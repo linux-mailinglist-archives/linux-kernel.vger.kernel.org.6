@@ -1,548 +1,480 @@
-Return-Path: <linux-kernel+bounces-186385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330AE8CC384
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B52218CC386
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12961F210CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2C11F22B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3FE1C6A8;
-	Wed, 22 May 2024 14:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE961EA91;
+	Wed, 22 May 2024 14:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W7/3BHm1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f3h/FXkd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D92D51E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716389352; cv=fail; b=B2KV2y0VHVmk60hjwOfC8G5tSH7NJbVrlrAjilnCb1/Eu/beOAJKmNXuCPgXohCTzgLwI1IrSrzjPn+cksUv5CfhNemSKsEg0tWnRYP6r4PSqJXLyMA9I1KRYeF1NiTmW2D4NiQxXM3gmFb8rY+suJB1KDpTf1QOSmFqvmuAIjU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716389352; c=relaxed/simple;
-	bh=AaZ25kyhIbcE6SSgAzYOd3OCPkG61ooUJX4JSJPRDus=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bmx7sAggTOEY9kj7PxQ4JMHxBk12fG2jOtWU7i4rX1o62T5M3s1RZ5X76DU5XYL2dqAh4G9T2O/wgUpf+8KgdsWe8jtIzxGWoM9/RlCNZQf0J5rjEwHC37i65xbEuzA9RkX3HG0GBYxHrhzrcUQlGNWNwgYrvz1OoYF23qR+uzU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W7/3BHm1; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716389350; x=1747925350;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=AaZ25kyhIbcE6SSgAzYOd3OCPkG61ooUJX4JSJPRDus=;
-  b=W7/3BHm1vuKd2x/xI7t/GuX4osTOaSup0WdndVdY31Mo6Pl3zxrjvVmw
-   NN7Qg77g6mN0SlQ7Qoir0n37SpypF60A1I4Cjpf7nx82mOqhrnDTnu1EW
-   yE3YV3+1YpGF3kCbFvIKjJn1IJlwuni7fwizW4A56OHwU1UTEnWSuiLse
-   O4Yp6Y88NF73sKvOhTKiwsFkQEdFmqz1x22ht4RqiRZVh9+NmjH6xUBUH
-   Efo/wr+yrpafOoOO8xI2eAr243O4LlyiK5I2Gy0uu1cVpQMEx823n3Zic
-   S0Rp49qnnCQahlLmCwMygorJTiqeriWSD8L0TbummVe2GvDOOaqGIjfz4
-   g==;
-X-CSE-ConnectionGUID: IgqMv3jdQzqoUkisCdc5cQ==
-X-CSE-MsgGUID: B9F4RXtyQlGIx0m7OghJ0w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12825198"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12825198"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 07:49:09 -0700
-X-CSE-ConnectionGUID: QgB2NCGqR7WZFAlKy6yXbw==
-X-CSE-MsgGUID: KwEi2yvHRESVvrAUvEjLWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33181457"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 07:49:09 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 22 May 2024 07:49:08 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 07:49:08 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 22 May 2024 07:49:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oPYCn4Ai8xHctCi2Xh2BRbCPQ13vbloN4WQS6uSbZFN9f+/Uiax7/2xTHQQwel+wnHdIxG8B0VO7lmQ8L0u8ZAy7MiYlJIXgccsd8Mq5/DMm6I7489mef+lbrBE5UNnk8aQizdN1B553j1XmrVov4ygPJfgtc14ou+MmFCyZUX2KH9Akqf86VKjSrBcrrE+PUR9lSVbEhY7sK6CRvT0+Xj6h2WxSzFbnjugIm05sOajdSIZX14heRTMnWb2oYpy2LrkBc4kHhBMtw5zCi/024fs5ON6upocaY4OIWhIXoNjkt6MfZFWV8ETY0JFi1p20vfM5j6fMUHEXESNwTQS3Dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=poz65z4ZXZ5/GDBhojPo3WuBC4/gsZ73beRktpbvZ2I=;
- b=ZNnABrj9gBe0F0jPqWp6b7GIOfPXvP0fc/iU1ArQTSegm34wiRmtKQzP+Gh2tPsSNU3+QQ9pLc60ujcmyucI8Vrp3oERnbEj9j0smfU0kmum9payq247eQYE+KJD3QZV98tJwcFv6IKGK93T56lfhs6emAGRB3c+6dWpZ+/bSu+CNFDPb6KXBRKDnhbBssMtIwn7BZOTO9u/ACysCa53z98x+eF1en8RG2BFbHXRuE4W6d0TzN1cgh7d8O2UlviayWfTZIkh5FWsrd7oZvfQSw+nvbyC5iXNUQQJPTJraWfUZ7/Vkx8Dk18xC2xM+/M32DBn2/aq4BQ+5FPac4cskA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- BL3PR11MB6313.namprd11.prod.outlook.com (2603:10b6:208:3b0::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
- 2024 14:49:04 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%5]) with mapi id 15.20.7611.016; Wed, 22 May 2024
- 14:49:03 +0000
-Date: Wed, 22 May 2024 22:48:47 +0800
-From: Chen Yu <yu.c.chen@intel.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-CC: Peter Zijlstra <peterz@infradead.org>, <mingo@redhat.com>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <bristot@redhat.com>, <vschneid@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <wuyun.abel@bytedance.com>,
-	<tglx@linutronix.de>, <efault@gmx.de>, <tim.c.chen@intel.com>,
-	<yu.c.chen.y@gmail.com>
-Subject: Re: [RFC][PATCH 10/10] sched/eevdf: Use sched_attr::sched_runtime to
- set request/slice suggestion
-Message-ID: <Zk4FzyUImFy7DwWc@chenyu5-mobl2>
-References: <20240405102754.435410987@infradead.org>
- <20240405110010.934104715@infradead.org>
- <ZjpFruUiBiNi6VSO@chenyu5-mobl2>
- <422fc38c-6096-8804-17ce-1420661743e8@amd.com>
- <ZkMsf4Fz7/AFoQfC@chenyu5-mobl2>
- <f2eafde3-b9e8-afc9-8934-ca8e597c33e6@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f2eafde3-b9e8-afc9-8934-ca8e597c33e6@amd.com>
-X-ClientProxiedBy: KL1P15301CA0058.APCP153.PROD.OUTLOOK.COM
- (2603:1096:820:3d::18) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75191CAA6;
+	Wed, 22 May 2024 14:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716389387; cv=none; b=t0qNcwNWXSvoBdkMzTFcx9fuBExvWznv1+9lflwU+fQwDW9V9q+1pqQrPRpbg+/kLYb6Y+hm9l0Ek/eUWK7pS/C4/SwrSvne/OqTMtKEp/GvkUa+q456mNAN/jdz1kjoDqF+nYPQJILd3A7YGLKUEtLSkjB1nj4dMiQj4p/lEcI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716389387; c=relaxed/simple;
+	bh=A/JHw7Gv9bkuxzXooBZkfpUGMoav1/PyRjgDItv+tDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ld0mWNzYrnrpIkP/7Y7nRb2ULqtjsp6it6Qcf0QvI3+MzrMMwpZOb57JUj0kEV3UB/hH/2AeSDyL40vbXumT9+h22qTIRHnZSlclONnbMe9kvIyF5toP6McpBYN+KqDXscmHACQ8gvzmwTtwTpN2dCjyDdmiDe4AApQrA01+abc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f3h/FXkd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D4ABC32782;
+	Wed, 22 May 2024 14:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716389386;
+	bh=A/JHw7Gv9bkuxzXooBZkfpUGMoav1/PyRjgDItv+tDY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=f3h/FXkd0WvxQgmqcecxkPuAlTbD8+f4dns6kCMAFVzRtF0ihP6AhvOaTdRk/Ttex
+	 b8O9RuOw6PEC1IrCzeP/MVm+wLvoUDbgNkgcIzhLQVB1rTYfFsQL+q5fn0BTHuI6m2
+	 SExVd5ECVRfbfIxtsC35jimtFtR4EwbOwqhmBnoE=
+Date: Wed, 22 May 2024 16:49:44 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB/Thunderbolt driver changes for 6.10-rc1
+Message-ID: <Zk4GCA9FcWdWtjnt@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|BL3PR11MB6313:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2c5acbe-6e06-4b0c-6b47-08dc7a6e5299
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6uow2lXMh63xvoj9ShtFVB/WCb2EqghQE8+VvAbpEjmYwwxmzb6pyBK35fCE?=
- =?us-ascii?Q?oTV8tyY6sUP457Mr1UjbIehjjxyMfeyxHZwKYAFDpr8cAyWt8MtDn62aX4QB?=
- =?us-ascii?Q?lvTgzS0koYJcCGVIHhjx/aaUKxiQilU/cXQPPLGbroXwfH0fbuZGgdUv14u4?=
- =?us-ascii?Q?IQl+zZ0KpS+KKaDlxEPpqhF4F0Ucqhsn8eUvoUu8bYFND5RAtkDYRmgCs3kO?=
- =?us-ascii?Q?FYLZZsZz6Gtv1GLRIsWxt4JNdSmjg6PXOk3wDH11dzH0ryEteSxTRI7iB/bn?=
- =?us-ascii?Q?D+Z+yWPXHeBTwvjhbRHbF9QRlejwKgagk5+nqIb7cly0+Fi+g7pqRFUuserY?=
- =?us-ascii?Q?7d9i+80MFaIM8FLInZu+die/CxNZXmyzjnfoTRrBOuucXUA1BMkOek3wKJyX?=
- =?us-ascii?Q?ply4+NHlExN+ooGtHs2nyR5Jrzgv9sJZWg3N59F542zDrOEjhe6KISlfOJtk?=
- =?us-ascii?Q?v0CGg98GMOL3BP3zo0SpXLFLTS8c9G9sIcHkGZImBuJzbVufAz/s3g5anPGA?=
- =?us-ascii?Q?/uTFnDnunMFnzWk0uYqYa+VqbB6nMji3NcQxJxn7Zgfpprg+2z1vy4rPh27Y?=
- =?us-ascii?Q?hSu9HXiRc5li9TCcLK2MD9BmMljwpTAq5ze7Z7AJmDWzRPH7lQPHC8tMDRvA?=
- =?us-ascii?Q?D4cDla2qOby1tHfRsz/JoqFqdZLvS5WdGm/JnGworSwTzbTN4+n5QRKg/drk?=
- =?us-ascii?Q?a6CcvZ3xjq523MOIAawmD2reujTbFL6ag2B4vZiLMvLc/E7TvsP2oPaoTep9?=
- =?us-ascii?Q?vumMbCQb2qHvNWhVmGfQqOY3bG7MHH0dnxmS4/WI4XNg/no0jo81aPs5rK+P?=
- =?us-ascii?Q?YQpH+oEifMY96gi9rcStFf2xCLRDH5fWtM1MXNRcfhJDDs7mo/fPjGflbzIt?=
- =?us-ascii?Q?u2kF606SiU+rEhSrbPMe4p1pISNT3/MUr/7Bqe/H/OYKwT5YpLs6NlBUvUr2?=
- =?us-ascii?Q?z+lenKpQrwBn0LzZAobtvGIagU1bBIKTvjmPurRil5IFjNThZrp9FlrcqUGB?=
- =?us-ascii?Q?P1H4V/l3VyoF8PEVAla4nI7ErbyHCkltioh+pLa937BHvjoUenCCpcosLJVw?=
- =?us-ascii?Q?UflaA2wFROT55sqX4bjDX9YV5CjRRfk0ggWQ2MHgL5MxqedAKfbDHOEY5Tyl?=
- =?us-ascii?Q?U71MmLvm4J3mrQFFu0rridy3cP0q3AjHC/PqJkTADPWY15MwDWeIckGScUAx?=
- =?us-ascii?Q?DVmYF1LuaybwhJvKHxf3ZnSfv6ghHFAxYTHYKfWVfsD3n7gK+/oYRF1GbgmO?=
- =?us-ascii?Q?T/b4l2PXU9mm72jrHCNntUS8GZr9tIciXjbpBA5e1w=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?206qElRnPq1R7g6vxuoVbfFkitlc9AvduUhoFeFXTQETzOIvFsHSqwCXUSPJ?=
- =?us-ascii?Q?qfuBR+haH4obNJoGFqxz6QzjA7qAlxMAHPYuys9m2fcPRI23eoQ8h8h40S3j?=
- =?us-ascii?Q?QSb24bkICcHsqkuNrvADD477ZgGc4gX1Tnw8l/+4a6o6u0KPBCcRcuFlXWt8?=
- =?us-ascii?Q?Z6l3MwSjY65UkGCrrJCrHR59mlzMyIa1chTfPwUyIl59m9LPXkMy+c4Jc2L0?=
- =?us-ascii?Q?bcGsr1PV+wAYiI43Oon+WKo2SSKput1H0dAPCG+8J51W/qR+72R1wUDjwTx/?=
- =?us-ascii?Q?Z9asmNY4EKqh2wy66IGTTmsMzhz4wWe/YqbwPYP35F/HlvP8xvV6zwMYv98B?=
- =?us-ascii?Q?hTmPh3SbYkr4e/2CBTnLrVqxgjWbI7v5A1Ee2Uky8YCPM8UtsxpJvE1MtEzJ?=
- =?us-ascii?Q?G/q00LEHkbWVNZu+zHDXCq0Bx8CLTEGs6vrl3qUYiBnSb9KEfw6Zo9krnK3k?=
- =?us-ascii?Q?1L3bvxvgo5/IqvguUP3099/vnrmxUVwSEug5x2jKaysrMHuCAIne3FFP2Wla?=
- =?us-ascii?Q?5MztcT4S+RM5q+k61istV5wNDH6Txbf+DIoB1x5mp9ddHm1ShTQSoGqeo87N?=
- =?us-ascii?Q?bptEhxT57X2tVGqY/osK9EQEdkl1Ef0OnTpcIlb88jsw2Zbt1wMsBo6ClDLo?=
- =?us-ascii?Q?dXssriyrVXFzuRehLqf+bBZo/EtCtv4xYtpUOCQfhkGwNGw5dVp5e1nZGswz?=
- =?us-ascii?Q?SXYkNcc2gzFq71QN8UfSuTZxoMBynTDNBmJEPKId6Z89c6d/PrGX1UFCLcvI?=
- =?us-ascii?Q?5/qpAjsPcNza9aw9v6xFdrB6M7Kp1+iRlY8sKLuw44sUGpjXwZ3FGsrIbhCh?=
- =?us-ascii?Q?FYIEXNPWn0kwSFDMGFwPNqJwxv5+uJxUlFrJuPbVUXqiYUQ06GEz8l3pgljK?=
- =?us-ascii?Q?7/fJjmIzlxiXMw+wu37pFA/K5PuHKQ4f1eXGkSh5J+TIt6U/AIszZU7xmLPK?=
- =?us-ascii?Q?iiqkkHdCrKLnptapDCfpLPpDroQVg4o7gtmUsxFg1LuXu/RT6IeiEos95H67?=
- =?us-ascii?Q?C3b9zRWkG5L9fnfWSER6/HeAZ56FNip0j2+AQEN6Rdfnj8gA+INPYiZfVcUp?=
- =?us-ascii?Q?iM3/70qW+Knu6zMg8ZyYKhu+SOGMHmYsksRPbsI93VpkisPAKyWWKArH7KX+?=
- =?us-ascii?Q?lsLfaVq0GI9VmGAMUnaIaf8WTzw8aQ8+ocjJ1LG3PHAnSEZfsXrZ4hudi6pe?=
- =?us-ascii?Q?0MutGFKqBO/x2YeEPYYDcerIzBm7LZXBk1QSPrhzY5Jtg0FYjZs4cOQFq9/X?=
- =?us-ascii?Q?JBJbIqzFHQY6rp9nBFdI2r3cHxP/OGwEyTKJpIH7KdJBmM+sb+yfn3f9t7Ke?=
- =?us-ascii?Q?SSQBXHsVnljBDfREfMZw2+p4KsDdTTcHQThWFbCMikWozdAc+YzG3cx+9V87?=
- =?us-ascii?Q?tPOyQkWayUaM+OFy1/sIpes4n+CjSOyizGkkFXkRzplORGGg+wFuSoRbRtd4?=
- =?us-ascii?Q?hzZhqSO9MFuDWD7dERXSkoOu4/lKpEWEc6pw14LZbAls76VCalJOsY80OKb0?=
- =?us-ascii?Q?7Qfsm5rV1uiZLwVfnVisvIYibgIoiRmEvAYhqZFtFbttg7w91iURbtl6NxIq?=
- =?us-ascii?Q?7xRtdDe6/gpT9vpBxoKdb45XEFxQ/Nq6/l2FYSOn?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2c5acbe-6e06-4b0c-6b47-08dc7a6e5299
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 14:49:03.2187
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HcanvsrVFxa5+Wd7dWNqvqtD6kkWmywkn3Pd8huZHdR8dGybYWaZz73sO1mjqKQG8rDAz3ZSI+5M5jHwwAgeig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6313
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 2024-05-14 at 20:53:16 +0530, K Prateek Nayak wrote:
-> Hello Chenyu,
-> 
-> On 5/14/2024 2:48 PM, Chen Yu wrote:
-> >>> [..snip..]
-> >>>  /*
-> >>>   * Scan the LLC domain for idle CPUs; this is dynamically regulated by
-> >>>   * comparing the average scan cost (tracked in sd->avg_scan_cost) against the
-> >>> @@ -7384,10 +7402,9 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
-> >>>  	if (sched_feat(SIS_UTIL)) {
-> >>>  		sd_share = rcu_dereference(per_cpu(sd_llc_shared, target));
-> >>>  		if (sd_share) {
-> >>> -			/* because !--nr is the condition to stop scan */> -			nr = READ_ONCE(sd_share->nr_idle_scan) + 1;
-> >>> +			nr = adjust_idle_scan(p, READ_ONCE(sd_share->nr_idle_scan));
-> >>>  			/* overloaded LLC is unlikely to have idle cpu/core */
-> >>> -			if (nr == 1)
-> >>> +			if (nr <= 0)
-> >>
-> >> I was wondering if this would preserve the current behavior with
-> >> SIS_FAST toggled off? Since the implementation below still does a
-> >> "--nr <= 0" , wouldn't it effectively visit one CPU less overall now?
-> >>
-> >> Have you tried something similar to the below hunk?
-> >>
-> >> 	/* because !--nr is the condition to stop scan */
-> >> 	nr = adjust_idle_scan(p, READ_ONCE(sd_share->nr_idle_scan)) + 1;
-> >> 	if (nr == 1)
-> >> 		return -1;
-> >>
-> > 
-> > Yeah, right, to keep the scan depth consistent, the "+1" should be kept.
-> >  
-> >> I agree with Mike that looking at slice to limit scan-depth seems odd.
-> >> My experience with netperf is that the workload cares more about the
-> >> server-client being co-located on the closest cache domain and by
-> >> limiting scan-depth using slice, this is indirectly achieved since all
-> >> the wakeups carry the WF_SYNc flag.
-> >>
-> > 
-> > Exactly. This is the original motivation.
-> >  
-> >> P.S. have you tried using the slice in __select_idle_cpu()? Similar to
-> >> sched_idle_cpu() check, perhaps an additional sched_preempt_short_cpu()
-> >> which compares rq->curr->se.slice with the waking task's slice and
-> >> returs that cpu if SIS_SHORT can help run the workload quicker?
-> > 
-> > This is a good idea, it seems to be benefit PREEMPT_SHORT. If the customized
-> > task slice is introduced, we can leverage this hint for latency related
-> > optimization. Task wakeup is one thing, I can also think of other aspects,
-> > like idle load balance, etc. I'm not sure what is the proper usage of the
-> > task slice though, this is why I sent this RFC.
-> > 
-> >> Note:
-> >> This will not work if the SIS scan itself is the largest overhead in the
-> >> wakeup cycle and not the task placement itself. Previously during
-> >> SIS_UTIL testing, to measure the overheads of scan vs placement, we
-> >> would do a full scan but return the result that SIS_UTIL would have
-> >> returned to determine the overhead of the search itself.
-> >>
-> > 
-> > Regarding the task placement, do you mean the time between a task is enqueued
-> > and picked up? Do you have any recommendation which workload can expose the
-> > scan overhead most?
-> 
-> Sorry for not being clear here. From what I've observed in the past,
-> there are two dimensions to slect_idle_sibling():
-> 
-> i)  Placement: Final CPU select_idle_sibling() returns
-> ii) Search: Do we find an idle core/CPU in select_idle_sibling()
-> 
-> In case of netperf, I've observed that i) is more important than ii)
-> wherin a placement of client on same core/thread as that of the server
-> results in better performance vs finding an idle CPU on a remote LLC.
-> For hackbench/tbench, when runqueues are under high utilization (~75%),
-> reduction in search time ii) seems to be more beneficial.
->
+The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
 
-Usually task stacking is not preferred because it hurts latency. But as we
-discovered on AMD and Intel's large servers, sometimes the overhead of task
-migration offset the benefit of running an idle CPU.
+  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
 
-Inspired by your description on SIS_SHORT, and also Mike's feedback, I respin
-the SIS_SHORT patch, to consider the task's customized slice:
+are available in the Git repository at:
 
-Leverage the WF_SYNC to achieve better cache locality.
-If both the waker and the wakee are short duration tasks, wake up the wakee on
-waker's CPU directly. To avoid task stacking as much as possible:
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.10-rc1
 
-1. Only when has_idle_core is false, SIS_SYNC takes effect.
+for you to fetch changes up to 51474ab44abf907023a8a875e799b07de461e466:
 
-2. Only if the user has shrinked the task slice, SIS_SYNC takes effect.
+  drm/bridge: aux-hpd-bridge: correct devm_drm_dp_hpd_bridge_add() stub (2024-05-11 13:02:14 +0100)
 
-3. The waker must be the only runnable task on the runqueue.
+----------------------------------------------------------------
+USB / Thunderbolt changes for 6.10-rc1
 
-4. The duration threshold is based on the CPU number within the LLC.
-   The more CPUs there are, the lower the bar for the task to be treated as
-   a short duration one, and vice versa.
+Here is the big set of USB and Thunderbolt changes for 6.10-rc1.
+Nothing hugely earth-shattering, just constant forward progress for
+hardware support of new devices and cleanups over the drivers.
 
-   threshold = sysctl_sched_migration_cost * llc_weight^2 / 256^2
+Included in here are:
+  - Thunderbolt / USB 4 driver updates
+  - typec driver updates
+  - dwc3 driver updates
+  - gadget driver updates
+  - uss720 driver id additions and fixes (people use USB->arallel port
+    devices still!)
+  - onboard-hub driver rename and additions for new hardware
+  - xhci driver updates
+  - other small USB driver updates and additions for quirks and api
+    changes
 
-                             threshold
-   LLC_WEIGHT=8               0.5 usec
-   LLC_WEIGHT=16              2 usec
-   LLC_WEIGHT=32              8 usec
-   LLC_WEIGHT=64              31 usec
-   LLC_WEIGHT=128             125 usec
-   LLC_WEIGHT=256             500 usec
+All of these have been in linux-next for a while with no reported
+problems.
 
-5. Honor idle-CPU-first for CPUs share the L2 cache(Cluster). Only
-   there is no idle CPU within the Cluster domain, SIS_SYNC takes
-   effect.
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Benchmark:
-Tested on 4 platforms, significant throughput improvement on tbench, netperf,
-stress-ng, will-it-scale, and latency reduced of lmbench. No performance
-difference was observed in an Online Transaction Processing (OLTP) test.
+----------------------------------------------------------------
+Alex Henrie (4):
+      usb: misc: uss720: point pp->dev to usbdev->dev
+      usb: misc: uss720: document the names of the compatible devices
+      usb: misc: uss720: add support for another variant of the Belkin F5U002
+      usb: misc: uss720: check for incompatible versions of the Belkin F5U002
 
-Platform1, 240 CPUs, 2 sockets Intel(R) Xeon(R)
-========================================================================
-netperf
-=======
-case            	load    	baseline(std%)	compare%( std%)
-TCP_RR          	60-threads	 1.00 (  1.11)	 +8.22 (  1.06)
-TCP_RR          	120-threads	 1.00 (  1.74)	+38.71 (  0.74)
-TCP_RR          	180-threads	 1.00 (  1.21)	+108.12 (  1.07)
-TCP_RR          	240-threads	 1.00 (  4.75)	+160.98 (  4.01)
-UDP_RR          	60-threads	 1.00 ( 11.70)	 +7.17 ( 10.89)
-UDP_RR          	120-threads	 1.00 ( 10.82)	 +5.54 (  7.17)
-UDP_RR          	180-threads	 1.00 (  9.77)	+10.29 ( 10.87)
-UDP_RR          	240-threads	 1.00 ( 12.38)	 +4.45 ( 16.69)
+Alex James (1):
+      thunderbolt: Enable NVM upgrade support on Intel Maple Ridge
 
-tbench
-======
-case            	load    	baseline(std%)	compare%( std%)
-loopback        	60-threads	 1.00 (  0.22)	 +8.67 (  0.12)
-loopback        	120-threads	 1.00 (  0.20)	+42.12 (  1.16)
-loopback        	180-threads	 1.00 (  0.16)	+96.36 (  1.34)
-loopback        	240-threads	 1.00 (  0.23)	+122.68 (  4.87)
+Anand Moon (5):
+      usb: ehci-exynos: Use devm_clk_get_enabled() helpers
+      usb: ehci-exynos: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+      usb: ohci-exynos: Use devm_clk_get_enabled() helpers
+      usb: ohci-exynos: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
+      usb: dwc3: exynos: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
 
-schbench
-========
-No noticeable difference of 99.0th wakeup/request latency, 50.0th RPS percentiles.
-schbench -m 2 -r 100
+André Draszik (2):
+      dt-bindings: usb: samsung,exynos-dwc3: add gs101 compatible
+      usb: dwc3: exynos: add support for Google Tensor gs101
 
-                                  baseline                       sis_sync
+Andy Shevchenko (6):
+      xhci: pci: Use full names in PCI IDs for Intel platforms
+      xhci: pci: Group out Thunderbolt xHCI IDs
+      xhci: pci: Use PCI_VENDOR_ID_RENESAS
+      usb: phy: tegra: Replace of_gpio.h by proper one
+      usb: fotg210: Use *-y instead of *-objs in Makefile
+      usb: fotg210: Add missing kernel doc description
 
-Wakeup Latencies 99.0th usec            27                            25
-Request Latencies 99.0th usec        15376                         15376
-RPS percentiles 50.0th               16608                         16608
+Arnd Bergmann (1):
+      usb: gadget: omap_udc: remove unused variable
 
-Platform2, 48 CPUs 2 sockets Intel(R) Xeon(R) CPU E5-2697
-========================================================================
-lmbench3: lmbench3.PIPE.latency.us 33.8% improvement
-lmbench3: lmbench3.AF_UNIX.sock.stream.latency.us 30.6% improvement
+Biju Das (6):
+      dt-bindings: usb: renesas,usbhs: Document RZ/G2L family compatible
+      usb: renesas_usbhs: Simplify obtaining device data
+      usb: renesas_usbhs: Improve usbhsc_default_pipe[] for isochronous transfers
+      usb: renesas_usbhs: Update usbhs pipe configuration for RZ/G2L family
+      usb: renesas_usbhs: Remove trailing comma in the terminator entry for OF table
+      arm64: dts: renesas: r9a07g0{43,44,54}: Update RZ/G2L family compatible
 
-Platform3: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480
-=======================================================================
-stress-ng: stress-ng.vm-rw.ops_per_sec 250.8% improvement
-will-it-scale: will-it-scale.per_process_ops 42.1% improvement
+Bo Liu (1):
+      usb: typec: stusb160x: convert to use maple tree register cache
 
-Platform4: 288 CPUs, 2 sockets, 4 CPUs share the L2 cache, Intel(R) Xeon(R)
-=========================================================================
-netperf
-=======
-case            	load    	baseline(std%)	compare%( std%)
-TCP_RR          	72-threads	 1.00 (  0.89)	 +6.14 (  0.95)
-TCP_RR          	144-threads	 1.00 (  1.53)	 +5.18 (  1.24)
-TCP_RR          	216-threads	 1.00 ( 10.76)	+23.31 (  1.67)
-TCP_RR          	288-threads	 1.00 (  2.28)	 +1.72 (  2.10)
-UDP_RR          	72-threads	 1.00 (  3.44)	 +0.42 (  3.11)
-UDP_RR          	144-threads	 1.00 ( 14.53)	 +1.40 ( 16.11)
-UDP_RR          	216-threads	 1.00 ( 17.30)	 +1.18 ( 23.00)
-UDP_RR          	288-threads	 1.00 ( 21.30)	 -0.15 ( 20.14)
+Chris Wulff (2):
+      usb: gadget: u_audio: Fix race condition use of controls after free during gadget unbind.
+      usb: gadget: u_audio: Clear uac pointer when freed.
 
+Christian A. Ehrhardt (3):
+      usb: typec: ucsi: Stop abuse of bit definitions from ucsi.h
+      usb: typec: ucsi: Never send a lone connector change ack
+      usb: typec: ucsi_acpi: Remove Dell quirk
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1437c276c915..b2b838d499ea 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1003,7 +1003,7 @@ static void update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
- #include "pelt.h"
- #ifdef CONFIG_SMP
- 
--static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
-+static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu, int sync);
- static unsigned long task_h_load(struct task_struct *p);
- static unsigned long capacity_of(int cpu);
- 
-@@ -7410,16 +7410,36 @@ static inline int select_idle_smt(struct task_struct *p, struct sched_domain *sd
- 
- #endif /* CONFIG_SCHED_SMT */
- 
-+static int short_task(struct task_struct *p, int llc)
-+{
-+	if (!p->se.custom_slice || p->se.slice >= sysctl_sched_base_slice)
-+		return 0;
-+
-+	/*
-+	 * Scale the threshold by the LLC CPU number.
-+	 * The more CPUs there are, the more likely the
-+	 * task is regarded as a small one.
-+	 *
-+	 */
-+	if ((p->duration_avg << 16) >=
-+	    (sysctl_sched_migration_cost * llc * llc))
-+		return 0;
-+
-+	return 1;
-+}
-+
- /*
-  * Scan the LLC domain for idle CPUs; this is dynamically regulated by
-  * comparing the average scan cost (tracked in sd->avg_scan_cost) against the
-  * average idle time for this rq (as found in rq->avg_idle).
-  */
--static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool has_idle_core, int target)
-+static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool has_idle_core, int target,
-+			   int sync)
- {
- 	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
- 	int i, cpu, idle_cpu = -1, nr = INT_MAX;
- 	struct sched_domain_shared *sd_share;
-+	int llc_weight = per_cpu(sd_llc_size, target);
- 
- 	cpumask_and(cpus, sched_domain_span(sd), p->cpus_ptr);
- 
-@@ -7458,6 +7478,20 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool
- 		}
- 	}
- 
-+	/*
-+	 * When reached here, next step is to scan idle CPUs that do not share L2.
-+	 * However, the Core-to-Core cache latency could be large on big system.
-+	 * Give target another chance if waker and wakee are mutually waking up
-+	 * each other.
-+	 */
-+	if (sched_feat(SIS_SYNC) &&
-+	    target == smp_processor_id() && !has_idle_core &&
-+	    sync && this_rq()->nr_running <= 1 &&
-+	    short_task(p, llc_weight) &&
-+	    short_task(current, llc_weight)) {
-+		return target;
-+	}
-+
- 	for_each_cpu_wrap(cpu, cpus, target + 1) {
- 		if (has_idle_core) {
- 			i = select_idle_core(p, cpu, cpus, &idle_cpu);
-@@ -7550,7 +7584,7 @@ static inline bool asym_fits_cpu(unsigned long util,
- /*
-  * Try and locate an idle core/thread in the LLC cache domain.
-  */
--static int select_idle_sibling(struct task_struct *p, int prev, int target)
-+static int select_idle_sibling(struct task_struct *p, int prev, int target, int sync)
- {
- 	bool has_idle_core = false;
- 	struct sched_domain *sd;
-@@ -7659,7 +7693,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 		}
- 	}
- 
--	i = select_idle_cpu(p, sd, has_idle_core, target);
-+	i = select_idle_cpu(p, sd, has_idle_core, target, sync);
- 	if ((unsigned)i < nr_cpumask_bits)
- 		return i;
- 
-@@ -8259,7 +8293,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
- 		new_cpu = sched_balance_find_dst_cpu(sd, p, cpu, prev_cpu, sd_flag);
- 	} else if (wake_flags & WF_TTWU) { /* XXX always ? */
- 		/* Fast path */
--		new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
-+		new_cpu = select_idle_sibling(p, prev_cpu, new_cpu, sync);
- 	}
- 	rcu_read_unlock();
- 
-diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-index 143f55df890b..7e5968d01dcb 100644
---- a/kernel/sched/features.h
-+++ b/kernel/sched/features.h
-@@ -50,6 +50,7 @@ SCHED_FEAT(TTWU_QUEUE, true)
-  * When doing wakeups, attempt to limit superfluous scans of the LLC domain.
-  */
- SCHED_FEAT(SIS_UTIL, true)
-+SCHED_FEAT(SIS_SYNC, true)
- 
- /*
-  * Issue a WARN when we do multiple update_rq_clock() calls
--- 
-2.25.1
+Christophe JAILLET (6):
+      usb: dwc2: Remove cat_printf()
+      usb: gadget: u_audio: Fix the size of a buffer in a strscpy() call
+      usb: gadget: u_audio: Use the 2-argument version of strscpy()
+      usb: gadget: u_audio: Use snprintf() instead of sprintf()
+      usb: gadget: function: Remove usage of the deprecated ida_simple_xx() API
+      usb: core: Remove the useless struct usb_devmap which is just a bitmap
 
+Dingyan Li (1):
+      USB: Use EHCI control transfer pid macros instead of constant values.
 
+Diogo Ivo (1):
+      usb: typec: ucsi: Only enable supported notifications
 
-Preparation patch to record the task's duration:
- 
+Dmitry Baryshkov (22):
+      usb: typec: ucsi: allow non-partner GET_PDOS for Qualcomm devices
+      usb: typec: ucsi: limit the UCSI_NO_PARTNER_PDOS even further
+      usb: typec: ucsi: properly register partner's PD device
+      usb: typec: ucsi: always register a link to USB PD device
+      usb: typec: ucsi: simplify partner's PD caps registration
+      usb: typec: ucsi: extract code to read PD caps
+      usb: typec: ucsi: support delaying GET_PDOS for device
+      usb: typec: ucsi_glink: rework quirks implementation
+      usb: typec: ucsi_glink: enable the UCSI_DELAY_DEVICE_PDOS quirk
+      soc: qcom: pmic_glink: reenable UCSI on sc8280xp
+      soc: qcom: pmic_glink: enable UCSI on sc8180x
+      usb: typec: ucsi_glink: enable the UCSI_DELAY_DEVICE_PDOS quirk on qcm6490
+      usb: typec: ucsi_glink: drop NO_PARTNER_PDOS quirk for sm8550 / sm8650
+      usb: typec: ucsi_glink: drop special handling for CCI_BUSY
+      usb: typec: ucsi: add callback for connector status updates
+      usb: typec: ucsi: glink: move GPIO reading into connector_status callback
+      usb: typec: ucsi: glink: use typec_set_orientation
+      usb: typec: ucsi: add update_connector callback
+      usb: typec: ucsi: glink: set orientation aware if supported
+      dt-bindings: usb: qcom,pmic-typec: update example to follow connector schema
+      usb: typec: qcom-pmic-typec: split HPD bridge alloc and registration
+      drm/bridge: aux-hpd-bridge: correct devm_drm_dp_hpd_bridge_add() stub
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 61591ac6eab6..9e8dfdc81048 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1339,6 +1339,9 @@ struct task_struct {
- 	struct callback_head		cid_work;
- #endif
- 
-+	u64				prev_sleep_sum_runtime;
-+	u64				duration_avg;
-+
- 	struct tlbflush_unmap_batch	tlb_ubc;
- 
- 	/* Cache last used pipe for splice(): */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..c4288d613374 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4566,6 +4566,8 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
- 	p->migration_pending = NULL;
- #endif
- 	init_sched_mm_cid(p);
-+	p->prev_sleep_sum_runtime = 0;
-+	p->duration_avg = 0;
- }
- 
- DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 8a5b1ae0aa55..1437c276c915 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6833,6 +6833,15 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 
- static void set_next_buddy(struct sched_entity *se);
- 
-+static inline void dur_avg_update(struct task_struct *p)
-+{
-+	u64 dur;
-+
-+	dur = p->se.sum_exec_runtime - p->prev_sleep_sum_runtime;
-+	p->prev_sleep_sum_runtime = p->se.sum_exec_runtime;
-+	update_avg(&p->duration_avg, dur);
-+}
-+
- /*
-  * The dequeue_task method is called before nr_running is
-  * decreased. We remove the task from the rbtree and
-@@ -6905,6 +6914,9 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 
- dequeue_throttle:
- 	util_est_update(&rq->cfs, p, task_sleep);
-+	if (task_sleep)
-+		dur_avg_update(p);
-+
- 	hrtick_update(rq);
- }
- 
--- 
-2.25.1
+Dr. David Alan Gilbert (1):
+      usb: musc: Remove unused list 'buffers'
 
- 
+Fabio Estevam (2):
+      dt-bindings: usb: Document the Microchip USB2514 hub
+      dt-bindings: usb: hx3: Remove unneeded dr_mode
+
+Francesco Dolcini (1):
+      usb: typec: mux: gpio-sbu: Allow GPIO operations to sleep
+
+Geert Uytterhoeven (1):
+      usb: renesas_usbhs: Remove renesas_usbhs_get_info() wrapper
+
+Gil Fine (4):
+      thunderbolt: Fix calculation of consumed USB3 bandwidth on a path
+      thunderbolt: Allow USB3 bandwidth to be lower than maximum supported
+      thunderbolt: Fix uninitialized variable in tb_tunnel_alloc_usb3()
+      thunderbolt: Fix kernel-doc for tb_tunnel_alloc_dp()
+
+Greg Kroah-Hartman (4):
+      Merge 6.9-rc2 into usb-next
+      Merge 6.9-rc5 into usb-next
+      Merge 6.9-rc7 into usb-next
+      Merge tag 'thunderbolt-for-v6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt into usb-next
+
+Guenter Roeck (1):
+      MAINTAINERS: Remove {ehci,uhci}-platform.c from ARM/VT8500 entry
+
+Hans de Goede (1):
+      usb: dwc3: pci: Don't set "linux,phy_charger_detect" property on Lenovo Yoga Tab2 1380
+
+Hardik Gajjar (1):
+      usb: gadget: f_fs: Add the missing get_alt callback
+
+Heikki Krogerus (1):
+      usb: typec: ucsi: displayport: Fix potential deadlock
+
+Inochi Amaoto (2):
+      dt-bindings: usb: dwc2: Add support for Sophgo CV18XX/SG200X series SoC
+      usb: dwc2: add support for Sophgo CV18XX/SG200X series SoC
+
+Javier Carrasco (11):
+      usb: misc: onboard_hub: use device supply names
+      usb: misc: onboard_hub: rename to onboard_dev
+      drm: ci: arm64.config: update ONBOARD_USB_HUB to ONBOARD_USB_DEV
+      arm64: defconfig: update ONBOARD_USB_HUB to ONBOARD_USB_DEV
+      ARM: multi_v7_defconfig: update ONBOARD_USB_HUB to ONBOAD_USB_DEV
+      usb: misc: onboard_dev: add support for non-hub devices
+      ASoC: dt-bindings: xmos,xvf3500: add XMOS XVF3500 voice processor
+      usb: misc: onboard_dev: add support for XMOS XVF3500
+      usb: typec: tipd: fix event checking for tps25750
+      usb: typec: tipd: fix event checking for tps6598x
+      usb: typec: tipd: rely on i2c_get_match_data()
+
+Johan Hovold (1):
+      dt-bindings: usb: qcom,dwc3: fix interrupt max items
+
+Justin Stitt (2):
+      usb: gadget: u_ether: replace deprecated strncpy with strscpy
+      usb: gadget: mv_u3d: replace deprecated strncpy with strscpy
+
+Komal Bajaj (1):
+      dt-bindings: usb: dwc3: Add QDU1000 compatible
+
+Krishna Kurapati (11):
+      dt-bindings: usb: Add bindings for multiport properties on DWC3 controller
+      usb: dwc3: core: Access XHCI address space temporarily to read port info
+      usb: dwc3: core: Skip setting event buffers for host only controllers
+      usb: dwc3: core: Refactor PHY logic to support Multiport Controller
+      dt-bindings: usb: qcom,dwc3: Add bindings for SC8280 Multiport
+      usb: dwc3: qcom: Add helper function to request wakeup interrupts
+      usb: dwc3: qcom: Refactor IRQ handling in glue driver
+      usb: dwc3: qcom: Enable wakeup for applicable ports of multiport
+      usb: dwc3: qcom: Add multiport suspend/resume support for wrapper
+      usb: dwc3: core: Fix compile warning on s390 gcc in dwc3_get_phy call
+      usb: dwc3: core: Fix unused variable warning in core driver
+
+Krzysztof Kozlowski (3):
+      usb: phy: fsl-usb: drop driver owner assignment
+      usb: typec: nvidia: drop driver owner assignment
+      usb: typec: displayport: drop driver owner assignment
+
+Luca Weiss (2):
+      usb: typec: ptn36502: switch to DRM_AUX_BRIDGE
+      dt-bindings: usb: qcom,pmic-typec: Add support for the PM7250B PMIC
+
+Marcello Sylvester Bauer (2):
+      usb: gadget: dummy_hcd: Switch to hrtimer transfer scheduler
+      usb: gadget: dummy_hcd: Set transfer interval to 1 microframe
+
+Mathias Nyman (4):
+      xhci: stored cached port capability values in one place
+      xhci: remove xhci_check_usb2_port_capability helper
+      xhci: improve PORTSC register debugging output
+      xhci: remove XHCI_TRUST_TX_LENGTH quirk
+
+Michael Grzeschik (4):
+      usb: gadget: uvc: fix try format returns on uncompressed formats
+      usb: gadget: uvc: configfs: ensure guid to be valid before set
+      usb: phy-generic: add short delay after pulling the reset pin
+      usb: chipidea: move ci_ulpi_init after the phy initialization
+
+Mika Westerberg (6):
+      thunderbolt: Use correct error code with ERROR_NOT_SUPPORTED
+      thunderbolt: Get rid of TB_CFG_PKG_PREPARE_TO_SLEEP
+      thunderbolt: Increase sideband access polling delay
+      thunderbolt: No need to loop over all retimers if access fails
+      thunderbolt: There are only 5 basic router registers in pre-USB4 routers
+      thunderbolt: Correct trace output of firmware connection manager packets
+
+Minas Harutyunyan (7):
+      usb: dwc2: Add core new versions definition
+      usb: dwc2: New bit definition in GOTGCTL register
+      usb: dwc2: Add new parameter eusb2_disc
+      usb: dwc2: Add eUSB2 PHY disconnect flow support
+      usb: dwc2: New bit definition in GPWRDN register
+      usb: dwc2: Add hibernation updates for ULPI PHY
+      usb: dwc2: New bitfield definition and programming in GRSTCTL
+
+Mohammad Shehar Yaar Tausif (1):
+      dt-bindings: usb: uhci: convert to dt schema
+
+Nathan Chancellor (1):
+      usb: typec: ptn36502: Only select DRM_AUX_BRIDGE with OF
+
+Niklas Neronin (11):
+      usb: xhci: check if 'requested segments' exceeds ERST capacity
+      usb: xhci: improve debug message in xhci_ring_expansion_needed()
+      usb: xhci: address off-by-one in xhci_num_trbs_free()
+      usb: xhci: remove redundant variable 'erst_size'
+      usb: xhci: use array_size() when allocating and freeing memory
+      usb: xhci: prevent potential failure in handle_tx_event() for Transfer events without TRB
+      usb: xhci: remove 'handling_skipped_tds' from handle_tx_event()
+      usb: xhci: replace goto with return when possible in handle_tx_event()
+      usb: xhci: remove goto 'cleanup' in handle_tx_event()
+      usb: xhci: remove duplicate TRB_TO_SLOT_ID() calls
+      usb: xhci: compact 'trb_in_td()' arguments
+
+Oliver Neukum (1):
+      USB: usb_parse_endpoint: ignore reserved bits
+
+Pavan Holla (1):
+      usb: typec: ucsi: Wait 20ms before reading CCI after a reset
+
+Prashanth K (1):
+      usb: dwc3: Wait unconditionally after issuing EndXfer command
+
+Roy Luo (1):
+      USB: gadget: core: create sysfs link between udc and gadget
+
+Stephen Rothwell (1):
+      USB: fix up for "usb: misc: onboard_hub: rename to onboard_dev"
+
+Thinh Nguyen (1):
+      usb: dwc3: Select 2.0 or 3.0 clk base on maximum_speed
+
+Uwe Kleine-König (1):
+      usb: chipidea: npcm: Convert to platform remove callback returning void
+
+Xu Yang (4):
+      usb: chipidea: ci_hdrc_imx: align usb wakeup clock name with dt-bindings
+      dt-bindings: usb: chipidea,usb2-imx: move imx parts to dedicated schema
+      dt-bindings: usb: ci-hdrc-usb2-imx: add restrictions for reg, interrupts, clock and clock-names properties
+      dt-bindings: usb: ci-hdrc-usb2-imx: add compatible and clock-names restriction for imx93
+
+ ...-usb-hub => sysfs-bus-platform-onboard-usb-dev} |   3 +-
+ .../devicetree/bindings/sound/xmos,xvf3500.yaml    |  63 +++
+ .../bindings/usb/chipidea,usb2-common.yaml         | 200 ++++++++
+ .../devicetree/bindings/usb/chipidea,usb2-imx.yaml | 287 +++++++++++
+ .../devicetree/bindings/usb/ci-hdrc-usb2.yaml      | 360 +-------------
+ .../devicetree/bindings/usb/cypress,hx3.yaml       |   1 -
+ Documentation/devicetree/bindings/usb/dwc2.yaml    |   1 +
+ .../devicetree/bindings/usb/microchip,usb2514.yaml |  63 +++
+ .../devicetree/bindings/usb/qcom,dwc3.yaml         |  41 +-
+ .../devicetree/bindings/usb/qcom,pmic-typec.yaml   |  35 +-
+ .../devicetree/bindings/usb/renesas,usbhs.yaml     |   6 +-
+ .../bindings/usb/samsung,exynos-dwc3.yaml          |  18 +
+ .../devicetree/bindings/usb/snps,dwc3.yaml         |  13 +-
+ Documentation/devicetree/bindings/usb/usb-uhci.txt |  18 -
+ .../devicetree/bindings/usb/usb-uhci.yaml          |  75 +++
+ MAINTAINERS                                        |   6 +-
+ arch/arm/configs/multi_v7_defconfig                |   2 +-
+ arch/arm64/boot/dts/renesas/r9a07g043.dtsi         |   2 +-
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi         |   2 +-
+ arch/arm64/boot/dts/renesas/r9a07g054.dtsi         |   2 +-
+ arch/arm64/configs/defconfig                       |   2 +-
+ drivers/gpu/drm/ci/arm64.config                    |   4 +-
+ drivers/soc/qcom/pmic_glink.c                      |   5 -
+ drivers/thunderbolt/debugfs.c                      |   2 +-
+ drivers/thunderbolt/icm.c                          |   1 +
+ drivers/thunderbolt/retimer.c                      |  12 +-
+ drivers/thunderbolt/tb.c                           |   9 +-
+ drivers/thunderbolt/tb_msgs.h                      |   6 -
+ drivers/thunderbolt/trace.h                        |  13 +-
+ drivers/thunderbolt/tunnel.c                       |  39 +-
+ drivers/thunderbolt/usb4.c                         |  22 +-
+ drivers/thunderbolt/xdomain.c                      |   2 +-
+ drivers/usb/chipidea/ci_hdrc_imx.c                 |   2 +-
+ drivers/usb/chipidea/ci_hdrc_npcm.c                |   6 +-
+ drivers/usb/chipidea/core.c                        |   8 +-
+ drivers/usb/chipidea/ulpi.c                        |   5 -
+ drivers/usb/core/Makefile                          |   4 +-
+ drivers/usb/core/config.c                          |   8 +-
+ drivers/usb/core/hcd.c                             |   4 +-
+ drivers/usb/core/hub.c                             |  17 +-
+ drivers/usb/core/hub.h                             |   2 +-
+ drivers/usb/dwc2/core.c                            |  42 ++
+ drivers/usb/dwc2/core.h                            |   8 +
+ drivers/usb/dwc2/core_intr.c                       |  26 +-
+ drivers/usb/dwc2/debugfs.c                         |   1 +
+ drivers/usb/dwc2/gadget.c                          |  28 +-
+ drivers/usb/dwc2/hcd.c                             |  10 +
+ drivers/usb/dwc2/hcd_queue.c                       |  52 +-
+ drivers/usb/dwc2/hw.h                              |  14 +
+ drivers/usb/dwc2/params.c                          |  43 ++
+ drivers/usb/dwc3/core.c                            | 320 +++++++++---
+ drivers/usb/dwc3/core.h                            |  20 +-
+ drivers/usb/dwc3/drd.c                             |  15 +-
+ drivers/usb/dwc3/dwc3-exynos.c                     |  22 +-
+ drivers/usb/dwc3/dwc3-pci.c                        |   8 +-
+ drivers/usb/dwc3/dwc3-qcom.c                       | 265 ++++++----
+ drivers/usb/dwc3/gadget.c                          |   4 +-
+ drivers/usb/fotg210/Makefile                       |  10 +-
+ drivers/usb/fotg210/fotg210-core.c                 |   1 +
+ drivers/usb/gadget/function/f_fs.c                 |  20 +-
+ drivers/usb/gadget/function/f_hid.c                |   6 +-
+ drivers/usb/gadget/function/f_printer.c            |   6 +-
+ drivers/usb/gadget/function/rndis.c                |   4 +-
+ drivers/usb/gadget/function/u_audio.c              |  32 +-
+ drivers/usb/gadget/function/u_ether.c              |   2 +-
+ drivers/usb/gadget/function/uvc_configfs.c         |  14 +-
+ drivers/usb/gadget/function/uvc_v4l2.c             |  24 +-
+ drivers/usb/gadget/udc/core.c                      |   9 +
+ drivers/usb/gadget/udc/dummy_hcd.c                 |  37 +-
+ drivers/usb/gadget/udc/mv_u3d_core.c               |   4 +-
+ drivers/usb/gadget/udc/omap_udc.c                  |  10 +-
+ drivers/usb/host/ehci-dbg.c                        |  10 +-
+ drivers/usb/host/ehci-exynos.c                     |  27 +-
+ drivers/usb/host/ehci-q.c                          |  20 +-
+ drivers/usb/host/ehci.h                            |   8 +-
+ drivers/usb/host/ohci-exynos.c                     |  27 +-
+ drivers/usb/host/xhci-dbgcap.c                     |   2 +-
+ drivers/usb/host/xhci-mem.c                        |  48 +-
+ drivers/usb/host/xhci-pci.c                        |  49 +-
+ drivers/usb/host/xhci-rcar.c                       |   6 +-
+ drivers/usb/host/xhci-ring.c                       | 138 +++---
+ drivers/usb/host/xhci.c                            |  38 +-
+ drivers/usb/host/xhci.h                            |  28 +-
+ drivers/usb/misc/Kconfig                           |  16 +-
+ drivers/usb/misc/Makefile                          |   2 +-
+ drivers/usb/misc/onboard_usb_dev.c                 | 550 +++++++++++++++++++++
+ .../misc/{onboard_usb_hub.h => onboard_usb_dev.h}  |  62 ++-
+ ...ard_usb_hub_pdevs.c => onboard_usb_dev_pdevs.c} |  47 +-
+ drivers/usb/misc/onboard_usb_hub.c                 | 507 -------------------
+ drivers/usb/misc/uss720.c                          |  42 +-
+ drivers/usb/musb/musb_gadget.c                     |   9 -
+ drivers/usb/phy/phy-fsl-usb.c                      |   1 -
+ drivers/usb/phy/phy-generic.c                      |   1 +
+ drivers/usb/renesas_usbhs/common.c                 |  41 +-
+ drivers/usb/renesas_usbhs/rza.h                    |   1 +
+ drivers/usb/renesas_usbhs/rza2.c                   |  13 +
+ drivers/usb/typec/altmodes/displayport.c           |   1 -
+ drivers/usb/typec/altmodes/nvidia.c                |   1 -
+ drivers/usb/typec/mux/Kconfig                      |   2 +-
+ drivers/usb/typec/mux/gpio-sbu-mux.c               |   8 +-
+ drivers/usb/typec/mux/ptn36502.c                   |  44 +-
+ drivers/usb/typec/stusb160x.c                      |   2 +-
+ drivers/usb/typec/tcpm/qcom/qcom_pmic_typec.c      |  10 +-
+ drivers/usb/typec/tipd/core.c                      |  56 ++-
+ drivers/usb/typec/tipd/tps6598x.h                  |  11 +
+ drivers/usb/typec/ucsi/displayport.c               |   4 -
+ drivers/usb/typec/ucsi/ucsi.c                      | 225 +++++----
+ drivers/usb/typec/ucsi/ucsi.h                      |   8 +-
+ drivers/usb/typec/ucsi/ucsi_acpi.c                 |  56 +--
+ drivers/usb/typec/ucsi/ucsi_glink.c                |  92 ++--
+ drivers/usb/typec/ucsi/ucsi_stm32g0.c              |   1 +
+ include/drm/bridge/aux-bridge.h                    |   2 +-
+ include/linux/thunderbolt.h                        |   1 -
+ include/linux/usb.h                                |   7 +-
+ include/linux/usb/onboard_dev.h                    |  18 +
+ include/linux/usb/onboard_hub.h                    |  18 -
+ include/linux/usb/renesas_usbhs.h                  |   5 -
+ include/linux/usb/tegra_usb_phy.h                  |   3 +-
+ 118 files changed, 2755 insertions(+), 1941 deletions(-)
+ rename Documentation/ABI/testing/{sysfs-bus-platform-onboard-usb-hub => sysfs-bus-platform-onboard-usb-dev} (74%)
+ create mode 100644 Documentation/devicetree/bindings/sound/xmos,xvf3500.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/chipidea,usb2-imx.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/microchip,usb2514.yaml
+ delete mode 100644 Documentation/devicetree/bindings/usb/usb-uhci.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/usb-uhci.yaml
+ create mode 100644 drivers/usb/misc/onboard_usb_dev.c
+ rename drivers/usb/misc/{onboard_usb_hub.h => onboard_usb_dev.h} (56%)
+ rename drivers/usb/misc/{onboard_usb_hub_pdevs.c => onboard_usb_dev_pdevs.c} (68%)
+ delete mode 100644 drivers/usb/misc/onboard_usb_hub.c
+ create mode 100644 include/linux/usb/onboard_dev.h
+ delete mode 100644 include/linux/usb/onboard_hub.h
 
