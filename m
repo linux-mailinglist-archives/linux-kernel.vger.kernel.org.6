@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-186367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD85E8CC33F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:31:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D2B8CC349
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CBDDB21657
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:31:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3EC1C21ED3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1035F179AE;
-	Wed, 22 May 2024 14:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69435134AB;
+	Wed, 22 May 2024 14:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9pkbY/o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="cBINWo57"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3AF8F6D;
-	Wed, 22 May 2024 14:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECC01BDD0;
+	Wed, 22 May 2024 14:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716388292; cv=none; b=mvbBumpfLbGi5tKSkTHVEkVE+ygpvWbqEZ8ZJh+n3XSQ0vPRJ1m5ZkT4pCGU8dZopHC5SVljDf7VhFZHkxx+x9jp8qIqlfFEYPLChhLpqxJ7N0uXG0wB3w/dNjPuGTUMw5kdtfANK2SKCb7znLtPKcvWmgAEBrc4Lg1EK+bnbVU=
+	t=1716388545; cv=none; b=hmPgY9pQTcr4+MoCe49XuE26Z/oH5sc/7B6C3N2bZn1UnH699AXsZ5HR4p/g5zyHjjKM9prcATkA/EuUx+KH0JGmLK2Oyt6OH9Ql+2AMoBpahjJ95JSnd1FCIIv8925XYeGTMph5DJ+/A6wX4lEFM7TryeMAo1t4j8NXyZPLD8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716388292; c=relaxed/simple;
-	bh=caxlHLkLA7Kyl2xhI0wkWw8AtvfOM+yyH8wCjBO9scI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C37/EIN0ROr4gD3SqHp3WwD6dk8RNkssNk0b7lyZIJPl9po+xHNrf23SDUXx1i22jeGVmZcVDuEoolB5KYC/7fOxs49HQPeyZFWLkP2HF7+aA5JO/tQmuTB+E+SsJI8DYP+DiIfLCG8sEu8k95GCnOo3mnouOPS6AL29dTOsKPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9pkbY/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88564C2BBFC;
-	Wed, 22 May 2024 14:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716388290;
-	bh=caxlHLkLA7Kyl2xhI0wkWw8AtvfOM+yyH8wCjBO9scI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J9pkbY/oQCevl7mOH3JJXSgFZZOrwY2EaiGTjT8Qvv42x3YKAakriYSPEhSm7/KqX
-	 05892MJl4SjdKnQ5Z8EygCt+PzSVMSLX1ThcbkbQy2Thj0ibC6PxwSuS4xeDSYHrYQ
-	 2d1HSVKTf4d5DvLDe0hqNcp9+dCb4GCcYr92NOht2cTMFClds7a2SfDhgwPdB9EE7G
-	 Mw49zWiygkpLHxgM2eEXsf797PqZb10QM3kAaW6l7R0S7mBde/SbVRXaBh7V6PKhH5
-	 YPSxlvClXZXKD1wcVZue7IpXSclgliHTDcvRlCrR7vDdXSUYLZ/zK7+P/djy4uGwAd
-	 8gNRRpFg7CiMQ==
-Date: Wed, 22 May 2024 09:31:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: skseofh@gmail.com
-Cc: lkp@intel.com, daero_le.lee@samsung.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, rppt@kernel.org,
-	saravanak@google.com
-Subject: Re: [PATCH v2] of: of_reserved_mem: clean-up reserved memory with
- no-map
-Message-ID: <20240522143129.GA3244910-robh@kernel.org>
-References: <202405011208.qsZQwChO-lkp@intel.com>
- <20240501132359.488616-1-skseofh@gmail.com>
+	s=arc-20240116; t=1716388545; c=relaxed/simple;
+	bh=i4rasA2acN66D6Z+ulCdlX0xWV7X3xQAZp4uOXv0umI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EC8m0sgeTSizKS0QMAJNdvkx32xLuDEUBzAOVDKaMq9YTn4/2KDzBHACpQw5ZP8i2HLHrl7xGaxVDt7SzimsRKvZ2HPreUEksduVEW5zScQsW3aUcs/jF8GXDy7fP+ZgmBmaSPd0Ep5bU6kXXXLPkobIJmbptacOl93Z+6kLTTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=cBINWo57; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=ZNmiJed3LQ9K2TAQzrIkg8tVC5riieBoVY7FS58SXFo=; b=cBINWo57ruofAmBa2/cgxzV4Nh
+	BzfV0kxDMZI4si3mDluTmX8HhOs7QwGqOwRMUoVSNv9OjcKO6Lg54mV9TvR3IhPCtn6AdbvkibI4a
+	LtKjxpyOGEW9R65efq9U7manVdmBr1Phdo5vlWBu0iEKOuouli+MqdSNkvqlgmNUfKhSwNG88GvUm
+	h3z5gmearYVp/GXhD6xrhKf7WI2qKWnaRwJqkRZFMwFFmYdqV+OKqM6nE6IBD2DMPTeGf/6Ec6CK4
+	TunDQk87MaBXT8mCDFWzYssoOoFxSGM9dfz8bDKHt2WWCq9L0Ub0NXPa11oZqHsJK1IbjzW8sLBVd
+	K74NV7XL3/Tki5kGnVZFJfbkavm+QwihTIZq2VAQPtNlXRykc2SVDO7dT/sCM0H7kz5XZkzXtRoSF
+	iUK9FTiDQYTHNGPZOrrDmSm6xhnjWWZKi8qg1Sw1nNpRThALJIW2/uUCrn/5AATx/yVS78JYcKRtR
+	Km5a20H3vBih284cusO0zpHuaMK9ihU5sBzfM9dSfuH5owR8cHn4kvuuPHWeE8lCQ7WIrR+tcvget
+	v/WgrqlIugyowjZqsohLMsZKXEb1/UfoC93usUCnghyy/SjNNi7CjYvMkHZEXzVD1bHQVr4Bk9k4O
+	r8ea0Y0XjK/tCuL+iKfDcqoYqFPF9qFT/25NazoLc=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Dominique Martinet <asmadeus@codewreck.org>, Greg Kurz <groug@kaod.org>,
+ Jianyong Wu <jianyong.wu@arm.com>,
+ Dominique Martinet <asmadeus@codewreck.org>
+Cc: stable@vger.kernel.org, Eric Van Hensbergen <ericvh@gmail.com>,
+ v9fs@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: add missing locking around taking dentry fid list
+Date: Wed, 22 May 2024 16:35:19 +0200
+Message-ID: <1738699.kjPCCGL2iY@silver>
+In-Reply-To: <20240521122947.1080227-1-asmadeus@codewreck.org>
+References: <20240521122947.1080227-1-asmadeus@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240501132359.488616-1-skseofh@gmail.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, May 01, 2024 at 10:23:59PM +0900, skseofh@gmail.com wrote:
-> From: Daero Lee <daero_le.lee@samsung.com>
+On Tuesday, May 21, 2024 2:29:46 PM CEST Dominique Martinet wrote:
+> Fix a use-after-free on dentry's d_fsdata fid list when a thread
+> lookups a fid through dentry while another thread unlinks it:
+
+I guess that's "looks up". :)
+
+> UAF thread:
+> refcount_t: addition on 0; use-after-free.
+>  p9_fid_get linux/./include/net/9p/client.h:262
+>  v9fs_fid_find+0x236/0x280 linux/fs/9p/fid.c:129
+>  v9fs_fid_lookup_with_uid linux/fs/9p/fid.c:181
+>  v9fs_fid_lookup+0xbf/0xc20 linux/fs/9p/fid.c:314
+>  v9fs_vfs_getattr_dotl+0xf9/0x360 linux/fs/9p/vfs_inode_dotl.c:400
+>  vfs_statx+0xdd/0x4d0 linux/fs/stat.c:248
 > 
-> In early_init_dt_reserve_memory we only add memory w/o no-map flag to
-> memblock.reserved. But we need to add memory w/ no-map flag to
-> memblock.reserved, because NOMAP and memblock.reserved are semantically
-> different.
+> Freed by:
+>  p9_client_clunk+0xb0/0xe0 linux/net/9p/client.c:1456
+
+That line number looks weird.
+
+>  p9_fid_put linux/./include/net/9p/client.h:278
+>  v9fs_dentry_release+0xb5/0x140 linux/fs/9p/vfs_dentry.c:55
+>  v9fs_remove+0x38f/0x620 linux/fs/9p/vfs_inode.c:518
+>  vfs_unlink+0x29a/0x810 linux/fs/namei.c:4335
 > 
-> Signed-off-by: Daero Lee <daero_le.lee@samsung.com>
+> The problem is that d_fsdata was not accessed under d_lock, because
+> d_release() normally is only called once the dentry is otherwise no
+> longer accessible but since we also call it explicitly in v9fs_remove
+> that lock is required:
+> move the hlist out of the dentry under lock then unref its fids once
+> they are no longer accessible.
+> 
+> Fixes: 154372e67d40 ("fs/9p: fix create-unlink-getattr idiom")
+> Cc: stable@vger.kernel.org
+> Reported-by: Meysam Firouzi
+> Reported-by: Amirmohammad Eftekhar
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 > ---
->  drivers/of/of_reserved_mem.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  fs/9p/vfs_dentry.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index 8236ecae2953..d00a17a9cebc 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -81,6 +81,7 @@ static void __init fdt_reserved_mem_save_node(unsigned long node, const char *un
->  static int __init early_init_dt_reserve_memory(phys_addr_t base,
->  					       phys_addr_t size, bool nomap)
+> diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
+> index f16f73581634..01338d4c2d9e 100644
+> --- a/fs/9p/vfs_dentry.c
+> +++ b/fs/9p/vfs_dentry.c
+> @@ -48,12 +48,17 @@ static int v9fs_cached_dentry_delete(const struct dentry *dentry)
+>  static void v9fs_dentry_release(struct dentry *dentry)
 >  {
-> +	int err = 0;
->  	if (nomap) {
->  		/*
->  		 * If the memory is already reserved (by another region), we
-> @@ -91,7 +92,10 @@ static int __init early_init_dt_reserve_memory(phys_addr_t base,
->  		    memblock_is_region_reserved(base, size))
->  			return -EBUSY;
+>  	struct hlist_node *p, *n;
+> +	struct hlist_head head;
 >  
-> -		return memblock_mark_nomap(base, size);
+>  	p9_debug(P9_DEBUG_VFS, " dentry: %pd (%p)\n",
+>  		 dentry, dentry);
+> -	hlist_for_each_safe(p, n, (struct hlist_head *)&dentry->d_fsdata)
 > +
-> +		err = memblock_mark_nomap(base, size);
-
-The last time this was touched, it was to make the handling aligned with 
-EFI memory map handling. Is that still going to be the case with this 
-change? Or does EFI memory map handling have the same issue?
-
-> +		if (err)
-> +			return err;
->  	}
->  	return memblock_reserve(base, size);
+> +	spin_lock(&dentry->d_lock);
+> +	hlist_move_list((struct hlist_head *)&dentry->d_fsdata, &head);
+> +	spin_unlock(&dentry->d_lock);
+> +
+> +	hlist_for_each_safe(p, n, &head)
+>  		p9_fid_put(hlist_entry(p, struct p9_fid, dlist));
+> -	dentry->d_fsdata = NULL;
 >  }
-> -- 
-> 2.25.1
+
+I'm not sure if that works out. So you are moving the list from dentry to a
+local variable. But if you look at v9fs_fid_find() [fs/9p/fid.c#123] it reads
+dentry->d_fsdata (twice) and holds it as local variable before taking a
+lock. So the lock in v9fs_fid_find() should happen earlier, no?
+
+>  
+>  static int v9fs_lookup_revalidate(struct dentry *dentry, unsigned int flags)
 > 
+
+
 
