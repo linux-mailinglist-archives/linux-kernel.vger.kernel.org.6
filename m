@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-186002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D2C8CBE6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39ED08CBE71
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C31E28244C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68ADE1C213E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5152181AAA;
-	Wed, 22 May 2024 09:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DDC81724;
+	Wed, 22 May 2024 09:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kj38TorU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674AA22086;
-	Wed, 22 May 2024 09:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="NocNKk8x"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FED619470;
+	Wed, 22 May 2024 09:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716371118; cv=none; b=iFDiKDHP8iG5TCGKSPHkEnSQsqYaPzfOqEaNJEb00Y7WuXmZbWLokK50YaFo54GHS5dW3mndT9kNTv6XbA55LiSDxN6WtDdISrUrn9INhna0WiHzPn8XJfYIIB3kuoqn2y2630WKFhMtYHHagTdAy7LD87OSIZRfWFRa882rSFE=
+	t=1716371150; cv=none; b=Nuk7lDFyr5XIyHET4R4W8JmHrrsqRefur1IfxnMG2e5C9o2OADGjgiIAi8wP1FGJ3P6lARl/ao89NWCN51ZkVMWZmDChrStPdkMNVJs3VxxNX+DKwL9TKvWJ4l37rGBQ/a1tM84ZLIBZTNlXQ4VX0qwExzkQU/lfZAnX7LYtZEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716371118; c=relaxed/simple;
-	bh=qYv4awJponJVTMURVaZCUK355/IK5Q/ijJovQLrQtFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d2+id9wPV9oovfhNV4U1hcC2rogtzxSMz0OjWYZCFIRMZXAWd6FWZQAzO62tXLOjVs8cU2Rji+V46v3uK5wkpyJyehnjYIVPB6q3TbUxv2nMqeMDFEZzpBEqOJG69zBw9BM2+JqA9PfKsSo4zCglJ2d3/bY0wqgZw7YV1O30Qpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kj38TorU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78E4DC2BD11;
-	Wed, 22 May 2024 09:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716371118;
-	bh=qYv4awJponJVTMURVaZCUK355/IK5Q/ijJovQLrQtFU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kj38TorUK3Ojrmadg1u8VdLR0WVyWCyAWIEgg1euDZ6fb6GvkQ0ZUgxfy67dfsCMr
-	 3YY+zLCy3lA/mGrqLsX8cD4JmYqhOZPUYyoBXO6KoC7cgO9KaKnuDgfCn8ocxWRGwX
-	 n2UIejO7Bm4sDN9NNfSLSBjC7F1p8kio3kgGEY3T/5fvv5KktLbuT82itc37KQAjH2
-	 tSGF19M513bgiROjKC/09B17zwmg7YOiprq+/pceAhNsTOxqxShIShqFVrsZlBckdr
-	 RAajctdyAluqYfhGGiRP1F3cLTjnK0EVayaiZD9P2CYvfS7OXsDcEEp0ISdhHbCX7M
-	 /DcN1FhIwLTjQ==
-Message-ID: <33c849d2-994b-4380-a177-88412e698615@kernel.org>
-Date: Wed, 22 May 2024 11:45:07 +0200
+	s=arc-20240116; t=1716371150; c=relaxed/simple;
+	bh=aYA6/GwGXTOxStDL3CrE3iLD+7zCga5XYorfKEhclCI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5YfXV3wUu/69HNhuWbXNrZp+y7heIF7ZjfUU0KPzKFW5u+U+OwsugNDmVeD7VgnajlelbmUm3edhl5MgbFONkrdE/K/ETWRBpqBNXp9XL48ZZH4ayZfRv+mPKZIpqJ70U1evsqI0csjiwWAPqTTMkQ9Lo/ZwUdPwNpD9Mh8Le8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=NocNKk8x; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1716371145;
+	bh=D2gJWDdN6XlnceVs7J1C8EIKdWpmV/r/rS+czmPgl78=; l=1495;
+	h=Date:From:To:Subject:Message-ID:MIME-Version;
+	b=NocNKk8xJLzZbvUnG1yUx4fQ9Kz4q9lSPOtyStXaoBFzWM3w7qjme0/cHXj3T/fvK
+	 /TaMsVoW4Bg+tcUab1zD+MGiVv6qY3jFYVYh0QmgxT2sJWWbIXaFX9wIcYLglz0GB5
+	 4oh1h+ZJnBJpkPcM+Ck3dnWg07a+YaTujRfMoXZdwTaijqG7Carg+UoLodJn/+94Oy
+	 nfDlqehZjRO2cRTvwl3WB1/z7irvhEA9cMufzo9ld99OYYpnDUDZ16+zJRbTFmdjKh
+	 FD1zIbp0q5H5QO7A/pvjcAGDgghxY0D7tiZygJ/9XEpNX+eL+4FwPJynyNWKyWAyCR
+	 FqEKmqLFRSWdQ==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213212:0:AUTH_RELAY)
+	(envelope-from <alina_yu@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Wed, 22 May 2024 17:45:25 +0800 (CST)
+Received: from ex4.rt.l (192.168.10.47) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
+ 2024 17:45:24 +0800
+Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 22 May 2024 17:45:24 +0800
+Date: Wed, 22 May 2024 17:45:24 +0800
+From: Alina Yu <alina_yu@richtek.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<cy_huang@richtek.com>
+Subject: Re: [PATCH 2/2] regulator: dt-bindings: rtq2208: Add specified fixed
+ LDO VOUT property
+Message-ID: <20240522094524.GA21859@linuxcarl2.richtek.com>
+References: <cover.1715846612.git.alina_yu@richtek.com>
+ <9c1bbe4b38a4ee5650d888478f1ce2cec2733669.1715846612.git.alina_yu@richtek.com>
+ <5d26b19c-7679-4dba-a9ba-a7368d39b474@linaro.org>
+ <20240522090302.GA19548@linuxcarl2.richtek.com>
+ <b094ce68-9ce2-411d-99f2-1f143e4c3347@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net 0/3] doc: mptcp: new general doc and fixes
-Content-Language: en-GB
-To: Paolo Abeni <pabeni@redhat.com>, mptcp@lists.linux.dev,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Gregory Detal <gregory.detal@gmail.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240520-upstream-net-20240520-mptcp-doc-v1-0-e3ad294382cb@kernel.org>
- <8945a5ae3f94572daae42d4bfdc326bcf0889964.camel@redhat.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- xsFNBFXj+ekBEADxVr99p2guPcqHFeI/JcFxls6KibzyZD5TQTyfuYlzEp7C7A9swoK5iCvf
- YBNdx5Xl74NLSgx6y/1NiMQGuKeu+2BmtnkiGxBNanfXcnl4L4Lzz+iXBvvbtCbynnnqDDqU
- c7SPFMpMesgpcu1xFt0F6bcxE+0ojRtSCZ5HDElKlHJNYtD1uwY4UYVGWUGCF/+cY1YLmtfb
- WdNb/SFo+Mp0HItfBC12qtDIXYvbfNUGVnA5jXeWMEyYhSNktLnpDL2gBUCsdbkov5VjiOX7
- CRTkX0UgNWRjyFZwThaZADEvAOo12M5uSBk7h07yJ97gqvBtcx45IsJwfUJE4hy8qZqsA62A
- nTRflBvp647IXAiCcwWsEgE5AXKwA3aL6dcpVR17JXJ6nwHHnslVi8WesiqzUI9sbO/hXeXw
- TDSB+YhErbNOxvHqCzZEnGAAFf6ges26fRVyuU119AzO40sjdLV0l6LE7GshddyazWZf0iac
- nEhX9NKxGnuhMu5SXmo2poIQttJuYAvTVUNwQVEx/0yY5xmiuyqvXa+XT7NKJkOZSiAPlNt6
- VffjgOP62S7M9wDShUghN3F7CPOrrRsOHWO/l6I/qJdUMW+MHSFYPfYiFXoLUZyPvNVCYSgs
- 3oQaFhHapq1f345XBtfG3fOYp1K2wTXd4ThFraTLl8PHxCn4ywARAQABzSRNYXR0aGlldSBC
- YWVydHMgPG1hdHR0YmVAa2VybmVsLm9yZz7CwZEEEwEIADsCGwMFCwkIBwIGFQoJCAsCBBYC
- AwECHgECF4AWIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZUDpDAIZAQAKCRD2t4JPQmmgcz33
- EACjROM3nj9FGclR5AlyPUbAq/txEX7E0EFQCDtdLPrjBcLAoaYJIQUV8IDCcPjZMJy2ADp7
- /zSwYba2rE2C9vRgjXZJNt21mySvKnnkPbNQGkNRl3TZAinO1Ddq3fp2c/GmYaW1NWFSfOmw
- MvB5CJaN0UK5l0/drnaA6Hxsu62V5UnpvxWgexqDuo0wfpEeP1PEqMNzyiVPvJ8bJxgM8qoC
- cpXLp1Rq/jq7pbUycY8GeYw2j+FVZJHlhL0w0Zm9CFHThHxRAm1tsIPc+oTorx7haXP+nN0J
- iqBXVAxLK2KxrHtMygim50xk2QpUotWYfZpRRv8dMygEPIB3f1Vi5JMwP4M47NZNdpqVkHrm
- jvcNuLfDgf/vqUvuXs2eA2/BkIHcOuAAbsvreX1WX1rTHmx5ud3OhsWQQRVL2rt+0p1DpROI
- 3Ob8F78W5rKr4HYvjX2Inpy3WahAm7FzUY184OyfPO/2zadKCqg8n01mWA9PXxs84bFEV2mP
- VzC5j6K8U3RNA6cb9bpE5bzXut6T2gxj6j+7TsgMQFhbyH/tZgpDjWvAiPZHb3sV29t8XaOF
- BwzqiI2AEkiWMySiHwCCMsIH9WUH7r7vpwROko89Tk+InpEbiphPjd7qAkyJ+tNIEWd1+MlX
- ZPtOaFLVHhLQ3PLFLkrU3+Yi3tXqpvLE3gO3LM7BTQRV4/npARAA5+u/Sx1n9anIqcgHpA7l
- 5SUCP1e/qF7n5DK8LiM10gYglgY0XHOBi0S7vHppH8hrtpizx+7t5DBdPJgVtR6SilyK0/mp
- 9nWHDhc9rwU3KmHYgFFsnX58eEmZxz2qsIY8juFor5r7kpcM5dRR9aB+HjlOOJJgyDxcJTwM
- 1ey4L/79P72wuXRhMibN14SX6TZzf+/XIOrM6TsULVJEIv1+NdczQbs6pBTpEK/G2apME7vf
- mjTsZU26Ezn+LDMX16lHTmIJi7Hlh7eifCGGM+g/AlDV6aWKFS+sBbwy+YoS0Zc3Yz8zrdbi
- Kzn3kbKd+99//mysSVsHaekQYyVvO0KD2KPKBs1S/ImrBb6XecqxGy/y/3HWHdngGEY2v2IP
- Qox7mAPznyKyXEfG+0rrVseZSEssKmY01IsgwwbmN9ZcqUKYNhjv67WMX7tNwiVbSrGLZoqf
- Xlgw4aAdnIMQyTW8nE6hH/Iwqay4S2str4HZtWwyWLitk7N+e+vxuK5qto4AxtB7VdimvKUs
- x6kQO5F3YWcC3vCXCgPwyV8133+fIR2L81R1L1q3swaEuh95vWj6iskxeNWSTyFAVKYYVskG
- V+OTtB71P1XCnb6AJCW9cKpC25+zxQqD2Zy0dK3u2RuKErajKBa/YWzuSaKAOkneFxG3LJIv
- Hl7iqPF+JDCjB5sAEQEAAcLBXwQYAQIACQUCVeP56QIbDAAKCRD2t4JPQmmgc5VnD/9YgbCr
- HR1FbMbm7td54UrYvZV/i7m3dIQNXK2e+Cbv5PXf19ce3XluaE+wA8D+vnIW5mbAAiojt3Mb
- 6p0WJS3QzbObzHNgAp3zy/L4lXwc6WW5vnpWAzqXFHP8D9PTpqvBALbXqL06smP47JqbyQxj
- Xf7D2rrPeIqbYmVY9da1KzMOVf3gReazYa89zZSdVkMojfWsbq05zwYU+SCWS3NiyF6QghbW
- voxbFwX1i/0xRwJiX9NNbRj1huVKQuS4W7rbWA87TrVQPXUAdkyd7FRYICNW+0gddysIwPoa
- KrLfx3Ba6Rpx0JznbrVOtXlihjl4KV8mtOPjYDY9u+8x412xXnlGl6AC4HLu2F3ECkamY4G6
- UxejX+E6vW6Xe4n7H+rEX5UFgPRdYkS1TA/X3nMen9bouxNsvIJv7C6adZmMHqu/2azX7S7I
- vrxxySzOw9GxjoVTuzWMKWpDGP8n71IFeOot8JuPZtJ8omz+DZel+WCNZMVdVNLPOd5frqOv
- mpz0VhFAlNTjU1Vy0CnuxX3AM51J8dpdNyG0S8rADh6C8AKCDOfUstpq28/6oTaQv7QZdge0
- JY6dglzGKnCi/zsmp2+1w559frz4+IC7j/igvJGX4KDDKUs0mlld8J2u2sBXv7CGxdzQoHaz
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <8945a5ae3f94572daae42d4bfdc326bcf0889964.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <b094ce68-9ce2-411d-99f2-1f143e4c3347@linaro.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hi Paolo,
-
-On 22/05/2024 11:35, Paolo Abeni wrote:
-> Hi,
+On Wed, May 22, 2024 at 11:27:06AM +0200, Krzysztof Kozlowski wrote:
+> On 22/05/2024 11:03, Alina Yu wrote:
+> > On Thu, May 16, 2024 at 02:34:02PM +0200, Krzysztof Kozlowski wrote:
+> >> On 16/05/2024 11:20, Alina Yu wrote:
+> >>> As the fixed voltage for the LDO is outside the range of the adjustable voltage mode,
+> >>> the constraints for this scenario are not suitable to represent both modes.
+> >>> Therefore, A property is added to specify the fixed LDO VOUT.
+> >>>
+> >>> Examples of fixed LDO VOUT and adjustable LDO VOUT is also added to this version.
+> >>>
+> >>> Signed-off-by: Alina Yu <alina_yu@richtek.com>
+> >>> ---
+> >>
+> >> This is a v1 but I am pretty sure I saw it somewhere and there was
+> >> already some sort of discussion. Confused... :(
+> >>
+> >> Best regards,
+> >> Krzysztof
+> >>
+> > 
+> > The discussion regarding this matter took place during v2 and v3.
 > 
-> On Mon, 2024-05-20 at 10:16 +0200, Matthieu Baerts (NGI0) wrote:
->> A general documentation about MPTCP was missing since its introduction
->> in v5.6. The last patch adds a new 'mptcp' page in the 'networking'
->> documentation.
->>
->> The first patch is a fix for a missing sysctl entry introduced in v6.10
->> rc0, and the second one reorder the sysctl entries.
->>
->> These patches can be applied without conflicts on top of the 'net' tree
->> and the 'docs-next' one. They are currently based on top of the current
->> 'net' tree because the first patch is a fix for a patch that is not in
->> 'docs-next' yet.
->>
->> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> So in the future?
+
+Based on the previous discussion, it is scheduled to be included in the linux-next tree.
+Will we start a further discussions on this topic?
+
 > 
-> These patches are IMHO net-next material. If you don't mind I'll defer
-> them.
+> > Due to the fixed LDO VOUT being outside the range of the adjustable one,
+> > a special-use property has been added to avoid overusing the constraints.
+> 
+> Hm, why exactly this is not a bool property? What are the benefits?
+> 
+> Best regards,
+> Krzysztof
+>
 
-No problem, my bad, I thought it was OK to send new doc about existing
-features and missing items to -net. I will re-send them next week,
-targetting net-next then.
+As only the user will know the exact fixed voltage,
+the property is defined as a u32 to allow user customization and decision-making.
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
 
+Thanks,
+Alina
 
