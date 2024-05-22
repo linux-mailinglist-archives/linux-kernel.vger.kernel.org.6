@@ -1,123 +1,205 @@
-Return-Path: <linux-kernel+bounces-186024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0588F8CBEED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C548CBEEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF1041F22E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:05:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4014B1F22F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1160581742;
-	Wed, 22 May 2024 10:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fwAbFeLp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DB48172A;
-	Wed, 22 May 2024 10:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229A481AB7;
+	Wed, 22 May 2024 10:05:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF7F7E572;
+	Wed, 22 May 2024 10:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372303; cv=none; b=QmTNqQQ4e1QF8lBRfk3B6zBpFwwrBNblWNJ101jrEAVqn4PvjcLWR1P51ebtufNmc14JtM31PndARr95IOT2oDSdtRakzZ73NYnBamlzgGf2+8HdIeAMLKyYZwrLpwB2TltCm3tHAEI/SaQIWW26v05UcevBuDkgwp++/bkXMgY=
+	t=1716372319; cv=none; b=KvlyNail3DE+gZBPoilDXDNcTRRwysM4elzGP5fnghwgB9Kaj2xSnGU0jTbDTFhflhjuCbMyj28qYOqjHIEDbZmgLHBGGPkeARRqkp/seOQgv1HQyOuHBEI3aJg0D+8VIXfeI1dDa4TL5L8s/QLVBcNHLbCUy9ZgAsgbwYYEH68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372303; c=relaxed/simple;
-	bh=96lDSFPE2HzXlib3zI3ULsk4mWza6pXfJP5k0lPy1ac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EP5zG90o7PxSmzn5J6qIL38u1Tr5UMqVtiHn8t4enwER59hS0jE8ZZQhPDht8rntgjQi5ZTrAt65cMKZX2Mz9HU6DBO7oVucJzvSv0yukoeB5LW+G9wOoDf2NnbXX2SJiaUklrHRN2v5rl4NwxZOGXgZfz6S80iXGHK3ANgGWUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fwAbFeLp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E425BC2BD11;
-	Wed, 22 May 2024 10:04:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716372303;
-	bh=96lDSFPE2HzXlib3zI3ULsk4mWza6pXfJP5k0lPy1ac=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fwAbFeLpbxtH2RT5GKWheKAK+izlrUi40FUBrVXg+YdtkeerhjP/nGFnLP2xQ2IV/
-	 6xWXNM2RQdKXH9BdftuD5OaJOzamSZV8BodXf0Jvn8xPlt5gWAlCaVvqWlYYHOE6ji
-	 3hhgIU4O56c9iXuymL59CGEyWoWtPJmmFZNf5zzKA31gQkFZsBYkH9a84pyuM3xhMT
-	 raZEHTQ2EK4fXHR1khtazcFIi1yAiyjzQMAZfibNNOPW+lbLIZkeCT54H0S8Xoc1Pr
-	 fDfb5TWg0KfWbdnY/uKbrHbZN/Ps5LcIwsHYY3i6xI6n/eW9KsQjNWbFNejBObM+/+
-	 eHL5I0IgtwYEQ==
-Message-ID: <d5996571-7dbd-4e8e-ab33-bfadafa86ff4@kernel.org>
-Date: Wed, 22 May 2024 12:04:56 +0200
+	s=arc-20240116; t=1716372319; c=relaxed/simple;
+	bh=uWk0LMa9b/L4O6C8T1qp//VpKe389OGPlpvKZgpDSIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KT3mpA7/UHhYxIBcdS4MbzvNS64Tpefa6R8T8QD/9gJvJl/ViHUgoN+ylx/JuFR13bgLD1z9d++X6k6m1rl/tnhTbGiofOMtk58vFE9a16yCztYn7KDA/MufjenHvIuPlLJmtkkZOnUYxwvYnoMYtkLfhJx0WTV2qzy/1T+R/Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27D8A339;
+	Wed, 22 May 2024 03:05:37 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B1E13F641;
+	Wed, 22 May 2024 03:05:11 -0700 (PDT)
+Date: Wed, 22 May 2024 11:05:07 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Icenowy Zheng <uwu@icenowy.me>, linux-sunxi@lists.linux.dev,
+ wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org, didi.debian@cknow.org, Marek Kraus
+ <gamiee@pine64.org>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Correct the descriptions
+ for Pine64 boards
+Message-ID: <20240522110507.51b12966@donnerap.manchester.arm.com>
+In-Reply-To: <5635a6e79427e43ef20b690c766267d0@manjaro.org>
+References: <d2943d9f4c99a239f86188eaf45a73972685c255.1713833436.git.dsimic@manjaro.org>
+	<057b4a5504656bb7455ead39768d9e7167fb724b.camel@icenowy.me>
+	<5635a6e79427e43ef20b690c766267d0@manjaro.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm: rockchip: Add Radxa ROCK S0
-To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240521212247.1240226-1-jonas@kwiboo.se>
- <20240521212247.1240226-2-jonas@kwiboo.se>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240521212247.1240226-2-jonas@kwiboo.se>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 21/05/2024 23:22, Jonas Karlman wrote:
-> Add devicetree binding for the Radxa ROCK S0 board.
-> 
-> Radxa ROCK S0 is a single-board computer based on the Rockchip RK3308B
-> SoC in an ultra-compact form factor.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
+On Wed, 22 May 2024 08:10:21 +0200
+Dragan Simic <dsimic@manjaro.org> wrote:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi,
 
-Best regards,
-Krzysztof
+> Hello Icenowy,
+>=20
+> On 2024-05-22 02:48, Icenowy Zheng wrote:
+> > =E5=9C=A8 2024-04-23=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 03:00 +0200=EF=
+=BC=8CDragan Simic=E5=86=99=E9=81=93=EF=BC=9A =20
+> >> Correct the descriptions of a few Pine64 boards and devices,
+> >> according
+> >> to their official names used on the Pine64 wiki.=C2=A0 This ensures
+> >> consistency
+> >> between the officially used names and the names in the source code.
+> >>=20
+> >> Cc: Marek Kraus <gamiee@pine64.org>
+> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> >> ---
+> >>=20
+> >> Notes:
+> >> =C2=A0=C2=A0=C2=A0 This completes the correction of the descriptions o=
+f the Pine64
+> >> boards
+> >> =C2=A0=C2=A0=C2=A0 and devices, which was started with the Pine64 boar=
+ds and devices
+> >> based
+> >> =C2=A0=C2=A0=C2=A0 on Rockchip SoCs. [1]
+> >> =C2=A0=C2=A0=C2=A0
+> >> =C2=A0=C2=A0=C2=A0 [1]
+> >> https://lore.kernel.org/linux-rockchip/ec124dab2b1a8776aa39177ecce34ba=
+bca3a50e2.1713832790.git.dsimic@manjaro.org/
+> >>=20
+> >> =C2=A0Documentation/devicetree/bindings/arm/sunxi.yaml | 12 ++++++----=
+--
+> >> =C2=A01 file changed, 6 insertions(+), 6 deletions(-)
+> >>=20
+> >> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
+> >> b/Documentation/devicetree/bindings/arm/sunxi.yaml
+> >> index 09d835db6db5..b66873ae2d71 100644
+> >> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
+> >> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+> >> @@ -709,17 +709,17 @@ properties:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+sochip,s3
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+allwinner,sun8i-v3
+> >> =C2=A0
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineH64 model A
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 H64 Model A
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,pine-h64
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+allwinner,sun50i-h6
+> >> =C2=A0
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineH64 model B
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 H64 Model B =20
+> >=20
+> > Sorry for replying so late, but I don't think there is a Pine64 H64
+> > board. The Pine64 wiki calls it Pine H64. [1]
+> >=20
+> > [1] https://wiki.pine64.org/wiki/PINE_H64 =20
+>=20
+> Good point, thanks.  Though, this board is really an exception to
+> the naming scheme employed for the Pine64 boards, so perhaps it would
+> actually be better to rename the board in the Pine64 wiki, by adding
+> "64" to "Pine", to ensure consistency.
+
+I am sorry, but I don't think this is how it works. The board is really
+called "Pine H64", that's printed on the board [1] and everywhere else [2].
+That's a choice the manufacturer made, and renaming some Wiki page won't
+change that. I understand the engineer's desire to make everything nice and
+consistent ;-) , but I am afraid that's not our call. After all this file
+is to document the device naming, not to be an example of consistent
+naming schemes.
+
+Cheers,
+Andre
+
+[1] https://linux-sunxi.org/images/5/53/Pineh64_top.jpg
+[2] https://pine64.org/devices/pine_h64_model_a/
+>=20
+> Alas, the Pine64 wiki is currently in read-only mode, due to some
+> recent issues with the underlying hardware that runs it.  Migration to
+> another form of documentation for Pine64 boards is also a possibility,
+> which makes the updates even more complicated.
+>=20
+> With all this in mind, I think it would be the best to rename the board
+> on the Pine64 side, to ensure consistency, and keep this patch as-is.
+> I'll make a mental note to do that on the Pine64 side once the current
+> situation with the Pine64 wiki is resolved.
+>=20
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,pine-h64-model-b
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+allwinner,sun50i-h6
+> >> =C2=A0
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 LTS
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 A64 LTS
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,pine64-lts
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+allwinner,sun50i-r18
+> >> @@ -748,17 +748,17 @@ properties:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,pinephone
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+allwinner,sun50i-a64
+> >> =C2=A0
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab, Develop=
+ment Sample
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab Develope=
+r Sample
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,pinetab
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+allwinner,sun50i-a64
+> >> =C2=A0
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab, Early A=
+dopter's batch (and
+> >> maybe later ones)
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab Early Ad=
+opter
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,pinetab-early-adopter
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+allwinner,sun50i-a64
+> >> =C2=A0
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 SoPine Baseboard
+> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 SOPine
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,sopine-baseboard
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
+pine64,sopine
+> >>  =20
+>=20
 
 
