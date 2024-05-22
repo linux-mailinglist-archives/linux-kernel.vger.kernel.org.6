@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-186569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D034B8CC5C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3A58CC5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86677286ACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB80C2864DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DCE145B05;
-	Wed, 22 May 2024 17:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DB6142E6A;
+	Wed, 22 May 2024 17:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bDr7EHc1"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clnf1PVx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC36F57C8E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0389776048
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716399907; cv=none; b=D3jziZH9IADUAirQ6s6lw9X/LtwdkcI9TNUo/bXdV+7sL05CMZOgPydOfUmczFDWX5kjopUE++daxU1n7NkOwkZJl7XLfEqRdvPlPhmeMLl4eJ9B7lfUhW6rYiGmTK3LwSv7I1gP/YPRVQN4qWvZNVgx6Dk5jY+6ZHdyu39jZ9k=
+	t=1716399895; cv=none; b=WtrdPFADn+7zdazIZALyIxbp/rJqSpX7XI+na+PiqwORh55iKmt6NP/VsN1+dTkVYjXFTxZDnvwJ9Aa6cSEBlFmQ1hHzpeqarKhRQxO6sp0/dJEl7agpUYKeas4aYkEmf0tcm2GPwOKbYBuhCcc7wewO2hJ10kpVxqCixYZKG80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716399907; c=relaxed/simple;
-	bh=3aciCKn2C/o/gcIQNjenoGJmglB3BvsgYJj98ymPKks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c5F3XtnSmsj1fF/zJinoYrx1VaPUEtuVIRxSxoJZvKAiql90zPnXO/9Zxf/IYuehRJsnAu9xNbjlmg78rDu4kNUNzFKkeQciI2G6dFsZkqQzW3njgr68UsnQ7ZQoQwbexobI/Cj9pWM/bGPvO7Maw0wi/LqGLaUl2+Mo9i0uiyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bDr7EHc1; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso1347a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716399904; x=1717004704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46egnT16tVwxmfnNBO145wZ0ppbM6j0s2l6EqdlS1tY=;
-        b=bDr7EHc1MQM5ge0wW8OyziytM+KI9E3eZrfmhBpB7f0+41x3yLL9B1B6ElILkf29yO
-         Pk8CobJhB3P8uOybyqMajfjrh99bd+lgZo+zxeBdSiJpC7BWjSFdtt2wnwuZ9t9H+Ycd
-         b1/Pb4jUGgbxIUoPA559+8ouk0/BKWUo9Hf79eerxdA1XwJpx6KzXMwes3KXToRoZPvu
-         MVe3Zz+NNTK4CuFUwIVrMzK9XJ5QLzrnAT6T3tl/er7MmBxzu8mgRuhx+1Nmsg9RdGTC
-         AfUE5qhwqdndruylfGtcaxXTqklGRid7IdYw3uY0QiLCeI4lEI4l/c5HezuDjyn6hpqF
-         1Saw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716399904; x=1717004704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=46egnT16tVwxmfnNBO145wZ0ppbM6j0s2l6EqdlS1tY=;
-        b=wb0icrZq4VNK1I7r4N4wuDVvW0kLq0WtFSPlhqtbmDFTBY0PFZ6RIKiWCng4rXNYma
-         PARZoGjmFe/T+1IxzfCSagfQ0Dx2Qbtbo14zhgVSxS5ujheBiCMZ5x3mvNIACr9LAWZ3
-         8hfVD+22QMOs3SC7R1ldFn6mUQ6Q7z/k9GQSfgvaNw5vHNTaZbZhC5cBt2HUqiuxLZMV
-         PXzUhAcU+KSK/Wvk5OUbKUZ4b6luc00AIUZnlGW08VOaECPV3o3hSf/OEI/HiurknnW1
-         ugYk0BERXqD0oCu7BOgHjdDBIfN0SEQ80IKNmf/f8EH0uaCWHAfFrhCtg2Qzx/grtCaU
-         Eb2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXzUpBLekZEYE3+Wqrb0GTYYzwqWwBE62XOnZ9ZFcpJea9HxFXYMqt0LDnmQ4FT7IUx8SXm3dcC9wrkvTSJf3VyMsJihXY0/UC09GHA
-X-Gm-Message-State: AOJu0Yyt7hg0X3CL/880pTQ1FgCmn6KPOornnMBfZVSYjaqEmV2tW7UH
-	0zEj2IE6tNmDJrnlYZEWkiTtU8laR0+xozgbeqiH90+xqzdDwkMPeQafapY0kIT0TozoWyQQi09
-	zlVre3hrwVflxKFo5qHSPBMLIqahRgLUUA9py
-X-Google-Smtp-Source: AGHT+IEv8xe30GVN53LXujFuOLIK2Susr76GRSHxvaCa6Bcn17UOTkMRnicosfESbnqEFHs+NH8WrFmg8Sb7+erv/0Q=
-X-Received: by 2002:a05:6402:2685:b0:572:e6fb:ab07 with SMTP id
- 4fb4d7f45d1cf-5783237b9e4mr236808a12.7.1716399903775; Wed, 22 May 2024
- 10:45:03 -0700 (PDT)
+	s=arc-20240116; t=1716399895; c=relaxed/simple;
+	bh=ISa/9A9sTfOrlUnAeGnim+Gt5o4gpr/3BuYQQpAPN2E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AHCOdOJ98nlIwAK8uETBsWNc6KncZbbAicBvWfCuYh6DoBfbxyxEPGOdCGijpqj3b0LOMCyrQtrQ0QqSbviLWWQ5x2aA+/Qq7BiLFq8AW8Njb6w/cmgkfKJk19GemDHgKUmmmhDWY+1GyqzRt6rthlCJs6YVfjua4Ydp5EyAgQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clnf1PVx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1172C2BBFC;
+	Wed, 22 May 2024 17:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716399894;
+	bh=ISa/9A9sTfOrlUnAeGnim+Gt5o4gpr/3BuYQQpAPN2E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=clnf1PVx5pjEIBXXPLoZHu7Wc9+wp7wYokdhCiFEUIWQksZfqGuAtYCxEf8OGiZS8
+	 bCvXCk39ABvG925EuhFZ35B2nOruJKwf8T9istziSOsn4Fa5ConD+srCCQuD9iL/Ew
+	 WETLZinMfQQ6uecsxLhY2mQAgr7NO7ughzPcsrKZJY3m/XD5jsT1NyhbJ0k9LAAU2K
+	 7vCMi3/t/Kql0Q3b5imC0a4ec4fTDNdNhvqMhhk67X2BxTNYgynYXNkjj5oMDJe1jU
+	 joIGQLta4OMjKbVteqr3L0EWJyQnuL4pXDqQtBtkS5Fc2E2TSLnuqEo6ga8Cz0zZ0C
+	 4ckwKiNAhKGpQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Wed, 22 May 2024 18:44:41 +0100
+Subject: [PATCH] clocksource: sp804: Make user selectable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522005913.3540131-1-edliaw@google.com> <6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
- <20240522101349.565a745e@kernel.org>
-In-Reply-To: <20240522101349.565a745e@kernel.org>
-From: Edward Liaw <edliaw@google.com>
-Date: Wed, 22 May 2024 10:44:36 -0700
-Message-ID: <CAG4es9VZ3r34sUkp31+GCrA_XOq6WqwUUitPMQFViLL83mezYg@mail.gmail.com>
-Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	shuah@kernel.org, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Christian Brauner <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240522-arm64-vexpress-sp804-v1-1-0344cd42eb77@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAgvTmYC/x2MSQqAMAwAvyI5G6i11uUr4kHbqDm40EARin+3e
+ ByGmQRCgUlgKBIEiix8nRmqsgC3z+dGyD4zaKWNarTGORzWYKTnDiSCcnfKYG0bb/u6W1TrIKf
+ Zrfz823F63w9Kr0K/ZgAAAA==
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Ross Burton <ross.burton@arm.com>, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-621fa
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1729; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=ISa/9A9sTfOrlUnAeGnim+Gt5o4gpr/3BuYQQpAPN2E=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmTi8TQANlzhzfGOBFS1jd6/1jJABcH9JyDpWkLZOO
+ ikTKWJqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZk4vEwAKCRAk1otyXVSH0OBCB/
+ 0aZpC6NKdXSpgQyq9v0fvqYE9FhffOVFgF6tT3x8iUzVJk0Ie5DmJK0S7qx7o2xU7iRq6PRlSGsAgR
+ njHkxfVrWetShIZ7Paq4PxA4pB8yti98rw8FsxOuICJjtMeErJj+lx4/NLEgbrpzm7DTHZcgMrX/SI
+ OChKJZ3TkgNaIy872LmoIejlK9QRZ1Mf8aNGzUJi5fleIAi2V1i1yT6IIcmpKbb/gN/b04tEQfaBbM
+ T8j/ouOAbEbiu/7cy744tPe+8h+mKl6byuSrD7dNYKfbela270OLBGH4On9X1h+Cj9IZ1YuYKFFgrP
+ Uu0wAhxV9aX0poip0AqR6v5YHbzFXv
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, May 22, 2024 at 10:13=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> w=
-rote:
->
-> On Wed, 22 May 2024 10:19:33 -0600 Shuah Khan wrote:
-> > On 5/21/24 18:56, Edward Liaw wrote:
-> > > Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and remo=
-ves
-> > > redefinitions of _GNU_SOURCE from source code.
-> > >
-> > > 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> > > asprintf into kselftest_harness.h, which is a GNU extension and needs
-> >
-> > Easier solution to define LINE_MAX locally. In gerenal it is advisable
-> > to not add local defines, but it is desirable in some cases to avoid
-> > churn like this one.
->
-> Will the patch that Andrew applied:
-> https://lore.kernel.org/all/20240519213733.2AE81C32781@smtp.kernel.org/
-> make its way to Linus? As you say that's a much simpler fix.
+The sp804 is currently only user selectable if COMPILE_TEST, this was
+done by commit dfc82faad725 ("clocksource/drivers/sp804: Add
+COMPILE_TEST to CONFIG_ARM_TIMER_SP804") in order to avoid it being
+spuriously offered on platforms that won't have the hardware since it's
+generally only seen on Arm based platforms.  This config is overly
+restrictive, while platforms that rely on the SP804 do select it in
+their Kconfig there are others such as the Arm fast models which have a
+SP804 available but currently unused by Linux.  Relax the dependency to
+allow it to be user selectable on arm and arm64 to avoid surprises and
+in case someone comes up with a use for extra timer hardware.
 
-Right, this patch series may be unnecessary after all, since the
-problem is fixed by that patch.
+Fixes: dfc82faad725 ("clocksource/drivers/sp804: Add COMPILE_TEST to CONFIG_ARM_TIMER_SP804")
+Reported-by: Ross Burton <ross.burton@arm.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/clocksource/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-It might be better to drop the series unless it is desirable to
-centralize the declaration of _GNU_SOURCE to the root Makefile /
-lib.mk.  If that is still wanted, maybe a more palatable approach
-would be to surround every instance of #define _GNU_SOURCE with
-#ifndef _GNU_SOURCE first, then induce the change to CFLAGS in lib.mk.
-That would prevent a partial merge from triggering build warnings.
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 34faa0320ece..ca6045f90000 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -390,7 +390,8 @@ config ARM_GT_INITIAL_PRESCALER_VAL
+ 	  This affects CPU_FREQ max delta from the initial frequency.
+ 
+ config ARM_TIMER_SP804
+-	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
++	bool "Support for Dual Timer SP804 module"
++	depends on ARM || ARM64 || COMPILE_TEST
+ 	depends on GENERIC_SCHED_CLOCK && HAVE_CLK
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF if OF
+
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240522-arm64-vexpress-sp804-365d6938b07c
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
