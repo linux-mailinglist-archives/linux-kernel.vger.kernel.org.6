@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-186228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3B28CC152
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:34:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92B38CC155
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53566B22F3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 213B3B20BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D690513D609;
-	Wed, 22 May 2024 12:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16D213D632;
+	Wed, 22 May 2024 12:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="m7N2oHez"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kULq4VoT"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147C4130A53;
-	Wed, 22 May 2024 12:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8D01E86A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716381284; cv=none; b=Xn38/skKspc9MR9F3fEU1YFcwBw8U5wN85CMXw+lnwGz5ihKTCmIjSvIhiXN39YGfI/gnbT012T68jrntaC9Sf9J2cQcjeI3YIDBEbXaxsV2B7P0stZ+F1h+NFQrGC9ao7eYeCKlNumEfTvKCtCP7CZFJ1rCOMXlTIIxqDLKj+w=
+	t=1716381455; cv=none; b=ilXDcM4lZd3QV5bhe9W+8TVLwM3pMo7gckK1hGFW3NmbauE6oFDYTi/TSY6Iqmi95yB/VW/eCWtd7wwNAHuYb+U4PM5BY8ArR/cV/TBkI4xjsm3ox2lc0xnew3zFdKFARpwFYKn+qdNaiOllsq/yj7CdI/LW4pKlo/wgcGbVhNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716381284; c=relaxed/simple;
-	bh=0+wBh2A6G9cbB+lHeDN9Taxufokix63LGAyMizCEq8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xxs0FkPjMrZFOyglnUUqAQgMHSXAfMxHoPkiv+pwbfOgkdm2Q+gMz9yUBQphCd9Qhq9H2i1lkp39PKdz6LrAe5Ozf78ErsuRrYCBmvkd5UEB+cbqCJrywpCYIYkwNs7z7DSEgmHeS8y4/ApG3+dXr6sLpgxHI7HNEGPiJgymmCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=m7N2oHez; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A4E0C2BD11;
-	Wed, 22 May 2024 12:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716381283;
-	bh=0+wBh2A6G9cbB+lHeDN9Taxufokix63LGAyMizCEq8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m7N2oHezajdS5VUWHtxQrfyLA+ApwbYaBzm0zTXpqrGJJl361XOdOTwef1kFzLv+A
-	 Z7JYmd4CZozqN0HGbMB49I67imUj5xiKJokGGgnamkARxGo5QtpktkfcsOpNJpJyIp
-	 XAAOXJIHGJBV2Hbdl9fp+s3pJWMta+Xjn+eFm6aU=
-Date: Wed, 22 May 2024 14:34:41 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: "cve@kernel.org" <cve@kernel.org>,
-	"linux-cve-announce@vger.kernel.org" <linux-cve-announce@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: CVE-2024-27410: wifi: nl80211: reject iftype change with mesh ID
- change
-Message-ID: <2024052231-entity-peculiar-0087@gregkh>
-References: <2024051701-CVE-2024-27410-874a@gregkh>
- <42c2fa68c360d05dcf798bc783078270e8fe8314.camel@oracle.com>
+	s=arc-20240116; t=1716381455; c=relaxed/simple;
+	bh=EMnIYHaY7LLVlAqbN0Em3LajT8YCdusKQh/jH5I8FNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ChrASqcWq3hj8kHrOhZ796pabRArVx72eDw9YhhYVfIEA8FwlyNZmLgN8xabRWiPTaGutRX2jKiLOMMjrZv5L6yaEosRIUJZIx6h0O6NKQyoaCqj7IyXG9S5fdFW8Xbv+3sqC8y0Lo0wjtCwAp65AEjZYcygybs/BYFPEPgUOeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kULq4VoT; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-351da5838fcso4609985f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:37:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716381451; x=1716986251; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P25DPsLo0fuN2OKJTl/EGAh8Y3s1DSkqFIXVqeeCVVc=;
+        b=kULq4VoToY2Vat7vm8GGjVA6foF0Uvp7NuZJAGIy/qwIu6TJdSrH8/rXgvsTlUUGtN
+         E28mvwzI/Q4zWKdxGVhmPx7unW09xyPwoGQckbRGHR1TEzP2X3iODzruBUrlqnpnpTeF
+         Zhwg1DGEKgJEGubaDnwoaGZByR8PTj8eA9ok4xPDLEFwl4pni8WOlxt+45TYFbUlP/1m
+         jmau5/scArzcXYJECl+5QBuBvDq+zc8AfZ2gCc2gkDImjpPAT+Dxy8BeHyiziP7M3heA
+         gSfi52+83PyN8AScEFHvFGd2wC5lqXkRUi9LeaWprrXKojuLjyVVWeMGd+/Vd4hZ+nGW
+         LKPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716381451; x=1716986251;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P25DPsLo0fuN2OKJTl/EGAh8Y3s1DSkqFIXVqeeCVVc=;
+        b=F5cWpZMVlGEO5Ai3tbSTiFdbcrKuUmfXJNQJaqRRZV/OUNTiWui4UZwvCX8FjzbnZc
+         LM7m3GNcgtrWsYLVTOLLPCkrBGpGybY5znyWOoyxocXUDKztZG51A4kqPNZMh5l6jijj
+         Z/lBskiGcPNHd5tNFGUeBzcZz5GuMhRcRoFp5y+5Teml4dZ35hJd6kJHwlUM2jrz2JtM
+         q0rK+abbcxyGikVaM6V9GNwYxzlvGSByLhxHubTv22/GIDqgNwbBGn2c6O3b/wvAU/Le
+         rcoDC1HKMDiUSzOMEcWNqCvhfow0/TRP1PNNPDxDJ2yjLwQ4zLBSXSroWqyaeu/agtvX
+         ElWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTcyYDWSQwlGvMTql3EMonBFXUlv685ec4T6tkQ0nRFYFHMN97xymSJ/jecIDBQ8V0u+ohrY8fpsI068SD78DpxoJe0a4TCWBChCm8
+X-Gm-Message-State: AOJu0Yyc5yOzs2hEaSXz73gj0GBitNfHIriNK/s2j6OqGLPPmsGk9qSP
+	Ycp1KLZjIvHFY4z+p3b7jJtoaDkOLaOkMRajTt5cP4sgRcgThcC3Uk4u+Evb+VIWQJnuADnnT0+
+	qLwslz1oa6ZrFsrmz/IIzz8bC339wipPtE/Gf
+X-Google-Smtp-Source: AGHT+IHqXaamjnUmjvBxFPNiRV+xFMiG4l6hh3Y9Gjymq+7Usr/czLNVkJc84E+5l0e/SJVREuKfW8ugea4XTlNrNck=
+X-Received: by 2002:a5d:4104:0:b0:354:f2a7:97dc with SMTP id
+ ffacd0b85a97d-354f2a79916mr422094f8f.2.1716381451014; Wed, 22 May 2024
+ 05:37:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42c2fa68c360d05dcf798bc783078270e8fe8314.camel@oracle.com>
+References: <ME0P282MB48901A79E405F9CF615FF2F1CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
+In-Reply-To: <ME0P282MB48901A79E405F9CF615FF2F1CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 22 May 2024 14:37:19 +0200
+Message-ID: <CAH5fLgiL7EdnzRL79x4zX0pXrtb8OjVkRib+qkoi=TyzHzEc4A@mail.gmail.com>
+Subject: Re: [PATCH] rust: kernel: make impl_has_work compatible with more
+ complex generics
+To: mu001999 <mu001999@outlook.com>
+Cc: ojeda@kernel.org, boqun.feng@gmail.com, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 12:28:59PM +0000, Siddh Raman Pant wrote:
-> On Fri, 17 May 2024 13:52:02 +0200, Greg Kroah-Hartman wrote:
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > wifi: nl80211: reject iftype change with mesh ID change
-> > 
-> > It's currently possible to change the mesh ID when the
-> > interface isn't yet in mesh mode, at the same time as
-> > changing it into mesh mode. This leads to an overwrite
-> > of data in the wdev->u union for the interface type it
-> > currently has, causing cfg80211_change_iface() to do
-> > wrong things when switching.
-> > 
-> > [...]
-> > 
-> > The Linux kernel CVE team has assigned CVE-2024-27410 to this issue.
-> 
-> This does not apply to versions below 6.0, as the union was not backported.
-> The fix commit mentioned is incorrect, it should be 7b0a0e3c3a88.
+On Wed, May 22, 2024 at 2:27=E2=80=AFPM mu001999 <mu001999@outlook.com> wro=
+te:
+>
+> Signed-off-by: mu001999 <mu001999@outlook.com>
 
-Changelogs should be written a bit more careful then :)
+Please provide a more complete commit description. What user motivates
+this change?
 
-Note, that commit was backported to 5.19.2, so 6.0 is not correct...
+>  impl_has_work! {
+> -    impl<T> HasWork<Self> for ClosureWork<T> { self.work }
+> +    impl{T} HasWork<Self> for ClosureWork<T> { self.work }
+>  }
 
-I'll go update the cve and push out a json update to cve.org with this
-information, thanks for letting us know!
+I ended up doing something similar for the generics in some of the
+linked list patches. Does anyone know if it's possible to support this
+without giving up the <T> syntax?
 
-Also, this commit was backported to the older kernels, so this is going
-to look strange, here's the new text:
-
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 4.19.309 with commit d38d31bbbb9d
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 5.4.271 with commit 0cfbb26ee5e7
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 5.10.212 with commit 99eb2159680a
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 5.15.151 with commit 063715c33b4c
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 6.1.81 with commit 930e826962d9
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 6.6.21 with commit 177d574be4b5
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 6.7.9 with commit a2add961a5ed
-+       Issue introduced in 6.0 with commit 7b0a0e3c3a88 and fixed in 6.8 with commit f78c1375339a
-
-Hopefully people's json parsers can handle that well :)
-
-thanks,
-
-greg k-h
+Alice
 
