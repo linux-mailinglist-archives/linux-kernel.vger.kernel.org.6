@@ -1,111 +1,97 @@
-Return-Path: <linux-kernel+bounces-186788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E288CC929
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:46:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626848CC92B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63A321C2098B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:46:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806A51C2121D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CF7146A71;
-	Wed, 22 May 2024 22:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE1B14901E;
+	Wed, 22 May 2024 22:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Difkpi8p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yo82asRq"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2A541A80;
-	Wed, 22 May 2024 22:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A3C43147;
+	Wed, 22 May 2024 22:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716417969; cv=none; b=l3z0mx87XtvQIOydhX4bs+J0GrmsnwxK/sqyi5ZB9ZwdsQAhemz5cyxKSIjZLaQA4OkWVOVOJdpPzSnrtjhOLKdOqJR48OYvLA/hTw8jHbJ8fOe7GzGigm1tP+koY8M3E8JqU7SODsFLRR1miO8ogs0KOKw+ygEtvxXOjXAx7K0=
+	t=1716418056; cv=none; b=E4p1dc6a7PeH2XWMyTKQZvOF01YT8XPR9F15lYKobiwzsZyEF3oIK2SwusR1Nx8CiDOUxtpu5mmxuxHkgznzh6wkmTI3RNljfKNdqX4rtCnGWIPFjfNHnyE1eqaVzhxcxii1WQZCIY68HGiHBRUmFviF9UEIHwEsUqVU8C2lL4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716417969; c=relaxed/simple;
-	bh=Wt/lYOMjZ5EiLqgZDOMSYLAv6ghVbecXbWEEUnbdvAk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=I8ley0LEtGN3PubbW8F/1VlsVW4cBCTy/Je3OK1HaJqftPWDz1O0UFruzsh+cZQ4hdzyfYyB0Gc21YQ8ZN5szw0UROkEfXNVOy0qle6DNvKVL/AqLMijXOA3tWaeBnkA/UhnLi4RzFxLrliUY06dKEJig74iWGGX06ejQ+89Gag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Difkpi8p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A11A8C2BBFC;
-	Wed, 22 May 2024 22:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716417969;
-	bh=Wt/lYOMjZ5EiLqgZDOMSYLAv6ghVbecXbWEEUnbdvAk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Difkpi8pE8zKRNDX2+VZ7EyZcNiHjM0HR8FJLGZH0pip8MxP1u7thd/rd83PcA09V
-	 TVYuNLsB9uDO/0L6O8a4XCtYe8AGfV2GMFw/WHUCsVYFKPfQALg/JlSvIlzFXcExDp
-	 AtnoA3XHUlrJl32QhYOsFNsXhIwLTMDFKtCKGeoA=
-Date: Wed, 22 May 2024 15:46:07 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Eric Chanudet <echanude@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Andy Lutomirski
- <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Mike Rapoport
- <rppt@kernel.org>, Baoquan He <bhe@redhat.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nick Piggin <npiggin@gmail.com>, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] mm/mm_init: use node's number of cpus in
- deferred_page_init_max_threads
-Message-Id: <20240522154607.bd5790c0b0dc642aefd3a05c@linux-foundation.org>
-In-Reply-To: <20240522203758.626932-4-echanude@redhat.com>
-References: <20240522203758.626932-4-echanude@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716418056; c=relaxed/simple;
+	bh=1tQYnuBW0tCO/M95+qVez0oXwbjCD36YNuqAKFKPkjo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HVBC40/lG7c+MGhPmpD55kpmUOO6qYG8AwSyaOS4lBtLXbJXpL/MIHLwvFTvTwGW0A9qgD0xdD69hS3u/Zn4Z68b7YQFs41mN0TGVJwr/bA8ln4hbS0DLg4rCTEWqNsEqy7vWpTUwdunmUKtJzr2PUE5Y8qChRNa+Fx8Sb6HyXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yo82asRq; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=B60f+SkB/fbDXXMGfWZNp//l2iDgy3hxtoJM7FOinzM=; b=Yo82asRquTYyeclv+7EF8LGaaG
+	pMOvX1SPnVTWRJLyLNRwEvL1LB47kuJjOfHrPGWXaoFmKgpvDgclHhWx5EKbO9VTeVtOM6jYUTYxQ
+	Fc/za1ohTH4HajpKvuWGpIAPf0aGYy3YnqBs2N5lwv1QCGvZuemQgGlMw+uiJuH9YLMy74pVmh3c8
+	8LxUAfugpEegadeIa3zBxgen+fIxXcNKlJ87/yNW7Rfu583c08VcMpWKc2jbHiK6Vj47furftaPbt
+	pU0mQIEDOOydrrTMagpCZF/me1XkNw7eenGzWIw/dNXxa/x7I+bHXihApY0e2yO3c9Mub/I9TlcQD
+	yXts3QyQ==;
+Received: from [50.53.4.147] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s9uk5-00000004K9L-1jjb;
+	Wed, 22 May 2024 22:47:29 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org
+Subject: [PATCH] doc-guide: kernel-doc: document Returns: spelling
+Date: Wed, 22 May 2024 15:47:26 -0700
+Message-ID: <20240522224726.10498-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 22 May 2024 16:38:01 -0400 Eric Chanudet <echanude@redhat.com> wrote:
+scripts/kernel-doc accepts "Return:" or "Returns:" for describing the
+return value of a function or function-like macro, so document this
+alternative spelling and use it in an example.
 
-> x86_64 is already using the node's cpu as maximum threads. Make that the
-> default for all archs setting DEFERRED_STRUCT_PAGE_INIT.
-> 
-> This returns to the behavior prior making the function arch-specific
-> with commit ecd096506922 ("mm: make deferred init's max threads
-> arch-specific").
-> 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+---
+ Documentation/doc-guide/kernel-doc.rst |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It isn't clear to me what is the runtime effect of this change upon our
-users.  Can you please prepare a sentence which spells this out?
-
-> 
-> ---
-> Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64 platforms
-> shows faster deferred_init_memmap completions:
-> 
-> |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
-> |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
-> |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
-> |---------|-------------|--------------|-----------------|--------------|
-> | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
-> |---------|-------------|--------------|-----------------|--------------|
-> | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
-> | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
-
-The above is useful info, I'll hoist it into the main changelog.
-
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -2126,7 +2126,7 @@ deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
->  __weak int __init
->  deferred_page_init_max_threads(const struct cpumask *node_cpumask)
->  {
-> -	return 1;
-> +	return max_t(int, cpumask_weight(node_cpumask), 1);
->  }
-
-It's an unrelated cleanup , but that could be
-
-	max(cpumask_weight(node_cpumask), 1U);
-
-and the function could/should return unsigned.
+diff -- a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
+--- a/Documentation/doc-guide/kernel-doc.rst
++++ b/Documentation/doc-guide/kernel-doc.rst
+@@ -143,7 +143,7 @@ Return values
+ ~~~~~~~~~~~~~
+ 
+ The return value, if any, should be described in a dedicated section
+-named ``Return``.
++named ``Return`` (or ``Returns``).
+ 
+ .. note::
+ 
+@@ -337,7 +337,7 @@ Typedefs with function prototypes can al
+    * Description of the type.
+    *
+    * Context: Locking context.
+-   * Return: Meaning of the return value.
++   * Returns: Meaning of the return value.
+    */
+    typedef void (*type_name)(struct v4l2_ctrl *arg1, void *arg2);
+ 
 
