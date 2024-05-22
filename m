@@ -1,856 +1,519 @@
-Return-Path: <linux-kernel+bounces-185574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785548CB6F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:54:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF958CB6F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E873C1F27CE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:54:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 371941F26692
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3E21CFB9;
-	Wed, 22 May 2024 00:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471A66AC0;
+	Wed, 22 May 2024 00:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HoS6gskJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1uX+R+Gb"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50A71CD16;
-	Wed, 22 May 2024 00:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5CF256D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716339209; cv=none; b=Zh5+ECTDdIVbvZ7sXuZRZ5sNndIj4y38yQeXztQIZfCx6qjf/7jmqYzpjK93yp0k/ctxs4Ygt8aXL07M2zpHZQJTvFejSeibZU2wtDhutPcrwo9DrlCU+HydYNIAyytj8C9B4uEEzzWhHDSSJopWl6RdTbauMKfHrVQyLMsfkE4=
+	t=1716339569; cv=none; b=peIwNC51YCl40VvSDEqQ7dllbzKSvu2X+pDpfKVOq5X/l6hCzPn+COwwAopQ4Ae9tsr0defno/UiDsdeVFwEPs/Q8alHIuZeVAeDW4TDWzSlevqjNoCOK0EjD6EnAqAgktk3Ng4wOe4KOMfbffOwCQD+BL7kk2m+fghlIN+AHP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716339209; c=relaxed/simple;
-	bh=b/nH9MqgmbCQ+VpUd2BSe5KKpDBI/e3Eh+GRMbNBPB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hoAbuLCePbLUU96gvTv3KtV7KWxHp/HoobTW5o9L7JPgOliUKhML4RA8xjjwDUxA48aT0GdpK8x1SLNqhSe5yXe+sLx/dO9BuDzb5LP1EvPPMRt7LNEMGu76l+kibP4iQjl3UqRIk2LHBDDHv4Jo1b+BlDhQ7HiDx6w4BXsV/2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HoS6gskJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCAF4C2BD11;
-	Wed, 22 May 2024 00:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716339209;
-	bh=b/nH9MqgmbCQ+VpUd2BSe5KKpDBI/e3Eh+GRMbNBPB0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HoS6gskJrFiDuxBkhVUxR8tPpSshirAMuD61nJ57rqA/jVmpLGabzdWcLJTtWTy/v
-	 k2pYXCsKnYiTgbtApVRhcJSAlphuv7LSxJDqcNsGtc3fj89ucQudWD1yk7JssJDjQv
-	 bCDuFPKfcdXDAFkgeru5RDyHK7CvVgUYujOaNmVCf1B7681kimE88F+hTHMHlA2WtW
-	 +GCq7Ky1gt6rai6i733nXPVJNqH1kQYfiZt5/WXjAkipUXdwd+Vy5fbXxElr8ZkrEg
-	 OYqDs0Q9wOsx0q2OMOUOJbj0xG3vN/SV1nDxQttd0pjocTSMTzbJcvvBG01566Z1zl
-	 qSEB/uIpaa1Lw==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	Andreas.Fuchs@infineon.com,
-	James Prestwood <prestwoj@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org (open list:CRYPTO API),
-	linux-kernel@vger.kernel.org (open list),
-	David Howells <dhowells@redhat.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v4 5/5] keys: asymmetric: ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
-Date: Wed, 22 May 2024 03:52:43 +0300
-Message-ID: <20240522005252.17841-6-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240522005252.17841-1-jarkko@kernel.org>
-References: <20240522005252.17841-1-jarkko@kernel.org>
+	s=arc-20240116; t=1716339569; c=relaxed/simple;
+	bh=Xt5d/neilLCZVei3mpQhTz0hOx+oANyXq8TJdE8hUKY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TFH/AG5CFgkklqrqVT6S/GQTHEfzC+B1D1O23DO/yMMt2pyKRC5DR29v1CeJ6wFeoYKAfF2WA6ZWTv5xAh0iNZTxS2DTGwYJqe8VU8E4Be+zA7URvQ4ZBGr0sgYdHxvfM787PiegShQ7CX0lnlxQn7SOgHNLl3Aavz5z8Na8amM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1uX+R+Gb; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1ecb7e1e3fdso2990765ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 17:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716339566; x=1716944366; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3H/qLykK0be6JzcChu0xYuBPqT3iUmuFe25FY2FEMUM=;
+        b=1uX+R+Gb53DfdCvlQLyiesnRP8VrWFPX7LeL9SYZtjZCFvZFd7Pzl2baoPHIreeEFI
+         z4o/M/vLTr94HQkCRauoMPnqkvxYt0Xo6PFgSwoCF+/ri7Sg7thvays1xdu6sp/fcQnf
+         dgadV+0DYzcrS3RWkQKKHAGJkwngpAac+2XA+NrN68cHIguXdI6H2qhQnpe6uyNAjXGz
+         kLoArOhizhHeSrKqZU9jnVZxUwYJUqGUvoYMfwV37NPrGbUeZ7ZUHcdpuu/VkM6HOkrF
+         LV7xkMLvji0ZmcRkiIguE9+IBnVEivO3qbdXA0zHL9RuBNgQ1UqUwOceE0Z98JHJUM19
+         a7aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716339566; x=1716944366;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3H/qLykK0be6JzcChu0xYuBPqT3iUmuFe25FY2FEMUM=;
+        b=gbgohXBerjpAC0o2iApoPquqkz+/ceegmvtFfSUyn87r5Bo/Li6hXo/J5PRP+ImT9X
+         Bm/q2gQD59SYpCxCCVU+rBedZ285PdManOBnjFZrL45J6CDNzciah+I1FkXQtXy3Jkre
+         3lrLF3KV9mEesRXQwzoWelYayWltjgCjg/PvhBVgaz3irk5Flwv9qlYUICTZTpOao5hu
+         +B+oMKC87B4nWPo2FT7tg20i0c0zA7YOcLqhD3PQbj1JdWoMuHmw+qQbLFbKuwe1olaM
+         RkPtduBSmhwfESlPnNfXDa8nRBtVGj0UiKBH3FXgI6FmfK0VXDAvFRpouYkWmOBkFv9S
+         t0CA==
+X-Gm-Message-State: AOJu0Yz5NdsarPFK0AFTUXpHibBvRAs45zwJ7HEAY8yR5lAfNWZkAEmm
+	7OC+xqIhOGC7zatbi1U6xyHIFMqBOCYj8PVgLEeFc26dec9UrrkGYGPblLmBJq1HylqZMPxAJ62
+	I7g==
+X-Google-Smtp-Source: AGHT+IHFq5KLedkVsXVGeEpddvfWr31mNZxdbN6nqQCky9ZSP8UdWQ1SSIMVcln+xUZYV0qcAtMvCUZ12JQ=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a17:902:d482:b0:1f3:c14:968b with SMTP id
+ d9443c01a7336-1f31acfacffmr231255ad.2.1716339565821; Tue, 21 May 2024
+ 17:59:25 -0700 (PDT)
+Date: Wed, 22 May 2024 00:56:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+Message-ID: <20240522005913.3540131-1-edliaw@google.com>
+Subject: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
+From: Edward Liaw <edliaw@google.com>
+To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, Edward Liaw <edliaw@google.com>, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: James Prestwood <prestwoj@gmail.com>
+Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+redefinitions of _GNU_SOURCE from source code.
 
-Based on earlier work by James Prestwood.
+809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+asprintf into kselftest_harness.h, which is a GNU extension and needs
+_GNU_SOURCE to either be defined prior to including headers or with the
+-D_GNU_SOURCE flag passed to the compiler.
 
-Add ASN.1 compatible asymmetric TPM2 RSA key subtype:
+v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+v2: https://lore.kernel.org/linux-kselftest/20240507214254.2787305-1-edliaw@google.com/
+ - Add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+   location.
+ - Remove #define _GNU_SOURCE from source code to resolve redefinition
+   warnings.
+v3: https://lore.kernel.org/linux-kselftest/20240509200022.253089-1-edliaw@google.com/
+ - Rebase onto linux-next 20240508.
+ - Split patches by directory.
+ - Add -D_GNU_SOURCE directly to CFLAGS in lib.mk.
+ - Delete additional _GNU_SOURCE definitions from source code in
+   linux-next.
+ - Delete additional -D_GNU_SOURCE flags from Makefiles.
+v4: https://lore.kernel.org/linux-kselftest/20240510000842.410729-1-edliaw@google.com/
+ - Rebase onto linux-next 20240509.
+ - Remove Fixes tag from patches that drop _GNU_SOURCE definition.
+ - Restore space between comment and includes for selftests/damon.
+v5:
+ - Rebase onto linux-next 20240521
+ - Drop initial patches that modify KHDR_INCLUDES.
+ - Incorporate Mark Brown's patch to replace static_assert with warning.
+ - Don't drop #define _GNU_SOURCE from nolibc and wireguard.
+ - Change Makefiles for x86 and vDSO to append to CFLAGS.
 
-1. Signing and decryption (with the private key) is handled by
-   TPM2_RSA_Decrypt.
-2. Encryption (with the public key) is handled by the kernel RSA
-   implementation.
+Edward Liaw (67):
+  selftests: Compile with -D_GNU_SOURCE when including lib.mk
+  selftests/arm64: Drop define _GNU_SOURCE
+  selftests/arm64: Drop duplicate -D_GNU_SOURCE
+  selftests/bpf: Drop define _GNU_SOURCE
+  selftests/breakpoints: Drop define _GNU_SOURCE
+  selftests/cachestat: Drop define _GNU_SOURCE
+  selftests/capabilities: Drop define _GNU_SOURCE
+  selftests/cgroup: Drop define _GNU_SOURCE
+  selftests/clone3: Drop define _GNU_SOURCE
+  selftests/core: Drop define _GNU_SOURCE
+  selftests/damon: Drop define _GNU_SOURCE
+  selftests/drivers: Drop define _GNU_SOURCE
+  selftests/exec: Drop duplicate -D_GNU_SOURCE
+  selftests/fchmodat2: Drop define _GNU_SOURCE
+  selftests/filelock: Drop define _GNU_SOURCE
+  selftests/filesystems: Drop define _GNU_SOURCE
+  selftests/firmware: Drop define _GNU_SOURCE
+  selftests/fpu: Drop define _GNU_SOURCE
+  selftests/futex: Drop define _GNU_SOURCE
+  selftests/futex: Drop duplicate -D_GNU_SOURCE
+  selftests/intel_pstate: Drop duplicate -D_GNU_SOURCE
+  selftests/iommu: Drop duplicate -D_GNU_SOURCE
+  selftests/ipc: Drop define _GNU_SOURCE
+  selftests/kcmp: Drop define _GNU_SOURCE
+  selftests/landlock: Drop define _GNU_SOURCE
+  selftests/lsm: Drop define _GNU_SOURCE
+  selftests/membarrier: Drop define _GNU_SOURCE
+  selftests/memfd: Drop define _GNU_SOURCE
+  selftests/mincore: Drop define _GNU_SOURCE
+  selftests/mm: Drop define _GNU_SOURCE
+  selftests/mount: Drop define _GNU_SOURCE
+  selftests/mount_setattr: Drop define _GNU_SOURCE
+  selftests/move_mount_set_group: Drop define _GNU_SOURCE
+  selftests/mqueue: Drop define _GNU_SOURCE
+  selftests/net: Drop define _GNU_SOURCE
+  selftests/net: Drop duplicate -D_GNU_SOURCE
+  selftests/nsfs: Drop define _GNU_SOURCE
+  selftests/openat2: Drop define _GNU_SOURCE
+  selftests/perf_events: Drop define _GNU_SOURCE
+  selftests/pid_namespace: Drop define _GNU_SOURCE
+  selftests/pidfd: Drop define _GNU_SOURCE
+  selftests/ptrace: Drop define _GNU_SOURCE
+  selftests/powerpc: Drop define _GNU_SOURCE
+  selftests/proc: Drop define _GNU_SOURCE
+  selftests/proc: Drop duplicate -D_GNU_SOURCE
+  selftests/ptp: Drop define _GNU_SOURCE
+  selftests/resctrl: Drop duplicate -D_GNU_SOURCE
+  selftests/riscv: Drop define _GNU_SOURCE
+  selftests/riscv: Drop duplicate -D_GNU_SOURCE
+  selftests/rlimits: Drop define _GNU_SOURCE
+  selftests/rseq: Drop define _GNU_SOURCE
+  selftests/safesetid: Drop define _GNU_SOURCE
+  selftests/sched: Drop define _GNU_SOURCE
+  selftests/seccomp: Drop define _GNU_SOURCE
+  selftests/sigaltstack: Drop define _GNU_SOURCE
+  selftests/sgx: Compile with -D_GNU_SOURCE
+  selftests/splice: Drop define _GNU_SOURCE
+  selftests/syscall_user_dispatch: Drop define _GNU_SOURCE
+  selftests/thermal: Drop define _GNU_SOURCE
+  selftests/timens: Drop define _GNU_SOURCE
+  selftests/tmpfs: Drop duplicate -D_GNU_SOURCE
+  selftests/uevent: Drop define _GNU_SOURCE
+  selftests/user_events: Drop define _GNU_SOURCE
+  selftests/vDSO: Append to CFLAGS in Makefile
+  selftests/vDSO: Drop define _GNU_SOURCE
+  selftests/x86: Append to CFLAGS in Makefile
+  selftests/x86: Drop define _GNU_SOURCE
 
-Signed-off-by: James Prestwood <prestwoj@gmail.com>
-Co-developed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v4:
-* Just put the values to the buffer instead of encoding them.
-* Adjust buffer sizes.
-* Make tpm2_rsa_key_encode() not to allocate from heap and simplify
-  the serialization.
-v3:
-* Drop the special case for null handle i.e. do not define policy.
-* Remove extra empty line.
-v2:
-* Remove two spurios pr_info() messsages that I forgot to remove.
-* Clean up padding functions and add additional checks for length
-  also in tpm2_unpad_pcks1().
-* Add the missing success check kzalloc() in tpm2_key_rsa_decrypt().
-* Check that params->out_len for capacity before copying the result.
----
- crypto/asymmetric_keys/Kconfig        |  15 +
- crypto/asymmetric_keys/Makefile       |   1 +
- crypto/asymmetric_keys/tpm2_key_rsa.c | 670 ++++++++++++++++++++++++++
- include/linux/tpm.h                   |   2 +
- 4 files changed, 688 insertions(+)
- create mode 100644 crypto/asymmetric_keys/tpm2_key_rsa.c
+Mark Brown (1):
+  kselftest: Desecalate reporting of missing _GNU_SOURCE
 
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index e1345b8f39f1..71448c2f0a8f 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -15,6 +15,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- 	select MPILIB
- 	select CRYPTO_HASH_INFO
- 	select CRYPTO_AKCIPHER
-+	select CRYPTO_RSA
- 	select CRYPTO_SIG
- 	select CRYPTO_HASH
- 	help
-@@ -23,6 +24,20 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- 	  appropriate hash algorithms (such as SHA-1) must be available.
- 	  ENOPKG will be reported if the requisite algorithm is unavailable.
- 
-+config ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
-+	tristate "Asymmetric TPM2 RSA crypto algorithm subtype"
-+	depends on TCG_TPM
-+	select TCG_TPM2_HMAC
-+	select CRYPTO_RSA
-+	select CRYPTO_SHA256
-+	select CRYPTO_HASH_INFO
-+	select ASN1
-+	help
-+	  This option provides support for asymmetric TPM2 key type handling.
-+	  If signature generation and/or verification are to be used,
-+	  appropriate hash algorithms (such as SHA-256) must be available.
-+	  ENOPKG will be reported if the requisite algorithm is unavailable.
-+
- config X509_CERTIFICATE_PARSER
- 	tristate "X.509 certificate parser"
- 	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-index bc65d3b98dcb..c6da84607824 100644
---- a/crypto/asymmetric_keys/Makefile
-+++ b/crypto/asymmetric_keys/Makefile
-@@ -11,6 +11,7 @@ asymmetric_keys-y := \
- 	signature.o
- 
- obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
-+obj-$(CONFIG_ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE) += tpm2_key_rsa.o
- 
- #
- # X.509 Certificate handling
-diff --git a/crypto/asymmetric_keys/tpm2_key_rsa.c b/crypto/asymmetric_keys/tpm2_key_rsa.c
-new file mode 100644
-index 000000000000..f611da3b92d1
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm2_key_rsa.c
-@@ -0,0 +1,670 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* TPM2 asymmetric public-key crypto subtype
-+ *
-+ * See Documentation/crypto/asymmetric-keys.rst
-+ *
-+ * Copyright (c) 2020 Intel Corporation
-+ */
-+
-+#include <asm/unaligned.h>
-+#include <crypto/akcipher.h>
-+#include <crypto/public_key.h>
-+#include <crypto/rsa-pkcs1pad.h>
-+#include <crypto/tpm2_key.h>
-+#include <keys/asymmetric-parser.h>
-+#include <keys/asymmetric-subtype.h>
-+#include <keys/trusted-type.h>
-+#include <linux/asn1_encoder.h>
-+#include <linux/keyctl.h>
-+#include <linux/module.h>
-+#include <linux/scatterlist.h>
-+#include <linux/slab.h>
-+#include <linux/tpm.h>
-+
-+#undef pr_fmt
-+#define pr_fmt(fmt) "tpm2_key_rsa: "fmt
-+
-+/* 4096 bits */
-+#define TPM2_KEY_RSA_PUB_SIZE		512
-+#define TPM2_KEY_RSA_PUB_ENC_SIZE	(TPM2_KEY_RSA_PUB_SIZE + 16)
-+/* 4x 4096bits */
-+#define TPM2_KEY_RSA_BUFFER_SIZE	(TPM2_KEY_RSA_PUB_SIZE * 4)
-+
-+#define PKCS1_PAD_MIN_SIZE  11
-+
-+struct tpm2_key_rsa {
-+	struct tpm2_key key;
-+	const u8 *pub;
-+	int pub_len;
-+};
-+
-+/*
-+ * Fill the data with PKCS#1 v1.5 padding.
-+ */
-+static int tpm2_pad_pkcs1(const u8 *in, int in_len, u8 *out, int out_len)
-+{
-+	unsigned int prefix_len = out_len - in_len - 3;
-+
-+	if (in_len > out_len - PKCS1_PAD_MIN_SIZE)
-+		return -EBADMSG;
-+
-+	/* prefix */
-+	out[0] = 0;
-+	out[1] = 1;
-+	memset(&out[2], 0xff, prefix_len);
-+	out[2 + prefix_len] = 0;
-+	/* payload */
-+	memcpy(&out[2 + prefix_len + 1], in, in_len);
-+
-+	return 0;
-+}
-+
-+/*
-+ * RFC 3447 - Section 7.2.2
-+ * Size of the input data should be checked against public key size by
-+ * the caller.
-+ */
-+static const u8 *tpm2_unpad_pkcs1(const u8 *in, int in_len, int *out_len)
-+{
-+	int i;
-+
-+	if (in[0] != 0 || in[1] != 2)
-+		return NULL;
-+
-+	i = 2;
-+	while (in[i] != 0 && i < in_len)
-+		i++;
-+
-+	if (i == in_len || i < (PKCS1_PAD_MIN_SIZE - 1))
-+		return NULL;
-+
-+	*out_len = in_len - i - 1;
-+	return in + i + 1;
-+}
-+
-+/*
-+ * Outputs the cipher algorithm name on success, and retuns -ENOPKG
-+ * on failure.
-+ */
-+static int tpm2_key_get_akcipher(const char *encoding, const char *hash_algo,
-+				 char *cipher)
-+{
-+	ssize_t ret;
-+
-+	if (strcmp(encoding, "pkcs1") == 0) {
-+		if (!hash_algo) {
-+			strcpy(cipher, "pkcs1pad(rsa)");
-+			return 0;
-+		}
-+
-+		ret = snprintf(cipher, CRYPTO_MAX_ALG_NAME,
-+			       "pkcs1pad(rsa,%s)",
-+			       hash_algo);
-+		if (ret >= CRYPTO_MAX_ALG_NAME)
-+			return -ENOPKG;
-+
-+		return 0;
-+	}
-+
-+	if (strcmp(encoding, "raw") == 0) {
-+		strcpy(cipher, "rsa");
-+		return 0;
-+	}
-+
-+	return -ENOPKG;
-+}
-+
-+static int tpm2_key_rsa_extract_pub(struct tpm2_key_rsa *key_rsa)
-+{
-+	struct tpm2_key *key = &key_rsa->key;
-+	struct tpm_buf buf;
-+	off_t offset = 2;
-+	u16 policy_len;
-+	u32 attr;
-+	u16 bits;
-+	u16 type;
-+	u16 len;
-+	u16 alg;
-+	u32 exp;
-+
-+	buf.flags = TPM_BUF_TPM2B;
-+	buf.length = key->pub_len;
-+	buf.data = (void *)key->pub;
-+
-+	if (get_unaligned_be16(key->pub) != buf.length - 2)
-+		return -EINVAL;
-+
-+	type = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub type: 0x%04x\n", type);
-+	if (type != TPM_ALG_RSA)
-+		return -EINVAL;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub name alg: 0x%04x\n", alg);
-+	attr = tpm_buf_read_u32(&buf, &offset);
-+	pr_debug("pub attributes: 0x%08x\n", attr);
-+	policy_len = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub policy length: %u bytes\n", policy_len);
-+	offset += policy_len;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub symmetric: 0x%04x\n", alg);
-+	if (alg != TPM_ALG_NULL)
-+		return -EINVAL;
-+
-+	alg = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub symmetric scheme: 0x%04x\n", alg);
-+	if (alg != TPM_ALG_NULL)
-+		return -EINVAL;
-+
-+	bits = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub bits: %u\n", bits);
-+
-+	exp = tpm_buf_read_u32(&buf, &offset);
-+	pr_debug("pub exponent: 0x%08x\n", exp);
-+	if (exp != 0x00000000 && exp !=  0x00010001)
-+		return -EINVAL;
-+
-+	len = tpm_buf_read_u16(&buf, &offset);
-+	pr_debug("pub modulus: %u bytes\n", len);
-+	key_rsa->pub = key->pub + offset;
-+	key_rsa->pub_len = len;
-+
-+	return buf.flags & TPM_BUF_BOUNDARY_ERROR ? -EIO : 0;
-+}
-+
-+static int tpm2_key_rsa_encode(const struct tpm2_key_rsa *key, u8 *buf)
-+{
-+	int pub_len = key->pub_len;
-+	const u8 *pub = key->pub;
-+	u8 *start = &buf[4];
-+	u8 *work = &buf[4];
-+	u32 seq_len;
-+
-+	work[0] = 0x02;			/* INTEGER */
-+	work[1] = 0x82;			/* u16 */
-+	work[2] = pub_len >> 8;
-+	work[3] = pub_len & 0xff;
-+	work = &work[4];
-+	memcpy(work, pub, pub_len);
-+	work = &work[pub_len];
-+	work[0] = 0x02;			/* INTEGER */
-+	work[1] = 3;			/* < 128 */
-+	work[2] = 1;			/* 65537 */
-+	work[3] = 0;
-+	work[4]	= 1;
-+	work = &work[5];
-+	memset(work, 0, 8);
-+	seq_len = work - start;
-+	buf[0] = 0x30;			/* SEQUENCE */
-+	buf[1] = 0x82;			/* u16 */
-+	buf[2] = seq_len >> 8;
-+	buf[3] = seq_len & 0xff;
-+
-+	return seq_len + 4;
-+}
-+
-+/*
-+ * Encryption operation is performed with the public key.  Hence it is done
-+ * in software
-+ */
-+static int tpm2_key_rsa_encrypt(struct tpm2_key_rsa *key,
-+				struct kernel_pkey_params *params,
-+				const void *in, void *out)
-+{
-+	u8 enc_pub_key[TPM2_KEY_RSA_PUB_ENC_SIZE];
-+	char cipher[CRYPTO_MAX_ALG_NAME];
-+	struct scatterlist in_sg, out_sg;
-+	struct akcipher_request *req;
-+	struct crypto_akcipher *tfm;
-+	struct crypto_wait cwait;
-+	int rc;
-+
-+	rc = tpm2_key_get_akcipher(params->encoding, params->hash_algo, cipher);
-+	if (rc < 0)
-+		return rc;
-+
-+	tfm = crypto_alloc_akcipher(cipher, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	rc = tpm2_key_rsa_encode(key, enc_pub_key);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = crypto_akcipher_set_pub_key(tfm, enc_pub_key, rc);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	req = akcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req) {
-+		rc = -ENOMEM;
-+		goto err_tfm;
-+	}
-+
-+	sg_init_one(&in_sg, in, params->in_len);
-+	sg_init_one(&out_sg, out, params->out_len);
-+	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
-+				   params->out_len);
-+
-+	crypto_init_wait(&cwait);
-+	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP,
-+				      crypto_req_done, &cwait);
-+
-+	rc = crypto_akcipher_encrypt(req);
-+	rc = crypto_wait_req(rc, &cwait);
-+	if (!rc)
-+		rc = req->dst_len;
-+
-+	akcipher_request_free(req);
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+
-+	return rc;
-+}
-+
-+static int __tpm2_key_rsa_decrypt(struct tpm_chip *chip,
-+				  struct tpm2_key_rsa *key,
-+				  struct kernel_pkey_params *params,
-+				  const void *in, int in_len, void *out)
-+{
-+	unsigned int offset = 0;
-+	u32 key_handle = 0;
-+	struct tpm_buf buf;
-+	u16 decrypted_len;
-+	u32 parent;
-+	u8 *pos;
-+	int ret;
-+
-+	ret = tpm_try_get_ops(chip);
-+	if (ret)
-+		return ret;
-+
-+	ret = tpm2_start_auth_session(chip);
-+	if (ret)
-+		goto err_ops;
-+
-+	parent = key->key.parent;
-+
-+	ret = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
-+	if (ret < 0)
-+		goto err_auth;
-+
-+	tpm_buf_append_name(chip, &buf, parent, NULL);
-+	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_CONTINUE_SESSION |
-+				    TPM2_SA_ENCRYPT, NULL, 0);
-+	tpm_buf_append(&buf, key->key.blob, key->key.blob_len);
-+	if (buf.flags & TPM_BUF_OVERFLOW) {
-+		ret = -E2BIG;
-+		goto err_buf;
-+	}
-+	tpm_buf_fill_hmac_session(chip, &buf);
-+	ret = tpm_transmit_cmd(chip, &buf, 4, "RSA key loading");
-+	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-+	if (ret) {
-+		ret = -EIO;
-+		goto err_buf;
-+	}
-+	key_handle = be32_to_cpup((__be32 *)&buf.data[TPM_HEADER_SIZE]);
-+
-+	tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_RSA_DECRYPT);
-+	tpm_buf_append_name(chip, &buf, key_handle, NULL);
-+	tpm_buf_append_hmac_session(chip, &buf, TPM2_SA_DECRYPT, NULL, 0);
-+	tpm_buf_append_u16(&buf, in_len);
-+	tpm_buf_append(&buf, in, in_len);
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_fill_hmac_session(chip, &buf);
-+	ret = tpm_transmit_cmd(chip, &buf, 4, "RSA key decrypting");
-+	ret = tpm_buf_check_hmac_response(chip, &buf, ret);
-+	if (ret) {
-+		ret = -EIO;
-+		goto err_blob;
-+	}
-+
-+	pos = buf.data + TPM_HEADER_SIZE + 4;
-+	decrypted_len = be16_to_cpup((__be16 *)pos);
-+	pos += 2;
-+
-+	if (params->out_len < decrypted_len) {
-+		ret = -EMSGSIZE;
-+		goto err_blob;
-+	}
-+
-+	memcpy(out, pos, decrypted_len);
-+	ret = decrypted_len;
-+
-+err_blob:
-+	tpm2_flush_context(chip, key_handle);
-+
-+err_buf:
-+	tpm_buf_destroy(&buf);
-+
-+err_auth:
-+	if (ret < 0)
-+		tpm2_end_auth_session(chip);
-+
-+err_ops:
-+	tpm_put_ops(chip);
-+	return ret;
-+}
-+
-+static int tpm2_key_rsa_decrypt(struct tpm_chip *chip, struct tpm2_key_rsa *key,
-+				struct kernel_pkey_params *params,
-+				const void *in, void *out)
-+{
-+	const u8 *ptr;
-+	int out_len;
-+	u8 *work;
-+	int ret;
-+
-+	work = kzalloc(params->out_len, GFP_KERNEL);
-+	if (!work)
-+		return -ENOMEM;
-+
-+	ret = __tpm2_key_rsa_decrypt(chip, key, params, in, params->in_len,
-+				     work);
-+	if (ret < 0)
-+		goto err;
-+
-+	ptr = tpm2_unpad_pkcs1(work, ret, &out_len);
-+	if (!ptr) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
-+
-+	if (out_len > params->out_len) {
-+		ret = -EMSGSIZE;
-+		goto err;
-+	}
-+
-+	memcpy(out, ptr, out_len);
-+	kfree(work);
-+	return out_len;
-+
-+err:
-+	kfree(work);
-+	return ret;
-+}
-+
-+/*
-+ * Sign operation is an encryption using the TPM's private key. With RSA the
-+ * only difference between encryption and decryption is where the padding goes.
-+ * Since own padding can be used, TPM2_RSA_Decrypt can be repurposed to do
-+ * encryption.
-+ */
-+static int tpm2_key_rsa_sign(struct tpm_chip *chip, struct tpm2_key_rsa *key,
-+			     struct kernel_pkey_params *params,
-+			     const void *in, void *out)
-+{
-+	const struct rsa_asn1_template *asn1;
-+	u32 in_len = params->in_len;
-+	void *asn1_wrapped = NULL;
-+	int pub_len = key->pub_len;
-+	u8 *padded;
-+	int ret;
-+
-+	if (strcmp(params->encoding, "pkcs1") != 0) {
-+		ret = -ENOPKG;
-+		goto err;
-+	}
-+
-+	if (params->hash_algo) {
-+		asn1 = rsa_lookup_asn1(params->hash_algo);
-+		if (!asn1) {
-+			ret = -ENOPKG;
-+			goto err;
-+		}
-+
-+		/* Request enough space for the ASN.1 template + input hash */
-+		asn1_wrapped = kzalloc(in_len + asn1->size, GFP_KERNEL);
-+		if (!asn1_wrapped) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
-+
-+		/* Copy ASN.1 template, then the input */
-+		memcpy(asn1_wrapped, asn1->data, asn1->size);
-+		memcpy(asn1_wrapped + asn1->size, in, in_len);
-+
-+		in = asn1_wrapped;
-+		in_len += asn1->size;
-+	}
-+
-+	/* with padding: */
-+	padded = kmalloc(pub_len, GFP_KERNEL);
-+	tpm2_pad_pkcs1(in, in_len, padded, pub_len);
-+	ret = __tpm2_key_rsa_decrypt(chip, key, params, padded, pub_len, out);
-+	kfree(padded);
-+
-+err:
-+	kfree(asn1_wrapped);
-+	return ret;
-+}
-+
-+static void tpm2_key_rsa_describe(const struct key *asymmetric_key,
-+				  struct seq_file *m)
-+{
-+	struct tpm2_key_rsa *key = asymmetric_key->payload.data[asym_crypto];
-+
-+	if (!key) {
-+		pr_err("key blob missing");
-+		return;
-+	}
-+
-+	seq_puts(m, "TPM2/RSA");
-+}
-+
-+static void tpm2_key_rsa_destroy(void *payload0, void *payload3)
-+{
-+	struct tpm2_key *key = payload0;
-+
-+	if (!key)
-+		return;
-+
-+	tpm2_key_destroy(key);
-+	kfree(key);
-+}
-+
-+static int tpm2_key_rsa_eds_op(struct kernel_pkey_params *params,
-+			       const void *in, void *out)
-+{
-+	struct tpm2_key_rsa *key = params->key->payload.data[asym_crypto];
-+	struct tpm_chip *chip = tpm_default_chip();
-+
-+	if (!chip)
-+		return -ENODEV;
-+
-+	switch (params->op) {
-+	case kernel_pkey_encrypt:
-+		return tpm2_key_rsa_encrypt(key, params, in, out);
-+	case kernel_pkey_decrypt:
-+		return tpm2_key_rsa_decrypt(chip, key, params, in, out);
-+	case kernel_pkey_sign:
-+		return tpm2_key_rsa_sign(chip, key, params, in, out);
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+}
-+
-+static int tpm2_key_rsa_verify(const struct key *key,
-+			       const struct public_key_signature *sig)
-+{
-+	const struct tpm2_key_rsa *tpm2_key = key->payload.data[asym_crypto];
-+	u8 enc_pub_key[TPM2_KEY_RSA_PUB_ENC_SIZE];
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	struct akcipher_request *req;
-+	struct scatterlist src_sg[2];
-+	struct crypto_akcipher *tfm;
-+	struct crypto_wait cwait;
-+	int rc;
-+
-+	if (!sig->digest)
-+		return -ENOPKG;
-+
-+	rc = tpm2_key_get_akcipher(sig->encoding, sig->hash_algo, alg_name);
-+	if (rc < 0)
-+		return rc;
-+
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	rc = tpm2_key_rsa_encode(tpm2_key, enc_pub_key);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = crypto_akcipher_set_pub_key(tfm, enc_pub_key, rc);
-+	if (rc < 0)
-+		goto err_tfm;
-+
-+	rc = -ENOMEM;
-+	req = akcipher_request_alloc(tfm, GFP_KERNEL);
-+	if (!req)
-+		goto err_tfm;
-+
-+	sg_init_table(src_sg, 2);
-+	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
-+	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
-+	akcipher_request_set_crypt(req, src_sg, NULL, sig->s_size,
-+				   sig->digest_size);
-+	crypto_init_wait(&cwait);
-+	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
-+				      CRYPTO_TFM_REQ_MAY_SLEEP,
-+				      crypto_req_done, &cwait);
-+	rc = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
-+
-+	akcipher_request_free(req);
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+	return rc;
-+}
-+
-+static int tpm2_key_rsa_query(const struct kernel_pkey_params *params,
-+			      struct kernel_pkey_query *info)
-+{
-+	struct tpm2_key_rsa *tk = params->key->payload.data[asym_crypto];
-+	u8 enc_pub_key[TPM2_KEY_RSA_PUB_ENC_SIZE];
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	struct crypto_akcipher *tfm;
-+	unsigned int len;
-+	int ret;
-+
-+	ret = tpm2_key_get_akcipher(params->encoding, params->hash_algo, alg_name);
-+	if (ret < 0)
-+		return ret;
-+
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
-+
-+	ret = tpm2_key_rsa_encode(tk, enc_pub_key);
-+	if (ret < 0)
-+		goto err_tfm;
-+
-+	ret = crypto_akcipher_set_pub_key(tfm, enc_pub_key, ret);
-+	if (ret < 0)
-+		goto err_tfm;
-+
-+	len = crypto_akcipher_maxsize(tfm);
-+
-+	info->key_size = tk->pub_len * 8;
-+	info->max_data_size = tk->pub_len;
-+	info->max_sig_size = len;
-+	info->max_enc_size = len;
-+	info->max_dec_size = tk->pub_len;
-+
-+	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
-+			      KEYCTL_SUPPORTS_DECRYPT |
-+			      KEYCTL_SUPPORTS_VERIFY |
-+			      KEYCTL_SUPPORTS_SIGN;
-+
-+err_tfm:
-+	crypto_free_akcipher(tfm);
-+	return ret;
-+}
-+
-+/*
-+ * Asymmetric TPM2 RSA key. Signs and decrypts with TPM.
-+ */
-+struct asymmetric_key_subtype tpm2_key_rsa_subtype = {
-+	.owner			= THIS_MODULE,
-+	.name			= "tpm2_key_rsa",
-+	.name_len		= sizeof("tpm2_key_rsa") - 1,
-+	.describe		= tpm2_key_rsa_describe,
-+	.destroy		= tpm2_key_rsa_destroy,
-+	.query			= tpm2_key_rsa_query,
-+	.eds_op			= tpm2_key_rsa_eds_op,
-+	.verify_signature	= tpm2_key_rsa_verify,
-+};
-+EXPORT_SYMBOL_GPL(tpm2_key_rsa_subtype);
-+
-+/*
-+ * Attempt to parse a data blob for a key as a TPM private key blob.
-+ */
-+static int tpm2_key_preparse(struct key_preparsed_payload *prep)
-+{
-+	struct tpm2_key_rsa *key;
-+	int ret;
-+
-+	key = kzalloc(sizeof(*key), GFP_KERNEL);
-+	if (!key)
-+		return -ENOMEM;
-+
-+	if (prep->datalen > TPM2_KEY_RSA_BUFFER_SIZE) {
-+		kfree(key);
-+		return -EMSGSIZE;
-+	}
-+
-+	ret = tpm2_key_decode(prep->data, prep->datalen, &key->key,
-+			      TPM2_KEY_RSA_BUFFER_SIZE);
-+	if (ret) {
-+		kfree(key);
-+		return ret;
-+	}
-+
-+	if (key->key.oid != OID_TPMLoadableKey) {
-+		tpm2_key_destroy(&key->key);
-+		kfree(key);
-+		return -EINVAL;
-+	}
-+
-+	ret = tpm2_key_rsa_extract_pub(key);
-+	if (ret < 0) {
-+		tpm2_key_destroy(&key->key);
-+		kfree(key);
-+		return ret;
-+	}
-+
-+	prep->payload.data[asym_subtype] = &tpm2_key_rsa_subtype;
-+	prep->payload.data[asym_key_ids] = NULL;
-+	prep->payload.data[asym_crypto] = key;
-+	prep->payload.data[asym_auth] = NULL;
-+	prep->quotalen = 100;
-+	return 0;
-+}
-+
-+static struct asymmetric_key_parser tpm2_key_rsa_parser = {
-+	.owner	= THIS_MODULE,
-+	.name	= "tpm2_key_rsa_parser",
-+	.parse	= tpm2_key_preparse,
-+};
-+
-+static int __init tpm2_key_rsa_init(void)
-+{
-+	return register_asymmetric_key_parser(&tpm2_key_rsa_parser);
-+}
-+
-+static void __exit tpm2_key_rsa_exit(void)
-+{
-+	unregister_asymmetric_key_parser(&tpm2_key_rsa_parser);
-+}
-+
-+module_init(tpm2_key_rsa_init);
-+module_exit(tpm2_key_rsa_exit);
-+
-+MODULE_DESCRIPTION("Asymmetric TPM2 RSA key");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index c17e4efbb2e5..040be2c75868 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -43,6 +43,7 @@ enum tpm2_session_types {
- /* if you add a new hash to this, increment TPM_MAX_HASHES below */
- enum tpm_algorithms {
- 	TPM_ALG_ERROR		= 0x0000,
-+	TPM_ALG_RSA		= 0x0001,
- 	TPM_ALG_SHA1		= 0x0004,
- 	TPM_ALG_AES		= 0x0006,
- 	TPM_ALG_KEYEDHASH	= 0x0008,
-@@ -271,6 +272,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_NV_READ                 = 0x014E,
- 	TPM2_CC_CREATE		        = 0x0153,
- 	TPM2_CC_LOAD		        = 0x0157,
-+	TPM2_CC_RSA_DECRYPT	        = 0x0159,
- 	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
- 	TPM2_CC_UNSEAL		        = 0x015E,
- 	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
--- 
-2.45.1
+ tools/testing/selftests/arm64/fp/fp-ptrace.c                  | 3 ---
+ tools/testing/selftests/arm64/fp/fp-stress.c                  | 2 --
+ tools/testing/selftests/arm64/fp/vlset.c                      | 1 -
+ tools/testing/selftests/arm64/mte/check_buffer_fill.c         | 3 ---
+ tools/testing/selftests/arm64/mte/check_child_memory.c        | 3 ---
+ tools/testing/selftests/arm64/mte/check_gcr_el1_cswitch.c     | 3 ---
+ tools/testing/selftests/arm64/mte/check_ksm_options.c         | 3 ---
+ tools/testing/selftests/arm64/mte/check_mmap_options.c        | 3 ---
+ tools/testing/selftests/arm64/mte/check_tags_inclusion.c      | 3 ---
+ tools/testing/selftests/arm64/mte/check_user_mem.c            | 3 ---
+ tools/testing/selftests/arm64/pauth/pac.c                     | 3 ---
+ tools/testing/selftests/arm64/signal/Makefile                 | 2 +-
+ tools/testing/selftests/bpf/bench.c                           | 1 -
+ tools/testing/selftests/bpf/benchs/bench_trigger.c            | 1 -
+ tools/testing/selftests/bpf/cgroup_helpers.c                  | 1 -
+ tools/testing/selftests/bpf/map_tests/task_storage_map.c      | 1 -
+ tools/testing/selftests/bpf/network_helpers.c                 | 2 --
+ tools/testing/selftests/bpf/prog_tests/bind_perm.c            | 1 -
+ tools/testing/selftests/bpf/prog_tests/bpf_cookie.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/bpf_iter_setsockopt.c  | 1 -
+ tools/testing/selftests/bpf/prog_tests/bpf_obj_pinning.c      | 1 -
+ tools/testing/selftests/bpf/prog_tests/btf_endian.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/btf_skc_cls_ingress.c  | 2 --
+ tools/testing/selftests/bpf/prog_tests/cgrp_kfunc.c           | 2 --
+ tools/testing/selftests/bpf/prog_tests/cgrp_local_storage.c   | 2 --
+ tools/testing/selftests/bpf/prog_tests/cls_redirect.c         | 3 ---
+ tools/testing/selftests/bpf/prog_tests/connect_ping.c         | 2 --
+ tools/testing/selftests/bpf/prog_tests/core_retro.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/d_path.c               | 1 -
+ tools/testing/selftests/bpf/prog_tests/deny_namespace.c       | 1 -
+ tools/testing/selftests/bpf/prog_tests/fexit_sleep.c          | 1 -
+ .../selftests/bpf/prog_tests/flow_dissector_reattach.c        | 2 --
+ tools/testing/selftests/bpf/prog_tests/get_stack_raw_tp.c     | 1 -
+ tools/testing/selftests/bpf/prog_tests/htab_reuse.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/htab_update.c          | 1 -
+ tools/testing/selftests/bpf/prog_tests/map_in_map.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/ns_current_pid_tgid.c  | 2 --
+ tools/testing/selftests/bpf/prog_tests/perf_branches.c        | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_buffer.c          | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_event_stackmap.c  | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_link.c            | 1 -
+ tools/testing/selftests/bpf/prog_tests/perf_skip.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/preempted_bpf_ma_op.c  | 1 -
+ tools/testing/selftests/bpf/prog_tests/rcu_read_lock.c        | 2 --
+ tools/testing/selftests/bpf/prog_tests/reg_bounds.c           | 2 --
+ tools/testing/selftests/bpf/prog_tests/ringbuf.c              | 1 -
+ tools/testing/selftests/bpf/prog_tests/ringbuf_multi.c        | 1 -
+ tools/testing/selftests/bpf/prog_tests/setget_sockopt.c       | 2 --
+ tools/testing/selftests/bpf/prog_tests/sk_assign.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/sk_lookup.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/sock_fields.c          | 2 --
+ tools/testing/selftests/bpf/prog_tests/task_kfunc.c           | 2 --
+ tools/testing/selftests/bpf/prog_tests/task_local_storage.c   | 2 --
+ tools/testing/selftests/bpf/prog_tests/task_pt_regs.c         | 1 -
+ tools/testing/selftests/bpf/prog_tests/tcp_custom_syncookie.c | 2 --
+ tools/testing/selftests/bpf/prog_tests/tcp_hdr_options.c      | 2 --
+ tools/testing/selftests/bpf/prog_tests/test_bpf_ma.c          | 1 -
+ .../testing/selftests/bpf/prog_tests/test_bpf_syscall_macro.c | 1 -
+ tools/testing/selftests/bpf/prog_tests/test_bpffs.c           | 1 -
+ tools/testing/selftests/bpf/prog_tests/test_overhead.c        | 1 -
+ tools/testing/selftests/bpf/prog_tests/token.c                | 1 -
+ tools/testing/selftests/bpf/prog_tests/trace_ext.c            | 2 --
+ tools/testing/selftests/bpf/prog_tests/trampoline_count.c     | 1 -
+ tools/testing/selftests/bpf/prog_tests/user_ringbuf.c         | 2 --
+ tools/testing/selftests/bpf/prog_tests/xdp_bonding.c          | 2 --
+ tools/testing/selftests/bpf/prog_tests/xdp_synproxy.c         | 2 --
+ tools/testing/selftests/bpf/test_flow_dissector.c             | 3 ---
+ tools/testing/selftests/bpf/test_lru_map.c                    | 1 -
+ tools/testing/selftests/bpf/test_progs.c                      | 1 -
+ tools/testing/selftests/bpf/test_tcpnotify_user.c             | 1 -
+ tools/testing/selftests/bpf/veristat.c                        | 1 -
+ tools/testing/selftests/bpf/xskxceiver.c                      | 2 --
+ tools/testing/selftests/breakpoints/breakpoint_test_arm64.c   | 3 ---
+ tools/testing/selftests/breakpoints/step_after_suspend_test.c | 3 ---
+ tools/testing/selftests/cachestat/test_cachestat.c            | 2 --
+ tools/testing/selftests/capabilities/test_execve.c            | 2 --
+ tools/testing/selftests/cgroup/cgroup_util.c                  | 3 ---
+ tools/testing/selftests/cgroup/test_core.c                    | 2 --
+ tools/testing/selftests/cgroup/test_cpu.c                     | 2 --
+ tools/testing/selftests/cgroup/test_hugetlb_memcg.c           | 2 --
+ tools/testing/selftests/cgroup/test_kmem.c                    | 2 --
+ tools/testing/selftests/cgroup/test_memcontrol.c              | 2 --
+ tools/testing/selftests/cgroup/test_zswap.c                   | 2 --
+ tools/testing/selftests/clone3/clone3.c                       | 2 --
+ .../testing/selftests/clone3/clone3_cap_checkpoint_restore.c  | 2 --
+ tools/testing/selftests/clone3/clone3_clear_sighand.c         | 2 --
+ tools/testing/selftests/clone3/clone3_selftests.h             | 1 -
+ tools/testing/selftests/clone3/clone3_set_tid.c               | 2 --
+ tools/testing/selftests/core/close_range_test.c               | 2 --
+ tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c   | 2 --
+ .../damon/debugfs_target_ids_read_before_terminate_race.c     | 1 -
+ tools/testing/selftests/drivers/dma-buf/udmabuf.c             | 1 -
+ tools/testing/selftests/exec/Makefile                         | 1 -
+ tools/testing/selftests/fchmodat2/fchmodat2_test.c            | 2 --
+ tools/testing/selftests/filelock/ofdlocks.c                   | 2 --
+ tools/testing/selftests/filesystems/binderfs/binderfs_test.c  | 2 --
+ tools/testing/selftests/filesystems/devpts_pts.c              | 1 -
+ tools/testing/selftests/filesystems/dnotify_test.c            | 1 -
+ tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c | 2 --
+ tools/testing/selftests/filesystems/eventfd/eventfd_test.c    | 2 --
+ tools/testing/selftests/filesystems/fat/rename_exchange.c     | 2 --
+ tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c   | 2 --
+ .../testing/selftests/filesystems/statmount/statmount_test.c  | 3 ---
+ tools/testing/selftests/firmware/fw_namespace.c               | 1 -
+ tools/testing/selftests/fpu/test_fpu.c                        | 2 --
+ tools/testing/selftests/futex/functional/Makefile             | 2 +-
+ tools/testing/selftests/futex/functional/futex_requeue_pi.c   | 3 ---
+ tools/testing/selftests/intel_pstate/Makefile                 | 2 +-
+ tools/testing/selftests/iommu/Makefile                        | 2 --
+ tools/testing/selftests/ipc/msgque.c                          | 1 -
+ tools/testing/selftests/kcmp/kcmp_test.c                      | 2 --
+ tools/testing/selftests/kselftest_harness.h                   | 2 +-
+ tools/testing/selftests/landlock/base_test.c                  | 2 --
+ tools/testing/selftests/landlock/fs_test.c                    | 2 --
+ tools/testing/selftests/landlock/net_test.c                   | 2 --
+ tools/testing/selftests/landlock/ptrace_test.c                | 2 --
+ tools/testing/selftests/lib.mk                                | 3 +++
+ tools/testing/selftests/lsm/common.c                          | 2 --
+ tools/testing/selftests/lsm/lsm_get_self_attr_test.c          | 2 --
+ tools/testing/selftests/lsm/lsm_list_modules_test.c           | 2 --
+ tools/testing/selftests/lsm/lsm_set_self_attr_test.c          | 2 --
+ tools/testing/selftests/membarrier/membarrier_test_impl.h     | 1 -
+ .../selftests/membarrier/membarrier_test_multi_thread.c       | 1 -
+ .../selftests/membarrier/membarrier_test_single_thread.c      | 1 -
+ tools/testing/selftests/memfd/common.c                        | 1 -
+ tools/testing/selftests/memfd/fuse_test.c                     | 2 --
+ tools/testing/selftests/memfd/memfd_test.c                    | 1 -
+ tools/testing/selftests/mincore/mincore_selftest.c            | 3 ---
+ tools/testing/selftests/mm/cow.c                              | 1 -
+ tools/testing/selftests/mm/gup_longterm.c                     | 1 -
+ tools/testing/selftests/mm/hugepage-mmap.c                    | 1 -
+ tools/testing/selftests/mm/hugepage-mremap.c                  | 2 --
+ tools/testing/selftests/mm/hugetlb-madvise.c                  | 2 --
+ tools/testing/selftests/mm/hugetlb-read-hwpoison.c            | 2 --
+ tools/testing/selftests/mm/khugepaged.c                       | 1 -
+ tools/testing/selftests/mm/ksm_functional_tests.c             | 1 -
+ tools/testing/selftests/mm/madv_populate.c                    | 1 -
+ tools/testing/selftests/mm/map_populate.c                     | 2 --
+ tools/testing/selftests/mm/memfd_secret.c                     | 2 --
+ tools/testing/selftests/mm/mlock2-tests.c                     | 1 -
+ tools/testing/selftests/mm/mrelease_test.c                    | 1 -
+ tools/testing/selftests/mm/mremap_dontunmap.c                 | 1 -
+ tools/testing/selftests/mm/mremap_test.c                      | 2 --
+ tools/testing/selftests/mm/mseal_test.c                       | 1 -
+ tools/testing/selftests/mm/pagemap_ioctl.c                    | 1 -
+ tools/testing/selftests/mm/pkey-helpers.h                     | 1 -
+ tools/testing/selftests/mm/protection_keys.c                  | 1 -
+ tools/testing/selftests/mm/seal_elf.c                         | 1 -
+ tools/testing/selftests/mm/split_huge_page_test.c             | 2 --
+ tools/testing/selftests/mm/thuge-gen.c                        | 2 --
+ tools/testing/selftests/mm/uffd-common.h                      | 1 -
+ tools/testing/selftests/mount/nosymfollow-test.c              | 1 -
+ tools/testing/selftests/mount/unprivileged-remount-test.c     | 1 -
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c    | 1 -
+ .../move_mount_set_group/move_mount_set_group_test.c          | 1 -
+ tools/testing/selftests/mqueue/mq_perf_tests.c                | 1 -
+ tools/testing/selftests/net/af_unix/diag_uid.c                | 2 --
+ tools/testing/selftests/net/af_unix/scm_pidfd.c               | 1 -
+ tools/testing/selftests/net/af_unix/scm_rights.c              | 1 -
+ tools/testing/selftests/net/af_unix/unix_connect.c            | 2 --
+ tools/testing/selftests/net/epoll_busy_poll.c                 | 2 --
+ tools/testing/selftests/net/gro.c                             | 3 ---
+ tools/testing/selftests/net/ip_defrag.c                       | 3 ---
+ tools/testing/selftests/net/ipsec.c                           | 3 ---
+ tools/testing/selftests/net/ipv6_flowlabel.c                  | 3 ---
+ tools/testing/selftests/net/ipv6_flowlabel_mgr.c              | 3 ---
+ tools/testing/selftests/net/lib/csum.c                        | 3 ---
+ tools/testing/selftests/net/mptcp/mptcp_connect.c             | 3 ---
+ tools/testing/selftests/net/mptcp/mptcp_inq.c                 | 3 ---
+ tools/testing/selftests/net/mptcp/mptcp_sockopt.c             | 3 ---
+ tools/testing/selftests/net/msg_zerocopy.c                    | 3 ---
+ tools/testing/selftests/net/netfilter/audit_logread.c         | 2 --
+ tools/testing/selftests/net/netfilter/conntrack_dump_flush.c  | 3 ---
+ tools/testing/selftests/net/nettest.c                         | 2 --
+ tools/testing/selftests/net/psock_fanout.c                    | 3 ---
+ tools/testing/selftests/net/psock_snd.c                       | 3 ---
+ tools/testing/selftests/net/reuseport_addr_any.c              | 3 ---
+ tools/testing/selftests/net/reuseport_bpf_cpu.c               | 3 ---
+ tools/testing/selftests/net/reuseport_bpf_numa.c              | 3 ---
+ tools/testing/selftests/net/reuseport_dualstack.c             | 3 ---
+ tools/testing/selftests/net/so_incoming_cpu.c                 | 1 -
+ tools/testing/selftests/net/so_netns_cookie.c                 | 1 -
+ tools/testing/selftests/net/so_txtime.c                       | 3 ---
+ tools/testing/selftests/net/tap.c                             | 3 ---
+ tools/testing/selftests/net/tcp_ao/Makefile                   | 2 +-
+ tools/testing/selftests/net/tcp_fastopen_backup_key.c         | 1 -
+ tools/testing/selftests/net/tcp_inq.c                         | 2 --
+ tools/testing/selftests/net/tcp_mmap.c                        | 1 -
+ tools/testing/selftests/net/tls.c                             | 3 ---
+ tools/testing/selftests/net/toeplitz.c                        | 3 ---
+ tools/testing/selftests/net/tun.c                             | 3 ---
+ tools/testing/selftests/net/txring_overwrite.c                | 3 ---
+ tools/testing/selftests/net/txtimestamp.c                     | 3 ---
+ tools/testing/selftests/net/udpgso.c                          | 3 ---
+ tools/testing/selftests/net/udpgso_bench_rx.c                 | 3 ---
+ tools/testing/selftests/net/udpgso_bench_tx.c                 | 3 ---
+ tools/testing/selftests/nsfs/owner.c                          | 1 -
+ tools/testing/selftests/nsfs/pidns.c                          | 1 -
+ tools/testing/selftests/openat2/helpers.c                     | 2 --
+ tools/testing/selftests/openat2/helpers.h                     | 1 -
+ tools/testing/selftests/openat2/openat2_test.c                | 2 --
+ tools/testing/selftests/openat2/rename_attack_test.c          | 2 --
+ tools/testing/selftests/openat2/resolve_test.c                | 2 --
+ tools/testing/selftests/perf_events/remove_on_exec.c          | 2 --
+ tools/testing/selftests/perf_events/sigtrap_threads.c         | 2 --
+ tools/testing/selftests/perf_events/watermark_signal.c        | 2 --
+ tools/testing/selftests/pid_namespace/regression_enomem.c     | 1 -
+ tools/testing/selftests/pidfd/pidfd.h                         | 1 -
+ tools/testing/selftests/pidfd/pidfd_fdinfo_test.c             | 2 --
+ tools/testing/selftests/pidfd/pidfd_getfd_test.c              | 2 --
+ tools/testing/selftests/pidfd/pidfd_open_test.c               | 2 --
+ tools/testing/selftests/pidfd/pidfd_poll_test.c               | 2 --
+ tools/testing/selftests/pidfd/pidfd_setns_test.c              | 2 --
+ tools/testing/selftests/pidfd/pidfd_test.c                    | 2 --
+ tools/testing/selftests/pidfd/pidfd_wait.c                    | 2 --
+ tools/testing/selftests/powerpc/benchmarks/context_switch.c   | 2 --
+ tools/testing/selftests/powerpc/benchmarks/exec_target.c      | 2 --
+ tools/testing/selftests/powerpc/benchmarks/fork.c             | 2 --
+ tools/testing/selftests/powerpc/benchmarks/futex_bench.c      | 3 ---
+ tools/testing/selftests/powerpc/dexcr/hashchk_test.c          | 3 ---
+ tools/testing/selftests/powerpc/dscr/dscr_default_test.c      | 3 ---
+ tools/testing/selftests/powerpc/dscr/dscr_explicit_test.c     | 3 ---
+ tools/testing/selftests/powerpc/dscr/dscr_sysfs_thread_test.c | 1 -
+ tools/testing/selftests/powerpc/mm/exec_prot.c                | 2 --
+ tools/testing/selftests/powerpc/mm/pkey_exec_prot.c           | 2 --
+ tools/testing/selftests/powerpc/mm/pkey_siginfo.c             | 2 --
+ tools/testing/selftests/powerpc/mm/tlbie_test.c               | 2 --
+ tools/testing/selftests/powerpc/papr_vpd/papr_vpd.c           | 1 -
+ tools/testing/selftests/powerpc/pmu/count_instructions.c      | 3 ---
+ tools/testing/selftests/powerpc/pmu/count_stcx_fail.c         | 3 ---
+ tools/testing/selftests/powerpc/pmu/ebb/ebb.c                 | 3 ---
+ .../selftests/powerpc/pmu/ebb/instruction_count_test.c        | 3 ---
+ tools/testing/selftests/powerpc/pmu/event.c                   | 2 --
+ tools/testing/selftests/powerpc/pmu/lib.c                     | 3 ---
+ tools/testing/selftests/powerpc/pmu/per_event_excludes.c      | 3 ---
+ tools/testing/selftests/powerpc/ptrace/perf-hwbreak.c         | 3 ---
+ tools/testing/selftests/powerpc/ptrace/ptrace-syscall.c       | 2 --
+ .../testing/selftests/powerpc/signal/sig_sc_double_restart.c  | 1 -
+ tools/testing/selftests/powerpc/signal/sigreturn_kernel.c     | 3 ---
+ tools/testing/selftests/powerpc/signal/sigreturn_vdso.c       | 3 ---
+ tools/testing/selftests/powerpc/syscalls/ipc_unmuxed.c        | 2 --
+ tools/testing/selftests/powerpc/tm/tm-exec.c                  | 2 --
+ tools/testing/selftests/powerpc/tm/tm-poison.c                | 2 --
+ .../testing/selftests/powerpc/tm/tm-signal-context-force-tm.c | 2 --
+ tools/testing/selftests/powerpc/tm/tm-signal-sigreturn-nt.c   | 2 --
+ tools/testing/selftests/powerpc/tm/tm-tmspr.c                 | 2 --
+ tools/testing/selftests/powerpc/tm/tm-trap.c                  | 2 --
+ tools/testing/selftests/powerpc/tm/tm-unavailable.c           | 2 --
+ tools/testing/selftests/powerpc/utils.c                       | 3 ---
+ tools/testing/selftests/proc/Makefile                         | 1 -
+ tools/testing/selftests/proc/proc-empty-vm.c                  | 3 ---
+ tools/testing/selftests/ptp/testptp.c                         | 1 -
+ tools/testing/selftests/ptrace/get_set_sud.c                  | 1 -
+ tools/testing/selftests/ptrace/peeksiginfo.c                  | 1 -
+ tools/testing/selftests/resctrl/Makefile                      | 2 +-
+ tools/testing/selftests/riscv/hwprobe/cbo.c                   | 1 -
+ tools/testing/selftests/riscv/hwprobe/which-cpus.c            | 1 -
+ tools/testing/selftests/riscv/mm/Makefile                     | 2 +-
+ tools/testing/selftests/rlimits/rlimits-per-userns.c          | 1 -
+ tools/testing/selftests/rseq/basic_percpu_ops_test.c          | 1 -
+ tools/testing/selftests/rseq/basic_test.c                     | 2 --
+ tools/testing/selftests/rseq/param_test.c                     | 1 -
+ tools/testing/selftests/rseq/rseq.c                           | 2 --
+ tools/testing/selftests/safesetid/safesetid-test.c            | 1 -
+ tools/testing/selftests/sched/cs_prctl_test.c                 | 2 --
+ tools/testing/selftests/seccomp/seccomp_benchmark.c           | 1 -
+ tools/testing/selftests/seccomp/seccomp_bpf.c                 | 2 --
+ tools/testing/selftests/sgx/Makefile                          | 2 +-
+ tools/testing/selftests/sgx/sigstruct.c                       | 1 -
+ tools/testing/selftests/sigaltstack/sas.c                     | 2 --
+ tools/testing/selftests/splice/default_file_splice_read.c     | 1 -
+ tools/testing/selftests/splice/splice_read.c                  | 1 -
+ tools/testing/selftests/syscall_user_dispatch/sud_benchmark.c | 2 --
+ tools/testing/selftests/syscall_user_dispatch/sud_test.c      | 2 --
+ .../selftests/thermal/intel/power_floor/power_floor_test.c    | 3 ---
+ .../thermal/intel/workload_hint/workload_hint_test.c          | 3 ---
+ tools/testing/selftests/timens/clock_nanosleep.c              | 1 -
+ tools/testing/selftests/timens/exec.c                         | 1 -
+ tools/testing/selftests/timens/futex.c                        | 1 -
+ tools/testing/selftests/timens/gettime_perf.c                 | 1 -
+ tools/testing/selftests/timens/procfs.c                       | 1 -
+ tools/testing/selftests/timens/timens.c                       | 1 -
+ tools/testing/selftests/timens/timer.c                        | 1 -
+ tools/testing/selftests/timens/timerfd.c                      | 1 -
+ tools/testing/selftests/timens/vfork_exec.c                   | 1 -
+ tools/testing/selftests/tmpfs/Makefile                        | 1 -
+ tools/testing/selftests/uevent/uevent_filtering.c             | 2 --
+ tools/testing/selftests/user_events/abi_test.c                | 2 --
+ tools/testing/selftests/vDSO/Makefile                         | 2 +-
+ tools/testing/selftests/vDSO/vdso_test_abi.c                  | 1 -
+ tools/testing/selftests/vDSO/vdso_test_clock_getres.c         | 2 --
+ tools/testing/selftests/vDSO/vdso_test_correctness.c          | 3 ---
+ tools/testing/selftests/x86/Makefile                          | 2 +-
+ tools/testing/selftests/x86/amx.c                             | 2 --
+ tools/testing/selftests/x86/check_initial_reg_state.c         | 3 ---
+ tools/testing/selftests/x86/corrupt_xstate_header.c           | 3 ---
+ tools/testing/selftests/x86/entry_from_vm86.c                 | 3 ---
+ tools/testing/selftests/x86/fsgsbase.c                        | 2 --
+ tools/testing/selftests/x86/fsgsbase_restore.c                | 2 --
+ tools/testing/selftests/x86/ioperm.c                          | 2 --
+ tools/testing/selftests/x86/iopl.c                            | 2 --
+ tools/testing/selftests/x86/lam.c                             | 1 -
+ tools/testing/selftests/x86/ldt_gdt.c                         | 2 --
+ tools/testing/selftests/x86/mov_ss_trap.c                     | 2 --
+ tools/testing/selftests/x86/nx_stack.c                        | 2 --
+ tools/testing/selftests/x86/ptrace_syscall.c                  | 2 --
+ tools/testing/selftests/x86/sigaltstack.c                     | 2 --
+ tools/testing/selftests/x86/sigreturn.c                       | 3 ---
+ tools/testing/selftests/x86/single_step_syscall.c             | 3 ---
+ tools/testing/selftests/x86/syscall_arg_fault.c               | 3 ---
+ tools/testing/selftests/x86/syscall_numbering.c               | 3 ---
+ tools/testing/selftests/x86/sysret_rip.c                      | 3 ---
+ tools/testing/selftests/x86/sysret_ss_attrs.c                 | 3 ---
+ tools/testing/selftests/x86/test_FCMOV.c                      | 4 ----
+ tools/testing/selftests/x86/test_FCOMI.c                      | 4 ----
+ tools/testing/selftests/x86/test_FISTTP.c                     | 4 ----
+ tools/testing/selftests/x86/test_mremap_vdso.c                | 1 -
+ tools/testing/selftests/x86/test_shadow_stack.c               | 3 ---
+ tools/testing/selftests/x86/test_syscall_vdso.c               | 4 ----
+ tools/testing/selftests/x86/test_vsyscall.c                   | 3 ---
+ tools/testing/selftests/x86/unwind_vdso.c                     | 3 ---
+ tools/testing/selftests/x86/vdso_restorer.c                   | 3 ---
+ 322 files changed, 13 insertions(+), 605 deletions(-)
+
+--
+2.45.1.288.g0e0cd299f1-goog
 
 
