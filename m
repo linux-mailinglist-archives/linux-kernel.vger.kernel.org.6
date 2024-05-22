@@ -1,102 +1,252 @@
-Return-Path: <linux-kernel+bounces-185670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0C48CB8B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:53:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0B58CB8B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75288283BCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:53:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 213BCB20CE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DD8AD59;
-	Wed, 22 May 2024 01:53:13 +0000 (UTC)
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063351171C;
+	Wed, 22 May 2024 01:57:26 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C894C6D;
-	Wed, 22 May 2024 01:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B04528EA;
+	Wed, 22 May 2024 01:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716342792; cv=none; b=l8ltJlx7Ans5eYWCgXJziW8hMxV9gFVeWK3h+Y7pHQuuk3XoNH8Dh+ElzuhsawAx9/jOur3zpD8vc/83YVs6Cr5ViWZF663/fKDtfb+eVIJ7oRJmXCXPH1K/8wLGclCunU9jgoLXynXPBU3GdkSMOgcS0YizInkXnu1b/oGe6w4=
+	t=1716343045; cv=none; b=YxoR//Y2Bp8uoa/Epmfrz5y2Nh1ofL/2nHDTZv8Mbqv7Q8oQQ69uropyOC1n5E7Zh/ARMF4fuoS7R9e0iVI9BnP+/TwIaIwgLwJMizoleQ/F3Wv1d8bsdLXyKVh3YUoDpK358fpFt2A/E60iS3ndkll9Ylsk+ahetr4ptnraMzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716342792; c=relaxed/simple;
-	bh=QzOuKU9c0vwtW/Ze84nja4TaK9d5djDTqJ5gKBV6pYE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TNzzLhgHDOHYQc59KX2/gPpygusgNw9khmIcesN/KPe840YrBxwlAyZaQJt8wrr2D9HdKuGllVJ3YTc5/ouH0qANLhrtM/eaE8wxAcxt+z+TEV4qhPhYNXcJNYOoBuYqd29Mbyq4TBfs1MzdxoWa5SFjemN0GfI7BjjrGHnKluU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f0f252db4dso2302096a34.0;
-        Tue, 21 May 2024 18:53:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716342790; x=1716947590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bt27wWUkwaxGWYZV4sI8tjk/fi7z2Y6g09AK4Fz8+fE=;
-        b=FvUXLu+beIH9llgTVX7B1psKZzUZBUrDXPd/rDj2WMYXq4hmalxEXpIAwujvt6HOI2
-         MVT/plS7bz0XxzqUqTxJ3NOrllnjeF/oBKuhBpwJ5zbJ+Xacgw9JbA7lACEMmuqDpyl0
-         s1UThm54sWJxvBhjTfb0pS17/8LkE65YG5zXvX7IRznpNwPGCxb3he6PSSGmTNRIch8T
-         SjUvAdhXO1rLCDyDNCP3PenbdCisxVIIl8BUFjnaxpKMci3FP+iqGiMxz14brSfDBZU1
-         sq4ehRqj7OM1Ahu9z6j+6JqONqPX5kO1oR2+OL/JEgTYCaxHBlNb00mtFfADz92NMIA2
-         hb9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU8TTGzvYWcqTFlKWyy2M4X/ER19UuAkORLzOlCS9gP6NHBywvJXt03tAykQY5lbxtstFfQHhU92A2o045CvLWvjTzISmND/MYxZHzrMQ3sgWqJV1cEu1S7xVTIJW26aaM8hBr7pPQ=
-X-Gm-Message-State: AOJu0YwkM99APTcmlrIGZs9gDOJexS+thIuDQO9lm1X/hwvyd19U9OlS
-	UWO3fdaCu1dlgbT9J1vvqRkRdwzajeABZzorKNtssttHzvcrMJA7YbrV2KNTQzM/Z+oUXnoqWMV
-	iuXNngRf0zBPhmyCR6VuTz/i8lcA=
-X-Google-Smtp-Source: AGHT+IFLPPilD8pOX77mCzYXmqAPEniDSoE51Dy0+JK+Jl8X4dJbi8em/Dj4jvKF/wF/djjnPMRM9wEBWBapzTKsvEw=
-X-Received: by 2002:a05:6870:1605:b0:22e:9e53:3fd2 with SMTP id
- 586e51a60fabf-24c68ba6e36mr870443fac.28.1716342790655; Tue, 21 May 2024
- 18:53:10 -0700 (PDT)
+	s=arc-20240116; t=1716343045; c=relaxed/simple;
+	bh=xHf9C7VC9Cn5nDtbZqifMKKp/pMcFa4oDvkZBX+9g5U=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=olH3OWTA3hLFXxKnhQSWBFJNO131t/j98ERPoKbh0aSNYN4XnJaGc8wXzZXiJrIA7Wz0ekQ3Mtv2DxyyK1clxH3I6KpycXLcV25X8p+Hh3L38yK0btjdAeR0hmmG9oqkjWkydKbeD6nEOW9LLP8ucdiasWp0G/RSazbNDS95TSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VkZDh3gnfz4f3jcy;
+	Wed, 22 May 2024 09:57:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 6ED461A01B9;
+	Wed, 22 May 2024 09:57:17 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgBHaw75UE1moSigNg--.25797S3;
+	Wed, 22 May 2024 09:57:15 +0800 (CST)
+Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, djwong@kernel.org,
+ hch@infradead.org, brauner@kernel.org, chandanbabu@kernel.org, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
+ <20240517111355.233085-4-yi.zhang@huaweicloud.com>
+ <ZkwJJuFCV+WQLl40@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <122ab6ed-147b-517c-148d-7cb35f7f888b@huaweicloud.com>
+Date: Wed, 22 May 2024 09:57:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87o79cjjik.fsf@kernel.org> <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
- <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local> <87h6f4jdrq.fsf@kernel.org>
- <878r0djxgc.fsf@kernel.org> <874jb0jzx5.fsf@kernel.org> <20240514160555.GCZkOL41oB3hBt45eO@fat_crate.local>
- <87msoofjg1.fsf@kernel.org> <35086bb6-ee11-4ac6-b8ba-5fab20065b54@intel.com>
- <871q60ffnr.fsf@kernel.org> <CAJZ5v0iHoU7dHxzL5ryehZT7unZiapoiBzPo1d=wsffNGqcS7Q@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iHoU7dHxzL5ryehZT7unZiapoiBzPo1d=wsffNGqcS7Q@mail.gmail.com>
-From: Len Brown <lenb@kernel.org>
-Date: Tue, 21 May 2024 21:52:59 -0400
-Message-ID: <CAJvTdKkR2HarKaU6rnS281=HYNuOpsyBFBdUSNNLzKpWDZ7Lyg@mail.gmail.com>
-Subject: Re: [regression] suspend stress test stalls within 30 minutes
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Kalle Valo <kvalo@kernel.org>, Dave Hansen <dave.hansen@intel.com>, 
-	Borislav Petkov <bp@alien8.de>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZkwJJuFCV+WQLl40@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgBHaw75UE1moSigNg--.25797S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF1Dtry5Wr43ur48Cr48JFb_yoWxuryxpF
+	WrK3W5Cr4Dt34Ivrn7ZF1qq3WFyw4rAF4IkryfJr42vwn8Xr1xtr9FgFWFg3yqkrs3Gr4j
+	vF4Ut397u3Z5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Fri, May 17, 2024 at 3:00=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
-> > [  449.061525] rtcwake test 31
-> > [  449.176854] PM: suspend entry (deep)
-> > [  449.179072] Filesystems sync: 0.002 seconds
->
-> This means that ksys_sync_helper() has run, so it blocks somewhere in
-> enter_state() around suspend_prepare().
->
-> Can please echo 1 (as root) to /sys/power/pm_debug_messages and retest?
->
-> This should allow us to see more in the log.
+On 2024/5/21 10:38, Dave Chinner wrote:
+> On Fri, May 17, 2024 at 07:13:55PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> When truncating a realtime file unaligned to a shorter size,
+>> xfs_setattr_size() only flush the EOF page before zeroing out, and
+>> xfs_truncate_page() also only zeros the EOF block. This could expose
+>> stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
+>> a write operation").
+>>
+>> If the sb_rextsize is bigger than one block, and we have a realtime
+>> inode that contains a long enough written extent. If we unaligned
+>> truncate into the middle of this extent, xfs_itruncate_extents() could
+>> split the extent and align the it's tail to sb_rextsize, there maybe
+>> have more than one blocks more between the end of the file. Since
+>> xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
+>> value, so it may leftover some blocks contains stale data that could be
+>> exposed if we append write it over a long enough distance later.
+>>
+>> xfs_truncate_page() should flush, zeros out the entire rtextsize range,
+>> and make sure the entire zeroed range have been flushed to disk before
+>> updating the inode size.
+>>
+>> Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
+>> Reported-by: Chandan Babu R <chandanbabu@kernel.org>
+>> Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
+>>  fs/xfs/xfs_iops.c  | 10 ----------
+>>  2 files changed, 31 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+>> index 4958cc3337bc..fc379450fe74 100644
+>> --- a/fs/xfs/xfs_iomap.c
+>> +++ b/fs/xfs/xfs_iomap.c
+>> @@ -1466,12 +1466,39 @@ xfs_truncate_page(
+>>  	loff_t			pos,
+>>  	bool			*did_zero)
+>>  {
+>> +	struct xfs_mount	*mp = ip->i_mount;
+>>  	struct inode		*inode = VFS_I(ip);
+>>  	unsigned int		blocksize = i_blocksize(inode);
+>> +	int			error;
+>> +
+>> +	if (XFS_IS_REALTIME_INODE(ip))
+>> +		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
+>> +
+>> +	/*
+>> +	 * iomap won't detect a dirty page over an unwritten block (or a
+>> +	 * cow block over a hole) and subsequently skips zeroing the
+>> +	 * newly post-EOF portion of the page. Flush the new EOF to
+>> +	 * convert the block before the pagecache truncate.
+>> +	 */
+>> +	error = filemap_write_and_wait_range(inode->i_mapping, pos,
+>> +					     roundup_64(pos, blocksize));
+>> +	if (error)
+>> +		return error;
+>>  
+>>  	if (IS_DAX(inode))
+>> -		return dax_truncate_page(inode, pos, blocksize, did_zero,
+>> -					&xfs_dax_write_iomap_ops);
+>> -	return iomap_truncate_page(inode, pos, blocksize, did_zero,
+>> -				   &xfs_buffered_write_iomap_ops);
+>> +		error = dax_truncate_page(inode, pos, blocksize, did_zero,
+>> +					  &xfs_dax_write_iomap_ops);
+>> +	else
+>> +		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
+>> +					    &xfs_buffered_write_iomap_ops);
+>> +	if (error)
+>> +		return error;
+>> +
+>> +	/*
+>> +	 * Write back path won't write dirty blocks post EOF folio,
+>> +	 * flush the entire zeroed range before updating the inode
+>> +	 * size.
+>> +	 */
+>> +	return filemap_write_and_wait_range(inode->i_mapping, pos,
+>> +					    roundup_64(pos, blocksize));
+>>  }
+> 
+> Ok, this means we do -three- blocking writebacks through this path
+> instead of one or maybe two.
+> 
+> We already know that this existing blocking writeback case for dirty
+> pages over unwritten extents is a significant performance issue for
+> some workloads. I have a fix in progress for iomap to handle this
+> case without requiring blocking writeback to be done to convert the
+> extent to written before we do the truncate.
+> 
+> Regardless, I think this whole "truncate is allocation unit size
+> aware" algorithm is largely unworkable without a rewrite. What XFS
+> needs to do on truncate *down* before we start the truncate
+> transaction is pretty simple:
+> 
+> 	- ensure that the new EOF extent tail contains zeroes
+> 	- ensure that the range from the existing ip->i_disk_size to
+> 	  the new EOF is on disk so data vs metadata ordering is
+> 	  correct for crash recovery purposes.
+> 
+> What this patch does to acheive that is:
+> 
+> 	1. blocking writeback to clean dirty unwritten/cow blocks at
+> 	the new EOF.
+> 	2. iomap_truncate_page() writes zeroes into the page cache,
+> 	which dirties the pages we just cleaned at the new EOF.
+> 	3. blocking writeback to clean the dirty blocks at the new
+> 	EOF.
+> 	4. truncate_setsize() then writes zeros to partial folios at
+> 	the new EOF, dirtying the EOF page again.
+> 	5. blocking writeback to clean dirty blocks from the current
+> 	on-disk size to the new EOF.
+> 
+> This is pretty crazy when you stop and think about it. We're writing
+> the same EOF block -three- times. The first data write gets
+> overwritten by zeroes on the second write, and the third write
+> writes the same zeroes as the second write. There are two redundant
+> *blocking* writes in this process.
 
-also, it would be interesting if you can reproduce with "rtcwake -m
-freeze" rather than "-m mem".
+Yes, this is indeed a performance disaster, and iomap_zero_range()
+should aware the dirty pages. I had the same problem when developing
+buffered iomap conversion on ext4.
 
-For we have a NUC8 like this in our lab, and we gave up on running
-ACPI S3 on it a few years ago
-because the BIOS just was never that good at ACPI S3.  However, it has
-been running freeze/s2idle
-like a champ, thousands of cycles per week, for years.
+> 
+> We can do all this with a single writeback operation if we are a
+> little bit smarter about the order of operations we perform and we
+> are a little bit smarter in iomap about zeroing dirty pages in the
+> page cache:
+> 
+> 	1. change iomap_zero_range() to do the right thing with
+> 	dirty unwritten and cow extents (the patch I've been working
+> 	on).
+> 
+> 	2. pass the range to be zeroed into iomap_truncate_page()
+> 	(the fundamental change being made here).
+> 
+> 	3. zero the required range *through the page cache*
+> 	(iomap_zero_range() already does this).
+> 
+> 	4. write back the XFS inode from ip->i_disk_size to the end
+> 	of the range zeroed by iomap_truncate_page()
+> 	(xfs_setattr_size() already does this).
+> 
+> 	5. i_size_write(newsize);
+> 
+> 	6. invalidate_inode_pages2_range(newsize, -1) to trash all
+> 	the page cache beyond the new EOF without doing any zeroing
+> 	as we've already done all the zeroing needed to the page
+> 	cache through iomap_truncate_page().
+> 
+> 
+> The patch I'm working on for step 1 is below. It still needs to be
+> extended to handle the cow case, but I'm unclear on how to exercise
+> that case so I haven't written the code to do it. The rest of it is
+> just rearranging the code that we already use just to get the order
+> of operations right. The only notable change in behaviour is using
+> invalidate_inode_pages2_range() instead of truncate_pagecache(),
+> because we don't want the EOF page to be dirtied again once we've
+> already written zeroes to disk....
+> 
 
-Len Brown, Intel
+Indeed, this sounds like the best solution. Since Darrick recommended
+that we could fix the stale data exposure on realtime inode issue by
+convert the tail extent to unwritten, I suppose we could do this after
+fixing the problem.
+
+Thanks,
+Yi.
+
 
