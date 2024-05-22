@@ -1,189 +1,147 @@
-Return-Path: <linux-kernel+bounces-186213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20D78CC127
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:24:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFF28CC12A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6766D2836FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:24:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F030EB2334C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B7D13D89C;
-	Wed, 22 May 2024 12:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037D413D632;
+	Wed, 22 May 2024 12:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="faHQ43JD"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2087.outbound.protection.outlook.com [40.107.236.87])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="sozDw0DP"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E9D8287C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716380649; cv=fail; b=Bza0Cd5nLK4UOrmd22HBk2/BdQBl/WaNYsG8vde2ZW57FxIgVUsphrxbRZR8HdzHTbZ3cLpDGJtsLQ/gWqENKszfRtSU0E4G7Ezs9rWoQAmBRDLCGTD869+l/nzvAkzSQXEDqZoWq1tpRfmpUbgM2Q5E61eHJI5a8fEYPqMfspc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716380649; c=relaxed/simple;
-	bh=SSbvVyX2UW7i3gXl4aA5qOmp/W3Ow+5HG9O3i8ovLEc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sTHT61IdSvQjhJ9hUTyzinXCDS+De63VgKgQtlorKlId3hhzXinJJN7ncr650TpxTVGK64EFLi0BTo5rUV8EtQqyRP5lRLwNB/wUSGvD0FHKCrxJBSL+/Rfbp4KXyvycOd57+hvySpids9BVv80MhCU80HT6sE+0n0XlWvtpm5I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=faHQ43JD; arc=fail smtp.client-ip=40.107.236.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F3KswqAcMfEuj/gaKkuLgRoi/D5xnF7axEnUrWVc1rriCRc+wtAOhIBeZrtUCURh4hoWKb/h4urmED7qf3UWKYSsbxrys2eTfjubBZLPtbxAGHFW1ES+5gs9vxQHcoHaLbdJOnoPZ9vyashK08kd2lPgwrhiCOBJYrnWmyVU6Y/lZP3nQK1edOLEbGhXD9yHcUQPgo6ctfXeF1sXMWF0k6f00lyfqgv5AkH7vODim78o76WlFaeEUUXm/3YlEVtKQNOnoyl4tjnrpCbeL8kuGH52VLHsaHuTbyAp11nm/KHHacxRVG01+mTJC8M4eQCn48e13bSC92qMOTkhLID2pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SSbvVyX2UW7i3gXl4aA5qOmp/W3Ow+5HG9O3i8ovLEc=;
- b=G3T8e1F0ewudUtlu4lXUwqQOSVq6C/8fEztQxykL6bAxTSQXjiJc4/sEQ6TWyaUN16sAgWO5trUCH8j2hnElXNlbniTavotLBRHELdW88RPvXk7Je2COJfrai6OOefpRUQ7rL2txWb5AJ7vs3JUE+Pk96+Mw0P/vxSuGQqvNE0AXSZfMluh1GlElFVbYOAfyAIB9S+kdnOfxoewnp+VZjB+kjjrCP+Sxhd4F66PYcW2EscwzqZ16ZXA4UhjowWQJWYW9IhB7JiGq/01x5mE9xGPBLWZenMDiOpPoVBfVJYgPkmgQK4RCKzLa2AUa4oIT1wpnzlpwzgHZQrRey2OjXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SSbvVyX2UW7i3gXl4aA5qOmp/W3Ow+5HG9O3i8ovLEc=;
- b=faHQ43JDgoNMC5obsL4E8kwWuJB0GLRSHf8xzozBOxU6Ehne7bTz346xY/Z42L3P6q3SiMDQJsv7abTDi4qfOEIx4vD08RPLEwH/zUIzXu+ECRLxJ6o8yWFIGFDXqJnimQ29FRntAGobM0vsv4pnxJtOGIfSE16Jpj0iQ8+BohBsDeE92YhHAF+ISU1pngoop1d2e+4XpOMieJmIhAZ5LU0DMi92tkniDTXFLmqd/ykylLGt9827pfjJBefLfYnCkKi8Kt0+RSBOTGHnszACY+Y1WSW+ERnFzi1TtmS/UzrIwbG0n2A1kYRr30ZhWfJPx2715Gv+DbP4cIXEoNU3FA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by PH8PR12MB6915.namprd12.prod.outlook.com (2603:10b6:510:1bc::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
- 2024 12:23:58 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
- 12:23:57 +0000
-Date: Wed, 22 May 2024 09:23:55 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>, Oscar Salvador <osalvador@suse.de>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [RFC PATCH v2 18/20] powerpc/64s: Use contiguous PMD/PUD instead
- of HUGEPD
-Message-ID: <20240522122355.GR20229@nvidia.com>
-References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
- <ac9f4f2d6e571e4579a8125b81eaa88fbddd6187.1715971869.git.christophe.leroy@csgroup.eu>
- <D1EHK0STZ19E.3CTOAWG7LVBPK@gmail.com>
- <99575c2c-7840-4fa4-b84e-aaddc7fef4cb@csgroup.eu>
- <D1FRWM5DHHOT.3EAJGCLO0YTND@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D1FRWM5DHHOT.3EAJGCLO0YTND@gmail.com>
-X-ClientProxiedBy: MN2PR14CA0003.namprd14.prod.outlook.com
- (2603:10b6:208:23e::8) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02AF13D53E;
+	Wed, 22 May 2024 12:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716380671; cv=none; b=oPxlj3BI4j5dGMNopQyD5yx39RoKPvPDonLUHnfJZ16Q5zdTA2HsBTIQRDQ9krMVhPkQwqUMDgSnA/390VjmVSWppvkqPEQnCTvrnhSscYivpNTatAXbAnYwfHJEIJAmAp271IgrVX1Th2gUWC+LNZgglW7KLrx6ESRMlOCeeIs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716380671; c=relaxed/simple;
+	bh=EPQiEdOm8pWQsKWJp92+fqy66UV0mN3U7t5279kB71c=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JHvG0XiBGr2TPepNV6kriuR4VRZA0lbCpaTvmTLqUlL3kuGBSlLYPiDqmNJD8Lx5FEdAW4D/B9GUaNquqCv44ygtumPHuXkjBY2ds4FmyVC+7lTRhoen41xl3WolcXsAQvR0VoaGvzb5ktEi9A/tsr62oE3EjQ13DEd3mUBUh2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=sozDw0DP; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716380668;
+	bh=EPQiEdOm8pWQsKWJp92+fqy66UV0mN3U7t5279kB71c=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=sozDw0DPD0uUURT3kUpLdSLj4oFB+YkwD4ki4HAn2/SPsB3gVGldkHTul93jLe1Yv
+	 sQz2WKx8N7XR5bH0rKz1lxIZG/eEYW8/lX59gPAjfXX62EtctyKRUG/vLSObWZBYhE
+	 IZfxvTjLTMrLP9IJpF63a2spdtVdyUpekBl8hU9PVA4WBLb3j8xlvxCxgarSRaf9z7
+	 dlRtSh7i67t6SuGRlwIldPf6OYni9kAgtMoreCUswb70DhL9+iH+GgBBWFa597CUL8
+	 HKRiDv7uU6C2OchAaGZVccJty1TSliFdFcbUVUHx+Qcok3c9JduJaBDtBu4Sx6KQsb
+	 BBWLUd04o+Utg==
+Received: from [100.95.196.182] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: andrzej.p)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D3E2337821A0;
+	Wed, 22 May 2024 12:24:26 +0000 (UTC)
+Message-ID: <f6819ac7-ba7a-442e-9408-af7bb673667c@collabora.com>
+Date: Wed, 22 May 2024 14:24:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH8PR12MB6915:EE_
-X-MS-Office365-Filtering-Correlation-Id: d1f563b5-f645-4f9d-249c-08dc7a5a0db6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bZ093FEt6J6BY7oqp9/Ahu17KaLLBLqFh6fTxvXWtRzo1gTQM2K1E/t486gU?=
- =?us-ascii?Q?3+nPJiJGrUfOulInR9AlA0S6GfKKZcYK1KjuyjWbNn/fbA1OL3JVspVl67Zo?=
- =?us-ascii?Q?Gh6S6HZaMVKmbAJgFc5HEj14pU6FhGrFAqpgheCoWvRdV2gCoaJXKRA2qARX?=
- =?us-ascii?Q?kocIWpruXPfXUcqnCwnjtQCnMogJ4/dXfuLxG89SngD2PT080JCNNNVr5evQ?=
- =?us-ascii?Q?M1taIFX2euXDoFhOhwb4Gqyc4Vd9kYSUXsYXKEhD6z9IgcaAEif7UqrlbCGV?=
- =?us-ascii?Q?CPT8pCC50ojEMM7Wam482ACRx6VJ2yi/3CGGO8mhuGRUU60fD+9dLLLLUkAt?=
- =?us-ascii?Q?+bgmHKi2lXSYMzv7u4vcyzklFhOUps4ewWK4gWuC6DlU1j0xMtEZvCqDE8wT?=
- =?us-ascii?Q?20FMkV9arfD9cESIXYI2xEYIAHUadS/RZwJPuCVaIz/lyVD5yroPIX8YFZUu?=
- =?us-ascii?Q?RaWUgUWmkvulBlWrRGbys+OqCrU4wn6Cb4BRzhcNR5YxJ500fSEJJSInnXxy?=
- =?us-ascii?Q?tty55XU/u2FkAx+Nae93UQRbApVf/agZjJF+JYVWkGkb44WfhsRmU13eB8+C?=
- =?us-ascii?Q?Ot2RKlaaLT5URSVJ33LY33HHXS6r7GntOmSi7MDRaTu9/mFTFuKJP5xtYAnX?=
- =?us-ascii?Q?cGzDy6p59tb3djxz7tF/J0O3VIHQLRtwX/H2cOY/KLzrqrWiBYCO8v8URmw1?=
- =?us-ascii?Q?015P810OBwnKA2YNlnBD+wP7r6U4XQzGiUdYqLzbQkMC163w04xLqAamyIUX?=
- =?us-ascii?Q?Q7bxyhgoNKs0cNQlbbf8cC/o+ireDlASSdKlaOYoY/WE1t9IIsG/g68fiPBK?=
- =?us-ascii?Q?VCOvR22OJOkwq2s6ng3Z+8JxRUgQPpZbW59Ev7maf9Hlm0Ygy55ieIo+6vPZ?=
- =?us-ascii?Q?KxX32bcvvmWbo3cSH3/J/CwiD4jBJWPgGe4QQfI2oVey7DgHbeBnP/JG4gOP?=
- =?us-ascii?Q?m06YI8Gw7PGiFRQ9xftfu5AkDgOMg4WUS1ESuBukWqIHatFO2VkmRTRvGCXg?=
- =?us-ascii?Q?sZULJVYiLhKXe48qBfkA3QkXY0d7xMklR4rE1c7WRogdutUYcuQGSOU032Y5?=
- =?us-ascii?Q?/hrq9x7BHw4jAolKXXSTr7n6WsDQOnHaE9/6Zs8kvUMFwla+1fys4HQBr9pt?=
- =?us-ascii?Q?/26khscVFrsH+I58MyKEIvnEFLT68xZ5ZfTBz3ExPvb7nxawu/MAtS0NoGfk?=
- =?us-ascii?Q?OghnRtBbdyquuvDyQQUAkJxLsqARVwgP9TrsQiGLNfmEOXFDYKq8tcuXl6dj?=
- =?us-ascii?Q?Zj1DPm359yFEKqbHxNUn7W6l3HLECzqRXqCMp8Fisw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?XBkxbeT3bK2bJRxyCyUyxkaqTeSvIG7NTuciD/T2em/Ovpp50pzInKGany4P?=
- =?us-ascii?Q?HUxhliH958NjjTU2I4uPjfrHBrJN9zsYUkAjKwRx1qhY93X67rBlV+ZQEaqA?=
- =?us-ascii?Q?C8+TL70/bDcJ5FDCDCix3KKh/jp0FYGaU4RUnwbDZtkzWHKSzYZjdAkUk2bY?=
- =?us-ascii?Q?Mm9dO5eTKsY7tBqs3DxNUpzTDYDbzCYU8boWPnd8CSCbHip+YLJSiRMh56Kn?=
- =?us-ascii?Q?aAjg8/A/s3Jr96Qs1q2ur3RsT475nHkWp4YKJ0WaFjJKM47VjTKO2FTC56aA?=
- =?us-ascii?Q?271vdZN7z/CzwhZTu0N1HiBU9UQxvwQ16Y3SYwFh9qXY7cnb+LMv4lLHT9qC?=
- =?us-ascii?Q?1e0e/ygZKp0MzMzSYLxSgbPRMjIDlll6S/0UTWTb1MECch0iNBGjpyqxnS0m?=
- =?us-ascii?Q?4szXaJItJrijx40tiWXoifI1HRKuOZKvHqDkqe98K9NtJhwqmb6SSD18wl/7?=
- =?us-ascii?Q?BGRdrJigOYG/W7eQ6cU90OzAAV8DX17tRxdpI7B3GhlLqfW8S7XaR4zLHJwx?=
- =?us-ascii?Q?G2qcjd3LIaZbNU3ripEyIw+tUtZwzhqSeouaku8OtzDirrdYPw5M71YvR41D?=
- =?us-ascii?Q?dxYkB626ntLU/kFqPXukbUS1LzjrsC9MgergJYOJSlx36MePxQRaFyEYXbgV?=
- =?us-ascii?Q?s5uLAL3ugsFGJuz05rsP8jJOP1GHfag/rzYiHRqAi1HYMmoC6Cbdrm2MizUd?=
- =?us-ascii?Q?pki6yLpb7aqtCmK+aSllcTN1RmBm/bGBdfmigMUGPCvV8x/Vt051JCvOqNz2?=
- =?us-ascii?Q?LrgIVPTsdcl6Rva1J4kSRSX7pVwyUl4kgdpzg/toFjJ9TUr2e4NSuG5f81FU?=
- =?us-ascii?Q?H6B+youwZzviVdsk5tCNL91wRExcZMK9pCOs40OsVzXqMi6/JcPRx/VsyYHB?=
- =?us-ascii?Q?agFcql53B0W/ymF1LiKVa/EBV+djEZQKWalJTHT+O86Oiiz0bKh+LOdt1Gnc?=
- =?us-ascii?Q?g0C2979ExVFmX5b1vTbwTy2yrMgRYNF5x41kZHL+FPDTq9TQZhJMlX5iCMvE?=
- =?us-ascii?Q?uuSuoDbK+A+EQqkS/5eWwswaVpnSHOU/aUXXjhGYpJAiILq92QqS977n0TCt?=
- =?us-ascii?Q?Qr+Ugya1eHSl+RhE8zZAEmha04b84d2DtAPc3nMqjyFt5cR/JvWFovN2KO4y?=
- =?us-ascii?Q?gCfaYw2aJ0bTFQmA50jKwkr1UhQAqdpurrsTOHIWZCAOAF0XvJt29Y+DQMYf?=
- =?us-ascii?Q?XHghMTkG/yHJZF66QazhvF8Bp7gJ5k/dgpRbWfdmO/2iV3TtPEqiHyo/JtTu?=
- =?us-ascii?Q?O2bSSVEzwudsOySVP8zHowv3+sZOn40RUzonFcxxMd8+MB3Ld8pfTJkVMoey?=
- =?us-ascii?Q?mXvZXsMDIN5ifoVN5un+RPF+0dS3p1Hwzrs07hSas5UTZZKE3zuxC4oQnXq0?=
- =?us-ascii?Q?7A9UhGzu5cWX3DxXbhCCecxJnaKrHkIS4csRYz99/qW3IPqFU/7sULQeKYW0?=
- =?us-ascii?Q?SErF67bTlbScq69Z+5Sxsioc7ZZujj9iP2XeTS/zOQIulzGozBZwR9X9NSFJ?=
- =?us-ascii?Q?+pieR7Vpnl1QSMzBPXhEuRF+93KfLe7mUofONSe4wDHbCHxXJQ1nNZ3q9o9X?=
- =?us-ascii?Q?DrkMwznC0fax6rPRKTE=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1f563b5-f645-4f9d-249c-08dc7a5a0db6
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 12:23:57.6917
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /UBVWUYyeYK8C6y5JcCkPWDqj+KX2FV/UJ5OnjxkaWxOK0rPrTYbNhtqsqvCb4nN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6915
+User-Agent: Mozilla Thunderbird
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Subject: Re: [PATCH v6,04/24] v4l: add documentation for restricted memory
+ flag
+To: Yunfei Dong <yunfei.dong@mediatek.com>,
+ Jeffrey Kardatzke <jkardatzke@google.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
+ Nathan Hebert <nhebert@chromium.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+ Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
+ <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T . J . Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
+ <20240516122102.16379-5-yunfei.dong@mediatek.com>
+Content-Language: en-US
+In-Reply-To: <20240516122102.16379-5-yunfei.dong@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 22, 2024 at 11:13:53AM +1000, Nicholas Piggin wrote:
+Hi Yunfei & Jeffrey,
 
-> From the mm/ side of things, hugetlb page tables are always walked via
-> the huge vma which knows the page size and could align address... I
-> guess except for fast gup? Which should be read-only. So okay you do
-> need to replicate huge ptes for fast gup at least. Any others?
+W dniu 16.05.2024 o 14:20, Yunfei Dong pisze:
+> From: Jeffrey Kardatzke <jkardatzke@google.com>
+> 
+> Adds documentation for V4L2_MEMORY_FLAG_RESTRICTED.
+> 
 
-We are trying to get away from this. We want all content in the page
-table to be walkable via the normal pud/pmd/pte/etc functions and the
-special huge VMA limited to only weird hugetlbfs internals. It should
-not leak into the arch.
+Why not in the patch where the flag is actually being added?
+ From that commit until this commit it would be undocumented.
 
-> There's going to need to be a little more to it. __hash_page_huge sets
-> PTE accessed and dirty for example, so if we allow any PTE readers to
-> check the non-0th pte we would have to do something about that.
+While at it...
 
-Ryan added a special function to get the access and dirty flags from a
-CONTIG PTE, the arch can do the right thing here. The case where there
-was a CONTIG PTE that spanned two PMD entries might be some trouble
-though.
+> Signed-off-by: Jeffrey Kardatzke <jkardatzke@google.com>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+> ---
+>   Documentation/userspace-api/media/v4l/buffer.rst | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/buffer.rst b/Documentation/userspace-api/media/v4l/buffer.rst
+> index 52bbee81c080..807e43bfed2b 100644
+> --- a/Documentation/userspace-api/media/v4l/buffer.rst
+> +++ b/Documentation/userspace-api/media/v4l/buffer.rst
+> @@ -696,7 +696,7 @@ enum v4l2_memory
+>   
+>   .. _memory-flags:
+>   
+> -Memory Consistency Flags
+> +Memory Flags
+>   ------------------------
+>   
+>   .. raw:: latex
+> @@ -728,6 +728,14 @@ Memory Consistency Flags
+>   	only if the buffer is used for :ref:`memory mapping <mmap>` I/O and the
+>   	queue reports the :ref:`V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS
+>   	<V4L2-BUF-CAP-SUPPORTS-MMAP-CACHE-HINTS>` capability.
+> +    * .. _`V4L2-MEMORY-FLAG-RESTRICTED`:
+> +
+> +      - ``V4L2_MEMORY_FLAG_RESTRICTED``
+> +      - 0x00000002
+> +      - The queued buffers are expected to be in restricted memory. If not, an
+> +	error will be returned. This flag can only be used with ``V4L2_MEMORY_DMABUF``.
+> +	Typically restricted buffers are allocated using a restricted dma-heap. This flag
+> +	can only be specified if the ``V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM`` is set.
 
-> How do you deal with dirty/accessed bits for other subarchs?
+is V4L2_BUF_CAP_SUPPORTS_RESTRICTED_MEM documented? Can it be referenced here
+in a way similar to how V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS is?
 
-ARM and RISCV verions will combine the access flags from every sub
-pte. Their HW is allowed to set dirty/access bits on any PTE in a
-contiguos set.
+Regards,
 
-Jason
+Andrzej
+
+>   
+>   .. raw:: latex
+>   
+
 
