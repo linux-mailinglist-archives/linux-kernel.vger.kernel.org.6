@@ -1,306 +1,189 @@
-Return-Path: <linux-kernel+bounces-186212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE4C8CC126
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:24:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20D78CC127
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3D9BB21A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6766D2836FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4A613D635;
-	Wed, 22 May 2024 12:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B7D13D89C;
+	Wed, 22 May 2024 12:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="wGtt6tJ8"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="faHQ43JD"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2087.outbound.protection.outlook.com [40.107.236.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1FF13D53C;
-	Wed, 22 May 2024 12:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716380629; cv=none; b=ZxSnEPEH7roAmvzLuRtxFaUL7l9yxPkJCYDe8XT8R/xxfp6xEM/7Fx6dgPzZlufW/HBLpuwNZTAJVH1iNgwPceoUSktT0txfTX4gt0XCQz24BhIH/NOoOty7HWwO9S9tdCKKYD7OcuIpZGQ/ZWzikPirkKYz5EAnHxAbZl8/vMQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716380629; c=relaxed/simple;
-	bh=phyztzXqZHdPHKrf8rO419t6Fa+vJzO/hs+BEbFz/nw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pMAoafK2Plg1u9895u/VtFFwHLfax7yrgBYHZ7SUjb0Wnczfslw/EDCXRVlAbg1W+DKeU/WuX9wo+YzS7UDVbLU3y+qFbDWO394ss0vyCQbNt+xXtV8gN/D+pu3as1IQ2/v7dZxF1v+059LZvlOuePvgb6QH+6xBtnCcjeeD8vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=wGtt6tJ8; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716380626;
-	bh=phyztzXqZHdPHKrf8rO419t6Fa+vJzO/hs+BEbFz/nw=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=wGtt6tJ8efObrlDVvEey44Szoh4c08bH3fMQfohugPaeRsm9KFwFA3jOqdSYSEAv+
-	 maoxRUVow1+2xlQCMMNQRPb3s4feJW1s9UewOa7ShgHaVdchpVZLJzwTI8ddNHGK0t
-	 HFcDYGDmTRixht+2huS7tt9hol7Nba0lW/E955CPt5wBqw1Dg6nYD2i4eCvzVugZ8J
-	 OL67a6QxlMHhfrCyx4kmP7taxCzYJNnZs+dvkrgOJu36Z5E+Hmha3AzGoQPYgT9CkB
-	 ilqG4Xc8xR9PKDEqJDo0aG7ymp/DWMUg5Q4w+W6nUzziwB8qDtvhft9Zg6bV9cnU5o
-	 LoW7f8jvWkuWQ==
-Received: from [100.95.196.182] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: andrzej.p)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 40C6F37821A0;
-	Wed, 22 May 2024 12:23:45 +0000 (UTC)
-Message-ID: <b76dc54f-ca33-4851-9999-72740cd22060@collabora.com>
-Date: Wed, 22 May 2024 14:23:44 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E9D8287C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716380649; cv=fail; b=Bza0Cd5nLK4UOrmd22HBk2/BdQBl/WaNYsG8vde2ZW57FxIgVUsphrxbRZR8HdzHTbZ3cLpDGJtsLQ/gWqENKszfRtSU0E4G7Ezs9rWoQAmBRDLCGTD869+l/nzvAkzSQXEDqZoWq1tpRfmpUbgM2Q5E61eHJI5a8fEYPqMfspc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716380649; c=relaxed/simple;
+	bh=SSbvVyX2UW7i3gXl4aA5qOmp/W3Ow+5HG9O3i8ovLEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=sTHT61IdSvQjhJ9hUTyzinXCDS+De63VgKgQtlorKlId3hhzXinJJN7ncr650TpxTVGK64EFLi0BTo5rUV8EtQqyRP5lRLwNB/wUSGvD0FHKCrxJBSL+/Rfbp4KXyvycOd57+hvySpids9BVv80MhCU80HT6sE+0n0XlWvtpm5I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=faHQ43JD; arc=fail smtp.client-ip=40.107.236.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=F3KswqAcMfEuj/gaKkuLgRoi/D5xnF7axEnUrWVc1rriCRc+wtAOhIBeZrtUCURh4hoWKb/h4urmED7qf3UWKYSsbxrys2eTfjubBZLPtbxAGHFW1ES+5gs9vxQHcoHaLbdJOnoPZ9vyashK08kd2lPgwrhiCOBJYrnWmyVU6Y/lZP3nQK1edOLEbGhXD9yHcUQPgo6ctfXeF1sXMWF0k6f00lyfqgv5AkH7vODim78o76WlFaeEUUXm/3YlEVtKQNOnoyl4tjnrpCbeL8kuGH52VLHsaHuTbyAp11nm/KHHacxRVG01+mTJC8M4eQCn48e13bSC92qMOTkhLID2pA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SSbvVyX2UW7i3gXl4aA5qOmp/W3Ow+5HG9O3i8ovLEc=;
+ b=G3T8e1F0ewudUtlu4lXUwqQOSVq6C/8fEztQxykL6bAxTSQXjiJc4/sEQ6TWyaUN16sAgWO5trUCH8j2hnElXNlbniTavotLBRHELdW88RPvXk7Je2COJfrai6OOefpRUQ7rL2txWb5AJ7vs3JUE+Pk96+Mw0P/vxSuGQqvNE0AXSZfMluh1GlElFVbYOAfyAIB9S+kdnOfxoewnp+VZjB+kjjrCP+Sxhd4F66PYcW2EscwzqZ16ZXA4UhjowWQJWYW9IhB7JiGq/01x5mE9xGPBLWZenMDiOpPoVBfVJYgPkmgQK4RCKzLa2AUa4oIT1wpnzlpwzgHZQrRey2OjXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SSbvVyX2UW7i3gXl4aA5qOmp/W3Ow+5HG9O3i8ovLEc=;
+ b=faHQ43JDgoNMC5obsL4E8kwWuJB0GLRSHf8xzozBOxU6Ehne7bTz346xY/Z42L3P6q3SiMDQJsv7abTDi4qfOEIx4vD08RPLEwH/zUIzXu+ECRLxJ6o8yWFIGFDXqJnimQ29FRntAGobM0vsv4pnxJtOGIfSE16Jpj0iQ8+BohBsDeE92YhHAF+ISU1pngoop1d2e+4XpOMieJmIhAZ5LU0DMi92tkniDTXFLmqd/ykylLGt9827pfjJBefLfYnCkKi8Kt0+RSBOTGHnszACY+Y1WSW+ERnFzi1TtmS/UzrIwbG0n2A1kYRr30ZhWfJPx2715Gv+DbP4cIXEoNU3FA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by PH8PR12MB6915.namprd12.prod.outlook.com (2603:10b6:510:1bc::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 12:23:58 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
+ 12:23:57 +0000
+Date: Wed, 22 May 2024 09:23:55 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>, Oscar Salvador <osalvador@suse.de>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v2 18/20] powerpc/64s: Use contiguous PMD/PUD instead
+ of HUGEPD
+Message-ID: <20240522122355.GR20229@nvidia.com>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <ac9f4f2d6e571e4579a8125b81eaa88fbddd6187.1715971869.git.christophe.leroy@csgroup.eu>
+ <D1EHK0STZ19E.3CTOAWG7LVBPK@gmail.com>
+ <99575c2c-7840-4fa4-b84e-aaddc7fef4cb@csgroup.eu>
+ <D1FRWM5DHHOT.3EAJGCLO0YTND@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D1FRWM5DHHOT.3EAJGCLO0YTND@gmail.com>
+X-ClientProxiedBy: MN2PR14CA0003.namprd14.prod.outlook.com
+ (2603:10b6:208:23e::8) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Subject: Re: [PATCH v6,09/24] media: mediatek: vcodec: allocate tee share
- memory
-To: Yunfei Dong <yunfei.dong@mediatek.com>,
- Jeffrey Kardatzke <jkardatzke@google.com>,
- =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
- Nathan Hebert <nhebert@chromium.org>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
- Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
- <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T . J . Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
- <20240516122102.16379-10-yunfei.dong@mediatek.com>
-Content-Language: en-US
-In-Reply-To: <20240516122102.16379-10-yunfei.dong@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH8PR12MB6915:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1f563b5-f645-4f9d-249c-08dc7a5a0db6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bZ093FEt6J6BY7oqp9/Ahu17KaLLBLqFh6fTxvXWtRzo1gTQM2K1E/t486gU?=
+ =?us-ascii?Q?3+nPJiJGrUfOulInR9AlA0S6GfKKZcYK1KjuyjWbNn/fbA1OL3JVspVl67Zo?=
+ =?us-ascii?Q?Gh6S6HZaMVKmbAJgFc5HEj14pU6FhGrFAqpgheCoWvRdV2gCoaJXKRA2qARX?=
+ =?us-ascii?Q?kocIWpruXPfXUcqnCwnjtQCnMogJ4/dXfuLxG89SngD2PT080JCNNNVr5evQ?=
+ =?us-ascii?Q?M1taIFX2euXDoFhOhwb4Gqyc4Vd9kYSUXsYXKEhD6z9IgcaAEif7UqrlbCGV?=
+ =?us-ascii?Q?CPT8pCC50ojEMM7Wam482ACRx6VJ2yi/3CGGO8mhuGRUU60fD+9dLLLLUkAt?=
+ =?us-ascii?Q?+bgmHKi2lXSYMzv7u4vcyzklFhOUps4ewWK4gWuC6DlU1j0xMtEZvCqDE8wT?=
+ =?us-ascii?Q?20FMkV9arfD9cESIXYI2xEYIAHUadS/RZwJPuCVaIz/lyVD5yroPIX8YFZUu?=
+ =?us-ascii?Q?RaWUgUWmkvulBlWrRGbys+OqCrU4wn6Cb4BRzhcNR5YxJ500fSEJJSInnXxy?=
+ =?us-ascii?Q?tty55XU/u2FkAx+Nae93UQRbApVf/agZjJF+JYVWkGkb44WfhsRmU13eB8+C?=
+ =?us-ascii?Q?Ot2RKlaaLT5URSVJ33LY33HHXS6r7GntOmSi7MDRaTu9/mFTFuKJP5xtYAnX?=
+ =?us-ascii?Q?cGzDy6p59tb3djxz7tF/J0O3VIHQLRtwX/H2cOY/KLzrqrWiBYCO8v8URmw1?=
+ =?us-ascii?Q?015P810OBwnKA2YNlnBD+wP7r6U4XQzGiUdYqLzbQkMC163w04xLqAamyIUX?=
+ =?us-ascii?Q?Q7bxyhgoNKs0cNQlbbf8cC/o+ireDlASSdKlaOYoY/WE1t9IIsG/g68fiPBK?=
+ =?us-ascii?Q?VCOvR22OJOkwq2s6ng3Z+8JxRUgQPpZbW59Ev7maf9Hlm0Ygy55ieIo+6vPZ?=
+ =?us-ascii?Q?KxX32bcvvmWbo3cSH3/J/CwiD4jBJWPgGe4QQfI2oVey7DgHbeBnP/JG4gOP?=
+ =?us-ascii?Q?m06YI8Gw7PGiFRQ9xftfu5AkDgOMg4WUS1ESuBukWqIHatFO2VkmRTRvGCXg?=
+ =?us-ascii?Q?sZULJVYiLhKXe48qBfkA3QkXY0d7xMklR4rE1c7WRogdutUYcuQGSOU032Y5?=
+ =?us-ascii?Q?/hrq9x7BHw4jAolKXXSTr7n6WsDQOnHaE9/6Zs8kvUMFwla+1fys4HQBr9pt?=
+ =?us-ascii?Q?/26khscVFrsH+I58MyKEIvnEFLT68xZ5ZfTBz3ExPvb7nxawu/MAtS0NoGfk?=
+ =?us-ascii?Q?OghnRtBbdyquuvDyQQUAkJxLsqARVwgP9TrsQiGLNfmEOXFDYKq8tcuXl6dj?=
+ =?us-ascii?Q?Zj1DPm359yFEKqbHxNUn7W6l3HLECzqRXqCMp8Fisw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XBkxbeT3bK2bJRxyCyUyxkaqTeSvIG7NTuciD/T2em/Ovpp50pzInKGany4P?=
+ =?us-ascii?Q?HUxhliH958NjjTU2I4uPjfrHBrJN9zsYUkAjKwRx1qhY93X67rBlV+ZQEaqA?=
+ =?us-ascii?Q?C8+TL70/bDcJ5FDCDCix3KKh/jp0FYGaU4RUnwbDZtkzWHKSzYZjdAkUk2bY?=
+ =?us-ascii?Q?Mm9dO5eTKsY7tBqs3DxNUpzTDYDbzCYU8boWPnd8CSCbHip+YLJSiRMh56Kn?=
+ =?us-ascii?Q?aAjg8/A/s3Jr96Qs1q2ur3RsT475nHkWp4YKJ0WaFjJKM47VjTKO2FTC56aA?=
+ =?us-ascii?Q?271vdZN7z/CzwhZTu0N1HiBU9UQxvwQ16Y3SYwFh9qXY7cnb+LMv4lLHT9qC?=
+ =?us-ascii?Q?1e0e/ygZKp0MzMzSYLxSgbPRMjIDlll6S/0UTWTb1MECch0iNBGjpyqxnS0m?=
+ =?us-ascii?Q?4szXaJItJrijx40tiWXoifI1HRKuOZKvHqDkqe98K9NtJhwqmb6SSD18wl/7?=
+ =?us-ascii?Q?BGRdrJigOYG/W7eQ6cU90OzAAV8DX17tRxdpI7B3GhlLqfW8S7XaR4zLHJwx?=
+ =?us-ascii?Q?G2qcjd3LIaZbNU3ripEyIw+tUtZwzhqSeouaku8OtzDirrdYPw5M71YvR41D?=
+ =?us-ascii?Q?dxYkB626ntLU/kFqPXukbUS1LzjrsC9MgergJYOJSlx36MePxQRaFyEYXbgV?=
+ =?us-ascii?Q?s5uLAL3ugsFGJuz05rsP8jJOP1GHfag/rzYiHRqAi1HYMmoC6Cbdrm2MizUd?=
+ =?us-ascii?Q?pki6yLpb7aqtCmK+aSllcTN1RmBm/bGBdfmigMUGPCvV8x/Vt051JCvOqNz2?=
+ =?us-ascii?Q?LrgIVPTsdcl6Rva1J4kSRSX7pVwyUl4kgdpzg/toFjJ9TUr2e4NSuG5f81FU?=
+ =?us-ascii?Q?H6B+youwZzviVdsk5tCNL91wRExcZMK9pCOs40OsVzXqMi6/JcPRx/VsyYHB?=
+ =?us-ascii?Q?agFcql53B0W/ymF1LiKVa/EBV+djEZQKWalJTHT+O86Oiiz0bKh+LOdt1Gnc?=
+ =?us-ascii?Q?g0C2979ExVFmX5b1vTbwTy2yrMgRYNF5x41kZHL+FPDTq9TQZhJMlX5iCMvE?=
+ =?us-ascii?Q?uuSuoDbK+A+EQqkS/5eWwswaVpnSHOU/aUXXjhGYpJAiILq92QqS977n0TCt?=
+ =?us-ascii?Q?Qr+Ugya1eHSl+RhE8zZAEmha04b84d2DtAPc3nMqjyFt5cR/JvWFovN2KO4y?=
+ =?us-ascii?Q?gCfaYw2aJ0bTFQmA50jKwkr1UhQAqdpurrsTOHIWZCAOAF0XvJt29Y+DQMYf?=
+ =?us-ascii?Q?XHghMTkG/yHJZF66QazhvF8Bp7gJ5k/dgpRbWfdmO/2iV3TtPEqiHyo/JtTu?=
+ =?us-ascii?Q?O2bSSVEzwudsOySVP8zHowv3+sZOn40RUzonFcxxMd8+MB3Ld8pfTJkVMoey?=
+ =?us-ascii?Q?mXvZXsMDIN5ifoVN5un+RPF+0dS3p1Hwzrs07hSas5UTZZKE3zuxC4oQnXq0?=
+ =?us-ascii?Q?7A9UhGzu5cWX3DxXbhCCecxJnaKrHkIS4csRYz99/qW3IPqFU/7sULQeKYW0?=
+ =?us-ascii?Q?SErF67bTlbScq69Z+5Sxsioc7ZZujj9iP2XeTS/zOQIulzGozBZwR9X9NSFJ?=
+ =?us-ascii?Q?+pieR7Vpnl1QSMzBPXhEuRF+93KfLe7mUofONSe4wDHbCHxXJQ1nNZ3q9o9X?=
+ =?us-ascii?Q?DrkMwznC0fax6rPRKTE=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1f563b5-f645-4f9d-249c-08dc7a5a0db6
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 12:23:57.6917
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /UBVWUYyeYK8C6y5JcCkPWDqj+KX2FV/UJ5OnjxkaWxOK0rPrTYbNhtqsqvCb4nN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6915
 
-Hi Yunfei,
+On Wed, May 22, 2024 at 11:13:53AM +1000, Nicholas Piggin wrote:
 
-W dniu 16.05.2024 o 14:20, Yunfei Dong pisze:
-> Allocate two share memory for each lat and core hardware used to share
-> information with optee-os. Msg buffer used to send ipi command and get ack
-> command with optee-os, data buffer used to store vsi information which
-> used for hardware decode.
-> 
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> ---
->   .../vcodec/decoder/mtk_vcodec_dec_optee.c     | 80 ++++++++++++++++++-
->   .../vcodec/decoder/mtk_vcodec_dec_optee.h     | 32 ++++++++
->   2 files changed, 111 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.c
-> index 38d9c1c1785a..611fb0e56480 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.c
-> @@ -47,13 +47,69 @@ int mtk_vcodec_dec_optee_private_init(struct mtk_vcodec_dec_dev *vcodec_dev)
->   }
->   EXPORT_SYMBOL_GPL(mtk_vcodec_dec_optee_private_init);
->   
-> +static void mtk_vcodec_dec_optee_deinit_memref(struct mtk_vdec_optee_ca_info *ca_info,
-> +					       enum mtk_vdec_optee_data_index data_index)
-> +{
-> +	tee_shm_free(ca_info->shm_memref[data_index].msg_shm);
-> +}
-> +
-> +static int mtk_vcodec_dec_optee_init_memref(struct tee_context *tee_vdec_ctx,
-> +					    struct mtk_vdec_optee_ca_info *ca_info,
-> +					    enum mtk_vdec_optee_data_index data_index)
-> +{
-> +	struct mtk_vdec_optee_shm_memref *shm_memref;
-> +	int alloc_size = 0, err = 0;
-> +	u64 shm_param_type = 0;
-> +	bool copy_buffer;
-> +
-> +	switch (data_index) {
-> +	case OPTEE_MSG_INDEX:
-> +		shm_param_type = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
-> +		alloc_size = MTK_VDEC_OPTEE_MSG_SIZE;
-> +		copy_buffer = true;
-> +		break;
-> +	case OPTEE_DATA_INDEX:
-> +		shm_param_type = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
-> +		alloc_size = MTK_VDEC_OPTEE_HW_SIZE;
-> +		copy_buffer = false;
-> +		break;
-> +	default:
-> +		pr_err(MTK_DBG_VCODEC_STR "tee invalid data_index: %d.\n", data_index);
-> +		return -EINVAL;
-> +	}
-> +
-> +	shm_memref = &ca_info->shm_memref[data_index];
-> +
-> +	/* Allocate dynamic shared memory with decoder TA */
-> +	shm_memref->msg_shm_size = alloc_size;
-> +	shm_memref->param_type = shm_param_type;
-> +	shm_memref->copy_to_ta = copy_buffer;
-> +	shm_memref->msg_shm = tee_shm_alloc_kernel_buf(tee_vdec_ctx, shm_memref->msg_shm_size);
-> +	if (IS_ERR(shm_memref->msg_shm)) {
-> +		pr_err(MTK_DBG_VCODEC_STR "tee alloc buf fail: data_index:%d.\n", data_index);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	shm_memref->msg_shm_ca_buf = tee_shm_get_va(shm_memref->msg_shm, 0);
-> +	if (IS_ERR(shm_memref->msg_shm_ca_buf)) {
-> +		pr_err(MTK_DBG_VCODEC_STR "tee get shm va fail: data_index:%d.\n", data_index);
-> +		err = PTR_ERR(shm_memref->msg_shm_ca_buf);
-> +		goto err_get_msg_va;
-> +	}
-> +
-> +	return err;
+> From the mm/ side of things, hugetlb page tables are always walked via
+> the huge vma which knows the page size and could align address... I
+> guess except for fast gup? Which should be read-only. So okay you do
+> need to replicate huge ptes for fast gup at least. Any others?
 
-Anything other than a zero possible here? In error-free exectution the return
-value of zero is set far away from here. And then both error-free execution
-and error recovery end in "return err;" which looks kind of weird to me.
-Maybe that's just my personal preference, but I'd prefer "return 0;" here.
-Alternatively, maybe rename "err" as "ret"? This applies to all patches.
+We are trying to get away from this. We want all content in the page
+table to be walkable via the normal pud/pmd/pte/etc functions and the
+special huge VMA limited to only weird hugetlbfs internals. It should
+not leak into the arch.
 
-I wouldn't mind a blank line here to visually separate the error recovery path
-from error-free execution. This applies to all patches.
+> There's going to need to be a little more to it. __hash_page_huge sets
+> PTE accessed and dirty for example, so if we allow any PTE readers to
+> check the non-0th pte we would have to do something about that.
 
-> +err_get_msg_va:
-> +	tee_shm_free(shm_memref->msg_shm);
-> +	return err;
-> +}
-> +
->   static int mtk_vcodec_dec_optee_init_hw_info(struct mtk_vdec_optee_private *optee_private,
->   					     enum mtk_vdec_hw_id hardware_index)
->   {
->   	struct device *dev = &optee_private->vcodec_dev->plat_dev->dev;
->   	struct tee_ioctl_open_session_arg session_arg;
->   	struct mtk_vdec_optee_ca_info *ca_info;
-> -	int err = 0, session_func;
-> +	int err, i, j, session_func;
->   
->   	/* Open lat and core session with vdec TA. */
->   	switch (hardware_index) {
-> @@ -87,6 +143,24 @@ static int mtk_vcodec_dec_optee_init_hw_info(struct mtk_vdec_optee_private *opte
->   	dev_dbg(dev, MTK_DBG_VCODEC_STR "open vdec tee session hw_id:%d session_id=%x.\n",
->   		hardware_index, ca_info->vdec_session_id);
->   
-> +	/* Allocate dynamic shared memory with decoder TA */
-> +	for (i = 0; i < OPTEE_MAX_INDEX; i++) {
-> +		err = mtk_vcodec_dec_optee_init_memref(optee_private->tee_vdec_ctx, ca_info, i);
-> +		if (err) {
-> +			dev_err(dev, MTK_DBG_VCODEC_STR "init vdec memref failed: %d.\n", i);
-> +			goto err_init_memref;
-> +		}
-> +	}
-> +
-> +	return err;
-> +err_init_memref:
-> +	if (i != 0) {
+Ryan added a special function to get the access and dirty flags from a
+CONTIG PTE, the arch can do the right thing here. The case where there
+was a CONTIG PTE that spanned two PMD entries might be some trouble
+though.
 
-Isn't i now equal to the index at which init memref failed?
+> How do you deal with dirty/accessed bits for other subarchs?
 
-> +		for (j = 0; j < i; j++)
-> +			mtk_vcodec_dec_optee_deinit_memref(ca_info, j);
-> +	}
+ARM and RISCV verions will combine the access flags from every sub
+pte. Their HW is allowed to set dirty/access bits on any PTE in a
+contiguos set.
 
-So instead of the above maybe:
-
-	--i;
-	while (i >= 0)
-		mtk_vcodec_dec_optee_deinit_memref(ca_info, i--);
-
-after --i the i points to the last successfully initialized memref unless < 0.
-This way you can eliminate the j.
-
-> +
-> +	tee_client_close_session(optee_private->tee_vdec_ctx, ca_info->vdec_session_id);
-> +
->   	return err;
->   }
->   
-> @@ -94,12 +168,16 @@ static void mtk_vcodec_dec_optee_deinit_hw_info(struct mtk_vdec_optee_private *o
->   						enum mtk_vdec_hw_id hw_id)
->   {
->   	struct mtk_vdec_optee_ca_info *ca_info;
-> +	int i;
->   
->   	if (hw_id == MTK_VDEC_LAT0)
->   		ca_info = &optee_private->lat_ca;
->   	else
->   		ca_info = &optee_private->core_ca;
->   
-> +	for (i = 0; i < OPTEE_MAX_INDEX; i++)
-> +		mtk_vcodec_dec_optee_deinit_memref(ca_info, i);
-> +
->   	tee_client_close_session(optee_private->tee_vdec_ctx, ca_info->vdec_session_id);
->   }
->   
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.h b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.h
-> index 8b1dca49331e..24aa63af9887 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.h
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_optee.h
-> @@ -18,16 +18,48 @@
->   
->   #define MTK_OPTEE_MAX_TEE_PARAMS 4
->   
-> +#define MTK_VDEC_OPTEE_MSG_SIZE     128
-> +#define MTK_VDEC_OPTEE_HW_SIZE      (8 * SZ_1K)
-> +
-> +/**
-> + * struct mtk_vdec_optee_shm_memref - share memory reference params
-
-maybe s/share/shared ? Applies to other occurences as well.
-
-Regards,
-
-Andrzej
-
-> + * @msg_shm:        message shared with TA in TEE.
-> + * @msg_shm_ca_buf: ca buffer.
-> + *
-> + * @msg_shm_size:   share message size.
-> + * @param_type:     each tee param types.
-> + * @copy_to_ta:     need to copy data from ca to share memory.
-> + */
-> +struct mtk_vdec_optee_shm_memref {
-> +	struct tee_shm *msg_shm;
-> +	u8 *msg_shm_ca_buf;
-> +
-> +	u32 msg_shm_size;
-> +	u64 param_type;
-> +	bool copy_to_ta;
-> +};
-> +
->   /**
->    * struct mtk_vdec_optee_ca_info - ca related param
->    * @vdec_session_id:   optee TA session identifier.
->    * @hw_id:             hardware index.
->    * @vdec_session_func: trusted application function id used specific to the TA.
-> + * @shm_memref:        share memory reference params.
->    */
->   struct mtk_vdec_optee_ca_info {
->   	u32 vdec_session_id;
->   	enum mtk_vdec_hw_id hw_id;
->   	u32 vdec_session_func;
-> +	struct mtk_vdec_optee_shm_memref shm_memref[MTK_OPTEE_MAX_TEE_PARAMS];
-> +};
-> +
-> +/*
-> + * enum mtk_vdec_optee_data_index - used to indentify each share memory information
-> + */
-> +enum mtk_vdec_optee_data_index {
-> +	OPTEE_MSG_INDEX = 0,
-> +	OPTEE_DATA_INDEX,
-> +	OPTEE_MAX_INDEX,
->   };
->   
->   /**
-
+Jason
 
