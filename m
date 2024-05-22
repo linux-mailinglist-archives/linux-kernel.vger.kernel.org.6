@@ -1,360 +1,337 @@
-Return-Path: <linux-kernel+bounces-186728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65AA8CC815
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:18:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385BD8CC818
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3CF1F21DFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6071C2103C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3361420D4;
-	Wed, 22 May 2024 21:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32721422D3;
+	Wed, 22 May 2024 21:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkPz2dB7"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjKIc5yZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F5676048
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716412719; cv=none; b=FvmD7EFmM0wtKFs3BRqcGo3fZI9mLEOJtjSrSgGJInRkahmE0LtpOvahPqxYghTQj8Ja1qGQ+Ya3pd4FFtNYyiH8bdARLxX3b6KwTGFV0ksnZzM2ApwFXy1h/P0jNAGULererKbGM5nrYLT8rIfjbj3HCJSB+7MaY4WDDmzAufU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716412719; c=relaxed/simple;
-	bh=h1du3Ar30jmBXtd+6JExR7IE+3FzKfDKF8z+kfLk3wg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qLc4X2UPVysvDSlbYUvN1Nw6ny/NcOPtZdZ8OnE1a8PDNt+dVcvT7rh8TtSpmlyxsppzgjFr3fkljlwECG3Lr0vwEQD0jzXp1HsqSm9PNwgGLwkWqx1RxChNKrsx5Z288AVFZdJ1HRmpZjiC5UXVaCVagmHtnXImiFnwUKvgJrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mkPz2dB7; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-354de97586cso1352636f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716412714; x=1717017514; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LPFBmLMrXmmvr6J+GTuOCF+VbCYwsLvpCyRM6XYnE9o=;
-        b=mkPz2dB7SiB3oergsH0vEvgHIcIX/pZqR1F4wQE0TUSOOlBQ9UW85yI8sxXqHfX55z
-         n7r0J10bML+66rdbeUtxRMkIAK9aetCa2Ayvm2wK/KOCiZSSUC8iE2X6Fku6o/AmxJE7
-         O+ySyhnAsy0MrdBWswpXsi1gJdOapgpUdRvHBxJbfYmybtzQGm8PKEvMa9P/XMB8ge62
-         Mh+l5+CP/XUGndsLLu0rf68YtSjG4jDqsVQSM6dzSsCQLNshZF//PHBulfDU48O61xuR
-         x8R+4VLeC8FXQlGZ/oYSPNUs8NEQ5iyeZv8IcqKVeFzDtoAYLsFQArLRMLa2DpWMOhi8
-         bwZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716412714; x=1717017514;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LPFBmLMrXmmvr6J+GTuOCF+VbCYwsLvpCyRM6XYnE9o=;
-        b=TQ39FBZM88Hnnvy6eHG/Hxha7vU5ukgy9sONT0dwq+t1XEzb3kyH4OomNyWslCeY5E
-         wfhVSZC6/GwDU4LDF5HAFVYyqHu2V9C24fYU8sC2Wa7XmO6UjlDmQmAJZMvNs1ibw3t5
-         jJzf4Cml0rEXHl0x4jizYPaM/ZbpgLLvUekKy9V/OJ+ylf/63Ii+JbAQ9FEsgLA+ZGsU
-         LABm+pXnwz8BLHSxIOSKDEpyXPhcYT8/0yb/nWA87ieP2wbJ06ESrLobViNlM/wNsldM
-         YllM4AdfF0SzHAADEuEv7tQnGukHeQ6UCs9gecUoBEwDK+ql8vsivbmwhIHyIsgwyrzX
-         NK7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVZvLFVwyeGG/MHyr9xBsSbAlaIUHewLPELZhwNI2Iu5zaN2667uz7z5RSDoSNk495ihJbqkM79dxSnIdv0By0y4YLu7O2tHJDQX7qS
-X-Gm-Message-State: AOJu0Yw88ws0NC6G4pySGWP9j1Vjq7sfz+d1K79KELWaaPYrjKe8P/4Z
-	JSgpu77xMFAPw977RW+NZH2Q55ex2zmtUo+yIzKFCkWmIiyH30ZP
-X-Google-Smtp-Source: AGHT+IG0LdNWuJZ1ltYpuD0k+A5ABTbklxoeAIOSGNw9XhOK2ynbOESExj8haYzXA6n8ue9WeSxYLQ==
-X-Received: by 2002:a5d:638d:0:b0:349:eb59:c188 with SMTP id ffacd0b85a97d-354d8c7428fmr2719584f8f.5.1716412713944;
-        Wed, 22 May 2024 14:18:33 -0700 (PDT)
-Received: from debian.local (host-92-13-19-4.as13285.net. [92.13.19.4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a25f0d2a9sm1804494266b.60.2024.05.22.14.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 14:18:33 -0700 (PDT)
-Date: Wed, 22 May 2024 22:18:30 +0100
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: regressions@lists.linux.dev, vasant.hegde@amd.com,
-	suravee.suthikulpanit@amd.com, jgg@nvidia.com, jroedel@suse.de,
-	"Deucher, Alexander" <Alexander.Deucher@amd.com>,
-	amd-gfx list <amd-gfx@lists.freedesktop.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: 6.10/regression/bisected commit c4cb23111103 causes sleeping
- function called from invalid context at kernel/locking/mutex.c:585
-Message-ID: <Zk5hJrY_lGmuW1G9@debian.local>
-References: <CABXGCsN1z2gj99zSdhQWynpTXBymrqHejDfF8axxxoiZ_0g_-g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327ADF4E7
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716412795; cv=fail; b=SgUtcxZFzPtenzLEc1GJ8uXlFNTFg8KSdp/3L4h4GfzX1uEpfu8CYd13TL1U0MBpHUNrGn1M6KBs0Eip9coOJY7S/8Yh16rlxva1v+CIif6xVgb1bSjdFZ8JPcbYVl/20MiQy8EyYpN9AxeoHdxgsWDw1ZBz+VDn9QseiiO0iLI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716412795; c=relaxed/simple;
+	bh=RgL5ptBP3B1nL5esWh3HtbbUQmfIjlOvx9n/Q1qPkmc=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mvDhNZnXM8x+bcGMm7p1YGeU215mNVy1nabyoSG9SPB+av26cPYfa1Lcwf30Jpvvlr83bviWHoh/+YOjVDJvhr2TmiVgqeugi3vrrHZ6Zo8d9XaHd/YWGn0dUV9sNruzUaZWYF8gNucCq9b9+q9B2GZjfaWBbz+CRS8KRzqTvCA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjKIc5yZ; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716412795; x=1747948795;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=RgL5ptBP3B1nL5esWh3HtbbUQmfIjlOvx9n/Q1qPkmc=;
+  b=gjKIc5yZ7HSPYevKVGgKQe1leEYQ3jlat0YHTGV4Vbbn53E6cHkQ9IZk
+   R9JVYEbUgYMXn0MF7Gwoe6TP2dvZ0D8tqzRjJQRmssSiEZbEW+uHjJ4Uw
+   SLXEI5z2YlWUINTBXxx9emxHJCmYGktj2G50WYTxjpTuI7DTGSouZCDCT
+   GRrF7M/3Dy2IegaNXcxgMScDYbEZSKx258Bu2oUwCXhLZ3uPtXUro0iZh
+   Z1kZCxuEh/F2SJhzZhkdpF2vBfE30JDDQivt1el+9IMlwB84DFIyft0GS
+   GvqJZ16zLWByB9Tx/Hr3xvrMa8KdSPE3VeXUs1NG9WX74U+minBTiEzde
+   Q==;
+X-CSE-ConnectionGUID: HtnYoOuORWusrJk+X1Nitw==
+X-CSE-MsgGUID: fMbxxaSWR5arwjSHXy5tqA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="30196251"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="30196251"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 14:19:54 -0700
+X-CSE-ConnectionGUID: cTy8t16OT8+hr8nCWcS5bA==
+X-CSE-MsgGUID: ewo041jdTxiwFZxWJQNN6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="38216672"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 14:19:54 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 22 May 2024 14:19:53 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 22 May 2024 14:19:52 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 14:19:52 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 22 May 2024 14:19:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ayE03DLJ7NtraRxVtLuJeh1LlEo8P8PBOtfabhn4MkmWqz+JQmgsF8diXrp5eUZ266TtdKn5p/mLGmu6ocGv2clVPnRPB9wp4gGVVmNLrJ1qE3X2tjmIlr2hzTmRHylHkwWIgVeyLTazwzQF0QFMKLlsRstZ0KsH8pn0qYXQM+f95/YfJpL5WLY8ee3+xFf14M02WGPDO35v18Sb5afOxBVPNaOpmRYBXZYeT6pgtq4dsLdkMAXXf+plHEkYsBjjak/znTa1HzY13IzOUslsR0KxDCcKyqVZITAH6aBoEG4PKNxN8BgOcg+fd2dOkcqi2TAICaRuwzVV/yrhiSPLOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qxD/QusL9a0uQLU8SFAeJuCKixld3ZA7ERjmsFslo1o=;
+ b=YJ+ERczMzU0hinicFJSF9JDRU2C93QF8glUu33FYxqfOyBuU3gtj+JubqHZwAeOE8Vcuj8zg127Ug52nyPDxJkbCGe2l97anrYG0OxGLpA1W8AbW4a3uqMWKeOru6Ev/GcC5GpYoRHEszJuFWyiDHdtD9BlopXNK1AtissobgO8QDJ8K0F4vwwfusv2zkcb8jIEzDjG6wtuawprtPosBxF0c0v6AElLb6EAfUN4odFNjhLLP1ZEi0YU7EGVahjUDavWQy2Uz5ERlTzakHWlTDxWwrP24BT4YFp9atzrWXwTnuiBYndXGE7lLmDHOzrN04h+3rkmrd10jmbHaGF/exA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by PH7PR11MB5887.namprd11.prod.outlook.com (2603:10b6:510:136::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 21:19:50 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 21:19:50 +0000
+Message-ID: <aa7d64b1-7c8e-4594-9e91-dfef2bae191b@intel.com>
+Date: Wed, 22 May 2024 14:19:48 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v18 12/17] x86/resctrl: Create Sub-NUMA (SNC) monitor
+ files
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Maciej
+ Wieczor-Retman <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20240515222326.74166-1-tony.luck@intel.com>
+ <20240515222326.74166-13-tony.luck@intel.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <20240515222326.74166-13-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0218.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::13) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABXGCsN1z2gj99zSdhQWynpTXBymrqHejDfF8axxxoiZ_0g_-g@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB5887:EE_
+X-MS-Office365-Filtering-Correlation-Id: 781814a0-6c34-4a6a-5e2b-08dc7aa4ea71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?N0ZTUEFVQlNwMEFKSXduV0luNlRKYnVKeGNSSWNhY2g1T1VQcTQ2eVJoNDdU?=
+ =?utf-8?B?UVNvOGNPeWRqNnFaRGl6ZEdjeXNVZW9Ea0N2Q3ptdWFrUERpTE4zcUpiS2Zm?=
+ =?utf-8?B?b25QbWFiZFRBUU5JSUhVYzhaSVVuMXhZNTFSWldwOW1GQWlOTkZwZjlsZ1R4?=
+ =?utf-8?B?U3FscGhOcnE1VnF2aEtKMXdyTEd2cmRka0RSTVlQTWZHWVIvSEZxMDNKYVpF?=
+ =?utf-8?B?akFqR29jcndnWmhEalhESGd2WnBKdGlSOTRIejIzUGtvR1hoWnZJR1hYMW5h?=
+ =?utf-8?B?dDlwVTR4c29TS3BIQVpWamRnL1I4RkxJUjNab1FWd1BmMWZQcVQxRmszZCtU?=
+ =?utf-8?B?K2M0SmJ4RTRGeUJXUnBlSFpEa0tNaHh1OVlReWJZalB5cFFrTHdVSjJBaHpW?=
+ =?utf-8?B?amdEeXdzL0ZDWWdLZEVBbkhzWHp5YkNvWWZmVXAyYUpvejlPS1FQYXg1bWxw?=
+ =?utf-8?B?NzZqamIvdjlpWkxzY2ZlR2lZTlpiVDBpQlhROEdXN282SzFKa2NETXBKMEpO?=
+ =?utf-8?B?YUl3clhQajRhclJwYTE4bjcyQUZ2VDdKaTJxTGhsQlBjMi9PcjFvR2JWdTND?=
+ =?utf-8?B?a1k3VVhPb3dySmlkb0FFSDdOZjM1TVB1WXJia2ViSnBjeXdiZDhBL1pPekxM?=
+ =?utf-8?B?ZDNnQ3VML3ZNVHRNbyszM05Cc2VhVlVJTWcvbWl6bUN3eHdobng1dHhzdVpT?=
+ =?utf-8?B?WjhsNGZ0SjRaZ3gvNGV3VTFVVjk4d1B4WThGa2pCTGJvaWVVaDF3RE02clJJ?=
+ =?utf-8?B?V1cwbEJOK2ZaYkJPcTZaSjJRMG1sTlQ5S1UyYkl6eld1NjNuY0U5Wm1WZElV?=
+ =?utf-8?B?TGliWFByN0IvejgrSG9VUmhLTUFTZUVOZWJWV0JLZmkxUU54ZTgxWVpxQXBC?=
+ =?utf-8?B?UlVISnp1bkNZejlaVFNtOGl5MGpGaE4xSEpYaC91NTdlY1E4TGlqSDVjdjVv?=
+ =?utf-8?B?VkxjcHVUZWt4VSsrTmQ0QTY1SnloekRqRFNoVVJrbTliZGhubE5uMlhGRHRk?=
+ =?utf-8?B?QTlGNEVyZTNIQy92TkRURjhhVDJ5UnNVRENlbXFvbDloempsR3JCNWRvV1R4?=
+ =?utf-8?B?Qit6c09pdWhXMFZMYzRyeC9ONDlmbVl6emZmckF4VXg0V0ZDWlViRWdtZ0tJ?=
+ =?utf-8?B?L2ZGTnJVR1dpSk5PVEtFS2crZnBJekg4MnpuZGdpM3Ezd25RTnM0cVBOT2Zn?=
+ =?utf-8?B?UDJpaS9JODI0MGxrRjVtci8zdC8rVitrTEl5UEFaVkFZMzBOQldzUmM1Zmli?=
+ =?utf-8?B?OVpDWExKOFVTZWd6aXllcFI0MHdwbENabWtIYnFTS0JLZUFiR0NiL0FhQ3Vm?=
+ =?utf-8?B?VlZFZHdJVlB3ODJBVFRqeVIycUhEVlFteklkeFpsdjNxM2dIYk5jclJNV2Q2?=
+ =?utf-8?B?bzNkMlNuanpFT1pSSkFBWU1HeE5sN2JyU0loQW9NR2VBSXNRVnVlWHB0NWVP?=
+ =?utf-8?B?M1docTJ6N1p3bTR1b3RrOGQvYWF2d0NhanRxdzdUTVpYeG9LWjRBSi8yR21D?=
+ =?utf-8?B?eEhYcGc3a0RIck9rSm0yU3MzSnJkL3hESG5hWE9qUmd0UisrL2M4bHh0L09J?=
+ =?utf-8?B?QVFweWdrOG05OE1qYlo0RzdvaVVCZTJ3SzAwMFlndGI5Y1IvbVJLcGdCSzAv?=
+ =?utf-8?B?Q0cvV09pYVM2WFhnc0dhK0MyeDZhbW50Y0x4eThmWkkwUVBZVkJpejhJc3FV?=
+ =?utf-8?B?UjBqSnhIVXJrVzZqUXp4elo3YUR1OEJkYVF1Mm9KY09sWmdCVnNqLzhnPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NE5kNjhIcWdBbUtYZ3hHcE1nWTYzUFpINXV0YWVzK0lhRXR1K1pWTWZCeHFn?=
+ =?utf-8?B?KzJkQzhJbE85RTZzdHprOWkrZVN1RytnQmRCbUtWL2FOWGY0cjhrdXZwa2V2?=
+ =?utf-8?B?RDYzRzIvY1FMNHR5WHMwemhrd0dPSzJ2YWxJbTRTbi9idHp0WnI3M3RhWnBk?=
+ =?utf-8?B?Ui95d0FqWFhLZkdRdkx2WVNWbmU0R3dxbjh6N0IxMUxZcmpER1hrczRoT0gx?=
+ =?utf-8?B?cDZYSGFZMjlXT0JxYk1JYWdBV01EYlprM0dFQXM1RjAvOGFObXZ0NVA1WThV?=
+ =?utf-8?B?SFRwRVJvZWMyM0hhZHZWWXFnR3NIVjRHMUoxd0Urayt3S3hqMnBWSThHQkoy?=
+ =?utf-8?B?ZXVRLzhwY2R0QXAzWEVmcGx4cE03bW1QTjViczJXTDlSRWpCL1lRTXFqYWNS?=
+ =?utf-8?B?UnhOclgwWkhXdGxPYklWaUVubWptWThNbGxaTFFQZTJHNXJXMEk0Y3Nwbkh5?=
+ =?utf-8?B?MUJtWjF0QTBBck1OKytDUUhaVm1oZ0pWenlOTmZzMWgzcjZVbjlxYWJJMnc3?=
+ =?utf-8?B?cUtLWVEyU3p5elhnK3NlS242SjArM2pQK3RxZ2tDQ01udXZtalJPWEFSRnpI?=
+ =?utf-8?B?c0l2ckhnMDdqczRSRWhzdVNQZEJSODV6eGExNGgvK1ZVSGNBVHdOYWVRVG9y?=
+ =?utf-8?B?YzJZbTh2MnhLeFpQVEZnU051MzRtNEJ6ZTBzdUpVRm42ZW03MFFUL2lkZWUy?=
+ =?utf-8?B?Tkl1ZGw3ZzlKb1l6UUc0L1RCQjNuRHZwUDVLWTVMekUydmVNaElyZXpDRktr?=
+ =?utf-8?B?RDhJeUhIUGt2ZXM5ZGx1a2RFYTdkREtyL1JYRGhGa1lGeW5CRmZqeXlNb3gz?=
+ =?utf-8?B?UUlPZ3k3aUNKWlV0SUVzVzc2UkdWN3hUUlhrS1Q1SVpjd3NFV1VmcTM0YkJ5?=
+ =?utf-8?B?SjNOQmxBclBpNldIYmZKWVNncXBUbFJ4UUJ0VVNyYTgrdkpFTzduVFFoYzln?=
+ =?utf-8?B?dmN4bHNMUjBZQTEwY3hJUC8xNFVpS0N3TXB0OGtDOFFxVW1ndm9iSEtCWGN2?=
+ =?utf-8?B?aFhINERkY0E0Z3Ayc0QzaFlwRDFsYUkrcUMzYzZBS08xOTB5U25VNEZJK0tQ?=
+ =?utf-8?B?eW0vZDNvMXc5NWx6b2tFb1U3Wk1SdHBIenN2bkpxOWZ0b2ZBMFZlSUhPQUlj?=
+ =?utf-8?B?bEFMNDErVktaWTBmTTRtYkZ5d1NhRVBXNzErMlhoOWRLTHgvTW5wMTFQdFhh?=
+ =?utf-8?B?Q1pFTzlCNFg2SWNwQmw1SDQ5cmlxTWhEQldmN2FqNlJUN0tobXBpb3E4M1NH?=
+ =?utf-8?B?QjNGOE5aWi9iRGVxc3FnR1p5NEhOOXdkdEJISDZJa3JVaEZpcmdYRGpQaDJw?=
+ =?utf-8?B?Q0NIMXlLNXdjdXFLeUxQdlVVVmJ5M3NxeFViSnQ5bzdCdDJVWkNqSUZ2Q01a?=
+ =?utf-8?B?aE52Q0d3MWF1cnU2U05XOE4yNnBOdkp0WnE4RG1pVGZxS0dXazFZRnlYbVZR?=
+ =?utf-8?B?cEJKek9BelpOYjBOT2U3cmlUbUFiOHg4VmdLaExJaFlWV0MyS2VkSEliUjJD?=
+ =?utf-8?B?UEFMd1A0eFJGQit4WUdnMFdtS3EzVGJqNHlzZWRpKzFBSVdkU3NLUXZYQXBL?=
+ =?utf-8?B?cWVVNllaU1c4aTVyWDdzM04zNUoydTBEMTY1WGwrRmlvNHBHY0RlNWM5ZnpW?=
+ =?utf-8?B?S3JxTTZsOGc3Ny8xMnlUaHhyMjNPTmx4TkRlZzFoY3JYK3BjdzJrUnRLQUdw?=
+ =?utf-8?B?S3FoQm5sRVNBYTE0RHZjOUVpYWpPNThyamlCL0J6Wkc4MXZFSzJmbFVMUnVE?=
+ =?utf-8?B?cjVDK2RneHZraGxUSGZiVjJrS1h0SjBLOVNjUllyNHZqdXNJZCtQU3RWRVRa?=
+ =?utf-8?B?UjJKZ1NFSUpVMm5ZdG8wQXpRamdsTVRRMzdXNkF3T3lDTUZpWWdKNnpCVHVV?=
+ =?utf-8?B?NHE4K3FDdTdsdmU0aCtSbDlJQm9NUmJTR1MwVVMzU2QvU3U0cnhocWZVVVpT?=
+ =?utf-8?B?eDVmdlRMNGx2RDlHZ2srUUdwRy9QSVFySTRhZEx1RXkyam5rc0crbVlrMVN5?=
+ =?utf-8?B?d1h2R3V2NW1yRzZ1N0xMMUVCcGZxc3BEZEpSRVFUWEgxcnQxUUdIaGwrM1hx?=
+ =?utf-8?B?SUdiTzVOb3QvK2FJLzg0bTNmcW9nWlhkblJNVUxBU3p4UWhLOTB3b0FmbzlU?=
+ =?utf-8?B?cUx0MGtnSEtjbTNod0NoQVJmb3RzQ2ZJQTlrL0kyM1o5M0lLVXhsOW1Cdjd0?=
+ =?utf-8?B?U3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 781814a0-6c34-4a6a-5e2b-08dc7aa4ea71
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 21:19:50.7347
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H4Mq9efCntedfhfZZZJRAIzf6B/bHRcGjuiQG3zi/dCiDqGJMNmN1BF2kCQDAfoLlor36PQtt+Lfh4iCWiQPC2IYfcwkx4C2otOsVAULPjs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5887
+X-OriginatorOrg: intel.com
 
-On Tue, May 21, 2024 at 02:39:06PM +0500, Mikhail Gavrilov wrote:
-> Hi,
-> Yesterday on the fresh kernel snapshot
-> I spotted a new bug message with follow stacktrace:
-> [    4.307097] BUG: sleeping function called from invalid context at
-> kernel/locking/mutex.c:585
-> [    4.307135] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid:
-> 1, name: swapper/0
-> [    4.307150] preempt_count: 3, expected: 0
-> [    4.307159] RCU nest depth: 0, expected: 0
-> [    4.307168] 4 locks held by swapper/0/1:
-> [    4.307176]  #0: ffff8881080ba920 (&group->mutex){+.+.}-{3:3}, at:
-> bus_iommu_probe+0xf6/0x4c0
-> [    4.307203]  #1: ffff88811654c1b8 (&domain->lock){....}-{2:2}, at:
-> amd_iommu_attach_device+0x1ad/0x1e80
-> [    4.307227]  #2: ffff888113518c18 (&dev_data->lock){....}-{2:2},
-> at: amd_iommu_attach_device+0x213/0x1e80
-> [    4.307243]  #3: ffff888108393030 (&iommu->lock){....}-{2:2}, at:
-> amd_iommu_iopf_add_device+0x69/0x140
-> [    4.307243] irq event stamp: 1021718
-> [    4.307243] hardirqs last  enabled at (1021717):
-> [<ffffffff9cc35f2e>] kasan_quarantine_put+0x12e/0x250
-> [    4.307243] hardirqs last disabled at (1021718):
-> [<ffffffff9f46895c>] _raw_spin_lock_irqsave+0x7c/0xa0
-> [    4.307243] softirqs last  enabled at (1020154):
-> [<ffffffff9c2721fb>] __irq_exit_rcu+0xbb/0x1c0
-> [    4.307243] softirqs last disabled at (1020147):
-> [<ffffffff9c2721fb>] __irq_exit_rcu+0xbb/0x1c0
-> [    4.307243] Preemption disabled at:
-> [    4.307243] [<0000000000000000>] 0x0
-> [    4.307243] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-> 6.10.0-0.rc0.20240520giteb6a9339efeb.9.fc41.x86_64+debug #1
-> [    4.307243] Hardware name: ASUS System Product Name/ROG STRIX
-> B650E-I GAMING WIFI, BIOS 2611 04/07/2024
-> [    4.307243] Call Trace:
-> [    4.307243]  <TASK>
-> [    4.307243]  dump_stack_lvl+0x84/0xd0
-> [    4.307243]  __might_resched.cold+0x1f7/0x23d
-> [    4.307243]  ? __pfx___might_resched+0x10/0x10
-> [    4.307243]  __mutex_lock+0xf3/0x13f0
-> [    4.307243]  ? iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  ? __pfx___mutex_lock+0x10/0x10
-> [    4.307243]  ? find_held_lock+0x34/0x120
-> [    4.307243]  ? __pfx_lock_acquired+0x10/0x10
-> [    4.307243]  ? iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  amd_iommu_iopf_add_device+0xcd/0x140
-> [    4.307243]  amd_iommu_attach_device+0xdc8/0x1e80
-> [    4.307243]  ? iommu_create_device_direct_mappings+0x571/0x7d0
-> [    4.307243]  __iommu_attach_device+0x64/0x250
-> [    4.307243]  __iommu_device_set_domain+0x122/0x1c0
-> [    4.307243]  __iommu_group_set_domain_internal+0xfa/0x2d0
-> [    4.307243]  iommu_setup_default_domain+0x918/0xcd0
-> [    4.307243]  bus_iommu_probe+0x1ad/0x4c0
-> [    4.307243]  ? __pfx_bus_iommu_probe+0x10/0x10
-> [    4.307243]  iommu_device_register+0x184/0x230
-> [    4.307243]  ? amd_iommu_iopf_init+0xfd/0x170
-> [    4.307243]  iommu_go_to_state+0xf87/0x3890
-> [    4.307243]  ? __pfx_iommu_go_to_state+0x10/0x10
-> [    4.307243]  ? lockdep_hardirqs_on+0x7c/0x100
-> [    4.307243]  ? _raw_spin_unlock_irqrestore+0x4f/0x80
-> [    4.307243]  ? add_device_randomness+0xb8/0xf0
-> [    4.307243]  ? __pfx_add_device_randomness+0x10/0x10
-> [    4.307243]  ? __pfx_pci_iommu_init+0x10/0x10
-> [    4.307243]  amd_iommu_init+0x21/0x60
-> [    4.307243]  ? __pfx_pci_iommu_init+0x10/0x10
-> [    4.307243]  pci_iommu_init+0x38/0x60
-> [    4.307243]  do_one_initcall+0xd6/0x460
-> [    4.307243]  ? __pfx_do_one_initcall+0x10/0x10
-> [    4.307243]  ? kernel_init_freeable+0x4cb/0x750
-> [    4.307243]  ? kasan_unpoison+0x44/0x70
-> [    4.307243]  kernel_init_freeable+0x6b4/0x750
-> [    4.307243]  ? __pfx_kernel_init_freeable+0x10/0x10
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  kernel_init+0x1c/0x150
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  ret_from_fork+0x31/0x70
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  ret_from_fork_asm+0x1a/0x30
-> [    4.307243]  </TASK>
-> 
-> [    4.307243] =============================
-> [    4.307243] [ BUG: Invalid wait context ]
-> [    4.307243] 6.10.0-0.rc0.20240520giteb6a9339efeb.9.fc41.x86_64+debug
-> #1 Tainted: G        W         -------  ---
-> [    4.307243] -----------------------------
-> [    4.307243] swapper/0/1 is trying to lock:
-> [    4.307243] ffff88810de2fa88 (&queue->lock){....}-{3:3}, at:
-> iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243] other info that might help us debug this:
-> [    4.307243] context-{4:4}
-> [    4.307243] 4 locks held by swapper/0/1:
-> [    4.307243]  #0: ffff8881080ba920 (&group->mutex){+.+.}-{3:3}, at:
-> bus_iommu_probe+0xf6/0x4c0
-> [    4.307243]  #1: ffff88811654c1b8 (&domain->lock){....}-{2:2}, at:
-> amd_iommu_attach_device+0x1ad/0x1e80
-> [    4.307243]  #2: ffff888113518c18 (&dev_data->lock){....}-{2:2},
-> at: amd_iommu_attach_device+0x213/0x1e80
-> [    4.307243]  #3: ffff888108393030 (&iommu->lock){....}-{2:2}, at:
-> amd_iommu_iopf_add_device+0x69/0x140
-> [    4.307243] stack backtrace:
-> [    4.307243] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W
->   -------  ---
-> 6.10.0-0.rc0.20240520giteb6a9339efeb.9.fc41.x86_64+debug #1
-> [    4.307243] Hardware name: ASUS System Product Name/ROG STRIX
-> B650E-I GAMING WIFI, BIOS 2611 04/07/2024
-> [    4.307243] Call Trace:
-> [    4.307243]  <TASK>
-> [    4.307243]  dump_stack_lvl+0x84/0xd0
-> [    4.307243]  __lock_acquire.cold+0x1fe/0x2a0
-> [    4.307243]  ? __pfx___lock_acquire+0x10/0x10
-> [    4.307243]  ? ret_from_fork_asm+0x1a/0x30
-> [    4.307243]  lock_acquire+0x1ae/0x540
-> [    4.307243]  ? iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  ? __pfx_lock_acquire+0x10/0x10
-> [    4.307243]  ? __printk_cpu_sync_put+0x35/0x60
-> [    4.307243]  ? add_taint+0x2a/0x70
-> [    4.307243]  ? __might_resched.cold+0x203/0x23d
-> [    4.307243]  ? __pfx___might_resched+0x10/0x10
-> [    4.307243]  __mutex_lock+0x189/0x13f0
-> [    4.307243]  ? iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  ? iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  ? __pfx___mutex_lock+0x10/0x10
-> [    4.307243]  ? find_held_lock+0x34/0x120
-> [    4.307243]  ? __pfx_lock_acquired+0x10/0x10
-> [    4.307243]  ? iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  iopf_queue_add_device+0xd2/0x5d0
-> [    4.307243]  amd_iommu_iopf_add_device+0xcd/0x140
-> [    4.307243]  amd_iommu_attach_device+0xdc8/0x1e80
-> [    4.307243]  ? iommu_create_device_direct_mappings+0x571/0x7d0
-> [    4.307243]  __iommu_attach_device+0x64/0x250
-> [    4.307243]  __iommu_device_set_domain+0x122/0x1c0
-> [    4.307243]  __iommu_group_set_domain_internal+0xfa/0x2d0
-> [    4.307243]  iommu_setup_default_domain+0x918/0xcd0
-> [    4.307243]  bus_iommu_probe+0x1ad/0x4c0
-> [    4.307243]  ? __pfx_bus_iommu_probe+0x10/0x10
-> [    4.307243]  iommu_device_register+0x184/0x230
-> [    4.307243]  ? amd_iommu_iopf_init+0xfd/0x170
-> [    4.307243]  iommu_go_to_state+0xf87/0x3890
-> [    4.307243]  ? __pfx_iommu_go_to_state+0x10/0x10
-> [    4.307243]  ? lockdep_hardirqs_on+0x7c/0x100
-> [    4.307243]  ? _raw_spin_unlock_irqrestore+0x4f/0x80
-> [    4.307243]  ? add_device_randomness+0xb8/0xf0
-> [    4.307243]  ? __pfx_add_device_randomness+0x10/0x10
-> [    4.307243]  ? __pfx_pci_iommu_init+0x10/0x10
-> [    4.307243]  amd_iommu_init+0x21/0x60
-> [    4.307243]  ? __pfx_pci_iommu_init+0x10/0x10
-> [    4.307243]  pci_iommu_init+0x38/0x60
-> [    4.307243]  do_one_initcall+0xd6/0x460
-> [    4.307243]  ? __pfx_do_one_initcall+0x10/0x10
-> [    4.307243]  ? kernel_init_freeable+0x4cb/0x750
-> [    4.307243]  ? kasan_unpoison+0x44/0x70
-> [    4.307243]  kernel_init_freeable+0x6b4/0x750
-> [    4.307243]  ? __pfx_kernel_init_freeable+0x10/0x10
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  kernel_init+0x1c/0x150
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  ret_from_fork+0x31/0x70
-> [    4.307243]  ? __pfx_kernel_init+0x10/0x10
-> [    4.307243]  ret_from_fork_asm+0x1a/0x30
-> [    4.307243]  </TASK>
-> [    4.311628] AMD-Vi: Extended features (0x246577efa2254afa, 0x0):
-> PPR NX GT [5] IA GA PC GA_vAPIC
-> [    4.311639] AMD-Vi: Interrupt remapping enabled
-> [    4.366191] AMD-Vi: Virtual APIC enabled
-> 
-> Bisect pointed to commit:
-> commit c4cb23111103a841c2df30058597398443bcad5f (HEAD)
-> Author: Vasant Hegde <vasant.hegde@amd.com>
-> Date:   Thu Apr 18 10:33:57 2024 +0000
-> 
->     iommu/amd: Add support for enable/disable IOPF
-> 
->     Return success from enable_feature(IOPF) path as this interface is going
->     away. Instead we will enable/disable IOPF support in attach/detach device
->     path.
-> 
->     In attach device path, if device is capable of PRI, then we will add it to
->     per IOMMU IOPF queue and enable PPR support in IOMMU. Also it will
->     attach device to domain even if it fails to enable PRI or add device to
->     IOPF queue as device can continue to work without PRI support.
-> 
->     In detach device patch it follows following sequence:
->       - Flush the queue for the given device
->       - Disable PPR support in DTE[devid]
->       - Remove device from IOPF queue
->       - Disable device PRI
-> 
->     Also add IOMMU_IOPF as dependency to AMD_IOMMU driver.
-> 
->     Co-developed-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
->     Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
->     Signed-off-by: Vasant Hegde <vasant.hegde@amd.com>
->     Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
->     Link: https://lore.kernel.org/r/20240418103400.6229-13-vasant.hegde@amd.com
->     Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> 
->  drivers/iommu/amd/Kconfig     |  1 +
->  drivers/iommu/amd/amd_iommu.h |  4 ++++
->  drivers/iommu/amd/iommu.c     | 39 +++++++++++++++++++++++++++++++--------
->  drivers/iommu/amd/ppr.c       | 41 +++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 77 insertions(+), 8 deletions(-)
-> 
-> 
-> Unfortunately I can't check revert c4cb23111103 due to conflicts:
-> > git revert -n c4cb23111103a841c2df30058597398443bcad5f
-> Auto-merging drivers/iommu/amd/Kconfig
-> CONFLICT (content): Merge conflict in drivers/iommu/amd/Kconfig
-> Auto-merging drivers/iommu/amd/amd_iommu.h
-> Auto-merging drivers/iommu/amd/iommu.c
-> CONFLICT (content): Merge conflict in drivers/iommu/amd/iommu.c
-> Auto-merging drivers/iommu/amd/ppr.c
-> error: could not revert c4cb23111103... iommu/amd: Add support for
-> enable/disable IOPF
-> 
-> 
-> I also attach below a full kernel log and build config.
-> 
-> My hardware specs: https://linux-hardware.org/?probe=ca80d0a307
-> 
-> Vasant or anyone else from the AMD team can you look please.
-> 
-> -- 
-> Best Regards,
-> Mike Gavrilov.
+Hi Tony,
 
-I am also getting this error on every boot. Decoded stacktrace:
+On 5/15/2024 3:23 PM, Tony Luck wrote:
+> When SNC mode is enabled, create subdirectories and file to monitor
 
-[    0.395553] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:283
-[    0.395560] fbcon: Taking over console
-[    0.395564] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 1, name: swapper/0
-[    0.395569] preempt_count: 3, expected: 0
-[    0.395573] RCU nest depth: 0, expected: 0
-[    0.395578] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.9.0-11198-gf3033eb79136 #897
-[    0.395581] Hardware name: HP HP Pavilion Aero Laptop 13-be0xxx/8916, BIOS F.12 04/11/2023
-[    0.395582] Call Trace:
-[    0.395584]  <TASK>
-[    0.395587] dump_stack_lvl (lib/dump_stack.c:117 (discriminator 1))
-[    0.395595] dump_stack (lib/dump_stack.c:124)
-[    0.395597] __might_resched (kernel/sched/core.c:10197)
-[    0.395602] __might_sleep (kernel/sched/core.c:10126 (discriminator 17))
-[    0.395605] mutex_lock (./include/linux/kernel.h:73 kernel/locking/mutex.c:283)
-[    0.395610] iopf_queue_add_device (drivers/iommu/io-pgfault.c:341)
-[    0.395616] amd_iommu_iopf_add_device (drivers/iommu/amd/ppr.c:265)
-[    0.395621] amd_iommu_attach_device (drivers/iommu/amd/iommu.c:2064 drivers/iommu/amd/iommu.c:2123 drivers/iommu/amd/iommu.c:2509)
-[    0.395626] __iommu_attach_device (drivers/iommu/iommu.c:2069)
-[    0.395630] __iommu_device_set_domain (drivers/iommu/iommu.c:2257)
-[    0.395633] __iommu_group_set_domain_internal (drivers/iommu/iommu.c:2313)
-[    0.395637] iommu_setup_default_domain (drivers/iommu/iommu.c:2976)
-[    0.395640] bus_iommu_probe (drivers/iommu/iommu.c:1828)
-[    0.395644] iommu_device_register (drivers/iommu/iommu.c:267 (discriminator 3))
-[    0.395646] ? srso_alias_return_thunk (arch/x86/lib/retpoline.S:182)
-[    0.395650] state_next (drivers/iommu/amd/init.c:2121 drivers/iommu/amd/init.c:2167 drivers/iommu/amd/init.c:3258)
-[    0.395655] amd_iommu_init (drivers/iommu/amd/init.c:3305 drivers/iommu/amd/init.c:3373)
-[    0.395657] ? __pfx_pci_iommu_init (arch/x86/kernel/pci-dma.c:177)
-[    0.395661] pci_iommu_init (arch/x86/kernel/pci-dma.c:182)
-[    0.395663] ? __pfx_pci_iommu_init (arch/x86/kernel/pci-dma.c:177)
-[    0.395665] do_one_initcall (init/main.c:1267)
-[    0.395671] kernel_init_freeable (init/main.c:1328 init/main.c:1345 init/main.c:1364 init/main.c:1578)
-[    0.395675] ? __pfx_kernel_init (init/main.c:1459)
-[    0.395679] kernel_init (init/main.c:1469)
-[    0.395681] ret_from_fork (arch/x86/kernel/process.c:153)
-[    0.395684] ? __pfx_kernel_init (init/main.c:1459)
-[    0.395686] ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
-[    0.395691]  </TASK>
+"and file" -> "and files"?
 
-#regzbot ^introduced c4cb23111103a841c2df30058597398443bcad5f
+> at the SNC node granularity. Monitor files at the L3 granularity are
+> tagged with a "sum" attribute to indicate that all SNC nodes sharing
+> an L3 cache should be read and summed to provide the result to the
+> user.
+
+Why go through effort to create a generic "monitor display scope" and
+then just always refer to it as L3 cache scope? One consequence is that
+the code and changelog seems to have a disconnect.
+
+> 
+> Note that the "domid" field for files that must sum across SNC domains
+> has the L3 cache instance id, while non-summing files use the domain id.
+> 
+> Also the "sum" files do not need to make a call to mon_event_read() to
+> initialize the MBM counters. This will be handled by initializing the
+> individual SNC nodes that share the L3.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 53 ++++++++++++++++++--------
+>  1 file changed, 38 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> index 7a6c40aefdcc..f0f468babdea 100644
+> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> @@ -3026,7 +3026,8 @@ static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+>  }
+>  
+>  static int mon_add_all_files(struct kernfs_node *kn, struct rdt_mon_domain *d,
+> -			     struct rdt_resource *r, struct rdtgroup *prgrp)
+> +			     struct rdt_resource *r, struct rdtgroup *prgrp,
+> +			     bool do_sum)
+>  {
+>  	union mon_data_bits priv;
+>  	struct mon_evt *mevt;
+> @@ -3037,15 +3038,18 @@ static int mon_add_all_files(struct kernfs_node *kn, struct rdt_mon_domain *d,
+>  		return -EPERM;
+>  
+>  	priv.u.rid = r->rid;
+> -	priv.u.domid = d->hdr.id;
+> +	priv.u.domid = do_sum ? d->display_id : d->hdr.id;
+> +	priv.u.sum = do_sum;
+>  	list_for_each_entry(mevt, &r->evt_list, list) {
+>  		priv.u.evtid = mevt->evtid;
+>  		ret = mon_addfile(kn, mevt->name, priv.priv);
+>  		if (ret)
+>  			return ret;
+>  
+> -		if (is_mbm_event(mevt->evtid))
+> +		if (!do_sum && is_mbm_event(mevt->evtid)) {
+> +			rr.sumdomains = 0;
+>  			mon_event_read(&rr, r, d, prgrp, mevt->evtid, true);
+> +		}
+>  	}
+>  
+>  	return 0;
+> @@ -3055,23 +3059,42 @@ static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+>  				struct rdt_mon_domain *d,
+>  				struct rdt_resource *r, struct rdtgroup *prgrp)
+>  {
+> -	struct kernfs_node *kn;
+> +	struct kernfs_node *kn, *ckn;
+>  	char name[32];
+> +	bool do_sum;
+>  	int ret;
+>  
+> -	sprintf(name, "mon_%s_%02d", r->name, d->hdr.id);
+> -	/* create the directory */
+> -	kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
+> -	if (IS_ERR(kn))
+> -		return PTR_ERR(kn);
+> +	do_sum = r->mon_scope != r->mon_display_scope;
+> +	sprintf(name, "mon_%s_%02d", r->name, d->display_id);
+
+Why not just determine "display_id" dynamically here and pass it as parameter
+to mon_add_all_files()? Previously you mentioned that error handling is a problem
+but this flow can surely handle errors, no?
+
+> +	kn = kernfs_find_and_get_ns(parent_kn, name, NULL);
+> +	if (!kn) {
+> +		/* create the directory */
+> +		kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
+> +		if (IS_ERR(kn))
+> +			return PTR_ERR(kn);
+>  
+> -	ret = rdtgroup_kn_set_ugid(kn);
+> -	if (ret)
+> -		goto out_destroy;
+> +		ret = rdtgroup_kn_set_ugid(kn);
+> +		if (ret)
+> +			goto out_destroy;
+> +		ret = mon_add_all_files(kn, d, r, prgrp, do_sum);
+> +		if (ret)
+> +			goto out_destroy;
+> +	}
+>  
+> -	ret = mon_add_all_files(kn, d, r, prgrp);
+> -	if (ret)
+> -		goto out_destroy;
+> +	if (do_sum) {
+> +		sprintf(name, "mon_sub_%s_%02d", r->name, d->hdr.id);
+> +		ckn = kernfs_create_dir(kn, name, parent_kn->mode, prgrp);
+> +		if (IS_ERR(ckn))
+> +			goto out_destroy;
+> +
+> +		ret = rdtgroup_kn_set_ugid(ckn);
+> +		if (ret)
+> +			goto out_destroy;
+> +
+> +		ret = mon_add_all_files(ckn, d, r, prgrp, false);
+> +		if (ret)
+> +			goto out_destroy;
+> +	}
+>  
+>  	kernfs_activate(kn);
+>  	return 0;
+
+Reinette
 
