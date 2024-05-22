@@ -1,232 +1,199 @@
-Return-Path: <linux-kernel+bounces-185765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9738CBA85
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:59:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCFD8CBAA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75418282D1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:59:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA4CDB216D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C37762CD;
-	Wed, 22 May 2024 04:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632A7770FF;
+	Wed, 22 May 2024 05:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9DZrJGi"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jrOTd2kX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE74C62
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 04:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1177922086;
+	Wed, 22 May 2024 05:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716353959; cv=none; b=nw0yITrcv/FYL6Hm02u4OWjehICGeZs2TjBQCalY78e5umE4vqN5pDJIqpb7nJgxVvwi+A+8O2m8Tv95xKOu8SZSxKMDZ89eV9GZBE+OdbVN6fJbtY9wVySYVXVD86mY7ahKvkT3yuhtJfSstZIknCbGuoZcmkusLX7NH4fVKaY=
+	t=1716354572; cv=none; b=uMhKTgQHtntSfub3O6TBgCppZVh5VeJxwqaM6SkKZTx96jG+JEi2oUnEO+ODt+aSJDFOlLHh9vTYyRnw1JZAqBUp7qPOI01RoT3MIIDfmq8bZAg35g4r16PwsnoTREzXlE1FbSGBnEdmYaPK/VigVA/89ga5IHcdApuO8Y7zw4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716353959; c=relaxed/simple;
-	bh=EZUgvT50EiG0noTA0PwEaevnx2DYm3VP9zfDMF3tH2s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LqMLuFUULoAuqM/tnTEl4iCAb8eH+s0ZnGCFBGL0WWyoDxUe73OmbiUhdXAhnIuThksxv9B2LtEo+uZOJZ46W2Zh9gKh+mqBce5Ci4OK6ERondQPHSfYVrOPBPx52UD896yblnJJJ69pua38dzR+8P21ofWfzUGSFnSo6nCSI4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9DZrJGi; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57342829409so926681a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 21:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716353956; x=1716958756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=39bxPhPVcA85UbzZ3VjWUXERVKdx/CAHlqDcF/RAs0Q=;
-        b=B9DZrJGi5oboN+XviEEgy7IUhqVDzeJ90ZgiHWsVxTj/1h/6jToqaZoOZFEFQJmtW0
-         ZbClyQMa14a4ubNHWrmZGRvu7Bdbj1/JtQqPM6p53RkOWBp5C5n/c7mQQmc8+H98EwNr
-         0vjN9kr8/F/SBcUQn1JzJ06L0ogvQkRFw8gRTh382rEo2V9G6Aacn/UVKQ+WmIJN6tfN
-         U9iwzuqc4nrLQli5MAg4uBVdCMf0twcAdli1/uN5y4rQAdFrfKisqOorAZaEvGZjiNiV
-         tVg3M3nq3+oPGmp0X0NtsOj38zJbnAe3QEzjY5CQU9TJhObvUfc2oqk3QB3IwgkPcc2U
-         MiIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716353956; x=1716958756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=39bxPhPVcA85UbzZ3VjWUXERVKdx/CAHlqDcF/RAs0Q=;
-        b=THuI4uO5arIuO+txiJQhEFdEAfz9rStO1Z8JuKjOYsqBpkiR8IfQlBp1CxUw8zEO7v
-         y4dfjT2H8TDUo9e57j7vYTMpoL6zp0fM/+dDjuj28pmcQBVc3ARss1/Dbr8N0yLLg9kY
-         eUUJxx/zcoFsgOfnd9fO+6gThx6Y4gCP8e+oVCQxQpm6Euwya0SFHsWZuQ/nq6eklSes
-         IHpicLOjna8zGqrA6u9OVFlSCA5AUEYteVJtIbX06Xx6HHwBQeClIUca2/vjuq9H4nZv
-         BfpCCxhjoWytk4QUcTwhzGZLW61I5hljCA/W+VyVqO7Uwo7tgDqdJ2sO7K7OohgMb4YU
-         AdBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3HU2xjN1awMGiRpf95wRL0jxiwJiW9AYxLd9W83miXpMeTK9f6s/+O842lfN6ijdPbTZXoN5OPcIT/9RR03k+7Q6618MzQblaHvPg
-X-Gm-Message-State: AOJu0Yx9gbMIPVEvKI6I8PTAENtaMAh+4PBaoApRyg2oTZmNMQKhJiKc
-	75RaBxLpOb67fhJFfbIHoxm+RNaS8KSMXYbuuywwfJuHwXS5B/DE8Onom4VcayVFpheORDWQtMz
-	oYzwfMOux4oCTEvunBUpqnkUuXoo=
-X-Google-Smtp-Source: AGHT+IGa+13CEFwmy5GAjmwiCyxL7oM9UfZgNMhWLRQ0BlkBOC5alvxMemPCt+VCIkYC9kd+4eTQUKoxh5bxNUxKbRE=
-X-Received: by 2002:a50:c044:0:b0:572:7014:230a with SMTP id
- 4fb4d7f45d1cf-5752b4c8d66mr9496526a12.14.1716353955662; Tue, 21 May 2024
- 21:59:15 -0700 (PDT)
+	s=arc-20240116; t=1716354572; c=relaxed/simple;
+	bh=5yMQt29GiX4QLWSZnaoUlqn2FUv+SMQYFbAoLq8shn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gGYWc3YqQBgPqQ8fgmVyu/pezDrJzG/76yXoVYMkiW1x67Ow8nbyjloU3WwuW5hbs2swo5WeWlIRn9LgEQLnRoQf4stylz4W2bO+C+Rv+xmZl7CU1b+jn2mwygid7Faii1FZY/xiC6aMqY6LY3tgJMElzdCh1Gy/VxZnmbaUEyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jrOTd2kX; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716354571; x=1747890571;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5yMQt29GiX4QLWSZnaoUlqn2FUv+SMQYFbAoLq8shn0=;
+  b=jrOTd2kX7GFx6g2coWXlwSQ2OPXHxTwhCjzeumaBMR2KBWifyFFtWqBe
+   CwypoKValDJxrS/wgJOKptL0fkgSkzfmTbycSGZFE9qK3yNRq4tie0m7y
+   YqTpNvk6eU/UujvxZOvuZZ0xocXtWUvmlNSdgQh1vKmD70m5O2JRWtCu2
+   dZKErSP25gnd39/M7ShhZMbSkluECns9k3aylO7REqS8sqoKINe0rRUwF
+   Egjj5u1C7b4Tacy8V/2qD6zoO1824MwWuOconE3E1b8ZVC8/OS010mdqd
+   LmppXdzEYeMQk7VU6BYL8FS1qGWaal8loyjeycEUUIH7+oaRziw+TPy7y
+   Q==;
+X-CSE-ConnectionGUID: bMrLr6YrRD+nicZcZFVnLQ==
+X-CSE-MsgGUID: Uv03fCIWSJaDjIUTheu02g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12696599"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="12696599"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 22:09:30 -0700
+X-CSE-ConnectionGUID: SPXqoh8cTNyio1ipcb/jnQ==
+X-CSE-MsgGUID: NV0A7hRJTH++l9KJcLFJQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="33080563"
+Received: from unknown (HELO [10.238.8.173]) ([10.238.8.173])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 22:09:27 -0700
+Message-ID: <18f52be4-6449-4761-a178-1ca87124c28d@linux.intel.com>
+Date: Wed, 22 May 2024 13:09:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521233100.358002-1-mjguzik@gmail.com> <Zk1HsDYKwxpzeBjq@snowbird>
-In-Reply-To: <Zk1HsDYKwxpzeBjq@snowbird>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 22 May 2024 06:59:02 +0200
-Message-ID: <CAGudoHGpiJwuNX5MEj_RGdc+vVo_3u3hSv9wWSRm6ZrmAi65NA@mail.gmail.com>
-Subject: Re: [PATCH v3] percpu_counter: add a cmpxchg-based _add_batch variant
-To: Dennis Zhou <dennis@kernel.org>
-Cc: tj@kernel.org, hughd@google.com, akpm@linux-foundation.org, vbabka@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 22, 2024 at 3:17=E2=80=AFAM Dennis Zhou <dennis@kernel.org> wro=
-te:
->
-> Hi Mateusz,
->
-> On Wed, May 22, 2024 at 01:31:00AM +0200, Mateusz Guzik wrote:
-> > Interrupt disable/enable trips are quite expensive on x86-64 compared t=
-o
-> > a mere cmpxchg (note: no lock prefix!) and percpu counters are used
-> > quite often.
-> >
-> > With this change I get a bump of 1% ops/s for negative path lookups,
-> > plugged into will-it-scale:
-> >
-> > void testcase(unsigned long long *iterations, unsigned long nr)
-> > {
-> >         while (1) {
-> >                 int fd =3D open("/tmp/nonexistent", O_RDONLY);
-> >                 assert(fd =3D=3D -1);
-> >
-> >                 (*iterations)++;
-> >         }
-> > }
-> >
-> > The win would be higher if it was not for other slowdowns, but one has
-> > to start somewhere.
->
-> This is cool!
->
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> > ---
-> >
-> > v3:
-> > - add a missing word to the new comment
-> >
-> > v2:
-> > - dodge preemption
-> > - use this_cpu_try_cmpxchg
-> > - keep the old variant depending on CONFIG_HAVE_CMPXCHG_LOCAL
-> >
-> >  lib/percpu_counter.c | 44 +++++++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 39 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
-> > index 44dd133594d4..c3140276bb36 100644
-> > --- a/lib/percpu_counter.c
-> > +++ b/lib/percpu_counter.c
-> > @@ -73,17 +73,50 @@ void percpu_counter_set(struct percpu_counter *fbc,=
- s64 amount)
-> >  EXPORT_SYMBOL(percpu_counter_set);
-> >
-> >  /*
-> > - * local_irq_save() is needed to make the function irq safe:
-> > - * - The slow path would be ok as protected by an irq-safe spinlock.
-> > - * - this_cpu_add would be ok as it is irq-safe by definition.
-> > - * But:
-> > - * The decision slow path/fast path and the actual update must be atom=
-ic, too.
-> > + * Add to a counter while respecting batch size.
-> > + *
-> > + * There are 2 implementations, both dealing with the following proble=
-m:
-> > + *
-> > + * The decision slow path/fast path and the actual update must be atom=
-ic.
-> >   * Otherwise a call in process context could check the current values =
-and
-> >   * decide that the fast path can be used. If now an interrupt occurs b=
-efore
-> >   * the this_cpu_add(), and the interrupt updates this_cpu(*fbc->counte=
-rs),
-> >   * then the this_cpu_add() that is executed after the interrupt has co=
-mpleted
-> >   * can produce values larger than "batch" or even overflows.
-> >   */
-> > +#ifdef CONFIG_HAVE_CMPXCHG_LOCAL
-> > +/*
-> > + * Safety against interrupts is achieved in 2 ways:
-> > + * 1. the fast path uses local cmpxchg (note: no lock prefix)
-> > + * 2. the slow path operates with interrupts disabled
-> > + */
-> > +void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, =
-s32 batch)
-> > +{
-> > +     s64 count;
-> > +     unsigned long flags;
-> > +
-> > +     count =3D this_cpu_read(*fbc->counters);
->
-> Should this_cpu_read() be inside the do {} while in case the extreme
-> case that we get preempted after the read and before the cmpxchg AND
-> count + amount < batch on both the previous and next cpu?
->
-
-this_cpu_try_cmpxchg updates the local value on failure (hence &), so
-from semantic pov this is equivalent to having this_cpu_read in the
-loop. I'm using it the same way as mod_zone_state.
-
-> > +     do {
-> > +             if (unlikely(abs(count + amount)) >=3D batch) {
-> > +                     raw_spin_lock_irqsave(&fbc->lock, flags);
-> > +                     /*
-> > +                      * Note: by now we might have migrated to another=
- CPU
-> > +                      * or the value might have changed.
-> > +                      */
-> > +                     count =3D __this_cpu_read(*fbc->counters);
-> > +                     fbc->count +=3D count + amount;
-> > +                     __this_cpu_sub(*fbc->counters, count);
-> > +                     raw_spin_unlock_irqrestore(&fbc->lock, flags);
-> > +                     return;
-> > +             }
-> > +     } while (!this_cpu_try_cmpxchg(*fbc->counters, &count, count + am=
-ount));
-> > +}
-> > +#else
-> > +/*
-> > + * local_irq_save() is used to make the function irq safe:
-> > + * - The slow path would be ok as protected by an irq-safe spinlock.
-> > + * - this_cpu_add would be ok as it is irq-safe by definition.
-> > + */
-> >  void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, =
-s32 batch)
-> >  {
-> >       s64 count;
-> > @@ -101,6 +134,7 @@ void percpu_counter_add_batch(struct percpu_counter=
- *fbc, s64 amount, s32 batch)
-> >       }
-> >       local_irq_restore(flags);
-> >  }
-> > +#endif
-> >  EXPORT_SYMBOL(percpu_counter_add_batch);
-> >
-> >  /*
-> > --
-> > 2.39.2
-> >
->
-> Thanks,
-> Dennis
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 12/49] KVM: x86: Reject disabling of MWAIT/HLT
+ interception when not allowed
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+ <20240517173926.965351-13-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240517173926.965351-13-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+On 5/18/2024 1:38 AM, Sean Christopherson wrote:
+> Reject KVM_CAP_X86_DISABLE_EXITS if userspace attempts to disable MWAIT or
+> HLT exits and KVM previously reported (via KVM_CHECK_EXTENSION) that
+> disabling the exit(s) is not allowed.  E.g. because MWAIT isn't supported
+> or the CPU doesn't have an aways-running APIC timer, or because KVM is
+
+aways-running -> always-running
+
+> configured to mitigate cross-thread vulnerabilities.
+>
+> Cc: Kechen Lu <kechenl@nvidia.com>
+> Fixes: 4d5422cea3b6 ("KVM: X86: Provide a capability to disable MWAIT intercepts")
+> Fixes: 6f0f2d5ef895 ("KVM: x86: Mitigate the cross-thread return address predictions bug")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/kvm/x86.c | 54 ++++++++++++++++++++++++----------------------
+>   1 file changed, 28 insertions(+), 26 deletions(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 4cb0c150a2f8..c729227c6501 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4590,6 +4590,20 @@ static inline bool kvm_can_mwait_in_guest(void)
+>   		boot_cpu_has(X86_FEATURE_ARAT);
+>   }
+>   
+> +static u64 kvm_get_allowed_disable_exits(void)
+> +{
+> +	u64 r = KVM_X86_DISABLE_EXITS_PAUSE;
+> +
+> +	if (!mitigate_smt_rsb) {
+> +		r |= KVM_X86_DISABLE_EXITS_HLT |
+> +			KVM_X86_DISABLE_EXITS_CSTATE;
+> +
+> +		if (kvm_can_mwait_in_guest())
+> +			r |= KVM_X86_DISABLE_EXITS_MWAIT;
+> +	}
+> +	return r;
+> +}
+> +
+>   #ifdef CONFIG_KVM_HYPERV
+>   static int kvm_ioctl_get_supported_hv_cpuid(struct kvm_vcpu *vcpu,
+>   					    struct kvm_cpuid2 __user *cpuid_arg)
+> @@ -4726,15 +4740,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>   		r = KVM_CLOCK_VALID_FLAGS;
+>   		break;
+>   	case KVM_CAP_X86_DISABLE_EXITS:
+> -		r = KVM_X86_DISABLE_EXITS_PAUSE;
+> -
+> -		if (!mitigate_smt_rsb) {
+> -			r |= KVM_X86_DISABLE_EXITS_HLT |
+> -			     KVM_X86_DISABLE_EXITS_CSTATE;
+> -
+> -			if (kvm_can_mwait_in_guest())
+> -				r |= KVM_X86_DISABLE_EXITS_MWAIT;
+> -		}
+> +		r |= kvm_get_allowed_disable_exits();
+
+Nit: Just use "=".
+
+>   		break;
+>   	case KVM_CAP_X86_SMM:
+>   		if (!IS_ENABLED(CONFIG_KVM_SMM))
+> @@ -6565,33 +6571,29 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>   		break;
+>   	case KVM_CAP_X86_DISABLE_EXITS:
+>   		r = -EINVAL;
+> -		if (cap->args[0] & ~KVM_X86_DISABLE_VALID_EXITS)
+> +		if (cap->args[0] & ~kvm_get_allowed_disable_exits())
+>   			break;
+>   
+>   		mutex_lock(&kvm->lock);
+>   		if (kvm->created_vcpus)
+>   			goto disable_exits_unlock;
+>   
+> -		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+> -			kvm->arch.pause_in_guest = true;
+> -
+>   #define SMT_RSB_MSG "This processor is affected by the Cross-Thread Return Predictions vulnerability. " \
+>   		    "KVM_CAP_X86_DISABLE_EXITS should only be used with SMT disabled or trusted guests."
+>   
+> -		if (!mitigate_smt_rsb) {
+> -			if (boot_cpu_has_bug(X86_BUG_SMT_RSB) && cpu_smt_possible() &&
+> -			    (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
+> -				pr_warn_once(SMT_RSB_MSG);
+> -
+> -			if ((cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT) &&
+> -			    kvm_can_mwait_in_guest())
+> -				kvm->arch.mwait_in_guest = true;
+> -			if (cap->args[0] & KVM_X86_DISABLE_EXITS_HLT)
+> -				kvm->arch.hlt_in_guest = true;
+> -			if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+> -				kvm->arch.cstate_in_guest = true;
+> -		}
+> +		if (!mitigate_smt_rsb && boot_cpu_has_bug(X86_BUG_SMT_RSB) &&
+> +		    cpu_smt_possible() &&
+> +		    (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
+> +			pr_warn_once(SMT_RSB_MSG);
+>   
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+> +			kvm->arch.pause_in_guest = true;
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT)
+> +			kvm->arch.mwait_in_guest = true;
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_HLT)
+> +			kvm->arch.hlt_in_guest = true;
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+> +			kvm->arch.cstate_in_guest = true;
+>   		r = 0;
+>   disable_exits_unlock:
+>   		mutex_unlock(&kvm->lock);
+
 
