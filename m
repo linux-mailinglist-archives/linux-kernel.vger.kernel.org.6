@@ -1,134 +1,143 @@
-Return-Path: <linux-kernel+bounces-186348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA9F8CC30E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:19:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403C18CC2E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5EA61C2274F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71CB41C22525
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97661482E1;
-	Wed, 22 May 2024 14:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4230B1411FD;
+	Wed, 22 May 2024 14:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OhtK3LO6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Xtvp2Z9F"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7uQkqK6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D2B1474B8;
-	Wed, 22 May 2024 14:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734921DA24;
+	Wed, 22 May 2024 14:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716387403; cv=none; b=GL9AB7ZjqE1F8cV4Z5t4ZYkM8KWz1F7zBb22AAKBhOFImSubfVvq1FC8Rk2+M0IzPmvWP535gbZvFiuj/xnWO0saznXSqi3fvgSw7us3Hj6Kwe682SIuuTwGtvZVwAkiO1IWHfwnAjg/0hmMARQKPTzT+gpOLsRiKxp/6quR6Hw=
+	t=1716387350; cv=none; b=hkFZpZzp9BG6vdmZUjGmG1PePvl6Q2gmlC5ku3vwJhhObD0LczVuJEwbH8dP4nddT0GSUdcx9CrP38N6ztDDDcbw9Z2bd/xCi2aaStX5gql2Mme/HHeqK2EqOaoYUYUpb48XMPXQGnF4vLcboyYDiMopT/CYlSA3bA3ANGOB7xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716387403; c=relaxed/simple;
-	bh=OdGZx35Xq/K2qo+2VemsbuBTb2vtHnLZgwqnHGj6dHs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fSu7gLo86DopVopCeJyCkYgnqz8SsX/ZZwUBsNtc3ti/urA+9W9KOMVQxQTSeqjs8haB+YYbgYoqmZBD6Evm8d7TJLkU+yGHowfRggbHHBfbVB8EqIhgGY4Yhstjc/OCQc2G5edSltY7OMF30VeriA923LZWivye6IUsUAmmmFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OhtK3LO6; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Xtvp2Z9F reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1716387401; x=1747923401;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=cyyRUEqHorrucwPwnV8fQCfXT5oEDfauIgMMG9jC7FM=;
-  b=OhtK3LO6mQK1CAu941DUpr0sFsYbPAPQ4uoLBWCfwPBL815os6fZIAfD
-   +MOrWEFmyU3SSg2/18qGngy3b1am7PH7iVeGpULZlTBZQkKslpLAtSd8B
-   +vBId8I3DPMvHnx2G/v29rjATRcVxq6zOTSZ4syWwHNDjJdsDMiOPm7BL
-   rJvLnOD5CgngDcfgG2IRrq5Lntcj14FTFda/e6nHq6yvVQSfWAXMyNXND
-   8yGSJrDiqNG5Qgs+b/r7YediSdiXfs/erCs1vuj6FzavUPx+CWX3VSKjZ
-   /4skJkTiJG2Yh0Q3G9BpGZ890P6W6Gr31uC9qs3jQ87Pcfm61I2EXitqR
-   g==;
-X-CSE-ConnectionGUID: BDwKn6HkTBi+ipyCzc3sRA==
-X-CSE-MsgGUID: 26cSOEZTSQS/O1T9RwEotA==
-X-IronPort-AV: E=Sophos;i="6.08,179,1712613600"; 
-   d="scan'208";a="37017683"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 22 May 2024 16:16:40 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C163316EF06;
-	Wed, 22 May 2024 16:16:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1716387395;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=cyyRUEqHorrucwPwnV8fQCfXT5oEDfauIgMMG9jC7FM=;
-	b=Xtvp2Z9F7vtHnA4uHwqzd40sVd/Le0dBcX3UpZTVqoSUvxjJM1GJ/jCqtNkTAi69/lSCfe
-	vEpoYeR2EQAD0vWJ/3BNCWqWsuR9cmL2Y5Kmmu/MUlg4ICc/L0pXPDzhdXxU4H4PB3FnEd
-	H9Q0d2VSDH+SUjDq2B4v610Y04YjLOn6BusDF4b6iPJ9Ps9Kc4qhev2UY90bSHRjI9DO5l
-	8Vse0Tvngqq4wNHWEtcRK3bs2uycKS1E2r2np8W2LL4IlG7V2UFNxYCz0eSjrFEkGAYzLh
-	YDldi4w3XNcKVjIriev3PR2xjA8xzwpKNnAG/pmwD9PeStyjLLc7vBfK0/wMOg==
-From: Gregor Herburger <gregor.herburger@ew.tq-group.com>
-Date: Wed, 22 May 2024 16:15:25 +0200
-Subject: [PATCH RESEND v3 8/8] dt-bindings: can: mcp251xfd: add
- gpio-controller property
+	s=arc-20240116; t=1716387350; c=relaxed/simple;
+	bh=U/NjJb0xHLp/B0jItwl/jBx9LMFb6nr8u3NBLdLHYr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dMTTMFE4SIxdNkTs7iS9HcCxb4pPm1RxfhGfiWVxRsCP9UDFoyndgMdvE+/4Mj4c7pBJfVJ1/rO/YQgiFAVL4r21TH5szobwAAPuz7zvGpx1Cf2kEwL0qXoaYcgO05mHcqZFIOH834S7/Dbu9C1/Fh7EY2f3huM0UD4fe2w+/YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7uQkqK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C12FEC2BBFC;
+	Wed, 22 May 2024 14:15:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716387350;
+	bh=U/NjJb0xHLp/B0jItwl/jBx9LMFb6nr8u3NBLdLHYr4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m7uQkqK6c6mNvuylUP7zsSjrW5HysjxEwdhSLZgYIs2bRVySPQBSrdVNkQQLeCeeq
+	 U1Iff6G0L5rqgmZeLY173WtyQhKDPtkwxhocqLlQ+krQoVIa2OJwW4TWqbRTBquqdh
+	 /Np9yYi3FrzY53GLDsbXPsI5o1+Z4XRbQ1QpkKFq9x7G87jaoNMho4pYdsvyKaX1gt
+	 KRnqqaZNaO+zwcpV9L3ZXt6t7KPvamhyB22d+BQvo2PKexS++E+tfDNA+X7szO5hOA
+	 EoUxwIwMztkvRpfG4uj7HBia+e26W7Ka52BPry740lsxiJ/DsMi+xyyenbs9UcEZGH
+	 HcrREyWl2W5nA==
+Message-ID: <760012df-5b16-4cc6-b2e5-0a05294f6000@kernel.org>
+Date: Wed, 22 May 2024 16:15:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Mithil <bavishimithil@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240522075245.388-1-bavishimithil@gmail.com>
+ <bcc9999d-b912-417a-8ae8-f4e252d1bd8b@kernel.org>
+ <CAGzNGRkc5NJbJpZuUir7dv-C3A=6p_kxp56zrVp6N8+DviPkig@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAGzNGRkc5NJbJpZuUir7dv-C3A=6p_kxp56zrVp6N8+DviPkig@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-mcp251xfd-gpio-feature-v3-8-8829970269c5@ew.tq-group.com>
-References: <20240522-mcp251xfd-gpio-feature-v3-0-8829970269c5@ew.tq-group.com>
-In-Reply-To: <20240522-mcp251xfd-gpio-feature-v3-0-8829970269c5@ew.tq-group.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Thomas Kopp <thomas.kopp@microchip.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux@ew.tq-group.com, gregor.herburger@ew.tq-group.com, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716387339; l=932;
- i=gregor.herburger@ew.tq-group.com; s=20230829; h=from:subject:message-id;
- bh=OdGZx35Xq/K2qo+2VemsbuBTb2vtHnLZgwqnHGj6dHs=;
- b=OHtY6KgFHG+iBUfU0YBi281KIdVWaWQqMvJEoo8s8rPb9hdJExEcAPRb2QmRbXMuZTf4sVFDy
- jVRGwKMAsJ5BCrxiESFhn31aXVnwvNGsvafRMVWsvi6jf3Rv++Lck6U
-X-Developer-Key: i=gregor.herburger@ew.tq-group.com; a=ed25519;
- pk=+eRxwX7ikXwazcRjlOjj2/tbDmfVZdDLoW+xLZbQ4h4=
-X-Last-TLS-Session-Version: TLSv1.3
 
-The mcp251xfd has two pins that can be used as gpio. Add gpio-controller
-property to binding description.
+On 22/05/2024 15:46, Mithil wrote:
+>> You are not making it easier for us to review:
+>> ====
+>> b4 diff '<20240522075245.388-1-bavishimithil@gmail.com>'
+>> Grabbing thread from
+>> lore.kernel.org/all/20240522075245.388-1-bavishimithil@gmail.com/t.mbox.gz
+>> Checking for older revisions
+>> Grabbing search results from lore.kernel.org
+>>   Added from v4: 2 patches
+>> ---
+>> Analyzing 15 messages in the thread
+>> WARNING: duplicate messages found at index 1
+>>    Subject 1: ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+>>    Subject 2: ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+>>   2 is not a reply... assume additional patch
+>> Preparing fake-am for v4: ASoC: dt-bindings: omap-mcpdm: Convert to DT
+>> schema
+>> ERROR: Could not fake-am version v4
+>> ---
+>> Could not create fake-am range for lower series v4
+>>
+>> ====
+>>
+> Hey, sorry about it, its my first time with lkml, could you explain
+> what seems to be the issue here?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Gregor Herburger <gregor.herburger@ew.tq-group.com>
----
- Documentation/devicetree/bindings/net/can/microchip,mcp251xfd.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+You sent multiple same versions, I think more than one v4. You can try
+by yourself - does b4 work on this patchset?
 
-diff --git a/Documentation/devicetree/bindings/net/can/microchip,mcp251xfd.yaml b/Documentation/devicetree/bindings/net/can/microchip,mcp251xfd.yaml
-index 2a98b26630cb..e9605a75c45b 100644
---- a/Documentation/devicetree/bindings/net/can/microchip,mcp251xfd.yaml
-+++ b/Documentation/devicetree/bindings/net/can/microchip,mcp251xfd.yaml
-@@ -49,6 +49,11 @@ properties:
-       Must be half or less of "clocks" frequency.
-     maximum: 20000000
- 
-+  gpio-controller: true
-+
-+  "#gpio-cells":
-+    const: 2
-+
- required:
-   - compatible
-   - reg
-
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
