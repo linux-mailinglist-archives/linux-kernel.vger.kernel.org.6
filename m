@@ -1,673 +1,293 @@
-Return-Path: <linux-kernel+bounces-186779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87AC8CC912
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:30:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189EF8CC915
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE0E1C21BDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845391F21A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B57D1487C7;
-	Wed, 22 May 2024 22:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C891487C5;
+	Wed, 22 May 2024 22:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="md/u8quh"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="csza3GX8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED5A811E0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252AA80BFC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716417000; cv=none; b=ec2trv2ZYArDcoOMEFaV0AZ0Pkn92pKFXqyC5jL2YUpkWqrBXEr6sVADzIWc/l7RqKnrlN+Cr4jZ1w4Usf9tpvqsiqAB7bGLZXfchXKTuUmzYXPoFEqxZ/7Etj6cEbetFsyFLh27F5WSfvQ8IXHSfZGi3IOjAewEc5FVfwwfoEM=
+	t=1716417093; cv=none; b=FMP6DlpyLz30lsI2MNF+ZvZ92xo3i3wkON3jQmzcn9YNs4CxqYe13BlLOh1zrmHsdmoFkOGqdzm88S/K7+FTe1wVNLel7ORrEZh5Ro+fiPi8vb6ZQlYHVMfhH291mFXyMRqgUPGhKijOFHv3uNhFGNi7FD4ymj9gwEz5YKNa/oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716417000; c=relaxed/simple;
-	bh=k8sK4swG0goFnYX0Fd+UivU9IjwQMRpCUWcGlcn5n3s=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=Bu6UCRFERDF+M0qUtyahJmBqnR1ldU1R3vGLxy6TfNbaZVt/jGUIStAqbvaAnEUfkGZwSBOMmW4Ep4JT5Mxtk+DScW4c+QcmiPJ9d2YtjhznOXFKlzy5R6FGCr2tgmeJowUMFRRfGkKcKHa8xugyyeQ/aE/6NGh4N0aFeusmvhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=md/u8quh; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-574b3d6c0f3so11802241a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716416995; x=1717021795; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k8sK4swG0goFnYX0Fd+UivU9IjwQMRpCUWcGlcn5n3s=;
-        b=md/u8quhzgw7FfEaYHbwKI1QKl5yoZiAx7t1Wd5VqaMopyRmujjob2YAybmEs0G9Tb
-         qUPQQzuwj5Np9XOkWEO8+pLo3ptabztyWIgNADbZkrZuzKLeQ60WQMiO2gvxJ73tXFUY
-         Hhp9JhhCmBvXfMt8lplbfNyfUcNUf6U3/yjYcgZJtWuzWv07KIJQnJmn7HNS95lwgfim
-         Td3ydGoFUj/e8/WdD28y6tMjvifJH3EcnPvrScFb0+EoUg5eeqzGJLJhQxS5Wsrs9NRi
-         X03ylbwpc1I1crW9iaQm0XN7Zl0zugQ1QyPJsHOd7CL5d8IVaYE6reeiPSC28+aPoZNn
-         x81g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716416995; x=1717021795;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=k8sK4swG0goFnYX0Fd+UivU9IjwQMRpCUWcGlcn5n3s=;
-        b=wnIUwuqu3T7QUZGJ6eWq8HYkeDVnSayriy2ipmfWg38ZlblSGzcJv1DfAAL2cUm/5P
-         StA13jYSmxCtDeg+I+D9u7ROsnofsu+UmvDQXaLlfJCSDJ7aOXse79MNBWwkF8Ci7nkW
-         jmUV8qh3AKYQ9/UvRUpRattzhdCGSytXEl4V1TShZJZ6CSEoZ06u7Ks0JFlpGIMfmYpC
-         vILb3bTXIHkKuBtTe+pwxfSJPxC1GKvrOkJ+TGUL1AUh8zegy0d+ONVjJhEHJccMoRpp
-         Nf/duHTjMvLcLQXCXJgtpjZLcUYBhvZn8LuvFVaRnFmtS+U36q2KDwD45qIYeJEbbjrD
-         w0JA==
-X-Gm-Message-State: AOJu0YwVpcrHK1JhN/oQqPY5lEgIQdlFFDwOQUr64M0BFrLaAIUiYlKs
-	UH6AB7S2N5al+C2X0ca5ZcoqBP58cZ0qqhNZ1D964cXI4dOBk4n7Kyvcf5gF
-X-Google-Smtp-Source: AGHT+IHWBZmfUjKqnO5DGHVL0yjqdslnB2UR2CI1/agshin+YicRQztisDfdNXBbt9KM6VIKYjwiVg==
-X-Received: by 2002:a17:906:3404:b0:a59:c28a:7ec2 with SMTP id a640c23a62f3a-a62280970ebmr185065466b.41.1716416994486;
-        Wed, 22 May 2024 15:29:54 -0700 (PDT)
-Received: from [192.168.178.51] (p54a89620.dip0.t-ipconnect.de. [84.168.150.32])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01451sm1861431266b.149.2024.05.22.15.29.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 15:29:53 -0700 (PDT)
-Message-ID: <e441605c-eaf2-4c2d-872b-d8e541f4cf60@gmail.com>
-Date: Thu, 23 May 2024 00:29:40 +0200
+	s=arc-20240116; t=1716417093; c=relaxed/simple;
+	bh=1W1L7acCospm0rUX5FWxQM3phzR8QfqYtWmsjzBV1iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJnRxon8S4h9tIUTvzo3uKrXXSQOMYFp9r1ToW02uspdlERz/JL4obp9mv9qmYwXEtvpkTuu4ppBfBgZNaSKQXV3R7hA1W2wyJZs2xhXek/vU/E2Uvz8sXozyVzGICIPZqFXYxvuaVyEPPe8Bzgn0yYpfSFN1dZH35QrErIhlnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=csza3GX8; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716417091; x=1747953091;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1W1L7acCospm0rUX5FWxQM3phzR8QfqYtWmsjzBV1iY=;
+  b=csza3GX8bCowH1UrEnMB0wWr1+An1RiLgY74pGUap0b6muKfe3HPoVoq
+   heiaghKVJDvhuWbLZ/2Qx+6nrxLcN6jAJwA8J3F828GoEZt6721U1lJ4q
+   iLKPp0yELkz9u7xgiO1DznQQhSTrAArZP8CbSEp9HssS2aoGm5vppy3+u
+   wddFvI+AlO/JFYlubiCL36i16HTd8Ydu0MycHqtLI81vkY7OWzgdrVrdg
+   KqPBtsQnSPWvZEBiJgNfdXpjqn74lWRfRi1gzdBnYO0Z84dLhyXYxzyXv
+   rb0BOOudID23gMbEGZGAvxbb8U0BG+Iqw4RBjMyhmnw86F33LNWUpB2rK
+   Q==;
+X-CSE-ConnectionGUID: wxRzx78YRyqj52PGb/B27A==
+X-CSE-MsgGUID: n+w1ggRVR7ClWaDqikSWiA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="23270778"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="23270778"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 15:31:30 -0700
+X-CSE-ConnectionGUID: G5irdcCXSgyxecri599MIA==
+X-CSE-MsgGUID: iwX5NZClT4C7gT1HWu2k8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="33550283"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 22 May 2024 15:31:23 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s9uUS-0002BN-35;
+	Wed, 22 May 2024 22:31:20 +0000
+Date: Thu, 23 May 2024 06:30:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shenghao Ding <shenghao-ding@ti.com>, broonie@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, andriy.shevchenko@linux.intel.com,
+	lgirdwood@gmail.com, perex@perex.cz,
+	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
+	judyhsiao@google.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
+	linux-kernel@vger.kernel.org, j-chadha@ti.com,
+	liam.r.girdwood@intel.com, bard.liao@intel.com,
+	yung-chuan.liao@linux.intel.com, dipa@ti.com, kevin-lu@ti.com,
+	yuhsuan@google.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
+	Baojun.Xu@fpt.com, navada@ti.com, cujomalainey@google.com,
+	aanya@ti.com, nayeem.mahmud@ti.com,
+	Shenghao Ding <shenghao-ding@ti.com>
+Subject: Re: [PATCH v1] ASoc: tas2781: Add Calibration Kcontrols and tas2563
+ digtial gain for Chromebook
+Message-ID: <202405230633.Vq1CHD6e-lkp@intel.com>
+References: <20240522112942.994-1-shenghao-ding@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Johannes_W=C3=BCller?= <johanneswueller@gmail.com>
-Subject: [BUG] Task Blocking in Kernel 6.9.1-arch1-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522112942.994-1-shenghao-ding@ti.com>
 
-$ uname -a
-Linux jw 6.9.1-arch1-1 #1 SMP PREEMPT_DYNAMIC Fri, 17 May 2024 16:56:38 +0000 x86_64 GNU/Linux
+Hi Shenghao,
 
-$ inxi
-CPU: 16-core AMD Ryzen 9 7950X (-MT MCP-) speed/min/max: 3661/545/5881 MHz
-Kernel: 6.9.1-arch1-1 x86_64 Up: 1h 57m Mem: 8.89/58.57 GiB (15.2%)
-Storage: 3.64 TiB (16.6% used) Procs: 538 Shell: Bash inxi: 3.3.34
+kernel test robot noticed the following build errors:
 
-Problem Description:
-I am encountering an issue where several tasks are seemingly being blocked by an
-intermittent locking issue. Sometimes the system boots, sometimes it just stalls
-while systemd decides to wait for networking that's might never come online
-because of this.
+[auto build test ERROR on broonie-sound/for-next]
+[also build test ERROR on next-20240522]
+[cannot apply to tiwai-sound/for-next tiwai-sound/for-linus linus/master v6.9]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I've been made aware of this but, that might be related, judging by a cursory
-comparison of the symptoms:
-https://bugzilla.kernel.org/show_bug.cgi?id=218740
+url:    https://github.com/intel-lab-lkp/linux/commits/Shenghao-Ding/ASoc-tas2781-Add-Calibration-Kcontrols-and-tas2563-digtial-gain-for-Chromebook/20240522-193315
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+patch link:    https://lore.kernel.org/r/20240522112942.994-1-shenghao-ding%40ti.com
+patch subject: [PATCH v1] ASoc: tas2781: Add Calibration Kcontrols and tas2563 digtial gain for Chromebook
+config: x86_64-buildonly-randconfig-002-20240523 (https://download.01.org/0day-ci/archive/20240523/202405230633.Vq1CHD6e-lkp@intel.com/config)
+compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405230633.Vq1CHD6e-lkp@intel.com/reproduce)
 
-Relevant Logs:
-May 21 19:36:48 jw kernel: INFO: task kworker/u130:4:285 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:kworker/u130:4  state:D stack:0     pid:285   tgid:285   ppid:2      flags:0x00004000
-May 21 19:36:48 jw kernel: Workqueue: events_power_efficient reg_check_chans_work [cfg80211]
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? __queue_work.part.0+0x18b/0x3a0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_preempt_disabled+0x15/0x30
-May 21 19:36:48 jw kernel:  __mutex_lock.constprop.0+0x31e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  reg_check_chans_work+0x31/0x5a0 [cfg80211 e26458db9aeedbfd1117deb28e3ddf74ab47901e]
-May 21 19:36:48 jw kernel:  ? try_to_wake_up+0x22f/0x660
-May 21 19:36:48 jw kernel:  process_one_work+0x18b/0x350
-May 21 19:36:48 jw kernel:  worker_thread+0x2eb/0x410
-May 21 19:36:48 jw kernel:  ? __pfx_worker_thread+0x10/0x10
-May 21 19:36:48 jw kernel:  kthread+0xcf/0x100
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork+0x31/0x50
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork_asm+0x1a/0x30
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task kworker/u130:6:287 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:kworker/u130:6  state:D stack:0     pid:287   tgid:287   ppid:2      flags:0x00004000
-May 21 19:36:48 jw kernel: Workqueue: events_power_efficient crda_timeout_work [cfg80211]
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? psi_group_change+0x1b0/0x350
-May 21 19:36:48 jw kernel:  ? dequeue_entity+0x138/0x4a0
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_preempt_disabled+0x15/0x30
-May 21 19:36:48 jw kernel:  __mutex_lock.constprop.0+0x31e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  crda_timeout_work+0x10/0x40 [cfg80211 e26458db9aeedbfd1117deb28e3ddf74ab47901e]
-May 21 19:36:48 jw kernel:  process_one_work+0x18b/0x350
-May 21 19:36:48 jw kernel:  worker_thread+0x2eb/0x410
-May 21 19:36:48 jw kernel:  ? __pfx_worker_thread+0x10/0x10
-May 21 19:36:48 jw kernel:  kthread+0xcf/0x100
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork+0x31/0x50
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork_asm+0x1a/0x30
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task systemd-network:633 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:systemd-network state:D stack:0     pid:633   tgid:633   ppid:1      flags:0x00004006
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __slab_free+0xdf/0x2f0
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_preempt_disabled+0x15/0x30
-May 21 19:36:48 jw kernel:  rwsem_down_read_slowpath+0x26f/0x4e0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? vsnprintf+0x33f/0x6e0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  down_read+0x48/0xa0
-May 21 19:36:48 jw kernel:  led_trigger_register+0xe6/0x1a0
-May 21 19:36:48 jw kernel:  phy_led_triggers_register+0xee/0x25c [libphy 62ef5849eba6bb95967a9b99c9f5dfd80cb3790c]
-May 21 19:36:48 jw kernel:  phy_attach_direct+0x363/0x370 [libphy 62ef5849eba6bb95967a9b99c9f5dfd80cb3790c]
-May 21 19:36:48 jw kernel:  ? __pfx_r8169_phylink_handler+0x10/0x10 [r8169 deaf1b76310aec8b228de15cb4aae9b98656b9c8]
-May 21 19:36:48 jw kernel:  phy_connect_direct+0x25/0x70 [libphy 62ef5849eba6bb95967a9b99c9f5dfd80cb3790c]
-May 21 19:36:48 jw kernel:  rtl_open+0x2ce/0x490 [r8169 deaf1b76310aec8b228de15cb4aae9b98656b9c8]
-May 21 19:36:48 jw kernel:  __dev_open+0xf8/0x1b0
-May 21 19:36:48 jw kernel:  __dev_change_flags+0x1e4/0x230
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? nla_put_ifalias+0x42/0xb0
-May 21 19:36:48 jw kernel:  dev_change_flags+0x26/0x70
-May 21 19:36:48 jw kernel:  do_setlink+0x36c/0x1210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? dev_fetch_sw_netstats+0x5c/0x70
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? rtl8169_get_stats64+0x54/0x110 [r8169 deaf1b76310aec8b228de15cb4aae9b98656b9c8]
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? ep_poll_callback+0x24d/0x2a0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __nla_validate_parse+0x5f/0xcb0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __wake_up_common+0x75/0xa0
-May 21 19:36:48 jw kernel:  rtnl_setlink+0x11f/0x1d0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? mntput_no_expire+0x4a/0x260
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? security_capable+0x41/0x70
-May 21 19:36:48 jw kernel:  rtnetlink_rcv_msg+0x142/0x3e0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __mod_memcg_lruvec_state+0x94/0x110
-May 21 19:36:48 jw kernel:  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
-May 21 19:36:48 jw kernel:  netlink_rcv_skb+0x50/0x100
-May 21 19:36:48 jw kernel:  netlink_unicast+0x240/0x370
-May 21 19:36:48 jw kernel:  netlink_sendmsg+0x21b/0x470
-May 21 19:36:48 jw kernel:  __sys_sendto+0x201/0x210
-May 21 19:36:48 jw kernel:  __x64_sys_sendto+0x24/0x30
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? dquot_drop+0x24/0x50
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? shmem_evict_inode+0x9d/0x2b0
-May 21 19:36:48 jw kernel:  ? __inode_wait_for_writeback+0x7c/0xf0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? fsnotify_grab_connector+0x43/0x80
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? fsnotify_destroy_marks+0x2a/0x1b0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __memcg_slab_free_hook+0xef/0x140
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? kmem_cache_free+0x3b9/0x3e0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __x64_sys_fcntl+0x94/0xc0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x76a43ed2c4e7
-May 21 19:36:48 jw kernel: RSP: 002b:00007ffc3f657ea8 EFLAGS: 00000202 ORIG_RAX: 000000000000002c
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 000063a016834000 RCX: 000076a43ed2c4e7
-May 21 19:36:48 jw kernel: RDX: 0000000000000020 RSI: 000063a01684be60 RDI: 0000000000000003
-May 21 19:36:48 jw kernel: RBP: 00007ffc3f657f40 R08: 00007ffc3f657eb0 R09: 0000000000000080
-May 21 19:36:48 jw kernel: R10: 0000000000000000 R11: 0000000000000202 R12: 000063a01684ba30
-May 21 19:36:48 jw kernel: R13: 000063a01684bed8 R14: 0000000000000000 R15: 000063a01684be90
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task (udev-worker):641 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:(udev-worker)   state:D stack:0     pid:641   tgid:641   ppid:623    flags:0x00000006
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_timeout+0x12f/0x160
-May 21 19:36:48 jw kernel:  wait_for_completion+0x86/0x170
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x1d0/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x74691d8fae9d
-May 21 19:36:48 jw kernel: RSP: 002b:00007ffee6117cb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 00005c753ee8abc0 RCX: 000074691d8fae9d
-May 21 19:36:48 jw kernel: RDX: 0000000000000004 RSI: 000074691de2d376 RDI: 0000000000000020
-May 21 19:36:48 jw kernel: RBP: 000074691de2d376 R08: 0000000000000003 R09: 00007ffee6117d00
-May 21 19:36:48 jw kernel: R10: 0000000000000007 R11: 0000000000000246 R12: 0000000000020000
-May 21 19:36:48 jw kernel: R13: 00005c753ee8ab50 R14: 0000000000000000 R15: 00005c753ee88fb0
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task (udev-worker):666 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:(udev-worker)   state:D stack:0     pid:666   tgid:666   ppid:623    flags:0x00004006
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __slab_free+0xdf/0x2f0
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_preempt_disabled+0x15/0x30
-May 21 19:36:48 jw kernel:  rwsem_down_write_slowpath+0x1d3/0x660
-May 21 19:36:48 jw kernel:  down_write+0x5a/0x60
-May 21 19:36:48 jw kernel:  led_classdev_unregister+0x8f/0x110
-May 21 19:36:48 jw kernel:  input_leds_disconnect+0x37/0x70
-May 21 19:36:48 jw kernel:  __input_unregister_device+0xa9/0x190
-May 21 19:36:48 jw kernel:  input_unregister_device+0x45/0x70
-May 21 19:36:48 jw kernel:  hidinput_disconnect+0x79/0xf0
-May 21 19:36:48 jw kernel:  hid_disconnect+0x62/0x80
-May 21 19:36:48 jw kernel:  hid_device_remove+0x8c/0xa0
-May 21 19:36:48 jw kernel:  device_release_driver_internal+0x19c/0x200
-May 21 19:36:48 jw kernel:  ? __pfx___hid_bus_reprobe_drivers+0x10/0x10
-May 21 19:36:48 jw kernel:  device_reprobe+0x1d/0x90
-May 21 19:36:48 jw kernel:  ? __hid_bus_reprobe_drivers+0x39/0x60
-May 21 19:36:48 jw kernel:  bus_for_each_dev+0x8c/0xe0
-May 21 19:36:48 jw kernel:  ? __pfx___hid_bus_driver_added+0x10/0x10
-May 21 19:36:48 jw kernel:  __hid_bus_driver_added+0x2c/0x40
-May 21 19:36:48 jw kernel:  bus_for_each_drv+0x95/0xf0
-May 21 19:36:48 jw kernel:  __hid_register_driver+0x74/0x80
-May 21 19:36:48 jw kernel:  ? __pfx_logi_djreceiver_driver_init+0x10/0x10 [hid_logitech_dj 39f687323f8fde2b576eb64f7732f5326f391f36]
-May 21 19:36:48 jw kernel:  do_one_initcall+0x58/0x310
-May 21 19:36:48 jw kernel:  do_init_module+0x60/0x220
-May 21 19:36:48 jw kernel:  init_module_from_file+0x89/0xe0
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x121/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? __slab_free+0xa1/0x2f0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __rseq_handle_notify_resume+0xa6/0x490
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? switch_fpu_return+0x4e/0xd0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __irq_exit_rcu+0x4a/0xb0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x74691d8fae9d
-May 21 19:36:48 jw kernel: RSP: 002b:00007ffee6117cb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 00005c753eec6cc0 RCX: 000074691d8fae9d
-May 21 19:36:48 jw kernel: RDX: 0000000000000004 RSI: 000074691de2d376 RDI: 0000000000000038
-May 21 19:36:48 jw kernel: RBP: 000074691de2d376 R08: 0000000000000001 R09: 00007ffee6117d00
-May 21 19:36:48 jw kernel: R10: 0000000000000050 R11: 0000000000000246 R12: 0000000000020000
-May 21 19:36:48 jw kernel: R13: 00005c753eeb57a0 R14: 0000000000000000 R15: 00005c753eeca180
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task (udev-worker):722 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:(udev-worker)   state:D stack:0     pid:722   tgid:722   ppid:623    flags:0x00000006
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_timeout+0x12f/0x160
-May 21 19:36:48 jw kernel:  wait_for_completion+0x86/0x170
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x1d0/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? do_filp_open+0xc4/0x170
-May 21 19:36:48 jw kernel:  ? __pfx_page_put_link+0x10/0x10
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_sys_openat2+0x9c/0xe0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_sys_openat2+0x9c/0xe0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_user_addr_fault+0x34e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x74691d8fae9d
-May 21 19:36:48 jw kernel: RSP: 002b:00007ffee6117cb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 00005c753eeb7c60 RCX: 000074691d8fae9d
-May 21 19:36:48 jw kernel: RDX: 0000000000000004 RSI: 000074691de2d376 RDI: 0000000000000060
-May 21 19:36:48 jw kernel: RBP: 000074691de2d376 R08: 0000000000000001 R09: 00007ffee6117d00
-May 21 19:36:48 jw kernel: R10: 0000000000000050 R11: 0000000000000246 R12: 0000000000020000
-May 21 19:36:48 jw kernel: R13: 00005c753ef0ffa0 R14: 0000000000000000 R15: 00005c753ef10c40
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task kworker/21:4:760 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:kworker/21:4    state:D stack:0     pid:760   tgid:760   ppid:2      flags:0x00004000
-May 21 19:36:48 jw kernel: Workqueue: events linkwatch_event
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? psi_group_change+0x1b0/0x350
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_preempt_disabled+0x15/0x30
-May 21 19:36:48 jw kernel:  __mutex_lock.constprop.0+0x31e/0x620
-May 21 19:36:48 jw kernel:  ? delayed_vfree_work+0x35/0x50
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  linkwatch_event+0x12/0x40
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  process_one_work+0x18b/0x350
-May 21 19:36:48 jw kernel:  worker_thread+0x2eb/0x410
-May 21 19:36:48 jw kernel:  ? __pfx_worker_thread+0x10/0x10
-May 21 19:36:48 jw kernel:  kthread+0xcf/0x100
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork+0x31/0x50
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork_asm+0x1a/0x30
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task modprobe:854 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:modprobe        state:D stack:0     pid:854   tgid:854   ppid:2      flags:0x00000002
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_timeout+0x12f/0x160
-May 21 19:36:48 jw kernel:  wait_for_completion+0x86/0x170
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x1d0/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? switch_fpu_return+0x4e/0xd0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_sys_openat2+0x9c/0xe0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? handle_mm_fault+0x1f0/0x300
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_user_addr_fault+0x34e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x718a8d527e9d
-May 21 19:36:48 jw kernel: RSP: 002b:00007fffce99f9a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 00005c00c9402d50 RCX: 0000718a8d527e9d
-May 21 19:36:48 jw kernel: RDX: 0000000000000004 RSI: 00005c00c34f1478 RDI: 0000000000000000
-May 21 19:36:48 jw kernel: RBP: 00005c00c34f1478 R08: 0000718a8d5f6b20 R09: 0000000000000000
-May 21 19:36:48 jw kernel: R10: 00005c00c94032f0 R11: 0000000000000246 R12: 0000000000040000
-May 21 19:36:48 jw kernel: R13: 00005c00c9403160 R14: 0000000000000000 R15: 00005c00c94032b0
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task modprobe:855 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:modprobe        state:D stack:0     pid:855   tgid:855   ppid:2      flags:0x00000002
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_timeout+0x12f/0x160
-May 21 19:36:48 jw kernel:  wait_for_completion+0x86/0x170
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x1d0/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? vfs_read+0x2a2/0x360
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? vfs_read+0x2a2/0x360
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __rseq_handle_notify_resume+0xa6/0x490
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? set_pte_range+0xcc/0x270
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? next_uptodate_folio+0x8b/0x240
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? filemap_map_pages+0x47e/0x550
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? vfs_statx+0x93/0x1c0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_fault+0x246/0x490
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __handle_mm_fault+0x855/0xe10
-May 21 19:36:48 jw kernel:  ? delayed_vfree_work+0x35/0x50
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  linkwatch_event+0x12/0x40
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  process_one_work+0x18b/0x350
-May 21 19:36:48 jw kernel:  worker_thread+0x2eb/0x410
-May 21 19:36:48 jw kernel:  ? __pfx_worker_thread+0x10/0x10
-May 21 19:36:48 jw kernel:  kthread+0xcf/0x100
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork+0x31/0x50
-May 21 19:36:48 jw kernel:  ? __pfx_kthread+0x10/0x10
-May 21 19:36:48 jw kernel:  ret_from_fork_asm+0x1a/0x30
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task modprobe:854 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:modprobe        state:D stack:0     pid:854   tgid:854   ppid:2      flags:0x00000002
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_timeout+0x12f/0x160
-May 21 19:36:48 jw kernel:  wait_for_completion+0x86/0x170
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x1d0/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? switch_fpu_return+0x4e/0xd0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_sys_openat2+0x9c/0xe0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? handle_mm_fault+0x1f0/0x300
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_user_addr_fault+0x34e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x718a8d527e9d
-May 21 19:36:48 jw kernel: RSP: 002b:00007fffce99f9a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 00005c00c9402d50 RCX: 0000718a8d527e9d
-May 21 19:36:48 jw kernel: RDX: 0000000000000004 RSI: 00005c00c34f1478 RDI: 0000000000000000
-May 21 19:36:48 jw kernel: RBP: 00005c00c34f1478 R08: 0000718a8d5f6b20 R09: 0000000000000000
-May 21 19:36:48 jw kernel: R10: 00005c00c94032f0 R11: 0000000000000246 R12: 0000000000040000
-May 21 19:36:48 jw kernel: R13: 00005c00c9403160 R14: 0000000000000000 R15: 00005c00c94032b0
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task modprobe:855 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:modprobe        state:D stack:0     pid:855   tgid:855   ppid:2      flags:0x00000002
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_timeout+0x12f/0x160
-May 21 19:36:48 jw kernel:  wait_for_completion+0x86/0x170
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x1d0/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? vfs_read+0x2a2/0x360
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? vfs_read+0x2a2/0x360
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __rseq_handle_notify_resume+0xa6/0x490
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? set_pte_range+0xcc/0x270
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? next_uptodate_folio+0x8b/0x240
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? filemap_map_pages+0x47e/0x550
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? vfs_statx+0x93/0x1c0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_fault+0x246/0x490
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __handle_mm_fault+0x855/0xe10
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? next_uptodate_folio+0x8b/0x240
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? filemap_map_pages+0x47e/0x550
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? vfs_statx+0x93/0x1c0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_fault+0x246/0x490
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __handle_mm_fault+0x855/0xe10
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __count_memcg_events+0x4d/0xb0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? count_memcg_events.constprop.0+0x1a/0x30
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? handle_mm_fault+0x1f0/0x300
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_user_addr_fault+0x34e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x7f8071327e9d
-May 21 19:36:48 jw kernel: RSP: 002b:00007ffed39e0f48 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 0000601489df6d50 RCX: 00007f8071327e9d
-May 21 19:36:48 jw kernel: RDX: 0000000000000004 RSI: 0000601470012478 RDI: 0000000000000000
-May 21 19:36:48 jw kernel: RBP: 0000601470012478 R08: 00007f80713f6b20 R09: 0000000000000000
-May 21 19:36:48 jw kernel: R10: 0000601489df72f0 R11: 0000000000000246 R12: 0000000000040000
-May 21 19:36:48 jw kernel: R13: 0000601489df7160 R14: 0000000000000000 R15: 0000601489df72b0
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: INFO: task modprobe:858 blocked for more than 122 seconds.
-May 21 19:36:48 jw kernel:       Not tainted 6.9.1-arch1-1 #1
-May 21 19:36:48 jw kernel: "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-May 21 19:36:48 jw kernel: task:modprobe        state:D stack:0     pid:858   tgid:858   ppid:2      flags:0x00004002
-May 21 19:36:48 jw kernel: Call Trace:
-May 21 19:36:48 jw kernel:  <TASK>
-May 21 19:36:48 jw kernel:  __schedule+0x3c7/0x1510
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? finish_task_switch.isra.0+0x99/0x2e0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  schedule+0x27/0xf0
-May 21 19:36:48 jw kernel:  schedule_preempt_disabled+0x15/0x30
-May 21 19:36:48 jw kernel:  __mutex_lock.constprop.0+0x31e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  set_device_name+0x2a/0x140 [ledtrig_netdev 9ef86161089123f18990e2e814a36d05675e99cc]
-May 21 19:36:48 jw kernel:  netdev_trig_activate+0x165/0x1e0 [ledtrig_netdev 9ef86161089123f18990e2e814a36d05675e99cc]
-May 21 19:36:48 jw kernel:  led_trigger_set+0x210/0x310
-May 21 19:36:48 jw kernel:  led_trigger_register+0x169/0x1a0
-May 21 19:36:48 jw kernel:  ? __pfx_netdev_led_trigger_init+0x10/0x10 [ledtrig_netdev 9ef86161089123f18990e2e814a36d05675e99cc]
-May 21 19:36:48 jw kernel:  do_one_initcall+0x58/0x310
-May 21 19:36:48 jw kernel:  do_init_module+0x60/0x220
-May 21 19:36:48 jw kernel:  init_module_from_file+0x89/0xe0
-May 21 19:36:48 jw kernel:  idempotent_init_module+0x121/0x2b0
-May 21 19:36:48 jw kernel:  __x64_sys_finit_module+0x5e/0xb0
-May 21 19:36:48 jw kernel:  do_syscall_64+0x82/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? syscall_exit_to_user_mode+0x75/0x210
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_syscall_64+0x8e/0x160
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? __count_memcg_events+0x4d/0xb0
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? count_memcg_events.constprop.0+0x1a/0x30
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? handle_mm_fault+0x1f0/0x300
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? do_user_addr_fault+0x34e/0x620
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-May 21 19:36:48 jw kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-May 21 19:36:48 jw kernel: RIP: 0033:0x7a7397b27e9d
-May 21 19:36:48 jw kernel: RSP: 002b:00007ffced8cf988 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-May 21 19:36:48 jw kernel: RAX: ffffffffffffffda RBX: 00005fb280b89d50 RCX: 00007a7397b27e9d
-May 21 19:36:48 jw kernel: RDX: 0000000000000004 RSI: 00005fb2412d4478 RDI: 0000000000000000
-May 21 19:36:48 jw kernel: RBP: 00005fb2412d4478 R08: 00007a7397bf6b20 R09: 0000000000000000
-May 21 19:36:48 jw kernel: R10: 00005fb280b8a2f0 R11: 0000000000000246 R12: 0000000000040000
-May 21 19:36:48 jw kernel: R13: 00005fb280b8a160 R14: 0000000000000000 R15: 00005fb280b8a2b0
-May 21 19:36:48 jw kernel:  </TASK>
-May 21 19:36:48 jw kernel: Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405230633.Vq1CHD6e-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   sound/soc/codecs/tas2781-i2c.c: In function 'tas2563_digital_gain_get':
+>> sound/soc/codecs/tas2781-i2c.c:696:31: error: 'tas2563_dvc_table' undeclared (first use in this function); did you mean 'tasklet_disable'?
+      ar_mid = get_unaligned_be32(tas2563_dvc_table[mid]);
+                                  ^~~~~~~~~~~~~~~~~
+                                  tasklet_disable
+   sound/soc/codecs/tas2781-i2c.c:696:31: note: each undeclared identifier is reported only once for each function it appears in
+   sound/soc/codecs/tas2781-i2c.c: In function 'tas2563_digital_gain_put':
+   sound/soc/codecs/tas2781-i2c.c:737:29: error: 'tas2563_dvc_table' undeclared (first use in this function); did you mean 'tasklet_disable'?
+     volwr = get_unaligned_be32(tas2563_dvc_table[vol]);
+                                ^~~~~~~~~~~~~~~~~
+                                tasklet_disable
+   In file included from sound/soc/codecs/tas2781-i2c.c:30:
+   sound/soc/codecs/tas2781-i2c.c: At top level:
+>> sound/soc/codecs/tas2781-i2c.c:790:3: error: 'tas2563_dvc_tlv' undeclared here (not in a function); did you mean 'tas2563_snd_controls'?
+      tas2563_dvc_tlv),
+      ^~~~~~~~~~~~~~~
+   include/sound/soc.h:293:12: note: in definition of macro 'SOC_SINGLE_RANGE_EXT_TLV'
+     .tlv.p = (tlv_array), \
+               ^~~~~~~~~
+>> sound/soc/codecs/tas2781-i2c.c:788:17: error: 'tas2563_dvc_table' undeclared here (not in a function); did you mean 'tas2563_snd_controls'?
+      0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
+                    ^~~~~~~~~~~~~~~~~
+   include/sound/soc.h:298:42: note: in definition of macro 'SOC_SINGLE_RANGE_EXT_TLV'
+       .rshift = xshift, .min = xmin, .max = xmax, \
+                                             ^~~~
+   sound/soc/codecs/tas2781-i2c.c:788:6: note: in expansion of macro 'ARRAY_SIZE'
+      0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
+         ^~~~~~~~~~
+   include/linux/build_bug.h:16:51: error: bit-field '<anonymous>' width not an integer constant
+    #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
+                                                      ^
+   include/sound/soc.h:298:42: note: in definition of macro 'SOC_SINGLE_RANGE_EXT_TLV'
+       .rshift = xshift, .min = xmin, .max = xmax, \
+                                             ^~~~
+   include/linux/compiler.h:237:28: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+    #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+                               ^~~~~~~~~~~~~~~~~
+   include/linux/array_size.h:11:59: note: in expansion of macro '__must_be_array'
+    #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+                                                              ^~~~~~~~~~~~~~~
+   sound/soc/codecs/tas2781-i2c.c:788:6: note: in expansion of macro 'ARRAY_SIZE'
+      0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
+         ^~~~~~~~~~
+
+
+vim +696 sound/soc/codecs/tas2781-i2c.c
+
+   669	
+   670	static int tas2563_digital_gain_get(
+   671		struct snd_kcontrol *kcontrol,
+   672		struct snd_ctl_elem_value *ucontrol)
+   673	{
+   674		struct soc_mixer_control *mc =
+   675			(struct soc_mixer_control *)kcontrol->private_value;
+   676		struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
+   677		struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
+   678		unsigned int l = 0, r = mc->max;
+   679		unsigned int target, ar_mid, mid, ar_l, ar_r;
+   680		unsigned int reg = mc->reg;
+   681		unsigned char data[4];
+   682		int ret;
+   683	
+   684		mutex_lock(&tas_dev->codec_lock);
+   685		/* Read the primary device */
+   686		ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
+   687		if (ret) {
+   688			dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
+   689			goto out;
+   690		}
+   691	
+   692		target = get_unaligned_be32(&data[0]);
+   693	
+   694		while (r > 1 + l) {
+   695			mid = (l + r) / 2;
+ > 696			ar_mid = get_unaligned_be32(tas2563_dvc_table[mid]);
+   697			if (target < ar_mid)
+   698				r = mid;
+   699			else
+   700				l = mid;
+   701		}
+   702	
+   703		ar_l = get_unaligned_be32(tas2563_dvc_table[l]);
+   704		ar_r = get_unaligned_be32(tas2563_dvc_table[r]);
+   705	
+   706		ucontrol->value.integer.value[0] =
+   707			abs(target - ar_l) <= abs(target - ar_r) ? l : r;
+   708	out:
+   709		mutex_unlock(&tas_dev->codec_lock);
+   710		return 0;
+   711	}
+   712	
+   713	static int tas2563_digital_gain_put(
+   714		struct snd_kcontrol *kcontrol,
+   715		struct snd_ctl_elem_value *ucontrol)
+   716	{
+   717		struct soc_mixer_control *mc =
+   718			(struct soc_mixer_control *)kcontrol->private_value;
+   719		struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
+   720		struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
+   721		unsigned int reg = mc->reg;
+   722		unsigned int volrd, volwr;
+   723		int vol = ucontrol->value.integer.value[0];
+   724		int max = mc->max, i, ret = 1;
+   725		unsigned char data[4];
+   726	
+   727		vol = clamp(vol, 0, max);
+   728		mutex_lock(&tas_dev->codec_lock);
+   729		/* Read the primary device */
+   730		ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
+   731		if (ret) {
+   732			dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
+   733			goto out;
+   734		}
+   735	
+   736		volrd = get_unaligned_be32(&data[0]);
+   737		volwr = get_unaligned_be32(tas2563_dvc_table[vol]);
+   738	
+   739		if (volrd == volwr) {
+   740			ret = 0;
+   741			goto out;
+   742		}
+   743	
+   744		for (i = 0; i < tas_dev->ndev; i++) {
+   745			ret = tasdevice_dev_bulk_write(tas_dev, i, reg,
+   746				(unsigned char *)tas2563_dvc_table[vol], 4);
+   747			if (ret)
+   748				dev_err(tas_dev->dev,
+   749					"%s, set digital vol error in device %d\n",
+   750					__func__, i);
+   751		}
+   752	
+   753	out:
+   754		mutex_unlock(&tas_dev->codec_lock);
+   755		return ret;
+   756	}
+   757	
+   758	static const struct snd_kcontrol_new tasdevice_snd_controls[] = {
+   759		SOC_SINGLE_BOOL_EXT("Speaker Force Firmware Load", 0,
+   760			tasdev_force_fwload_get, tasdev_force_fwload_put),
+   761	};
+   762	
+   763	static const struct snd_kcontrol_new tasdevice_cali_controls[] = {
+   764		SOC_SINGLE_EXT("Calibration Stop", SND_SOC_NOPM, 0, 1, 0,
+   765			tasdev_nop_get, tasdev_calib_stop_put),
+   766		SND_SOC_BYTES_EXT("Amp TF Data", 5, tasdev_tf_data_get, NULL),
+   767		SND_SOC_BYTES_EXT("Amp RE Data", 5, tasdev_re_data_get, NULL),
+   768		SND_SOC_BYTES_EXT("Amp R0 Data", 5, tasdev_r0_data_get, NULL),
+   769		SND_SOC_BYTES_EXT("Amp XMA1 Data", 5, tasdev_XMA1_data_get, NULL),
+   770		SND_SOC_BYTES_EXT("Amp XMA2 Data", 5, tasdev_XMA2_data_get, NULL),
+   771	};
+   772	
+   773	static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+   774		SOC_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
+   775			1, 0, 20, 0, tas2781_amp_getvol,
+   776			tas2781_amp_putvol, amp_vol_tlv),
+   777		SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Gain", TAS2781_DVC_LVL,
+   778			0, 0, 200, 1, tas2781_digital_getvol,
+   779			tas2781_digital_putvol, dvc_tlv),
+   780	};
+   781	
+   782	static const struct snd_kcontrol_new tas2781_cali_controls[] = {
+   783		SND_SOC_BYTES_EXT("Amp Latch Data", 2, tas2781_latch_reg_get, NULL),
+   784	};
+   785	
+   786	static const struct snd_kcontrol_new tas2563_snd_controls[] = {
+   787		SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Gain", TAS2563_DVC_LVL, 0,
+ > 788			0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
+   789			tas2563_digital_gain_get, tas2563_digital_gain_put,
+ > 790			tas2563_dvc_tlv),
+   791	};
+   792	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
