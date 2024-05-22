@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-186124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D54E8CC012
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:17:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FAD98CC015
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1811C210EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:17:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD294B21C43
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFF5824AA;
-	Wed, 22 May 2024 11:17:13 +0000 (UTC)
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6122A824BC;
+	Wed, 22 May 2024 11:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="px2RWFZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6097BB17;
-	Wed, 22 May 2024 11:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A314F8249F;
+	Wed, 22 May 2024 11:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716376633; cv=none; b=elSUWCm/ZTD0vZJOi5ztw3VTfMh3ZQI6AwLrpCfRvLPemKRx4Pz5eU2b8N9TBMJK90o2NBEjrMQslMq6UjckP8l8mnPW6IHpJP6uQX6SxrcCM8HOSSFHJyanCCVHz382DZ4QHYT60lfxwDId1qaWUfpfAdIRu+XGSWg4lfBDiHk=
+	t=1716376667; cv=none; b=RnWCP5+sD+6g1a1bq/K8RpjaHzXwwvHYgaLIuwFy4D8J/17uB1wuYn3BYmXAJPJtiusSpuysjlEUST1a9ORHLsS86YGQyNcaLivWHbyeT+I7F3Z51OEYyT+n7a3r7U7W87eXPLR77ZckBAhIyw7lhZFjXYfE1Ydrbdvz9NzSpwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716376633; c=relaxed/simple;
-	bh=CPEqhqyGm2UZF8UZo0VoyFgQT3dnqGYzpOjGsl/H4IE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hz34u17DKb3a7SFS1xXzII4J3LINXUNjuh4bem41a7LeE4igEtUXcF4vTEV1aHjoT7c5NnR23ZVd7it9cGUMVG/aZEWd/sZkjNKFhTFONxGXoM4zwfT2Aa0EfrwyxOaPkk8DGpV3972nuEKl0t8c1v0j1RbYZ+PeZ1tYyiLEOCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F3A84240008;
-	Wed, 22 May 2024 11:16:57 +0000 (UTC)
-Message-ID: <35bf5362-ae70-4fbe-acff-691bfe4a9e34@ghiti.fr>
-Date: Wed, 22 May 2024 13:16:56 +0200
+	s=arc-20240116; t=1716376667; c=relaxed/simple;
+	bh=qZiV++8wFsZaZn9+O5eSl13hHafRZyCKoGIEOJQTM0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AY4yGSTBcR2PusYU7v01RcVHOmAzIRxsgxcYJ/56q6BI+z5OI8H1R2dItw1LRYBJclllV6KtP8dQEvktXx8daRtA3vg/0OqEH6LqYk+OzB/gB3ox7b4PmFIQiWZ8dNIXhG1Iq+Zk+hOuNbC59Ny7lWUNigusP53Ax3hv2AoF3+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=px2RWFZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 351D8C32781;
+	Wed, 22 May 2024 11:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716376666;
+	bh=qZiV++8wFsZaZn9+O5eSl13hHafRZyCKoGIEOJQTM0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=px2RWFZkTWNtFHYrYkm5f1CdFTudaTF36hBSxdYsSkrRw2TETNyYgPQ/PvkEmqHpC
+	 Xqyx5ZNKNBp13TlMMhdnC7PGESeqVfDSbjqp091Z5KPYZA8B6MQSL87t/KhIVDwaZ/
+	 EwLKrn7WtK0w3CsSAsWpcPOrEqOCrWIOO5FZzKgQBBDGoT8vVEi2+og7kKa8GhLoOe
+	 JsuiZ1TcbaQNfoUWEoD4tL1DXaJFnWswX0S4BwSrni8cdxqrHAB8X4HidZIVrGbWR7
+	 LzvDx8ioaaGEgXJU8DOquQTiROZF2DmIyryLhJwMhOGzBZ/FXvoE0CyBl98CAIA32t
+	 XGcwALbTJsXNg==
+Date: Wed, 22 May 2024 12:17:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/crypto: Raise priority of NEON crct10dif
+ implementation
+Message-ID: <e103fabb-6854-4ce1-b4f9-6f6b7f912895@sirena.org.uk>
+References: <20240521-arm64-crct10dif-neon-prio-v1-1-e2975754b8f3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] riscv: force PAGE_SIZE linear mapping if
- debug_pagealloc is enabled
-To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alexghiti@rivosinc.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <cover.1715750938.git.namcao@linutronix.de>
- <2e391fa6c6f9b3fcf1b41cefbace02ee4ab4bf59.1715750938.git.namcao@linutronix.de>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <2e391fa6c6f9b3fcf1b41cefbace02ee4ab4bf59.1715750938.git.namcao@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
-
-Hi Nam,
-
-On 15/05/2024 07:50, Nam Cao wrote:
-> debug_pagealloc is a debug feature which clears the valid bit in page table
-> entry for freed pages to detect illegal accesses to freed memory.
->
-> For this feature to work, virtual mapping must have PAGE_SIZE resolution.
-> (No, we cannot map with huge pages and split them only when needed; because
-> pages can be allocated/freed in atomic context and page splitting cannot be
-> done in atomic context)
->
-> Force linear mapping to use small pages if debug_pagealloc is enabled.
->
-> Note that it is not necessary to force the entire linear mapping, but only
-> those that are given to memory allocator. Some parts of memory can keep
-> using huge page mapping (for example, kernel's executable code). But these
-> parts are minority, so keep it simple. This is just a debug feature, some
-> extra overhead should be acceptable.
->
-> Fixes: 5fde3db5eb02 ("riscv: add ARCH_SUPPORTS_DEBUG_PAGEALLOC support")
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> Cc: stable@vger.kernel.org
-> ---
-> Interestingly this feature somehow still worked when first introduced.
-> My guess is that back then only 2MB page size is used. When a 4KB page is
-> freed, the entire 2MB will be (incorrectly) invalidated by this feature.
-> But 2MB is quite small, so no one else happen to use other 4KB pages in
-> this 2MB area. In other words, it used to work by luck.
->
-> Now larger page sizes are used, so this feature invalidate large chunk of
-> memory, and the probability that someone else access this chunk and
-> trigger a page fault is much higher.
->
->   arch/riscv/mm/init.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 2574f6a3b0e7..73914afa3aba 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -682,6 +682,9 @@ void __init create_pgd_mapping(pgd_t *pgdp,
->   static uintptr_t __init best_map_size(phys_addr_t pa, uintptr_t va,
->   				      phys_addr_t size)
->   {
-> +	if (debug_pagealloc_enabled())
-> +		return PAGE_SIZE;
-> +
->   	if (pgtable_l5_enabled &&
->   	    !(pa & (P4D_SIZE - 1)) && !(va & (P4D_SIZE - 1)) && size >= P4D_SIZE)
->   		return P4D_SIZE;
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZrKxlTL1TQtyMzxA"
+Content-Disposition: inline
+In-Reply-To: <20240521-arm64-crct10dif-neon-prio-v1-1-e2975754b8f3@kernel.org>
+X-Cookie: Bridge ahead.  Pay troll.
 
 
-You can add:
+--ZrKxlTL1TQtyMzxA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+On Tue, May 21, 2024 at 09:22:49PM +0100, Mark Brown wrote:
+> The NEON implementation of crctd10dif is registered with a priority of 100
+> which is identical to that used by the generic C implementation. Raise the
+> priority to 150, half way between the PMULL based implementation and the
+> NEON one, so that it will be preferred over the generic implementation.
 
-Thanks,
+That second NEON should be PMULL, sorry.
 
-Alex
+--ZrKxlTL1TQtyMzxA
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZN1FQACgkQJNaLcl1U
+h9DoDwf9E9YZQMeL1x5cA1ghTaD8CabmKoN0Uenl7iBJdvZt+g9BMuQ5/KD3T7OZ
+E+kyQEeEFmJB2akufGOfZYGlLoAvT1hO3ZJiF7dO3zHtpAtEvyiboHMR6QZSyoO+
+WJb+XYwhBjhkRWEMQTz/oJbSKPWHVc3oxTQbOgPUjEv5UdoSnpgsaRJp3GA4F/Pe
+BZRIrRZFfFnRPtNR5HCaPZdLn8LPFsAmJ8SSyc7UTDdOzAGbTen1d9Rdv2j3oAKA
+PkJ/opjZr47CiOiTFJhcBK+QwGAiI7O0HnV5yVXvzrAFwGSKYdpO10k5Eag3E2km
+3nB/NMv/jYBjFoAJ94pEzYwo7LfBZw==
+=jRxo
+-----END PGP SIGNATURE-----
+
+--ZrKxlTL1TQtyMzxA--
 
