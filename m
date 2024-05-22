@@ -1,1056 +1,120 @@
-Return-Path: <linux-kernel+bounces-186487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247038CC4CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:19:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3CE8CC4D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C62B1C2137D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:19:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5FA1F236C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF55313DDB0;
-	Wed, 22 May 2024 16:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACA8141987;
+	Wed, 22 May 2024 16:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XgJBgKeQ"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M+yRx/qJ"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719688286B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C625713E8A0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394769; cv=none; b=dwGac3kj7NJtbTsAq332uJ3mTI8lBY76eDKX6GemtoY63ZTlMbm/qX0cH4iy5T65KJ8KNyBdrv+eABa0VsA+lRn5G3m2X5pRbX1CiDc2jGgpM9ZjAHFnbKAxXCUFbz8JWOSPICPboBma1SRgoDcwB+vDyZvqawfgNtHruVbrpA8=
+	t=1716394777; cv=none; b=LVEsrw6YGDhWqvxCygxuSDWaWiFdybUj0KvBTHA9KxYA/aWxHu9fOS12VWqK/ZjN4ISknthk9Shnn+XUfgRwKgzud2uNqaGF7+6n0y3QHuXvB1GcPC60DYEHNy3yQmhnIdQ97H5Ch9zIXZ8DfgGoJXOUSVNQdBqOZ6hdEkBlA5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394769; c=relaxed/simple;
-	bh=Bv6ieMAjzVAUu6LbJVl3ZHL2B3ZvmBzp2daJ9c+LJQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mq8yS0bxCyqQ+UDKjDgd3BlLxtEtz05GaqbQiushj96BR4j8vvEg7shCf6ZcyUgYFnUHgoHS6ehJQVruknzo1zMVqeq1Qe9fV9ZVVOrtVsuNP5JiR8h6myJ+pHNR51teq1jP2BonOn19SLIByk77aNL05l47CqgcouutG+4rCFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XgJBgKeQ; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-627f46fbe14so1479747b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:19:27 -0700 (PDT)
+	s=arc-20240116; t=1716394777; c=relaxed/simple;
+	bh=gRGdiC32qyMGfj6WpEKPIdOaphnyHadvcat7Ef04QOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q/B9PfVnUo24H7vbr5owG/jn+bwhgxVBirRYQVJOBe96PJP7DoU362jNU+nS3nFHAb7B4WKd81yQRAHNfcpPVuyMyjIsU3qxo+dkQnYh9QMpg5mc9iusNmX9K4cVjceQCXqKXpVmoWgRpIObIHjE3OSY9BI7ciI4PuP07eNwTZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M+yRx/qJ; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7e1b520812fso35658939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:19:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716394766; x=1716999566; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9T3xO/XHhm2H+tB6zW+QpmfjNEa5Ci7cKjzyBanXSvY=;
-        b=XgJBgKeQxrS/Fr2yrtUQtmxgFeHuJ53SK438KNKl2/sCd53WfpA9x+dR0FGMoQytmU
-         1CzBADo1N1SGuBsRqEk57wK7z8m6bBAn6+KGftlw5nZbmxH7dJS9Fji7qZGCh7lF1mSM
-         avsvt2U5WYX0gQ9nILEhG0G5+21TQGP6qF84mL6CWuVEkBYZhUE37EyZJQbErfiOU36W
-         zfjli8fQQyq2PwALGTetni+OlZtISzSspfoxhjpicBOy0awA+V2yfcGC8jkRADWMoh8N
-         KqLmlzpsNquuzrL2cI2z1ypdxgr4pO2IuRlsLcHHUFKwTH996ATLCJ6rHPpbv54g0nuv
-         TKeg==
+        d=linuxfoundation.org; s=google; t=1716394775; x=1716999575; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=26coTTJPMwihRdwvqlxfLCNSgtD/ruUTDG9z4IGxkNE=;
+        b=M+yRx/qJyV3krTJFoIJpvzfi5HD9gPOjhWMFsZvS2WRQuzcBNB/hwbz/AHOa4wY+th
+         melQpBTsw3k8gyBdsCQAWDwm4ORJZG7qTjNgWuvT9k0e08W5V/6Bbgm1DM3CKge55wHg
+         EooZNmGoEJrYgfRZu5Gh0qTVOiGcGlDf3K0y4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716394766; x=1716999566;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9T3xO/XHhm2H+tB6zW+QpmfjNEa5Ci7cKjzyBanXSvY=;
-        b=wkRY2qXJ4XkqCqzsj+Z2BT9RN+3JEyeXgt0Kqkz3iq0xqQhu8V6CF3dK04yDPRZJY7
-         KDy+1zLu2E1Na5T1Ni4JTMiDcDTkJpDm1oZcq5RPyrCYyck564PvEqehy1kKj9+lIFyp
-         67Voz5JjEldvxKxDPWmlVXpkfWZAxDR4vZ+9+VcVEY0bTspeU8SAzTjU+UWMWtOHZ3eT
-         jrEf2Let9N6DycctsNS5tJxX1XBAZiMx5iflzFDAObc04xqJ9XumVWRXXFAUp8yvEanR
-         qDuqBW2stPmDCL36j8hE99SfS+P7mrAsuI17o+zLYHqKc3jvhtVt43k5kvk9Nxq13QUI
-         0Wdw==
-X-Gm-Message-State: AOJu0YwowiBGCr9FaVPPE/WnnBIwGtB+TGOxFC6CL3IxSAteB5sDoGU6
-	2oCkjPCZRBxPem596h2/3bjHWbiQ7xpsNYKw8QQqtvJcJmRvshC3g4BIQP1mbb/O1+eI
-X-Google-Smtp-Source: AGHT+IFdoBvXyaOC+S/gBDy6YLaFyE6SNo8IO/EGf1N4TClHtYrAVA0utN8A2wAKJXrIkdtTk4T+kQ==
-X-Received: by 2002:a05:690c:dd1:b0:61b:1e81:4eb8 with SMTP id 00721157ae682-627e46a9528mr30970817b3.9.1716394766024;
-        Wed, 22 May 2024 09:19:26 -0700 (PDT)
-Received: from localhost.localdomain ([104.28.152.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e3467fasm59034527b3.94.2024.05.22.09.19.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 09:19:25 -0700 (PDT)
-From: Kieran Moy <kfatyuip@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Kieran Moy <kfatyuip@gmail.com>
-Subject: [PATCH] cpupower: Add Chinese Simplified translation
-Date: Wed, 22 May 2024 16:19:13 +0000
-Message-ID: <20240522161914.57866-1-kfatyuip@gmail.com>
-X-Mailer: git-send-email 2.45.1
+        d=1e100.net; s=20230601; t=1716394775; x=1716999575;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=26coTTJPMwihRdwvqlxfLCNSgtD/ruUTDG9z4IGxkNE=;
+        b=cdzWrjHq+mbZ2WL+PtKaTT6llBYd5gBoGJnP/VAiLKDS/JU4ZCeh+wmfjqmhQeFW3U
+         UPDFMsQQfsgySSlo7eSvokxK/ncQAnTMQFr9EtL6Au9HDBICzTjBnjP/VCP882uJGB/r
+         r0+DLfxuCIafSqu9xZEgeNeVd+iCexXYHOKYP+lCaEW5l8Jld+66WzJOksEgRuMfY/Ul
+         Lm13w8Djw1EQ+38sIr80jPNsIBSiYxlhXspOy1Qb4bhkPwqOcq02GqFO9lkWsKKx/eSL
+         CkJ/LlJ8bJq8EpHqeQGs2e8XW/CMFABm+ZvGFls9DyXu5cYOIUPAupdjg+VUn0rdoVlr
+         DvNQ==
+X-Gm-Message-State: AOJu0Yyh9uFN7bdvH9DAmZBYub3lJkVLHTU59b09L7rnacZOWd6d4TRg
+	++//83PRhD7FTk9cWsIcNIPvC0tCixXDyK4vn2qcrGnOzERziksJfTVddxpWHq0=
+X-Google-Smtp-Source: AGHT+IH/KZa0o+v3YObJYKHyHITiD47mIwmwbzcFdaePVDylL6T1KHgx+UsgI0x7EBrdYtRJOKeT1w==
+X-Received: by 2002:a5e:cb03:0:b0:7e1:d865:e700 with SMTP id ca18e2360f4ac-7e38b2004fbmr274656739f.2.1716394774799;
+        Wed, 22 May 2024 09:19:34 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376fc6aasm7421787173.174.2024.05.22.09.19.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 09:19:34 -0700 (PDT)
+Message-ID: <6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
+Date: Wed, 22 May 2024 10:19:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
+To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, linux-security-module@vger.kernel.org,
+ netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+ bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240522005913.3540131-1-edliaw@google.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add Chinese Simplified translation for cpupower
+On 5/21/24 18:56, Edward Liaw wrote:
+> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+> redefinitions of _GNU_SOURCE from source code.
+> 
+> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> asprintf into kselftest_harness.h, which is a GNU extension and needs
 
-Signed-off-by: Kieran Moy <kfatyuip@gmail.com>
----
- tools/power/cpupower/Makefile    |   2 +-
- tools/power/cpupower/po/zh_CN.po | 942 +++++++++++++++++++++++++++++++
- 2 files changed, 943 insertions(+), 1 deletion(-)
- create mode 100644 tools/power/cpupower/po/zh_CN.po
+Easier solution to define LINE_MAX locally. In gerenal it is advisable
+to not add local defines, but it is desirable in some cases to avoid
+churn like this one.
 
-diff --git a/tools/power/cpupower/Makefile b/tools/power/cpupower/Makefile
-index b53753dee..ccbd78da3 100644
---- a/tools/power/cpupower/Makefile
-+++ b/tools/power/cpupower/Makefile
-@@ -57,7 +57,7 @@ LIB_MIN=			1
- 
- PACKAGE =			cpupower
- PACKAGE_BUGREPORT =		linux-pm@vger.kernel.org
--LANGUAGES = 			de fr it cs pt ka
-+LANGUAGES = 			de fr it cs pt ka zh_CN
- 
- 
- # Directory definitions. These are default and most probably
-diff --git a/tools/power/cpupower/po/zh_CN.po b/tools/power/cpupower/po/zh_CN.po
-new file mode 100644
-index 000000000..a3c62c15d
---- /dev/null
-+++ b/tools/power/cpupower/po/zh_CN.po
-@@ -0,0 +1,942 @@
-+# Chinese Simplified translations for cpufrequtils package
-+# Copyright (C) 2004 THE PACKAGE'S COPYRIGHT HOLDER
-+# This file is distributed under the same license as the cpufrequtils package.
-+#
-+#, fuzzy
-+msgid ""
-+msgstr ""
-+"Project-Id-Version: cpufrequtils 006\n"
-+"Report-Msgid-Bugs-To: \n"
-+"POT-Creation-Date: 2011-03-08 17:03+0100\n"
-+"PO-Revision-Date: 2024-05-22 15:36+0000\n"
-+"Last-Translator: Kieran Moy <ducrot@gmail.com>\n"
-+"Language-Team: NONE\n"
-+"Language: zh_CN\n"
-+"MIME-Version: 1.0\n"
-+"Content-Type: text/plain; charset=UTF-8\n"
-+"Content-Transfer-Encoding: 8bit\n"
-+"X-Generator: Poedit 3.4.2\n"
-+
-+#: utils/idle_monitor/nhm_idle.c:36
-+msgid "Processor Core C3"
-+msgstr "处理器核心 C3"
-+
-+#: utils/idle_monitor/nhm_idle.c:43
-+msgid "Processor Core C6"
-+msgstr "处理器核心 C6"
-+
-+#: utils/idle_monitor/nhm_idle.c:51
-+msgid "Processor Package C3"
-+msgstr "处理器套件 C3"
-+
-+#: utils/idle_monitor/nhm_idle.c:58 utils/idle_monitor/amd_fam14h_idle.c:70
-+msgid "Processor Package C6"
-+msgstr "处理器套件 C6"
-+
-+#: utils/idle_monitor/snb_idle.c:33
-+msgid "Processor Core C7"
-+msgstr "处理器核心 C7"
-+
-+#: utils/idle_monitor/snb_idle.c:40
-+msgid "Processor Package C2"
-+msgstr "处理器套件 C2"
-+
-+#: utils/idle_monitor/snb_idle.c:47
-+msgid "Processor Package C7"
-+msgstr "处理器套件 C7"
-+
-+#: utils/idle_monitor/amd_fam14h_idle.c:56
-+msgid "Package in sleep state (PC1 or deeper)"
-+msgstr "处于睡眠状态的包（PC1 或更深）"
-+
-+#: utils/idle_monitor/amd_fam14h_idle.c:63
-+msgid "Processor Package C1"
-+msgstr "处理器套件 C1"
-+
-+#: utils/idle_monitor/amd_fam14h_idle.c:77
-+msgid "North Bridge P1 boolean counter (returns 0 or 1)"
-+msgstr "北桥 P1 布尔计数器（返回 0 或 1）"
-+
-+#: utils/idle_monitor/mperf_monitor.c:35
-+msgid "Processor Core not idle"
-+msgstr "处理器核心不空闲"
-+
-+#: utils/idle_monitor/mperf_monitor.c:42
-+msgid "Processor Core in an idle state"
-+msgstr "处理器核心处于空闲状态"
-+
-+#: utils/idle_monitor/mperf_monitor.c:50
-+msgid "Average Frequency (including boost) in MHz"
-+msgstr "平均频率（包括增加频率），单位 MHz"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:66
-+#, c-format
-+msgid ""
-+"cpupower monitor: [-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
-+"interval_sec | -c command ...]\n"
-+msgstr ""
-+"cpupower monitor：[-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
-+"interval_sec | -c command...]\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:69
-+#, c-format
-+msgid ""
-+"cpupower monitor: [-v] [-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
-+"interval_sec | -c command ...]\n"
-+msgstr ""
-+"cpupower monitor：[-v] [-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
-+"interval_sec | -c command...]\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:71
-+#, c-format
-+msgid "\t -v: be more verbose\n"
-+msgstr "-v：更详细\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:73
-+#, c-format
-+msgid "\t -h: print this help\n"
-+msgstr "-h：打印此帮助\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:74
-+#, c-format
-+msgid "\t -i: time interval to measure for in seconds (default 1)\n"
-+msgstr "-i：测量的时间间隔（以秒为单位）（默认 1）\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:75
-+#, c-format
-+msgid "\t -t: show CPU topology/hierarchy\n"
-+msgstr "-t：显示CPU拓扑/层次结构\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:76
-+#, c-format
-+msgid "\t -l: list available CPU sleep monitors (for use with -m)\n"
-+msgstr "-l：列出可用的 CPU 睡眠监视器（与 -m 一起使用）\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:77
-+#, c-format
-+msgid "\t -m: show specific CPU sleep monitors only (in same order)\n"
-+msgstr "-m：仅显示特定的CPU睡眠监视器（按相同顺序）\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:79
-+#, c-format
-+msgid ""
-+"only one of: -t, -l, -m are allowed\n"
-+"If none of them is passed,"
-+msgstr ""
-+"仅允许以下之一：-t、-l、-m\n"
-+"如果都没有通过的话"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:80
-+#, c-format
-+msgid " all supported monitors are shown\n"
-+msgstr "显示所有支持的显示器\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:197
-+#, c-format
-+msgid "Monitor %s, Counter %s has no count function. Implementation error\n"
-+msgstr "监视器 %s、计数器 %s 无计数功能。 执行错误\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:207
-+#, c-format
-+msgid " *is offline\n"
-+msgstr "*离线\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:236
-+#, c-format
-+msgid "%s: max monitor name length (%d) exceeded\n"
-+msgstr "%s：超出最大监视器名称长度 (%d)\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:250
-+#, c-format
-+msgid "No matching monitor found in %s, try -l option\n"
-+msgstr "在 %s 中找不到匹配的监视器，请尝试 -l 选项\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:266
-+#, c-format
-+msgid "Monitor \"%s\" (%d states) - Might overflow after %u s\n"
-+msgstr "监视器“%s”（%d 状态）- 可能会在 %u 秒后溢出\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:319
-+#, c-format
-+msgid "%s took %.5f seconds and exited with status %d\n"
-+msgstr "%s 用了 %.5f 秒并退出，状态为 %d\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:406
-+#, c-format
-+msgid "Cannot read number of available processors\n"
-+msgstr "无法读取可用处理器的数量\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:417
-+#, c-format
-+msgid "Available monitor %s needs root access\n"
-+msgstr "可用监视器 %s 需要 root 访问权限\n"
-+
-+#: utils/idle_monitor/cpupower-monitor.c:428
-+#, c-format
-+msgid "No HW Cstate monitors found\n"
-+msgstr "未找到 HW Cstate 监视器\n"
-+
-+#: utils/cpupower.c:78
-+#, c-format
-+msgid "cpupower [ -c cpulist ] subcommand [ARGS]\n"
-+msgstr "cpupower [ -c cpulist ] subcommand [ARGS]\n"
-+
-+#: utils/cpupower.c:79
-+#, c-format
-+msgid "cpupower --version\n"
-+msgstr "cpupower --version\n"
-+
-+#: utils/cpupower.c:80
-+#, c-format
-+msgid "Supported subcommands are:\n"
-+msgstr "支持的子命令有：\n"
-+
-+#: utils/cpupower.c:83
-+#, c-format
-+msgid ""
-+"\n"
-+"Some subcommands can make use of the -c cpulist option.\n"
-+msgstr ""
-+"\n"
-+"某些子命令可以使用 -c cpulist 选项。\n"
-+
-+#: utils/cpupower.c:84
-+#, c-format
-+msgid "Look at the general cpupower manpage how to use it\n"
-+msgstr "看看一般的cpupower manpage如何使用它\n"
-+
-+#: utils/cpupower.c:85
-+#, c-format
-+msgid "and read up the subcommand's manpage whether it is supported.\n"
-+msgstr "并阅读子命令的manpage是否受支持。\n"
-+
-+#: utils/cpupower.c:86
-+#, c-format
-+msgid ""
-+"\n"
-+"Use cpupower help subcommand for getting help for above subcommands.\n"
-+msgstr ""
-+"\n"
-+"使用 cpupower help subcommand获取上述子命令的帮助。\n"
-+
-+#: utils/cpupower.c:91
-+#, c-format
-+msgid "Report errors and bugs to %s, please.\n"
-+msgstr "请向 %s 报告错误和错误。\n"
-+
-+#: utils/cpupower.c:114
-+#, c-format
-+msgid "Error parsing cpu list\n"
-+msgstr "解析cpu列表时出错\n"
-+
-+#: utils/cpupower.c:172
-+#, c-format
-+msgid "Subcommand %s needs root privileges\n"
-+msgstr "子命令 %s 需要 root 权限\n"
-+
-+#: utils/cpufreq-info.c:31
-+#, c-format
-+msgid "Couldn't count the number of CPUs (%s: %s), assuming 1\n"
-+msgstr "无法计算 CPU 数量（%s：%s），假设为 1\n"
-+
-+#: utils/cpufreq-info.c:63
-+#, c-format
-+msgid ""
-+"          minimum CPU frequency  -  maximum CPU frequency  -  governor\n"
-+msgstr "最低 CPU 频率 - 最高 CPU 频率 - 调速器\n"
-+
-+#: utils/cpufreq-info.c:151
-+#, c-format
-+msgid "Error while evaluating Boost Capabilities on CPU %d -- are you root?\n"
-+msgstr "评估 CPU %d 上的 Boost 功能时出错 - 您是 root 吗？\n"
-+
-+#. P state changes via MSR are identified via cpuid 80000007
-+#. on Intel and AMD, but we assume boost capable machines can do that
-+#. if (cpuid_eax(0x80000000) >= 0x80000007
-+#. && (cpuid_edx(0x80000007) & (1 << 7)))
-+#.
-+#: utils/cpufreq-info.c:161
-+#, c-format
-+msgid "  boost state support: \n"
-+msgstr "升压状态支持：\n"
-+
-+#: utils/cpufreq-info.c:163
-+#, c-format
-+msgid "    Supported: %s\n"
-+msgstr "支持：%s\n"
-+
-+#: utils/cpufreq-info.c:163 utils/cpufreq-info.c:164
-+msgid "yes"
-+msgstr "是"
-+
-+#: utils/cpufreq-info.c:163 utils/cpufreq-info.c:164
-+msgid "no"
-+msgstr "不是"
-+
-+#: utils/cpufreq-info.c:164
-+#, c-format
-+msgid "    Active: %s\n"
-+msgstr "活跃：%s\n"
-+
-+#: utils/cpufreq-info.c:177
-+#, c-format
-+msgid "    Boost States: %d\n"
-+msgstr "    提升状态：%d\n"
-+
-+#: utils/cpufreq-info.c:178
-+#, c-format
-+msgid "    Total States: %d\n"
-+msgstr "状态总数：%d\n"
-+
-+#: utils/cpufreq-info.c:181
-+#, c-format
-+msgid "    Pstate-Pb%d: %luMHz (boost state)\n"
-+msgstr "Pstate-Pb%d：%luMHz（升压状态）\n"
-+
-+#: utils/cpufreq-info.c:184
-+#, c-format
-+msgid "    Pstate-P%d:  %luMHz\n"
-+msgstr "Pstate-P%d：%luMHz\n"
-+
-+#: utils/cpufreq-info.c:211
-+#, c-format
-+msgid "  no or unknown cpufreq driver is active on this CPU\n"
-+msgstr "该 CPU 上没有或未知的 cpufreq 驱动程序处于活动状态\n"
-+
-+#: utils/cpufreq-info.c:213
-+#, c-format
-+msgid "  driver: %s\n"
-+msgstr "驱动程序：%s\n"
-+
-+#: utils/cpufreq-info.c:219
-+#, c-format
-+msgid "  CPUs which run at the same hardware frequency: "
-+msgstr "以相同硬件频率运行的 CPU："
-+
-+#: utils/cpufreq-info.c:230
-+#, c-format
-+msgid "  CPUs which need to have their frequency coordinated by software: "
-+msgstr "需要通过软件协调频率的 CPU："
-+
-+#: utils/cpufreq-info.c:241
-+#, c-format
-+msgid "  maximum transition latency: "
-+msgstr "最大转换延迟："
-+
-+#: utils/cpufreq-info.c:247
-+#, c-format
-+msgid "  hardware limits: "
-+msgstr "硬件限制："
-+
-+#: utils/cpufreq-info.c:256
-+#, c-format
-+msgid "  available frequency steps: "
-+msgstr "可用频率范围："
-+
-+#: utils/cpufreq-info.c:269
-+#, c-format
-+msgid "  available cpufreq governors: "
-+msgstr "可用的cpufreq调节器："
-+
-+#: utils/cpufreq-info.c:280
-+#, c-format
-+msgid "  current policy: frequency should be within "
-+msgstr "当前政策：频率应在"
-+
-+#: utils/cpufreq-info.c:282
-+#, c-format
-+msgid " and "
-+msgstr "和"
-+
-+#: utils/cpufreq-info.c:286
-+#, c-format
-+msgid ""
-+"The governor \"%s\" may decide which speed to use\n"
-+"                  within this range.\n"
-+msgstr ""
-+"调速器“%s”可以决定使用哪种速度\n"
-+"                   在这个范围内。\n"
-+
-+#: utils/cpufreq-info.c:293
-+#, c-format
-+msgid "  current CPU frequency is "
-+msgstr "当前CPU频率是"
-+
-+#: utils/cpufreq-info.c:296
-+#, c-format
-+msgid " (asserted by call to hardware)"
-+msgstr "（通过调用硬件来断言）"
-+
-+#: utils/cpufreq-info.c:304
-+#, c-format
-+msgid "  cpufreq stats: "
-+msgstr "cpu频率统计："
-+
-+#: utils/cpufreq-info.c:472
-+#, c-format
-+msgid "Usage: cpupower freqinfo [options]\n"
-+msgstr "用法：cpupower freqinfo [选项]\n"
-+
-+#: utils/cpufreq-info.c:473 utils/cpufreq-set.c:26 utils/cpupower-set.c:23
-+#: utils/cpupower-info.c:22 utils/cpuidle-info.c:148
-+#, c-format
-+msgid "Options:\n"
-+msgstr "选项：\n"
-+
-+#: utils/cpufreq-info.c:474
-+#, c-format
-+msgid "  -e, --debug          Prints out debug information [default]\n"
-+msgstr "-e, --debug 打印出调试信息[默认]\n"
-+
-+#: utils/cpufreq-info.c:475
-+#, c-format
-+msgid ""
-+"  -f, --freq           Get frequency the CPU currently runs at, according\n"
-+"                       to the cpufreq core *\n"
-+msgstr ""
-+"-f, --freq 获取CPU当前运行的频率，根据\n"
-+"                        到 cpufreq 核心 *\n"
-+
-+#: utils/cpufreq-info.c:477
-+#, c-format
-+msgid ""
-+"  -w, --hwfreq         Get frequency the CPU currently runs at, by reading\n"
-+"                       it from hardware (only available to root) *\n"
-+msgstr ""
-+"-w, --hwfreq 通过读取获取CPU当前运行的频率\n"
-+"                        它来自硬件（仅适用于root）*\n"
-+
-+#: utils/cpufreq-info.c:479
-+#, c-format
-+msgid ""
-+"  -l, --hwlimits       Determine the minimum and maximum CPU frequency "
-+"allowed *\n"
-+msgstr "-l, --hwlimits 确定允许的最小和最大 CPU 频率 *\n"
-+
-+#: utils/cpufreq-info.c:480
-+#, c-format
-+msgid "  -d, --driver         Determines the used cpufreq kernel driver *\n"
-+msgstr "-d, --driver 确定使用的 cpufreq 内核驱动程序 *\n"
-+
-+#: utils/cpufreq-info.c:481
-+#, c-format
-+msgid "  -p, --policy         Gets the currently used cpufreq policy *\n"
-+msgstr "-p, --policy 获取当前使用的cpufreq策略 *\n"
-+
-+#: utils/cpufreq-info.c:482
-+#, c-format
-+msgid "  -g, --governors      Determines available cpufreq governors *\n"
-+msgstr "-g, --governors 确定可用的 cpufreq 调节器 *\n"
-+
-+#: utils/cpufreq-info.c:483
-+#, c-format
-+msgid ""
-+"  -r, --related-cpus   Determines which CPUs run at the same hardware "
-+"frequency *\n"
-+msgstr "-r, --lated-cpus 确定哪些 CPU 以相同的硬件频率运行 *\n"
-+
-+#: utils/cpufreq-info.c:484
-+#, c-format
-+msgid ""
-+"  -a, --affected-cpus  Determines which CPUs need to have their frequency\n"
-+"                       coordinated by software *\n"
-+msgstr ""
-+"-a, --affected-cpus 确定哪些 CPU 需要其频率\n"
-+"                        由软件协调*\n"
-+
-+#: utils/cpufreq-info.c:486
-+#, c-format
-+msgid "  -s, --stats          Shows cpufreq statistics if available\n"
-+msgstr "-s, --stats 显示 cpufreq 统计信息（如果有）\n"
-+
-+#: utils/cpufreq-info.c:487
-+#, c-format
-+msgid ""
-+"  -y, --latency        Determines the maximum latency on CPU frequency "
-+"changes *\n"
-+msgstr "-y, --latency 确定 CPU 频率变化的最大延迟*\n"
-+
-+#: utils/cpufreq-info.c:488
-+#, c-format
-+msgid "  -b, --boost          Checks for turbo or boost modes  *\n"
-+msgstr "-b, --boost 检查 Turbo 或 boost 模式 *\n"
-+
-+#: utils/cpufreq-info.c:489
-+#, c-format
-+msgid ""
-+"  -o, --proc           Prints out information like provided by the /proc/"
-+"cpufreq\n"
-+"                       interface in 2.4. and early 2.6. kernels\n"
-+msgstr ""
-+"-o, --proc 打印 /proc/cpufreq 提供的信息\n"
-+"                        2.4 中的接口。 以及 2.6 之前的内核。\n"
-+
-+#: utils/cpufreq-info.c:491
-+#, c-format
-+msgid ""
-+"  -m, --human          human-readable output for the -f, -w, -s and -y "
-+"parameters\n"
-+msgstr "-m, -- human -f, -w, -s 和 -y 参数的人类可读输出\n"
-+
-+#: utils/cpufreq-info.c:492 utils/cpuidle-info.c:152
-+#, c-format
-+msgid "  -h, --help           Prints out this screen\n"
-+msgstr "-h, --help 打印此屏幕\n"
-+
-+#: utils/cpufreq-info.c:495
-+#, c-format
-+msgid ""
-+"If no argument or only the -c, --cpu parameter is given, debug output "
-+"about\n"
-+"cpufreq is printed which is useful e.g. for reporting bugs.\n"
-+msgstr ""
-+"screen如果没有参数或仅给出了 -c, --cpu 参数，则调试输出有关\n"
-+"cpufreq 被打印出来，这很有用，例如 用于报告错误。\n"
-+
-+#: utils/cpufreq-info.c:497
-+#, c-format
-+msgid ""
-+"For the arguments marked with *, omitting the -c or --cpu argument is\n"
-+"equivalent to setting it to zero\n"
-+msgstr ""
-+"对于标有 * 的参数，省略 -c 或 --cpu 参数是\n"
-+"相当于将其设置为零\n"
-+
-+#: utils/cpufreq-info.c:580
-+#, c-format
-+msgid ""
-+"The argument passed to this tool can't be combined with passing a --cpu "
-+"argument\n"
-+msgstr "传递给此工具的参数不能与传递 --cpu 参数结合使用\n"
-+
-+#: utils/cpufreq-info.c:596
-+#, c-format
-+msgid ""
-+"You can't specify more than one --cpu parameter and/or\n"
-+"more than one output-specific argument\n"
-+msgstr ""
-+"您不能指定多个 --cpu 参数和/或\n"
-+"多个特定于输出的参数\n"
-+
-+#: utils/cpufreq-info.c:600 utils/cpufreq-set.c:82 utils/cpupower-set.c:42
-+#: utils/cpupower-info.c:42 utils/cpuidle-info.c:213
-+#, c-format
-+msgid "invalid or unknown argument\n"
-+msgstr "无效或未知的参数\n"
-+
-+#: utils/cpufreq-info.c:617
-+#, c-format
-+msgid "couldn't analyze CPU %d as it doesn't seem to be present\n"
-+msgstr "无法分析 CPU %d，因为它似乎不存在\n"
-+
-+#: utils/cpufreq-info.c:620 utils/cpupower-info.c:142
-+#, c-format
-+msgid "analyzing CPU %d:\n"
-+msgstr "分析 CPU %d：\n"
-+
-+#: utils/cpufreq-set.c:25
-+#, c-format
-+msgid "Usage: cpupower frequency-set [options]\n"
-+msgstr "用法：cpupower frequency-set [选项]\n"
-+
-+#: utils/cpufreq-set.c:27
-+#, c-format
-+msgid ""
-+"  -d FREQ, --min FREQ      new minimum CPU frequency the governor may "
-+"select\n"
-+msgstr "-d FREQ, --min FREQ 调控器可以选择的新的最小 CPU 频率\n"
-+
-+#: utils/cpufreq-set.c:28
-+#, c-format
-+msgid ""
-+"  -u FREQ, --max FREQ      new maximum CPU frequency the governor may "
-+"select\n"
-+msgstr "-u FREQ, --max FREQ 调控器可以选择的新的最大 CPU 频率\n"
-+
-+#: utils/cpufreq-set.c:29
-+#, c-format
-+msgid "  -g GOV, --governor GOV   new cpufreq governor\n"
-+msgstr "-g GOV, --governor GOV 新的 cpufreq 调节器\n"
-+
-+#: utils/cpufreq-set.c:30
-+#, c-format
-+msgid ""
-+"  -f FREQ, --freq FREQ     specific frequency to be set. Requires "
-+"userspace\n"
-+"                           governor to be available and loaded\n"
-+msgstr ""
-+"-f FREQ, --freq FREQ 要设置的特定频率。 需要用户空间\n"
-+"                            调速器可用并已加载\n"
-+
-+#: utils/cpufreq-set.c:32
-+#, c-format
-+msgid "  -r, --related            Switches all hardware-related CPUs\n"
-+msgstr "-r, --related 切换所有与硬件相关的CPU\n"
-+
-+#: utils/cpufreq-set.c:33 utils/cpupower-set.c:28 utils/cpupower-info.c:27
-+#, c-format
-+msgid "  -h, --help               Prints out this screen\n"
-+msgstr "-h, --help 打印此屏幕\n"
-+
-+#: utils/cpufreq-set.c:35
-+#, c-format
-+msgid ""
-+"Notes:\n"
-+"1. Omitting the -c or --cpu argument is equivalent to setting it to "
-+"\"all\"\n"
-+msgstr ""
-+"注意：\n"
-+"1.省略-c或--cpu参数相当于将其设置为“all”\n"
-+
-+#: utils/cpufreq-set.c:37
-+#, c-format
-+msgid ""
-+"2. The -f FREQ, --freq FREQ parameter cannot be combined with any other "
-+"parameter\n"
-+"   except the -c CPU, --cpu CPU parameter\n"
-+"3. FREQuencies can be passed in Hz, kHz (default), MHz, GHz, or THz\n"
-+"   by postfixing the value with the wanted unit name, without any space\n"
-+"   (FREQuency in kHz =^ Hz * 0.001 =^ MHz * 1000 =^ GHz * 1000000).\n"
-+msgstr ""
-+"2. -f FREQ、--freq FREQ参数不能与任何其他参数组合使用\n"
-+"    除了 -c CPU、--cpu CPU 参数\n"
-+"3. 频率可以以 Hz、kHz（默认）、MHz、GHz 或 THz 为单位传递\n"
-+"    通过在值后面添加所需的单位名称，不带任何空格\n"
-+"    （以 kHz 为单位的频率 =^ Hz * 0.001 =^ MHz * 1000 =^ GHz * 1000000）。\n"
-+
-+#: utils/cpufreq-set.c:57
-+#, c-format
-+msgid ""
-+"Error setting new values. Common errors:\n"
-+"- Do you have proper administration rights? (super-user?)\n"
-+"- Is the governor you requested available and modprobed?\n"
-+"- Trying to set an invalid policy?\n"
-+"- Trying to set a specific frequency, but userspace governor is not "
-+"available,\n"
-+"   for example because of hardware which cannot be set to a specific "
-+"frequency\n"
-+"   or because the userspace governor isn't loaded?\n"
-+msgstr ""
-+"设置新值时出错。 常见错误：\n"
-+"- 您有适当的管理权吗？ （超级用户？）\n"
-+"- 您请求的调控器是否可用并已进行 modprobed？\n"
-+"- 尝试设置无效的策略？\n"
-+"- 尝试设置特定频率，但用户空间调控器不可用，\n"
-+"    例如由于硬件无法设置为特定频率\n"
-+"    或者因为用户空间调控器未加载？\n"
-+
-+#: utils/cpufreq-set.c:170
-+#, c-format
-+msgid "wrong, unknown or unhandled CPU?\n"
-+msgstr "错误、未知或未处理的CPU？\n"
-+
-+#: utils/cpufreq-set.c:302
-+#, c-format
-+msgid ""
-+"the -f/--freq parameter cannot be combined with -d/--min, -u/--max or\n"
-+"-g/--governor parameters\n"
-+msgstr ""
-+"-f/--freq 参数不能与 -d/--min、-u/--max 或\n"
-+"-g/--调速器参数\n"
-+
-+#: utils/cpufreq-set.c:308
-+#, c-format
-+msgid ""
-+"At least one parameter out of -f/--freq, -d/--min, -u/--max, and\n"
-+"-g/--governor must be passed\n"
-+msgstr ""
-+"-f/--freq、-d/--min、-u/--max 和 -f/--freq 中的至少一个参数\n"
-+"-g/--governor 必须通过\n"
-+
-+#: utils/cpufreq-set.c:347
-+#, c-format
-+msgid "Setting cpu: %d\n"
-+msgstr "设置CPU：%d\n"
-+
-+#: utils/cpupower-set.c:22
-+#, c-format
-+msgid "Usage: cpupower set [ -b val ] [ -m val ] [ -s val ]\n"
-+msgstr "用法： cpupower set [ -b val ] [ -m val ] [ -s val ]\n"
-+
-+#: utils/cpupower-set.c:24
-+#, c-format
-+msgid ""
-+"  -b, --perf-bias [VAL]    Sets CPU's power vs performance policy on some\n"
-+"                           Intel models [0-15], see manpage for details\n"
-+msgstr ""
-+"-b, --perf-bias [VAL] 设置 CPU 的功耗与性能策略\n"
-+"                            Intel 型号 [0-15]，请参阅manpage了解详细信息\n"
-+
-+#: utils/cpupower-set.c:26
-+#, c-format
-+msgid ""
-+"  -m, --sched-mc  [VAL]    Sets the kernel's multi core scheduler policy.\n"
-+msgstr "-m, --sched-mc [VAL] 设置内核的多核调度程序策略。\n"
-+
-+#: utils/cpupower-set.c:27
-+#, c-format
-+msgid ""
-+"  -s, --sched-smt [VAL]    Sets the kernel's thread sibling scheduler "
-+"policy.\n"
-+msgstr "-s, --sched-smt [VAL] 设置内核的线程同级调度程序策略。\n"
-+
-+#: utils/cpupower-set.c:80
-+#, c-format
-+msgid "--perf-bias param out of range [0-%d]\n"
-+msgstr "--perf-bias 参数超出范围 [0-%d]\n"
-+
-+#: utils/cpupower-set.c:91
-+#, c-format
-+msgid "--sched-mc param out of range [0-%d]\n"
-+msgstr "--sched-mc 参数超出范围 [0-%d]\n"
-+
-+#: utils/cpupower-set.c:102
-+#, c-format
-+msgid "--sched-smt param out of range [0-%d]\n"
-+msgstr "--sched-smt 参数超出范围 [0-%d]\n"
-+
-+#: utils/cpupower-set.c:121
-+#, c-format
-+msgid "Error setting sched-mc %s\n"
-+msgstr "设置 sched-mc %s 时出错\n"
-+
-+#: utils/cpupower-set.c:127
-+#, c-format
-+msgid "Error setting sched-smt %s\n"
-+msgstr "设置 sched-smt %s 时出错\n"
-+
-+#: utils/cpupower-set.c:146
-+#, c-format
-+msgid "Error setting perf-bias value on CPU %d\n"
-+msgstr "在 CPU %d 上设置性能偏差值时出错\n"
-+
-+#: utils/cpupower-info.c:21
-+#, c-format
-+msgid "Usage: cpupower info [ -b ] [ -m ] [ -s ]\n"
-+msgstr "用法：cpupower info [-b][-m][-s]\n"
-+
-+#: utils/cpupower-info.c:23
-+#, c-format
-+msgid ""
-+"  -b, --perf-bias    Gets CPU's power vs performance policy on some\n"
-+"                           Intel models [0-15], see manpage for details\n"
-+msgstr ""
-+"  -b, --perf-bias    获取 CPU 在某些方面的功耗与性能策略\n"
-+"                            Intel 型号 [0-15]，请参阅联机帮助页了解详细信"
-+"息\n"
-+
-+#: utils/cpupower-info.c:25
-+#, c-format
-+msgid "  -m, --sched-mc     Gets the kernel's multi core scheduler policy.\n"
-+msgstr "-m, --sched-mc 获取内核的多核调度程序策略。\n"
-+
-+#: utils/cpupower-info.c:26
-+#, c-format
-+msgid ""
-+"  -s, --sched-smt    Gets the kernel's thread sibling scheduler policy.\n"
-+msgstr " -s, --sched-smt    获取内核的线程同级调度程序策略。\n"
-+
-+#: utils/cpupower-info.c:28
-+#, c-format
-+msgid ""
-+"\n"
-+"Passing no option will show all info, by default only on core 0\n"
-+msgstr ""
-+"\n"
-+"不传递任何选项将显示所有信息，默认情况下仅在核心 0 上\n"
-+
-+#: utils/cpupower-info.c:102
-+#, c-format
-+msgid "System's multi core scheduler setting: "
-+msgstr "系统的多核调度器设置："
-+
-+#. if sysfs file is missing it's: errno == ENOENT
-+#: utils/cpupower-info.c:105 utils/cpupower-info.c:114
-+#, c-format
-+msgid "not supported\n"
-+msgstr "不支持\n"
-+
-+#: utils/cpupower-info.c:111
-+#, c-format
-+msgid "System's thread sibling scheduler setting: "
-+msgstr "系统的线程兄调度程序设置："
-+
-+#: utils/cpupower-info.c:126
-+#, c-format
-+msgid "Intel's performance bias setting needs root privileges\n"
-+msgstr "Intel的性能偏差设置需要root权限\n"
-+
-+#: utils/cpupower-info.c:128
-+#, c-format
-+msgid "System does not support Intel's performance bias setting\n"
-+msgstr "系统不支持Intel的性能偏差设置\n"
-+
-+#: utils/cpupower-info.c:147
-+#, c-format
-+msgid "Could not read perf-bias value\n"
-+msgstr "无法读取性能偏差值\n"
-+
-+#: utils/cpupower-info.c:150
-+#, c-format
-+msgid "perf-bias: %d\n"
-+msgstr "性能偏差：%d\n"
-+
-+#: utils/cpuidle-info.c:28
-+#, c-format
-+msgid "Analyzing CPU %d:\n"
-+msgstr "正在分析 CPU %d：\n"
-+
-+#: utils/cpuidle-info.c:32
-+#, c-format
-+msgid "CPU %u: No idle states\n"
-+msgstr "CPU %u：无空闲状态\n"
-+
-+#: utils/cpuidle-info.c:36
-+#, c-format
-+msgid "CPU %u: Can't read idle state info\n"
-+msgstr "CPU %u：无法读取空闲状态信息\n"
-+
-+#: utils/cpuidle-info.c:41
-+#, c-format
-+msgid "Could not determine max idle state %u\n"
-+msgstr "无法确定最大空闲状态 %u\n"
-+
-+#: utils/cpuidle-info.c:46
-+#, c-format
-+msgid "Number of idle states: %d\n"
-+msgstr "空闲状态数：%d\n"
-+
-+#: utils/cpuidle-info.c:48
-+#, c-format
-+msgid "Available idle states:"
-+msgstr "可用的空闲状态："
-+
-+#: utils/cpuidle-info.c:71
-+#, c-format
-+msgid "Flags/Description: %s\n"
-+msgstr "标志/描述：%s\n"
-+
-+#: utils/cpuidle-info.c:74
-+#, c-format
-+msgid "Latency: %lu\n"
-+msgstr "延迟：%lu\n"
-+
-+#: utils/cpuidle-info.c:76
-+#, c-format
-+msgid "Usage: %lu\n"
-+msgstr "用法：%lu\n"
-+
-+#: utils/cpuidle-info.c:78
-+#, c-format
-+msgid "Duration: %llu\n"
-+msgstr "持续时间：%llu\n"
-+
-+#: utils/cpuidle-info.c:90
-+#, c-format
-+msgid "Could not determine cpuidle driver\n"
-+msgstr "无法确定 cpuidle 驱动程序\n"
-+
-+#: utils/cpuidle-info.c:94
-+#, c-format
-+msgid "CPUidle driver: %s\n"
-+msgstr "CPU 空闲驱动程序：%s\n"
-+
-+#: utils/cpuidle-info.c:99
-+#, c-format
-+msgid "Could not determine cpuidle governor\n"
-+msgstr "无法确定 cpuidle 调控器\n"
-+
-+#: utils/cpuidle-info.c:103
-+#, c-format
-+msgid "CPUidle governor: %s\n"
-+msgstr "CPU 空闲调节器：%s\n"
-+
-+#: utils/cpuidle-info.c:122
-+#, c-format
-+msgid "CPU %u: Can't read C-state info\n"
-+msgstr "CPU %u：无法读取 C 状态信息\n"
-+
-+#. printf("Cstates: %d\n", cstates);
-+#: utils/cpuidle-info.c:127
-+#, c-format
-+msgid "active state:            C0\n"
-+msgstr "活动状态:            C0\n"
-+
-+#: utils/cpuidle-info.c:128
-+#, c-format
-+msgid "max_cstate:              C%u\n"
-+msgstr "最大c状态:              C%u\n"
-+
-+#: utils/cpuidle-info.c:129
-+#, c-format
-+msgid "maximum allowed latency: %lu usec\n"
-+msgstr "允许的最大延迟：%lu usec\n"
-+
-+#: utils/cpuidle-info.c:130
-+#, c-format
-+msgid "states:\t\n"
-+msgstr "状态：\t\n"
-+
-+#: utils/cpuidle-info.c:132
-+#, c-format
-+msgid "    C%d:                  type[C%d] "
-+msgstr "    C%d:                  类型[C%d]"
-+
-+#: utils/cpuidle-info.c:134
-+#, c-format
-+msgid "promotion[--] demotion[--] "
-+msgstr "晋升[--] 降级[--]"
-+
-+#: utils/cpuidle-info.c:135
-+#, c-format
-+msgid "latency[%03lu] "
-+msgstr "延迟[%03lu]"
-+
-+#: utils/cpuidle-info.c:137
-+#, c-format
-+msgid "usage[%08lu] "
-+msgstr "使用情况[%08lu]"
-+
-+#: utils/cpuidle-info.c:139
-+#, c-format
-+msgid "duration[%020Lu] \n"
-+msgstr "持续时间[%020Lu]\n"
-+
-+#: utils/cpuidle-info.c:147
-+#, c-format
-+msgid "Usage: cpupower idleinfo [options]\n"
-+msgstr "用法：cpupower idleinfo [选项]\n"
-+
-+#: utils/cpuidle-info.c:149
-+#, c-format
-+msgid "  -s, --silent         Only show general C-state information\n"
-+msgstr "-s, --silent 只显示一般C状态信息\n"
-+
-+#: utils/cpuidle-info.c:150
-+#, c-format
-+msgid ""
-+"  -o, --proc           Prints out information like provided by the /proc/"
-+"acpi/processor/*/power\n"
-+"                       interface in older kernels\n"
-+msgstr ""
-+"-o, --proc 打印 /proc/acpi/processor/*/power 提供的信息\n"
-+"                        旧内核中的接口\n"
-+
-+#: utils/cpuidle-info.c:209
-+#, c-format
-+msgid "You can't specify more than one output-specific argument\n"
-+msgstr "您不能指定多个特定于输出的参数\n"
-+
-+#~ msgid ""
-+#~ "  -c CPU, --cpu CPU    CPU number which information shall be determined "
-+#~ "about\n"
-+#~ msgstr ""
-+#~ "  -c CPU, --cpu CPU    NumÃ©ro du CPU pour lequel l'information sera "
-+#~ "affichÃ©e\n"
-+
-+#~ msgid ""
-+#~ "  -c CPU, --cpu CPU        number of CPU where cpufreq settings shall be "
-+#~ "modified\n"
-+#~ msgstr ""
-+#~ "  -c CPU, --cpu CPU        numÃ©ro du CPU Ã  prendre en compte pour les\n"
-+#~ "                           changements\n"
--- 
-2.45.1
+> _GNU_SOURCE to either be defined prior to including headers or with the
+> -D_GNU_SOURCE flag passed to the compiler.
+> 
 
+This is huge churn to all the tests and some maintainers aren't
+onboard to take this change.
+
+Is there an wasier way to fix this instead? Please explore
+localized options before asking me to take this series.
+
+thanks,
+-- Shuah
 
