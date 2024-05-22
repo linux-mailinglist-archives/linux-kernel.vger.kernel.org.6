@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-186451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891468CC458
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:46:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BB18CC45C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC151F21B23
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:46:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C30284AED
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40B81420A8;
-	Wed, 22 May 2024 15:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501ED13D88D;
+	Wed, 22 May 2024 15:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AGAyKEhW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uLwquy6H"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9115F13E8A0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA1081204
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716392759; cv=none; b=eRYH+fgxIYziJau82dUBxhs1ulkv0LMbrGh37V4rUFYtJItf7EHphET9dx3d9M/+Oy3QZeDuc3YMke32zAxSBoqTYFcB+GkHlYB8C4NvvlIOXI+ehUaEzaNj/NJQ3oeQcDdcOlNEtOwU2m537/7JV7qOdLt76wwhDnvMvjle5UY=
+	t=1716392784; cv=none; b=j7JBZjpTaUXvay6qDce6nkatyHQaUHp0OWy8loST6AhXPi0WXbs/gQ0cXYDnlhfVcUCIX6ouodfV7mYOKS0v9Ccpbedw2xV/ToQmyGqOwNAJE1iY9bwlWH2in7DgM+LSfqQpzpnaI6KKW1bTxnZSHiRKWAHo2ecN62njTWIA4eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716392759; c=relaxed/simple;
-	bh=Mdb4OhrS+xxduGqCQenQjyZiiOEqWnw5Chesp52+Cyw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZTq14YmeK3HJmE2Pen9+Oyfy1ul/8Hoxuseieg3phmGuxweyZCtTJ3tgHuRTHiiiSM2na2O7jeFoC3r6L1eA8WxXei24fqLJ2kxznujp/i5rfT5E5Z6CfF9AXU5zzU3YpyYbdzx2nDYbCaXNz9tqVpUSDm6sSwRDgNHel6P2LtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AGAyKEhW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716392756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mdb4OhrS+xxduGqCQenQjyZiiOEqWnw5Chesp52+Cyw=;
-	b=AGAyKEhWPHFwhP5csu/9jm+KKi3DAP5+8MAeOOa7diUkO3B6qGZroHxB1za6S68psAtJ8C
-	IeCJyzJzRjR9qCWbeiiGe5wO06FGozTbNXNJ09ihxumeS7h3EMsBM35l9DarWhGaGhbQQM
-	ulgAsFGHu1b2LVuPDXohhoC0ZiyLLQU=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-25-7f18bCruNo-SmbhIfwRwbA-1; Wed, 22 May 2024 11:45:52 -0400
-X-MC-Unique: 7f18bCruNo-SmbhIfwRwbA-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-354df3e1b0fso390553f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:45:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716392752; x=1716997552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mdb4OhrS+xxduGqCQenQjyZiiOEqWnw5Chesp52+Cyw=;
-        b=UazgVT4C2+CfH5LQQlxoY4rXpmeucX/ofwwR1kR0XkUZd6ZnD1JrTY+AI5Q/n0E0YI
-         gh0qAEyzROgTS86KjgbRvfI752pb41dTVaqFGwL433YGuv0N6WjpJOSuT3CdSiA4FIRq
-         axV58AEyU+PbA6xAinepTTUWqPhkjAqtOHF0kxUk0KyX77+4MZpKSjyYDP9U+Cc6FnrW
-         ULODXMAmrbtAnEOksRIF5jAhHldCntQVB+YbBDB61Isz62W3H1VKx2oZ0U+tBfoIDomt
-         +homZLXPPDumKmAVuNtiHX23MQK7hE7W0Iw/kXbcbiiBLbGQcnUThH5ziDySZd4zw1uJ
-         a3Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2lFoMPYaDUcr40dYazNJB0y6ON7c3+Rn+1udTGHI21wpNXLv7OTJzmnpVqa8jjapKEAX9YxuJTKheoTeDINvOx7cBqpiQtzlBmxzR
-X-Gm-Message-State: AOJu0YyZrR77FQ2NVyKhQjAsII/q7qy8CMhEIKsJ3lk6yNBGbgMfdcdx
-	MC1NOpV3sJjQMITvR0kazRGuRKOvwp3GekMpT2836xzf5kr0tp2aAZxk2OUoKPVp+tBQPt9gINs
-	b346JVkDEI6sysrRk+LiESLeBbEqDYL4p6AfkbFGWeOPDejeJsli4FQLchHUlC9ev6b3K/usxZD
-	lOuX+PhEXQdBDyVYpUlZXk94TxASuf8SFoa+fj
-X-Received: by 2002:adf:eccd:0:b0:354:f452:c99a with SMTP id ffacd0b85a97d-354f452cc09mr512929f8f.25.1716392751782;
-        Wed, 22 May 2024 08:45:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFu6jDF0/N1JzMpNdLFgCRDbMRMnB/WJd7oq/LlNSDUtsAaagfukeItFC0VsQV7unOBGexMVYUOFO7FNwpI4uE=
-X-Received: by 2002:adf:eccd:0:b0:354:f452:c99a with SMTP id
- ffacd0b85a97d-354f452cc09mr512909f8f.25.1716392751401; Wed, 22 May 2024
- 08:45:51 -0700 (PDT)
+	s=arc-20240116; t=1716392784; c=relaxed/simple;
+	bh=m5IRUcHKz6e88TJmUQOvC2AcC0A8I/DAAbwMO2bG0QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oRCat4WDchiPXFdxLTVYn/OCYOpFbHdH0hAuF22Zh5Hr6u5TUvh7dm6jimoMCTrapQoKm8n69hJfUeJN1gujU6DOjpcysN5+grXeJ/wWBqJajlns1xixiXGDP7SyYYZVeI6qJ+/rvrSPd9V5eZBVumVrZDqm46Fz0fUWk79kISU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uLwquy6H; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D0ADFC67;
+	Wed, 22 May 2024 17:46:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716392769;
+	bh=m5IRUcHKz6e88TJmUQOvC2AcC0A8I/DAAbwMO2bG0QE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uLwquy6HMmuiD24COtyH6xSjv/kXtcgWiBMQBEv+U7HSfTSW1VYqGfrEaKEq8qbzQ
+	 BpJnOb+XzfoXL3IXqwq2OFJKqdM3gt9BAtiBsTw3SDBqpqcMmWnrs0YdXqzjmLznj9
+	 RN7mA8sJdeNGC2oVNTSnwxnXhJtWJT3I3CfcM6J4=
+Date: Wed, 22 May 2024 18:46:12 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: tomi.valkeinen@ideasonboard.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, michal.simek@amd.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+Subject: Re: [PATCH] drm: xlnx: zynqmp_disp: Fix WARN_ON build warning
+Message-ID: <20240522154612.GB15832@pendragon.ideasonboard.com>
+References: <20240521142814.32145-2-palmer@rivosinc.com>
+ <20240522144401.GA9789@pendragon.ideasonboard.com>
+ <20240522154528.GA15832@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZkUIMKxhhYbrvS8I@google.com> <1257b7b43472fad6287b648ec96fc27a89766eb9.camel@intel.com>
- <ZkUVcjYhgVpVcGAV@google.com> <ac5cab4a25d3a1e022a6a1892e59e670e5fff560.camel@intel.com>
- <ZkU7dl3BDXpwYwza@google.com> <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
- <ZkVDIkgj3lWKymfR@google.com> <7df9032d-83e4-46a1-ab29-6c7973a2ab0b@redhat.com>
- <Zk1KZDStu/+CR0i4@yzhao56-desk.sh.intel.com> <Zk1ZA-u9yYq0i15-@google.com> <Zk2VPoIpm9E6CCTm@yzhao56-desk.sh.intel.com>
-In-Reply-To: <Zk2VPoIpm9E6CCTm@yzhao56-desk.sh.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Wed, 22 May 2024 17:45:39 +0200
-Message-ID: <CABgObfaq4oHC9C_iA2OudmFN-7E9RDiw-WiDu9skmpsW39j0nQ@mail.gmail.com>
-Subject: Re: [PATCH 02/16] KVM: x86/mmu: Introduce a slot flag to zap only
- slot leafs on slot deletion
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
-	"sagis@google.com" <sagis@google.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Erdem Aktas <erdemaktas@google.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240522154528.GA15832@pendragon.ideasonboard.com>
 
-On Wed, May 22, 2024 at 8:49=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> wro=
-te:
-> > Disabling the quirk would allow KVM to choose between a slow/precise/pa=
-rtial zap,
-> > and full/fast zap.
-> TDX needs to disable the quirk for slow/precise/partial zap, right?
+On Wed, May 22, 2024 at 06:45:29PM +0300, Laurent Pinchart wrote:
+> On Wed, May 22, 2024 at 05:44:02PM +0300, Laurent Pinchart wrote:
+> > Hi Palmer,
+> > 
+> > (CC'ing Anatoliy)
+> > 
+> > Thank you for the patch.
+> > 
+> > On Tue, May 21, 2024 at 07:28:15AM -0700, Palmer Dabbelt wrote:
+> > > From: Palmer Dabbelt <palmer@rivosinc.com>
+> > > 
+> > > Without this I get warnings along the lines of
+> > > 
+> > >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: error: logical not is only applied to the left hand side of this comparison [-Werror,-Wlogical-not-parentheses]
+> > >       949 |         if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> > >           |                     ^            ~~
+> > >     arch/s390/include/asm/bug.h:54:25: note: expanded from macro 'WARN_ON'
+> > >        54 |         int __ret_warn_on = !!(x);                      \
+> > >           |                                ^
+> > >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses after the '!' to evaluate the comparison first
+> > >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses around left hand side expression to silence this warning
+> > > 
+> > > which get promoted to errors in my test builds.  Adding the suggested
+> > > parens elides those warnings.
+> > 
+> > I think this should have
+> > 
+> > Fixes: b0f0469ab662 ("drm: xlnx: zynqmp_dpsub: Anounce supported input formats")
+> > 
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Closes: https://lore.kernel.org/oe-kbuild-all/202405080553.tfH9EmS8-lkp@intel.com/
+> > > Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> > > ---
+> > > I couldn't find a patch for this in Linus' tree or on the lists, sorry
+> > > if someone's already fixed it.  No rush on my end, I'll just stash this
+> > > in a local branch for the tester.
+> > > ---
+> > >  drivers/gpu/drm/xlnx/zynqmp_disp.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > > index 13157da0089e..d37b4a9c99ea 100644
+> > > --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > > +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > > @@ -981,7 +981,7 @@ u32 *zynqmp_disp_layer_drm_formats(struct zynqmp_disp_layer *layer,
+> > >  	unsigned int i;
+> > >  	u32 *formats;
+> > >  
+> > > -	if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> > > +	if (WARN_ON((!layer->mode) == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> > 
+> > That doesn't seem right. layer->mode isn't a boolean, it's an enum. The
+> > right fix seems to be
+> > 
+> > 	if (WARN_ON(layer->mode != ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> > 
+> > Anatoliy, could you check this ? Palmer, do you plan to submit a new
+> > version of the patch, or should I send the right fix separately ?
+> 
+> I see a fix is already present in the drm-misc-fixes branch. Please
+> ignore my previous e-mail.
 
-Yes - and since TDX is a separate VM type it might even start with the
-quirk disabled. For sure, the memslot flag is the worst option and I'd
-really prefer to avoid it.
+I meant drm-misc-next-fixes.
 
-> > I have the same feeling that the bug is probably not reproducible with =
-latest
-> > KVM code
+> > >  		*num_formats = 0;
+> > >  		return NULL;
+> > >  	}
 
-Or with the latest QEMU code, if it was related somehow to non-atomic
-changes to the memory map.
+-- 
+Regards,
 
-Paolo
-
+Laurent Pinchart
 
