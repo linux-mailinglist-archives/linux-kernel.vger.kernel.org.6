@@ -1,183 +1,157 @@
-Return-Path: <linux-kernel+bounces-186378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259798CC36F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1088CC36D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95CE71F21975
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97BA2283EC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510351CD23;
-	Wed, 22 May 2024 14:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9015A1C6AF;
+	Wed, 22 May 2024 14:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FEhmauS3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOiJwRsh"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1896199B0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE3C1864C;
+	Wed, 22 May 2024 14:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716389008; cv=none; b=HrJxLLre5V1YhmYfJZRyageB4bmwVduBf9yVvdhv3ok+y4vgVhlQ8MWtHCG/WtoOw3v/2CPD4I5XNUYAIpga2NzVTpi31kQIzDfksT0hzxdsgxjBKa+6jD5pjqlAs968PbOJkONbRPzkibx7PuoU1caP+hI+7CEti5QY9C+NXfo=
+	t=1716388993; cv=none; b=AG3mbeh68rsF7MmmKiaAoJY3lVLehjzRV1eXKn7mOW9AuUpDt0jRsLnk+iiO3xFhu2SaRFBVgMUwAl2L0MQiljIpCM2/3perUi3MkPp7kCx/9MI3y+20DIpVEAX4FpccnxCtGxtvoO5De4nEIRgmguQB+oiXVuNWtKM2d9GlwkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716389008; c=relaxed/simple;
-	bh=ojl3Kz+45ZBjnPCHAViG+5m7ZbPO937xkun+CmzGL0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RPrOpG95dJziDLbYinuK0Qvah1iW8MHpxpylRT3qyV0xcggBAblR62SY+95gRdcApmTM0pkjTajqIW/VlPGsoCHMyjPNWdoBjDh4VPuPPid/6gvzxtBucLmWwyXfD3cN+U8EmLHusfzfoAAZnjEf5zUsEjN5vNUQwuNOstEp/xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FEhmauS3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716389005;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oCCD5AL8sXkrhzAHpHnYOFwpAjoAA+9SMdIBjKqepNw=;
-	b=FEhmauS3Oeqt8hxlq27v56AlxRmC9+2mfEC02N1KILtJBKXxdTa2TeQQYDoQ22RPirCCJf
-	ebaTUIHRUGZ/Yv6ng4cUbs2WuyfjUX+qxS/QDcTrwkN84tmByXDSlTj3qz8OOgFRK+gFUS
-	6fTlPnn0LMBOxyIFYkf3Xu7URtyr7EU=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-198-nlHii9zpPVewwuvn0Joqmw-1; Wed, 22 May 2024 10:43:21 -0400
-X-MC-Unique: nlHii9zpPVewwuvn0Joqmw-1
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36da6da1d98so7763605ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:43:21 -0700 (PDT)
+	s=arc-20240116; t=1716388993; c=relaxed/simple;
+	bh=cU0VfFRghGglmx3GPYhyRadXAJpo3i6tBsjliiSd/5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=feIL77WB5s0jFtahqq7wjBQLtqd3cx6FdpnHF2mvf03A2kb+ulCDZo+1+2n8X76wcxVHVv+4h+rwLzZeLTt6zelMEfPKJ+fpRwrNNiQHoRVhvewLcgIKbDx9QZkh7W5MSS5KHzlUBu4vEBd5TvnWzFvquDmxX4HNkRiavv5M46E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOiJwRsh; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-520f9d559f6so7937741e87.3;
+        Wed, 22 May 2024 07:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716388990; x=1716993790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xKGz5EzGEJV05Hj0JhuGrkXsXmjzWO6dC3DmXo4LzKE=;
+        b=FOiJwRshJQ9jaNEKzOhV/UVNGIvOKytkCpc+DSshQCnXIdNVuz5/EWNGrTgEZyHjnv
+         5gv9sxRvGUGsBwS17R3QzaJpQQrPHqU5gIwEBMFAC8CEf9oTiZVRXZiHW2gxN/gCrBwP
+         R1xzS9iQZbpsmkLCKhgModDegMntPWSMrY16nnznc7ngygTsd1GsJI1qSC43VpecLTLK
+         tWtK0cHMvpYT5NSTsKfqc63uDrWohV16beQLrJU/oS5j+mlDUCjBEtc6RdwAmsIrSG4t
+         g8uC46dMQgWmRfMokY5cI4fzoebFyo4dXx1O6ftwwZwJqpMH2cgvtRCAna+if0lY1z7V
+         mPTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716389001; x=1716993801;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oCCD5AL8sXkrhzAHpHnYOFwpAjoAA+9SMdIBjKqepNw=;
-        b=MwGENx5zJxGYglvGAc/245zEEebxyTjaGLVPB6m2nHib7IUt+jdkGZC60UcCE2hM7M
-         EIJ7reE4kIRhum4sJbQ3p53spb/MCNA62KWKytBErhn9+Mmv2CtOlhvcSqFnNc73uMZq
-         J+rb5CqatZenKYpBmAh7/K8OlRjrpPRxm1YfWvBelS3eeHBEpm5Lb9xnmP+ck6OGV1v1
-         BK3aD1IxdCQ8e4NR7XFvkzJnY33YsOit3ighPUuFFGwqWBsS9LUGCsFIiOOOcJjCSm6g
-         xH2SPKhm3poemdv4xW21o6QwRc7sBTvPsYBmVNu/zEl/ji9r9wTYuNfCb1UtgrePxAbA
-         GFow==
-X-Forwarded-Encrypted: i=1; AJvYcCW91T6ssAT1xnxBcmYeuZQ9XTTrEQUHYpqqkbAHzdcuFnB/rkvzt95dxUCz7MmseF2GAHPUbI4BxRop7Z9WajBPvzArgxgoSEL6GX2L
-X-Gm-Message-State: AOJu0Yw9UK5a+Um/PKgYb08JutP8tMqnY5RoKLGfrf1ORmx0CDazJ/o2
-	jbKNxT9J7bDtVQScYUV+z9Ux4xmkmq/tody0DzMXNmSymTX+mYm61hnulzlr64pLfStBylAxwqq
-	MarE2vpH0+GvgbSulPrApHOU0f28A97ItDV/0AUad8ip2M8IGebFgTdeNmpAF7A==
-X-Received: by 2002:a05:6e02:12e8:b0:36c:45bf:a8f0 with SMTP id e9e14a558f8ab-371fb91fe79mr24461385ab.25.1716389000960;
-        Wed, 22 May 2024 07:43:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqJHjQHAf8ioYQJxg3KTDvGvqncn/7PxrQwSaE3bVUPwOeK3bCtm4GVPxds6m+Fab6ef5A4w==
-X-Received: by 2002:a05:6e02:12e8:b0:36c:45bf:a8f0 with SMTP id e9e14a558f8ab-371fb91fe79mr24461105ab.25.1716389000614;
-        Wed, 22 May 2024 07:43:20 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37195389d91sm6333875ab.7.2024.05.22.07.43.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 07:43:20 -0700 (PDT)
-Date: Wed, 22 May 2024 08:43:18 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>, "Vetter, Daniel"
- <daniel.vetter@intel.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "pbonzini@redhat.com"
- <pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "luto@kernel.org" <luto@kernel.org>, "peterz@infradead.org"
- <peterz@infradead.org>, "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
- "hpa@zytor.com" <hpa@zytor.com>, "corbet@lwn.net" <corbet@lwn.net>,
- "joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>, "baolu.lu@linux.intel.com"
- <baolu.lu@linux.intel.com>, "Liu, Yi L" <yi.l.liu@intel.com>
-Subject: Re: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in
- non-coherent domains
-Message-ID: <20240522084318.43e0dbb1.alex.williamson@redhat.com>
-In-Reply-To: <20240522122939.GT20229@nvidia.com>
-References: <BN9PR11MB52766D78684F6206121590B98CED2@BN9PR11MB5276.namprd11.prod.outlook.com>
-	<20240516143159.0416d6c7.alex.williamson@redhat.com>
-	<20240517171117.GB20229@nvidia.com>
-	<BN9PR11MB5276250B2CF376D15D16FF928CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
-	<20240521160714.GJ20229@nvidia.com>
-	<20240521102123.7baaf85a.alex.williamson@redhat.com>
-	<20240521163400.GK20229@nvidia.com>
-	<20240521121945.7f144230.alex.williamson@redhat.com>
-	<20240521183745.GP20229@nvidia.com>
-	<BN9PR11MB52769E209C5B978C7094A5C08CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
-	<20240522122939.GT20229@nvidia.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1716388990; x=1716993790;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKGz5EzGEJV05Hj0JhuGrkXsXmjzWO6dC3DmXo4LzKE=;
+        b=cbRxCpEWegTdD9EBv5Z9XcRdjArmXycOvhG3c3PEPoizp3ybsHlXYOLKG8Iwmb1p7j
+         yXs1FEZZz45aIxd3Wxi+KcONWrzxdGDKH80ye8gd72TJ7ZwvqHuHxCU3y/Luu74ZNjd2
+         kPAad+585HMUX5AFCthBSPu+IAS8KBR7nQ5+te4KnecMEeHMKfOXGBL7QOD1aI3CMmXH
+         6HV9Y1l4JuUtl6IhYh2p3uqbs9xM8IamBF2cpNvV+uDELHQEkvpLIe0ySqA3AB8A9LBD
+         LzXU/lvLzShd9vievj2UnrvtwbxlpMu78dxlqFj5lffxeMp/uxYSHOrtBgDO2vHIAuKs
+         MRQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGasCA8yuB3Ytuyu7iCMulhg4raMaufde3TU2fj4X0Wcqof+EbGP8xkb9QfsT4gKVNO+LdtbGrN3tRaGviiyHf5QtEG+D8iIyvf8l29PKrV/7VUWAmGsQ/eis/IYRbdnwob6gilYh6H4P8jCNyfHOJokTirNJq+CVHlx7dXo55mfZALZfE
+X-Gm-Message-State: AOJu0YxH/RJMSIrGssgA/AdKZLJMD7ppwVZSWFucfqmzH2IJOoVMINnq
+	olt5Nwib3LDPHPtCqp3uWpzrQv8YpPSuPlkigLQaIAIFgiu2dHm5
+X-Google-Smtp-Source: AGHT+IG4fUvdOa89iMSUKAiQ1AAmrXW4cgIx9Qlz27fd1jVvMkQLth48Htq0VZuMOnG63nSQyDH2yw==
+X-Received: by 2002:ac2:59c6:0:b0:523:9747:4920 with SMTP id 2adb3069b0e04-526be316495mr1617301e87.36.1716388990067;
+        Wed, 22 May 2024 07:43:10 -0700 (PDT)
+Received: from [10.0.0.100] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52733b3e732sm126213e87.184.2024.05.22.07.43.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 07:43:09 -0700 (PDT)
+Message-ID: <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
+Date: Wed, 22 May 2024 17:43:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>, Mighty <bavishimithil@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240522075245.388-1-bavishimithil@gmail.com>
+ <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
+ <4f722e53-011f-4176-b6af-080522165007@kernel.org>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+Content-Language: en-US
+In-Reply-To: <4f722e53-011f-4176-b6af-080522165007@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 22 May 2024 09:29:39 -0300
-Jason Gunthorpe <jgg@nvidia.com> wrote:
 
-> On Wed, May 22, 2024 at 06:24:14AM +0000, Tian, Kevin wrote:
-> > > From: Jason Gunthorpe <jgg@nvidia.com>
-> > > Sent: Wednesday, May 22, 2024 2:38 AM
-> > > 
-> > > On Tue, May 21, 2024 at 12:19:45PM -0600, Alex Williamson wrote:  
-> > > > > I'm OK with this. If devices are insecure then they need quirks in
-> > > > > vfio to disclose their problems, we shouldn't punish everyone who
-> > > > > followed the spec because of some bad actors.
-> > > > >
-> > > > > But more broadly in a security engineered environment we can trust the
-> > > > > no-snoop bit to work properly.  
-> > > >
-> > > >  The spec has an interesting requirement on devices sending no-snoop
-> > > >  transactions anyway (regarding PCI_EXP_DEVCTL_NOSNOOP_EN):
-> > > >
-> > > >  "Even when this bit is Set, a Function is only permitted to Set the No
-> > > >   Snoop attribute on a transaction when it can guarantee that the
-> > > >   address of the transaction is not stored in any cache in the system."
-> > > >
-> > > > I wouldn't think the function itself has such visibility and it would
-> > > > leave the problem of reestablishing coherency to the driver, but am I
-> > > > overlooking something that implicitly makes this safe?  
-> > > 
-> > > I think it is just bad spec language! People are clearly using
-> > > no-snoop on cachable memory today. The authors must have had some
-> > > other usage in mind than what the industry actually did.  
-> > 
-> > sure no-snoop can be used on cacheable memory but then the driver
-> > needs to flush the cache before triggering the no-snoop DMA so it
-> > still meets the spec "the address of the transaction is not stored
-> > in any cache in the system".  
+
+On 22/05/2024 17:16, Krzysztof Kozlowski wrote:
+> On 22/05/2024 15:56, Péter Ujfalusi wrote:
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - interrupts
+>>> +  - ti,hwmods
+>>> +  - clocks
+>>> +  - clock-names
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +    pdm@40132000 {
+>>
+>> The original label and name is preferred to be used.
 > 
-> Flush does not mean evict.. The way I read the above it is trying to
-> say the driver must map all the memory non-cachable to ensure it never
-> gets pulled into a cache in the first place.
-
-I think we should probably just fall back to your previous
-interpretation, it's bad spec language.  It may not be possible to map
-the memory uncachable, it's a driver issue to sync the DMA as needed
-for coherency.
-
-> > > Maybe not entire, but as an additional step to reduce the cost of
-> > > this. ARM would like this for instance.  
-> > 
-> > I searched PCI_EXP_DEVCTL_NOSNOOP_EN but surprisingly it's not
-> > touched by i915 driver. sort of suggesting that Intel GPU doesn't follow
-> > the spec to honor that bit...  
+> Label is not used here.
 > 
-> Or the BIOS turns it on and the OS just leaves it..
+> About node name, not:
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> 
+>>
+>>> +      compatible = "ti,omap4-mcpdm";
+>>> +      reg = <0x40132000 0x7f>, /* MPU private access */
+>>> +            <0x49032000 0x7f>; /* L3 Interconnect */
+>>> +      interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+>>> +      interrupt-parent = <&gic>;
+>>> +      ti,hwmods = "mcpdm";
+>>> +      clocks = <&twl6040>;
+>>> +      clock-names = "pdmclk";
+>>
+>> The clocks cannot be added at the time when the node is defined, it is
+>> board specific. This way you imply that it is OK to have it in main dtsi
+>> file. It is not.
+> 
+> Wait, what? That's example and pretty standard. Example should be
+> complete. This is not an exceptional binding.
 
-This is kind of an unusual feature in that sense, the default value of
-PCI_EXP_DEVCTL_NOSNOOP_EN is enabled.  It therefore might make sense
-that the i915 driver assumes that it can do no-snoop.  The interesting
-case would be if it still does no-snoop if that bit were cleared prior
-to the driver binding or while the device is running.
+The fclk for the McPDM is coming from external source, and the McPDM is
+designed in pair with twl6040/6041, there were plan for other codecs to
+support the McPDM protocol and in those cases the clock would come from
+the connected codec.
 
-But I think this also means that regardless of virtualizing
-PCI_EXP_DEVCTL_NOSNOOP_EN, there will be momentary gaps around device
-resets where a device could legitimately perform no-snoop transactions.
-Thanks,
+The example (as the original binding was bit rot) is missing reg-names,
+dmas and dma-names to be complete.
 
-Alex
+> 
+> Best regards,
+> Krzysztof
+> 
 
+-- 
+Péter
 
