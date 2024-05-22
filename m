@@ -1,159 +1,137 @@
-Return-Path: <linux-kernel+bounces-186668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246D48CC732
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:33:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318F88CC734
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8795C1F20FFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:33:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0B66B2117A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709C51487E9;
-	Wed, 22 May 2024 19:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622E5148848;
+	Wed, 22 May 2024 19:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ODVAjdMF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JIN/Ok6A"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KegHVOdk"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B0148314;
-	Wed, 22 May 2024 19:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CA2148314;
+	Wed, 22 May 2024 19:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716406124; cv=none; b=KJhOUJ9qTpRs4goPOi8kHcbRzeuFs7s2etDBpYhjGhkZyMyumBvuGhfUSC921u2xzbDOKiMnAgX0aVZaWISuuJhsRxwIvtg3einy3isBtWSeXqBPHOmY3FwRLFR9CPBRYxS72ZBKLmoMpzYSiVEajQBvrbWfGRWSCX8Rvt02tYA=
+	t=1716406130; cv=none; b=G9VEYih0YHoQrjU2QJ05/7IA1xIjDZ2zvnTWCLnuk6gjpcAYhGGEIDGMoB+ccYcyMb5cqdzD3GFoX5JrP+Y0u0k7IBcwl7DFlvanqhyYdm4QOvonB0yiRxkduJwC33ZnBKyc82+Sb+9NTahBCpY6l/Y4Q1vzPEEzLX8mpvxSMbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716406124; c=relaxed/simple;
-	bh=+HIgq/76YrSpoSHZQMGZD7wasDol7pRR2YrI24eJaRc=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=PyXN4BJ0Lcen6v6UYXhRhtXUZlyrzzocA7uw0aAbCP/VIaQC0Jb4na3BcrOzljk63lU7YKMO88NaU9X20AVKBw/sHSxGOQVitHGEa3w8taw3p1Xp+EkNLkkgsiyIV+hXBuJBxo1HEDdTGjKIb9eOAP+FP307CjocwZhwXKBXeIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ODVAjdMF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JIN/Ok6A; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 6DF1C13800E5;
-	Wed, 22 May 2024 15:28:41 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 22 May 2024 15:28:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716406121; x=1716492521; bh=pllOxeaFWD
-	cR8Doa6DvpzS5mFzmOse3mS7XlUVEkPaQ=; b=ODVAjdMFooUC6RtWgQ05G4aIno
-	CjqNq4EzzPwn4EyzyXNNKhAs7pWzoHJDlCixeY+2KjImjXwmNpiSdhbo8cULcl+S
-	Fcep/k2NS7uz5gcu4FTHYvRvYjm8FH2MPdTjgBwucpByTRUrsvSrb5UmilHrkOqT
-	uZN3zoMP3G65tb4lu7+nZyFd8tKNmt5TvNlULbUFOYWYuVGRrW698TjxJUkYkPIQ
-	uaZu2EWfxDmbzgsIjPFiPNLb6sDqNXqeQvsybzyd/tKLhNostdt0F9vPWtv6fQRL
-	yPFlMCVsrpcSE78kfQPqhPT+RJGuMW3EJdUg0JKW0jh/Tty/qvyZ3I4JZgGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716406121; x=1716492521; bh=pllOxeaFWDcR8Doa6DvpzS5mFzmO
-	se3mS7XlUVEkPaQ=; b=JIN/Ok6AyH+phSgmoWwBUTlMMrIgFd5BF2l37ZVfKd1m
-	68BoX727+72560uwvRkkyhMqihkFCRF6pBko8hDe8btk1MtzaY1to+r7jdSfrOgt
-	NyEa1rDXeAnQJlWzWBEaxdie7q2cpSyyFKp+30W0o9XAU/9pbR/aXlVS1wXe9/Po
-	85XjJQtNtAdg4/CgWWbSFVTksGzt3FFR6xGpwO0hDMVWPHZUycyQXD3Fc9TNEM1x
-	nytgae0skluwJj736YRCvn5lY7pgHhIvp2StijeV2OobiBr6K3foVF12IUKZiRM/
-	2/7qoCwkY/j17xbvWgBQYdmb3zIhN5qoUWSjht/ZZA==
-X-ME-Sender: <xms:aUdOZsqoS2bPYdMMkNRAraJ_9foHojotVK01oEoj2nUTwduugaKJNw>
-    <xme:aUdOZip2CpZ7Wbrr9g7ZYqSxf11WZxjtkqKV8kyK7k1LDZ3YKN9R-SgTuMpYH4KBR
-    xZlgw-chm6AfjAhZ1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeigedgheeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:aUdOZhNktpru_bQ2z3icIo0h20DUBZKP7b_SFsQ61Kz0ICkAlmoQdw>
-    <xmx:aUdOZj4a-b3aq_PeWPVmn3a9krhK1RNjOyXtwPoM69bYSfBOp_ww7w>
-    <xmx:aUdOZr6kD-JeTjJc2057GD5V5xX68vKxffF8RUW2CB33aGTbbvBKDg>
-    <xmx:aUdOZjh1unIg_yrrgmeOlIpsvNEJ7nwS6s9zTDgs7Z2ekfQT38Lz0g>
-    <xmx:aUdOZubeBWu_FR3h3IcpQyoXG0h_UumJKSvBc-2LFbdwQ1wKZllt-TTu>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id EC110B6008D; Wed, 22 May 2024 15:28:40 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-480-g515a2f54a-fm-20240515.001-g515a2f54
+	s=arc-20240116; t=1716406130; c=relaxed/simple;
+	bh=asqTH8IVJLtiuy+OydqF1YSC4+AWx5xmAD1qinDcuos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+lGwa+Sg8UM8mbNwRUYmlzbf1vt6XHxL9AFfeE85iKk/sfrm3f54aJKt57n7RwnsJCjaYaeR7FOyFuf5qcOCnq5ai467TBQzguhgvOadcuJN8DkBi3wUpugq9m5l6i//WuyS856y/GlsVmn5KLoRO/N3OAfAy1xefrUpIt6D1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KegHVOdk; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b31f2c6e52so2272434eaf.2;
+        Wed, 22 May 2024 12:28:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716406128; x=1717010928; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p9CpjKztRQ/VjY+lu7XUjYKlv0LD57wkTyNwyxdQqMc=;
+        b=KegHVOdkazxBTpoOfVnG/sjcnPDuE/pQUrxSc8AWVpdZGghcjHkRafW67LEHXWoT/c
+         TyomOsRuGEQ3n83O9g5i9TjbY7u/dywOr3RIgZ1yFdNONqDLHKwinpHbyLNU3h1wzXWb
+         WapdD2ae9cc4Qs3j3zPg+Kx3+M3Zr/iXweQv8qRP4nWuNxHu5qyD0ZT8UMvhiQrLhHEz
+         9+R5qEJrwYjNMajYTygu+yZ9S+ggaKN2zeKeSf2/x0Q98JsB9s7Cbt8OlVxeMspJy/I0
+         IglAxNCKsq+A28c6dKvcXKGMN6AzMHelzsB4Lx5Qtj/E0g0lO+xo6Y9I/apLY3goiBas
+         3hZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716406128; x=1717010928;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9CpjKztRQ/VjY+lu7XUjYKlv0LD57wkTyNwyxdQqMc=;
+        b=fDVEo2sXObOqIEhebqkGCmziHrRfAhQoIxJL5secRnv9bkcLLYbRu/P4XQemXIymcz
+         phAmt56wGzPZLK8GuSR1+6TYAwkkn8stoW4Y+MCy4uG7mZc1OCDvItMtdpMHUSP0Pd5v
+         oSLGc2BmjSqdGVNR0StKbp7ojDWkQ14t4vHAJt/MclM/uWi7gc6VdEm8raaurLvxmyWN
+         hyDP65+A2Jiqywp0TKMB32ch69IMwriyzWH018WnpqhpDak2OGghsYAp1+KhyYOb1Q9E
+         g6rnIpYZb22f8sJZhGQWlPA0ufImrqbLDnxNBomYnfSM6enwp6V7lHXAM+maJFni28C2
+         rUbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZvu8QVlrwaf+QUa4bh1yh1K3GjCH4uNLzCS5ASwUCEHT6+gh+0/wtqpH/wj6FytFj1kcA4hIns9YAmyuhhAo0TmJ0rECTFeeqwCoh
+X-Gm-Message-State: AOJu0YyDsFecU6AH4hOh/XPRlqejs6o6qdBbrxV3b7FLfvDcpijR0vLx
+	ngdKwEk3kJwHRG9Mlqip0W+n73aaep4Y4NYMZ7USTUaWLbwjJJpf
+X-Google-Smtp-Source: AGHT+IHuNrKoXEFiaRZX1E47Xdrl9Xv8ilNKbTR2scVi8VwkWewMUYlUC2tfGxuI8NqekB93CD5A4g==
+X-Received: by 2002:a05:6359:2d05:b0:18d:7b30:eec1 with SMTP id e5c5f4694b2df-19791f23572mr243689555d.19.1716406128041;
+        Wed, 22 May 2024 12:28:48 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:d9d8:1fc1:6a1c:984b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a819e7sm22826164b3a.56.2024.05.22.12.28.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 12:28:47 -0700 (PDT)
+Date: Wed, 22 May 2024 12:28:45 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: John Keeping <jkeeping@inmusicbrands.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: ili210x - fix ili251x_read_touch_data() return
+ value
+Message-ID: <Zk5HbaC7FbIia3RV@google.com>
+References: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ee4cd4fa-9c5b-444c-803f-1075c7425109@app.fastmail.com>
-In-Reply-To: <87seya452v.fsf@>
-References: <20240309202445.work.165-kees@kernel.org> <87seya452v.fsf@>
-Date: Wed, 22 May 2024 19:28:19 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nicolai Stange" <nstange@suse.de>, "Kees Cook" <keescook@chromium.org>
-Cc: "Jeremy Linton" <jeremy.linton@arm.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-hardening@vger.kernel.org,
- "Elena Reshetova" <elena.reshetova@intel.com>,
- "Thomas Gleixner" <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] randomize_kstack: Improve entropy diffusion
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
 
-On Wed, May 22, 2024, at 08:35, Nicolai Stange wrote:
-> Kees Cook <keescook@chromium.org> writes:
->>
->> diff --git a/include/linux/randomize_kstack.h b/include/linux/randomize_kstack.h
->> index 5d868505a94e..6d92b68efbf6 100644
->> --- a/include/linux/randomize_kstack.h
->> +++ b/include/linux/randomize_kstack.h
->> @@ -80,7 +80,7 @@ DECLARE_PER_CPU(u32, kstack_offset);
->>  	if (static_branch_maybe(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT,	\
->>  				&randomize_kstack_offset)) {		\
->>  		u32 offset = raw_cpu_read(kstack_offset);		\
->> -		offset ^= (rand);					\
->> +		offset = ror32(offset, 5) ^ (rand);			\
->
-> Hi Kees,
->
-> I'm wondering whether this renders the per-arch mask applied to 'rand'
-> at the respective choose_random_kstack_offset() invocations ineffective?
->
-> Like e.g. on x86 there is
->
->   choose_random_kstack_offset(rdtsc() & 0xFF);
->
-> I would argue that while before the patch kstack_offset had been
-> guaranteed to stay within the bounds of 0xFF, it's now effectively
-> unlimited (well, <= (u32)-1) and only capped to 0x3ff when subsequently
-> applying the KSTACK_OFFSET_MAX().
->
-> Or am I simply missing something?
+On Wed, May 22, 2024 at 11:03:41AM +0100, John Keeping wrote:
+> The caller of this function treats all non-zero values as an error, so
+> the return value of i2c_master_recv() cannot be returned directly.
+> Follow the same pattern as ili211x_read_touch_data() to return zero when
+> the correct number of bytes is read and a negative error code otherwise.
+> 
+> This fixes touch reporting when there are more than 6 active touches.
+> 
+> Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+> ---
+>  drivers/input/touchscreen/ili210x.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/ili210x.c b/drivers/input/touchscreen/ili210x.c
+> index 31ffdc2a93f35..8846c6d10fc0d 100644
+> --- a/drivers/input/touchscreen/ili210x.c
+> +++ b/drivers/input/touchscreen/ili210x.c
+> @@ -255,14 +255,15 @@ static int ili251x_read_reg(struct i2c_client *client,
+>  static int ili251x_read_touch_data(struct i2c_client *client, u8 *data)
+>  {
+>  	int error;
+> +	int ret;
+>  
+>  	error = ili251x_read_reg_common(client, REG_TOUCHDATA,
+>  					data, ILI251X_DATA_SIZE1, 0);
+>  	if (!error && data[0] == 2) {
+> -		error = i2c_master_recv(client, data + ILI251X_DATA_SIZE1,
+> -					ILI251X_DATA_SIZE2);
+> -		if (error >= 0 && error != ILI251X_DATA_SIZE2)
+> -			error = -EIO;
 
-Hi Nicolai,
+Thanks for noticing this. Can we say
 
-I think you are correct and this is an unintended side-effect
-of this patch. We could either restore the previous limits
-or try to come up with a cross platform policy here, which
-may be better in the end.
+		if (error >= 0)
+			error = error != ILI251X_DATA_SIZE2 ? -EIO : 0;
 
-I see that out of the five architectures that have randomized
-kstacks, only powerpc and riscv actually use the default
-1kb range of offsets, so those are unaffected by the unintential
-change.
-arm64 uses a 512 byte while x86 and s390 use a 256 byte range.
+> +		ret = i2c_master_recv(client, data + ILI251X_DATA_SIZE1,
+> +				      ILI251X_DATA_SIZE2);
+> +		if (ret != ILI251X_DATA_SIZE2)
+> +			error = ret < 0 ? ret : -EIO;
+>  	}
+>  
+>  	return error;
+> -- 
+> 2.45.1
+> 
 
-As far as I can tell, there should be nothing architecture
-specific about that limit, though we might want to reconsider
-the total size of the stack. On architectures with 4KB
-pages and CONFIG_VMAP_STACK, we should be able to have
-arbitrarily sized stacks (e.g. 12kb or 20kb instead of the
-default 16kb) as a compile-time selection.
+Thanks.
 
-If we increase the stack size by 4KB, it would be trivial
-to set the random offset to the same 4KB range instead of
-256/512/1024 bytes. On the other hand, I always feel
-uneasy about enabling kstack randomization without
-CONFIG_VMAP_STACK, so we may want to also tie it to that.
-
-     Arnd
+-- 
+Dmitry
 
