@@ -1,188 +1,147 @@
-Return-Path: <linux-kernel+bounces-185854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1C38CBBF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF718CBBF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0961F22588
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:26:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FCEC1F224D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB9E7D41C;
-	Wed, 22 May 2024 07:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C497D07F;
+	Wed, 22 May 2024 07:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="OI2y7haS"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSnaWPeG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138847D08F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3151D79B84;
+	Wed, 22 May 2024 07:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362774; cv=none; b=Rxr5362fWsAfwWiy5dsvPSUL55oc9GXWuxLrWp3K4poBfBLZhg9N/7VM9W33YeNYPVGWF9xkEZJ/MeOLw7MNdAqiau8ktOAbtfqAZ5l44emBu8Iaj2zjD4iyjy7y+eZXs39jyY0QrNnOR+jDJ0qO+ADvDy0o7gw9HB6nOSYiftM=
+	t=1716362858; cv=none; b=APWHu269APQs8mhYLtVT2/uviuiXYfwSBT0rg3A0EslmJ1kmSkjSwAislT4UCD/JXQMZsW8K06ESTnIMmdNXMndB0KzdDqu42uUZ9mI1eTvIGOhffZFv9OCPhewqobzM/iv58mwdo2gynM+T84/JarTfkov/DwxyCMyjAnwqOFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362774; c=relaxed/simple;
-	bh=B2CDPNitYGaoZk2uhokzaiodnwqXGZy926AOhJ4VnBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O38PifvKc6Y70eh5Hj8eAOwDHFLpMQEetr2yz2vUFb9s9hnfskwJDGKohv782dC7zFZnEIOWgPIicIiZEgCVFgUOnMJbJ8ZFLmgKlXBH7ek/n9fohsHPtWqc1dayHZDnWhJAn6DQBxdbanGal65ffpEG+8hS0RCMCDNrCdJ/wjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=OI2y7haS; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a0e4b773so927464166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1716362769; x=1716967569; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=otCVHUs3Nwj+ovQYLyF48k7PQwF+3UYRrO9JIydnJro=;
-        b=OI2y7haSLgtUNsqIdQ0SwX+50vvyVQKqdz/r5p9v9fNSotnjOWf9HfntSMIClVikFk
-         HN4ftKzsR25VlB+0JfwUjkvFrq4uh5reoLOVoIuhnMgIQmXzid7VyKCLkhqrEbji0efI
-         IAXTsUzQRhXiIgerlU1tQt02wqtKVQP2XVyORXsbfNtykl8CAhJ6KbHSpcrkXbd1Nahn
-         7OE93i3S4FSUjTLFU6RNw5CnEVLNO4cKBEgbQuXOSUOrdBP0JMEmAENDRUBcY5lfiBzz
-         er7mqEZsxpu80z+j51tlKH3FTCW0NxcuEYg3WXxBXaUO316usBdzD4DESbzp3pwaRpBe
-         8K1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716362769; x=1716967569;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=otCVHUs3Nwj+ovQYLyF48k7PQwF+3UYRrO9JIydnJro=;
-        b=Pp2vcW/8WBhd0uudz/aSP4h/CGuGyIAQuwPIjh8U8HdmXfDNAWCU3aerPK1F4+sKKy
-         Z1ZWo41XDjo5uNMnrQ+35JC3XFBfCc6Pg0+Ec1cTve0TCuRZDPkiT4gLSVzCzzx4dyAp
-         l/oYN39awqHNTtX+bS2uLiSUdLmAWjWmyrYZ8chI22iiybhyuBC6Vhkfmzo+IVYnaBX1
-         rHRxCuhRLt/Dsn1CKaILLq+B1dRrvKJ67tN+YbD0xU9SrA3F/88nZlMJK7xzQ/WZ4Ofh
-         HqEMKr3UFP37htyzQXpReBlAPy735BXaFV+3baXHE535jMGvkjxiExpLvqI2Z9DuSkJV
-         XTRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWP4EWv86zX7stj7mXsQOx2GsfcXNTwxLbRTR6PQqprxmzr1JtZEmwZqrAlkpoGsmheBD3OxfD9VUpL5JtJ0HCdznXmc4LBXi32RIrW
-X-Gm-Message-State: AOJu0YzucIqDdkQxICXngMmDTin+CEAHEZoGtmzVyuK8vEWv95TVM3NK
-	nhXW88gUWw5I35lCQnr6vpQnIZCLDHUit/HktKzP3yzXarLx36oAmEN0oeAkDUE=
-X-Google-Smtp-Source: AGHT+IF6EAxEE0WmF0iEa+XtzugLxuIFj5baBsfbvmbG+5Y6OKzYuSLxthr/qXaZVtPWpKfIPBryBg==
-X-Received: by 2002:a17:906:3a90:b0:a59:9b52:cfc5 with SMTP id a640c23a62f3a-a62280a05a2mr61439366b.37.1716362769340;
-        Wed, 22 May 2024 00:26:09 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01399sm1765616766b.172.2024.05.22.00.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 00:26:08 -0700 (PDT)
-Date: Wed, 22 May 2024 09:26:08 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Evan Green <evan@rivosinc.com>
-Cc: Yangyu Chen <cyy@cyyself.name>, linux-riscv@lists.infradead.org, 
-	Elliott Hughes <enh@google.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] docs: riscv: hwprobe: Clarify misaligned keys are
- values not bitmasks
-Message-ID: <20240522-d110bb16f54eebb725e943c2@orel>
-References: <tencent_9D721BDDF88C04DBB5151D57711D62524209@qq.com>
- <tencent_338DF690631BAE788C4CC858233E9FBAE006@qq.com>
- <CALs-HssGcNso6vTfbcsiWX1h_46jgDDRcEWcfZCTpxXYnubcng@mail.gmail.com>
+	s=arc-20240116; t=1716362858; c=relaxed/simple;
+	bh=Cj4rOccV5n4WWzyX8ZvH5KCQ+t6e8DjdPRMFd1Z3Wpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QGPk9y/+HtOcDPoLKsi4HZXZ0erKuah4I9SHAnj0kBZOaEXa4lfsL70lsAGPxaJDb7Rj0y2tFbhuvbVGpry5V+ADBcaulhX1LhSqYMM4YBqnTZV9Echzehkwo6KC6bpPU2LcYyTe1xwskFi9Ecti+LYBIyTYwuR1nJOAN3UNitw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSnaWPeG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0C7C2BD11;
+	Wed, 22 May 2024 07:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716362857;
+	bh=Cj4rOccV5n4WWzyX8ZvH5KCQ+t6e8DjdPRMFd1Z3Wpc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iSnaWPeGfdlpKVyRlSkCnqcfgpIN8POcITDHdw+KjcoGvX+fwgPNx16i24H0ZtRFp
+	 nO7W0YJLJcPiIOckngG7aYPLqQD39qETSmP7WJlB+AWpSj2FvPtl/WzLWY8IRFlye/
+	 zD1pnbi1eQ0HoBSnOsJ2dGW9idTJZGayGe5TiA3+Co7lYlaYW9+SDfecNFzCyGIRth
+	 pwEQIdxXZfgd04iedflMAYjl8rjapUo9u0vXKuK8GKeWVj7EG18wEt+52TZK8DwJE1
+	 R7y+kCiqAIxiiVFsJpfUaGbq8TOC3ZfzYjUnMZpqb7RoVuGt6xwlWoeA0S7W31cPM7
+	 qfynx4AIzwRMw==
+Message-ID: <c2905eaf-7194-4f2b-98c8-52b1907e398a@kernel.org>
+Date: Wed, 22 May 2024 09:27:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALs-HssGcNso6vTfbcsiWX1h_46jgDDRcEWcfZCTpxXYnubcng@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] arm64: dts: qcom: sm8650: Add hwlock to remoteproc
+To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-7-47a90a859238@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240516-hwspinlock-bust-v1-7-47a90a859238@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 11:36:06AM GMT, Evan Green wrote:
-> On Sat, May 18, 2024 at 9:00 AM Yangyu Chen <cyy@cyyself.name> wrote:
-> >
-> > The original documentation says hwprobe keys are bitmasks, but actually,
-> > they are values. This patch clarifies this to avoid confusion.
-> >
-> > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+On 17/05/2024 00:58, Chris Lew wrote:
+> Add the hwlock property to remoteproc. This enables the remoteproc to
+> try and bust the smem hwspinlock if the remoteproc has crashed while
+> holding the hwspinlock.
 > 
-> Hm, we also have this problem in the code, since
-> hwprobe_key_is_bitmask() returns true for KEY_CPUPERF_0. This results
-> in wrong information being returned for queries using the WHICH_CPU
-> flag. If usermode asked for the set of CPUs that was specifically SLOW
-> or EMULATED, the returned cpuset would also include cpus that were
-> FAST. I believe all other queries are okay.
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> The one-liner fix is to just not return true for that key in
-> hwprobe_key_is_bitmask(). But that's technically user-visible: if some
-> software relied on the buggy behavior of FAST cpus being swept up in
-> the query for SLOW or EMULATED cpus, this change would expose that.
-> The grownups-eat-their-vegetables thing to do would be to define a new
-> key that returns this same value, but doesn't return true in
-> hwprobe_key_is_bitmask(). What do people think?
+> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> index 62a6e77730bc..a65a1679f003 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> @@ -2878,6 +2878,7 @@ remoteproc_mpss: remoteproc@4080000 {
+>  
+>  			qcom,smem-states = <&smp2p_modem_out 0>;
+>  			qcom,smem-state-names = "stop";
+> +			hwlocks = <&tcsr_mutex 3>;
 
-Even though I actually enjoy eating vegetables, I think it's unlikely
-that we need to be so cautious for this. I feel like kernel updates
-provide a bit of freedom to change results of hardware query syscalls,
-even when run on the same hardware. Particularly the EMULATED query,
-which I guess could change with a firmware update. And, even the SLOW
-query could change if the probing was modified directly or indirectly.
-IOW, applications that use the which-cpus syscall shouldn't freak out
-if they don't get the same cpuset after a kernel update, which means
-we can drop the FAST cpus from the result.
+lock #3 is used by smem, so this proves you are taking someone else's
+lock. I commented on this in the binding, but let's be specific:
 
-Thanks,
-drew
+NAK, please carry:
 
-> 
-> -Evan
-> 
-> > ---
-> >  Documentation/arch/riscv/hwprobe.rst | 31 ++++++++++++++++------------
-> >  1 file changed, 18 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> > index 239be63f5089..4abfa3f9fe44 100644
-> > --- a/Documentation/arch/riscv/hwprobe.rst
-> > +++ b/Documentation/arch/riscv/hwprobe.rst
-> > @@ -188,25 +188,30 @@ The following keys are defined:
-> >         manual starting from commit 95cf1f9 ("Add changes requested by Ved
-> >         during signoff")
-> >
-> > -* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
-> > +* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A value that contains performance
-> >    information about the selected set of processors.
-> >
-> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
-> > -    scalar accesses is unknown.
-> > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_MASK`: The bitmask of the misaligned
-> > +    access performance field in the value of key `RISCV_HWPROBE_KEY_CPUPERF_0`.
-> >
-> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned scalar accesses are
-> > -    emulated via software, either in or below the kernel.  These accesses are
-> > -    always extremely slow.
-> > +    The following values (not bitmasks) in this field are defined:
-> >
-> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned scalar accesses are
-> > -    slower than equivalent byte accesses.  Misaligned accesses may be supported
-> > -    directly in hardware, or trapped and emulated by software.
-> > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
-> > +      scalar accesses is unknown.
-> >
-> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned scalar accesses are
-> > -    faster than equivalent byte accesses.
-> > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned scalar accesses are
-> > +      emulated via software, either in or below the kernel.  These accesses are
-> > +      always extremely slow.
-> >
-> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned scalar accesses
-> > -    are not supported at all and will generate a misaligned address fault.
-> > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned scalar accesses are
-> > +      slower than equivalent byte accesses.  Misaligned accesses may be supported
-> > +      directly in hardware, or trapped and emulated by software.
-> > +
-> > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned scalar accesses are
-> > +      faster than equivalent byte accesses.
-> > +
-> > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned scalar accesses
-> > +      are not supported at all and will generate a misaligned address fault.
-> >
-> >  * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
-> >    represents the size of the Zicboz block in bytes.
-> > --
-> > 2.43.0
-> >
+Nacked-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Best regards,
+Krzysztof
+
 
