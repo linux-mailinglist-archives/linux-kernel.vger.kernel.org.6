@@ -1,156 +1,89 @@
-Return-Path: <linux-kernel+bounces-186201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3A18CC103
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:12:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B6CE8CC109
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:13:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42491F23940
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:12:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB927B23765
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A6C13D60F;
-	Wed, 22 May 2024 12:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A3813D608;
+	Wed, 22 May 2024 12:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ElQAy4iY"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWutsMvz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E2913D602
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314B27D3E0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716379951; cv=none; b=jBrL9eS9IAtuzOicjKEaHvzs7RklL1Z5Cs3qjY/PyZbqEFMl/cfcUBInO+7QKdqcAvFw/2oaBX3qJ+2TK+ia8WqvUvBexvJNLOL+kocamcimfhCjqq7NwOqi6nEeUzAIz9/v9+tTGxqihyLt64ta8m/pAuuuorf3nMh5vNaedn0=
+	t=1716379999; cv=none; b=eTUnQTLtkPOnnD6b6dM1dwqNXQYOiod/H31mEvV1nBaikDy1Xq5roMWHMlGeMnQaclYJN5fLc761twMN1CUx/vjZUMVZgtc8gjK8CEiaEEiqSFcGiMvgI+obVS30Ci5andyCVv3pRnjPFrzJddQZEEl0U28sP5h+VargsWZBCmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716379951; c=relaxed/simple;
-	bh=BAof/JIscvcZciVQ5PJ0YJMLhfMx6ELaTY2iwZ39ljM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ptPkkk0vxXkdl/eoDQKSaf5MSpxV4w5cqZbXTm6ga02UyWgNpcsBjOdRQtdmOaY7tBMD0lgxQLb6D1w3vfcmZEmt3QvlhWjYZVIJoyB63oY+RFAmpwBjueMtka7CC74RSvhnz7Ddhtv2ISPaAIiTtzHfgnVREAfIoltpAD7a1rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ElQAy4iY; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5708d8beec6so10221616a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1716379948; x=1716984748; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m6v7R8Jn9mrQ1jFO6WJT02ZXqZgLEi4/5o5xTGHxv3M=;
-        b=ElQAy4iY1/S73PMf/h42QJYpiGWta2zoymcoqag3dRdQ+ILO4SsNimJt0GIfpcUFCn
-         450820enbCk7ybR/ycCyvh98RDjiTWRPnSi9WTabn/kXJpnjFC2+vn81EZrqRfGhe/4V
-         FIcFRxcmBMJzZNXfMhHQdnq6/GvBEnyHtOaI6dVWK8R3jGVngpXw8A5i61NKz2Zxa/kJ
-         YiMFjRdtj+W0v/pbnqVLaUxaIarkrfC4EKn+BajuuQv13rItjiu7q04oYdeZHB1PciaS
-         5CXoCCPeOrM3DfOWJBsVmAYBmDpHNRxkCnYnF430jSaVbhuMJUMjNdoLn5hOkGo18Bi3
-         PFMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716379948; x=1716984748;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m6v7R8Jn9mrQ1jFO6WJT02ZXqZgLEi4/5o5xTGHxv3M=;
-        b=m5C7xSBBBEYJiM1sfTyYsEG6mFRKk0CMjL4c7fRk44GYMyuEuTN9xN8EXu8IDCe8FG
-         VWVBvz8APrJ4hQbrfp6gxvzD8b+FVX3KGEvVRYDkd3CcbRQbYGkmRLSVDNxaRZDjyL7P
-         YHPOINeYjFit/lmyc2SE0922Ghz1ORZSQK5FS3zYa8oJ28wK7Zu09OL98UdxgWhzY3UY
-         hFCrxS3SX/Ai4UwsN2tZjB+s4KwJCC7vR4gjHzmqOzRM1IiA78pkQN3YG9x5wEK3gz9w
-         YgCVeLcAuDu2OSuiAtppJDj+KDwJGeV9NJLAiTQk6VRyQEL5C8EV3CuPzlaMH/ntOACi
-         TIhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsuulf5k/2sohEJF1xrblk99RNFl3vBnZOh0kzE8mUY+2KN8UjwoevNicq6S9N2HO9iGYV1A1mVg5a3rQn1von1J3Lfvr+xbDSUuZz
-X-Gm-Message-State: AOJu0Yxuv3cbkP2RiwmrmocqKpNiAZc2LnH78gLrwrtPdqmPxgRqQI0R
-	RgOEJMljg9BAFhCPnrkh0bL/PMObNUWygo4iHmbbtFZVM9/KiJkUrzhgWLzP7g0=
-X-Google-Smtp-Source: AGHT+IHqMWNSPjdTuLfdDab2oJ2USR+dOiil+nWG5c+2IEvTLY6ujL/dfbfMxSzfrvvGaDq69eQqlw==
-X-Received: by 2002:a50:ab4b:0:b0:574:ecc4:6b54 with SMTP id 4fb4d7f45d1cf-578329c7ca3mr1731751a12.9.1716379948503;
-        Wed, 22 May 2024 05:12:28 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac5:5063:2dc::49:b7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bed000esm18281624a12.54.2024.05.22.05.12.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 05:12:27 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,  Tetsuo Handa
- <penguin-kernel@i-love.sakura.ne.jp>,  Eric Dumazet <edumazet@google.com>,
-  Linus Torvalds <torvalds@linux-foundation.org>,  bpf
- <bpf@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
-In-Reply-To: <20240522113349.2202-1-hdanton@sina.com> (Hillf Danton's message
-	of "Wed, 22 May 2024 19:33:49 +0800")
-References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
-	<20240521225918.2147-1-hdanton@sina.com>
-	<20240522113349.2202-1-hdanton@sina.com>
-User-Agent: mu4e 1.12.4; emacs 29.1
-Date: Wed, 22 May 2024 14:12:26 +0200
-Message-ID: <87o78yvydx.fsf@cloudflare.com>
+	s=arc-20240116; t=1716379999; c=relaxed/simple;
+	bh=Gr+/A7/ijZDQDz7elG8jrXwS23bISKQ5Fsa85hruja0=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m7u7CFsMzy3IgIFIOpAbjHztYG6Xn3KXReIDkz+ebvmMsOtVXH8Gci3ltJ6WGlBr8iz293Em3WNmLIYjKBzjURcvDgS1fZgf0AWQ21fbvujKxiW+6W600DBGd/Xi5m910JN+ykj0pEfkSxdXlZm297NiGoS3VK5wcGfsNResC7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWutsMvz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27394C2BD11;
+	Wed, 22 May 2024 12:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716379998;
+	bh=Gr+/A7/ijZDQDz7elG8jrXwS23bISKQ5Fsa85hruja0=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=mWutsMvzZUBTtqxqBX4RetMNkhaTTqzjlefCaYJAuPvgodzDZXQ/PkYev1wvXFbND
+	 ca8sdJCoPETdGJ7iV6OuJyo+P1drtBOcfLv1k6HKTRmQyWmEeHL0j1FLzJbeAtaPng
+	 oNen5q2As4+IfplhJMYDH7lASkVtUHX7XZX6xnXoU8Zm2ncmU4MAvP+Ov4F8QYyMQR
+	 cf2EodStPBHiIYiJtcJuAq5AeCo8bMNDDscLRxE3MSW90R0XdW0fZ09Tm7UJR1S6be
+	 x2fDatp3bqTgGKMU6PtbtG6VtafDYNnM5kWp/m1j+dp/uM8Pl/jFvZfwiHiVY91cyy
+	 q74M1J4k1hyXg==
+From: Robert Foss <rfoss@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Jonas Karlman <jonas@kwiboo.se>,
+ Daniel Vetter <daniel@ffwll.ch>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Allen Chen <allen.chen@ite.com.tw>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, kuro <kuro.chung@ite.com.tw>, Kenneth Haung <kenneth.hung@ite.com.tw>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, Pin-yen Lin <treapking@chromium.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ open list <linux-kernel@vger.kernel.org>, Hermes Wu <hermes.wu@ite.com.tw>
+In-Reply-To: <20240522065528.1053439-1-kuro.chung@ite.com.tw>
+References: <20240522065528.1053439-1-kuro.chung@ite.com.tw>
+Subject: Re: [PATCH v13] drm/bridge: it6505: fix hibernate to resume no display issue
+Message-Id: <171637999486.1598011.4983921044000498146.b4-ty@kernel.org>
+Date: Wed, 22 May 2024 14:13:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.1
 
-On Wed, May 22, 2024 at 07:33 PM +08, Hillf Danton wrote:
-> On Wed, 22 May 2024 11:50:49 +0200 Jakub Sitnicki <jakub@cloudflare.com>
-> On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
->> > On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com>
->> >> On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> >> > --- a/net/core/sock_map.c
->> >> > +++ b/net/core/sock_map.c
->> >> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
->> >> >         bool strp_stop =3D false, verdict_stop =3D false;
->> >> >         struct sk_psock_link *link, *tmp;
->> >> >
->> >> > +       rcu_read_lock();
->> >> >         spin_lock_bh(&psock->link_lock);
->> >> 
->> >> I think this is incorrect.
->> >> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
->> >
->> > Could you specify why it won't be safe in rcu cs if you are right?
->> > What does rcu look like in RT if not nothing?
->> 
->> RCU readers can't block, while spinlock RT doesn't disable preemption.
->> 
->> https://docs.kernel.org/RCU/rcu.html
->> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-rt
->> 
->> I've finally gotten around to testing proposed fix that just disallows
->> map_delete_elem on sockmap/sockhash from BPF tracing progs
->> completely. This should put an end to this saga of syzkaller reports.
->> 
->> https://lore.kernel.org/all/87jzjnxaqf.fsf@cloudflare.com/
->> 
-> The locking info syzbot reported [2] suggests a known issue that like Alexei
-> you hit the send button earlier than expected.
->
-> 4 locks held by syz-executor361/5090:
->  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
->  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
->  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: map_delete_elem+0x388/0x5e0 kernel/bpf/syscall.c:1695
->  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
->  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_hash_delete_elem+0x17c/0x400 net/core/sock_map.c:945
->  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
->  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_del_link net/core/sock_map.c:145 [inline]
->  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_unref+0xcc/0x5e0 net/core/sock_map.c:180
->  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
->  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
->  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2380 [inline]
->  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x114/0x420 kernel/trace/bpf_trace.c:2420
->
-> [2] https://lore.kernel.org/all/000000000000d0b87206170dd88f@google.com/
->
->
-> If CONFIG_PREEMPT_RCU=y rcu_read_lock() does not disable
-> preemption. This is even true for !RT kernels with CONFIG_PREEMPT=y
->
-> [3] Subject: Re: [patch 30/63] locking/spinlock: Provide RT variant
-> https://lore.kernel.org/all/874kc6rizr.ffs@tglx/
+On Wed, 22 May 2024 14:55:28 +0800, kuro wrote:
+> From: Kuro Chung <kuro.chung@ite.com.tw>
+> 
+> When the system power resumes, the TTL input of IT6505 may experience
+> some noise before the video signal stabilizes, necessitating a video
+> reset. This patch is implemented to prevent a loop of video error
+> interrupts, which can occur when a video reset in the video FIFO error
+> interrupt triggers another such interrupt. The patch processes the SCDT
+> and FIFO error interrupts simultaneously and ignores any video FIFO
+> error interrupts caused by a video reset.
+> 
+> [...]
 
-That locking issue is related to my earlier, as it turned out -
-incomplete, fix:
+Applied, thanks!
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ff91059932401894e6c86341915615c5eb0eca48
+[1/1] drm/bridge: it6505: fix hibernate to resume no display issue
+      https://cgit.freedesktop.org/drm/drm-misc/commit/?id=484436ec5c2b
 
-We don't expect map_delete_elem to be called from map_update_elem for
-sockmap/sockhash, but that is what syzkaller started doing by attaching
-BPF tracing progs which call map_delete_elem.
+
+
+Rob
+
 
