@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-186246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41838CC1A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:57:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C782A8CC19A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5C91F24711
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:57:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA8428361A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8062A13DBAC;
-	Wed, 22 May 2024 12:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="pKayUhcT"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BD88249A;
+	Wed, 22 May 2024 12:51:45 +0000 (UTC)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB6B7FBA3
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B34EC7;
+	Wed, 22 May 2024 12:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716382642; cv=none; b=uThq0IEg72gihWnHfFKVXyDCNCqVX0BlALor2vNjxx5vRm2Jhox58CBBwEU4Ec2I0ExtYQKbisQVB+RMyGdtxzpg3In6kCpeL4DCr4foPG+9Ane/T0iiWbtolXU8zfXXvF3ZtpmfHrZxBEjn4gkeZoepr6C7NSU9BkB2MTnycyI=
+	t=1716382305; cv=none; b=hyB6U5tnTi9v0XFgRiTZLRO5WqscKCCm5q/LVlYXrvxdoTWKQ8aApc+E18Q8AGsoa6+Va1vyM7acMFejC7EgCynHRnEe+3Ws3atmk2Qwwm3yYmu6TFjOQ2+XnRbOJFpi2bl4ncT8meqWEyGNU3KxvVBM01s2LNeCmz8+/TvRPbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716382642; c=relaxed/simple;
-	bh=xBud25eM4yR11aN5HGQxiH9+Sx2L4j+qJ0ynZTg8Wyg=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Y0220i60SW/guwBJAYBWBVHeVbTqkIdMX60uWUGf1/h0sRmEtXl9EjPEdlZnR02MbJFn7la/9Ah0cWy0oHiGWmh78NxZydnBr5C8simHnh0f3hbgRm7TQuNV7ZQszhPSCjdyoSaejFoN6BcvxjvzNzln7teK0/VDVeX5rOAYtQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=pKayUhcT; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1716382635; bh=5MvkZN3RDGcPo83rc0nLy9YS2nGjPGU9i1zaRaoeixo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=pKayUhcTjS4MN+9LeqgzveeOf1raDDx2hZbClL81MqpRzg7KY/ylImNfEsBR0hy89
-	 G3D7n1C5UVVhXI8MYS1BqU+XfqXw8SwR2KfvLe2bnQnTL5xqmAQyn8PJZ+fZEfEYBG
-	 dUPKSzqL8XKB/h/yOPYdjOCbFleM0vhSeqR8ncps=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id C42BA47A; Wed, 22 May 2024 20:49:02 +0800
-X-QQ-mid: xmsmtpt1716382142tp2mrrr5d
-Message-ID: <tencent_7BF20C9927C0C6D292CCC64BC994EEF92E06@qq.com>
-X-QQ-XMAILINFO: Nfm/+M6ONQ57+EFywhSWNnLM+Js8SQ7R0Hanc8fKUO1LMjiwWxSYiL+CqMCihG
-	 +512fUG6xrfsYSXQclBFKX3ZJob928gQSnYvnWvJxvzgq00SiEFaSI6TigDnb+eLbmHUaGzYJoj1
-	 zh2+c4R2Nl1cIU2+tjIKppGdMopbuwa7jievTglZmWtfR3z1+KUajLJfRlqNaq3mSl3Vu7I6uK0V
-	 BpTourEm1Srtf7jxrrrqL3qO35LfVz1e6VynpEBwUtNLciB53MkKQ9k0lSJz9Xf4j9bwxjqgFXi8
-	 50Xrk0WTfnUsodHtFrb3TzUIcXfiW0v+RcOw9FViHZTcdNVoMCT9CjhFF5BOCQS2d8pbFXU2sze+
-	 H6RmSxKExdXoGzdVFYkHCAPU3SJT2dlq6Y3wpodbYng3NddnvyPEF4G1pcJIq7RRh/+L2X/wgF+B
-	 Y3pp80ZhAZVYO/lA00Qd+42HlEcml3qjexXH6TAxlxHxCaDchQIYSCWQ9jDhVDuTJZwyDrMa7Iew
-	 VvlTmPT4ZSJ7kCy3EnkBhN5tIKS+C+gKjdx5pGvQ1otLHrU51+u9bgEAOXfZWFeVH9OXcib+Mlva
-	 Ogy6coltYll/U1CbuWOqUpNPLS6yNYHyAbQccy25Vfe8nkeavRPYMuwyRapNzIplF9fwqFObaZR7
-	 gMt9iLAJ7I+dh+uCY5X8zHeLhKdNpu9KTD0s9EFxD1ULH+GWtUb6bZrJdqynYphoW0rry2na5659
-	 KR+2aWHIsJh8I1DF380xpbStreZKBZz7gNQPNL6NNQO7XmH9nFO/4cKGvPyPqc84EM9pi+jQfziK
-	 TnF/ETyqfoEUlr6GJIIkNxS5i3w9D3u14whuvdFo1tFBc0PhkzeQZ6SqfNlo8G2bx8bn4EFuycrq
-	 T3qt9clTnlYESF4n5miAYKAd9lOzLSB8nTU+9CJELl2jETYOIytMK7F5pUb+UIYUIlxapfK2ERTF
-	 4y9B1iG08=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
-Date: Wed, 22 May 2024 20:49:03 +0800
-X-OQ-MSGID: <20240522124902.2296647-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000002fd2de0618de2e65@google.com>
-References: <0000000000002fd2de0618de2e65@google.com>
+	s=arc-20240116; t=1716382305; c=relaxed/simple;
+	bh=xx7vlOS3eoQRwVtkzrylouSI4VFOYntzau4o1P2SHTA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XMC2DGNQfDe+Tlc0EFyn+WxPcDncKblQTyQZzR4Nd/PrRLkzL9lu6oW+mFyMaKUeNjzRtNWnYgN8HHkAyHE3ddokpB6PG2OOasUUhzQjeCAMqvVDq+ZCopvngg6UUZ40IlX8tyjPr79iM5i/fXAUs7W1Nos7gC3sBSvyarhi+I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-df4e40a3cb6so592668276.0;
+        Wed, 22 May 2024 05:51:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716382301; x=1716987101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q6bXjieqcNyS0/OchHiuO2tjxnibClzMky7Vem1Q5JQ=;
+        b=tTwWJP3JGO4jUpqdQ5FYJWnz0imDOsNcb3il/SB0x7eXMNgApWOoEPGEPrXfXhyNv4
+         IUcnSDJY3v8KedBXa73lqyt0061FN6W6/zrSMBLhaC9bYdOWr96jPnupvbQF7CTDZTgc
+         VBSJSKtRPxgHoNsRXGMLf+WqMjpwZ7hu3URuiIiPU+/Lj5NROlvcWpKE2BLQacaend7s
+         Lgd/y7suDIXVdm3jaiVbvavIkXrWldq0220UTobm+yDOyFCZ5t1Q0dIHlyV+01j35p3e
+         2h0gyrrV1jwgSEAvXPfqjmslfGm/s2d7Gvv9z8xSctowq7+eINgaBjkjEw7Ph8x8yQDg
+         iISQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjlfj2U4idwYs6UXNuCrkoucb3wjS8B/LWUdVmT1b1jfei2Qlu12sTIprLUpAeDct6XX69mdp1ePjTUAPEwcPEjHLxU/yGmRwRyPlVpwYvctlRJzTAjAUtpb8aN4EOcBTFa2Uyrz/lJHKwVqHWm8fndkXc54+1ssYtA3fNUmxWtYRXic45amcYrp6mY1YQ0bSFQWvEjQpCEof4wQixgJ1b/XnOgsQkWQ==
+X-Gm-Message-State: AOJu0YzXKwHV0rbwCqa/mHPlSI1WPLk6sytuvFXT2wdmDXSpaxn+GOON
+	Dm8GUIk7UIHfty8vR8AWxT7eCINM4das7QQSdcpZ6Mlex1vGQNgmTQMZ7fdu
+X-Google-Smtp-Source: AGHT+IG5Qt7KV619CeF21y3L6R4VynGqOpRJ5wx8Ef6AgNzS++rjDlpbioyIDTbDh7vQlSyI+Z69AQ==
+X-Received: by 2002:a05:6902:4c4:b0:df4:b3ca:d322 with SMTP id 3f1490d57ef6-df4e0aae398mr1923995276.17.1716382301398;
+        Wed, 22 May 2024 05:51:41 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df4ebc02362sm73032276.55.2024.05.22.05.51.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 05:51:40 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-622f5a0badcso53731937b3.2;
+        Wed, 22 May 2024 05:51:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKOAuNz/K0oLhNukW7J27q64YWUg/5LekM+w37gCqEd27BX0/mFLOwu+vbkgMrSrcz9PGwYOf70Zi3wwvlRYGlxsRxxbWyTjpx+WtKbA24ovAbQ/SJZWork/LJcEcb0F55g22ADfV892O7IPnm+VBNyh8bAaXZfnMLrAFYyrBwPDuDda+qQJyBE/KEB0AtjPKvRAGAMYXF2QiyoCWy7iE6VRJ5uq+PqA==
+X-Received: by 2002:a81:6c10:0:b0:61a:e48c:38b7 with SMTP id
+ 00721157ae682-627e486570dmr20655057b3.41.1716382300769; Wed, 22 May 2024
+ 05:51:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240423175900.702640-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 May 2024 14:51:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVW-0+XbvUpCq_k7qevuDd9Jo46ngDJMMk+CFzw4DwSEA@mail.gmail.com>
+Message-ID: <CAMuHMdVW-0+XbvUpCq_k7qevuDd9Jo46ngDJMMk+CFzw4DwSEA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/13] pinctrl: renesas: pinctrl-rzg2l: Add support to
+ configure the slew-rate
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-please test null ptr in iter_file_splice_write
+On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support to configure slew-rate property of the pin.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> RFC->v2
+> - New patch
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 33e02dc69afb
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 60aed8de21f8..8ec408c40755 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -715,6 +715,7 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- 		/* build the vector */
- 		left = sd.total_len;
-+		printk("total len: %lu, %s\n", left, __func__);
- 		for (n = 0; !pipe_empty(head, tail) && left && n < nbufs; tail++) {
- 			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
- 			size_t this_len = buf->len;
-@@ -751,9 +752,16 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- 		/* dismiss the fully eaten buffers, adjust the partial one */
- 		tail = pipe->tail;
--		while (ret) {
-+		printk("ret: %ld, nbufs: %d, %s\n", ret, nbufs, __func__);
-+		n = 0;
-+		while (ret > 0 && n < nbufs) {
- 			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
--			if (ret >= buf->len) {
-+			if (!buf->len) {
-+				tail++;
-+				continue;
-+			}
-+			printk("buf len: %lu, %s\n", buf->len, __func__);
-+			if (ret >= (ssize_t)buf->len) {
- 				ret -= buf->len;
- 				buf->len = 0;
- 				pipe_buf_release(pipe, buf);
-@@ -766,6 +774,7 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 				buf->len -= ret;
- 				ret = 0;
- 			}
-+			n++;
- 		}
- 	}
- done:
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
