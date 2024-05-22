@@ -1,93 +1,133 @@
-Return-Path: <linux-kernel+bounces-186417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB028CC3EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:16:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62A28CC402
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 539F1282790
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1563A1F2218D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA845579F;
-	Wed, 22 May 2024 15:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C552770F1;
+	Wed, 22 May 2024 15:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sYKGFHxn"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MR8HfGt/"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295B846AF;
-	Wed, 22 May 2024 15:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC5A2B9CD
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716390957; cv=none; b=J6F6dueW836qCCo0IpFxuXwRwcZhqQmpMz3J7T5jv/qPdk2B9jpLi649sbMz7A6FuOeCaZOY8EdKCK4rzSyy+kzGI9aSM1YB+DrPbp7MH1tDV/QQRX+10M2/O8EKNVyP8grtDs2ux1ejHMRuZmGijlMCbHEfwc8Im+SJYS0V/Ds=
+	t=1716390982; cv=none; b=P0rJ9iAqtSW38wow7AQc2+GaRW9EKQ0Hm51Jlp/iWgpaaCqy6xRtsVyHqyq+K9TuaX9WzUwEUyD2nK1Rvqky5NrIHJvdSRobndl+8psk9dv8F5KvtpN9mGzZ+d+hQ52F6qGdZZzlGf+XV53eaPFo+Q6+i+EV5oqIKbRvmrjTjFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716390957; c=relaxed/simple;
-	bh=BLzUQ8V0xeTF+dtdwWRkLWETsEKNM5FXTDRvAzbY51g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=edQkqmCwoIK2mQawA2H3voQJirKOO4rqOG74K9uACuFOgcvlotdkLtAUukR765FmV0twfv/KlIhkVeLK3+N4jsdCKfcpr9wmo/9F4T/j08HCmt3FXnsYjWi5KUOrk59LOFY5qnqaCdtQ4Odn0L708OLhQ6s5nKvg4TwElU2q28w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sYKGFHxn; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44MFFgRS028006;
-	Wed, 22 May 2024 10:15:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716390942;
-	bh=uuwFmYRHuiGD48DhV0PDwVMHSAkqVP16xhaWkJZ/WKo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=sYKGFHxnc9YqXL6iF19U12BZouXomlfSPV2r+iFPvelSJKZX3V9HWtS4vk+dMuVQN
-	 lv0SNQpbcqTwHDso+5VfpKMxoK1HTWOS1czkudYWF97R3o/XPNljTzuPEDnoFqpx1G
-	 IkJ0+p+yG0UWGOsEnDAHytwAbdKgOJLnR5h0aNB8=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44MFFfas011580
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 May 2024 10:15:42 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 22
- May 2024 10:15:41 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 22 May 2024 10:15:41 -0500
-Received: from [137.167.6.219] (lt5cg1094w5k.dhcp.ti.com [137.167.6.219])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44MFFdNX049254;
-	Wed, 22 May 2024 10:15:39 -0500
-Message-ID: <1ab99d82-602e-4c7e-9570-0d9c67719051@ti.com>
-Date: Wed, 22 May 2024 18:15:38 +0300
+	s=arc-20240116; t=1716390982; c=relaxed/simple;
+	bh=LBsuxRIt25iSTct1CaOFF4pb8q9+nLplzWcPNkULdk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5YhSkKWqejiee7ekEq0w6WzHFDzfu3lzmJKx11i1PMD9gzUzIslBqv2onzQ7A7gB/842jXc0Jrib0LSDUMWv1ABPeZLJLENWGpikZtIWQ4n/QB05S6Gie5oO66LG1qYEREiTU93ei6MGy9usbrgdt9/zP2b2cMmXgTVc/eZ+Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MR8HfGt/; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: seanjc@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716390977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qPx5VBeAtVusPub5h8jjoS2Zp/k7LiSDo3T23EUz3Cc=;
+	b=MR8HfGt/7NWj1OeZKFuwxnVF9+ndS7xCoaOY+r1JI2bWBzf2MynLiEMDjC1DrcozAH8hei
+	TUnFiYL5Pyj+E10/+shwWi4h/9LVvu0Mc6mkr1yRH6n++3msAFiuDQVzo86zkrGkaVb0hH
+	6NbyKC1AGLafKPP8z0hv7d6a9IuqBaQ=
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: zhaotianrui@loongson.cn
+X-Envelope-To: maobibo@loongson.cn
+X-Envelope-To: chenhuacai@kernel.org
+X-Envelope-To: mpe@ellerman.id.au
+X-Envelope-To: anup@brainfault.org
+X-Envelope-To: paul.walmsley@sifive.com
+X-Envelope-To: palmer@dabbelt.com
+X-Envelope-To: aou@eecs.berkeley.edu
+X-Envelope-To: borntraeger@linux.ibm.com
+X-Envelope-To: frankja@linux.ibm.com
+X-Envelope-To: imbrenda@linux.ibm.com
+X-Envelope-To: pbonzini@redhat.com
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: kvm@vger.kernel.org
+X-Envelope-To: loongarch@lists.linux.dev
+X-Envelope-To: linux-mips@vger.kernel.org
+X-Envelope-To: linuxppc-dev@lists.ozlabs.org
+X-Envelope-To: kvm-riscv@lists.infradead.org
+X-Envelope-To: linux-riscv@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Wed, 22 May 2024 08:16:07 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] KVM: Add a flag to track if a loaded vCPU is
+ scheduled out
+Message-ID: <Zk4MN49212SaW1_z@linux.dev>
+References: <20240522014013.1672962-1-seanjc@google.com>
+ <20240522014013.1672962-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH 07/17] Add boot.c, boot.h
-To: Krzysztof Kozlowski <krzk@kernel.org>, Breno Leitao <leitao@debian.org>
-CC: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sabeeh Khan
-	<sabeeh-khan@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-8-michael.nemanov@ti.com> <Zk2ywFQQ2SuXvPiE@gmail.com>
- <f6ee888b-f4de-4b72-8224-aca4236ab220@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <f6ee888b-f4de-4b72-8224-aca4236ab220@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522014013.1672962-2-seanjc@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 5/22/2024 2:12 PM, Krzysztof Kozlowski wrote:
-> So neither this nor previous version was ever built...
+On Tue, May 21, 2024 at 06:40:08PM -0700, Sean Christopherson wrote:
+> Add a kvm_vcpu.scheduled_out flag to track if a vCPU is in the process of
+> being scheduled out (vCPU put path), or if the vCPU is being reloaded
+> after being scheduled out (vCPU load path).  In the short term, this will
+> allow dropping kvm_arch_sched_in(), as arch code can query scheduled_out
+> during kvm_arch_vcpu_load().
+> 
+> Longer term, scheduled_out opens up other potential optimizations, without
+> creating subtle/brittle dependencies.  E.g. it allows KVM to keep guest
+> state (that is managed via kvm_arch_vcpu_{load,put}()) loaded across
+> kvm_sched_{out,in}(), if KVM knows the state isn't accessed by the host
+> kernel.  Forcing arch code to coordinate between kvm_arch_sched_{in,out}()
+> and kvm_arch_vcpu_{load,put}() is awkward, not reusable, and relies on the
+> exact ordering of calls into arch code.
+> 
+> Adding scheduled_out also obviates the need for a kvm_arch_sched_out()
+> hook, e.g. if arch code needs to do something novel when putting vCPU
+> state.
+> 
+> And even if KVM never uses scheduled_out for anything beyond dropping
+> kvm_arch_sched_in(), just being able to remove all of the arch stubs makes
+> it worth adding the flag.
+> 
+> Link: https://lore.kernel.org/all/20240430224431.490139-1-seanjc@google.com
+> Cc: Oliver Upton <oliver.upton@linux.dev>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-I was building with ARCH=arm. Seems like linux/vmalloc.h is included 
-automatically with this architecture but not others. I'll fix the 
-include and make sure to test with other archs as well.
+Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
 
-Michael.
-
+-- 
+Thanks,
+Oliver
 
