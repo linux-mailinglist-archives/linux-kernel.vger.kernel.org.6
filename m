@@ -1,148 +1,169 @@
-Return-Path: <linux-kernel+bounces-186762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D128CC8B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEE38CC8B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561791C21A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948C1281DBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62841146008;
-	Wed, 22 May 2024 22:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED964145B33;
+	Wed, 22 May 2024 22:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="cWtGFMvU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iBB34r8X"
-Received: from wfhigh4-smtp.messagingengine.com (wfhigh4-smtp.messagingengine.com [64.147.123.155])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EyAZPkbn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222181411D8;
-	Wed, 22 May 2024 22:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B1C7E578
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716415352; cv=none; b=WgKiE++3hQfhNjpTc2Uld+7OMIOtypUoASyVq53eY3tZvoHMdymh7T7uuKg8ariS6Nbvj0H3XWOHmH99rpHJgK19tpRgqnwtZzQ1erQHeXny+ahD/5D4/FEbTE8QWt3XJEO9whEKZ29SOy/DTRjsyeRwh7kfxzbZWyt+4Xge164=
+	t=1716415420; cv=none; b=O4k3ncsn3+XeWVO56BeVIo+8AXo2ALunbox66km+Kv7dmmkHJ7FqaiK0HrN7a0XOLi6ps3bEnVePrW0JUnykDv5KDlbTY0EUaqwwiNpSVO0Ff5ogiy+z18IcyhO7PclL6WJVOcKDZtI6ulezxCm7Bu2XXGRLN3s7wr6HhoGqhXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716415352; c=relaxed/simple;
-	bh=7fdJBdzIPfqGGEwtcL8/d/uM5agRxxUtdOfdCs2glQQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y9XHesWADTT/Ese8Le5S5dF27uO4pxY4zHBqT71yjtYOChEow73HI/eU5vRJRZwwcgJXr9gwkEXANTYUFc+H5q8XsOAtt1H0cTlf6OmoVJG1F2IHP/dH0K4UZ1Fs7DvU0EXil0tJDJmV1oSsqmTtvg4Gf+kRkMoON4xHmksrXuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=cWtGFMvU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iBB34r8X; arc=none smtp.client-ip=64.147.123.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 40575180012F;
-	Wed, 22 May 2024 18:02:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Wed, 22 May 2024 18:02:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1716415349;
-	 x=1716501749; bh=eohBkNeC9goPP1VCyGzG57xJ91PgPdvWRQbAuvbCQlw=; b=
-	cWtGFMvU/1fsBfnOLQYfE1/RRhrbnG9lwDpP2nTUTSSIzlj2FzrWs8a+2ngN+mIF
-	1ul5L+xMrMJUite9KxIC8Ei8SldhSzIbyK09UbFP4HGA10k9EURyr+QthvuVsGYL
-	Bp6vPm9gZ6Le7p+q6KU5wA0vnv5XD6+065k40+5OIQqRuwK7YJqGfwks7IM7Lr83
-	QkJAhVYtxcKTiosng9LjhVN90jtCf2EyciiCcJ7g/V6NDCMARgZY+UOs+o/rNzDT
-	iCN5nyUrqLiE3QoqsCdecC685+odFUeSqRl9Rsu2nVWIFJ0dYe+5yctTdp1CJvt9
-	lbqkNdNS+oO0aWhHIEnZqA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716415349; x=
-	1716501749; bh=eohBkNeC9goPP1VCyGzG57xJ91PgPdvWRQbAuvbCQlw=; b=i
-	BB34r8XRZUoTLMyUy2w3h6zzY8B2MyyX6gaQTRKhGO8/X7x3nBaCYpAY65NtilTg
-	VJH7SJiIFfFOZUwmvjFbNeWGFUvK+OicAoxoFlhEavONJTIeEeGXet5cgCNlCx/p
-	XQwIUN1pV069s49kSfymbPA6zyUQTgkox/KRjVnoz/9Xf2YBC33lilPeCSxqyRNY
-	aD+SoG2jakd6tUwcha1WcEGqP2KRFvKfahN3JdiIxKDX4Y4yRkjMekVZaEAJTneZ
-	o6pSs8xzhCnNtpPdC0b0jr+dcBqYgJPZWt3Hz1iWrcfCTc2kJxZ6zXIpcvYXs741
-	5Nl3iYmMG3OTErg0QrnCg==
-X-ME-Sender: <xms:dWtOZvdnZicuVsDe8T0eLpf3old_WET7EC7jkfjkXoeNjas2DTyL8A>
-    <xme:dWtOZlNKrBk92rXMBTtrulp_jmPu0SLEIJtW0dsO_R_uZGW9whhMgIuVgTBzBErZp
-    JZZTzq-jR--klC5Ygk>
-X-ME-Received: <xmr:dWtOZoiPBi9p4o2tcdH0PEkDX4BQE0mh8IPkV3Zwp2sruWPYSnHkr_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeihedgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflihgr
-    gihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqne
-    cuggftrfgrthhtvghrnhepvdekiefhfeevkeeuveetfeelffekgedugefhtdduudeghfeu
-    veegffegudekjeelnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilh
-    hfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:dWtOZg-5AnFNO4JL5UXWFhQnyprk-pO-SKAANAacZ0UfhMLSQnSagQ>
-    <xmx:dWtOZrsJhGgHWu9kyfVW-z5L6-l1o2FL2O-ze6l7o_kus_Tqbs9zHQ>
-    <xmx:dWtOZvHCQMTjX0APRNO40rNHdcnNSpfyUN04ENGArONqcpz1GAm3rg>
-    <xmx:dWtOZiMYgeV89GtThfawqerNGuMLUsWVB7dBcv9IEaoLOhqDn4jeYQ>
-    <xmx:dWtOZvi4KTXrMfaFWvx9ebcStTjaMqo9RwznBjm0Uk5bcxvyQL5FG6zh>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 22 May 2024 18:02:28 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Wed, 22 May 2024 23:02:20 +0100
-Subject: [PATCH v3 4/4] LoongArch: Override higher address bits in
- JUMP_VIRT_ADDR
+	s=arc-20240116; t=1716415420; c=relaxed/simple;
+	bh=V/OjKPxD4m8dljSxcrsuVphlD92neLpCIPnWiQftobo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aK0ml1YRnC57zgJb0vZiCWsF+T0HzGXqwXrLnDA0uLUYSCdYNAk9/UzzhmIA9U+rI+VaTQNaUV0fLt+uHzB8SK55o1w4W3xD2+fqOnuxUaSArfJe/wi9rJOeb9r0NeZNH7MZZAKvbV8mgTn58gJev/YCxm5yYsb/8+8IHUq7pV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EyAZPkbn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716415417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B4hXJ6JIsSVK9s0rSIg6c+3f6ReWIevwF2URwvf4CAk=;
+	b=EyAZPkbnwMMpLVdIhZR0oiTg/LhyUJYXcBgHQ83BhVmYfhsmkkhhFdnS6S9e4egjl0epml
+	a0p/hv5qpxY4cyNTjEBJwS9qHVBSU4mRYEw5c43+PnrNIboCA7TcP68VzzXI4LJGMfdULd
+	XSnKqL/Czf4tdvZPyStYYIoqcKOogEE=
+Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
+ [209.85.161.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-38-N-yJpwBfNaOQBpE50FpuEg-1; Wed, 22 May 2024 18:03:36 -0400
+X-MC-Unique: N-yJpwBfNaOQBpE50FpuEg-1
+Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-5b212b26f3fso168696eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:03:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716415415; x=1717020215;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B4hXJ6JIsSVK9s0rSIg6c+3f6ReWIevwF2URwvf4CAk=;
+        b=sswel6+0Tcr+zgBBw6BSjjeg/DssyneF/sbjzEbzTSmP7dr5ptS7VLZuSVTChUPwWz
+         3Xa+yKGmsPrfAeOpm+zhBfSiZRo35k6yqLlubi5b+nIg0Y+yHhtLj1BvWkc7Su8He7MH
+         fqUM+hSHnpalDezfJCuCGzMPQhkfCgojWiUD1N4b5z6v/h0Kipj3s3Z6PvG5e5vTQPYd
+         QQQQ3MY66+xjUuGG7X9gSpnNtWUybvBSgG3vixnXz5Z7Oamtsviclb0Na7oj5Bjc4bGo
+         qmXVWaUmgwf1SjOrKqbaRHzACwMScBr4MKMud8eFuCBzsO7bjSV5ocQ85a739lVVpFeh
+         3LiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCg5uYjQYETp0MP6HdjEi7wkWedmDvGbY5jNjiINmpulKD3+7kzOHLQBiUOGi0B32tPm3fGgK3z8oMAQVeSQxlAwSfYM/8eeXh+gY5
+X-Gm-Message-State: AOJu0Yz7Gutk0Xi9qKse0oHLp+OrsE2UrQpZvJ5VRRkkeKA9QkOemylM
+	DOCwb1kCupQOhTJgRpbgepwkYUd4rVxmB3haO+JPNB+cEYQnFup2KvwpN2G3OQYVh1FsyDNYPNB
+	sPI/ukO3V4B5j5pERc2sjI3DqJCXXuVzSbLP/ao79lfxb6ruyrUsZrom4MjPIew==
+X-Received: by 2002:a05:6358:998a:b0:190:f30c:3856 with SMTP id e5c5f4694b2df-1979215b528mr285579355d.2.1716415415122;
+        Wed, 22 May 2024 15:03:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHlZSZyKnZdnEG0+pNanazMyIfCqIlp5QZYYe1QG8gY0ave2/OHUyQlsME1+uHDBoxePLQG5g==
+X-Received: by 2002:a05:6358:998a:b0:190:f30c:3856 with SMTP id e5c5f4694b2df-1979215b528mr285573755d.2.1716415414181;
+        Wed, 22 May 2024 15:03:34 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1cd266sm136937796d6.80.2024.05.22.15.03.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 15:03:33 -0700 (PDT)
+Date: Wed, 22 May 2024 18:03:30 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Axel Rasmussen <axelrasmussen@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Liu Shixin <liushixin2@huawei.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
+ poison errors
+Message-ID: <Zk5rsvMs6qVPAw52@x1n>
+References: <20240510182926.763131-1-axelrasmussen@google.com>
+ <20240510182926.763131-2-axelrasmussen@google.com>
+ <20240515104142.GBZkSRZsa3cxJ3DKVy@fat_crate.local>
+ <ZkSUaVx3uCIPkpkJ@localhost.localdomain>
+ <CAJHvVchGGJkEX=qroW=+N-RJDMDGuxM4xoGe7iOtRu9YcfxEEw@mail.gmail.com>
+ <20240515183222.GCZkT_tvEffgYtah4T@fat_crate.local>
+ <CAJHvVcj+YBpLbjLy+M+b8K7fj0XvFSZLpsuY-RbCCn9ouV1WjQ@mail.gmail.com>
+ <20240515201831.GDZkUYlybfejSh79ix@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-loongarch-booting-fixes-v3-4-25e77a8fc86e@flygoat.com>
-References: <20240522-loongarch-booting-fixes-v3-0-25e77a8fc86e@flygoat.com>
-In-Reply-To: <20240522-loongarch-booting-fixes-v3-0-25e77a8fc86e@flygoat.com>
-To: Huacai Chen <chenhuacai@kernel.org>, 
- Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>, stable@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1077;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=7fdJBdzIPfqGGEwtcL8/d/uM5agRxxUtdOfdCs2glQQ=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhjS/7JzH9+Mblh89VqzPGryVL6GvdHpx3L/l74O2WUpn8
- l5e+Kuyo5SFQYyLQVZMkSVEQKlvQ+PFBdcfZP2BmcPKBDKEgYtTACZylZGRobckVX7HaWZ9/R1T
- xa+/aO3u2JHWv5pNKPa+5+nbVvF1/Az/HaqOcHWFnP5vk/umifX3Hsl0oaBvzOc90uc/zrlht3U
- BLwA=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240515201831.GDZkUYlybfejSh79ix@fat_crate.local>
 
-In JUMP_VIRT_ADDR we are performing an or calculation on
-address value directly from pcaddi.
+On Wed, May 15, 2024 at 10:18:31PM +0200, Borislav Petkov wrote:
+> So if I were to design this, I'd do it this way:
+> 
+> 0. guest gets hw poison injected
+> 
+> 1. it runs memory_failure() and it kills the processes using the page.
+> 
+> 2. page is marked poisoned on the host so no other guest gets it.
+> 
+> That's it. No second accesses whatsoever. At least this is how it works
+> on baremetal.
+> 
+> This hw poisoning emulation is just silly and unnecessary.
 
-This will only work if we are currently running from direct
-1:1 mapping addresses or firmware's DMW is configured exactly
-same as kernel. Still, we should not rely on such assumption.
+We (QEMU) haven't yet consumed this.. but I think it makes sense to have
+such emulation, as it's slightly different from a real hwpoison.
 
-Fix by overriding higher bits in address comes from pcaddi,
-so we can get rid of or operator.
+I think the important bit that's missing in this picture is migration, that
+the VM can migrate from one host to another, carrying that poisoned PFN.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
-v2: Overriding address with bstrins
----
- arch/loongarch/include/asm/stackframe.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Let's assume we have two hosts: src and dst.  Currently VM runs on src
+host.
 
-diff --git a/arch/loongarch/include/asm/stackframe.h b/arch/loongarch/include/asm/stackframe.h
-index 45b507a7b06f..51dec8b17d16 100644
---- a/arch/loongarch/include/asm/stackframe.h
-+++ b/arch/loongarch/include/asm/stackframe.h
-@@ -42,7 +42,7 @@
- 	.macro JUMP_VIRT_ADDR temp1 temp2
- 	li.d	\temp1, CACHE_BASE
- 	pcaddi	\temp2, 0
--	or	\temp1, \temp1, \temp2
-+	bstrins.d	\temp1, \temp2, (DMW_PABITS - 1), 0
- 	jirl	zero, \temp1, 0xc
- 	.endm
- 
+Before migration, there is a real PFN that is bad, MCE injected. When
+accesssed by either guest vcpu or host cpu / hypervisor, VM gets killed.
+This is so far the same to any process that has a bad page.
+
+However it's possible a VM got migrated _before_ that bad PFN accessed, in
+this case the VM is still legal to run, the hypervisor will not migrate
+that bad PFN data knowing that its data is invalid.  What it does is it'll
+tell dst that "this guest PFN is bad, if guest access it let's crash it".
+Then what dst host needs is a way to describe "this guest PFN is bad": the
+easiest way is to describe "this VA of the process is bad", meanwhile
+there'll be no real page backing that VA anyway, and also no real poisoned
+pages.  We want to poison a VA only. That's why an emulation is needed.
+Besides that we want to get exactly whatever we'll get for a real hwpoison,
+e.g. SIGBUS with the address encoded, then KVM work naturally with that
+just like a real MCE.
+
+One other thing we can do is to inject-poison to the VA together with the
+page backing it, but that'll pollute a PFN on dst host to be a real bad PFN
+and won't be able to be used by the dst OS anymore, so it's less optimal.
+
+Thanks,
 
 -- 
-2.43.0
+Peter Xu
 
 
