@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-186843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95F78CC9E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:52:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A5D8CC9EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3575EB22205
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670A51F21276
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B608114D6FF;
-	Wed, 22 May 2024 23:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C492F14F128;
+	Wed, 22 May 2024 23:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/Re7Mcm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urSOuSEN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE92B7F7D3;
-	Wed, 22 May 2024 23:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C62214D29A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421908; cv=none; b=fQppHZIhdS8YgGtF0AwR5XcB/fdnd3RbcBzxShMRB3NJqpfyqrRZwntFQ8s9l5mlkb4L17EUuJmycpFFYyTbyNkV91vCOpTFBvINUN8gkd2vpYch+WbjG3ojhkQXPMPO8t9/eg3yb67mJWebrt/rkU0mHSNriK1mrPJ8Rt6z+J8=
+	t=1716421908; cv=none; b=lxYH9FRZ7ZSys5nWR79Y+TJuN2XcBLNiz1F22QWOCMRPMz1f6YXjPwWd2ExJ5z2wencalhDYHoTOE7KoUZGlBYAZoQldx/L0T49wEbCf0CK2S+W/1Xqzz79L9qBKDBRuqGLEIO8xMtmPk71orT3Cl2ENT8gVwygIACGcpslK7IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716421908; c=relaxed/simple;
-	bh=twsR8G5WscdioqUmw9Xs22RKtQ4/tW93gBPGJtFfYeg=;
+	bh=WxJ6YXhCfPuZ517v7LggLzpx3WamKrtIwMEXRH1SkOs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=B7xNrXmE/LGDSJuF58FgcX2//wLOwg2VSyl0EaOTJ0Cs8eApY0FVg6EaNKbxxk7APPeet5wxXp+hfSynLEFL4by/kMUYVW6h2K9h6TcRBUgrUARWYPdgil3q54kdlNlFJdAuvIYx5Zzp2LKX23HaocOXcZVDLZCNH8TX0D4D09w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/Re7Mcm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8E10EC32781;
+	 In-Reply-To:To:Cc; b=DGTiTJCSjJQrpkOxi8AJ7UOUVYHspzLrdo5xFdZk2V+TuF8avluyPkobw48N8/FRMx3CcCpBKyeSFEvgW0RF2WjfmfEXZpMWdtnT3zv3HPADIUZPHdEeQK7gpt6Dp1jVaxYvxfAsKKqCKcWqiaBWPQxoVXT051Qv9qLLuhIxNAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urSOuSEN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B9E76C4AF0A;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1716421907;
-	bh=twsR8G5WscdioqUmw9Xs22RKtQ4/tW93gBPGJtFfYeg=;
+	bh=WxJ6YXhCfPuZ517v7LggLzpx3WamKrtIwMEXRH1SkOs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=S/Re7Mcmf44ueE641qccxRstYMzUWUuLPF6G6uAihMTBn8k6uC8HXzNMOeVTxJLXr
-	 57ZSUx8tMD8oL8OH5yaO6fWkLlCcpyMg2J7h05jZF+MxFQZV4F8oV8YOVOiwcqi2Cx
-	 uq64ewRhX5oZg/Ac4FdduTh/SBcSFf14lQD4fvtaKfUNd+bUXaAUKEtLGdHzTPbmBX
-	 D85/yR8ZD9I5FEUrSlbknVz2BOR55UBRr+Q6BG+lcT6TFNMS7MGCVHyuObyBujs0ru
-	 BlFA/LVO0xgFBIdNQy//4zTL6s13+BKA/Fqs2j+9P86nFc5baicTdBiiqKgTWUQNzh
-	 MDiSasTEpCBcw==
+	b=urSOuSENx+V2tYjtyhElDa8RGuy6Yw2ejpx3a5Jpk2tG1Is1oN+9fpqbUqBszAYLI
+	 highrSAdxr5LyMCPvlFNIzGXb+Hce93cFZCuKLDhnLQQFKD5Y2h7h3cErqWqNfXLHc
+	 PPrtRCjOZEhRCk6mgWUcgUvdxMqhB/GtUDsOyVAmiZJoYf5PVynhnbOLyOduA1u6kt
+	 mfKiJGmD4ixh2Wj+kaFbeA56QwAjLCfuFIpeOCD8JIsZLfBNVUxabigZfyTcvMLSJB
+	 RZeLZzsH0pHAsyE4dGd/nYRxwvPMtjoJUe8W8IH7eLBqfsMKtyjUzsNh6OZ9stqfBO
+	 cYPt0Me+dG28g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 790BDC4361A;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ADCCFC54BB1;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: selftests: Add hwprobe binaries to .gitignore
+Subject: Re: [PATCH] riscv: typo in comment for get_f64_reg
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171642190748.9409.11788212835891535911.git-patchwork-notify@kernel.org>
+ <171642190770.9409.8853343046568203839.git-patchwork-notify@kernel.org>
 Date: Wed, 22 May 2024 23:51:47 +0000
-References: <20240425-gitignore_hwprobe_artifacts-v1-1-dfc5a20da469@rivosinc.com>
-In-Reply-To: <20240425-gitignore_hwprobe_artifacts-v1-1-dfc5a20da469@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, shuah@kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- ajones@ventanamicro.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <20240317055556.9449-1-rockrush@rockwork.org>
+In-Reply-To: <20240317055556.9449-1-rockrush@rockwork.org>
+To: Xingyou Chen <rockrush@rockwork.org>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ ajones@ventanamicro.com, cleger@rivosinc.com, aou@eecs.berkeley.edu,
+ palmer@dabbelt.com, paul.walmsley@sifive.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Thu, 25 Apr 2024 12:58:03 -0700 you wrote:
-> The cbo and which-cpu hwprobe selftests leave their artifacts in the
-> kernel tree and end up being tracked by git. Add the binaries to the
-> hwprobe selftest .gitignore so this no longer happens.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Fixes: a29e2a48afe3 ("RISC-V: selftests: Add CBO tests")
-> Fixes: ef7d6abb2cf5 ("RISC-V: selftests: Add which-cpus hwprobe test")
-> 
-> [...]
+On Sun, 17 Mar 2024 13:55:56 +0800 you wrote:
+> Signed-off-by: Xingyou Chen <rockrush@rockwork.org>
+> ---
+>  arch/riscv/kernel/fpu.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - riscv: selftests: Add hwprobe binaries to .gitignore
-    https://git.kernel.org/riscv/c/b1f4ad94cd12
+  - riscv: typo in comment for get_f64_reg
+    https://git.kernel.org/riscv/c/fca93def4e41
 
 You are awesome, thank you!
 -- 
