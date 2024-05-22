@@ -1,333 +1,669 @@
-Return-Path: <linux-kernel+bounces-186611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2EF8CC644
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A288CC645
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81382B212C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0C428225E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD1B145B39;
-	Wed, 22 May 2024 18:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57837145B34;
+	Wed, 22 May 2024 18:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="wBHGrYl0";
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="eLhDqd06";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="dlidXFkb"
-Received: from mx0b-00230701.pphosted.com (mx0b-00230701.pphosted.com [148.163.158.9])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KvHKQlMA"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90205762FF;
-	Wed, 22 May 2024 18:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716402261; cv=fail; b=V3tBH20S2OX6r/L0yxLZlQ7TcifjYp0J9mlIbM4zp/XQJrFE4smDxdqonXb+/qtnvuPmt5S9HelAx03xeeAKaljeODHlLyDg+RPFCuVExTQAhKYyaKZXVA9wuW1GfJLYE6xf9BzEOPAbi8iL9H9vYRDk+wlmnRK7R49Gm4+mHIQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716402261; c=relaxed/simple;
-	bh=Z++4WoDma6sxiti9EkRLyxwlDvMkYyJjyGGkoJZjO/I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Dy13YZ5kifdkvOOuPNJZMPUol+EecDIZqfbE/BNRT+ENHma8fiPfkZwuET+DllG+XvTI1Z5Idtg4IAzPHmMMRfUkVD9/eWejcMBqL3O6raOFK4u7cbXODXR3DNdC/CxHhlGBV1yKUB15DlSlkRt/kRZCAP4eAjenDcuD38skhnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com; spf=pass smtp.mailfrom=synopsys.com; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=wBHGrYl0; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=eLhDqd06; dkim=fail (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=dlidXFkb reason="signature verification failed"; arc=fail smtp.client-ip=148.163.158.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synopsys.com
-Received: from pps.filterd (m0297265.ppops.net [127.0.0.1])
-	by mx0a-00230701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MGg0db021814;
-	Wed, 22 May 2024 11:24:09 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com; h=
-	from:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-id:content-transfer-encoding:mime-version;
-	 s=pfptdkimsnps; bh=Z++4WoDma6sxiti9EkRLyxwlDvMkYyJjyGGkoJZjO/I=; b=
-	wBHGrYl02E9tdq8nNWLDFUavZ916KLJEUDGmXyRGIzZ2CWCuA30PW1qrceJgfmU3
-	sOMS43/hJtD25OPCmh06wlsUuVsiRT/i6FJgVJgc2ahhbIidlqh7MHwshPkXwphD
-	4DX+imvD9HqXWmvKC8AUAfMxw9lTZw4oR6OMoXkV8KDHPwNDbdWl/SCrDRm1CcB5
-	9MkC/GSDVFTnzm53GrzANJma+fRO/mDww011bqdtgXLyJDiNONOdmNAYzD0ZaO5T
-	4RAfaKxXQOTTWa4FzEcHLcxYE9izNOYdNw4u3n1xnWvjzc4BCj/kzIvo4AiJEsBl
-	8jXQ2yrwmp+vz7Fxa6UJVw==
-Received: from smtprelay-out1.synopsys.com (smtprelay-out1.synopsys.com [149.117.73.133])
-	by mx0a-00230701.pphosted.com (PPS) with ESMTPS id 3y6u8sk1wr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 11:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-	t=1716402247; bh=Z++4WoDma6sxiti9EkRLyxwlDvMkYyJjyGGkoJZjO/I=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=eLhDqd06ySz3q6oHfEgfZxoiP/+umvVuXyNHyffMsOHeCjpepovFBGHwa3Qrq9ejV
-	 VTwg66HZJEn4eyEiLxd61LWB89KRV8tQ91+q6C77AdfzlHH0E6TSuaEdl6SMURi3IC
-	 tPTNRFwkc20ckGGE/8ogo6bph+Pi+WVCbgTd79rFuRxhclVfwJWCsc9gbRGr2n7ObM
-	 OqesawDjZQb92A+VcQo7QdsBSAyb32PQNV4L9ytjqwsDVwN9HZNTurjXCf6+3YvF7m
-	 yfoIu8WuUeMCCOlOgSUACfuNGAFR4TwMTxycBzmfZZgz30I4PJjOrISQAfkZuHSRcc
-	 8t1+QZWkcqzWA==
-Received: from mailhost.synopsys.com (sv2-mailhost2.synopsys.com [10.205.2.134])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724CC145B1C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716402273; cv=none; b=Dpx5/Q/ZnKP0Br0+7i5CDT/qwvhElBadjTdzoOjkbAWiASFuXfOUieG7ZEMs657uxDhdY/lK3S1sWmkNPUleqmtgZwWeBy3RVuyPgMDvyqdQ+wBDLkIehBg9wzfyONUgb1Z1sABHihctbP6FeZy+fv8Qj+tyQG3spNNlH7Eqvt8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716402273; c=relaxed/simple;
+	bh=hueSyFGvdqJBYf3vY3PLE55btfFHuENuwTKM5eITzoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjjBgVkvIxc4GkooNjJSiskSbcM5ucilcJ5bih/+J+7wfdcHNXzoIMh5LXXOtBp80lziC49x/3H3HOp6C0exsHVWO4KsIqEETlgQ82gaw6OrDQOKo/rHLnA6VW9roukIxYm41Yw+st+V/7rQNm5CHzfFYRO0Boweka9z1sb/+AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KvHKQlMA; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 32EFA40E01E8;
+	Wed, 22 May 2024 18:24:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IoC8fq2LIzWP; Wed, 22 May 2024 18:24:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716402263; bh=VKDQ9D3vPxUB5c+NJbgqGDU7CKprw8DEYhYbwJDr73Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KvHKQlMApNXrvaMVs/pZfmgacTGHuFikmSGRpt1WRIki06ije4ukjR3CXEl62dZE9
+	 Cu/v2ljxn711qfWqwO1BLrHgt9JSBmQwhEaehSZNF0iUo6YT+7M2QDyd91tTDn/7qc
+	 EfRrD5GgvdtjzXLaQWjpReyt13pzaVCE+R5D6SXdaHbk+Jk4g7faelsyDTuWejkA3A
+	 /EHDhmF/5i6oyNkKMD6xtZt+BWD+U02bU/RayT/TQEwtxUrS3+lLTGPUZ4BDhk4yYW
+	 Ln2Sz6cM/93jR9Uczng6fE7KgCxMzaUPLf3F9jXcNIo5iNht8Tz5fHY2TmvmLwXzxD
+	 YwwFrMF/FD+r+cluMjpnNDvLZNoyDOmJP0Ss3fYYqUWS2xVTyyxDYf0hn4dgWN488s
+	 ADXrYID5yx2ZD5ZSruGu30/JiDc5/RT2Si/VAl+nKtLfAzaklj1RWulE22K/agcBLN
+	 RVtEA+UEnqO2YuwAjVniIgmSrVN3xa5EidoZJzg7cM5c2b93mgVx5dZzzME42b/f+i
+	 yetmiQv+uDOBQyqnX3Ap2cYoH4Jh10jAFZTrHQeNIzQh4NmMk8sg55F1hptUMBa6rj
+	 1FkfCjyq9IoCtvXrS4oaC1cbIiPmToSOLBpf/zuv3RQy0d9++caeWuAMXatSvfeh9+
+	 wZiFiKLW//3sNy7wPuY8grZk=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits)
-	 client-signature RSA-PSS (2048 bits))
-	(Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
-	by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id C71F940585;
-	Wed, 22 May 2024 18:24:06 +0000 (UTC)
-Received: from o365relay-in.synopsys.com (us03-o365relay3.synopsys.com [10.4.161.139])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(Client CN "o365relay-in.synopsys.com", Issuer "Entrust Certification Authority - L1K" (verified OK))
-	by mailhost.synopsys.com (Postfix) with ESMTPS id 599CAA007B;
-	Wed, 22 May 2024 18:24:06 +0000 (UTC)
-Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com;
-	dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.a=rsa-sha256 header.s=selector1 header.b=dlidXFkb;
-	dkim-atps=neutral
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
-	by o365relay-in.synopsys.com (Postfix) with ESMTPS id 0209940565;
-	Wed, 22 May 2024 18:24:04 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZYWWHNS9GgcYfAvrL+i4S+ouF1Iv8MFllTxob/bW1mTiYNt5Yy7os/fCirHEBRE+zII+UK5yvmdMfHdkim3ZNkfZOvcAXzw/ecyHpZsprxpJ7ny17HacpSaBpfGkZ70N6uVWPgWHb6mquwr8X0Z48QRSzUOldfSkJ5+jFww1A9snPFRbdquDz4cXqRnAprBLp+dyZimZyFfV3e0+qhWcJt4P3JLSped7zBtZnzcQOhzNJMjYUvw1iYZmWYFHIre24U/5KHjWQpRASy3E31J85XdzrST6dMHiLGBP7nNh9swCQA29dtjznkpydkmiHA8PxzxcKNYCyea+qNo720mCVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z++4WoDma6sxiti9EkRLyxwlDvMkYyJjyGGkoJZjO/I=;
- b=Vs+5/wSSaEyNPfz6+OJ4w1z55jtoULIq0cVX1UTxj8O2LFu0e+ox5BQvmUk/20xA8PPqtc3XjPCgdushg6AAyLgIf3fFGhh0put7kjqcy6ekHVmgTi9ISDoUb7AFNtMkcF6+iA3d3W4/zqeCL7UtGRIGn7OQkx9xtOEmg2UYWM300lUd7Ju+qcYk7e1yxEWKljg4eeJJQCEphMriwvci0Eont6VSaT0fJ0zp2rQPrndPk/XDW3YvZdp2NRoJD4ZaicAJdzpr4UFepZRYAyB9j/eZ5y65cC9VblH2JXKSbf9qu3lM+guKJekaG6jA0yIudkj9NDwEQaBdktfF58RQWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z++4WoDma6sxiti9EkRLyxwlDvMkYyJjyGGkoJZjO/I=;
- b=dlidXFkbkBYME6ZEvSH/mL4DOna+eGPtuSunBvx8IN7QfaYfVZmebmutLSJBOALsiZA9bnUXJZGlbrRyz9dVObVUpfMnPVmuwp8XK5tYunX3LiTCisfK0LsoDJ+Kyaa21KPtGwfKRWP1j8m7Ao6TQ77/BYi2R4/SV3hvIbD4Gaw=
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com (2603:10b6:408:170::16)
- by SJ1PR12MB6123.namprd12.prod.outlook.com (2603:10b6:a03:45a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Wed, 22 May
- 2024 18:24:00 +0000
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::3d09:f15f:d888:33a8]) by LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::3d09:f15f:d888:33a8%4]) with mapi id 15.20.7611.016; Wed, 22 May 2024
- 18:23:58 +0000
-X-SNPS-Relay: synopsys.com
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To: Michael Grzeschik <mgr@pengutronix.de>
-CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Avichal Rakesh <arakesh@google.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Daniel Scally <dan.scally@ideasonboard.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jayant Chowdhary <jchowdhary@google.com>,
-        "etalvala@google.com" <etalvala@google.com>,
-        Michael Riesch <michael.riesch@wolfvision.net>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
- interval length and buffersize
-Thread-Topic: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
- interval length and buffersize
-Thread-Index: 
- AQHaisR7p/ka60fKF0m666TF1RlbgLFzcN6AgAGh4ICAAOvGgIAAlmuAgAAznACAHZQygIAGhRmAgAfA2gCAABofAIAA3HGAgAAo1QCAAAX1gIAADM0A
-Date: Wed, 22 May 2024 18:23:58 +0000
-Message-ID: <20240522182348.4jyitatwtdqeo2gf@synopsys.com>
-References: <ZifEvUi9-E8M4dp8@pengutronix.de>
- <17192e0f-7f18-49ae-96fc-71054d46f74a@google.com>
- <20240424022806.uo73nwpeg63vexiv@synopsys.com>
- <ZkE-O0yJ33T9hWa0@pengutronix.de>
- <20240517014359.p2s44ypl4bix4odm@synopsys.com>
- <Zk03Ys1rA0I5yiZy@pengutronix.de>
- <20240522014132.xlf7azgq2urfff2d@synopsys.com>
- <3f404a27-50e8-42c5-a497-b46751154613@rowland.harvard.edu>
- <20240522171640.iuol4672rnklc35g@synopsys.com>
- <Zk4td_0RR0cMJKro@pengutronix.de>
-In-Reply-To: <Zk4td_0RR0cMJKro@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR12MB5990:EE_|SJ1PR12MB6123:EE_
-x-ms-office365-filtering-correlation-id: a7f94c2c-d030-4e29-0617-08dc7a8c58b4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?bFp3MGxFaFIzaWxHanhkMTdoYWYyRm12VWlxRC81bGFUMWNPb1pQTXFrVzFC?=
- =?utf-8?B?TUs1NkJoWGZXWmp0OFVRREFuSFVXQ2ZEVkY5SWFETFJJMWc4cEEzQXVWTmNt?=
- =?utf-8?B?Mkt6OVlsNW1kYjRKeVFsSGNPWm9qMFE1aldFWk51WDV1VkFhbjFmMzhYaEpj?=
- =?utf-8?B?T3pwc21RREdqdTEvZVk2L1R5SlBoZDdxYVJkeUFCbDhCQXBhZGVTb3l1a3VY?=
- =?utf-8?B?S1NmS0VkMERlT241ODYvR3ozdVZkN3h3N0ZkcjlzRTF0MUkrMytycHJEWGRj?=
- =?utf-8?B?VVJuaE5MNHlXZUJnM2xzQTdVVVlTb0ltRTFjMk5DbFIxMTd4NjdTM1hSak81?=
- =?utf-8?B?RjAzeHdiVzUwcGFENUl0MmFJdVNCSTJUQ1IzS014Qm5DK1A5TXNCRFBiWjlv?=
- =?utf-8?B?T2h4YWpLd2tuV2tseFIzNlVnM3laR1phSHIxQUxGM2p1QmdvUmVKcWhiTVBx?=
- =?utf-8?B?SjJYY2U1cVpPL09Ta2M4UHFhV25CWlIxU3ZHTjlKVlN2QUVMQmNySmJ6S0tP?=
- =?utf-8?B?aEQxTUZCMzVIRkhBQUo3UjE5MnhSY1Q4di9lcHJQYm01bzJ1VFNLNDAwVTlD?=
- =?utf-8?B?UDdZRUEzSzl0bEFkcGlLbmNwTFAxWVIySHI5UVRyajBDQ3MxYnk0UFhSS0tL?=
- =?utf-8?B?c29GdGhpMlk0dzZVTkNpQy9zRitjdGNpLy9IYW5wUTZsdlZGdjFkQ2swa1FN?=
- =?utf-8?B?ZWRSZm9DVFIwTzFYUkVUM0lnejBLNitST2RvSFRkKy85cFlNM2hXcFF6ZElj?=
- =?utf-8?B?cHpTZlBvcGlYSTFtS2g3allUSXhDTEJtYXYxbVFVaWI5RENIMEZBcExxMlJP?=
- =?utf-8?B?L3lNMnBDMjNKeHFkYW9ydlhqcy85UlNENUJJem9TdExQOVRjSVk2TmZwbjhM?=
- =?utf-8?B?VGowSDlLQ090VnM1QnA5UXpKRHhobTRaN2JaZnpaYWxpNGRuNEZ5YVYvSVNq?=
- =?utf-8?B?RmlBbTFVKzI2NG9ZV0dscEhxcngyeFgzSW5qUWNtVERxMkVUQ3VQNWwvcUhh?=
- =?utf-8?B?TE5tVTdHZkhEdHFYaURvbzBFSkw1VmVJd2dRNTl3aEM2NzZldnk4VW1aMDhR?=
- =?utf-8?B?QkYyaHJGZklhOGJUVExwdzVFRUFJY0Rub0k4dUY1Mmh6enFuNW5jelJFWVAv?=
- =?utf-8?B?VlNoMElBbmZ5OTZSYUVaeGU0bXBIZ1hpeURtaU9FMzhFRitkRmd4OVMzdDRt?=
- =?utf-8?B?SHNTcCtjZzdUd0lrWGxOS25Edm9XNFMyd3RPblJRR2RFQ0pteGNYdUQzNzIw?=
- =?utf-8?B?Q3I4QUlEeUtESGJ3MFk2VDlTenVyVHorRDNuR2g2OWJNY2xJc1M3NGtRZGlM?=
- =?utf-8?B?Q2E5SkRRZnlrZzJNSHNYNHNKbHdybUxsK3h1VkxNWjNuYlJraittK3hJcjZ2?=
- =?utf-8?B?a0N2S1VERjdqSVhaeEFFcU1KT2lEZ3Jhek1VZUNFeEd0L0JYT2xkU0RiMENl?=
- =?utf-8?B?d3ZsUDdOOFhKazNYd3NWR1lkeDhWMEtWU3hMRVYyajdSMEIwUXRmZW1WSUcw?=
- =?utf-8?B?R0FObW5rU1BCU1ZYY3VyaFBPb2RkQlJ1am9rdVovNE83M2dNTGtteW1VcFor?=
- =?utf-8?B?bVFaZlJadFhPKzdSWVhyWCtqdnhaNmxlSUZXSXc4NDdDeXVNbEZ6Q0NySDEr?=
- =?utf-8?B?M3duSFJqQ3haSE5xNHNkWUUzR2ZxUVZydEVMQWhzYnZ5MmNvNmZoOE9TOUda?=
- =?utf-8?B?ZzN6UU9wcitBMVRWMStRSkpFSnNYdVcxVXc4Y0dSV2VwRGFTVDBwZStnPT0=?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?ekhoejNhVUlIR05Xb3JKMnVUWXVlRXR6clc2aE5PcVFYUnBGVDc4Z3BRRDJ0?=
- =?utf-8?B?cjM0b3dSQW1yelA5WG8zM0tMOCtQb0tYcVRId1dMOHpCWVFVWWxQb0xjS2xZ?=
- =?utf-8?B?bVhob283bnNXQjUyL1VxZWw5KzVZeXlsa2Z5ZUlqd3FERGt1TW1ORUVWWFJJ?=
- =?utf-8?B?SGxwU2hiOU5GRlNaVjNTT3ArN2MvRVNNMVZWSnJlM2NJLzZkeGFqanB3Q29p?=
- =?utf-8?B?TjV1b3dJQnZ6TzR2cmk1YWFUQ2RxaXJJS05XUFNrdk9VTDhRZ3g5bm50YjRn?=
- =?utf-8?B?QzdLOWl0SDJWbE91WURBNkxvdkYwNlpTYk9QdDNNS05Ebm5qNDB5R25VU1Vz?=
- =?utf-8?B?YU0rU3RlTnF1QjdXRjBFMDE4U1hYWGJEaktja0RsS0ZOU2xUcWlNdHkrTzBF?=
- =?utf-8?B?aEVldmM3QitSejBvcTBtbDBvKzNFMk9DKzFIR0VzcVpqai9UcWZKNmVhbEw2?=
- =?utf-8?B?Qnd0UHQrZ29vUk4xYklaSitXRE1ucEIrS2VsSTJLU2F1eHcyNVFCUFpmb1lB?=
- =?utf-8?B?eEhod0VySUIyRlBUcmRjOUFHRnBhRjN2QzVkMXN2ZVBQOTl3eUFIcmhOUU9u?=
- =?utf-8?B?MSs5RE5Uam5CN1NCV0JTR1pJbjF1aE9GL1VmU055dndUSWx3a1oxQmJySDg4?=
- =?utf-8?B?WXlpME1RMjNHY1YyKzA0dmRMVENSZFN5YXQ0Q0h1aVM3MUZxaGpEaUloRjcx?=
- =?utf-8?B?NTNyVmhCcDd5VXJBR2M0Y0EwMXBjQkl2bWJkVllvT1NMMHdHMGVBVlBKUFVh?=
- =?utf-8?B?aStTTklrVk9JeFNaVmx3ZDM4b25vMmVuTG10eThsdFA3R0Y4dys4UHBMOU5L?=
- =?utf-8?B?T2lMcU50L2VsRGg2d2U5Qmh6MUVvQmpDdmplS0dETWs3cFRrV1VGcmlaWUNM?=
- =?utf-8?B?ZlRXTkYrclgvOW1kMkVwYThGWjVGdTJCTFcraFZuQXVDUzFFTXlYYzFNWitN?=
- =?utf-8?B?Wnc4UDR5WkFVVUhpZ1dQNWdDSDJWMkpLS28xRVl4QjNIdCtSWk9xV0pDRkVP?=
- =?utf-8?B?M1NCY3JvWEVISDU2RWcvZmlTaXNOd2NjazRXYThGWGRrRmdyMk1vQzBZSmdU?=
- =?utf-8?B?WEF3U2cxM1U0MlNBbWtXb2I3L20xV005Z1Bla3hLUXFRTWNvYTlLdzN4MUww?=
- =?utf-8?B?bVBwMHlXTUFpbUhnWklJNmdiTEx3M01RWEFnclJLOWdNSjdLbDAvbjh4Q3pu?=
- =?utf-8?B?cXRaSndpY3kwa0Mvb1g5N1pNK0VLWWtnNllVUXg0aHFuQmhOT0NjR0pxTFVV?=
- =?utf-8?B?aE5LblpYT0crTThFU1FyTWJQd2NwNHBoN0xBczlCTDEvdTFDQVBjcjNSSm9D?=
- =?utf-8?B?OGo0L0FPMUdSRndaeXlVSDFRcEtWTkdpOGtIVndjODZnQTI0OFNKVnZRS1Fr?=
- =?utf-8?B?RGRJSzc1cVBmejRDNmlMUFJROFo1VGNURkt4bUUvcTMxRFcvalBVc3dzMVJm?=
- =?utf-8?B?ZEZoM08rQWpqNG5iNkhjMHNFbTVnbytyenlJam1DeFdaZVpXUkZXSkVCYmdS?=
- =?utf-8?B?TEtxelFaMU9sZ2hwL0plM3ViaU82RncxNVBob2ZvRHN6UE9aYmJycnNJVHVa?=
- =?utf-8?B?SEg2THZDTDhHSmJZVzdNVEVHVlRJc2dMeUdSUFBtRVMzQVVRMjdZNmtxdGtH?=
- =?utf-8?B?cmtuKzJZc0dmdUE3UHUrN2svWjNQVlJ4QW5vWFkzSTduMnNsV0NGaVFSYVJw?=
- =?utf-8?B?dEJqcExvYzFlclZDc2hhQ2hkTG1Zc0RmdGFxYkw5cUN5WHl5eDNlelQrRkVy?=
- =?utf-8?B?MEdxdWRsR25DMkx6MnI2a1F0WG1UZWtmS0NXQlBkc0gyZWY2U0NsL2FMRVht?=
- =?utf-8?B?NzNGTDlQaW5QVU53bG5Pb2xHWnRZV2VYQTVSajdlTnZHdmxvdWpFYmxtcUNw?=
- =?utf-8?B?TnNYWkpxRlBPazZUOGZWSUppZU9wUElXSTQ3MXlSd2drL3loRUdYWlU4djJH?=
- =?utf-8?B?V1ZVWVJNSnh4WWhpWXJJLzJKVTBrSEJrNElueFVFblloUGVwSW52MDFlaVJo?=
- =?utf-8?B?WW1qbFhpYjlHTlhwalc2K25qRFJJdWlGb1ZiVWk5MXExdTVTY3VjdnoxV0xm?=
- =?utf-8?B?cWpJQkJsVkg5VmlTSXJzODdDQ0FoazVJTEdvazNHeDNiU28xL0pCUlBlV0lI?=
- =?utf-8?B?RVNwZ3JuSGN2d3poOUJ2Tmg2VHQydjFnUzA1NnBIK0pKUmpNdUVFVHNCc1Zv?=
- =?utf-8?B?OUE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <258D5063236AC448B438B53A29CD8264@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4CE8F40E01A1;
+	Wed, 22 May 2024 18:24:09 +0000 (UTC)
+Date: Wed, 22 May 2024 20:24:03 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v4 06/15] x86/sev: Perform PVALIDATE using the SVSM when
+ not at VMPL0
+Message-ID: <20240522182403.GAZk44Q7DalfDBk7Br@fat_crate.local>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <ce5f7ded87868adce2f4724415313229a8bf3eb3.1713974291.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	a5vZDs45bJZp055Q2iT9ZFpjAGe+C6HV1CdIMpY/A/KmITbHfW6DmU3ZExpjjuwZqq7MyiYKBsW0+NtpI+jruWxeCmwkalXNxsRlTgbh8Pdf3U6fTgsTTkWMcinXFYRlMrVg+1CWppulNSNkF/8yabpjMufj0XPl2vs2MJ51vPU5cyf3+GzTb/R17iHLmrObSvsJU/yjAPq+LIhdA7kch2p9SRd12aYehDFOVJFJ/0NtTstIUU1Ac4Kn+ZcgpdYgmYEIz4WBF53ii3GHvEcTxxNRNr5P+wYRuCgWVCQYPIzshiUGcWyiKpdHXjgFAJjAZHAKlKt8/3PHZehPY6Yo8LmOEFNiqrCmDW7c74gfcwyfY92ebETEnzPuxzgAjVX4ypkWJMN24te0nkVjv42BdnbPCPWyi6uOZlFI6XMtVRr9ezY20HLkR3lNJt4rChqii1fdv+Yp6hmwlD1vhGALzu6s4T62/cLtf4Ft3GF8QQxI2tByctb8hlk3+RAG9C4pHxjDb604xMMM8M5/R9IQwN/13Z7edy474FR+4ce/hYxzClGlaNlD1fJgeXagr4G2LuApCaMvIM5CV7BRq+hgVv+0gHe4ncO8gArZu4tcPn+oC30HK2C1TNX0xj0Sf+apcGxVgd3HpUJC8quYv980Ug==
-X-OriginatorOrg: synopsys.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7f94c2c-d030-4e29-0617-08dc7a8c58b4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 18:23:58.1564
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VPPo4ZC1j9PYbc2d6hr8EHTWJQs4lLdBLTuSb2rwmXfroGw3PNbK5XkJ1+c/Kwq8i6EGlDFPli5ubYvHpPQ+Gg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6123
-X-Proofpoint-ORIG-GUID: xBbBfnKgV-T9dkc3_NpAjQYmGQfooACU
-X-Proofpoint-GUID: xBbBfnKgV-T9dkc3_NpAjQYmGQfooACU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_10,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_active_cloned_notspam policy=outbound_active_cloned score=0
- spamscore=0 clxscore=1015 bulkscore=0 phishscore=0 mlxlogscore=915
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 adultscore=0 impostorscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405220127
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ce5f7ded87868adce2f4724415313229a8bf3eb3.1713974291.git.thomas.lendacky@amd.com>
 
-T24gV2VkLCBNYXkgMjIsIDIwMjQsIE1pY2hhZWwgR3J6ZXNjaGlrIHdyb3RlOg0KPiBPbiBXZWQs
-IE1heSAyMiwgMjAyNCBhdCAwNToxNzowMlBNICswMDAwLCBUaGluaCBOZ3V5ZW4gd3JvdGU6DQo+
-ID4gT24gV2VkLCBNYXkgMjIsIDIwMjQsIEFsYW4gU3Rlcm4gd3JvdGU6DQo+ID4gPiBPbiBXZWQs
-IE1heSAyMiwgMjAyNCBhdCAwMTo0MTo0MkFNICswMDAwLCBUaGluaCBOZ3V5ZW4gd3JvdGU6DQo+
-ID4gPiA+IE9uIFdlZCwgTWF5IDIyLCAyMDI0LCBNaWNoYWVsIEdyemVzY2hpayB3cm90ZToNCj4g
-PiA+ID4gPiBPbiBGcmksIE1heSAxNywgMjAyNCBhdCAwMTo0NDowNUFNICswMDAwLCBUaGluaCBO
-Z3V5ZW4gd3JvdGU6DQo+ID4gPiA+ID4gPiBGb3IgaXNvYyBlbmRwb2ludCBJTiwgeWVzLiBJZiB0
-aGUgaG9zdCByZXF1ZXN0cyBmb3IgaXNvYyBkYXRhIElOIHdoaWxlDQo+ID4gPiA+ID4gPiBubyBU
-UkIgaXMgcHJlcGFyZWQsIHRoZW4gdGhlIGNvbnRyb2xsZXIgd2lsbCBhdXRvbWF0aWNhbGx5IHNl
-bmQgMC1sZW5ndGgNCj4gPiA+ID4gPiA+IHBhY2tldCByZXNwb25kLg0KPiA+ID4gPiA+DQo+ID4g
-PiA+ID4gUGVyZmVjdCEgVGhpcyB3aWxsIGhlbHAgYSBsb3QgYW5kIHdpbGwgbWFrZSBhY3RpdmUg
-cXVldWVpbmcgb2Ygb3duDQo+ID4gPiA+ID4gemVyby1sZW5ndGggcmVxdWVzdHMgcnVuIHVubmVj
-ZXNzYXJ5Lg0KPiA+ID4gPg0KPiA+ID4gPiBZZXMsIGlmIHdlIHJlbHkgb24gdGhlIGN1cnJlbnQg
-c3RhcnQvc3RvcCBpc29jIHRyYW5zZmVyIHNjaGVtZSBmb3IgVVZDLA0KPiA+ID4gPiB0aGVuIHRo
-aXMgd2lsbCB3b3JrLg0KPiA+ID4gDQo+ID4gPiBZb3Ugc2hvdWxkbid0IHJlbHkgb24gdGhpcyBi
-ZWhhdmlvci4gIE90aGVyIGRldmljZSBjb250cm9sbGVycyBtaWdodCBub3QNCj4gPiA+IGJlaGF2
-ZSB0aGlzIHdheTsgdGhleSBtaWdodCBzZW5kIG5vIHBhY2tldCBhdCBhbGwgdG8gdGhlIGhvc3Qg
-KGNhdXNpbmcgYQ0KPiA+ID4gVVNCIHByb3RvY29sIGVycm9yKSBpbnN0ZWFkIG9mIHNlbmRpbmcg
-YSB6ZXJvLWxlbmd0aCBwYWNrZXQuDQo+ID4gDQo+ID4gSSBhZ3JlZS4gVGhlIGR3YzMgZHJpdmVy
-IGhhcyB0aGlzIHdvcmthcm91bmQgdG8gc29tZXdoYXQgd29yayB3aXRoIHRoZQ0KPiA+IFVWQy4g
-VGhpcyBiZWhhdmlvciBpcyBub3Qgc29tZXRoaW5nIHRoZSBjb250cm9sbGVyIGV4cGVjdGVkLCBh
-bmQgdGhpcw0KPiA+IHdvcmthcm91bmQgc2hvdWxkIG5vdCBiZSBhIGNvbW1vbiBiZWhhdmlvciBm
-b3IgZGlmZmVyZW50IGZ1bmN0aW9uDQo+ID4gZHJpdmVyL3Byb3RvY29sLiBTaW5jZSB0aGlzIGJl
-aGF2aW9yIHdhcyBhZGRlZCBhIGxvbmcgdGltZSBhZ28sIGl0IHdpbGwNCj4gPiByZW1haW4gdGhl
-IGRlZmF1bHQgYmVoYXZpb3IgaW4gZHdjMyB0byBhdm9pZCByZWdyZXNzaW9uIHdpdGggVVZDIChh
-dA0KPiA+IGxlYXN0IHVudGlsIHRoZSBVVkMgaXMgY2hhbmdlZCkuIEhvd2V2ZXIsIGl0IHdvdWxk
-IGJlIG5pY2UgZm9yIFVWQyB0bw0KPiA+IG5vdCByZWx5IG9uIHRoaXMuDQo+IA0KPiBXaXRoICJ0
-aGlzIiB5b3UgbWVhbiBleGFjdGx5IHRoZSBmb2xsb3dpbmcgY29tbWl0LCByaWdodD8NCj4gDQo+
-IChmNWU0NmFhNCB1c2I6IGR3YzM6IGdhZGdldDogd2hlbiB0aGUgc3RhcnRlZCBsaXN0IGlzIGVt
-cHR5IHN0b3AgdGhlIGFjdGl2ZSB4ZmVyKQ0KDQpJIGJlbGlldmUgdGhhdCB3YXMgdGhlIGNhc2Uu
-IEhvd2V2ZXIsIHRoZXJlIHdlcmUgY2hhbmdlcyBwcmlvciB0byB0aGF0DQp0aGF0IHJlc3RhcnRz
-IHRoZSBpc29jIG9uIG1pc3NlZCBpc29jLCB3aGljaCBzaG91bGRuJ3QgYmUgdGhlIGRlZmF1bHQN
-CmJlaGF2aW9yLg0KDQo+IA0KPiBXaGVuIHdlIHN0YXJ0IHF1ZXN0aW9uaW5nIHRoaXMsIHRoZW4g
-bGV0cyBkaWcgZGVlcGVyIGhlcmUuDQo+IA0KPiBXaXRoIHRoZSBmYXN0IGRhdGFyYXRlIG9mIGF0
-IGxlYXN0IHVzYiBzdXBlcnNwZWVkIHNob3VsZG4ndCB0aGV5IG5vdCBhbGwNCj4gY29tcGxldGVs
-eSB3b3JrIGFzeW5jaHJvbm91cyB3aXRoIHRoZWlyIGluIGZsaWdodCB0cmJzPw0KDQpJJ20gbm90
-IHN1cmUgd2hhdCB5b3UgbWVhbiBieSBhc3luY2hyb25vdXMgaGVyZS4NCg0KPiANCj4gSW4gbXkg
-dW5kZXJzdGFuZGluZyB0aGlzIHZhbGlkYXRlcyB0aGF0LCB3aXRoIGF0IGxlYXN0IHN1cGVyc3Bl
-ZWQgd2UgYXJlDQo+IHVubGlrZWx5IHRvIHJlYWN0IGZhc3QgZW5vdWdoIHRvIG1haW50YWluIGEg
-c3RlYWR5IGlzb2MgZGF0YWZsb3csIHNpbmNlDQo+IHRoZSBkcml2ZXIgYWJvdmUgaGFzIHRvIHJl
-YWN0IHRvIGVycm9ycyBpbiB0aGUgcHJvY2Vzc2luZyBjb250ZXh0Lg0KDQpUaGUgcG9pbnQgaXMg
-dGhhdCB3ZSBkb24ndCBzdG9wIHRoZSBpc29jIHRyYW5zZmVycyB1bmxlc3MgdGhlcmUncyBhDQpj
-aGFuZ2UgdG8gdGhlIGludGVyZmFjZS4gVGhlIGR3YzMgZHJpdmVyIHNob3VsZCBub3QgbmVlZCB0
-byBkbyBhbnl0aGluZw0KZWxzZSBleGNlcHQgcmVwb3J0aW5nIHRoZSBtaXNzZWQgcmVxdWVzdCB0
-byB0aGUgZnVuY3Rpb24gZHJpdmVyLiBUaGUNCmFwcGxpY2F0aW9uL2Z1bmN0aW9uIGRyaXZlciBz
-aG91bGQga2VlcCB1cCB3aXRoIHRoZSBjb250aW5vdXMgZGF0YSBiYXNlDQpvbiB0aGUgZXN0YWJs
-aXNoZWQgcGVyaW9kaWMgc2VydmljZSBpbnRlcnZhbC4gVGhpcyBpcyBub3QgYnVsayB0cmFuc2Zl
-ci4NCg0KPiANCj4gVGhpcyBydW5zIHRoZSBhYm92ZSBwYXRjaCAoZjVlNDZhYTQpIGEgZ2FkZ2V0
-IGluZGVwZW5kZW50IHNvbHV0aW9uDQo+IHdoaWNoIGhhcyBub3RoaW5nIHRvIGRvIHdpdGggdXZj
-IGluIHBhcnRpY3VsYXIgSU1ITy4NCg0KSWYgdGhhdCdzIG5vdCB0aGUgY2FzZSwgSSBzdGFuZCBj
-b3JyZWN0ZWQgc2luY2UgSSB0aG91Z2h0IHlvdSBzZW50DQp0aGF0IHBhdGNoIGluIHBhcnRpY3Vs
-YXIgZm9yIFVWQy4gUmVnYXJkbGVzcywgbXkgb3RoZXIgcG9pbnRzIHN0aWxsDQpzdGFuZC4NCg0K
-PiANCj4gSG93IGRvIG90aGVyIGNvbnRyb2xsZXJzIGFuZCB0aGVpciBkcml2ZXJzIHdvcms/DQoN
-CklmIHdlIHN0b3AgYW5kIHN0YXJ0IHRoZSB0cmFuc2ZlciBiZWNhdXNlIHRoZSBmdW5jdGlvbiBk
-cml2ZXIgY2FuJ3Qga2VlcA0KdXAsIHRoZW4gdGhlIGRhdGEgd2lsbCBnbyBvdXQgaW4gdGhlIHdy
-b25nIGludGVydmFsLiBUaGUgVVZDIGhvc3Qgc2VlbXMNCnRvIHdvcmsgYmFzZSBvbiB0aGUgdmlk
-ZW8gZnJhbWUgcmF0aGVyIHRoYW4gYXQgdGhlIFVTQiBtaWNyb2ZyYW1lDQppbnRlcnZhbCB0aGF0
-IGl0IHVzZXMuIEl0IG1heSBub3QgYmUgdGhlIGNhc2UgZm9yIG90aGVyIHByb3RvY29scy4gSWYN
-Cmlzb2MgZW5kcG9pbnQgaXMgdXNlZCwgdGhlbiB3ZSBleHBlY3QgdGltZWxpbmVzcyBtYXR0ZXIu
-DQoNCkJSLA0KVGhpbmgNCg0KPiANCj4gPiBTaWRlIG5vdGUsIHdoZW4gdGhlIGR3YzMgZHJpdmVy
-IHJlc2NoZWR1bGVzL3N0YXJ0cyBpc29jIHRyYW5zZmVyIGFnYWluLA0KPiA+IHRoZSBmaXJzdCB0
-cmFuc2ZlciB3aWxsIGJlIHNjaGVkdWxlZCBnbyBvdXQgYXQgc29tZSBmdXR1cmUgaW50ZXJ2YWwg
-YW5kDQo+ID4gbm90IHRoZSBuZXh0IGltbWVkaWF0ZSBtaWNyb2ZyYW1lLiBGb3IgVVZDLCBpdCBw
-cm9iYWJseSB3b24ndCBiZSBhDQo+ID4gcHJvYmxlbSBzaW5jZSBpdCBkb2Vzbid0IHNlZW0gdG8g
-bmVlZCBkYXRhIGdvaW5nIG91dCBldmVyeSBpbnRlcnZhbC4NCj4gDQo+IEl0IHNob3VsZCBub3Qg
-bWFrZSBhIGRpZmZlcmVuY2UuIFtUTV0NCj4gDQo+ID4gPiANCj4gPiA+IE9uIHRoZSBvdGhlciBo
-YW5kLCBpdCBtYXkgbm90IG1ha2UgYW55IGRpZmZlcmVuY2UuICBUaGUgaG9zdCdzIFVWQw0KPiA+
-ID4gZHJpdmVyIG1vc3QgbGlrZWx5IHdvbid0IGNhcmUgYWJvdXQgdGhlIGRpZmZlcmVuY2UgYmV0
-d2VlbiBubyBwYWNrZXQgYW5kDQo+ID4gPiBhIDAtbGVuZ3RoIHBhY2tldC4gIDotKQ0KPiA+ID4g
-DQo+ID4gPiBBbGFuIFN0ZXJuDQo+IA0KPiAtLSANCj4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCj4gU3Rl
-dWVyd2FsZGVyIFN0ci4gMjEgICAgICAgICAgICAgICAgICAgICAgIHwgaHR0cDovL3d3dy5wZW5n
-dXRyb25peC5kZS8gIHwNCj4gMzExMzcgSGlsZGVzaGVpbSwgR2VybWFueSAgICAgICAgICAgICAg
-ICAgIHwgUGhvbmU6ICs0OS01MTIxLTIwNjkxNy0wICAgIHwNCj4gQW10c2dlcmljaHQgSGlsZGVz
-aGVpbSwgSFJBIDI2ODYgICAgICAgICAgIHwgRmF4OiAgICs0OS01MTIxLTIwNjkxNy01NTU1IHwN
-Cg0K
+On Wed, Apr 24, 2024 at 10:58:02AM -0500, Tom Lendacky wrote:
+> The PVALIDATE instruction can only be performed at VMPL0. An SVSM will
+> be present when running at VMPL1 or a lower privilege level.
+
+s/when running/when the guest itself is running/
+
+> When an SVSM is present, use the SVSM_CORE_PVALIDATE call to perform
+> memory validation instead of issuing the PVALIDATE instruction directly.
+> 
+> The validation of a single 4K page is now explicitly identified as such
+> in the function name, pvalidate_4k_page(). The pvalidate_pages() function
+> is used for validating 1 or more pages at either 4K or 2M in size. Each
+> function, however, determines whether it can issue the PVALIDATE directly
+> or whether the SVSM needs to be invoked.
+
+This all talks more about what this is doing and I'm missing the "why".
+
+It sounds like when you're running a SVSM under the guest, you cannot
+use PVALIDATE but the SVSM should do it for you. And you should start
+with that.
+
+The rest/details should be visible from the diff.
+
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
+>  arch/x86/boot/compressed/sev.c |  45 ++++++++-
+>  arch/x86/include/asm/sev.h     |  22 ++++
+>  arch/x86/kernel/sev-shared.c   | 179 ++++++++++++++++++++++++++++++++-
+>  arch/x86/kernel/sev.c          |  25 +++--
+>  4 files changed, 253 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+> index cb771b380a6b..32a1e98ffaa9 100644
+> --- a/arch/x86/boot/compressed/sev.c
+> +++ b/arch/x86/boot/compressed/sev.c
+> @@ -130,6 +130,34 @@ static bool fault_in_kernel_space(unsigned long address)
+>  /* Include code for early handlers */
+>  #include "../../kernel/sev-shared.c"
+>  
+> +static struct svsm_ca *__svsm_get_caa(void)
+> +{
+> +	return boot_svsm_caa;
+> +}
+> +
+> +static u64 __svsm_get_caa_pa(void)
+> +{
+> +	return boot_svsm_caa_pa;
+> +}
+> +
+> +static int svsm_protocol(struct svsm_call *call)
+
+Function name needs a verb.
+
+> +{
+> +	struct ghcb *ghcb;
+> +	int ret;
+> +
+> +	if (boot_ghcb)
+> +		ghcb = boot_ghcb;
+> +	else
+> +		ghcb = NULL;
+> +
+> +	do {
+> +		ret = ghcb ? __svsm_ghcb_protocol(ghcb, call)
+> +			   : __svsm_msr_protocol(call);
+> +	} while (ret == SVSM_ERR_BUSY);
+> +
+> +	return ret;
+> +}
+> +
+>  bool sev_snp_enabled(void)
+>  {
+>  	return sev_status & MSR_AMD64_SEV_SNP_ENABLED;
+> @@ -146,8 +174,8 @@ static void __page_state_change(unsigned long paddr, enum psc_op op)
+>  	 * If private -> shared then invalidate the page before requesting the
+>  	 * state change in the RMP table.
+>  	 */
+> -	if (op == SNP_PAGE_STATE_SHARED && pvalidate(paddr, RMP_PG_SIZE_4K, 0))
+> -		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
+> +	if (op == SNP_PAGE_STATE_SHARED)
+> +		pvalidate_4k_page(paddr, paddr, 0);
+
+That is a bool so put a "false" in there.
+
+>  	/* Issue VMGEXIT to change the page state in RMP table. */
+>  	sev_es_wr_ghcb_msr(GHCB_MSR_PSC_REQ_GFN(paddr >> PAGE_SHIFT, op));
+> @@ -162,8 +190,8 @@ static void __page_state_change(unsigned long paddr, enum psc_op op)
+>  	 * Now that page state is changed in the RMP table, validate it so that it is
+>  	 * consistent with the RMP entry.
+>  	 */
+> -	if (op == SNP_PAGE_STATE_PRIVATE && pvalidate(paddr, RMP_PG_SIZE_4K, 1))
+> -		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
+> +	if (op == SNP_PAGE_STATE_PRIVATE)
+> +		pvalidate_4k_page(paddr, paddr, 1);
+
+Ditto, but "true".
+
+>  void snp_set_page_private(unsigned long paddr)
+> @@ -256,6 +284,15 @@ void sev_es_shutdown_ghcb(void)
+>  	if (!sev_es_check_cpu_features())
+>  		error("SEV-ES CPU Features missing.");
+>  
+> +	/*
+> +	 * The boot_ghcb value is used to determine whether to use the GHCB MSR
+
+s/The boot_ghcb value /This is used/
+
+> +	 * protocol or the GHCB shared page to perform a GHCB request. Since the
+> +	 * GHCB page is being changed to encrypted, it can't be used to perform
+> +	 * GHCB requests. Clear the boot_ghcb variable so that the GHCB MSR
+> +	 * protocol is used to change the GHCB page over to an encrypted page.
+> +	 */
+> +	boot_ghcb = NULL;
+> +
+>  	/*
+>  	 * GHCB Page must be flushed from the cache and mapped encrypted again.
+>  	 * Otherwise the running kernel will see strange cache effects when
+> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+> index 8f180fd3cbf0..e6f1ed3f6ce3 100644
+> --- a/arch/x86/include/asm/sev.h
+> +++ b/arch/x86/include/asm/sev.h
+> @@ -187,6 +187,27 @@ struct svsm_ca {
+>  #define SVSM_ERR_INVALID_PARAMETER		0x80000005
+>  #define SVSM_ERR_INVALID_REQUEST		0x80000006
+>  #define SVSM_ERR_BUSY				0x80000007
+> +#define SVSM_PVALIDATE_FAIL_SIZEMISMATCH	0x80001006
+> +
+> +/*
+> + * The SVSM PVALIDATE related structures
+> + */
+> +struct svsm_pvalidate_entry {
+> +	u64 page_size		: 2,
+> +	    action		: 1,
+> +	    ignore_cf		: 1,
+> +	    rsvd		: 8,
+> +	    pfn			: 52;
+> +};
+> +
+> +struct svsm_pvalidate_call {
+> +	u16 entries;
+> +	u16 next;
+> +
+> +	u8 rsvd1[4];
+> +
+> +	struct svsm_pvalidate_entry entry[];
+> +};
+>  
+>  /*
+>   * SVSM protocol structure
+> @@ -207,6 +228,7 @@ struct svsm_call {
+>  
+>  #define SVSM_CORE_CALL(x)		((0ULL << 32) | (x))
+>  #define SVSM_CORE_REMAP_CA		0
+> +#define SVSM_CORE_PVALIDATE		1
+>  
+>  #ifdef CONFIG_AMD_MEM_ENCRYPT
+>  extern void __sev_es_ist_enter(struct pt_regs *regs);
+> diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+> index 6f57eb804e70..b415b10a0823 100644
+> --- a/arch/x86/kernel/sev-shared.c
+> +++ b/arch/x86/kernel/sev-shared.c
+> @@ -40,6 +40,9 @@ static u8 vmpl __ro_after_init;
+>  static struct svsm_ca *boot_svsm_caa __ro_after_init;
+>  static u64 boot_svsm_caa_pa __ro_after_init;
+>  
+> +static struct svsm_ca *__svsm_get_caa(void);
+> +static u64 __svsm_get_caa_pa(void);
+
+Are we being lazy again? :)
+
+So I know the below is bigger than two silly forward declarations but
+forward declarations are a sign that our source code placement is
+lacking and if we keep piling on that, it'll become a mess soon. And
+guess who gets to mop up after y'all who don't have time to do it
+because you have to enable features? :-\
+
+So in order to avoid that, we'll re-position it to where we think it'll
+be better going forward.
+
+Btw, this is the second time, at least, where I think that that
+sev-shared.c thing is starting to become more of a nuisance than a code
+savings thing but I don't have a better idea for it yet.
+
+So let's extend that ifdeffery at the top which provides things which
+are called the same but defined differently depending on whether we're
+in the decompressor or kernel proper.
+
+IOW, something like this, ontop:
+
+diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+index 32a1e98ffaa9..9d89fc67574b 100644
+--- a/arch/x86/boot/compressed/sev.c
++++ b/arch/x86/boot/compressed/sev.c
+@@ -130,16 +130,6 @@ static bool fault_in_kernel_space(unsigned long address)
+ /* Include code for early handlers */
+ #include "../../kernel/sev-shared.c"
+ 
+-static struct svsm_ca *__svsm_get_caa(void)
+-{
+-	return boot_svsm_caa;
+-}
+-
+-static u64 __svsm_get_caa_pa(void)
+-{
+-	return boot_svsm_caa_pa;
+-}
+-
+ static int svsm_protocol(struct svsm_call *call)
+ {
+ 	struct ghcb *ghcb;
+diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+index b415b10a0823..b4f1fd780925 100644
+--- a/arch/x86/kernel/sev-shared.c
++++ b/arch/x86/kernel/sev-shared.c
+@@ -11,20 +11,6 @@
+ 
+ #include <asm/setup_data.h>
+ 
+-#ifndef __BOOT_COMPRESSED
+-#define error(v)			pr_err(v)
+-#define has_cpuflag(f)			boot_cpu_has(f)
+-#define sev_printk(fmt, ...)		printk(fmt, ##__VA_ARGS__)
+-#define sev_printk_rtl(fmt, ...)	printk_ratelimited(fmt, ##__VA_ARGS__)
+-#else
+-#undef WARN
+-#define WARN(condition, format...)	(!!(condition))
+-#define sev_printk(fmt, ...)
+-#define sev_printk_rtl(fmt, ...)
+-#undef vc_forward_exception
+-#define vc_forward_exception(c)		panic("SNP: Hypervisor requested exception\n")
+-#endif
+-
+ /*
+  * SVSM related information:
+  *   When running under an SVSM, the VMPL that Linux is executing at must be
+@@ -40,8 +26,47 @@ static u8 vmpl __ro_after_init;
+ static struct svsm_ca *boot_svsm_caa __ro_after_init;
+ static u64 boot_svsm_caa_pa __ro_after_init;
+ 
+-static struct svsm_ca *__svsm_get_caa(void);
+-static u64 __svsm_get_caa_pa(void);
++#ifdef __BOOT_COMPRESSED
++
++#undef WARN
++#define WARN(condition, format...)	(!!(condition))
++#define sev_printk(fmt, ...)
++#define sev_printk_rtl(fmt, ...)
++#undef vc_forward_exception
++#define vc_forward_exception(c)		panic("SNP: Hypervisor requested exception\n")
++
++static struct svsm_ca *__svsm_get_caa(void)
++{
++	return boot_svsm_caa;
++}
++
++static u64 __svsm_get_caa_pa(void)
++{
++	return boot_svsm_caa_pa;
++}
++
++#else /* __BOOT_COMPRESSED */
++
++#define error(v)			pr_err(v)
++#define has_cpuflag(f)			boot_cpu_has(f)
++#define sev_printk(fmt, ...)		printk(fmt, ##__VA_ARGS__)
++#define sev_printk_rtl(fmt, ...)	printk_ratelimited(fmt, ##__VA_ARGS__)
++
++static DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
++
++static struct svsm_ca *__svsm_get_caa(void)
++{
++	return sev_cfg.cas_initialized ? this_cpu_read(svsm_caa)
++				       : boot_svsm_caa;
++}
++
++static u64 __svsm_get_caa_pa(void)
++{
++	return sev_cfg.cas_initialized ? this_cpu_read(svsm_caa_pa)
++				       : boot_svsm_caa_pa;
++}
++
++#endif /* __BOOT_COMPRESSED */
+ 
+ /* I/O parameters for CPUID-related helpers */
+ struct cpuid_leaf {
+diff --git a/arch/x86/kernel/sev.c b/arch/x86/kernel/sev.c
+index bb6455ff45a2..db895a7a9401 100644
+--- a/arch/x86/kernel/sev.c
++++ b/arch/x86/kernel/sev.c
+@@ -138,7 +138,6 @@ static struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
+ 
+ static DEFINE_PER_CPU(struct sev_es_runtime_data*, runtime_data);
+ static DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
+-static DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
+ static DEFINE_PER_CPU(u64, svsm_caa_pa);
+ 
+ struct sev_config {
+@@ -616,18 +615,6 @@ static __always_inline void vc_forward_exception(struct es_em_ctxt *ctxt)
+ /* Include code shared with pre-decompression boot stage */
+ #include "sev-shared.c"
+ 
+-static struct svsm_ca *__svsm_get_caa(void)
+-{
+-	return sev_cfg.cas_initialized ? this_cpu_read(svsm_caa)
+-				       : boot_svsm_caa;
+-}
+-
+-static u64 __svsm_get_caa_pa(void)
+-{
+-	return sev_cfg.cas_initialized ? this_cpu_read(svsm_caa_pa)
+-				       : boot_svsm_caa_pa;
+-}
+-
+ static noinstr void __sev_put_ghcb(struct ghcb_state *state)
+ {
+ 	struct sev_es_runtime_data *data;
+
+> +
+>  /* I/O parameters for CPUID-related helpers */
+>  struct cpuid_leaf {
+>  	u32 fn;
+> @@ -102,6 +105,8 @@ static u32 cpuid_std_range_max __ro_after_init;
+>  static u32 cpuid_hyp_range_max __ro_after_init;
+>  static u32 cpuid_ext_range_max __ro_after_init;
+>  
+> +static int svsm_protocol(struct svsm_call *call);
+
+You get the idea...
+
+>  static bool __init sev_es_check_cpu_features(void)
+>  {
+>  	if (!has_cpuflag(X86_FEATURE_RDRAND)) {
+> @@ -1186,7 +1191,65 @@ static void __head setup_cpuid_table(const struct cc_blob_sev_info *cc_info)
+>  	}
+>  }
+>  
+> -static void pvalidate_pages(struct snp_psc_desc *desc)
+> +static int base_pvalidate_4k_page(unsigned long vaddr, bool validate)
+> +{
+> +	return pvalidate(vaddr, RMP_PG_SIZE_4K, validate);
+> +}
+
+There are those silly wrappers again. Kill it pls.
+
+> +
+> +static int svsm_pvalidate_4k_page(unsigned long paddr, bool validate)
+
+Will there ever be a pvalidate_2M_page?
+
+If so, then you need to redesign this to have a lower-level helper
+
+	__svsm_pvalidate_page(... ,size, );
+
+and the 4K and 2M things call it.
+
+> +{
+> +	struct svsm_pvalidate_call *pvalidate_call;
+
+Too long:
+
+	struct svsm_pvalidate_call *pvl_call;
+
+> +	struct svsm_call call = {};
+
+I guess this needs to be
+
+	struct svsm_call svsm_call = {};
+
+so that you know what kind of call it is - you have two.
+
+> +	u64 pvalidate_call_pa;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	/*
+> +	 * This can be called very early in the boot, use native functions in
+> +	 * order to avoid paravirt issues.
+> +	 */
+> +	flags = native_save_fl();
+> +	if (flags & X86_EFLAGS_IF)
+> +		native_irq_disable();
+
+Yeah, this'll change.
+
+> +	call.caa = __svsm_get_caa();
+> +
+> +	pvalidate_call = (struct svsm_pvalidate_call *)call.caa->svsm_buffer;
+
+That's almost a page worth of data, we don't zero it. How sensitive
+would this be if the SVSM sees some old data?
+
+Or we trust the SVSM and all is good?
+
+> +	pvalidate_call_pa = __svsm_get_caa_pa() + offsetof(struct svsm_ca, svsm_buffer);
+> +
+> +	pvalidate_call->entries = 1;
+> +	pvalidate_call->next    = 0;
+> +	pvalidate_call->entry[0].page_size = RMP_PG_SIZE_4K;
+> +	pvalidate_call->entry[0].action    = validate;
+> +	pvalidate_call->entry[0].ignore_cf = 0;
+> +	pvalidate_call->entry[0].pfn       = paddr >> PAGE_SHIFT;
+> +
+> +	/* Protocol 0, Call ID 1 */
+> +	call.rax = SVSM_CORE_CALL(SVSM_CORE_PVALIDATE);
+> +	call.rcx = pvalidate_call_pa;
+> +
+> +	ret = svsm_protocol(&call);
+> +
+> +	if (flags & X86_EFLAGS_IF)
+> +		native_irq_enable();
+> +
+> +	return ret;
+> +}
+> +
+> +static void pvalidate_4k_page(unsigned long vaddr, unsigned long paddr, bool validate)
+> +{
+> +	int ret;
+> +
+> +	ret = vmpl ? svsm_pvalidate_4k_page(paddr, validate)
+> +		   : base_pvalidate_4k_page(vaddr, validate);
+
+	if (vmpl)
+		ret = svsm_pvalidate_4k_page(paddr, validate);
+	else
+		ret = pvalidate(vaddr, RMP_PG_SIZE_4K, validate);
+
+No need for silly wrappers.
+
+> +
+> +	if (ret) {
+> +		WARN(1, "Failed to validate address 0x%lx ret %d", vaddr, ret);
+> +		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
+> +	}
+> +}
+> +
+> +static void base_pvalidate_pages(struct snp_psc_desc *desc)
+>  {
+>  	struct psc_entry *e;
+>  	unsigned long vaddr;
+> @@ -1220,6 +1283,120 @@ static void pvalidate_pages(struct snp_psc_desc *desc)
+>  	}
+>  }
+>  
+> +static void svsm_pvalidate_pages(struct snp_psc_desc *desc)
+> +{
+> +	struct svsm_pvalidate_call *pvalidate_call;
+
+shorten to "pvl_call" or so.
+
+> +	struct svsm_pvalidate_entry *pe;
+
+See, like this. :-P
+
+> +	unsigned int call_count, i;
+> +	struct svsm_call call = {};
+> +	u64 pvalidate_call_pa;
+> +	struct psc_entry *e;
+> +	unsigned long flags;
+> +	unsigned long vaddr;
+> +	bool action;
+> +	int ret;
+> +
+> +	/*
+> +	 * This can be called very early in the boot, use native functions in
+> +	 * order to avoid paravirt issues.
+> +	 */
+> +	flags = native_save_fl();
+> +	if (flags & X86_EFLAGS_IF)
+> +		native_irq_disable();
+> +
+> +	call.caa = __svsm_get_caa();
+> +
+> +	pvalidate_call = (struct svsm_pvalidate_call *)call.caa->svsm_buffer;
+> +	pvalidate_call_pa = __svsm_get_caa_pa() + offsetof(struct svsm_ca, svsm_buffer);
+
+As above.
+
+> +	/* Calculate how many entries the CA buffer can hold */
+> +	call_count = sizeof(call.caa->svsm_buffer);
+> +	call_count -= offsetof(struct svsm_pvalidate_call, entry);
+> +	call_count /= sizeof(pvalidate_call->entry[0]);
+> +
+> +	/* Protocol 0, Call ID 1 */
+> +	call.rax = SVSM_CORE_CALL(SVSM_CORE_PVALIDATE);
+> +	call.rcx = pvalidate_call_pa;
+> +
+> +	pvalidate_call->entries = 0;
+> +	pvalidate_call->next    = 0;
+
+Or you simply memset the whole thing and be safe.
+
+> +	for (i = 0; i <= desc->hdr.end_entry; i++) {
+> +		e = &desc->entries[i];
+> +		pe = &pvalidate_call->entry[pvalidate_call->entries];
+> +
+> +		pe->page_size = e->pagesize ? RMP_PG_SIZE_2M : RMP_PG_SIZE_4K;
+> +		pe->action    = e->operation == SNP_PAGE_STATE_PRIVATE;
+> +		pe->ignore_cf = 0;
+> +		pe->pfn       = e->gfn;
+> +
+> +		pvalidate_call->entries++;
+> +		if (pvalidate_call->entries < call_count && i != desc->hdr.end_entry)
+> +			continue;
+> +
+> +		ret = svsm_protocol(&call);
+> +		if (ret == SVSM_PVALIDATE_FAIL_SIZEMISMATCH &&
+> +		    pvalidate_call->entry[pvalidate_call->next].page_size == RMP_PG_SIZE_2M) {
+> +			u64 pfn, pfn_end;
+> +
+> +			/*
+> +			 * The "next" field is the index of the failed entry. Calculate the
+> +			 * index of the entry after the failed entry before the fields are
+> +			 * cleared so that processing can continue on from that point (take
+> +			 * into account the for loop adding 1 to the entry).
+> +			 */
+> +			i -= pvalidate_call->entries - pvalidate_call->next;
+> +			i += 1;
+> +
+> +			action = pvalidate_call->entry[pvalidate_call->next].action;
+> +			pfn = pvalidate_call->entry[pvalidate_call->next].pfn;
+> +			pfn_end = pfn + 511;
+> +
+> +			pvalidate_call->entries = 0;
+> +			pvalidate_call->next    = 0;
+
+You did that above before the loop. Looks weird doing it again.
+
+> +			for (; pfn <= pfn_end; pfn++) {
+> +				pe = &pvalidate_call->entry[pvalidate_call->entries];
+> +
+> +				pe->page_size = RMP_PG_SIZE_4K;
+> +				pe->action    = action;
+> +				pe->ignore_cf = 0;
+> +				pe->pfn       = pfn;
+> +
+> +				pvalidate_call->entries++;
+> +				if (pvalidate_call->entries < call_count && pfn != pfn_end)
+> +					continue;
+> +
+> +				ret = svsm_protocol(&call);
+> +				if (ret != SVSM_SUCCESS)
+> +					break;
+> +
+> +				pvalidate_call->entries = 0;
+> +				pvalidate_call->next    = 0;
+> +			}
+> +		}
+
+I have no clue what's going on in this function. Sounds like it needs
+splitting. And commenting too. Like the loop body should be something
+like svsm_pvalidate_entry() or so.
+
+And then that second loop wants to be a separate function too as it is
+calling the SVSM protocol again.
+
+> +
+> +		if (ret != SVSM_SUCCESS) {
+> +			pe = &pvalidate_call->entry[pvalidate_call->next];
+> +			vaddr = (unsigned long)pfn_to_kaddr(pe->pfn);
+> +
+> +			WARN(1, "Failed to validate address %lx ret=%#x (%d)", vaddr, ret, ret);
+> +			sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_PVALIDATE);
+> +		}
+> +
+> +		pvalidate_call->entries = 0;
+> +		pvalidate_call->next    = 0;
+
+And here it is again. If anything, splitting and comments are needed
+here at least.
+
+..
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
