@@ -1,106 +1,99 @@
-Return-Path: <linux-kernel+bounces-186249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E842D8CC1AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:58:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6266B8CC259
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F9EB1F21782
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:58:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948401C229A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F85F8249A;
-	Wed, 22 May 2024 12:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AD2140E2F;
+	Wed, 22 May 2024 13:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UWj6gAJt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJ696Q5J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF60513F42C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAD913E3EB;
+	Wed, 22 May 2024 13:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716382647; cv=none; b=X0YLadc5H+qIZw+vCHs6tBm6UH6OYoS+kIpEmC1+g3Ez8XAedwn+F3VJ78CzW6gI0US9TWFf/TdiC0q30G0P6QwJhyV4RiadfNnMuO6fX+yYsTo6wh1s1FqqG3Fz2Q7NoY7RiYYNdPfXOkvPMCevdkDtiS+x8H86xKKB17nWvZc=
+	t=1716385370; cv=none; b=dSxiqKioaVzCVTEYp7ffVaRChk4qMeWaz7UAYnXfqcPuObF+DJaGNFbS47y8aKG8OY0bFG0Lvg7Zz12ld1eR3XtjJoc6xJO2fJBlBxG4oxGtdeaziV5nKDNFZJMAIIbwCTDOtMkbg3vCGoLoysxG0pcuapcOqGuJ1IueLokRrvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716382647; c=relaxed/simple;
-	bh=7gZc1lemhEx1oyQ2ybmtLVTSnwoyms1w8WxZ4R/dFDA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=io61QZYMUE2/ZAYjsDlmrnj8+ntK+nzFCA8Yz22kcWNIGcLC3NyE79C1Fu3rPtD7/uhFfx2zilDvqK2La++9OG9JV3eyCQsvtHDG3m8km22O+Z500Yd7BC7EjCvFTu1agkfz/DKTMzcOfta9jTQmke1VTehw4iyBL6ZD0noCj+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UWj6gAJt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716382643;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qt4DlmVVsqb/QNq76vNlwwGXNiph41eusgcJK0KNhok=;
-	b=UWj6gAJtHKV8q48z16ksk3WNFCaCwI0THTIbg6wAMhB+GwJf/bXCtDqVSiD3uAdxShmUC+
-	adeDhMp8AbxY0MESE9pgx6IguK8UVLyJkW6kNdUX/BiWuvxhGVBQVY6fPAPVfjMtgV/XWd
-	AfciP7/xlcb2paJod+PhOyJpmIRAwq8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-537-66OPK548MCiiS05cIhsAWg-1; Wed, 22 May 2024 08:57:20 -0400
-X-MC-Unique: 66OPK548MCiiS05cIhsAWg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 905F7800169;
-	Wed, 22 May 2024 12:57:19 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.39.195.53])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 6CCEC40C6CB7;
-	Wed, 22 May 2024 12:57:18 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vincent Donnefort <vdonnefort@google.com>,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH v2 3/3] mm/rmap: sanity check that zeropages are not passed to RMAP
-Date: Wed, 22 May 2024 14:57:13 +0200
-Message-ID: <20240522125713.775114-4-david@redhat.com>
-In-Reply-To: <20240522125713.775114-1-david@redhat.com>
-References: <20240522125713.775114-1-david@redhat.com>
+	s=arc-20240116; t=1716385370; c=relaxed/simple;
+	bh=T28A7QNWQkhXDshEFyD2WCyzjLns6B7vVcmqDqKuwrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sB1dXmXuTcSB8IcizeD2rJ+kakpUFr1bUf9r/75lDa2akZu8OJ8rEAF/d2PuTMQGQIL9xthPAlbgnbLYjoEVImWxj3ZbJ01AU36lmcBtY84aWDDHHaOsAYLECgrJ3GRsd1FLWnWtsXtyLO4mEO6o7H6m/I5WPhqXQjJMCI3Md2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJ696Q5J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A54EFC2BD11;
+	Wed, 22 May 2024 13:42:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716385370;
+	bh=T28A7QNWQkhXDshEFyD2WCyzjLns6B7vVcmqDqKuwrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qJ696Q5JCZcBy1c+Hh1dk6OSrEb1z8kbbl0f12m4/wTOYaSHn8Y8416n1wYdFVwY1
+	 fhLq7ycjinBoMSq+kG1jnULQlM+bFrkR193SAs04+1VPL4x1KIvYrw7nzqxyU8FB6R
+	 RWgdyG9ivsLpIQV7CrwdeNH8B//BG7EAwpyHSqKaTu18pLxsZcddOdjfyVnNKzb8hk
+	 MxadlOtdX4j/6MKs5K6lOQ5K2FcxBGz9XeG2xdItTnigjfoi0XMbrvVt5xUGJiWP3B
+	 mdXIOPhhE8/u1f/WSBzHNI5TgNx1b5Lu403KULNZZ9PCJf8xiuwBJhSkx7yDzXJ4zH
+	 m98ogOG27rpDA==
+Date: Wed, 22 May 2024 08:57:31 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: =?iso-8859-1?Q?Asbj=F8rn_Sloth_T=F8nnesen?= <ast@fiberby.net>
+Cc: Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>, manishc@marvell.com,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.10 5/9] net: qede: sanitize 'rc' in
+ qede_add_tc_flower_fltr()
+Message-ID: <Zk3ruzqbpMAzZr9q@sashalap>
+References: <20240507231406.395123-1-sashal@kernel.org>
+ <20240507231406.395123-5-sashal@kernel.org>
+ <ZkHMvNFzwPfMeJL3@duo.ucw.cz>
+ <ea7ae0c4-a582-42ce-9bc9-5f3df1915ca0@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+In-Reply-To: <ea7ae0c4-a582-42ce-9bc9-5f3df1915ca0@fiberby.net>
 
-Using insert_page() we might have previously ended up passing the zeropage
-into rmap code. Make sure that won't happen again.
+On Mon, May 13, 2024 at 09:46:02AM +0000, Asbjørn Sloth Tønnesen wrote:
+>Hi Pavel and Sasha,
+>
+>On 5/13/24 8:18 AM, Pavel Machek wrote:
+>>>Explicitly set 'rc' (return code), before jumping to the
+>>>unlock and return path.
+>>>
+>>>By not having any code depend on that 'rc' remains at
+>>>it's initial value of -EINVAL, then we can re-use 'rc' for
+>>>the return code of function calls in subsequent patches.
+>>>
+>>>Only compile tested.
+>>
+>>Only compile tested, and is a preparation for something we won't do in
+>>stable. Does not fix a bug, please drop.
+>
+>Please see the original thread about this series[1], this patch is a requirement for
+>two of the next patches, which does fix a few bugs with overruled error codes returned
+>to user space.
+>
+>I was originally going to ignore these AUTOSEL mails, since the whole series was already
+>added to the queued more than 24 hours earlier[2]. In the queue Sasha has also added "Stable-dep-of:'.
+>
+>So the weird thing is that AUTOSEL selected this patch, given that it was already in the queue.
 
-Note that we won't check the huge zeropage for now, which might still
-end up in RMAP code.
+Two different processes on my end, sorry for the noise!
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- include/linux/rmap.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-index 7229b9baf20d..5cb0d419a1d7 100644
---- a/include/linux/rmap.h
-+++ b/include/linux/rmap.h
-@@ -200,6 +200,9 @@ static inline void __folio_rmap_sanity_checks(struct folio *folio,
- 	/* hugetlb folios are handled separately. */
- 	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
- 
-+	/* When (un)mapping zeropages, we should never touch ref+mapcount. */
-+	VM_WARN_ON_FOLIO(is_zero_folio(folio), folio);
-+
- 	/*
- 	 * TODO: we get driver-allocated folios that have nothing to do with
- 	 * the rmap using vm_insert_page(); therefore, we cannot assume that
 -- 
-2.45.0
-
+Thanks,
+Sasha
 
