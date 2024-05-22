@@ -1,190 +1,143 @@
-Return-Path: <linux-kernel+bounces-186677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AAB8CC769
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:42:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5842C8CC76A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF7991C21722
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CDA4282176
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3B0146013;
-	Wed, 22 May 2024 19:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C960C13D601;
+	Wed, 22 May 2024 19:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CZHSzy6r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LaOcVR0H"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222F82D7B8;
-	Wed, 22 May 2024 19:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD13155C3E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 19:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716406934; cv=none; b=m2ncQyOIAXjcqS4ZEE1/wc+yhIj8Ko/Jrdm19xmBKHifjlJFPwB+LWXFftbrFCZhhqDsYRlozqTQc16U0WXFvv/Mw00uMpppdaBIoNn27bNPO++fdhw1K0+3ParQqnCgm3fXb6lDt4xGjkJ9Hj/52CyjB0t5Q4oHfkUxwsx7QNU=
+	t=1716406982; cv=none; b=my0NXOVD25tfAzP4hVONSuvVAurj3SFn+OqX0UYcGamO7q4Pjv8JcBSzXOQAODA25325HZRgSSwb0EmTbaf6vQ3SPlYEBXh6cjwkc1q84SQ4VvhB1D6PDpzMqZOVO1rCP1lOT1+Y78LrxNPIIxr070J+cHgRlGPCGnhn5sPLK4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716406934; c=relaxed/simple;
-	bh=apsvq8D/U5++BNOQgSfpk+bmHPQ8hj7h6aQa6GB6wio=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEQfyOF8iawhl1qbtkoj5xUlSq4LN7EzxzuBwk8C72xizJT8kyzOZNfCpfq7gDcfxALgCJJUxLqznhLiGCibz/G2rOHg45qYj5o6fLxtaYVQU/OIO1AaecQKR/wH4WKus5rfsZX5zi69Ac7Kh/4T138Bf1oGqXBYVKK867jK9/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CZHSzy6r; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716406932; x=1747942932;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=apsvq8D/U5++BNOQgSfpk+bmHPQ8hj7h6aQa6GB6wio=;
-  b=CZHSzy6rzvnjvagrmQRH2KLLxtd0qzC5lww37DrXxZIaA4pLvJOwhlNJ
-   OHebiJRt3g2mPKcBPIaek+aFCFFhox0JuVn9f14BLnxycxZG1CTzAwArh
-   zIoGbTNRjs3Js2AC6yc4Z0C3g46jj+fvdo3mam84rdrWp1j15aYKW8i7w
-   BCeFph4r4JN035lcfy3MS0bQvfPI+G98X+hPxL13M+R2/eWgs2TRLzWs/
-   ja4TVh71/MdsC1eC+YP/3ypiwoiDaqLfzxA9Y0n9ODoTJW1we4weOUdi6
-   Ii3OKxAGQzxulI60E6PhRyBGLb/WyAvJQJ4aSqAEroucc/iMI/nKiCIWY
-   A==;
-X-CSE-ConnectionGUID: n+8sASfqQ+y3ZFq0tEhHaA==
-X-CSE-MsgGUID: R0HV3gDvSAu4UeCjCQOTWw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="23256916"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="23256916"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 12:42:11 -0700
-X-CSE-ConnectionGUID: BxF/64opR/WvluM5jcjbig==
-X-CSE-MsgGUID: H5drMtJ3R+aAH/ZndtsmFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="56643099"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.237]) ([10.125.109.237])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 12:42:10 -0700
-Message-ID: <dd0f3183-e10b-4a3d-98b6-c6963dc86512@intel.com>
-Date: Wed, 22 May 2024 12:42:09 -0700
+	s=arc-20240116; t=1716406982; c=relaxed/simple;
+	bh=Dw5j8VGHS5Q3mQPMZlca9i/sZ/qFXvLWtVJzt6swrcs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jqGDR3nQj85r6VWhZzEEfPbLMrrIlrduhdx/FkpD5PHt96rala+4uuM9NVvIFoao563ldi0dGfpAPlVekV5d70sojMmUExVG/TRrqpz9yMHYVJcelkcgHSR5o30rHJhEY8gyQTqi/g12nvNcRAX02MtzprNEn7k6ouipIY9Eewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LaOcVR0H; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f4dcc3eeb3so1338911b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716406980; x=1717011780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+l1jGRIHGLSOCzg1Hqtmq9RANsnqiXOnvKtLbcZF6nw=;
+        b=LaOcVR0HCwBOwmZ51bB7aiUfXBl01yHw2HXvY34qst0D5WxSA+RKipTqWtP+ssTY81
+         Wwx0DCwTsOeebU6t9W0mqWgO+O+hvgpvDTsol6kTWCAHWpB+b7I8BNExYC8Wy5wMPR0E
+         r83SPX9f2dsGzLURwGZjfX9+nmMqRA4yrBYUHiQnw9zSatlOFImPAHm66ky8uoJGlsBB
+         Kh8VPl6QrNtQ5QVuc9ME80JFIXASd9MAaI2aNyYGAYFO6QcLsoMohf4DeuG7M0Y90KOw
+         vP0DHb/QNESs+plxP7ZV7MDwc7lptkVEopjPSFMp8IUzi0J1L9hMGd24HzjlTljh6V0m
+         RebA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716406980; x=1717011780;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+l1jGRIHGLSOCzg1Hqtmq9RANsnqiXOnvKtLbcZF6nw=;
+        b=YK77M4OG7aVQ8PUYebdWaIrku1yoAs/z4I5xz6+gVM9JDOeVzrJzQkfgfsbkY9HAB6
+         qDmxUgnC9xaFzMyu0TwFEmTMBL4ReNqZXdEmgQMYbP+tQ/mWboygg/msCL4X7Ya2M7AD
+         LUkQZKJfv9vUUWEHwnMEvJyGebCBwKQ265rmtaUN1Hrore0f4VZaeIDVricm0V1/MR9F
+         Oh4zJ9pL7sJ6y7VrPXexY9FwWf4msgzpIO+j/jAmbJURKe7X56XuL1/SMw93sn0tBQoO
+         QiIL6q59vWbQcgZhrCoGJ2YrWxd0OGcWN3WyDwl+jCyMs7AOAs1nB89A+gDBf0RdQOuI
+         p2+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXwTuLS59GGNOQ2Vdn/jRuO3dFYH1m+BnF755GI35jnU42mfZxcNoiAIgkuenH8RO7KtTwzhoo/sQsK0ifcY6754/B+bsAD24b4Fqfh
+X-Gm-Message-State: AOJu0Yyb8URCNX0GjjBMLQIJ4B13Eo8shmhg0zPGGN6XBU/bj3trVd2u
+	6cchl4YltlNizpriOOV5+KHdaV9eUkmCmxXZqn53cUdoXJQmZ5Ds
+X-Google-Smtp-Source: AGHT+IGahBLCjjQG1T2S2C1fP6BqgfIWhVb9z2cxp36QzXbpzt8+4YBsoWGn0Y1xbJP7uCm5/8JW3g==
+X-Received: by 2002:a05:6a20:3217:b0:1b1:d2a5:c7b1 with SMTP id adf61e73a8af0-1b1f8b44af2mr2752771637.49.1716406980129;
+        Wed, 22 May 2024 12:43:00 -0700 (PDT)
+Received: from localhost.localdomain ([27.7.152.139])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-656f38b855esm10648576a12.8.2024.05.22.12.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 12:42:59 -0700 (PDT)
+From: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+To: akpm@linux-foundation.org
+Cc: mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen.n.rao@linux.ibm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	julia.lawall@inria.fr,
+	javier.carrasco.cruz@gmail.com,
+	Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+Subject: [PATCH next] arch: powerpc: platforms: Remove unnecessary call to of_node_get
+Date: Thu, 23 May 2024 01:12:50 +0530
+Message-Id: <20240522194250.1165568-1-pvkumar5749404@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] cxl/pci: Define a common function get_cxl_dev()
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>
-References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
- <20240522150839.27578-5-Smita.KoralahalliChannabasappa@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240522150839.27578-5-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+`dev->of_node` has a pointer to device node, of_node_get call seems
+unnecessary.
+It will automate the cleanup process allowing to remove the of_node_put
+call.
 
+Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+---
+ arch/powerpc/platforms/cell/iommu.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-On 5/22/24 8:08 AM, Smita Koralahalli wrote:
-> Refactor computation of cxlds to a common function get_cxl_dev() and reuse
-> the function in both cxl_handle_cper_event() and cxl_handle_prot_err().
+diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
+index 4cd9c0de22c2..5b794ce08689 100644
+--- a/arch/powerpc/platforms/cell/iommu.c
++++ b/arch/powerpc/platforms/cell/iommu.c
+@@ -780,14 +780,13 @@ static int __init cell_iommu_init_disabled(void)
+ static u64 cell_iommu_get_fixed_address(struct device *dev)
+ {
+ 	u64 cpu_addr, size, best_size, dev_addr = OF_BAD_ADDR;
+-	struct device_node *np;
++	struct device_node *np = dev->of_node;
+ 	const u32 *ranges = NULL;
+ 	int i, len, best, naddr, nsize, pna, range_size;
+ 
+ 	/* We can be called for platform devices that have no of_node */
+-	np = of_node_get(dev->of_node);
+ 	if (!np)
+-		goto out;
++		return dev_addr;
+ 
+ 	while (1) {
+ 		naddr = of_n_addr_cells(np);
+@@ -805,7 +804,7 @@ static u64 cell_iommu_get_fixed_address(struct device *dev)
+ 
+ 	if (!ranges) {
+ 		dev_dbg(dev, "iommu: no dma-ranges found\n");
+-		goto out;
++		return dev_addr;
+ 	}
+ 
+ 	len /= sizeof(u32);
+@@ -833,8 +832,6 @@ static u64 cell_iommu_get_fixed_address(struct device *dev)
+ 	} else
+ 		dev_dbg(dev, "iommu: no suitable range found!\n");
+ 
+-out:
+-	of_node_put(np);
+ 
+ 	return dev_addr;
+ }
+-- 
+2.34.1
 
-I think just introduce the function where you open coded it instead of adding code and then deleting them in the same series.
-> 
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> ---
->  drivers/cxl/pci.c | 52 +++++++++++++++++++++++------------------------
->  1 file changed, 26 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> index 3e3c36983686..26e65e5b68cb 100644
-> --- a/drivers/cxl/pci.c
-> +++ b/drivers/cxl/pci.c
-> @@ -974,32 +974,43 @@ static struct pci_driver cxl_pci_driver = {
->  	},
->  };
->  
-> +static struct cxl_dev_state *get_cxl_dev(u16 segment, u8 bus, u8 device,
-> +					 u8 function)
-
-get_cxlds() or get_cxl_device_state() would be better. 
-
-DJ
-
-> +{
-> +	struct pci_dev *pdev __free(pci_dev_put) = NULL;
-> +	struct cxl_dev_state *cxlds;
-> +	unsigned int devfn;
-> +
-> +	devfn = PCI_DEVFN(device, function);
-> +	pdev = pci_get_domain_bus_and_slot(segment, bus, devfn);
-> +
-> +	if (!pdev)
-> +		return NULL;
-> +
-> +	guard(device)(&pdev->dev);
-> +	if (pdev->driver != &cxl_pci_driver)
-> +		return NULL;
-> +
-> +	cxlds = pci_get_drvdata(pdev);
-> +
-> +	return cxlds;
-> +}
-> +
->  #define CXL_EVENT_HDR_FLAGS_REC_SEVERITY GENMASK(1, 0)
->  static void cxl_handle_cper_event(enum cxl_event_type ev_type,
->  				  struct cxl_cper_event_rec *rec)
->  {
->  	struct cper_cxl_event_devid *device_id = &rec->hdr.device_id;
-> -	struct pci_dev *pdev __free(pci_dev_put) = NULL;
->  	enum cxl_event_log_type log_type;
->  	struct cxl_dev_state *cxlds;
-> -	unsigned int devfn;
->  	u32 hdr_flags;
->  
->  	pr_debug("CPER event %d for device %u:%u:%u.%u\n", ev_type,
->  		 device_id->segment_num, device_id->bus_num,
->  		 device_id->device_num, device_id->func_num);
->  
-> -	devfn = PCI_DEVFN(device_id->device_num, device_id->func_num);
-> -	pdev = pci_get_domain_bus_and_slot(device_id->segment_num,
-> -					   device_id->bus_num, devfn);
-> -	if (!pdev)
-> -		return;
-> -
-> -	guard(device)(&pdev->dev);
-> -	if (pdev->driver != &cxl_pci_driver)
-> -		return;
-> -
-> -	cxlds = pci_get_drvdata(pdev);
-> +	cxlds = get_cxl_dev(device_id->segment_num, device_id->bus_num,
-> +			    device_id->device_num, device_id->func_num);
->  	if (!cxlds)
->  		return;
->  
-> @@ -1013,21 +1024,10 @@ static void cxl_handle_cper_event(enum cxl_event_type ev_type,
->  
->  static void cxl_handle_prot_err(struct cxl_cper_prot_err *p_err)
->  {
-> -	struct pci_dev *pdev __free(pci_dev_put) = NULL;
->  	struct cxl_dev_state *cxlds;
-> -	unsigned int devfn;
->  
-> -	devfn = PCI_DEVFN(p_err->device, p_err->function);
-> -	pdev = pci_get_domain_bus_and_slot(p_err->segment,
-> -					   p_err->bus, devfn);
-> -	if (!pdev)
-> -		return;
-> -
-> -	guard(device)(&pdev->dev);
-> -	if (pdev->driver != &cxl_pci_driver)
-> -		return;
-> -
-> -	cxlds = pci_get_drvdata(pdev);
-> +	cxlds = get_cxl_dev(p_err->segment, p_err->bus,
-> +			    p_err->device, p_err->function);
->  	if (!cxlds)
->  		return;
->  
 
