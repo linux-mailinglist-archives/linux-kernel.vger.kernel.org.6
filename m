@@ -1,157 +1,172 @@
-Return-Path: <linux-kernel+bounces-186500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101638CC501
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:41:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADC18CC503
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA3652815DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:41:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2691A1F2337B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850751411FE;
-	Wed, 22 May 2024 16:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A00214198A;
+	Wed, 22 May 2024 16:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDtrEhS8"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw+7RvXa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C346AD7;
-	Wed, 22 May 2024 16:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A1D6AD7;
+	Wed, 22 May 2024 16:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716396096; cv=none; b=A6K3QGGLvjHJxiPxFKdOOmz1HWcMSKDz0dTKgLUfzhPhVZEWWcYytN/QUeMKUe5C98FXgTX9Vvr3XNnKAKeg6EV57x62yFsVS8gtayhawL3PeNxievCPCT8F4uKs9Wi+m20OfxURW8E1QgNftkOZpyNdv/YkIbjcesrmgiqjXuQ=
+	t=1716396167; cv=none; b=r0W5E9qrs9gxTUWMjf3SkxuUvR4SXBNKAdnhG11H5R5Tjtj5xolZt8eUMRA5HcTRopQsyYmkY4Tfjp8Yvn1gJz0KIpv3dutU75vpKjTGTGacezskBxAc3kvvnQontI1ReoX4oZ10eXiLn2MdjbeRQxMM/E82GhjVdGn3nyiol9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716396096; c=relaxed/simple;
-	bh=3HJZVeDMIv4Kz56r9LNuwnySLYRtafeI1iZp6necHeU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tR7YwyLqFhRADKLygo2Bxkv2zCQTL35jqww+2THDZuIDEXEGA5PumARexXbCvWpIvkj+8PA0AGTBhkC7C2hFa7JGtuCmyfHYKcEtLquVHAr27lbR4z+epVCYQRYq73n8o84jJYIbnvu7fTu6fD6If4ULhiEr0orC0ELSoKJpIJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDtrEhS8; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-56e6affdd21so3743521a12.3;
-        Wed, 22 May 2024 09:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716396093; x=1717000893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D0D2E2cfbbxVHUzTYoIqfwhIyGan3otmR2xS4JLclOU=;
-        b=MDtrEhS86Htnr2eGqsxzx70c/1+683CcrtrvB4ybTr58981c/9kp//jC8BVMG4UgkL
-         rOedjW4x3saqW1tofQ56/O+s/wou9n5bwaLl71KuFrYste9HsEMKDxpT+YKeA3thAvGG
-         PXbG8dxibhmaSIz7WUYRhrvi8cEolvp17JxoBdMqsHWIK5KnLqeHqIv5USoFwbQC8CKM
-         sL5Q1hj0S1Qobb+c6f8tl9DIPEGrxpe8ToOFkREP7cwdKr0D63kY7Y+n6f9Yck47tkO7
-         MhN0ka0kgFcpVsTbm99f60cCZNyXyGfqxNNsupfiTk3oot3dZqHbevewzHo6Pkfe95hl
-         iMKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716396093; x=1717000893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D0D2E2cfbbxVHUzTYoIqfwhIyGan3otmR2xS4JLclOU=;
-        b=IoMj3lqIazfAcqYr/WxxAc3KAvQ2GB2lvl/B72CuYjnaA13A4SqkF/9s5cY+GXakip
-         HjQDqkdWilmCdHjOTHckcWwm+gKNYQSKO1Dd4h+/jJJtw++H3TKHvlm9f4O7pFjOIRyT
-         OLIs3V2xBhvHzIW+H4oXCcmpxCs2+MLogCph1b3WM9NFGCUGZEFW0TqyL6C+bQCfWUlz
-         CX/54FV85gfjiAI9UoHrnq8IkMRMoaWL/6pbs9tVAPFLjf/Onvf6dE+kxcnGBEWgKDN8
-         0XV+V8tHk/kNTuXW2FejSDcfa6ygIH5MXVfkmOzFH23zM6h6GT/gco0BJkWjJle7GL0g
-         oiLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtck4To8hvOL7cq53mioJUHuZIoIUKTPKv7KswmMeU2F9WEXlwsYZoVs13vxBVD5GExSdDxALQQbHit2WawAG2IrjY9QABc22VKh538MNfKgrgi8FbmlHS4OP7y1ueN7mWm0dQckS2CA==
-X-Gm-Message-State: AOJu0YzJgI3P7IJnI65iJOp8MFf+LqpN+FhW7gKNiOyWiYxwOsYqXeyR
-	u9HUA7cgu4aieNV4/n4P6wrEHlZwNCvNIRZ2//GxHh3wQTZfLRPIw6ewho+aIKlyFPfn9LkFaxB
-	t87TfmksYWzFs53TB077Hi4edbsc=
-X-Google-Smtp-Source: AGHT+IFFX3MYqZxTykrBDqEhWWplDnP3uOhy/1gv12cOKWc1GtiHAJtX3Yuzanuue7f8uxVzBuYnBeq7lKYou4B2Xrc=
-X-Received: by 2002:a50:9b42:0:b0:570:5bcc:f749 with SMTP id
- 4fb4d7f45d1cf-57832c326cbmr1934151a12.29.1716396093397; Wed, 22 May 2024
- 09:41:33 -0700 (PDT)
+	s=arc-20240116; t=1716396167; c=relaxed/simple;
+	bh=0yTpr4XDAR+wPp22gH1CKiRI5rw+V152ACV8HzNj8bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tKn5R/HYn38Q5RfHRzsKrKQH9XPa0l2VEf2tH11wNidPndEAJ9HXjFEahKT+aT7uQONgxGmNdScYn/WjrvlIQ7Xa2XApqrzzU3R1eOjrs/bXYqNLGU4ECRepjbaHbNcECUo79A6drrtyqoDiO7AUpDCqudi9lJuol9CUimYQg3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jw+7RvXa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B214C2BBFC;
+	Wed, 22 May 2024 16:42:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716396167;
+	bh=0yTpr4XDAR+wPp22gH1CKiRI5rw+V152ACV8HzNj8bs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jw+7RvXae583rBN8jVMBx/fkbAVVn6VuInBNSh5++U1yqwYNKIL3VqIOO2jjFKvFE
+	 IegEAvgXh0MYQLSwauE24hPSHO2HIY8zwHU6GNCIClfWAwVMUN9c+5XTn80tgI0zqm
+	 C5Pxe2Lh69z3DkBZLNa1OyMIowSuLrvUtqrpbGXzsvdASRmyZULHvJQu+Bir8GUwq7
+	 S55/PMk1yRJ/ale27JCD3TPIfKeKjIDdnxk/rYx5Vd65nZeevLKCCjz6X4CvNz0WPg
+	 m3sISpN5rAr1Q/oQJls7LiYZVxJ/JTWD5AmUqyNWu5SbMLkkjHLCn9TLMiIm2TnBAR
+	 22Nc52RgQ7s6A==
+Message-ID: <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
+Date: Wed, 22 May 2024 18:42:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522153835.22712-1-kanakshilledar111@protonmail.com> <20240522-yoga-blurt-dc5e40a0ae3a@spud>
-In-Reply-To: <20240522-yoga-blurt-dc5e40a0ae3a@spud>
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-Date: Wed, 22 May 2024 22:11:20 +0530
-Message-ID: <CAGLn_=vfnQrNh63jWtUCojONAYqX3dm6qnXgA--Zi1KQ0P0o-A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] dt-bindings: interrupt-controller: riscv,cpu-intc
-To: Conor Dooley <conor@kernel.org>
-Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Samuel Holland <samuel.holland@sifive.com>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
+ Mighty <bavishimithil@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240522075245.388-1-bavishimithil@gmail.com>
+ <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
+ <4f722e53-011f-4176-b6af-080522165007@kernel.org>
+ <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
+ <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org>
+ <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Conor,
+On 22/05/2024 18:01, Péter Ujfalusi wrote:
+> 
+> 
+> On 22/05/2024 18:22, Krzysztof Kozlowski wrote:
+>> On 22/05/2024 16:43, Péter Ujfalusi wrote:
+>>>>>
+>>>>>> +      compatible = "ti,omap4-mcpdm";
+>>>>>> +      reg = <0x40132000 0x7f>, /* MPU private access */
+>>>>>> +            <0x49032000 0x7f>; /* L3 Interconnect */
+>>>>>> +      interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>> +      interrupt-parent = <&gic>;
+>>>>>> +      ti,hwmods = "mcpdm";
+>>>>>> +      clocks = <&twl6040>;
+>>>>>> +      clock-names = "pdmclk";
+>>>>>
+>>>>> The clocks cannot be added at the time when the node is defined, it is
+>>>>> board specific. This way you imply that it is OK to have it in main dtsi
+>>>>> file. It is not.
+>>>>
+>>>> Wait, what? That's example and pretty standard. Example should be
+>>>> complete. This is not an exceptional binding.
+>>>
+>>> The fclk for the McPDM is coming from external source, and the McPDM is
+>>> designed in pair with twl6040/6041, there were plan for other codecs to
+>>> support the McPDM protocol and in those cases the clock would come from
+>>> the connected codec.
+>>>
+>>> The example (as the original binding was bit rot) is missing reg-names,
+>>> dmas and dma-names to be complete.
+>>
+>> None of these properties are allowed by the binding and during these
+>> five/six revisions of the patchset no one raised missing properties.
+> 
+> I just by accident spotted this patch, I was not in Cc.
+> 
+> The reg-names must be set to 'mpu' and 'dma'
+> The dma-names should be 'up_link' and 'dn_link'
+> 
+> These names go back for a long time (~2012) and have been mandatory ever
+> since.
+> 
+> Yes, the binding document was neglected pretty badly but when converting
+> to yaml it has to be correct since that will have ripple effect on
+> existing dts/dtsi files.
 
-On Wed, May 22, 2024 at 9:34=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Wed, May 22, 2024 at 09:08:34PM +0530, Kanak Shilledar wrote:
-> > This series of patches converts the RISC-V CPU interrupt controller to
-> > the newer dt-schema binding.
-> >
-> > Patch 1:
-> > This patch is currently at v3 as it has been previously rolled out.
-> > Contains the bindings for the interrupt controller.
-> >
-> > Patch 2:
-> > This patch is currently at v2.
-> > Contains the reference to the above interrupt controller. Thus, making
-> > all the RISC-V interrupt controller bindings in a centralized place.o
->
-> Don't do this, it breaks tooling:
->
->         b4 shazam 20240522153835.22712-2-kanakshilledar111@protonmail.com
->         Grabbing thread from lore.kernel.org/all/20240522153835.22712-2-k=
-anakshilledar111@protonmail.com/t.mbox.gz
->         Checking for newer revisions
->         Grabbing search results from lore.kernel.org
->         Analyzing 3 messages in the thread
->         Looking for additional code-review trailers on lore.kernel.org
->         Will use the latest revision: v3
->         You can pick other revisions using the -vN flag
->         Checking attestation on all messages, may take a moment...
->         Retrieving CI status, may take a moment...
->         ---
->           =E2=9C=93 [PATCH v3 1/2] dt-bindings: interrupt-controller: ris=
-cv,cpu-intc: convert to dtschema
->             =E2=9C=93 Signed: DKIM/gmail.com
->             + Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
->           ERROR: missing [2/2]!
->         ---
->         Total patches: 1
->         ---
->         WARNING: Thread incomplete!
->          Base: using specified base-commit 20cb38a7af88dc40095da7c2c9094d=
-a3873fea23
->         Applying: dt-bindings: interrupt-controller: riscv,cpu-intc: conv=
-ert to dtschema
->
-> If you change one patch in a series, the whole series gets a new version.
-> Just let git format-patch do that for you with the "-v N" argument and
-> you'll not have to worry about breaking people's tooling.
+Yep. And testing DTS should clearly show that conversion leads to
+incomplete binding.
 
-Sorry for the tooling breaking. I used the "-v N" argument to make the
-v2 patches but I bumped up the "riscv,cpu-intc"patch
-to v3 due to it being in v3 already and it gave errors in the previous
-patchset and you mentioned that I missed the v3 in subject line.
-How shall I proceed with this version mismatch? Shall I make the
-patchset as v3 and have both the patches at v3?
+> 
+>> I assume the DTS was validated with the binding. Isn't the case here?
 
-> Patches themselves are
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Mithil Bavishi,
+Are you sure you tested the DTS?
 
-I shall include this in my commit message. Is it required to bump the
-version of the patch just for the reviewed flag?
+Best regards,
+Krzysztof
 
-> Cheers,
-> Conor.
-
-Thanks and Regards,
-Kanak Shilledar
 
