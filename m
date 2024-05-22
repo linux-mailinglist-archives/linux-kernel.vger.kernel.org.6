@@ -1,133 +1,143 @@
-Return-Path: <linux-kernel+bounces-186616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654A18CC65E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0878CC662
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950D41C212A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8273282304
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B270145FF6;
-	Wed, 22 May 2024 18:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3032145FE4;
+	Wed, 22 May 2024 18:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iAQURosu"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxNysHD6"
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055C1419BC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3741422A1
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716402833; cv=none; b=Sc6wrEekWVyUh8TzIiK2w7treFL98KSPVuKHBR1y+Fiwv/mlsrg8balFiFMlkh5MchyAMWVL6kGm93c7eTc3JqatwCEleBlIGyFgSnt5jO8ck8zj1dNefRSCxLlJMaEDcq7eClg5aqR101aEg6bacTQhVImTIKhLkgeFFNk6fGQ=
+	t=1716402859; cv=none; b=t0mFk+iZgu0aTKPGidS/rMgKMTsv2ZOg4irZ+lO4l14WGivthPPxvELAi7AJmznAm43WEXnJmyAbBp3JzbGOUhRvX6c/aCSx+zDdMI81nVfM4EWjElvsLXTIcU2cb0+eXA9V8qNJ15lyB/8Bcn/CiUEeQgJf6QTZtdKgYeqx2SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716402833; c=relaxed/simple;
-	bh=jnEBtkTj6abvY8mxMmaxe+8NYxHaAdanWXFKxYwaKy0=;
+	s=arc-20240116; t=1716402859; c=relaxed/simple;
+	bh=7H6bDFuryLuKipfoW/x/JW8852Pk7g5KvRRPCe4w288=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=erXTkGFqpKqTZ5AUjVEBPiP6RP1feyECo4USzZl2CTXffMOWZtIielZr85ZsrzqP/FyqfPWZyG86QIvLzbbhdKUtbJmBcg9HElI2sLwoH0Zzkj+mPq1gTgOboKIhG9kpVc7CP9sedHbu6B8Y0EAKQ0q4D+iciNbCwN9zXB5Xcgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iAQURosu; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbed0710c74so4407558276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:33:51 -0700 (PDT)
+	 To:Cc:Content-Type; b=M7TQFltlkEqA3matcpGRxEw9tKv1h3/Qx2qHs6+QIEiOlv0tyH72vhmqYBLP0n3iBoA7gIagS6GJbxbRnBgFWOjVyEIAcQCm7ZFv7W1ph5xAmyUn+wuKkB8WQvNcRrQR3EE9OqgbmhGUTYP7zXYgl6EzsOCGmFY2rrtlUrKlcyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxNysHD6; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-47f3e985a84so1819751137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:34:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716402831; x=1717007631; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716402856; x=1717007656; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7EbhQWdOoh78Q/g/fDhY/dpoBbFrko5oWqLo7rk8/U0=;
-        b=iAQURosuJKIEGwWLqugJ/0GW5yZsg9VxKsQhWA7Qqc6+rFSFLDbtWEo8q7xiItLTJM
-         XUHgmeYz5TJu4SvfIMhmil5K8APXmbv6Rps1zGMTLMOsG/rf9VYotCuZPF3k8+Pop2o3
-         DTQDy6bJRzBV/QGKkGpkGmnRjO4Aki0E+bVL/JyRPPzDtmfXWphXnw0Fvxe/mWXPps+S
-         GT9mYrB/cg9cGeEpXs4GZEmttMMczSg4edIYQz8ES6x44RG7+tRLgJRfl1yxr/O7DwkJ
-         vu3pRO5r8vyT7rEzFqfcS7iIQG0KyaAsCc13F4T8rbsgiihS0qzuGHxerq7/BYNUSD5E
-         yp4Q==
+        bh=UFXKlIKgDPCNdWHHAlyeZ/Dt2RLUBRjZBqCR8Jamito=;
+        b=KxNysHD6VowvQdC9YQ31AvvOBbtFn/4KqxlYj9dYNscfwaEhXx+AxKLUmRw9QFuJ1F
+         f3QjIXTELTShgxjY5EKCcneUL22XxdSWa7KtQPkWj4encqyjZlJvFkL7Ul3ZS4o9QTcx
+         dqy5pTpj1nhKKRNedLDEz5YpjdZtgk5EOPSGHWJa8GiSgtSVidjGHBsyzgeChlNyDNkb
+         84lozd1f/W4970QbkbxZ1dsLWC5BFaovM7TIvQPTbwTI20fuaKJGrJJ7PY7e1lqx4Zb4
+         FY3u7loeB2LV9+pHE2wGBvJEXO5PRcD/nVi1VfolfaYbRZNgAAphZpSprUQDRWwo9RP8
+         fIEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716402831; x=1717007631;
+        d=1e100.net; s=20230601; t=1716402856; x=1717007656;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7EbhQWdOoh78Q/g/fDhY/dpoBbFrko5oWqLo7rk8/U0=;
-        b=EdUohfE9xRtgcCnFKEpSIjf2Asl4ycy6xt0fWFNjObOMJ6AANd5Q4uGTzaB2GGgKNH
-         Amztn9V2GkmqHApYqwA2VIVnaBEoZk14RIRJ8P3/Ok6TMoN3Sb7M1i1RXHf3g8Ljc9W9
-         g4UKB+8FllNjNXQ+B9BuPmxux/Q/+m6wdj8nq4gJPUUqeihXUHFT3T/+8w06+N0Iu1wO
-         xos4N68mM7RG2kWtzIETo8L2qvvVKNeqbvonc52qsoF7ZjRE/1UeSvwj4g5JOrdvnQb3
-         23nUvHHKY6TUZWUHIf9fQO48TVECjAfyTgjLIGJLCgGTki3n1VRRxdS4p4EocUdlb3RK
-         JE1g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+lMI46Y+rhzYR4dYWVjX4A76Du+tvlOCU0m7jFTZP5+F5MQiia29zFd/eXVbAgRmz8uTUMD2QeTayZ+2g56OU2mbF7I5Z+IoUe1c4
-X-Gm-Message-State: AOJu0YwiIHV0PrfcCEKiyc7Om16eKBqoTbCVtdqwtQ7ke8r/715fIvjx
-	19b2wmKeMBVd/y3jlor8HPWMH8zqk/Ooddvo8fsW6WmG6zDOS1h/TdgZfy0KNslbpiusx5p2tDr
-	2hPbnFBA1bNG35SiQeBJDKXgbu4BOu5vYa0S9
-X-Google-Smtp-Source: AGHT+IGN47Nmo4f4RGiZUu/PPp/jTEE3uqbIMeUgnJAorz3ApRFTFuY2uRHKB4JKQhH3PzXLlW1bM1uS2dJXihd38dY=
-X-Received: by 2002:a25:a2c4:0:b0:de5:51a1:d47a with SMTP id
- 3f1490d57ef6-df4e0c1d0dbmr2686142276.28.1716402830630; Wed, 22 May 2024
- 11:33:50 -0700 (PDT)
+        bh=UFXKlIKgDPCNdWHHAlyeZ/Dt2RLUBRjZBqCR8Jamito=;
+        b=UfqUcn1HsUpFIiGauir2zykJDkUY2PmHlhBnJye55y6z/4mfOv/3g0Xi5z4HaDEnXS
+         +ZT7nSY3WDydzA9QbKo7z365wUmuKToDVJDB4YqhDnARNZY4QeA+TFdDaPDp+Yyk4wsn
+         9RUHdF2xI0Nj/naxTyebwaL8UVUI+U0J7fR8OnPmPJJIHrTUcgOS/ckoQobUwr9JlRjq
+         zHcqnTm7c9+w2XfSx3Q6rfJcqGOq0V3Fc+4+vVl0jwsfOR3f21g1Jp6tHzb/m1fCgVkR
+         nESwE1AV1quQlilvpOpFFGtwb/sYHAdcxjGR9LZuNISZqTE5NNOLxIKw/z8GGepmj6El
+         BbiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6JGXDjtCs0qNdpfQf5VgYhMmVfI1DBAG3jEaDVQNTZoSB6SaD3rmVoy5dFozxJ2B2CPP3dQD3NbAHCVs8Ys6hGxftqstDHnO6l97H
+X-Gm-Message-State: AOJu0Yx+HsMd/0hUIbxuPXWHhjeiBf89PXBeXrYAdHHGzteN1WwANxmH
+	Gmv4HkuLphi53X1w0JXKuy5zRpVGGPZ5uvyt6oAvi6sjs5GOTHC6sTU/xX+cdPqmcmULmZQ/l3l
+	YnrE3px2F9e0UC2llrIPJE15+EuY=
+X-Google-Smtp-Source: AGHT+IEEmD/CCeIUWY2+eazkHvob9wyzgRKhKjSFVJeJyHafDS6M40zNGlxR9TI0NGUo6cYWpXYJPUXAYT6AMe+7ZVw=
+X-Received: by 2002:a05:6102:32d4:b0:47c:abf:383 with SMTP id
+ ada2fe7eead31-489058437bemr3025281137.5.1716402856397; Wed, 22 May 2024
+ 11:34:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522181308.841686-1-pchelkin@ispras.ru>
-In-Reply-To: <20240522181308.841686-1-pchelkin@ispras.ru>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Wed, 22 May 2024 11:33:38 -0700
-Message-ID: <CABdmKX2qdT0HvkX0B6kcxALwxZsLFOtgPsOP_rY0AXM1eAtAtA@mail.gmail.com>
-Subject: Re: [PATCH v2] dma-buf: handle testing kthreads creation failure
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Chris Wilson <chris@chris-wilson.co.uk>, 
-	Daniel Vetter <daniel.vetter@ffwll.ch>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-kernel@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, 
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
+References: <20240516174357.26755-1-jim.cromie@gmail.com> <20240516174357.26755-23-jim.cromie@gmail.com>
+ <CALwA+Nb8EKBRk+1ejxWhRBhoYf=Arge5TvA-mPzDD95Am+7pYw@mail.gmail.com>
+ <CAJfuBxxhTzOOBz_kTc9APGVw==r1fkyk+rdiri3wJAYJZSYoLQ@mail.gmail.com> <CALwA+NaYPZY6956KG6u4t3WxN5YAWABitvhwYn30kcH_nrxeuA@mail.gmail.com>
+In-Reply-To: <CALwA+NaYPZY6956KG6u4t3WxN5YAWABitvhwYn30kcH_nrxeuA@mail.gmail.com>
+From: jim.cromie@gmail.com
+Date: Wed, 22 May 2024 12:33:50 -0600
+Message-ID: <CAJfuBxymaL_7P6bi5i+bkV71ym1G7pweVo=uTm=KQ=ZfbZ0DWg@mail.gmail.com>
+Subject: Re: [PATCH v8-RESEND 22/33] dyndbg: split multi-query strings with %
+To: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
+	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
+	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 11:14=E2=80=AFAM Fedor Pchelkin <pchelkin@ispras.ru=
-> wrote:
+On Wed, May 22, 2024 at 10:57=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chrom=
+ium.org> wrote:
 >
-> kthread creation may possibly fail inside race_signal_callback(). In
-> such a case stop the already started threads, put the already taken
-> references to them and return with error code.
+> On Tue, May 21, 2024 at 6:08=E2=80=AFPM <jim.cromie@gmail.com> wrote:
+> >
+> > On Tue, May 21, 2024 at 5:58=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@ch=
+romium.org> wrote:
+> > >
+> > > On Thu, May 16, 2024 at 7:45=E2=80=AFPM Jim Cromie <jim.cromie@gmail.=
+com> wrote:
+> > > >
+> > > > Multi-query strings have long allowed:
+> >
+> > ... input like:  (Im using it like a verb)
+> >
+> > > Missing been ?
+> >
+> > this is an alternative.
 >
-> Found by Linux Verification Center (linuxtesting.org).
+> I see
 >
-> Fixes: 2989f6451084 ("dma-buf: Add selftests for dma-fence")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-Reviewed-by: T.J. Mercier <tjmercier@google.com>
-> ---
-> v2: use kthread_stop_put() to actually put the last reference as
->     T.J. Mercier noticed;
->     link to v1: https://lore.kernel.org/lkml/20240522122326.696928-1-pche=
-lkin@ispras.ru/
+> > maybe s/strings/commands/ too
+> >
 >
->  drivers/dma-buf/st-dma-fence.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> I like commands more
 >
-> diff --git a/drivers/dma-buf/st-dma-fence.c b/drivers/dma-buf/st-dma-fenc=
-e.c
-> index b7c6f7ea9e0c..6a1bfcd0cc21 100644
-> --- a/drivers/dma-buf/st-dma-fence.c
-> +++ b/drivers/dma-buf/st-dma-fence.c
-> @@ -540,6 +540,12 @@ static int race_signal_callback(void *arg)
->                         t[i].before =3D pass;
->                         t[i].task =3D kthread_run(thread_signal_callback,=
- &t[i],
->                                                 "dma-fence:%d", i);
-> +                       if (IS_ERR(t[i].task)) {
-> +                               ret =3D PTR_ERR(t[i].task);
-> +                               while (--i >=3D 0)
-> +                                       kthread_stop_put(t[i].task);
-> +                               return ret;
-> +                       }
->                         get_task_struct(t[i].task);
->                 }
->
-> --
-> 2.39.2
->
+> > > >
+> > > >   modprobe drm dyndbg=3D"class DRM_UT_CORE +p; class DRM_UT_KMS +p"
+> > > >   modprobe drm dyndbg=3D<<EOX
+> > > >      class DRM_UT_CORE +p
+> > > >      class DRM_UT_KMS +p
+> > > >   EOX
+> > > >
+
+I did reword it - to:
+
+Subject: [PATCH v8d 22/36] dyndbg: split multi-query strings with %
+
+Since commit
+85f7f6c0edb8 ("dynamic_debug: process multiple debug-queries on a line")
+
+Multi-query commands have been allowed:
+
+  modprobe drm dyndbg=3D"class DRM_UT_CORE +p; class DRM_UT_KMS +p"
+  modprobe drm dyndbg=3D<<EOX
+     class DRM_UT_CORE +p
+     class DRM_UT_KMS +p
+  EOX
+
+
+the other thing I didnt do was add an example writing to >control explicitl=
+y,
+but they are equivalent.
 
