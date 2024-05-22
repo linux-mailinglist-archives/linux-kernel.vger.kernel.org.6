@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-186847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6300F8CC9ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1ACF8CC9E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00E48B22841
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:53:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E283A1C21269
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D3314F12C;
-	Wed, 22 May 2024 23:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB81514D456;
+	Wed, 22 May 2024 23:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kY3Cpmni"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gdnzibck"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE4014D28B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE96C146D4D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421908; cv=none; b=FZURcyvmbs05/dH3oP8ah8lPL+DmXeWtYfhAvARSm+aUBjwXEUvr65tGFR3omubgik7DxT4R+45r/LdwXqo65YAomcUCXgFaGXs3CLADSMYoN5C+Mefzd2liBo1t5XkIEbA645wmTWmpdTyoSlux/iK1uQa1VKXJEP1CYL2OGZo=
+	t=1716421908; cv=none; b=siybXCgFW0+7nijls1pp+RWkyBFvwakarwCdaQoignREKDQXZ8WGa4PgPQz9olqHAVcXeCJUjGE6DLen6mnjYKabuJ3/GtzJzeTSnFRAUiExbXwv6f5dzDEHjE9S0KZy9E/OowtGqSy2zw1OrDnEGjRLTWxxG6J06aLhMPp1fqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716421908; c=relaxed/simple;
-	bh=gqLUb9QwFmSI9zsPRr9h3j96reicOIQtoFbQZ+xpT4c=;
+	bh=Wz6FwdvgNhDesiVH6dQghRM42TWv9+GR59lUb5hn/E4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nKFTMy51koiUjArj3e4/r4cnu4X6nMGUrXdNzVw3FRNNTsUmh1RI4FpXy8x66SkzkKbyvlAr1TVHkai66DlvACe6KdM8z/SFt4x9pvSKYLWX/1TCAuh9sP55WE/X8cetYZVkDo3C3VEqA8KklnBLRkFJmjcm4mEYK0i+y72Fr/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kY3Cpmni; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7C3EC4AF12;
+	 In-Reply-To:To:Cc; b=X9zSqQl5jirqf1B617yfJwtdrJA3mcdEBCWtJWMeCgg2x1xHTq0RBh39kiU1w2U06jZcGmTy8JTUFO/RlaR6bg4c+XLnEtMibokhSrf024guaF/5fCZjMShob6lr7DSjqgtMdOd/EEhiqNdIqhQXKa5hzjOtaM7wwxy2UljFfkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gdnzibck; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9AF56C3277B;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1716421907;
-	bh=gqLUb9QwFmSI9zsPRr9h3j96reicOIQtoFbQZ+xpT4c=;
+	bh=Wz6FwdvgNhDesiVH6dQghRM42TWv9+GR59lUb5hn/E4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=kY3CpmniW4Xo04BbXZBNVtdDiX3zJFaVbuN7sRGtSwXGiPwZ/iO0HAQ+wqA307T2M
-	 sf8ing+ScWnGv/es/7MrZWsgs7DOPB8gOEFRzVW60YtPXR60VdNg8zYV+K9nOzCSer
-	 atj6e+cp87MEQP8vbJDBleLys/l0ItejflIL2t4R7NfcR/pOLZSDnlZcYbUpulHWTM
-	 faLgH3UnsWWbS/eyh0vGTpgFrv7CrmaXNXlh8KRQQlKJWOdbKc+eV01S2BnOQWgmZl
-	 q8iVdBpj7cLrOq3JT2X9R0g3RHE0A8BfzH5NZE0Yp3wb/24SPZIBGK873LwcVotaGK
-	 P3KNTxnPeYEHg==
+	b=Gdnzibckaz5cwwTCArZbF5NHieAhZNuBW55C4Js2e7xiejIwL1qDzPUSCJRA4neAJ
+	 R08Kl7qzp/aMwumDYHWADsnV8sFbMKL2utt/IIN9SvaZBQUDDzAuJZJifx1iMAa7lb
+	 OTyv2Mq5oKDHRbPaEru6GeIswqmkq+AY/hSGT260paQ6aCExrNfGryanLlU6WpMXRm
+	 pEiU5H76wmMz/sSi2UBS6xN0g/vNjklDR8ZLGCNfniWGvLWVnHUOrfbkY0bxQQSB3b
+	 W7IAGQzqvYTYLyZ6fnCfqo0rx3QvB4ROYjNYfvIZF31Pzf7bAfou3CRVq98rsM9p2d
+	 ced3spMHDRqmg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DCE91C43638;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 837C7C43618;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,35 +51,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Use bool value in set_cpu_online()
+Subject: Re: [GIT PULL] RISC-V Patches for the 6.10 Merge Window, Part 1
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171642190790.9409.1797871952115228181.git-patchwork-notify@kernel.org>
+ <171642190753.9409.11050201174881713187.git-patchwork-notify@kernel.org>
 Date: Wed, 22 May 2024 23:51:47 +0000
-References: <20240318065404.123668-1-ke.zhao@shingroup.cn>
-In-Reply-To: <20240318065404.123668-1-ke.zhao@shingroup.cn>
-To: Zhao Ke <ke.zhao@shingroup.cn>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, dawei.li@shingroup.cn,
- shenghui.qu@shingroup.cn
+References: <mhng-e73e59bf-92fc-4122-9f9e-a329d20eba55@palmer-ri-x1c9>
+In-Reply-To: <mhng-e73e59bf-92fc-4122-9f9e-a329d20eba55@palmer-ri-x1c9>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, torvalds@linux-foundation.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+This pull request was applied to riscv/linux.git (for-next)
+by Linus Torvalds <torvalds@linux-foundation.org>:
 
-On Mon, 18 Mar 2024 14:54:04 +0800 you wrote:
-> The declaration of set_cpu_online() takes a bool value. So replace
-> int here to make it consistent with the declaration.
+On Wed, 22 May 2024 09:13:28 -0700 (PDT) you wrote:
+> The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 > 
-> Signed-off-by: Zhao Ke <ke.zhao@shingroup.cn>
-> ---
->  arch/riscv/kernel/smpboot.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-mw1
+> 
+> [...]
 
 Here is the summary with links:
-  - Use bool value in set_cpu_online()
-    https://git.kernel.org/riscv/c/07f23286451d
+  - [GIT,PULL] RISC-V Patches for the 6.10 Merge Window, Part 1
+    https://git.kernel.org/riscv/c/0bfbc914d943
 
 You are awesome, thank you!
 -- 
