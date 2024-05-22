@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-186601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1247F8CC623
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3E98CC62B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4366A1C20FD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19DEF1C20EF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B8A145FFD;
-	Wed, 22 May 2024 18:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CE2145B2D;
+	Wed, 22 May 2024 18:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BjTuCMuh"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="PwQLBlMz"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2526C141991;
-	Wed, 22 May 2024 18:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA1DA929;
+	Wed, 22 May 2024 18:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716401541; cv=none; b=JsZ0d1ZypwpCNPQ6rh8b2aCqsjPdfubaFInu5XwkaE8WFNI4//GpcGORwq1lwOt8UbrIhAXrO8vHtpAvTPF9wzJnhoqJ1GLASx5kV+UFvUSn3iv38FYsSWEK4h3ofSinorp0JgaeVMUYW6sAYnyPKOAeeWH3Y+iZoernqkde7QQ=
+	t=1716401658; cv=none; b=Hvyp4wCcHqBqeNqbMIqbdmyX22KTIScnN+ZAF0C9twf4rr7nCLOrt6DWgnpf5VL7pYK5/SGRGh3CQro/3aKiSmVIMBYvnocfbP6KG4LzpV+M7fBBXv9abdddGTDsk7J42L7DqpzTDDHEeuKu4HCehQ+EhYSq30aoKDqiswvLLrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716401541; c=relaxed/simple;
-	bh=/d4v5sYm1m6fuW79UH7BAzTvWviVCQgqSpnXSdESHns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AOef6FiDK4yon+/qoVa+XA2xyZgzea3DOHlgOE05aWL5HgRJJTUzxFfIItTyLvObxZUCTDB9bnFU/eEKIDDNrj3k3lVCep7o3mqFqX0CZG2ArrW7bXzb6kA+GVbKstcMZ85szZEQtbiEnBZxh2GusOuWawyvtiIpjExPVRMZybA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BjTuCMuh; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Vkzsv4W3HzlgMVN;
-	Wed, 22 May 2024 18:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716401537; x=1718993538; bh=ovcwOX7c3kKC7VfVSgG2qEQZ
-	z0LFgHzfruEwaIPcjQI=; b=BjTuCMuhoqZIW+R/GHbffN1feXO1KNBl5rwqZExO
-	tG/h1FfpnC6NETZnWurq0WKpfOFYPq3q5d7vp+iT+c3/FU6etpKyq/4ksMjcf30I
-	QmddFHtuxgTM6jHx2HGNeHi6hBu6G7hmB7iNUdVjct1wFcHqH0yyU7mhBbJyfjlV
-	7qo2etsKOicPQDolOSeXD7m+O88IQPpczOJ9FLcvJGGo2tUjDiPdqwZGk8FuFI0R
-	EgCEaIuqiBV3FW/ReDIh6Py9sUZpZik+UPXvWUCl3dklRc2iPKi5GOPjtjI17pbx
-	EpsQ+8TdGEBo/8RqlypYIU/HovgwarKY6msBQ0xZfCBdrw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id lFeQQcOfYWfF; Wed, 22 May 2024 18:12:17 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vkzsr5hSvzlgMVL;
-	Wed, 22 May 2024 18:12:16 +0000 (UTC)
-Message-ID: <f6d3e1f2-e004-49bb-b6c1-969915ccab37@acm.org>
-Date: Wed, 22 May 2024 11:12:16 -0700
+	s=arc-20240116; t=1716401658; c=relaxed/simple;
+	bh=RvVkosRpeyj9j/AnzllgMBKI6qNAPpxdxuaRh0mQIMs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=snA4ZSSxHFcPwsRbWzsZ/UXc9IjDOc42rMPSo7lXy/M/SRJtfDZzbDayHF6OFMz7P2jCB6o5lnxT6pkFCEedjpUr+bf6H7CXoFdpnqcuNXGBOIzEUnbE5YKxAyE+e+7lT0gi4aCUQUolgRsO8VZb3I2glVLQ6XMhEtPl73mQDSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=PwQLBlMz; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc.intra.ispras.ru (unknown [10.10.165.15])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 000114078505;
+	Wed, 22 May 2024 18:14:10 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 000114078505
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1716401651;
+	bh=Imz5WELE7gK/KIIyH94s3uVtNby+XXwDNZ6i3Up+9+0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PwQLBlMzotLiAng0Y2FrLpGSywzTylbdpLcYvuBEyzGO+5gnFrxHojCLr7ct+78VE
+	 BzFqINVtD47vCYbX4L0MHhj+7MhSAVZOhRfwwYypmZcnRco90zR3GmuWErKqL3kiit
+	 uPz6LmvIw3lrJaC0BWvQq+ZfGf9IAoLr+hDtmHC0=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Chris Wilson <chris@chris-wilson.co.uk>,
+	Daniel Vetter <daniel.vetter@ffwll.ch>,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	linux-kernel@vger.kernel.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	lvc-project@linuxtesting.org,
+	"T.J. Mercier" <tjmercier@google.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] dma-buf: handle testing kthreads creation failure
+Date: Wed, 22 May 2024 21:13:08 +0300
+Message-Id: <20240522181308.841686-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] loop: inherit the ioprio in loop woker thread
-To: Jens Axboe <axboe@kernel.dk>, Yunlong Xing <yunlong.xing@unisoc.com>,
- yunlongxing23@gmail.com, niuzhiguo84@gmail.com, Hao_hao.Wang@unisoc.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240522074829.1750204-1-yunlong.xing@unisoc.com>
- <5166bc31-1fd9-4f7f-bc51-f1f50d9d5483@acm.org>
- <68cfbc08-6d39-4bc6-854d-5df0c94dbfd4@kernel.dk>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <68cfbc08-6d39-4bc6-854d-5df0c94dbfd4@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 5/22/24 10:57, Jens Axboe wrote:
-> On 5/22/24 11:38 AM, Bart Van Assche wrote:
->> On 5/22/24 00:48, Yunlong Xing wrote:
->>> @@ -1913,6 +1921,10 @@ static void loop_handle_cmd(struct loop_cmd *c=
-md)
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_active_me=
-mcg(old_memcg);
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 css_put(cmd_m=
-emcg_css);
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0 if (ori_ioprio !=3D cmd_ioprio)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 set_task_ioprio(current, =
-ori_ioprio);
->>> +
->>>  =C2=A0=C2=A0 failed:
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* complete non-aio request */
->>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!use_aio || ret) {
->>
->> Does adding this call in the hot path have a measurable performance im=
-pact?
->=20
-> It's loop, I would not be concerned with overhead. But it does look pre=
-tty
-> bogus to modify the task ioprio from here.
+kthread creation may possibly fail inside race_signal_callback(). In
+such a case stop the already started threads, put the already taken
+references to them and return with error code.
 
-Hi Jens,
+Found by Linux Verification Center (linuxtesting.org).
 
-Maybe Yunlong uses that call to pass the I/O priority to the I/O submitte=
-r?
+Fixes: 2989f6451084 ("dma-buf: Add selftests for dma-fence")
+Cc: stable@vger.kernel.org
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+v2: use kthread_stop_put() to actually put the last reference as
+    T.J. Mercier noticed;
+    link to v1: https://lore.kernel.org/lkml/20240522122326.696928-1-pchelkin@ispras.ru/
 
-I think that it is easy to pass the I/O priority to the kiocb submitted b=
-y
-lo_rw_aio() without calling set_task_ioprio().
+ drivers/dma-buf/st-dma-fence.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-lo_read_simple() and lo_write_simple() however call vfs_iter_read() /
-vfs_iter_write(). This results in a call of do_iter_readv_writev() and
-init_sync_kiocb(). The latter function calls get_current_ioprio(). This i=
-s
-probably why the set_task_ioprio() call has been added?
-
-Thanks,
-
-Bart.
-
+diff --git a/drivers/dma-buf/st-dma-fence.c b/drivers/dma-buf/st-dma-fence.c
+index b7c6f7ea9e0c..6a1bfcd0cc21 100644
+--- a/drivers/dma-buf/st-dma-fence.c
++++ b/drivers/dma-buf/st-dma-fence.c
+@@ -540,6 +540,12 @@ static int race_signal_callback(void *arg)
+ 			t[i].before = pass;
+ 			t[i].task = kthread_run(thread_signal_callback, &t[i],
+ 						"dma-fence:%d", i);
++			if (IS_ERR(t[i].task)) {
++				ret = PTR_ERR(t[i].task);
++				while (--i >= 0)
++					kthread_stop_put(t[i].task);
++				return ret;
++			}
+ 			get_task_struct(t[i].task);
+ 		}
+ 
+-- 
+2.39.2
 
 
