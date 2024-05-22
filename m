@@ -1,292 +1,206 @@
-Return-Path: <linux-kernel+bounces-186253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF18B8CC1C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:06:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DE18CC1C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C069284577
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:06:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0762845F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8212C13DDC0;
-	Wed, 22 May 2024 13:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD148287F;
+	Wed, 22 May 2024 13:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3OtvXoW"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="AQYGwp3k"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE40B82487
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88DC82487;
+	Wed, 22 May 2024 13:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716383204; cv=none; b=BMKLhYHsUXcwoQeo+YpP9CnyUqh/FcRKo44IrlQ3X8r0ekivJI5hcIeXGLYXbIyk7pKUPlc/tDk07KEpGDQGHlVzpvZl3VwCCluESPMiVq7jzqZ59C1px89kuPC1lSqDi3MC9fnAot0pxP4yvNBvEYnsyDtbdWmq7DwzB4Ty8y8=
+	t=1716383227; cv=none; b=clueHUh+F7HfHWY67evClb7TubDSt4PBlM0SiPuY3aS3ZnYyI8Q39W3y1uBWusY1GQVUyjYVsIBYTLt37MojnWJoJ+/6OyuvJt+WnexfSBjzFL98PS1c/pxSiWy2yoilCY1y2gUo5IfU3PfDHaT2aofxwN39w4THMLCxgDY2tWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716383204; c=relaxed/simple;
-	bh=eCw2iXIxZvZ4hdXnwCeU0//1RJ8cFUohcuV/vFYGTmE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bFyIg1pYzhsNiTHVQH1v6P7IlcQWFMby5AyAkLqTX4M6CaCX30iejAIp4eZu5gdOeAHZ8glM0cpL+8lWsRLkeLEGToH1DdmJ9PrTnqSffJRr9i3ANfGjl+ZxAm/xibhDnD3Mw7HhJceFP0aqSvjhENgoPbLxC+sIpi9CVwgHXfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P3OtvXoW; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f71e4970bso7992350e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716383201; x=1716988001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IHQs81pS5e/M8Ft067yAZNFQ01IZ5xjkXQeMA4zm/pc=;
-        b=P3OtvXoWEagyM1xLMdbHscmyw5lRg3JAAbhkBOe1DICZ7xuGM+8GANu7Mik53jl6tc
-         7mYeubiJrhAOItWBBsyovysAw5Jbo04+iugxoXQsipxHWcRDL7sd7R9GWCrXhtxwWR4u
-         8AeWC31JLpEWCQ/wzVVqdxG/nC1zlypzCBrycwyKsAVMxPAi2L9tk85QxLZu6d1YZFjZ
-         +Gelq6DavPXDmNKiyhK6YASi+67iCjqgNtxBKDZxdVPkAiK3tNebNON4b+jwRkQ/g/Vp
-         azDIfLVbSE2gLDKz/dAvJbxNGM2DLYomRsCkN87cFn9zLJ/fniS82QZOnISv5BDRKH6R
-         cYcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716383201; x=1716988001;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IHQs81pS5e/M8Ft067yAZNFQ01IZ5xjkXQeMA4zm/pc=;
-        b=CJjhKyO6wBvH08sntkdE/Eftprj0OcEzjhBacR1pj1A6pBRS9x3/WZQmjk6rug9tDJ
-         v5lC9fbXFBSiEKwai+eoW/3oeRHIjH3OtWWoRpspN8pZl92XuKbKVpWKyb4KwXoOlM4P
-         9cfrB7d5Et4rujD9lfSRhDgdCYdTPcc4wMy578wQMkGAsGXYiVyPY96HxRBX6S5g1Pwl
-         ity/ClDdyMZMFL3k0jG/Obo3y0zpWSoT4M7vZF5cHRdkmeYKZ23ev/urydrhUcrEJbkP
-         gUAou1ni920qGHd/fh5KLckIDNDOpKlWw3Bkw3/q/cOaKaQgrgGb71XvwqJZDxaqrJze
-         fpAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOw3fWc0UuiCq9BM5FUas5mXx6FrS2yg8kFjL3/DVyQxdzris9jgZYNU5yd3pJgGBjqEjdS/a476EyRZFM/bKfUkhudmtpdg3Q6W4F
-X-Gm-Message-State: AOJu0Ywp78dKQB9IdsaMQFKlSRYbpcVPFsRS5MIMb02R5UEhjjKlABz7
-	YzyTsQbgoeY6KjruW/p3x6YJFE0X+dSyLPj57AlguB1L8S9ke7w8sEFZqUAM6Bk=
-X-Google-Smtp-Source: AGHT+IF5qKv7UruRy7oBLP8sQOBvZCH9oB3wHTijgo+xIDX3Mq8ff5or65N1qYLdZ5YnzEz5rE/e5g==
-X-Received: by 2002:ac2:5548:0:b0:51d:9808:6645 with SMTP id 2adb3069b0e04-526c0a68dd6mr1569386e87.50.1716383200660;
-        Wed, 22 May 2024 06:06:40 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10? ([2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d2bsm1759195266b.120.2024.05.22.06.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 06:06:40 -0700 (PDT)
-Message-ID: <42ba8472-9d63-4125-b538-39d8090203b4@linaro.org>
-Date: Wed, 22 May 2024 15:06:38 +0200
+	s=arc-20240116; t=1716383227; c=relaxed/simple;
+	bh=Jf8mZf3DgAaMtntKI4Uw9rXIc+EGLRwZMsKLOABmmPc=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=WG1yR5Q4HGtBxl3mlcWJj2S7jeMXZ4GqAPhYwDOhuNhoafrgCfjzlDKpDV5NFoeLBnDd1AkHqFHS4LDuGP7RJb05tM3VphqZcFCHWJkPxyj+dzeTP1Acm8L3Pa75OmfDoARY7bygqwG0bx7onZys9/TMCAweXn45Qwyvm8cWmg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=AQYGwp3k; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: Document
- the SA8775p ADSP, CDSP and GPDSP
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tengfei Fan <quic_tengfan@quicinc.com>,
- Srini Kandagatla <srinivas.kandagatla@linaro.org>,
- Alex Elder <elder@kernel.org>
-References: <20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org>
- <20240522-topic-lemans-iot-remoteproc-v1-1-af9fab7b27f0@linaro.org>
- <e89c3270-e51f-4d5b-87db-09ff8f0961e6@linaro.org>
- <CAMRc=MczvfcXnEae__LJh47T=vCTbCz9EHOrNP+QmpTDvdarZw@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAMRc=MczvfcXnEae__LJh47T=vCTbCz9EHOrNP+QmpTDvdarZw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1716383216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1DKAHeVr2WZo8CYG+lRCuTrC6xOJJVRKKKaiTlSOfro=;
+	b=AQYGwp3kldEn+VkmYCqm7oJKJuOTCUwP47m5XSPPaMNl7Z7HsSVDUBDheAUiAX+9gluhmo
+	lByZtR2r3hSCUf/IZQ6lyK5cJsP/hJf3Gt1ibuotAmnPOBoG2QGAGeJXGB0Zky8d6pIjvF
+	qlR4SCSruE9Kw08DPkq/8HvBOzY5+lB27V+QW6VFmGKQo4UIZhFS8GXsCllqPGVW/s5Kcr
+	eGL78sYfAiP15Wp8vDUqXMeqxSXhbviEpHYxIZ0mLTRzKu2qMcPClh0NmYDNw++d7zdsYf
+	iM+ocJUPnqEto7FCI2ezzKUs4w84OLwFArA/MnNrKhLV4JA4wL2C/bltr1oAMw==
+Date: Wed, 22 May 2024 15:06:49 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Icenowy Zheng <uwu@icenowy.me>, linux-sunxi@lists.linux.dev,
+ wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-kernel@vger.kernel.org, didi.debian@cknow.org, Marek Kraus
+ <gamiee@pine64.org>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Correct the descriptions for
+ Pine64 boards
+In-Reply-To: <20240522110507.51b12966@donnerap.manchester.arm.com>
+References: <d2943d9f4c99a239f86188eaf45a73972685c255.1713833436.git.dsimic@manjaro.org>
+ <057b4a5504656bb7455ead39768d9e7167fb724b.camel@icenowy.me>
+ <5635a6e79427e43ef20b690c766267d0@manjaro.org>
+ <20240522110507.51b12966@donnerap.manchester.arm.com>
+Message-ID: <90fada7d9a37a5e413b16bc176ec2f8d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 22/05/2024 15:04, Bartosz Golaszewski wrote:
-> On Wed, May 22, 2024 at 2:42 PM <neil.armstrong@linaro.org> wrote:
->>
->> On 22/05/2024 14:08, Bartosz Golaszewski wrote:
->>> From: Tengfei Fan <quic_tengfan@quicinc.com>
->>>
->>> Document the compatibles for the components used to boot the ADSP, CDSP0,
->>> CDSP1, GPDSP0 and GPDSP1 on the SA8775p SoC.
->>>
->>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->>> Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>> ---
->>>    .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 76 +++++++++++++++++++++-
->>>    1 file changed, 75 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>> index 73fda7565cd1..9d3a862c39e1 100644
->>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
->>> @@ -16,6 +16,11 @@ description:
->>>    properties:
->>>      compatible:
->>>        enum:
->>> +      - qcom,sa8775p-adsp-pas
->>> +      - qcom,sa8775p-cdsp0-pas
->>> +      - qcom,sa8775p-cdsp1-pas
->>> +      - qcom,sa8775p-gpdsp0-pas
->>> +      - qcom,sa8775p-gpdsp1-pas
->>>          - qcom,sm8550-adsp-pas
->>>          - qcom,sm8550-cdsp-pas
->>>          - qcom,sm8550-mpss-pas
->>> @@ -44,12 +49,13 @@ properties:
->>>
->>>      firmware-name:
->>>        $ref: /schemas/types.yaml#/definitions/string-array
->>> +    minItems: 1
->>
->> This will allow a single firmware name for all compatible,
->> which is wrong
->>
+Hello Andre,
+
+On 2024-05-22 12:05, Andre Przywara wrote:
+> On Wed, 22 May 2024 08:10:21 +0200
+> Dragan Simic <dsimic@manjaro.org> wrote:
+>> On 2024-05-22 02:48, Icenowy Zheng wrote:
+>> > 在 2024-04-23星期二的 03:00 +0200，Dragan Simic写道：
+>> >> Correct the descriptions of a few Pine64 boards and devices,
+>> >> according
+>> >> to their official names used on the Pine64 wiki.  This ensures
+>> >> consistency
+>> >> between the officially used names and the names in the source code.
+>> >>
+>> >> Cc: Marek Kraus <gamiee@pine64.org>
+>> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> >> ---
+>> >>
+>> >> Notes:
+>> >>     This completes the correction of the descriptions of the Pine64
+>> >> boards
+>> >>     and devices, which was started with the Pine64 boards and devices
+>> >> based
+>> >>     on Rockchip SoCs. [1]
+>> >>    
+>> >>     [1]
+>> >> https://lore.kernel.org/linux-rockchip/ec124dab2b1a8776aa39177ecce34babca3a50e2.1713832790.git.dsimic@manjaro.org/
+>> >>
+>> >>  Documentation/devicetree/bindings/arm/sunxi.yaml | 12 ++++++------
+>> >>  1 file changed, 6 insertions(+), 6 deletions(-)
+>> >>
+>> >> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >> b/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >> index 09d835db6db5..b66873ae2d71 100644
+>> >> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >> @@ -709,17 +709,17 @@ properties:
+>> >>            - const: sochip,s3
+>> >>            - const: allwinner,sun8i-v3
+>> >>  
+>> >> -      - description: Pine64 PineH64 model A
+>> >> +      - description: Pine64 H64 Model A
+>> >>          items:
+>> >>            - const: pine64,pine-h64
+>> >>            - const: allwinner,sun50i-h6
+>> >>  
+>> >> -      - description: Pine64 PineH64 model B
+>> >> +      - description: Pine64 H64 Model B
+>> >
+>> > Sorry for replying so late, but I don't think there is a Pine64 H64
+>> > board. The Pine64 wiki calls it Pine H64. [1]
+>> >
+>> > [1] https://wiki.pine64.org/wiki/PINE_H64
+>> 
+>> Good point, thanks.  Though, this board is really an exception to
+>> the naming scheme employed for the Pine64 boards, so perhaps it would
+>> actually be better to rename the board in the Pine64 wiki, by adding
+>> "64" to "Pine", to ensure consistency.
 > 
-> So increasing the limit from the default under allOf doesn't seem to
-> work, should I instead keep this and make the lower limit stricter for
-> all other models?
-
-Yes add minItems in all the allOf:if: and add the missing allOf:if: for
-the new compatibles to set the minItems, same for memory-region.
-
-Or you may simply spin off a new yaml, this one is getting quite large.
-
-Neil
-
+> I am sorry, but I don't think this is how it works. The board is really
+> called "Pine H64", that's printed on the board [1] and everywhere else 
+> [2].
+> That's a choice the manufacturer made, and renaming some Wiki page 
+> won't
+> change that. I understand the engineer's desire to make everything nice 
+> and
+> consistent ;-) , but I am afraid that's not our call. After all this 
+> file
+> is to document the device naming, not to be an example of consistent
+> naming schemes.
 > 
-> Bart
-> 
->>>        items:
->>>          - description: Firmware name of the Hexagon core
->>>          - description: Firmware name of the Hexagon Devicetree
->>>
->>>      memory-region:
->>> -    minItems: 2
->>> +    minItems: 1
->>
->> Same here
->>
->>>        items:
->>>          - description: Memory region for main Firmware authentication
->>>          - description: Memory region for Devicetree Firmware authentication
->>> @@ -81,6 +87,21 @@ allOf:
->>>              maxItems: 5
->>>            memory-region:
->>>              maxItems: 2
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - qcom,sa8775p-adsp-pas
->>> +            - qcom,sa8775p-cdsp0-pas
->>> +            - qcom,sa8775p-cdsp1-pas
->>> +            - qcom,sa8775p-gpdsp0-pas
->>> +            - qcom,sa8775p-gpdsp1-pas
->>> +    then:
->>> +      properties:
->>> +        interrupts:
->>> +          maxItems: 5
->>> +        interrupt-names:
->>> +          maxItems: 5
->>>      - if:
->>>          properties:
->>>            compatible:
->>> @@ -128,6 +149,7 @@ allOf:
->>>          properties:
->>>            compatible:
->>>              enum:
->>> +            - qcom,sa8775p-adsp-pas
->>>                - qcom,sm8550-adsp-pas
->>>                - qcom,sm8650-adsp-pas
->>>                - qcom,x1e80100-adsp-pas
->>> @@ -177,6 +199,58 @@ allOf:
->>>                - const: cx
->>>                - const: mxc
->>>                - const: nsp
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - qcom,sa8775p-cdsp-pas
->>> +    then:
->>> +      properties:
->>> +        power-domains:
->>> +          items:
->>> +            - description: CX power domain
->>> +            - description: MXC power domain
->>> +            - description: NSP0 power domain
->>> +        power-domain-names:
->>> +          items:
->>> +            - const: cx
->>> +            - const: mxc
->>> +            - const: nsp0
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - qcom,sa8775p-cdsp1-pas
->>> +    then:
->>> +      properties:
->>> +        power-domains:
->>> +          items:
->>> +            - description: CX power domain
->>> +            - description: MXC power domain
->>> +            - description: NSP1 power domain
->>> +        power-domain-names:
->>> +          items:
->>> +            - const: cx
->>> +            - const: mxc
->>> +            - const: nsp1
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - qcom,sa8775p-gpdsp0-pas
->>> +            - qcom,sa8775p-gpdsp1-pas
->>> +    then:
->>> +      properties:
->>> +        power-domains:
->>> +          items:
->>> +            - description: CX power domain
->>> +            - description: MXC power domain
->>> +        power-domain-names:
->>> +          items:
->>> +            - const: cx
->>> +            - const: mxc
->>>
->>>    unevaluatedProperties: false
->>>
->>>
->>
+> [1] https://linux-sunxi.org/images/5/53/Pineh64_top.jpg
+> [2] https://pine64.org/devices/pine_h64_model_a/
 
+Those are all valid concerns.  Though, when it comes to the silkscreened
+labels on PCBs, sometimes they have no connection with the real, 
+official
+board names.  An almost funny example :) is the QuartzPro64 board, also
+from Pine64. [3]
+
+I'll check with Pine64 are there some intentions for unifying the 
+officially
+used board names, and if there aren't, I'll submit the v2 of this series
+with the corrected board names.
+
+[3] 
+https://wiki.pine64.org/images/f/fe/Quartzpro64_whole_board_top_resized.jpeg
+
+>> Alas, the Pine64 wiki is currently in read-only mode, due to some
+>> recent issues with the underlying hardware that runs it.  Migration to
+>> another form of documentation for Pine64 boards is also a possibility,
+>> which makes the updates even more complicated.
+>> 
+>> With all this in mind, I think it would be the best to rename the 
+>> board
+>> on the Pine64 side, to ensure consistency, and keep this patch as-is.
+>> I'll make a mental note to do that on the Pine64 side once the current
+>> situation with the Pine64 wiki is resolved.
+>> 
+>> >>          items:
+>> >>            - const: pine64,pine-h64-model-b
+>> >>            - const: allwinner,sun50i-h6
+>> >>  
+>> >> -      - description: Pine64 LTS
+>> >> +      - description: Pine64 A64 LTS
+>> >>          items:
+>> >>            - const: pine64,pine64-lts
+>> >>            - const: allwinner,sun50i-r18
+>> >> @@ -748,17 +748,17 @@ properties:
+>> >>            - const: pine64,pinephone
+>> >>            - const: allwinner,sun50i-a64
+>> >>  
+>> >> -      - description: Pine64 PineTab, Development Sample
+>> >> +      - description: Pine64 PineTab Developer Sample
+>> >>          items:
+>> >>            - const: pine64,pinetab
+>> >>            - const: allwinner,sun50i-a64
+>> >>  
+>> >> -      - description: Pine64 PineTab, Early Adopter's batch (and
+>> >> maybe later ones)
+>> >> +      - description: Pine64 PineTab Early Adopter
+>> >>          items:
+>> >>            - const: pine64,pinetab-early-adopter
+>> >>            - const: allwinner,sun50i-a64
+>> >>  
+>> >> -      - description: Pine64 SoPine Baseboard
+>> >> +      - description: Pine64 SOPine
+>> >>          items:
+>> >>            - const: pine64,sopine-baseboard
+>> >>            - const: pine64,sopine
+>> >>
+>> 
 
