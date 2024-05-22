@@ -1,156 +1,344 @@
-Return-Path: <linux-kernel+bounces-185652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6838CB871
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:29:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170878CB873
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCBA1C209DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:29:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92EE01F217EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901F02940B;
-	Wed, 22 May 2024 01:19:23 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2120.outbound.protection.partner.outlook.cn [139.219.146.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B9B2E3E0;
+	Wed, 22 May 2024 01:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="o0kttKKw"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2058.outbound.protection.outlook.com [40.107.117.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06A34C6D;
-	Wed, 22 May 2024 01:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3722C9D;
+	Wed, 22 May 2024 01:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.58
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716340762; cv=fail; b=j6wb8M2ZTQuEa9491uNHxgNuDbEzZ8rh2ENP0Hmn05YbG+kJgxDIyu5psrEf6mXeGcM2aJ+RByCHI10F7qA6iDZfii7rgbNRQfjO7e/J4pKMWJ1zKS+l1Ij0rHqGU9+tY478JkL1sacypsEv8JKRox5T3HVjk/J9S1V1UieymgU=
+	t=1716341149; cv=fail; b=NcoUNediQn0SvpRIRBRtL+9xg95tiryVoH6KapoCjlxkcLGx84FsnHCFATh13W2eslSAh2Mz7hD7jWIoMxEI7pB92iw/9yQZBnNXOYTUpaHuBVcR/M2fprKUOE8KC1GdbxQQrmGo/EpdLewOX7S14s6PX63QpPkBHsZSuIf/KFo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716340762; c=relaxed/simple;
-	bh=fszV9JOzggVN7+ckiW7JVmiP7/n/aznPEBnVghYtApo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=irahjs40Ym8nXW8FUggP2xrxLMMphPRusv7rt4i14IR/7lAxBh3Oide6hdsFznK7W2HOntu3pR9q/8AbXOxzhcpPkzM51cRO0PlFibLc2V25z4rSyq/U6OhrFnHyNjTVlUFfF7ns+RBqtZ6rdiO1S2BzftOSR5+xIdADLKYGHX4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+	s=arc-20240116; t=1716341149; c=relaxed/simple;
+	bh=AmI/QH1JDBm0sNSSGC+9czsGdznApzj56hGO+aNzqBQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QbGWxP3P297OT3gjsz0eVIJZIPFNNtT6Yss68e6qe1OBWeBfnrT4G39Y7FVxKwBRkd74nwMgORy2DvMH9raa3fg6kAxQqE4QxwV+dNi6uu18OCs5MLwoljw41XtYEtNem2/SMsQYRhfiSAi6IMmDY2EDaGRyHXJZSzbHMHax24E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=o0kttKKw; arc=fail smtp.client-ip=40.107.117.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bX+zpL/Z9HoM20eDJYioNT/1FgdqP3EIELzGzpRvWVucFq2GFOn5iTnnvGlZvgR7DlJ3AAG4SM/2sa70ZLRv2gI9IyyQBeQqaNYyuBRdJBrTedz3lnrR2IQDJ+sApvpf2PEpgWIKJ8q5z/QfDLWc3ZqAheblm+m7fTfbHIy5RPV6fAqgOlbXGZhqyGcBdOBykR59ZhoWU9MtuJbwDkaz8swIP4BV9O/qfr3Oivjjh6Iv28Gpsu8bOLwQENKNWXHxL8uJFrc1Q64okBAUx+uGMffGy0RfDEVf7dMJvnNSqqMje0B2z4fTcMWIu4vUrWo5NBfqnEnQlg+53zeaEgH6Tg==
+ b=OAAC6wpHJVX2SxifNvmts57ShaW48tahMOGU9FJ8UynmuVTfG4pAkiW14DpC14jXMR+2VGLOL7glOTla0jXvJPRMhdlL8tyJ89/lGHw78vBntmUsJRGCX9jp/v2GXB6TQlc9/eg/7kS+3GHJ8QfBwLcfkZZpxR9k2QoUue+cN/uPYDF+c8yDFxx+vsYNSta85y1ksan3E0ygO7MLQNnuduIOdQM4Zeb/smBnOK+bgAJQst/J1cu0M7q5h53nwcF4z9PgQy+YXDOgxoe3SxjcOLphG1I+64mMqwa0MwrMkP/MvHPf2MBABfD83n12XfnQSZJxb7VmkqR2/QMhpriljg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tcj0nV0QKTR6KYMKm5D5jAyIT43iPeTTe0tlkJpe7xc=;
- b=eMm9cMLi+XIimhMazDq2EEvRI+Gsi0ZG6HJEBorgZuPHVVOW9JM8lEBSW328XLVJpxQ72BsA4KT3xGeFWXogD8vbo/Vg8uiP82utwIdQEmfyEW2nz75TSxzeY8ij4vXSszNYa/YK3FXoUFtLDUWzcHhIqLm2FyBFLgYP9YJIKx8Sh7XzpHpP6JaUpjmZZ900Z3SwlfaMwMf18aSKj9xWc5jnsPWVkaXhKKs4SXCx53pFLzJk4QNAwVPxooACZvbzp5hm5LdbKAPWEl2E947eGLfkLVrr6dU46TRIFhxBgCgpDghdRSrVqqGrBJzo/+mscyfwyDaZjmIka8J1WgyoIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ0PR01MB0981.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550::13) by ZQ0PR01MB0951.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:e::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.37; Wed, 22 May
- 2024 01:19:10 +0000
-Received: from ZQ0PR01MB0981.CHNPR01.prod.partner.outlook.cn
- ([fe80::a350:34aa:a63c:287f]) by
- ZQ0PR01MB0981.CHNPR01.prod.partner.outlook.cn ([fe80::a350:34aa:a63c:287f%6])
- with mapi id 15.20.7587.028; Wed, 22 May 2024 01:19:10 +0000
-From: Kevin Xie <kevin.xie@starfivetech.com>
-To: Minda Chen <minda.chen@starfivetech.com>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Conor Dooley <conor@kernel.org>,
-	=?iso-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, Rob Herring
-	<robh+dt@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Daire McNamara <daire.mcnamara@microchip.com>, Emil
- Renner Berthing <emil.renner.berthing@canonical.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
-	<aou@eecs.berkeley.edu>, Philipp Zabel <p.zabel@pengutronix.de>, Mason Huo
-	<mason.huo@starfivetech.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>
-Subject: Re: [PATCH v16 19/22] dt-bindings: PCI: Add StarFive JH7110 PCIe
- controller
-Thread-Topic: [PATCH v16 19/22] dt-bindings: PCI: Add StarFive JH7110 PCIe
- controller
-Thread-Index: AQHagPD6N6etUUNV8EKahT86V8hnLbGiyjZw
-Date: Wed, 22 May 2024 01:19:10 +0000
-Message-ID:
- <ZQ0PR01MB09818F373ACAA70B3C9F39E282EB2@ZQ0PR01MB0981.CHNPR01.prod.partner.outlook.cn>
-References: <20240328091835.14797-1-minda.chen@starfivetech.com>
- <20240328091835.14797-20-minda.chen@starfivetech.com>
-In-Reply-To: <20240328091835.14797-20-minda.chen@starfivetech.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ0PR01MB0981:EE_|ZQ0PR01MB0951:EE_
-x-ms-office365-filtering-correlation-id: dd824be0-73d8-45f8-c363-08dc79fd2f2c
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230031|366007|7416005|1800799015|921011|38070700009;
-x-microsoft-antispam-message-info:
- BI6GmKmB/BdY3XeJTG8rMpk+DxpdX+JkNj3NDmC4Uu19e/zcY0zhHtygyXWUK3O40coTq9oTzeZDzD0jlg5jP0bevoobz0nQD23lF8Gyy7+wYw3SYcFdDIPB4SMBl7UHpcFHQ/usoLS3Y0PBK2kK261KzPQeSOfkiRtHhBA3KSnwT19unjJCnPcCqtkuLaOd3xqd+MxbDsZr3kn9yGVINShIkrAeHx6gUsUfesozbUc/YxwcQETelIuq2pMznA9dcFSIRWgzMpWTPHSZDuQx5T/TwQhERlGZ6DnLc7QBEBe/+bW7juTR98n4kk3LfUglsrkbr6iRvUn9oZ+Enrw+KNkGhKf6k8vHrA4QPYdcxUCFdFiRrg2bUxaGl1ZXWPzai9QG6bUm/WSeBEwAdzi0oXXLmQrh4tqn3wnBoEPW0i5vM+e6knxACYOfRI6n99fyWuUVU5MyWwHE6tQyEAoL6CLbY3PJuSS2ISoZ0Ly5FCNIfHagdMzP4l0Zx0/XyZsWom4kJ9/4WyY8yyKVJZouI78FyueEqI9P2uyjDIWNUJwD+W4PIie4grY0Wsz3LogRiGLoYTXgy3Pm6JVz3Dq/G/91ETWVgYIYzgCcWWkVznXLqry+arx8LcrZ1LLxTnS52LN+plJ1DN71K7IWWh2XLQ==
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB0981.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(921011)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?FJ7RwoJOAlihYMalqyQ01lVDLRNtxp0r4wz47A0dNRnmRVZ7ES4cWttOwn?=
- =?iso-8859-2?Q?Pvai5Pwv9JpYwWDYT6MUfNQb8oos/PuPszjtxexXEHfFJk5INtjN/W5yO6?=
- =?iso-8859-2?Q?CiTyMAEkAO+boNqn+IdT01z1qAVL/geruCrfrc5RquwHD82LQIjhtpdCCE?=
- =?iso-8859-2?Q?d4kljn1+MSp1yQy50AjkIwnkHnY5cfAlC6nzReq9SJD+x/5L8H34biZw1+?=
- =?iso-8859-2?Q?HdmVyfiGF5WShSSS7LQ/pQ/xz0z+CjNPxcbC/8xT2MAvQxbQfzS0QZZG61?=
- =?iso-8859-2?Q?aV/91ZGx2Md8w9PG7hbENKdROcmCflAKI5tAnqSLEtbVmMkJKh+Acoy3O0?=
- =?iso-8859-2?Q?r+GGQlQOhOK7U0js+w5kAQW5GfntT1HOx+3CeC2tQ8r120t22dqLQ5XR+6?=
- =?iso-8859-2?Q?niDBb2RMQWzVPLXs0eo08Rkk3ri8z08MlOkIE5UxiHc+iMs736FKEF7Cwu?=
- =?iso-8859-2?Q?K9HhcW3cZ4Mfx4t4bmPP48OBA7DaXce9pmQ9maGpSOsxQGxY8SugQnv21H?=
- =?iso-8859-2?Q?CNKgu0wMOnE/DP6Qn/Cv/2JLLwpikCrsTqWv43M4GnvBeh5TjdjG/YgmVe?=
- =?iso-8859-2?Q?5eqJWa6GfpqXa/d1D+yunL2YGT0comMlqarStamXf+qgqVm/zOfoAjYNNZ?=
- =?iso-8859-2?Q?ytIx66nwtp3S6QUZT5nLtktI1ZscvopkzfXOSDvVIz8rpwaUayKFe7fOYn?=
- =?iso-8859-2?Q?13WTZ6nSTm6f8K1eeyIQ4nbdxLILSxEbfGptf/QB6VWuHI/e7KiJRaUr00?=
- =?iso-8859-2?Q?e+iBaaVgg9a44uiuVBrwvHfK7Hs+GJyTOIqQJmip4VfVPwjkOznNkCFzr1?=
- =?iso-8859-2?Q?Ugf+Bt0R17keX8NWRUoGdbncA+m4w/7CP2oQW58vcpYXjyNP5y+V/vhi4U?=
- =?iso-8859-2?Q?0SA7QCpYbQMQvajN5m6NqshJVJlgkZC+yP0FPMYC100hray/WNb3MNVcyS?=
- =?iso-8859-2?Q?5l1zQ2O48fmFp5FhzqsMT99q2voSz8y4F4ZzfFrY4jT9kjsEI9qBi66cif?=
- =?iso-8859-2?Q?iAE9alDF2f54XdgdRJkarC70D76kjt1h0utJ+XoB8HM1/kZwMeNmCSkf4t?=
- =?iso-8859-2?Q?oW7VR6TvD/lzMuZn9omtyY2wn58ah5gXI0YlFrb5ZY057PNzaUJPENTTgu?=
- =?iso-8859-2?Q?6Dm1o40c7MuK9Eg7PrZ+RrdacioCZPQoABwMQE4z8siXZ4kWHCzABVvFF0?=
- =?iso-8859-2?Q?n56DyeJNvZkQcgDgOPPgMrDSAOu4V9mnFuu0kPTjfBC+USH3BDKBzHw8gD?=
- =?iso-8859-2?Q?rJb2Hmo3mo4UPWEjthq01lgi9BIkSIjWClnDpjyz5mjDAABzSZFy6Bhhm6?=
- =?iso-8859-2?Q?fUDM5/NrWqD14zpyuJMBjNnxNJgqVCRNEt8ifPbUbtaaenOTMfDXsB6O5M?=
- =?iso-8859-2?Q?ZLe+pnWZIe6xvtyogEdAizL0kpdinlQWUptbNtR/MMFCSI500864hmvj27?=
- =?iso-8859-2?Q?tfEjiphQBfuyiSMTwRg0/RDFuN+O08rLI/Y+jnTgmJCzZjcOOtAvfBWNL6?=
- =?iso-8859-2?Q?fgAGk15NxClf/kiIDwaUuFIJZBGdLf5hS3QmX9RWN3TB2bt+jllm31iwSN?=
- =?iso-8859-2?Q?qwYYDhb60bbW1ELDOHU03P+Vvm+FTBRTR7L4TUsZTvhWlwadcvq09zb7LR?=
- =?iso-8859-2?Q?0fhauX0ciEpm7YTJ0g0nNX4BK2z1QYkIjn?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+ bh=MpR5vcox7qIrfrMuA1GVItiQ1YBg1Rdpf1mQ/akwuZQ=;
+ b=k+JP/bHGl+9Ec8CfmijifvNMrKwugdctLdEBACw9HWBDy/tMHrXD8Nnilz/u/+2j4dO4YomD82HGK8qJqKAy3wO+rL/bF1VH+AkKbLQNOEf98M+JTur0GY/dvf88xN3dL26Z4LhRcsdnh7itSlnx1w8sutj/iqb6BDunVu+hQ4iB0jdprmPcYgCV6swSvS+HPHvMTaMtm71/co37wS36pvfdzxHvGM9jOnt7cYpqCt6DLY38tu1mpQLYT8ybwSt8m4eR/m7DKJ+R93vxUbiw0v60qSjO4gMiuTqZWOJn8OIsV3pSy5Gu/LMGOoR9aML4hX7ISkPWUgUIPrWvPhwY3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MpR5vcox7qIrfrMuA1GVItiQ1YBg1Rdpf1mQ/akwuZQ=;
+ b=o0kttKKw+6pUlUXYQV9ins3NI2F+/tX2tfp5/sva+w3tZGNVbe1Me815VtjGQUJZqgVV6IvuaxgQPsefhj4MCgBbjy87FaaRSV2njInB01ClvpD73HFTE98LM34jrxPWN9nHqkJBvWGyoeU/jhv75qhIQQquZR5kKZ431GVHvx9JhBXsMRVzv99hkPnE8zwVnu9MBiBPogJalVnE329m92rvpP2hffdAjNLsM1XUqMrhNV0oYeCTuoVG/Aw0UY9pjRIPZGcIKaz7Tic83k1gDvgFdVsrFsaG65aXJq+QV78KUzkmZNOUns71WXtFDtWPCv+6RES2Sv2ZWhTHPeBk3w==
+Received: from SG2PR02CA0129.apcprd02.prod.outlook.com (2603:1096:4:188::19)
+ by SEZPR04MB6171.apcprd04.prod.outlook.com (2603:1096:101:cf::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
+ 2024 01:25:40 +0000
+Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
+ (2603:1096:4:188:cafe::33) by SG2PR02CA0129.outlook.office365.com
+ (2603:1096:4:188::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36 via Frontend
+ Transport; Wed, 22 May 2024 01:25:40 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
+ SMTP Server id 15.20.7611.14 via Frontend Transport; Wed, 22 May 2024
+ 01:25:39 +0000
+From: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
+To: patrick@stwcx.xyz,
+	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] net/ncsi: Fix the multi thread manner of NCSI driver
+Date: Wed, 22 May 2024 09:25:36 +0800
+Message-Id: <20240522012537.2485027-1-delphine_cc_chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB0981.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd824be0-73d8-45f8-c363-08dc79fd2f2c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 01:19:10.4776
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SEZPR04MB6171:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 8ffca375-8a5d-4f0e-3c65-08dc79fe1735
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|1800799015|376005|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oWD9vhW0mOp/77s8EumMdiEefIU3OL01KV5GAWRbsVneqRPAOzXOjh7j1y82?=
+ =?us-ascii?Q?SBISBmap5fiokpGkbUwwIHY5AK3q9waep+JKpUwMFJu/tFRFzbClwYWEqYAB?=
+ =?us-ascii?Q?tMol9fwhHuNY1Gr3KaoLWvpAPp9sleERQJiNgoYeoFO2tT+7T0rY9VqnGs5t?=
+ =?us-ascii?Q?IhScCsOy1NwqzTpObiz2jqZqFRWRSGL4/+TibfOomAjCHzbM4V5kPl4qrf1T?=
+ =?us-ascii?Q?gDMz6MCh9Lmkwq5JTuhp3DPYA7ZSQ/7RTe1VxN6e3INdkte2m1+xPvvKc5Vh?=
+ =?us-ascii?Q?gjYMukdnFUe9D6qEtBLfo3mWGUcAsdx6DbdjLtZCd6VL1sulanajquC0Wxzt?=
+ =?us-ascii?Q?z07HlpHxANhrxadGFMUuBI/E1TZXyagFpKSrO/hKt9tcW4hPK1pv8SmRdVRp?=
+ =?us-ascii?Q?s0zbAG0w5iEzy7Rr9AurOYA8Q4rcQ4g+ZIBKeFBOa/FBTgUww/0kCShf4R4w?=
+ =?us-ascii?Q?2nskOcQFmqWKrixIGfCdg3DeKTaf9/uW7JsjuwQsZixMiNcvN2vxIdJCjhFh?=
+ =?us-ascii?Q?I7K6bpvFeSkMafNMY0dqknRLgGGNw3sSNd7jUjhxWR46EmNmnhnjTIcVR54O?=
+ =?us-ascii?Q?GgQy3PxZcyf+Wpeec2KPAkpjy+PPEW2OekYSf0iMBrrYTSG9DyjhF8JimfET?=
+ =?us-ascii?Q?YAue8KYyHkXl6qlKAQy86d4IZaXGClsmOdhlFVSqCk1cuB2N1aV0A0IaWvWn?=
+ =?us-ascii?Q?3jQEw16Weu9hh9eSbsAEXtGvvTt5wJArwvNXwNXEWgGPWcjYzAC/hFv28The?=
+ =?us-ascii?Q?CS1+wnSUss12emKKz69lTdigAWQ7jWjZZ/E4Q/a9pAQWUWs44gRCjPu/UrtQ?=
+ =?us-ascii?Q?iblTmA9FlOFcNE3mckXA8eo/Lb/Af8m15CeMzK8nfUaxfc6qaHYL4UPOvHiY?=
+ =?us-ascii?Q?Z8ab/zfz6WvpvB6S28nphZw/iwNEuuCKAFv3L2Q3l1KyuXBAG6z4No3vs3ZK?=
+ =?us-ascii?Q?axVAy2Z6mu010LMXyiIRaEXbPgcoGWAqfIctcU7M/SON5rg+QRTY1nU6Al5S?=
+ =?us-ascii?Q?JdaswU8Lj3uVRtjkCiSXqB1msSNJtunZHL+dGMSiOZsYN5Bg7MciYWH+WsJg?=
+ =?us-ascii?Q?8VFUgsnFImCeBKtqAufvGnBoX5XDFHGrtYmc/1FXqmUJCP6dGaeorZKPmMY1?=
+ =?us-ascii?Q?h+qN/4XHkPbhZLCQezG9Of1zICOct0pckjJXyHZCmwtK0NuOgFHcIIm2AqvI?=
+ =?us-ascii?Q?nmbE5DvftOPaPwbmT2mqBQ+FN5HZhivnNmGp5Eo/Npuio6aw6IeIsFMg0ele?=
+ =?us-ascii?Q?nVIdrVvhv97+tbXBrTORx2gd+C4Wh9G4m/bAxowoucySGOPShG8+0cyl0a1R?=
+ =?us-ascii?Q?Z1nSohjK6EMMK/dP/1T2L/iz+SHZNfMEbkv4SDM08KAri7RAbaYIlMDIbkwj?=
+ =?us-ascii?Q?eE3uayw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(36860700004)(1800799015)(376005)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 01:25:39.2474
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: whPvcV45kSnhi6q2Vvh+Qi6o/6c1K2Q7LP/SoJquu5SZQrkEcM4aHONHTDcs/TF2V+92tRWLcQ81Y1EcZwGtzGbxw10RJ4MvqXp3eNA0dJM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB0951
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ffca375-8a5d-4f0e-3c65-08dc79fe1735
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG2PEPF000B66CC.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR04MB6171
 
-> Add StarFive JH7110 SoC PCIe controller dt-bindings. JH7110 using PLDA
-> XpressRICH PCIe host controller IP.
->=20
-> Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
-> Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Kevin Xie <kevin.xie@starfivetech.com>
-> ---
->  .../bindings/pci/starfive,jh7110-pcie.yaml    | 120 ++++++++++++++++++
->  MAINTAINERS                                   |   6 +
->  2 files changed, 126 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+Currently NCSI driver will send several NCSI commands back to back without
+waiting the response of previous NCSI command or timeout in some state
+when NIC have multi channel. This operation against the single thread
+manner defined by NCSI SPEC(section 6.3.2.3 in DSP0222_1.1.1)
+
+According to NCSI SPEC(section 6.2.13.1 in DSP0222_1.1.1), we should probe
+one channel at a time by sending NCSI commands (Clear initial state, Get
+version ID, Get capabilities...), than repeat this steps until the max
+number of channels which we got from NCSI command (Get capabilities) has
+been probed.
+
+Signed-off-by: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
+---
+ net/ncsi/internal.h    |  2 ++
+ net/ncsi/ncsi-manage.c | 73 +++++++++++++++++++++---------------------
+ net/ncsi/ncsi-rsp.c    |  4 ++-
+ 3 files changed, 41 insertions(+), 38 deletions(-)
+
+diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
+index 374412ed780b..ef0f8f73826f 100644
+--- a/net/ncsi/internal.h
++++ b/net/ncsi/internal.h
+@@ -325,6 +325,7 @@ struct ncsi_dev_priv {
+ 	spinlock_t          lock;            /* Protect the NCSI device    */
+ 	unsigned int        package_probe_id;/* Current ID during probe    */
+ 	unsigned int        package_num;     /* Number of packages         */
++	unsigned int        channel_probe_id;/* Current cahnnel ID during probe */
+ 	struct list_head    packages;        /* List of packages           */
+ 	struct ncsi_channel *hot_channel;    /* Channel was ever active    */
+ 	struct ncsi_request requests[256];   /* Request table              */
+@@ -343,6 +344,7 @@ struct ncsi_dev_priv {
+ 	bool                multi_package;   /* Enable multiple packages   */
+ 	bool                mlx_multi_host;  /* Enable multi host Mellanox */
+ 	u32                 package_whitelist; /* Packages to configure    */
++	unsigned char       channel_count;     /* Num of channels to probe   */
+ };
+ 
+ struct ncsi_cmd_arg {
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index 745c788f1d1d..5ecf611c8820 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -510,17 +510,19 @@ static void ncsi_suspend_channel(struct ncsi_dev_priv *ndp)
+ 
+ 		break;
+ 	case ncsi_dev_state_suspend_gls:
+-		ndp->pending_req_num = np->channel_num;
++		ndp->pending_req_num = 1;
+ 
+ 		nca.type = NCSI_PKT_CMD_GLS;
+ 		nca.package = np->id;
++		nca.channel = ndp->channel_probe_id;
++		ret = ncsi_xmit_cmd(&nca);
++		if (ret)
++			goto error;
++		ndp->channel_probe_id++;
+ 
+-		nd->state = ncsi_dev_state_suspend_dcnt;
+-		NCSI_FOR_EACH_CHANNEL(np, nc) {
+-			nca.channel = nc->id;
+-			ret = ncsi_xmit_cmd(&nca);
+-			if (ret)
+-				goto error;
++		if (ndp->channel_probe_id == ndp->channel_count) {
++			ndp->channel_probe_id = 0;
++			nd->state = ncsi_dev_state_suspend_dcnt;
+ 		}
+ 
+ 		break;
+@@ -1345,7 +1347,6 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
+ {
+ 	struct ncsi_dev *nd = &ndp->ndev;
+ 	struct ncsi_package *np;
+-	struct ncsi_channel *nc;
+ 	struct ncsi_cmd_arg nca;
+ 	unsigned char index;
+ 	int ret;
+@@ -1423,23 +1424,6 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
+ 
+ 		nd->state = ncsi_dev_state_probe_cis;
+ 		break;
+-	case ncsi_dev_state_probe_cis:
+-		ndp->pending_req_num = NCSI_RESERVED_CHANNEL;
+-
+-		/* Clear initial state */
+-		nca.type = NCSI_PKT_CMD_CIS;
+-		nca.package = ndp->active_package->id;
+-		for (index = 0; index < NCSI_RESERVED_CHANNEL; index++) {
+-			nca.channel = index;
+-			ret = ncsi_xmit_cmd(&nca);
+-			if (ret)
+-				goto error;
+-		}
+-
+-		nd->state = ncsi_dev_state_probe_gvi;
+-		if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY))
+-			nd->state = ncsi_dev_state_probe_keep_phy;
+-		break;
+ 	case ncsi_dev_state_probe_keep_phy:
+ 		ndp->pending_req_num = 1;
+ 
+@@ -1452,14 +1436,17 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
+ 
+ 		nd->state = ncsi_dev_state_probe_gvi;
+ 		break;
++	case ncsi_dev_state_probe_cis:
+ 	case ncsi_dev_state_probe_gvi:
+ 	case ncsi_dev_state_probe_gc:
+ 	case ncsi_dev_state_probe_gls:
+ 		np = ndp->active_package;
+-		ndp->pending_req_num = np->channel_num;
++		ndp->pending_req_num = 1;
+ 
+-		/* Retrieve version, capability or link status */
+-		if (nd->state == ncsi_dev_state_probe_gvi)
++		/* Clear initial state Retrieve version, capability or link status */
++		if (nd->state == ncsi_dev_state_probe_cis)
++			nca.type = NCSI_PKT_CMD_CIS;
++		else if (nd->state == ncsi_dev_state_probe_gvi)
+ 			nca.type = NCSI_PKT_CMD_GVI;
+ 		else if (nd->state == ncsi_dev_state_probe_gc)
+ 			nca.type = NCSI_PKT_CMD_GC;
+@@ -1467,19 +1454,29 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
+ 			nca.type = NCSI_PKT_CMD_GLS;
+ 
+ 		nca.package = np->id;
+-		NCSI_FOR_EACH_CHANNEL(np, nc) {
+-			nca.channel = nc->id;
+-			ret = ncsi_xmit_cmd(&nca);
+-			if (ret)
+-				goto error;
+-		}
++		nca.channel = ndp->channel_probe_id;
+ 
+-		if (nd->state == ncsi_dev_state_probe_gvi)
++		ret = ncsi_xmit_cmd(&nca);
++		if (ret)
++			goto error;
++
++		if (nd->state == ncsi_dev_state_probe_cis) {
++			nd->state = ncsi_dev_state_probe_gvi;
++			if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY) && ndp->channel_probe_id == 0)
++				nd->state = ncsi_dev_state_probe_keep_phy;
++		} else if (nd->state == ncsi_dev_state_probe_gvi) {
+ 			nd->state = ncsi_dev_state_probe_gc;
+-		else if (nd->state == ncsi_dev_state_probe_gc)
++		} else if (nd->state == ncsi_dev_state_probe_gc) {
+ 			nd->state = ncsi_dev_state_probe_gls;
+-		else
++		} else {
++			nd->state = ncsi_dev_state_probe_cis;
++			ndp->channel_probe_id++;
++		}
++
++		if (ndp->channel_probe_id == ndp->channel_count) {
++			ndp->channel_probe_id = 0;
+ 			nd->state = ncsi_dev_state_probe_dp;
++		}
+ 		break;
+ 	case ncsi_dev_state_probe_dp:
+ 		ndp->pending_req_num = 1;
+@@ -1780,6 +1777,7 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
+ 		ndp->requests[i].ndp = ndp;
+ 		timer_setup(&ndp->requests[i].timer, ncsi_request_timeout, 0);
+ 	}
++	ndp->channel_count = NCSI_RESERVED_CHANNEL;
+ 
+ 	spin_lock_irqsave(&ncsi_dev_lock, flags);
+ 	list_add_tail_rcu(&ndp->node, &ncsi_dev_list);
+@@ -1813,6 +1811,7 @@ int ncsi_start_dev(struct ncsi_dev *nd)
+ 
+ 	if (!(ndp->flags & NCSI_DEV_PROBED)) {
+ 		ndp->package_probe_id = 0;
++		ndp->channel_probe_id = 0;
+ 		nd->state = ncsi_dev_state_probe;
+ 		schedule_work(&ndp->work);
+ 		return 0;
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index bee290d0f48b..e28be33bdf2c 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -795,12 +795,13 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
+ 	struct ncsi_rsp_gc_pkt *rsp;
+ 	struct ncsi_dev_priv *ndp = nr->ndp;
+ 	struct ncsi_channel *nc;
++	struct ncsi_package *np;
+ 	size_t size;
+ 
+ 	/* Find the channel */
+ 	rsp = (struct ncsi_rsp_gc_pkt *)skb_network_header(nr->rsp);
+ 	ncsi_find_package_and_channel(ndp, rsp->rsp.common.channel,
+-				      NULL, &nc);
++				      &np, &nc);
+ 	if (!nc)
+ 		return -ENODEV;
+ 
+@@ -835,6 +836,7 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
+ 	 */
+ 	nc->vlan_filter.bitmap = U64_MAX;
+ 	nc->vlan_filter.n_vids = rsp->vlan_cnt;
++	np->ndp->channel_count = rsp->channel_cnt;
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
+
 
