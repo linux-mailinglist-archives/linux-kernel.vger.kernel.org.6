@@ -1,49 +1,64 @@
-Return-Path: <linux-kernel+bounces-186057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F2C8CBF47
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CD68CBF48
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C69D0B21CBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91711F235D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F69782483;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6198B8248E;
 	Wed, 22 May 2024 10:31:31 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LQDXFwus"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999BE50269
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0457A15C;
+	Wed, 22 May 2024 10:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716373890; cv=none; b=rxccv6Pl1/ry6kZFWAqLei2UigdOqMfpUa+oUuyio+urRBMPivxrCQDz0UZ+nq8/BN2N6SJwJz2ud3REhaE+w/xQD3H4arH4xCyab62RiA/fo79P4NVa5PGLBsFH3AA4cmTMNw4Fs6a6hj3tiPU96J82qeVXUkvvwTwuVYx6dyo=
+	t=1716373890; cv=none; b=gCYT9Ow07/Zgulquwx9hIPfIgv4shfq0SCDTk5D1wDx4WhNagdKFptmGgAeJc4I7L32fKSjJbMRh0LAJsZi+lo72RikwB+QqctT48vmXcHtNQyQlhDksT19VSHvbD8GATSYuhp2BliwUIU7/UoaC7yXOxQZ3pTsyv0zpZonCgwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716373890; c=relaxed/simple;
-	bh=rxFk8HEHcSjxEGIA+UOVFBH3zOZ9OBbzCE67oj1TzPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FuAM9Mh1Tb1C7k2jjCErGjatFI3OeKXkCio4CADfbAw6LY7FmIunCeyJ9Bh6L9lAqdMvOcdw5EhgbfJlWPmC6a+ouYqlJFTnwAmTAmLqxT4JpsSEEsgr0p8Wgz5jIxKntyPge8xVKIYhvrLcw3vA6RKKqba8FhufiPMvjqN+0hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44MAUxO7084776;
-	Wed, 22 May 2024 19:30:59 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
- Wed, 22 May 2024 19:30:59 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44MAUwdV084772
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 22 May 2024 19:30:59 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <f77290fe-a94e-498b-bbbf-429ba0ce49c2@I-love.SAKURA.ne.jp>
-Date: Wed, 22 May 2024 19:30:58 +0900
+	bh=K8nGBpYmn5/Xkz9UAUlz7hw6W5DQdelisT+tUlEm9IM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SQX2AZAHQ9lyNhUfQT3BTc/CchnkDL8QYw7I0Gy+az66m5UZ4xYJ5K35VBirAZVAaW2EACEBwDYxlTCWloeVvTHk/RzB38peLK2z3fQ1o/6GiMsJGrWV9ENLmUOoKzk+3DzPrBusC8zbbM6wZEqPI+W/IzoLCCMcaE4IUWsznPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LQDXFwus; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716373889; x=1747909889;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=K8nGBpYmn5/Xkz9UAUlz7hw6W5DQdelisT+tUlEm9IM=;
+  b=LQDXFwuszdrL/rGdSDq7L5y/QnLuxm+oSK36sDCuGXJMs5QUdP9RH6TG
+   wFxxkEtnzgbe0HuHM+gpSsHqRym1QHJ7zIOeC/9/iJQRus66qcW8FlR5M
+   aZ2UCHxtuSW3tVf4JiHnhIoEZeaZ2I3B3mUPtGt6NG/MjLRWHyPTlRmnl
+   s9fKzH0DyZywzKDnc8yGEf5wiSP6T4ywusBmIjpqK98Gje/8y+EnRJTU4
+   +5PkyLYEOMrli4+byN9A2BDJ5CizL1k3iYBgUGvjJV7hnQkpl0EyFOUc+
+   jROmz8RimKKbHu70QJYsxok6t76hbeYecjc+IyBo/tpmQOUzkzgyTsr4l
+   A==;
+X-CSE-ConnectionGUID: Ixuv09lCRW+PWMbbvw4LGA==
+X-CSE-MsgGUID: 0tnJAq+ATVSJ7xXx/6J5qA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="15563988"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="15563988"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 03:31:28 -0700
+X-CSE-ConnectionGUID: klKjfoyyRJiCxPBKgFuUtg==
+X-CSE-MsgGUID: igCx5FxgTT6z+NreK37uhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="33296921"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.38])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 03:31:25 -0700
+Message-ID: <2f4fce9f-6283-40ad-8adc-c370e98627da@intel.com>
+Date: Wed, 22 May 2024 13:31:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,123 +66,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
-To: Jakub Sitnicki <jakub@cloudflare.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Hillf Danton <hdanton@sina.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>
-References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
- <20240521225918.2147-1-hdanton@sina.com> <877cfmxjie.fsf@cloudflare.com>
+Subject: Re: [PATCH v3 1/3] perf maps: Sort kcore maps
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ James Clark <james.clark@arm.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240520090647.949371-1-leo.yan@arm.com>
+ <20240520090647.949371-2-leo.yan@arm.com>
 Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <877cfmxjie.fsf@cloudflare.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240520090647.949371-2-leo.yan@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2024/05/22 18:50, Jakub Sitnicki wrote:
-> On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
->> On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com>
->>> On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>> --- a/net/core/sock_map.c
->>>> +++ b/net/core/sock_map.c
->>>> @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
->>>>         bool strp_stop =3D false, verdict_stop =3D false;
->>>>         struct sk_psock_link *link, *tmp;
->>>>
->>>> +       rcu_read_lock();
->>>>         spin_lock_bh(&psock->link_lock);
->>>
->>> I think this is incorrect.
->>> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
->>
->> Could you specify why it won't be safe in rcu cs if you are right?
->> What does rcu look like in RT if not nothing?
+On 20/05/24 12:06, Leo Yan wrote:
+> When merging kcore maps into the kernel maps, it has an implicit
+> requirement for the kcore maps ordering, otherwise, some sections
+> delivered by the kcore maps will be ignored.
+
+perf treats the kernel text map as a special case.  The problem
+is that the kcore loading logic did not cater for there being 2
+maps that covered the kernel mapping.
+
+The workaround was to choose the smaller mapping, but then that
+still only worked if that was the first.
+
+James essentially fixed that by ensuring the kernel "replacement"
+map is inserted first.
+
+In other respects, the ordering of the maps does not matter, so
+I am not sure it is worth this extra processing.
+
 > 
-> RCU readers can't block, while spinlock RT doesn't disable preemption.
+> Let's see below example:
 > 
-> https://docs.kernel.org/RCU/rcu.html
-> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-rt
+>   Ordering 1:
+>   Kcore maps       | Start address      | End address
+>   -----------------+--------------------+--------------------
+>   kcore_text       | 0xffff800080000000 | 0xffff8000822f0000
+>   vmalloc          | 0xffff800080000000 | 0xfffffdffbf800000
 > 
-
-I didn't catch what you mean.
-
-https://elixir.bootlin.com/linux/latest/source/include/linux/spinlock_rt.h#L43 defines spin_lock() for RT as
-
-static __always_inline void spin_lock(spinlock_t *lock)
-{
-	rt_spin_lock(lock);
-}
-
-and https://elixir.bootlin.com/linux/v6.9/source/include/linux/spinlock_rt.h#L85 defines spin_lock_bh() for RT as
-
-static __always_inline void spin_lock_bh(spinlock_t *lock)
-{
-	/* Investigate: Drop bh when blocking ? */
-	local_bh_disable();
-	rt_spin_lock(lock);
-}
-
-and https://elixir.bootlin.com/linux/latest/source/kernel/locking/spinlock_rt.c#L54 defines rt_spin_lock() for RT as
-
-void __sched rt_spin_lock(spinlock_t *lock)
-{
-	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
-	__rt_spin_lock(lock);
-}
-
-and https://elixir.bootlin.com/linux/v6.9/source/kernel/locking/spinlock_rt.c#L46 defines __rt_spin_lock() for RT as
-
-static __always_inline void __rt_spin_lock(spinlock_t *lock)
-{
-	rtlock_might_resched();
-	rtlock_lock(&lock->lock);
-	rcu_read_lock();
-	migrate_disable();
-}
-
- You can see that calling spin_lock() or spin_lock_bh() automatically starts RCU critical section, can't you?
-
-If spin_lock_bh() for RT might sleep and calling spin_lock_bh() under RCU critical section is not safe,
-how can
-
-  spin_lock(&lock1);
-  spin_lock(&lock2);
-  // do something
-  spin_unlock(&lock2);
-  spin_unlock(&lock1);
-
-or
-
-  spin_lock_bh(&lock1);
-  spin_lock(&lock2);
-  // do something
-  spin_unlock(&lock2);
-  spin_unlock_bh(&lock1);
-
-be possible?
-
-Unless rcu_read_lock() is implemented in a way that is safe to do
-
-  rcu_read_lock();
-  spin_lock(&lock2);
-  // do something
-  spin_unlock(&lock2);
-  rcu_read_unlock();
-
-and
-
-  rcu_read_lock();
-  spin_lock_bh(&lock2);
-  // do something
-  spin_unlock_bh(&lock2);
-  rcu_read_unlock();
-
-, I think RT kernels can't run safely.
-
-Locking primitive ordering is too much complicated/distributed.
-We need documentation using safe/unsafe ordering examples.
+>   Ordering 2:
+>   Kcore maps       | Start address      | End address
+>   -----------------+--------------------+--------------------
+>   vmalloc          | 0xffff800080000000 | 0xfffffdffbf800000
+>   kcore_text       | 0xffff800080000000 | 0xffff8000822f0000
+> 
+> The 'kcore_text' map is a subset of the 'vmalloc' map. When merging
+> these two maps into the kernal maps with the maps__merge_in() function,
+> the ordering 1 inserts the 'kcore_text' map prior to the 'vmalloc' map,
+> thus the 'kcore_text' map will be respected. On the other hand, if maps
+> are inserted with the ordering 2, the 'vmalloc' is inserted ahead, as a
+> result, its subset map will be ignored afterwards.
+> 
+> To merge the maps in a reliable way, this commit sorts the kcore maps
+> before merging them. Besides sorting the maps based on the end address,
+> it also gives the priority to a subset map to insert it before its
+> superset map in the list.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/util/symbol.c | 50 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 49 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 9e5940b5bc59..c1513976ab6e 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -1256,6 +1256,7 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
+>  {
+>  	struct kcore_mapfn_data *md = data;
+>  	struct map_list_node *list_node = map_list_node__new();
+> +	struct map_list_node *node;
+>  
+>  	if (!list_node)
+>  		return -ENOMEM;
+> @@ -1269,8 +1270,55 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
+>  	map__set_end(list_node->map, map__start(list_node->map) + len);
+>  	map__set_pgoff(list_node->map, pgoff);
+>  
+> -	list_add(&list_node->node, &md->maps);
+> +	list_for_each_entry(node, &md->maps, node) {
+> +		/*
+> +		 * When the new map (list_node)'s end address is less than
+> +		 * current node, it can be divided into three cases.
+> +		 *
+> +		 * Case 1: the new map does not overlap with the current node,
+> +		 * as the new map's end address is less than the current node's
+> +		 * start address.
+> +		 *                      [*******node********]
+> +		 *    [***list_node***] `start              `end
+> +		 *    `start          `end
+> +		 *
+> +		 * Case 2: the new map overlaps with the current node.
+> +		 *
+> +		 *        ,start              ,end
+> +		 *        [*******node********]
+> +		 *    [***list_node***]
+> +		 *    `start          `end
+> +		 *
+> +		 * Case 3: the new map is subset of the current node.
+> +		 *
+> +		 *        ,start              ,end
+> +		 *        [*******node********]
+> +		 *         [***list_node***]
+> +		 *         `start          `end
+> +		 *
+> +		 * For above three cases, insert the new map node before the
+> +		 * current node.
+> +		 */
+> +		if (map__end(node->map) > map__end(list_node->map))
+> +			break;
+> +
+> +		/*
+> +		 * When the new map is subset of the current node and both nodes
+> +		 * have the same end address, insert the new map node before the
+> +		 * current node.
+> +		 *
+> +		 *        ,start              ,end
+> +		 *        [*******node********]
+> +		 *            [***list_node***]
+> +		 *            `start          `end
+> +		 */
+> +		if ((map__end(node->map) == map__end(list_node->map)) &&
+> +		    (map__start(node->map) <= map__start(list_node->map)))
+> +			break;
+> +	}
+>  
+> +	/* Insert the new node (list_node) ahead */
+> +	list_add_tail(&list_node->node, &node->node);
+>  	return 0;
+>  }
+>  
 
 
