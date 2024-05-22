@@ -1,302 +1,230 @@
-Return-Path: <linux-kernel+bounces-186483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13C18CC4BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:14:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8269A8CC4BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BBF2810BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C4411F232AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7351B3716D;
-	Wed, 22 May 2024 16:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B09012E1F1;
+	Wed, 22 May 2024 16:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Aw3Fgi2O"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1/xw7hjW"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2041.outbound.protection.outlook.com [40.107.92.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E8D56444
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394433; cv=none; b=A8wlV49JICSY0MniW+k61s2YVgs9DHePYWqGUxiH004tr7d8Zg9fvXQAY5TCTBoHlqEqsWo0XCQbNuV3CMW7bn2+OreEvrRNdcR5rIsv3zvHXuP2BeCf3gpE+ZVoz9ogarpCW9ML0YfiJZYxAzn2yPNS/guna4pCkvOLKFpYODs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394433; c=relaxed/simple;
-	bh=NjXiPTWnOeImNdoz9BOwvzUqhkai0vzWdsLF5ouFHs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNGdIy9qwhnLrEMiSctcAIjoEwIl++dfWW274VflrZZz6q8dg+CcOrSiUUDcTw7GYq7rKUKPGkVX/cTh8oY5urXOml8iSZ21LIPsbFXJlL/qEBvzADXt36a29GCO7J+TtkaOjgnhoKrCpCG5vPn6lCuyEfdz+McqYF0z/OKbPxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Aw3Fgi2O; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716394430;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nOUOflu7eQzj/terIhor8uH3BfQ+23Qg6GF2/UGitw=;
-	b=Aw3Fgi2OPeNobl6V6uXb4qpMv2w+9o3PFqy/WAiGcqvZxxtxcv8Hg3jYhMxFewa1gmxP7v
-	xQFNLH7E5WMEA6IcQrY9ikPnqoWZulJaRfe6k3YYzntkrnlKF7F6w4ChZ5JIUhay+o7MRt
-	yzRwo0vQD4M/znt8kgqw9OEQkV9zGi4=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-364-lZOu8c7RMR6Alz31AhyiIQ-1; Wed, 22 May 2024 12:13:49 -0400
-X-MC-Unique: lZOu8c7RMR6Alz31AhyiIQ-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6a0dc98ce3fso12330046d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:13:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716394429; x=1716999229;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3nOUOflu7eQzj/terIhor8uH3BfQ+23Qg6GF2/UGitw=;
-        b=ehzutuCuzCpPtYcNscERnjWY69jhc1SHFbix0CiLCv30jrfK3jpAXZhGruEUagx4op
-         QdWroWILvfOb50QX9DkuU5jwXKnTp/DbRqzMkPghgyDuiwmqf1P3MIxxy/rU6ljN4jxB
-         PunAtJKnU7PQSZsdkqzFrS19UBI0jEh7YM+Qhb+AvzvM/VZeXqCSakrrtAKasr2bbnvq
-         y0DSRfiGdPpNl/ROlaphD94jMM+DfKGHWTV//146owQNp+kBge6VDWtqZvB9sjcwn+iK
-         htPYjtWj8wg9FYSp35EkZBuBCwAXbg2ghzSxeGKnrwh9uiNjORwnrVXl6C6iyp4Lz0vL
-         yUyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyGB75LnExdBf75hAWvjhNLvBUMqMg5AC3IqDUct/DR5mmORgSZaBnmL1k+rpj2fq7Ix/2OR4g7eRZxb1V/KTuY0d1vdtnQBXUZmlq
-X-Gm-Message-State: AOJu0Ywx3usx7KoJFg0dsduwjP//H8ntu1x2HhKhzW6Sx57rGQJuN0nf
-	upWNsBz8Ah3EfLa1xffwh/aGzfRLK9bPSEsHNpJyMk7h+ZFhIr1N80+q6zVuvbf0FyP+pm9Y4d6
-	MQVmRqqySI2oJazPd+PW7y1YpRmNEbgiNUuCZfsaE6g2jxmbTdXa1TBJvbk8cIA==
-X-Received: by 2002:a05:6214:2626:b0:6a0:87e5:210c with SMTP id 6a1803df08f44-6ab80931c4emr24096656d6.5.1716394428137;
-        Wed, 22 May 2024 09:13:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZToKdbUy5jaMTAiNrIxehX58pgqc0VaKB4XF1FynvcepfCcDlxlf35vwQBh40mWPVQggo8g==
-X-Received: by 2002:a05:6214:2626:b0:6a0:87e5:210c with SMTP id 6a1803df08f44-6ab80931c4emr24096056d6.5.1716394427346;
-        Wed, 22 May 2024 09:13:47 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1d9dd2sm134417386d6.129.2024.05.22.09.13.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 09:13:47 -0700 (PDT)
-Date: Wed, 22 May 2024 12:13:45 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-	Pavel Tatashin <pasha.tatashin@soleen.com>,
-	axelrasmussen@google.com, nadav.amit@gmail.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: 6.10/bisected/regression - commit 8430557fc584 cause warning at
- mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
-Message-ID: <Zk4ZuQpql0kBkMMH@x1n>
-References: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
- <Zk0HxVODITGKqYCw@x1n>
- <CABXGCsNbcMn0Z0RudFrBW78rZPE+cDY+f9r+yKf_AZwJZUOrQg@mail.gmail.com>
- <Zk0UA6wABOB9X_Dx@x1n>
- <CABXGCsOZnxrSHd0y6QrFhzAiY-uTJiRSmo__C_P8Y2qjFV6bRA@mail.gmail.com>
- <Zk0h0V8kvZRKu6F4@x1n>
- <a3d54407-87aa-4f59-adac-c9b79fe1ecef@redhat.com>
- <Zk4MsGxhP5x5aURG@x1n>
- <03faa624-1685-4a21-81fc-cc9e8b760e97@redhat.com>
- <Zk4Y9tU7pOzU0lw1@x1n>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0C71CD23
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716394536; cv=fail; b=U7mHsbhOOq3tDhDzgB7Ham5aq1i7dINE6fE6kbDrob6b+cQzD9VMV4oW3DlWxATwK+OljilHNnUBj6/MM4koB/CNBY7hkG2bqP9yQznjQ519TUI/AUma6bK7S2amtK/B2Q4jxQ419cbCPmfXg8qyTTS22iY8gOrXVZHM4D4pA2w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716394536; c=relaxed/simple;
+	bh=i39Y3EYpQBL+a8/bsValSX3EhhUZc2ixssRJ2VdbJ6E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dgBV82CdPTdNqApDZmGFcsS7EbwdCQWyPUUOD+2uEEvmzQDMiYys9FDaLumbaj2T2oTfOMna7uxwAfJ/YwhzkjALtpdWNhT10Cu5cOP61JdAmIiuVoVu3CNi8RQCGbDHAZ8zUfTkwvNBKAVx/AH0e5OGQndHu6SzrYDQQ9kXcBo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1/xw7hjW; arc=fail smtp.client-ip=40.107.92.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DpOlyh96A4zTA0BvrtLF5+Y4+6qvp2MEVu7WRa33BX8VF9fJpl4SkN9Ig+oP1x5/dFoPnMZeIOIz6QnQamcKUolT4AQ5qvUjXScePoIEBEm55ioBCLklClAkHOMYNWCBnxgxu2j31bNzHxrmHnmK9SzGDPf+ZXVIk7Q8qHROfM71G0WtKQnL982McN6XHRTDwiS6a1xHymMWkw7tLyWyyK5vImsQa5UCPvKPHjF4EkIvp0JzM4bLzCJcZoThyH9++lNKLB5v8HUYGnVORS6gajixNThTwAn8yJS64PtG/EZFf9NvZ1pI5K2/+99a5mru8KJN4pkUfb/483+oK3/bJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FsDPNCNeoiLC7+YGRBbV+a3I1N7vxT/g8Zru/cMwnmA=;
+ b=ASskevHoiYqRWg5YQB2p4LJWOVp7EMCeyBtlkV9KXS3S5Ooj3/fa8UnCzEfQkD7grVxOomBk9D8gThcrn+lesS4BlJdJrMrBErKknIyaZMeU3HBbZW88V9GpG9DD7cG93f4X3WX0/Y7w2jU5VdOWia3CB0WuMByGt5Ng31mlCsi4US5mUlcU6gry5W0ltn1sJ2IpCg36OlKlgMn4dAHStWZ9QqrTPLknIDoXgwn1wQMm3Y8NC8/PFeaO2+Jw2QdyDMn2LtoNcxS2pQIOd+toIYdj1qc3WBRLDnxoj8yl8naHIox8VLxOCScAPU7ZuNf9K97nUmfinuiv8BZvUtIojA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FsDPNCNeoiLC7+YGRBbV+a3I1N7vxT/g8Zru/cMwnmA=;
+ b=1/xw7hjW8cJ97mv/MgePMo5WB2CFwD/CFSoC3O0AU95csHe/hKyuNdAmDJivqVeEVsp0jGQMC7AgE1vJHrYksC4JvB8ZHUI2Zodh3cKTdWLnBAZXE31Yph9hjw1JOUqfRmka/ySy9Faib9x+CvNxNF5O8Vjrrbs7GP/rW6MnjtQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
+ by DS7PR12MB5888.namprd12.prod.outlook.com (2603:10b6:8:7b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
+ 2024 16:15:30 +0000
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 16:15:30 +0000
+Message-ID: <db4d1dee-b25e-f28e-e8dc-9c9bcce68dd4@amd.com>
+Date: Wed, 22 May 2024 11:15:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 04/15] x86/sev: Check for the presence of an SVSM in
+ the SNP Secrets page
+Content-Language: en-US
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ svsm-devel@coconut-svsm.dev, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Dan Williams <dan.j.williams@intel.com>, Michael Roth
+ <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <6cf54cac47f212f4c2b59b123855d8c183989022.1713974291.git.thomas.lendacky@amd.com>
+ <20240502093520.GRZjNeWLXU5j2UMOAM@fat_crate.local>
+ <66928741-aa5c-4bbb-9155-dc3a0609c50a@amd.com>
+ <20240517155858.GDZkd-wkWmYegos-eT@fat_crate.local>
+ <f8a92b19-9090-40ea-c2cf-707005f583a5@amd.com>
+ <20240522152712.GBZk4O0LIl2r0dH--H@fat_crate.local>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20240522152712.GBZk4O0LIl2r0dH--H@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR01CA0012.prod.exchangelabs.com (2603:10b6:805:b6::25)
+ To BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zk4Y9tU7pOzU0lw1@x1n>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|DS7PR12MB5888:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e049f16-6134-4553-00e3-08dc7a7a66a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|366007|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bU5NZ0FNbHF5ZFFmZGltSEsvUjZaYlFkK3RTVnRoTXU2MDhhQjE1ek9WVXNq?=
+ =?utf-8?B?dXU2QXNNcU0wWC9SR2hVYUg3b2ZsdG5RdFlIa1FIRVVheG5BNlFJWnNRUDJM?=
+ =?utf-8?B?VFdpamx6cWJ0K1UrclAyWmFGckxRRUExTlR3ZTZJNElOU1NpTGRyd2hqTkNB?=
+ =?utf-8?B?MlZqNnMwcnJwMkZRamNvb0JyV0F1aHNkUDVVeVNwT2ZleFEvQ1crY1V1a2l5?=
+ =?utf-8?B?RWc5c3NoRFBta1NUZVhybmk1RjVBdWV1djV2Q3ZvWkQ3bFMzdHZHUCtSOTA0?=
+ =?utf-8?B?dUIwdUdsMlpVbWF6Q09tL2ttUnljUE1uaC9JVENTTFlYaVQyU0drV1JSUnpl?=
+ =?utf-8?B?NndlcTNydDhmbm5iZlhlK2hzNmNsc1hzQWVhN3ZaTWFTOWNodGxIMGlLdzV3?=
+ =?utf-8?B?bFhsWVp0dE1VTXhqNnZrTzRCM1BMM1VKWFQya3ZuWC9FcWRwVmt2UnZmR0hV?=
+ =?utf-8?B?UG9IM3NpalZlSUVxWElyaEJuUmV4YkRzTEdnQVIra3dQSVNVWHhpbWxENVB0?=
+ =?utf-8?B?ZGtYcHhobHdJMnJJeHVhSllxcVRHNDRQNjROZ0RBbk5yYWdDSUkyY0tlLzRV?=
+ =?utf-8?B?WFNZeXBJQTdhbmdyZkNNS2p4d0paYjRNSXE0K1BKS3dDRXJvdGFnOWRrSVV2?=
+ =?utf-8?B?bGJ3dEJuODYvK2d2Y2l5Zy80YktLRExOSzJBb2hrKzZwZ2V3c2p1MFFlbVhQ?=
+ =?utf-8?B?ZWZpcGIwZzdzMUNaSEVlZ081c3VacVl4SVNwR3ZDSGtlam9heWpTOUdpZEk1?=
+ =?utf-8?B?azZiNUg2UnltclJrVCtUVGV0QnB4SG9FZDhrY2FNdEpJd2ovUmg3MEhxTnFU?=
+ =?utf-8?B?RzN4ZC8rbkFzWklmUDVPMklmTktXWVdkalZPUTlibVRRTC85RW8vQktTemN0?=
+ =?utf-8?B?S3dJd3NMN0YrOTMvTTREdEc0bk1YRE5ra0tBK1ZIcWUrVEc2WGNIdUZobnhO?=
+ =?utf-8?B?dm4wbklmYzJYV2p4cVRqR0RXQlM2THlOa1JDaG5qNHlMK3ZtOFBhZlc0bjJI?=
+ =?utf-8?B?aWxBeWNTQ29ISTc4ZFk3MEVpSlNheEU5d0x2YVN0Z1lyVWxaU0ZtQ21IRkdD?=
+ =?utf-8?B?bGhFdmRhV3YvSlgzNGhodGpWQTVQeEQ3eVk5UDhic3Nha2JqSXN6T0FYOW1V?=
+ =?utf-8?B?anJlVXVMV0ZCdldFMTdqclQzM0piZWh5L01CZklqZy8vc3JJYlFpZnpQSVNB?=
+ =?utf-8?B?UkNqYzgrczhLd1diNWdLVU1raHNLYjkrQ25uVlA1NGs3Vzd2QjdFSXZGSVZx?=
+ =?utf-8?B?VVhERDE4OVhoK05oQ0o1M3FrS0ZuWmJPVmVQb3VvUnJ2MFdYVEllQjVpUXZQ?=
+ =?utf-8?B?YzZLWXJlL0hkSWx0K1c5UWU3VzI1RzBKKzZPTGM4S3BSYnpacVh6b2VFWk9t?=
+ =?utf-8?B?Tm9xNXdybmxybTNLUUNwZW9UOGNyMC9mTVZoMjl2TkhTdEYrL3Q1RDNSQXFi?=
+ =?utf-8?B?V1o2R2FMQUJIa2NvUTh4V1dvOWd1c0ozN0Nyditxd1VFVitDTjdXM3lmbDBP?=
+ =?utf-8?B?VjRVYjNNMXFoV1U2M1d3ajZHaVh4QUFMOGV3c0JCNyt3ejVTNkZTUHhJUVpU?=
+ =?utf-8?B?clRVeXpHME05S1F6WjVVYlhkZnY5OFFYQzJkSVBsVDhjSFpYNXdVeXQzaWpl?=
+ =?utf-8?B?TlcrejFXZHNKVGNwU29NWm95c3RiakpTVEIvQ242MWNzRmNLNGorRzRUTjMw?=
+ =?utf-8?B?UE85RVZydUdrVmMxVnpOTUdrbXdPZENLVHBmZDBqRWxEeHJhZlhCeFdBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UzYzRGQxRGNpNGFRS3ByMlF3OHcva09MNDhrT0p5eHFDZ2lMODVWNVZKM3hm?=
+ =?utf-8?B?V0FiOGpVRXMyWjFNOXh3dlRkNnpQMkxHT01QS2p0dm1BZDlKV2VleHlGNWht?=
+ =?utf-8?B?ZWRDbkpxV0ZpdU81RkZrbXkySjA1T0VJd3FxSVBSRmVrTDBGUEdEVXlyWnpJ?=
+ =?utf-8?B?Q1Jzbm9kYzVYNXB3YW12MFMzZ2F1YVhzR2piRU96b0tUNi8xdWpDUXhMbHlY?=
+ =?utf-8?B?ZlV0WlFBdEZRMXNDa0RwM3ZBNDV5alVtSTRDdmcvaFJFMEdKV1hEenN3akRz?=
+ =?utf-8?B?S0FDb3BuWmJEZGxJTU9XbHErUFpEWFoweVowb2J0YlJxbXYxZCs0Y1Rvd3hn?=
+ =?utf-8?B?VzBWR0pPeHo2WnY0S0JzQ29LVXZyNjN5SzB2TnNkcXF3LzJPdzZnRDM1d3Qy?=
+ =?utf-8?B?cXJQMDdXTnVPUlBGaU1IaGhEWG9Ec2ZvR0JDUHcxUFkvaW01NDNUWTJXWFNy?=
+ =?utf-8?B?OG9EaXRjL3pMZUtOUVN1a21pSitlUEJVM2JEL1BJcXlYbkpZTGxpWTZJZnRj?=
+ =?utf-8?B?WjBjSnBtQUgya3Z4KzBJYjdXa0ZNRHBZSlJkQUVaMkJWVUszRHdrZitWWnJD?=
+ =?utf-8?B?VVZ2cW5Yc05HcHpGbHlDV3BDNi9KVms5R3diRWhUazNIaFdWYnJ1b1doMDZE?=
+ =?utf-8?B?TXo4Mk5hZk5QRFc2ODZVTU1tZEttcXZzSm5QTUVDYTZ6bXF1VWJOZzBQNFVK?=
+ =?utf-8?B?SG9FZDlKQ1V3MDdFSWhhTG5ZVGxoeEE3TlJTUngzSWV4WVJkV3NJWm9NTi9N?=
+ =?utf-8?B?bHUrem9obHVqaEYydGR2MGRrU2xVL2NnR0Z4QjV6U0VRMERJZWU3T1lHMEJE?=
+ =?utf-8?B?R2ZrUUxldFhDUzU4dzVWTGIrSkpDYzVlY3lXUlpNWnNicEZpemRpMHozcTZ6?=
+ =?utf-8?B?bmhRTU1YZVJhRUJPNkJqc1k3QmV6TllBbnhzclp0cXU5RnVMeUh6M1ZNQXFx?=
+ =?utf-8?B?MHhoTzk2NWRqek1OSGxVbnpFckNXVlJuUmxmUnQ1QThoWGM1OTdyYmgySUkz?=
+ =?utf-8?B?azcwdk91Zk1VeWhjdEdCR3NtNk9DV0NNb2IrK0RnTXFiN3pWL3JjVEVWODYy?=
+ =?utf-8?B?OEVnU1ZtejdxL252cVNyTFZOcjFsUVRVNllKQ2VBQkNlZHZwZW55UjdWcHpn?=
+ =?utf-8?B?MTZLc0d6WVphd1V2aUFNN1BXMGQ1Q04yK0pvMitNQzQzNlZYaGFoTGxGR2ts?=
+ =?utf-8?B?MWRWUXhTTnBEUTNMaVFCVnllTHZuS0xnT2ZjSEVmc01YbzVTWWVqSXliVFhq?=
+ =?utf-8?B?Tm1naTRjeDVLMmZ6SU9KYytoRjIvMlhpVEl4eUVkdTF1cWQvaXJIWWZYWnlj?=
+ =?utf-8?B?YWVnVSt6ZVlLZ01QN2tVSEF5eDBWZkRYTlVtcWRQd2NyckdwQ2R2YWpjZmtq?=
+ =?utf-8?B?VGZzTExqaWVSLzF4WWdrT2U0K3RIVHF3eEpCVU5EdS9vdnk3OWRtNjhiRjBp?=
+ =?utf-8?B?WElxTkIwVWhwKy9ZQjJLOThoL2lnWGhZWVp5bXR2R25OMkFEVUlFQjllNFh2?=
+ =?utf-8?B?UWtGck5BN2ErYUQ1ME0yK2ZudkJBcjArZUp4a2l6YTRWZ2pmRjJIQ21TYXlr?=
+ =?utf-8?B?SHIzc1N6aFB6dHdSay9RR0NtL21OeFU4V1pKSmEzUVhJVjlGR0pESkl1THUx?=
+ =?utf-8?B?WnJwSVZ5YTR3bzFJYThHNUVPNXVHdmlhdXRLaEdqQTJXNVptUWF3a1l4R0Zw?=
+ =?utf-8?B?UEtGSERScW9wYWpab2ZST1RFbE9YT0Z2ZmFPbnRkd2VIakNDdWVqVmF3T3Jr?=
+ =?utf-8?B?YWxrcllkbmo1QUM4QU9Ja09iQmhNM09NODdYNFBLbEdWbldOcVkraVRhUzFk?=
+ =?utf-8?B?QkJFeHdLUXZ2UmY5c0RudDFCMENiL2xzVjRONFFvWnRrRlV2VEkxQ2lvQVU3?=
+ =?utf-8?B?RFJRbGJaVXloQmp3bTRlNFE0aUJHbTF2NzZSSWNVeFZMcmR2Rnkrb0pHSlBj?=
+ =?utf-8?B?WFliQm5CbWdCQU0wK05WdzU2REtnMk55S1VIUmhlc3BiU3VzY0d6NXZBREdD?=
+ =?utf-8?B?MlNpR1QweHA2cnJBTld6WWwwRU9BaUFuUTJmWWU4aXRkVkoxRG0vUlU2azlk?=
+ =?utf-8?B?SGRNTFlmS1haN2pjU2gwNTdVTTVMdmROV3NMSVNpY29QNko5ZTNCUk5sZFBn?=
+ =?utf-8?Q?0Ba0h2ptyANlLmRpcZGoPjA5Y?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e049f16-6134-4553-00e3-08dc7a7a66a9
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 16:15:30.8103
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5+XeHwJBtZ8lbn4IdE/bHcMyRyBgLCgwyQTH+8SxTOnrtti9m016CZARyCJfrmWPSaPWA9fqQFOsf6sNgGRW0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5888
 
-On Wed, May 22, 2024 at 12:10:30PM -0400, Peter Xu wrote:
-> On Wed, May 22, 2024 at 05:34:21PM +0200, David Hildenbrand wrote:
-> > On 22.05.24 17:18, Peter Xu wrote:
-> > > On Wed, May 22, 2024 at 09:48:51AM +0200, David Hildenbrand wrote:
-> > > > On 22.05.24 00:36, Peter Xu wrote:
-> > > > > On Wed, May 22, 2024 at 03:21:04AM +0500, Mikhail Gavrilov wrote:
-> > > > > > On Wed, May 22, 2024 at 2:37 AM Peter Xu <peterx@redhat.com> wrote:
-> > > > > > > Hmm I still cannot reproduce.  Weird.
-> > > > > > > 
-> > > > > > > Would it be possible for you to identify which line in debug_vm_pgtable.c
-> > > > > > > triggered that issue?
-> > > > > > > 
-> > > > > > > I think it should be some set_pte_at() but I'm not sure, as there aren't a
-> > > > > > > lot and all of them look benign so far.  It could be that I missed
-> > > > > > > something important.
-> > > > > > 
-> > > > > > I hope it's helps:
-> > > > > 
-> > > > > Thanks for offering this, it's just that it doesn't look coherent with what
-> > > > > was reported for some reason.
-> > > > > 
-> > > > > > 
-> > > > > > > sh /usr/src/kernels/(uname -r)/scripts/faddr2line /lib/debug/lib/modules/(uname -r)/vmlinux debug_vm_pgtable+0x1c04
-> > > > > > debug_vm_pgtable+0x1c04/0x3360:
-> > > > > > native_ptep_get_and_clear at arch/x86/include/asm/pgtable_64.h:94
-> > > > > > (inlined by) ptep_get_and_clear at arch/x86/include/asm/pgtable.h:1262
-> > > > > > (inlined by) ptep_clear at include/linux/pgtable.h:509
-> > > > > 
-> > > > > This is a pte_clear(), and pte_clear() shouldn't even do the set() checks,
-> > > > > and shouldn't stumble over what I added.
-> > > > > 
-> > > > > IOW, it doesn't match with the real stack dump previously:
-> > > > > 
-> > > > > [    5.581003]  ? __page_table_check_ptes_set+0x306/0x3c0
-> > > > > [    5.581274]  ? __pfx___page_table_check_ptes_set+0x10/0x10
-> > > > > [    5.581544]  ? __pfx_check_pgprot+0x10/0x10
-> > > > > [    5.581806]  set_ptes.constprop.0+0x66/0xd0
-> > > > > [    5.582072]  ? __pfx_set_ptes.constprop.0+0x10/0x10
-> > > > > [    5.582333]  ? __pfx_pte_val+0x10/0x10
-> > > > > [    5.582595]  debug_vm_pgtable+0x1c04/0x3360
-> > > > > 
-> > > > 
-> > > > Staring at pte_clear_tests():
-> > > > 
-> > > > #ifndef CONFIG_RISCV
-> > > > 	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
-> > > > #endif
-> > > > 	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
-> > > > 
-> > > > So we set random PTE bits, probably setting the present, uffd and write bit
-> > > > at the same time. That doesn't make too much sense when we want to perform
-> > > > that such combinations cannot exist.
-> > > 
-> > > Here the issue is I don't think it should set W bit anyway, as we init
-> > > page_prot to be RWX but !shared:
-> > > 
-> > > 	args->page_prot          = vm_get_page_prot(VM_ACCESS_FLAGS);
-> > > 
-> > > On x86_64 (Mikhail's system) it should have W bit cleared afaict, meanwhile
-> > > the RANDOM_ORVALUE won't touch bit W due to S390_SKIP_MASK (which contains
-> > > bit W / bit 1, which is another "accident"..).  Then even if with that it
-> > > should not trigger..  I think that's also why I cannot reproduce this
-> > > problem locally.
-> > 
-> > Why oh why are skip mask applied independently of the architecture.
-> > 
-> > While _PAGE_RW should indeed be masked out by RANDOM_ORVALUE.
-> > 
-> > But with shadow stacks we consider a PTE writable (see
-> > pte_write()->pte_shstk()) if
-> > (1) X86_FEATURE_SHSTK is enabled
-> > (2) _PAGE_RW is clear
-> > (3) _PAGE_DIRTY is set
-> > 
-> > _PAGE_DIRTY is bit 6.
-> > 
-> > Likely your CPU does not support shadow stacks.
+On 5/22/24 10:27, Borislav Petkov wrote:
+> On Mon, May 20, 2024 at 08:57:43AM -0500, Tom Lendacky wrote:
+>> So this will be a new shared directory in the top level include directory
+>> (as PAGE_ALIGNED is defined in include/linux/mm.h), not just in the
+>> arch/x86/include directory like the others (io.h, msr.h and tdx.h). Is that
+>> what you want?
 > 
-> Good point.  My host has it, but I tested in the VM which doesn't.  I
-> suppose we can wait and double check whether Mikhail should see the issue
-> went away with that patch provided.
+> You can actually do this - it is a lot easier and still clean:
 > 
-> In this case, instead of keep fiddling with random bits to apply and
-> further work on top of per-arch random bits, I'd hope we can simply drop
-> that random mechanism as I don't think it'll be pxx_none() now.  I attached
-> a patch I plan to post. Does it look reasonable?
-> 
-> I also copied Anshuman, Gavin and Aneesh.
+> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+> index cb771b380a6b..5ee53a7a060e 100644
+> --- a/arch/x86/boot/compressed/sev.c
+> +++ b/arch/x86/boot/compressed/sev.c
+> @@ -12,7 +12,6 @@
+>    */
+>   #include "misc.h"
+>   
+> -#include <linux/mm.h>
+>   #include <asm/bootparam.h>
+>   #include <asm/pgtable_types.h>
+>   #include <asm/sev.h>
+> diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
+> index 46ea4e5e118a..bd4bbb30ef0c 100644
+> --- a/arch/x86/kernel/sev-shared.c
+> +++ b/arch/x86/kernel/sev-shared.c
+> @@ -1329,7 +1329,12 @@ static void __head setup_svsm_ca(const struct cc_blob_sev_info *cc_info)
+>   	vmpl = secrets_page->svsm_guest_vmpl;
+>   
+>   	caa = secrets_page->svsm_caa;
+> -	if (!PAGE_ALIGNED(caa))
+> +
+> +	/*
+> +	 * Open-code PAGE_ALIGNED() to avoid pulling in the world and
+> +	 * more by including linux/mm.h.
+> +	 */
+> +	if (caa & (PAGE_SIZE - 1))
 
-No I didn't.. this one will..
+Or what I originally proposed:
 
-> 
-> Thanks,
-> 
-> ===8<===
-> From c10cde00b14d2d305390dd418a8a8855d3e6437f Mon Sep 17 00:00:00 2001
-> From: Peter Xu <peterx@redhat.com>
-> Date: Wed, 22 May 2024 12:04:33 -0400
-> Subject: [PATCH] drop RANDOM_ORVALUE bits
-> 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->  mm/debug_vm_pgtable.c | 30 ++++--------------------------
->  1 file changed, 4 insertions(+), 26 deletions(-)
-> 
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index f1c9a2c5abc0..b5d7be05063a 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -40,22 +40,7 @@
->   * Please refer Documentation/mm/arch_pgtable_helpers.rst for the semantics
->   * expectations that are being validated here. All future changes in here
->   * or the documentation need to be in sync.
-> - *
-> - * On s390 platform, the lower 4 bits are used to identify given page table
-> - * entry type. But these bits might affect the ability to clear entries with
-> - * pxx_clear() because of how dynamic page table folding works on s390. So
-> - * while loading up the entries do not change the lower 4 bits. It does not
-> - * have affect any other platform. Also avoid the 62nd bit on ppc64 that is
-> - * used to mark a pte entry.
->   */
-> -#define S390_SKIP_MASK		GENMASK(3, 0)
-> -#if __BITS_PER_LONG == 64
-> -#define PPC64_SKIP_MASK		GENMASK(62, 62)
-> -#else
-> -#define PPC64_SKIP_MASK		0x0
-> -#endif
-> -#define ARCH_SKIP_MASK (S390_SKIP_MASK | PPC64_SKIP_MASK)
-> -#define RANDOM_ORVALUE (GENMASK(BITS_PER_LONG - 1, 0) & ~ARCH_SKIP_MASK)
->  #define RANDOM_NZVALUE	GENMASK(7, 0)
->  
->  struct pgtable_debug_args {
-> @@ -511,8 +496,7 @@ static void __init pud_clear_tests(struct pgtable_debug_args *args)
->  		return;
->  
->  	pr_debug("Validating PUD clear\n");
-> -	pud = __pud(pud_val(pud) | RANDOM_ORVALUE);
-> -	WRITE_ONCE(*args->pudp, pud);
-> +	WARN_ON(pud_none(pud));
->  	pud_clear(args->pudp);
->  	pud = READ_ONCE(*args->pudp);
->  	WARN_ON(!pud_none(pud));
-> @@ -548,8 +532,7 @@ static void __init p4d_clear_tests(struct pgtable_debug_args *args)
->  		return;
->  
->  	pr_debug("Validating P4D clear\n");
-> -	p4d = __p4d(p4d_val(p4d) | RANDOM_ORVALUE);
-> -	WRITE_ONCE(*args->p4dp, p4d);
-> +	WARN_ON(p4d_none(p4d));
->  	p4d_clear(args->p4dp);
->  	p4d = READ_ONCE(*args->p4dp);
->  	WARN_ON(!p4d_none(p4d));
-> @@ -582,8 +565,7 @@ static void __init pgd_clear_tests(struct pgtable_debug_args *args)
->  		return;
->  
->  	pr_debug("Validating PGD clear\n");
-> -	pgd = __pgd(pgd_val(pgd) | RANDOM_ORVALUE);
-> -	WRITE_ONCE(*args->pgdp, pgd);
-> +	WARN_ON(pgd_none(pgd));
->  	pgd_clear(args->pgdp);
->  	pgd = READ_ONCE(*args->pgdp);
->  	WARN_ON(!pgd_none(pgd));
-> @@ -634,9 +616,6 @@ static void __init pte_clear_tests(struct pgtable_debug_args *args)
->  	if (WARN_ON(!args->ptep))
->  		return;
->  
-> -#ifndef CONFIG_RISCV
-> -	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
-> -#endif
->  	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
->  	flush_dcache_page(page);
->  	barrier();
-> @@ -650,8 +629,7 @@ static void __init pmd_clear_tests(struct pgtable_debug_args *args)
->  	pmd_t pmd = READ_ONCE(*args->pmdp);
->  
->  	pr_debug("Validating PMD clear\n");
-> -	pmd = __pmd(pmd_val(pmd) | RANDOM_ORVALUE);
-> -	WRITE_ONCE(*args->pmdp, pmd);
-> +	WARN_ON(pmd_none(pmd));
->  	pmd_clear(args->pmdp);
->  	pmd = READ_ONCE(*args->pmdp);
->  	WARN_ON(!pmd_none(pmd));
-> -- 
-> 2.45.0
-> 
-> -- 
-> Peter Xu
+	if (!IS_ALIGNED(caa, PAGE_SIZE))
 
--- 
-Peter Xu
+Which also works without including mm.h.
 
+Thanks,
+Tom
+
+>   		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SVSM_CAA);
+>   
+>   	/*
+> 
 
