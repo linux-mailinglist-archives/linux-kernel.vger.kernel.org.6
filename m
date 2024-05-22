@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-186145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAC28CC051
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:34:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824958CC054
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98BB283724
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D10D2836F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0324C82863;
-	Wed, 22 May 2024 11:34:44 +0000 (UTC)
-Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24AD82486;
+	Wed, 22 May 2024 11:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gk3ZfjmA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80F656B72
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDF956B72;
+	Wed, 22 May 2024 11:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377683; cv=none; b=WEElSdC/qIS7nV+wUAQW3TVn7h+dXtW38Glo7YKXqC7EsgSj4OOlTVVO5iezwW/ze6Ckbj1aycMdXEaMjcGl2o39wTUkjhCescI17P+stQWhsSvTZnPupLsnMmwTYiLFhpHj8GhxTmlD2YjxPebR+2GqJCO+9l1vOATs0wtnwzw=
+	t=1716377688; cv=none; b=RGMKwCUcjdQhiQoxwhckNEmppjXvvdRpfDZbjzJtANbbACXrm42mGYumcSrE6IeeiOHTjsjh+ZYBDmvgyaNLfTLZrDE3IR0FZy7EEu4xKK7mbWGgKv3PMqWcbZrmAoXc9h/rpIfGYkdSCavT2JjCBQcmj4lh7QHkfsd7AjcP7xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377683; c=relaxed/simple;
-	bh=lH6KbgxQ/zhQaHHB/tshrEoyjiCr4O+1LfFZ/Ly2bCw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rJy0L+78gHENWjm3v2WNsMKp6y+l+mPfLBwHJJCPZ3QayRqtNPlSSdKq9hFbm+myYHO1pUsSwXGS0OHP2ppAFEpq6cuQt2cp1d9QqGzGvMRoTlyoL86GCq1zuCPnmKmFKBXM/qimt7q92XpduxhfwEUnLshrRVyx3MvA5P1JhfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.71.62])
-	by sina.com (172.16.235.25) with ESMTP
-	id 664DD8260000282A; Wed, 22 May 2024 19:34:00 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 70485834210399
-X-SMAIL-UIID: FADD444D6EE443508E86F8EBE03CEA13-20240522-193400-1
-From: Hillf Danton <hdanton@sina.com>
-To: Jakub Sitnicki <jakub@cloudflare.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Eric Dumazet <edumazet@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
-Date: Wed, 22 May 2024 19:33:49 +0800
-Message-Id: <20240522113349.2202-1-hdanton@sina.com>
-In-Reply-To: <877cfmxjie.fsf@cloudflare.com>
-References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp> <20240521225918.2147-1-hdanton@sina.com>
+	s=arc-20240116; t=1716377688; c=relaxed/simple;
+	bh=SqZv+J0FOQDs0+Dw6WcXgcuK2MUV7Z4FZPlHttKhaq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3XSgyACU7WD7BJeho6P41VcaQx8EKyewb/xa9yDBLcOgxj4coST/NUWsfnCDiTzTtatJ+yfrYuH2n1dH+tMbot4sZYCG2i7tSIqwY7hfMsahaZIv2HQsVjlAPopR42jqjZVBte2NVOP2/7/9mJxF+OK1NFE8m0QJ84TBXZXilo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gk3ZfjmA; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716377687; x=1747913687;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SqZv+J0FOQDs0+Dw6WcXgcuK2MUV7Z4FZPlHttKhaq0=;
+  b=gk3ZfjmA4x1NHT24yb7pw43BdE78t67e0fQU0PofxWvqyZJo33Yo9NAl
+   xpqficiV+SG5HrSWbxOB/vsUC1sEG9DjRmWMEtRG4DCHZ7k4HVbcgS4Gp
+   SKlGlRbFXOVXrO+JYJNiMc2Si3TiIJbrfb2QEW7shwYQ8eL9+lHLvfG/U
+   F5mP/KVmrgO0GlOqnGNRTn+qVkNiYU8ZLisdyE5APicoAEw8rC8rzUBQN
+   ps/ipk9vSHi/mjFhEctH77ngnnjkeAwXNRPIIwXVv6b8bqfs8zsEmwBwQ
+   kUcf+GDDyDUw7DNqNG4iOlZQd5oU/iD6pLaISqifWT43w+SloKBpjpbFN
+   A==;
+X-CSE-ConnectionGUID: 96KBdVvWQpuCP0dbYht1WQ==
+X-CSE-MsgGUID: hysNcxrITaGWbnG3Oc0heA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="16450062"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="16450062"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 04:34:46 -0700
+X-CSE-ConnectionGUID: K5DYVZXATbK33baoP3EKVA==
+X-CSE-MsgGUID: tBt9SnjkQxyCPbbg6PBdMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="37841772"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 04:34:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s9kEy-00000009xO1-2DqT;
+	Wed, 22 May 2024 14:34:40 +0300
+Date: Wed, 22 May 2024 14:34:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 1/2] device property: introduce
+ fwnode_for_each_available_child_node_scoped()
+Message-ID: <Zk3YUJjJ34FYo5NJ@smile.fi.intel.com>
+References: <20240522-fwnode_for_each_available_child_node_scoped-v1-0-1188b0da12dc@gmail.com>
+ <20240522-fwnode_for_each_available_child_node_scoped-v1-1-1188b0da12dc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522-fwnode_for_each_available_child_node_scoped-v1-1-1188b0da12dc@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 22 May 2024 11:50:49 +0200 Jakub Sitnicki <jakub@cloudflare.com>
-On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
-> > On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com>
-> >> On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >> > --- a/net/core/sock_map.c
-> >> > +++ b/net/core/sock_map.c
-> >> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
-> >> >         bool strp_stop =3D false, verdict_stop =3D false;
-> >> >         struct sk_psock_link *link, *tmp;
-> >> >
-> >> > +       rcu_read_lock();
-> >> >         spin_lock_bh(&psock->link_lock);
-> >> 
-> >> I think this is incorrect.
-> >> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
-> >
-> > Could you specify why it won't be safe in rcu cs if you are right?
-> > What does rcu look like in RT if not nothing?
-> 
-> RCU readers can't block, while spinlock RT doesn't disable preemption.
-> 
-> https://docs.kernel.org/RCU/rcu.html
-> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-rt
-> 
-> I've finally gotten around to testing proposed fix that just disallows
-> map_delete_elem on sockmap/sockhash from BPF tracing progs
-> completely. This should put an end to this saga of syzkaller reports.
-> 
-> https://lore.kernel.org/all/87jzjnxaqf.fsf@cloudflare.com/
-> 
-The locking info syzbot reported [2] suggests a known issue that like Alexei
-you hit the send button earlier than expected.
+On Wed, May 22, 2024 at 11:18:07AM +0200, Javier Carrasco wrote:
+> Add a scoped version of fwnode_for_each_available_child_node() following
+> the approach recently taken for other loops that handle child nodes like
+> for_each_child_of_node_scoped() or device_for_each_child_node_scoped(),
+> which are based on the __free() auto cleanup handler to remove the need
+> for fwnode_handle_put() on early loop exits.
 
-4 locks held by syz-executor361/5090:
- #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: map_delete_elem+0x388/0x5e0 kernel/bpf/syscall.c:1695
- #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
- #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_hash_delete_elem+0x17c/0x400 net/core/sock_map.c:945
- #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
- #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_del_link net/core/sock_map.c:145 [inline]
- #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_unref+0xcc/0x5e0 net/core/sock_map.c:180
- #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2380 [inline]
- #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x114/0x420 kernel/trace/bpf_trace.c:2420
+OK as long as we have users.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[2] https://lore.kernel.org/all/000000000000d0b87206170dd88f@google.com/
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-If CONFIG_PREEMPT_RCU=y rcu_read_lock() does not disable
-preemption. This is even true for !RT kernels with CONFIG_PREEMPT=y
-
-[3] Subject: Re: [patch 30/63] locking/spinlock: Provide RT variant
-https://lore.kernel.org/all/874kc6rizr.ffs@tglx/
 
