@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-186463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34498CC480
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:53:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF29C8CC486
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6709D1F22AE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:53:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 991E9283350
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D71141981;
-	Wed, 22 May 2024 15:52:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0F0140E4D;
-	Wed, 22 May 2024 15:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694C213DBA0;
+	Wed, 22 May 2024 15:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IelD6NNy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C516EB5D;
+	Wed, 22 May 2024 15:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716393171; cv=none; b=nfzJWQh7ncw6xL2x+Ez1KUyqr3LGXD1GlAsaCKHtDuxcyrBHtLsL8iOIrnYKa1sUiaAjIxT9EzZf2EBxu/Qt5BEeqdoBf6v4ijqBfriu+K+dl1s3UadN4D2k0bjzaHxJ9jYF94zMZEPmobT7+Us/LqW/SyVDBP5b3zhq8dHIkLY=
+	t=1716393218; cv=none; b=hr0+wGpcN9Lbt9mjnEFwQoEtEVHQBluUnkATtwsvY/EYNW8u9yGzhmJmFYozlHu9zLMBcReit5iaFb1OsD1+1sBWT0xK63T7jfbgolOPq/TJ6xtjpqg6deea094t5ZcmXjfSe78ThxTOdVno4UZ+1xx9h9I+PuWL8ioFlrcjC/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716393171; c=relaxed/simple;
-	bh=FNUKhCgH3p/nE748aRJauYt6enORN/xUcsNBXPvhy6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s3ZqqC2DS5HVIO10SpkNlMVkxMnzZYlu9L0HGg1odLmy7kIq2Qx2dMCvqhLcw7KwqM9I0gholEfQ9sETh50wQEC67pNrYCWHHWXy5jVF3gVKQ4x9hBe62R0L9SKRtHpg9gZKjdMFpRIDaqPjEuglytwqrXMVfpR+o+vJ1uQGcYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2005DDA7;
-	Wed, 22 May 2024 08:53:13 -0700 (PDT)
-Received: from [10.57.35.73] (unknown [10.57.35.73])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 750243F766;
-	Wed, 22 May 2024 08:52:45 -0700 (PDT)
-Message-ID: <fe1e3793-a413-42b6-b368-619aae277cb6@arm.com>
-Date: Wed, 22 May 2024 16:52:47 +0100
+	s=arc-20240116; t=1716393218; c=relaxed/simple;
+	bh=A/ZS2NtINBxthxwqs5PcU2EkST+CNjfZ5b8/iFOfEhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3Noggr9Awp4EVuJe0+0aFRen4X6+Sxg+gl0tNkRb2xkuyiUkYENjNMyyZSp2Nu3DA1CiLtKt+u5sqolKi6JhdMmR7niP/Sm7kAVdNtMaZuimiqiUBolSiUD1zqBKleSh8/wsHQsGtJ9437lJ62VUfOeH2PqzsYLldTh1xOMrgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IelD6NNy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BBF1BC67;
+	Wed, 22 May 2024 17:53:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716393202;
+	bh=A/ZS2NtINBxthxwqs5PcU2EkST+CNjfZ5b8/iFOfEhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IelD6NNycUfvoHK84yZHpxTn7nh6WN1bSc/gKsWdz6CnuXUTf38HWwaPvr6+f46Ev
+	 fjdBnlhyT0LQC+YAMTDIFZiq82rAMQu7V+IdNFjhjB2SHACSsutM/PVjn7kdz7liPg
+	 7gHxp3CUdzihFfVj4PCTsnbiMKo42t2Ig5Ag5XDQ=
+Date: Wed, 22 May 2024 18:53:26 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+Subject: Re: [PATCH] drm: zynqmp_dpsub: Fix an error handling path in
+ zynqmp_dpsub_probe()
+Message-ID: <20240522155326.GC9789@pendragon.ideasonboard.com>
+References: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/14] arm64: rsi: Interfaces to query attestation
- token
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Sami Mujawar <sami.mujawar@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-14-steven.price@arm.com> <ZkSYCYOWxKSV9t8S@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <ZkSYCYOWxKSV9t8S@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <974d1b062d7c61ee6db00d16fa7c69aa1218ee02.1716198025.git.christophe.jaillet@wanadoo.fr>
 
-On 15/05/2024 12:10, Catalin Marinas wrote:
-> On Fri, Apr 12, 2024 at 09:42:12AM +0100, Steven Price wrote:
->> diff --git a/arch/arm64/include/asm/rsi_cmds.h b/arch/arm64/include/asm/rsi_cmds.h
->> index b4cbeafa2f41..c1850aefe54e 100644
->> --- a/arch/arm64/include/asm/rsi_cmds.h
->> +++ b/arch/arm64/include/asm/rsi_cmds.h
->> @@ -10,6 +10,9 @@
->>  
->>  #include <asm/rsi_smc.h>
->>  
->> +#define GRANULE_SHIFT		12
->> +#define GRANULE_SIZE		(_AC(1, UL) << GRANULE_SHIFT)
+Hi Christophe,
+
+Thank you for the patch.
+
+On Mon, May 20, 2024 at 11:40:37AM +0200, Christophe JAILLET wrote:
+> If zynqmp_dpsub_drm_init() fails, we must undo the previous
+> drm_bridge_add() call.
 > 
-> The name is too generic and it goes into a header file. Also maybe move
-> it to rsi.h, and use it for other definitions like rsi_config struct
-> size and alignment.
+> Fixes: be3f3042391d ("drm: zynqmp_dpsub: Always register bridge")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> Compile tested only
+> ---
+>  drivers/gpu/drm/xlnx/zynqmp_dpsub.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> index face8d6b2a6f..f5781939de9c 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_dpsub.c
+> @@ -269,6 +269,7 @@ static int zynqmp_dpsub_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err_disp:
+> +	drm_bridge_remove(dpsub->bridge);
+>  	zynqmp_disp_remove(dpsub);
+>  err_dp:
+>  	zynqmp_dp_remove(dpsub);
 
-The realm config structure although it 'happens to be' granule sized
-isn't really required to be - so I think it would be a bit confusing to
-specify that.
+-- 
+Regards,
 
-There are only two other interfaces that require this:
- * RSI_IPA_STATE_GET - completely unused so far
- * RSI_ATTESTATION_TOKEN_CONTINUE - the buffer has to be contained with
-   a granule, so it affects the maximum length per operation.
-
-I'll rename to RSI_GRANULE_{SHIFT,SIZE}, but I'm not sure it really
-belongs in rsi.h because none of that functionality cares about the
-granule size (indeed the driver in the following patch doesn't include
-rsi.h).
-
-Thanks,
-Steve
+Laurent Pinchart
 
