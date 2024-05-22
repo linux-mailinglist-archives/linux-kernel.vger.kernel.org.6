@@ -1,110 +1,132 @@
-Return-Path: <linux-kernel+bounces-186354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66948CC31C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 266798CC320
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F8428364E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8EC1283A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A59E1DA24;
-	Wed, 22 May 2024 14:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E93141981;
+	Wed, 22 May 2024 14:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YALm9vI7"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5yE1Uhf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C9A141995
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FF4142E86;
+	Wed, 22 May 2024 14:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716387657; cv=none; b=F3MlbyH4MJ7zcALVl7sKCz2V8FISoi6vBCFLE/xxzJTG7jCZAovZK2Gtt7nqMVKYxn296/OLJ2IxP/Bqklb69GvoO1CfXgvI3vnf7jqtmuxk4+hRt80BjMw5Ya8N3lIiPzVFWVbHSSxhJgL2mq1puS/jabRlTM4UGOLybsmhmvo=
+	t=1716387681; cv=none; b=PmCRJgY+TzS/IH4WgccvuEHI9k1LQJsbQU7ULMbAC1FjA71JdGdMCWAWI0moVfgev34+HqLXtJPiJK0/7EJAtCiJ/MtLWs6Vrp4VBQ9V6gYzoXAsg57+eR6msRY/x6OeaCGzdkNYMdZ10gPpT2l2A/Xs2oMAMK8h/zbMVj0SZ4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716387657; c=relaxed/simple;
-	bh=wiHvAt4aG5xr7RlqSNws4R/08iwTyUy0i5hw/IiiJXI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KjkPXXa8rXiQoy4/rPIZljEPH5XmMbBXYWRUTgxbH7AVk3Y3UYhHG6TFsYmaoOW2h3dqkOj2wrosY/V4Qul3SGTUfU2J816k8sVK2mDWzw0Biw61v89ArdrSIrugFoCYhgt3JhInpsJbzu+3hFxWgrOJX5YWuooJUFPt22Dz5is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YALm9vI7; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-5ce07cf1e5dso1913144a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:20:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716387655; x=1716992455; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HFMr3MMlN9ccj6zDjuA2RuE2zH4kKscYyAKXBqfTffU=;
-        b=YALm9vI7vD53ny2Q5Otp0IxU1jr2QVPDkPBEi4CO0fxKS+141tVtStMwJ9LMWToYrV
-         zve6oywESIO/oFUp/hkV/CWuVdsvApkbVM0RYRFQZkYvLBkHuPmn8hAlMNDtQ0nHN8YG
-         TQ+7OnUSuKguGkWl+vMcHv4xV+ZVSYyAaxzZw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716387655; x=1716992455;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HFMr3MMlN9ccj6zDjuA2RuE2zH4kKscYyAKXBqfTffU=;
-        b=I6zSW1yjLkMaoa1dj0KekgakVMSMP86pX1OBvEHbA0+qy817k7EsBRNtZqbV4qaLlU
-         dh6Xo2RoIX5oAE/SToRK9JkbBbT1I+tAhrqClfLWjTFgHjGppFW4dXkmI1hX/qoxZVEB
-         oz2YxrOE2zhJEN93je9ZXL+KQtw7cyUxDL8q+RBTbHFP5ypU+nR+G7mT9NqhO/Pw3T/L
-         RDKZBZSuLGE4UiPIUWwDBougHO2lJLkAe2m8vRBgI223ccm6VPXLcDLOpvFIccIT8cTI
-         mORHnhT8NfdHIljjSP3rB6rSem/4Nps7iIR64sjD/oFZUSZ1k4DatdXl0zw7McnY7Cw3
-         iJeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYOOrgCyeYWkYWgLgtijUKFTXXZC7Jpc3fDHsLiW5QjLIWz1I8O1AgWjIS1Xa3GReEC/tWhBaKEJTC4xPd89KqXXCP07Xkt7f15kXp
-X-Gm-Message-State: AOJu0YzHZdxnbCqbf/LjSVFmNdrt/T9O129RkiRvV0uhIrDkeln6Rwb/
-	A3yPmmjiP+QizitO2l74vxqlVjOhn9UcRfJGrOYMuUMyOGRISpwa/ErGmF/kOw==
-X-Google-Smtp-Source: AGHT+IGHIinTCDwt/PEgWlkID0Una1sqCjW4DV4H213H9PaTp4eMUvMwciKgrPBvbyKEA415+UyAmA==
-X-Received: by 2002:a17:90a:ea81:b0:2b9:7afc:e7be with SMTP id 98e67ed59e1d1-2bd9f5b96ecmr2046384a91.46.1716387655532;
-        Wed, 22 May 2024 07:20:55 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:f9bb:ebce:f86b:d551])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bd74309db7sm6244367a91.33.2024.05.22.07.20.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 07:20:55 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, sam@ravnborg.org, 
- Haikun Zhou <zhouhaikun5@huaqin.corp-partner.google.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- daniel@ffwll.ch, airlied@gmail.com
-In-Reply-To: <20240522113924.1261683-1-zhouhaikun5@huaqin.corp-partner.google.com>
-References: <20240522113924.1261683-1-zhouhaikun5@huaqin.corp-partner.google.com>
-Subject: Re: [PATCH] drm/panel-edp: Add CMN N116BCJ-EAK
-Message-Id: <171638765427.3003190.5451039339852663119.b4-ty@chromium.org>
-Date: Wed, 22 May 2024 07:20:54 -0700
+	s=arc-20240116; t=1716387681; c=relaxed/simple;
+	bh=lquTU6pX0ULhSMvL+iVpOVq7rbv4rErDdUOxr4AwOyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KRkQYtbcSKsTMG43pmastE/tJaodz+7u4DAfQDLwoOEvKU3p7YuGIRn4tXSls3izEMY/sb4ep4vmydnG52V9aj+eCD+S2u9GsA56jttlFSBVQ1LeIkTFJ08wNRHzMju5/Lno01mkkFx6hLT5TXbpUY2Dri0lRYug8WgEq8qZE/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5yE1Uhf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08E66C2BBFC;
+	Wed, 22 May 2024 14:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716387680;
+	bh=lquTU6pX0ULhSMvL+iVpOVq7rbv4rErDdUOxr4AwOyA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O5yE1Uhfepn+5cl0PWB3BFdQhrnD1Gh3IDOE4I7MJi8bH5gUjckjPgZSOHCxv2N49
+	 vTp8vtQm9t42ZXZWu5reLOZarpkUDi58vh2XEKzYDouYPXYa8Zp1nzyxE5NfefOeYP
+	 VOJZoa7Qb/thmOEwrDz1XJDM81rCgviYSLplGAzFIfyGK2iQ20c/XQGBchguunI51o
+	 L/4VrhKqgbRStfdT2/vmXxyyISdbmuDDviauBIkthvxu1gNrFpAqoutKaXLvNSeg1t
+	 RWC2qKm+MPVFDTWrhCBjfvkyPLqCBFPW3fWDt571aOlTx2R+81o8yKXI7Ejzmp00zN
+	 0rjCeNKfXn2LA==
+Message-ID: <8519b339-adb2-440e-8a54-077fac39ccfe@kernel.org>
+Date: Wed, 22 May 2024 16:21:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: mailbox: qcom-ipcc: Add GPDSP0 and
+ GPDSP1 clients
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Tengfei Fan <quic_tengfan@quicinc.com>,
+ Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+ Alex Elder <elder@kernel.org>
+References: <20240522-topic-lemans-iot-remoteproc-v1-0-af9fab7b27f0@linaro.org>
+ <20240522-topic-lemans-iot-remoteproc-v1-2-af9fab7b27f0@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240522-topic-lemans-iot-remoteproc-v1-2-af9fab7b27f0@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-
-On Wed, 22 May 2024 19:39:24 +0800, Haikun Zhou wrote:
-> Add support for the CMN N116BCJ-EAK, place the raw EDID here for
-> subsequent reference.
-> 00 ff ff ff ff ff ff 00 0d ae 60 11 00 00 00 00
-> 04 22 01 04 95 1a 0e 78 02 67 75 98 59 53 90 27
-> 1c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-> 01 01 01 01 01 01 da 1d 56 e2 50 00 20 30 30 20
-> a6 00 00 90 10 00 00 18 00 00 00 fe 00 4e 31 31
-> 36 42 43 4a 2d 45 41 4b 0a 20 00 00 00 fe 00 43
-> 4d 4e 0a 20 20 20 20 20 20 20 20 20 00 00 00 fe
-> 00 4e 31 31 36 42 43 4a 2d 45 41 4b 0a 20 00 98
+On 22/05/2024 14:08, Bartosz Golaszewski wrote:
+> From: Tengfei Fan <quic_tengfan@quicinc.com>
 > 
-> [...]
+> Add GPDSP0 and GPDSP1 clients for SA8775p platform.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-Applied, thanks!
-
-[1/1] drm/panel-edp: Add CMN N116BCJ-EAK
-      commit: 7acacca1b157fcb258cfd781603425f73bc7370b
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Douglas Anderson <dianders@chromium.org>
+Krzysztof
 
 
