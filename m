@@ -1,209 +1,217 @@
-Return-Path: <linux-kernel+bounces-185841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1128CBBBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 392CB8CBC94
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484C91C20FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA2F1C21813
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F76A7C097;
-	Wed, 22 May 2024 07:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAC77EEF5;
+	Wed, 22 May 2024 08:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fv2FqG35"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="t0SIqXIe"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60297D3E6;
-	Wed, 22 May 2024 07:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716361812; cv=fail; b=JXXZ2yLIlyYSM1SDXR+jbgSIPGb7hwV07EcLWrQkwnkQambMrQzvP2n9cJXRRIPBGrHIWB4toAEK4OZDuIk4JTO4YSFYjdgx+xBZiTtWN0H2rL1x5d1Mm71W88q+E3+tXJuAFsT5FvaU22jxFVcS53b52d0XwDQeURSHdC1ytEg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716361812; c=relaxed/simple;
-	bh=lxNXnec6r6QDBTZlEMuZMoTgGx/KEseZZzhj3cnOewA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WKfohheE4/00jO7c4JmKrS1E5jnDu9TUwQqGAzg9oH2VK0FwY6juv9PQffNo1ipdl/oKzRYQNttT7vRhaq56+P+ldkxfeahD/AFm6OrkXRKYUzSsbIGpglWeYhd14uqIh4kJPar8CWP3GXSuoR/d5SrIbbi87ZcpGte66RAoCnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fv2FqG35; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716361811; x=1747897811;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=lxNXnec6r6QDBTZlEMuZMoTgGx/KEseZZzhj3cnOewA=;
-  b=Fv2FqG35xf/ftl1wXv38F1vUTXEyDxn4qx+tXIb/hkeTP9uBD0QptRLV
-   w3FkbMvfhyjPHJxJaL+NzT6WTlpZIgdf/ghiu+o19WRm9LKMNlSPZuDkT
-   2FOZSPIhRGZFJ7eJrF87KuBfxoz/Gwv+3/ejPyc6Pa0Y/jDzb/9WeayM0
-   3muz+b6CCBzMzFCX5H8MyID36O9EOlZO++j6n4EG0ZxpyNNFVdQc6ce55
-   MPBSU6jQ04Wocu6sHnmTeWdzszbYpMSGYlEH538iJNyq5Wnq1GxKc1Kq9
-   MdP7NQzYl3tEl7fSXxSXpEehkUvSlG3jgwIFffCuUTjoxCkI1ttTxPGM2
-   Q==;
-X-CSE-ConnectionGUID: HHdJkSAMT4SpliJ7o2Tk/g==
-X-CSE-MsgGUID: Q8BwkogjQtGH7a/DFav1Og==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12710821"
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="12710821"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 00:10:11 -0700
-X-CSE-ConnectionGUID: dhrb4vohRHWK/Znv6rGclA==
-X-CSE-MsgGUID: GCTfkW1jR0GMsckfSGnzDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="33244153"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 00:10:10 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 22 May 2024 00:10:09 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 00:10:09 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.100)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 22 May 2024 00:10:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oKhA8dmy5PNtt9R0o+VrDmwQeF/wywcsNg6eG/MmfSP88g8nYOugKS/NuxLkKaBPN8fzK7jd/u1NZ5zjNL9n2rM425/PNScLDQa3MgVRCGMTEBkiG4cbACOTeLv02dEUV+TcnOc4Yl1Yr6KGkjLy3tOUKAShRjM1zDDUPI7fXZFx51tSdK86xCLXTIfzYdpk24XntCY0lrQP1nwoG+hCwqhctZHAKeyBugWiTnonBqMPv15DyP1z2AU+XMT/6aDaK5NUhfC8NlzGShF0yk3MZq/a5BN+9HJ+uaqsh8ZaxudpI4fW1o0wTUiUcG210N69sCdlS0BdvyZwH6YycbwyDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lxNXnec6r6QDBTZlEMuZMoTgGx/KEseZZzhj3cnOewA=;
- b=bDXMdfIbWzw2AO65b/oMp5WGHmIjzVMlXDDz1X7RIKgWwQYlS+jCkbnSRV+8/ugBhpr/uiE108buB4VdVtjBzwAR3du/a7I+mFM7X6hmq9ELiAqMvJhtY3jjm/jNQrxjL5Mu3MXMcvSTm0ZIBLLHnBsFSNoXmaLCaVD/TwEQ8yylKTge5ICWQW5TqiZklEKROJY35j/5k4yxD+eCSsIDU/33XqrU9bhBpfBymTn/kfEx76psM8lljJQqYF9d/TvW3+2P1zRpIXJegT4LX+UZI8whJZ1gDHPQI5lnUvzyymxxm93mkXOd3AOV9KBvmQkR3lrqGGQoUB6DrBzwC6kylA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by PH7PR11MB6836.namprd11.prod.outlook.com (2603:10b6:510:1ef::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Wed, 22 May
- 2024 07:10:08 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::5135:2255:52ba:c64e]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::5135:2255:52ba:c64e%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
- 07:10:08 +0000
-Date: Wed, 22 May 2024 15:10:00 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Kai Huang <kai.huang@intel.com>
-Subject: Re: [PATCH v2 2/6] KVM: Rename functions related to enabling
- virtualization hardware
-Message-ID: <Zk2aSIK3sbtr0WEP@chao-email>
-References: <20240522022827.1690416-1-seanjc@google.com>
- <20240522022827.1690416-3-seanjc@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240522022827.1690416-3-seanjc@google.com>
-X-ClientProxiedBy: SI2PR04CA0017.apcprd04.prod.outlook.com
- (2603:1096:4:197::15) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1741A7E0F1
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716364912; cv=none; b=ULIXz7BVMic9cCqdsC2cA1CPVcqzWsIxZg9wdd9jF/k+A5NWiCeSyWM4z5Tsy8HruM11P2PSUcei8F0fnDEu0tZvOOxUG3CvZTkAw+vp/1DV3TL72YHPNypOPO+UggmC1E0kZ6Ul/MPN32pVhq3RsNqMjPSUBOFnrrTTCTsiBU0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716364912; c=relaxed/simple;
+	bh=3IU/Y5S5PbEM8sZoU16hx3r94ogEHRDSVQlKe9+7bN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=eHQblrXTsUEYNQMFUJsIKBpU6vLabKcBqFO7TSLtJq7lk3p60nC4WQO4r1X/lhLkXLFG2jeKEOAPWaixd9iFPzSX6YDp7Pe2vwhoPwIANu5uB8CL5vxY0Kc7kuLbJV1A2tZ6dKSn3puVF+tzoRp1hFPtkEhAm8Et/+kqYMhPHGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=t0SIqXIe; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240522080142epoutp04e62c6f60506146e016e90b846cdd62da~RwMkAsB_y0152801528epoutp04q
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:01:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240522080142epoutp04e62c6f60506146e016e90b846cdd62da~RwMkAsB_y0152801528epoutp04q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716364902;
+	bh=627E9H6r3w+Yw4w0h70HH2hr5j+VfvV9NWE3+rPSikA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t0SIqXIeAFMAMBIHtT9GgGfIo0nlEaXJEoLablJbu6Nq8eS3Eg2imD/IxF53PLYGu
+	 dY1bILQk6nurtGP9Wreazhc4n5vLq6MGaHsrDsthqu+cRBsT1HVh1OY46gbLTm6Imm
+	 5q+IhbOtZwmFo1Er9+24orKl8kJcrpMhHsrefvFI=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240522080141epcas5p465ef2f70fec9f61ce57611b3f188fc54~RwMjcp4ql1649116491epcas5p4E;
+	Wed, 22 May 2024 08:01:41 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VkkKJ4nNqz4x9Q7; Wed, 22 May
+	2024 08:01:40 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D9.0F.09688.466AD466; Wed, 22 May 2024 17:01:40 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240522071705epcas5p23ab74d2c71948bc9e5a9b23a65146eeb~RvlnKjcwd2177421774epcas5p2s;
+	Wed, 22 May 2024 07:17:05 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240522071705epsmtrp2f47c73456f842bfd16c1f3953e503f90~RvlnJUYKI0221202212epsmtrp2e;
+	Wed, 22 May 2024 07:17:05 +0000 (GMT)
+X-AuditID: b6c32a4a-837fa700000025d8-01-664da664e987
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	09.D5.08390.1FB9D466; Wed, 22 May 2024 16:17:05 +0900 (KST)
+Received: from green245 (unknown [107.99.41.245]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240522071701epsmtip1ac16f31e1dcf01f686c2edd63bf915aa~RvljiHMFw3023730237epsmtip1r;
+	Wed, 22 May 2024 07:17:01 +0000 (GMT)
+Date: Wed, 22 May 2024 12:40:03 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, Alasdair
+	Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
+	<kch@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+	Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	martin.petersen@oracle.com, bvanassche@acm.org, david@fromorbit.com,
+	damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
+	nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v20 09/12] dm: Add support for copy offload
+Message-ID: <20240522071003.fd5oijr3jycvtws4@green245>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|PH7PR11MB6836:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d4898fb-ee99-458f-1d4a-08dc7a2e365b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Qc9zO6kkX/3eJvQRbND5T/FtxELrAD/aHpjWmTKgqvyEE1oVRGYTAS8bLv4k?=
- =?us-ascii?Q?J5UELDv6Da7d3rsscsQupy484A0jMSEMBikD+o/rUqy7OtY89PxXF6o9sHMb?=
- =?us-ascii?Q?lnU7Am5NJBNOtIfesTjdIVdsfwHjs+etthaWgR/z7jmz1kXBzxKcsRQ74PhB?=
- =?us-ascii?Q?C+065N48ywN8ADIGRRH8kozUd+dEOBigmLdZYEF7nLZyQEob+g+XAldi+kGt?=
- =?us-ascii?Q?hB/r+dRJdzAEjKtV4UTSc1NnXeRqzd8NcH+3volIEA3VJbmHBG3nlq16JXcX?=
- =?us-ascii?Q?h3SqIw6hriA7XgpRuEYAksMMC8d1qV34BxxGRKSGNFDTUCgwAJhVQfJEIUT5?=
- =?us-ascii?Q?JHzjSTgW7MkcQvA84TeKMW0f99dHWEGprz10JcM21rVsRl66uma0qa1j3nZ1?=
- =?us-ascii?Q?Xasa8WMVcYy0gn1f1u0x/MyWDEjKTAh7r9S733NW1byrhITMilT1UnkFH+Y6?=
- =?us-ascii?Q?oTGwPv0KR5xrnS0C/48v1j1AaKoS5LHWrq2jnscAw+bG25cmoB5IYORIQ8Cz?=
- =?us-ascii?Q?EHwNITMS6YHxI2MtWZSjXEIHo+COvTgmpxfLv3oOScrH+WCuiyYhM87877Mb?=
- =?us-ascii?Q?07QxIECfDJch/HdvDxHEySPX5CbusvG5FGNTMvE458Bl2SbePNuie6zgVEJe?=
- =?us-ascii?Q?qtkSpkrGumpW8uhmM0u3hGop4HdnEtwIKQe+cA7fN4aYuLyHViJU+UV3hBZp?=
- =?us-ascii?Q?8uDHKpmhFI3+D9NFN68MZsXX4BIY2/jkSvVjDdYSURENA3iwsnjQDiyk8IOi?=
- =?us-ascii?Q?m8LxN4ErcUQWxQ4bSRkTqjnZRFc0R76hwlpCv8se+8ULk7wLavyJ7GG5EiUj?=
- =?us-ascii?Q?A2ORivX58jgtlEYdFijuYXk54ZjkYxEDGNkEbsBSWvXe9pI+y5vMEKfnAOlP?=
- =?us-ascii?Q?N9TRU+ywwZ8fJW0H1Xu6BsfwLm87lwQyU23dcCYG1lv0Fk3pAlJKZHhllpR2?=
- =?us-ascii?Q?uSNyhku5jAH8YJDk/wQ6M+5Kk69UWnWCN8tXz4dS2E5oNtf+FPV0i96jplwi?=
- =?us-ascii?Q?dmzTNJdXJlhwyPiSqMiJg4ujlxvhDwVpYfIG48XhW6s8JARenRrToAoJpZDd?=
- =?us-ascii?Q?mZLdfUBgccLA1RoYjfCSE8jwlbG+zDhpOPgQFKA0rnx55J16+Wc4Kiiwzn7y?=
- =?us-ascii?Q?8ByWhzkyJvXwZE8zhpB6vJbgfvK8jCR7Qo/YcC+ALZeBthaM0uH0Rg2x1HKu?=
- =?us-ascii?Q?C6p7TekV+UaWTfk4VSp8YgGtsgZlkB1Cpf31gLNaeFQOym2WV9PS41v+P8WR?=
- =?us-ascii?Q?mz/caXY6NAEhDUlCzxev9/5mpLDI3vyWHGiyuV66VA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?42XK06Mdqh5FIyg1+DvK9mvEi6GCVomyBZdq2uCuIy1yT6yldHhkYG+V0qB/?=
- =?us-ascii?Q?mwubR/t/uA0F7ldbjbrD732RB/ux9DDZRItX1C+1FeAfl8+/GrrPZiY1/NXx?=
- =?us-ascii?Q?1wdgXY7/XMnChxa5wSpGU911qhZCg/OVmmxk4z+WGpqBbUH9WquIk4bv3UyI?=
- =?us-ascii?Q?GblzuXiC26/5uYila3+wmJLuPGue3YaBcPpuAoTG/EnXmxL9wwgOEIzuK/7J?=
- =?us-ascii?Q?wGc94fA/zeN1Q1EHg8AgpKYCpVfa2VgqaaC6byFzM+Aia1sGFkpNNRJ4YmoE?=
- =?us-ascii?Q?6R+Phfc2ufi5CueHojCfXQAnzLO7j/2q5BNp71pVU/nGZIU+TObVj+LZ7HSo?=
- =?us-ascii?Q?KhNvSYQ+ToO9d7ZjNKzuvuSBXWs57BcMyxU52f+yVw/uV48DtN9PS1TmQKkA?=
- =?us-ascii?Q?PGOLZPJHkxeBtBOAu+TJNiRvn2cpJuIBwMepsQtkIDq4je9uV26VL0gWoVZc?=
- =?us-ascii?Q?w+0WYWzR81cNjK/GGHYFe55v8DDrGt7cHL0EoDNAXvn9NHSGiSkTxuSlQax+?=
- =?us-ascii?Q?vevbDQ4FP0Y4r3bdQqVOFUgb2AhtmRWT9ffhEPO/wxA4FctP4ZVt1C29YqPE?=
- =?us-ascii?Q?BYVfUUZR5zYNxjfWpwPUl/WwRunQeYAv0IPiaH6/leQlyodwgSdb3csUPF7E?=
- =?us-ascii?Q?aoMMIQ0v5fXylJ0jySys4AFcelCd1HdQEaHbw3wY/NLd2AiqQHChQEBFsByI?=
- =?us-ascii?Q?iCZkaNYxZ6Qh/diXBcQdXbB6X5Wk6xPxvVMsDzFgtuNoI5rfQfcaL9AAUls6?=
- =?us-ascii?Q?ti0tKYwW1SO5tuvqtRdMCt71Ou62SIDVLBFadITm0046yIBlVuJDMOxGAwVC?=
- =?us-ascii?Q?zlauxTkZrbbw1QxhjhXxNrEQVmJq5QjNugPhaIw1G4hxYLUs1Ku4MhnJfkvT?=
- =?us-ascii?Q?I7N63UaLljAst7IQtZa1r4yg2bDCLtfv9O2fK51DZyaei3WyFWPhdGIjjzSV?=
- =?us-ascii?Q?terluOykxn4l7z8Mx2JiyDQWD4gWPB0P3ROliraOwb2vO6qRePqEnGGoBcbC?=
- =?us-ascii?Q?qsvkwfd6pE47/g9jmTl20dJx/VCyKPdCkAhulQlMtet1pIcT8hJ1+Z4X9kwW?=
- =?us-ascii?Q?X2z4bDq+/HbGoQsZYVMwiBg+v+5p37DWQcq8xIxObMBuAMJhVUsqFueoBmJ0?=
- =?us-ascii?Q?wgFoK95NwiXDu89VDrAY69oZLuC8wwQy0of3QVzdZ0jH+2VWK/yVhFii+vAo?=
- =?us-ascii?Q?2Qs8RyKE2dAf4FtVltBfrIkkUNVtZcNsAGagObYKspZ+aIWkjrrtjFreUGpO?=
- =?us-ascii?Q?cka58addaF2pb95UhliODU7n7OB8fEnmSyzURK/DL4yJYCG3pbWHtg15fHhJ?=
- =?us-ascii?Q?KTJ0DLEBvkBccngSWQXu9fFKZTGs3fAYcOG1ApKrhdejers6ZDsc4gYS62kh?=
- =?us-ascii?Q?P6iH0PyEwa7cTY8fnj9SVvZPEpHxpa7UzdO6UDZJug+CVTogE0aMWHamSw4U?=
- =?us-ascii?Q?353WzG3KfuMxeNdYcCNJbeO2W1N1veX4puNo8KLjwUofJAR5k1nZenaMxqhr?=
- =?us-ascii?Q?H2Y/LaUIogC5WfwjSwXvGZRrsVBvcsdf6Obs7Zh8ooVZaf7NxPAkkEeFjwmZ?=
- =?us-ascii?Q?UUwaEvVXxQQXbVPwS838fYjUdC98UiHvZGfHxv56?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d4898fb-ee99-458f-1d4a-08dc7a2e365b
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 07:10:07.9826
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jMoh7PYddL5eVCFC3M5MwuzDLzKmKU9j5fe23M3tCHYaZspW6ULEl3EFdA4+1pp1TYdUUr60cGJOVtfBDCJKFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6836
-X-OriginatorOrg: intel.com
+In-Reply-To: <0f29bcc1-e708-47cc-a562-0d1e69be6b03@suse.de>
+User-Agent: NeoMutt/20171215
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TezBcdxTH53fv7nVpdG52mfxCTXQ7ndZ7N2H7k9I0IXoTIjKJVtJM2XI9
+	Brvb3UUlpvGoeDQPpC2uYAnRoCSIsVlCKUKopqxiQpsp0ampoINREbWWtv995nzP+8whcZ7W
+	yIKMkKoYhVQSJSBMOI0dNrYOITePhQpLqq1QbW8XjpKz1nBUNX6VQDMdCwB9PbeCo8m2NIBW
+	+wdw1NA1AZC6tJCDRts0GGouzcHQrapODBXkpmCoc/1PAuW0DwM0pWMx1DJmh0oulnFQc0sP
+	Bw3eu06g4ptTRqii+wWGstN1GGqaTAKoZuYZBz0Ys0QDa93cdy3pwSFvurcU0hp23IgemLjD
+	oQf7Y+i6ygyCri+7QP9enw9o7WgiQd+4co1LX06ZJWhN6i9cen5qjEM/u68j6CsNlYDuU39v
+	5Mc/E+kWzkhCGIU1Iw2WhURIw9wF3icDPQJdxEKRg8gVvSWwlkqiGXeBp4+fg1dE1MZyBNax
+	kqiYDZOfRKkUOL3jppDFqBjrcJlS5S5g5CFRcme5o1ISrYyRhjlKGdV+kVC412XDMSgyfCG/
+	w0j+yPxT7cwlIhGs78wExiSknGF1YzLIBCYkj9ICeLcvj9ALPGoBwL47XgZhCcDn3z4itiNy
+	8hqMDEILgEvaJ1sRTwGs00TrmUO9DkufjnAyAUkSlB18uE7qzWaUAM6ntW/G4lQFAZ+vj3P1
+	Ap86ANfGMzA9m1JiOJfRhht4J+zJn+To2Zh6G86UD2zazalXYF75Im5oaNYYtnb7GtgT3mbz
+	MQPz4R/d+kb1bAH/mm3ZGiAO3vryG0LfBKQ+B5D9mQUG4QBM7b2K65vGqXCYXkwazFbwq96a
+	zZw49TK8vDq5ld8UNhVt82uwula9lX83HF5O2mIa6pLrccOy+jF4Y7IRywJ72P/Nxv5Xjt0s
+	sR9mzCVzDbwHptwtwA0ulrDiBWlAG1h7z0kNiEqwm5Ero8MYpYt8r5SJ+/f0wbLoOrD5RbZH
+	m8CTX+cc2wFGgnYASVxgZlrXcCSUZxoiiT/HKGSBipgoRtkOXDbOlo1bmAfLNt5QqgoUObsK
+	ncVisbPrPrFIsMt0JrUwhEeFSVRMJMPIGcV2HEYaWyRi/PoIIt+mXHz4xHuf+MQfOrUy/5v/
+	BBHX5zvL455Mm55d2MXuOy8bLc9lOpLGpjWikUxzt7lrAeyHJbycQ+EL8Lq2SH1uVVsw9VmZ
+	5uDHKznc7vaAs4utQX4qYevy/cdvetgfD8z+QmyhflA1PTQ/zV7gt1rVgmo4Kv6o+HznQqnH
+	4nRRgu4s70hn+kWn3J/EnNO6Uc13Ow5XnhlZPh3QYf/S36WzniY/XIoqd3lfapZ5EAUN6xK6
+	4ptjC5fIdO9F01NsT/IH9Vle8dHHwx4zqZWvwhbW0cdfzQQlpJQcAzW1J5ylHvOhmPcb/B2x
+	Pz5UFtv5CkX2rGVBIXXUP+X2kICjDJeIbHGFUvIPNBNwJs4EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZdlhJTvfjbN80g73ntSzWnzrGbNE04S+z
+	xeq7/WwWrw9/YrSY9uEns8WTA+2MFr/Pnme22HLsHqPFgkVzWSxuHtjJZLFn0SQmi5WrjzJZ
+	zJ7ezGRx9P9bNotJh64xWjy9OovJYu8tbYuFbUtYLPbsPclicXnXHDaL+cueslssP/6PyWJi
+	x1Umix1PGhkt1r1+z2Jx4pa0xfm/x1kdpD0uX/H2OLVIwmPnrLvsHufvbWTxuHy21GPTqk42
+	j81L6j1ebJ7J6LH7ZgObx+K+yawevc3v2Dx2tt5n9fj49BaLx/t9V9k8+rasYvQ4s+AIe4Bw
+	FJdNSmpOZllqkb5dAldG48v7zAWPhCo2b+plbWBcy9/FyMkhIWAiMWnGFvYuRi4OIYHdjBK9
+	l/6yQSQkJZb9PcIMYQtLrPz3HKroCaPEuZ/PwIpYBFQlFj27wdLFyMHBJqAtcfo/B0hYREBJ
+	4mP7IbB6ZoHVbBK7Di1mBEkIC9hL/L3byQRi8wqYSXzoPMAMMfQsk0Tf+99sEAlBiZMzn7CA
+	2MxARfM2P2QGWcAsIC2x/B8HRFheonnrbLDjOAWsJV4vPQ9miwrISMxY+pV5AqPQLCSTZiGZ
+	NAth0iwkkxYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAhOMFpaOxj3rPqgd4iR
+	iYPxEKMEB7OSCO+mLZ5pQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJzU5NLUgt
+	gskycXBKNTCtbZxb5v6y/0Ow30pN5TR9Pu+qide+PdUPEfeRMo+779X6cOGtSmb753E/hD/9
+	3/j/2qRXjit7QiTvzbj9yNE33t/nUky5stWJR65CcUukdjybznZPT6muZ7X4hZ3zFcz4WRVm
+	Sp09X3znzrcZC2e/cPrO//i8iKe+QYnSjwMt02Kijzrb2v02DxGef9n+4Nyjjesf6+1RSlj1
+	aX61vwfDU8Y3O2Z9L2dlFTmzaXGJ3Kepjcqu82fe2JRhs+Dw5gPz926N2+bFVfq1f03BQ/EF
+	RW98+i8fZON7uTN524ZlfpeUX6i5Orovl/+xeILizOI5j141uP5TiTh1Tqtd6jpr7MFDke+i
+	tjZcfyAS6yN7Q4mlOCPRUIu5qDgRABcP8X2fAwAA
+X-CMS-MailID: 20240522071705epcas5p23ab74d2c71948bc9e5a9b23a65146eeb
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_19f97_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240520103004epcas5p4a18f3f6ba0f218d57b0ab4bb84c6ff18
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+	<CGME20240520103004epcas5p4a18f3f6ba0f218d57b0ab4bb84c6ff18@epcas5p4.samsung.com>
+	<20240520102033.9361-10-nj.shetty@samsung.com>
+	<41228a01-9d0c-415d-9fef-a3d2600b1dfa@suse.de>
+	<20240521140850.m6ppy2sxv457gxgs@green245>
+	<0f29bcc1-e708-47cc-a562-0d1e69be6b03@suse.de>
 
-On Tue, May 21, 2024 at 07:28:23PM -0700, Sean Christopherson wrote:
->Rename the various functions that enable virtualization to prepare for
->upcoming changes, and to clean up artifacts of KVM's previous behavior,
->which required manually juggling locks around kvm_usage_count.
->
->Drop the "nolock" qualifier from per-CPU functions now that there are no
->"nolock" implementations of the "all" variants, i.e. now that calling a
->non-nolock function from a nolock function isn't confusing (unlike this
->sentence).
->
->Drop "all" from the outer helpers as they no longer manually iterate
->over all CPUs, and because it might not be obvious what "all" refers to.
->Instead, use double-underscores to communicate that the per-CPU functions
->are helpers to the outer APIs.
->
->Opportunistically prepend "kvm" to all functions to help make it clear
->that they are KVM helpers, but mostly there's no reason not to.
->
->Lastly, use "virtualization" instead of "hardware", because while the
->functions do enable virtualization in hardware, there are a _lot_ of
->things that KVM enables in hardware.
->
->Signed-off-by: Sean Christopherson <seanjc@google.com>
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_19f97_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-Reviewed-by: Chao Gao <chao.gao@intel.com>
+On 22/05/24 08:22AM, Hannes Reinecke wrote:
+>On 5/21/24 16:08, Nitesh Shetty wrote:
+>>On 21/05/24 09:11AM, Hannes Reinecke wrote:
+>>>On 5/20/24 12:20, Nitesh Shetty wrote:
+>>>>Before enabling copy for dm target, check if underlying devices and
+>>>>dm target support copy. Avoid split happening inside dm target.
+>>>>Fail early if the request needs split, currently splitting copy
+>>>>request is not supported.
+>>>>
+>>>>Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+>>>>---
+>>>>@@ -397,6 +397,9 @@ struct dm_target {
+>>>>      * bio_set_dev(). NOTE: ideally a target should _not_ need this.
+>>>>      */
+>>>>     bool needs_bio_set_dev:1;
+>>>>+
+>>>>+    /* copy offload is supported */
+>>>>+    bool copy_offload_supported:1;
+>>>> };
+>>>> void *dm_per_bio_data(struct bio *bio, size_t data_size);
+>>>
+>>>Errm. Not sure this will work. DM tables might be arbitrarily, 
+>>>requiring us to _split_ the copy offload request according to the 
+>>>underlying component devices. But we explicitly disallowed a split 
+>>>in one of the earlier patches.
+>>>Or am I wrong?
+>>>
+>>Yes you are right w.r.to split, we disallow split.
+>>But this flag indicates whether we support copy offload in dm-target or
+>>not. At present we support copy offload only in dm-linear.
+>>For other dm-target, eventhough underlaying device supports copy
+>>offload, dm-target based on it wont support copy offload.
+>>If the present series get merged, we can test and integrate more
+>>targets.
+>>
+>But dm-linear can be concatenated, too; you can easily use dm-linear
+>to tie several devices together.
+>Which again would require a copy-offload range to be split.
+>Hmm?
+>
+Sorry, I dont understand the concern here. I see 3 possibilites here.
+
+1. Both src and dst IO lies in same underlying device. This will succeed.
+2. src and dst lie in different devices. This will fail.
+	a. src or dst needs to be split, if one or both of them
+	spans across the underlying block device boundary. In this case we
+	fail the IO in dm layer(refer patch 9).
+	b. src and dst doesn't split in dm,
+	but they wont be merged in request later as they belong to
+	different block device.
+	Hence the request reaches the driver with single bio and will fail
+	in driver(refer patch 7)
+
+Does this address your concern, or do you have something else in mind ?
+
+Thank you,
+Nitesh Shetty
+
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_19f97_
+Content-Type: text/plain; charset="utf-8"
+
+
+------Fualeei1.f5fhWGYL679EBd0hH5-OLgtfrOtH6wInDZGwDEe=_19f97_--
 
