@@ -1,155 +1,147 @@
-Return-Path: <linux-kernel+bounces-186599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71188CC61F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:11:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7138CC625
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 466391F25380
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:11:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF63A1C210C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3ED1459F7;
-	Wed, 22 May 2024 18:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3977145B3B;
+	Wed, 22 May 2024 18:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fdimPzqP"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k5P1If5I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DC3210EC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6330B145B1F;
+	Wed, 22 May 2024 18:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716401487; cv=none; b=oF2W4x6y9EnRovNAk1bLwzYGFGyerRff/25FpjqTRJE8eAdNb2aLnlSJVM/vkUWA0Umt2ULtUzEaaCAKhdTfaFGdvjaF3NGkn2a5Rto2zHGaXIvd1esno8oK8mNIedC4ncfwkRnWHem0BG146VjKBgvDFxgBEm77iiMCe0/aKtw=
+	t=1716401553; cv=none; b=dyYlRjOflgyAw7URvoD1BFTnurQpEBLcQZWEREVpZrT+j10rVtg1OsouaTgCP7p3mVddafFujMKSAvkvRZuBrr+v/AmucJzDC2gFPPDax1x2n+V0jdwTLQT3ZKfTlDaby4oO+q7S7waZoNzc31/pdgVg0wLsY+HjxPn146vhmFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716401487; c=relaxed/simple;
-	bh=oZSIUryH8Cqq8Qql2NnER5eoLAH632P7s2G857Vxqik=;
+	s=arc-20240116; t=1716401553; c=relaxed/simple;
+	bh=P8JmmA0EqNGVqZirp7HNAbnnpaWqE/5cpMWAbpIhSVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kyI/NDslBBEVPtOm4gzhx70sCb2JLzJDUn3Y8ay57I7zDRqiSh5n22lTn9JuYpKreZbWbfDQtDHCXHwyxHqT4m8+n/b6DExLLAAkC/+ubWIXKWGanFqWN6sPoBB8Y22hZiBrdfH0uo8CLztyh7C0pdjmxLgXYt+ykd/YeVGbdoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fdimPzqP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 736DDA38;
-	Wed, 22 May 2024 20:11:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716401470;
-	bh=oZSIUryH8Cqq8Qql2NnER5eoLAH632P7s2G857Vxqik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fdimPzqPz/6X19BTIpFZEN6pDNiF5wTMpcx3RYuex3opCMeDL27XYwoVWkkpVGhxz
-	 pJJHx3WhQCUiEywBbftWXpzRQH6Dl9PvZWBu+60CN4CFsbeCBbSGbdq1D0lW3UWYpP
-	 h5l3B6ewhoMMWvhU9w5l0vu9Ea1j2qZaEnUdLuMQ=
-Date: Wed, 22 May 2024 21:11:13 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "Klymenko, Anatoliy" <Anatoliy.Klymenko@amd.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm: xlnx: zynqmp_dpsub: Enable plane in atomic update
-Message-ID: <20240522181113.GD5164@pendragon.ideasonboard.com>
-References: <20240520-dp-layer-enable-v1-1-c9b481209115@amd.com>
- <20240522153151.GB9789@pendragon.ideasonboard.com>
- <MW4PR12MB71654EE394DFEBE7325E6DC1E6EB2@MW4PR12MB7165.namprd12.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGKPK+e31YwvOQV1EjWn9NtlAlVNtoLYxWq2zv8OFISRbiIka1SWHgNjq847PAZfylE4/IhNOrC+KawBPlCwNo9bvPrEA77bQ1HPkdujPsfsvqelnvzSirGqPP0+XwOMh9s2tBKx8umpYrrQdjoXsWu3WANBlPwIkjrVaG2ewdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k5P1If5I; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716401551; x=1747937551;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=P8JmmA0EqNGVqZirp7HNAbnnpaWqE/5cpMWAbpIhSVs=;
+  b=k5P1If5IffUmzPvaMxqYBfFMunx+0dU1ms+slGsdeaeqEMCK/CeyPp6S
+   YTLTyPwiEH4VDsN3vfy7glQADx+XsyCutQzEiWNdz2/W9UJ63WmcUWq99
+   ds974e9agZG2V7LX3LV784sgNo6IGbzqP1D/Ct2tRD5srh/zkkNEgQzA6
+   f7125lJJw/SIeD7u/VWbNYaq6s8rJHzqq560NYQuDfi7tcCcNWnIdxkfT
+   F88J+UGLzmB4No0+Cgx75txVOwKsb0opa9d/gf50RQsKeEdjsfcUIDxFs
+   +CCqBR8e/vuAqnq3Woc47rg1t8RF9hNqsxS2LtKaVAmJITWD2dgBbPkjF
+   g==;
+X-CSE-ConnectionGUID: MdLxL76rTxi6L6QEjm7TVQ==
+X-CSE-MsgGUID: iyLm5tBPQtycptlymDrwRg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="23812916"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="23812916"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 11:12:31 -0700
+X-CSE-ConnectionGUID: 5FNYXQyhRl+eTYgPJUt6yA==
+X-CSE-MsgGUID: vSxxeIEkQUaBmK4vADCXFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="33378007"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 22 May 2024 11:12:26 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s9qRr-0001q1-2m;
+	Wed, 22 May 2024 18:12:23 +0000
+Date: Thu, 23 May 2024 02:11:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xiaojian Du <Xiaojian.Du@amd.com>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
+	pawan.kumar.gupta@linux.intel.com, sandipan.das@amd.com,
+	kai.huang@intel.com, perry.yuan@amd.com, x86@kernel.org,
+	ray.huang@amd.com, rafael@kernel.org,
+	Xiaojian Du <Xiaojian.Du@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: amd-pstate: change cpu freq transition
+ delay for some models
+Message-ID: <202405230126.Ww25ogId-lkp@intel.com>
+References: <b2c8fb2da41f9fb21f095f67d99cbdbd0aa34091.1716356681.git.Xiaojian.Du@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <MW4PR12MB71654EE394DFEBE7325E6DC1E6EB2@MW4PR12MB7165.namprd12.prod.outlook.com>
+In-Reply-To: <b2c8fb2da41f9fb21f095f67d99cbdbd0aa34091.1716356681.git.Xiaojian.Du@amd.com>
 
-On Wed, May 22, 2024 at 05:52:56PM +0000, Klymenko, Anatoliy wrote:
-> On Wednesday, May 22, 2024 8:32 AM, Laurent Pinchart wrote:
-> > On Mon, May 20, 2024 at 08:22:31PM -0700, Anatoliy Klymenko wrote:
-> > > Unconditionally enable the DPSUB layer in the corresponding atomic plane
-> > > update callback. Setting the new display mode may require disabling and
-> > > re-enabling the CRTC. This effectively resets DPSUB to the default state
-> > > with all layers disabled.
-> > 
-> > Ah, I went through the code and I see that. Oops.
-> > 
-> > > The original implementation of the plane atomic
-> > > update enables the corresponding DPSUB layer only if the framebuffer
-> > > format has changed. This would leave the layer disabled after switching to
-> > > a different display mode with the same framebuffer format.
-> > 
-> > Do we need a Fixes: tag or has this issue been there since the beginning
-> > ?
-> 
-> Yes, this was introduced in the initial driver commit.
-> 
-> > > Signed-off-by: Anatoliy Klymenko <anatoliy.klymenko@amd.com>
-> > > ---
-> > >  drivers/gpu/drm/xlnx/zynqmp_kms.c | 5 ++---
-> > >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-> > > index 43bf416b33d5..c4f038e34814 100644
-> > > --- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
-> > > +++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
-> > > @@ -120,9 +120,8 @@ static void
-> > zynqmp_dpsub_plane_atomic_update(struct drm_plane *plane,
-> > >               zynqmp_disp_blend_set_global_alpha(dpsub->disp, true,
-> > >                                                  plane->state->alpha >> 8);
-> > >
-> > > -     /* Enable or re-enable the plane if the format has changed. */
-> > > -     if (format_changed)
-> > > -             zynqmp_disp_layer_enable(layer);
-> > > +     /* Enable or re-enable the plane. */
-> > > +     zynqmp_disp_layer_enable(layer);
-> > 
-> > This should be safe for now, as the function will just write the plane
-> > registers with identical values. The waste of CPU cycles may not be a
-> > big issue, even if it would be best to avoid it.
-> 
-> The CPU time wasted on doubling down layer enablement is neglectable
-> compared to DP link training time.
+Hi Xiaojian,
 
-Good point.
+kernel test robot noticed the following build warnings:
 
-> > What bothers me more is that we may be working around a larger
-> > problem.
-> > Resetting the CRTC when disabling it affects the hardware state of the
-> > whole device, and thus the state of all software DRM objects. The
-> > hardware and software states lose sync. Maybe this patch is all that is
-> > needed for now, but other similar issues could pop up in the future.
-> 
-> I had similar thoughts about proper HW state tracking, but that would be
-> rather large rework.
-> 
-> > Would it be possible, at atomic check time, to detect the objects whose
-> > hardware state will need to be synced, and marked that in their state ?
-> > Then in zynqmp_dpsub_plane_atomic_update() you could re-enable the
-> > layer
-> > based on that. You may need to subclass the drm_plane_state if there's
-> > no field in that structure that is suitable to store the information.
-> > The format_changed local variable would move there.
-> 
-> Thank you for the idea! I'll check it out.
+[auto build test WARNING on tip/master]
+[also build test WARNING on rafael-pm/linux-next rafael-pm/bleeding-edge linus/master next-20240522]
+[cannot apply to tip/x86/core tip/auto-latest v6.9]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If it ends up being overkill I think this patch is probably OK. A
-comment to explain the reasoning in the code would be nice though.
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiaojian-Du/cpufreq-amd-pstate-change-cpu-freq-transition-delay-for-some-models/20240522-135241
+base:   tip/master
+patch link:    https://lore.kernel.org/r/b2c8fb2da41f9fb21f095f67d99cbdbd0aa34091.1716356681.git.Xiaojian.Du%40amd.com
+patch subject: [PATCH v2 2/2] cpufreq: amd-pstate: change cpu freq transition delay for some models
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240523/202405230126.Ww25ogId-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405230126.Ww25ogId-lkp@intel.com/reproduce)
 
-> > >  }
-> > >
-> > >  static const struct drm_plane_helper_funcs
-> > zynqmp_dpsub_plane_helper_funcs = {
-> > >
-> > > ---
-> > > base-commit: 673087d8b023faf34b84e8faf63bbeea3da87bab
-> > > change-id: 20240520-dp-layer-enable-7b561af29ca8
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405230126.Ww25ogId-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/cpufreq/amd-pstate.c: In function 'amd_pstate_get_transition_delay_us':
+>> drivers/cpufreq/amd-pstate.c:821:12: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]
+     821 |         if (transition_delay_ns == CPUFREQ_ETERNAL)
+         |            ^
+
+
+vim +/else +821 drivers/cpufreq/amd-pstate.c
+
+e571a5e2068ef5 Meng Li     2024-01-19  811  
+5131a3ca3518d7 Perry Yuan  2024-04-30  812  /*
+069a2bb8c48c43 Perry Yuan  2024-04-25  813   * Get pstate transition delay time from ACPI tables that firmware set
+069a2bb8c48c43 Perry Yuan  2024-04-25  814   * instead of using hardcode value directly.
+069a2bb8c48c43 Perry Yuan  2024-04-25  815   */
+069a2bb8c48c43 Perry Yuan  2024-04-25  816  static u32 amd_pstate_get_transition_delay_us(unsigned int cpu)
+069a2bb8c48c43 Perry Yuan  2024-04-25  817  {
+069a2bb8c48c43 Perry Yuan  2024-04-25  818  	u32 transition_delay_ns;
+069a2bb8c48c43 Perry Yuan  2024-04-25  819  
+069a2bb8c48c43 Perry Yuan  2024-04-25  820  	transition_delay_ns = cppc_get_transition_latency(cpu);
+069a2bb8c48c43 Perry Yuan  2024-04-25 @821  	if (transition_delay_ns == CPUFREQ_ETERNAL)
+be020c2c1f8622 Xiaojian Du 2024-05-22  822  		if (cpu_feature_enabled(X86_FEATURE_FAST_CPPC))
+be020c2c1f8622 Xiaojian Du 2024-05-22  823  			return AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY;
+be020c2c1f8622 Xiaojian Du 2024-05-22  824  		else
+069a2bb8c48c43 Perry Yuan  2024-04-25  825  			return AMD_PSTATE_TRANSITION_DELAY;
+069a2bb8c48c43 Perry Yuan  2024-04-25  826  
+069a2bb8c48c43 Perry Yuan  2024-04-25  827  	return transition_delay_ns / NSEC_PER_USEC;
+069a2bb8c48c43 Perry Yuan  2024-04-25  828  }
+069a2bb8c48c43 Perry Yuan  2024-04-25  829  
 
 -- 
-Regards,
-
-Laurent Pinchart
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
