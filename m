@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-185820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114408CBB84
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:48:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD028CBB87
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F49282811
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:48:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D17D71C217FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879CF78C9D;
-	Wed, 22 May 2024 06:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9026E79B84;
+	Wed, 22 May 2024 06:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IP/ZfH47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0gUs2nj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B354C62;
-	Wed, 22 May 2024 06:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C387117C6D;
+	Wed, 22 May 2024 06:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716360479; cv=none; b=bk98ThSlr0aAAdlw8MCr/SN4teGlZkqRqckChvgcwmfe9/pzh8hVkmJzKOAZjWUXoBZ4dt9cFKGDFLeEUabIv+in6TzHdjXO1nX1yUQBCxkoiD4ZHlfAIf+N2o2wSXKz9GxaD71NyqmmFRNkjt18feml2mP8gD7yMkyuL7c1RVM=
+	t=1716360496; cv=none; b=JY+rw3sZJ4CSl8v/M6UtoLACFLOxhGxz0An6WEdeGSSUAMJmIqcgHnF3JI+sR3vRYW/glySu4Jm/Do+Rx/hm71iArWEW1k/4a2vSxGmqUk9QO8vytj9pAnIAhwgKm2lgkScG2br8lv5P9EtCjcA+5f8KGYWb7IEBcWPcBR149QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716360479; c=relaxed/simple;
-	bh=fUIhzOfVUoWq4e5Mlr0tdY19EgBcj6SfhCRx1Nk6Vvc=;
+	s=arc-20240116; t=1716360496; c=relaxed/simple;
+	bh=WJkjDmeHNuFhx5I8TgiVf4oKs1vqcYl8v194EPdzTG8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XL4akTgw3huKKSRxUDTxwjlFQaE8LsGIvcQL3Cwd7ymH4WzKrj6gpi08MiEVQcrIJYwQyV+sg8iK/gPHjlETtZsAVyuS2Nz8+K2vumr0L+uwx/rQ9a722Sn/L3QPZJDyU0zdOjozdY1i373+oJ9UbASolBzB8bITeSWB7hxEbOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IP/ZfH47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F796C2BD11;
-	Wed, 22 May 2024 06:47:54 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=QFEuD4kJC/4E4tLWEakl18vcaF0Pd75UlhhVDnS30w2EDtzN3Xs6y/PwhnFC2sbuRFF21vv40aNoCWFcFPuCiSgNThqstT8kBYK4SQvyKmv5kdcYbDl2NrXjatFryXxLK3K2zv+aKzqPDZYOTBsSnGa4u0RsL0tfcUxqOlZfSU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0gUs2nj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1342C2BD11;
+	Wed, 22 May 2024 06:48:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716360479;
-	bh=fUIhzOfVUoWq4e5Mlr0tdY19EgBcj6SfhCRx1Nk6Vvc=;
+	s=k20201202; t=1716360496;
+	bh=WJkjDmeHNuFhx5I8TgiVf4oKs1vqcYl8v194EPdzTG8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IP/ZfH47R13Tp6eCpcCvKQD+kEyYBG9CsM4JZ9jRZIFuibJPgK1SkM/20TrcLcH91
-	 rhXXPdvPFZogdJtAaxQFuKg0p5RUrQj4ySLrbbL1z6bA0cpBmhO7LmeelWXGq8R2/O
-	 efiXbHJckVMvggjLnA2GrswM9DWUkNKHkxDiB/UfY+zxU/RGDndsxRPsNLFGdyZaXx
-	 4MscVaoefqe0/55Qx+CGGVTmnZdptDovqUQhfGd88CO0p4JyyEJR8OyyRwrxAx/O0k
-	 HhdhYpE1pAM0PQfVDGKkUzmqRVZTX8qLxMJqXzE0PI+k5uupbvbSoTAKmgdMQ+Cem4
-	 K8gIngW6ELWkQ==
-Message-ID: <56bf93ac-6c1e-48aa-89d0-7542ea707848@kernel.org>
-Date: Wed, 22 May 2024 08:47:52 +0200
+	b=i0gUs2njoNCFsJjbNMnz6TQuyPZKULsPY+oKAP5X/FA1HdW81kG3iOitS2Uu+MD3x
+	 PX5q461DS5mdNyEcjAyyqznIDfoMgRtru0HN2ftE44a6YhvexZ/qx3NzHgdzmTxvJ8
+	 0p1DHA9hBX9ikAjdOqmyI8bOYDkAeVoJADRKLsMT5fYkQg5UTDMoMvrFuzQ93atu5B
+	 o0XLo8bzuw97lD8JHTKq0BTOHJC1I2dOVMKH5ENxPCoaKOAz/7EWhCKgplxBuRVf7F
+	 nDTk6x/UJ8PLpULoMp4wef441wQCZ5/JmMC1YMaowkZ8WGkaCJ30drT6iSdvePLdnP
+	 PmTD39o17d0JA==
+Message-ID: <6dba81fe-2e82-4807-8da8-bc5d8c7e174a@kernel.org>
+Date: Wed, 22 May 2024 08:48:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 1/2] dt-bindings: dma: Add reg-names to
- nvidia,tegra210-adma
-To: Sameer Pujar <spujar@nvidia.com>, vkoul@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
- jonathanh@nvidia.com, dmaengine@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- ldewangan@nvidia.com, mkumard@nvidia.com
-References: <20240521110801.1692582-1-spujar@nvidia.com>
- <20240521110801.1692582-2-spujar@nvidia.com>
- <80b6e6e6-9805-4a85-97d5-38e1b2bf2dd0@kernel.org>
- <e6fab314-8d1e-4ed7-bb5a-025fd65e1494@nvidia.com>
+Subject: Re: [PATCH] dt-bindings: PCI: mediatek,mt7621-pcie: add PCIe host
+ topology ascii graph
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+ devicetree@vger.kernel.org
+Cc: linux-pci@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org,
+ kw@linux.com, lpieralisi@kernel.org, bhelgaas@google.com,
+ conor+dt@kernel.org, angelogioacchino.delregno@collabora.com,
+ linux-kernel@vger.kernel.org
+References: <20240522044321.3205160-1-sergio.paracuellos@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,65 +103,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <e6fab314-8d1e-4ed7-bb5a-025fd65e1494@nvidia.com>
+In-Reply-To: <20240522044321.3205160-1-sergio.paracuellos@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/05/2024 07:35, Sameer Pujar wrote:
+On 22/05/2024 06:43, Sergio Paracuellos wrote:
+> MediaTek MT7621 PCIe subsys supports a single Root Complex (RC) with 3 Root
+> Ports. Add PCIe host topology ascii graph to the binding for completeness.
 > 
-> 
-> On 21-05-2024 17:23, Krzysztof Kozlowski wrote:
->> On 21/05/2024 13:08, Sameer Pujar wrote:
->>> From: Mohan Kumar <mkumard@nvidia.com>
->>>
->>> For Non-Hypervisor mode, Tegra ADMA driver requires the register
->>> resource range to include both global and channel page in the reg
->>> entry. For Hypervisor more, Tegra ADMA driver requires only the
->>> channel page and global page range is not allowed for access.
->>>
->>> Add reg-names DT binding for Hypervisor mode to help driver to
->>> differentiate the config between Hypervisor and Non-Hypervisor
->>> mode of execution.
->>>
->>> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
->>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>> ---
->>>   .../devicetree/bindings/dma/nvidia,tegra210-adma.yaml  | 10 ++++++++++
->>>   1 file changed, 10 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml
->>> index 877147e95ecc..ede47f4a3eec 100644
->>> --- a/Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml
->>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.yaml
->>> @@ -29,8 +29,18 @@ properties:
->>>             - const: nvidia,tegra186-adma
->>>
->>>     reg:
->>> +    description: |
->>> +      For hypervisor mode, the address range should include a
->>> +      ADMA channel page address range, for non-hypervisor mode
->>> +      it starts with ADMA base address covering Global and Channel
->>> +      page address range.
->>>       maxItems: 1
->>>
->>> +  reg-names:
->>> +    description: only required for Hypervisor mode.
->> This does not work like that. I provide vm entry for non-hypervisor mode
->> and what? You claim it is virtualized?
->>
->> Drop property.
-> 
-> With 'vm' entry added for hypervisor mode, the 'reg' address range needs 
-> to be updated to use channel specific region only. This is used to 
-> inform driver to skip global regions which is taken care by hypervisor. 
-> This is expected to be used in the scenario where Linux acts as a 
-> virtual machine (VM). May be the hypervisor mode gives a different 
-> impression here? Sorry, I did not understand what dropping the property 
-> exactly means here.
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> ---
+>  .../bindings/pci/mediatek,mt7621-pcie.yaml    | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
 
-It was imperative. Drop it. Remove it. I provided explanation why.
-
-Also, drop unneeded |.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
