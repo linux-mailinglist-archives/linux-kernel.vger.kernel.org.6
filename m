@@ -1,162 +1,210 @@
-Return-Path: <linux-kernel+bounces-185682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6918CB8DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F978CB8DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95D1AB21130
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864441F25A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1333ADDBD;
-	Wed, 22 May 2024 02:12:03 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2101.outbound.protection.partner.outlook.cn [139.219.146.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E08134AB;
+	Wed, 22 May 2024 02:14:06 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0365F63C7;
-	Wed, 22 May 2024 02:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBD433DF;
+	Wed, 22 May 2024 02:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.238
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716343922; cv=fail; b=ODlgMS8h/Me7VWHC0Zew5/6fobD6OywVLjJ4+d19BCxGS0i2RGNSfeC0q7/rPOy65+UkU2Sv6a1OtdHjaXpivR8fzkZti0JPk+aX4fCXiEUSiKM4Z6g6jFChuhriBx7qSGEHpRKPZ4Q7i0PcJmiZR56X/bSudkpmdWmVj1xqRzc=
+	t=1716344045; cv=fail; b=T9kzfLc/mVbJx8k2AXi8HfzksUSmsShAGHujeE0A+2/Tb9mrM6rwubREWQMOcPswrk8I0BJcpqV6G/WALLsOYYUSsva1Kp2dzZtZz6afBMtFyjhoUq69pCzuQ+ywX5l0sK7NHgSqAL7qY7rO5z5UZoaMwpiH2BhNGh8gmYXq5v8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716343922; c=relaxed/simple;
-	bh=RUCD/05DnTMhqzRRGJ/s8zZRxgcT1gTNXYxSOiZ2QAk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BtyP5HCdETAQ/qg1jFiRxr2LK6nEaPHj2d8tWzWjah/WIQEdlN1LWuQ7R7xUTAubWIkIzozar9xMXEWeLVJ71aD6PxKMUqpUIWah43OHhWAyg4Rd0nwfO7QUNv8yvgXSdKlBHXWK2XxmfL2NOVyAtyVgqH+n6v2jYn9hmWLhs5g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+	s=arc-20240116; t=1716344045; c=relaxed/simple;
+	bh=Y0R4Kg3pddHZw3126HkIuTpKc5za6BKAqmU+LS//x0I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=tTUBtxSJmafmUIW+rpWPqOsUC+U0oKM51FKIWbeAZ7s9rLr0bPfOqL0z6VC7gyzZ26vDHOSiJHgGSgsVpHW0lHABzwbNYc0oHS0tI1XFVs5AHNZhP1l1ujjCBfn5IPv4OkbSDUVekTI7i7dQZZ/QWMFnm9EvK0o1gfSRhi/mYC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44M0wjIi014420;
+	Tue, 21 May 2024 19:13:38 -0700
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2173.outbound.protection.outlook.com [104.47.58.173])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3y96mng1kn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 May 2024 19:13:38 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mJGr8OfkzEPWKbAi0ZXWkt48JERet8MMpJ6e8OdRUOKZMpQEXnHyjrOVLjbrNLqnB9qomBXrhSp/J/OahYzryMwjuNrThPJTyMSDYOqQ4KkYjl2XOVr2P1fmkaMHlX/V7WOMUT5Zx/u2H2m/VB37ikEHXkrx1lznzx5gR489G4XyX8ZgtJ/vOHcWiPwGqxruP+p7OxSN1G2e3QpyaiARce1XV/vbP/tIBZVeDhWXe4qusTMJFnANQDYPE6PDTNGIoNRv1JVoOKcPPb4UExMLy2X15GEWQtjXq0nHkm6pSmSQl4PyxBWmuJM/5/Zjw9J0oItvpvZzxFBOVxEtXv1rVQ==
+ b=P3hVD39hClgmURP6hC86jjGQLQwiACNTOEXIfOkwe6pR9KvzlybnJZDbu0EAbNKK+az8m6nFAyiVTQFVbyKKyn/0HXgyuHMS/2PXST5/rAL1KvXncJOUxdz0t1qHYFdB2nb663P39Q6UJGbBgSLkgu4fF6Ez9PsK495IvuE918DSh9UTXaPGmCtYHqi+pPWLu+fjIHgvmY4hN7wG+JdKxe7htlhVbbxvx1DSL1Co4U4q8BhMxoJ2q/uqpqq8Dj+cIMMOCJqOfXUhS5vF6dBNfVymRuqJxh/2DIUE9TWwT1mnpa+SjtPpUef2zhtBHRCT6n1nzVjrVkE3Ns/cV6MRaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oP56qYh3jO2aZPo0WJrLMAOvBZCGkYh972ZwrNqxYvg=;
- b=C1zqF9r5Q9BFkF9FlTWCvZ64CUgroUU70xo9SSgqeHBclUDO/NhMNowknazLtKXrzupr9LAl7RDYHamQtM5if/UD7BflxJaASmFv4NVbEx+88EBs4ZJn2auWFJ9TEVDdDTYGF7icnnhPCU7oDwlaYMh7JB8FrCFaUH7NS0ghKHrHvzKu0n4E2j9Pl36DtLegSLJr24KczSkwoC2fSPF6V6OrwTMvKddSAgsG+MQClOLfZvL59hxZorlNCVh0JowjZ9Uvii0qQuDu/RWZMjFUeKb3Ylm1FXe6xdqt4zs07b6U74BGMA/9RT+gR9ZH5QNEmvOSGguPQXptDwn6rJAi8w==
+ bh=n4o9WboDjWsVys1OhY7fZ/3YitobHiGrKq0zjsStjxg=;
+ b=CAECVfe0dRbtA5e1qB9CYtj34Re9+sQ/6gvHbbQWX/+J+L3h+mTcwChYRG4B+ZZu4OdvW4Mh6TjPjBC5H+t3wYGkbfYUcYK5RmuPMf0XfEv9HDqo4dhsozu7g62XuKaEyzNsbWpL9z3/eDXgj334QTbXQXSJM+qX57di9HVYYeoj6yL9kqK4sp1YVgUPYWxJrr4epiElIdLJsmVzJsHrnq2fSCln67g8b4Tiluy6d6Bl8lF72UlK5WYPCtH7w+FqjTcviotE9BUopyxeAyejh1wTpU8ThGLSQ4W/MQ0qpnDGaB02ZY/J+du8tSNV7n0FtF+Z+fT5eacJ/Nq5eRlvnQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:8::10) by NTZPR01MB1002.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:b::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.33; Wed, 22 May
- 2024 02:11:55 +0000
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- ([fe80::e903:99a6:10b7:304d]) by
- NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::e903:99a6:10b7:304d%6])
- with mapi id 15.20.7472.044; Wed, 22 May 2024 02:11:55 +0000
-From: Xingyu Wu <xingyu.wu@starfivetech.com>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-CC: Walker Chen <walker.chen@starfivetech.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org"
-	<alsa-devel@alsa-project.org>, "linux-sound@vger.kernel.org"
-	<linux-sound@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela
-	<perex@perex.cz>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
-	<conor.dooley@microchip.com>
-Subject: RE: [PATCH v2 2/2] ASoC: starfive: Add PDM controller support
-Thread-Topic: [PATCH v2 2/2] ASoC: starfive: Add PDM controller support
-Thread-Index: AQHalVkIdRsOCKK/U0GRbtz/T/P037GiqLtw
-Date: Wed, 22 May 2024 02:11:55 +0000
-Message-ID:
- <NTZPR01MB0956BAFCBF0EA32824C3350A9FEB2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-References: <20240423083405.263912-1-xingyu.wu@starfivetech.com>
- <20240423083405.263912-3-xingyu.wu@starfivetech.com>
-In-Reply-To: <20240423083405.263912-3-xingyu.wu@starfivetech.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1002:EE_
-x-ms-office365-filtering-correlation-id: 3b352070-cd88-4434-21c3-08dc7a048d75
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- DEW6xTo3m/dFrXgHquL9RPpj057T2Q/qvpenJ6uZR3WEUeGOs5HohaWLviGBvJ1IeOIelE2KYTBRrdRnKpEOVzxWZ/Sc60SKpn4QKeYsd5ri3naaesIUxirTszZ9izZ7xpJ8ViprRQ6PKFy2gMJByp+k5bnbHjEcm8Opf+HP/SeVsWvyi5VWJqTIv4F+RGAjiQgmgXLxVjPe6aBX3bjELMHmDWyxQxEThApG4Z1awAYxZ7EVGevPA46WYhQKjw7JX6tTEwiS4an24tbkLhWwuvQD56aDwVpHrHKM8AdhfxnbGKmxlbbfDAtNp0+eLYM4FsjQgSu8FeFbP0tLT3bhoaCcc6X7vdCw+25M8B+3vsWXXErF10fYvBvCHvl6jeAb5GcmR42H3as3hEuBJNsUd1C804RTtemprKnsfVT6v8JHmVnSmEo5TPwUzwv/ra5KQqIvrtXkLt22NLr+BgGfrQmKocQcT10QbUFKFOR6ZiuKIB534zR2uGVLUk4/TfmdZMPvf6MKxLfYodvvgFunjuczp12CypmP8R0zqp6NFir9cGJ6zvWF3bh9cshZmpCQ3GoM0axbaZcuDYtb/K24eFzhUgDPzdFGjJv2I46jFVy/EatyVkDGpyncd2pSJtJE
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(7416005)(41320700004)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?vPKj5sBqQd9vV/fVQao+ekkhlFCFB7fgEl/fyad158c/s6hJ9wcMyN9TuhlI?=
- =?us-ascii?Q?fWtwmQViG93v5rIDcqn2k04L7lPVYEh4TTIGnaewaw029CeFyuVotQs0Vfag?=
- =?us-ascii?Q?1rJbOKcZwS8fZ+hP5bIVz6K3I16DLr3OE8UIMmRcSWY5lDsb1G5CibMq9Mpg?=
- =?us-ascii?Q?Hk9e6xMgs5NnhRC3K49u26lQ9NBQjTgrJ8ghfGgsItcCKVO5+G3ZPgZqwOOM?=
- =?us-ascii?Q?50m3ENjzSspjJKopZZGkcYMvu2+yZwugbmGHvbv2LFsuB70YSb5+wqvxu7+D?=
- =?us-ascii?Q?J1aSBz4Rk4qxFI+yjQQTgF4WCmiy1AJmRtbSxzSogoJNf6CgfWMOcfs5lPKF?=
- =?us-ascii?Q?Bv1hEvAx7AGak2RwAqEBxU771ItQj/1hReFTszCwFGtQPe3PFgRBQ3yfcqf3?=
- =?us-ascii?Q?4+IBBkaOrphqi/fy6x48jRF4tIrK1KzDXSbvUQhDr8LDecVUTrHr+htwlW8w?=
- =?us-ascii?Q?mfVwEugp7oV2cGl9QfvjW0NAtU6A7xz19RwMFOieIDVRlOw+i2fynKbVm/Z+?=
- =?us-ascii?Q?WXYp98i73YZD5jELynPhJO7f8sEitmxrCakMjNA2L4EZ5otZ921Ys71hajVB?=
- =?us-ascii?Q?Tjp9nDOOXn8ez+CulZA1jFLUPu1FuRdQfK+8DV2/jhvXAehCJEW7pBBd7zAH?=
- =?us-ascii?Q?oku/2irwswjEdC+5fSSjvdNPUvPflpAFONscaYGAGLJx5g3aO5zjUId9oUoa?=
- =?us-ascii?Q?KeXm6CsDcE+a9hemH8b9gmFc86jPkacdZa5htgtC9xDidqsapnbqRIGOQyJB?=
- =?us-ascii?Q?zy6d3EUO7/M2XuLnQ39AZ5Nb2BUSkgUE/dHE5F+MBFVxUmTiu9jomGf35sXv?=
- =?us-ascii?Q?KfJCnNDNJbeiEl8kGb1cTt7cV/32KXD+Rif+Sa+UO4e3UhfAUzjBj+R/ggJ2?=
- =?us-ascii?Q?Mtf6UNzEewVE0aJ02ctKWBStq4GhzwKlcHfC9s8xBknPjDEf1h+mLYNiUrBU?=
- =?us-ascii?Q?3/M64yGi6V0m3zxH2rkgSwovqpNQ9Ok2hurJb5bFQeh+PlsGXxsFNVXHJ0sR?=
- =?us-ascii?Q?+AlpEOE1yt1i+hww2EQZKEJlDCIsL6vkfszN12L6GxhtZn37wsxF/6udoDBh?=
- =?us-ascii?Q?Q/hCON8NOHErWB4hHFK/QVYatXv7IRWO6Uk6oUVF4kggai6mTXikxmxFmIwP?=
- =?us-ascii?Q?zimSWDmq2Ufh67AFtRqjKvmrlGX76aif/IvqVqV1lHcU0J2/x7Gg0QSQmH2A?=
- =?us-ascii?Q?afq3Y7JifjH3iqCn5StXcu/4GN9nxOvFgkuqqwbQNAoGSACZhJwzoiP2YYRq?=
- =?us-ascii?Q?JxWcV+02YPW+PjB5muqFF0Zqx0Pt2p1A+uvuaLoFcmpPCRyjEdeFSJbGAxpg?=
- =?us-ascii?Q?rG9SGgwdpw13W4pu34jdw68VSgo4X7EslbnztNCxpTYd/xdTj0rEPUm1XupE?=
- =?us-ascii?Q?5tGv3MXI62/q0s6NWA4kpqKlVW23EV/rIet0hulcioFFBzro+1Y0N+xkgbEf?=
- =?us-ascii?Q?5VAns9g/Nv+79UZI8K/O41S6ps1uCL/U0HB+RzkmVU1WC/ZVPcaGk4cvm3dF?=
- =?us-ascii?Q?QT0CwZyBXMdYGgbeV/Y8xMmlByc3KTddJZiLsPcK3Atfi4VmTXTyXChhSqQE?=
- =?us-ascii?Q?DjqT1AOxeGArPJUyBS2cxnO49x7N9qHAg5WHhgVR?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by PH8PR11MB7968.namprd11.prod.outlook.com (2603:10b6:510:25f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Wed, 22 May
+ 2024 02:13:33 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
+ 02:13:33 +0000
+From: Xiaolei Wang <xiaolei.wang@windriver.com>
+To: wei.fang@nxp.com, shenwei.wang@nxp.com, xiaoning.wang@nxp.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com
+Cc: imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [net PATCH] net: fec: free fec queue when fec_enet_mii_init() fails
+Date: Wed, 22 May 2024 10:13:17 +0800
+Message-Id: <20240522021317.1113689-1-xiaolei.wang@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYWPR01CA0003.jpnprd01.prod.outlook.com
+ (2603:1096:400:a9::8) To MW5PR11MB5764.namprd11.prod.outlook.com
+ (2603:10b6:303:197::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|PH8PR11MB7968:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47d7b2cb-477f-4d4c-4f62-08dc7a04c7c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230031|1800799015|376005|7416005|52116005|366007|38350700005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?LmdVVEH126kszUAsoe84Bcd4Zs1LGrDbIxCxZ1fikKShlNDEVTWWjYmDjWfF?=
+ =?us-ascii?Q?593B8gMPmaaovxmYdhPCt3c8Z/yM59AydcK+Q7Qsmgn/x9T4xVlYPU2F+lLq?=
+ =?us-ascii?Q?UPPjgVl74hcQVcD+D6GUrKAMJC8+LCiw6dzq5oh0sjDJT2UFk3IluO2WK4Bi?=
+ =?us-ascii?Q?jXlw+WK+x4Z8BhONvXOgxG9LUzs8EUhQrjAh7WJmXNYTIe8y0MwizRVofgXw?=
+ =?us-ascii?Q?HEMo8z91fIQZZcZWb65vbnlr4qwA2177LCytUkewoCnwqmwZzyl2rbA1U2IE?=
+ =?us-ascii?Q?9aq8wjU8SfkfBeAvLE4aPTYjOQza2R8VKag+JmLvLZVmr2kRT3b6WIq7ONAs?=
+ =?us-ascii?Q?n0FmO1wOmECyhWtn99da/xNsFIbaqEvU3hOyMKnmqDb+94tVDcLODyVGEIMS?=
+ =?us-ascii?Q?GdIHY+YNPZl6wRUJCRAhZ+D/HRDicWNGvmog5Xvd/Q1woRjyB7lFR4SUtwT9?=
+ =?us-ascii?Q?HfGXxbub0j0Mt0rm01PtVp0q1AKGMka+lqQ6cDISdJ0hotWqQK9lEi9aGBve?=
+ =?us-ascii?Q?FbyVO9E+ZCXaPog/mfNerDbr0GVgAoJ3l/Hh9mUobeyD0X3OXoG9t2DblKj5?=
+ =?us-ascii?Q?ssJDSygLvdM/HUVat6tCNUVB2iz3DnOOvBAuRgagIdwqiphmDTJX9HAx3xPd?=
+ =?us-ascii?Q?+5BHu/JfGbqi7VHwj2/gwsxGUwidPmWz8MQzfjGkGRAyixIfdMSUE7dG6W2O?=
+ =?us-ascii?Q?KTmpJFoVuFbFmElqbkJvlVMZNCWvcRPIvQGWxQ0Tr7cvpWv3UCJKsvefUY7X?=
+ =?us-ascii?Q?bWOyiyM4nQuQk2tTJegyD2O2OpGBk+bvDumRipRTmZseOZfG/39iPmxUf/tM?=
+ =?us-ascii?Q?5iZt/q7aA62yaeDr/hcauePcBng2cpQTUhQZJk6ptxVEwNrQe1PaA3PNXHzX?=
+ =?us-ascii?Q?saZcPpbJ1fuPwn1DSHofgn0XLJa6WAKgP1iOlPyVZTwbFmGMxNPyyQLsfGsP?=
+ =?us-ascii?Q?GqR9Ftp9MFd3eyeu3iPhrEQ+SyZr5WmULjXMqeRl9v04KgDR2QyR+Te1qia3?=
+ =?us-ascii?Q?EQ2/5hQaOWdOZnt74IdQGCQvRQZdrWnsx/zl2nlkKsR4BXbmGqUTszsOzBhT?=
+ =?us-ascii?Q?EVcoiPajiqFVcgU203xI72NM25Hg76J/kE2/R9dEyzBSjS7T1YZbUK1TyFsn?=
+ =?us-ascii?Q?1cnI70ek0ZsDYpnjEEr9MsJZ1SGNqi9xgTRMW4VKqE5RsvnrXPiMJxhIh25v?=
+ =?us-ascii?Q?U8RCW4pzNIYoJHQnQBFcJ8H25idJGCxiAOPqk8Pz9u+WgXBl91GJs9ctp+M8?=
+ =?us-ascii?Q?nmDsgQvvQ3FLcTp2FXnLlKGWOvZcrV0tmmbSCFFiDbyvZyaz6GKVDA/fylpQ?=
+ =?us-ascii?Q?pgCEwNcbShh7YoKo/Q9LZGukrTvo8pbLPuvBsV3JtCazSA=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(52116005)(366007)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?ey7D60ax1K911XCHjEFALIa2Dzc8pU4XyXubcrJOp8+0LSZRNDXYx7Fnsb6O?=
+ =?us-ascii?Q?tAsOfV/LWW+cMh6WUznckQObI0Y8RgGTUx9fX/8yFhICYmYOU31o78faUlFq?=
+ =?us-ascii?Q?1n2kx4BYGV0Kr5Y4xDyHx5zbDdwqf2fFHmCiXwZPoTR1At2e2wqrjiu8nT9N?=
+ =?us-ascii?Q?7QFLHB+tRMSoge05jSvPEdsr9AAPbrJAld/fCKRx7hSY6GLjQvQbMxtbJaFb?=
+ =?us-ascii?Q?43E9zUTRgDY3to6vM33umxon0LQW8YRV/qfFYu7p6V7okKj2iduE0pM0J2yu?=
+ =?us-ascii?Q?EqKvA5OlkSlprZc0CTcpAkY30cat4z/yBk/MqMqt2Rp7Md2m62O/T2H4gYKc?=
+ =?us-ascii?Q?k6vZgTj/DXac5oKlv2fVHbAkdgFO1TIPehtjdi5QCMoDHfn+PUtW3t/tDMCj?=
+ =?us-ascii?Q?pf+Te6mVdIJCK3KtgZdeo/kOWTNSPHEU7fJPMoF1EM840bP+3wol41M4KTbq?=
+ =?us-ascii?Q?kBeo+Api4Bcl+nCAEWdoUt3evHdRuFiWdPOzCdjvh7GCjAQGQf9y8oadsIp2?=
+ =?us-ascii?Q?7eOVvNfmu/jJaRropFnRapsu5oXTtVTmTmEc+Jdf5g/oR4qWI8S4etKeD3ie?=
+ =?us-ascii?Q?wwWJhlMpbyRoq/1YrihcMd9J+Ih4hC7lkp+ZShQSuu/hV0SolzuAoEqi8LIj?=
+ =?us-ascii?Q?4b/imUuIDBBsEf0sPm6eNPajiGDs+0tWXhjwUoU+4pldbuWb4shbeSRUCbws?=
+ =?us-ascii?Q?y4mfvTVA/zJJHKDEnB/z9jbu0ugRqQCP25JmsqrXQ4MpVQNIeC5OQ0c3hpMc?=
+ =?us-ascii?Q?rOrz0bu/m5rXwb33K8CTX/vU2J0VSZ+QOHN7wUf8H0DOYjO6vfaFSjDFf1Bg?=
+ =?us-ascii?Q?xddzH7OxHlb8LwalKEUD1lWtd5i1koVIllXAl7xCw8gIHUApWdCxNSC2ionG?=
+ =?us-ascii?Q?Nuaz/nWLyspl+cy9u79AZRlZvWB68ZoBGiGmZOXS8BvtEaJkmYpNYG4ThQl+?=
+ =?us-ascii?Q?4uhI9KpD/No7dYB/pZXmGpd140PTWO0xVVcN/Cn3c1W7DVD9jgB9Gl8Ngplj?=
+ =?us-ascii?Q?M2l/7qR7Kt5Swi61lyqwk4nJKdCKzTyUrAI1Xi9A3gG4/v82swtSKyJ974hA?=
+ =?us-ascii?Q?4F0opHn8l66BxT/ZyjJuErA96uBbH4NkME1OezlDEOSGptZp+4XUrmN+8D+t?=
+ =?us-ascii?Q?/Y4KagAI1kOCgTvo6NQE828ue8gTBXDjXNfHOQtIlNByTyB0tHuQFHaXKMUU?=
+ =?us-ascii?Q?3b151i1uVU5rrCQgUEnj62lEBZJk8K/PKDnbztaTBZH9EOfSgXoYS4XGOjSG?=
+ =?us-ascii?Q?3za4uvF4b0r5FxP9qaUL3ps1rPRlZDFx07Cn8pvPuoqXKWrO32vYdxqBIvgt?=
+ =?us-ascii?Q?3sdNb9AVhHI4zJwcfD0Mq7u6FHRhvJeAGX9+F4B9yXLK0GqAgY/NwhG2xUX7?=
+ =?us-ascii?Q?ASVrDiRk5J9yUqfRjBecJW4zaiFPJ4xSDzakeAN7dm+230NHCWUQlRBV4G/T?=
+ =?us-ascii?Q?g0ooHoKC08SfTv99tbQmhBe06jp5uP6JT2eme9JrqrsS28IEFYu305KckXn4?=
+ =?us-ascii?Q?XWdAdmTiWIm7a8qBg/YsBLv/LPJ17JZ7ixqE0uoCe0tZBwg63PqYr1HqCtzm?=
+ =?us-ascii?Q?y3QZAw+QMfqrMKm5NurCOURGgLJbtTABuc1I68Wm8ndvRlNw+vQKxCGgxa7E?=
+ =?us-ascii?Q?bw=3D=3D?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47d7b2cb-477f-4d4c-4f62-08dc7a04c7c8
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b352070-cd88-4434-21c3-08dc7a048d75
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 02:11:55.1114
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 02:13:33.2256
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FISAFXJtOdy3zKuPXq/4UpK7/8jEc+4l/P6018toKQE18BRhSGb2j4d0GUmY78B4he+lzFyl+EW8MCRb6PkBfqvCfw4tMk6PlO0CsDw0i10=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1002
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MPNmrZ4vmwvZoTzjNfjd0RvNV8D4DXtfYo182Eu2rlML09tpTMLkFzIQFDzhskAeqQ52cNThBV9iOfFUF457b4/xmCcbLBvF/VlrzHJSgwk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7968
+X-Proofpoint-GUID: 5vFXzgOfKhROar-MKmEbFDGu6fisrPNk
+X-Proofpoint-ORIG-GUID: 5vFXzgOfKhROar-MKmEbFDGu6fisrPNk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-22_01,2024-05-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 clxscore=1011 adultscore=0 bulkscore=0 suspectscore=0
+ mlxlogscore=999 priorityscore=1501 mlxscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405220015
 
-> Subject: [PATCH v2 2/2] ASoC: starfive: Add PDM controller support
->=20
-> Add the driver of PDM controller for the StarFive JH8100 SoC.
->=20
-> The Pulse Density Modulation (PDM) controller is a digital PDM microphone
-> interface controller and decoder that supports up to
-> 4 channels. The PDM have two blocks and each block controls stereo audio =
-data
-> which is transferred to a Inter-IC Sound (I2S) recorder on the JH8100 SoC=
-.
->=20
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> ---
->  MAINTAINERS                     |   7 +
->  sound/soc/starfive/Kconfig      |   7 +
->  sound/soc/starfive/Makefile     |   1 +
->  sound/soc/starfive/jh8100_pdm.c | 447
-> ++++++++++++++++++++++++++++++++
->  4 files changed, 462 insertions(+)
->  create mode 100644 sound/soc/starfive/jh8100_pdm.c
->=20
+commit 63e3cc2b87c2 ("arm64: dts: imx93-11x11-evk: add
+reset gpios for ethernet PHYs") the rese-gpios attribute
+is added, but this pcal6524 is loaded later, which causes
+fec driver defer, the following memory leak occurs.
 
-Hi Mark,
+unreferenced object 0xffffff8010350000 (size 8192):
+  comm "kworker/u8:3", pid 39, jiffies 4294893562
+  hex dump (first 32 bytes):
+    02 00 00 00 00 00 00 00 00 50 06 8a c0 ff ff ff  .........P......
+    e0 6f 06 8a c0 ff ff ff 00 50 06 8a c0 ff ff ff  .o.......P......
+  backtrace (crc f1b8b79f):
+    [<0000000057d2c6ae>] kmemleak_alloc+0x34/0x40
+    [<000000003c413e60>] kmalloc_trace+0x2f8/0x460
+    [<00000000663f64e6>] fec_probe+0x1364/0x3a04
+    [<0000000024d7e427>] platform_probe+0xc4/0x198
+    [<00000000293aa124>] really_probe+0x17c/0x4f0
+    [<00000000dfd1e0f3>] __driver_probe_device+0x158/0x2c4
+    [<000000004ae0034a>] driver_probe_device+0x60/0x18c
+    [<00000000fa3ad0e1>] __device_attach_driver+0x168/0x208
+    [<00000000394a38d3>] bus_for_each_drv+0x104/0x190
+    [<00000000c44e3dea>] __device_attach+0x1f8/0x33c
+    [<000000004db69c14>] device_initial_probe+0x14/0x20
+    [<00000000f4705309>] bus_probe_device+0x128/0x158
+    [<00000000f7115919>] deferred_probe_work_func+0x12c/0x1d8
+    [<0000000012315b3b>] process_scheduled_works+0x6c0/0x164c
+    [<0000000089b2b6e1>] worker_thread+0x370/0x95c
+    [<000000004dbe3d1a>] kthread+0x360/0x420
 
-Could you please help to review and give your comment about this PDM driver=
-?
+Fixes: 63e3cc2b87c2 ("arm64: dts: imx93-11x11-evk: add reset gpios for ethernet PHYs")
+Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+---
+ drivers/net/ethernet/freescale/fec_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Xingyu Wu
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index a72d8a2eb0b3..2b3534d434d8 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -4524,6 +4524,7 @@ fec_probe(struct platform_device *pdev)
+ 	fec_enet_mii_remove(fep);
+ failed_mii_init:
+ failed_irq:
++	fec_enet_free_queue(ndev);
+ failed_init:
+ 	fec_ptp_stop(pdev);
+ failed_reset:
+-- 
+2.25.1
+
 
