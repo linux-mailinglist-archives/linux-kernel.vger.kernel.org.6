@@ -1,278 +1,203 @@
-Return-Path: <linux-kernel+bounces-185869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438EC8CBC2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:40:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCAF8CBC32
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B32691F221A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 680561C21C0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4297E111;
-	Wed, 22 May 2024 07:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346007D40B;
+	Wed, 22 May 2024 07:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJHqHpyT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bZt7NAqb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wNt1EplU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D18E3BBC9;
-	Wed, 22 May 2024 07:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AEAB65E;
+	Wed, 22 May 2024 07:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716363609; cv=none; b=iFcp8nyFcH682yrIGnVpg7Z3Xpg5QpBzQCXQt2R2hvDjuPPgTXCfSj7dqUdbUMIL3FZxc0n3Rtmm1NldYZjdR7OMIi5R+PkzwmzxqExwr0HhIcx6LTd4V1p5pqIO4+ZpcQYXoYukIWV+QxoRmKlqPPtn+oTGRDbDPCJCSZrftTc=
+	t=1716363742; cv=none; b=UrRkVqcK8i8+lHozu/QJoHEX9j6bykVZ3tyBdjTXaTTHDaxQlkJHO5bXABwR2HBuTySDAlR7Jl2kJvbXQTOmk9RDLtwbVd2LD4NvB/FAH5RbMwQwDFSLEHKg3R0v6YJge8XjRPVfUh+zjrYGBnFTafqNYvIyUOMgiChrxwC9/z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716363609; c=relaxed/simple;
-	bh=alH0vAWFhvDWRtiEnbqkphPSEOdwiGks2NcpAfpkPjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bnOFn5cIUVAwNmhqQeF8ihQKZ5PIHeTTRIVFjZBBPxCQWh9oL45YQXRjTKQCS5zecaFtN8jJy77TJwkDbcIcVcgpaqMvlf7a/Cm4vi7z/y4rNZeU+nXLZ6h445mpkPfOtKARO2qiYdirkLOltxo+P7DccrvxbsNE81VrBBpL/KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJHqHpyT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB379C32789;
-	Wed, 22 May 2024 07:40:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716363609;
-	bh=alH0vAWFhvDWRtiEnbqkphPSEOdwiGks2NcpAfpkPjA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FJHqHpyTB69clfA4N4Tn5tLzqzUsQb2JSUR6wnaVO1r6kmYpou2q1CXN7Yew5+RJz
-	 uZw4/DFaoEQIAo7SRDwebc9IWTaUw/Mbv99cYaLgPVur5mEZD8BhsfwnNGJILWjvuP
-	 yx2UvH+BetIRP3jASw19I2dKSL7J+mi/JIUzc/oi71S/S1YbR01tR8DqJGso+FjZHd
-	 b+ZilW3rULI3ode2ZBgrYLTuGmIgpBFaqkaOZNAe3aI6Rju50m70I1qbxN1oFzKsMv
-	 lOq/emdBCENbOid3MZR9hRl5uNkcZeSpOUnCsWv17zvQY2XE0QVqvVeXPdbZH0Kuq3
-	 XQU+wMi/lEGSw==
-Message-ID: <92e85dff-ad02-4673-a625-2248b249c262@kernel.org>
-Date: Wed, 22 May 2024 09:40:02 +0200
+	s=arc-20240116; t=1716363742; c=relaxed/simple;
+	bh=rxKN71VpGxYtjkgxNReprJSlk2dzVEoZhuFNDMk6Wxc=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=PYVC0bhwl6jkHMZZWaCoo8H7whWxK21Dm8xJticBwwy3NysvsIUfh554CxwZPFGn0yMupAA0RnYlGEgqDdV+zF46Q0khqvB+MWS2Hgo2rJIsP6iZ3QB/JSVC8Sz14q4PSiVnc57mOSAKGX7k2Aby+ZO/vjC0vlYHWTsB872Q4g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bZt7NAqb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wNt1EplU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 22 May 2024 07:42:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716363737;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=/S8FV9j2oiYN4vc8M28HvM1rkdMF6GJRTY8GZcK8n0I=;
+	b=bZt7NAqbECp/PnWzUob6TL/gKv8Z8YuJNkRVrZn6gWaj9NTMzINmp/Zc/DITrxgyARFXGf
+	0M4/4LY42mzumSQwp37zl42ulr8oyGeX/Egw0B4TiABQrfdUzvCJY7lqINNIeAh/UdRqsp
+	xRpsmjSOfI95jP6joHnYgJ36dgNvAlDwu6qAmRESQXL6CKtavCqTTge7Sa0YKWHY7GRNmh
+	LCX2QG/KzJHyDlYrSOH6FpMS/hO9Q2GFWCKCOastOt8Irv8kpA6NM/iaN6crAfIRV67thv
+	xFeHzREt65Af/Lw5cz8sirKywPTAwkXWGy1/2+bhrJMxuizWKUmnGeFvdUFo4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716363737;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=/S8FV9j2oiYN4vc8M28HvM1rkdMF6GJRTY8GZcK8n0I=;
+	b=wNt1EplUUBjWYO7LdjcO0vAKaXt+wrLnQ790VrXMrSCCHKlmFkRJr22h+GwnBOIr+Jl4gL
+	/PNbf3iXAbvyENCA==
+From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/boot] x86/boot: Clean up the arch/x86/boot/main.c code a bit
+Cc: Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
+ linux-kernel@vger.kernel.org, x86@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
- Alexandru Ardelean <alexandru.ardelean@analog.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
- <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
- <20240521194309.GA8863@pendragon.ideasonboard.com>
- <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
- <20240522072224.GC8863@pendragon.ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240522072224.GC8863@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <171636373729.10875.4887706398268223159.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 22/05/2024 09:22, Laurent Pinchart wrote:
-> On Wed, May 22, 2024 at 08:57:56AM +0200, Krzysztof Kozlowski wrote:
->> On 21/05/2024 21:43, Laurent Pinchart wrote:
->>> Hi Krzysztof,
->>>
->>> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
->>>> On 20/05/2024 21:59, Laurent Pinchart wrote:
->>>>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
->>>>> matrix decoder, programmable logic, reset generator, and PWM generator.
->>>>> These bindings model the device as an MFD, and support the GPIO expander
->>>>> and PWM functions.
->>>>>
->>>>> These bindings support the GPIO and PWM functions.
->>>>>
->>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>>> ---
->>>>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
->>>>> implement and test the rest of the features the chip supports.
->>>>> ---
->>>>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
->>>>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
->>>>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
->>>>>  MAINTAINERS                                   |   7 ++
->>>>>  4 files changed, 195 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
->>>>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..210e4d53e764
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>>>> @@ -0,0 +1,36 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>> +%YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title: Analog Devices ADP5585 GPIO Expander
->>>>> +
->>>>> +maintainers:
->>>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>>> +
->>>>> +description: |
->>>>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
->>>>> +  node of the parent MFD device. See
->>>>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
->>>>> +  well as an example.
->>>>> +
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    const: adi,adp5585-gpio
->>>>> +
->>>>> +  gpio-controller: true
->>>>> +
->>>>> +  '#gpio-cells':
->>>>> +    const: 2
->>>>> +
->>>>> +  gpio-reserved-ranges: true
->>>>
->>>> There are no resources here, so new compatible is not really warranted.
->>>> Squash the node into parent.
->>>
->>> Child nodes seem (to me) to be the standard way to model functions in
->>> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
->>> function iterates over child nodes. I don't mind going a different
->>
->> Only to assign of node, which could be skipped as well.
-> 
-> It has to be assigned somehow, otherwise the GPIO and PWM lookups won't
-> work. That doesn't have to be done in mfd_add_device() though, it can
-> also be done manually by the driver. Looking at the example you gave,
-> cs42l43_pin_probe() handles that assignment. I would have considered
-> that a bit of a hack, but if that's your preferred approach, I'm fine
-> with it. Could you confirm you're OK with that ?
+The following commit has been merged into the x86/boot branch of tip:
 
-I am fine with the drivers doing that. It's not a hack, for all
-sub-devices (e.g. also auxiliary bus) you won't have automatic of_node
-assignment.
+Commit-ID:     52cccc64cf7c90696d09d54a383793804ba872ba
+Gitweb:        https://git.kernel.org/tip/52cccc64cf7c90696d09d54a383793804ba872ba
+Author:        Ingo Molnar <mingo@kernel.org>
+AuthorDate:    Tue, 21 May 2024 13:42:17 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 22 May 2024 09:36:49 +02:00
 
-> 
->>> routes, could you indicate what you have in mind, perhaps pointing to an
->>> existing driver as an example ?
->>
->> Most of them? OK, let's take the last added driver in MFD directory:
->> cirrus,cs42l43
->> It has three children and only two nodes, because only these two devices
->> actually need/use/benefit the subnodes.
-> 
-> Still trying to understand what bothers you here, is it the child nodes,
-> or the fact that they have a compatible string and are documented in a
-> separate binding ? Looking at the cirrus,cs42l43 bindings and the
+x86/boot: Clean up the arch/x86/boot/main.c code a bit
 
-What bothers me (and as expressed in many reviews by us) is representing
-driver structure directly in DT. People model DT based how their Linux
-drivers are represented. I don't care about driver stuff here, but DT/DTS.
+ - Don't line break user-visible strings
 
-> corresponding drivers, the pinctrl child node serves the purpose of
-> grouping properties related to the pinctrl function, and allows
-> referencing pinctrl entries from other DT nodes. All those properties
+ - Use consistent comment style
 
-If you have sub-subnodes, it warrants for me such child. Why? Because it
-makes DTS easier to read.
+ - Remove unnecessary col80 line breaks
 
-> could have been placed in the parent node. Are you fine with the
-> adi,adp5585 having gpio and pwm child nodes, as long as they don't have
-> compatible strings, and are documented in a single binding ?
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/x86/boot/main.c | 41 +++++++++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 22 deletions(-)
 
-As well not, because then you have even less reasons to have them as
-separate nodes. With compatible, one could at least try to argue that
-sub-devices are re-usable across families.
-
->>>>> +required:
->>>>> +  - compatible
->>>>> +  - reg
->>>>> +  - gpio
->>>>> +  - pwm
->>>>> +
->>>>> +allOf:
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            const: adi,adp5585-01
->>>>> +    then:
->>>>> +      properties:
->>>>> +        gpio:
->>>>> +          properties:
->>>>> +            gpio-reserved-ranges: false
->>>>
->>>> This also points to fact your child node is pointless. It does not stand
->>>> on its own...
->>>
->>> That doesn't make the child pointless just for that reason. There are
->>> numerous examples of child nodes that don't stand on their own.
->>
->> No, your if-then must be in the schema defining it. This is just
->> unmaintianable code. It proves that child's compatible means nothing. If
->> you cannot use child's compatible to make any meaningful choices, then
->> it is useless.
-> 
-> The compatible string may not be very useful. The child nodes have a
-> use.
-
-What is their use? Grouping few properties? As mentioned above -
-grouping subnodes like pinctrl does, is argument on its own for code
-readability. Grouping few properties, which in many other devices are in
-top-node (see last 100 reviews of new drivers doing exactly the same),
-is not that argument.
-
-OTOH, my first, main argument was:
-
-They do not have any resources on their own. Otherwise please point me -
-which property represents their resource, like clock, reset, gpio,
-suppy, IO address?
-
-Best regards,
-Krzysztof
-
+diff --git a/arch/x86/boot/main.c b/arch/x86/boot/main.c
+index ac78f8c..9d0fea1 100644
+--- a/arch/x86/boot/main.c
++++ b/arch/x86/boot/main.c
+@@ -27,34 +27,32 @@ char *heap_end = _end;		/* Default end of heap = no heap */
+  * screws up the old-style command line protocol, adjust by
+  * filling in the new-style command line pointer instead.
+  */
+-
+ static void copy_boot_params(void)
+ {
+ 	struct old_cmdline {
+ 		u16 cl_magic;
+ 		u16 cl_offset;
+ 	};
+-	const struct old_cmdline * const oldcmd =
+-		absolute_pointer(OLD_CL_ADDRESS);
++	const struct old_cmdline * const oldcmd = absolute_pointer(OLD_CL_ADDRESS);
+ 
+ 	BUILD_BUG_ON(sizeof(boot_params) != 4096);
+ 	memcpy(&boot_params.hdr, &hdr, sizeof(hdr));
+ 
+-	if (!boot_params.hdr.cmd_line_ptr &&
+-	    oldcmd->cl_magic == OLD_CL_MAGIC) {
+-		/* Old-style command line protocol. */
++	if (!boot_params.hdr.cmd_line_ptr && oldcmd->cl_magic == OLD_CL_MAGIC) {
++		/* Old-style command line protocol */
+ 		u16 cmdline_seg;
+ 
+-		/* Figure out if the command line falls in the region
+-		   of memory that an old kernel would have copied up
+-		   to 0x90000... */
++		/*
++		 * Figure out if the command line falls in the region
++		 * of memory that an old kernel would have copied up
++		 * to 0x90000...
++		 */
+ 		if (oldcmd->cl_offset < boot_params.hdr.setup_move_size)
+ 			cmdline_seg = ds();
+ 		else
+ 			cmdline_seg = 0x9000;
+ 
+-		boot_params.hdr.cmd_line_ptr =
+-			(cmdline_seg << 4) + oldcmd->cl_offset;
++		boot_params.hdr.cmd_line_ptr = (cmdline_seg << 4) + oldcmd->cl_offset;
+ 	}
+ }
+ 
+@@ -66,6 +64,7 @@ static void copy_boot_params(void)
+ static void keyboard_init(void)
+ {
+ 	struct biosregs ireg, oreg;
++
+ 	initregs(&ireg);
+ 
+ 	ireg.ah = 0x02;		/* Get keyboard status */
+@@ -83,8 +82,10 @@ static void query_ist(void)
+ {
+ 	struct biosregs ireg, oreg;
+ 
+-	/* Some older BIOSes apparently crash on this call, so filter
+-	   it from machines too old to have SpeedStep at all. */
++	/*
++	 * Some older BIOSes apparently crash on this call, so filter
++	 * it from machines too old to have SpeedStep at all.
++	 */
+ 	if (cpu.level < 6)
+ 		return;
+ 
+@@ -119,16 +120,13 @@ static void init_heap(void)
+ 	char *stack_end;
+ 
+ 	if (boot_params.hdr.loadflags & CAN_USE_HEAP) {
+-		stack_end = (char *)
+-			(current_stack_pointer - STACK_SIZE);
+-		heap_end = (char *)
+-			((size_t)boot_params.hdr.heap_end_ptr + 0x200);
++		stack_end = (char *) (current_stack_pointer - STACK_SIZE);
++		heap_end = (char *) ((size_t)boot_params.hdr.heap_end_ptr + 0x200);
+ 		if (heap_end > stack_end)
+ 			heap_end = stack_end;
+ 	} else {
+ 		/* Boot protocol 2.00 only, no heap available */
+-		puts("WARNING: Ancient bootloader, some functionality "
+-		     "may be limited!\n");
++		puts("WARNING: Ancient bootloader, some functionality may be limited!\n");
+ 	}
+ }
+ 
+@@ -149,12 +147,11 @@ void main(void)
+ 
+ 	/* Make sure we have all the proper CPU support */
+ 	if (validate_cpu()) {
+-		puts("Unable to boot - please use a kernel appropriate "
+-		     "for your CPU.\n");
++		puts("Unable to boot - please use a kernel appropriate for your CPU.\n");
+ 		die();
+ 	}
+ 
+-	/* Tell the BIOS what CPU mode we intend to run in. */
++	/* Tell the BIOS what CPU mode we intend to run in */
+ 	set_bios_mode();
+ 
+ 	/* Detect memory layout */
 
