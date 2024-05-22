@@ -1,219 +1,251 @@
-Return-Path: <linux-kernel+bounces-186836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DB08CC9DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9262F8CC9DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C93B21E67
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50791C218B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63A814D43A;
-	Wed, 22 May 2024 23:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3897F7D3;
+	Wed, 22 May 2024 23:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="azsBbvxE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nD2tEt7Z"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D93A14D2A4;
-	Wed, 22 May 2024 23:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE37D14EC45
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421701; cv=none; b=BuVS3UA4lrJjM1UO+xwFSmPi8IK6/TtDD8vaNcBdLQ1eDOKiVWWcAfnTvNwB5UjRGwf7ORcXNnGMKDY8chneS1RliI4ABezxqa4hGoMj+vHM6SpsVwFfz1vyBrwBROf/Fo56YdzsYxek/i0gImiytJMUbFgakWLIC/B/FI3gs4c=
+	t=1716421766; cv=none; b=gxPY8ivm5XTMu9f5UKoMta7RWMUmmD+7GMkJP4j9XQI3cybxEaRW5PqjZ8SBJUVXnn4O9aRplN8TG3eiGotERLDQEVBH1TtTuoXuGO5ZZMEwnfmDfRNP4QhnbBl7zoFJxIQwAKB/kmlswTC/x/p7CbrOB4GBAtjUb3SGDM068pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716421701; c=relaxed/simple;
-	bh=AJsx9yBJy7KmJZ8yFLoOgiMw7kr+qvivBCVpiic91SA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhpE5LBdWrgRglHnYYYsCHNPNrqMVBJVdo5gntd04+ok27iN+5fWhpgjoANkK3J8s1RfsXVdT0nBTwVsUh8IfGYhPPQIV7qRCjFbXkSjTBkd5Z7ZB5pe4cCYrrFdM8CfX7pYu+I+9PykCSJdK4RFe8O+CJoDUN5t5lUd9N7NvCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=azsBbvxE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MDGP5Z031736;
-	Wed, 22 May 2024 23:48:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=iEKyOIGYT1uhtKW2TUcrB
-	jky0FOziJQOHoYC/86BYaA=; b=azsBbvxEMnGpJ8q1Omtt0NcKV+il/vmJkYSCj
-	h4nNGz5yOkY05j+Am9C9gyeP/f8XE9VNUWKLCwtd/gcQmVWkyyEYu4D1hkF7Ojf1
-	AxgJp+8Fujb0sQ6drCw77UJW10KSqcSbFtRf12x4rcvFHmE/64CGeaVGhRTUuVTo
-	xnT1gX5r7Qs42+cnFjz2LXORvyUh8k5tRy6ZJoCZWCnIGotZwkRIuCGIrWIP+xYn
-	Na1yByBFVQ4rxMjUUGhDFUfHquWShWcs1hoLlfEjg/MQGxIl4csvGKw09MFBly/z
-	n2X5PgxW8hBS6nyvRni7o399BXQ+yNExeWmNnrnj3w+gtTTWg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6psb2bku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 23:47:59 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MNlwRm022885
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 23:47:58 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 22 May 2024 16:47:57 -0700
-Date: Wed, 22 May 2024 16:47:56 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Amrit Anand <quic_amrianan@quicinc.com>,
-        "Peter
- Griffin" <peter.griffin@linaro.org>,
-        Caleb Connolly
-	<caleb.connolly@linaro.org>,
-        Andy Gross <agross@kernel.org>, Doug Anderson
-	<dianders@chromium.org>,
-        Simon Glass <sjg@chromium.org>, Chen-Yu Tsai
-	<wenst@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        "Humphreys,
- Jonathan" <j-humphreys@ti.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        "Michal
- Simek" <michal.simek@amd.com>,
-        <boot-architecture@lists.linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH RFC v3 2/9] dt-bindings: board: Introduce board-id
-Message-ID: <20240522162545887-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
- <20240521-board-ids-v3-2-e6c71d05f4d2@quicinc.com>
- <20240521-bonfire-backboned-9ef33c10d447@spud>
+	s=arc-20240116; t=1716421766; c=relaxed/simple;
+	bh=o5DvWYLwxeN3+5gGgxdGr9iU7m0Mz7NtMl0UOhl2tdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Spvf+WhslFBcakq9Du/U7/8PP155HUWmmMEYhmzioii4Z/4NkF/YyDde9w7W3LOCVq9Qz+BZ0TyemLcixcnfZH2D9/nXnWlTCpM+rOqYT5JoWRHqMgivanrzXEt5eqvVhmmdgPY0xDDTKiI4Lrc6sYp4Xr6BCOwK7cJZTzpMr0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nD2tEt7Z; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716421761;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EFnL3passYan85t/4rtCvjnbTvKOxRfIbRInp52tVnQ=;
+	b=nD2tEt7ZgC/+QMFyXZlVgMvmB6RY++dG2RieesbwWmCQfUGLyM5ZtCgYrcSlO2+DFAWgmH
+	+sVVQ1lscTEITOCB2KGCgPRrUJiTtHVnUj69TDY4JCRKIEpcH3lU+JyjT52l45gYrRgA4u
+	DaA5kknGP39wTOI2yKV6flA6exJMRuw=
+X-Envelope-To: glider@google.com
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+Date: Wed, 22 May 2024 19:49:17 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: syzbot <syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com>, 
+	Alexander Potapenko <glider@google.com>
+Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in
+ bch2_extent_update_i_size_sectors
+Message-ID: <jgtxdyooy6zyettrj53qi7s7z5fs5zpnwdjm7eqpihwo32lxzx@v2234ezsba4d>
+References: <0000000000009f9447061833d477@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240521-bonfire-backboned-9ef33c10d447@spud>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qY_JvQaN1iAlFKq6mrdUQu4JL51Q8nc-
-X-Proofpoint-ORIG-GUID: qY_JvQaN1iAlFKq6mrdUQu4JL51Q8nc-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_13,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- priorityscore=1501 phishscore=0 impostorscore=0 spamscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405220165
+In-Reply-To: <0000000000009f9447061833d477@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Conor,
+This (and a few others I've looked at) look more likely to be bugs in
+KMSAN, not bcachefs.
 
-Thanks for taking the time to look at the patch.
+here, the supposedly uninitialized key was read in from disk, so the key
+couldn't possibly have been legitimately marked uninitialized.
 
-On Tue, May 21, 2024 at 08:21:45PM +0100, Conor Dooley wrote:
-> On Tue, May 21, 2024 at 11:37:59AM -0700, Elliot Berman wrote:
-> > Device manufcturers frequently ship multiple boards or SKUs under a
-> > single softwre package. These software packages ship multiple devicetree
-> > blobs and require some mechanims to pick the correct DTB for the boards
-> > that use the software package.
-> 
-> Okay, you've got the problem statement here, nice.
-> 
-> > This patch introduces a common language
-> > for adding board identifiers to devicetrees.
-> 
-> But then a completely useless remainder of the commit message.
-> I open this patch, see the regexes, say "wtf", look at the commit
-> message and there is absolutely no explanation of what these properties
-> are for. That's quite frankly just not good enough - even for an RFC.
-> 
+All the suspicious KMSAN splats I'm looking at involve bkeys, but I'm
+not seeing any other common factors besides that.
 
-Understood, I've been trying to walk the line of getting the idea across
-to have conversation about the board-ids, while not getting into too
-much of the weeds. I was hoping the example and the matching code in the
-first patch would get enough of the idea across, but I totally
-empathize that might not be enough. I'll reply here shortly with a
-version of this patch which adds more details.
-
-> > 
-> > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> > ---
-> >  .../devicetree/bindings/board/board-id.yaml        | 24 ++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/board/board-id.yaml b/Documentation/devicetree/bindings/board/board-id.yaml
-> > new file mode 100644
-> > index 000000000000..99514aef9718
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/board/board-id.yaml
-> > @@ -0,0 +1,24 @@
-> > +# SPDX-License-Identifier: BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/board/board-id.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: board identifiers
-> > +description: Common property for board-id subnode
+On Sat, May 11, 2024 at 01:52:29PM -0700, syzbot wrote:
+> Hello,
 > 
-> s/property/properties/
+> syzbot found the following issue on:
 > 
-> > +
-> > +maintainers:
-> > +  - Elliot Berman <quic_eberman@quicinc.com>
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    const: '/'
-> > +  board-id:
-> > +    type: object
-> > +    patternProperties:
-> > +      "^.*(?!_str)$":
+> HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14c66e24980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=617171361dd3cd47
+> dashboard link: https://syzkaller.appspot.com/bug?extid=eceea46e8838baeeba67
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 > 
-> Does this regex even work? Take "foo_str" as an example - doesn't "^.*"
-> consume all of the string, leaving the negative lookahead with nothing
-> to object to? I didn't properly test this with an example and the dt
-> tooling, but I lazily threw it into regex101 and both the python and
-> emcascript versions agree with me. Did you test this?
-
-Right, it should be a lookbehind, not a lookahead.
-
+> Unfortunately, I don't have any reproducer for this issue yet.
 > 
-> And while I am here, no underscores in property names please. And if
-> "str" means string, I suggest not saving 3 characters.
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/fdbc7be30633/disk-dccb07f2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a9e4c11aa835/vmlinux-dccb07f2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/43c3a343ea93/bzImage-dccb07f2.xz
 > 
-> > +        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> > +      "^.*_str$":
-> > +        $ref: /schemas/types.yaml#/definitions/string-array
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com
 > 
-> Why do we even need two methods? Commit message tells me nothing and
-> there's no description at all... Why do we need regexes here, rather
-> than explicitly defined properties? Your commit message should explain
-> the justification for that and the property descriptions (as comments if
-> needs be for patternProperties) should explain why this is intended to
-> be used.
+> bcachefs (loop0): snapshots_read... done
+> bcachefs (loop0): journal_replay... done
+> bcachefs (loop0): resume_logged_ops... done
+> bcachefs (loop0): going read-write
+> bcachefs (loop0): done starting filesystem
+> =====================================================
+> BUG: KMSAN: uninit-value in bch2_extent_update_i_size_sectors+0x140f/0x17d0 fs/bcachefs/io_write.c:237
+>  bch2_extent_update_i_size_sectors+0x140f/0x17d0 fs/bcachefs/io_write.c:237
+>  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+>  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+>  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+>  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+>  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+>  closure_queue include/linux/closure.h:257 [inline]
+>  closure_call include/linux/closure.h:390 [inline]
+>  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+>  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+>  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+>  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+>  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+>  sync_file_range+0x316/0x450 fs/sync.c:292
+>  ksys_sync_file_range fs/sync.c:364 [inline]
+>  __do_sys_sync_file_range fs/sync.c:373 [inline]
+>  __se_sys_sync_file_range fs/sync.c:370 [inline]
+>  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+>  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:278
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
-> How is anyone supposed to look at this binding and understand how it
-> should be used?
-
-I was thinking that firmware may only provide the data without being
-able to provide the context whether the value is a number or a string.
-I think this is posisble if firmware provides the device's board
-identifier in the format of a DT itself. It seems natural to me in the
-EBBR flow. There is example of this in example in patches 3
-(fdt-select-board) and 9 (the test suite). DTB doesn't inherently
-provide instruction on how to interpret a property's value, so I created
-a rule that strings have to be suffixed with "-string".
-
-One other note -- I (QCOM) don't currently have a need for board-ids to
-be strings. I thought it was likely that someone might want that though.
-
-Thanks,
-Elliot
-
+> Uninit was stored to memory at:
+>  memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
+>  bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
+>  __bch2_bkey_make_mut_noupdate fs/bcachefs/btree_update.h:225 [inline]
+>  __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:282 [inline]
+>  bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
+>  bch2_extent_update_i_size_sectors+0x9a9/0x17d0 fs/bcachefs/io_write.c:219
+>  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+>  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+>  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+>  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+>  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+>  closure_queue include/linux/closure.h:257 [inline]
+>  closure_call include/linux/closure.h:390 [inline]
+>  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+>  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+>  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+>  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+>  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+>  sync_file_range+0x316/0x450 fs/sync.c:292
+>  ksys_sync_file_range fs/sync.c:364 [inline]
+>  __do_sys_sync_file_range fs/sync.c:373 [inline]
+>  __se_sys_sync_file_range fs/sync.c:370 [inline]
+>  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+>  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:278
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Uninit was stored to memory at:
+>  memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
+>  bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
+>  btree_key_cache_fill fs/bcachefs/btree_key_cache.c:454 [inline]
+>  bch2_btree_path_traverse_cached_slowpath+0x5f02/0x79f0 fs/bcachefs/btree_key_cache.c:530
+>  bch2_btree_path_traverse_cached+0xd1a/0x1140
+>  bch2_btree_path_traverse_one+0x737/0x5290 fs/bcachefs/btree_iter.c:1155
+>  bch2_btree_path_traverse fs/bcachefs/btree_iter.h:225 [inline]
+>  bch2_btree_iter_peek_slot+0x128c/0x3840 fs/bcachefs/btree_iter.c:2473
+>  __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:549 [inline]
+>  __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:278 [inline]
+>  bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
+>  bch2_extent_update_i_size_sectors+0x404/0x17d0 fs/bcachefs/io_write.c:219
+>  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+>  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+>  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+>  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+>  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+>  closure_queue include/linux/closure.h:257 [inline]
+>  closure_call include/linux/closure.h:390 [inline]
+>  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+>  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+>  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+>  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+>  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+>  sync_file_range+0x316/0x450 fs/sync.c:292
+>  ksys_sync_file_range fs/sync.c:364 [inline]
+>  __do_sys_sync_file_range fs/sync.c:373 [inline]
+>  __se_sys_sync_file_range fs/sync.c:370 [inline]
+>  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+>  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:278
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Uninit was created at:
+>  __kmalloc_large_node+0x231/0x370 mm/slub.c:3927
+>  __do_kmalloc_node mm/slub.c:3960 [inline]
+>  __kmalloc_node+0xb10/0x10c0 mm/slub.c:3979
+>  kmalloc_node include/linux/slab.h:648 [inline]
+>  kvmalloc_node+0xc0/0x2d0 mm/util.c:634
+>  kvmalloc include/linux/slab.h:766 [inline]
+>  btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
+>  bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
+>  btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
+>  bch2_btree_node_read+0x3d42/0x4b50
+>  __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
+>  bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
+>  read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
+>  bch2_fs_recovery+0x7adb/0x9310 fs/bcachefs/recovery.c:785
+>  bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
+>  bch2_fs_open+0x135f/0x1670 fs/bcachefs/super.c:2102
+>  bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1903
+>  legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+>  vfs_get_tree+0xa7/0x570 fs/super.c:1779
+>  do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
+>  path_mount+0x742/0x1f20 fs/namespace.c:3679
+>  do_mount fs/namespace.c:3692 [inline]
+>  __do_sys_mount fs/namespace.c:3898 [inline]
+>  __se_sys_mount+0x725/0x810 fs/namespace.c:3875
+>  __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
+>  x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:166
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> CPU: 1 PID: 6218 Comm: syz-executor.0 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> =====================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
