@@ -1,123 +1,179 @@
-Return-Path: <linux-kernel+bounces-186240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E74D8CC18D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:46:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E18A8CC192
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E2261C21EF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:46:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3ABFB20A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C1713D8B5;
-	Wed, 22 May 2024 12:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A52823D9;
+	Wed, 22 May 2024 12:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eY3zJIq8"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="LZqF8H3D"
+Received: from AUS01-ME3-obe.outbound.protection.outlook.com (mail-me3aus01olkn2140.outbound.protection.outlook.com [40.92.63.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D171848
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716381964; cv=none; b=t+px8MNypk+O9uh9GORcnSDD+80X46HOHyrMa5YyfKT34YlY+0+KiJYoNaJX8t/GDQj9M/bcnxn8L+FIy4N46MzmYWt4cL1ul0kb8R5517YoptA9m+Iwhb1dbcL/gDz0D71JpdCyzQytwq46aHxXZCu07rFQWaZsZjAxqnIDLpM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716381964; c=relaxed/simple;
-	bh=ZQJQmXhWg9nPg2zrXMvCQ7J/HQIRLAQCnGo6p6LlhiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNiXSjV429g+xEX57aFKNTamcbiL94aL5HdSptccrsRv3A9DYGhtmvVEJ3VOBLlM6Tx6QtMUjUMbIsxWLpAsdaHtNs6ggsT/kfMHV4ISpOOalUajhOilXbYSm+zvI+uJVHRNBv0Fcm5ik4nqDQUUwQv8UahE6A0blzfmd4e60e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=eY3zJIq8; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2454154e53aso2842795fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1716381961; x=1716986761; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WijfuUs+156edccXDFhHVcWXKQ+B4/XZiPfwdG70AgA=;
-        b=eY3zJIq8qYY3iPPEEG+Ui/t+RVk6COnu0Icn3wSiWx2s5jUXUf902XD1btzA5YgLZ4
-         jnkSwAb7+qIpUckLOOgLLpDMs91Bp/VMXgtBzC7ZVLNOfiwFIz9v5L857FQNlXouNUVw
-         BcLWAkaSYpowlFkGkiwuF5PXIIeZM2nXmLIqKPdgZOvIUXQVg4oIfQ7jrMJrp8UlNfjW
-         IiYWCdbvt7W96FE+2Y6p3Jv5pkKZ9Svfql7bjSVJ1hOseXJcKUnevTW3Io/dyzG+Cdio
-         v7r38r4L55lhsrUngYmIE0RSfkh/gQTDkm7EFzB4M9Alxh5oG1hwM4hqywjV0itViPwN
-         51PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716381961; x=1716986761;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WijfuUs+156edccXDFhHVcWXKQ+B4/XZiPfwdG70AgA=;
-        b=gxa79YZDxmx772ROb8AGS6/eH35VU6SyvnJtRqbePIe6YzLASh5u1Z+0dhhxeanqRn
-         vMgLLB7CHVa9OPRW0pySQNMR/UKrlfGuDle84Ld/JgnSgZzGNjPQ0ixAHpXIagNzZy4A
-         AHwmNNlT+EV88UdD/QBMT8YIvbGnPmR8pcXSA8Nygtg+zzqNL7VvNJI+wCBJrtJANaAc
-         Qf5Ogn1OGEWtfGDvLW5sPkfSMsyWrueHzwH0pqGkbumCALEqJXMWMWsZjM821iPbadbg
-         0rW4UywBZK0nZ83zxFzQDaTMRoPeeUARkkKaOOHsU/gnwkDyT/n4yC3CeTh96YiT17FD
-         DJDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVs61uS6VF5fVAoMLC3LKlrP7lSI9rxsVheI+INQy1hKrDu05jV8/Rydv8AKBPXGtmr+0zJ1+I7/yYz6xYDoc+31sAs3OY2n9xaqPs3
-X-Gm-Message-State: AOJu0YzaBLkNcBCGhN019lMVuGpSQszyzLKK+cKrzlL+AT/FO5TP4P9I
-	uR1mt+WsY2s+SgOgmXHJzs6YEEKgwUI/pVnD6QbwrQS4h6u+QH3JSuNmBM/hcy4=
-X-Google-Smtp-Source: AGHT+IETP3qReUQJuxRlhxnWJn7QpbV+LVqvRpkT9nppkVGnw4JfRUuMImdtGPF2qcpBugAZnHpoew==
-X-Received: by 2002:a05:6870:d88e:b0:23d:a1d0:7334 with SMTP id 586e51a60fabf-24c68a33ae2mr2153288fac.17.1716381960558;
-        Wed, 22 May 2024 05:46:00 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e074719d1sm151805451cf.35.2024.05.22.05.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 05:46:00 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1s9lLy-00C914-Bg;
-	Wed, 22 May 2024 09:45:58 -0300
-Date: Wed, 22 May 2024 09:45:58 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-team@android.com,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	linux-riscv@lists.infradead.org, bpf@vger.kernel.org,
-	John Hubbard <jhubbard@nvidia.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v5 23/68] selftests/iommu: Drop duplicate -D_GNU_SOURCE
-Message-ID: <20240522124558.GC69273@ziepe.ca>
-References: <20240522005913.3540131-1-edliaw@google.com>
- <20240522005913.3540131-24-edliaw@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FE4EC0;
+	Wed, 22 May 2024 12:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.63.140
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716382119; cv=fail; b=Iy7A19MZA7j6szSA58fyGbcMf00ZGx1Geba6cg+ojQHoqfqsmvDGhIvYmuCxqgRiFWFV/ctfDZjB3/k40tVlTevd1Gfx97Kx3pDRy/T/HXh/sNEXtMW/rHj5OL7YE/kObKVMPsDwcz8hJuIZ7trteLICCakoFjNqwbeanssShXw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716382119; c=relaxed/simple;
+	bh=aQ9kUq2MEhfAb/16TRyiUro9Kp/ae5UjQxkFpoBobVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ms05uQ7S+smpemVMMU8r0HlcKbmB8EhgAJqbWuo0+/5Hx5Ng+OPKZ2CdLkSNZF/zWDfYru2yJwkPpGRqF9ttUcIpoAqevLLVKzTT3jPKypGc+o2rBYZcn91tRPQCtnhbMJvanKuEf+DOfIH+FXKDC6a2rr4bTGkJ+VlMog9Us0k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=LZqF8H3D; arc=fail smtp.client-ip=40.92.63.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Rs9BdcXOQWTwWHWS6GiGPm0XcYHfYoIOORsjkYBGgbVVdX3RxSB17sGpwxzpHt+uJ7H9LIMBp7XFUIHAWMy9r4TqY2fJyFUbVQQ2RS+GRca4P+JY4kaEcEIfbn1DsANmgtfhJfjvmfpaIQ1DwyudiYTa6/Bfi1fsGbgY2Ta4WwtLpcwe2ek3zfQFs8cOgsalYqu83gw0tTUc1qh9yI3pfeiXPKkS0FbR8rRBqNBuCwWF3gIB1T8zpju1PLBvB7G6+1d1fA42GXST7p+kff3Be7Q6jJshRmdQ0V/LKvXqD6omD1Rq8d8GrPr+mBlogag87cuORxdEBtDiG8n6HK0Bxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x6GMX8euwPtGkw65psqU9W5Dd/PIjEg0c+oI/rtFnbE=;
+ b=fqLajYOMplpeEsdC+rdhzQuXijUuioMIwDBifJzRSOt0Pd5AO/YEqOHmnnRLMBUDdQwgA++jfy5XbPOvr+ECrYxME30ZYQucG8sqhpeRVHW+ZdGN2KDIqdufdUVFP1YohgaaayDEou9In3RdBtQ9vP+jXgyBzzRiU6rVCFyUgXmnDUaS/dKmXL2zis0D5NwSV1NDVO6+yuFYdWzqPBibSK0ZCQtfTssKAl7bQb6E/vpOfb9MMdt8pIlSJ1IKlXyojaZaEd//YnmdHw2QXp3/1rjz+C0I/qDDLuIq4KH+V7HW9DMxBBy9zXqNbsEEfaINyMNjvmrbwXJfJYMYQu6NKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x6GMX8euwPtGkw65psqU9W5Dd/PIjEg0c+oI/rtFnbE=;
+ b=LZqF8H3DkKrpGiRa8Qruyk8D3l4rNg+ql+eR+wIgZ5W7n3nRQOVO9uSmOgfwyMtMjdA+47GjoCivnsl/NGsnIkQcgbBPG1/m9hIr/iH7cRNZ8Wm+u33QZQrHsEfIC1bGcXOF3fsbW7PqZWwXFXpXCkuPEyYhO8BkG/dVUNbtdKuwokGNDsbtm+ETRDItPKV5JiUNXcbBaZTVowc2yt6DULwlPYEcOG7DpYD0fCfVgpxZxtxjED7UG3UUoXiY9d7eX5fKt/ZY4/NQVN7NTJ8cHYzSOsV6yMRj1XZNglfRGM3uETvvjwoBGpjGktci4WuPqlE8VJeaAWZo5bHLqZeJrQ==
+Received: from ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:228::21)
+ by ME3P282MB1169.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:85::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 12:48:32 +0000
+Received: from ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::d384:a02f:2370:f33e]) by ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::d384:a02f:2370:f33e%7]) with mapi id 15.20.7587.035; Wed, 22 May 2024
+ 12:48:32 +0000
+From: mu001999 <mu001999@outlook.com>
+To: ojeda@kernel.org,
+	boqun.feng@gmail.com
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mu001999 <mu001999@outlook.com>
+Subject: [PATCH] rust: kernel: make impl_has_work compatible with more complex generics
+Date: Wed, 22 May 2024 20:48:21 +0800
+Message-ID:
+ <ME0P282MB4890D938E60E706E937F9207CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [y91LmgdPfvkQHY0yoRC1NAo586N1uZcC]
+X-ClientProxiedBy: SG2PR02CA0029.apcprd02.prod.outlook.com
+ (2603:1096:3:18::17) To ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:220:228::21)
+X-Microsoft-Original-Message-ID:
+ <20240522124821.287360-1-mu001999@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522005913.3540131-24-edliaw@google.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ME0P282MB4890:EE_|ME3P282MB1169:EE_
+X-MS-Office365-Filtering-Correlation-Id: e36875a1-fca0-4692-5d5b-08dc7a5d7c83
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|3430499023|440099019|3412199016|1602099003|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	SzPyWaxtWnl3rfe78Vp+raL8Mqvkplq7UniWXDcx2vdD/DlwlkXRlby42NFClFJDtWdBsNKvkqYZCU/S6tkY8aFIEQdhBEN575ZX/0JucdYGVc9CpWySnhl++mPuxoGdv95HetHNFSgwiTbb4ZiDPUtangdfdWSA7Rmd1AQkitOsolN9JN7TbX3doVjFzIhiFF5HV0Fy6fkvM4kCBqGqH8q6csRyswQG3JUoNL7SM1dcNhiEPQhU14koQ+n/AoBMLKZK71kCPIA6pukNJATT4phIRmoSQGq8gRKVkUuPIACvF/gcsdCJMcFqTWv5ZoBjHbIF/gpD8fN8mwLP7AG/J3PdNTlgRCPDjpp8cBfD3VKbAH3ahrv1i3/wgopM2T62SHgspIIgkO0mKEISyFhITKaYHNr7ICKSp8qUllTgjwrXucITLIxdQVOXStuh2dgxYDj+wDy8BF/2jdDuUzW+oh2XRC0l1hLYG8+/0A1EismRukxDGCtXyfDhgE4YZ0AEGEWygYBAXWBnC10LUXmcyKJ+t+Q3n38JOhSKi/aGeCp5CpRuSmFBovCCcyXnXkfuVzHO43ozFQhOUtbJrXiKbgnczTmRaq+q6Viz2wUoKoiRCxtKBxqDtlQtrgepOgkNNIu2vTIMiF85l3STVE501Sx5xzDp3i61J/bDUtY5tHOI5HsmOBFeyWHfkd6Fz/dx
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FarGbBMqrt4jVqFfKntCsFyNZeOqpzrI16bl1Li8EVVZX85z3gNqXn0OIVWj?=
+ =?us-ascii?Q?RE+Gk8patC9FM5YUZhh06rG2D+I5X3HyL6h3wqfP8zoWNFLrySKKSLLeu4Zi?=
+ =?us-ascii?Q?I2EFVPXHFMkz5Num5PPLZj510rm9eCrP1oGAgXpmmeIt1ckWG3DXELgRP+4l?=
+ =?us-ascii?Q?y2cn4xMuhEqhXzzjQA2tLn2Aw/vve0vFU5OnndPqtPSZPqlWPTWUQNJIAfWl?=
+ =?us-ascii?Q?AQwqlY05gtH0U0z+7kp3HO/o7tk0KNEgSgTmckxAarLWQNRY1S08BqZlbnlA?=
+ =?us-ascii?Q?83H6aMjq+oh/qLwwJW4X8oKcAKsM3jvSHDWQEElslFQQJCWrZTjWWKA4sB4O?=
+ =?us-ascii?Q?CpdY62fLXK6X1ptE1M8t8nlE8a5oye0io3O2LwkBaXbjjCZQ2ZBSscQIn3Dn?=
+ =?us-ascii?Q?56K5L5koRo8SrLBWZswkHjkDps3HaqFilR2akB8EHe7AzvK90TocW5r1gIVX?=
+ =?us-ascii?Q?jR6OomRP7wGSg8UJBG8pEeEttLSEtbVfl19n4WNYI2R6ygXULwYXBBKwYbkl?=
+ =?us-ascii?Q?jvMqx12/pEfqEwLx4t2o4xTV3kKNixWMVZlg0jwu+b9C48iL8G1XOFbZWwIQ?=
+ =?us-ascii?Q?I04f/LX1Frw9+jJtqh1onYbepxlRo2lCxne2wWvLI3l2/7afGfPKcJ5dYkXM?=
+ =?us-ascii?Q?IDOQKL9Aa2YmRf2qy/jE4qoKVn9EI7JqtCBZ/SFGkQWtGptSK62EMCBA/Gr9?=
+ =?us-ascii?Q?SgDbvG/hIqpn2a5hwLOYBILolaBf/kMqC/0OybyNruaaajK3d5RZpEtZnAcm?=
+ =?us-ascii?Q?EQ2KweLxzHAzInS5jnHmdkB9dplI0THs4ZBFN9m+5JXOl2l+aUzBHpGXdm03?=
+ =?us-ascii?Q?2DlXgJWI6sOGRncxyU2T5kqAWZ2YXxi6D0s4NFLJCr5iWjRD45ndUokTzEP5?=
+ =?us-ascii?Q?YvUJF+t5+C+0Tgg3xuQLxDeKXKrKKlHc3aV0caa705uWMxhfhOp/aG6wA/60?=
+ =?us-ascii?Q?B621Fpzu5cjBVpOcn0g40Tux+qwB4/yA0Dr9LUUn59ccmktiyY/qmT6Kp+Lk?=
+ =?us-ascii?Q?hiDsudkTNGsruVgMtdz+jMkmiVKEu2rn6HM9riTISmXhacZ1tZR2xsZt6ZCM?=
+ =?us-ascii?Q?HmWQPicfHp2v4h1JSdyKf5yuDqA7c8qiBycKmKjRNN7MfGI3U9oFYw5Z4vK8?=
+ =?us-ascii?Q?nTvz/NAxshDObgkSG29sfDBe2pgy2jUY5/a69hM679RuWv2ZV0TQ1iUjoEET?=
+ =?us-ascii?Q?Dhpw4SAy/OO2/16PetMiVpmojr1ws8NyZP0u5Pt2J0ScVhJN8E9vX7yUMaM?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e36875a1-fca0-4692-5d5b-08dc7a5d7c83
+X-MS-Exchange-CrossTenant-AuthSource: ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 12:48:32.1261
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ME3P282MB1169
 
-On Wed, May 22, 2024 at 12:57:09AM +0000, Edward Liaw wrote:
-> -D_GNU_SOURCE can be de-duplicated here, as it is added by lib.mk.
-> 
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> Signed-off-by: Edward Liaw <edliaw@google.com>
-> ---
->  tools/testing/selftests/iommu/Makefile | 2 --
->  1 file changed, 2 deletions(-)
+Make the impl_has_work macro compatible with more complex generics such as lifetimes and const generic arguments.
+See more in https://github.com/Rust-for-Linux/linux/issues/1077
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Signed-off-by: mu001999 <mu001999@outlook.com>
+---
+ rust/kernel/workqueue.rs | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-Jason
+diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+index 1cec63a2aea8..1ff81d88b61d 100644
+--- a/rust/kernel/workqueue.rs
++++ b/rust/kernel/workqueue.rs
+@@ -482,24 +482,25 @@ unsafe fn work_container_of(ptr: *mut Work<T, ID>) -> *mut Self
+ /// use kernel::sync::Arc;
+ /// use kernel::workqueue::{self, impl_has_work, Work};
+ ///
+-/// struct MyStruct {
+-///     work_field: Work<MyStruct, 17>,
++/// struct MyStruct<'a, T, const N: usize> {
++///     work_field: Work<MyStruct<'a, T, N>, 17>,
++///     f: fn(&'a [T; N]),
+ /// }
+ ///
+ /// impl_has_work! {
+-///     impl HasWork<MyStruct, 17> for MyStruct { self.work_field }
++///     impl{'a, T, const N: usize} HasWork<MyStruct<'a, T, N>, 17> for MyStruct<'a, T, N> { self.work_field }
+ /// }
+ /// ```
+ #[macro_export]
+ macro_rules! impl_has_work {
+-    ($(impl$(<$($implarg:ident),*>)?
++    ($(impl$({$($generics:tt)*})?
+        HasWork<$work_type:ty $(, $id:tt)?>
+-       for $self:ident $(<$($selfarg:ident),*>)?
++       for $self:ty
+        { self.$field:ident }
+     )*) => {$(
+         // SAFETY: The implementation of `raw_get_work` only compiles if the field has the right
+         // type.
+-        unsafe impl$(<$($implarg),*>)? $crate::workqueue::HasWork<$work_type $(, $id)?> for $self $(<$($selfarg),*>)? {
++        unsafe impl$(<$($generics)+>)? $crate::workqueue::HasWork<$work_type $(, $id)?> for $self {
+             const OFFSET: usize = ::core::mem::offset_of!(Self, $field) as usize;
+ 
+             #[inline]
+@@ -515,7 +516,7 @@ unsafe fn raw_get_work(ptr: *mut Self) -> *mut $crate::workqueue::Work<$work_typ
+ pub use impl_has_work;
+ 
+ impl_has_work! {
+-    impl<T> HasWork<Self> for ClosureWork<T> { self.work }
++    impl{T} HasWork<Self> for ClosureWork<T> { self.work }
+ }
+ 
+ unsafe impl<T, const ID: u64> WorkItemPointer<ID> for Arc<T>
+-- 
+2.34.1
+
 
