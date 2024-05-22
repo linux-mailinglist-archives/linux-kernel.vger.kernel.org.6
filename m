@@ -1,328 +1,152 @@
-Return-Path: <linux-kernel+bounces-186639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375BE8CC6B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:05:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF338CC690
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0E51C21D39
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:05:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A1C3282B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175C8146013;
-	Wed, 22 May 2024 19:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5862714601A;
+	Wed, 22 May 2024 18:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R/Tzk+5Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEy4071S"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814D84C9A;
-	Wed, 22 May 2024 19:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF9823CB;
+	Wed, 22 May 2024 18:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716404715; cv=none; b=D11s/wacwHfhAItP1+GyIm36baVollfMz/ix1BZavc/+TTStdgCJKUzOFdKgOwHE658hyJewIgfzK/koY6/SSqwbwlP07cJk8NQVzW5IZJwUQqYtnbUPQsEJuKAIGaeZvb0NaWeXs4i8hsr4+cmV9lcJ663bPBIiwlSHN5ZmhcE=
+	t=1716403739; cv=none; b=gbO1UXI+nr18CSZemGhjhTPa2D+X7lEsrOOuEDj5ecFgC28sTTGoIrsjULBpwirk4haIvaf+HCkHToMdnhgLSYpV4LuvA9Jz3HN1GvzOx/4OEo9XxUKixRbxa582XLZGW4Ahsy9av01UcjfYp8z9q7ZlLG3hMD/uAgMEbAJPYlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716404715; c=relaxed/simple;
-	bh=OMsEdF706zMDc6DTElZgQu1W4GvOAtsxz+Uf9uiV0OI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oAVPFbcqRlDRyYrF6AkMpuBXzJRY8DtRx9Lix1K9EGuoiP7wl+jjFi5n4QWleVe184a08aURInOq+5AamBcjXgCjD4RgF1OWWQagDAJdLQdvmWAkCCdy0SlIlbCvYLY64HHMYsfQQ9Eukq1JYlfu2Jr6oT6q9NziA7IPgsgUa+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R/Tzk+5Z; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716404714; x=1747940714;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OMsEdF706zMDc6DTElZgQu1W4GvOAtsxz+Uf9uiV0OI=;
-  b=R/Tzk+5Z1P40P7Rb43pYapCCETQW1EaDoFEMc9daO2eUazZ6SWY2X64T
-   z+59aSs6W/ajWZSCq2PnTc9ronQEszIw3TYwKWPYJIx27Phgf+ZLnI+t1
-   JGRaqrBXyB/j2OO4z8hnFxm3zPj5ZziXt8kqyfhlFbgXtNtNEimIu2hKR
-   GDENwxOjEth1gh8NfooBAurC1/FDpAB1YF4ZNX56c+B9ZUE2cdFyJq9of
-   02413D6AGu6WteJRPXChRkGzjXw14cBSTdIhRKxdTtWABfXW1BjxddZH9
-   xu25ldw/fSDGR2iTWc4DL/34G4u5bXo19UlXIB5WFzcgwhBu7ZtL0/sX/
-   g==;
-X-CSE-ConnectionGUID: 4ZFSyZKgRi+Ujp2mf9wBKg==
-X-CSE-MsgGUID: bGXJkCNsQ26c/osLCQExZw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12798886"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12798886"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 12:05:13 -0700
-X-CSE-ConnectionGUID: KVkmJbkoR9azi3BvcMfRhg==
-X-CSE-MsgGUID: 7OL0PhrpQRaRADgpNPRC3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="37971239"
-Received: from chang-linux-3.sc.intel.com ([172.25.66.177])
-  by fmviesa004.fm.intel.com with ESMTP; 22 May 2024 12:05:01 -0700
-From: "Chang S. Bae" <chang.seok.bae@intel.com>
-To: ebiggers@kernel.org,
-	linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	herbert@gondor.apana.org.au,
-	ardb@kernel.org,
-	x86@kernel.org,
-	bernie.keany@intel.com,
-	chang.seok.bae@intel.com,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH v9a 08/14] x86/PM/keylocker: Restore the wrapping key on the resume from ACPI S3/4
-Date: Wed, 22 May 2024 11:48:35 -0700
-Message-Id: <20240522184835.16839-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240329015346.635933-9-chang.seok.bae@intel.com>
-References: <20240329015346.635933-9-chang.seok.bae@intel.com>
+	s=arc-20240116; t=1716403739; c=relaxed/simple;
+	bh=oDR35NfNsRBH2fJ/xX+R+OSAGEUDe+MKHboG8nW8crg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jo71Rr5WgAmazweCjqAsEfqC6qj5I4pq6wFwN9+B5Tsm4MbPSr+wgldjJ32sWf7Bz4i+JQqiVYTq6zT7d/obq4MJjWkWRTIXApQdK3b4NXr63jzYvmKS5K/0VclCTNtRxwnimkeR4eC93+XiSPbwBtlnq8vUZv2HGCyW0DSQkRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEy4071S; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e6792ea67fso84164881fa.1;
+        Wed, 22 May 2024 11:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716403736; x=1717008536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DTzDmERoVHEg6js4vRxidK21RXEZ4WiJHQmiaHh1F4s=;
+        b=MEy4071SPVz7gVoH1xigDk2BN9ZW2hu4JXnzkFA9Rp+7SYKqkMuJmdKUTtLPwEe8Jz
+         bu0YP9cntN8VM04v3viZLIqkf3dXNXhl5WOF2PtxYdUAfuzgDm03mzws+bm4ouOIS/2u
+         m2123+axOf5aNEkbnqwTAZTbxUvgZTed90WUHlNsc7pza0L0GN1RFWcqIJFu6mst2fIx
+         O+gNc5jLnE9p2BO2F8CbL6t0qMMv4D/kp0xMoKW7vgKHnes361UJ8mi3uBv81PAQuf9+
+         dMpglePw+TOLkxNCtVvlV2bH3M4BDJlGQzwXtw0/1TPEHqOS+GQhHU4g+g4qbISfzOFf
+         2TUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716403736; x=1717008536;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DTzDmERoVHEg6js4vRxidK21RXEZ4WiJHQmiaHh1F4s=;
+        b=m3cKCTMZZDl8bvqiA/mTKU+TiuR7zq/0cdavU8dzCcCpC4J6SfFyM4eD0txiIdycOo
+         O6gHJVY9nmNcX7pHFs62p3myoMke+Q4x7DV3CKB+SKd8/gC1kz7KrrV9EX+WootzccsY
+         0b8BsrE179DRv8GNt5FRujrJDLtKvdVloSEg7LpfGXevc6GLkYDM6c7+5o8dW4+OXhav
+         9GFu+NZW3uL5QRh5d9VvAGdsaEiXdfJ+8KaH3MnzpIXy3YOtkwzqVrTeJD899A/LAuj/
+         Z4fbN9NmHBLk9JfKFO2UNEoAYo1LJdLCn1n71rHvIvU5Qnsm1ZiRo+DfH4eL7DX/x0Np
+         w3/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzRhyMMGHYewzBcQoPOY3I3rlQNWdjJ3/AcpkoA/vgCLPLOe1RJVX/8SgO7TgM7q5QFLteSvDPgObnObN0iK52c6wMnQD/OMU1uyk6ZCvB5ZrkxKneWx9RVUXUAIl4CIC5Xa5vEHMHqfIX8al+ISlU7HGXFdJjqER94s8/cUuf0zesfimi
+X-Gm-Message-State: AOJu0YzctEWg163dlGRuLodpg7dmY5aGlUjD+lvG+jtIO/kRILJINdEt
+	1ijrYnlbo7fRVyI7ACMFsx06fWf5FfCktdQTu31oV420rdoMN1b2
+X-Google-Smtp-Source: AGHT+IHVOa4KArOmWO1iKvBvgvxFQ+i+ezI4L0bfGrkS09VtQN+XR7jRD5LAMkItjfmSkvlNNtymIQ==
+X-Received: by 2002:a2e:be06:0:b0:2e5:87c1:e845 with SMTP id 38308e7fff4ca-2e949650e42mr19384361fa.48.1716403735959;
+        Wed, 22 May 2024 11:48:55 -0700 (PDT)
+Received: from [10.0.0.100] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d18344f4sm40455991fa.136.2024.05.22.11.48.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 11:48:55 -0700 (PDT)
+Message-ID: <bcbe109d-5974-428d-b74e-c29bec9f68b0@gmail.com>
+Date: Wed, 22 May 2024 21:49:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Mithil <bavishimithil@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240522075245.388-1-bavishimithil@gmail.com>
+ <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
+ <4f722e53-011f-4176-b6af-080522165007@kernel.org>
+ <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
+ <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org>
+ <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
+ <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
+ <CAGzNGRm5i8zvnXiPzMg5=+tr9oyBcRA8LFvnmgGzE=MzSNTXug@mail.gmail.com>
+ <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org>
+ <CAGzNGRnsmRWzimUX5tEC2-Y44aa4i9Lbdp8YJ+oneV4ujs4qBA@mail.gmail.com>
+ <CAGzNGRmTR_nK0SoWG8uqDfRzDShs7sR+Mc+44__SBi0CR5LKEg@mail.gmail.com>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAGzNGRmTR_nK0SoWG8uqDfRzDShs7sR+Mc+44__SBi0CR5LKEg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The primary use case for the feature is bare metal dm-crypt. The key
-needs to be restored properly on wakeup, as dm-crypt does not prompt
-for the key on resume from suspend. Even if the prompt performs for
-unlocking the volume, where the hibernation image is stored, it still
-expects to reuse the key handles within the hibernation image once it
-is loaded.
+Hi,
 
-== Wrapping-key Restore ==
+On 22/05/2024 20:47, Mithil wrote:
+> My apologies, misunderstood the error.
+> Proposed changes for the next version,
+> Add dma, dma-names, reg-names properties, and do the changes in
+> example (rename node to mcpdm since it is different from generic pdm).
+>   reg-names:
+>     items:
+>       - const: mpu
+>       - const: dma
+> 
+>   dmas:
+>     maxItems: 2
+> 
+>   dma-names:
+>     items:
+>       - const: up_link
+>       - const: dn_link
+> 
+> examples:
+>     - |
+>     #include <dt-bindings/interrupt-controller/arm-gic.h>
+>     mcpdm@0 {
+>       compatible = "ti,omap4-mcpdm";
+>       reg = <0x0 0x7f>, /* MPU private access */
+>             <0x49032000 0x7f>; /* L3 Interconnect */
+>       reg-names = "mpu", "dma";
+>       interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+>       interrupt-parent = <&gic>;
+>       dmas = <&sdma 65>,
+>              <&sdma 66>;
+These can be in one line to make it nice and tidy
 
-To meet dm-crypt's expectations, the key handles in the suspend-image has
-to remain valid after resuming from an S-state. However, when the system
-enters ACPI S3 or S4 sleep states, the wrapping key is discarded.
+>       dma-names = "up_link", "dn_link";
+>       ti,hwmods = "mcpdm";
 
-Key Locker provides a mechanism to back up the wrapping key in
-non-volatile storage. Therefore, upon boot, request a backup of the
-wrapping key and copy it back to each CPU upon wakeup. If the backup
-mechanism is unavailable, disable the feature unless CONFIG_SUSPEND=n.
+The ti,hwmods no longer needed since the sysc conversion
 
-== Restore Failure ==
+>       clocks = <&twl6040>;
+>       clock-names = "pdmclk";
+>     };
+> 
+> Remove ti.hwmods from required since some dts like
+> omap4-duovero-parlor, omap4-panda etc do not use it which causes
+> dtbs_check to not pass.
+> 
 
-In the event of a key restore failure, the kernel proceeds with an
-initialized wrapping key state. This action invalidates any key handles
-present in the suspend-image, leading to I/O errors in dm-crypt
-operations.
-
-However, data integrity remains intact, and access is restored with new
-handles created by the new wrapping key at the next boot. At least,
-manage a feature-specific flag to communicate with the crypto
-implementation, ensuring to stop using AES instructions upon the key
-restore failure, instead of abruptly disabling the feature.
-
-== Off-states ==
-
-While the backup may persist in non-volatile media across S5 and G3 "off"
-states, it is neither architecturally guaranteed nor expected by
-dm-crypt. Therefore, a reboot can address this scenario with a new
-wrapping key, as dm-crypt prompts for the key whenever the volume is
-started.
-
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-Change from v9:
-* Export valid_keylocker() again for the AES-KL module.
----
- arch/x86/include/asm/keylocker.h | 10 ++++
- arch/x86/kernel/cpu/common.c     |  4 +-
- arch/x86/kernel/keylocker.c      | 89 ++++++++++++++++++++++++++++++++
- arch/x86/power/cpu.c             |  2 +
- 4 files changed, 104 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/keylocker.h b/arch/x86/include/asm/keylocker.h
-index 1213d273c369..c93102101c41 100644
---- a/arch/x86/include/asm/keylocker.h
-+++ b/arch/x86/include/asm/keylocker.h
-@@ -28,5 +28,15 @@ struct iwkey {
- #define KEYLOCKER_CPUID_EBX_WIDE	BIT(2)
- #define KEYLOCKER_CPUID_EBX_BACKUP	BIT(4)
- 
-+#ifdef CONFIG_X86_KEYLOCKER
-+void setup_keylocker(void);
-+void restore_keylocker(void);
-+extern bool valid_keylocker(void);
-+#else
-+static inline void setup_keylocker(void) { }
-+static inline void restore_keylocker(void) { }
-+static inline bool valid_keylocker(void) { return false; }
-+#endif
-+
- #endif /*__ASSEMBLY__ */
- #endif /* _ASM_KEYLOCKER_H */
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 605c26c009c8..85946d79cb96 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -62,6 +62,7 @@
- #include <asm/intel-family.h>
- #include <asm/cpu_device_id.h>
- #include <asm/fred.h>
-+#include <asm/keylocker.h>
- #include <asm/uv/uv.h>
- #include <asm/ia32.h>
- #include <asm/set_memory.h>
-@@ -1834,10 +1835,11 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	/* Disable the PN if appropriate */
- 	squash_the_stupid_serial_number(c);
- 
--	/* Set up SMEP/SMAP/UMIP */
-+	/* Setup various Intel-specific CPU security features */
- 	setup_smep(c);
- 	setup_smap(c);
- 	setup_umip(c);
-+	setup_keylocker();
- 
- 	/* Enable FSGSBASE instructions if available. */
- 	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
-diff --git a/arch/x86/kernel/keylocker.c b/arch/x86/kernel/keylocker.c
-index 8569b92971da..da0830e980ed 100644
---- a/arch/x86/kernel/keylocker.c
-+++ b/arch/x86/kernel/keylocker.c
-@@ -9,11 +9,26 @@
- 
- #include <asm/fpu/api.h>
- #include <asm/keylocker.h>
-+#include <asm/msr.h>
- #include <asm/processor.h>
- #include <asm/tlbflush.h>
- 
- static struct iwkey wrapping_key __initdata;
- 
-+/*
-+ * This flag is set when a wrapping key is successfully loaded. If a key
-+ * restoration fails, it is reset. This state is exported to the crypto
-+ * library, indicating whether Key Locker is usable. Thus, the feature
-+ * can be soft-disabled based on this flag.
-+ */
-+static bool valid_wrapping_key;
-+
-+bool valid_keylocker(void)
-+{
-+	return valid_wrapping_key;
-+}
-+EXPORT_SYMBOL_GPL(valid_keylocker);
-+
- static void __init generate_keylocker_data(void)
- {
- 	get_random_bytes(&wrapping_key.integrity_key, sizeof(wrapping_key.integrity_key));
-@@ -38,9 +53,69 @@ static void __init load_keylocker(struct work_struct *unused)
- 	kernel_fpu_end();
- }
- 
-+/**
-+ * copy_keylocker - Copy the wrapping key from the backup.
-+ *
-+ * Returns:	true if successful, otherwise false.
-+ */
-+static bool copy_keylocker(void)
-+{
-+	u64 status;
-+
-+	wrmsrl(MSR_IA32_COPY_IWKEY_TO_LOCAL, 1);
-+	rdmsrl(MSR_IA32_IWKEY_COPY_STATUS, status);
-+	return !!(status & BIT(0));
-+}
-+
-+/*
-+ * On wakeup, APs copy a wrapping key after the boot CPU verifies a valid
-+ * backup status through restore_keylocker(). Subsequently, they adhere
-+ * to the error handling protocol by invalidating the flag.
-+ */
-+void setup_keylocker(void)
-+{
-+	if (!valid_wrapping_key)
-+		return;
-+
-+	cr4_set_bits(X86_CR4_KEYLOCKER);
-+
-+	if (copy_keylocker())
-+		return;
-+
-+	pr_err_once("x86/keylocker: Invalid copy status.\n");
-+	valid_wrapping_key = false;
-+}
-+
-+/* The boot CPU restores the wrapping key in the first place on wakeup. */
-+void restore_keylocker(void)
-+{
-+	u64 backup_status;
-+
-+	if (!valid_wrapping_key)
-+		return;
-+
-+	rdmsrl(MSR_IA32_IWKEY_BACKUP_STATUS, backup_status);
-+	if (backup_status & BIT(0)) {
-+		if (copy_keylocker())
-+			return;
-+		pr_err("x86/keylocker: Invalid copy state.\n");
-+	} else {
-+		pr_err("x86/keylocker: The key backup access failed with %s.\n",
-+		       (backup_status & BIT(2)) ? "read error" : "invalid status");
-+	}
-+
-+	/*
-+	 * Invalidate the feature via this flag to indicate that the
-+	 * crypto code should voluntarily stop using the feature, rather
-+	 * than abruptly disabling it.
-+	 */
-+	valid_wrapping_key = false;
-+}
-+
- static int __init init_keylocker(void)
- {
- 	u32 eax, ebx, ecx, edx;
-+	bool backup_available;
- 
- 	if (!cpu_feature_enabled(X86_FEATURE_KEYLOCKER))
- 		goto disable;
-@@ -60,9 +135,23 @@ static int __init init_keylocker(void)
- 		goto clear_cap;
- 	}
- 
-+	/*
-+	 * The backup is critical for restoring the wrapping key upon
-+	 * wakeup.
-+	 */
-+	backup_available = !!(ebx & KEYLOCKER_CPUID_EBX_BACKUP);
-+	if (!backup_available && IS_ENABLED(CONFIG_SUSPEND)) {
-+		pr_debug("x86/keylocker: No key backup with possible S3/4.\n");
-+		goto clear_cap;
-+	}
-+
- 	generate_keylocker_data();
- 	schedule_on_each_cpu(load_keylocker);
- 	destroy_keylocker_data();
-+	valid_wrapping_key = true;
-+
-+	if (backup_available)
-+		wrmsrl(MSR_IA32_BACKUP_IWKEY_TO_PLATFORM, 1);
- 
- 	pr_info_once("x86/keylocker: Enabled.\n");
- 	return 0;
-diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
-index 63230ff8cf4f..e99be45354cd 100644
---- a/arch/x86/power/cpu.c
-+++ b/arch/x86/power/cpu.c
-@@ -27,6 +27,7 @@
- #include <asm/mmu_context.h>
- #include <asm/cpu_device_id.h>
- #include <asm/microcode.h>
-+#include <asm/keylocker.h>
- 
- #ifdef CONFIG_X86_32
- __visible unsigned long saved_context_ebx;
-@@ -264,6 +265,7 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
- 	x86_platform.restore_sched_clock_state();
- 	cache_bp_restore();
- 	perf_restore_debug_store();
-+	restore_keylocker();
- 
- 	c = &cpu_data(smp_processor_id());
- 	if (cpu_has(c, X86_FEATURE_MSR_IA32_FEAT_CTL))
 -- 
-2.34.1
-
+Péter
 
