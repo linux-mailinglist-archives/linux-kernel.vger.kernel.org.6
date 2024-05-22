@@ -1,103 +1,158 @@
-Return-Path: <linux-kernel+bounces-185867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BF88CBC25
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:36:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928CB8CBC24
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F7BE280DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:36:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3275B2164B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FF57D401;
-	Wed, 22 May 2024 07:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD9A7CF1A;
+	Wed, 22 May 2024 07:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eIAPT8NN"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C8A3C099
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="THD5o3kf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873F03BB21
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716363392; cv=none; b=AKzjCxTbFOxm/XHnRI+p6ZN57/DCbkjNYsjm7XgPxu5k6aVOt74sOtZGVKqg65Ljus9J7jBTXy7waEVdDYFj2DGsQlU/xZcTqnXMDqHVDQUABr6QsFmnExe4kN8CPBcSRzOJn5dfyeDSI1Ic9WJPNuWh5Q3ktKfYLwHnYhCcQc8=
+	t=1716363382; cv=none; b=YlydkQUq57arwWxPCTB+O+NX7VMglZHczmVxXzzFVMQlZO8CAYhfLKXvOftEk8Zwipp8Dx9Euwc4o5PeG8EPPMfOleSVavCaeCk8Dj3ERmGr2UwXj9u1TVcSIL18lpRI1hgk784laqSShZ0U5nK2Q2ysTOqkjQycQfsLLETRXhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716363392; c=relaxed/simple;
-	bh=sRR+OoNe+CJbOABxoZNaQT2CCvoMwl0YHxGhGd8xLdY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eETVo60JPo2BXYE0uS4JfmTfILfFauehsDpsv7DF9N4/F1PGvAN9b2kFxb3yLnT/TrmUOFaI/Po9yUqPYYJuKjVRixlsOTfE2/3W2UaPzqL3AFLb22SMUP284LPc7E9rgLiDoAXqfmJFFNlZCH+urR/gVIHO6DkVYVYbaD0wKF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eIAPT8NN; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=WY9vcFIYHyY28AUyfY/N7+e9B4gmGc0udXw0k/OYO9k=;
-	b=eIAPT8NN8l7lu5sTik9h/UTvBw47YSSsTQLnk8zh5ujmlIbS3246pv1xqLN3ly
-	Bh5iL1/vSre4p+CVW5ir8vE/RXBuYZ/UBc6gC165vGJmstmeLKAs5BCGlqoSnY1p
-	TDzU0xAdFFLzu8EC71HNwmoz6wGglzFnfa3Ist0cJVn3M=
-Received: from localhost.localdomain (unknown [111.48.58.10])
-	by gzga-smtp-mta-g2-0 (Coremail) with SMTP id _____wD3n7hxoE1mSfpFAw--.37392S2;
-	Wed, 22 May 2024 15:36:18 +0800 (CST)
-From: huanglei814 <huanglei814@163.com>
-To: sudipm.mukherjee@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	huanglei <huanglei@kylinos.cn>
-Subject: [PATCH] parport: Increase buffer max length to avoid memory out of bounds overflow
-Date: Wed, 22 May 2024 15:36:07 +0800
-Message-Id: <20240522073607.15076-1-huanglei814@163.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1716363382; c=relaxed/simple;
+	bh=xJpqtv5wS0sus5aBfOZS2WQnS/pPkC2QI6BMxCDEOHk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iu/x77jstBn4ehWpvnTEY80mwMmEUs6BJAT+qthOla21m52HyAU0gPQQYg3bxsPUBjvh+B1mHxLPezyc99kBG0GHrofwIfTIn9kRyPWl08QqMbet0q8i3IFzMmMasB1A8t03hwDwsQCfRune950SalJpBQWzKPqQnlFN85/y8RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=THD5o3kf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716363379;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DpAxOU2aBgMjznsU4cnXhiKkEbSF/tfuwpgPheSiit4=;
+	b=THD5o3kfhm/MAqA1lqxtpt3MCIozqmz1D1KbAbAgeKsxe3RidqG8DtL9LogUmJIoz/Oj7Y
+	aYzF5AKDFmR94Q+Jew4IWTtf+TFzNy99NDx3iSYST8z7/lU6r77bpMbJ6k4T/UH60l2RjA
+	kCnVdNViKvHIonYr+TX7O0c/CVMbGZ8=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-510-MOwyuCEcPyScBgEuRDMPRw-1; Wed, 22 May 2024 03:36:18 -0400
+X-MC-Unique: MOwyuCEcPyScBgEuRDMPRw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-354c43b4b7fso2430351f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:36:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716363376; x=1716968176;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DpAxOU2aBgMjznsU4cnXhiKkEbSF/tfuwpgPheSiit4=;
+        b=gfhwWv91jzZrCyQxIWW2EG1MuXqWcpERwaaoUNzy2+jlpjXSIl1JU25o40V+94p8Yu
+         mn0mSECMrzbXUG8nP4yJhi60gsWaAAzGxNKbS7LcwGdAtZBAWgMCe1WijKEeUF60pACA
+         IiFrEu29tzn3vbwXBg+MZA7MLpE/bNfspeWJ/r0vMe5CQOUuqzc0mUCQt4c1IoXDof73
+         XYjYftjZeEexn7T9XVHQqEDPYupWG70ougOMrpKSm6gEDB25Lw4M6pu2XQdJd53TVkYC
+         pIoFPqW0PBK+fqOlvZr6DpJnlvJAyorco1/tJm9YqlVtAzsWD1vOrq3zBUvWm4rlGEDj
+         YjQQ==
+X-Gm-Message-State: AOJu0YxorwtHQfhlkAO8Mx46Gf7wdJyukDg4BGkunYf0l99kTafN3cH3
+	19GQScfJYt6HNW8AppfQD+t8YLcZCBGHwlmPufZ8YAM/CMDX9Od4aYQZ7xgCxSdD4+XnkiJK+Lb
+	4HauFGt9xCD0lDFUX24e0RjTZ8hNvw37ctzrrQPbBOYMVzRrIxWzmeeSfhwoylQ==
+X-Received: by 2002:a5d:4e84:0:b0:354:ed0d:deea with SMTP id ffacd0b85a97d-354ed0de3aemr241050f8f.61.1716363375918;
+        Wed, 22 May 2024 00:36:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIul26mV6vub8/6e1p6F3cWQikk0lGeDfN+8U6+bi2zDxD5zJnDsL8jJG/LlIj0y6kg4Smtg==
+X-Received: by 2002:a5d:4e84:0:b0:354:ed0d:deea with SMTP id ffacd0b85a97d-354ed0de3aemr241017f8f.61.1716363375415;
+        Wed, 22 May 2024 00:36:15 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:d500:4044:6d4c:f060:f677? (p200300cbc709d50040446d4cf060f677.dip0.t-ipconnect.de. [2003:cb:c709:d500:4044:6d4c:f060:f677])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbedbsm33553679f8f.92.2024.05.22.00.36.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 00:36:14 -0700 (PDT)
+Message-ID: <1bb2a62c-ba26-40e2-a749-90382ff27595@redhat.com>
+Date: Wed, 22 May 2024 09:36:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n7hxoE1mSfpFAw--.37392S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Ary7CFWfZw4kGr4UKr45Jrb_yoW8Gr4Upa
-	98Krs0krZ8t3yUGw4kZwsI93yrXa97X3W8WF17G34akr4jqFn7ZFn0kF9FkF9Ygrs7uaya
-	grs3Kr1UCr4jkF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UgYFZUUUUU=
-X-CM-SenderInfo: xkxd0wxohlmiqu6rljoofrz/1tbiUBPm9mXAk3Pm7QAAsd
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] mm: Add update_mmu_tlb_range()
+To: Bang Li <libang.li@antgroup.com>, akpm@linux-foundation.org,
+ chenhuacai@kernel.org, tsbogend@alpha.franken.de, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, chris@zankel.net, jcmvbkbc@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+ ryan.roberts@arm.com, ioworker0@gmail.com, libang.linux@gmail.com
+References: <20240522061204.117421-1-libang.li@antgroup.com>
+ <20240522061204.117421-2-libang.li@antgroup.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240522061204.117421-2-libang.li@antgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: huanglei <huanglei@kylinos.cn>
+On 22.05.24 08:12, Bang Li wrote:
+> Added update_mmu_tlb_range(), we can batch update tlb of an
+> address range.
+> 
+> Signed-off-by: Bang Li <libang.li@antgroup.com>
+> ---
 
-Most of the time，will use 64 bit address.
-such as port->base=0xffffffc010e21280 and then use
-len += sprintf (buffer, "%lu\t%lu\n", port->base, port->base_hi),
-port->base convert to string is "18446743799114896000" add
-port->base_hi is "0" and "\t" "\n" len will be 23.
-But buffer the original max length is 20, length 23 is out of buffer.
-So to make sure 64 bit address will not experience buffer overflow,
-need increase buffer size to 32.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Signed-off-by: huanglei <huanglei@kylinos.cn>
----
- drivers/parport/procfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
-index bd388560ed59..6722ae620b68 100644
---- a/drivers/parport/procfs.c
-+++ b/drivers/parport/procfs.c
-@@ -117,7 +117,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
- 				 void *result, size_t *lenp, loff_t *ppos)
- {
- 	struct parport *port = (struct parport *)table->extra1;
--	char buffer[20];
-+	char buffer[32];
- 	int len = 0;
- 
- 	if (*ppos) {
-@@ -171,7 +171,7 @@ static int do_hardware_dma(struct ctl_table *table, int write,
- 			   void *result, size_t *lenp, loff_t *ppos)
- {
- 	struct parport *port = (struct parport *)table->extra1;
--	char buffer[20];
-+	char buffer[32];
- 	int len = 0;
- 
- 	if (*ppos) {
 -- 
-2.17.1
+Cheers,
+
+David / dhildenb
 
 
