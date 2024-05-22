@@ -1,86 +1,115 @@
-Return-Path: <linux-kernel+bounces-186179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92FD8CC0B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:56:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1D38CC0BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D991C219A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:56:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45AEB283969
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDA613D534;
-	Wed, 22 May 2024 11:56:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6DC13D62C;
+	Wed, 22 May 2024 11:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHwfFnIt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E74757FD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A0F757FD;
+	Wed, 22 May 2024 11:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716378966; cv=none; b=iuNHc1I/w22ssZxB73NyWaic89lFjT1x2jiAZbdMVU1Lzb9R6bDyrX7csYFFqRC4zl4F4i4CUyhA3T7f7IABZkW4MkhqnLI0L02E2/WBh+bfnH6967UVUhjtTw3u0vLYxUuGj0BwYZwHssOvwwIEqLhw0ptMjMKCyc+wiXY2HpM=
+	t=1716379189; cv=none; b=o5qt9NCl51Zk4UrvN6dQxA3U5e3GjlE6mSho8YpDmhCOPJICa5pNyvr2GEBBjVDOGeMMyZ1BDo7HgJO9t+2hXkXymq6vsp1IueBHq2nM4INUDSrvrQdMxm35trbJmdkkO2kFs4A2j9DL6nKL9KEf1d2Gz4E6rtkBrk7k6pQ0BcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716378966; c=relaxed/simple;
-	bh=/uxNzhuEpEuNDt2jpdc27me5iRGt1/3VuDrhzDVcBoI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MB+xLNe+6sNrqulTxO4OUZQoVIs66kGyCNG0hTzJK9oKivYE3asRFLKI6rc/YkneIm5D5KySMHdQXjUlhxkCHrUIku7ARmFHq82TTzFMbh2prxXsOu9upnxm+qTReav2uP5eDSCWDIz6uJmBNogy1xmYOiARF0UaGfnXXep8HEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7dabc125bddso16754839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 04:56:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716378964; x=1716983764;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SGSGt5zkHSQc1VjNVftzodvlANt3bWCgcnLgMe4H7pg=;
-        b=aj6cG1Zlv1Hidx7R6DLo53hjjQDrZpUR9nO/qe9RPXzmFwNt6ZL5I8stTIMvDexPx1
-         lIJz4Wyj/q0FkbAHrRsUz7JXoIopINRyUPT8F0RzOJ0U4VNOboK0dgnMByWfPdIVXvlh
-         pILPq4XTlFwWx/2LwD53q4yO63eG5wLLXNRfr++Fj+eWbYWDUmkHQ6RRlC4lfZLCxIaA
-         GNebwIqYTHvkjQPf3ESjFqzDBFeXEu+2EXV/RHp8/XABmrdFKc+zJ45suxWSnII1j8v3
-         2sYJl9xbK2sP8vISv1L4PhLrfadI4kJ7/OjHszLTlRDw9weM+NeROa6+4yc7SD/aJP+z
-         ACKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZCZUt1OOQxNFrrZlKHMfDX7D9GwvTL76gvT1Dhs+314XyMHE/a0qi8QZkut4ytVCRCesWPS8KeCTPPWNZ3PThBlkvb/LoYFZJpNuX
-X-Gm-Message-State: AOJu0YwCL5h24Z7qUjeOV7CbOhzA8rpWJEGbhOlzNESL1zkx/iw1MA8w
-	uFohNWjjeD3N196kfcc7tzT5WlxyXJx++PZ56rfiXmxMb9OCDqGlJXXDatTrbn/s5nzW/YLcNNa
-	3+0El2oTatV//rAU+VirY9l6eMf98/CVia4A/Rm3pEevHhOCUMFmRPF4=
-X-Google-Smtp-Source: AGHT+IFaQR/wwwjXbBcPunurewHyTe2Ekd6xHwwWmKJKFeUo5uMbGdlyh35IOS3lAzg8WzKW5qfXqTcnk2nIT5Tm0aLNAO/iYIoN
+	s=arc-20240116; t=1716379189; c=relaxed/simple;
+	bh=cuGc8Pu9YBooy2bz94a0RDTpxwgjGmzp7A3RCV71uBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=urRu4HFSjjiGFy+qSpPouxgCSPI2C4S7p79Z3zK4+ttRJzF8m0lA9v2Drw/8yl09W1dM5jtXMU+PynyQZTjSswfeSqpqNkcH8Z+ESVZLems4a0JYc5LM+uMhOdf+YzL1QX26QYjwzwRr/HonjZfotkDDGLoDL5Fh1Uz+x9p+2K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHwfFnIt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF304C4AF0C;
+	Wed, 22 May 2024 11:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716379188;
+	bh=cuGc8Pu9YBooy2bz94a0RDTpxwgjGmzp7A3RCV71uBY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RHwfFnItv8LD2taa6jaAHrvWT+XxrJHlQkuHnzdBaZEWjmpHvJ7bsc48naAGRt75Z
+	 H6T46K610TUzNEtMko04OEKPCrT5OJgSFokQqAzbx0RvDZjMGGmpPglKwHDJOyYsuz
+	 5jJF93jH4oR0Z7eolRY+r0QNejd54D18pG06NILDfFyYY58DEX2dpDL0BDwVdwTMei
+	 Po1rPAPfhhfd9/tPn4i9dn0d7kLtIdBypuxlEzJqvPG8dmQ9dbWnbOySsAjNB711VC
+	 h2ZrAJ+B0vY2GqK2Za9tUd/FSwV4lopxx0kXM6Uv81DDG9kcOCCTyxOcIzx+mB540R
+	 c4Kbhshiz7TAQ==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572e48f91e9so11183232a12.0;
+        Wed, 22 May 2024 04:59:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWlnMrn7obYEDIcDBR/NQa62ReR+e679myHHJQAICzoQUbHeJTuUX3CbBVcYOWWub6rdMSQYxBxCKbdXbagp7ADruS9FCc8CPEem0IWh2VifXKKCY7fWte+MZVBfipbGl5RhvAiZRsfojac3vBkAPTAzDVxvsqkHxUWTfo2FDoKeqjzgOE8yqFYshs=
+X-Gm-Message-State: AOJu0Ywfd5Hdmz6PvQmeRBk9qYg3waznPoGaVDB4z6YESQkVPcF5qf6w
+	nvFxK0jiNZNJ8QGPPCT0o0OM6BLrdA+wJt48OP+FlhxymSM/YooTNtzdJUY88Zy8+hYyaGGNiU/
+	D/HbdUuZZHHx1vviGPqCxJcx83zI=
+X-Google-Smtp-Source: AGHT+IHk+CMXXdznhyC6NiX8Q4L+PrjPhLJ1J+2v+YFGNPc4PubPHIgL3xICBwAhXA6j3E+g1zBDCYvwUlS7NAzH8MA=
+X-Received: by 2002:a50:a6de:0:b0:575:899:d6a0 with SMTP id
+ 4fb4d7f45d1cf-57832abb39dmr1207229a12.23.1716379187716; Wed, 22 May 2024
+ 04:59:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f87:b0:7e2:2c72:c60f with SMTP id
- ca18e2360f4ac-7e39df9d37cmr6970039f.3.1716378963666; Wed, 22 May 2024
- 04:56:03 -0700 (PDT)
-Date: Wed, 22 May 2024 04:56:03 -0700
-In-Reply-To: <tencent_7BA1330A9E431B2B4B071B6B2518BA37BB08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006df71c0619099e75@google.com>
-Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
-From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240519211235.589325-1-ojeda@kernel.org> <20240519211235.589325-2-ojeda@kernel.org>
+ <CAK7LNATPx2wTEM=KDmGtcH8vVTB4suOhh-CUQKP54F8wtPWDiw@mail.gmail.com>
+ <CANiq72mcdtNie=t=HHhZnjQa7gQiDZin+TYP_7Rgi4kL83H2BA@mail.gmail.com>
+ <CAK7LNASYYYsiZUaA1StD9kWO0WBC0PBPtfY7u32g94WtOPFZgw@mail.gmail.com> <CANiq72mzTaKYJqNcv1qT3nXEbh_t7CwaAqxCuYNcx9eHOZf7wQ@mail.gmail.com>
+In-Reply-To: <CANiq72mzTaKYJqNcv1qT3nXEbh_t7CwaAqxCuYNcx9eHOZf7wQ@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 22 May 2024 20:58:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQkUik_VW7j-d56Pr4NnExxDnjMfWSwtxvijH4q4Onctg@mail.gmail.com>
+Message-ID: <CAK7LNAQkUik_VW7j-d56Pr4NnExxDnjMfWSwtxvijH4q4Onctg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] kbuild: rust: apply `CONFIG_WERROR` to all Rust targets
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, May 22, 2024 at 7:52=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Wed, May 22, 2024 at 12:14=E2=80=AFPM Masahiro Yamada <masahiroy@kerne=
+l.org> wrote:
+> >
+> > What does "everything else" mean exactly?
+>
+> Everything but the host programs. Or as many targets as possible, if
+> you think there are other cases that we should avoid.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+You can do this if rebuilding makes sense
+when any CONFIG option is changed.
 
-Tested on:
 
-commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=15025ca4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10592b58980000
 
-Note: testing is done by a robot and is best-effort only.
+> > Why is the .config required for generating documentation?
+>
+> `rustdoc` sees the code in a similar way as the compiler (it uses
+> parts of the compiler); in particular, it processes conditional
+> compilation like the compiler. So we need a given configuration to
+> generate it.
+
+Surprising.
+
+It potentially generates different documentations
+depending on the .config file.
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
