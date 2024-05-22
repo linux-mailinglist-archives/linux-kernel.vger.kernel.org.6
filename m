@@ -1,180 +1,99 @@
-Return-Path: <linux-kernel+bounces-185936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4888CBD0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:35:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD028CBD12
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104871F22B55
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90D2281CA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA037E0E8;
-	Wed, 22 May 2024 08:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90B37F7F7;
+	Wed, 22 May 2024 08:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f1XzmQrk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="b8oaISQS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VS+FrNt5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="v9Z4QZ8O"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d/jWhR9j"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032361EA91;
-	Wed, 22 May 2024 08:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6721A2262B;
+	Wed, 22 May 2024 08:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716366930; cv=none; b=Utd9u9halQpKX3cyLF0mtjeEOhXgDxvFQ7rfCvmCHM1Pu1+Nhwd9A3u+f1kYNLM/S12/3YzC67QWtfRTOTMSVM7oIXO+FC6Dr1X1ZR57m02/w+zFUEvLZ4WYU8CEp3b/Y/ihk3xyxixcnMHddKRDF4nyChy/ZymhqXZJrSbKtwY=
+	t=1716367003; cv=none; b=U9VaOOOYaWBy187bHeslg0IBuLmbU4FF8xixPtE0NDA/yurcfWh0l2Wyj1t7E+CgcZxHzCvdavCrvl3HIA2U+10Ci/E+fYygcslSV72vhdB092mZWsgqnJWp41TSrPoFCE1zzqp1X/tgDeB9UDAmocCw+tCGMHtKzRNUb2TttP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716366930; c=relaxed/simple;
-	bh=QQNKugEsLR4Zxngf3KdWr5FWEuPBdF2sYz5hfdGxDQ0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Cm+fAzVKZ0YBBLEJPJbu4aYb2+HDfTKbo7Tc3AIugUGvMAYqkWknA4tASRlAUsKYzaYQuETO+0nHJhOaKUAsWmz7PWek+feS1wTZbGJhrRA8bNoiLYQhCTMI48Na+eEPl56Bb2KyugrVfyxtzdADs9/MAOuKaLp5MF1mVTSjfW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f1XzmQrk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=b8oaISQS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VS+FrNt5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=v9Z4QZ8O; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E082F34C24;
-	Wed, 22 May 2024 08:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716366926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWndrgG/Ib+G3BT3J07GW9jQZDryptwZKaxFblL8oDg=;
-	b=f1XzmQrkEYZ0PEZ/bg7/qszRrTTm+hsEL0euZX7DQntBg0qNQXZtHGkStFQPa8JbwsC10A
-	e8d8UUBVPg/zYyBtsyaqCase+h9J0Jgp1l3mL15ABLM56AW+oRzSAr6ocak6dCjC3LbVwI
-	Bb0XHuYZNtpHylYAAxNqeVhPuTCnR1c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716366926;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWndrgG/Ib+G3BT3J07GW9jQZDryptwZKaxFblL8oDg=;
-	b=b8oaISQSGgnLsRof6WTzL8CmgdM74YzZwXvFQ6pfv+nGPjVWI6zP79Ikr3KfpzGMo9FktN
-	jdh0d8SZOCzLeACg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716366925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWndrgG/Ib+G3BT3J07GW9jQZDryptwZKaxFblL8oDg=;
-	b=VS+FrNt5MsAFcaVeSBoZPJCOQRFha6G5oYXRUoDYswoQM+wnaPNiw808zAg/fdReA5Hgc+
-	6DLP2ju+ONd0X059T7QvbVqgOgv3zDOErxZwmO0tIU85Ea369OsEwi8I7J3Tw2WnYqdri2
-	PIwRomRbZ5E5RkyjjCKUoB3ixZkar1E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716366925;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NWndrgG/Ib+G3BT3J07GW9jQZDryptwZKaxFblL8oDg=;
-	b=v9Z4QZ8OVS2BUiEKq2BELvyygyttIWy/IWvBPk1OcGiP80MCMYEzS/4c64zHDWSt4fzXoq
-	SEKMRWqHe2egp6Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A8D113A1E;
-	Wed, 22 May 2024 08:35:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fZ8xJE2uTWZEUQAAD6G6ig
-	(envelope-from <nstange@suse.de>); Wed, 22 May 2024 08:35:25 +0000
-From: Nicolai Stange <nstange@suse.de>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jeremy Linton <jeremy.linton@arm.com>,  Arnd Bergmann <arnd@arndb.de>,
-  "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-  linux-hardening@vger.kernel.org,  Elena Reshetova
- <elena.reshetova@intel.com>,  Thomas Gleixner <tglx@linutronix.de>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] randomize_kstack: Improve entropy diffusion
-In-Reply-To: <20240309202445.work.165-kees@kernel.org> (Kees Cook's message of
-	"Sat, 9 Mar 2024 12:24:48 -0800")
-References: <20240309202445.work.165-kees@kernel.org>
-Date: Wed, 22 May 2024 10:35:20 +0200
-Message-ID: <87seya452v.fsf@>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1716367003; c=relaxed/simple;
+	bh=G5Sh2d9Xq79Hi6W8v/uzk298wFlWep6o+iThnMQq4yQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k2EI7Rht8Enyvmw6pIIS987K+UoGJA0XX17qXH+ufmxOazre3ORI/hTwNT86twGz2b7tIf6hL/UbGk0g0aC09rG7hYcI5zpIAgy/wJTI7NfLBLlzDNDBo36tvDYTDqtIJV+JKsOf9uBXBvNOcnlYe1/g8MOSt5QsA7oL3zbcB0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=d/jWhR9j; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44M8aWeK049185;
+	Wed, 22 May 2024 03:36:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716366992;
+	bh=n8oBR7JoDKyKvVrxrHX/RxpGuTR/rtSwQ+FaAI9ezQE=;
+	h=From:To:CC:Subject:Date;
+	b=d/jWhR9j0O/J+DLMHiXvg0imgN07TqEP16yQRTFjHep5Fut22FukOBXNJBsf0oovp
+	 3OVJRjhkjVcuP4PrZIZ/ic53DUQ99C1RfdjM+xoEFJexTzGt3dM/DMJR4jDhi0SBU1
+	 Kv28qHuXhFIdkH1XVIwVibVLh8vaub4nTClsh7dU=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44M8aWpH004411
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 22 May 2024 03:36:32 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 22
+ May 2024 03:36:32 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 22 May 2024 03:36:32 -0500
+Received: from localhost (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44M8aVA1050180;
+	Wed, 22 May 2024 03:36:32 -0500
+From: Bhavya Kapoor <b-kapoor@ti.com>
+To: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <b-kapoor@ti.com>, <jm@ti.com>, <vigneshr@ti.com>, <nm@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-j722s-evm: Mark eMMC as non removable
+Date: Wed, 22 May 2024 14:06:31 +0530
+Message-ID: <20240522083631.1015198-1-b-kapoor@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Flag: NO
-X-Spam-Score: -2.10
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.10 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	INVALID_MSGID(1.70)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Kees Cook <keescook@chromium.org> writes:
+Mark the eMMC module on J722S as non removable since it
+is always present on the evm.
 
->
-> diff --git a/include/linux/randomize_kstack.h b/include/linux/randomize_k=
-stack.h
-> index 5d868505a94e..6d92b68efbf6 100644
-> --- a/include/linux/randomize_kstack.h
-> +++ b/include/linux/randomize_kstack.h
-> @@ -80,7 +80,7 @@ DECLARE_PER_CPU(u32, kstack_offset);
->  	if (static_branch_maybe(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT,	\
->  				&randomize_kstack_offset)) {		\
->  		u32 offset =3D raw_cpu_read(kstack_offset);		\
-> -		offset ^=3D (rand);					\
-> +		offset =3D ror32(offset, 5) ^ (rand);			\
+Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hi Kees,
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+index bf3c246d13d1..fe810e32cb7a 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+@@ -369,6 +369,7 @@ partition@3fc0000 {
+ &sdhci0 {
+ 	disable-wp;
+ 	bootph-all;
++	non-removable;
+ 	ti,driver-strength-ohm = <50>;
+ 	status = "okay";
+ };
+-- 
+2.34.1
 
-I'm wondering whether this renders the per-arch mask applied to 'rand'
-at the respective choose_random_kstack_offset() invocations ineffective?
-
-Like e.g. on x86 there is
-
-  choose_random_kstack_offset(rdtsc() & 0xFF);
-
-I would argue that while before the patch kstack_offset had been
-guaranteed to stay within the bounds of 0xFF, it's now effectively
-unlimited (well, <=3D (u32)-1) and only capped to 0x3ff when subsequently
-applying the KSTACK_OFFSET_MAX().
-
-Or am I simply missing something?
-
-Thanks!
-
-Nicolai
-
->  		raw_cpu_write(kstack_offset, offset);			\
->  	}								\
->  } while (0)
-
---=20
-SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
-rnberg, Germany
-GF: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG N=C3=BCrnberg)
 
