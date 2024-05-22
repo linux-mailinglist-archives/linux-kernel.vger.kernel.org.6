@@ -1,234 +1,187 @@
-Return-Path: <linux-kernel+bounces-185907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E017A8CBCC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:17:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615F08CBCCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D271F22CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:17:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92C671C21535
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9687E58F;
-	Wed, 22 May 2024 08:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC0907F499;
+	Wed, 22 May 2024 08:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZRbCgbM"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VC7/V79j"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D6777F30
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6A8C138;
+	Wed, 22 May 2024 08:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716365812; cv=none; b=bk5aeAIO0k0CcGpbQKpp+GqPjXCjRc896rc9hUmOtWn54pn6YrLl8C9hiEuEIdEujhwlVPpo6MWKCyf8mns9IZnPjqcnUHzs2uJp4FXuZrChCZ3dkBu3vDxsktN4G7kY0vppeuqLVGZP7IkyByZ+jLaA3+WujLtfgzutZP0U+wY=
+	t=1716365941; cv=none; b=eKRJXtzspCTrLAomU0rwAgqJCIzfiijMuE48ruPhjHwYC7/a4IMf6HWsa9smJvyp6i3comjj4HXFomdvEHmJfTznw9WwygMWTT5IXF6GNG3GUSX85dgzoIonjY2sI26BmubWpZhes7KnqJd2XtGok1MQYn360pvap4GiA5raOSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716365812; c=relaxed/simple;
-	bh=brnfMtGcMMlEPk53jJhmT21576fF5GBWJDH0XGnxxLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=icJU9627kXb5dGIC/o52iOwJYhbY0bD00d5qz61MPqXCbNkaNqdSpEHEKbcnndS+AN0ecSdPqdy8+OejJMiyH3xJrlVdVfqmpWIoQeMpaUO8bsC4msWu1M4RbyBDOgWs/0t694Z1PCCfHIWo+WXaloz1LE3ylsS4XMUIw5xKnx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZRbCgbM; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1716365941; c=relaxed/simple;
+	bh=bSHpF7FSeuBzxNcacKanUepxY0i4i7iOjdWUu/P8znY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=V9VID4COpMUhMAOH7jRx3KTM6zfslFdjOVA7ByO8ntJRABgiIXofZughuStiDJCFJct1UaVsFNGwKeSe2gWEB0LBwnUZIBW4cVbrPovIYCk1YbbMselA7fj7ZKIdtMrN32kEVnuQGANSW2hOWj+kvVqxygMQq1VFjZRPruCpwlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VC7/V79j; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a5dcb5a0db4so475891266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:16:50 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42016c8daa7so37961185e9.2;
+        Wed, 22 May 2024 01:18:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716365809; x=1716970609; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWF9+jISPa0SvmLgvqwBtrWZLN0MZwBJjydQ/zsUvNc=;
-        b=MZRbCgbMmqxB7kTX/rK4fARPybcNs5xGq+NBH9XeW81qPDUtxYtrHellnUNeeonMhQ
-         Q0z4cFAPg1MPFq9DM11QbYbW1x4jgzMa9rABhKnu1/BT+gNGYez3dJbtRDSbfXFxaIT9
-         Xt8Km0FTFpUtyoN3f2p9tXAWijJc0QR3gYnwS5J8HxI7hTdgiKQ81NmE4HX3qV/6pD5o
-         w1dAe8qBDlVgo+OKq2abdeJyFhj3bQQYoSW6fqQSXPz2i1GbEInzD+L2LSw2J0TtjJ2N
-         1MDpoHZ0bYqyEVhglM2Lv6Yrw7zIyPh8BrqCtWvx42U577odWZjZ/1SemHZfh8pFmdBb
-         802g==
+        d=gmail.com; s=20230601; t=1716365938; x=1716970738; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lBg4uyn78t0bKiR5npVACUo4W3upFksgzJ+CETLwn1o=;
+        b=VC7/V79jnvh8oNiXGIyENtx5r/GZNADafdUxhSm9tKx7KVTTCWWYaABKNPRgAHEW5G
+         poO7VYW9LfvydgVSl7tIEL0WP+oJsb29rdS9ikKSeyeIqX0esOSSDfY6LJhztPjwPC0G
+         wQenGVTkesDbc7WrzOjoeRIXLOb25iSyrQmEVblJxkuQQR/q4gsnGW+5xlZHcGCfuEwy
+         vBhYnc8az5VkWB0gsvoGtR4uOK+vhOKzK1ca+pfA6qHnxc1Q4A+R4ftxe3jgYzs0zqsF
+         pqURDC++m4hfrS7+Awx0YoPNwP0NKFVZTfsFB+18FCFHRDSa+sDOW0fLD+GSwmEaLshI
+         qcww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716365809; x=1716970609;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cWF9+jISPa0SvmLgvqwBtrWZLN0MZwBJjydQ/zsUvNc=;
-        b=oVWhZXeo7yQTRDN/PoAJygXt+0brZ0Nz+Wsstetuz9jJnrlUSpMCwFF32zqHMHt0Ec
-         l5Gp53fi2igJpEzGTEaN/cRIAfgphd0tVYroTrFgrp+tcbXkt0qLAG2v4IdPr3Q02m4X
-         Hm2p5VMAZao1EQmjpAj0d4rt7M3Mk4R4xKer/3ystK8a0Vd/ZCknzWWjwbPsvzwdps4+
-         dQsYE9bXh21ceXEhm2Ououw8/H2GvQwEItMAkwPHpbGO8WRxK5SVveupFouovpLi2DaH
-         LEsmHcn/qyAVmhs5wsw+MJVKGV3/MFDmZR9LK+gkqyWY0RaSmFAauDBjeEfJOO9JaPHv
-         6UoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUea5kpNioyW8jIifwSynbV/rAWgKj/Z9fSfLcAlz8+C0xaieebirMA5800WrRgct+pBllqclPZ3lgfZjyQvpiHQYEDbczrkU2D2EoQ
-X-Gm-Message-State: AOJu0YxIhMHniCG63oGYoE1QkPBGrFZMIBaPkhQMhqMZIcgOnhN1wcjm
-	mViLRfRTSh7/wQ5Q2JQkByXcTfncD7dqY/Zl6kr/zP+zptHWddK5
-X-Google-Smtp-Source: AGHT+IFAwo2wFFZHqeFgGha0f7XN6Yby5SI6m6Aol27vpYXjkrNMUOIKkSX1cPRjU/m4x492FGLRvQ==
-X-Received: by 2002:a17:906:693:b0:a5f:ae29:6a53 with SMTP id a640c23a62f3a-a62281f798fmr67350466b.66.1716365808900;
-        Wed, 22 May 2024 01:16:48 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7da8sm1751489066b.99.2024.05.22.01.16.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 May 2024 01:16:48 -0700 (PDT)
-Date: Wed, 22 May 2024 08:16:47 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Jaewon Kim <jaewon31.kim@samsung.com>
-Cc: Mike Rapoport <rppt@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jaewon31.kim@gmail.com" <jaewon31.kim@gmail.com>,
-	"tkjos@google.com" <tkjos@google.com>
-Subject: Re: (2) [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Message-ID: <20240522081647.zlwenenrbrjemlp6@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <ZkxN0yQ7Fb0X26hT@kernel.org>
- <20240521023957.2587005-1-jaewon31.kim@samsung.com>
- <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
- <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p5>
- <20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
+        d=1e100.net; s=20230601; t=1716365938; x=1716970738;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lBg4uyn78t0bKiR5npVACUo4W3upFksgzJ+CETLwn1o=;
+        b=A+9CRnJq2afFqnb191DvUBh8wkVxFXm/FaioDKNOVmtbYBRbyR2WK37tLiqDxtDDA4
+         WU3Ebpr2WQk9Qjb5XycHsR3U1GJtAny+IwBRg3IZgj3eZvSYeydEfKZtjt/tl4Ugc/Yv
+         JeKmH9qNWaqHmCJCjgk4pbOCOdroLopqjfhXal/HC0nRNDGxV24NJZYyHBybgN/QtG5W
+         hPwzw6AR/ANRgo5bFsLxJhHNDjSAO/Y7Ohs3mE2QGt4YWA9UGm1k8J34rUNyf9OnPZYy
+         u+7CQ//jSA2VcKXwT5WAZP2GG9RhnQJ+VurLxyKivt95T4Lk+Mw10nkXiR3R/9foiMIB
+         TIgw==
+X-Forwarded-Encrypted: i=1; AJvYcCULgoU+cVKdIi7Rh5To19YgdW6aiCUk4TDiH4luZyg4qbxZ4Y1K69IcndRTJ5WhRVN3bCTrpcDiTgjxZHR4sUAnD1GNq4NcOjxGjxK0eXSxjTXAchpZ9Ll76gC0lzowW/y6o6pUuhTIIaqVvNwkrXDlMvnJE1S60860xydeGGFj68aqNgsox6Bu2Kx8VW/AfGuDe5v7
+X-Gm-Message-State: AOJu0YzviqUTLZx752qOPTPD2TbY6DWcpgK3zN63RO75r6NqyGYh+x+0
+	R6XIij+iMEKrLriKwrd25gh4JJStyblzIktIxmRNY6QDz4j+fJ0Dz8kkcA==
+X-Google-Smtp-Source: AGHT+IHLXZgSDJmsis6up0QpZBrArcJ+z5AUWwf3Q497OyVDz9iO2MWp1O0/FUUykhM9+MyKYg62oA==
+X-Received: by 2002:a05:600c:2101:b0:41b:f30a:41f1 with SMTP id 5b1f17b1804b1-420fd2db85amr9177325e9.7.1716365937832;
+        Wed, 22 May 2024 01:18:57 -0700 (PDT)
+Received: from ?IPv6:2001:8a0:e622:f700:6a60:8259:5f0c:8e1? ([2001:8a0:e622:f700:6a60:8259:5f0c:8e1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42017166c64sm363200215e9.8.2024.05.22.01.18.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 01:18:57 -0700 (PDT)
+Message-ID: <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
+Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
+From: Vitor Soares <ivitro@gmail.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jarkko Sakkinen
+	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+ <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Wed, 22 May 2024 09:18:56 +0100
+In-Reply-To: <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
+References: <20240519235122.3380-1-jarkko@kernel.org>
+	 <20240519235122.3380-2-jarkko@kernel.org>
+	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
+	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
+	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
-User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Tue, May 21, 2024 at 07:17:53PM +0900, Jaewon Kim wrote:
->>On Tue, May 21, 2024 at 11:53:29AM +0900, Jaewon Kim wrote:
->>> >--------- Original Message ---------
->>> >Sender : 김재원 <jaewon31.kim@samsung.com>System Performance Lab.(MX)/삼성전자
->>> >Date   : 2024-05-21 11:40 (GMT+9)
->>> >Title  : [RESEND PATCH 00/10] memblock: introduce memsize showing reserved memory
->>> >?
->>> >Some of memory regions can be reserved for a specific purpose. They are
->>> >usually defined through reserved-memory in device tree. If only size
->>> >without address is specified in device tree, the address of the region
->>> >will be determined at boot time.
->>> >
->>> >We may find the address of the memory regions through booting log, but
->>> >it does not show all. And it could be hard to catch the very beginning
->>> >log. The memblock_dump_all shows all memblock status but it does not
->>> >show region name and its information is difficult to summarize.
->>> >
->>> >This patch introduce a debugfs node, memblock/memsize, to see reserved
->>> >memory easily.
->>> >
->>> >Here's an example
->>> >
->>> >$ cat debugfs/memblock/memsize
->>> >
->>> >0x0000000000000000-0x0000000000000000 0x02000000 (?  32768 KB )?  map reusable linux,cma
->>> >0x0000000000000000-0x0000000000000000 0x01000000 (?  16384 KB )?  map reusable vxxxxx
->>> >...
->>> >0x0000000000000000-0x0000000000000000 0x004e0000 (? ? 4992 KB ) nomap unusable unknown
->>> >0x0000000000000000-0x0000000000000000 0x00400000 (? ? 4096 KB ) nomap unusable cxxxxx
->>> >0x0000000000000000-0x0000000000000000 0x00e00000 (?  14336 KB ) nomap unusable gxxxxx
->>> >
->>> >Reserved? ? : 1223856 KB
->>> > .kernel? ? :? 275208 KB
->>> >? .text? ?  :?  16576 KB
->>> >? .rwdata?  :? ? 1963 KB
->>> >? .rodata?  :?  11920 KB
->>> >? .bss? ? ? :? ? 2450 KB
->>> >? .memmap?  :? 186368 KB
->>> >? .etc? ? ? :?  55933 KB
->>> > .unusable? :? 948648 KB
->>> >System? ? ? : 11359056 KB
->>> > .common? ? : 10306384 KB
->>> > .reusable? : 1052672 KB
->>> >Total? ? ?  : 12582912 KB ( 12288.00 MB )
->>> >
->>> >Jaewon Kim (10):
->>> >? memblock: introduce memsize showing reserved memory
->>> >? memblock: detect hidden memory hole size
->>> >? memblock: handle overlapped reserved memory region
->>> >? memblock: take a region intersecting an unknown region
->>> >? memblock: track memblock changed at early param
->>> >? memblock: recognize late freed size by checking PageReserved
->>> >? memblock: track kernel size on memsize
->>> >? memblock: print memsize summary information
->>> >? memblock: print kernel internal size
->>> >? memblock: support memsize reusable to consider as reusable
->>> >
->>> > drivers/of/fdt.c? ? ? ? ? ?  |? 11 +
->>> > drivers/of/of_reserved_mem.c |? 12 +-
->>> > include/linux/memblock.h? ?  |? 29 ++
->>> > init/main.c? ? ? ? ? ? ? ? ? |? 13 +-
->>> > kernel/dma/contiguous.c? ? ? |?  9 +-
->>> > mm/Kconfig? ? ? ? ? ? ? ? ?  |? 16 ++
->>> > mm/memblock.c? ? ? ? ? ? ? ? | 502 ++++++++++++++++++++++++++++++++++-
->>> > mm/mm_init.c? ? ? ? ? ? ? ?  |?  6 +-
->>> > mm/page_alloc.c? ? ? ? ? ? ? |? 10 +-
->>> > 9 files changed, 597 insertions(+), 11 deletions(-)
->>> >
->>> >-- 
->>> >2.25.1
->>> 
->>> Hello Mike 
->>> 
->>> This is actually RESEND as it was introduced 2 years ago.
->>> Please refer to https://lore.kernel.org/linux-mm/YkQB6Ah603yPR3qf@kernel.org/#t
->>> 
->>> > But you never provided details about *why* you want this information exposed.
->>> 
->>> For your question, I'd like to say ;
->>> We can see the same format and exact information between different version of kernel status.
->>> 
->>> 1) Internally we can check if the reserved memory changes.
->>> 2) Externally we can communicate between chipset vendors and OEM, with a same format.
->>
->>Why the existing debugfs interface is not sufficient?
->
->debugfs/memblock/memory & debugfs/memblock/reserved have changed its format but still does not show name, reusable, kernel size.
+On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
+> On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
+> > This benchmark could be done in user space using /dev/tpm0.
+>=20
+> Let's actually try that.=C2=A0 If you have the ibmtss installed, the comm=
+and
+> to time primary key generation from userspace on your tpm is
+>=20
+> time tsscreateprimary -hi n -ecc nistp256
+>=20
+>=20
+> And just for chuckles and grins, try it in the owner hierarchy as well
+> (sometimes slow TPMs cache this)
+>=20
+> time tsscreateprimary -hi o -ecc nistp256
+>=20
+> And if you have tpm2 tools, the above commands should be:
+>=20
+> time tpm2_createprimary -C n -G ecc256
+> time tpm2_createprimary -C o -G ecc256
+>=20
+> James
+>=20
+>=20
 
-Would you mind showing which information matters to you most in the following
-example log message? What you expect to see and helps you on locating problem?
+Testing on an arm64 platform I get the following results.
 
-0x0000000000000000-0x0000000000000000 0x02000000 (   32768 KB )   map reusable linux,cma
-0x0000000000000000-0x0000000000000000 0x01000000 (   16384 KB )   map reusable vxxxxx
-.
-0x0000000000000000-0x0000000000000000 0x004e0000 (    4992 KB ) nomap unusable unknown
-0x0000000000000000-0x0000000000000000 0x00400000 (    4096 KB ) nomap unusable cxxxxx
-0x0000000000000000-0x0000000000000000 0x00e00000 (   14336 KB ) nomap unusable gxxxxx
+hmac disabled:
+  time modprobe tpm_tis_spi
+  real    0m2.776s
+  user    0m0.006s
+  sys     0m0.015s
 
-Reserved    : 1223856 KB
- .kernel    :  275208 KB
-  .text     :   16576 KB
-  .rwdata   :    1963 KB
-  .rodata   :   11920 KB
-  .bss      :    2450 KB
-  .memmap   :  186368 KB
-  .etc      :   55933 KB
- .unusable  :  948648 KB
-System      : 11359056 KB
- .common    : 10306384 KB
- .reusable  : 1052672 KB
-Total       : 12582912 KB ( 12288.00 MB )
+  time tpm2_createprimary -C n -G ecc256
+  real    0m0.686s
+  user    0m0.044s
+  sys     0m0.025s
 
->If memory is reserved from memblock, and did not freed back to memblock. Memblock does not know even after the memory is freed to system.
+  time tpm2_createprimary -C o -G ecc256
+  real    0m0.638s
+  user    0m0.048s
+  sys     0m0.009s
 
-You mean we may reserve memory in memblock.reserved, but still have it freed
-to system? This sounds a bug to me.
 
->I think a simple debug interface is needed to easily communicate with others or compare different SW releases.
->
->> 
->>> This helps us to communitcate well, to easily detect changes or just to see differences.
->>> 
->>> Jaewon Kim
->>> 
->>
->>-- 
->>Sincerely yours,
->>Mike.
->
->
+hmac enabled:
+  time modprobe tpm_tis_spi
+  real    8m5.840s
+  user    0m0.005s
+  sys     0m0.018s
 
--- 
-Wei Yang
-Help you, Help me
+
+  time tpm2_createprimary -C n -G ecc256
+  real    5m27.678s
+  user    0m0.059s
+  sys     0m0.009s
+
+  (after first command)
+  real    0m0.395s
+  user    0m0.040s
+  sys     0m0.015s
+
+  time tpm2_createprimary -C o -G ecc256
+  real    0m0.418s
+  user    0m0.049s
+  sys     0m0.009s
+
+hmac enabled + patches applied
+  time modprobe tpm_tis_spi
+  real    8m6.663s
+  user    0m0.000s
+  sys     0m0.021s
+
+
+  time tpm2_createprimary -C n -G ecc256
+  real    7m24.662s
+  user    0m0.048s
+  sys     0m0.022s
+
+  (after first command)
+  real    0m0.395s
+  user    0m0.047s
+  sys     0m0.009s
+
+  time tpm2_createprimary -C o -G ecc256
+  real    0m0.404s
+  user    0m0.046s
+  sys     0m0.012s
+
+
+Regards,
+Vitor Soares
 
