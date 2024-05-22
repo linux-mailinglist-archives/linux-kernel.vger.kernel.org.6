@@ -1,284 +1,146 @@
-Return-Path: <linux-kernel+bounces-186584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3850D8CC5F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:00:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D6C8CC5FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B1AF1C20ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:59:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A97BA1F22BD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E843145B10;
-	Wed, 22 May 2024 17:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB31145B23;
+	Wed, 22 May 2024 18:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="naWG00b7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqnG3Bur"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEA41411FF;
-	Wed, 22 May 2024 17:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631FF182B9;
+	Wed, 22 May 2024 18:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716400790; cv=none; b=URwB9RI1QMjwxsYXW7LBpj7MmT9Zl3hRyrWGkv+0uC1X8q9GcF7r4vYXkd8IkhICxIZ7M2yr73a6UC5a9+AVnIvguLHNetrQFADP2I8d8bYeO+Q4DBUYLX/8IF8QRQp3GW1ICk8hf0KNxTRWg0P6VcIY4q0/5SO2hYktTKVxW0M=
+	t=1716400993; cv=none; b=DrByRj+AZIfFSSUuWMBU00OO1QxOrVpash5YWPiY9ni9ifVctxuVEz+YO9ZMA4YC92WjEDhUPrcbyhm6huph9yyHHt1a2cteUwbk9qADCfYvMBJfh4XFBMtr2BMP+oZnZoCIgYOGhvhn8WXeZhw5JXPtfaBvP/lPzGNx93VzoB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716400790; c=relaxed/simple;
-	bh=m8dSaMf+9viOYLDWhAIIO5d+dTaOcVWzhd5wL34Njkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I58Wf9oEEoUUD11BUlqFbUlDNZVvjXY3nDEiLp62N3IYi2OCw8zbHKuCPmQvEjEqhA07nLdGU9bPDxxA6q3V1UEP/ca7t2TCSIQBEA0NLpZiyTj3tw0uErJl8nKPZfsCovRX2ILMiSsUv4oqQ2hjUhIa6Ndeq7sdhTl57lyVJnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=naWG00b7; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716400788; x=1747936788;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=m8dSaMf+9viOYLDWhAIIO5d+dTaOcVWzhd5wL34Njkk=;
-  b=naWG00b75Tf3q3vOMd0nVBuhx5WaeadodDoftSYZwQmYyx12BZ2jx8uT
-   9bdwiIQry4yILrWy3g1JJY+w1seQ19/6Fp+MTboAfJwELYK2TmUZxx+36
-   msT6m8IQ0D24DjZ6+J+C2iomu56D84ioFMFrxWG65segW4+rsZSTIMxm/
-   N4JfQRMdwAoROhuVFUgrFuLjGJErGoNI4T7g5i6dqHK7o1zE4TKVQyVO5
-   hn2nBac/D9VtAtF3GUQg+QXg7P5P2TMslQwsLCRoRnND72xIgtn93t8oF
-   jjO7toJXXvx+bUAZdVGl2kUgFOwbKVhXZmhe0suGbpu31hM3QYfGTMNBS
-   Q==;
-X-CSE-ConnectionGUID: i//ccQYJS0KrP1+6bwjCNQ==
-X-CSE-MsgGUID: Rvue0N8tS829Y1yzeZQUhw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="15624524"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="15624524"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 10:59:47 -0700
-X-CSE-ConnectionGUID: RflMnJeIRfCjQ79P9qwagA==
-X-CSE-MsgGUID: NgPq+JFfT4Ww72g129iM7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33833457"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.237]) ([10.125.109.237])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 10:59:46 -0700
-Message-ID: <8470dcc5-fbd4-4977-b8e8-5f7bfbf4b220@intel.com>
-Date: Wed, 22 May 2024 10:59:45 -0700
+	s=arc-20240116; t=1716400993; c=relaxed/simple;
+	bh=EgqUgI0H7TNae0QKJUbfzzMgFbTC81vHTSiEYGcj1Kc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T3p1Df0swB4XkKeUOI8KMG7sDgB2WyNY9In7TbfSeBpyDwA/7HmV3RaJ1T+TI4Ev036UQRM6RYR1NprHzEfUhF6AjBo2PrUJ6JD7hA4DlZbqWgsg+DFGwzez1cJO/4grO0EggZoCOCIam0tnMN5PO0dHbt/kHxsDzn82oFi74E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqnG3Bur; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17E8C4AF09;
+	Wed, 22 May 2024 18:03:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716400993;
+	bh=EgqUgI0H7TNae0QKJUbfzzMgFbTC81vHTSiEYGcj1Kc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eqnG3BurugA8eP+sBdeowbE+tTl1ziDioTAU76vCtcnMRell+SQ6FCr0wmO56ZbyF
+	 04BXP1XMFrNHmKIrorHpFHirI7Y8+eTSXKUpfM+ivhMr6ZIVSJMxan9pJ33UMWwLuz
+	 pRMurL9vRHaVw4lvUASCjD/KLQALbHF42X8Z4NWprQpZTuvBuTO9DY0fSST7idEF7S
+	 c7PSRjLHs/w4uOsQK2ImVFG1o1D0g9RrmSYjK3tdmYnnifuFPrTXidirpg4HI8syja
+	 TRAFUi8ts/h3esYVg+R10zYSnYf1TqAHyf4hfdgyoZszcPzTHfuk/WLvKXBx80xtwj
+	 1lW5FYanDiNcA==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e1fa824504so65411741fa.0;
+        Wed, 22 May 2024 11:03:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX5syn8iZtyEwb+Ocr0CIqpotitMw+84IR1sLoV01S1mPzwoMUnhqdidQiCH9Kjf5XgXJ9fq2XT+ns4Z2JknPSkq1Wx9xR8L5DPQQIZcG0leOBfntPpxPx0LG9iqVVQ9mTMCX5KfO3Xhib1/2xK0QuWfz8yvscRzVUc0O9oe3XcpthkF5isvq4IF4ReblQgnuMHzU8C9KW4KDfrQ3XZaEGY
+X-Gm-Message-State: AOJu0YyijETD19m/3iL/jJ4Xl71X/WnpPxluAV5FWi8s4ZZX5FfmNPfA
+	0FZKxzvIH9uXaxqiXiYasuwyVaxQrpebRMw0/KLPXwS808UhtMphYpfcERSN3q5PXLyxbNQRew6
+	YxB3yguRZn4/KVraKmml/ANvLvg==
+X-Google-Smtp-Source: AGHT+IHwAu69YuO1Nh3RQD2Pvp4YaJq25imcdHx3Dm0uO3K69AKZ/92diCIr1s9eL3l/QWkXG2g3XsBaE4fqA9npTO0=
+X-Received: by 2002:a19:9143:0:b0:51d:1830:8380 with SMTP id
+ 2adb3069b0e04-526bebb4d43mr1337039e87.8.1716400991593; Wed, 22 May 2024
+ 11:03:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] acpi/ghes, efi/cper: Recognize and process CXL
- Protocol Errors.
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>
-References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
- <20240522150839.27578-3-Smita.KoralahalliChannabasappa@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240522150839.27578-3-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com> <20240522074658.2420468-2-Sukrit.Bhatnagar@sony.com>
+In-Reply-To: <20240522074658.2420468-2-Sukrit.Bhatnagar@sony.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 22 May 2024 11:02:59 -0700
+X-Gmail-Original-Message-ID: <CANeU7Qn5KmdA2bVmEMjFtxcP+WnE174VgtkXZEHX82fc-gxXhg@mail.gmail.com>
+Message-ID: <CANeU7Qn5KmdA2bVmEMjFtxcP+WnE174VgtkXZEHX82fc-gxXhg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iomap: swap: print warning for unaligned swapfile
+To: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Christian Brauner <brauner@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-xfs@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Sukrit,
 
+It seems that you need the swap file block start address to read the
+swap file headers.
+This warning still requires the user to read the dmesg. The kernel
+still does not have the swapfile header at resume. In other words, it
+does not fix the issue.
 
-On 5/22/24 8:08 AM, Smita Koralahalli wrote:
-> UEFI v2.10 section N.2.13 defines a CPER record for CXL Protocol errors.
-> 
-> Add GHES support to detect CXL CPER Protocol Error Record and Cache Error
-> Severity, Device ID, Device Serial number and CXL RAS capability struct in
-> struct cxl_cper_prot_err. Include this struct as a member of struct
-> cxl_cper_work_data.
-> 
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+I don't know the suspend/resume code enough, will adding recording the
+physical start address of the swapfile in swap_info_struct help you
+address this problem? The suspend code can write that value to
+"somewhere* for resume to pick it up.
+
+Let's find a proper way to fix this issue rather than just warning on it.
+
+Chris
+
+On Wed, May 22, 2024 at 12:42=E2=80=AFAM Sukrit Bhatnagar
+<Sukrit.Bhatnagar@sony.com> wrote:
+>
+> When creating a swapfile on a filesystem with block size less than the
+> PAGE_SIZE, there is a possibility that the starting physical block is not
+> page-aligned, which results in rounding up that value before setting it
+> in the first swap extent. But now that the value is rounded up, we have
+> lost the actual offset location of the first physical block.
+>
+> The starting physical block value is needed in hibernation when using a
+> swapfile, i.e., the resume_offset. After we have written the snapshot
+> pages, some values will be set in the swap header which is accessed using
+> that offset location. However, it will not find the swap header if the
+> offset value was rounded up and results in an error.
+>
+> The swapfile offset being unaligned should not fail the swapon activation
+> as the swap extents will always have the alignment.
+>
+> Therefore, just print a warning if an unaligned swapfile is activated
+> when hibernation is enabled.
+>
+> Signed-off-by: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
 > ---
->  drivers/acpi/apei/ghes.c        | 10 +++++
->  drivers/firmware/efi/cper_cxl.c | 66 +++++++++++++++++++++++++++++++++
->  include/linux/cxl-event.h       | 26 +++++++++++++
->  3 files changed, 102 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 623cc0cb4a65..1a58032770ee 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -717,6 +717,14 @@ static void cxl_cper_post_event(enum cxl_event_type event_type,
->  	schedule_work(cxl_cper_work);
->  }
->  
-> +static void cxl_cper_handle_prot_err(struct acpi_hest_generic_data *gdata)
-> +{
-> +	struct cxl_cper_work_data wd;
-> +
-> +	if (cxl_cper_handle_prot_err_info(gdata, &wd.p_err))
-> +		return;
-> +}
-> +
->  int cxl_cper_register_work(struct work_struct *work)
->  {
->  	if (cxl_cper_work)
-> @@ -791,6 +799,8 @@ static bool ghes_do_proc(struct ghes *ghes,
->  			struct cxl_cper_event_rec *rec = acpi_hest_get_payload(gdata);
->  
->  			cxl_cper_post_event(CXL_CPER_EVENT_MEM_MODULE, rec);
-> +		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
-> +			cxl_cper_handle_prot_err(gdata);
->  		} else {
->  			void *err = acpi_hest_get_payload(gdata);
->  
-> diff --git a/drivers/firmware/efi/cper_cxl.c b/drivers/firmware/efi/cper_cxl.c
-> index 4fd8d783993e..03b9839f3b73 100644
-> --- a/drivers/firmware/efi/cper_cxl.c
-> +++ b/drivers/firmware/efi/cper_cxl.c
-> @@ -8,6 +8,7 @@
->   */
->  
->  #include <linux/cper.h>
-> +#include <acpi/ghes.h>
->  #include "cper_cxl.h"
->  
->  #define PROT_ERR_VALID_AGENT_TYPE		BIT_ULL(0)
-> @@ -44,6 +45,17 @@ enum {
->  	USP,	/* CXL Upstream Switch Port */
->  };
->  
-> +static enum cxl_aer_err_type cper_severity_cxl_aer(int cper_severity)
-> +{
-> +	switch (cper_severity) {
-> +	case CPER_SEV_RECOVERABLE:
-> +	case CPER_SEV_FATAL:
-> +		return CXL_AER_UNCORRECTABLE;
-> +	default:
-> +		return CXL_AER_CORRECTABLE;
-> +	}
-> +}
-> +
->  void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_err)
->  {
->  	if (prot_err->valid_bits & PROT_ERR_VALID_AGENT_TYPE)
-> @@ -176,3 +188,57 @@ void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_e
->  			       sizeof(cxl_ras->header_log), 0);
->  	}
->  }
-> +
-> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
-> +				  struct cxl_cper_prot_err *p_err)
-> +{
-> +	struct cper_sec_prot_err *prot_err = acpi_hest_get_payload(gdata);
-> +	u8 *dvsec_start, *cap_start;
-> +
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_DEVICE_ID)) {
-> +		pr_err(FW_WARN "No Device ID\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * The device ID or agent address is required for CXL RCD, CXL
-> +	 * SLD, CXL LD, CXL Fabric Manager Managed LD, CXL Root Port,
-> +	 * CXL Downstream Switch Port and CXL Upstream Switch Port.
-> +	 */
-> +	if (prot_err->agent_type <= 0x7 && prot_err->agent_type != RCH_DP) {
-
-Perhaps define an enum CXL_AGENT_TYPE_MAX instead of 0x7 magic number? Otherwise if a new type is introduced, it would break this code.
- 
-> +		p_err->segment = prot_err->agent_addr.segment;
-> +		p_err->bus = prot_err->agent_addr.bus;
-> +		p_err->device = prot_err->agent_addr.device;
-> +		p_err->function = prot_err->agent_addr.function;
-> +	} else {
-> +		pr_err(FW_WARN "Invalid agent type\n");
-> +		return -EINVAL;
-> +	}
-
-Up to you if you want to do this or not, but maybe:
-
-	if (prot_err->agent_type >= CXL_AGENT_TYPE_MAX || prot_err->agent_type == RCH_DP) {
-		pr_warn(...);
-		return -EINVAL;
-	}
-
-	p_err->segment = ...;
-	p_err->bus = ...;
-	...
-
-Although perhaps a helper function cxl_cper_valid_agent_type() that checks invalid agent type by checking the valid_bits, the agent_type boundary, and if agent_type != RCH_DP?
-> +
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
-> +		pr_err(FW_WARN "Invalid Protocol Error log\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	dvsec_start = (u8 *)(prot_err + 1);
-> +	cap_start = dvsec_start + prot_err->dvsec_len;
-> +	p_err->cxl_ras = *(struct cxl_ras_capability_regs *)cap_start;
-> +
-> +	/*
-> +	 * Set device serial number unconditionally.
-> +	 *
-> +	 * Print a warning message if it is not valid. The device serial
-> +	 * number is required for CXL RCD, CXL SLD, CXL LD and CXL Fabric
-> +	 * Manager Managed LD.
-> +	 */
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER) ||
-> +	      prot_err->agent_type > 0x4 || prot_err->agent_type == RCH_DP)
-
-prot_err->agent_type > FM_LD? Although maybe it would be a clearer read if a helper function is defined to identify the agent types such as cxl_cper_prot_err_serial_needed() or cxl_cper_prot_agent_type_device() and with it a switch statement to explicitly identify all the agent types that require serial number. If a future device is defined, the > 0x4 logic may break.  
-
-DJ
-
-> +		pr_warn(FW_WARN "No Device Serial number\n");
-> +
-> +	p_err->lower_dw = prot_err->dev_serial_num.lower_dw;
-> +	p_err->upper_dw = prot_err->dev_serial_num.upper_dw;
-> +
-> +	p_err->severity = cper_severity_cxl_aer(gdata->error_severity);
-> +
-> +	return 0;
-> +}
-> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> index f11e52ff565a..9c7b69e076a0 100644
-> --- a/include/linux/cxl-event.h
-> +++ b/include/linux/cxl-event.h
-> @@ -165,11 +165,37 @@ struct cxl_ras_capability_regs {
->  	u32 header_log[16];
->  };
->  
-> +enum cxl_aer_err_type {
-> +	CXL_AER_UNCORRECTABLE,
-> +	CXL_AER_CORRECTABLE,
-> +};
-> +
-> +struct cxl_cper_prot_err {
-> +	struct cxl_ras_capability_regs cxl_ras;
-> +
-> +	/* Device ID */
-> +	u8 function;
-> +	u8 device;
-> +	u8 bus;
-> +	u16 segment;
-> +
-> +	/* Device Serial Number */
-> +	u32 lower_dw;
-> +	u32 upper_dw;
-> +
-> +	int severity;
-> +};
-> +
->  struct cxl_cper_work_data {
->  	enum cxl_event_type event_type;
->  	struct cxl_cper_event_rec rec;
-> +	struct cxl_cper_prot_err p_err;
->  };
->  
-> +struct acpi_hest_generic_data;
-> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
-> +				  struct cxl_cper_prot_err *p_err);
-> +
->  #ifdef CONFIG_ACPI_APEI_GHES
->  int cxl_cper_register_work(struct work_struct *work);
->  int cxl_cper_unregister_work(struct work_struct *work);
+>  fs/iomap/swapfile.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/fs/iomap/swapfile.c b/fs/iomap/swapfile.c
+> index 5fc0ac36dee3..1f7b189089dd 100644
+> --- a/fs/iomap/swapfile.c
+> +++ b/fs/iomap/swapfile.c
+> @@ -49,6 +49,16 @@ static int iomap_swapfile_add_extent(struct iomap_swap=
+file_info *isi)
+>         next_ppage =3D ALIGN_DOWN(iomap->addr + iomap->length, PAGE_SIZE)=
+ >>
+>                         PAGE_SHIFT;
+>
+> +#ifdef CONFIG_HIBERNATION
+> +       /*
+> +        * Print a warning if the starting physical block is not aligned
+> +        * to PAGE_SIZE (for filesystems using smaller block sizes).
+> +        * This will fail the hibernation suspend as we need to read
+> +        * the swap header later using the starting block offset.
+> +        */
+> +       if (!iomap->offset && iomap->addr & PAGE_MASK)
+> +               pr_warn("swapon: starting physical offset not page-aligne=
+d\n");
+> +#endif
+>         /* Skip too-short physical extents. */
+>         if (first_ppage >=3D next_ppage)
+>                 return 0;
+> --
+> 2.34.1
+>
+>
 
