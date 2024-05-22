@@ -1,88 +1,245 @@
-Return-Path: <linux-kernel+bounces-186534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA098CC54E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEF768CC558
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D002826C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863A2280E3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034F11422DF;
-	Wed, 22 May 2024 17:05:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C91422B5;
+	Wed, 22 May 2024 17:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HBnV2ChT"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C41F17B;
-	Wed, 22 May 2024 17:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523431F17B;
+	Wed, 22 May 2024 17:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716397537; cv=none; b=dln0lB1/rdve/SuN+eEN3AiE5S9XaIxy/Wf2zg1o4a3iKK0bZibDJg4Fz5A2WQS1JyL8eb3s6dCewpj2Dq2mImex354/MBnyK8KRwtxz3vCuOrPoB04CEcUgLjgGXpWrdIxBLBDyCApOk2b908F/P8AFbBQcuAL0uEEYigEB/yo=
+	t=1716397666; cv=none; b=otKL69xQy5NdnKNIVakdXpSWy+GJFHmjE90ZLKTFJiz6BUynueVRmxRuQbzx4gf4a/L2mXlols/ebnKNT8tJv981gjc7+4GUr8LRlhDxamg3nzQRvgtQ3GRGDHXEkB2aLKi/Cc0vOxFdU3cr7crtgad3s2l6OEK0arn8MTKlgFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716397537; c=relaxed/simple;
-	bh=mwwMo0Vvvhtk4BnzEWt4A3iCr981iZe9k75eEk/w0xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UT0zFNwQOh9MJTr6S43dnGpuSfOo9zs3WVhTirWfe0wy1dBEH98mwLyIdEUtGJ9cINuucT6MZhgm7B5BkQz8+qsAouGWVWKJwEYKAQda5939Ngaup5Qj2nKZ6k+6a+j8ZC4v+s0c39CuRTA9FSVieittqqYGudjTSg4n6DaTjes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34ABEC32789;
-	Wed, 22 May 2024 17:05:34 +0000 (UTC)
-Date: Wed, 22 May 2024 18:05:31 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v2 12/14] arm64: realm: Support nonsecure ITS emulation
- shared
-Message-ID: <Zk4l2xFBDW_3ImFD@arm.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-13-steven.price@arm.com>
- <ZkSV7Z8QFQYLETzD@arm.com>
- <74011ac1-34e0-4ee3-a00d-f78ad334fce2@arm.com>
+	s=arc-20240116; t=1716397666; c=relaxed/simple;
+	bh=/kt+NqBwmu9PAbUDYn6qhBk39YQggcMNamNlMPFBDJ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ivL1iUTlqYMFURB3AQ1tLqrP9NUnPAeLQ02zT+uLweVbQ0xyZ1okBuQyL7b995YtrlH/xo6Z//7fXg1cy26qo6kIhqfOfvkR0TLY15C1Ab5U/8jCoIxjC3j7h2la5YyTm4rRpTO9mBCiURGwo/7v3bF5hqDlrOWDx6RjvUIq1S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HBnV2ChT; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716397662;
+	bh=/kt+NqBwmu9PAbUDYn6qhBk39YQggcMNamNlMPFBDJ8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HBnV2ChTSuVUyx1gZvBatJ3jZWQU8fvjLE2KcRbYDhn8hhepV235/Cq8ZYf+3h6QX
+	 mTA/uphi+W1KwQInP/Kf/q/DfuyiuAUk8ujcIjiRT2xVTqfcnqAkcrBMqLjVCpxb8u
+	 4nKXqcm7doHJt6YOaMB7ZSKhd19yFdg/bKk6Z1SeGMC6d8jI2qpNr7wyoRKyVpekMY
+	 afHlWY+lGqgK5rpzQdYuw4YmujEDQSE92aP8c4e5vdNnqYkdC/jEKpn6lLxsIjmxhS
+	 3pA2xoJqWukhfUy2zGxPkVFaqH2qVkVnPaCGZeC///JSG19LHrqkrEotPuOCLuj52q
+	 g/eNV/Ifjortg==
+Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B2A82378216B;
+	Wed, 22 May 2024 17:07:40 +0000 (UTC)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: kernel@collabora.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] selftests/thermel/intel: conform the test to TAP output
+Date: Wed, 22 May 2024 10:06:48 -0700
+Message-Id: <20240522170655.2879712-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74011ac1-34e0-4ee3-a00d-f78ad334fce2@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 22, 2024 at 04:52:45PM +0100, Steven Price wrote:
-> On 15/05/2024 12:01, Catalin Marinas wrote:
-> > On Fri, Apr 12, 2024 at 09:42:11AM +0100, Steven Price wrote:
-> >> @@ -3432,7 +3468,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
-> >>  	nr_ites = max(2, nvecs);
-> >>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
-> >>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
-> >> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
-> >> +	itt_order = get_order(sz);
-> >> +	page = its_alloc_shared_pages_node(its->numa_node,
-> >> +					   GFP_KERNEL | __GFP_ZERO,
-> >> +					   itt_order);
-> > 
-> > How much do we waste by going for a full page always if this is going to
-> > be used on the host?
-> 
-> sz is a minimum of ITS_ITT_ALIGN*2-1 - which is 511 bytes. So
-> potentially PAGE_SIZE-512 bytes could be wasted here (minus kmalloc
-> overhead).
+Conform the layout, informational and status messages to TAP. No
+functional change is intended other than the layout of output messages.
 
-That I figured out as well but how many times is this path called with a
-size smaller than a page?
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+ .../intel/workload_hint/workload_hint_test.c  | 98 ++++++++-----------
+ 1 file changed, 39 insertions(+), 59 deletions(-)
 
+diff --git a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
+index 217c3a641c537..d107c2d6f3a22 100644
+--- a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
++++ b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
+@@ -9,6 +9,7 @@
+ #include <fcntl.h>
+ #include <poll.h>
+ #include <signal.h>
++#include "../../../kselftest.h"
+ 
+ #define WORKLOAD_NOTIFICATION_DELAY_ATTRIBUTE "/sys/bus/pci/devices/0000:00:04.0/workload_hint/notification_delay_ms"
+ #define WORKLOAD_ENABLE_ATTRIBUTE "/sys/bus/pci/devices/0000:00:04.0/workload_hint/workload_hint_enable"
+@@ -31,17 +32,13 @@ void workload_hint_exit(int signum)
+ 	/* Disable feature via sysfs knob */
+ 
+ 	fd = open(WORKLOAD_ENABLE_ATTRIBUTE, O_RDWR);
+-	if (fd < 0) {
+-		perror("Unable to open workload type feature enable file\n");
+-		exit(1);
+-	}
++	if (fd < 0)
++		ksft_exit_fail_perror("Unable to open workload type feature enable file");
+ 
+-	if (write(fd, "0\n", 2) < 0) {
+-		perror("Can' disable workload hints\n");
+-		exit(1);
+-	}
++	if (write(fd, "0\n", 2) < 0)
++		ksft_exit_fail_perror("Can' disable workload hints");
+ 
+-	printf("Disabled workload type prediction\n");
++	ksft_print_msg("Disabled workload type prediction\n");
+ 
+ 	close(fd);
+ }
+@@ -54,32 +51,27 @@ int main(int argc, char **argv)
+ 	char delay_str[64];
+ 	int delay = 0;
+ 
+-	printf("Usage: workload_hint_test [notification delay in milli seconds]\n");
++	ksft_print_header();
++	ksft_set_plan(1);
++
++	ksft_print_msg("Usage: workload_hint_test [notification delay in milli seconds]\n");
+ 
+ 	if (argc > 1) {
+ 		ret = sscanf(argv[1], "%d", &delay);
+-		if (ret < 0) {
+-			printf("Invalid delay\n");
+-			exit(1);
+-		}
++		if (ret < 0)
++			ksft_exit_fail_perror("Invalid delay");
+ 
+-		printf("Setting notification delay to %d ms\n", delay);
++		ksft_print_msg("Setting notification delay to %d ms\n", delay);
+ 		if (delay < 0)
+-			exit(1);
+-
+-		sprintf(delay_str, "%s\n", argv[1]);
++			ksft_exit_fail_msg("delay can never be negative\n");
+ 
+ 		sprintf(delay_str, "%s\n", argv[1]);
+ 		fd = open(WORKLOAD_NOTIFICATION_DELAY_ATTRIBUTE, O_RDWR);
+-		if (fd < 0) {
+-			perror("Unable to open workload notification delay\n");
+-			exit(1);
+-		}
++		if (fd < 0)
++			ksft_exit_fail_perror("Unable to open workload notification delay");
+ 
+-		if (write(fd, delay_str, strlen(delay_str)) < 0) {
+-			perror("Can't set delay\n");
+-			exit(1);
+-		}
++		if (write(fd, delay_str, strlen(delay_str)) < 0)
++			ksft_exit_fail_perror("Can't set delay");
+ 
+ 		close(fd);
+ 	}
+@@ -93,63 +85,51 @@ int main(int argc, char **argv)
+ 
+ 	/* Enable feature via sysfs knob */
+ 	fd = open(WORKLOAD_ENABLE_ATTRIBUTE, O_RDWR);
+-	if (fd < 0) {
+-		perror("Unable to open workload type feature enable file\n");
+-		exit(1);
+-	}
++	if (fd < 0)
++		ksft_exit_fail_perror("Unable to open workload type feature enable file");
+ 
+-	if (write(fd, "1\n", 2) < 0) {
+-		perror("Can' enable workload hints\n");
+-		exit(1);
+-	}
++	if (write(fd, "1\n", 2) < 0)
++		ksft_exit_fail_perror("Can' enable workload hints");
+ 
+ 	close(fd);
+ 
+-	printf("Enabled workload type prediction\n");
++	ksft_print_msg("Enabled workload type prediction\n");
+ 
+ 	while (1) {
+ 		fd = open(WORKLOAD_TYPE_INDEX_ATTRIBUTE, O_RDONLY);
+-		if (fd < 0) {
+-			perror("Unable to open workload type file\n");
+-			exit(1);
+-		}
++		if (fd < 0)
++			ksft_exit_fail_perror("Unable to open workload type file");
+ 
+-		if ((lseek(fd, 0L, SEEK_SET)) < 0) {
+-			fprintf(stderr, "Failed to set pointer to beginning\n");
+-			exit(1);
+-		}
++		if ((lseek(fd, 0L, SEEK_SET)) < 0)
++			ksft_exit_fail_perror("Failed to set pointer to beginning");
+ 
+-		if (read(fd, index_str, sizeof(index_str)) < 0) {
+-			fprintf(stderr, "Failed to read from:%s\n",
+-			WORKLOAD_TYPE_INDEX_ATTRIBUTE);
+-			exit(1);
+-		}
++		if (read(fd, index_str, sizeof(index_str)) < 0)
++			ksft_exit_fail_perror("Failed to read from: workload_type_index");
+ 
+ 		ufd.fd = fd;
+ 		ufd.events = POLLPRI;
+ 
+ 		ret = poll(&ufd, 1, -1);
+ 		if (ret < 0) {
+-			perror("poll error");
+-			exit(1);
++			ksft_exit_fail_perror("poll error");
+ 		} else if (ret == 0) {
+-			printf("Poll Timeout\n");
++			ksft_print_msg("Poll Timeout\n");
+ 		} else {
+-			if ((lseek(fd, 0L, SEEK_SET)) < 0) {
+-				fprintf(stderr, "Failed to set pointer to beginning\n");
+-				exit(1);
+-			}
++			if ((lseek(fd, 0L, SEEK_SET)) < 0)
++				ksft_exit_fail_perror("Failed to set pointer to beginning");
+ 
+-			if (read(fd, index_str, sizeof(index_str)) < 0)
+-				exit(0);
++			if (read(fd, index_str, sizeof(index_str)) < 0) {
++				ksft_test_result_pass("Successfully read\n");
++				ksft_finished();
++			}
+ 
+ 			ret = sscanf(index_str, "%d", &index);
+ 			if (ret < 0)
+ 				break;
+ 			if (index > WORKLOAD_TYPE_MAX_INDEX)
+-				printf("Invalid workload type index\n");
++				ksft_print_msg("Invalid workload type index\n");
+ 			else
+-				printf("workload type:%s\n", workload_types[index]);
++				ksft_print_msg("workload type:%s\n", workload_types[index]);
+ 		}
+ 
+ 		close(fd);
 -- 
-Catalin
+2.39.2
+
 
