@@ -1,188 +1,135 @@
-Return-Path: <linux-kernel+bounces-186282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E8B8CC22B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0588CC230
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8593E284981
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2181C20E75
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615A313FD6D;
-	Wed, 22 May 2024 13:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F55140375;
+	Wed, 22 May 2024 13:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSCrCvCF"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="My5N5kfp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0E81E863;
-	Wed, 22 May 2024 13:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED7413D638;
+	Wed, 22 May 2024 13:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716384685; cv=none; b=EXL9Pk2R+dGw4FxQY8S0PRlu3AoHqidtjkl6rdg4Nrdn0GGGiOvVFjln6lmU4ICcsCTP9lyZcDA6qVcoY4rGpkSdaiLq+3MhhHlvtxwOLCD18iqU6/BbGNgFsK114b379haw5GkEYl+hLmnxsL1rlKioCDqQQRXw3Xlah9hFr6k=
+	t=1716384844; cv=none; b=Nf20Db+LSOoBWjes/ymXH71OeN6hTpfMUkdu8+cDBBDIUioZq560Iy41dn1tTtXwi9Y0V5feqOkRApQ+BGuFpVSNkdBGn6B3uGBUL5mH1c9qfQEPC8AERUJESV3FEM6ONmVvTxptOs7bIJNWLyeA/MeKsfEb+HQYlmAGsUjJVHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716384685; c=relaxed/simple;
-	bh=1dqu49KIhHX03dY2eY4sz5bfwjB0DUIJyZNap3tF754=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uNmWEmXO5zJPC4qvsvxTGN71j2r1VBWRkV4cXIeh+mNRd6PLdRKLFGH1IHzzgA0a9S5NjY42BivDEvhyGG95F+ZNX3TD+xhIDEiEqiAgNOxUB6jAQ2NP37I5lFECPz977yqoh+4RQTrZleFODcAXz1Tr3qlKl3cGw+IqU/xRjX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSCrCvCF; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4202cea98daso7639425e9.0;
-        Wed, 22 May 2024 06:31:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716384682; x=1716989482; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1dqu49KIhHX03dY2eY4sz5bfwjB0DUIJyZNap3tF754=;
-        b=DSCrCvCF4wZaXlGTORjaonaKLTxXwcZ6Xg4C1ZnqJ6M0c0Nba8cccbeIEJycSaJ8pQ
-         LvqdEgPeyn6M5kC4ZyxspChXHwpu/3xS66Y/PWs83arTlazGsquXYAaxLeG5xQySJ149
-         vofr23C/u5v0ctFZnXfKiHGQ7MSFinYl57ck0kZ1gR38gyoiu5REkWcOapU7puABSuon
-         +knhzx2BqjUb5m6BuFKiD3Mg7KnIaftrW/ccuU1QwR1UXwCfe7ktdCnVoK4CYGQpr4ez
-         PHlIhgeqriPOQp6XsH4OvdBCRmQF1hoBh+rCom+Y1p/EkOMcRDadCqFT/NiHKINsXik7
-         HSHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716384682; x=1716989482;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1dqu49KIhHX03dY2eY4sz5bfwjB0DUIJyZNap3tF754=;
-        b=e/RykAo6H+CHROz1BYeucCjVG1TzPNJTdkj7tN2rNsa7uhPsRzcT4kP4O27ixxGrLH
-         XUkZv59+gDkAGiTtnkMIOD0l4RFjXARyEEts+aCBUxwsDlgXNPBYbBmwptVEfy/URn/7
-         R5W7oMR6Z8Uocb+FjKZimZFye1HCkYdZqVAA4EvHQrM+xOEkbltn/PikJRUCL5DpE0x+
-         sj3HEkgPNMTOfwdoOaQKUrd2IADcaGNhnEtCeh9BIdA/fnrqy7qtCFVRPKC6ZgHra0Wn
-         sRUJ1M6zBxmH+zHsBf5GlK9KLpoOX8LqcOOmlXhmCRykvsvOSzKLivWSkdXFceVVQtuI
-         a1rg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5dgUk3SzZj+UqOGCfsDFIxmYd5b9ylCi/F9YBH/7r9yehZd9+1+At41s9us3lmEhbWzoHOstxCywN+B7dultrtazfGrm/MZ5udQnMFzt3qSctOUp6Wj45ILiPVAyGWWWT3aWaHldoT9OWIm4HzgKj1pKA/H5gIkYRodn5X7gWFEG+wbK7weICTn63sOxQUCvly3/N
-X-Gm-Message-State: AOJu0YxChrKncCT8g2foW84HmEoSaMYCHlZ8wo+R3Nx74OqHWh5LlQjj
-	LMBlzQ7SnoFjYSPXJuy7TgGCnI/kMK/38hYuV2pzXJ9wS4TJthy2
-X-Google-Smtp-Source: AGHT+IHvDjyB71F/5YoiFEt7yx1RM6sBzbPAZJyZJH6vwMhYIl3p7lksTQbf9pFsBUP4SzZArROpsQ==
-X-Received: by 2002:a5d:6383:0:b0:34d:e598:b716 with SMTP id ffacd0b85a97d-354dababedbmr1388018f8f.67.1716384682226;
-        Wed, 22 May 2024 06:31:22 -0700 (PDT)
-Received: from ?IPv6:2001:8a0:e622:f700:597:127d:3af6:7529? ([2001:8a0:e622:f700:597:127d:3af6:7529])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbe43sm34226615f8f.99.2024.05.22.06.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 06:31:21 -0700 (PDT)
-Message-ID: <9098d5912a87cbfaaf0de2fdd041d0c5ac1af1fa.camel@gmail.com>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: Vitor Soares <ivitro@gmail.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, James Bottomley
-	 <James.Bottomley@HansenPartnership.com>, linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Wed, 22 May 2024 14:31:20 +0100
-In-Reply-To: <56e52200bd9ede6bcdcc907d24bd4a3e0dddd24f.camel@gmail.com>
-References: <20240519235122.3380-1-jarkko@kernel.org>
-	 <20240519235122.3380-2-jarkko@kernel.org>
-	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
-	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
-	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
-	 <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
-	 <D1G5O2Z86E4W.2DHG4QZE2W2JG@kernel.org>
-	 <56e52200bd9ede6bcdcc907d24bd4a3e0dddd24f.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1716384844; c=relaxed/simple;
+	bh=XENaKu81uo2SnkATLjfJUrruUWNLlv+2wqPqvQQ/VxA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q33kYhpfYtFq2vd0IVNZtHU1cGokLmAgq0CI2D6/C/4xLYyoYhaTmEpYiv2KIwv/PG1L4vAqskwr0QXuqCnSgTj8xS9kMi/cBewwigKMKoxsgbRoq4n8VVf33gsuJTWmdHeq/T4suSWgBGtrGmXlFgl5nyTcnSokw+GXuABO9EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=My5N5kfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07A8EC2BD11;
+	Wed, 22 May 2024 13:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716384842;
+	bh=XENaKu81uo2SnkATLjfJUrruUWNLlv+2wqPqvQQ/VxA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=My5N5kfpNLUnMPhTU4qVCq25Z7PPaXf1dmyAZATelZya55RQq7jMApIehmRhfjtfc
+	 TfJpjFIh5XVXA4rzz9nBtnmr6ALDqzV03z230nlm+TeASnPpvjTPE9xWh1swhT1NgE
+	 RLftBDCBLhYHFoJfKltNPKbmwwni2nKyDML6jM66Y3QOJODac6cRmO8a1mxLNf03R5
+	 cIKMt2clJGT9UpX1nB4PnFHl5YFYxrLC1hIVkaprJZJM3ylcT8EBmLidyw+3EX3lsJ
+	 9xp8ZBXmpsxYT9XmSxZK4t1k6Xf77yhDiNJo+BzssqRQQtHdqncViPcunxNGLgNW/o
+	 AkZ20lX0Z9i4Q==
+Message-ID: <efb07835-8894-43d0-9fe1-14cb865db135@kernel.org>
+Date: Wed, 22 May 2024 15:33:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: iio: adc: add a7779 doc
+To: ranechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240522120208.18575-1-ramona.nechita@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240522120208.18575-1-ramona.nechita@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-05-22 at 14:17 +0100, Vitor Soares wrote:
-> On Wed, 2024-05-22 at 15:01 +0300, Jarkko Sakkinen wrote:
-> > On Wed May 22, 2024 at 11:18 AM EEST, Vitor Soares wrote:
-> > > On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
-> > > > On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
-> > > > > This benchmark could be done in user space using /dev/tpm0.
-> > > >=20
-> > > > Let's actually try that.=C2=A0 If you have the ibmtss installed, th=
-e command
-> > > > to time primary key generation from userspace on your tpm is
-> > > >=20
-> > > > time tsscreateprimary -hi n -ecc nistp256
-> > > >=20
-> > > >=20
-> > > > And just for chuckles and grins, try it in the owner hierarchy as w=
-ell
-> > > > (sometimes slow TPMs cache this)
-> > > >=20
-> > > > time tsscreateprimary -hi o -ecc nistp256
-> > > >=20
-> > > > And if you have tpm2 tools, the above commands should be:
-> > > >=20
-> > > > time tpm2_createprimary -C n -G ecc256
-> > > > time tpm2_createprimary -C o -G ecc256
-> > > >=20
-> > > > James
-> > > >=20
-> > > >=20
-> > >=20
-> > > Testing on an arm64 platform I get the following results.
-> >=20
-> > OK, appreciate these results. I try to get mine this week, if I can
-> > allocate some bandwidth but latest early next week. The Intel CPU
-> > I'll be testing is Intel Celeron J4025:
-> >=20
-> > https://www.intel.com/content/www/us/en/products/sku/197307/intel-celer=
-on-processor-j4025-4m-cache-up-to-2-90-ghz/specifications.html
-> >=20
-> > So if things work reasonably fast with this, then I think we can
-> > enable the feature at least on X86_64 by default, and make it
-> > opt-in for other arch's.
-> >=20
-> > I sent already this patch but holding with PR up until rc1 is
-> > out so that there is some window to act:
-> >=20
-> > https://lore.kernel.org/linux-integrity/20240521130921.15028-1-jarkko@k=
-ernel.org/
-> >=20
-> > If I need to send an updated patch ("default X86_64") and rip
-> > transcrip from below results.
-> >=20
-> > But to do that correctly I'd need to know at least:
-> >=20
-> > 1. What is the aarch64 platform you are using?
->=20
-> I was testing this on the Toradex Verdin iMX8MM SoM.
->=20
-> > 2. What kind of TPM you are using and how is it connect?
->=20
-> TPM device is the ATTPM20P connect through the SPI at speed of 36 MHz.
-> The bus is shared with a CAN controller (MCP251xFD), so both mues work
-> together.
->=20
-> The dts looks like:
-> tpm1: tpm@1 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "atmel,attpm20p=
-", "tcg,tpm_tis-spi";
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 interrupts-extended =3D <&gpio=
-1 7 IRQ_TYPE_LEVEL_LOW>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl-0 =3D <&pinctrl_can2_i=
-nt>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pinctrl-names =3D "default";
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <1>;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spi-max-frequency =3D <3600000=
-0>;
-> };
->=20
-> Regards,
-> Vitor Soares
+On 22/05/2024 14:01, ranechita wrote:
+> Add dt bindings for adc ad7779.
+> 
+> Signed-off-by: ranechita <ramona.nechita@analog.com>
 
-For the sake of clarity, the timing tests were done without CAN enabled.
+Are you sure that's the name or identity you want to use? Looks like
+misconfigured git...
 
->=20
-> >=20
-> > Obviously if I make this decision, I'll put you as "Reported-by".
-> >=20
-> >=20
->=20
+> ---
+>  .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+>  .../bindings/iio/adc/adi,ad7779.yaml          | 93 +++++++++++++++++++
+
+Where is any user of it?
+..
+
+> +
+> +  clock-names:
+> +    items:
+> +      - const: adc-clk
+
+Drop names, it repeats what's obvious.
+
+
+Best regards,
+Krzysztof
 
 
