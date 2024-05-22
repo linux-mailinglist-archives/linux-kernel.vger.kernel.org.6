@@ -1,116 +1,126 @@
-Return-Path: <linux-kernel+bounces-185890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1EE8CBC85
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:59:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158398CBC8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D31AB216EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0EFB282849
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAFE7E579;
-	Wed, 22 May 2024 07:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8BC7E785;
+	Wed, 22 May 2024 08:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRngYAHc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrqtgxHH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB387B3E5;
-	Wed, 22 May 2024 07:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2779182DB;
+	Wed, 22 May 2024 08:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716364772; cv=none; b=q8e0ozLPCA6oVGjjAzXj+YnbjG4qUDVDDsZqKFLY335DXXI1pkV22PSj+GjRroC7KP8e2INO3apHOucVYq5eslLFYGwHXhMrDYnT6noEE/q0e94uKi156DSulH4+/zWIVVqqCKQsa0lUJ9AH8CVE5b40QF8sSngwlW50WLwylGM=
+	t=1716364831; cv=none; b=REXW1qs/mM0XltAZU00+q2crMRaU6e4HliHC6O/hc7pVyFsO51FeS3IdjTYtA2os0EbE7SqI4UkPjjUzesjtFeocp9OEH63wJoULMhyAASJ5L384AjeB0j3dYkBKs5klVtxVqlgOMEV+6b25iZCTH5XVZBBQBc91C5CjYZUQwoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716364772; c=relaxed/simple;
-	bh=N3iti17OfcUn8VUy6eLkIktbxGicvZRj9Al44bzEv2I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tlMqleggI1So6Hn067wewjErGU0ZPvc3eCoDlU0vTLCfs1D7iLNfOp7S9UDdQd0oCeE55OUCabYmADoyV+6NZWxDIbDcf0fQQZuR5mADGbL4ekMuLo0sQZDjuKJ6vnj7CKqhEC26GwGfTAwM8WKFXQ9PbzcXRCwhSpbcua0ncmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRngYAHc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 181D6C4AF07;
-	Wed, 22 May 2024 07:59:32 +0000 (UTC)
+	s=arc-20240116; t=1716364831; c=relaxed/simple;
+	bh=k03dfXKacAQksrmP4DO5pxvFhcvSvUfVXIXzKKP1VCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSoyLtk/t3ggFtj4qehS0bj3PfhN6R84kAWAT8aBPzLYcTBW0Ua99iN/nCTZevp5Oe0Jjr2Y3z0xL4M+wqrRhPLP0j9pg0XrzjFNqof/zrzZHgUo9vbgnCvHnQDGsE5OZQMFJ5zVxiL7lUvNysKTJ9GE+NKW+FULD42qcgtd8jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrqtgxHH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ADC8C32781;
+	Wed, 22 May 2024 08:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716364772;
-	bh=N3iti17OfcUn8VUy6eLkIktbxGicvZRj9Al44bzEv2I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CRngYAHcZfQ5hzbpoEBgQ3EKPTdm3waecrQ9gG5h8nHxFR9DID2XyPLduZ0BvooBH
-	 /Hm/pxUjTg37ITiW/ar6AnlUNNVdRuY4Kxz+QzJkjU3i1757Rpy05OKL7wGEP4fpSa
-	 arHaxxyhKKJ0AOpSvaHd7+BNHLLBgydDDHqnUG+FKPSSGQmmrgzaMNZGSFwYeSXACw
-	 Ib6Cr211xReCGFed2YkWoWu9oQ4A5Dbu2zqKuk3IDfcdmTedF58kFSy/CdWSqiQ34+
-	 URCXfo3bwCgXZ1nxB0huvxKNQx868ESVG7XLZvY4Wno6SjICm6mXjaasdl4LpCm5XX
-	 XZwts4I4F8JHQ==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e72224c395so34729081fa.3;
-        Wed, 22 May 2024 00:59:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVejOPW7rUtyFHnX7WqUR6bHcY4j0pyHZrYcj+ZyH3izCrDnIqOoUoF76Q2SVsJuJoItBAvzPnYWc3Lm02DwLZ9P6+hQ7fSY5/VXJGN4/W94m+45Xp/MOzOtqSqBjs3FTKE4dD6
-X-Gm-Message-State: AOJu0YzEfb59f8KAcPKPFJ6C5XO9xhB6YV81xICl2Gu7DcQIDxbKIUPg
-	WZpG84mwmeUAvR2QJeE+0Iuv/JS1uBqyhY4yRG5nUgVroY7PZEKpVE0e8pSXPWB6vPkgUnOMIdA
-	jG2rtf/AqV7w1hXsRP5qzx7f39wU=
-X-Google-Smtp-Source: AGHT+IHWS9tj8VJIzXsP0D+C/CspjE/XGnPtEd2Ju1GXqpgie5xRBedC6u++vj3ver/nUVV9fv+/hNon0a+ZZbGjn6I=
-X-Received: by 2002:ac2:598f:0:b0:51e:1264:8435 with SMTP id
- 2adb3069b0e04-526bf35ce18mr590649e87.27.1716364770414; Wed, 22 May 2024
- 00:59:30 -0700 (PDT)
+	s=k20201202; t=1716364831;
+	bh=k03dfXKacAQksrmP4DO5pxvFhcvSvUfVXIXzKKP1VCQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JrqtgxHHQ73jfB7ZtvLDnbb5gv1FpAQmvRfxfjthcoGCksvmVCrUoIeHItMSHtuxz
+	 6kFHJhJqOFcqar2hutAA0fITAM3V0kM3YXVes4g9QC+n/hnMyiTGuVPos1NGVCiswt
+	 9kl7cKXk5V1NpeQ+Eg5MUtE0FzsgOmybdopoJTrfAEj/mnABxEMIpsLQYdyeWQpXJv
+	 me6/pzaRIG/3F2SUElz5lNnSjm31LiYQkuDEq8wDYzlILW8Y/V+K0IV0auW/C5Ivu0
+	 FBnlQY8YW+ViIRqgcVYxPHO96fFaRbUZkva/Z+mY0FnT7zxBMTQjPMAlIp0n7WBPNI
+	 abYZxxfY72DoA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s9gte-000000000fm-3hPm;
+	Wed, 22 May 2024 10:00:27 +0200
+Date: Wed, 22 May 2024 10:00:26 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 11/13] mfd: pm8008: rework driver
+Message-ID: <Zk2mGpseH3DFqCjK@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-12-johan+linaro@kernel.org>
+ <ZjktIrsZS-T7cm-A@surfacebook.localdomain>
+ <ZjyafGz_1pY4J9C7@hovoldconsulting.com>
+ <CAHp75VfP2AB45mn6gB3suCAO9iT3bOWZ=7m9U7E087Lac0P3gg@mail.gmail.com>
+ <Zk2VX5JRzmePxG4N@hovoldconsulting.com>
+ <CAHp75Vcs3DvBK3P058gU6L-24Q9PTrPg_hLujxaUGHNB=JCW0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522-loongarch-booting-fixes-v2-0-727edb96e548@flygoat.com> <20240522-loongarch-booting-fixes-v2-4-727edb96e548@flygoat.com>
-In-Reply-To: <20240522-loongarch-booting-fixes-v2-4-727edb96e548@flygoat.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 22 May 2024 15:59:18 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7b_-QyQUPTCz1zFEz4YjZeB-ta5yAZgPLiNkUXosw-Uw@mail.gmail.com>
-Message-ID: <CAAhV-H7b_-QyQUPTCz1zFEz4YjZeB-ta5yAZgPLiNkUXosw-Uw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] LoongArch: Override higher address bits in JUMP_VIRT_ADDR
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75Vcs3DvBK3P058gU6L-24Q9PTrPg_hLujxaUGHNB=JCW0A@mail.gmail.com>
 
-Hi, Jiaxun,
+On Wed, May 22, 2024 at 10:13:33AM +0300, Andy Shevchenko wrote:
+> On Wed, May 22, 2024 at 9:49 AM Johan Hovold <johan@kernel.org> wrote:
+> > On Fri, May 10, 2024 at 04:15:43PM +0300, Andy Shevchenko wrote:
+> > > On Thu, May 9, 2024 at 12:42 PM Johan Hovold <johan@kernel.org> wrote:
+> > > > On Mon, May 06, 2024 at 10:18:58PM +0300, Andy Shevchenko wrote:
+> > > > > Mon, May 06, 2024 at 05:08:28PM +0200, Johan Hovold kirjoitti:
 
-On Wed, May 22, 2024 at 2:30=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.co=
-m> wrote:
->
-> In JUMP_VIRT_ADDR we are performing an or calculation on
-> address value directly from pcaddi.
->
-> This will only work if we are currently running from direct
-> 1:1 mapping addresses or firmware's DMW is configured exactly
-> same as kernel. Still, we should not rely on such assumption.
->
-> Fix by overriding higher bits in address comes from pcaddi,
-> so we can get rid of or operator.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
-> v2: Overriding address with bstrins
-> ---
->  arch/loongarch/include/asm/stackframe.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/include/asm/stackframe.h b/arch/loongarch/inc=
-lude/asm/stackframe.h
-> index 45b507a7b06f..51dec8b17d16 100644
-> --- a/arch/loongarch/include/asm/stackframe.h
-> +++ b/arch/loongarch/include/asm/stackframe.h
-> @@ -42,7 +42,7 @@
->         .macro JUMP_VIRT_ADDR temp1 temp2
->         li.d    \temp1, CACHE_BASE
->         pcaddi  \temp2, 0
-> -       or      \temp1, \temp1, \temp2
-> +       bstrins.d       \temp1, \temp2, (DMW_PABITS - 1), 0
->         jirl    zero, \temp1, 0xc
->         .endm
-Can we align the first parameter about the first parameter?
+> > > > > > +static void devm_irq_domain_fwnode_release(void *res)
+> > > > > > +{
+> > > > >
+> > > > > > +   struct fwnode_handle *fwnode = res;
+> > > > >
+> > > > > Unneeded line, can be
+> > > > >
+> > > > > static void devm_irq_domain_fwnode_release(void *fwnode)
+> > > > >
+> > > > > > +   irq_domain_free_fwnode(fwnode);
+> > > > > > +}
+> > > >
+> > > > I think I prefer it this way for clarity and for type safety in the
+> > > > unlikely even that the argument to irq_domain_free_fwnode() would ever
+> > > > change.
+> > >
+> > > If it ever changes, the allocation part most likely would need an
+> > > update and since devm_add_action() takes this type of function, I
+> > > don't believe the argument would ever change from void * to something
+> > > else. With this it just adds an additional burden on the conversion.
+> >
+> > I was referring to the irq_domain_free_fwnode() prototype.
+> 
+> And I also referred to that one. The release callback, i.e. the type
+> of the parameter, is solely defined by a caller of devm_add_action()
+> end friends, and in this case it means that if ever the type changes
+> (this is your argument why you want to have explicit line for that,
+> necessity of which I oppose) the devm_add_action() arguments also has
+> to be changed, it can't be done _just_ there, in
+> irq_domain_free_fwnode().
 
-Huacai
->
->
-> --
-> 2.43.0
->
+No, not necessarily, but as I already wrote above this is unlikely to
+ever be of practical concern.
+
+Johan
 
