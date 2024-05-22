@@ -1,269 +1,236 @@
-Return-Path: <linux-kernel+bounces-186741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4789F8CC834
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:45:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D6C8CC837
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED144282936
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:45:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D50B282937
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FE48060A;
-	Wed, 22 May 2024 21:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9568060A;
+	Wed, 22 May 2024 21:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UQHB6zJe";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Qa8c9yCH"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q6zkypWr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A367F7F7
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716414316; cv=fail; b=Vs0ifJ26VxM1Yr5IpTNfCpvUfFIBxcYRIKZXyPgQB7LbtI+QZao0vzj789CzLnY9VFZ3nu2pMjJiES7oBHum6O55SSK9zow/YXzQ4PBuOkBC0cZ7T34gsJHf/V1XZhJk/FO95bdKhnXr25RvaxHO1c8OmJtjnUGlcY2xssZLVBk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716414316; c=relaxed/simple;
-	bh=81W+2PO/JyFGzN4I7/pM3k4AwXXNIwpyR3mAr4J8w8Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iU1Rt0KLmMZsD4nr1RWtPlB+wbDp3FBXZy2ZPVDFdMO8dKXTrG6aCurKyW0vlFtJp8z5JBBPsQviU9htK3FI17SjWWYgegC+w+QCB+2yjVlieNRHeiXIsICtDks2iNz+9Q83rQVj6F+b01L2yEU+oliNcb/so+YICQwCB6YykG8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UQHB6zJe; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Qa8c9yCH; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44MLawx4004699;
-	Wed, 22 May 2024 21:44:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=uTht2xriqou4gUeoNVWdfdYZ2Aytd3hAhaaGCaC6k+k=;
- b=UQHB6zJebz0Uho4xgrWRRPiu7SHxR1VmH7HrexzK9R2zteRAQkXraTX0CIEGCs3pFcOP
- jrNwy2h42L2oRVOl36/L954mbNbgrKUsXqBFciEixQFlCk5hNTlAcrx7gfmPnKqbShMa
- SsuGSr0GHBD09k1B6HlhsVYKcgCibcygC80zWTz8ihBOUqmvx3cnSw5cpt4WTgQeInbi
- 02g2nq9HpzOEIWjYieLhKNYcelxUnDgF5NyN1RGpNjNko533QOaD9FtoEunC69Eb2kK3
- AR+vJBXEiAVVigGko0XqvhkGaDZHstdVfF43whI5QNo5YWqUQI1PiACFMK8yCkJLtDyY Sw== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y6jrerq0x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 May 2024 21:44:42 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44MKgGk0005063;
-	Wed, 22 May 2024 21:44:41 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y6jsa3mn4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 May 2024 21:44:41 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kZghFpjfoOQsaEOZenhgmRcP9UBN2e7/9G72Pf55m6fZkRi3GyJKMrocX5ScJk/zLgPaEyAA27+zcw6GnkAqOnD/K4o/xUOS/0OO+jovId3BwMrMP5L3M2UyOKNBWm8aPtkzVDeqNdSfoEtgnYj/fvK6DlnlwoOSYkIOkR2ncaql5rKKF2t2JDTEXwmWNo3tEUIhtZH7WcGhhwH0h0fTiy+VaGTPv/qKBLmzAT+CAIYXBUru60vPO/vw/KkQIe4ATCAAeaMy+480dcJpu2h+B6hkrLm9MJOU7tc8isuTsiPaaYwmtvPyfVa8NHwG1oNeLVqz+iUyL80uVYgyHnA+GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uTht2xriqou4gUeoNVWdfdYZ2Aytd3hAhaaGCaC6k+k=;
- b=GVsSrg3hDFFxXNrxUa6KO0SdRQZ3gDAoQJWwGs0erpR692v97j3OkBHGl5PbNaahUzfI61/EoBC7TTcvNlFTiC3+SMJZMjm7UQ1yI2ctQfAe7Ltdh+UWH2VRDTjqkf1UPLurG3ZAWNR6qkld4Cm4FF64h45HV+GdRxmZTlhHkKLCGXaROTNH26mXwiDFBHvTR0nb48hGgDeKJirth+2BGMRwGTRn87oMa8TtXIFryMa0n8G2ogpDsnI4mvuvKMfjteVpDo2OfyNNrr6Vf/UxPEh3CL4Hr33N3tOk+AG8y3MHw4npc8dYTZcGxJ/B1eWLTVGRMUVsC5hLMRWnO59dTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uTht2xriqou4gUeoNVWdfdYZ2Aytd3hAhaaGCaC6k+k=;
- b=Qa8c9yCHIVjkDiQUVYehR0jB0zhatg1HdMgSQlCmem3X2lel4MN/U/2DWZDCgFTeq0AGOmQEd8to9D8zZ0vKTZjXiSN3Ep/NGN7q1va6HxZk882yJpP4BT6UZlR30QxtfUUAtgK1Y0CZI8W5+YCbPXxrvCemqLCqkb44qbLjoYE=
-Received: from SA0PR10MB6425.namprd10.prod.outlook.com (2603:10b6:806:2c0::8)
- by DS7PR10MB5168.namprd10.prod.outlook.com (2603:10b6:5:3a0::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
- 2024 21:44:39 +0000
-Received: from SA0PR10MB6425.namprd10.prod.outlook.com
- ([fe80::447b:4d38:1f8b:28f1]) by SA0PR10MB6425.namprd10.prod.outlook.com
- ([fe80::447b:4d38:1f8b:28f1%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
- 21:44:39 +0000
-Message-ID: <2c5fed84-bd3f-4f57-893d-59434e64b9c3@oracle.com>
-Date: Wed, 22 May 2024 14:44:36 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] x86/vector: Fix vector leak during CPU offline
-To: Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Cc: mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
-        joe.jin@oracle.com, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux.dev, Borislav Petkov <bp@alien8.de>
-References: <875xv7idcb.ffs@tglx>
-Content-Language: en-US
-From: Dongli Zhang <dongli.zhang@oracle.com>
-In-Reply-To: <875xv7idcb.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL1PR13CA0156.namprd13.prod.outlook.com
- (2603:10b6:208:2bd::11) To SA0PR10MB6425.namprd10.prod.outlook.com
- (2603:10b6:806:2c0::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4617E10B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716414380; cv=none; b=fgztLXQYOXh0pe0UqnVn4ZTTBsw1de1+mTs5CqUNtatMpuTxXN/KUpDWwdyAO8GPBCw9MxJaU+DuHsAGBF1yaYEEMu1hTsFm9o3uTAGySwLyJUFnwE7T1Q3F5VxoVDYYZjwCQFn6N4vj8LzxrOhaAOyOTaZhCiDVN4w8heDYKEM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716414380; c=relaxed/simple;
+	bh=9D+mCskmlHmPyPr1Z1l0AHlbE/4D1ysyOinW+4Cz95U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCLd+DJZ07p5qCNeH53aiEOmuHw+pZFI8AT2kIB1jzTQcIxUiEXwMRDgqMUltXNbt6C2sAOrAzPdwSXhdp6zjik2K0JsvDEKtVyjwoLpLdfeZnF1D4mnerIhtUlynCGm5ExypDFsJz6S/PiiZIopnVGqbPpbg4qm7pGmOajYjn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q6zkypWr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716414377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0IPOkswwA/TJ9xaHowV/cvfG1H4kLvnXT+ET0mPfmoA=;
+	b=Q6zkypWrLByt8VdI/TmX8Ci4YnjIxgXSfDqvlxTVgpJCqQPmyfQfjLfJYDfuQ2deZ46anz
+	WACELr531OEhfE8+8jrUVcwgSyxfts9nakVrVo9bO0qpJlQn+qCJhg+seXeRTGQioyI7pn
+	jY+dVVExxL3fKygyX1FDv9o6W541khg=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-353-yleCh7MuOyy96_a8gv3lxg-1; Wed, 22 May 2024 17:46:15 -0400
+X-MC-Unique: yleCh7MuOyy96_a8gv3lxg-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6ab871c215fso2839676d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:46:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716414375; x=1717019175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0IPOkswwA/TJ9xaHowV/cvfG1H4kLvnXT+ET0mPfmoA=;
+        b=MW6ISOWY08uQUPIyAesIjK5QY3s2famp2ZRpWXArGY1Rj7zKRWwe2yonxEwpXvlOdq
+         8XzbIKEdbShYxS9cjKI0EgwT/i574/NQuDNPchjB7zYUL1h9Wp6lAyYspsUPLjtSgND9
+         1+myS+J3Nogn0EeZKj1SMlX5/aZWtttETsnKERxNWkjxDuFK5fG3nBx1bD+qb5VSAxj4
+         l6eNamtWOszzbVwBeWha54mENSQUHoTzaq3SQgms4Igue3X2ixPd8LkPywAOydF55S15
+         X0cxV4lhPzjPgIttnttrtxgwx06M+I9GDLbjPfYieEcLxKWDagkfLadYaCWXKdyM3y5l
+         F3Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4jB+Ok9CLTwccb2xLkTyHrGCQFtpR3OQDg4DD+Ff/A7APt7Bl5YFHCapixDcdB5QP/vawfwgWeVWce4GxBjPJ52tP7PrfP3C/Hn5f
+X-Gm-Message-State: AOJu0Yz9Jdzo5vi5DBxi9S8Xi8vAnNtoWYV42CttqJJyeYlCH1CVR8wt
+	VnlapK/CrMNd+T18VfclM1oJ7TE0a+DYGykbLCbZGsPEwuMVYccMp353XYqfqxF3ZLi7FmJu9Xa
+	5XJ8JwTimwBpE33E+shL2BB/7OPqvxqmpCtuhI00emw6moRy7lE9wBOl2qdMm8Q==
+X-Received: by 2002:a05:6214:3004:b0:69b:1c6d:9a64 with SMTP id 6a1803df08f44-6ab80920651mr35047096d6.4.1716414374709;
+        Wed, 22 May 2024 14:46:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFrpao2OsvBu8SGwX0VKGUdrFoO4tAR8Hf7zdwQnywyhHnT3+AiYwuxl3MoZyQZWINIE7Uy4g==
+X-Received: by 2002:a05:6214:3004:b0:69b:1c6d:9a64 with SMTP id 6a1803df08f44-6ab80920651mr35046606d6.4.1716414373600;
+        Wed, 22 May 2024 14:46:13 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1cd266sm136827696d6.80.2024.05.22.14.46.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 14:46:13 -0700 (PDT)
+Date: Wed, 22 May 2024 17:46:09 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Oscar Salvador <osalvador@suse.de>
+Cc: Axel Rasmussen <axelrasmussen@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Liu Shixin <liushixin2@huawei.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
+ poison errors
+Message-ID: <Zk5noUEYI4lknyJy@x1n>
+References: <20240510182926.763131-1-axelrasmussen@google.com>
+ <20240510182926.763131-2-axelrasmussen@google.com>
+ <Zj51rEwZeSK4Vr1G@x1n>
+ <ZkPJCc5N1Eotpa4u@localhost.localdomain>
+ <ZkPY4CSnZWZnxjTa@x1n>
+ <ZkSMv31Cwx080no7@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR10MB6425:EE_|DS7PR10MB5168:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca2d8310-d204-4c47-c12a-08dc7aa861aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?djVKSllBRG5vU0R3UGMrdzFpTFQybnd1UGw4cStxdTJ2UFg5dWtCemFZQ0JG?=
- =?utf-8?B?WUxVZXRxejcrV1J5WThybGdJa0hkZTV0bE1rMWxxKzRjMlplWHZVRktxa2xK?=
- =?utf-8?B?dWJMM2Q4TUJSa2FJcHoxQWR1MXZ6cmFMc0Y5UllqdmxmUFh1Q01JbUp2ejRh?=
- =?utf-8?B?OVA1SHQvWHc2YU81UkJwdVdGbFV1ckZyTE1yYkFIM2Y2WUpHekw3S080M0lv?=
- =?utf-8?B?WWN1TWFLUGlVbEtiTi9OSW9ZVzR4aEV5Um9XcmFJN25jaXlPQ0hpeWdieUhv?=
- =?utf-8?B?M1gwUFZKS3gwRzgrbGFYZ2xOaWF0VTdnczRRU1ZNcTFmZWpPdE1yNndQMUVt?=
- =?utf-8?B?TTZkeVBCOGtuOFBLZGIvVm9XdzV6T3paQ1JmNkJzK2w0dFlLNjJNVlR3d3dP?=
- =?utf-8?B?ZS8xckJ5NGV1UTFOajgrRWg4ZE45VWlmZWZtNmVLTU02T3ZIOFJCR1hwbHlF?=
- =?utf-8?B?K0NBcWxIZjNicFY5TURqSDRVYVViYlVxVU1NVDJBaW1ZWWZjZW5tMUNaVjJZ?=
- =?utf-8?B?c3BDeFZFVzBRbDVQMzVkNXNiTWdoL2tYemZIS1NDY29FbmdhTTdUSzVpUkJq?=
- =?utf-8?B?eVV2VzRScUxtNE9udVBPSzFRMXJKMEJxdll0dkMrUmh3WEF4U1pMNnBJaCtQ?=
- =?utf-8?B?VGREaGFudFJSOUhPS0gvVW1NZngvTmpjaUNlSGdleFJCWUE4N0ZyVE05SSsr?=
- =?utf-8?B?NkZWbGpadDBXeGFrQmt0ejVPZHhuaHBPRmtkMHp4MW9JVUZyYm1DQXdJNytx?=
- =?utf-8?B?Ri91UmdpS21PRGRzbU1ENmd6MHlUcElPaUlORzBvd2laVFBiUHdmakhrVjFi?=
- =?utf-8?B?blRRVlZEUFJWTnQ1bTlXTjVyV3lRbnhZRmVhdkRabjcyQllWaWpOOG1ZaGQ5?=
- =?utf-8?B?VzdkZkE1U1pOT0ZYaWdIWDhkMXNmb1Z1OWcwcktrQ24vcll6OG9NWnJnNDA5?=
- =?utf-8?B?OXFLLzg4OXpnMzFlWXF2NnZKeXdUaWxBT2ZQVWVwMTFwRE9TQ0VLY0cydVJn?=
- =?utf-8?B?NzhIMzZJN2VBY01GeG1PZ0p3NGg5QkVsWWU2Y2QyWkdkZDBLMHcwTGE3Y1N5?=
- =?utf-8?B?Wk1XMTh1SVdwVFNiU2JFSStHWkN6RWRacVFJT3k5aHRlY3NUZW1PbmpYb09P?=
- =?utf-8?B?TCt4NkJNQzdMNlM1TUxyaWUwbE1HOE0vYVU5Q3RaMjZQeWNmNEoydFNVSUZZ?=
- =?utf-8?B?ai95cWc3eEFxSkxiUm1BSmxPR0NwcU8rUm85WDhHQk91b2ZOSURNQUo5UmN4?=
- =?utf-8?B?dHRTSis0U3RkajNQVWt0ZTJVOUhyVktyblpidmpKZTFXZkZBMWJ4Z1R3Tmpi?=
- =?utf-8?B?dmxId2NHYTZETUVZZ0QyNXpzbUVITkFZNmViZDd6UDI3Q2dhb0RkWnk0UC9s?=
- =?utf-8?B?MDJybFk0Y3YyTlFkbjIvcDE4eVdWanZZOTVNZ1JUQVo0VU95ZDkvWTFBR1Bk?=
- =?utf-8?B?MFhLWEc3NzdMQnArQjFQbytWS1Jsajg5WkVsRGZHelI5Smt1dklQSzlwcXlw?=
- =?utf-8?B?Yys3TDc3Tyt2S1BTbFFaYVVpZEZZZ09aV3MxSEJYNVNtZkRsUS8xNkY5LzRp?=
- =?utf-8?B?TnJiWVoxeGhQL1BWcGs3NXJtS0FIYUdyOFVUZGVHKyt1SDFkbzg1UVNFam9T?=
- =?utf-8?Q?Xqo0mxVPaocQnCVXT07jsZFhaiNWje1H3ql4Cv0xHusw=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR10MB6425.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?dURiQVBDTUJ6ZjNPL2xzamlJMkZYNWhhV1luMDhRYi8rN1FRM0JPUUYvYXV4?=
- =?utf-8?B?OTllZFlSdHRmMmxjTDRLeTFkT3I4SzhUWkhKZkU2YjJkeUZvV3BYeFBrMVoz?=
- =?utf-8?B?TG5RTTgzMnpMcDhhaEIwTmNCL0FrdVRIaldVTU90SUNDUDZSVjhla2FkWEh1?=
- =?utf-8?B?aU40UDY0SmZpUUxvNFk1S1N1RjlMc1dVbTlZTTNaMkcwY2h3emYzZ2FaVHd1?=
- =?utf-8?B?eUE1ZmZxWkt0K01ldXFhK0ZzZlA5dURya1Q5SXFIM09HN1VKWjBPSUVzdlBD?=
- =?utf-8?B?MElPZHVTVHdXOEczT05IUkZLTFBrMUZSVFBEdVk4aGxRZXFmZ1ppWW1aVlZW?=
- =?utf-8?B?Ump5c2hlNDZ1SkN0QXlIUVhGS1hhRC9seElZS0FyL3lSangwVGpYT1JyVU1t?=
- =?utf-8?B?Y3V5TkVjTmRlc2d6UnVCenpBcGg0NWRiNWtXTzR5T09hMXVXd21aeVdGSmxC?=
- =?utf-8?B?K0NWYTJ6eUVnN0w5SjNuL3FDZFg2dE5rV1VkeDY5ODdOcWlLZGh5ejh0dXZt?=
- =?utf-8?B?Zm8vdEwvVFhnVGprelBIVncxUmlNYlZ4cEszamp6Z1JaU3dHMkxzdStSVDJP?=
- =?utf-8?B?dWNsUW1IOWEzQ0phR2NHMWlQVUJTa2tDSzQ5TGV5cW1aRGQ5ZmVjUVY5Qjds?=
- =?utf-8?B?R01nOXBMd0JBQjJ0ZHA4dmI2SVpkR25ycUJqdkxsMEJXMEJITEpwRlhTNyt6?=
- =?utf-8?B?aURkbmkvVkdhU1NpckdsZnZSei9YejhnbSs2Z0lkbkpqUjRPd0dvSnJ2ck9Y?=
- =?utf-8?B?N25JdUt3ZWRmZHR4ZURCT0hPaTJvVzBoZXpGb0VpTEFTNUY1YmhwVy9ZVGJF?=
- =?utf-8?B?ZWJWb1NDR2Y5ZG44dFBDTGdmNlVJdW9YaW1HSjFHNVhUTkc2QmxUamlaQy9P?=
- =?utf-8?B?MEU4cEFLTVdISzNjT0R3TEp5c0J5ZExaN2x3eUpYbXJValFoeFByQzZJMVZE?=
- =?utf-8?B?SVZ5akRicm1PNXl6ZDZuRW1GTnZkTkZVZE14OFRLTkRqLzVUTU5BcDJFSW96?=
- =?utf-8?B?SER1WkZoa0I1M200UlJOSjNPY3VWQjlXV2o3SVY5aXhweDRMVDNtYnFwdkpS?=
- =?utf-8?B?bjc0RmJtL0NBMXUyMXJWd1JxbGN4c2dsa2cwamtXZTFmWmllUExxSGNOa3hi?=
- =?utf-8?B?RWdlWUtiVnlzdlMzSVZoN0NEM0J1QmFldHJRTHFDbXN2WTNjTytkTmtEVGZw?=
- =?utf-8?B?MXNOV2Z1aml6UFpVWHhGQzYxckYvODM3NXNVZzRBNkUwdkZubnF1VUF5ZmJm?=
- =?utf-8?B?WGlQd2M5d2JVdm5mb2NzZzBZMitFTm5LMUJKVGx4Mm55LzNRY1QrUERSUFhU?=
- =?utf-8?B?c1BidTlaMjgxRWhmdDFKV2VLVFF0elIyczRYRXhyZzBrdjdTYzVON2lSWlVF?=
- =?utf-8?B?dEJSSlVjTlNZMXNnL2xyZTVzajBCR1Zjb0ZFNktRU1BDU3ZoTWFPWDB0ZGcz?=
- =?utf-8?B?RVBFVVJNL2dGVHRJQmNra3U0SlFrSnE2SUZ3aVJzaVhKcVIyWGdIcXNpYW9E?=
- =?utf-8?B?eVRDVmJSbTRuelUwYWNYaU5Pbmk5VlRlZUVzWWlNNGIzNjlyL3BPY05aeFYw?=
- =?utf-8?B?ZzFwMlkveEI1dTVxV0Y3MlI2ZDlXMldrMkdHdXcxam5ZYk54am1rUlZwenFr?=
- =?utf-8?B?Z3FCSWVLcUFjV1F1WVlqNkF5ZWxhTTFWdUc0ZC9PbUlPc0h2dGx1WkY4aDRv?=
- =?utf-8?B?a2x6K0ZMYVRxbk1aZHk3bzNxbVIxNmYvNEZ0ZmdUR0NZakRpaGlqblBCWFFp?=
- =?utf-8?B?SVlsaDV5ZG1kRkkrU0FiNlFpcjh5aEtaQlVmWUNteVhqVXZOUUZCWm1nMnUv?=
- =?utf-8?B?dnE3bm8xVFRzRGpRTDdCSjg4NVJvUTFqTUVaaXpPbWxRbkl1dkNrSmNkWk9u?=
- =?utf-8?B?Z1FpVU95TkVMSlQ2ZEVITmUraEUwWFhRc2xja3pBamExQ0YwNkJGb3RoQzdF?=
- =?utf-8?B?L1JUck5hb1d4UTZ1ZmhIYmtxTjFYN3E3YmhPUzFXSlQ3RTJkWXh6YzdLYXFB?=
- =?utf-8?B?aXg2RWVOM1YxbktzZng5c3A0MFZuQ21RdTdSWVd5MWhSOWpuTXl1YXk4em85?=
- =?utf-8?B?ZzdIbXZpOCs0Vjc5U1NKZ0RlbFdoS0ZHNHowWFloVEMzU1k3Z3J3Q3U3YzVB?=
- =?utf-8?Q?Al2Aj0H/LuwWFVccHt4C3Dr6J?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	GNo1VcfCvqXBNi8zVBQsqBdvSSGP3Hc3zEgF995cEU/s2Hquk8nfP5citWglYecQkEBpYaAO5WmB+IdmVJpZYE+f/km9PnOnPN11OmvGt1Y83U6WwrlpGkLvORd37SY7we5tZkwZmeTg84OGMhcpPccwhmV9uw1ujkqeT7f9UJI/nMGbatyIi83AnHrDBsvbJ+XkrYZ1t7/DsvTUiuiVynukr/3MM0zOlIz9ML9H/BkKcFdFSC3BKNXiWsikhSmUmY4nzysU9dhs3/dszgtEeiEN+UXmgjEVl5wHUi3T8yUm9Ra8ncyYNzWakcVMX4OHyqKyUYi4tfudt2CieXHZ/KOKv5ow1jXpTsiz6xCi67yOsWDC3CR3ik6bpDy8gPnBmObF2NYsXtFJmYTGQTTQxCjWxlVT92R+XPsUA6lK8zLCDu/RRtsss2VRUMhJW3CYiaR2tClteLu1iHtUH4RWJODBT8nIG/E01+WW2+kW1XMkmd44yBetg3JqI6B0h1dlh7iH60TisXLHPo3ulb7enHqTRuY4gNvvkLDG2YacANaBF4Fk+dNUQp5b3AV1XClGIMwWCLNPKLHovbqBWMH6gs7d1ec+suOBh0peaguqeSo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca2d8310-d204-4c47-c12a-08dc7aa861aa
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR10MB6425.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 21:44:39.2703
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BGIgyW0q3pCSU5Z4nNRYNIuUtkxyu948imup/uRB05ZRGDfN3FGel5q9fDm9b3cTU5kqzxaPV91B6JqQdfPqYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5168
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_12,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405220151
-X-Proofpoint-GUID: S5vy20evSU-cilwqJ4dNRp6-_sLEXg6v
-X-Proofpoint-ORIG-GUID: S5vy20evSU-cilwqJ4dNRp6-_sLEXg6v
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZkSMv31Cwx080no7@localhost.localdomain>
 
-
-
-On 5/21/24 5:00 AM, Thomas Gleixner wrote:
-> On Wed, May 15 2024 at 12:51, Dongli Zhang wrote:
->> On 5/13/24 3:46 PM, Thomas Gleixner wrote:
->>> So yes, moving the invocation of irq_force_complete_move() before the
->>> irq_needs_fixup() call makes sense, but it wants this to actually work
->>> correctly:
->>> @@ -1097,10 +1098,11 @@ void irq_force_complete_move(struct irq_
->>>  		goto unlock;
->>>  
->>>  	/*
->>> -	 * If prev_vector is empty, no action required.
->>> +	 * If prev_vector is empty or the descriptor was previously
->>> +	 * not on the outgoing CPU no action required.
->>>  	 */
->>>  	vector = apicd->prev_vector;
->>> -	if (!vector)
->>> +	if (!vector || apicd->prev_cpu != smp_processor_id())
->>>  		goto unlock;
->>>  
->>
->> The above may not work. migrate_one_irq() relies on irq_force_complete_move() to
->> always reclaim the apicd->prev_vector. Otherwise, the call of
->> irq_do_set_affinity() later may return -EBUSY.
+On Wed, May 15, 2024 at 12:21:51PM +0200, Oscar Salvador wrote:
+> On Tue, May 14, 2024 at 03:34:24PM -0600, Peter Xu wrote:
+> > The question is whether we can't.
+> > 
+> > Now we reserved a swp entry just for hwpoison and it makes sense only
+> > because we cached the poisoned pfn inside.  My long standing question is
+> > why do we ever need that pfn after all.  If we don't need the pfn, we
+> > simply need a bit in the pgtable entry saying that it's poisoned, if
+> > accessed we should kill the process using sigbus.
+> > 
+> > I used to comment on this before, the only path that uses that pfn is
+> > check_hwpoisoned_entry(), which was introduced in:
+> > 
+> > commit a3f5d80ea401ac857f2910e28b15f35b2cf902f4
+> > Author: Naoya Horiguchi <nao.horiguchi@gmail.com>
+> > Date:   Mon Jun 28 19:43:14 2021 -0700
+> > 
+> >     mm,hwpoison: send SIGBUS with error virutal address
+> >     
+> >     Now an action required MCE in already hwpoisoned address surely sends a
+> >     SIGBUS to current process, but the SIGBUS doesn't convey error virtual
+> >     address.  That's not optimal for hwpoison-aware applications.
+> >     
+> >     To fix the issue, make memory_failure() call kill_accessing_process(),
+> >     that does pagetable walk to find the error virtual address.  It could find
+> >     multiple virtual addresses for the same error page, and it seems hard to
+> >     tell which virtual address is correct one.  But that's rare and sending
+> >     incorrect virtual address could be better than no address.  So let's
+> >     report the first found virtual address for now.
+> > 
+> > So this time I read more on this and Naoya explained why - it's only used
+> > so far to dump the VA of the poisoned entry.
 > 
-> You're right. But that still can be handled in irq_force_complete_move()
-> with a single unconditional invocation in migrate_one_irq():
+> Well, not really dumped, but we just pass the VA down the chain to the
+> signal handler.
 > 
-> 	cpu = smp_processor_id();
-> 	if (!vector || (apicd->cur_cpu != cpu && apicd->prev_cpu != cpu))
-> 		goto unlock;
+> But on the question whether we need the pfn encoded, I am not sure
+> actually.
+> check_hwpoisoned_entry() checks whether the pfn where the pte sits is
+> the same as the hwpoisoned one, so we know if the process has to be
+> killed.
+> 
+> Now, could we get away with using pte_page() instead of pte_pfn() in there, and
+> passing the hwpoisoned page instead ot the pfn?
+> I am trying to think of the implications, then we should not need the
+> encoded pfn?
 
-The current affine is apicd->cpu :)
+I sincerely don't know; we need help from someone know better on hwpoison,
+maybe.
 
-Thank you very much for the suggestion!
+It's at least not needed in fault paths, afaiu.
 
 > 
-> because there are only two cases when a cleanup is required:
+> > However what confused me is, if an entry is poisoned already logically we
+> > dump that message in the fault handler not memory_failure(), which is:
+> > 
+> > MCE: Killing uffd-unit-tests:650 due to hardware memory corruption fault at 7f3589d7e000
+> > 
+> > So perhaps we're trying to also dump that when the MCEs (points to the same
+> > pfn) are only generated concurrently?  I donno much on hwpoison so I cannot
+> > tell, there's also implication where it's only triggered if
+> > MF_ACTION_REQUIRED.  But I think it means hwpoison may work without pfn
+> > encoded, but I don't know the implication to lose that dmesg line.
 > 
->    1) The outgoing CPU is the current target
+> Not necesarily concurrently, but simply if for any reason the page could
+> not have been unmapped.
+> Let us say you have ProcessA and ProcessB mapping the same page.
+> We get an MCE for that page but we could not unmapped it, at least not
+> from all processes (maybe just ProcessA).
 > 
->    2) The outgoing CPU was the previous target
+> memory-failure code will mark it as hwpoison, now ProcessA faults it in
+> and gets killed because we see that the page is hwpoisoned in the fault
+> path, so we sill send VM_FAULT_HWPOISON all the way down till you see
+> the:
 > 
-> No?
+> "MCE: Killing uffd-unit-tests:650 due to hardware memory corruption
+> fault at 7f3589d7e000" from e.g: arch/x86/mm/fault.c:do_sigbus()
+> 
+> Now, ProcessB still has the page mapped, so upon re-accessing it,
+> it will trigger a new MCE event. memory-failure code will see that this
 
-I agree with this statement.
+The question is why accessing that hwpoison entry from ProcB triggers an
+MCE.  Logically that's a swap entry and it should generate a page fault
+rather than MCE.  Then in the pgfault hanlder we don't need that encoded
+pfn as we have vmf->address.
 
-My only concern is: while we use "apicd->cpu", the irq_needs_fixup() uses a
-different way. It uses d->common->effective_affinity or d->common->affinity to
-decide whether to move forward to migrate the interrupt.
+> page has already been marked as hwpoisoned, but since we failed to
+> unmap it (otherwise no one should be re-accessing it), it goes: "ok,
+> let's just kill everybody who has this page mapped".
+> 
+> 
+> > We used to not dump error for swapin error.  Note that here what I am
+> > saying is not that Axel is doing things wrong, but it's just that logically
+> > swapin error (as pte marker) can also be with !QUIET, so my final point is
+> > we may want to avoid having the assumption that "pte marker should always
+> > be QUITE", because I want to make it clear that pte marker can used in any
+> > form, so itself shouldn't imply anything..
+> 
+> I think it would make more sense if we have a separate marker for swapin
+> errors?
+> I mean, deep down, they do not mean the same as poison, right?
+> 
+> Then you can choose which events get to be silent because you do not
+> care, and which ones need to scream loud.
+> I think swapin errors belong to the latter. At least I a heads-up why a
+> process is getting killed is appreciated, IMHO.
 
-I have spent some time reading about the discussion that happened in the year
-2017 (below link). According to my understanding,
-CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK always relies on CONFIG_SMP, and we do not
-have the chance to encounter the issue for x86.
+Right it can be separate, and that was the plan IIRC. But maybe an overkill
+for now if nobody cared, and we can wait until someone really cares about
+that.  After all adding a dmesg line for such event is much easier than
+removing one..
 
-https://lore.kernel.org/all/alpine.DEB.2.20.1710042208400.2406@nanos/T/#u
+Thanks,
 
-I have tested the new patch for a while and never encountered any issue.
+-- 
+Peter Xu
 
-Therefore, I will send v2.
-
-Thank you very much for all suggestions!
-
-Dongli Zhang
 
