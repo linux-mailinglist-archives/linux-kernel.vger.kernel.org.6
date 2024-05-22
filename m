@@ -1,130 +1,142 @@
-Return-Path: <linux-kernel+bounces-185993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098B78CBDE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A9E8CBDE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1A71C2220B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3229C1C20F96
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09356811F8;
-	Wed, 22 May 2024 09:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DDC81726;
+	Wed, 22 May 2024 09:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fW+q7v1e"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DWZepHJJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DE37D3F5;
-	Wed, 22 May 2024 09:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AED280C1C;
+	Wed, 22 May 2024 09:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716370493; cv=none; b=RGnitDRQHKc+mE7uMHFYoxYrGSfXCoz/mvWa/NHr2ij2ztjDyC8IEDS7XvCKvYQ/INK+mMyoZBe4Orp9BKhDJYNbwJCRcS6+Y3Tp2BSQ0q8ntRXWL7UNtUQxBCRAhZiped01OXOqrloKv6mmSJQQPQR+rCLekIFio5kmzVJ5eLo=
+	t=1716370512; cv=none; b=tnJd+ge07i7QYDkEXJDcWA0b3F1LeZVoUJrhuNc5KJ76UT230ENYxd7uiyqWCkhNDKh/wv/SN/zTCPQGudT7b2eWuWsIM5oQNfMh9Ml2OKZDlXiOYF2AgNdFxBNwAXfhgueCuGIr5/cYN6obyIWwptJKXSEv4yWW9tkI5qqMLNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716370493; c=relaxed/simple;
-	bh=mX5vIgRWx9WAOsjeTaBhf88G2r0ZoYliqn7TtU06B+g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtHQ7smmVrkbUugn49c5sVBW4SsXe3paHlUF7FPBAnHY1lPHZiW7/D7NtnbixoIaUIIizqECqkz3kGpVrv49CTNVWBEPJwpudIkyljXUuaHe85jbp/T/60amg6gWnPzjOgVicGgfStUwj7MppuKh434fe6/lqRDnty2AmbhoXVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fW+q7v1e; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0ULik29NBLPRrUwg+mqBvlx8JWj5pFQ0AbuABh1uIWo=; b=fW+q7v1eKF9i86BC7a3TFCWCJS
-	pp4J5e5sVUH2nEndz39ojCjFGaOqyLglcpN9hTCtq91H9ePbGcWtzeseRil0LY5DHYUROa1VhFa8d
-	DtObyI7YPh6BOgsEQN05gFjRG+50l9PR4gFiA7WOtRxOoJgaReLWE0WVFgG/Z1e0eK/V1bFESl0+6
-	UMKE1Ns3i2VsOQsgZF69Hnj4FVMZVnPMdspK7jIZyS/L9vtXR1XPKiA/Izbb5pYuDXjZ+FdNwgChw
-	jzjQO9nZBwlQ3GoIp0qXB8gPYFCq+ScMReSX8kdfF9KszJMKIsghuRSLiHGzNi6UrUpLPRaiZivYS
-	N57WdbAg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45380)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s9iMd-0004o5-3B;
-	Wed, 22 May 2024 10:34:29 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s9iMY-00062c-TZ; Wed, 22 May 2024 10:34:22 +0100
-Date: Wed, 22 May 2024 10:34:22 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	linux-arm-kernel@lists.infradead.org,
-	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
- entries
-Message-ID: <Zk28HtN30TJvnZan@shell.armlinux.org.uk>
-References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
- <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
- <ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk>
- <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
- <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
- <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
- <ZkhSOvkaAwsTe7Dm@shell.armlinux.org.uk>
- <44151fe7-1822-4b95-8981-9a1f1884d662@leemhuis.info>
+	s=arc-20240116; t=1716370512; c=relaxed/simple;
+	bh=eLe73X66lUM8ibMxNC3oHU1OPlkpVzsDexRH8SsFIsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vz1XRtL7/exrUJKZHzEUxr7I0U4nbGyThIlirVih1m4+Yx+kRTo8TZ9xn+gbvgqhewHcpbcypvaDGaOE8vJv30GyWOlFQakU6URHT4ueyvb0/pI4DePVDroqlTWdXvd4dxJh7j2d9hO0qc5ZAPa6Fb4gFKJOGFXokugSlcC7psY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DWZepHJJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1A8C32789;
+	Wed, 22 May 2024 09:35:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716370512;
+	bh=eLe73X66lUM8ibMxNC3oHU1OPlkpVzsDexRH8SsFIsQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DWZepHJJcfuOaIFJ7tQ8mJAwe61k4RxAQxTXxOEu9FOJ/o8WeAo6ZgZ4mt+zX75jR
+	 tU/NiWDY4ZbpIqj8rqNengPVMSjo5S428ZNGXyk8nn67atgcShHnjyXA7MKl3WrRlR
+	 Gd0bfUzUy5gkarILz5Qm5Jo/viUygcbADygkzyzbQO4YOj2rQ81UvQogS/hQx5CckI
+	 oovcqrtWIX3nyYU7Z7qS5wm47KtXToCCKsmFwvPsTk7u+bp0loYFspRA4QUOrfnBGi
+	 SsSO+/lE+gxXIOF+jc5N6WWbVttMzNawsP+t6ZocWNrujuPKHwQ0XKQiEZu4UIgTnl
+	 mM++DXfRnTCGA==
+Message-ID: <1686c1e6-94c6-45c0-adc5-c05d49614d30@kernel.org>
+Date: Wed, 22 May 2024 11:35:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44151fe7-1822-4b95-8981-9a1f1884d662@leemhuis.info>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/17] Add ti,cc33xx.yaml
+To: michael.nemanov@ti.com, Kalle Valo <kvalo@kernel.org>,
+ Johannes Berg <johannes.berg@intel.com>, Breno Leitao <leitao@debian.org>,
+ Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20240521171841.884576-1-michael.nemanov@ti.com>
+ <20240521171841.884576-18-michael.nemanov@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240521171841.884576-18-michael.nemanov@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 22, 2024 at 08:53:18AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> Hmmm. Communication problem aside, this in the end seems to be a
-> regression that is caused by a change of yours. Maybe not a major one
-> that is making a fuzz about, but still one that would be good to get
-> fixed. So who will take care of that?
+On 21/05/2024 19:18, michael.nemanov@ti.com wrote:
+> From: Michael Nemanov <michael.nemanov@ti.com>
 
-I have suggested several approaches to fixing it, and each time I'm
-being ignored by Guenter, who seems to have some other agenda -
-because he seems to believe that using dev_name() when registering
-the clk with clkdev is wrong... despite the fact that clkdev uses
-dev_name().
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-What I am uncertain about is:
-1) whether clkdev is even necessary here, or whether it is pure noise.
-   I think it's pure noise.  Why? The dev_name() that is being used#
-   to register the clk seems to be the _source_ device of the clock,
-   whereas the name given should be the _consumer_ of the clock (when
-   clk_get(dev, con_id) is called, dev is the _consumer_ device, and
-   this is the device that dev_name() is used internally with.) Thus,
-   if _that_ device is not the same as the struct device that is being
-   passed to dev_name() when registering the clk, the entry in clkdev
-   is utterly useless.
+Missing commit msg.
 
-2) why someone would think that using best_dev_name() to work around
-   this would be a good idea. One might as well pass the string
-   "hahaha" when registering the clk - because if the device name is
-   truncated, clk_get() is not going to find it. So, by registering
-   it with clkdev, we're just eating memory for no reason.
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Therefore, this change is finding bugs elsewhere. Should it cause a
-boot failure? No, and I'm happy to make clkdev just warn about it.
-However, reverting the change means we're not going to find these
-issues.
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline), work on fork of kernel
+(don't, instead use mainline) or you ignore some maintainers (really
+don't). Just use b4 and everything should be fine, although remember
+about `b4 prep --auto-to-cc` if you added new patches to the patchset.
 
-Why was the change originally proposed (by Duanqiang Wen) ? The reason
-was because of this truncation causing clk_get() to fail unexpectedly.
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time, thus I will skip this patch entirely till you follow
+the process allowing the patch to be tested.
 
-I am all for a _sensible_ discussion over this - not one that seems to
-have an agenda about "should dev_name() be used when registering a
-clk" that seems to be Guenter's approach because _that_ is not the root
-cause of the issue and I've already explained that _that_ is not the
-issue here. Yet, Guenter insists on that.
+Please kindly resend and include all necessary To/Cc entries.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Best regards,
+Krzysztof
+
 
