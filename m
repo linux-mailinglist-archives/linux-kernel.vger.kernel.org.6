@@ -1,110 +1,152 @@
-Return-Path: <linux-kernel+bounces-186087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECA48CBFBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:55:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0F98CBFC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26AE8B22298
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:55:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E2FD1F232E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1330982C7D;
-	Wed, 22 May 2024 10:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9340824AF;
+	Wed, 22 May 2024 10:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XOMOKJyU"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eqDl9zPY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7FA82899;
-	Wed, 22 May 2024 10:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6238248D;
+	Wed, 22 May 2024 10:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716375145; cv=none; b=KF/39C1+2MMyVq9nFtwQiEoy0zHsXyIHu8J66BIxX97UimqRP9ULkUnahSMpx1hwIR9YAjPUCohk7mbrxhcqqg04xk2MdRiyFfxXXXDQ3CkIYyLZsPkLBfrO7YcFNpR9FAYJDNpRUAYwFabiUvEj+WWtsoFs1+gbzXwb7ZdfS3M=
+	t=1716375441; cv=none; b=qPCtyYuvcL0keZEYDH0rFczz/Gt1GxTS3JIYXzVrdbPyN6LQeLMAmDBRJJ+Ex6fh4Nb/5b3u0QAgm4reEMjZKO6FzvVALMUE0xcrrotG3/TLBWiZ6ecC44PCop/MpnSkwbX49Wop8Oky3r1CCuymmoRAPKvnCRDs5JW/LmUy2Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716375145; c=relaxed/simple;
-	bh=0Y93dPhHvn01+Vtk2BQihtxVDdioBUNBOZ0XK/IR2XE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LDTFIyMe/KAaa6XDLsnAbC3XQGj5iOavBJe3kFdl/59bWt95+b+lPzI0UH2AmimaZUw7qOAItlhHGkTm7AxmL+eVWY7uwW1rF/7Te6rgAgcy5ToStSrbKDXFtiPFHBcZ2JEkAlrWZPSdlPWAJ5UsDhIXDmV4+oMCQ8rMaGOQ5f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XOMOKJyU; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-23dd94111cfso2964392fac.2;
-        Wed, 22 May 2024 03:52:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716375143; x=1716979943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Y93dPhHvn01+Vtk2BQihtxVDdioBUNBOZ0XK/IR2XE=;
-        b=XOMOKJyU+y0pRvwEvDzRIjRzXwPBQoJ0G3Uhj0tVqURysJK7YjuOjALbFpqjYXpQSz
-         kDyqRXpE79uvK27tBUx50QlCg3U4tSCmHtbmSg0rK8xNgqz6vEHui46f1h2AUYgsOud6
-         9mEBh0w+jIVbjF9dwfMHgqDfJAJBIEMmMzFSPnFoCmu+h7Tc3xvnmtvmOoBWp29WMjrb
-         EL8h84l4mSXLBE1mLCSFSPuTK9oKQrz81Qaq6teNeRw+QX/c+pX0OcGH8PHeOb5hgkSG
-         85LRk5P+NJXrmyVfy6g4+tfySK3yLr1Czmpx0sXyVCN0+jhAev1IZJss6wSJcZEV9QZP
-         bPzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716375143; x=1716979943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Y93dPhHvn01+Vtk2BQihtxVDdioBUNBOZ0XK/IR2XE=;
-        b=Qevq2+BRRnrg9TEgtxardxvv3+znjdOI3e8KI4Ae310Zr0ZzN1IrmSRIgVSVUCnGE1
-         9yJ27EnQixOOVlobz/U/4ObmEUztRvmQVyf9W3Qezk1BPRRWqMtYLau7eQh0VroXC2uf
-         wpe0AcaU5nlnwHXRz96PJO0jyKcHKLCQLbIySsgaremhCL/KlprpEuToL5U3qUiv/wri
-         pfrRcxDamO1+NhAUYtj0lfPjKuAXHX8GdxGNArocakL61CunSUdZ5wH3qoILEQlManNW
-         PT2X9vclFVbECcOs9NL6qrPtWIKt/WipynA3AqbsYT4NtZ9U8iGJlrJZAZpo7y3hm/j2
-         qu+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVPTj0GWqVPnPOxWi/makaZtl6nFezr8/ycEhRHx2XB62Wz7P92ITMb98BGiuhFVvlIUAmTgNrPW4jIJQMoOetVsgT5HE7KdaZds4M1dM3xuie6Fxsc4vGmFYAsy7tlMIWnAtQWZA5NPLRHOJwJdyk77x9mx4YQHoNMbdccV3RzIq6wGIHfGC4mf+Q=
-X-Gm-Message-State: AOJu0YyWSPtbphxoTwEasQEWk/rCtvhAH/MJhVoBGERTDul9jIaKYfTH
-	Ibu+ayIzErpFSWqkAmK/B/Uc42efUN2GIZADV7EMGeEUvYUzFBWBp6XZuC7VIGHXqYpFVKos4n9
-	BZq2LUVeTK72njTof/KHwhvTb3ns=
-X-Google-Smtp-Source: AGHT+IG/AS4kJMzfIgzw3AMuTS/nlyyPXYuhXOPvLaLt3mE1VVgwbiK0gwIGfRoZ7lTb+QeX9+yvLRcXGPalXpvNf7Y=
-X-Received: by 2002:a05:6870:e253:b0:24c:5018:e6a5 with SMTP id
- 586e51a60fabf-24c68aebcb5mr1986514fac.5.1716375143007; Wed, 22 May 2024
- 03:52:23 -0700 (PDT)
+	s=arc-20240116; t=1716375441; c=relaxed/simple;
+	bh=SylLlKY5CBoxLppHNyLoIhvEyhdTimOFUf/M84mucLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G3PN2U3M+8WGfOu+0RRF2SRrwRo3AvINXO9XxTMqfMs3F+vNT/c3e9S2PD0wisfCN2AfjKX7luOXWa4Gy6ryHEkvJ/vkqF+AJ0yRRf7bYz17Ig/+7+DI9gM4vYvmWAkbQLosiNQ3LKL8Y4jCUzm5seZXfAByVDJwfBEvIbK36ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eqDl9zPY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44M2YgKA031245;
+	Wed, 22 May 2024 10:56:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=HPyJZ+IQWOZKRRpHGYSzS507Ci7ZQ9SHHNkKp70iD0A=; b=eq
+	Dl9zPYMhkKVBMLcM5+Sxn7XDoMlwFv4Yr0pgD3VMFxx4MUnXqSGRludUaxOsREvV
+	n/AIPeN9yIDQzZBFiBKOdOT4fcdTsFwsqVVr8SwXzHS0d85CjpHrCiKP4Nn7nS2P
+	gIFGWA0DHhsx8QTSKkzAjGuWEfuxFw7otgrp1Rl7IPMywDd9Ym2AdRSpsTuSS5Sb
+	fEdb9DmkLX48ukfuGAqsWUe86mxn6RBXaeSZt6D7d7U38cUZuT64Qvyn0mOGHQJi
+	GhW1AoB54qYL+VESORRaz1lSSofc5QtKbxN9bejSkTjaOtB+aPaRk/4qiVFM6Ou/
+	kXhMPmJPGNArSecYuWoQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pr2rn0v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 10:56:50 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MAunkF002918
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 10:56:49 GMT
+Received: from [10.216.17.165] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 22 May
+ 2024 03:56:45 -0700
+Message-ID: <40594542-ac60-0ff7-8474-a93f678a99be@quicinc.com>
+Date: Wed, 22 May 2024 16:26:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240519211235.589325-1-ojeda@kernel.org> <20240519211235.589325-2-ojeda@kernel.org>
- <CAK7LNATPx2wTEM=KDmGtcH8vVTB4suOhh-CUQKP54F8wtPWDiw@mail.gmail.com>
- <CANiq72mcdtNie=t=HHhZnjQa7gQiDZin+TYP_7Rgi4kL83H2BA@mail.gmail.com> <CAK7LNASYYYsiZUaA1StD9kWO0WBC0PBPtfY7u32g94WtOPFZgw@mail.gmail.com>
-In-Reply-To: <CAK7LNASYYYsiZUaA1StD9kWO0WBC0PBPtfY7u32g94WtOPFZgw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 22 May 2024 12:52:09 +0200
-Message-ID: <CANiq72mzTaKYJqNcv1qT3nXEbh_t7CwaAqxCuYNcx9eHOZf7wQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] kbuild: rust: apply `CONFIG_WERROR` to all Rust targets
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v4 2/7] ASoC: codecs: wcd937x-sdw: add SoundWire driver
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>
+CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami
+	<bgoswami@quicinc.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai
+	<tiwai@suse.com>, <alsa-devel@alsa-project.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <quic_pkumpatl@quicinc.com>
+References: <20240516044801.1061838-1-quic_mohs@quicinc.com>
+ <20240516044801.1061838-3-quic_mohs@quicinc.com>
+ <91f581ef-58ea-4b98-80e2-dd9b14a61c60@sirena.org.uk>
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+In-Reply-To: <91f581ef-58ea-4b98-80e2-dd9b14a61c60@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: oEa4VcuMEe6-HxUvq2uT8Hl8_qXlruDv
+X-Proofpoint-GUID: oEa4VcuMEe6-HxUvq2uT8Hl8_qXlruDv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-22_05,2024-05-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1015 lowpriorityscore=0 adultscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405220074
 
-On Wed, May 22, 2024 at 12:14=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.=
-org> wrote:
->
-> What does "everything else" mean exactly?
+On 5/16/2024 5:17 PM, Mark Brown wrote:
+> On Thu, May 16, 2024 at 10:17:56AM +0530, Mohammad Rafi Shaik wrote:
+> 
+>> +static const struct reg_default wcd937x_defaults[] = {
+> 
+>> +	{ WCD937X_DIGITAL_EFUSE_REG_0,				0x00 },
+>> +	{ WCD937X_DIGITAL_EFUSE_REG_1,				0xff },
+>> +	{ WCD937X_DIGITAL_EFUSE_REG_2,				0xff },
+>> +	{ WCD937X_DIGITAL_EFUSE_REG_3,				0xff },
+> 
+> Given the name I'd expect these to vary per device so not have default
+> values.  In general ID, status or volatile registers probably shouldn't
+> have defaults since they should be read from the device.
+> 
 
-Everything but the host programs. Or as many targets as possible, if
-you think there are other cases that we should avoid.
+Thanks for the review,
 
-> Why is the .config required for generating documentation?
+Will cleanup those.
+>> +static bool wcd937x_readonly_register(struct device *dev, unsigned int reg)
+>> +{
+>> +	switch (reg) {
+> 
+>> +	case WCD937X_DIGITAL_CHIP_ID0:
+>> +	case WCD937X_DIGITAL_CHIP_ID1:
+>> +	case WCD937X_DIGITAL_CHIP_ID2:
+>> +	case WCD937X_DIGITAL_CHIP_ID3:
+> 
+>> +	case WCD937X_DIGITAL_EFUSE_REG_0:
+>> +	case WCD937X_DIGITAL_EFUSE_REG_1:
+>> +	case WCD937X_DIGITAL_EFUSE_REG_2:
+> 
+>> +	.readable_reg = wcd937x_readable_register,
+>> +	.writeable_reg = wcd937x_rdwr_register,
+>> +	.volatile_reg = wcd937x_readonly_register,
+> 
+> It's not a bug per se since things will work but you should probably
+> have separate volatile and read only checks, things like the ID and
+> efuse registers are read only but they shouldn't vary at runtime so
+> could be cached and not volatile.
 
-`rustdoc` sees the code in a similar way as the compiler (it uses
-parts of the compiler); in particular, it processes conditional
-compilation like the compiler. So we need a given configuration to
-generate it.
+ACK,
 
-Cheers,
-Miguel
+Will cleanup and improve.
+
+Thanks & Regards,
+Rafi.
 
