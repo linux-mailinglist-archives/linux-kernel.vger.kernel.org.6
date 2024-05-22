@@ -1,269 +1,150 @@
-Return-Path: <linux-kernel+bounces-186270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0A68CC1F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:18:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B76B8CC1FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCFD01C22518
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:18:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE899B20E6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFCA140361;
-	Wed, 22 May 2024 13:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uz91kDpC"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4D013E02C;
+	Wed, 22 May 2024 13:21:49 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDD413FD6D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7109D8061B;
+	Wed, 22 May 2024 13:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716383903; cv=none; b=Ado7WcIeF7c7pwQQJAp7MhfgXMbUbWaNMitFM5p+vjiB5yZTy7fA+tAXnlQrhYu5B9yebsZiEeCmTB82JSuMotUkDdl+f9XWPb7HA4JY52vGbVC20mvns2ZPuOwPvERTGsm78k8hz7IhF2BmhQ3LttdVfGfw79JXTifBVFPQeOo=
+	t=1716384109; cv=none; b=dD36IilVwM/7bhwrnp7CG24O5H4se/5UisMwIvANC/Py10NJ6DuPiAYDcOHUnRZraBXm26Ika1CjKirDaKNJZgK/f7+K7prbpgI/cwhts9mwlsV861GEqdW1zOCCsqvnsoEQqy2/fwdK/cY97ZVdzWa/jSYxkCPgbQQ+WJk6TeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716383903; c=relaxed/simple;
-	bh=jEwM0kOo09rp2TUsgk4DTGHqwE3eLNGg1VYjTBvYx9k=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LIEfdVX6G7Z2uUSMRUWSzsLpBaa2wNXXGNKnhthbcYKPAHj8xaz1BP3Nobvel15VKLg+MJygT+oc6HQmOFmGm1xayX+2Mgtf0XYSWpiVa1zlRWlF6KhPsOnVEq4GUzndPVnz5XzyzSZMD3TeYkFJutkDITtiL/fjgqVsVzFsjdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uz91kDpC; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59cf8140d0so818050666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:18:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716383900; x=1716988700; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:reply-to:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qqcESmaWM8FJOpyOPS0sprtY1tr2oWGLmcOcBYk/KFo=;
-        b=uz91kDpCUh+/THhMhR1Q9VDeR58HCmaY7pNeT+8qu0htbp1PVEFymWDT8YkMqVmlgx
-         rucT1gxYnQ6pzn1JVayP3rwUy2cpYXLTmn0COQ+iOqUB+g1cjQfNlbnwMneD8ck5ahJ9
-         qYdBbgaeRDX0fyIBQfHUzhX5ge8q/E4ba2a+zQ/YY3pZZ1khYErjB2bm+a59nmeR+Yav
-         ohazTrJ/n1GSNA9V/Ef4aXcgo6vw8D9Aa8oK4omE4Z3DYQeu49cR3pWFOiJ4ASfUpNcb
-         iWKSOqrEkrllMxFfhauPLMRbvLMatZatekUzuds2ZrE41RzztryvV08JAa0rYa+xgyC2
-         sJsw==
+	s=arc-20240116; t=1716384109; c=relaxed/simple;
+	bh=1zHWV9lrir7bcF6ZsXjm0Dm5UaAg89JLGm6bgIZ8wRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OIGQWiqUhJe9J0Q2dP0eFGgZ5dZo425nzXkCXjQmWNWdM5h5bwHnMX/i02f3pofhaFXTgPgu9tcmSPmj+pQXXRC++9XdXK0Q12Cebf4+qERQ/gScEg61PLQWAs723sXKcIrHPWrov2sW6T6Su6wXEYHL0SDXYD4vuNo6UF7wOv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-61bed738438so49578287b3.2;
+        Wed, 22 May 2024 06:21:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716383900; x=1716988700;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:reply-to:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qqcESmaWM8FJOpyOPS0sprtY1tr2oWGLmcOcBYk/KFo=;
-        b=WzL4pOYpEB+EM/xOS4fTLCjdToS6XjPg0VF5AYWuevB8snI/ewHEEoM20LgchPoPLD
-         m5P0h5788iiTwmv7UXkLoQnhJuNfQKahEbjdNlOkY89LbCPfie/rShLUns8CtbyWAB8I
-         M9knk0fvFNBcZnlIbi7xI54HyksVVcCYnAnZszY/jLIdv9pDArC6cQuCi6hAtIoWqmg+
-         2Gps/MUOsdPhXwkQ9NAXc97VL0+ST9/yekGltw97fUoC7wEvtzGmTQ0PCHtl1tAY1a7N
-         jOItFlaaok8IdtZIffCH+hCPo+hW9jD5/95oAo2E68M0c6Wb6Oe5txiGsYfKIOUoXNI5
-         srmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGi861sKLRVwYYP4abuEd31l1bPxhbZb05rH5/QthoSu6V+hjbIthdjaUPdN9+CN1ItZE/lPvu5aMWkc5vQ07nBS6h8oWSlSCVAGNB
-X-Gm-Message-State: AOJu0YxEMpDeRyBgBqlsWqrCvUvgOD1UGiZbdKiOda+ZZ8wuIc8lduPy
-	dOzPeK1tjQ3Gq6ZBvzIz7+UUG2iRHOdm7Ri3g+AI5zXL7YS1KKzef++zbpdPXN4=
-X-Google-Smtp-Source: AGHT+IEUk2Li2IEfcrnOb1ftgQowl3n2MBBBZ16yurpy908Ne1i0rXR90Z7ga35SnRf3k14JJ3/mKg==
-X-Received: by 2002:a17:906:259a:b0:a59:a0b6:638 with SMTP id a640c23a62f3a-a622819aea3mr113715266b.61.1716383899523;
-        Wed, 22 May 2024 06:18:19 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10? ([2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a178923fesm1778659866b.64.2024.05.22.06.18.18
+        d=1e100.net; s=20230601; t=1716384106; x=1716988906;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pwO3V0ef+iewPljIZQdQy9oZrW8vxT6y27HOdLh4pwc=;
+        b=jGX2EeH3QndnhCzshAY+iCS0D9gEl3vq9DrGrrk2TwG6BscwHC1ZxXW8EWRuZsQOi2
+         FVeFAw54Vpl4AhAcJzdGWq8yPrGfdLdBw/KdlLp+VhovmjmPZmfjU7vtzs59ZLIqzzCW
+         nGyIDlW19lWCksXmQPmptZ2tTQuOLxB6FOqjedSXbrd4p6s6mK+8nFkn/EYTpUdaHT43
+         dj5wxiJ+ksIW8WwKq20SNHR0mIW0oa91mN+HTG+yppuaV81N5xAmkRLgqUwejB+pQgZt
+         aqLZuh8lg7WBWOk6zOD7FRnaQLgkAL7EqUiIlEMhIZZXFwTln/tl+4K0zKRINBR4k3WU
+         q96Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVYTZy1PgIK+u86Ny0zMtnTWcFc6wbWt3lyTJM/UetLFlOspGiXTI1XHsLl+aSmwm7hwNX1M0t6rZKSR/uaUXoxHW4CN/VQLH9OzElPoh577FXkKAl1Aq2ytt7VbV3ZmrG9Utmdrt0AJrptf6yDufkuGsGf8PMKG0In706PHCpvdHeKu9dBmT7xi54gBbNn9giX2q707bDJgQkvA1qLRy2bkVbAxciQgw==
+X-Gm-Message-State: AOJu0Yw8ZaNbX2kzu9h9FJ0iHSvfkXv203JltQoo4ax9tsqDeh1adQ+t
+	SjrI1R1kTpFmC4bRfDi/HyAw8l6NWt9qEbarZM9f1agYRb7UCBqLkivdcAFJ
+X-Google-Smtp-Source: AGHT+IFP4p3lCRUBVGwOq/TLnR8fdUV9Ioulf7bIfz0Dj5W31c/p0FlTCSJ+kVJA7j3AREcIh9Fl/w==
+X-Received: by 2002:a81:92d7:0:b0:618:8a27:6150 with SMTP id 00721157ae682-627e46df567mr19733137b3.24.1716384105775;
+        Wed, 22 May 2024 06:21:45 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e3790dasm59151617b3.110.2024.05.22.06.21.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 06:18:19 -0700 (PDT)
-Message-ID: <71e7b6f8-67f2-4c03-b83a-71d7e747ad04@linaro.org>
-Date: Wed, 22 May 2024 15:18:18 +0200
+        Wed, 22 May 2024 06:21:45 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61bed738438so49577947b3.2;
+        Wed, 22 May 2024 06:21:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWqa8bpEpj5wKN26+EYt5s0zq5Ht1N1tnN8QXIBHxD9ANXuXenjCu29NKuCsCJ//pYJeXcnQH3YYTa+zC5N7PwM7TklpLMzlswhNZjhQJYvBinaNukt2bW4gOQv56iwBuOGzNCRWoKBkRkrzUY176d2go3D9w0d9y0wb0EiNE1ACq4+pVZ5OjLmlvoeT66GTJjQfwji2yR4XNaXvmojSqtzv3HKG1r1cg==
+X-Received: by 2002:a05:690c:d8f:b0:61e:a3a:2538 with SMTP id
+ 00721157ae682-627e46c7296mr24311947b3.18.1716384105266; Wed, 22 May 2024
+ 06:21:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
- <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
- <8ae675b5-fcf9-4c9b-b06a-4462f70e1322@linaro.org>
- <Zk3X7Dgst5kVzJxy@smile.fi.intel.com>
- <5c32d7fd-4a7f-4d9c-805c-87d4d14f741e@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <5c32d7fd-4a7f-4d9c-805c-87d4d14f741e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240423175900.702640-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 May 2024 15:21:33 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXA8hnV6NTSNdYQNvuBsK5Os9CDgE64xLN3R0wAAmtJgA@mail.gmail.com>
+Message-ID: <CAMuHMdXA8hnV6NTSNdYQNvuBsK5Os9CDgE64xLN3R0wAAmtJgA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/13] pinctrl: renesas: pinctrl-rzg2l: Add support for
+ custom parameters
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Prabhakar,
 
-On 22/05/2024 13:53, Neil Armstrong wrote:
-> On 22/05/2024 13:33, Andy Shevchenko wrote:
->> On Wed, May 22, 2024 at 12:03:33PM +0200, Neil Armstrong wrote:
->>> On 15/05/2024 23:09, Nícolas F. R. A. Prado wrote:
->>>> On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
->>>>> Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
->>>>> have checks for orig_nents against 0. No need to duplicate this.
->>>>> All the same applies to other DMA mapping API calls.
->>>>>
->>>>> Also note, there is no other user in the kernel that does this kind of
->>>>> checks.
->>>>>
->>>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>>>
->>>> Hi,
->>>>
->>>> this commit caused a regression which I reported here:
->>>>
->>>> https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
->>>>
->>>> along with some thoughts on the cause and a possible solution, though I'm not
->>>> familiar with this code base at all and would really appreciate any feedback you
->>>> may have.
->>>
->>> I also see the same regression on the SM8550 and SM8650 platforms,
->>> please CC linux-arm-msm@vger.kernel.org and me for a potential fix to test on those platforms.
->>
->> There is still no answer from IOMMU patch author. Do you have the same trace
->> due to IOMMU calls? Anyway, I guess it would be nice to see it.
-> 
-> Yes :
-> [    6.404623] Unable to handle kernel NULL pointer dereference at virtual address 000000000000001c
-> <snip>
-> [    6.641597] lr : __dma_sync_sg_for_device+0x3c/0x40
-> <snip>
-> [    6.688286] Call trace:
-> [    6.688287]  iommu_dma_sync_sg_for_device+0x28/0x100
-> [    6.717582]  __dma_sync_sg_for_device+0x3c/0x40
-> [    6.717585]  spi_transfer_one_message+0x358/0x680
-> [    6.732229]  __spi_pump_transfer_message+0x188/0x494
-> [    6.732232]  __spi_sync+0x2a8/0x3c4
-> [    6.732234]  spi_sync+0x30/0x54
-> [    6.732236]  goodix_berlin_spi_write+0xf8/0x164 [goodix_berlin_spi]
-> [    6.739854]  _regmap_raw_write_impl+0x538/0x674
-> [    6.750053]  _regmap_raw_write+0xb4/0x144
-> [    6.750056]  regmap_raw_write+0x7c/0xc0
-> [    6.750058]  goodix_berlin_power_on+0xb0/0x1b0 [goodix_berlin_core]
-> [    6.765520]  goodix_berlin_probe+0xc0/0x660 [goodix_berlin_core]
-> [    6.765522]  goodix_berlin_spi_probe+0x12c/0x14c [goodix_berlin_spi]
-> [    6.772339]  spi_probe+0x84/0xe4
-> [    6.772342]  really_probe+0xbc/0x29c
-> [    6.784313]  __driver_probe_device+0x78/0x12c
-> [    6.784316]  driver_probe_device+0x3c/0x15c
-> [    6.784319]  __driver_attach+0x90/0x19c
-> [    6.784322]  bus_for_each_dev+0x7c/0xdc
-> [    6.794520]  driver_attach+0x24/0x30
-> [    6.794523]  bus_add_driver+0xe4/0x208
-> [    6.794526]  driver_register+0x5c/0x124
-> [    6.802586]  __spi_register_driver+0xa4/0xe4
-> [    6.802589]  goodix_berlin_spi_driver_init+0x20/0x1000 [goodix_berlin_spi]
-> [    6.802591]  do_one_initcall+0x80/0x1c8
-> [    6.902310]  do_init_module+0x60/0x218
-> [    6.921988]  load_module+0x1bcc/0x1d8c
-> [    6.925847]  init_module_from_file+0x88/0xcc
-> [    6.930238]  __arm64_sys_finit_module+0x1dc/0x2e4
-> [    6.935074]  invoke_syscall+0x48/0x114
-> [    6.938944]  el0_svc_common.constprop.0+0xc0/0xe0
-> [    6.943781]  do_el0_svc+0x1c/0x28
-> [    6.947195]  el0_svc+0x34/0xd8
-> [    6.950348]  el0t_64_sync_handler+0x120/0x12c
-> [    6.954833]  el0t_64_sync+0x190/0x194
-> [    6.958600] Code: 2a0203f5 2a0303f6 a90363f7 aa0003f7 (b9401c2
-> 
-> Reverting  8cc3bad9d9d6 ("spi: Remove unneded check for orig_nents") removes the crash.
-> 
->>
->> Meanwhile, I have three changes I posted in the replies to the initial report,
->> can you combine them all and test? This will be a plan B (? or A, depending on
->> the culprit).
->>
-> 
-> I'll try to apply them and test.
+On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> In preparation for passing custom params for RZ/V2H(P) SoC assign the
+> custom params that is being passed via struct rzg2l_pinctrl_data.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> RFC->v2
+> - No change
 
-I stacked the 3 changes, and it works:
-Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Thanks for your patch!
 
-For reference, the changeset looks like:
-============><============================================================================================
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 289feccca376..0851c5e1fd1f 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1220,6 +1220,11 @@ void spi_unmap_buf(struct spi_controller *ctlr, struct device *dev,
-  	spi_unmap_buf_attrs(ctlr, dev, sgt, dir, 0);
-  }
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -262,6 +262,9 @@ struct rzg2l_pinctrl_data {
+>         const struct rzg2l_hwcfg *hwcfg;
+>         const struct rzg2l_variable_pin_cfg *variable_pin_cfg;
+>         unsigned int n_variable_pin_cfg;
+> +       unsigned int num_custom_params;
+> +       const struct pinconf_generic_params *custom_params;
+> +       const struct pin_config_item *custom_conf_items;
 
-+/* Dummy SG for unidirect transfers */
-+static struct scatterlist dummy_sg = {
-+	.page_link = SG_END,
-+};
-+
-  static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
-  {
-  	struct device *tx_dev, *rx_dev;
-@@ -1243,6 +1248,7 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
-  	else
-  		rx_dev = ctlr->dev.parent;
+Perhaps this should be protected by #ifdef CONFIG_DEBUG_FS, too?
 
-+	ret = -ENOMSG;
-  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
-  		/* The sync is done before each transfer. */
-  		unsigned long attrs = DMA_ATTR_SKIP_CPU_SYNC;
-@@ -1257,6 +1263,9 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
-  						attrs);
-  			if (ret != 0)
-  				return ret;
-+		} else {
-+			memset(&xfer->tx_sg, 0, sizeof(xfer->tx_sg));
-+			xfer->tx_sg.sgl = &dummy_sg;
-  		}
+>         void (*pwpr_pfc_unlock)(struct rzg2l_pinctrl *pctrl);
+>         void (*pwpr_pfc_lock)(struct rzg2l_pinctrl *pctrl);
+>         void (*pmc_writeb)(struct rzg2l_pinctrl *pctrl, u8 val, void __io=
+mem *addr);
+> @@ -2374,6 +2377,13 @@ static int rzg2l_pinctrl_register(struct rzg2l_pin=
+ctrl *pctrl)
+>         pctrl->desc.pmxops =3D &rzg2l_pinctrl_pmxops;
+>         pctrl->desc.confops =3D &rzg2l_pinctrl_confops;
+>         pctrl->desc.owner =3D THIS_MODULE;
+> +       if (pctrl->data->num_custom_params) {
+> +               pctrl->desc.num_custom_params =3D pctrl->data->num_custom=
+_params;
+> +               pctrl->desc.custom_params =3D pctrl->data->custom_params;
+> +#ifdef CONFIG_DEBUG_FS
+> +               pctrl->desc.custom_conf_items =3D pctrl->data->custom_con=
+f_items;
+> +#endif
+> +       }
+>
+>         pins =3D devm_kcalloc(pctrl->dev, pctrl->desc.npins, sizeof(*pins=
+), GFP_KERNEL);
+>         if (!pins)
 
-  		if (xfer->rx_buf != NULL) {
-@@ -1270,8 +1279,14 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+Gr{oetje,eeting}s,
 
-  				return ret;
-  			}
-+		} else {
-+			memset(&xfer->rx_sg, 0, sizeof(xfer->rx_sg));
-+			xfer->rx_sg.sgl = &dummy_sg;
-  		}
-  	}
-+	/* No transfer has been mapped, bail out with success */
-+	if (ret)
-+		return 0;
+                        Geert
 
-  	ctlr->cur_rx_dma_dev = rx_dev;
-  	ctlr->cur_tx_dma_dev = tx_dev;
-============><============================================================================================
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
 
-Thanks,
-Neil
-> 
-> Neil
-> 
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
