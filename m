@@ -1,196 +1,148 @@
-Return-Path: <linux-kernel+bounces-185660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47278CB88D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:39:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AC58CB88F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0738BB2100D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03DD01F2337F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1486AC0;
-	Wed, 22 May 2024 01:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDFEA94F;
+	Wed, 22 May 2024 01:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="C6maWd24"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eE6mn8ev"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D062595
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB764C7B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716341979; cv=none; b=GJsvwMwms93JjvojzzHiDrBqN2vBvQswRtE5eJH7Do08MIDhY2MACq/H3TMf/a8KrcITRAWr6xCsvzYbGJYXWGd7xYHx1edxVZOhbRJc0RHLGxh8Zmh+j5mr6BwT2zXRhIRHGpIgRMBsj1NiIDdtDQqR6btGy4elX5Ydawcxk9s=
+	t=1716342019; cv=none; b=Utm2uLVg7cXIwhwbK7IuMcaZXcVibS5ZJe+PAfUdweF2pq8c1DkvqBg4m93IfTblXw1pHcbRH+g5lIDyor8zvPtfqqNwsdDN558wz+kxftnK+1xvWhQUVt6QCYhycPhHmU4pwPByrvcN/MoUhFawX8iOze+3JPpC3YrM2eiZLN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716341979; c=relaxed/simple;
-	bh=1WwCIjW+QYZ8B5shPiF0CpPutf23ixubnTbRYcKHs68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c3vb0HfQpwhcrjeMiLrzkiDcSuvemzlEqg8pkXNgtccu6r/c0pDz6fATABWMTKkyHSRJfAuH728SEaUgYVaAPME+GP3Ecgjd1AoLS0oGDs3tQVNY4rpGyTk08jgxEjgiXTt0Mti/w6QOCwfY7xJTRQE3toZ5uFyHLJBgKLwYez4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=C6maWd24; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ec4ef7d13aso968135ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:39:37 -0700 (PDT)
+	s=arc-20240116; t=1716342019; c=relaxed/simple;
+	bh=U8u9ZX67H1rnYv/prrk0VhN0vNHEl9qh4LwcmqvwAWs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KQ275tkic4gWewHvL/DuF/ci5rtbyZBwo9kMASj05ObZt+JRYwOqHk8m8v9FTQDpecmmZdbitjgAL5ZVGoIw/6w10r+jR6+s+78W016pnCmr4Wew6KRp1wBHpjsZ/9MYDGIetXvqZvRkrX/vsbetz+2bBzPhiWFwBhQS5OtkJCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eE6mn8ev; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df4c61aeebcso2329806276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:40:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716341977; x=1716946777; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u/SglNeSrL+bAHmb25h1R4JUv+l/fpVwpE+XdiicPe0=;
-        b=C6maWd24za/zjQwqbAJHIIdxbDW3JUFR180bxHXggbMQ52ZU098CDSIJHWOMOngdtg
-         0iiJwrPn0FyKG8a08qFN5FokZRwtRguoR2feglW7o3XwPamgMSSXdiM55JvWrGOHTnxq
-         RM1XnaOHZou6bAPfNEC02XrFMsBJ2My95F9y82nmrwHXZ50ABL54wURLk8b21IYtF34z
-         QGl8hcpXYJGpHIu2PbjZc+6PvGgQlUAYAhG6ILxVZZnpSh+c2RWrYytHWI8hhZXrbWOg
-         ouaIsuFzUYn/9ebndm6vD0hoKCx9vOGr+NBdeRBx+9zGRdxo6M5lp0VfZ4k0oywDWzx/
-         dMIw==
+        d=google.com; s=20230601; t=1716342016; x=1716946816; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zcj+niLGOsOBGFG/wxz5ssr64Z9mR+IM9s4JveywwVo=;
+        b=eE6mn8evLWaQxHpT4P9LcEvg64AhA+UGIXg+26lXT0wvoc1GHJJuOYlsHwlJTCmVER
+         k9WmqAzTJ68N33eLNQPD1RKdrTvorl7e+ligH9YVmcXa1rjavRYw0dI8I4W7k5bg0gF+
+         8tOfXXmguBm06mXQ/ubK0Da3vXVjkxfvmS+p4SMj4+gOGHI6eOPvgAtcL3wO6ux9e4He
+         E0AoUjbbvpQBiRwswVIoUfDS/lj087JQ/gAWw4Xq0uElwfjFSItDosqdMJWxrlwZ77bO
+         qCggnMZHTzLVh7pktPs80WFXZMSG+Q9ksq43hhjy/KK9Hc7mbfNjsvY5mcnQgP2LI+Y6
+         MuJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716341977; x=1716946777;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1716342016; x=1716946816;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u/SglNeSrL+bAHmb25h1R4JUv+l/fpVwpE+XdiicPe0=;
-        b=KYaH1VELiyGbspyXjohHhehq9XCLvI+12QeQeUZAcll9JZ5DqbV+MiyzYsegNAur1R
-         RMh20dHOMn3b+gDo1x9pX3OTMbSCLPGVLBzw1PHAAqNHtfaRyVC6th7sT6DuJBZDRbs9
-         j20IzQ9UUKHWXfzB/G4vu1HsZ8+846jHxIXhpjbmvw1ykWo1lCTaQrFFuwcv3ZAsp+Dt
-         tTtfkreCw7s574z6s7VzTuR4OH9eBFNEeo0/kP6yYaQo5qWUhREIAVJsAwxA5frjk/7+
-         w3oYPW1wAE/U9MClsu9uyfzOBPTVGvQVkJ5vqCyGHkuyf62RGHw327bMwg9sTOe5b4sk
-         7v6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUsnaLr1jekaaAIFb4HvHjDfM55W0mHKjCJ/M9NngGYZN8blDwaCex9yBakjQRJEkr2ILhKAV988ybfAomfenT7Yfa1+QFSh1F9Wsb7
-X-Gm-Message-State: AOJu0Yx1zRtidb3o0ReF/U2JRaDumHzrv4Y8+Jpuu1Vmv3yRS8IB8nXP
-	QwGKUVWSfydXIeW4ovXyoKUGQeLmXoMz+UCEwG+v0sIzrane9jz3PLDCzPCHsTY=
-X-Google-Smtp-Source: AGHT+IGZ5Dzet+It/SNVh6yNDJY38hstpJVORVy8wNn2KqW50FEzmNwEPkFFvTlXJA9hHBB0ZQ4+WQ==
-X-Received: by 2002:a17:902:f688:b0:1f2:fae6:3ace with SMTP id d9443c01a7336-1f31c966f9amr7965285ad.2.1716341976695;
-        Tue, 21 May 2024 18:39:36 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d484fsm227102355ad.39.2024.05.21.18.39.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 18:39:36 -0700 (PDT)
-Message-ID: <dcd2dac3-07d2-4ee8-addf-b9266a84f7fd@kernel.dk>
-Date: Tue, 21 May 2024 19:39:35 -0600
+        bh=zcj+niLGOsOBGFG/wxz5ssr64Z9mR+IM9s4JveywwVo=;
+        b=pLSUi0i5FpwcjrvpgTem9oZMFP0UBGrpshXLZcjEKSctog+7O6l5q8UMsn7ma+/jLR
+         Snpz4DFXwBQE8eBDqDpyeUk2vKJqcb1e6/L7ho64KuJRwuICo0/oWmOyssnXPl4kyXrW
+         qJJbwyJr87hN0oH4+fCWFjEZgL5Afmz5IqNq/2OhuI1MJwZHwUJwxYETq+6UqJj1IieP
+         GdapOeBKY51sNYrupVKEvEOyKq/lHzerf0mK2QvXQCsD+bfEXbhmlCsA9w5mYUicF8Yd
+         EDU+PKceiH+QKwEJ+k6pthxNcOQnGmtqyn1NRwiI/DY/Ovt+TM7CYxMXUHUXtcB1AMZD
+         KUWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+I043K0Z6B5IKlEYj4qCwDwL6rPwJ75UnOXJfWoSwGmpd343GZFiaKO//NHEO5hC0BC5+VkR6H262VBI+w/8DMA6KlGBWw3QN524I
+X-Gm-Message-State: AOJu0YyfrFn2JyoYdAHxpwrmcIbSgrnTl8jK0v3er+/X6Tsq9/Jz9Mhg
+	dYpQGfxiylQKirFijPKh3/TXyZUgP68bPnOFiNyHr+Bck2TjQznEVpJ07xU4sCAhhondGUvn5aJ
+	isQ==
+X-Google-Smtp-Source: AGHT+IF8tl2Sd1O1Adb/DEG65NrlAsoUAahexLMaCbbpQeSeG4ZOBg+4u/hLB5lJUUIzwhVDdo9qeU1encA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:20c1:b0:de5:3003:4b64 with SMTP id
+ 3f1490d57ef6-df4e0a80c05mr82582276.1.1716342016391; Tue, 21 May 2024 18:40:16
+ -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 21 May 2024 18:40:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 for-6.10/block 1/2] loop: Fix a race between loop
- detach and loop open
-To: Gulam Mohamed <gulam.mohamed@oracle.com>, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: shinichiro.kawasaki@wdc.com, chaitanyak@nvidia.com, hch@lst.de
-References: <20240521224249.7389-1-gulam.mohamed@oracle.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240521224249.7389-1-gulam.mohamed@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
+Message-ID: <20240522014013.1672962-1-seanjc@google.com>
+Subject: [PATCH v2 0/6] KVM: Fold kvm_arch_sched_in() into kvm_arch_vcpu_load()
+From: Sean Christopherson <seanjc@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/21/24 4:42 PM, Gulam Mohamed wrote:
-> Description
-> ===========
-> 
-> 1. Userspace sends the command "losetup -d" which uses the open() call
->    to open the device
-> 2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
->    function loop_clr_fd()
-> 3. If LOOP_CLR_FD is the first command received at the time, then the
->    AUTOCLEAR flag is not set and deletion of the
->    loop device proceeds ahead and scans the partitions (drop/add
->    partitions)
-> 
-> 	if (disk_openers(lo->lo_disk) > 1) {
-> 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
-> 		loop_global_unlock(lo, true);
-> 		return 0;
-> 	}
-> 
->  4. Before scanning partitions, it will check to see if any partition of
->     the loop device is currently opened
->  5. If any partition is opened, then it will return EBUSY:
-> 
->     if (disk->open_partitions)
-> 		return -EBUSY;
->  6. So, after receiving the "LOOP_CLR_FD" command and just before the above
->     check for open_partitions, if any other command
->     (like blkid) opens any partition of the loop device, then the partition
->     scan will not proceed and EBUSY is returned as shown in above code
->  7. But in "__loop_clr_fd()", this EBUSY error is not propagated
->  8. We have noticed that this is causing the partitions of the loop to
->     remain stale even after the loop device is detached resulting in the
->     IO errors on the partitions
-> 
-> Fix
-> ---
-> Re-introduce the lo_open() call to restrict any process to open the loop
-> device when its being detached
-> 
-> Test case
-> =========
-> Test case involves the following two scripts:
-> 
-> script1.sh
-> ----------
-> while [ 1 ];
-> do
-> 	losetup -P -f /home/opt/looptest/test10.img
-> 	blkid /dev/loop0p1
-> done
-> 
-> script2.sh
-> ----------
-> while [ 1 ];
-> do
-> 	losetup -d /dev/loop0
-> done
-> 
-> Without fix, the following IO errors have been observed:
-> 
-> kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
-> kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
->         phys_seg 1 prio class 0
-> kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
->         phys_seg 1 prio class 0
-> kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
->         read
-> 
-> V1->V2:
-> 	Added a test case, 010, in blktests in tests/loop/
-> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
-> ---
->  drivers/block/loop.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 28a95fd366fe..9a235d8c062d 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -1717,6 +1717,24 @@ static int lo_compat_ioctl(struct block_device *bdev, blk_mode_t mode,
->  }
->  #endif
->  
-> +static int lo_open(struct gendisk *disk, blk_mode_t mode)
-> +{
-> +        struct loop_device *lo = disk->private_data;
-> +        int err;
-> +
-> +        if (!lo)
-> +                return -ENXIO;
-> +
-> +        err = mutex_lock_killable(&lo->lo_mutex);
-> +        if (err)
-> +                return err;
-> +
-> +        if (lo->lo_state == Lo_rundown)
-> +                err = -ENXIO;
-> +        mutex_unlock(&lo->lo_mutex);
-> +	return err;
-> +}
+Drop kvm_arch_sched_in() and instead add and use kvm_vcpu.scheduled_out
+to communicate to kvm_arch_vcpu_load() that the vCPU is being scheduling
+back in.
 
-Most of this function uses spaces rather than tabs.
+While fiddling with an idea for optimizing state management on AMD CPUs,
+I wanted to skip re-saving certain host state when a vCPU is scheduled back
+in, as the state (theoretically) shouldn't change for the task while it's
+scheduled out.  Actually doing that was annoying and unnecessarily brittle
+due to having a separate API for the kvm_sched_in() case (the state save
+needed to be in kvm_arch_vcpu_load() for the common path).
 
+The other motivation for this is to avoid yet another arch hook, and more
+arbitrary ordering, if there's a future need to hook kvm_sched_out() (we've
+come close on the x86 side several times).  E.g. kvm_arch_vcpu_put() can
+simply check kvm_vcpu.scheduled_out if it needs to something specific for
+the vCPU being scheduled out.
+
+v2:
+ - Add scheduled_out flag instead of passing a bool to kvm_arch_vcpu_load().
+   [Oliver]
+ - Tack on patches to clean up x86's setting of l1tf_flush_l1d in
+   kvm_arch_sched_load() (the code looked slightly less weird when the flag
+   was being set by kvm_arch_sched_in()).
+
+v1: https://lore.kernel.org/all/20240430193157.419425-1-seanjc@google.com
+
+Sean Christopherson (6):
+  KVM: Add a flag to track if a loaded vCPU is scheduled out
+  KVM: VMX: Move PLE grow/shrink helpers above vmx_vcpu_load()
+  KVM: x86: Fold kvm_arch_sched_in() into kvm_arch_vcpu_load()
+  KVM: Delete the now unused kvm_arch_sched_in()
+  KVM: x86: Unconditionally set l1tf_flush_l1d during vCPU load
+  KVM: x86: Drop now-superflous setting of l1tf_flush_l1d in vcpu_run()
+
+ arch/arm64/include/asm/kvm_host.h     |  1 -
+ arch/loongarch/include/asm/kvm_host.h |  1 -
+ arch/mips/include/asm/kvm_host.h      |  1 -
+ arch/powerpc/include/asm/kvm_host.h   |  1 -
+ arch/riscv/include/asm/kvm_host.h     |  1 -
+ arch/s390/include/asm/kvm_host.h      |  1 -
+ arch/x86/include/asm/kvm-x86-ops.h    |  1 -
+ arch/x86/include/asm/kvm_host.h       |  2 -
+ arch/x86/kvm/pmu.c                    |  6 +-
+ arch/x86/kvm/svm/svm.c                | 11 +---
+ arch/x86/kvm/vmx/main.c               |  2 -
+ arch/x86/kvm/vmx/vmx.c                | 80 +++++++++++++--------------
+ arch/x86/kvm/vmx/x86_ops.h            |  1 -
+ arch/x86/kvm/x86.c                    | 22 +++-----
+ include/linux/kvm_host.h              |  3 +-
+ virt/kvm/kvm_main.c                   |  5 +-
+ 16 files changed, 59 insertions(+), 80 deletions(-)
+
+
+base-commit: 4aad0b1893a141f114ba40ed509066f3c9bc24b0
 -- 
-Jens Axboe
+2.45.0.215.g3402c0e53f-goog
 
 
