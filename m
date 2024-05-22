@@ -1,207 +1,156 @@
-Return-Path: <linux-kernel+bounces-186199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C98F8CC100
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:11:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B3A18CC103
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74F2285351
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42491F23940
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2A613D61A;
-	Wed, 22 May 2024 12:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A6C13D60F;
+	Wed, 22 May 2024 12:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GKCqmVdL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="ElQAy4iY"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9A27D3E0;
-	Wed, 22 May 2024 12:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E2913D602
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716379903; cv=none; b=GD+f9+3SKnJ/8jsA0VYTcdJ9Ud7QeL4nf2JUBKvXhDaDJn2t9JK9tJiJfpXtZpgOH+krSd7iM997CUdvR/Ng76I0es8pyxkR9M3oAP1vk9Owj+sorThNT9Qp/hCUI5R2VeShG+ZAMaY9ASrkefMYuj+JX7z2Stx5piMQorG47IA=
+	t=1716379951; cv=none; b=jBrL9eS9IAtuzOicjKEaHvzs7RklL1Z5Cs3qjY/PyZbqEFMl/cfcUBInO+7QKdqcAvFw/2oaBX3qJ+2TK+ia8WqvUvBexvJNLOL+kocamcimfhCjqq7NwOqi6nEeUzAIz9/v9+tTGxqihyLt64ta8m/pAuuuorf3nMh5vNaedn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716379903; c=relaxed/simple;
-	bh=CtnT05vnBc8AYHsVdRQfm3ZfZIHntoVJb50nT3GF2uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DtcfCgP8QoJ684BZA6tmIYLFaCgU4Cgh/giue04aFF9ensqsoOVyjKopeokayR53X5on49UuF6+MzCujhYeloNKq2kFZ0APIVGDA1RV4Bn1o15g5Sx6PkjJnOoUvu8T+uxXrYUVmexYyIfu4jNrdQ2uX8ULCaQJEAKQYBoXDlZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GKCqmVdL; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716379903; x=1747915903;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CtnT05vnBc8AYHsVdRQfm3ZfZIHntoVJb50nT3GF2uw=;
-  b=GKCqmVdLKoyUKOKy92N3dwNgKMdkPRnC4SemuNKJ8QlLUbAJdmgXthGk
-   bBbVM6DIzFiXmO452g5kDNs3m6ktj+kNqXJQcsX/6WBTclqFz2ZtVAZun
-   +8TDYVe20gsy1ZTq9I3m2CgTGEA7TFFahq4O41e4jCgpfQXykpoFtNW/f
-   1skXDOBHJIphxrxdzVYN3cnpn+fRF3RTTvqZiRN0CIaZFmOEReDvMDXLv
-   LjKitGRWIozDhd9IkTQAu2V4SB+GF6+3qwySdNhit4FbU+RzOJuBnqxfc
-   Y20wtn3DOKf/2HZkTrnJRnpVfDc1mnVaZxVA+Fjxo5k+XkhddvDspw+ih
-   g==;
-X-CSE-ConnectionGUID: EO70mcJiS0KiAzZgj0877w==
-X-CSE-MsgGUID: aniynrUMSSSw1dJL6m5KEA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="30147503"
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="30147503"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 05:11:42 -0700
-X-CSE-ConnectionGUID: qAn5SldGQKOSRiq9taHSHw==
-X-CSE-MsgGUID: dXaG29cbROCynHDuUw5X1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="33259880"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 05:11:38 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 2F53611F82A;
-	Wed, 22 May 2024 15:11:36 +0300 (EEST)
-Date: Wed, 22 May 2024 12:11:36 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Cc: Alain Volmat <alain.volmat@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>,
-	Pavel Machek <pavel@ucw.cz>,
-	Arnaud Ferraris <arnaud.ferraris@collabora.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: media: i2c: add galaxycore,gc2145
- DVP bus support
-Message-ID: <Zk3g-CGWQOx5zZkT@kekkonen.localdomain>
-References: <20240504164115.64603-1-andrej.skvortzov@gmail.com>
- <20240504164115.64603-2-andrej.skvortzov@gmail.com>
+	s=arc-20240116; t=1716379951; c=relaxed/simple;
+	bh=BAof/JIscvcZciVQ5PJ0YJMLhfMx6ELaTY2iwZ39ljM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ptPkkk0vxXkdl/eoDQKSaf5MSpxV4w5cqZbXTm6ga02UyWgNpcsBjOdRQtdmOaY7tBMD0lgxQLb6D1w3vfcmZEmt3QvlhWjYZVIJoyB63oY+RFAmpwBjueMtka7CC74RSvhnz7Ddhtv2ISPaAIiTtzHfgnVREAfIoltpAD7a1rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=ElQAy4iY; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5708d8beec6so10221616a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1716379948; x=1716984748; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m6v7R8Jn9mrQ1jFO6WJT02ZXqZgLEi4/5o5xTGHxv3M=;
+        b=ElQAy4iY1/S73PMf/h42QJYpiGWta2zoymcoqag3dRdQ+ILO4SsNimJt0GIfpcUFCn
+         450820enbCk7ybR/ycCyvh98RDjiTWRPnSi9WTabn/kXJpnjFC2+vn81EZrqRfGhe/4V
+         FIcFRxcmBMJzZNXfMhHQdnq6/GvBEnyHtOaI6dVWK8R3jGVngpXw8A5i61NKz2Zxa/kJ
+         YiMFjRdtj+W0v/pbnqVLaUxaIarkrfC4EKn+BajuuQv13rItjiu7q04oYdeZHB1PciaS
+         5CXoCCPeOrM3DfOWJBsVmAYBmDpHNRxkCnYnF430jSaVbhuMJUMjNdoLn5hOkGo18Bi3
+         PFMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716379948; x=1716984748;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m6v7R8Jn9mrQ1jFO6WJT02ZXqZgLEi4/5o5xTGHxv3M=;
+        b=m5C7xSBBBEYJiM1sfTyYsEG6mFRKk0CMjL4c7fRk44GYMyuEuTN9xN8EXu8IDCe8FG
+         VWVBvz8APrJ4hQbrfp6gxvzD8b+FVX3KGEvVRYDkd3CcbRQbYGkmRLSVDNxaRZDjyL7P
+         YHPOINeYjFit/lmyc2SE0922Ghz1ORZSQK5FS3zYa8oJ28wK7Zu09OL98UdxgWhzY3UY
+         hFCrxS3SX/Ai4UwsN2tZjB+s4KwJCC7vR4gjHzmqOzRM1IiA78pkQN3YG9x5wEK3gz9w
+         YgCVeLcAuDu2OSuiAtppJDj+KDwJGeV9NJLAiTQk6VRyQEL5C8EV3CuPzlaMH/ntOACi
+         TIhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsuulf5k/2sohEJF1xrblk99RNFl3vBnZOh0kzE8mUY+2KN8UjwoevNicq6S9N2HO9iGYV1A1mVg5a3rQn1von1J3Lfvr+xbDSUuZz
+X-Gm-Message-State: AOJu0Yxuv3cbkP2RiwmrmocqKpNiAZc2LnH78gLrwrtPdqmPxgRqQI0R
+	RgOEJMljg9BAFhCPnrkh0bL/PMObNUWygo4iHmbbtFZVM9/KiJkUrzhgWLzP7g0=
+X-Google-Smtp-Source: AGHT+IHqMWNSPjdTuLfdDab2oJ2USR+dOiil+nWG5c+2IEvTLY6ujL/dfbfMxSzfrvvGaDq69eQqlw==
+X-Received: by 2002:a50:ab4b:0:b0:574:ecc4:6b54 with SMTP id 4fb4d7f45d1cf-578329c7ca3mr1731751a12.9.1716379948503;
+        Wed, 22 May 2024 05:12:28 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:2dc::49:b7])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bed000esm18281624a12.54.2024.05.22.05.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 05:12:27 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,  Tetsuo Handa
+ <penguin-kernel@i-love.sakura.ne.jp>,  Eric Dumazet <edumazet@google.com>,
+  Linus Torvalds <torvalds@linux-foundation.org>,  bpf
+ <bpf@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
+In-Reply-To: <20240522113349.2202-1-hdanton@sina.com> (Hillf Danton's message
+	of "Wed, 22 May 2024 19:33:49 +0800")
+References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
+	<20240521225918.2147-1-hdanton@sina.com>
+	<20240522113349.2202-1-hdanton@sina.com>
+User-Agent: mu4e 1.12.4; emacs 29.1
+Date: Wed, 22 May 2024 14:12:26 +0200
+Message-ID: <87o78yvydx.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240504164115.64603-2-andrej.skvortzov@gmail.com>
+Content-Type: text/plain
 
-Hi Andrey,
+On Wed, May 22, 2024 at 07:33 PM +08, Hillf Danton wrote:
+> On Wed, 22 May 2024 11:50:49 +0200 Jakub Sitnicki <jakub@cloudflare.com>
+> On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
+>> > On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com>
+>> >> On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>> >> > --- a/net/core/sock_map.c
+>> >> > +++ b/net/core/sock_map.c
+>> >> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
+>> >> >         bool strp_stop =3D false, verdict_stop =3D false;
+>> >> >         struct sk_psock_link *link, *tmp;
+>> >> >
+>> >> > +       rcu_read_lock();
+>> >> >         spin_lock_bh(&psock->link_lock);
+>> >> 
+>> >> I think this is incorrect.
+>> >> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
+>> >
+>> > Could you specify why it won't be safe in rcu cs if you are right?
+>> > What does rcu look like in RT if not nothing?
+>> 
+>> RCU readers can't block, while spinlock RT doesn't disable preemption.
+>> 
+>> https://docs.kernel.org/RCU/rcu.html
+>> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-rt
+>> 
+>> I've finally gotten around to testing proposed fix that just disallows
+>> map_delete_elem on sockmap/sockhash from BPF tracing progs
+>> completely. This should put an end to this saga of syzkaller reports.
+>> 
+>> https://lore.kernel.org/all/87jzjnxaqf.fsf@cloudflare.com/
+>> 
+> The locking info syzbot reported [2] suggests a known issue that like Alexei
+> you hit the send button earlier than expected.
+>
+> 4 locks held by syz-executor361/5090:
+>  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+>  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+>  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: map_delete_elem+0x388/0x5e0 kernel/bpf/syscall.c:1695
+>  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+>  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_hash_delete_elem+0x17c/0x400 net/core/sock_map.c:945
+>  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+>  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_del_link net/core/sock_map.c:145 [inline]
+>  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_unref+0xcc/0x5e0 net/core/sock_map.c:180
+>  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+>  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+>  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2380 [inline]
+>  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x114/0x420 kernel/trace/bpf_trace.c:2420
+>
+> [2] https://lore.kernel.org/all/000000000000d0b87206170dd88f@google.com/
+>
+>
+> If CONFIG_PREEMPT_RCU=y rcu_read_lock() does not disable
+> preemption. This is even true for !RT kernels with CONFIG_PREEMPT=y
+>
+> [3] Subject: Re: [patch 30/63] locking/spinlock: Provide RT variant
+> https://lore.kernel.org/all/874kc6rizr.ffs@tglx/
 
-On Sat, May 04, 2024 at 07:41:14PM +0300, Andrey Skvortsov wrote:
-> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/media/i2c/galaxycore,gc2145.yaml | 65 ++++++++++++++++++-
->  1 file changed, 64 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/galaxycore,gc2145.yaml b/Documentation/devicetree/bindings/media/i2c/galaxycore,gc2145.yaml
-> index 1726ecca4c77..3ca5bb94502d 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/galaxycore,gc2145.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/galaxycore,gc2145.yaml
-> @@ -61,8 +61,38 @@ properties:
->          properties:
->            link-frequencies: true
->  
-> +          bus-type:
-> +            enum:
-> +              - 4 # CSI-2 D-PHY
-> +              - 5 # Parallel
-> +            default: 4
-> +
-> +          bus-width:
-> +            const: 8
-> +
-> +          hsync-active:
-> +            enum: [0, 1]
-> +            default: 1
-> +
-> +          vsync-active:
-> +            enum: [0, 1]
-> +            default: 1
-> +
-> +          pclk-sample:
-> +            enum: [0, 1]
-> +            default: 1
+That locking issue is related to my earlier, as it turned out -
+incomplete, fix:
 
-These are relevant for bus-type 5 only.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ff91059932401894e6c86341915615c5eb0eca48
 
-> +
->          required:
-> -          - link-frequencies
-> +          - bus-type
-> +
-> +        allOf:
-> +          - if:
-> +              properties:
-> +                bus-type:
-> +                  const: 4
-> +            then:
-> +              required:
-> +                - link-frequencies
-
-I think I'd keep the link-frequencies for DVP as well.
-
->  
->      required:
->        - endpoint
-> @@ -84,6 +114,7 @@ additionalProperties: false
->  
->  examples:
->    - |
-> +    #include <dt-bindings/media/video-interfaces.h>
->      #include <dt-bindings/gpio/gpio.h>
->  
->      i2c {
-> @@ -103,6 +134,7 @@ examples:
->              port {
->                  endpoint {
->                      remote-endpoint = <&mipid02_0>;
-> +                    bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
->                      data-lanes = <1 2>;
->                      link-frequencies = /bits/ 64 <120000000 192000000 240000000>;
->                  };
-> @@ -110,4 +142,35 @@ examples:
->          };
->      };
->  
-> +  - |
-> +    #include <dt-bindings/media/video-interfaces.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        camera@3c {
-> +            compatible = "galaxycore,gc2145";
-> +            reg = <0x3c>;
-> +            clocks = <&clk_ext_camera>;
-> +            iovdd-supply = <&scmi_v3v3_sw>;
-> +            avdd-supply = <&scmi_v3v3_sw>;
-> +            dvdd-supply = <&scmi_v3v3_sw>;
-> +            powerdown-gpios = <&mcp23017 3 (GPIO_ACTIVE_LOW | GPIO_PUSH_PULL)>;
-> +            reset-gpios = <&mcp23017 4 (GPIO_ACTIVE_LOW | GPIO_PUSH_PULL)>;
-> +
-> +            port {
-> +                endpoint {
-> +                    remote-endpoint = <&parallel_from_gc2145>;
-> +                    bus-type = <MEDIA_BUS_TYPE_PARALLEL>;
-> +                    bus-width = <8>;
-> +                    hsync-active = <1>;
-> +                    vsync-active = <1>;
-> +                    pclk-sample = <1>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
->  ...
-
--- 
-Kind regards,
-
-Sakari Ailus
+We don't expect map_delete_elem to be called from map_update_elem for
+sockmap/sockhash, but that is what syzkaller started doing by attaching
+BPF tracing progs which call map_delete_elem.
 
