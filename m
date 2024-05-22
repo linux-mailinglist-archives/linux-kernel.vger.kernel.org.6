@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-186564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED45F8CC5B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:38:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D278CC5B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15D8FB219B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:38:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B86281155
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A74142E6E;
-	Wed, 22 May 2024 17:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0ED144304;
+	Wed, 22 May 2024 17:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="YqQFU1gj"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lbnWxyF2"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CC07D071;
-	Wed, 22 May 2024 17:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B457D071;
+	Wed, 22 May 2024 17:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716399511; cv=none; b=oplqnyrOQ0IH555e/7P7bodlrh516tKHQjNhMXZRxcXJ30igA2tw7P6c2oxOClMy+xKjA4xD6bZ2ssFBYAsGNxJBHtidMqcOmzwZobNXCIuIa5TYrXmqcDNVTSCN2FyvUIa78EMxxx8KkXEBrVMzwV8QUamZdHvhyG4qrO7uGK8=
+	t=1716399610; cv=none; b=aqTtbg2KZVPE8Uueg0fuOyahzddNqMpKtglre52/mpRxViO9QufZKkH0BAPchzQsIMfqWhVGg5dhaHY4EsL6v2puDrzN7crJMQBOwtogcYHl89xmlXOJKk3qlOWRIJ1mbvrjnagoC6l474d8Xl4aWYkiHsgku1HDf/BmceO2/e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716399511; c=relaxed/simple;
-	bh=utZwExZsy+bbzeGxO3QSi4GkAIS9asuvSNjQM7MzDJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RQDbB2NSNkWjerF1HPX8uP44f5YVTb/4HqiWn6/PcVCAyJ/G/30sqZ3VQOiQLpUG+l8QTPf44V4ctmnpOE6gQA7f+Aaenfcw4M73PS2SSNKcysbN+rT+3G/VVCLCzCV3iClNEtQSiuMVqAZFL/ghgeVqQzO1/JHL1EzIMHnc8LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=YqQFU1gj; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Vkz6s4NcTzlgMVN;
-	Wed, 22 May 2024 17:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716399507; x=1718991508; bh=hYMzJ6ZktlWrLhJIonyk1Rju
-	qO/QWvieXSfFyw4bnCs=; b=YqQFU1gjjShdbKHUuEsWdQ2Hw/e7MTj1Rqjd4nUL
-	xuLqxx/Zru75ZuUC1JUFioXsH/Sp5lm9GM8/wyMhvSMYhwck6uweksfj4p+UcEci
-	31x3WJ6uXSjEg/vdViamuS/PwEfV6Di0yattALWBKftaS3WSZB68NdkN6ydFJVA6
-	GR7Zo7bqKWJ0TvO23SUFxGBShqWmNsJ95hequA/Ni0zkY5bcITVo9iTtpj3uRB6g
-	qS4SfQBKgscaUIZHmerlhsO5AINOexgVHMjtUBl+WtNWEYs6SkTrFKnFgIwgqK39
-	HUcTn34ZW/gDZmpDi1d6S7V70L9cnoGedvYPMUrlYFXwEw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Bvzryhrrd1zB; Wed, 22 May 2024 17:38:27 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Vkz6p70p2zlgMVL;
-	Wed, 22 May 2024 17:38:26 +0000 (UTC)
-Message-ID: <5166bc31-1fd9-4f7f-bc51-f1f50d9d5483@acm.org>
-Date: Wed, 22 May 2024 10:38:26 -0700
+	s=arc-20240116; t=1716399610; c=relaxed/simple;
+	bh=rvyON9Eez4+bgszygh1Bb1QcvHtLRDv9uBENZwvOqgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HvuITG6YRcU1FX9yt3/PCgs1pnJwCTFalA9vy9unmW2pvjPU017MJPiWb3+fG6qWIlhiqQoRYbMuTZfqHbLDTSfPxIdx61NswSMpfAvt/V6zx1kdv9Em/bRhajoHmfECDLnlfKePb8W3mD6yiKgbNO5U2dYwk2naenum8xyLxak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lbnWxyF2; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44MHdgZ2058268;
+	Wed, 22 May 2024 12:39:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716399583;
+	bh=96umGE7Q8x9vdEdBBDF/Aa24QRAMgPy3dYLj6BJie8k=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=lbnWxyF2XCnoOX2VMR21xaTV+WQlRqXc/+PCmgxkXrFUkHlyUtAJfF5OrLaPD67J5
+	 h4u5U7qoxy7u9LjpgIUxZtzcTN7ZR19a1eHDhfv3e7HpnWER/dJDV0ahkhykCG26CQ
+	 rvtKjnvwJGPpfelmmrHdOBvyrC94axaVqDm/HUxw=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44MHdgTM024507
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 22 May 2024 12:39:42 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 22
+ May 2024 12:39:42 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 22 May 2024 12:39:42 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44MHdaJM018757;
+	Wed, 22 May 2024 12:39:37 -0500
+Message-ID: <c2fe8d96-677a-4779-b46b-1c50698ef6a0@ti.com>
+Date: Wed, 22 May 2024 23:09:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,33 +64,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] loop: inherit the ioprio in loop woker thread
-To: Yunlong Xing <yunlong.xing@unisoc.com>, axboe@kernel.dk,
- yunlongxing23@gmail.com, niuzhiguo84@gmail.com, Hao_hao.Wang@unisoc.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240522074829.1750204-1-yunlong.xing@unisoc.com>
+Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
+ GPL-2.0
+To: Nishanth Menon <nm@ti.com>, Conor Dooley <conor@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Andrew Lunn
+	<andrew@lunn.ch>
+CC: <vigneshr@ti.com>, <davem@davemloft.net>, <edumazet@google.com>,
+        <kuba@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Kip Broadhurst <kbroadhurst@ti.com>,
+        <w.egorov@phytec.de>, <u-kumar1@ti.com>
+References: <20240517104226.3395480-1-u-kumar1@ti.com>
+ <20240517-poster-purplish-9b356ce30248@spud>
+ <20240517-fastball-stable-9332cae850ea@spud>
+ <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
+ <20240520-discard-fanatic-f8e686a4faad@spud>
+ <20240520201807.GA1410789-robh@kernel.org>
+ <e257de5f54d361da692820f72048ed06a8673380.camel@redhat.com>
+ <20240522-vanquish-twirl-4f767578ee8d@spud>
+ <20240522134001.tjgvzglufwmi3k75@imitate>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240522074829.1750204-1-yunlong.xing@unisoc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240522134001.tjgvzglufwmi3k75@imitate>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 5/22/24 00:48, Yunlong Xing wrote:
-> @@ -1913,6 +1921,10 @@ static void loop_handle_cmd(struct loop_cmd *cmd)
->   		set_active_memcg(old_memcg);
->   		css_put(cmd_memcg_css);
->   	}
-> +
-> +	if (ori_ioprio != cmd_ioprio)
-> +		set_task_ioprio(current, ori_ioprio);
-> +
->    failed:
->   	/* complete non-aio request */
->   	if (!use_aio || ret) {
+Thanks all for review
 
-Does adding this call in the hot path have a measurable performance impact?
+On 5/22/2024 7:10 PM, Nishanth Menon wrote:
+> On 11:25-20240522, Conor Dooley wrote:
+>> On Wed, May 22, 2024 at 10:04:39AM +0200, Paolo Abeni wrote:
+>>> On Mon, 2024-05-20 at 15:18 -0500, Rob Herring wrote:
+>>>> On Mon, May 20, 2024 at 06:17:52PM +0100, Conor Dooley wrote:
+>>>>> On Sat, May 18, 2024 at 02:18:55PM +0530, Kumar, Udit wrote:
+>>>>>> Hi Conor
+>>>>>>
+>>>>>> On 5/17/2024 8:11 PM, Conor Dooley wrote:
+>>>>>>> On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
+>>>>>>>> On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
+>>>>>>>>> Modify license to include dual licensing as GPL-2.0-only OR MIT
+>>>>>>>>> license for TI specific phy header files. This allows for Linux
+>>>>>>>>> kernel files to be used in other Operating System ecosystems
+>>>>>>>>> such as Zephyr or FreeBSD.
+>>>>>>>> What's wrong with BSD-2-Clause, why not use that?
+>>>>>>> I cut myself off, I meant to say:
+>>>>>>> What's wrong with BSD-2-Clause, the standard dual license for
+>>>>>>> bindings, why not use that?
+>>>>>> want to be inline with License of top level DTS, which is including this
+>>>>>> header file
+>>>>> Unless there's a specific reason to use MIT (like your legal won't even
+>>>>> allow you to use BSD-2-Clause) then please just use the normal license
+>>>>> for bindings here.
+>>>> Aligning with the DTS files is enough reason for me as that's where
+>>>> these files are used. If you need to pick a permissive license for both,
+>>>> then yes, use BSD-2-Clause. Better yet, ask your lawyer.
+>>> Conor would you agree with Rob? - my take is that he is ok with this
+>>> patch.
+>> I don't think whether or not I agree matters, Rob said it's fine so it's
+>> fine.
+> Just to close the loop here: Udit pointed me to this thread and having
+> gone through this already[1] with internal TI teams, the feedback we
+> have gotten from our licensing team (including legal) is to go with
+> GPL2 or MIT. BSD (2 and 3 clauses) were considered, but due to varied
+> reasons, dropped.
+>
+> That said, Udit, since you are touching this, please update in the next
+> revision:
+> Copyright:   (C) 2015-2024 Texas Instruments, Inc.
+>   to
+> Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
 
-Thanks,
 
-Bart.
+will post v2 with these changes after merge window is open.
+
+Along with that in v2 will copy other contributors as well, who are 
+including these files.
+
+
+> [1] https://serenity.dal.design.ti.com/lore/linux-patch-review/20240109231804.3879513-1-nm@ti.com/
+>
 
