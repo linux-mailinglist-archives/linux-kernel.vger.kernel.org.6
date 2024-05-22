@@ -1,349 +1,244 @@
-Return-Path: <linux-kernel+bounces-186184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0DF8CC0C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:02:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2038CC0D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED151C21BB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:02:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5A8F1F23A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEBB82494;
-	Wed, 22 May 2024 12:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAC613D603;
+	Wed, 22 May 2024 12:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jdYPgH9+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="YBGCOsGs"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0CE7E567
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2C22E419;
+	Wed, 22 May 2024 12:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716379332; cv=none; b=oasdCmQw5M1PdBL9WvBJJ7da3eqTH2S3QCVuDNYnNuE+XdmH4ZoLNeEJJgvAMS9oSEcsI07ZB33zcyRqTbYuyhevuG0sepTIr+h8pdzgl1PdQngzt1uPevjJOJnR+5XK7zv0P8stMkSbqRsx9SqoUOD0ryhV9txf4DK7MTihQHU=
+	t=1716379371; cv=none; b=uSDMphpQYdPlhVykjPDTGPfrmLbXzxbOv2dRR3ZNE7Vxka1z4YCeqBXbfQdnkLXw4oi0MyYHHtyymwzz0wo2RLADirolaaCNuikMmi6BHLJSANx9UncPcBzoAOc/UfQfLtap0bC7Y9WsFn5ZRCtiXUGnBkNHGVWwP22BP5q0GSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716379332; c=relaxed/simple;
-	bh=V1W1yhRu3QGRy8i0FYdCDQwXLV2ju0wX/urQiIjlx+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FyjpDRlDRTVT8Y6hfhM0AC0W8KK1+I/VcBenMGIdRjV8e+NaTuc7cd3PlHqj53xiA1mHgv1OeM0X6BDY65mMXqQ8Hz8yEdYGEXs9eC4IgwDm9Wveqr0rZB62C/hGSQkq3I9ZPY8xBjpDjMlXS2sjIKf6VMAkcxYyneMSN2ikNsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jdYPgH9+; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716379330; x=1747915330;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V1W1yhRu3QGRy8i0FYdCDQwXLV2ju0wX/urQiIjlx+A=;
-  b=jdYPgH9+fypWdM6sAVa9NxgSAtu6Juj/BWXsIkfqetVnYO72rEBtNOCw
-   GIZuSOgcaJ3OOh/vFdv5pfdA5Zmz32XA4f3RSVFWEm6anIdguJ1BwSVTE
-   uQVodQH+StIXlTMWLk3dTjh3BdkDB75SYPtzZdwopujdTpdo199a5It9R
-   JZmEPyxcrVxJP9Mm/DltOzIa06ikMmPeIdUlsjTCEhMboI7PcAy6RnPYR
-   1/khSUYDujEXuVLbkfi/oogzpQ0hTOWMp55LHoH6pRhYJJ6KynF3C9wus
-   epP2Mpg30H2whNlHf6afIJB8blfSpbcqlJadfTyMWvhH/auVbu71w3CA0
-   w==;
-X-CSE-ConnectionGUID: W6vvHVvyQoiImkRPVcg8Fg==
-X-CSE-MsgGUID: r+gTPmnRRb6Uu+lZhdDYbw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="38007983"
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="38007983"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 05:01:57 -0700
-X-CSE-ConnectionGUID: qLBuxnBlTUiMeiYoe1OuRg==
-X-CSE-MsgGUID: +oAIr/WIRDOT4+f5G2La8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="64489562"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 05:01:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s9kfE-00000009xkL-0Kd9;
-	Wed, 22 May 2024 15:01:48 +0300
+	s=arc-20240116; t=1716379371; c=relaxed/simple;
+	bh=AylsLP65X8aXsqie5S2YlDUHlaH84sN449S9gHsNeNY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UICOJzajl8aIpGpvFoOY9bShVrm1NWKPj1TyI6dGZxqqVTP50+P7Ekj516orU7hdnP/A5xs2Oi3YpbKsTGLnOAo5drDxv3gUo8Z5HQhaSPxKZw8CzsEgGbxUBTGHxvnklOlPnQUHzDnBKgRqzsHQTrlshMxIXowQ9i7zWuQTvsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=YBGCOsGs; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44M8dW4S001998;
+	Wed, 22 May 2024 08:02:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding; s=DKIM; bh=fPV+7rvFygyeWuVmJsu50ispp
+	GbF3++ukyFG91/HleQ=; b=YBGCOsGsGnvkqamuy6nYrbjuSP4dy+oJegz/Rz6oS
+	wwGNKUbe6kZ5ZhS7BNbxZ293P0HRE0XexJMjOzU+D81BzXnveUL08VDRRpz+0glk
+	ycubP3YNZSYLtGuGFTv0FSBv7r90Nrk1+ntrMMCJ7/oBLzUurW8vdariMvdrE4qg
+	BYwlTDfdlaJd4jEFvuuFaEnGXYX0cCKaG3yBWQycNPqdsg+yT/AMTFtb+4cuU3ox
+	gBG81WaC5NlA7ycObr2DkU20xJvJ5vFyZI4ML9RBYcIP+GPG01wlnnXMsTYuhqUD
+	1nLa9T4jN7l1v956tisvjhKmPSjeoYePb84N08vk7J6TA==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3y9dd00kcp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 08:02:32 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 44MC2Vkt039734
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 22 May 2024 08:02:31 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 22 May 2024 08:02:30 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 22 May 2024 08:02:30 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 22 May 2024 08:02:30 -0400
+Received: from HYB-hYN1yfF7zRm.ad.analog.com (HYB-hYN1yfF7zRm.ad.analog.com [10.48.65.137])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44MC2IO3019741;
+	Wed, 22 May 2024 08:02:21 -0400
+From: ranechita <ramona.nechita@analog.com>
+To: <linux-iio@vger.kernel.org>
+CC: ranechita <ramona.nechita@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH] dt-bindings: iio: adc: add a7779 doc
 Date: Wed, 22 May 2024 15:01:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
-	judyhsiao@google.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
-	linux-kernel@vger.kernel.org, j-chadha@ti.com,
-	liam.r.girdwood@intel.com, bard.liao@intel.com,
-	yung-chuan.liao@linux.intel.com, dipa@ti.com, kevin-lu@ti.com,
-	yuhsuan@google.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
-	Baojun.Xu@fpt.com, navada@ti.com, cujomalainey@google.com,
-	aanya@ti.com, nayeem.mahmud@ti.com
-Subject: Re: [PATCH v1] ASoc: tas2781: Add Calibration Kcontrols and tas2563
- digtial gain for Chromebook
-Message-ID: <Zk3eq0k2Eq-gtejq@smile.fi.intel.com>
-References: <20240522112942.994-1-shenghao-ding@ti.com>
+Message-ID: <20240522120208.18575-1-ramona.nechita@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522112942.994-1-shenghao-ding@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Wed, May 22, 2024 at 07:29:41PM +0800, Shenghao Ding wrote:
-> Calibrated data will be set to default after loading DSP config params,
-> which will cause speaker protection work abnormally. Reload calibrated
-> data after loading DSP config params.
-
-..
-
-> -// tas2781-lib.c -- TAS2781 Common functions for HDA and ASoC Audio drivers
-> +// tas2781-comlib.c -- TAS2781 Common functions for HDA and ASoC Audio drivers
-
-Please, drop the filename from the file completely, this change is exactly the
-answer to "why having filename in the file is a bad idea in a long-term".
-
-..
-
-> +int tasdevice_chn_switch(struct tasdevice_priv *tas_priv,
-> +	unsigned short chn)
-
-Pretty much can be on a single line.
-
-> +{
-> +	struct i2c_client *client = (struct i2c_client *)tas_priv->client;
-> +	struct tasdevice *tasdev = &tas_priv->tasdevice[chn];
-> +	struct regmap *map = tas_priv->regmap;
-> +	int ret;
-
-> +	if (client->addr != tasdev->dev_addr) {
-
-With inverted check this entire function becomes neater.
-
-> +		client->addr = tasdev->dev_addr;
-> +		/* All devices share the same regmap, clear the page
-> +		 * inside regmap once switching to another device.
-> +		 * Register 0 at any pages and any books inside tas2781
-> +		 * is the same one for page-switching.
-> +		 */
-> +		ret = regmap_write(map, TASDEVICE_PAGE_SELECT, 0);
-> +		if (ret < 0) {
-> +			dev_err(tas_priv->dev, "%s, E=%d\n",
-> +				__func__, ret);
-> +			return ret;
-> +		}
-> +		return 1;
-> +	}
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(tasdevice_chn_switch);
-
-Is it namespaced? If not would be good to make it so.
-Also I see that other file uses namespaced exports.
-
-..
-
-> +	if (!priv->is_user_space_calidata &&
-> +		cal_fmw) {
-
-With all possible restrictions this can be on a single line besides the fact
-that the second one currently has a broken indentation.
-
-..
-
-> +				&(data[k + 4 * j]), 4);
-
-How parentheses are helpful here?
-
-> +	}
-
-..
-
-> +#include <asm/unaligned.h>
-
-linux/* followed by asm/* as the latter is not so generic as the former.
-
->  #include <linux/crc8.h>
->  #include <linux/firmware.h>
->  #include <linux/gpio/consumer.h>
-
-..
-
-> +	{
-> +		.reg = TAS2781_PRM_TEST_57_REG,
-> +		.val = { 0x14 },
-> +		.val_len = 1,
-> +		.is_locked = true
-
-Here and everywhere else in cases like this (when it's not a termination line)
-leave the trailing comma. It will reduce the churn in case this needs to be
-expanded in the future.
-
-> +	},
-
-..
-
-> +	int rc;
-> +
-> +	mutex_lock(&tas_priv->codec_lock);
-> +	rc = tasdevice_digital_getvol(tas_priv, ucontrol, mc);
-> +	mutex_unlock(&tas_priv->codec_lock);
->  
-> -	return tasdevice_digital_getvol(tas_priv, ucontrol, mc);
-> +	return rc;
-
-Why not converting to use cleanup.h and this will become a oneliner update.
-Same Q to all these mutex additions.
-
-..
-
-> +{
-> +	struct i2c_client *clt = (struct i2c_client *)tas_priv->client;
-
-Hmm... Why explicit casting? Is the client not void * or the same type?
-
-> +	struct tasdevice *tasdev = tas_priv->tasdevice;
-
-> +	int rc = -1;
-
-Use proper error codes.
-
-> +	int i;
-> +
-> +	if (data_len != 4)
-> +		return rc;
-> +
-> +	for (i = 0; i < tas_priv->ndev; i++) {
-> +		if (clt->addr == tasdev[i].dev_addr) {
-> +			/* First byte is the device index. */
-> +			dst[0] = i;
-> +			tasdevice_dev_bulk_read(tas_priv, i, reg, &dst[1],
-> +				4);
-
-On one line this will be better to read.
-
-> +			rc = 0;
-> +			break;
-
-Why not simply
-
-			return 0;
-
-?
-
-> +		}
-> +	}
-> +
-> +	return rc;
-> +}
-
-..
-
-> +	if (tas_priv->chip_id != TAS2781 &&
-> +		bytes_ext->max != 8 * tas_priv->ndev) {
-
-Here and seems in many places you have broken indentation.
-
-> +		rc = -1;
-
-error code?
-
-> +		goto out;
-> +	}
-
-> +		for (j = 0; j < sum; j++) {
-
-With a temporary variable for p[j]...
-
-> +			if (p[j].val_len == 1) {
-> +				if (p[j].is_locked)
-> +					tasdevice_dev_write(tas_priv, i,
-> +						TAS2781_TEST_UNLOCK_REG,
-> +						TAS2781_TEST_PAGE_UNLOCK);
-> +				tasdevice_dev_read(tas_priv, i, p[j].reg,
-> +					(int *)&p[j].val[0]);
-> +			} else
-> +				tasdevice_dev_bulk_read(tas_priv, i, p[j].reg,
-> +					p[j].val, 4);
-
-..all the above can be made more readable.
-
-> +		}
-> +
-> +		for (j = 0; j < sum - 2; j++) {
-
-Ditto for tas2781_cali_start_reg[j]
-
-> +		}
-
-..
-
-> +	while (r > 1 + l) {
-> +		mid = (l + r) / 2;
-> +		ar_mid = get_unaligned_be32(tas2563_dvc_table[mid]);
-> +		if (target < ar_mid)
-> +			r = mid;
-> +		else
-> +			l = mid;
-> +	}
-
-Hmm... I'm wondering if bsearch() can be utilised here.
-
-..
-
-> +	ucontrol->value.integer.value[0] =
-> +		abs(target - ar_l) <= abs(target - ar_r) ? l : r;
-
-I don't understand why do you need 'target' to be in this check.
-
-..
-
-> +	uinfo->value.integer.max = (int)tas_priv->ndev - 1;
-
-Why casting?
-
-..
-
-> +	scnprintf(active_dev_name, SNDRV_CTL_ELEM_ID_NAME_MAXLEN,
-
-Why 'c' variant in use? You are ignoring the returned value. Isn't strscpy()
-you want or memtostr() (in both cases 2 parameters variant)?
-
-> +		"Activate Tasdevice Id");
-
-Same Q to all scnprintf() calls.
-
-..
-
-> +	cali_data->data = devm_kzalloc(tas_priv->dev, tas_priv->ndev *
-> +		(cali_data->reg_array_sz * 4 + 1), GFP_KERNEL);
-
-No way. First of all, we have kcalloc(), second, there is an overflow.h that
-has necessary macros to calculate sizes for memory allocations.
-
-> +	if (!cali_data->data)
-> +		return -ENOMEM;
-
-..
-
-> -	int ret = 0;
->  
-> -	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
-> -		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
-> -		ret = -EINVAL;
-> +	if (!(tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK ||
-> +		tas_priv->fw_state == TASDEVICE_RCA_FW_OK)) {
-> +		dev_err(tas_priv->dev, "Bin file not loaded\n");
-> +		return -EINVAL;
->  	}
->  
-> -	return ret;
-> +	return 0;
-
-This patch is a mess. Try to split out the different logical changes into
-different patches.
-
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: bnlzI0GHyRupb8EWAJshqisyv1A4vBVZ
+X-Proofpoint-GUID: bnlzI0GHyRupb8EWAJshqisyv1A4vBVZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-22_05,2024-05-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 priorityscore=1501 spamscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405220080
+
+Add dt bindings for adc ad7779.
+
+Signed-off-by: ranechita <ramona.nechita@analog.com>
+---
+ .../ABI/testing/sysfs-bus-iio-adc-ad777x      | 23 +++++
+ .../bindings/iio/adc/adi,ad7779.yaml          | 93 +++++++++++++++++++
+ 2 files changed, 116 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+new file mode 100644
+index 000000000000..0a57fda598e6
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad777x
+@@ -0,0 +1,23 @@
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Reading returns a list with the possible filter modes. Only supported by
++		AD7771.
++
++		  * "sinc3"	- The digital sinc3 filter implements three main notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another two at the ODR frequency selected to
++				stop noise aliasing into the pass band.
++
++		  * "sinc5"	- The sinc5 filter implements five notches, one at
++				the maximum ODR (128 kHz or 32 kHz, depending on the
++				power mode) and another four at the ODR frequency
++				selected to stop noise aliasing into the pass band.
++
++What:		/sys/bus/iio/devices/iio:deviceX/filter_type
++KernelVersion:  6.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Set the filter mode of the differential channel. The current sampling_frequency
++		is set according to the filter range. Only supported by AD7771.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+new file mode 100644
+index 000000000000..7176674595fc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+@@ -0,0 +1,93 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/adi,ad7779.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices AD777X family 8-Channel, 24-Bit, Simultaneous Sampling ADCs
++
++maintainers:
++  - Ramona Nechita <ramona.nechita@analog.com>
++
++description: |
++  The AD777X family consist of 8-channel, simultaneous sampling analog-to-
++  digital converter (ADC). Eight full Σ-Δ ADCs are on-chip. The
++  AD7771 provides an ultralow input current to allow direct sensor
++  connection. Each input channel has a programmable gain stage
++  allowing gains of 1, 2, 4, and 8 to map lower amplitude sensor
++  outputs into the full-scale ADC input range, maximizing the
++  dynamic range of the signal chain.
++
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7770.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7771.pdf
++  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7779.pdf
++
++$ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - adi,ad7770
++      - adi,ad7771
++      - adi,ad7779
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  spi-max-frequency: true
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: adc-clk
++
++  interrupts:
++    maxItems: 1
++
++  vref-supply:
++    description:
++      ADC reference voltage supply
++
++  start-gpios:
++    description:
++      Pin that controls start synchronization pulse.
++    maxItems: 1
++
++  reset-gpios:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        adc@0 {
++          compatible = "adi,ad7779";
++          reg = <0>;
++          spi-max-frequency = <20000000>;
++          vref-supply = <&vref>;
++          start-gpios = <&gpio0 87 GPIO_ACTIVE_LOW>;
++          reset-gpios = <&gpio0 93 GPIO_ACTIVE_LOW>;
++          clocks = <&adc_clk>;
++          clock-names = "adc-clk";
++        };
++    };
++...
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
