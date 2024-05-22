@@ -1,192 +1,195 @@
-Return-Path: <linux-kernel+bounces-186022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E7B8CBEEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AAB8CBEEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49F011C21592
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087131C21839
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2F28172A;
-	Wed, 22 May 2024 10:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF80981219;
+	Wed, 22 May 2024 10:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="REh5uMJS"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2094.outbound.protection.outlook.com [40.107.92.94])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGch9krJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3600717BB5;
-	Wed, 22 May 2024 10:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372245; cv=fail; b=Tl2y3WGBH6TvyFp0X8C7wqwzUloC4GFDLEXXvexYyxFnwBTfMVWHCZObqAB9MeM/VgSRGibz+amRb90vu7HNudQptULgCQnTS2hvKntBTsUPYgScrcYvztRLhOPTNNxDfKcOMsSZXHPs8moVKkkHZZ51H9c3JhaFlXo4OZlrSc0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372245; c=relaxed/simple;
-	bh=+5nz+5dEoPkMwk4ei0SQmOGZ0jbcb9kDRJovmb5ZwD8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=EEgaJdx3R3lVHB5oZboDBRSFebhT3dIKsxSlIXg9iaq/lg1riBIaKoCgOC1bF93IJu/5oHQChrjNXBWtR8/hMqBt+1yFZfdIqj3Cs4ziaUycI9YfSYXqfQsa+JZ4AbYrmfMx/MZvToxoi0mAJRd0ZEZt/MIuAdjsGy7wuJq3mBU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=REh5uMJS; arc=fail smtp.client-ip=40.107.92.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OwGFW+NAFfw8SV8cxN/hzdAYD9UA/REsCV9826OYx+HFA/ZuEWiEWLtsG5f6hG25322VngfPPGwWIPpfiK2WOyLkOOi6yJe/J1BIgtDV0/Th50h3NdEAPrIO7Oq0+1wbasPnzFDV19yrR+NKfcJWPX1+OndinMDUV+ZsvnmwiBQ/vmiLiZxPRe6hbBh4h6n0z7iQ5V0tRwcI4IimBVhK2iGANitwMWpLBLnGP/U+dEt8OATd+iZzDEXXQUKCnLISxcKu4o+iwKSJyn+/0crMWbXJjzVrkNxkDIwLPIvAbetWVcoxtgEF40q1Pm7HL+xO/RMSaANeYoDhhHanOvmJRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CmvZbOVDpKx4wbqBFCU69NJDtrdZlwlyLtwIhAeems4=;
- b=SZ8/uf449EX8jnzxNIFc56l4+XnNA7Ry+5NAs39i7crvITiB8i5DJOQJi6ttP0idG0zhgVgIoe/AV15OKqZqAZRIYU0MR1R/AaF9riGr7Nsp08oGdi8PZsqrYq1Iurg2roWjC7SCj2NdV2ChIXJePZxOb7dQ7rqYf7AQiQNNJltNMxAWKpZ+YPf5E8Q2mhgyXNRvQTSSofa5hmbq/xG93c/xgtGi34plVuGEaZgL0azlPX4pLhfgiukN+6CU9u+WoVcYe/WOzwxO/6BbvYcphhmPfdH0QoB18D4712Q4kegj+3nBhwP5wa8GhMRldhwT7AdugqSFkmFa5xD56fjx0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
- header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CmvZbOVDpKx4wbqBFCU69NJDtrdZlwlyLtwIhAeems4=;
- b=REh5uMJST/Fm1nHhGuFqkUHrTS2fNkNX0ficCH/9I8UIa4opun8vEzfcgGzswTTYJ3kLe95f8fMvv8gGSIYSgNk9uvlf/atemFULkLSd8A6tEHcCZwWXFy3jHuHH/bttOags5n7QN3PvGFN/BvBRMHsoQ7V4dA2OI/O8chpGdlg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
- by SA2PR08MB6730.namprd08.prod.outlook.com (2603:10b6:806:118::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
- 2024 10:04:00 +0000
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401%5]) with mapi id 15.20.7587.035; Wed, 22 May 2024
- 10:03:59 +0000
-From: John Keeping <jkeeping@inmusicbrands.com>
-To: linux-input@vger.kernel.org
-Cc: John Keeping <jkeeping@inmusicbrands.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: ili210x - fix ili251x_read_touch_data() return value
-Date: Wed, 22 May 2024 11:03:41 +0100
-Message-ID: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
-X-Mailer: git-send-email 2.45.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0033.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ae::6) To MW4PR08MB8282.namprd08.prod.outlook.com
- (2603:10b6:303:1bd::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC50F7E572
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716372267; cv=none; b=BJ6tmTglY8M3N4zF/H9ysACsnRTepLoFBBfmH8HOloeMhuEBewpiobpmFlN4epelErSYWsWI0PBABQiBxxZGpRuOFCQeYVyZBZYbdpCwo3Lx9TQgFndjbFVqYLu574RrmoAA/86uGURGb7tF/VNaOzcI7O5frFct14r9i1werko=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716372267; c=relaxed/simple;
+	bh=r2aTjwr63X9DEKuVZ3pWPxsKeT7TlJApCdsq8TPv88Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PgE3hr7ZTBAujGrUt1jXRxfR10zlroevYAesSj30vaJi5kf5EPlFmj2o1U5QX3LCJxypaGKW7c2Tbu5cglxcCxQaqJ6oC1YuC1uxLA2ztTRH7aIZNdOqCpgg1NK9CJ6xoNPsSKAhnXTBt+AIxKpvsDBtHFKjD/Gf5M4iKWeqZ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGch9krJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAD5C2BD11;
+	Wed, 22 May 2024 10:04:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716372267;
+	bh=r2aTjwr63X9DEKuVZ3pWPxsKeT7TlJApCdsq8TPv88Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=oGch9krJcdMaGxQoxvjCupdPwWwsSCrkOLXU2PBC2cdBiwt0FQ4HLbcRKRIwFxakR
+	 wRvV/O2Vlg9aPThoLMMGnajBgD1CrUpUhpHhIgiY6T1TANeHiQThPBoGZlHM4gfsMU
+	 Gd8Rm0JufaoxZogEUx5bjdFp9ZIDTtIp0mSgVBP5XQ59qNSVB//yDlwnhm+zAZumeP
+	 rdfkN0cXG6my4kr+Fd+dTUXgTfO/4QcXJ2JiSfPBFuQkb2ZrSVR/ApF+6b1xpHqLw9
+	 7jfxFV9SAQzR8NcbUrSvv6hRp0o3/wH2O5ajyGlKDSCnnMPExJSFM5HfxpVYNEN6wE
+	 4u+Vret6OrP/w==
+Date: Wed, 22 May 2024 11:04:23 +0100
+From: Lee Jones <lee@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [GIT PULL] Backlight for v6.10
+Message-ID: <20240522100423.GC6035@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|SA2PR08MB6730:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdd9bd44-4b61-409c-8059-08dc7a468011
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|1800799015|376005|366007|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Nx20lxZ9PofmzERqU3t/e7gBT/D+YUfsAlZQdCzfMijRuIyB9HfBcvu1JIHH?=
- =?us-ascii?Q?jx+HeIMl8IF1GBrItZ7hWDIEON8ggQ9alFL4GoySjrS929vxPSgrwkAPw3kl?=
- =?us-ascii?Q?eO5//ZRTUA0XNXeZehxS9KtuXqrq/f1h/cwMHzhLoBJNArh8GRZkzYZ58H44?=
- =?us-ascii?Q?lhf4kpibZCmxf6dE7FzR4YBCiBkRZzFiGkKheVDrb/DbWnOspR3JfhqERqZ5?=
- =?us-ascii?Q?Ml93gBd+V0+VYxpKAC0cXFEvJkbHtUNBy4EEFAGFTmJqsn6gmX2PIDJyxBcC?=
- =?us-ascii?Q?8Ove2LSvt1GGEyW6FaaPZrzIeh6PDprioksgic+32AIn17nxXKTdn6Mwotql?=
- =?us-ascii?Q?VSQhWlAjaH2kC8G6JpRWBJEChVDV+D1Z6nP23xaL2InaE6VgM2WU1yN5JEcI?=
- =?us-ascii?Q?/P+eBER8JJg7sYABoRWNQW5mkhH2n5LAxiH++VhFmISlC8/KWZak87NqtjQ9?=
- =?us-ascii?Q?/0Avy1FpXxhycIMBjOQwkLVQfhGq6KuzgiyZ2XWcxnGVOIkzbTYtWPAUX0NP?=
- =?us-ascii?Q?bF9XBKYpo1ZK+LlwAW7wNVRelxr50rySyuMr5MQONqQc1mT37UeUQnll3uhv?=
- =?us-ascii?Q?7ta0LXE1AH/3xNP1Ytlnw7xNkRhz5upKn4/rQ82n28AvvzKzAllbSF+u3Int?=
- =?us-ascii?Q?bd3zA6W4WhM+s58fh0XN3J4F41WZBgGedMRkrgpBzXQcwvAeXDgRMPrJiXBk?=
- =?us-ascii?Q?XjIPV7EiDv006UWcMWjFx/0hb62GtRPJX6CgsNQUVpplR3eNOzCR+7lHGu57?=
- =?us-ascii?Q?DgWbTXkYREsUQCaZPEWU9Kyv5jnQSER9l0fuQ1zDY2C/dG6iS0H1wKfdQ1wx?=
- =?us-ascii?Q?23lIc3XhjBK/Pr9I/pJSog7N5za8nIa9Xi8KEb87ojLPhsVbdmrlbs8LpoZT?=
- =?us-ascii?Q?z+gn4TqKIBJgXmfkvJpN8LG0wKCXm1uIgBJwbJmAXjn3zWJVmN78fgm52/yM?=
- =?us-ascii?Q?RB66NG2FVXbUa6uChcALyHKq74VeBOg27T7EM/gkuuqrjkXp/J25EOSYKnx/?=
- =?us-ascii?Q?7V8CukLBBFJ5JbTlu1D2N44sZSiCxm26lYCt0L3Dw/UxK1OzQYSfl4nZA5sF?=
- =?us-ascii?Q?SN5o9CEjIoXocRmn4Zcy3cgK6HFssiJSVI4nFJs2Is0iw1hgYewsYm1OsH13?=
- =?us-ascii?Q?fYH2f04xztIrhnnc1E5IlORHgkIAMyGKoIJyVTiQ16ajH+RyS3Unz8JMq6ET?=
- =?us-ascii?Q?erGJAqqxTEmkhTmEhPqyvdZdfhnV3cjYj8VFa8vwvxA8FKKMs73c6rWtDISv?=
- =?us-ascii?Q?UAJAHMQQHimv24QWshenP3OanO7qlDs3tPDSe7yk3GXSPBf2KLGGHBvHPUr5?=
- =?us-ascii?Q?wcKmlStvLeK1yTnbVpKCqBOC9a75JVoPProKcFd1wJ7lGg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(1800799015)(376005)(366007)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ovtPzInskIpQpibpj68TwClr7/MxJzIaH4Ho76Rx5d8dD01T2XxuPVLyezXZ?=
- =?us-ascii?Q?68yIkMoq5s0xqpHH+pfOagrO9a9Z0m6vDxDs6EtikArF7iDMg0pyKpXByMGw?=
- =?us-ascii?Q?vNGtQVcHsMLXQ1hCbPqAZcCy0r5rp3ngt9YkmU47touLBOkJsUD80uu9+Rm0?=
- =?us-ascii?Q?2MAoIaPl7A9h5CWINRYwzwci7DPBXp9eCalLOEeSrvsNsvbgimM1FUX6XKZS?=
- =?us-ascii?Q?4rtTr1Mz512t2VOwXjx1J6cGJ2SJFunrgE37ibjwyjf1dhrUYY1f6+fzzfmP?=
- =?us-ascii?Q?zbzjfn45F1TfQ1cRCeNQtmOo9VHzV8frjX4tmvj/m3HLdJ7+uPYJmR+dmZ7P?=
- =?us-ascii?Q?LFIFVwVWU/RK5q/UXqSmMEKKlA9PRhHgSxAe1k4LLI4Hl2GSDtIKABranEbP?=
- =?us-ascii?Q?Wuy/WFoVLbFT9WCebGJvhIMrwDp2IKbHHeFdOvbThOFIec973qWCoXibo9sS?=
- =?us-ascii?Q?aS/XCF1gg3Jl9tLzYpToFZdeFyjy88JfKYlM8Jf1gZ2Uq4zSbZoi1cfBedxj?=
- =?us-ascii?Q?WsfMdu1CnwmejT27Zj/lqFohTE56aEIGWx5l7GwInojZ3TC6RmNSMhmi6qQq?=
- =?us-ascii?Q?fKUhkWfwLWZqD58n2k5k3eI68et7YLtzqgid2G4C5H5JrybkLa5bKWY7zZwf?=
- =?us-ascii?Q?NuhPBRitoH4S2lnMLv186Q1RqIPSHXWcwQG/O7R+H4DVxR22++ekZOt8Z1t4?=
- =?us-ascii?Q?kd7jU6PVHsSpQsom0sTRkmmmgBXO1oBPlYBdBNR8WdgV8PfKS5TSHIYFpxBb?=
- =?us-ascii?Q?vhqibZy0Lju+RcTm8oErVRx9pC418rbSI703MYSGLCC0g13YCzArbH1k4vas?=
- =?us-ascii?Q?sW2/O9DMcTsULDn6OQdO5H+sx7PKER3tBM4m0mPCmutVPy9hmuZLjNNsuFKm?=
- =?us-ascii?Q?QGo4Gm+7MIbpyOCQwHJ3k0ChdkWlzRv/JJZI6iSNhbk4hKlg64u/z3lnjfs1?=
- =?us-ascii?Q?pN5evXh6bhqB0LpvjPBrMDzeTlPKG019TJF+2QcIKhl+js+n2HK4NTPbv8AL?=
- =?us-ascii?Q?F2Nr3oABS19iyjGzttp144UAYRUq+Ug5wSTPgJbTsXIsvhtSEPZO+2WyfOLK?=
- =?us-ascii?Q?72mG8gdxANBhT+flxah+17SY2/WbwK2hO1LHYPnkdX0KzhDrGK8C0Mjc6QN3?=
- =?us-ascii?Q?CjaThWevUlFYoKtB8/yaI/h9RBu3mW4/Jbcl8MlM90N+YMkgwVKyno/hgBVg?=
- =?us-ascii?Q?aj9QxNmptDUNPvLJQP/H6Vek1VcrFfoECkoXB4QFXClNUz7/cEIJN0XVfJ6F?=
- =?us-ascii?Q?sUnyr3cSNfVnz0WSfwpXHc5+71XybLiKlxBM2LbRyUy+9n8dvSXe3KCqEVVH?=
- =?us-ascii?Q?CE74OpwU6IupSsQPN9U0cR635cNlBtMrytIEBHqe1V86L6nmly2MXwlrOzw/?=
- =?us-ascii?Q?uxIcAvTYRLuRlHfxVWXjOLcXy6PdkTeHz+hx2+T1gRDW0rdwQqNpBJmrw/81?=
- =?us-ascii?Q?OW1XBwBbTIJ+NXAXVGtR6CStKNAUcnutxOvcIMyuUrLtljyQ+K4/MPQCGOZc?=
- =?us-ascii?Q?Wpk6nbe5mKWn58ky4NbKJh+XWtdkktJ+I6D7gk4SbvHma4PiQ2LDTwB7pdK2?=
- =?us-ascii?Q?+Jy0OPlrNb707rcA0rXs0F4EXw/Tfui/2VNeM3+AixNaI6QZcOiOX07p7h+c?=
- =?us-ascii?Q?Zw=3D=3D?=
-X-OriginatorOrg: inmusicbrands.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdd9bd44-4b61-409c-8059-08dc7a468011
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 10:03:59.5649
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o4O0ohk+0nugsZY3+UkRczHzrhXyxfsYygxBfyr0no/ENZp+n6sLyoJDIKkVkFNEJcaS3Cj3tIZOLwtRU3cdrtn7n5/PjVrohlJ/9xvp5gE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR08MB6730
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The caller of this function treats all non-zero values as an error, so
-the return value of i2c_master_recv() cannot be returned directly.
-Follow the same pattern as ili211x_read_touch_data() to return zero when
-the correct number of bytes is read and a negative error code otherwise.
+Good morning Linus,
 
-This fixes touch reporting when there are more than 6 active touches.
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
----
- drivers/input/touchscreen/ili210x.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-diff --git a/drivers/input/touchscreen/ili210x.c b/drivers/input/touchscreen/ili210x.c
-index 31ffdc2a93f35..8846c6d10fc0d 100644
---- a/drivers/input/touchscreen/ili210x.c
-+++ b/drivers/input/touchscreen/ili210x.c
-@@ -255,14 +255,15 @@ static int ili251x_read_reg(struct i2c_client *client,
- static int ili251x_read_touch_data(struct i2c_client *client, u8 *data)
- {
- 	int error;
-+	int ret;
- 
- 	error = ili251x_read_reg_common(client, REG_TOUCHDATA,
- 					data, ILI251X_DATA_SIZE1, 0);
- 	if (!error && data[0] == 2) {
--		error = i2c_master_recv(client, data + ILI251X_DATA_SIZE1,
--					ILI251X_DATA_SIZE2);
--		if (error >= 0 && error != ILI251X_DATA_SIZE2)
--			error = -EIO;
-+		ret = i2c_master_recv(client, data + ILI251X_DATA_SIZE1,
-+				      ILI251X_DATA_SIZE2);
-+		if (ret != ILI251X_DATA_SIZE2)
-+			error = ret < 0 ? ret : -EIO;
- 	}
- 
- 	return error;
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/lee/backlight tags/backlight-next-6.10
+
+for you to fetch changes up to 1fd949f653ee1a3c1776ef8a5295ae072c9b67f2:
+
+  backlight: sky81452-backlight: Remove unnecessary call to of_node_get() (2024-05-10 15:44:29 +0100)
+
+----------------------------------------------------------------
+ - Fix-ups
+   - FB Backlight interaction overhaul
+   - Remove superfluous code and simplify overall
+   - Constify various structs and struct attributes
+
+ - Bug Fixes
+   - Repair LED flickering
+   - Fix signedness bugs
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      backlight: mp3309c: Fix signedness bug in mp3309c_parse_fwnode()
+
+Flavio Suligoi (1):
+      backlight: mp3309c: Fix LEDs flickering in PWM mode
+
+Krzysztof Kozlowski (20):
+      backlight: lcd: Constify lcd_ops
+      backlight: ams369fg06: Constify lcd_ops
+      backlight: corgi_lcd: Constify lcd_ops
+      backlight: hx8357: Constify lcd_ops
+      backlight: ili922x: Constify lcd_ops
+      backlight: ili9320: Constify lcd_ops
+      backlight: jornada720_lcd: Constify lcd_ops
+      backlight: l4f00242t03: Constify lcd_ops
+      backlight: lms283gf05: Constify lcd_ops
+      backlight: lms501kf03: Constify lcd_ops
+      backlight: ltv350qv: Constify lcd_ops
+      backlight: otm3225a: Constify lcd_ops
+      backlight: platform_lcd: Constify lcd_ops
+      backlight: tdo24m: Constify lcd_ops
+      HID: picoLCD: Constify lcd_ops
+      fbdev: clps711x: Constify lcd_ops
+      fbdev: imx: Constify lcd_ops
+      fbdev: omap: lcd_ams_delta: Constify lcd_ops
+      const_structs.checkpatch: add lcd_ops
+      backlight: otm3225a: Drop driver owner assignment
+
+Lee Jones (1):
+      Merge branches 'ib-backlight-auxdisplay-staging-omap-6.9', 'ib-backlight-auxdisplay-hid-fb-6.9' and 'ib-backlight-hid-fbdev-lcd-scripts-6.10' into ibs-for-backlight-merged
+
+Ricardo B. Marliere (2):
+      backlight: Make backlight_class constant
+      backlight: lcd: Make lcd_class constant
+
+Shresth Prasad (1):
+      backlight: sky81452-backlight: Remove unnecessary call to of_node_get()
+
+Thomas Zimmermann (16):
+      backlight: Match backlight device against struct fb_info.bl_dev
+      auxdisplay: ht16k33: Remove struct backlight_ops.check_fb
+      hid: hid-picolcd: Fix initialization order
+      hid: hid-picolcd: Remove struct backlight_ops.check_fb
+      backlight: aat2870-backlight: Remove struct backlight.check_fb
+      backlight: pwm-backlight: Remove struct backlight_ops.check_fb
+      fbdev: sh_mobile_lcdc_fb: Remove struct backlight_ops.check_fb
+      fbdev: ssd1307fb: Init backlight before registering framebuffer
+      fbdev: ssd1307fb: Remove struct backlight_ops.check_fb
+      backlight: Add controls_device callback to struct backlight_ops
+      auxdisplay: ht16k33: Replace use of fb_blank with backlight helper
+      backlight: omap1: Remove unused struct omap_backlight_config.set_power
+      backlight: omap1: Replace FB_BLANK_ states with simple on/off
+      fbdev: omap2/omapfb: Replace use of fb_blank with backlight helpers
+      staging: fbtft: Remove reference to fb_blank
+      backlight: Remove fb_blank from struct backlight_properties
+
+Uwe Kleine-König (1):
+      backlight: lp8788: Drop support for platform data
+
+ drivers/auxdisplay/ht16k33.c                       |  15 +-
+ drivers/hid/hid-picolcd_backlight.c                |   7 -
+ drivers/hid/hid-picolcd_core.c                     |  14 +-
+ drivers/hid/hid-picolcd_fb.c                       |   6 +
+ drivers/hid/hid-picolcd_lcd.c                      |   2 +-
+ drivers/staging/fbtft/fb_ssd1351.c                 |   4 +-
+ drivers/staging/fbtft/fbtft-core.c                 |   5 +-
+ drivers/video/backlight/aat2870_bl.c               |   7 -
+ drivers/video/backlight/ams369fg06.c               |   2 +-
+ drivers/video/backlight/backlight.c                |  39 +++---
+ drivers/video/backlight/bd6107.c                   |  12 +-
+ drivers/video/backlight/corgi_lcd.c                |   2 +-
+ drivers/video/backlight/gpio_backlight.c           |  12 +-
+ drivers/video/backlight/hx8357.c                   |   2 +-
+ drivers/video/backlight/ili922x.c                  |   2 +-
+ drivers/video/backlight/ili9320.c                  |   2 +-
+ drivers/video/backlight/jornada720_lcd.c           |   2 +-
+ drivers/video/backlight/l4f00242t03.c              |   2 +-
+ drivers/video/backlight/lcd.c                      |  27 ++--
+ drivers/video/backlight/lms283gf05.c               |   2 +-
+ drivers/video/backlight/lms501kf03.c               |   2 +-
+ drivers/video/backlight/lp8788_bl.c                | 151 ++-------------------
+ drivers/video/backlight/ltv350qv.c                 |   2 +-
+ drivers/video/backlight/lv5207lp.c                 |  12 +-
+ drivers/video/backlight/mp3309c.c                  |   9 +-
+ drivers/video/backlight/omap1_bl.c                 |  47 +++----
+ drivers/video/backlight/otm3225a.c                 |   3 +-
+ drivers/video/backlight/platform_lcd.c             |   2 +-
+ drivers/video/backlight/pwm_bl.c                   |  12 --
+ drivers/video/backlight/sky81452-backlight.c       |   8 +-
+ drivers/video/backlight/tdo24m.c                   |   2 +-
+ drivers/video/fbdev/atmel_lcdfb.c                  |   1 -
+ drivers/video/fbdev/clps711x-fb.c                  |   2 +-
+ drivers/video/fbdev/core/fb_backlight.c            |   6 +
+ drivers/video/fbdev/imxfb.c                        |   2 +-
+ drivers/video/fbdev/omap/lcd_ams_delta.c           |   2 +-
+ .../fbdev/omap2/omapfb/displays/panel-dsi-cm.c     |   7 +-
+ .../omap2/omapfb/displays/panel-sony-acx565akm.c   |  10 +-
+ drivers/video/fbdev/sh_mobile_lcdcfb.c             |   7 -
+ drivers/video/fbdev/ssd1307fb.c                    |  31 ++---
+ include/linux/backlight.h                          |  41 ++----
+ include/linux/fb.h                                 |   9 ++
+ include/linux/lcd.h                                |   6 +-
+ include/linux/mfd/lp8788.h                         |  36 -----
+ include/linux/platform_data/omap1_bl.h             |   1 -
+ include/linux/pwm_backlight.h                      |   1 -
+ scripts/const_structs.checkpatch                   |   1 +
+ 47 files changed, 161 insertions(+), 418 deletions(-)
+
 -- 
-2.45.1
-
+Lee Jones [李琼斯]
 
