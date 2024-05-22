@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-185939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99698CBD17
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:37:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4828CBD18
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B0BB21C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463A02815C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876E37FBC1;
-	Wed, 22 May 2024 08:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C967E782;
+	Wed, 22 May 2024 08:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o896LBsQ"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HcYERscd"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6309C2262B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244F37FBA2
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716367066; cv=none; b=DPk5JToriVjCkj2koe6lBaxMWnEi2FftEUUwwybvXc0DX5u+sKeQ03q1rCtsyGT9J2HvneOAbrG4rn3o+Zp623RJJZKFWqFe4ItqXGWKWf7/MvoDFLUscyuqxVD4Trmk6abVr7yyHYnk7FbX9T5fCv33NJC+nlrrr2VOGL8Yqjw=
+	t=1716367125; cv=none; b=WZ7QVkTiW3TWGkApU1uQ4u//EEkMRLXKd4nT1HF+jX+E1f1aOYL1tOk80mjbFApzxsVNq67EU3FFweQ4PIY5In1JsvQQXs+XKbFEDdLgqMMiHXot7Woa3DSJny6oGkzVRFr+kc6O/X6i2V7f/jpq1qtEgcueeL0lqDLdd6lcxKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716367066; c=relaxed/simple;
-	bh=gViipR0aoHspEq+mMM1VX2DizsB7l/GY0qFHEDlX30A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hABrjmx8OjsaiU+UzCkqesPnPjmlFnAIpyZvqIc2rYDfPa8zIqziH6AgUXw4gNaS+FjzdxU8ELFXE0Ny0pZo/Ugnu6r/5SFWgdcPGin6/ii71okmyscl28zKMj9fiMyXd83gyT1uC9jNCiutvxRe5RMTUGu+nn6dC2OOvFnW0g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o896LBsQ; arc=none smtp.client-ip=209.85.160.170
+	s=arc-20240116; t=1716367125; c=relaxed/simple;
+	bh=UUF1Xl3WF/inRUVbCOLgMd/fbD1vWfQB+LFC7jXVyy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFpB82fZztdklHWXV9nuEaVqrkuCk+H2SG4sC2n+QoJ7/fCPn6WXqleu1eBrdjh6a8T8h2LRrw/ezjV/BCqBMEbFnHt2Zcki0GPCeweZ4lTfBRHnwgGWqcV34P/ohSW8OB72Wx2+7Zbn/N2TDpXCLxOB7espCgxPrtM6EERiTQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HcYERscd; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-43dfe020675so381501cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:37:45 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso11956a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:38:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716367064; x=1716971864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gViipR0aoHspEq+mMM1VX2DizsB7l/GY0qFHEDlX30A=;
-        b=o896LBsQc1eg2Dx81kTgmlbhLXIuHnoFBaz9ncIU4tIxDI7+/GXaEI/ejmtLysJlHJ
-         5/Xs4RIZxbD1a9QUQ0p1NctTb9WLS4B70c4z609RBVMUKT1VukF5MXE0s4yn5sRqwsL1
-         wilMknVJ3XDAQH3wrczTn3/jJKXsrhEg67y0Xq111JcP9HfP6OpEv5dFygb86iJxmNF2
-         koM71bZcMX6YMKTgVIxr5kabTZUqwkKJqLB3Vo+EhO3D85FYPlx+s7vbNINDLqSG82jC
-         IB5VKw9ALTrFL3UrGMgK3b2zZ4ivi0kAV3Y3ZO3eYkNv7aAF3uC1v7eQC/GQ11DGKrNg
-         YFog==
+        d=google.com; s=20230601; t=1716367122; x=1716971922; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=m+G67b4GxIThbEafe87WEoBwf+8+QKS2G2eyvZIlV5E=;
+        b=HcYERscdHmNwFiGCriBRIuSZu3R7fTkcZfYGgArgGupJaW15Hs55T5q3BYApokuC3F
+         y9myIM50uMcGHo7W+8VjKbmAVcGOofKn3WqPBv1BU+VHVADhw74mO/fSSlcinAW0rWHh
+         BpuIAq4E3FmpNxRe7WDV4IdBvAm281HybSwyOpvbXPcjE2ppiDGboNJ2CvEhvBrcj8ng
+         hozjtqMTJvxeYTnsJlDSsT6OANXpA3WIxtUHb/9qqL1YB4MFnNuyWfduLi2nr5W/w/Pk
+         OsxHh+YrTfbk8umyzztXZIGo5pX09v93VFK67xei3iUEfMhaXXPaC31S8iqrkAndcd4P
+         Nf3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716367064; x=1716971864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gViipR0aoHspEq+mMM1VX2DizsB7l/GY0qFHEDlX30A=;
-        b=j7YmvFgR/pU96x6acBT3TEK8zKngrufvr+UKKlzcmIaqMVavMgtO9R5AnQRfQmQe7o
-         ResTUZyeP3kTKCLmcfXnw/QtOlKrm7rmrR8hK3LfAtdCy/HI4ViapHPiEiW0T9QOTloE
-         xSkypcYACCwb1ORiMNCId3cl1MFhF4m+skALjVkVZ3livYDNm9/MNjG7WNXT+cVE2n7y
-         2Hn9kQLhOmx4hEI8l9LyJMjy8ZkyHhIMjvw3rGci/Vfj+KnlozikV3YRR+E2w++XDG2l
-         Y7dgnFPSgUwWn0rMk/fWD4RqY4bNq9CESRggYkwVp0pvVzcc6iBBIRW2a2orePBcw2Jf
-         jdCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYVMsBVvnt+6ZyaNeWhZ0lN1ae6lBNGKAD/Q0LgCT7alFF4yNeShxqSmKzLU1i4k8C8J3vjo5UEACnqb9S4L4GXX+be9ZLn0TaLilF
-X-Gm-Message-State: AOJu0YxKfX8lrnfMMWxk8T5Kw8w9nkeOjly4JVR1z+fKAbcq7ODGiyiu
-	D3mAgaUrLU8ZEu7b0X0mz79FLgOtrA7RiXu/JY+pUAozWUs1SR4VFMUYQaPfEkj7y9kJV1i8tEZ
-	V88Kg/6o6YZszBWkI1c6C0hQ0GJzwf2TMaUDv
-X-Google-Smtp-Source: AGHT+IGprLvaYe+qHSu6TTn5MUJntUl0VrZQahqHOY3uDjYVE33MM1kRNnpFP6Qyc1Z/gxjxIikyxDq80lGa1qHiRDI=
-X-Received: by 2002:a05:622a:6088:b0:43a:f42f:f0b4 with SMTP id
- d75a77b69052e-43f9e54a565mr1586941cf.13.1716367064252; Wed, 22 May 2024
- 01:37:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716367122; x=1716971922;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m+G67b4GxIThbEafe87WEoBwf+8+QKS2G2eyvZIlV5E=;
+        b=KvVLHuf0beiinae48Ir14ZAGrN+wMfMDuWeVG9BJ2OiXBzZaJDmz8P+/1Czzifl5sy
+         FoVblyG4I6ek9DinCdudRXgmUaRui/sDiRqwAReXmzKm2PAfdUHqeqjgLuCJVTARF360
+         gjPLi6VXwsB1i1+YfetBdOt381wNCLdg6JKtzkg93l4LcMidxGLD8FP6VCG90mfQU5D6
+         uRFzEcYDbnI+sKiff8v3YwdEYaRLkODmpi9e3vfwJj5IuH9RILH/0pnrU9FZ7sEi8OyF
+         j7CnMLZqetaWbUXKMF+cWLSlKp5zR6IbP2F2GJedXVFe6ySCoKYALEjgwwSwEkR+pnJO
+         Qu1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUFZNmRGzDOLR4jR1IQUCbLghP2ZnbTCA/Vxy5sgxX2ATrRpLW84ZkPsjEh/XXMt9uf1Nnf04UyeRqkbUFBflm990dm8th99UhxULQM
+X-Gm-Message-State: AOJu0YygptOdEWyzK3Aw2DJSn7rEjmnZwwaLzj7DTAAm8LXEsj/Prly9
+	CUrXOuUeBsB+mgJge1gnwv0ufTfuAoAzZiJJ57JM1LB5MlOYvk12p4wtz/TZRw==
+X-Google-Smtp-Source: AGHT+IHH7O6UHB3CPQsag/IvObOgeU2NNagvZ48JB2VhjbHMXHJqB6094MVSZkbPabRRQ/efkorrQQ==
+X-Received: by 2002:a05:6402:2904:b0:578:33c0:f00e with SMTP id 4fb4d7f45d1cf-57833c0f3a4mr63801a12.0.1716367122156;
+        Wed, 22 May 2024 01:38:42 -0700 (PDT)
+Received: from google.com (49.240.189.35.bc.googleusercontent.com. [35.189.240.49])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354f1664c7dsm275885f8f.86.2024.05.22.01.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 01:38:41 -0700 (PDT)
+Date: Wed, 22 May 2024 08:38:37 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Lance Yang <ioworker0@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm,memory_hotplug: {READ,WRITE}_ONCE unsynchronized
+ zone data
+Message-ID: <Zk2vDeQ3feZ3hsf0@google.com>
+References: <20240521-mm-hotplug-sync-v1-0-6d53706c1ba8@google.com>
+ <20240521-mm-hotplug-sync-v1-2-6d53706c1ba8@google.com>
+ <CABzRoyZXq3u4DYxO39Fcezo56HAbkNh6xLuK9jnuiNK5gVmV1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zktnt7rjKryTh9-N@arch>
-In-Reply-To: <Zktnt7rjKryTh9-N@arch>
-From: David Gow <davidgow@google.com>
-Date: Wed, 22 May 2024 16:37:30 +0800
-Message-ID: <CABVgOS=xA15qTL1Uqcxe6+uLubRHCLt5+me9ykV9_gOXhvXQtA@mail.gmail.com>
-Subject: Re: First Contributions for KUnit
-To: Artur A C de Barros <arturacb@gmail.com>
-Cc: willy@infradead.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABzRoyZXq3u4DYxO39Fcezo56HAbkNh6xLuK9jnuiNK5gVmV1w@mail.gmail.com>
 
-On Mon, 20 May 2024 at 23:09, Artur A C de Barros <arturacb@gmail.com> wrot=
-e:
->
-> Hi all,
->
-> We are students from the State University of Campinas with an interest in=
- contributing to the kernel. We are part of LKCAMP, a student group that fo=
-cuses on researching and contributing to open source software. Our group ha=
-s organized kernel hackathons in the past [1] that resulted in sucessful co=
-ntributions, and we would like to continue the effort this year.
->
-> This time, we were thinking about writing KUnit tests for data structures=
- in `lib/` (or converting existing lib test code), similarly to our previou=
-s hackathon. We are currently considering a few candidates:
->
-> - lib/kfifo.c
-> - lib/llist.c
-> - tools/testing/scatterlist
-> - tools/testing/radix-tree
->
-> We would like to know if these are good candidates, and also ask for sugg=
-estions of other code that could benefit from having KUnit tests.
->
-> Thanks!
-> Artur Alves
->
-> [1] https://lore.kernel.org/dri-devel/20211011152333.gm5jkaog6b6nbv5w@not=
-apiano/
->
+Hi Lance, thanks for taking a look.
 
-Hi Artur,
+On Wed, May 22, 2024 at 12:25:30PM +0800, Lance Yang wrote:
+> Hi Brendan,
+> 
+> On Tue, May 21, 2024 at 8:57 PM Brendan Jackman <jackmanb@google.com> wrote:
+> > @@ -1077,7 +1081,7 @@ void adjust_present_page_count(struct page *page, struct memory_group *group,
+> >          */
+> >         if (early_section(__pfn_to_section(page_to_pfn(page))))
+> >                 zone->present_early_pages += nr_pages;
+> > -       zone->present_pages += nr_pages;
+> > +       WRITE_ONCE(zone->present_pages, zone->present_pages + nr_pages);
+> 
+> I'm not sure that using the WRITE_ONCE() wrapper would prevent load tearing
+> on 'zone->present_pages', but it's probably just me overthinking it :)
 
-Thanks for reaching out: the contributions from LKCAMP in the past
-have been great, so we'd love to see more from you!
+Hmm.. this isn't for load-tearing, it's for store-tearing. I have a
+feeling I might be missing your pont here though, can you elaborate?
 
-Data structures do tend to be an excellent starting point for new
-contributors, so I think you're on the right track. As the maintainer
-of the other linked list tests (lib/list_test.c), I think llist (and
-probably also kfifo) could be great starts. I'm not very familiar with
-the scatterlist and radix-tree code myself, but it could also be
-useful.
+I have just noticed that the original "big bad optimizing compiler"
+article[1] only says store-tearing has been observed in the wild when
+the value being stored can be split into immediates (i.e. is
+constant). But it doesn't really seem wise to rely on that. From what
+I can tell from tools/memory-model/Documentation you are really out in
+the wild with unmarked accesses.
 
-Otherwise, a couple of suggestions would be:
-- As you've already done, look for standalone files in lib/ or in the
-headers (include/). There are almost certainly more self-contained
-data structures to work with.
-- The FAT filesystem (fs/fat/) has some basic tests, but could use
-some more advanced ones using the KUnit function redirection features.
-This would be more complicated than simple data-structure work, but
-could be interesting.
-- Otherwise, lots of other drivers, filesystems, subsystems, etc will
-have need of tests. The tricky bit is that you'll need to have some
-way of stubbing/mocking out their interactions with actual hardware
-and the rest of the kernel.
-- If you've got anyone who's an expert in Rust, some of the KUnit rust
-bindings[1] could use reworking. if you want to work on test
-infrastructure as well as the tests themselved.
-
-I'm sure there are other people on the list with more suggestions:
-there's a lot of room for more tests in the kernel, after all!
-
-Cheers,
--- David
-
-[1]: https://patchwork.kernel.org/project/linux-kselftest/list/?series=3D76=
-7643
+[1] https://lwn.net/Articles/793253
 
