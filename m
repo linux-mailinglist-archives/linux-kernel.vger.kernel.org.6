@@ -1,99 +1,119 @@
-Return-Path: <linux-kernel+bounces-186396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9644B8CC3AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:01:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356A48CC3B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5329D282C7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:01:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D4A1C22526
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C96920DFF;
-	Wed, 22 May 2024 15:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0441224CC;
+	Wed, 22 May 2024 15:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZrZun4u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LIP/93DP"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9D4AD23;
-	Wed, 22 May 2024 15:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F70217556
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716390056; cv=none; b=VwBNYyWKz3unyi3vkiGf+ZlN76FljIoxcN3NfZz0Fib6/Xbc0uTwUNda10pFE/4+tDcefbgHki3NQiiBpqLqP2OO/LTi7n9/yAaciteqkXN1W5s8VbfC/Gh9Kiosk7iXpKq/MsrobWHPUVSsUf/GyEmeoUA7Zn7FJlDWeO1nZvU=
+	t=1716390172; cv=none; b=KGpUi2OZefwPQZIhs+O3bxVNBMERAqjZsmhJgi3Ii+MEFiXThvxK3dztaJlv/I8v4+Pm7bjTV7bx7mKJOmEXQpVGu+KGBIo6xZAz3HUcw3gTEsbFqSqDHk2omz/CASbhYnmH5d1DAE6FrUgOspyv0UK/qk1Sm90L5k6glYth+bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716390056; c=relaxed/simple;
-	bh=4pdAzhbUK2tL0oB6flZpstCuhJJbI2mdYJEwhKfdzs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lcyzT+MxjdLkRwr5TZPJxFdJ6zEdfM//duQQ/yXkVyI/ntMUW1pdGgBRG1BnEhOTqb6oGnjyI8jnXRh/EJPPaO1nk/CDQSTz0/BiQsec1kKBWTgnR9CEnA0oX6JKoJP/d9qFsC0IdakzJFKVUa4rOtgu467P1Zbpu3xwzWwpOB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZrZun4u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE13C2BBFC;
-	Wed, 22 May 2024 15:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716390056;
-	bh=4pdAzhbUK2tL0oB6flZpstCuhJJbI2mdYJEwhKfdzs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rZrZun4umNT26if2ijBipctJlvrW5ohvd+Rda/UdY8LIkzWmFxfUze/N4XLt/pesQ
-	 d/v3VsvEVc3U936NdWseVbClZ9dUXpWy74mfbRvLrQmF4l10B/p/VpXFB7zXUXOUwK
-	 wIf27Qo1LqiH6rZRwBZIDVO30vt1PpHYxcLcUl+cKhb1AvmsaENGqUjIwCIC8/Vfw4
-	 qvKKVr34wOwSTY+1fynwAso4llPK+k8VtF/VmZBQFlynfhWbLkMqxM6DqM+2FGqFBE
-	 DMwJUK8PWjnpqCg02EuMEmBVi7jSmoP1SGskMjhxH2W5TGeZCmdEe4Y1KwpYo/LU8o
-	 XvoZsphGw4/5Q==
-Date: Wed, 22 May 2024 10:00:54 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Dai <davidai@google.com>
-Cc: Will Deacon <will@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Pavan Kondeti <quic_pkondeti@quicinc.com>,
+	s=arc-20240116; t=1716390172; c=relaxed/simple;
+	bh=O0L72EV3SoSMUxeiDpo2pMhpYJ4G4dITD0c7JPwzQdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUrV/FoRR1JHYk/2kimuBYsJLWMPoOuHzGgh+qxefzD5rLAi5KjclNrkdMsgnXnVOVW9bu+SW/nxsAsGWzNXsrBLAO5AS98yUcq0rQAQ2EPO/h+gfgJGhr81wJ6Oq86tshG86AB++PpcEzxjXc5unlGPh28qawXqBpHm7kck0hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LIP/93DP; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-420180b5897so8658555e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716390168; x=1716994968; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qRSTScqeQkeHPB+eXO+qUigZFJj2TICxMJQ8vQ0E+fE=;
+        b=LIP/93DPQ9tPfaFoYSxi3ccLE5rtg4olQ3OwsG/PGIT42WogMQE8sKNslZYA83FGJA
+         4HxZFpAoci/wRngdUcV/hfBgyh0exE9KW3TVmCcbZ92IlVOD/IzmljJltYqU2Fi5uvMa
+         ORXPpOcOGKHECGNHOTZ44QeBxF1lkdV9fqdJi5WacZ9axkXwdTIvoSP24QZnqgqiC+8v
+         DLhfjxHSTID7AanvZMhZFexDu9PgVDFqOr8FfxCTrbMk2838HrFVox8Ju9nli9WE7qwQ
+         n+uhJqU/umSXhucoMYysi01XOzFr5KCQmNl4WHn2TtL03zvXgQCGiSjiU8484oC2G/H7
+         yAUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716390168; x=1716994968;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qRSTScqeQkeHPB+eXO+qUigZFJj2TICxMJQ8vQ0E+fE=;
+        b=IUsHoqDAv0dCT8cEPp3mvPrZISNz7nbCu+yssLDrSiXVLtESyOEBvVCSjjPmhcirP8
+         E5ZuexujlCyOfILePVK/7uux11KN3Cy4eK592p1Ugu+ZhHHfLE81mG3b/eOUhM+1HLqh
+         hPZurkCT/NxtatzsrjuqDHBu16doSjxiokzI9ZhLcCluSw3ZhbeIqq4U8VB4ESDS/eW1
+         sIEOFJyfdm60BiBYXbxZubF7Y20OLDMzsDwhTHpHZMu/YmVA1MI/3xTw/k9VCxPuwYD5
+         25KxMp4/i1PznCV73SJsGDpGmaFF9V3ZFd5y6Q6KARIBJq8v5P26FoBqojXhXto3gKIA
+         uqbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2oph2ZUIBYLnWDPQeLz2M5ufyblpiFqe9o5Y7lHUtUtJz2LdcCBmlPQsQAtTHrYryZX6vQBekwvmilUqA2VBbK8FPg1GrNUs9cJQu
+X-Gm-Message-State: AOJu0YzOZl/eUGaMvqNjEQwDI5k/i2MKqconyVQmDBGu88q1H+eLRztJ
+	+Pq3HD0hfoWZd+9ds2ghSqGAU77va2lf6Bi+F0PfYkuRdwj6xSctspcHHrPAdXc=
+X-Google-Smtp-Source: AGHT+IG4GcEYn1PZI2Gtu5J0UVA+SzKFrymrH4lYB8MtjfRDD7wK1hG8lEjenPs+3o8noaNhbG6Exg==
+X-Received: by 2002:a7b:ce14:0:b0:420:1551:96ab with SMTP id 5b1f17b1804b1-420fd2fdcc5mr19499465e9.10.1716390167789;
+        Wed, 22 May 2024 08:02:47 -0700 (PDT)
+Received: from localhost.localdomain (host-79-16-6-145.retail.telecomitalia.it. [79.16.6.145])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm531370515e9.9.2024.05.22.08.02.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 08:02:47 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+To: jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: nuno.sa@analog.com,
+	lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	linux-iio@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@google.com>,
-	Quentin Perret <qperret@google.com>,
-	Gupta Pankaj <pankaj.gupta@amd.com>, Marc Zyngier <maz@kernel.org>,
-	Mel Gorman <mgorman@suse.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, kernel-team@android.com
-Subject: Re: [PATCH v6 1/2] dt-bindings: cpufreq: add virtual cpufreq device
-Message-ID: <171639005247.3294172.9981807951705426790.robh@kernel.org>
-References: <20240521043102.2786284-1-davidai@google.com>
- <20240521043102.2786284-2-davidai@google.com>
+	Angelo Dureghello <adureghello@baylibre.com>
+Subject: [PATCH v2 0/6] minor fixes and improvements
+Date: Wed, 22 May 2024 17:01:35 +0200
+Message-ID: <20240522150141.1776196-1-adureghello@baylibre.org>
+X-Mailer: git-send-email 2.45.0.rc1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521043102.2786284-2-davidai@google.com>
+Content-Transfer-Encoding: 8bit
 
+From: Angelo Dureghello <adureghello@baylibre.com>
 
-On Mon, 20 May 2024 21:30:51 -0700, David Dai wrote:
-> Adding bindings to represent a virtual cpufreq device.
-> 
-> Virtual machines may expose MMIO regions for a virtual cpufreq device
-> for guests to read performance information or to request performance
-> selection. The virtual cpufreq device has an individual controller for
-> each performance domain. Performance points for a given domain can be
-> normalized across all domains for ease of allowing for virtual machines
-> to migrate between hosts.
-> 
-> Co-developed-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: David Dai <davidai@google.com>
-> ---
->  .../cpufreq/qemu,virtual-cpufreq.yaml         | 48 +++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/qemu,virtual-cpufreq.yaml
-> 
+After testing this driver, add some minor fixes and improvements,
+as adding single channel variants support (ad3541r, ad3551r), also as a
+preparatory step to bigger future improvements related to fast-rate mode
+for this DAC family.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Previous patches (v1, 3/3)
+https://lore.kernel.org/linux-iio/20240510141836.1624009-1-adureghello@baylibre.org
+https://lore.kernel.org/linux-iio/20240510141836.1624009-2-adureghello@baylibre.org/
+https://lore.kernel.org/linux-iio/20240510141836.1624009-3-adureghello@baylibre.org/
+
+Angelo Dureghello (6):
+  dt-bindings: iio: dac: fix ad3552r gain parameter names
+  dt-bindings: iio: dac: add ad35xxr single output variants
+  iio: dac: ad3552r: add model data structure
+  iio: dac: ad3552r: add support for ad3541r and ad3551r
+  iio: dac: ad3552r: change AD3552R_NUM_CH define name
+  iio: dac: ad3552r: uniform structure names
+
+ .../bindings/iio/dac/adi,ad3552r.yaml         |  43 ++++--
+ drivers/iio/dac/ad3552r.c                     | 140 ++++++++++++------
+ 2 files changed, 128 insertions(+), 55 deletions(-)
+
+-- 
+2.45.0.rc1
 
 
