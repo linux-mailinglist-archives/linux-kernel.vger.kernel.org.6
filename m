@@ -1,157 +1,166 @@
-Return-Path: <linux-kernel+bounces-186337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC7E8CC2E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:13:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EC08CC2EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F0D5B21F35
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF7C1F22CAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88375140E5C;
-	Wed, 22 May 2024 14:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C598B1420D0;
+	Wed, 22 May 2024 14:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+Q3750N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="bxBc8p6X";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="tgGdvNnV"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C273A1E4AB;
-	Wed, 22 May 2024 14:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BD913D899;
+	Wed, 22 May 2024 14:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716387226; cv=none; b=ilLYLiXq3yg8yJ+E7cHX8qb7xlXaVtC5v2c1vqDNlP2Z1+KFotSwcx2aIB0e6SPMVypTQaoYaIz4wEc4cOcYiHudZu5A9rJscVtNe3gyAa6uN7spygceuVFMuYLlS0Lj4chH7pr4nRJcdikgutB4p+xi7GGXQpEwI0acGbJlzFA=
+	t=1716387373; cv=none; b=gVa32PuB22ONtYtmh7U74wT2BKXGvIPHFdwVHgRI+pzwp1pIcJi7MlXvurhoTkpJTGvFrGlPgPf2NXRpPurq1v3me2MDcL/oZFxi99mgBLBtK6+rVRJG84lVOsGUjLsyztSci/FLw8wcUKoE5LW7unnPjw3sMr3qLUEAX/Ra4Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716387226; c=relaxed/simple;
-	bh=3+PkXwZXhStybi9etPbkY23fmwd4r7n5f4fGWVhcsr0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=u0ji0dWYZzXClDm0slv68k7NaW253/bhALSw/CkS14T6h4LRyf0cf+ocNjiHhoU0tqtGkdwS9HC/evFR4sO1DgoXorXOJto3SHNd+2+cid3hJ4O4ZjPOlmV80qnE+0FVo8sORSG6gfqFc5BEv7fv4YUW7wtaHBZpR/c8+vjGQYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+Q3750N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69FFC2BBFC;
-	Wed, 22 May 2024 14:13:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716387226;
-	bh=3+PkXwZXhStybi9etPbkY23fmwd4r7n5f4fGWVhcsr0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=U+Q3750N/mtGeGDtg27ep1MaI8KU1Lp9FV7E1wpcDVS97Oe9E78fE5wPCwzIKQRaY
-	 XXcGk3429FutzkLGl7+WR7Z/Nzut9Y8CcWGLBBdChxj3HKZlBmEk3wWTbvzFM3LOJK
-	 ZHZceBTszgPUZm+aHRDxdskFxRn+cK7g63v7rMifPnmCWPZAW3gTsq9ZaqT48KrzvV
-	 jaqGcyLgB684qFD6cI5lh7hYMcuSQYOrBP+QZ8wIEzFxeT94bAt058dAl2Df/z+Pr8
-	 TctS03IdMMYglE7ZyAY7+k+OIc4wzRcx0myCGNj7Yunut9SQmmeFKaNHNkfV8u9L0k
-	 asHKrpx377z/Q==
+	s=arc-20240116; t=1716387373; c=relaxed/simple;
+	bh=poYwZzFrROnVvrzaB1PisgarOajrVBSZw1xGHbZ6Mkw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Kf5SwS58TQMkbYLe8O3/RGAAPai2bGv4ztkR5Wraq5lE7mIVzRht1gxpm7BN09tlPQY/izIaNvFgOPfQJuK7as/lGwKtoXCHImv9iqqEje3IzGOVW7IqmhaYHAzpO2R0nQ4uRn8qoW5dmFepOZ62GERdBI/Ze/VMoZm1lB7f6oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=bxBc8p6X; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=tgGdvNnV reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1716387371; x=1747923371;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=pyP6xgaP2ZcvnjLNb6y+BeqcJGYFyeQAlt1mSCVUPeI=;
+  b=bxBc8p6X1rlVP3q0ghqYDq4vDGDFIEyoAqn4q2lI9Pq6/KFGfe4QxX3T
+   9rcEmugGfS0pTmMe20raAQ+BhGaDTNdEUNg21bGUamw6yURgYhjKmMDFG
+   tGb8e3Lz/RxEYmNBW8Cm+/5kV8+mHi7WnhfkI9487/SgfsnLaQOUC1ax6
+   uEUedBsCFR+I2KyKl2Oj41k+4jSwUeUNMAnppSdJAvCVFuyOIioJb44MO
+   rFx/t/L/0SER+dEmsexh9Rn31jlNb0ZQlIXUAXoUF24ZkdCLZX2NdZAoF
+   JJoKCCqas2+XUTfAuKszPeYz9wmVGadw/0zTefQOmxteWeI39DzKBlZYx
+   w==;
+X-CSE-ConnectionGUID: ItvqHDVoScCNDD8qdXzqGQ==
+X-CSE-MsgGUID: JOzqs72yQ2ayPma6NH9rjQ==
+X-IronPort-AV: E=Sophos;i="6.08,179,1712613600"; 
+   d="scan'208";a="37017658"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 22 May 2024 16:16:02 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D667F160CA6;
+	Wed, 22 May 2024 16:15:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1716387357;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=pyP6xgaP2ZcvnjLNb6y+BeqcJGYFyeQAlt1mSCVUPeI=;
+	b=tgGdvNnV+1b8REiUhwMHuwl6aGlzYeaM5Ahgx0UQW9pLsCgLuwrjOJYVMZWzjZ/eXHdVIC
+	nDxX8ThVbAtXfU7AbMxWR2CRHh5j6kxBUlhm8opuAU/XuBuIo7CJ6IT3uklYLD02i4mk8P
+	/+p5hfenhpVyvRhWFLekPHZbPb3ADgj3j1eBVYDl1LzFc1m70M8gT/7NhHITSQk8jCAV2q
+	W6C/ifgsYJmSKNA98pDu3GeXJDLt8W16N2pO4uxTw/4eAHNY2qvXKhVu4cPkacuVkIiogh
+	pWB1eKVgIleSGJlktebuiOMU1JKw89muq1LBM96TxvpuWtZL2rkxiI8KGZGr0A==
+From: Gregor Herburger <gregor.herburger@ew.tq-group.com>
+Subject: [PATCH RESEND v3 0/8] can: mcp251xfd: add gpio functionality
+Date: Wed, 22 May 2024 16:15:17 +0200
+Message-Id: <20240522-mcp251xfd-gpio-feature-v3-0-8829970269c5@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 May 2024 17:13:41 +0300
-Message-Id: <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>, "Jason
- Gunthorpe" <jgg@ziepe.ca>, "Mimi Zohar" <zohar@linux.ibm.com>, "David
- Howells" <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James
- Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Vitor
- Soares" <ivitro@gmail.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240519235122.3380-1-jarkko@kernel.org>
- <20240519235122.3380-2-jarkko@kernel.org>
- <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
- <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
- <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
- <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
- <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
-In-Reply-To: <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Thomas Kopp <thomas.kopp@microchip.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux@ew.tq-group.com, gregor.herburger@ew.tq-group.com, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716387339; l=2868;
+ i=gregor.herburger@ew.tq-group.com; s=20230829; h=from:subject:message-id;
+ bh=poYwZzFrROnVvrzaB1PisgarOajrVBSZw1xGHbZ6Mkw=;
+ b=ksfiujku3m4JTx2U6PYibn/TjEeEI2vdaP8wABQL4ifUTdhURQ1JgTdHCUfytZ94EeakbQNiw
+ ezNuirdEwqTDbJ0PDjtqLLBshcXRNqAbCawI8FMWpVRR4KS+vTK8wAk
+X-Developer-Key: i=gregor.herburger@ew.tq-group.com; a=ed25519;
+ pk=+eRxwX7ikXwazcRjlOjj2/tbDmfVZdDLoW+xLZbQ4h4=
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed May 22, 2024 at 4:35 PM EEST, James Bottomley wrote:
-> On Wed, 2024-05-22 at 09:18 +0100, Vitor Soares wrote:
-> > On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
-> > > On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
-> > > > This benchmark could be done in user space using /dev/tpm0.
-> > >=20
-> > > Let's actually try that.=C2=A0 If you have the ibmtss installed, the
-> > > command to time primary key generation from userspace on your tpm
-> > > is
-> > >=20
-> > > time tsscreateprimary -hi n -ecc nistp256
-> > >=20
-> > >=20
-> > > And just for chuckles and grins, try it in the owner hierarchy as
-> > > well (sometimes slow TPMs cache this)
-> > >=20
-> > > time tsscreateprimary -hi o -ecc nistp256
-> > >=20
-> > > And if you have tpm2 tools, the above commands should be:
-> > >=20
-> > > time tpm2_createprimary -C n -G ecc256
-> > > time tpm2_createprimary -C o -G ecc256
-> > >=20
-> > > James
-> > >=20
-> > >=20
-> >=20
-> > Testing on an arm64 platform I get the following results.
-> >=20
-> > hmac disabled:
-> > =C2=A0 time modprobe tpm_tis_spi
-> > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m2.776s
-> > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.006s
-> > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.015s
-> >=20
-> > =C2=A0 time tpm2_createprimary -C n -G ecc256
-> > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.686s
-> > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.044s
-> > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.025s
-> >=20
-> > =C2=A0 time tpm2_createprimary -C o -G ecc256
-> > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.638s
-> > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.048s
-> > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.009s
-> >=20
-> >=20
-> > hmac enabled:
-> > =C2=A0 time modprobe tpm_tis_spi
-> > =C2=A0 real=C2=A0=C2=A0=C2=A0 8m5.840s
-> > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.005s
-> > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.018s
-> >=20
-> >=20
-> > =C2=A0 time tpm2_createprimary -C n -G ecc256
-> > =C2=A0 real=C2=A0=C2=A0=C2=A0 5m27.678s
-> > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.059s
-> > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.009s
-> >=20
-> > =C2=A0 (after first command)
-> > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.395s
-> > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.040s
-> > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.015s
-> >=20
-> > =C2=A0 time tpm2_createprimary -C o -G ecc256
-> > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.418s
-> > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.049s
-> > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.009s
->
-> That's interesting: it suggests the create primary is fast (as
-> expected) but that the TPM is blocked for some reason.  Is there
-> anything else in dmesg if you do
->
-> dmesg|grep -i tpm
->
-> ?
->
-> Unfortunately we don't really do timeouts on our end (we have the TPM
-> do it instead), but we could instrument your kernel with command and
-> time sent and returned.  That may tell us where the problem lies.
+Hi all,
 
-If there was possibility to use bpftrace it is trivial to get histogram
-of time used where. I can bake a script but I need to know first if it
-is available in the first place before going through that trouble.
+The mcp251xfd allows two pins to be configured as GPIOs. This series
+adds support for this feature.
 
-BR, Jarkko
+The GPIO functionality is controlled with the IOCON register which has
+an erratum.
+
+Patch 1-3 from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime_pm-v1-0-c26a93a66544@pengutronix.de/
+Patch 4 refactor of no-crc functions to prepare workaround for non-crc writes
+Patch 5 is the fix/workaround for the aforementioned erratum
+Patch 6 only configure pin1 for rx-int
+Patch 7 adds the gpio support
+Patch 8 updates dt-binding
+
+---
+Changes in v3:
+- Implement workaround for non-crc writes
+- Configure only Pin1 for rx-int feature
+- moved errata check to .gather_write callback function
+- Added MCP251XFD_REG_IOCON_*() macros
+- Added Marcs suggestions
+- Collect Krzysztofs Acked-By
+- Link to v2: https://lore.kernel.org/r/20240506-mcp251xfd-gpio-feature-v2-0-615b16fa8789@ew.tq-group.com
+
+Changes in v2:
+- picked Marcs patches from https://lore.kernel.org/linux-can/20240429-mcp251xfd-runtime_pm-v1-0-c26a93a66544@pengutronix.de/
+- Drop regcache
+- Add pm_runtime in mcp251xfd_gpio_request/mcp251xfd_gpio_free
+- Implement mcp251xfd_gpio_get_multiple/mcp251xfd_gpio_set_multiple
+- Move check for rx_int/gpio conflict to mcp251xfd_gpio_request
+- Link to v1: https://lore.kernel.org/r/20240417-mcp251xfd-gpio-feature-v1-0-bc0c61fd0c80@ew.tq-group.com
+
+---
+Gregor Herburger (5):
+      can: mcp251xfd: utilize gather_write function for all non-CRC writes
+      can: mcp251xfd: add workaround for errata 5
+      can: mcp251xfd: only configure PIN1 when rx_int is set
+      can: mcp251xfd: add gpio functionality
+      dt-bindings: can: mcp251xfd: add gpio-controller property
+
+Marc Kleine-Budde (3):
+      can: mcp251xfd: properly indent labels
+      can: mcp251xfd: move mcp251xfd_timestamp_start()/stop() into mcp251xfd_chip_start/stop()
+      can: mcp251xfd: move chip sleep mode into runtime pm
+
+ .../bindings/net/can/microchip,mcp251xfd.yaml      |   5 +
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c     | 338 ++++++++++++++++-----
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-dump.c     |   2 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c   | 116 +++++--
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c      |   2 +-
+ .../net/can/spi/mcp251xfd/mcp251xfd-timestamp.c    |   7 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c       |   2 +-
+ drivers/net/can/spi/mcp251xfd/mcp251xfd.h          |  11 +
+ 8 files changed, 389 insertions(+), 94 deletions(-)
+---
+base-commit: 1fdad13606e104ff103ca19d2d660830cb36d43e
+change-id: 20240417-mcp251xfd-gpio-feature-29a1bf6acb54
+
+Best regards,
+-- 
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
+
 
