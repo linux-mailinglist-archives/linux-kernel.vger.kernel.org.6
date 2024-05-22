@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-185848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279B68CBBD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:20:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBED98CBBDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51C52828C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355821F2282B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4490D7BAE3;
-	Wed, 22 May 2024 07:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E0C7C097;
+	Wed, 22 May 2024 07:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="yxEbtQ3j"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0IskLwb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D140A7CF34
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561C62233A;
+	Wed, 22 May 2024 07:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362414; cv=none; b=hxIOqLlxN0C/T76JORAg8RP7AdSyLR0cYMzi8EcVZs33H7QbosMReaM0i4WTiIVouqC7SKpYm5sNQr4vL/Km/KveMRA8qGFAhYpuXrqlb32vCAgpPhRaTuujKzdTES7Bc3hB8Hd9Gjjwaza1XcUNX8LUHUTyYz325QW2NZe0Aok=
+	t=1716362461; cv=none; b=RwnLnlrQgT6GYmkKJke4ytivmAjMx6SRRvpi8hpaP6ms1KXgC2pRV5qzGJZyGJd3hctzBoPQp6l7pKwIoXRJM6MiIdhdbmy7Z8ZMpGIQVRg7HPahWeYJ8wn4b2/oQwz+roG7dU7bbGaLAIZAUx1gS+n5+ppSndWiQbiY3kb2SoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362414; c=relaxed/simple;
-	bh=91UIMoBqJuIXzScrNoeDbzNCRnDbmKh3LQPWGD3QPxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m1JCwBeuS8TF+0vcDcSf7vl+yoVsjbLcLLACZpU99I4CWHkJl5DLGK58FiDbilYhF253OJwXOJch3Ww7V8Pft3OmWafkWWT7AHFKIVhFLPaFHdZktkNHltgAtCuLix827IY+QzWIMnH3HF89DzUd4Aa7vi8vp3zL7wXMnshsJu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=yxEbtQ3j; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-351c2c48effso99984f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:20:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716362411; x=1716967211; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fMBhFPY2RLtVbP9uMG/kHTkoH5FQv+/qbKIQ531cWpY=;
-        b=yxEbtQ3jBAiY1LpsMAoWuQU3Vaj6RXjkYDZGyBUphNOwgccUqyjFhXkjlwa8gp45eb
-         8o9QXJ8wqST8RsWfjHawpZ2QXwBcX6Bg4aVQrOYeUo5DAf37nwwhoW7t+R0P9NScrCFP
-         hEwIygrBPCrpTwdtJQM9MsPOP3qfrawdiQBqCI0Bg0YOVPrBMsBPOqTfCpHpgO0ZCzIW
-         XgrUrb8JYI7tmql124H9Ip53DhMDhck6W1wFnYqF8f25BmXEcEjMz828NPw5xIbuzvgn
-         l1Iba4rfhlBwFdlG6hBBYLIymcTqItTO8L5RR3GHGzQw478K2W9t6+/q9Uba9ByS0Iil
-         jW5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716362411; x=1716967211;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fMBhFPY2RLtVbP9uMG/kHTkoH5FQv+/qbKIQ531cWpY=;
-        b=ZS5c0o8CTURWXBvFQ8/JWO27+Slt/Ou2x/fpjXfhFMtMlFRXvIkG1ZnTTpcSQQFcTa
-         L1+4GprPsj/Yaah+D5R5cDLBC1zYbum0gH0gzvdkfR8EMT+uiEEsRQZRJ2DVJJerKzwi
-         tO5g9suY3mBrUETviDm+klo17SIyUm0L/YNUZIhNHDSCWNzR+5NOrELlVQX291q/kCxz
-         vMjcyS6Z79jOW6Ivl6wCYjS1aaTlt02YB2vY2H5/TFO7E3Ri0b/JNYQ/BILDWK0wXKm5
-         fT0NsAN47w4Hlg/BqSR4voKLgcdLIjPJVcc4c1LMOJD7AuOjWaoKFONmCcoY9vHYWpnU
-         3K3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxTad6+g0PNGdZ0z6xxrLss5eUGI9jI+4FSxQ0Jg//vpxljO89JomwhrqSc/jedMVRwAYXi4fCBmaBfqvYAUI/plH5ZNbRP7vssUrG
-X-Gm-Message-State: AOJu0YzzTbX+8f72q9Jh/ymBx9QpOPOYdl1rRfGkHqNYfAMfJc0MCSaj
-	o6uyElnyRmMRDJ/OA+EfKJuZDqUy1yUHxwyLZe6SKOEAD7/21h7eWb276eCMUDg=
-X-Google-Smtp-Source: AGHT+IHWVY+wf0lMzIRvSFmzGRBEtlk7+RZmAm7eEQ/Zt8L9I28gKKUkeR8X87R48p3Psaag4VJcvQ==
-X-Received: by 2002:adf:f5c3:0:b0:34e:bdf9:32ff with SMTP id ffacd0b85a97d-354d8c7c2a0mr765925f8f.1.1716362411076;
-        Wed, 22 May 2024 00:20:11 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:999:a3a0:2d44:5824:d42d:899? ([2a01:e0a:999:a3a0:2d44:5824:d42d:899])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad037sm33448437f8f.71.2024.05.22.00.20.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 00:20:10 -0700 (PDT)
-Message-ID: <de2c9064-bb01-42b2-9c0f-884dcabf7c40@rivosinc.com>
-Date: Wed, 22 May 2024 09:20:09 +0200
+	s=arc-20240116; t=1716362461; c=relaxed/simple;
+	bh=9iaBb5mHzEt3sd5FPGMcs25cO1NhhiyMvrzjqOLKl/c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZWmFEpDYKstXm/NTRozuMl+GzawUXyLk1qdoEbnis3dKtfMFbEi3YLRB7h5C5jB/qFB6ygs7JQjdV6znbBu/XR81LO1Y7laV7XzMt80qRvKv1V3K8nPDofGBFUzfeJ42K1avvbJJHLHQwjaQ5jMPMk9anp4B2Z9W+i0DzX4ROO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0IskLwb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 440EAC2BD11;
+	Wed, 22 May 2024 07:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716362460;
+	bh=9iaBb5mHzEt3sd5FPGMcs25cO1NhhiyMvrzjqOLKl/c=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=J0IskLwbdL+IfFmIfTfDTmH/Qq4Z/Pwh+Gj8pfJ0QzXHnMYfKlyrAGD4AQq5rtf3U
+	 CXew5AElD1ij+dp7YxQzPjuGj4VffL+RJhnKpXR36eilwHQdAEp3uz3WzSKP7918Zz
+	 K47gmGVlUVc94DHue9XnmHKUi/H6Kg5C/uxJZhuwHwiNfaRbZu/Tp9O8p+z6yvAEKp
+	 C6+LrGJaTEed4Pj072y0cgZp9lnn6wgwP/kB5jirKmLv/OQL0Ksd1yqFOxUKZru5HN
+	 tTgUd5mVAWDGgg7043QSqnfX0VEgQhshn/lMmx6WjB2kBRX08RnniX8YrYKEyBqCsK
+	 yY1kWY5vWMElA==
+Message-ID: <482e5724-cfe0-4cb0-8faa-f5dfafd0e563@kernel.org>
+Date: Wed, 22 May 2024 09:20:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,67 +49,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 08/16] riscv: add ISA parsing for Zca, Zcf, Zcd and Zcb
-To: Conor Dooley <conor@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
- Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kvm@vger.kernel.org,
- kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-References: <20240517145302.971019-1-cleger@rivosinc.com>
- <20240517145302.971019-9-cleger@rivosinc.com>
- <20240521-spiny-undergrad-efa1a391ad3d@spud>
+Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
+ ADP5585
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+ Alexandru Ardelean <alexandru.ardelean@analog.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
+ <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
+ <20240521194309.GA8863@pendragon.ideasonboard.com>
+ <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20240521-spiny-undergrad-efa1a391ad3d@spud>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 21/05/2024 21:49, Conor Dooley wrote:
-> On Fri, May 17, 2024 at 04:52:48PM +0200, Clément Léger wrote:
+On 22/05/2024 08:57, Krzysztof Kozlowski wrote:
+> On 21/05/2024 21:43, Laurent Pinchart wrote:
+>> Hi Krzysztof,
+>>
+>> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
+>>> On 20/05/2024 21:59, Laurent Pinchart wrote:
+>>>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
+>>>> matrix decoder, programmable logic, reset generator, and PWM generator.
+>>>> These bindings model the device as an MFD, and support the GPIO expander
+>>>> and PWM functions.
+>>>>
+>>>> These bindings support the GPIO and PWM functions.
+>>>>
+>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>>> ---
+>>>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
+>>>> implement and test the rest of the features the chip supports.
+>>>> ---
+>>>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
+>>>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
+>>>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
+>>>>  MAINTAINERS                                   |   7 ++
+>>>>  4 files changed, 195 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
+>>>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..210e4d53e764
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
+>>>> @@ -0,0 +1,36 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Analog Devices ADP5585 GPIO Expander
+>>>> +
+>>>> +maintainers:
+>>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>>>> +
+>>>> +description: |
+>>>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
+>>>> +  node of the parent MFD device. See
+>>>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
+>>>> +  well as an example.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: adi,adp5585-gpio
+>>>> +
+>>>> +  gpio-controller: true
+>>>> +
+>>>> +  '#gpio-cells':
+>>>> +    const: 2
+>>>> +
+>>>> +  gpio-reserved-ranges: true
+>>>
+>>> There are no resources here, so new compatible is not really warranted.
+>>> Squash the node into parent.
+>>
+>> Child nodes seem (to me) to be the standard way to model functions in
+>> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
+>> function iterates over child nodes. I don't mind going a different
 > 
->> +static int riscv_ext_zca_depends(const struct riscv_isa_ext_data *data,
->> +				 const unsigned long *isa_bitmap)
->> +{
->> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) ? 0 : -EPROBE_DEFER;
->> +}
->> +static int riscv_ext_zcd_validate(const struct riscv_isa_ext_data *data,
->> +				  const unsigned long *isa_bitmap)
->> +{
->> +	return __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
->> +	       __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_d) ? 0 : -EPROBE_DEFER;
->> +}
+> Only to assign of node, which could be skipped as well.
 > 
-> Could you write the logic in these out normally please? I think they'd
-> be more understandable (particular this second one) broken down and with
-> early return.
-
-Yes sure. I'll probably make the same thing for zcf_validate as well as
-removing the #ifdef and using IS_ENABLED():
-
-static int riscv_ext_zcf_validate(const struct riscv_isa_ext_data *data,
-				  const unsigned long *isa_bitmap)
-{
-	if (IS_ENABLED(CONFIG_64BIT))
-		return -EINVAL;
-
-	if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_ZCA) &&
-	    __riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_f))
-	       return 0;
-
-	return -EPROBE_DEFER;
-}
-
+>> routes, could you indicate what you have in mind, perhaps pointing to an
+>> existing driver as an example ?
 > 
-> Otherwise,
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> 
-> Cheers,
-> Conor.
+> Most of them? OK, let's take the last added driver in MFD directory:
+> cirrus,cs42l43
+> It has three children and only two nodes, because only these two devices
+> actually need/use/benefit the subnodes.
+
+BTW, if these devices have their own I2C addresses or are reusable
+blocks, then of course their existence as child nodes is warranted.
+
+Similarly if these devices had additional subnodes, like pinctrl or SPI
+controller.
+
+Best regards,
+Krzysztof
+
 
