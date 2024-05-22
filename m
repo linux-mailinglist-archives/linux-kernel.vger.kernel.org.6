@@ -1,146 +1,89 @@
-Return-Path: <linux-kernel+bounces-186795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A02218CC944
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C818CC959
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09DA1C21C0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:59:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 164FE1C21BFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9AB1494D2;
-	Wed, 22 May 2024 22:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1091494D6;
+	Wed, 22 May 2024 23:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OH76cNwF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="QiiVgGzY"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2508F1494AC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E628080C04;
+	Wed, 22 May 2024 23:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716418750; cv=none; b=h+W/P+og8J4LAC7VEuY3H2EQlG0A8f6m3giiLIDac6nx7jGkJj3aiIIVTCURDJQM69tq53RI2TYJ2q70eUZWlYNQJ7NfToNfllViX2gsvceOB9b0kIWFz3EEDNbQMslOZ38bLf68ePpkBUP+eNpHupb6XPjZQngdAyWwzhXOmMw=
+	t=1716419109; cv=none; b=rkYWmnbGfQUtOrl0mppehRDYoanAHuHi1DnRrEHtbfJgf3MkM2jdUFkLx0ODAmlkxH/VwnOfIalqQxQvo/x1at6I7/UHluRXVATIrD289vKmA6FADZVGtdseX38Pzpff4myVl9j5H+H9sKGWd61VjQUBVDqHF0A4zAfw0VQaA0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716418750; c=relaxed/simple;
-	bh=lUyseyhrTphGdKiHxqU49ao7Ry2K6n4epBhRL331XWI=;
-	h=To:cc:Subject:MIME-Version:Content-Type:From:Date:Message-ID; b=tltsFUjgX8RM9vrCjJeOGlbu4VBjlq++maO9CR4k8Vgi+/zQwMMGqJ11s8z92C8h3s2fqA05jB6PgIPOKGUeJcwgcYxI2mQ+tl4JB5sg5Zh8LwTGF4QMiQ5cRUbGzaWUbAusdOcdy7nvCzp84XbS6lN4PoQLFfT4pNTvbc1LQgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OH76cNwF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716418748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aLGhBNxsqVskXvt4vSfXPq+TZr8BC8vuqNTuesM2U10=;
-	b=OH76cNwFyNEIDxT12ZdxcqrnOjiVWS+fb0w6uihUwL+jRVwNwnp7mx1zY3vz3ZjVMCC5SY
-	Knc4naw6zzeWx4bZjw33oXWgz+nG66POhEUPYEMni4V87zD1ixnNNYufxKxJo8TMwCjyAl
-	GmA0SnNte9Wi5Wazl1Ds8p3/rsX67hQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-N82oH1LtPryF20wyqw928w-1; Wed, 22 May 2024 18:59:04 -0400
-X-MC-Unique: N82oH1LtPryF20wyqw928w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1E4BA800169;
-	Wed, 22 May 2024 22:59:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 0871C561A;
-	Wed, 22 May 2024 22:59:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>
-cc: dhowells@redhat.com, Shyam Prasad N <nspmangalore@gmail.com>,
-    Rohith Surabattula <rohiths.msft@gmail.com>,
-    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] cifs: Fix credit handling in cifs_io_subrequest cleanup
+	s=arc-20240116; t=1716419109; c=relaxed/simple;
+	bh=ziUTCItjs4pwIzMLrxs6a8H8BKosi12oUaXzTdEk+9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s6E57kX9mN7xPx44y5wtk2/Ic9wu9Hxhd+dEot5Nj8XOTOUswqPGE8+a/39xy0Ui8azJUzUEpQoHvNhBM1MJhMGpLVizu/Oxz9SEI9ATmrU5mXv1I2Ug27gPe+PG/N5lqbwKPyXojObT8nxvLkO6JMBpKucfwLkAX+hnipvYqZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=QiiVgGzY; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=MkecTzVTSWpFN8cR6NW7tQdeCOgZs3Z0mf0F5wLZywU=; b=QiiVgGzYWM6AyeeE
+	bsNXeeilmjmH3zRDfwYePM8ubqOqSz3ZVtBUHx6my9cFDPADKXODGhnvMIpqZnhtiW87KRbJyF2+0
+	OCjJGmFnWEekSMZdKndLJ6bMJ/rRK7chWqmIN1upY2OOogM/c9VNjCaKcGRTqV29krnRtyOBxWvdH
+	YD/TLXhZGEE4s9IPMMcm1aWCzUBcFMXztmKysX0upG2qL0VhlbNGat7iymicoRjIWo4GgDs4VCsyQ
+	hURuCdPial5t7uSkkHN3WihHRQ1psphMVkZYa+KD6NiO9k+swf5NRrjH9ugpaIHfUxheik1R9fbmz
+	D6HMx5HylsZsEn1psA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s9v11-0027Vk-1R;
+	Wed, 22 May 2024 23:04:59 +0000
+From: linux@treblig.org
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	marius.cristea@microchip.com,
+	mazziesaccount@gmail.com
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH 0/3] IIO dead struct cleanup
+Date: Thu, 23 May 2024 00:04:54 +0100
+Message-ID: <20240522230457.478156-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <469429.1716418699.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-From: David Howells <dhowells@redhat.com>
-Date: Wed, 22 May 2024 23:59:02 +0100
-Message-ID: <469451.1716418742@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+Content-Transfer-Encoding: 8bit
 
-    =
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-When a cifs_io_subrequest (wrapping a netfs_io_subrequest) is cleaned up i=
-n
-cifs_free_subrequest(), it releases any credits that are left in
-rdata->credits.  However, this is a problem because smb2_writev_callback()
-calls add_credits() to add the new credits from the response header
-CreditRequest to the available pool.
+Hi,
+  Three dead structs to cleanup in iio.
+The bmi and pac are very recent.
 
-This can cause a warning to be emitted in smb2_add_credits() as
-server->in_flight gets doubly decremented and a later operation sees it
-having prematurely reached 0.
+(Build tested only)
 
-Fix this by clearing the credit count after actually issuing the request o=
-n
-the assumption that we've given the credits back to the server (it will
-give us new credits in the reply).
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/file.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 9d5c2440abfc..73e2765c4d2f 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -110,6 +110,7 @@ static void cifs_issue_write(struct netfs_io_subreques=
-t *subreq)
- 		goto fail;
- =
+Dr. David Alan Gilbert (3):
+  iio: accel: bmi088: remove unused struct 'bmi088_scale_info'
+  iio: adc: pac1934: remove unused struct 'samp_rate_mapping'
+  iio: light: rohm-bu27034: remove unused struct 'bu27034_result'
 
- 	wdata->server->ops->async_writev(wdata);
-+	wdata->credits.value =3D 0;
- out:
- 	return;
- =
+ drivers/iio/accel/bmi088-accel-core.c | 5 -----
+ drivers/iio/adc/pac1934.c             | 5 -----
+ drivers/iio/light/rohm-bu27034.c      | 6 ------
+ 3 files changed, 16 deletions(-)
 
-@@ -205,10 +206,12 @@ static void cifs_req_issue_read(struct netfs_io_subr=
-equest *subreq)
- =
-
- 	rc =3D adjust_credits(rdata->server, &rdata->credits, rdata->subreq.len)=
-;
- 	if (!rc) {
--		if (rdata->req->cfile->invalidHandle)
-+		if (rdata->req->cfile->invalidHandle) {
- 			rc =3D -EAGAIN;
--		else
-+		} else {
- 			rc =3D rdata->server->ops->async_readv(rdata);
-+			rdata->credits.value =3D 0;
-+		}
- 	}
- =
-
- out:
+-- 
+2.45.1
 
 
