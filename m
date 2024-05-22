@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-185729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF2A8CB9DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:40:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9338CB9E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D9EA28356B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:40:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5659B21141
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727E274418;
-	Wed, 22 May 2024 03:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CC274BE0;
+	Wed, 22 May 2024 03:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gqdJs16o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QcUJboQP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B6D74BE0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13D560BBE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716349198; cv=none; b=la3pnzSQ3ASwnP3HdBo4EJJDMlCC9ajZSXY5ovVARIWTEfRCoO17+eCGVekQv5pvrh/TCwsuGSY1Cqpx/CYZ1pRECh2Tp7Lofi5VPSgkJHzO503jG4sF7jwNDyC3Zbjx2NTWQ2IhwpcTY57EPPvSrorU6CIZkD9kKn8HAFQTkRw=
+	t=1716349270; cv=none; b=DihfZUezuRVgqs2PYeh5wHEMc0YS2oDs2GwuJIWKu8awXAQiLwJ7dwKv+ABC1DMsdvxVtgDzUb9iOjmgouMeFmqm+LLHc0tWaFDSXgL6a+yaO/pq4tIkz4l8J7aT/QD31m5B4DEwBGVfl1e3ZBO3EfuwNksqqeOAkAw0X5Veil4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716349198; c=relaxed/simple;
-	bh=rsad/eQ6DWGheNrhJpEzrqphxiW82XXKQz+YNf64b9U=;
+	s=arc-20240116; t=1716349270; c=relaxed/simple;
+	bh=fAjHmMPI9BjcKrbZj23D72c/rUSBc/IAX+hDIpozsB0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SLbs0I61uBkdA61q5iNVkoi9lKrm8LbcUlFuOyG38uLZ6O9/LxR/C9NHbEonawSRAcdg5YNcv25xpPwxP5m6KQ3AY9alMZKb7Z2k67wd+0sefx3pls1MMCDVXbN9dGeQDf8RmEcmR5xAVDlNbcHThLeWHSRijIC2llxs6VOs3SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gqdJs16o; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=lees4Mr6QLg7s10C4tjAzBkHl0gxjNjp9ITdwhnj9353GtWFViPOLVSrEjV6ECxAtXxIsBfDYT4x3JQWCLlLuzdYOwyOpUFGSY2632EdNbEZTAAs13TfeA0Idu7s1+4640cJNQ/j3N7b8yS17LzIuR8OcprVppSD06mHqZ8FrF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QcUJboQP; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716349195;
+	s=mimecast20190719; t=1716349263;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ahfb/G0D4ZbkGUdB/34uH7SDNYvGMH6beGMeu1yJFi4=;
-	b=gqdJs16oELEWpN82uY28xO1QvpVaT+wgQGSDQBkdMx5LfNahvSGkM3UM85rBXYaQe/Hm9K
-	zjZxOPZY5izu4ik3iM9dx7dNG2v3j1Rqy3Son3KyZXSEwf+boK17aRS5y94lYNj4l7bMrm
-	WwQa7Goo3cH2VJprF8jPDxAB0m4Qqzs=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=8S3Gid4+HHyOby23oKkItTJxpdYfB0tmiZc2RtKlOLQ=;
+	b=QcUJboQP/0+KWyMu2WFuLlzkEyAe9MINSnSodaMYlZYzKnCcia6btcpDorP7UOxfPNMkY+
+	8/+L8HERmMuDj0VG+yEFMtCEQOJk3NhQFEh1pt+6rP3XEzIcU3d/vrHorXiizvWd89OkBG
+	JK8DG/5fi5ZdFuFnfuqYVtpFtoYcAnk=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-8LGZCaWpNwqpnL95lTvOPQ-1; Tue, 21 May 2024 23:39:54 -0400
-X-MC-Unique: 8LGZCaWpNwqpnL95lTvOPQ-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2b4330e57b6so13289339a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:39:53 -0700 (PDT)
+ us-mta-564-whn6WNbKODaL6fNwPcPxFA-1; Tue, 21 May 2024 23:41:02 -0400
+X-MC-Unique: whn6WNbKODaL6fNwPcPxFA-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2b34facb83aso12949101a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 20:41:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716349193; x=1716953993;
+        d=1e100.net; s=20230601; t=1716349261; x=1716954061;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ahfb/G0D4ZbkGUdB/34uH7SDNYvGMH6beGMeu1yJFi4=;
-        b=QSY/PwE5SDEUI8F7NPHPt43wYej1KYP+FiHFsBA1QSTxx+YqHL/emiEYkzNMV7ZmhC
-         jes1Hioj8FRvzARgypabq4aYUuL5rLg4bHLjYYu2emeRskM3XvTpyxW0qf6aetS9bsMH
-         9tmwJo909K0m6/unFEb2qIRU2AjBA71dFwjZ1Yod7gTeJT88B7SEHvj9vaLkUAB2DYo1
-         xksOkNjALsefc9Bdf4an4NL3nyOx3RSekv1PXpoNYSBoZmrHZuPXbpZ36TyHGvcRn9nq
-         wF5pJ846NkOh/EAkso2MbjCrLuGQFgJYpV2CDzP7e2ujLDU7yU9LbK6andngVblROXR6
-         nP/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtT8Lz9hXpzab3PjpSKoStXtAuuP9yC/Ss3DNWLiJ3okmQNgY8F0wq1dvgz/OOJ2JXuMpm9t/9Pu7T+kTbLqwpSH5YGHx0LOLMORN5
-X-Gm-Message-State: AOJu0YywX0BUnhY9tfriHYD1KiarVbSTguO6+q7eEbZRdvrYXg0n1eD1
-	V4BAaILbWxMe+1guaNVOtAMY3zdA+B3ncYexXZHZwcdPqjLimKubNfcNEs2/W65Tu8YEjbBlu4x
-	qBd5w7+pQU7MNt9EN09ClLtZrCdcAhesvoxTxKjf9Q629rYg3vNHd4YkTg6/b5d3CnU2qV8SgOQ
-	kWE9ltqklgOfdhq8Ebgzphry1bMeaVd44UZF5F
-X-Received: by 2002:a17:90a:2ca1:b0:2b6:c4d7:fc31 with SMTP id 98e67ed59e1d1-2bd9f5bc52emr1191155a91.40.1716349192778;
-        Tue, 21 May 2024 20:39:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8sphTEf2DYNIvycHgNVTAqOYPL463d5Bg/hLWjrc2NJXKaACBiVW4Y6g7W/u0hk1gVqaiG+1JL0LQ1v/2zrA=
-X-Received: by 2002:a17:90a:2ca1:b0:2b6:c4d7:fc31 with SMTP id
- 98e67ed59e1d1-2bd9f5bc52emr1191138a91.40.1716349192371; Tue, 21 May 2024
- 20:39:52 -0700 (PDT)
+        bh=8S3Gid4+HHyOby23oKkItTJxpdYfB0tmiZc2RtKlOLQ=;
+        b=MWv3UlZjEvyworAeCVDeFZKe1YzpeRo/XgWOleVVew2wfs4KmyZs9aYdGIb3PJMgeG
+         DoTYzVHH9RF1+hPyj+huj2ddpC978d6iYozS6NJ3U72lR7DqO5nnPXoWKQ8hQX5ClJEr
+         7Rt6PAgGmnLg2Hr0MaVFQ60LJDjkIgJC3XiaDlh2S7DiFqR8p+Tpfo01AwkcotMrv5n+
+         ZA2b2wJRHUKxJ2Bi+NG+llkTsvb3wmhnTT/vW97Miacs8Lfvr9qJzkI99NMAmLa1koeR
+         TlWHbOl+gnG5TwbgxUg3aGvKTc70ZX4IPTldR3vxRUVxLWyRdtg4+U/SGftWadKEtqAP
+         96HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3LlrU6NI5hOpkz6vVV+9GN4xsR/4KQRPXZGgEnM29if+NxSD0hWFb7l+RIQYijyTd9BvrK/Iqc35Bah8G9aDkFCLy0liqkt3pT4fh
+X-Gm-Message-State: AOJu0YwjdD0BoUSOcR0RUy79bP919C7nTRxhWtFPnBYMbDsv1aWHhZAi
+	3HMB77Stl6L5Io15jDodA/x9Vj0o58UEF1F1ErH0T9yXEjv+3QFMlfs/U45pVdzuEhWB3cEP0Vk
+	WSir3pYDiPBPwzX9z4ZQsJzEb3KorAPNgYHXZ4f03EzBU2jms2Ry6D1FWssdJEA+ihAH7ZZV+2o
+	E1ZXfmAiUYC7CEnf/ob1KVBwPaY5peiIwl6p95
+X-Received: by 2002:a17:90a:d608:b0:2b4:32ae:9932 with SMTP id 98e67ed59e1d1-2bd9f489a59mr924138a91.17.1716349260999;
+        Tue, 21 May 2024 20:41:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyGlRV9Te14odh1WiHeDE1DeZgFbjBkjl9hPq8vAGxQEAtuBhP/TUWMA2lvNVxJdKHHffm6JzFMhfzwA8FnWY=
+X-Received: by 2002:a17:90a:d608:b0:2b4:32ae:9932 with SMTP id
+ 98e67ed59e1d1-2bd9f489a59mr924124a91.17.1716349260637; Tue, 21 May 2024
+ 20:41:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,13 +77,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <1716218462-84587-1-git-send-email-steven.sistare@oracle.com>
- <1716218462-84587-4-git-send-email-steven.sistare@oracle.com>
- <CACGkMEur=CoU1GgxNdweu-SfuutSN-a+LaHLkdtoWYJMnE+LOg@mail.gmail.com> <46f91e76-6f88-4f83-8854-10baed4e82c9@oracle.com>
-In-Reply-To: <46f91e76-6f88-4f83-8854-10baed4e82c9@oracle.com>
+ <1716218462-84587-3-git-send-email-steven.sistare@oracle.com>
+ <CACGkMEtfjHzdBBwgUWgRHDc5opekvgTuXp-_z4ku6L5cqOeAJA@mail.gmail.com> <b55cccfc-67b0-4f21-9070-127af6fd07a7@oracle.com>
+In-Reply-To: <b55cccfc-67b0-4f21-9070-127af6fd07a7@oracle.com>
 From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 22 May 2024 11:39:41 +0800
-Message-ID: <CACGkMEtVt+W4jmBxaXAytreXjJUHxmo+zzAw0wsrLw97pJmW-A@mail.gmail.com>
-Subject: Re: [PATCH V3 3/3] vdpa_sim: flush workers on suspend
+Date: Wed, 22 May 2024 11:40:49 +0800
+Message-ID: <CACGkMEu4WZnqcTPyq566X5aWL-mL1KSR7XWoTKq5AU0mSsB9_A@mail.gmail.com>
+Subject: Re: [PATCH V3 2/3] vduse: suspend
 To: Steven Sistare <steven.sistare@oracle.com>
 Cc: virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
 	"Michael S. Tsirkin" <mst@redhat.com>, Si-Wei Liu <si-wei.liu@oracle.com>, 
@@ -95,112 +95,117 @@ Content-Transfer-Encoding: quoted-printable
 On Tue, May 21, 2024 at 9:39=E2=80=AFPM Steven Sistare
 <steven.sistare@oracle.com> wrote:
 >
-> On 5/20/2024 10:32 PM, Jason Wang wrote:
+> On 5/20/2024 10:30 PM, Jason Wang wrote:
 > > On Mon, May 20, 2024 at 11:21=E2=80=AFPM Steve Sistare
 > > <steven.sistare@oracle.com> wrote:
 > >>
-> >> Flush to guarantee no workers are running when suspend returns.
-> >> Add a lock to enforce ordering between clearing running, flushing,
-> >> and posting new work in vdpasim_kick_vq.  It must be a spin lock
-> >> because vdpasim_kick_vq may be reached va eventfd_write.
+> >> Support the suspend operation.  There is little to do, except flush to
+> >> guarantee no workers are running when suspend returns.
 > >>
 > >> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
 > >> ---
-> >>   drivers/vdpa/vdpa_sim/vdpa_sim.c | 16 ++++++++++++++--
-> >>   drivers/vdpa/vdpa_sim/vdpa_sim.h |  1 +
-> >>   2 files changed, 15 insertions(+), 2 deletions(-)
+> >>   drivers/vdpa/vdpa_user/vduse_dev.c | 24 ++++++++++++++++++++++++
+> >>   1 file changed, 24 insertions(+)
 > >>
-> >> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.c b/drivers/vdpa/vdpa_sim/=
-vdpa_sim.c
-> >> index 8ffea8430f95..67ed49d95bf0 100644
-> >> --- a/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> >> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.c
-> >> @@ -322,7 +322,7 @@ static u16 vdpasim_get_vq_size(struct vdpa_device =
-*vdpa, u16 idx)
-> >>                  return VDPASIM_QUEUE_MAX;
+> >> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_us=
+er/vduse_dev.c
+> >> index 73c89701fc9d..7dc46f771f12 100644
+> >> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> >> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> >> @@ -472,6 +472,18 @@ static void vduse_dev_reset(struct vduse_dev *dev=
+)
+> >>          up_write(&dev->rwsem);
 > >>   }
 > >>
-> >> -static void vdpasim_kick_vq(struct vdpa_device *vdpa, u16 idx)
-> >> +static void vdpasim_do_kick_vq(struct vdpa_device *vdpa, u16 idx)
-> >>   {
-> >>          struct vdpasim *vdpasim =3D vdpa_to_sim(vdpa);
-> >>          struct vdpasim_virtqueue *vq =3D &vdpasim->vqs[idx];
-> >> @@ -337,6 +337,15 @@ static void vdpasim_kick_vq(struct vdpa_device *v=
-dpa, u16 idx)
-> >>                  vdpasim_schedule_work(vdpasim);
-> >>   }
-> >>
-> >> +static void vdpasim_kick_vq(struct vdpa_device *vdpa, u16 idx)
+> >> +static void vduse_flush_work(struct vduse_dev *dev)
 > >> +{
-> >> +       struct vdpasim *vdpasim =3D vdpa_to_sim(vdpa);
+> >> +       flush_work(&dev->inject);
 > >> +
-> >> +       spin_lock(&vdpasim->kick_lock);
-> >> +       vdpasim_do_kick_vq(vdpa, idx);
-> >> +       spin_unlock(&vdpasim->kick_lock);
+> >> +       for (int i =3D 0; i < dev->vq_num; i++) {
+> >> +               struct vduse_virtqueue *vq =3D dev->vqs[i];
+> >> +
+> >> +               flush_work(&vq->inject);
+> >> +               flush_work(&vq->kick);
+> >> +       }
 > >> +}
 > >> +
-> >>   static void vdpasim_set_vq_cb(struct vdpa_device *vdpa, u16 idx,
-> >>                                struct vdpa_callback *cb)
-> >>   {
-> >> @@ -520,8 +529,11 @@ static int vdpasim_suspend(struct vdpa_device *vd=
-pa)
-> >>          struct vdpasim *vdpasim =3D vdpa_to_sim(vdpa);
-> >>
-> >>          mutex_lock(&vdpasim->mutex);
-> >> +       spin_lock(&vdpasim->kick_lock);
-> >>          vdpasim->running =3D false;
-> >> +       spin_unlock(&vdpasim->kick_lock);
-> >>          mutex_unlock(&vdpasim->mutex);
-> >> +       kthread_flush_work(&vdpasim->work);
-> >>
-> >>          return 0;
+> >>   static int vduse_vdpa_set_vq_address(struct vdpa_device *vdpa, u16 i=
+dx,
+> >>                                  u64 desc_area, u64 driver_area,
+> >>                                  u64 device_area)
+> >> @@ -724,6 +736,17 @@ static int vduse_vdpa_reset(struct vdpa_device *v=
+dpa)
+> >>          return ret;
 > >>   }
-> >> @@ -537,7 +549,7 @@ static int vdpasim_resume(struct vdpa_device *vdpa=
-)
-> >>          if (vdpasim->pending_kick) {
-> >>                  /* Process pending descriptors */
-> >>                  for (i =3D 0; i < vdpasim->dev_attr.nvqs; ++i)
-> >> -                       vdpasim_kick_vq(vdpa, i);
-> >> +                       vdpasim_do_kick_vq(vdpa, i);
 > >>
-> >>                  vdpasim->pending_kick =3D false;
-> >>          }
-> >> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim.h b/drivers/vdpa/vdpa_sim/=
-vdpa_sim.h
-> >> index bb137e479763..5eb6ca9c5ec5 100644
-> >> --- a/drivers/vdpa/vdpa_sim/vdpa_sim.h
-> >> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim.h
-> >> @@ -75,6 +75,7 @@ struct vdpasim {
-> >>          bool pending_kick;
-> >>          /* spinlock to synchronize iommu table */
-> >>          spinlock_t iommu_lock;
-> >> +       spinlock_t kick_lock;
+> >> +static int vduse_vdpa_suspend(struct vdpa_device *vdpa)
+> >> +{
+> >> +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> >> +
+> >> +       down_write(&dev->rwsem);
+> >> +       vduse_flush_work(dev);
+> >> +       up_write(&dev->rwsem);
 > >
-> > It looks to me this is not initialized?
+> > Can this forbid the new work to be scheduled?
 >
-> Yup, I lost that line while fiddling with different locking schemes.
-> Thanks, will fix in V4.
->
-> @@ -236,6 +236,7 @@ struct vdpasim *vdpasim_create(struct vdpasim_dev_att=
-r
-> *dev_attr,
->
->          mutex_init(&vdpasim->mutex);
->          spin_lock_init(&vdpasim->iommu_lock);
-> +       spin_lock_init(&vdpasim->kick_lock);
->
-> With that fix, does this patch earn your RB?
+> Are you suggesting I return an error below if the dev is suspended?
+> I can do that.
 
-Yes.
+I mean the irq injection work can still be scheduled after vduse_vdpa_suspe=
+nd().
+
+>
+> However, I now suspect this implementation of vduse_vdpa_suspend is not
+> complete in other ways, so I withdraw this patch pending future work.
+> Thanks for looking at it.
+
+Ok.
 
 Thanks
 
 >
 > - Steve
 >
+> > static int vduse_dev_queue_irq_work(struct vduse_dev *dev,
+> >                                      struct work_struct *irq_work,
+> >                                      int irq_effective_cpu)
+> > {
+> >          int ret =3D -EINVAL;
+> >
+> >          down_read(&dev->rwsem);
+> >          if (!(dev->status & VIRTIO_CONFIG_S_DRIVER_OK))
+> >                  goto unlock;
+> >
+> >          ret =3D 0;
+> >          if (irq_effective_cpu =3D=3D IRQ_UNBOUND)
+> >                  queue_work(vduse_irq_wq, irq_work);
+> >          else
+> >                  queue_work_on(irq_effective_cpu,
+> >                        vduse_irq_bound_wq, irq_work);
+> > unlock:
+> >          up_read(&dev->rwsem);
+> >
+> >          return ret;
+> > }
+> >
+> > Thanks
+> >
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +
+> >>   static u32 vduse_vdpa_get_generation(struct vdpa_device *vdpa)
+> >>   {
+> >>          struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> >> @@ -806,6 +829,7 @@ static const struct vdpa_config_ops vduse_vdpa_con=
+fig_ops =3D {
+> >>          .set_vq_affinity        =3D vduse_vdpa_set_vq_affinity,
+> >>          .get_vq_affinity        =3D vduse_vdpa_get_vq_affinity,
+> >>          .reset                  =3D vduse_vdpa_reset,
+> >> +       .suspend                =3D vduse_vdpa_suspend,
+> >>          .set_map                =3D vduse_vdpa_set_map,
+> >>          .free                   =3D vduse_vdpa_free,
 > >>   };
-> >>
-> >>   struct vdpasim *vdpasim_create(struct vdpasim_dev_attr *attr,
 > >> --
 > >> 2.39.3
 > >>
