@@ -1,415 +1,256 @@
-Return-Path: <linux-kernel+bounces-186004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CCB8CBE73
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:46:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFA88CBE7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBCB1F2333C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:46:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CEEBB21F6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340C68172D;
-	Wed, 22 May 2024 09:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B276281741;
+	Wed, 22 May 2024 09:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQ8KSH1v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Zt2DsWUl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Oh08JwbD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADC419470;
-	Wed, 22 May 2024 09:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D10381721;
+	Wed, 22 May 2024 09:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716371187; cv=none; b=VttJR0mk4cQNH1KV/XCW8mQwu47kLgCnYAiDvjTNTs58mudqvMMBr1beX7AswNFXPSfZ8N4XnPrBchYX4/TH7G8TlKUn1oXI3MGBgPyW7LWoNk9j4yqTbhMSU56TUnlmYju4fyGXkDVgnQi4UUtOrqclm8AsX8Tcx2G65TXWJHA=
+	t=1716371228; cv=none; b=BnFa0a6IlItdMJHQjP3YmQ7iO994Va7TmjjfEZZJqNnqG5bVVjTMxSDLW0EgQc8x3/58xrtrIKnItELhoJXKszxbyIsGP8Ts7QaHiVCujwdQGyeLJa+3msmBBfhjQjPqIR3bu7ft4APNKHilgHrSv0WiIgw3k/uoA3vVHgn8n0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716371187; c=relaxed/simple;
-	bh=QJumkkZR6qagpwpY/H8WHNdfEgsCNhV3ncAsS/9+02Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sZDDHOowJVpR44ivTPzFzXxZRtHxtpKiP1tuy/hTd9WXf9JT0rga47iqrDcA6EOEmZ3cAk+rkPSQ9K6sciNHHLjbOVNdnP79U9pmLOrboQWG6YsNKuA1ytEDc39d8490Jxk0SC48TSI9J4J99Zi0Jz96k1980QHV3Nrs1v5+ZyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQ8KSH1v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBB18C2BD11;
-	Wed, 22 May 2024 09:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716371186;
-	bh=QJumkkZR6qagpwpY/H8WHNdfEgsCNhV3ncAsS/9+02Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kQ8KSH1vGkcgrSK5f25Wb1fxM/+dk3Q5TK7GuUIwfsjKpbgDaSDCHEcL1I4cmODw0
-	 SIbw4QZv2fqFd6L+h62OqAzz4fvt51MFjHs83FDmBSGZl9dSP3Bv6q3f520qh7eATv
-	 ZAK94DvjP09UdWxCXZQIqolL1GnGo3T2vnzdUvHULF+3s9TvYNQzXbx4Qu0aiRisw5
-	 ziiH20rKUP8Z4PvyHROHg5kt6Pc7nMpQRJziicxoQuX2EzXuGWvXWcoX+QpQzH6owz
-	 WjdptlNp3ELfcXQS59MXvJClqB8vL3fErg3jIBGAyftrMaahHyYhdbciVfKtvoRmlo
-	 TjwZ97qqJgndA==
-Message-ID: <cfe33bf1-9df3-4d02-b4ed-e29a430b106d@kernel.org>
-Date: Wed, 22 May 2024 11:46:21 +0200
+	s=arc-20240116; t=1716371228; c=relaxed/simple;
+	bh=9bH5UtwVNn9nICzxLIRIbfHQYR4U41F2jgkEuHp5D4s=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=h2oL+kqPUjmdQ5iFJ6P9/JMq54mfcsWcCh+4MKDg6T04mAh4lwr/H+0m3fieJSGp1qQowTiKBwlSegsAG7xnJPiQsfySTzxAcM1RMH/WmyPnMmKlZ5XSxtApH9KuwlK0l6Rx2CBIPMwhIlfPAs1Hs3Auy3o0fNQV5uzgOO5urmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Zt2DsWUl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Oh08JwbD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 22 May 2024 09:47:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716371225;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJjvIh1So52Uu8jC23qRITcBGsHdfOJSfO4XQIWrX2g=;
+	b=Zt2DsWUlLBR3VU5gCfk9NWzb2erZAQ6CjN6wQyztLYHNryDmRlY2ee/hju4G6iGPw4C98d
+	ykItcJtVtsVtBZlxTpTQvhKHUKcPlJUI4pO8ukIW4kjLbzYOJ5l9AM3mUBs7T6IzeBRiAq
+	u5JI1x9ecwfYuNBK0oTVJ6jJa+mdx45se8s9r69munIjtftT8hK870ZVgC22jFRXoVHbZO
+	WtapNLk5VmbxsP+SRlsLte5n8kU5xCU66u/dniDNNolCFEx3+aqfK5p4c3ABysEVqQ3Q2Z
+	9/CIR+5cd2nRxhz8/lDFd107nS/erBk9p0S3oWsxpB9Ajk7+w1z20076LZ60RQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716371225;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJjvIh1So52Uu8jC23qRITcBGsHdfOJSfO4XQIWrX2g=;
+	b=Oh08JwbDvWd3ADa8l41e8oX52XiiSRpNdQUzVersyxoVubsK+6BBF4X24WKnbfIBnRxruD
+	hbR67DxlOhSDZXDA==
+From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/cpu: Fix x86_match_cpu() to match just X86_VENDOR_INTEL
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Tony Luck <tony.luck@intel.com>,  <stable+noautosel@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local>
+References: <20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/17] Add main.c
-To: michael.nemanov@ti.com, Kalle Valo <kvalo@kernel.org>,
- Johannes Berg <johannes.berg@intel.com>, Breno Leitao <leitao@debian.org>,
- Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-9-michael.nemanov@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240521171841.884576-9-michael.nemanov@ti.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <171637122476.10875.17865590798146315700.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 21/05/2024 19:18, michael.nemanov@ti.com wrote:
-> From: Michael Nemanov <Michael.Nemanov@ti.com>
-> 
-> General code and structures.
-> Notably:
-> 
+The following commit has been merged into the x86/urgent branch of tip:
 
+Commit-ID:     93022482b2948a9a7e9b5a2bb685f2e1cb4c3348
+Gitweb:        https://git.kernel.org/tip/93022482b2948a9a7e9b5a2bb685f2e1cb4c3348
+Author:        Tony Luck <tony.luck@intel.com>
+AuthorDate:    Mon, 20 May 2024 15:45:33 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 22 May 2024 11:31:10 +02:00
 
-..
+x86/cpu: Fix x86_match_cpu() to match just X86_VENDOR_INTEL
 
-> +}
-> +
-> +static int read_version_info(struct cc33xx *cc)
-> +{
-> +	int ret;
-> +
-> +	cc33xx_info("Wireless driver version %s", DRV_VERSION);
+Code in v6.9 arch/x86/kernel/smpboot.c was changed by commit
 
-Drop
+  4db64279bc2b ("x86/cpu: Switch to new Intel CPU model defines") from:
 
-> +
-> +	ret = cc33xx_acx_init_get_fw_versions(cc);
-> +	if (ret < 0) {
-> +		cc33xx_error("Get FW version FAILED!");
-> +		return ret;
-> +	}
-> +
-> +	cc33xx_info("Wireless firmware version %u.%u.%u.%u",
-> +		    cc->all_versions.fw_ver->major_version,
-> +		    cc->all_versions.fw_ver->minor_version,
-> +		    cc->all_versions.fw_ver->api_version,
-> +		    cc->all_versions.fw_ver->build_version);
-> +
-> +	cc33xx_info("Wireless PHY version %u.%u.%u.%u.%u.%u",
-> +		    cc->all_versions.fw_ver->phy_version[5],
-> +		    cc->all_versions.fw_ver->phy_version[4],
-> +		    cc->all_versions.fw_ver->phy_version[3],
-> +		    cc->all_versions.fw_ver->phy_version[2],
-> +		    cc->all_versions.fw_ver->phy_version[1],
-> +		    cc->all_versions.fw_ver->phy_version[0]);
-> +
-> +	cc->all_versions.driver_ver = DRV_VERSION;
+  static const struct x86_cpu_id intel_cod_cpu[] = {
+          X86_MATCH_INTEL_FAM6_MODEL(HASWELL_X, 0),       /* COD */
+          X86_MATCH_INTEL_FAM6_MODEL(BROADWELL_X, 0),     /* COD */
+          X86_MATCH_INTEL_FAM6_MODEL(ANY, 1),             /* SNC */	<--- 443
+          {}
+  };
 
-Drop
+  static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+  {
+          const struct x86_cpu_id *id = x86_match_cpu(intel_cod_cpu);
 
-> +
-> +	return 0;
-> +}
-> +
-> +static void cc33xx_nvs_cb(const struct firmware *fw, void *context)
-> +{
-> +	struct cc33xx *cc = context;
-> +	struct platform_device *pdev = cc->pdev;
-> +	struct cc33xx_platdev_data *pdev_data = dev_get_platdata(&pdev->dev);
-> +
-> +	int ret;
-> +
-> +	if (fw) {
-> +		cc->nvs_mac_addr = kmemdup(fw->data, fw->size, GFP_KERNEL);
-> +		if (!cc->nvs_mac_addr) {
-> +			cc33xx_error("Could not allocate nvs data");
-> +			goto out;
-> +		}
-> +		cc->nvs_mac_addr_len = fw->size;
-> +	} else if (pdev_data->family->nvs_name) {
-> +		cc33xx_debug(DEBUG_BOOT, "Could not get nvs file %s",
-> +			     pdev_data->family->nvs_name);
-> +		cc->nvs_mac_addr = NULL;
-> +		cc->nvs_mac_addr_len = 0;
-> +	} else {
-> +		cc->nvs_mac_addr = NULL;
-> +		cc->nvs_mac_addr_len = 0;
-> +	}
-> +
-> +	ret = cc33xx_setup(cc);
-> +	if (ret < 0)
-> +		goto out_free_nvs;
-> +
-> +	BUILD_BUG_ON(CC33XX_NUM_TX_DESCRIPTORS > CC33XX_MAX_TX_DESCRIPTORS);
-> +
-> +	/* adjust some runtime configuration parameters */
-> +	cc33xx_adjust_conf(cc);
-> +
-> +	cc->if_ops = pdev_data->if_ops;
-> +	cc->if_ops->set_irq_handler(cc->dev, irq_wrapper);
-> +
-> +	cc33xx_power_off(cc);
-> +
-> +	setup_wake_irq(cc);
-> +
-> +	ret = cc33xx_init_fw(cc);
-> +	if (ret < 0) {
-> +		cc33xx_error("FW download failed");
-> +		cc33xx_power_off(cc);
-> +		goto out_irq;
-> +	}
-> +
-> +	ret = cc33xx_identify_chip(cc);
-> +	if (ret < 0)
-> +		goto out_irq;
-> +
-> +	ret = read_version_info(cc);
-> +	if (ret < 0)
-> +		goto out_irq;
-> +
-> +	ret = cc33xx_init_ieee80211(cc);
-> +	if (ret)
-> +		goto out_irq;
-> +
-> +	ret = cc33xx_register_hw(cc);
-> +	if (ret)
-> +		goto out_irq;
-> +
-> +	cc->initialized = true;
-> +	cc33xx_notice("loaded");
+to:
 
-?!?!?
+  static const struct x86_cpu_id intel_cod_cpu[] = {
+           X86_MATCH_VFM(INTEL_HASWELL_X,   0),    /* COD */
+           X86_MATCH_VFM(INTEL_BROADWELL_X, 0),    /* COD */
+           X86_MATCH_VFM(INTEL_ANY,         1),    /* SNC */
+           {}
+   };
 
-> +	goto out;
-> +
-> +out_irq:
-> +	if (cc->wakeirq >= 0)
-> +		dev_pm_clear_wake_irq(cc->dev);
-> +	device_init_wakeup(cc->dev, false);
-> +
-> +out_free_nvs:
-> +	kfree(cc->nvs_mac_addr);
-> +
-> +out:
-> +	release_firmware(fw);
-> +	complete_all(&cc->nvs_loading_complete);
-> +	cc33xx_debug(DEBUG_CC33xx, "%s complete", __func__);
+  static bool match_llc(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+  {
+          const struct x86_cpu_id *id = x86_match_cpu(intel_cod_cpu);
 
-NAK, drop. This applies everywhere.
+On an Intel CPU with SNC enabled this code previously matched the rule on line
+443 to avoid printing messages about insane cache configuration.  The new code
+did not match any rules.
 
+Expanding the macros for the intel_cod_cpu[] array shows that the old is
+equivalent to:
 
-> +}
-> +
-> +static int cc33xx_remove(struct platform_device *pdev)
+  static const struct x86_cpu_id intel_cod_cpu[] = {
+  [0] = { .vendor = 0, .family = 6, .model = 0x3F, .steppings = 0, .feature = 0, .driver_data = 0 },
+  [1] = { .vendor = 0, .family = 6, .model = 0x4F, .steppings = 0, .feature = 0, .driver_data = 0 },
+  [2] = { .vendor = 0, .family = 6, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 1 },
+  [3] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 }
+  }
 
-Why remove callback is before probe? Please follow standard driver
-convention. This goes immediately after probe.
+while the new code expands to:
 
-> +{
-> +	struct cc33xx_platdev_data *pdev_data = dev_get_platdata(&pdev->dev);
-> +	struct cc33xx *cc = platform_get_drvdata(pdev);
-> +
-> +	set_bit(CC33XX_FLAG_DRIVER_REMOVED, &cc->flags);
+  static const struct x86_cpu_id intel_cod_cpu[] = {
+  [0] = { .vendor = 0, .family = 6, .model = 0x3F, .steppings = 0, .feature = 0, .driver_data = 0 },
+  [1] = { .vendor = 0, .family = 6, .model = 0x4F, .steppings = 0, .feature = 0, .driver_data = 0 },
+  [2] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 1 },
+  [3] = { .vendor = 0, .family = 0, .model = 0x00, .steppings = 0, .feature = 0, .driver_data = 0 }
+  }
 
-?!?!
+Looking at the code for x86_match_cpu():
 
-Your code is seriously buggy if you depend on setting bit in remove
-callback.
+  const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+  {
+           const struct x86_cpu_id *m;
+           struct cpuinfo_x86 *c = &boot_cpu_data;
 
-> +
-> +	cc->dev->driver->pm = NULL;
-> +
-> +	if (pdev_data->family && pdev_data->family->nvs_name)
-> +		wait_for_completion(&cc->nvs_loading_complete);
-> +
-> +	if (!cc->initialized)
-> +		goto out;
-> +
-> +	if (cc->wakeirq >= 0) {
-> +		dev_pm_clear_wake_irq(cc->dev);
-> +		cc->wakeirq = -ENODEV;
-> +	}
-> +
-> +	device_init_wakeup(cc->dev, false);
-> +	cc33xx_unregister_hw(cc);
-> +	cc33xx_turn_off(cc);
-> +
-> +out:
-> +	cc33xx_free_hw(cc);
-> +	return 0;
-> +}
-> +
+           for (m = match;
+                m->vendor | m->family | m->model | m->steppings | m->feature;
+                m++) {
+       		...
+           }
+           return NULL;
 
+it is clear that there was no match because the ANY entry in the table (array
+index 2) is now the loop termination condition (all of vendor, family, model,
+steppings, and feature are zero).
 
-> +
-> +static int cc33xx_probe(struct platform_device *pdev)
-> +{
-> +	struct cc33xx *cc;
-> +	struct ieee80211_hw *hw;
-> +	struct cc33xx_platdev_data *pdev_data = dev_get_platdata(&pdev->dev);
-> +	const char *nvs_name;
-> +	int ret;
-> +
-> +	cc33xx_debug(DEBUG_CC33xx, "Wireless Driver Version %s", DRV_VERSION);
+So this code was working before because the "ANY" check was looking for any
+Intel CPU in family 6. But fails now because the family is a wild card. So the
+root cause is that x86_match_cpu() has never been able to match on a rule with
+just X86_VENDOR_INTEL and all other fields set to wildcards.
 
-Drop
+Add a new flags field to struct x86_cpu_id that has a bit set to indicate that
+this entry in the array is valid. Update X86_MATCH*() macros to set that bit.
+Change the end-marker check in x86_match_cpu() to just check the flags field
+for this bit.
 
-> +
-> +	if (!pdev_data) {
-> +		cc33xx_error("can't access platform data");
+Backporter notes: The commit in Fixes is really the one that is broken:
+you can't have m->vendor as part of the loop termination conditional in
+x86_match_cpu() because it can happen - as it has happened above
+- that that whole conditional is 0 albeit vendor == 0 is a valid case
+- X86_VENDOR_INTEL is 0.
 
-Do not use your own print code. Use standard dev_() calls. This applies
-*everywhere*.
+However, the only case where the above happens is the SNC check added by
+4db64279bc2b1 so you only need this fix if you have backported that
+other commit
 
-> +		return -EINVAL;
-> +	}
-> +
-> +	hw = cc33xx_alloc_hw(CC33XX_AGGR_BUFFER_SIZE);
-> +	if (IS_ERR(hw)) {
-> +		cc33xx_error("can't allocate hw");
+  4db64279bc2b ("x86/cpu: Switch to new Intel CPU model defines")
 
-Heh? Since when do we print memory allocation failures? Since when
-memory allocation returns ERR ptr?
+Fixes: 644e9cbbe3fc ("Add driver auto probing for x86 features v4")
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: <stable+noautosel@kernel.org> # see above
+Link: https://lore.kernel.org/r/20240517144312.GBZkdtAOuJZCvxhFbJ@fat_crate.local
+---
+ arch/x86/include/asm/cpu_device_id.h | 5 +++++
+ arch/x86/kernel/cpu/match.c          | 4 +---
+ include/linux/mod_devicetable.h      | 2 ++
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
-
-> +		ret = PTR_ERR(hw);
-> +		goto out;
-> +	}
-> +	cc = hw->priv;
-> +	cc->dev = &pdev->dev;
-> +	cc->pdev = pdev;
-> +	platform_set_drvdata(pdev, cc);
-> +
-> +	if (pdev_data->family && pdev_data->family->nvs_name) {
-> +		nvs_name = pdev_data->family->nvs_name;
-> +		ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
-> +					      nvs_name, &pdev->dev, GFP_KERNEL,
-> +					      cc, cc33xx_nvs_cb);
-> +		if (ret < 0) {
-> +			cc33xx_error("request_firmware_nowait failed for %s: %d",
-> +				     nvs_name, ret);
-> +			complete_all(&cc->nvs_loading_complete);
-> +		}
-> +	} else {
-> +		cc33xx_nvs_cb(NULL, cc);
-> +		cc33xx_error("Invalid platform data entry");
-> +		ret = -EINVAL;
-> +	}
-> +
-> +	cc33xx_debug(DEBUG_CC33xx, "WLAN CC33xx platform device probe done");
-
-Drop, tracing/sysfs gices you this. Do not print simple
-success/entry/exit messages.
-
-> +	return ret;
-> +
-> +out:
-> +	return ret;
-> +}
-> +
-> +static const struct platform_device_id cc33xx_id_table[] = {
-> +	{ "cc33xx", 0 },
-> +	{  } /* Terminating Entry */
-
-Drop comment. Obvious.
-
-> +};
-> +MODULE_DEVICE_TABLE(platform, cc33xx_id_table);
-> +
-> +static struct platform_driver cc33xx_driver = {
-> +	.probe		= cc33xx_probe,
-> +	.remove		= cc33xx_remove,
-> +	.id_table	= cc33xx_id_table,
-> +	.driver = {
-> +		.name	= "cc33xx_driver",
-> +	}
-> +};
-> +
-> +u32 cc33xx_debug_level = DEBUG_NO_DATAPATH;
-
-Why this is global? Why u32? Why global variable is defined at the end
-of the file?!?!
-
-> +
-> +module_platform_driver(cc33xx_driver);
-> +
-> +module_param_named(debug_level, cc33xx_debug_level, uint, 0600);
-> +MODULE_PARM_DESC(debug_level, "cc33xx debugging level");
-> +
-> +MODULE_PARM_DESC(secure_boot_enable, "Enables secure boot and FW downlaod");
-
-Eh? why secure boot is module param?
-
-> +
-> +module_param_named(fwlog, fwlog_param, charp, 0);
-> +MODULE_PARM_DESC(fwlog, "FW logger options: continuous, dbgpins or disable");
-> +
-> +module_param(no_recovery, int, 0600);
-> +MODULE_PARM_DESC(no_recovery, "Prevent HW recovery. FW will remain stuck.");
-> +
-> +module_param_named(ht_mode, ht_mode_param, charp, 0400);
-> +MODULE_PARM_DESC(ht_mode, "Force HT mode: wide or siso20");
-
-Does not look like suitable for module params.
-
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("Texas Instruments CC33xx WLAN driver");
-> +MODULE_AUTHOR("Michael Nemanov <michael.nemanov@ti.com>");
-> +MODULE_AUTHOR("Sabeeh Khan <sabeeh-khan@ti.com>");
-> +
-> +MODULE_VERSION(DRV_VERSION);
-
-Drop.
-
-Perform internal review first. This is really not ready.
-
-
-Best regards,
-Krzysztof
-
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index 970a232..b6325ee 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -53,6 +53,9 @@
+ #define X86_CENTAUR_FAM6_C7_D		0xd
+ #define X86_CENTAUR_FAM6_NANO		0xf
+ 
++/* x86_cpu_id::flags */
++#define X86_CPU_ID_FLAG_ENTRY_VALID	BIT(0)
++
+ #define X86_STEPPINGS(mins, maxs)    GENMASK(maxs, mins)
+ /**
+  * X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE - Base macro for CPU matching
+@@ -79,6 +82,7 @@
+ 	.model		= _model,					\
+ 	.steppings	= _steppings,					\
+ 	.feature	= _feature,					\
++	.flags		= X86_CPU_ID_FLAG_ENTRY_VALID,			\
+ 	.driver_data	= (unsigned long) _data				\
+ }
+ 
+@@ -89,6 +93,7 @@
+ 	.model		= _model,					\
+ 	.steppings	= _steppings,					\
+ 	.feature	= _feature,					\
++	.flags		= X86_CPU_ID_FLAG_ENTRY_VALID,			\
+ 	.driver_data	= (unsigned long) _data				\
+ }
+ 
+diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
+index 8651643..8e7de73 100644
+--- a/arch/x86/kernel/cpu/match.c
++++ b/arch/x86/kernel/cpu/match.c
+@@ -38,9 +38,7 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+ 	const struct x86_cpu_id *m;
+ 	struct cpuinfo_x86 *c = &boot_cpu_data;
+ 
+-	for (m = match;
+-	     m->vendor | m->family | m->model | m->steppings | m->feature;
+-	     m++) {
++	for (m = match; m->flags & X86_CPU_ID_FLAG_ENTRY_VALID; m++) {
+ 		if (m->vendor != X86_VENDOR_ANY && c->x86_vendor != m->vendor)
+ 			continue;
+ 		if (m->family != X86_FAMILY_ANY && c->x86 != m->family)
+diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+index 7a9a07e..4338b1b 100644
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -690,6 +690,8 @@ struct x86_cpu_id {
+ 	__u16 model;
+ 	__u16 steppings;
+ 	__u16 feature;	/* bit index */
++	/* Solely for kernel-internal use: DO NOT EXPORT to userspace! */
++	__u16 flags;
+ 	kernel_ulong_t driver_data;
+ };
+ 
 
