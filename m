@@ -1,142 +1,82 @@
-Return-Path: <linux-kernel+bounces-185892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA8A8CBC8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:00:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A75348CBC9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31EC91F22305
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:00:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633B5282B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1133D7E588;
-	Wed, 22 May 2024 08:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2+/g0JC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543E8182DB;
-	Wed, 22 May 2024 08:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5937E11E;
+	Wed, 22 May 2024 08:03:58 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6C2182DB;
+	Wed, 22 May 2024 08:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716364842; cv=none; b=Rsd4OJXHGwixoPpsKBD5y/dtx4TNwxl9CylgXPQbW+mEQciCB0dAotMucz5AU8CgunpzUNxYUvN0GWM275owSOW2gSimf6/rjv+pvCEUc+NDXgUJH6jWaUBK5caBS41ozR01fLWpjhpNaiK5YyrJyJDu+ATEe7lcPXiIkZKCehw=
+	t=1716365038; cv=none; b=Ucv8qcirEl91gx4oSJ0vc89mx/e4VJYYBCfV6I2QFnQjl0iW+IYhX+h4IMDRZZbta5glx/a4R+IDOLFpNGsnjO5WDhmIpEt24isUexbWfpz6wdKqYqhPIkMfixUrVHQedKU1hSZ9VSknQvOLoPUqluJKwBKjb7nvr3d/JtSuL5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716364842; c=relaxed/simple;
-	bh=aV7NdtVB/SzBUj/d+kn2bUhxu2Qvmc8Xm3U4xn5YA3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V3cIOO/p7ji+gnAh0VWNHY7IwmoX+wpnpJp1xCfPcQ/3AQzn6vRxXJIKeOEjObIylCaK7x4wPPL6PhDt3BvBF3gwY6fVqr/BhiG+/HpC1dhvTEme8avge3a9U+MjvZXUMdulpfOk7kU1mC/P32ntMUtP1uEuaxgXVL5JbiDd8iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2+/g0JC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C107C32781;
-	Wed, 22 May 2024 08:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716364842;
-	bh=aV7NdtVB/SzBUj/d+kn2bUhxu2Qvmc8Xm3U4xn5YA3Q=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=k2+/g0JCirUhfOBiUEonbgEDaaTA+nXUollhqidvEQ+V0rOCM7bqkiEdg1d0mXeve
-	 NnhvCUndy/vQpprZQQZ9ZXrby+qNvJ65l9nnxXqfdLwxATBOWm5cJ4zsOXA4CD89H1
-	 6VVoaBc5S0m/7xE2FubaLEPr5E4Zx+su482GaoiAGq5GCVrkG9CATqFQkIZAkArPJc
-	 M2O5CwvGOUpoZYKYQYXn76tOWSIgJMt58BeURUcJVQEKazq1kPz2nKx8oEOIcB8Wnb
-	 RrVCPS173Z+uA1niHUqmf+7oN6018eJo1TinQB2++q2Rtq3Iab85c9muTGEemmlT9s
-	 0BAD+M4RwZnnw==
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-34d9c9f2cf0so530809f8f.3;
-        Wed, 22 May 2024 01:00:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbUFKZjD+U3bK9afaEqpXx4+njt8196yWfWTAE6olDOIVR7xB+dLiV+UDTd/kdVSJ/NgqYOH+nkJCwZHx4zQU2RcMdTmJM/ABnHS6aOobuJPn+Pk6N8UpsMOtdA1wr1OdKTJ9c
-X-Gm-Message-State: AOJu0YylA8zSTz9pphnZKWMQPgTQF5B/nnSLTRIQHMeMIdsmWBamVVUW
-	GKxR1WZxz+i2dt2hJPLet0rsi4Fhii7dKrKIyZIL6PstaSEMwYFlb3YF1lTDdvgLXsiLdIFlW97
-	y04AkqeLnTjJc8K5VR+29/ubYvnU=
-X-Google-Smtp-Source: AGHT+IGB9BIS9Kop1kEq4bxJyatyF4JrT25siZ44mZDszmXdW0jKScK7W34sTieEYRDBfaV1TG/QovV0S90rAFTzvIM=
-X-Received: by 2002:a05:6000:bd0:b0:34c:71d0:1151 with SMTP id
- ffacd0b85a97d-354d8c75e43mr1050070f8f.10.1716364840755; Wed, 22 May 2024
- 01:00:40 -0700 (PDT)
+	s=arc-20240116; t=1716365038; c=relaxed/simple;
+	bh=vIdlUTx5hX/0YOhY6TTa1dkzMd8tl1BtTYdzu6Q8I8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fy6WoaI25EOA7x387y5e9sOB9PSezztx6t88wL49qBgurETIq0wIOs/sDUxfZe+Zit3i+DNPVBIcfHThjv139rjsev8ItAdw36PDMziCm8NxLwEsf1VcsVuD+2PhZx27PjizCt6qCjAnndB2PKIJnTYojZ+1fDHSdt0dRQq1QKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1s9gwl-0007gE-00; Wed, 22 May 2024 10:03:39 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 4C2BCC0120; Wed, 22 May 2024 10:03:03 +0200 (CEST)
+Date: Wed, 22 May 2024 10:03:03 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>
+Subject: Re: [PATCH v3 0/9] MIPS: Unify low-level debugging functionalities
+Message-ID: <Zk2mt/FsgltvhVzf@alpha.franken.de>
+References: <20240502-mips_debug_ll-v3-0-3b61f30e484c@flygoat.com>
+ <3dcf3ac1-5494-482a-a80a-df4126e6ae59@app.fastmail.com>
+ <3d6883ed-f8f4-44e5-a184-e5499c44f0f7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522-loongarch-booting-fixes-v2-0-727edb96e548@flygoat.com> <20240522-loongarch-booting-fixes-v2-3-727edb96e548@flygoat.com>
-In-Reply-To: <20240522-loongarch-booting-fixes-v2-3-727edb96e548@flygoat.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 22 May 2024 16:00:29 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7+2BFEN4qgkJ0N48t8o7rixPK7_kn8jwowWPNHS7=Ohw@mail.gmail.com>
-Message-ID: <CAAhV-H7+2BFEN4qgkJ0N48t8o7rixPK7_kn8jwowWPNHS7=Ohw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] LoongArch: Fix entry point in image header
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3d6883ed-f8f4-44e5-a184-e5499c44f0f7@app.fastmail.com>
 
-Hi, Jiaxun,
+On Wed, May 22, 2024 at 08:15:22AM +0100, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年5月15日五月 下午10:28，Jiaxun Yang写道：
+> [...]
+> >
+> > A gentle ping.
+> >
+> > Our reviewing capacity is quite low recently, hope everything is fine
+> > with Thomas.
+> 
+> Another gentle-ish ping after 6.10 merge window.
+> 
+> This series has been floating here for so long, if I missed the merge
+> window, I think I deserve a notice.
 
-On Wed, May 22, 2024 at 2:30=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.co=
-m> wrote:
->
-> Currently kernel entry in head.S is in DMW address range,
-> firmware is instructed to jump to this address after loading
-> the image.
->
-> However kernel should not make any assumption on firmware's
-> DMW setting, thus the entry point should be a physical address
-> falls into direct translation region.
->
-> Fix by applying a calculation to the entry and amend entry
-> calculation logic in libstub accordingly.
->
-> Note that due to relocation restriction TO_PHYS can't be used
-> in assembly, we can only do plus and minus here.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
-> v2: Fix efistub
-> ---
->  arch/loongarch/kernel/head.S             | 2 +-
->  drivers/firmware/efi/libstub/loongarch.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/loongarch/kernel/head.S b/arch/loongarch/kernel/head.S
-> index c4f7de2e2805..1a83564023e1 100644
-> --- a/arch/loongarch/kernel/head.S
-> +++ b/arch/loongarch/kernel/head.S
-> @@ -22,7 +22,7 @@
->  _head:
->         .word   MZ_MAGIC                /* "MZ", MS-DOS header */
->         .org    0x8
-> -       .dword  kernel_entry            /* Kernel entry point */
-> +       .dword  PHYS_LINK_KADDR + (kernel_entry - _head)        /* Kernel=
- entry point */
-It could be better to calculate it in the link script, just as _kernel_asiz=
-e.
+hmmm, I thought I was clear enough on version 1 of this series.
 
-Huacai
+I don't want an additional printk like debug interface, There is
+prom_putchar() and early printk console, which always got me past
+any boot issue.
 
->         .dword  _kernel_asize           /* Kernel image effective size */
->         .quad   PHYS_LINK_KADDR         /* Kernel image load offset from =
-start of RAM */
->         .org    0x38                    /* 0x20 ~ 0x37 reserved */
-> diff --git a/drivers/firmware/efi/libstub/loongarch.c b/drivers/firmware/=
-efi/libstub/loongarch.c
-> index 684c9354637c..60c145121393 100644
-> --- a/drivers/firmware/efi/libstub/loongarch.c
-> +++ b/drivers/firmware/efi/libstub/loongarch.c
-> @@ -41,7 +41,7 @@ static efi_status_t exit_boot_func(struct efi_boot_memm=
-ap *map, void *priv)
->  unsigned long __weak kernel_entry_address(unsigned long kernel_addr,
->                 efi_loaded_image_t *image)
->  {
-> -       return *(unsigned long *)(kernel_addr + 8) - VMLINUX_LOAD_ADDRESS=
- + kernel_addr;
-> +       return *(unsigned long *)(kernel_addr + 8) - TO_PHYS(VMLINUX_LOAD=
-_ADDRESS) + kernel_addr;
->  }
->
->  efi_status_t efi_boot_kernel(void *handle, efi_loaded_image_t *image,
->
-> --
-> 2.43.0
->
->
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
