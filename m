@@ -1,83 +1,144 @@
-Return-Path: <linux-kernel+bounces-186033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E66F8CBF06
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F578CBF08
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED3492853DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52F81F2292C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49DF81ACB;
-	Wed, 22 May 2024 10:09:55 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA0081AD0;
+	Wed, 22 May 2024 10:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lPNFX/11"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A021CD13;
-	Wed, 22 May 2024 10:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD471CD13;
+	Wed, 22 May 2024 10:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372595; cv=none; b=b+56xX6SQHaRqu5cDMbpgZMjXoKpH8GohqGjhai5BY8h1wPaTTNmyuq+7UxpLukPwy+GrdZ2aamKYqHpR134G+TiooCpGfkb40mRPc360eNfYVGYJLZS+OXBbnnLn2AOpGRF48Z+BG749nY/WP8Y2MDZtXStbfQKps0XGtKRdY0=
+	t=1716372621; cv=none; b=sAXir3Xfxr64mmNSmwtlGOnPPw1/heFdJjJMk7QACBnMkWQcnArtLrrw50qIod3qclcoPjOhQ8tc3b4LLJZxKe8tgzQhRyJitnNWEHMmTEL4/OK8+biboao82jOxMDQIvuR0zOk/gpoPnERXL8AqDiYNtGj+u6mAY72Pq4J2bNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372595; c=relaxed/simple;
-	bh=MGaEax+OAxHF7CuQ1K04zDUYjYQwNLeO0Fvn7PYBV7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WoJf8yPad06ssRzz+46+ge8H892kvNWaUb3Soq11TF7ud26nB12DVGUIURFw6ARFdWjwxWL/jUjjuTL/btv+UM5fxhyD/mEcoguDydjgO2c548irCbDGsR9ua2r+PMk2ypc5RO7EYj8MPnDTtIT0jibvK7u4vtKoWVo9ywU1axw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 6A0C8300000A6;
-	Wed, 22 May 2024 12:09:42 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 624716FAE90; Wed, 22 May 2024 12:09:42 +0200 (CEST)
-Date: Wed, 22 May 2024 12:09:42 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, jarkko@kernel.org
-Subject: Re: [REPOST PATCH v3] crypto: ecc - Prevent ecc_digits_from_bytes
- from reading too many bytes
-Message-ID: <Zk3EZqQcMYKiDvhC@wunner.de>
-References: <20240521225006.207084-1-stefanb@linux.ibm.com>
+	s=arc-20240116; t=1716372621; c=relaxed/simple;
+	bh=FI4zo+moBW9miEacUIAXuSGw8WkogkLoVnq2rXZ7GMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PHEa3ZOwKop8BF1igI77XzQNmOY1VwdGqIAQwf+3h2WQupSdkoVTHcjQm3HrlL89Kb99zEARcOYldr90OTgOB38vqGCDMUlCGZilwofgvPmHwaUwbuwu4Pm3KOOh2X75A4PLniacymKrZdgjYeP9ULijxTsKBQyTRk06u0WrFPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lPNFX/11; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C48C2BD11;
+	Wed, 22 May 2024 10:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716372620;
+	bh=FI4zo+moBW9miEacUIAXuSGw8WkogkLoVnq2rXZ7GMI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lPNFX/11+47X3X4nyohE95UryamoopXx6FCkavLZaxztSI7RJjmAnROKkzLWmUI3Y
+	 I/6wess+wZmlzLQiz/t5Yi1D8kWHku10JDl2NAo1tn7mSt2jaemIFCQA7ybsWEsPqX
+	 CII039h1LGk6C2ncNQt2r9uqDBdkduZ5+eqMAwczsjKSHTMUBB8XAQYjlyd2GZEiw4
+	 d3hAq4WXzTtR5viXsGIiz93r23spQfzxJObfwlTojDKBdXePzapHp0hCKfYsc5a4aS
+	 0fZ+dz8KgwT630anyAMBfg6mkhf0KsXGxMC9qAilYYK3qwWltr0SsJzasYYly3jS3H
+	 Z0yN5yNA39EEA==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b3356fd4f3so500807eaf.1;
+        Wed, 22 May 2024 03:10:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtzQVoBs4x26Y5f5Fgmk0qHLPSDtJGDJ01drojCYTTZOXGWzPt5d5u5PXJ67sAEJaKNcxGwbCBBtby3X5z7PAsq/a2FSmbkvQbHwWJkyUkkhAQdqiCgdM67OuW20/lJnwRZmTZQ5XwMg==
+X-Gm-Message-State: AOJu0YxX00xU5sXIVTqhYRmXz3MiElwL+gkwRAZurNX7irFokt0qFJU8
+	Xp9uLfjkXSOFiVIdDeCUZ776ofwNa3movMmG7wj9AIu5/JGpqEXF3knwH3SEcRqrSTw+modonEC
+	fnXgEJh2MsrtTrWyPzgkX9jk6Bqo=
+X-Google-Smtp-Source: AGHT+IEarXMU3u+jUAtq8NVPIv6BfztF2G7OuMYlKS+slataKc51NNA8r5y9q6ryL1Ift+y5s/WLRi6XBrY1cZ3OSt4=
+X-Received: by 2002:a4a:bd14:0:b0:5b2:7aa7:7b29 with SMTP id
+ 006d021491bc7-5b6a32e9241mr1461779eaf.1.1716372620255; Wed, 22 May 2024
+ 03:10:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521225006.207084-1-stefanb@linux.ibm.com>
+References: <20240521211036.227674-1-zaidal@os.amperecomputing.com> <20240521211036.227674-2-zaidal@os.amperecomputing.com>
+In-Reply-To: <20240521211036.227674-2-zaidal@os.amperecomputing.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 22 May 2024 12:10:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iEufuZugRT3ZPn=wk49E8_xACsOJX4OWPpiv0HybGKNA@mail.gmail.com>
+Message-ID: <CAJZ5v0iEufuZugRT3ZPn=wk49E8_xACsOJX4OWPpiv0HybGKNA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/8] ACPICA: Update values to hex to follow ACPI specs
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com, 
+	tony.luck@intel.com, bp@alien8.de, robert.moore@intel.com, 
+	Jonathan.Cameron@huawei.com, Benjamin.Cheatham@amd.com, 
+	dan.j.williams@intel.com, arnd@arndb.de, Avadhut.Naik@amd.com, 
+	u.kleine-koenig@pengutronix.de, john.allen@amd.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	acpica-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 06:50:06PM -0400, Stefan Berger wrote:
-> Prevent ecc_digits_from_bytes from reading too many bytes from the input
-> byte array in case an insufficient number of bytes is provided to fill the
-> output digit array of ndigits. Therefore, initialize the most significant
-> digits with 0 to avoid trying to read too many bytes later on. Convert the
-> function into a regular function since it is getting too big for an inline
-> function.
-> 
-> If too many bytes are provided on the input byte array the extra bytes
-> are ignored since the input variable 'ndigits' limits the number of digits
-> that will be filled.
-> 
-> Fixes: d67c96fb97b5 ("crypto: ecdsa - Convert byte arrays with key coordinates to digits")
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> 
+On Tue, May 21, 2024 at 11:11=E2=80=AFPM Zaid Alali
+<zaidal@os.amperecomputing.com> wrote:
+>
+> ACPI specs(1) define Error Injection Actions in hex values.
+> This commit intends to update values from decimal to hex to be
+> consistent with ACPI specs. This commit and the following one are
+> not to be merged and will come form ACPICA project(2).
+>
+> (1) https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html
+> (2) https://lore.kernel.org/acpica-devel/20240514184150.6285-1-zaidal@os.=
+amperecomputing.com/
+>
+> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+
+In order to modify the ACPICA code in the Linux kernel, you need to
+submit a corresponding pull request to the upstream ACPICA project on
+GitHub.  Once that pull request has been merged, please send the Linux
+patch with a Link: tag pointing to the upstream ACPICA pull request
+corresponding to it.
+
+Thanks!
+
 > ---
-> v3:
->  - Applied Jarkko's tag
-
-Already landed in Linus' tree 42 hours ago -- with Jarkko's tag:
-
-https://git.kernel.org/linus/568c98a0f6ef
+>  include/acpi/actbl1.h | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
+> index 841ef9f22795..b321d481b09a 100644
+> --- a/include/acpi/actbl1.h
+> +++ b/include/acpi/actbl1.h
+> @@ -1017,18 +1017,18 @@ struct acpi_einj_entry {
+>  /* Values for Action field above */
+>
+>  enum acpi_einj_actions {
+> -       ACPI_EINJ_BEGIN_OPERATION =3D 0,
+> -       ACPI_EINJ_GET_TRIGGER_TABLE =3D 1,
+> -       ACPI_EINJ_SET_ERROR_TYPE =3D 2,
+> -       ACPI_EINJ_GET_ERROR_TYPE =3D 3,
+> -       ACPI_EINJ_END_OPERATION =3D 4,
+> -       ACPI_EINJ_EXECUTE_OPERATION =3D 5,
+> -       ACPI_EINJ_CHECK_BUSY_STATUS =3D 6,
+> -       ACPI_EINJ_GET_COMMAND_STATUS =3D 7,
+> -       ACPI_EINJ_SET_ERROR_TYPE_WITH_ADDRESS =3D 8,
+> -       ACPI_EINJ_GET_EXECUTE_TIMINGS =3D 9,
+> -       ACPI_EINJ_ACTION_RESERVED =3D 10, /* 10 and greater are reserved =
+*/
+> -       ACPI_EINJ_TRIGGER_ERROR =3D 0xFF  /* Except for this value */
+> +       ACPI_EINJ_BEGIN_OPERATION =3D             0x0,
+> +       ACPI_EINJ_GET_TRIGGER_TABLE =3D           0x1,
+> +       ACPI_EINJ_SET_ERROR_TYPE =3D              0x2,
+> +       ACPI_EINJ_GET_ERROR_TYPE =3D              0x3,
+> +       ACPI_EINJ_END_OPERATION =3D               0x4,
+> +       ACPI_EINJ_EXECUTE_OPERATION =3D           0x5,
+> +       ACPI_EINJ_CHECK_BUSY_STATUS =3D           0x6,
+> +       ACPI_EINJ_GET_COMMAND_STATUS =3D          0x7,
+> +       ACPI_EINJ_SET_ERROR_TYPE_WITH_ADDRESS =3D 0x8,
+> +       ACPI_EINJ_GET_EXECUTE_TIMINGS =3D         0x9,
+> +       ACPI_EINJ_ACTION_RESERVED =3D             0xA,    /* 0xA and grea=
+ter are reserved */
+> +       ACPI_EINJ_TRIGGER_ERROR =3D               0xFF    /* Except for t=
+his value */
+>  };
+>
+>  /* Values for Instruction field above */
+> --
+> 2.34.1
+>
 
