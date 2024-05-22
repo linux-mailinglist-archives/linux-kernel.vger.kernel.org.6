@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-186289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC788CC240
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:37:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56058CC246
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3A5C1C20EF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:37:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A61F28568A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD88140369;
-	Wed, 22 May 2024 13:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E08140381;
+	Wed, 22 May 2024 13:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i6KkroaS"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2089.outbound.protection.outlook.com [40.107.94.89])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qqR4Uj3T"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2056.outbound.protection.outlook.com [40.107.92.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E240513F452
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C86213D639;
+	Wed, 22 May 2024 13:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.56
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716385022; cv=fail; b=d+2mHIBDPaKYlGt29zvsSv1yyqXh9K7C33CKDj+v8GTiI5HB+EOIil63hay1feoCraPYV0RPk/hgXD51VFhWKqy03IUF8lxkjiUUROeHgx8gA7bJ9O8T8NbXqKood2VhSdA8RvoWmFGHH48S+DO3XxMuv8FVQb8AQBByWZ175JA=
+	t=1716385152; cv=fail; b=QO3+5+ji+JYJFLHpxlN6WfpoeALUYSGH8I38DM5fidSlIymQUKfi9f1qwL69Os6szNVUaLE1bsuEYZjetPWmdXMTZ1x7YU0ChXYJCBasrGHwkjWzWo9jrE5as3fqrYpfoRRgl4PaCd3i+7FZzogN+Ndc7UlgGj1aUh2Aw8SZBus=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716385022; c=relaxed/simple;
-	bh=VdQ43YBfuaFawktHl7kRxmILOpJaALbrRZ/+kVjEUso=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Awimf/rTCDzhzMmALh17n0pNA9ynoyZj8zoJ4Gm3D0B4G4c1QoGk34zxClaLRgjCsfyDY3MH5gzdHm2b7/uZbsQkezTdj5Wu2VHdsjsQwQkMxWmSJaNtMFxmoFVMWTkSImAfIjDKUahsIWm0knmCZePfPHAPdwuPS9ETNuP4P8c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i6KkroaS; arc=fail smtp.client-ip=40.107.94.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1716385152; c=relaxed/simple;
+	bh=N3MVSBJKaHEYjV7gbWuA8haZRV+Mh9/mbEPr1dmXzCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZAiM2pxEsNB2tMa/ifbmKSCSukUHhJ0O6EJtnKiiWsnqHfivVaZ9/ej/R6anPD8D9KWj4ZPXh4UdgcIt37/W9U7iLE6TDweFYEr1Tz84fSPeKbSn66uLxrMwpi65PXaEUKmd/JfKLJKGX7mECrpwM2T1eY9D31j6+BqEq1+s7z8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qqR4Uj3T; arc=fail smtp.client-ip=40.107.92.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nzqlIyC524Fjqd+Dc2HJn3SfqMQU5vDiU+qO0xJzMUneqxI1JecEfaieDvzf3LZ72CaeUWa3mqnJyOQQ2SXWJFLUc0DVfrWmx8nlU13fMbNGV0mBsimXmugktGaOBaNOBtFIrpLOX8AilihPerwY8r+RGWF199PsMZr2UVojT0jZBzRDyJZ+UKygiWApvYW8GYNRXFod54zaj5UZBgPcZTPDOI9n6taP8NQ8G7i9izzYDyjGIxjB34OxWzF0rLjiedTrK4kXbrlXlJbp6VVB59eGRRxBzXQAEoTNxHDrt9S+ILhiRUKsTYSXldrri8B9/WBOnhQCaz4//OTlkvPd9w==
+ b=OnXpa4WmsJFQy9UyTLhovVOp3ExjyLrKVMopmq7H39YVJEQPIeb6s39fO/xV8cOsyr2oD2p6K6wqbwhlAxyK5AThyEs/j0t1Ftnuteyi2A4h2KcENeJqVCU0gciYJBVNtOihZRnAGJXktNpPmtiIyW2z6p03Xn8QpBRdjdJ6Mqp+Nuqu8fAvI9YIj33t6CEPDjU/sLKGup2M5U1KAMGF6tPJuzG8mM3b0xldpoz9Z0Nd0N7smyAD9SmKkvsGK/51l7bn/MEdVWPFFMgYEQMyJHhO4jDRV3AkPsDXAOWYmA2yq0Lq4KWWeyvR8GBU+Drvw9F8z68JnAGQKnxfIsxFQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o9jgfqsZZG4GfWQQI0H4Fny15YsC+L5JhyygSeHIGGs=;
- b=MANRHekBkrqt7JevJfVqj7z18fRcvTG2Fq3fVHxMJW2qBVSpcHM09Yjt7ZDk151tt7ggRHOwhv727VUnB9GiGA7A7UYvY1INYTVScMZJsHlSBPfbnDvVcK+zsaC5hDGrGLY06NZxyq0i03xX70EhN0BXxW3vkUkeo5Hw5NIts9eOrYAY2FVlt+V79AdB8+As5KlGNmWmFCQ3jZEelIUbO6fbhVDQuy98CAA+NT28s6izi8OcQIWz6pZjNcmIOcBa2d8wqBpE/7Y1HSCtTPHuWndPrs0t2U3Hi4xT7YbQNCi6hAzCosY3V3WX8Irwsq41iHIbvcv0TJEFQIBk5gPX1Q==
+ bh=PeHl+vda+DVf7wDC8DNAtITCtnRv6Htiw8y6Njll65c=;
+ b=X6+22la/q273wl9Qd2hXF2DzOyCFQCcGTC5CWjvyVd12npHl13SK7oHzZCbZCh27Fjod6E/9n7Onauxm2XwCbXMy7Yi7kLL52hSnRBK3qjeRb1unOfZAElZwypowmDB4q9J6bnoFP1Yi0LEKAPv/0S51zcoQ051cYG2XOQNBjYO+GahY6PXXNLXAx8UyLAPPxqkA4jTFIllQZ9uzfe2T9tv+QBg+9W91V0u6YmUPWHW5kRSyjVjgXwZmgErm7BiUIHFaHRuuOl78Z62XrPLrGq2J0lzvU0teXDMTiRJb24obGYvZ/XQTmEUPcEYSTiS4+0juDJwNeGZlhwaQ59wW2A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o9jgfqsZZG4GfWQQI0H4Fny15YsC+L5JhyygSeHIGGs=;
- b=i6KkroaS+l26EM5yMXypTL2BXgADa3X8m0Ypgo+xv7ZrfYIZFx0rm00kzpdSjdcrIzcZk18uauMvwSkiAi7yvVl3xGcAYM0XCi073usdMjYmn9XIb41oWyaoyGkBcg3/N377ued44xbmOOYs8IVfxBtbUnrbP8rZrj5SIIF4VWw=
+ bh=PeHl+vda+DVf7wDC8DNAtITCtnRv6Htiw8y6Njll65c=;
+ b=qqR4Uj3TLMvhHSzMD9VEb5Vgg7Sv/Dxq0bFnIwlNd5p7ZedYviQ55w5o12BhuqFItANNOMKfNyMVb3CXsOUtd85nGlgTJIlW/GHpz4i59DOHKwKex4iV2ONZbo+m0ADxpnW1H2dIyObTgMYgY7IZ4CX0CMPmK+i8dnTdnqUPpi6M+vownE2lhAqjmF3nupdycaeVS+NRjWmvb0eLv9Tqi/C8C6gDjr8dldbrGhfDTn+rGWkUK0poby9v0otiNfIweQHa5Tq/eSuzkmhAa8EdG0r3cI3BttLYDQtsxCBjSqAfe9eup+50zvbwGr2lqmP9o8Z6adEl4jyDmwWfGBlzBw==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by PH7PR12MB5617.namprd12.prod.outlook.com (2603:10b6:510:133::6) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by DM3PR12MB9391.namprd12.prod.outlook.com (2603:10b6:0:3d::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Wed, 22 May
- 2024 13:36:57 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7587.035; Wed, 22 May 2024
- 13:36:57 +0000
-Message-ID: <666e36b7-5379-46ef-a16b-00ec499fb42c@amd.com>
-Date: Wed, 22 May 2024 08:36:54 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/amd/display: Add pixel encoding info to debugfs
-To: =?UTF-8?Q?Rino_Andr=C3=A9_Johnsen?= <rinoandrejohnsen@gmail.com>,
- Simon Ser <contact@emersion.fr>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- alexander.deucher@amd.com, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Aurabindo Pillai
- <aurabindo.pillai@amd.com>, Hersen Wu <hersenxs.wu@amd.com>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>, Wayne Lin <wayne.lin@amd.com>,
- Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
- Fangzhi Zuo <jerry.zuo@amd.com>, Tom Chung <chiahsuan.chung@amd.com>,
- Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com>
- <20240521051140.30509-1-rinoandrejohnsen@gmail.com>
- <17782a6e-db84-4c20-874a-342b9655ffc5@amd.com>
- <CAACkh=-B-jH6g7KY7Nn_7Y_+gHPQ7G5Z5AZ0=a=_ifjcmsorcw@mail.gmail.com>
- <86410711-9b88-448c-9148-109f81b1ca55@amd.com>
- <CAACkh=9hY7eg_uuH7Psm=XJfSzwQTvzs8bvOXQ=wwkMPrC44SA@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <CAACkh=9hY7eg_uuH7Psm=XJfSzwQTvzs8bvOXQ=wwkMPrC44SA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN7PR04CA0048.namprd04.prod.outlook.com
- (2603:10b6:806:120::23) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
+ 2024 13:39:07 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
+ 13:39:07 +0000
+Date: Wed, 22 May 2024 10:39:05 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>,
+	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
+	"jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
+	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
+	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 04/14] iommufd: Add struct iommufd_viommu and
+ iommufd_viommu_ops
+Message-ID: <20240522133905.GX20229@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <8610498e3fc00000e78bb9cef6fac9f6a54978a4.1712978212.git.nicolinc@nvidia.com>
+ <ZkDMSfd9BXmsFfb+@nvidia.com>
+ <ZkGKKoHnykAdGJq6@nvidia.com>
+ <ZkOJgvMNFaZZ06OO@nvidia.com>
+ <BN9PR11MB5276423A0BFBDA8346E1ED3C8CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276423A0BFBDA8346E1ED3C8CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-ClientProxiedBy: BL0PR0102CA0049.prod.exchangelabs.com
+ (2603:10b6:208:25::26) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,231 +96,200 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB5617:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f179ef4-3b9d-476b-e08b-08dc7a643ff3
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|DM3PR12MB9391:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2752548-b1d3-404d-c472-08dc7a648d6e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VGhIN0NiVUtwek4yMkpDc05YbkdjZzBNMlZJdHd6SzdkUE1NcllNajN4azlj?=
- =?utf-8?B?T1FUUTVGUW10SURsN0dOT09hdHF5dlhVblZBTzZhQ1JaeVpLeXhGdkJkRjNr?=
- =?utf-8?B?eUpNbHpEMk1KQm1qYWRMUS9xczlCeVNuMDZvcEZ0aGk1T0w4U0NnTjFTMmtB?=
- =?utf-8?B?N2o3NHFnK1F0b2dGQWZxMk45eGNhaVpyQ1hCQWpoSUd6Y2pEOCtEbzl6QndO?=
- =?utf-8?B?ZnIxV3crUGRSRlJaaXN5dUhuYzU0QjkveHc2MERCOEE4WnB3UzVZNkFFcjFL?=
- =?utf-8?B?NU93SFgzZ3dNamhQZzZMRnZYS205TTV5Ymd5aXVFSjlhdlBFdmY3TjhHSTcx?=
- =?utf-8?B?WTZwdW5DV0hCRWlnSWpOZzhqVkxHK3YwRytJSDk5VmE0cFkzQU1GdXhiNHVB?=
- =?utf-8?B?TlRKV3RJWFA0bFo0L1VpS0s2TjM3aGxCK1RWZnRSVDBObnRVckdvc1JOaEhi?=
- =?utf-8?B?UkJMNnN5MWxtaExhblZGandiTk9Ld3RoRmFVSXdpdnFJYlBqbzRlOVVjRE1J?=
- =?utf-8?B?QWMxckxSdENqY2ZoZTErODlJYTRFc0QwSEtsV2RmQTg1L3RxVWxlV2tlZEha?=
- =?utf-8?B?Q3JSL0QyeGZrOUZyS2JOZXU4ejZmbDdDRjByeEprQ1BYamMzTUg5cys4VzRm?=
- =?utf-8?B?K1M0VlZPVk5pYk1kWTZaWlduS1pBcktjeG5hZHdNK3h5Y0hXMlN6NUYyVGpD?=
- =?utf-8?B?alZHSnpremtLak5xUlc0SExKSXIvckxzM2FyeFFKMUx5ODlDNkVuSktSN1lN?=
- =?utf-8?B?aFZwZEVQSS9JU0RDWTd4aVJpeU50ZWtYWEdSUG5IcnA4djBmZlNnMWl0Q3lK?=
- =?utf-8?B?bzhzMmwxOXdxUm1nUm1VN21SM3JPbU05NnBrWXBYZUpIZ0tIdzRuMW82andC?=
- =?utf-8?B?ZDFObzZjcnVTK3BBVU45V25XOUpXbjh4aFgwdEtWMGQyd2ZZeThHMDJIeVhC?=
- =?utf-8?B?eFRpajlTWitIczJ0OWFzZkJtRFFtYWI5dFhoYmgyWTNiMVNmYUNXOU82d1FN?=
- =?utf-8?B?WXdRVlMvOUROWHMvZHErZ1hneUpkbTUxYmdmcEppajk1dnJtSFdRdVpLRytF?=
- =?utf-8?B?VXdYVUJBc3l1WEQ1Mjk0U3FVWUlEMnpUUEVzRk02OGVHak53eTBOL3YxU3lv?=
- =?utf-8?B?RU1ONzc1OXNWV0xheEtZY2VIZ2Rhak5XNTlGY0VyVXhFYWJKTWsvei9QdEtU?=
- =?utf-8?B?eDJoSERLSHlaaFMvRUdSV241Q2wzWCtsa0xhV3pnQ2ducEppN21kejRKOE85?=
- =?utf-8?B?SExEclF2R0VBNnVGNEZCZ09xRWxyZGNRbWpvRVhtWW9YU21GYUh3Y2ora3FY?=
- =?utf-8?B?NUZFVHgwN0FQTXU3Y2lzUUFkb2E0SWhna1F1RWZlODQ4UFFWT0ZMUWRRaHhR?=
- =?utf-8?B?UGRFb1JOSWpacXEwTjZybXZvb0oxNkxGcjJMSzJ3SlBUclhLdnA3cjRUMlU4?=
- =?utf-8?B?U1c0eURiVU5naTRjUkhXQm9kVHlQSUxxcnpTYWM0RElsOG5NeEhmemtrZkwy?=
- =?utf-8?B?MzVteGNFUllULzhYZU5ic0hHbEVqZlpCbWwyeUVOaXdHbGl3aVhnYWZCbmZS?=
- =?utf-8?B?aXd3NCt5dXRqMWZ5UGpQdWFvWWlRNWpHdkNGK2lVbzRTZWtjdVBHTTMzRkRX?=
- =?utf-8?Q?9m71t0Mv+WpRieFO70QAH6AkDJ0sXGjLgUPhYrGiKTWA=3D?=
+	=?us-ascii?Q?DbZ4CBpxidn42c3WsR4pMsVREguxh2YSOwN4Pbub/JQx6BR1CIyu0gRp7dHB?=
+ =?us-ascii?Q?9r/6kSjLeux7Tz9OZsxc2bJvK4Z7adFHVsqIRnVfaWyRrzo9hSNcgltDXVRD?=
+ =?us-ascii?Q?/FXW8laQFiPnmmY7WZ7bbvtk/HfhI8qcFtvsG3LwhtgV7sQSQnXyAR6UsVCG?=
+ =?us-ascii?Q?4dlkoExUhqIs7hZpbRe2deUcLWdCZ1BKnFvuCNEGbm12s3a4zW1cv3tpgA1w?=
+ =?us-ascii?Q?pWG0BU/K4hijxcUOkH7xpwGQ2pCp4DFLSHJwMNtveODjkKJKMGiDsq8tcsdV?=
+ =?us-ascii?Q?CX0jQ5orzPBQHebvnfFSyxGOeP1ssmGt4Ry/q+0HwCPpaKcC5FYaoTTqUXv4?=
+ =?us-ascii?Q?SEgsdH5+46rbH2fFzCu4k58Z37DSCFbhTWqht8giKfrnyf9k/fUfq1zN7dpu?=
+ =?us-ascii?Q?mquulclBfyMOfYwJTNYoa1fRMuf0OSeZnaefHzPUwUOxnRX4nZNrPB3kvS1D?=
+ =?us-ascii?Q?vP9hd/9shNy/em5oXXf9pBQVgYMXPmuatX3/eZG2CkIzIlNKNaQsMpU/uhRd?=
+ =?us-ascii?Q?Swq280zFpLCaKj03HYr73u9DDfE50ysmR1ldXkAyVVCIO1trp3SfnRNUpceq?=
+ =?us-ascii?Q?+7rpx6MKKiw1ioO+8TsLWWvP7h5p4ZJAIxKe+uTE7BSeCsqS3yrR3eh9U8tF?=
+ =?us-ascii?Q?mbsicZOKLy6GnyMrpSacascXU9gDdg5aZOI1hDqP6QZ3RJhCENasXQiAnW37?=
+ =?us-ascii?Q?ItS+toQ5Q+MedqIeS2AEYyNVQKffyB3OI8KsCYr0FZARyZqRaULlr4N6zsdz?=
+ =?us-ascii?Q?fAhvtBsbPFZFNV0GpEY9Wj1b8nLRs00eLiqWo4X19zZ+9EHBL87zHyamju8G?=
+ =?us-ascii?Q?gWTxUF4LH51yD5Tgw60gmTdVt3AMQ7uuCrzfHqLdiZqdHLBTCQr551aZ8biL?=
+ =?us-ascii?Q?2q7VyeaDnfDlTs28NWpz62UrMhmxktLYdq10ERj3iBh1tA9BcDzxTaD0nkVx?=
+ =?us-ascii?Q?bMDBKW+uwh0H7NLvYr80Ixk+UBCfJudiixLt/inektAFR9bFelRnG72ze5az?=
+ =?us-ascii?Q?i9thpAl/mkhaEaFS88IWU+ShRwPDHQMyh0MkJhRzOYzIFt0mTfO4xDLjbGAt?=
+ =?us-ascii?Q?rjgPS1QVk6lrlQQ4f4G8JWpVgaN0/wlI8MFTwcz/lq/9i9kfJg2LflOa2QD6?=
+ =?us-ascii?Q?VUcCwnIgWtu24is7odVcgu+Nj7mEDsapJArtmZObO7acgG4NAY/aPkIMRs+t?=
+ =?us-ascii?Q?bxUQPMsgmGMSyJi1BuTHigCucVC3WWFLHlyCFhQt5rl+3g5UJUqO8WBmwm7j?=
+ =?us-ascii?Q?SKmmocMNQshRmbUd90egFoDneKtYYtYae7PoD6wKKg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnhackFEenJLTmdvWE9kWEZzMHhERzd1VzhLdVVCazBCN21ZWlB1NldUTmZV?=
- =?utf-8?B?NUFVNm1LS0V6VEVNQlRsZjY2TlRtZVlpa3ZZZ0k5M0grTW9BZVp5b054RHN6?=
- =?utf-8?B?MEF1N1RNYlo0L1lQS0dXeFZTdlp2eGFsK2tKYXpIYlVzSmJVUHV6c0dkK3Zv?=
- =?utf-8?B?K2NEd05YRkJTZWhNUE5SRkFjLzZYVGpoK3UyVXFoOWY0eURyMGd6YTFkRFRr?=
- =?utf-8?B?SW53WWJsNG9sRXlCU28wSGx0dExRa0d5em9YcFBGWm1hQVJXd3c0MGlYM2k1?=
- =?utf-8?B?VUZzMDZ6WUgxd2RpMkFKT3BjSlRDZlkrbFVSMjBBekgvNFRMRkVuYng1Rjlu?=
- =?utf-8?B?Q2hna2NWUmJZVkJtM3I4RHl2RmpxVXlUNjNnYVJUbWgxMENWNG5Yd0NaZXVi?=
- =?utf-8?B?aFVaZ0FWbVRGampPejF5VTRxdkdCUWlhQ0JkNHVoZWl0dHJWbXRWYmJsd2h2?=
- =?utf-8?B?bDhaUWNxOTJlTVBNclFtSmNXTkUwM3kvWHJ2T3lmdzNrK2hxS1JEVDFjVWo1?=
- =?utf-8?B?U1grRTFRZjBaZGoyM3o2dEJrVnFGZ0VwWWllei9qUXoyeXJyUmxRZVFodFdl?=
- =?utf-8?B?RzdjbUhpNUNpdE5QTDVzdUUyOTcrWnhKZGVVZnBCU0ZCSE1NQ203Z2h0NUo1?=
- =?utf-8?B?OGtzQ2tWei9xYjVuTGhrY3o1azBaeHdHaHlKam8xVTBKQ3lXd3B2YndDWkRP?=
- =?utf-8?B?Nmd1Ri9weUNRNWc5L0hyTVNpVjluS2JBdlJUZGY2Q0dBOVRHUGtSZ1BvRStz?=
- =?utf-8?B?S29Ec25GY1RCd2IyYnVDUGMveHdxbWJRSlR4Mkl2V2s0dzNWTUJSNGVzbjFk?=
- =?utf-8?B?ZGZCVi9ualhNR3hzcnYwcUlRMWtndmlpZ0Zzc2dpQmR0OGZZZFp1K1VrWXFX?=
- =?utf-8?B?WURFcll6T29NWWxleGUvdTJIY2JnVTFnL2ZhSjlURGZsdWRzNDlGQWU2MzRN?=
- =?utf-8?B?eWhUSmJjSkxwUHd2akRjVGJHcjVVWG81T242bnFMeDZxakNvUU1VMk1rTHla?=
- =?utf-8?B?bStBM1JIeXgySzZKbGNna3lhTVF4Zmg1WEZsRXNLQWtHRGN0MENBMW8xaUUx?=
- =?utf-8?B?aUtHTGtCUHhmUWozYzRXTzNLMUFYK0szMUJXbnExSFVoVk1VVkl5NHZJMW5n?=
- =?utf-8?B?UVJzREdMYlVWUHE3S2U2cGhqT3dqOW91VzNPbEdZTGtTMHdHTWkwMHVzQjcy?=
- =?utf-8?B?clUvN0p6UjlaYTFZek9SVkJQT2NVUVdZaDNPWm5FRnBMK0xDMXdxMEVZWUpj?=
- =?utf-8?B?L0YrNHdyY0VjdHNrd2FxMnVkQkxlWWZ3cTVhVnpwVGJ6RTZmOFJGSG1lLzlV?=
- =?utf-8?B?YWloZUFkbHhPTk8vY3ZVOGErNVROWEV3eWNhaXV1aWNPM2tHVkxESWFhaU5v?=
- =?utf-8?B?UjhUN2NXMHBrdlpJSWxHZVdJcGVMVnJ1MyswR3V0ZkhtajhMbWtWM2xjT2FU?=
- =?utf-8?B?d2dYUXdNNmVJaWNlTWszczRieStKVGJNQ2hWT2xYYlkyd3JPNTNuR0p5OC92?=
- =?utf-8?B?THRFRVJqNXhYaTJWUVJ6dHcvbFAxUy9GUWlscGdUUHNUNlpzWERBdDJMSmMz?=
- =?utf-8?B?NWR1aGxoelhETVVRaWJNT0xFNk84b0c3aHpybzVaZGo2Q1JRK2p1SUM4Rlcv?=
- =?utf-8?B?Sk05RnMrcytNSG9OeGtrd1dQWExod2V0SzNFOWNwTVNCc1BOd3RHVlI4SVhL?=
- =?utf-8?B?cnVOaXNYZGtZTitSOUtMQ1IwV3ROaVpZbGdCZDZobWRUbnFFeENjVWQxODB4?=
- =?utf-8?B?c3RjWDJOQnpJQnh2UWp4R1NsQW13ajY4b2E1YnNkMzhuc2FwUFdCMk91MXdY?=
- =?utf-8?B?bCtxUzBST21ONkFWOTN6cGlQWWxxSGMwNHBmcU9rQXZxTU9FVktiNGltME41?=
- =?utf-8?B?K0dDV2xjSG1hVFVOWVk5bGdENWNURW51clpnbmsxN2hydWp0azlreHpRbEgr?=
- =?utf-8?B?NUMxSGhBZHdjV2t4RzhhR2FFM2s3R09nb1pPQlVPeVZRL2YraU9GQ3dEdnUw?=
- =?utf-8?B?QjBRb0wxVlFodFYybkZIN3dUWHRzSEs2U1EzSHBGQ3dJYnEybmpXS3AvQWxm?=
- =?utf-8?B?ZVR0WE5XK2hLY0ZTM28xWVB3Uzl5am1qOVo4ZkQwSWpIL3VDS0Q1MXhtdHlE?=
- =?utf-8?Q?U0CvN1oQHWK9Hbf4keP23NZwI?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f179ef4-3b9d-476b-e08b-08dc7a643ff3
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+	=?us-ascii?Q?XgX7tK69Fthql12Q/6AkS52rYIQezbV0YZzd2YEMNQgbjJI297cQA0jtepok?=
+ =?us-ascii?Q?bZpnaZvD8/ubKAbzJfGYTgNNxC/LkgxvlC1vq81Nr7qjvTX6cOl0D+bElppj?=
+ =?us-ascii?Q?+m9PwyFXi0nR/ANyJ6nGpGcUgV4NXCyCugTcD82WomKPG3A47btCWupZkEHi?=
+ =?us-ascii?Q?QHKwJj1R/1KJHgig7QxomdiPuxQFRD9H3LAWkUwgFLjRaNuH0GeHoeE6vU6D?=
+ =?us-ascii?Q?pl/ylGs4fDX4xBDqlRAW3Chj9WkrgHYOzy8MRUaeltjbISn/EoOMnS/zyE5r?=
+ =?us-ascii?Q?sBLWW+YCS4Nw9ANBQSiEuXaFwuIDFNG1H6eOTJPkGV1zk+pkDb4UXn99rM+Z?=
+ =?us-ascii?Q?pA9kMQPbqdKAASkO+MOtDi9AA08eAUJiabX7RKN1eG6HKk1CmujrTPQrvcUq?=
+ =?us-ascii?Q?27WzsSuqleNJJ8RKlMrvc6ydJiDGOvX19E2lIDIKi209pW3E0hY5d7ssQuwf?=
+ =?us-ascii?Q?JOyzY73ZoT9Vt0zmj7iwt3f3WSy429vDXW/J5MrPjkEqK30kETyF0OVqGEZF?=
+ =?us-ascii?Q?aShD98jMpUu+4DoXlWd/L7/qiW/OJDskCzLwpzLOfI2riz9aml2S7nxdk851?=
+ =?us-ascii?Q?pPky2gPeiNZ839jU/eCd0re6mZe4Wv4VhR67JiBqWQ72gJEnzlycyrgejtjJ?=
+ =?us-ascii?Q?T8kjmxpXmUEO04NTcwobXsr2ghNW8mRbGsWQ5aZZOBi1JpinN3vs8Ho14HcF?=
+ =?us-ascii?Q?OJSnkjUcWAcFYlPYuOZDBJAotA5wsq6W0NpXOOrFBJzC8akJtkGnd7Pn8eFb?=
+ =?us-ascii?Q?rnjQYYqtorH35Yei9y2j6aLOhq4iIf/J/JNiquCvkUSKCFA4vp2FR1vRWnQ0?=
+ =?us-ascii?Q?2VVueRBsUAFQZhrhdQ9JQGaLrSXe1JiDMJC1Cg7NXlVxwdizNUAmxGIPPAnT?=
+ =?us-ascii?Q?HfM8wY75rZ5BHUpllAVfJUO2Wkhd9CR7Qq3I6K20oLMz/lQtdlL9gx7pc7SO?=
+ =?us-ascii?Q?xnzQbeVLjEdBPhX6xYZ8bCFyrErS8EofZUzQptxQOx4cvNra5MlgGMFF/TCM?=
+ =?us-ascii?Q?UOlSeO2xaMT6rV2prj0DqeTtiwLG/QXhB/X+GNP9Vg/VFYh1+w5W+77NPj+x?=
+ =?us-ascii?Q?0zPPkNNMdO30oAL/0GOEVLXvArkrxtKtQdmukg88dzpDg/NcKqNe0Tc5hXEP?=
+ =?us-ascii?Q?n/oZds9Fz532QzX/7CvShq+s/gBUKcLCOTO7qDKZ29s+/forh90PZsLWVQ3R?=
+ =?us-ascii?Q?HSbsS+1fNOugpJQMKSAczZPVFxn06RZrBagMemSFi7fZsur4LdG7ulYeOlKA?=
+ =?us-ascii?Q?e3bDE6FC2MPkw0ddLKWhJ59/ZxOOtXKMXEhU84bNKWlBVD6bG9vgI2hH8i9r?=
+ =?us-ascii?Q?XLzdyUB9DxRF8Y7/TqmWcNt8nJ6WWTlaG7o+KZL+qHffMLfhV0EdsFiOyaEg?=
+ =?us-ascii?Q?OFY2KXVAIjLdnTZ7L1T6DGdsAfdE7+ZlC6rFsZyqpKF2kWv1ASpEsuZljBxK?=
+ =?us-ascii?Q?BMlzD1Pdb/C2Ey9PD2VIym1O230d8DZZwkZug/PvfcGLOY446n/J8a1kEUHO?=
+ =?us-ascii?Q?EZYCS9rBVC8/M4ZOvWt1+4aWNAoeoPTB41spsZvTFnBMWauc/BGDhI6GZS9t?=
+ =?us-ascii?Q?6t/qAclB7180KxJb958=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2752548-b1d3-404d-c472-08dc7a648d6e
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 13:36:57.0933
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 13:39:06.9339
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /m5wj/Bvk4nNw9EBT4elddWUaWBpNw2IzcBTc5GQE5sNjH7JzEIgXHnmX3wn2wrifuhLFFIftsV0CrgaEn+OfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5617
+X-MS-Exchange-CrossTenant-UserPrincipalName: qtq2fshNb0uLm2v4+bvQJbXsAy8Oelz0Hv6w5jYIOjaWLZFmT58244MtlK1HEWJC
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9391
 
-+ Simon
-
-On 5/22/2024 05:07, Rino André Johnsen wrote:
-> To be perfectly honest with you, I haven't given that much though. I
-> used the 'bpc' and 'colorspace' property in debugfs, since I could not
-> find that information anywhere else. And since I also needed to verify
-> the pixel encoding being used, I added it where those other values
-> were. That made for a simple and easy addition for this property.
+On Wed, May 22, 2024 at 08:58:34AM +0000, Tian, Kevin wrote:
+> > From: Jason Gunthorpe <jgg@nvidia.com>
+> > Sent: Tuesday, May 14, 2024 11:56 PM
+> > 
+> > On Sun, May 12, 2024 at 08:34:02PM -0700, Nicolin Chen wrote:
+> > > On Sun, May 12, 2024 at 11:03:53AM -0300, Jason Gunthorpe wrote:
+> > > > On Fri, Apr 12, 2024 at 08:47:01PM -0700, Nicolin Chen wrote:
+> > > > > Add a new iommufd_viommu core structure to represent a vIOMMU
+> > instance in
+> > > > > the user space, typically backed by a HW-accelerated feature of an
+> > IOMMU,
+> > > > > e.g. NVIDIA CMDQ-Virtualization (an ARM SMMUv3 extension) and
+> > AMD Hardware
+> > > > > Accelerated Virtualized IOMMU (vIOMMU).
+> > > >
+> > > > I expect this will also be the only way to pass in an associated KVM,
+> > > > userspace would supply the kvm when creating the viommu.
+> > > >
+> > > > The tricky bit of this flow is how to manage the S2. It is necessary
+> > > > that the S2 be linked to the viommu:
+> > > >
+> > > >  1) ARM BTM requires the VMID to be shared with KVM
+> > > >  2) AMD and others need the S2 translation because some of the HW
+> > > >     acceleration is done inside the guest address space
+> > > >
+> > > > I haven't looked closely at AMD but presumably the VIOMMU create will
+> > > > have to install the S2 into a DID or something?
+> > > >
+> > > > So we need the S2 to exist before the VIOMMU is created, but the
+> > > > drivers are going to need some more fixing before that will fully
+> > > > work.
 > 
-> If you want me to do this differently, let me know. And please point
-> me to the standardized DRM property where I should expose the values.
+> Can you elaborate on this point? VIOMMU is a dummy container when
+> it's created and the association to S2 comes relevant only until when
+> VQUEUE is created inside and linked to a device? 
 
-Here's a pointer to where the colorspace property is created:
+VIOMMU contains:
+ - A nesting parent
+ - A KVM
+ - Any global per-VM data the driver needs
+   * In ARM case this is VMID, sometimes shared with KVM
+   * In AMD case this is will allocate memory in the
+     "viommu backing storage memory"
 
-https://github.com/torvalds/linux/blob/v6.9/drivers/gpu/drm/drm_connector.c#L2147
+Objects can be created on top of a VIOMMU:
+ - A nested HWPT (iommu_hwpt_alloc::pt_id can be a viommu)
+ - A vqueue (ARM/AMD)
+ - Other AMD virtualized objects (EventLog, PPRLog)
 
-I would expect you can make another property for the information you're 
-looking for and then can get it from userspace using standard property
-APIs.
+It is desirable to keep the VIOMMU linked to only a single nesting
+parent that never changes. Given it seems to be a small ask to
+allocate the nesting parent before the VIOMMU providing it at VIOMMU
+creation time looks like it will simplify the drivers because they can
+rely on it always existing and never changing.
 
+I think this lends itself to a logical layered VMM design..
+
+ - If VFIO is being used get an iommufd
+ - Allocate an IOAS for the entire guest physical
+ - Determine the vIOMMU driver to use
+ - Allocate a HWPT for use by all the vIOMMU instances
+ - Allocate a VIOMMU per vIOMMU instance
+
+On ARM the S2 is not divorced from the VIOMMU, ARM requires a single
+VMID, shared with KVM, and localized to a single VM for some of the
+bypass features (vBTM, vCMDQ). So to attach a S2 you actually have to
+attach the VIOMMU to pick up the correct VMID.
+
+I imagine something like this:
+   hwpt_alloc(deva, nesting_parent=true) = shared_s2
+   viommu_alloc(deva, shared_s2) = viommu1
+   viommu_alloc(devb, shared_s2) = viommu2
+   hwpt_alloc(deva, viommu1, vste) = deva_vste
+   hwpt_alloc(devb, viommu2, vste) = devb_vste
+   attach(deva, deva_vste)
+   attach(devb, devb_vste)
+   attach(devc, shared_s2)
+
+The driver will then know it should program three different VMIDs for
+the same S2 page table, which matches the ARM expectation for
+VMID. That is to say we'd pass in the viommu as the pt_id for the
+iommu_hwpt_alloc. The viommu would imply both the S2 page table and
+any meta information like VMID the driver needs.
+
+Both AMD and the vCMDQ thing need to translate some PFNs through the
+S2 and program them elsewhere, this is manually done by SW, and there
+are three choices I guess:
+ - Have the VMM do it and provide  void __user * to the driver
+ - Have the driver do it through the S2 directly and track
+   S2 invalidations
+ - Have the driver open an access on the IOAS and use the access unmap
+
+Not sure which is the best..
+
+> > Right, Intel currently doesn't need it, but I feel like everyone will
+> > need this eventually as the fast invalidation path is quite important.
 > 
-> Rino
+> yes, there is no need but I don't see any harm of preparing for such
+> extension on VT-d. Logically it's clearer, e.g. if we decide to move
+> device TLB invalidation to a separate uAPI then vIOMMU is certainly
+> a clearer object to carry it. and hardware extensions really looks like
+> optimization on software implementations.
 > 
-> On Tue, May 21, 2024 at 10:55 PM Mario Limonciello
-> <mario.limonciello@amd.com> wrote:
->>
->> On 5/21/2024 15:06, Rino André Johnsen wrote:
->>> What is already there in debugfs is 'bpc' and 'colorspace', but not
->>> the pixel encoding/format.
->>> I have searched high and low for that to be able to verify that my
->>> monitor and computer are using my preferred combination of all those
->>> three values.
->>>
->>> I do think it should be available as a standard DRM CRTC property, but
->>> for the time being, I figured that a simple debugfs property would be
->>> sufficient for time being.
->>>
->>
->> It's just about as much work either way to populate it though, why do it
->> twice instead of just doing it right the first time?
->>
->>> Rino
->>>
->>>
->>> On Tue, May 21, 2024 at 9:04 PM Christian König
->>> <christian.koenig@amd.com> wrote:
->>>>
->>>> Am 21.05.24 um 07:11 schrieb Rino Andre Johnsen:
->>>>> [Why]
->>>>> For debugging and testing purposes.
->>>>>
->>>>> [How]
->>>>> Create amdgpu_current_pixelencoding debugfs entry.
->>>>> Usage: cat /sys/kernel/debug/dri/1/crtc-0/amdgpu_current_pixelencoding
->>>>
->>>> Why isn't that available as standard DRM CRTC property in either sysfs
->>>> or debugfs?
->>>>
->>>> I think the format specifiers should already be available somewhere there.
->>>>
->>>> Regards,
->>>> Christian.
->>>>
->>>>>
->>>>> Signed-off-by: Rino Andre Johnsen <rinoandrejohnsen@gmail.com>
->>>>> ---
->>>>>
->>>>> Changes in v2:
->>>>> 1. Do not initialize dm_crtc_state to NULL.
->>>>> ---
->>>>>     .../amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 47 +++++++++++++++++++
->>>>>     1 file changed, 47 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
->>>>> index 27d5c6077630..4254d4a4b56b 100644
->>>>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
->>>>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
->>>>> @@ -1160,6 +1160,51 @@ static int amdgpu_current_colorspace_show(struct seq_file *m, void *data)
->>>>>     }
->>>>>     DEFINE_SHOW_ATTRIBUTE(amdgpu_current_colorspace);
->>>>>
->>>>> +/*
->>>>> + * Returns the current pixelencoding for the crtc.
->>>>> + * Example usage: cat /sys/kernel/debug/dri/0/crtc-0/amdgpu_current_pixelencoding
->>>>> + */
->>>>> +static int amdgpu_current_pixelencoding_show(struct seq_file *m, void *data)
->>>>> +{
->>>>> +     struct drm_crtc *crtc = m->private;
->>>>> +     struct drm_device *dev = crtc->dev;
->>>>> +     struct dm_crtc_state *dm_crtc_state;
->>>>> +     int res = -ENODEV;
->>>>> +
->>>>> +     mutex_lock(&dev->mode_config.mutex);
->>>>> +     drm_modeset_lock(&crtc->mutex, NULL);
->>>>> +     if (crtc->state == NULL)
->>>>> +             goto unlock;
->>>>> +
->>>>> +     dm_crtc_state = to_dm_crtc_state(crtc->state);
->>>>> +     if (dm_crtc_state->stream == NULL)
->>>>> +             goto unlock;
->>>>> +
->>>>> +     switch (dm_crtc_state->stream->timing.pixel_encoding) {
->>>>> +     case PIXEL_ENCODING_RGB:
->>>>> +             seq_puts(m, "RGB");
->>>>> +             break;
->>>>> +     case PIXEL_ENCODING_YCBCR422:
->>>>> +             seq_puts(m, "YCBCR422");
->>>>> +             break;
->>>>> +     case PIXEL_ENCODING_YCBCR444:
->>>>> +             seq_puts(m, "YCBCR444");
->>>>> +             break;
->>>>> +     case PIXEL_ENCODING_YCBCR420:
->>>>> +             seq_puts(m, "YCBCR420");
->>>>> +             break;
->>>>> +     default:
->>>>> +             goto unlock;
->>>>> +     }
->>>>> +     res = 0;
->>>>> +
->>>>> +unlock:
->>>>> +     drm_modeset_unlock(&crtc->mutex);
->>>>> +     mutex_unlock(&dev->mode_config.mutex);
->>>>> +
->>>>> +     return res;
->>>>> +}
->>>>> +DEFINE_SHOW_ATTRIBUTE(amdgpu_current_pixelencoding);
->>>>>
->>>>>     /*
->>>>>      * Example usage:
->>>>> @@ -3688,6 +3733,8 @@ void crtc_debugfs_init(struct drm_crtc *crtc)
->>>>>                             crtc, &amdgpu_current_bpc_fops);
->>>>>         debugfs_create_file("amdgpu_current_colorspace", 0644, crtc->debugfs_entry,
->>>>>                             crtc, &amdgpu_current_colorspace_fops);
->>>>> +     debugfs_create_file("amdgpu_current_pixelencoding", 0644, crtc->debugfs_entry,
->>>>> +                         crtc, &amdgpu_current_pixelencoding_fops);
->>>>>     }
->>>>>
->>>>>     /*
->>>>
->>
+> and we do need make a decision now, given if we make vIOMMU as
+> a generic object for all vendors it may have potential impact on
+> the user page fault support which Baolu is working on.
 
+> the so-called
+> fault object will be contained in vIOMMU, which is software managed
+> on VT-d/SMMU but passed through on AMD. 
+
+Hmm, given we currently have no known hardware entanglement between
+PRI and VIOMMU it does seem OK for PRI to just exist seperate for
+now. If someone needs them linked someday we can add a viommu_id to
+the create pri queue command.
+
+> And probably we don't need another handle mechanism in the attach
+> path, suppose the vIOMMU object already contains necessary
+> information to find out iommufd_object for a reported fault.
+
+The viommu might be useful to have the kernel return the vRID instead
+of the dev_id in the fault messages. I'm not sure how valuable this
+is..
+
+Jason
 
