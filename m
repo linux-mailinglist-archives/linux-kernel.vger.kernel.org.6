@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-186576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0F58CC5E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:52:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0CE8CC5E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB6F828451E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:52:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27E83B22C85
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D10145B10;
-	Wed, 22 May 2024 17:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4059146004;
+	Wed, 22 May 2024 17:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q1jefk0y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="p2pHGKlT"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1759257C8E;
-	Wed, 22 May 2024 17:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64CB145B02;
+	Wed, 22 May 2024 17:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716400343; cv=none; b=RI0QJOG6OGIVzzHwH1StBvR2WzEKiV+TjIg/BYZ45elOjS8Aq/7BYHP17t4q9kU6jhDkz7xBBfSRAWD5OyMhgHxkP2h+e53ZTeUXPG0yzULJJxRinjqdh/8ilX9pbactm7CKgxmyg5fI++o2Lq8zTez1/wWkFD70DCj0CadwByE=
+	t=1716400348; cv=none; b=qc6U99tYOwiiXuUTdwo0YWl2ZUtGSugxD726X3dkRkJbeGoCXWJkeIcnVgzB2H5IuZYVNmS6iGxzS2JMqW2NhoVCJhd1mA5Ut2/O8IYAfS2Z/wpNTrlkPm8nqnL9/TTtezdvvdG/+bMcbIJD1XyTjdnplEIeH/RI87Ghdt+M0Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716400343; c=relaxed/simple;
-	bh=GqUR8YikJ6aus54l8QP7m+6LW+eBsJvJWssh9eElXjA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NemlFeY12PFSDdfxYI1AFpH9myTCLnGhBkJZd2mNcfk7SeIiaQSlujE9lnrFl2UY31yxMAuwLrRl31yZ9W8PhIqdPUG+TksaisvcRcLbV6Ih1kXw5VZmG2b74fkQqb58SOCif2N6cNPUR01NkZl2aZjX1KqitzNZz0Nj+Ef2pZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q1jefk0y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44M8Go04025175;
-	Wed, 22 May 2024 17:52:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=by0d6FIgykBOIQ2rkYvOY
-	1RYbDxocjPFrC4pjQMP+Sk=; b=Q1jefk0y1G31BaP6KSmzXhs+f6jbYI1BT3cM4
-	aWIUZoXSnyO1qRYfpHgFSgjckaKKm6/2SCJyD2ZimZB1EfZsRk7tNbS/P+u6tjiH
-	oiM5P8dgdX6zTTZHl+YAk0XyCZbxKWvzyzEO9vfRQERap8U1iamPfrqtAHdefsfL
-	pBgncK1pSaqbAyq62W8mmToT+MGKjlzhENh2VH1xr2IKoRPcG4PVaX5TNvJa0/TO
-	isq/GszcDGgNxqoJNI56pW0NNjuguMj07QueIluhvoGUWV27UhH5sJDsWy4tD51h
-	QdenswZapdu7SJzKm4J4TQ9tIN6hicCIf3nfX+MN7ySKshJAg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n4pa5u1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 17:52:00 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MHpxHl003730
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 17:51:59 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 22 May 2024 10:51:58 -0700
-Date: Wed, 22 May 2024 10:51:57 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon
-	<will@kernel.org>, Waiman Long <longman@redhat.com>,
-        Boqun Feng
-	<boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 7/7] arm64: dts: qcom: sm8650: Add hwlock to remoteproc
-Message-ID: <Zk4wvTjld4QVBMDY@hu-bjorande-lv.qualcomm.com>
-References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
- <20240516-hwspinlock-bust-v1-7-47a90a859238@quicinc.com>
- <c2905eaf-7194-4f2b-98c8-52b1907e398a@kernel.org>
+	s=arc-20240116; t=1716400348; c=relaxed/simple;
+	bh=aA3DKznaBT1BfNeUkAE6FwQ0W4IHdJ7XzpJGKtXI/6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ja6LSKSfe3Nlp56nuFBr546uewCtvKshoJnMgCdk4YrOM5fneTy5g6znBmCtx7oYq3kXGuNvgniFgaawDktThOMWomWJzdcQLvRzfmv1gpw0WcBY+OgTS4hfvV5esGWlXcZ7gGqLQH78MRSqwQ/N9RGCAZBwT16SFzEpOaon10M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=p2pHGKlT; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VkzQy08jwz6Cnk9V;
+	Wed, 22 May 2024 17:52:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1716400336; x=1718992337; bh=aA3DKznaBT1BfNeUkAE6FwQ0
+	W4IHdJ7XzpJGKtXI/6s=; b=p2pHGKlTGN1n79gxy2b/GyEl+HkP0bgyc2UeYFM/
+	GXSzKzNN1hhVyWYWt36+Lp/wge77YnUp3UTBQCCs5mnMacRLMOcgij5X6fN65Wej
+	8KE9Kc0EFuDdd4BXiOu3B/ASQKyk8frkif00MA86DIrCWQvv4TL86jA6U4fYWUZo
+	pAeT3gs6lohVfoM8VXD757F87uEZlLe8RGe3dO6Y619fpHFuOke+evLOcDOq98DH
+	RTyPuQLqHjXoK/xBROHDvP9Iy+XKZ1Mj4yQ1DKWMguuVjseOFLaV2CCHYGnIZaV4
+	Lgjk/nUaA+7ZTeyoDv8HIjuDr+QSK8ehLX5M3WFoaFZOXA==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id SYpxkEZJmixc; Wed, 22 May 2024 17:52:16 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VkzQg1dXmz6Cnk9X;
+	Wed, 22 May 2024 17:52:11 +0000 (UTC)
+Message-ID: <631c55b9-8b0a-4ac0-81bd-acf82c4a7602@acm.org>
+Date: Wed, 22 May 2024 10:52:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c2905eaf-7194-4f2b-98c8-52b1907e398a@kernel.org>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qHvMGm8dNuCWFSgpif71DXrFX8vzWdMh
-X-Proofpoint-GUID: qHvMGm8dNuCWFSgpif71DXrFX8vzWdMh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_10,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 mlxscore=0 malwarescore=0 spamscore=0
- impostorscore=0 clxscore=1015 phishscore=0 suspectscore=0 adultscore=0
- mlxlogscore=794 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405220123
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 12/12] null_blk: add support for copy offload
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ Vincent Fu <vincent.fu@samsung.com>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520103039epcas5p4373f7234162a32222ac225b976ae30ce@epcas5p4.samsung.com>
+ <20240520102033.9361-13-nj.shetty@samsung.com>
+ <2433bc0d-3867-475d-b472-0f6725f9a296@acm.org>
+ <20240521144629.reyeiktaj72p4lzd@green245>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240521144629.reyeiktaj72p4lzd@green245>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 09:27:29AM +0200, Krzysztof Kozlowski wrote:
-> On 17/05/2024 00:58, Chris Lew wrote:
-> > Add the hwlock property to remoteproc. This enables the remoteproc to
-> > try and bust the smem hwspinlock if the remoteproc has crashed while
-> > holding the hwspinlock.
-> > 
-> > Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sm8650.dtsi | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> > index 62a6e77730bc..a65a1679f003 100644
-> > --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> > @@ -2878,6 +2878,7 @@ remoteproc_mpss: remoteproc@4080000 {
-> >  
-> >  			qcom,smem-states = <&smp2p_modem_out 0>;
-> >  			qcom,smem-state-names = "stop";
-> > +			hwlocks = <&tcsr_mutex 3>;
-> 
-> lock #3 is used by smem, so this proves you are taking someone else's
-> lock.
+On 5/21/24 07:46, Nitesh Shetty wrote:
+> On 20/05/24 04:42PM, Bart Van Assche wrote:
+>> On 5/20/24 03:20, Nitesh Shetty wrote:
+>>> +=C2=A0=C2=A0=C2=A0 __rq_for_each_bio(bio, req) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (seg =3D=3D blk_rq_nr_=
+phys_segments(req)) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 s=
+ector_in =3D bio->bi_iter.bi_sector;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i=
+f (rem !=3D bio->bi_iter.bi_size)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return status;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 s=
+ector_out =3D bio->bi_iter.bi_sector;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r=
+em =3D bio->bi_iter.bi_size;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 seg++;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>
+>> _rq_for_each_bio() iterates over the bios in a request. Does a copy
+>> offload request always have two bios - one copy destination bio and
+>> one copy source bio? If so, is 'seg' a bio counter? Why is that bio
+>> counter compared with the number of physical segments in the request?
+>>
+> Yes, your observation is right. We are treating first bio as dst and
+> second as src. If not for that comparision, we might need to store the
+> index in a temporary variable and parse based on index value.
 
-The lock is a shared resource, it's not "some else's lock".
+I'm still wondering why 'seg' is compared with blk_rq_nr_phys_segments(re=
+q).
 
-Regards,
-Bjorn
+Thanks,
 
-> I commented on this in the binding, but let's be specific:
-> 
-> NAK, please carry:
-> 
-> Nacked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> Best regards,
-> Krzysztof
-> 
+Bart.
+
 
