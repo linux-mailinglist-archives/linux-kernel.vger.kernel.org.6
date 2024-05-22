@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-185636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 243DC8CB831
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:23:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7548CB838
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 447C31C20C9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:23:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC001F27D0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDE2159901;
-	Wed, 22 May 2024 01:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFA915B0F3;
+	Wed, 22 May 2024 01:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2aZuf6au"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tEWYn0cD"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB959158DCC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDEE15AACA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716339747; cv=none; b=UUl0BiBrjdeeYKTQxIZcW9nwwWF3ci9sX9+i8muHzA0YGvS7HBxdOiny1KNtYhTF/sowEa5zcOMt2SNzv848R9YjtUrhHxItFRCKTzorQP9dKLEoFf64pzz8oD/Zkh7BYtZDdZ+106KwdhhR7ahaSACV+PWvJDfy/1pudeRuuBg=
+	t=1716339750; cv=none; b=K+yka2F8chUjIaRJkjaClqCdzjCw4GCiZSAd3JcAxs47XgByqAtQ8O+EPCWRc8scOQgcm3ogaPVbanpRvK9Ib1U4oUTQRTQiM+3zXcnOxtzwDmr/hZQw9obVXsryQROOE6iqaH8oDMkSnhjIF4FsVS3jwzw0PuTYY5deO9FMmFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716339747; c=relaxed/simple;
-	bh=EB/j6UJypAPanDLZb2I0KEJMnVzQCxSyO8B/qmHrSYc=;
+	s=arc-20240116; t=1716339750; c=relaxed/simple;
+	bh=lCyVuupDWxVZz2sQcXJKSxKEuAFc66qg8/4YnRBy/7g=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LJUG6XIf87Zx1cMtB8PyyTNZ2qfxBreKK8Zlg0DdbQoc8zIWGnfrZJI26JF3BBNb/dRKSmeGZGpfe+GwMMeGEBvVDC1rEw79CL8GAP4sQto9ovRIV2ulZHqwepg1TEGM0tfoQ1jFyjgPbqonrOxjezmP5f70pNom+qxvEysFF7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2aZuf6au; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=cLCdOCe7xJJfXMp1935+0UxPoaGycUlzLYdmpxHXI8hJ4KVO/PMZuYGBO0XrGirJyIrR3PEKi1K7w5Qi65qIhD8KqEruqqP2rb9sQTT1SNgedzQLn3YXFJZgNeNXP3RO5FpXPnyHE/76CBbJ+Np1FwjTc5tK7MGSafxsZGVWGy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tEWYn0cD; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1e54e6ba9a1so124044905ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:02:25 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-5c65e666609so12292035a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:02:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716339745; x=1716944545; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1716339748; x=1716944548; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dm1RYHlP0yY8z+cx1ACTtX9tqSUF2UuvA0/IyJOdLP8=;
-        b=2aZuf6aueSZmbQ5iwuelzjjoGKTOUfcQbw8QvThA7XvRQ9hnkctUcCccItmg941epE
-         QxbQYjXS68EJU+XJL0yGEsQO0EbHbsy5AQh/LpmsrlR/yaLZ5gAyQMpinjZk9aYxQSQC
-         T6SXIF0czwHWxG+4uaDRI993WoAwR3rORGcpTrgbhsen/KleiT1HkogIilOpuOTnVTuo
-         3H5tIMH1gWUZqG0e83QkgOTNezwvEyNnnAnUyESqgzPtRCj1gLlvfXcVu3+HSHazf/Qd
-         p33m/zaA/Td4UmjtKIokJL2vi69hJZ4v3yXMqoFbCI4SGMODnjVq9CvMnniRnyhIsYrT
-         dD9A==
+        bh=dbqh1zsxn8gUvUDhxAFBA4KqPqi5wbFi57fCLR1fcnQ=;
+        b=tEWYn0cD7JUJq5QtzSm9rwmKMucfa1559+ROTR7bB+wFwo8vxl0HMNAGavKVkWYkjg
+         yRWi/SS6zlstQ2pcl42d31/VdNYoLwnJxfWWnnemKCfGTSbcYaHWB7R91k1+qoomHZ0L
+         pDwTLHVRqob4SK4+nllR5mpBNTP8+Wtr6xfQBjABKMMSXJ/oME/i+t8OH1aMsCIJXod5
+         cr1+8Ap9LlT3jpO7nf2zz8CU2OEbK3EL/uhU2xKKVrPyMl6UouiK2FFkWVeSsooZVGIB
+         legpc95/RTvuHfU8HakyAr38nQWuJv+iX5vyDXwpRttaodT63N0pfe7WcQab9YwJHcoA
+         Maew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716339745; x=1716944545;
+        d=1e100.net; s=20230601; t=1716339748; x=1716944548;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dm1RYHlP0yY8z+cx1ACTtX9tqSUF2UuvA0/IyJOdLP8=;
-        b=JU0RpBgHWR8pysMeETlv4TvTSui2nCNayARfYISKBEM5Ndlhski+4s3dLgkO38jqki
-         Y2N111rypjRB+ZgWgb2u3sjKECsegGW0ZDWdTkjluNXWx6+fHHsCLOQmB2bBHsqtCwpG
-         fuC9ElArhn2oS5Ukjtosq8WXNO/Wys95w+c2O9nEMf7gT0zj/Y+ydMgOzhfcmDMSMIT5
-         2AaK65hq5+hiu1CwmvOODpAHjzCwBAgAN9JA1VMiYScMZDzAamPuRHeOH1Pm8aIs+kLc
-         vLnG30x6LahBMLyp5PdUfiqAnNhOJjVeKEyTDx4pJlTWNrZe592vp/6VDq29x0WB+aWf
-         pCww==
-X-Gm-Message-State: AOJu0YxZqoiRDq6RyUd1fKVGvIYegFZ8OqrilqshP/Ma3N8t1fNJzEyp
-	opoFGGR/TQ9npNf6NxpJ3Ep03xfllAKOpFmj1g3s3vZxJEwz0TzlhtfulvQFkCJiIeLn9ypu3I+
-	t6g==
-X-Google-Smtp-Source: AGHT+IFlPItv3KQjRVyD08JVklH4KtCoAvfm4Lf6y215FzRt97XcDClrNcaWNS3yMHJbFTWQCPvk6KGG8pM=
+        bh=dbqh1zsxn8gUvUDhxAFBA4KqPqi5wbFi57fCLR1fcnQ=;
+        b=oG21A4eeuLGP44FDASqZ3GxbHTASHdn3cxvx7vibjb1ltdQSmANc7odpI4gmOn+p7d
+         Ow7wb3Ht1wDJThKyeBzfCu6+egcZYE4bKeNmgzXc8EU2J+QHIV20YtH12H2Wa+LrIzk3
+         aotsIgqdlWDU1CqGWqV7l8NAnZLhwhtPGZltJfoIAWWA+q3+8FQ/HNjEkgnIRCmX0P5i
+         HkD9jVO0hzPgd+z61EZETCRlmtgYLFJRZUvRjaVhxJg830aXbx4oJ/ET+6t60DmSObm+
+         wKgH68GIbcVSV0lewsQ8H8CuYUPalSQCG8P9pFyTSK3toXCtUhkeu4Gi1s0MunAwe2Lq
+         92yQ==
+X-Gm-Message-State: AOJu0YxYrShWjG5brkeC53XG9E9/LuGuGfhJmtqpahh57BHxKoUSxZq1
+	qHdX5YmvXNAv4k6kI9ONNSunvJme1niiFMced2bHfic980VWwKSOXk/rfw798wJb08etJugbW16
+	dYg==
+X-Google-Smtp-Source: AGHT+IFeB1oZ2QDPlQwbKGu6/7hRJIp6ShmXfXRHnd65hPo3vaqEqmZiHbt+kHZ6MjMBCzZNuDqiB1MC7/g=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a17:902:ce85:b0:1f3:665:9043 with SMTP id
- d9443c01a7336-1f31c7f3f98mr17625ad.0.1716339745033; Tue, 21 May 2024 18:02:25
+ (user=edliaw job=sendgmr) by 2002:a63:2e43:0:b0:673:9f86:3f2f with SMTP id
+ 41be03b00d2f7-6764dd980f6mr1274a12.9.1716339748428; Tue, 21 May 2024 18:02:28
  -0700 (PDT)
-Date: Wed, 22 May 2024 00:57:46 +0000
+Date: Wed, 22 May 2024 00:57:47 +0000
 In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240522005913.3540131-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240522005913.3540131-61-edliaw@google.com>
-Subject: [PATCH v5 60/68] selftests/thermal: Drop define _GNU_SOURCE
+Message-ID: <20240522005913.3540131-62-edliaw@google.com>
+Subject: [PATCH v5 61/68] selftests/timens: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -93,34 +93,107 @@ redefinition warnings.
 
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- .../selftests/thermal/intel/power_floor/power_floor_test.c     | 3 ---
- .../selftests/thermal/intel/workload_hint/workload_hint_test.c | 3 ---
- 2 files changed, 6 deletions(-)
+ tools/testing/selftests/timens/clock_nanosleep.c | 1 -
+ tools/testing/selftests/timens/exec.c            | 1 -
+ tools/testing/selftests/timens/futex.c           | 1 -
+ tools/testing/selftests/timens/gettime_perf.c    | 1 -
+ tools/testing/selftests/timens/procfs.c          | 1 -
+ tools/testing/selftests/timens/timens.c          | 1 -
+ tools/testing/selftests/timens/timer.c           | 1 -
+ tools/testing/selftests/timens/timerfd.c         | 1 -
+ tools/testing/selftests/timens/vfork_exec.c      | 1 -
+ 9 files changed, 9 deletions(-)
 
-diff --git a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-index 0326b39a11b9..ce98ab045ae9 100644
---- a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-+++ b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-@@ -1,7 +1,4 @@
+diff --git a/tools/testing/selftests/timens/clock_nanosleep.c b/tools/testing/selftests/timens/clock_nanosleep.c
+index 72d41b955fb2..5608f2b519e1 100644
+--- a/tools/testing/selftests/timens/clock_nanosleep.c
++++ b/tools/testing/selftests/timens/clock_nanosleep.c
+@@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
--
 -#define _GNU_SOURCE
--
- #include <stdio.h>
- #include <string.h>
- #include <stdlib.h>
-diff --git a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-index 217c3a641c53..5153d42754d6 100644
---- a/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-+++ b/tools/testing/selftests/thermal/intel/workload_hint/workload_hint_test.c
-@@ -1,7 +1,4 @@
+ #include <sched.h>
+ 
+ #include <sys/timerfd.h>
+diff --git a/tools/testing/selftests/timens/exec.c b/tools/testing/selftests/timens/exec.c
+index e40dc5be2f66..7f718a3bb043 100644
+--- a/tools/testing/selftests/timens/exec.c
++++ b/tools/testing/selftests/timens/exec.c
+@@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
--
 -#define _GNU_SOURCE
--
- #include <stdio.h>
- #include <string.h>
- #include <stdlib.h>
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sched.h>
+diff --git a/tools/testing/selftests/timens/futex.c b/tools/testing/selftests/timens/futex.c
+index 6b2b9264e851..0a5a81939220 100644
+--- a/tools/testing/selftests/timens/futex.c
++++ b/tools/testing/selftests/timens/futex.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sched.h>
+ 
+ #include <linux/unistd.h>
+diff --git a/tools/testing/selftests/timens/gettime_perf.c b/tools/testing/selftests/timens/gettime_perf.c
+index 6b13dc277724..9fe6690edd2a 100644
+--- a/tools/testing/selftests/timens/gettime_perf.c
++++ b/tools/testing/selftests/timens/gettime_perf.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <errno.h>
+diff --git a/tools/testing/selftests/timens/procfs.c b/tools/testing/selftests/timens/procfs.c
+index 1833ca97eb24..7bc389b05799 100644
+--- a/tools/testing/selftests/timens/procfs.c
++++ b/tools/testing/selftests/timens/procfs.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <math.h>
+diff --git a/tools/testing/selftests/timens/timens.c b/tools/testing/selftests/timens/timens.c
+index 387220791a05..7941a43155a8 100644
+--- a/tools/testing/selftests/timens/timens.c
++++ b/tools/testing/selftests/timens/timens.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sched.h>
+diff --git a/tools/testing/selftests/timens/timer.c b/tools/testing/selftests/timens/timer.c
+index 5e7f0051bd7b..378e058359c1 100644
+--- a/tools/testing/selftests/timens/timer.c
++++ b/tools/testing/selftests/timens/timer.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sched.h>
+ 
+ #include <sys/syscall.h>
+diff --git a/tools/testing/selftests/timens/timerfd.c b/tools/testing/selftests/timens/timerfd.c
+index 9edd43d6b2c1..807edb9d83c9 100644
+--- a/tools/testing/selftests/timens/timerfd.c
++++ b/tools/testing/selftests/timens/timerfd.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sched.h>
+ 
+ #include <sys/timerfd.h>
+diff --git a/tools/testing/selftests/timens/vfork_exec.c b/tools/testing/selftests/timens/vfork_exec.c
+index beb7614941fb..675c6a8b2eed 100644
+--- a/tools/testing/selftests/timens/vfork_exec.c
++++ b/tools/testing/selftests/timens/vfork_exec.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sched.h>
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
