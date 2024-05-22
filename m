@@ -1,143 +1,232 @@
-Return-Path: <linux-kernel+bounces-185763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E368CBA65
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:43:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF9738CBA85
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2BE1F2252B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75418282D1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEC5770E7;
-	Wed, 22 May 2024 04:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C37762CD;
+	Wed, 22 May 2024 04:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7g07fsQ"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9DZrJGi"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0C737144;
-	Wed, 22 May 2024 04:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EE74C62
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 04:59:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716353008; cv=none; b=scCt3F0bSNguTjMBWkOdkhTevQv8kvxzf5ZBcIVvwUWsnQxJfYJZMqhnz/zRUx3QUNtjFNbNm6AAQdQ7ioyU4vS+vPmBdFa3J3hmZX3W0VdPgqCysbOVM7SQ8+KpiZDfSZD0PHBTVGYaPfiLtzS0Eq28vOadzxaffImotmuu0NE=
+	t=1716353959; cv=none; b=nw0yITrcv/FYL6Hm02u4OWjehICGeZs2TjBQCalY78e5umE4vqN5pDJIqpb7nJgxVvwi+A+8O2m8Tv95xKOu8SZSxKMDZ89eV9GZBE+OdbVN6fJbtY9wVySYVXVD86mY7ahKvkT3yuhtJfSstZIknCbGuoZcmkusLX7NH4fVKaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716353008; c=relaxed/simple;
-	bh=rOjGBGJlpqLBibSals7NQDD+aW+xnPnJbgEyujc2IxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IzNx67rXad3Jv5Ck4bUBTywKv4Vwvohu2etq4iPdqyZudOdlrFttMDEE7xI6tDFUJSQ+p0nIismJlsgQBR7SPPgDFIXroMu6DjyVx+izWeOKKtMPYEnFU8QeUUEwpBCGBNLLwSu0ODo+YHUTyGd5SgqdJtUear67K5ZFmxLxKuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7g07fsQ; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1716353959; c=relaxed/simple;
+	bh=EZUgvT50EiG0noTA0PwEaevnx2DYm3VP9zfDMF3tH2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LqMLuFUULoAuqM/tnTEl4iCAb8eH+s0ZnGCFBGL0WWyoDxUe73OmbiUhdXAhnIuThksxv9B2LtEo+uZOJZ46W2Zh9gKh+mqBce5Ci4OK6ERondQPHSfYVrOPBPx52UD896yblnJJJ69pua38dzR+8P21ofWfzUGSFnSo6nCSI4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9DZrJGi; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34dc8d3fbf1so3404566f8f.1;
-        Tue, 21 May 2024 21:43:26 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57342829409so926681a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 21:59:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716353004; x=1716957804; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AmHrqywSLIqSjg1vJV1MQvzffoeBek4ngmT0+/XAH2s=;
-        b=T7g07fsQSBG21rtc6TgBz/57zSZ6nVH/6DBlAyiAdgqv51foi8w/zKGjQsEp4JwRWf
-         Epy2E/8tZVpWl+YOhruM4oeXWv+t6yZ9wIL2ge/xaMrHHEu1b/PnHzSZ1zhzMvNdLNMP
-         qOgoEmqO3+eLginj879ldk3tAaiGIGO0vEekuyS9DElAWmAxysKQfh9F50YGkBMfL6Q+
-         RYfrF7ZA90+DyPHBZbF9bBkOjHKoaup9pDBfrFVCeDEsbVJCTZbD3GCjzowvoFb43sb2
-         lHNdRTWSgRDVnsS8VGx+lWDiZYkQGdTlwcpxZ09lCVcSdoB97wWaPkSCqD+0DwE+PbZc
-         OE/A==
+        d=gmail.com; s=20230601; t=1716353956; x=1716958756; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=39bxPhPVcA85UbzZ3VjWUXERVKdx/CAHlqDcF/RAs0Q=;
+        b=B9DZrJGi5oboN+XviEEgy7IUhqVDzeJ90ZgiHWsVxTj/1h/6jToqaZoOZFEFQJmtW0
+         ZbClyQMa14a4ubNHWrmZGRvu7Bdbj1/JtQqPM6p53RkOWBp5C5n/c7mQQmc8+H98EwNr
+         0vjN9kr8/F/SBcUQn1JzJ06L0ogvQkRFw8gRTh382rEo2V9G6Aacn/UVKQ+WmIJN6tfN
+         U9iwzuqc4nrLQli5MAg4uBVdCMf0twcAdli1/uN5y4rQAdFrfKisqOorAZaEvGZjiNiV
+         tVg3M3nq3+oPGmp0X0NtsOj38zJbnAe3QEzjY5CQU9TJhObvUfc2oqk3QB3IwgkPcc2U
+         MiIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716353004; x=1716957804;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AmHrqywSLIqSjg1vJV1MQvzffoeBek4ngmT0+/XAH2s=;
-        b=mT7blln1H/n6mm27jcqCATNHkX42Dpn5EOxH7SsNhKP00iFrh1BVJozMW4UjNDumym
-         JzB8py6Bbon60MEInbNBgIwOamKa0uGJYUEfCjNEqJCV8KbMMR5l7sLEWxdxD5j6R2mu
-         YZJDFJDhfVLHT8WHhZXrYIff/yKda8NjFHkfBm9lGR/i7fc7Rlh2EwdACDLO/0D18xrs
-         QfOgvXov6smVRtwClKWXokVPioybPjGLxeHMNFKBRQApsQZEcmZUcXjGtl0PT/fwPi9B
-         mHwsoc/eW8p9Tko9iKLdm6rtLNtDKsYZBGEmxGE+mTaLLw2BLvw/DU+nBfBjfLIf5vv1
-         t66Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5eiKdrYBlX8AXMd6lbwyF4dw+osOOerPwkR24IEFxCIO9p/dwy/xS9sVEHEKlPnKotth++MAVFmGIZl41m7A6CHb6G5x8wvkltRAT
-X-Gm-Message-State: AOJu0YzCS4m4tOfgo1nTEzWe2gFSCv7eGSGn/IJi7TbOL06+AHwFc5jT
-	RHHs7WQ9VqVmjltZZVJVezeeDPOAYlwKh7YluP+rokZUQanapMHdfDAWoA==
-X-Google-Smtp-Source: AGHT+IH9ikW4E4tHEicpzfvYHbvquTNq7PRR5DdZGtiEVgQbOy5637MdDZfAFOGp3f8I34KHrLqW4Q==
-X-Received: by 2002:adf:eeca:0:b0:34d:9e54:11ec with SMTP id ffacd0b85a97d-354d8c73f2cmr490258f8f.5.1716353004206;
-        Tue, 21 May 2024 21:43:24 -0700 (PDT)
-Received: from localhost.localdomain (249.red-88-10-56.dynamicip.rima-tde.net. [88.10.56.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b89573csm33222744f8f.29.2024.05.21.21.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 21:43:23 -0700 (PDT)
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To: devicetree@vger.kernel.org
-Cc: linux-pci@vger.kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	kw@linux.com,
-	lpieralisi@kernel.org,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	angelogioacchino.delregno@collabora.com,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] dt-bindings: PCI: mediatek,mt7621-pcie: add PCIe host topology ascii graph
-Date: Wed, 22 May 2024 06:43:21 +0200
-Message-Id: <20240522044321.3205160-1-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1716353956; x=1716958756;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=39bxPhPVcA85UbzZ3VjWUXERVKdx/CAHlqDcF/RAs0Q=;
+        b=THuI4uO5arIuO+txiJQhEFdEAfz9rStO1Z8JuKjOYsqBpkiR8IfQlBp1CxUw8zEO7v
+         y4dfjT2H8TDUo9e57j7vYTMpoL6zp0fM/+dDjuj28pmcQBVc3ARss1/Dbr8N0yLLg9kY
+         eUUJxx/zcoFsgOfnd9fO+6gThx6Y4gCP8e+oVCQxQpm6Euwya0SFHsWZuQ/nq6eklSes
+         IHpicLOjna8zGqrA6u9OVFlSCA5AUEYteVJtIbX06Xx6HHwBQeClIUca2/vjuq9H4nZv
+         BfpCCxhjoWytk4QUcTwhzGZLW61I5hljCA/W+VyVqO7Uwo7tgDqdJ2sO7K7OohgMb4YU
+         AdBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3HU2xjN1awMGiRpf95wRL0jxiwJiW9AYxLd9W83miXpMeTK9f6s/+O842lfN6ijdPbTZXoN5OPcIT/9RR03k+7Q6618MzQblaHvPg
+X-Gm-Message-State: AOJu0Yx9gbMIPVEvKI6I8PTAENtaMAh+4PBaoApRyg2oTZmNMQKhJiKc
+	75RaBxLpOb67fhJFfbIHoxm+RNaS8KSMXYbuuywwfJuHwXS5B/DE8Onom4VcayVFpheORDWQtMz
+	oYzwfMOux4oCTEvunBUpqnkUuXoo=
+X-Google-Smtp-Source: AGHT+IGa+13CEFwmy5GAjmwiCyxL7oM9UfZgNMhWLRQ0BlkBOC5alvxMemPCt+VCIkYC9kd+4eTQUKoxh5bxNUxKbRE=
+X-Received: by 2002:a50:c044:0:b0:572:7014:230a with SMTP id
+ 4fb4d7f45d1cf-5752b4c8d66mr9496526a12.14.1716353955662; Tue, 21 May 2024
+ 21:59:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240521233100.358002-1-mjguzik@gmail.com> <Zk1HsDYKwxpzeBjq@snowbird>
+In-Reply-To: <Zk1HsDYKwxpzeBjq@snowbird>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 22 May 2024 06:59:02 +0200
+Message-ID: <CAGudoHGpiJwuNX5MEj_RGdc+vVo_3u3hSv9wWSRm6ZrmAi65NA@mail.gmail.com>
+Subject: Re: [PATCH v3] percpu_counter: add a cmpxchg-based _add_batch variant
+To: Dennis Zhou <dennis@kernel.org>
+Cc: tj@kernel.org, hughd@google.com, akpm@linux-foundation.org, vbabka@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-MediaTek MT7621 PCIe subsys supports a single Root Complex (RC) with 3 Root
-Ports. Add PCIe host topology ascii graph to the binding for completeness.
+On Wed, May 22, 2024 at 3:17=E2=80=AFAM Dennis Zhou <dennis@kernel.org> wro=
+te:
+>
+> Hi Mateusz,
+>
+> On Wed, May 22, 2024 at 01:31:00AM +0200, Mateusz Guzik wrote:
+> > Interrupt disable/enable trips are quite expensive on x86-64 compared t=
+o
+> > a mere cmpxchg (note: no lock prefix!) and percpu counters are used
+> > quite often.
+> >
+> > With this change I get a bump of 1% ops/s for negative path lookups,
+> > plugged into will-it-scale:
+> >
+> > void testcase(unsigned long long *iterations, unsigned long nr)
+> > {
+> >         while (1) {
+> >                 int fd =3D open("/tmp/nonexistent", O_RDONLY);
+> >                 assert(fd =3D=3D -1);
+> >
+> >                 (*iterations)++;
+> >         }
+> > }
+> >
+> > The win would be higher if it was not for other slowdowns, but one has
+> > to start somewhere.
+>
+> This is cool!
+>
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> > ---
+> >
+> > v3:
+> > - add a missing word to the new comment
+> >
+> > v2:
+> > - dodge preemption
+> > - use this_cpu_try_cmpxchg
+> > - keep the old variant depending on CONFIG_HAVE_CMPXCHG_LOCAL
+> >
+> >  lib/percpu_counter.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 39 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
+> > index 44dd133594d4..c3140276bb36 100644
+> > --- a/lib/percpu_counter.c
+> > +++ b/lib/percpu_counter.c
+> > @@ -73,17 +73,50 @@ void percpu_counter_set(struct percpu_counter *fbc,=
+ s64 amount)
+> >  EXPORT_SYMBOL(percpu_counter_set);
+> >
+> >  /*
+> > - * local_irq_save() is needed to make the function irq safe:
+> > - * - The slow path would be ok as protected by an irq-safe spinlock.
+> > - * - this_cpu_add would be ok as it is irq-safe by definition.
+> > - * But:
+> > - * The decision slow path/fast path and the actual update must be atom=
+ic, too.
+> > + * Add to a counter while respecting batch size.
+> > + *
+> > + * There are 2 implementations, both dealing with the following proble=
+m:
+> > + *
+> > + * The decision slow path/fast path and the actual update must be atom=
+ic.
+> >   * Otherwise a call in process context could check the current values =
+and
+> >   * decide that the fast path can be used. If now an interrupt occurs b=
+efore
+> >   * the this_cpu_add(), and the interrupt updates this_cpu(*fbc->counte=
+rs),
+> >   * then the this_cpu_add() that is executed after the interrupt has co=
+mpleted
+> >   * can produce values larger than "batch" or even overflows.
+> >   */
+> > +#ifdef CONFIG_HAVE_CMPXCHG_LOCAL
+> > +/*
+> > + * Safety against interrupts is achieved in 2 ways:
+> > + * 1. the fast path uses local cmpxchg (note: no lock prefix)
+> > + * 2. the slow path operates with interrupts disabled
+> > + */
+> > +void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, =
+s32 batch)
+> > +{
+> > +     s64 count;
+> > +     unsigned long flags;
+> > +
+> > +     count =3D this_cpu_read(*fbc->counters);
+>
+> Should this_cpu_read() be inside the do {} while in case the extreme
+> case that we get preempted after the read and before the cmpxchg AND
+> count + amount < batch on both the previous and next cpu?
+>
 
-Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- .../bindings/pci/mediatek,mt7621-pcie.yaml    | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
+this_cpu_try_cmpxchg updates the local value on failure (hence &), so
+from semantic pov this is equivalent to having this_cpu_read in the
+loop. I'm using it the same way as mod_zone_state.
 
-diff --git a/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml
-index 6fba42156db6..c41608863d6c 100644
---- a/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml
-@@ -13,6 +13,35 @@ description: |+
-   MediaTek MT7621 PCIe subsys supports a single Root Complex (RC)
-   with 3 Root Ports. Each Root Port supports a Gen1 1-lane Link
- 
-+                          MT7621 PCIe HOST Topology
-+
-+                                   .-------.
-+                                   |       |
-+                                   |  CPU  |
-+                                   |       |
-+                                   '-------'
-+                                       |
-+                                       |
-+                                       |
-+                                       v
-+                              .------------------.
-+                  .-----------|  HOST/PCI Bridge |------------.
-+                  |           '------------------'            | Type1
-+             BUS0 |                     |                     | Access
-+                  v                     v                     v On Bus0
-+          .-------------.        .-------------.       .-------------.
-+          | VIRTUAL P2P |        | VIRTUAL P2P |       | VIRTUAL P2P |
-+          |    BUS0     |        |    BUS0     |       |    BUS0     |
-+          |    DEV0     |        |    DEV1     |       |    DEV2     |
-+          '-------------'        '-------------'       '-------------'
-+    Type0        |          Type0       |         Type0       |
-+   Access   BUS1 |         Access   BUS2|        Access   BUS3|
-+   On Bus1       v         On Bus2      v        On Bus3      v
-+           .----------.           .----------.          .----------.
-+           | Device 0 |           | Device 0 |          | Device 0 |
-+           |  Func 0  |           |  Func 0  |          |  Func 0  |
-+           '----------'           '----------'          '----------'
-+
- allOf:
-   - $ref: /schemas/pci/pci-host-bridge.yaml#
- 
--- 
-2.25.1
+> > +     do {
+> > +             if (unlikely(abs(count + amount)) >=3D batch) {
+> > +                     raw_spin_lock_irqsave(&fbc->lock, flags);
+> > +                     /*
+> > +                      * Note: by now we might have migrated to another=
+ CPU
+> > +                      * or the value might have changed.
+> > +                      */
+> > +                     count =3D __this_cpu_read(*fbc->counters);
+> > +                     fbc->count +=3D count + amount;
+> > +                     __this_cpu_sub(*fbc->counters, count);
+> > +                     raw_spin_unlock_irqrestore(&fbc->lock, flags);
+> > +                     return;
+> > +             }
+> > +     } while (!this_cpu_try_cmpxchg(*fbc->counters, &count, count + am=
+ount));
+> > +}
+> > +#else
+> > +/*
+> > + * local_irq_save() is used to make the function irq safe:
+> > + * - The slow path would be ok as protected by an irq-safe spinlock.
+> > + * - this_cpu_add would be ok as it is irq-safe by definition.
+> > + */
+> >  void percpu_counter_add_batch(struct percpu_counter *fbc, s64 amount, =
+s32 batch)
+> >  {
+> >       s64 count;
+> > @@ -101,6 +134,7 @@ void percpu_counter_add_batch(struct percpu_counter=
+ *fbc, s64 amount, s32 batch)
+> >       }
+> >       local_irq_restore(flags);
+> >  }
+> > +#endif
+> >  EXPORT_SYMBOL(percpu_counter_add_batch);
+> >
+> >  /*
+> > --
+> > 2.39.2
+> >
+>
+> Thanks,
+> Dennis
 
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
