@@ -1,184 +1,88 @@
-Return-Path: <linux-kernel+bounces-186540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F518CC560
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:10:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0D58CC566
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9AF1F22E02
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBE0284113
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490F7142E64;
-	Wed, 22 May 2024 17:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF12E1422D1;
+	Wed, 22 May 2024 17:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V/1ei27w"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeFxgPqN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84AB1420C8;
-	Wed, 22 May 2024 17:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D7C762FF;
+	Wed, 22 May 2024 17:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716397830; cv=none; b=cIqWLWH1jLByVLX7Cd7elIWg21j35ZwOv56hPgZ2Z8iBanXtNBmYTbOx7KqnRDNwERhx2It7rTJrzR/em7ym+y8DtKjeLGKZO/V1w4EUlNBV8KjUd9in8F5XGNDMGkxgBPXpG2RN2Vhb4R//kHUWicAG9tqpZ/gNOVWjrNkVvTs=
+	t=1716398032; cv=none; b=ZJnhnm29EjJS4ub04giVeuC1xYZo9jVd1pEiNVWfH0i8piUii5S2le+NsKsm6Y+IrlcJCMK21QE3YzO5veqEZcSHohR9rBNsE1Omc6lJnUYWzPwFSFiXPRe+hIXUO0Q498Aju8kntYninAUlmBGE+iFgCoANXCxA1MT7tJ535Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716397830; c=relaxed/simple;
-	bh=ih/XatgI/b6IXMWF2mm3fivW4TL6AmJ8/jFk2rg1YXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fjfI0VxMcOFykoMT3nShXp3snZx/L4t754VSkE5qAFsvU/Zol6zCZDWk67GsCx+LU9SObSv5ekmxNJn/phGbgAx4r5T/x3+lL6o2NZYaH1NKHyOhSKs0nVVWa7l/dhd15MjhrUzg65GWrU+8Oh3ywfEDwjgFST2wiHujRexQ7Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V/1ei27w; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716397829; x=1747933829;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ih/XatgI/b6IXMWF2mm3fivW4TL6AmJ8/jFk2rg1YXQ=;
-  b=V/1ei27wJZnCp5jBxcWHrZAGZxe8DjpWMdF++7UUy6vzkpQ/KaYMBQnZ
-   G9xCgxUvxZ17A5bkeoqyvKyGn+XboRt3lP6mQQoC68pL84rnfLY2zzWka
-   mq+lDBaq6s16tXaIuBIt6xZaDIjzcTYYk2jvcBArDePCMqH3k65oof7ri
-   IxsYZQ8qNMlkAClI+4MSxNClJZcdCXuFS08KiNVwd0XcxkSCSWOUOyTVx
-   qnDXvKeltZpPLzJ0ifSng227lNHUEnYd8BkNWWJWWTre2+EzK8G2roBtN
-   AfM7TUmRceDfkjMmtFJWfKGapw8B2pfPZSKsWKUz2x5PsC5cyaP0lbDGs
-   g==;
-X-CSE-ConnectionGUID: 8w6/T7P5QLqU+PCQMqg8pg==
-X-CSE-MsgGUID: fVY7HYzyRIujHwzsGUqBLw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="35180072"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="35180072"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 10:10:29 -0700
-X-CSE-ConnectionGUID: 36ppDiJ0ROqN2gKE81F7ag==
-X-CSE-MsgGUID: 2V+ttrCiSq+SXM7w0NvCzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="38204823"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 22 May 2024 10:10:27 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BCCC83D1; Wed, 22 May 2024 20:10:25 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v1 2/2] spi: Check if transfer is mapped before calling DMA sync APIs
-Date: Wed, 22 May 2024 20:09:50 +0300
-Message-ID: <20240522171018.3362521-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
-References: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1716398032; c=relaxed/simple;
+	bh=60LHAtzrKidGyWFU1huo2XzSzZXTtfyfRyB9guGBkOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cA002To3Muxf6iKI36/DvuoAI3Xtgx6X966Wxs5qOrGw5o5Xc1X6OBcjgTpRmU/XMLWELmOQIRsOKz241ZaFV5B1xOrx0KEC6Eo9RIyyjnRpeu2YeAoLaObxmEmW4K6iPdFZaE8T+UzkpOJXyiVE09IhAzN7lcDi/AGk2mQLqYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeFxgPqN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E92FC2BBFC;
+	Wed, 22 May 2024 17:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716398031;
+	bh=60LHAtzrKidGyWFU1huo2XzSzZXTtfyfRyB9guGBkOE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UeFxgPqNVyEgTI0XJHmMlqgVNwR2qk549KtkKSQj2xn6VpsjZwqC2Lf+iDGZOM5df
+	 0pIFB6FedIZ/eSAj34yv1Bx+FunjVdU3oXJTN9JCuPirVygCgAdPEBau4VikcgzwOQ
+	 vlGypaEUL6B4MLskgs7u6vTkyDaanEs1bahwrtj9f+XSO7m6MP7DKDlUm+A0438Ht9
+	 2a4kdmt1gQm5HYO3RfBeVkC9R256x/7f0QwJz18xlk3m5e89KQ/35CBOktYzcP1rKi
+	 EodPgwktvtviUOk0lBkjMML7i2DmwbUNREU03/GeffV5q/eqjOx9u6S0Sn1Z0ZUMco
+	 ceoRRyLMbHS3g==
+Date: Wed, 22 May 2024 10:13:49 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Shuah Khan <skhan@linuxfoundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Edward Liaw <edliaw@google.com>, shuah@kernel.org, =?UTF-8?B?TWlja2E=?=
+ =?UTF-8?B?w6tsIFNhbGHDvG4=?= <mic@digikod.net>, =?UTF-8?B?R8O8bnRoZXI=?=
+ Noack <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, Richard
+ Cochran <richardcochran@gmail.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-team@android.com,
+ linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+ linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
+Message-ID: <20240522101349.565a745e@kernel.org>
+In-Reply-To: <6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
+References: <20240522005913.3540131-1-edliaw@google.com>
+	<6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The resent update to remove the orig_nents checks revealed
-that not all DMA sync backends can cope with the unallocated
-SG list, while supplying orig_nents == 0 (the commit 861370f49ce4
-("iommu/dma: force bouncing if the size is not cacheline-aligned"),
-for example, makes that happen for the IOMMU case). It means
-we have to check if the buffers are DMA mapped before trying
-to sync them. Re-introduce that check in a form of calling
-->can_dma() in the same way as it's done in the DMA mapping loop
-for the SPI transfers.
+On Wed, 22 May 2024 10:19:33 -0600 Shuah Khan wrote:
+> On 5/21/24 18:56, Edward Liaw wrote:
+> > Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
+> > redefinitions of _GNU_SOURCE from source code.
+> > 
+> > 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> > asprintf into kselftest_harness.h, which is a GNU extension and needs  
+> 
+> Easier solution to define LINE_MAX locally. In gerenal it is advisable
+> to not add local defines, but it is desirable in some cases to avoid
+> churn like this one.
 
-Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
-Closes: https://lore.kernel.org/r/8ae675b5-fcf9-4c9b-b06a-4462f70e1322@linaro.org
-Closes: https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
-Fixes: 8cc3bad9d9d6 ("spi: Remove unneded check for orig_nents")
-Suggested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/spi/spi.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 51811f04e463..cc8bb7d5ba1a 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1311,7 +1311,7 @@ static int __spi_unmap_msg(struct spi_controller *ctlr, struct spi_message *msg)
- 	return 0;
- }
- 
--static void spi_dma_sync_for_device(struct spi_controller *ctlr,
-+static void spi_dma_sync_for_device(struct spi_controller *ctlr, struct spi_message *msg,
- 				    struct spi_transfer *xfer)
- {
- 	struct device *rx_dev = ctlr->cur_rx_dma_dev;
-@@ -1320,11 +1320,14 @@ static void spi_dma_sync_for_device(struct spi_controller *ctlr,
- 	if (!ctlr->cur_msg_mapped)
- 		return;
- 
-+	if (!ctlr->can_dma(ctlr, msg->spi, xfer))
-+		return;
-+
- 	dma_sync_sgtable_for_device(tx_dev, &xfer->tx_sg, DMA_TO_DEVICE);
- 	dma_sync_sgtable_for_device(rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
- }
- 
--static void spi_dma_sync_for_cpu(struct spi_controller *ctlr,
-+static void spi_dma_sync_for_cpu(struct spi_controller *ctlr, struct spi_message *msg,
- 				 struct spi_transfer *xfer)
- {
- 	struct device *rx_dev = ctlr->cur_rx_dma_dev;
-@@ -1333,6 +1336,9 @@ static void spi_dma_sync_for_cpu(struct spi_controller *ctlr,
- 	if (!ctlr->cur_msg_mapped)
- 		return;
- 
-+	if (!ctlr->can_dma(ctlr, msg->spi, xfer))
-+		return;
-+
- 	dma_sync_sgtable_for_cpu(rx_dev, &xfer->rx_sg, DMA_FROM_DEVICE);
- 	dma_sync_sgtable_for_cpu(tx_dev, &xfer->tx_sg, DMA_TO_DEVICE);
- }
-@@ -1350,11 +1356,13 @@ static inline int __spi_unmap_msg(struct spi_controller *ctlr,
- }
- 
- static void spi_dma_sync_for_device(struct spi_controller *ctrl,
-+				    struct spi_message *msg,
- 				    struct spi_transfer *xfer)
- {
- }
- 
- static void spi_dma_sync_for_cpu(struct spi_controller *ctrl,
-+				 struct spi_message *msg,
- 				 struct spi_transfer *xfer)
- {
- }
-@@ -1626,10 +1634,10 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
- 			reinit_completion(&ctlr->xfer_completion);
- 
- fallback_pio:
--			spi_dma_sync_for_device(ctlr, xfer);
-+			spi_dma_sync_for_device(ctlr, msg, xfer);
- 			ret = ctlr->transfer_one(ctlr, msg->spi, xfer);
- 			if (ret < 0) {
--				spi_dma_sync_for_cpu(ctlr, xfer);
-+				spi_dma_sync_for_cpu(ctlr, msg, xfer);
- 
- 				if (ctlr->cur_msg_mapped &&
- 				   (xfer->error & SPI_TRANS_FAIL_NO_START)) {
-@@ -1654,7 +1662,7 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
- 					msg->status = ret;
- 			}
- 
--			spi_dma_sync_for_cpu(ctlr, xfer);
-+			spi_dma_sync_for_cpu(ctlr, msg, xfer);
- 		} else {
- 			if (xfer->len)
- 				dev_err(&msg->spi->dev,
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Will the patch that Andrew applied:
+https://lore.kernel.org/all/20240519213733.2AE81C32781@smtp.kernel.org/
+make its way to Linus? As you say that's a much simpler fix.
 
