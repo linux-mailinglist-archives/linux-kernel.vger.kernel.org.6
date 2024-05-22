@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-185802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2550E8CBB21
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:22:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5128CBB23
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00FC281EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:22:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FBC11F21B49
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1B879945;
-	Wed, 22 May 2024 06:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A949778C8F;
+	Wed, 22 May 2024 06:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BlUpopu7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="USJvkhZ0";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BlUpopu7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="USJvkhZ0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mAQqnmaF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C7D76405;
-	Wed, 22 May 2024 06:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B603018B1A;
+	Wed, 22 May 2024 06:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716358960; cv=none; b=J3qEqm07kYNsm/O+EgBTf6uNE3P8VEuOW53S7zGzJIRdFQ4JaIpR16DrNrUdYw8uNSbVpFMrxJzB8kAd/C4iynhgP7o8yOzyEi1sK7HzQTmF+CRnux39SD7hOXmzN1xwqP0rHXlDsrgukQLQ7qzikyj5vsBwdRBVpAWeXk/gUv0=
+	t=1716359003; cv=none; b=kCuw7F/7gp3+uSKnfFRI4UWeDF54O2oIFezVF+sbppmdHmxNj3EE3cBnhqClUuU3ZzZ/xUUWsRVoUm+8rFJkFrpYPak8ggOwq8X25vwneNUWxj9S/6cJq5ZcgpBXAko6jOUWnyN23s/jIFtYGJ1qAXuunme7VVpuNqfvhKufovQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716358960; c=relaxed/simple;
-	bh=dWFbD0hyjBTnHZSjDxti4iwBSEqTJCgP6oKdO+DHDtM=;
+	s=arc-20240116; t=1716359003; c=relaxed/simple;
+	bh=gL+jDYOFb6oMDjEJ9oFeSQH2k0FsJz1AF0qKezKEZ2w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aZOQrolNsIVhkS3GOD3qtuDAXKd6v9hcJMxL4U/iiHenjpBVc1vJosaC6jnGb3A2QbFlAuLm//9kb2hCj7Cwux05LIL4C0malcAVbdtIjVDLX8nj1uEKlJFIF79bdHCUGUONksrYzxZWwFgUDmf12Y+i4MsueDD1AXPL3FrWqmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BlUpopu7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=USJvkhZ0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BlUpopu7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=USJvkhZ0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 43DE65C678;
-	Wed, 22 May 2024 06:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716358957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
-	b=BlUpopu7lfFzGuVYtey10hAI09jmAuC31yfW6GvvmDn9RQMWyaubtSHkaVrj5Bej4Weexg
-	uDE4uRzvaJwypMdbUPGEQ3yUhK1muvUiKd5ArSLeWLy9NLdwHl8+VkfOVlaOGwUOrzuQxZ
-	FxjncxhnRRYHDzf74v+5jq7Yml+KHFY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716358957;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
-	b=USJvkhZ0rAe5SKW+Hevkq3gRvCInKHPvDgudvGa0YY9rv3HIinKlhd8tE5ei4I/5cDSgp3
-	XqEXzO025UO1QGCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716358957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
-	b=BlUpopu7lfFzGuVYtey10hAI09jmAuC31yfW6GvvmDn9RQMWyaubtSHkaVrj5Bej4Weexg
-	uDE4uRzvaJwypMdbUPGEQ3yUhK1muvUiKd5ArSLeWLy9NLdwHl8+VkfOVlaOGwUOrzuQxZ
-	FxjncxhnRRYHDzf74v+5jq7Yml+KHFY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716358957;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxcsE1xFuEdCcsKm6YBMU0O/FCyQsR2TEf5Wkf0+zNc=;
-	b=USJvkhZ0rAe5SKW+Hevkq3gRvCInKHPvDgudvGa0YY9rv3HIinKlhd8tE5ei4I/5cDSgp3
-	XqEXzO025UO1QGCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 62EE213A1E;
-	Wed, 22 May 2024 06:22:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NKF0FiyPTWY+AQAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 22 May 2024 06:22:36 +0000
-Message-ID: <0f29bcc1-e708-47cc-a562-0d1e69be6b03@suse.de>
-Date: Wed, 22 May 2024 08:22:35 +0200
+	 In-Reply-To:Content-Type; b=GmaZfdFwJtXV4eFJY2zZ89ICUAcgjGCxVLhjP+jiG/Fse2U6RrWR2qzr2hczbKvtOVA+2WRwbjjBwswE9WtG1j1jW7KwUCvRoFsPaqxFbEi6klZu1SETuocEAkLIRhsKwpbHbsURmaWeiU2Ns84njDQD9WIEhAN+jPbbA4DMDY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mAQqnmaF; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716359002; x=1747895002;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gL+jDYOFb6oMDjEJ9oFeSQH2k0FsJz1AF0qKezKEZ2w=;
+  b=mAQqnmaFoFCabrMNkh0NNG8xFhw5VAYHt0giHxWYY1M8Q4BOzTxmQSLS
+   +3nViOTAn2UDXxv6qfBcgpWbNunX9WmpJwBZpVWggNOjseI1zofFPhuQt
+   b7mWJxKuYmy9UQl9aDMrUxrvAjy95UdVCSx0pfHlz+89Mst12CMWaolzj
+   +I/fGIklS6RDYNCiPAcHsFlflvRhSxZJrig14YIPasOn31NqxDZ8Q8H6f
+   zMHWA819asJA6yP70lwXwpQm0UwhjmFxNXHBKP4rFPjkg6xIcKAdYLgRO
+   Psdb3iyprnrtvawPyNYABndFobmTPSvI/2M/jnf+60gxz3RAyFH98wrOh
+   A==;
+X-CSE-ConnectionGUID: 5xGDgxvYRZmXTldy5A6y/Q==
+X-CSE-MsgGUID: xIING5cNQmOAZGXX3J3lsQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="15538594"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="15538594"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 23:23:21 -0700
+X-CSE-ConnectionGUID: QhaGxeTAQv+nYr5q2jXWTQ==
+X-CSE-MsgGUID: oR0oQIlkSb+9aT578bh+kA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="37655218"
+Received: from unknown (HELO [10.238.8.173]) ([10.238.8.173])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 23:23:18 -0700
+Message-ID: <7ed7f3b7-4970-4723-8969-6452aed41b01@linux.intel.com>
+Date: Wed, 22 May 2024 14:23:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,103 +66,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 09/12] dm: Add support for copy offload
+Subject: Re: [PATCH v2 20/49] KVM: x86: Rename kvm_cpu_cap_mask() to
+ kvm_cpu_cap_init()
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+ <20240517173926.965351-21-seanjc@google.com>
 Content-Language: en-US
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, bvanassche@acm.org,
- david@fromorbit.com, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
- joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520103004epcas5p4a18f3f6ba0f218d57b0ab4bb84c6ff18@epcas5p4.samsung.com>
- <20240520102033.9361-10-nj.shetty@samsung.com>
- <41228a01-9d0c-415d-9fef-a3d2600b1dfa@suse.de>
- <20240521140850.m6ppy2sxv457gxgs@green245>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240521140850.m6ppy2sxv457gxgs@green245>
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240517173926.965351-21-seanjc@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[27];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.dk,lwn.net,redhat.com,kernel.org,lst.de,grimberg.me,nvidia.com,zeniv.linux.org.uk,suse.cz,oracle.com,acm.org,fromorbit.com,opensource.wdc.com,samsung.com,gmail.com,vger.kernel.org,lists.linux.dev,lists.infradead.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLhytspa9b8ghbrab87o1fjg5u)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
+Content-Transfer-Encoding: 7bit
 
-On 5/21/24 16:08, Nitesh Shetty wrote:
-> On 21/05/24 09:11AM, Hannes Reinecke wrote:
->> On 5/20/24 12:20, Nitesh Shetty wrote:
->>> Before enabling copy for dm target, check if underlying devices and
->>> dm target support copy. Avoid split happening inside dm target.
->>> Fail early if the request needs split, currently splitting copy
->>> request is not supported.
->>>
->>> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->>> ---
->>> @@ -397,6 +397,9 @@ struct dm_target {
->>>       * bio_set_dev(). NOTE: ideally a target should _not_ need this.
->>>       */
->>>      bool needs_bio_set_dev:1;
->>> +
->>> +    /* copy offload is supported */
->>> +    bool copy_offload_supported:1;
->>>  };
->>>  void *dm_per_bio_data(struct bio *bio, size_t data_size);
->>
->> Errm. Not sure this will work. DM tables might be arbitrarily, 
->> requiring us to _split_ the copy offload request according to the 
->> underlying component devices. But we explicitly disallowed a split in 
->> one of the earlier patches.
->> Or am I wrong?
->>
-> Yes you are right w.r.to split, we disallow split.
-> But this flag indicates whether we support copy offload in dm-target or
-> not. At present we support copy offload only in dm-linear.
-> For other dm-target, eventhough underlaying device supports copy
-> offload, dm-target based on it wont support copy offload.
-> If the present series get merged, we can test and integrate more
-> targets.
-> 
-But dm-linear can be concatenated, too; you can easily use dm-linear
-to tie several devices together.
-Which again would require a copy-offload range to be split.
-Hmm?
 
-Cheers,
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+On 5/18/2024 1:38 AM, Sean Christopherson wrote:
+> Rename kvm_cpu_cap_mask() to kvm_cpu_cap_init() in anticipation of merging
+> it with kvm_cpu_cap_init_kvm_defined(), and in anticipation of _setting_
+> bits in the helper (a future commit will play macro games to set emulated
+> feature flags via kvm_cpu_cap_init()).
+>
+> No functional change intended.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/kvm/cpuid.c | 36 ++++++++++++++++++------------------
+>   1 file changed, 18 insertions(+), 18 deletions(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index a802c09b50ab..5a4d6138c4f1 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -74,7 +74,7 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
+>    * Raw Feature - For features that KVM supports based purely on raw host CPUID,
+>    * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
+>    * Simply force set the feature in KVM's capabilities, raw CPUID support will
+> - * be factored in by kvm_cpu_cap_mask().
+> + * be factored in by __kvm_cpu_cap_mask().
+
+kvm_cpu_cap_init()?
+
+
+>    */
+>   #define RAW_F(name)						\
+>   ({								\
+> @@ -619,7 +619,7 @@ static __always_inline void __kvm_cpu_cap_mask(unsigned int leaf)
+>   static __always_inline
+>   void kvm_cpu_cap_init_kvm_defined(enum kvm_only_cpuid_leafs leaf, u32 mask)
+>   {
+> -	/* Use kvm_cpu_cap_mask for leafs that aren't KVM-only. */
+> +	/* Use kvm_cpu_cap_init for leafs that aren't KVM-only. */
+>   	BUILD_BUG_ON(leaf < NCAPINTS);
+>   
+>   	kvm_cpu_caps[leaf] = mask;
+> @@ -627,7 +627,7 @@ void kvm_cpu_cap_init_kvm_defined(enum kvm_only_cpuid_leafs leaf, u32 mask)
+>   	__kvm_cpu_cap_mask(leaf);
+>   }
+>   
+> -static __always_inline void kvm_cpu_cap_mask(enum cpuid_leafs leaf, u32 mask)
+> +static __always_inline void kvm_cpu_cap_init(enum cpuid_leafs leaf, u32 mask)
+>   {
+>   	/* Use kvm_cpu_cap_init_kvm_defined for KVM-only leafs. */
+>   	BUILD_BUG_ON(leaf >= NCAPINTS);
+> @@ -656,7 +656,7 @@ void kvm_set_cpu_caps(void)
+>   	memcpy(&kvm_cpu_caps, &boot_cpu_data.x86_capability,
+>   	       sizeof(kvm_cpu_caps) - (NKVMCAPINTS * sizeof(*kvm_cpu_caps)));
+>   
+> -	kvm_cpu_cap_mask(CPUID_1_ECX,
+> +	kvm_cpu_cap_init(CPUID_1_ECX,
+>   		/*
+>   		 * NOTE: MONITOR (and MWAIT) are emulated as NOP, but *not*
+>   		 * advertised to guests via CPUID!
+> @@ -673,7 +673,7 @@ void kvm_set_cpu_caps(void)
+>   	/* KVM emulates x2apic in software irrespective of host support. */
+>   	kvm_cpu_cap_set(X86_FEATURE_X2APIC);
+>   
+> -	kvm_cpu_cap_mask(CPUID_1_EDX,
+> +	kvm_cpu_cap_init(CPUID_1_EDX,
+>   		F(FPU) | F(VME) | F(DE) | F(PSE) |
+>   		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+>   		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SEP) |
+> @@ -684,7 +684,7 @@ void kvm_set_cpu_caps(void)
+>   		0 /* HTT, TM, Reserved, PBE */
+>   	);
+>   
+> -	kvm_cpu_cap_mask(CPUID_7_0_EBX,
+> +	kvm_cpu_cap_init(CPUID_7_0_EBX,
+>   		F(FSGSBASE) | F(SGX) | F(BMI1) | F(HLE) | F(AVX2) |
+>   		F(FDP_EXCPTN_ONLY) | F(SMEP) | F(BMI2) | F(ERMS) | F(INVPCID) |
+>   		F(RTM) | F(ZERO_FCS_FDS) | 0 /*MPX*/ | F(AVX512F) |
+> @@ -693,7 +693,7 @@ void kvm_set_cpu_caps(void)
+>   		F(AVX512ER) | F(AVX512CD) | F(SHA_NI) | F(AVX512BW) |
+>   		F(AVX512VL));
+>   
+> -	kvm_cpu_cap_mask(CPUID_7_ECX,
+> +	kvm_cpu_cap_init(CPUID_7_ECX,
+>   		F(AVX512VBMI) | RAW_F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+>   		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+>   		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+> @@ -708,7 +708,7 @@ void kvm_set_cpu_caps(void)
+>   	if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
+>   		kvm_cpu_cap_clear(X86_FEATURE_PKU);
+>   
+> -	kvm_cpu_cap_mask(CPUID_7_EDX,
+> +	kvm_cpu_cap_init(CPUID_7_EDX,
+>   		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+>   		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP) |
+>   		F(MD_CLEAR) | F(AVX512_VP2INTERSECT) | F(FSRM) |
+> @@ -727,7 +727,7 @@ void kvm_set_cpu_caps(void)
+>   	if (boot_cpu_has(X86_FEATURE_AMD_SSBD))
+>   		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL_SSBD);
+>   
+> -	kvm_cpu_cap_mask(CPUID_7_1_EAX,
+> +	kvm_cpu_cap_init(CPUID_7_1_EAX,
+>   		F(AVX_VNNI) | F(AVX512_BF16) | F(CMPCCXADD) |
+>   		F(FZRM) | F(FSRS) | F(FSRC) |
+>   		F(AMX_FP16) | F(AVX_IFMA) | F(LAM)
+> @@ -743,7 +743,7 @@ void kvm_set_cpu_caps(void)
+>   		F(BHI_CTRL) | F(MCDT_NO)
+>   	);
+>   
+> -	kvm_cpu_cap_mask(CPUID_D_1_EAX,
+> +	kvm_cpu_cap_init(CPUID_D_1_EAX,
+>   		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | F(XSAVES) | f_xfd
+>   	);
+>   
+> @@ -751,7 +751,7 @@ void kvm_set_cpu_caps(void)
+>   		SF(SGX1) | SF(SGX2) | SF(SGX_EDECCSSA)
+>   	);
+>   
+> -	kvm_cpu_cap_mask(CPUID_8000_0001_ECX,
+> +	kvm_cpu_cap_init(CPUID_8000_0001_ECX,
+>   		F(LAHF_LM) | F(CMP_LEGACY) | 0 /*SVM*/ | 0 /* ExtApicSpace */ |
+>   		F(CR8_LEGACY) | F(ABM) | F(SSE4A) | F(MISALIGNSSE) |
+>   		F(3DNOWPREFETCH) | F(OSVW) | 0 /* IBS */ | F(XOP) |
+> @@ -759,7 +759,7 @@ void kvm_set_cpu_caps(void)
+>   		F(TOPOEXT) | 0 /* PERFCTR_CORE */
+>   	);
+>   
+> -	kvm_cpu_cap_mask(CPUID_8000_0001_EDX,
+> +	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
+>   		F(FPU) | F(VME) | F(DE) | F(PSE) |
+>   		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+>   		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
+> @@ -777,7 +777,7 @@ void kvm_set_cpu_caps(void)
+>   		SF(CONSTANT_TSC)
+>   	);
+>   
+> -	kvm_cpu_cap_mask(CPUID_8000_0008_EBX,
+> +	kvm_cpu_cap_init(CPUID_8000_0008_EBX,
+>   		F(CLZERO) | F(XSAVEERPTR) |
+>   		F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
+>   		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON) |
+> @@ -811,13 +811,13 @@ void kvm_set_cpu_caps(void)
+>   	 * Hide all SVM features by default, SVM will set the cap bits for
+>   	 * features it emulates and/or exposes for L1.
+>   	 */
+> -	kvm_cpu_cap_mask(CPUID_8000_000A_EDX, 0);
+> +	kvm_cpu_cap_init(CPUID_8000_000A_EDX, 0);
+>   
+> -	kvm_cpu_cap_mask(CPUID_8000_001F_EAX,
+> +	kvm_cpu_cap_init(CPUID_8000_001F_EAX,
+>   		0 /* SME */ | 0 /* SEV */ | 0 /* VM_PAGE_FLUSH */ | 0 /* SEV_ES */ |
+>   		F(SME_COHERENT));
+>   
+> -	kvm_cpu_cap_mask(CPUID_8000_0021_EAX,
+> +	kvm_cpu_cap_init(CPUID_8000_0021_EAX,
+>   		F(NO_NESTED_DATA_BP) | F(LFENCE_RDTSC) | 0 /* SmmPgCfgLock */ |
+>   		F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | 0 /* PrefetchCtlMsr */ |
+>   		F(WRMSR_XX_BASE_NS)
+> @@ -837,7 +837,7 @@ void kvm_set_cpu_caps(void)
+>   	 * kernel.  LFENCE_RDTSC was a Linux-defined synthetic feature long
+>   	 * before AMD joined the bandwagon, e.g. LFENCE is serializing on most
+>   	 * CPUs that support SSE2.  On CPUs that don't support AMD's leaf,
+> -	 * kvm_cpu_cap_mask() will unfortunately drop the flag due to ANDing
+> +	 * kvm_cpu_cap_init() will unfortunately drop the flag due to ANDing
+>   	 * the mask with the raw host CPUID, and reporting support in AMD's
+>   	 * leaf can make it easier for userspace to detect the feature.
+>   	 */
+> @@ -847,7 +847,7 @@ void kvm_set_cpu_caps(void)
+>   		kvm_cpu_cap_set(X86_FEATURE_NULL_SEL_CLR_BASE);
+>   	kvm_cpu_cap_set(X86_FEATURE_NO_SMM_CTL_MSR);
+>   
+> -	kvm_cpu_cap_mask(CPUID_C000_0001_EDX,
+> +	kvm_cpu_cap_init(CPUID_C000_0001_EDX,
+>   		F(XSTORE) | F(XSTORE_EN) | F(XCRYPT) | F(XCRYPT_EN) |
+>   		F(ACE2) | F(ACE2_EN) | F(PHE) | F(PHE_EN) |
+>   		F(PMM) | F(PMM_EN)
 
 
