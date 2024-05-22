@@ -1,159 +1,157 @@
-Return-Path: <linux-kernel+bounces-186438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9188CC42B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1EA8CC42F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 822041F22B9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D96A1C21E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6537CF39;
-	Wed, 22 May 2024 15:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC337D08F;
+	Wed, 22 May 2024 15:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JXCw+3DE"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJCaiQjL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C730A1171C;
-	Wed, 22 May 2024 15:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF641171C;
+	Wed, 22 May 2024 15:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716392103; cv=none; b=MkveClFuqxhNrh4ujFBtjlp+SVjU3c3a2FC6gJP2inGl87phs4lsMuT/FOO6WGXd4MahBbvNe7ZR3AyEMnzWBNkexfeNEdiQHh3rxCdPVNobb34J5NjLrqKAfSpc6+eBIuvYuRoJvyzJzttCqSBSETSrjDmlRyOGK8lhPJ6Pwv8=
+	t=1716392151; cv=none; b=R/XJsjpfSIb+DhbURxLVuLz2eYUSZZklCr/lc893q5f4DptHAtqboc5XDQ5wZxM6EhfeWrqpsECqxxq2z16UmaeaNdlTn3Q7adLLhEWoKjFgy0HCjrzKQemt9biNvID+lXhMFnfPpZeKcNtuY3DVassabCNNECQBmN5WUFF/irM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716392103; c=relaxed/simple;
-	bh=8480QhKUdQoJHZDBOHDLuO3cqndu/sU4gw6J3Z4J4uI=;
+	s=arc-20240116; t=1716392151; c=relaxed/simple;
+	bh=Qd+NDxGOZ2bJf9sIDqREHnfFavqyfD7ddBDGDAxcjbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UHlpw5bJSEYhMFktwo6mOwYGiGTDGHkh1yrslvxf3KwUY6XrBUSVJAkumeMuQtN55kGiTrS/qstyEKGGxtZHcOaEKgT6KlqignnTwRSZiylbc5ozvP+cw483aMCBWKJluZSx2xIQsFgA4cYnZ1NU2hZlKyBEWDzW5ItgjcyK6Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JXCw+3DE reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0C7FD40E0254;
-	Wed, 22 May 2024 15:34:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id wqTkxvV73S00; Wed, 22 May 2024 15:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716392094; bh=Xmy+3e1HHHTBNLSRHwnL6nlYDa9k9Cp2lomF07Vmx8M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mF8CuFLubuTp1/qrxU8kZoJrGh1Boqzc+2efiqb1f3z4Co09Fzlp15NDZz9luCREN4DgK84ZJ1qVJWHqZuUHQhiGz1gruWa1znCOM8e2dOsvqEQDI1L7W10KpLfABpybUOVnsf/f5NJ02QI5x9r4VowpepH81vpIMTo9kgHu+HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJCaiQjL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DE9C2BD11;
+	Wed, 22 May 2024 15:35:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716392151;
+	bh=Qd+NDxGOZ2bJf9sIDqREHnfFavqyfD7ddBDGDAxcjbk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JXCw+3DEfJjYLRkVQzMmJsoxUxb+crd9QUp2D6N8qTU23wQL1oV/VtjD7TdS7JbIs
-	 r/ysPLnKN+8KFBqQI0a83WEVeCL4oTMhh5DZFqSrqA7bkpu9x04N+VTgYZCEBJ/5rE
-	 cF75WoiavAXMd0B122qI8/O1e77WlcDAJ9dCSAmE3klJV19jAfqDu1m38BrupUhDhf
-	 McCnH9C/SxtmUWB4ZWy5Ep1KCbpARCkfZGVRcoJtdktYekLjaCweHv1FSsr8QnZKxV
-	 MsfwK+qVnWgOK1/GdEEjcmmGtEPJRMgsihVhLM4n/ngg9kdOpCgZIZSvYM0TL6xWnq
-	 4jylzsuUSB1IjGPQ88EmHuVUx7hXBAM+D4CaJbfMkWOrRJE9cUoFUlURqrY1puKJ16
-	 ysex2xRY8nflVtq5FqraGbEihfAsc7KEoW5Fnqp6FoeClUWqOv79qdQSG/XUYSLE7s
-	 DGO3ISzCpus26E9YbSQJHqlEy1YbQ0/66Mns9aScxJpE4fEv4mcmt+QY1qxS8HBudo
-	 e0bCVVs4yU9214jWMb2XPWbIUUKHxdI+MFUYjP+WEtD8nDFg15JEoJ2PbUQ2r8rh0+
-	 bJceLUXnJIZhUDNAcPpqnp/+2KR14NZ0O0qfKPV13VuanhWMBH7GNccH9UM1LMR+kB
-	 zeOfji83xzWdJqjiOI7FwJKw=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2368F40E0177;
-	Wed, 22 May 2024 15:34:34 +0000 (UTC)
-Date: Wed, 22 May 2024 17:34:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Balasubrmanian, Vignesh" <vigbalas@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	"Balasubrmanian, Vignesh" <Vignesh.Balasubrmanian@amd.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-toolchains@vger.kernel.org" <linux-toolchains@vger.kernel.org>,
-	"mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-	"npiggin@gmail.com" <npiggin@gmail.com>,
-	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"naveen.n.rao@linux.ibm.com" <naveen.n.rao@linux.ibm.com>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"keescook@chromium.org" <keescook@chromium.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"George, Jini Susan" <JiniSusan.George@amd.com>,
-	"matz@suse.de" <matz@suse.de>,
-	"binutils@sourceware.org" <binutils@sourceware.org>,
-	"jhb@FreeBSD.org" <jhb@freebsd.org>,
-	"felix.willgerodt@intel.com" <felix.willgerodt@intel.com>
-Subject: Re: [PATCH v2 1/1] x86/elf: Add a new .note section containing
- Xfeatures information to x86 core files
-Message-ID: <20240522153433.GCZk4QiX4Hf0OuI48E@fat_crate.local>
-References: <87wmo4o3r4.ffs@tglx>
- <4a090901-9705-40aa-ac3d-d67c52660f22@amd.com>
+	b=fJCaiQjLOSkJeC8737kXYulTF1E8kx+viQmK6R8A79ohnS0Ia2oKO7niWQO25ldGP
+	 YcrmWJcjzgvYYamWATddny5NL8foEzHP71g5oKW+oZV2cvD+IbmF/V50RAHLsngVuW
+	 8T6ALDPEmvK1nPQML2+v2HFyWk40+BCuyzs1d7AFmd7wuIRr9poXzP7qvb3kGF5LA7
+	 k3x18K6WyK0m64ECtrMbp0YEnAQ1NR5l1clMI2yrI91yteJvWEX4i9zH6bLxnWIz8d
+	 6yzROBcTARIC05vmq7n0pwnrFEtY8Rk4mGhd5bjzNdXdFWL2JL9AbLdWWc5sMj7OYr
+	 0Q+7VSasTFxdw==
+Date: Wed, 22 May 2024 16:35:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: display: vop2: Add VP clock resets
+Message-ID: <20240522-slimness-dullness-bb807f053c89@spud>
+References: <20240514152328.21415-1-detlev.casanova@collabora.com>
+ <13628421.uLZWGnKmhe@arisu>
+ <20240521-silver-exciting-bb3725dc495d@spud>
+ <3334403.5fSG56mABF@arisu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="O1xKPYmQ4qbvZFbX"
 Content-Disposition: inline
-In-Reply-To: <4a090901-9705-40aa-ac3d-d67c52660f22@amd.com>
+In-Reply-To: <3334403.5fSG56mABF@arisu>
+
+
+--O1xKPYmQ4qbvZFbX
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 06:42:55PM +0530, Balasubrmanian, Vignesh wrote:
-> > > +enum custom_feature {
-> > > +     FEATURE_XSAVE_FP =3D 0,
-> > > +     FEATURE_XSAVE_SSE =3D 1,
-> > > +     FEATURE_XSAVE_YMM =3D 2,
-> > > +     FEATURE_XSAVE_BNDREGS =3D 3,
-> > > +     FEATURE_XSAVE_BNDCSR =3D 4,
-> > > +     FEATURE_XSAVE_OPMASK =3D 5,
-> > > +     FEATURE_XSAVE_ZMM_Hi256 =3D 6,
-> > > +     FEATURE_XSAVE_Hi16_ZMM =3D 7,
-> > > +     FEATURE_XSAVE_PT =3D 8,
-> > > +     FEATURE_XSAVE_PKRU =3D 9,
-> > > +     FEATURE_XSAVE_PASID =3D 10,
-> > > +     FEATURE_XSAVE_CET_USER =3D 11,
-> > > +     FEATURE_XSAVE_CET_SHADOW_STACK =3D 12,
-> > > +     FEATURE_XSAVE_HDC =3D 13,
-> > > +     FEATURE_XSAVE_UINTR =3D 14,
-> > > +     FEATURE_XSAVE_LBR =3D 15,
-> > > +     FEATURE_XSAVE_HWP =3D 16,
-> > > +     FEATURE_XSAVE_XTILE_CFG =3D 17,
-> > > +     FEATURE_XSAVE_XTILE_DATA =3D 18,
-> > > +     FEATURE_MAX,
-> > > +     FEATURE_XSAVE_EXTENDED_START =3D FEATURE_XSAVE_YMM,
-> > > +     FEATURE_XSAVE_EXTENDED_END =3D FEATURE_XSAVE_XTILE_DATA,
-> > > +};
-> > Why can't this use the existing 'enum xfeature' which is providing
-> > exactly the same information already?
-> First version of patch was similar to what you mentioned here and other
-> review comments to use existing kernel definitions.
-> https://lore.kernel.org/linux-mm/20240314112359.50713-1-vigbalas@amd.co=
-m/T/
+On Wed, May 22, 2024 at 11:31:36AM -0400, Detlev Casanova wrote:
+> On Tuesday, May 21, 2024 2:31:51 P.M. EDT Conor Dooley wrote:
+> > On Tue, May 21, 2024 at 01:15:46PM -0400, Detlev Casanova wrote:
+> > > On Wednesday, May 15, 2024 12:33:22 P.M. EDT Heiko St=FCbner wrote:
+> > > > Am Mittwoch, 15. Mai 2024, 18:19:29 CEST schrieb Conor Dooley:
+> > > > > On Tue, May 14, 2024 at 11:19:47AM -0400, Detlev Casanova wrote:
+> > > > > > Add the documentation for VOP2 video ports reset clocks.
+> > > > > > One reset can be set per video port.
+> > > > > >=20
+> > > > > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > > > >=20
+> > > > > Are these resets valid for all VOPs or just the one on 3588?
+> > > >=20
+> > > > Not in that form.
+> > > > I.e. rk3588 has 4 video-ports (0-3), while rk3568 has 3 (0-2).
+> > > >=20
+> > > > So the binding should take into account that rk3568 also has the
+> > > > SRST_VOP0 ... SRST_VOP2.
+> > >=20
+> > > That is what is set in the example and the reason why I set minItems =
+to 3
+> > > in the main bindings.
+> > > Then, the rk3588 specific part sets it to 4.
+> > >=20
+> > > Isn't that enough ?
+> >=20
+> > Not quite - you need to restrict maxItems to 3 for the other devices if
+> > the clocks are not valid. What you've got says that 4 clocks are
+> > possible but not needed on !rk3588.
+> >=20
+> I don't understand what "properties: resets: minItems: 3" means then. I=
+=20
+> thought it means that all devices should have at least 3 resets. Then the=
+=20
+> allOf below specifies the special case of rk3588 which has a minimum of 4=
+=20
+> resets.
+
+The change you made to the bindings allows someone to define either 3
+(because of minItems 3) or 4 (because there are 4 items in the list) resets
+for the rk3568.
+
+> Do I need to add=20
+>         resets:
+>           minItems: 3
+>         reset-names:
+>           minItems: 3
+> in the "else:" ?
+
+No, you need to add maxItems: 3 to the else.
+
+> So in that case, I can remove "properties: resets: minItems: 3" above ?
 >=20
-> As per the review comment https://lore.kernel.org/linux-mm/202403141629=
-54.GAZfMmAnYQoRjRbRzc@fat_crate.local/
-> , modified the patch to be a independent of kernel internal definitions=
-.
-> Though this enum and below function=C2=A0 "get_sub_leaf" are not useful=
- now,=C2=A0 it
-> will be required when we extend for a new/different features.
+> Also, what do you mean "If the clocks are not valid" ?
 
-No, Thomas' sugggestion is to use the existing xfeature enum - not
-define the same thing again.
+s/clocks/resets/ ;)
 
-Why do you need that enum custom_feature thing if you can use
+--O1xKPYmQ4qbvZFbX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-/*
- * List of XSAVE features Linux knows about:
- */
-enum xfeature {
+-----BEGIN PGP SIGNATURE-----
 
-from arch/x86/include/asm/fpu/types.h
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk4Q0AAKCRB4tDGHoIJi
+0s0DAQDoOkPVLDr+HE00hhznKtcPPj+CcSSPyDVA/6sDIBivXQEAsVedCSlfxbXc
+k7i+X+yRjsbEqstU9Tavi7c6NTEiuQI=
+=aFFV
+-----END PGP SIGNATURE-----
 
-?
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--O1xKPYmQ4qbvZFbX--
 
