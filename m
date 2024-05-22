@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-186133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC168CC02D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:24:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A09A8CC030
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B5D11C211D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:24:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 039841F21E47
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163BF82877;
-	Wed, 22 May 2024 11:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A9D824BD;
+	Wed, 22 May 2024 11:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWPU+AHW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="is5fp94B"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE9F824AE;
-	Wed, 22 May 2024 11:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A12D824A1
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377040; cv=none; b=l6qaWAuQd5pQnmRo119/Nsmcxn7y4SmplrG0ENtqud6lYAxJTYuTJUHbbba/PdWdTKNQ3gwWgKheIWSqN5mKWAij4bXjPaJ3Fl+VvxXe04lKbk6sYEgJDKnxzd29kdkzvXizeeatlcr742EooBkvaw/u1BzU1GPNlxxdns/N3Hc=
+	t=1716377093; cv=none; b=DDuNUxOeNPBPgXB13bUXLa+VqQdhSxJBud2TBB65PI6LJENCrgybQaGH4HJm0DRic+0zmu80v+NcsJHHg5Y9GBMk1EhF2Kca0BtHoWY+oUYqqSLG0hD9awuSP7RYl++ycyv6CIfiFGEWrFKHCjE8DRHoBOFDvrVY/32153jCWY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377040; c=relaxed/simple;
-	bh=woKPDlBhWzEwxGppa56Q92nHAi8Aqz8b0Ooq3A14Eo0=;
+	s=arc-20240116; t=1716377093; c=relaxed/simple;
+	bh=7s3EVsSEdAae3zdQoXSEi1dnM21hfqyM9LApN2IL4nQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s8EPpAWQKtYZeDgcVPNc7I9zv/UYXPOW8HbXwlf53DJdE7iZGfaGwslH5ZuBOtsl4p9N74iNjA8ZnYGruCZH36hY8naVepVu/hVkD4CMY/SX1DgJ+0a5Wv/IB9oENxamfJrZGaL+r6cZNvz+2tjP5XhY8DANGYtR6OLsXFPhDCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWPU+AHW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D20DC2BD11;
-	Wed, 22 May 2024 11:23:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716377039;
-	bh=woKPDlBhWzEwxGppa56Q92nHAi8Aqz8b0Ooq3A14Eo0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MWPU+AHWDTvedVQ6wIHWkQ2VeYGadpGsSeRw9yv/Jp1L5eNNZC0Yj2Zro77xy0wzs
-	 g5zcHQSOeGhPwz9kFf+UQImXYhWoasUG1m6wkyvXvGDLcytlsEwlphMAdOSCUufUsY
-	 QTs9BxCAjqAtjXtUyA+Vtcz2PvX7jVmzCBX0SN3FDVRBDRjt4V5gko2LTUug1HWC3J
-	 phMCFZLGWsC80gQx0J1KPYOwEopOK08cJ3TtbAxNBEoF1liiw463ruNLAncr96M6d6
-	 DJczuxj4VOvdENccqfxVixasWkFS93GM+Pw7a8U4zfcBdI5/HsBG6h+HAC+pCBszS1
-	 5wri7ge85CKlw==
-Message-ID: <c8fb27bd-187c-4216-956a-f30172571d77@kernel.org>
-Date: Wed, 22 May 2024 13:23:55 +0200
+	 In-Reply-To:Content-Type; b=DaadN/7qReU+H4FBsS0EuwmteMucTbrUvLIqcRgjBPGBKATXXJmXT3C12sCKclmMXnt3PQX1ZINXEu5lFG9eAMdJwkS/ZPjKHt4wzt5y8Iezd5h/ao97WnFwSqQdMl1WpyLpLe3D5VgiA+PmuYakZxXCaCAWsr0YXj5jrDpxHY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=is5fp94B; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716377087; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=FsfoN0B25x/yfr2/PDmpfakYf9XUAtERkvPB+NSPL1M=;
+	b=is5fp94BSPCo3wkAnCUY3k1xcJy3PKYRIQSxFbQdBr2W6ljqbIPjZfoxn0ilEDzH1/ykFC2aJ8i4aDBpdpnWQdaFeaj6gxEP+JkKHQatNtRzSJTf4HO58f2CC/kX1WqzZTCXxk787ANXWM5oMm47VSaCf8mCuFAsxy9CdnawngE=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W7.Qpex_1716377085;
+Received: from 30.97.56.54(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W7.Qpex_1716377085)
+          by smtp.aliyun-inc.com;
+          Wed, 22 May 2024 19:24:46 +0800
+Message-ID: <c55648d4-cec2-48ca-9ca9-c8fc2aecc741@linux.alibaba.com>
+Date: Wed, 22 May 2024 19:24:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,83 +48,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: drop
- second output clock name
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- devicetree@vger.kernel.org
-References: <20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org>
- <20240521-fix-pcie-phy-compat-v1-2-8aa415b92308@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240521-fix-pcie-phy-compat-v1-2-8aa415b92308@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] mm: drop the 'anon_' prefix for swap-out mTHP counters
+To: Barry Song <21cnbao@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ willy@infradead.org, ying.huang@intel.com, ryan.roberts@arm.com,
+ ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <0e2a6f232e7579a2e4407ecf075531980d97f286.1716367360.git.baolin.wang@linux.alibaba.com>
+ <22ac01a3-ddbb-4114-88cd-ad1a31982dad@redhat.com>
+ <51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
+ <CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 21/05/2024 22:30, Dmitry Baryshkov wrote:
-> There is no need to specify exact name for the second (AUX) output
-> clock. It has never been used for the lookups based on the system clock
-> name. Partially revert commit 72bea132f368 ("dt-bindings: phy:
-> qcom,sc8280xp-qmp-pcie-phy: document PHY AUX clock on SM8[456]50 SoCs"),
-> returning compatibility with the existing device tree: reduce
-> clock-output-names to always contain a single entry.
+
+
+On 2024/5/22 18:40, Barry Song wrote:
+> On Wed, May 22, 2024 at 9:38 PM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 2024/5/22 16:58, David Hildenbrand wrote:
+>>> On 22.05.24 10:51, Baolin Wang wrote:
+>>>> The mTHP swap related counters: 'anon_swpout' and
+>>>> 'anon_swpout_fallback' are
+>>>> confusing with an 'anon_' prefix, since the shmem can swap out
+>>>> non-anonymous
+>>>> pages. So drop the 'anon_' prefix to keep consistent with the old swap
+>>>> counter
+>>>> names.
+>>>>
+>>>> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>
+>>> Am I daydreaming or did we add the anon_ for a reason and discussed the
+>>> interaction with shmem? At least I remember some discussion around that.
+>>
+>> Do you mean the shmem mTHP allocation counters in previous
+>> discussion[1]? But for 'anon_swpout' and 'anon_swpout_fallback', I can
+>> not find previous discussions that provided a reason for adding the
+>> ‘anon_’ prefix. Barry, any comments? Thanks.
 > 
-> Fixes: 72bea132f368 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: document PHY AUX clock on SM8[456]50 SoCs")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+> HI Baolin,
+> We had tons of emails discussing about namin and I found this email,
+> 
+> https://lore.kernel.org/all/bca6d142-15fd-4af5-9f71-821f891e8305@redhat.com/
+> 
+> David had this comment,
+> "I'm wondering if these should be ANON specific for now. We might want to
+> add others (shmem, file) in the future."
+> 
+> This is likely how the 'anon_' prefix started being added, although it
+> wasn't specifically
+> targeting swapout.
 
+That's what I missed before. Thanks Barry.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> I sense your patch slightly alters the behavior of thp_swpout_fallback
+> in /proc/vmstat.
+> Previously, we didn't classify them as THP_SWPOUT_FALLBACK, even though we
+> always split them.
 
-Best regards,
-Krzysztof
+Sorry I did not get you here. I just re-name the mTHP swpout_fallback, 
+how can this patch change the THP_SWPOUT_FALLBACK statistic counted by 
+count_vm_event()?
 
+>                  if (folio_test_anon(folio) && folio_test_swapbacked(folio)) {
+>                          ...
+>                                  if (!add_to_swap(folio)) {
+>                                          int __maybe_unused order =
+> folio_order(folio);
+> 
+>                                          if (!folio_test_large(folio))
+>                                                  goto activate_locked_split;
+>                                          /* Fallback to swap normal pages */
+>                                          if (split_folio_to_list(folio,
+> folio_list))
+>                                                  goto activate_locked;
+> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>                                          if (nr_pages >= HPAGE_PMD_NR) {
+>                                                  count_memcg_folio_events(folio,
+>                                                          THP_SWPOUT_FALLBACK, 1);
+> 
+> count_vm_event(THP_SWPOUT_FALLBACK);
+>                                          }
+>                                          count_mthp_stat(order,
+> MTHP_STAT_ANON_SWPOUT_FALLBACK);
+> #endif
+>                                          if (!add_to_swap(folio))
+>                                                  goto activate_locked_split;
+>                                  }
+>                          }
+>                  } else if (folio_test_swapbacked(folio) &&
+>                             folio_test_large(folio)) {
+>                          /* Split shmem folio */
+>                          if (split_folio_to_list(folio, folio_list))
+>                                  goto keep_locked;
+>                  }
+> 
+> 
+> 
+> If the goal is to incorporate pmd-mapped shmem under thp_swpout* in
+> /proc/vmstat,
+> and if there is consistency between /proc/vmstat and sys regarding
+> their definitions,
+> then I have no objection to this patch. 
+
+I think this is the goal, moreover shmem will support large folio (not 
+only THP) in future, so swpout related counters should be defined as 
+clear as possible.
+
+However, shmem_swpout and shmem_swpout_*
+> appear more intuitive, given that thp_swpout_* in /proc/vmstat has
+> never shown any
+> increments for shmem until now - we have been always splitting shmem in vmscan.
+
+This is somewhat similar to our previous discussion on the naming of the 
+shmem's mTHP counter[1], as David suggested, we should keep counter name 
+consistency for now and add more in the future as needed.
+
+[1] 
+https://lore.kernel.org/all/ce6be451-7c5a-402f-8340-be40699829c2@redhat.com/
+> 
+> By the way, if this patch is accepted, it must be included in version
+> 6.10 to maintain
+> ABI compatibility. Additionally, documentation must be updated accordingly.
+
+Sure. I missed update the documentation, and will do in next version.
 
