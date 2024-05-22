@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-186542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0D58CC566
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:14:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E758CC568
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBE0284113
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:14:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09054B22AD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF12E1422D1;
-	Wed, 22 May 2024 17:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06EB1422C2;
+	Wed, 22 May 2024 17:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeFxgPqN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VBh336lN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D7C762FF;
-	Wed, 22 May 2024 17:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563D1762FF;
+	Wed, 22 May 2024 17:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716398032; cv=none; b=ZJnhnm29EjJS4ub04giVeuC1xYZo9jVd1pEiNVWfH0i8piUii5S2le+NsKsm6Y+IrlcJCMK21QE3YzO5veqEZcSHohR9rBNsE1Omc6lJnUYWzPwFSFiXPRe+hIXUO0Q498Aju8kntYninAUlmBGE+iFgCoANXCxA1MT7tJ535Mo=
+	t=1716398046; cv=none; b=jtP/uYM0b6f/Le1yLNyWb4OT9x9ZRxxgl4pksG5SldqkxUeY1/AgqmcLbMu/TbuAtyiQbM6LbdHCmCPYXqJoW06Spp3Yl4Px0NEuASAIV6UDiYyii7UvTq+5J9rL5ksK7KYd4rBq/iE/WILgWt8DLOBBpezEWNWlUuzp26KMkTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716398032; c=relaxed/simple;
-	bh=60LHAtzrKidGyWFU1huo2XzSzZXTtfyfRyB9guGBkOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cA002To3Muxf6iKI36/DvuoAI3Xtgx6X966Wxs5qOrGw5o5Xc1X6OBcjgTpRmU/XMLWELmOQIRsOKz241ZaFV5B1xOrx0KEC6Eo9RIyyjnRpeu2YeAoLaObxmEmW4K6iPdFZaE8T+UzkpOJXyiVE09IhAzN7lcDi/AGk2mQLqYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeFxgPqN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E92FC2BBFC;
-	Wed, 22 May 2024 17:13:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716398031;
-	bh=60LHAtzrKidGyWFU1huo2XzSzZXTtfyfRyB9guGBkOE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UeFxgPqNVyEgTI0XJHmMlqgVNwR2qk549KtkKSQj2xn6VpsjZwqC2Lf+iDGZOM5df
-	 0pIFB6FedIZ/eSAj34yv1Bx+FunjVdU3oXJTN9JCuPirVygCgAdPEBau4VikcgzwOQ
-	 vlGypaEUL6B4MLskgs7u6vTkyDaanEs1bahwrtj9f+XSO7m6MP7DKDlUm+A0438Ht9
-	 2a4kdmt1gQm5HYO3RfBeVkC9R256x/7f0QwJz18xlk3m5e89KQ/35CBOktYzcP1rKi
-	 EodPgwktvtviUOk0lBkjMML7i2DmwbUNREU03/GeffV5q/eqjOx9u6S0Sn1Z0ZUMco
-	 ceoRRyLMbHS3g==
-Date: Wed, 22 May 2024 10:13:49 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Edward Liaw <edliaw@google.com>, shuah@kernel.org, =?UTF-8?B?TWlja2E=?=
- =?UTF-8?B?w6tsIFNhbGHDvG4=?= <mic@digikod.net>, =?UTF-8?B?R8O8bnRoZXI=?=
- Noack <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, Richard
- Cochran <richardcochran@gmail.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-team@android.com,
- linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
- linux-riscv@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
-Message-ID: <20240522101349.565a745e@kernel.org>
-In-Reply-To: <6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
-References: <20240522005913.3540131-1-edliaw@google.com>
-	<6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
+	s=arc-20240116; t=1716398046; c=relaxed/simple;
+	bh=mbmrUgoWc/irdBq3b+5a3FMGIAtSnhpi9AUa/pCz9n0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oUOMtXyi48Gc0HnOn/QFZlor6CYGfN1UZ2xcqKezycv6hmQJnuHeAH+GbFvNfcE4CXZ4Yaa2TlIMDDoVpLKE5JFAzVg7zfPYcBlEWzRFkmyqOOV0Ae7UnoIRTIEfFiWLqJ1IZpcIO7RMLLf2VD8Am77TG8AE2WWfiLTwKiiWt+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VBh336lN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tTs5GqkH792WkQ5uou1WjI1GQqIun7xt5FNmVzrUoKY=; b=VBh336lNsDVUCmD5sKjJynTTOh
+	g791d7gHmi1Fk0v2aqXU+C+DyODxr3tIORHuNoGSbhfb2slTVoVTl2uFIPrn37YqWi26hN0KsDqw5
+	2KhmSp9dzPE6HM0kh+R41fRhe5dpes8HAKZWjx6tw8sHax/GhqN7JpQ52k1wurVhMys2G3lgtaNAP
+	SdQxtE6X4eDiXexmnCf0GIyqNKg4hDO5hJdvkRGrRYfTlf/EUctSuaRAb2URt58u+IE9aoCOh50Mv
+	fkyNht8QFQCvA/o06TuCmu/IQoWdWf0GJCCuAZJoCUtsKKsXpe8raiRvAJevNdylYnxyZTPPRp2k+
+	Ui/x+jiQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s9pXJ-00000000rO0-2wvS;
+	Wed, 22 May 2024 17:13:57 +0000
+Date: Wed, 22 May 2024 18:13:57 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: kernel test robot <oliver.sang@intel.com>,
+	Yafang Shao <laoar.shao@gmail.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Waiman Long <longman@redhat.com>, Wangkai <wangkai86@huawei.com>,
+	Colin Walters <walters@verbum.org>, linux-fsdevel@vger.kernel.org,
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: Delete the associated dentry when deleting a file
+Message-ID: <Zk4n1eXLXkbKWFs2@casper.infradead.org>
+References: <20240515091727.22034-1-laoar.shao@gmail.com>
+ <202405221518.ecea2810-oliver.sang@intel.com>
+ <CAHk-=wg2jGRLWhT1-Od3A74Cr4cSM9H+UhOD46b3_-mAfyf1gw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg2jGRLWhT1-Od3A74Cr4cSM9H+UhOD46b3_-mAfyf1gw@mail.gmail.com>
 
-On Wed, 22 May 2024 10:19:33 -0600 Shuah Khan wrote:
-> On 5/21/24 18:56, Edward Liaw wrote:
-> > Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
-> > redefinitions of _GNU_SOURCE from source code.
-> > 
-> > 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> > asprintf into kselftest_harness.h, which is a GNU extension and needs  
-> 
-> Easier solution to define LINE_MAX locally. In gerenal it is advisable
-> to not add local defines, but it is desirable in some cases to avoid
-> churn like this one.
+On Wed, May 22, 2024 at 09:00:03AM -0700, Linus Torvalds wrote:
+> Of course, if you do billions of lookups of different files that do
+> not exist in the same directory, I suspect you just have yourself to
+> blame, so the "lots of negative lookups" load doesn't sound
+> particularly realistic.
 
-Will the patch that Andrew applied:
-https://lore.kernel.org/all/20240519213733.2AE81C32781@smtp.kernel.org/
-make its way to Linus? As you say that's a much simpler fix.
+Oh no.  We have real customers that this hits and it's not even stupid.
+
+Every time an "event" happens, they look up something like a hash in three
+different directories (like $PATH or multiple -I flags to the compiler).
+Order is important, so they can't just look it up in the directory that
+it's most likely to exist in.  It usually fails to exist in directory A
+and B, so we create dentries that say it doesn't.  And those dentries are
+literally never referenced again.  Then directory C has the file they're
+looking for (or it doesn't and it gets created because the process has
+write access to C and not A or B).
+
+plan9 handles this so much better because it has that union-mount stuff
+instead of search paths.  So it creates one dentry that tells it which of
+those directories it actually exists in.  But we're stuck with unix-style
+search paths, so life is pain.
 
