@@ -1,205 +1,195 @@
-Return-Path: <linux-kernel+bounces-186025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C548CBEEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:05:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B158CBEF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4014B1F22F36
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:05:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770551C21B04
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229A481AB7;
-	Wed, 22 May 2024 10:05:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF7F7E572;
-	Wed, 22 May 2024 10:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B3481AB7;
+	Wed, 22 May 2024 10:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SMlrFHX+"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFD781219
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372319; cv=none; b=KvlyNail3DE+gZBPoilDXDNcTRRwysM4elzGP5fnghwgB9Kaj2xSnGU0jTbDTFhflhjuCbMyj28qYOqjHIEDbZmgLHBGGPkeARRqkp/seOQgv1HQyOuHBEI3aJg0D+8VIXfeI1dDa4TL5L8s/QLVBcNHLbCUy9ZgAsgbwYYEH68=
+	t=1716372332; cv=none; b=tiIB9XouaS3hbITnhRO9Os068lN9UA8I1dcy8Sn0M7InH4dSslCWWlzhjq840uDLgE6kD0LGud3gpW/hBJD1qoSC4J/GAVgjXv2o3CS1AMG+f3sdadH7KP++LqA8zxKO+CCZIvoEGlpNC2JSwDZeSBYs6aGHXNpMKdY41FkCDxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372319; c=relaxed/simple;
-	bh=uWk0LMa9b/L4O6C8T1qp//VpKe389OGPlpvKZgpDSIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KT3mpA7/UHhYxIBcdS4MbzvNS64Tpefa6R8T8QD/9gJvJl/ViHUgoN+ylx/JuFR13bgLD1z9d++X6k6m1rl/tnhTbGiofOMtk58vFE9a16yCztYn7KDA/MufjenHvIuPlLJmtkkZOnUYxwvYnoMYtkLfhJx0WTV2qzy/1T+R/Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27D8A339;
-	Wed, 22 May 2024 03:05:37 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B1E13F641;
-	Wed, 22 May 2024 03:05:11 -0700 (PDT)
-Date: Wed, 22 May 2024 11:05:07 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Icenowy Zheng <uwu@icenowy.me>, linux-sunxi@lists.linux.dev,
- wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-kernel@vger.kernel.org, didi.debian@cknow.org, Marek Kraus
- <gamiee@pine64.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Correct the descriptions
- for Pine64 boards
-Message-ID: <20240522110507.51b12966@donnerap.manchester.arm.com>
-In-Reply-To: <5635a6e79427e43ef20b690c766267d0@manjaro.org>
-References: <d2943d9f4c99a239f86188eaf45a73972685c255.1713833436.git.dsimic@manjaro.org>
-	<057b4a5504656bb7455ead39768d9e7167fb724b.camel@icenowy.me>
-	<5635a6e79427e43ef20b690c766267d0@manjaro.org>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1716372332; c=relaxed/simple;
+	bh=FzxcMdJRlw32pxc5qidtepX6vG4x8QIo99LwzafuDe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qyXSOLUBEv7b8Kt+pccVoL1ehV/nZc/yeS3bsfOWXFVCwXpoacyOwqTjWe3Ni5n3JoTbI020crkrMXhrXqmfzNYLnOs/Ebfm5UAERjM6/F6V17jfpNgjaCVMeDNKiDIroMtIW6MR+WggiJcXm5xLtCoS4ifwCxjLWUQ/VEskPY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SMlrFHX+; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-56e1f3462caso10473457a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716372328; x=1716977128; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MAuT1CrGzLDbQfX5xdrNBQ8TlS884bMDX3/yN0VN0vA=;
+        b=SMlrFHX+KM9srHdfMMlhuHmyVbhrXRm0NMAA7qKQQcLew3iv8fbZJLCDabJbxp6rt6
+         AorBN1yGYLGpnqu7WAlmupYr8nMAALqQX3foi8xkwHImGtnLxCvhddTTMte1wmlgPHga
+         DIFUvzTCzbfxtG8DBtGprtvU3oSIlI/mrSJZgJGOV8hEAAjeuhXN2771dt+92G9EXE4e
+         gtgQwbvOnNkLto+jbgsL59mgAclpCU0/OpfTEgIB8UAY/uC2/xvxARg/yQo7wrh/cwn8
+         J3Hq4eXZnSaEqmU41McMhLhVQWbirFtWOzSjiYWPtRvOoZ4nGUXSV96Ft0uQHcQXtzxs
+         qHRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716372328; x=1716977128;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MAuT1CrGzLDbQfX5xdrNBQ8TlS884bMDX3/yN0VN0vA=;
+        b=tNAF27R780HiTZCGp4jAhaE30E5FFRNl3c2cH3RSbFryXnhqMWEB7DT8iihHvJb4c4
+         PDNpVnPSuVYJjvSgSpIsecbbSLn/ex/3PxZTrpjZK55NYsg/6O+fNL+7TsGP8ZmlfK5R
+         RZ3qXH51fJo5krqfij8BZNe9e2ie+CVzDIB3jAq95+/7hNRScvEqdY4KbvsxYgJ8i4Jw
+         a62UHvpJwLCdrvMH1XWt+8FvDc9pCrjkqS8JuHrTJAysj/ABflHeJp6paO1VCX0AT82Y
+         +lwBsMrT0iQiqv6i5nStzuXXT4oUa1hg/4nWfooRUKZBBMrxzJSLanZ4DcX2iE5HBLrg
+         cblg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnHKJJmFtjfTLY09If8K9mwYhetkd68goYmRhBAE/zsLJYViIV6F3999V4LI4NkY+YNY+7USPDHPRzjamoERrhWs6qCM3yCTstYp96
+X-Gm-Message-State: AOJu0YxWyb8VGLnT4b+WMDYDBszoc4Q7BhVUVKUbX4Vaia9918YzNbs3
+	h8X+VLATDuiTNaHknL5mR+773ySh5MQ3s7tGSW9n+/2pKmdkYU7culCeVrmCCY4=
+X-Google-Smtp-Source: AGHT+IFqDFgHKrPPybsbXgR9W6pXr6lzRXXb8Y6SzZTFgfvrdPD2EJsqc/1laDwrKtXZfHf421suaw==
+X-Received: by 2002:a50:9ec8:0:b0:56e:743:d4d9 with SMTP id 4fb4d7f45d1cf-57832c6c0c6mr724613a12.42.1716372328602;
+        Wed, 22 May 2024 03:05:28 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5782859f7ffsm1622311a12.83.2024.05.22.03.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 03:05:28 -0700 (PDT)
+Date: Wed, 22 May 2024 12:05:26 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Lukas Hruska <lhruska@suse.cz>
+Cc: mbenes@suse.cz, jpoimboe@kernel.org, joe.lawrence@redhat.com,
+	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, mpdesouza@suse.com,
+	Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v2 2/6] livepatch: Add klp-convert tool
+Message-ID: <Zk3DZtIr4fWaukO9@pathway.suse.cz>
+References: <20240516133009.20224-1-lhruska@suse.cz>
+ <20240516133009.20224-3-lhruska@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516133009.20224-3-lhruska@suse.cz>
 
-On Wed, 22 May 2024 08:10:21 +0200
-Dragan Simic <dsimic@manjaro.org> wrote:
+On Thu 2024-05-16 15:30:05, Lukas Hruska wrote:
+> Livepatches need to access external symbols which can't be handled
+> by the normal relocation mechanism. It is needed for two types
+> of symbols:
+> 
+>   + Symbols which can be local for the original livepatched function.
+>     The alternative implementation in the livepatch sees them
+>     as external symbols.
+> 
+>   + Symbols in modules which are exported via EXPORT_SYMBOL*(). They
+>     must be handled special way otherwise the livepatch module would
+>     depend on the livepatched one. Loading such livepatch would cause
+>     loading the other module as well.
+> 
+> The address of these symbols can be found via kallsyms. Or they can
+> be relocated using livepatch specific relocation sections as specified
+> in Documentation/livepatch/module-elf-format.txt.
+> 
+> --- /dev/null
+> +++ b/scripts/livepatch/klp-convert.c
+> +/* Converts rela symbol names */
+> +static bool convert_symbol(struct symbol *s)
+> +{
+> +	char lp_obj_name[MODULE_NAME_LEN];
+> +	char sym_obj_name[MODULE_NAME_LEN];
+> +	char sym_name[KSYM_NAME_LEN];
+> +	char *klp_sym_name;
+> +	unsigned long sym_pos;
+> +	int poslen;
+> +	unsigned int length;
+> +
+> +	static_assert(MODULE_NAME_LEN >= 56 && KSYM_NAME_LEN == 512,
+> +			"Update limit in the below sscanf()");
+> +
+> +	if (sscanf(s->name, KLP_SYM_RELA_PREFIX "%55[^.].%55[^.].%511[^,],%lu",
+> +			lp_obj_name, sym_obj_name, sym_name, &sym_pos) != 4) {
+> +		WARN("Invalid format of symbol (%s)\n", s->name);
+> +		return false;
+> +	}
+> +
+> +	poslen = calc_digits(sym_pos);
+> +
+> +	length = strlen(KLP_SYM_PREFIX) + strlen(sym_obj_name)
+> +		 + strlen(sym_name) + sizeof(poslen) + 3;
 
-Hi,
+There should be "poslen" instead of "sizeof(poslen)".
 
-> Hello Icenowy,
->=20
-> On 2024-05-22 02:48, Icenowy Zheng wrote:
-> > =E5=9C=A8 2024-04-23=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 03:00 +0200=EF=
-=BC=8CDragan Simic=E5=86=99=E9=81=93=EF=BC=9A =20
-> >> Correct the descriptions of a few Pine64 boards and devices,
-> >> according
-> >> to their official names used on the Pine64 wiki.=C2=A0 This ensures
-> >> consistency
-> >> between the officially used names and the names in the source code.
-> >>=20
-> >> Cc: Marek Kraus <gamiee@pine64.org>
-> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> >> ---
-> >>=20
-> >> Notes:
-> >> =C2=A0=C2=A0=C2=A0 This completes the correction of the descriptions o=
-f the Pine64
-> >> boards
-> >> =C2=A0=C2=A0=C2=A0 and devices, which was started with the Pine64 boar=
-ds and devices
-> >> based
-> >> =C2=A0=C2=A0=C2=A0 on Rockchip SoCs. [1]
-> >> =C2=A0=C2=A0=C2=A0
-> >> =C2=A0=C2=A0=C2=A0 [1]
-> >> https://lore.kernel.org/linux-rockchip/ec124dab2b1a8776aa39177ecce34ba=
-bca3a50e2.1713832790.git.dsimic@manjaro.org/
-> >>=20
-> >> =C2=A0Documentation/devicetree/bindings/arm/sunxi.yaml | 12 ++++++----=
---
-> >> =C2=A01 file changed, 6 insertions(+), 6 deletions(-)
-> >>=20
-> >> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >> b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >> index 09d835db6db5..b66873ae2d71 100644
-> >> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
-> >> @@ -709,17 +709,17 @@ properties:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-sochip,s3
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-allwinner,sun8i-v3
-> >> =C2=A0
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineH64 model A
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 H64 Model A
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,pine-h64
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-allwinner,sun50i-h6
-> >> =C2=A0
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineH64 model B
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 H64 Model B =20
-> >=20
-> > Sorry for replying so late, but I don't think there is a Pine64 H64
-> > board. The Pine64 wiki calls it Pine H64. [1]
-> >=20
-> > [1] https://wiki.pine64.org/wiki/PINE_H64 =20
->=20
-> Good point, thanks.  Though, this board is really an exception to
-> the naming scheme employed for the Pine64 boards, so perhaps it would
-> actually be better to rename the board in the Pine64 wiki, by adding
-> "64" to "Pine", to ensure consistency.
+> +
+> +	klp_sym_name = calloc(1, length);
+> +	if (!klp_sym_name) {
+> +		WARN("Memory allocation failed (%s%s.%s,%lu)\n", KLP_SYM_PREFIX,
+> +				sym_obj_name, sym_name, sym_pos);
+> +		return false;
+> +	}
+> +
+> +	if (safe_snprintf(klp_sym_name, length, KLP_SYM_PREFIX "%s.%s,%lu",
+> +			  sym_obj_name, sym_name, sym_pos)) {
+> +
+> +		WARN("Length error (%s%s.%s,%lu)", KLP_SYM_PREFIX,
+> +				sym_obj_name, sym_name, sym_pos);
+> +		free(klp_sym_name);
+> +		return false;
+> +	}
+> +
+> +	s->name = klp_sym_name;
+> +	s->sec = NULL;
+> +	s->sym.st_name = -1;
+> +	s->sym.st_shndx = SHN_LIVEPATCH;
+> +
+> +	return true;
+> +}
+> --- /dev/null
+> +++ b/scripts/livepatch/klp-convert.h
+> @@ -0,0 +1,23 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2016 Josh Poimboeuf <jpoimboe@redhat.com>
+> + * Copyright (C) 2017 Joao Moreira   <jmoreira@suse.de>
+> + *
+> + */
+> +
+> +#define SHN_LIVEPATCH		0xff20
+> +#define SHF_RELA_LIVEPATCH	0x00100000
+> +#define MODULE_NAME_LEN		(64 - sizeof(GElf_Addr))
+> +#define WARN(format, ...) \
+> +	fprintf(stderr, "klp-convert: " format "\n", ##__VA_ARGS__)
 
-I am sorry, but I don't think this is how it works. The board is really
-called "Pine H64", that's printed on the board [1] and everywhere else [2].
-That's a choice the manufacturer made, and renaming some Wiki page won't
-change that. I understand the engineer's desire to make everything nice and
-consistent ;-) , but I am afraid that's not our call. After all this file
-is to document the device naming, not to be an example of consistent
-naming schemes.
+Nit: I would remove "\n" here and add it to all callers. Half of the
+     callers already have it ;-)
 
-Cheers,
-Andre
+> +
+> +/*
+> + * klp-convert uses macros and structures defined in the linux sources
+> + * package (see include/uapi/linux/livepatch.h). To prevent the
+> + * dependency when building locally, they are defined below. Also notice
+> + * that these should match the definitions from the targeted kernel.
+> + */
+> +
+> +#define KLP_RELA_PREFIX			".klp.rela."
+> +#define KLP_SYM_RELA_PREFIX		".klp.sym.rela."
+> +#define KLP_SYM_PREFIX			".klp.sym."
 
-[1] https://linux-sunxi.org/images/5/53/Pineh64_top.jpg
-[2] https://pine64.org/devices/pine_h64_model_a/
->=20
-> Alas, the Pine64 wiki is currently in read-only mode, due to some
-> recent issues with the underlying hardware that runs it.  Migration to
-> another form of documentation for Pine64 boards is also a possibility,
-> which makes the updates even more complicated.
->=20
-> With all this in mind, I think it would be the best to rename the board
-> on the Pine64 side, to ensure consistency, and keep this patch as-is.
-> I'll make a mental note to do that on the Pine64 side once the current
-> situation with the Pine64 wiki is resolved.
->=20
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,pine-h64-model-b
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-allwinner,sun50i-h6
-> >> =C2=A0
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 LTS
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 A64 LTS
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,pine64-lts
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-allwinner,sun50i-r18
-> >> @@ -748,17 +748,17 @@ properties:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,pinephone
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-allwinner,sun50i-a64
-> >> =C2=A0
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab, Develop=
-ment Sample
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab Develope=
-r Sample
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,pinetab
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-allwinner,sun50i-a64
-> >> =C2=A0
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab, Early A=
-dopter's batch (and
-> >> maybe later ones)
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 PineTab Early Ad=
-opter
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,pinetab-early-adopter
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-allwinner,sun50i-a64
-> >> =C2=A0
-> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 SoPine Baseboard
-> >> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Pine64 SOPine
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,sopine-baseboard
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: =
-pine64,sopine
-> >>  =20
->=20
+Otherwise, it looks good.
 
+Best Regards,
+Petr
 
