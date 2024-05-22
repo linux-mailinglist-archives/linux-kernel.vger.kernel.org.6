@@ -1,189 +1,141 @@
-Return-Path: <linux-kernel+bounces-185646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052918CB861
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:27:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476798CB863
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C46F1F2349D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:27:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB813B242A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1512AE8A;
-	Wed, 22 May 2024 01:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15D9EED8;
+	Wed, 22 May 2024 01:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lapIq5Gk"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCeBkXo3"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0831BEEAD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24B928FD
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716339856; cv=none; b=WRR665eJp8O0kVz5HxvnJKfYxY9nwHcWtYgsJ4EqVTlNicMx5/aaYh9qa88vsd0EX1AQ5y1Mr4YNT3G+3e1ANT4zvtiyshua2XxcpvUPifmtiMPxGmy264OZFWnRUBIRO8ij82KBWst94LKuB6PK4TdwN6Z2x0zq76AFWNNPw1g=
+	t=1716339980; cv=none; b=mT8l9Aew4UKx6fMNtK5EQxcCVKAuriPvMoHoqlyRj7MkSwlIEUjYHk9BLlcOjtM6U1FOo4n8y7ZnyQKvpBl4jurJT0WrEmcXGzLzkvDcGwVZiB5KIlWoIxIs4vsTiIAmSWkRO3EHZxn5yZoSWwyFyiRZFSosaZ+8Qs2I6jYMgvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716339856; c=relaxed/simple;
-	bh=OqYU2toc8VhoFRt8nhJ72nYlMy15OQ6sULFO1f7aqe4=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=n8o8Nwsg1sKcNH+jEWk6Gsm6YDvk65FhacKFWh6ogon9hjdadfvwWfX4JY59Rca307G+HZ5vrsvMZ3I+UoaELHaZQKCKbc7MWcUYnQL/ucEAmqtRvOZK8lOIdAdBLP+Lknq7eZzFT9jsCI/E19gNq1D8bHKv6HwUYt7AOOmcl8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lapIq5Gk; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240522010410epoutp045c3bc340d1dd7a1bbbb81fe2df140531~RqgAvhU742360123601epoutp040
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:04:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240522010410epoutp045c3bc340d1dd7a1bbbb81fe2df140531~RqgAvhU742360123601epoutp040
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716339850;
-	bh=Uitcad8ZpKbqMNDW2YytBLVtTZ4j7uwwqX9O3MWQJPo=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=lapIq5GkskK7aRDEkVatV8emSRWbNh4HPuzM77CaA1geDzhCTFC+tjvq2DZ5gA/9m
-	 U9IsDp4IYTSpOS9iWF1zS96iVj480Oq/7SJx+3WCXVho75IKTosdXXejZcQe76u6X8
-	 ocuag9zW4zX5ZL3XPILy7k28b838/khdOpmoY/YE=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20240522010410epcas2p11d5550044515a107ecd4ef5392f36bdc~RqgAbdLEf0338303383epcas2p1e;
-	Wed, 22 May 2024 01:04:10 +0000 (GMT)
-Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.69]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4VkY3Y64zSz4x9Q9; Wed, 22 May
-	2024 01:04:09 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7A.94.19141.9844D466; Wed, 22 May 2024 10:04:09 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199~Rqf-d4A7i0068900689epcas2p4s;
-	Wed, 22 May 2024 01:04:09 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240522010409epsmtrp2846a47b1fde03b71481eeb5f30d7a431~Rqf-XLog81573115731epsmtrp2M;
-	Wed, 22 May 2024 01:04:09 +0000 (GMT)
-X-AuditID: b6c32a4d-869ff70000004ac5-bb-664d44892cd5
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	33.61.08924.9844D466; Wed, 22 May 2024 10:04:09 +0900 (KST)
-Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240522010409epsmtip207170fe17fd7525879063e08d597c994~Rqf-JMfKt2481524815epsmtip2G;
-	Wed, 22 May 2024 01:04:09 +0000 (GMT)
-From: Daehwan Jung <dh10.jung@samsung.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org (open list:USB XHCI DRIVER),
-	linux-kernel@vger.kernel.org (open list), Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>, Daehwan Jung <dh10.jung@samsung.com>
-Subject: [RFC] usb: host: xhci-mem: Write high first on erst base of
- secondary interrupter
-Date: Wed, 22 May 2024 10:03:59 +0900
-Message-Id: <1716339839-44022-1-git-send-email-dh10.jung@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7bCmqW6ni2+aweM+Q4s7C6YxWTQvXs9m
-	cXnXHDaLRctamS2aN01htVi14AC7A5vH4j0vmTz2z13D7tG3ZRWjx5b9nxk9Pm+SC2CNyrbJ
-	SE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpASaEsMacU
-	KBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeXWmJlaGBgZApUmJCdseXx
-	GvaCp4IVv6fNYG1g/M/XxcjJISFgIjHh6FwmEFtIYA+jxK9VrF2MXED2J0aJrRdes0E43xgl
-	9m77xQzTcePPAajEXkaJbS3/mCGcH4wSvbfaWboYOTjYBLQkvi9kBGkQEYiTWNp5iQmkhllg
-	O6PEjBfP2EESwgIxEpvvngKbyiKgKrHl5y82EJtXwFVizvWHjBDb5CRunusEWyAhsIpdYk37
-	CVaIhIvE1ksHWSBsYYlXx7ewQ9hSEp/f7WWDsIslbj1/BtXcwiix4lUL1A/GErOetTOCXMos
-	oCmxfpc+iCkhoCxx5BbYSGYBPomOw3/ZIcK8Eh1tQhCNyhLTL0+AukBS4uDrc1ADPSQ6WuYz
-	QoIxVuLrhW2MExhlZyHMX8DIuIpRKrWgODc9NdmowFA3L7UcHlHJ+bmbGMEJS8t3B+Pr9X/1
-	DjEycTAeYpTgYFYS4d20xTNNiDclsbIqtSg/vqg0J7X4EKMpMMwmMkuJJucDU2ZeSbyhiaWB
-	iZmZobmRqYG5kjjvvda5KUIC6YklqdmpqQWpRTB9TBycUg1MPP+Z/vakTklYf+COHGe0SWNT
-	nZHVnO0+Vlc2SSlcXpipzv5+0j29ibtnXQsS+nMupnjriZiHdhf1Tgd1lCksOphlH25ksD5J
-	6Xh1xqxpQgX//p8IeuqzbSv3nXP/O9/G6HFq2pw1DH8d9OqfuU9a3BzPDw8f5G7yP23gXDwr
-	tXTljAs2WZuEknbNXLCi65B/68PDN/okuOuYuH5seeUaf/GihKpsaURxlPkr2QmRM++XltTu
-	2SsfGa70JnCe5oLP08prX0Vd3vgudfb5vru3qw3ufjq/3m5KoGOBZ5uSivjEsgbV4jMeJhG2
-	ba7Ghc7rgm42vPJ4zHeEtX5jj+H/2Lzl/b7rr1x+fvyWYuhuJZbijERDLeai4kQAPQIb4uED
-	AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFJMWRmVeSWpSXmKPExsWy7bCSvG6ni2+awdR9nBZ3FkxjsmhevJ7N
-	4vKuOWwWi5a1Mls0b5rCarFqwQF2BzaPxXteMnnsn7uG3aNvyypGjy37PzN6fN4kF8AaxWWT
-	kpqTWZZapG+XwJWx5fEa9oKnghW/p81gbWD8z9fFyMkhIWAicePPAbYuRi4OIYHdjBKXV2xi
-	h0hISiydewPKFpa433KEFaLoG6PEgl9PgDo4ONgEtCS+L2QEqRERiJNYcXkPC0gNs8BORonb
-	H3awgSSEBaIk/vfcARvEIqAqseXnL7A4r4CrxJzrDxkhFshJ3DzXyTyBkWcBI8MqRsnUguLc
-	9NxiwwLDvNRyveLE3OLSvHS95PzcTYzg4NHS3MG4fdUHvUOMTByMhxglOJiVRHg3bfFME+JN
-	SaysSi3Kjy8qzUktPsQozcGiJM4r/qI3RUggPbEkNTs1tSC1CCbLxMEp1cDk0h+g3nT/bezf
-	H0/m8Xvd27WiVHp/3G/jmZsqXjedVc9vv50064WJwZlnF2VL5q8WM+PVf7bhg+H25slOJrdb
-	+1wOPnwpFBLPMvFiwEal2eUvTu+8ousSI822r/iQt7Xy5bqN53bqtN/9y6bTt6Ky+iH7spIb
-	TR0MewMmsv8Q5RP9vtJG6twPPd/eReWVCpOnH3wXFGBh/orZ4bYdxzmJvcZ8jy7l9Quu3fdB
-	zt1aTCaWy/7pgfseu/ctVeZWyHNRERdcIiRo80Pp/Y4Xf180/y9Q1lM58OrT6yUc54yVjlt+
-	WWrMLZv8W2jFZ+l+hg3L7K2MWH1NbhnuvbxHTdV0z6Eob9VdPsFni6bP2pOgxFKckWioxVxU
-	nAgAkSKzKY0CAAA=
-X-CMS-MailID: 20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199
-References: <CGME20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199@epcas2p4.samsung.com>
+	s=arc-20240116; t=1716339980; c=relaxed/simple;
+	bh=J/OK9JoU/P4aXrA7FZp1yntoZLeQUivL/F3j6wQQf6A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JQDWzVbq3geWtD1nOFFKCNCT9dyE7IvQ1T+mJYJbaK/cZqQO64WJrwMScp3o912ixdKsXKVuvhKRTjeBiCVT7YVsWRaYZfiHnVtD5tnkHI8H+n+o6bfKQS9o4wp60SUJ/IujPzVRjRZo6lGc+yfxnIW7+W/yuEUZFfzD1+ukC2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCeBkXo3; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3713ff97cf5so4805505ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716339978; x=1716944778; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3QRoVunXuTL7aJsorGhwdMs/cGyNJtncIxhrxIr+CyQ=;
+        b=hCeBkXo3hia4/kt3mIUHyM2NLjxBtDrgx2b+wtHTwlwbI+1QG7LL2FJpX2tJJGrPjX
+         YXvVKStZ6eN5hB9VE+UfHjAS5M8HoB2IRzOGxIbyLslSoTOF8IlPP1l3CdiJLs2XZRNH
+         CKo9ofqNSBknOHmNhSN28eWyufAspiiEVeopUn1ol/yFWDkdSlEYtWAgHjbB0NnasSpt
+         vYm5cCmatjsCsTRz581Rx8JufioQxncLAX2TSDxg/9pU5rSdf2k2EsvW8h7PC6I2hh3l
+         nY4W7Ds1NOpUCL6+THsAwfZ2liKZrzrawJN3AQWWGbm2DHXuV0wDne9Fl8kj3zcTkO+H
+         9z4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716339978; x=1716944778;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3QRoVunXuTL7aJsorGhwdMs/cGyNJtncIxhrxIr+CyQ=;
+        b=FM3m7XwXnY1MSF0VLsp02Bzme4+E/GCIoIzZRaxYAcvPdzokhOvOgYeKj8jsrv3SGM
+         5B4Eq2lShHBXsAYIQWwElgeRSqym/mstDwgULaZB7/fKq672yr6xOxXNr9kPptuEEnwH
+         L8PW6kRWtTtsULe/GGHOyj7gjZ1Ah6ZdgMmhNUaVq5mMI9U8sPaJKi57/P42lNw6z2To
+         MxvucsXtKwfrLB4w6wJuhgm8d7QPOCsHPvtf+jr/f46ulJEKvhr7YB1As4Q37mga3eKe
+         Rh9R2aiQdu3XyJF+pDYQn6NOq6yyVNRsKJYIQtt6PiaymV8IRQHfSyyHWO7QuTKlslBV
+         F13A==
+X-Gm-Message-State: AOJu0YyXg4MicgtZ71UUPRfNqdF4+HtoAuk+r2fFBSwjc+1Q+9a9Mgpq
+	3A7k7x0TnS15laZQ+t2JUt8M9xtyrcHR3qRIERblNSL55rwQijIf
+X-Google-Smtp-Source: AGHT+IE1IwwFQEw+aG+KNJqb4DFSXGzdgrDNKnnZsN0lwEXDd5LRtVesMV1crJFYZ7n3nJFWPuaLfQ==
+X-Received: by 2002:a05:6e02:1a8b:b0:36a:ed0:ca0d with SMTP id e9e14a558f8ab-371fc8d255fmr6363235ab.25.1716339977880;
+        Tue, 21 May 2024 18:06:17 -0700 (PDT)
+Received: from localhost.localdomain ([111.196.74.188])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-6f4fa8db6a2sm18065112b3a.177.2024.05.21.18.06.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 18:06:17 -0700 (PDT)
+From: Xiong Nandi <xndchn@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	quic_bjorande@quicinc.com,
+	cmllamas@google.com,
+	quic_eberman@quicinc.com,
+	Xiong Nandi <xndchn@gmail.com>
+Subject: Re: [PATCH] scripts/decode_stacktrace.sh: better support to ARM32 module stack trace
+Date: Wed, 22 May 2024 09:05:59 +0800
+Message-Id: <20240522010559.10551-1-xndchn@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240521005649.12144-1-xndchn@gmail.com>
+References: <20240521005649.12144-1-xndchn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-ERSTBA_HI should be written first on secondary interrupter.
-That's why secondary interrupter could be set while Host Controller
-is already running.
-
-[Synopsys]- The host controller was design to support ERST setting
-during the RUN state. But since there is a limitation in controller
-in supporting separate ERSTBA_HI and ERSTBA_LO programming,
-It is supported when the ERSTBA is programmed in 64bit,
-or in 32 bit mode ERSTBA_HI before ERSTBA_LO
-
-[Synopsys]- The internal initialization of event ring fetches
-the "Event Ring Segment Table Entry" based on the indication of
-ERSTBA_LO written.
-
-Signed-off-by: Daehwan Jung <dh10.jung@samsung.com>
+Sorry about the name, it is some kind of abbreviation. So I re-post here:
 ---
- drivers/usb/host/xhci-mem.c | 5 ++++-
- drivers/usb/host/xhci.h     | 6 ++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+Since System.map is generated by cross-compile nm tool, we should use it
+here too. Otherwise host nm may not recognize thumb2 function address well.
 
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index 3100219..36ee704 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -2325,7 +2325,10 @@ xhci_add_interrupter(struct xhci_hcd *xhci, struct xhci_interrupter *ir,
- 	erst_base = xhci_read_64(xhci, &ir->ir_set->erst_base);
- 	erst_base &= ERST_BASE_RSVDP;
- 	erst_base |= ir->erst.erst_dma_addr & ~ERST_BASE_RSVDP;
--	xhci_write_64(xhci, erst_base, &ir->ir_set->erst_base);
-+	if (intr_num == 0)
-+		xhci_write_64(xhci, erst_base, &ir->ir_set->erst_base);
-+	else
-+		xhci_write_64_r(xhci, erst_base, &ir->ir_set->erst_base);
+Beside, sometimes special characters around module name, such as ARM32
+with BACKTRACE_VERBOSE in "(%pS)" format, such as:
+[<806e4845>] (dump_stack_lvl) from [<7f806013>] (hello_init+0x13/0x1000 [test])
+
+After stripping other characters around "[module]", it can be finally decoded:
+(dump_stack_lvl) from hello_init (/foo/test.c:10) test
+
+Signed-off-by: Xiong Nandi <xndchn@gmail.com>
+---
+ scripts/decode_stacktrace.sh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index fa5be6f57b00..324e4a6c260a 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -30,6 +30,7 @@ fi
  
- 	/* Set the event ring dequeue address of this interrupter */
- 	xhci_set_hc_event_deq(xhci, ir);
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 3041515..7951c0e 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -17,6 +17,7 @@
- #include <linux/kernel.h>
- #include <linux/usb/hcd.h>
- #include <linux/io-64-nonatomic-lo-hi.h>
-+#include <linux/io-64-nonatomic-hi-lo.h>
+ READELF=${UTIL_PREFIX}readelf${UTIL_SUFFIX}
+ ADDR2LINE=${UTIL_PREFIX}addr2line${UTIL_SUFFIX}
++NM=${UTIL_PREFIX}nm${UTIL_SUFFIX}
  
- /* Code sharing between pci-quirks and xhci hcd */
- #include	"xhci-ext-caps.h"
-@@ -1747,6 +1748,11 @@ static inline void xhci_write_64(struct xhci_hcd *xhci,
- {
- 	lo_hi_writeq(val, regs);
- }
-+static inline void xhci_write_64_r(struct xhci_hcd *xhci,
-+				 const u64 val, __le64 __iomem *regs)
-+{
-+	hi_lo_writeq(val, regs);
-+}
+ if [[ $1 == "-r" ]] ; then
+ 	vmlinux=""
+@@ -158,7 +159,7 @@ parse_symbol() {
+ 	if [[ $aarray_support == true && "${cache[$module,$name]+isset}" == "isset" ]]; then
+ 		local base_addr=${cache[$module,$name]}
+ 	else
+-		local base_addr=$(nm "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
++		local base_addr=$(${NM} "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
+ 		if [[ $base_addr == "" ]] ; then
+ 			# address not found
+ 			return
+@@ -282,8 +283,8 @@ handle_line() {
  
- static inline int xhci_link_trb_quirk(struct xhci_hcd *xhci)
- {
+ 	if [[ ${words[$last]} =~ \[([^]]+)\] ]]; then
+ 		module=${words[$last]}
+-		module=${module#\[}
+-		module=${module%\]}
++		module=${module#*\[}
++		module=${module%\]*}
+ 		modbuildid=${module#* }
+ 		module=${module% *}
+ 		if [[ $modbuildid == $module ]]; then
 -- 
-2.7.4
+2.25.1
 
 
