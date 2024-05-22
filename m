@@ -1,89 +1,235 @@
-Return-Path: <linux-kernel+bounces-185956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08B2D8CBD5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:55:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CBCC8CBD60
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E9F9B20FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF1F1C20E91
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9AA8003F;
-	Wed, 22 May 2024 08:55:42 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B8880046;
+	Wed, 22 May 2024 08:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eRikXVWX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BD346522;
-	Wed, 22 May 2024 08:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A417E572;
+	Wed, 22 May 2024 08:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716368141; cv=none; b=sPTHUXgbKGlxe/7qpLLpjnkHu4A0R3mmLZFxgOyv9DF/bODEeGg5gfirSsCcINeSClKvFkHXeeNF2ETLUfuSMrSZwC6N3cA+pIfRre8SKxTb6lHVIQDnLzMoUNb3xc0C3bYbATyWxzYFWn2fhDe4eYgdQ4xYMROwEoerr5e85EA=
+	t=1716368294; cv=none; b=DjicNFmIsRrHnyUoOPAp/zsvePUpty+NJPs2aSnE+6EmCVWf0uyCy1uPGVv84A8z/vAIsVlhyXx1oG9jLEw3v1VIJO1Lya0aELq3YGiFKe/w6BDLXxZa7ifcij3qCvGJPnrrQ6Ee1WfupFyGJhDpzRBpLZOMo4vXUD37kktDT7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716368141; c=relaxed/simple;
-	bh=iWxRNOoqlA4B9l8RxZ8dXMccrb9P5UxJI0CIiL+rYoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HoKE6os62GOfKhUbtkMvhW+orbf4/kVCkEfIAUmanFDBhcR2dRVrg1yyve6jRkALUltcAhIYrN3JpGkVAwVq4LvsR+OXVb7pzzgsTy4WvZLcgRKwbcof938EOnOanDJWpb/XwGSmCZm4ZMflz8iLktcN5ya6OD9qu1ztpEtAPIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-56e1f3462caso10366996a12.3;
-        Wed, 22 May 2024 01:55:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716368139; x=1716972939;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iWxRNOoqlA4B9l8RxZ8dXMccrb9P5UxJI0CIiL+rYoE=;
-        b=GvI+bWrtnqbaXu3gwztZNpK6gCwcrmaLIEMlUYuYNG1bQGy1IOvNZnV9hQl5j4I3Sr
-         4WY7R1dTtLZDHcGwXJT8l2j8ajuAVPR77FM6FczI8aZpNVWOk5nC3szG647BxJo2DW6K
-         lPngm0guC0ZWMtmThEEsjIV82X4tt0HIOkRUwwJEHEmZG0ai724plhwOJcQiQjFoJ3PF
-         cBbIxDjt8mtru8Puyn3b2oDQTqykw2WVQu4eFoNP09H3kH20FPp+0pdvYyRdJpNHutR6
-         8xKkvCw5SRlCx8MvXg39ih4+mKOPyorYDTDS4n18PwlgcM+vNw9l4IgV9yR1EoKuinUA
-         NY1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWwdT6HpYjsfBCe+SlXCEYvANNDdbOZeSHNOvT4FKAeoZR7D2QN8d0r58IKaga5QNbFFx1uNAeTsVzbSqyT3vHlX3niHdCl0+AImGxUKZROK8HBShFwVthF0kYOnGJPsvzwAWm6JKtgJGOdAGw=
-X-Gm-Message-State: AOJu0YwDZHDU+/AI8Vtq5eQQ49dlJMUNKSLeP+GXhfgszT+y3JjA3FYA
-	jyoA4QX2RXxrM+AkqKL4NJFYNtFz98ZH6KSNak1MBqMZnY1ez7KT
-X-Google-Smtp-Source: AGHT+IGxiQ6bn8qgjERKxdFhyBYHp7N7U2YloEfTv+RcPaRDM8k4WLdgo4je9Mx8sJk96xj9bI3A1w==
-X-Received: by 2002:a17:906:16cc:b0:a5a:15b6:25ab with SMTP id a640c23a62f3a-a6228160d30mr75838166b.61.1716368138553;
-        Wed, 22 May 2024 01:55:38 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17922159sm1756296666b.97.2024.05.22.01.55.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 01:55:38 -0700 (PDT)
-Date: Wed, 22 May 2024 01:55:36 -0700
-From: Breno Leitao <leitao@debian.org>
-To: michael.nemanov@ti.com
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Kees Cook <keescook@chromium.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
-Subject: Re: [PATCH 09/17] Add rx.c, rx.h
-Message-ID: <Zk2zCEhs9dDmOoMt@gmail.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-10-michael.nemanov@ti.com>
+	s=arc-20240116; t=1716368294; c=relaxed/simple;
+	bh=X6iqZiLGEw+GNXUfJNsLcSk7n3NM00188BHJh+kM7Wo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rw5drkeKKTwGLKjaknh4UDFJ/eqxFYDpg7osS29Syg1Xdv3+4DmQL6UDIty72uJhwoTUPF7l+ZHKA61DgyiGUMVwMdKSiQm2K5IP4rfaPuswCq3nrEYW/grKw0PLg553Ah9s7lLW7DLJ0GimkIIB3R9+fi0bk26QandnHN8MdQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eRikXVWX; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716368293; x=1747904293;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=X6iqZiLGEw+GNXUfJNsLcSk7n3NM00188BHJh+kM7Wo=;
+  b=eRikXVWXCQsWfXhA60TA8pGzgCMleOV/GWD9K+eNNLpkGmNuBtreJJBC
+   9qjZVmQdLnQfxGe1KqlzulONb+bVBPtZ3Cbhhctx/ntgeQVQU6IUbbcKG
+   NoKzYhX+gvSYbXPC+jSKS8+vLIs5sGmuUkNQQd3xFto1BotMbjdJ0YX/5
+   3J2+ynryP/2hgAuhF1Q9bq1xwJlhomJRq81PEpGYlRq0I4PwUwA/plzLk
+   lACh5TFMV/cfF+Tk82Ipm1cC9wYGuKOLUvFO2fN+LCs33FQLn/BKlFcgw
+   H++hrTEwkNSHSAiAYaO6FJYYXFpunva/otF9mfgBFx1xfczl+SKjg3Lr/
+   A==;
+X-CSE-ConnectionGUID: opBQX60oRKOcd4IDh/P6AA==
+X-CSE-MsgGUID: lE//53GPTZu3idAa0cXxpA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12389028"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="12389028"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 01:57:51 -0700
+X-CSE-ConnectionGUID: Ad79jrqTQqaO+8N2E9x3pQ==
+X-CSE-MsgGUID: Z7UQuLE1T7q7LjjHvB898Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="37699452"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.38])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 01:57:47 -0700
+Message-ID: <08b239b8-0d89-4602-bf2b-e785544ac2d7@intel.com>
+Date: Wed, 22 May 2024 11:57:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521171841.884576-10-michael.nemanov@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] perf maps: Remove the replacement of kernel map
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ James Clark <james.clark@arm.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240520090647.949371-1-leo.yan@arm.com>
+ <20240520090647.949371-4-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240520090647.949371-4-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Michael,
+On 20/05/24 12:06, Leo Yan wrote:
+> The kernel text map has been removed from the kernel maps by
+> maps__remove_maps(), and the kcore maps are organized in order, allowing
+> us to achieve neat kernel maps.
+> 
+> As a result, it is not necessary to replace the old kernel text map.
+> Instead, the commit finds the latest text map, assigns it to
+> 'machine->vmlinux_map', and releases the old map.
 
-On Tue, May 21, 2024 at 08:18:33PM +0300, michael.nemanov@ti.com wrote:
-> diff --git a/drivers/net/wireless/ti/cc33xx/rx.c b/drivers/net/wireless/ti/cc33xx/rx.c
-> new file mode 100644
-> index 000000000000..038b356f50a2
-> --- /dev/null
-> +++ b/drivers/net/wireless/ti/cc33xx/rx.c
+There is also the parameter 'map' that the caller can continue
+to use.  It was originally vmlinux_map which was checked:
 
+	/* This function requires that the map is the kernel map */
+	if (!__map__is_kernel(map))
+		return -EINVAL;
+
+Although that now looks broken and should probably be:
+
+	/* This function requires that the map is the kernel map */
+	if (map != machine__kernel_map(machine))
+		return -EINVAL;
+
+> 
+> One concern is if a platform fails to find a kernel text map after
+> updating maps list with kcore, in this case, it should not happen and
+> reports the failure.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/util/symbol.c | 77 ++++++++++------------------------------
+>  1 file changed, 19 insertions(+), 58 deletions(-)
+> 
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 915435d55498..a4b65d868fc9 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -1335,13 +1335,12 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>  			   const char *kallsyms_filename)
+>  {
+>  	struct maps *kmaps = map__kmaps(map);
+> +	struct map *vmlinux_map;
+>  	struct kcore_mapfn_data md;
+> -	struct map *map_ref, *replacement_map = NULL;
+>  	struct machine *machine;
+>  	bool is_64_bit;
+>  	int err, fd;
+>  	char kcore_filename[PATH_MAX];
+> -	u64 stext;
+>  
+>  	if (!kmaps)
+>  		return -EINVAL;
+> @@ -1386,51 +1385,6 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>  	maps__remove_maps(kmaps, remove_old_maps);
+>  	machine->trampolines_mapped = false;
+>  
+> -	/* Find the kernel map using the '_stext' symbol */
+> -	if (!kallsyms__get_function_start(kallsyms_filename, "_stext", &stext)) {
+> -		u64 replacement_size = 0;
+> -		struct map_list_node *new_node;
+> -
+> -		list_for_each_entry(new_node, &md.maps, node) {
+> -			struct map *new_map = new_node->map;
+> -			u64 new_size = map__size(new_map);
+> -
+> -			if (!(stext >= map__start(new_map) && stext < map__end(new_map)))
+> -				continue;
+> -
+> -			/*
+> -			 * On some architectures, ARM64 for example, the kernel
+> -			 * text can get allocated inside of the vmalloc segment.
+> -			 * Select the smallest matching segment, in case stext
+> -			 * falls within more than one in the list.
+> -			 */
+> -			if (!replacement_map || new_size < replacement_size) {
+> -				replacement_map = new_map;
+> -				replacement_size = new_size;
+> -			}
+> -		}
+> -	}
+> -
+> -	if (!replacement_map)
+> -		replacement_map = list_entry(md.maps.next, struct map_list_node, node)->map;
+> -
+> -	/*
+> -	 * Update addresses of vmlinux map. Re-insert it to ensure maps are
+> -	 * correctly ordered. Do this before using maps__merge_in() for the
+> -	 * remaining maps so vmlinux gets split if necessary.
+> -	 */
+> -	map_ref = map__get(map);
+> -
+> -	map__set_start(map_ref, map__start(replacement_map));
+> -	map__set_end(map_ref, map__end(replacement_map));
+> -	map__set_pgoff(map_ref, map__pgoff(replacement_map));
+> -	map__set_mapping_type(map_ref, map__mapping_type(replacement_map));
+> -
+> -	err = maps__insert(kmaps, map_ref);
+> -	map__put(map_ref);
+> -	if (err)
+> -		goto out_err;
+> -
+>  	/* Add new maps */
+>  	while (!list_empty(&md.maps)) {
+>  		struct map_list_node *new_node = list_entry(md.maps.next, struct map_list_node, node);
+> @@ -1438,21 +1392,28 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>  
+>  		list_del_init(&new_node->node);
+>  
+> -		/* skip if replacement_map, already inserted above */
+> -		if (!RC_CHK_EQUAL(new_map, replacement_map)) {
+> -			/*
+> -			 * Merge kcore map into existing maps,
+> -			 * and ensure that current maps (eBPF)
+> -			 * stay intact.
+> -			 */
+> -			if (maps__merge_in(kmaps, new_map)) {
+> -				err = -EINVAL;
+> -				goto out_err;
+> -			}
+> +		/*
+> +		 * Merge kcore map into existing maps,
+> +		 * and ensure that current maps (eBPF)
+> +		 * stay intact.
+> +		 */
+> +		if (maps__merge_in(kmaps, new_map)) {
+> +			err = -EINVAL;
+> +			goto out_err;
+>  		}
+>  		free(new_node);
+>  	}
+>  
+> +	/* Update vmlinux_map */
+> +	vmlinux_map = maps__find(kmaps, map__start(map));
+> +	if (vmlinux_map) {
+> +		free(machine->vmlinux_map);
+
+Reference counting?
+
+> +		machine->vmlinux_map = vmlinux_map;
+> +	} else {
+> +		pr_err("Failed to find vmlinux map from kcore\n");
+> +		goto out_err;
+> +	}
 > +
-> +int cc33xx_rx_filter_clear_all(struct cc33xx *cc) {}
+>  	if (machine__is(machine, "x86_64")) {
+>  		u64 addr;
+>  
 
-You probably want to return an integer in this function here.
 
