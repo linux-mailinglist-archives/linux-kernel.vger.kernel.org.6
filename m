@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-186039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1184E8CBF11
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:13:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3AA8CBF14
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA6F2832F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:13:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D821F22F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF5181AC7;
-	Wed, 22 May 2024 10:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3123E81AC7;
+	Wed, 22 May 2024 10:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXTJnBZp"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b="V2AzULBm";
+	dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b="I6xvTTPg"
+Received: from mx.bitactive.com (mx.bitactive.com [178.32.63.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CDA824A3;
-	Wed, 22 May 2024 10:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D11CD13
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.32.63.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372749; cv=none; b=t8mKZ3tY8H9bc0YZdqOfQ7ARYF9J9cjUJ9XAbe6gBXP62Fp+h/PqzJdum4bKr7siDzigs3hlSTXNCnAReLomCI36j6rSQP6glibbE7CuaRaQjdWu6k4tsLWit0XXYOSRDlAzYdk2iSdUvOCsZPHMPFghjNGjgF5C1pKOPI5pDp4=
+	t=1716372810; cv=none; b=eODo/E+6yVg7WgnMMVVqcGC9ZhKJodM/HginVjBZsCGvBpHUbprj9J+Rd9jeMz2xMgWwyS/2DfKxUREz8eVjVlBj2QWOgoZv3AYijkO4Hbirj8qEZOXVrQXC/3sxEjiqkXWsn6GunY9dWzNeP9VRopaDQ0MgwasKBROX2VFAr2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372749; c=relaxed/simple;
-	bh=nf38RgXKckNA//++U+fbpqBoqTwnk26oCDdREN9SisU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jQ/hfU3YsPjBLfJJdkTj9GAKLnDto8CwVXd5/cht1HLDXNDMh3fpiF7V2TRyfvvoaZXP0E1CkufMi3W8C3Ipc9d5YDcVZsmybsw+8NyFaf4R11pun0lwmWjEXY/R5kpN/OVujCxDU9CZEzsy8xMDArOEjBR1fNXY5BDb4+naGHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXTJnBZp; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1e3c3aa8938so110663205ad.1;
-        Wed, 22 May 2024 03:12:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716372747; x=1716977547; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jH0CAgEAzY3nt8fx/klVxthc1x5d0RrIHXtq1pEypB4=;
-        b=WXTJnBZpyLoYb3eQb9MXYxfBZ4bQWN9dzJS6VxQNU+u6KbNWtnlVXuL0QaISoENVjV
-         hmmx3dtrlmhptJFrDABAhAw5v9B/uqWKqRezJL0DEUqbzlcWv6015Q8uZ2FiC1rkrJPi
-         RN4/m9SMYkN/e9JOsFQHKBCXEhISLAK3neLzBPNZfIhcY+W/Yc/I+w4iZJ8fmRb3zvEH
-         M5UHtAY87x7QUSHwaR/WBmZWTKbYyCCQRYOasp70Bk/22h0ekhC+6McGvUFjy12lHQeU
-         AKgUKCh2q+/nsVH04HcopHMP8ITITfrR9qut9FfwSOTL8htIpUfuZ5Ql5URFb3ebtgjg
-         N7fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716372747; x=1716977547;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jH0CAgEAzY3nt8fx/klVxthc1x5d0RrIHXtq1pEypB4=;
-        b=VMSYldo021kOUTmCn3Ll8o0dK6iy02IrzZ8RfmTPy5C+L1Mmy/7bRENE0lRLqrXErE
-         QtVHMkPySe2P4oD9ckBQb/4isDTyP72niVPj2r34PvGuarMTXP3UVigUG5MziBwx1X2O
-         oyGddX+aYs37Lwy8MP3jU4sNXqYLQMMzQf0CfPCgZjOTmRfDnpEIplIVDLIBteGQGLng
-         zEm49gvUJzfWYN1YHJJrowb+TmAbvkRlzCO+5TQkPL/kAdczk3qIAn8R/clYIGV/6+nu
-         qrZ/UZm3nm+1srrHctDmVQHos4QU/PVu7Y0TDwUmJSQZ9AKeDpxr9ds2cDPLyeTV7Po+
-         OHJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUigWbknPCcRHw1NfmGAFL0Puo5OXswV3VhxRxB8/+8r9Mr696JNCWpNsy6y7JfruFDCH9gD07nyWlNJUzCiqEopkJcp3X+/3kajXIJyZjbvBXPEDt5L2q0gwpCWbLyG4iPNyNVQP2p
-X-Gm-Message-State: AOJu0YyQldKeBPrR8FEOfMoJSDL0Y+yw6biWUmdo748koLhb84Q7Hjos
-	E6OLUklBPUrO0lkYz+yJOKdokrJx0Fs+nmyCLf7M13SqZmUk1awFOSnKXEHb
-X-Google-Smtp-Source: AGHT+IHpksIRmXfsImJ7MYH7YyiaSifjcCmeIkdi/gPHDwUvQdkcXd8lJftUc8jSlXbwqUSg0qjzMw==
-X-Received: by 2002:a17:902:da92:b0:1ea:5ac0:ce46 with SMTP id d9443c01a7336-1f31ca4dc02mr17194485ad.66.1716372747195;
-        Wed, 22 May 2024 03:12:27 -0700 (PDT)
-Received: from toolbox.alistair23.me (2403-580b-97e8-0-f22f-74ff-fe1e-41ce.ip6.aussiebb.net. [2403:580b:97e8:0:f22f:74ff:fe1e:41ce])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f3066594bdsm44593235ad.303.2024.05.22.03.12.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 03:12:26 -0700 (PDT)
-From: Alistair Francis <alistair23@gmail.com>
-X-Google-Original-From: Alistair Francis <alistair.francis@wdc.com>
-To: bhelgaas@google.com,
-	linux-pci@vger.kernel.org,
-	Jonathan.Cameron@huawei.com,
-	lukas@wunner.de
-Cc: alex.williamson@redhat.com,
-	christian.koenig@amd.com,
-	kch@nvidia.com,
-	gregkh@linuxfoundation.org,
-	logang@deltatee.com,
-	linux-kernel@vger.kernel.org,
-	alistair23@gmail.com,
-	chaitanyak@nvidia.com,
-	rdunlap@infradead.org,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: [PATCH v10 4/4] PCI/DOE: Allow enabling DOE without CXL
-Date: Wed, 22 May 2024 20:11:42 +1000
-Message-ID: <20240522101142.559733-4-alistair.francis@wdc.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240522101142.559733-1-alistair.francis@wdc.com>
-References: <20240522101142.559733-1-alistair.francis@wdc.com>
+	s=arc-20240116; t=1716372810; c=relaxed/simple;
+	bh=f6uxh30zMm2VrV2fxQMmLGBXNp4mKz7OmD1+JtVasf0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type; b=uxdCWpTAzZlryaQtCvLtideVB29p1UN/YSlgQIkuMI+tbk3mTwXAEAcauq/5MqYzpITuhS2UosindNSr/Q4meYW9Rxcflx/nEInkx0yVUJiv7UR+dbUlOQOJAtsdtO0h6AXRuA8tTwaW9ioBwGyZlZg6ebVv2L7ESz1APuRpBQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marcinwanat.pl; spf=pass smtp.mailfrom=marcinwanat.pl; dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b=V2AzULBm; dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b=I6xvTTPg; arc=none smtp.client-ip=178.32.63.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marcinwanat.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcinwanat.pl
+Received: by mx.bitactive.com (Postfix, from userid 1044)
+	id 4VknFD5NZrz7mgc; Wed, 22 May 2024 12:13:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marcinwanat.pl;
+	s=s2048; t=1716372800;
+	bh=vwogVyT1ERaJqCbtt35UMJYwBhprISHU+UzKOErpRZI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=V2AzULBmkBbI9nSndOmNy+octXyzb/U9BiEy/QL5uOZRBgH0zIUZjxkSLns+Fy+Uz
+	 8iRZWrX6tsTnrQQ5JQFmA09zFnRfh2ZfFyKbFtl30jn5+knOnOneRAyCau94izHf9Y
+	 Wr4EPCDrg2CLskc89HsiOZqEMu/DaG8QLn9NpkVY1+IRuulI+8HrXZblZN6DzVqh0J
+	 q5AJTgBRCDGQqPHTxo2bx6SweuoS3VmnYssR1D/yDkDMbhfosyt+JGJk+6SXbOkg6q
+	 eOlPgmM8uCTkKxqnoXRJjQpaV6WIzgYiHywUvXXdxB1wCuxYHze/xQL92I+HU9eJLh
+	 cGQ1uOOM6404g==
+X-Spam-Level: 
+X-Spam-Virus: No
+Message-ID: <b4883f83-9f5d-46b2-b30e-f2e78506bf30@marcinwanat.pl>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marcinwanat.pl;
+	s=s2048; t=1716372794;
+	bh=vwogVyT1ERaJqCbtt35UMJYwBhprISHU+UzKOErpRZI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=I6xvTTPgd8AbX5YRJV4/QLxDN2cp6/xs9z/YtVk3Dfl+0zUUWh61BNanaJ01aAKqJ
+	 YEVB27YWFa1YLIfKpMAuvauphmQUHWoQd5L/ftsOxlF7NPU46SwGUjVM1vK+O5vdY5
+	 qwhRmLwq1W6CL5dxcpT+TdV/Y5VDX3+AWfLEpSLmSDAi7Zc3UpckjDHdCvdqFO+nnB
+	 iZmoVozdyzkZGrMF9QMK6geNKj+pBZMqTrcVGkn1kCAkYHQCUipui6IJKNWnBzqtwb
+	 fRzPRGDYSUoRNBicZ/+d5y5TnbizkWChYSIH7xJax9bf3AVyNMZOfEYRRSjERfB7L2
+	 Ntqptwirdv4qw==
+Date: Wed, 22 May 2024 12:13:12 +0200
+Subject: Re: [PATCH 1/1] mm: protect xa split stuff under lruvec->lru_lock
+ during migration
+To: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Alex Shi <alexs@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+References: <20240412064353.133497-1-zhaoyang.huang@unisoc.com>
+ <20240412143457.5c6c0ae8f6df0f647d7cf0be@linux-foundation.org>
+ <CAGWkznHRyZDuumF=70DncgPHFM0+pgxuONh98Bykz5b-=rCjCQ@mail.gmail.com>
+ <ZhxwIh2M8jr6IZaF@dread.disaster.area>
+ <CAGWkznHDpw5Sw5pAfB=TdgRqsf=bmwUQ6+kvvLht3=wumNNo6Q@mail.gmail.com>
+ <d9f7c779-acc0-4b8b-993e-e56e9475438e@marcinwanat.pl>
+ <CAGWkznESMXeOhWnK93q1JJxhP0r4wR16cRJxiVzKZmM47GiEWw@mail.gmail.com>
+ <CAGWkznEG78ppUXyoM2HKoo9MCOBJQaW=vSdSKDYXJj6kWH6zjA@mail.gmail.com>
+ <2652f0c1-acc9-4288-8bca-c95ee49aa562@marcinwanat.pl>
+ <CAGWkznE0psiqZYSRjF+Joq73--Yo-xUhGD0gnBa42fYC55BFdA@mail.gmail.com>
+Content-Language: en-US
+From: Marcin Wanat <private@marcinwanat.pl>
+In-Reply-To: <CAGWkznE0psiqZYSRjF+Joq73--Yo-xUhGD0gnBa42fYC55BFdA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.6 at mx.bitactive.com
+X-Virus-Status: Clean
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-PCIe devices (not CXL) can support DOE as well, so allow DOE to be
-enabled even if CXL isn't.
+On 22.05.2024 07:37, Zhaoyang Huang wrote:
+> On Tue, May 21, 2024 at 11:47 PM Marcin Wanat <private@marcinwanat.pl> wrote:
+>>
+>> On 21.05.2024 03:00, Zhaoyang Huang wrote:
+>>> On Tue, May 21, 2024 at 8:58 AM Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
+>>>>
+>>>> On Tue, May 21, 2024 at 3:42 AM Marcin Wanat <private@marcinwanat.pl> wrote:
+>>>>>
+>>>>> On 15.04.2024 03:50, Zhaoyang Huang wrote:
+>>>>> I have around 50 hosts handling high I/O (each with 20Gbps+ uplinks
+>>>>> and multiple NVMe drives), running RockyLinux 8/9. The stock RHEL
+>>>>> kernel 8/9 is NOT affected, and the long-term kernel 5.15.X is NOT affected.
+>>>>> However, with long-term kernels 6.1.XX and 6.6.XX,
+>>>>> (tested at least 10 different versions), this lockup always appears
+>>>>> after 2-30 days, similar to the report in the original thread.
+>>>>> The more load (for example, copying a lot of local files while
+>>>>> serving 20Gbps traffic), the higher the chance that the bug will appear.
+>>>>>
+>>>>> I haven't been able to reproduce this during synthetic tests,
+>>>>> but it always occurs in production on 6.1.X and 6.6.X within 2-30 days.
+>>>>> If anyone can provide a patch, I can test it on multiple machines
+>>>>> over the next few days.
+>>>> Could you please try this one which could be applied on 6.6 directly. Thank you!
+>>> URL: https://lore.kernel.org/linux-mm/20240412064353.133497-1-zhaoyang.huang@unisoc.com/
+>>>
+>>
+>> Unfortunately, I am unable to cleanly apply this patch against the
+>> latest 6.6.31
+> Please try below one which works on my v6.6 based android. Thank you
+> for your test in advance :D
+> 
+> mm/huge_memory.c | 22 ++++++++++++++--------
+>   1 file changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
 
-Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
-v9:
- - No changes
-v8:
- - No changes
-v7:
- - Initial patch
-
- drivers/pci/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index d35001589d88..09d3f5c8555c 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -122,7 +122,10 @@ config PCI_ATS
- 	bool
- 
- config PCI_DOE
--	bool
-+	bool "Enable PCI Data Object Exchange (DOE) support"
-+	help
-+	  Say Y here if you want be able to communicate with PCIe DOE
-+	  mailboxes.
- 
- config PCI_ECAM
- 	bool
--- 
-2.45.1
-
+I have compiled 6.6.31 with this patch and will test it on multiple 
+machines over the next 30 days. I will provide an update after 30 days 
+if everything is fine or sooner if any of the hosts experience the same 
+soft lockup again.
 
