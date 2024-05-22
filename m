@@ -1,344 +1,239 @@
-Return-Path: <linux-kernel+bounces-185653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170878CB873
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:29:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E538CB877
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92EE01F217EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D8A91C20A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B9B2E3E0;
-	Wed, 22 May 2024 01:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BBC6AD7;
+	Wed, 22 May 2024 01:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="o0kttKKw"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2058.outbound.protection.outlook.com [40.107.117.58])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CBP62Sfg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3722C9D;
-	Wed, 22 May 2024 01:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C264C7B;
+	Wed, 22 May 2024 01:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716341149; cv=fail; b=NcoUNediQn0SvpRIRBRtL+9xg95tiryVoH6KapoCjlxkcLGx84FsnHCFATh13W2eslSAh2Mz7hD7jWIoMxEI7pB92iw/9yQZBnNXOYTUpaHuBVcR/M2fprKUOE8KC1GdbxQQrmGo/EpdLewOX7S14s6PX63QpPkBHsZSuIf/KFo=
+	t=1716341408; cv=fail; b=Xe3coYbKUR/o0NBvHbdR7GxZDStlQ3Yocu3eNQ3hLBbjxk16JppEJ0JVyorGwj+oHSMcsaCFY4z4OzR8DlpMRuqei+DZJ5sjm0apjdBAEKaWcuV00cwZalmQxwf/mXPB/k0FVXslffejzEeeTQUy0Y6HA8w0nlkvGGUSLYXNW2k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716341149; c=relaxed/simple;
-	bh=AmI/QH1JDBm0sNSSGC+9czsGdznApzj56hGO+aNzqBQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QbGWxP3P297OT3gjsz0eVIJZIPFNNtT6Yss68e6qe1OBWeBfnrT4G39Y7FVxKwBRkd74nwMgORy2DvMH9raa3fg6kAxQqE4QxwV+dNi6uu18OCs5MLwoljw41XtYEtNem2/SMsQYRhfiSAi6IMmDY2EDaGRyHXJZSzbHMHax24E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=o0kttKKw; arc=fail smtp.client-ip=40.107.117.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+	s=arc-20240116; t=1716341408; c=relaxed/simple;
+	bh=G12qxb0NNGGYU+iz5G3oZBvQ3cov3SJ4vssfyTex5Ws=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aUYJJMXIRsSfhcZSwtTwMpDghZeXaLjhl/NykV+NpHOtUu6qX/lPI5fkGBNiPx0Y86b9y+hPMmOfkvRZhKxWPe4ONmolFj3Dd9CnjpVTgRUjpbdS/0B+OWly52vtjlmAdiisHZQGZRMZw0dmHdYIoye9E2n+3+4XZoDpOl7kyp0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CBP62Sfg; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716341406; x=1747877406;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=G12qxb0NNGGYU+iz5G3oZBvQ3cov3SJ4vssfyTex5Ws=;
+  b=CBP62SfgloIaLxSObGlIApqet7WEI2Ehn172ixq/VTnq5oDsXZYBFuSI
+   vCnSTEnqUOallUVbB7InlJC7zc568mbCAW7124LGRNqGmJk9fz2m93WBv
+   NqnvgylpiK03xWRBGfFzuY8+SaPcYDJSMZIueexYObsuEEDFR2UTWQXYu
+   mqd5kJP0IfIP21F9oxHRXORGBKAJ7BCJDi4d47QWCXVsB7mdbnrqnzqan
+   VknWtks9EaXTLx9+WbQBlz51tU152TdDXo4VTTQ163DTj6CBYNigmJuRh
+   XHcGNJGgDSEHUSX2V0T6M5yzulLXiu75do1MXjEibhKkok8eHcQU1O6N7
+   g==;
+X-CSE-ConnectionGUID: 8hPXzyMzQHuIiST7oy6Qug==
+X-CSE-MsgGUID: Z1WH4cEzRMuv4r67VsRgZw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="11640556"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="11640556"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 18:30:06 -0700
+X-CSE-ConnectionGUID: /28i/hvzQ321Av3dmFjMyw==
+X-CSE-MsgGUID: 4PwbjfsjSQm4YMM1LXUG/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="63944743"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 May 2024 18:30:06 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 21 May 2024 18:30:05 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 21 May 2024 18:30:05 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 21 May 2024 18:30:05 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 21 May 2024 18:30:04 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OAAC6wpHJVX2SxifNvmts57ShaW48tahMOGU9FJ8UynmuVTfG4pAkiW14DpC14jXMR+2VGLOL7glOTla0jXvJPRMhdlL8tyJ89/lGHw78vBntmUsJRGCX9jp/v2GXB6TQlc9/eg/7kS+3GHJ8QfBwLcfkZZpxR9k2QoUue+cN/uPYDF+c8yDFxx+vsYNSta85y1ksan3E0ygO7MLQNnuduIOdQM4Zeb/smBnOK+bgAJQst/J1cu0M7q5h53nwcF4z9PgQy+YXDOgxoe3SxjcOLphG1I+64mMqwa0MwrMkP/MvHPf2MBABfD83n12XfnQSZJxb7VmkqR2/QMhpriljg==
+ b=RVPBMShCipDPXAv/KAcw7jmpogmHF78eNBJWggDq32rC5NEBuWj37PHC1KzPupR8UNCfv8r/OkZBvANUs8t6/PB9gUGlKvgxfiZyUSLZVQnCg9rrxpwHJRFhSN2CL/cjp9fapEojNp5cHf8IQ5b8UbQWR9CMUvsM9tfkCTuO2RgpnvKyQpJ4LlaSvIHKt/PAWKMm3kGCtLkj2IM/avTULuA/r8jGqXfVNaSCUyUhkiga1jDHRcnUkDdo4k1/wuNUX1If2kMP2xP8vyd8TNkMQAlHhr1bddtNq2AxOGqcYBrD99Fjc/JhRm41PxuG/S9L0GGAd7uNCPVUOCx0v1rLWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MpR5vcox7qIrfrMuA1GVItiQ1YBg1Rdpf1mQ/akwuZQ=;
- b=k+JP/bHGl+9Ec8CfmijifvNMrKwugdctLdEBACw9HWBDy/tMHrXD8Nnilz/u/+2j4dO4YomD82HGK8qJqKAy3wO+rL/bF1VH+AkKbLQNOEf98M+JTur0GY/dvf88xN3dL26Z4LhRcsdnh7itSlnx1w8sutj/iqb6BDunVu+hQ4iB0jdprmPcYgCV6swSvS+HPHvMTaMtm71/co37wS36pvfdzxHvGM9jOnt7cYpqCt6DLY38tu1mpQLYT8ybwSt8m4eR/m7DKJ+R93vxUbiw0v60qSjO4gMiuTqZWOJn8OIsV3pSy5Gu/LMGOoR9aML4hX7ISkPWUgUIPrWvPhwY3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MpR5vcox7qIrfrMuA1GVItiQ1YBg1Rdpf1mQ/akwuZQ=;
- b=o0kttKKw+6pUlUXYQV9ins3NI2F+/tX2tfp5/sva+w3tZGNVbe1Me815VtjGQUJZqgVV6IvuaxgQPsefhj4MCgBbjy87FaaRSV2njInB01ClvpD73HFTE98LM34jrxPWN9nHqkJBvWGyoeU/jhv75qhIQQquZR5kKZ431GVHvx9JhBXsMRVzv99hkPnE8zwVnu9MBiBPogJalVnE329m92rvpP2hffdAjNLsM1XUqMrhNV0oYeCTuoVG/Aw0UY9pjRIPZGcIKaz7Tic83k1gDvgFdVsrFsaG65aXJq+QV78KUzkmZNOUns71WXtFDtWPCv+6RES2Sv2ZWhTHPeBk3w==
-Received: from SG2PR02CA0129.apcprd02.prod.outlook.com (2603:1096:4:188::19)
- by SEZPR04MB6171.apcprd04.prod.outlook.com (2603:1096:101:cf::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
- 2024 01:25:40 +0000
-Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
- (2603:1096:4:188:cafe::33) by SG2PR02CA0129.outlook.office365.com
- (2603:1096:4:188::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36 via Frontend
- Transport; Wed, 22 May 2024 01:25:40 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
- SMTP Server id 15.20.7611.14 via Frontend Transport; Wed, 22 May 2024
- 01:25:39 +0000
-From: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Samuel Mendoza-Jonas <sam@mendozajonas.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] net/ncsi: Fix the multi thread manner of NCSI driver
-Date: Wed, 22 May 2024 09:25:36 +0800
-Message-Id: <20240522012537.2485027-1-delphine_cc_chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+ bh=4wStgtuY/o8NKzfSpxCSG7qazqoeMiJ7WcRfCrOl/0A=;
+ b=NwgsPHHlfnU2IdvD28Oa8x7O/5jPN5Xw3sc9V8XOl3E0x7VnQyIBHm5/xsDRfJ+l4qmNI5f5v02T3ZfL1mIXclQs93To71HVsJjdpm/6A8EmtiTqU9McQZVK5T+KWiWOsREzl/XWvpCnBr7rR5HxOpGuxUV8PBKv4lBYu3wpJje/Sn4lY8w5J/y9tKY369RF8O86tbrTKd3bhvRhpz+ebEF8+xBOv7b9qFJmS3m25Ey5T1UGn0ntnO1jGOsqYOZ5141KMBMF6JUYa8PkR3NokXbl/96zouqC/d/bZ/jITsGvMtRtyvNnhK06D6iAS77WCkdMmkfHe5VDrJaDvlvXYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ CY8PR11MB7170.namprd11.prod.outlook.com (2603:10b6:930:91::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.19; Wed, 22 May 2024 01:29:57 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.7587.030; Wed, 22 May 2024
+ 01:29:57 +0000
+Date: Wed, 22 May 2024 09:29:08 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+CC: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>,
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "dmatlack@google.com"
+	<dmatlack@google.com>, "sagis@google.com" <sagis@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Erdem Aktas
+	<erdemaktas@google.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Subject: Re: [PATCH 02/16] KVM: x86/mmu: Introduce a slot flag to zap only
+ slot leafs on slot deletion
+Message-ID: <Zk1KZDStu/+CR0i4@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20240515005952.3410568-3-rick.p.edgecombe@intel.com>
+ <b89385e5c7f4c3e5bc97045ec909455c33652fb1.camel@intel.com>
+ <ZkUIMKxhhYbrvS8I@google.com>
+ <1257b7b43472fad6287b648ec96fc27a89766eb9.camel@intel.com>
+ <ZkUVcjYhgVpVcGAV@google.com>
+ <ac5cab4a25d3a1e022a6a1892e59e670e5fff560.camel@intel.com>
+ <ZkU7dl3BDXpwYwza@google.com>
+ <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
+ <ZkVDIkgj3lWKymfR@google.com>
+ <7df9032d-83e4-46a1-ab29-6c7973a2ab0b@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7df9032d-83e4-46a1-ab29-6c7973a2ab0b@redhat.com>
+X-ClientProxiedBy: SG2PR04CA0183.apcprd04.prod.outlook.com
+ (2603:1096:4:14::21) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SEZPR04MB6171:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 8ffca375-8a5d-4f0e-3c65-08dc79fe1735
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|CY8PR11MB7170:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ad79a23-fbe3-472e-493b-08dc79feb0a8
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|1800799015|376005|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oWD9vhW0mOp/77s8EumMdiEefIU3OL01KV5GAWRbsVneqRPAOzXOjh7j1y82?=
- =?us-ascii?Q?SBISBmap5fiokpGkbUwwIHY5AK3q9waep+JKpUwMFJu/tFRFzbClwYWEqYAB?=
- =?us-ascii?Q?tMol9fwhHuNY1Gr3KaoLWvpAPp9sleERQJiNgoYeoFO2tT+7T0rY9VqnGs5t?=
- =?us-ascii?Q?IhScCsOy1NwqzTpObiz2jqZqFRWRSGL4/+TibfOomAjCHzbM4V5kPl4qrf1T?=
- =?us-ascii?Q?gDMz6MCh9Lmkwq5JTuhp3DPYA7ZSQ/7RTe1VxN6e3INdkte2m1+xPvvKc5Vh?=
- =?us-ascii?Q?gjYMukdnFUe9D6qEtBLfo3mWGUcAsdx6DbdjLtZCd6VL1sulanajquC0Wxzt?=
- =?us-ascii?Q?z07HlpHxANhrxadGFMUuBI/E1TZXyagFpKSrO/hKt9tcW4hPK1pv8SmRdVRp?=
- =?us-ascii?Q?s0zbAG0w5iEzy7Rr9AurOYA8Q4rcQ4g+ZIBKeFBOa/FBTgUww/0kCShf4R4w?=
- =?us-ascii?Q?2nskOcQFmqWKrixIGfCdg3DeKTaf9/uW7JsjuwQsZixMiNcvN2vxIdJCjhFh?=
- =?us-ascii?Q?I7K6bpvFeSkMafNMY0dqknRLgGGNw3sSNd7jUjhxWR46EmNmnhnjTIcVR54O?=
- =?us-ascii?Q?GgQy3PxZcyf+Wpeec2KPAkpjy+PPEW2OekYSf0iMBrrYTSG9DyjhF8JimfET?=
- =?us-ascii?Q?YAue8KYyHkXl6qlKAQy86d4IZaXGClsmOdhlFVSqCk1cuB2N1aV0A0IaWvWn?=
- =?us-ascii?Q?3jQEw16Weu9hh9eSbsAEXtGvvTt5wJArwvNXwNXEWgGPWcjYzAC/hFv28The?=
- =?us-ascii?Q?CS1+wnSUss12emKKz69lTdigAWQ7jWjZZ/E4Q/a9pAQWUWs44gRCjPu/UrtQ?=
- =?us-ascii?Q?iblTmA9FlOFcNE3mckXA8eo/Lb/Af8m15CeMzK8nfUaxfc6qaHYL4UPOvHiY?=
- =?us-ascii?Q?Z8ab/zfz6WvpvB6S28nphZw/iwNEuuCKAFv3L2Q3l1KyuXBAG6z4No3vs3ZK?=
- =?us-ascii?Q?axVAy2Z6mu010LMXyiIRaEXbPgcoGWAqfIctcU7M/SON5rg+QRTY1nU6Al5S?=
- =?us-ascii?Q?JdaswU8Lj3uVRtjkCiSXqB1msSNJtunZHL+dGMSiOZsYN5Bg7MciYWH+WsJg?=
- =?us-ascii?Q?8VFUgsnFImCeBKtqAufvGnBoX5XDFHGrtYmc/1FXqmUJCP6dGaeorZKPmMY1?=
- =?us-ascii?Q?h+qN/4XHkPbhZLCQezG9Of1zICOct0pckjJXyHZCmwtK0NuOgFHcIIm2AqvI?=
- =?us-ascii?Q?nmbE5DvftOPaPwbmT2mqBQ+FN5HZhivnNmGp5Eo/Npuio6aw6IeIsFMg0ele?=
- =?us-ascii?Q?nVIdrVvhv97+tbXBrTORx2gd+C4Wh9G4m/bAxowoucySGOPShG8+0cyl0a1R?=
- =?us-ascii?Q?Z1nSohjK6EMMK/dP/1T2L/iz+SHZNfMEbkv4SDM08KAri7RAbaYIlMDIbkwj?=
- =?us-ascii?Q?eE3uayw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(36860700004)(1800799015)(376005)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 01:25:39.2474
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MmdtN1JQSWU1cUZ4UlRka2VsemtMRHEwcFhBeXVTYllGRTBvOXVWNUdGVkRW?=
+ =?utf-8?B?bnNRaEZCTU9oR3BXcm5SQTdQUFhacU9GK3BQRmpGVlIrbnFrOHlnWUVLMnA1?=
+ =?utf-8?B?Wkl6UW9rSkVzbmdRNFpKc0tibyttbGFXbnVFQUVuUzVYcUVHbEVDYjU5VVJM?=
+ =?utf-8?B?RzNwWXBYTW1xdVduY1B0WEtGVC9Lb2thaUlSSnJOOUZmaGdjR1BFSkxxSjFX?=
+ =?utf-8?B?bjNiOHh0K2xVWk5sdE5GZ2tyd0t4aDhIbjZvTklHWFlZOVpXZENNeU11aGRs?=
+ =?utf-8?B?NzNwVEV4MnVVUlZpaHZWelVqVTJjN01pVVJROTBmYmRYRGIwMzEvM3RlTGRJ?=
+ =?utf-8?B?aThKc0VaMm1yTENXZ3YybWVkMkp4d3VveVdWdFMwQ1FYZXpVcitlWkI3dllQ?=
+ =?utf-8?B?UTFFTW5zYXdDUkczMG1ONVZXUkJDckdzWTdlOW5xSTdjam0zTlRDK0lIYzht?=
+ =?utf-8?B?cVVZZExTcGZmdjdabjRwaUJxZHQrbjVaNW1SS2dzc0ZqK1hvWTBwRGtyK2x4?=
+ =?utf-8?B?Um83VUQyZU1ReEZYTU01TWt1RHVleFVHV2k1eUxXSEZ3ZkJSVkhONURlYngr?=
+ =?utf-8?B?bW1WSFlMWm1SeGtCVGxuTG5BVEFWM1BKUmd4aDZ2dERBbjhKdkpVQytXM3dr?=
+ =?utf-8?B?eXBUaGNoS0hyMFJjdWt1RW9MNmJwY3N3WEdqcHZGcXRDcWQ2YnVmVGhCRmpq?=
+ =?utf-8?B?WEtXTnhlSXFNd0FwU2NzcUVQUVpmOGE4OFpFL0VlTWk0MldidG9BL0dzZ1lJ?=
+ =?utf-8?B?QTJPbWpRTGlRWE9ZRktKdzY4UEwzcnpUQ0xWSmV2eThrV1U1MndPaXF1bDkz?=
+ =?utf-8?B?MVlWcExFNWJQcFhyK1ZpQnBEcWZyNFI2MDJ2SWlHRzBqRmxKdVJ2QmRkbnNO?=
+ =?utf-8?B?MkN2TnB0L0JMNXo0NTl0SG5jUTNUSkdMckpWUE51YUcwb3E4YlBNbFJzRllO?=
+ =?utf-8?B?WE5QSEs2aXJ6akNUZzR0QUtCK2I4RmFia0puaUpTU3l2VHZEV1MxRTZ0cUp0?=
+ =?utf-8?B?UitENmkxODVXTEZ3NE0rL2dFcmpWa0g3L3ZBNVdNSnFiVU5jTDFRbWt5UjlF?=
+ =?utf-8?B?VzVtL2VOSFo0cUdqMTBHM1RFdHZRc0I4UDRIN3JMa093a0tIZHlIU0haSGp1?=
+ =?utf-8?B?SndmOStucEtWblNOVWFsYjBXamhOR1ZXZGRFbkZMbGNpK1Frb3VXL09YSXpN?=
+ =?utf-8?B?VlN4aWVkWExCWC9SMTIvakcwcmlwVFIxYzFvWGZzTU5yM0s0a1NIY2hRWllt?=
+ =?utf-8?B?TE1GeFdSdDlqWktsNnphbitpSk1GT00wZ3VleCtRSytMWlp1YWtER2NvYlFz?=
+ =?utf-8?B?dFB3NU9wNzUwUzdsOFVKK2l0NHF6WFdTekJJbUphRGwvaVRJeFQ5UGlQdEZY?=
+ =?utf-8?B?eEtMa0thWERlMWdBK1NUSmtJSXdvMmZlcHQ1TGZ6ZGdxNmVRUDNvd2RkaE5h?=
+ =?utf-8?B?cmt5dm5hbmd3MkNad0ZWa0phL2dvcHU3ampXdEFBcmVsSnlJRFlNaGxKUlRN?=
+ =?utf-8?B?NkVsSHVFMVhvS1RCV1c1RExNODdaUE90d2JZVXhmUjNYRmJ2QkRrb1ZpWWIx?=
+ =?utf-8?B?dTVxNFByK3paQU85Qjc1WnZHd3JzZld6L0RJLzNIQ09ib0MvM3J0T3VLTzVO?=
+ =?utf-8?Q?5xernxvEQBvTBzOTzlkAuSYRgwgiIv7gyru7FO4cZ+fs=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MkpKRlo5YnUwTmNmSnZYVmd3NHNOcDE3dythbi84TmlVUGx1K3g2QmFNODBm?=
+ =?utf-8?B?TWlRTTdZNWU2bmJpRzNvbzFFUDBnTzk3ZlpUOFlGWnJQcjE0NDhaalZxNWdB?=
+ =?utf-8?B?K0FsUGM0MXdweE9DNm9qUjJmKzRLdW93bW5BSlJSRE1YNEk3blRFNm9wNnFw?=
+ =?utf-8?B?MHBZRmZsNWFodEtoOTRXQW02L1hmNFYwUFBBWlNCVllFNC82bXpMMVl2MjZI?=
+ =?utf-8?B?RTdqcGplR3ZwSzdsR21TMFErSUlJNUMxVnZZZ0UzZFNNY0ptQ0M0bDIrbFJF?=
+ =?utf-8?B?Q2RtM0I1cVVaL1VxakRZc1I4NG1mOW9LRVkwRWpLQ3hYdjZGbksyUmk3SG1a?=
+ =?utf-8?B?diswS1BzMHpRbUNNSVNwc0p5QWozNmZMTWNCdThaMEl4bDZoWU8vRzhJc0p6?=
+ =?utf-8?B?dGZaTHdUbWRCNHJ4c05VUlRsK3pFRGFnbGNvV0taWG93bmF2djRQMDZ2STNp?=
+ =?utf-8?B?ZkVNQVBFaXIyNFZJUnZEaWxPaFNGM1VMOXRBak5sN0YrRUdHa3pRWEl3cUsx?=
+ =?utf-8?B?R2RyUXkvNFdscVVpdDhwNE5QWkMyOHhhNVFMMU8zcnFvbFpOSXliTUF5eG1O?=
+ =?utf-8?B?Tk9SOGYzU1VtUFBTUGhtamgrays5ZTI5eDArQVA0OWQ0dExsdklCVVlUNytH?=
+ =?utf-8?B?TkhoTlBhUmlQOWpNMGJwV2hXOWN5d3JCdnpncENIQUZnNEpiVGtJZnVsR05L?=
+ =?utf-8?B?RDlDTGxSUHc0MlZEL1ZhZ0w4bi9LVFc5eUVTSzlYRkFxZlpCUTRNZlhEd25m?=
+ =?utf-8?B?UlBSbGtkVW9uMThtb0dsU24rcFh5VDVzZURtZzFIejFJSTF1QktsYmgyelg0?=
+ =?utf-8?B?cHR4L0YwQ3RjaEZWVVZHQk5rUG5oQ0Z4Q2ZZeUFORGNGMjMyZVp0VXYxdWpp?=
+ =?utf-8?B?cWFDTm5hTVRQMm1IVDJpaGhBa3h4M1QvRmxsUm9DdU5PSERXQUFpa1ZXVFdt?=
+ =?utf-8?B?ZUtzenRyWU5nOFgyZC9ZREQ5Nm1XRndETWpGeURqc2pLL0lQcUl2N1ltMlhr?=
+ =?utf-8?B?YkkyT2FRTWlSK0FBakhMYVhlUGhHMHRueVdXbThzMzdoMy8xMkdGTUNSWlAz?=
+ =?utf-8?B?cjlvaGYyRVhURVhNUmZhT21mNlVnNUhLVklvRlU2WHRGa2Rtd1FJQ25YcFVF?=
+ =?utf-8?B?U3R4NFFhQzhoaVdVQ1pTWTRNaHZMOTB1RXQ0ZTNielVrRUJTYSttKzdDTFN4?=
+ =?utf-8?B?bU9kTTFPUHVaNUxCUE14a3kzb2ZDRVdHd1cxUlRXR1k1azRRNURVOFlITWJ5?=
+ =?utf-8?B?bmdnNVJ2UUtCdFFFeE5vckdEamRYelhlZHNpMFpxaGVFTTVTK0pxTEtMUENK?=
+ =?utf-8?B?S2dDbUk4YU1hZHVPK3NEL1pSSlU3YzZuMUxPWDViVUpzaGhFTktPdE5uOG1M?=
+ =?utf-8?B?NXVwNDFpSG9kVEpWV1k5dzNpc3VvWXdOOGd3VEdoajk3M09vUUR1TFlYTWx6?=
+ =?utf-8?B?Wlk1UHJhS2lkMzNMdlRQemFtVXlNdXVYdVhNM1IrcEVOSWJqYnhUbnB2RzRS?=
+ =?utf-8?B?Z2Q2K2cySWRQaWo4NXZQa3RxdDRaVlZXaHpMR0x1MER5QlprVHdvTU1RaStn?=
+ =?utf-8?B?TEFwRnE1cjJyemFxb1ErOUlzRjU2ZHcyVU90ZzJDdDZsZ09leWRPeUVEbVhs?=
+ =?utf-8?B?RFpPZmZkMmJtSVhXVTJQK2dkV01RdzcxZVJxZERySXY4YlMxVjJuZSs0RlYz?=
+ =?utf-8?B?Vm5WMHd2UzQrWmN5NWkyOTZ0Q2pCM1NFM0dmY1Z3SXVXN0VUaHNuUFE2L2F2?=
+ =?utf-8?B?anl6aGp5VFUyRXZrZWZVSmZUbmhobmlGWkNTL2dQclJndHd0Ynl5OXp6ejda?=
+ =?utf-8?B?aFFWdVl4ZzBPeEd2QVZVdDh6TXYvUm04U0pURWd3aTFycFdJaXF6VFFmQXlm?=
+ =?utf-8?B?ZDlEdXdlRjFjb0hsQ3VwVDRnMStIdjkwOUJxdDJXZXBBMnlqdk1lMG9XQmw2?=
+ =?utf-8?B?Qmx0dFk0YW9WNjlwZnV0M0FReVlSZDlGc2hQTnRqZ21lUUZIZ1VDRTFUM1hV?=
+ =?utf-8?B?ZG44cDVicDdTQy9TQ04wTFdydmhhaDdjSGRVYmxtVnd1VDJjdktQZDBkc2V2?=
+ =?utf-8?B?dkFnT0ZKREpPUVcxd2VuTkh1ZlV4cVBxcWlMcVlkQmxZaHpVdituTTcwZXVG?=
+ =?utf-8?Q?eBs6TzAlUcQPcT3+LUPRSyDbf?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ad79a23-fbe3-472e-493b-08dc79feb0a8
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 01:29:57.3846
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ffca375-8a5d-4f0e-3c65-08dc79fe1735
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG2PEPF000B66CC.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR04MB6171
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Zm17Bf1DHzEiNumK9LG52zmYl8Lps9OYZvpb1m4WVJYzXwUCrwGVlnkFwKgILpFjmvPRXqOiUVszg/Ud8TWtVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7170
+X-OriginatorOrg: intel.com
 
-Currently NCSI driver will send several NCSI commands back to back without
-waiting the response of previous NCSI command or timeout in some state
-when NIC have multi channel. This operation against the single thread
-manner defined by NCSI SPEC(section 6.3.2.3 in DSP0222_1.1.1)
+On Fri, May 17, 2024 at 05:30:50PM +0200, Paolo Bonzini wrote:
+> On 5/16/24 01:20, Sean Christopherson wrote:
+> > Hmm, a quirk isn't a bad idea.  It suffers the same problems as a memslot flag,
+> > i.e. who knows when it's safe to disable the quirk, but I would hope userspace
+> > would be much, much cautious about disabling a quirk that comes with a massive
+> > disclaimer.
+> > 
+> > Though I suspect Paolo will shoot this down too 😉
+> 
+> Not really, it's probably the least bad option.  Not as safe as keying it
+> off the new machine types, but less ugly.
+A concern about the quirk is that before identifying the root cause of the
+issue, we don't know which one is a quirk, fast zapping all TDPs or slow zapping
+within memslot range.
 
-According to NCSI SPEC(section 6.2.13.1 in DSP0222_1.1.1), we should probe
-one channel at a time by sending NCSI commands (Clear initial state, Get
-version ID, Get capabilities...), than repeat this steps until the max
-number of channels which we got from NCSI command (Get capabilities) has
-been probed.
+I have the same feeling that the bug is probably not reproducible with latest
+KVM code. And even when both ways are bug free, some VMs may still prefer to
+fast zapping given it's fast.
+So, I'm wondering if a cap in [1] is better.
 
-Signed-off-by: DelphineCCChiu <delphine_cc_chiu@wiwynn.com>
----
- net/ncsi/internal.h    |  2 ++
- net/ncsi/ncsi-manage.c | 73 +++++++++++++++++++++---------------------
- net/ncsi/ncsi-rsp.c    |  4 ++-
- 3 files changed, 41 insertions(+), 38 deletions(-)
-
-diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
-index 374412ed780b..ef0f8f73826f 100644
---- a/net/ncsi/internal.h
-+++ b/net/ncsi/internal.h
-@@ -325,6 +325,7 @@ struct ncsi_dev_priv {
- 	spinlock_t          lock;            /* Protect the NCSI device    */
- 	unsigned int        package_probe_id;/* Current ID during probe    */
- 	unsigned int        package_num;     /* Number of packages         */
-+	unsigned int        channel_probe_id;/* Current cahnnel ID during probe */
- 	struct list_head    packages;        /* List of packages           */
- 	struct ncsi_channel *hot_channel;    /* Channel was ever active    */
- 	struct ncsi_request requests[256];   /* Request table              */
-@@ -343,6 +344,7 @@ struct ncsi_dev_priv {
- 	bool                multi_package;   /* Enable multiple packages   */
- 	bool                mlx_multi_host;  /* Enable multi host Mellanox */
- 	u32                 package_whitelist; /* Packages to configure    */
-+	unsigned char       channel_count;     /* Num of channels to probe   */
- };
- 
- struct ncsi_cmd_arg {
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index 745c788f1d1d..5ecf611c8820 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -510,17 +510,19 @@ static void ncsi_suspend_channel(struct ncsi_dev_priv *ndp)
- 
- 		break;
- 	case ncsi_dev_state_suspend_gls:
--		ndp->pending_req_num = np->channel_num;
-+		ndp->pending_req_num = 1;
- 
- 		nca.type = NCSI_PKT_CMD_GLS;
- 		nca.package = np->id;
-+		nca.channel = ndp->channel_probe_id;
-+		ret = ncsi_xmit_cmd(&nca);
-+		if (ret)
-+			goto error;
-+		ndp->channel_probe_id++;
- 
--		nd->state = ncsi_dev_state_suspend_dcnt;
--		NCSI_FOR_EACH_CHANNEL(np, nc) {
--			nca.channel = nc->id;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
-+		if (ndp->channel_probe_id == ndp->channel_count) {
-+			ndp->channel_probe_id = 0;
-+			nd->state = ncsi_dev_state_suspend_dcnt;
- 		}
- 
- 		break;
-@@ -1345,7 +1347,6 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- {
- 	struct ncsi_dev *nd = &ndp->ndev;
- 	struct ncsi_package *np;
--	struct ncsi_channel *nc;
- 	struct ncsi_cmd_arg nca;
- 	unsigned char index;
- 	int ret;
-@@ -1423,23 +1424,6 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 
- 		nd->state = ncsi_dev_state_probe_cis;
- 		break;
--	case ncsi_dev_state_probe_cis:
--		ndp->pending_req_num = NCSI_RESERVED_CHANNEL;
--
--		/* Clear initial state */
--		nca.type = NCSI_PKT_CMD_CIS;
--		nca.package = ndp->active_package->id;
--		for (index = 0; index < NCSI_RESERVED_CHANNEL; index++) {
--			nca.channel = index;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
--		}
--
--		nd->state = ncsi_dev_state_probe_gvi;
--		if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY))
--			nd->state = ncsi_dev_state_probe_keep_phy;
--		break;
- 	case ncsi_dev_state_probe_keep_phy:
- 		ndp->pending_req_num = 1;
- 
-@@ -1452,14 +1436,17 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 
- 		nd->state = ncsi_dev_state_probe_gvi;
- 		break;
-+	case ncsi_dev_state_probe_cis:
- 	case ncsi_dev_state_probe_gvi:
- 	case ncsi_dev_state_probe_gc:
- 	case ncsi_dev_state_probe_gls:
- 		np = ndp->active_package;
--		ndp->pending_req_num = np->channel_num;
-+		ndp->pending_req_num = 1;
- 
--		/* Retrieve version, capability or link status */
--		if (nd->state == ncsi_dev_state_probe_gvi)
-+		/* Clear initial state Retrieve version, capability or link status */
-+		if (nd->state == ncsi_dev_state_probe_cis)
-+			nca.type = NCSI_PKT_CMD_CIS;
-+		else if (nd->state == ncsi_dev_state_probe_gvi)
- 			nca.type = NCSI_PKT_CMD_GVI;
- 		else if (nd->state == ncsi_dev_state_probe_gc)
- 			nca.type = NCSI_PKT_CMD_GC;
-@@ -1467,19 +1454,29 @@ static void ncsi_probe_channel(struct ncsi_dev_priv *ndp)
- 			nca.type = NCSI_PKT_CMD_GLS;
- 
- 		nca.package = np->id;
--		NCSI_FOR_EACH_CHANNEL(np, nc) {
--			nca.channel = nc->id;
--			ret = ncsi_xmit_cmd(&nca);
--			if (ret)
--				goto error;
--		}
-+		nca.channel = ndp->channel_probe_id;
- 
--		if (nd->state == ncsi_dev_state_probe_gvi)
-+		ret = ncsi_xmit_cmd(&nca);
-+		if (ret)
-+			goto error;
-+
-+		if (nd->state == ncsi_dev_state_probe_cis) {
-+			nd->state = ncsi_dev_state_probe_gvi;
-+			if (IS_ENABLED(CONFIG_NCSI_OEM_CMD_KEEP_PHY) && ndp->channel_probe_id == 0)
-+				nd->state = ncsi_dev_state_probe_keep_phy;
-+		} else if (nd->state == ncsi_dev_state_probe_gvi) {
- 			nd->state = ncsi_dev_state_probe_gc;
--		else if (nd->state == ncsi_dev_state_probe_gc)
-+		} else if (nd->state == ncsi_dev_state_probe_gc) {
- 			nd->state = ncsi_dev_state_probe_gls;
--		else
-+		} else {
-+			nd->state = ncsi_dev_state_probe_cis;
-+			ndp->channel_probe_id++;
-+		}
-+
-+		if (ndp->channel_probe_id == ndp->channel_count) {
-+			ndp->channel_probe_id = 0;
- 			nd->state = ncsi_dev_state_probe_dp;
-+		}
- 		break;
- 	case ncsi_dev_state_probe_dp:
- 		ndp->pending_req_num = 1;
-@@ -1780,6 +1777,7 @@ struct ncsi_dev *ncsi_register_dev(struct net_device *dev,
- 		ndp->requests[i].ndp = ndp;
- 		timer_setup(&ndp->requests[i].timer, ncsi_request_timeout, 0);
- 	}
-+	ndp->channel_count = NCSI_RESERVED_CHANNEL;
- 
- 	spin_lock_irqsave(&ncsi_dev_lock, flags);
- 	list_add_tail_rcu(&ndp->node, &ncsi_dev_list);
-@@ -1813,6 +1811,7 @@ int ncsi_start_dev(struct ncsi_dev *nd)
- 
- 	if (!(ndp->flags & NCSI_DEV_PROBED)) {
- 		ndp->package_probe_id = 0;
-+		ndp->channel_probe_id = 0;
- 		nd->state = ncsi_dev_state_probe;
- 		schedule_work(&ndp->work);
- 		return 0;
-diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
-index bee290d0f48b..e28be33bdf2c 100644
---- a/net/ncsi/ncsi-rsp.c
-+++ b/net/ncsi/ncsi-rsp.c
-@@ -795,12 +795,13 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
- 	struct ncsi_rsp_gc_pkt *rsp;
- 	struct ncsi_dev_priv *ndp = nr->ndp;
- 	struct ncsi_channel *nc;
-+	struct ncsi_package *np;
- 	size_t size;
- 
- 	/* Find the channel */
- 	rsp = (struct ncsi_rsp_gc_pkt *)skb_network_header(nr->rsp);
- 	ncsi_find_package_and_channel(ndp, rsp->rsp.common.channel,
--				      NULL, &nc);
-+				      &np, &nc);
- 	if (!nc)
- 		return -ENODEV;
- 
-@@ -835,6 +836,7 @@ static int ncsi_rsp_handler_gc(struct ncsi_request *nr)
- 	 */
- 	nc->vlan_filter.bitmap = U64_MAX;
- 	nc->vlan_filter.n_vids = rsp->vlan_cnt;
-+	np->ndp->channel_count = rsp->channel_cnt;
- 
- 	return 0;
- }
--- 
-2.25.1
+[1] https://lore.kernel.org/kvm/20200713190649.GE29725@linux.intel.com/T/#mabc0119583dacf621025e9d873c85f4fbaa66d5c
 
 
