@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-186449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348B78CC455
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:45:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 891468CC458
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6565D1C21A04
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC151F21B23
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B841140E23;
-	Wed, 22 May 2024 15:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40B81420A8;
+	Wed, 22 May 2024 15:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETSzzFqI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AGAyKEhW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EB013DDA5;
-	Wed, 22 May 2024 15:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9115F13E8A0
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716392744; cv=none; b=auslO3q23Ef0jzHr782478xypICzp1iTUgE4H0md052FIE43dgBqE8QyIZN9/aNlYIePZblek7a/rDMktQ/QHlBq7kUp0xdaURSHlOvGI+sNyk7pBr5c5HcWFz7iaxULttyZIU9dBtYowjSViEY79PK8nQXe0otlPOVDXy3sCyc=
+	t=1716392759; cv=none; b=eRYH+fgxIYziJau82dUBxhs1ulkv0LMbrGh37V4rUFYtJItf7EHphET9dx3d9M/+Oy3QZeDuc3YMke32zAxSBoqTYFcB+GkHlYB8C4NvvlIOXI+ehUaEzaNj/NJQ3oeQcDdcOlNEtOwU2m537/7JV7qOdLt76wwhDnvMvjle5UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716392744; c=relaxed/simple;
-	bh=ufoYxK1fyxQsCJ6E3XPZLUf38wiUDYwMD5+3HGtWjKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/Kg8BIwplxVIcBIDSJTySXQ+49mSxunw8iNqexXAKxRYUOcUPt+Ps839TQBf0SDTMtWY32nugvlp7PkfmJk0ZCS42TJ0r/m9GZx+cg6cpDLEzd7RWJFt2rnolziLvCC0T7FaFvNnFNwrKH2nZfVexmHUElgwsIyqCPos5xS57Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETSzzFqI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78512C2BBFC;
-	Wed, 22 May 2024 15:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716392743;
-	bh=ufoYxK1fyxQsCJ6E3XPZLUf38wiUDYwMD5+3HGtWjKE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ETSzzFqIS62XDL7IDh2iXP33WXQNjQ/0pq6ZDo4hEQUYqoS+cVKifkukR3BqfAvI6
-	 dzzvy5xd9UvgNnVdetD372bCD8w4XzAD/L0F/DJCQVEZ2+kePdrBzspEQlwe4EnsSm
-	 +3go6vrV0uwusgJ28UcXQ0/sBt2WuuuchnLb46Wpc4KmoqHHIS5Hom3ulv+QgMWaIY
-	 vrtcDhLhGp6RX5DB7GsGBSEFF/dSAbNAuVxLRP4ijEyCjI6Ci3NUWEUF+ekh8Y0xGT
-	 0aYL630Ki75pr+EUkaZ4j+7DVF3CyBjwWqem1mkIKWAHm08Uk8iz881y196RblqauO
-	 ybF9z84xv31yQ==
-Date: Wed, 22 May 2024 16:45:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Lubomir Rintel <lkundrak@v3.sk>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: dt-bindings: marvell,mmp2-ssp: Merge PXA SSP into
- schema
-Message-ID: <20240522-festivity-remark-8d6393fada17@spud>
-References: <20240522132859.3146335-1-robh@kernel.org>
+	s=arc-20240116; t=1716392759; c=relaxed/simple;
+	bh=Mdb4OhrS+xxduGqCQenQjyZiiOEqWnw5Chesp52+Cyw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZTq14YmeK3HJmE2Pen9+Oyfy1ul/8Hoxuseieg3phmGuxweyZCtTJ3tgHuRTHiiiSM2na2O7jeFoC3r6L1eA8WxXei24fqLJ2kxznujp/i5rfT5E5Z6CfF9AXU5zzU3YpyYbdzx2nDYbCaXNz9tqVpUSDm6sSwRDgNHel6P2LtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AGAyKEhW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716392756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mdb4OhrS+xxduGqCQenQjyZiiOEqWnw5Chesp52+Cyw=;
+	b=AGAyKEhWPHFwhP5csu/9jm+KKi3DAP5+8MAeOOa7diUkO3B6qGZroHxB1za6S68psAtJ8C
+	IeCJyzJzRjR9qCWbeiiGe5wO06FGozTbNXNJ09ihxumeS7h3EMsBM35l9DarWhGaGhbQQM
+	ulgAsFGHu1b2LVuPDXohhoC0ZiyLLQU=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-25-7f18bCruNo-SmbhIfwRwbA-1; Wed, 22 May 2024 11:45:52 -0400
+X-MC-Unique: 7f18bCruNo-SmbhIfwRwbA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-354df3e1b0fso390553f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:45:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716392752; x=1716997552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mdb4OhrS+xxduGqCQenQjyZiiOEqWnw5Chesp52+Cyw=;
+        b=UazgVT4C2+CfH5LQQlxoY4rXpmeucX/ofwwR1kR0XkUZd6ZnD1JrTY+AI5Q/n0E0YI
+         gh0qAEyzROgTS86KjgbRvfI752pb41dTVaqFGwL433YGuv0N6WjpJOSuT3CdSiA4FIRq
+         axV58AEyU+PbA6xAinepTTUWqPhkjAqtOHF0kxUk0KyX77+4MZpKSjyYDP9U+Cc6FnrW
+         ULODXMAmrbtAnEOksRIF5jAhHldCntQVB+YbBDB61Isz62W3H1VKx2oZ0U+tBfoIDomt
+         +homZLXPPDumKmAVuNtiHX23MQK7hE7W0Iw/kXbcbiiBLbGQcnUThH5ziDySZd4zw1uJ
+         a3Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2lFoMPYaDUcr40dYazNJB0y6ON7c3+Rn+1udTGHI21wpNXLv7OTJzmnpVqa8jjapKEAX9YxuJTKheoTeDINvOx7cBqpiQtzlBmxzR
+X-Gm-Message-State: AOJu0YyZrR77FQ2NVyKhQjAsII/q7qy8CMhEIKsJ3lk6yNBGbgMfdcdx
+	MC1NOpV3sJjQMITvR0kazRGuRKOvwp3GekMpT2836xzf5kr0tp2aAZxk2OUoKPVp+tBQPt9gINs
+	b346JVkDEI6sysrRk+LiESLeBbEqDYL4p6AfkbFGWeOPDejeJsli4FQLchHUlC9ev6b3K/usxZD
+	lOuX+PhEXQdBDyVYpUlZXk94TxASuf8SFoa+fj
+X-Received: by 2002:adf:eccd:0:b0:354:f452:c99a with SMTP id ffacd0b85a97d-354f452cc09mr512929f8f.25.1716392751782;
+        Wed, 22 May 2024 08:45:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFu6jDF0/N1JzMpNdLFgCRDbMRMnB/WJd7oq/LlNSDUtsAaagfukeItFC0VsQV7unOBGexMVYUOFO7FNwpI4uE=
+X-Received: by 2002:adf:eccd:0:b0:354:f452:c99a with SMTP id
+ ffacd0b85a97d-354f452cc09mr512909f8f.25.1716392751401; Wed, 22 May 2024
+ 08:45:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mX0BiKdZerE2Ta4F"
-Content-Disposition: inline
-In-Reply-To: <20240522132859.3146335-1-robh@kernel.org>
-
-
---mX0BiKdZerE2Ta4F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <ZkUIMKxhhYbrvS8I@google.com> <1257b7b43472fad6287b648ec96fc27a89766eb9.camel@intel.com>
+ <ZkUVcjYhgVpVcGAV@google.com> <ac5cab4a25d3a1e022a6a1892e59e670e5fff560.camel@intel.com>
+ <ZkU7dl3BDXpwYwza@google.com> <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
+ <ZkVDIkgj3lWKymfR@google.com> <7df9032d-83e4-46a1-ab29-6c7973a2ab0b@redhat.com>
+ <Zk1KZDStu/+CR0i4@yzhao56-desk.sh.intel.com> <Zk1ZA-u9yYq0i15-@google.com> <Zk2VPoIpm9E6CCTm@yzhao56-desk.sh.intel.com>
+In-Reply-To: <Zk2VPoIpm9E6CCTm@yzhao56-desk.sh.intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 22 May 2024 17:45:39 +0200
+Message-ID: <CABgObfaq4oHC9C_iA2OudmFN-7E9RDiw-WiDu9skmpsW39j0nQ@mail.gmail.com>
+Subject: Re: [PATCH 02/16] KVM: x86/mmu: Introduce a slot flag to zap only
+ slot leafs on slot deletion
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"sagis@google.com" <sagis@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Erdem Aktas <erdemaktas@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 08:28:58AM -0500, Rob Herring (Arm) wrote:
-> The Marvell PXA SSP block is the same or similiar to the MMP2 variant.
-> The only difference in the binding is the PXA version supports DMA (and
-> that's probably a binding difference rather than an actual h/w
-> difference).
->=20
-> The old binding didn't belong under 'serial' as it is not a UART. The
-> SSP block also supports audio devices, so 'spi' is not a perfect fit
-> either. As the existing schema for MMP2 is there, just leave things
-> as-is.
->=20
-> The examples in the old text binding were pretty out of sync with
-> reality. 'clock-names' and 'ssp-id' aren't documented nor used.
->=20
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Wed, May 22, 2024 at 8:49=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> wro=
+te:
+> > Disabling the quirk would allow KVM to choose between a slow/precise/pa=
+rtial zap,
+> > and full/fast zap.
+> TDX needs to disable the quirk for slow/precise/partial zap, right?
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Yes - and since TDX is a separate VM type it might even start with the
+quirk disabled. For sure, the memslot flag is the worst option and I'd
+really prefer to avoid it.
 
-Cheers,
-Conor.
+> > I have the same feeling that the bug is probably not reproducible with =
+latest
+> > KVM code
 
---mX0BiKdZerE2Ta4F
-Content-Type: application/pgp-signature; name="signature.asc"
+Or with the latest QEMU code, if it was related somehow to non-atomic
+changes to the memory map.
 
------BEGIN PGP SIGNATURE-----
+Paolo
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk4TIwAKCRB4tDGHoIJi
-0hz4AQDqkrfj5lvbaIp9JRsRma3PhrCTRXlGlgrOV3oWp2RnywEAzo2us+p8Tf9D
-pamFjR4bwBoafa83jLVuHKG1XTNyawQ=
-=DLer
------END PGP SIGNATURE-----
-
---mX0BiKdZerE2Ta4F--
 
