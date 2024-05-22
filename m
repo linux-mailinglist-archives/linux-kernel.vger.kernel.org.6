@@ -1,106 +1,132 @@
-Return-Path: <linux-kernel+bounces-186705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E838CC7E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:02:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA958CC7E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECBC1C20E74
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C04F1C20EDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793F3146A6A;
-	Wed, 22 May 2024 21:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972C013D61A;
+	Wed, 22 May 2024 21:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="dXWVEvto"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WmvHLmxF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC1A1CAA6;
-	Wed, 22 May 2024 21:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEAE20DF4
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716411722; cv=none; b=CUbUiMgCfoFdbLxDEmnjwPPzO7SQM58kOz5viKbSu1lC7eA/qtoMY/t710LiMzeiHJN+zbSd7fC9n2C4AV8k+82TXi97zFxgGkeJlXBJQssB0p3LycsKrA8YNavMf29eNlftM2wnl3OTsaj1+3w2JT6tN4uY0A7WBVIcKLXoZnM=
+	t=1716411831; cv=none; b=adRVUT4xMFbFoK7qYyP/K4mU4LPmduwaea3+v+/MK1tGJ2NKtjv4iWyODscxP6IEVSsHVMdABd5HDI3pVp+wVXlkUO+51FK+M4F8AA2grdYba6DDqGnRQrDmBKTMdDQH9i4s7g3/GBHIkBW3kZHkCcWhE/nCmG2Qyfl5vYUjRNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716411722; c=relaxed/simple;
-	bh=er7P36jIArk3ujM8x9Cy03xPyL1nefNS9QVEIwttV+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gIonnEh6LtKuSAOocxNSgZFX3NIMucr2Dx9PmLYCbBXRIrC00mV66gpinkhNrAtM2BMmONMZo28aiWvzxj2VjatR3k3pur4sD4Q7tDvXZP34w8zSWTBk7hIrQysQWqZJvn4n2bLLC8QgzRVTJHM5vPh1uYgIKY2aCIsszHPWgqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=dXWVEvto; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vl3dh2jgnz6Cnk9V;
-	Wed, 22 May 2024 21:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716411715; x=1719003716; bh=Atjv96qq2OAJtNvHEuhpPZvH
-	JqM/RL80by+9suRd8jY=; b=dXWVEvtowpQ/rT7tagj4HNILifmUfKkdishecPh+
-	MZxW074xv03njCj4qBGGmx1YkWMVGBQtEdFWKWofKAsDhLmBEvMAN8rWI3YFGwIA
-	Mqu0FHc338dszAqlPs6ayXz7Sz6+UBQTbGb77FJwgHgvT8X/yNaH88IR7A6R/r47
-	ywyGHCk45eSBz9ZMVyvgg1+6rsrEpP4x8Qh6EAfoM9aLf2D+1XFU1EraKR1DIB23
-	6EpH69ahHuOtVpXP4Dj4FeDKtF2ZXu/LHtLjOdCW5SeTPaykIsXq3dgcXrJZbZ33
-	JYi5jljhi+70lM8JXqw7Y/CARw+rKZ5gn4Ju0h2crqSG1w==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id D78-WJJWmQKg; Wed, 22 May 2024 21:01:55 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
+	s=arc-20240116; t=1716411831; c=relaxed/simple;
+	bh=c0knFbe4KUs1c2AEzMCJh04Hrtk/o1gEtpRmb2o7zXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1gPJkmr0Lew2hE1Fif+awrTpmYt9g6NZorNxwchj4BwRk1NTsPYjxvv5Rv5LFhWUurPOtWbbsXRS4rhXhd+jEUS7OL9iL8RvuR/WY8M0+oTmWNX8BlC3QMabVgaMq/EpVOYhxCVzlwgn+M1yLZiCm9DSm6nGvsJfBLDbZse3iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WmvHLmxF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716411828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8bJaVETnceXnZKEpoYXTppVEYfiyqOTFMzgclBfDxIg=;
+	b=WmvHLmxFVg7jFo0KkSlYO+9GBCbnHw2ztI7r2pvvMbFzkQMkajOP4MuqphmwYOX4Y+zVc1
+	Xuo11p3iIvGfXEm2qinmuZ7Rv83ekdGGO6UMK49Aj49F1VnMUG53xOYZDKes3YI5izugQU
+	xB5gJNpk4ux8Xjae3jm3VKbJtpxMdXY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-369-8G2Dz7GxOOaDT4FP9uenVQ-1; Wed, 22 May 2024 17:03:45 -0400
+X-MC-Unique: 8G2Dz7GxOOaDT4FP9uenVQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vl3dW10Lrz6Cnk9B;
-	Wed, 22 May 2024 21:01:50 +0000 (UTC)
-Message-ID: <bdd52dc0-85dd-4000-b5dd-c2c22f5b8ba1@acm.org>
-Date: Wed, 22 May 2024 14:01:49 -0700
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0546681227E;
+	Wed, 22 May 2024 21:03:45 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.192.4])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 82A9F7412;
+	Wed, 22 May 2024 21:03:42 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Subject: [PATCH RFC 0/6] mm: page_type, zsmalloc and page_mapcount_reset()
+Date: Wed, 22 May 2024 23:03:35 +0200
+Message-ID: <20240522210341.1030552-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] scsi: ufs: qcom: Update the UIC Command Timeout
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
- quic_nitirawa@quicinc.com, avri.altman@wdc.com, beanhuo@micron.com,
- adrian.hunter@intel.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <cover.1716359578.git.quic_nguyenb@quicinc.com>
- <8e5593feaac75660ff132d67ee5d9130e628fefb.1716359578.git.quic_nguyenb@quicinc.com>
- <2ec8a7a6-c2cd-4861-9a43-8a4652e0f116@acm.org>
- <f9595b82-66f9-dce2-7fba-c42b1eacf962@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <f9595b82-66f9-dce2-7fba-c42b1eacf962@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On 5/22/24 13:56, Bao D. Nguyen wrote:
-> On 5/22/2024 11:18 AM, Bart Van Assche wrote:
->> Since the described issue is only encountered during development, why to
->> modify the UIC command timeout unconditionally?
-> 
-> The vendors can enjoy the default 500ms UIC timeout if they prefer.
-> As long as they don't write to hba->uic_cmd_timeout in the vendor's initialization routine, the default value of 500ms will be used.
+Wanting to remove the remaining abuser of _mapcount/page_type along with
+page_mapcount_reset(), I stumbled over zsmalloc, which is yet to be
+converted away from "struct page" [1].
 
-Since this issue is not vendor specific, I think it would be better to
-modify the UFSHCI core driver only. Has it been considered to introduce a
-kernel module parameter for setting the UIC command timeout instead of the
-approach of this patch? As you probably know there are multiple mechanisms
-for specifying kernel module parameters, e.g. the bootargs parameter in the
-device tree.
+Unfortunately, we cannot stop using the page_type field in zsmalloc code
+completely for its own purposes. All other fields in "struct page" are
+used one way or the other.
 
-Thanks,
+.. but we can limit the abuse to 16 bit, glue it to a apge type that
+must be set, and document it. page_has_type() will always successfully
+indicate such zsmalloc pages, and such zsmalloc pages only.
 
-Bart.
+We lose zsmalloc support for PAGE_SIZE > 64KB, which should be tolerable.
+We could use more bits from the page type, but 16 bit sounds like a good
+idea.
+
+So clarify the _mapcount/page_type documentation, use a proper page_type
+for zsmalloc, and remove page_mapcount_reset().
+
+Only lightly tested with zram. Will have to do more testing and
+cross-compile checking.
+
+[1] https://lore.kernel.org/all/20231130101242.2590384-1-42.hyeyoo@gmail.com/
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Mike Rapoport <rppt@kernel.org>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+
+David Hildenbrand (6):
+  mm: update _mapcount and page_type documentation
+  mm: allow reuse of the lower 16bit of the page type with an actual
+    type
+  mm/zsmalloc: use a proper page type
+  mm/page_alloc: clear PageBuddy using __ClearPageBuddy() for bad pages
+  mm/filemap: reinitialize folio->_mapcount directly
+  mm/mm_init: initialize page->_mapcount directly in__init_single_page()
+
+ include/linux/mm.h         | 10 ----------
+ include/linux/mm_types.h   | 29 ++++++++++++++++++++---------
+ include/linux/page-flags.h | 25 +++++++++++++++++--------
+ mm/Kconfig                 |  1 +
+ mm/filemap.c               |  2 +-
+ mm/mm_init.c               |  2 +-
+ mm/page_alloc.c            |  6 ++++--
+ mm/zsmalloc.c              | 23 +++++++++++++++++++----
+ 8 files changed, 63 insertions(+), 35 deletions(-)
+
+
+base-commit: 29c73fc794c83505066ee6db893b2a83ac5fac63
+-- 
+2.45.0
 
 
