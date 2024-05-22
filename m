@@ -1,119 +1,182 @@
-Return-Path: <linux-kernel+bounces-186392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDAB8CC399
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:56:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D32F8CC39F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F81C212AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41FC528368E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887E120DC4;
-	Wed, 22 May 2024 14:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B698F2135A;
+	Wed, 22 May 2024 14:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sOGTz7oy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RR8qWjsc"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4831C683;
-	Wed, 22 May 2024 14:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AFC1CD16;
+	Wed, 22 May 2024 14:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716389798; cv=none; b=Az2Pr0oDNEi61pJhYTOvY5y+yYZdEJYRKHGSpMoogNePyNqKmczi8xFa5CIUFOv8bcyjt6wCLNqvxwV93bY0Jhd38p5GRj4KcWN/NuAziEd6ReZ/U464SuvKKh2e1OYjsNPKQZwQCYHKxTfnBy7s1xgpjjnS8zM/G9QLmFZhGQE=
+	t=1716389884; cv=none; b=MnogDyaDJl/WtcdK0RM4DI0/HQ2REjd3rL2lY4ENcDUTE04B/+FCvScejk109Z0SOOflk+O12EG7sqNobYaLKSujp1Ekmkuz/zmGE8jvuhgSGZiCBtfcEM5nBkMzgwXT2k07xQiDBKLVtGlzm/oH6pH5BYUnk9K2JF0WrP1vLzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716389798; c=relaxed/simple;
-	bh=zWm8NiSY2+aawW2KRUHKXAJ/95lx4gCIUjpIrTP/ufc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpsbRBpFn1DdU6Z8C8EFWjiCeF1mqpDuqKtURQKNujy2nmvr5oRpqWxBG9ZkxWltaw5pLdaQXDwXUS1yuwyVQJPf84tP4sYoP+PCpfh7LpMI0VvE5Pn0kQTd6OoxY1anCsHJgvFx8F+qHP7PRyeyKQMGRPPWv10XFu87haNn1N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sOGTz7oy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 415E3C2BBFC;
-	Wed, 22 May 2024 14:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716389798;
-	bh=zWm8NiSY2+aawW2KRUHKXAJ/95lx4gCIUjpIrTP/ufc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sOGTz7oynf65RXL6PVaStX562gyTyqhuRcDAIstxAgUBzOyhuqL9yJvvd1on9/nyv
-	 2POi+KESaZ7+I1qt3oo8po9UUfh1Y1clhy+vtovEWSrXmtX4ORJHWVQE1abZ+SdTHd
-	 qv2umpzSHjBXMTTiGYbq4lJ1r6e8+l/Cek2UlHdoca/16QAn0WPvI7VxA9PymwLMpt
-	 q/Vu7I5TUwCiScpmepGhVnIRhRJonYO2/e4jwzh7aEFTRkGV32sjmW2Epfk9gASBdi
-	 90yeF0mQGFjHZpttSXuC0+gC6dXSrB1UzV4Q1iUDrf13hGLkjWhW+35KEY/mzNUkU3
-	 /NZbFLelIBbnQ==
-Date: Wed, 22 May 2024 07:56:37 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] mm: swap: print starting physical block offset in
- swapon
-Message-ID: <20240522145637.GV25518@frogsfrogsfrogs>
-References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
- <20240522074658.2420468-3-Sukrit.Bhatnagar@sony.com>
+	s=arc-20240116; t=1716389884; c=relaxed/simple;
+	bh=sNIJpRfP4ZNAO3JZryCVD2MT1kP8J4iERxQvnvO9sG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kINKROJsWxcK6W+snX/vNQI/SlU3JwDai1V8WNYhIo7P/T46N/PBQS1lORA3TjKSxKBfhQrlZgzzviSu49HCs56AK8AJ68TwBZ7hsgpsbkBdVWPb2ssvL9I33dRauNrF5CWwsAPi12SKLyrtlFdF+fn+lAvVP1iOiegyBvA11Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RR8qWjsc; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso8572845e9.3;
+        Wed, 22 May 2024 07:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716389880; x=1716994680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L+dDeIIv4/uhDcs1sA4p7D8qsofH0JyJ1gi8ixGWHQQ=;
+        b=RR8qWjscOEWGd/zTC5iGf++mSoOvtRsqndoZ6wLecoxwOVIyHZ4K4j0D7O0frsM8nz
+         kpuyDZgdkgA1Iru2N4vsxBw7CrdwKA1khsM5wd2Z9G6JyQi/qpbGjdmIehZpSB0hHnav
+         tWVxa5l43mEFMiW9wu9Mo7yXwPNhMRokFcX+VoWhMd1BY1ixXJRtfCdF52loSXg5t4jX
+         sdXv/h9fphYVwmBel+n0GOU+UZh4yrwkbmoLbtDl3/kIxzAtGrTskD8UK+9Ronfen3j5
+         N+0lANn00UCF/SQfzX5N5Tq9bucUiegSrOmZtDBIUhycgXVPwAT+8mzK2expX7YnLq+L
+         bLtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716389880; x=1716994680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+dDeIIv4/uhDcs1sA4p7D8qsofH0JyJ1gi8ixGWHQQ=;
+        b=bdQmGXZ4gqYbMG6ZEIdv09IFzKy8DHyvCvvJRbtCkkE3zAZRQqACsbQVxFN9EBbsvF
+         t8WPcxTy10IWY8gTyuzbzctZj+ocLx+R+LsR9dZVvTeoT1wgUPsIbgEq1L8DJak39xK8
+         /UeIPq2c82iGiZ3mOppZ8rEmMwei/eEW4H+MTWVJR4ji2BJpjvaE9t6wCm8FAlhqc3vS
+         ot/B+s2PgRmkfbBMs6bNoe4vr57xP2xLaVaelwtO7J459leQzbPEBaA/g4jmPu77optO
+         8DjsQ9Z2zb/IHqFJTKq/skxInSptI/zoEotceFfaIPKAJT8IFyI1jiF5lLtiTQqWCJ+W
+         SXAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbdpOlD3knYJIVtWuIOuvTE+zGtWyUmtF0390NPyu8FgqBwhoVe2ZBxeUc+XP2TH0zrLp0OeF+G7hfkRZVWFIp0lJtpAaFp2WcIQ4TpqJW0+Ap8vLiRNIh7ZTiMp05iuk1
+X-Gm-Message-State: AOJu0YwVU7ktygAtLEEJLfCUQEkD43Q9UDnsxrTKDQ+01diplJhfVQeH
+	KyI8MTVwiosVFlXWk025xQw+4fme4UVB/pTwUkY3x157lrozCz3ppI/xiywES0Exvpcz0aL17oO
+	JOHlPEvkx9KDt1LxG9TKAaZZ3nXHauA==
+X-Google-Smtp-Source: AGHT+IG3r58WVQJ64mCHF4QO8x24ODELD9v3yHURR/2VERPceKZUjEwp6WIgfT5kbQEBQ5zTYq4VaAFNPdoQ4g7iNbc=
+X-Received: by 2002:a05:600c:2311:b0:420:ee24:9b26 with SMTP id
+ 5b1f17b1804b1-420fd31a43emr16094795e9.24.1716389880339; Wed, 22 May 2024
+ 07:58:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522074658.2420468-3-Sukrit.Bhatnagar@sony.com>
+References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
+ <20240521225918.2147-1-hdanton@sina.com> <20240522113349.2202-1-hdanton@sina.com>
+ <87o78yvydx.fsf@cloudflare.com>
+In-Reply-To: <87o78yvydx.fsf@cloudflare.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 22 May 2024 07:57:48 -0700
+Message-ID: <CAADnVQKfbaY-pm2H-6U_c=-XyvocSAkNqXg4+Kj7cXGtmajaAA@mail.gmail.com>
+Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
+To: Jakub Sitnicki <jakub@cloudflare.com>, John Fastabend <john.fastabend@gmail.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>
+Cc: Hillf Danton <hdanton@sina.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	Eric Dumazet <edumazet@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 04:46:58PM +0900, Sukrit Bhatnagar wrote:
-> When a swapfile is created for hibernation purposes, we always need
-> the starting physical block offset, which is usually determined using
-> userspace commands such as filefrag.
+On Wed, May 22, 2024 at 5:12=E2=80=AFAM Jakub Sitnicki <jakub@cloudflare.co=
+m> wrote:
+>
+> On Wed, May 22, 2024 at 07:33 PM +08, Hillf Danton wrote:
+> > On Wed, 22 May 2024 11:50:49 +0200 Jakub Sitnicki <jakub@cloudflare.com=
+>
+> > On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
+> >> > On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starov=
+oitov@gmail.com>
+> >> >> On Sun, May 12, 2024 at 12:22=3DE2=3D80=3DAFAM Tetsuo Handa <pengui=
+n-kernel@i-love.sakura.ne.jp> wrote:
+> >> >> > --- a/net/core/sock_map.c
+> >> >> > +++ b/net/core/sock_map.c
+> >> >> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk=
+,
+> >> >> >         bool strp_stop =3D3D false, verdict_stop =3D3D false;
+> >> >> >         struct sk_psock_link *link, *tmp;
+> >> >> >
+> >> >> > +       rcu_read_lock();
+> >> >> >         spin_lock_bh(&psock->link_lock);
+> >> >>
+> >> >> I think this is incorrect.
+> >> >> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
+> >> >
+> >> > Could you specify why it won't be safe in rcu cs if you are right?
+> >> > What does rcu look like in RT if not nothing?
+> >>
+> >> RCU readers can't block, while spinlock RT doesn't disable preemption.
+> >>
+> >> https://docs.kernel.org/RCU/rcu.html
+> >> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-=
+rt
+> >>
+> >> I've finally gotten around to testing proposed fix that just disallows
+> >> map_delete_elem on sockmap/sockhash from BPF tracing progs
+> >> completely. This should put an end to this saga of syzkaller reports.
+> >>
+> >> https://lore.kernel.org/all/87jzjnxaqf.fsf@cloudflare.com/
 
-If you always need this value, then shouldn't it be exported via sysfs
-or somewhere so that you can always get to it?  The kernel ringbuffer
-can overwrite log messages, swapfiles can get disabled, etc.
+Agree. Let's do that. According to John the delete path is not something
+that is used in production. It's only a source of trouble with syzbot.
 
-> It would be good to have that value printed when we do swapon and get
-> that value directly from dmesg.
-> 
-> Signed-off-by: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
-> ---
->  mm/swapfile.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index f6ca215fb92f..53c9187d5fbe 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -3264,8 +3264,9 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
->  		  (swap_flags & SWAP_FLAG_PRIO_MASK) >> SWAP_FLAG_PRIO_SHIFT;
->  	enable_swap_info(p, prio, swap_map, cluster_info);
->  
-> -	pr_info("Adding %uk swap on %s.  Priority:%d extents:%d across:%lluk %s%s%s%s\n",
-> +	pr_info("Adding %uk swap on %s. Priority:%d extents:%d start:%llu across:%lluk %s%s%s%s\n",
->  		K(p->pages), name->name, p->prio, nr_extents,
-> +		(unsigned long long)first_se(p)->start_block,
 
-Last time I looked, start_block was in units of PAGE_SIZE, despite
-add_swap_extent confusingly (ab)using the sector_t type.  Wherever you
-end up reporting this value, it ought to be converted to something more
-common (like byte offset or 512b-block offset).
-
-Also ... if this is a swap *file* then reporting the path and the
-physical storage device address is not that helpful.  Exposing the block
-device major/minor and block device address would be much more useful,
-wouldn't it?
-
-(Not that I have any idea what the "suspend process" in the cover letter
-refers to -- suspend and hibernate have been broken on xfs forever...)
-
---D
-
->  		K((unsigned long long)span),
->  		(p->flags & SWP_SOLIDSTATE) ? "SS" : "",
->  		(p->flags & SWP_DISCARDABLE) ? "D" : "",
-> -- 
-> 2.34.1
-> 
-> 
+> >>
+> > The locking info syzbot reported [2] suggests a known issue that like A=
+lexei
+> > you hit the send button earlier than expected.
+> >
+> > 4 locks held by syz-executor361/5090:
+> >  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire=
+ include/linux/rcupdate.h:329 [inline]
+> >  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock in=
+clude/linux/rcupdate.h:781 [inline]
+> >  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: map_delete_elem+=
+0x388/0x5e0 kernel/bpf/syscall.c:1695
+> >  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lo=
+ck_bh include/linux/spinlock.h:356 [inline]
+> >  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_ha=
+sh_delete_elem+0x17c/0x400 net/core/sock_map.c:945
+> >  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: spin_lock_bh=
+ include/linux/spinlock.h:356 [inline]
+> >  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_del=
+_link net/core/sock_map.c:145 [inline]
+> >  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_unr=
+ef+0xcc/0x5e0 net/core/sock_map.c:180
+> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire=
+ include/linux/rcupdate.h:329 [inline]
+> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock in=
+clude/linux/rcupdate.h:781 [inline]
+> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run =
+kernel/trace/bpf_trace.c:2380 [inline]
+> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0=
+x114/0x420 kernel/trace/bpf_trace.c:2420
+> >
+> > [2] https://lore.kernel.org/all/000000000000d0b87206170dd88f@google.com=
+/
+> >
+> >
+> > If CONFIG_PREEMPT_RCU=3Dy rcu_read_lock() does not disable
+> > preemption. This is even true for !RT kernels with CONFIG_PREEMPT=3Dy
+> >
+> > [3] Subject: Re: [patch 30/63] locking/spinlock: Provide RT variant
+> > https://lore.kernel.org/all/874kc6rizr.ffs@tglx/
+>
+> That locking issue is related to my earlier, as it turned out -
+> incomplete, fix:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Dff91059932401894e6c86341915615c5eb0eca48
+>
+> We don't expect map_delete_elem to be called from map_update_elem for
+> sockmap/sockhash, but that is what syzkaller started doing by attaching
+> BPF tracing progs which call map_delete_elem.
 
