@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-186078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F8D8CBFAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04638CBFAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B94128394E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC9E1F21D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C12D84A32;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF33F84A51;
 	Wed, 22 May 2024 10:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jt0d8YIR"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+DkYB/g"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D4382890
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC1682D68
 	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716375067; cv=none; b=Tb02NgYMNW7YyQtaDoQeN+g5LLvO8IWXce8eZNw+7eIEb4llZW8rt7bkyErKH3ocx6kYJOywkPUqldVcwpRDWhEwC51R0E7orS7b1RdzOmXn6poEJIgTPeVjIFMqymQrsSZ19E1lM3nWnvOIobNPWQZZcQCifvbAT+QnXUbahTQ=
+	t=1716375067; cv=none; b=G5T6Ey/6sayx8B4VSZ0uRMAtDME7rX7WcAT9Eb0So1Bnc5S59uWQocM4pjQ/62T2ZvNYnxLVuqQElgk3kP2TCyhZh90d3uwHt+8jYA7eRj7kvF5bazl4N3Bp91q6pItqcAXwC4ZD39AtjkM7SSBNgJfYvQhUKnQ0A1poaZA9SCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716375067; c=relaxed/simple;
-	bh=rVRKl0jVYPeqcqz91TQ881Equ4F+ZgpwdiZXFz89P0g=;
+	bh=Jgttl5H44Vld14qWMns1jroXWg5YOpL1Dc2oQSS9ypw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F35pyq1v2jY2MV64LGKsL5RemafPSRB0dovLx4k29J/uQiGlfplomA13CkTJ9dpGbH3PQ9StMVL5ZVDJ/L5agl2r5Wxq5RUS5xIs5xgtDHJ/NwIYMFjXEowVUibnPB7Wcshc1+kEuCcFBMe/cNTIm+oAWM8gMdzUNKv4S1T6cug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jt0d8YIR; arc=none smtp.client-ip=209.85.208.180
+	 In-Reply-To:To:Cc; b=VReAJ408O/lc2xzmIgp7X6EtH5+3fhlqhA7vxyB0rWnxREIYmdh+kw67PSGIjyBQJKS+Q2RtuOn0zjEw0C4xxbrvKUdO4Yr3znEC6X/BFY+6zEm3ZUu0AP0ctOVj2Nj6c8WDjhULEgnjpgN1ziY3ERBDBwO9ROeSF1MgN/tJnt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J+DkYB/g; arc=none smtp.client-ip=209.85.167.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e72b8931caso35065091fa.0
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51f57713684so7843733e87.1
         for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716375063; x=1716979863; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716375064; x=1716979864; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IAmphMNQpXqW8eT1O41Bu5TdohycNUyawz5wYr1vHd8=;
-        b=Jt0d8YIRnom2NpB7q0YHMMJKbXklgQdCgbEqOsOoSTwR2YxgkYDr0KJHiOPlUkM2h5
-         WvZDh0/QgolGHG96cncqfJwnAWykHmNjsaw4ceL8JPT9Ust/70HbvKMHH8j4Rbx7th7d
-         z4Ddgq29+tGTC+JEbo8GXD2+/k8OGLjvmpagHjZtyi9sHN97hXjoMLHdxGoV/WGa0Ohl
-         gEwSluI+QK2ZtL9JNMPqk4vEld2BWgciB52ZeNie0BtKFz/W3AvQSyGaLuR88G14EYD+
-         x1gDO9KG9e+ifDcaSrhG8Xb967GfsPWu0ADduCI3CCEImBDUq9bnpubWPzwO3AzYFM8a
-         bRLw==
+        bh=r6GgwKTdsZwJRv3Ukk7SFtFzEc2aaRxTR76EeCWgZKA=;
+        b=J+DkYB/gslx7TMhjgQCCJh3/Ltmu/25tbMFf0DXtl2i7IoamLjjtvvu55HmdxBexTN
+         O0OYeyscnvgIDLaGNgm0+f7X/zcSGHsDBR3I4GQWjkFPa1LLwO7jk+NdocoyRAxfYWhU
+         KxTpQBTmfX450e1dKTrTRjrqVJEKuOOr8lMyCVFrF73z1XNiHY1StAu4mG2jdfhIr24I
+         0iojeGJS1ZUAzgGwzvSWiwL9zmzvq+F6af/TAgifgsxBpcQGbYQJQNiH3S3IzrFTNXrT
+         oNQ8WtnlCyhrBcY9sFDCQdeHT3kMuhQaiflX1S/FrVNdQmlG9UT5Wn/Nb3FdDqBhhRWn
+         q2xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716375063; x=1716979863;
+        d=1e100.net; s=20230601; t=1716375064; x=1716979864;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IAmphMNQpXqW8eT1O41Bu5TdohycNUyawz5wYr1vHd8=;
-        b=bnQzePfHOwLDOQGRa7V4jkxFsHKTJu1DZXZ6wF3ILUO9A2Lg07vtNyFfV6nOyFfPz+
-         cEbP+aPZT6mOc5b7U+usJcmxpOidNCke65TOq47Jp3iK3CAG46fPMpgFZ/hsaOqDeJg9
-         1V4xdA8ElFrcB0T1Z1Y1r42VtejlfW7DCaHac6Krj/vbJsv6+RAx752T6zDO6se/q1dT
-         9hXBl8BPWwcCAgxv9bHdSYacbEM/McFXKRxoyGwCQapNcrHTtlCkmcJ+1EA3i47Fbwrj
-         wBBRebLRCON0lA5wuucRRAiDigffVO8zQ+ZyT1vqz+adL/jzFb8Po+WlnTtoKbY1ig6Q
-         phxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWs0PqHnNo6oxED8M4pJCJPmr0RXYJ1/HXDcnamJvyHwIUsScrSjagkpZWpMbnx5/p+tJ165lobACk+BXJWdHTL+FBRnzbtKOIr8GOw
-X-Gm-Message-State: AOJu0YyVqp/CYU22wz6p0DpkyHFJA7an59Nln4Vl7fIQeEHzCZ3U3Xbe
-	F+T+Rtnc5neSwQPwEQSQCyyzgR3hgiRrTc5oZV+2RzUkiLCmKPfVMJ1UwFw8Y2Q=
-X-Google-Smtp-Source: AGHT+IFvKJh7JOYXQJKM2qi5VIh0iYd/BGRN6yDP29LSOK7OX2zXaEKTsibdu8B9a2dC6ZHLhKrCjQ==
-X-Received: by 2002:a19:6a09:0:b0:51d:5f0b:816f with SMTP id 2adb3069b0e04-526bf35c690mr832319e87.15.1716375063679;
-        Wed, 22 May 2024 03:51:03 -0700 (PDT)
+        bh=r6GgwKTdsZwJRv3Ukk7SFtFzEc2aaRxTR76EeCWgZKA=;
+        b=au4dH6YfRLh9qmz2lIEOK05Cbwl1QP4TrNKLvrhjpM+JFQRF6rxbUkmTeKXuK0G6xP
+         DUqce1kggZOPbtI/K4JPJG3+xNhxPBz0Pxc2O2oOvUQmD015LB5Uep36FId9W63GnltG
+         OAMT0uM8Z/PoeFWtWhESKBrsouYZW+nHE55k1UtDudhci8FDCwmzCNwK7b/4w2dqpEov
+         ZCauPI6p+eQvXiuhUqoXaMUcM0sJHDjVjyyCSaz979Cr/xDL6dDd9DWsNIXYa+KEk3cc
+         Ry1ZCxcyyYBq0mgTIW96SQ1dWXEOEqsHfEkkP2d6slguFpLfbAfvi8knHVEJ9qcB57J7
+         k60g==
+X-Forwarded-Encrypted: i=1; AJvYcCXw4x+pDgkj3S/1Nq7HagJD1UurhCi8Mx9LgCJE8UZ2S3KCkIodFlNHd/showsZepuHDcl3jmFE79ZndaFGppcHwm2eBOpKrZEK5pPK
+X-Gm-Message-State: AOJu0YwL3Aig2zSZ53y69xduP6jYig+Zq+qfBiSdUTJkTEjz757qJUgy
+	lPyj3rpjICaq2TnZlBvVCH+ftqHX0mmhE/qlGGOKfSHEcg/cVoU/Hf6AyQXkS5E=
+X-Google-Smtp-Source: AGHT+IGZEv+CIDPXP0TJ1i+AotzbFz5H7fqitUI/2i1sh33JfiQ5E7D0YHElItOMq6UM8jVLtSM+jA==
+X-Received: by 2002:ac2:47e8:0:b0:521:7846:69d1 with SMTP id 2adb3069b0e04-526be6ea784mr995436e87.6.1716375064461;
+        Wed, 22 May 2024 03:51:04 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52431778ec8sm1279126e87.194.2024.05.22.03.51.02
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52431778ec8sm1279126e87.194.2024.05.22.03.51.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 03:51:03 -0700 (PDT)
+        Wed, 22 May 2024 03:51:04 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 22 May 2024 13:50:59 +0300
-Subject: [PATCH v2 07/14] drm/msm/hdmi: switch to
- pm_runtime_resume_and_get()
+Date: Wed, 22 May 2024 13:51:00 +0300
+Subject: [PATCH v2 08/14] drm/msm/hdmi: add runtime PM calls to DDC
+ transfer function
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-fd-hdmi-hpd-v2-7-c30bdb7c5c7e@linaro.org>
+Message-Id: <20240522-fd-hdmi-hpd-v2-8-c30bdb7c5c7e@linaro.org>
 References: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
 In-Reply-To: <20240522-fd-hdmi-hpd-v2-0-c30bdb7c5c7e@linaro.org>
 To: Rob Clark <robdclark@gmail.com>, 
@@ -89,90 +89,72 @@ To: Rob Clark <robdclark@gmail.com>,
 Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2613;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1518;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=rVRKl0jVYPeqcqz91TQ881Equ4F+ZgpwdiZXFz89P0g=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmTc4QmHQVBTWzpD8Jbi0KRzPokGAEgSr3P4vPX
- 6mb04s1+KiJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZk3OEAAKCRCLPIo+Aiko
- 1fSQCACsc4K3scUWB77PU9aHBfrcHuUnWfl6JI/ujLNtLgxLO3Gc1GO2QfCPmY0NwhqA29kIB18
- vJ21o26KCmZINsMjIV/y7yFwUEX+oa4+2d39ZLu/s1YkR1wasrTckdY0sPYebJxxkNc9JAjaO0p
- ofgIEbCuajfb1AJFLf+ygf9ALiPRqLlVVM3rWvN/sxeHKiahb+TE4NbHaUzdTCas5RCFj5rDVQj
- QQz2mdlVfmrp82eJwicfGToeL6X2DSvkTQ1UtsBCEt/a0Bo5uUd42ND5xfcWVrxZSEwox3LzVDh
- W9TTH9jpEtbTPnHu8fjEp4MQknreKmXwj8w06V01FkXAesNB
+ bh=Jgttl5H44Vld14qWMns1jroXWg5YOpL1Dc2oQSS9ypw=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ5rvOYH/AvxRXG5PuivCtgZbTDkzq5nVPWvqSuvbF7bJ9
+ rk0FuZ2MhqzMDByMciKKbL4FLRMjdmUHPZhx9R6mEGsTCBTGLg4BWAik8U4GBpOrL91US2S2SFV
+ 9ZCs0o4mLsaQ+M5Xpdm66VVdr8SybSZkrV92JVMh3kPGLmgR67tHLIlF57/r1jWJRc/4UDnxY+m
+ eeTJx0/alXEoTqJaWKljNnD9vmuILxjDFKMP8sMMFJ0svhu7uyJeqCn45Q3lKZMEFZq9JrYpvfy
+ y7FHL66gttO929211S1l5RmLlJsmeSBLf7boZrZzszPBmMFyzbI5fVJGMSfdl5+4nyf9t1vyXP/
+ PukZV1B4yyra3/OSLzOcK6Z+CnSfLVGYfnVbwyO/6VbMg801y/ROpJzgLss7q1uTcbtjao+B2Tf
+ 7zvHoJK1ZYrOpKDmdXeWHam/tVr6j4H+YcHFqf7lBVKnAQ==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The pm_runtime_get_sync() function is a bad choise for runtime power
-management. Switch HDMI driver to pm_runtime_resume_and_get() and add
-proper error handling, while we are at it.
+We must be sure that the HDMI controller is powered on, while performing
+the DDC transfer. Add corresponding runtime PM calls to
+msm_hdmi_i2c_xfer().
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/msm/hdmi/hdmi_bridge.c |  2 +-
- drivers/gpu/drm/msm/hdmi/hdmi_hpd.c    | 12 ++++++++++--
- drivers/gpu/drm/msm/hdmi/hdmi_phy.c    |  6 +++++-
- 3 files changed, 16 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/msm/hdmi/hdmi_i2c.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-index fb99328107dd..d1b35328b6e8 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-@@ -19,7 +19,7 @@ static void msm_hdmi_power_on(struct drm_bridge *bridge)
- 	const struct hdmi_platform_config *config = hdmi->config;
- 	int ret;
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_i2c.c b/drivers/gpu/drm/msm/hdmi/hdmi_i2c.c
+index 7aa500d24240..ebefea4fb408 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_i2c.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_i2c.c
+@@ -107,11 +107,15 @@ static int msm_hdmi_i2c_xfer(struct i2c_adapter *i2c,
+ 	if (num == 0)
+ 		return num;
  
--	pm_runtime_get_sync(&hdmi->pdev->dev);
-+	pm_runtime_resume_and_get(&hdmi->pdev->dev);
- 
- 	ret = regulator_bulk_enable(config->pwr_reg_cnt, hdmi->pwr_regs);
- 	if (ret)
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c b/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
-index 36266aa626dc..fc21ad3b01dc 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_hpd.c
-@@ -85,7 +85,12 @@ int msm_hdmi_hpd_enable(struct drm_bridge *bridge)
- 	if (hdmi->hpd_gpiod)
- 		gpiod_set_value_cansleep(hdmi->hpd_gpiod, 1);
- 
--	pm_runtime_get_sync(dev);
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		DRM_DEV_ERROR(dev, "runtime resume failed: %d\n", ret);
-+		goto fail;
-+	}
-+
- 	ret = clk_bulk_prepare_enable(config->hpd_clk_cnt, hdmi->hpd_clks);
- 	if (ret)
- 		goto fail;
-@@ -178,7 +183,10 @@ static enum drm_connector_status detect_reg(struct hdmi *hdmi)
- 	uint32_t hpd_int_status = 0;
- 	int ret;
- 
--	pm_runtime_get_sync(&hdmi->pdev->dev);
 +	ret = pm_runtime_resume_and_get(&hdmi->pdev->dev);
 +	if (ret)
-+		goto out;
-+
- 	ret = clk_bulk_prepare_enable(config->hpd_clk_cnt, hdmi->hpd_clks);
- 	if (ret)
- 		goto out;
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_phy.c b/drivers/gpu/drm/msm/hdmi/hdmi_phy.c
-index 88a3423b7f24..d5acae752300 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_phy.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_phy.c
-@@ -58,7 +58,11 @@ int msm_hdmi_phy_resource_enable(struct hdmi_phy *phy)
- 	struct device *dev = &phy->pdev->dev;
- 	int i, ret = 0;
- 
--	pm_runtime_get_sync(dev);
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		DRM_DEV_ERROR(dev, "runtime resume failed: %d\n", ret);
 +		return ret;
-+	}
++
+ 	init_ddc(hdmi_i2c);
  
- 	ret = regulator_bulk_enable(cfg->num_regs, phy->regs);
- 	if (ret) {
+ 	ret = ddc_clear_irq(hdmi_i2c);
+ 	if (ret)
+-		return ret;
++		goto fail;
+ 
+ 	for (i = 0; i < num; i++) {
+ 		struct i2c_msg *p = &msgs[i];
+@@ -169,7 +173,7 @@ static int msm_hdmi_i2c_xfer(struct i2c_adapter *i2c,
+ 				hdmi_read(hdmi, REG_HDMI_DDC_SW_STATUS),
+ 				hdmi_read(hdmi, REG_HDMI_DDC_HW_STATUS),
+ 				hdmi_read(hdmi, REG_HDMI_DDC_INT_CTRL));
+-		return ret;
++		goto fail;
+ 	}
+ 
+ 	ddc_status = hdmi_read(hdmi, REG_HDMI_DDC_SW_STATUS);
+@@ -202,7 +206,13 @@ static int msm_hdmi_i2c_xfer(struct i2c_adapter *i2c,
+ 		}
+ 	}
+ 
++	pm_runtime_put(&hdmi->pdev->dev);
++
+ 	return i;
++
++fail:
++	pm_runtime_put(&hdmi->pdev->dev);
++	return ret;
+ }
+ 
+ static u32 msm_hdmi_i2c_func(struct i2c_adapter *adapter)
 
 -- 
 2.39.2
