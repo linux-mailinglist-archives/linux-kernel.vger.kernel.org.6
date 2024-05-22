@@ -1,171 +1,182 @@
-Return-Path: <linux-kernel+bounces-186764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9438CC8C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:07:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B9C8CC8D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5402D1F23B18
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86CB81F23E5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236828120C;
-	Wed, 22 May 2024 22:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30C0146D67;
+	Wed, 22 May 2024 22:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I9+HAIlw"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QG9l8swA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629AB23CB
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAF07F47F;
+	Wed, 22 May 2024 22:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716415626; cv=none; b=u7elO1Njfd/yDT6Nm+udXXAzKdc3Vk6wZ1R2wXub+NpxeWROQRUXdiy3fod71mEblA+MkcR2apJAlHIV3ZrrhgO/GT9ptp4V/Q3S6paEAjXzruo8mkW+4S6d/kw8H2tOsjJM9+Kl3gnfi9vrvZpLxe3/oHMadA/y/JJXhNxet9A=
+	t=1716415837; cv=none; b=GE7zay9A7l2vFfGDGNPQDNRP+FchM0i/PywUW07f2fwWZKrJQSDdRuxq+JNAJssIwmMGCBES+M4ucqXKcRzfbY1w+N5l+D0kMRaoeGK7MTX3/YCY/ppyD4WXffbQRAMSiWkJkpI1REUMgTAvdnDPZOKBgzCtp6JIobjbRGarR04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716415626; c=relaxed/simple;
-	bh=P3nfzAeDzHWCF/hR3Be4Vs0HK32RB+1TM1u0f2LLKPY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R8bEazU/27BtIaNkeV4ez0tLa4/M3731AwAj8UuqCPxi2VlQZXUQJnwZMc5haqgbVsEyGs5oKTRIus9sjEV45UYUsZKwlAx3VrBtl8u4vBvMtoEkoHZX+UXvq20X57vQ7zU980/3jOi1DCRltM1FS0o+FenIEnqjXgkR5LMlVMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I9+HAIlw; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e45c0a8360so60965441fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716415622; x=1717020422; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kvx6yeinoVDUi5Zfkw33aV+5YjT78WJ1rv7O0iicX/w=;
-        b=I9+HAIlw9pEnXo5t4kRROo3E1BJMnvrCDNps9bOMlBXmp/GRPgBToOEpGYt7n0aCKT
-         znSHysLcJoDif5uCbJ3UaF1VwD1gO7DgJtvlMkULEHfjC1vclQS5GcukHaq5CEw3GQin
-         h3C4FBsTfDFZFR0WOzhsbNn5QhlMoB5wJDrK7q+D8O3hy9BXUR5TquYDV8Hmni4bJiw4
-         hrKZq95fGoOdOh27Yio5Ju/2uXe+vfG2f6ynUm8U+Nh6+5tjdsNebdEHcA2ggPq1/eeF
-         Da8AyG4dmA5ZsaPzFKFUMjEKBuZ92Zjlep3yFyUzZURe/lsVbUP4feBbp86WPHWESO4G
-         6dZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716415622; x=1717020422;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kvx6yeinoVDUi5Zfkw33aV+5YjT78WJ1rv7O0iicX/w=;
-        b=Ggqo7PycRyTvvyzU3vEZk8174hOg4rQ/mfjGLZ7plQUhPF9/L5xQcgaHl1aOmmFwkn
-         DkGSo+94wolexwR7gscLn5d5oBhBjsTY+KFMM2EDakTfIeWlNOotLV7aKLnbS26gCyAU
-         cOspeSMOweSkbnq5q17XO+CTSgQrIH8S1wz9AFBcAcTcCMeIqwljMilKSULSzeT17r4t
-         SxzuutPx/cprdB+noOP40MfZT8bVfAZpht4+e7mAnjwdKssaBNkx3xEn3qQQZ/qwON8p
-         vozpUvjPQXhDVACyPPoBnFgWRIP5yLo0BuP6zN3v4ZcpLaRgoCMwBg3Inj7VnzkUODLY
-         I3CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJEJZlfAFPFMu4PE/otkciObgwWx/FtDHKor4LtcMyGy7xwI6SaI5OekVhF3pBF1o5YP7re/YEgvGdn/FmhW6mNJ/imSwOr0UpmCvB
-X-Gm-Message-State: AOJu0Ywn+fEkeSXJJN/YMXpEIxhkj45ROQ/KITx/76IZlwsV41V6cjmW
-	5UkapyXjAvyoH/FdblQOjeFoov0m2m3fXHI4bk/xWmDmEaXu2kD4/PJoHQ3WUdU=
-X-Google-Smtp-Source: AGHT+IHvvy96Pg+GUU/MU5q+kBLk9kzzZb38y4KNjSyfaRuJK/MxIVMkE4HTw90jn1n1wg6XsU8azw==
-X-Received: by 2002:a2e:a444:0:b0:2e5:2c7e:257 with SMTP id 38308e7fff4ca-2e94949dfa2mr20306221fa.30.1716415622393;
-        Wed, 22 May 2024 15:07:02 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95289b4fdsm295021fa.29.2024.05.22.15.07.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 15:07:01 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 23 May 2024 01:07:00 +0300
-Subject: [PATCH RFC] drm/panel-edp: add fat warning against adding new
- panel compatibles
+	s=arc-20240116; t=1716415837; c=relaxed/simple;
+	bh=78lSOt435SpzlKtYFJRnRC9xals+PsmCRmkOx4okULU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=kgModzx9HguWgyF+cgHR+dN46lP1ZaIAkxP+qSNFuOzjAsTKqzPTkIJuIaJHsV6NbMr6aBKSdFyHKGFNDubPUsznDgfpmf93pjSwQbP+0NLLSvvGSChLOdnOhjvECekxfShsNEn3XUunqjateoYWsMA78WjaE4RDRIhTi/AlAiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QG9l8swA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A5CAC2BBFC;
+	Wed, 22 May 2024 22:10:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716415836;
+	bh=78lSOt435SpzlKtYFJRnRC9xals+PsmCRmkOx4okULU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=QG9l8swAl+2uLJlTgqBUAn1o2pxnCYHODesOdRxMEAL+yKCPO/ptqgxYEmtcEWHza
+	 2Ttp0uF6DOs/G/2dn6c5nT8/MuORHjJXMXq8en+AaL4Rx9QNMBLwgH3sH1pqLkZ0sU
+	 /yzJtJGaq8erEVBauiQaBlmSVXWip0wwdZPtvuXVEOGNLorpqdz3hb7uKhWOpI6DtM
+	 E7VeoG7Lv6MpKiUJqMo8bLHMbIB6qKbniCDkIsFmWaJxi9JN7encYqT8WsB3v+j2H/
+	 Th3B+Ik4ds12hJz3pXKtiAQikPmd5iyPC6hHTNWHxweBaIKxKHeFPTUoNJ9F2giBKy
+	 /7+hB7Ceb732w==
+Date: Wed, 22 May 2024 17:10:34 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Minda Chen <minda.chen@starfivetech.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mason Huo <mason.huo@starfivetech.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Kevin Xie <kevin.xie@starfivetech.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjE2IDA4?=
+ =?utf-8?Q?=2F22=5D_PCI?= =?utf-8?Q?=3A?= microchip: Change the argument of
+ plda_pcie_setup_iomems()
+Message-ID: <20240522221034.GA83828@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240523-edp-panel-drop-v1-1-045d62511d09@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAINsTmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUyNj3dSUAt2CxLzUHN2UovwCXQODxEQjY8sk42SzJCWgpoKi1LTMCrC
- B0UpBbs5KsbW1AGgtl7RlAAAA
-To: Douglas Anderson <dianders@chromium.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2251;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=P3nfzAeDzHWCF/hR3Be4Vs0HK32RB+1TM1u0f2LLKPY=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ5pfTouUqvqtluq5hwJiZh++eFaho04xvyOfc84Jx5Liz
- DrGidadjMYsDIxcDLJiiiw+BS1TYzYlh33YMbUeZhArE8gUBi5OAZhI8g8Ohn6dWValqa4re1j8
- LjjfWDWP95XCSolzv3rCNb2XLhP/56J7UfVNnMTMD0xrHJIEGveo/6xsyosOm16eZOvUr+krm5P
- sHlNjUOZj48JUIXxtwatvCiGHNe6c+H1xVvvVWYYv/1xeoDfXxS9V7FeEq07ipUrfj1PjTghl6e
- Q8Z+bQq7e0PXVYdvXrqPslUryPJWfY8Qr09iRXWomxc/HE7GLb/bPnex/jU73oiTVb2i+4a/ueE
- RY0/D5frPFFnbjI/0cBVUvyTBRUo3+bLI90qHp+49uKM2d/5y1Sm5ArOPF+tZjx2y2O7513bTZ5
- 41Pt+mSDzAS5jLS1Sz/r+lSFaO58VrjoVuz942qBPTIA
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SHXPR01MB086351396027D8A443BB6068E6EB2@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
 
-Add a fat warning against adding new panel compatibles to the panel-edp
-driver. All new users of the eDP panels are supposed to use the generic
-"edp-panel" compatible device on the AUX bus. The remaining compatibles
-are either used by the existing DT or were used previously and are
-retained for backwards compatibility.
+On Wed, May 22, 2024 at 01:50:57AM +0000, Minda Chen wrote:
+> > The patch is OK, but the subject line is not very informative.  It
+> > should be useful all by itself even without the commit log.
+> > "Change the argument of X" doesn't say anything about why we would
+> > want to do that.
+> > 
+> > On Thu, Mar 28, 2024 at 05:18:21PM +0800, Minda Chen wrote:
+> > > If other vendor do not select PCI_HOST_COMMON, the driver data is not
+> > > struct pci_host_bridge.
+> > 
+> > Also, I don't think this is the real problem.  Your PCIE_MICROCHIP_HOST
+> > Kconfig selects PCI_HOST_COMMON, and the driver calls
+> > pci_host_common_probe(), so the driver wouldn't even build without
+> > PCI_HOST_COMMON.
+> > 
+> > This patch is already applied and ready to go, but if you can tell
+> > us what's really going on here, I'd like to update the commit log.
+> > 
+> It is modified for Starfive code. Starfive JH7110 PCIe do not select
+> PCI_HOST_COMMON
+> plda_pcie_setup_iomems() will be changed to common plda code.
+> 
+> I think I can modify the title and commit log like this.
+> 
+> Title: 
+> PCI: microchip: Get struct pci_host_bridge pointer from platform code
+> 
+> Since plda_pcie_setup_iomems() will be a common PLDA core driver
+> function, but the argument0 is a struct platform_device pointer.
+> plda_pcie_setup_iomems() actually using struct pci_host_bridge
+> pointer other than platform_device pointer. Further more if a new
+> PLDA core PCIe driver do not select PCI_HOST_COMMON, the platform
+> driver data is not struct pci_host_bridge pointer. So get struct
+> pci_host_bridge pointer from platform code function
+> mc_platform_init() and make it to be an argument of
+> plda_pcie_setup_iomems().
 
-Suggested-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-The following compatibles were never used by the devices supported by
-the upstream kernel and are a subject to possible removal:
+OK, I see what you're doing.  This actually has nothing to do with
+whether PCI_HOST_COMMON is *enabled*.  It has to do with whether
+drivers use pci_host_common_probe().  Here's what I propose:
 
-- auo,b133han05
-- auo,b140han06
-- ivo,m133nwf4-r0
-- lg,lp097qx1-spa1
-- lg,lp129qe
-- samsung,lsn122dl01-c01
-- samsung,ltn140at29-301
-- sharp,ld-d5116z01b
-- sharp,lq140m1jw46
-- starry,kr122ea0sra
+  PCI: plda: Pass pci_host_bridge to plda_pcie_setup_iomems()
 
-I'm considering dropping them, unless there is a good reason not to do
-so.
----
- drivers/gpu/drm/panel/panel-edp.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+  plda_pcie_setup_iomems() needs the bridge->windows list from struct
+  pci_host_bridge and is currently used only by pcie-microchip-host.c.  This
+  driver uses pci_host_common_probe(), which sets a pci_host_bridge as the
+  drvdata, so plda_pcie_setup_iomems() used platform_get_drvdata() to find
+  the pci_host_bridge.
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index 6db277efcbb7..95b25ec67168 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1776,7 +1776,23 @@ static const struct of_device_id platform_of_match[] = {
- 	{
- 		/* Must be first */
- 		.compatible = "edp-panel",
--	}, {
-+	},
-+	/*
-+	 * Do not add panels to the list below unless they cannot be handled by
-+	 * the generic edp-panel compatible.
-+	 *
-+	 * The only two valid reasons are:
-+	 * - because of the panel issues (e.g. broken EDID or broken
-+	 *   identification),
-+	 * - because the platform which uses the panel didn't wire up the AUX
-+	 *   bus properly.
-+	 *
-+	 * In all other cases the platform should use the aux-bus and declare
-+	 * the panel using the 'edp-panel' compatible as a device on the AUX
-+	 * bus. The lack of the aux-bus support is not a valid case. Platforms
-+	 * are urged to be converted to declaring panels in a proper way.
-+	 */
-+	{
- 		.compatible = "auo,b101ean01",
- 		.data = &auo_b101ean01,
- 	}, {
+  But we also want to use plda_pcie_setup_iomems() in the new pcie-starfive.c
+  driver, which does not use pci_host_common_probe() and will have struct
+  starfive_jh7110_pcie as its drvdata, so pass the pci_host_bridge directly
+  to plda_pcie_setup_iomems() so it doesn't need platform_get_drvdata() to
+  find it.
 
----
-base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
-change-id: 20240523-edp-panel-drop-00aa239b3c6b
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+> > > Move calling platform_get_drvdata() to mc_platform_init().
+> > >
+> > > Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > ---
+> > >  drivers/pci/controller/plda/pcie-microchip-host.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/pci/controller/plda/pcie-microchip-host.c
+> > > b/drivers/pci/controller/plda/pcie-microchip-host.c
+> > > index 9b367927cd32..805870aed61d 100644
+> > > --- a/drivers/pci/controller/plda/pcie-microchip-host.c
+> > > +++ b/drivers/pci/controller/plda/pcie-microchip-host.c
+> > > @@ -876,11 +876,10 @@ static void plda_pcie_setup_window(void __iomem
+> > *bridge_base_addr, u32 index,
+> > >  	writel(0, bridge_base_addr + ATR0_PCIE_WIN0_SRC_ADDR);  }
+> > >
+> > > -static int plda_pcie_setup_iomems(struct platform_device *pdev,
+> > > +static int plda_pcie_setup_iomems(struct pci_host_bridge *bridge,
+> > >  				  struct plda_pcie_rp *port)
+> > >  {
+> > >  	void __iomem *bridge_base_addr = port->bridge_addr;
+> > > -	struct pci_host_bridge *bridge = platform_get_drvdata(pdev);
+> > >  	struct resource_entry *entry;
+> > >  	u64 pci_addr;
+> > >  	u32 index = 1;
+> > > @@ -1018,6 +1017,7 @@ static int mc_platform_init(struct
+> > > pci_config_window *cfg)  {
+> > >  	struct device *dev = cfg->parent;
+> > >  	struct platform_device *pdev = to_platform_device(dev);
+> > > +	struct pci_host_bridge *bridge = platform_get_drvdata(pdev);
+> > >  	void __iomem *bridge_base_addr =
+> > >  		port->axi_base_addr + MC_PCIE_BRIDGE_ADDR;
+> > >  	int ret;
+> > > @@ -1031,7 +1031,7 @@ static int mc_platform_init(struct
+> > pci_config_window *cfg)
+> > >  	mc_pcie_enable_msi(port, cfg->win);
+> > >
+> > >  	/* Configure non-config space outbound ranges */
+> > > -	ret = plda_pcie_setup_iomems(pdev, &port->plda);
+> > > +	ret = plda_pcie_setup_iomems(bridge, &port->plda);
+> > >  	if (ret)
+> > >  		return ret;
+> > >
+> > > --
+> > > 2.17.1
+> > >
 
