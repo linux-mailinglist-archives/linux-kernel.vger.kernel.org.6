@@ -1,158 +1,239 @@
-Return-Path: <linux-kernel+bounces-185866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928CB8CBC24
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:36:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE108CBC2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3275B2164B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:36:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BD4B2146A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD9A7CF1A;
-	Wed, 22 May 2024 07:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F197CF1A;
+	Wed, 22 May 2024 07:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="THD5o3kf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jen7BD82"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873F03BB21
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF363BBC9
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716363382; cv=none; b=YlydkQUq57arwWxPCTB+O+NX7VMglZHczmVxXzzFVMQlZO8CAYhfLKXvOftEk8Zwipp8Dx9Euwc4o5PeG8EPPMfOleSVavCaeCk8Dj3ERmGr2UwXj9u1TVcSIL18lpRI1hgk784laqSShZ0U5nK2Q2ysTOqkjQycQfsLLETRXhM=
+	t=1716363602; cv=none; b=VMxSSzONAmTqk91Z//KH0cmVp/mYMf3eJLuPusI0XObnPx0myuIFO8t/jtPAhkp0pLek2L98aJt72BHyoGASIGmuLcVLLnyaVs5wcNkbX565bisWAZeaPMh0Slphh62EoosNYgoPN0b5scZwDM2FjAY7none2JbzETDIVk9WK7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716363382; c=relaxed/simple;
-	bh=xJpqtv5wS0sus5aBfOZS2WQnS/pPkC2QI6BMxCDEOHk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iu/x77jstBn4ehWpvnTEY80mwMmEUs6BJAT+qthOla21m52HyAU0gPQQYg3bxsPUBjvh+B1mHxLPezyc99kBG0GHrofwIfTIn9kRyPWl08QqMbet0q8i3IFzMmMasB1A8t03hwDwsQCfRune950SalJpBQWzKPqQnlFN85/y8RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=THD5o3kf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716363379;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DpAxOU2aBgMjznsU4cnXhiKkEbSF/tfuwpgPheSiit4=;
-	b=THD5o3kfhm/MAqA1lqxtpt3MCIozqmz1D1KbAbAgeKsxe3RidqG8DtL9LogUmJIoz/Oj7Y
-	aYzF5AKDFmR94Q+Jew4IWTtf+TFzNy99NDx3iSYST8z7/lU6r77bpMbJ6k4T/UH60l2RjA
-	kCnVdNViKvHIonYr+TX7O0c/CVMbGZ8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-510-MOwyuCEcPyScBgEuRDMPRw-1; Wed, 22 May 2024 03:36:18 -0400
-X-MC-Unique: MOwyuCEcPyScBgEuRDMPRw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-354c43b4b7fso2430351f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:36:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716363376; x=1716968176;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DpAxOU2aBgMjznsU4cnXhiKkEbSF/tfuwpgPheSiit4=;
-        b=gfhwWv91jzZrCyQxIWW2EG1MuXqWcpERwaaoUNzy2+jlpjXSIl1JU25o40V+94p8Yu
-         mn0mSECMrzbXUG8nP4yJhi60gsWaAAzGxNKbS7LcwGdAtZBAWgMCe1WijKEeUF60pACA
-         IiFrEu29tzn3vbwXBg+MZA7MLpE/bNfspeWJ/r0vMe5CQOUuqzc0mUCQt4c1IoXDof73
-         XYjYftjZeEexn7T9XVHQqEDPYupWG70ougOMrpKSm6gEDB25Lw4M6pu2XQdJd53TVkYC
-         pIoFPqW0PBK+fqOlvZr6DpJnlvJAyorco1/tJm9YqlVtAzsWD1vOrq3zBUvWm4rlGEDj
-         YjQQ==
-X-Gm-Message-State: AOJu0YxorwtHQfhlkAO8Mx46Gf7wdJyukDg4BGkunYf0l99kTafN3cH3
-	19GQScfJYt6HNW8AppfQD+t8YLcZCBGHwlmPufZ8YAM/CMDX9Od4aYQZ7xgCxSdD4+XnkiJK+Lb
-	4HauFGt9xCD0lDFUX24e0RjTZ8hNvw37ctzrrQPbBOYMVzRrIxWzmeeSfhwoylQ==
-X-Received: by 2002:a5d:4e84:0:b0:354:ed0d:deea with SMTP id ffacd0b85a97d-354ed0de3aemr241050f8f.61.1716363375918;
-        Wed, 22 May 2024 00:36:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIul26mV6vub8/6e1p6F3cWQikk0lGeDfN+8U6+bi2zDxD5zJnDsL8jJG/LlIj0y6kg4Smtg==
-X-Received: by 2002:a5d:4e84:0:b0:354:ed0d:deea with SMTP id ffacd0b85a97d-354ed0de3aemr241017f8f.61.1716363375415;
-        Wed, 22 May 2024 00:36:15 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c709:d500:4044:6d4c:f060:f677? (p200300cbc709d50040446d4cf060f677.dip0.t-ipconnect.de. [2003:cb:c709:d500:4044:6d4c:f060:f677])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbedbsm33553679f8f.92.2024.05.22.00.36.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 00:36:14 -0700 (PDT)
-Message-ID: <1bb2a62c-ba26-40e2-a749-90382ff27595@redhat.com>
-Date: Wed, 22 May 2024 09:36:13 +0200
+	s=arc-20240116; t=1716363602; c=relaxed/simple;
+	bh=f3Hc/S5iPU1pxS7uFNla+UfZV6h4yjRsbFGxog9sYv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LBCuZnWtZNkQ0Ym4rzKZ4Mg/JPwKtiXxcS6YezsHF27XZE3sgmWG56yP+G+5leLpLUfHc2aDgHX9olOUWGPeoQcio08THgB6sqJ0y20noxnq3+X8mxa3YXS2sI9lrYFi6OxWZHouFKIOtQUSV/bmBDmfybixvCe2X50IwAMiuSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jen7BD82; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716363600; x=1747899600;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=f3Hc/S5iPU1pxS7uFNla+UfZV6h4yjRsbFGxog9sYv4=;
+  b=jen7BD82iGoyjfvIGNE260ZG3711d/ci8PvNx+bZPhaelK3YERjnnRPF
+   YC9jzhxFXv07vib7g5ZdMlh1fU8E3D7YwRIEmIrWuEJn4DjThAzXlv0Hm
+   /8hogKyWUSRD8ohPLl+wY1ZCnj+tsFQBNWp9usmraVRjyaq7b7Nzyrl8E
+   Hb810lil2cGkM1IrdHZciv2pqTjHruoVhJNKbSWwAsJNOfFQK7TGyv0Je
+   pdSsWivl/YTdluciNBvRLo+JQcoGotGD7czbad8/P9GMPXmGP30lBORo0
+   e7OKTiPPYQqTbQXXZSSslSn6eg0ZxJ/RGkrybxEko7GzRoaATBVJEyCdf
+   g==;
+X-CSE-ConnectionGUID: 0kS6kbC8TAevHh9gTM6RsA==
+X-CSE-MsgGUID: 8txdXAIVS46T1Dchv/tOGw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12443457"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="12443457"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 00:40:00 -0700
+X-CSE-ConnectionGUID: 9A4E8CnSSlSCdnuTwJyWTQ==
+X-CSE-MsgGUID: OdClcumTQyadA7TS7a61Og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="56430458"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 00:39:56 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
+  <kernel_team@skhynix.com>,  <akpm@linux-foundation.org>,
+  <vernhao@tencent.com>,  <mgorman@techsingularity.net>,
+  <hughd@google.com>,  <willy@infradead.org>,  <david@redhat.com>,
+  <peterz@infradead.org>,  <luto@kernel.org>,  <tglx@linutronix.de>,
+  <mingo@redhat.com>,  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,
+  <rjgolo@gmail.com>
+Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+In-Reply-To: <20240522021616.GA34580@system.software.com> (Byungchul Park's
+	message of "Wed, 22 May 2024 11:16:16 +0900")
+References: <20240510065206.76078-1-byungchul@sk.com>
+	<87eda8g6q2.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<20240513014428.GB38851@system.software.com>
+	<20240522021616.GA34580@system.software.com>
+Date: Wed, 22 May 2024 15:38:04 +0800
+Message-ID: <87h6eqb8kj.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] mm: Add update_mmu_tlb_range()
-To: Bang Li <libang.li@antgroup.com>, akpm@linux-foundation.org,
- chenhuacai@kernel.org, tsbogend@alpha.franken.de, paul.walmsley@sifive.com,
- palmer@dabbelt.com, chris@zankel.net, jcmvbkbc@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- ryan.roberts@arm.com, ioworker0@gmail.com, libang.linux@gmail.com
-References: <20240522061204.117421-1-libang.li@antgroup.com>
- <20240522061204.117421-2-libang.li@antgroup.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240522061204.117421-2-libang.li@antgroup.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-On 22.05.24 08:12, Bang Li wrote:
-> Added update_mmu_tlb_range(), we can batch update tlb of an
-> address range.
-> 
-> Signed-off-by: Bang Li <libang.li@antgroup.com>
-> ---
+Hi, Byungchul,
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Byungchul Park <byungchul@sk.com> writes:
 
--- 
-Cheers,
+> On Mon, May 13, 2024 at 10:44:29AM +0900, Byungchul Park wrote:
+>> On Sat, May 11, 2024 at 03:15:01PM +0800, Huang, Ying wrote:
+>> > Byungchul Park <byungchul@sk.com> writes:
+>> > 
+>> > > Hi everyone,
+>> > >
+>> > > While I'm working with a tiered memory system e.g. CXL memory, I have
+>> > > been facing migration overhead esp. tlb shootdown on promotion or
+>> > > demotion between different tiers.  Yeah..  most tlb shootdowns on
+>> > > migration through hinting fault can be avoided thanks to Huang Ying's
+>> > > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
+>> > > is inaccessible").  See the following link for more information:
+>> > >
+>> > > https://lore.kernel.org/lkml/20231115025755.GA29979@system.software.com/
+>> > 
+>> > And, I still have interest of the performance impact of commit
+>> > 7e12beb8ca2a ("migrate_pages: batch flushing TLB").  In the email above,
+>> > you said that the performance of v6.5-rc5 + 7e12beb8ca2a reverted has
+>> > better performance than v6.5-rc5.  Can you provide more details?  For
+>> > example, the number of TLB flushing IPI for two kernels?
+>> 
+>> Okay.  I will test and share the result with what you asked me now once
+>> I get available for the test.
+>
+> I should admit that the test using qemu is so unstable.  While using
+> qemu for the test, kernel with 7e12beb8ca2a applied gave better results
+> sometimes and worse ones sometimes.  I should've used a bare metal from
+> the beginning.  Sorry for making you confused with the unstable result.
+>
+> Since I thought you asked me for the test with the same environment in
+> the link above, I used qemu to reproduce the similar result but changed
+> the number of threads for the test from 16 to 14 to get rid of noise
+> that might be introduced by other than the intended test just in case.
+>
+> As expected, the stats are better with your work:
+>
+>    ------------------------------------------
+>    v6.6-rc5 with 7e12beb8ca2a commit reverted
+>    ------------------------------------------
+>
+>    1) from output of XSBench
+>
+>    Threads:     14              
+>    Runtime:     1127.043 seconds
+>    Lookups:     1,700,000,000   
+>    Lookups/s:   1,508,371       
+>
+>    2) from /proc/vmstat
+>
+>    numa_hit 15580171                      
+>    numa_miss 1034233                      
+>    numa_foreign 1034233                   
+>    numa_interleave 773                    
+>    numa_local 7927442                     
+>    numa_other 8686962                     
+>    numa_pte_updates 24068923              
+>    numa_hint_faults 24061125              
+>    numa_hint_faults_local 0               
+>    numa_pages_migrated 7426480            
+>    pgmigrate_success 15407375             
+>    pgmigrate_fail 1849                    
+>    compact_migrate_scanned 4445414        
+>    compact_daemon_migrate_scanned 4445414 
+>    pgdemote_kswapd 7651061                
+>    pgdemote_direct 0                      
+>    nr_tlb_remote_flush 8080092            
+>    nr_tlb_remote_flush_received 109915713 
+>    nr_tlb_local_flush_all 53800           
+>    nr_tlb_local_flush_one 770466                                                   
+>    
+>    3) from /proc/interrupts
+>
+>    TLB: 8022927    7840769     123588    7837008    7835967    7839837
+>    	7838332    7839886    7837610    7837221    7834524     407260
+>    	7430090    7835696    7839081    7712568    TLB shootdowns  
+>    
+>    4) from 'perf stat -a'
+>
+>    222371217		itlb.itlb_flush      
+>    919832520		tlb_flush.dtlb_thread
+>    372223809		tlb_flush.stlb_any   
+>    120210808042		dTLB-load-misses     
+>    979352769		dTLB-store-misses    
+>    3650767665		iTLB-load-misses     
+>
+>    -----------------------------------------
+>    v6.6-rc5 with 7e12beb8ca2a commit applied
+>    -----------------------------------------
+>
+>    1) from output of XSBench
+>
+>    Threads:     14
+>    Runtime:     1105.521 seconds
+>    Lookups:     1,700,000,000
+>    Lookups/s:   1,537,737
+>
+>    2) from /proc/vmstat
+>
+>    numa_hit 24148399
+>    numa_miss 797483
+>    numa_foreign 797483
+>    numa_interleave 772
+>    numa_local 12214575
+>    numa_other 12731307
+>    numa_pte_updates 24250278
+>    numa_hint_faults 24199756
+>    numa_hint_faults_local 0
+>    numa_pages_migrated 11476195
+>    pgmigrate_success 23634639
+>    pgmigrate_fail 1391
+>    compact_migrate_scanned 3760803
+>    compact_daemon_migrate_scanned 3760803
+>    pgdemote_kswapd 11932217
+>    pgdemote_direct 0
+>    nr_tlb_remote_flush 2151945
+>    nr_tlb_remote_flush_received 29672808
+>    nr_tlb_local_flush_all 124006
+>    nr_tlb_local_flush_one 741165
+>    
+>    3) from /proc/interrupts
+>
+>    TLB: 2130784    2120142    2117571     844962    2071766     114675
+>    	2117258    2119596    2116816    1205446    2119176    2119209
+>    	2116792    2118763    2118773    2117762    TLB shootdowns
+>
+>    4) from 'perf stat -a'
+>
+>    60851902		itlb.itlb_flush
+>    334068491		tlb_flush.dtlb_thread
+>    223732916		tlb_flush.stlb_any
+>    120207083382		dTLB-load-misses
+>    446823059		dTLB-store-misses
+>    1926669373		iTLB-load-misses
+>
 
-David / dhildenb
+Thanks a lot for test results!
 
+From your test results, the TLB shootdown IPI can be reduced effectively
+with commit 7e12beb8ca2a.  So that the benchmark score improved a
+little.
+
+And, your changes will reduce the TLB shootdown IPI further, right?  Do
+you have the number?
+
+--
+Best Regards,
+Huang, Ying
 
