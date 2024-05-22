@@ -1,160 +1,104 @@
-Return-Path: <linux-kernel+bounces-186323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69C48CC2BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:03:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD4DE8CC2CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AC82B223B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631F51F21AA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02EA140E5C;
-	Wed, 22 May 2024 14:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RzWT3O3N"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E9113E03E;
+	Wed, 22 May 2024 14:08:35 +0000 (UTC)
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467B6AB9;
-	Wed, 22 May 2024 14:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BB243AAB
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716386580; cv=none; b=CHLhs1Z1sx4JQUnY9zAk5/SXwJzUxCT4RRxexy8DCuV8W3ex12rNi3RbT6KlgWcZlIrIyuo0eXxUUdJRQT+ZvgQ74aBByGIOt5FkqedpptGU14xBLF1YOFWxkxzknPYxfJInP47Y8Z5KxyLdzmyTvMNWbVVVvlD/99CIGYvIlkU=
+	t=1716386915; cv=none; b=JXUYnIYs21aYy+kqvQ7lYtMvwzIoUIsf/VtzGAkbx2bnBUf+SQzxHIrjqASdVpBqghSZ64+gmk8+AQZq6yhnw+sKijUt6aJjDOeYXknTbYuhpIkkxg36cf1/x0Ps3XAEb1wVfR/QfXuGq8enhXMMgwXKmDyXRXAKVHoVo0oXH/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716386580; c=relaxed/simple;
-	bh=7kTG5ts3OQOCh1/2XvqX0aVjJCkbUUXFDVmo08IThCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RN9i224W7/nO0zPkOONx4qcvOQfzCY0Pk+9rg7BnU8hXlz3Ud+6oPEYf4Rd8Rlv4MMzZqL2TtKpCDJCSx7IFlCa7ARMFsgRXZZrUqscDu5sZYtk+bwhqfEA/u6QA1/FUeo733IHTlT3RI5DZcrFPIvsCtBHUqE2wFC9qg8PqORM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RzWT3O3N; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716386575;
-	bh=7kTG5ts3OQOCh1/2XvqX0aVjJCkbUUXFDVmo08IThCA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RzWT3O3NZ1dwV9M2JHbVSngE4q1VPMGXCXBpUQq11qZ2XeiDQmS47vXNKh45ByruT
-	 Cm7JT6sfDFXS8Fa1W3bTnt3tZ9zNI/4VVsOPEWAheGA84yHB0+QR9/vD8ZNCY2muQ/
-	 v20AlPXWqnAAZMWBoRd+unQh0zXE48VBkyjei/Zf3ZYkSL3XFlGcPWwHE8Ok//AO6Q
-	 EPl3BQhtDjJXhDQI8sWI8BAIxBLQHJBirIfmH+vA9Mkyzu/ded0oeTF8nT7FYY4Trp
-	 PMDbOHmF6JipmDBsBTOZtMmW4ktp9wbt35v3TgXmqkNsRi9LocM4J3Mc0RmJzFxtxt
-	 SKCoSTO0+zKlA==
-Received: from [100.90.194.27] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1716386915; c=relaxed/simple;
+	bh=KHwsZDEiIGJ2DyJzOBSHb0eWPfnlHZGZQg0MlCtoSSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmkcOB0Dmg+RDiF3/smQtguPO9DTs/0wWBE9rLQFFjrx2Fj5cS8j8tYnd21+fXmJU5+jw78mD0DV+JpWh3T8swa8SWdVOozZJjgRWFaF6xACtuz23My3vNcFp6iy4HoT6AS5fjDxYJ2ARu9QC1Rh4KVUvJiI0+v7iAnybzCyMTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4991137821B3;
-	Wed, 22 May 2024 14:02:54 +0000 (UTC)
-Message-ID: <9afebadd-765f-42f3-a80b-366dd749bf48@collabora.com>
-Date: Wed, 22 May 2024 17:02:53 +0300
+	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 57C2F4081E;
+	Wed, 22 May 2024 15:51:31 +0200 (CEST)
+Date: Wed, 22 May 2024 15:51:29 +0200
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>, Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Vinod Koul <vkoul@kernel.org>, 
+	Caleb Connolly <caleb@connolly.tech>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 2/3] drm/panel/lg-sw43408: select
+ CONFIG_DRM_DISPLAY_DP_HELPER
+Message-ID: <lpguauybi5xs5hy7vglqvaloy4yykgejdhreeqp6fioeuelav6@pj2ap6eat3cy>
+References: <20240522-panel-sw43408-fix-v3-0-6902285adcc0@linaro.org>
+ <20240522-panel-sw43408-fix-v3-2-6902285adcc0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
- comparison helper
-To: Gabriel Krisman Bertazi <krisman@suse.de>,
- Eric Biggers <ebiggers@kernel.org>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
- jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, Gabriel Krisman Bertazi <krisman@collabora.com>
-References: <20240405121332.689228-1-eugen.hristev@collabora.com>
- <20240405121332.689228-4-eugen.hristev@collabora.com>
- <20240510013330.GI1110919@google.com> <875xviyb3f.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@collabora.com>
-In-Reply-To: <875xviyb3f.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522-panel-sw43408-fix-v3-2-6902285adcc0@linaro.org>
 
-On 5/13/24 00:27, Gabriel Krisman Bertazi wrote:
-> Eric Biggers <ebiggers@kernel.org> writes:
-> 
->> On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
-> 
->>> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
->>> +			return -EINVAL;
->>> +
->>> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
->>> +		if (!decrypted_name.name)
->>> +			return -ENOMEM;
->>> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
->>> +						&decrypted_name);
->>> +		if (res < 0)
->>> +			goto out;
->>
->> If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
->> then this function returns 0 (indicating no match) instead of the error code
->> (indicating an error).  Is that the correct behavior?  I would think that
->> strict_encoding should only have an effect on the actual name
->> comparison.
-> 
-> No. we *want* this return code to be propagated back to f2fs.  In ext4 it
-> wouldn't matter since the error is not visible outside of ext4_match,
-> but f2fs does the right thing and stops the lookup.
+On 2024-05-22 09:25:54, Dmitry Baryshkov wrote:
+> This panel driver uses DSC PPS functions and as such depends on the
+> DRM_DISPLAY_DP_HELPER. Select this symbol to make required functions
 
-In the previous version which I sent, you told me that the error should be
-propagated only in strict_mode, and if !strict_mode, it should just return no match.
-Originally I did not understand that this should be done only for utf8_strncasecmp
-errors, and not for all the errors. I will change it here to fix that.
+Here and in the title: maybe this is a remnant from v2, but you split out a
+DRM_DISPLAY_DSC_HELPER and shouldn't be enabling DP for a DSI panel now.
 
-> 
-> Thinking about it, there is a second problem with this series.
-> Currently, if we are on strict_mode, f2fs_match_ci_name does not
-> propagate unicode errors back to f2fs. So, once a utf8 invalid sequence
-> is found during lookup, it will be considered not-a-match but the lookup
-> will continue.  This allows some lookups to succeed even in a corrupted
-> directory.  With this patch, we will abort the lookup on the first
-> error, breaking existing semantics.  Note that these are different from
-> memory allocation failure and fscrypt_fname_disk_to_usr. For those, it
-> makes sense to abort.
+- Marijn
 
-So , in the case of f2fs , we must not propagate utf8 errors ? It should just
-return no match even in strict mode ?
-If this helper is common for both f2fs and ext4, we have to do the same for ext4 ?
-Or we are no longer able to commonize the code altogether ?
+> available to the driver.
 > 
-> Also, once patch 6 and 7 are added, if fscrypt fails with -EINVAL for
-> any reason unrelated to unicode (like in the WARN_ON above), we will
-> incorrectly print the error message saying there is a bad UTF8 string.
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202404200800.kYsRYyli-lkp@intel.com/
+> Fixes: 069a6c0e94f9 ("drm: panel: Add LG sw43408 panel driver")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/panel/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> My suggestion would be to keep the current behavior.  Make
-> generic_ci_match only propagate non-unicode related errors back to the
-> filesystem.  This means that we need to move the error messages in patch
-> 6 and 7 into this function, so they only trigger when utf8_strncasecmp*
-> itself fails.
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index 4a2f621433ef..3e3f63479544 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -340,6 +340,8 @@ config DRM_PANEL_LG_SW43408
+>  	depends on OF
+>  	depends on DRM_MIPI_DSI
+>  	depends on BACKLIGHT_CLASS_DEVICE
+> +	select DRM_DISPLAY_DSC_HELPER
+> +	select DRM_DISPLAY_HELPER
+>  	help
+>  	  Say Y here if you want to enable support for LG sw43408 panel.
+>  	  The panel has a 1080x2160@60Hz resolution and uses 24 bit RGB per
 > 
-
-So basically unicode errors stop here, and print the error message here in that case.
-Am I understanding it correctly ?
->>> +	/*
->>> +	 * Attempt a case-sensitive match first. It is cheaper and
->>> +	 * should cover most lookups, including all the sane
->>> +	 * applications that expect a case-sensitive filesystem.
->>> +	 */
->>> +	if (folded_name->name) {
->>> +		if (dirent.len == folded_name->len &&
->>> +		    !memcmp(folded_name->name, dirent.name, dirent.len))
->>> +			goto out;
->>> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
->>
->> Shouldn't the memcmp be done with the original user-specified name, not the
->> casefolded name?  I would think that the user-specified name is the one that's
->> more likely to match the on-disk name, because of case preservation.  In most
->> cases users will specify the same case on both file creation and later access.
+> -- 
+> 2.39.2
 > 
-> Yes.
-> 
-so the utf8_strncasecmp_folded call here must use name->name instead of folded_name ?
-
-Thanks for the review
-Eugen
-
 
