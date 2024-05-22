@@ -1,213 +1,345 @@
-Return-Path: <linux-kernel+bounces-186715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49608CC7F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:07:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA3A8CC7F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524FC1F21F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0401F217F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65261465B2;
-	Wed, 22 May 2024 21:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BD01422D2;
+	Wed, 22 May 2024 21:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZMsAi/rB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jLnOj0g4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kUrSZGKE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B6D182DB;
-	Wed, 22 May 2024 21:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716412034; cv=none; b=NPLknpZhC8w3MoSz5CsFELX6HgYzUHAO2suT15ldQqBCWUEykws6diK+6q+CcRgHGI0hfQX38qELmZv5xU1AuxabogadDtSLw+7eevYNl/TBCCjx6fjrcIPIsnOvcCvrJYCzsVPjhqC6mjJN26N+7xL2xELDrsaOrw3/hrtk/a4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716412034; c=relaxed/simple;
-	bh=IXX192pD0raczuPL13k5ksQg23Qrdji8/ReRatFWZOY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f1y+Dd9xL2Hce1pidZWyrsPEn8n4JJmE+V/x8tIx4mRig/nqnBtclRI/mNdl8IXE030rRITTCzq0qHaTMPG5BSeCQ04OYc7z1dJ9Q3DK5llAwL8MvSHfAt2DPT0+tRzyTFXD2TB0G7206hYxjTua9NYWdqC11gVDmAb1MKPVnmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZMsAi/rB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jLnOj0g4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716412030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jLVxSCQfoVeR8U2ERh+IiooD/MtttiK7XavkulJ8Sz8=;
-	b=ZMsAi/rBw+STsdRVRyLD14gUdNDkd+kZfJcbn1yBmydUm4lwQV8f0h2lG+hlKfER2WUzqi
-	CGN8pdvwlTCC7srgMxwuL3Cn6yW9SyPBYq2MUox0pBYBmkLaLAYrDTUz+xhzexmQ/HgQBP
-	UOPsmgdENY8SpivY6JVeDwHOl0cOGcAYAvVmUMMweb8N0J17zKkXYK6SZlVgqA+asshM2j
-	QUYj9AB/0Nx7Y0cF+X8p56Rqjzrp1zrNepGKU/fq+59/8yiefjH0ys87MbEJD1Moxm2f3v
-	VIbom4CjiP1ozjmTONJTZSeET0ipafyLQ+4MeSFMCoBt1wiC0K39KJhwPVfMTA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716412030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jLVxSCQfoVeR8U2ERh+IiooD/MtttiK7XavkulJ8Sz8=;
-	b=jLnOj0g48+pWO/rtZVTMq1YU81uGsKgOYmL0kb6c0mTC927Zqax2FcBY6lOfP0+tCpETOV
-	gE0bEdFJPfICm7BA==
-To: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
- <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, Vitaly Kuznetsov
- <vkuznets@redhat.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>
-Subject: Re: RFC: NTP adjustments interfere with KVM emulation of TSC
- deadline timers
-In-Reply-To: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
-References: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
-Date: Wed, 22 May 2024 23:07:10 +0200
-Message-ID: <875xv5h7y9.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E274E146D43
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716412089; cv=fail; b=h3GGKpd3qFyWz5f9oqyvdfUBEWcfiBKOlS6U7xGZAmZIoudAJsmYQND9KOm98NwHNksPwvirNsys+qXJ6niV0F4NA2BlNJ2CB0hbfhbVOl1yvgwkvsoZq7xkMXWowTNQqGZlc1GuFMzMnYdZ4lfAPe5SRYGDPEAKVvbMGcX0xoU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716412089; c=relaxed/simple;
+	bh=idGFz/OJqo+LT2qdwq3P5lB1AOsXwnJ8ZOCiNUkNpzU=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=VrmQVlh+L7ycQoF6gZmwUe+gPQib4AcB8liHNBHZICv3+ic2xegpJ6/9NTyO84efUtlb4ZXpmH4kTdyAP1oeNddTfPYmTpmarKcL8kyayQJEjfymsF3dD0wW+uXhKrYUmFUZLK8URbUnwNvKS+lCYShxCVuy9JH+oq55tyrf31Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kUrSZGKE; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716412088; x=1747948088;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=idGFz/OJqo+LT2qdwq3P5lB1AOsXwnJ8ZOCiNUkNpzU=;
+  b=kUrSZGKEi0aXnA9+xCC2UhlQhzGWTBp2CkNxHZsX1kgFHWzx7c8NMJYy
+   UpdlilnES/1jvUvK0nNSBVM0uAuOwH2GboUfYs2SxNdAJ8BGSp4vKtqpr
+   iezytqEfbSHnJSOxKJMxQvqXO/ShZ8mirxUColpYXeyFNYl3qNykcsPG8
+   /zuOw3h7PW0vFV/Dmfw8sIR+5UX2sCHAGBVuZVVRnfR3Ntzyf0ZXNmxp6
+   y0dMsYxZ74i7NtstdAkDMHESNguqCRhvlYlv743u0ByxsIyDnc8Y7JX7y
+   DOiIQ7as3TefoMwvhwWJpQZTSvaBsHJL43n82WIiP/xnHOKX8QiD7qEj4
+   g==;
+X-CSE-ConnectionGUID: Ltbmc35XRrWN8hDlpFQMtw==
+X-CSE-MsgGUID: ZJsocXc/RxK1NKCLYpYM3g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12809537"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="12809537"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 14:08:07 -0700
+X-CSE-ConnectionGUID: jQBOYDp/SvWWGt2NnVjCMA==
+X-CSE-MsgGUID: 9Cqv4oN3Rk6KuHzNekW1jA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="33267952"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 14:08:07 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 22 May 2024 14:08:06 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 14:08:06 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 22 May 2024 14:08:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QeW/RTWdyh5aFj+3u94DQWnazU+iDW2vqeuhlceWv4WMmretnYTDwF8eza72YJBO1VpcmnDpZHyJkINhi1cc2t2jt275+vARgc5iSOfIKCsVGA945iJxdnBx27Ix4+eGmNKCIp0+OGBZ+fzv6DEJHd+hH2MEkXL0dyyv47iUAXbwVbPZvm61jtckKW3CcrBXbSGBWeOQburXobnRX/4DnMBuVc4LCf9LvqkMbuzXmrdphVKe21OllaRVXBgVotf1u59YDjJFevjfEhQedk2sE6gfWKYC/D0Bba/kCASd4P56SeS3ge4El9VvCJ0gsrUEd5lrsjKyvYPUbNgUt9hvQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hIFi6bQwqvDgE+kRnk9JnlxMJixhppIyZpCPoXta9S4=;
+ b=aPrGWKlO9Dga1qs8BdWcdJhMjCCqbmkIaDf0P7JSJIof3zhdT28CxraVMFJslxaAFDwjxxtT2sLdMCxhXe19nRgJLDgBRPT8yg2MVhh6/WL+OjRUvkY5VdkRmqSyvGmjm4Iml9pm+FRYQeDQ2k0oNpWXNfz2aSH5Bnwqfg+d7MI8le1oCWhjTB8eNUm0IgdGPnqxwpvgpToppupUEDjuoXqE18A7QeqV4i8a6+6uhJhQR8HD9vLp/0GN+T1vDX642QjcSPW1DHA9OqNye68RQ6ZX96wymilxfNrJkSY1lf8k5b2AxCNSi3zL9W5OWi0wRMPthQ2HJiziAeHybMN21A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DM6PR11MB4753.namprd11.prod.outlook.com (2603:10b6:5:2ac::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 21:08:04 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 21:08:04 +0000
+Message-ID: <beee3369-0075-462e-8449-88fee807463e@intel.com>
+Date: Wed, 22 May 2024 14:08:01 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v18 06/17] x86/resctrl: Introduce snc_nodes_per_l3_cache
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+	"Maciej Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20240515222326.74166-1-tony.luck@intel.com>
+ <20240515222326.74166-7-tony.luck@intel.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <20240515222326.74166-7-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW3PR05CA0011.namprd05.prod.outlook.com
+ (2603:10b6:303:2b::16) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM6PR11MB4753:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69b3154d-4f05-43a2-c77f-08dc7aa3454e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bk1aUkdTN1pvaTA5K21obGNmUHpwYXo2bUk0Qlp4VEZiOWVnK3hjVkZGaXh2?=
+ =?utf-8?B?dGd0dFNNTEluZCtORHE2ZDF2RHJ1ZW1EWThrLzh0alZlV1ZGaEZickgxVmxm?=
+ =?utf-8?B?RmhocVNtVkpaUG1lV01sNFpTbHRreHNqTWJKV01GQW9La2phTG95dFh5QWZm?=
+ =?utf-8?B?Y3F6OHNoaVVTY2ZCK0ZDRmd3MEZLbDdTeEFJSmFkNU9vTisrQjk0VFNQbnBV?=
+ =?utf-8?B?eWhsK2NNUStmY1crcTc2eVRuUDZCQTdXUk5lbkxlRnlQVzhHZjVVREdxN0xj?=
+ =?utf-8?B?TXhyaERsYkdHWmIzOWhDZldJTmJuNDgxcjhRWFd3MXVLZm9aUkhCNEcxR241?=
+ =?utf-8?B?NjBSMjdXVldhS0FHR0hOVWpFeXY4WHlZV0tTbHdmMUVvaGRxc0d5U0ZxOWQv?=
+ =?utf-8?B?QlBHZ2plQWE2cTFSUS9vTi8rWjBJc2NqSE5YMUNIdi9iV0FiMUJkbFlLdnpC?=
+ =?utf-8?B?NVJDK0pnTXUrUytoNkZkQklvaXdUSVI1YUdsdzhYL3JHU1YwZW1HdHFnbWdv?=
+ =?utf-8?B?bmMrcEw3ZGR1WDM0SjFPcTBqTVExVXFaTnA0UlNWQ24rRm4yNHJsK0Zjb0J5?=
+ =?utf-8?B?ZGpnZG1COEVQM0lXTm9MUDVINThXWTNUS2k3TWc1cVltR1VNUCtXYkdpZHlm?=
+ =?utf-8?B?NW9POEFRUVpZZU05dlRxVWdOUG5TbzJwVnZidlU4TERUSm15T0M3RzFXdFBE?=
+ =?utf-8?B?SllpQXA5YUhNbkpUVVgxR0VNWEI2NVB1a25OY2QzbzhWb0IzNldBQzJubkJY?=
+ =?utf-8?B?VVdBYUZMKzZoR0l5YnhLbGxxZTlQUzNjOWVYNWRpU2JIeUZPaHNzdU9tK2Jq?=
+ =?utf-8?B?elhCWStWTWh4NUVIWFZzd09qeis5MWFieVYrUTYvcjY4RWlkZTRsZUx5dEo1?=
+ =?utf-8?B?M1JjWGpPczY2SmJNbEJxa0hsUmh0UUhPUFk5NFQyNnpjY0dtUjg1bXBaTVVE?=
+ =?utf-8?B?R1NNNlhtRmpaZ3NXVlRpeEEwN3Q4NithSWdhWitSTlM1OTNKTW1qbklmM3VQ?=
+ =?utf-8?B?UXp1VkIvcUY0YXB1NW5SM2JLaXhTWFh6TXZDcDZGbkJKRk1RMUFNRTdaS0FT?=
+ =?utf-8?B?R0kyT1lBRTUwZ1p2TmRmM0cycWxqVjNYcVRtL2NEaHprSGJoSUpEYkxTM3lm?=
+ =?utf-8?B?K21WTERvekZ0V0V1aVllVjhaNHQ5YWwveC8yYjVPdDJxRTBEQmpsaklqQk5C?=
+ =?utf-8?B?bDRpclFuSkt4ZEZMUk1RaXUySUVwbERoc3lMYVRIdEJsM0VaYVBybGtVbWVN?=
+ =?utf-8?B?VUZMbVliZ1JHSVNrclVNdU1nVHVwYmZrZU56aEtWR0NCMGpYSHhwNU5od3Ny?=
+ =?utf-8?B?WVhXQmVjbjBkWTM5Qm53MmRpVmV0ZHFwYnpFVDFieTFTU240THJzaWVGTjI5?=
+ =?utf-8?B?elJBTlFZckdIMDhkYXFEcDlOb0FrQjZKZkVBdVo1UDJLYWVidjJQdWd6b3py?=
+ =?utf-8?B?YnVkME5oY1pMNjBPczRVSU1QdW0xbldPZVFhNkkzQnRCa2lJajRsYmxUNi9E?=
+ =?utf-8?B?bW00Z3FIL1RtSjFNN2tOVExYbGUwcExaSWlpUDJjZWlsR0E1aWpEYmJsdkMx?=
+ =?utf-8?B?Q2Z2ZVdQN1Bvd2RRREtrL0Zuc3UyczRrM0Uwc1lYbjRnYWtoMWl5M0VZUXJB?=
+ =?utf-8?B?WmlpWTJkRGluRllqdTRpRk5JNjB4QXRLczBlUVptblVWczJacTNsbmNkTkl2?=
+ =?utf-8?B?ancxVVY0VFRaMjJhaTlWbEJabEJNSk1LR3dvTXZRc1JkVmgwSmtrTlZBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aWFwL2lvMHFyYUN4YnVCMHlZaTlEUVBSdGJBbFJkT2RJcFFqMHhhd3ZUT2Nn?=
+ =?utf-8?B?N21aK01KSW1DTTVMaFFBUUJjZC9EV3RWWFZiN2NNRHJON1BNekdYMnVrSHlU?=
+ =?utf-8?B?dHJ4OW1oMEU1MzNUNVhzTjhidmExVzRNc2hvMTdHYmR2eGw5blo5QVo5T3Vl?=
+ =?utf-8?B?Q1pWOUNsVlQzeTVWWHVNUDVBSTZzQ1ZyL2hjWm9PeU0rSGpGckt2amI1SzJQ?=
+ =?utf-8?B?dE1qd1ROeDNjdmFodVBVdGdZbXJ6NVpUOTBJOWt0WHJqc3lpV1BRZXNKcjBB?=
+ =?utf-8?B?NHhtcS9LdExmNkNqemdZdkJCQmRJaGl1aS81WnBaVG5GemQ1cmxlWGpJWDlm?=
+ =?utf-8?B?MmNocTRNaVFNblg1MExCQmhEL003YjF0QTFnZWFjUHgxS0wzWHdTd0dQWnF0?=
+ =?utf-8?B?aXc2V2pMQXVSanNoNFdPamJvN1p1ZmdhOCtHTUl6eUZrQVdzZTB3VUJiTnA1?=
+ =?utf-8?B?d1U4bTlLT0MxSWRLU0ZUZE1RZlZ3a29vYTVud0pBMWtpVnNQTE1MVUJPUlZ2?=
+ =?utf-8?B?UGdvUHlQUlVuOVFPUlh3NGtybS83MU9wcDQ4QytIamVmSW1wUVl4bWdjTHhO?=
+ =?utf-8?B?QkxTZkhTdFdROWxNUGlUKzZnMUNRcXFiajdDTnhkR25UcTNjd3o0aCtJaG93?=
+ =?utf-8?B?Z3dpL3VhaHRBYmJZbGQwUWJCT0lkRkFFbzdvY0JaQUJJc2xMTlRzeFZyK25T?=
+ =?utf-8?B?M0pvUHF3SHJhQlFKTjlnUEVET2lBRU1mbkZpUEtXeWJHUVZjVU9rUHZOY0xL?=
+ =?utf-8?B?YXpRTVNPbEx2SVR2bUdrbUZNbGRId1BtcWZKVXR6bEh5c0dmOGg2VDhvNFNS?=
+ =?utf-8?B?d1ArdDM3cVI0ZXNEMlRqbWZCTExvUWpKaXVQaXh2S1hzSHhVdndVcTFQLzRy?=
+ =?utf-8?B?ZmR4cXc2RHFFUFNyYWNNbDRidmJQSlpPWUoyUUdqS2wwNjFRT0hWRE5rbTI4?=
+ =?utf-8?B?c0FKWnNDWStIOHJUQ2hyQ1BOZzRIeDFKTjYrOEt6aUU3U05GSnMxaitzaTBS?=
+ =?utf-8?B?Y25SRzlYdVFBQ0NoWkJ6Q2g4RGhqMzYvZkp6dm9kSGV1UGxVMVJSdjIzZWFH?=
+ =?utf-8?B?QWlTUEZUaFFLaTdvVVNwcS9hTDRLYnN5VUdqRVIzcVdnY0lFL2MvbkhWYzhC?=
+ =?utf-8?B?R2ZFU25XVTFjU3lCZlpqQ1lROGh1b0FScVc1N1ZsUVlFOGFCam5mM1dCQ3di?=
+ =?utf-8?B?dnh2UjhZQWhuTVdkZ2NkeHBWaHNDYm11OEJ6UVFjR2haVlh4SjZDbTVWQnBV?=
+ =?utf-8?B?bWw5dVA3Nit0V2dqM3Y1MGpoOHVyWnlqcU9VNTFTamtLUzJpQUtNelZickho?=
+ =?utf-8?B?RUF0Q3d6bVhOQ1IvKzN6Qno0M2lVbmtTblhwdHBhRTRRNmNLUWVNYzVDY2dS?=
+ =?utf-8?B?Ly9Dc0ZVOVJUME1vUDgrUUFLRE5aR1VDbXZVcyswclRqcjk3L1ZOWHEyT3FU?=
+ =?utf-8?B?SlZBbEdkbENiMmRMQkd3UWhCYXRhbFRUbDQ5MDNjMTliaU02eVVJbnUxQ0Fh?=
+ =?utf-8?B?M3h3Tkt4c1dUMUc3R2xIVUU1ZDdHUGdyYWRhS2hmSHFld3hnMi8raWF5T1Ro?=
+ =?utf-8?B?dkMzZWt1Y2ZkZHF3eS9vMUlWQ3Rhbk5QRW1nSU1kYWFxY3MzdTlQa2xUaEVZ?=
+ =?utf-8?B?eXhSejMvYkR1QzNYclpzUGtFTEI5Qkp2emtZSXdDV2g4SEVDb2Q1QkFIa1VC?=
+ =?utf-8?B?djBEaSs1THBYcDExL0Z4ZHRrMG01eURVWUU0MVJ5RDN6NS9RVDlpNEdONlZ2?=
+ =?utf-8?B?aEgrZXBQWnRGVDVEa3JCMzFKa0JpTGxNdGFkTFcyNjh2NzI5ZndEbDdvamlu?=
+ =?utf-8?B?K0tGcUxXRzFkdUl4eHNpQWg4M1lKT2RGYkVVU2hJWWdySDJ3RlRHU2VCdWZ1?=
+ =?utf-8?B?ZHBySEpkamJQVDVBU3doN0Y4RFRBZ3MvRkFmUmg0VUNrUnVrbmllcW0xSkdE?=
+ =?utf-8?B?V1d5S29OS1V2a0UwRFFvYmtFWWxPaHRDQnVvSXk5b3UxRDRqUXp0SkZ1Q1I4?=
+ =?utf-8?B?cXJ4eXNCTmNtUXp2aTJXdVRzbWpDNHJPRnFBNjdXVStpckR0aDdFa2Jzbjg4?=
+ =?utf-8?B?VXFjQ2hIMVpxL0Jnai9Oaml4RWp6QS8vclRoSHVHOS9WZGlmN250VnpJcits?=
+ =?utf-8?B?N3FRY1o3ZXN6QzVvSmQ0MFJBdjFMMUZqdzBRV2s1Z2FGSXhUcm1HcW53dHpx?=
+ =?utf-8?B?ZVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69b3154d-4f05-43a2-c77f-08dc7aa3454e
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 21:08:04.2596
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TmfmRhpLZB1nJ0dUETJk40RDaT9KS0bvWU/xhchjrYBZgfydSWTh54qPohpFeP0PtOvXLw7eoOTUX+WCv+ZuHIK91nmevHkqpv0IdT5Z8DM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4753
+X-OriginatorOrg: intel.com
 
-On Thu, Dec 21 2023 at 18:51, Maxim Levitsky wrote:
-> The test usually fails because L2 observes TSC after the 
-> preemption timer deadline, before the VM exit happens.
+Hi Tony,
 
-That's an arguably silly failure condition.
+On 5/15/2024 3:23 PM, Tony Luck wrote:
+> Intel Sub-NUMA Cluster (SNC) is a feature that subdivides the CPU cores
+> and memory controllers on a socket into two or more groups. These are
+> presented to the operating system as NUMA nodes.
+> 
+> This may enable some workloads to have slightly lower latency to memory
+> as the memory controller(s) in an SNC node are electrically closer to the
+> CPU cores on that SNC node. This cost may be offset by lower bandwidth
+> since the memory accesses for each core can only be interleaved between
+> the memory controllers on the same SNC node.
+> 
+> Resctrl monitoring on an Intel system depends upon attaching RMIDs to tasks
+> to track L3 cache occupancy and memory bandwidth. There is an MSR that
+> controls how the RMIDs are shared between SNC nodes.
+> 
+> The default mode divides them numerically. E.g. when there are two SNC
+> nodes on a socket the lower number half of the RMIDs are given to the
+> first node, the remainder to the second node. This would be difficult
+> to use with the Linux resctrl interface as specific RMID values assigned
+> to resctrl groups are not visible to users.
+> 
+> The other mode divides the RMIDs and renumbers the ones on the second
+> SNC node to start from zero.
+> 
+> Even with this renumbering SNC mode requires several changes in resctrl
+> behavior for correct operation.
+> 
+> Add a global integer "snc_nodes_per_l3_cache" that shows how many
+> SNC nodes share each L3 cache. When "snc_nodes_per_l3_cache" is "1",
+> SNC mode is either not implemented, or not enabled.
+> 
+> Update all places to take appropriate action when SNC mode is enabled:
+> 1) The number of logical RMIDs per L3 cache available for use is the
+>    number of physical RMIDs divided by the number of SNC nodes.
 
-Timer interrupt delivery can be late even on bare metal, so observing
-TSC ahead of the expected timer event is not really wrong.
+Should it then perhaps be "number of logical RMIDs per SNC node"?
+The way this feature is introduced makes it hard to understand how
+RMIDs are used when SNC is enabled since the implementation appears
+to distinguish between (a) RMIDs assigned to monitor group and written
+to PQR register and (b) RMIDs for which the event counters are read.
+The former ((a)) is used directly after the adjustment described in (1) but
+the latter needs an adjustment that I did not notice being mentioned.
 
-Btw, the kernel also handles it nicely when the timer event arrives
-_before_ the expected time. It simply reprograms the timer and is done
-with it. That's actually required because clocksource (which determines
-time) and clockevent (which expires timers) can be on different clocks
-which might drift against each other.
+I think it will help to move the get_node_rmid() helper that is
+introduced later here and explain why it is needed.
 
->     In particular, NTP performing a forward correction will result in
->     a timer expiring sooner than expected from a guest point of view.
->     Not a big deal, we kick the vcpu anyway.
->
->     But on wake-up, the vcpu thread is going to perform a check to
->     find out whether or not it should block. And at that point, the
->     timer check is going to say "timer has not expired yet, go back
->     to sleep". This results in the timer event being lost forever.
+> 2) Likewise the "mon_scale" value must be divided by the number of SNC
+>    nodes.
+> 3) Disable the "-o mba_MBps" mount option in SNC mode
+>    because the monitoring is being done per SNC node, while the
+>    bandwidth allocation is still done at the L3 cache scope.
+>    Trying to use this feedback loop might result in contradictory
+>    changes to the throttling level coming from each of the SNC
+>    node bandwidth measurements.
+> 
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  arch/x86/kernel/cpu/resctrl/internal.h | 2 ++
+>  arch/x86/kernel/cpu/resctrl/core.c     | 6 ++++++
+>  arch/x86/kernel/cpu/resctrl/monitor.c  | 4 ++--
+>  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 3 ++-
+>  4 files changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> index 135190e0711c..49440f194253 100644
+> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> @@ -484,6 +484,8 @@ extern struct rdt_hw_resource rdt_resources_all[];
+>  extern struct rdtgroup rdtgroup_default;
+>  extern struct dentry *debugfs_resctrl;
+>  
+> +extern unsigned int snc_nodes_per_l3_cache;
+> +
+>  enum resctrl_res_level {
+>  	RDT_RESOURCE_L3,
+>  	RDT_RESOURCE_L2,
+> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> index 395bac851f6e..bfa9d3a429fd 100644
+> --- a/arch/x86/kernel/cpu/resctrl/core.c
+> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> @@ -331,6 +331,12 @@ static u32 delay_bw_map(unsigned long bw, struct rdt_resource *r)
+>  	return r->default_ctrl;
+>  }
+>  
+> +/*
+> + * Number of SNC nodes that share each L3 cache.  Default is 1 for
+> + * systems that do not support SNC, or have SNC disabled.
+> + */
+> +unsigned int snc_nodes_per_l3_cache = 1;
+> +
+>  static void mba_wrmsr_intel(struct msr_param *m)
+>  {
+>  	struct rdt_hw_ctrl_domain *hw_dom = resctrl_to_arch_ctrl_dom(m->dom);
+> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+> index 89d7e6fcbaa1..0f66825a1ac9 100644
+> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+> @@ -1022,8 +1022,8 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+>  	int ret;
+>  
+>  	resctrl_rmid_realloc_limit = boot_cpu_data.x86_cache_size * 1024;
+> -	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale;
+> -	r->num_rmid = boot_cpu_data.x86_cache_max_rmid + 1;
+> +	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale / snc_nodes_per_l3_cache;
+> +	r->num_rmid = (boot_cpu_data.x86_cache_max_rmid + 1) / snc_nodes_per_l3_cache;
+>  	hw_res->mbm_width = MBM_CNTR_WIDTH_BASE;
+>  
+>  	if (mbm_offset > 0 && mbm_offset <= MBM_CNTR_WIDTH_OFFSET_MAX)
+> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> index cc31ede1a1e7..0923492a8bd0 100644
+> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> @@ -2346,7 +2346,8 @@ static bool supports_mba_mbps(void)
+>  	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_MBA].r_resctrl;
+>  
+>  	return (is_mbm_local_enabled() &&
+> -		r->alloc_capable && is_mba_linear());
+> +		r->alloc_capable && is_mba_linear() &&
+> +		snc_nodes_per_l3_cache == 1);
+>  }
+>  
+>  /*
 
-That's obviously a real problem.
+Since the software controller is a filesystem feature the above
+now requires that snc_nodes_per_l3_cache becomes part of the resctrl
+filesystem code and every architecture will need to set snc_nodes_per_l3_cache.
+Every architecture will thus need to interpret what "SNC" means for them
+using the term introduced here. That may be ok ... but the term "SNC"
+will then surely not identify an Intel feature and Intel needs to be ok
+that any architecture calls their "similar to SNC but not quite identical"
+"SNC".
 
->     There are multiple ways to handle this. One would be record that
->     the timer has expired and let kvm_cpu_has_pending_timer return
->     true in that case, but that would be fairly invasive. Another is
->     to check for the "short sleep" condition in the hrtimer callback,
->     and restart the timer for the remaining time when the condition
->     is detected.
+I assume now that as part of the fs/arch split there needs to be
+a new helper that allows different architectures to set this
+filesystem variable?
 
-:)
-
-> So to solve this issue there are two options:
-
-There is a third option:
-
-   3. Unconditionally inject the timer interrupt into the guest when the
-      underlying hrtimer has expired
-
-      That's fine because timer interrupts can be early (see above) and
-      any sane OS has to be able to handle it.
-
-> 1. Have another go at implementing support for CLOCK_MONOTONIC_RAW timers. 
->    I don't know if that is feasible and I would be very happy to hear
->    a feedback from you.
-
-That's a non-trivial exercise.
-
-The charm of having all clocks related to CLOCK_MONOTONIC is that there
-is zero requirement to take NTP frequency adjustments into account,
-which makes the implementation reasonably simple and robust.
-
-Changing everything over in that area (hrtimers, clockevents, NOHZ) to
-be raw hardware frequency based would be an Herculean task and just a
-huge pile of horrors.
-
-So the only realistic way to do that is to correlate a
-CLOCK_MONOTONIC_RAW timer to CLOCK_MONOTONIC, which obviously has the
-same problem you are trying to solve :)
-
-But we could be smart about it. Let's look at the math:
-
-    mraw  = base_mraw + (tsc - base_r) * factor_r;
-    mono  = base_mono + (tsc - base_m) * factor_m;
-
-So converting a MONOTONIC_RAW time into MONOTONIC would be:
-
-   tsc = (mraw - base_mraw)/factor_r + base_r
-
-   mono = base_mono + ((mraw - base_mraw)/factor_r + base_r - base_m) * factor_m;
-
-It's guaranteed that base_r == base_m, so:
-
-   mono = base_mono + (mraw - base_mraw) * factor_m / factor_r;
-
-The conversion factors are actually implemented with scaled math:
-
-   mono = base_mono + (((delta_raw * mult_m) >> sft_m) << sft_r) / mult_r;
-
-As sft_m and sft_r are guaranteed to be identical:
-
-   mono = base_mono + (delta_raw * mult_m) / mult_r;
-
-That obviously only works correctly when mult_m is constant between the
-time the timer is enqueued and the time the timer is expired as you
-figured out.
-
-But even if mult_m changes this will be correct if we take NOHZ out of
-the picture for a moment. Why?
-
-In a NOHZ=n scenario the next expiring timer is at least reevaluated
-once every tick. As mult_m is stable between ticks any MONOTONIC_RAW
-timer which expires before the next tick will be pretty accurately
-mapped back onto MONOTONIC and therefore expire at the expected time.
-
-Now NOHZ comes into play and ruins everything under the following
-condition:
-
-   1) CPU takes an idle nap for a longer period of time
-   
-   2) Time synchronization (NTP/PTP/PPS) is adjusting mult_m during that
-      #1 period
-
-That's the only condition where the conversion fails. If NTP slows down
-the conversion then the timer is going to be late. If it speeds it up
-then the hrtimer core will take care of it and guarantee that the timer
-callback is never invoked early.
-
-But that's going to be a rare problem because it requires:
-
-    1) the CPU to be in idle for a longer period
-
-    2) the MONOTONIC_RAW timer to be the effective first timer to fire
-       after that idle period
-
-    3) Time synchronization adjusting right during that idle period
-
-Sure that can happen, but the question is whether it's really a
-problem. As I said before timer events coming late is to be expected
-even on bare metal (think SMI, NMI, long interrupt disabled regions).
-
-So the main benefit of such a change would be to spare the various
-architecture specific implementations the stupid exercise of
-implementing half baked workarounds which will suffer from
-the very same problems.
-
-If done right then the extra overhead of the division will be not really
-noticable and only take effect when there is a MONOTONIC_RAW timer
-queued. IOW, it's a penalty on virtualization hosts, but not for
-everyone. The facility will introduce some extra cycles due to
-conditionals vs. MONOTONIC_RAW in a few places, but that's probably
-something which can't even be measured.
-
-Thanks,
-
-        tglx
+Reinette
 
