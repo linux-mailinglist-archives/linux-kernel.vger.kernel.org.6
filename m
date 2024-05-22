@@ -1,97 +1,183 @@
-Return-Path: <linux-kernel+bounces-186547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08128CC579
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:25:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8A28CC57B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C4EDB2287E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:25:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B925B22925
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8253C1422CD;
-	Wed, 22 May 2024 17:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA6D1422CA;
+	Wed, 22 May 2024 17:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="n56wN4hb"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6505C2B9C3;
-	Wed, 22 May 2024 17:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="MD3YR4Ix"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8349D2B9C3;
+	Wed, 22 May 2024 17:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716398723; cv=none; b=TJ3sib4Ignt2pwekTgIKLnhMlk6VRKC0+Fxlh6ASwx3C5siF+SjQAX1f5UaHc/Oeq+QPhU74KnrO6mQZCgVKD8gX++4JDzyxAh5OWbQ0L9u5ZGYqHBCK6J46Nwt5Ox+rp55uC38zS57T5u94gDB4sCHP8afI8SsT4ZqmfbZaG4Q=
+	t=1716398740; cv=none; b=BTfwDm9zHYmgw7SOJTvxd33s2gGKRMQECSv+hDW1kb3myvJmR035tVvzfwqOOvLNVc2NxAFiwu2kJokZvimbLEVXh/rAO0XIOq/+YV0ZdiSds+nkN1k8BFuqD/y5GMpWgHfjmXflAoGoM9VzH0/qcwAPp5jgDTT1EoBAflhqj/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716398723; c=relaxed/simple;
-	bh=QnU6TLnYhrKP0IhVowNIjwPrz/U8ertoOdukGfKUadw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uIHOSlPuxU1HOzV25kTB2W942HQ2STeEi2t04Ca8/rUjYWaP2d6Vu47Vs2Z9f3oH1Iw/TcveWs3kdVOylLdbLUL60Nx0rdK2tszRz3AIrs/L4rKzd6iSfdib1Bbr08nSpOzugTiD2xduL95GQfkDzFm50WF8D9UM6JTVmTforo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=n56wN4hb; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=V5gX0iaMm0XLDVaVLLJuDodgb7XRDFc8VwDQ9Wvel1Q=; b=n56wN4hbZpnW7D2u
-	TH9ZMYWx5fvF+SHZAV3WEgtpYmRolbhSDhtMmRT1MEnGjnmKEGlGx936t8FTpM0PqFhWK7R0OMke5
-	cYsQceOI91L+Z9CFQKXWTcA7xC4hxtYjNONCflFKQtwGwJ07t0BLiyPVhPUoP+Lw+8rh41JLzQn6I
-	a6ZMWBXQe70l+akHdh2Fk27xQmHj0z6INJ9mfa4gf6bje35IUwCBN7zjDH92A/YE521McaCYbkxMX
-	lC3279B3di7BBQFb6BDc2UEYwLDdfzAUVS0AwF0QNvXAXfuOepaOj1sWTIBBHja+Qzgd+ve0U6sjW
-	zWBR3aGVj05yDVsBGA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1s9pi0-0025JX-1Q;
-	Wed, 22 May 2024 17:25:00 +0000
-From: linux@treblig.org
-To: tj@kernel.org,
-	axboe@kernel.dk,
-	yukuai3@huawei.com
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] blk-throttle: remove unused struct 'avg_latency_bucket'
-Date: Wed, 22 May 2024 18:24:58 +0100
-Message-ID: <20240522172458.334173-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716398740; c=relaxed/simple;
+	bh=iMNRZ7+0rdrHnxvP4fjqemrREgUEcpP0yPTxazQ+uZU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=frLmEccHmhvqCpo0S9Mqmqx52/IkSeE1zRlY6LWLn30S8hm2Xty7nkjp0EDRBJxuSLDAABEQ+qLB2SnRVR1S9RIsuGGcnkLWn2TU6yXKNTe+Ql2+4TehYYUN80IEsMiamrxW8tCsVIN8lzixQhcyrTWrmE9/aIqKqj3ICq/omGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=MD3YR4Ix; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 6E59714C2DB;
+	Wed, 22 May 2024 19:25:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1716398729;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MjYx+oNvZPdABC1fXs5E8e+EjlgfWp0VoNQKSmEu+fQ=;
+	b=MD3YR4Ixj7oVgewBNwgIsxglU5w4112AoNmfjYY1jtMl8C7k2cBzw4AbcIgQk7rh4jB1LG
+	Us+7l55fj/p3iepLENOckJxNGoa/GP37ZV2FGxExEZGI89/AHadkWdExALrgZQ5aGy8v72
+	zT0G0dMYmUNfuZue8NN+qdT0+gcL71KVq/Y8uGQXTENOCK/bqjjYjJcUqMPdbdPcGL83vZ
+	fsxJ3m09AFHJxHQxoFvVJOpiiNnqMD6BE9S2niC4YWDlmBWiXBNmqUA0ZObA3a2J0JdEZa
+	FyYMUUunbaKNKJAn3nGCFp7rqem7TEltF9YtISKD8oWkBGHDb4aB1K/KgyIItw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 4bffc3c6;
+	Wed, 22 May 2024 17:25:21 +0000 (UTC)
+Date: Thu, 23 May 2024 02:25:06 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>,
+	Jianyong Wu <jianyong.wu@arm.com>, stable@vger.kernel.org,
+	Eric Van Hensbergen <ericvh@gmail.com>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: add missing locking around taking dentry fid list
+Message-ID: <Zk4qcmtot6WEC1Xx@codewreck.org>
+References: <20240521122947.1080227-1-asmadeus@codewreck.org>
+ <1738699.kjPCCGL2iY@silver>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1738699.kjPCCGL2iY@silver>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Christian Schoenebeck wrote on Wed, May 22, 2024 at 04:35:19PM +0200:
 
-'avg_latency_bucket' is unused since
-commit bf20ab538c81 ("blk-throttle: remove
-CONFIG_BLK_DEV_THROTTLING_LOW")
+Thanks for the review!
 
-Remove it.
+> On Tuesday, May 21, 2024 2:29:46 PM CEST Dominique Martinet wrote:
+> > Fix a use-after-free on dentry's d_fsdata fid list when a thread
+> > lookups a fid through dentry while another thread unlinks it:
+> 
+> I guess that's "looks up". :)
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- block/blk-throttle.c | 5 -----
- 1 file changed, 5 deletions(-)
+Err, I guess.
 
-diff --git a/block/blk-throttle.c b/block/blk-throttle.c
-index 80aaca18bfb0..0be180f9a789 100644
---- a/block/blk-throttle.c
-+++ b/block/blk-throttle.c
-@@ -39,11 +39,6 @@ struct latency_bucket {
- 	int samples;
- };
+> > UAF thread:
+> > refcount_t: addition on 0; use-after-free.
+> >  p9_fid_get linux/./include/net/9p/client.h:262
+> >  v9fs_fid_find+0x236/0x280 linux/fs/9p/fid.c:129
+> >  v9fs_fid_lookup_with_uid linux/fs/9p/fid.c:181
+> >  v9fs_fid_lookup+0xbf/0xc20 linux/fs/9p/fid.c:314
+> >  v9fs_vfs_getattr_dotl+0xf9/0x360 linux/fs/9p/vfs_inode_dotl.c:400
+> >  vfs_statx+0xdd/0x4d0 linux/fs/stat.c:248
+> > 
+> > Freed by:
+> >  p9_client_clunk+0xb0/0xe0 linux/net/9p/client.c:1456
+> 
+> That line number looks weird.
+
+I have a p9_fid_destroy there (as of a v6.9-rc5 tree); might have moved
+a bit though.
+Unfortunately it's inlined so the stack trace only has kfree() next
+which is why I cut the trace there; I don't think it really matters?
+
+> >  p9_fid_put linux/./include/net/9p/client.h:278
+> >  v9fs_dentry_release+0xb5/0x140 linux/fs/9p/vfs_dentry.c:55
+> >  v9fs_remove+0x38f/0x620 linux/fs/9p/vfs_inode.c:518
+> >  vfs_unlink+0x29a/0x810 linux/fs/namei.c:4335
+> > 
+> > The problem is that d_fsdata was not accessed under d_lock, because
+> > d_release() normally is only called once the dentry is otherwise no
+> > longer accessible but since we also call it explicitly in v9fs_remove
+> > that lock is required:
+> > move the hlist out of the dentry under lock then unref its fids once
+> > they are no longer accessible.
+> > 
+> > Fixes: 154372e67d40 ("fs/9p: fix create-unlink-getattr idiom")
+> > Cc: stable@vger.kernel.org
+> > Reported-by: Meysam Firouzi
+> > Reported-by: Amirmohammad Eftekhar
+> > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> > ---
+> >  fs/9p/vfs_dentry.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
+> > index f16f73581634..01338d4c2d9e 100644
+> > --- a/fs/9p/vfs_dentry.c
+> > +++ b/fs/9p/vfs_dentry.c
+> > @@ -48,12 +48,17 @@ static int v9fs_cached_dentry_delete(const struct dentry *dentry)
+> >  static void v9fs_dentry_release(struct dentry *dentry)
+> >  {
+> >  	struct hlist_node *p, *n;
+> > +	struct hlist_head head;
+> >  
+> >  	p9_debug(P9_DEBUG_VFS, " dentry: %pd (%p)\n",
+> >  		 dentry, dentry);
+> > -	hlist_for_each_safe(p, n, (struct hlist_head *)&dentry->d_fsdata)
+> > +
+> > +	spin_lock(&dentry->d_lock);
+> > +	hlist_move_list((struct hlist_head *)&dentry->d_fsdata, &head);
+> > +	spin_unlock(&dentry->d_lock);
+> > +
+> > +	hlist_for_each_safe(p, n, &head)
+> >  		p9_fid_put(hlist_entry(p, struct p9_fid, dlist));
+> > -	dentry->d_fsdata = NULL;
+> >  }
+> 
+> I'm not sure if that works out. So you are moving the list from dentry to a
+> local variable. But if you look at v9fs_fid_find() [fs/9p/fid.c#123] it reads
+> dentry->d_fsdata (twice) and holds it as local variable before taking a
+> lock. So the lock in v9fs_fid_find() should happen earlier, no?
+
+The comment still works -- if detry->d_fsdata is NULL then
+hlist_for_each_entry will stop short and not iterate over anything (it
+won't bug out), so that part is fine in my opinion.
+
+What should be improved though is that if dentry->d_inode we can still
+look by inode even if there was a d_fsdata as log as fid wasn't found,
+e.g.:
+-----
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e2..c72825fb0ece 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -131,9 +131,9 @@ static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
+ 			}
+ 		}
+ 		spin_unlock(&dentry->d_lock);
+-	} else {
+-		if (dentry->d_inode)
+-			ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
++	}
++	if (!ret && dentry->d_inode)
++		ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
+ 	}
  
--struct avg_latency_bucket {
--	unsigned long latency; /* ns / 1024 */
--	bool valid;
--};
--
- struct throtl_data
- {
- 	/* service tree for active throtl groups */
--- 
-2.45.1
+ 	return ret;
+----
 
+I don't think that has to be part of this commit though, the worst that
+can happen here is an extra lookup to server instead of a use after
+free; I'll send a separate patch for this.
+
+-- 
+Dominique Martinet | Asmadeus
 
