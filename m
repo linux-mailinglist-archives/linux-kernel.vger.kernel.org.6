@@ -1,155 +1,120 @@
-Return-Path: <linux-kernel+bounces-186151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABEE8CC061
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:38:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065CB8CC05E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6221F2365C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47DD28318D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA48882C63;
-	Wed, 22 May 2024 11:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99D782890;
+	Wed, 22 May 2024 11:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W96hvT8j"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QEhmjH5f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E1356B72;
-	Wed, 22 May 2024 11:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5357F7FD;
+	Wed, 22 May 2024 11:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377886; cv=none; b=Xy/7OeacX2bng/FDOiIGZ98gZwLGwubaDMtC2slju0neMq4YgiWCDLGSKfFN25bzh0fgauwSgLbrgvGPRHXmH71R0uhlOJ1FlLpWnXuhZjqRxmluxQQ9irfYPPpHxlFmE6vQjokksFk5v4oSeVQqVHnTXfgdbiFXVY2cHvQ1tIE=
+	t=1716377864; cv=none; b=N1b5mVhgf7ozRSR72ML6KtxtBkNJU7Gps2rlPAvSIYnrNJQJOpePw23RL159SIx8+7Vy1az4dKdxy941sGOVVt9LhwjOiPXPx2zTZl8GMtW0VJBTOGNs/E6Y0r5M3WpYFYDH9l6VLZYGxok1fqtZW362tGbZpv7ofLI1LgwdYvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377886; c=relaxed/simple;
-	bh=j+W4GcZJGISa77lDIEBfrxFXmjiKU9BCqC2sLBGFabQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n+jToij07stIaBg40NI60QgTrxjCrFF8JCT3NU78ijVQmA8UDxZvTvIqEN8KkCCIIAPp6yzGdh4mKllncAuR+/slRQ2J+vaalucOZvN7JWIZUPOw2iW1MqBmNLLgkKhkuDvybabMHnWHEJzmlq+YGCap5RWIdp2ktAnID5fT2aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W96hvT8j; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44MBDjON004375;
-	Wed, 22 May 2024 11:37:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=tLtkLaJdZcABEuKym7kQ0uGy5iDx/Mdabykmq2f/jnw=;
- b=W96hvT8jTsH9kRl7AZDQ+nNDpUDzk3m954evYLx301G0VZel/cWErybTqmIh4ProGWGl
- dQGcdL8jFGKIgGUASAYCTZ7hZO0u8ozgeeRAV59Kq1alfSomqiWWljVjpw0kAsLuY+qm
- kx6ExyANJdff/8Rabx0tg6D00oM+ElKLWGKD6v5MpOuAcFnJfMGHHxwJnefc26HsYlEZ
- or43uwWG/wGmzEX6dOP4WiLERsDhwCDVAUpv40AVhfgn0LN54wb2qKpGoiKn3l/RwJj8
- YmfcZrbj/fNx7mglqcfzEjUtC2AmXZIxrPlcZRRpgdu6YDXOcNad+J6xtS+nrVyNukBe cQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y9fmw022k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 11:37:36 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44MBbaA4009010;
-	Wed, 22 May 2024 11:37:36 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y9fmw022f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 11:37:36 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44M8c9gK008090;
-	Wed, 22 May 2024 11:37:35 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y79c338t2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 11:37:35 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44MBbVUM48693692
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 May 2024 11:37:33 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BC51D2004B;
-	Wed, 22 May 2024 11:37:31 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 75D4120043;
-	Wed, 22 May 2024 11:37:29 +0000 (GMT)
-Received: from [9.203.115.195] (unknown [9.203.115.195])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 22 May 2024 11:37:29 +0000 (GMT)
-Message-ID: <922473a0-7e74-45e8-9929-154d0590d124@linux.ibm.com>
-Date: Wed, 22 May 2024 17:07:28 +0530
+	s=arc-20240116; t=1716377864; c=relaxed/simple;
+	bh=ncAhPReHQsINppuuHQJkanT4redij6dVT742FCMChbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfClAPe0CPdmYSBZVACJcGUyh244JGQRAvl3KbR0znPH3Uc4m1cW6uah61evpHsrz/n0MJm8+N9eHX4tp3qR2Cc7Y3GVmqruTf8K9Z7v8oM/B2pMnjp0qbgUE31z/PLV1BMSI9y9IuICvauk4KbLthRY1ViS2FWmDd/bvgQdxC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QEhmjH5f; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716377863; x=1747913863;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ncAhPReHQsINppuuHQJkanT4redij6dVT742FCMChbE=;
+  b=QEhmjH5fvx6tz/NdjFlLd+xVHBZr5o+3qO6BdBQz9cZ7ZSm2IbsZtZyd
+   0j/QqQanCJGWvHLx7GiZuEQ50X5zoG39QRxaZSDFjb9L+PiEEkror0H7I
+   Zuk3ZXP473XTqbZwVyH33kId/gMSw9WXeKoRvcvwRbZTgURZXu1DDkxPE
+   WPVg+5HLrDmh7kzyonoDgg65T+L5wNz5QkbjP/UrfA4eczJ2bZFLcIqaM
+   e3oCRXX/m+EUmxfaMK3rZgEesl7cc+sonFT0+gNLN4odW8X5333ykcC2p
+   GURYGs4bexH47qPOXMP/7Lw7zSR6Zw8JTRndDnnfAetV2gcwgxEZGgpgP
+   w==;
+X-CSE-ConnectionGUID: O0RureqgTnCmiXV+CWQSfg==
+X-CSE-MsgGUID: HHzPlGtkTuKRS14vD9wuWw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="16450460"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="16450460"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 04:37:42 -0700
+X-CSE-ConnectionGUID: uXLZJLUITt2/WzQ36eXdfA==
+X-CSE-MsgGUID: O5as8n//Qre+NXSX2RI5UQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="37842814"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 04:37:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s9kHn-00000009xQt-44Tc;
+	Wed, 22 May 2024 14:37:35 +0300
+Date: Wed, 22 May 2024 14:37:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH 2/2] hwmon: (ltc2992) use
+ fwnode_for_each_available_child_node_scoped()
+Message-ID: <Zk3Y_5B8lR0wHpD8@smile.fi.intel.com>
+References: <20240522-fwnode_for_each_available_child_node_scoped-v1-0-1188b0da12dc@gmail.com>
+ <20240522-fwnode_for_each_available_child_node_scoped-v1-2-1188b0da12dc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] powerpc64/bpf: jit support for unconditional byte
- swap
-To: Artem Savkov <asavkov@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240517075650.248801-1-asavkov@redhat.com>
- <20240517075650.248801-3-asavkov@redhat.com>
-Content-Language: en-US
-From: Hari Bathini <hbathini@linux.ibm.com>
-In-Reply-To: <20240517075650.248801-3-asavkov@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: B1XldeUENKxGYq5S-5rVvIhGUSDaHHY-
-X-Proofpoint-GUID: X_i3t_4zqRLlNLATCKOrtc6kfWhvOpTC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_05,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 clxscore=1011 mlxlogscore=999
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405220077
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522-fwnode_for_each_available_child_node_scoped-v1-2-1188b0da12dc@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-
-On 17/05/24 1:26 pm, Artem Savkov wrote:
-> Add jit support for unconditional byte swap. Tested using BSWAP tests
-> from test_bpf module.
+On Wed, May 22, 2024 at 11:18:08AM +0200, Javier Carrasco wrote:
+> The error path from a zero value of the "shunt-resistor-micro-ohms"
+> property does not decrement the refcount of the child node.
 > 
-> Signed-off-by: Artem Savkov <asavkov@redhat.com>
-> ---
->   arch/powerpc/net/bpf_jit_comp64.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-> index 3071205782b15..97191cf091bbf 100644
-> --- a/arch/powerpc/net/bpf_jit_comp64.c
-> +++ b/arch/powerpc/net/bpf_jit_comp64.c
-> @@ -699,11 +699,12 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
->   		 */
->   		case BPF_ALU | BPF_END | BPF_FROM_LE:
->   		case BPF_ALU | BPF_END | BPF_FROM_BE:
+> Instead of adding the missing fwnode_handle_put(), a safer fix for
+> future modifications is using the _scoped version of the macro,
+> which removes the need for fwnode_handle_put() in all error paths.
 
-> +		case BPF_ALU64 | BPF_END | BPF_FROM_LE:
+Not sure if the fix for easier backporting is better, up to Guenter and Greg.
+If the above is the case, you will need
 
-A comment here indicating this case does unconditional swap
-could improve readability.
+1) backportable fix;
+2) the patch 1 as of this series;
+3) conversion patch.
 
-Other than this minor nit, the patchset looks good to me.
-Also, tested the changes with test_bpf module and selftests.
-For the series..
+> The macro defines the child node internally, which removes the need for
+> the current child node declaration as well.
 
-Reviewed-by: Hari Bathini <hbathini@linux.ibm.com>
+FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+in case it will go the current way.
 
->   #ifdef __BIG_ENDIAN__
->   			if (BPF_SRC(code) == BPF_FROM_BE)
->   				goto emit_clear;
->   #else /* !__BIG_ENDIAN__ */
-> -			if (BPF_SRC(code) == BPF_FROM_LE)
-> +			if (BPF_CLASS(code) == BPF_ALU && BPF_SRC(code) == BPF_FROM_LE)
->   				goto emit_clear;
->   #endif
->   			switch (imm) {
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
