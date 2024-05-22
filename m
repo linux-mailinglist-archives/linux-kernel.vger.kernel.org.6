@@ -1,124 +1,159 @@
-Return-Path: <linux-kernel+bounces-186662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563C28CC714
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:29:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246D48CC732
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7FD283C62
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:29:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8795C1F20FFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F4014A4F9;
-	Wed, 22 May 2024 19:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709C51487E9;
+	Wed, 22 May 2024 19:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iFLq4met"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ODVAjdMF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JIN/Ok6A"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24296148855;
-	Wed, 22 May 2024 19:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610B0148314;
+	Wed, 22 May 2024 19:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716406009; cv=none; b=DJr3P617PhGyn44qpgiIlHSX7+PBXbGn8BKGfYsYF1HCHeQ69W2pFRKH9Fr20cJZiicVomf76bFY7KsbemXCfXbcxpM9DfPImvvH3+cAeJIhSCTFWFA00ROcNWy3XoH0Q25+SrzGpDgtjNfwQwDSVE7BWEYSW3Qy7JlUNlxILUA=
+	t=1716406124; cv=none; b=KJhOUJ9qTpRs4goPOi8kHcbRzeuFs7s2etDBpYhjGhkZyMyumBvuGhfUSC921u2xzbDOKiMnAgX0aVZaWISuuJhsRxwIvtg3einy3isBtWSeXqBPHOmY3FwRLFR9CPBRYxS72ZBKLmoMpzYSiVEajQBvrbWfGRWSCX8Rvt02tYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716406009; c=relaxed/simple;
-	bh=dKKGEyMUk0UwgESO6nJ+5EuDLzkHGZXIp4njWAeuzdk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uJiQLHPrNvefJ1CLrtf8AV8FYao7Cs9bra9M5S/I6SVRVFmZJ67jpPytKyaxs5lEhs1P9tIybXgxqjS6OcJzHqs+DXM+dNNoQS9GDa44Zhx8t51Wuukn9TCpQAz/f9phB+63SsUqt7225vK5m3tdPxXxagGb2+o/J/Rc5aXpNr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iFLq4met; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44MJL7Tj009082;
-	Wed, 22 May 2024 19:25:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=b4yNQBAtpva9pbdQ3MKrwTcabBpfveNT3SZdpdEVr0c=;
- b=iFLq4met8zFy+YtmiiCSmcfrw61QqoWcV/5AMrtdk3ZaET3BU6s07oWDmWNkrXc+698p
- wESa62W34gENtY3z5UgIh1T/4MuQswWVccah6z9CilBkaLyGNTqB1tQHpyi/qd8Ar8LS
- XR5HqlrjKSQVK8/CUbknr7Drj5zhXtmfuZJUxPLySP66qiCnlNzg8Cd7znvLp7juMVxI
- 5eah6bD7VbY6MXaUTWihUC1NJl+QpgVQEKiFAqFefRoqEbfxjRmKJQl5njU6V+wZ2R3p
- TNXiQGkh7+RhdYW83DjY9Ub6ATK7Vr5YF35TqKr/EGveYlGcbyUSKyZ31BKMqgGr7jh3 SQ== 
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y9mrx09ka-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 19:25:37 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44MJ8Zna008226;
-	Wed, 22 May 2024 19:25:36 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y78vm5a63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 19:25:36 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44MJPW1j51052808
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 May 2024 19:25:34 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8ECF258058;
-	Wed, 22 May 2024 19:25:32 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36F9558067;
-	Wed, 22 May 2024 19:25:32 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.104.209])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 22 May 2024 19:25:32 +0000 (GMT)
-From: Eddie James <eajames@linux.ibm.com>
-To: linux-fsi@lists.ozlabs.org
-Cc: eajames@linux.ibm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ninad@linux.ibm.com, lakshmiy@us.ibm.com,
-        linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, andrew@codeconstruct.com.au,
-        joel@jms.id.au, robh@kernel.org, conor+dt@kernel.org,
-        krzk+dt@kernel.org, andi.shyti@kernel.org, broonie@kernel.org
-Subject: [PATCH v6 20/20] fsi: scom: Update compatible string to match documentation
-Date: Wed, 22 May 2024 14:25:24 -0500
-Message-Id: <20240522192524.3286237-21-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240522192524.3286237-1-eajames@linux.ibm.com>
-References: <20240522192524.3286237-1-eajames@linux.ibm.com>
+	s=arc-20240116; t=1716406124; c=relaxed/simple;
+	bh=+HIgq/76YrSpoSHZQMGZD7wasDol7pRR2YrI24eJaRc=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=PyXN4BJ0Lcen6v6UYXhRhtXUZlyrzzocA7uw0aAbCP/VIaQC0Jb4na3BcrOzljk63lU7YKMO88NaU9X20AVKBw/sHSxGOQVitHGEa3w8taw3p1Xp+EkNLkkgsiyIV+hXBuJBxo1HEDdTGjKIb9eOAP+FP307CjocwZhwXKBXeIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ODVAjdMF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JIN/Ok6A; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 6DF1C13800E5;
+	Wed, 22 May 2024 15:28:41 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 22 May 2024 15:28:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1716406121; x=1716492521; bh=pllOxeaFWD
+	cR8Doa6DvpzS5mFzmOse3mS7XlUVEkPaQ=; b=ODVAjdMFooUC6RtWgQ05G4aIno
+	CjqNq4EzzPwn4EyzyXNNKhAs7pWzoHJDlCixeY+2KjImjXwmNpiSdhbo8cULcl+S
+	Fcep/k2NS7uz5gcu4FTHYvRvYjm8FH2MPdTjgBwucpByTRUrsvSrb5UmilHrkOqT
+	uZN3zoMP3G65tb4lu7+nZyFd8tKNmt5TvNlULbUFOYWYuVGRrW698TjxJUkYkPIQ
+	uaZu2EWfxDmbzgsIjPFiPNLb6sDqNXqeQvsybzyd/tKLhNostdt0F9vPWtv6fQRL
+	yPFlMCVsrpcSE78kfQPqhPT+RJGuMW3EJdUg0JKW0jh/Tty/qvyZ3I4JZgGA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716406121; x=1716492521; bh=pllOxeaFWDcR8Doa6DvpzS5mFzmO
+	se3mS7XlUVEkPaQ=; b=JIN/Ok6AyH+phSgmoWwBUTlMMrIgFd5BF2l37ZVfKd1m
+	68BoX727+72560uwvRkkyhMqihkFCRF6pBko8hDe8btk1MtzaY1to+r7jdSfrOgt
+	NyEa1rDXeAnQJlWzWBEaxdie7q2cpSyyFKp+30W0o9XAU/9pbR/aXlVS1wXe9/Po
+	85XjJQtNtAdg4/CgWWbSFVTksGzt3FFR6xGpwO0hDMVWPHZUycyQXD3Fc9TNEM1x
+	nytgae0skluwJj736YRCvn5lY7pgHhIvp2StijeV2OobiBr6K3foVF12IUKZiRM/
+	2/7qoCwkY/j17xbvWgBQYdmb3zIhN5qoUWSjht/ZZA==
+X-ME-Sender: <xms:aUdOZsqoS2bPYdMMkNRAraJ_9foHojotVK01oEoj2nUTwduugaKJNw>
+    <xme:aUdOZip2CpZ7Wbrr9g7ZYqSxf11WZxjtkqKV8kyK7k1LDZ3YKN9R-SgTuMpYH4KBR
+    xZlgw-chm6AfjAhZ1g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeigedgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:aUdOZhNktpru_bQ2z3icIo0h20DUBZKP7b_SFsQ61Kz0ICkAlmoQdw>
+    <xmx:aUdOZj4a-b3aq_PeWPVmn3a9krhK1RNjOyXtwPoM69bYSfBOp_ww7w>
+    <xmx:aUdOZr6kD-JeTjJc2057GD5V5xX68vKxffF8RUW2CB33aGTbbvBKDg>
+    <xmx:aUdOZjh1unIg_yrrgmeOlIpsvNEJ7nwS6s9zTDgs7Z2ekfQT38Lz0g>
+    <xmx:aUdOZubeBWu_FR3h3IcpQyoXG0h_UumJKSvBc-2LFbdwQ1wKZllt-TTu>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id EC110B6008D; Wed, 22 May 2024 15:28:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-480-g515a2f54a-fm-20240515.001-g515a2f54
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: OV8UgjSZUWLVCrjVRLIJYkH9sGb0Y6vO
-X-Proofpoint-ORIG-GUID: OV8UgjSZUWLVCrjVRLIJYkH9sGb0Y6vO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_10,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405220134
+Message-Id: <ee4cd4fa-9c5b-444c-803f-1075c7425109@app.fastmail.com>
+In-Reply-To: <87seya452v.fsf@>
+References: <20240309202445.work.165-kees@kernel.org> <87seya452v.fsf@>
+Date: Wed, 22 May 2024 19:28:19 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolai Stange" <nstange@suse.de>, "Kees Cook" <keescook@chromium.org>
+Cc: "Jeremy Linton" <jeremy.linton@arm.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-hardening@vger.kernel.org,
+ "Elena Reshetova" <elena.reshetova@intel.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] randomize_kstack: Improve entropy diffusion
+Content-Type: text/plain
 
-Use p9-scom instead of fsi2pib.
+On Wed, May 22, 2024, at 08:35, Nicolai Stange wrote:
+> Kees Cook <keescook@chromium.org> writes:
+>>
+>> diff --git a/include/linux/randomize_kstack.h b/include/linux/randomize_kstack.h
+>> index 5d868505a94e..6d92b68efbf6 100644
+>> --- a/include/linux/randomize_kstack.h
+>> +++ b/include/linux/randomize_kstack.h
+>> @@ -80,7 +80,7 @@ DECLARE_PER_CPU(u32, kstack_offset);
+>>  	if (static_branch_maybe(CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT,	\
+>>  				&randomize_kstack_offset)) {		\
+>>  		u32 offset = raw_cpu_read(kstack_offset);		\
+>> -		offset ^= (rand);					\
+>> +		offset = ror32(offset, 5) ^ (rand);			\
+>
+> Hi Kees,
+>
+> I'm wondering whether this renders the per-arch mask applied to 'rand'
+> at the respective choose_random_kstack_offset() invocations ineffective?
+>
+> Like e.g. on x86 there is
+>
+>   choose_random_kstack_offset(rdtsc() & 0xFF);
+>
+> I would argue that while before the patch kstack_offset had been
+> guaranteed to stay within the bounds of 0xFF, it's now effectively
+> unlimited (well, <= (u32)-1) and only capped to 0x3ff when subsequently
+> applying the KSTACK_OFFSET_MAX().
+>
+> Or am I simply missing something?
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/fsi/fsi-scom.c | 1 +
- 1 file changed, 1 insertion(+)
+Hi Nicolai,
 
-diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
-index 61dbda9dbe2b0..4558b96474e09 100644
---- a/drivers/fsi/fsi-scom.c
-+++ b/drivers/fsi/fsi-scom.c
-@@ -590,6 +590,7 @@ static int scom_remove(struct device *dev)
- 
- static const struct of_device_id scom_of_ids[] = {
- 	{ .compatible = "ibm,fsi2pib" },
-+	{ .compatible = "ibm,p9-scom" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, scom_of_ids);
--- 
-2.39.3
+I think you are correct and this is an unintended side-effect
+of this patch. We could either restore the previous limits
+or try to come up with a cross platform policy here, which
+may be better in the end.
 
+I see that out of the five architectures that have randomized
+kstacks, only powerpc and riscv actually use the default
+1kb range of offsets, so those are unaffected by the unintential
+change.
+arm64 uses a 512 byte while x86 and s390 use a 256 byte range.
+
+As far as I can tell, there should be nothing architecture
+specific about that limit, though we might want to reconsider
+the total size of the stack. On architectures with 4KB
+pages and CONFIG_VMAP_STACK, we should be able to have
+arbitrarily sized stacks (e.g. 12kb or 20kb instead of the
+default 16kb) as a compile-time selection.
+
+If we increase the stack size by 4KB, it would be trivial
+to set the random offset to the same 4KB range instead of
+256/512/1024 bytes. On the other hand, I always feel
+uneasy about enabling kstack randomization without
+CONFIG_VMAP_STACK, so we may want to also tie it to that.
+
+     Arnd
 
