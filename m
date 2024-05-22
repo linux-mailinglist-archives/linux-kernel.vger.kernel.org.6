@@ -1,232 +1,118 @@
-Return-Path: <linux-kernel+bounces-185999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096D18CBDFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:40:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD8E8CBE03
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:41:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CD441C211D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70D8C1C21CD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8F381720;
-	Wed, 22 May 2024 09:40:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BCF81721;
+	Wed, 22 May 2024 09:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i3ay2Itt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2FC54720;
-	Wed, 22 May 2024 09:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E554720
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716370830; cv=none; b=ZIuzrVm9Eu3I4KswqAR+ExWxeinukhk3B8HrTkbF9LBHh5sR0GFy5eZNhdD2dtS83ZXAxS3wuX25unLEb+vgVHmM8C3HBQGf5qwQYxqpDemexUXVoR9M2qqgGamDO8OEgu2JMmgfe+QASz9bUdi/Pa+aYtvzYqKWElyA8hUTlnI=
+	t=1716370896; cv=none; b=T5xXapyjc6W1UYJrbKFH7PkiwvK7fCvg51CuL+wWPMswrLhyVPh9IG9BtKXprVesbpVZJtOWoRSQ3kf6VcOzJ+QEgI5M3pxcFYuRCkKcs0s1bV4tlUK+yjGU1pJF2+MDYkXQ+iCMSVw9aFz5O/kpzFKDmQ/yz4zBhliSsOvleUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716370830; c=relaxed/simple;
-	bh=dI4/Xlum3q54/48w5qXC2mpJ/wMnduDUMS+A4zFT9kU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A97shix0rZ8Ctogn+HDCuokrPgwtMEXnVsHSa73SymeXyCuRFEbkEJqkqmq6UEVNCMbRguaSSpPiRHygioyfyTFVrwjX3M6WahGkmxsHiCauc8+PwrAarHcstKndEp7qQHxelKN5D2DGbpafDVMAJoqj3zlrrgAA96utBcRFZII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VkmQw2rK4z6J9Sj;
-	Wed, 22 May 2024 17:36:40 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 44E6D140A70;
-	Wed, 22 May 2024 17:40:19 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 22 May
- 2024 10:40:18 +0100
-Date: Wed, 22 May 2024 10:40:17 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Dan Williams <dan.j.williams@intel.com>, Shiju Jose
-	<shiju.jose@huawei.com>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "dave.jiang@intel.com"
-	<dave.jiang@intel.com>, "alison.schofield@intel.com"
-	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
-	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
-	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"tony.luck@intel.com" <tony.luck@intel.com>, "Jon.Grimm@amd.com"
-	<Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "mike.malvestuto@intel.com"
-	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
-	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Jean Delvare
-	<jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240522104017.00003904@Huawei.com>
-In-Reply-To: <20240521080621.GBZkxV_ZWnbbrq-yV_@fat_crate.local>
-References: <D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
-	<20240509200306.GAZj0r-h5Tnc0ecIOz@fat_crate.local>
-	<663d3e58a0f73_1c0a1929487@dwillia2-xfh.jf.intel.com.notmuch>
-	<20240509215147.GBZj1Fc06Ieg8EQfnR@fat_crate.local>
-	<663d55515a2d9_db82d2941e@dwillia2-xfh.jf.intel.com.notmuch>
-	<20240510092511.GBZj3n9ye_BCSepFZy@fat_crate.local>
-	<663e55c59d9d_3d7b429475@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<20240511101705.GAZj9FoVbThp7JUK16@fat_crate.local>
-	<20240517121554.000031d4@Huawei.com>
-	<20240517124418.00000b48@Huawei.com>
-	<20240521080621.GBZkxV_ZWnbbrq-yV_@fat_crate.local>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1716370896; c=relaxed/simple;
+	bh=DjnElTg7Qgq0nv6HeC2LrF24Xu7WtyPkWqEqn7UgKZE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KB0xuevX0s7G+mw3lFQ3LcOSMli7zc0PCBmSLkB8Mey2HuVxXDput2HtSs28R8uEpVHHa01mbu22uF9OWQ8VannlJ/MXpqVtDyUR1jm0U9DRf7UOCdRjmvg/p7PcNIUldgjV85v9KlQN9RKMGYHt2H5hZWjdtcjSNGu2ymRkYjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i3ay2Itt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716370892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DjnElTg7Qgq0nv6HeC2LrF24Xu7WtyPkWqEqn7UgKZE=;
+	b=i3ay2Ittn0b8k3Jq4F/fFB5qAstnGfH6NQlvznJdiYxQqxR6FsbeBZo2vXdUHHSOCFITUJ
+	8b6sJVNQwRgbR81bPxHZx+KZznEQ6z9vx74RNkdSiG5HuTLoylcWRSmLXCqmdo2Nm/5Pkv
+	KsgkNNq8riGQ5APU5kuJPWfFlJQDvNc=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-BldQDSX8N5eciXvRr_dUhQ-1; Wed, 22 May 2024 05:41:31 -0400
+X-MC-Unique: BldQDSX8N5eciXvRr_dUhQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-34da4d75ceeso1817565f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:41:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716370890; x=1716975690;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DjnElTg7Qgq0nv6HeC2LrF24Xu7WtyPkWqEqn7UgKZE=;
+        b=Bf3oiZiUHm+mM7N7CPAnl/J+AeRv30euhQ4Afe7Wm9gbEk36nmgsFR2828qGvEGJnH
+         JkNeROn6eOoISIHmoAzNN1XOzgAJ/fI6nfKBuA1cAldJ4bnEGlUPLkWOaJ0u3JX0k/Kh
+         hpP8n9smocNC2Gw6daf1TVJcCJ4tTMTxjQ3tBidfVJdVAehY6sbAYQA+He8OHaPSTPWH
+         IS7stdJq5PACneAFskAY9S9Rgx5CivXU3xXJf+bN47aoWCSeMVFYFxyIxSRo5tMtYMNH
+         zi/uUWHUa45XCUdaT0/lUP/pNFB/bxmrttwQ2mkC6iT/P/QseeM/T2VMAXLJSoOtbq8f
+         6MRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXprA/zOMmH9qrH3yJ31aj04ooQdlSeY49DcRDUwv9IQSrwH2Zt07A7IrYn7p4/atZNHaepZlSh7cBPFCwq3GmLy9hDU4kYluj3WD2P
+X-Gm-Message-State: AOJu0YxYbFPN6b7OBvW+2vX3Qp39DFPE41q3Cs65Wg3FLTxOvg/d4Gll
+	wBj7hpduVFQw/yOhtThFgFCgub38hxmi+t7sejW4eNxlAEnPjBGB3Ih0G5MUSQXZ9dIc+8iXpnY
+	mhB3+ANkyW8rHFLYAMRuMo4sw/ANtOSSkdQif73MRjdsD33IfnHhcAOiFQ2tZJw==
+X-Received: by 2002:a05:600c:1d11:b0:41f:cfe6:3648 with SMTP id 5b1f17b1804b1-420fd2df018mr10857835e9.1.1716370890076;
+        Wed, 22 May 2024 02:41:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7u5yR/66gta0KXU2XV+qRuPxUjFc0Ve+i7CZkVqw1FFFcUdTGZUdlJkrZ1TcboZbu9HzLcg==
+X-Received: by 2002:a05:600c:1d11:b0:41f:cfe6:3648 with SMTP id 5b1f17b1804b1-420fd2df018mr10857725e9.1.1716370889675;
+        Wed, 22 May 2024 02:41:29 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10::f71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354eedd143bsm468185f8f.8.2024.05.22.02.41.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 02:41:29 -0700 (PDT)
+Message-ID: <d5e3a8b423a4bdb57e865be26a6779fee65a691b.camel@redhat.com>
+Subject: Re: [PATCH] net: sync headers
+From: Paolo Abeni <pabeni@redhat.com>
+To: Florian Lehner <dev@der-flo.net>, linux-kernel@vger.kernel.org
+Cc: davem@davemloft.net, netdev@vger.kernel.org
+Date: Wed, 22 May 2024 11:41:27 +0200
+In-Reply-To: <20240520092145.13575-1-dev@der-flo.net>
+References: <20240520092145.13575-1-dev@der-flo.net>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 21 May 2024 10:06:21 +0200
-Borislav Petkov <bp@alien8.de> wrote:
+Hi,
 
-> On Fri, May 17, 2024 at 12:44:18PM +0100, Jonathan Cameron wrote:
-> > Given we are talking about something new, maybe this is an opportunity
-> > to not perpetuate this?
-> > 
-> > If we add scrub in here I'd prefer to just use the normal bus registration
-> > handling rather than creating a nest of additional nodes.  So perhaps we
-> > could consider
-> > /sys/bus/edac/device/scrub0 (or whatever name makes sense, as per the
-> > earlier discussion of cxl_scrub0 or similar).  
-> 
-> Yes, my main worry is how this RAS functionality is going to be all
-> organized in the tree. Yes, EDAC legacy methods can die but the
-> user-visible part can't so we might as well use it to concentrate stuff
-> there.
+On Mon, 2024-05-20 at 11:21 +0200, Florian Lehner wrote:
+> The header files include/uapi/linux/pkt_cls.h and
+> tools/include/uapi/linux/pkt_cls.h did become out of sync. Update the lat=
+er
+> with the changes from the former.
+>=20
+> Signed-off-by: Florian Lehner <dev@der-flo.net>
 
-Understood.
+This looks like net-next material, and net-next is currently closed for
+the merge window.
 
-> 
-> > Could consider moving the bus location of mc0 etc in future to there with
-> > symlinks to /sys/bus/edac/device/mc/* for backwards compatibility either
-> > via setting their parents or more explicit link creation.  
-> 
-> You can ignore the mc - that's the memory controller representation EDAC
-> does and that's also kind of semi-legacy considering how heterogeneous
-> devices are becoming. Nowadays, scrubbing functionality can be on
-> anything that has memory and that's not only a memory controller.
-> 
-> So it would actually be the better thing to abstract that differently
-> and use .../edac/device/ for the different RAS functionalities. I.e.,
-> have the "device" organize it all.
+More importantly, I think it would be better to avoid this periodic
+manual sync-up and instead let the build system fetch the files from
+the include/uapi/linux directory, instead from a local copy.
 
-I'm not sure I follow this. Definitely worth ensuring we are thinking
-the same thing wrt to layout before we go further,
+Cheers,
 
-Do you mean keep it similar to the existing device/mc device/pci
-structure so /sys/bus/edac/devices/scrub/cxl_mem0_scrub etc?
-This would rely on symlinks to paper over the dev->parent not being
-the normal parent. Hence would be similar to /sys/bus/edac/devices/pci in
-edac_pci_create_sysfs() or equivalent in edac_device_create_sysfs().
-
-Or is the ../edac/device bit about putting an extra device under edac/devices/?
-e.g.
-/sys/bus/edac/devices/cxl_memX/scrub
-/sys/bus/edac/devices/cxl_memX/other_ras_thing
-which would be fairly standard driver model stuff.
-
-This would sit alongside 'legacy'
-/sys/bus/edac/devices/mc/mcX
-/sys/bus/edac/devices/pci/pciX etc
-
-I'd prefer this second model as it's very standard and but grouping is per
-providing parent device, rather than functionality. However, it is rather
-different from the existing edac structure.
-
-Where I've used the symlink approach in the past, it has always
-been about keeping a legacy interface in place, not where I'd start
-with something new.   Hence I think this is a question of how far
-we 'breakaway' from existing edac structure.
-
-
-
-> 
-> > These scrub0 would have their dev->parent set to who ever actually
-> > registered them providing that reference cleanly and letting all the
-> > normal device model stuff work more simply.  
-> 
-> Ack.
-
-This suggests the second option above, but I wanted to confirm as Shiju
-and I read this differently.
-
-> 
-> > If we did that with the scrub nodes, the only substantial change from
-> > a separate subsystem as seen in this patch set would be to register
-> > them on the edac bus rather than a separate class.
-> > 
-> > As you pointed out, there is a simple scrub interface in the existing
-> > edac memory controller code. How would you suggest handling that?
-> > Have them all register an additional device on the bus (as a child
-> > of the mcX devices) perhaps?  Seems an easy step forwards and should
-> > be no backwards compatibility concerns.  
-> 
-> Well, you guys want to control that scrubbing from userspace and those
-> old things probably do not fit that model? We could just not convert
-> them for now and add them later if really needed. I.e., leave sleeping
-> dogs lie.
-
-Ok. There is an existing is the minimal sysfs existing interface but I'm
-fine with ignoring it for now.
- 
-> 
-> > It absolutely doesn't as long as we can do it fairly cleanly within
-> > existing code. I wasn't sure that was possible, but you know edac
-> > a lot better than me and so I'll defer to you on that!  
-> 
-> Meh, I'm simply maintaining it because no one else wants to. :)
-
-*much sympathy!*  As we ramp up more on this stuff, we'll try and
-help out where we can.
-
-> 
-> > Several options for that, but fair question - bringing (at least some of)
-> > the RAS mess together will focus reviewer bandwidth etc better.  
-> 
-> Review is more than appreciated, as always.
-> 
-> > I'm definitely keen on unifying things as I agree, this mixture of different
-> > RAS functionality is a ever worsening mess.  
-> 
-> Yap, it needs to be unified and reigned into something more
-> user-friendly and manageable.
-
-Hopefully we all agree on a unified solution being the target.
-
-Feels like we are converging. Now we are down to the details :)
-
-Thanks,
-
-Jonathan
-
-> 
-> Thx.
-> 
+Paolo
 
 
