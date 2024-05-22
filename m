@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-186055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72EE8CBF44
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:29:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F2C8CBF47
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEC5E1C21544
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:29:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C69D0B21CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CE182480;
-	Wed, 22 May 2024 10:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cqE23WdT"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F69782483;
+	Wed, 22 May 2024 10:31:31 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BFD7E572
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999BE50269
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716373756; cv=none; b=YMifLdtXTLSaaJY2CILj/twCpjnENh+hOh/kVAO2pb3zqxMtW96Oc+9j83u8LcJKKOTKs4QEqI17kk8fVqqIkZyTEGiTRBY2QX/Di5cFEv5iKoEQ+CtR08QAQBuyWStKEPlXUecsGNbColro90B0QIjay3OKT+HLW+fseS3Y4xM=
+	t=1716373890; cv=none; b=rxccv6Pl1/ry6kZFWAqLei2UigdOqMfpUa+oUuyio+urRBMPivxrCQDz0UZ+nq8/BN2N6SJwJz2ud3REhaE+w/xQD3H4arH4xCyab62RiA/fo79P4NVa5PGLBsFH3AA4cmTMNw4Fs6a6hj3tiPU96J82qeVXUkvvwTwuVYx6dyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716373756; c=relaxed/simple;
-	bh=YgWOXcmXZa+NxNmnvSW0g33eq38hRBxHQFuxngZ9Po8=;
+	s=arc-20240116; t=1716373890; c=relaxed/simple;
+	bh=rxFk8HEHcSjxEGIA+UOVFBH3zOZ9OBbzCE67oj1TzPI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/lsSVntMCsNi1HQX5yN+OJoaAxTU8IoItphxaQQCzT+u1t0PpdSK4/c4q7/ZNGnUEFXKFagJ2QLveTfRbwYL5jBzLL4g+Ns+n61k78AZfURzaD2FpKq0ojXvmT1QXoiAcvR90WqbcV/y/dArXsIwObIOWqiASN/6TLRxX1NF44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cqE23WdT; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: kotaranov@linux.microsoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716373750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dBqCPT8x+cGM4ULy2b+eQuWgpEzPPgSD98pYc3964+Q=;
-	b=cqE23WdTOHz3c6Jp+iMdabjGcebl/Tfu5NNgrG2fL0upgM3qZpFnGRGVygnZIMF0dpOnVD
-	Fnvlv1RoaFgFfkYcpfMxAFJKplKMvQ7JWZdDlKg7+kHAcO7/InSkam1rmJG/0BaEPbTXV0
-	Jv7dOi2bL4+CBhzK5l9v/UtkvVoVv9U=
-X-Envelope-To: kotaranov@microsoft.com
-X-Envelope-To: sharmaajay@microsoft.com
-X-Envelope-To: longli@microsoft.com
-X-Envelope-To: jgg@ziepe.ca
-X-Envelope-To: leon@kernel.org
-X-Envelope-To: linux-rdma@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <10a9df97-7b1b-4c0f-ad11-3ecf6512d926@linux.dev>
-Date: Wed, 22 May 2024 12:29:08 +0200
+	 In-Reply-To:Content-Type; b=FuAM9Mh1Tb1C7k2jjCErGjatFI3OeKXkCio4CADfbAw6LY7FmIunCeyJ9Bh6L9lAqdMvOcdw5EhgbfJlWPmC6a+ouYqlJFTnwAmTAmLqxT4JpsSEEsgr0p8Wgz5jIxKntyPge8xVKIYhvrLcw3vA6RKKqba8FhufiPMvjqN+0hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44MAUxO7084776;
+	Wed, 22 May 2024 19:30:59 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
+ Wed, 22 May 2024 19:30:59 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44MAUwdV084772
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 22 May 2024 19:30:59 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <f77290fe-a94e-498b-bbbf-429ba0ce49c2@I-love.SAKURA.ne.jp>
+Date: Wed, 22 May 2024 19:30:58 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH rdma-next v3 0/3] RDMA/mana_ib: Add support of RC QPs
-To: Konstantin Taranov <kotaranov@linux.microsoft.com>,
- kotaranov@microsoft.com, sharmaajay@microsoft.com, longli@microsoft.com,
- jgg@ziepe.ca, leon@kernel.org
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1716366242-558-1-git-send-email-kotaranov@linux.microsoft.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <1716366242-558-1-git-send-email-kotaranov@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
+To: Jakub Sitnicki <jakub@cloudflare.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Hillf Danton <hdanton@sina.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
+ <20240521225918.2147-1-hdanton@sina.com> <877cfmxjie.fsf@cloudflare.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <877cfmxjie.fsf@cloudflare.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-在 2024/5/22 10:23, Konstantin Taranov 写道:
-> From: Konstantin Taranov <kotaranov@microsoft.com>
+On 2024/05/22 18:50, Jakub Sitnicki wrote:
+> On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
+>> On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com>
+>>> On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>> --- a/net/core/sock_map.c
+>>>> +++ b/net/core/sock_map.c
+>>>> @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
+>>>>         bool strp_stop =3D false, verdict_stop =3D false;
+>>>>         struct sk_psock_link *link, *tmp;
+>>>>
+>>>> +       rcu_read_lock();
+>>>>         spin_lock_bh(&psock->link_lock);
+>>>
+>>> I think this is incorrect.
+>>> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
+>>
+>> Could you specify why it won't be safe in rcu cs if you are right?
+>> What does rcu look like in RT if not nothing?
 > 
-> This patch series enables creation and destruction of RC QPs.
-> The RC QP can be transitioned to RTS and be used by rdma-core.
+> RCU readers can't block, while spinlock RT doesn't disable preemption.
 > 
-> RDMA-CORE: https://github.com/linux-rdma/rdma-core/pull/1461
+> https://docs.kernel.org/RCU/rcu.html
+> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-rt
 > 
-> v2->v3:
-> * fixed c99 comment style
 
-Thanks a lot. I am fine with it.
-You can add:
+I didn't catch what you mean.
 
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+https://elixir.bootlin.com/linux/latest/source/include/linux/spinlock_rt.h#L43 defines spin_lock() for RT as
 
-Zhu Yanjun
+static __always_inline void spin_lock(spinlock_t *lock)
+{
+	rt_spin_lock(lock);
+}
 
-> 
-> v1->v2:
-> * Removed an old comment in 2/3.
-> * Fixed text in a debug message in 3/3.
-> 
-> Konstantin Taranov (3):
->    RDMA/mana_ib: Create and destroy RC QP
->    RDMA/mana_ib: Implement uapi to create and destroy RC QP
->    RDMA/mana_ib: Modify QP state
-> 
->   drivers/infiniband/hw/mana/main.c    |  59 ++++++++++
->   drivers/infiniband/hw/mana/mana_ib.h |  99 +++++++++++++++-
->   drivers/infiniband/hw/mana/qp.c      | 166 ++++++++++++++++++++++++++-
->   include/uapi/rdma/mana-abi.h         |   9 ++
->   4 files changed, 328 insertions(+), 5 deletions(-)
-> 
+and https://elixir.bootlin.com/linux/v6.9/source/include/linux/spinlock_rt.h#L85 defines spin_lock_bh() for RT as
+
+static __always_inline void spin_lock_bh(spinlock_t *lock)
+{
+	/* Investigate: Drop bh when blocking ? */
+	local_bh_disable();
+	rt_spin_lock(lock);
+}
+
+and https://elixir.bootlin.com/linux/latest/source/kernel/locking/spinlock_rt.c#L54 defines rt_spin_lock() for RT as
+
+void __sched rt_spin_lock(spinlock_t *lock)
+{
+	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+	__rt_spin_lock(lock);
+}
+
+and https://elixir.bootlin.com/linux/v6.9/source/kernel/locking/spinlock_rt.c#L46 defines __rt_spin_lock() for RT as
+
+static __always_inline void __rt_spin_lock(spinlock_t *lock)
+{
+	rtlock_might_resched();
+	rtlock_lock(&lock->lock);
+	rcu_read_lock();
+	migrate_disable();
+}
+
+ You can see that calling spin_lock() or spin_lock_bh() automatically starts RCU critical section, can't you?
+
+If spin_lock_bh() for RT might sleep and calling spin_lock_bh() under RCU critical section is not safe,
+how can
+
+  spin_lock(&lock1);
+  spin_lock(&lock2);
+  // do something
+  spin_unlock(&lock2);
+  spin_unlock(&lock1);
+
+or
+
+  spin_lock_bh(&lock1);
+  spin_lock(&lock2);
+  // do something
+  spin_unlock(&lock2);
+  spin_unlock_bh(&lock1);
+
+be possible?
+
+Unless rcu_read_lock() is implemented in a way that is safe to do
+
+  rcu_read_lock();
+  spin_lock(&lock2);
+  // do something
+  spin_unlock(&lock2);
+  rcu_read_unlock();
+
+and
+
+  rcu_read_lock();
+  spin_lock_bh(&lock2);
+  // do something
+  spin_unlock_bh(&lock2);
+  rcu_read_unlock();
+
+, I think RT kernels can't run safely.
+
+Locking primitive ordering is too much complicated/distributed.
+We need documentation using safe/unsafe ordering examples.
 
 
