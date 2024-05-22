@@ -1,157 +1,178 @@
-Return-Path: <linux-kernel+bounces-185978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 784928CBD9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:18:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0858CBDA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFC21F2227E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:18:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F36F1F2323B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC26681723;
-	Wed, 22 May 2024 09:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7589E80635;
+	Wed, 22 May 2024 09:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5r6mYzE"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zfp3GvI6"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9437580BE5;
-	Wed, 22 May 2024 09:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70E1770FB
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716369500; cv=none; b=fnFD+R1uzJqSDP5D2APpeRNlFyKvZl0fBPwLU4mIuKg2pap7LnyTpN9mvK4dQrQOLolRIGKLeaVriS9Pi7FsRox8u6dkqpq6cZk21TiwVRjtPkyoNqjI+70G85fMDihz1Ij/3DwUM7Y0L3t8Q9Gu1eCgerZgtpBwSqe+lRDazUs=
+	t=1716369587; cv=none; b=pZOaarjvokVEOtMccOYoX7LEB+0yOXfEWEZ+FndwPbQzJ12KaBnVLD28wEi7vBgPQcbQMqZ/GvOWh7SXr3ID91hXA6Mdur3P1VR85Q7mVPHSLwjvKCqfOcw+pHa6ZTySDA9r3mnIxinIYCgHPEl2s47/uzoU057WEejHc9/fkeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716369500; c=relaxed/simple;
-	bh=gJ0Rue8CIZyFI5vYaIOIDGhFikGz+fvLwhXk8VedQ4Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m/nfGFmr64JpNaefN8I2L5bRw6rM9UkbfAV3/BpsZgUC0VBhzb3TJZfpR+UeGssUf4Uojrn9468SAuVrW6ZAO0mKETLwpSoevbGzHerIKYm2+9x2aReDepYcpDxD/hEi/qRqaZ6sz3FeHS7eupYzxVW+cqWjVQV8IJfLQYqYEds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K5r6mYzE; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-56e56ee8d5cso11045731a12.2;
-        Wed, 22 May 2024 02:18:18 -0700 (PDT)
+	s=arc-20240116; t=1716369587; c=relaxed/simple;
+	bh=VBsqYl7hUfneg7Pf4Un76AsJyXt20lSzdpAomEsu61M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jpXdVhmrVPeQ2J0/xsweeQ2RWkVkW6QYDcR6bAwonBwAxW7VH+f/Ag1/kIN5H/xYFNyVJI7EwAYZ5iC4lwrU0PHR1sjt86KQCLGDG7FeIVZp1oxF5xsz/uKdhxyA+4ufuvZTNjKU/nngXiwfnzzhId+PKppvHtcImYnuyBRVaUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zfp3GvI6; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4200ee78e56so5219515e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:19:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716369497; x=1716974297; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hS8QMYPX9HU5iZYVx3xj9uGjra02vQn4uMTO3p8AL04=;
-        b=K5r6mYzEc+YSf4uuURpEE4QKV7ehLV3HEzMlKwl1Lh+oCSmsfrkvRTmk2uwqfRz8gw
-         bP33phRu/IbNtqIcC+bRlWs9MSimYVhx4tGAUERTp0AMNyaDCgaBV1tBuQyOMxRpVvWl
-         rcw0CzpxMcvrCxjl4tQN5aEqWS7Q5tRFO0RMPti07KOX2H+y5T3+4YvbznzXWyqYT3DT
-         QY10HWMQFz4imaKIrai4QL3WjdeK7qD6QOyrRPGIpmWNGAV/7WhVytxcmqCCtOUJNuWZ
-         VqS31oZUnnpKDsL21SvpLPeZixxFzxAnTB+pYfkbuH4rKRI7Jk9yCWWEq3E5hcaQO6hq
-         acyA==
+        d=linaro.org; s=google; t=1716369584; x=1716974384; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=M6NPTm1+e7s8OX0cZE3wNIuYcGvWCpp5F6olMkreWtA=;
+        b=zfp3GvI6SoFpVjlh7XxARIPJ+hVZjcjvwJd6IEfWclZu2efMiRlndoHkmMwbQpCw0F
+         xIC0/j60ATcs8Pr0XR4w0Q+iabYGUr019xNyknONniykLMeKbAPgH9hDk7mY/Y75XAaj
+         /VRjJGfrmxlN9yf4g8Ip9t3rdA5mjEE45chNyIucLDwOaOiA7XPG4sQby8tRm1H49pKN
+         k/dzuF0sY+iLUPlYocokSW1broz7zGH4UbF4RfLfdMZMoyHpYmfF6cBr7uz8n9QPP970
+         M4YPWFV2bNRAAwgBYkMgknBYqGy6x1hxvIV+sstLrvF1dH7ahD79Pn+hFM32IHS5LTpV
+         Xa3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716369497; x=1716974297;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hS8QMYPX9HU5iZYVx3xj9uGjra02vQn4uMTO3p8AL04=;
-        b=pVtYxARtGl5nQ9+Itb+onY6qU+ajgQautohlLQrQnsPV/kD3b+fXZh70hWB4tZrYTB
-         g/BWW9g85/5SVfM5Pm/zBT6emf7KggDlldGdJIgvb04zBKjJjZNA76NnV77yhABiHvq1
-         1rcf0wWLfTLZO0/LFFPyo3QIMZ4F54VYcBVmi7yaqI9WJwBltvMtv8+MykzL9lp3A1fa
-         lahc1BclxZ8qsJsdj4BbZMXq+0nZLXVWBq9JvPrd8ZucWNInxeyp9jQiHZY30mqGAAlf
-         CWOmcVPmlg3ILA8HK63sJgaMUk8qM5/fE1NJl9Sr6Jns+7S64UOfFrEQe9dsPgRHiNL0
-         V/1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXi2jO230Ny7ROueWv4KI+ibdheTs+wtD6XQPptx8C4kRE5qUYhLt0WVOGsZQzVMdydGflhOskSmaaLe6g0CLSbapRS+G5JUzxfnzcLnH39kmtOyUJrQulhmYIdHAYc+ghNP/MGyNdgypI=
-X-Gm-Message-State: AOJu0YxaBXyQWfYfsatv14B+fwy0ULpyn3bzAVYmBV6CA8UnC7l/PjS8
-	8tVnYw4I5/Zvb66h3t9AlTXl45ro/44XwzQoc93eo84+yoC/3kDm
-X-Google-Smtp-Source: AGHT+IF/8OxWhDUzjhGymfGdtzuojEnUQciyaHavmrRUL77vmxFvNHu12QGy36TR9eglHTPzQgnaZQ==
-X-Received: by 2002:a17:906:f8d6:b0:a5a:2aed:ca2b with SMTP id a640c23a62f3a-a62280611ccmr92560166b.28.1716369496750;
-        Wed, 22 May 2024 02:18:16 -0700 (PDT)
-Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5cec3d9b5csm836678066b.16.2024.05.22.02.18.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 02:18:16 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Wed, 22 May 2024 11:18:08 +0200
-Subject: [PATCH 2/2] hwmon: (ltc2992) use
- fwnode_for_each_available_child_node_scoped()
+        d=1e100.net; s=20230601; t=1716369584; x=1716974384;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M6NPTm1+e7s8OX0cZE3wNIuYcGvWCpp5F6olMkreWtA=;
+        b=i1ZGSDpiDFQeS224hJiLEm1N4h57XArLv9JWeaUGyY+AwB7ppM2TEqXushTxsIYilc
+         ho6Lz89e/6/jmIHZSBM6pkb9QPVkuoOyoPJ3pjW3UMVTUX3g+B6Od0EOmH7HghdP5Omm
+         9p8RYUqBQ9uZ+3kOa07QEWwBPDSfxHAuome51d8v8S/jJ7lPP3OwW4sCIbJLzlOnKuI6
+         1NQHZKaVR6zu8CPyWDnnpR0aL740PBO/BFSJXz+SzYxEIaQEhiH/zRMuYGW1bFgcPqcn
+         0Z8c6WGlVBKYfX7qyJgcP7E1uAlJ0J5cDE+K9DusknQYCA00RDCdfsAbaPhX7LiB+LcU
+         lFXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRMQgTQrnNdxgmCBMpTPeBCZhjLAuYmjoceflI37/dZbtcu3tc3cVFiecCvxMZQ6ZOn0DAef9laYEedpfRM3A5ZwJmNFjkdQ8ogl5h
+X-Gm-Message-State: AOJu0YyYD+4qgvm5RnB5F415D5PLNUOeu8YfcMcRn5UUmU/LVlOwLDmR
+	OW9CJQWBTNS5ExkitX/p3aWPnTE+Kk+yI1I38LUEGhxTBs8rmLCRLokKnab10Cw=
+X-Google-Smtp-Source: AGHT+IFWcn1Za+rNzPPMjDFE8xFV1g40XFGrqFdisQd/XTmkiQF0mV+J4SB5f9ahYz2TN+e2ltQ3Dw==
+X-Received: by 2002:a7b:c2b1:0:b0:41b:7d6f:1f24 with SMTP id 5b1f17b1804b1-420fd31d423mr10667475e9.21.1716369584246;
+        Wed, 22 May 2024 02:19:44 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm521064565e9.9.2024.05.22.02.19.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 02:19:43 -0700 (PDT)
+Message-ID: <1a623910-0fce-4835-a047-4086dafd3186@linaro.org>
+Date: Wed, 22 May 2024 11:19:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-fwnode_for_each_available_child_node_scoped-v1-2-1188b0da12dc@gmail.com>
-References: <20240522-fwnode_for_each_available_child_node_scoped-v1-0-1188b0da12dc@gmail.com>
-In-Reply-To: <20240522-fwnode_for_each_available_child_node_scoped-v1-0-1188b0da12dc@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Daniel Scally <djrscally@gmail.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Antoniu Miclaus <antoniu.miclaus@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716369492; l=1624;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=gJ0Rue8CIZyFI5vYaIOIDGhFikGz+fvLwhXk8VedQ4Y=;
- b=wQ3arPrlq5jG+PHOk8g6UYSech0Zs3LjLnOqv1Zq9azk4RcV6qXWM4uz27Ag7lYIm9qToKnPd
- MgBAG71LnogAwtuBRihcB19SRjRzZnPPxmCE8GJsjuG7k8cQxl6C5qD
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: icc-bwmon: Update zone1_thres_count to 3
+To: Shivnandan Kumar <quic_kshivnan@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_rgottimu@quicinc.com
+References: <20240522081508.1488592-1-quic_kshivnan@quicinc.com>
+ <bc973b4f-fe8b-44e5-afbc-f3ce8a6fc873@linaro.org>
+ <baa55c1f-2670-4a3c-abcf-ea4e841e4a1e@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <baa55c1f-2670-4a3c-abcf-ea4e841e4a1e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The error path from a zero value of the "shunt-resistor-micro-ohms"
-property does not decrement the refcount of the child node.
+On 22/05/2024 11:05, Shivnandan Kumar wrote:
+> 
+> 
+> On 5/22/2024 1:58 PM, Krzysztof Kozlowski wrote:
+>> On 22/05/2024 10:15, Shivnandan Kumar wrote:
+>>> Update zone1_thres_count to 3 from 16 so that
+>>> driver can reduce bus vote in 3 sample windows instead
+>>> of waiting for 16 windows. This is in line with downstream
+>>> implementation.
+>>>
+>>
+>> This might make bwmon quite jittery. I don't think downstream is the
+>> source of truth here. Please provide some measurements *on mainline tree*.
+>>
+> 
+> Hi Krzysztof,
+> 
+> The 16-window (64 ms) waiting time is too long to reduce the bus vote.
+> At higher FPS, there will be multiple frames in 64ms e.g. 4 frames at 
+> 60FPS in 64ms. Hence, delay of 64ms in decision making will lead to 
+> higher power regression. I’ve tested this change for 4K video playback 
+> on mainline tree, and there’s a significant power-saving.
 
-Instead of adding the missing fwnode_handle_put(), a safer fix for
-future modifications is using the _scoped version of the macro,
-which removes the need for fwnode_handle_put() in all error paths.
+Please include it, with measurement below, in the commit msg.
 
-The macro defines the child node internally, which removes the need for
-the current child node declaration as well.
+> I propose to make it a tunable,so that user space can tune it
+> based on runtime depending on fps.>
+> USECASE                     zone1_thres_count=16     zone1_thres_count=3
+> 4K video playback           236.15 mA	             203.15 mA
+> 
+> Thanks,
+> Shivnandan
+> 
+>> Best regards,
+>> Krzysztof
+>>
 
-Fixes: 10b029020487 ("hwmon: (ltc2992) Avoid division by zero")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/hwmon/ltc2992.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/hwmon/ltc2992.c b/drivers/hwmon/ltc2992.c
-index 229aed15d5ca..3feee400ecf8 100644
---- a/drivers/hwmon/ltc2992.c
-+++ b/drivers/hwmon/ltc2992.c
-@@ -855,24 +855,19 @@ static const struct regmap_config ltc2992_regmap_config = {
- static int ltc2992_parse_dt(struct ltc2992_state *st)
- {
- 	struct fwnode_handle *fwnode;
--	struct fwnode_handle *child;
- 	u32 addr;
- 	u32 val;
- 	int ret;
- 
- 	fwnode = dev_fwnode(&st->client->dev);
- 
--	fwnode_for_each_available_child_node(fwnode, child) {
-+	fwnode_for_each_available_child_node_scoped(fwnode, child) {
- 		ret = fwnode_property_read_u32(child, "reg", &addr);
--		if (ret < 0) {
--			fwnode_handle_put(child);
-+		if (ret < 0)
- 			return ret;
--		}
- 
--		if (addr > 1) {
--			fwnode_handle_put(child);
-+		if (addr > 1)
- 			return -EINVAL;
--		}
- 
- 		ret = fwnode_property_read_u32(child, "shunt-resistor-micro-ohms", &val);
- 		if (!ret) {
-
--- 
-2.40.1
+Best regards,
+Krzysztof
 
 
