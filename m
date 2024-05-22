@@ -1,235 +1,156 @@
-Return-Path: <linux-kernel+bounces-186041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93AC28CBF18
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:13:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F90C8CBF1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1C11F23327
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:13:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614A01C20D08
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A745D81ADA;
-	Wed, 22 May 2024 10:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02BB823A6;
+	Wed, 22 May 2024 10:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LMGMBDev"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CX2I4Kf4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C11E81AA7;
-	Wed, 22 May 2024 10:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172C081ABF;
+	Wed, 22 May 2024 10:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372827; cv=none; b=gpkUWP4WLxxkc/i0t7QI//LBKu9/3k0MMhsS07l8GLK05u4EowhHWxy7I5DO6h3nuCy+1GYoPyCmf2kEmJOVkOdFPRqnLIv3y8zdA04U1C4ivUA6qDhymdjwXZcZE+3T87ctvoZfIgMkmHBn8WL0H+PDpkQWQuFn+iSU+d4ED+8=
+	t=1716372859; cv=none; b=Xrd34fh2oYYHq4l+8lOuSyIpaqdBqHApLvYz458pb6cZJQPa165Gd/Xfp2RVIMaFJ02v2j4TpmAReUQ4K+ocA8ZSVdMf1V5XTTYF9tKprkHc97pYMjOPpBGMCPsjh0zUBDWiCTanTesVVIGttOtjX7boglu3iml0vjcXj9pS0p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372827; c=relaxed/simple;
-	bh=1mP4oCCZIocHPEfXo/hwjMohvwOhWaSus8BGK7ZMHLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3SFXNbHHKCwyBWGyyUJDkLy0w7tkYPsTyu63rPb+clQzFzCciegRP2aU+V1v3sKG1sxE3PPihKOluZubBmlbRpIRJXLpUY9w7IwnAz+ttPW1S0Up1O2pc7CrEhtxF0bk8pHA4FMSBNVskpashn8mxwk98bIidY8Rtb0E5FuPwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LMGMBDev; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 70FBAFD6;
-	Wed, 22 May 2024 12:13:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716372811;
-	bh=1mP4oCCZIocHPEfXo/hwjMohvwOhWaSus8BGK7ZMHLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LMGMBDev4PAjWhtqVUMjdqFbaSJpAqgilatWhqlbIIY/WUBls4LzhOAnmggVXpziL
-	 8UROPQlZp2DW/GLFYwUAexLeOH/DpKJIpDOFG9wljMtXYZ6ZCAsKZF9e6ybbodcRE2
-	 L5OS7yQRtXmrygLrnKrPZYGUxubH0r6jBtyTlaUc=
-Date: Wed, 22 May 2024 13:13:35 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Clark Wang <xiaoning.wang@nxp.com>
-Subject: Re: [PATCH 5/5] pwm: adp5585: Add Analog Devices ADP5585 support
-Message-ID: <20240522101335.GE1935@pendragon.ideasonboard.com>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-6-laurent.pinchart@ideasonboard.com>
- <dl7a6puox5lc36fpto2fgyfgmpd3uboqc4lcfdtuaxzzsboqld@alw7vyi7pqjz>
- <20240521100922.GF16345@pendragon.ideasonboard.com>
- <xobmekjwqanow765yr42tsgknc5gc7szjublq6ywgbmoxovlr5@v3sofz5bmkol>
+	s=arc-20240116; t=1716372859; c=relaxed/simple;
+	bh=/eBRmVULM/brvA86jKSO8fNKreehpyNAcfaRDoQlPFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V4v5tu/S4lDS8bZkl3ZiHfB1iftYxKiekTdpPBo9vDhFEMtnMaeCoMdW4jyx6eL1cCdCOMH+I7X+ZIl3SavgTtPDmmFhQiCX9Lc2sqmch++UX6adCOOQTgXqkp9Zr/Eh0EUS/L1ZfJoo75nFPd7aCdpoKEE4SvZVGC+zmbpGgzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CX2I4Kf4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E855C32789;
+	Wed, 22 May 2024 10:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716372858;
+	bh=/eBRmVULM/brvA86jKSO8fNKreehpyNAcfaRDoQlPFo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CX2I4Kf4iAvhmBBiSFjec2CuY/1jWgpEojlQPfd7rehC4UNfwfJ4/uFyujKb/qpwW
+	 UJBE3hKM4A9D6sQliyUlrDE3NnblH4AZ++vinpIFWDHK67OTBuVl83oIBR+kxEYmBH
+	 K/jtdUfcJX3zZLCUYPzmZsLYFppDSmGBkDRfaZ31zJ/ReZiF4snmH17PbueOxZszQT
+	 lsP9uHzAxEoaqsFPk6axHAWLWOg1Q5Pu+PlEu+JHtOKt1cRznQe5aJ5sOeWuF3cO4y
+	 7eewLF0a5uvW6uA2qn290AJIFCpbDHaPSHaoSDYb9w+eXK3ivvAsnBT4y4rcDInVuV
+	 y4boZFFywW7/Q==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52449b7aa2bso3626875e87.3;
+        Wed, 22 May 2024 03:14:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXE+09cl3QjWLHX/z78YwmSsjp/Gr+bCkTy5bjWgGqElKq0CZe/Ho1kjQ8n2cSLbV1m7q1KPvvmK+f/0pCjrVsQFnhvAOeiQwmb/Yc0FWWaVolykPuN5fiV65PZt8LLV+cAdzweL1kM1F+kLOZ4vJcJYD9jbegKnaKokVfL39JCmhLY6FaFn+PCQco=
+X-Gm-Message-State: AOJu0YzsjTG4WGwlLaKsMSrYzn2krN6AFagE5JjPH6/Y6i2Mv+4tF0fZ
+	szqenoDacNc4bs6arMEnaYzYg349iRVCSdsvXj8HcFWNX56mOUVKYsefbtQmt0aodwgxNaoRUde
+	HF8EtZam9Es9/hxkRLDHbo2ou7Ww=
+X-Google-Smtp-Source: AGHT+IESHrVpQIUMDI5MQE6vMqT+X/yuGi7iQfYDNfycFqV2CatwL/tSZgkxd/8on83csX676ZIC0dOoNzJVxkq5jzk=
+X-Received: by 2002:a05:6512:604:b0:51e:ff32:16a8 with SMTP id
+ 2adb3069b0e04-526c0e3eec2mr1096444e87.62.1716372857330; Wed, 22 May 2024
+ 03:14:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <xobmekjwqanow765yr42tsgknc5gc7szjublq6ywgbmoxovlr5@v3sofz5bmkol>
+References: <20240519211235.589325-1-ojeda@kernel.org> <20240519211235.589325-2-ojeda@kernel.org>
+ <CAK7LNATPx2wTEM=KDmGtcH8vVTB4suOhh-CUQKP54F8wtPWDiw@mail.gmail.com> <CANiq72mcdtNie=t=HHhZnjQa7gQiDZin+TYP_7Rgi4kL83H2BA@mail.gmail.com>
+In-Reply-To: <CANiq72mcdtNie=t=HHhZnjQa7gQiDZin+TYP_7Rgi4kL83H2BA@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 22 May 2024 19:13:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASYYYsiZUaA1StD9kWO0WBC0PBPtfY7u32g94WtOPFZgw@mail.gmail.com>
+Message-ID: <CAK7LNASYYYsiZUaA1StD9kWO0WBC0PBPtfY7u32g94WtOPFZgw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] kbuild: rust: apply `CONFIG_WERROR` to all Rust targets
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 03:05:53PM +0200, Uwe Kleine-König wrote:
-> Hello,
-> 
-> [dropping Alexandru Ardelean from Cc as their address bounces]
-> 
-> On Tue, May 21, 2024 at 01:09:22PM +0300, Laurent Pinchart wrote:
-> > On Tue, May 21, 2024 at 10:51:26AM +0200, Uwe Kleine-König wrote:
-> > > On Mon, May 20, 2024 at 10:59:41PM +0300, Laurent Pinchart wrote:
-> > > > +	ret = regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
-> > > > +				 ADP5585_OSC_EN, ADP5585_OSC_EN);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	return 0;
-> > > 
-> > > The last four lines are equivalent to
-> > > 
-> > > 	return ret;
-> > 
-> > I prefer the existing code but can also change it.
-> 
-> Well, I see the upside of your approach. If this was my only concern I
-> wouldn't refuse to apply the patch.
+On Tue, May 21, 2024 at 5:05=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, May 21, 2024 at 6:15=E2=80=AFAM Masahiro Yamada <masahiroy@kernel=
+org> wrote:
+> >
+> > Rust started to do something different from C.
+> >
+> > KBUILD_HOSTCFLAGS is not affected by any CONFIG option.
+> >
+> > The reason is because HOSTCC is needed for building Kconfig.
+> > If the flags for HOSTCC is changed by a CONFIG option,
+> > it would be a chicken-egg problem.
+> > Also, some host programs might be compiled even
+> > without .config at all. (e.g. scripts/unifdef)
+> >
+> > I know Rust will not become a part of the core infrastructure
+> > of the build system, but IMHO, host programs should not be
+> > affected by any CONFIG option.
+> >
+> > I do not like this patch.
+>
+> Thanks Masahiro -- yeah, I can see how it makes sense for C host
+> programs, and consistency with those may be best, even if it is not
+> used for core infrastructure in the case of Rust.
+>
+> Do you think it would be OK if we do it only for everything else, i.e.
+> no host programs?
 
-While I have my preferences, I also favour consistency, so I'm happy to
-comply with the preferred coding style for the subsystem :-) I'll
-update this in the next version.
 
-> > > > +	regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
-> > > > +			   ADP5585_OSC_EN, 0);
-> > > > +}
-> > > > +
-> > > > +static int pwm_adp5585_apply(struct pwm_chip *chip,
-> > > > +			     struct pwm_device *pwm,
-> > > > +			     const struct pwm_state *state)
-> > > > +{
-> > > > +	struct adp5585_pwm_chip *adp5585_pwm = to_adp5585_pwm_chip(chip);
-> > > > +	u32 on, off;
-> > > > +	int ret;
-> > > > +
-> > > > +	if (!state->enabled) {
-> > > > +		guard(mutex)(&adp5585_pwm->lock);
-> > > > +
-> > > > +		return regmap_update_bits(adp5585_pwm->regmap, ADP5585_PWM_CFG,
-> > > > +					  ADP5585_PWM_EN, 0);
-> > > > +	}
-> > > > +
-> > > > +	if (state->period < ADP5585_PWM_MIN_PERIOD_NS ||
-> > > > +	    state->period > ADP5585_PWM_MAX_PERIOD_NS)
-> > > > +		return -EINVAL;
-> > > 
-> > > Make this:
-> > > 
-> > > 	if (state->period < ADP5585_PWM_MIN_PERIOD_NS)
-> > > 		return -EINVAL;
-> > > 
-> > > 	period = min(ADP5585_PWM_MAX_PERIOD_NS, state->period)
-> > > 	duty_cycle = min(period, state->period);
-> > 
-> > I haven't been able to find documentation about the expected behaviour.
-> > What's the rationale for returning an error if the period is too low,
-> > but silently clamping it if it's too high ?
-> 
-> Well, it's only implicitly documented in the implementation of
-> PWM_DEBUG. The reasoning is a combination of the following thoughts:
-> 
->  - Requiring exact matches is hard to work with, so some deviation
->    between request and configured value should be allowed.
->  - Rounding in both directions has strange and surprising effects. The
->    corner cases (for all affected parties (=consumer, lowlevel driver
->    and pwm core)) are easier if you only round in one direction.
->    One ugly corner case in your suggested patch is:
->    ADP5585_PWM_MAX_PERIOD_NS corresponds to 0xffff clock ticks.
->    If the consumer requests period=64000.2 clock ticks, you configure
->    for 64000. If the consumer requests period=65535.2 clock ticks you
->    return -EINVAL.
->    Another strange corner case is: Consider a hardware that can
->    implement the following periods 499.7 ns, 500.2 ns, 500.3 ns and then
->    only values >502 ns.
->    If you configure for 501 ns, you'd get 500.3 ns. get_state() would
->    tell you it's running at 500 ns. If you then configure 500 ns you
->    won't get 500.3 ns any more.
->  - If you want to allow 66535.2 clock ticks (and return 65535), what
->    should be the maximal value that should yield 65535? Each cut-off
->    value is arbitrary, so using \infty looks reasonable (to me at
->    least).
->  - Rounding down is easier than rounding up, because that's what C's /
->    does. (Well, this is admittedly a bit arbitrary, because if you round
->    down in .apply() you have to round up in .get_state().)
+What does "everything else" mean exactly?
 
-Thank you for the detailed explanation.
 
-> > > round-closest is wrong. Testing with PWM_DEBUG should point that out.
-> > > The right algorithm is:
-> > > 
-> > > 	on = duty_cycle / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
-> > > 	off = period / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ) - on
-> > > 
-> > > 
-> > > > +	if (state->polarity == PWM_POLARITY_INVERSED)
-> > > > +		swap(on, off);
-> > > 
-> > > Uhh, no. Either you can do inverted polarity or you cannot. Don't claim
-> > > you can.
-> > 
-> > OK, but what's the rationale ? This is also an area where I couldn't
-> > find documentation.
-> 
-> I don't have a good rationale here. IMHO this inverted polarity stuff is
-> only a convenience for consumers because the start of the period isn't
-> visible from the output wave form (apart from (maybe) the moment where
-> you change the configuration) and so
-> 
-> 	.period = 5000, duty_cycle = 1000, polarity = PWM_POLARITY_NORMAL
-> 
-> isn't distinguishable from
-> 
-> 	.period = 5000, duty_cycle = 4000, polarity = PWM_POLARITY_INVERSED
-> 
-> . But it's a historic assumption of the pwm core that there is a
-> relevant difference between the two polarities and I want at least a
-> consistent behaviour among the lowlevel drivers. BTW, this convenience
-> is the reason I'm not yet clear how I want to implemement a duty_offset.
+I just noticed that $(rust_common_flags) is passed
+not only to RUSTC but also to RUSTDOC.
 
-Consistency is certainly good. Inverting the duty cycle to implement
-inverted polarity would belong in the PWM core if we wanted to implement
-it in software I suppose. I'll drop it from the driver.
 
-> > > > +	ret = devm_pwmchip_add(&pdev->dev, &adp5585_pwm->chip);
-> > > > +	if (ret) {
-> > > > +		mutex_destroy(&adp5585_pwm->lock);
-> > > > +		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
-> > > > +	}
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > +static void adp5585_pwm_remove(struct platform_device *pdev)
-> > > > +{
-> > > > +	struct adp5585_pwm_chip *adp5585_pwm = platform_get_drvdata(pdev);
-> > > > +
-> > > > +	mutex_destroy(&adp5585_pwm->lock);
-> > > 
-> > > Huh, this is a bad idea. The mutex is gone while the pwmchip is still
-> > > registered. AFAIK calling mutex_destroy() is optional, and
-> > > adp5585_pwm_remove() can just be dropped. Ditto in the error paths of
-> > > .probe().
-> > 
-> > mutex_destroy() is a no-op when !CONFIG_DEBUG_MUTEXES. When the config
-> > option is selected, it gets more useful. I would prefer moving away from
-> > the devm_* registration, and unregister the pwm_chip in .remove()
-> > manually, before destroying the mutex.
-> 
-> In that case I'd prefer a devm_mutex_init()?!
+It seems to be intentional because it explicitly says
+"requires kernel .config".
 
-Maybe that would be useful :-) Let's see if I can drop the mutex though.
 
--- 
-Regards,
+@echo  '  rustdoc   - Generate Rust documentation'
+@echo  '     (requires kernel .config)'
 
-Laurent Pinchart
+
+This is different from how other "make htmldocs" etc. work.
+
+Why is the .config required for generating documentation?
+
+
+
+
+
+
+
+
+
+> That covers most of the Rust things so far and would
+> have helped with the warning I linked above (which is why I would like
+> to change this -- one can pass the flag manually, of course, but
+> having more targets affected by `CONFIG_WERROR` means more developers
+> will have it enabled and thus notice earlier).
+>
+> (I am also thinking whether it could make sense to eventually
+> explicitly mark the C host programs that would be exempt from
+> `CONFIG_WERROR` so that we could apply it to everything else -- I
+> guess it could be easy to get wrong and/or forget when new ones are
+> added.)
+>
+> Cheers,
+> Miguel
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
