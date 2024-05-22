@@ -1,98 +1,103 @@
-Return-Path: <linux-kernel+bounces-185842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF268CBBC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:13:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186A28CBBC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A013D1F222CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:13:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C3E3B21B5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730F77BB13;
-	Wed, 22 May 2024 07:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C287CF16;
+	Wed, 22 May 2024 07:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KkFRQKz0"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxUDh4A7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BCE44374
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD47D7BAF7;
+	Wed, 22 May 2024 07:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362021; cv=none; b=pjIeGHC5UGgA+VWhqqByHRoWfMlpg3Qsyrmhm/tPA6dFkbVGVzhEnh7C/B6/8sP+z5urgqIsng+TeoFEemyxbI7s2ZnvbbduMlzwWKaSataQKhsl/urGKcqCnX4S/PLbbU365weKnrz5fpdIvVSHNSr7qh2MT/CJz2y6KIQsKYA=
+	t=1716362072; cv=none; b=OtynCIumofW9ft4nVC+2Zv8t+gBnAsSErWvhhP4Z1Wk39znpjNAhfYbMw0uJUFo8/tHvOSajaFzFde3Bp4qxJAdjquI1qK+2mHbL4TRXjSnbgYyd76jw+f9CXqKXiHWIyUCmXixjowAaLX/UjF/jWcmThd4TiB68BlCu9VjdU6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362021; c=relaxed/simple;
-	bh=ovjsPfFfFox4+imrFSPnYzf2/8RO117uDA2zkRXNfwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LqNeXja+iGwdm4vKs8LENKF3y6mHZPgnwziJdYC+90OdpqHRzaxn7Xw3QCZFLioe6YQXp98wTZYFrWHMhFC0oj4L4SGlgjtwJx2jaSIBzQI8aDEYa5fP6LYeljIARDdOkq5teF0u3dRUB4/BdNyfK8Urx0Gwp5wE2hbEBGx04DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KkFRQKz0; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716362017;
-	bh=ovjsPfFfFox4+imrFSPnYzf2/8RO117uDA2zkRXNfwA=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=KkFRQKz0MxzG22OOPEO8j67lNYRPlqtfyMac+UsYjN4SRbp3Xa5KiRCexxYiKyLAy
-	 EUAwRR4/QxCU+H6QkD/HrDOcMBU31d58wVIIIWz4ls5Z4Mg3qk2b1MSfDnFmd9ZH/K
-	 P9LhoXe0Ne5BsbYtzAw5nfHIAhwEwIjOko8f49go1pG0pvYY8T14A9QBamezgl7eNN
-	 299ya3lanlzRA3SyuskG0aQmnWVkspFZ26QN2IGCD4dnvfV/PJ+xGUDIuoevhnDM4d
-	 U0beMYKzKSE/zBLjcMX3Xj4xiVHieKNofMi9rQYYWOWKJxjwKwnAmGz9WPZshe16dh
-	 6kOBl4NFY8yQw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1B2B23782157;
-	Wed, 22 May 2024 07:13:36 +0000 (UTC)
-Message-ID: <36052284-6b17-4b3f-ab99-a01beed4c601@collabora.com>
-Date: Wed, 22 May 2024 09:13:35 +0200
+	s=arc-20240116; t=1716362072; c=relaxed/simple;
+	bh=o7FelwEYe06bUj5gigSKOWEN1hyHxbXUGTMgm7PhL9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h1O/f4ypO85NuEnv9Q6up9NtvMkJ1HkNgqo+WbDIBHyo7FoU1u6QnN9XGupjfsdi3UXw4537iE9SEn6LRxUfMIe4i1F5TDQlcNhHLU7jeHRJKMhsctgtyRYMfEUEVMrbWYoS7HQdA89hm3YT9OMPoiRK/jlDOAju4G8/WJyEf9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxUDh4A7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8693DC2BD11;
+	Wed, 22 May 2024 07:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716362071;
+	bh=o7FelwEYe06bUj5gigSKOWEN1hyHxbXUGTMgm7PhL9Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KxUDh4A73NHTC6Uo8h5Ypzmu20FS3YX6acckvMWdiTXlPRBjHCRk0EBbJl9S64aw7
+	 fvi2zjqqoHjbD8jQyI1RMGX+yQx0yPJAEnWSLlpK9yTT0aatU/SRonCaKuyKmVGbNH
+	 3HqrddQuCxvyfWafJoMknIMWKMebVIPmr5pz3n4sa9urXda/xmbnk9J8jWy3L7ypdD
+	 V1UvaZyoATvDw+yBeJObfOx70Af9oi6mTC5NVQw+byDXa4FRe2gG5/Hu+oF/RQiMBr
+	 aYar/GPGVKNDfbmSkaX4NWa83bKOiAMWu4xVSJI4C1GotroqgvH+ILaWPJpAEHlyM1
+	 es738P4O+j5QQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Steve French <stfrench@microsoft.com>,
+	David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Enzo Matsumiya <ematsumiya@suse.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	v9fs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
+Date: Wed, 22 May 2024 09:14:20 +0200
+Message-ID: <20240522-weltmeere-rammt-70f03e24b8b4@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <316306.1716306586@warthog.procyon.org.uk>
+References: <316306.1716306586@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13] drm/bridge: it6505: fix hibernate to resume no
- display issue
-To: kuro <kuro.chung@ite.com.tw>, Pin-yen Lin <treapking@chromium.org>,
- Kenneth Haung <kenneth.hung@ite.com.tw>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Hermes Wu <hermes.wu@ite.com.tw>, Allen Chen <allen.chen@ite.com.tw>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240522065528.1053439-1-kuro.chung@ite.com.tw>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240522065528.1053439-1-kuro.chung@ite.com.tw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1256; i=brauner@kernel.org; h=from:subject:message-id; bh=o7FelwEYe06bUj5gigSKOWEN1hyHxbXUGTMgm7PhL9Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT5zvZ/VJrSsYxv51y3TfmcQte5fa4UZafWckj9j9mw2 PJaYfO/jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlUrWD4n5pi88L397Z6Xbv2 O1r3t/Z9dXA+H9T4a6/78o9nxIPZgxkZWj89LFFMex2/tuIsx+tL+ZE/tl/mFI60cZxvEvT/lTY 7AwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Il 22/05/24 08:55, kuro ha scritto:
-> From: Kuro Chung <kuro.chung@ite.com.tw>
+On Tue, 21 May 2024 16:49:46 +0100, David Howells wrote:
+> Fix netfs_perform_write() to set BDP_ASYNC if IOCB_NOWAIT is set rather
+> than if IOCB_SYNC is not set.  It reflects asynchronicity in the sense of
+> not waiting rather than synchronicity in the sense of not returning until
+> the op is complete.
 > 
-> When the system power resumes, the TTL input of IT6505 may experience
-> some noise before the video signal stabilizes, necessitating a video
-> reset. This patch is implemented to prevent a loop of video error
-> interrupts, which can occur when a video reset in the video FIFO error
-> interrupt triggers another such interrupt. The patch processes the SCDT
-> and FIFO error interrupts simultaneously and ignores any video FIFO
-> error interrupts caused by a video reset.
+> Without this, generic/590 fails on cifs in strict caching mode with a
+> complaint that one of the writes fails with EAGAIN.  The test can be
+> distilled down to:
 > 
-> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> Signed-off-by: Kuro Chung <kuro.chung@ite.com.tw>
-> Signed-off-by: Hermes Wu <hermes.wu@ite.com.tw>
+> [...]
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] netfs: Fix setting of BDP_ASYNC from iocb flags
+      https://git.kernel.org/vfs/vfs/c/33c9d7477ef1
 
