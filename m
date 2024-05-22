@@ -1,205 +1,111 @@
-Return-Path: <linux-kernel+bounces-186538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329E08CC55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:08:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8798CC554
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A416CB22AA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA6A1C20F34
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4A8145B22;
-	Wed, 22 May 2024 17:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A0D1422AE;
+	Wed, 22 May 2024 17:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Al5qSITR"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRk8tYwg"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440331F17B;
-	Wed, 22 May 2024 17:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DCD1F17B;
+	Wed, 22 May 2024 17:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716397671; cv=none; b=OL8GoAoH8KVvJjiZ9gL3LjwEfnfw4t0HK4a+PwM+xDernQq/q/WOS2aodf9OF7acTqRhhOIVP5vnQqbIisb9Kq3AE5pcH2u4F2YQvJn2Pcl1c73/IjRU/NPJy3BczqoWqQ/ExKx4OtngHiZpQrQGiMu9zy0ki/05uiiiK7sMiH0=
+	t=1716397654; cv=none; b=UpaYD/YkWlet3pMh+oOEMPCD7mVBrDJlDb4Sav3RtJTX1tFYDCxbrqkI/pNK6JTIhQ/cU4xhWy+l9XoweEMM6KhIwcCwS1W0zCSJfjvrqNlsQHlHkrBzwmyr/Ogj1/xgL4PkbrZ3kPt1M5ZtDeyHPTfRrTL4GFPbHuk32iXAI4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716397671; c=relaxed/simple;
-	bh=Q5eimIUAh2hCMIAuK6asuJ6RF1m3Dp6LF57HRl79KzI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dda0wf6AnjUEkaMlkNOFd96HjmVT4q3Z1Al5TBAL5IPTp2Qmw9SF7jg+E4b9xspXOylrtT16RO5D9yMDujCpOxBv/EhupfXz2vQIZ1RP/UP7lCtSsxhzCAib0E3Rblr2MJHV9+efaKXZy0SpP7GDRfAJVZDoEidumsusHcEEzIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Al5qSITR; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716397668;
-	bh=Q5eimIUAh2hCMIAuK6asuJ6RF1m3Dp6LF57HRl79KzI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Al5qSITRus5LO4elT1QOmpA0adoZ7FmZokOzdLcJ2nxwJeh+wY5QbDoYL922by/zM
-	 NLCeEwaMvqozCpO5yEn1UHUoJTtm8yPovJuAcSaClpTd3HN3d7oqO969Lgqp8kVphG
-	 w7CrOWAXhJattII5moPUfnahfF0xKiM1RVlh/vm/87Ke8Z5H2/8sRK4hU+8BConVca
-	 4+bMiKYyInLtx43Hp7HyigTsKAw4snt7Gho8T6b/4ZVV/xev4iYeHp1N9GbiwXXslz
-	 y0D1H2sWzQ0hgtPdTLQkJjex7qaTPxMk7Yy98T7UscCS4U+LuU25lcQ3TtfwALpZLF
-	 R5jSbBmNcKefw==
-Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 37668378216B;
-	Wed, 22 May 2024 17:07:47 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel@collabora.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] selftests/thermel/intel: conform the test to TAP output
-Date: Wed, 22 May 2024 10:06:49 -0700
-Message-Id: <20240522170655.2879712-2-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240522170655.2879712-1-usama.anjum@collabora.com>
-References: <20240522170655.2879712-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1716397654; c=relaxed/simple;
+	bh=jJg6M8vnkkRviy8VdHkN3OP9YxMIJ2Pi8/sx2dPnwlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=crF6PeQVFXxXuEde0KCHERGyNtIz0+u9MgsfyL1bn1BC9PMaflMZVCVRv79I/7pvkKijqNzHbvcuzFxbSq8Vsm7QoOtEZ8Rdg3gd1GXjrkxIEYGGdOonCywBwEA3melhsxkkkKCVO9wfbXIMGPHHwjHM9s+1fdM8zWPZTW/dRy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gRk8tYwg; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5238fe0cfc9so1199019e87.0;
+        Wed, 22 May 2024 10:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716397650; x=1717002450; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S9aUWuoj4YVy4L3kVpwH36ZaspoRMfIbWdd8Qbs4xFE=;
+        b=gRk8tYwgwErSUB3yjT1wPes1LIIBTkJVZkKCWakaVB4an1APPe9QzGdnviX1cYi3KA
+         fUJGOPIBORWKi8eM+ZblP3GqLZYpVcFg9GsJQiy/js7Y9jTojWjuUGjrkc3F73K5oKP/
+         e5e3R2/YWwarvtthjki9MO4VaK5e0iAQJdUCIdAZ8Irep6xhSnffaYz2qeoGbe0Znm0E
+         dK5rpCdeiewkeZKGZQS1VTrdTG75hyCskpAF6aqxtgCOzxgsx2aehGWcA+gVSnoQIh5Q
+         jH+NPtGrQesLPKOL26WqzRGHTYDTsZLc3qT41L/qvZzCmcXqPwXLHpRMQB+6rIO5xRX6
+         G1AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716397650; x=1717002450;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S9aUWuoj4YVy4L3kVpwH36ZaspoRMfIbWdd8Qbs4xFE=;
+        b=GPoOqfqsVKCPR/V3WdYkJnvcC/rAYaf+E6ZmZTUV+c7y5HWUKXLC6iBctKV/rToUCZ
+         VBpka6B8NcrUZhS/E+78E5FRdJz0zyGqMoG75mtf3RrT/5GtNEIg4KpbNnVEjx+7mOU9
+         mvBjxGNWrPBZ9ygmvT5JPIeBoQw1sc/YBijrw0/2DkUkp0OpCjqS3dw5eviN64+7YGBw
+         vpDnGj+WlU4/hKXMcm9ja1wJS1dqLL/J+YcCu31l6HzR6MfnVm+wAj+QDAWFeVCKCJ6m
+         sQMBNWXHgLtjxOmCnLbzpr4X8ivUw1qF/xs+3SMIM/h2LzX/HMOenR12luM04e/MfRUP
+         hTRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjmCx2qkx8FtsNNyVB+0AzffE3HejkHVSAihHBAhTW5Vacki8cJW9wHeAyTgR0oFtuNntLvfroi3bIkzMwbr0qIJfgyw2gVeBhIhkRvt8LP+87GPaUGOzbn3E6FbkGUjiWaEOFNcauHlqW3xOddl04t6tN1vowNhdxvxG/2UCuhuja0TEc
+X-Gm-Message-State: AOJu0Yx0wBzsjTbAZNeCesTvvpqBohH0r1/vLfXIwt7mPboDrECnjWEB
+	T4FAQnYjJ5wckqSsMUg19rGgOrdAzbtemRwm9sbmaNsP5FRv1Zhlnwrndd0VcsDZltieBtQmByJ
+	0wnorwgcYWk/xM1TMNILdrsyV5IbApu8eis/4wA==
+X-Google-Smtp-Source: AGHT+IHJtY2P3oJxRC0ryXLWUKx5drw3pPINF21ew+vjLBwgO/mAJe8fhU6lyJ3KfHeHcoaraTybHLIiAC8QR8aVmSY=
+X-Received: by 2002:a05:6512:3991:b0:521:7b99:8d20 with SMTP id
+ 2adb3069b0e04-5269cdd056dmr935303e87.23.1716397650274; Wed, 22 May 2024
+ 10:07:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240522075245.388-1-bavishimithil@gmail.com> <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
+ <4f722e53-011f-4176-b6af-080522165007@kernel.org> <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
+ <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org> <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
+ <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org> <CAGzNGRm5i8zvnXiPzMg5=+tr9oyBcRA8LFvnmgGzE=MzSNTXug@mail.gmail.com>
+In-Reply-To: <CAGzNGRm5i8zvnXiPzMg5=+tr9oyBcRA8LFvnmgGzE=MzSNTXug@mail.gmail.com>
+From: Mithil <bavishimithil@gmail.com>
+Date: Wed, 22 May 2024 22:37:18 +0530
+Message-ID: <CAGzNGRmiNvNvzkxeyhoC30_QY=MK8pgxdVf_E9Toa7Z66dmwmQ@mail.gmail.com>
+Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lopez Cruz <misael.lopez@ti.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Conform the layout, informational and status messages to TAP. No
-functional change is intended other than the layout of output messages.
+Something along the lines of,
+mcpdm: mcpdm@0 {
+    compatible = "ti,omap4-mcpdm";
+    reg = <0x0 0x7f>, /* MPU private access */
+            <0x49032000 0x7f>; /* L3 Interconnect */
+    reg-names = "mpu", "dma";
+    interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+    dmas = <&sdma 65>,
+                <&sdma 66>;
+     dma-names = "up_link", "dn_link";
+};
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- .../intel/power_floor/power_floor_test.c      | 68 ++++++++-----------
- 1 file changed, 28 insertions(+), 40 deletions(-)
+Might also need to add clocks?
+    clocks = <&twl6040>;
+    clock-names = "pdmclk";
+But those are usually defined in board specific files.
 
-diff --git a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-index 0326b39a11b91..1626c6d92e621 100644
---- a/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-+++ b/tools/testing/selftests/thermal/intel/power_floor/power_floor_test.c
-@@ -9,6 +9,7 @@
- #include <fcntl.h>
- #include <poll.h>
- #include <signal.h>
-+#include "../../../kselftest.h"
- 
- #define POWER_FLOOR_ENABLE_ATTRIBUTE "/sys/bus/pci/devices/0000:00:04.0/power_limits/power_floor_enable"
- #define POWER_FLOOR_STATUS_ATTRIBUTE  "/sys/bus/pci/devices/0000:00:04.0/power_limits/power_floor_status"
-@@ -20,17 +21,13 @@ void power_floor_exit(int signum)
- 	/* Disable feature via sysfs knob */
- 
- 	fd = open(POWER_FLOOR_ENABLE_ATTRIBUTE, O_RDWR);
--	if (fd < 0) {
--		perror("Unable to open power floor enable file\n");
--		exit(1);
--	}
-+	if (fd < 0)
-+		ksft_exit_fail_perror("Unable to open power floor enable file");
- 
--	if (write(fd, "0\n", 2) < 0) {
--		perror("Can' disable power floor notifications\n");
--		exit(1);
--	}
-+	if (write(fd, "0\n", 2) < 0)
-+		ksft_exit_fail_perror("Can' disable power floor notifications");
- 
--	printf("Disabled power floor notifications\n");
-+	ksft_print_msg("Disabled power floor notifications\n");
- 
- 	close(fd);
- }
-@@ -41,6 +38,9 @@ int main(int argc, char **argv)
- 	char status_str[3];
- 	int fd, ret;
- 
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
- 	if (signal(SIGINT, power_floor_exit) == SIG_IGN)
- 		signal(SIGINT, SIG_IGN);
- 	if (signal(SIGHUP, power_floor_exit) == SIG_IGN)
-@@ -50,57 +50,45 @@ int main(int argc, char **argv)
- 
- 	/* Enable feature via sysfs knob */
- 	fd = open(POWER_FLOOR_ENABLE_ATTRIBUTE, O_RDWR);
--	if (fd < 0) {
--		perror("Unable to open power floor enable file\n");
--		exit(1);
--	}
-+	if (fd < 0)
-+		ksft_exit_fail_perror("Unable to open power floor enable file");
- 
--	if (write(fd, "1\n", 2) < 0) {
--		perror("Can' enable power floor notifications\n");
--		exit(1);
--	}
-+	if (write(fd, "1\n", 2) < 0)
-+		ksft_exit_fail_perror("Can' enable power floor notifications");
- 
- 	close(fd);
- 
--	printf("Enabled power floor notifications\n");
-+	ksft_print_msg("Enabled power floor notifications\n");
- 
- 	while (1) {
- 		fd = open(POWER_FLOOR_STATUS_ATTRIBUTE, O_RDONLY);
--		if (fd < 0) {
--			perror("Unable to power floor status file\n");
--			exit(1);
--		}
-+		if (fd < 0)
-+			ksft_exit_fail_perror("Unable to power floor status file");
- 
--		if ((lseek(fd, 0L, SEEK_SET)) < 0) {
--			fprintf(stderr, "Failed to set pointer to beginning\n");
--			exit(1);
--		}
-+		if ((lseek(fd, 0L, SEEK_SET)) < 0)
-+			ksft_exit_fail_perror("Failed to set pointer to beginning\n");
- 
- 		if (read(fd, status_str, sizeof(status_str)) < 0) {
--			fprintf(stderr, "Failed to read from:%s\n",
--			POWER_FLOOR_STATUS_ATTRIBUTE);
--			exit(1);
--		}
-+			ksft_exit_fail_perror(stderr, "Failed to read from: power_floor_status");
- 
- 		ufd.fd = fd;
- 		ufd.events = POLLPRI;
- 
- 		ret = poll(&ufd, 1, -1);
- 		if (ret < 0) {
--			perror("poll error");
--			exit(1);
-+			ksft_exit_fail_msg("Poll error\n");
- 		} else if (ret == 0) {
--			printf("Poll Timeout\n");
-+			ksft_print_msg("Poll Timeout\n");
- 		} else {
--			if ((lseek(fd, 0L, SEEK_SET)) < 0) {
--				fprintf(stderr, "Failed to set pointer to beginning\n");
--				exit(1);
--			}
-+			if ((lseek(fd, 0L, SEEK_SET)) < 0)
-+				ksft_exit_fail_msg("Failed to set pointer to beginning\n");
- 
--			if (read(fd, status_str, sizeof(status_str)) < 0)
--				exit(0);
-+			if (read(fd, status_str, sizeof(status_str)) < 0) {
-+				ksft_test_result_pass("Successfully read\n");
-+				ksft_finished();
-+			}
- 
--			printf("power floor status: %s\n", status_str);
-+			ksft_print_msg("power floor status: %s\n", status_str);
- 		}
- 
- 		close(fd);
+And add reg-names, dmas, dma-names information to the docs?
+
 -- 
-2.39.2
-
+Best Regards,
+Mithil
 
