@@ -1,245 +1,160 @@
-Return-Path: <linux-kernel+bounces-186322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62108CC2BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:02:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69C48CC2BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B53D2822B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AC82B223B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D97824A3;
-	Wed, 22 May 2024 14:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02EA140E5C;
+	Wed, 22 May 2024 14:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XVeUk8Eq"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RzWT3O3N"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4256AB9
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4467B6AB9;
+	Wed, 22 May 2024 14:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716386519; cv=none; b=dHKyId0z/KG5oyv7UJySklkBHThcYfc2+ybrUQI7X4+FhxrbrQx1NS+gauyTA2AB36OAk2Ugk8Vnn2anTSwR0JWf7ctA8ULVu9+zd7CiTPAm9P628XSXw4F5rQ8RT65RI7nkx90WulK7+vs0s94CDaOHB/KUDVqZE057BLMKTe8=
+	t=1716386580; cv=none; b=CHLhs1Z1sx4JQUnY9zAk5/SXwJzUxCT4RRxexy8DCuV8W3ex12rNi3RbT6KlgWcZlIrIyuo0eXxUUdJRQT+ZvgQ74aBByGIOt5FkqedpptGU14xBLF1YOFWxkxzknPYxfJInP47Y8Z5KxyLdzmyTvMNWbVVVvlD/99CIGYvIlkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716386519; c=relaxed/simple;
-	bh=myYHA+ZviKp/pX06xhXrEgiAUMeEmoKowIRkjh6lviY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UGsPXiGfhBtaqNJbgNYJ9Ie76RSHDbJpp3FIhkRQMMqPCua1iAFakR6c/XUeQ4PMEjJ2o3TYgoG2a79kNquZ8JoaOQasxpLHPSs3gZUVs4fuMANF9RT0Wju6FtVrp0OBcmCgg4dn9G1QzouPkKqJ7vVE/TwHroGL7u4+l2KtrLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XVeUk8Eq; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5238b7d0494so6685474e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716386516; x=1716991316; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YpcH2M2rE7fdWSwrlKhRsJ3VqP+ueP08PmnanHg+yOo=;
-        b=XVeUk8Eqhxg3B8sV5qGvp25BhNKN7Df5h9yzHWQIahb2SXJuBDydsfFczYzG/O54eX
-         58aj9/yNWeByAa5YyEuIulM649JRlZr42mK+2ieu9RJv3qA3pN86CgbJpEFinA65ykcT
-         gze1Uzn8VGJRMszKY3hstnQlMVM4v7EdslKyM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716386516; x=1716991316;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YpcH2M2rE7fdWSwrlKhRsJ3VqP+ueP08PmnanHg+yOo=;
-        b=mfiHxXDb33z4TqH6Iq3YccJolJHXswCP37OsGMEHMa308J9SDsVdhB+H0DuK5RrID6
-         Fb0svBOHkDKV0Q/T6rzgLCqgC++9wxOIBvgp5N72dw7QHkbvPVGM4am1h/Y54pK5B5Sg
-         XjptDzZfORLOu67k/ugXgW3n9rjompT3G8+NVIlO616UX0ad5GS3O+uRoooCfviR768l
-         +FPsQIK0Z1NHHi4BleCcBZxtSaaIlsGzzyDX2r0yfC+9lFlfjWNQJdBlIkYPXrfBFyWM
-         n/uMAScNdJ8ChKA7yCDzve5Bhkisiy1DpBwOOVb+Lm9eedRKD79O4zEIyXDopaeAbOLX
-         o+oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBW7JseIuwhu2/ZKl0NyExARqEzyDtcBNNfnxtBuSclgU526DsG5UhlY//Ayrs3O/yVeKpyXDb9YuOnnxXEVixsSHnHevUDsWyk2uQ
-X-Gm-Message-State: AOJu0YwtP4VZ1BWVrA0ujJeWjOhp5SgXctqCic2TAIerH+XlRD3LldUC
-	KH4K+SJm280qOgKW0iykM4kjTKQGh7PmKsQFdEuwgI2Af3krSXBqZLUJzh0a781OFB5ra5zpP9N
-	fhHt38VsJLgMswsogIGVkMJ2ob51/6pq8MyY=
-X-Google-Smtp-Source: AGHT+IE6TZAaLzabvqwAwFl1mEfPwAsDXOc379Dn3LSqMCtZDjWDWgjg8bKqPdMMj1IWp9/+7WQsG4Na0ieXFGEbGjs=
-X-Received: by 2002:ac2:484c:0:b0:51b:1e76:4ea9 with SMTP id
- 2adb3069b0e04-526beca954bmr1726704e87.4.1716386515921; Wed, 22 May 2024
- 07:01:55 -0700 (PDT)
+	s=arc-20240116; t=1716386580; c=relaxed/simple;
+	bh=7kTG5ts3OQOCh1/2XvqX0aVjJCkbUUXFDVmo08IThCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RN9i224W7/nO0zPkOONx4qcvOQfzCY0Pk+9rg7BnU8hXlz3Ud+6oPEYf4Rd8Rlv4MMzZqL2TtKpCDJCSx7IFlCa7ARMFsgRXZZrUqscDu5sZYtk+bwhqfEA/u6QA1/FUeo733IHTlT3RI5DZcrFPIvsCtBHUqE2wFC9qg8PqORM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RzWT3O3N; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716386575;
+	bh=7kTG5ts3OQOCh1/2XvqX0aVjJCkbUUXFDVmo08IThCA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RzWT3O3NZ1dwV9M2JHbVSngE4q1VPMGXCXBpUQq11qZ2XeiDQmS47vXNKh45ByruT
+	 Cm7JT6sfDFXS8Fa1W3bTnt3tZ9zNI/4VVsOPEWAheGA84yHB0+QR9/vD8ZNCY2muQ/
+	 v20AlPXWqnAAZMWBoRd+unQh0zXE48VBkyjei/Zf3ZYkSL3XFlGcPWwHE8Ok//AO6Q
+	 EPl3BQhtDjJXhDQI8sWI8BAIxBLQHJBirIfmH+vA9Mkyzu/ded0oeTF8nT7FYY4Trp
+	 PMDbOHmF6JipmDBsBTOZtMmW4ktp9wbt35v3TgXmqkNsRi9LocM4J3Mc0RmJzFxtxt
+	 SKCoSTO0+zKlA==
+Received: from [100.90.194.27] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ehristev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4991137821B3;
+	Wed, 22 May 2024 14:02:54 +0000 (UTC)
+Message-ID: <9afebadd-765f-42f3-a80b-366dd749bf48@collabora.com>
+Date: Wed, 22 May 2024 17:02:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240516174357.26755-1-jim.cromie@gmail.com> <20240516174357.26755-20-jim.cromie@gmail.com>
- <CALwA+NYNPfpyM8ZH3L-fbrqSpzKw61gZU+u_uxP6tjnFe7UJ-w@mail.gmail.com> <CAJfuBxyMBh-1BQMqgXj1GBZ=pwbFK3PuBhRDzM7DNd4ML2hSzw@mail.gmail.com>
-In-Reply-To: <CAJfuBxyMBh-1BQMqgXj1GBZ=pwbFK3PuBhRDzM7DNd4ML2hSzw@mail.gmail.com>
-From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
-Date: Wed, 22 May 2024 16:01:44 +0200
-Message-ID: <CALwA+NaFsTx-ay=29e=6OZWCiawYPYOfFmPXkDv6xDB_odfC+A@mail.gmail.com>
-Subject: Re: [PATCH v8-RESEND 19/33] dyndbg-doc: add classmap info to howto
-To: jim.cromie@gmail.com
-Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
-	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
-	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
-	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
+ comparison helper
+To: Gabriel Krisman Bertazi <krisman@suse.de>,
+ Eric Biggers <ebiggers@kernel.org>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, Gabriel Krisman Bertazi <krisman@collabora.com>
+References: <20240405121332.689228-1-eugen.hristev@collabora.com>
+ <20240405121332.689228-4-eugen.hristev@collabora.com>
+ <20240510013330.GI1110919@google.com> <875xviyb3f.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: Eugen Hristev <eugen.hristev@collabora.com>
+In-Reply-To: <875xviyb3f.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 4:58=E2=80=AFPM <jim.cromie@gmail.com> wrote:
->
-> On Tue, May 21, 2024 at 5:57=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chro=
-mium.org> wrote:
-> >
-> > On Thu, May 16, 2024 at 7:45=E2=80=AFPM Jim Cromie <jim.cromie@gmail.co=
-m> wrote:
-> > >
-> > > Describe the 3 API macros providing dynamic_debug's classmaps
-> > >
-> > > DYNDBG_CLASSMAP_DEFINE - create, exports a module's classmap
-> >
-> > create, exports a module's classmap - > creates and exports a module's =
-classmap
->
-> I was going for an imperative "thou shalt" voice,
-> rather than a descriptive/passive voice
-> since its an API, and thou shalt use it "this way"
-> ( s/creates/create/ if so)
->
+On 5/13/24 00:27, Gabriel Krisman Bertazi wrote:
+> Eric Biggers <ebiggers@kernel.org> writes:
+> 
+>> On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
+> 
+>>> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
+>>> +			return -EINVAL;
+>>> +
+>>> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
+>>> +		if (!decrypted_name.name)
+>>> +			return -ENOMEM;
+>>> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
+>>> +						&decrypted_name);
+>>> +		if (res < 0)
+>>> +			goto out;
+>>
+>> If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
+>> then this function returns 0 (indicating no match) instead of the error code
+>> (indicating an error).  Is that the correct behavior?  I would think that
+>> strict_encoding should only have an effect on the actual name
+>> comparison.
+> 
+> No. we *want* this return code to be propagated back to f2fs.  In ext4 it
+> wouldn't matter since the error is not visible outside of ext4_match,
+> but f2fs does the right thing and stops the lookup.
 
-Makes sense, thanks for the explanation
+In the previous version which I sent, you told me that the error should be
+propagated only in strict_mode, and if !strict_mode, it should just return no match.
+Originally I did not understand that this should be done only for utf8_strncasecmp
+errors, and not for all the errors. I will change it here to fix that.
 
-> Do we / linux-doc  have a preference in this regard ?
->
->
->
->
-> >
-> > > DYNDBG_CLASSMAP_USE    - refer to exported map
-> >
-> > DYNDBG_CLASSMAP_USE - refers to exported map
-> >
-> > > DYNDBG_CLASSMAP_PARAM  - bind control param to the classmap
-> >
-> > bind -> binds
-> >
-> > > DYNDBG_CLASSMAP_PARAM_REF + use module's storage - __drm_debug
-> > >
-> >
-> > + use module's storage - __drm_debug -> - uses module's storage (for
-> > example __drm_debug)
-> >
-> > > cc: linux-doc@vger.kernel.org
-> > > Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
-> > > ---
-> > > v5 adjustments per Randy Dunlap
-> > > v7 checkpatch fixes
-> > > v8 more
-> > > ---
-> > >  .../admin-guide/dynamic-debug-howto.rst       | 63 +++++++++++++++++=
-+-
-> > >  1 file changed, 62 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Docu=
-mentation/admin-guide/dynamic-debug-howto.rst
-> > > index 6a8ce5a34382..742eb4230c6e 100644
-> > > --- a/Documentation/admin-guide/dynamic-debug-howto.rst
-> > > +++ b/Documentation/admin-guide/dynamic-debug-howto.rst
-> > > @@ -225,7 +225,6 @@ the ``p`` flag has meaning, other flags are ignor=
-ed.
-> > >  Note the regexp ``^[-+=3D][fslmpt_]+$`` matches a flags specificatio=
-n.
-> > >  To clear all flags at once, use ``=3D_`` or ``-fslmpt``.
-> > >
-> > > -
-> > >  Debug messages during Boot Process
-> > >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >
-> > > @@ -375,3 +374,65 @@ just a shortcut for ``print_hex_dump(KERN_DEBUG)=
-``.
-> > >  For ``print_hex_dump_debug()``/``print_hex_dump_bytes()``, format st=
-ring is
-> > >  its ``prefix_str`` argument, if it is constant string; or ``hexdump`=
-`
-> > >  in case ``prefix_str`` is built dynamically.
-> > > +
-> > > +Dynamic Debug classmaps
-> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> > > +
-> > > +Dyndbg allows selection/grouping of *prdbg* callsites using structur=
-al
-> > > +info: module, file, function, line.  Classmaps allow authors to add
-> > > +their own domain-oriented groupings using class-names.  Classmaps ar=
-e
-> > > +exported, so they referencable from other modules.
-> >
-> > Typo referencable -> are referenceable
-> >
-> >
-> >
-> > > +
-> > > +  # enable classes individually
-> > > +  :#> ddcmd class DRM_UT_CORE +p
-> > > +  :#> ddcmd class DRM_UT_KMS +p
-> > > +  # or more selectively
-> > > +  :#> ddcmd class DRM_UT_CORE module drm +p
-> > > +
-> > > +The "class FOO" syntax protects class'd prdbgs from generic overwrit=
-e::
-> > > +
-> > > +  # IOW this doesn't wipe any DRM.debug settings
-> > > +  :#> ddcmd -p
-> > > +
-> > > +To support the DRM.debug parameter, DYNDBG_CLASSMAP_PARAM* updates a=
-ll
-> > > +classes in a classmap, mapping param-bits 0..N onto the classes:
-> > > +DRM_UT_<*> for the DRM use-case.
-> > > +
-> > > +Dynamic Debug Classmap API
-> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> > > +
-> > > +DYNDBG_CLASSMAP_DEFINE - modules use this to create classmaps, namin=
-g
-> > > +each of the classes (stringified enum-symbols: "DRM_UT_<*>"), and
-> > > +type, and mapping the class-names to consecutive _class_ids.
-> > > +
-> > > +By doing so, modules tell dyndbg that they have prdbgs with those
-> > > +class_ids, and they authorize dyndbg to accept "class FOO" for the
-> > > +module defining the classmap, and its contained classnames.
-> > > +
-> > > +DYNDBG_CLASSMAP_USE - drm drivers invoke this to ref the CLASSMAP th=
-at
-> > > +drm DEFINEs.  This shares the classmap definition, and authorizes
-> > > +dyndbg to apply changes to the user module's class'd pr_debugs.  It
-> > > +also tells dyndbg how to initialize the user's prdbgs at modprobe,
-> > > +based upon the current setting of the parent's controlling param.
-> > > +
-> > > +There are 2 types of classmaps:
-> > > +
-> > > + DD_CLASS_TYPE_DISJOINT_BITS: classes are independent, like DRM.debu=
-g
-> > > + DD_CLASS_TYPE_LEVEL_NUM: classes are relative, ordered (V3 > V2)
-> > > +
-> > > +DYNDBG_CLASSMAP_PARAM - modelled after module_param_cb, it refers to=
- a
-> > > +DEFINEd classmap, and associates it to the param's data-store.  This
-> > > +state is then applied to DEFINEr and USEr modules when they're modpr=
-obed.
-> > > +
-> > > +This interface also enforces the DD_CLASS_TYPE_LEVEL_NUM relation
-> > > +amongst the contained classnames; all classes are independent in the
-> > > +control parser itself.
-> > > +
-> > > +Modules or module-groups (drm & drivers) can define multiple
-> > > +classmaps, as long as they share the limited 0..62 per-module-group
-> > > +_class_id range, without overlap.
-> > > +
-> > > +``#define DEBUG`` will enable all pr_debugs in scope, including any
-> > > +class'd ones.  This won't be reflected in the PARAM readback value,
-> > > +but the class'd pr_debug callsites can be forced off by toggling the
-> > > +classmap-kparam all-on then all-off.
-> > > --
-> > > 2.45.0
-> > >
+> 
+> Thinking about it, there is a second problem with this series.
+> Currently, if we are on strict_mode, f2fs_match_ci_name does not
+> propagate unicode errors back to f2fs. So, once a utf8 invalid sequence
+> is found during lookup, it will be considered not-a-match but the lookup
+> will continue.  This allows some lookups to succeed even in a corrupted
+> directory.  With this patch, we will abort the lookup on the first
+> error, breaking existing semantics.  Note that these are different from
+> memory allocation failure and fscrypt_fname_disk_to_usr. For those, it
+> makes sense to abort.
+
+So , in the case of f2fs , we must not propagate utf8 errors ? It should just
+return no match even in strict mode ?
+If this helper is common for both f2fs and ext4, we have to do the same for ext4 ?
+Or we are no longer able to commonize the code altogether ?
+> 
+> Also, once patch 6 and 7 are added, if fscrypt fails with -EINVAL for
+> any reason unrelated to unicode (like in the WARN_ON above), we will
+> incorrectly print the error message saying there is a bad UTF8 string.
+> 
+> My suggestion would be to keep the current behavior.  Make
+> generic_ci_match only propagate non-unicode related errors back to the
+> filesystem.  This means that we need to move the error messages in patch
+> 6 and 7 into this function, so they only trigger when utf8_strncasecmp*
+> itself fails.
+> 
+
+So basically unicode errors stop here, and print the error message here in that case.
+Am I understanding it correctly ?
+>>> +	/*
+>>> +	 * Attempt a case-sensitive match first. It is cheaper and
+>>> +	 * should cover most lookups, including all the sane
+>>> +	 * applications that expect a case-sensitive filesystem.
+>>> +	 */
+>>> +	if (folded_name->name) {
+>>> +		if (dirent.len == folded_name->len &&
+>>> +		    !memcmp(folded_name->name, dirent.name, dirent.len))
+>>> +			goto out;
+>>> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
+>>
+>> Shouldn't the memcmp be done with the original user-specified name, not the
+>> casefolded name?  I would think that the user-specified name is the one that's
+>> more likely to match the on-disk name, because of case preservation.  In most
+>> cases users will specify the same case on both file creation and later access.
+> 
+> Yes.
+> 
+so the utf8_strncasecmp_folded call here must use name->name instead of folded_name ?
+
+Thanks for the review
+Eugen
+
 
