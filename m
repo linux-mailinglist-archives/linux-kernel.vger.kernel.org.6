@@ -1,366 +1,415 @@
-Return-Path: <linux-kernel+bounces-186118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3EE8CC002
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:14:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9918CC005
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B63F2283235
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:14:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AC51C21CEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9704684A21;
-	Wed, 22 May 2024 11:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NP+QnvT4"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A268289C;
+	Wed, 22 May 2024 11:11:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29538624E;
-	Wed, 22 May 2024 11:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1983582891
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716376246; cv=none; b=J6fE3T0BuZdbB/sJuohW/fKfX117Eltr9L0KVcu2FQaFbgLYIHbZIDKjBfyEWgBlNJ6zM2kSXps9aKcXeRC4lnVbCfC3Aqp0ffR2fgG9ULyXWg0BHkNONrGr8UB1qm1crH0/Z0HjQBqNphCPEGj0x7M/DJoVII4osHTFLcZI3Wk=
+	t=1716376281; cv=none; b=Hy0rgmHB0BeViV/EXKoPVCmFNAc7+KrgeWjpYeQyQUM17UhQjxiHmn9i0qG8YsHrdJYikFIp1w7BDPkCCSTjExWRav8Bqe831F6x/40chGT0j3cvkYTBJm5wi7nOSiCHF2LCtesnflKYMbHy9F3E1MDrdvpm6m2d6qaIoCABp+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716376246; c=relaxed/simple;
-	bh=O2I8lWiIa+e3vWwQXk4xKH/yJO1rty4U17nEZLqK42g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NWSIgRZtpcDO91VNkfBWzVlH5pk2Gx9eCpKjJXrDA2dhsajPvgE8+PSMwAiyt46j6q9cbLXvLXVqVLl1e2QSCQ01SoWq7wp8Y5hm2apa31z16UcbBGTvMyEqyVae1uZLvcANALjQApoKV+Zv72/RvkcnSU/2hrC5vCuoAJoTfuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NP+QnvT4; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-36d93568a58so22004395ab.3;
-        Wed, 22 May 2024 04:10:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716376244; x=1716981044; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jE0H2RxssWQXN9aqLMp8xQYjZc1ttCR56vJVWiJ8IzQ=;
-        b=NP+QnvT49+z6R7n41kuf4aCZhQInwHxjXhTwpKUbSAMnPs4ggr9fj6a4XQLlutfiHt
-         L/gJg/0ARx9MotVfVREuWePd27LVcngsuC++4gobvo+c++OzMctMej0dLKwjzET2dOeh
-         ppmdvrOHzBjKU3m6Vz7HVvdwAGH4smEnulkDeEDKTsXYnpLTsXf7OYGpQFZdRiI6APLO
-         Efgbaye4Mjj5ZXxb4dSFWZyBPPGnr6GZN6NZ+pZ1JpSk6uZo6H9VMYrju7QjxQtCrT4R
-         EcJIROYjlDBqJElHhZK7aYoKeolKRjxgrn+ExSR88G5atnZLfLjQDAzQcMxJ7XO1d12K
-         SEYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716376244; x=1716981044;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jE0H2RxssWQXN9aqLMp8xQYjZc1ttCR56vJVWiJ8IzQ=;
-        b=hwFcTZ0uIAtO8eIE4exHD2kTa8ub2FV+JJb1NF253FzXXndFo791Z2fo0tyL8zPNzs
-         IQV7s790jch3MLvvE3ksnec6dU0iD8aHEiq2TEYWm5CLKwqtdklZxIqMAQv+NNSYMJux
-         OBPiTJvgmgPjnNMt8Bml5RJOYKXoqwuFvV/aYIHeRMm8NvWGpvxINIn22OSiurkzisGz
-         1azRPypVLBK4eupexscQ4xNVj8DLSvTau+TNaN/6Hu1ElbKYgqEV/60i+NRAsbK2cP+5
-         RBXpz/wtTRfni+jb0S9SyvOcf67k30dbB/t+WNCovk1HB8mR71e+YtulIuQeRmUHMw1x
-         9u2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVtjJHhp7YdkJ1tFrXuDVddHsOnTqTZJWYpQ7o+Tkx2h8EEwnNGDm3hvqQavjVAzR069Y3vxlZP4dBFfqQPHr1heUiTLT7QUQSwaPUA
-X-Gm-Message-State: AOJu0YzUBlHgdw8lr9+7l9DVeYQAiLOfZ8R0qGlmFbqEQtssmgUof8Cd
-	s1NODj5F7MsAED2j8UDs+Lol8SOtyrNp1Wtc0nU9kAG2CUJ48Dzb
-X-Google-Smtp-Source: AGHT+IFzV5YoBiaL3MVAsDlkwPV26N8tC8bxwOuQVLuhDcMnM3QrpFkdup09u4nH7SyRq2CxwtX2wg==
-X-Received: by 2002:a05:6e02:1c21:b0:36b:3a3b:b2c0 with SMTP id e9e14a558f8ab-371faf4ee6cmr13340055ab.32.1716376243755;
-        Wed, 22 May 2024 04:10:43 -0700 (PDT)
-Received: from localhost.localdomain (2001-b400-e283-0474-753d-295c-237e-167b.emome-ip6.hinet.net. [2001:b400:e283:474:753d:295c:237e:167b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2a98sm22223760b3a.169.2024.05.22.04.10.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 04:10:43 -0700 (PDT)
-From: Victor Shih <victorshihgli@gmail.com>
-To: ulf.hansson@linaro.org,
-	adrian.hunter@intel.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	benchuanggli@gmail.com,
-	HL.Liu@genesyslogic.com.tw,
-	Greg.tu@genesyslogic.com.tw,
-	takahiro.akashi@linaro.org,
-	dlunev@chromium.org,
-	Victor Shih <victorshihgli@gmail.com>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Subject: [PATCH V16 23/23] mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
-Date: Wed, 22 May 2024 19:09:09 +0800
-Message-Id: <20240522110909.10060-24-victorshihgli@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240522110909.10060-1-victorshihgli@gmail.com>
-References: <20240522110909.10060-1-victorshihgli@gmail.com>
+	s=arc-20240116; t=1716376281; c=relaxed/simple;
+	bh=7omBT22T50M9DG8qe8VMelQgsvVyR3ldDWD333kj6JE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pDNJx9c4wkY6zD66orFlDy6M8lUOfr8hhWGqALuUQz7wnYT80tzeMMkGdfJmLX1dEYAY2/MOU6I8s3aPSIkwgSiM/ClTBvABss9+FUytzZyVLmetTQZQuLA1kjpSl/tFzpDJUX200xkqe+9HeOUQP/RXgmTYsgzX7l/I2aR6kxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s9jrx-0003mj-8q; Wed, 22 May 2024 13:10:53 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1s9jrw-002Vuu-BD; Wed, 22 May 2024 13:10:52 +0200
+Received: from pengutronix.de (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id E087A2D669B;
+	Wed, 22 May 2024 11:10:51 +0000 (UTC)
+Date: Wed, 22 May 2024 13:10:51 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: RE: RE: RE: [EXT] Re: [PATCH 4/4] firmware: imx: add driver for
+ NXP EdgeLock Enclave
+Message-ID: <20240522-prudent-puffin-of-painting-d2f1c3-mkl@pengutronix.de>
+References: <20240510-imx-se-if-v1-0-27c5a674916d@nxp.com>
+ <20240510-imx-se-if-v1-4-27c5a674916d@nxp.com>
+ <20240513-pretty-quartz-lemming-14d9ea-mkl@pengutronix.de>
+ <AM9PR04MB86044FBF697375EB2C8D285B95EE2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+ <20240520-accurate-intrepid-kestrel-8eb361-mkl@pengutronix.de>
+ <AM9PR04MB86045BD682A0362A7D463C5A95EA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+ <20240521-handsome-hairy-bullfrog-d2faba-mkl@pengutronix.de>
+ <AM9PR04MB8604836B3211B6D74878D04795EB2@AM9PR04MB8604.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4wc3bdscyxbqok4p"
+Content-Disposition: inline
+In-Reply-To: <AM9PR04MB8604836B3211B6D74878D04795EB2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Victor Shih <victor.shih@genesyslogic.com.tw>
 
-Changes are:
- * Enable the internal clock when do reset on UHS-II mode.
- * Increase timeout value before detecting UHS-II interface.
- * Add vendor settings for UHS-II mode.
+--4wc3bdscyxbqok4p
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
----
+On 22.05.2024 10:46:10, Pankaj Gupta wrote:
+> > > > > > > +
+> > > > > > > +	memset(s_info, 0x0, sizeof(*s_info));
+> > > > > > > +
+> > > > > > > +	if (priv->mem_pool_name)
+> > > > > > > +		get_info_data =3D get_phy_buf_mem_pool(dev,
+> > > > > > > +						     priv-
+> > >mem_pool_name,
+> > > > > > > +						     &get_info_addr,
+> > > > > > > +
+> > ELE_GET_INFO_BUFF_SZ);
+> > > > > > > +	else
+> > > > > > > +		get_info_data =3D dmam_alloc_coherent(dev,
+> > > > > > > +
+> > ELE_GET_INFO_BUFF_SZ,
+> > > > > > > +						    &get_info_addr,
+> > > > > > > +						    GFP_KERNEL);
+> > > > > >
+> > > > > > It's better style to move the init of the dma memory into the
+> > > > > > probe function.
+> > > > >
+> > > > > It is not DMA init. It is DMA allocation.
+> > > >
+> > > > It's better style to move the allocation of the dma memory into the
+> > > > probe function.
+> > > >
+> > > The buffer 'get_info_data', is allocated and freed within this functi=
+on.
+> > > This API is called multiple times:
+> > > - as part of probe.
+> > > - as part of suspend/resume.
+> > >
+> > > Why to keep the memory retained?
+> >=20
+> > I see. Then why do you allocate with dmam_alloc_coherent()?
+>=20
+> Because this memory is written by Firmware. It should be either from SRAM
+> Or from reserved memory region, accessible to FW.
 
-Updates in V15:
- - Add gl9767 to support uhs2 function.
+It's about managed resources. Why don't you use dma_alloc_coherent()?
 
----
+> > > > > > > +int imx_ele_msg_send(struct se_if_priv *priv, void *mssg) {
+> > > > > > > +	bool is_cmd_lock_tobe_taken =3D false;
+> > > > > > > +	int err;
+> > > > > > > +
+> > > > > > > +	if (!priv->waiting_rsp_dev || priv->no_dev_ctx_used) {
+> > > > > > > +		is_cmd_lock_tobe_taken =3D true;
+> > > > > > > +		mutex_lock(&priv->se_if_cmd_lock);
+> > > > > > > +	}
+> > > > > > > +	scoped_guard(mutex, &priv->se_if_lock);
+> > > > > > > +
+> > > > > > > +	err =3D mbox_send_message(priv->tx_chan, mssg);
+> > > > > > > +	if (err < 0) {
+> > > > > > > +		dev_err(priv->dev, "Error: mbox_send_message
+> > failure.\n");
+> > > > > > > +		if (is_cmd_lock_tobe_taken)
+> > > > > > > +			mutex_unlock(&priv->se_if_cmd_lock);
+> > > > > >
+> > > > > > Only dropping the lock in case of failure doesn't look right to=
+ me.
+> > > > >
+> > > > > The callers of this function, takes the execution flow to aborting
+> > > > > the operation on getting return code < 0. No next action is
+> > > > > expected under this aborted operation. Unlocking the lock here is
+> > > > > not an issue
+> > > > >
+> > > > > > It seems you should better move the lock to the callers of this=
+ function.
+> > > > >
+> > > > > Accepted, and moved to the caller of the function for:
+> > > > >    - locking
+> > > > >    - unlocking in case of error.
+> > > > >
+> > > > > Unlocking in the read API, once response is successfully received
+> > > > > and read.
+> > > >
+> > > > A better design would be: imx_ele_msg_rcv() imx_ele_msg_send() are
+> > > > expected to be called locked. Add lockdep_assert_held() to these
+> > > > function to document/check this.
+> > > >
+> > > > The callers of imx_ele_msg_rcv() and imx_ele_msg_send() have to take
+> > > > care of the locking.
+> > > >
+> > > > [...]
+> > > >
+> > > The locking/unlocking of se_if_cmd_lock, is taken care by the callers=
+ only:
+> > > - imx_ele_msg_send_rcv calls both the functions:
+> > >   --imx_ele_msg_send.
+> > >   --imx_ele_msg_rcv.
+> > >
+> > > But the lockdep_assert_held, cannot be added to imx_ele_msg_send, as
+> > > its another caller function imx_ele_miscdev_msg_send calls if for
+> > > sending:
+> > >  --- command (here command lock is taken).
+> > >  --- response to a command (here command lock is not taken).
+> >=20
+> > miscdev is another patch.
+> Will try to split it.
+>=20
+> >=20
+> > But why can't you use the same lock in imx_ele_miscdev_msg_send()?
+> Using the same lock "se_if_cmd_lock", in imx_ele_miscdev_msg_send.
+> This function is called from fops_write. This lock is taken conditionally=
+ taken depending on the kind of message:
+>=20
+>   --- Message containing command (here command lock is taken).
+>   --- Message containing response to a command (here command lock is not =
+taken).
 
- drivers/mmc/host/sdhci-pci-gli.c | 152 ++++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci-uhs2.c    |   3 +-
- drivers/mmc/host/sdhci-uhs2.h    |   1 +
- 3 files changed, 153 insertions(+), 3 deletions(-)
+Let's design a proper the kernel internal interface first. For
+simplicity reasons the misc dev should be out of scope first.
 
-diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
-index 5df6be758b06..20f19cec6e64 100644
---- a/drivers/mmc/host/sdhci-pci-gli.c
-+++ b/drivers/mmc/host/sdhci-pci-gli.c
-@@ -210,6 +210,10 @@
- #define   PCIE_GLI_9767_SCR_CORE_PWR_D3_OFF		  BIT(21)
- #define   PCIE_GLI_9767_SCR_CFG_RST_DATA_LINK_DOWN	  BIT(30)
- 
-+#define PCIE_GLI_9767_UHS2_PHY_SET_REG1				0x90C
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR		  GENMASK(31, 29)
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE	  0x3
-+
- #define PCIE_GLI_9767_SDHC_CAP			0x91C
- #define   PCIE_GLI_9767_SDHC_CAP_SDEI_RESULT	  BIT(5)
- 
-@@ -228,9 +232,15 @@
- #define   PCIE_GLI_9767_SD_EXPRESS_CTL_SD_EXPRESS_MODE	  BIT(1)
- 
- #define PCIE_GLI_9767_SD_DATA_MULTI_CTL				0x944
-+#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2		  BIT(5)
-+#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL	  BIT(8)
- #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME	  GENMASK(23, 16)
- #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME_VALUE	  0x64
- 
-+#define PCIE_GLI_9767_UHS2_PHY_SET_REG2					0x948
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING		  GENMASK(22, 21)
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE		  0x0
-+
- #define PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2			0x950
- #define   PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2_SDEI_COMPLETE	  BIT(0)
- 
-@@ -240,6 +250,28 @@
- #define PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2				0x958
- #define   PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2_SDEI_COMPLETE_SIGNAL_EN	  BIT(0)
- 
-+#define PCIE_GLI_9767_UHS2_CTL1				0x95C
-+#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS		  BIT(5)
-+#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE	  0x1
-+#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL		  BIT(6)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE	  0x1
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN		  GENMASK(10, 7)
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE	  0x3
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV		  GENMASK(14, 11)
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE	  0xf
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS		  GENMASK(16, 15)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE	  0x3
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV		  GENMASK(18, 17)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE	  0x0
-+#define   PCIE_GLI_9767_UHS2_CTL1_PDRST			  BIT(25)
-+#define   PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE		  0x1
-+
-+#define PCIE_GLI_9767_UHS2_CTL2			0x964
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC		  GENMASK(3, 0)
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE	  0xb
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL	  BIT(6)
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE	  0x1
-+
- #define GLI_MAX_TUNING_LOOP 40
- 
- /* Genesys Logic chipset */
-@@ -1198,8 +1230,35 @@ static void gl9767_hw_setting(struct sdhci_pci_slot *slot)
- 
- static void sdhci_gl9767_reset(struct sdhci_host *host, u8 mask)
- {
--	sdhci_reset(host, mask);
--	gli_set_9767(host);
-+	u16 clk_ctrl;
-+	u16 ctrl2;
-+
-+	if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
-+	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
-+	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
-+	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
-+		/* need internal clock */
-+		if (mask & SDHCI_RESET_ALL) {
-+			ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-+			clk_ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-+
-+			if ((ctrl2 & SDHCI_CTRL_V4_MODE) && (ctrl2 & SDHCI_CTRL_UHS2_ENABLE)) {
-+				sdhci_writew(host, SDHCI_CLOCK_INT_EN, SDHCI_CLOCK_CONTROL);
-+			} else {
-+				sdhci_writew(host, SDHCI_CLOCK_INT_EN, SDHCI_CLOCK_CONTROL);
-+				sdhci_wait_clock_stable(host);
-+				sdhci_writew(host, SDHCI_CTRL_V4_MODE, SDHCI_HOST_CONTROL2);
-+			}
-+		}
-+		if ((mask & SDHCI_RESET_CMD) | (mask & SDHCI_RESET_DATA))
-+			sdhci_gli_uhs2_reset_sd_tran(host);
-+
-+		sdhci_uhs2_reset(host, mask);
-+		gli_set_9767(host);
-+	} else {
-+		sdhci_reset(host, mask);
-+		gli_set_9767(host);
-+	}
- }
- 
- static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
-@@ -1289,6 +1348,87 @@ static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
- 	return 0;
- }
- 
-+static void gl9767_vendor_init(struct sdhci_host *host)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value;
-+
-+	gl9767_vhs_write(pdev);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR,
-+			    PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING,
-+			    PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS,
-+			    PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL,
-+			    PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN,
-+			    PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV,
-+			    PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS,
-+			    PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_RECV,
-+			    PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_PDRST,
-+			    PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC,
-+			    PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC_CTL,
-+			    PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-+
-+	gl9767_vhs_read(pdev);
-+}
-+
-+static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned char mode,	unsigned short vdd)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev;
-+	u32 value;
-+
-+	pdev = slot->chip->pdev;
-+
-+	if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
-+	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
-+	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
-+	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-+		value |= PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-+			 PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL;
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-+
-+		gl9767_vhs_read(pdev);
-+
-+		sdhci_uhs2_set_power(host, mode, vdd);
-+	} else {
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-+		value &= ~(PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-+			   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL);
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-+
-+		gl9767_vhs_read(pdev);
-+
-+		sdhci_set_power(host, mode, vdd);
-+	}
-+}
-+
- static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
- {
- 	struct sdhci_host *host = slot->host;
-@@ -1325,6 +1465,7 @@ static int gli_probe_slot_gl9767(struct sdhci_pci_slot *slot)
- 	host->mmc->caps2 |= MMC_CAP2_SD_EXP;
- 	host->mmc_host_ops.init_sd_express = gl9767_init_sd_express;
- 	sdhci_enable_v4_mode(host);
-+	gl9767_vendor_init(host);
- 
- 	return 0;
- }
-@@ -1828,12 +1969,19 @@ static const struct sdhci_ops sdhci_gl9767_ops = {
- 	.reset			 = sdhci_gl9767_reset,
- 	.set_uhs_signaling	 = sdhci_set_uhs_signaling,
- 	.voltage_switch		 = sdhci_gl9767_voltage_switch,
-+	.dump_uhs2_regs		 = sdhci_uhs2_dump_regs,
-+	.set_timeout		 = sdhci_uhs2_set_timeout,
-+	.irq			 = sdhci_uhs2_irq,
-+	.set_power		 = sdhci_gl9767_set_power,
-+	.uhs2_pre_detect_init	 = sdhci_gli_pre_detect_init,
- };
- 
- const struct sdhci_pci_fixes sdhci_gl9767 = {
- 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
- 	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
- 	.probe_slot	= gli_probe_slot_gl9767,
-+	.add_host	= sdhci_pci_uhs2_add_host,
-+	.remove_host	= sdhci_pci_uhs2_remove_host,
- 	.ops		= &sdhci_gl9767_ops,
- #ifdef CONFIG_PM_SLEEP
- 	.resume		= sdhci_pci_gli_resume,
-diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-index c830ee352504..47180429448b 100644
---- a/drivers/mmc/host/sdhci-uhs2.c
-+++ b/drivers/mmc/host/sdhci-uhs2.c
-@@ -125,7 +125,7 @@ static void sdhci_uhs2_reset_cmd_data(struct mmc_host *mmc)
- 	}
- }
- 
--static void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd)
-+void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd)
- {
- 	struct mmc_host *mmc = host->mmc;
- 	u8 pwr = 0;
-@@ -165,6 +165,7 @@ static void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, un
- 		mdelay(5);
- 	}
- }
-+EXPORT_SYMBOL_GPL(sdhci_uhs2_set_power);
- 
- static u8 sdhci_calc_timeout_uhs2(struct sdhci_host *host, u8 *cmd_res, u8 *dead_lock)
- {
-diff --git a/drivers/mmc/host/sdhci-uhs2.h b/drivers/mmc/host/sdhci-uhs2.h
-index 42f34ca75275..c4a860f4e1e0 100644
---- a/drivers/mmc/host/sdhci-uhs2.h
-+++ b/drivers/mmc/host/sdhci-uhs2.h
-@@ -185,5 +185,6 @@ void sdhci_uhs2_clear_set_irqs(struct sdhci_host *host, u32 clear, u32 set);
- u32 sdhci_uhs2_irq(struct sdhci_host *host, u32 intmask);
- int sdhci_uhs2_add_host(struct sdhci_host *host);
- void sdhci_uhs2_remove_host(struct sdhci_host *host, int dead);
-+void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd);
- 
- #endif /* __SDHCI_UHS2_H */
--- 
-2.25.1
+> > > > > > > +static const struct imx_se_node_info_list imx93_info =3D {
+> > > > > > > +	.num_mu =3D 1,
+> > > > > > > +	.soc_id =3D SOC_ID_OF_IMX93,
+> > > > > > > +	.info =3D {
+> > > > > > > +			{
+> > > > > > > +				.se_if_id =3D 2,
+> > > > > > > +				.se_if_did =3D 3,
+> > > > > > > +				.max_dev_ctx =3D 4,
+> > > > > > > +				.cmd_tag =3D 0x17,
+> > > > > > > +				.rsp_tag =3D 0xe1,
+> > > > > > > +				.success_tag =3D 0xd6,
+> > > > > > > +				.base_api_ver =3D
+> > MESSAGING_VERSION_6,
+> > > > > > > +				.fw_api_ver =3D
+> > MESSAGING_VERSION_7,
+> > > > > > > +				.se_name =3D "hsm1",
+> > > > > > > +				.mbox_tx_name =3D "tx",
+> > > > > > > +				.mbox_rx_name =3D "rx",
+> > > > > > > +				.reserved_dma_ranges =3D true,
+> > > > > > > +				.imem_mgmt =3D true,
+> > > > > > > +				.soc_register =3D true,
+> > > > > > > +			},
+> > > > > > > +	},
+> > > > > >
+> > > > > >
+> > > > > > Some (most?) members of these structs are the same. Why do you
+> > > > > > have this abstraction if it's not needed right now?
+> > > > >
+> > > > > It is needed as the values is different for different NXP SoC
+> > > > > compatible. It will be needed for NXP i.MX95 platform, whose code
+> > > > > will be next in pipeline.
+> > > >
+> > > > How does the imx95 .info look like?
+> > > >
+> > > Copied from the internal repo.
+> > > static const struct imx_info_list imx95_info =3D {
+> > >         .num_mu =3D 4,
+> > >         .soc_id =3D SOC_ID_OF_IMX95,
+> > >         .info =3D {
+> > >                         {
+> > >                                 .socdev =3D false,
+> > >                                 .mu_id =3D 2,
+> > >                                 .mu_did =3D 3,
+> > >                                 .max_dev_ctx =3D 4,
+> > >                                 .cmd_tag =3D 0x17,
+> > >                                 .rsp_tag =3D 0xe1,
+> > >                                 .success_tag =3D 0xd6,
+> > >                                 .base_api_ver =3D MESSAGING_VERSION_6,
+> > >                                 .fw_api_ver =3D MESSAGING_VERSION_7,
+> > >                                 .se_name =3D "hsm1",
+> > >                                 .mbox_tx_name =3D "tx",
+> > >                                 .mbox_rx_name =3D "rx",
+> > >                                 .pool_name =3D NULL,
+> > >                                 .reserved_dma_ranges =3D false,
+> > >                                 .init_fw =3D true,
+> > >                                 .v2x_state_check =3D true,
+> > >                                 .start_rng =3D ele_start_rng,
+> > >                                 .enable_ele_trng =3D true,
+> > >                                 .imem_mgmt =3D false,
+> > >                                 .mu_buff_size =3D 0,
+> > >                                 .fw_name_in_rfs =3D NULL,
+> > >                         },
+> > >                         {
+> > >                                 .socdev =3D false,
+> > >                                 .mu_id =3D 0,
+> > >                                 .mu_did =3D 0,
+> > >                                 .max_dev_ctx =3D 0,
+> > >                                 .cmd_tag =3D 0x17,
+> > >                                 .rsp_tag =3D 0xe1,
+> > >                                 .success_tag =3D 0xd6,
+> > >                                 .base_api_ver =3D 0x2,
+> > >                                 .fw_api_ver =3D 0x2,
+> > >                                 .se_name =3D "v2x_dbg",
+> > >                                 .pool_name =3D NULL,
+> > >                                 .mbox_tx_name =3D "tx",
+> > >                                 .mbox_rx_name =3D "rx",
+> > >                                 .reserved_dma_ranges =3D false,
+> > >                                 .init_fw =3D false,
+> > >                                 .v2x_state_check =3D true,
+> > >                                 .start_rng =3D v2x_start_rng,
+> > >                                 .enable_ele_trng =3D false,
+> > >                                 .imem_mgmt =3D false,
+> > >                                 .mu_buff_size =3D 0,
+> > >                                 .fw_name_in_rfs =3D NULL,
+> > >                         },
+> > >                         {
+> > >                                 .socdev =3D false,
+> > >                                 .mu_id =3D 4,
+> > >                                 .mu_did =3D 0,
+> > >                                 .max_dev_ctx =3D 4,
+> > >                                 .cmd_tag =3D 0x18,
+> > >                                 .rsp_tag =3D 0xe2,
+> > >                                 .success_tag =3D 0xd6,
+> > >                                 .base_api_ver =3D 0x2,
+> > >                                 .fw_api_ver =3D 0x2,
+> > >                                 .se_name =3D "v2x_sv0",
+> > >                                 .pool_name =3D NULL,
+> > >                                 .mbox_tx_name =3D "tx",
+> > >                                 .mbox_rx_name =3D "rx",
+> > >                                 .reserved_dma_ranges =3D false,
+> > >                                 .init_fw =3D false,
+> > >                                 .v2x_state_check =3D true,
+> > >                                 .start_rng =3D NULL,
+> > >                                 .enable_ele_trng =3D false,
+> > >                                 .imem_mgmt =3D false,
+> > >                                 .mu_buff_size =3D 16,
+> > >                                 .fw_name_in_rfs =3D NULL,
+> > >                         },
+> > >                         {
+> > >                                 .socdev =3D false,
+> > >                                 .mu_id =3D 6,
+> > >                                 .mu_did =3D 0,
+> > >                                 .max_dev_ctx =3D 4,
+> > >                                 .cmd_tag =3D 0x1a,
+> > >                                 .rsp_tag =3D 0xe4,
+> > >                                 .success_tag =3D 0xd6,
+> > >                                 .base_api_ver =3D 0x2,
+> > >                                 .fw_api_ver =3D 0x2,
+> > >                                 .se_name =3D "v2x_she",
+> > >                                 .pool_name =3D NULL,
+> > >                                 .mbox_tx_name =3D "tx",
+> > > 		   .mbox_rx_name =3D "rx",
+> > >                                 .reserved_dma_ranges =3D false,
+> > >                                 .init_fw =3D false,
+> > >                                 .v2x_state_check =3D true,
+> > >                                 .start_rng =3D NULL,
+> > >                                 .enable_ele_trng =3D false,
+> > >                                 .imem_mgmt =3D false,
+> > >                                 .mu_buff_size =3D 16,
+> > >                                 .fw_name_in_rfs =3D NULL,
+> > >                         },
+> > >                         {
+> > >                                 .socdev =3D false,
+> > >                                 .mu_id =3D 6,
+> > >                                 .mu_did =3D 0,
+> > >                                 .max_dev_ctx =3D 4,
+> > >                                 .cmd_tag =3D 0x1a,
+> > >                                 .rsp_tag =3D 0xe4,
+> > >                                 .success_tag =3D 0xd6,
+> > >                                 .base_api_ver =3D 0x2,
+> > >                                 .fw_api_ver =3D 0x2,
+> > >                                 .se_name =3D "v2x_she",
+> > >                                 .pool_name =3D NULL,
+> > >                                 .mbox_tx_name =3D "tx",
+> > >                                 .mbox_rx_name =3D "rx",
+> > >                                 .reserved_dma_ranges =3D false,
+> > >                                 .init_fw =3D false,
+> > >                                 .v2x_state_check =3D true,
+> > >                                 .start_rng =3D NULL,
+> > >                                 .enable_ele_trng =3D false,
+> > >                                 .imem_mgmt =3D false,
+> > >                                 .mu_buff_size =3D 256,
+> > >                                 .fw_name_in_rfs =3D NULL,
+> > >                         },
+> > >         }
+> > > };
+> >=20
+> > Just looking at _some_, the .cmd_tag, .rsp_tag and .success_tag look the
+> > same for all SoCs.
+> .cmd_tag & .rsp_tag is varying for each: .se_name =3D "v2x_dbg",  .se_nam=
+e =3D "v2x_she" and .se_name =3D "v2x_sv0",
+>=20
+> .success_tag is going to be different for i.MX8DXL. It will be zero for i=
+=2EMX8DXL, as compared to current 0xD6, for i.MX8ULP, 93, 95
+>=20
+>=20
+> >=20
+> > [...]
+> >=20
+> > > Created a static variable g_soc_rev in the se_ctrl.c.
+> > > Accepted and will correct it in v2.
+> > >
+> > > >
+> > > > > > > +	if (info_list->soc_rev)
+> > > > > > > +		return err;
+> > > > > >
+> > > Will change the above condition to g_soc_rev.
+> >=20
+> > "g_" as is global? Don't do that. Use your priv!
+> Yes, soc_rev can be put under priv.
+> It is proposed like this as it is used only once, that too in this file o=
+nly.
+>=20
+> Will do this in V2.
 
+If it's only used once, pass it via a function parameter. If you need it
+past probe, put in priv.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--4wc3bdscyxbqok4p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZN0rgACgkQKDiiPnot
+vG+q4Qf/XqaBftWbRVbl/NctWjNZD/C46y07kkG6ge99GnSoO+uBteK3qqypznFi
+qch37xcHzvy1w4IiInZm2HzPFPRv2WAqu/BNbtRFQ5RUZUcKQNl2hCzX7GsVpQ1P
+RWqUJBhzYXD83UnURjWEBKvf2UB+Gaxqyn5zYsp7yj+wHaBI8jp9tQPvfZtCnsUj
+IrgOvnxD5Tze5V5uAEn53uxcEdYwYZqK5F3mNUWeT5n9fU1GhGVbLgnrXjVfVpDk
+5P2WoU4C5McfOedvEssrKmkyW05j3m2j2JHogVLehE+z/5/jS6vS5ZnbsqspTzuY
+BUAEKqVxDzR7x9sj8YeIs7t29uwTEw==
+=2orR
+-----END PGP SIGNATURE-----
+
+--4wc3bdscyxbqok4p--
 
