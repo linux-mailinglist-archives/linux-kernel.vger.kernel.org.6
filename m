@@ -1,104 +1,123 @@
-Return-Path: <linux-kernel+bounces-186328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4DE8CC2CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:08:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF688CC2C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631F51F21AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A31612828A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E9113E03E;
-	Wed, 22 May 2024 14:08:35 +0000 (UTC)
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4FA13E40F;
+	Wed, 22 May 2024 14:05:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BB243AAB
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8BA6AB9;
+	Wed, 22 May 2024 14:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716386915; cv=none; b=JXUYnIYs21aYy+kqvQ7lYtMvwzIoUIsf/VtzGAkbx2bnBUf+SQzxHIrjqASdVpBqghSZ64+gmk8+AQZq6yhnw+sKijUt6aJjDOeYXknTbYuhpIkkxg36cf1/x0Ps3XAEb1wVfR/QfXuGq8enhXMMgwXKmDyXRXAKVHoVo0oXH/k=
+	t=1716386718; cv=none; b=OdJG4E9tizSeHNjeAZ+NBZy6VXH6b/2xfUZZjIRUk6PxJe7RCrAp2pbxUL+Dyotmngi8FZnKfS4b+vUBSBSqZNgcJRYCL8/jEpNs2WL9TH84zFGU1ilpF1PB1w1p+IiC1p9hZx5ISi/djrCPi2RoMlSuOnDDXNEMffuf56g1r7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716386915; c=relaxed/simple;
-	bh=KHwsZDEiIGJ2DyJzOBSHb0eWPfnlHZGZQg0MlCtoSSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmkcOB0Dmg+RDiF3/smQtguPO9DTs/0wWBE9rLQFFjrx2Fj5cS8j8tYnd21+fXmJU5+jw78mD0DV+JpWh3T8swa8SWdVOozZJjgRWFaF6xACtuz23My3vNcFp6iy4HoT6AS5fjDxYJ2ARu9QC1Rh4KVUvJiI0+v7iAnybzCyMTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 57C2F4081E;
-	Wed, 22 May 2024 15:51:31 +0200 (CEST)
-Date: Wed, 22 May 2024 15:51:29 +0200
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, Alex Deucher <alexander.deucher@amd.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Vinod Koul <vkoul@kernel.org>, 
-	Caleb Connolly <caleb@connolly.tech>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 2/3] drm/panel/lg-sw43408: select
- CONFIG_DRM_DISPLAY_DP_HELPER
-Message-ID: <lpguauybi5xs5hy7vglqvaloy4yykgejdhreeqp6fioeuelav6@pj2ap6eat3cy>
-References: <20240522-panel-sw43408-fix-v3-0-6902285adcc0@linaro.org>
- <20240522-panel-sw43408-fix-v3-2-6902285adcc0@linaro.org>
+	s=arc-20240116; t=1716386718; c=relaxed/simple;
+	bh=8e71njZJWwY8ETmCINBrNexR+jgS6wvIDFiP1CyeUi4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m5PfghoIIjUqDKCmHIpAKK7qPWYDcvmkgetvu1oHxDg/tRvS+ltX6+vvydqDo1qGyBr/FtWs4Oj5oSCO5Ng6l0PrSzrOwSj23BWtqgB+cW2wG9LeVoBLLa7qcn3jEh8mpQ8Oho8Byv7Z8mMKpk8wud7iezupC+9RRGb1g6RFxnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE3C9C2BBFC;
+	Wed, 22 May 2024 14:05:14 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch changes for v6.10
+Date: Wed, 22 May 2024 22:05:04 +0800
+Message-ID: <20240522140504.4071402-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522-panel-sw43408-fix-v3-2-6902285adcc0@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On 2024-05-22 09:25:54, Dmitry Baryshkov wrote:
-> This panel driver uses DSC PPS functions and as such depends on the
-> DRM_DISPLAY_DP_HELPER. Select this symbol to make required functions
+The following changes since commit a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6:
 
-Here and in the title: maybe this is a remnant from v2, but you split out a
-DRM_DISPLAY_DSC_HELPER and shouldn't be enabling DP for a DSI panel now.
+  Linux 6.9 (2024-05-12 14:12:29 -0700)
 
-- Marijn
+are available in the Git repository at:
 
-> available to the driver.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202404200800.kYsRYyli-lkp@intel.com/
-> Fixes: 069a6c0e94f9 ("drm: panel: Add LG sw43408 panel driver")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/panel/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index 4a2f621433ef..3e3f63479544 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -340,6 +340,8 @@ config DRM_PANEL_LG_SW43408
->  	depends on OF
->  	depends on DRM_MIPI_DSI
->  	depends on BACKLIGHT_CLASS_DEVICE
-> +	select DRM_DISPLAY_DSC_HELPER
-> +	select DRM_DISPLAY_HELPER
->  	help
->  	  Say Y here if you want to enable support for LG sw43408 panel.
->  	  The panel has a 1080x2160@60Hz resolution and uses 24 bit RGB per
-> 
-> -- 
-> 2.39.2
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-6.10
+
+for you to fetch changes up to 9cc1df421f00453afdcaf78b105d8e7fd03cce78:
+
+  LoongArch: Update Loongson-3 default config file (2024-05-19 22:18:56 +0800)
+
+----------------------------------------------------------------
+LoongArch changes for v6.10
+
+1, Select some options in Kconfig;
+2, Give a chance to build with !CONFIG_SMP;
+3, Switch to use built-in rustc target;
+4, Add new supported device nodes to dts;
+5, Some bug fixes and other small changes;
+6, Update the default config file.
+
+Note: There is a conflict in arch/loongarch/kernel/irq.c, but can be
+simply fixed by dropping the modification in this file (because that
+section is removed by the kvm tree).
+
+----------------------------------------------------------------
+Binbin Zhou (3):
+      LoongArch: dts: Remove "disabled" state of clock controller node
+      LoongArch: dts: Add new supported device nodes to Loongson-2K0500
+      LoongArch: dts: Add new supported device nodes to Loongson-2K2000
+
+Huacai Chen (4):
+      LoongArch: Select ARCH_WANT_DEFAULT_BPF_JIT
+      LoongArch: Select THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
+      LoongArch: Fix callchain parse error with kernel tracepoint events again
+      LoongArch: Update Loongson-3 default config file
+
+Tiezhu Yang (1):
+      LoongArch: Give a chance to build with !CONFIG_SMP
+
+WANG Rui (1):
+      LoongArch: rust: Switch to use built-in rustc target
+
+Xi Ruoyao (2):
+      LoongArch: Select ARCH_HAS_FAST_MULTIPLIER
+      LoongArch: Select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
+
+ arch/loongarch/Kconfig                          |  6 +-
+ arch/loongarch/Makefile                         |  2 +-
+ arch/loongarch/boot/dts/loongson-2k0500.dtsi    | 86 ++++++++++++++++++++++++-
+ arch/loongarch/boot/dts/loongson-2k1000-ref.dts |  4 --
+ arch/loongarch/boot/dts/loongson-2k1000.dtsi    |  1 -
+ arch/loongarch/boot/dts/loongson-2k2000.dtsi    | 49 ++++++++++++--
+ arch/loongarch/configs/loongson3_defconfig      | 24 +++++++
+ arch/loongarch/include/asm/acpi.h               |  1 +
+ arch/loongarch/include/asm/asm-prototypes.h     |  6 ++
+ arch/loongarch/include/asm/perf_event.h         |  3 +-
+ arch/loongarch/include/asm/smp.h                |  6 ++
+ arch/loongarch/kernel/irq.c                     |  2 +
+ arch/loongarch/kernel/machine_kexec.c           |  2 +-
+ arch/loongarch/lib/Makefile                     |  2 +
+ arch/loongarch/lib/tishift.S                    | 56 ++++++++++++++++
+ arch/loongarch/mm/tlbex.S                       |  9 ++-
+ arch/loongarch/power/suspend.c                  |  4 +-
+ rust/Makefile                                   |  2 +-
+ scripts/Makefile                                |  2 +-
+ scripts/generate_rust_target.rs                 |  7 +-
+ 20 files changed, 245 insertions(+), 29 deletions(-)
+ create mode 100644 arch/loongarch/lib/tishift.S
 
