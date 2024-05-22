@@ -1,56 +1,52 @@
-Return-Path: <linux-kernel+bounces-186468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1868CC48F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:56:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D407E8CC490
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68D781F213CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E272283CE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4CD13D8AA;
-	Wed, 22 May 2024 15:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE8613E04E;
+	Wed, 22 May 2024 15:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLD0jpc6"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hHdVEMMT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0900210EC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1B1210EC;
+	Wed, 22 May 2024 15:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716393402; cv=none; b=hClv6DH1463HrQ7ZQJucAWwqnougBrx3rHC8K6Pa/SPV2Ua+TGLyT80RDrjPQJWKzFnXPHojHmsGzCo5VwRcamK/GKxWmgSUPqPVlgO5g+n1BH9frdvGi5xb+xExfsDDKPQiQ7egvA9wcMnf75x2bKe93896NgELHcF51pFq+FQ=
+	t=1716393451; cv=none; b=fHnm1oNS5wC0yTo0ei1Zjo8kzZ2j7aePNqLGtZ5XYZ1oSezG5L3nJXxdv8WGcz6wusVVJVzQgwbfRVGiVAJvZbhSzjfZaeWTP6nXGa75+xjbB3g+wNpFRzzXWREKQ5Egyg4HGkmQTnv3fub0P1yqYVWcbU2DEY759/Dvhstb4zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716393402; c=relaxed/simple;
-	bh=v8cAZZ8J7bzfnYp5o6idecynXR7i2En6YomK8I+ZL6k=;
+	s=arc-20240116; t=1716393451; c=relaxed/simple;
+	bh=s7fLrqlLqrdwUt4HwOiHRqZ1aWTDKv1ZtetuvCqzHYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcLeRf5Oy4q3RkKLzmKJNEu9nFj3uWxjgfj7noQbuPLye5kNvbrlDi9QmCVnH8TYi9Zvra7Z3tPsIwt3I//Q2tpG7xnvxWQr+5EqN2AA/tkq4mw4EvPIQYIn9MN3/+7wSalQAkzCa8hTW1PAoPpx0xeT/Ju129ssWOfnUIElN3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLD0jpc6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D94C2BD11;
-	Wed, 22 May 2024 15:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716393401;
-	bh=v8cAZZ8J7bzfnYp5o6idecynXR7i2En6YomK8I+ZL6k=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxaAQKjV6DVfYW5vEF4KZxgyqNA45rpWHOIBcUmJ+bLonP0ncfzSSbDbA8XTjJd2MBwZK2DXoYP/Hs71IQrmHtvZ/P8osE94mdlLJksgvXHK83PN2ilCDeZmjrUzdJqS4W5P4DLDe2RquKOEop60y2VRb3d/Ji8iVWHBQ9mjfjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hHdVEMMT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80D99C2BBFC;
+	Wed, 22 May 2024 15:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716393450;
+	bh=s7fLrqlLqrdwUt4HwOiHRqZ1aWTDKv1ZtetuvCqzHYc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pLD0jpc6QQLiSCCbEJeS+c7bGv0AsYyKFZKKbtw7cQcYIknJL1fcWPR1nAQOaha9z
-	 oj90/comP+41/pQqz2/wj5CvnrFTF5uQC0UNTxkUZAqgW0q1cR8Z3MY+IsA9aLbbmZ
-	 cvUOEP/gBVlbuVuPlIQR4qqx0iTloDgBs79fnz/MdQ/bHuc85GvC8LeRWH+uzqIQzo
-	 dhJStFVW+HggCYESP7xGiH2i+5p1grYKCuMq8W7YuzuWiyzt8FfJV6s2KRNJJW6btu
-	 ddOK2mZSKdYQi2qF79qYmKlBuSMycmJo7poUF62W6nXV9XOVNp/jO5K7RkEgUEehL6
-	 6CPfgG9iDIigg==
-Date: Wed, 22 May 2024 09:56:38 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: John Meneghini <jmeneghi@redhat.com>
-Cc: hch@lst.de, sagi@grimberg.me, emilne@redhat.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
-Subject: Re: [PATCH v4 1/1] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-Message-ID: <Zk4VtiCjeqkBKCBA@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240522154212.643572-1-jmeneghi@redhat.com>
- <20240522154212.643572-2-jmeneghi@redhat.com>
+	b=hHdVEMMT7yEeHEjRb8AKs6PdTe0Jz5DckgqlVSGU2qDb7VPWIn129BstQFh8me2tl
+	 MVDouGgbq1ahnznEEuianDx6MpoStZKRn8SwW10V70H3t6nc5HNL8b/9clprSR3I/c
+	 TNHToQXWpk8ktl2vvl8V0wR3SqsKyYwjt9rb7bT8=
+Date: Wed, 22 May 2024 17:57:28 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Roland Xu <mu001999@outlook.com>
+Cc: ojeda@kernel.org, boqun.feng@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: kernel: make impl_has_work compatible with more
+ generics
+Message-ID: <2024052258-trifocals-engaged-8d80@gregkh>
+References: <ME0P282MB489023110AAF1163F0A4B2E1CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
+ <SY8P282MB48866A68C05C6444F0340A00CCEB2@SY8P282MB4886.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,35 +55,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240522154212.643572-2-jmeneghi@redhat.com>
+In-Reply-To: <SY8P282MB48866A68C05C6444F0340A00CCEB2@SY8P282MB4886.AUSP282.PROD.OUTLOOK.COM>
 
-On Wed, May 22, 2024 at 11:42:12AM -0400, John Meneghini wrote:
-> +static void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
-> +{
-> +	struct nvme_ctrl *ctrl;
-> +	int old_iopolicy = READ_ONCE(subsys->iopolicy);
-> +
-> +	WRITE_ONCE(subsys->iopolicy, iopolicy);
-> +
-> +	/* iopolicy changes reset the counters and clear the mpath by design */
-> +	mutex_lock(&nvme_subsystems_lock);
-> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
-> +		atomic_set(&ctrl->nr_active, 0);
+On Wed, May 22, 2024 at 11:45:33PM +0800, Roland Xu wrote:
+> v2: apply comments, wrap lines at 72 columns
+> ---
 
-Can you me understand why this is a desirable feature? Unless you
-quiesce everything at some point, you'll always have more unaccounted
-requests on whichever path has higher latency. That sounds like it
-defeats the goals of this io policy.
+That goes below the --- line.
 
-> @@ -1061,6 +1066,9 @@ static inline bool nvme_disk_is_ns_head(struct gendisk *disk)
->  {
->  	return false;
->  }
-> +static inline void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
-> +{
-> +}
->  #endif /* CONFIG_NVME_MULTIPATH */
+> Make the impl_has_work macro compatible with more complex generics such as lifetimes and const generic arguments.
 
-You can remove this stub function since the only caller resides in a
-CONFIG_NVME_MULTIPATH file.
+Columns are still not wrapped :(
+
+Look at example submissions on the mailing list for how to structure
+this.
+
+thanks,
+
+greg k-h
 
