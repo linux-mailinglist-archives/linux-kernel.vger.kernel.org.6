@@ -1,157 +1,102 @@
-Return-Path: <linux-kernel+bounces-186439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1EA8CC42F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:35:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F1D8CC435
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D96A1C21E2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278751F22F50
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC337D08F;
-	Wed, 22 May 2024 15:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJCaiQjL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019DD7D3E6;
+	Wed, 22 May 2024 15:36:32 +0000 (UTC)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF641171C;
-	Wed, 22 May 2024 15:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC929768EC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716392151; cv=none; b=R/XJsjpfSIb+DhbURxLVuLz2eYUSZZklCr/lc893q5f4DptHAtqboc5XDQ5wZxM6EhfeWrqpsECqxxq2z16UmaeaNdlTn3Q7adLLhEWoKjFgy0HCjrzKQemt9biNvID+lXhMFnfPpZeKcNtuY3DVassabCNNECQBmN5WUFF/irM=
+	t=1716392191; cv=none; b=d6UM4TnSCtop0KbXic5v7Pl3KuWkugvPNvzv55HMWMX/CnBrwTl+dUUKeHD4RUCdcXzEcxbIJqF4gkeBZRqRmJQTEgvUUGJimJETbicfuu3CteWbsy8XjytglsuZGHwvlexLOzG+WP6CkF6xjb9kSRRa0YjmHXIMvhGXv9RuzOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716392151; c=relaxed/simple;
-	bh=Qd+NDxGOZ2bJf9sIDqREHnfFavqyfD7ddBDGDAxcjbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mF8CuFLubuTp1/qrxU8kZoJrGh1Boqzc+2efiqb1f3z4Co09Fzlp15NDZz9luCREN4DgK84ZJ1qVJWHqZuUHQhiGz1gruWa1znCOM8e2dOsvqEQDI1L7W10KpLfABpybUOVnsf/f5NJ02QI5x9r4VowpepH81vpIMTo9kgHu+HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJCaiQjL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DE9C2BD11;
-	Wed, 22 May 2024 15:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716392151;
-	bh=Qd+NDxGOZ2bJf9sIDqREHnfFavqyfD7ddBDGDAxcjbk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fJCaiQjLOSkJeC8737kXYulTF1E8kx+viQmK6R8A79ohnS0Ia2oKO7niWQO25ldGP
-	 YcrmWJcjzgvYYamWATddny5NL8foEzHP71g5oKW+oZV2cvD+IbmF/V50RAHLsngVuW
-	 8T6ALDPEmvK1nPQML2+v2HFyWk40+BCuyzs1d7AFmd7wuIRr9poXzP7qvb3kGF5LA7
-	 k3x18K6WyK0m64ECtrMbp0YEnAQ1NR5l1clMI2yrI91yteJvWEX4i9zH6bLxnWIz8d
-	 6yzROBcTARIC05vmq7n0pwnrFEtY8Rk4mGhd5bjzNdXdFWL2JL9AbLdWWc5sMj7OYr
-	 0Q+7VSasTFxdw==
-Date: Wed, 22 May 2024 16:35:44 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: display: vop2: Add VP clock resets
-Message-ID: <20240522-slimness-dullness-bb807f053c89@spud>
-References: <20240514152328.21415-1-detlev.casanova@collabora.com>
- <13628421.uLZWGnKmhe@arisu>
- <20240521-silver-exciting-bb3725dc495d@spud>
- <3334403.5fSG56mABF@arisu>
+	s=arc-20240116; t=1716392191; c=relaxed/simple;
+	bh=ULFbJbVKQMWnZ1ms7vRd/YXmVFPFapk+Fu4aJyVk1Os=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MFodIP/gTtT5iaEXmhyILNzJQxnOCPce6kClvC9/aqWsbbA7Mx0cZIAr+CbN2XW74zB8dSTWKY5eX+yv9rpHzJEY4nLYjjqsOxY2HJf7zuxCm1LYOrnDnGd1fYo2tPpku5RRsqfHqZvkIQJmV9XDKNEKVZRluW8gDbKt2y+RUE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-61804067da0so9779387b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:36:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716392188; x=1716996988;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5rBlAy4O9Lv/8JE6GkQCoKCu1hP1DJWjgLhKz1QEi/g=;
+        b=bVcKAU2EKuH6vr+0TkKvOu/jc5s8o8II0IlfwZGgxg4xqjAgeZEEnyvzwZGNOi6w9u
+         67QRRfpGGfJ9Z8rX6UAyb6+Z7nfmvRMhF2GT74A6vOYEwYJhg0jju/s6AHuZ4YFd69fC
+         5aZOIOwHzcF6rTVoh6fYlvv7s6YjNpxEyxOFgMRMfvmtQBSVMcUrq/gB4frH48E6NVeE
+         FZTuuIfJYw3ravIPioXgNDHix7CA5LvwflSF7iaB5fRARXWDOMnklGTVL9zLJ4QdcTzQ
+         pNgkWK4iTTKVCLmFwcPDJ4U5WqSJDVaWGcf6p4QBHVLB6PRNM8lBVmSGqhORK91jsNmh
+         DJXw==
+X-Gm-Message-State: AOJu0YxkY3541Wi72fAmdpgH7LgQowC2yKR0XHvKoPW+gCteUkpyaQ+X
+	o8N0z5Ew+ehN7rTRjpicwIZKeHnEgIYUKM5Vf4bENCnwHmwEikcJCx/is/OC
+X-Google-Smtp-Source: AGHT+IGBb/g68Rs+GTvSoaGZj+8rQG55UfsO9Fje7NvqXXTO92ltwP0gWtUpoe1G0ptv+qJpiuILjQ==
+X-Received: by 2002:a0d:cb94:0:b0:61b:1c75:2077 with SMTP id 00721157ae682-627e4623210mr26271197b3.7.1716392187972;
+        Wed, 22 May 2024 08:36:27 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e25483dsm59231797b3.46.2024.05.22.08.36.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 08:36:27 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-61804067da0so9779017b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:36:27 -0700 (PDT)
+X-Received: by 2002:a05:690c:6513:b0:61a:da7e:1f66 with SMTP id
+ 00721157ae682-627e462389bmr27860127b3.2.1716392187488; Wed, 22 May 2024
+ 08:36:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="O1xKPYmQ4qbvZFbX"
-Content-Disposition: inline
-In-Reply-To: <3334403.5fSG56mABF@arisu>
-
-
---O1xKPYmQ4qbvZFbX
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20240521111958.2384173-1-Jason@zx2c4.com> <20240521111958.2384173-4-Jason@zx2c4.com>
+In-Reply-To: <20240521111958.2384173-4-Jason@zx2c4.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 May 2024 17:36:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUwVuVfAwDJkMNZFj+_+dKHFf1MX1=wrchUhHfKoP0Z6w@mail.gmail.com>
+Message-ID: <CAMuHMdUwVuVfAwDJkMNZFj+_+dKHFf1MX1=wrchUhHfKoP0Z6w@mail.gmail.com>
+Subject: Re: [PATCH v15 3/5] arch: allocate vgetrandom_alloc() syscall number
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 11:31:36AM -0400, Detlev Casanova wrote:
-> On Tuesday, May 21, 2024 2:31:51 P.M. EDT Conor Dooley wrote:
-> > On Tue, May 21, 2024 at 01:15:46PM -0400, Detlev Casanova wrote:
-> > > On Wednesday, May 15, 2024 12:33:22 P.M. EDT Heiko St=FCbner wrote:
-> > > > Am Mittwoch, 15. Mai 2024, 18:19:29 CEST schrieb Conor Dooley:
-> > > > > On Tue, May 14, 2024 at 11:19:47AM -0400, Detlev Casanova wrote:
-> > > > > > Add the documentation for VOP2 video ports reset clocks.
-> > > > > > One reset can be set per video port.
-> > > > > >=20
-> > > > > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > > > >=20
-> > > > > Are these resets valid for all VOPs or just the one on 3588?
-> > > >=20
-> > > > Not in that form.
-> > > > I.e. rk3588 has 4 video-ports (0-3), while rk3568 has 3 (0-2).
-> > > >=20
-> > > > So the binding should take into account that rk3568 also has the
-> > > > SRST_VOP0 ... SRST_VOP2.
-> > >=20
-> > > That is what is set in the example and the reason why I set minItems =
-to 3
-> > > in the main bindings.
-> > > Then, the rk3588 specific part sets it to 4.
-> > >=20
-> > > Isn't that enough ?
-> >=20
-> > Not quite - you need to restrict maxItems to 3 for the other devices if
-> > the clocks are not valid. What you've got says that 4 clocks are
-> > possible but not needed on !rk3588.
-> >=20
-> I don't understand what "properties: resets: minItems: 3" means then. I=
-=20
-> thought it means that all devices should have at least 3 resets. Then the=
-=20
-> allOf below specifies the special case of rk3588 which has a minimum of 4=
-=20
-> resets.
+On Tue, May 21, 2024 at 1:21=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com=
+> wrote:
+> Add vgetrandom_alloc() as syscall 462 (or 572 on alpha) by adding it to
+> all of the various syscall.tbl and unistd.h files.
+>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 
-The change you made to the bindings allows someone to define either 3
-(because of minItems 3) or 4 (because there are 4 items in the list) resets
-for the rk3568.
+>  arch/m68k/kernel/syscalls/syscall.tbl               | 1 +
 
-> Do I need to add=20
->         resets:
->           minItems: 3
->         reset-names:
->           minItems: 3
-> in the "else:" ?
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-No, you need to add maxItems: 3 to the else.
+Gr{oetje,eeting}s,
 
-> So in that case, I can remove "properties: resets: minItems: 3" above ?
->=20
-> Also, what do you mean "If the clocks are not valid" ?
+                        Geert
 
-s/clocks/resets/ ;)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
 
---O1xKPYmQ4qbvZFbX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk4Q0AAKCRB4tDGHoIJi
-0s0DAQDoOkPVLDr+HE00hhznKtcPPj+CcSSPyDVA/6sDIBivXQEAsVedCSlfxbXc
-k7i+X+yRjsbEqstU9Tavi7c6NTEiuQI=
-=aFFV
------END PGP SIGNATURE-----
-
---O1xKPYmQ4qbvZFbX--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
