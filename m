@@ -1,108 +1,141 @@
-Return-Path: <linux-kernel+bounces-186280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905E28CC222
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:29:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7710F8CC21F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D6E21F23AE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:29:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196FE1F237ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2EF1411CA;
-	Wed, 22 May 2024 13:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB3D140381;
+	Wed, 22 May 2024 13:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="eNfUi+JD"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CaTV1i6l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D351140E2F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29F8140361
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716384558; cv=none; b=tC+1n6UbI6FAImyEqQDT1SGqf6DiKTAh6jeU4i9AkWyU2gq46CfdkuNNSpp6LM7zqS2dK8ly41EcWSQLgpLW9lewbUIlOzH56y/45TV5LAixmnHtl1A0fo+yZz+Dfe1jFy5bbnptGp/d1DEVBownpzGmSBMd04cs0hdomsbtzh8=
+	t=1716384553; cv=none; b=Hlvp8h6Sf80KgQOgCI5/8nO5JaaIj2Bj7tVRQVePM5v1zFobCJh+tN+jOXYsYx49YoqH3hQWtBCt3UKXop0kev5FJwYVXeJs4+P9MkG69c/oddDXWkzLzq2uriGXrw6hkIdEZ/CqE1xYP38qbINYoGg3D9tZHqDcUu6CvyAR/m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716384558; c=relaxed/simple;
-	bh=61mO5+snMGsz2ee+TFdxLBoONuQxJeAcSO8S6crnAK8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=YaUm6LTRdodekJd7C2C6RHeL3hYRtkC1osMbaQwpCeitEkHhn2wOUOFIbVh6bjzbYWqTg4/8UOGM6fPa3NjVbjraGgdDJ1PD89w+yL9hNjFggC7FoM3Q+Q+xwQ+AHcKiG5a9HUzrYJvvK8+z365tQf+mquOdyQ9CIjrLFWPw2Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=eNfUi+JD; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5a5c930cf6so1009195766b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:29:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1716384554; x=1716989354; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fcAnLjMIMbITY++kSDoM1eUoNeGeLxhIN5O6O+u3md8=;
-        b=eNfUi+JD5hCg56yJHaoYPZ74COFIf6NnI0qH9nL6BI8IxXaugOw9AW3WDE/g7eQcPq
-         RTx94BQ/2OyeqmBZKoYXaGYV3g5OCVoTPNNg3hzW4oFWz36j3evrjcYaF7mINHHgHdPo
-         0/kzMaf4396YboZdIHbbKGcEAJW0lSVIbfk00=
+	s=arc-20240116; t=1716384553; c=relaxed/simple;
+	bh=5sakKOKAmbCrsEjASnjL7UgkTgHABzWbOCfbUd+pBkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gtic/scMkklaqG82paIwbP2thafPJ0HlIdsQn/7QoJLztM3U8dqMhZkj1L/tZkLaKws05dQVJG5l+rz5w/HWmt1/9ePegxDCe2rssqgd7dVgn18nPrQ74/aeKzsxaEf1wVp2SoFx0ZbDRBD8uJGo4fuTwTyQW7B9e3OG3M5al1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CaTV1i6l; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716384551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vlxAhypZGuJ51fiH3I4BvsR7+m69A2J2YkZeHnupay4=;
+	b=CaTV1i6lg20U8LNIZN02wd987zwpUnlxWA2Sxnhu7HJt2XZEnb4HZ1tfLv7b9Hv+gQl+d8
+	327dvmm+J7s0zf36IxVVsQ4TOVIhiRlMY9DW8W5ovKBQRJSuBl4IFAl30eGOJanfgBGa9a
+	yg5LSIaiTGxC2+yr42r6rMlbOHNkUJI=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-382-YtWxIqaRPya--jjGhOWrJA-1; Wed, 22 May 2024 09:29:08 -0400
+X-MC-Unique: YtWxIqaRPya--jjGhOWrJA-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a5a1b50d45cso60269366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:29:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716384554; x=1716989354;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fcAnLjMIMbITY++kSDoM1eUoNeGeLxhIN5O6O+u3md8=;
-        b=wyQo9BAFEyDuCUZP/wkADOlGVaccOnmv/o0+ygS1/up0uN3xol4hUTaC1y95JCL146
-         qprywpmpL3pS8GL0SGuW2sPO4ujjTVvzSK3XV/eTP9Pju0JrqH7zGY4BLARS81Zww7bk
-         5DBlXziriK8gujE661rcC0rTxPBJ/YbrDwpOdJwsacdW7S3JS+8WmX7Nk1PJpW4yAOhe
-         jfkPbVGfs5HQrig9lz65FmZASIOiVJhx31dFkkqNUzX54iCz4wbDrlzurwOOFApWrhJ+
-         jHy/rL5uWJOvyA8OW/puezjM1sDIwZGZzcV9SBQuZfjdmER/YhdoCPWKCBQAU6toEr7b
-         WGhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKir0dknH6Z0zIgoyn/K4VJ0HFCjBfHNk+yqlIPS9mWufwQJbMFWaVq0MBCb+yyF3Aee4T6mpj3GTuMptv252fASuvO8X9gyEnmWSe
-X-Gm-Message-State: AOJu0YzE8pWLYqrKl4jki8I+lZuHeIy2oPKUwju14fqoZo4rBF74VTxK
-	gnGS2CDw4del3TZfha5R7gEK7Ey8km2zlSLGFGG0k5ksprT8ZrgZiOyVl2Cc7h3VuXhHkRp4XqM
-	kV2QNLr7mFhmVgDoLsid1DtZNF86T9T0DH7GeAw==
-X-Google-Smtp-Source: AGHT+IEkcTSyEUkeYpXWY+h3epaoj2bcPKEEthTvq9ZR3Kgjf4O9kooRyINxL3rDCrzwmh3KjLFlaI17FCigLPEni+M=
-X-Received: by 2002:a17:906:6884:b0:a59:9e01:e787 with SMTP id
- a640c23a62f3a-a62280a0e9emr136501566b.34.1716384554522; Wed, 22 May 2024
- 06:29:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716384547; x=1716989347;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vlxAhypZGuJ51fiH3I4BvsR7+m69A2J2YkZeHnupay4=;
+        b=e+9i35e5QTmqEGhwo1iwcJXU32OD9Qvr7XlgwyU9h4hOxktLxKv8czhNs1yITYfLV+
+         TPSqtM5f1qbRhlh6Gor+nqUpDubd39Z/dTx5D2Qt2sed3YJ/jTNydU4lqicvp9LCNeOf
+         YA9Kf0rM2O42YDWm8ZQKAPbE7e0Wn95mRc6ykozB05pI7Bx6WD8XZIkTbyu+JAdPoeDa
+         6nycD8dY9NxJwXgYRp2beL620i+ruEGYoK9K5qIOfG3/N6ngKVsl4dqBhaBNYzGw5N/9
+         DqIpn4NLUaEJRj8lmH0bxo8RoPklU34Zivbi177C6tdUURLJ8aTR0fCVYylgDsp1RSEB
+         6Dtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhpoC82NiKu5d+r8fLqjHMMjsdSZW161zRJ3oQFo6hTjgeZg4VGeIa0zIEt3CsiORAkoD+owgmWlDE/PBQlG5T5n41NISBmenSrpv5
+X-Gm-Message-State: AOJu0YwNx780MGpOqTehcL5Zc/PnbsRYUKelF8FM8ntFuUmyWEdBVNAa
+	khPIqxCKJlHwsVBG4vkgU+I8Rul1orro8CadXd0dsYihaOFWPwCaZyydwLAy6fwEc+Wben1K5a3
+	I1AB3K/8+N3cCFkrsnZvNnYQaLQfAguEfgo9Go2MxW3YCLiaKsoVZaMvrY04HZUR5Akx02g==
+X-Received: by 2002:a17:906:d0db:b0:a59:b4e8:d925 with SMTP id a640c23a62f3a-a62280964f9mr126366666b.34.1716384547168;
+        Wed, 22 May 2024 06:29:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtb1pBEHqfSS0/fLHCW2NnVfu+WU48owlxpl2PgihyF4jDO2x1GADbGyTyJtG37fRQ3GEQYA==
+X-Received: by 2002:a17:906:d0db:b0:a59:b4e8:d925 with SMTP id a640c23a62f3a-a62280964f9mr126364966b.34.1716384546632;
+        Wed, 22 May 2024 06:29:06 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d57sm1789138166b.73.2024.05.22.06.29.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 06:29:06 -0700 (PDT)
+Message-ID: <bdfc7022-f8a0-4d07-b301-5d00ecb86ea6@redhat.com>
+Date: Wed, 22 May 2024 15:29:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 22 May 2024 15:29:02 +0200
-Message-ID: <CAJfpegu93nZEeEJhepnDhzHO7khEmXkP1UssKNErqXFFUw-8uA@mail.gmail.com>
-Subject: [GIT PULL] overlayfs update for 6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: thinkpad_acpi: Select INPUT_SPARSEKMAP in
+ Kconfig
+To: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org
+References: <20240522074813.379b9fc2@gandalf.local.home>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240522074813.379b9fc2@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+Hi,
 
-Please pull from:
+On 5/22/24 1:48 PM, Steven Rostedt wrote:
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> 
+> Now that drivers/platform/x86/thinkpad_acpi.c uses
+> sparse_keymap_report_event(), it must select INPUT_SPARSEKMAP in its
+> Kconfig option otherwise the build fails with:
+> 
+>   ld: vmlinux.o: in function `tpacpi_input_send_key':
+>   thinkpad_acpi.c:(.text+0xd4d27f): undefined reference to `sparse_keymap_report_event'
+>   ld: vmlinux.o: in function `hotkey_init':
+>   thinkpad_acpi.c:(.init.text+0x66cb6): undefined reference to `sparse_keymap_setup'
+> 
+> Fixes: 42f7b965de9d ("platform/x86: thinkpad_acpi: Switch to using sparse-keymap helpers")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git
-tags/ovl-update-6.10
+Thanks, patch looks good to me:
 
-- Add tmpfile support
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-- Clean up include
+I'll include this in the next pdx86 fixes pull-request for Linus.
 
-Thanks,
-Miklos
+Regards,
 
----
-Miklos Szeredi (2):
-      ovl: implement tmpfile
-      ovl: remove upper umask handling from ovl_create_upper()
+Hans
 
-Thorsten Blum (1):
-      ovl: remove duplicate included header
+> ---
+>  drivers/platform/x86/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 0ec952b5d03e..1953317541ea 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -515,6 +515,7 @@ config THINKPAD_ACPI
+>  	select NVRAM
+>  	select NEW_LEDS
+>  	select LEDS_CLASS
+> +	select INPUT_SPARSEKMAP
+>  	help
+>  	  This is a driver for the IBM and Lenovo ThinkPad laptops. It adds
+>  	  support for Fn-Fx key combinations, Bluetooth control, video
 
----
- fs/backing-file.c            |  23 +++++++
- fs/internal.h                |   3 +
- fs/namei.c                   |   6 +-
- fs/overlayfs/dir.c           | 152 ++++++++++++++++++++++++++++++++++++-------
- fs/overlayfs/file.c          |   3 -
- fs/overlayfs/inode.c         |   1 -
- fs/overlayfs/overlayfs.h     |   3 +
- include/linux/backing-file.h |   3 +
- 8 files changed, 165 insertions(+), 29 deletions(-)
 
