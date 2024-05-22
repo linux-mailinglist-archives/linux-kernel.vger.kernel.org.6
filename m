@@ -1,88 +1,82 @@
-Return-Path: <linux-kernel+bounces-186507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC3F8CC50F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:46:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88E38CC511
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C663BB21378
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F01F1F23881
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEAC82482;
-	Wed, 22 May 2024 16:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC1314198E;
+	Wed, 22 May 2024 16:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="T7MImrad"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bEtTwAuP"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2082.outbound.protection.outlook.com [40.107.94.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD3379D1;
-	Wed, 22 May 2024 16:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A8C224E8;
+	Wed, 22 May 2024 16:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.82
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716396393; cv=fail; b=dtMPgaZkjX5Q1gjgNzbgmIusXspgEmIfC8tnu7F3cgRQmZ1/QCz70T3ss3kIgqCsUX+qIxgzLrpCFt3wMD2u5vmC+Ra3QUeBSvwf6uRm2aaPhuOVfvRXxZpy+AHzrYVcAImr3GlUyKVcCudsOA0uy+h4Fo0407bEX16i8gh2Zg0=
+	t=1716396410; cv=fail; b=Qpm05J1BQq+qR4pdXdQrtzhabdZZcqyS/YAYl6zihI6GDdg0HoqNP0gVqwuMoDJXCmL8iTZpG/6gWYYY5c1elX3Z+UH2QuyBg71ueqqxF+NeTFRfvMe2LSBcJXqZZuz5QC9+RSpUTnGuUPuBZzVZ34yh13Tn1p3o0IwPpWfJR28=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716396393; c=relaxed/simple;
-	bh=x18STXpD3d29xjKD9C9lapUiG2WVNFiFxYuyPZrVeDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=suT06AGA8dLJGIWXDCXuT13n2rvEfnLc9oHd84LTX5YhEpJmfYUp+NQ1qDnuwsrVYr0hspsRI+1QeV/TztO5bX7IiC/VkL+DxNEtgdqqATxujM5357fI/IiFlZX7SmE8UvoSlOai3yJ/9LF0b14EzRIGtsf8IZFsZd2W4jEzfqI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=T7MImrad; arc=fail smtp.client-ip=40.107.220.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1716396410; c=relaxed/simple;
+	bh=0JeFAAiPE/K1Yx44TxqohrWnGI/ra4G5bsdGDatUyQ8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=D3HL14TqjWBEOcuKvHmA7Gh0nDBci4sBeF2u2NgmVmvo879+7NFAb2fiOv5KpXGVj4ZBWTOm4OFrEggE/1hz5eaqrK5ufPxafDzENYwAw/r+/M5udJ8KCtL6QcoJD1sS+sPps2I97rgic7lE2SReFO+tG4RIxSXrMWV2aDs29jU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bEtTwAuP; arc=fail smtp.client-ip=40.107.94.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=URwSXMpVRG43WYYBNOBDvpVKHr2AuM0s/fBuQGis/6cYaO4CkWf05ISHX/u3lbr6Qhxo2CoYp8YtH6OJqV/NWAPCo+79TxO1G5uCz0AsibgG6AiqtWfYA+QYCo2n1RrMAyuLbwZYbPzElofS9EF4hwJEJxNHmLTOijXqo3yC4yBgSeoNG7mHB0Lo+AgmJzz5K9o6PHGsavrmqG3GYI3yMSkIDgZDwcyana/ij5I0Xp4qyLL2aQf38YEtMXs7mDLFyA/zyudVnlQMP66FOSfGrZ7KnkQe7/6v66S3TdLqRYBmOcJR1BIidl+xEYmfw4ByG0gGW6gWiHQD+Ix0azS5Qw==
+ b=Mw88zR1ujaPiyufctSlJ4jK4b0LlV2UCeugYQtb5ub+UGf56Kq5/kVTU2Otb7wyq4oznhB+vjF2dzmE6SHTavsbDPkXi6EDZ8zduFuwlBXdJ6NbyTn49pZEFeONcCoey0QgsvFf1oVRBzCvhkKhe4Q1z2J4WTB+7hgxoJ536LAoSPMYkse0F+TynQSpi8oCxyFN3rXW00EMBquPAGd8rIQlnAnZbNHIpp4IampA2hmVf7gQ1zD6ZrVLMUGQXHqvDYuuOduHx9lv44Qnu4NIJx1oo9EC0flZeqaKqyEphtCYugAL4qOl0KnXI7L5tc9c18nY+dxMAWIhVrPm7XzMBhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x18STXpD3d29xjKD9C9lapUiG2WVNFiFxYuyPZrVeDk=;
- b=IDyi8xDB1aNL2xHBS8oAvOFJIY0hzEOlmnHuEipP24MnocFL+GFQVcMldPNV8+nM7ifO6GBRUMn3HQNL6Vw9EZl+NGZvtYRCcws+eGjw1znl2ndoRgd6qne1CPxzezeEqqIXmw2FoBaSF9HZY3HVkEC4g5RWqOF/SfKXmduVRZoIsYjrKPz1CcCWFeVdT+CEa5wRa/fqOpoiOpcrA9sm9lO/soYJcRa302MafrhUnsDWpsW7vYXQJF4theYertxIiMfzE0AFkDnana+qQD9/+aeClqRL5NABF3o3y4u3u9alqPe002qw+aTfH1tKNNkDPZd22v3FRnuTuimLJuJklA==
+ bh=e/5TRZoH0Eu995ZUzQPFuM+hl7c/vvkF00Ey9p03/+U=;
+ b=AyvwnKLHSSvkhLK5Yl686krUMjTYf4ntBMD+KI9Cya3kGuhIP5eOzPYCrR0ovRemIhklL3qzeRVeeOhoNfbJaIB7xqCy1ahfYc1i50JHglIVPmWnRounln3gc7HqrR4Y5hSGgT055excS5DWGtPmXmSRpPCE8iy1fcdCX+7xO6cKSegcDopxaYs5k340JEEg1tUNByMb93rkm2AcLnR1x3Dk7vX2RrjBbCm9pmiTHT5ZPzkFVn/Uf5O1YRgRRjiuISl79gZasBKaiVr+XfUQR0KfyoKpssu2Fpb6DqFdPhoewceoxxlUVWfVWmPKvAMCenp4AUGl+Myj1xQk7Wya9A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x18STXpD3d29xjKD9C9lapUiG2WVNFiFxYuyPZrVeDk=;
- b=T7MImradIZKWriuVhJkwRp5jUCC5SiESGdF/d75fpdkhNcBsd/A1kxE6+CszYMt32A6awhFsCk3NzIFWNnGjeat93t4f7fKVcrpXJyKPqwXcqyQLS9PArp3GlevYCbigEbYMcLBu9Ja73ztvYUwCgRk8Zg8SnyiCLklr0C1toUC7v+8UN0AshvIdR24oGm4bk+ofYMCOwE0HqmvwEB1NVuKeCk+I1Gms88yGxTSSQ1U4UjqD0yn/Nfyt0CV9e77lTIGF8xzJCSqwMO26WrW5WeMTwwGp7TYXoA9XhcGm/QJqM6lM1bF6XuTtJIYsC6zUoB0tVl8hBL7YtsRhyzqjRw==
+ bh=e/5TRZoH0Eu995ZUzQPFuM+hl7c/vvkF00Ey9p03/+U=;
+ b=bEtTwAuPRUo/SXVBJmFAExmKWZiMu65/48b6r8qS0StkcMu36/hor6bkcwpB32yxnB/HFFz65svKxWUv/P8PCILYWSs/yJBXHbvPZkpLDfxWV3JAxmgHpTAixCPL7JsRaztZZbb9hi+DfUgdqg8FeABkUAO4c5iPNjZwB9/dTCQ=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by BY5PR12MB4307.namprd12.prod.outlook.com (2603:10b6:a03:20c::16) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by BL3PR12MB6428.namprd12.prod.outlook.com (2603:10b6:208:3b7::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
- 2024 16:46:26 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
- 16:46:26 +0000
-Date: Wed, 22 May 2024 13:46:23 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, kevin.tian@intel.com,
-	suravee.suthikulpanit@amd.com, joro@8bytes.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	yi.l.liu@intel.com, eric.auger@redhat.com, vasant.hegde@amd.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, Dhaval.Giani@amd.com,
-	shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH RFCv1 05/14] iommufd: Add IOMMUFD_OBJ_VIOMMU and
- IOMMUFD_CMD_VIOMMU_ALLOC
-Message-ID: <20240522164623.GA20229@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <3aa9bc1df6a2ee58a03c6ea6ededbc210a2d23a8.1712978212.git.nicolinc@nvidia.com>
- <ZkDR4Rp57cy9qSqP@nvidia.com>
- <ZkGYN36N7sh2vUmv@nvidia.com>
- <ZkOFkfHhG2h2fv/c@nvidia.com>
- <ZkQNxkYv23z7i6e0@nvidia.com>
- <20240521180555.GM20229@nvidia.com>
- <Zk04vnqJPKsVtrdY@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zk04vnqJPKsVtrdY@nvidia.com>
-X-ClientProxiedBy: BL1PR13CA0432.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::17) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
+ 2024 16:46:43 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7587.035; Wed, 22 May 2024
+ 16:46:43 +0000
+Message-ID: <7407f7e8-d7e9-42cf-8ab1-b002a88c2436@amd.com>
+Date: Wed, 22 May 2024 11:46:40 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] cpufreq: amd-pstate: change cpu freq transition delay
+ for some models
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, daniel.sneddon@linux.intel.com,
+ jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
+ sandipan.das@amd.com, kai.huang@intel.com, perry.yuan@amd.com,
+ x86@kernel.org, ray.huang@amd.com, Xiaojian Du <Xiaojian.Du@amd.com>,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240429070322.999500-1-Xiaojian.Du@amd.com>
+ <20240429070322.999500-2-Xiaojian.Du@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240429070322.999500-2-Xiaojian.Du@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR02CA0022.namprd02.prod.outlook.com
+ (2603:10b6:806:2cf::29) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,103 +84,209 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|BY5PR12MB4307:EE_
-X-MS-Office365-Filtering-Correlation-Id: 61de9dbb-a70d-4d88-9b16-08dc7a7eb86a
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|BL3PR12MB6428:EE_
+X-MS-Office365-Filtering-Correlation-Id: afad7d92-19de-4fc4-f510-08dc7a7ec2eb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007|7416005;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?k2TDq3Be62nqyBqEx8sBtztZX2VSA+frdbxVwUJsi3OkuAiOMmM4/fPgYkkx?=
- =?us-ascii?Q?CgIy02ZhCTIE8QGRYAzPU+MKhFJoAa5LHPlzZPCncbYmOcKr8NFx7HKEVi2L?=
- =?us-ascii?Q?xsAWlt9886vOH7EoeyLd1uN3571TNt6q02eQz5cV+hVKa99FEepfeBkuQcBb?=
- =?us-ascii?Q?Gq79rRQq37nzc8QCOp79m2R0xmbCup57/i1MN5F/bcc/9NNGzbJmbX0AnkJ+?=
- =?us-ascii?Q?dDF9DaR+O8vQ0STDJVaI8zWzvJOwwUXW2001/aXIZVWk9OJvMr435OE1H5tB?=
- =?us-ascii?Q?6l8tWPBdarKKfug4+cfP+JCh1zzUzzVZpzjzPFq5t+/uJIzAIGN+Gdy7eol6?=
- =?us-ascii?Q?2MIJSj+bidla3+hv5bbliNPX9gYfRThwC/a2iaXRC2Wy6s93VJ53J89WQKd+?=
- =?us-ascii?Q?hivc9/9RIEY0mEXpLsCMRkplb/1LXDAy703+idWYT3PcIhsc7+rNQHyHbY4G?=
- =?us-ascii?Q?cfMeZl8ZjXd/uaWoRQYKVAgxqGr8TQ6WB1ZsLBhURFF/cncjUEmnL+UBa8nQ?=
- =?us-ascii?Q?z2erf18f7QoPCiNeqlepNWl9OzOsWBB4cO1AF2A5fsIU6bjjJ7IMAVBg1OZb?=
- =?us-ascii?Q?BS/b3HUtDCrayquWTYPgI5RxpJpsk1RArFAYue124FM4599ymllX6txjXB1S?=
- =?us-ascii?Q?GcJEZnjq5zKXmkzKt/NnB4cFadSX6co+bIQhejsVuZa3ZUCKv1G1AjWK29zI?=
- =?us-ascii?Q?R2G6gjdYbXkvk5/aAjOVoC/0233Hl3fUVMfzBrJlGbJB5OI91czTZdJuxXqb?=
- =?us-ascii?Q?SvuLhqM5ol1nLDYkXU8y/1WmwdFOpYGAQ+xvu5uY60Nt8SkTbTB9ruE5/mn9?=
- =?us-ascii?Q?RUfGak0mVC0PGBFCb+tPg988LlnbGXcvnsny60Sl0RpcZj0jMRq6/gy4UxLD?=
- =?us-ascii?Q?Oc5JMWfY1TnUf1UOjGtVRh3HQ3pQfltZVgKxDJnLLKhm1koc5sIA57oHLueG?=
- =?us-ascii?Q?oPDJ9jBOR4c0ueLeRDYPjIt0bFyqIqd/mZhvvgCV/gxeVWI4/BNVLOpL1YN8?=
- =?us-ascii?Q?LG4maYfqshHuaaGnlZBPxPPuWoMTpNCHn/lc9h5RHJH8ETPqp2iX4Kiw1Osj?=
- =?us-ascii?Q?fLWRF4hFUQtp0Pci8pW3h5HCRK+Ff2uXmcAqt+ILhZKZjmcFSQwQjvjiHQ1M?=
- =?us-ascii?Q?SwjchtLXN1Mdszy7Pda+lfedTiVq2Mi0AWuNKFzzrvEtd+/qKM6jgTutZfHl?=
- =?us-ascii?Q?IPMd6zq1rV5xoU5VbcLeShnYoORbbHNgN3YJn7j2jK+NyyMikH1dmHN8Ksqf?=
- =?us-ascii?Q?ibbT3V53L420K0kNPutZYoUpFmvDRQ7C8SxlZVcmnQ=3D=3D?=
+	=?utf-8?B?WmdkbGZUTkx5ZlJKdXpOQXRlR20zeFN0cDZZL3M3M3hRRkNNanRTMEtFYlE2?=
+ =?utf-8?B?VVI4R01POFV4bVpUUzZQcUxhMDVqRFBmM3kvQitVWmw1NExTbHloV1U2SWh5?=
+ =?utf-8?B?eDdGQTcrUzY1UitORGZjZUExenAyZGlFb3lKMUpGQkRiZjBieE5sUmVhQWxn?=
+ =?utf-8?B?Tk9SV0NURlhRQ1pXRkE2UUN2eHBnUkxPZDY3T0wzai9oVDg4bmQycVgrMDRV?=
+ =?utf-8?B?cEhFQ01HK0plWlFCamhUdDNBVmRPRU9BbWxnK0NCS3pTUGZvTTJRajZ4TjhB?=
+ =?utf-8?B?ZC9xNllzMTNISytxbWlRQ0pwNVQ2SFRnMnBzT2tpdnZwQ3RiNWc5NEV6WFBN?=
+ =?utf-8?B?NythM0VIcnFnTU9ncnZvdWxyTUZzcnJyN2lvdUVqQXdJZWs5eEJVcHAyTU1E?=
+ =?utf-8?B?UnlpSTFiTDVGTk9JMXFDR3EyRWV0MkJ0MWFBQ2JSUnZDV0JWZGpKVCtuMWFj?=
+ =?utf-8?B?WjFyVFduZ3VhcEViMTRNWWUvaC9xRTdFSHAweGs2RzRjbGI2MGw5amhrazdO?=
+ =?utf-8?B?d3VCclRvVnJrdStqRzdVc05Wdkt4VTVBMk9wSWtEVTVHWTg3bnVZNCtmMStu?=
+ =?utf-8?B?ZWxhVDJ4ZkxGOTZmS3VpMEFwVUF1d2NHN2ZHS29EWk83R0VDa0FDdWtrRWRP?=
+ =?utf-8?B?enpMTDJidWZjRFpYODY1RmRXVUIrSWtJM1pFbmdZK3h5MHkvMXUxOFRZcS9E?=
+ =?utf-8?B?Ly8zYmZvNFV3eEhiN1BRczFVOXdibVJqZ2pBek9nR2lES3p3Z0E1cE1nV0Vl?=
+ =?utf-8?B?RzZZaVhIUm5tRCtDWUJGZFp5Y3ArVjcwaHdDbyszN0g4RFMramFxQS9QMW9q?=
+ =?utf-8?B?ZVNvYU5Ya21nekJBK29ISVJJVjVCcTdrOTNpRG4xY1dtQlBnMGxZM0hNWlBH?=
+ =?utf-8?B?UXhOQ2hZeURGQVdJODRTeWx3WUV3Y1c5a0ZpcDQ2ZGVweXVIR1hYdzhBeW5C?=
+ =?utf-8?B?L0IwN0VHSkhwK1RUYVhPM3FuVzI4b2xTbWRtVU0ybjlLb1h4ejhxb0RSY3Rw?=
+ =?utf-8?B?bDhSTTZrQlJNSllUNEdHR2crdVpYQitOZy9DNUVBTlR6dit6WGdNY09rZlJp?=
+ =?utf-8?B?OWdQMnZIdjdMUjRLWmVhK0xlU01vTlJXMW1EWnR2aDdVVWV4RldlbVMvZVhT?=
+ =?utf-8?B?WmZ5ZFJBNGFqNGRsaHhXVW0xRUEvWFdsSUJMYWFXOU9BbGFTZ0syc01qWFpK?=
+ =?utf-8?B?SkhDeUc1ZEp0bndYcHRLT29aVkxDNSthN0RPNktYM3RQclV0QkJUS0lWZXcx?=
+ =?utf-8?B?Q3NXNUk4R0k3NVMybTZkRUZCcERvSld6YnVpQzNlR2hlb0N1eG5DOEJZZjVX?=
+ =?utf-8?B?ODRaNzBNaWpuVUVaOUhzTkZNMVRTZXh3QURHNmZ3aFQzYllXYTE0K1VDNXVT?=
+ =?utf-8?B?eEc5cXg4Ty80VklPc04yZ1UxSjdlaUZpQ0RMZTczWEJKaWRhb3JadXcrMktV?=
+ =?utf-8?B?WTVtYkNTYjAzUlhySGlUa1I3emlXTnI5aFV0Uy9NeFJhNURSVHYvM2tpR253?=
+ =?utf-8?B?NzVFdDZUVlYyTzlmMmltWlVQMXFjdzJLMEhYZ1hIbGlkS3VyRlN1WnRGSFpx?=
+ =?utf-8?B?bzRvcGZHaEhXMVJ2bUYvOXp2MWpiN1FCc0ZIdnBBMVNGMTgvazlCUFdtM01y?=
+ =?utf-8?B?dGh1MFFoZ1NxQWswSUxEVGR6eklTbzIvR3pDeDd6Qko3RXJnOUtzMW1vZXVx?=
+ =?utf-8?B?UFR3d2VyY2hrUG4zbWIraVllcmZxaVM4K0FlVkU2VW4vcWtScEdEdDhRPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(7416005);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AQSZ44eadGE5q86pizPfpkKwY+XKTW4O74sGoanV9EbYoLTXfZnZDIMteAAD?=
- =?us-ascii?Q?jWQiVFLw967ggECFq7lxFxL6p2Yfn+zFBZtjde2w8BDcLI/ZX9IqRTf8UCIQ?=
- =?us-ascii?Q?zmIFjdO8/+ixq26qH3A0i53+8pBVtzejPZUoDy4lC7G72/Bf5bjXwD8VVxJh?=
- =?us-ascii?Q?DiXx/Am30UrYBfvsOYAiwxvkU5mC8C37qYToAj7U+MQXOrbEjkayMzBYOU0t?=
- =?us-ascii?Q?/+Wmw5/lSHXLCBy3hPGuleI0SeZyi7n5kBJrck78reoA5OtKWndikSEKjMvY?=
- =?us-ascii?Q?47eBukbLsAmT9rjese6QUrSiMW8Qe7tdj9ATFsQdBfKnejFAZOgxOZcybsBy?=
- =?us-ascii?Q?O9NuIOVjdAePMOKHKPlgAFV+BuJVvyaLhN7yhdoBKJbe01kOdpAuK0z5rQpW?=
- =?us-ascii?Q?iCwXH/E5N4lolYB4sacrYgoRAFh0zAOWLKMzVxutgoPjKtt0IxdT9Lvn0kxx?=
- =?us-ascii?Q?QH4K9/85tTM6rnMZv+eqdoZKkEWQBZG4Iqp+CbRkDAKynncyIETh6GfeXCRh?=
- =?us-ascii?Q?TxZUMvlYp39ZMqutBr8OmdeF8UMqEkgiihq/8jUKMNF30e0iuHZeZUCFWOFk?=
- =?us-ascii?Q?QmLPsfWAPrdnI3tWX2HCl6mSvNnDbtP7N4MFhgK4RMoxSqQbl0fxMsPoVlg0?=
- =?us-ascii?Q?VzhToXYN+U1QW1vHM6r5GpS2FQaXpDcukTN2QhXieqKHOR2KJ4EMJgvgVJy0?=
- =?us-ascii?Q?hQ/5gaok2jxgnfx/Xt/Oo0MsSHIRQ7mIeCbM/IMjRakJ/wjDWc5Hfzf+mlKy?=
- =?us-ascii?Q?14aDmb9RRoZf4HoRFp/AMfeDjXaEW2JeyxE7EKx7I9sR/HD8phNioqZv0pkS?=
- =?us-ascii?Q?S1githuE+1/QOP4VvpETiUW1Q68l6ku9XU4evE7xMj50XnY1PayIYyTeftIm?=
- =?us-ascii?Q?68bsPwMMPPt3OkvnH5Qb1x27mHrTA8+KV2BUyyW4djUJpcQbNwcr3oh85NgQ?=
- =?us-ascii?Q?CTONJuPai+wzELk8zKB9sVRFU27Kqe2eR5AfqAqU7UxzxjIJQW2ztcj1VZI/?=
- =?us-ascii?Q?E5UtAGU7nyjDwuAvs1s00Ja0xY+B6z4K1VwqhL2SwtkcJ0sBskBDmrWAJfCn?=
- =?us-ascii?Q?PFuuhgbNFxTUBcQtDMDuti5M+mTnMuPpFrUUND9T5yl2F7pzidaM/y6zK9Va?=
- =?us-ascii?Q?iIa3MC1jJ2DKUq+sPCFFOYsX8JXOrCsBreAX0FJOoD5AzbB3Gxjs5xkurLM8?=
- =?us-ascii?Q?3BSJZ3UW8xbXFuc822CVNoZ+oqh9/5PjH4EbPBGiTteBMeqUhrBHUeC92UK7?=
- =?us-ascii?Q?sEmTYq92Pk7zxdlL85bNDtaM9jDVCvdYoUQ2RJtJxy9lopWSWnC6L9ysdwt4?=
- =?us-ascii?Q?5glAYQairkIYRWqK0/9h3moWmXsEm5We3u1cTwOrFOZs3sWqJVbnBFOP09O1?=
- =?us-ascii?Q?RSpU3GNijYa4WiIKRY7KWOKtEzoXIygf101tYxtQYUlg3dc4Kp0C87G/dH9k?=
- =?us-ascii?Q?2Jqk3J6vyTsjN9nuvcO+C4sL01EGqwYmOohuXfHVQ0r1zGqem7U+1Hn6i28i?=
- =?us-ascii?Q?L/2/6NbdxpG/z+EoXsT4fuEc2qQUYf87rfN4othsP92Kyatj9SIz0ifngvyT?=
- =?us-ascii?Q?2UDjE5ppwAqYT9cRtmA=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61de9dbb-a70d-4d88-9b16-08dc7a7eb86a
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+	=?utf-8?B?RXA5WktaK0NmNXFEOWpYMnJxMWZYcVVxYTN3clJ6WGQwU2VTN0VvVXI3YWtB?=
+ =?utf-8?B?VGlDRys1Qm1aRWVHdVI2TWM1cXM2a1ZHRXlvK3o0Tit2T3JtN1hJc3lCVVFP?=
+ =?utf-8?B?dXpTZ0pJTS9ITEZvZFMrZjFLYkVGRVRVbml5NXNmdExTVzRlYkVwank5VDZY?=
+ =?utf-8?B?VHo3REp4TFBvMXE0UWJ0NnFMVUR2NnJlaWhaSWlNNDlyWjBiQ3ovZTF5Ty9K?=
+ =?utf-8?B?L1lxb1c4dFBab1dLUFYvUEZhVWlCTWplaXVqbEtpVjB3UUpvemYxNGh2QjlZ?=
+ =?utf-8?B?Wi9uMTRtTW8wMGxQcmxSRkVFR1NacE9wRnE4RmJZMkh3SlRMQ0UzWmJlZ1VE?=
+ =?utf-8?B?UXdpNDYxdlZuUTRDTllzTVhJRUdvOE42MWRSOWgzelJiU3IxN09VWEtVdU1Y?=
+ =?utf-8?B?WlR2MlVQbDg3dW1WS3hCZ0d6L0FBUVUxL0l2WlF0NG1KMGZyZGs3SzJTZ29B?=
+ =?utf-8?B?cDVFR25aSG1SQTBxaWRYVEZvUFNLZHgyMmFxTlp4bU1NY1pMQUlGS3pmUFBm?=
+ =?utf-8?B?K0REbW5CK2dzb2tXOEcreFFuVlFlVHdibHFJZk9JdEp1aC9LQ0d5QU9YeTJa?=
+ =?utf-8?B?WndjaWxZN0NXZlg2L0xjRW1qYzdDMVR2b1JEc3ppQ1lucVZ0M0FiY0hEKzhu?=
+ =?utf-8?B?TXJ2SWxWTzg3MlpHaDg3Rk9VTXBGRWNQYnFreWJuaE44bW8yc2lNdWNtT0hi?=
+ =?utf-8?B?L2hHTHJQZDd6a3lnS2MwNFEzOTZ1ai91MzNCU1Azc05XZnRZZS9taGRiT3NE?=
+ =?utf-8?B?N2xuZEJpUkhmb1huK21MSVJiVlpPYUY1TDhHNSt0U0h3MkxMNDV3MytjenlB?=
+ =?utf-8?B?QjJsRUFxK2lqTHVQZmYxVFNZZ0V2NnJjbVFhK3YxeVYwZlcvUWN0OWwyZXNp?=
+ =?utf-8?B?U1RQclpZZitSTjFLK3NDanNoeXJXZmhFZTM0TnB4S0ZRY3FGU29hNGNXU2kw?=
+ =?utf-8?B?UlZ2SXRPZFBjNVJNazhKbENLNksxQ09pQnhQc2QwSi9lYnB3QnBUSHE0MFVI?=
+ =?utf-8?B?eFVvZ0xhb0p3VThld3Z0dEsra2pKbFBHL3YwWnlNdHBsKzd6Qk9ncUh3eXhG?=
+ =?utf-8?B?Sy9HNWxKUEs1aGhaaEJWcjZNV093VElpOFBUNWdHVUIwTktGMlFCRHhSTHVr?=
+ =?utf-8?B?L25sQm1JOXdNbzZHdlFVN0xJWjJCeFpwRmZOb1o3OENYTG9Ya1ZQUzc2ZWkv?=
+ =?utf-8?B?Y2FPSWRUaW5OaHczTmJDS0dEZGtLSHlSU1lRbktIVGt5TFZVMlN2bEdNclRF?=
+ =?utf-8?B?RW56UU1kbUVOSWFPdkt1ek1yclViYTN1bEhsWTk1ck11cm9sTzRyenluR1Ay?=
+ =?utf-8?B?eEVmNTBCRzZwS1Vvc1lyUlNKcGswYW11VjMxSFBLUVBNazdBd00yNlErNTVl?=
+ =?utf-8?B?Rm5pd2VPUXVCUDN5NkdMWDhwblMwckdHNFdLNEo1M1Y4OXNFVmxoYldlVzJp?=
+ =?utf-8?B?b1hyOWRtcS9QVGlqRTlkTmdEZlVJaXJrb0daMXJLeXRrUEViVU1xek9IbHFT?=
+ =?utf-8?B?Q2paLzRVWkhvMTI0SDdydVFiOWlwQ1FDN2d2Z04zbDkwODgzUEZHN2xxV1JU?=
+ =?utf-8?B?Z3ZIdUdZSS93WVFIWGVzV1JEV25QZi9ZcmdRdjB0dk5UYmFjYWxkcGNZRDJ5?=
+ =?utf-8?B?dHlSRTVucklnaTdBbEV5TVNXZmZCek81TWdva0EzcFBVSDdUbTFmQUR6cmhV?=
+ =?utf-8?B?a09HUmROZmJpRXZsY09nTkJBTXlEbzZMSzFCbkdxaVVxU2lrc2ZIVEY2M1dm?=
+ =?utf-8?B?RjhBczNOeVk4Z2N0YlBlYXllaWxKcEI0ZmF3UndRQUZmY2JPdk5tV1IwY1No?=
+ =?utf-8?B?UGxqS0hJdE84eDhqYlhJZkZTTEtpa3NOWTRON3VIOExiKzVQM00rdFh6enZU?=
+ =?utf-8?B?MjNkN1RkbGhuOSs1QVpnVVo1OHBkTHQxQ2lybExPbkZWSnhtaC9abW4ra1Vr?=
+ =?utf-8?B?WVpXaFhyazdnWWU0TVg0cVY1UjVJR3gzTUhZTmZaRW9RZXJYTG0xa3N2VzNW?=
+ =?utf-8?B?aGg0R0YvMThtV2lKbWNWVjhJUEl4aGhpYVlqYWRvcUNEeWtPMDhKRC96MUtz?=
+ =?utf-8?B?T2dVSDFZSGVWU3d5dHRnZ3czU0pLblUyTVlUU0FndlN3MkJObmhaV1c3NUpv?=
+ =?utf-8?Q?EwjENuAjVgUT+ATFlaIrkuE9F?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: afad7d92-19de-4fc4-f510-08dc7a7ec2eb
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 16:46:25.9612
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 16:46:43.6290
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6uIjB6y3quVyMkyaKt+sldsND8fYcpEx3UJSa8pbfyjDJcCjv3qIX+Nv6ikwfCiH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4307
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nt5JK/duOBmImJjLA43OuW8pi/y1UZUgQZGpOBfDrnxLVYecsk1hXD27eSnVSIS/260dOaWVIWu4v9NeO49uMA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6428
 
-On Tue, May 21, 2024 at 05:13:50PM -0700, Nicolin Chen wrote:
-> Yea. VMM is always allowed to create a viommu to wrap an S2
-> HWPT. Then, I assume iommufd in this case should allocate a
-> viommu object if !domain_ops->viommu_alloc.
+On 4/29/2024 02:03, Xiaojian Du wrote:
+> Some of AMD ZEN4 APU/CPU have support for adjusting the CPU core
+> clock more quickly and presicely according to CPU work loading.
+> This is advertised by the Fast CPPC x86 feature.
+> This change will only be effective in the *passive mode* of
+> AMD pstate driver. From the test results of different
+> transition delay values, 600us is chosen to make a balance
+> between performance and power consumption.
+> 
+> Some test results on AMD Ryzen 7840HS(Phoenix) APU:
+> 
+> 1. Tbench
+> (Energy less is better, Throughput more is better,
+> PPW--Performance per Watt more is better)
+> ============= =================== ============== =============== ============== =============== ============== =============== ===============
+>   Trans Delay   Tbench              governor:schedutil, 3-iterations average
+> ============= =================== ============== =============== ============== =============== ============== =============== ===============
+>   1000us        Clients             1              2               4              8              12             16              32
+>                 Energy/Joules       2010           2804            8768           17171          16170          15132           15027
+>                 Throughput/(MB/s)   114            259             1041           3010           3135           4851            4605
+>                 PPW                 0.0567         0.0923          0.1187         0.1752         0.1938         0.3205          0.3064
+>   600us         Clients             1              2               4              8              12             16              32
+>                 Energy/Joules       2115  (5.22%)  2388  (-14.84%) 10700(22.03%)  16716 (-2.65%) 15939 (-1.43%) 15053 (-0.52%)  15083 (0.37% )
+>                 Throughput/(MB/s)   122   (7.02%)  234   (-9.65% ) 1188 (14.12%)  3003  (-0.23%) 3143  (0.26% ) 4842  (-0.19%)  4603  (-0.04%)
+>                 PPW                 0.0576(1.59%)  0.0979(6.07%  ) 0.111(-6.49%)  0.1796(2.51% ) 0.1971(1.70% ) 0.3216(0.34% )  0.3051(-0.42%)
+> ============= =================== ============== ================ ============= =============== ============== =============== ===============
+> 
+> 2.Dbench
+> (Energy less is better, Throughput more is better,
+> PPW--Performance per Watt more is better)
+> ============= =================== ============== =============== ============== =============== ============== =============== ===============
+>   Trans Delay   Dbench              governor:schedutil, 3-iterations average
+> ============= =================== ============== =============== ============== =============== ============== =============== ===============
+>   1000us        Clients             1             2               4              8               12             16              32
+>                 Energy/Joules       4890          3779            3567           5157            5611           6500            8163
+>                 Throughput/(MB/s)   327           167             220            577             775            938             1397
+>                 PPW                 0.0668        0.0441          0.0616         0.1118          0.1381         0.1443          0.1711
+>   600us         Clients             1             2               4              8               12             16              32
+>                 Energy/Joules       4915  (0.51%) 4912  (29.98%)  3506  (-1.71%) 4907  (-4.85% ) 5011 (-10.69%) 5672  (-12.74%) 8141  (-0.27%)
+>                 Throughput/(MB/s)   348   (6.42%) 284   (70.06%)  220   (0.00% ) 518   (-10.23%) 712  (-8.13% ) 854   (-8.96% ) 1475  (5.58% )
+>                 PPW                 0.0708(5.99%) 0.0578(31.07%)  0.0627(1.79% ) 0.1055(-5.64% ) 0.142(2.82%  ) 0.1505(4.30%  ) 0.1811(5.84% )
+> ============= =================== ============== =============== ============== =============== ============== =============== ===============
+> 
+> 3.Hackbench(less time is better)
+> ============= =========================== ==========================
+>    hackbench     governor:schedutil
+> ============= =========================== ==========================
+>    Trans Delay   Process Mode Ave time(s)  Thread Mode Ave time(s)
+>    1000us        14.484                      14.484
+>    600us         14.418(-0.46%)              15.41(+6.39%)
+> ============= =========================== ==========================
+> 
+> 4.Perf_sched_bench(less time is better)
+> ============= =================== ============== ============== ============== =============== =============== =============
+>   Trans Delay  perf_sched_bench    governor:schedutil
+> ============= =================== ============== ============== ============== =============== =============== =============
+>    1000us        Groups             1             2              4              8               12              24
+>                  AveTime(s)        1.64          2.851          5.878          11.636          16.093          26.395
+>    600us         Groups             1             2              4              8               12              24
+>                  AveTime(s)        1.69(3.05%)   2.845(-0.21%)  5.843(-0.60%)  11.576(-0.52%)  16.092(-0.01%)  26.32(-0.28%)
+> ============= ================== ============== ============== ============== =============== =============== ==============
+> 
+> 5.Sysbench(higher is better)
+> ============= ================== ============== ================= ============== ================ =============== =================
+>    Sysbench    governor:schedutil
+> ============= ================== ============== ================= ============== ================ =============== =================
+>    1000us      Thread             1               2                4              8                12               24
+>                Ave events         6020.98         12273.39         24119.82       46171.57         47074.37         47831.72
+>    600us       Thread             1               2                4              8                12               24
+>                Ave events         6154.82(2.22%)  12271.63(-0.01%) 24392.5(1.13%) 46117.64(-0.12%) 46852.19(-0.47%) 47678.92(-0.32%)
+> ============= ================== ============== ================= ============== ================ =============== =================
+> 
+> In conclusion, a shorter transition delay
+> of cpu clock will make a quite positive effect to improve PPW on Dbench test,
+> in the meanwhile , keep stable performance on Tbench,
+> Hackbench, Perf_sched_bench and Sysbench.
+> 
+> Signed-off-by: Xiaojian Du <Xiaojian.Du@amd.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-Yeah
+Rafael,
 
-> On one side, it may not be straightforward for a qemu viommu
-> driver to hold a shared S2 hwpt, as the driver is typically
-> per instance, though I think it can keep viommu to its own.
-> So passing the S2 hwpt back to qemu core and tie to iommufd
-> handler (ictx) makes sense.
+You can swap my R-b for an A-b for when you pick this up after merge window.
 
-Yes, qemu will need some per-driver-type but not per-instance storage
-to make this work. Ie the ARM per-driver-type shared storage would
-hold the ARM specific list of S2 hwpts.
+Thx!
 
-> On the other side, there can be some future HW potentially
-> supporting two+ kinds of IO page tables so a VM may have two+
-> S2 hwpts? Then the core would hold a list of S2 hwpts and the
-> viommu driver would need to try-n-allocate viommu against the
-> list..
+Acked-by: Mario Limonciello <mario.limonciello@amd.com>
 
-Yes, it is supported in the API. Userspace should try to create
-viommus with all the S2 hwpts available and build a new one if it
-can't, just like hwpt attachment to a device.
+> ---
+>   drivers/cpufreq/amd-pstate.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 2015c9fcc3c9..8c8594f67af6 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -50,6 +50,7 @@
+>   
+>   #define AMD_PSTATE_TRANSITION_LATENCY	20000
+>   #define AMD_PSTATE_TRANSITION_DELAY	1000
+> +#define AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY	600
+>   #define AMD_PSTATE_PREFCORE_THRESHOLD	166
+>   
+>   /*
+> @@ -868,7 +869,11 @@ static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
+>   	}
+>   
+>   	policy->cpuinfo.transition_latency = AMD_PSTATE_TRANSITION_LATENCY;
+> -	policy->transition_delay_us = AMD_PSTATE_TRANSITION_DELAY;
+> +
+> +	if (cpu_feature_enabled(X86_FEATURE_FAST_CPPC))
+> +		policy->transition_delay_us = AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY;
+> +	else
+> +		policy->transition_delay_us = AMD_PSTATE_TRANSITION_DELAY;
+>   
+>   	policy->min = min_freq;
+>   	policy->max = max_freq;
 
-Jason
 
