@@ -1,86 +1,138 @@
-Return-Path: <linux-kernel+bounces-185783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C61A8CBAC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:45:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69A78CBAC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD3F280E33
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:45:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DDEAB217A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B3577113;
-	Wed, 22 May 2024 05:45:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B13A77117;
+	Wed, 22 May 2024 05:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FQ3HWlPd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4187710C
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB726F067;
+	Wed, 22 May 2024 05:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716356705; cv=none; b=c8CptzKAL1FT35aUwOVm1FWyRUdMefAYdentnlnbC5qi9C9C2CHrC95u10Hatgpaj4buZ8xl+XnR6TwBiVQ0aN58m5rNQU2OKz+ojUPGuB2OORMAFeHJttYmAFjQX1lmWuZaXtv6SyaDi93huUIU1JfVzNLX//cHeI5cNp/AbsY=
+	t=1716356521; cv=none; b=VtxjhhGNKuyZDLnvJ60BX5FPboGUSnxFhYG1f1DWYKEpUOfu2RhUpwEON0MtMggxIAFYOQpFMc7HvXi+Rsd9tdJtXWHE5q3xYXtCDztd4mwTcajqOmUkrh1xCAgCwuWVf9yR6Puu90TPmKE4wtlwMDfLyNayvGkHkm2WQn5sabY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716356705; c=relaxed/simple;
-	bh=GUNzKR17ExrlXxqaZ0pILUvwkdrZ3pQ14y1UNPvZkto=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Z1QLfnRXnsgCNy/bjMK+bzON88qzIrwV/cMerz0wis8xgYg3tOjFsZtQSn1yOcbidphfVlPMZMQN4a+H+0E1m3DEduLqmEaR5G98HP9enOiQ+Zd5H0uCHmQZ6YEHF5LtZt32HdlRDWXshO9nedro5f6e/586HZjvUm+9Et7fY68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1fe2ba2e1so969072339f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 22:45:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716356703; x=1716961503;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rgty7Pfnmfl9KQwoZJU67HqbxOvFg+UokW7KT8OAsAU=;
-        b=B/FDZuKW7dKfq1hzW8rTFUFnARf5z0GkcgpcZ5yny4Q534mbOghFHkRZxxyQRVAKb2
-         dOyRrfFsCo5OydshrmaUdOtBA5Yh4LfTPKbUIMo7wDgiJ+wfwdJs4Ofx8BTRyn+FPv91
-         oMIMS3v1xmrzEUibQ7e7lr2FOxcj/J80Wk7TPOyAx1BMMfYO8RmpKffDWf4OQ/UWJNg5
-         BsDcAWVr3mxXM4NamX73OgnDJihrRu4Olk01hhdWEapjB0mJBTRkLbC4Vd7qN+3MBv1P
-         f/8zjJTkMBK8+zPmLne3wreFIAemtSTCuoPehl487dJ5waQ+XiYXP+0SHd8xgG5xT6Ag
-         J6qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ7py5nmqiuvKZILXTGrJ9CKXg8JMLNDx8JuRWCizmhP+ztNmhnWVEbCkYxFv6qdsdZTHjp9MnwnZefbqArCn9cMiXHHf0k5TwkNiy
-X-Gm-Message-State: AOJu0Yxm+0GqDf7FMyeZNQUTxS2z6qRPM5jqdL+Mbb3GPUgyR60LTQ4J
-	h7uTvkkU9S/ACX3/qcKcBDbum8HioG2xZ3swmxKUqv8+cYhtqiKmnRBIBzW9nfl25HbnoCQwT91
-	BXNOSfosOvmEnymyqREPvASvQUsDZlNJrNH1xDrwCJBV/C254m18FB4M=
-X-Google-Smtp-Source: AGHT+IFlXDjgQcMSg1MbONcL/etxR6wlTAo+jyX+GNoqh/OcR+Z6aOn0RzVOiLRANV/tkRDG60ybRjo1nTv5BU1FFXH88VBbnvi4
+	s=arc-20240116; t=1716356521; c=relaxed/simple;
+	bh=DNOmOODdlXynNw2098gR2o08KbJJt+rlhW8xtv8itE8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gGCW4Igyt+GhQ/pNCa9mDLkZ0rMC6Cq/1uZNCxfL2baT5UqschOBz0txwR6F9C/ONJ7ay9h6aIZpk7URMeJyTnCwQCI7Kas+FrT4a2tn3HGQ0ITjyIGLi9b7X2ysLqXrfrveM2AgQbLU6dni1auo8/bWqjEjT7wGwjwOSIU3xCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FQ3HWlPd; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716356519; x=1747892519;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DNOmOODdlXynNw2098gR2o08KbJJt+rlhW8xtv8itE8=;
+  b=FQ3HWlPdyxJTbTchvKnNfCMPaf2vSTWPaaGE4b2Ah8KIDYC7xd5FzPDf
+   2WPEVpIMdoZX4cYJHxHc0Q3VVFZXFNeeFMIUTGTh9gHrhiocmLqeXWfhJ
+   unGpbIG8+N6JlyTl9ehFp9vVyhUXqv3xKVglptmn+CytLcfjZiP2Oz0oS
+   HWMLLXJtS28J/go/CQKck2BqQjd3hfwIcWinOWuI8qpCt+7Ch+2/mSasz
+   ZXlBKx/G3M9mRNA1Jvd07WVeaBTf+Jy80UG2YAuThyndNBRGGFYKSzUnb
+   1J6ha+Q9dsWv50Nt6rrpbwpfF5BSOiLOShRNPu4R4MJXlGbUpKz4azetr
+   w==;
+X-CSE-ConnectionGUID: 9NssqFZyQGK3E6IhAgUfSA==
+X-CSE-MsgGUID: 0ZqYTFTiSg+ChrA3oDz/Sg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="23990822"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="23990822"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 22:41:58 -0700
+X-CSE-ConnectionGUID: 2Q1tF3BvQ9S+lXXvTMhpug==
+X-CSE-MsgGUID: ms7XDvyHTui40I7vtTbvbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="37922008"
+Received: from xiao-desktop.sh.intel.com ([10.239.46.158])
+  by orviesa003.jf.intel.com with ESMTP; 21 May 2024 22:41:53 -0700
+From: Xiao Wang <xiao.w.wang@intel.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	luke.r.nels@gmail.com,
+	xi.wang@gmail.com,
+	bjorn@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@google.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	pulehui@huawei.com,
+	haicheng.li@intel.com,
+	Xiao Wang <xiao.w.wang@intel.com>
+Subject: [PATCH] riscv, bpf: Use STACK_ALIGN macro for size rounding up
+Date: Wed, 22 May 2024 13:45:07 +0800
+Message-Id: <20240522054507.3941595-1-xiao.w.wang@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d92:b0:36c:11a0:7878 with SMTP id
- e9e14a558f8ab-371f73d553emr948305ab.2.1716356703406; Tue, 21 May 2024
- 22:45:03 -0700 (PDT)
-Date: Tue, 21 May 2024 22:45:03 -0700
-In-Reply-To: <tencent_11C652F8465D499BEEC06EC00CAFE7D30606@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009d5c0f0619046f5f@google.com>
-Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
-From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Use the macro STACK_ALIGN that is defined in asm/processor.h for stack size
+rounding up, just like bpf_jit_comp32.c does.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
+---
+ arch/riscv/net/bpf_jit_comp64.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+diff --git a/arch/riscv/net/bpf_jit_comp64.c b/arch/riscv/net/bpf_jit_comp64.c
+index 39149ad002da..bd869d41612f 100644
+--- a/arch/riscv/net/bpf_jit_comp64.c
++++ b/arch/riscv/net/bpf_jit_comp64.c
+@@ -858,7 +858,7 @@ static int __arch_prepare_bpf_trampoline(struct bpf_tramp_image *im,
+ 	stack_size += 8;
+ 	sreg_off = stack_size;
+ 
+-	stack_size = round_up(stack_size, 16);
++	stack_size = round_up(stack_size, STACK_ALIGN);
+ 
+ 	if (!is_struct_ops) {
+ 		/* For the trampoline called from function entry,
+@@ -1723,7 +1723,7 @@ void bpf_jit_build_prologue(struct rv_jit_context *ctx, bool is_subprog)
+ {
+ 	int i, stack_adjust = 0, store_offset, bpf_stack_adjust;
+ 
+-	bpf_stack_adjust = round_up(ctx->prog->aux->stack_depth, 16);
++	bpf_stack_adjust = round_up(ctx->prog->aux->stack_depth, STACK_ALIGN);
+ 	if (bpf_stack_adjust)
+ 		mark_fp(ctx);
+ 
+@@ -1743,7 +1743,7 @@ void bpf_jit_build_prologue(struct rv_jit_context *ctx, bool is_subprog)
+ 	if (seen_reg(RV_REG_S6, ctx))
+ 		stack_adjust += 8;
+ 
+-	stack_adjust = round_up(stack_adjust, 16);
++	stack_adjust = round_up(stack_adjust, STACK_ALIGN);
+ 	stack_adjust += bpf_stack_adjust;
+ 
+ 	store_offset = stack_adjust - 8;
+-- 
+2.25.1
 
-Tested on:
-
-commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=116d7244980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=127284e8980000
-
-Note: testing is done by a robot and is best-effort only.
 
