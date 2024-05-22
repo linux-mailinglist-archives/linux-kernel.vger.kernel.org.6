@@ -1,120 +1,119 @@
-Return-Path: <linux-kernel+bounces-186144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F218CC04F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:34:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BAC28CC051
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F3D1F22F12
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98BB283724
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396F556B72;
-	Wed, 22 May 2024 11:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TQGq+5a3"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0324C82863;
+	Wed, 22 May 2024 11:34:44 +0000 (UTC)
+Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE12A81ACA
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80F656B72
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377632; cv=none; b=ZVFD0ZCCeDiGhdFmjp9x6dehg9FrK9zk754tvz22fZTRpEWz7ILp3fwae8CTWmXOsoQeU3+/fCwu//Q3imjF8/rLDkh08eObGl9mYwuOo+C4PB4SDZILAJGqdkVvENwPDjFYxeU/zXfsLTdoXMMVDIdXfcykiwTqEzhkQNKeNIM=
+	t=1716377683; cv=none; b=WEElSdC/qIS7nV+wUAQW3TVn7h+dXtW38Glo7YKXqC7EsgSj4OOlTVVO5iezwW/ze6Ckbj1aycMdXEaMjcGl2o39wTUkjhCescI17P+stQWhsSvTZnPupLsnMmwTYiLFhpHj8GhxTmlD2YjxPebR+2GqJCO+9l1vOATs0wtnwzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377632; c=relaxed/simple;
-	bh=nTvlfb9YGnNTKN6G+RLS44igQJv3ipgoswKOLp1f0ig=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pCbQTrLwUd2Q/ThWW9qhlwKrpZdZJ8oFZkuCSgk+T5EV9GQNFToZysq9DRhXlqPop3OxW6M+ErIZBc3g1XsyifpS1sEwzn6Qxd+XpQPrG0BJRumxdseEnaBzotsojWN1jKrqdNuLa8/YGxHNl4/rNxTtjQA+na+fXFGOISIxAaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TQGq+5a3; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a5cdd6cfae7so123704366b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 04:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716377629; x=1716982429; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cRW932voPWIlMWkxCkJVneBFSVf5edVVWFRjcR0MAnU=;
-        b=TQGq+5a3lxQWfohysyGBcIiJYzGE1pqxbNHhDi2IpgH5lmbjgEJBVKB4Bly7OQtkZu
-         f3HkybCO2iPYLIRaiQdQ3grEDWJwGWVCti2XRs0oLnPOnSHzk4dqvKvKP+DQgYt+5fxh
-         RFAiLit0Z6Y2XEqyzoZqqDxZw614og3I0lEKKlXH6y/PB4eszeinMKtV0xm7aNB7iGgZ
-         XGizzkV9+iNajg8CxXovJWRTilnEBgtEPb3t6lZI94MaB/1vyBF+1z/TKKc2YxYJmNEc
-         aMvO4uGV9lqMwaemfM4QX1W6E6TPdEfJCk8sZ37fgWC820ArJ/McWi1PNk4Peh7wmsTq
-         pZLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716377629; x=1716982429;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cRW932voPWIlMWkxCkJVneBFSVf5edVVWFRjcR0MAnU=;
-        b=rYZ0Xh1JwlocqsFp3N27M07uFfHTlou8DV/ELCbqK4e+u6xaZOFoc61lf8joDmkn9w
-         nFn7oYIGiSAQh2PM3AyVNMFM5XZrbaXtU0xA1sCF2FLcDGyddl03lPP1vIsea0A/whQ9
-         7xTDgSw/7BiuFpw0ZqRIV7afLCbHoWp1KHPxG/cBS1QYQ0E8k82T3i7/oPIt79opg2XQ
-         vFozmYt8gVP61/g0vnkXoaIhZQcEPOOQJJtF9xm0CmCZOxmKPw59alBwH2SxIaAJVi8X
-         FCLHCO4PtLKMBhxWJUTUPLvTTTHapk2AQi5ZQRw4p2n6F/nPLogxJubERO5GnVNHFMLb
-         1kug==
-X-Forwarded-Encrypted: i=1; AJvYcCV60NArzBwu3SOOBJfcvXjxoIFchdPqLFIRf1Xp+DIydUQ9T9QVrwVQOXCNjqqzXw9blLLEsMt/MlI6wQscfwRLHhUEo/oC1wRG6UHo
-X-Gm-Message-State: AOJu0YyEsx/lP50Bs/1skZgsV+VmZNYBCQ8ggYpi5Hd1n34xU5CYWOxW
-	5yKiOvdaQbd9+T+J9c0whTgEii0ITLJ7cYn2u0F+L4hTcP2BWrs07Y7BkXuq5hnEMfKsbsS+9+K
-	rBJQ=
-X-Google-Smtp-Source: AGHT+IHdFu3XoWK3DJSSo9+7yDuyrUMyNNW6xZNAHXCMupaIHhESb4rOw7EWexdU0Bt1/PvMFRv9rw==
-X-Received: by 2002:a17:906:7c53:b0:a5a:3908:f4ad with SMTP id a640c23a62f3a-a62230f84a1mr157277666b.10.1716377628873;
-        Wed, 22 May 2024 04:33:48 -0700 (PDT)
-Received: from [127.0.1.1] ([2a00:f41:c55:53ae:4d0a:75f4:a9ea:5025])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d2bsm1748202266b.120.2024.05.22.04.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 04:33:48 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 22 May 2024 13:33:43 +0200
-Subject: [PATCH] soc: qcom: socinfo: Update X1E PMICs
+	s=arc-20240116; t=1716377683; c=relaxed/simple;
+	bh=lH6KbgxQ/zhQaHHB/tshrEoyjiCr4O+1LfFZ/Ly2bCw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rJy0L+78gHENWjm3v2WNsMKp6y+l+mPfLBwHJJCPZ3QayRqtNPlSSdKq9hFbm+myYHO1pUsSwXGS0OHP2ppAFEpq6cuQt2cp1d9QqGzGvMRoTlyoL86GCq1zuCPnmKmFKBXM/qimt7q92XpduxhfwEUnLshrRVyx3MvA5P1JhfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.71.62])
+	by sina.com (172.16.235.25) with ESMTP
+	id 664DD8260000282A; Wed, 22 May 2024 19:34:00 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 70485834210399
+X-SMAIL-UIID: FADD444D6EE443508E86F8EBE03CEA13-20240522-193400-1
+From: Hillf Danton <hdanton@sina.com>
+To: Jakub Sitnicki <jakub@cloudflare.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Eric Dumazet <edumazet@google.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
+Date: Wed, 22 May 2024 19:33:49 +0800
+Message-Id: <20240522113349.2202-1-hdanton@sina.com>
+In-Reply-To: <877cfmxjie.fsf@cloudflare.com>
+References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp> <20240521225918.2147-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-topic-x1e_pmics_socinfo-v1-1-da8a097e5134@linaro.org>
-X-B4-Tracking: v=1; b=H4sIABfYTWYC/x3MQQqAIBBA0avErBN0KomuEhFhU80iFScikO6et
- HyL/zMIJSaBocqQ6Gbh4AtMXYE7Fr+T4rUYUGOrO0R1hchOPYbmeLKTWYJjvwXV6Nbianq79BZ
- KHRNt/PzncXrfD9Sh3HVpAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+Content-Transfer-Encoding: 8bit
 
-Assign the correct name to ID 82 and fix the ID of SMB2360.
+On Wed, 22 May 2024 11:50:49 +0200 Jakub Sitnicki <jakub@cloudflare.com>
+On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
+> > On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> >> On Sun, May 12, 2024 at 12:22=E2=80=AFAM Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >> > --- a/net/core/sock_map.c
+> >> > +++ b/net/core/sock_map.c
+> >> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
+> >> >         bool strp_stop =3D false, verdict_stop =3D false;
+> >> >         struct sk_psock_link *link, *tmp;
+> >> >
+> >> > +       rcu_read_lock();
+> >> >         spin_lock_bh(&psock->link_lock);
+> >> 
+> >> I think this is incorrect.
+> >> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
+> >
+> > Could you specify why it won't be safe in rcu cs if you are right?
+> > What does rcu look like in RT if not nothing?
+> 
+> RCU readers can't block, while spinlock RT doesn't disable preemption.
+> 
+> https://docs.kernel.org/RCU/rcu.html
+> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-rt
+> 
+> I've finally gotten around to testing proposed fix that just disallows
+> map_delete_elem on sockmap/sockhash from BPF tracing progs
+> completely. This should put an end to this saga of syzkaller reports.
+> 
+> https://lore.kernel.org/all/87jzjnxaqf.fsf@cloudflare.com/
+> 
+The locking info syzbot reported [2] suggests a known issue that like Alexei
+you hit the send button earlier than expected.
 
-Fixes: e025171d1ab1 ("soc: qcom: socinfo: Add SMB2360 PMIC")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/soc/qcom/socinfo.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+4 locks held by syz-executor361/5090:
+ #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: map_delete_elem+0x388/0x5e0 kernel/bpf/syscall.c:1695
+ #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_hash_delete_elem+0x17c/0x400 net/core/sock_map.c:945
+ #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: spin_lock_bh include/linux/spinlock.h:356 [inline]
+ #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_del_link net/core/sock_map.c:145 [inline]
+ #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_unref+0xcc/0x5e0 net/core/sock_map.c:180
+ #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2380 [inline]
+ #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0x114/0x420 kernel/trace/bpf_trace.c:2420
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index 277c07a6603d..41342c37916a 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -133,7 +133,8 @@ static const char *const pmic_models[] = {
- 	[72] = "PMR735D",
- 	[73] = "PM8550",
- 	[74] = "PMK8550",
--	[82] = "SMB2360",
-+	[82] = "PMC8380",
-+	[83] = "SMB2360",
- };
- 
- struct socinfo_params {
+[2] https://lore.kernel.org/all/000000000000d0b87206170dd88f@google.com/
 
----
-base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
-change-id: 20240522-topic-x1e_pmics_socinfo-30462d186a86
 
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+If CONFIG_PREEMPT_RCU=y rcu_read_lock() does not disable
+preemption. This is even true for !RT kernels with CONFIG_PREEMPT=y
 
+[3] Subject: Re: [patch 30/63] locking/spinlock: Provide RT variant
+https://lore.kernel.org/all/874kc6rizr.ffs@tglx/
 
