@@ -1,133 +1,155 @@
-Return-Path: <linux-kernel+bounces-186598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE7428CC61D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:08:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D71188CC61F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918431F250C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 466391F25380
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81574145A1E;
-	Wed, 22 May 2024 18:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3ED1459F7;
+	Wed, 22 May 2024 18:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVLKOzN6"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fdimPzqP"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27333A929
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DC3210EC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716401303; cv=none; b=OKQYHX8i60728GDAuNFazilZfne97P1Rk/ZdXbQSxp8ViVVIWzSq+izRM/zrSgs/VholFxLzJydGxRktx4LZJjKH6/LQaZ68RWy0KKtB7Brf0nGqQB74bNfbojlzW+8n70yD0+LQrV9yjTPF3J8gvuykps/YbN2KOcRn2rfJZW8=
+	t=1716401487; cv=none; b=oF2W4x6y9EnRovNAk1bLwzYGFGyerRff/25FpjqTRJE8eAdNb2aLnlSJVM/vkUWA0Umt2ULtUzEaaCAKhdTfaFGdvjaF3NGkn2a5Rto2zHGaXIvd1esno8oK8mNIedC4ncfwkRnWHem0BG146VjKBgvDFxgBEm77iiMCe0/aKtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716401303; c=relaxed/simple;
-	bh=de/va54cFXE6dZC3rsLgUlhOLoQzpNi7uxfl6NckXE0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aY6eDvB8qekEr759kW6YqdHcBfRN7AC/iaUYFDYC8joEslwnL4LvHFqVcAg0707XYA68Mz4hhLbvUbzWAOsGnwyCRU8AC5UkBhPmxOuyWWEoeThLMzlF/Hrn94M/S7MmuuTKJfhZV//ar4wT6JZnxVxWD2j+8IS6ujvECBbdp4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jVLKOzN6; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e1fa1f1d9bso93820311fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716401300; x=1717006100; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9J7VkvlyzdgokztcmiI2sbYnzlGN24WOER4kC71qKRU=;
-        b=jVLKOzN667Eq12ZkyFd1/+gp1ZB7JUbglJ4co85ZzB3w6KqRgHep/V9Si98t/ZPLJ/
-         6NH4ItZNbtIDhqOefKa7iMW22pTuWI2t9CYgIqKFJskDiXJ9dFv+n/BV8kz3Uk5TxB5/
-         HVzGFpakOmejM7Z2a/hcAaAbTQI+I1IN3Q15GGqlo77J0yZqFU34H0OZAsfC7DZs2QUj
-         FYuR7fdNiK6AA3aefnlGcKhOvgkbzDb9mu9mhdDOSmwPTuu2T6f1KqDNLNyj4oX4ZlZz
-         d7xrkATWAHC97dD6NAaEFdSjg22GLOJJAdgRo8wlooXasyS21O289DNSoLYFElDveG6k
-         Qq6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716401300; x=1717006100;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9J7VkvlyzdgokztcmiI2sbYnzlGN24WOER4kC71qKRU=;
-        b=jaesHs5JaJ0kV3xYzHRQWphIyucXXaSiFbzbgNcBfzNp34x+HGrYgUiBb5TTLj7Y7E
-         zWi/SA/uWQPeBjKs/z4cLtsGrnbII6KSEWHKi4ZB093+NRaR6rN7VFIRsE5nreWZFz1h
-         M6grDGySpQCsH32YIxlJDZQldxp9nZsXBomDnRRIV3N7juaPSAEg9NecI5GrUuxYJYkl
-         8wKfRZrolZhPJdlyYG/4RigcGIu6t7G2pZ7oUlh/M/ZuT75FLac9E3BJIFt6Kpnz0+VH
-         z4j9L20ND9YOfRp0BfPXNNHripzk53KfUK/WP2vjawCq1J160uoPfnxbwe/dkHtYcNWi
-         vIYw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0iKgcrbV08COND6l55PWJbtYE8BcmIcFRDeheCR42CCOB4rZk3LM8adX4toB604Vu0VwpqJA6UQ6VcD02OFXAb4WWCEvkTIjtq8+U
-X-Gm-Message-State: AOJu0YzMQWdirJJkwXkEXDEk3te1jGWLn4tLgQhkyw7YP3RU2aTqQCgL
-	v4H1ltXGNzFq/fBwk9jRGpYi6gXYQHnnBscnyBP9fzgNOpq9HMIuguZ9jpqLMre/RzEnrkU7FT5
-	KIYI=
-X-Google-Smtp-Source: AGHT+IEeYd5+idxruIhxMc0np6hZeIJiKBt4Z1yIzKJzI/XBLd9hysaJbSL+PGkWRmsK2YVUj02EAA==
-X-Received: by 2002:a2e:9846:0:b0:2e2:64d:6849 with SMTP id 38308e7fff4ca-2e949564009mr21402001fa.50.1716401300051;
-        Wed, 22 May 2024 11:08:20 -0700 (PDT)
-Received: from [127.0.1.1] ([2a00:f41:c55:53ae:8e0f:24ed:3702:e958])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a8bc917e2sm1118929866b.155.2024.05.22.11.08.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 11:08:19 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 22 May 2024 20:08:17 +0200
-Subject: [PATCH v2] spmi: pmic-arb: Pass the correct of_node to
- irq_domain_add_tree
+	s=arc-20240116; t=1716401487; c=relaxed/simple;
+	bh=oZSIUryH8Cqq8Qql2NnER5eoLAH632P7s2G857Vxqik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kyI/NDslBBEVPtOm4gzhx70sCb2JLzJDUn3Y8ay57I7zDRqiSh5n22lTn9JuYpKreZbWbfDQtDHCXHwyxHqT4m8+n/b6DExLLAAkC/+ubWIXKWGanFqWN6sPoBB8Y22hZiBrdfH0uo8CLztyh7C0pdjmxLgXYt+ykd/YeVGbdoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fdimPzqP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 736DDA38;
+	Wed, 22 May 2024 20:11:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716401470;
+	bh=oZSIUryH8Cqq8Qql2NnER5eoLAH632P7s2G857Vxqik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fdimPzqPz/6X19BTIpFZEN6pDNiF5wTMpcx3RYuex3opCMeDL27XYwoVWkkpVGhxz
+	 pJJHx3WhQCUiEywBbftWXpzRQH6Dl9PvZWBu+60CN4CFsbeCBbSGbdq1D0lW3UWYpP
+	 h5l3B6ewhoMMWvhU9w5l0vu9Ea1j2qZaEnUdLuMQ=
+Date: Wed, 22 May 2024 21:11:13 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "Klymenko, Anatoliy" <Anatoliy.Klymenko@amd.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm: xlnx: zynqmp_dpsub: Enable plane in atomic update
+Message-ID: <20240522181113.GD5164@pendragon.ideasonboard.com>
+References: <20240520-dp-layer-enable-v1-1-c9b481209115@amd.com>
+ <20240522153151.GB9789@pendragon.ideasonboard.com>
+ <MW4PR12MB71654EE394DFEBE7325E6DC1E6EB2@MW4PR12MB7165.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-topic-spmi_multi_master_irqfix-v2-1-7ec92a862b9f@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJA0TmYC/42NQQ6CMBBFr0JmbU2pKODKexhCaJ3CJEBxWhsN4
- e5WTuDmJ+8v3lvBIxN6uGYrMEby5OYE6pCBGbq5R0GPxKCkKuRZKRHcQkb4ZaJ2eo0hbecDckv
- 8tPQW9nJCbYtSS2UgSRbGdO+Be5N4IB8cf/ZezH/v3+qYi1zYUtaVrk1VyeI20tyxOzruodm27
- QtLMdhrzQAAAA==
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <MW4PR12MB71654EE394DFEBE7325E6DC1E6EB2@MW4PR12MB7165.namprd12.prod.outlook.com>
 
-Currently, irqchips for all of the subnodes (which represent a given
-bus master) point to the parent wrapper node. This is no bueno, as
-no interrupts arrive, ever (because nothing references that node).
+On Wed, May 22, 2024 at 05:52:56PM +0000, Klymenko, Anatoliy wrote:
+> On Wednesday, May 22, 2024 8:32 AM, Laurent Pinchart wrote:
+> > On Mon, May 20, 2024 at 08:22:31PM -0700, Anatoliy Klymenko wrote:
+> > > Unconditionally enable the DPSUB layer in the corresponding atomic plane
+> > > update callback. Setting the new display mode may require disabling and
+> > > re-enabling the CRTC. This effectively resets DPSUB to the default state
+> > > with all layers disabled.
+> > 
+> > Ah, I went through the code and I see that. Oops.
+> > 
+> > > The original implementation of the plane atomic
+> > > update enables the corresponding DPSUB layer only if the framebuffer
+> > > format has changed. This would leave the layer disabled after switching to
+> > > a different display mode with the same framebuffer format.
+> > 
+> > Do we need a Fixes: tag or has this issue been there since the beginning
+> > ?
+> 
+> Yes, this was introduced in the initial driver commit.
+> 
+> > > Signed-off-by: Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+> > > ---
+> > >  drivers/gpu/drm/xlnx/zynqmp_kms.c | 5 ++---
+> > >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+> > > index 43bf416b33d5..c4f038e34814 100644
+> > > --- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
+> > > +++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+> > > @@ -120,9 +120,8 @@ static void
+> > zynqmp_dpsub_plane_atomic_update(struct drm_plane *plane,
+> > >               zynqmp_disp_blend_set_global_alpha(dpsub->disp, true,
+> > >                                                  plane->state->alpha >> 8);
+> > >
+> > > -     /* Enable or re-enable the plane if the format has changed. */
+> > > -     if (format_changed)
+> > > -             zynqmp_disp_layer_enable(layer);
+> > > +     /* Enable or re-enable the plane. */
+> > > +     zynqmp_disp_layer_enable(layer);
+> > 
+> > This should be safe for now, as the function will just write the plane
+> > registers with identical values. The waste of CPU cycles may not be a
+> > big issue, even if it would be best to avoid it.
+> 
+> The CPU time wasted on doubling down layer enablement is neglectable
+> compared to DP link training time.
 
-Fix that by passing a reference to the respective master's of_node.
+Good point.
 
-Worth noting, this is a NOP for devices with only a single master
-described.
+> > What bothers me more is that we may be working around a larger
+> > problem.
+> > Resetting the CRTC when disabling it affects the hardware state of the
+> > whole device, and thus the state of all software DRM objects. The
+> > hardware and software states lose sync. Maybe this patch is all that is
+> > needed for now, but other similar issues could pop up in the future.
+> 
+> I had similar thoughts about proper HW state tracking, but that would be
+> rather large rework.
+> 
+> > Would it be possible, at atomic check time, to detect the objects whose
+> > hardware state will need to be synced, and marked that in their state ?
+> > Then in zynqmp_dpsub_plane_atomic_update() you could re-enable the
+> > layer
+> > based on that. You may need to subclass the drm_plane_state if there's
+> > no field in that structure that is suitable to store the information.
+> > The format_changed local variable would move there.
+> 
+> Thank you for the idea! I'll check it out.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
-Changes in v2:
-- Un-delete the missing ampersand
-- Link to v1: https://lore.kernel.org/r/20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804@linaro.org
----
- drivers/spmi/spmi-pmic-arb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+If it ends up being overkill I think this patch is probably OK. A
+comment to explain the reasoning in the code would be nice though.
 
-diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-index 791cdc160c51..e6a4bf3abb1f 100644
---- a/drivers/spmi/spmi-pmic-arb.c
-+++ b/drivers/spmi/spmi-pmic-arb.c
-@@ -1737,8 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
- 
- 	dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
- 
--	bus->domain = irq_domain_add_tree(dev->of_node,
--					  &pmic_arb_irq_domain_ops, bus);
-+	bus->domain = irq_domain_add_tree(node, &pmic_arb_irq_domain_ops, bus);
- 	if (!bus->domain) {
- 		dev_err(&pdev->dev, "unable to create irq_domain\n");
- 		return -ENOMEM;
+> > >  }
+> > >
+> > >  static const struct drm_plane_helper_funcs
+> > zynqmp_dpsub_plane_helper_funcs = {
+> > >
+> > > ---
+> > > base-commit: 673087d8b023faf34b84e8faf63bbeea3da87bab
+> > > change-id: 20240520-dp-layer-enable-7b561af29ca8
 
----
-base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
-change-id: 20240522-topic-spmi_multi_master_irqfix-f63ebf47b02c
-
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+Regards,
 
+Laurent Pinchart
 
