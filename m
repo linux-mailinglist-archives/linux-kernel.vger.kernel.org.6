@@ -1,191 +1,350 @@
-Return-Path: <linux-kernel+bounces-185858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D5E8CBC01
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:29:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D528CBC04
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40191C211E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1343282B7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E107D08D;
-	Wed, 22 May 2024 07:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331197D414;
+	Wed, 22 May 2024 07:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mQ7pASic"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tw7n8Wwu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D383C7C086
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365117D3EC;
+	Wed, 22 May 2024 07:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362984; cv=none; b=crVXwOfWgEYxPPk+o0Xz49ODa8dSKYpnN4WvFiUI7/LVBmWPrInJlexpTlg1KjvCmcEYgrutl3kMIfDcbU8bpiBjq2l/teH6nfyOza1tE6TY4sUHBSvyHzjq7MfGr7r4P+hIAw8n7QngvOZdKfRoTYQ2XdzoFQaPEcsyHWZ10Rk=
+	t=1716362986; cv=none; b=ti9qO0g0gtUX0wHEv6sOVnRFHTHIcKPfpRNFyIV+zKa3ZadnIAw8jMXfizHOHH1zX/y012Or070KU9EfPJRKP3w8iFkSM5lxq1cc3n1fy83EM3nibP/TmbA18cBwbLzWbVdlW0BEs8hy2dolkRRNeqFezn1ci2mBSXAYxMZO4hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362984; c=relaxed/simple;
-	bh=ujtplpDHHre57IF59IvqEB2Kw8dcbdxqOMgfH/r499o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=piKsNkZzF9CmLpxn8fYMYwVcQUd6XqH2WT+01kWjrHUwTmOgB/8clElAwlkA8rY3rRhEqgGoQVtMtbUJ/13f8xt4cOLx8SFZLbvsSHOKkH8LvTDzXwRJTPuk3Ji/+niiSBlHu5lcCK+VY4OAAWIdLR+rcwij5SnKpTkUl0EOBT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mQ7pASic; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4200ee78f34so4070055e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716362979; x=1716967779; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2U3y/E4W+g6WHZWhWDHN2owdKPMa1Ox2KTg8IP+L8r4=;
-        b=mQ7pASicJcXadKRRc+LF532GzGA6FhKeq4Gjhs/CRwiZUUw5uGxsjUG1h/no63soGA
-         zn/nNgbZUhobK91o/j5f4Sci29ldSL/7FsWREAIRY+jK19uSy0xHszuuXyRNVB9orm6C
-         VsA6hPxiXrCpsHgTEDxSJerhIzYSIJXMDhygMLkgr7M+3/4NNQqlN4Z/vaxygi39NOIG
-         fJp82CdcceZqc127fEnFNOfweiLrH+Ddb3/tisC3OmM+J9pD+4KXpQIZmiSUirt6gXoJ
-         56IbT8aJXMt32RYAxFf6gCviHK2jf4MjYIS/YVJsRIJ7UqOu6aRanmY3KC6P5D9mE5Q8
-         y2Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716362979; x=1716967779;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2U3y/E4W+g6WHZWhWDHN2owdKPMa1Ox2KTg8IP+L8r4=;
-        b=P8OtanCTChHdXLeY6ffTyVOgTP/cYEO/dUZZfVusZYkuhCWiDLqE7hOJsEPyruLE+7
-         5Yufny5cPEDZn875U+MzITDz3TqMA1Qi3eb7BjDLCzuTpLMIUAzTWGZoFAfteAx+UYqn
-         QPni8j0klIwfOj7h0shPd7Nzh7ukorTM2tPfE+D8KWCMryY5cL+2PralAZYifJY9GzoS
-         4P+pYGzUXxCWnuU7RTfAvqtcmggyUdoJF9BiobG7FD+haD3u0lKCWvyjmTCo5QzAcx5r
-         yX8xThfVAirWJkNtscygn6dBQkZ9Ni3qTMGFWyTpxzuhzw71B1O5F8i7D1xDYjvb8rQh
-         7TLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEQK97PaTO5OueaFfrMT+Ce6q5ta+cl+ixMhgGL3Teub6JzXo8pwlsUVOr11CkyRkpqPdPLLY4prljVlZSqj9qKU1lygTukdyw/lCr
-X-Gm-Message-State: AOJu0Yyen2cHQsHYDehjXGq8DEow+Dg5qAeiUdCzBWLWm/PUOtI0Bdiv
-	e4xcLzljZ8bmMfqErQi5AQtgULQzUA/oSPJK8012nRos4L679NNn9vlaRnYPKDI=
-X-Google-Smtp-Source: AGHT+IHZr6SGdmsYq7oNUSaghJWy+96UkRVzcYcM6OS/e/jllLwc1HzE5OHDTuC/E4zIrh+PfTxRWw==
-X-Received: by 2002:a05:600c:5613:b0:420:1853:68c3 with SMTP id 5b1f17b1804b1-420fd3282ddmr6928015e9.20.1716362979042;
-        Wed, 22 May 2024 00:29:39 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8fa6sm489538445e9.2.2024.05.22.00.29.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 00:29:38 -0700 (PDT)
-Message-ID: <262fa428-70e9-48d8-b89a-65225c0c7d15@linaro.org>
-Date: Wed, 22 May 2024 09:29:36 +0200
+	s=arc-20240116; t=1716362986; c=relaxed/simple;
+	bh=V3uPlocq7EfqVIlxxbF6SPjdseVkyVIwyPMroCDimqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZyD0TLt7Drkd6m14xP9cp7Z/EuyzsWaTk2Qyop2ZGVR3JyeSNZKmRkdaGXhyJXaa97ABecBYYUczPdrGKPWrL52aq17NZjiURQaPwP1Kz1HyU5mdpaKdT6j9+7EmnoQ5fQwN0w60RaEBLK/nmUWTEzdknbRnp0991ySZRbeFCBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tw7n8Wwu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8575FC32781;
+	Wed, 22 May 2024 07:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716362986;
+	bh=V3uPlocq7EfqVIlxxbF6SPjdseVkyVIwyPMroCDimqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tw7n8WwuA54pyRy1AvmhSnbT3434jUpB0DZ+vZhOT5dJBlX2zrR0ABXs81MwoL+tb
+	 0ZVZ6NnC9bb+4b4MVylhVU9n55T42YDEHzx9CI09ibR8aVxvlBej+c0pIygL/5RPBv
+	 CdkhI0mB1F20Sg0wartj6n6NoOUoDUc4zD87oI0r+k2K1C9/9DejVEDs0WHe4ldb6s
+	 qoFH55EEWOjrJy5Dl381Sy634ijSagvKOgE0qbA+O5/l0PXyVdLxClJsVCpWE8LMpr
+	 X/ZYKSG1eV5S+w7tkUaPVsAYgCjvGhlxnoGkzQ94llQMFkSYKuvVo/+l9QPeKyAKgd
+	 E2noSXrQsMPyQ==
+Date: Wed, 22 May 2024 09:29:43 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: keith <keith.zhao@starfivetech.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, hjc@rock-chips.com, 
+	heiko@sntech.de, andy.yan@rock-chips.com, xingyu.wu@starfivetech.com, 
+	p.zabel@pengutronix.de, jack.zhu@starfivetech.com, shengyang.chen@starfivetech.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 10/10] drm/vs: add simple dsi encoder
+Message-ID: <20240522-devious-strict-tapir-3a7f5a@houat>
+References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
+ <20240521105817.3301-11-keith.zhao@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] ASoC: cdns: Add drivers of Cadence Multi-Channel
- I2S Controller
-To: Xingyu Wu <xingyu.wu@starfivetech.com>, Mark Brown <broonie@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- Claudiu Beznea <Claudiu.Beznea@microchip.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor.dooley@microchip.com>
-References: <20240508070406.286159-1-xingyu.wu@starfivetech.com>
- <20240508070406.286159-3-xingyu.wu@starfivetech.com>
- <NTZPR01MB0956937A2D3D8B97DB1C8E079FEB2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <NTZPR01MB0956937A2D3D8B97DB1C8E079FEB2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="2txi7h3za2mlitau"
+Content-Disposition: inline
+In-Reply-To: <20240521105817.3301-11-keith.zhao@starfivetech.com>
 
-On 22/05/2024 04:33, Xingyu Wu wrote:
->> Subject: [PATCH v3 2/2] ASoC: cdns: Add drivers of Cadence Multi-Channel I2S
->> Controller
->>
->> Add the drivers of Cadence Multi-Channel I2S Controller.
->>
->> The Cadence I2S Controller implements a function of the multi-channel (up to 8-
->> channel) bus. Each stereo channel combines functions of a transmitter and a
->> receiver. Each channel has independent and internal gating, clock and
->> interruption control. It alos support some of these channels are used as playback
->> and others can also be used as record in the same time.
->>
->> The I2S-MC is used on the StarFive JH8100 SoC and add the compatible for this.
->>
->> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->> ---
->>  MAINTAINERS                      |   6 +
->>  sound/soc/Kconfig                |   1 +
->>  sound/soc/Makefile               |   1 +
->>  sound/soc/cdns/Kconfig           |  18 +
->>  sound/soc/cdns/Makefile          |   3 +
->>  sound/soc/cdns/cdns-i2s-mc-pcm.c | 285 +++++++++++++
->>  sound/soc/cdns/cdns-i2s-mc.c     | 704 +++++++++++++++++++++++++++++++
->>  sound/soc/cdns/cdns-i2s-mc.h     | 151 +++++++
->>  8 files changed, 1169 insertions(+)
->>  create mode 100644 sound/soc/cdns/Kconfig  create mode 100644
->> sound/soc/cdns/Makefile  create mode 100644 sound/soc/cdns/cdns-i2s-mc-
->> pcm.c  create mode 100644 sound/soc/cdns/cdns-i2s-mc.c  create mode 100644
->> sound/soc/cdns/cdns-i2s-mc.h
->>
-> 
-> Hi Mark,
-> 
-> Could you please help to review and give your comment about this I2S driver?
-> Thank you very much!
-> 
 
-So you are not going to implement my feedback? Then Review tag does not
-stand.
+--2txi7h3za2mlitau
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also, please avoid pings for non-fixes during merge window. It's
-pointless now.
+Hi,
 
-Best regards,
-Krzysztof
+On Tue, May 21, 2024 at 06:58:17PM GMT, keith wrote:
+> add encoder to match cdns dsi driver
+>=20
+> Signed-off-by: keith <keith.zhao@starfivetech.com>
+> ---
+>  drivers/gpu/drm/verisilicon/Makefile        |   3 +-
+>  drivers/gpu/drm/verisilicon/vs_drv.c        |   1 +
+>  drivers/gpu/drm/verisilicon/vs_drv.h        |   1 +
+>  drivers/gpu/drm/verisilicon/vs_simple_enc.c | 190 ++++++++++++++++++++
+>  drivers/gpu/drm/verisilicon/vs_simple_enc.h |  25 +++
+>  5 files changed, 219 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/verisilicon/vs_simple_enc.c
+>  create mode 100644 drivers/gpu/drm/verisilicon/vs_simple_enc.h
+>=20
+> diff --git a/drivers/gpu/drm/verisilicon/Makefile b/drivers/gpu/drm/veris=
+ilicon/Makefile
+> index 2d02b4a3a567..c35ba9bd6f81 100644
+> --- a/drivers/gpu/drm/verisilicon/Makefile
+> +++ b/drivers/gpu/drm/verisilicon/Makefile
+> @@ -4,7 +4,8 @@ vs_drm-objs :=3D vs_dc_hw.o \
+>  		vs_modeset.o \
+>  		vs_plane.o \
+>  		vs_crtc.o \
+> -		vs_drv.o
+> +		vs_drv.o \
+> +		vs_simple_enc.o
+> =20
+>  vs_drm-$(CONFIG_DRM_INNO_STARFIVE_HDMI) +=3D inno_hdmi-starfive.o
+>  obj-$(CONFIG_DRM_VERISILICON_DC8200) +=3D vs_drm.o
+> diff --git a/drivers/gpu/drm/verisilicon/vs_drv.c b/drivers/gpu/drm/veris=
+ilicon/vs_drv.c
+> index 6f04102b05b3..2748d48f2c7e 100644
+> --- a/drivers/gpu/drm/verisilicon/vs_drv.c
+> +++ b/drivers/gpu/drm/verisilicon/vs_drv.c
+> @@ -612,6 +612,7 @@ static struct platform_driver *drm_sub_drivers[] =3D {
+>  #ifdef CONFIG_DRM_INNO_STARFIVE_HDMI
+>  	&starfive_hdmi_driver,
+>  #endif
+> +	&simple_encoder_driver,
+>  };
+> =20
+>  static struct component_match *vs_add_external_components(struct device =
+*dev)
+> diff --git a/drivers/gpu/drm/verisilicon/vs_drv.h b/drivers/gpu/drm/veris=
+ilicon/vs_drv.h
+> index c3c08ed5f8ac..f3f0f170777d 100644
+> --- a/drivers/gpu/drm/verisilicon/vs_drv.h
+> +++ b/drivers/gpu/drm/verisilicon/vs_drv.h
+> @@ -17,6 +17,7 @@
+>  #include <drm/drm_managed.h>
+> =20
+>  #include "vs_dc_hw.h"
+> +#include "vs_simple_enc.h"
+> =20
+>  /*@pitch_alignment: buffer pitch alignment required by sub-devices.*/
+>  struct vs_drm_device {
+> diff --git a/drivers/gpu/drm/verisilicon/vs_simple_enc.c b/drivers/gpu/dr=
+m/verisilicon/vs_simple_enc.c
+> new file mode 100644
+> index 000000000000..d0b1755d77d2
+> --- /dev/null
+> +++ b/drivers/gpu/drm/verisilicon/vs_simple_enc.c
+> @@ -0,0 +1,190 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2020 VeriSilicon Holdings Co., Ltd.
+> + */
+> +#include <linux/component.h>
+> +#include <linux/of_device.h>
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/media-bus-format.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_bridge.h>
+> +#include <drm/drm_crtc_helper.h>
+> +#include <drm/drm_of.h>
+> +
+> +#include "vs_crtc.h"
+> +#include "vs_simple_enc.h"
+> +
+> +static const struct simple_encoder_priv dsi_priv =3D {
+> +	.encoder_type =3D DRM_MODE_ENCODER_DSI
+> +};
 
+A simple encoder is a thing in KMS, and it's not what you are doing /
+using. Please use a different name.
+
+> +static inline struct vs_simple_encoder *to_simple_encoder(struct drm_enc=
+oder *enc)
+> +{
+> +	return container_of(enc, struct vs_simple_encoder, encoder);
+> +}
+> +
+> +static int encoder_parse_dt(struct device *dev)
+> +{
+> +	struct vs_simple_encoder *simple =3D dev_get_drvdata(dev);
+> +	unsigned int args[2];
+> +
+> +	simple->dss_regmap =3D syscon_regmap_lookup_by_phandle_args(dev->of_nod=
+e,
+> +								  "starfive,syscon",
+> +								  2, args);
+> +
+> +	if (IS_ERR(simple->dss_regmap)) {
+> +		return dev_err_probe(dev, PTR_ERR(simple->dss_regmap),
+> +				     "getting the regmap failed\n");
+> +	}
+> +
+> +	simple->offset =3D args[0];
+> +	simple->mask =3D args[1];
+> +
+> +	return 0;
+> +}
+> +
+> +static void vs_encoder_atomic_enable(struct drm_encoder *encoder, struct=
+ drm_atomic_state *state)
+> +{
+> +	struct vs_simple_encoder *simple =3D to_simple_encoder(encoder);
+> +
+> +	regmap_update_bits(simple->dss_regmap, simple->offset, simple->mask, si=
+mple->mask);
+> +}
+
+That should be handled through cdns_dsi_platform_ops.enable.
+
+> +static int vs_encoder_atomic_check(struct drm_encoder *encoder,
+> +				   struct drm_crtc_state *crtc_state,
+> +				   struct drm_connector_state *conn_state)
+> +{
+> +	struct vs_crtc_state *vs_crtc_state =3D to_vs_crtc_state(crtc_state);
+> +	struct drm_connector *connector =3D conn_state->connector;
+> +	int ret =3D 0;
+> +
+> +	vs_crtc_state->encoder_type =3D encoder->encoder_type;
+> +	if (connector->display_info.num_bus_formats)
+> +		vs_crtc_state->output_fmt =3D connector->display_info.bus_formats[0];
+> +	else
+> +		vs_crtc_state->output_fmt =3D MEDIA_BUS_FMT_FIXED;
+> +
+> +	switch (vs_crtc_state->output_fmt) {
+> +	case MEDIA_BUS_FMT_FIXED:
+> +	case MEDIA_BUS_FMT_RGB565_1X16:
+> +	case MEDIA_BUS_FMT_RGB666_1X18:
+> +	case MEDIA_BUS_FMT_RGB888_1X24:
+> +	case MEDIA_BUS_FMT_RGB666_1X24_CPADHI:
+> +	case MEDIA_BUS_FMT_RGB101010_1X30:
+> +	case MEDIA_BUS_FMT_UYYVYY8_0_5X24:
+> +	case MEDIA_BUS_FMT_UYVY8_1X16:
+> +	case MEDIA_BUS_FMT_YUV8_1X24:
+> +	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
+> +	case MEDIA_BUS_FMT_UYVY10_1X20:
+> +	case MEDIA_BUS_FMT_YUV10_1X30:
+> +		ret =3D 0;
+> +		break;
+> +	default:
+> +		ret =3D -EINVAL;
+> +		break;
+> +	}
+> +
+> +	/* If MEDIA_BUS_FMT_FIXED, set it to default value */
+> +	if (vs_crtc_state->output_fmt =3D=3D MEDIA_BUS_FMT_FIXED)
+> +		vs_crtc_state->output_fmt =3D MEDIA_BUS_FMT_RGB888_1X24;
+> +
+> +	return ret;
+> +}
+
+And that should be handled by the core cdns-dsi driver.
+
+Maxime
+
+> +static const struct drm_encoder_helper_funcs encoder_helper_funcs =3D {
+> +	.atomic_check =3D vs_encoder_atomic_check,
+> +	.atomic_enable =3D vs_encoder_atomic_enable,
+> +};
+> +
+> +static int vs_encoder_bind(struct device *dev, struct device *master, vo=
+id *data)
+> +{
+> +	struct drm_device *drm_dev =3D data;
+> +	struct vs_simple_encoder *simple =3D dev_get_drvdata(dev);
+> +	struct drm_encoder *encoder;
+> +	struct drm_bridge *bridge;
+> +	int ret;
+> +
+> +	encoder =3D &simple->encoder;
+> +
+> +	ret =3D drmm_encoder_init(drm_dev, encoder, NULL, simple->priv->encoder=
+_type, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	drm_encoder_helper_add(encoder, &encoder_helper_funcs);
+> +
+> +	encoder->possible_crtcs =3D
+> +			drm_of_find_possible_crtcs(drm_dev, dev->of_node);
+> +
+> +	/* output port is port1*/
+> +	bridge =3D devm_drm_of_get_bridge(dev, dev->of_node, 1, 0);
+> +	if (IS_ERR(bridge)) {
+> +		if (PTR_ERR(bridge) =3D=3D -ENODEV) {
+> +			bridge =3D NULL;
+> +			return 0;
+> +		}
+> +
+> +		return PTR_ERR(bridge);
+> +	}
+> +
+> +	return drm_bridge_attach(encoder, bridge, NULL, 0);
+> +}
+> +
+> +static const struct component_ops encoder_component_ops =3D {
+> +	.bind =3D vs_encoder_bind,
+> +};
+> +
+> +static int vs_encoder_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct vs_simple_encoder *simple;
+> +	int ret;
+> +
+> +	simple =3D devm_kzalloc(dev, sizeof(*simple), GFP_KERNEL);
+> +	if (!simple)
+> +		return -ENOMEM;
+> +
+> +	simple->priv =3D of_device_get_match_data(dev);
+> +
+> +	simple->dev =3D dev;
+> +
+> +	dev_set_drvdata(dev, simple);
+> +
+> +	ret =3D encoder_parse_dt(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return component_add(dev, &encoder_component_ops);
+> +}
+> +
+> +static int vs_encoder_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +
+> +	component_del(dev, &encoder_component_ops);
+> +	dev_set_drvdata(dev, NULL);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id simple_encoder_dt_match[] =3D {
+> +	{ .compatible =3D "starfive,dsi-encoder", .data =3D &dsi_priv},
+> +	{},
+> +};
+
+You also don't need a specific compatible here, just reuse cdns,dsi.
+
+Maxime
+
+--2txi7h3za2mlitau
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZk2e5gAKCRAnX84Zoj2+
+dlNtAX92xm/RDdc/CmqVPEPloHqxxfPMxhP/Ta3CNyw5RyUuuBv0QmyecDivQd9U
+bOAfBb8BfiXgB7iKzWtbYwU7sK1+xZp15EceIVQMqpIi4IfZ5VaFBJsszbABX2J5
+gPoGjw/s8g==
+=FF2L
+-----END PGP SIGNATURE-----
+
+--2txi7h3za2mlitau--
 
