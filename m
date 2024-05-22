@@ -1,148 +1,124 @@
-Return-Path: <linux-kernel+bounces-186755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C5B8CC85E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:57:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34B08CC860
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0051F21124
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:57:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DCF1B21747
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2673148854;
-	Wed, 22 May 2024 21:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84131149E06;
+	Wed, 22 May 2024 21:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZrQl0R/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PAgB0mL+"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50611487E3;
-	Wed, 22 May 2024 21:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6531149DE6;
+	Wed, 22 May 2024 21:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716414982; cv=none; b=X9Gp46fy1UQiPyZ3w/OZVP6p1gevtSlHb5Qa/Wueq395DchIdrD3Nptb9mYlyGhksjzUp8wP4fZ8Ue8PJuPqLiumRCopAh2/yhYvfBt0rpmUcelrFG978suxckF8v3mgC9hcAU6p8Y2phOxaZDhVtB98XANqiPDG/vaUkABZLXg=
+	t=1716415022; cv=none; b=FY8wqosP/XHU0g4rPhEZ6EzIYPSzAdmCSj/8r/qW8dC3mx5nYhe1A7XPw1O7FsJR9vGqHRJ6chH+UnpdaQ0ZOnjqNYeg7zHvSUJ24eRhGEHPJjqv2H2vh4xrRlIzpMb+WWKD2aawxgVol+Gvp6zo0M83ZCw4QYioyghREV5r0Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716414982; c=relaxed/simple;
-	bh=Z4r4Kvmu8bvtpq0F56IFeFFxcPQskBGSqOlqhqZnnvY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PnI2HvEELIiXNj9gIZlvRYvR8Z6X6UXSDwVysGVLZQ/8Zf0QyAxTMr5GvL3F8cJbOVc1x1XtJqQoHtWhcWNsMdSxgElbx5B7djmqUhcmIJHHpShGcxXjIruHg9DvmMhzV6t9n45AwSCHfW+lGEm+O6/RL2Ab7Hf7wWCV7ps52Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZrQl0R/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 190ABC4AF0A;
-	Wed, 22 May 2024 21:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716414981;
-	bh=Z4r4Kvmu8bvtpq0F56IFeFFxcPQskBGSqOlqhqZnnvY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KZrQl0R/lbG8f4A7szWgDJYqmLYn7KOIeQeMfrtQxitWHeoO/sYd4zuepi/Rp+fCI
-	 e4zAfV5f47LS1zMIKgwVOVtSlhSN6mc796VSgUuWO1V/VqEKwiZzHxfklGrRUk2U6r
-	 4PrqUUFqGuC/ZiWBBGnt5Ge70Ff7NVneaTImxXAsmLC4VLZjxAjocOupoa0Zrdqp45
-	 XlYv0cFvjCOL93fJCOTtu/WaCQYDa3c9ihmfNHFjhhYVtfX3tYDoRCDjBHU/DMAxUk
-	 /OC/cN+YzUX2/D3D9PWPSUKFvXGy4aZhlLzz6J8lMXJ2QniKoGTumkiGYQ0W5QPJsw
-	 9BIz6HXdxxjew==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	KP Singh <kpsingh@kernel.org>,
-	Stephane Eranian <eranian@google.com>,
-	Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org
-Subject: [PATCH 6/6] perf record: Add --setup-filter option
-Date: Wed, 22 May 2024 14:56:16 -0700
-Message-ID: <20240522215616.762195-7-namhyung@kernel.org>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-In-Reply-To: <20240522215616.762195-1-namhyung@kernel.org>
-References: <20240522215616.762195-1-namhyung@kernel.org>
+	s=arc-20240116; t=1716415022; c=relaxed/simple;
+	bh=N4qVpG58VKqKgZKyTkTeB1CudfqXIits3TVA1PWshf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KjSYJ+J6pKShJXKnIg6IqQSRt7WHNjhyCoOZsn+GCdMtotQzSv2EAgD3TXfVbggzj/yQWwSmFU/XmqtZvn7xCcVDxRl0Dk950XBKiLiZ/rsnBY80Ev6b46TMhjoNb5uqta9tzStOCZc+PzfdDEdGD5594JB4HtHPyebRNCpoeII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PAgB0mL+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OtlyxkkzB2BjgfYbFdYm1Yvm8zkHcVIsiDANoj0QdIg=; b=PAgB0mL+L3w4fZSyf1x7yDLl/w
+	+XtXEAgSQ4Tp3RSWdju1UUHftUS3ScXd+YO2y8ICZNubA8jiygpNZYPP4ifan1zfHWc6Oj42FOUaA
+	Z+r37SPbuTaiUZJuJOMpRCg2qanunYYdB52ph2jlnVZV2OitmJcT9kRTL2G26gwEqk/W58rt77zbh
+	Kfaky9WKflalU3s1Kt60l0flCR5WID5qeaFV0QD0b4MQRoHGN07fI6+XM6lfGVoNIK2Tx/iThycfT
+	yySypAeMLhYtTGqSZnqa7fcHroQWlnNj7WPUHCpXCTiKohr3eyXOdSvjowd6VQvQgBnuQOCNG4kh8
+	9HiVCYlQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s9txB-00000004Cgh-2a85;
+	Wed, 22 May 2024 21:56:57 +0000
+Date: Wed, 22 May 2024 14:56:57 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: John Garry <john.g.garry@oracle.com>, David Bueso <dave@stgolabs.net>
+Cc: Theodore Ts'o <tytso@mit.edu>, lsf-pc@lists.linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
+Message-ID: <Zk5qKUJUOjGXEWus@bombadil.infradead.org>
+References: <20240228061257.GA106651@mit.edu>
+ <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-To allow BPF filters for unprivileged users it needs to pin the BPF
-objects to BPF-fs first.  Let's add a new option to pin and unpin the
-objects easily.
+On Wed, May 15, 2024 at 01:54:39PM -0600, John Garry wrote:
+> On 27/02/2024 23:12, Theodore Ts'o wrote:
+> > Last year, I talked about an interest to provide database such as
+> > MySQL with the ability to issue writes that would not be torn as they
+> > write 16k database pages[1].
+> > 
+> > [1] https://urldefense.com/v3/__https://lwn.net/Articles/932900/__;!!ACWV5N9M2RV99hQ!Ij_ZeSZrJ4uPL94Im73udLMjqpkcZwHmuNnznogL68ehu6TDTXqbMsC4xLUqh18hq2Ib77p1D8_4mV5Q$
+> > 
+> 
+> After discussing this topic earlier this week, I would like to know if there
+> are still objections or concerns with the untorn-writes userspace API
+> proposed in https://lore.kernel.org/linux-block/20240326133813.3224593-1-john.g.garry@oracle.com/
+> 
+> I feel that the series for supporting direct-IO only, above, is stuck
+> because of this topic of buffered IO.
 
-  $ sudo perf record --setup-filter pin
+I think it was good we had the discussions at LSFMM over it, however
+I personally don't percieve it as stuck, however without any consensus
+being obviated or written down anywhere it would not be clear to anyone
+that we did reach any consensus at all. Hope is that lwn captures any
+consensus if any was indeed reached as you're not making it clear any
+was.
 
-The above command would pin BPF program and maps for the filter when the
-system has BPF-fs (usually at /sys/fs/bpf/).  To unpin the objects,
-users can run the following command (as root).
+In case it helps, as we did with the LBS effort it may also be useful to
+put together bi-monthly cabals to follow up progress, and divide and
+conquer any pending work items.
 
-  $ sudo perf record --setup-filter unpin
+> So I sent an RFC for buffered untorn-writes last month in https://lore.kernel.org/linux-fsdevel/20240422143923.3927601-1-john.g.garry@oracle.com/,
+> which did leverage the bs > ps effort. Maybe it did not get noticed due to
+> being an RFC. It works on the following principles:
+> 
+> - A buffered atomic write requires RWF_ATOMIC flag be set, same as
+>   direct IO. The same other atomic writes rules apply.
+> - For an inode, only a single size of buffered write is allowed. So for
+>   statx, atomic_write_unit_min = atomic_write_unit_max always for
+>   buffered atomic writes.
+> - A single folio maps to an atomic write in the pagecache. So inode
+>   address_space folio min order = max order = atomic_write_unit_min/max
+> - A folio is tagged as "atomic" when atomically written and written back
+>   to storage "atomically", same as direct-IO method would do for an
+>   atomic write.
+> - If userspace wants to guarantee a buffered atomic write is written to
+>   storage atomically after the write syscall returns, it must use
+>   RWF_SYNC or similar (along with RWF_ATOMIC).
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-record.txt |  5 +++++
- tools/perf/builtin-record.c              | 15 +++++++++++++++
- 2 files changed, 20 insertions(+)
+From my perspective the above just needs the IOCB atomic support, and
+the pending long term work item there is the near-write-through buffered
+IO support. We could just wait for buffered-IO support until we have
+support for that. I can't think of anying blocking DIO support though,
+now that we at least have a mental model of how buffered IO *should*
+work.
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 6015fdd08fb6..e51a492dc8e0 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -828,6 +828,11 @@ filtered through the mask provided by -C option.
- 	only, as of now.  So the applications built without the frame
- 	pointer might see bogus addresses.
- 
-+--setup-filter=<action>::
-+	Prepare BPF filter to be used by regular users.  The action should be
-+	either "pin" or "unpin".  The filter can be used after it's pinned.
-+
-+
- include::intel-hybrid.txt[]
- 
- SEE ALSO
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 3a5a24dec356..4dababd0d338 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -171,6 +171,7 @@ struct record {
- 	bool			timestamp_filename;
- 	bool			timestamp_boundary;
- 	bool			off_cpu;
-+	const char		*filter_action;
- 	struct switch_output	switch_output;
- 	unsigned long long	samples;
- 	unsigned long		output_max_size;	/* = 0: unlimited */
-@@ -3573,6 +3574,8 @@ static struct option __record_options[] = {
- 			    "write collected trace data into several data files using parallel threads",
- 			    record__parse_threads),
- 	OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analysis"),
-+	OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
-+		   "BPF filter action"),
- 	OPT_END()
- };
- 
-@@ -4102,6 +4105,18 @@ int cmd_record(int argc, const char **argv)
- 		pr_warning("WARNING: --timestamp-filename option is not available in parallel streaming mode.\n");
- 	}
- 
-+	if (rec->filter_action) {
-+		if (!strcmp(rec->filter_action, "pin"))
-+			err = perf_bpf_filter__pin();
-+		else if (!strcmp(rec->filter_action, "unpin"))
-+			err = perf_bpf_filter__unpin();
-+		else {
-+			pr_warning("Unknown BPF filter action: %s\n", rec->filter_action);
-+			err = -EINVAL;
-+		}
-+		goto out_opts;
-+	}
-+
- 	/*
- 	 * Allow aliases to facilitate the lookup of symbols for address
- 	 * filters. Refer to auxtrace_parse_filters().
--- 
-2.45.1.288.g0e0cd299f1-goog
+What about testing? Are you extending fstests, blktests?
 
+  Luis
 
