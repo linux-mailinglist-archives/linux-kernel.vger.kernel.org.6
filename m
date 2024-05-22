@@ -1,252 +1,345 @@
-Return-Path: <linux-kernel+bounces-185671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0B58CB8B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:57:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C42368CB8BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 213BCB20CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:57:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A701C217EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063351171C;
-	Wed, 22 May 2024 01:57:26 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268E379D1;
+	Wed, 22 May 2024 01:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="a54wyXbX"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2067.outbound.protection.outlook.com [40.107.6.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B04528EA;
-	Wed, 22 May 2024 01:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716343045; cv=none; b=YxoR//Y2Bp8uoa/Epmfrz5y2Nh1ofL/2nHDTZv8Mbqv7Q8oQQ69uropyOC1n5E7Zh/ARMF4fuoS7R9e0iVI9BnP+/TwIaIwgLwJMizoleQ/F3Wv1d8bsdLXyKVh3YUoDpK358fpFt2A/E60iS3ndkll9Ylsk+ahetr4ptnraMzA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716343045; c=relaxed/simple;
-	bh=xHf9C7VC9Cn5nDtbZqifMKKp/pMcFa4oDvkZBX+9g5U=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=olH3OWTA3hLFXxKnhQSWBFJNO131t/j98ERPoKbh0aSNYN4XnJaGc8wXzZXiJrIA7Wz0ekQ3Mtv2DxyyK1clxH3I6KpycXLcV25X8p+Hh3L38yK0btjdAeR0hmmG9oqkjWkydKbeD6nEOW9LLP8ucdiasWp0G/RSazbNDS95TSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VkZDh3gnfz4f3jcy;
-	Wed, 22 May 2024 09:57:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 6ED461A01B9;
-	Wed, 22 May 2024 09:57:17 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgBHaw75UE1moSigNg--.25797S3;
-	Wed, 22 May 2024 09:57:15 +0800 (CST)
-Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, djwong@kernel.org,
- hch@infradead.org, brauner@kernel.org, chandanbabu@kernel.org, jack@suse.cz,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
- <20240517111355.233085-4-yi.zhang@huaweicloud.com>
- <ZkwJJuFCV+WQLl40@dread.disaster.area>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <122ab6ed-147b-517c-148d-7cb35f7f888b@huaweicloud.com>
-Date: Wed, 22 May 2024 09:57:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ADD5223
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716343075; cv=fail; b=F6hyPlsvLQijgsD9a7NshTxWs/0G4ZLMj1v3efUmIecsBulwCIjIwTI66PocDLtl5hFL7HPin8t/ewHf8wsSo85Gw20P9Kvttgoyq9NH1DRyEzY2ePAuv9vIeW/i8f/16fd4XDfXGDb8gndreqdTId4WSQQfIDnTgvIGwl8Sh7Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716343075; c=relaxed/simple;
+	bh=T1bric+Q4EOxpgjy3ve2Do0hlZeUUJ4ibws3JFYJGdE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HIPbgDOuacOSL0J4tCLVQIvqZzcsCmS+X615AJNiJkCow6K+w+3V1COLxUL/8pzoG9m/6tYtNLWs373Z6dcVieuN4/t8DLy0bned4Hj0qwSMr5zD8NjHffXZG50zsRTKG/JadJesRnU3Gozd2XcZzHS3ywPnGvCiXXxVqa4+4cA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=a54wyXbX; arc=fail smtp.client-ip=40.107.6.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gTVFQjsGyy2wKZWUkzZkI9hsa3N6a/e+/UaErf+6aBnfOq9L4HJkd7jC2NmLHUVpKeOIjQnHmUZx8iONGtsrz9a8TimoxPQT05U1S5DfYwGmGPGZW659ZMW0WVfn4FhGLxfUMsp4Ysw4ue0qdLmFhHDUtu9OGYK3J3y/qSFXnm0AURlhRhNRbKcBTRVY44V+CSBOkjYZWL7tPD+Pp1WxbJ6iAGPenxVTfJm09M05lTOUYwl9zgEZzjYDfSul0bhzXR5+Tri/OPazjqZPYhQPCTeikIDZhOpGmAmytLeZ9XGqoRxPwAEzoZT9eTmVqueRRm96mUkrPqz+RZK0uy29Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hn5GrsbCNtIiNj7KyuBTctWjdArhYBE9qYaYZrCuzF0=;
+ b=cQU9f1JaZNxoF8jHbtvlps4CceH7jtUXWZKUsO5IQjtKWoeoEUqjKqMfSYxmI4pRx4CfZAr42caTiFv0jya07JcrwGvJPvnGOeOnHsSImMeV3tMdLpxRXJ185ObnSNor+6rS82Gx4RAeksZ/X1i9gg3DfFtGAnvqMFPRVf53joyrxJpbGoVNWPiu03llvYTHxV3xJOewVxNg+aH+bYsic9cFAiIHKvFpFr90Jzf9WKJONtUpmWvIuHrrQ79wxjvaXJSb2JNPve5XRL+CWcHwlrjc8pO95bjMY1veSU4ssNp+4fTxvj6Xu1avXBQlZnwLCrrRAcWX/1/XuZNfH4ECHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hn5GrsbCNtIiNj7KyuBTctWjdArhYBE9qYaYZrCuzF0=;
+ b=a54wyXbXwBnI83O2Vk0Nu4p8ILYVgknzVZqP2jFUL280J3du6NEc3gfrV+MpXrfn4pfJbLJq8KocnuUIGHFqEMGVB7kC0wUf/0Ca1bYCMFiv+Mi/8xmgZHGFMxj3iEoNO1/8qpbxW7wlerHEnJ2nSQXyuR2UARNL37CEmomO7uM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AS1PR04MB9584.eurprd04.prod.outlook.com (2603:10a6:20b:473::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 22 May
+ 2024 01:57:50 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.7587.035; Wed, 22 May 2024
+ 01:57:50 +0000
+Message-ID: <7bb4d582-5d90-465e-a241-1ee8439a5057@nxp.com>
+Date: Wed, 22 May 2024 09:58:09 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: adv7511: Fix Intermittent EDID failures
+To: Adam Ford <aford173@gmail.com>, dri-devel@lists.freedesktop.org
+Cc: dmitry.baryshkov@linaro.org, sui.jingfeng@linux.dev,
+ aford@beaconembedded.com, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+References: <20240521011614.496421-1-aford173@gmail.com>
+ <CAHCN7xLekU9u0auzB+bt7cRgv48qxH8bRY2e-_nK0nUhaLJagA@mail.gmail.com>
+Content-Language: en-US
+From: Liu Ying <victor.liu@nxp.com>
+In-Reply-To: <CAHCN7xLekU9u0auzB+bt7cRgv48qxH8bRY2e-_nK0nUhaLJagA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0134.apcprd02.prod.outlook.com
+ (2603:1096:4:188::14) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZkwJJuFCV+WQLl40@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBHaw75UE1moSigNg--.25797S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtF1Dtry5Wr43ur48Cr48JFb_yoWxuryxpF
-	WrK3W5Cr4Dt34Ivrn7ZF1qq3WFyw4rAF4IkryfJr42vwn8Xr1xtr9FgFWFg3yqkrs3Gr4j
-	vF4Ut397u3Z5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UWE__UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS1PR04MB9584:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5d4064f6-d518-47fa-3c22-08dc7a0295d0
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?dysrTng2VVZ2T0tNcytBOUw3c2htS1VlTzI2QksyUjRiODFPbGllajcwV3Nq?=
+ =?utf-8?B?RTVGd0ZDM2doS2hsVFhYUDVqVXBxSE5YR2JIVnZSYnNJb2RDVjRraDAzTzly?=
+ =?utf-8?B?T0NMK0VSZHFkeFZxeU1Vd3BvS3oxOWljOWhJWWh1QjVaMGpBTjltNDNIb3V3?=
+ =?utf-8?B?eHNpbWM3dlBROGw1WXlEbm9kamhoWDdUNDQvNVNHck0xSHNPY0NZRTJ3Und4?=
+ =?utf-8?B?OFR2aFp0Zy9KNVpNVi9HNUZ1MTFJM2F3UVk5UFR0azdUcUhiOWNHeXRVWEsx?=
+ =?utf-8?B?aTNLdU9nUCtlbytuNk9MZUFrWU40N2FjUlFiREU2Z29hbFQwQkFCWnV5MTd2?=
+ =?utf-8?B?R3lHQzdtZ1VhSXNBUUFhb3hBMU0wTFEwaDd5Y1NaOG5JSUEyZzVhaXovZk1D?=
+ =?utf-8?B?eFdsWi9NT0haUVI0ZTZZa0RTSytSa3pWanJseFVzdHQvQWFsOTJMczczMTkv?=
+ =?utf-8?B?RW44MExwVHd3bmlwbmdSaExaOWpoSlpBUENsVEJCTTIxbDExckdEWVdDbUVG?=
+ =?utf-8?B?ZlJxZDVvQThQQ1BvSlBsM2dsbW1WcHp6dWcyUUZHMFB5akVYYXdIek9tcWxu?=
+ =?utf-8?B?MXlSd1IvWUJmUFlTVXcxeW1FdlAxUXc2Sy85WDd5UktmMTRqTkFTeiswbk1Y?=
+ =?utf-8?B?VEk5Wk05YnVkcG85dG9ha0hQN3ZkRmMrMDNkMmR3R1JVQjB4RVRkQks1ZUZ4?=
+ =?utf-8?B?RGNKVWc1YldsTG8wUHlzTFp1NE1tZmtvMi9kNU9BZmZBenJJbndsdStSZWY1?=
+ =?utf-8?B?a1REbnBueGNPZmZ1UGU1bDhuSUtiNTVGVlNycVVGUmc5UFZiQ0dTdFA5QTZx?=
+ =?utf-8?B?aC95T21IQzltaTNxSDI4c3VhV1JPa0U4SEFqVU1qbmhLR2NIZ1VpTEdPanJB?=
+ =?utf-8?B?UWxEeThyeXpLMnBidXc3TFROMzlvdTcxY0FPeWd3WDUxZHpUbXV0UkwzT2Jx?=
+ =?utf-8?B?OHRGU21wTVYrOXVNcnJKeTJsZHNBMUFDdWYvSFhNR0FzR2M4bGdQU3NnV0VL?=
+ =?utf-8?B?TFV5czMwUjF3am1IVzlrSW5kdVArcFplQVlRMkxHQzROYTNtS1pPVklQR1hz?=
+ =?utf-8?B?ZUZ3eEk0RlVXUys1dG1PTDd4R1hlTEtJRm1jUWFUMHBWcVQraDF6aXRZQ1hq?=
+ =?utf-8?B?dlRRRFRFZzlDd05uK1owc1BnL1hTbk84MzNSUmV5ZnlSQWVTdDE2L0o3Vk95?=
+ =?utf-8?B?UnJWVWpqbjluUytQbkNPMG9hOUpIdDZoRGVVeThDTkVHOXo2QlBvUXVRVTRz?=
+ =?utf-8?B?dWJSaWsyVmVVcWFEQVNDQk1iRzdjZWthMDRnTUVBTHlVT2dFYzFRcmVlZEZq?=
+ =?utf-8?B?RHFpeHBvbzJWVHJGaGJ3OXBPOGc0eTlPS0xGanVObHNPRlRteTRacitreDRY?=
+ =?utf-8?B?eTljTHNJVVZHSU9MMlNwaEhPQUpyODF4R0VtMmQxS05oazR4L0N2RXpwcVp3?=
+ =?utf-8?B?YjJDMEY3WDBjS29qeEM3eTZXdmp1SmtwcjV0azRSN2R2SVkzOTI0ODYvaEhT?=
+ =?utf-8?B?VXl0Ly9UMUVHQmtRTVlMWDdCZHIveHhzTURuUnJ4MTNrUDRtRkoyVzZWbkJV?=
+ =?utf-8?B?NWNRSHUrd1NUUkNXY1RLU3lvMmRJVEkvTkZNdHdmSzlNeU1VcldNWlA4U1Nu?=
+ =?utf-8?B?WE5mYVhtOU16dEc3cnNxQlV5VEJvUk92Q21vNHFUQzJrb3RsUlVERGhDKzJG?=
+ =?utf-8?B?Z2praGRjV1JFV201dCtKR0RxRHBTSmF3TjAyeDJ2YTAyeC94aGZUd0x3PT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?YjNWc0lHaXBrclFoMEJyRnIyRFV0dEJpeVRxL2Vqbyt0aXBGQmt5bDdKMm9F?=
+ =?utf-8?B?Q2trVEZZbVlkUDdoM3RObkZtUzlDL1dVNWdFc2xTYkZkMDRTNit1ZW43WXRI?=
+ =?utf-8?B?UXlBMjRxaVIydTNhdnIyN1dhQ3ZlOGNTWU1waVBwRHFmWTF1RXVZK0wzQWo1?=
+ =?utf-8?B?bWc2QmEySy9lcFUxNEk4QXVtenpGVDNsVHlyYXBYcHBNYUhGU1d2MmwrbWxh?=
+ =?utf-8?B?ZjUzOHpuOTZpZncwNVIvQ1dtODQ5Q2MzRGtwak1qRXh3ZkxGVkpOcXBRWjBQ?=
+ =?utf-8?B?NGVjT2d6d1JZQWQ4RWp2dzBRWkRTOUZTVEUzTTNVUjd3TEY5WDJNZ2R6OFJv?=
+ =?utf-8?B?c1BEVVhJSHRKTEFEYWRFbTh6T2hEVTloeVg0bVIrVGU0czZlOGxza3VaV2Nt?=
+ =?utf-8?B?ZW1BUnBXUCtKOVYwcTFWeUp0QXBCTi9kb1IvemtXZW9tU251S04vdXk1cWxO?=
+ =?utf-8?B?blVXcVdLU1BXc0tUMGdtYzJZbGp6UDhsZ3ZZSmhUcTJ1Z1FaWUtJSFU1bkRw?=
+ =?utf-8?B?OWlBL2JJQXdXaXRyTmJsOXNncjdIanNxb211dXkvaEZ2S3g2bmJwWXl0eGJn?=
+ =?utf-8?B?WVhkcUxaa3J1NmxPTm9VL09yRUdmVkQzYUcxK3c5NU0zY0ZCRE1JQzNyZi8r?=
+ =?utf-8?B?M01EbHEzMUFrV2ZXQ29iakt2NnYwUHZWOElJNmRzZGRQK0ErVFljd1RzTng1?=
+ =?utf-8?B?cEVmL2NBU0dVbitBeEdHd0lBV3ZhcXZjTUpvSFJ4aE1lQjVFL2gyZ0ZYandn?=
+ =?utf-8?B?d3l4QWo3U0tERzc5bVNXUTJnVjNnUGlaK252NDFlaWZiQ3BEUW4wQ1RLUXR0?=
+ =?utf-8?B?UTViTDVnblFOaGR2YUNPalQ0M3p2NkFRQlFXWm93c1F4MEZ1K3Bpa1lrM1Br?=
+ =?utf-8?B?NElOZ3MxZ0E1Sk5uNmo5MU8zbzNzVURjMy9TZXFwcHlFTUdYVGNaRHlMSzcv?=
+ =?utf-8?B?M0tsenNNTG1jMGUxKzN1L1ViMUx3UVlFcUpzM3lWUGM0TFh4ekZiRGhYNlFI?=
+ =?utf-8?B?NnRWcmVuQjZoRTJtVHF5UjZERmFxQ1IvTG52amtCRVhtUkJmc3J0QTlWTS82?=
+ =?utf-8?B?TGt6ZWRtSjVsSkFvb0g4SVdDd1dpeG5xdHVRMHlydTF4bURxVXBjaW9CYXZV?=
+ =?utf-8?B?bUNBSUpXMmp5bXRKcHQyLy9zcVJEZWdJOHVPeFhxUXRTbnZiMSsxZFk5dTIw?=
+ =?utf-8?B?NnFnc1JzT3U4RU9ObnI1Nk9PNmFDU0M5cU5CUFRaOGRDMTFUZUI4MkswNktp?=
+ =?utf-8?B?ZmlQU0xXTjhDb2lvbmJTenE2TW9SNlU4RHY1U1VaRzRQTmlSeW1kYlhRSkRI?=
+ =?utf-8?B?RzkxWEdhSlB2NXpxVkt6aUs0c1dra2NUUkJPWFQ1bnlqMXB0aXhZd0YyY090?=
+ =?utf-8?B?RGdkMENEeE9FTC81Y2hobkVMejZOY2lWaVlFRmdwOUsvM3NjalNxZFdpbk9Z?=
+ =?utf-8?B?NE9DQitmOHl0TjR1V0Zhd3Z0ejJ5Y1ZJQ1UrNGNaN0RVVkh4bkRVZ0pGd3Fw?=
+ =?utf-8?B?QnY1WEhJQzJIaHRjS2JaQUoyZHVkZnJIVEdnRk9LSXJyWko0U21qYWFCVkRz?=
+ =?utf-8?B?SzV2aHNrZGpXSWJSNkt5enZpWk40Ylc5QjJIeTh6QmRkcVhMSDFvL0tiRGJI?=
+ =?utf-8?B?RXpSbHoyTnI0TTcra1NrMDRrWmc0WERaem5Id3JjNm55RHNVZ0NHZCtreXh2?=
+ =?utf-8?B?UFlZbXlYMElzT2llUDlHckt4QjFCWnZwQnpHOGNRY0lOSStCQzMyeDl5VjVJ?=
+ =?utf-8?B?SGlPSDRrMFo5Lzhmc0FXNmx4ZXIydmdocGdtWGw2cGxiOVE5QTluN1orV3E1?=
+ =?utf-8?B?RXRJYU4xV1ZJOW1jL3hBZHZTZ2Z6SjFmS0hINXk1a0U3ZGw0WjFRWFlJT1Zp?=
+ =?utf-8?B?NUttNklmTVJnR1huU2tKbUV1RUxVSXJxSFJQSEtlTENsazUyamc0WFA0aXFq?=
+ =?utf-8?B?aGZEU2NzVkhLT0ZENlU1U2hFMDRRaGw0a2VwMkVXUk1BdWVFQkI1WTRjM3lz?=
+ =?utf-8?B?bFZmM25waXdTM0lsT1h0VjdTckZweVczTC9rNFIvN3pKcHErMjg0R1dlYlNO?=
+ =?utf-8?B?bUd2SktmeFZsaEpuWnhhdzEzVitIL1orWUk4SFpoanFTekgwOVpCc2ljcHhz?=
+ =?utf-8?Q?IgIzQZoTT3a3T5rAThptHGwtt?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d4064f6-d518-47fa-3c22-08dc7a0295d0
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 01:57:50.2952
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lG+461iEr3i3M+0mRHKJiFecm0nTljMQ9/mOfKG9l8BggyyUhPUDJG1hp7ysQzE/gBlKU+1YtUhtAI+52gZrDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9584
 
-On 2024/5/21 10:38, Dave Chinner wrote:
-> On Fri, May 17, 2024 at 07:13:55PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
+On 5/22/24 05:51, Adam Ford wrote:
+> On Mon, May 20, 2024 at 8:16 PM Adam Ford <aford173@gmail.com> wrote:
 >>
->> When truncating a realtime file unaligned to a shorter size,
->> xfs_setattr_size() only flush the EOF page before zeroing out, and
->> xfs_truncate_page() also only zeros the EOF block. This could expose
->> stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
->> a write operation").
+>> In the process of adding support for shared IRQ pins, a scenario
+>> was accidentally created where adv7511_irq_process returned
+>> prematurely causing the EDID to fail randomly.
 >>
->> If the sb_rextsize is bigger than one block, and we have a realtime
->> inode that contains a long enough written extent. If we unaligned
->> truncate into the middle of this extent, xfs_itruncate_extents() could
->> split the extent and align the it's tail to sb_rextsize, there maybe
->> have more than one blocks more between the end of the file. Since
->> xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
->> value, so it may leftover some blocks contains stale data that could be
->> exposed if we append write it over a long enough distance later.
+>> Since the interrupt handler is broken up into two main helper functions,
+>> update both of them to treat the helper functions as IRQ handlers. These
+>> IRQ routines process their respective tasks as before, but if they
+>> determine that actual work was done, mark the respective IRQ status
+>> accordingly, and delay the check until everything has been processed.
 >>
->> xfs_truncate_page() should flush, zeros out the entire rtextsize range,
->> and make sure the entire zeroed range have been flushed to disk before
->> updating the inode size.
+>> This should guarantee the helper functions don't return prematurely
+>> while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
 >>
->> Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
->> Reported-by: Chandan Babu R <chandanbabu@kernel.org>
->> Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
->>  fs/xfs/xfs_iops.c  | 10 ----------
->>  2 files changed, 31 insertions(+), 14 deletions(-)
+>> Reported by: Liu Ying <victor.liu@nxp.com>
+
+s/Reported by/Reported-by/
+
+>> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+>> Signed-off-by: Adam Ford <aford173@gmail.com>
+> 
+> + Liu
+> 
+> Sorry about the e-mail address copy-paste error.
+
+No worries.
+
+With this patch, it looks EDID retrieval works ok for me without
+interrupt requested.
+
+Tested-by: Liu Ying <victor.liu@nxp.com> # i.MX8MP EVK ADV7535 EDID retrieval w/o IRQ
+
 >>
->> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
->> index 4958cc3337bc..fc379450fe74 100644
->> --- a/fs/xfs/xfs_iomap.c
->> +++ b/fs/xfs/xfs_iomap.c
->> @@ -1466,12 +1466,39 @@ xfs_truncate_page(
->>  	loff_t			pos,
->>  	bool			*did_zero)
+>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>> index ea271f62b214..ec0b7f3d889c 100644
+>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+>> @@ -401,7 +401,7 @@ struct adv7511 {
+>>
+>>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+>>  int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
+>> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+>> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+>>  #else
+>>  static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
 >>  {
->> +	struct xfs_mount	*mp = ip->i_mount;
->>  	struct inode		*inode = VFS_I(ip);
->>  	unsigned int		blocksize = i_blocksize(inode);
->> +	int			error;
->> +
->> +	if (XFS_IS_REALTIME_INODE(ip))
->> +		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
->> +
->> +	/*
->> +	 * iomap won't detect a dirty page over an unwritten block (or a
->> +	 * cow block over a hole) and subsequently skips zeroing the
->> +	 * newly post-EOF portion of the page. Flush the new EOF to
->> +	 * convert the block before the pagecache truncate.
->> +	 */
->> +	error = filemap_write_and_wait_range(inode->i_mapping, pos,
->> +					     roundup_64(pos, blocksize));
->> +	if (error)
->> +		return error;
->>  
->>  	if (IS_DAX(inode))
->> -		return dax_truncate_page(inode, pos, blocksize, did_zero,
->> -					&xfs_dax_write_iomap_ops);
->> -	return iomap_truncate_page(inode, pos, blocksize, did_zero,
->> -				   &xfs_buffered_write_iomap_ops);
->> +		error = dax_truncate_page(inode, pos, blocksize, did_zero,
->> +					  &xfs_dax_write_iomap_ops);
->> +	else
->> +		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
->> +					    &xfs_buffered_write_iomap_ops);
->> +	if (error)
->> +		return error;
->> +
->> +	/*
->> +	 * Write back path won't write dirty blocks post EOF folio,
->> +	 * flush the entire zeroed range before updating the inode
->> +	 * size.
->> +	 */
->> +	return filemap_write_and_wait_range(inode->i_mapping, pos,
->> +					    roundup_64(pos, blocksize));
+>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+>> index 44451a9658a3..4efb2cabf1b5 100644
+>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+>> @@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, int rx_buf)
+>>         cec_received_msg(adv7511->cec_adap, &msg);
 >>  }
-> 
-> Ok, this means we do -three- blocking writebacks through this path
-> instead of one or maybe two.
-> 
-> We already know that this existing blocking writeback case for dirty
-> pages over unwritten extents is a significant performance issue for
-> some workloads. I have a fix in progress for iomap to handle this
-> case without requiring blocking writeback to be done to convert the
-> extent to written before we do the truncate.
-> 
-> Regardless, I think this whole "truncate is allocation unit size
-> aware" algorithm is largely unworkable without a rewrite. What XFS
-> needs to do on truncate *down* before we start the truncate
-> transaction is pretty simple:
-> 
-> 	- ensure that the new EOF extent tail contains zeroes
-> 	- ensure that the range from the existing ip->i_disk_size to
-> 	  the new EOF is on disk so data vs metadata ordering is
-> 	  correct for crash recovery purposes.
-> 
-> What this patch does to acheive that is:
-> 
-> 	1. blocking writeback to clean dirty unwritten/cow blocks at
-> 	the new EOF.
-> 	2. iomap_truncate_page() writes zeroes into the page cache,
-> 	which dirties the pages we just cleaned at the new EOF.
-> 	3. blocking writeback to clean the dirty blocks at the new
-> 	EOF.
-> 	4. truncate_setsize() then writes zeros to partial folios at
-> 	the new EOF, dirtying the EOF page again.
-> 	5. blocking writeback to clean dirty blocks from the current
-> 	on-disk size to the new EOF.
-> 
-> This is pretty crazy when you stop and think about it. We're writing
-> the same EOF block -three- times. The first data write gets
-> overwritten by zeroes on the second write, and the third write
-> writes the same zeroes as the second write. There are two redundant
-> *blocking* writes in this process.
-
-Yes, this is indeed a performance disaster, and iomap_zero_range()
-should aware the dirty pages. I had the same problem when developing
-buffered iomap conversion on ext4.
-
-> 
-> We can do all this with a single writeback operation if we are a
-> little bit smarter about the order of operations we perform and we
-> are a little bit smarter in iomap about zeroing dirty pages in the
-> page cache:
-> 
-> 	1. change iomap_zero_range() to do the right thing with
-> 	dirty unwritten and cow extents (the patch I've been working
-> 	on).
-> 
-> 	2. pass the range to be zeroed into iomap_truncate_page()
-> 	(the fundamental change being made here).
-> 
-> 	3. zero the required range *through the page cache*
-> 	(iomap_zero_range() already does this).
-> 
-> 	4. write back the XFS inode from ip->i_disk_size to the end
-> 	of the range zeroed by iomap_truncate_page()
-> 	(xfs_setattr_size() already does this).
-> 
-> 	5. i_size_write(newsize);
-> 
-> 	6. invalidate_inode_pages2_range(newsize, -1) to trash all
-> 	the page cache beyond the new EOF without doing any zeroing
-> 	as we've already done all the zeroing needed to the page
-> 	cache through iomap_truncate_page().
-> 
-> 
-> The patch I'm working on for step 1 is below. It still needs to be
-> extended to handle the cow case, but I'm unclear on how to exercise
-> that case so I haven't written the code to do it. The rest of it is
-> just rearranging the code that we already use just to get the order
-> of operations right. The only notable change in behaviour is using
-> invalidate_inode_pages2_range() instead of truncate_pagecache(),
-> because we don't want the EOF page to be dirtied again once we've
-> already written zeroes to disk....
-> 
-
-Indeed, this sounds like the best solution. Since Darrick recommended
-that we could fix the stale data exposure on realtime inode issue by
-convert the tail extent to unwritten, I suppose we could do this after
-fixing the problem.
-
-Thanks,
-Yi.
+>>
+>> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>>  {
+>>         unsigned int offset = adv7511->info->reg_cec_offset;
+>>         const u32 irq_tx_mask = ADV7511_INT1_CEC_TX_READY |
+>> @@ -130,17 +130,21 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>>                                 ADV7511_INT1_CEC_RX_READY3;
+>>         unsigned int rx_status;
+>>         int rx_order[3] = { -1, -1, -1 };
+>> -       int i;
+>> +       int i, ret = 0;
+>> +       int irq_status = IRQ_NONE;
+>>
+>> -       if (irq1 & irq_tx_mask)
+>> +       if (irq1 & irq_tx_mask) {
+>>                 adv_cec_tx_raw_status(adv7511, irq1);
+>> +               irq_status = IRQ_HANDLED;
+>> +       }
+>>
+>>         if (!(irq1 & irq_rx_mask))
+>> -               return;
+>> +               return irq_status;
+>>
+>> -       if (regmap_read(adv7511->regmap_cec,
+>> -                       ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
+>> -               return;
+>> +       ret = regmap_read(adv7511->regmap_cec,
+>> +                       ADV7511_REG_CEC_RX_STATUS + offset, &rx_status);
+>> +       if (ret < 0)
+>> +               return ret;
+>>
+>>         /*
+>>          * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of RX
+>> @@ -172,6 +176,8 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>>
+>>                 adv7511_cec_rx(adv7511, rx_buf);
+>>         }
+>> +
+>> +       return IRQ_HANDLED;
+>>  }
+>>
+>>  static int adv7511_cec_adap_enable(struct cec_adapter *adap, bool enable)
+>> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> index 66ccb61e2a66..56dd2d5a0376 100644
+>> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+>> @@ -469,6 +469,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+>>  {
+>>         unsigned int irq0, irq1;
+>>         int ret;
+>> +       int cec_status;
+>> +       int irq_status = IRQ_NONE;
+>>
+>>         ret = regmap_read(adv7511->regmap, ADV7511_REG_INT(0), &irq0);
+>>         if (ret < 0)
+>> @@ -478,38 +480,41 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+>>         if (ret < 0)
+>>                 return ret;
+>>
+>> -       /* If there is no IRQ to handle, exit indicating no IRQ data */
+>> -       if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+>> -           !(irq1 & ADV7511_INT1_DDC_ERROR))
+>> -               return -ENODATA;
+>> -
+>>         regmap_write(adv7511->regmap, ADV7511_REG_INT(0), irq0);
+>>         regmap_write(adv7511->regmap, ADV7511_REG_INT(1), irq1);
+>>
+>> -       if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder)
+>> +       if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder) {
+>>                 schedule_work(&adv7511->hpd_work);
+>> +               irq_status = IRQ_HANDLED;
+>> +       }
+>>
+>>         if (irq0 & ADV7511_INT0_EDID_READY || irq1 & ADV7511_INT1_DDC_ERROR) {
+>>                 adv7511->edid_read = true;
+>>
+>>                 if (adv7511->i2c_main->irq)
+>>                         wake_up_all(&adv7511->wq);
+>> +               irq_status = IRQ_HANDLED;
+>>         }
+>>
+>>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+>> -       adv7511_cec_irq_process(adv7511, irq1);
+>> +       cec_status = adv7511_cec_irq_process(adv7511, irq1);
+>> +
+>> +       if (cec_status < 0)
+>> +               return cec_status;
+>>  #endif
+>>
+>> -       return 0;
+>> +       /* If there is no IRQ to handle, exit indicating no IRQ data */
+>> +       if (irq_status == IRQ_HANDLED || cec_status == IRQ_HANDLED)
+>> +               return IRQ_HANDLED;
+>> +
+>> +       return IRQ_NONE;
+>>  }
+>>
+>>  static irqreturn_t adv7511_irq_handler(int irq, void *devid)
+>>  {
+>>         struct adv7511 *adv7511 = devid;
+>> -       int ret;
+>>
+>> -       ret = adv7511_irq_process(adv7511, true);
+>> -       return ret < 0 ? IRQ_NONE : IRQ_HANDLED;
+>> +       return adv7511_irq_process(adv7511, true);
+>>  }
+>>
+>>  /* -----------------------------------------------------------------------------
+>> --
+>> 2.43.0
+>>
 
 
