@@ -1,210 +1,130 @@
-Return-Path: <linux-kernel+bounces-185695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949D28CB8F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:31:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E188CB8FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0668C1F269BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A0C282676
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FA22EB07;
-	Wed, 22 May 2024 02:31:16 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467CE43147;
+	Wed, 22 May 2024 02:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dqVtVC50"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9296339A8;
-	Wed, 22 May 2024 02:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0EC322A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716345076; cv=none; b=o6+zAXhPPjQoZff7bHfYh0cs/YKMEyP95+6WbspTHakmmoRPt6SKYMGUBLRbgVIZEg1X6tU+H6Jg/dUGzyddN/UA7NazHgkqeDGYy50adZuuYTSlHj7fD4yIjnucYkfFzyohAVhv7tyFW6S+X3eDgvbCmRnDbuMUwe212bSgx9E=
+	t=1716345095; cv=none; b=HEWx42afyW4/iGQKuW0lPtqmeyZm+cqJYiqcV+icQA5Nje08u5ww9yi34/MARlgdqGk1rOnr/emWRBMZD8OPOFzdv9qd5JcUw3aBrAgQcR0JZ2iRNuKVrLiP/752pKyKrq47/yB1L6CeAKilo8WRAFtLxhS4VWa+vhQXjH/MO/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716345076; c=relaxed/simple;
-	bh=dCWpHDIGxN8+JH6x/Fr1QOyLBL0zIKxdojXzZXnoBWs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=pbDbomx4+6PWGJU4HqYI0dqzvDr+Y4XJ2RACiI+DmAU/BBstJrALjTLmRVhmGvdAPo6Q/xudw7qMbnsPRC4M3NuQV7eUpzUk5H8SrzXbvQSkTrgPh+aDHDkcPT4KugEiG5tuvsxdN4RUxrwihUUEzwe8R3p/kP0c2uyViTydNNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VkZzn672Vz4f3kK0;
-	Wed, 22 May 2024 10:31:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id A003A1A0199;
-	Wed, 22 May 2024 10:31:07 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxDlWE1mfUNSNQ--.47117S3;
-	Wed, 22 May 2024 10:31:03 +0800 (CST)
-Subject: Re: [PATCH V2 for-6.10/block 1/2] loop: Fix a race between loop
- detach and loop open
-To: Jens Axboe <axboe@kernel.dk>, Gulam Mohamed <gulam.mohamed@oracle.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: shinichiro.kawasaki@wdc.com, chaitanyak@nvidia.com, hch@lst.de,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240521224249.7389-1-gulam.mohamed@oracle.com>
- <dcd2dac3-07d2-4ee8-addf-b9266a84f7fd@kernel.dk>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c7eb562c-97ae-455a-3859-0ed28ebdf7ae@huaweicloud.com>
-Date: Wed, 22 May 2024 10:31:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1716345095; c=relaxed/simple;
+	bh=tak0JNHXgiWiJt06m1Iot07uFQvw2SbXkoQiZzW0bo0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WDkvFleUUYfUTeGvqI1+4WNcIU/MfuCvlGJ5s5064gxiYshq0RwTwxdjgWsJph0eKce0UV+bKttxUIhaUhwbClskIUSe+2bT0KLkLsW2DFRP832f1p4WX4Bh+elIWx2QtsUEsNYIOu6flvTRn0DKQO1sKKUJunLyaUfQSBKoCtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dqVtVC50; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61bea0c36bbso264545777b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:31:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716345093; x=1716949893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gOYDdieEO0SMEqqI4rHYaS0F69dZml7a9rO/mRwE3Yc=;
+        b=dqVtVC50iSxq4VQELbM6nAHkP/Wh8cRQb2jyNF5baHhYXcyIol18qtJr7X8aYGHl7O
+         VtsY3Fz72yDBUgukYlkgglcCPLa2DuwtWisjGZh7Cxbu+094x6Q0PCe+ar/V4A49RizW
+         RpwpuHccV2+ly66d8lYDk1tL4jD2qQT5kplPwhdL/cR1aD01ibv7kbuUMAFe3+fmkkh+
+         na7MwqH4PGi4F8kgvBMsUHoGdYkXXJONBLvYEOWjnICF33dBlfCjtskp3sWVZEawBpYb
+         7ca3xx9JRt+SGrYBYOgoPWPoHe0R8pb8OFy9apmgI6umWH3pozocHkN60i2hzv3ailpu
+         fnNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716345093; x=1716949893;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gOYDdieEO0SMEqqI4rHYaS0F69dZml7a9rO/mRwE3Yc=;
+        b=EvvUZdpl1Jcu7/9ZoHTRLYaM7TNV2PCUlxdSv11awcRCas0t311Z0pDaU3OqHqPOsP
+         GnBvBFiQKujE6Ux/sCilmoZDYoI/JFqBnEOCHdkaahYmR0KhmTZ2Ix9sPSaVWIFok7tr
+         OCvJkHZOH9Nglhul2OjMJPN7a3oAv4XwKbIgpzJmxwBlCAtNT3p/6E3N+XXPaMqKdUln
+         nHI7TZ2RqSftOjpf3+0y7PEfwEnYaPYmaibgOE9OUl4WHY16+nehvFA7Y7fZg8S8BnJu
+         LWbvGMDshagL3xU1I216GSabMaNS6mGO9ipHz21QTdmU09rzYEfvKb88u1baODLTJKsq
+         ICYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6gF7XzlQOFXIdt9XRxx/HF7pWWYtT8qgHBMASEip/Xc99Blym5uxYe0yPXCFX9OTPmsEHMduQLIwciy+6Q5WHt+M6QD/kiAirk/5z
+X-Gm-Message-State: AOJu0Yw4GZUFuAaBLvpV1LOswLBe3NuYOhPZ687qekGck/H/r8uxDz97
+	NEZy1VcZnuEWz3rBpCv2AI/gqI7SacJ0wsE3YidW5YxIgvmg97YuOegXHo1/AlE6jLInyubhdww
+	FvA==
+X-Google-Smtp-Source: AGHT+IGmJ0SvbLnKDHz/DAYY+qVuk91HRc2JW9lRvffWDQUBufCfe/OdwsfiVcHXEKW1MXdrv4UbappAeDQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:aad4:0:b0:de5:8427:d66e with SMTP id
+ 3f1490d57ef6-df4e0dbb481mr238843276.11.1716345093234; Tue, 21 May 2024
+ 19:31:33 -0700 (PDT)
+Date: Tue, 21 May 2024 19:31:31 -0700
+In-Reply-To: <Zk1KZDStu/+CR0i4@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <dcd2dac3-07d2-4ee8-addf-b9266a84f7fd@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxDlWE1mfUNSNQ--.47117S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF47XF4fAryDury3tw18Xwb_yoW5KFWDpF
-	Z3WFW2kryDKa9xWw12vF1xu3WFq3Z2yrWrGrn7C34SkrnFyFnavFy2vryY9a4jgrW0kayj
-	vF1UWrWUuFWUCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Mime-Version: 1.0
+References: <b89385e5c7f4c3e5bc97045ec909455c33652fb1.camel@intel.com>
+ <ZkUIMKxhhYbrvS8I@google.com> <1257b7b43472fad6287b648ec96fc27a89766eb9.camel@intel.com>
+ <ZkUVcjYhgVpVcGAV@google.com> <ac5cab4a25d3a1e022a6a1892e59e670e5fff560.camel@intel.com>
+ <ZkU7dl3BDXpwYwza@google.com> <175989e7-2275-4775-9ad8-65c4134184dd@intel.com>
+ <ZkVDIkgj3lWKymfR@google.com> <7df9032d-83e4-46a1-ab29-6c7973a2ab0b@redhat.com>
+ <Zk1KZDStu/+CR0i4@yzhao56-desk.sh.intel.com>
+Message-ID: <Zk1ZA-u9yYq0i15-@google.com>
+Subject: Re: [PATCH 02/16] KVM: x86/mmu: Introduce a slot flag to zap only
+ slot leafs on slot deletion
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Kai Huang <kai.huang@intel.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"sagis@google.com" <sagis@google.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Erdem Aktas <erdemaktas@google.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, May 22, 2024, Yan Zhao wrote:
+> On Fri, May 17, 2024 at 05:30:50PM +0200, Paolo Bonzini wrote:
+> > On 5/16/24 01:20, Sean Christopherson wrote:
+> > > Hmm, a quirk isn't a bad idea.  It suffers the same problems as a mem=
+slot flag,
+> > > i.e. who knows when it's safe to disable the quirk, but I would hope =
+userspace
+> > > would be much, much cautious about disabling a quirk that comes with =
+a massive
+> > > disclaimer.
+> > >=20
+> > > Though I suspect Paolo will shoot this down too =F0=9F=98=89
+> >=20
+> > Not really, it's probably the least bad option.  Not as safe as keying =
+it
+> > off the new machine types, but less ugly.
+> A concern about the quirk is that before identifying the root cause of th=
+e
+> issue, we don't know which one is a quirk, fast zapping all TDPs or slow =
+zapping
+> within memslot range.
 
-在 2024/05/22 9:39, Jens Axboe 写道:
-> On 5/21/24 4:42 PM, Gulam Mohamed wrote:
->> Description
->> ===========
->>
->> 1. Userspace sends the command "losetup -d" which uses the open() call
->>     to open the device
->> 2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
->>     function loop_clr_fd()
->> 3. If LOOP_CLR_FD is the first command received at the time, then the
->>     AUTOCLEAR flag is not set and deletion of the
->>     loop device proceeds ahead and scans the partitions (drop/add
->>     partitions)
->>
->> 	if (disk_openers(lo->lo_disk) > 1) {
->> 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
->> 		loop_global_unlock(lo, true);
->> 		return 0;
->> 	}
->>
->>   4. Before scanning partitions, it will check to see if any partition of
->>      the loop device is currently opened
->>   5. If any partition is opened, then it will return EBUSY:
->>
->>      if (disk->open_partitions)
->> 		return -EBUSY;
->>   6. So, after receiving the "LOOP_CLR_FD" command and just before the above
->>      check for open_partitions, if any other command
->>      (like blkid) opens any partition of the loop device, then the partition
->>      scan will not proceed and EBUSY is returned as shown in above code
->>   7. But in "__loop_clr_fd()", this EBUSY error is not propagated
->>   8. We have noticed that this is causing the partitions of the loop to
->>      remain stale even after the loop device is detached resulting in the
->>      IO errors on the partitions
->>
->> Fix
->> ---
->> Re-introduce the lo_open() call to restrict any process to open the loop
->> device when its being detached
->>
->> Test case
->> =========
->> Test case involves the following two scripts:
->>
->> script1.sh
->> ----------
->> while [ 1 ];
->> do
->> 	losetup -P -f /home/opt/looptest/test10.img
->> 	blkid /dev/loop0p1
->> done
->>
->> script2.sh
->> ----------
->> while [ 1 ];
->> do
->> 	losetup -d /dev/loop0
->> done
->>
->> Without fix, the following IO errors have been observed:
->>
->> kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
->> kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
->>          phys_seg 1 prio class 0
->> kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
->>          phys_seg 1 prio class 0
->> kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
->>          read
->>
->> V1->V2:
->> 	Added a test case, 010, in blktests in tests/loop/
->> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
->> ---
->>   drivers/block/loop.c | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
->>
->> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
->> index 28a95fd366fe..9a235d8c062d 100644
->> --- a/drivers/block/loop.c
->> +++ b/drivers/block/loop.c
->> @@ -1717,6 +1717,24 @@ static int lo_compat_ioctl(struct block_device *bdev, blk_mode_t mode,
->>   }
->>   #endif
->>   
->> +static int lo_open(struct gendisk *disk, blk_mode_t mode)
->> +{
->> +        struct loop_device *lo = disk->private_data;
->> +        int err;
->> +
->> +        if (!lo)
->> +                return -ENXIO;
->> +
->> +        err = mutex_lock_killable(&lo->lo_mutex);
->> +        if (err)
->> +                return err;
->> +
->> +        if (lo->lo_state == Lo_rundown)
->> +                err = -ENXIO;
->> +        mutex_unlock(&lo->lo_mutex);
+The quirk is specifically that KVM zaps SPTEs that aren't related to the me=
+mslot
+being deleted/moved.  E.g. the issue went away if KVM zapped a rather arbit=
+rary
+set of SPTEs.  IIRC, there was a specific gfn range that was "problematic",=
+ but
+we never figured out the correlation between the problematic range and the =
+memslot
+being deleted.
 
-This doesn't fix the problem completely, there is still a race window.
-
-lo_release
-  if (disk_openers(disk) > 0)
-   reutrn
-   -> no openers now
-		lo_open
-		 if (lo->lo_state == Lo_rundown)
-		 -> no set yet
-		 open succeed
-  mutex_lock(lo_mutex)
-  lo->lo_state = Lo_rundown
-  mutex_unlock(lo_mutex)
-  __loop_clr_fd
-
-And with the respect, loop_clr_fd() has the same problem.
-
-I think probably loop need a open counter for itself.
-
-Thanks,
-Kuai
-
->> +	return err;
->> +}
-> 
-> Most of this function uses spaces rather than tabs.
-> 
-
+Disabling the quirk would allow KVM to choose between a slow/precise/partia=
+l zap,
+and full/fast zap.
 
