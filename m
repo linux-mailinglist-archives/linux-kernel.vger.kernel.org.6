@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-186822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED058CC9B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:32:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41C38CC9B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D425B2117E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:32:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B691F2212D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56C614E2D6;
-	Wed, 22 May 2024 23:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE7314F9C9;
+	Wed, 22 May 2024 23:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHwzCwRN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvxrjXYy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222B914C5B5;
-	Wed, 22 May 2024 23:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7FE14D28E;
+	Wed, 22 May 2024 23:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716420744; cv=none; b=U+RBwtyP+h1nYUM+7gg7AXfC7e1WAGM80RXa/xg5mMeYBRAWf1r4kF6QdBbN1QWjkYJWPRFpJOwWxfVLICrM0Gv7M9HOR7nVGx6He25cUcoUo/G0pYDfKN46Uun536m5ZCoYbN/dtsaVscAxHoYqRQaer3QunIb/CDAT4GULIBU=
+	t=1716420744; cv=none; b=psLAZIa8wxnewWIRt+MVHcSrR+0vyOv0mThixE0sYKlBiuFZnAcy8MLpvMI5q0IE+vDF1MTcIwVS+j9PG5Smw1qIIyYXUFV6O4xfcg/cemSHqTZqgPvIKGj/tphEsokNNgXEMCZHnx5ndC7Xu1EcKlADUf09XzKDwvdOI8dO3UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716420744; c=relaxed/simple;
-	bh=kpKPeLWBCjE5fgd+5cOKsD21nksUdXEMnnTmcz5+9NM=;
+	bh=sFivK456BiubdJX56tlNdVWZafvyAwixp16zhXxqH70=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=UlFo5NDmpfI8vOZ7Ta2yCICLKvTrMg6Q/78jPrIjXq3EHSuFTeuPjuoRNHBmOC5f7q7XjEo4t85cZswNIHdgX4uZDswomoJPCrQiGIx69m5EocDDv5L9DeQoQHe7RHCsTvEOrhP4tC6onddCxiAKhXUf4NZDd5rIwxOVt5tt+bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHwzCwRN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A5D32C4AF08;
+	 In-Reply-To:To:Cc; b=lPQEtbFzLt3yKP1nhPJUoCg8Hd1dLuGEXIalwCS2QqIyW/Gw25ne1y3QgxD9obgT4M0AnfdWucSVxvmkYAg7kuUsF5Tum22lFRwvnQeJzEbYlt7vLh+hoYvAI1jYaPLxoqubdO39LBU+kJZuI1phcxkTNtEirZYUAxZb4gUeWiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvxrjXYy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BD809C4AF15;
 	Wed, 22 May 2024 23:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1716420743;
-	bh=kpKPeLWBCjE5fgd+5cOKsD21nksUdXEMnnTmcz5+9NM=;
+	bh=sFivK456BiubdJX56tlNdVWZafvyAwixp16zhXxqH70=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sHwzCwRNVkYZxwlprVtZrnp3/dsj9O9SfyPmCrFUvdoemahb42MxmJbr4Q62RVlU/
-	 DXRYmKoTLfgyAdBv5rM/uENXk0rr/jzybEPmP/d+92DkkvhI1zQdbf8eAgAW7fF2ae
-	 njUMhdcDMAs6I+aqvk0SCNCZvkmzo84aTLIzbGIEbqr/F54VXk6wQiHo34C2OIMKft
-	 biV8uX8Xcon8i+loWX6K5f5ogbMgp+gEAg7y16IU+YYtx56CpxTCW7C/1AZ/O07Db1
-	 EWxCcu1m+fpCU/zZG7bnJGkDlbFoVRWiCf+tjAX0OCrrR58w09KPPTvPg2IKrKtthz
-	 edzoNxZUaSQXQ==
+	b=MvxrjXYyWgudMCjnBPVn9CXPVvpZNtaSUZ1gyq7PTmVmsLPKSp4NYpwhcGJcgtsps
+	 ZQigp0aoMd337dNepQtlG7ONduRS6voeXw8G++uWdKEk6y7kzjYZuq96XJ7/yQN19U
+	 IqJrWt8Rxg0xye2QS6uRQncojNKYhA9QElzTRMJox85W4T2sCbklby0gjCZU9wjUxM
+	 bIKgDpuY3lMTzfOOvE5ZE3aYgr4zJsDNOJcBlqDMfSjVhfax54WnjBVe7xoJmcD286
+	 HTXTNilxLy9lspwts50EVF1udoz+PVsPXjAxFdPOlmfSbHjPLqMQ0/3xuRViW2cwUe
+	 cVQfWD+cD2/eg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 99E31C54BA0;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AF297C43618;
 	Wed, 22 May 2024 23:32:23 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,42 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4] of: property: Add fw_devlink support for interrupt-map
- property
+Subject: Re: [PATCH] KVM: selftest: Define _GNU_SOURCE for all selftests code
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171642074362.9409.8597055988913469203.git-patchwork-notify@kernel.org>
+ <171642074371.9409.16238055569874422523.git-patchwork-notify@kernel.org>
 Date: Wed, 22 May 2024 23:32:23 +0000
-References: <20240509120820.1430587-1-apatel@ventanamicro.com>
-In-Reply-To: <20240509120820.1430587-1-apatel@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, robh@kernel.org, saravanak@google.com,
- devicetree@vger.kernel.org, anup@brainfault.org, paul.walmsley@sifive.com,
- linux-kernel@vger.kernel.org, palmer@dabbelt.com, atishp@atishpatra.org,
- ajones@ventanamicro.com
+References: <20240423190308.2883084-1-seanjc@google.com>
+In-Reply-To: <20240423190308.2883084-1-seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-riscv@lists.infradead.org, pbonzini@redhat.com, maz@kernel.org,
+ oliver.upton@linux.dev, anup@brainfault.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, borntraeger@linux.ibm.com,
+ frankja@linux.ibm.com, imbrenda@linux.ibm.com, kvm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ usama.anjum@collabora.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
-by Rob Herring (Arm) <robh@kernel.org>:
+by Sean Christopherson <seanjc@google.com>:
 
-On Thu,  9 May 2024 17:38:20 +0530 you wrote:
-> Some of the PCI host controllers (such as generic PCI host controller)
-> use "interrupt-map" DT property to describe the mapping between PCI
-> endpoints and PCI interrupt pins. This is the only case where the
-> interrupts are not described in DT.
-> 
-> Currently, there is no fw_devlink created based on "interrupt-map"
-> DT property so interrupt controller is not guaranteed to be probed
-> before the PCI host controller. This affects every platform where
-> both PCI host controller and interrupt controllers are probed as
-> regular platform devices.
+On Tue, 23 Apr 2024 12:03:08 -0700 you wrote:
+> Define _GNU_SOURCE is the base CFLAGS instead of relying on selftests to
+> manually #define _GNU_SOURCE, which is repetitive and error prone.  E.g.
+> kselftest_harness.h requires _GNU_SOURCE for asprintf(), but if a selftest
+> includes kvm_test_harness.h after stdio.h, the include guards result in
+> the effective version of stdio.h consumed by kvm_test_harness.h not
+> defining asprintf():
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4] of: property: Add fw_devlink support for interrupt-map property
-    https://git.kernel.org/riscv/c/d976c6f4b32c
+  - KVM: selftest: Define _GNU_SOURCE for all selftests code
+    https://git.kernel.org/riscv/c/730cfa45b5f4
 
 You are awesome, thank you!
 -- 
