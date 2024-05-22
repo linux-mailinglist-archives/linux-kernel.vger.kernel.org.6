@@ -1,145 +1,81 @@
-Return-Path: <linux-kernel+bounces-186292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DB68CC24A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:40:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D2E98CC24F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4DB41C22983
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:40:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7A331F24368
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B98B1411C8;
-	Wed, 22 May 2024 13:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A358414038F;
+	Wed, 22 May 2024 13:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DhfVII0i"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b="yvIGFZrS"
+Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D9514037D;
-	Wed, 22 May 2024 13:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CAF13F44F
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716385213; cv=none; b=JjinZMxZ9fzdPKAPsJvfOvonqSC1iK09Ktpk/5foK+BN21mwD2ZJT7jhXIZiIeMS9BIkHGUw0CLErcfjE5YbuNdtXtojmyFb1d/d7qVQQmzMg9H74MFsRMuXjP7v51vcSifnsjAE2Sy9ELhE9bQpJZi0cBltbRrcEwMLMRrqMmY=
+	t=1716385246; cv=none; b=mM9U1JvUbS5DDgvxC88yYVWBhEGW5Dp/n4+GAmzxKs1pEs6osyH22zIp22NKTf/kARpucrqWWCtHqnqa/isVsp37muVJW7bOAtBz9V3dkpNuOgq6a5CztVuvIh505lHz2jIYR9Q2PTSr9zvlJdddaG5m5w8lyjgQnphlsLRNzJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716385213; c=relaxed/simple;
-	bh=KlcfgZBOLuLi9UUyHSlAq0UwDQgF6FqjZB64J+brl1U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihmEwwb+ee43hG8zx747uOQWoTH6i6qF88oqD71F5MSvA+J47o0Rc+AU2zPDvtCP63UkpIFgx/5Ae415j65/Dtg3XSFPMVNFdwamUcxXHbeMgz5gS7/mFyw3AhMvP5qbfU5rA3sB6Q1gdqfGrH1sL9sytUqIr9eP/B18nR2j7ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DhfVII0i; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44MDe1Co116757;
-	Wed, 22 May 2024 08:40:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716385201;
-	bh=156ErfcH2Ob6eWxrQ7Lwe485QGxB7cdVxE6jta+DSgo=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=DhfVII0iLK0gq+ozg5PPwd/mDyAosw6OPZ9sTL7PieLseF7ZPPiTyXnaZmZSXWskI
-	 KPA4rPF+pJNUp/JiIfNB5yg+jCDMtIz+lL+sM4FbXyUbdwQpd8hLDwoPmpv7JBxpf5
-	 QcfjEwj1ovtlrLNnCqq7yjXBZB2FFONaw1ODEOBg=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44MDe13j016785
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 May 2024 08:40:01 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 22
- May 2024 08:40:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 22 May 2024 08:40:01 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44MDe1Q8022418;
-	Wed, 22 May 2024 08:40:01 -0500
-Date: Wed, 22 May 2024 08:40:01 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        "Kumar,
- Udit" <u-kumar1@ti.com>, <vigneshr@ti.com>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kip Broadhurst
-	<kbroadhurst@ti.com>, <w.egorov@phytec.de>
-Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
- GPL-2.0
-Message-ID: <20240522134001.tjgvzglufwmi3k75@imitate>
-References: <20240517104226.3395480-1-u-kumar1@ti.com>
- <20240517-poster-purplish-9b356ce30248@spud>
- <20240517-fastball-stable-9332cae850ea@spud>
- <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
- <20240520-discard-fanatic-f8e686a4faad@spud>
- <20240520201807.GA1410789-robh@kernel.org>
- <e257de5f54d361da692820f72048ed06a8673380.camel@redhat.com>
- <20240522-vanquish-twirl-4f767578ee8d@spud>
+	s=arc-20240116; t=1716385246; c=relaxed/simple;
+	bh=wtv5GehB0RNRrwKNMSpWWR1rBRSVtWsYLFCegIScuU4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sinQ9GoWblbH/R+1Q5faNReEntG7GGCOTxBMeIr+W6yLLNTcEvtGQuP+fPqAZF/kx86cy/d7FD7ZHU+WkphB5xQHZNHp/N5O3Zz9cv4ogiL2Y/Ysu3Qm+wflpI/uY1d2dBtvcuZfXSNreL8mATQpoCbPoll8yvpBKqQmgZysDYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr; spf=pass smtp.mailfrom=emersion.fr; dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b=yvIGFZrS; arc=none smtp.client-ip=185.70.43.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emersion.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+	s=protonmail3; t=1716385240; x=1716644440;
+	bh=wtv5GehB0RNRrwKNMSpWWR1rBRSVtWsYLFCegIScuU4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=yvIGFZrSL3iRU85LAzfwzh+uq0jLCjADU6LMEGnjMcGt++u5/NLIlJG88CSeTIRcf
+	 GPHdN9aBbDdIBmDReF13JTw6whWLxrYdcN0y0DLD7b2XyIHFcoIZu112gaPWkTiop9
+	 9N/28V7OxshKIW5zjoaUo7dYNXP58prPUvRtEW7bF2Byi1O5XQxLpTE7v+vsMmhMsj
+	 S37g+lawcenjPzcgC6vZF2FwovTw1QBhHXJfxIhw+z3hFV3y2SxlBqrYoipBcVUhNg
+	 OI0R4GzDpatz7CDja0Q6bd8q7alaWZx2gzFAzSx0rMeyvVOMOJdesZW+WO+q2m2yRg
+	 cCT7AA126qLgA==
+Date: Wed, 22 May 2024 13:40:36 +0000
+To: Mario Limonciello <mario.limonciello@amd.com>
+From: Simon Ser <contact@emersion.fr>
+Cc: =?utf-8?Q?Rino_Andr=C3=A9_Johnsen?= <rinoandrejohnsen@gmail.com>, =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, alexander.deucher@amd.com, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Aurabindo Pillai <aurabindo.pillai@amd.com>, Hersen Wu <hersenxs.wu@amd.com>, Hamza Mahfooz <hamza.mahfooz@amd.com>, Wayne Lin <wayne.lin@amd.com>, Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>, Tom Chung <chiahsuan.chung@amd.com>, Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>, amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/amd/display: Add pixel encoding info to debugfs
+Message-ID: <1XiLpoWd2E_COrHNl9BYkmCXkUKK6Bv1wibdFxiw3Vi6AQOPAIhrIMPNEZmmKAp9yxC8Er4DEMqOqjshMgRqtpV3UkS7MN2OjCsDjllvdRE=@emersion.fr>
+In-Reply-To: <666e36b7-5379-46ef-a16b-00ec499fb42c@amd.com>
+References: <fa885eca-d7e6-415a-8a08-9103b002c6bb@amd.com> <20240521051140.30509-1-rinoandrejohnsen@gmail.com> <17782a6e-db84-4c20-874a-342b9655ffc5@amd.com> <CAACkh=-B-jH6g7KY7Nn_7Y_+gHPQ7G5Z5AZ0=a=_ifjcmsorcw@mail.gmail.com> <86410711-9b88-448c-9148-109f81b1ca55@amd.com> <CAACkh=9hY7eg_uuH7Psm=XJfSzwQTvzs8bvOXQ=wwkMPrC44SA@mail.gmail.com> <666e36b7-5379-46ef-a16b-00ec499fb42c@amd.com>
+Feedback-ID: 1358184:user:proton
+X-Pm-Message-ID: b585325d54e6bc294fd23a41f27306f095acabbc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240522-vanquish-twirl-4f767578ee8d@spud>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 11:25-20240522, Conor Dooley wrote:
-> On Wed, May 22, 2024 at 10:04:39AM +0200, Paolo Abeni wrote:
-> > On Mon, 2024-05-20 at 15:18 -0500, Rob Herring wrote:
-> > > On Mon, May 20, 2024 at 06:17:52PM +0100, Conor Dooley wrote:
-> > > > On Sat, May 18, 2024 at 02:18:55PM +0530, Kumar, Udit wrote:
-> > > > > Hi Conor
-> > > > > 
-> > > > > On 5/17/2024 8:11 PM, Conor Dooley wrote:
-> > > > > > On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
-> > > > > > > On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
-> > > > > > > > Modify license to include dual licensing as GPL-2.0-only OR MIT
-> > > > > > > > license for TI specific phy header files. This allows for Linux
-> > > > > > > > kernel files to be used in other Operating System ecosystems
-> > > > > > > > such as Zephyr or FreeBSD.
-> > > > > > > What's wrong with BSD-2-Clause, why not use that?
-> > > > > > I cut myself off, I meant to say:
-> > > > > > What's wrong with BSD-2-Clause, the standard dual license for
-> > > > > > bindings, why not use that?
-> > > > > 
-> > > > > want to be inline with License of top level DTS, which is including this
-> > > > > header file
-> > > > 
-> > > > Unless there's a specific reason to use MIT (like your legal won't even
-> > > > allow you to use BSD-2-Clause) then please just use the normal license
-> > > > for bindings here.
-> > > 
-> > > Aligning with the DTS files is enough reason for me as that's where 
-> > > these files are used. If you need to pick a permissive license for both, 
-> > > then yes, use BSD-2-Clause. Better yet, ask your lawyer.
-> > 
-> > Conor would you agree with Rob? - my take is that he is ok with this
-> > patch.
-> 
-> I don't think whether or not I agree matters, Rob said it's fine so it's
-> fine.
+On Wednesday, May 22nd, 2024 at 15:36, Mario Limonciello <mario.limonciello=
+@amd.com> wrote:
 
-Just to close the loop here: Udit pointed me to this thread and having
-gone through this already[1] with internal TI teams, the feedback we
-have gotten from our licensing team (including legal) is to go with
-GPL2 or MIT. BSD (2 and 3 clauses) were considered, but due to varied
-reasons, dropped.
+> > To be perfectly honest with you, I haven't given that much though. I
+> > used the 'bpc' and 'colorspace' property in debugfs, since I could not
+> > find that information anywhere else. And since I also needed to verify
+> > the pixel encoding being used, I added it where those other values
+> > were. That made for a simple and easy addition for this property.
+> >=20
+> > If you want me to do this differently, let me know. And please point
+> > me to the standardized DRM property where I should expose the values.
 
-That said, Udit, since you are touching this, please update in the next
-revision:
-Copyright:   (C) 2015-2024 Texas Instruments, Inc.
- to
-Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
+FWIW, there is a patch from Andri to add a similar (?) property:
+https://lore.kernel.org/dri-devel/20240115160554.720247-1-andri@yngvason.is=
+/
 
-[1] https://serenity.dal.design.ti.com/lore/linux-patch-review/20240109231804.3879513-1-nm@ti.com/
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+The patch also allows user-space to set the "pixel encoding".
 
