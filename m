@@ -1,85 +1,103 @@
-Return-Path: <linux-kernel+bounces-186506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F51C8CC50D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:44:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2F48CC50A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 406651C20FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:44:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08389B215B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649AD1420B0;
-	Wed, 22 May 2024 16:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="q4LFV16n"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963AC14198A;
+	Wed, 22 May 2024 16:44:23 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71761411E0;
-	Wed, 22 May 2024 16:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D35D1411E0;
+	Wed, 22 May 2024 16:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716396276; cv=none; b=hc5cFsNwX9Gq4tJ07kWhn5YEr2RZq+qiiHzs2EcflDHG6m6UD/iwafdaxjGE+GCPn7ZKmlePQ1w7f4zlrEGN1Oz1jcN8cFdSyD0cBf8FeXMrP1Y9dPnN8RpTX5N3QGYC+YIrMSr5EnMGjvjf/6wxRwcYnriWjKiEIp47BAuuZHk=
+	t=1716396263; cv=none; b=XgzAB8PAPSkZYgseBTJYbogCfEEsQiMlquiIEF6kYzgfeStg405nyAywJW/hkkClhqg0gB3gpAp3Gk1Err2k6uaJmZiITzspT8JqUEowK8gaTHIqdFk/OlQ8wjuLoW5xEdK1o9rIx4hDeig7z3nllX8tvLZkOnIFglX8KjkICRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716396276; c=relaxed/simple;
-	bh=mRzXmGLEv1Sl8l3NlQK6F2G7/wyMGAx0/1jAxVbxsrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=imJA4b+JlujEKhx8VzZUD/RV7s8F8i6FxCPTaInL7i8DxXc0q+udeB5P5ELWSvysL/gXydlPovJzQSaCIrLVAzxSD7QBzQrwJrGcP1LMbs4XWQl+DOY2c/k82xf1qGJasV+oNJ4UBfB9jeJZe842OjSPE+wSS0byLq+WbgCrNt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=q4LFV16n; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8Tfw1C5OBMTMu+sGe3XwcpMYANF6JY3ZkgMDDdPK8dI=; b=q4LFV16nCNg0Rizqr8jyU8IGeF
-	AjtVn6vUasE2rVcjVzpGjksb+mOa2kwZMbL6rNU7JJjcpLXBfMmDxfdHYK8aoo0cVuGwSRc+d5w0N
-	epsyLBEy/O/26r6YIZoOrJF3Yw+//6cD8xyzgTBE+WTCQdIoCKLEvFocS7Yc1Y3oK29U=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s9p4g-00Fppo-EO; Wed, 22 May 2024 18:44:22 +0200
-Date: Wed, 22 May 2024 18:44:22 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: steve.glendinning@shawell.net, UNGLinuxDriver@microchip.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: usb: smsc95xx: configure external LEDs function for
- EVB-LAN8670-USB
-Message-ID: <9c19e0a1-b65c-416a-833c-1a4c3b63fa2f@lunn.ch>
-References: <20240522140817.409936-1-Parthiban.Veerasooran@microchip.com>
+	s=arc-20240116; t=1716396263; c=relaxed/simple;
+	bh=m0KMP47n39r0blvYu76srRaZafMY7Z9XIDGSzufey60=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=fxd9aV9nQ9T87w0bwfji+OpHJ49aNT1CJU0sRiHbTx8VbL/lU34wNpN94YLsYfkr9IzHrp+kL4NJdhlydtjkqmpXAL/E2GbdRo2MfcfToGXwrzGYSD/E0Mm3wZAx40WLzI4qjVRPZ6YazwABngZKanPdgNH2lFdgPDaNBUJ2vuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3941C2BBFC;
+	Wed, 22 May 2024 16:44:21 +0000 (UTC)
+Date: Wed, 22 May 2024 12:45:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] tracefs: Remove unneeded buggy tracefs iput callback
+Message-ID: <20240522124504.28982867@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522140817.409936-1-Parthiban.Veerasooran@microchip.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 22, 2024 at 07:38:17PM +0530, Parthiban Veerasooran wrote:
-> By default, LAN9500A configures the external LEDs to the below function.
-> nSPD_LED -> Speed Indicator
-> nLNKA_LED -> Link and Activity Indicator
-> nFDX_LED -> Full Duplex Link Indicator
-> 
-> But, EVB-LAN8670-USB uses the below external LEDs function which can be
-> enabled by writing 1 to the LED Select (LED_SEL) bit in the LAN9500A.
-> nSPD_LED -> Speed Indicator
-> nLNKA_LED -> Link Indicator
-> nFDX_LED -> Activity Indicator
+From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
 
-What else can the LEDs indicate?
+The iput callback was added because the remount could call into the
+eventfs code and touch the ei->entry_attrs array, which could have been
+freed when an eventfs directory is freed (via a synthetic event). But the
+entry_attrs was freed incorrectly and since been fixed to be freed after
+the last reference of the ei is done.
 
-> +	/* Set LED Select (LED_SEL) bit for the external LED pins functionality
-> +	 * in the Microchip's EVB-LAN8670-USB 10BASE-T1S Ethernet device which
+The iput clears the TRACEFS_EVENT_INODE flag of the tracefs_inode
+preventing it from calling the eventfs_remount() function. But the iput
+can be called after the last reference to the inode is done but the
+eventfs_inode still exists, causing the eventfs_remount() not to be called
+on an tracefs_inode when it should be.
 
-Is this a function of the USB dongle? Or a function of the PHY?
+Link: https://lore.kernel.org/all/CAK7LNARXgaWw3kH9JgrnH4vK6fr8LDkNKf3wq8NhMWJrVwJyVQ@mail.gmail.com/
 
-	Andrew
+Cc: stable@vger.kernel.org
+Reported-by: Masahiro Yamada <masahiroy@kernel.org>
+Fixes: ee4e0379475e4 ("eventfs: Free all of the eventfs_inode after RCU")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ fs/tracefs/inode.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
+
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index 9252e0d78ea2..62ca9c23b93c 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -455,22 +455,7 @@ static int tracefs_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	return !(ei && ei->is_freed);
+ }
+ 
+-static void tracefs_d_iput(struct dentry *dentry, struct inode *inode)
+-{
+-	struct tracefs_inode *ti = get_tracefs(inode);
+-
+-	/*
+-	 * This inode is being freed and cannot be used for
+-	 * eventfs. Clear the flag so that it doesn't call into
+-	 * eventfs during the remount flag updates. The eventfs_inode
+-	 * gets freed after an RCU cycle, so the content will still
+-	 * be safe if the iteration is going on now.
+-	 */
+-	ti->flags &= ~TRACEFS_EVENT_INODE;
+-}
+-
+ static const struct dentry_operations tracefs_dentry_operations = {
+-	.d_iput = tracefs_d_iput,
+ 	.d_revalidate = tracefs_d_revalidate,
+ 	.d_release = tracefs_d_release,
+ };
+-- 
+2.43.0
+
 
