@@ -1,119 +1,227 @@
-Return-Path: <linux-kernel+bounces-186364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A1B8CC339
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:27:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA4B8CC33B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3981F22FAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E51283CEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EAE141981;
-	Wed, 22 May 2024 14:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4371419A6;
+	Wed, 22 May 2024 14:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dnjnc1lM"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="SQSSP6QB"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D875C3C0B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485531411FA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716388043; cv=none; b=PA9XZtKC+crFe1tawDhHvz5YmTnyrb4HDZlVXe/Nx9DLp3FEGnCDkramNz/Ozmssov3ehpxqvo9Bzi/CjBAYIe4Q+0fudPjrkJsemtqpRUMDdhKLQFZxt4JZrSW3ej2Ot8oK2gRt4f4psfPUCI5V0oM4DzAcZ/HA66hdPFT1yiU=
+	t=1716388068; cv=none; b=ZfonnhOr3gSHLvnblpW/XR8JB9zkxxbWqcUgPFVe+OdoGDyZmLQKJgWHr86XfJV5LP5dO12Q6Gw5r4tgO6B44NIYmA/3UIT49ApBz8p933Nou5cg4cMEaBssy4krLR6bZf0mtGlTsyx1O+fPEO7dpS7qIYBA10WljMknpK2nPOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716388043; c=relaxed/simple;
-	bh=9Fn0WfEjx52+1QRb1yhDK//ABaUvIK47riUAZlHyIpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DvEQtky9dd2DDF9Fl2zH7sjakxtAsyTMwI1xjOZ4IIBWlpfiSkTmQwQAJsW1Ice2Wz82/X2bPtyYh/7z87KeccxbBzqoa2MbJYibsioTWt7DcaDq1ZoY6Feye5B4IoKNWt0+BeD7TVRZhTrw3LS98IAmhxTkbf+inWN1A6GcPpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dnjnc1lM; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-420107286ecso72835e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716388040; x=1716992840; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWS8Vu4y++22wN7Iqs/67qvIcKnj8YVwi65a4fpgdVM=;
-        b=Dnjnc1lMgWAHA3E4Gq6K2i9J73GsRf0fI0xlR7nDOZRedjX3Xa7n22lbk59hzYHzBK
-         t/tZxJia1bW/6XmmWkAbnf7IgtuIfkCtOhAIhQibMQWzWlzPzOzEaUuhJeoRHicURTAR
-         8qGf9t+hOBnKKjnMTXI0T8FNmEE18fftZWGnIBTQ4OHT1pVxGVCTa45DAWEgs0gDArbv
-         5tM6Fb8R6T8Md8WLNODwLSjwY1UULc6fQMHkmRYzSAQ4Ga9if912wDqbR/Urk0JK2dvz
-         Zh3vk+tdbYgcBOHvT9DFKnhKE7BQWHRkDfABoutx7V0sRFW9hTy+TY9UKPRbG6TE0iEH
-         p2aQ==
+	s=arc-20240116; t=1716388068; c=relaxed/simple;
+	bh=SbBPwv5GSuNadWkN/Ype/GvbpCPfCZDny7K84NYcp+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q5E85KgDtWXvegIYGQ/NtjjUhNp+6DU74t64kRq4k7m9vYvrSf7Dh1vW40mm6Jeqi9kjmwOMVklqxb/DkohiPnWFM0SR1zAa3dCoFJeMv3Nw1P0xPr3z3oRRIa8co0L0bYYsykSAScXHwJggQywEVCiWvA8rKAw7l/UHGkFUskw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=SQSSP6QB; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 23C093F339
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1716388062;
+	bh=SbBPwv5GSuNadWkN/Ype/GvbpCPfCZDny7K84NYcp+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=SQSSP6QBCHza1n+PqCJT0sF2ABPUMZZPQ0P0Kx9Z/M3fVkGbb1q1BHW+Nl3QKz2P3
+	 i1ehIlI4PLp8HYATlCJEJPlbaiw1msxnnI2SJZZjYYy7BWhHApXap78iCG3sCKUpU/
+	 kGwoHWYyFezjeP6pBD68ythDXEcFYojFJSOA9LgJPA4Zdj/AN2DNOsu1iltEsKl9Rp
+	 /qU4b5vHLkfIk7qdoRHWOhxjg6OyRYcdra4M7jYQrZ/CRor40S3Ih66ZdfsqboxinD
+	 TDUkgf6JssyKuIH/cnXGFlcUFgleQEIOXZTWTHLtD40FWpFc/Ls8YRCOnAAvGBU/d1
+	 troRJJXjuJD0w==
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2e2c59a053cso2310401fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:27:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716388040; x=1716992840;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CWS8Vu4y++22wN7Iqs/67qvIcKnj8YVwi65a4fpgdVM=;
-        b=JJjgCAF0JPe2L/kjHkX3e+0qr/Z3wLQVmxkSoH6Y8a0vNihiYqrIBMfy+PWdCr8tZ4
-         F8WzGyQnOjg+I7RRT30rs35O28iXQUbB+P45sjD+vnI/vyY8oo3/qsgSnw3qUexKAPIC
-         lEPCS7pnR1ysFNI1exVDtKREycSNyhK4G6LmL3GXLnAhmTkKK7ZI9uMNS2QmX8n4Z6to
-         gLSHz7v5Wln+FeWNsMNDyyWp5uDP7z/n/Jt+rRvsUT4Y+/DtSkjCcwXJUp4m4XAB4/dm
-         bCZ0zOYrR3/Zt9wOiTUyAaoniJlopK+HHzod3AB4VAsOViyesWzI9+aHc5kXmy99MhwA
-         npnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUntNx6kf3Z03LXHtJOibP4Fe+1QKaC9cGZDB+eMsH+BVCY2R6g6Ja1tY0XR3WAUrXxDVxTMgLDdbafjCDGEXVkp1FjCwg7zCleLsVW
-X-Gm-Message-State: AOJu0Yyqbm4RwbD67aDkdeK8hK7D6FBs8N0+0h7v9aDD0tcbGjef53hp
-	DNntfMPF+SQi3JozT2hJcMqnhXrOagIRJFF1gAe+ou7G3/bv93vUg6c6uSpDl1cqP0vYllwkRId
-	OqQ==
-X-Google-Smtp-Source: AGHT+IEFFG+qYQVoC2KEMboKeDlm7788nvC7Mqu7vzSmsup678qTPNKe5/p4J9YO3Lr0CHgF9wFRcg==
-X-Received: by 2002:a05:600c:cc4:b0:41c:a1b:2476 with SMTP id 5b1f17b1804b1-420fc8135e7mr2037165e9.6.1716388040011;
-        Wed, 22 May 2024 07:27:20 -0700 (PDT)
-Received: from google.com (49.240.189.35.bc.googleusercontent.com. [35.189.240.49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354de2d1ae0sm1576149f8f.44.2024.05.22.07.27.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 07:27:19 -0700 (PDT)
-Date: Wed, 22 May 2024 14:27:15 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm,memory_hotplug: Remove un-taken lock
-Message-ID: <Zk4AwwX7x426KU7H@google.com>
-References: <20240521-mm-hotplug-sync-v1-0-6d53706c1ba8@google.com>
- <20240521-mm-hotplug-sync-v1-1-6d53706c1ba8@google.com>
- <78e646af-e8b5-4596-8fbf-17b139cfdddd@redhat.com>
+        d=1e100.net; s=20230601; t=1716388061; x=1716992861;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SbBPwv5GSuNadWkN/Ype/GvbpCPfCZDny7K84NYcp+M=;
+        b=wR297k53Rigq5qLBK/m3wzrMRJsyDMNPz/XF1YIT8ciPcC46Vu5MTVNF5IjnF0tB81
+         InuJLlCkZELZvefrZtFvfbIoVweWbwwFew8T0UI4EyMi9wjYal7u2iG+4txnzndqlEyN
+         Mt60hiAYKUC2T1vhpc1O5Z+7M3sEPnt0GiDfwN1R0tiyT/Rf9kklVOX4cttYMp7SO6XX
+         ocEiadrH96jsbj5IS1WQA5IblXhlokz/snddVt56kakWvaPCnbnrBLPa5wzchr6paCX5
+         SdelUFPT/xhIxtUCRiHvJh/OfYJQJCremjow59bFUaxJcuE6uWCDewlJG+6Mw8Bmu/Ft
+         PPRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyzWqqvZbSchV2503iz/ov50A/5tCqkP9YCM2szwdB7cq9baUHI4gZkZ/zqP7fF2zWGj9ozDvv46WWiaU34Ne3x+oNs5Z53TpflsWp
+X-Gm-Message-State: AOJu0YwTYhRuI/CjXEwdh5e0m94D68ZzL9e6JtjOdz5WaSBRDMDMRqNV
+	2+30tgMszLzeB6KsXmwSEv3yh3WfaM3cq4ktcwvwMnGYWoYtf14UQNQ4VBs7VbYQx+jzSiH6nnu
+	gCNMJ0/czkgGm7GVixVfK7+cmk+w1mFR5bSyO91zLgmLaS/J7m/fXBO5ZeKokef8k7mgymqMfG5
+	KjVghxwm4nSg0U0s3dAlyLdp8VkMhxqXkJxsuHd+VxS+mFI/4XcyqW
+X-Received: by 2002:a2e:2c16:0:b0:2e0:6313:fe3a with SMTP id 38308e7fff4ca-2e949540d05mr18142521fa.35.1716388061026;
+        Wed, 22 May 2024 07:27:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOH5h3bTDQ9rTy1KoldO/wIaRpZJa7uBiJFnfVUbNB5/XrA1cSzm7wwuMdCdQtFrMjqDVyZknit/uZCxatc3U=
+X-Received: by 2002:a2e:2c16:0:b0:2e0:6313:fe3a with SMTP id
+ 38308e7fff4ca-2e949540d05mr18142291fa.35.1716388060589; Wed, 22 May 2024
+ 07:27:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78e646af-e8b5-4596-8fbf-17b139cfdddd@redhat.com>
+References: <20240520070348.26725-1-chengen.du@canonical.com>
+ <664b97e8abe7a_12b4762946f@willemb.c.googlers.com.notmuch>
+ <CAPza5qcGyfcUYOoznci4e=1eaScVTgkzAhXfKSG3bTzC=aOwew@mail.gmail.com>
+ <eaf33ba66cbdc639b0209b232f892ec8a52a1f21.camel@redhat.com> <664ca1651b66_14f7a8294cb@willemb.c.googlers.com.notmuch>
+In-Reply-To: <664ca1651b66_14f7a8294cb@willemb.c.googlers.com.notmuch>
+From: Chengen Du <chengen.du@canonical.com>
+Date: Wed, 22 May 2024 22:27:28 +0800
+Message-ID: <CAPza5qfZ8JPkt4Ez1My=gfpT7VfHo75N01fLQdFaojBv2whi8w@mail.gmail.com>
+Subject: Re: [PATCH] af_packet: Handle outgoing VLAN packets without hardware offloading
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000a6bba006190bbcfa"
 
-On Wed, May 22, 2024 at 04:09:41PM +0200, David Hildenbrand wrote:
-> On 21.05.24 14:57, Brendan Jackman wrote:
-> The old seqlock guaranteed that we would have obtained consistent values
-> here. start + spanned_pages defines a range. For example, growing a zone to
-> the beginning implies that both ranges must be changed.
-> 
-> I do wonder if it might be better to instead have zone->zone_start_pfn and
-> zone->zone_end_pfn. That way, both can be changed individually, not
-> requiring adjustment of both to grow/shrink a zone at the beginning.
+--000000000000a6bba006190bbcfa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks this is a good point.
+Hi Paolo,
 
-So basically the fact that spanned_pages is "once or eventually"
-correct is certainly not enough because it only has meaning with
-reference to zone_start_pfn. I didn't realise this because of my
-spontaneous inspiration to believe that zone_start_pfn was fixed.
+Thank you for your useful suggestions and information.
 
-By the way, some noob questions: am I OK with my assumption that it's
-fine for reader code to operate on zone spans that are both stale and
-"from the future"? thinking abstractly I guess that seeing a stale
-value when racing with offline_pages is roughly the same as seeing a
-value "from the future" when racing with online_pages?
+Hi Willem,
 
-Also, is it ever possible for pages to get removed and then added back
-and end up in a different zone than before?
+The issue initially stems from libpcap [1].
+Upon their further investigation, another issue was discovered,
+leading to a kernel request [2] that describes the problem in detail.
+
+In essence, the kernel does not provide VLAN information if hardware
+VLAN offloading is unavailable in cooked mode.
+The TCI-TPID is missing because the prb_fill_vlan_info() function in
+af_packet.c does not modify the tp_vlan_tci/tp_vlan_tpid values since
+the information is in the payload and not in the sk_buff struct.
+In cooked mode, the L2 header is stripped, preventing the receiver
+from determining the correct TCI-TPID value.
+Additionally, the protocol in SLL is incorrect, which means the
+receiver cannot parse the L3 header correctly.
+
+To reproduce the issue, please follow these steps:
+1. ip link add link ens18 ens18.24 type vlan id 24
+2. ifconfig ens18.24 1.0.24.1/24
+3. ping -n 1.0.24.3 > /dev/null 2>&1 &
+4. tcpdump -nn -i any -Q out not tcp and not udp
+
+The attached experiment results show that the protocol is incorrectly
+parsed as IPv4, which leads to inaccurate outcomes.
+
+Thanks to Paolo's suggestion, I propose that we add a new bit in the
+status to indicate the presence of VLAN information in the payload and
+modify the header's entry (i.e., tp_vlan_tci/tp_vlan_tpid)
+accordingly.
+For the sll_protocol part, we can introduce a new member in the
+sockaddr_ll struct to represent the VLAN-encapsulated protocol, if
+applicable.
+
+In my humble opinion, this approach will not affect current users who
+rely on the status to handle VLAN parsing, and the sll_protocol will
+remain unchanged.
+Please kindly provide your feedback on this proposal, as there may be
+important points I have overlooked.
+If this approach seems feasible, I will submit a new version next week.
+Your assistance and opinions on this issue are important to me, and I
+truly appreciate them.
+
+Best regards,
+Chengen Du
+
+[1] https://github.com/the-tcpdump-group/libpcap/issues/1105
+[2] https://marc.info/?l=3Dlinux-netdev&m=3D165074467517201&w=3D4
+
+On Tue, May 21, 2024 at 9:28=E2=80=AFPM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> Paolo Abeni wrote:
+> > On Tue, 2024-05-21 at 11:31 +0800, Chengen Du wrote:
+> > > I would appreciate any suggestions you could offer, as I am not as
+> > > familiar with this area as you are.
+> > >
+> > > I encountered an issue while capturing packets using tcpdump, which
+> > > leverages the libpcap library for sniffing functionalities.
+> > > Specifically, when I use "tcpdump -i any" to capture packets and
+> > > hardware VLAN offloading is unavailable, some bogus packets appear.
+>
+> Bogus how exactly?
+>
+> > > In this scenario, Linux uses cooked-mode capture (SLL) for the "any"
+> > > device, reading from a PF_PACKET/SOCK_DGRAM socket instead of the
+> > > usual PF_PACKET/SOCK_RAW socket.
+>
+> Trying to extract L2 or VLAN information from the any device may be
+> the real issue here.
+>
+> > >
+> > > Using SOCK_DGRAM instead of SOCK_RAW means that the Linux socket code
+> > > does not supply the packet's link-layer header.
+> > > Based on the code in af_packet.c, SOCK_DGRAM strips L2 headers from
+> > > the original packets and provides SLL for some L2 information.
+> >
+> > > From the receiver's perspective, the VLAN information can only be
+> > > parsed from SLL, which causes issues if the kernel stores VLAN
+> > > information in the payload.
+>
+> ETH_HLEN is pulled, but the VLAN tag is still present, right?
+>
+> > >
+> > > As you mentioned, this modification affects existing PF_PACKET receiv=
+ers.
+> > > For example, libpcap needs to change how it parses VLAN packets with
+> > > the PF_PACKET/SOCK_RAW socket.
+> > > The lack of VLAN information in SLL may prevent the receiver from
+> > > properly decoding the L3 frame in cooked mode.
+> > >
+> > > I am new to this area and would appreciate it if you could kindly
+> > > correct any misunderstandings I might have about the mechanism.
+> > > I would also be grateful for any insights you could share on this iss=
+ue.
+> > > Additionally, I am passionate about contributing to resolving this
+> > > issue and am willing to work on patches based on your suggestions.
+> >
+> > One possible way to address the above in a less invasive manner, could
+> > be allocating a new TP_STATUS_VLAN_HEADER_IS_PRESENT bit, set it for
+> > SLL when the vlan is not stripped by H/W and patch tcpdump to interpret
+> > such info.
+>
+> Any change must indeed not break existing users. It's not sufficient
+> to change pcap/tcpdump. There are lots of other PF_PACKET users out
+> there. Related, it is helpful to verify that tcpdump agrees to a patch
+> before we change the ABI for it.
+
+--000000000000a6bba006190bbcfa
+Content-Type: application/vnd.tcpdump.pcap; name="any_sll.pcap"
+Content-Disposition: attachment; filename="any_sll.pcap"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lwhx0e5n0>
+X-Attachment-Id: f_lwhx0e5n0
+
+1MOyoQIABAAAAAAAAAAAAAAABABxAAAAGPhNZqvjCgAsAAAALAAAAAAEAAEABqoRvXX09QAACAYA
+AQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgDGPhNZq3jCgAsAAAALAAAAAAEAAEABqoRvXX09QAA
+gQAAAQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgDGfhNZsNBCwAsAAAALAAAAAAEAAEABqoRvXX0
+9QAACAYAAQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgDGfhNZsRBCwAsAAAALAAAAAAEAAEABqoR
+vXX09QAAgQAAAQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgDGvhNZv6eCwAsAAAALAAAAAAEAAEA
+BqoRvXX09QAACAYAAQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgDGvhNZgCfCwAsAAAALAAAAAAE
+AAEABqoRvXX09QAAgQAAAQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgDG/hNZs38CwAsAAAALAAA
+AAAEAAEABqoRvXX09QAACAYAAQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgDG/hNZtL8CwAsAAAA
+LAAAAAAEAAEABqoRvXX09QAAgQAAAQgABgQAAaoRvXX09QEAGAEAAAAAAAABABgD
+--000000000000a6bba006190bbcfa--
 
