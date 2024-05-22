@@ -1,68 +1,98 @@
-Return-Path: <linux-kernel+bounces-185954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16C88CBD55
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:54:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542728CBD59
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC4B282759
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3972B20AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB2E80023;
-	Wed, 22 May 2024 08:54:31 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94118004B;
+	Wed, 22 May 2024 08:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="brEPUscw"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A86546522;
-	Wed, 22 May 2024 08:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7E646522;
+	Wed, 22 May 2024 08:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716368070; cv=none; b=TQmXw7OsniywA/Kg5PTjDdv2KK0VAeVJ+pkgtV21sW1XAq9HwgY9QbFMiQk+ocK7LUVPf/KQaC7pqg0FC4JEG9K4mWmRryQ/87UNKFFLJN+bJM2z9zQgC6J3olD1UNIIr9OG2DM6CHyY9QYz8AtUOCaYOHAr1P4TgyRy0PaXFnw=
+	t=1716368124; cv=none; b=qZ+Wk+smrqjkkwkv9GK9Eic/YkVG06aX5TJqRncgVQEP5D/jq4CL0mDCimk7tcJLgyoMGIytxmU+XAyk27xHeafF3wqVJ74eG7CGZfXaF6ntIdSGXfl0FC0XR+JOGmXWrDau5OUT2anadxCq/9yBC6ndBYKIFd1mcZzplNJaxA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716368070; c=relaxed/simple;
-	bh=AAGNDmc0GUmss1gbsWKmPZoTiSwI0BqgwhKNiMvxu+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NbiNSQiMoEF3yjnjrpxkZjKyJMWNZCQVdLG60MSSpJjMXDYJh66nKaOkZSF+JKfkCHTGqdGZAU0yMWCP/paV4bOQpTH8eA1qYuYkW142uL0iOOMx7wfNzvgJhXU9CCEO5oT/5UFKJ4u2QkwfOyqvsTSCMYxc/3RNHN7xXtcsG+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1716368124; c=relaxed/simple;
+	bh=5MbnzzSEIr8suB+6SA9cqi6nf2bLYWxzZ9I6mZm6lQw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XrVNF9oYReIapy9Azrqo2unv5kYzaRW7RfIZBPXiRlIPxEccYX0Rk6c3qgpR1quVEAuiPxRAUbQvnGNNUEPAD2k36d76E59L8BUFofz3sKpFPwi0ZPNnICCtYmNg8/oyooRAfBuFrxuuuejc16B3sepgMXYL2Y/luX60jbpibzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=brEPUscw; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59b81d087aso914551566b.3;
-        Wed, 22 May 2024 01:54:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716368067; x=1716972867;
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so1150588a12.0;
+        Wed, 22 May 2024 01:55:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716368121; x=1716972921; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZsKIVJXsn0LOYaTET+hKEKwlMg9X9Tb+9iNScZ+Rm2U=;
+        b=brEPUscw78aeSsPckUzHKsGSuBaCRPWcvzg7ziIU6oC+OGXnkALvxaq3TQpHknjdYc
+         gE2aTcTuOP0LNXCfMshFETJL1dlwvD4/gHJMGRw8GfxiVC+tj0ctNwNfguTqsXUkOcyC
+         l3fW7xX9xFIXGzI2mWC+9MlDuIBWVd28G0ThXopYuj3WcZOk8bhyBN/DvM+AE2uaYuiX
+         QLoycEHSQo/QPOyJwLqfmZi0ain7TDhoKvSYFX583Wt1Fn/wu+PHyK+bGGkc6DZOUBfr
+         mYfK1+FNyoxBueY3aJnSeg+Tcz6Ldg/ywRlqg/nIFj9B+3UqxLUXSCSUUp/SW6Mznk8a
+         Pt4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716368121; x=1716972921;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HspjnCEvXmbgUttk3s3iC7M1d8a32lNVOBCNd0rIXxc=;
-        b=JYH72epPSzjZrFpi/+a2C/SPLK0hjbHpC2ZCdnfiShVQLWOrPTZxqQ3xrWoRXTS6Cn
-         DEl6eJvgAxiMsn3DAb/5skdrG8xlwhnEELD4mhNiH3BMG1MFDmfN7Kc1I+h8JQfYll9u
-         mB1VkbqKcxat1MKreVerPeK3dgLOIYH53IhFJnTEg1L6wCwYV3JDIS1zAsjG4Va9K8Wy
-         FfAg/UOHHFNxp+ED6xf74aTVpUnXU4oZmjYlCdx4D4vijGViyW1PWz8afqbaAD7eAsID
-         3TaLvFBDD1PkmqEmJ+3oCAzr0RNQo+VMNlTTPq6pr0wXIVM70mAaUZlaTV4GN9LxOsNm
-         XQJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXM1ctreQhJLXdg2g3XxKVVWIRqvt+YMtZmcTPv5bFK0h1oBBQDTRP0QGN8qRIVF7ca33HbQ3x7VsYC8TRYrKzWAq2aQKb0QjLXkwW0FwhYBlGzfa3SEmoZw4mZvAmlhHxAV1B8prB13FldfG0=
-X-Gm-Message-State: AOJu0Yyvv2gK93oAsZ97f1/2TsmbsU0FV481uuciBzxOzLqTSG8XNM8n
-	BPG1FdEkwacQ2YFRCQLUMcNjcAxjpEtc8k7+OKzRvEDbacsLrlvI
-X-Google-Smtp-Source: AGHT+IFplUWmfFdL3ZU6R8Iae8/XVRL2QQOV5RYX6Q6tjJQ7D3jyOPtzwR21CtBgmOfQw/4qz27MXQ==
-X-Received: by 2002:a17:906:ad7:b0:a59:c3a5:4df0 with SMTP id a640c23a62f3a-a62280b040dmr119223166b.4.1716368067362;
-        Wed, 22 May 2024 01:54:27 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17814sm1732868066b.206.2024.05.22.01.54.26
+        bh=ZsKIVJXsn0LOYaTET+hKEKwlMg9X9Tb+9iNScZ+Rm2U=;
+        b=oBoba0S883S/vnFuu4gDhL3yPmv5kjQFpAqY8ySEbu/nWbWCSbj+R+u2w0/pfg5YgG
+         1ABu2DU+z1atPsS1BDMZ/kLpL0TpUGP5Z/V07X/P5P6LcizXg5a2BXE8nzdK5MBPL6ay
+         zWsGNoj1hLn1gTMix3nUMtnnZeKO5BLTIvnkR2jC+52dvFeh4MJbQAVmJ9jWaE6WKJPB
+         TZtWGbMJ3Lf35VgJ7DZ+4SeuunanrjbvRqs+OFl1E7UZwxNPA9bL1cA9r+zqTBRiRMAW
+         GxssvFYtv6GuQZ22F//IUJ8mz012Q9hKW69aqSOa5ZT+/+LCgiE8a/8X7ODZ/2xcrj1Q
+         w6hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULzxguAMLzhPkb4+Ek6muLBIMjkI2rFBnaERRoa5wWlewXzZUzGA6ytspr+32cRIUs9Qi3KOIj0ogeTP0pJH66ms4NmqaEbg7vKFTtpG3Mc1CQ2S/50i83G7/7stRKGA3atEC8yl7LLlk/YjqfRVlAobdSTu24qm5W/U4jWW2NXKy8PvplIY/TqeFXqn4k9vMb8c99HzJXT9XNlpCC4MoaonBAyTaabgAxVICykfmx2KgZBnAZGzzSNkFh
+X-Gm-Message-State: AOJu0YxxZQisqubVm1llOUBOMSNkmwDWGAPV17i4HBlMuNeHEUfyVyBD
+	IfcAIz61It8Dgew26fYNnjrQNRy7SXy03quZN1Rqqbyev7BZYBhN
+X-Google-Smtp-Source: AGHT+IGglvHN3H2cK8ueaZOg82/YsEcPTFpr4/QkUF0qp/x5ObIxq6iuHLnuXNRCHJ2cMG/cJT/iRw==
+X-Received: by 2002:a50:8d5e:0:b0:572:2fdf:b965 with SMTP id 4fb4d7f45d1cf-5752b432b79mr11104430a12.7.1716368120602;
+        Wed, 22 May 2024 01:55:20 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea65b5sm18240841a12.6.2024.05.22.01.55.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 01:54:27 -0700 (PDT)
-Date: Wed, 22 May 2024 01:54:24 -0700
-From: Breno Leitao <leitao@debian.org>
-To: michael.nemanov@ti.com
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Kees Cook <keescook@chromium.org>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
-Subject: Re: [PATCH 07/17] Add boot.c, boot.h
-Message-ID: <Zk2ywFQQ2SuXvPiE@gmail.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-8-michael.nemanov@ti.com>
+        Wed, 22 May 2024 01:55:20 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 22 May 2024 10:55:17 +0200
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Deepak Gupta <debug@rivosinc.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
+	Linux API <linux-api@vger.kernel.org>,
+	linux-man <linux-man@vger.kernel.org>, X86 ML <x86@kernel.org>,
+	bpf <bpf@vger.kernel.org>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Subject: Re: [PATCHv6 bpf-next 0/9] uprobe: uretprobe speed up
+Message-ID: <Zk2y9XMZfLtys1GB@krava>
+References: <20240521104825.1060966-1-jolsa@kernel.org>
+ <Zk0IvZU834RQ7YKp@debug.ba.rivosinc.com>
+ <CAADnVQ+2Q1992e9mRtWOavHfqKsFUxPp4f6MAAJg90TK_KTpew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,47 +102,62 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240521171841.884576-8-michael.nemanov@ti.com>
+In-Reply-To: <CAADnVQ+2Q1992e9mRtWOavHfqKsFUxPp4f6MAAJg90TK_KTpew@mail.gmail.com>
 
-Hello Michael,
+On Tue, May 21, 2024 at 01:57:33PM -0700, Alexei Starovoitov wrote:
+> On Tue, May 21, 2024 at 1:49 PM Deepak Gupta <debug@rivosinc.com> wrote:
+> >
+> > On Tue, May 21, 2024 at 12:48:16PM +0200, Jiri Olsa wrote:
+> > >hi,
+> > >as part of the effort on speeding up the uprobes [0] coming with
+> > >return uprobe optimization by using syscall instead of the trap
+> > >on the uretprobe trampoline.
+> >
+> > I understand this provides an optimization on x86. I believe primary reason
+> > is syscall is straight-line microcode and short sequence while trap delivery
+> > still does all the GDT / IDT and segmentation checks and it makes delivery
+> > of the trap slow.
+> >
+> > So doing syscall improves that. Although it seems x86 is going to get rid of
+> > that as part of FRED [1, 2]. And linux kernel support for FRED is already upstream [2].
+> > So I am imagining x86 hardware already exists with FRED support.
+> >
+> > On other architectures, I believe trap delivery for breakpoint instruction
+> > is same as syscall instruction.
+> >
+> > Given that x86 trap delivery is pretty much going following the suit here and
+> > intend to make trap delivery cost similar to syscall delivery.
+> >
+> > Sorry for being buzzkill here but ...
+> > Is it worth introducing this syscall which otherwise has no use on other arches
+> > and x86 (and x86 kernel) has already taken steps to match trap delivery latency with
+> > syscall latency would have similar cost?
+> >
+> > Did you do any study of this on FRED enabled x86 CPUs?
 
-On Tue, May 21, 2024 at 08:18:31PM +0300, michael.nemanov@ti.com wrote:
-> From: Michael Nemanov <Michael.Nemanov@ti.com>
+nope.. interesting, will check, thanks
 
-> +static u8 *fetch_container(struct cc33xx *cc, const char *container_name,
-> +			   size_t *container_len)
-> +{
-> +	u8 *container_data = NULL;
-> +	const struct firmware *container;
-> +	int ret;
-> +
-> +	ret = request_firmware(&container, container_name, cc->dev);
-> +
-> +	if (ret < 0) {
-> +		cc33xx_error("could not get container %s: (%d)",
-> +			     container_name, ret);
-> +		return NULL;
-> +	}
-> +
-> +	if (container->size % 4) {
-> +		cc33xx_error("container size is not word-aligned: %zu",
-> +			     container->size);
-> +		goto out;
-> +	}
-> +
-> +	*container_len = container->size;
-> +	container_data = vmalloc(container->size);
+> 
+> afaik CPUs with FRED do not exist on the market and it's
+> not clear when they will be available.
+> And when they finally will be on the shelves
+> the overhead of FRED vs int3 would still have to be measured.
+> int3 with FRED might still be higher than syscall with FRED.
 
++1, also it's not really a complicated change and the wiring of the
+new syscall to uretprobe is really simple and we could go back to int3
+with just one single patch if we see no longer any benefit to it,
+but at the moment it provides speed up
 
-I got the following error when compiling it:
+jirka
 
-
-	drivers/net/wireless/ti/cc33xx/boot.c: In function ‘fetch_container’:
-	drivers/net/wireless/ti/cc33xx/boot.c:76:26: error: implicit declaration of function ‘vmalloc’; did you mean ‘kmalloc’? [-Werror=implicit-function-declaration]
-	   76 |         container_data = vmalloc(container->size);
-	      |                          ^~~~~~~
-	      |                          kmalloc
-	drivers/net/wireless/ti/cc33xx/boot.c:76:24: warning: assignment to ‘u8 *’ {aka ‘unsigned char *’} from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
-	   76 |         container_data = vmalloc(container->size);
-
+> 
+> >
+> > [1] - https://www.intel.com/content/www/us/en/content-details/780121/flexible-return-and-event-delivery-fred-specification.html
+> > [2] - https://docs.kernel.org/arch/x86/x86_64/fred.html
+> >
+> > >
+> > >The speed up depends on instruction type that uprobe is installed
+> > >and depends on specific HW type, please check patch 1 for details.
+> > >
 
