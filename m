@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-185604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8838CB789
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E508CB78E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310AA1F218A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6DA41F21A55
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486F6291E;
-	Wed, 22 May 2024 01:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B0114BFB0;
+	Wed, 22 May 2024 01:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DBx+aRsG"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k+aoStCl"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135E714B06E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24D814B95B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716339650; cv=none; b=GvMqMGINLz1AFbuU52AZak8fIQ3xWqDRT6s+WS8Mi7x65ogFb9tuPTan0/q/l1jzrA27dxJSn0jLBsxdiq3tDj3iy9R1a0FzduLRRr4Rmz3MFgYQC1SiwqRMszVJAWqxQG8j1Lsqf1bZnvy7DzsVnqPAIGsZP4q2vOQVCbK1oqo=
+	t=1716339653; cv=none; b=fwzgCmuCGdS0AKZF+QpiY7pNE1bFKOQ8Y9iJNsjPPRuoBZYDVwJP9MTJOBDqPokZgTL1ZzcQgJm0za0xba1HPE0ScqL1sVl+iWOwDJbpsxca4Sh+aUFJf+RvH+TXJQLeq9EhwDvLupILh+8RVPrBJq8gslqWszG9gs5W7hDJwvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716339650; c=relaxed/simple;
-	bh=lsQ42Y5Htgr3DTEtIEz5DolJMzdlzKLlDpLP6Gf0KXk=;
+	s=arc-20240116; t=1716339653; c=relaxed/simple;
+	bh=7z2cK/G7kUfriq3IqJdcywskZOy0/wDKMEFNF/o0umk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JzgFgQRq/rm78oEZCCtmtLDqLNAqEAnQWmEnKja5uz3CdIyD90CNG/usRg7vz2EMl9uzakk+i2NL8iwfHqWUZYEQfA6RP9vG1uSLl6+CPrkQCoxMk31AmDLzw4I4As6a8sg5RZXEI++LJ9/zY0O4dZt3gVxMwwRvMCoHA5ENPR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DBx+aRsG; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=LO9msjF5ewl9Ycc0GbQx56QddhgSz5Id6o8qsM1g7sPMcaS6KFwTw9c5pnScvgbRmaSM9QrqyK6MKUOhSZdbZngfioMAO9nDHtRC6dqzOGem3CUV1Plzsz1iVqtN26ClACJG5HBss0FDkfPArZNquYBZ9GFuvzRZYQ8+6wVE/C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k+aoStCl; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbe9e13775aso23644230276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:00:48 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61d21cf3d3bso234783547b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:00:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716339648; x=1716944448; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1716339651; x=1716944451; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yAQSiPU3Xxpg5se1jVwrYALJE0mXKiuWYh1IlCTKguE=;
-        b=DBx+aRsGrh43u1T1Bdx0RBdlDC2H0IJkLaia4U6o/JP83zOgcIEc+I4V630p2qBfVo
-         MfhV94JD++lDmpnUJGolpYOa/gcikUtgEb/PUuz5u03sNsqEqtmy4DnymaQt/+U1QiU3
-         H5XrO57kUalPd8+1Pg7Tv+T0s27wlP+XCVBxUzIDjroxUwTNtWWPN62oGIgn6J7wwBRJ
-         KsQkRUSgoVksiiILKhosxCD6QSiateUyDkXHA6ONP8B64Wdbn75m0dHe0KQmiVwLv07E
-         aCf3FkS3Q91WT9AeSSB1xiJswErFOxevLTYCyvmZ87MfJJB79ur+yhUYVZ1ZRYvUrxJC
-         6KPA==
+        bh=N8L5ENa9saWnWy7VMZgJQvy8O2UHKdWgDS9fdPg7qj8=;
+        b=k+aoStClS1UiazscDoVQLOM1WVf0RmO5j3vCzdBb4D8uC0FairiuHEy4kDINYQG92Y
+         5Yk4v7MdtvSR1nCWWK9aibo9JsUKXyXIe14d+RHL8dNZkKw4toInGYos+KiTJTOIEWPi
+         tb+uRifwGfehat5dUl2AyYXhlw1MuLA/gYufpEuJifwEF8OMZdgZJXjOebj7ygE6tTSi
+         22Rji/im/i2tUWn57HaSd1sFPousoaAvCyWrUJS8oa5yfLdY1RZ8/8q2cdLUSbsLWYuA
+         AaN+29Eo+pEOyivrB6z0OQDnXxKLMUg9Kjcok0QYXhpwuUZ5RiNvrGspG2yEGUMEs18W
+         Dbeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716339648; x=1716944448;
+        d=1e100.net; s=20230601; t=1716339651; x=1716944451;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yAQSiPU3Xxpg5se1jVwrYALJE0mXKiuWYh1IlCTKguE=;
-        b=K1OUh9E/Rt/MidS0Q3OueyGIFBqMW06sRNLmXohxIfK0Yindqj57F8i6k4RQyBf+Zf
-         viAcPvq9c6c0xR0dya+UVrXiks7w/fECjJrT3yVLL3/gTqY5Jrz+qAnipETh8xtHkTaA
-         rmAGrq+Fd0+/mAqVUMYxgoT5bEUfvCVD8jiGQ4UxwNnPO+PXmPwdLKqaRGTCAxWulw4Z
-         Let2y2aeesI8wiyptNMhnGuPP30hASKbfsPGqvg215ysSMvdvn5rwwHVMn3ZheCguQa6
-         f304sSnObepI1AoZgena2QUKSgBBca/awHoPz1AJ6Db01zuJFF/QszPSQqG6UQt5VBUm
-         g4DA==
-X-Gm-Message-State: AOJu0Yx3n6W2P6pFcU9Ky/fZUCUPzuNPKr8QXJx4jJNH8QZPYNmfWZLC
-	+ytUvXpJjCBmSYGoPj26Iz2sDi4yVE5YTpVTwsxuoToYdtwpLJ2RhVhl1yCi140OMIS3Gtfj95g
-	thQ==
-X-Google-Smtp-Source: AGHT+IFjr+dMdwwjSeyKVtDvj71h4a27dlU6zI/2JB6uVxDlz76u2lFmfPLoHDWhwCSwvHwm9NN5UxukkLw=
+        bh=N8L5ENa9saWnWy7VMZgJQvy8O2UHKdWgDS9fdPg7qj8=;
+        b=Ir81K+RrXsnnWOvnFyMd9dgO8yiaz5NSXLM/97U/PtLhmmZ+kxF8cqnH1NKsWU6emy
+         o3/gW1FmFDVOe1U8jbSaAq9XwSo3mEZG3vX3Bf0NQSk9dAOygGhk/b7w8hDgVXGRcU3R
+         I5sHnAuaAw/kGnmba592yXDsYIK/sdHbn9zVuxuxoIKJ8oFo1e9eNw3JNtNju+7S/5e6
+         enoasxPNR39nPsPWDJZ390gMqrl/o7EiWluKa2QHkE85akMxsx76BRK64wvMIJ0L3hpj
+         6PBFBUfpr+SNtiwqOp8ETZBZSTidYgVi+dpg3tiSBIxbG7B8KwI+KCyvZRTb9EC9Kdyp
+         lgJA==
+X-Gm-Message-State: AOJu0YzyhSEXitMMTGtAPCrKQnnL9bpDA4wuzqYixNXkR3t0qi6hVL4q
+	q7GWkX9zNH/jkfvvazj2K0FqbcY9gja9ib1Khwk0ChgCqdJO5yfcKJ25iUX9Tg+fOdg7vOVCmZ+
+	PMw==
+X-Google-Smtp-Source: AGHT+IFS/IZw7uE/6kkYjIq+Ri8WqRBtijmIEiJcIQSsTtS4Ny9KcGMsd6Vyi/YUNyZQw3Hok9pzmfMHEIg=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:6902:1083:b0:dcd:88e9:e508 with SMTP id
- 3f1490d57ef6-df4e0ab542cmr224908276.5.1716339647973; Tue, 21 May 2024
- 18:00:47 -0700 (PDT)
-Date: Wed, 22 May 2024 00:57:14 +0000
+ (user=edliaw job=sendgmr) by 2002:a0d:d5c7:0:b0:627:8b31:e81 with SMTP id
+ 00721157ae682-627e484a333mr1542497b3.5.1716339650801; Tue, 21 May 2024
+ 18:00:50 -0700 (PDT)
+Date: Wed, 22 May 2024 00:57:15 +0000
 In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240522005913.3540131-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240522005913.3540131-29-edliaw@google.com>
-Subject: [PATCH v5 28/68] selftests/membarrier: Drop define _GNU_SOURCE
+Message-ID: <20240522005913.3540131-30-edliaw@google.com>
+Subject: [PATCH v5 29/68] selftests/memfd: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -96,41 +96,44 @@ Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/membarrier/membarrier_test_impl.h        | 1 -
- .../testing/selftests/membarrier/membarrier_test_multi_thread.c  | 1 -
- .../testing/selftests/membarrier/membarrier_test_single_thread.c | 1 -
- 3 files changed, 3 deletions(-)
+ tools/testing/selftests/memfd/common.c     | 1 -
+ tools/testing/selftests/memfd/fuse_test.c  | 2 --
+ tools/testing/selftests/memfd/memfd_test.c | 1 -
+ 3 files changed, 4 deletions(-)
 
-diff --git a/tools/testing/selftests/membarrier/membarrier_test_impl.h b/tools/testing/selftests/membarrier/membarrier_test_impl.h
-index af89855adb7b..a8a60b6271a5 100644
---- a/tools/testing/selftests/membarrier/membarrier_test_impl.h
-+++ b/tools/testing/selftests/membarrier/membarrier_test_impl.h
-@@ -1,5 +1,4 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#define _GNU_SOURCE
- #include <linux/membarrier.h>
- #include <syscall.h>
- #include <stdio.h>
-diff --git a/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c b/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c
-index 4e14dba81234..c00f380b2757 100644
---- a/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c
-+++ b/tools/testing/selftests/membarrier/membarrier_test_multi_thread.c
+diff --git a/tools/testing/selftests/memfd/common.c b/tools/testing/selftests/memfd/common.c
+index 8eb3d75f6e60..879d4f4c66fa 100644
+--- a/tools/testing/selftests/memfd/common.c
++++ b/tools/testing/selftests/memfd/common.c
 @@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
 -#define _GNU_SOURCE
- #include <linux/membarrier.h>
- #include <syscall.h>
+ #define __EXPORTED_HEADERS__
+ 
  #include <stdio.h>
-diff --git a/tools/testing/selftests/membarrier/membarrier_test_single_thread.c b/tools/testing/selftests/membarrier/membarrier_test_single_thread.c
-index fa3f1d6c37a0..c399fbad8efd 100644
---- a/tools/testing/selftests/membarrier/membarrier_test_single_thread.c
-+++ b/tools/testing/selftests/membarrier/membarrier_test_single_thread.c
+diff --git a/tools/testing/selftests/memfd/fuse_test.c b/tools/testing/selftests/memfd/fuse_test.c
+index dbc171a3806d..e35c6909f0bb 100644
+--- a/tools/testing/selftests/memfd/fuse_test.c
++++ b/tools/testing/selftests/memfd/fuse_test.c
+@@ -12,8 +12,6 @@
+  * the read() syscall with our memory-mapped memfd object as receive buffer to
+  * force the kernel to write into our memfd object.
+  */
+-
+-#define _GNU_SOURCE
+ #define __EXPORTED_HEADERS__
+ 
+ #include <errno.h>
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index 95af2d78fd31..ee019b57bb98 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
 @@ -1,5 +1,4 @@
  // SPDX-License-Identifier: GPL-2.0
 -#define _GNU_SOURCE
- #include <linux/membarrier.h>
- #include <syscall.h>
- #include <stdio.h>
+ #define __EXPORTED_HEADERS__
+ 
+ #include <errno.h>
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
