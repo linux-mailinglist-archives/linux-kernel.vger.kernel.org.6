@@ -1,162 +1,88 @@
-Return-Path: <linux-kernel+bounces-186533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018E78CC54D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:05:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA098CC54E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D747B20F64
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D002826C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9BD1420D1;
-	Wed, 22 May 2024 17:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5/TqdKb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034F11422DF;
+	Wed, 22 May 2024 17:05:38 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379741F17B;
-	Wed, 22 May 2024 17:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C41F17B;
+	Wed, 22 May 2024 17:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716397532; cv=none; b=GYshaQrm5AdMteLQuaIH6HU3ufJej4x4vs+KNJ8ZxYnZH+5zz3qTuHlLQHQSv4RY7/hfJBgzH3ShGzVC+3rfhzHafanfdpogF5i6KEA1vKTXQDoQo3JzERsUNq04R05UdE+CXvNPmBq5kFda+wTD0IGSbbM0hT8aLRI+shZwiw0=
+	t=1716397537; cv=none; b=dln0lB1/rdve/SuN+eEN3AiE5S9XaIxy/Wf2zg1o4a3iKK0bZibDJg4Fz5A2WQS1JyL8eb3s6dCewpj2Dq2mImex354/MBnyK8KRwtxz3vCuOrPoB04CEcUgLjgGXpWrdIxBLBDyCApOk2b908F/P8AFbBQcuAL0uEEYigEB/yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716397532; c=relaxed/simple;
-	bh=n+bl6qffvfcDmfvyQ5KKICcroj6hZl/cSV5hmi5RmH0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uGC7XNhjkHbZBRYr6d8WXWqtZF0cEgwiXRWcgckpni0fy8dT4bCiavI7vtpyxgbCreRd2CzUSwH/7sq5MFzwXN4N12Zt+IKOmXn+oc7hBytuQZ2SSTKfTY9GePMuV/P4jCHKb+KZi5P8BpSdomo56Z8Cb2gGQjzocJYgrc/2lZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5/TqdKb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63601C2BBFC;
-	Wed, 22 May 2024 17:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716397530;
-	bh=n+bl6qffvfcDmfvyQ5KKICcroj6hZl/cSV5hmi5RmH0=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=e5/TqdKbduEfbop/yeQg5/GSqLX6vWsJeN/dzQ3ZGNxUZIU935+6iJTB25f6eZmtr
-	 YBzvRhFbXuUeMZnPdxaRAPHqbPYRq0L58V8WHe7seX99QV6cYZGdfj/qBQgqbqEZ1W
-	 0MYklGrEuW9i7aVt8WPMuVVVLj9YT8xdBDh+C/UkUx1cWvVsp7DXXxk24IXnvafeb5
-	 +QtB+k4qzKPtG1HGHqL2ncyVD101QFRMIHmgFwoWe23o6SVb8IsIWkt0+5o7g3nJjL
-	 iD9oB8cNsRkAyP5k4RLLh3TAV1EatT7Pc9/Omr+iS2bcy9MN2QC9dgrXzI9C43kKxx
-	 uRopnj2oP0dRQ==
-Message-ID: <60989c44-6d16-4698-bf3f-b3c5dcd7b3e0@kernel.org>
-Date: Wed, 22 May 2024 19:05:24 +0200
+	s=arc-20240116; t=1716397537; c=relaxed/simple;
+	bh=mwwMo0Vvvhtk4BnzEWt4A3iCr981iZe9k75eEk/w0xM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UT0zFNwQOh9MJTr6S43dnGpuSfOo9zs3WVhTirWfe0wy1dBEH98mwLyIdEUtGJ9cINuucT6MZhgm7B5BkQz8+qsAouGWVWKJwEYKAQda5939Ngaup5Qj2nKZ6k+6a+j8ZC4v+s0c39CuRTA9FSVieittqqYGudjTSg4n6DaTjes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34ABEC32789;
+	Wed, 22 May 2024 17:05:34 +0000 (UTC)
+Date: Wed, 22 May 2024 18:05:31 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v2 12/14] arm64: realm: Support nonsecure ITS emulation
+ shared
+Message-ID: <Zk4l2xFBDW_3ImFD@arm.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-13-steven.price@arm.com>
+ <ZkSV7Z8QFQYLETzD@arm.com>
+ <74011ac1-34e0-4ee3-a00d-f78ad334fce2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: DT schema bindings conversion mentorships (was Re: [PATCH v5] ASoC:
- dt-bindings: omap-mcpdm: Convert to DT schema)
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Daniel Baluta <daniel.baluta@nxp.com>,
- Shuah Khan <skhan@linuxfoundation.org>, Julia Lawall
- <julia.lawall@inria.fr>, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
- linux-kernel@vger.kernel.org
-References: <20240522075245.388-1-bavishimithil@gmail.com>
- <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
- <4f722e53-011f-4176-b6af-080522165007@kernel.org>
- <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
- <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org>
- <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
- <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74011ac1-34e0-4ee3-a00d-f78ad334fce2@arm.com>
 
-On 22/05/2024 18:42, Krzysztof Kozlowski wrote:
->> Yes, the binding document was neglected pretty badly but when converting
->> to yaml it has to be correct since that will have ripple effect on
->> existing dts/dtsi files.
+On Wed, May 22, 2024 at 04:52:45PM +0100, Steven Price wrote:
+> On 15/05/2024 12:01, Catalin Marinas wrote:
+> > On Fri, Apr 12, 2024 at 09:42:11AM +0100, Steven Price wrote:
+> >> @@ -3432,7 +3468,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+> >>  	nr_ites = max(2, nvecs);
+> >>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
+> >>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+> >> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
+> >> +	itt_order = get_order(sz);
+> >> +	page = its_alloc_shared_pages_node(its->numa_node,
+> >> +					   GFP_KERNEL | __GFP_ZERO,
+> >> +					   itt_order);
+> > 
+> > How much do we waste by going for a full page always if this is going to
+> > be used on the host?
 > 
-> Yep. And testing DTS should clearly show that conversion leads to
-> incomplete binding.
-> 
->>
->>> I assume the DTS was validated with the binding. Isn't the case here?
-> 
-> Mithil Bavishi,
-> Are you sure you tested the DTS?
+> sz is a minimum of ITS_ITT_ALIGN*2-1 - which is 511 bytes. So
+> potentially PAGE_SIZE-512 bytes could be wasted here (minus kmalloc
+> overhead).
 
-Dear Daniel, Shuah, Julia, Javier and other mentorship managers,
+That I figured out as well but how many times is this path called with a
+size smaller than a page?
 
-I see some contributions regarding Devicetree bindings which look like
-efforts of some mentorship programs. It's great, I really like it. Only
-sadness is that no one ever asked us, Devicetree maintainers, about some
-sort of guidelines. This leads to sub-optimal allocation of tasks and
-quite a strain on reviewers side: for example we receive contributions
-which were never tested (tested as in make target - make
-dt_binding_check). Or people converted bindings which really do not
-matter thus their work soon will become obsolete.
-
-If there are still such active programs, please be sure that mentees
-follow these guidelines:
-
-https://social.kernel.org/notice/Ai9hYRUKo8suzX3zNY
-
-1. Please convert bindings which have active DTS users. First choose
-bindings with DTS built by arm64 defconfig, then next choice by arm
-multi_v7 defconfig. Then any other ARM or different architecture DTS.
-
-2. Be sure dt_bindings_check (including yamllint) and checkpatch pass
-without any warnings. See writing-schema.rst document.
-
-3. Be sure DTS using these bindings passes dtbs_check validation. If
-this means binding needs to be adapted during conversion, mention
-briefly in the commit message changes done comparing to pure TXT->DT
-schema conversion.
-
-Best regards,
-Krzysztof
-
+-- 
+Catalin
 
