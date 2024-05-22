@@ -1,236 +1,189 @@
-Return-Path: <linux-kernel+bounces-185645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A39A8CB85F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 052918CB861
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0771F213E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C46F1F2349D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 01:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48358537F8;
-	Wed, 22 May 2024 01:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1512AE8A;
+	Wed, 22 May 2024 01:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jDbLjKPY"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lapIq5Gk"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EB0BA2F
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0831BEEAD
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716339788; cv=none; b=r0K/NK6GF0Q2lX2/nlvvhhSoOr7rgxPAPfLYIS9nmCOB2IUasR9iW9twn7VbwSV4KclvhPb7sQI5XO2+S7bw/SEYJNgiyYn4Ql+Jlf1blM5eTN3Hzhew4WjjIzIyTyGOnwlKrxRXShPosVZPl/UjFS2+/X4V3o3PYIUhse22haY=
+	t=1716339856; cv=none; b=WRR665eJp8O0kVz5HxvnJKfYxY9nwHcWtYgsJ4EqVTlNicMx5/aaYh9qa88vsd0EX1AQ5y1Mr4YNT3G+3e1ANT4zvtiyshua2XxcpvUPifmtiMPxGmy264OZFWnRUBIRO8ij82KBWst94LKuB6PK4TdwN6Z2x0zq76AFWNNPw1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716339788; c=relaxed/simple;
-	bh=dt+HjkdjSlkJT9aF6qvhLbzVRK6aMxCNpDcmFRwXO/o=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fKa08Q6MmDG5082lLrOIo9fNR9IoBrrdRr4HPs6jOg8dT/5JGAj3LOaxlWBMgH0oqMXU7oU84s2tBel0TBYeNLGtTyLKwHlt/GQ6mafwKaceYnYzmkzKidncsaU8ZJwoYdDTEwbsNRzjHkX0IfkkyJKRl0QB9dOigPwQRY+OCFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jDbLjKPY; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6f475e364b7so7244117b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 18:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716339786; x=1716944586; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HwclbEARXJEfzAMj1ocJrX5kIt6/+X6ICBIFzrsnIj4=;
-        b=jDbLjKPYekPJEm42JP5PWXMJIAQVwyNzq2TbD5IOSqVi7vj1/nJa0UyoXwFMIxE8S/
-         91tuwQlZspP4+8YD9PWdpnx68AFYF5wGNJhNc/3jt2e08FAELxgSWpeOqVoLSaQwl5Is
-         VHagWLuOV+b1RJeE0KHE9gdATTSewgsxPCIX9RzQHBuJ9fhVPvZnxjs7F6l3UNSYaqvI
-         W4TzyWNi8bKtRwHSec9F3ADoYUJtSiypePT+lLbG0u+A5/QExs3YvS5qSYc0FpocA+ib
-         IObwdOhLCjP9hY08NGYn75FYtJOBkftz2aQWdYRohb/Nfi7bkBofIUCTHKOnKuSoSIfc
-         yOVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716339786; x=1716944586;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HwclbEARXJEfzAMj1ocJrX5kIt6/+X6ICBIFzrsnIj4=;
-        b=r0PdGfYLJZqhhI3WfUExf5dvV2rgfBBLtF6xCtnE9kxmxT3CkA9+UnRxcq10oaxWFU
-         6YsRQMlWPvDW5zLR2jXJJrGS0iiDSwg5zetnlsmrnO9jsL1brH+ZVyLcPJaT9HD8poW7
-         J88pqk28oyqdT2jkDpriqVSM2+GlRjW36kSftA+hIJng6cUONobnaLckW6FILfmYrgDq
-         FTcEPqU0hsAn/jAZ7Exx6HXQi+KT7BgcRhWSBuQmiPUgdGkpvENcNlS9S1/gSox1yaH3
-         2kXJDNTA4cd6ayklRqQXwsqHLqGAMB+C/Fr0OplX1UwxSKc2BfN080oHbZRNlqEmWris
-         C2Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Ghg+rOoavT9JcspdOkA9LX27kYHspOwXAS3UDIjYw3Zpa3hdm1n+8C1fLuNDCF9VjRp+CVCqjYgOzYpr/vNQDKegIuxjZ/5zoTi+
-X-Gm-Message-State: AOJu0Yy7pcoDGG9BzWZroDXSTRcGo26LGJvDuHRXR8TyLGKtntPoy75t
-	DDGv9fZFM+VVnjE9AOMWs+cY/AezA4aEHU4cti2Lde9l2sI15eaiZw4tu7jCIvAFQMgsjPAF+Zr
-	1Ug==
-X-Google-Smtp-Source: AGHT+IFdZeLXYEa7a5kPS3tjJMRfVxMjMYj5V/vemDMKNlWVJfsCOupgo8wNUUxaVEp5n/l+9BlMf8LeKKM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:3915:b0:6ec:f266:d214 with SMTP id
- d2e1a72fcca58-6f6d6477b74mr22476b3a.4.1716339786070; Tue, 21 May 2024
- 18:03:06 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 21 May 2024 18:03:04 -0700
+	s=arc-20240116; t=1716339856; c=relaxed/simple;
+	bh=OqYU2toc8VhoFRt8nhJ72nYlMy15OQ6sULFO1f7aqe4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=n8o8Nwsg1sKcNH+jEWk6Gsm6YDvk65FhacKFWh6ogon9hjdadfvwWfX4JY59Rca307G+HZ5vrsvMZ3I+UoaELHaZQKCKbc7MWcUYnQL/ucEAmqtRvOZK8lOIdAdBLP+Lknq7eZzFT9jsCI/E19gNq1D8bHKv6HwUYt7AOOmcl8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lapIq5Gk; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240522010410epoutp045c3bc340d1dd7a1bbbb81fe2df140531~RqgAvhU742360123601epoutp040
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:04:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240522010410epoutp045c3bc340d1dd7a1bbbb81fe2df140531~RqgAvhU742360123601epoutp040
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716339850;
+	bh=Uitcad8ZpKbqMNDW2YytBLVtTZ4j7uwwqX9O3MWQJPo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=lapIq5GkskK7aRDEkVatV8emSRWbNh4HPuzM77CaA1geDzhCTFC+tjvq2DZ5gA/9m
+	 U9IsDp4IYTSpOS9iWF1zS96iVj480Oq/7SJx+3WCXVho75IKTosdXXejZcQe76u6X8
+	 ocuag9zW4zX5ZL3XPILy7k28b838/khdOpmoY/YE=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240522010410epcas2p11d5550044515a107ecd4ef5392f36bdc~RqgAbdLEf0338303383epcas2p1e;
+	Wed, 22 May 2024 01:04:10 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.69]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4VkY3Y64zSz4x9Q9; Wed, 22 May
+	2024 01:04:09 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7A.94.19141.9844D466; Wed, 22 May 2024 10:04:09 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199~Rqf-d4A7i0068900689epcas2p4s;
+	Wed, 22 May 2024 01:04:09 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240522010409epsmtrp2846a47b1fde03b71481eeb5f30d7a431~Rqf-XLog81573115731epsmtrp2M;
+	Wed, 22 May 2024 01:04:09 +0000 (GMT)
+X-AuditID: b6c32a4d-869ff70000004ac5-bb-664d44892cd5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	33.61.08924.9844D466; Wed, 22 May 2024 10:04:09 +0900 (KST)
+Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240522010409epsmtip207170fe17fd7525879063e08d597c994~Rqf-JMfKt2481524815epsmtip2G;
+	Wed, 22 May 2024 01:04:09 +0000 (GMT)
+From: Daehwan Jung <dh10.jung@samsung.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org (open list:USB XHCI DRIVER),
+	linux-kernel@vger.kernel.org (open list), Thinh Nguyen
+	<Thinh.Nguyen@synopsys.com>, Daehwan Jung <dh10.jung@samsung.com>
+Subject: [RFC] usb: host: xhci-mem: Write high first on erst base of
+ secondary interrupter
+Date: Wed, 22 May 2024 10:03:59 +0900
+Message-Id: <1716339839-44022-1-git-send-email-dh10.jung@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHKsWRmVeSWpSXmKPExsWy7bCmqW6ni2+aweM+Q4s7C6YxWTQvXs9m
+	cXnXHDaLRctamS2aN01htVi14AC7A5vH4j0vmTz2z13D7tG3ZRWjx5b9nxk9Pm+SC2CNyrbJ
+	SE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpASaEsMacU
+	KBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeXWmJlaGBgZApUmJCdseXx
+	GvaCp4IVv6fNYG1g/M/XxcjJISFgIjHh6FwmEFtIYA+jxK9VrF2MXED2J0aJrRdes0E43xgl
+	9m77xQzTcePPAajEXkaJbS3/mCGcH4wSvbfaWboYOTjYBLQkvi9kBGkQEYiTWNp5iQmkhllg
+	O6PEjBfP2EESwgIxEpvvngKbyiKgKrHl5y82EJtXwFVizvWHjBDb5CRunusEWyAhsIpdYk37
+	CVaIhIvE1ksHWSBsYYlXx7ewQ9hSEp/f7WWDsIslbj1/BtXcwiix4lUL1A/GErOetTOCXMos
+	oCmxfpc+iCkhoCxx5BbYSGYBPomOw3/ZIcK8Eh1tQhCNyhLTL0+AukBS4uDrc1ADPSQ6WuYz
+	QoIxVuLrhW2MExhlZyHMX8DIuIpRKrWgODc9NdmowFA3L7UcHlHJ+bmbGMEJS8t3B+Pr9X/1
+	DjEycTAeYpTgYFYS4d20xTNNiDclsbIqtSg/vqg0J7X4EKMpMMwmMkuJJucDU2ZeSbyhiaWB
+	iZmZobmRqYG5kjjvvda5KUIC6YklqdmpqQWpRTB9TBycUg1MPP+Z/vakTklYf+COHGe0SWNT
+	nZHVnO0+Vlc2SSlcXpipzv5+0j29ibtnXQsS+nMupnjriZiHdhf1Tgd1lCksOphlH25ksD5J
+	6Xh1xqxpQgX//p8IeuqzbSv3nXP/O9/G6HFq2pw1DH8d9OqfuU9a3BzPDw8f5G7yP23gXDwr
+	tXTljAs2WZuEknbNXLCi65B/68PDN/okuOuYuH5seeUaf/GihKpsaURxlPkr2QmRM++XltTu
+	2SsfGa70JnCe5oLP08prX0Vd3vgudfb5vru3qw3ufjq/3m5KoGOBZ5uSivjEsgbV4jMeJhG2
+	ba7Ghc7rgm42vPJ4zHeEtX5jj+H/2Lzl/b7rr1x+fvyWYuhuJZbijERDLeai4kQAPQIb4uED
+	AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFJMWRmVeSWpSXmKPExsWy7bCSvG6ni2+awdR9nBZ3FkxjsmhevJ7N
+	4vKuOWwWi5a1Mls0b5rCarFqwQF2BzaPxXteMnnsn7uG3aNvyypGjy37PzN6fN4kF8AaxWWT
+	kpqTWZZapG+XwJWx5fEa9oKnghW/p81gbWD8z9fFyMkhIWAicePPAbYuRi4OIYHdjBKXV2xi
+	h0hISiydewPKFpa433KEFaLoG6PEgl9PgDo4ONgEtCS+L2QEqRERiJNYcXkPC0gNs8BORonb
+	H3awgSSEBaIk/vfcARvEIqAqseXnL7A4r4CrxJzrDxkhFshJ3DzXyTyBkWcBI8MqRsnUguLc
+	9NxiwwLDvNRyveLE3OLSvHS95PzcTYzg4NHS3MG4fdUHvUOMTByMhxglOJiVRHg3bfFME+JN
+	SaysSi3Kjy8qzUktPsQozcGiJM4r/qI3RUggPbEkNTs1tSC1CCbLxMEp1cDk0h+g3nT/bezf
+	H0/m8Xvd27WiVHp/3G/jmZsqXjedVc9vv50064WJwZlnF2VL5q8WM+PVf7bhg+H25slOJrdb
+	+1wOPnwpFBLPMvFiwEal2eUvTu+8ousSI822r/iQt7Xy5bqN53bqtN/9y6bTt6Ky+iH7spIb
+	TR0MewMmsv8Q5RP9vtJG6twPPd/eReWVCpOnH3wXFGBh/orZ4bYdxzmJvcZ8jy7l9Quu3fdB
+	zt1aTCaWy/7pgfseu/ctVeZWyHNRERdcIiRo80Pp/Y4Xf180/y9Q1lM58OrT6yUc54yVjlt+
+	WWrMLZv8W2jFZ+l+hg3L7K2MWH1NbhnuvbxHTdV0z6Eob9VdPsFni6bP2pOgxFKckWioxVxU
+	nAgAkSKzKY0CAAA=
+X-CMS-MailID: 20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199
+References: <CGME20240522010409epcas2p457b2fcb4f423f2500305053f44ae3199@epcas2p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
-Message-ID: <20240522010304.1650603-1-seanjc@google.com>
-Subject: [PATCH] KVM: x86: Drop support for hand tuning APIC timer advancement
- from userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shuling Zhou <zhoushuling@huawei.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
 
-Remove support for specifying a static local APIC timer advancement value,
-and instead present a read-only boolean parameter to let userspace enable
-or disable KVM's dynamic APIC timer advancement.  Realistically, it's all
-but impossible for userspace to specify an advancement that is more
-precise than what KVM's adaptive tuning can provide.  E.g. a static value
-needs to be tuned for the exact hardware and kernel, and if KVM is using
-hrtimers, likely requires additional tuning for the exact configuration of
-the entire system.
+ERSTBA_HI should be written first on secondary interrupter.
+That's why secondary interrupter could be set while Host Controller
+is already running.
 
-Dropping support for a userspace provided value also fixes several flaws
-in the interface.  E.g. KVM interprets a negative value other than -1 as a
-large advancement, toggling between a negative and positive value yields
-unpredictable behavior as vCPUs will switch from dynamic to static
-advancement, changing the advancement in the middle of VM creation can
-result in different values for vCPUs within a VM, etc.  Those flaws are
-mostly fixable, but there's almost no justification for taking on yet more
-complexity (it's minimal complexity, but still non-zero).
+[Synopsys]- The host controller was design to support ERST setting
+during the RUN state. But since there is a limitation in controller
+in supporting separate ERSTBA_HI and ERSTBA_LO programming,
+It is supported when the ERSTBA is programmed in 64bit,
+or in 32 bit mode ERSTBA_HI before ERSTBA_LO
 
-The only arguments against using KVM's adaptive tuning is if a setup needs
-a higher maximum, or if the adjustments are too reactive, but those are
-arguments for letting userspace control the absolute max advancement and
-the granularity of each adjustment, e.g. similar to how KVM provides knobs
-for halt polling.
+[Synopsys]- The internal initialization of event ring fetches
+the "Event Ring Segment Table Entry" based on the indication of
+ERSTBA_LO written.
 
-Link: https://lore.kernel.org/all/20240520115334.852510-1-zhoushuling@huawei.com
-Cc: Shuling Zhou <zhoushuling@huawei.com>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Daehwan Jung <dh10.jung@samsung.com>
 ---
- arch/x86/kvm/lapic.c | 39 +++++++++++++++++++++------------------
- arch/x86/kvm/lapic.h |  2 +-
- arch/x86/kvm/x86.c   | 11 +----------
- 3 files changed, 23 insertions(+), 29 deletions(-)
+ drivers/usb/host/xhci-mem.c | 5 ++++-
+ drivers/usb/host/xhci.h     | 6 ++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index ebf41023be38..acd7d48100a1 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -59,7 +59,17 @@
- #define MAX_APIC_VECTOR			256
- #define APIC_VECTORS_PER_REG		32
+diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+index 3100219..36ee704 100644
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -2325,7 +2325,10 @@ xhci_add_interrupter(struct xhci_hcd *xhci, struct xhci_interrupter *ir,
+ 	erst_base = xhci_read_64(xhci, &ir->ir_set->erst_base);
+ 	erst_base &= ERST_BASE_RSVDP;
+ 	erst_base |= ir->erst.erst_dma_addr & ~ERST_BASE_RSVDP;
+-	xhci_write_64(xhci, erst_base, &ir->ir_set->erst_base);
++	if (intr_num == 0)
++		xhci_write_64(xhci, erst_base, &ir->ir_set->erst_base);
++	else
++		xhci_write_64_r(xhci, erst_base, &ir->ir_set->erst_base);
  
--static bool lapic_timer_advance_dynamic __read_mostly;
-+/*
-+ * Enable local APIC timer advancement (tscdeadline mode only) with adaptive
-+ * tuning.  When enabled, KVM programs the host timer event to fire early, i.e.
-+ * before the deadline expires, to account for the delay between taking the
-+ * VM-Exit (to inject the guest event) and the subsequent VM-Enter to resume
-+ * the guest, i.e. so that the interrupt arrives in the guest with minimal
-+ * latency relative to the deadline programmed by the guest.
-+ */
-+static bool lapic_timer_advance __read_mostly = true;
-+module_param(lapic_timer_advance, bool, 0444);
-+
- #define LAPIC_TIMER_ADVANCE_ADJUST_MIN	100	/* clock cycles */
- #define LAPIC_TIMER_ADVANCE_ADJUST_MAX	10000	/* clock cycles */
- #define LAPIC_TIMER_ADVANCE_NS_INIT	1000
-@@ -1854,16 +1864,14 @@ static void __kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
- 	guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
- 	trace_kvm_wait_lapic_expire(vcpu->vcpu_id, guest_tsc - tsc_deadline);
+ 	/* Set the event ring dequeue address of this interrupter */
+ 	xhci_set_hc_event_deq(xhci, ir);
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 3041515..7951c0e 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -17,6 +17,7 @@
+ #include <linux/kernel.h>
+ #include <linux/usb/hcd.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
++#include <linux/io-64-nonatomic-hi-lo.h>
  
--	if (lapic_timer_advance_dynamic) {
--		adjust_lapic_timer_advance(vcpu, guest_tsc - tsc_deadline);
--		/*
--		 * If the timer fired early, reread the TSC to account for the
--		 * overhead of the above adjustment to avoid waiting longer
--		 * than is necessary.
--		 */
--		if (guest_tsc < tsc_deadline)
--			guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
--	}
-+	adjust_lapic_timer_advance(vcpu, guest_tsc - tsc_deadline);
-+
-+	/*
-+	 * If the timer fired early, reread the TSC to account for the overhead
-+	 * of the above adjustment to avoid waiting longer than is necessary.
-+	 */
-+	if (guest_tsc < tsc_deadline)
-+		guest_tsc = kvm_read_l1_tsc(vcpu, rdtsc());
- 
- 	if (guest_tsc < tsc_deadline)
- 		__wait_lapic_expire(vcpu, tsc_deadline - guest_tsc);
-@@ -2812,7 +2820,7 @@ static enum hrtimer_restart apic_timer_fn(struct hrtimer *data)
- 		return HRTIMER_NORESTART;
- }
- 
--int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
-+int kvm_create_lapic(struct kvm_vcpu *vcpu)
+ /* Code sharing between pci-quirks and xhci hcd */
+ #include	"xhci-ext-caps.h"
+@@ -1747,6 +1748,11 @@ static inline void xhci_write_64(struct xhci_hcd *xhci,
  {
- 	struct kvm_lapic *apic;
+ 	lo_hi_writeq(val, regs);
+ }
++static inline void xhci_write_64_r(struct xhci_hcd *xhci,
++				 const u64 val, __le64 __iomem *regs)
++{
++	hi_lo_writeq(val, regs);
++}
  
-@@ -2845,13 +2853,8 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
- 	hrtimer_init(&apic->lapic_timer.timer, CLOCK_MONOTONIC,
- 		     HRTIMER_MODE_ABS_HARD);
- 	apic->lapic_timer.timer.function = apic_timer_fn;
--	if (timer_advance_ns == -1) {
-+	if (lapic_timer_advance)
- 		apic->lapic_timer.timer_advance_ns = LAPIC_TIMER_ADVANCE_NS_INIT;
--		lapic_timer_advance_dynamic = true;
--	} else {
--		apic->lapic_timer.timer_advance_ns = timer_advance_ns;
--		lapic_timer_advance_dynamic = false;
--	}
- 
- 	/*
- 	 * Stuff the APIC ENABLE bit in lieu of temporarily incrementing
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 0a0ea4b5dd8c..a69e706b9080 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -85,7 +85,7 @@ struct kvm_lapic {
- 
- struct dest_map;
- 
--int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns);
-+int kvm_create_lapic(struct kvm_vcpu *vcpu);
- void kvm_free_lapic(struct kvm_vcpu *vcpu);
- 
- int kvm_apic_has_interrupt(struct kvm_vcpu *vcpu);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d750546ec934..fa064864ad2c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -164,15 +164,6 @@ module_param(kvmclock_periodic_sync, bool, 0444);
- static u32 __read_mostly tsc_tolerance_ppm = 250;
- module_param(tsc_tolerance_ppm, uint, 0644);
- 
--/*
-- * lapic timer advance (tscdeadline mode only) in nanoseconds.  '-1' enables
-- * adaptive tuning starting from default advancement of 1000ns.  '0' disables
-- * advancement entirely.  Any other value is used as-is and disables adaptive
-- * tuning, i.e. allows privileged userspace to set an exact advancement time.
-- */
--static int __read_mostly lapic_timer_advance_ns = -1;
--module_param(lapic_timer_advance_ns, int, 0644);
--
- static bool __read_mostly vector_hashing = true;
- module_param(vector_hashing, bool, 0444);
- 
-@@ -12177,7 +12168,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 	if (r < 0)
- 		return r;
- 
--	r = kvm_create_lapic(vcpu, lapic_timer_advance_ns);
-+	r = kvm_create_lapic(vcpu);
- 	if (r < 0)
- 		goto fail_mmu_destroy;
- 
-
-base-commit: 4aad0b1893a141f114ba40ed509066f3c9bc24b0
+ static inline int xhci_link_trb_quirk(struct xhci_hcd *xhci)
+ {
 -- 
-2.45.0.215.g3402c0e53f-goog
+2.7.4
 
 
