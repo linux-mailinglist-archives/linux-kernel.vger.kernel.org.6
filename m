@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-186010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B908CBE8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:50:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A35CE8CBE8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B761F23337
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:50:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C11E01C21C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A632E8172E;
-	Wed, 22 May 2024 09:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DF78172E;
+	Wed, 22 May 2024 09:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cr99sXcE"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aTn6/8sl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3snz6aGS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aTn6/8sl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3snz6aGS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BE97FBC4;
-	Wed, 22 May 2024 09:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C523A81721
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716371436; cv=none; b=c2FI+tTRX0WLFUAP+b3qz6+ahONdT5sJqNXdUXzET+89+v0iPm686TajRGh1CcuwA2h8CD+2SlZZW909IAIWZkwuc4kS7hid8U4i9XG5iUaa6CjFSWsRK0zdV0xubJEHjG+mbvY9HV1mOg4MREaMN8IkpiPC0ohqIQpgATKOuQ0=
+	t=1716371415; cv=none; b=PQ1oBtShcKoaU6K77vFdTLLYVdeMOiQ2yPW8/bzE2fLS71Hdw5AxCldCNZ2jC8OufM8GyML8q9j0qDVqiYigihjSBap5FSmAtC/y8vG52PsJqIQ8hMis0x+jD4/rL+1e+pZcVzPoo4c6ht3h4U/dxN75fAuQ2TgMmLCODnhsnyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716371436; c=relaxed/simple;
-	bh=s38cFtVzJD6qbysyN3bZJfC0joEZb1eAw1TbBF8E06c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IUflpmycExCbYiQ5cMceQKskJF3Y5PcbV3waztVNn+uESdlLnwA4cChp2eW1uL8oRGxodh9X3RQKw2HSrg1+KJoQEHtwv+hKWTJzAywKz59X1GKV27pofmBjaqGOZOrmoNGMh9fCkQCsJvNUCfwR7g13IPt6V14Umuzm22Utcy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cr99sXcE; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59cdd185b9so144962666b.1;
-        Wed, 22 May 2024 02:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716371433; x=1716976233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IT1jn5XZVlHhaOOAiUsTvpY+rK0Oxoh6SbeLRw0834s=;
-        b=cr99sXcEphIyP/MTjF/CTcx+pMFNhC/iFE3N2tyt11iMyBq1XhxdHauVaLbSu6RJqC
-         +BcPS5S65DevNE+I7s3kQSN/SMmBhaCBFODOfBj3OF4F9dfizJaqBGAwe9KYrkdh4C+8
-         nChX/BTVmGlStuaQ69LBQ0cOyuifgb9MFLQkXzvYqaTklVYnPvbZYV4d+tswGW5bHGSH
-         qPhvy/KqIHbeQcU60u6b+Qac5z06ceRXvMbj32VVRSITP5x2FciVylv9XgH9eNTosNAD
-         ofcm3xagOpQgee58w9tomCoRI0ZfPN3Yjhtmp8JR2Ss2YiGSDJ2T0O/0LNyXYQAPVLSV
-         Yhxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716371433; x=1716976233;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IT1jn5XZVlHhaOOAiUsTvpY+rK0Oxoh6SbeLRw0834s=;
-        b=LafiPZ8dJ54avgeTorhlEWC2gByG1CaI1YJN7tqdu1yjGh2gMcz0VOD6CMWbJXPdGS
-         tpu8DJrgQ7jze5yWDk5lm8WbDZnLRxEhNVI/2LRrv64nwiSuFNPtYR7ViPH3GdC5I7Nm
-         QG/FUFr7AU0oKnAVuie4UyrLr3x5h65DHDPZekuPWtzB3epj2ZVKheXn9a7BmYq6XHaj
-         ccN8MWsZaBfipQCekMmp+g91Sfxnz1oRZBI/gI5s/pLUrPhW8Cpj/2F1AsfQfOMErCYO
-         NTF4/eeqmPFBu15wtDU3zGQX8SToX84P6uyD0BvDQ6l+0TDAayna2xiDkaz12vVdxT+4
-         ovPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjI2IrT3C2WUMp6hbkYMn0DCaZVaGw2LppZwWq1mtcCtistObT+PDVR415n11KOpQybfsVWUuLe9GR0x0sCVJj/Mn/62jOVhV1sbVhuP3YJcFLVLSYyCTs7MuqL4NPO+ChKa512fate8XmrhlmiyW7uz1ED93OT70FjB5tJVVetK8qYw==
-X-Gm-Message-State: AOJu0Ywciicw1Iba5IRDAHRAj/psjBmReHESJm3dIo4b2m12cSDUv9FY
-	Wkw/Fl3OVgC65WQYPLBRLJ+HQgTgWWmc+daoTIGozF/uVc/krE4f
-X-Google-Smtp-Source: AGHT+IHSdIB34GezXsnYJdQRlu4R1+I4JK0TPdgS+Fbz5G5y04tAFR/jtDPbSfrE9LMiPyK4ZSum8g==
-X-Received: by 2002:a17:906:3c54:b0:a59:c3a1:23f9 with SMTP id a640c23a62f3a-a5d58e495b3mr1005218966b.7.1716371432490;
-        Wed, 22 May 2024 02:50:32 -0700 (PDT)
-Received: from spiri.. ([5.14.134.210])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1787c686sm1745589166b.47.2024.05.22.02.50.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 02:50:32 -0700 (PDT)
-From: Alisa-Dariana Roman <alisadariana@gmail.com>
-X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
-To: andy@kernel.org
-Cc: Jonathan.Cameron@huawei.com,
-	alisa.roman@analog.com,
-	alisadariana@gmail.com,
-	bigunclemax@gmail.com,
-	broonie@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dlechner@baylibre.com,
-	fr0st61te@gmail.com,
-	jic23@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	lars@metafoo.de,
-	lgirdwood@gmail.com,
-	liambeguin@gmail.com,
-	linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1716371415; c=relaxed/simple;
+	bh=T4zfwfnwVEW2QxwI1rPFP7I9WdOAnI1Bm2yQVcWb6hM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W8SXA04wPXaFeXZ1eDcxYz4pyuk3pFYR1y2oTwUVl1bsLIFvsTfwZ8s5LFsK5BCJcB/1tOdZofZOfS8eGgHpevxlUPfKPsDGw6CS0ovTBTs4Exg1T7ZhMb1PxWPZR5RrKK7zW8JfleCP/gasUlQOsgWqWriK4wf5NK7uI9+S5Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aTn6/8sl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3snz6aGS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aTn6/8sl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3snz6aGS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A097A5C766;
+	Wed, 22 May 2024 09:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716371411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=y5seN7yenBgxcqGC98g7sKIA9LM4LrCJZY6xmIjA2EE=;
+	b=aTn6/8sleM0ONztO4Unqpxd+uynjWz3urX78jlz4ob4A9pmacA4e9fn7384PkRcYCjYf5R
+	PxiTGQV0QRUIenlmXLZl2huVcDb3p6j8g81KbR3TYWl5JuQyul88i6d1IX96XYQuGhbZ+z
+	43DPZszmIkW/PU/E4HazfSptPDexj2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716371411;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=y5seN7yenBgxcqGC98g7sKIA9LM4LrCJZY6xmIjA2EE=;
+	b=3snz6aGS+9BRVPXLvnvmTvVZ9CDdUumRJ2bBPLF2+YgozUn1Xmarkel22uavtoFbXPCiZm
+	RLCmz7LLypAFsdCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716371411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=y5seN7yenBgxcqGC98g7sKIA9LM4LrCJZY6xmIjA2EE=;
+	b=aTn6/8sleM0ONztO4Unqpxd+uynjWz3urX78jlz4ob4A9pmacA4e9fn7384PkRcYCjYf5R
+	PxiTGQV0QRUIenlmXLZl2huVcDb3p6j8g81KbR3TYWl5JuQyul88i6d1IX96XYQuGhbZ+z
+	43DPZszmIkW/PU/E4HazfSptPDexj2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716371411;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=y5seN7yenBgxcqGC98g7sKIA9LM4LrCJZY6xmIjA2EE=;
+	b=3snz6aGS+9BRVPXLvnvmTvVZ9CDdUumRJ2bBPLF2+YgozUn1Xmarkel22uavtoFbXPCiZm
+	RLCmz7LLypAFsdCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EA5A13A6B;
+	Wed, 22 May 2024 09:50:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dwKlItO/TWbzWgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 22 May 2024 09:50:11 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+To: Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
-	marcelo.schmitt@analog.com,
-	marcus.folkesson@gmail.com,
-	michael.hennerich@analog.com,
-	nuno.sa@analog.com,
-	okan.sahin@analog.com,
-	robh@kernel.org,
-	schnelle@linux.ibm.com
-Subject: [PATCH] fix
-Date: Wed, 22 May 2024 12:50:23 +0300
-Message-Id: <20240522095023.35189-1-alisa.roman@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZktB5Ex5oQ2E45QR@smile.fi.intel.com>
-References: <ZktB5Ex5oQ2E45QR@smile.fi.intel.com>
+	Vlastimil Babka <vbabka@suse.cz>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Kees Cook <keescook@chromium.org>
+Subject: [PATCH] mm, slab: don't wrap internal functions with alloc_hooks()
+Date: Wed, 22 May 2024 11:50:37 +0200
+Message-ID: <20240522095037.13958-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,49 +101,285 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo];
+	FREEMAIL_CC(0.00)[linux.dev,gmail.com,kvack.org,vger.kernel.org,suse.cz,google.com,chromium.org];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Score: -1.30
+X-Spam-Flag: NO
 
+The functions __kmalloc_noprof(), kmalloc_large_noprof(),
+kmalloc_trace_noprof() and their _node variants are all internal to the
+implementations of kmalloc_noprof() and kmalloc_node_noprof() and are
+only declared in the "public" slab.h and exported so that those
+implementations can be static inline and distinguish the build-time
+constant size variants. The only other users for some of the internal
+functions are slub_kunit and fortify_kunit tests which make very
+short-lived allocations.
+
+Therefore we can stop wrapping them with the alloc_hooks() macro and
+drop the _noprof suffix. Instead add a __prefix where missing and a
+comment documenting these are internal. Also rename __kmalloc_trace() to
+__kmalloc_cache() which is more descriptive - it is a variant of
+__kmalloc() where the exact kmalloc cache has been already determined.
+
+Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
+The intention is to use the slab tree after rc1 if no big conflicts with
+mm.
 
-Would this fix be alright, since writing something like if(!ret) may be
-confusing?
+ include/linux/slab.h | 53 ++++++++++++++++++++++----------------------
+ lib/slub_kunit.c     |  2 +-
+ mm/slub.c            | 32 +++++++++++++-------------
+ 3 files changed, 43 insertions(+), 44 deletions(-)
 
-And regarding the comment, my bad, there is nothing wrong there.
-
- drivers/iio/adc/ad7192.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-index 101afce49378..0789121236d6 100644
---- a/drivers/iio/adc/ad7192.c
-+++ b/drivers/iio/adc/ad7192.c
-@@ -1101,14 +1101,12 @@ static int ad7194_parse_channels(struct iio_dev *indio_dev)
- 		ret = fwnode_property_read_u32_array(child, "diff-channels",
- 						     ain, ARRAY_SIZE(ain));
- 		if (ret == 0) {
--			ret = ad7194_validate_ain_channel(dev, ain[0]);
--			if (ret)
-+			if (!ad7194_validate_ain_channel(dev, ain[0]))
- 				return dev_err_probe(dev, -EINVAL,
- 						     "Invalid AIN channel: %u\n",
- 						     ain[0]);
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 7247e217e21b..5ce84ffd0423 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -528,9 +528,6 @@ static_assert(PAGE_SHIFT <= 20);
  
--			ret = ad7194_validate_ain_channel(dev, ain[1]);
--			if (ret)
-+			if (!ad7194_validate_ain_channel(dev, ain[1]))
- 				return dev_err_probe(dev, -EINVAL,
- 						     "Invalid AIN channel: %u\n",
- 						     ain[1]);
-@@ -1125,8 +1123,7 @@ static int ad7194_parse_channels(struct iio_dev *indio_dev)
- 				return dev_err_probe(dev, ret,
- 						     "Missing channel property\n");
+ #include <linux/alloc_tag.h>
  
--			ret = ad7194_validate_ain_channel(dev, ain[0]);
--			if (ret)
-+			if (!ad7194_validate_ain_channel(dev, ain[0]))
- 				return dev_err_probe(dev, -EINVAL,
- 						     "Invalid AIN channel: %u\n",
- 						     ain[0]);
+-void *__kmalloc_noprof(size_t size, gfp_t flags) __assume_kmalloc_alignment __alloc_size(1);
+-#define __kmalloc(...)				alloc_hooks(__kmalloc_noprof(__VA_ARGS__))
+-
+ /**
+  * kmem_cache_alloc - Allocate an object
+  * @cachep: The cache to allocate from.
+@@ -568,31 +565,33 @@ static __always_inline void kfree_bulk(size_t size, void **p)
+ 	kmem_cache_free_bulk(NULL, size, p);
+ }
+ 
+-void *__kmalloc_node_noprof(size_t size, gfp_t flags, int node) __assume_kmalloc_alignment
+-							 __alloc_size(1);
+-#define __kmalloc_node(...)			alloc_hooks(__kmalloc_node_noprof(__VA_ARGS__))
+-
+ void *kmem_cache_alloc_node_noprof(struct kmem_cache *s, gfp_t flags,
+ 				   int node) __assume_slab_alignment __malloc;
+ #define kmem_cache_alloc_node(...)	alloc_hooks(kmem_cache_alloc_node_noprof(__VA_ARGS__))
+ 
+-void *kmalloc_trace_noprof(struct kmem_cache *s, gfp_t flags, size_t size)
+-		    __assume_kmalloc_alignment __alloc_size(3);
++/*
++ * The following functions are not to be used directly and are intended only for
++ * internal use from kmalloc() and kmalloc_node(), with the exception of kunit
++ * tests.
++ */
++void *__kmalloc(size_t size, gfp_t flags) __assume_kmalloc_alignment
++					  __alloc_size(1);
++
++void *__kmalloc_node(size_t size, gfp_t flags, int node)
++			__assume_kmalloc_alignment __alloc_size(1);
+ 
+-void *kmalloc_node_trace_noprof(struct kmem_cache *s, gfp_t gfpflags,
+-		int node, size_t size) __assume_kmalloc_alignment
+-						__alloc_size(4);
+-#define kmalloc_trace(...)			alloc_hooks(kmalloc_trace_noprof(__VA_ARGS__))
++void *__kmalloc_cache(struct kmem_cache *s, gfp_t flags, size_t size)
++			__assume_kmalloc_alignment __alloc_size(3);
+ 
+-#define kmalloc_node_trace(...)			alloc_hooks(kmalloc_node_trace_noprof(__VA_ARGS__))
++void *__kmalloc_cache_node(struct kmem_cache *s, gfp_t gfpflags, int node,
++			   size_t size)	__assume_kmalloc_alignment
++				__alloc_size(4);
+ 
+-void *kmalloc_large_noprof(size_t size, gfp_t flags) __assume_page_alignment
+-					      __alloc_size(1);
+-#define kmalloc_large(...)			alloc_hooks(kmalloc_large_noprof(__VA_ARGS__))
++void *__kmalloc_large(size_t size, gfp_t flags)	__assume_page_alignment
++			__alloc_size(1);
+ 
+-void *kmalloc_large_node_noprof(size_t size, gfp_t flags, int node) __assume_page_alignment
+-							     __alloc_size(1);
+-#define kmalloc_large_node(...)			alloc_hooks(kmalloc_large_node_noprof(__VA_ARGS__))
++void *__kmalloc_large_node(size_t size, gfp_t flags, int node)
++				__assume_page_alignment __alloc_size(1);
+ 
+ /**
+  * kmalloc - allocate kernel memory
+@@ -654,14 +653,14 @@ static __always_inline __alloc_size(1) void *kmalloc_noprof(size_t size, gfp_t f
+ 		unsigned int index;
+ 
+ 		if (size > KMALLOC_MAX_CACHE_SIZE)
+-			return kmalloc_large_noprof(size, flags);
++			return __kmalloc_large(size, flags);
+ 
+ 		index = kmalloc_index(size);
+-		return kmalloc_trace_noprof(
++		return __kmalloc_cache(
+ 				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
+ 				flags, size);
+ 	}
+-	return __kmalloc_noprof(size, flags);
++	return __kmalloc(size, flags);
+ }
+ #define kmalloc(...)				alloc_hooks(kmalloc_noprof(__VA_ARGS__))
+ 
+@@ -671,14 +670,14 @@ static __always_inline __alloc_size(1) void *kmalloc_node_noprof(size_t size, gf
+ 		unsigned int index;
+ 
+ 		if (size > KMALLOC_MAX_CACHE_SIZE)
+-			return kmalloc_large_node_noprof(size, flags, node);
++			return __kmalloc_large_node(size, flags, node);
+ 
+ 		index = kmalloc_index(size);
+-		return kmalloc_node_trace_noprof(
++		return __kmalloc_cache_node(
+ 				kmalloc_caches[kmalloc_type(flags, _RET_IP_)][index],
+ 				flags, node, size);
+ 	}
+-	return __kmalloc_node_noprof(size, flags, node);
++	return __kmalloc_node(size, flags, node);
+ }
+ #define kmalloc_node(...)			alloc_hooks(kmalloc_node_noprof(__VA_ARGS__))
+ 
+@@ -756,7 +755,7 @@ static inline __alloc_size(1, 2) void *kmalloc_array_node_noprof(size_t n, size_
+ 		return NULL;
+ 	if (__builtin_constant_p(n) && __builtin_constant_p(size))
+ 		return kmalloc_node_noprof(bytes, flags, node);
+-	return __kmalloc_node_noprof(bytes, flags, node);
++	return __kmalloc_node(bytes, flags, node);
+ }
+ #define kmalloc_array_node(...)			alloc_hooks(kmalloc_array_node_noprof(__VA_ARGS__))
+ 
+diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+index 4ce960438806..3b5fea45b8fe 100644
+--- a/lib/slub_kunit.c
++++ b/lib/slub_kunit.c
+@@ -140,7 +140,7 @@ static void test_kmalloc_redzone_access(struct kunit *test)
+ {
+ 	struct kmem_cache *s = test_kmem_cache_create("TestSlub_RZ_kmalloc", 32,
+ 				SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
+-	u8 *p = kmalloc_trace(s, GFP_KERNEL, 18);
++	u8 *p = __kmalloc_cache(s, GFP_KERNEL, 18);
+ 
+ 	kasan_disable_current();
+ 
+diff --git a/mm/slub.c b/mm/slub.c
+index 0809760cf789..31c25e0ebed8 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4053,7 +4053,7 @@ EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
+  * directly to the page allocator. We use __GFP_COMP, because we will need to
+  * know the allocation order to free the pages properly in kfree.
+  */
+-static void *__kmalloc_large_node(size_t size, gfp_t flags, int node)
++static void *___kmalloc_large_node(size_t size, gfp_t flags, int node)
+ {
+ 	struct folio *folio;
+ 	void *ptr = NULL;
+@@ -4078,25 +4078,25 @@ static void *__kmalloc_large_node(size_t size, gfp_t flags, int node)
+ 	return ptr;
+ }
+ 
+-void *kmalloc_large_noprof(size_t size, gfp_t flags)
++void *__kmalloc_large(size_t size, gfp_t flags)
+ {
+-	void *ret = __kmalloc_large_node(size, flags, NUMA_NO_NODE);
++	void *ret = ___kmalloc_large_node(size, flags, NUMA_NO_NODE);
+ 
+ 	trace_kmalloc(_RET_IP_, ret, size, PAGE_SIZE << get_order(size),
+ 		      flags, NUMA_NO_NODE);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_large_noprof);
++EXPORT_SYMBOL(__kmalloc_large);
+ 
+-void *kmalloc_large_node_noprof(size_t size, gfp_t flags, int node)
++void *__kmalloc_large_node(size_t size, gfp_t flags, int node)
+ {
+-	void *ret = __kmalloc_large_node(size, flags, node);
++	void *ret = ___kmalloc_large_node(size, flags, node);
+ 
+ 	trace_kmalloc(_RET_IP_, ret, size, PAGE_SIZE << get_order(size),
+ 		      flags, node);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_large_node_noprof);
++EXPORT_SYMBOL(__kmalloc_large_node);
+ 
+ static __always_inline
+ void *__do_kmalloc_node(size_t size, gfp_t flags, int node,
+@@ -4123,17 +4123,17 @@ void *__do_kmalloc_node(size_t size, gfp_t flags, int node,
+ 	return ret;
+ }
+ 
+-void *__kmalloc_node_noprof(size_t size, gfp_t flags, int node)
++void *__kmalloc_node(size_t size, gfp_t flags, int node)
+ {
+ 	return __do_kmalloc_node(size, flags, node, _RET_IP_);
+ }
+-EXPORT_SYMBOL(__kmalloc_node_noprof);
++EXPORT_SYMBOL(__kmalloc_node);
+ 
+-void *__kmalloc_noprof(size_t size, gfp_t flags)
++void *__kmalloc(size_t size, gfp_t flags)
+ {
+ 	return __do_kmalloc_node(size, flags, NUMA_NO_NODE, _RET_IP_);
+ }
+-EXPORT_SYMBOL(__kmalloc_noprof);
++EXPORT_SYMBOL(__kmalloc);
+ 
+ void *kmalloc_node_track_caller_noprof(size_t size, gfp_t flags,
+ 				       int node, unsigned long caller)
+@@ -4142,7 +4142,7 @@ void *kmalloc_node_track_caller_noprof(size_t size, gfp_t flags,
+ }
+ EXPORT_SYMBOL(kmalloc_node_track_caller_noprof);
+ 
+-void *kmalloc_trace_noprof(struct kmem_cache *s, gfp_t gfpflags, size_t size)
++void *__kmalloc_cache(struct kmem_cache *s, gfp_t gfpflags, size_t size)
+ {
+ 	void *ret = slab_alloc_node(s, NULL, gfpflags, NUMA_NO_NODE,
+ 					    _RET_IP_, size);
+@@ -4152,10 +4152,10 @@ void *kmalloc_trace_noprof(struct kmem_cache *s, gfp_t gfpflags, size_t size)
+ 	ret = kasan_kmalloc(s, ret, size, gfpflags);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_trace_noprof);
++EXPORT_SYMBOL(__kmalloc_cache);
+ 
+-void *kmalloc_node_trace_noprof(struct kmem_cache *s, gfp_t gfpflags,
+-			 int node, size_t size)
++void *__kmalloc_cache_node(struct kmem_cache *s, gfp_t gfpflags, int node,
++			   size_t size)
+ {
+ 	void *ret = slab_alloc_node(s, NULL, gfpflags, node, _RET_IP_, size);
+ 
+@@ -4164,7 +4164,7 @@ void *kmalloc_node_trace_noprof(struct kmem_cache *s, gfp_t gfpflags,
+ 	ret = kasan_kmalloc(s, ret, size, gfpflags);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(kmalloc_node_trace_noprof);
++EXPORT_SYMBOL(__kmalloc_cache_node);
+ 
+ static noinline void free_to_partial_list(
+ 	struct kmem_cache *s, struct slab *slab,
 -- 
-2.34.1
+2.45.1
 
 
