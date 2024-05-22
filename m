@@ -1,104 +1,126 @@
-Return-Path: <linux-kernel+bounces-186493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463A68CC4E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5848CC4EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A341C2183E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EED81C218D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4E1140E3C;
-	Wed, 22 May 2024 16:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7961422A5;
+	Wed, 22 May 2024 16:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qf3wgycv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bs9d+264"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D51C13D8AA
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53011420C9;
+	Wed, 22 May 2024 16:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716395384; cv=none; b=D0BP7kw7h0km1BGTqhq2vmR25hrFJFPzmyrD4vEVLcO0lHI/ewlP2WZuzZ6pwP/nZGQw82ww2GOOmmDvF141zP8aQNU4O6CaDU+FLkvXrIriLqBhchogfaGp9iaCZN8isWwB+um3Oi5Pejm5R+m1k98DPWMBW9dq2oU4Ius5oMM=
+	t=1716395713; cv=none; b=s1BOqKPZtn30DiKECE78zGwHZyocGM/KwzPHqbIkvr/bkCehSc7wuFs/5hM+gvjN9qFaBd8BcEiJdN4a8aA6EJMSrOJQhrSV9Sid0YS0p8289L32RXk/xz9ro3SVK7VzaxHC0DaAIgEobM/CxqWiWmbYcluhNa02OjOSn6dXTlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716395384; c=relaxed/simple;
-	bh=JUtNNJy/nHM4nKkU6sDEme4IkoVcVSX2db5+h1zO+ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KG3ovxWIuS5l3awB5k523NQwamidtmlJKzA5E1CxCYKr0scayNJqUE4N8ZhVYCARKcOd/bYsyJUpHmrtVM3CWY7DGrlKsFUq4jJ9SJES7j9DPVIXti2ulkmahbPo+3R14isB0Lf2OyTHuTW0g8WtGXyV3FAtwxCOoR+RdMNifDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qf3wgycv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B3A1C2BBFC;
-	Wed, 22 May 2024 16:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716395384;
-	bh=JUtNNJy/nHM4nKkU6sDEme4IkoVcVSX2db5+h1zO+ac=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qf3wgycv0vGY1lvXnKMRNqMJUZL34+i6jciTl+/h2OitcbI7fSBAfLJ4bsWwxDMyp
-	 SxUgE79/uzg3gdbuS1OCa3tK44ftrHsrL8tIsH5KJQUIQHEqR8fpgAgDbDDfTTodIi
-	 jQQ6Mk0/T0Wc9EtESMSelBkiW+DnB5zn2nzS7b3jYB3IaYMa4joL+31qGVJXjZ6SIB
-	 8u20pzIMLtrO1UxrMD9+Bb4j9JbMgdefFMaI2lDceBrYCBhgjB/e/RJCn5YkmiyyBL
-	 9qu+2ZsoTI37O7zfnnOzaHE9hpnmG9/CZd8o5QBrDLS4caN0HNQWyDjpu7/FVt5ENm
-	 nxv5xGzprRVjA==
-Date: Wed, 22 May 2024 10:29:40 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: John Meneghini <jmeneghi@redhat.com>
-Cc: hch@lst.de, sagi@grimberg.me, emilne@redhat.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
-Subject: Re: [PATCH v4 1/1] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-Message-ID: <Zk4ddPmottdOJND1@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240522154212.643572-1-jmeneghi@redhat.com>
- <20240522154212.643572-2-jmeneghi@redhat.com>
- <Zk4VtiCjeqkBKCBA@kbusch-mbp.dhcp.thefacebook.com>
- <cef5a764-ffab-495c-bea2-e4c6a7c76944@redhat.com>
+	s=arc-20240116; t=1716395713; c=relaxed/simple;
+	bh=HwrtFMkpSDt9VbB+n06nlRftl6YZbhM7iR+8tjiKkcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n/ZrjpqJljIsADyJyIp7ntkFWu8B0Z1Rl+3j2Ce6sEQfSmwONWjCYaaaQvHejHcZpJg+dBE0qH3otUVxxJ7sJEToxIEwalkhXgcs4DXYTBdQzX34B9iBd/DQGD4MdJG6yfcjCL1t1rxFsDjgUj2gC1Bj1s0qoP9nOsW/iTFNKS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bs9d+264; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-df4f31e963dso35455276.0;
+        Wed, 22 May 2024 09:35:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716395710; x=1717000510; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HwrtFMkpSDt9VbB+n06nlRftl6YZbhM7iR+8tjiKkcc=;
+        b=Bs9d+264S92vqA7ZwVMOAzWdqwXw0rmFr9ti+80IdSngKY0nB3A/ujTkNCb8dXMAQo
+         58fzcygoMeiRZOHtxXEbNt5FpDepTMF4qmAV9uEROhLSvkxyUJiDOqdP9a2jsueIy3ti
+         fuEMK4MUxB181QkXz05OC2JrYCtjUV7Cqqc/loFhR24TL4ZUquv8F2YcMD6EOuH9WkaH
+         x/PvSSpVfpcx+rF6icSgYDoUwX6okY9eIXzdRdC5OhdDPHD21LmxF9k9ERDovmxu2bv2
+         PaodPwX9h9AwSh6oPdyo3cODluEBhoJaabClUr7j5P+rb5c0IkaBll7n7eCPD6eSyJYU
+         MQjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716395710; x=1717000510;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HwrtFMkpSDt9VbB+n06nlRftl6YZbhM7iR+8tjiKkcc=;
+        b=EVaFuVhxoXN4DygUV1AjA0oQivJ7vSHXi4iaQEdqBMLWNKIYxeCjK0TlrdKAm6gvVP
+         e1fpxol5YeaALqtC59sk1qsiaLZsY9x8HgE1mEI/4xXcN+8uvt4R+GqwDN1EjSF1CDNC
+         M2FzfZCnhqkXHhVRRstfNnRWytLNl/TEnIjds+k8ik9yDjCoFMsjUBhgrggYHW0zaY5L
+         jUDdy6MbkkfMd+mncAy4hDMiFWJDurKwSlyGyPnqrWwTjih0JtdADTansrTwPsvoSLm8
+         Ql5jLK7skZ57ywNgrbhVUBUaoUzFec03PuLM2aPt1LjXNj10Ufd2J36D/xnMN7u62vcN
+         oexA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG/XyT8168tRtseQDKqgttj27PyoaGj7CzAPfCz6W+WzJwJnDdG0k67rru2fWcFFpC+ptuMerMrqRr7TXChDryZEaMMngJADNaI4TENSxz8F2/64EpRH+HFh6V3p8J7mQAnSOIgjvpmYRRVmi5SFQPcGs22JLQV8XxYjGiqhBY18q1Lg==
+X-Gm-Message-State: AOJu0YzBBeinyuuknNjCTP7qMKR4gsDr2YT/bdEWgT2ZekNhkHrTBxXo
+	HlLHZk4Y4Ia+Q0wbG8yWx1Cn53bQU/tWCOeCKa/wplzaB5hJ+mn7wJh6j3gNtlxC+7EnldHFs3L
+	kPxJ2Y1yQNCjGSIA2BzvdK7ry6O0=
+X-Google-Smtp-Source: AGHT+IHTSs1INlTP/I9mKiFoUjrWofSCk/KeTJ4YOYLi5YbSbKts7y2jk9BRDKrvtm+jktdyKAvGR9JjbnfiPI3UwwM=
+X-Received: by 2002:a25:86cd:0:b0:dcc:6894:4ac0 with SMTP id
+ 3f1490d57ef6-df4e0e612c4mr1846106276.20.1716395710484; Wed, 22 May 2024
+ 09:35:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cef5a764-ffab-495c-bea2-e4c6a7c76944@redhat.com>
+References: <20240509192411.2432066-1-tmaimon77@gmail.com> <20240509192411.2432066-5-tmaimon77@gmail.com>
+ <20240513155330.GA2676859-robh@kernel.org> <CAP6Zq1hRw6xfNKKfBFGuKbZk0su3ys6+hnMzqRWrZeKzDoKLEw@mail.gmail.com>
+In-Reply-To: <CAP6Zq1hRw6xfNKKfBFGuKbZk0su3ys6+hnMzqRWrZeKzDoKLEw@mail.gmail.com>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Wed, 22 May 2024 19:34:59 +0300
+Message-ID: <CAP6Zq1gKp+Hu93CK=78chvNk70WtKMKUv8ny0Mzkw47wn7Af2g@mail.gmail.com>
+Subject: Re: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk bindings
+To: Rob Herring <robh@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 22, 2024 at 12:23:51PM -0400, John Meneghini wrote:
-> On 5/22/24 11:56, Keith Busch wrote:
-> > On Wed, May 22, 2024 at 11:42:12AM -0400, John Meneghini wrote:
-> > > +static void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
-> > > +{
-> > > +	struct nvme_ctrl *ctrl;
-> > > +	int old_iopolicy = READ_ONCE(subsys->iopolicy);
-> > > +
-> > > +	WRITE_ONCE(subsys->iopolicy, iopolicy);
-> > > +
-> > > +	/* iopolicy changes reset the counters and clear the mpath by design */
-> > > +	mutex_lock(&nvme_subsystems_lock);
-> > > +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
-> > > +		atomic_set(&ctrl->nr_active, 0);
-> > 
-> > Can you me understand why this is a desirable feature? Unless you
-> > quiesce everything at some point, you'll always have more unaccounted
-> > requests on whichever path has higher latency. That sounds like it
-> > defeats the goals of this io policy.
-> 
-> This is true. And as a matter of practice I never change the IO policy when IOs are in flight.  I always stop the IO first.
-> But we can't stop any user from changing the IO policy again and again.  So I'm not sure what to do.
-> 
-> If you'd like I add the 'if (old_iopolicy == iopolicy) return;' here, but
-> that's not going to solve the problem of inaccurate counters when users
-> start flipping io policies around. with IO inflight. There is no
-> synchronization between io submission across controllers and changing the
-> policy so I expect changing between round-robin and queue-depth with IO
-> inflight suffers from the same problem... though not as badly.
-> 
-> I'd rather take this patch now and figure out how to fix the problem with
-> another patch in the future.  Maybe we can check the io stats and refuse to
-> change the policy of they are not zero....
+Hi Rob,
 
-The idea of tagging the nvme_req()->flags on submission means the
-completion handling the nr_active counter is symmetric with the
-submission side: you don't ever need to reset nr_active because
-everything is accounted for.
+Kind reminder about the question in the mail thread below.
+Your response would be greatly appreciated.
+
+Thanks,
+
+Tomer
+
+On Thu, 16 May 2024 at 12:44, Tomer Maimon <tmaimon77@gmail.com> wrote:
+>
+> Hi Rob,
+>
+> Thanks for your comment.
+>
+> On Mon, 13 May 2024 at 18:53, Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Thu, May 09, 2024 at 10:24:11PM +0300, Tomer Maimon wrote:
+> > > Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
+> > > using the auxiliary device framework and not the device tree framework.
+> >
+> > Again, this is an ABI break. Changing driver architecture for 1 OS is
+> > not a reason to change DT.
+> Is it an ABI break even if the NPCM8xx clock driver hasn't upstream
+> the kernel vanilla yet?
+>
+> I thought that since the NPCM8xx clock driver hasn't upstream the
+> kernel vanilla yet and and in the latest NPCM8xx clock driver patch
+> the NPCM8xx clock driver.
+> using auxiliary device framework instead of DT we should remove the
+> nuvoton,npcm845-clk.yaml file.
+> https://patchwork.kernel.org/project/linux-clk/patch/20240509192411.2432066-4-tmaimon77@gmail.com/
+>
+> >
+> > Rob
+>
+> Thanks,
+>
+> Tomer
 
