@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-186490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527B98CC4DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:22:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40928CC4DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03D821F212FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:22:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCF328230F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8870A140E40;
-	Wed, 22 May 2024 16:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3A4140397;
+	Wed, 22 May 2024 16:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fky4eMAs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MpUW4hC2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF91542AB9;
-	Wed, 22 May 2024 16:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E43313D8AA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394942; cv=none; b=ChRFLcX3AHtLB4Wrm/qXDLiiTZU12+vIozwBd1CQ1uqErO6I7pzQjYpdiSAMS2JNIWojk/aW0c8P0EKd8aOCot4qzTljK7jCbJfMkCbqLLbn8azDGSunKvSdYfiwv/VI8/PibHiDNfSB+la+ygPBxlItXADnoOCQ0vhiF7BUw1w=
+	t=1716395041; cv=none; b=lF7iGDqJ+cL//ixOve9nEzm8dEH5G+U1WDQ16hMzv00P2hDU7ifa9uyjvAlnRXKlVud9yokv0R0tv/l80V6jtomhmtb2OkwSWlgK6udv3obI6BMd8uoQgAUSIdi8NJj9Sz+FavPJ2reegcpnU/gZtlyHzFXP2NaAeIruFgC1H5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394942; c=relaxed/simple;
-	bh=AWTKHb0bmoEcBitaeZqYTd0+23qEPVjE572slrya0ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwBk1X5zSTUE2MmwHi3bc/hM/qK+FcGPB7i8z3KNg9xHbY7zMj+gPHcbbnWGwAty8wBF1r8jBXZd2YFqVGGujtcanpdfkKJOmFpK6XfBBoMNcV6HuDAKKBV7fh0l6k0H9xX9EvvXEqKH6eCC7YP6Agb34HRv6nGeb0R+xAcdHOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fky4eMAs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E5C0C2BBFC;
-	Wed, 22 May 2024 16:22:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716394942;
-	bh=AWTKHb0bmoEcBitaeZqYTd0+23qEPVjE572slrya0ls=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fky4eMAsBLnUS+z0kupJjk+N+lm7BPyuPATy7PrnPDc6XufE0Gn+auAfTvhCwPmfl
-	 avvetGb85fhHXdyDoZooW49ws3OQBB4mKM4tM6ql7fynuLgM8uD7NfESRNb3YFEtRg
-	 e1GLPba1O4ykrm3HMSYFYYwIJACKyE47Jwde7y17wRGRjAaoYBYuQHetb166tZpCEg
-	 UVoQiPuFJTim0WPru6wl/d6xdzKQVtc6ixII07M7yNSfqLgXjM7OymfVpW0yreMP6V
-	 w9Lg5C3jVNs0I8zxj5Y9z/1AUPXAZM0SvGnALDzGsnk9KqOEtX6jcSA2QNGlL0fcES
-	 K4+fxL9I5ollQ==
-Date: Wed, 22 May 2024 17:22:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
- supply support
-Message-ID: <d64991ee-e125-4497-8030-6ca64fbe35e6@sirena.org.uk>
-References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
- <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
- <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
- <52428c0d-4b18-4707-9cda-4e6a11e256bc@gmail.com>
+	s=arc-20240116; t=1716395041; c=relaxed/simple;
+	bh=WzzACzeOEfdxxtrcE38+k9lmcbN8RjTur9kWqmXDwNU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uQ4ppTSZKy9jzMwktf77SceM3qE7HKmA4p6TMyyEJL5ElPlwtEixUBOzq8y3SgsBKcYudGrrRU3gyD8VDBkVawKp3rPaFmLq3ez2cLrthBZwYKDyLn2tC4Mg17Agj1liOO/j+lwngGkzTNqYNGOU14I4/26D6vw3Z+1UQNbZsII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MpUW4hC2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716395038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hB44jEoNckFCuyEM1NsGtowIzM2T9RXtZ2BqaZ5qjGY=;
+	b=MpUW4hC2iWeLvipwP947yeIESEdLCdKdJewL4t1LgN+DuGuxDU8RjnPtQIZStO0RAZjubi
+	agLEOuspFu9GhbWorX8aZo1xVedCTNvSo3CuGvxWLjdFMTJ77Hz2+ruGW0T7PvMHU1QoWb
+	r6bhfHI4DcB5qNrzCLHbgawhr7rSaZk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-uwP77EvXMSml3iGLmDurqQ-1; Wed,
+ 22 May 2024 12:23:52 -0400
+X-MC-Unique: uwP77EvXMSml3iGLmDurqQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 18C423C025D2;
+	Wed, 22 May 2024 16:23:52 +0000 (UTC)
+Received: from [10.22.8.193] (unknown [10.22.8.193])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 4C970492BC6;
+	Wed, 22 May 2024 16:23:51 +0000 (UTC)
+Message-ID: <cef5a764-ffab-495c-bea2-e4c6a7c76944@redhat.com>
+Date: Wed, 22 May 2024 12:23:51 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EL4i+puPElguxjip"
-Content-Disposition: inline
-In-Reply-To: <52428c0d-4b18-4707-9cda-4e6a11e256bc@gmail.com>
-X-Cookie: Bridge ahead.  Pay troll.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/1] nvme: multipath: Implemented new iopolicy
+ "queue-depth"
+To: Keith Busch <kbusch@kernel.org>
+Cc: hch@lst.de, sagi@grimberg.me, emilne@redhat.com,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
+References: <20240522154212.643572-1-jmeneghi@redhat.com>
+ <20240522154212.643572-2-jmeneghi@redhat.com>
+ <Zk4VtiCjeqkBKCBA@kbusch-mbp.dhcp.thefacebook.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <Zk4VtiCjeqkBKCBA@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
+On 5/22/24 11:56, Keith Busch wrote:
+> On Wed, May 22, 2024 at 11:42:12AM -0400, John Meneghini wrote:
+>> +static void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
+>> +{
+>> +	struct nvme_ctrl *ctrl;
+>> +	int old_iopolicy = READ_ONCE(subsys->iopolicy);
+>> +
+>> +	WRITE_ONCE(subsys->iopolicy, iopolicy);
+>> +
+>> +	/* iopolicy changes reset the counters and clear the mpath by design */
+>> +	mutex_lock(&nvme_subsystems_lock);
+>> +	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
+>> +		atomic_set(&ctrl->nr_active, 0);
+> 
+> Can you me understand why this is a desirable feature? Unless you
+> quiesce everything at some point, you'll always have more unaccounted
+> requests on whichever path has higher latency. That sounds like it
+> defeats the goals of this io policy.
 
---EL4i+puPElguxjip
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is true. And as a matter of practice I never change the IO policy when IOs are in flight.  I always stop the IO first.
+But we can't stop any user from changing the IO policy again and again.  So I'm not sure what to do.
 
-On Wed, May 22, 2024 at 06:20:14PM +0200, Artur Weber wrote:
+If you'd like I add the 'if (old_iopolicy == iopolicy) return;' here, but that's not going to solve the problem of inaccurate 
+counters when users start flipping io policies around. with IO inflight. There is no synchronization between io submission 
+across controllers and changing the policy so I expect changing between round-robin and queue-depth with IO inflight suffers 
+from the same problem... though not as badly.
 
-> What would be the correct thing to do here - add a secondary DAPM widget
-> of type REGULATOR_SUPPLY and connect it to the MIC widget via audio-
-> routing, or replace the entire MIC widget with a REGULATOR_SUPPLY (or
-> something else entirely)?
+I'd rather take this patch now and figure out how to fix the problem with another patch in the future.  Maybe we can check the 
+io stats and refuse to change the policy of they are not zero....
 
-The microphone is getting a supply so the first option seems better.
+>> @@ -1061,6 +1066,9 @@ static inline bool nvme_disk_is_ns_head(struct gendisk *disk)
+>>   {
+>>   	return false;
+>>   }
+>> +static inline void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
+>> +{
+>> +}
+>>   #endif /* CONFIG_NVME_MULTIPATH */
+> 
+> You can remove this stub function since the only caller resides in a
+> CONFIG_NVME_MULTIPATH file.
+> 
 
-> And should this be done with the Main Mic and Sub Mic as well?
+I can do that.  Since I have to spin a version 5 patch, do you want me to make the change above?
 
-Probably yes.
+Is there anything else?
 
---EL4i+puPElguxjip
-Content-Type: application/pgp-signature; name="signature.asc"
+/John
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZOG7cACgkQJNaLcl1U
-h9Da9Af/YiLFo0ws5uTputzZ9Vnnzu51OTlsLRlk/AI4srvbo/yePNM+Zsxysdsm
-cM6zex9GmD0DJCYpHAS6sCwGT11nGDlfAUrxi1D/xZYURxArtojJbBztByv7Y2QM
-NBjQJcKcvvwtmIG4NT6YS46w2jUBfq7j8LbqMxkby62KiWPe5t1tILfeyv9qHIay
-QuR6ILhS093P1LaNp/gM1u6d+usQTb7ymCMWhZWk3ODj23x2VdCSQ94DvUjIlGYV
-P4rIzntrO9jzQw3NgEJBLuAhIt6VQmk7Cg04H5ElZlgT7pmbr9cWiLRnepe2uR7g
-oQLU9FWtULGu/9PXCdtk2Jj3T61Liw==
-=NRmF
------END PGP SIGNATURE-----
-
---EL4i+puPElguxjip--
 
