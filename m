@@ -1,296 +1,264 @@
-Return-Path: <linux-kernel+bounces-186832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556648CC9CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:41:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525138CC9D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA53C1F229D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:41:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8401F21F30
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0388E14C581;
-	Wed, 22 May 2024 23:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39F714C5B8;
+	Wed, 22 May 2024 23:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlWlpB+p"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="go0SVbHL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA64824B1;
-	Wed, 22 May 2024 23:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421290; cv=none; b=asJLt0Ufx3JCycG657EqOKO+6HACYyIwAXX30QixVwSe2H9cFAr/kBDkTO+g/f42JaCb1ZOqJLKUz53wfTt6ecLvslYWUrm3db8+sWH/Nq6wE0KHbpQgVTPqFfuRZgliZYiyHu8zqWa7MR69VSKuMlv+Q2/xnANafgp57gtkxTU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716421290; c=relaxed/simple;
-	bh=vggnmkJygBRK8GAMVq19lWbRS7b34eyKsZmnwfwYnfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7JgoeifKDPUOug/CvCkgNw1McVDM3qUcdymdOV1XNtL4JS3BiFEiAUFFlcMKVzCkVm7h6b22HRx0JTwGIKDCeLDbE1jWNZ3/tjxvR1kIJNTGhheMbEZtRj89VbWyczM3+1rW7a865uk6iAY6k7GjxH0+PQDwctI6hQN0/vP2Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlWlpB+p; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b2e942171cso3063939eaf.3;
-        Wed, 22 May 2024 16:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716421287; x=1717026087; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gWukj2snaUQpvheqYxoT6sRpwOl1cI9Ig/I6rHkd/ts=;
-        b=MlWlpB+p6RRWNi/MHnA5zBR9yjDFtIjjtCRedY+W/ZC0AF9MDYk+CFHXnJixfZUohE
-         3Q8G92zyVa0HBmciHhtyjq6VjERNGVSOTqz+j6HfGrMcZzWitPV7fsrTreXgZZwwExLD
-         mGaRETcGmBTIHtMdOrQ8S+OtYh2IJNFPUiLhrM/35/MnX4VNwx9HIkLxRvFK9otRKkne
-         Mle+4Vi3MwIVxYb1JQ3hPXT6EmLotKlkn29vDZ6vZ9KreKvMMEe39S0IJrseiDijgIa9
-         KUBwV1Gwu1gucHqLuG6r1TZ03uVeEXdkHZqoc7kYPDT24pRF3MUvyM7MiI/3CdeOtNWo
-         LTmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716421287; x=1717026087;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gWukj2snaUQpvheqYxoT6sRpwOl1cI9Ig/I6rHkd/ts=;
-        b=FAyywbQUsGIr1C99E1ID5gyo/F8MutVsAiBK6huU8Ycla2HuSIVoVCOIXddIhKlzZx
-         qzrAwSZu+CE8m0HwVwzSFX87MMwBJxxYGCuDP/FZJOV7TH8DOr77KPna/MJsY12qaRfp
-         VJNpQp91yUnVRXEZkb4qCDldBzSr5Pi04fXffIYFnEJKvHRhU03Gh8sL6niXj0/aFAlS
-         /ZGu77tYCK33ksrL2ArX4jJ98DsRQuvR9Xwh6GxOUN+pc/E3Hrsg0VxPJrcIUd+PMcvP
-         q94M7i3JGownSPWA+AsKEpBqlg+T3HSg07Ddtvl5p8JmUN0xWAYHtoi8ZaMKY1LwjBCh
-         zs7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVLHW7E8hipS3XCaI7Izx7uv7XlGWmJ/dyrSqIAMNM5Z6e0XgcQTLXJmJj4Z4tcknIpVy+5cIdU4DIFQumQs/IIfuKk5hQKMNASFP3g2ZDAyw2rhaNhmChPhZY1mE2Sk4mnGoLY5FxfKoTGJYD6BlRg6fUf9OQ1O0dbO17SQfPTBUS45Q==
-X-Gm-Message-State: AOJu0Yw5hGsgnEoJj8QyJdvPCHYpcn/6XwCQrtK9EcbTMKQMdHXpAINK
-	CQfRg3CpKfYk58Va9sX+iDqQ0uwRekW5MdC/Ci0I0x0SuJakJkJz
-X-Google-Smtp-Source: AGHT+IE0d+EY6qLVEYas/aDbAVhly2G2iZsay05JQ07b3GGXxqmurnPP45B+PYUcYsUehPTJYrupIA==
-X-Received: by 2002:a05:6358:8003:b0:186:f45:391a with SMTP id e5c5f4694b2df-1979214497fmr519300455d.28.1716421287435;
-        Wed, 22 May 2024 16:41:27 -0700 (PDT)
-Received: from archlinux ([189.101.162.253])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a9107f3sm23359241a12.9.2024.05.22.16.41.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 16:41:26 -0700 (PDT)
-Date: Wed, 22 May 2024 20:41:18 -0300
-From: Gustavo Silva <gustavograzs@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, lars@metafoo.de, gerald.loacker@wolfvision.net, 
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] iio: chemical: add driver for ENS160 sensor
-Message-ID: <i6heylzrq3kez23oq3brbbhpw4ktt6umzh2vcsawch52upv4oa@muxsuackv6er>
-References: <20240512210444.30824-1-gustavograzs@gmail.com>
- <20240512210444.30824-4-gustavograzs@gmail.com>
- <205163e0-e2bd-4ed9-9f51-e20468f77655@wanadoo.fr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0237A146A6E;
+	Wed, 22 May 2024 23:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716421437; cv=fail; b=uy28P6ubJHdfXOjUM0JUnuVyUXGK4VjJa7Q2if/TxdmgOlQqfz/CPuv+SxTSngcjrsC/FAAx7Zp/g/W8rYR6zH64A92XQ0zdMSflTIm7S7HUAuyjdultIrIgciQGkTsxbOGeNfZKS/dGIBbCfIpy95uXWt2ljHWEAgUC2R1sa6o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716421437; c=relaxed/simple;
+	bh=6S+NCxkltd1eq6k13uF2TKTTirceVwwEftjpyv42e6s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=U8D1QKURACWrN0cr2Mo5Wp20PQmI43DQasP4Tt3Idlmc8ly9436klq/i/uLGqJifhmRgWuWtGO4g41M3UTIz328BLzrV2u33q6F7+EY86Weqo4/6+2kpdSLw/bQ2OkenCbA4svQm7RT/N+79g1mM3sLxFWTezp2QOiwEW5WB/y0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=go0SVbHL; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716421436; x=1747957436;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=6S+NCxkltd1eq6k13uF2TKTTirceVwwEftjpyv42e6s=;
+  b=go0SVbHLwm7eWwH9iCcsF+lE3SxYG1WhSkAsXJBuu2mQgUtDyx8gOXiy
+   LPR+TT4oHxaoi0IX7+MA/ELd+1o5M6VAjniMezRRudroDmfzH+GAQH0j4
+   3mswCIUk/qYEA/noOUq3L/raO/ZE/az5wr3eR+HM9jxBeWZNVSitOWYZH
+   yjd2YeojAuWDpsELGMLu8V+E5eJqkMFbdny/54r9tIj4S46JOmcv3zHAa
+   gmS1wgWL9Pp5Ip2sGJE2GCPG6oHtn8jtkMEP+JVkakeBWZjTcCejFWB/R
+   mQopQpPmF3Kstz/HsnFVB7+3jlKSS+30KF5lfGldCYXRFuskQBbf2dwXp
+   Q==;
+X-CSE-ConnectionGUID: IrvT7DaqSy69KweFxzdGKw==
+X-CSE-MsgGUID: KRrRa1aDQdW1mRJxuHHDIA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="38088805"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="38088805"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 16:43:55 -0700
+X-CSE-ConnectionGUID: o8DCTdf4RECKPsXEcibLtQ==
+X-CSE-MsgGUID: mCDCqli8RcSsa3GA2LYxpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="70863301"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 16:43:55 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 22 May 2024 16:43:54 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 22 May 2024 16:43:53 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 16:43:53 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 22 May 2024 16:43:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HGDL8ZSiSTZJ8Q2XFEefwCi4np0gnYW5VkXMj0m5YU8u3ZhxFxZD051HM209BslAgEHBwc7zqCQGe08KmGjRpt58sJIOgb0c3Y04lrX46Z0w5XdXyQ3qgmrBCcb1tSjhYuvt0zyDDKXV0KVRNTSfM9Bn7lnJ99PrFzi6yc4SGVEcsv6JkAT8xSiMduXzRCMcFpqd44vZuYshmXMx/KQm5yaHnEHFyoi5/Ke6cdIh7k9MhzQJCo2w4Q5OJhKfv8BhbRuxo267+u24JBxhxvv2WUVipk47HMknouL4E7opjJDGmjma+8f0doNJfnOJRnol53r/Z6vDAlXAvpIcpZx/zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6S+NCxkltd1eq6k13uF2TKTTirceVwwEftjpyv42e6s=;
+ b=jyAGFSN6ufGwHplrC3oQ2A2SUEPrXH6Y5UEMdKsjObTxYMcPiZdN+zrMz9+ktQNwfRQK3yEZU4/EzZRscFpWfZQJbeRUxpX790X2wqLebYYOEEB93IpDm2XY5dW8KufqEeESBpKul+15tywHjrhF9ob9Dc7jrqQ/v1RV5gD5JTzC9XQaF4zMPWdLmrMCUgsxsGDboNevbvKSHdjWn/Jh9/9I07+2ZtiggxVtJewYhKmf8g1uCiM8dmIQoWBVwIT4iQa8M5CDhVNqGrKZxkYEBweDtcmEAwf+lImgiMJkWOuQY+WUaKVmv8+ZPpGo9y0fSORTPYmc6jRAT2IH4i1sLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by LV3PR11MB8727.namprd11.prod.outlook.com (2603:10b6:408:20d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Wed, 22 May
+ 2024 23:43:51 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 23:43:51 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>, Nicolin Chen <nicolinc@nvidia.com>
+CC: "will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "joro@8bytes.org" <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
+	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
+	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: RE: [PATCH RFCv1 00/14] Add Tegra241 (Grace) CMDQV Support (part 2/2)
+Thread-Topic: [PATCH RFCv1 00/14] Add Tegra241 (Grace) CMDQV Support (part
+ 2/2)
+Thread-Index: AQHajVVgzSKGnSPg+UW1Z+6EC5j/q7GjLESAgACIwgCAADIFgIAAPc+AgAADkSA=
+Date: Wed, 22 May 2024 23:43:51 +0000
+Message-ID: <BN9PR11MB527613C6094EDE9B2732928F8CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <BN9PR11MB527641C15DD88FB0C44323D08CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240522164818.GB20229@nvidia.com> <Zk5Lx7IqvnE2q7a7@nvidia.com>
+ <20240522232833.GH20229@nvidia.com>
+In-Reply-To: <20240522232833.GH20229@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|LV3PR11MB8727:EE_
+x-ms-office365-filtering-correlation-id: 5a98653f-a569-4d6e-6d24-08dc7ab90905
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007|38070700009;
+x-microsoft-antispam-message-info: =?us-ascii?Q?t/HIqwlmw3A4f83QHb8cR8dI8dCqXLstIGQQRCfKXqCniSJCGXvn/+oCNtu5?=
+ =?us-ascii?Q?ranc6qTbj/BLfAAHyqUPeWUdzDaQe52mQwMoRyz7wOWaPoRpgGxw6HUWAI/o?=
+ =?us-ascii?Q?nfc85zuxsenhsMrvSUaTAt0BBxCSSAzlRYzRJfzd0mEThRnDuj40fSXDzRUj?=
+ =?us-ascii?Q?dYXpVu5EG9ZEakQ4nQjVbovsezId/jhl9Kll7r2n7rpUEAHKFdlfCNp9pK1f?=
+ =?us-ascii?Q?pXJs5EOalNftMrZ2K3X+Wbp3qIfN/8cGvXmWSSfaqBtYA6IT1ZOVm32UljbM?=
+ =?us-ascii?Q?w1secLEUrjkveJUL9J7sQipVU2rCG5qWwZm4QWLkC9eIN7Z/ZKBaVgLAX4Af?=
+ =?us-ascii?Q?H8AIxNSMQQqG6OlDA80NIgHEuRDUGepA/IhxZ1a2qKJfNxuL1/oo2Ok//JJU?=
+ =?us-ascii?Q?5Z8soq9l79MMwuio0zffJiPOqvpL6EwHSR+enEQDROZpTARqv9pMPVB5GCGh?=
+ =?us-ascii?Q?eFVc/qgrlbDpGv+zsgak0+rFjrM6fHE9n0zttzoMaWFVasm545qvsBeeSoah?=
+ =?us-ascii?Q?KEYAAqL29Rn1FvTwWn6/v5+nSt3p9GjGodb0YcIUP9S2TOi42E8uUwrRSM5v?=
+ =?us-ascii?Q?oXLa5G6LapVhKlWp0hu8ntVwL5eKIfLsUi3iFLoH+cYgN9wd0LO+nCU+Zrqd?=
+ =?us-ascii?Q?lCCy+GRSCyRUmjHg+KM4452skwzPt2AWUf3bv9KJYM8GPtcITD9J7Sq8zoPy?=
+ =?us-ascii?Q?rf3zri/rTlGfTvx/1x0VMq4UecNHagzUABZam6uei2yTHacWYrJKMTt0vbge?=
+ =?us-ascii?Q?XstWdVD0ZqPpWWY4N7eIJM/EOMLWC1tJM9PsvTNS23XYf+Q8eQr868Gr4NLV?=
+ =?us-ascii?Q?lO7DZEblQSmxbee5V1l9aY22b1E83opCJ8WO6o5uybz4bqRxTwcJJyR9sgwk?=
+ =?us-ascii?Q?w0IXBDgUZfJQtTGBNWc86kKC0/DdGuvIf7Q9Km8qauMFQ1MlGab87iR8c+x6?=
+ =?us-ascii?Q?Uic5coHQi88IuCr6RIpY1ZE6knMKBtctkbQfU11VzXpBHuqwvjGfXSriMnT4?=
+ =?us-ascii?Q?eXsjBMKQQlf3xKq+EoYFFb9Slnz+UH5OCxab/6z0qx5TGhk8X6SdFX2lOKO8?=
+ =?us-ascii?Q?KpDr1n9L8RYuyYXh7r6aA5aefc3xoRaPhxeM5zaNuXQn/WkJ0UISCScaFvW2?=
+ =?us-ascii?Q?+QLkuvxHVjg5XY9bGv5lhaS7+GTh24ERXaGuEjqJWHnoABPVsILhh8B5dhOi?=
+ =?us-ascii?Q?vyQGjzGdxhMG++Vm474KwIeg/8CzA+B5Lal6zGoMr2ckUXVhGMZVOHQav2YA?=
+ =?us-ascii?Q?VCtpPZR2lSFHPuKYRQwgGDQ0C7JuOa7g4mlcZcg+DuPnmMXSvPRCBpoFB52/?=
+ =?us-ascii?Q?DPsImfLpmciVgL28wYDUyCn6JQUtnVxoP6WKJQFHCIAEog=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?iqPh/llYkh0X33q69qD/jGagbgC2/Xnl49FUeVYnJdT9oa1uZdxgAhtKh7zN?=
+ =?us-ascii?Q?QRswdBUsSP6fKjZayHiezaKyFJWUdFmFYpurPToCEpYvOfW6/VCbDUdd6ZCu?=
+ =?us-ascii?Q?JxNO7wAuI6gKxwloEjpiaBztbKuCMkqqmTCDjq5pd3dhj/68KfZIkrjon/vk?=
+ =?us-ascii?Q?Cg+rHewX4C9faiN5xbG7xFSWk5tIlre6R5eeuQCrqFsg8IY3kUlZnerL8xoA?=
+ =?us-ascii?Q?fVuGlMPNojMX1JtT6bPy6oNl4Y2BWmumj7PLlUI4bIz39ev0k1aCd1ZcwShZ?=
+ =?us-ascii?Q?r51G26MscimlNXMCJCyyKxrpSCdPnEy23MUTybxAYxxYY/WnxqVT4T4yNr2K?=
+ =?us-ascii?Q?cFRWVK830GqdQBsyRHicUTugYKi+vYeold/iVP2WAABCLjdwl6YTljXcTH4c?=
+ =?us-ascii?Q?Jweds4D+RkKVSQGolrav74dEW6ECXtfDFiHtayktEfJfwgP+XuQ5s3nP/Ncv?=
+ =?us-ascii?Q?dOfvb0mQuhEHZ57gwblRPocqYI72cYLgmCkxMiCiobFQb0HsOUItYfPQczgl?=
+ =?us-ascii?Q?amgDTXAgtYDBvfHgP7s4MdROAPuXC9rVLK1AsGnKIOuNh3MBmkB5SWzyt7C0?=
+ =?us-ascii?Q?vgDS3qFk1Dshm5Smk3pIUlo6Bv72WVK9RrSRjczf5MEmw1ZPe7INW2+KOKGs?=
+ =?us-ascii?Q?/sgDe1EZvHkhj0j/uaaqPXmZgGurre0r5ZLfuzTpmLbtEMrK4F8hcBeYu4hQ?=
+ =?us-ascii?Q?vugb0bTbiUsuVidfLqe1uuB04VzuSRYHRhn1w4poJwjYNr4lP6rNTcW8ghje?=
+ =?us-ascii?Q?2mWErYD2c4cKzYYze2nsBv2p7AQ1NAPZef3PcjznDKOhLxM+t5B2ad8SW4Wk?=
+ =?us-ascii?Q?zJdw4XteugXYEydPkq8N3EoFxI6S1xbDQ7Hc9HEBE7xLjATMDQ7lV2B43U89?=
+ =?us-ascii?Q?xGMI/UjCzsnr4uIvqNeJ5x8J/ABBcyTJziKktIBUYkf1hqPFFZvKm+sw3rfy?=
+ =?us-ascii?Q?PZ4cx8eKswrjzuKjpDxr5gPnhCjY15YLxynsMs4Xu4tg4LAQLX2d6n/pco3s?=
+ =?us-ascii?Q?THB3LAAa72yLmd0mfZ4w3S4r0KGgaPwVRAk7/f8SrPSne9o02C6HdCCxSFfr?=
+ =?us-ascii?Q?SkcieDgzDFTuDiRrGmXJNAyiOtkWxasUxkhper0pw2/Yr1Q7iNE1CL/j/yLY?=
+ =?us-ascii?Q?gFSZvhSpkQ7qbKhyVtpPzBn257+9AK4rNkiqh+EElR/mmhsP1bEcgAAZFdTy?=
+ =?us-ascii?Q?1H5eRodVuo87zs39ybF1c6aQSTVjqR3RlRR1VMWmgJSmZd5iaM/d45+qRgHW?=
+ =?us-ascii?Q?iAdhMDkuINShJpZ848pk1l9DG4IenFtWbRBM7ZKWG9MSApviTtFqIIbNcCiQ?=
+ =?us-ascii?Q?oyky9vhfrPpvZGqARQ/XFrD8pRF7zwPgxHcBN+zlNQR7LbCChWoFnkAGQFnP?=
+ =?us-ascii?Q?8uEN1Ugy+Cyan0JZwRafWo6V0Vz0+9Bi2u6oOmL1Tist2tp3aLNh/eQFTFxf?=
+ =?us-ascii?Q?re8XAa/VeW3lQzpwDvk5pI66xocsbHfu2xx3rFLGTx+ywP6palcmWuKsSXe0?=
+ =?us-ascii?Q?Pj6BwRwY+HTqduOGJEpOY4zhVuoEDyUhU71GXfY0XVON3Wps8REkYUEAc8Lp?=
+ =?us-ascii?Q?sLn0ZqLHmns50NdZK9eN4ayUbHH2jELRYuYBc93a?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <205163e0-e2bd-4ed9-9f51-e20468f77655@wanadoo.fr>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a98653f-a569-4d6e-6d24-08dc7ab90905
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 23:43:51.8144
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9B62rw5v0OzlExL/41uNvhgRSO4b9e3GdasrAK/DBLgFHWlafo2DqW1C8M/24SdCnWb85/F6fjYtL6RYoIX7Fg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8727
+X-OriginatorOrg: intel.com
 
-On Mon, May 13, 2024 at 09:12:55PM GMT, Christophe JAILLET wrote:
-> Le 12/05/2024 à 23:04, Gustavo Silva a écrit :
-> > ScioSense ENS160 is a digital metal oxide multi-gas sensor, designed
-> > for indoor air quality monitoring. The driver supports readings of
-> > CO2 and VOC, and can be accessed via both SPI and I2C.
-> > 
-> > Signed-off-by: Gustavo Silva <gustavograzs-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> 
-> Hi,
-> a few comments below, for what it worth.
-> 
-> BTW, why I'm in copy of the mail?
-> I'm not a maintainer, and not active on drivers/iio/chemical/
-> Slightly proud, but curious as well.
-> 
-Hi Christophe,
+> From: Jason Gunthorpe <jgg@nvidia.com>
+> Sent: Thursday, May 23, 2024 7:29 AM
+>=20
+> On Wed, May 22, 2024 at 12:47:19PM -0700, Nicolin Chen wrote:
+> > On Wed, May 22, 2024 at 01:48:18PM -0300, Jason Gunthorpe wrote:
+> > > On Wed, May 22, 2024 at 08:40:00AM +0000, Tian, Kevin wrote:
+> > > > > From: Nicolin Chen <nicolinc@nvidia.com>
+> > > > > Sent: Saturday, April 13, 2024 11:47 AM
+> > > > >
+> > > > > This is an experimental RFC series for VIOMMU infrastructure, usi=
+ng
+> NVIDIA
+> > > > > Tegra241 (Grace) CMDQV as a test instance.
+> > > > >
+> > > > > VIOMMU obj is used to represent a virtual interface (iommu) backe=
+d
+> by an
+> > > > > underlying IOMMU's HW-accelerated feature for virtualizaion: for
+> example,
+> > > > > NVIDIA's VINTF (v-interface for CMDQV) and AMD"s vIOMMU.
+> > > > >
+> > > > > VQUEUE obj is used to represent a virtual command queue (buffer)
+> backed
+> > > > > by
+> > > > > an underlying IOMMU command queue to passthrough for VMs to
+> use
+> > > > > directly:
+> > > > > for example, NVIDIA's Virtual Command Queue and AMD's Command
+> Buffer.
+> > > > >
+> > > >
+> > > > is VCMDQ more accurate? AMD also supports fault queue passthrough
+> > > > then VQUEUE sounds broader than a cmd queue...
+> > >
+> > > Is there a reason VQUEUE couldn't handle the fault/etc queues too? Th=
+e
+> > > only difference is direction, there is still a doorbell/etc.
 
-Your name was listed by the `get_maintainer.pl` script, so I may have
-added you to CC accidentally, my bad. I appreciate your review
-nonetheless.
+No reason. the description made it specific to a cmd queue which
+led me the impression that we may want to create a separate
+fault queue.
 
-> ...
-> 
-> > +#define ENS160_REG_TEMP_IN		0x13
-> > +#define ENS160_REG_RH_IN		0x15
-> > +#define ENS160_REG_DEVICE_STATUS	0x20
-> 
-> If defining everything, maybe:
-> #define ENS160_REG_DATA_AQI	0x21
-> 
-Ack.
+> >
+> > Yea, SMMU also has Event Queue and PRI queue. Though I haven't
+> > got time to sit down to look at Baolu's work closely, the uAPI
+> > seems to be a unified one for all IOMMUs. And though I have no
+> > intention to be against that design, yet maybe there could be
+> > an alternative in a somewhat HW specific language as we do for
+> > invalidation? Or not worth it?
+>=20
+> I was thinking not worth it, I expect a gain here is to do as AMD has
+> done and make the HW dma the queues directly to guest memory.
+>=20
+> IMHO the primary issue with the queues is DOS, as having any shared
+> queue across VMs is dangerous in that way. Allowing each VIOMMU to
+> have its own private queue and own flow control helps with that.
+>=20
 
-> > +#define ENS160_REG_DATA_TVOC		0x22
-> > +#define ENS160_REG_DATA_ECO2		0x24
-> > +#define ENS160_REG_DATA_T		0x30
-> > +#define ENS160_REG_DATA_RH		0x32
-> > +#define ENS160_REG_GPR_READ4		0x4C
-> 
-> ...
-> 
-> > +static int ens160_chip_init(struct ens160_data *data)
-> > +{
-> > +	struct device *dev = regmap_get_device(data->regmap);
-> > +	u8 fw_version[3];
-> > +	__le16 part_id;
-> > +	unsigned int status;
-> > +	int ret;
-> > +
-> > +	ret = ens160_set_mode(data, ENS160_REG_MODE_RESET);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = regmap_bulk_read(data->regmap, ENS160_REG_PART_ID, &part_id,
-> > +			       sizeof(part_id));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (le16_to_cpu(part_id) != ENS160_PART_ID)
-> > +		return -ENODEV;
-> > +
-> > +	ret = ens160_set_mode(data, ENS160_REG_MODE_IDLE);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
-> > +			   ENS160_REG_COMMAND_CLRGPR);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = regmap_write(data->regmap, ENS160_REG_COMMAND,
-> > +			   ENS160_REG_COMMAND_GET_APPVER);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	msleep(ENS160_BOOTING_TIME_MS);
-> > +
-> > +	ret = regmap_bulk_read(data->regmap, ENS160_REG_GPR_READ4,
-> > +			       fw_version, sizeof(fw_version));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	msleep(ENS160_BOOTING_TIME_MS);
-> > +
-> > +	dev_info(dev, "firmware version: %u.%u.%u\n", fw_version[2],
-> > +		 fw_version[1], fw_version[0]);
-> > +
-> > +	ret = ens160_set_mode(data, ENS160_REG_MODE_STANDARD);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = regmap_read(data->regmap, ENS160_REG_DEVICE_STATUS, &status);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (FIELD_GET(ENS160_STATUS_VALIDITY_FLAG, status)
-> > +	    != ENS160_STATUS_NORMAL)
-> > +		return -EINVAL;
-> 
-> Just wondering how it works with the Warm-up and initial Start-up times.
-> If the probe is executed and the corresponding duration has not elpased,
-> then the probe fails.
-> 
-> Is it what is expected?
->
-According to the datasheet, the warm-up time corresponds to the first 3
-minutes after power-on. However, the chip I'm working with always seems
-to go straight to standard operating mode (validity flag = 0x00)
-immediately after power-on.
-
-Also, checking other drivers for the same sensor, including ScioSense's
-official arduino driver, none of them seem to consider this initial
-warm-up time.
-
-Maybe it is more reasonable not to fail the probe based on this
-condition but instead only log the status. If the status reads 1
-(warm-up) or 2 (initial start-up) the readings may be unreliable for
-some time, but the user will be warned. What do you think?
-
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct iio_info ens160_info = {
-> > +	.read_raw = ens160_read_raw,
-> > +};
-> > +
-> > +int ens160_core_probe(struct device *dev, struct regmap *regmap,
-> > +		      const char *name)
-> > +{
-> > +	struct ens160_data *data;
-> > +	struct iio_dev *indio_dev;
-> > +	int ret;
-> > +
-> > +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-> > +	if (!indio_dev)
-> > +		return -ENOMEM;
-> > +
-> > +	data = iio_priv(indio_dev);
-> > +	dev_set_drvdata(dev, indio_dev);
-> > +	data->regmap = regmap;
-> > +
-> > +	indio_dev->name = name;
-> > +	indio_dev->info = &ens160_info;
-> > +	indio_dev->modes = INDIO_DIRECT_MODE;
-> > +	indio_dev->channels = ens160_channels;
-> > +	indio_dev->num_channels = ARRAY_SIZE(ens160_channels);
-> > +
-> > +	ret = ens160_chip_init(data);
-> > +	if (ret) {
-> > +		dev_err_probe(dev, ret, "chip initialization failed\n");
-> 
-> Nitpick: return dev_err_probe()
-Ack.
-
-> 
-> > +		return ret;
-> > +	}
-> > +
-> > +	return devm_iio_device_register(dev, indio_dev);
-> > +}
-> 
-> ...
-> 
-> > +static int ens160_i2c_probe(struct i2c_client *client)
-> > +{
-> > +	struct regmap *regmap;
-> > +
-> > +	regmap = devm_regmap_init_i2c(client, &ens160_regmap_i2c_conf);
-> > +	if (IS_ERR(regmap)) {
-> > +		dev_err(&client->dev, "Failed to register i2c regmap %ld\n",
-> > +			PTR_ERR(regmap));
-> 
-> Nitpick: dev_err_probe()
-Ack.
-
-> 
-> > +		return PTR_ERR(regmap);
-> > +	}
-> 
-> ...
-> 
-> > +static int ens160_spi_probe(struct spi_device *spi)
-> > +{
-> > +	struct regmap *regmap;
-> > +	const struct spi_device_id *id = spi_get_device_id(spi);
-> > +
-> > +	regmap = devm_regmap_init_spi(spi, &ens160_regmap_spi_conf);
-> > +	if (IS_ERR(regmap)) {
-> > +		dev_err(&spi->dev, "Failed to register spi regmap: %pe\n",
-> > +			regmap);
-> 
-> Nitpick: dev_err_probe()
-Ack.
-
-> 
-> CJ
-> 
-> > +		return PTR_ERR(regmap);
-> > +	}
-> > +
-> > +	return ens160_core_probe(&spi->dev, regmap, id->name);
-> > +}
-> 
-> 
+and also shorter delivering path with less data copy?
 
