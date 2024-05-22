@@ -1,320 +1,143 @@
-Return-Path: <linux-kernel+bounces-186153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7368CC066
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:38:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460998CC064
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A061F23810
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:38:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752871C2249D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CA582D64;
-	Wed, 22 May 2024 11:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FTHxr6+Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7023C839EA;
+	Wed, 22 May 2024 11:38:08 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703DB8287E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC6282D6D;
+	Wed, 22 May 2024 11:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377903; cv=none; b=f8cxJweqPU6wZMtI3plZBGSbUjDOvupHaOS8amOKTbVm+VleP974G/F8AbaYVmLnVB1ReZw67Bm8g/zBe/bNTyoF7jESA3OpESHaomNLxhcFFn72UWrHIeakXTU8Wle2KYSzxhnbzZIWXaRKi//H+D8KTP/V/JDQHV83ItcVxU8=
+	t=1716377888; cv=none; b=dd0swZpb167MS+JA88rLrV9dfxRx+ufjeE6lOTbW0pliaxRRF6TYqDrvehbi36IxKULvYI9trkLaDe3j77d4VBXnrqQtxOYdAnA7nMoe7M7La8nqP2AEWv8NviuDZ7V5f0O66ZTYcvCX7Zx9Rq2RtQyujoq1wagsRsV1D5CQmHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377903; c=relaxed/simple;
-	bh=TYPRc8K5lINwHSpAKS3gPPNAiyGdkK9OMzfTF/F3uCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGlxiJ1UX4g6/rn4urpzIAefJae6w7d0YtEl5uGH7zfAT9Cj2GsFxdMk7l0v09O/nWYsJGEeetP85BbtJGhFxh77Yxh0emNBPnq08YDNMyH+dRLCu4RiABYgHO2dgAMqz7GQydSwQb7LVvrOjWuEdCBpclBHcdS7pxZySEjpZJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FTHxr6+Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716377900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HVaOOA6qGL/CK6WZX/6d0obWvvk3+JicZE8KikRaOUo=;
-	b=FTHxr6+YphRV3xtIo+l19zRFJNUdpYhQ52ub/UEMO6PbzKEqVLdpQalSJlGlqOiaewTkSG
-	gAyTD2L9/GSDH6M+ZlF2v8eY5CndqJP4zABtR2sU1axJ0Q5KY9GKlXTN1wsUgclw+e/e3t
-	2Bq/WPiSmNBuYqVeoEnow6blrZiqFec=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-349-AhgUgHPXPv-QCL2qYIWlVg-1; Wed, 22 May 2024 07:38:17 -0400
-X-MC-Unique: AhgUgHPXPv-QCL2qYIWlVg-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34f1b148725so7162085f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 04:38:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716377896; x=1716982696;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVaOOA6qGL/CK6WZX/6d0obWvvk3+JicZE8KikRaOUo=;
-        b=d9mbV+Mlc1euqqxBPs46xTk0hHqixE8Q08mKMOuj1/j+xappFi69pZF5aarV32Pl0o
-         ffq9pNUr6O/QcqWxRROId16NhSHUEZYNlGXYOs+H5/TBhsT/FdOhv9+3lRSkNsfhcjqt
-         s46Zx/FmCVBCO48Bs1imiSj/L4pj8F5JtZ2nC4ZxWGU6jaNq/MLqOwXoQwOiy2EX8ut6
-         J4w5RDUERkhpGUDKd7TvinCVtKnEeklXEoJNwQS5VTLnVtk+W4jxMb5I9E/w5g1btPs9
-         NY2y4d5SvxhpJJmnoENqTqxnu73wjoiYItKbc8O/Ta0NaxOdEM/vKoIMyKNFjd6ytzfx
-         4CQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmak5KL/PSZNxLQCy4kmdQAgCT2pvichUIbFIWB8A3vJzcFMJiQ1/P1H7TpMt5ro8O0/Sov9YdFzMdkNQwwhIlqIekknbQTmkIL5V+
-X-Gm-Message-State: AOJu0YzxkVenZuWGq3WIA+gOffsJdME+EaX86FKXhsgWrV9eyZp0uc3S
-	mPtKRh6btt7kWZFf2Yz/OCVZrQhq8bbj3gG02UgpWEXgt9dmbSC4LLnYzTZfkx9fK2uh9Hsr8bj
-	5zsT9tPRkYmI+ey8kKOdYRAkmDqxELVEvzSxHnPL1/e0oSgKVJbYci9hOnmLZTA==
-X-Received: by 2002:a05:600c:5105:b0:41b:cc7d:1207 with SMTP id 5b1f17b1804b1-420fd31e112mr15624475e9.19.1716377896365;
-        Wed, 22 May 2024 04:38:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEt6Cbeq9f6S2CBwMYNTzyGc4qDdBN6K2JnTNHMSnN9QXLcMstq+yPsTE9sbhgVDijWWVE1jw==
-X-Received: by 2002:a05:600c:5105:b0:41b:cc7d:1207 with SMTP id 5b1f17b1804b1-420fd31e112mr15624025e9.19.1716377895712;
-        Wed, 22 May 2024 04:38:15 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:55d:e862:558a:a573:a176:1825])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4201c3f8032sm347952525e9.28.2024.05.22.04.38.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 04:38:15 -0700 (PDT)
-Date: Wed, 22 May 2024 07:38:01 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anton.yakovlev@opensynergy.com, bartosz.golaszewski@linaro.org,
-	christophe.jaillet@wanadoo.fr, dave.jiang@intel.com,
-	david@redhat.com, eperezma@redhat.com, herbert@gondor.apana.org.au,
-	jasowang@redhat.com, jiri@nvidia.com, jiri@resnulli.us,
-	johannes@sipsolutions.net, krzysztof.kozlowski@linaro.org,
-	lingshan.zhu@intel.com, linus.walleij@linaro.org,
-	lizhijian@fujitsu.com, martin.petersen@oracle.com,
-	maxime.coquelin@redhat.com, michael.christie@oracle.com,
-	sgarzare@redhat.com, stevensd@chromium.org, sudeep.holla@arm.com,
-	syzbot+98edc2df894917b3431f@syzkaller.appspotmail.com,
-	u.kleine-koenig@pengutronix.de, viresh.kumar@linaro.org,
-	yuxue.liu@jaguarmicro.com, Srujana Challa <schalla@marvell.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [GIT PULL] virtio: features, fixes, cleanups
-Message-ID: <20240522073727-mutt-send-email-mst@kernel.org>
-References: <20240522060301-mutt-send-email-mst@kernel.org>
- <1716373365.1499481-1-xuanzhuo@linux.alibaba.com>
+	s=arc-20240116; t=1716377888; c=relaxed/simple;
+	bh=2BJRm4wgEIkAM6We144klaRept7/E/Hts/VoRR5fcY8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yn8+rkcTrNecUiKuQXrTB/w0m3NZXgjwhLoYivZjLTcssyz+zW6zigPtZWLK89pVO6ZW+S1yPc89mpxt0K3/4L+RxD9T67Alldx7Vxfreb/8pP5j5/wreURfMTP45Ys37BV9F/b5vlhLe4UEMwQDiKAOpO6NP8DKKJJEypjweec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94602C2BD11;
+	Wed, 22 May 2024 11:38:04 +0000 (UTC)
+Message-ID: <ae3f4c13-9a4b-44e3-b793-f94aba59127f@xs4all.nl>
+Date: Wed, 22 May 2024 13:38:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1716373365.1499481-1-xuanzhuo@linux.alibaba.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] media: v4l2-ctrls: Add average qp control
+To: Ming Qian <ming.qian@nxp.com>, mchehab@kernel.org
+Cc: nicolas@ndufresne.ca, shawnguo@kernel.org, robh+dt@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ linux-imx@nxp.com, xiahong.bao@nxp.com, eagle.zhou@nxp.com,
+ tao.jiang_2@nxp.com, ming.qian@oss.nxp.com, imx@lists.linux.dev,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240506084918.799544-1-ming.qian@nxp.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240506084918.799544-1-ming.qian@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 22, 2024 at 06:22:45PM +0800, Xuan Zhuo wrote:
-> On Wed, 22 May 2024 06:03:01 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > Things to note here:
-> >
-> > - the new Marvell OCTEON DPU driver is not here: latest v4 keeps causing
-> >   build failures on mips. I deferred the pull hoping to get it in
-> >   and I might merge a new version post rc1
-> >   (supposed to be ok for new drivers as they can't cause regressions),
-> >   but we'll see.
-> > - there are also a couple bugfixes under review, to be merged after rc1
-> > - I merged a trivial patch (removing a comment) that also got
-> >   merged through net.
-> >   git handles this just fine and it did not seem worth it
-> >   rebasing to drop it.
-> > - there is a trivial conflict in the header file. Shouldn't be any
-> >   trouble to resolve, but fyi the resolution by Stephen is here
-> > 	diff --cc drivers/virtio/virtio_mem.c
-> > 	index e8355f55a8f7,6d4dfbc53a66..000000000000
-> > 	--- a/drivers/virtio/virtio_mem.c
-> > 	+++ b/drivers/virtio/virtio_mem.c
-> > 	@@@ -21,7 -21,7 +21,8 @@@
-> > 	  #include <linux/bitmap.h>
-> > 	  #include <linux/lockdep.h>
-> > 	  #include <linux/log2.h>
-> > 	 +#include <linux/vmalloc.h>
-> > 	+ #include <linux/suspend.h>
-> >   Also see it here:
-> >   https://lore.kernel.org/all/20240423145947.142171f6@canb.auug.org.au/
-> >
-> >
-> >
-> > The following changes since commit 18daea77cca626f590fb140fc11e3a43c5d41354:
-> >
-> >   Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2024-04-30 12:40:41 -0700)
-> >
-> > are available in the Git repository at:
-> >
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
-> >
-> > for you to fetch changes up to 0b8dbbdcf2e42273fbac9b752919e2e5b2abac21:
-> >
-> >   Merge tag 'for_linus' into vhost (2024-05-12 08:15:28 -0400)
-> >
-> > ----------------------------------------------------------------
-> > virtio: features, fixes, cleanups
-> >
-> > Several new features here:
-> >
-> > - virtio-net is finally supported in vduse.
-> >
-> > - Virtio (balloon and mem) interaction with suspend is improved
-> >
-> > - vhost-scsi now handles signals better/faster.
-> >
-> > - virtio-net now supports premapped mode by default,
-> >   opening the door for all kind of zero copy tricks.
-> >
-> > Fixes, cleanups all over the place.
-> >
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> >
-> > ----------------------------------------------------------------
-> > Christophe JAILLET (1):
-> >       vhost-vdpa: Remove usage of the deprecated ida_simple_xx() API
-> >
-> > David Hildenbrand (1):
-> >       virtio-mem: support suspend+resume
-> >
-> > David Stevens (2):
-> >       virtio_balloon: Give the balloon its own wakeup source
-> >       virtio_balloon: Treat stats requests as wakeup events
-> >
-> > Eugenio Pérez (2):
-> >       MAINTAINERS: add Eugenio Pérez as reviewer
-> >       MAINTAINERS: add Eugenio Pérez as reviewer
-> >
-> > Jiri Pirko (1):
-> >       virtio: delete vq in vp_find_vqs_msix() when request_irq() fails
-> >
-> > Krzysztof Kozlowski (24):
-> >       virtio: balloon: drop owner assignment
-> >       virtio: input: drop owner assignment
-> >       virtio: mem: drop owner assignment
-> >       um: virt-pci: drop owner assignment
-> >       virtio_blk: drop owner assignment
-> >       bluetooth: virtio: drop owner assignment
-> >       hwrng: virtio: drop owner assignment
-> >       virtio_console: drop owner assignment
-> >       crypto: virtio - drop owner assignment
-> >       firmware: arm_scmi: virtio: drop owner assignment
-> >       gpio: virtio: drop owner assignment
-> >       drm/virtio: drop owner assignment
-> >       iommu: virtio: drop owner assignment
-> >       misc: nsm: drop owner assignment
-> >       net: caif: virtio: drop owner assignment
-> >       net: virtio: drop owner assignment
-> >       net: 9p: virtio: drop owner assignment
-> >       vsock/virtio: drop owner assignment
-> >       wifi: mac80211_hwsim: drop owner assignment
-> >       nvdimm: virtio_pmem: drop owner assignment
-> >       rpmsg: virtio: drop owner assignment
-> >       scsi: virtio: drop owner assignment
-> >       fuse: virtio: drop owner assignment
-> >       sound: virtio: drop owner assignment
-> >
-> > Li Zhijian (1):
-> >       vdpa: Convert sprintf/snprintf to sysfs_emit
-> >
-> > Maxime Coquelin (6):
-> >       vduse: validate block features only with block devices
-> >       vduse: Temporarily fail if control queue feature requested
-> >       vduse: enable Virtio-net device type
-> >       vduse: validate block features only with block devices
-> >       vduse: Temporarily fail if control queue feature requested
-> >       vduse: enable Virtio-net device type
-> >
-> > Michael S. Tsirkin (2):
-> >       Merge tag 'stable/vduse-virtio-net' into vhost
-> >       Merge tag 'for_linus' into vhost
-> >
-> > Mike Christie (9):
-> >       vhost-scsi: Handle vhost_vq_work_queue failures for events
-> >       vhost-scsi: Handle vhost_vq_work_queue failures for cmds
-> >       vhost-scsi: Use system wq to flush dev for TMFs
-> >       vhost: Remove vhost_vq_flush
-> >       vhost_scsi: Handle vhost_vq_work_queue failures for TMFs
-> >       vhost: Use virtqueue mutex for swapping worker
-> >       vhost: Release worker mutex during flushes
-> >       vhost_task: Handle SIGKILL by flushing work and exiting
-> >       kernel: Remove signal hacks for vhost_tasks
-> >
-> > Uwe Kleine-König (1):
-> >       virtio-mmio: Convert to platform remove callback returning void
-> >
-> > Xuan Zhuo (7):
-> >       virtio_ring: introduce dma map api for page
-> >       virtio_ring: enable premapped mode whatever use_dma_api
-> >       virtio_net: replace private by pp struct inside page
-> >       virtio_net: big mode support premapped
-> >       virtio_net: enable premapped by default
-> >       virtio_net: rx remove premapped failover code
-> >       virtio_net: remove the misleading comment
+On 06/05/2024 10:49, Ming Qian wrote:
+> Add a control V4L2_CID_MPEG_VIDEO_AVERAGE_QP to report the average qp
+> value of current encoded frame. the value applies to the last dequeued
+> capture buffer.
 > 
-> Hi Michael,
-> 
-> As we discussed here:
-> 
-> 	http://lore.kernel.org/all/CACGkMEuyeJ9mMgYnnB42=hw6umNuo=agn7VBqBqYPd7GN=+39Q@mail.gmail.com
-> 
-> This patch set has been abandoned.
+> Signed-off-by: Ming Qian <ming.qian@nxp.com>
 
-You mean I should drop it? OK.
+Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-> And you miss
+Regards,
+
+	Hans
+
+> ---
+> v3
+> - document the valid range of the new ctrl
 > 
-> 	https://lore.kernel.org/all/20240424091533.86949-1-xuanzhuo@linux.alibaba.com/
+> v2
+>  - improve document description according Hans's comments
+>  - drop volatile flag
 > 
-> Thanks.
+>  .../userspace-api/media/v4l/ext-ctrls-codec.rst    | 14 ++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls-defs.c          |  5 +++++
+>  include/uapi/linux/v4l2-controls.h                 |  2 ++
+>  3 files changed, 21 insertions(+)
 > 
-> >
-> > Yuxue Liu (2):
-> >       vp_vdpa: Fix return value check vp_vdpa_request_irq
-> >       vp_vdpa: don't allocate unused msix vectors
-> >
-> > Zhu Lingshan (1):
-> >       MAINTAINERS: apply maintainer role of Intel vDPA driver
-> >
-> >  MAINTAINERS                                   |  10 +-
-> >  arch/um/drivers/virt-pci.c                    |   1 -
-> >  drivers/block/virtio_blk.c                    |   1 -
-> >  drivers/bluetooth/virtio_bt.c                 |   1 -
-> >  drivers/char/hw_random/virtio-rng.c           |   1 -
-> >  drivers/char/virtio_console.c                 |   2 -
-> >  drivers/crypto/virtio/virtio_crypto_core.c    |   1 -
-> >  drivers/firmware/arm_scmi/virtio.c            |   1 -
-> >  drivers/gpio/gpio-virtio.c                    |   1 -
-> >  drivers/gpu/drm/virtio/virtgpu_drv.c          |   1 -
-> >  drivers/iommu/virtio-iommu.c                  |   1 -
-> >  drivers/misc/nsm.c                            |   1 -
-> >  drivers/net/caif/caif_virtio.c                |   1 -
-> >  drivers/net/virtio_net.c                      | 248 +++++++++++++++++---------
-> >  drivers/net/wireless/virtual/mac80211_hwsim.c |   1 -
-> >  drivers/nvdimm/virtio_pmem.c                  |   1 -
-> >  drivers/rpmsg/virtio_rpmsg_bus.c              |   1 -
-> >  drivers/scsi/virtio_scsi.c                    |   1 -
-> >  drivers/vdpa/vdpa.c                           |   2 +-
-> >  drivers/vdpa/vdpa_user/vduse_dev.c            |  24 ++-
-> >  drivers/vdpa/virtio_pci/vp_vdpa.c             |  27 ++-
-> >  drivers/vhost/scsi.c                          |  70 +++++---
-> >  drivers/vhost/vdpa.c                          |   6 +-
-> >  drivers/vhost/vhost.c                         | 130 ++++++++++----
-> >  drivers/vhost/vhost.h                         |   3 +-
-> >  drivers/virtio/virtio_balloon.c               |  85 +++++----
-> >  drivers/virtio/virtio_input.c                 |   1 -
-> >  drivers/virtio/virtio_mem.c                   |  69 ++++++-
-> >  drivers/virtio/virtio_mmio.c                  |   6 +-
-> >  drivers/virtio/virtio_pci_common.c            |   4 +-
-> >  drivers/virtio/virtio_ring.c                  |  59 +++++-
-> >  fs/coredump.c                                 |   4 +-
-> >  fs/fuse/virtio_fs.c                           |   1 -
-> >  include/linux/sched/vhost_task.h              |   3 +-
-> >  include/linux/virtio.h                        |   7 +
-> >  include/uapi/linux/virtio_mem.h               |   2 +
-> >  kernel/exit.c                                 |   5 +-
-> >  kernel/signal.c                               |   4 +-
-> >  kernel/vhost_task.c                           |  53 ++++--
-> >  net/9p/trans_virtio.c                         |   1 -
-> >  net/vmw_vsock/virtio_transport.c              |   1 -
-> >  sound/virtio/virtio_card.c                    |   1 -
-> >  42 files changed, 578 insertions(+), 265 deletions(-)
-> >
+> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
+> index 2a165ae063fb..4a379bd9e3fb 100644
+> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
+> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec.rst
+> @@ -1653,6 +1653,20 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type -
+>      Quantization parameter for a P frame for FWHT. Valid range: from 1
+>      to 31.
+>  
+> +``V4L2_CID_MPEG_VIDEO_AVERAGE_QP (integer)``
+> +    This read-only control returns the average QP value of the currently
+> +    encoded frame. The value applies to the last dequeued capture buffer
+> +    (VIDIOC_DQBUF). Its valid range depends on the encoding format and parameters.
+> +    For H264, its valid range is from 0 to 51.
+> +    For HEVC, its valid range is from 0 to 51 for 8 bit and
+> +    from 0 to 63 for 10 bit.
+> +    For H263 and MPEG4, its valid range is from 1 to 31.
+> +    For VP8, its valid range is from 0 to 127.
+> +    For VP9, its valid range is from 0 to 255.
+> +    If the codec's MIN_QP and MAX_QP are set, then the QP will meet both requirements.
+> +    Codecs need to always use the specified range, rather then a HW custom range.
+> +    Applicable to encoders
+> +
+>  .. raw:: latex
+>  
+>      \normalsize
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls-defs.c b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> index 8696eb1cdd61..1ea52011247a 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls-defs.c
+> @@ -970,6 +970,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_LTR_COUNT:			return "LTR Count";
+>  	case V4L2_CID_MPEG_VIDEO_FRAME_LTR_INDEX:		return "Frame LTR Index";
+>  	case V4L2_CID_MPEG_VIDEO_USE_LTR_FRAMES:		return "Use LTR Frames";
+> +	case V4L2_CID_MPEG_VIDEO_AVERAGE_QP:			return "Average QP Value";
+>  	case V4L2_CID_FWHT_I_FRAME_QP:				return "FWHT I-Frame QP Value";
+>  	case V4L2_CID_FWHT_P_FRAME_QP:				return "FWHT P-Frame QP Value";
+>  
+> @@ -1507,6 +1508,10 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  		*max = 0xffffffffffffLL;
+>  		*step = 1;
+>  		break;
+> +	case V4L2_CID_MPEG_VIDEO_AVERAGE_QP:
+> +		*type = V4L2_CTRL_TYPE_INTEGER;
+> +		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +		break;
+>  	case V4L2_CID_PIXEL_RATE:
+>  		*type = V4L2_CTRL_TYPE_INTEGER64;
+>  		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 99c3f5e99da7..974fd254e573 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -898,6 +898,8 @@ enum v4l2_mpeg_video_av1_level {
+>  	V4L2_MPEG_VIDEO_AV1_LEVEL_7_3 = 23
+>  };
+>  
+> +#define V4L2_CID_MPEG_VIDEO_AVERAGE_QP  (V4L2_CID_CODEC_BASE + 657)
+> +
+>  /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
+>  #define V4L2_CID_CODEC_CX2341X_BASE				(V4L2_CTRL_CLASS_CODEC | 0x1000)
+>  #define V4L2_CID_MPEG_CX2341X_VIDEO_SPATIAL_FILTER_MODE		(V4L2_CID_CODEC_CX2341X_BASE+0)
 
 
