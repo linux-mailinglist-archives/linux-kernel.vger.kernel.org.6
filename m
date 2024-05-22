@@ -1,206 +1,168 @@
-Return-Path: <linux-kernel+bounces-185962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644488CBD6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:02:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8548CBD70
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 195DB2826BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDADE1C20CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1513B7E0E4;
-	Wed, 22 May 2024 09:02:05 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7599F80045;
+	Wed, 22 May 2024 09:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4+W7yQj"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49F718EB1
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BE418EB1;
+	Wed, 22 May 2024 09:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716368524; cv=none; b=oPOTrRQCsqZ9mexaNPFsEA16b6Fw13xanURDx7Ne+unaF0dTULkBY4iMPyilBCbuAJfYilgxn4fvcB3m6eJl2OswV9+4iYLHCeeGfGNPzy1P1ZnIPVa/cEuLpdO+qBb1ega8l0NN6F5q7pphKm8YcIC8NyGhf40amGmE5wm78KI=
+	t=1716368571; cv=none; b=HrEM+egvLRthT+I8+/xrTq/XVXzxMwOT0A8rWtkOiMOS80CPsw//0/gxvWmbd8NYsysA6R0wMAA4MdVW5Ztjegv8iudhWuCjk27XXyob2ejlqIAd+L6+ZjMQaHaE2KWfCUybw0oHkeNCH2Nc5AIA9Ewlq358s6191IylHDyW0Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716368524; c=relaxed/simple;
-	bh=4UzTD7C9lHLWck3Qurn1hE1jt9KY6qkwQLk+zDYylDw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=p9DwB9toh2mI6Sgn8ELBTjypfgms1T+bNTxQoyPbAflibZJH4Ch60YijZDdx30YkNh7VG47fPeFAvh9QrHsZcJfuyEK+/qHjG1G1pvnbxn/JogZDJoV3vo0fJ+j04f9mSTMRAjX/niLZ5R3yZRTSCXemOhr9dRChJlg/q7jrWdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 44M918Eh051203;
-	Wed, 22 May 2024 17:01:08 +0800 (+08)
-	(envelope-from Dongliang.Cui@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VklYq6l8Xz2PrQJr;
-	Wed, 22 May 2024 16:57:35 +0800 (CST)
-Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 22 May 2024 17:01:06 +0800
-From: Dongliang Cui <dongliang.cui@unisoc.com>
-To: <axboe@kernel.dk>, <rostedt@goodmis.org>, <mhiramat@kernel.org>,
-        <mathieu.desnoyers@efficios.com>, <ebiggers@kernel.org>
-CC: <ke.wang@unisoc.com>, <hongyu.jin.cn@gmail.com>, <niuzhiguo84@gmail.com>,
-        <hao_hao.wang@unisoc.com>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <akailash@google.com>,
-        <cuidongliang390@gmail.com>, Dongliang Cui <dongliang.cui@unisoc.com>
-Subject: [PATCH v3] block: Add ioprio to block_rq tracepoint
-Date: Wed, 22 May 2024 17:01:04 +0800
-Message-ID: <20240522090104.1751148-1-dongliang.cui@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716368571; c=relaxed/simple;
+	bh=df1Xo2E4oNV3Ik/iVOCYN6L6LPpEV5UloozS7oqR3Sg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kzRwhdYLZUpcXaQRIcpPRdyM3/cXm+ucylXRm3R6w8jdGi+TL8Lpy48VyfdB2hl6aWfulOB+XiRn2SHlCURRK+yrYyz9omh6i2DNtN935AZSSQIvyVQy4kwsgdab2cQjymdarKh4fjEPYY9ZarkJsgX8X9FDflEyQuA56YOJhto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4+W7yQj; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1eeabda8590so7962485ad.0;
+        Wed, 22 May 2024 02:02:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716368566; x=1716973366; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nLNtBYttVOortE4drZbAdtdQ+c5yWCs8A7f+Kl7W60c=;
+        b=H4+W7yQj7Ep82CMdk0DSqjWuA+jd7e8oEORZw5+GEidBaKGkPxy1stTRE6qUhyT0Fj
+         aJZ51cmszUvbXyxdDyRaQ+KlVewiw/rzythgOVYWFTWRG+T7rzUZMBGrNbtKrfF7+g06
+         hlbXaj7TYxCB+V+/Gn8bVZOADojfJXVPEgsGlVdhp+FwaPTFooytIqVcS5qgnqSFV/KP
+         58BkddzkSgq43xhoGaBchn2VDglDHwJI2ypm050f3d2upixOnCkTUOnpWM2M38z5eBgx
+         qx1ulMiuHnO9/A2UinRUO2T0T/RatRqtdmqmATRcIXipRGbXE24J4LVL23uCYdhRPvED
+         nU8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716368566; x=1716973366;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nLNtBYttVOortE4drZbAdtdQ+c5yWCs8A7f+Kl7W60c=;
+        b=pyyyIp/FiZKzRERLnotunFlZwBTpcMw/97pdZ4i3X/5G2j9eFpB6U/f+o5ehMj0sdF
+         pOttHpxut6Y9Qt7qwBjtq/OhYFXnf9vSnwbqpTe8x66SVe+wwT+ue16S8JRqK/NKBuDR
+         0ewVrtQFZ1R8eRZmATn1jDXOdTSNDxyuv/qHZgJ0EOoPMrttb7FurR20B2nD6LvCCOxj
+         qHxgHlwjr2TyAmClemK9ZTJG61O8daz3/0u9YRTedKameH8MyP8fgzN/ykXbOh5xA8uc
+         7JxAXpDVOGcJ/vfNch/C+lxA5G2FG/8EsVvcPquymX9y+fMycjFB9ixpjMeVEZsWnXeA
+         eJ7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Xgd5HO4hmgc3qfHaVRQ14oBMH/ofTdMzHq8txxiRQhf+hKt5YzPMisRU6E3XkWxqvHK8DarXDO9H5yXjA7NPww961RwUlFv7VUA=
+X-Gm-Message-State: AOJu0Yx8lcsY8848zdkCOXlW3Xom1W05Subi8sf5G4SnCHISOQioszPZ
+	1RfaPFaN60J5FfsqCl2rZRYr155mfVegi39ePNrPG2Oyj2fLgJIU
+X-Google-Smtp-Source: AGHT+IF29gJJxooGTt+9X3IuC3RscusZu+sJgvCtr+mjChH43A1gvSfHGvV2d3z6054ZVRbSW9iN0Q==
+X-Received: by 2002:a17:902:ecc7:b0:1f3:53c:32be with SMTP id d9443c01a7336-1f31c95c225mr15349755ad.2.1716368566546;
+        Wed, 22 May 2024 02:02:46 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad819csm235033875ad.84.2024.05.22.02.02.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 02:02:46 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: sumit.semwal@linaro.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org,
+	dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+	benjamin.gaignard@collabora.com,
+	Brian.Starkey@arm.com,
+	jstultz@google.com,
+	tjmercier@google.com,
+	christian.koenig@amd.com,
+	Barry Song <v-songbaohua@oppo.com>
+Subject: [RFC PATCH] dma-buf: align fd_flags and heap_flags with dma_heap_allocation_data
+Date: Wed, 22 May 2024 21:01:58 +1200
+Message-Id: <20240522090158.121797-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 44M918Eh051203
 
-Sometimes we need to track the processing order of requests with
-ioprio set. So the ioprio of request can be useful information.
+From: Barry Song <v-songbaohua@oppo.com>
 
-Example：
+dma_heap_allocation_data defines the UAPI as follows:
 
-block_rq_insert: 8,0 WS 4096 () 16573296 + 8 rt,4 [highpool[1]]
-block_rq_issue: 8,0 WS 4096 () 16573296 + 8 rt,4 [kworker/7:0H]
-block_rq_complete: 8,0 WS () 16573296 + 8 rt,4 [0]
+ struct dma_heap_allocation_data {
+         __u64 len;
+         __u32 fd;
+         __u32 fd_flags;
+         __u64 heap_flags;
+ };
 
-Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
+However, dma_heap_buffer_alloc() casts them into unsigned int. It's unclear
+whether this is intentional or what the purpose is, but it can be quite
+confusing for users.
+
+Adding to the confusion, dma_heap_ops.allocate defines both of these as
+unsigned long. Fortunately, since dma_heap_ops is not part of the UAPI,
+it is less of a concern.
+
+struct dma_heap_ops {
+        struct dma_buf *(*allocate)(struct dma_heap *heap,
+                                    unsigned long len,
+                                    unsigned long fd_flags,
+                                    unsigned long heap_flags);
+};
+
+I am sending this RFC in hopes of clarifying these confusions.
+
+If the goal is to constrain both flags to 32 bits while ensuring the struct
+is aligned to 64 bits, it would have been more suitable to define
+dma_heap_allocation_data accordingly from the beginning, like so:
+
+ struct dma_heap_allocation_data {
+         __u64 len;
+         __u32 fd;
+         __u32 fd_flags;
+         __u32 heap_flags;
+	 __u32 padding;
+ };
+
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 ---
-Changes in v3:
- - Change the location of the priority macro definition.
----
----
- include/trace/events/block.h | 43 +++++++++++++++++++++++++++---------
- 1 file changed, 33 insertions(+), 10 deletions(-)
+ drivers/dma-buf/dma-heap.c    | 4 ++--
+ include/uapi/linux/dma-heap.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-index 0e128ad51460..4563c852ad65 100644
---- a/include/trace/events/block.h
-+++ b/include/trace/events/block.h
-@@ -9,9 +9,17 @@
- #include <linux/blkdev.h>
- #include <linux/buffer_head.h>
- #include <linux/tracepoint.h>
-+#include <uapi/linux/ioprio.h>
+diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+index 84ae708fafe7..2298ca5e112e 100644
+--- a/drivers/dma-buf/dma-heap.c
++++ b/drivers/dma-buf/dma-heap.c
+@@ -50,8 +50,8 @@ static struct class *dma_heap_class;
+ static DEFINE_XARRAY_ALLOC(dma_heap_minors);
  
- #define RWBS_LEN	8
+ static int dma_heap_buffer_alloc(struct dma_heap *heap, size_t len,
+-				 unsigned int fd_flags,
+-				 unsigned int heap_flags)
++				 u32 fd_flags,
++				 u64 heap_flags)
+ {
+ 	struct dma_buf *dmabuf;
+ 	int fd;
+diff --git a/include/uapi/linux/dma-heap.h b/include/uapi/linux/dma-heap.h
+index 6f84fa08e074..a4cf716a49fa 100644
+--- a/include/uapi/linux/dma-heap.h
++++ b/include/uapi/linux/dma-heap.h
+@@ -19,7 +19,7 @@
+ #define DMA_HEAP_VALID_FD_FLAGS (O_CLOEXEC | O_ACCMODE)
  
-+#define IOPRIO_CLASS_STRINGS \
-+	{ IOPRIO_CLASS_NONE,	"none" }, \
-+	{ IOPRIO_CLASS_RT,	"rt" }, \
-+	{ IOPRIO_CLASS_BE,	"be" }, \
-+	{ IOPRIO_CLASS_IDLE,	"idle" }, \
-+	{ IOPRIO_CLASS_INVALID,	"invalid"}
-+
- #ifdef CONFIG_BUFFER_HEAD
- DECLARE_EVENT_CLASS(block_buffer,
- 
-@@ -82,6 +90,8 @@ TRACE_EVENT(block_rq_requeue,
- 		__field(  dev_t,	dev			)
- 		__field(  sector_t,	sector			)
- 		__field(  unsigned int,	nr_sector		)
-+		__field(  unsigned int,	ioprio_class		)
-+		__field(  unsigned int, ioprio_value		)
- 		__array(  char,		rwbs,	RWBS_LEN	)
- 		__dynamic_array( char,	cmd,	1		)
- 	),
-@@ -90,16 +100,19 @@ TRACE_EVENT(block_rq_requeue,
- 		__entry->dev	   = rq->q->disk ? disk_devt(rq->q->disk) : 0;
- 		__entry->sector    = blk_rq_trace_sector(rq);
- 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
-+		__entry->ioprio_class = rq->ioprio >> IOPRIO_CLASS_SHIFT & 0x3;
-+		__entry->ioprio_value = rq->ioprio & 0xff;
- 
- 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
- 		__get_str(cmd)[0] = '\0';
- 	),
- 
--	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
-+	TP_printk("%d,%d %s (%s) %llu + %u %s,%u [%d]",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  __entry->rwbs, __get_str(cmd),
--		  (unsigned long long)__entry->sector,
--		  __entry->nr_sector, 0)
-+		  (unsigned long long)__entry->sector, __entry->nr_sector,
-+		  __print_symbolic(__entry->ioprio_class, IOPRIO_CLASS_STRINGS),
-+		  __entry->ioprio_value, 0)
- );
- 
- DECLARE_EVENT_CLASS(block_rq_completion,
-@@ -113,6 +126,8 @@ DECLARE_EVENT_CLASS(block_rq_completion,
- 		__field(  sector_t,	sector			)
- 		__field(  unsigned int,	nr_sector		)
- 		__field(  int	,	error			)
-+		__field(  unsigned int,	ioprio_class		)
-+		__field(  unsigned int, ioprio_value		)
- 		__array(  char,		rwbs,	RWBS_LEN	)
- 		__dynamic_array( char,	cmd,	1		)
- 	),
-@@ -122,16 +137,19 @@ DECLARE_EVENT_CLASS(block_rq_completion,
- 		__entry->sector    = blk_rq_pos(rq);
- 		__entry->nr_sector = nr_bytes >> 9;
- 		__entry->error     = blk_status_to_errno(error);
-+		__entry->ioprio_class = rq->ioprio >> IOPRIO_CLASS_SHIFT & 0x3;
-+		__entry->ioprio_value = rq->ioprio & 0xff;
- 
- 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
- 		__get_str(cmd)[0] = '\0';
- 	),
- 
--	TP_printk("%d,%d %s (%s) %llu + %u [%d]",
-+	TP_printk("%d,%d %s (%s) %llu + %u %s,%u [%d]",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  __entry->rwbs, __get_str(cmd),
--		  (unsigned long long)__entry->sector,
--		  __entry->nr_sector, __entry->error)
-+		  (unsigned long long)__entry->sector, __entry->nr_sector,
-+		  __print_symbolic(__entry->ioprio_class, IOPRIO_CLASS_STRINGS),
-+		  __entry->ioprio_value, __entry->error)
- );
+ /* Currently no heap flags */
+-#define DMA_HEAP_VALID_HEAP_FLAGS (0)
++#define DMA_HEAP_VALID_HEAP_FLAGS (0ULL)
  
  /**
-@@ -180,8 +198,10 @@ DECLARE_EVENT_CLASS(block_rq,
- 		__field(  sector_t,	sector			)
- 		__field(  unsigned int,	nr_sector		)
- 		__field(  unsigned int,	bytes			)
-+		__field(  unsigned int,	ioprio_class		)
-+		__field(  unsigned int, ioprio_value		)
- 		__array(  char,		rwbs,	RWBS_LEN	)
--		__array(  char,         comm,   TASK_COMM_LEN   )
-+		__array(  char,		comm,   TASK_COMM_LEN	)
- 		__dynamic_array( char,	cmd,	1		)
- 	),
- 
-@@ -190,17 +210,20 @@ DECLARE_EVENT_CLASS(block_rq,
- 		__entry->sector    = blk_rq_trace_sector(rq);
- 		__entry->nr_sector = blk_rq_trace_nr_sectors(rq);
- 		__entry->bytes     = blk_rq_bytes(rq);
-+		__entry->ioprio_class = rq->ioprio >> IOPRIO_CLASS_SHIFT & 0x3;
-+		__entry->ioprio_value = rq->ioprio & 0xff;
- 
- 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
- 		__get_str(cmd)[0] = '\0';
- 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
- 	),
- 
--	TP_printk("%d,%d %s %u (%s) %llu + %u [%s]",
-+	TP_printk("%d,%d %s %u (%s) %llu + %u %s,%u [%s]",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  __entry->rwbs, __entry->bytes, __get_str(cmd),
--		  (unsigned long long)__entry->sector,
--		  __entry->nr_sector, __entry->comm)
-+		  (unsigned long long)__entry->sector, __entry->nr_sector,
-+		  __print_symbolic(__entry->ioprio_class, IOPRIO_CLASS_STRINGS),
-+		  __entry->ioprio_value, __entry->comm)
- );
- 
- /**
+  * struct dma_heap_allocation_data - metadata passed from userspace for
 -- 
-2.25.1
+2.34.1
 
 
