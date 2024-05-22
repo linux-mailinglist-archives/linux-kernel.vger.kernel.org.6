@@ -1,154 +1,124 @@
-Return-Path: <linux-kernel+bounces-185822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC7D8CBB88
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:48:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C44E8CBB8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10501F2238A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:48:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 969B41C21959
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3EF78C67;
-	Wed, 22 May 2024 06:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9882979B87;
+	Wed, 22 May 2024 06:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A9Wd/ZiV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhdaP4IG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF5E4C62;
-	Wed, 22 May 2024 06:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9978770EA;
+	Wed, 22 May 2024 06:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716360530; cv=none; b=hgsd88N72/TaIhEGfWlOlbAyWOyrfBk44D+AXsZtaka1fTY8dTK6gVizP+IVFxBFJHQnJ7ngCaCyjBjscZEqvekPm+98cOqoe9h6txBFPC1rDYQBe12id9aPO0aypkrFML+zy57WvSv0ecVmXAhfwuj3r8sZffTDA6czDTGBAkE=
+	t=1716360548; cv=none; b=FwLfydWvOkk+tx5jZXf1KauRol3JEsqC9rxepnXiSHYQ9dp0dbBAHZ89Uujy9kEoXZPIFztVfVhr0HpBROszewF16RPf0AmP/qhOvzD6M4+xbqwnT00iiTOZMTs+3uISoIhnrEAA7YR4scIcZMs2KujOafXG0Uc4t/y2OM1SVxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716360530; c=relaxed/simple;
-	bh=Jl2fXLtvIPGDFHybLQKPphcqtovlI/3sW73cHL+/w7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FHYf+mL8cQkER2Rg9SdMhsqK2aMpTmDxm9J4gTRbcODA7J984c+977dT/sG8jIOzoLXdGSeWBeR2ZkmqSGnplHvLE2a9BYBV4Ttfh1KZanoz+/8FVQdJw3dDwfLjGe2BL3M83NizMTugjvkBXoQCFQJRARu+KS3j1vs0ay5jVu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A9Wd/ZiV; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716360528; x=1747896528;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Jl2fXLtvIPGDFHybLQKPphcqtovlI/3sW73cHL+/w7M=;
-  b=A9Wd/ZiVsWKsMlYcEyEDrjz+OG15+w5EnHxAF3PEVu4HAb2gyRo4JMcS
-   a8wWLzqaImWZLkK/T21HOz7l7/ov1TjakN/KjoHwNmC58Gbi8XvqZX1x+
-   zr2b8PHDJerGHupJHNcldBGl/px+nTUPiYilPRFIU2H1QTPrdCAupY66a
-   iJif8KU4y28HO4CId7qJQnNM9ZjRAqpXz2WTCcfSt6Kc+3xVzq3SM+8aE
-   TmMfFBpLOQFCdOl6SdKzb6bxnMqhVdat4bkMqK27zXhptbVs1ABBidDm9
-   hVPpxZgT1WOVZjKuQjbH15zXsHdMu4ka1A6HxFNYdKfrucltriOQEd6vC
-   w==;
-X-CSE-ConnectionGUID: bLFCmyoFQwSnS5xt/AMJeg==
-X-CSE-MsgGUID: I3XLXv/nQ9aEQyaWpy4XlA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="23997423"
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="23997423"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 23:48:48 -0700
-X-CSE-ConnectionGUID: x2vpTcWsR+aUAuHCJmDz+w==
-X-CSE-MsgGUID: fbL4ld0/TTOn7b5M4QLCvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="37572475"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 23:48:45 -0700
-Message-ID: <46dae102-b6b0-4626-a33e-c20b08e97a14@intel.com>
-Date: Wed, 22 May 2024 14:48:42 +0800
+	s=arc-20240116; t=1716360548; c=relaxed/simple;
+	bh=CeMXYGdyxRFb87MLEU2wKkVTrxdM2DN0261kgTe8GyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7CsZMcrLabFjdpP4d3kzR/bU123PzR3S6MSsIiQErpw8Erg9F92vFJYHsXMGlnEWfFfveb+wyR2sCJgGK2Aq6R3ii8TFwn4Ix0DngA9a4tfZYGFpNnyDjm7SrKmmJYhCoCKuTcYiW0iQwxu2gbC+6atsIENZYNR6GHOr5x60pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhdaP4IG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D8E9C2BD11;
+	Wed, 22 May 2024 06:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716360548;
+	bh=CeMXYGdyxRFb87MLEU2wKkVTrxdM2DN0261kgTe8GyA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OhdaP4IGKfpy9K9vnmhuIP+iDLoyVNynedwbbMol1RbN9E20GAhr28+L+FFIfKbUN
+	 OsnSuuT4f3a2/aXNN/zLMn33P/S6yrd2zJIXaihCJ353zLMajd/RmybzEt7fUNnhcr
+	 gKt11gv/llSJArVXURFq3nzcgZk6ipBNygRiaEsYpGhnVHdztDdWiOLJbw1Pfol+2P
+	 Yyz2I4+E2lP8YgTOV7+MCRGJxNeOXBb0Jlvg6BFDs5H+j0GuuK5kgIHB6pLMC2ATjk
+	 hY4pzHWRhZlI++YsPyebKYdojp306tmwkfZypEc/3QeKKlo40npn0I49y8Q1BuUX92
+	 hol4ewdWNrZyg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s9fmZ-000000002vV-2Xji;
+	Wed, 22 May 2024 08:49:04 +0200
+Date: Wed, 22 May 2024 08:49:03 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 11/13] mfd: pm8008: rework driver
+Message-ID: <Zk2VX5JRzmePxG4N@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-12-johan+linaro@kernel.org>
+ <ZjktIrsZS-T7cm-A@surfacebook.localdomain>
+ <ZjyafGz_1pY4J9C7@hovoldconsulting.com>
+ <CAHp75VfP2AB45mn6gB3suCAO9iT3bOWZ=7m9U7E087Lac0P3gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 04/10] KVM: VMX: Move MSR_IA32_VMX_BASIC bit defines to
- asm/vmx.h
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>, Shan Kang <shan.kang@intel.com>,
- Xin Li <xin3.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>
-References: <20240520175925.1217334-1-seanjc@google.com>
- <20240520175925.1217334-5-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240520175925.1217334-5-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VfP2AB45mn6gB3suCAO9iT3bOWZ=7m9U7E087Lac0P3gg@mail.gmail.com>
 
-On 5/21/2024 1:59 AM, Sean Christopherson wrote:
-> From: Xin Li <xin3.li@intel.com>
+On Fri, May 10, 2024 at 04:15:43PM +0300, Andy Shevchenko wrote:
+> On Thu, May 9, 2024 at 12:42 PM Johan Hovold <johan@kernel.org> wrote:
+> > On Mon, May 06, 2024 at 10:18:58PM +0300, Andy Shevchenko wrote:
+> > > Mon, May 06, 2024 at 05:08:28PM +0200, Johan Hovold kirjoitti:
+
+> > > > +static void devm_irq_domain_fwnode_release(void *res)
+> > > > +{
+> > >
+> > > > +   struct fwnode_handle *fwnode = res;
+> > >
+> > > Unneeded line, can be
+> > >
+> > > static void devm_irq_domain_fwnode_release(void *fwnode)
+> > >
+> > > > +   irq_domain_free_fwnode(fwnode);
+> > > > +}
+> >
+> > I think I prefer it this way for clarity and for type safety in the
+> > unlikely even that the argument to irq_domain_free_fwnode() would ever
+> > change.
 > 
-> Move the bit defines for MSR_IA32_VMX_BASIC from msr-index.h to vmx.h so
-> that they are colocated with other VMX MSR bit defines, and with the
-> helpers that extract specific information from an MSR_IA32_VMX_BASIC value.
+> If it ever changes, the allocation part most likely would need an
+> update and since devm_add_action() takes this type of function, I
+> don't believe the argument would ever change from void * to something
+> else. With this it just adds an additional burden on the conversion.
+
+I was referring to the irq_domain_free_fwnode() prototype.
+ 
+> > > > +   name = devm_kasprintf(dev, GFP_KERNEL, "%pOF-internal", dev->of_node);
+> > >
+> > > You are using fwnode for IRQ domain and IRQ domain core uses fwnode, why OF here?
+> > >
+> > >       name = devm_kasprintf(dev, GFP_KERNEL, "%pfw-internal", dev_fwnode(dev));
+> >
+> > This driver only support OF so why bother.
 > 
-> Opportunistically use BIT_ULL() instead of open coding hex values.
-> 
-> Opportunistically rename VMX_BASIC_64 to VMX_BASIC_32BIT_PHYS_ADDR_ONLY,
-> as "VMX_BASIC_64" is widly misleading.  The flag enumerates that addresses
-> are limited to 32 bits, not that 64-bit addresses are allowed.
-> 
-> Cc: Shan Kang <shan.kang@intel.com>
-> Cc: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Xin Li <xin3.li@intel.com>
-> [sean: split to separate patch, write changelog]
-> Reviewed-by: Zhao Liu <zhao1.liu@intel.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/include/asm/msr-index.h | 8 --------
->   arch/x86/include/asm/vmx.h       | 7 +++++++
->   2 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> index b14434af00df..7e7cad59e552 100644
-> --- a/arch/x86/include/asm/msr-index.h
-> +++ b/arch/x86/include/asm/msr-index.h
-> @@ -1168,14 +1168,6 @@
->   #define MSR_IA32_VMX_VMFUNC             0x00000491
->   #define MSR_IA32_VMX_PROCBASED_CTLS3	0x00000492
->   
-> -/* VMX_BASIC bits and bitmasks */
-> -#define VMX_BASIC_VMCS_SIZE_SHIFT	32
-> -#define VMX_BASIC_TRUE_CTLS		(1ULL << 55)
-> -#define VMX_BASIC_64		0x0001000000000000LLU
-> -#define VMX_BASIC_MEM_TYPE_SHIFT	50
+> Sure, but it makes a bit of inconsistency.
 
-> -#define VMX_BASIC_MEM_TYPE_MASK	0x003c000000000000LLU
+No, I don't consider this an inconsistency. Again, *this* is an OF
+driver, other subsystems need to deal with ACPI and use fwnode.
 
-VMX_BASIC_MEM_TYPE_MASK	gets deleted. It deserves to be mentioned?
-
-> -#define VMX_BASIC_INOUT		0x0040000000000000LLU
-> -
->   /* Resctrl MSRs: */
->   /* - Intel: */
->   #define MSR_IA32_L3_QOS_CFG		0xc81
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index e531d8d80a11..81b986e501a9 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -135,6 +135,13 @@
->   #define VMX_VMFUNC_EPTP_SWITCHING               VMFUNC_CONTROL_BIT(EPTP_SWITCHING)
->   #define VMFUNC_EPTP_ENTRIES  512
->   
-> +#define VMX_BASIC_VMCS_SIZE_SHIFT		32
-> +#define VMX_BASIC_32BIT_PHYS_ADDR_ONLY		BIT_ULL(48)
-> +#define VMX_BASIC_DUAL_MONITOR_TREATMENT	BIT_ULL(49)
-
-why add it?
-
-> +#define VMX_BASIC_MEM_TYPE_SHIFT		50
-> +#define VMX_BASIC_INOUT				BIT_ULL(54)
-> +#define VMX_BASIC_TRUE_CTLS			BIT_ULL(55)
-> +
->   static inline u32 vmx_basic_vmcs_revision_id(u64 vmx_basic)
->   {
->   	return vmx_basic & GENMASK_ULL(30, 0);
-
+Johan
 
