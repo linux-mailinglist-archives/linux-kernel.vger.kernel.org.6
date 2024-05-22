@@ -1,178 +1,143 @@
-Return-Path: <linux-kernel+bounces-185764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9369D8CBA67
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:43:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E368CBA65
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475BC2826F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB2BE1F2252B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004F9770ED;
-	Wed, 22 May 2024 04:43:43 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEC5770E7;
+	Wed, 22 May 2024 04:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7g07fsQ"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E455B626CB;
-	Wed, 22 May 2024 04:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0C737144;
+	Wed, 22 May 2024 04:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716353022; cv=none; b=QO5DXLbXUHyW2GgCAvIL2ZrbRbpfWKtgAe5pQJy+isB2d1B8V52gNN2tm3NZrLElxkxo9L0GE6bUuNg+R2JqVQZcSiwBzFI/prnF2p8bn2/K5u0LvL0fCmuVb7VH4Glf/xq9YZBmkKN1zxc46d7+NEzxo/P5XgiP2b/FPTtt7KY=
+	t=1716353008; cv=none; b=scCt3F0bSNguTjMBWkOdkhTevQv8kvxzf5ZBcIVvwUWsnQxJfYJZMqhnz/zRUx3QUNtjFNbNm6AAQdQ7ioyU4vS+vPmBdFa3J3hmZX3W0VdPgqCysbOVM7SQ8+KpiZDfSZD0PHBTVGYaPfiLtzS0Eq28vOadzxaffImotmuu0NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716353022; c=relaxed/simple;
-	bh=GifwPNjkmdSh84BrObBoXhtNIvv2Uc6L8fR11qFS1AI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=if2AJP/jkyAuar9n82Ms3ej47w90V0VEhELFlBurtZ7/JWRBhuVrMqCOx2r++4o7CS7g8t/r5bygdzZqxVzvVEw0k9G1Nv+ncYH+ImtcjeHHUkkbo/KynFYG0q+RjrITXGnJy59NnWxwNEuBUUsoF/vU1T1B88/QPWeQzTezu5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44M4hCIa93476326, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44M4hCIa93476326
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 May 2024 12:43:12 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 22 May 2024 12:43:12 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 22 May 2024 12:43:11 +0800
-Received: from RTEXMBS03.realtek.com.tw ([fe80::b9ff:7c04:a2d:c266]) by
- RTEXMBS03.realtek.com.tw ([fe80::b9ff:7c04:a2d:c266%2]) with mapi id
- 15.01.2507.035; Wed, 22 May 2024 12:43:11 +0800
-From: Larry Chiu <larry.chiu@realtek.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Justin Lai <justinlai0215@realtek.com>,
-        "kuba@kernel.org"
-	<kuba@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "pabeni@redhat.com"
-	<pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org" <horms@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>
-Subject: RE: [PATCH net-next v19 01/13] rtase: Add pci table supported in this module
-Thread-Topic: [PATCH net-next v19 01/13] rtase: Add pci table supported in
- this module
-Thread-Index: AQHaqC9Rjgvgl8xidUGsWwGzPtgZ5LGa66SAgAZDQWCAAA0PoP//58SAgAGQINA=
-Date: Wed, 22 May 2024 04:43:11 +0000
-Message-ID: <f9133a36bbae41138c3080f8f6282bfd@realtek.com>
-References: <20240517075302.7653-1-justinlai0215@realtek.com>
- <20240517075302.7653-2-justinlai0215@realtek.com>
- <d840e007-c819-42df-bc71-536328d4f5d7@lunn.ch>
- <e5d7a77511f746bdb0b38b6174ef5de4@realtek.com>
- <97e30c5f-1656-46d0-b06c-3607a90ec96f@lunn.ch>
-In-Reply-To: <97e30c5f-1656-46d0-b06c-3607a90ec96f@lunn.ch>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1716353008; c=relaxed/simple;
+	bh=rOjGBGJlpqLBibSals7NQDD+aW+xnPnJbgEyujc2IxM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IzNx67rXad3Jv5Ck4bUBTywKv4Vwvohu2etq4iPdqyZudOdlrFttMDEE7xI6tDFUJSQ+p0nIismJlsgQBR7SPPgDFIXroMu6DjyVx+izWeOKKtMPYEnFU8QeUUEwpBCGBNLLwSu0ODo+YHUTyGd5SgqdJtUear67K5ZFmxLxKuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7g07fsQ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34dc8d3fbf1so3404566f8f.1;
+        Tue, 21 May 2024 21:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716353004; x=1716957804; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AmHrqywSLIqSjg1vJV1MQvzffoeBek4ngmT0+/XAH2s=;
+        b=T7g07fsQSBG21rtc6TgBz/57zSZ6nVH/6DBlAyiAdgqv51foi8w/zKGjQsEp4JwRWf
+         Epy2E/8tZVpWl+YOhruM4oeXWv+t6yZ9wIL2ge/xaMrHHEu1b/PnHzSZ1zhzMvNdLNMP
+         qOgoEmqO3+eLginj879ldk3tAaiGIGO0vEekuyS9DElAWmAxysKQfh9F50YGkBMfL6Q+
+         RYfrF7ZA90+DyPHBZbF9bBkOjHKoaup9pDBfrFVCeDEsbVJCTZbD3GCjzowvoFb43sb2
+         lHNdRTWSgRDVnsS8VGx+lWDiZYkQGdTlwcpxZ09lCVcSdoB97wWaPkSCqD+0DwE+PbZc
+         OE/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716353004; x=1716957804;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AmHrqywSLIqSjg1vJV1MQvzffoeBek4ngmT0+/XAH2s=;
+        b=mT7blln1H/n6mm27jcqCATNHkX42Dpn5EOxH7SsNhKP00iFrh1BVJozMW4UjNDumym
+         JzB8py6Bbon60MEInbNBgIwOamKa0uGJYUEfCjNEqJCV8KbMMR5l7sLEWxdxD5j6R2mu
+         YZJDFJDhfVLHT8WHhZXrYIff/yKda8NjFHkfBm9lGR/i7fc7Rlh2EwdACDLO/0D18xrs
+         QfOgvXov6smVRtwClKWXokVPioybPjGLxeHMNFKBRQApsQZEcmZUcXjGtl0PT/fwPi9B
+         mHwsoc/eW8p9Tko9iKLdm6rtLNtDKsYZBGEmxGE+mTaLLw2BLvw/DU+nBfBjfLIf5vv1
+         t66Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5eiKdrYBlX8AXMd6lbwyF4dw+osOOerPwkR24IEFxCIO9p/dwy/xS9sVEHEKlPnKotth++MAVFmGIZl41m7A6CHb6G5x8wvkltRAT
+X-Gm-Message-State: AOJu0YzCS4m4tOfgo1nTEzWe2gFSCv7eGSGn/IJi7TbOL06+AHwFc5jT
+	RHHs7WQ9VqVmjltZZVJVezeeDPOAYlwKh7YluP+rokZUQanapMHdfDAWoA==
+X-Google-Smtp-Source: AGHT+IH9ikW4E4tHEicpzfvYHbvquTNq7PRR5DdZGtiEVgQbOy5637MdDZfAFOGp3f8I34KHrLqW4Q==
+X-Received: by 2002:adf:eeca:0:b0:34d:9e54:11ec with SMTP id ffacd0b85a97d-354d8c73f2cmr490258f8f.5.1716353004206;
+        Tue, 21 May 2024 21:43:24 -0700 (PDT)
+Received: from localhost.localdomain (249.red-88-10-56.dynamicip.rima-tde.net. [88.10.56.249])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b89573csm33222744f8f.29.2024.05.21.21.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 May 2024 21:43:23 -0700 (PDT)
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To: devicetree@vger.kernel.org
+Cc: linux-pci@vger.kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	kw@linux.com,
+	lpieralisi@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	angelogioacchino.delregno@collabora.com,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] dt-bindings: PCI: mediatek,mt7621-pcie: add PCIe host topology ascii graph
+Date: Wed, 22 May 2024 06:43:21 +0200
+Message-Id: <20240522044321.3205160-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+MediaTek MT7621 PCIe subsys supports a single Root Complex (RC) with 3 Root
+Ports. Add PCIe host topology ascii graph to the binding for completeness.
 
-> On Tue, May 21, 2024 at 06:20:04AM +0000, Larry Chiu wrote:
-> >
-> > >> + *  Below is a simplified block diagram of the chip and its relevan=
-t
-> interfaces.
-> > >> + *
-> > >> + *               *************************
-> > >> + *               *                       *
-> > >> + *               *  CPU network device   *
-> > >> + *               *                       *
-> > >> + *               *   +-------------+     *
-> > >> + *               *   |  PCIE Host  |     *
-> > >> + *               ***********++************
-> > >> + *                          ||
-> > >> + *                         PCIE
-> > >> + *                          ||
-> > >> + *      ********************++**********************
-> > >> + *      *            | PCIE Endpoint |             *
-> > >> + *      *            +---------------+             *
-> > >> + *      *                | GMAC |                  *
-> > >> + *      *                +--++--+  Realtek         *
-> > >> + *      *                   ||     RTL90xx Series  *
-> > >> + *      *                   ||                     *
-> > >> + *      *     +-------------++----------------+    *
-> > >> + *      *     |           | MAC |             |    *
-> > >> + *      *     |           +-----+             |    *
-> > >> + *      *     |                               |    *
-> > >> + *      *     |     Ethernet Switch Core      |    *
-> > >> + *      *     |                               |    *
-> > >> + *      *     |   +-----+           +-----+   |    *
-> > >> + *      *     |   | MAC |...........| MAC |   |    *
-> > >> + *      *     +---+-----+-----------+-----+---+    *
-> > >> + *      *         | PHY |...........| PHY |        *
-> > >> + *      *         +--++-+           +--++-+        *
-> > >> + *      *************||****************||***********
-> > >> + *
-> > >> + *  The block of the Realtek RTL90xx series is our entire chip
-> > >> + architecture,
-> > >> + *  the GMAC is connected to the switch core, and there is no PHY i=
-n
-> between.
-> > >
-> > >Given this architecture, this driver cannot be used unless there is a =
-switch
-> > >driver as well. This driver is nearly ready to be merged. So what are =
-your
-> > >plans for the switch driver? Do you have a first version you can post?=
- That
-> > >will reassure us you do plan to release a switch driver, and not use a=
- SDK in
-> > >userspace.
-> > >
-> > >        Andrew
-> >
-> > Hi Andrew,
-> > This GMAC is configured after the switch is boot-up and does not requir=
-e a
-> > switch driver to work.
->=20
-> But if you cannot configure the switch, it is pointless passing the switc=
-h
-> packets. The Linux architecture is that Linux needs to be able to control=
- the
-> switch somehow. There needs to be a driver with the switchdev API on its
-> upper side which connects it to the Linux network stack. Ideally the lowe=
-r
-> side of this driver can directly write switch registers. Alternatively it=
- can make
-> some sort of RPC to firmware which configures the switch.
->=20
-> Before committing this MAC driver, we will want to be convinced there is =
-a
-> switchdev driver for the switch.
->=20
->         Andrew
+Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ .../bindings/pci/mediatek,mt7621-pcie.yaml    | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml
+index 6fba42156db6..c41608863d6c 100644
+--- a/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/mediatek,mt7621-pcie.yaml
+@@ -13,6 +13,35 @@ description: |+
+   MediaTek MT7621 PCIe subsys supports a single Root Complex (RC)
+   with 3 Root Ports. Each Root Port supports a Gen1 1-lane Link
+ 
++                          MT7621 PCIe HOST Topology
++
++                                   .-------.
++                                   |       |
++                                   |  CPU  |
++                                   |       |
++                                   '-------'
++                                       |
++                                       |
++                                       |
++                                       v
++                              .------------------.
++                  .-----------|  HOST/PCI Bridge |------------.
++                  |           '------------------'            | Type1
++             BUS0 |                     |                     | Access
++                  v                     v                     v On Bus0
++          .-------------.        .-------------.       .-------------.
++          | VIRTUAL P2P |        | VIRTUAL P2P |       | VIRTUAL P2P |
++          |    BUS0     |        |    BUS0     |       |    BUS0     |
++          |    DEV0     |        |    DEV1     |       |    DEV2     |
++          '-------------'        '-------------'       '-------------'
++    Type0        |          Type0       |         Type0       |
++   Access   BUS1 |         Access   BUS2|        Access   BUS3|
++   On Bus1       v         On Bus2      v        On Bus3      v
++           .----------.           .----------.          .----------.
++           | Device 0 |           | Device 0 |          | Device 0 |
++           |  Func 0  |           |  Func 0  |          |  Func 0  |
++           '----------'           '----------'          '----------'
++
+ allOf:
+   - $ref: /schemas/pci/pci-host-bridge.yaml#
+ 
+-- 
+2.25.1
 
-I know what you mean.
-But actually this GMAC works like a NIC connected to an Ethernet Switch not=
- a=20
-management port, its packets communicating with other ports.
-
-The PCIe Endpoint is a multi-function device, the other function is used to=
-=20
-control the switch register, we are still working on where to put this driv=
-er in=20
-Linux. We thought it should be separated into different device drivers, or =
-you=20
-think we should register two pcie functions in this driver.
-
-Larry
 
