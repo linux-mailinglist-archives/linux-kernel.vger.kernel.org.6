@@ -1,132 +1,258 @@
-Return-Path: <linux-kernel+bounces-186005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF328CBE79
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:47:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97018CBE80
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED301C21E6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CAB72827F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8808172A;
-	Wed, 22 May 2024 09:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12AF81722;
+	Wed, 22 May 2024 09:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rwXL67JA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qv7C0+Wj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m0Aq26r7"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD8481722;
-	Wed, 22 May 2024 09:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8BC6026A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716371228; cv=none; b=rZvkpowDPAcFSRVxiaLmJpJVjDKJalNcJvyIyQaXikaD107vhLIUfQeJ8EdrgdaFOyCRNf9I1h6yE/+RP2CIjRU3Lf//JUQTtG/DaYHtGjZRrq6IZ2q6raQ3x4iWRHXZEiRxxMUqCQlOmQ/2iN4HmunT0XjYz8j9n3pSZq/kNYU=
+	t=1716371295; cv=none; b=U1KsoWwGREOQQjyhp8VXQGOQ2tVng0XK/dtHy/7ZUH+CoehsdWMYIFE+oAWD1icTOFWuS+9SQOIKW5tE9/rbhv2Psr+G9kn+B32pEqOnlqF9helCmZ5aQSopAGI82NfF9VZk/LlFE3oHDn4u48FQK1Nhrk+ceFzGBmyNUcJOfqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716371228; c=relaxed/simple;
-	bh=GbH3ZjuIogxSDiRqCT4Y8LqcpzEVznEj2b457At/qkk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=m1RfrG4dR/X8/9+kx7k+Rq6jxRnP94cOM5U8NwnXYzquPYa261CaE6P9J0NEzt8mA+smlBCz66JMrTZtLsGKwan8oN+HK8a+X1Z3PKD6lgBWz0jkxtfV8rLEPs/vUp4HNQLdKbZ0QkG7/YOjtJ6Ng1SixH/c0stacjL3MFSGJeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rwXL67JA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qv7C0+Wj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 22 May 2024 09:47:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716371225;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tbci3/Q4QiVdr3IVwLhtaqvHRvmSpRWKwJzp81lpGZk=;
-	b=rwXL67JAo1CG/iB6g+MzvoqMuZaGGCxK0hv94nJMqODPglPdRORKnKON6OqrZMpOcuV35V
-	nGwAScoxINlWlws8iH71/AHPWAOuW9uyghG+XxLlbFXzT6/noKrS+rk/5/vJ2ePZS1d6vh
-	H9c8kNzhbiPSlyb1dCH8JYIMqDe21cXgSHBBf2PEfYX/uK6hnLgsEg3RKsN8R0+KSiPM9O
-	ts38Cba7g6j32fPeXJa66a9Ww+5ex51WuvPiuw3qtk1f6SuqbbtkjHAARRvk0zZgNRqb7Q
-	AEXqW5VHbssYB0Z0FHaRtKh83DGn1sC9U3XkcgK3cSDvjW9TZxUC3DP9Dl6v4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716371225;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tbci3/Q4QiVdr3IVwLhtaqvHRvmSpRWKwJzp81lpGZk=;
-	b=Qv7C0+WjYk9osFw5DYP4N3u23PObAjUJci7+2y572QeVIiKG4Ks3zaro9UDv0VwaIE9pAN
-	Kk5jP3bRFeHADAAw==
-From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] crypto: x86/aes-xts - switch to new Intel CPU model defines
-Cc: Tony Luck <tony.luck@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Eric Biggers <ebiggers@google.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240520224620.9480-2-tony.luck@intel.com>
-References: <20240520224620.9480-2-tony.luck@intel.com>
+	s=arc-20240116; t=1716371295; c=relaxed/simple;
+	bh=omFLdolZvGc4xQSWLt7a52xcBAYC8ZG2c0FRLO/U8SM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rD3g8ne52t2WuaH9BHrUeJQoxWddskuIttcSvfM8KvnJ1kr3PJk0ytvJXnPVWW0ae8kxx2Y4+lnl4ldyQNh1tnniXWrL9LDPQsaCdXPmcGWiI5agqz3Dq72OPYUUyFh7cgnqM1O7nRfN9clF6VW9R5nxaRBU1v9wslZHOfpHbOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m0Aq26r7; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52232d0e5ceso6407135e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716371291; x=1716976091; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOYgFzdldhFOs8AkqkazEb6OybG4e8b+WL3wRmANGa0=;
+        b=m0Aq26r7ArDR/ipGpuWazFc3nUYMmoM+UkcYo1kfdVlDRDDmM/FDng48cLaWhzoHbQ
+         ZpjA+qEDvLUZUk9E3+iySQMNq2MK9wFwcYTUIW8W4fTvs6HSKWmXoqRIrZal+xNnv7f5
+         ICzoUi3886IWcG913t2SbnBWmlL/yaN4Z2pkCKmi4cSFgzMwJV4bEG8TdF+jMy8J8xZd
+         6aVbqH+rqVb2Hqm91ku3tPdJl1KMc7U41nJzoNtWBA6c0FZwbvVxNRH1nvumWpHRZlOl
+         XV9sH4fJINfRMyC/MmOyH5kMdUyq+I8CiTJ3UTfC3+Hg/EkYKKWmCxoPEPMfRdEEdGZs
+         UOtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716371291; x=1716976091;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wOYgFzdldhFOs8AkqkazEb6OybG4e8b+WL3wRmANGa0=;
+        b=DIN3uGSftZNUxNCEYAxmQmPpmUWJi6yDRD9t0GI5Y9feC/3kVbPqnPzhkclcUeJgns
+         aghw58g0jQhlcPFSYuztLEkXuKdORiR5l/rdNf2fYaf9bG5nAcebTf0REmNIstsM6ika
+         aWHfeUj4naU4qyKUUEgBjxE6dIAEO1/PwgxM/ZSH9vPlPsmEpNOS4L5rqdIjuLMmlYJS
+         OlmA7zp4uxwtV25AhbSxjAOLGdaume8j+HjLSRrFWWYffUmVICkRY+kZ9CcLOeqqeHrt
+         rwYLs7TUmE9KV6DmelGIn5eOmNL28S28ZghaccvI/A4zt2VwliUmxoto3zK2FDTBaC7z
+         xz2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWsMNHvZ4w0DxDcSBa+JpAsRb3jDryaO8XLJOBnVcXD905YUzZQrqCMezgyeoNClFRoyuW8pOg02xw9r8Evy23MRO21HLJrhvduOAuP
+X-Gm-Message-State: AOJu0YwmCE1Qo9asrjAZYGv6ifSxocgAq1JaleW2GO1Mi9qQwo20FLjl
+	HPTLd7XD1VlpY9VUWbOU810En2aUD7Dsqx7fHaEIGdx9BGeMwM+Rjga72ahFmUI=
+X-Google-Smtp-Source: AGHT+IE2KdRn8tiZE5EhAMqBZDzzCFB+zAishxFGbPK+g4iaMbgPVJWTe8n8SoI27ZkHJmcECOuQ2w==
+X-Received: by 2002:ac2:5e85:0:b0:51f:d72:cd2d with SMTP id 2adb3069b0e04-526bf35cb2amr849600e87.22.1716371291176;
+        Wed, 22 May 2024 02:48:11 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ad640sm4913602e87.61.2024.05.22.02.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 02:48:10 -0700 (PDT)
+Date: Wed, 22 May 2024 12:48:09 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Adam Ford <aford173@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, ictor.liu@nxp.com, 
+	sui.jingfeng@linux.dev, aford@beaconembedded.com, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: adv7511:  Fix Intermittent EDID failures
+Message-ID: <idjjg2lj7labpaq55u5ttn42fcp3ryae2ctvaw4c5lqlfp2wmz@2r6tilyvqbaf>
+References: <20240521011614.496421-1-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171637122512.10875.8916941284453923650.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521011614.496421-1-aford173@gmail.com>
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, May 20, 2024 at 08:16:14PM -0500, Adam Ford wrote:
+> In the process of adding support for shared IRQ pins, a scenario
+> was accidentally created where adv7511_irq_process returned
+> prematurely causing the EDID to fail randomly.
+> 
+> Since the interrupt handler is broken up into two main helper functions,
+> update both of them to treat the helper functions as IRQ handlers. These
+> IRQ routines process their respective tasks as before, but if they
+> determine that actual work was done, mark the respective IRQ status
+> accordingly, and delay the check until everything has been processed.
+> 
+> This should guarantee the helper functions don't return prematurely
+> while still returning proper values of either IRQ_HANDLED or IRQ_NONE.
+> 
+> Reported by: Liu Ying <victor.liu@nxp.com>
+> Fixes: f3d9683346d6 ("drm/bridge: adv7511: Allow IRQ to share GPIO pins")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> 
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511.h b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> index ea271f62b214..ec0b7f3d889c 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511.h
+> @@ -401,7 +401,7 @@ struct adv7511 {
+>  
+>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+>  int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511);
+> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1);
+>  #else
+>  static inline int adv7511_cec_init(struct device *dev, struct adv7511 *adv7511)
+>  {
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> index 44451a9658a3..4efb2cabf1b5 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_cec.c
+> @@ -119,7 +119,7 @@ static void adv7511_cec_rx(struct adv7511 *adv7511, int rx_buf)
+>  	cec_received_msg(adv7511->cec_adap, &msg);
+>  }
+>  
+> -void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+> +int adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>  {
+>  	unsigned int offset = adv7511->info->reg_cec_offset;
+>  	const u32 irq_tx_mask = ADV7511_INT1_CEC_TX_READY |
+> @@ -130,17 +130,21 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>  				ADV7511_INT1_CEC_RX_READY3;
+>  	unsigned int rx_status;
+>  	int rx_order[3] = { -1, -1, -1 };
+> -	int i;
+> +	int i, ret = 0;
+> +	int irq_status = IRQ_NONE;
+>  
+> -	if (irq1 & irq_tx_mask)
+> +	if (irq1 & irq_tx_mask) {
+>  		adv_cec_tx_raw_status(adv7511, irq1);
+> +		irq_status = IRQ_HANDLED;
+> +	}
+>  
+>  	if (!(irq1 & irq_rx_mask))
+> -		return;
+> +		return irq_status;
+>  
+> -	if (regmap_read(adv7511->regmap_cec,
+> -			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status))
+> -		return;
+> +	ret = regmap_read(adv7511->regmap_cec,
+> +			ADV7511_REG_CEC_RX_STATUS + offset, &rx_status);
+> +	if (ret < 0)
+> +		return ret;
 
-Commit-ID:     6d85a058cf4941b5b2713b879ef41430e6aa74f3
-Gitweb:        https://git.kernel.org/tip/6d85a058cf4941b5b2713b879ef41430e6aa74f3
-Author:        Tony Luck <tony.luck@intel.com>
-AuthorDate:    Mon, 20 May 2024 15:45:32 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Wed, 22 May 2024 11:10:48 +02:00
+Ok, maybe I was wrong with my previous suggestion. The code starts to
+look more and more clumsy.  Do we really care about error status at all?
+Maybe it's enough to return IRQ_NONE here from the IRQ handlers?
 
-crypto: x86/aes-xts - switch to new Intel CPU model defines
+>  
+>  	/*
+>  	 * ADV7511_REG_CEC_RX_STATUS[5:0] contains the reception order of RX
+> @@ -172,6 +176,8 @@ void adv7511_cec_irq_process(struct adv7511 *adv7511, unsigned int irq1)
+>  
+>  		adv7511_cec_rx(adv7511, rx_buf);
+>  	}
+> +
+> +	return IRQ_HANDLED;
+>  }
+>  
+>  static int adv7511_cec_adap_enable(struct cec_adapter *adap, bool enable)
+> diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> index 66ccb61e2a66..56dd2d5a0376 100644
+> --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> @@ -469,6 +469,8 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+>  {
+>  	unsigned int irq0, irq1;
+>  	int ret;
+> +	int cec_status;
 
-New CPU #defines encode vendor and family as well as model.
+cec_status ends up being unset if CEC is disabled.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Link: https://lore.kernel.org/r/20240520224620.9480-2-tony.luck@intel.com
----
- arch/x86/crypto/aesni-intel_glue.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+> +	int irq_status = IRQ_NONE;
+>  
+>  	ret = regmap_read(adv7511->regmap, ADV7511_REG_INT(0), &irq0);
+>  	if (ret < 0)
+> @@ -478,38 +480,41 @@ static int adv7511_irq_process(struct adv7511 *adv7511, bool process_hpd)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	/* If there is no IRQ to handle, exit indicating no IRQ data */
+> -	if (!(irq0 & (ADV7511_INT0_HPD | ADV7511_INT0_EDID_READY)) &&
+> -	    !(irq1 & ADV7511_INT1_DDC_ERROR))
+> -		return -ENODATA;
+> -
+>  	regmap_write(adv7511->regmap, ADV7511_REG_INT(0), irq0);
+>  	regmap_write(adv7511->regmap, ADV7511_REG_INT(1), irq1);
+>  
+> -	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder)
+> +	if (process_hpd && irq0 & ADV7511_INT0_HPD && adv7511->bridge.encoder) {
+>  		schedule_work(&adv7511->hpd_work);
+> +		irq_status = IRQ_HANDLED;
+> +	}
+>  
+>  	if (irq0 & ADV7511_INT0_EDID_READY || irq1 & ADV7511_INT1_DDC_ERROR) {
+>  		adv7511->edid_read = true;
+>  
+>  		if (adv7511->i2c_main->irq)
+>  			wake_up_all(&adv7511->wq);
+> +		irq_status = IRQ_HANDLED;
+>  	}
+>  
+>  #ifdef CONFIG_DRM_I2C_ADV7511_CEC
+> -	adv7511_cec_irq_process(adv7511, irq1);
+> +	cec_status = adv7511_cec_irq_process(adv7511, irq1);
+> +
+> +	if (cec_status < 0)
+> +		return cec_status;
+>  #endif
+>  
+> -	return 0;
+> +	/* If there is no IRQ to handle, exit indicating no IRQ data */
+> +	if (irq_status == IRQ_HANDLED || cec_status == IRQ_HANDLED)
+> +		return IRQ_HANDLED;
+> +
+> +	return IRQ_NONE;
+>  }
+>  
+>  static irqreturn_t adv7511_irq_handler(int irq, void *devid)
+>  {
+>  	struct adv7511 *adv7511 = devid;
+> -	int ret;
+>  
+> -	ret = adv7511_irq_process(adv7511, true);
+> -	return ret < 0 ? IRQ_NONE : IRQ_HANDLED;
+> +	return adv7511_irq_process(adv7511, true);
 
-diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
-index 5b25d2a..ef03165 100644
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -1223,14 +1223,14 @@ DEFINE_XTS_ALG(vaes_avx10_512, "xts-aes-vaes-avx10_512", 800);
-  * implementation with ymm registers (256-bit vectors) will be used instead.
-  */
- static const struct x86_cpu_id zmm_exclusion_list[] = {
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_SKYLAKE_X },
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_X },
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_D },
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE },
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_L },
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_ICELAKE_NNPI },
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_TIGERLAKE_L },
--	{ .vendor = X86_VENDOR_INTEL, .family = 6, .model = INTEL_FAM6_TIGERLAKE },
-+	X86_MATCH_VFM(INTEL_SKYLAKE_X,		0),
-+	X86_MATCH_VFM(INTEL_ICELAKE_X,		0),
-+	X86_MATCH_VFM(INTEL_ICELAKE_D,		0),
-+	X86_MATCH_VFM(INTEL_ICELAKE,		0),
-+	X86_MATCH_VFM(INTEL_ICELAKE_L,		0),
-+	X86_MATCH_VFM(INTEL_ICELAKE_NNPI,	0),
-+	X86_MATCH_VFM(INTEL_TIGERLAKE_L,	0),
-+	X86_MATCH_VFM(INTEL_TIGERLAKE,		0),
- 	/* Allow Rocket Lake and later, and Sapphire Rapids and later. */
- 	/* Also allow AMD CPUs (starting with Zen 4, the first with AVX-512). */
- 	{},
+This should be return ret < 0 ? IRQ_NONE : ret. We should not be
+returning negative error via irqreturn_t.
+
+>  }
+>  
+>  /* -----------------------------------------------------------------------------
+> -- 
+> 2.43.0
+> 
+
+-- 
+With best wishes
+Dmitry
 
