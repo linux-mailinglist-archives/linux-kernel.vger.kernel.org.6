@@ -1,177 +1,103 @@
-Return-Path: <linux-kernel+bounces-186829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350898CC9C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:40:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2CB8CC9C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B685E1F2202F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A775D28338C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B676914BFBF;
-	Wed, 22 May 2024 23:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587A2142E6E;
+	Wed, 22 May 2024 23:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bt/C4/nf"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M37YCKoK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7E2142E6E
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304EA824B1;
+	Wed, 22 May 2024 23:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421207; cv=none; b=EwMhI4vM/MEBmJ1EFnHhJyCht2rsMn3609ykOIsvQooyOVyEGlmLnlR3KQMy1wgnmSAlkrSeSTtrlpA0BzIBy3kEbD0EwUZhDnrav6MjgXlN2/cOw9SfyUZfSzpw1vLBB0E8Jdi5btUD9QYTuxpMdp5qkEuC+vRgrUZgaKb+3tI=
+	t=1716421230; cv=none; b=XcbboxXddreFZQVypJLJ8w8VGkr3owUxxvAwu3UShXU5GZT9XKvNqrWzDXqpo6lznGbhQQ6zAa9L8b4wq3r0wrvaILnZOaVqiNWqP6cgpgeyFaVciYSZ/5JsPVQTIDNYoj7vMnJVASwh2vbomMyw8vdUGGEbJE9oLhTu2hTDG/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716421207; c=relaxed/simple;
-	bh=mGlmVg+uwz/HtNBT80xzjZ9KnSF2ROtraD+iGdk3u30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FRM+gBPen+wJ9R68SIuguPfcKENkXd0XxEfch47zOdpkK5KaJIFL41NJ+q5Nfc/4vo3IqTjCTwOOvHP/Dc15KPCEpemI/CkswDDH9o6o4NXBXMmJBWeF5SRYkSJ6IMuCTgtKcPrV/R76P2UCGFlXPyF79BWCri7vxsvyTT3JWhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=bt/C4/nf; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-df4dce67becso1736313276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:40:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1716421205; x=1717026005; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCeXqO694HgEAFqSHQXqbvYxJUxtExpMbdEe7ZIdETA=;
-        b=bt/C4/nfWmBO5PAB90tV8lm9lqb7s8wgprxPZ1vQ/sq9tFLaNlBS7302frmjfnWvY9
-         Eh/dVxuG34fL2o2CJMwjVJfObV6CeGXmfGNOXDEX0tY+qWW1Ikvgb4QJVadkUjM7KrSB
-         gQA5EpTSUmwd5jvKc77woPiwA0LTA1vBmN8Rg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716421205; x=1717026005;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CCeXqO694HgEAFqSHQXqbvYxJUxtExpMbdEe7ZIdETA=;
-        b=HsMZVONO7vpkR7DGpfrkkgIw6uAG3xo7dYnTT1hDPpxv08B35QqAjoRnSHv0gNMPWp
-         t++fTlKwrihSgvCusEh4KJaFTlvnmshmwsZ3WvteEKLoMcidfp4+8sf83dFHDHX2Jhdv
-         U+iTBHzE4Hd1pAv2bYV6JySfGnX2jXv4TmdrNEcU74Y6AqkFKTn6UBv4baSN4erPTHz9
-         039UrOqaywiuH5m7kp5S5CByg18K8gV5rMeqx4eXjbhYPQZv+cEyjkOiO+VfQiD6STtn
-         Kc1TMqRkPssgBaGhw0Cu9/TcQTLp3XKh9P2q8cJacoxJxDjjngoaezjqPeemtqdLfNSe
-         zmMw==
-X-Gm-Message-State: AOJu0YwX2EdTgIjETHoPPMDeLvleaW28a85hATo5Ri6mHjY8cKCR1jK5
-	8cA8/qe32zP3ejMoSEMmJ97cV7izUbzA0En2xG9d5gGPRsdOv7R0himdXtBueA==
-X-Google-Smtp-Source: AGHT+IHWA2ySaerrSLmapcqRcekl4k10gEqjceg3ERi1laZg3yw8KcPaSqtvkObLZp4ZwEKO6vwlPg==
-X-Received: by 2002:a05:6902:2182:b0:dc6:e4f8:7e22 with SMTP id 3f1490d57ef6-df4e0e81210mr4151332276.62.1716421205384;
-        Wed, 22 May 2024 16:40:05 -0700 (PDT)
-Received: from [10.66.192.68] ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f18543fsm137498156d6.34.2024.05.22.16.40.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 16:40:04 -0700 (PDT)
-Message-ID: <683225e0-1cd3-4dea-bb68-086d46b233e8@broadcom.com>
-Date: Wed, 22 May 2024 16:39:57 -0700
+	s=arc-20240116; t=1716421230; c=relaxed/simple;
+	bh=Lac8YCfjoaXKhule2JmpslgLs5slviDNOTBA0T1TU9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4GA8CoVTptM9W4cq/PR5CuaqC5qw4Ha/o1oOba0jLtaoMUMWQthUwUCPn5N8zy125dMasTz1IC7vWtdNvAg+JJGujX2XQLpfINIwzAZ0hL/2y4Zn5JZhEAt729EVzVB9ouot53wvQKKTVppDzZU/w84wB0qK+1rst9hNi9kH4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M37YCKoK; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716421229; x=1747957229;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Lac8YCfjoaXKhule2JmpslgLs5slviDNOTBA0T1TU9E=;
+  b=M37YCKoKQz+Ks/hADcOQZCohy2m1LJqP6q5J6G/QmbpdZNCZ4A7o9fSG
+   u7tDSrtXMNVY0EihfiYCXVmN9X+gVbdPlfsK6TO4MZFBR89rF3c+xxk47
+   uKctDCS5zdo3oWx/+6SEjrXsMCIwK2xyUb6uaQjT/9EiZkslODE+rXJrh
+   sTEB8QqqvpqgEitdfwdW+MnWThwLSvAZdUSSZc9zFC9iYPbEZagMc0WIm
+   01TatTAlu8NvIeoa+ntfu89eV29GT21lqSugO2zGGcOi+STjLS3yZAVKj
+   JUN74c0SIPPwdm8/rDPukrVA+fgcAK0dRw/2+OW4QdGMCgMeUgTleadk8
+   A==;
+X-CSE-ConnectionGUID: SeJlr5eASEi14wjPT9M1+A==
+X-CSE-MsgGUID: aHnpfyXeQBKf5DV8zi3+Gg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="30239654"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="30239654"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 16:40:28 -0700
+X-CSE-ConnectionGUID: c6OzR8POStKsGfZPVBt85A==
+X-CSE-MsgGUID: jrMO2U2QSOiWE5exff0bxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="33357557"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.68.11])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 16:40:28 -0700
+Date: Wed, 22 May 2024 16:40:26 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Bowman Terry <terry.bowman@amd.com>
+Subject: Re: [PATCH 1/4] efi/cper, cxl: Make definitions and structures global
+Message-ID: <Zk6CaqJ+vELPUrXj@aschofie-mobl2>
+References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20240522150839.27578-2-Smita.KoralahalliChannabasappa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/8] x86/vmware: Introduce VMware hypercall API
-To: Simon Horman <horms@kernel.org>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
- bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
- tglx@linutronix.de, x86@kernel.org, netdev@vger.kernel.org,
- richardcochran@gmail.com, linux-input@vger.kernel.org,
- dmitry.torokhov@gmail.com, zackr@vmware.com,
- linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
- timothym@vmware.com, akaher@vmware.com, dri-devel@lists.freedesktop.org,
- daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
- maarten.lankhorst@linux.intel.com, kirill.shutemov@linux.intel.com,
- Nadav Amit <nadav.amit@gmail.com>, Jeff Sipek <jsipek@vmware.com>
-References: <20240505182829.GBZjfPzeEijTsBUth5@fat_crate.local>
- <20240506215305.30756-1-alexey.makhalov@broadcom.com>
- <20240506215305.30756-4-alexey.makhalov@broadcom.com>
- <20240511150225.GK2347895@kernel.org>
-Content-Language: en-US
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
- 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 EuY0
-In-Reply-To: <20240511150225.GK2347895@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522150839.27578-2-Smita.KoralahalliChannabasappa@amd.com>
 
-Hi Simon, apologize for long delay
+On Wed, May 22, 2024 at 03:08:36PM +0000, Smita Koralahalli wrote:
+> In preparation to add tracepoint support, move protocol error UUID
+> definition to a common location and make CXL RAS capability struct
+> global for use across different modules.
 
-On 5/11/24 8:02 AM, Simon Horman wrote:
->> diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
-> 
-> ...
-> 
->> +static inline
->> +unsigned long vmware_hypercall3(unsigned long cmd, unsigned long in1,
->> +				uint32_t *out1, uint32_t *out2)
-> 
-> nit: u32 is preferred over uint32_t.
->       Likewise elsewhere in this patch-set.
-Good to know. Can you please shed a light on the reason?
-I still see bunch of stdint style uint32_t in arch/x86.
-
-
-> ...
-> 
->>   /*
->> - * The high bandwidth in call. The low word of edx is presumed to have the
->> - * HB bit set.
->> + * High bandwidth calls are not supported on encrypted memory guests.
->> + * The caller should check cc_platform_has(CC_ATTR_MEM_ENCRYPT) and use
->> + * low bandwidth hypercall it memory encryption is set.
->> + * This assumption simplifies HB hypercall impementation to just I/O port
-> 
-> nit: implementation
-> 
->       checkpatch.pl --codespell is your friend
-Thanks, that is useful!
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
 > 
->> + * based approach without alternative patching.
->>    */
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> ---
+>  drivers/firmware/efi/cper_cxl.c | 11 -----------
+>  drivers/firmware/efi/cper_cxl.h |  7 ++-----
+>  include/linux/cper.h            |  4 ++++
+>  include/linux/cxl-event.h       | 11 +++++++++++
+>  4 files changed, 17 insertions(+), 16 deletions(-)
 > 
-> ...
+
+snip to end
 
