@@ -1,442 +1,237 @@
-Return-Path: <linux-kernel+bounces-185707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671C08CB952
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:00:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22AB58CB966
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B04D1C20AB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:00:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77031F22249
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 03:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214F36F067;
-	Wed, 22 May 2024 03:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758B562A02;
+	Wed, 22 May 2024 03:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8b5ivsb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="iPuFRQZQ"
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2043.outbound.protection.outlook.com [40.107.7.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9AF139E;
-	Wed, 22 May 2024 03:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716346821; cv=none; b=ebktA7ToZPKN8YAuFV6e0RFcvhhpSIm8oN6Uzk4AuGRNn+cCUGvf3Zs5H+WtRxF18vJlgftoaLj7UkWjK0Xw2tBzpYCSRph/uphgNyIo4P11l0Ju1Eo3HPBHaHithbKjDBaYNYdI+YWDsxX8GjGEfOCgMFfAcJvl0whsvouP8Xk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716346821; c=relaxed/simple;
-	bh=wQZj55jaaKJ9dRY35CiHLlwO+ti3BjVxpod5ND0gKSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5jkCqeOt//cWnlRme8aRjqoWPJRa8pKE3Uhy6dx2RTok5kqxOiIs8TulNyicyJAAoRGHCnCupRh0tWXsYoMweExBX9uAgvtLZaPtWSYkgRZVtar6DXbx3AAoKDDajuxRSAM7P7PiOEhaxjfTjpeTgMoFUWYGlPpLT28Ez54qHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8b5ivsb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9DBBC2BD11;
-	Wed, 22 May 2024 03:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716346820;
-	bh=wQZj55jaaKJ9dRY35CiHLlwO+ti3BjVxpod5ND0gKSk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e8b5ivsbXzo0xLyRfNPIvhl2rpDySsHJHVBldinYkl5FEb2Rc9jQ/MBYX+au8TzhX
-	 nARjzcWDCHBXGMz9gkTthOPwhvo5/fqLIepGK2Nw+A8r2NLiyy2sHrm+9BdnffWTMo
-	 CQyGQCvBP3dpMyryr6hHS1hkWsVTAjGoOqv/UsCS866rJbz8axON8gc/XQLaeZcYV6
-	 BqZi+gaTy6stO9sycrCQRQg1Mn/vlmeT57+2a6m+6JWz8GAAVAjR7vukxajVGkNOlB
-	 VLgvterUQKZxWVmSSUgiiQY4M5XvNs/uHPhYvVvuWJWRgH6hGtmmQlUQ8zsjTWRvKM
-	 APv4CAwBvUyEQ==
-Date: Tue, 21 May 2024 20:00:20 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
-Message-ID: <20240522030020.GU25518@frogsfrogsfrogs>
-References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
- <20240517111355.233085-4-yi.zhang@huaweicloud.com>
- <ZkwJJuFCV+WQLl40@dread.disaster.area>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411D64C89;
+	Wed, 22 May 2024 03:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716347091; cv=fail; b=hU8PIFDCkYkHtORqgz4gYVl1eU6WJIkbt6+motC/5kfVMU5g2VXYKvJ8jEjpXvyfQ2VljgGmsR3kQPKJUyqyQoIH+gQ9OfCUu9R62wPAuQ6WGrgih14pOK+qNTpsFe+rMp81E4wfmdj9O7rGR2GTM8i1CLuM2C1A/FrITcKzcEk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716347091; c=relaxed/simple;
+	bh=ffi+TfvNIYqQSVfLC1JYjNML+M++b4J+ttmKF787/gc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NQj+54bukGDjNb5RbwDtu0jKRNrTeOntq84YEUcftUqvzgH4sfpr/KBshJ+KUKEdIYCLTFTRrEh6IFQwPqPwGPk3oL7mjAB1Y6KP0EeSJbrPGJby2uv9CrO6aAEY1Bp3Np2mwKQHp+WZTHX6TaTjCzKXk8ONljjLLr5j8Rs2Eyc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=iPuFRQZQ; arc=fail smtp.client-ip=40.107.7.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H7cUMorv7tjegMUYeaH60STdq3UA9dv0zbH/mLRBHgJh+Bx58OBJtOtifIyrZc1sGzTcRB7/mBB3+qwI5VpcWAHVLhd7OvO112VvZvKAZL1ZNYPejlXi3AXQPvYzFXYeLauRNcndlmQOz07/C8uaUiXTo2iIPRckmy/AUo9lQo6XkTuqMO/yWTuV5cWyq9zobTvfSwZLgPoWVv42Thxy7snbSfIYb/ix1PMu0mp4umqPa1TVwJlzAqboQYMC3A4bwADdlffNxQrQ/qP+X6FPeeDKNl2pzhviTlSKlXK/7lnO++RBJqlhBodLYWcIyLw6UcfsxYUe0LR6XP55mkEWpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ffi+TfvNIYqQSVfLC1JYjNML+M++b4J+ttmKF787/gc=;
+ b=mNUNBfxJycMcu2/AvFXNf8Ui5/kMJX1ZbEhsWAi5G8LjJ3ZHlO8WjYndaMfLBo4hc8sECKljwymowafAbUtufvcpntXlYhzwpMn9nPOSjkgWEMUyPlFkh4GHQTaGnXPZsefXsGboYNvDPpLttlKVGnFYELBGn+lPkyfMJdC1DKfNUR01k33tC8gCmKV7vTybiPCTkdsExyKUTQnqaceOPA9+2k05GChaQSWRSrilhMXG+JI7ToU5pezBU/wPB2I7db7QS/hFauH9UuAgovSwl9kDCXy4jFnHO+CDG+C/FvvtlYyUzAkMwBtsiAwi/31Y7vmbDh8h2LodlcALkXZ2dA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ffi+TfvNIYqQSVfLC1JYjNML+M++b4J+ttmKF787/gc=;
+ b=iPuFRQZQbpQv1KjMedBGDd0Z8uIxAPeQDeMX1SXvoVxY9UmNPlNBFF3eTVcCYr1O6Iq15HOYh0G0rHjLXBIXhzM92CoW4ClYsuhZYlg69Y01qcpGWHwI5i7/mXVI29yu/k/Njw2sg7AFxiwEV/I5Mdd19fJBY50QJSlW2bWFEAo=
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by DUZPR04MB9784.eurprd04.prod.outlook.com (2603:10a6:10:4e0::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 03:04:45 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::baed:1f6d:59b4:957]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::baed:1f6d:59b4:957%5]) with mapi id 15.20.7587.028; Wed, 22 May 2024
+ 03:04:45 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>, Shenwei Wang
+	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [net PATCH] net: fec: free fec queue when fec_enet_mii_init()
+ fails
+Thread-Topic: [net PATCH] net: fec: free fec queue when fec_enet_mii_init()
+ fails
+Thread-Index: AQHaq+22vnaNT3PSDE643JvjIPXkobGiiaOg
+Date: Wed, 22 May 2024 03:04:45 +0000
+Message-ID:
+ <PAXPR04MB8510B1D6C8B77D7E154CC6CF88EB2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20240522021317.1113689-1-xiaolei.wang@windriver.com>
+In-Reply-To: <20240522021317.1113689-1-xiaolei.wang@windriver.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|DUZPR04MB9784:EE_
+x-ms-office365-filtering-correlation-id: cf2f91d4-7aa0-48fb-a835-08dc7a0bef50
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|366007|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?dHdYS2NnbWVUNzJ3aGxVWUpwWDBUZnY5MFduaUxoUFF6eVZ0ZUZjTnRFeXZU?=
+ =?gb2312?B?cDVyNEdYUG1tRE5MYms1aVR0cTRCUGpTN1V3VzFkdnhSVUZ6YVp6ZzJCakQ1?=
+ =?gb2312?B?VHNRaE01QzFhakthWUNsKzBaNFEzblVva3N6bWZsbk5tUFNobnpOc0FSVU1C?=
+ =?gb2312?B?WFV1blc3TURSdjhrdmtpWU5QaDFCcDI3UDl1SjVCMmpVNk5qTHJnNEE4eHQ4?=
+ =?gb2312?B?WHdmb250ZStHSWlpTTF2ZTJvNGE4TlB4ejJibzJLWlh2MVJRMWMzdmZDTTJ5?=
+ =?gb2312?B?RHU3eVdjYXJVb0NPc1lVbmtqb0cxc2hYMkhNeG9FSnVrc3RnRmtwM1ZYdjU0?=
+ =?gb2312?B?QUZkSEczOS9tK0xqYVJ5SzRzNzZlR2oxalhUZHdNaEFvaGcrbUlZSVdzb3ov?=
+ =?gb2312?B?K1FhUGZhYXlESjFVVjZwSGMxVndaWUNHQXQrb3B1Zy90U2dkR1lYaEVYWlhG?=
+ =?gb2312?B?M3RWaVlpYWxBazdhUjBMc00wVm5jWCs3L2Y1RHNCQ3VZUVRMeVFJK1ZTcEYw?=
+ =?gb2312?B?SVZSUmZxY1FtVXB1VzlhakNpVWQ5RElGMnIvQ1hZd1VycFdmQTE4dmNPcmlh?=
+ =?gb2312?B?cHFCQ3VWSEtuVHM2QlpBTkkwZmp3SkJUR3d0OHpkVGxycUoyWmdjNlk5RFhS?=
+ =?gb2312?B?VUt2RlRDT2drNklwYlFnQUY1dHlGcEJuR2thdWNuSnE2ZkRlUkMrWkxocDFL?=
+ =?gb2312?B?VUF3VHJ6WC8vZ24vMjBZUm9WOVd0cjdzQzJJaWljODE4SUt6Skp5bmtuSUxY?=
+ =?gb2312?B?dWtFSFJVZVVUdng1V1NiRTE3WWtoMkthb0ZvU0tNbjhWdGo3WEZrbkV6L2ZJ?=
+ =?gb2312?B?eXU2M1BwQnB0ODBGbFFPQWZXL1BvUStFMU11WTdDbHRUOFA3bTFJODlIVm5m?=
+ =?gb2312?B?dmg1Qy9UUkkvbTVWY0RLaHpJdHVGUThGNDhlOFUzdWdpdWsrRVNEdW02QjU1?=
+ =?gb2312?B?Vm5LRFFZa1M0U2NGZnl6UmI1Uzkxak15b1FaakpoUFk3OXcrUGw0b2ZGWTdp?=
+ =?gb2312?B?Q1BoRXNuV2FFTFB1SzJjeFkreVZ4OXVIVCtMYUtvdENIUmxnSlhKSE9OcGdZ?=
+ =?gb2312?B?SGNvL2h0MWdWbkNaRGJpaEsraVNOZndHcVVoWGpBOTFhSE14dVV3YlBsOXVG?=
+ =?gb2312?B?ODhGeFhFM1NBdkJ1Z2dmR1MvTkd5aDJWZ3NodVpmRHBTM1NscDVMbWxneGg3?=
+ =?gb2312?B?TFlweEludldtc1ZFSlcrUmUzdkFGbG4yMk91dS9VeHNTSGVyeUxmZ0k4cCtl?=
+ =?gb2312?B?bkIwaE1IMGZ2RzZFYlFCcE9VcmlrSU9iZVN0d3VOVHBCQ1B5VnVYcWoxL242?=
+ =?gb2312?B?aWUxTjZwbyt5dk15Nzl0THFNRko5cWYxRkF5S05pNmRXNzBZMEdMZnlzQUFF?=
+ =?gb2312?B?aVBDL2wyTmlUUUkrcGt0eTJFSzFjTlIwb29ORmNVbDBYN2JkRm1FaXpqSC8v?=
+ =?gb2312?B?OXZ6VXBFK0U1UlM1bjhVYXdVWFZkQStPK3NYcXozcGVWK3ZYQm1ZK2NnQlN3?=
+ =?gb2312?B?VUtoZkxlNStxYkhqN2lJOTRKWnlKcDlQQkhCU0ljU08xN1daaTQvZ0pkdjht?=
+ =?gb2312?B?Lyt3aDlqK2l3dFgvVFc4Ymt4SDVYb3lrcVREbFI0MDE1ZGhURURubGF5MzZX?=
+ =?gb2312?B?YVRyQ0U3eDN4TEdyT3B2QUdmS1dPZFpLUGNsUjA0RG1vYXViMXJjMGJ0ZVhJ?=
+ =?gb2312?B?azVOOEcreUZhSk9Oem1mQlRXcjR4TFA2Qm5MbmoxUVNKNDhETHdGUGxYUVVm?=
+ =?gb2312?B?SGE4YktPUzBiL0cxa1N5WFQwS2J0TzQ3azdSa2djM00xWUtqSUhmMW5yWldU?=
+ =?gb2312?B?QWNGMXF2RSs0bnVLWU04dz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?bTFRUU95cmJvSjhCdTREMVpLYjRRbHJkK2paK1pYbGRMMEVmL2FsYWxQVzg0?=
+ =?gb2312?B?b0JlZ3pHai93d2ZhRzdISFdaNkNSazd0d2NNVWtyNHhud2EycXNpb0cyNlp5?=
+ =?gb2312?B?T0xZeEI3U1hxVUYwZ1dHUWwwb3RJWVBRQnl2TlhmVlM2UmpQTGFpd1RNcVo3?=
+ =?gb2312?B?azlSaWZ3c0NKdFMyLzM3LzBSaHk5V2RUdDNodnc1VGRqeGp3ZjBYVE1lbXFO?=
+ =?gb2312?B?MWRvOERuMVFZNmRuQURrUUtIZXYxQjgrVjFSa0xFaGJTU1dTY01xY0g5Q2J0?=
+ =?gb2312?B?SWlqQ1Nha2s3Z1N6bEFDbjQvU3pXZ3NVUHNEQmZpblVGR0pPeEZCd1JqUWZ1?=
+ =?gb2312?B?VHpMOHN1MC81R3dma0R5SktEdkpscDdQdmNQZjVwQ2pSVmtQUUw4WXVrUFVN?=
+ =?gb2312?B?M2l0cVdlT0JFNWtWM213Nk5aZG8vam9YNTRodWt6Z2I4bUczaGM0THFqNXgw?=
+ =?gb2312?B?VEZLQjBERW9iOVE1cjRocTFsdDBKVmNZODFYSFd4RDE0eVQ5NitPUGpjSEJ4?=
+ =?gb2312?B?U2VVY2dQT1lHWGc0WkllNVJ6SUJCRUdISmJiWHpFNUVscmFRM04rSys4eFpt?=
+ =?gb2312?B?dlZ1TzFldHFHWXNQRGZ1R0ZUN2lvcmZueHNaNlpZbDBBVHJWQXlmZ3ZSSm5v?=
+ =?gb2312?B?RWg5YUhISlJ3bTBGdzJodnBTQlUxZlpCcUY4MlJJL3NJbkJkYTVmY1dqWElJ?=
+ =?gb2312?B?NkVjQi83NmJidlg4TndXTExIWFdTUEU0Nkx3YzdWZGM4THNCRFp4dU1hVHZm?=
+ =?gb2312?B?UXpWRFhpOG83TU5FMXRpZm9UL2t3UGtDTklkMVF0V0VyZkRGM0loc0gzNUlS?=
+ =?gb2312?B?N0ZrVUFaTnNETGs3ZHAwZGJYYlFqMTVkRkFWdGJVQnpuQzd6QWNDclNkUnF6?=
+ =?gb2312?B?OEZrMVR6MVk3eTJLZE5SZERGRlJ2cTU1aXJ4S09sVjhnMjJrKy9HOWx1QUhN?=
+ =?gb2312?B?d3NDVkVibHg3NXJHbW1MTE1lK1RXODR0T1VUd2hOaS85SlV1dm4wQVorMllo?=
+ =?gb2312?B?Y2traUZtZzIwZjVrVHBsUlVFb0tzMnpsQ1JPY1FwdTlxRWNmVzBmbDMydnBG?=
+ =?gb2312?B?RE5aSHpKWldHQ3ZnNUw2S0JHaHBZZ0Jneko5T0hiYXNwR1FxYWNoQUxlMHBy?=
+ =?gb2312?B?VGpDT1JYUzlpSkdaMnk3S0JOVGFoUVdXZ2lhVGVvaWtxSkZMN1pNMG92Q2pk?=
+ =?gb2312?B?VmQva2dRc1JhVElqcDFBQ2JsOGNXS01wejU2SDZsa0xTdU55Tlc4WkYvaVA0?=
+ =?gb2312?B?NVNGbjF4TGNlakRnNURNcHRRMko1ZEVzVjhTYTF1eXNiQnY0ZWZZZ3dzS2VX?=
+ =?gb2312?B?TkQ2WklPaEx0M2RMTFZrVTVEOVF5dE1vU2NaV21uUWVXbzVxS1hWckdlZXJR?=
+ =?gb2312?B?ZEhRK0NmZkVtSWMvdGZwSHY1VUJzY1lmVVVjZTMzbFZsR29nWEF5OCtGRUNt?=
+ =?gb2312?B?UVNGMEdxbzdFWmlUVEdZUk1zU1hSVDUza0FvVEpPbm1OUUJKNEhHZW5JTnJU?=
+ =?gb2312?B?eit0Ris5MmxlYy9uSEtYKzlwSkhBaGRtOElkbElnQzFhb1ZnaEEwdUxkeExE?=
+ =?gb2312?B?QVowdjBvV2NwR2svb2lFRmpDTU9LN0tLUldXOVkvSWlrVW4wZXFOTVZxb1gw?=
+ =?gb2312?B?RUpJVVFDbXk4eUFDdVlYK1daYlg0WXVZYXZWMzM5SmJDcnJmWFFBZGxIOXhT?=
+ =?gb2312?B?bTFWdVh4U2dLS0VyWE9qRmVJaFY0bHE3TE9DZ1IrWXpaT0ZaUVRGdmlzNm8w?=
+ =?gb2312?B?aWFVQnVIRjVpSHF4dDJ5UTVzL1FZZFErcmcwdkMwVElhQmtobm9sYmZKdDE2?=
+ =?gb2312?B?RUhOYm5CQnhkd0tqTHBtRzkvS2E1QWdCUVpGMEF4Y09KNTJSTEJWSjVPRlpN?=
+ =?gb2312?B?WFlsOWF6R2VRSFdwSVNtb2lZNEt4VGlCRjZGREI5dDZoN0RIR3ZUVVdsdVdt?=
+ =?gb2312?B?NjhPRXhSTzdiNmhrY1JhSFUySUUvRzJ2K0dWQnJUbzZRNi84MGxXTzczVGdq?=
+ =?gb2312?B?b3hLbnRwMHpYcmZFa3ovQXF1MElldG5IbVR4UFhFQlFUTTBRQXo4YUlhdDNz?=
+ =?gb2312?B?YS82Y21mVWZuR3Uva1RqRFBQKzBQSWZLQTVkTzhYOUhqTEtxZGp5WHR2eU5n?=
+ =?gb2312?Q?yi4Q=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkwJJuFCV+WQLl40@dread.disaster.area>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf2f91d4-7aa0-48fb-a835-08dc7a0bef50
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 03:04:45.7567
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kPHcXhr2JpPYORKdkhQr2HZzcFpQtMJVq7Wxj1Dsk6C5alsFXKO9eIoTkyIMwYY+9uIVJMBiAUFhNq7JmgNOxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9784
 
-On Tue, May 21, 2024 at 12:38:30PM +1000, Dave Chinner wrote:
-> On Fri, May 17, 2024 at 07:13:55PM +0800, Zhang Yi wrote:
-> > From: Zhang Yi <yi.zhang@huawei.com>
-> > 
-> > When truncating a realtime file unaligned to a shorter size,
-> > xfs_setattr_size() only flush the EOF page before zeroing out, and
-> > xfs_truncate_page() also only zeros the EOF block. This could expose
-> > stale data since 943bc0882ceb ("iomap: don't increase i_size if it's not
-> > a write operation").
-> > 
-> > If the sb_rextsize is bigger than one block, and we have a realtime
-> > inode that contains a long enough written extent. If we unaligned
-> > truncate into the middle of this extent, xfs_itruncate_extents() could
-> > split the extent and align the it's tail to sb_rextsize, there maybe
-> > have more than one blocks more between the end of the file. Since
-> > xfs_truncate_page() only zeros the trailing portion of the i_blocksize()
-> > value, so it may leftover some blocks contains stale data that could be
-> > exposed if we append write it over a long enough distance later.
-> > 
-> > xfs_truncate_page() should flush, zeros out the entire rtextsize range,
-> > and make sure the entire zeroed range have been flushed to disk before
-> > updating the inode size.
-> > 
-> > Fixes: 943bc0882ceb ("iomap: don't increase i_size if it's not a write operation")
-> > Reported-by: Chandan Babu R <chandanbabu@kernel.org>
-> > Link: https://lore.kernel.org/linux-xfs/0b92a215-9d9b-3788-4504-a520778953c2@huaweicloud.com
-> > Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> > ---
-> >  fs/xfs/xfs_iomap.c | 35 +++++++++++++++++++++++++++++++----
-> >  fs/xfs/xfs_iops.c  | 10 ----------
-> >  2 files changed, 31 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index 4958cc3337bc..fc379450fe74 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -1466,12 +1466,39 @@ xfs_truncate_page(
-> >  	loff_t			pos,
-> >  	bool			*did_zero)
-> >  {
-> > +	struct xfs_mount	*mp = ip->i_mount;
-> >  	struct inode		*inode = VFS_I(ip);
-> >  	unsigned int		blocksize = i_blocksize(inode);
-> > +	int			error;
-> > +
-> > +	if (XFS_IS_REALTIME_INODE(ip))
-> > +		blocksize = XFS_FSB_TO_B(mp, mp->m_sb.sb_rextsize);
-> > +
-> > +	/*
-> > +	 * iomap won't detect a dirty page over an unwritten block (or a
-> > +	 * cow block over a hole) and subsequently skips zeroing the
-> > +	 * newly post-EOF portion of the page. Flush the new EOF to
-> > +	 * convert the block before the pagecache truncate.
-> > +	 */
-> > +	error = filemap_write_and_wait_range(inode->i_mapping, pos,
-> > +					     roundup_64(pos, blocksize));
-> > +	if (error)
-> > +		return error;
-> >  
-> >  	if (IS_DAX(inode))
-> > -		return dax_truncate_page(inode, pos, blocksize, did_zero,
-> > -					&xfs_dax_write_iomap_ops);
-> > -	return iomap_truncate_page(inode, pos, blocksize, did_zero,
-> > -				   &xfs_buffered_write_iomap_ops);
-> > +		error = dax_truncate_page(inode, pos, blocksize, did_zero,
-> > +					  &xfs_dax_write_iomap_ops);
-> > +	else
-> > +		error = iomap_truncate_page(inode, pos, blocksize, did_zero,
-> > +					    &xfs_buffered_write_iomap_ops);
-> > +	if (error)
-> > +		return error;
-> > +
-> > +	/*
-> > +	 * Write back path won't write dirty blocks post EOF folio,
-> > +	 * flush the entire zeroed range before updating the inode
-> > +	 * size.
-> > +	 */
-> > +	return filemap_write_and_wait_range(inode->i_mapping, pos,
-> > +					    roundup_64(pos, blocksize));
-> >  }
-> 
-> Ok, this means we do -three- blocking writebacks through this path
-> instead of one or maybe two.
-> 
-> We already know that this existing blocking writeback case for dirty
-> pages over unwritten extents is a significant performance issue for
-> some workloads. I have a fix in progress for iomap to handle this
-> case without requiring blocking writeback to be done to convert the
-> extent to written before we do the truncate.
-> 
-> Regardless, I think this whole "truncate is allocation unit size
-> aware" algorithm is largely unworkable without a rewrite. What XFS
-> needs to do on truncate *down* before we start the truncate
-> transaction is pretty simple:
-> 
-> 	- ensure that the new EOF extent tail contains zeroes
-> 	- ensure that the range from the existing ip->i_disk_size to
-> 	  the new EOF is on disk so data vs metadata ordering is
-> 	  correct for crash recovery purposes.
-> 
-> What this patch does to acheive that is:
-> 
-> 	1. blocking writeback to clean dirty unwritten/cow blocks at
-> 	the new EOF.
-> 	2. iomap_truncate_page() writes zeroes into the page cache,
-> 	which dirties the pages we just cleaned at the new EOF.
-> 	3. blocking writeback to clean the dirty blocks at the new
-> 	EOF.
-> 	4. truncate_setsize() then writes zeros to partial folios at
-> 	the new EOF, dirtying the EOF page again.
-> 	5. blocking writeback to clean dirty blocks from the current
-> 	on-disk size to the new EOF.
-> 
-> This is pretty crazy when you stop and think about it. We're writing
-> the same EOF block -three- times. The first data write gets
-> overwritten by zeroes on the second write, and the third write
-> writes the same zeroes as the second write. There are two redundant
-> *blocking* writes in this process.
-> 
-> We can do all this with a single writeback operation if we are a
-> little bit smarter about the order of operations we perform and we
-> are a little bit smarter in iomap about zeroing dirty pages in the
-> page cache:
-> 
-> 	1. change iomap_zero_range() to do the right thing with
-> 	dirty unwritten and cow extents (the patch I've been working
-> 	on).
-> 
-> 	2. pass the range to be zeroed into iomap_truncate_page()
-> 	(the fundamental change being made here).
-> 
-> 	3. zero the required range *through the page cache*
-> 	(iomap_zero_range() already does this).
-> 
-> 	4. write back the XFS inode from ip->i_disk_size to the end
-> 	of the range zeroed by iomap_truncate_page()
-> 	(xfs_setattr_size() already does this).
-> 
-> 	5. i_size_write(newsize);
-> 
-> 	6. invalidate_inode_pages2_range(newsize, -1) to trash all
-> 	the page cache beyond the new EOF without doing any zeroing
-> 	as we've already done all the zeroing needed to the page
-> 	cache through iomap_truncate_page().
-> 
-> 
-> The patch I'm working on for step 1 is below. It still needs to be
-> extended to handle the cow case, but I'm unclear on how to exercise
-> that case so I haven't written the code to do it. The rest of it is
-> just rearranging the code that we already use just to get the order
-> of operations right. The only notable change in behaviour is using
-> invalidate_inode_pages2_range() instead of truncate_pagecache(),
-> because we don't want the EOF page to be dirtied again once we've
-> already written zeroes to disk....
-> 
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
-> 
-> [RFC] iomap: zeroing needs to be pagecache aware
-> 
-> From: Dave Chinner <dchinner@redhat.com>
-> 
-> Unwritten extents can have page cache data over the range being
-> zeroed so we can't just skip them entirely. Fix this by checking for
-> an existing dirty folio over the unwritten range we are zeroing
-> and only performing zeroing if the folio is already dirty.
-> 
-> XXX: how do we detect a iomap containing a cow mapping over a hole
-> in iomap_zero_iter()? The XFS code implies this case also needs to
-> zero the page cache if there is data present, so trigger for page
-> cache lookup only in iomap_zero_iter() needs to handle this case as
-> well.
-
-Hmm.  If memory serves, we probably need to adapt the
-xfs_buffered/direct_write_iomap_begin functions to return the hole in
-srcmap and the cow mapping in the iomap.  RN I think it just returns the
-hole.
-
---D
-
-> Before:
-> 
-> $ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> 
-> real    0m14.103s
-> user    0m0.015s
-> sys     0m0.020s
-> 
-> $ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->  85.90    0.847616          16     50000           ftruncate
->  14.01    0.138229           2     50000           pwrite64
-> ....
-> 
-> After:
-> 
-> $ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> 
-> real    0m0.144s
-> user    0m0.021s
-> sys     0m0.012s
-> 
-> $ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
-> path /mnt/scratch/foo, 50000 iters
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->  53.86    0.505964          10     50000           ftruncate
->  46.12    0.433251           8     50000           pwrite64
-> ....
-> 
-> Yup, we get back all the performance.
-> 
-> As for the "mmap write beyond EOF" data exposure aspect
-> documented here:
-> 
-> https://lore.kernel.org/linux-xfs/20221104182358.2007475-1-bfoster@redhat.com/
-> 
-> With this command:
-> 
-> $ sudo xfs_io -tfc "falloc 0 1k" -c "pwrite 0 1k" \
->   -c "mmap 0 4k" -c "mwrite 3k 1k" -c "pwrite 32k 4k" \
->   -c fsync -c "pread -v 3k 32" /mnt/scratch/foo
-> 
-> Before:
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0000 sec (34.877 MiB/sec and 35714.2857 ops/sec)
-> wrote 4096/4096 bytes at offset 32768
-> 4 KiB, 1 ops; 0.0000 sec (229.779 MiB/sec and 58823.5294 ops/sec)
-> 00000c00:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-> 00000c10:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-> read 32/32 bytes at offset 3072
-> 32.000000 bytes, 1 ops; 0.0000 sec (568.182 KiB/sec and 18181.8182 ops/sec
-> 
-> After:
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0000 sec (40.690 MiB/sec and 41666.6667 ops/sec)
-> wrote 4096/4096 bytes at offset 32768
-> 4 KiB, 1 ops; 0.0000 sec (150.240 MiB/sec and 38461.5385 ops/sec)
-> 00000c00:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> 00000c10:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> read 32/32 bytes at offset 3072
-> 32.000000 bytes, 1 ops; 0.0000 sec (558.036 KiB/sec and 17857.1429 ops/sec)
-> 
-> We see that this post-eof unwritten extent dirty page zeroing is
-> working correctly.
-> 
-> This has passed through most of fstests on a couple of test VMs
-> without issues at the moment, so I think this approach to fixing the
-> issue is going to be solid once we've worked out how to detect the
-> COW-hole mapping case.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> ---
->  fs/iomap/buffered-io.c | 42 ++++++++++++++++++++++++++++++++++++++++--
->  fs/xfs/xfs_iops.c      | 12 +-----------
->  2 files changed, 41 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 4e8e41c8b3c0..6877474de0c9 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -583,11 +583,23 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
->   *
->   * Returns a locked reference to the folio at @pos, or an error pointer if the
->   * folio could not be obtained.
-> + *
-> + * Note: when zeroing unwritten extents, we might have data in the page cache
-> + * over an unwritten extent. In this case, we want to do a pure lookup on the
-> + * page cache and not create a new folio as we don't need to perform zeroing on
-> + * unwritten extents if there is no cached data over the given range.
->   */
->  struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
->  {
->  	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
->  
-> +	if (iter->flags & IOMAP_ZERO) {
-> +		const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +
-> +		if (srcmap->type == IOMAP_UNWRITTEN)
-> +			fgp &= ~FGP_CREAT;
-> +	}
-> +
->  	if (iter->flags & IOMAP_NOWAIT)
->  		fgp |= FGP_NOWAIT;
->  	fgp |= fgf_set_order(len);
-> @@ -1375,7 +1387,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  	loff_t written = 0;
->  
->  	/* already zeroed?  we're done. */
-> -	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
-> +	if (srcmap->type == IOMAP_HOLE)
->  		return length;
->  
->  	do {
-> @@ -1385,8 +1397,22 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  		size_t bytes = min_t(u64, SIZE_MAX, length);
->  
->  		status = iomap_write_begin(iter, pos, bytes, &folio);
-> -		if (status)
-> +		if (status) {
-> +			if (status == -ENOENT) {
-> +				/*
-> +				 * Unwritten extents need to have page cache
-> +				 * lookups done to determine if they have data
-> +				 * over them that needs zeroing. If there is no
-> +				 * data, we'll get -ENOENT returned here, so we
-> +				 * can just skip over this index.
-> +				 */
-> +				WARN_ON_ONCE(srcmap->type != IOMAP_UNWRITTEN);
-> +				if (bytes > PAGE_SIZE - offset_in_page(pos))
-> +					bytes = PAGE_SIZE - offset_in_page(pos);
-> +				goto loop_continue;
-> +			}
->  			return status;
-> +		}
->  		if (iter->iomap.flags & IOMAP_F_STALE)
->  			break;
->  
-> @@ -1394,6 +1420,17 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  		if (bytes > folio_size(folio) - offset)
->  			bytes = folio_size(folio) - offset;
->  
-> +		/*
-> +		 * If the folio over an unwritten extent is clean (i.e. because
-> +		 * it has been read from), then it already contains zeros. Hence
-> +		 * we can just skip it.
-> +		 */
-> +		if (srcmap->type == IOMAP_UNWRITTEN &&
-> +		    !folio_test_dirty(folio)) {
-> +			folio_unlock(folio);
-> +			goto loop_continue;
-> +		}
-> +
->  		folio_zero_range(folio, offset, bytes);
->  		folio_mark_accessed(folio);
->  
-> @@ -1401,6 +1438,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  		if (WARN_ON_ONCE(bytes == 0))
->  			return -EIO;
->  
-> +loop_continue:
->  		pos += bytes;
->  		length -= bytes;
->  		written += bytes;
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 8a145ca7d380..e8c9f3018c80 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -838,17 +838,7 @@ xfs_setattr_size(
->  		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
->  		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
->  				&did_zeroing);
-> -	} else {
-> -		/*
-> -		 * iomap won't detect a dirty page over an unwritten block (or a
-> -		 * cow block over a hole) and subsequently skips zeroing the
-> -		 * newly post-EOF portion of the page. Flush the new EOF to
-> -		 * convert the block before the pagecache truncate.
-> -		 */
-> -		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
-> -						     newsize);
-> -		if (error)
-> -			return error;
-> +	} else if (newsize != oldsize) {
->  		error = xfs_truncate_page(ip, newsize, &did_zeroing);
->  	}
->  
-> 
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBYaWFvbGVpIFdhbmcgPHhpYW9s
+ZWkud2FuZ0B3aW5kcml2ZXIuY29tPg0KPiBTZW50OiAyMDI0xOo11MIyMsjVIDEwOjEzDQo+IFRv
+OiBXZWkgRmFuZyA8d2VpLmZhbmdAbnhwLmNvbT47IFNoZW53ZWkgV2FuZw0KPiA8c2hlbndlaS53
+YW5nQG54cC5jb20+OyBDbGFyayBXYW5nIDx4aWFvbmluZy53YW5nQG54cC5jb20+Ow0KPiBkYXZl
+bUBkYXZlbWxvZnQubmV0OyBlZHVtYXpldEBnb29nbGUuY29tOyBrdWJhQGtlcm5lbC5vcmc7DQo+
+IHBhYmVuaUByZWRoYXQuY29tDQo+IENjOiBpbXhAbGlzdHMubGludXguZGV2OyBuZXRkZXZAdmdl
+ci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6
+IFtuZXQgUEFUQ0hdIG5ldDogZmVjOiBmcmVlIGZlYyBxdWV1ZSB3aGVuIGZlY19lbmV0X21paV9p
+bml0KCkgZmFpbHMNCj4gDQo+IGNvbW1pdCA2M2UzY2MyYjg3YzIgKCJhcm02NDogZHRzOiBpbXg5
+My0xMXgxMS1ldms6IGFkZA0KPiByZXNldCBncGlvcyBmb3IgZXRoZXJuZXQgUEhZcyIpIHRoZSBy
+ZXNlLWdwaW9zIGF0dHJpYnV0ZQ0Kbml0OiByZXNldC1ncGlvcw0KDQo+IGlzIGFkZGVkLCBidXQg
+dGhpcyBwY2FsNjUyNCBpcyBsb2FkZWQgbGF0ZXIsIHdoaWNoIGNhdXNlcw0KPiBmZWMgZHJpdmVy
+IGRlZmVyLCB0aGUgZm9sbG93aW5nIG1lbW9yeSBsZWFrIG9jY3Vycy4NCj4gDQo+IHVucmVmZXJl
+bmNlZCBvYmplY3QgMHhmZmZmZmY4MDEwMzUwMDAwIChzaXplIDgxOTIpOg0KPiAgIGNvbW0gImt3
+b3JrZXIvdTg6MyIsIHBpZCAzOSwgamlmZmllcyA0Mjk0ODkzNTYyDQo+ICAgaGV4IGR1bXAgKGZp
+cnN0IDMyIGJ5dGVzKToNCj4gICAgIDAyIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDUwIDA2IDhh
+IGMwIGZmIGZmIGZmICAuLi4uLi4uLi5QLi4uLi4uDQo+ICAgICBlMCA2ZiAwNiA4YSBjMCBmZiBm
+ZiBmZiAwMCA1MCAwNiA4YSBjMCBmZiBmZiBmZiAgLm8uLi4uLi4uUC4uLi4uLg0KPiAgIGJhY2t0
+cmFjZSAoY3JjIGYxYjhiNzlmKToNCj4gICAgIFs8MDAwMDAwMDA1N2QyYzZhZT5dIGttZW1sZWFr
+X2FsbG9jKzB4MzQvMHg0MA0KPiAgICAgWzwwMDAwMDAwMDNjNDEzZTYwPl0ga21hbGxvY190cmFj
+ZSsweDJmOC8weDQ2MA0KPiAgICAgWzwwMDAwMDAwMDY2M2Y2NGU2Pl0gZmVjX3Byb2JlKzB4MTM2
+NC8weDNhMDQNCj4gICAgIFs8MDAwMDAwMDAyNGQ3ZTQyNz5dIHBsYXRmb3JtX3Byb2JlKzB4YzQv
+MHgxOTgNCj4gICAgIFs8MDAwMDAwMDAyOTNhYTEyND5dIHJlYWxseV9wcm9iZSsweDE3Yy8weDRm
+MA0KPiAgICAgWzwwMDAwMDAwMGRmZDFlMGYzPl0gX19kcml2ZXJfcHJvYmVfZGV2aWNlKzB4MTU4
+LzB4MmM0DQo+ICAgICBbPDAwMDAwMDAwNGFlMDAzNGE+XSBkcml2ZXJfcHJvYmVfZGV2aWNlKzB4
+NjAvMHgxOGMNCj4gICAgIFs8MDAwMDAwMDBmYTNhZDBlMT5dIF9fZGV2aWNlX2F0dGFjaF9kcml2
+ZXIrMHgxNjgvMHgyMDgNCj4gICAgIFs8MDAwMDAwMDAzOTRhMzhkMz5dIGJ1c19mb3JfZWFjaF9k
+cnYrMHgxMDQvMHgxOTANCj4gICAgIFs8MDAwMDAwMDBjNDRlM2RlYT5dIF9fZGV2aWNlX2F0dGFj
+aCsweDFmOC8weDMzYw0KPiAgICAgWzwwMDAwMDAwMDRkYjY5YzE0Pl0gZGV2aWNlX2luaXRpYWxf
+cHJvYmUrMHgxNC8weDIwDQo+ICAgICBbPDAwMDAwMDAwZjQ3MDUzMDk+XSBidXNfcHJvYmVfZGV2
+aWNlKzB4MTI4LzB4MTU4DQo+ICAgICBbPDAwMDAwMDAwZjcxMTU5MTk+XSBkZWZlcnJlZF9wcm9i
+ZV93b3JrX2Z1bmMrMHgxMmMvMHgxZDgNCj4gICAgIFs8MDAwMDAwMDAxMjMxNWIzYj5dIHByb2Nl
+c3Nfc2NoZWR1bGVkX3dvcmtzKzB4NmMwLzB4MTY0Yw0KPiAgICAgWzwwMDAwMDAwMDg5YjJiNmUx
+Pl0gd29ya2VyX3RocmVhZCsweDM3MC8weDk1Yw0KPiAgICAgWzwwMDAwMDAwMDRkYmUzZDFhPl0g
+a3RocmVhZCsweDM2MC8weDQyMA0KPiANCj4gRml4ZXM6IDYzZTNjYzJiODdjMiAoImFybTY0OiBk
+dHM6IGlteDkzLTExeDExLWV2azogYWRkIHJlc2V0IGdwaW9zIGZvcg0KPiBldGhlcm5ldCBQSFlz
+IikNCg0KSSBkb24ndCB0aGluayB0aGlzIGNvbW1pdCBzaG91bGQgYmUgYmxhbWVkLCBiZWNhdXNl
+IHRoaXMgaXNzdWUgc2hvdWxkDQpoYXZlIGV4aXN0ZWQgZWFybGllciwgaXQgaXMganVzdCBwY2Fs
+NjUyNCBkcml2ZXIgaXMgbG9hZGVkIGxhdGVyIHRoYW4gdGhlDQpmZWMgZHJpdmVyLCB3aGljaCB0
+cmlnZ2VycyB0aGlzIGlzc3VlLg0KDQpUaGUgY29tbWl0IDU5ZDBmNzQ2NTY0NCAoIm5ldDogZmVj
+OiBpbml0IG11bHRpIHF1ZXVlIGRhdGUgc3RydWN0dXJlIikNCndhcyB0aGUgZmlyc3QgdG8gaW50
+cm9kdWNlIHRoaXMgaXNzdWUsIGNvbW1pdCA2MTlmZWU5ZWIxM2INCigibmV0OiBmZWM6IGZpeCB0
+aGUgcG90ZW50aWFsIG1lbW9yeSBsZWFrIGluIGZlY19lbmV0X2luaXQoKSAiKQ0KZml4ZWQgdGhp
+cywgYnV0IGl0IGRvZXMgbm90IHNlZW0gdG8gYmUgY29tcGxldGVseSBmaXhlZC4NCg0KV2Ugc2hv
+dWxkIGZpbmQgdGhlIGNvcnJlY3QgYmxhbWVkIGNvbW1pdCBzbyB0aGF0IHN0YWJsZSBtYWludGFp
+bmVycw0KY2FuIGJhY2twb3J0IHRvIHRoZSBjb3JyZWN0IGtlcm5lbCB2ZXJzaW9uLg0KDQo+IFNp
+Z25lZC1vZmYtYnk6IFhpYW9sZWkgV2FuZyA8eGlhb2xlaS53YW5nQHdpbmRyaXZlci5jb20+DQo+
+IC0tLQ0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMgfCAxICsN
+Cj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNfbWFpbi5jDQo+IGIvZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19tYWluLmMNCj4gaW5kZXggYTcyZDhhMmViMGIzLi4yYjM1
+MzRkNDM0ZDggMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9m
+ZWNfbWFpbi5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L2V0aGVybmV0L2ZyZWVzY2FsZS9mZWNfbWFp
+bi5jDQo+IEBAIC00NTI0LDYgKzQ1MjQsNyBAQCBmZWNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
+dmljZSAqcGRldikNCj4gIAlmZWNfZW5ldF9taWlfcmVtb3ZlKGZlcCk7DQo+ICBmYWlsZWRfbWlp
+X2luaXQ6DQo+ICBmYWlsZWRfaXJxOg0KPiArCWZlY19lbmV0X2ZyZWVfcXVldWUobmRldik7DQo+
+ICBmYWlsZWRfaW5pdDoNCj4gIAlmZWNfcHRwX3N0b3AocGRldik7DQo+ICBmYWlsZWRfcmVzZXQ6
+DQo+IC0tDQo+IDIuMjUuMQ0KDQo=
 
