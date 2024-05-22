@@ -1,99 +1,194 @@
-Return-Path: <linux-kernel+bounces-186062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C4F8CBF59
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297BF8CBF5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF02BB21D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D931F23333
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A16982482;
-	Wed, 22 May 2024 10:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3589823DE;
+	Wed, 22 May 2024 10:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRfEQIQm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XboQguBB"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F4C81AD0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BC2405CC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716374357; cv=none; b=QYZ8aH1SHu4ap4Sib4UM3lmqUtK28K5ptVpAZrIwPgPxEkvudaGccjBuYuJ9ggqYHPtf650NPIoGEc/uCMfq9O+0vZnwfH22+9CnEb4LpLRSmcwfLkKTUrESyDApDsRrLY1LUOpoug7L4W0Ob2+yHfg0TWVo2MsfMx7nYFLn9bU=
+	t=1716374434; cv=none; b=cWP1Hpzyq+FLZKdJF7ztrfnKXNBelF58vaNHLjdRnvpmxnec9ERugpKywusBH1Qlvmo/25UgsI2jLL09/zlE9LZuprj34Y+3UkDy0orVfvZWw+M6APm77UQCWeOWTJvBwxiK894jDq9Un947s9HwU+w9cj9BX8Nh34uRDUcU39k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716374357; c=relaxed/simple;
-	bh=w+JBP+YjCE/qMG21vPjkWKzaQsU894rn3eFPFGdZ+4U=;
+	s=arc-20240116; t=1716374434; c=relaxed/simple;
+	bh=DX3D6Q/G2nkV8/MDn0wGoCxEIYLxKvAtTiLNkBqKcxg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WYc7edpweS+kMZ6wBbkv9JUjII1fQ1Ou+a6tiv4/yhkeaahjgxkBuzlJL1YgFQOBMoGBrftX5N7a/xAqe84dpqrqmlTskdWR4CSFniF5uCi8IKN8WRUGxzBN7vK8xoWedMzcpkgqNe368OsEMFDwfTkZC8hZzl2oKUIGeSBxMwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRfEQIQm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F73DC32781
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:39:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716374357;
-	bh=w+JBP+YjCE/qMG21vPjkWKzaQsU894rn3eFPFGdZ+4U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bRfEQIQm/6YXO0bEnt1/NP1kauvyQ4UQF6QSfXbfcn4fOQciBqqCarLC4F8YkvAhW
-	 k7uOI5qAW8CBFLidrR+E60Rzlqq7sQPNSbCQwAzMS2lQZW7OTrinPX3++auXFEQi4f
-	 H/6OIBcy8ws7UQAWnR6fqWBo86kXfS85araqZZPdNEYXgeMkTLMn1ZiBXr3S7+aagR
-	 d6jEuGiGGFvy0/L7NeWfwARSoEFso0hQ1Iw0YN0jz/9qWAxXYos9vSFJRGUsdyR3Uq
-	 5GKOM9SM31QQoA9Gr1Mvmcbv9XyfmjcP7GAKJHesADNW9IUWXCxR/H721P5+KHsdis
-	 pvPUe8JEt6yFw==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51f57713684so7833716e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:39:17 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzE0l4BPfs8SuW/liwQPr/ehTIZVxL69veT5UWb5QEqX79uaUJy
-	sqLP0fbh+/HBnaZlwInK/QJgLK6Mfs9EOVwOveGiRGorOKOQPVQ6FtR0jFSJ4bR3A6yFkDV1oUx
-	ozsuS0fYjORXyKXOXfJfJf6L7FaE=
-X-Google-Smtp-Source: AGHT+IG15YWoyGMSrCLJPu6j2RhwjiHgK4lLnT3gBvwEAWUesPPDKffzeoOkQGCvGPH7XczTejCUAAnKdVUwN+T/slQ=
-X-Received: by 2002:ac2:5506:0:b0:51b:6f06:92f2 with SMTP id
- 2adb3069b0e04-526bf35cd13mr819793e87.33.1716374355823; Wed, 22 May 2024
- 03:39:15 -0700 (PDT)
+	 To:Cc:Content-Type; b=Dohg1vg1o+/a2L0PI68Ah8G+IQLFD3m4aXi/FgFAlihPKtEQCJNmHhcypef1cAbn6SGtlRcfU3RruyzYMpGAzR9boLnohvocRP/jzT9eHLffgQz49Wq6/rAOWscQoV3W7KAx3+YmDXkNQ1L455eeerj4uY7WSvyO3TmDLbJLQFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XboQguBB; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4df456bbf86so1594681e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716374432; x=1716979232; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JGBrCiYdmQ4B6wnJrGx67czT3yLNOBqFphtPVjs664s=;
+        b=XboQguBBcyo0ACzQubO5Hte4hmO4+Ie9JIa/jX9y4yBFEvOV/aAvchX0StWXVs6NC9
+         0XvpU9H96wg7Un6axZ0fRqZ/0ORCEicNGinmb5F4c5dlPRb9C12Gh5csovuZx/PYiOcm
+         QnbxjDsnlZgFq4OhFd6yFlsfrN2nqCqF6id9nUbSyPiG/bagspczylbVY/boMqXqnJUi
+         RJHE19j01twowLkQsFHCmKR7XmyGV2Qry74dQurSe+uSn3WImBTLpoLc9dY6Met6jqI8
+         JGMTgMBxQsdTzNCS9y/Rx1qVdxSwW81ijRAsJyYQ3jq/kvg0VoPAzYZ+tPBQG5JoTpb3
+         M88w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716374432; x=1716979232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JGBrCiYdmQ4B6wnJrGx67czT3yLNOBqFphtPVjs664s=;
+        b=AjtmVqq/0erXcOXZjUU0CWk5v7qUHBukUqNnGSrzj/iSmG3sDtQAYw8IvQa7G+J192
+         RAidKF5+PGPfmgsMmSFe7FVUDC/GfMlAm3H35PoX1OKC+sRtdRGiw3fTK2IyhixMVgmQ
+         OKdqyMhGGpXSWZApa4sZgNZhgrMGNwm58IB4ZBoTJPgLMRmjOwnVkJxc/w263Gwdlkwm
+         j3SRYH3lnteI1/D+nA7NI7TT/xyqlYsijCqzQlhYp6w1sceKlINrxku9E5ahgg3u0hsp
+         QXP+Ckl6fEuNQORJXH9uGMQHbS83YFW/VdFD+uX7P3O9p9hV306TQkY6RKg4vokdM2bj
+         gQSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVx4z4ho2EqBOXS0jqoHG+6pPtLqyh3ZQn/Lrq6ugG918ScBVDOJjF3wiblvfC6QygvQDfPJsSNCTgN1CfoBb17ESQZQ9GoiS4T9bwe
+X-Gm-Message-State: AOJu0YzOY3Cg4V1xatO91JdzBVqbw80AfyZfCQ7xta2tvZB1bebUXOm1
+	ZFJVWtHMpD8Q3o7wX+HOeUOA41oQscVmIYJ2Rk+91VM/rElokYpiGuDpC66+isSM8EcYH7Xgr1a
+	BZQqvhpQO0/33RfCA8UX/P4zmWeJKbbrq
+X-Google-Smtp-Source: AGHT+IFz/+FulVn/L4GngDGNYyGatHQM4h9w9g4/jURT3l7FTQh1zUzhDggmL2PIlEtdWuaZYnIBue2iy9mAn20e0uE=
+X-Received: by 2002:a05:6122:168b:b0:4cb:fc25:7caa with SMTP id
+ 71dfb90a1353d-4e2185dfe36mr1512317e0c.14.1716374432152; Wed, 22 May 2024
+ 03:40:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522040754.2972825-1-bo.wu@vivo.com>
-In-Reply-To: <20240522040754.2972825-1-bo.wu@vivo.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 22 May 2024 19:38:39 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT8h-VQe-NLJXksRkskEZwCWCESNMfdUWpfbwFebSyoMw@mail.gmail.com>
-Message-ID: <CAK7LNAT8h-VQe-NLJXksRkskEZwCWCESNMfdUWpfbwFebSyoMw@mail.gmail.com>
-Subject: Re: [PATCH] scripts/gdb: fix symbol link when run make cmd out of tree
-To: Wu Bo <bo.wu@vivo.com>
-Cc: linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Kieran Bingham <kbingham@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Wu Bo <wubo.oduw@gmail.com>
+References: <0e2a6f232e7579a2e4407ecf075531980d97f286.1716367360.git.baolin.wang@linux.alibaba.com>
+ <22ac01a3-ddbb-4114-88cd-ad1a31982dad@redhat.com> <51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
+In-Reply-To: <51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 22 May 2024 22:40:20 +1200
+Message-ID: <CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
+Subject: Re: [PATCH] mm: drop the 'anon_' prefix for swap-out mTHP counters
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, willy@infradead.org, 
+	ying.huang@intel.com, ryan.roberts@arm.com, ziy@nvidia.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 12:55=E2=80=AFPM Wu Bo <bo.wu@vivo.com> wrote:
+On Wed, May 22, 2024 at 9:38=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
 >
-> When running 'make scripts_gdb' command out of kernel source tree, the
-> symbol links gennerated under build-dir/scripts/gdb/linux is invalid.
 >
-> $(srctree)/$(src) need to be replaced with $(src) since
-> commit b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src)
-> for source directory")
 >
-> Signed-off-by: Wu Bo <bo.wu@vivo.com>
-> ---
+> On 2024/5/22 16:58, David Hildenbrand wrote:
+> > On 22.05.24 10:51, Baolin Wang wrote:
+> >> The mTHP swap related counters: 'anon_swpout' and
+> >> 'anon_swpout_fallback' are
+> >> confusing with an 'anon_' prefix, since the shmem can swap out
+> >> non-anonymous
+> >> pages. So drop the 'anon_' prefix to keep consistent with the old swap
+> >> counter
+> >> names.
+> >>
+> >> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
+> >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> >> ---
+> >
+> > Am I daydreaming or did we add the anon_ for a reason and discussed the
+> > interaction with shmem? At least I remember some discussion around that=
+.
+>
+> Do you mean the shmem mTHP allocation counters in previous
+> discussion[1]? But for 'anon_swpout' and 'anon_swpout_fallback', I can
+> not find previous discussions that provided a reason for adding the
+> =E2=80=98anon_=E2=80=99 prefix. Barry, any comments? Thanks.
+
+HI Baolin,
+We had tons of emails discussing about namin and I found this email,
+
+https://lore.kernel.org/all/bca6d142-15fd-4af5-9f71-821f891e8305@redhat.com=
+/
+
+David had this comment,
+"I'm wondering if these should be ANON specific for now. We might want to
+add others (shmem, file) in the future."
+
+This is likely how the 'anon_' prefix started being added, although it
+wasn't specifically
+targeting swapout.
+
+I sense your patch slightly alters the behavior of thp_swpout_fallback
+in /proc/vmstat.
+Previously, we didn't classify them as THP_SWPOUT_FALLBACK, even though we
+always split them.
+
+                if (folio_test_anon(folio) && folio_test_swapbacked(folio))=
+ {
+                        ...
+                                if (!add_to_swap(folio)) {
+                                        int __maybe_unused order =3D
+folio_order(folio);
+
+                                        if (!folio_test_large(folio))
+                                                goto activate_locked_split;
+                                        /* Fallback to swap normal pages */
+                                        if (split_folio_to_list(folio,
+folio_list))
+                                                goto activate_locked;
+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+                                        if (nr_pages >=3D HPAGE_PMD_NR) {
+                                                count_memcg_folio_events(fo=
+lio,
+                                                        THP_SWPOUT_FALLBACK=
+, 1);
+
+count_vm_event(THP_SWPOUT_FALLBACK);
+                                        }
+                                        count_mthp_stat(order,
+MTHP_STAT_ANON_SWPOUT_FALLBACK);
+#endif
+                                        if (!add_to_swap(folio))
+                                                goto activate_locked_split;
+                                }
+                        }
+                } else if (folio_test_swapbacked(folio) &&
+                           folio_test_large(folio)) {
+                        /* Split shmem folio */
+                        if (split_folio_to_list(folio, folio_list))
+                                goto keep_locked;
+                }
 
 
-This was fixed in today's linux-next.
 
-commit ab32efe0e2b6ab01ba079995071da8d587c976cc
-Author: Douglas Anderson <dianders@chromium.org>
-Date:   Mon May 20 12:56:52 2024 -0700
+If the goal is to incorporate pmd-mapped shmem under thp_swpout* in
+/proc/vmstat,
+and if there is consistency between /proc/vmstat and sys regarding
+their definitions,
+then I have no objection to this patch. However, shmem_swpout and shmem_swp=
+out_*
+appear more intuitive, given that thp_swpout_* in /proc/vmstat has
+never shown any
+increments for shmem until now - we have been always splitting shmem in vms=
+can.
 
-    kbuild: scripts/gdb: Replace missed $(srctree)/$(src) w/ $(src)
+By the way, if this patch is accepted, it must be included in version
+6.10 to maintain
+ABI compatibility. Additionally, documentation must be updated accordingly.
 
+>
+> [1]
+> https://lore.kernel.org/all/05d0096e4ec3e572d1d52d33a31a661321ac1551.1713=
+755580.git.baolin.wang@linux.alibaba.com/
 
-
-
-
---
-Best Regards
-Masahiro Yamada
+Thanks
+Barry
 
