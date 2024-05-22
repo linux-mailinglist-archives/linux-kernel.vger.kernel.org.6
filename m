@@ -1,116 +1,116 @@
-Return-Path: <linux-kernel+bounces-186689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D3D8CC7A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:20:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A928CC7AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E7B1C20D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:20:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B4D1C20DE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723B31465A2;
-	Wed, 22 May 2024 20:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D5F146A80;
+	Wed, 22 May 2024 20:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v9fId9EF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U7cZLAkc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="l6pyeiSJ"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215413D97F;
-	Wed, 22 May 2024 20:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20C828F0;
+	Wed, 22 May 2024 20:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716409223; cv=none; b=diyoiT7rNOOHwp0H3WY7Eo2qOrzS5BkYOU/ntNdU6yxj6cRzeW0hwKpDP2YwQGFDvFhW/5imcaZQsVZbeLPbYye26Rs1at0d3EsfhtgwfbsVxqLukl7gV3MtuKFK05o50ugQ7Q4f1Ykzj1djhzr67rPWS2ftoOwB9AUaBgoYiXk=
+	t=1716409533; cv=none; b=d/1B3H4trBfX7iA5ytkfW7NjDpzxa2Ant1hWj/4N590Wa6ViB4LUE1nI4KoG3eoLoa5axgVMEq5S2Rp3xcuXBH9RzCYLJiWKUtjEXoc5jevw+uuC9Ik7s3Q2HN1xIdE/RY4TxSAb0zDLmboGSTUc6itX8GSBvTcA5GXI5X5xjaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716409223; c=relaxed/simple;
-	bh=F2xmOV7bgrVkwiNtggsuXeIJFbpdRdBJcYc6gTTGxjQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JPTdCqLiTzmYtZr3YAWjWg/NynMoysDbaHQ7m/L+y34jCvSQeq9qAXs3xZMuYSz2r9Prp8Szay4KmZG4MaeM/GCY07T+ncrjUdkhcdw2WEdwmqE3q7jXcHDUUUXHP4W9way5JMYkcPLxJO5mxpy3e9lUM0Sol23u/6YWyM2W5AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v9fId9EF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U7cZLAkc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716409214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2DMJSM7Oa5HYtwPggEvWY9KVgsO4BWl3ByYqO2+nYDw=;
-	b=v9fId9EF1EI9dTrREN1vupIBY53gNyx8SuIfQITUmEel0Y3nRMRx0tdSzMwmE6R2dlA+lP
-	GUKuS6JJDuBdbYpQHuacnZQJw5D0CxewJIZnkN3fQhPgm5m4VvQo8rI8gWRN5MCCk9TUMB
-	rKKsbrhhV4R3jayzTDvay8iodficuYocWUpLGsXGVqt/IhIKFhWJncACq29TNm80VdnFgL
-	sIlv69XeSUZHIsgKM+zHjtera42YlLZJJeaY8uJ0LR0c6R19yhQUkxfDO9ZDXLoknCrUVZ
-	JKLmZ+F0RaXos5PAZf9OASy2IgJir97gJLwEsfpqgZrbSM38DFc8Wl12brjOmQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716409214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2DMJSM7Oa5HYtwPggEvWY9KVgsO4BWl3ByYqO2+nYDw=;
-	b=U7cZLAkcwWGoRzBFryEp0fGuiQbnBiKLDhkkMwypWFCIwrbgYx6ELPgOKdkej/zotInkb6
-	93jllOkHPR4W76Aw==
-To: Jim Mattson <jmattson@google.com>, Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini
- <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Marc
- Zyngier <maz@kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: RFC: NTP adjustments interfere with KVM emulation of TSC
- deadline timers
-In-Reply-To: <CALMp9eSPXP-9u7Fd+QMmeKzO6+fbTfn3iAHUn83Og+F=SvcQ4A@mail.gmail.com>
-References: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
- <CALMp9eSy2r+iUzqHV+V2mbPaPWfn=Y=a1aM+9C65PGtE0=nGqA@mail.gmail.com>
- <481be19e33915804c855a55181c310dd8071b546.camel@redhat.com>
- <CALMp9eQcRF_oS2rc_xF1H3=pfHB7ggts44obZgvh-K03UYJLSQ@mail.gmail.com>
- <7cb1aec718178ee9effe1017dad2ef7ab8b2a714.camel@redhat.com>
- <CALMp9eSPXP-9u7Fd+QMmeKzO6+fbTfn3iAHUn83Og+F=SvcQ4A@mail.gmail.com>
-Date: Wed, 22 May 2024 22:20:13 +0200
-Message-ID: <87cypdha4i.ffs@tglx>
+	s=arc-20240116; t=1716409533; c=relaxed/simple;
+	bh=i5YeBElyyeAgBzFvmLeCign/ZZTOXVpIXph9q9KRSNU=;
+	h=Message-ID:Date:MIME-Version:To:References:Subject:From:Cc:
+	 In-Reply-To:Content-Type; b=BO8OFbjY7kVCEtuzkeqYwlT4AiDcZdno4ZLwkZTawNPOSwdUsZ3Y8CYG8bhvLIJtVDjXaFgBqNczIug7dXSEHTkA4GU1Au3SkHhc+uRUdKyNrhIgOk3sJp97mR5JlHkwIFUhHMaVx8mJi5twfrDrLVLExlWSDZv3Wo0rgRcE96Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=l6pyeiSJ; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716409520; x=1717014320; i=markus.elfring@web.de;
+	bh=HkwD7TSpNFck9Pz42Pa/zrMVWZu+W0Oh5FLIwzj9QLg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:References:
+	 Subject:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=l6pyeiSJrV1Szt1VVh7n6lgikHN6RLpaXjpXFxs41UzLOU5cZ3kCivjkKCAD/klM
+	 fthgmVJjSSrjneDGE8+ot7Aa1h3EqKmxtm1KukElsk/vaZ51kSkZCv1CWMA/MAUn0
+	 RknIhrJ5n9F7//j9xJYBacAQ/Nm8CSznXoetiraxQWeD0mOKAtq4MHXisUvkpUEmi
+	 5vXbySkZxwF6WTTDFdljaBoF54GTRkkkEuQYOAKsxVLFPhjZmWpX08YhEmlsrQVpq
+	 62fqBdg0SkoaNGbotSvD1mqvUqlQHYQYnB8wkJlXg1HNBOjg7Z+vJaNM5cCfpw/2U
+	 O5yXxvYOV2kOrlQs2g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MmQYX-1ssK4s3ojB-00iK6Q; Wed, 22
+ May 2024 22:25:19 +0200
+Message-ID: <5ed339a9-82cb-403d-92fd-fdcb18653f72@web.de>
+Date: Wed, 22 May 2024 22:25:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+To: John Keeping <jkeeping@inmusicbrands.com>, linux-input@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
+Subject: Re: [PATCH] Input: ili210x - fix ili251x_read_touch_data() return
+ value
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+In-Reply-To: <20240522100341.1650842-1-jkeeping@inmusicbrands.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hCnH6YciGuPD/GgNskigEv6YNstG+WJ2woxlLKGBJXmNkJsC0ja
+ rZ2LmOdFKo+44VhhVAW4pfU75My0zLSWzoGt6qAlKcyqILvKDwxiopEple6/pk55Es9fMiL
+ eZE2DvGlVPxI+2I976W/O0Dt8VNQWjAuQwpBzckbFn+E6mkCFi6htpw0ot3rSsZZkQjzQIc
+ P5ZfbOC9mHrftrDY2/heA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bEXtXTs4R90=;egPiOca3X35QYWaxy65sV6JrrHD
+ bF1FNBgp0aY082IBCstnJrg0arJuqdYiV3/f0fc4wlqSYEnLKpIulQbfoiNnptFUWlplsIGTs
+ 6qi7KMXZ5k9Iq1L4UzrG4NlHa0rifdci9MNKPagknLxagUfCoPajvQkpkNYrJUO56Ct77+p9+
+ YeBEzUvD0YBgHuGG7D7BunoXOaTS6iKY4E02r05wniJbaoUY0POTNg2FiDXzHuQYAHZ+ZZbyK
+ NRxf5ngk5d9eQH2iwELHhtfVxFmRS8Qj3F378pj7xmJ7Bl1D0yDHHzr69qGc4S/msjWm5En1Q
+ lfpkpfp1l9Y8JBuDcJlJSU3lGemZEGOa0bwAA5dfqPfS0+zaB/OAUDtbHE4kSnbrstnkhzZz1
+ xuLlGP7bQD+/yWDXzGpB0DuVHXoP1P1VS29v2XR0HsUHxFubdebuoyqJ3QEbR0QNypLHvsIvB
+ NgkF3yS/62Q3P3LOjM5Xs7KW3yJhBs2lw4ix8p8ZSCfkwf7ymZnWOuAxvUBoAuG9V57+rz1xw
+ wCWQccFYWVPfgq5ZBhWnTMQkXe8T0ISZm5UPoQUpx0NjxkIYOwrccZzKIdR5DXIBOl1AzQIR7
+ rNmfeV9Ayb2vM63Kz4as3kpO2Y2XuHFjWGOcjyQS2PUCthvgm7spLrDFvbdRKqFWHW4r3EhDI
+ YNorHHp/6b6GzhV/cTrxqXC1XMoGuKxoVRJSSWnqtYmSL2CedadkzhboxGwuWgG+82KFFA36U
+ 6yT0C9S3kBt+2pdWp+IFaLABYESPFpiWsN1fe9nNzwkFloyfbhTyMhsCGN0Ri0cJ3azMJ4zNl
+ AH1Z4YOmLo2WtNqRJmGVdO16cjEuPGWdFBuaVYZUmtEco=
 
-On Thu, May 16 2024 at 09:53, Jim Mattson wrote:
-> On Wed, May 15, 2024 at 2:03=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.c=
-om> wrote:
->> > Today, I believe that we only use the hardware VMX-preemption timer to
->> > deliver the virtual local APIC timer. However, it shouldn't be that
->> > hard to pick the first deadline of {VMX-preemption timer, local APIC
->> > timer} at each emulated VM-entry to L2.
->>
->> I assume that this is possible but it might add some complexity.
->>
->> AFAIK the design choice here was that L1 uses the hardware VMX preemptio=
-n timer always,
->> while L2 uses the software preemption timer which is relatively simple.
->>
->> I do agree that this might work and if it does work it might be even wor=
-thwhile
->> change on its own.
->>
->> If you agree that this is a good idea, I can prepare a patch series for =
-that.
+=E2=80=A6
+> This fixes touch reporting when there are more than 6 active touches.
+
+Does such information indicate a need for the tag =E2=80=9CFixes=E2=80=9D?
+
+
+=E2=80=A6
+> +++ b/drivers/input/touchscreen/ili210x.c
+> @@ -255,14 +255,15 @@ static int ili251x_read_reg(struct i2c_client *cli=
+ent,
+>  static int ili251x_read_touch_data(struct i2c_client *client, u8 *data)
+>  {
+>  	int error;
+> +	int ret;
 >
-> I do think it would be worthwhile to provide the infrastructure for
-> multiple clients of the VMX-preemption timer.
+>  	error =3D ili251x_read_reg_common(client, REG_TOUCHDATA,
+>  					data, ILI251X_DATA_SIZE1, 0);
+>  	if (!error && data[0] =3D=3D 2) {
+=E2=80=A6
 
-That only solves the problem when the guests are on the CPU, but it does
-not solve anything when they are off the CPU because they are waiting
-for a timer to expire. In that case you are back at square one, no?
+I suggest to define the variable =E2=80=9Cret=E2=80=9D in the shown if bra=
+nch.
 
-> (Better yet would be to provide a CLOCK_MONOTONIC_RAW hrtimer, but
-> that's outwith our domain.)
-
-That's a non-trivial exercise. I respond to that in a separate mail.
-
-Thanks,
-
-        tglx
+Regards,
+Markus
 
