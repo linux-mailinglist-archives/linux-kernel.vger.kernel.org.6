@@ -1,146 +1,149 @@
-Return-Path: <linux-kernel+bounces-185930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344578CBD00
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE00F8CBD02
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 669B71C2207E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2628282269
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6B280045;
-	Wed, 22 May 2024 08:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6A97FBA3;
+	Wed, 22 May 2024 08:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="aA1zAWr4";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OBVPMh5I"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QATkBnza"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEE77FBA2;
-	Wed, 22 May 2024 08:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2255F78C6E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716366523; cv=none; b=gNtn+l3KmyWdy3YGiHDA1sPeuYQND6LttzEEuJl9NvTDZ+dJuF6ELoRIdE59JgE7MMjhIe20/8EA+3uhrksIeycD0FRyfkiNTGEV0p8GoKKG/swQvyiC8n7J1ngbXXQ8eFR4Y279fUzX0oO59zzc8pTRjqDv+iZwQoOGjCTNPBw=
+	t=1716366536; cv=none; b=jjvwL2U0QDycTKcFJxca7WngcZMFxAqEc8FjNOrZDOLg35vdFrEDzBpjJ/2VBgort9W1/6m8IB1nibSejVVGRaPXjBUTYOKjiPAlNLLlBpewc6ETzn0yyZgXwI1lMWgUkqAjyYmtrdA77LvgFD1CjfgI45kUbyll6RcgCdIBxaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716366523; c=relaxed/simple;
-	bh=BCSWIERW/CzbZMGD5Q5Ts/scWWhcLl5JApEzwfk/x0k=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=p00l+GAR/VM0F4fp1j7OOK71fVaiMXVvSP4GuBWhjXoj28JKoDHBnN4pSP8x4duU4xkZru7AjoypY+ZXcDXMxzoIegMLos1zD5dHeXYplLBkEXoMCMOwZKiIyPwJDxmHwlWmslYdj+YsWzNgUSlE8o5HAI3AycqDmBJQFqwkMHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=aA1zAWr4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OBVPMh5I; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id DC7801140190;
-	Wed, 22 May 2024 04:28:40 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Wed, 22 May 2024 04:28:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1716366520;
-	 x=1716452920; bh=zPBylMyx9adf3Iiq2rlEqVXCiuXLUMTM7dbVivl5iQI=; b=
-	aA1zAWr48Pj8wCThXE6dLBR4MeeLjb7l5Fvo2zI0n5MFTDC38uAXIwampX/2rnxD
-	6ZpMhW2xaYXTeLNwXnskqQ2TUaI7aYuDhiS4mz8XhAOS2RRip3GphW/E6cieAeqN
-	aVEjJeEjOD71jyhflolh+fjkjjatcO1OIwlEhMu/1w7OYhbFgI/vpdu22scMkT1B
-	LnV8RlNTzhcoHg04WcLu+L6rYd/sPHkDFzqYYi1BaBYOVTaT2TWbg4TwCeIvfK2K
-	chya0WIL41b+yyOlazeRpQ08YjOYv3Eeqt8DgpZI1vCnhXeCudv8kJ71SnXXHZVR
-	qJVLmSePohID+hK17PSTGQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716366520; x=
-	1716452920; bh=zPBylMyx9adf3Iiq2rlEqVXCiuXLUMTM7dbVivl5iQI=; b=O
-	BVPMh5I5KiZWRcP2lBkze+JNfXo55BRGU/tnJaqa4tHa2qhCMK746752jkL9vlqu
-	pTGBVL1d/g0g+lT5RtyW0aFsEz7QcZRiKxcqent/uOZNOPb4EDks9ZL+oa56vxqg
-	Gj4F9ORXBqTZsVvTo9O6YiYEgirGvLUkLMJTT2kTOsOR403SZygTCuGHZ5SdvfPB
-	ydShheNspp1E/QpJTUShJsUbWjj/Ontfyhy/3p46UJkL/V/25Gw6e6+3bcCZc9HT
-	Gv6zZJ28TlNIVuJ6fcZvuo295LR6yu7NAYo4tDvLkeHjqSqcOl+Y+FVPkWAt9cWx
-	ruLCl+SX5PghIiilvYaiQ==
-X-ME-Sender: <xms:uKxNZl2TF2PX2hYxG09x1IsEp4U6OmxV79yyS4YL0N9I0bVvEqte0g>
-    <xme:uKxNZsFoISeUiJg6fRGN-UPweem_43qiQLZMBxsuuCqW25hKADeVFT1HkHbcLlpup
-    dajbbtVQBZzTjC_3-A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeifedguddtkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    lfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtg
-    homheqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefh
-    jeeugeevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:uKxNZl5Yo5RnRM8qKnGjSaUbUlKblGYrE2N4lOfJGfD4E-LeU9mI0w>
-    <xmx:uKxNZi2AfEojAhUoVq3o9Tolec835sOfkb0qyDhr5bAHObmUOlcc8A>
-    <xmx:uKxNZoHF6v3SLWHXJwBoJI9bqm0ymiJAapWBpnDVa0VxUzfHb1Ri-g>
-    <xmx:uKxNZj-aOnyEf6eOBFwwmAQpgM2K6IgZtWZB4qsWnp5v4i4dMTQ2dw>
-    <xmx:uKxNZsBoHrvPGGKdYY7MpoTU8zQ5tjYPtheJsce7p87ttUNZEFgvMmRM>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 8630136A006A; Wed, 22 May 2024 04:28:40 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-480-g515a2f54a-fm-20240515.001-g515a2f54
+	s=arc-20240116; t=1716366536; c=relaxed/simple;
+	bh=U6HzOuGXbSXHu/VEZTBDBAataVvHsUHclMz+/uTMyBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cj6ZI6qLdiZuogd/RsO+SXmSQdIqrWxnvTi1/c2FMDRWrA/peoxBeZTC5GAZFmfHIjehTzh2P8GQlGq0rtU/ciO+kE3kgSbN34JGszanHXPOF694vmWxuyJeEsvaDOU5HZ89XQKsMa5CWfT9oVfR/I8CbiAW7AmjzRuZdQ6BOfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QATkBnza; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4200ee78f33so5298785e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716366533; x=1716971333; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=dyRXwAbr3cWA3+MZ0nmGTO3HkhhGGwxYI+BsxiJrIv0=;
+        b=QATkBnzaIz0VDTlIJmWKN94pIVKnbBqs9O1qBtUYgvG6FHKmpvOHSKl1At0tKiNAnj
+         UlQQqnkXBx1o/X3jzMT7+eU4f3zGQD4g1QpYNdT8q0guSC6uufTbOEyyqo0YtdGeC7qx
+         jZ/MND5EmvoRhtFdpmKwawm5AQA9RNB8FTZiN9Cuvvs29QPhRFrwfDMhP/mLvu8prNCD
+         U2QbKM0zql76UZc+uySdpDQz4aeb2TIQxWBo+ipJhgqMrUqywbicwK+EbLv2yBAlUJin
+         F2gXv14tjdOR7745xrc6sleCWmblUqy3N6QkFFaeMTeZw5BeVmCTtOwMZ22nlVkAXrXs
+         kt2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716366533; x=1716971333;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dyRXwAbr3cWA3+MZ0nmGTO3HkhhGGwxYI+BsxiJrIv0=;
+        b=lij/QGyO5rpmEK+G/q2BvLYRPdEHAzr/xIJModYgFQDFKgPBEmkoEqxlX6OfWjqcIl
+         sywGnPCNybdRz6ZYnaakfG5WzdJ9jOtBd8OSaDCOVDRAa/y3KnXtmnE5FsmnlSfkfXaM
+         N5NZWfd9GrcrElgXYgtlz0cez/WUhZKc0Yrq3ibyuEwJcO51BKTB3FrnVLPeZExxBXMc
+         pB48dWPUGNjAXYMT19YDJE6juNRu+Y15FXiN2As7msll2+Yb8FfIsecpctA2HH3ey8ll
+         pfPcLjN/FXfEYFanGyZZVt1ouX/QH/Y3u+qnE+0V3wEPx2RvurfxVUZeBLtWknPuycG0
+         1TzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV809QODIfV62qdVn9sjdHZ5Ov0uAIMbkXsg91tGpGFNFkF4pCKOM/sHCLy69UymqZgNb0daR8YdO3d5wz5jHXhAejc6tzUICmUTsFb
+X-Gm-Message-State: AOJu0Yxd/42H4lkZL6nxX+rIX7oNOvVHbLOZ432vQCGKHhQfYMDjuTiG
+	L7shlgurxcQhPwA4VjmKmLGIYTRut1WGW+WrDmYZLOn59O929eytYnAWbQUUFAM=
+X-Google-Smtp-Source: AGHT+IGtd5mhIns9+dKeaSONPFVKiPTPNHd93FF0zu+PgXSuseURLxclJNdYNqgwYGu8isWyziuoPw==
+X-Received: by 2002:a05:600c:6a15:b0:420:1551:96a9 with SMTP id 5b1f17b1804b1-420fd37f192mr8929895e9.39.1716366533470;
+        Wed, 22 May 2024 01:28:53 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4202d81104esm231947535e9.16.2024.05.22.01.28.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 01:28:52 -0700 (PDT)
+Message-ID: <bc973b4f-fe8b-44e5-afbc-f3ce8a6fc873@linaro.org>
+Date: Wed, 22 May 2024 10:28:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <13aa508f-6830-4d52-87fd-5063f737c990@app.fastmail.com>
-In-Reply-To: <Zk2mt/FsgltvhVzf@alpha.franken.de>
-References: <20240502-mips_debug_ll-v3-0-3b61f30e484c@flygoat.com>
- <3dcf3ac1-5494-482a-a80a-df4126e6ae59@app.fastmail.com>
- <3d6883ed-f8f4-44e5-a184-e5499c44f0f7@app.fastmail.com>
- <Zk2mt/FsgltvhVzf@alpha.franken.de>
-Date: Wed, 22 May 2024 09:28:22 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-Subject: Re: [PATCH v3 0/9] MIPS: Unify low-level debugging functionalities
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: icc-bwmon: Update zone1_thres_count to 3
+To: Shivnandan Kumar <quic_kshivnan@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_rgottimu@quicinc.com
+References: <20240522081508.1488592-1-quic_kshivnan@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240522081508.1488592-1-quic_kshivnan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 22/05/2024 10:15, Shivnandan Kumar wrote:
+> Update zone1_thres_count to 3 from 16 so that
+> driver can reduce bus vote in 3 sample windows instead
+> of waiting for 16 windows. This is in line with downstream
+> implementation.
+> 
 
+This might make bwmon quite jittery. I don't think downstream is the
+source of truth here. Please provide some measurements *on mainline tree*.
 
-=E5=9C=A82024=E5=B9=B45=E6=9C=8822=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8A=E5=
-=8D=889:03=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
-[...]
->
-> hmmm, I thought I was clear enough on version 1 of this series.
->
-> I don't want an additional printk like debug interface, There is
-> prom_putchar() and early printk console, which always got me past
-> any boot issue.
+Best regards,
+Krzysztof
 
-So it's not an additional printk like debug interface, it actually
-merged 3 existing debug interfaces, the first being zboot's assembly
-print routines, the second being CPS's assembly print routines, the
-third being some platform specific early printk. I think they are
-all essential for debugging early faults, for zboot that's the only
-way to print something at decompressing stage, for CPS as other cores
-are booting in non-coherent state we can't safely use any kernel
-functions, for early_printk that can help us *reduce* the amount
-of early printk code by just adding UART base to config.
-
-The only thing being added is the ability to debug very early exception,
-even that is partially ported from existing CPS assembly debugging routi=
-nes.
-
-Please let me know your thoughts.
-
-Thanks
->
-> Thomas.
->
-> --=20
-> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
-rily a
-> good idea.                                                [ RFC1925, 2=
-3 ]
-
---=20
-- Jiaxun
 
