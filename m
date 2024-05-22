@@ -1,245 +1,210 @@
-Return-Path: <linux-kernel+bounces-185694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352AA8CB8F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949D28CB8F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E711F2676F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0668C1F269BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10327D095;
-	Wed, 22 May 2024 02:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJHIrMm9"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FA22EB07;
+	Wed, 22 May 2024 02:31:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487B77B3C1
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9296339A8;
+	Wed, 22 May 2024 02:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716344922; cv=none; b=s/d9Te+kNwF1CZQmE+v8lwZ4UiyFFoQS+Mi4GF1zeOjQpjoqLhA0+lE7Xc8PCo6YSacoApqpFXE5scYh1AjGbRE3qHVCXvY4HL8NntNBs/YtoUG1kXgGvEh9u42aGeWeLz1Z3ofKXI5N7cf1E7VwVB5HJLp8iDVd9Egt5CiPOAk=
+	t=1716345076; cv=none; b=o6+zAXhPPjQoZff7bHfYh0cs/YKMEyP95+6WbspTHakmmoRPt6SKYMGUBLRbgVIZEg1X6tU+H6Jg/dUGzyddN/UA7NazHgkqeDGYy50adZuuYTSlHj7fD4yIjnucYkfFzyohAVhv7tyFW6S+X3eDgvbCmRnDbuMUwe212bSgx9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716344922; c=relaxed/simple;
-	bh=bL1+vHMHhm9cMRQczr5G+NHO3Zy1qclzvEFtBGp3ICc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZJLJksBmRHam9q7i132Le7qeyH/mDSKJrV4LtJhUd/ey39kxc4KodhdI0p64okneylswwdkuTo5cU02FcjngJw6orxPqgPUW9fKFYomXLPrtIAYEnt5lSYBqTbPjV1tLI0VqFxx8Kw/KkiOv3p88xIk0KIMWIf4eyOJcG2H7fZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJHIrMm9; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-6efef492e79so12887639b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716344921; x=1716949721; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=3UQR7L7IeR8qz/nRM58REudhth61YMdGJiKJChX9kbI=;
-        b=iJHIrMm9GwBnSI1yjJajM0NyU9BObafjttFfKfHFnTmBoA5icmjewg2HT4xKppxpxO
-         WIvyzBh/lgwYUFm6UrCgyVEEgb/s0D2bELZ27vrsUXhAlWngfo65dIjQAvP5YZ/xJ59t
-         DZMSBxcXtlKxui/9eXrhdzbven9eS1BXwtvGXiMCEL0WwaY0AOItb6a3yE+L3gdjyMXt
-         /Jv7nT7iNSZfBeY3n/to0YO6EXSRTco5C9XXLtPxwPXB1JU1wjVbW1GXuo3hoXugVoun
-         EFKEMiqmco60vrv/s7PCxLxpoBhaCQVmF43loq7bAqVw23dfco4sSt44621hKRkQ8TO9
-         uk9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716344921; x=1716949721;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3UQR7L7IeR8qz/nRM58REudhth61YMdGJiKJChX9kbI=;
-        b=VDUXegUzH0glSc34l3jAcPbZQ2LFUEPPk8xbx1xiw5vcObOghBcfQljnaIQsVsjbbP
-         MZSlittQVSbjLF1QaVHHNglvHpN2rTxY961oH2MZnW5iGYXxhrdPtrRqqFPQfjn3UUJg
-         nkpcQBJGnh2EakZ14kTQb+uvZOi61P5fzFy+DMrZHbPAs8M8+k83Id2z46ZyxRJVwTPB
-         rfkkVqax+e8PS4+lftihHWIf2mhxKaLBOmpl+6UP0pJdWK5Fw1WQ9pv/QCwzsKXh8+in
-         a8C4TZ7l44mbdTkk03+mFuxmSBjEPq6Ad6e99HOeg6sk7awWUSR4ji9qdDYjNXHy2IDn
-         NS3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWEDjOI8/m2qo//8xxYookKqoHlTHcXY96V7QV3nzfgT5luoM5NT/f6t6wD62XoEyn7twUEQo5G+/+BYyuGCO7+uWkoil1OV4f/azZp
-X-Gm-Message-State: AOJu0YxTy0u8JVByxQZ3/qlHehzOLOB/KOAU26DPqfFwPE9rwFNUXhSL
-	6qxOy8dmp0Sos+YvIv5Fb/7pSXraYzqhWmshDHayxABiPmwH9R+6AXZXWZzqYtCPSgiFWc72TOu
-	i4A==
-X-Google-Smtp-Source: AGHT+IFOo0EomRnvSty2EF4AepPhMj/lMUO8x2DSRQ64LdBqHmI5HFTl/IGL+l18xs+e4laGXFK2xAMdhpc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:2d04:b0:6f3:ead3:c280 with SMTP id
- d2e1a72fcca58-6f6d60c1e1cmr35160b3a.2.1716344920604; Tue, 21 May 2024
- 19:28:40 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 21 May 2024 19:28:27 -0700
-In-Reply-To: <20240522022827.1690416-1-seanjc@google.com>
+	s=arc-20240116; t=1716345076; c=relaxed/simple;
+	bh=dCWpHDIGxN8+JH6x/Fr1QOyLBL0zIKxdojXzZXnoBWs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pbDbomx4+6PWGJU4HqYI0dqzvDr+Y4XJ2RACiI+DmAU/BBstJrALjTLmRVhmGvdAPo6Q/xudw7qMbnsPRC4M3NuQV7eUpzUk5H8SrzXbvQSkTrgPh+aDHDkcPT4KugEiG5tuvsxdN4RUxrwihUUEzwe8R3p/kP0c2uyViTydNNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VkZzn672Vz4f3kK0;
+	Wed, 22 May 2024 10:31:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id A003A1A0199;
+	Wed, 22 May 2024 10:31:07 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxDlWE1mfUNSNQ--.47117S3;
+	Wed, 22 May 2024 10:31:03 +0800 (CST)
+Subject: Re: [PATCH V2 for-6.10/block 1/2] loop: Fix a race between loop
+ detach and loop open
+To: Jens Axboe <axboe@kernel.dk>, Gulam Mohamed <gulam.mohamed@oracle.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: shinichiro.kawasaki@wdc.com, chaitanyak@nvidia.com, hch@lst.de,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240521224249.7389-1-gulam.mohamed@oracle.com>
+ <dcd2dac3-07d2-4ee8-addf-b9266a84f7fd@kernel.dk>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c7eb562c-97ae-455a-3859-0ed28ebdf7ae@huaweicloud.com>
+Date: Wed, 22 May 2024 10:31:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240522022827.1690416-1-seanjc@google.com>
-X-Mailer: git-send-email 2.45.0.215.g3402c0e53f-goog
-Message-ID: <20240522022827.1690416-7-seanjc@google.com>
-Subject: [PATCH v2 6/6] KVM: x86: Register "emergency disable" callbacks when
- virt is enabled
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chao Gao <chao.gao@intel.com>, Kai Huang <kai.huang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+In-Reply-To: <dcd2dac3-07d2-4ee8-addf-b9266a84f7fd@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDHlxDlWE1mfUNSNQ--.47117S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF47XF4fAryDury3tw18Xwb_yoW5KFWDpF
+	Z3WFW2kryDKa9xWw12vF1xu3WFq3Z2yrWrGrn7C34SkrnFyFnavFy2vryY9a4jgrW0kayj
+	vF1UWrWUuFWUCFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UWE__UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Register the "disable virtualization in an emergency" callback just
-before KVM enables virtualization in hardware, as there is no functional
-need to keep the callbacks registered while KVM happens to be loaded, but
-is inactive, i.e. if KVM hasn't enabled virtualization.
+Hi,
 
-Note, unregistering the callback every time the last VM is destroyed could
-have measurable latency due to the synchronize_rcu() needed to ensure all
-references to the callback are dropped before KVM is unloaded.  But the
-latency should be a small fraction of the total latency of disabling
-virtualization across all CPUs, and userspace can set enable_virt_at_load
-to completely eliminate the runtime overhead.
+在 2024/05/22 9:39, Jens Axboe 写道:
+> On 5/21/24 4:42 PM, Gulam Mohamed wrote:
+>> Description
+>> ===========
+>>
+>> 1. Userspace sends the command "losetup -d" which uses the open() call
+>>     to open the device
+>> 2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
+>>     function loop_clr_fd()
+>> 3. If LOOP_CLR_FD is the first command received at the time, then the
+>>     AUTOCLEAR flag is not set and deletion of the
+>>     loop device proceeds ahead and scans the partitions (drop/add
+>>     partitions)
+>>
+>> 	if (disk_openers(lo->lo_disk) > 1) {
+>> 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+>> 		loop_global_unlock(lo, true);
+>> 		return 0;
+>> 	}
+>>
+>>   4. Before scanning partitions, it will check to see if any partition of
+>>      the loop device is currently opened
+>>   5. If any partition is opened, then it will return EBUSY:
+>>
+>>      if (disk->open_partitions)
+>> 		return -EBUSY;
+>>   6. So, after receiving the "LOOP_CLR_FD" command and just before the above
+>>      check for open_partitions, if any other command
+>>      (like blkid) opens any partition of the loop device, then the partition
+>>      scan will not proceed and EBUSY is returned as shown in above code
+>>   7. But in "__loop_clr_fd()", this EBUSY error is not propagated
+>>   8. We have noticed that this is causing the partitions of the loop to
+>>      remain stale even after the loop device is detached resulting in the
+>>      IO errors on the partitions
+>>
+>> Fix
+>> ---
+>> Re-introduce the lo_open() call to restrict any process to open the loop
+>> device when its being detached
+>>
+>> Test case
+>> =========
+>> Test case involves the following two scripts:
+>>
+>> script1.sh
+>> ----------
+>> while [ 1 ];
+>> do
+>> 	losetup -P -f /home/opt/looptest/test10.img
+>> 	blkid /dev/loop0p1
+>> done
+>>
+>> script2.sh
+>> ----------
+>> while [ 1 ];
+>> do
+>> 	losetup -d /dev/loop0
+>> done
+>>
+>> Without fix, the following IO errors have been observed:
+>>
+>> kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
+>> kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
+>>          phys_seg 1 prio class 0
+>> kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
+>>          phys_seg 1 prio class 0
+>> kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
+>>          read
+>>
+>> V1->V2:
+>> 	Added a test case, 010, in blktests in tests/loop/
+>> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+>> ---
+>>   drivers/block/loop.c | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+>> index 28a95fd366fe..9a235d8c062d 100644
+>> --- a/drivers/block/loop.c
+>> +++ b/drivers/block/loop.c
+>> @@ -1717,6 +1717,24 @@ static int lo_compat_ioctl(struct block_device *bdev, blk_mode_t mode,
+>>   }
+>>   #endif
+>>   
+>> +static int lo_open(struct gendisk *disk, blk_mode_t mode)
+>> +{
+>> +        struct loop_device *lo = disk->private_data;
+>> +        int err;
+>> +
+>> +        if (!lo)
+>> +                return -ENXIO;
+>> +
+>> +        err = mutex_lock_killable(&lo->lo_mutex);
+>> +        if (err)
+>> +                return err;
+>> +
+>> +        if (lo->lo_state == Lo_rundown)
+>> +                err = -ENXIO;
+>> +        mutex_unlock(&lo->lo_mutex);
 
-Add a pointer in kvm_x86_ops to allow vendor code to provide its callback.
-There is no reason to force vendor code to do the registration, and either
-way KVM would need a new kvm_x86_ops hook.
+This doesn't fix the problem completely, there is still a race window.
 
-Suggested-by: Kai Huang <kai.huang@intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/kvm_host.h |  3 +++
- arch/x86/kvm/svm/svm.c          |  5 +----
- arch/x86/kvm/vmx/main.c         |  2 ++
- arch/x86/kvm/vmx/vmx.c          |  6 +-----
- arch/x86/kvm/vmx/x86_ops.h      |  1 +
- arch/x86/kvm/x86.c              | 10 ++++++++++
- 6 files changed, 18 insertions(+), 9 deletions(-)
+lo_release
+  if (disk_openers(disk) > 0)
+   reutrn
+   -> no openers now
+		lo_open
+		 if (lo->lo_state == Lo_rundown)
+		 -> no set yet
+		 open succeed
+  mutex_lock(lo_mutex)
+  lo->lo_state = Lo_rundown
+  mutex_unlock(lo_mutex)
+  __loop_clr_fd
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index aabf1648a56a..66698f5bcc85 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -36,6 +36,7 @@
- #include <asm/kvm_page_track.h>
- #include <asm/kvm_vcpu_regs.h>
- #include <asm/hyperv-tlfs.h>
-+#include <asm/reboot.h>
- 
- #define __KVM_HAVE_ARCH_VCPU_DEBUGFS
- 
-@@ -1613,6 +1614,8 @@ struct kvm_x86_ops {
- 
- 	int (*hardware_enable)(void);
- 	void (*hardware_disable)(void);
-+	cpu_emergency_virt_cb *emergency_disable;
-+
- 	void (*hardware_unsetup)(void);
- 	bool (*has_emulated_msr)(struct kvm *kvm, u32 index);
- 	void (*vcpu_after_set_cpuid)(struct kvm_vcpu *vcpu);
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 3d0549ca246f..9c55d0c9cb59 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -4952,6 +4952,7 @@ static void svm_vcpu_unblocking(struct kvm_vcpu *vcpu)
- static struct kvm_x86_ops svm_x86_ops __initdata = {
- 	.name = KBUILD_MODNAME,
- 
-+	.emergency_disable = svm_emergency_disable,
- 	.check_processor_compatibility = svm_check_processor_compat,
- 
- 	.hardware_unsetup = svm_hardware_unsetup,
-@@ -5389,8 +5390,6 @@ static struct kvm_x86_init_ops svm_init_ops __initdata = {
- static void __svm_exit(void)
- {
- 	kvm_x86_vendor_exit();
--
--	cpu_emergency_unregister_virt_callback(svm_emergency_disable);
- }
- 
- static int __init svm_init(void)
-@@ -5406,8 +5405,6 @@ static int __init svm_init(void)
- 	if (r)
- 		return r;
- 
--	cpu_emergency_register_virt_callback(svm_emergency_disable);
--
- 	/*
- 	 * Common KVM initialization _must_ come last, after this, /dev/kvm is
- 	 * exposed to userspace!
-diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-index 7c546ad3e4c9..3f423afc263b 100644
---- a/arch/x86/kvm/vmx/main.c
-+++ b/arch/x86/kvm/vmx/main.c
-@@ -24,6 +24,8 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
- 
- 	.hardware_enable = vmx_hardware_enable,
- 	.hardware_disable = vmx_hardware_disable,
-+	.emergency_disable = vmx_emergency_disable,
-+
- 	.has_emulated_msr = vmx_has_emulated_msr,
- 
- 	.vm_size = sizeof(struct kvm_vmx),
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 51b2cd13250a..eac505299a7b 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -753,7 +753,7 @@ static int kvm_cpu_vmxoff(void)
- 	return -EIO;
- }
- 
--static void vmx_emergency_disable(void)
-+void vmx_emergency_disable(void)
- {
- 	int cpu = raw_smp_processor_id();
- 	struct loaded_vmcs *v;
-@@ -8613,8 +8613,6 @@ static void __vmx_exit(void)
- {
- 	allow_smaller_maxphyaddr = false;
- 
--	cpu_emergency_unregister_virt_callback(vmx_emergency_disable);
--
- 	vmx_cleanup_l1d_flush();
- }
- 
-@@ -8661,8 +8659,6 @@ static int __init vmx_init(void)
- 		pi_init_cpu(cpu);
- 	}
- 
--	cpu_emergency_register_virt_callback(vmx_emergency_disable);
--
- 	vmx_check_vmcs12_offsets();
- 
- 	/*
-diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
-index 502704596c83..afddfe3747dd 100644
---- a/arch/x86/kvm/vmx/x86_ops.h
-+++ b/arch/x86/kvm/vmx/x86_ops.h
-@@ -15,6 +15,7 @@ void vmx_hardware_unsetup(void);
- int vmx_check_processor_compat(void);
- int vmx_hardware_enable(void);
- void vmx_hardware_disable(void);
-+void vmx_emergency_disable(void);
- int vmx_vm_init(struct kvm *kvm);
- void vmx_vm_destroy(struct kvm *kvm);
- int vmx_vcpu_precreate(struct kvm *kvm);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d750546ec934..84b34696a76c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12464,6 +12464,16 @@ void kvm_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector)
- }
- EXPORT_SYMBOL_GPL(kvm_vcpu_deliver_sipi_vector);
- 
-+void kvm_arch_enable_virtualization(void)
-+{
-+	cpu_emergency_register_virt_callback(kvm_x86_ops.emergency_disable);
-+}
-+
-+void kvm_arch_disable_virtualization(void)
-+{
-+	cpu_emergency_unregister_virt_callback(kvm_x86_ops.emergency_disable);
-+}
-+
- int kvm_arch_hardware_enable(void)
- {
- 	struct kvm *kvm;
--- 
-2.45.0.215.g3402c0e53f-goog
+And with the respect, loop_clr_fd() has the same problem.
+
+I think probably loop need a open counter for itself.
+
+Thanks,
+Kuai
+
+>> +	return err;
+>> +}
+> 
+> Most of this function uses spaces rather than tabs.
+> 
 
 
