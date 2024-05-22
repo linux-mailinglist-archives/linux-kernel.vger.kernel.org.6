@@ -1,293 +1,234 @@
-Return-Path: <linux-kernel+bounces-186780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189EF8CC915
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:31:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAFC8CC917
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845391F21A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE4C283CF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C891487C5;
-	Wed, 22 May 2024 22:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E705D1494A1;
+	Wed, 22 May 2024 22:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="csza3GX8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xhpzo/SK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252AA80BFC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716417093; cv=none; b=FMP6DlpyLz30lsI2MNF+ZvZ92xo3i3wkON3jQmzcn9YNs4CxqYe13BlLOh1zrmHsdmoFkOGqdzm88S/K7+FTe1wVNLel7ORrEZh5Ro+fiPi8vb6ZQlYHVMfhH291mFXyMRqgUPGhKijOFHv3uNhFGNi7FD4ymj9gwEz5YKNa/oc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716417093; c=relaxed/simple;
-	bh=1W1L7acCospm0rUX5FWxQM3phzR8QfqYtWmsjzBV1iY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJnRxon8S4h9tIUTvzo3uKrXXSQOMYFp9r1ToW02uspdlERz/JL4obp9mv9qmYwXEtvpkTuu4ppBfBgZNaSKQXV3R7hA1W2wyJZs2xhXek/vU/E2Uvz8sXozyVzGICIPZqFXYxvuaVyEPPe8Bzgn0yYpfSFN1dZH35QrErIhlnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=csza3GX8; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4395A146A8F;
+	Wed, 22 May 2024 22:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716417215; cv=fail; b=hN4ibjbDzlddrKbSxiXn5lWQvQ5sg9SpJn3rZAeWFe+BD5TWq5vjXrX4aFyZe6qLLwQv1kSk4tvJdjuJUCtnM1j4uE5KEZekNGa0oCbuLvE+22vRlBthISrMd3415JaXD8ZpbY+W+Sn3/w2oKvru8542u9i8O6GVuNRmif+Sbb0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716417215; c=relaxed/simple;
+	bh=Ea7FlnAw5qui8pYLGIpgA+d2R4sKxoOYj0wt7o5pRGA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=I2fZjMNWr+sOJ7G9ScJcfwh56XYD+OfIKjNsZLR1ViZbIbKrYSF3ADotS+7SLRcInz5P/khH396QAicqY9khTWRa8y1cNhbiSSGBHJoI8e4z10k3JcmVuxGwKBU7Em4Yjj1p0uGdRflKBMN3jjXK2lcsowwnoA1it1fTcl2yfLk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xhpzo/SK; arc=fail smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716417091; x=1747953091;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1W1L7acCospm0rUX5FWxQM3phzR8QfqYtWmsjzBV1iY=;
-  b=csza3GX8bCowH1UrEnMB0wWr1+An1RiLgY74pGUap0b6muKfe3HPoVoq
-   heiaghKVJDvhuWbLZ/2Qx+6nrxLcN6jAJwA8J3F828GoEZt6721U1lJ4q
-   iLKPp0yELkz9u7xgiO1DznQQhSTrAArZP8CbSEp9HssS2aoGm5vppy3+u
-   wddFvI+AlO/JFYlubiCL36i16HTd8Ydu0MycHqtLI81vkY7OWzgdrVrdg
-   KqPBtsQnSPWvZEBiJgNfdXpjqn74lWRfRi1gzdBnYO0Z84dLhyXYxzyXv
-   rb0BOOudID23gMbEGZGAvxbb8U0BG+Iqw4RBjMyhmnw86F33LNWUpB2rK
-   Q==;
-X-CSE-ConnectionGUID: wxRzx78YRyqj52PGb/B27A==
-X-CSE-MsgGUID: n+w1ggRVR7ClWaDqikSWiA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="23270778"
+  t=1716417213; x=1747953213;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Ea7FlnAw5qui8pYLGIpgA+d2R4sKxoOYj0wt7o5pRGA=;
+  b=Xhpzo/SKvp/M0ekVZQ/sOjLOWCc20RcugtGFvoTKyZ82DxkcNkN1UZA0
+   PewjGSIWAS2INPTfeIYU15PI1aaG/o0Jk63MROCvyUu0qmY3MXwnVDIiv
+   xhjNpr/jlsYT8IoqzCu8eQ3louUBdkdiL3DvnYHpQ63LiOnNBeFxPdFMB
+   y0c3Oci2cWDIO5vAWlZE27iPqbkQbDMJ/Y2pAjasZxltxbsscmCn1IkwD
+   0bT5htuggTpXmFr8g3dT3KcwprKMmbUDDtW6xSr54RiNn3t36kw/Bedw2
+   cHyiqz+26mDPZ8ncheyxP9ByFlT/kw4vyjjUPRRrP5H2g5/c9MQg9Vbnz
+   A==;
+X-CSE-ConnectionGUID: kOaXFrsuSlCNOofVkD66yw==
+X-CSE-MsgGUID: 30rgjnhSTbuNWePS6S9rlQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="24113084"
 X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="23270778"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 15:31:30 -0700
-X-CSE-ConnectionGUID: G5irdcCXSgyxecri599MIA==
-X-CSE-MsgGUID: iwX5NZClT4C7gT1HWu2k8A==
+   d="scan'208";a="24113084"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 15:33:28 -0700
+X-CSE-ConnectionGUID: jhrxoex7TCKWYbKaCFA4WA==
+X-CSE-MsgGUID: 2vr47Ce0SUGs7oxaow2ddw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33550283"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 22 May 2024 15:31:23 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9uUS-0002BN-35;
-	Wed, 22 May 2024 22:31:20 +0000
-Date: Thu, 23 May 2024 06:30:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shenghao Ding <shenghao-ding@ti.com>, broonie@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andriy.shevchenko@linux.intel.com,
-	lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
-	judyhsiao@google.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
-	linux-kernel@vger.kernel.org, j-chadha@ti.com,
-	liam.r.girdwood@intel.com, bard.liao@intel.com,
-	yung-chuan.liao@linux.intel.com, dipa@ti.com, kevin-lu@ti.com,
-	yuhsuan@google.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
-	Baojun.Xu@fpt.com, navada@ti.com, cujomalainey@google.com,
-	aanya@ti.com, nayeem.mahmud@ti.com,
-	Shenghao Ding <shenghao-ding@ti.com>
-Subject: Re: [PATCH v1] ASoc: tas2781: Add Calibration Kcontrols and tas2563
- digtial gain for Chromebook
-Message-ID: <202405230633.Vq1CHD6e-lkp@intel.com>
-References: <20240522112942.994-1-shenghao-ding@ti.com>
+   d="scan'208";a="38417437"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 15:33:29 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 22 May 2024 15:33:27 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 15:33:27 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.101)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 22 May 2024 15:33:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j05ViwcB79/m54pQematWIhrN4XB0uFt9XRbfaX3w/6ZPZDG1bVCMc33fXldvJ+6+WQ09JA48XbOS39+AqOXxiWnm615xF4oaYGvtCYB9F+GRyLhDlm6gW0MQYe5CU3dEaOaVxMoSJC2+hFLVdqlzhWUJGHsHkoLFevuKdAQ3t4qQ41hyW+53kiHEWZCOS1XwURIK3w2rgSwec+qFcTJx368ds6wDWXC2oIpS+lX4hC/0EwTuLfO3IKAjXykYycS/wGEPHJLDKTvG8LqFDugCk2jZOiaAq5j3haciGtXzC0EIrly5V9eyth5ad4XCgul3KbL5c1Bb6Gh5t2vkgkWdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W7wImcC7TVdinSB6a1EVGpJcnltZuhYUDsaCgDKCdkY=;
+ b=jWDz4ZHxOS1+0odJ/4YRNS6vhxgiusBmybRp93HTtnzFG9OwzF3SpiDpZXHEYY4g01sr2HAMFw0p+bUD+uKQki/X7JV23jVoyAyxUixv5Ro+80a40ukwW/FA9nLfghQ8VfIOQIbLgofIuFcxsv12njT5PYXS9Mvg1qvYUwlei0Rpo3fsP/ahhxytNlPF6RVPmBm9zLZLKzrplMw7/gfAU929957F6+knlJhFE9V3QWETAYOGKkCVqSvRXEEvDNM13/1ahBYHTifJqfsL8jZjSLfdtIRMAgfn50B+sp0tDwcULjIf+Gq66gOjsJNy7M6tTUx0iJ1cOCagOLf4NaRoaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by PH8PR11MB8015.namprd11.prod.outlook.com (2603:10b6:510:23b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 22:33:25 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 22:33:25 +0000
+Message-ID: <2d873eb4-67d2-446d-8208-a43a4a8aba14@intel.com>
+Date: Thu, 23 May 2024 10:33:17 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/6] KVM: Add arch hooks for enabling/disabling
+ virtualization
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+	<pbonzini@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chao Gao
+	<chao.gao@intel.com>
+References: <20240522022827.1690416-1-seanjc@google.com>
+ <20240522022827.1690416-5-seanjc@google.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+In-Reply-To: <20240522022827.1690416-5-seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR06CA0010.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::23) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522112942.994-1-shenghao-ding@ti.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|PH8PR11MB8015:EE_
+X-MS-Office365-Filtering-Correlation-Id: a53652ab-fde9-4eaa-c943-08dc7aaf31e7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?cFp4K0hvN2NINnZoNE9YM3JQSk5XT0JHMkc2NytINzhEblhDNi9DQ3pGZ3lw?=
+ =?utf-8?B?WWFTQXp5ZncvUk5Bb1VOcDc2MDQxZGRoZlc0Qy92ejVQVmpDajl2SFBPaFlX?=
+ =?utf-8?B?aE13TFV4TnM0eG1LUkpNRnJrMTY0MkV3dDh0d2VDa2MzUkdRNks5V0ZsR3FG?=
+ =?utf-8?B?eTNLdE0wSnVTM241UGY1VjQyMXJlSUpYUjZSQWhhWDN5aDR3UlN4dWRLbVhY?=
+ =?utf-8?B?OFVLYUtIQzZwR1VyNTEyZkpRQzFsUXBFN3Nac1lOOXJIbFZyRUMrNjZ4eENU?=
+ =?utf-8?B?Rm8yaXdTaG1lNU5Wa0pGL2hiTnpuU0EwQXZVYU5UeWZxVEduV3ZOeWpLM0xO?=
+ =?utf-8?B?dHpLUTc5RnJDa3JqY2pMMHBMVFVPU09USnp4SThibzREOHhlY3lzdFVvMGlx?=
+ =?utf-8?B?SEZSdjBBekZpbC8zM3RLa0dCWWhJdnFEK0NuOVE4YVlTY1RIWXovd3VnSWZa?=
+ =?utf-8?B?VHY3emxtZ3ZRWEpJaGtDRFBVNjUvMHIrYmgzY2I5bnFDUWRxSUJaUUlhSWlu?=
+ =?utf-8?B?OXNFZXFURUh3V3VNTUdGYndJVWw2YlI2Rzd3WElWcDRUMnYwazNPZlFHRm1v?=
+ =?utf-8?B?UWI1UXY5MUZXSW8yR0xaRmsvNEJyZEpJbGFaazVHeWtLeXY0YmlzRDhMc0Ex?=
+ =?utf-8?B?RUpvZXIzVVZmVlNab0tZWHpISEU4ajlZaG5rd1FpT3RQUVRpbE51RW9BZHF0?=
+ =?utf-8?B?bVh3NytPZWp3M3hhaVIrUHNsMTYxRzU4TEc4eVhVeDV6N3ZiNVRPU290ZkNT?=
+ =?utf-8?B?a3VsMDRYN1FxcVdnRmR1ZThiWlIwd0VuTlU5bTJWNEcvdExBYWE3NDJKelNX?=
+ =?utf-8?B?MjZ6VXJZVTk4eGxkNGFwUzEzdXNxUWRTa3ByZStBbjRXZ25CN2ZxeklqNTlG?=
+ =?utf-8?B?cUVTYW1WYjdTM20zNUR2aHQ0amJEbjloc0VOSjZOQVpSNXZ6OEVMSXlJd044?=
+ =?utf-8?B?YnUrclU4TG5aSzhTcytYb3BMV0J6eUE5OWdzZFhrbDNWdjRvbDZGVDdaNnc4?=
+ =?utf-8?B?c2l2VmszVWRKR0dOenNZL3c1UXVRZXplSUxSeUo5eWRHd2hrallYWkpSblRy?=
+ =?utf-8?B?UFNYZU1ZUFRLS0NJY2J2TnA3Y1hvNjdlUGFQZDZsZmF6Y29RTHRrMnlPb29X?=
+ =?utf-8?B?L1l5K0gvMDZUbkwySVpQczdnbkZQVVdpTXF3WE9RTWVKS0hzYnpZOG52cWJG?=
+ =?utf-8?B?dlFPaEpyQkk1dVJob015L25kNTZIMVBrR1RTaUNmWE1CbmI1TkRld1dKMEht?=
+ =?utf-8?B?RkdrSE9YN1ZJRE05MDRxMnoxZVc0L3h4MDVjYU9DZXZtNWRoVHo5dUJhckdX?=
+ =?utf-8?B?alZHSTIya1U0ZDQ4VXRSb0VabENCV1o3ZnJaNGtjUWYwT0oyWjE0M1F2RS9i?=
+ =?utf-8?B?OU1FeDg0VzRKbGpWUWVpLzExVTNUc0pBRmhtNHBpVGJidWZvQTJVdC93cGRF?=
+ =?utf-8?B?eVQ2V3dKenprd09WWStUc211UnpTcGJxQjZMaGRjSWNFUkxneWhvRWVGMUxG?=
+ =?utf-8?B?RGlLR1NROFlLOGc3dGJOOEw3bkRsTjB2S05ZQURHZnl3R0ZyVmUyY0Jsa2tx?=
+ =?utf-8?B?NkgxNGh2d01hZjNiaWcxczd2dXB5bGpoRFptYW85K3VDamt2d2NrblpIL1Q1?=
+ =?utf-8?B?RmpSZVpEZ3k0OEhQWXNBdTNCVUpVL2xaZW5ibXJmaDk5Q01LYnVQdEk5WTdL?=
+ =?utf-8?B?WmswWkIxZG5CRFhYTTJEWWQ4Uk54elIyclJ6NmVQd0lGcktPNVRUM3ZBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RHNMUVFBRUtOL3dTYjZ5TUtSNDlNcUNhNWpIK0R0dHl1SlRlWlQwTlV2T1NR?=
+ =?utf-8?B?bjhKemtXZzFnU0RZUkVJVVdtR0FLeXA5dFBjTHp6QmZHeXdYVHpvRGMyUEVL?=
+ =?utf-8?B?NXR2cmJiZE9OVGYzOG1Nc3pCSlNNYjZzcVFFZDlKclNiTGw5OVVuUHdBbjdI?=
+ =?utf-8?B?cnk2VEtIamdhcjQwcGI5UnRIZWJMbmNXcnB0Q2lKb2xpTWkyOUlHYnFrSnJz?=
+ =?utf-8?B?YXFBbkxqakZOMHpMMHk2WXl2Z0oyY2ZYWFN2N1pGRjFtd1J5VFVvTDZqUXZT?=
+ =?utf-8?B?VWM4T0RjNW5oV3hzN2dWbHdSUTNPV0VjOW1ITFVuSFkrQmc0OVdVbEN1b1Vu?=
+ =?utf-8?B?T1k1WjFUdFdFaFgyZFNHUEhwcjlOWVFnVmwxbzQ4dzJodWRMbEZtYnhKb1FS?=
+ =?utf-8?B?TjFYTzFvbkhmTElzeitnay9mdWcxUzZ6Syt1K0VkVm1TNGNqZ2JOaVVMSnFU?=
+ =?utf-8?B?TGpHbmJ1L3FrVmtTWXk2ejdjR3E2aWJlcXVYc1dPSzFNVXhZRzBrTUFxcGVC?=
+ =?utf-8?B?d1d1eUF0K1MyM0pCY0xvZGJ3MnQrNlVmb210N2luYmY1cEFLTlVyb2FUSU1v?=
+ =?utf-8?B?OC9JREZwN1ZVRlMyaWRFQzd6MUs3YzhaamRyb2pGUXVCd0tVWWIvcnR0ZzIy?=
+ =?utf-8?B?d0xSTEUwR1NEMXFqRzZCL0QrTlNmUGtyNFpIa09ZRDRmWW9aVEduQU5uMHhl?=
+ =?utf-8?B?cGpuRVdyck12SUk0T1o5c05SazFxME1CTEE2WU5XUHByUk5pVUZVczNDSHYw?=
+ =?utf-8?B?WFUwN0owNDUrRnBuSmZ1S3BudzV1Q3E3R2VucmthVVFhY1ZZL2pURENnOEUr?=
+ =?utf-8?B?VW1zbVBwSDViNUtrSWRCZHB0WE5NQmpLZUFlWG4zdW9Pb002RC9seGJ1R1VK?=
+ =?utf-8?B?NVczUUlnREt1NXZNTURqZDFpekk5dFlhVS9pTE9vczFqZElqZzlPNC9VYzJL?=
+ =?utf-8?B?VzNvaHJBWHN0TGRaWHdxakEvNzVOeXpEa0tzZldOTW1JL0lIbnNndktYV0JT?=
+ =?utf-8?B?TURVUkwzdWI4bTBKUkg0L2srWEJ3ZzIyZk1IUWxhUnBDL0t6d1E0OE9XQ2xu?=
+ =?utf-8?B?S2U5V1pXSGJoQlc0d0NFV0U0cEVScXVDeEpEQ05qKzRjZXZUR3lIUGZQMUVQ?=
+ =?utf-8?B?MTBuWUpwOE1ud3FPaWoyeENIQTVhYWx2OGw4d05ZMER6bklXVEd0RWlPemVp?=
+ =?utf-8?B?OFBiKzBRekZRbTVrZ1BoMXRhTThxdHgxQWFFclAwNzZtYUVRS0drenVhWW9U?=
+ =?utf-8?B?RjFsajVpNTMxOWsrbEdhSk1sbUFnUEJua3AwM2hyUzUveCs3QlhtaUdqbjRG?=
+ =?utf-8?B?YTVjQTJsRzdDbWpxQkxHM0x0MG15U3FHWWdhMXpJQStEUWJLYlY5c0JHWWhs?=
+ =?utf-8?B?dWhrdUZ0K0k1NUtYbnBETDZzaDF3UWxNZWNkYUVmRy9ReFB6TmlOMFN4aEhH?=
+ =?utf-8?B?ak8zVXFJWnNYKzhLYXZpZTRjSXRaZlhLWVVkNHlMcmFxWkw5djNWd2tvWDd4?=
+ =?utf-8?B?bFZ4TkVCSUc2SjJVbENselFoRzB0by9CQVhLRndVN1RXOXJmTUcxR0JWekp3?=
+ =?utf-8?B?MThkWlpCSmd4SWRET0JTOFZKUW52TXA5Zko0cWpJY3JYZXp1Zkt5VGVBbmt4?=
+ =?utf-8?B?LzVYeXliY3RWQ1oxWTlBQjN0aTdWVmhoMkxBNmdFaXRrUHFzSFNrZ2pWdWhW?=
+ =?utf-8?B?WWQxMUp3aFlYYmM4bHhlS2F4UStzbERsbzY2R1p5dFNtNmswT1I5TGQ4VXNC?=
+ =?utf-8?B?MEtzYUEvTDJENFVzWk1JMmlORlgyOGZvWGtCaVQzeUs5Y0JxQVdWaGkwZzJu?=
+ =?utf-8?B?dDM3ZVJCeklWRGFGMnJOdVVyVHZSRVUwV0dNZ05sZUhaSjlXUG1nUjlZV3ZN?=
+ =?utf-8?B?dDdEanRKbVNLWm9na29SWnlPSFJNQ2FsU3ZNbk1Wei9WalBLcUFjQzlySHNa?=
+ =?utf-8?B?TVBLVHVSYURBRTJNeWlPZm9wdHdPRlBwSkZjOG5OME1oRUVtZlNSaytNdUs5?=
+ =?utf-8?B?MEdScFZjRG5rdTlxWFl1c0pZUmJDSW1lci96Sk5vemE0WW52UDdNYVpOL0x4?=
+ =?utf-8?B?eXd3ejFRNGdlT2JsWk9rQnV2WjVTTVhXaHAwSkVnOUtCYklCb2JWdmMxdmd0?=
+ =?utf-8?Q?KNVtzute22bsiImGNHPHGXN/w?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a53652ab-fde9-4eaa-c943-08dc7aaf31e7
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 22:33:25.6553
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x7QjKpTM3xIsWOPmi7tTIHWTZ+nyxvFXMq8RjVMW5NjdXMMkqTQb9BWaJpMeNbkmqycb6desRFgwiYn7xq1esw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8015
+X-OriginatorOrg: intel.com
 
-Hi Shenghao,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on broonie-sound/for-next]
-[also build test ERROR on next-20240522]
-[cannot apply to tiwai-sound/for-next tiwai-sound/for-linus linus/master v6.9]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Shenghao-Ding/ASoc-tas2781-Add-Calibration-Kcontrols-and-tas2563-digtial-gain-for-Chromebook/20240522-193315
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20240522112942.994-1-shenghao-ding%40ti.com
-patch subject: [PATCH v1] ASoc: tas2781: Add Calibration Kcontrols and tas2563 digtial gain for Chromebook
-config: x86_64-buildonly-randconfig-002-20240523 (https://download.01.org/0day-ci/archive/20240523/202405230633.Vq1CHD6e-lkp@intel.com/config)
-compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405230633.Vq1CHD6e-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405230633.Vq1CHD6e-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   sound/soc/codecs/tas2781-i2c.c: In function 'tas2563_digital_gain_get':
->> sound/soc/codecs/tas2781-i2c.c:696:31: error: 'tas2563_dvc_table' undeclared (first use in this function); did you mean 'tasklet_disable'?
-      ar_mid = get_unaligned_be32(tas2563_dvc_table[mid]);
-                                  ^~~~~~~~~~~~~~~~~
-                                  tasklet_disable
-   sound/soc/codecs/tas2781-i2c.c:696:31: note: each undeclared identifier is reported only once for each function it appears in
-   sound/soc/codecs/tas2781-i2c.c: In function 'tas2563_digital_gain_put':
-   sound/soc/codecs/tas2781-i2c.c:737:29: error: 'tas2563_dvc_table' undeclared (first use in this function); did you mean 'tasklet_disable'?
-     volwr = get_unaligned_be32(tas2563_dvc_table[vol]);
-                                ^~~~~~~~~~~~~~~~~
-                                tasklet_disable
-   In file included from sound/soc/codecs/tas2781-i2c.c:30:
-   sound/soc/codecs/tas2781-i2c.c: At top level:
->> sound/soc/codecs/tas2781-i2c.c:790:3: error: 'tas2563_dvc_tlv' undeclared here (not in a function); did you mean 'tas2563_snd_controls'?
-      tas2563_dvc_tlv),
-      ^~~~~~~~~~~~~~~
-   include/sound/soc.h:293:12: note: in definition of macro 'SOC_SINGLE_RANGE_EXT_TLV'
-     .tlv.p = (tlv_array), \
-               ^~~~~~~~~
->> sound/soc/codecs/tas2781-i2c.c:788:17: error: 'tas2563_dvc_table' undeclared here (not in a function); did you mean 'tas2563_snd_controls'?
-      0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
-                    ^~~~~~~~~~~~~~~~~
-   include/sound/soc.h:298:42: note: in definition of macro 'SOC_SINGLE_RANGE_EXT_TLV'
-       .rshift = xshift, .min = xmin, .max = xmax, \
-                                             ^~~~
-   sound/soc/codecs/tas2781-i2c.c:788:6: note: in expansion of macro 'ARRAY_SIZE'
-      0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
-         ^~~~~~~~~~
-   include/linux/build_bug.h:16:51: error: bit-field '<anonymous>' width not an integer constant
-    #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
-                                                      ^
-   include/sound/soc.h:298:42: note: in definition of macro 'SOC_SINGLE_RANGE_EXT_TLV'
-       .rshift = xshift, .min = xmin, .max = xmax, \
-                                             ^~~~
-   include/linux/compiler.h:237:28: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
-    #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-                               ^~~~~~~~~~~~~~~~~
-   include/linux/array_size.h:11:59: note: in expansion of macro '__must_be_array'
-    #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
-                                                              ^~~~~~~~~~~~~~~
-   sound/soc/codecs/tas2781-i2c.c:788:6: note: in expansion of macro 'ARRAY_SIZE'
-      0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
-         ^~~~~~~~~~
 
 
-vim +696 sound/soc/codecs/tas2781-i2c.c
+On 22/05/2024 2:28 pm, Sean Christopherson wrote:
+> Add arch hooks that are invoked when KVM enables/disable virtualization.
+> x86 will use the hooks to register an "emergency disable" callback, which
+> is essentially an x86-specific shutdown notifier that is used when the
+> kernel is doing an emergency reboot/shutdown/kexec.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-   669	
-   670	static int tas2563_digital_gain_get(
-   671		struct snd_kcontrol *kcontrol,
-   672		struct snd_ctl_elem_value *ucontrol)
-   673	{
-   674		struct soc_mixer_control *mc =
-   675			(struct soc_mixer_control *)kcontrol->private_value;
-   676		struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
-   677		struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
-   678		unsigned int l = 0, r = mc->max;
-   679		unsigned int target, ar_mid, mid, ar_l, ar_r;
-   680		unsigned int reg = mc->reg;
-   681		unsigned char data[4];
-   682		int ret;
-   683	
-   684		mutex_lock(&tas_dev->codec_lock);
-   685		/* Read the primary device */
-   686		ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
-   687		if (ret) {
-   688			dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
-   689			goto out;
-   690		}
-   691	
-   692		target = get_unaligned_be32(&data[0]);
-   693	
-   694		while (r > 1 + l) {
-   695			mid = (l + r) / 2;
- > 696			ar_mid = get_unaligned_be32(tas2563_dvc_table[mid]);
-   697			if (target < ar_mid)
-   698				r = mid;
-   699			else
-   700				l = mid;
-   701		}
-   702	
-   703		ar_l = get_unaligned_be32(tas2563_dvc_table[l]);
-   704		ar_r = get_unaligned_be32(tas2563_dvc_table[r]);
-   705	
-   706		ucontrol->value.integer.value[0] =
-   707			abs(target - ar_l) <= abs(target - ar_r) ? l : r;
-   708	out:
-   709		mutex_unlock(&tas_dev->codec_lock);
-   710		return 0;
-   711	}
-   712	
-   713	static int tas2563_digital_gain_put(
-   714		struct snd_kcontrol *kcontrol,
-   715		struct snd_ctl_elem_value *ucontrol)
-   716	{
-   717		struct soc_mixer_control *mc =
-   718			(struct soc_mixer_control *)kcontrol->private_value;
-   719		struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
-   720		struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
-   721		unsigned int reg = mc->reg;
-   722		unsigned int volrd, volwr;
-   723		int vol = ucontrol->value.integer.value[0];
-   724		int max = mc->max, i, ret = 1;
-   725		unsigned char data[4];
-   726	
-   727		vol = clamp(vol, 0, max);
-   728		mutex_lock(&tas_dev->codec_lock);
-   729		/* Read the primary device */
-   730		ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
-   731		if (ret) {
-   732			dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
-   733			goto out;
-   734		}
-   735	
-   736		volrd = get_unaligned_be32(&data[0]);
-   737		volwr = get_unaligned_be32(tas2563_dvc_table[vol]);
-   738	
-   739		if (volrd == volwr) {
-   740			ret = 0;
-   741			goto out;
-   742		}
-   743	
-   744		for (i = 0; i < tas_dev->ndev; i++) {
-   745			ret = tasdevice_dev_bulk_write(tas_dev, i, reg,
-   746				(unsigned char *)tas2563_dvc_table[vol], 4);
-   747			if (ret)
-   748				dev_err(tas_dev->dev,
-   749					"%s, set digital vol error in device %d\n",
-   750					__func__, i);
-   751		}
-   752	
-   753	out:
-   754		mutex_unlock(&tas_dev->codec_lock);
-   755		return ret;
-   756	}
-   757	
-   758	static const struct snd_kcontrol_new tasdevice_snd_controls[] = {
-   759		SOC_SINGLE_BOOL_EXT("Speaker Force Firmware Load", 0,
-   760			tasdev_force_fwload_get, tasdev_force_fwload_put),
-   761	};
-   762	
-   763	static const struct snd_kcontrol_new tasdevice_cali_controls[] = {
-   764		SOC_SINGLE_EXT("Calibration Stop", SND_SOC_NOPM, 0, 1, 0,
-   765			tasdev_nop_get, tasdev_calib_stop_put),
-   766		SND_SOC_BYTES_EXT("Amp TF Data", 5, tasdev_tf_data_get, NULL),
-   767		SND_SOC_BYTES_EXT("Amp RE Data", 5, tasdev_re_data_get, NULL),
-   768		SND_SOC_BYTES_EXT("Amp R0 Data", 5, tasdev_r0_data_get, NULL),
-   769		SND_SOC_BYTES_EXT("Amp XMA1 Data", 5, tasdev_XMA1_data_get, NULL),
-   770		SND_SOC_BYTES_EXT("Amp XMA2 Data", 5, tasdev_XMA2_data_get, NULL),
-   771	};
-   772	
-   773	static const struct snd_kcontrol_new tas2781_snd_controls[] = {
-   774		SOC_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
-   775			1, 0, 20, 0, tas2781_amp_getvol,
-   776			tas2781_amp_putvol, amp_vol_tlv),
-   777		SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Gain", TAS2781_DVC_LVL,
-   778			0, 0, 200, 1, tas2781_digital_getvol,
-   779			tas2781_digital_putvol, dvc_tlv),
-   780	};
-   781	
-   782	static const struct snd_kcontrol_new tas2781_cali_controls[] = {
-   783		SND_SOC_BYTES_EXT("Amp Latch Data", 2, tas2781_latch_reg_get, NULL),
-   784	};
-   785	
-   786	static const struct snd_kcontrol_new tas2563_snd_controls[] = {
-   787		SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Gain", TAS2563_DVC_LVL, 0,
- > 788			0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
-   789			tas2563_digital_gain_get, tas2563_digital_gain_put,
- > 790			tas2563_dvc_tlv),
-   791	};
-   792	
+Reviewed-by: Kai Huang <kai.huang@intel.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[...]
+
+> +
+>   static int __kvm_enable_virtualization(void)
+>   {
+>   	if (__this_cpu_read(hardware_enabled))
+> @@ -5604,6 +5614,8 @@ static int kvm_enable_virtualization(void)
+>   	if (kvm_usage_count++)
+>   		return 0;
+>   
+> +	kvm_arch_enable_virtualization();
+> +
+>   	r = cpuhp_setup_state(CPUHP_AP_KVM_ONLINE, "kvm/cpu:online",
+>   			      kvm_online_cpu, kvm_offline_cpu);
+
+
+Nit:  is kvm_arch_pre_enable_virtualization() a better name?
+
+
 
