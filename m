@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-185849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBED98CBBDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:21:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 382FA8CBBE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 355821F2282B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:21:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AB6AB2171A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E0C7C097;
-	Wed, 22 May 2024 07:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB4A7BB19;
+	Wed, 22 May 2024 07:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0IskLwb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lpw/B3gG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561C62233A;
-	Wed, 22 May 2024 07:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7392233A;
+	Wed, 22 May 2024 07:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362461; cv=none; b=RwnLnlrQgT6GYmkKJke4ytivmAjMx6SRRvpi8hpaP6ms1KXgC2pRV5qzGJZyGJd3hctzBoPQp6l7pKwIoXRJM6MiIdhdbmy7Z8ZMpGIQVRg7HPahWeYJ8wn4b2/oQwz+roG7dU7bbGaLAIZAUx1gS+n5+ppSndWiQbiY3kb2SoE=
+	t=1716362536; cv=none; b=qXxJL7govOC0bH3U90A9qVoA3LTak28cns8ftNYsaMiQU8ChrrRE6O6ygV7FDp6P3Ih6QDNEFmWdvH+qVZj3N7iItMOU/8W6pPwTRWeNv2lOBGZfebIT2WVvlBWWCqy5NcULQjC1qUvsX9DxJzpaKiJZma7PcBzkqaOEI9ErwIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362461; c=relaxed/simple;
-	bh=9iaBb5mHzEt3sd5FPGMcs25cO1NhhiyMvrzjqOLKl/c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZWmFEpDYKstXm/NTRozuMl+GzawUXyLk1qdoEbnis3dKtfMFbEi3YLRB7h5C5jB/qFB6ygs7JQjdV6znbBu/XR81LO1Y7laV7XzMt80qRvKv1V3K8nPDofGBFUzfeJ42K1avvbJJHLHQwjaQ5jMPMk9anp4B2Z9W+i0DzX4ROO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0IskLwb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 440EAC2BD11;
-	Wed, 22 May 2024 07:20:56 +0000 (UTC)
+	s=arc-20240116; t=1716362536; c=relaxed/simple;
+	bh=G9YcMfhrQ9j2j9QKRYjsl8EGoPXBNFdvyHLvUFY1Zbs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RoH2zxL1nZu8Agb+rMU1oY8vHLIEEfUSQbPmcqDXlc6Uv885KBGf3suTD64rT38cLI6fjOU1TMAPspdlCsGxwbky6Rkp93klAyEmtZWimPAOWwP+k7TgQ3INzsTHuiz5dm9GOaaCCsoxy6K+esVHYmUXEriZ8mKRT7E2XbkfLgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lpw/B3gG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34116C2BD11;
+	Wed, 22 May 2024 07:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716362460;
-	bh=9iaBb5mHzEt3sd5FPGMcs25cO1NhhiyMvrzjqOLKl/c=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=J0IskLwbdL+IfFmIfTfDTmH/Qq4Z/Pwh+Gj8pfJ0QzXHnMYfKlyrAGD4AQq5rtf3U
-	 CXew5AElD1ij+dp7YxQzPjuGj4VffL+RJhnKpXR36eilwHQdAEp3uz3WzSKP7918Zz
-	 K47gmGVlUVc94DHue9XnmHKUi/H6Kg5C/uxJZhuwHwiNfaRbZu/Tp9O8p+z6yvAEKp
-	 C6+LrGJaTEed4Pj072y0cgZp9lnn6wgwP/kB5jirKmLv/OQL0Ksd1yqFOxUKZru5HN
-	 tTgUd5mVAWDGgg7043QSqnfX0VEgQhshn/lMmx6WjB2kBRX08RnniX8YrYKEyBqCsK
-	 yY1kWY5vWMElA==
-Message-ID: <482e5724-cfe0-4cb0-8faa-f5dfafd0e563@kernel.org>
-Date: Wed, 22 May 2024 09:20:54 +0200
+	s=k20201202; t=1716362535;
+	bh=G9YcMfhrQ9j2j9QKRYjsl8EGoPXBNFdvyHLvUFY1Zbs=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Lpw/B3gGPeHQ14nzItkGa3VcStWFisAvph5CfqC6AlPhhdhF7YpAUwMUxTl0vbXFv
+	 ripIB9GISwaeiFaAln/2+geRGW6V8mobtYrpShyWLBHqqXaCzse3Axig1kW33hphz3
+	 oxPOnHaAtepc2a8FqoQSp5NHjfSkD6QfkgLAXhgbQutYlbxT1Ho39PuzNn6d/NT3NR
+	 RUQtE+Ojj9AtIB62LVJZcnmeLEAKeh6PrjRKn5Ddfn23VOEbXNmr04DpLxsJvBInO1
+	 ccyVBxA67wUKQ1E0pHSbg4o0kzOyT83oipVhZsXXgptN2lBR6zVj/kulAmQQdj5K/t
+	 6euWP90WNg3tQ==
+Message-ID: <ff660459-8c58-49b1-a28d-b86e28207f41@kernel.org>
+Date: Wed, 22 May 2024 09:22:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
- Alexandru Ardelean <alexandru.ardelean@analog.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
- <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
- <20240521194309.GA8863@pendragon.ideasonboard.com>
- <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: arm: amlogic: document AC200 support
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-amlogic@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Lucas Tanure <tanure@linux.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+References: <20240521222155.28094-1-jan.dakinevich@salutedevices.com>
+ <20240521222155.28094-3-jan.dakinevich@salutedevices.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -109,93 +107,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
+In-Reply-To: <20240521222155.28094-3-jan.dakinevich@salutedevices.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/05/2024 08:57, Krzysztof Kozlowski wrote:
-> On 21/05/2024 21:43, Laurent Pinchart wrote:
->> Hi Krzysztof,
->>
->> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
->>> On 20/05/2024 21:59, Laurent Pinchart wrote:
->>>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
->>>> matrix decoder, programmable logic, reset generator, and PWM generator.
->>>> These bindings model the device as an MFD, and support the GPIO expander
->>>> and PWM functions.
->>>>
->>>> These bindings support the GPIO and PWM functions.
->>>>
->>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>> ---
->>>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
->>>> implement and test the rest of the features the chip supports.
->>>> ---
->>>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
->>>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
->>>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
->>>>  MAINTAINERS                                   |   7 ++
->>>>  4 files changed, 195 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
->>>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>>> new file mode 100644
->>>> index 000000000000..210e4d53e764
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>>> @@ -0,0 +1,36 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Analog Devices ADP5585 GPIO Expander
->>>> +
->>>> +maintainers:
->>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>> +
->>>> +description: |
->>>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
->>>> +  node of the parent MFD device. See
->>>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
->>>> +  well as an example.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: adi,adp5585-gpio
->>>> +
->>>> +  gpio-controller: true
->>>> +
->>>> +  '#gpio-cells':
->>>> +    const: 2
->>>> +
->>>> +  gpio-reserved-ranges: true
->>>
->>> There are no resources here, so new compatible is not really warranted.
->>> Squash the node into parent.
->>
->> Child nodes seem (to me) to be the standard way to model functions in
->> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
->> function iterates over child nodes. I don't mind going a different
+On 22/05/2024 00:21, Jan Dakinevich wrote:
+> Add compatible string for the Amlogic AC200 board.
 > 
-> Only to assign of node, which could be skipped as well.
-> 
->> routes, could you indicate what you have in mind, perhaps pointing to an
->> existing driver as an example ?
-> 
-> Most of them? OK, let's take the last added driver in MFD directory:
-> cirrus,cs42l43
-> It has three children and only two nodes, because only these two devices
-> actually need/use/benefit the subnodes.
+> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> ---
 
-BTW, if these devices have their own I2C addresses or are reusable
-blocks, then of course their existence as child nodes is warranted.
-
-Similarly if these devices had additional subnodes, like pinctrl or SPI
-controller.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
