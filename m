@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-186402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC7628CC3BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:03:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAF48CC3C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5A21C22BAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C3E61F231C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806EB20DE8;
-	Wed, 22 May 2024 15:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4E9140375;
+	Wed, 22 May 2024 15:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lOsOaVwT"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="J6Z3qU5V"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E142940B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398EC7CF39
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716390177; cv=none; b=PrnYwGjRXZZN49WMDb5c/RiaY98FJmYipLQvXA5azqdOGEb1lY6cjCCg4qb+ON1qSX+jJHVyrAmPng/ltkcdaBc/lPr9WI63yUzZJuQzNUO8/YUaOvKQj1TiLuwi+oV0mzM84eXKG9KSpYNq0SrRvVLNbtjG8/3GZOTTJ20NVSQ=
+	t=1716390178; cv=none; b=YI6qnyD/UpTlmg5clKASWCFhQT+nJPFa21BlWYNBx5hDED9S0MdOFW1wldoVly8Sq4FAwIdSJHGfX/3tY1NOD8bk/+XkNc1QDo0XqeVkix0uhBqA09+QDhICZuxAT9HxovBKfQNNHZBhCiYSro7Wa1nRLo/9PHHiTUsa5hbZrKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716390177; c=relaxed/simple;
-	bh=Nl4giAAtfP1wgG/NEvZwNNNg55OtAUvdLhvjiOoMMiI=;
+	s=arc-20240116; t=1716390178; c=relaxed/simple;
+	bh=pVh87fVqPqfQKJqqcDbSMFn+FcTBzRpmEsaCLIFq0AA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c1065tNWxB2oIbVpXhJIBw0IDBUaPssnUy7si5NGqxf4vLWeEfhqZMHN7Kk1YGzx+dwLLtVqxd7vLmOHqG02T/ssK1nqHHkx5MTwiIOD60OP/2WkxD5wDPNLz3Vf4m2VjIrlBOblA5tw6D/PqFmGJFjmE1JHcbPqc1dHuwYevjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lOsOaVwT; arc=none smtp.client-ip=209.85.208.182
+	 MIME-Version; b=mV+Pk7wvbM5jcg2XEIGc+EtZ0L6Uon6nDsnKp1sNghxeNikfNjOk03y/FIMJc6eQVMwaI9GlE7f6vw7n6qY5cF2MLdi3IuXn5YLvwYw5NoZPeKd0L2Fj3Ag/J0q5I/63ywynJGEL0oard60Xh5b1bc3tPOKg+k/MtouF6248+ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=J6Z3qU5V; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e6792ea67fso80955361fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:02:55 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e3b1b6e9d1so78074691fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716390174; x=1716994974; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716390175; x=1716994975; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7D6fFRwhN0Zkm+pAkm+qmc7n3e4Gjj3CxdaCMG+7qFE=;
-        b=lOsOaVwTjbL3/MMOYpC+33vZF3ehhPbbX7OoGEGfu4alEbUs8E7wI0HlMsY5mmuncI
-         pL85DjfL/tPF8YSeQtIOVWKCMxtNKeiK9lmgk85V8TPoj6U5Nir7lDYj1R98QmUa622J
-         uEXS+VnwBAoOp3zSxP7yHt9+xHPnAgvZye+MANa3TazzkMEhrwOjf1R9JESiWCPGjydN
-         tLi1gb2m88GmFpj5/j5K6BpybXZrO6cLOd6tFF1GKoT8J1YiyXO7jX7DwilRyGBYq8Tc
-         oyuFh0rjJIfgjT0j45tqBHBIZShjqVhTN+W+nHAwFe1xJ+GauGMltb3tcnFGjIy2mSsd
-         mcPQ==
+        bh=3jsqIIhfmiwTRQW5T/GGVz9A/caM/qGXeRU8xHOLSg0=;
+        b=J6Z3qU5VeCfmizfMpuuKDk8Tr+51wldm0CshacVsxrmUiCdjjraP71SQfvnwiQaykq
+         N1t2RjOw6OAXKyezl6O8kKGI5kuwzBfvKV2F773FvlFrv8Fn5h07WfGn7wgrzRDTkQde
+         k9cPYPNNcCaqsLwLxb7rAtf9RPj73ofxdZr1wXNqySPud0l6Cp4JAHrwZhDnYZpfT0v8
+         lIkGjCxd6BPSp/G9NIar5ZcMN7DH2+wzgVlCy0eE0Gpk+w1P9DHEGUZGFs+B+L96RJed
+         qxXlhV73fYCT/WfEZtqJwvEPMR7R/uweuulx9ZheyjhKQzvkAt38GL8E+7AI48YOs7TH
+         pTdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716390174; x=1716994974;
+        d=1e100.net; s=20230601; t=1716390175; x=1716994975;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7D6fFRwhN0Zkm+pAkm+qmc7n3e4Gjj3CxdaCMG+7qFE=;
-        b=qjLolTK1DZTULKRTwTmtkHHCc66QbuOlNlfrijFA0BZJduwwzwu/R0CkA0VbyB2ccm
-         dC/UTC4vgLz5i/6G1kerpwtq9mKvBLDlOZVIlbH+KQxV186s/1bhhhvGPu8Qg2ebQO65
-         5RAOAqunrkwV3KgFeAkjLdcZ2JLM9rR8IhKOpq6NMa2DI9lSqqt1tsTlrDnQEVEeDSV1
-         iIGnNN/fGjTLCvcUW4Ec4UDv8XlLNKrq2IZoBb6MLMpq+1jt76zBDEVOQhLUN4YFZr2n
-         Nhz2xLXuPIG/lrmkUt0QKZFLDbkquY4yKb+N2MmkA4463drQczV6JyCsQ1bo2fX1wPcK
-         BowQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqvYuptwcRmPgKUOVCQo59IIsnVlYF1BD/sVEs7y44OXo0SHlY0657ggL1fMuyq6A8JZ1RF5iVYDKA4qb+4GxuSDwg1g4dtYPY3LlQ
-X-Gm-Message-State: AOJu0YxIsqieami2fXc9D0FwCcBlgQWurmrAPJqSwmdNgQOPAWQ0Gf4a
-	+NmAoFeRCHwia15TGem63ccLhUBIMlc+n+oETLF0wkYqrp3qnVNao8treHYAQ9o=
-X-Google-Smtp-Source: AGHT+IGD/2vp9GYsoEwJ7/JTNdx/B3p8YYiryw+V1L9SZyquSNzerQr26Dr671cNpJ9rq5Cile52Dg==
-X-Received: by 2002:a2e:9dc1:0:b0:2e0:69b4:d655 with SMTP id 38308e7fff4ca-2e949501a7emr12417751fa.3.1716390174350;
-        Wed, 22 May 2024 08:02:54 -0700 (PDT)
+        bh=3jsqIIhfmiwTRQW5T/GGVz9A/caM/qGXeRU8xHOLSg0=;
+        b=Q5tNUncjbXeJXkxuyNObeBhvDo4bHySeKdVeKknTIKJaF/6YaCyVZD2UgOgaO1IDIR
+         UtLGPWP4qCydzJe+OW6f+ynMcxwBuDVip095wazSBMM4lkZmB5wPz/+x1ApvawqFd8Fc
+         M/HLEMegiSrXKoJLAqNxiQIL1lJiFSPRUIq/w51g+9yCA7zt6+tnZ8UYjiOeEKPuPgdC
+         GaGpCKM9ITHFrGHiDcnLGhY9jTEnrZlAAqItA+g10BYjXs8uaIUt7dqxUEy1xmHOHoMX
+         w/15sUgHIzUeKuCnCkFTSfhsqZWCOnMxbma8t9mJ1OtlX0yVoQiRdz0Y9Ont+KYjh3iR
+         MQFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6ApLGstDoyW6fxZz241AIn9vlDxiBtGbhdGLkNrUuYEpMc7fUWnmfxpVZhLhPo3knK/ITOgPsmqXVyRAZkqduDUTbM7XYSli6XWUa
+X-Gm-Message-State: AOJu0Yz4IPEvP9Rs16hNFFdOS3lEF5FZ2Crh/w3B/ha0FS+5ChPVhOml
+	5S9D5yp+twd4ZXeysCefUYnjMbaAteg98wg1Pe0CjFkMnYy54Fa+nDL7VOkROQY=
+X-Google-Smtp-Source: AGHT+IFO99+pk7LErl0507i4+6glcqOJj5k3VvjWUKfZyuG4ISlN/d5VATvuxSfbiyh00Qg47KZK8Q==
+X-Received: by 2002:a2e:9d02:0:b0:2e4:7996:f9f0 with SMTP id 38308e7fff4ca-2e94946d417mr14305091fa.17.1716390175584;
+        Wed, 22 May 2024 08:02:55 -0700 (PDT)
 Received: from localhost.localdomain (host-79-16-6-145.retail.telecomitalia.it. [79.16.6.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm531370515e9.9.2024.05.22.08.02.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm531370515e9.9.2024.05.22.08.02.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 08:02:54 -0700 (PDT)
+        Wed, 22 May 2024 08:02:55 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
 To: jic23@kernel.org,
@@ -79,9 +79,9 @@ Cc: nuno.sa@analog.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Angelo Dureghello <adureghello@baylibre.com>
-Subject: [PATCH v2 5/6] iio: dac: ad3552r: change AD3552R_NUM_CH define name
-Date: Wed, 22 May 2024 17:01:40 +0200
-Message-ID: <20240522150141.1776196-6-adureghello@baylibre.org>
+Subject: [PATCH v2 6/6] iio: dac: ad3552r: uniform structure names
+Date: Wed, 22 May 2024 17:01:41 +0200
+Message-ID: <20240522150141.1776196-7-adureghello@baylibre.org>
 X-Mailer: git-send-email 2.45.0.rc1
 In-Reply-To: <20240522150141.1776196-1-adureghello@baylibre.org>
 References: <20240522150141.1776196-1-adureghello@baylibre.org>
@@ -95,65 +95,39 @@ Content-Transfer-Encoding: 8bit
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-After model data and num_hw_channles introduction, we have:
-
-ad3552r_desc, num_ch: used to keep channel number set in fdt,
-ad35xxr_model_data, num_hw_channels: for max channel checks,
-AD3552R_NUM_CH: just actually used to define the max array size
-on allocated arrays.
-
-Renaming AD3552R_NUM_CH to a more consistent name, as AD3552R_MAX_CH.
+Use same driver file name (ad3552r) for structure names used
+for all variants.
 
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
 Changes for v2:
 - patch added in v2
 ---
- drivers/iio/dac/ad3552r.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/iio/dac/ad3552r.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
-index b4630fb89334..b8bdbfed22e3 100644
+index b8bdbfed22e3..b060cdbc715d 100644
 --- a/drivers/iio/dac/ad3552r.c
 +++ b/drivers/iio/dac/ad3552r.c
-@@ -117,7 +117,7 @@
- #define AD3552R_REG_ADDR_CH_INPUT_24B(ch)		(0x4B - (1 - ch) * 3)
- 
- /* Useful defines */
--#define AD3552R_NUM_CH					2
-+#define AD3552R_MAX_CH					2
- #define AD3552R_MASK_CH(ch)				BIT(ch)
- #define AD3552R_MASK_ALL_CH				GENMASK(1, 0)
- #define AD3552R_MAX_REG_SIZE				3
-@@ -279,8 +279,8 @@ struct ad3552r_desc {
- 	struct gpio_desc	*gpio_reset;
- 	struct gpio_desc	*gpio_ldac;
- 	struct spi_device	*spi;
--	struct ad3552r_ch_data	ch_data[AD3552R_NUM_CH];
--	struct iio_chan_spec	channels[AD3552R_NUM_CH + 1];
-+	struct ad3552r_ch_data	ch_data[AD3552R_MAX_CH];
-+	struct iio_chan_spec	channels[AD3552R_MAX_CH + 1];
- 	unsigned long		enabled_ch;
- 	unsigned int		num_ch;
+@@ -139,7 +139,7 @@ enum ad3552r_ch_vref_select {
+ 	AD3552R_EXTERNAL_VREF_PIN_INPUT
  };
-@@ -539,7 +539,7 @@ static int32_t ad3552r_trigger_hw_ldac(struct gpio_desc *ldac)
- static int ad3552r_write_all_channels(struct ad3552r_desc *dac, u8 *data)
- {
- 	int err, len;
--	u8 addr, buff[AD3552R_NUM_CH * AD3552R_MAX_REG_SIZE + 1];
-+	u8 addr, buff[AD3552R_MAX_CH * AD3552R_MAX_REG_SIZE + 1];
  
- 	addr = AD3552R_REG_ADDR_CH_INPUT_24B(1);
- 	/* CH1 */
-@@ -597,7 +597,7 @@ static irqreturn_t ad3552r_trigger_handler(int irq, void *p)
- 	struct iio_buffer *buf = indio_dev->buffer;
- 	struct ad3552r_desc *dac = iio_priv(indio_dev);
- 	/* Maximum size of a scan */
--	u8 buff[AD3552R_NUM_CH * AD3552R_MAX_REG_SIZE];
-+	u8 buff[AD3552R_MAX_CH * AD3552R_MAX_REG_SIZE];
- 	int err;
+-enum ad3542r_id {
++enum ad3552r_id {
+ 	AD3541R_ID = 0x400b,
+ 	AD3542R_ID = 0x4009,
+ 	AD3551R_ID = 0x400a,
+@@ -265,7 +265,7 @@ struct ad3552r_ch_data {
  
- 	memset(buff, 0, sizeof(buff));
+ struct ad3552r_model_data {
+ 	const char *model_name;
+-	enum ad3542r_id chip_id;
++	enum ad3552r_id chip_id;
+ 	unsigned int num_hw_channels;
+ 	const s32 (*ranges_table)[2];
+ 	int num_ranges;
 -- 
 2.45.0.rc1
 
