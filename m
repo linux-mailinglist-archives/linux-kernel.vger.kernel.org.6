@@ -1,401 +1,142 @@
-Return-Path: <linux-kernel+bounces-186236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0CF28CC16E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D438CC15F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B9C1F237AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C61B28224A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1D913F452;
-	Wed, 22 May 2024 12:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="MJMg4/AE"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED72613D891;
+	Wed, 22 May 2024 12:39:46 +0000 (UTC)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD67413E031;
-	Wed, 22 May 2024 12:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA65C1E86A;
+	Wed, 22 May 2024 12:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716381645; cv=none; b=MNqFXalKlvBJq6Cn8sCx3jc/GoKyzg2jLuDKDKp4R/l+Hr1uluEclQtvAeEPhj35os1GU4Smwi5YFeN8nZSP03BAlRC1V202WF6fKZg3zgOcod50ey7vBnWkX7fL3DamfNht2/2hOEJYducr2+EHvwcAw55E1iT98TEJrcH9Nos=
+	t=1716381586; cv=none; b=kBF7zt1QSvCAhme/y6k6ULOEHIY6trYzdVqV9JPSLNl1HUf1FBE9LDApNbATnn9s5zqCiWX9i34r2m9aafGXOIBbBTMx/Xg2hE81xr45cxx14Fq+pGkuUgmp/W1Gu8rDitS1XCjBnnjuI4NRkQuaVIqAPdyizJRTwr74yQV/p3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716381645; c=relaxed/simple;
-	bh=7vkFt0/Es8eM9NpOoGJklRPQA1fts2tNghOMr5lXFgI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hOamYs/7qWvFSp05iAsATNfyXibF64HkPjTl9j80Y46psHcjsSzVieF6wxpHJAN86DlQJ0AgZLl/3nYCRE4bK16ma43w+GG04er15ZrrLtQilpLJlL+xOIBRobkC9yR7Y8OmCs04keuschgKnMAGlOAVFkJG4JVNXvI/gxVWE0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=MJMg4/AE; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MC5WkT011821;
-	Wed, 22 May 2024 08:40:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=DKIM;
-	 bh=OHKGS8+XN26OG5c7BXLOon/rMIiAQs5YVbHPwWDNZWg=; b=MJMg4/AEUctR
-	752+fPxjUx31aWGacu8H7AAfbT1lL6m1G9rWT3LLaDzD7oNNZLsumcPmbhPI1fZY
-	7F5mCwI5cGfFoCE7nWhr5q9pruJyh8PLe/axrVGvbJ4gCJ/8w+As1WsUhLanhKJU
-	fNc3IiWwoKy2ZfOYRJBQ2uzCfN9KOFvDDFh85yR2bUfFFpo0luvXneXXZr/cZJKp
-	D5MrFSGOKD/Bt/Zm2rH/CkBbum6FtSuutmIbo5V5R0lTPx5rimoX3Gw2Oorc+wp3
-	Lt1+e7ABXdqO2bN+1Vahq8vEJLW0hoq/5cYe7AnUdl683cUjhNy48BSWSmxhyBX8
-	KcTL6foXGw==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3y87pwh4dw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 08:40:30 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44MCeTpu013953
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 May 2024 08:40:29 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 22 May 2024 08:40:28 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Wed, 22 May 2024 08:40:28 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Wed, 22 May 2024 08:40:28 -0400
-Received: from radu.ad.analog.com ([10.48.65.150])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44MCe7Ic005879;
-	Wed, 22 May 2024 08:40:22 -0400
-From: Radu Sabau <radu.sabau@analog.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Radu Sabau <radu.sabau@analog.com>
-Subject: [PATCH 2/2] drivers: hwmon: max31827: Add debugfs support
-Date: Wed, 22 May 2024 15:39:23 +0300
-Message-ID: <20240522123923.22320-3-radu.sabau@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240522123923.22320-1-radu.sabau@analog.com>
-References: <20240522123923.22320-1-radu.sabau@analog.com>
+	s=arc-20240116; t=1716381586; c=relaxed/simple;
+	bh=aNedcAVnCvJrAapeIogsNjauhIABcjyNM4HfaFnJdpM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DwGnrElci4BpU81QIdfxKfyH191dn1lwD5zFVXtzVn9LwSrro8XCIKogdYqiW0K3+VU9WhmYyag2GSotbTSVEG7G9lou9IlKDqdmq+QcIOSNIyEALTadQQa13I+Ib1P37R7pWYf6ck28QoVmf9ERM4sFPr6L4GKSfzijUdn1/mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so1346448276.2;
+        Wed, 22 May 2024 05:39:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716381584; x=1716986384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=STYz1CCHL1ReBDNZAxtBrSRfOeV1rl9JcCw8eXKJlk0=;
+        b=IDD5OoOcfg4WkuYCGNUiywH8VpDDmwyKZvVd7HUyZEN3j92myGTIg9gLPwQDjTDcA9
+         gkpPZPEvzQclr4K2s3K/f7QBisREfUiIT9StF2RbFw10uBFgdyNG8FuMc3I6uZ7FpQ1A
+         KHDX+gRPJY8/K1sNaUiH5DgfqeOdrpSM4UNHfriORoYXVBnvy9FjLXc8E2pOnhI3tPNm
+         xDuZ01qPFO3Bc2pl7RxWLIuqv1GaOHBAuuHz8uR2v/ZpObGNlOkPsugj013+YQ44Ure7
+         35O8zvsLPh7hkY3/IfyXDohYFS3zyZE3jVwuB9vFdSZi9GySL25jGua2tQpypKxWekJI
+         H5lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVV4tBBjALisMB93LHuu+yfyqRMwEftA5MRLr2cD5vWGlWPxW6U70mK2a49wFGxPt65BPx8/cvzyTH/DPE4AZo9+EEH9+4YqRz8UiKfAw5hC416quHcDg5egG/peWn2YMKBCP4GKGCnUb2ES7a/7oDlmpbtq+xZxrBpBil+LbZaGVph7UTC+VxQJcBRYuRdUteZ33wIdgE6wkK4D5DCzpBnuy4Wch9nMA==
+X-Gm-Message-State: AOJu0Yw5SoVlgj9/Pw6FQubBdnoENJhgvlidLa4Nsy7EwmUsNYfRebKl
+	JoA2wYBcQ1JqqYbOu0oCDOxDU9EOQX8gAL8FbFSAJffVrP1jinltuNh7K6Wx
+X-Google-Smtp-Source: AGHT+IHzH8Ek3jgip/zOfXMzLZeMsnpnr8rirplvnPliKVOoUVMbmCxtt17VRYoKRYU3nJHcPjGBOg==
+X-Received: by 2002:a25:ac66:0:b0:de8:8cd9:c44a with SMTP id 3f1490d57ef6-df4e0a76ac3mr2108284276.5.1716381583714;
+        Wed, 22 May 2024 05:39:43 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df4ec644d91sm61091276.44.2024.05.22.05.39.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 05:39:43 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6181d032bf9so8554827b3.3;
+        Wed, 22 May 2024 05:39:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXbSF542F2s+3B3M1P0tgY8Ej8iuWPAh4KXGhCoikoLpbFuq2XejrvKQQplBekDJuGjYkKVwbqrr6X0Cq9TjBG7drkHhws3bk6Ew/zAwmKVkMmqdv+geqXMIkpGvyBcvlkUeUwlqq3Vt83w3ueeZiaGAE4UG6qIaO1/0XZB7mTBCzBdWqCW9ru7+w012ouM0/H0Dw0VHd5v74okVv3c6YeA/9nhdNVHhw==
+X-Received: by 2002:a05:690c:fce:b0:61a:fe34:18b6 with SMTP id
+ 00721157ae682-627e46dd10dmr22299147b3.21.1716381582320; Wed, 22 May 2024
+ 05:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: Tj0zzfQgAWtB2qbzwPx6sE8vcBJsKnrj
-X-Proofpoint-GUID: Tj0zzfQgAWtB2qbzwPx6sE8vcBJsKnrj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_05,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0
- bulkscore=0 malwarescore=0 clxscore=1015 spamscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405220085
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240423175900.702640-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 May 2024 14:39:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWh5dD_dT6+SvxycgfX6OHw0m4Lu+QoRE33HgG_-AyYaQ@mail.gmail.com>
+Message-ID: <CAMuHMdWh5dD_dT6+SvxycgfX6OHw0m4Lu+QoRE33HgG_-AyYaQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/13] pinctrl: renesas: pinctrl-rzg2l: Add function
+ pointer for writing to PMC register
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add debugfs support by creating directory in sys-fs which includes
-debugfs specific files used for configuring the device by
-preference.
+Hi Prabhakar,
 
-Signed-off-b: Radu Sabau <radu.sabau@analog.com>
----
- Documentation/hwmon/max31827.rst |  25 ++++
- drivers/hwmon/max31827.c         | 202 ++++++++++++++++++++++++++++++-
- 2 files changed, 225 insertions(+), 2 deletions(-)
+On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> This patch introduces a function pointer, pmc_writeb(), in the
+> struct rzg2l_pinctrl_data to facilitate writing to the PMC register. On
+> the RZ/V2H(P) SoC, unlocking the PWPR.REGWE_A bit before writing to PMC
+> registers is required, whereas this is not the case for the existing
+> RZ/G2L family. This addition enables the reuse of existing code for
+> RZ/V2H(P). Additionally, this patch populates this function pointer with
+> appropriate data for existing SoCs.
+>
+> Note that this functionality is only handled in rzg2l_gpio_request(), as
+> PMC unlock/lock during PFC setup will be taken care of in the
+> pwpr_pfc_unlock/pwpr_pfc_lock.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> RFC->v2
+> - No change
 
-diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
-index 9c11a9518c67..940310be6075 100644
---- a/Documentation/hwmon/max31827.rst
-+++ b/Documentation/hwmon/max31827.rst
-@@ -142,3 +142,28 @@ usage (+33% for both write and reads) in normal conditions.
- Since this operation implies there will be an extra delay to each
- transaction, PEC can be disabled or enabled through sysfs.
- Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
-+
-+DebugFs entries
-+---------------
-+
-+The chip also has a configuration register where each bit stands for a specific
-+functionality to be configured. Hence as one would like to have access to these
-+features, we give access to them in debugfs.
-+
-+.. warning:: The debugfs interface is subject to change without notice
-+             and is only available when the kernel is compiled with
-+             ``CONFIG_DEBUG_FS`` defined.
-+
-+``/sys/kernel/debug/max31827/``
-+contains the following attributes:
-+
-+==============  ===============================================================
-+alarm_polarity  Write 1 for ALARM pin active state is low, 0 otherwise
-+comp_int        Set to 1 if OT and UT status bits are in interrupt mode
-+fault_queue     Number of consecutive temperature faults until OT and UT faults
-+                are indicated in status bits
-+pec_error       Set to 1 if PEC Enable bit is set, 0 otherwise
-+resolution      2-bit value that select the conversion resolution, please see
-+                datasheet for corresponding values
-+timeout         Write 1 do disable bus timeout, 0 otherwise
-+==============  ===============================================================
-diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
-index 16a1524413db..1303ea81250d 100644
---- a/drivers/hwmon/max31827.c
-+++ b/drivers/hwmon/max31827.c
-@@ -13,8 +13,19 @@
- #include <linux/mutex.h>
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/debugfs.h>
- #include <linux/of_device.h>
- 
-+enum {
-+	MAX31827_DEBUGFS_TIMEOUT = 0,
-+	MAX31827_DEBUGFS_RESOLUTION,
-+	MAX31827_DEBUGFS_ALARM_POLARITY,
-+	MAX31827_DEBUGFS_COMP_INT,
-+	MAX31827_DEBUGFS_FAULT_QUEUE,
-+	MAX31827_DEBUGFS_PEC_ERROR,
-+	MAX31827_DEBUGFS_NUM_ENTRIES
-+};
-+
- #define MAX31827_T_REG	0x0
- #define MAX31827_CONFIGURATION_REG	0x2
- #define MAX31827_TH_REG	0x4
-@@ -30,6 +41,7 @@
- #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
- #define MAX31827_CONFIGURATION_COMP_INT_MASK	BIT(9)
- #define MAX31827_CONFIGURATION_FLT_Q_MASK	GENMASK(11, 10)
-+#define MAX31827_CONFIGURATION_PEC_ERR_MASK	BIT(13)
- #define MAX31827_CONFIGURATION_U_TEMP_STAT_MASK	BIT(14)
- #define MAX31827_CONFIGURATION_O_TEMP_STAT_MASK	BIT(15)
- 
-@@ -92,12 +104,17 @@ static const u16 max31827_conv_times[] = {
- 	[MAX31827_RES_12_BIT] = MAX31827_12_BIT_CNV_TIME,
- };
- 
-+struct max31827_debugfs_data {
-+	int debugfs_entries[MAX31827_DEBUGFS_NUM_ENTRIES];
-+};
-+
- struct max31827_state {
- 	/*
- 	 * Prevent simultaneous access to the i2c client.
- 	 */
- 	struct mutex lock;
- 	struct regmap *regmap;
-+	struct max31827_debugfs_data psu;
- 	bool enable;
- 	unsigned int resolution;
- 	unsigned int update_interval;
-@@ -552,7 +569,6 @@ static int max31827_init_client(struct max31827_state *st,
- 	int ret;
- 
- 	fwnode = dev_fwnode(dev);
--
- 	st->enable = true;
- 	res |= MAX31827_DEVICE_ENABLE(1);
- 
-@@ -655,6 +671,182 @@ static const struct hwmon_chip_info max31827_chip_info = {
- 	.info = max31827_info,
- };
- 
-+#ifdef CONFIG_DEBUG_FS
-+static ssize_t max31827_debugfs_read(struct file *file, char __user *buf,
-+				     size_t count, loff_t *ppos)
-+{
-+	char tbuf[DEBUG_FS_DATA_MAX] = { 0 };
-+	struct max31827_debugfs_data *psu;
-+	struct max31827_state *st;
-+	int *attrp = file_inode(file)->i_private;
-+	int attr = *attrp;
-+	unsigned int uval;
-+	int ret, len;
-+
-+	psu = container_of(attrp, struct max31827_debugfs_data, debugfs_entries[attr]);
-+	st = container_of(psu, struct max31827_state, psu);
-+
-+	ret = regmap_read(st->regmap, MAX31827_CONFIGURATION_REG, &uval);
-+	if (ret)
-+		return ret;
-+
-+	switch (attr) {
-+	case MAX31827_DEBUGFS_TIMEOUT:
-+		uval = FIELD_GET(MAX31827_CONFIGURATION_TIMEOUT_MASK, uval);
-+		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", uval);
-+		break;
-+	case MAX31827_DEBUGFS_RESOLUTION:
-+		uval = FIELD_GET(MAX31827_CONFIGURATION_RESOLUTION_MASK, uval);
-+		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", uval);
-+		break;
-+	case MAX31827_DEBUGFS_ALARM_POLARITY:
-+		uval = FIELD_GET(MAX31827_CONFIGURATION_ALRM_POL_MASK, uval);
-+		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", uval);
-+		break;
-+	case MAX31827_DEBUGFS_COMP_INT:
-+		uval = FIELD_GET(MAX31827_CONFIGURATION_COMP_INT_MASK, uval);
-+		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", uval);
-+		break;
-+	case MAX31827_DEBUGFS_FAULT_QUEUE:
-+		uval = FIELD_GET(MAX31827_CONFIGURATION_FLT_Q_MASK, uval);
-+		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", uval);
-+		break;
-+	case MAX31827_DEBUGFS_PEC_ERROR:
-+		uval = FIELD_GET(MAX31827_CONFIGURATION_PEC_ERR_MASK, uval);
-+		len = scnprintf(tbuf, DEBUG_FS_DATA_MAX, "%d\n", uval);
-+		break;
-+	default:
-+		len = strscpy(tbuf, "Invalid\n", DEBUG_FS_DATA_MAX);
-+	}
-+
-+	return simple_read_from_buffer(buf, count, ppos, tbuf, len);
-+}
-+
-+static ssize_t max31827_debugfs_write(struct file *file, const char __user *buf,
-+				      size_t count, loff_t *ppos)
-+{
-+	char tbuf[DEBUG_FS_DATA_MAX] = { 0 };
-+	struct max31827_debugfs_data *psu;
-+	struct max31827_state *st;
-+	int *attrp = file_inode(file)->i_private;
-+	int attr = *attrp;
-+	u16 uval;
-+	int ret;
-+
-+	pr_info("attr = %d\n", attr);
-+	psu = container_of(attrp, struct max31827_debugfs_data, debugfs_entries[attr]);
-+	pr_info("First container ok.\n");
-+	st = container_of(psu, struct max31827_state, psu);
-+
-+	ret = kstrtou16_from_user(buf, count, 0, &uval);
-+	if (ret)
-+		return ret;
-+
-+	pr_info("uval = %s\n", tbuf);
-+
-+	switch (attr) {
-+	case MAX31827_DEBUGFS_TIMEOUT:
-+		uval = FIELD_PREP(MAX31827_CONFIGURATION_TIMEOUT_MASK, uval);
-+		ret = regmap_update_bits(st->regmap,
-+					 MAX31827_CONFIGURATION_REG,
-+					 MAX31827_CONFIGURATION_TIMEOUT_MASK,
-+					 uval);
-+		break;
-+	case MAX31827_DEBUGFS_RESOLUTION:
-+		uval = FIELD_PREP(MAX31827_CONFIGURATION_RESOLUTION_MASK, uval);
-+		ret = regmap_update_bits(st->regmap,
-+					 MAX31827_CONFIGURATION_REG,
-+					 MAX31827_CONFIGURATION_RESOLUTION_MASK,
-+					 uval);
-+		break;
-+	case MAX31827_DEBUGFS_ALARM_POLARITY:
-+		uval = FIELD_PREP(MAX31827_CONFIGURATION_ALRM_POL_MASK, uval);
-+		ret = regmap_update_bits(st->regmap,
-+					 MAX31827_CONFIGURATION_REG,
-+					 MAX31827_CONFIGURATION_ALRM_POL_MASK,
-+					 uval);
-+		break;
-+	case MAX31827_DEBUGFS_COMP_INT:
-+		uval = FIELD_PREP(MAX31827_CONFIGURATION_COMP_INT_MASK, uval);
-+		ret = regmap_update_bits(st->regmap,
-+					 MAX31827_CONFIGURATION_REG,
-+					 MAX31827_CONFIGURATION_COMP_INT_MASK,
-+					 uval);
-+		break;
-+	case MAX31827_DEBUGFS_FAULT_QUEUE:
-+		uval = FIELD_PREP(MAX31827_CONFIGURATION_FLT_Q_MASK, uval);
-+		ret = regmap_update_bits(st->regmap,
-+					 MAX31827_CONFIGURATION_REG,
-+					 MAX31827_CONFIGURATION_FLT_Q_MASK,
-+					 uval);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static const struct file_operations max31827_fops = {
-+	.read = max31827_debugfs_read,
-+	.write = max31827_debugfs_write,
-+};
-+
-+static void max31827_debugfs_remove(void *dir)
-+{
-+	debugfs_remove_recursive(dir);
-+}
-+
-+static int max31827_init_debugfs(struct max31827_state *st,
-+				 struct i2c_client *client)
-+{
-+	struct dentry *debugfs;
-+	int ret, i;
-+
-+	debugfs = debugfs_create_dir(client->name, NULL);
-+	if (!debugfs)
-+		return -ENOENT;
-+
-+	for (i = 0; i < MAX31827_DEBUGFS_NUM_ENTRIES; ++i)
-+		st->psu.debugfs_entries[i] = i;
-+
-+	ret = devm_add_action_or_reset(&client->dev, max31827_debugfs_remove,
-+				       debugfs);
-+	if (ret)
-+		return ret;
-+
-+	debugfs_create_file("timeout", 0644, debugfs,
-+			    &st->psu.debugfs_entries[MAX31827_DEBUGFS_TIMEOUT],
-+			    &max31827_fops);
-+	debugfs_create_file("resolution", 0644, debugfs,
-+			    &st->psu.debugfs_entries[MAX31827_DEBUGFS_RESOLUTION],
-+			    &max31827_fops);
-+	debugfs_create_file("alarm_polarity", 0644, debugfs,
-+			    &st->psu.debugfs_entries[MAX31827_DEBUGFS_ALARM_POLARITY],
-+			    &max31827_fops);
-+	debugfs_create_file("comp_int", 0644, debugfs,
-+			    &st->psu.debugfs_entries[MAX31827_DEBUGFS_COMP_INT],
-+			    &max31827_fops);
-+	debugfs_create_file("fault_queue", 0644, debugfs,
-+			    &st->psu.debugfs_entries[MAX31827_DEBUGFS_FAULT_QUEUE],
-+			    &max31827_fops);
-+	debugfs_create_file("pec_error", 0444, debugfs,
-+			    &st->psu.debugfs_entries[MAX31827_DEBUGFS_PEC_ERROR],
-+			    &max31827_fops);
-+
-+	return 0;
-+}
-+#else
-+static int max31827_init_debugfs(struct max31827_state *st,
-+				 struct i2c_client *client)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_DEBUG_FS */
-+
- static int max31827_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -698,7 +890,13 @@ static int max31827_probe(struct i2c_client *client)
- 							 &max31827_chip_info,
- 							 max31827_groups);
- 
--	return PTR_ERR_OR_ZERO(hwmon_dev);
-+	if (IS_ERR(hwmon_dev))
-+		return dev_err_probe(dev, PTR_ERR(hwmon_dev),
-+				     "Failed to register device");
-+
-+	max31827_init_debugfs(st, client);
-+
-+	return 0;
- }
- 
- static const struct of_device_id max31827_of_match[] = {
--- 
-2.34.1
+Thanks for the update!
 
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -463,6 +464,11 @@ static const struct rzg2l_variable_pin_cfg r9a07g043=
+f_variable_pin_cfg[] =3D {
+>  };
+>  #endif
+>
+> +static void rzg2l_pmc_writeb(struct rzg2l_pinctrl *pctrl, u8 val, void _=
+_iomem *addr)
+
+Please pass the register offset instead of the virtual register address.
+You do have pctrl->base here, and rzv2h_pmc_writeb() will need to use
+pctrl->base for all other register writes anyway.
+
+> +{
+> +       writeb(val, addr);
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
