@@ -1,362 +1,302 @@
-Return-Path: <linux-kernel+bounces-186482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05C88CC4B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:13:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13C18CC4BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E1A428050A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BBF2810BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0541257CA6;
-	Wed, 22 May 2024 16:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7351B3716D;
+	Wed, 22 May 2024 16:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZNpa84gf"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Aw3Fgi2O"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A41B1F17B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E8D56444
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394414; cv=none; b=RM2qGjuQKA9l2H5WGRHKbCSaYFcaT4MxB4+fqTrHpVHpzYYYs76lOaCMRn9afLfPvY591itVJTYwiYRM96SwoJABfXRsWKUBcY6+uhV39RAkBDpG7mvSBI0XvQjsesDfFd9K1uu/FCi6N2FMsntGmdaMeInMpISky0kracaVhtw=
+	t=1716394433; cv=none; b=A8wlV49JICSY0MniW+k61s2YVgs9DHePYWqGUxiH004tr7d8Zg9fvXQAY5TCTBoHlqEqsWo0XCQbNuV3CMW7bn2+OreEvrRNdcR5rIsv3zvHXuP2BeCf3gpE+ZVoz9ogarpCW9ML0YfiJZYxAzn2yPNS/guna4pCkvOLKFpYODs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394414; c=relaxed/simple;
-	bh=58ockLmgsrUZMMZrH6nylZdylj4gAMkL3TV8TbAU9J8=;
-	h=Date:Subject:CC:From:To:Message-ID; b=t6J9jFZs8g1z7IBgc6eCsBeaQAq1aUvL7puzLUSQthm1Q1KNo0rMurYdEyaohQR/istUsvgbWZEV3lhP6iAPYp9Gk7eNwuTrLR4EuJgQL5ioZ9GyxPK8S3au/LlYvJcwLQF1fHfjztsVHBIj1h1LfXsl6s09UZXZROQ+WQrni0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZNpa84gf; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-628a551d10cso2162404a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716394410; x=1716999210; darn=vger.kernel.org;
-        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TvJV5ZGsuu7yjPkuizDv1ykHrklgDvGswJrEOm3kD5A=;
-        b=ZNpa84gfZUsj4/tasahwaOIhjjs5ubA9uUcH7Erw+aMCZmH7U4aXj8mPSq4Sjvc7y+
-         ikz4pffKo2zsP6ReZpQWfoZGrGtWPIV4ZW+PxVCE12SlcmmQnP8GUU4ZESJmgFdWL/c/
-         XmIHa3M2+1QRRndF9DvUQ+Rem/sCWd4f2BNBfjDWGGKi4wZ6wk/vB5PHG2FQ/gayYCMU
-         gIY6imgMn/tBhzpHxj+yfxn4U3VuN+vqN1yPXn2JzUjYHOjUP/GtnmUfipz4lOFe/bsI
-         vS8H8ezeaHsEc+c+xialJoFB07mClf+iQHi2LHE1BBuZdEEIU0V9NKeqqkee0RYrNUq4
-         jr5w==
+	s=arc-20240116; t=1716394433; c=relaxed/simple;
+	bh=NjXiPTWnOeImNdoz9BOwvzUqhkai0vzWdsLF5ouFHs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNGdIy9qwhnLrEMiSctcAIjoEwIl++dfWW274VflrZZz6q8dg+CcOrSiUUDcTw7GYq7rKUKPGkVX/cTh8oY5urXOml8iSZ21LIPsbFXJlL/qEBvzADXt36a29GCO7J+TtkaOjgnhoKrCpCG5vPn6lCuyEfdz+McqYF0z/OKbPxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Aw3Fgi2O; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716394430;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3nOUOflu7eQzj/terIhor8uH3BfQ+23Qg6GF2/UGitw=;
+	b=Aw3Fgi2OPeNobl6V6uXb4qpMv2w+9o3PFqy/WAiGcqvZxxtxcv8Hg3jYhMxFewa1gmxP7v
+	xQFNLH7E5WMEA6IcQrY9ikPnqoWZulJaRfe6k3YYzntkrnlKF7F6w4ChZ5JIUhay+o7MRt
+	yzRwo0vQD4M/znt8kgqw9OEQkV9zGi4=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-364-lZOu8c7RMR6Alz31AhyiIQ-1; Wed, 22 May 2024 12:13:49 -0400
+X-MC-Unique: lZOu8c7RMR6Alz31AhyiIQ-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6a0dc98ce3fso12330046d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:13:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716394410; x=1716999210;
-        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TvJV5ZGsuu7yjPkuizDv1ykHrklgDvGswJrEOm3kD5A=;
-        b=kt7MZpV8ChLDve+vuEVJ4/AKiRjzcfwZ3Vs1tjV2jbTd9fDXELujqffq0zQnJI14Rx
-         q79AbLKJVwVe3xj9wfm3eTSihsE5npGv/nV4j3zoUsj31RXaDMMREHkK13fCI08rle1g
-         qRiCAxegywx+1qYeaGUvrRwCTlN6PaOSklk/pNcqtbC6k8fKpj4rt+hQAcPmaafwkV5a
-         N3gIQUc+YcqH9hw0pW5pvtOvzCSLeeg+VUK/mgyzdlDiQuh3zpT8j9+rhTuJCuuVchQy
-         jc3pMsj56uB6eY9sWEysMclzEnw7cKmC+GvP8Uw0Wmk/PmFqnofKRnlfKhPZ8jfmV4yi
-         yIWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvLw50EIc/9pbckmgXDB/WPLCDpV8TrHhn2QrWkKKEldhztK5otyc8su/GTgxFUdp0H3QRWiE93CYxfB202vcKYPoPr35KNWTUwEtR
-X-Gm-Message-State: AOJu0Yx0siIhJtB96DWyCHyaYK+3zaUMGdVe1zqXr4UkjbWXG1cVQj/z
-	P16m/1gIqTLkkoucOu/go8m9k+dcsM7ui/pSuo48NzQJ3u721vuRECq3zeXiHgQGNvY8SdjolL/
-	S
-X-Google-Smtp-Source: AGHT+IGIo1wZlSPwwSu9xw5c4I51qpXk7ZOigKsyxWm6T8IDrvSKigUlmUGe9S6Z4XUSv7E8Tg4RbA==
-X-Received: by 2002:a17:90a:5385:b0:2bd:9648:1fe with SMTP id 98e67ed59e1d1-2bd9f344e7cmr2642563a91.7.1716394409942;
-        Wed, 22 May 2024 09:13:29 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bd9099a4afsm3665730a91.8.2024.05.22.09.13.28
+        d=1e100.net; s=20230601; t=1716394429; x=1716999229;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3nOUOflu7eQzj/terIhor8uH3BfQ+23Qg6GF2/UGitw=;
+        b=ehzutuCuzCpPtYcNscERnjWY69jhc1SHFbix0CiLCv30jrfK3jpAXZhGruEUagx4op
+         QdWroWILvfOb50QX9DkuU5jwXKnTp/DbRqzMkPghgyDuiwmqf1P3MIxxy/rU6ljN4jxB
+         PunAtJKnU7PQSZsdkqzFrS19UBI0jEh7YM+Qhb+AvzvM/VZeXqCSakrrtAKasr2bbnvq
+         y0DSRfiGdPpNl/ROlaphD94jMM+DfKGHWTV//146owQNp+kBge6VDWtqZvB9sjcwn+iK
+         htPYjtWj8wg9FYSp35EkZBuBCwAXbg2ghzSxeGKnrwh9uiNjORwnrVXl6C6iyp4Lz0vL
+         yUyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyGB75LnExdBf75hAWvjhNLvBUMqMg5AC3IqDUct/DR5mmORgSZaBnmL1k+rpj2fq7Ix/2OR4g7eRZxb1V/KTuY0d1vdtnQBXUZmlq
+X-Gm-Message-State: AOJu0Ywx3usx7KoJFg0dsduwjP//H8ntu1x2HhKhzW6Sx57rGQJuN0nf
+	upWNsBz8Ah3EfLa1xffwh/aGzfRLK9bPSEsHNpJyMk7h+ZFhIr1N80+q6zVuvbf0FyP+pm9Y4d6
+	MQVmRqqySI2oJazPd+PW7y1YpRmNEbgiNUuCZfsaE6g2jxmbTdXa1TBJvbk8cIA==
+X-Received: by 2002:a05:6214:2626:b0:6a0:87e5:210c with SMTP id 6a1803df08f44-6ab80931c4emr24096656d6.5.1716394428137;
+        Wed, 22 May 2024 09:13:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZToKdbUy5jaMTAiNrIxehX58pgqc0VaKB4XF1FynvcepfCcDlxlf35vwQBh40mWPVQggo8g==
+X-Received: by 2002:a05:6214:2626:b0:6a0:87e5:210c with SMTP id 6a1803df08f44-6ab80931c4emr24096056d6.5.1716394427346;
+        Wed, 22 May 2024 09:13:47 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1d9dd2sm134417386d6.129.2024.05.22.09.13.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 09:13:28 -0700 (PDT)
-Date: Wed, 22 May 2024 09:13:28 -0700 (PDT)
-X-Google-Original-Date: Wed, 22 May 2024 09:13:24 PDT (-0700)
-Subject: [GIT PULL] RISC-V Patches for the 6.10 Merge Window, Part 1
-CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <mhng-e73e59bf-92fc-4122-9f9e-a329d20eba55@palmer-ri-x1c9>
+        Wed, 22 May 2024 09:13:47 -0700 (PDT)
+Date: Wed, 22 May 2024 12:13:45 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>,
+	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+	Pavel Tatashin <pasha.tatashin@soleen.com>,
+	axelrasmussen@google.com, nadav.amit@gmail.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: 6.10/bisected/regression - commit 8430557fc584 cause warning at
+ mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
+Message-ID: <Zk4ZuQpql0kBkMMH@x1n>
+References: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
+ <Zk0HxVODITGKqYCw@x1n>
+ <CABXGCsNbcMn0Z0RudFrBW78rZPE+cDY+f9r+yKf_AZwJZUOrQg@mail.gmail.com>
+ <Zk0UA6wABOB9X_Dx@x1n>
+ <CABXGCsOZnxrSHd0y6QrFhzAiY-uTJiRSmo__C_P8Y2qjFV6bRA@mail.gmail.com>
+ <Zk0h0V8kvZRKu6F4@x1n>
+ <a3d54407-87aa-4f59-adac-c9b79fe1ecef@redhat.com>
+ <Zk4MsGxhP5x5aURG@x1n>
+ <03faa624-1685-4a21-81fc-cc9e8b760e97@redhat.com>
+ <Zk4Y9tU7pOzU0lw1@x1n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zk4Y9tU7pOzU0lw1@x1n>
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+On Wed, May 22, 2024 at 12:10:30PM -0400, Peter Xu wrote:
+> On Wed, May 22, 2024 at 05:34:21PM +0200, David Hildenbrand wrote:
+> > On 22.05.24 17:18, Peter Xu wrote:
+> > > On Wed, May 22, 2024 at 09:48:51AM +0200, David Hildenbrand wrote:
+> > > > On 22.05.24 00:36, Peter Xu wrote:
+> > > > > On Wed, May 22, 2024 at 03:21:04AM +0500, Mikhail Gavrilov wrote:
+> > > > > > On Wed, May 22, 2024 at 2:37 AM Peter Xu <peterx@redhat.com> wrote:
+> > > > > > > Hmm I still cannot reproduce.  Weird.
+> > > > > > > 
+> > > > > > > Would it be possible for you to identify which line in debug_vm_pgtable.c
+> > > > > > > triggered that issue?
+> > > > > > > 
+> > > > > > > I think it should be some set_pte_at() but I'm not sure, as there aren't a
+> > > > > > > lot and all of them look benign so far.  It could be that I missed
+> > > > > > > something important.
+> > > > > > 
+> > > > > > I hope it's helps:
+> > > > > 
+> > > > > Thanks for offering this, it's just that it doesn't look coherent with what
+> > > > > was reported for some reason.
+> > > > > 
+> > > > > > 
+> > > > > > > sh /usr/src/kernels/(uname -r)/scripts/faddr2line /lib/debug/lib/modules/(uname -r)/vmlinux debug_vm_pgtable+0x1c04
+> > > > > > debug_vm_pgtable+0x1c04/0x3360:
+> > > > > > native_ptep_get_and_clear at arch/x86/include/asm/pgtable_64.h:94
+> > > > > > (inlined by) ptep_get_and_clear at arch/x86/include/asm/pgtable.h:1262
+> > > > > > (inlined by) ptep_clear at include/linux/pgtable.h:509
+> > > > > 
+> > > > > This is a pte_clear(), and pte_clear() shouldn't even do the set() checks,
+> > > > > and shouldn't stumble over what I added.
+> > > > > 
+> > > > > IOW, it doesn't match with the real stack dump previously:
+> > > > > 
+> > > > > [    5.581003]  ? __page_table_check_ptes_set+0x306/0x3c0
+> > > > > [    5.581274]  ? __pfx___page_table_check_ptes_set+0x10/0x10
+> > > > > [    5.581544]  ? __pfx_check_pgprot+0x10/0x10
+> > > > > [    5.581806]  set_ptes.constprop.0+0x66/0xd0
+> > > > > [    5.582072]  ? __pfx_set_ptes.constprop.0+0x10/0x10
+> > > > > [    5.582333]  ? __pfx_pte_val+0x10/0x10
+> > > > > [    5.582595]  debug_vm_pgtable+0x1c04/0x3360
+> > > > > 
+> > > > 
+> > > > Staring at pte_clear_tests():
+> > > > 
+> > > > #ifndef CONFIG_RISCV
+> > > > 	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
+> > > > #endif
+> > > > 	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
+> > > > 
+> > > > So we set random PTE bits, probably setting the present, uffd and write bit
+> > > > at the same time. That doesn't make too much sense when we want to perform
+> > > > that such combinations cannot exist.
+> > > 
+> > > Here the issue is I don't think it should set W bit anyway, as we init
+> > > page_prot to be RWX but !shared:
+> > > 
+> > > 	args->page_prot          = vm_get_page_prot(VM_ACCESS_FLAGS);
+> > > 
+> > > On x86_64 (Mikhail's system) it should have W bit cleared afaict, meanwhile
+> > > the RANDOM_ORVALUE won't touch bit W due to S390_SKIP_MASK (which contains
+> > > bit W / bit 1, which is another "accident"..).  Then even if with that it
+> > > should not trigger..  I think that's also why I cannot reproduce this
+> > > problem locally.
+> > 
+> > Why oh why are skip mask applied independently of the architecture.
+> > 
+> > While _PAGE_RW should indeed be masked out by RANDOM_ORVALUE.
+> > 
+> > But with shadow stacks we consider a PTE writable (see
+> > pte_write()->pte_shstk()) if
+> > (1) X86_FEATURE_SHSTK is enabled
+> > (2) _PAGE_RW is clear
+> > (3) _PAGE_DIRTY is set
+> > 
+> > _PAGE_DIRTY is bit 6.
+> > 
+> > Likely your CPU does not support shadow stacks.
+> 
+> Good point.  My host has it, but I tested in the VM which doesn't.  I
+> suppose we can wait and double check whether Mikhail should see the issue
+> went away with that patch provided.
+> 
+> In this case, instead of keep fiddling with random bits to apply and
+> further work on top of per-arch random bits, I'd hope we can simply drop
+> that random mechanism as I don't think it'll be pxx_none() now.  I attached
+> a patch I plan to post. Does it look reasonable?
+> 
+> I also copied Anshuman, Gavin and Aneesh.
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+No I didn't.. this one will..
 
-are available in the Git repository at:
+> 
+> Thanks,
+> 
+> ===8<===
+> From c10cde00b14d2d305390dd418a8a8855d3e6437f Mon Sep 17 00:00:00 2001
+> From: Peter Xu <peterx@redhat.com>
+> Date: Wed, 22 May 2024 12:04:33 -0400
+> Subject: [PATCH] drop RANDOM_ORVALUE bits
+> 
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  mm/debug_vm_pgtable.c | 30 ++++--------------------------
+>  1 file changed, 4 insertions(+), 26 deletions(-)
+> 
+> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> index f1c9a2c5abc0..b5d7be05063a 100644
+> --- a/mm/debug_vm_pgtable.c
+> +++ b/mm/debug_vm_pgtable.c
+> @@ -40,22 +40,7 @@
+>   * Please refer Documentation/mm/arch_pgtable_helpers.rst for the semantics
+>   * expectations that are being validated here. All future changes in here
+>   * or the documentation need to be in sync.
+> - *
+> - * On s390 platform, the lower 4 bits are used to identify given page table
+> - * entry type. But these bits might affect the ability to clear entries with
+> - * pxx_clear() because of how dynamic page table folding works on s390. So
+> - * while loading up the entries do not change the lower 4 bits. It does not
+> - * have affect any other platform. Also avoid the 62nd bit on ppc64 that is
+> - * used to mark a pte entry.
+>   */
+> -#define S390_SKIP_MASK		GENMASK(3, 0)
+> -#if __BITS_PER_LONG == 64
+> -#define PPC64_SKIP_MASK		GENMASK(62, 62)
+> -#else
+> -#define PPC64_SKIP_MASK		0x0
+> -#endif
+> -#define ARCH_SKIP_MASK (S390_SKIP_MASK | PPC64_SKIP_MASK)
+> -#define RANDOM_ORVALUE (GENMASK(BITS_PER_LONG - 1, 0) & ~ARCH_SKIP_MASK)
+>  #define RANDOM_NZVALUE	GENMASK(7, 0)
+>  
+>  struct pgtable_debug_args {
+> @@ -511,8 +496,7 @@ static void __init pud_clear_tests(struct pgtable_debug_args *args)
+>  		return;
+>  
+>  	pr_debug("Validating PUD clear\n");
+> -	pud = __pud(pud_val(pud) | RANDOM_ORVALUE);
+> -	WRITE_ONCE(*args->pudp, pud);
+> +	WARN_ON(pud_none(pud));
+>  	pud_clear(args->pudp);
+>  	pud = READ_ONCE(*args->pudp);
+>  	WARN_ON(!pud_none(pud));
+> @@ -548,8 +532,7 @@ static void __init p4d_clear_tests(struct pgtable_debug_args *args)
+>  		return;
+>  
+>  	pr_debug("Validating P4D clear\n");
+> -	p4d = __p4d(p4d_val(p4d) | RANDOM_ORVALUE);
+> -	WRITE_ONCE(*args->p4dp, p4d);
+> +	WARN_ON(p4d_none(p4d));
+>  	p4d_clear(args->p4dp);
+>  	p4d = READ_ONCE(*args->p4dp);
+>  	WARN_ON(!p4d_none(p4d));
+> @@ -582,8 +565,7 @@ static void __init pgd_clear_tests(struct pgtable_debug_args *args)
+>  		return;
+>  
+>  	pr_debug("Validating PGD clear\n");
+> -	pgd = __pgd(pgd_val(pgd) | RANDOM_ORVALUE);
+> -	WRITE_ONCE(*args->pgdp, pgd);
+> +	WARN_ON(pgd_none(pgd));
+>  	pgd_clear(args->pgdp);
+>  	pgd = READ_ONCE(*args->pgdp);
+>  	WARN_ON(!pgd_none(pgd));
+> @@ -634,9 +616,6 @@ static void __init pte_clear_tests(struct pgtable_debug_args *args)
+>  	if (WARN_ON(!args->ptep))
+>  		return;
+>  
+> -#ifndef CONFIG_RISCV
+> -	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
+> -#endif
+>  	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
+>  	flush_dcache_page(page);
+>  	barrier();
+> @@ -650,8 +629,7 @@ static void __init pmd_clear_tests(struct pgtable_debug_args *args)
+>  	pmd_t pmd = READ_ONCE(*args->pmdp);
+>  
+>  	pr_debug("Validating PMD clear\n");
+> -	pmd = __pmd(pmd_val(pmd) | RANDOM_ORVALUE);
+> -	WRITE_ONCE(*args->pmdp, pmd);
+> +	WARN_ON(pmd_none(pmd));
+>  	pmd_clear(args->pmdp);
+>  	pmd = READ_ONCE(*args->pmdp);
+>  	WARN_ON(!pmd_none(pmd));
+> -- 
+> 2.45.0
+> 
+> -- 
+> Peter Xu
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.10-mw1
+-- 
+Peter Xu
 
-for you to fetch changes up to 92cce91949a497a8a4615f9ba5813b03f7a1f1d5:
-
-  riscv: defconfig: Enable CONFIG_CLK_SOPHGO_CV1800 (2024-05-13 14:26:34 -0700)
-
-----------------------------------------------------------------
-RISC-V Patches for the 6.10 Merge Window, Part 1
-
-* Support for byte/half-word compare-and-exchange, emulated via LR/SC
-  loops.
-* Support for Rust.
-* Support for Zihintpause in hwprobe.
-* Support for the PR_RISCV_SET_ICACHE_FLUSH_CTX prctl().
-* Support for lockless lockrefs.
-
-----------------------------------------------------------------
-This was really meant to be last week's PR, but due to a handful of small
-issues.  There's a pair of driver build fixes that are already on the lists and
-a report of a ftrace failure that might be triggered by the ftrace/AIA fix, but
-seems like we're better off with these than without.  I've got a few other
-smaller things queued up for Friday, but I figured it'd be best to get this
-moving because there's a handful of merge conflicts.
-
-This first one isn't showing up in a in-flight merge `git diff`, but it looks
-pretty straight-forward
-
-    diff --git a/Documentation/rust/arch-support.rst b/Documentation/rust/arch-support.rst
-    index c9137710633a..4d1495ded2aa 100644
-    --- a/Documentation/rust/arch-support.rst
-    +++ b/Documentation/rust/arch-support.rst
-    @@ -16,7 +16,8 @@ support corresponds to ``S`` values in the ``MAINTAINERS`` file.
-     Architecture   Level of support  Constraints
-     =============  ================  ==============================================
-     ``arm64``      Maintained        Little Endian only.
-    -``loongarch``  Maintained        \-
-    +``loongarch``  Maintained        -
-    +``riscv``      Maintained        ``riscv64`` only.
-     ``um``         Maintained        ``x86_64`` only.
-     ``x86``        Maintained        ``x86_64`` only.
-     =============  ================  ==============================================
-
-There's also one in the IMSIC driver where there's really no way for git to
-pick up the conflict, as it's a far-away API change.  Here's my resolution,
-Anup likes it as well
-<https://lore.kernel.org/all/CAK9=C2UkTD0hYymjow-yHHfBDh4CtRv-G2BPt=ncstLRmpYgyg@mail.gmail.com/>:
-
-    diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
-    index 886418ec06cb..4fbb37074d29 100644
-    --- a/drivers/irqchip/irq-riscv-imsic-early.c
-    +++ b/drivers/irqchip/irq-riscv-imsic-early.c
-    @@ -49,7 +49,7 @@ static int __init imsic_ipi_domain_init(void)
-     		return virq < 0 ? virq : -ENOMEM;
-     
-     	/* Set vIRQ range */
-    -	riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI, true);
-    +	riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI);
-     
-     	/* Announce that IMSIC is providing IPIs */
-     	pr_info("%pfwP: providing IPIs using interrupt %d\n", imsic->fwnode, IMSIC_IPI_ID);
-
-The rest show up pretty normally, so here's the regular merge diff output from
-how I've resolved them:
-
-    diff --cc arch/riscv/Makefile
-    index 1e002d8003c5,321c057e2bdc..000000000000
-    --- a/arch/riscv/Makefile
-    +++ b/arch/riscv/Makefile
-    @@@ -151,20 -166,9 +166,9 @@@ endi
-      endif
-      
-      vdso-install-y			+= arch/riscv/kernel/vdso/vdso.so.dbg
-     -vdso-install-$(CONFIG_COMPAT)	+= arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg:../compat_vdso/compat_vdso.so
-     +vdso-install-$(CONFIG_COMPAT)	+= arch/riscv/kernel/compat_vdso/compat_vdso.so.dbg
-      
-    - ifneq ($(CONFIG_XIP_KERNEL),y)
-    - ifeq ($(CONFIG_RISCV_M_MODE)$(CONFIG_SOC_CANAAN_K210),yy)
-    - KBUILD_IMAGE := $(boot)/loader.bin
-    - else
-    - ifeq ($(CONFIG_EFI_ZBOOT),)
-    - KBUILD_IMAGE := $(boot)/Image.gz
-    - else
-    - KBUILD_IMAGE := $(boot)/vmlinuz.efi
-    - endif
-    - endif
-    - endif
-    - BOOT_TARGETS := Image Image.gz loader loader.bin xipImage vmlinuz.efi
-    + BOOT_TARGETS := Image Image.gz Image.bz2 Image.lz4 Image.lzma Image.lzo Image.zst loader loader.bin xipImage vmlinuz.efi
-      
-      all:	$(notdir $(KBUILD_IMAGE))
-      
-    diff --cc include/uapi/linux/prctl.h
-    index 713d28788df7,524d546d697b..000000000000
-    --- a/include/uapi/linux/prctl.h
-    +++ b/include/uapi/linux/prctl.h
-    @@@ -306,20 -306,10 +306,26 @@@ struct prctl_mm_map 
-      # define PR_RISCV_V_VSTATE_CTRL_NEXT_MASK	0xc
-      # define PR_RISCV_V_VSTATE_CTRL_MASK		0x1f
-      
-    + #define PR_RISCV_SET_ICACHE_FLUSH_CTX	71
-    + # define PR_RISCV_CTX_SW_FENCEI_ON	0
-    + # define PR_RISCV_CTX_SW_FENCEI_OFF	1
-    + # define PR_RISCV_SCOPE_PER_PROCESS	0
-    + # define PR_RISCV_SCOPE_PER_THREAD	1
-    + 
-     +/* PowerPC Dynamic Execution Control Register (DEXCR) controls */
-     +#define PR_PPC_GET_DEXCR		72
-     +#define PR_PPC_SET_DEXCR		73
-     +/* DEXCR aspect to act on */
-     +# define PR_PPC_DEXCR_SBHE		0 /* Speculative branch hint enable */
-     +# define PR_PPC_DEXCR_IBRTPD		1 /* Indirect branch recurrent target prediction disable */
-     +# define PR_PPC_DEXCR_SRAPD		2 /* Subroutine return address prediction disable */
-     +# define PR_PPC_DEXCR_NPHIE		3 /* Non-privileged hash instruction enable */
-     +/* Action to apply / return */
-     +# define PR_PPC_DEXCR_CTRL_EDITABLE	 0x1 /* Aspect can be modified with PR_PPC_SET_DEXCR */
-     +# define PR_PPC_DEXCR_CTRL_SET		 0x2 /* Set the aspect for this process */
-     +# define PR_PPC_DEXCR_CTRL_CLEAR	 0x4 /* Clear the aspect for this process */
-     +# define PR_PPC_DEXCR_CTRL_SET_ONEXEC	 0x8 /* Set the aspect on exec */
-     +# define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
-     +# define PR_PPC_DEXCR_CTRL_MASK		0x1f
-     +
-      #endif /* _LINUX_PRCTL_H */
-    diff --cc kernel/sys.c
-    index f9c95410278c,1b7bda0722ca..000000000000
-    --- a/kernel/sys.c
-    +++ b/kernel/sys.c
-    @@@ -146,13 -146,10 +146,15 @@@
-      #ifndef RISCV_V_GET_CONTROL
-      # define RISCV_V_GET_CONTROL()		(-EINVAL)
-      #endif
-    + #ifndef RISCV_SET_ICACHE_FLUSH_CTX
-    + # define RISCV_SET_ICACHE_FLUSH_CTX(a, b)	(-EINVAL)
-    + #endif
-     -
-     +#ifndef PPC_GET_DEXCR_ASPECT
-     +# define PPC_GET_DEXCR_ASPECT(a, b)	(-EINVAL)
-     +#endif
-     +#ifndef PPC_SET_DEXCR_ASPECT
-     +# define PPC_SET_DEXCR_ASPECT(a, b, c)	(-EINVAL)
-     +#endif
-    - 
-      /*
-       * this is where the system-wide overflow UID and GID are defined, for
-       * architectures that now have 32-bit UID/GID but didn't in the past
-
-
-----------------------------------------------------------------
-Alexandre Ghiti (2):
-      riscv: Remove superfluous smp_mb()
-      riscv: Fix text patching when IPI are used
-
-Charlie Jenkins (4):
-      riscv: Remove unnecessary irqflags processor.h include
-      riscv: Include riscv_set_icache_flush_ctx prctl
-      documentation: Document PR_RISCV_SET_ICACHE_FLUSH_CTX prctl
-      cpumask: Add assign cpu
-
-Clément Léger (2):
-      riscv: misaligned: remove CONFIG_RISCV_M_MODE specific code
-      riscv: hwprobe: export Zihintpause ISA extension
-
-Dawei Li (2):
-      riscv: Remove redundant CONFIG_64BIT from pgtable_l{4,5}_enabled
-      riscv: Annotate pgtable_l{4,5}_enabled with __ro_after_init
-
-Inochi Amaoto (1):
-      riscv: defconfig: Enable CONFIG_CLK_SOPHGO_CV1800
-
-Jisheng Zhang (4):
-      riscv: select ARCH_USE_CMPXCHG_LOCKREF
-      riscv: cmpxchg: implement arch_cmpxchg64_{relaxed|acquire|release}
-      riscv: mm: still create swiotlb buffer for kmalloc() bouncing if required
-      riscv: select ARCH_HAS_FAST_MULTIPLIER
-
-Leonardo Bras (5):
-      riscv/cmpxchg: Deduplicate xchg() asm functions
-      riscv/cmpxchg: Deduplicate cmpxchg() asm and macros
-      riscv/atomic.h : Deduplicate arch_atomic.*
-      riscv/cmpxchg: Implement cmpxchg for variables of size 1 and 2
-      riscv/cmpxchg: Implement xchg for variables of size 1 and 2
-
-Masahiro Yamada (2):
-      riscv: merge two if-blocks for KBUILD_IMAGE
-      export.h: remove include/asm-generic/export.h
-
-Miguel Ojeda (1):
-      RISC-V: enable building 64-bit kernels with rust support
-
-Palmer Dabbelt (6):
-      Merge patch series "Rework & improve riscv cmpxchg.h and atomic.h"
-      Merge patch series "riscv: 64-bit NOMMU fixes and enhancements"
-      Merge patch series "riscv: fix patching with IPI"
-      Merge patch series "riscv: Create and document PR_RISCV_SET_ICACHE_FLUSH_CTX prctl"
-      Merge patch series "riscv: enable lockless lockref implementation"
-      Merge patch series "riscv: ASID-related and UP-related TLB flush enhancements"
-
-Samuel Holland (18):
-      riscv: Fix TASK_SIZE on 64-bit NOMMU
-      riscv: Fix loading 64-bit NOMMU kernels past the start of RAM
-      riscv: Remove MMU dependency from Zbb and Zicboz
-      riscv: Allow NOMMU kernels to run in S-mode
-      riscv: Do not save the scratch CSR during suspend
-      riscv: Flush the instruction cache during SMP bringup
-      riscv: Factor out page table TLB synchronization
-      riscv: Use IPIs for remote cache/TLB flushes by default
-      riscv: mm: Broadcast kernel TLB flushes only when needed
-      riscv: Only send remote fences when some other CPU is online
-      riscv: mm: Combine the SMP and UP TLB flush code
-      riscv: Apply SiFive CIP-1200 workaround to single-ASID sfence.vma
-      riscv: Avoid TLB flush loops when affected by SiFive CIP-1200
-      riscv: mm: Introduce cntx2asid/cntx2version helper macros
-      riscv: mm: Use a fixed layout for the MM context ID
-      riscv: mm: Make asid_bits a local variable
-      riscv: mm: Preserve global TLB entries when switching contexts
-      riscv: mm: Always use an ASID to flush mm contexts
-
-Stafford Horne (1):
-      riscv: Remove unused asm/signal.h file
-
-Tanzir Hasan (1):
-      riscv: remove unused header
-
-Yangyu Chen (1):
-      RISC-V: only flush icache when it has VM_EXEC set
-
- Documentation/arch/riscv/cmodx.rst    |  98 ++++++++
- Documentation/arch/riscv/hwprobe.rst  |   4 +
- Documentation/arch/riscv/index.rst    |   1 +
- Documentation/rust/arch-support.rst   |   1 +
- arch/riscv/Kconfig                    |  22 +-
- arch/riscv/Makefile                   |  26 ++-
- arch/riscv/configs/defconfig          |   1 +
- arch/riscv/errata/sifive/errata.c     |   5 +
- arch/riscv/include/asm/atomic.h       | 164 ++++++-------
- arch/riscv/include/asm/cache.h        |   2 +-
- arch/riscv/include/asm/cacheflush.h   |   7 +-
- arch/riscv/include/asm/cmpxchg.h      | 422 ++++++++++++----------------------
- arch/riscv/include/asm/errata_list.h  |  12 +-
- arch/riscv/include/asm/irqflags.h     |   1 -
- arch/riscv/include/asm/mmu.h          |   5 +
- arch/riscv/include/asm/page.h         |   2 +-
- arch/riscv/include/asm/patch.h        |   1 +
- arch/riscv/include/asm/pgalloc.h      |  32 ++-
- arch/riscv/include/asm/pgtable.h      |   2 +-
- arch/riscv/include/asm/processor.h    |  10 +
- arch/riscv/include/asm/sbi.h          |   4 +
- arch/riscv/include/asm/signal.h       |  12 -
- arch/riscv/include/asm/smp.h          |  15 +-
- arch/riscv/include/asm/suspend.h      |   1 -
- arch/riscv/include/asm/switch_to.h    |  23 ++
- arch/riscv/include/asm/tlbflush.h     |  52 ++---
- arch/riscv/include/uapi/asm/hwprobe.h |   1 +
- arch/riscv/kernel/ftrace.c            |  44 +++-
- arch/riscv/kernel/patch.c             |  17 +-
- arch/riscv/kernel/sbi-ipi.c           |  11 +-
- arch/riscv/kernel/smp.c               |  11 +-
- arch/riscv/kernel/smpboot.c           |   7 +-
- arch/riscv/kernel/suspend.c           |   3 +-
- arch/riscv/kernel/sys_hwprobe.c       |   1 +
- arch/riscv/kernel/sys_riscv.c         |   1 -
- arch/riscv/kernel/traps_misaligned.c  | 106 ++-------
- arch/riscv/mm/Makefile                |   5 +-
- arch/riscv/mm/cacheflush.c            | 120 +++++++++-
- arch/riscv/mm/context.c               |  42 ++--
- arch/riscv/mm/init.c                  |  22 +-
- arch/riscv/mm/tlbflush.c              |  75 ++----
- drivers/clocksource/timer-clint.c     |   2 +-
- include/asm-generic/export.h          |  11 -
- include/linux/cpumask.h               |  16 ++
- include/uapi/linux/prctl.h            |   6 +
- kernel/sys.c                          |   6 +
- scripts/generate_rust_target.rs       |   6 +
- 47 files changed, 757 insertions(+), 681 deletions(-)
- create mode 100644 Documentation/arch/riscv/cmodx.rst
- delete mode 100644 arch/riscv/include/asm/signal.h
- delete mode 100644 include/asm-generic/export.h
 
