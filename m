@@ -1,228 +1,119 @@
-Return-Path: <linux-kernel+bounces-186099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAA48CBFDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:10:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6908CBFD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681F21F21594
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5872837A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FF883A0D;
-	Wed, 22 May 2024 11:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A15824AE;
+	Wed, 22 May 2024 11:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaRgVD8Y"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFOc5bTb"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D293C82D72;
-	Wed, 22 May 2024 11:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A372B80C07;
+	Wed, 22 May 2024 11:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716376174; cv=none; b=iP3CAq2/wBi14vIa0N1c78aYG5MiwSymbH0dXFjl4uWuw0mSYcye75ugOx3N08k/yS043iVBCjtZN4TubnwjeFtSnHon7JUq5PD0JgRwTFRSSL7fZVEfoCWpqko9aiMQ00h1MPKRIBMXKh7lhgcXSj4FY8TI77gVxo+vLLPLpDQ=
+	t=1716376137; cv=none; b=e+ssxXaxd0zbp+lDaJyuN+Xce+UqZC1TwjfdCHc9H9sYGWsM9jJOgUr/XcmUGutrx2zueWs0dH1xjRr0n9DbQLRpO8LgCMNyaHLobG7XF+TUIDTzzfUDpN1SDDsKIn/cunjte/a/sYaWckC+2vGsVJNQs1gfOJOv8xFd3fmp0NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716376174; c=relaxed/simple;
-	bh=Lt1nFZ8VwQDqcdcvZHEXzl3FPeDt6SmnxVVK6tvED9M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Yv+aZ82FXpkdk0GGVGKUzInkJ3bfPWzQq8SvXP4ZnhOlw3FUFv9dxmvuMhney92jQ7Z9yy9QlZMbTYwDuohqQRj893HRYV+mcc3udUErSE06emdTnTCVO9j1+p4dxw12oGAEPRAjJjv/AOcmbbM26D8rGEfModLwkTinw5xQu64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaRgVD8Y; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1716376137; c=relaxed/simple;
+	bh=EUVi8pXNqTfD4bu+3/Opg1n7iWHcwxR9KxjT1HjrgnM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=DNFKAPzaaivsgRKxA0A4njsOff9VyLkHuW94ThhndGBwCYOpgrWIvatIxPo4vU0fZSYDDGLXO55Yp7nUCYrR2ORFJLLiMGNchmUoP0nEybn8ez7lSpGFeDjDhYlt7frPj7gDlfMuv47TB2vY3mJpUEgzXOYXfxmGIemoTuHQ2Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFOc5bTb; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f4603237e0so583506b3a.0;
-        Wed, 22 May 2024 04:09:32 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4200ee78e56so6014655e9.3;
+        Wed, 22 May 2024 04:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716376172; x=1716980972; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P0O7T2yJ5pHgmNgm6vNSvjG0SyzCguoIApl75+ur4PI=;
-        b=eaRgVD8YpxPWFUdnKbz9ym5Tv8Rfwmt6m565x9+NXekB6ir9Jr/5JwE8V1GRkcenfp
-         zwn21jGttcwOhD7mTyb+xNGkzpZTqQKAf2n3LmKyKoCH6m685sfXOzHF+/aXalIHB/I7
-         BJ5F0A4hQHQq9tfnULvyJmH8HggaLPvjojwe6wM9+y5jAGcDRMMs3XM+1IrcldpSVkO1
-         /ys6BsLxHhFDeBFjX9WTw7O7cbXNk2FufB37Hc+SuC6SmIuWbp2B6+d47p+jKCG61sDK
-         NPh73Nncm8jk3EQty4OphYFcKDy3EEDAHDZplC1fu+wSaVqYaS0+PEPSGQCpbPY4VuLU
-         q5Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716376172; x=1716980972;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=gmail.com; s=20230601; t=1716376134; x=1716980934; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P0O7T2yJ5pHgmNgm6vNSvjG0SyzCguoIApl75+ur4PI=;
-        b=k6xJVDWHy+KOyYr+0UFcqb6wapxhQBiWJY7alzb/W2y1Qf/XoPjhUdINcIDibayYzt
-         8HAmiEbCAMKZo4SSlqlGchPVfwPFbPXu06Mc++ooRgi7TwIQSbxh2SrpEWUWcqz0soVV
-         LAUJSlmljRwrd1IEtwlQIzzFZMRT09Qfitm44kdP57eQfKHIVUSO9aEBak7QmTHDrCa5
-         GcbU8EqensBbjWt7O4Spy5s/I6R5eEi3TEz4W7BEi2mge9A+GSfwlSVCIV+P/NHIYVEs
-         JQqwoPrQKUmrODj+9Chk+A8iPBx4wuAbaFlYdsPEZTGr5fkjKq1TlTMfaZy4EQBHtLCK
-         j0+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTGlvfQ2SDQpLS+cEviYAHy7KTlisqnqPPveYaBOy1KMWSO5ZPdM74bQ13Q1uFkUJNJjJpnuIjRpkSeWIEnCbzjCBheEYpnX2Ottqs
-X-Gm-Message-State: AOJu0Yz4X82r+j2wBFl2doicXcp8nt7jzZd2zeGPnhvMS/EVAZXXXCk/
-	NbM8kiEN7+0w4Ss3Wa6oelmqregL52BG3+WQnYH8PgIbQYW6MPTz
-X-Google-Smtp-Source: AGHT+IGF0zHUCvYxYuJksXJqPTw0tgyCbIt7Q2iNBwfLWanNp3O2diLyuGexy+6sYguZmn8BbOneAw==
-X-Received: by 2002:a05:6a00:6281:b0:6f4:74b8:3d57 with SMTP id d2e1a72fcca58-6f69fb9c0c9mr14495625b3a.7.1716376172167;
-        Wed, 22 May 2024 04:09:32 -0700 (PDT)
-Received: from localhost.localdomain (2001-b400-e283-0474-753d-295c-237e-167b.emome-ip6.hinet.net. [2001:b400:e283:474:753d:295c:237e:167b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2a98sm22223760b3a.169.2024.05.22.04.09.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 04:09:31 -0700 (PDT)
-From: Victor Shih <victorshihgli@gmail.com>
-To: ulf.hansson@linaro.org,
-	adrian.hunter@intel.com
-Cc: linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	benchuanggli@gmail.com,
-	HL.Liu@genesyslogic.com.tw,
-	Greg.tu@genesyslogic.com.tw,
-	takahiro.akashi@linaro.org,
-	dlunev@chromium.org,
-	Victor Shih <victorshihgli@gmail.com>
-Subject: [PATCH V16 04/23] mmc: core: Extend support for mmc regulators with a vqmmc2
-Date: Wed, 22 May 2024 19:08:50 +0800
-Message-Id: <20240522110909.10060-5-victorshihgli@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240522110909.10060-1-victorshihgli@gmail.com>
-References: <20240522110909.10060-1-victorshihgli@gmail.com>
+        bh=HTA7LnXUVCxdmoKd3vWVKbpmE3D6UHlWv/BKj3RwnS8=;
+        b=SFOc5bTbYDBQArSXa3eFaLKP051TESeu3UMCbYjN09H526TLIglRgC/XfR/MK1F5Kr
+         6e/xfgo6qAV08TpTnrztXAHNcMTgAValA7aGj9qKqUIufU13VnKUilQDitaOE0T01HFA
+         U/7WWGbedORSevrG2g8PrCdy+ZGU6DpuljXU+ntqArMosYVmRDb5PWBVwocCskZyW43L
+         rwDYQmjAFZpU08ZZuPDrtQlkZg3TKkUvvwgQUvd9rugBZOzbTVJZ0ao1LFSujBgwYldK
+         yYpE3iuhobuXraU7Utt2SmSd8V2llpssGlCOG7KwG78tdH5/SOGW8rkz7unoqJivldxv
+         gZog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716376134; x=1716980934;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HTA7LnXUVCxdmoKd3vWVKbpmE3D6UHlWv/BKj3RwnS8=;
+        b=qBN3+DKwEmZ25VRwywHIolF+BCS7EMwebZlC0O6IrOK26G4jnzW2EiGBqXo6PEUBt2
+         CJ2tsJe1/GMHkDIwm+Pz8XNCHQgRM6MM5hG9gPyOZee35VK/+HQlGOb/k92wf/cYPup9
+         SzQLcm1vYrHjAJMWPC6QX1D5Fjd+kFyVKYuIoCw0XJ9RI9naJiXg5UPWIxVVVUXKTCmp
+         fs5HNoix4I2gEXb8QxerYtgnTM1i9vMcTlETEhu6dbn1j04npqTkk2i/mRXSpaNoMr+j
+         gM488iGmiISI0V9S6sHHLH/rMx9KxrNX3BZdqanaGHUfDm6ZEFnMhoxaL1MNVIe4xWjX
+         lkyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG3lNHnoi4smm3uqrHoW/G0noErrcIZjyWJh6RhzyDysb3rehqXpBGTaWr+vrDjnizHKlMWJZ0F6jjIrh6KS+r5XeJyvcjL9sJr+7/mtCK06h452CdJkPom3ZfmlxD8rk2VpZ3
+X-Gm-Message-State: AOJu0YyzbrMlPnaYFOTZ61hQQMS9IqqgNFf/7Lg43AQ0fN37gVKge5NC
+	ziWVPoLOBgzIu8kaUfD6EokekFDwH0v9DcJsjAI+MpZ3ParV3l7l
+X-Google-Smtp-Source: AGHT+IHzSwBwOk+aDPnk13PzYrPuoXchlVw/Y8U96+cttyLLSHQJ1BDt2/OzxMjtW076hS73tWCuPw==
+X-Received: by 2002:adf:f504:0:b0:34a:687a:8f66 with SMTP id ffacd0b85a97d-354d8d7b3dcmr1026586f8f.45.1716376133551;
+        Wed, 22 May 2024 04:08:53 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacff4sm34208278f8f.79.2024.05.22.04.08.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 04:08:53 -0700 (PDT)
+Subject: Re: cpu performance drop between 4.18 and 5.10 kernel?
+To: mengkanglai <mengkanglai2@huawei.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jiri Pirko <jiri@resnulli.us>, Simon Horman <horms@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: "Fengtao (fengtao, Euler)" <fengtao40@huawei.com>,
+ "Yanan (Euler)" <yanan@huawei.com>
+References: <9fd382fb581e47a291ed31bfe091112c@huawei.com>
+From: Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <0826f183-5402-5529-c935-e933b817bd74@gmail.com>
+Date: Wed, 22 May 2024 12:08:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <9fd382fb581e47a291ed31bfe091112c@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+On 22/05/2024 08:44, mengkanglai wrote:
+> Dear maintainers:
+> I updated my VM kernel from 4.18 to 5.10, and found that the CPU SI usage was higher under the 5.10 kernel for the same udp service.
+> I captured the flame graph and compared the two versions of kernels. 
+> Kernel 5.10 compared to 4.18 napi_complete_done function added gro_normal_list call (ommit 323ebb61e32b4 ("net: use listified RX for handling GRO_NORMAL
+> skbs") Introduced), I removed gro_normal_list from napi_complete_done in 5.10 kernel, CPU SI usages was same as 4.18.
+> I don't know much about GRO, so I'm not sure if it can be modified in this way, and the consequences of such a modification?
 
-To allow an additional external regulator to be controlled by an mmc host
-driver, let's add support for a vqmmc2 regulator to the mmc core.
+No, you can't just remove that call, else network RX packets will
+ be delayed for arbitrarily long times, and potentially leaked if
+ the netdev is ifdowned.  The delay may also lead to other bugs
+ from code that assumes the RX processing happens within a single
+ NAPI cycle.
+You could revert the commit, and if that improves performance for
+ you then more data would potentially be interesting.
+You can also try altering sysctl net.core.gro_normal_batch;
+ setting it to 0 (or 1) should prevent any batching and in theory
+ give the same performance as reverting 323ebb61e32b4 — if it
+ doesn't then that's also a significant datum.
 
-For an SD UHS-II interface the vqmmc2 regulator may correspond to the so
-called vdd2 supply, as described by the SD spec. Initially, only 1.8V is
-needed, hence limit the new helper function, mmc_regulator_set_vqmmc2() to
-this too.
-
-Note that, to allow for flexibility mmc host drivers need to manage the
-enable/disable of the vqmmc2 regulator themselves, while the regulator is
-looked up through the common mmc_regulator_get_supply().
-
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
-
-Updates in V10:
- - Modify the commit message.
-
-Updates in V4:
- - Moved the voltage defines into this patch.
-
----
-
- drivers/mmc/core/regulator.c | 34 ++++++++++++++++++++++++++++++++++
- include/linux/mmc/host.h     | 11 +++++++++++
- 2 files changed, 45 insertions(+)
-
-diff --git a/drivers/mmc/core/regulator.c b/drivers/mmc/core/regulator.c
-index 005247a49e51..208c27cfa505 100644
---- a/drivers/mmc/core/regulator.c
-+++ b/drivers/mmc/core/regulator.c
-@@ -226,6 +226,33 @@ int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios)
- }
- EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc);
- 
-+/**
-+ * mmc_regulator_set_vqmmc2 - Set vqmmc2 as per the ios->vqmmc2_voltage
-+ * @mmc: The mmc host to regulate
-+ * @ios: The io bus settings
-+ *
-+ * Sets a new voltage level for the vqmmc2 regulator, which may correspond to
-+ * the vdd2 regulator for an SD UHS-II interface. This function is expected to
-+ * be called by mmc host drivers.
-+ *
-+ * Returns a negative error code on failure, zero if the voltage level was
-+ * changed successfully or a positive value if the level didn't need to change.
-+ */
-+int mmc_regulator_set_vqmmc2(struct mmc_host *mmc, struct mmc_ios *ios)
-+{
-+	if (IS_ERR(mmc->supply.vqmmc2))
-+		return -EINVAL;
-+
-+	switch (ios->vqmmc2_voltage) {
-+	case MMC_VQMMC2_VOLTAGE_180:
-+		return mmc_regulator_set_voltage_if_supported(
-+			mmc->supply.vqmmc2, 1700000, 1800000, 1950000);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(mmc_regulator_set_vqmmc2);
-+
- #else
- 
- static inline int mmc_regulator_get_ocrmask(struct regulator *supply)
-@@ -252,6 +279,7 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
- 
- 	mmc->supply.vmmc = devm_regulator_get_optional(dev, "vmmc");
- 	mmc->supply.vqmmc = devm_regulator_get_optional(dev, "vqmmc");
-+	mmc->supply.vqmmc2 = devm_regulator_get_optional(dev, "vqmmc2");
- 
- 	if (IS_ERR(mmc->supply.vmmc)) {
- 		if (PTR_ERR(mmc->supply.vmmc) == -EPROBE_DEFER)
-@@ -271,6 +299,12 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
- 		dev_dbg(dev, "No vqmmc regulator found\n");
- 	}
- 
-+	if (IS_ERR(mmc->supply.vqmmc2)) {
-+		if (PTR_ERR(mmc->supply.vqmmc2) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+		dev_dbg(dev, "No vqmmc2 regulator found\n");
-+	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(mmc_regulator_get_supply);
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 3e823ef5f672..f60cce75af57 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -74,6 +74,9 @@ struct mmc_ios {
- #define MMC_SIGNAL_VOLTAGE_180	1
- #define MMC_SIGNAL_VOLTAGE_120	2
- 
-+	unsigned char	vqmmc2_voltage;
-+#define MMC_VQMMC2_VOLTAGE_180	0
-+
- 	unsigned char	drv_type;		/* driver type (A, B, C, D) */
- 
- #define MMC_SET_DRIVER_TYPE_B	0
-@@ -331,6 +334,7 @@ struct mmc_pwrseq;
- struct mmc_supply {
- 	struct regulator *vmmc;		/* Card power supply */
- 	struct regulator *vqmmc;	/* Optional Vccq supply */
-+	struct regulator *vqmmc2;	/* Optional supply for phy */
- };
- 
- struct mmc_ctx {
-@@ -613,6 +617,7 @@ int mmc_regulator_set_ocr(struct mmc_host *mmc,
- 			struct regulator *supply,
- 			unsigned short vdd_bit);
- int mmc_regulator_set_vqmmc(struct mmc_host *mmc, struct mmc_ios *ios);
-+int mmc_regulator_set_vqmmc2(struct mmc_host *mmc, struct mmc_ios *ios);
- #else
- static inline int mmc_regulator_set_ocr(struct mmc_host *mmc,
- 				 struct regulator *supply,
-@@ -626,6 +631,12 @@ static inline int mmc_regulator_set_vqmmc(struct mmc_host *mmc,
- {
- 	return -EINVAL;
- }
-+
-+static inline int mmc_regulator_set_vqmmc2(struct mmc_host *mmc,
-+					   struct mmc_ios *ios)
-+{
-+	return -EINVAL;
-+}
- #endif
- 
- int mmc_regulator_get_supply(struct mmc_host *mmc);
--- 
-2.25.1
-
+-ed
 
