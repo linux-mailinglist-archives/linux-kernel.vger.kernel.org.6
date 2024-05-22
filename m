@@ -1,159 +1,118 @@
-Return-Path: <linux-kernel+bounces-186349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0232A8CC310
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:19:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569CD8CC311
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97B8E1F21620
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 885041C21A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9BB1411F0;
-	Wed, 22 May 2024 14:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5722F1411FE;
+	Wed, 22 May 2024 14:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Az/gRs4i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nEQvlhj8"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CA81411EB;
-	Wed, 22 May 2024 14:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328391DA24
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 14:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716387417; cv=none; b=mP12B55l5WGcUKRmatotficUMu/BgWuYNBf7Ce4NTkXpFOgNeFL5X/c1RYJLf48cJZseG8pdJrS17Bw0YDfgvh8lXyXm9ZKPw5+Pueg7SEtAl8QDqHoWLoKyRHirHfCXJXW4Lr1TPfWI8ZgA1+Wg0OK3ZwWta444MmJy85ubgVY=
+	t=1716387498; cv=none; b=V/g6eMurzWKDMzdovScdknVAQFMzYEvoasPmM24fZY2m34nl93bXufsykT/1hpq05wHkWlSEtdAzoI0E6mQvSxz/3LIsrnXe4IcDWMgSq/61b7fwuIIqOpS6Eq4RvHs76ldwaGMSy93okEbuINJYKdS9rARIlPlrMiEWdW4EksM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716387417; c=relaxed/simple;
-	bh=RSAXkko1c9u6TELmDINaGCBfMIhMLmGXz9yU4gV4KMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jG/yvatVF4OwRMoHGTZlGryv35nsj+ok+70XQpUtJZvlASrsckfEyrE8abQDYIf55yod8NKJDRIl3XYKR7e4/GPz4x97YTt5ryZ9iU+xgVcllBnRcaHGvIjrHlYiQSIqlI2A9XpRKczVCcTtvgRhwfN0Xeu24T6lOgpjWJ1VjdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Az/gRs4i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74A6EC2BBFC;
-	Wed, 22 May 2024 14:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716387416;
-	bh=RSAXkko1c9u6TELmDINaGCBfMIhMLmGXz9yU4gV4KMI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Az/gRs4ikmQaiO5IlqDDr9sDcoBF8L0yqhyquvJxaqG8XNKcODuPMHYUU8NzCLAON
-	 LeiPxTEcvrL9Xsex/m572P95db1u5icg2mSFhIoy54ExmQV1noUU1t8abLfSwCOkUC
-	 yXXa5Ezr847Lti2/d1pcxUo4Fi9DbM/sdo3jrnZZbmRGuuwgBCMn2zyP3bE6fsiYI7
-	 BUo0chOBxCddmUiV9LeYFDMICke20gu1wtAjN/Y4dgWoWHBedtLr+x88z9chsqiuLV
-	 iyRNEIEXoGISinQ61yf+CLItW1lsCSo2wnxXa/s/UuoOI6XJ+73cXxnHLSIAYeT1JJ
-	 UTGgNuGi51sLg==
-Message-ID: <4f722e53-011f-4176-b6af-080522165007@kernel.org>
-Date: Wed, 22 May 2024 16:16:51 +0200
+	s=arc-20240116; t=1716387498; c=relaxed/simple;
+	bh=XdGM7udhh/rDsOmgLCtOfwv28+UMTcF99TQmI59z2UY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YSDSn7j6yq/NxBePmsTrnS2DOLG4qA86npPWbjQZ0/pnTnS07+loVdWrE+1v9KubFCe8GTQOO+Q6cM6UduNuiATr02SwmlkoEz5Pc/Yf8U/jPSIF86hRnzJ8dsJU/poPbeR7eNXBFxQVoFsR6kgACNEQRhv8nbhYuMvidxWXwqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nEQvlhj8; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-69b782287f9so6190886d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:18:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716387495; x=1716992295; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tp4KP5oH7k3Z3p5mvwLefK8v+H6XRCcOVGolKaP/uaw=;
+        b=nEQvlhj8jZY6u1Q1x00jN8K1I0ChTLgxLdEk22g/m7sySVzqVsuemxNGdJOOYJu9/X
+         FFSqfs5iVPJMxp8L6YSsh0ayCbUzaq48tTWaifLmJ9wgt6wiBkDTS8R0sB4OzqFluof+
+         EXl47E6QvSySSSlLBNsalK89w6IefT90tOGnM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716387495; x=1716992295;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tp4KP5oH7k3Z3p5mvwLefK8v+H6XRCcOVGolKaP/uaw=;
+        b=Nq9f20Yym4O1cJ/Lh6Dx+u2SaeM6B+Q3j5aegxnngZmMs0FE673PFivodkCYXA14X0
+         5awuRkOYgpW8J3jDQKUgaUiUmNb9EqCfEh0xD9dtDo+vJ65YwkXnfajj5fvRpw5An9+B
+         42apeXvzgz/qGsmiNGX5xy4Vz4HrbVMsITxnNy/CDOxsxY1mTIyEFER0Vp1K7S/wk9wV
+         TZpA7S319ITSM86pCmZSDtXmDMGiDMQjnvSnpx/OVq0TF7fWMvfEDXoNauK6CqWyl8/M
+         HTtPhWw9gqFdFZaTIUOLm9VOhOCFAsP3GtKZ4miaIyremJrFBw6frq6Qsvg+bGBFvQN/
+         DHhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkKPbrpHvVuiMOJUcPjUByHfDVRTDJwbJtvTKmO1GFr8Oc+o+XK4SV/0bboLBNDrNL1hqmhd9zpTzYAYqD84KYtu0fFDk80tpjPomD
+X-Gm-Message-State: AOJu0YxrCE7Gausi2jysfv7ihrMSLrj9g+A+9YGo0bjDKt+AsNc1VSIJ
+	jIMAZhzYHMOxITHH9VLNRUGOGfki58M3IqfgKbzVQZ88uyj66y9pXjIlJNyR7vHY1QVIQzCyj/Y
+	=
+X-Google-Smtp-Source: AGHT+IHl61uEnz8iNyNARifRFaHoFORFQ8pOn4mi1RHTXqMJruLKeHKvkrg7u+NEv4S9tm3nZA9rFg==
+X-Received: by 2002:a05:6214:2d41:b0:6ab:7088:c0d4 with SMTP id 6a1803df08f44-6ab7f349909mr19196036d6.12.1716387495367;
+        Wed, 22 May 2024 07:18:15 -0700 (PDT)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab891a7697sm3449546d6.107.2024.05.22.07.18.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 07:18:14 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43f87dd6866so369761cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:18:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdndfslt9wrLUnM2ugJe6lg1tLJ3g/aC0WoIROn7iYIyidqaWyvNLzppZU9h554GlrTq4zq6gjtYbnceSppE2x05Mr0LeCGrHYygLo
+X-Received: by 2002:a05:622a:5a97:b0:43a:b187:6a7 with SMTP id
+ d75a77b69052e-43f9d3de508mr3824681cf.28.1716387494000; Wed, 22 May 2024
+ 07:18:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
-To: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
- Mighty <bavishimithil@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240522075245.388-1-bavishimithil@gmail.com>
- <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240522113924.1261683-1-zhouhaikun5@huaqin.corp-partner.google.com>
+In-Reply-To: <20240522113924.1261683-1-zhouhaikun5@huaqin.corp-partner.google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 22 May 2024 07:17:57 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XruLcUq+4Y=tpVKREt3zeO5pjyzP-SH91ghJR8rfWZCQ@mail.gmail.com>
+Message-ID: <CAD=FV=XruLcUq+4Y=tpVKREt3zeO5pjyzP-SH91ghJR8rfWZCQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel-edp: Add CMN N116BCJ-EAK
+To: Haikun Zhou <zhouhaikun5@huaqin.corp-partner.google.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, sam@ravnborg.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	daniel@ffwll.ch, airlied@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/05/2024 15:56, Péter Ujfalusi wrote:
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - ti,hwmods
->> +  - clocks
->> +  - clock-names
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    pdm@40132000 {
-> 
-> The original label and name is preferred to be used.
+Hi,
 
-Label is not used here.
+On Wed, May 22, 2024 at 4:39=E2=80=AFAM Haikun Zhou
+<zhouhaikun5@huaqin.corp-partner.google.com> wrote:
+>
+> Add support for the CMN N116BCJ-EAK, place the raw EDID here for
+> subsequent reference.
+> 00 ff ff ff ff ff ff 00 0d ae 60 11 00 00 00 00
+> 04 22 01 04 95 1a 0e 78 02 67 75 98 59 53 90 27
+> 1c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 da 1d 56 e2 50 00 20 30 30 20
+> a6 00 00 90 10 00 00 18 00 00 00 fe 00 4e 31 31
+> 36 42 43 4a 2d 45 41 4b 0a 20 00 00 00 fe 00 43
+> 4d 4e 0a 20 20 20 20 20 20 20 20 20 00 00 00 fe
+> 00 4e 31 31 36 42 43 4a 2d 45 41 4b 0a 20 00 98
+>
+> Signed-off-by: Haikun Zhou <zhouhaikun5@huaqin.corp-partner.google.com>
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-About node name, not:
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-> 
->> +      compatible = "ti,omap4-mcpdm";
->> +      reg = <0x40132000 0x7f>, /* MPU private access */
->> +            <0x49032000 0x7f>; /* L3 Interconnect */
->> +      interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
->> +      interrupt-parent = <&gic>;
->> +      ti,hwmods = "mcpdm";
->> +      clocks = <&twl6040>;
->> +      clock-names = "pdmclk";
-> 
-> The clocks cannot be added at the time when the node is defined, it is
-> board specific. This way you imply that it is OK to have it in main dtsi
-> file. It is not.
-
-Wait, what? That's example and pretty standard. Example should be
-complete. This is not an exceptional binding.
-
-Best regards,
-Krzysztof
-
+..pushing to drm-misc-next...
 
