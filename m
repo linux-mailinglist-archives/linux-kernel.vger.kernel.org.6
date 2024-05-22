@@ -1,87 +1,152 @@
-Return-Path: <linux-kernel+bounces-186834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E108CC9D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:44:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E4D8CC9D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:47:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE27F1F21F1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:44:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E151C21601
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CBA14C5AA;
-	Wed, 22 May 2024 23:44:08 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72728149C41;
+	Wed, 22 May 2024 23:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZBRemrIb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C57824B1
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B8F7E777
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421448; cv=none; b=gKRk43kOTtKi5zTJcbNqJO2qHEN4OilZCcW51cyp9sz3P5+eAfwYo8L6xTZzL+899tB3XidwaWFI62xj5q0pvf+VO07T5DTlEfjSpB+Rw/sd1/HEyzHi3dmtNcVWq1vPHFRG2KfdmUpm18qUhtdZEXwIzNFZ62mz+baVHYR9BAw=
+	t=1716421647; cv=none; b=C/3tAXxQMYUdI+t8xKNiny5MUCsI+VVuGyueJgbjIVBygMD6WUUqhu5g2bxUNNdnNWIRK3UEmjiBvmRa5HGdnBlsYtEx35GdQnxLSQy9fgJ2xe7On0k3Okz5dTzRLYkR6CT2YlMt5gTEXoSHck9PwkNb8HabFWTPD2FhlGOLt/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716421448; c=relaxed/simple;
-	bh=5cRgqLhnmRmdK4aejWxtS0oasA7MXCMUasychzY5exk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=U0Pte8rRGfzn28+Y4qNouMQICOssLJKe/QOrBWB0C84YtGggmqxdGqkuWdsHvfBU51uXm0ymIFNuKl/uIlaj44EATZUYi6YjpYcOFshRQ/EjcZDiV0A9jTbwIwOQuN/98rbM+7vsyyhFtM6Ua0gPbUGGjUk8a2m/Rhw6ncLiPAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e212ee8008so95102739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:44:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716421446; x=1717026246;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vc2MFBhwlsHVuQtz8cTFgP39zvHjmAPHFY0rODoSqj4=;
-        b=aSLMXpzVATb8eQqToeoAvyAY/gR/HechmLnk0u20f1h3sEsve8PWm+NnhtXMzszmp/
-         kibyWoVZRQSLquqSnrM/r9mmxZbS110CnfndLwhvoHKLbkrHqvnfa64v+vv5l23h6369
-         zX4yEbLZmuWIRLFbtvCRFrXx76Vf54pMAtIsjC7AlYSRSwOB/zi1I5fvfpiTcrj0ylAb
-         jhmZ31/182POLePAijJ5i12k9HR22w5cvv+DpjAmPh+EoKC3O5YdENkLSizOn+MLgtFa
-         wc0UUVtkXylkF+nlVxetUBBBE+BMBWFQQhPJmiyZSJ/s4+T1VZcD3oFEnve0aT5TKGdf
-         9Bqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhBTjat+VKHd2cB6kWkaD57rkEy6FMzTR1WUYU9KepRGyGAYnzF/OefejO/8crV8lqOYO4YrZ9xOouUInKbqONUjcYlUY7IO2E5Dea
-X-Gm-Message-State: AOJu0YyQDRDXyOlSQnJ5rVi3kTHdXstZkwLveVe0gg6OSg+XbUSiZ9+t
-	5IQIlSbh6TSsq/2uCZGXmbHQ62Y5VFNURx6ucDS+Uc9PfjbEhf0nZXJ8BYxQxWE4VKS/jree41J
-	yEacQH7b3vFKJkmYbR/Yd67hrvhTudf1//tLd1zU2UJU5ZretUwOpMlQ=
-X-Google-Smtp-Source: AGHT+IHiGU9PmZriZ6f3ikyc/VDs3Af5et45t77EKLpej4NeZlnSL8OSpJLRnhKWR0NfGJI/AGv0RU9eMpfUo3pZxfK3+2cJYe4s
+	s=arc-20240116; t=1716421647; c=relaxed/simple;
+	bh=mcMDSvzSZvkz4h0Vl3V9NbPk8vcUsqlWmJWFs9CrDg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBuBib/3er9LfcVxT6G9sKZ9wBWKsDPCZ7veos/SNiUE9F5B/Lqx5wLN6ND82zRe2KyK8gflLf8vgXs3V7ypG86zZCDVgiX+HaUwJCo4mL8rA74Av1DyW4scoPep7H12CEghpiUTNEbV73rCiObtnh9Xd+WoecQZ/oFDzNqIFuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZBRemrIb; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716421646; x=1747957646;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mcMDSvzSZvkz4h0Vl3V9NbPk8vcUsqlWmJWFs9CrDg4=;
+  b=ZBRemrIb5pv1am0x83yhYVHI71mDtujdg2Q32O2bgZjVYkkQPWLmhQqK
+   zOwft3mUUIFZJeVhUvKsvxDm15fk/4iaqnBVSVzrLiWE0OLiHvWRnrZYx
+   DHTFgo7cpDCTG46hOhZYT4gxV22p2PaAE2CvVjHjwu26tdFjomaYoqs/o
+   gTj6/PJuPvNdC7EcvGcmhjutPmNclcdy4ZNfQzrAz0HDWH+JiyeOgpsGU
+   /iAtWZsYMQ7Eg/EXrUOC3KC06eP+ZOvbP9TlUpNuKp8Nqf9Z+XzvLCiXL
+   QHl/7/AsNezi32pVkSRPmpMi9RTk1uVvaKxv8Vat1bmK+xO2B6DI18SUX
+   w==;
+X-CSE-ConnectionGUID: zIFLnj69TEW9s00AwPcOtA==
+X-CSE-MsgGUID: QK1i5HnpSZyFxfn3ldZozg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="16548736"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="16548736"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 16:47:26 -0700
+X-CSE-ConnectionGUID: pIK8TF54RbWo4WKxhgX0Zw==
+X-CSE-MsgGUID: ieKqaBFzSiK82O5ULLNn/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="38301176"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 16:47:26 -0700
+Date: Wed, 22 May 2024 16:47:23 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v18 15/17] x86/resctrl: Fix RMID reading sanity check for
+ Sub-NUMA (SNC) mode
+Message-ID: <Zk6EC12hC0wzPiIu@agluck-desk3.sc.intel.com>
+References: <20240515222326.74166-1-tony.luck@intel.com>
+ <20240515222326.74166-16-tony.luck@intel.com>
+ <61e89a48-d1f4-49f2-8893-950e7e6ba7fe@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2182:b0:36d:bb86:f6a7 with SMTP id
- e9e14a558f8ab-371f8c2c19bmr2733395ab.2.1716421445976; Wed, 22 May 2024
- 16:44:05 -0700 (PDT)
-Date: Wed, 22 May 2024 16:44:05 -0700
-In-Reply-To: <20240522231944.2312-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000092914806191382ac@google.com>
-Subject: Re: [syzbot] [v9fs?] KASAN: slab-use-after-free Read in p9_fid_destroy
-From: syzbot <syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com, 
-	hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61e89a48-d1f4-49f2-8893-950e7e6ba7fe@intel.com>
 
-Hello,
+On Wed, May 22, 2024 at 02:25:23PM -0700, Reinette Chatre wrote:
+> > +		/*
+> > +		 * SNC: OK to read events on any CPU sharing same L3
+> > +		 * cache instance.
+> > +		 */
+> > +		if (d->display_id != get_cpu_cacheinfo_id(smp_processor_id(),
+> > +							  r->mon_display_scope))
+> 
+> By hardcoding that mon_display_scope is a cache instead of using get_domain_id_from_scope()
+> it seems that all pretending about being generic has just been abandoned at this point.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Yes. It now seems like a futile quest to make this look
+like something generic.  All this code is operating on the
+rdt_resources_all[RDT_RESOURCE_L3] resource (which by its very name is
+"L3" scoped). In the SNC case the L3 has been divided (in some senses,
+but not all) into nodes.
 
-Reported-and-tested-by: syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com
+Given that pretending isn't working ... just be explicit?
 
-Tested on:
+Some "thinking aloud" follows ...
 
-commit:         ea5f6ad9 Merge tag 'platform-drivers-x86-v6.10-1' of g..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=107aef84980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f1cd4092753f97c5
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7c7a495a5e466c031b6
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14b12b3f180000
+struct rdt_resource:
+    In order to track monitor events, resctrl must build a domain list based
+    on the smallest measurement scope. So with SNC enabled, that is the
+    node. With it disabled it is L3 cache scope (which on existing systems
+    is the same as node scope).
 
-Note: testing is done by a robot and is best-effort only.
+    Maybe keep .mon_scope with the existing name, but define it to be the
+    minimum measurement scope and use it to build domains. So it
+    defaults to RESCTRL_L3_CACHE but SNC detection will rewrite it to
+    RESCTRL_L3_NODE.
+
+    Drop the .mon_display_scope field. By definition it must always have
+    the value RESCTRL_L3_CACHE. So replace checks that compare values
+    rdt_resources_all[RDT_RESOURCE_L3] of .mon_scope & .mon_display_scope
+    with:
+
+    	if (r->mon_scope != RESCTRL_L3_CACHE)
+    		// SNC stuff
+    	else
+    		// regular stuff
+
+struct rdt_mon_domain:
+    In the rdt_mon_domain rename the display_id field with the more
+    honest name "l3_cache_id".  In addition save a pointer to the
+    .shared_cpu_map of the L3 cache. When SNC is off, this will be the
+    same as the d->hdr.cpu_mask for the domain. For SNC on it will be
+    a superset (encompassing all the bits from cpu_masks in all domains
+    that share an L3 instance).
+
+    Where SNC specifc code is required, the check becomes:
+
+    	if (d->hdr.id != d->l3_cache_id)
+		// SNC stuff
+	else
+		// regular stuff
+
+    The l3_cache_id can be used in mkdir code to make the mon_L3_XX
+    directories. The L3 .shared_cpu_map in picking a CPU to read
+    the counters for the "sum" files. l3_cache_id also indicates
+    which domains should be summed.
+
+
+Does this look like a useful direction to pursue?
+
+-Tony
 
