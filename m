@@ -1,51 +1,97 @@
-Return-Path: <linux-kernel+bounces-186019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8247E8CBEE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:03:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C308CBEE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4421F22FE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2541F22E48
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFB780C0C;
-	Wed, 22 May 2024 10:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC62C81ADA;
+	Wed, 22 May 2024 10:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcbE7SC4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UKE5+R0D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299FE17BB5
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055CE80C0C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372177; cv=none; b=uNHnz93aWRDAwYjMbro1D6AG4R+VbR0n0BHR2VkexqpUdSC/FEGAFUZe/E8B0n5pjfs381A8Ni9I6xNcD0jXtWqgy3gm19sSiVaXL9nbT+ml3/Op97dfeIMpYEUkgMcKZkgc7JZvkznnhjK7lculwyHOHm1uzP8dtdIg7azr6KY=
+	t=1716372195; cv=none; b=Hlkhb0S5zpGkfWweVfyhUCMdl4MARkQ+///HSPD2h3p1xzgRQvX9BPdr+ZAhFCiAzLeuxj0Qq1gMyQSN4J3oUxxp9sd0KkPFOplA1QeaU/qKtHCpU1aUzdDuCEsp/HxDH+4P4fgImF6ksxJ7uerTvPmBFqT7j+nAm6Db23oKEYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372177; c=relaxed/simple;
-	bh=moq8Hyotp47wsK2NBvnh7qshrFG+HNLao4drYLeLVQE=;
+	s=arc-20240116; t=1716372195; c=relaxed/simple;
+	bh=KT41JCa9HFl7P78kOZALNdAss8MmzSOhVIiGOp14XbQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d9nT7UZ6I1uUqZI8ylq6JjlLTPvvVBwPPyCoNTUqJgqOoWWwy8+SbEqMsCYPE/Z6m/ox9pd/onHhetxB92RNIu6ThajeLSR/8jH/6I5+98SGzlZJ9eROnrMVkhKlT/Euc9J2lTO3tV9lZTagyBmNc/5OM0t5U5NARBvSl4WKSeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcbE7SC4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2198FC2BD11;
-	Wed, 22 May 2024 10:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716372176;
-	bh=moq8Hyotp47wsK2NBvnh7qshrFG+HNLao4drYLeLVQE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OcbE7SC47JQgtga5zKIYClgrRU7kXkKbyABg71gaiyZVXW53mwruLsHLUtttczORl
-	 ipFwjVi//AJF9MLmkyHupLMdYwfPo5Po7ZyHiblQFEfoC/ji3QtsqVSIotyOKnPK4l
-	 vscani4er4qEblSx16Ay9HH62GxhVBNcfmWXLdyNn+XAvG3g9ZsAuDzt6DTa6bWwUc
-	 hIu/c1JkJ+WqaAb8qShR03xCFtXkLHvGxrQk0RdInlhBU93+Do551xEiGlAt4mKeBP
-	 c5dNjnHVQNDmU4VCnGWYpdtyCUKxKYe+wK3XJ3H/ws+e5YJqNAGCL/KBvzfcGBl7e4
-	 WutKBbBpJ6RlQ==
-Date: Wed, 22 May 2024 11:02:53 +0100
-From: Lee Jones <lee@kernel.org>
+	 Content-Disposition; b=rRZRB/n0bRnWRhIgRmuGKwhXDdqcPPMbxsek+aU8ngoo2oBDpNwQBglM7JoQ7z8qhWjfx26ycEMk8T1k4ygmH1xj6X1GXt5ANTpumUCloQgEAYAnlNXm6Gbz7KuvzMxRERM5JkH1dPMBptsQIq5ri2mfOpn37GPbc0kwy5qGuXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UKE5+R0D; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716372192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=knfGlOrM7SmmEuODKlCIaTFOFJa3qZNF92wFTYElUIQ=;
+	b=UKE5+R0DVdD/aYNlE097EMOHxIyi/fysskgWajEtKHwXP3dwh9Db4wO98b6dAUZ3g8TSU7
+	mQbDcp/uf8YIBCU+9aDbnNQO1p93mMgOcasTvV/bI0Szf3KugzGQ096KNp7Q3I50ExuTjE
+	IeYfl+qRELJqHFUVKI7BFNY02qFYWHk=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-46-rCVIo0UvMja4KJv8i3TeJQ-1; Wed, 22 May 2024 06:03:10 -0400
+X-MC-Unique: rCVIo0UvMja4KJv8i3TeJQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-34c93732095so7268372f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:03:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716372189; x=1716976989;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=knfGlOrM7SmmEuODKlCIaTFOFJa3qZNF92wFTYElUIQ=;
+        b=ULg4+flQ3bSbVJdbTp89GWNWw5Jl91y+0/A+Hdm/sEc5UQe92LJqFBopBg5EH4ZZzU
+         RIhNQsxrwRZMoXWwmI+gmNck6BdHTZK9QR54sfXTdyrFHGPj1rpLeET5mP8K5HbgosiY
+         Cz0JK9ia7GD2NWP4AF9xtMqiIHGt+vZDIW/AhuSOMI5VtNhKNZg7RonshLhFWKn+SAY3
+         oCbPH7QVGTjuh9P3vnWZjEy7ObicNstB97kYO+/fHHPx2IGlBrJ5152Lr7KyuD4cjNs7
+         Fzn0R3KPAJoEBtt6mpzVrj2gWqLfoh698JM4JFJ5SRxaKpdV+jnGmYYZ/BrWJg+mc2uS
+         nPew==
+X-Forwarded-Encrypted: i=1; AJvYcCVbA1Lrh7doQm5pPjVYIlrkGFAhVdv0ZOkdUIqgyTmqudQxPTNRjltH1LiAWEGlIZksaq+fBPbUiy0Iwx08EgO2PZpvI+k9liuwgHIx
+X-Gm-Message-State: AOJu0Yz9CIuAN5ZH1I1a2R+PK/rGRrSO2u+DXfqDk4azIQWaUWqN5fD6
+	QuEe1k1BH0u443u7fBhJSyBhs7y6Hz7CbgUtTT7PQBdxDkuRH0PMPZPX+6KWdmfWQDuOI5XzFY0
+	KG4QXjVR7BZXIwDm4fBlXwN/4SSS+rkZttZnSh7juj7XswnM4bukuWlu04dBhaA==
+X-Received: by 2002:a05:6000:e81:b0:354:f2af:6ad2 with SMTP id ffacd0b85a97d-354f2af6ce6mr86051f8f.68.1716372188719;
+        Wed, 22 May 2024 03:03:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4JD4hy648Vl10cTnw4UbRyOyD5/qdj2GTs8Izvh3XRzHLEkKuquqGU7Hg07yqa0KXqcFVVg==
+X-Received: by 2002:a05:6000:e81:b0:354:f2af:6ad2 with SMTP id ffacd0b85a97d-354f2af6ce6mr85988f8f.68.1716372187889;
+        Wed, 22 May 2024 03:03:07 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:55d:e862:558a:a573:a176:1825])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a78e8sm34236941f8f.61.2024.05.22.03.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 03:03:07 -0700 (PDT)
+Date: Wed, 22 May 2024 06:03:01 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] MFD for v6.10
-Message-ID: <20240522100253.GB6035@google.com>
+Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anton.yakovlev@opensynergy.com, bartosz.golaszewski@linaro.org,
+	christophe.jaillet@wanadoo.fr, dave.jiang@intel.com,
+	david@redhat.com, eperezma@redhat.com, herbert@gondor.apana.org.au,
+	jasowang@redhat.com, jiri@nvidia.com, jiri@resnulli.us,
+	johannes@sipsolutions.net, krzysztof.kozlowski@linaro.org,
+	lingshan.zhu@intel.com, linus.walleij@linaro.org,
+	lizhijian@fujitsu.com, martin.petersen@oracle.com,
+	maxime.coquelin@redhat.com, michael.christie@oracle.com,
+	mst@redhat.com, sgarzare@redhat.com, stevensd@chromium.org,
+	sudeep.holla@arm.com,
+	syzbot+98edc2df894917b3431f@syzkaller.appspotmail.com,
+	u.kleine-koenig@pengutronix.de, viresh.kumar@linaro.org,
+	xuanzhuo@linux.alibaba.com, yuxue.liu@jaguarmicro.com,
+	Srujana Challa <schalla@marvell.com>
+Subject: [GIT PULL] virtio: features, fixes, cleanups
+Message-ID: <20240522060301-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,234 +101,198 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+X-Mutt-Fcc: =sent
 
-Good morning Linus,
+Things to note here:
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+- the new Marvell OCTEON DPU driver is not here: latest v4 keeps causing
+  build failures on mips. I deferred the pull hoping to get it in
+  and I might merge a new version post rc1
+  (supposed to be ok for new drivers as they can't cause regressions),
+  but we'll see.
+- there are also a couple bugfixes under review, to be merged after rc1
+- I merged a trivial patch (removing a comment) that also got
+  merged through net.
+  git handles this just fine and it did not seem worth it
+  rebasing to drop it.
+- there is a trivial conflict in the header file. Shouldn't be any
+  trouble to resolve, but fyi the resolution by Stephen is here
+	diff --cc drivers/virtio/virtio_mem.c
+	index e8355f55a8f7,6d4dfbc53a66..000000000000
+	--- a/drivers/virtio/virtio_mem.c
+	+++ b/drivers/virtio/virtio_mem.c
+	@@@ -21,7 -21,7 +21,8 @@@
+	  #include <linux/bitmap.h>
+	  #include <linux/lockdep.h>
+	  #include <linux/log2.h>
+	 +#include <linux/vmalloc.h>
+	+ #include <linux/suspend.h>
+  Also see it here:
+  https://lore.kernel.org/all/20240423145947.142171f6@canb.auug.org.au/
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+
+The following changes since commit 18daea77cca626f590fb140fc11e3a43c5d41354:
+
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2024-04-30 12:40:41 -0700)
 
 are available in the Git repository at:
 
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/lee/mfd tags/mfd-next-6.10
+  https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
 
-for you to fetch changes up to 1482489b5196f4203576ae1dc2ba4ce3ada381c7:
+for you to fetch changes up to 0b8dbbdcf2e42273fbac9b752919e2e5b2abac21:
 
-  dt-bindings: mfd: Use full path to other schemas (2024-05-10 15:39:18 +0100)
-
-----------------------------------------------------------------
- - New Device Support
-   - Add support for X-Powers AXP717 PMIC to AXP22X
-   - Add support for Rockchip RK816 PMIC to RK8XX
-   - Add support for TI TPS65224 PMIC to TPS6594
-
- - New Functionality
-   - Add Power Off functionality to Rohm BD71828
-   - Allow I2C SMBus access in Renesas RSMU
-
- - Fix-ups
-   - Device Tree binding adaptions/conversions/creation
-   - Shift Intel support over to MSI interrupts
-   - Generify adding platform data away from being ACPI specific
-   - Use device core supplied attribute to register sysfs entries
-   - Replace hand-rolled functionality with generic APIs
-   - Utilise centrally provided helpers and macros
-   - Clean-up error handling
-   - Remove superfluous/duplicated/unused sections
-   - Trivial; spelling, whitespace, coding-style adaptions
-   - More Maple Tree conversions
+  Merge tag 'for_linus' into vhost (2024-05-12 08:15:28 -0400)
 
 ----------------------------------------------------------------
-Alex Bee (5):
-      dt-bindings: mfd: Add rk816 binding
-      mfd: rk8xx: Add RK816 support
-      pinctrl: rk805: Add rk816 pinctrl support
-      regulator: rk808: Support apply_bit for rk808_set_suspend_voltage_range
-      regulator: rk808: Add RK816 support
+virtio: features, fixes, cleanups
 
-Andre Przywara (4):
-      regulator: axp20x: fix typo-ed identifier
-      dt-bindings: mfd: x-powers,axp152: Document AXP717
-      mfd: axp20x: Add support for AXP717 PMIC
-      regulator: axp20x: add support for the AXP717
+Several new features here:
 
-Andreas Kemnade (4):
-      dt-bindings: mfd: twl: Convert trivial subdevices to json-schema
-      dt-bindings: mfd: Add ROHM BD71828 system-power-controller property
-      mfd: rohm-bd71828: Add power off functionality
-      dt-bindings: mfd: Add ROHM BD71879
+- virtio-net is finally supported in vduse.
 
-Andy Shevchenko (8):
-      mfd: intel-lpss: Switch over to MSI interrupts
-      mfd: kempld: Replace ACPI code with agnostic one
-      mfd: kempld: Use device core to create driver-specific device attributes
-      mfd: kempld: Simplify device registration
-      mfd: kempld: Use PLATFORM_DEVID_NONE instead of -1
-      mfd: kempld: Drop duplicate NULL check in ->exit()
-      mfd: kempld: Remove dead code
-      mfd: kempld: Remove custom DMI matching code
+- Virtio (balloon and mem) interaction with suspend is improved
 
-Bhargav Raviprakash (6):
-      mfd: tps6594: Use volatile_table instead of volatile_reg
-      dt-bindings: mfd: ti,tps6594: Add TI TPS65224 PMIC
-      mfd: tps6594-i2c: Add TI TPS65224 PMIC I2C
-      mfd: tps6594-spi: Add TI TPS65224 PMIC SPI
-      mfd: tps6594-core: Add TI TPS65224 PMIC core
-      misc: tps6594-pfsm: Add TI TPS65224 PMIC PFSM
+- vhost-scsi now handles signals better/faster.
 
-Charles Keepax (1):
-      mfd: cs42l43: Update patching revision check
+- virtio-net now supports premapped mode by default,
+  opening the door for all kind of zero copy tricks.
 
-Christophe JAILLET (2):
-      mfd: ocelot-spi: Use spi_sync_transfer()
-      mfd: ssbi: Remove unused field 'slave' from 'struct ssbi'
+Fixes, cleanups all over the place.
 
-Colin Ian King (1):
-      mfd: timberdale: Remove redundant assignment to variable err
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-Herman van Hazendonk (1):
-      dt-bindings: mfd: qcom: pm8xxx: Add pm8901 compatible
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      vhost-vdpa: Remove usage of the deprecated ida_simple_xx() API
 
-Ilpo Järvinen (1):
-      mfd: intel-m10-bmc: Change staging size to a variable
+David Hildenbrand (1):
+      virtio-mem: support suspend+resume
 
-Jean Delvare (1):
-      mfd: Tidy Kconfig dependency's parentheses
+David Stevens (2):
+      virtio_balloon: Give the balloon its own wakeup source
+      virtio_balloon: Treat stats requests as wakeup events
 
-Krzysztof Kozlowski (2):
-      dt-bindings: mfd: allwinner,sun6i-a31-prcm: Use hyphens in node names
-      dt-bindings: mfd: Use full path to other schemas
+Eugenio Pérez (2):
+      MAINTAINERS: add Eugenio Pérez as reviewer
+      MAINTAINERS: add Eugenio Pérez as reviewer
 
-Lee Jones (1):
-      Merge branches 'ib-mfd-misc-pinctrl-regulator-6.10', 'ib-mfd-pinctrl-regulator-6.10' and 'ib-mfd-regulator-6.10' into ibs-for-mfd-merged
+Jiri Pirko (1):
+      virtio: delete vq in vp_find_vqs_msix() when request_irq() fails
 
-Luca Weiss (1):
-      dt-bindings: mfd: qcom,spmi-pmic: Add pbs to SPMI device types
+Krzysztof Kozlowski (24):
+      virtio: balloon: drop owner assignment
+      virtio: input: drop owner assignment
+      virtio: mem: drop owner assignment
+      um: virt-pci: drop owner assignment
+      virtio_blk: drop owner assignment
+      bluetooth: virtio: drop owner assignment
+      hwrng: virtio: drop owner assignment
+      virtio_console: drop owner assignment
+      crypto: virtio - drop owner assignment
+      firmware: arm_scmi: virtio: drop owner assignment
+      gpio: virtio: drop owner assignment
+      drm/virtio: drop owner assignment
+      iommu: virtio: drop owner assignment
+      misc: nsm: drop owner assignment
+      net: caif: virtio: drop owner assignment
+      net: virtio: drop owner assignment
+      net: 9p: virtio: drop owner assignment
+      vsock/virtio: drop owner assignment
+      wifi: mac80211_hwsim: drop owner assignment
+      nvdimm: virtio_pmem: drop owner assignment
+      rpmsg: virtio: drop owner assignment
+      scsi: virtio: drop owner assignment
+      fuse: virtio: drop owner assignment
+      sound: virtio: drop owner assignment
 
-Matti Vaittinen (1):
-      mfd: bd71828: Remove commented code lines
+Li Zhijian (1):
+      vdpa: Convert sprintf/snprintf to sysfs_emit
 
-Min Li (1):
-      mfd: rsmu: support I2C SMBus access
+Maxime Coquelin (6):
+      vduse: validate block features only with block devices
+      vduse: Temporarily fail if control queue feature requested
+      vduse: enable Virtio-net device type
+      vduse: validate block features only with block devices
+      vduse: Temporarily fail if control queue feature requested
+      vduse: enable Virtio-net device type
 
-Nathan Morrisson (1):
-      dt-bindings: mfd: Convert lp873x.txt to json-schema
+Michael S. Tsirkin (2):
+      Merge tag 'stable/vduse-virtio-net' into vhost
+      Merge tag 'for_linus' into vhost
 
-Nirmala Devi Mal Nadar (3):
-      mfd: tps6594: Add register definitions for TI TPS65224 PMIC
-      regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators
-      pinctrl: pinctrl-tps6594: Add TPS65224 PMIC pinctrl and GPIO
+Mike Christie (9):
+      vhost-scsi: Handle vhost_vq_work_queue failures for events
+      vhost-scsi: Handle vhost_vq_work_queue failures for cmds
+      vhost-scsi: Use system wq to flush dev for TMFs
+      vhost: Remove vhost_vq_flush
+      vhost_scsi: Handle vhost_vq_work_queue failures for TMFs
+      vhost: Use virtqueue mutex for swapping worker
+      vhost: Release worker mutex during flushes
+      vhost_task: Handle SIGKILL by flushing work and exiting
+      kernel: Remove signal hacks for vhost_tasks
 
-Rob Herring (1):
-      dt-bindings: mfd: syscon: Add missing simple syscon compatibles
+Uwe Kleine-König (1):
+      virtio-mmio: Convert to platform remove callback returning void
 
-Rob Herring (Arm) (1):
-      dt-bindings: mfd: aspeed: Drop 'oneOf' for pinctrl node
+Xuan Zhuo (7):
+      virtio_ring: introduce dma map api for page
+      virtio_ring: enable premapped mode whatever use_dma_api
+      virtio_net: replace private by pp struct inside page
+      virtio_net: big mode support premapped
+      virtio_net: enable premapped by default
+      virtio_net: rx remove premapped failover code
+      virtio_net: remove the misleading comment
 
-Rohit Agarwal (1):
-      dt-bindings: mfd: qcom,tcsr: Add compatible for SDX75
+Yuxue Liu (2):
+      vp_vdpa: Fix return value check vp_vdpa_request_irq
+      vp_vdpa: don't allocate unused msix vectors
 
-Siddharth Vadapalli (1):
-      dt-bindings: mfd: syscon: Add ti,am62p-cpsw-mac-efuse compatible
+Zhu Lingshan (1):
+      MAINTAINERS: apply maintainer role of Intel vDPA driver
 
-wangkaiyuan (1):
-      mfd: axp20x: Convert to use Maple Tree register cache
+ MAINTAINERS                                   |  10 +-
+ arch/um/drivers/virt-pci.c                    |   1 -
+ drivers/block/virtio_blk.c                    |   1 -
+ drivers/bluetooth/virtio_bt.c                 |   1 -
+ drivers/char/hw_random/virtio-rng.c           |   1 -
+ drivers/char/virtio_console.c                 |   2 -
+ drivers/crypto/virtio/virtio_crypto_core.c    |   1 -
+ drivers/firmware/arm_scmi/virtio.c            |   1 -
+ drivers/gpio/gpio-virtio.c                    |   1 -
+ drivers/gpu/drm/virtio/virtgpu_drv.c          |   1 -
+ drivers/iommu/virtio-iommu.c                  |   1 -
+ drivers/misc/nsm.c                            |   1 -
+ drivers/net/caif/caif_virtio.c                |   1 -
+ drivers/net/virtio_net.c                      | 248 +++++++++++++++++---------
+ drivers/net/wireless/virtual/mac80211_hwsim.c |   1 -
+ drivers/nvdimm/virtio_pmem.c                  |   1 -
+ drivers/rpmsg/virtio_rpmsg_bus.c              |   1 -
+ drivers/scsi/virtio_scsi.c                    |   1 -
+ drivers/vdpa/vdpa.c                           |   2 +-
+ drivers/vdpa/vdpa_user/vduse_dev.c            |  24 ++-
+ drivers/vdpa/virtio_pci/vp_vdpa.c             |  27 ++-
+ drivers/vhost/scsi.c                          |  70 +++++---
+ drivers/vhost/vdpa.c                          |   6 +-
+ drivers/vhost/vhost.c                         | 130 ++++++++++----
+ drivers/vhost/vhost.h                         |   3 +-
+ drivers/virtio/virtio_balloon.c               |  85 +++++----
+ drivers/virtio/virtio_input.c                 |   1 -
+ drivers/virtio/virtio_mem.c                   |  69 ++++++-
+ drivers/virtio/virtio_mmio.c                  |   6 +-
+ drivers/virtio/virtio_pci_common.c            |   4 +-
+ drivers/virtio/virtio_ring.c                  |  59 +++++-
+ fs/coredump.c                                 |   4 +-
+ fs/fuse/virtio_fs.c                           |   1 -
+ include/linux/sched/vhost_task.h              |   3 +-
+ include/linux/virtio.h                        |   7 +
+ include/uapi/linux/virtio_mem.h               |   2 +
+ kernel/exit.c                                 |   5 +-
+ kernel/signal.c                               |   4 +-
+ kernel/vhost_task.c                           |  53 ++++--
+ net/9p/trans_virtio.c                         |   1 -
+ net/vmw_vsock/virtio_transport.c              |   1 -
+ sound/virtio/virtio_card.c                    |   1 -
+ 42 files changed, 578 insertions(+), 265 deletions(-)
 
- .../arm/altera/socfpga-sdram-controller.txt        |  12 -
- Documentation/devicetree/bindings/arm/apm/scu.txt  |  17 -
- .../bindings/arm/marvell/armada-37xx.txt           |  32 --
- .../bindings/input/twl4030-pwrbutton.txt           |  21 --
- .../devicetree/bindings/mfd/actions,atc260x.yaml   |   6 +-
- .../bindings/mfd/allwinner,sun6i-a31-prcm.yaml     |  14 +-
- .../bindings/mfd/aspeed,ast2x00-scu.yaml           |  16 +-
- .../devicetree/bindings/mfd/brcm,cru.yaml          |   8 +-
- .../devicetree/bindings/mfd/brcm,iproc-cdru.txt    |  16 -
- .../devicetree/bindings/mfd/brcm,iproc-mhb.txt     |  18 --
- .../devicetree/bindings/mfd/brcm,misc.yaml         |   2 +-
- .../bindings/mfd/canaan,k210-sysctl.yaml           |   6 +-
- .../devicetree/bindings/mfd/delta,tn48m-cpld.yaml  |   4 +-
- Documentation/devicetree/bindings/mfd/iqs62x.yaml  |   4 +-
- .../devicetree/bindings/mfd/kontron,sl28cpld.yaml  |  10 +-
- Documentation/devicetree/bindings/mfd/lp873x.txt   |  67 ----
- .../devicetree/bindings/mfd/max77650.yaml          |   8 +-
- .../devicetree/bindings/mfd/maxim,max77686.yaml    |   2 +-
- .../devicetree/bindings/mfd/maxim,max77693.yaml    |   2 +-
- .../devicetree/bindings/mfd/qcom,spmi-pmic.yaml    |   4 +
- .../devicetree/bindings/mfd/qcom,tcsr.yaml         |   1 +
- .../devicetree/bindings/mfd/qcom-pm8xxx.yaml       |   1 +
- .../devicetree/bindings/mfd/richtek,rt4831.yaml    |   4 +-
- .../devicetree/bindings/mfd/ricoh,rn5t618.yaml     |   6 +-
- .../devicetree/bindings/mfd/rockchip,rk805.yaml    |   2 +-
- .../devicetree/bindings/mfd/rockchip,rk808.yaml    |   2 +-
- .../devicetree/bindings/mfd/rockchip,rk816.yaml    | 274 ++++++++++++++++
- .../devicetree/bindings/mfd/rockchip,rk817.yaml    |   2 +-
- .../devicetree/bindings/mfd/rockchip,rk818.yaml    |   2 +-
- .../devicetree/bindings/mfd/rohm,bd71815-pmic.yaml |   2 +-
- .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml |  13 +-
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.yaml |   2 +-
- .../devicetree/bindings/mfd/rohm,bd9571mwv.yaml    |   2 +-
- .../devicetree/bindings/mfd/rohm,bd9576-pmic.yaml  |   2 +-
- .../devicetree/bindings/mfd/samsung,s2mpa01.yaml   |   2 +-
- .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |  12 +-
- .../devicetree/bindings/mfd/samsung,s5m8767.yaml   |   4 +-
- .../devicetree/bindings/mfd/st,stmfx.yaml          |   2 +-
- .../devicetree/bindings/mfd/st,stpmic1.yaml        |   4 +-
- .../devicetree/bindings/mfd/stericsson,ab8500.yaml |  48 +--
- .../bindings/mfd/stericsson,db8500-prcmu.yaml      |  40 +--
- Documentation/devicetree/bindings/mfd/syscon.yaml  |  16 +
- .../devicetree/bindings/mfd/ti,lp8732.yaml         | 112 +++++++
- .../devicetree/bindings/mfd/ti,tps65086.yaml       |   4 +-
- .../devicetree/bindings/mfd/ti,tps6594.yaml        |   1 +
- Documentation/devicetree/bindings/mfd/ti,twl.yaml  |  72 ++++-
- .../devicetree/bindings/mfd/x-powers,axp152.yaml   |   2 +
- Documentation/devicetree/bindings/rtc/twl-rtc.txt  |  11 -
- .../devicetree/bindings/watchdog/twl4030-wdt.txt   |  10 -
- drivers/fpga/intel-m10-bmc-sec-update.c            |   3 +-
- drivers/mfd/Kconfig                                |  16 +-
- drivers/mfd/axp20x-i2c.c                           |   2 +
- drivers/mfd/axp20x-rsb.c                           |   1 +
- drivers/mfd/axp20x.c                               |  90 ++++++
- drivers/mfd/cs42l43.c                              |  36 ++-
- drivers/mfd/intel-lpss-pci.c                       |   2 +-
- drivers/mfd/intel-m10-bmc-pmci.c                   |   1 +
- drivers/mfd/intel-m10-bmc-spi.c                    |   1 +
- drivers/mfd/kempld-core.c                          | 227 +++----------
- drivers/mfd/ocelot-spi.c                           |   5 +-
- drivers/mfd/rk8xx-core.c                           | 104 ++++++
- drivers/mfd/rk8xx-i2c.c                            |  45 ++-
- drivers/mfd/rohm-bd71828.c                         |  36 ++-
- drivers/mfd/rsmu_i2c.c                             | 107 ++++++-
- drivers/mfd/rsmu_spi.c                             |   8 +-
- drivers/mfd/ssbi.c                                 |   1 -
- drivers/mfd/timberdale.c                           |   1 -
- drivers/mfd/tps6594-core.c                         | 253 +++++++++++++--
- drivers/mfd/tps6594-i2c.c                          |  20 +-
- drivers/mfd/tps6594-spi.c                          |  20 +-
- drivers/misc/tps6594-pfsm.c                        |  48 ++-
- drivers/pinctrl/pinctrl-rk805.c                    |  69 ++++
- drivers/pinctrl/pinctrl-tps6594.c                  | 277 +++++++++++++---
- drivers/regulator/Kconfig                          |   4 +-
- drivers/regulator/axp20x-regulator.c               |  94 +++++-
- drivers/regulator/rk808-regulator.c                | 218 ++++++++++++-
- drivers/regulator/tps6594-regulator.c              | 334 ++++++++++++++++----
- include/linux/mfd/axp20x.h                         |  98 +++++-
- include/linux/mfd/intel-m10-bmc.h                  |   1 +
- include/linux/mfd/rk808.h                          | 144 +++++++++
- include/linux/mfd/rohm-bd71828.h                   |   5 +-
- include/linux/mfd/tps6594.h                        | 351 ++++++++++++++++++++-
- 82 files changed, 2805 insertions(+), 741 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-sdram-controller.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/apm/scu.txt
- delete mode 100644 Documentation/devicetree/bindings/arm/marvell/armada-37xx.txt
- delete mode 100644 Documentation/devicetree/bindings/input/twl4030-pwrbutton.txt
- delete mode 100644 Documentation/devicetree/bindings/mfd/brcm,iproc-cdru.txt
- delete mode 100644 Documentation/devicetree/bindings/mfd/brcm,iproc-mhb.txt
- delete mode 100644 Documentation/devicetree/bindings/mfd/lp873x.txt
- create mode 100644 Documentation/devicetree/bindings/mfd/rockchip,rk816.yaml
- create mode 100644 Documentation/devicetree/bindings/mfd/ti,lp8732.yaml
- delete mode 100644 Documentation/devicetree/bindings/rtc/twl-rtc.txt
- delete mode 100644 Documentation/devicetree/bindings/watchdog/twl4030-wdt.txt
-
--- 
-Lee Jones [李琼斯]
 
