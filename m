@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-186380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B395A8CC37B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0898B8CC37C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51581C20EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218FD1C21EEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8241CAB3;
-	Wed, 22 May 2024 14:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE3D1CAA1;
+	Wed, 22 May 2024 14:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ug8dRJXp"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JvevakpV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9E11AACB;
-	Wed, 22 May 2024 14:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61CD6AD7;
+	Wed, 22 May 2024 14:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716389190; cv=none; b=ZpzbAPbCg/I+HBB54cm6ZJyAjnM0hpDvq5anyWpkEQ1Aw943I15b9eS0qfVyVy1/OGGOObtIRwiYh94YC2JNyxkSKkxu6hdbG1hJlbvtK0Ply7fWYR54gnsW7hXwfcQ1HDuBdVXOBxLVoScFt2i+QtHypFLyb7Yi1HXEaQ4Iq1s=
+	t=1716389234; cv=none; b=BxB6eD2PxSYoNW9HJl7s0OYcj9SfO/PyupFP+j/e67Gl8cwbtZewYGzSg01VMLMZJ8SPS83AI+7TRR0sATz3HOmmxyt1sYH6r3XUC5Vwfzm0R59U3hG0W4fKbY7A7wI7St5V33oLKHMxVev+CWMs/sKOVq7UH+YDCaJDoT8WZks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716389190; c=relaxed/simple;
-	bh=dy7gr88adDgKpasKwsud6U16sjxUVBOaxRknrNm6xkU=;
+	s=arc-20240116; t=1716389234; c=relaxed/simple;
+	bh=5j3a97GZYn8GtQc/vvZ0rSn8m3uqrmZSlXHqEKA7KqE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b36j9oT3e5n6yYOSDVbryElg4G13uzjxt1q1wsgY6Pb4Eu8P3Id+Clqox85s0OScTdh+ip3XXxZRHc46feRm9hjLojnKg2XTsZyzAvt0aF/UPereSgl55ZIM8O2QevJYaI6LyBsqaLR7Y8I/22gNLGVzCGvJm0zNOvqg3gemZnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ug8dRJXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 076A3C2BBFC;
-	Wed, 22 May 2024 14:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716389190;
-	bh=dy7gr88adDgKpasKwsud6U16sjxUVBOaxRknrNm6xkU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLyNnJNl5lFhV02Lfjov+p31TUzOcDJL3haClLNUk2PSVUXl97fdYua9WVhoqghhS36nL2w+32C47fcJOv56N+C9z1t1qUzizendfDyzaKoQctVuVj0pWApFFhA3US7mKMEzj6EsOq4Lv5OQGSUMPhxgg7z8dKZc289cZcPUkA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JvevakpV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02CAC2BBFC;
+	Wed, 22 May 2024 14:47:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716389234;
+	bh=5j3a97GZYn8GtQc/vvZ0rSn8m3uqrmZSlXHqEKA7KqE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ug8dRJXpVEckHEassENbn9ROMPkaAby/LMVqPorfy17UISPuh3VHELsvyxKDZCPYL
-	 6W2m7UcOd66aR3hjGgOPXU6pFz5k7+ToOkDGXFHVTri4cnoi+34ngXqynrTvk29Oiz
-	 FE0QVYfKqarUkcWeHrlArhIusHiCfLEb+f5cyrpez/UCIf74y6wlyygSPG00gpp2zE
-	 u+Ou46NhRd1FnBO1W4uK0TdIEzWoHd8Cqwff25bM+8WHiK1CW/jl8KV3/VcCOzYxgI
-	 J2MZ+xQy9XvhJtxDQoss7cuALRSx5lXn8K4eip0IT1IzjSgfYFT3Sfs+WaB1I3VL9a
-	 syOaONQek/pCw==
-Date: Wed, 22 May 2024 09:46:29 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Michal Simek <michal.simek@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] dt-bindings: pci: xilinx-nwl: Add phys
-Message-ID: <171638918647.3276613.2909691160973849874.robh@kernel.org>
-References: <20240520145402.2526481-1-sean.anderson@linux.dev>
- <20240520145402.2526481-2-sean.anderson@linux.dev>
+	b=JvevakpVj33ueJIw6Hvj1R41NaRx/ciHI77LaJBPStAP1/m6aPoNPZLQN3i2Z5jRl
+	 Wl0W+TrkUMUXZHEHH57koACtpwhICr7etVIP8ErC0VzjtOxDWcf03dGT8xumMzbXVC
+	 KY5s6UfUgQW2s15iKAPUBydKcqtP9vaWOGRMVHcc=
+Date: Wed, 22 May 2024 16:47:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Roland Xu <mu001999@outlook.com>
+Cc: ojeda@kernel.org, boqun.feng@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: kernel: make impl_has_work compatible with more
+ complex generics
+Message-ID: <2024052213-uninjured-stricken-cc20@gregkh>
+References: <ME0P282MB489023110AAF1163F0A4B2E1CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,27 +54,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240520145402.2526481-2-sean.anderson@linux.dev>
+In-Reply-To: <ME0P282MB489023110AAF1163F0A4B2E1CCEB2@ME0P282MB4890.AUSP282.PROD.OUTLOOK.COM>
 
+On Wed, May 22, 2024 at 09:16:33PM +0800, Roland Xu wrote:
+> Make the impl_has_work macro compatible with more complex generics such as lifetimes and const generic arguments.
 
-On Mon, 20 May 2024 10:53:56 -0400, Sean Anderson wrote:
-> Add phys properties so Linux can power-on/configure the GTR
-> transcievers.
-> 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
-> Changes in v3:
-> - Document phys property
-> 
-> Changes in v2:
-> - Remove phy-names
-> - Add an example
-> 
->  Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
+Can you wrap your lines at 72 columns like checkpatch asks for?
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> See more in https://github.com/Rust-for-Linux/linux/issues/1077
 
+Please don't point to external sites for "more information", include it
+here in the changelog text as this is where it is going to live for
+"forever", random external sites hosted by others usually have short
+lifespans.
+
+thanks,
+
+greg k-h
 
