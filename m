@@ -1,272 +1,147 @@
-Return-Path: <linux-kernel+bounces-186621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F638CC670
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:39:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522FF8CC66E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B3C5B2136D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:39:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5976B2186D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD88914600C;
-	Wed, 22 May 2024 18:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E62D146008;
+	Wed, 22 May 2024 18:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5ZRqznk"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Py7Ap97+"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522B9145FE4;
-	Wed, 22 May 2024 18:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070D7145B34;
+	Wed, 22 May 2024 18:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716403171; cv=none; b=ldzYusBqtyR/wMuf40svIe2Y2dBeYsSHimIRZu5vDiT265xiqIMBO8bQCWqXkjpIdw/gUPQ/0Rim17jrtcbRjfC3pFme0d+TW71z0so0DsBp83snxOISWa9kYedxofC/vDOCv8Pou529LdzN+INx1LXZhE2KoiELbsThfB89Esk=
+	t=1716403150; cv=none; b=ldKu7JkjRV6Syxnb8U2f0DdJ9YV96GtkjhhFQCCFF3u8oM4OVwID2aO/XoeDBBUwXCgcAUQ0jznaxxEzZp7xHqvgNSL7iInyVPlBkCDekik+S6uok8sx4XN6T4WpkHAVt4loLQpNUbd0+Iv3z3ro85ZSB04r0weNOz4m+87I6Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716403171; c=relaxed/simple;
-	bh=S9l5v3KZf0QNF6xsXNUPid3YSFPvJ5dX6CaHgGPpHAs=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=K8X+G+VEeXtggLbZz020izimDHDDbCrOVU0lcy0/AAJfi9tvUMaghF+sBm4IkhhvU5DGmfTv4yblwLLFhsUYO2Urddrsb4JGu3v4Dyvm802g2nL+uhNcb2P8bXRat9L4h0vCmB6c+DgLOaerochs4gP52jmfKfI9BVabGJKhTLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5ZRqznk; arc=none smtp.client-ip=209.85.167.172
+	s=arc-20240116; t=1716403150; c=relaxed/simple;
+	bh=zBORLGfwEDM1w4TyfaRsoNqVkhOG4wegvCBhB3v3QGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AaybZYiN3GXMshjhwx5OaDg4At17eram2VtTnNRdbEvi+zVXRssxj3todNV6J65eypOkE2vw2x3CAmz4Ix9rjXkARNwgzKydRc6XRhMpZxSLnm+/0pEXJl27LMnGjDBb/eLF1clB5SR2G6wk+3OsWCH3cqLNak/1aA5F2Qf6PzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Py7Ap97+; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c9cc681e4fso2675287b6e.0;
-        Wed, 22 May 2024 11:39:30 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e724bc46bfso45183011fa.3;
+        Wed, 22 May 2024 11:39:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716403169; x=1717007969; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IMQOMsUvJoKTJuwjZqFeLcXEOOFPxcU27IS0vsncKk4=;
-        b=G5ZRqznk0ERbXVhGoCGJog8r4sSzfmiUMwXoFY9I+22k2nX9kuJGKZCDGBSOmvbOdt
-         PjqQ6SqQ8jQocI35MRvMJsXE8m5ZoAMCRBQzGnyf3BJZbiFIXOfL3e4U9M3GeAAzUiWS
-         BwIg2If4s6g+0x14l5l/YtuveupVJelR/BM/Ojb7oek+1Ls4nCVwsQdk4yxUE7cC4hBm
-         ZLALmq0pd3eNSZ1gaJyr6NI54DbgVI9EFn1BkClOGrDzqmnyWHfbVQ0oYI31XDu2Qlqv
-         oyb0INOwtWi22mTUpcC0Mdv9XIxT4uCTtSvnSN4wYil9r6PynNYuTevkFkvtoNi04rND
-         be6w==
+        d=gmail.com; s=20230601; t=1716403147; x=1717007947; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WowmymhSQgb7aeMuyb2EmWdDvfH/2EO855oEziB1Qzg=;
+        b=Py7Ap97+5kTm2tq7a99i5soGS+TB56wo2SQIhxd5jkDOA6P72rhYbY1PY5O48OxcMp
+         DPPVqa6TJXrvp4DEMcXJs9cAkExczRcGwdifou6Eyu6Q4dVYWoOHa9K35OjwGJTZj/B+
+         RDDRMWhTHfNv6FtQIPyZqO8u6exSu2Q7A3IedrLtZTHFHlaCy0CQxVkHQGg8fHBX4dny
+         rpd8iie1KdAF472aBS0eO1po0nAVC9ZB2lwZ1IvpTOVfvZ0oKaYocRD/Dacb3/aFbkOB
+         CVa0atbH8c2hqurRBG+rp2b1yD71McidKL4oZkEJjN1c85ZLDjsIx+xgECpCd7dRWISG
+         aTQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716403169; x=1717007969;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IMQOMsUvJoKTJuwjZqFeLcXEOOFPxcU27IS0vsncKk4=;
-        b=mmXcbFAS1o3+N3tnRFbpdQ9L2DNuuo5dH6RWVPlbPpVF99MKG55pPxFWzTYpvHHMaG
-         Aynd9guk3VbFHWkHjDCCIdVzaOd/wgF3AyF7KmZMG6lnlOI213Ixx54iU/4KOGlD48kb
-         kQYqbuGJ5rFlrvFFgTLUE+PBuEWnnc9jkNMJLqIDkhI2T0EZW85tg6dIJjQjj/BvxGJB
-         pfGQnkMsM5io/msE3rP+SFBEv17dVbkiCpwJ8I/P7ayVug8/T4kC64ZWAPaMegZPHLoj
-         mIhXRMsuAb3rJQeDdRAwEeg5L+C/jfOrK9wvzDITon6If69HZwUGPZ2/eTKXErGnQnxM
-         2cqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXP7/T5a/Bn7ss3gv29ON5aOyc+x07qC3KGT4d8pfPXjcCtq3chTqv78zhrwq5N6R2NyD6aaiyphi+FH+nAGW1QjGB4CPwrspgTipmv6RjO5T17qqAKlBczUJTOBw8yBSOfAHMP
-X-Gm-Message-State: AOJu0Yz+DPSXyYPF7XFT7Yw0FvxYdilsGUV7zPs7E4bl9jv3Vbfw8CwZ
-	8syt57akh5GXjHNXyxAJ/RdPzimyBjwgZWnt2gAeJot8jhpPy5gX
-X-Google-Smtp-Source: AGHT+IExmyD0PBTyUzdJ3U6VoqRAzkhELP89U8CERAJNzdfVN4KWvETkrs+Ft7k1qJLZzlFpx1yyPA==
-X-Received: by 2002:a05:6808:183:b0:3c8:2c1c:a39b with SMTP id 5614622812f47-3cdb64c6f81mr3738323b6e.32.1716403169288;
-        Wed, 22 May 2024 11:39:29 -0700 (PDT)
-Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-793017facabsm732376785a.88.2024.05.22.11.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 11:39:28 -0700 (PDT)
-Date: Wed, 22 May 2024 14:39:28 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Chengen Du <chengen.du@canonical.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <664e3be092d6a_184f2f29441@willemb.c.googlers.com.notmuch>
-In-Reply-To: <CAPza5qfZ8JPkt4Ez1My=gfpT7VfHo75N01fLQdFaojBv2whi8w@mail.gmail.com>
-References: <20240520070348.26725-1-chengen.du@canonical.com>
- <664b97e8abe7a_12b4762946f@willemb.c.googlers.com.notmuch>
- <CAPza5qcGyfcUYOoznci4e=1eaScVTgkzAhXfKSG3bTzC=aOwew@mail.gmail.com>
- <eaf33ba66cbdc639b0209b232f892ec8a52a1f21.camel@redhat.com>
- <664ca1651b66_14f7a8294cb@willemb.c.googlers.com.notmuch>
- <CAPza5qfZ8JPkt4Ez1My=gfpT7VfHo75N01fLQdFaojBv2whi8w@mail.gmail.com>
-Subject: Re: [PATCH] af_packet: Handle outgoing VLAN packets without hardware
- offloading
+        d=1e100.net; s=20230601; t=1716403147; x=1717007947;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WowmymhSQgb7aeMuyb2EmWdDvfH/2EO855oEziB1Qzg=;
+        b=oKxGgJncXWpEdGRVVWifFhCX/rA8OaCDWo2mE5DwGE6y/O3dN36Rn+WU96Si9yqJS7
+         7Ey4OkjH6lcX8zsSfeQnNL3setCg5b1X4hiqDWADIthxJjQkx7A52yCw1XAFtBbi4/ve
+         kgLn/EhTf+cpg68g9zmGmSJkBXR5Vjo/mdMTlAhgUYOglyk8wSj3RLJKC7+INL+Lp5OJ
+         bmanHhqq/f/41JgIJoicsKFxrLbjrAb8KMWQnLBQIEh0UMvZ8yVdElQTHX6atdZMmaP4
+         4Wnbl4QBj/ozbcdGgJQ8sivgidUPucKSce351VJq4z69f0gXmyOpuoN49GZjfnA06edz
+         UieA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvQeENFCi8aPOknVV5E0oEE/CCwcajIE/mpIOkSg6pLTZ/b2Xlc4ztBkp5YYrBg/5msYwlQ8V7A5fMD7Fzjpmzm5pblH0M2coNyiNOp7HNFvV+TtZJKF0ZdG55tvyLQlxzPm5ssXhr544PBPn9L3vDC/7GpCgJL2Rb8A8NSxl6Ao6nvVmb
+X-Gm-Message-State: AOJu0Yxm+mWIxAPJsqvEf89HLVqoO+M7cGdsuYmk+OGjVLF3nwi96QTa
+	ky+dTEBmyhW2a1SperwtEccfrm+nuQgNF29TxDtZEYTTLG3Pgixj
+X-Google-Smtp-Source: AGHT+IG4RBP0BkzL05EFItPmMq+sTkT5KD18CXqpi+UCTb8LIu1W9femaNsd+zD6c7pzhoWEn3+j7Q==
+X-Received: by 2002:ac2:47fb:0:b0:523:ab19:954b with SMTP id 2adb3069b0e04-526bdd47d37mr1714892e87.17.1716403146853;
+        Wed, 22 May 2024 11:39:06 -0700 (PDT)
+Received: from [10.0.0.100] (host-85-29-124-88.kaisa-laajakaista.fi. [85.29.124.88])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-523aa2645c7sm2535372e87.167.2024.05.22.11.39.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 11:39:06 -0700 (PDT)
+Message-ID: <2d2b0047-ae08-4a76-bada-6bc92f443544@gmail.com>
+Date: Wed, 22 May 2024 21:39:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>, Mithil <bavishimithil@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lopez Cruz <misael.lopez@ti.com>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240522075245.388-1-bavishimithil@gmail.com>
+ <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
+ <4f722e53-011f-4176-b6af-080522165007@kernel.org>
+ <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
+ <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org>
+ <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
+ <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
+ <CAGzNGRm5i8zvnXiPzMg5=+tr9oyBcRA8LFvnmgGzE=MzSNTXug@mail.gmail.com>
+ <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org>
+From: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+Content-Language: en-US
+In-Reply-To: <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Chengen Du wrote:
-> Hi Paolo,
-> =
 
-> Thank you for your useful suggestions and information.
-> =
 
-> Hi Willem,
-> =
+On 22/05/2024 20:07, Krzysztof Kozlowski wrote:
+> On 22/05/2024 19:02, Mithil wrote:
+>>> Yep. And testing DTS should clearly show that conversion leads to
+>>> incomplete binding.
+>>>
+>>>>
+>>>>> I assume the DTS was validated with the binding. Isn't the case here?
+>>>
+>>> Mithil Bavishi,
+>>> Are you sure you tested the DTS?
+>>
+>> dt_binding_check did not give me any errors. Yeah the example is
+>> different from how it is implemented in the kernel ie board specific
+>> (omap4, omap5 etc). Should the example be changed according to that
+>> dtsi then?
+> 
+> Binding needs to be adapted to match DTS or DTS has to be fixed to match
+> binding, depending which one is correct.
 
-> The issue initially stems from libpcap [1].
-> Upon their further investigation, another issue was discovered,
-> leading to a kernel request [2] that describes the problem in detail.
-> =
+Normally the DTS is written based on the binding document and the driver
+is written also to follow the binding document.
+However in this case we have a broken/inaccurate binding document and
+the existing DTS files and binaries in wild have deviated (there are
+boards out there using qnx or BSD and use this binding), or to be
+precise the binding document was not updated.
 
-> In essence, the kernel does not provide VLAN information if hardware
-> VLAN offloading is unavailable in cooked mode.
-> The TCI-TPID is missing because the prb_fill_vlan_info() function in
-> af_packet.c does not modify the tp_vlan_tci/tp_vlan_tpid values since
-> the information is in the payload and not in the sk_buff struct.
-> In cooked mode, the L2 header is stripped, preventing the receiver
-> from determining the correct TCI-TPID value.
-> Additionally, the protocol in SLL is incorrect, which means the
-> receiver cannot parse the L3 header correctly.
-> =
+The existing DTS files are the ABI, so we cannot deviate from them,
+unfortunately.
 
-> To reproduce the issue, please follow these steps:
-> 1. ip link add link ens18 ens18.24 type vlan id 24
-> 2. ifconfig ens18.24 1.0.24.1/24
-> 3. ping -n 1.0.24.3 > /dev/null 2>&1 &
-> 4. tcpdump -nn -i any -Q out not tcp and not udp
-> =
+In this case the DTS / driver needs to be reverse engineered to create a
+binding document.
 
-> The attached experiment results show that the protocol is incorrectly
-> parsed as IPv4, which leads to inaccurate outcomes.
-> =
+To note: I'm also guilty of not updating the .txt file.
 
-> Thanks to Paolo's suggestion, I propose that we add a new bit in the
-> status to indicate the presence of VLAN information in the payload and
-> modify the header's entry (i.e., tp_vlan_tci/tp_vlan_tpid)
-> accordingly.
-> For the sll_protocol part, we can introduce a new member in the
-> sockaddr_ll struct to represent the VLAN-encapsulated protocol, if
-> applicable.
-> =
-
-> In my humble opinion, this approach will not affect current users who
-> rely on the status to handle VLAN parsing, and the sll_protocol will
-> remain unchanged.
-> Please kindly provide your feedback on this proposal, as there may be
-> important points I have overlooked.
-> If this approach seems feasible, I will submit a new version next week.=
-
-> Your assistance and opinions on this issue are important to me, and I
-> truly appreciate them.
-> =
-
+> Mention any changes done in the
+> binding which deviate from pure conversion of TXT->DT schema.
+> 
+> https://social.kernel.org/notice/Ai9hYRUKo8suzX3zNY
+> 
 > Best regards,
-> Chengen Du
-> =
+> Krzysztof
+> 
 
-> [1] https://github.com/the-tcpdump-group/libpcap/issues/1105
-> [2] https://marc.info/?l=3Dlinux-netdev&m=3D165074467517201&w=3D4
-
-This is all super helpful context and will have to make it into the
-commit message.
-
-So if I understand correctly the issue is inconsistency about whether
-VLAN tags are L2 or L3, and information getting lost along the way.
-
-SOCK_DGRAM mode removes everything up to skb_network_offset, which
-also removes the VLAN tags. But it does not update skb->protocol.
-
-msg_name includes sockaddr_ll.sll_protocol which is set to
-skb->protocol.
-
-So the process gets a packet with purported protocol ETH_P_8021Q
-starting beginning at an IP or IPv6 header.
-
-A few alternatives to address this:
-
-1. insert the VLAN tag back into the packet, with an skb_push.
-2. prepare the data as if it is a VLAN offloaded packet:
-   pass the VLAN information through PACKET_AUXDATA.
-3. pull not up to skb_network_offset, but pull mac_len.
-
-Your patch does the second.
-
-I think the approach is largely sound, with a few issues to consider:
-- QinQ. The current solution just passes the protocol in the outer tag
-- Other L2.5, like MPLS. This solution does not work for those.
-  (if they need a fix, and the same network_offset issue applies.)
-
-3 would solve all these cases, I think. But is a larger diversion from
-established behavior.
-
-> On Tue, May 21, 2024 at 9:28=E2=80=AFPM Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
-> >
-> > Paolo Abeni wrote:
-> > > On Tue, 2024-05-21 at 11:31 +0800, Chengen Du wrote:
-> > > > I would appreciate any suggestions you could offer, as I am not a=
-s
-> > > > familiar with this area as you are.
-> > > >
-> > > > I encountered an issue while capturing packets using tcpdump, whi=
-ch
-> > > > leverages the libpcap library for sniffing functionalities.
-> > > > Specifically, when I use "tcpdump -i any" to capture packets and
-> > > > hardware VLAN offloading is unavailable, some bogus packets appea=
-r.
-> >
-> > Bogus how exactly?
-> >
-> > > > In this scenario, Linux uses cooked-mode capture (SLL) for the "a=
-ny"
-> > > > device, reading from a PF_PACKET/SOCK_DGRAM socket instead of the=
-
-> > > > usual PF_PACKET/SOCK_RAW socket.
-> >
-> > Trying to extract L2 or VLAN information from the any device may be
-> > the real issue here.
-> >
-> > > >
-> > > > Using SOCK_DGRAM instead of SOCK_RAW means that the Linux socket =
-code
-> > > > does not supply the packet's link-layer header.
-> > > > Based on the code in af_packet.c, SOCK_DGRAM strips L2 headers fr=
-om
-> > > > the original packets and provides SLL for some L2 information.
-> > >
-> > > > From the receiver's perspective, the VLAN information can only be=
-
-> > > > parsed from SLL, which causes issues if the kernel stores VLAN
-> > > > information in the payload.
-> >
-> > ETH_HLEN is pulled, but the VLAN tag is still present, right?
-> >
-> > > >
-> > > > As you mentioned, this modification affects existing PF_PACKET re=
-ceivers.
-> > > > For example, libpcap needs to change how it parses VLAN packets w=
-ith
-> > > > the PF_PACKET/SOCK_RAW socket.
-> > > > The lack of VLAN information in SLL may prevent the receiver from=
-
-> > > > properly decoding the L3 frame in cooked mode.
-> > > >
-> > > > I am new to this area and would appreciate it if you could kindly=
-
-> > > > correct any misunderstandings I might have about the mechanism.
-> > > > I would also be grateful for any insights you could share on this=
- issue.
-> > > > Additionally, I am passionate about contributing to resolving thi=
-s
-> > > > issue and am willing to work on patches based on your suggestions=
-.
-> > >
-> > > One possible way to address the above in a less invasive manner, co=
-uld
-> > > be allocating a new TP_STATUS_VLAN_HEADER_IS_PRESENT bit, set it fo=
-r
-> > > SLL when the vlan is not stripped by H/W and patch tcpdump to inter=
-pret
-> > > such info.
-> >
-> > Any change must indeed not break existing users. It's not sufficient
-> > to change pcap/tcpdump. There are lots of other PF_PACKET users out
-> > there. Related, it is helpful to verify that tcpdump agrees to a patc=
-h
-> > before we change the ABI for it.
-
-
+-- 
+Péter
 
