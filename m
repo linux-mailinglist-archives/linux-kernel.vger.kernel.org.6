@@ -1,185 +1,118 @@
-Return-Path: <linux-kernel+bounces-186550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E5E8CC582
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED978CC587
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9197B21305
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6ED2847A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F262B1422CA;
-	Wed, 22 May 2024 17:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749EE1422C8;
+	Wed, 22 May 2024 17:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HY+g04KC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mw7GoOCi"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6735E2869B;
-	Wed, 22 May 2024 17:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182E5223;
+	Wed, 22 May 2024 17:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716398916; cv=none; b=QBlUyUWyUJ5Xp84mlRqmHoOx3hrTY7cbQcByijTYZ+V9lyY37bei4a+hm6jg+4pgR4lEy8DgGvxdjc6v+hTEpfxaqDVHT0Zh80e7D7pDupz+Mo2nCCscRn3Sg1IkvG5BEjVwlTvl54vPZ5LthxRHfc5/NfzeTrn20IkOV2Zx6bY=
+	t=1716399056; cv=none; b=B8pWS3TwLE6NfY47zPiMigvY5OS3DpFWf8QBdP8GUS6PICs9Jtab44lHjxZeXhFxhxHn2hiPo+P9o6IySYLQ6QQMp7lBeS4+COU+z3k0SWxIdRs0VobNB2VlWMdBQwpCeXfkolNqfVGoVooQzooTCC66SDoRw0GhiEeQ7w7X+dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716398916; c=relaxed/simple;
-	bh=6IAVb655Lal5k214BV1xTkv/4AhPMBgxi0xW4QePFvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VEKJQlHDfaVuU9spJAQBUxAh7ieX73FzzIjlEIXlt2IE27BC+TLtXviGCSWF5PB020x56383ntCV22dAPucVNmABLDoB+mYVcKq0QuD/FqKxrRpMbxDdlkY8pt8/bGF8irOhV2rMFF2NkwKz7/YdT7k9SjV4VgaiN3L0kGYA0PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HY+g04KC; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716398914; x=1747934914;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6IAVb655Lal5k214BV1xTkv/4AhPMBgxi0xW4QePFvc=;
-  b=HY+g04KC/d3tdwU0vkzlu7G8OSFGrTWNlP0DAFnHBZA4tp2oIvtJeGvZ
-   KkoFJmB9k09rFR2sNP3uDU73JMjIp3kMNdTzryvIPEuX5QzXSN5vjQxWb
-   lib+7xBJiqMl7XQVVCL4Nc4kvK0XiZRY05AIK2gj7MjhVsudm2kEvcTbz
-   OSU/IqvAGiEP3RSlq14B4p62lYmeuoGgSX8IWmUd36YiSGqIFzDBsQ7A4
-   JmGdrCZokh5De9P24MZZ4fszK6s9jBhd+6vFflF2tkulrlHlBzLJcMWoj
-   n4Wzur6AYGVevmCah/n9wk19kyr41C4birMHzlmFiFlMYANH2pV6j0ur5
-   A==;
-X-CSE-ConnectionGUID: F4tuFladQvqtlmclYMq7Iw==
-X-CSE-MsgGUID: 2FuEGPoWTDidzOtEFgeI7A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12610632"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12610632"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 10:28:34 -0700
-X-CSE-ConnectionGUID: uAOOS8q7T1qcbDdPM8/oqw==
-X-CSE-MsgGUID: b4OMRyvKR3Sbi/TYIEM54g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33368874"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.237]) ([10.125.109.237])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 10:28:33 -0700
-Message-ID: <64ec7628-4906-4f5f-81b3-8e25536214c2@intel.com>
-Date: Wed, 22 May 2024 10:28:31 -0700
+	s=arc-20240116; t=1716399056; c=relaxed/simple;
+	bh=pgVOtAMYcJLOL5rY1GuVX9oZsXUI0zjls9R+s3vhh7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iYfg4ycMaqylDvux0z7VbxeBFhPwq8iKr28O6GgaJ3OPPNWFFMa8yBnJgyY3jz3REun0pUmlPNCmYirK4XKxZwdPyZiV8AF3fBwcZDyl4p/y1/z0YZUTNXhEc3z13PpkPkEbnwC475gA6kKMbiMjV9MKQaEilHHqHT4y4sbdo18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mw7GoOCi; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6ab83788bf5so4684846d6.0;
+        Wed, 22 May 2024 10:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716399054; x=1717003854; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oioJ37cLyddSrjaAU1ulmlInPWXjX5bMilUDK/7ET7s=;
+        b=Mw7GoOCi8VtCXmImr2tA/6ix4S3ak4ZuAwnP+Mre5QVLXx1E33jH/luFhyPbDvymhk
+         rEjhdmwMrdDvGCaxDVL2+fmrxounT70c2PfhDCKXdDAHJAOxjUggj4dBqGyLzBzBnLeN
+         +Fq/HOE5AKAEL0hp7XDqEOWcHFbHysUoZyxWZhXSFPOaZCZh0RU6jLfokMQNNuvL1D0s
+         cS4XTg1aZKEOS4vnugh/SC1xT68xm8m/kvoe5vt7phjFqV3IKEY5aMqPwSJKjeSCKj5d
+         BrMfGdAyYpjn8MCecI/hLVSmygcR/l6hIgkhKRiGfkQ7K24pmWf9mne/tZ8YHaUXJF+b
+         w7YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716399054; x=1717003854;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oioJ37cLyddSrjaAU1ulmlInPWXjX5bMilUDK/7ET7s=;
+        b=mVzXFW3IWndlk9keAfX2XKMliwn7PdHdzhFbFOf0w24X8sSdW/cvF4LH5mCGxZGuFv
+         eIS8PReiGNydoXFKy6sPtulaTjUkeDBaiW0i8fAftpZMwN+TEY5zr3yIBERJtBc5BydK
+         4Ks3AdFIGXehmE/56ieynqp2aC7cbcWthyuyYeKl4X9aTGMa0NveVJIJ1bJItxq64haQ
+         rlpZ44EUXoLgTUNw6kyVn5pdU66LNfWH6h6rexID+pjrfU2ZcxrqhxSownJv+Pl08H9k
+         jv/UYpuHvND+vPqDqH79cqQibypmTr6mGSfeG6s9iM5AB97fURHgF1iKHaNGS/7qlStC
+         K0vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQYaVCO9x3qJqekIdJ48DZa49cIw1EtWVPEHrE4gLIHAAlWGDbCUd8pYqdCR0D2eox4Maj7TGJo/rJQEpqMWqic2LHElzdHYlQ3hS4DYRI8kRhAslwNJHrqvWaFwyL0sDMzXuG3RBHvpx5RsyqMB52XKX37wVb4HcLZzqV1d+obHEx07gE
+X-Gm-Message-State: AOJu0YyXRtg1tqG0eaKCF2exiSRglhWlVkJpLqHlVH6mwnvJLWXy1UVJ
+	AOi4yp5/DRZ0vriVLf6cMaTLXNF8B5joKpzZ+OsUOHdCBt4SpX783ypwcSJ28JwiXgCUZ3aLmPc
+	eqFe/RVDTi85QhjVF+JdHxlnLvpU=
+X-Google-Smtp-Source: AGHT+IHDP1WY4e8aqcII+jTqWULSqgYOoJokIdckgEsVizApYaeJaCjXUQm46lslJCkiV7Iq2xd52mYFyZy6ndEuuwU=
+X-Received: by 2002:a05:6214:390a:b0:6aa:9bea:9302 with SMTP id
+ 6a1803df08f44-6ab7f34efd5mr26235636d6.14.1716399054308; Wed, 22 May 2024
+ 10:30:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] efi/cper, cxl: Make definitions and structures global
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>
-References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
- <20240522150839.27578-2-Smita.KoralahalliChannabasappa@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20240522150839.27578-2-Smita.KoralahalliChannabasappa@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240522075245.388-1-bavishimithil@gmail.com> <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
+ <4f722e53-011f-4176-b6af-080522165007@kernel.org> <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
+ <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org> <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
+ <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org> <CAGzNGRm5i8zvnXiPzMg5=+tr9oyBcRA8LFvnmgGzE=MzSNTXug@mail.gmail.com>
+ <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org>
+In-Reply-To: <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org>
+From: Mithil <bavishimithil@gmail.com>
+Date: Wed, 22 May 2024 23:00:40 +0530
+Message-ID: <CAGzNGRnsmRWzimUX5tEC2-Y44aa4i9Lbdp8YJ+oneV4ujs4qBA@mail.gmail.com>
+Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lopez Cruz <misael.lopez@ti.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+> Binding needs to be adapted to match DTS or DTS has to be fixed to match
+> binding, depending which one is correct. Mention any changes done in the
+> binding which deviate from pure conversion of TXT->DT schema.
+The DTS is correct so will base the example on that (and get a better
+changelog in the next version)
+So the checks will be 1) dt_bindings_check and 2) dtbs_check
 
+> https://social.kernel.org/notice/Ai9hYRUKo8suzX3zNY
+Noted, but here I'd assume omap2plus_defconfig would be more relevant.
 
-On 5/22/24 8:08 AM, Smita Koralahalli wrote:
-> In preparation to add tracepoint support, move protocol error UUID
-> definition to a common location and make CXL RAS capability struct
-> global for use across different modules.
-> 
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+arch/arm/boot/dts/ti/omap/omap4-duovero-parlor.dtb: mcpdm@0:
+'ti,hwmods' is a required property
+        from schema $id:
+http://devicetree.org/schemas/sound/ti,omap4-mcpdm.yaml#
+We already have ti,hwmods still its asking for it?
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+arch/arm/boot/dts/ti/omap/omap4-duovero-parlor.dtb: mcpdm@0:
+'dma-names', 'dmas', 'reg-names' do not match any of the regexes:
+'pinctrl-[0-9]+'
+        from schema $id:
+http://devicetree.org/schemas/sound/ti,omap4-mcpdm.yaml#
+It also requires a pinctrl subnode which isnt used anywhere, the
+parent node of mcpdm that is mcpdm_module has a pinctrl how would we
+go about implementing that?
 
-> ---
->  drivers/firmware/efi/cper_cxl.c | 11 -----------
->  drivers/firmware/efi/cper_cxl.h |  7 ++-----
->  include/linux/cper.h            |  4 ++++
->  include/linux/cxl-event.h       | 11 +++++++++++
->  4 files changed, 17 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/firmware/efi/cper_cxl.c b/drivers/firmware/efi/cper_cxl.c
-> index a55771b99a97..4fd8d783993e 100644
-> --- a/drivers/firmware/efi/cper_cxl.c
-> +++ b/drivers/firmware/efi/cper_cxl.c
-> @@ -18,17 +18,6 @@
->  #define PROT_ERR_VALID_DVSEC			BIT_ULL(5)
->  #define PROT_ERR_VALID_ERROR_LOG		BIT_ULL(6)
->  
-> -/* CXL RAS Capability Structure, CXL v3.0 sec 8.2.4.16 */
-> -struct cxl_ras_capability_regs {
-> -	u32 uncor_status;
-> -	u32 uncor_mask;
-> -	u32 uncor_severity;
-> -	u32 cor_status;
-> -	u32 cor_mask;
-> -	u32 cap_control;
-> -	u32 header_log[16];
-> -};
-> -
->  static const char * const prot_err_agent_type_strs[] = {
->  	"Restricted CXL Device",
->  	"Restricted CXL Host Downstream Port",
-> diff --git a/drivers/firmware/efi/cper_cxl.h b/drivers/firmware/efi/cper_cxl.h
-> index 86bfcf7909ec..6f8c00495708 100644
-> --- a/drivers/firmware/efi/cper_cxl.h
-> +++ b/drivers/firmware/efi/cper_cxl.h
-> @@ -7,14 +7,11 @@
->   * Author: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
->   */
->  
-> +#include <linux/cxl-event.h>
-> +
->  #ifndef LINUX_CPER_CXL_H
->  #define LINUX_CPER_CXL_H
->  
-> -/* CXL Protocol Error Section */
-> -#define CPER_SEC_CXL_PROT_ERR						\
-> -	GUID_INIT(0x80B9EFB4, 0x52B5, 0x4DE3, 0xA7, 0x77, 0x68, 0x78,	\
-> -		  0x4B, 0x77, 0x10, 0x48)
-> -
->  #pragma pack(1)
->  
->  /* Compute Express Link Protocol Error Section, UEFI v2.10 sec N.2.13 */
-> diff --git a/include/linux/cper.h b/include/linux/cper.h
-> index 265b0f8fc0b3..5c6d4d5b9975 100644
-> --- a/include/linux/cper.h
-> +++ b/include/linux/cper.h
-> @@ -89,6 +89,10 @@ enum {
->  #define CPER_NOTIFY_DMAR						\
->  	GUID_INIT(0x667DD791, 0xC6B3, 0x4c27, 0x8A, 0x6B, 0x0F, 0x8E,	\
->  		  0x72, 0x2D, 0xEB, 0x41)
-> +/* CXL Protocol Error Section */
-> +#define CPER_SEC_CXL_PROT_ERR						\
-> +	GUID_INIT(0x80B9EFB4, 0x52B5, 0x4DE3, 0xA7, 0x77, 0x68, 0x78,	\
-> +		  0x4B, 0x77, 0x10, 0x48)
->  
->  /* CXL Event record UUIDs are formatted as GUIDs and reported in section type */
->  /*
-> diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> index 60b25020281f..f11e52ff565a 100644
-> --- a/include/linux/cxl-event.h
-> +++ b/include/linux/cxl-event.h
-> @@ -154,6 +154,17 @@ struct cxl_cper_event_rec {
->  	union cxl_event event;
->  } __packed;
->  
-> +/* CXL RAS Capability Structure, CXL v3.0 sec 8.2.4.16 */
-> +struct cxl_ras_capability_regs {
-> +	u32 uncor_status;
-> +	u32 uncor_mask;
-> +	u32 uncor_severity;
-> +	u32 cor_status;
-> +	u32 cor_mask;
-> +	u32 cap_control;
-> +	u32 header_log[16];
-> +};
-> +
->  struct cxl_cper_work_data {
->  	enum cxl_event_type event_type;
->  	struct cxl_cper_event_rec rec;
+-- 
+Best Regards,
+Mithil
 
