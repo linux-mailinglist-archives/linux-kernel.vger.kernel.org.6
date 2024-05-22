@@ -1,140 +1,201 @@
-Return-Path: <linux-kernel+bounces-186452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BB18CC45C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE3A18CC461
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C30284AED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93BBF28179B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501ED13D88D;
-	Wed, 22 May 2024 15:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1AD13D899;
+	Wed, 22 May 2024 15:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uLwquy6H"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="F4CHmBRK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA1081204
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6380E28EA;
+	Wed, 22 May 2024 15:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716392784; cv=none; b=j7JBZjpTaUXvay6qDce6nkatyHQaUHp0OWy8loST6AhXPi0WXbs/gQ0cXYDnlhfVcUCIX6ouodfV7mYOKS0v9Ccpbedw2xV/ToQmyGqOwNAJE1iY9bwlWH2in7DgM+LSfqQpzpnaI6KKW1bTxnZSHiRKWAHo2ecN62njTWIA4eU=
+	t=1716392866; cv=none; b=aaQrglhmvLovKDI3c+cJSivaVKBgiAwZ9TMq7GFVuWmRnO/xu2gSn8KAGIcwjBBWGuoxnh6Hg9AmfHDL9XSkwtgunjEsRMa3xSyW0w2TPlVvZxZ2dB7D5m+C6t4nkQrTQ2boOcmtBIrXPoRg5gzhfm/XavNB7FwsSAzZgYLEkzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716392784; c=relaxed/simple;
-	bh=m5IRUcHKz6e88TJmUQOvC2AcC0A8I/DAAbwMO2bG0QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oRCat4WDchiPXFdxLTVYn/OCYOpFbHdH0hAuF22Zh5Hr6u5TUvh7dm6jimoMCTrapQoKm8n69hJfUeJN1gujU6DOjpcysN5+grXeJ/wWBqJajlns1xixiXGDP7SyYYZVeI6qJ+/rvrSPd9V5eZBVumVrZDqm46Fz0fUWk79kISU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uLwquy6H; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D0ADFC67;
-	Wed, 22 May 2024 17:46:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716392769;
-	bh=m5IRUcHKz6e88TJmUQOvC2AcC0A8I/DAAbwMO2bG0QE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uLwquy6HMmuiD24COtyH6xSjv/kXtcgWiBMQBEv+U7HSfTSW1VYqGfrEaKEq8qbzQ
-	 BpJnOb+XzfoXL3IXqwq2OFJKqdM3gt9BAtiBsTw3SDBqpqcMmWnrs0YdXqzjmLznj9
-	 RN7mA8sJdeNGC2oVNTSnwxnXhJtWJT3I3CfcM6J4=
-Date: Wed, 22 May 2024 18:46:12 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Palmer Dabbelt <palmer@rivosinc.com>
-Cc: tomi.valkeinen@ideasonboard.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	daniel@ffwll.ch, michal.simek@amd.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Anatoliy Klymenko <anatoliy.klymenko@amd.com>
-Subject: Re: [PATCH] drm: xlnx: zynqmp_disp: Fix WARN_ON build warning
-Message-ID: <20240522154612.GB15832@pendragon.ideasonboard.com>
-References: <20240521142814.32145-2-palmer@rivosinc.com>
- <20240522144401.GA9789@pendragon.ideasonboard.com>
- <20240522154528.GA15832@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1716392866; c=relaxed/simple;
+	bh=Z4b6yAOm419MX7wPDVaKyHdQeVieRDgxocrRUfc/tls=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kkDFTlzoXl6J/IYT8DOCGSDU1nq9WeO90S8o9PRUoHy/AVmJ+hbWoa4FmyEzd2FCuhfAPZHMvz298/av0JPO3DT7Cski8TKKrUr3xB7kSo3uIr2zJax2Qxzmb6C2KoyUlOUBNN9pbhF9iXqMReJ9bx0D34dheCp5hgHxZu96JEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=F4CHmBRK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MDXFES009063;
+	Wed, 22 May 2024 15:47:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=f9u+nCP
+	C+UHzz1WIorUWxk8YUqmznhU63Uts/ePUqj4=; b=F4CHmBRKbYqf17etxOLagm4
+	iUsLc10bE3VB5M1NUgCD7Iz9P6SWuE7NCglcWKY3h+ReoB+uj2FvA6hIYjKY/bK7
+	FzfSYRvS2S4rC31qaNSNwjRsvIhEPI16Oo6i251LonMgXKAv5u4v+/fLXgNp7iI2
+	JY3zJfzmNWWhtNWpKKKgW7dZ+TNpDUpab/xj9mDL0vHMWjmtq5RBClP2TNNeyoqm
+	0/n8s1Yj/hyQKNW0ugt/o/M3cnRdIAGgqCSovkZqtc+2/3Mqu+IJkGizw8N3/JQX
+	l7GOxFod1FXm8wA87P3xXrvB39iPSjeR3MLX/ugLf+DhkYHjV1CKYMsxZBhrOMw=
+	=
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqc9jm8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 15:47:32 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MFlUFn010548
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 15:47:30 GMT
+Received: from grosikop.eu.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 22 May 2024 08:47:27 -0700
+From: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <laurent.pinchart@ideasonboard.com>,
+        <hverkuil-cisco@xs4all.nl>, <quic_hariramp@quicinc.com>
+Subject: [PATCH v4 0/8] Move camss version related defs in to resources
+Date: Wed, 22 May 2024 18:46:51 +0300
+Message-ID: <20240522154659.510-1-quic_grosikop@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240522154528.GA15832@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: McuxGJK1IvhHIB9GhJxPAIBF1XoesGTT
+X-Proofpoint-GUID: McuxGJK1IvhHIB9GhJxPAIBF1XoesGTT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-22_08,2024-05-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405220107
 
-On Wed, May 22, 2024 at 06:45:29PM +0300, Laurent Pinchart wrote:
-> On Wed, May 22, 2024 at 05:44:02PM +0300, Laurent Pinchart wrote:
-> > Hi Palmer,
-> > 
-> > (CC'ing Anatoliy)
-> > 
-> > Thank you for the patch.
-> > 
-> > On Tue, May 21, 2024 at 07:28:15AM -0700, Palmer Dabbelt wrote:
-> > > From: Palmer Dabbelt <palmer@rivosinc.com>
-> > > 
-> > > Without this I get warnings along the lines of
-> > > 
-> > >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: error: logical not is only applied to the left hand side of this comparison [-Werror,-Wlogical-not-parentheses]
-> > >       949 |         if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
-> > >           |                     ^            ~~
-> > >     arch/s390/include/asm/bug.h:54:25: note: expanded from macro 'WARN_ON'
-> > >        54 |         int __ret_warn_on = !!(x);                      \
-> > >           |                                ^
-> > >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses after the '!' to evaluate the comparison first
-> > >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses around left hand side expression to silence this warning
-> > > 
-> > > which get promoted to errors in my test builds.  Adding the suggested
-> > > parens elides those warnings.
-> > 
-> > I think this should have
-> > 
-> > Fixes: b0f0469ab662 ("drm: xlnx: zynqmp_dpsub: Anounce supported input formats")
-> > 
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202405080553.tfH9EmS8-lkp@intel.com/
-> > > Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
-> > > ---
-> > > I couldn't find a patch for this in Linus' tree or on the lists, sorry
-> > > if someone's already fixed it.  No rush on my end, I'll just stash this
-> > > in a local branch for the tester.
-> > > ---
-> > >  drivers/gpu/drm/xlnx/zynqmp_disp.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> > > index 13157da0089e..d37b4a9c99ea 100644
-> > > --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> > > +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
-> > > @@ -981,7 +981,7 @@ u32 *zynqmp_disp_layer_drm_formats(struct zynqmp_disp_layer *layer,
-> > >  	unsigned int i;
-> > >  	u32 *formats;
-> > >  
-> > > -	if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
-> > > +	if (WARN_ON((!layer->mode) == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
-> > 
-> > That doesn't seem right. layer->mode isn't a boolean, it's an enum. The
-> > right fix seems to be
-> > 
-> > 	if (WARN_ON(layer->mode != ZYNQMP_DPSUB_LAYER_NONLIVE)) {
-> > 
-> > Anatoliy, could you check this ? Palmer, do you plan to submit a new
-> > version of the patch, or should I send the right fix separately ?
-> 
-> I see a fix is already present in the drm-misc-fixes branch. Please
-> ignore my previous e-mail.
+The different resources required for different camss soc versions are
+split in to two groups:
 
-I meant drm-misc-next-fixes.
+1. Camss device related. In this group are all resources described
+in the device tree, clocks, regulators etc.
 
-> > >  		*num_formats = 0;
-> > >  		return NULL;
-> > >  	}
+2. Sub-device specific resources. In the initialization
+of the each sub-device, the version of camss is passed.
+Based on this version the sub-device adds: hw layer support,
+per pad formats, number of dma's etc.
+
+The code for "1" group lives in camss.c. However the "2" group
+is spread across all sub-device implementations including video device.
+
+This kind of separation is not very convenient when adding new camss soc
+version. The reason is that you need to add support in all sub-device
+implementations.
+
+There were some improvements in this direction where some of the
+hw version related definitions were moved in to the "1". One
+example is attaching of the hw operations.
+
+This series aim to improve the things more and add additional definitions
+in to the "1".
+
+What is included:
+
+- Remove all format definitions from camss video. The will be passed
+  by the parent sub-device
+
+- Make camss generic format definition mapping, containing mbus to
+  v4l2 mapping, mbus bpp and other required fields used by the
+  sub-device and video node.
+
+- Add per sub-device type union in the resources, different
+  sub-devices are using different resources, as an example: is_lite flag.
+
+- Move camss link operation in to the resources. Currently one
+  function supports different topologies depending of the number
+  of devices. As hw version support increases this is not good
+  way of supporting different topologies.
+
+- Add parent device ops in to the resources. This resolves
+  inter-dependencies of vfe and csid. Csid requests the clocks
+  regulators etc from parent device instead calling directly vfe
+  functions.
+
+- Some cleanups in csid code for split the configuration of
+  RX and testgen and RDI.
+
+Changes in V4:
+- Updated first patch with once posted by Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+  for adding missing csiphy types in 8280xp resources.
+- Incorporate only cosmetic changes pointed by Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+  as agreed.
+- Add Reviewed-by and Tested-by tags form Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
+Changes in V3:
+- Incorporate missing changes in resources reported and fixed by
+  Bryan O'Donoghue <bryan.odonoghue@linaro.org> taken from the branch:
+  https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/sc8280xp-6.9-rc1-camss-resource-change-verification?ref_type=heads
+- Added missing signed-off to the changes submitted by me.
+
+Changes in V2:
+- Rebased on top of sc8280xp v6.
+- The change "Designate lite subdevices in resources" was dropped,
+  it was already merged in previous series.
+
+Atanas Filipov (1):
+  media: qcom: camss: Decompose register and link operations
+
+Milen Mitkov (2):
+  media: qcom: camss: Split testgen, RDI and RX for CSID 170
+  media: qcom: camss: Decouple VFE from CSID
+
+Radoslav Tsvetkov (5):
+  media: qcom: camss: Add per sub-device type resources
+  media: qcom: camss: Attach formats to VFE resources
+  media: qcom: camss: Attach formats to CSID resources
+  media: qcom: camss: Attach formats to CSIPHY resources
+  media: qcom: camss: Move format related functions
+
+ drivers/media/platform/qcom/camss/Makefile    |   1 +
+ .../platform/qcom/camss/camss-csid-4-1.c      | 132 +---
+ .../platform/qcom/camss/camss-csid-4-7.c      | 160 +----
+ .../platform/qcom/camss/camss-csid-gen2.c     | 410 ++++-------
+ .../media/platform/qcom/camss/camss-csid.c    | 512 ++++++++++++-
+ .../media/platform/qcom/camss/camss-csid.h    |  32 +-
+ .../media/platform/qcom/camss/camss-csiphy.c  |  74 +-
+ .../media/platform/qcom/camss/camss-csiphy.h  |  23 +-
+ .../media/platform/qcom/camss/camss-format.c  |  91 +++
+ .../media/platform/qcom/camss/camss-format.h  |  62 ++
+ .../media/platform/qcom/camss/camss-vfe-17x.c |  10 +-
+ .../media/platform/qcom/camss/camss-vfe-4-1.c |   4 +-
+ .../media/platform/qcom/camss/camss-vfe-4-7.c |   6 +-
+ .../media/platform/qcom/camss/camss-vfe-4-8.c |   6 +-
+ .../platform/qcom/camss/camss-vfe-gen1.c      |   8 +-
+ drivers/media/platform/qcom/camss/camss-vfe.c | 483 ++++++++-----
+ drivers/media/platform/qcom/camss/camss-vfe.h |  22 +-
+ .../media/platform/qcom/camss/camss-video.c   | 294 +-------
+ .../media/platform/qcom/camss/camss-video.h   |   4 +-
+ drivers/media/platform/qcom/camss/camss.c     | 678 +++++++++++++-----
+ drivers/media/platform/qcom/camss/camss.h     |  20 +-
+ 21 files changed, 1696 insertions(+), 1336 deletions(-)
+ create mode 100644 drivers/media/platform/qcom/camss/camss-format.c
+ create mode 100644 drivers/media/platform/qcom/camss/camss-format.h
 
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
 
