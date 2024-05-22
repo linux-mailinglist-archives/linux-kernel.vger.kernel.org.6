@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-186572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A91D8CC5D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:47:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF778CC5D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F9BB22CE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C531F2298B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54D9143C5B;
-	Wed, 22 May 2024 17:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F7E145B15;
+	Wed, 22 May 2024 17:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J497um/g"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="I8jCgEEs"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA19142E6A;
-	Wed, 22 May 2024 17:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596A146BF;
+	Wed, 22 May 2024 17:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716400052; cv=none; b=NOBbeIS+VoXsG9lTY4jQ9B7ODe2ouyAcjULur4fe9+1312fZ638ODvgunjFt4FFUuXLdstsOmj7p7pc25CsB7olVSBLC8rCpNBn28Gn0M6h/D4/BA9CuT698xecqiZTIue+Pf5/yvzqailB9rgf9d8qVI2Xpr/LWk+42mKmBPcg=
+	t=1716400168; cv=none; b=qSbG7amuK21vg4vyMGmkM3Q2dgApZ1/q43IZll03/CNk7pf3HIbJ9XK40vWWFa/T1OUt6OVMu9zn51p2/aPOxqoBB1J+9jkJEAXUcbQzRkWrXMTwYPV2zfmg8dyJJaqzWoao3xUkHYIHcJv/o16F/WTSI10ObvHgP0HxZwCbbGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716400052; c=relaxed/simple;
-	bh=gjQFUkmKSj86HlJZV1l+XdpHTnwTikA3msRKm7inGks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XvSd9dBfKqR8w6cMjRlnf499GMHIYfMD8VePkR/rlbiGCNabHHA8vMeKzObNTk6j4DNGrXGYSj7dELlOUAD6xoAkraDqfyG2YaRLiRm7KA4bzT7OO1wpGwTKwW0dQrfPMGOghSzSvEluuoYvdiuvdU2zsuYzUynKxr38WMlT51w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J497um/g; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5206a5854adso6040812e87.0;
-        Wed, 22 May 2024 10:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716400048; x=1717004848; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+HhzDlrygC3CKmNKNnlvvwQPnU1QbynOZdDkM/5OBAg=;
-        b=J497um/g8YwlJmRrAclrqlK8A/YDACqHn8JZjbqQDReVbponk3oTYCh0BmSX9dK65q
-         Os93v64aJDOUsizjxGMOxLE3BNZKXUfNo0WVTT/2Vvp1lw1vN29OKSVZCLVBsW8YAUwA
-         5GfuCc9i8e8d0rePWhuskYrx2RdsnLxwyH7vS6EqcLtitOp8Ka024pdkO67WuQkf4UJu
-         P1KYAAXj3Q/S/HzuaRw8Ch64nt4OltN+sMtIFMyhMU785e6y0/DXj6q4SLiaS53HcNCp
-         BNE6Nei+L1s+S6JQF3hxM4w2/AEyuvD1p2ME52z1Uswa4SuX2B5Y/oSUHTWEb27fCbXh
-         BY0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716400048; x=1717004848;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+HhzDlrygC3CKmNKNnlvvwQPnU1QbynOZdDkM/5OBAg=;
-        b=LfNc3cwm/V6bqEf9D5prQln3MKXzGrD0uoR2M6d1sjbHzMVk1u+PS9q5vDwsHlAvBZ
-         m3+h5hMcBP/0mSdHJV+A4rh7Wa5hLkRNTOgq8T0b5pLAiXPZaFqQIuYyZD8Hyk/H45Sp
-         giNMDpj6TXN4PnASjoX5uRC7It1gwhQSfBJaA0Z8Sz6v0RUbYcBPdCKjG5du9Mx72JCA
-         diKZnaCPtIRj+Ei+7to5NdbgeLub2Q3HcsFZCmRjgP5QAfZni3nRzrHmS5mbYBklZ8ub
-         eHA9v2X0Ff6QsgRHYUVG09pD9RVyMEdPs0MkeUBtEXO5GpWxT8LPCEmL2DTYcJDjTXFq
-         jmig==
-X-Forwarded-Encrypted: i=1; AJvYcCUQxqCfaqRxthHlDqUevGJ1lEmmHFpndBWScdpxrj77W6sJ0c82+/g1hfS3MfT+gU4qkTBuMgvOZ9Nci/dcPDlzrXeHcnTnPTfXHrUKykL8l/Mvun5aJGicRUUrL8c3L8FhIA47pGU1Kz1gIbdKUiOCTjeB2heBBgMpE/JOWfJgBfarN090
-X-Gm-Message-State: AOJu0Yx1qi87OsM7dj/SgRfcFiQnw1QfsEHtijq7mMhMpHgTQkT7W++Z
-	EvmMW8M2E6Rr6eqyThIH0qz1JBW1rvUGHoOQDf8BtT8abC8ft6RTsaOFIZ1L8APGwkdm4dKfeJ2
-	v2/Xi9CEWtutCJMifOVHUb6hzhr4=
-X-Google-Smtp-Source: AGHT+IFSpgb1R9JRzKeziRekZA8ENhVvYKjubDHK6juv356O4yEXmZixwV6hUWbStw3OL0qY6DzmQMO/fuak+bXr3y0=
-X-Received: by 2002:a05:6512:442:b0:523:c515:ecd9 with SMTP id
- 2adb3069b0e04-526bd694358mr1646462e87.14.1716400048051; Wed, 22 May 2024
- 10:47:28 -0700 (PDT)
+	s=arc-20240116; t=1716400168; c=relaxed/simple;
+	bh=Y82gHOSBDAaIbjj/OTmygzVjJRYdomrp2Yr813oI4eg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eMD6WIG5XdLBcxmjQgdeYSxDhesdBdT5GwtfsyXLvfuj6rOU7UrsFDawMDg8YwYl1U7NPV+BWtW+mPdRvlHyU9Og4blW6sSgYJNfLdLcxgjx9wr+nTVM9b6m/L41hjpUtezJeVli9MK4ppHWvfk+rCuk1hvU0Z/0ZTL9w7BnHbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=I8jCgEEs; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VkzMN4FYyz6Cnk9W;
+	Wed, 22 May 2024 17:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1716400151; x=1718992152; bh=Y82gHOSBDAaIbjj/OTmygzVj
+	JRYdomrp2Yr813oI4eg=; b=I8jCgEEs6RWhiaz3FOJ4qw6gwFlxnoo6V4I5ICCN
+	B5iRUSrU9bDloP1vUs/ZZRT1c6mbr95AFTkXe93u3OnQUfIFrTz8PTmpidYdbu7S
+	0Bg3sgdGkeJMtnBddXcOirP1nx1xBrwmSxOhJATHwYJv/cFB1VNg9FXMu8ZSUGq2
+	ee9Oidgxj3+Es0TMkPh1+qnqp5rL4XfUlOwukJ/fgpJoJCS1yfDy2K5z4asOizgM
+	NlJtvReL+/iJDMukLD0QK96UB3R+vdoRu/ncZFDz9DH/zX+r9h8Uu5q7ilNjr38V
+	IHwEowjgHCSLcLltTrVv87ydDlAD/tm6VjB9NOXZFga0Tg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id cGFB4tzVV1GF; Wed, 22 May 2024 17:49:11 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VkzM86DnRz6Cnk9V;
+	Wed, 22 May 2024 17:49:08 +0000 (UTC)
+Message-ID: <174d4908-b81c-4775-9b99-b0941451cb0e@acm.org>
+Date: Wed, 22 May 2024 10:49:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522075245.388-1-bavishimithil@gmail.com> <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
- <4f722e53-011f-4176-b6af-080522165007@kernel.org> <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
- <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org> <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
- <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org> <CAGzNGRm5i8zvnXiPzMg5=+tr9oyBcRA8LFvnmgGzE=MzSNTXug@mail.gmail.com>
- <e384272a-4dfe-4653-8983-6426f8803c84@kernel.org> <CAGzNGRnsmRWzimUX5tEC2-Y44aa4i9Lbdp8YJ+oneV4ujs4qBA@mail.gmail.com>
-In-Reply-To: <CAGzNGRnsmRWzimUX5tEC2-Y44aa4i9Lbdp8YJ+oneV4ujs4qBA@mail.gmail.com>
-From: Mithil <bavishimithil@gmail.com>
-Date: Wed, 22 May 2024 23:17:15 +0530
-Message-ID: <CAGzNGRmTR_nK0SoWG8uqDfRzDShs7sR+Mc+44__SBi0CR5LKEg@mail.gmail.com>
-Subject: Re: [PATCH v5] ASoC: dt-bindings: omap-mcpdm: Convert to DT schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lopez Cruz <misael.lopez@ti.com>, linux-sound@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 01/12] block: Introduce queue limits and sysfs for
+ copy-offload support
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102830epcas5p27274901f3d0c2738c515709890b1dec4@epcas5p2.samsung.com>
+ <20240520102033.9361-2-nj.shetty@samsung.com>
+ <d47b55ac-b986-4bb0-84f4-e193479444e3@acm.org>
+ <20240521142509.o7fu7gpxcvsrviav@green245>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240521142509.o7fu7gpxcvsrviav@green245>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-My apologies, misunderstood the error.
-Proposed changes for the next version,
-Add dma, dma-names, reg-names properties, and do the changes in
-example (rename node to mcpdm since it is different from generic pdm).
-  reg-names:
-    items:
-      - const: mpu
-      - const: dma
+On 5/21/24 07:25, Nitesh Shetty wrote:
+> On 20/05/24 03:42PM, Bart Van Assche wrote:
+>> On 5/20/24 03:20, Nitesh Shetty wrote:
+>>> +=C2=A0=C2=A0=C2=A0 if (max_copy_bytes & (queue_logical_block_size(q)=
+ - 1))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>
+>> Wouldn't it be more user-friendly if this check would be left out? Doe=
+s any code
+>> depend on max_copy_bytes being a multiple of the logical block size?
+>>
+> In block layer, we use max_copy_bytes to split larger copy into
+> device supported copy size.
+> Simple copy spec requires length to be logical block size aligned.
+> Hence this check.
 
-  dmas:
-    maxItems: 2
+Will blkdev_copy_sanity_check() reject invalid copy requests even if this
+check is left out?
 
-  dma-names:
-    items:
-      - const: up_link
-      - const: dn_link
+Thanks,
 
-examples:
-    - |
-    #include <dt-bindings/interrupt-controller/arm-gic.h>
-    mcpdm@0 {
-      compatible = "ti,omap4-mcpdm";
-      reg = <0x0 0x7f>, /* MPU private access */
-            <0x49032000 0x7f>; /* L3 Interconnect */
-      reg-names = "mpu", "dma";
-      interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-      interrupt-parent = <&gic>;
-      dmas = <&sdma 65>,
-             <&sdma 66>;
-      dma-names = "up_link", "dn_link";
-      ti,hwmods = "mcpdm";
-      clocks = <&twl6040>;
-      clock-names = "pdmclk";
-    };
-
-Remove ti.hwmods from required since some dts like
-omap4-duovero-parlor, omap4-panda etc do not use it which causes
-dtbs_check to not pass.
-
--- 
-Best Regards,
-Mithil
+Bart.
 
