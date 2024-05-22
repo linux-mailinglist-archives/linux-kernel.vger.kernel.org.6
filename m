@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-186526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBDA8CC536
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:56:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE04E8CC538
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DDB2B2131C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7501F21E82
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855AE1420D0;
-	Wed, 22 May 2024 16:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AD71420D1;
+	Wed, 22 May 2024 16:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Hgc0UHia"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PslpeSsv"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3AE249F9
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A121419B5
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716396994; cv=none; b=reFi5ZUfKp983C8JtzGI8Kc1E4LpEg8/J7nFeljHlXIcsCtPa2N5RxyqkJG+SjHTn8Yv/AynGOCDwIpOQ0rS1cNEP4sDtf+RBk/isb5KNWKvIji5dH79XDRdJbLsZ2NlR5jDVVU9OLVG6okBCm/B/Yb5olZULm/iGy+W/Z3c0v4=
+	t=1716397074; cv=none; b=EwUpA3CNoAq8eSd7/1MJUV3CywIUkM4kZcEAg9PjvcQxuKU8+nn7lO8LbF7yp9H5xKbzwdJCrDRmUSBRVYgDHxEONhzZV/jWdX/D0uZ+Arx/oCbVY6KCcIy5ndLMVtdMnxhHMpvhB3Fc93kToSEI7UONRVK/RIwkfYQOrw2lrOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716396994; c=relaxed/simple;
-	bh=K/QFqvmIUmvv+6I66+VxZaEmsXlY7Dd6DLzcMLWByuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BwKNv0DENryazsxOWGswqdA40XLvq7feStBsAaAMbHK2GIawOl33kGWEI+G12owfGz8xhvWKLkulSubUrsbXdD4x1EGmnfq7gz/Rk9KWmRnr27v/mfvPWmuo1L2cupQhZRD1VyKEg3CIydU4keKMuDZ/YXl/ak2QucbLtZgccH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Hgc0UHia; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5206a5854adso5978852e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:56:32 -0700 (PDT)
+	s=arc-20240116; t=1716397074; c=relaxed/simple;
+	bh=x6ol8NNtqyR5N4adBohXI5DIsH4OG/KKUJhcyxsPiB0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qOqhAF5c48ACmoYU+/j5kH4ZgPNoWmDmzDHB367j+FghthXTKAVgOVXtcJ1OYysGYOPPZgd67Wl5O1lLWQHtb1uTccqHRUT8y0+zA6u41xrcC5R/HC0vZVrV/yjEOCw6g0ET4o8Zr2OMFD52PwAY820ry3XqVWyXX4nzGbakHU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PslpeSsv; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51fdc9af005so10112467e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:57:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1716396991; x=1717001791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v4VWbigBV97aeZyxhifeEI6VQ++Df9sfCivB+cI7pOU=;
-        b=Hgc0UHia+N1oUrRYGADRbxr1BUmABZenh3NNQl6bfkQbz77HekguN9TBpx6z9FxdnI
-         L0Q17QBAtnQd1UQHTM7vaAoLfOEsCBFx5A3mDFJ18EQyrk6YmOomyKYmyGLWdVbWwdmN
-         xyUM91E4X4avohwVmMXbLmjCWs14HSGbumACoK4Lvbqdyg3GQcnZFooZcWObqngebbWZ
-         zo+VvVJJBqKbGPUWQY5k7hOIDpb3oewk3k+uZ7xrJNZeg7JtOIm+8RRC5f8Aqn3TKoCG
-         BwfgDdgJmVxl454mqdJuHJEJQHc9ZQ/q1stDuDyvPW6h2Od5t1rcbvgnHpzDpcWtAmDz
-         iCaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716396991; x=1717001791;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1716397070; x=1717001870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v4VWbigBV97aeZyxhifeEI6VQ++Df9sfCivB+cI7pOU=;
-        b=FwNHZIx4I2k35acC7/np7xuewU2Ehx5dmKY48jFZhxn7AA2ITjmscubYEhRqi7Lwvi
-         jGAeK8pxoYHQIGRbGTF7CLItfwO6mLdHSFpwB0asIjBaYkRrQUSzQ9JW/tA6y3Dz7lSW
-         BzZnFHY2T18dnEmjqC+Q8k5YLq1ZWU9dOsGgyD8gg43LasQGj2EbdXD1VoQarRQc++lx
-         MuPTVTYOuOUbmYIWE0rNNYfYgxVQsMv70xiocptvZ4aJzjMMnbo47sqECrxel2FEw5N/
-         oICwL2u+K3UUubIwJzcEc/Z+MKerYEc9dOl7BNSi/3eYlRDdJaxuMPMemZmdjWupbm5l
-         5ETg==
-X-Forwarded-Encrypted: i=1; AJvYcCVK14pEERNiowC3rzeFcVV6j5bh9TqDJ7CwgX+GUsYHYbbTNa5gjOGIw+6oXxcMNbOLjtSoP6wCkkoer3mo3Ki//V9zdP884Pfxoah6
-X-Gm-Message-State: AOJu0YzfUn99qIWdOii3gKSEFjs+eM6elQml+r/vVXazXI8IK7D7rLkN
-	veD9oDXq+KxWxMwv1g1vbiXW+O/jDE0zMo5vtlUNM6aIqAEf955OP8CztfnWAKM=
-X-Google-Smtp-Source: AGHT+IG7la7QdJ5gJEmQp6A/EREQqLjg3RbugtXHkWprUb8DAfwSzJsUVcwBr7yLjzDbpyCqEkbaYw==
-X-Received: by 2002:ac2:5442:0:b0:522:2fa0:c3f5 with SMTP id 2adb3069b0e04-526bfc02eb2mr1542529e87.62.1716396991348;
-        Wed, 22 May 2024 09:56:31 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d40sm1790774566b.75.2024.05.22.09.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 09:56:30 -0700 (PDT)
-Date: Wed, 22 May 2024 18:56:29 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	alex.williamson@redhat.com, kevin.tian@intel.com, jgg@nvidia.com, yishaih@nvidia.com, 
-	shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH] vfio/pci: take mmap write lock for io_remap_pfn_range
-Message-ID: <20240522-b1ef260c9d6944362c14c246@orel>
-References: <20230508125842.28193-1-yan.y.zhao@intel.com>
+        bh=YVqQilWnEvaPMm9v3i+xshWzcKoqdVjetPe0efHlOEA=;
+        b=PslpeSsvPr+wJ6XlbzslXgcG1dsd0Tv+C46jiugDVvdTQTRLjrqb6fPaNyTyttdLGM
+         +2NnM5AIwI+Ieu2uV6rJ21ijHy5bBsvsvZDZam0bpBZWcGsGFRr/Sh7crn0MYqMDqDWO
+         XX2FvRBvbIDP+eP1FGqJvvy87eX2joocL1uN4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716397070; x=1717001870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YVqQilWnEvaPMm9v3i+xshWzcKoqdVjetPe0efHlOEA=;
+        b=X9qWgxz24UHdHcGseBlyMgpbnluNSbc1XdSpm2bwU8kRFK+yCeo6nZrHrOwAvQU/iA
+         r5P34k66YpAv7nWKAwglqlzcCGfshXCQqhF+Yii++6XDs2eL7hsBiuqyebU8oHz5AHIB
+         vUAmeXPZOFevch589QfCRivrkYjrNHIp6Lb9th4mbucmlhfam1t/N4TEjKa/rsXCt9QF
+         9muEzJlb4XDf/aBUoXx+u985U5Mhle0/3TdnQ5FzDAtQnHA3vOsCF7W0dosQ6oBVzvSZ
+         8UqGvr4CZW71AoR2szuwRR840d5vp7wXnsvkTgk9TOU4noK+a6WyE39Vq8Q+DqgkMfmN
+         /O8w==
+X-Forwarded-Encrypted: i=1; AJvYcCU/vAiP23zxTkPZnH5zK5NRXhJl3p9a+t7dHQYuug/DXdbQiInZtF5oXVzRDZRdM7EqFwUfv0qULjpot/1+SNallA9Nxh9Bwif/zgGv
+X-Gm-Message-State: AOJu0YxZBVMgCXZKNMJdTmneaa0OCXKu6eFkRFmio9vVEtkGoL0h/Vea
+	dkBcXPFVJIswBUTtQwUPJdh8usGrG3DtvAbE25/OPBFAUyQOAo5l4Sphr+A+MmOLBGDFfsGiOER
+	xV01WYKs7/gf58CzS0G8we6t+wrmCNnXS4ck=
+X-Google-Smtp-Source: AGHT+IGrptWSdMdPR63//GttFSx2aUNf30uQrwxec28DmTObbvHKZqGgtlSu6ewyMoM0P1HhEuZ0NmwvWHhLNI4pUjM=
+X-Received: by 2002:ac2:447a:0:b0:523:9003:88a0 with SMTP id
+ 2adb3069b0e04-526bf82caffmr1833740e87.39.1716397070517; Wed, 22 May 2024
+ 09:57:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230508125842.28193-1-yan.y.zhao@intel.com>
+References: <20240516174357.26755-1-jim.cromie@gmail.com> <20240516174357.26755-23-jim.cromie@gmail.com>
+ <CALwA+Nb8EKBRk+1ejxWhRBhoYf=Arge5TvA-mPzDD95Am+7pYw@mail.gmail.com> <CAJfuBxxhTzOOBz_kTc9APGVw==r1fkyk+rdiri3wJAYJZSYoLQ@mail.gmail.com>
+In-Reply-To: <CAJfuBxxhTzOOBz_kTc9APGVw==r1fkyk+rdiri3wJAYJZSYoLQ@mail.gmail.com>
+From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Date: Wed, 22 May 2024 18:57:39 +0200
+Message-ID: <CALwA+NaYPZY6956KG6u4t3WxN5YAWABitvhwYn30kcH_nrxeuA@mail.gmail.com>
+Subject: Re: [PATCH v8-RESEND 22/33] dyndbg: split multi-query strings with %
+To: jim.cromie@gmail.com
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
+	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
+	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 08, 2023 at 08:58:42PM GMT, Yan Zhao wrote:
-> In VFIO type1, vaddr_get_pfns() will try fault in MMIO PFNs after
-> pin_user_pages_remote() returns -EFAULT.
-> 
-> follow_fault_pfn
->  fixup_user_fault
->   handle_mm_fault
->    handle_mm_fault
->     do_fault
->      do_shared_fault
->       do_fault
->        __do_fault
->         vfio_pci_mmap_fault
->          io_remap_pfn_range
->           remap_pfn_range
->            track_pfn_remap
->             vm_flags_set         ==> mmap_assert_write_locked(vma->vm_mm)
->            remap_pfn_range_notrack
->             vm_flags_set         ==> mmap_assert_write_locked(vma->vm_mm)
-> 
-> As io_remap_pfn_range() will call vm_flags_set() to update vm_flags [1],
-> holding of mmap write lock is required.
-> So, update vfio_pci_mmap_fault() to drop mmap read lock and take mmap
-> write lock.
-> 
-> [1] https://lkml.kernel.org/r/20230126193752.297968-3-surenb@google.com
-> commit bc292ab00f6c ("mm: introduce vma->vm_flags wrapper functions")
-> commit 1c71222e5f23
-> ("mm: replace vma->vm_flags direct modifications with modifier calls")
+On Tue, May 21, 2024 at 6:08=E2=80=AFPM <jim.cromie@gmail.com> wrote:
+>
+> On Tue, May 21, 2024 at 5:58=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chro=
+mium.org> wrote:
+> >
+> > On Thu, May 16, 2024 at 7:45=E2=80=AFPM Jim Cromie <jim.cromie@gmail.co=
+m> wrote:
+> > >
+> > > Multi-query strings have long allowed:
+>
+> ... input like:  (Im using it like a verb)
+>
+> > Missing been ?
+>
+> this is an alternative.
+
+I see
+
+> maybe s/strings/commands/ too
 >
 
-With linux-next I started noticing traces similar to the above without
-lockdep, since it has ba168b52bf8e ("mm: use rwsem assertion macros for
-mmap_lock"). Were there any follow ups to this? Sorry if my quick
-searching missed it.
+I like commands more
 
-Thanks,
-drew
+> > >
+> > >   modprobe drm dyndbg=3D"class DRM_UT_CORE +p; class DRM_UT_KMS +p"
+> > >   modprobe drm dyndbg=3D<<EOX
+> > >      class DRM_UT_CORE +p
+> > >      class DRM_UT_KMS +p
+> > >   EOX
+> > >
 
