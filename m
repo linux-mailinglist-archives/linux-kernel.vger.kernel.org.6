@@ -1,172 +1,133 @@
-Return-Path: <linux-kernel+bounces-185875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345488CBC48
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:46:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E2148CBC60
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567051C213AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:46:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49DEC1C21584
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107447E103;
-	Wed, 22 May 2024 07:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA6E7E101;
+	Wed, 22 May 2024 07:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qI2eEKlg"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="EYnRLAHA"
+Received: from jpms-ob01.noc.sony.co.jp (jpms-ob01.noc.sony.co.jp [211.125.140.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA19858AD0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 07:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7967381BD;
+	Wed, 22 May 2024 07:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716363973; cv=none; b=CX3JCNWeoiVmMAtK95lzUrXXTm7b1bMlew/CJHxe5QqA7DQ0Jwq7gpLmjYJXtHaNxq1gry/y1GdpB7z2XUGaodsbz6zP1n7BtrujiAy5tjYH0EOp1EXQ6KaEoK/aaXRNUzGmsVhBQt0cQQpHiLoZkHYUa1OMyW5V8y/0EtEy/Tw=
+	t=1716364367; cv=none; b=I/+cZ6MjFCMjee85JERUk9lEoLvBHHh6mvD6tGUtxMVFbfbZEtjXqOfWNLwOuyp1T/wERgForblrz83x/31nEpN+NkU6vh1YTWNUsE2INA/qhaj8prMsdqWuFPHj7hjfo3S9XL87lMWIlay0rGTHqeTcPp/aGEgKp9VDK5DHyEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716363973; c=relaxed/simple;
-	bh=tLI1/TLS9lgL0S+7Aa/oJePgPCAr9RaWzgqRi5Nu1w0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BaAL75yeXDSsdGEB1J8KwiJCm049N/jqSWpfCKQOiJPLIN2M7KLVBfRsGgt/UrMUME6I18KBYXC2KoDC5aG/Im9cG0zC3QuzYR8OSMxpvmmJ2rELT3OhaZ+yhX9pE6bKcuLQ03ZdKTX6OnzkEqN1qeHrjtuLsxaeyxYrKpDLU7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qI2eEKlg; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572669fd9f9so9829012a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:46:08 -0700 (PDT)
+	s=arc-20240116; t=1716364367; c=relaxed/simple;
+	bh=BlUYc18xxTSYW8D3eEZVvpXbvyLOVNxxS2l+k+VIBB4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tRfEP9Q9TjxKalsMWtNWmzJyuBk1lp9wgKxSKEFC6Ifv+wTe7ZupLPh824aaS0WlUBlHfNzcS7VpXVXabdvVw80JbD6lu64vwnL4i0+Rc9VVDn7fmDK6We/SicJk/7MJoj7b/UlPMtVTgDLJC75sYke6eN0UtmiFdAL+lWtsz0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=EYnRLAHA; arc=none smtp.client-ip=211.125.140.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716363967; x=1716968767; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gBM+jZUTYiUUTV5gkY6H6ON+yEQkLd9WRxTkpxE1iOk=;
-        b=qI2eEKlgLOir2CtqKVILaIuM3bvkYcAT0IWtXUVOcix3V5MyGzpDFmNFfrrzdQDCjH
-         RffvQbTr3nycZJS1snfg4lBHgLJGZLBfbD6BFZ7OL2UfSWN4LlnmpNc6NVAYRfzR7vtP
-         AbiRzd5DDT4oBa5h4K1YimB3IrYIWt4Rf5Q3IrZvYCNSZbxEVjuRcPWEdeXKN+62qQND
-         xzcn1QIfQtWpkIp4Or2rnXKThbCTmAKfI2x41oBFYjXsCtOOSzQR782vLnNSo9J/0tIf
-         umNpRB0lt5hJ9QkyMFDR1UrWaD0QCRSr0euP5DB3JzwCCjt3eUPlerngmMuAVCqSOh6S
-         cngw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716363967; x=1716968767;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gBM+jZUTYiUUTV5gkY6H6ON+yEQkLd9WRxTkpxE1iOk=;
-        b=nqePy4Y+sRw16uQeUuLWBUFCifm8RbVHLGJKXTyCR/8awMVGtStH/cEIJfoAEg8PPV
-         FZM8W1ymFFM/ljiRY/KBLYog8WWHdKR+p24jEgJ9vuTbW1p7Vwp3ocWwcS6uTMCYXsL1
-         w6chRxo4glTgg/zp6hfowIXdBU/u3cjy8HLKRDhA8SvtMwwA1uxAAsJww9QHogooLk5l
-         faMMq8XT3GyFQ42806n8/3JXZnyxDZP55Wlxqb7DVZTBwcArFRd7gTCHO13mNcOamuN8
-         Wn6wiYyyY0hBVsi5ncnMkmruKvfC6r44qIT3L7qXEC2RCR1R917iap59k9N912JfY0No
-         SPcw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/S0pSddfATGgn9pJG2/mZxLAwOa6ihcidDpjalhs0HVV5qVGqHidBMiKTtLox1+jy6vptClhcsODOdDw+HfYjQtTOPRYOG6irtCRj
-X-Gm-Message-State: AOJu0YxycV0jrWCeRXcuX1pYm/IZI1cKhRzaZsSO7ZDtRwrFitSC/ryx
-	TNYeH+y1J0Z3H/lOXQQWoLDosD0rJ7SMN0IB+bsttVCPTSBcQVFNl5VgDZ/ENqg=
-X-Google-Smtp-Source: AGHT+IGZLSApaCXvQGxW0dsVfPo3k1iNOpL3wwK5gco9RO/JQwo8qJZoMUt8UyhYHnBdO5wDLTd9WQ==
-X-Received: by 2002:a50:c355:0:b0:56c:5a12:ac53 with SMTP id 4fb4d7f45d1cf-57832bc92b0mr655224a12.24.1716363966909;
-        Wed, 22 May 2024 00:46:06 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10? ([2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5751ada828esm6950621a12.62.2024.05.22.00.46.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 00:46:06 -0700 (PDT)
-Message-ID: <0f784354-c5ca-4436-b5fd-b1744414bc3d@linaro.org>
-Date: Wed, 22 May 2024 09:46:03 +0200
+  d=sony.com; s=s1jp; t=1716364365; x=1747900365;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=p1PR+bMgri8CFj5w/WqKj5UXpiMUEtn0gsOYoXkuyv4=;
+  b=EYnRLAHA8Q8yrukXXqxhP+LF/bQKchi8obzQ8U/1qX2YKn9545pWOK/3
+   LVnSETqOnT9URNPGIRPsqCaUDbBNtb/5dubolZ3SPcnkmcsEzB5EfUwG9
+   lQaebYZFVRwfdv7xlJi8cGFzr4T1J2shfKw+BjypWWbS55CH6KpDJnkR6
+   Mn5n0KqE/zgK/MQXuIQLdvbVwPV1GApUC29hnCqEJoceuAhZ4BRTGTKLh
+   ApEc8akkxU0GThtmGNC+Ngs/q9CNt+P/iX1UIq917LsJS+vzObksYqScl
+   1g7/boxwxwY0mpcBlPYSJhruxfK/u0MrDL7NaVOIExTmxKUIgqEewv0ll
+   g==;
+Received: from unknown (HELO jpmta-ob02.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::7])
+  by jpms-ob01.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 16:42:34 +0900
+X-IronPort-AV: E=Sophos;i="6.08,179,1712588400"; 
+   d="scan'208";a="390840544"
+Received: from unknown (HELO OptiPlex-7080..) ([IPv6:2001:cf8:1:5f1:0:dddd:6fe5:f4d0])
+  by jpmta-ob02.noc.sony.co.jp with ESMTP; 22 May 2024 16:42:34 +0900
+From: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
+To: Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	Sukrit.Bhatnagar@sony.com
+Subject: [PATCH 0/2] Improve dump_page() output for slab pages
+Date: Wed, 22 May 2024 16:46:27 +0900
+Message-Id: <20240522074629.2420423-1-Sukrit.Bhatnagar@sony.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/2] phy: qcom: qmp-pcie: restore compatibility with
- existing DTs
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- devicetree@vger.kernel.org
-References: <20240521-fix-pcie-phy-compat-v1-0-8aa415b92308@linaro.org>
- <20240521-fix-pcie-phy-compat-v1-1-8aa415b92308@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240521-fix-pcie-phy-compat-v1-1-8aa415b92308@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/05/2024 22:30, Dmitry Baryshkov wrote:
-> Existing device trees specify only a single clock-output-name for the
-> PCIe PHYs. The function phy_aux_clk_register() expects a second entry in
-> that property. When it doesn't find it, it returns an error, thus
-> failing the probe of the PHY and thus breaking support for the
-> corresponding PCIe host.
-> 
-> Follow the approach of the combo USB+DT PHY and generate the name for
-> the AUX clocks instead of requiring it in DT.
-> 
-> Fixes: 583ca9ccfa80 ("phy: qcom: qmp-pcie: register second optional PHY AUX clock")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 9 +++------
->   1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index 6c796723c8f5..b4767b8cc014 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -3730,14 +3730,11 @@ static int phy_aux_clk_register(struct qmp_pcie *qmp, struct device_node *np)
->   {
->   	struct clk_fixed_rate *fixed = &qmp->aux_clk_fixed;
->   	struct clk_init_data init = { };
-> -	int ret;
-> +	char name[64];
->   
-> -	ret = of_property_read_string_index(np, "clock-output-names", 1, &init.name);
-> -	if (ret) {
-> -		dev_err(qmp->dev, "%pOFn: No clock-output-names index 1\n", np);
-> -		return ret;
-> -	}
-> +	snprintf(name, sizeof(name), "%s::pipe_aux_clk", dev_name(qmp->dev));
+While using dump_page() on a range of pages, I noticed that there were some
+PG_slab pages that were also showing as PG_anon pages, according to the
+function output.
 
-Should be "::phy_aux_clk"
+[    7.071985] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x102768
+[    7.072602] head: order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+[    7.073085] anon flags: 0x8000000000000840(slab|head|zone=2)
+[    7.073777] raw: 8000000000000840 ffff8881000419c0 0000000000000000 dead000000000001
 
->   
-> +	init.name = name;
->   	init.ops = &clk_fixed_rate_ops;
->   
->   	fixed->fixed_rate = qmp->cfg->aux_clock_rate;
-> 
+It was also printing the "page_type" field for slab pages, but that was fixed in
+a very recent commit:
+    8f790d0c7cfe (mm: improve dumping of mapcount and page_type)
 
-With that:
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Given that the slab pages cannot be mapped to userspace, this output seems
+misleading.
 
-Thanks,
-Neil
+In dump_page(), folio_test_anon() is used, which checks the "mapping" field.
+But the struct slab was separated from struct page.
+So accessing the mapping field through a struct page pointer, which actually
+points to a struct slab, will result in garbage memory access and the PG_anon
+test can return true.
+
+It seems that other parts of the kernel MM make the check for slab before
+checking for anon, but dump_page() is not doing that.
+
+On the other hand, the struct slab has kmem_cache which maintains another set
+of flags. It would be nice to have these flags added as a part of the debug
+output, and to have a convenient way to print them.
+
+(The long chain of pointer dereferences for cache flags looks messy, but I
+assume it should be fine for a debug function.)
+
+Sukrit Bhatnagar (2):
+  mm: printk: introduce new format %pGs for slab flags
+  mm: debug: print correct information for slab folios
+
+ Documentation/core-api/printk-formats.rst |  2 +
+ include/linux/slab.h                      |  5 ++
+ include/trace/events/mmflags.h            | 67 +++++++++++++++++++++++
+ lib/test_printf.c                         | 13 +++++
+ lib/vsprintf.c                            | 22 ++++++++
+ mm/debug.c                                | 12 +++-
+ mm/internal.h                             |  1 +
+ 7 files changed, 121 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
