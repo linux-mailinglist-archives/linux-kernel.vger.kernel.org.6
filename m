@@ -1,171 +1,148 @@
-Return-Path: <linux-kernel+bounces-186287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C6D8CC23C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:35:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC64D8CC23E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 788841C21DED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A091C21157
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89429140394;
-	Wed, 22 May 2024 13:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CA914038A;
+	Wed, 22 May 2024 13:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LY4KnZEt";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LY4KnZEt"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G46JFn8v"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80D313D532;
-	Wed, 22 May 2024 13:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF3B13F452
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716384933; cv=none; b=PHd+5vgwArfFuXpNtiJCy7rIg2+WtQYtX8B4xlkshLQmB3dnM+/Ax1uwOgHRjwE8JQwVJLPJ//0ouNHl5s22/2wAJMsCMsvLsQUJ5ppAHdUuLvQO0I4TUXvFwZrqx3jjHExAaUP5+4een8gEIQ8IGqAoVGMVa4ESffYQmxZHsYU=
+	t=1716384987; cv=none; b=AIWzNc10nhtnF+1KU6MOin/0q39twcye9ww3vkPXxOh/402rAAnisMQfshxUs1IaW4cnBvqjzeSxarzEaaV/smkT0wU+ChLtEMHHcrYgQ9ngs+oRz4SjCrGY3mEuiVJufmvuGu6qwNYUIj/srq6MUj0cIH4fboKSnrHl2xKQhIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716384933; c=relaxed/simple;
-	bh=kdwS4J2re7NPgqyP8PRnuHF0BUonXqbA7hQP1gBF8XE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JGjj+I9tRqABeowZP8tk38FaUalfb+Xyd7iyBLy6Jgcx1Iuowhpiq0CPVwS/Pk4iVnKPHLUFgOI6rkeU6wA5GanMZCdjAjcYb3PasInx6vDjH/QaDGo0DCGscAocP+D6V7R3kSkVu/oA89XHtjeyctZpBOfLS7F6AY15mPD5wjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=LY4KnZEt; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=LY4KnZEt; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716384929;
-	bh=kdwS4J2re7NPgqyP8PRnuHF0BUonXqbA7hQP1gBF8XE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=LY4KnZEtrqTVhymxyjmxAjbe5ZlSPq3aJ2wyoZRscMvYhC3ahsf6HNOWyadv0cZ5s
-	 2QHFCDEwdLy3DXizEYe+wHyKEi6iEoDD9/zeVJWULvhrk01/qZhceAW0N5TBStPQkO
-	 uxyvPDfPBlVfDtmjYSzxPSGdc6AgXEAFg1hCU16U=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id CF9771287287;
-	Wed, 22 May 2024 09:35:29 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id N1c-ZmMXw-pg; Wed, 22 May 2024 09:35:29 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716384929;
-	bh=kdwS4J2re7NPgqyP8PRnuHF0BUonXqbA7hQP1gBF8XE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=LY4KnZEtrqTVhymxyjmxAjbe5ZlSPq3aJ2wyoZRscMvYhC3ahsf6HNOWyadv0cZ5s
-	 2QHFCDEwdLy3DXizEYe+wHyKEi6iEoDD9/zeVJWULvhrk01/qZhceAW0N5TBStPQkO
-	 uxyvPDfPBlVfDtmjYSzxPSGdc6AgXEAFg1hCU16U=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9F7BA1286673;
-	Wed, 22 May 2024 09:35:28 -0400 (EDT)
-Message-ID: <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Vitor Soares <ivitro@gmail.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Wed, 22 May 2024 09:35:27 -0400
-In-Reply-To: <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
-References: <20240519235122.3380-1-jarkko@kernel.org>
-	 <20240519235122.3380-2-jarkko@kernel.org>
-	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
-	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
-	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
-	 <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1716384987; c=relaxed/simple;
+	bh=X2q+erCbtf0RX//GWfLitE9ugYmfB1kEk0t5QNdVhLk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=R0mxAL4OyjX/b60Zdn61+q9vplT/tDbyTTWHQJyijqC6fPTybVEZwEhRIJDDmExc6cHCseRZjtBlKeSgchzcuTvPloIsBi6pHZO48GfTlplYnZBQAdwEM9QoYkSpjFsw2mb4SAkmFjN3SNfW2H47HruKPsNh3GetEC3kRUgpJiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G46JFn8v; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: jack@suse.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716384982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rf2l+EHzhy6R8RE6vUeAIdMlv+BvfdFWYb4Q53DjI38=;
+	b=G46JFn8v39NdRGMGD8xcLanitZUpg1k4yR0eYud2rHt+Q0xg2M6dKHfTYqgI/S3JgVW7vo
+	5GdO4vMb+e1/ks2hUAxLhy5QP3CUtyJu9+l8Yjm3pa5zI91xpoCj8rh38e345XrjQOfTgn
+	pxTRFbutsFXl1eEvdWO4+Mf8QEnT+jM=
+X-Envelope-To: jack@suse.com
+X-Envelope-To: tytso@mit.edu
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: adilger@dilger.ca
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: luis.henriques@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,  Theodore Ts'o
+ <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Jan Kara
+ <jack@suse.com>,  linux-ext4@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] jbd2: reset fast commit offset only after fs
+ cleanup is done
+In-Reply-To: <20240522104500.z343a6xqfduuq5i3@quack3> (Jan Kara's message of
+	"Wed, 22 May 2024 12:45:00 +0200")
+References: <20240521154535.12911-1-luis.henriques@linux.dev>
+	<20240521154535.12911-3-luis.henriques@linux.dev>
+	<20240522104500.z343a6xqfduuq5i3@quack3>
+Date: Wed, 22 May 2024 14:36:20 +0100
+Message-ID: <87le42dl4b.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 2024-05-22 at 09:18 +0100, Vitor Soares wrote:
-> On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
-> > On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
-> > > This benchmark could be done in user space using /dev/tpm0.
-> > 
-> > Let's actually try that.  If you have the ibmtss installed, the
-> > command to time primary key generation from userspace on your tpm
-> > is
-> > 
-> > time tsscreateprimary -hi n -ecc nistp256
-> > 
-> > 
-> > And just for chuckles and grins, try it in the owner hierarchy as
-> > well (sometimes slow TPMs cache this)
-> > 
-> > time tsscreateprimary -hi o -ecc nistp256
-> > 
-> > And if you have tpm2 tools, the above commands should be:
-> > 
-> > time tpm2_createprimary -C n -G ecc256
-> > time tpm2_createprimary -C o -G ecc256
-> > 
-> > James
-> > 
-> > 
-> 
-> Testing on an arm64 platform I get the following results.
-> 
-> hmac disabled:
->   time modprobe tpm_tis_spi
->   real    0m2.776s
->   user    0m0.006s
->   sys     0m0.015s
-> 
->   time tpm2_createprimary -C n -G ecc256
->   real    0m0.686s
->   user    0m0.044s
->   sys     0m0.025s
-> 
->   time tpm2_createprimary -C o -G ecc256
->   real    0m0.638s
->   user    0m0.048s
->   sys     0m0.009s
-> 
-> 
-> hmac enabled:
->   time modprobe tpm_tis_spi
->   real    8m5.840s
->   user    0m0.005s
->   sys     0m0.018s
-> 
-> 
->   time tpm2_createprimary -C n -G ecc256
->   real    5m27.678s
->   user    0m0.059s
->   sys     0m0.009s
-> 
->   (after first command)
->   real    0m0.395s
->   user    0m0.040s
->   sys     0m0.015s
-> 
->   time tpm2_createprimary -C o -G ecc256
->   real    0m0.418s
->   user    0m0.049s
->   sys     0m0.009s
+On Wed 22 May 2024 12:45:00 PM +02, Jan Kara wrote;
 
-That's interesting: it suggests the create primary is fast (as
-expected) but that the TPM is blocked for some reason.  Is there
-anything else in dmesg if you do
+> On Tue 21-05-24 16:45:35, Luis Henriques (SUSE) wrote:
+>> When doing a journal commit, the fast journal offset (journal->j_fc_off) is
+>> set to zero too early in the process.  Since ext4 filesystem calls function
+>> jbd2_fc_release_bufs() in its j_fc_cleanup_callback (ext4_fc_cleanup()),
+>> that call will be a no-op exactly because the offset is zero.
+>> 
+>> Move the fast commit offset further down in the journal commit code, until
+>> it's mostly done, immediately before clearing the on-going commit flags.
+>> 
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>
+> Did you see any particular failure because of this? Because AFAICS the
+> buffers cleaned up by jbd2_fc_release_bufs() are only allocated during fast
+> commit (from ext4_fc_reserve_space()). And the code in
+> jbd2_journal_commit_transaction() is making sure fast commit isn't running
+> before we set journal->j_fc_off to 0.
 
-dmesg|grep -i tpm
+No, I did not see any failure caused by this, this patch is simply based
+on my understanding of the code after spending some time reviewing it.
 
-?
+The problem I saw was that jbd2_journal_commit_transaction() will run the
+clean-up callbacks, which includes ext4_fc_cleanup().  One of the first
+things that this callback will do is to call jbd2_fc_release_bufs().
+Because journal->j_fc_off is zero, this call is useless:
 
-Unfortunately we don't really do timeouts on our end (we have the TPM
-do it instead), but we could instrument your kernel with command and
-time sent and returned.  That may tell us where the problem lies.
+	j_fc_off = journal->j_fc_off;
 
-Regards,
+	for (i = j_fc_off - 1; i >= 0; i--) {
+		[...]
+	}
 
-James
+(It's even a bit odd to start the loop with 'i = -1'...)
 
+So the question is whether this call is actually useful at all.  Maybe the
+thing to do is to simply remove the call to jbd2_fc_release_bufs()?  (And
+in that case, remove the function too, as this is the only call site.)
+
+Cheers,
+-- 
+Luis
+
+>
+> 								Honza
+>
+>> ---
+>>  fs/jbd2/commit.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+>> index 75ea4e9a5cab..88b834c7c9c9 100644
+>> --- a/fs/jbd2/commit.c
+>> +++ b/fs/jbd2/commit.c
+>> @@ -435,7 +435,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>>  			commit_transaction->t_tid);
+>>  
+>>  	write_lock(&journal->j_state_lock);
+>> -	journal->j_fc_off = 0;
+>>  	J_ASSERT(commit_transaction->t_state == T_RUNNING);
+>>  	commit_transaction->t_state = T_LOCKED;
+>>  
+>> @@ -1133,6 +1132,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>>  		  journal->j_commit_sequence, journal->j_tail_sequence);
+>>  
+>>  	write_lock(&journal->j_state_lock);
+>> +	journal->j_fc_off = 0;
+>>  	journal->j_flags &= ~JBD2_FULL_COMMIT_ONGOING;
+>>  	journal->j_flags &= ~JBD2_FAST_COMMIT_ONGOING;
+>>  	spin_lock(&journal->j_list_lock);
+>> 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
