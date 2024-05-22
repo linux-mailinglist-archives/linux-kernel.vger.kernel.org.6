@@ -1,153 +1,264 @@
-Return-Path: <linux-kernel+bounces-185828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F07C8CBB9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:54:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3A678CBB7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4D32827E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B031F22DAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C077779B9C;
-	Wed, 22 May 2024 06:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E37B79950;
+	Wed, 22 May 2024 06:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W7SC4IyV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="JOS00aaP"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DA674E3D;
-	Wed, 22 May 2024 06:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CE61CD13
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716360882; cv=none; b=h8TG2OuvdVKCTkmzLmCJuIYjyGbbPd7ezFVfWhNJbV4xf6pONWouWQKdrz2zX4TzMQHKcW3Jksl2t8I/DWPVwkKxIalo+issR4OjACDwI/jPkr3sXWSD6VlgrkPXs/UtyqswtG1m5IlyATef7cwlkxE5M5aETPm/e/exWeech5s=
+	t=1716360298; cv=none; b=UK28tLJ9zKXqlbQcy55wp/ldE0wCxQJTYnni+7n34u/YwrCDw8gfP9Qa15HYX1PZ9CfbDoJPlAWGhfXvMmMTN4ZEEJHNBUkT+L/qpwNxjguJK382wW+UYGHmWJW9Q6fW6lXX7LkGEL5qvka8DmNuZ8AMvzWmOzTmA6lSxgo2y9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716360882; c=relaxed/simple;
-	bh=2pX/LCZ6hGHka5Q0D7rOPSBgXKZ79U0LHg4ijlN3vnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fu7rNLOVk0ijNUCXuexV2vMXUpDa8xisfZ21T/ySNUfqhHWC2lfdXcc1vLGm5a8ZNXhrnINwbAnlRlz/hSwVwj4nlWotU0ri/QDUMLAWxogVarVHaup/W0SkjaIBnCumZ1WmcoHi/A6P3aG6H8Oh+8/sp3u2eA0EOfFasVf3v44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W7SC4IyV; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716360881; x=1747896881;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2pX/LCZ6hGHka5Q0D7rOPSBgXKZ79U0LHg4ijlN3vnA=;
-  b=W7SC4IyVOg4fYfTNhpQqiBV5P0i1l4/SjOqEftZCyUDDPWxIwXp7qEQz
-   gXtd2IHLOAPGHSwF4pBE6UdV4IRe5p9L6MZ032FzNCd0FdwIw9Di3As5X
-   LSbgq9zY6tdPxD88dBBEBHr0l7FD1gXeaiwqasacqreE0wgh8ESZuK1rA
-   y4yUuaoavnvXxQH57R23edxXNU4udmndK+eJudXjYiZ++UK6Na2YmM+te
-   47zpor/g2IcYCS336KOqNYxl1EamR11L8DAEg/qwhzROBwUcJfbS8Lw1e
-   CQOp1DK8GvxiTaK7oQE9xhpcRZVxml6Cl7rrxBk0BbGh5ABk8XYd6gt5n
+	s=arc-20240116; t=1716360298; c=relaxed/simple;
+	bh=AO3Vpd1ntrpjK0UR4Wr2RGOzPY45HzszITItSO8PJ5Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dPZ1Wq/3T+7cXieyq0iGK0qboW4zKCOFiOXx+qZumdwMPum5PP7MjxG/BjlzOYPxQWC4OheRHRAilU6acz7OIZfht28tUWZQY9JLusPzA8EHN+Ss23ncHxdc0ZVbNRqaHwVnWZ7gSzYmflIkE8A6L2fTeEpIW3lxR/9wCCBol/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=JOS00aaP reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6nFM5+jD8FPIWS5lx1usPnsN259GSLpHjZwehXdlMKs=;
+  b=JOS00aaPE4CT0fteQfnoggHdkejoYoWDhsh1pJMZsaWHXq/Ksu+T0AOq
+   JbedFtP7foifB9D8S0zgWIcCxo7bdkxwr/vXdZ/C8VK974L8Y9eneMcyn
+   zjYevz4Jd0fRwwoW4GNKKP6WNF1MQkl7Phmkae+DsrqtTWIqtlabVZ2Cn
+   e0niKbi7bbXL4zazwuH/49qneBKqvyZLEyyw8sMe6W3V3TRFrgDwbL+Gw
+   n/1RjkOyx+Y+DgEgpDURoC8r1x63D1tyDM/y+SnYvEZYuUP71233/c56k
+   8Po6iqCY13Hwm80THAFNeBJjdNAb2jpGIqcAMHN6DuZfq4Dv7osQWQFJO
    w==;
-X-CSE-ConnectionGUID: rioNoovzQ5Wzr0Bev+Ms7Q==
-X-CSE-MsgGUID: heXOuaEZSMOPX2Y/65YOtg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="16381232"
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="16381232"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 23:54:40 -0700
-X-CSE-ConnectionGUID: 6cwL83/SS3Glp6YI4IZ/Mg==
-X-CSE-MsgGUID: U0ckjVvUTJWNSbMY7eMCLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
-   d="scan'208";a="37661274"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 23:54:37 -0700
-Message-ID: <783061e3-51ad-46f3-aca8-73cebf603e27@intel.com>
-Date: Wed, 22 May 2024 14:54:33 +0800
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 22 May 2024 14:44:52 +0800
+Received: from CSBMAIL1.internal.ite.com.tw (CSBMAIL1.internal.ite.com.tw [192.168.65.58])
+	by mse.ite.com.tw with ESMTP id 44M6iku5018988;
+	Wed, 22 May 2024 14:44:46 +0800 (GMT-8)
+	(envelope-from kuro.chung@ite.com.tw)
+Received: from ite-XPS-13-9360.internal.ite.com.tw (192.168.72.42) by
+ CSBMAIL1.internal.ite.com.tw (192.168.65.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 22 May 2024 14:44:45 +0800
+From: kuro <kuro.chung@ite.com.tw>
+To: Pin-yen Lin <treapking@chromium.org>,
+        Kenneth Haung
+	<kenneth.hung@ite.com.tw>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil
+ Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman
+	<jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        AngeloGioacchino Del
+ Regno <angelogioacchino.delregno@collabora.com>,
+        Hermes Wu
+	<hermes.wu@ite.com.tw>, Allen Chen <allen.chen@ite.com.tw>,
+        "open list:DRM
+ DRIVERS" <dri-devel@lists.freedesktop.org>,
+        open list
+	<linux-kernel@vger.kernel.org>
+CC: Kuro Chung <kuro.chung@ite.com.tw>
+Subject: [PATCH v13] drm/bridge: it6505: fix hibernate to resume no display issue
+Date: Wed, 22 May 2024 14:55:28 +0800
+Message-ID: <20240522065528.1053439-1-kuro.chung@ite.com.tw>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 07/10] KVM: nVMX: Add a helper to encode VMCS info in
- MSR_IA32_VMX_BASIC
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kai Huang <kai.huang@intel.com>, Shan Kang <shan.kang@intel.com>,
- Xin Li <xin3.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>
-References: <20240520175925.1217334-1-seanjc@google.com>
- <20240520175925.1217334-8-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240520175925.1217334-8-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CSBMAIL1.internal.ite.com.tw (192.168.65.58) To
+ CSBMAIL1.internal.ite.com.tw (192.168.65.58)
+X-TM-SNTS-SMTP:
+	127722F295CCAE5EF0417517ECBD90D34AEFDB3A3085AF0F931D0C303D6848E62002:8
+X-MAIL:mse.ite.com.tw 44M6iku5018988
 
-On 5/21/2024 1:59 AM, Sean Christopherson wrote:
-> Add a helper to encode the VMCS revision, size, and supported memory types
-> in MSR_IA32_VMX_BASIC, i.e. when synthesizing KVM's supported BASIC MSR
-> value, and delete the now unused VMCS size and memtype shift macros.
-> 
-> For a variety of reasons, KVM has shifted (pun intended) to using helpers
-> to *get* information from the VMX MSRs, as opposed to defined MASK and
-> SHIFT macros for direct use.  Provide a similar helper for the nested VMX
-> code, which needs to *set* information, so that KVM isn't left with a mix
-> of SHIFT macros and dedicated helpers.
-> 
-> Reported-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+From: Kuro Chung <kuro.chung@ite.com.tw>
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+When the system power resumes, the TTL input of IT6505 may experience
+some noise before the video signal stabilizes, necessitating a video
+reset. This patch is implemented to prevent a loop of video error
+interrupts, which can occur when a video reset in the video FIFO error
+interrupt triggers another such interrupt. The patch processes the SCDT
+and FIFO error interrupts simultaneously and ignores any video FIFO
+error interrupts caused by a video reset.
 
-> ---
->   arch/x86/include/asm/vmx.h | 7 +++++--
->   arch/x86/kvm/vmx/nested.c  | 8 +++-----
->   2 files changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index 90963b14afaa..65aaf0577265 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -135,10 +135,8 @@
->   #define VMX_VMFUNC_EPTP_SWITCHING               VMFUNC_CONTROL_BIT(EPTP_SWITCHING)
->   #define VMFUNC_EPTP_ENTRIES  512
->   
-> -#define VMX_BASIC_VMCS_SIZE_SHIFT		32
->   #define VMX_BASIC_32BIT_PHYS_ADDR_ONLY		BIT_ULL(48)
->   #define VMX_BASIC_DUAL_MONITOR_TREATMENT	BIT_ULL(49)
-> -#define VMX_BASIC_MEM_TYPE_SHIFT		50
->   #define VMX_BASIC_INOUT				BIT_ULL(54)
->   #define VMX_BASIC_TRUE_CTLS			BIT_ULL(55)
->   
-> @@ -157,6 +155,11 @@ static inline u32 vmx_basic_vmcs_mem_type(u64 vmx_basic)
->   	return (vmx_basic & GENMASK_ULL(53, 50)) >> 50;
->   }
->   
-> +static inline u64 vmx_basic_encode_vmcs_info(u32 revision, u16 size, u8 memtype)
-> +{
-> +	return revision | ((u64)size << 32) | ((u64)memtype << 50);
-> +}
-> +
->   static inline int vmx_misc_preemption_timer_rate(u64 vmx_misc)
->   {
->   	return vmx_misc & VMX_MISC_PREEMPTION_TIMER_RATE_MASK;
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index fbfd3c5cb541..d690fa720dcf 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -7035,12 +7035,10 @@ static void nested_vmx_setup_basic(struct nested_vmx_msrs *msrs)
->   	 * guest, and the VMCS structure we give it - not about the
->   	 * VMX support of the underlying hardware.
->   	 */
-> -	msrs->basic =
-> -		VMCS12_REVISION |
-> -		VMX_BASIC_TRUE_CTLS |
-> -		((u64)VMCS12_SIZE << VMX_BASIC_VMCS_SIZE_SHIFT) |
-> -		(X86_MEMTYPE_WB << VMX_BASIC_MEM_TYPE_SHIFT);
-> +	msrs->basic = vmx_basic_encode_vmcs_info(VMCS12_REVISION, VMCS12_SIZE,
-> +						 X86_MEMTYPE_WB);
->   
-> +	msrs->basic |= VMX_BASIC_TRUE_CTLS;
->   	if (cpu_has_vmx_basic_inout())
->   		msrs->basic |= VMX_BASIC_INOUT;
->   }
+Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
+Signed-off-by: Kuro Chung <kuro.chung@ite.com.tw>
+Signed-off-by: Hermes Wu <hermes.wu@ite.com.tw>
+---
+V1->V3: update MAINTAINERS mail list
+V3->V4: remove function it6505_irq_video_fifo_error,it6505_irq_io_latch_fifo_overflow
+V4->V5: customer feedback again, update again, kernel build pass
+V5->V6: remove unrelated patch change, split into another patch
+V6->V7: modify code 0x02 to TX_FIFO_RESET by macro define
+V7->V8: fix merge conflict, change mail from 'cc' to 'to'
+V8->V9: modify patch description, patch summary
+V9->V10: modify patch summary, add Fixes
+V10->V11: modify patch description, add Signed-off-by
+V11->V12: moidfy patch description.
+V12->V13: fix code checkpatch.pl warning
+
+---
+ drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
+ 1 file changed, 49 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+index 469157341f3ab..cd1b5057ddfb4 100644
+--- a/drivers/gpu/drm/bridge/ite-it6505.c
++++ b/drivers/gpu/drm/bridge/ite-it6505.c
+@@ -1307,9 +1307,15 @@ static void it6505_video_reset(struct it6505 *it6505)
+ 	it6505_link_reset_step_train(it6505);
+ 	it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID_MUTE);
+ 	it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x00);
+-	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
++
++	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FIFO_RESET);
++	it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00);
++
+ 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_501_FIFO);
+ 	it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
++
++	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESET);
++	usleep_range(1000, 2000);
+ 	it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
+ }
+ 
+@@ -2245,12 +2251,11 @@ static void it6505_link_training_work(struct work_struct *work)
+ 	if (ret) {
+ 		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
+ 		it6505_link_train_ok(it6505);
+-		return;
+ 	} else {
+ 		it6505->auto_train_retry--;
++		it6505_dump(it6505);
+ 	}
+ 
+-	it6505_dump(it6505);
+ }
+ 
+ static void it6505_plugged_status_to_codec(struct it6505 *it6505)
+@@ -2471,31 +2476,53 @@ static void it6505_irq_link_train_fail(struct it6505 *it6505)
+ 	schedule_work(&it6505->link_works);
+ }
+ 
+-static void it6505_irq_video_fifo_error(struct it6505 *it6505)
++static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
+ {
+-	struct device *dev = it6505->dev;
+-
+-	DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
+-	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
+-	flush_work(&it6505->link_works);
+-	it6505_stop_hdcp(it6505);
+-	it6505_video_reset(it6505);
++	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
+ }
+ 
+-static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
++static void it6505_irq_video_handler(struct it6505 *it6505, const int *int_status)
+ {
+ 	struct device *dev = it6505->dev;
++	int reg_0d, reg_int03;
+ 
+-	DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
+-	it6505->auto_train_retry = AUTO_TRAIN_RETRY;
+-	flush_work(&it6505->link_works);
+-	it6505_stop_hdcp(it6505);
+-	it6505_video_reset(it6505);
+-}
++	/*
++	 * When video SCDT change with video not stable,
++	 * Or video FIFO error, need video reset
++	 */
+ 
+-static bool it6505_test_bit(unsigned int bit, const unsigned int *addr)
+-{
+-	return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE));
++	if ((!it6505_get_video_status(it6505) &&
++	     (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *)int_status))) ||
++	    (it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW,
++			     (unsigned int *)int_status)) ||
++	    (it6505_test_bit(BIT_INT_VID_FIFO_ERROR,
++			     (unsigned int *)int_status))) {
++		it6505->auto_train_retry = AUTO_TRAIN_RETRY;
++		flush_work(&it6505->link_works);
++		it6505_stop_hdcp(it6505);
++		it6505_video_reset(it6505);
++
++		usleep_range(10000, 11000);
++
++		/*
++		 * Clear FIFO error IRQ to prevent fifo error -> reset loop
++		 * HW will trigger SCDT change IRQ again when video stable
++		 */
++
++		reg_int03 = it6505_read(it6505, INT_STATUS_03);
++		reg_0d = it6505_read(it6505, REG_SYSTEM_STS);
++
++		reg_int03 &= (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LATCH_FIFO_OVERFLOW));
++		it6505_write(it6505, INT_STATUS_03, reg_int03);
++
++		DRM_DEV_DEBUG_DRIVER(dev, "reg08 = 0x%02x", reg_int03);
++		DRM_DEV_DEBUG_DRIVER(dev, "reg0D = 0x%02x", reg_0d);
++
++		return;
++	}
++
++	if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *)int_status))
++		it6505_irq_scdt(it6505);
+ }
+ 
+ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
+@@ -2508,15 +2535,12 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
+ 	} irq_vec[] = {
+ 		{ BIT_INT_HPD, it6505_irq_hpd },
+ 		{ BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
+-		{ BIT_INT_SCDT, it6505_irq_scdt },
+ 		{ BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
+ 		{ BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
+ 		{ BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
+ 		{ BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
+ 		{ BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error },
+ 		{ BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail },
+-		{ BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error },
+-		{ BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_overflow },
+ 	};
+ 	int int_status[3], i;
+ 
+@@ -2546,6 +2570,7 @@ static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
+ 			if (it6505_test_bit(irq_vec[i].bit, (unsigned int *)int_status))
+ 				irq_vec[i].handler(it6505);
+ 		}
++		it6505_irq_video_handler(it6505, (unsigned int *)int_status);
+ 	}
+ 
+ 	pm_runtime_put_sync(dev);
+-- 
+2.25.1
 
 
