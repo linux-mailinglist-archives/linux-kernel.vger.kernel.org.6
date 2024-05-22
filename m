@@ -1,116 +1,99 @@
-Return-Path: <linux-kernel+bounces-186015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F2B8CBEBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:57:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 980478CBEBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1F21F233F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:57:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C97541C2176A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BCF81AD0;
-	Wed, 22 May 2024 09:57:46 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B5481AA2;
+	Wed, 22 May 2024 09:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FZj2R2su";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z/6PVAQR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF63E81723;
-	Wed, 22 May 2024 09:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F1E81723
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716371866; cv=none; b=Kg0S8wW6MsqHa5qW2veOqSyQ4m4wuYEGDLIzv4+C0IuLY03bEgsYiD8zDCnqm3KBC1sHvgONmMg0H2Fer2f6pmGb5afmyxN3YbLZYu6CoZ3u1dg6THuwYAlEewLyfxVyA6yeR+kx8ZmpymW4DDc24zGzQGkt8Jng2k6G+sGJP7s=
+	t=1716371886; cv=none; b=Qm3eCNmRqnxW390WmV+6JXhDht74cR8To8X8iS3UD2cqtIXSXjJHN9iuVWhg93tMahx3eTe4GxJUf5CDPZJFad/WsingVTX8isBWi7Ji4O8JB2yCdKz2jCSlZe0czZzvkF6R6CunToI0gk4SYtmrk9ZVxRbNgppzhk5NhFq5rtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716371866; c=relaxed/simple;
-	bh=oRhZ+hkitej8QLEV7TjmpBTnEXYNkbKTGXWL5E1m5TE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QnMLTjF6ZefXn1rAaW6NcQ8PoqKDISG8SAAlk9ErB+9LyDq4Dwfs/v/q6KcNLOUlXZ4T9XtkLHoMAWqzys63oE5rN5v2ymBscZDPAzlvph3WPmWBN666r4lIDhsum3PqYa/g1n8GO+w27udHcawYNa67d6e4F7W4HVyfxiAAjjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62036051972so51029857b3.1;
-        Wed, 22 May 2024 02:57:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716371863; x=1716976663;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yQUqzHvmyAFsXTEe5p45/nDuCGsXZRnjFI+azIsZoY4=;
-        b=WUqCaRJGYT7TJNyeKFVVHTNgyPC+sN8Fakxk+XClyxFGNysf4+XaQ8MZwUPQFW04zG
-         KJGHBLsxwfQ5hZ/AGo9g8E2lc8kxW/olbt7+qrgHz36e4IWHV/LJbiHFwUd0/wpVHM8L
-         QEBBEviex18YdYLzhhpiTbf20Njm01F9b0TwYrYZOQoiBtK+gGiZOKhe+YZ/GF/maI8E
-         DLjgnMe0ZTjHoQQsZCUtKilcpEIguVtc2Axh0FmQIv2EyqkHuIamn1yMJY6tacYGO1nL
-         VCY96ZbFdJRdRgFIT/pi2QkCGv+sNOoUOyjpb8d5KVwGrh3PZGBrURgdblaEiW6Yg/V4
-         IrnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMWrJwdCDhshHC2z4Gw36WKSv39aPNSTUC0P+4gtsf+bjuUSY0nnD9lq2lU6H6xNygqBv4upHv120VfOT8OhkQrZJhjuyseZyz3PBJTgMg9qZRyApdRq9PeAwkKegLb2ByWFX1MVR/5CPWIfSP3Ybm/BoGSbusYZkSQ7yN8uv0I2DM2DK0SBXNxTJpy72ryka2E7mFg0GYK2ORPlomAExGa4+fTXYRNw==
-X-Gm-Message-State: AOJu0Yx8NSLX5JFUaa1kHP+FotV10nadfO3LYXVL2/zHq0O20RPfVa+9
-	Z4Gmk8bf6WBA2QwUAqYU6itQbb6SV1AbPL51LQ87rUjbBukbpO+3nnwlWX8m
-X-Google-Smtp-Source: AGHT+IEB9NRIOWnTUbxg/Ad3FS5WcBSQh38DZCgPzil/W6hyl3srPeJxdp4Of6U2U1CKlEbKnRB7qg==
-X-Received: by 2002:a81:a18d:0:b0:61b:a7de:1f8c with SMTP id 00721157ae682-627e46a4872mr15269317b3.2.1716371863023;
-        Wed, 22 May 2024 02:57:43 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e347048sm58291807b3.82.2024.05.22.02.57.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 02:57:42 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-df4dda88ce9so728341276.3;
-        Wed, 22 May 2024 02:57:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWpSMDCFHdvTby375xo4tw/iK9gWgkLtGJozJC6n9xx2W+CtvHlUqS/ohAeVRbeyh/hEwjgHu1k8lxAlIR7JePpJeidNhMX1NKyPdDe4I8bm7awrIQIy57Do5JSsmT0q28mdB4e4zEy/a1SGlBEcS2gcWssePuPddOFdPQG6l3joFfhnpnUc6VgaTCpdVf+r+Kz8/NhFtE5cQuvjwmDt9a4RbcaS4hfA==
-X-Received: by 2002:a25:854e:0:b0:deb:d87e:b2c7 with SMTP id
- 3f1490d57ef6-df4e0db9859mr1397700276.49.1716371862361; Wed, 22 May 2024
- 02:57:42 -0700 (PDT)
+	s=arc-20240116; t=1716371886; c=relaxed/simple;
+	bh=ai3Po91eHrHWSqQYU9MF/oxQql3OSFBpm9cVkudZZl8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ir4bSoUmqrshBLRZBVeoQSeyzqQrbhPddAzkNpQC33unbHnNpinPP+A29QH5Rrn4bJSGz8yH3VA25ukBu2Lm7+vHwW3fZ8K51fA/4zgjCh/1INfvG3DG6gxdCkiFIqzbfXorsoV0QL4IucqW+bOdSS++OGNbV9kgOdt4tSYrnpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FZj2R2su; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z/6PVAQR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716371882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YYcRdQHtgu6q/Fcsceek8ZJ4kHucWNk9eR+lcvD6/aQ=;
+	b=FZj2R2suUUtPyM0B99TxvrVdlo7cQRAGGWO94+CRzGrLjE908T/MsEZW+TuqxWGYYDVH4h
+	cmn026cytUjKHWh8KH0oK1a2TVbgqAIwgRUDaLmA9NHB36SI8fUuopBiqhB3bnn56WH+Xl
+	kIyCDK0NI2hV+5lMx1Zd33v4WiRKi4+PCPUpwIulO+gMkrHUmfW050royKQ3IOZ0+hweLq
+	c8ewMuHzj/GxQTDKnWlH5Mg6476l1Xa9S68KAgSiYCMSqz1XL2MmszDnughuQObNitYuXZ
+	/Jm+2UdNcyqFbErmcB5FDdIT2YyIQccXGXNfXJsYbtWq119m0BadUA/hrGh2CQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716371882;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YYcRdQHtgu6q/Fcsceek8ZJ4kHucWNk9eR+lcvD6/aQ=;
+	b=z/6PVAQRrIkLG++OVztMfV6dDelOY+v19rQl7GAOiupWX02TMje8txJyUrRPzOHXCWe1qr
+	9KnAsw4MrJpXNUBA==
+To: Wei Yang <richard.weiyang@gmail.com>, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Wei Yang
+ <richard.weiyang@gmail.com>, Vivek Goyal <vgoyal@in.ibm.com>, "Kirill A .
+ Shutemov" <kirill.shutemov@linux.intel.com>, Ingo Molnar
+ <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>, Borislav Petkov
+ <bp@suse.de>
+Subject: Re: [PATCH] x86/head/64: level2_kernel_pgt's kernel area is built
+ with _PAGE_PRESENT set
+In-Reply-To: <20240323232621.10400-1-richard.weiyang@gmail.com>
+References: <20240323232621.10400-1-richard.weiyang@gmail.com>
+Date: Wed, 22 May 2024 11:58:01 +0200
+Message-ID: <87jzjmgod2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240423175900.702640-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 May 2024 11:57:30 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVzio8eYndKGjUASw964FtYezBW=E_xapDZ7F4i7Mi_rA@mail.gmail.com>
-Message-ID: <CAMuHMdVzio8eYndKGjUASw964FtYezBW=E_xapDZ7F4i7Mi_rA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/13] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
- Remove the check from the object
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Sat, Mar 23 2024 at 23:26, Wei Yang wrote:
+> The code is first introduced in 'commit 1ab60e0f72f7 ("[PATCH] x86-64:
+> Relocatable Kernel Support")'.  Then 'commit c88d71508e36b
+> ("x86/boot/64: Rewrite startup_64() in C")', convert it to c. And
+> 'commit 2aa85f246c181 ("x86/boot/64: Make level2_kernel_pgt pages
+> invalid outside kernel area")' limit the range from _text to _end.
 >
-> Drop the bogus check from object as this didn't really add restriction
-> check.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> RFC->v2
-> - Updated commit message
-> - Collected RB tag from Rob
+> Originally, it does the check because the loop iterate the whole
+> level2_kernel_pgt, while currently it just fixup the kernel area. This
+> area is built with _PAGE_PRESENT set.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.11.
+What's the actual problem you are trying to solve?
 
-Gr{oetje,eeting}s,
+>  	/* fixup pages that are part of the kernel image */
+>  	for (; i <= pmd_index((unsigned long)_end); i++)
+> -		if (pmd[i] & _PAGE_PRESENT)
+> -			pmd[i] += load_delta;
+> +		pmd[i] += load_delta;
 
-                        Geert
+Fixing up non-present PMDs is a pointless exercise.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+Thanks,
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+        tglx
 
