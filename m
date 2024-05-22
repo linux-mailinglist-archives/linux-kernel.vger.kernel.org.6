@@ -1,68 +1,66 @@
-Return-Path: <linux-kernel+bounces-186852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF1C8CC9F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:55:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0658C8CCA03
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 484DDB22236
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:55:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73F5CB21EA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611BF14D28F;
-	Wed, 22 May 2024 23:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B47814D29B;
+	Wed, 22 May 2024 23:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ldjcPls5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LaezNVqN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AF82E631;
-	Wed, 22 May 2024 23:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6892E631;
+	Wed, 22 May 2024 23:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716422094; cv=none; b=edIl5rTn8VJdrZwTv3wx5g9FkChM3Tl6eA2nEM2VqZpj2U2pz54sfL5uBxnJOzUtArXggwfssvW49raEEIDaTXUifc70QougIhkuSybi2BwhLdVvjHjQrpmGoJ11or+v52i+FletQKB3FMuRgWRJcsMjvtPHhfE41cGQQwDf9Oc=
+	t=1716422398; cv=none; b=hD1rZKuIZF2ycOHvt6lK3qVbUNBC7vYL5mzRPMFO9BxY+HiViWEPdiHdvi2SpvRK+ND1eoj+b7jMtZKY1KsP8cyjKPu4YbIBZNpRCjSEjbIKL2qTbKJgEJvsqyQMTVvEro7QyHYemtkufcbB20PX1egfhdWRH12SbebKj07RB6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716422094; c=relaxed/simple;
-	bh=Wzxdnp5XO5Gk8JeUZhpdnJbMxxnyzhO4T7hcTyJAUq0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jdqOrqHjG3v3BT7TTgN7IqCxlNjkgOOn5P3v/bs9VONrqoOU2urF+DBZ9wieQxRmpJWqzSmXqSQWGii2o7VDkDew+blwufXUgyqAlPPj9Nr9CZpXRYK4MJWc0zZO+rvYvtbOzfFJzJucTnag9ViY09uWF0xlQRJ27hZI6inV6/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ldjcPls5; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1716422398; c=relaxed/simple;
+	bh=bH25G4J9tJZE1A8A+0SH1UYcRTKMK873psmxMuRe84o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=plqVjDzRpTWqD8XFOxpOQxRzYOPSLCkTB7RFZclhVQtEulk3RGDviKxK7z/6cJTibJDlOAIVxtX+an0GTT4jD8D5dzsyJCR9v8hCUXu5KqPUJgPk4MstqhtdAxhiWiTfp0efVDca1IvxzjZlMEfrHsBMs+lUx5j4/aPjzk5uijY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LaezNVqN; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MKvvYt001874;
-	Wed, 22 May 2024 23:54:38 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MBkjFj010453;
+	Wed, 22 May 2024 23:57:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=xtjs0+95UyS0oZvi0YIw5LIDSHAwyXY4Y6Fx3l5/VrI=; b=ld
-	jcPls5oQfxFkhZqqlqDRr7yHDxetqexBX/EJ5161qkKp47daq+gpE8JqDEfPl1/w
-	BDf7wPkOEJL2AptBh7fplrI6SU+4oFKfZ8pAQrRZbKvk0raiMp31U+6fqyG4zsvU
-	XhfRS3sorD9s/JP094v6TjoQXF1ohvT1V2ijDtllDDfMq7OzvA5R2lEDCny1IDsj
-	1lN5zaKGh2o2Rw/zLX+rR2pyAnlS7KawR65IWD4COcb479u205mpWxIjES2ebkLH
-	3IIlGGpFrGDqH7VDBFfwdwjnHr6BZt8/C0KeKYfwmgTxJAvKm5zpJZd1u17UBF4w
-	OLf5hD5CuOgqoIW5EOkw==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pq5j9x1-1
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=RpsDCS1dfdoVuVzmg/2ZQ
+	JlLRYFFc7pkGn3XYPNcMoc=; b=LaezNVqN7lh4+nw66AgI6w0YFvS9ZHMqjTjef
+	ocPhU+VUeWbr0XQWw+DERG6RKr2JEFnH+kW/jQf+3MvHY6i4VNzFe5GbHB1Wu0Im
+	T0lXkdCewXJc1XeE02Jtb/Srm/P12iJJ4YGwHQ+r1J1rPYLI+brhCnZQtpEIZRbT
+	JXUlphLjmaNrWQaRPH4lQnxyUtgY2SiJAH4DWgF6u0zeG1S+8Cf2lEGzDGMTxtfj
+	oou9lZgbsOwgJonDsiXyplRwAQhHSwJHVEPQALAhcM7GXHsdEjjpZua+Cun6HFib
+	aN7oXtbMWqj0fiJ+6/16gLv8un8GoAbSVPMhvS6cjQLC1qheA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqcag6d-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 23:54:38 +0000 (GMT)
+	Wed, 22 May 2024 23:57:37 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MNsbYG029337
+	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44MNvaRI002713
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 23:54:37 GMT
+	Wed, 22 May 2024 23:57:36 GMT
 Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 22 May 2024 16:54:37 -0700
+ 15.2.1544.9; Wed, 22 May 2024 16:57:35 -0700
+Date: Wed, 22 May 2024 16:57:35 -0700
 From: Elliot Berman <quic_eberman@quicinc.com>
-To: Elliot Berman <quic_eberman@quicinc.com>
-CC: Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Frank
- Rowand" <frowand.list@gmail.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+To: Conor Dooley <conor@kernel.org>
+CC: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio
 	<konrad.dybcio@linaro.org>,
@@ -79,129 +77,56 @@ CC: Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         "Humphreys,
  Jonathan" <j-humphreys@ti.com>,
         Sumit Garg <sumit.garg@linaro.org>,
-        "Michal
- Simek" <michal.simek@amd.com>,
+        "Jon
+ Hunter" <jonathanh@nvidia.org>,
+        Michal Simek <michal.simek@amd.com>,
         <boot-architecture@lists.linaro.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-arm-msm@vger.kernel.org>
-Subject: [PATCH RFC v3 2/9] dt-bindings: board: Introduce board-id
-Date: Wed, 22 May 2024 16:54:23 -0700
-Message-ID: <20240522-board-ids-v4-2-a173277987f5@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240522162545887-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240522162545887-0700.eberman@hu-eberman-lv.qualcomm.com>
+Subject: Re: [PATCH RFC v3 1/9] libfdt: board-id: Implement board-id scoring
+Message-ID: <20240522165555758-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
+ <20240521-board-ids-v3-1-e6c71d05f4d2@quicinc.com>
+ <20240521-sandal-onslaught-7762ee03ee96@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240521-sandal-onslaught-7762ee03ee96@spud>
 X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DpkhxoH8UqRFLEMMCaRQiDEKebv4G9j2
-X-Proofpoint-ORIG-GUID: DpkhxoH8UqRFLEMMCaRQiDEKebv4G9j2
+X-Proofpoint-ORIG-GUID: aJOOoogyRGQQumiFE56hmGnw41NPIqf4
+X-Proofpoint-GUID: aJOOoogyRGQQumiFE56hmGnw41NPIqf4
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-22_13,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=697 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2405010000 definitions=main-2405220166
 
-Device manufcturers frequently ship multiple boards or SKUs under a
-single softwre package. These software packages ship multiple devicetree
-blobs and require some mechanims to pick the correct DTB for the boards
-that use the software package. This patch introduces a common language
-for adding board identifiers to devicetrees.
+On Tue, May 21, 2024 at 08:28:01PM +0100, Conor Dooley wrote:
+> On Tue, May 21, 2024 at 11:37:58AM -0700, Elliot Berman wrote:
+> > The devicetree spec introduced a mechanism to match devicetree blobs to
+> > boards using firmware-provided identifiers.
+> 
+> Can you share a link to where the devicetree spec introduced this
+> mechanism? I don't recall seeing a PR to dt-schema for it nor did a
+> quick check of the devicetree specification repo show a PR adding it.
+> 
+> What am I missing?
 
-Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
----
- .../devicetree/bindings/board/board-id.yaml        | 71 ++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+My thinking is that the next patch would probably go to dt-schema or
+devicetree specification repo.
 
-diff --git a/Documentation/devicetree/bindings/board/board-id.yaml b/Documentation/devicetree/bindings/board/board-id.yaml
-new file mode 100644
-index 000000000000..894c1e310cbd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/board/board-id.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/board/board-id.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Board identifiers
-+description: |
-+  This node contains a list of identifier values for the board(s) supported by
-+  this devicetree. Identifier values are either N-tuples of integers or a
-+  string. The number of items for an N-tuple identifer is determined by the
-+  property name. String identifiers must be suffixed with "-string".
-+
-+  Every identifier in the devicetree must have a matching value from the board
-+  to be considered a valid devicetree for the board. In other words: if
-+  multiple identifiers are present in the board-id and one identifier doesn't
-+  match against the board, then the devicetree is not applicable. Note this is
-+  not the case where the the board can provide more identifiers than the
-+  devicetree describes: those additional identifers can be ignored.
-+
-+  Identifiers in the devicetree can describe multiple possible valid values,
-+  such as revision 1 and revision 2.
-+
-+maintainers:
-+  - Elliot Berman <quic_eberman@quicinc.com>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  board-id:
-+    type: object
-+    patternProperties:
-+      "^.*(?<!-string)$":
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        description: |
-+          List of values that match boards this devicetree applies to.
-+          A bootloader checks whether any of the values in this list
-+          match against the board's value.
-+
-+          The number of items per tuple is determined by the property name,
-+          see the vendor-specific board-id bindings.
-+      "^.*-string$":
-+        $ref: /schemas/types.yaml#/definitions/string-array
-+        description: |
-+          List of strings that match boards this devicetree applies to.
-+          A bootloader checks whether any of the strings in this list
-+          match against the board's string representation.
-+
-+          String-based matching requires properties to be suffixed with
-+          -string so that a bootloader can match values without otherwise
-+          knowing the meaning of the identifier.
-+
-+examples:
-+  - |
-+    / {
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+      compatible = "example";
-+      board-id {
-+        // this works with any boards where:
-+        // some-hw-id = 1, other-hw-id = 1, some-id-string = "cat"
-+        // some-hw-id = 1, other-hw-id = 1, some-id-string = "kitten"
-+        // some-hw-id = 1, other-hw-id = 2, some-id-string = "cat"
-+        // some-hw-id = 1, other-hw-id = 2, some-id-string = "kitten"
-+        some-hw-id = <1>; // some-hw-id must be "1"
-+        other-hw-id = <1>, <2>; // other-hw-id must be "1" or "2"
-+        some-id-string = "cat", "kitten"; // some-id-string must be "cat" or "kitten"
-+      };
-+    };
-+
-+additionalProperties: true
+Thanks,
+Elliot
 
--- 
-2.34.1
 
