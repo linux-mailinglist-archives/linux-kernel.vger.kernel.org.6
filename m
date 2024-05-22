@@ -1,112 +1,125 @@
-Return-Path: <linux-kernel+bounces-186359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9228D8CC32A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:22:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E738B8CC324
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471FB1F21C8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7842838DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B5A1419BC;
-	Wed, 22 May 2024 14:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3724F141987;
+	Wed, 22 May 2024 14:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bRguW/6C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNFOnYu0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6646913DBA4;
-	Wed, 22 May 2024 14:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728DA13DBA4;
+	Wed, 22 May 2024 14:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716387750; cv=none; b=HbkKNJATJQtLZobiAHYcvPr6990rTdB/o6uPg1fvglv3a9mhYy5DjUpEn2TsGsrkwV5Rp4EwkuIflV8lzeGBvlYSDdqd6IKwJ8XFHdoCf0PpbJWAvS0+Jj2OpfaP70FvP4ftHGiiFxNfz58HVJV7rfZ7Mq05tk+VkS8TomUntxw=
+	t=1716387734; cv=none; b=uXasys1KXPcd/fJUVgWdnF9fASOO5i54/HDuUM5Hrsoe2MIPUCVmdJ7uvy/7Ty8BE8k5bOQnCZDgZ+m3lNUoHHUbY6QHZke6Jhn2UhuQvhWcFIi5Jac5JAZa0Jdff0fpyTlx9G7dNcbckNz4wJvtJq6btroeiMhdP8ZDC8bWs7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716387750; c=relaxed/simple;
-	bh=suVrlw0nFzc3lB2cYZbKfBlNaV+EXs/T5pbTxcvyUJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TOpzxEeNcQ4dNSz8PlA1C6CxHX/Jfgg8UTfgjlWfA+u5u3ISq9IcSrSVk0HwqbINXKwcggtjoEGUe7aOmRbphwnu8RV/ub7Vovwz1Ye8KPWRru+qurx4m0mE5qTD0ukE8HdF5x0sPiVRETIdpU8YR9os289cdWOG/qMuXY4O4ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bRguW/6C; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716387749; x=1747923749;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=suVrlw0nFzc3lB2cYZbKfBlNaV+EXs/T5pbTxcvyUJQ=;
-  b=bRguW/6CffoK0NZVp50YNOgvwNg/vYY5zatUc0KDFOlZ7hsB5lS3iM4E
-   GzKUmDIX+17eDft0+Fh/eIpCDYkKC60Ejz+GpTvuSPtSI4RHns2gedEl4
-   bcefbdfROVDuklSAbHjh/1obC1DgZeOQ2QMtxOWPG6WjmeceeuJQvJ6Oq
-   thySkvUpWU750D0xD0B0tKcj6By8YEPnksb7X/2GYtqhIqQi9BPP3BlmR
-   aD3ZH8uDPDPoVpmKpkPdJAuEOHkc2kmG2gL3w03xCKjb9Rnlb/ZZvVeCJ
-   l1A8hZflVhOCG6mpj2eWE+rlvVkIWN28PTZk7pVZPwXUk/fgGL6Ul3abl
-   g==;
-X-CSE-ConnectionGUID: wWHEUyfrQXK3MdQY1veTLA==
-X-CSE-MsgGUID: 6U1VOcCRRJKY6rAsh3V6aw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="16473448"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="16473448"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 07:22:08 -0700
-X-CSE-ConnectionGUID: y1hX3QJjQ7i5UrmlX0ooBA==
-X-CSE-MsgGUID: ZlqPq3bHRNqj9K1zaEWn8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33886167"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 07:22:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s9mqx-00000009zT4-2IdD;
-	Wed, 22 May 2024 17:22:03 +0300
-Date: Wed, 22 May 2024 17:22:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Lubomir Rintel <lkundrak@v3.sk>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org
-Subject: Re: [PATCH] spi: dt-bindings: marvell,mmp2-ssp: Merge PXA SSP into
- schema
-Message-ID: <Zk3_i6JabA-0j0eE@smile.fi.intel.com>
-References: <20240522132859.3146335-1-robh@kernel.org>
+	s=arc-20240116; t=1716387734; c=relaxed/simple;
+	bh=LJl1i0W4EXotAHG6nsa5glp9lSWgRODR5PILl5J3OSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OXINBOWXb/Bz04vcRiK3lzMy+JVcg1WG+8bzFjwS89e1mhubKohpejkHTPOI4mCaWf4O7CEN1SogqKwGdFkw5WtQHMwW1qCPYXEuTs5Cmxn9+btoja6wB2scUT0JO8XLGk6CZdaeQfg3MGIeh0IJwK4qcFkvyYQ2zRSLKwCdC8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNFOnYu0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74F5AC32782;
+	Wed, 22 May 2024 14:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716387734;
+	bh=LJl1i0W4EXotAHG6nsa5glp9lSWgRODR5PILl5J3OSg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nNFOnYu0LvkD8jM3Vk8qKMcoXnpxPkVdqgLyLfw+dILH0Kdt5fZXmclevA15f04kT
+	 07NipmFqpRIHZB9riYNK+1jSpi+Imnt4kMQv7dx2z6XkhiKKJ7KEf3RkdS3XXUUQCi
+	 et2ECh+Tr9FAnlKvtqx1UCkt/G/qvhK9msrujcDRcBFFs/quWOXkkdt8OiXoeSPfwF
+	 1l4pJjFbha7C5H4wnOwDL6dhHyxbjuTZ7XK9Z7VJfsh6p/JVxfI3xGIoEGVdqV1lng
+	 R2KBjPWJ8vh2ThlCZbf7ukqmkIUbBZsPxRztxFFpAnMTsgtljNhl4fp4Aik/88KiM+
+	 9Vbo26v2RIhUA==
+Date: Wed, 22 May 2024 07:22:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Danielle Ratson <danieller@nvidia.com>
+Cc: Ido Schimmel <idosch@nvidia.com>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>,
+ "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "sdf@google.com"
+ <sdf@google.com>, "kory.maincent@bootlin.com" <kory.maincent@bootlin.com>,
+ "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+ "vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
+ "przemyslaw.kitszel@intel.com" <przemyslaw.kitszel@intel.com>,
+ "ahmed.zaki@intel.com" <ahmed.zaki@intel.com>, "richardcochran@gmail.com"
+ <richardcochran@gmail.com>, "shayagr@amazon.com" <shayagr@amazon.com>,
+ "paul.greenwalt@intel.com" <paul.greenwalt@intel.com>, "jiri@resnulli.us"
+ <jiri@resnulli.us>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, mlxsw <mlxsw@nvidia.com>, Petr Machata
+ <petrm@nvidia.com>
+Subject: Re: [PATCH net-next v5 04/10] ethtool: Add flashing transceiver
+ modules' firmware notifications ability
+Message-ID: <20240522072212.7a21c84b@kernel.org>
+In-Reply-To: <DM6PR12MB451677DBA41EA8A622D3D446D8EB2@DM6PR12MB4516.namprd12.prod.outlook.com>
+References: <20240424133023.4150624-1-danieller@nvidia.com>
+	<20240424133023.4150624-5-danieller@nvidia.com>
+	<20240429201130.5fad6d05@kernel.org>
+	<DM6PR12MB45168DC7D9D9D7A5AE3E2B2DD81A2@DM6PR12MB4516.namprd12.prod.outlook.com>
+	<20240430130302.235d612d@kernel.org>
+	<ZjH1DCu0rJTL_RYz@shredder>
+	<20240501073758.3da76601@kernel.org>
+	<DM6PR12MB451687C3C54323473716621ED8EB2@DM6PR12MB4516.namprd12.prod.outlook.com>
+	<20240522064519.3e980390@kernel.org>
+	<DM6PR12MB451677DBA41EA8A622D3D446D8EB2@DM6PR12MB4516.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522132859.3146335-1-robh@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 08:28:58AM -0500, Rob Herring (Arm) wrote:
-> The Marvell PXA SSP block is the same or similiar to the MMP2 variant.
-> The only difference in the binding is the PXA version supports DMA (and
-> that's probably a binding difference rather than an actual h/w
-> difference).
-> 
-> The old binding didn't belong under 'serial' as it is not a UART. The
-> SSP block also supports audio devices, so 'spi' is not a perfect fit
-> either. As the existing schema for MMP2 is there, just leave things
-> as-is.
-> 
-> The examples in the old text binding were pretty out of sync with
-> reality. 'clock-names' and 'ssp-id' aren't documented nor used.
+On Wed, 22 May 2024 13:56:11 +0000 Danielle Ratson wrote:
+> > > 4. Add a new netlink notifier that when the relevant event takes plac=
+e, =20
+> > deletes the node from the list, wait until the end of the work item, wi=
+th
+> > cancel_work_sync() and free allocations.
+> >=20
+> > What's the "relevant event" in this case? Closing of the socket that us=
+er had
+> > issued the command on? =20
+>=20
+> The event should match the below:
+> event =3D=3D NETLINK_URELEASE && notify->protocol =3D=3D NETLINK_GENERIC
+>=20
+> Then iterate over the list to look for work that matches the dev and port=
+id.
+> The socket doesn=E2=80=99t close until the work is done in that case.=20
 
-Thank you! I believe this is correct implementation and
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-(can't fully review it due to lack of DT knowledge).
+Okay, good, yes. I think you can use one of the callbacks I mentioned
+below to achieve the same thing with less complexity than the notifier.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> > Easiest way to "notice" the socket got closed would probably be to add =
+some
+> > info to genl_sk_priv_*(). ->sock_priv_destroy() will get called. But yo=
+u can also
+> > get a close notification in the family =20
+> > ->unbind callback. =20
+> >=20
+> > I'm on the fence whether we should cancel the work. We could just mark =
+the
+> > command as 'no socket present' and stop sending notifications.
+> > Not sure which is better.. =20
+>=20
+> Is there a scenario that we hit this event and won't intend to cancel the=
+ work?=20
 
-
+I think it's up to us. I don't see any legit reason for user space to
+intentionally cancel the flashing. So the only option is that user space
+is either buggy or has crashed, and the socket got closed before
+flashing finished. Right?
 
