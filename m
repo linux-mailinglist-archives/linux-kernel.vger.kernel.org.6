@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-186845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F7E8CC9E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:52:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075388CC9EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62C4BB221EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:52:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69C1AB21E3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E2D14D6E6;
-	Wed, 22 May 2024 23:51:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10A114F12D;
+	Wed, 22 May 2024 23:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+rwHtvC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJ6yeDJp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F248B1487C6;
-	Wed, 22 May 2024 23:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDB114D29C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716421908; cv=none; b=stxfW22OsGUW5eQXn3pRk3yjJFgJmOWvs3kMV5ovG6csMrPXJ+fnlHXjbZ7mHn1hE2rjdlgxrxraUhz/+0Wnz5e2tU3cBVVND0MDmssYi70vIbQzdCYbpYbv8zXcYSmCjHfcF9l/IcB2CfTZJyhsVaw5oegXLygfVTmCQ/UUSU8=
+	t=1716421908; cv=none; b=ufkVBH/xH6EfaoK8GIZCk1Yzn9pMjXF0gtBYUzC8/LjOYYGA3DkSzfcH0azdCGPhl7JOR5blxEecTNvnLQkamDKkazFCWOh5mEgpv+kp1JIwT850mzUzqKp7fz+UPcNajxeblYNFx78RPivOvKgXZO8KEFm0FxcgGV9zca91In8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1716421908; c=relaxed/simple;
-	bh=TDaB1nKc+MxBvpO+Za9PJH0cIp+1S891erTFOL0RME0=;
+	bh=Nty+d0O2k+tcTQfotqrEHDSwCA3ilUGE7inQCe2W3o8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RqWHCvB2kvGEgwlRJ4piX6agLm0G/Mg0q9fBU/staB0DK9fRFvznxBaNS/W7/2uscKTTwL0b4KVLYckR9E+C7hhCDDowY0TwwiYsbrBw7MsDZb25oB71Wv/xyeZD1Bj+zNSM8EedG9kqNRv0BGqVRRsFlWFnPWnN8zIGgENNhrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+rwHtvC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B399FC4AF08;
+	 In-Reply-To:To:Cc; b=UrJImT7N9eZ/OMN3qtftOBmgRZiStfPzY06v3VcanRxDbapfn5foFfNLSEpwzw9h4t4pNUCBI8mVUlqrt1f9beNenKoBKtcxc5dp7iwKqU20Vk87MKosTlvg+GKpV0y3xiOGaiIi2Ey9jz2k2WKuPDUGxJvwhh2a6OTIevyj+4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJ6yeDJp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C7C00C4AF0C;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1716421907;
-	bh=TDaB1nKc+MxBvpO+Za9PJH0cIp+1S891erTFOL0RME0=;
+	bh=Nty+d0O2k+tcTQfotqrEHDSwCA3ilUGE7inQCe2W3o8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=D+rwHtvCdJh9jv2oAUness9TQVv+cysyk/nNly+t/EoeeHAhLstDeY5ELWWJunzbS
-	 bT9X8seWwsieQw4inJczsbHHHT9Aap9ZpIj3KmsqVSAVvrwUXFnw+v7ZOQ4Ln3swYL
-	 qs/pJrd4YZmqgkwi3HiTe7C/8FgDu57XnSfKI6gFkrGOrp16Qg0geYm15wMcq5FMVL
-	 YAtvpxmxDMYFF3FBPpwPuCumgaZJaJwKqjllc5pC//MdgqsPZEviF00iP5WFoBriSv
-	 P/fTgnI4SwXytPaA8cW5bfQqFaz43YtIBhG+ucoVqCYe4C0T4h1j+3rGasi5o+wi99
-	 UwldgHMC+O42Q==
+	b=eJ6yeDJpb7x/wkFNd67nxJKK7wx+jMvay4iawRRiXNsVYNj970j+MzX2xuGFszMqW
+	 1O0K4M9HvcWxvoSaHBSt+ojD8yVfNKiNim163ETs9khkxu45zF7R3AuHD+CDdvrf+h
+	 NeXBi2k9LKvuxIyS9E7ie/ALv2xe5Ch/1aNaVCcUAIA+BLe3bSlggJDmDJ3VnSRE52
+	 e3Kr37DsFP3a51mEEY3nvzQXTW/2LKZUizTBPNOlIghfpdPLrjcsNV4poUmxN+rwmL
+	 W/aWZd4FdHnoTrr5FUF/P93yy9WvcRbksmc3D+2DpXIcNRP8v5KULbee2tn+qav5kr
+	 /2Jse6KsKlVgQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A1C43C43619;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B99FEC43618;
 	Wed, 22 May 2024 23:51:47 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: selftests: Add signal handling vector tests
+Subject: Re: [PATCH] riscv: uaccess: Relax the threshold for fast path
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171642190765.9409.15264560939296767259.git-patchwork-notify@kernel.org>
+ <171642190775.9409.16917538511707082083.git-patchwork-notify@kernel.org>
 Date: Wed, 22 May 2024 23:51:47 +0000
-References: <20240403-vector_sigreturn_tests-v1-1-2e68b7a3b8d7@rivosinc.com>
-In-Reply-To: <20240403-vector_sigreturn_tests-v1-1-2e68b7a3b8d7@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, shuah@kernel.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- andy.chiu@sifive.com, bjorn@kernel.org, vineetg@rivosinc.com,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240313091929.4029960-1-xiao.w.wang@intel.com>
+In-Reply-To: <20240313091929.4029960-1-xiao.w.wang@intel.com>
+To: Xiao Wang <xiao.w.wang@intel.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, jerry.shih@sifive.com,
+ nick.knight@sifive.com, ajones@ventanamicro.com, bjorn@rivosinc.com,
+ andy.chiu@sifive.com, viro@zeniv.linux.org.uk, cleger@rivosinc.com,
+ alexghiti@rivosinc.com, haicheng.li@intel.com, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Wed, 03 Apr 2024 16:50:29 -0700 you wrote:
-> Add two tests to check vector save/restore when a signal is received
-> during a vector routine. One test ensures that a value is not clobbered
-> during signal handling. The other verifies that vector registers
-> modified in the signal handler are properly reflected when the signal
-> handling is complete.
+On Wed, 13 Mar 2024 17:19:29 +0800 you wrote:
+> The bytes copy for unaligned head would cover at most SZREG-1 bytes, so
+> it's better to set the threshold as >= (SZREG-1 + word_copy stride size)
+> which equals to 9*SZREG-1.
 > 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> 
-> [...]
+> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
+> ---
+>  arch/riscv/lib/uaccess.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - riscv: selftests: Add signal handling vector tests
-    https://git.kernel.org/riscv/c/b2a2e892cdbc
+  - riscv: uaccess: Relax the threshold for fast path
+    https://git.kernel.org/riscv/c/e8c7995ea148
 
 You are awesome, thank you!
 -- 
