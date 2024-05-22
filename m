@@ -1,194 +1,120 @@
-Return-Path: <linux-kernel+bounces-186063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297BF8CBF5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:40:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA608CBF5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D931F23333
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:40:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07AF91F2350C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3589823DE;
-	Wed, 22 May 2024 10:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A5182482;
+	Wed, 22 May 2024 10:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XboQguBB"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b="TnlWbJpe"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BC2405CC
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB4A405CC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716374434; cv=none; b=cWP1Hpzyq+FLZKdJF7ztrfnKXNBelF58vaNHLjdRnvpmxnec9ERugpKywusBH1Qlvmo/25UgsI2jLL09/zlE9LZuprj34Y+3UkDy0orVfvZWw+M6APm77UQCWeOWTJvBwxiK894jDq9Un947s9HwU+w9cj9BX8Nh34uRDUcU39k=
+	t=1716374449; cv=none; b=MKUiP47X6i6ngzCXgEAQaVCs86j8AxqgMnaiw2KTYC3cBgnqaJX3CPKsJmwh2/jJXKmU6pKJ1LKnxU7yRi9Y6RhrdhK6JVL3SVc8w7NfrVm24Pd4g2NbXfXez5x8Y+cWnZoBVy+6p6zJUMRElH5aT841tKTobeqebqh+IIrISoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716374434; c=relaxed/simple;
-	bh=DX3D6Q/G2nkV8/MDn0wGoCxEIYLxKvAtTiLNkBqKcxg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dohg1vg1o+/a2L0PI68Ah8G+IQLFD3m4aXi/FgFAlihPKtEQCJNmHhcypef1cAbn6SGtlRcfU3RruyzYMpGAzR9boLnohvocRP/jzT9eHLffgQz49Wq6/rAOWscQoV3W7KAx3+YmDXkNQ1L455eeerj4uY7WSvyO3TmDLbJLQFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XboQguBB; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4df456bbf86so1594681e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:40:33 -0700 (PDT)
+	s=arc-20240116; t=1716374449; c=relaxed/simple;
+	bh=uX4+J3uUcRNkmNptKAAtEgtyDstamJlPig+t2ovpjig=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aCNnr8+yZUsNgWa+/b5xXZIi6WA9H/2TLeguIclYXOns5kQTqfDwSXfCseM9VRzeYRrxpgbEx1hA+e/3ZWZmqKoMK3USRV0VRTiAO7BWXIU7jrH7NvKjimX+tkK881QDzi9ynHzhU6dPzppz9MnyOBhI7HezIi/XDclIbSV8hVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b=TnlWbJpe; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-df4e1f0f315so567732276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:40:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716374432; x=1716979232; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JGBrCiYdmQ4B6wnJrGx67czT3yLNOBqFphtPVjs664s=;
-        b=XboQguBBcyo0ACzQubO5Hte4hmO4+Ie9JIa/jX9y4yBFEvOV/aAvchX0StWXVs6NC9
-         0XvpU9H96wg7Un6axZ0fRqZ/0ORCEicNGinmb5F4c5dlPRb9C12Gh5csovuZx/PYiOcm
-         QnbxjDsnlZgFq4OhFd6yFlsfrN2nqCqF6id9nUbSyPiG/bagspczylbVY/boMqXqnJUi
-         RJHE19j01twowLkQsFHCmKR7XmyGV2Qry74dQurSe+uSn3WImBTLpoLc9dY6Met6jqI8
-         JGMTgMBxQsdTzNCS9y/Rx1qVdxSwW81ijRAsJyYQ3jq/kvg0VoPAzYZ+tPBQG5JoTpb3
-         M88w==
+        d=monstr-eu.20230601.gappssmtp.com; s=20230601; t=1716374444; x=1716979244; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QF6Qtl+FDdU1JQjEZdECTWNBkzbNoZxUpBzWTpiOiU8=;
+        b=TnlWbJpeiohyiQqYTUn1Tx9//ydzkObu60ZosSyQmxVWGUEIFux8tSQOb2FrzuUqps
+         ShS3NA8j5uL3mT/I/m/dFdOUk/OQrp6R3CiRq+0kz9dTmw28J4ZipJxT+bfKs3oOO4gE
+         e9L37DcSPG0PiiRo1481XPJxnolDMGu5IdqgGfrinRGx8lRJS0d/HokSftMi072n6Gbh
+         IntUtuqogX9EfSD3+EGV9SOs5LP1HVSMDV82KVngOVV1V5P5n07STYySUeQivXQs9pSB
+         lHa533JJkh61XQsah0VJvDn8s0p0rD4uZaO8tSgpL3mbV/WKj6Cw/atOh7RtZwinE8Uh
+         w50A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716374432; x=1716979232;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JGBrCiYdmQ4B6wnJrGx67czT3yLNOBqFphtPVjs664s=;
-        b=AjtmVqq/0erXcOXZjUU0CWk5v7qUHBukUqNnGSrzj/iSmG3sDtQAYw8IvQa7G+J192
-         RAidKF5+PGPfmgsMmSFe7FVUDC/GfMlAm3H35PoX1OKC+sRtdRGiw3fTK2IyhixMVgmQ
-         OKdqyMhGGpXSWZApa4sZgNZhgrMGNwm58IB4ZBoTJPgLMRmjOwnVkJxc/w263Gwdlkwm
-         j3SRYH3lnteI1/D+nA7NI7TT/xyqlYsijCqzQlhYp6w1sceKlINrxku9E5ahgg3u0hsp
-         QXP+Ckl6fEuNQORJXH9uGMQHbS83YFW/VdFD+uX7P3O9p9hV306TQkY6RKg4vokdM2bj
-         gQSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVx4z4ho2EqBOXS0jqoHG+6pPtLqyh3ZQn/Lrq6ugG918ScBVDOJjF3wiblvfC6QygvQDfPJsSNCTgN1CfoBb17ESQZQ9GoiS4T9bwe
-X-Gm-Message-State: AOJu0YzOY3Cg4V1xatO91JdzBVqbw80AfyZfCQ7xta2tvZB1bebUXOm1
-	ZFJVWtHMpD8Q3o7wX+HOeUOA41oQscVmIYJ2Rk+91VM/rElokYpiGuDpC66+isSM8EcYH7Xgr1a
-	BZQqvhpQO0/33RfCA8UX/P4zmWeJKbbrq
-X-Google-Smtp-Source: AGHT+IFz/+FulVn/L4GngDGNYyGatHQM4h9w9g4/jURT3l7FTQh1zUzhDggmL2PIlEtdWuaZYnIBue2iy9mAn20e0uE=
-X-Received: by 2002:a05:6122:168b:b0:4cb:fc25:7caa with SMTP id
- 71dfb90a1353d-4e2185dfe36mr1512317e0c.14.1716374432152; Wed, 22 May 2024
- 03:40:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716374444; x=1716979244;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QF6Qtl+FDdU1JQjEZdECTWNBkzbNoZxUpBzWTpiOiU8=;
+        b=Udj1gZ/Wm/47YBT9g089vlkVGASXoK+g/TakVADUyoKROaahciQIKYWkMePfNKeI9a
+         dwZSdt/I+P2iRvupAbvdT8zAcT/DkM+wj6ZcJPxeNsHDziJ0uExtkxMAoxFlonNYxyGR
+         szmHZyZmT5pk/QfqK1jrA5CQBtQ6Io2k+nPr76TRILNhuGS4tXrI3t4+ESoCplXj/64y
+         x2MJ8mFGuVtUT1I8f/Mj2RaeN1VG3XLB3J1pAnGFltFOYkLVnACH2T/ghEuVmiiYkJRh
+         JWrA5+CtvqODi+RNg0aKCYcZzMIu9TP3pRqFCC/CBOHiRshHyUKPUgN85g6uojlSQW8X
+         QFWw==
+X-Gm-Message-State: AOJu0YzYVtMzvCDIjpC2sNVw+t7lgoiag9jg2kciKTuhRtUPQ6nYisE0
+	S6Uq9PbdZR1kfP0fBbU61/BiKEdr1NTpDPXHuRiwg/6cWlhJgsPqTB7sY0AdPPqb0UXRAu34Ejk
+	13GebeXUqhKerfYeqFY2CRs9WjfpvySC/VUpqJnYYBqTcymnjccyb
+X-Google-Smtp-Source: AGHT+IF6C/SwIvqlbLxucTJYUAL2q8HkGrSMqR+5EetOG0QkPzGgAwWEWEPq1SwZlbWcXn50bAgww/+pBy3uBpg7Pls=
+X-Received: by 2002:a5b:c03:0:b0:de5:4c3a:5ab6 with SMTP id
+ 3f1490d57ef6-df4e0a6e888mr1686719276.3.1716374444532; Wed, 22 May 2024
+ 03:40:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0e2a6f232e7579a2e4407ecf075531980d97f286.1716367360.git.baolin.wang@linux.alibaba.com>
- <22ac01a3-ddbb-4114-88cd-ad1a31982dad@redhat.com> <51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
-In-Reply-To: <51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 22 May 2024 22:40:20 +1200
-Message-ID: <CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
-Subject: Re: [PATCH] mm: drop the 'anon_' prefix for swap-out mTHP counters
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, willy@infradead.org, 
-	ying.huang@intel.com, ryan.roberts@arm.com, ziy@nvidia.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+From: Michal Simek <monstr@monstr.eu>
+Date: Wed, 22 May 2024 12:40:33 +0200
+Message-ID: <CAHTX3dJaBOjpy6bkasrezjzydyMWAGEjqOcfhY18XWg=XDjHgw@mail.gmail.com>
+Subject: [GIT PULL] arch/microblaze patches for 6.10-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 9:38=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
->
->
-> On 2024/5/22 16:58, David Hildenbrand wrote:
-> > On 22.05.24 10:51, Baolin Wang wrote:
-> >> The mTHP swap related counters: 'anon_swpout' and
-> >> 'anon_swpout_fallback' are
-> >> confusing with an 'anon_' prefix, since the shmem can swap out
-> >> non-anonymous
-> >> pages. So drop the 'anon_' prefix to keep consistent with the old swap
-> >> counter
-> >> names.
-> >>
-> >> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-> >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> >> ---
-> >
-> > Am I daydreaming or did we add the anon_ for a reason and discussed the
-> > interaction with shmem? At least I remember some discussion around that=
-.
->
-> Do you mean the shmem mTHP allocation counters in previous
-> discussion[1]? But for 'anon_swpout' and 'anon_swpout_fallback', I can
-> not find previous discussions that provided a reason for adding the
-> =E2=80=98anon_=E2=80=99 prefix. Barry, any comments? Thanks.
+Hi Linus,
 
-HI Baolin,
-We had tons of emails discussing about namin and I found this email,
+please, pull these two patches to your tree. It is cleaning up code
+around early_printk support
+which was removed a long time ago.
 
-https://lore.kernel.org/all/bca6d142-15fd-4af5-9f71-821f891e8305@redhat.com=
-/
+Thanks,
+Michal
 
-David had this comment,
-"I'm wondering if these should be ANON specific for now. We might want to
-add others (shmem, file) in the future."
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-This is likely how the 'anon_' prefix started being added, although it
-wasn't specifically
-targeting swapout.
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-I sense your patch slightly alters the behavior of thp_swpout_fallback
-in /proc/vmstat.
-Previously, we didn't classify them as THP_SWPOUT_FALLBACK, even though we
-always split them.
+are available in the Git repository at:
 
-                if (folio_test_anon(folio) && folio_test_swapbacked(folio))=
- {
-                        ...
-                                if (!add_to_swap(folio)) {
-                                        int __maybe_unused order =3D
-folio_order(folio);
+  git://git.monstr.eu/linux-2.6-microblaze.git tags/microblaze-v6.10
 
-                                        if (!folio_test_large(folio))
-                                                goto activate_locked_split;
-                                        /* Fallback to swap normal pages */
-                                        if (split_folio_to_list(folio,
-folio_list))
-                                                goto activate_locked;
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-                                        if (nr_pages >=3D HPAGE_PMD_NR) {
-                                                count_memcg_folio_events(fo=
-lio,
-                                                        THP_SWPOUT_FALLBACK=
-, 1);
+for you to fetch changes up to 58d647506c92ccd3cfa0c453c68ddd14f40bf06f:
 
-count_vm_event(THP_SWPOUT_FALLBACK);
-                                        }
-                                        count_mthp_stat(order,
-MTHP_STAT_ANON_SWPOUT_FALLBACK);
-#endif
-                                        if (!add_to_swap(folio))
-                                                goto activate_locked_split;
-                                }
-                        }
-                } else if (folio_test_swapbacked(folio) &&
-                           folio_test_large(folio)) {
-                        /* Split shmem folio */
-                        if (split_folio_to_list(folio, folio_list))
-                                goto keep_locked;
-                }
+  microblaze: Remove early printk call from cpuinfo-static.c
+(2024-04-24 10:27:31 +0200)
+
+----------------------------------------------------------------
+Microblaze patches for 6.10-rc1
+
+- Cleanup code around removed early_printk
+
+----------------------------------------------------------------
+Michal Simek (2):
+      microblaze: Remove gcc flag for non existing early_printk.c file
+      microblaze: Remove early printk call from cpuinfo-static.c
+
+ arch/microblaze/kernel/Makefile             | 1 -
+ arch/microblaze/kernel/cpu/cpuinfo-static.c | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
 
-
-If the goal is to incorporate pmd-mapped shmem under thp_swpout* in
-/proc/vmstat,
-and if there is consistency between /proc/vmstat and sys regarding
-their definitions,
-then I have no objection to this patch. However, shmem_swpout and shmem_swp=
-out_*
-appear more intuitive, given that thp_swpout_* in /proc/vmstat has
-never shown any
-increments for shmem until now - we have been always splitting shmem in vms=
-can.
-
-By the way, if this patch is accepted, it must be included in version
-6.10 to maintain
-ABI compatibility. Additionally, documentation must be updated accordingly.
-
->
-> [1]
-> https://lore.kernel.org/all/05d0096e4ec3e572d1d52d33a31a661321ac1551.1713=
-755580.git.baolin.wang@linux.alibaba.com/
-
-Thanks
-Barry
+-- 
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
 
