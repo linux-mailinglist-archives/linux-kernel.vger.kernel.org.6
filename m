@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-186401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2DD8CC3BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:03:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7628CC3BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE9BDB22640
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:03:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5A21C22BAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DF91F5E6;
-	Wed, 22 May 2024 15:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806EB20DE8;
+	Wed, 22 May 2024 15:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="L5rWursz"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lOsOaVwT"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FA639FEB
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E142940B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716390176; cv=none; b=kjjYc4q1wYW1k0pJhkYnBaz8j5ayV0T0sa5iZFdGhhTmOu+TE8OsrrQOIQxTROoug+C4xSimm9d/lIfxUGSSux3zbls73+WuILmThSRdqBYfJ/CJA/od/KARKfHaXhS8gU9nKb55n2wZLbU+UvkIEZo1aMElPAYdjfv2nljNt/M=
+	t=1716390177; cv=none; b=PrnYwGjRXZZN49WMDb5c/RiaY98FJmYipLQvXA5azqdOGEb1lY6cjCCg4qb+ON1qSX+jJHVyrAmPng/ltkcdaBc/lPr9WI63yUzZJuQzNUO8/YUaOvKQj1TiLuwi+oV0mzM84eXKG9KSpYNq0SrRvVLNbtjG8/3GZOTTJ20NVSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716390176; c=relaxed/simple;
-	bh=Py0dfBh0rk9cPcnRmp0ehNdFKbMfxplFlghi6OJqfoQ=;
+	s=arc-20240116; t=1716390177; c=relaxed/simple;
+	bh=Nl4giAAtfP1wgG/NEvZwNNNg55OtAUvdLhvjiOoMMiI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vgvvhamg3M5XrM3NmDKyc3lUZe4P4zZ/FFhuhYcpfb0d760GC88aX1yIqrodbrpc9vy8k/hcMAYdEyJMBrL8HJg2LxO52BCMS02/rf3Oi/2DlAnkTZgMZp4usMCbAgRmIjvRtjkeyxa+0MQZX75kwt/5TczdvHR8EecPgGlUq7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=L5rWursz; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=c1065tNWxB2oIbVpXhJIBw0IDBUaPssnUy7si5NGqxf4vLWeEfhqZMHN7Kk1YGzx+dwLLtVqxd7vLmOHqG02T/ssK1nqHHkx5MTwiIOD60OP/2WkxD5wDPNLz3Vf4m2VjIrlBOblA5tw6D/PqFmGJFjmE1JHcbPqc1dHuwYevjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lOsOaVwT; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-420180b5897so8659955e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:02:54 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e6792ea67fso80955361fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:02:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716390173; x=1716994973; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716390174; x=1716994974; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GgUsIx8ed6TkRFD72RRzx4QHPjFX183C6Bw53EkwCkQ=;
-        b=L5rWurszqzxYQwhes2g9I1RNhiaxxtLds2nsxBjFKwsHHWaJbRlMpIVF2IwPbdTKT3
-         6thZaFKx533JoaLrRRSpmr/lDEWJYEK2Z4tJMiXJEh2oSCeZNNJWNdWYKz/uVO2qsDHO
-         Nc/F6P0Yuk2/nUkzqhNuvHjeFiKRqUno8xYm3qBbpofsErcJ+oclwQZBOnIxGec0r9T2
-         Qg3aUgWmLoqIAewNBvZhnQsRQkG5wtP7SUXmDUoB0qgfeLbw8gMCeyoDbAg8pcYBnCjg
-         PzIC7R7e4XmWiXq93I7drPducJN2AHtxumERzV8GUCIS3DKh+ggTENCAuJA4Hd7njY4i
-         8E8g==
+        bh=7D6fFRwhN0Zkm+pAkm+qmc7n3e4Gjj3CxdaCMG+7qFE=;
+        b=lOsOaVwTjbL3/MMOYpC+33vZF3ehhPbbX7OoGEGfu4alEbUs8E7wI0HlMsY5mmuncI
+         pL85DjfL/tPF8YSeQtIOVWKCMxtNKeiK9lmgk85V8TPoj6U5Nir7lDYj1R98QmUa622J
+         uEXS+VnwBAoOp3zSxP7yHt9+xHPnAgvZye+MANa3TazzkMEhrwOjf1R9JESiWCPGjydN
+         tLi1gb2m88GmFpj5/j5K6BpybXZrO6cLOd6tFF1GKoT8J1YiyXO7jX7DwilRyGBYq8Tc
+         oyuFh0rjJIfgjT0j45tqBHBIZShjqVhTN+W+nHAwFe1xJ+GauGMltb3tcnFGjIy2mSsd
+         mcPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716390173; x=1716994973;
+        d=1e100.net; s=20230601; t=1716390174; x=1716994974;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GgUsIx8ed6TkRFD72RRzx4QHPjFX183C6Bw53EkwCkQ=;
-        b=RzmVUoqDiFCc8l8SuglbC7Hy41TwG2veU2EmtEqR6bd12SncHOwOybCX+ybFOmv7eu
-         kkGPUm6uUt80ADldMHZ3OZ6DcL70V6+mGsT22PqLJfRcN4Y71qzulrfxg8MsLoh0U1bB
-         +odFrZ2kr2W+Uf23fmUMauHwvmU4EXfRA8X6uh+DOpzadm+hAAHA3zL1w1qf0oyyoFnU
-         rZAYkmfiRyKbQmUCjMcFk/2i6vNhUVwylCbW8uxo4n01JB+Dk5Eo7n7v+teeYWQCCuAa
-         2mZqFjO5OPDjrAk9ZFVj+7yV46Dl4ejqQjCGSXYFIBYKo6mNuMvf8rFJOGaG71OWFa9i
-         kTcw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1WFzuQsHIZB6prjhw9z+f8oUeuBDCPICoomb5nUfb9KvWgrMtAJizWrdUPEivm5Ayl6fR98oWPgEpLOWsNvb0CUYb3iqbKpGaT+hE
-X-Gm-Message-State: AOJu0YwDaVy635/8M40BueNWtzNmK6ebvTIB1trJs9tTJYg8iCfoQL00
-	td4CO2grl1BrcModlASR7lZ2EKnxkEpfwh/EWvHYWX9s9fqxSfv2rfc+oY9I2nw=
-X-Google-Smtp-Source: AGHT+IHyCHYYNmWWzpXhjpvsTTR8VSofZM1SnOjDCgrzbQXarHAbXHu4Sn+m+jj6ZJiPmf0ndNgQ8Q==
-X-Received: by 2002:a7b:cb44:0:b0:41b:8660:c530 with SMTP id 5b1f17b1804b1-420fd2d9c25mr16731045e9.5.1716390173171;
-        Wed, 22 May 2024 08:02:53 -0700 (PDT)
+        bh=7D6fFRwhN0Zkm+pAkm+qmc7n3e4Gjj3CxdaCMG+7qFE=;
+        b=qjLolTK1DZTULKRTwTmtkHHCc66QbuOlNlfrijFA0BZJduwwzwu/R0CkA0VbyB2ccm
+         dC/UTC4vgLz5i/6G1kerpwtq9mKvBLDlOZVIlbH+KQxV186s/1bhhhvGPu8Qg2ebQO65
+         5RAOAqunrkwV3KgFeAkjLdcZ2JLM9rR8IhKOpq6NMa2DI9lSqqt1tsTlrDnQEVEeDSV1
+         iIGnNN/fGjTLCvcUW4Ec4UDv8XlLNKrq2IZoBb6MLMpq+1jt76zBDEVOQhLUN4YFZr2n
+         Nhz2xLXuPIG/lrmkUt0QKZFLDbkquY4yKb+N2MmkA4463drQczV6JyCsQ1bo2fX1wPcK
+         BowQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqvYuptwcRmPgKUOVCQo59IIsnVlYF1BD/sVEs7y44OXo0SHlY0657ggL1fMuyq6A8JZ1RF5iVYDKA4qb+4GxuSDwg1g4dtYPY3LlQ
+X-Gm-Message-State: AOJu0YxIsqieami2fXc9D0FwCcBlgQWurmrAPJqSwmdNgQOPAWQ0Gf4a
+	+NmAoFeRCHwia15TGem63ccLhUBIMlc+n+oETLF0wkYqrp3qnVNao8treHYAQ9o=
+X-Google-Smtp-Source: AGHT+IGD/2vp9GYsoEwJ7/JTNdx/B3p8YYiryw+V1L9SZyquSNzerQr26Dr671cNpJ9rq5Cile52Dg==
+X-Received: by 2002:a2e:9dc1:0:b0:2e0:69b4:d655 with SMTP id 38308e7fff4ca-2e949501a7emr12417751fa.3.1716390174350;
+        Wed, 22 May 2024 08:02:54 -0700 (PDT)
 Received: from localhost.localdomain (host-79-16-6-145.retail.telecomitalia.it. [79.16.6.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm531370515e9.9.2024.05.22.08.02.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm531370515e9.9.2024.05.22.08.02.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 08:02:52 -0700 (PDT)
+        Wed, 22 May 2024 08:02:54 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
 To: jic23@kernel.org,
@@ -79,9 +79,9 @@ Cc: nuno.sa@analog.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Angelo Dureghello <adureghello@baylibre.com>
-Subject: [PATCH v2 4/6] iio: dac: ad3552r: add support for ad3541r and ad3551r
-Date: Wed, 22 May 2024 17:01:39 +0200
-Message-ID: <20240522150141.1776196-5-adureghello@baylibre.org>
+Subject: [PATCH v2 5/6] iio: dac: ad3552r: change AD3552R_NUM_CH define name
+Date: Wed, 22 May 2024 17:01:40 +0200
+Message-ID: <20240522150141.1776196-6-adureghello@baylibre.org>
 X-Mailer: git-send-email 2.45.0.rc1
 In-Reply-To: <20240522150141.1776196-1-adureghello@baylibre.org>
 References: <20240522150141.1776196-1-adureghello@baylibre.org>
@@ -95,91 +95,65 @@ Content-Transfer-Encoding: 8bit
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-Add support for single-output DAC variants.
+After model data and num_hw_channles introduction, we have:
+
+ad3552r_desc, num_ch: used to keep channel number set in fdt,
+ad35xxr_model_data, num_hw_channels: for max channel checks,
+AD3552R_NUM_CH: just actually used to define the max array size
+on allocated arrays.
+
+Renaming AD3552R_NUM_CH to a more consistent name, as AD3552R_MAX_CH.
 
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
 Changes for v2:
-- adding new models using model data structure.
+- patch added in v2
 ---
- drivers/iio/dac/ad3552r.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/iio/dac/ad3552r.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
-index 6a40c7eece1f..b4630fb89334 100644
+index b4630fb89334..b8bdbfed22e3 100644
 --- a/drivers/iio/dac/ad3552r.c
 +++ b/drivers/iio/dac/ad3552r.c
-@@ -140,7 +140,9 @@ enum ad3552r_ch_vref_select {
+@@ -117,7 +117,7 @@
+ #define AD3552R_REG_ADDR_CH_INPUT_24B(ch)		(0x4B - (1 - ch) * 3)
+ 
+ /* Useful defines */
+-#define AD3552R_NUM_CH					2
++#define AD3552R_MAX_CH					2
+ #define AD3552R_MASK_CH(ch)				BIT(ch)
+ #define AD3552R_MASK_ALL_CH				GENMASK(1, 0)
+ #define AD3552R_MAX_REG_SIZE				3
+@@ -279,8 +279,8 @@ struct ad3552r_desc {
+ 	struct gpio_desc	*gpio_reset;
+ 	struct gpio_desc	*gpio_ldac;
+ 	struct spi_device	*spi;
+-	struct ad3552r_ch_data	ch_data[AD3552R_NUM_CH];
+-	struct iio_chan_spec	channels[AD3552R_NUM_CH + 1];
++	struct ad3552r_ch_data	ch_data[AD3552R_MAX_CH];
++	struct iio_chan_spec	channels[AD3552R_MAX_CH + 1];
+ 	unsigned long		enabled_ch;
+ 	unsigned int		num_ch;
  };
+@@ -539,7 +539,7 @@ static int32_t ad3552r_trigger_hw_ldac(struct gpio_desc *ldac)
+ static int ad3552r_write_all_channels(struct ad3552r_desc *dac, u8 *data)
+ {
+ 	int err, len;
+-	u8 addr, buff[AD3552R_NUM_CH * AD3552R_MAX_REG_SIZE + 1];
++	u8 addr, buff[AD3552R_MAX_CH * AD3552R_MAX_REG_SIZE + 1];
  
- enum ad3542r_id {
-+	AD3541R_ID = 0x400b,
- 	AD3542R_ID = 0x4009,
-+	AD3551R_ID = 0x400a,
- 	AD3552R_ID = 0x4008,
- };
+ 	addr = AD3552R_REG_ADDR_CH_INPUT_24B(1);
+ 	/* CH1 */
+@@ -597,7 +597,7 @@ static irqreturn_t ad3552r_trigger_handler(int irq, void *p)
+ 	struct iio_buffer *buf = indio_dev->buffer;
+ 	struct ad3552r_desc *dac = iio_priv(indio_dev);
+ 	/* Maximum size of a scan */
+-	u8 buff[AD3552R_NUM_CH * AD3552R_MAX_REG_SIZE];
++	u8 buff[AD3552R_MAX_CH * AD3552R_MAX_REG_SIZE];
+ 	int err;
  
-@@ -1105,6 +1107,15 @@ static int ad3552r_probe(struct spi_device *spi)
- 	return devm_iio_device_register(&spi->dev, indio_dev);
- }
- 
-+static const struct ad3552r_model_data ad3541r_model_data = {
-+	.model_name = "ad3541r",
-+	.chip_id = AD3541R_ID,
-+	.num_hw_channels = 1,
-+	.ranges_table = ad3542r_ch_ranges,
-+	.num_ranges = ARRAY_SIZE(ad3542r_ch_ranges),
-+	.requires_output_range = true,
-+};
-+
- static const struct ad3552r_model_data ad3542r_model_data = {
- 	.model_name = "ad3542r",
- 	.chip_id = AD3542R_ID,
-@@ -1114,6 +1125,15 @@ static const struct ad3552r_model_data ad3542r_model_data = {
- 	.requires_output_range = true,
- };
- 
-+static const struct ad3552r_model_data ad3551r_model_data = {
-+	.model_name = "ad3551r",
-+	.chip_id = AD3551R_ID,
-+	.num_hw_channels = 1,
-+	.ranges_table = ad3552r_ch_ranges,
-+	.num_ranges = ARRAY_SIZE(ad3552r_ch_ranges),
-+	.requires_output_range = false,
-+};
-+
- static const struct ad3552r_model_data ad3552r_model_data = {
- 	.model_name = "ad3552r",
- 	.chip_id = AD3552R_ID,
-@@ -1124,10 +1144,18 @@ static const struct ad3552r_model_data ad3552r_model_data = {
- };
- 
- static const struct spi_device_id ad3552r_id[] = {
-+	{
-+		.name = "ad3541r",
-+		.driver_data = (kernel_ulong_t)&ad3541r_model_data
-+	},
- 	{
- 		.name = "ad3542r",
- 		.driver_data = (kernel_ulong_t)&ad3542r_model_data
- 	},
-+	{
-+		.name = "ad3551r",
-+		.driver_data = (kernel_ulong_t)&ad3551r_model_data
-+	},
- 	{
- 		.name = "ad3552r",
- 		.driver_data = (kernel_ulong_t)&ad3552r_model_data
-@@ -1137,7 +1165,9 @@ static const struct spi_device_id ad3552r_id[] = {
- MODULE_DEVICE_TABLE(spi, ad3552r_id);
- 
- static const struct of_device_id ad3552r_of_match[] = {
-+	{ .compatible = "adi,ad3541r", .data = &ad3541r_model_data },
- 	{ .compatible = "adi,ad3542r", .data = &ad3542r_model_data },
-+	{ .compatible = "adi,ad3551r", .data = &ad3551r_model_data },
- 	{ .compatible = "adi,ad3552r", .data = &ad3552r_model_data },
- 	{ }
- };
+ 	memset(buff, 0, sizeof(buff));
 -- 
 2.45.0.rc1
 
