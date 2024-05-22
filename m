@@ -1,250 +1,216 @@
-Return-Path: <linux-kernel+bounces-186691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0CF8CC7AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853C78CC7B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EF271F21914
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46583281AAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9135D1465A2;
-	Wed, 22 May 2024 20:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D77A146A7E;
+	Wed, 22 May 2024 20:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RnvQtoVZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FeyZGmPD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34831422AF
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 20:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFB1142E8A;
+	Wed, 22 May 2024 20:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716409563; cv=none; b=Ox7hYLqE2cNp5GDTkTOPdo0QyZBbz0TljyjIAWXzTqFrlZ+UZlhPz69a5bVau25NaGzyeTw4iPHPEUHmKfL0EkHzbdN5fZpo87/pO6XC+7HAa2ZCtW3EpzyyPBqlsn6WM6m6RIBYmmJ97WRBbq2GJwhH/bzRNC+jtvhjB60Qi6Y=
+	t=1716409611; cv=none; b=WFvnyyxq5ouwUQXxe7/8qaJsscFIiVsvbs1CsDsPG/7qBaHBDXxit9Z55WxJaEDnj5rctehVfBh6TRedmf9f2BI7BZh/nbFGI/QwU73YkNxqKbGUmZNdnhBPAG1s9w5dCschz7trUHfnTkSyIA2KFufGCeevKPfgSKc1hXaoo50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716409563; c=relaxed/simple;
-	bh=45T5zC6PAKnjG7hPcemv+Gvo024WV3JjthrTyv4RFf0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VHLdXRjYgmPJuMNKRXl8JFQz6RdTvWAbx+Rd/Vs1e1XVTsI9SwoW1GdYJQr5an4K/T4Q4C/zl3aezBWuSd4WqY9Fy5v90t4Y8V/k1cv6aiDoH0IUsT8r8IuRVmqk5BsKyieXrA09lgDz3nHtxFdCvigY6J0lhfVY8TUYEyWAjNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RnvQtoVZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716409560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gZALvGdcjSpjvohHOcQVL4xUs9hI4UVrL4ZOmtKsjao=;
-	b=RnvQtoVZ2ckfVwLLZlk+MHYWZ7OPBIR8ce9Eb9mGotRpYAvRwxfJWWQdD5DVOEQ5CKFNxq
-	P6rDcUx061NSMNn0+fOeDKeFbm7T3NnYQVqmV8zNG5BwTp/sK8aTVq65ihBm4Tz8UDSkW1
-	h41hEfi1vBm/FoE+copNIgBMClCB7QM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-303-swst-oTYPMO6aOvjv7UEIg-1; Wed, 22 May 2024 16:25:59 -0400
-X-MC-Unique: swst-oTYPMO6aOvjv7UEIg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34db1830d7cso798224f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:25:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716409558; x=1717014358;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gZALvGdcjSpjvohHOcQVL4xUs9hI4UVrL4ZOmtKsjao=;
-        b=ng4oCKHC6cNZK1gQs1H+0ld/7ugB2vupp51r+2h2GUEzc1NmCc3Tszn7zXfiBXLsuN
-         zu9E8XcZLmE0sPgCmooiOvPJuL4LsMAuOpvmFRSRZoGjNWZ4qhqGAeSAA8o2Db6YaMhr
-         wefHewVJfcZMzAz7x+MGlqdbiUUJnEJJmXPTOWjqsGG6zrznxDVe1qyN4ns1yxwoyxWP
-         vVBjrTCa6ij0n0RgoBEcG/jmLKqtA8WeEV4MUckSg1XR1rAMflMK33ENiFCWAHWOOKLj
-         hDsH2/fNgW6UizUKTLkE70lGT3gV0kqJ+VwFImWqpce6VFf/2g2n35YdLCTttn18Gtq8
-         6psg==
-X-Forwarded-Encrypted: i=1; AJvYcCViXkT587I2UDf1xMPoSSqbzafzMyurmh74kbn4eCOSnMGdkyyNSiIaALW/Og1YVaDOsbM1OT5JPCWWb6ceFHBvzWNHMRa/T+uiwa5w
-X-Gm-Message-State: AOJu0YzOO3bgJ82npj5p8QKOK63KhqlGZQ4oBwhEEwQzJlrldzNXPuC4
-	oG1/FpQ2Dtu7DR1/LTg7Ztx8TkFQoTGEvutWHUw6KTv/qief9ztgjg8Xf0vkgL1Pz+JYVJMqfDK
-	z69St3De8Jfz8EbbYcWxhlKynT7EKWbuTAldL4GJLBs9ttlHDGfuAbnoUPgKIUA==
-X-Received: by 2002:a5d:46d0:0:b0:34e:3d3a:e144 with SMTP id ffacd0b85a97d-354f74ff762mr239232f8f.2.1716409558050;
-        Wed, 22 May 2024 13:25:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfrGKCogoOqka0H47iN5AlSMonGlSalasIrh9d5HYGuYjbAAYbcl7DYG3ogzwS4hxPtAMhJw==
-X-Received: by 2002:a5d:46d0:0:b0:34e:3d3a:e144 with SMTP id ffacd0b85a97d-354f74ff762mr239220f8f.2.1716409557566;
-        Wed, 22 May 2024 13:25:57 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c709:d500:4044:6d4c:f060:f677? (p200300cbc709d50040446d4cf060f677.dip0.t-ipconnect.de. [2003:cb:c709:d500:4044:6d4c:f060:f677])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a77easm34985826f8f.53.2024.05.22.13.25.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 13:25:57 -0700 (PDT)
-Message-ID: <ff978ce9-bd22-4ee2-ba14-6dd8ee0b05dd@redhat.com>
-Date: Wed, 22 May 2024 22:25:55 +0200
+	s=arc-20240116; t=1716409611; c=relaxed/simple;
+	bh=PTiOczp2mzxEYJI4MT1GuN3UIP3h3LNBOO01otwTLUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pp2iYW/ELsxsEuHCdD5ig6avymY8w1adUxa70MKehnVip3jFI1Vj8gM/LZM5P2NLINjwBRfYRVuHrVRTWQMIE8sybLapRUw6xtPFpTg6WNlJXm9dOxmv2MQ3clsgjCN2FDf9w8Ozdy1n/1ApnuBu58/6pttyE2Dh4lcimDi8KHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FeyZGmPD; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716409609; x=1747945609;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PTiOczp2mzxEYJI4MT1GuN3UIP3h3LNBOO01otwTLUY=;
+  b=FeyZGmPDFtYqu8pv35V2T4fkJyyfwulbxcMMQzk+ExQsGY/c/W6Mq2m+
+   GlKgSO2IoKM7kapilLqGQjD5gWS6bVDt3ItCLRpvpu4FAFyycy/lWqC4C
+   nXGRJoS+bSYkJNXm0+JzqqSLznQEoLDsbSyGD9GV7sW1xr29vZbKG8pat
+   b05uxjslsRwDsfKcFzCBJopPvzh5/XEHV7dXOpQaIA27evFXKVE+LcXaP
+   NZ774fB9hEsVHliwbY0Ynbh+eKS+OnoxD//ncf6IlspbDT7BV8RJLkOwq
+   y9eqWHPMto3U8xx8FJftAUTFT4gKGuBBT5cpOg7l2ghvFGBsnrLh28agJ
+   Q==;
+X-CSE-ConnectionGUID: PWXBMVWzSv2ePdL9cvJGlg==
+X-CSE-MsgGUID: GbAHhUTITyyrdir4KCN1OQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="30189648"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="30189648"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 13:26:49 -0700
+X-CSE-ConnectionGUID: cgc9YBcSTqWKQMMmFJRK/Q==
+X-CSE-MsgGUID: NRL6tzc+Q5KVb2a3BwNPJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="37800567"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 22 May 2024 13:26:43 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s9sXo-0001wn-10;
+	Wed, 22 May 2024 20:26:40 +0000
+Date: Thu, 23 May 2024 04:25:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Christoph Lameter <cl@linux-foundation.org>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, Sukrit.Bhatnagar@sony.com
+Subject: Re: [PATCH 1/2] mm: printk: introduce new format %pGs for slab flags
+Message-ID: <202405230441.A0LFA9SY-lkp@intel.com>
+References: <20240522074629.2420423-2-Sukrit.Bhatnagar@sony.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: 6.10/bisected/regression - commit 8430557fc584 cause warning at
- mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
-To: Peter Xu <peterx@redhat.com>
-Cc: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
- Pavel Tatashin <pasha.tatashin@soleen.com>, axelrasmussen@google.com,
- nadav.amit@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
- Linux Memory Management List <linux-mm@kvack.org>,
- Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
- <Zk0HxVODITGKqYCw@x1n>
- <CABXGCsNbcMn0Z0RudFrBW78rZPE+cDY+f9r+yKf_AZwJZUOrQg@mail.gmail.com>
- <Zk0UA6wABOB9X_Dx@x1n>
- <CABXGCsOZnxrSHd0y6QrFhzAiY-uTJiRSmo__C_P8Y2qjFV6bRA@mail.gmail.com>
- <Zk0h0V8kvZRKu6F4@x1n> <a3d54407-87aa-4f59-adac-c9b79fe1ecef@redhat.com>
- <Zk4MsGxhP5x5aURG@x1n> <03faa624-1685-4a21-81fc-cc9e8b760e97@redhat.com>
- <Zk4Y9tU7pOzU0lw1@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zk4Y9tU7pOzU0lw1@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522074629.2420423-2-Sukrit.Bhatnagar@sony.com>
 
-On 22.05.24 18:10, Peter Xu wrote:
-> On Wed, May 22, 2024 at 05:34:21PM +0200, David Hildenbrand wrote:
->> On 22.05.24 17:18, Peter Xu wrote:
->>> On Wed, May 22, 2024 at 09:48:51AM +0200, David Hildenbrand wrote:
->>>> On 22.05.24 00:36, Peter Xu wrote:
->>>>> On Wed, May 22, 2024 at 03:21:04AM +0500, Mikhail Gavrilov wrote:
->>>>>> On Wed, May 22, 2024 at 2:37 AM Peter Xu <peterx@redhat.com> wrote:
->>>>>>> Hmm I still cannot reproduce.  Weird.
->>>>>>>
->>>>>>> Would it be possible for you to identify which line in debug_vm_pgtable.c
->>>>>>> triggered that issue?
->>>>>>>
->>>>>>> I think it should be some set_pte_at() but I'm not sure, as there aren't a
->>>>>>> lot and all of them look benign so far.  It could be that I missed
->>>>>>> something important.
->>>>>>
->>>>>> I hope it's helps:
->>>>>
->>>>> Thanks for offering this, it's just that it doesn't look coherent with what
->>>>> was reported for some reason.
->>>>>
->>>>>>
->>>>>>> sh /usr/src/kernels/(uname -r)/scripts/faddr2line /lib/debug/lib/modules/(uname -r)/vmlinux debug_vm_pgtable+0x1c04
->>>>>> debug_vm_pgtable+0x1c04/0x3360:
->>>>>> native_ptep_get_and_clear at arch/x86/include/asm/pgtable_64.h:94
->>>>>> (inlined by) ptep_get_and_clear at arch/x86/include/asm/pgtable.h:1262
->>>>>> (inlined by) ptep_clear at include/linux/pgtable.h:509
->>>>>
->>>>> This is a pte_clear(), and pte_clear() shouldn't even do the set() checks,
->>>>> and shouldn't stumble over what I added.
->>>>>
->>>>> IOW, it doesn't match with the real stack dump previously:
->>>>>
->>>>> [    5.581003]  ? __page_table_check_ptes_set+0x306/0x3c0
->>>>> [    5.581274]  ? __pfx___page_table_check_ptes_set+0x10/0x10
->>>>> [    5.581544]  ? __pfx_check_pgprot+0x10/0x10
->>>>> [    5.581806]  set_ptes.constprop.0+0x66/0xd0
->>>>> [    5.582072]  ? __pfx_set_ptes.constprop.0+0x10/0x10
->>>>> [    5.582333]  ? __pfx_pte_val+0x10/0x10
->>>>> [    5.582595]  debug_vm_pgtable+0x1c04/0x3360
->>>>>
->>>>
->>>> Staring at pte_clear_tests():
->>>>
->>>> #ifndef CONFIG_RISCV
->>>> 	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
->>>> #endif
->>>> 	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
->>>>
->>>> So we set random PTE bits, probably setting the present, uffd and write bit
->>>> at the same time. That doesn't make too much sense when we want to perform
->>>> that such combinations cannot exist.
->>>
->>> Here the issue is I don't think it should set W bit anyway, as we init
->>> page_prot to be RWX but !shared:
->>>
->>> 	args->page_prot          = vm_get_page_prot(VM_ACCESS_FLAGS);
->>>
->>> On x86_64 (Mikhail's system) it should have W bit cleared afaict, meanwhile
->>> the RANDOM_ORVALUE won't touch bit W due to S390_SKIP_MASK (which contains
->>> bit W / bit 1, which is another "accident"..).  Then even if with that it
->>> should not trigger..  I think that's also why I cannot reproduce this
->>> problem locally.
->>
->> Why oh why are skip mask applied independently of the architecture.
->>
->> While _PAGE_RW should indeed be masked out by RANDOM_ORVALUE.
->>
->> But with shadow stacks we consider a PTE writable (see
->> pte_write()->pte_shstk()) if
->> (1) X86_FEATURE_SHSTK is enabled
->> (2) _PAGE_RW is clear
->> (3) _PAGE_DIRTY is set
->>
->> _PAGE_DIRTY is bit 6.
->>
->> Likely your CPU does not support shadow stacks.
-> 
-> Good point.  My host has it, but I tested in the VM which doesn't.  I
-> suppose we can wait and double check whether Mikhail should see the issue
-> went away with that patch provided.
-> 
-> In this case, instead of keep fiddling with random bits to apply and
-> further work on top of per-arch random bits, I'd hope we can simply drop
-> that random mechanism as I don't think it'll be pxx_none() now.  I attached
-> a patch I plan to post. Does it look reasonable?
+Hi Sukrit,
 
-I doubt that randomness ever helped in finding a BUG. Clearing is just 
-too simple ... but I might just be wrong :)
+kernel test robot noticed the following build warnings:
 
-I'd vote for removing that, this will likely not be the last issue we 
-run into once we add more sanity checks during set_pte_at().
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on akpm-mm/mm-nonmm-unstable linus/master v6.9 next-20240522]
+[cannot apply to vbabka-slab/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sukrit-Bhatnagar/mm-printk-introduce-new-format-pGs-for-slab-flags/20240522-154443
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240522074629.2420423-2-Sukrit.Bhatnagar%40sony.com
+patch subject: [PATCH 1/2] mm: printk: introduce new format %pGs for slab flags
+config: x86_64-randconfig-123-20240522 (https://download.01.org/0day-ci/archive/20240523/202405230441.A0LFA9SY-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405230441.A0LFA9SY-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405230441.A0LFA9SY-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> lib/test_printf.c:692:15: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned long [addressable] [assigned] flags @@     got restricted slab_flags_t @@
+   lib/test_printf.c:692:15: sparse:     expected unsigned long [addressable] [assigned] flags
+   lib/test_printf.c:692:15: sparse:     got restricted slab_flags_t
+   lib/test_printf.c:708:49: sparse: sparse: cast from restricted gfp_t
+   lib/test_printf.c:712:58: sparse: sparse: cast from restricted gfp_t
+   lib/test_printf.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/umh.h, include/linux/kmod.h, ...):
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+
+vim +692 lib/test_printf.c
+
+   656	
+   657	static void __init
+   658	flags(void)
+   659	{
+   660		unsigned long flags;
+   661		char *cmp_buffer;
+   662		gfp_t gfp;
+   663		unsigned int page_type;
+   664	
+   665		cmp_buffer = kmalloc(BUF_SIZE, GFP_KERNEL);
+   666		if (!cmp_buffer)
+   667			return;
+   668	
+   669		flags = 0;
+   670		page_flags_test(0, 0, 0, 0, 0, flags, "", cmp_buffer);
+   671	
+   672		flags = 1UL << NR_PAGEFLAGS;
+   673		page_flags_test(0, 0, 0, 0, 0, flags, "", cmp_buffer);
+   674	
+   675		flags |= 1UL << PG_uptodate | 1UL << PG_dirty | 1UL << PG_lru
+   676			| 1UL << PG_active | 1UL << PG_swapbacked;
+   677		page_flags_test(1, 1, 1, 0x1fffff, 1, flags,
+   678				"uptodate|dirty|lru|active|swapbacked",
+   679				cmp_buffer);
+   680	
+   681		flags = VM_READ | VM_EXEC | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
+   682		test("read|exec|mayread|maywrite|mayexec", "%pGv", &flags);
+   683	
+   684		flags = 0;
+   685		scnprintf(cmp_buffer, BUF_SIZE, "%#x(%s)", (unsigned int) flags, "");
+   686		test(cmp_buffer, "%pGs", &flags);
+   687	
+   688		flags = 1U << _SLAB_FLAGS_LAST_BIT;
+   689		scnprintf(cmp_buffer, BUF_SIZE, "%#x(%s)", (unsigned int) flags, "");
+   690		test(cmp_buffer, "%pGs", &flags);
+   691	
+ > 692		flags = SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_NO_USER_FLAGS;
+   693		scnprintf(cmp_buffer, BUF_SIZE, "%#x(%s)", (unsigned int) flags,
+   694			  "HWCACHE_ALIGN|PANIC|NO_USER_FLAGS");
+   695		test(cmp_buffer, "%pGs", &flags);
+   696	
+   697		gfp = GFP_TRANSHUGE;
+   698		test("GFP_TRANSHUGE", "%pGg", &gfp);
+   699	
+   700		gfp = GFP_ATOMIC|__GFP_DMA;
+   701		test("GFP_ATOMIC|GFP_DMA", "%pGg", &gfp);
+   702	
+   703		gfp = __GFP_HIGH;
+   704		test("__GFP_HIGH", "%pGg", &gfp);
+   705	
+   706		/* Any flags not translated by the table should remain numeric */
+   707		gfp = ~__GFP_BITS_MASK;
+   708		snprintf(cmp_buffer, BUF_SIZE, "%#lx", (unsigned long) gfp);
+   709		test(cmp_buffer, "%pGg", &gfp);
+   710	
+   711		snprintf(cmp_buffer, BUF_SIZE, "__GFP_HIGH|%#lx",
+   712								(unsigned long) gfp);
+   713		gfp |= __GFP_HIGH;
+   714		test(cmp_buffer, "%pGg", &gfp);
+   715	
+   716		page_type = ~0;
+   717		page_type_test(page_type, "", cmp_buffer);
+   718	
+   719		page_type = 10;
+   720		page_type_test(page_type, "", cmp_buffer);
+   721	
+   722		page_type = ~PG_buddy;
+   723		page_type_test(page_type, "buddy", cmp_buffer);
+   724	
+   725		page_type = ~(PG_table | PG_buddy);
+   726		page_type_test(page_type, "table|buddy", cmp_buffer);
+   727	
+   728		kfree(cmp_buffer);
+   729	}
+   730	
 
 -- 
-Cheers,
-
-David / dhildenb
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
