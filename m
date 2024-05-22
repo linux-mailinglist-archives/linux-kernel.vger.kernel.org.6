@@ -1,125 +1,99 @@
-Return-Path: <linux-kernel+bounces-186581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E98C8CC5F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:59:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015C98CC5F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94CC4B21C26
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:59:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80D2AB21ACB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F737145FE9;
-	Wed, 22 May 2024 17:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E722D145B17;
+	Wed, 22 May 2024 17:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="2NXb5bWG"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="RO7l+xWm"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA6282877;
-	Wed, 22 May 2024 17:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BDC145FF6
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716400727; cv=none; b=Hs0QEzdOhQWmbG8p9nQEIv7GaAidlgihz58UYKStVic6Q9aWfAp7g3wxWe4jXTvlRyazqhK+/3vZcfFThSA+M8xjY91XVm/AoycClm7KGiEM2parhCT4Gj/Nu3aZkn7WPhViVaVhXaYNd78tznh/wnpKDri/Y3vpyyHTrZD83DA=
+	t=1716400731; cv=none; b=d7ygZM6TjB5EMONfbX6NRV8mZuKBsmVjsPNUmdbbFhGzjrCSxElrFkkufxSX2Kr/oZSs040Ap98tZwUVioohydi+M18+GVUXqqVcCYtAPAtVr7jbXTYUuKihEkANQBMHNoFa7x+Zw8pE//spSRuCpL4y01mblr1/wDCvyTDhkwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716400727; c=relaxed/simple;
-	bh=/fUnCyL4rXX2AQtUspHQvGeVSI9WBvUN5ojnjLO8HQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K2nM1n8VhxLPDYzb4oIufbWjoWxQyeLgqIt+wopOelZWXvphZaWq9+bUU4ljLmX8T4ix3ViLppDHmdHW3kQZGZshlJAwAW+0dw0VxZZFZu6T/k4NUUpmHLULYbrqbCBTx4pAZl6m1HwKeKZYZWxtoafl61he5N0mlGWT8cCMaTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=2NXb5bWG; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VkzZF3LmfzlgMVN;
-	Wed, 22 May 2024 17:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716400717; x=1718992718; bh=/fUnCyL4rXX2AQtUspHQvGeV
-	SI9WBvUN5ojnjLO8HQA=; b=2NXb5bWGOG3VkvoOW/1AJ/knPpCcKds88i+1padz
-	gFfE5fJ7PzdLZoQbo81PtZWYvVj1Q2FaHh1UQLiTDNI2ukoCNAbJ+Nl4g0u0NxC1
-	VFMGvH9ZW6chjnwY+pnV3bx1kPOLj3pBNscI2CIVjtcFel083RWJglTIwGpbB4pJ
-	bJhkKlRV4JZQ+dsHgKmxqRXb6ji4hq4XRfi27/mhn23bow5S9+pZ6h5Fg3QEfT+b
-	2LzHrguzq2mNP2MJ9Y2iMxIvL5pwEWYwp0kdwPm7JldrbYn5lI2FL0SSqRhARbEU
-	uLSMvifOyC0AND8nUQGjb/uPQ0TgHhjqr9UemL6WR7fA0Q==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 9NZjL2GE8PQb; Wed, 22 May 2024 17:58:37 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VkzZ21dlYzlgMVL;
-	Wed, 22 May 2024 17:58:33 +0000 (UTC)
-Message-ID: <53b30f65-6b0f-4c05-8372-023e5e61a035@acm.org>
-Date: Wed, 22 May 2024 10:58:33 -0700
+	s=arc-20240116; t=1716400731; c=relaxed/simple;
+	bh=JSigu62ltqLJCXUWDafIf56Zq1mZCARO6az4/E7iy70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jPlp63YbdbHjkSTZOnDNSuK0jJElsVREaNURnXLofUl3fCq84e7lvYKlC6bANzRx3rhy1mCWE0uZ4k2sV5RxbVrs6583v4DCf6uEsmh4NGzy6a79IpygS03mCpyR/4kgW2CdZnSNKhGqJ0NnmMm85lq5gcVBmLP762C+6ARyY2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=RO7l+xWm; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=Wbd6zrA/kHzFGZUfOfAivCujWYrNUgCo+i5BpHmbrpQ=; b=RO7l+xWmNB/ayxPi
+	tk47ep9m8n4rhaVvauBOexM6xSFIm69KE5wgl+cFv8EexhJykSUZ2o65t4QmBMStXkVtfGw3cI/b6
+	q3HyvuFpOJqC7pZLLwkzAZPdo9NcRdibgbguQSRvnHQUkqwB69V6dmAQfPFqvbMQQKb1d3yysRM6Q
+	4ePvQe7e/xSZvQ/sHHykf2guysjaAPFr5vsFa4v2sHbEUBcEHCsRBSwpPopXQcN0JGMCTu3DGDMkU
+	QWR4+aMz589J5VxBA4pAn6qAW4DyaTCIZrlfmxTQR0NFhzY+oMUcsdYsUubXuTNLrWWufrAC6L9z0
+	CkwDOnwnS/QyZwOt1g==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s9qEb-0025bK-2J;
+	Wed, 22 May 2024 17:58:42 +0000
+From: linux@treblig.org
+To: matthew.d.roper@intel.com,
+	lucas.demarchi@intel.com
+Cc: maarten.lankhorst@linux.intel.com,
+	airlied@gmail.com,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/xe: remove unused struct 'xe_gt_desc'
+Date: Wed, 22 May 2024 18:58:40 +0100
+Message-ID: <20240522175840.382107-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-To: Nitesh Shetty <nj.shetty@samsung.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
- hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
- joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20240520102033.9361-1-nj.shetty@samsung.com>
- <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
- <20240520102033.9361-3-nj.shetty@samsung.com>
- <086804a4-daa4-48a3-a7db-1d38385df0c1@acm.org>
- <20240521111756.w4xckwbecfyjtez7@green245>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240521111756.w4xckwbecfyjtez7@green245>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 5/21/24 04:17, Nitesh Shetty wrote:
-> On 20/05/24 04:00PM, Bart Van Assche wrote:
->> On 5/20/24 03:20, Nitesh Shetty wrote:
->>> +static inline bool blk_copy_offload_mergable(struct request *req,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- struct bio *bio)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 return (req_op(req) =3D=3D REQ_OP_COPY_DST &&
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bio_op(bio) =3D=3D REQ_OP=
-_COPY_SRC);
->>> +}
->>
->> bios with different operation types must not be merged. Please rename =
-this function.
->>
-> As far as function renaming, we followed discard's naming. But open to
-> any suggestion.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-req_attempt_discard_merge() checks whether two REQ_OP_DISCARD bios can be=
- merged.
-The above function checks something else, namely whether REQ_OP_COPY_DST =
-and
-REQ_OP_COPY_SRC can be combined into a copy offload operation. Hence my r=
-equest
-not to use the verb "merge" for combining REQ_OP_COPY_SRC and REQ_OP_COPY=
-_DST
-operations.
+'xe_gt_desc' is unused since
+commit 1e6c20be6c83 ("drm/xe: Drop extra_gts[] declarations and
+XE_GT_TYPE_REMOTE").
 
-Thanks,
+Remove it.
 
-Bart.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/gpu/drm/xe/xe_pci.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/xe/xe_pci.c b/drivers/gpu/drm/xe/xe_pci.c
+index f326dbb1cecd..2ca210480bd1 100644
+--- a/drivers/gpu/drm/xe/xe_pci.c
++++ b/drivers/gpu/drm/xe/xe_pci.c
+@@ -40,12 +40,6 @@ struct xe_subplatform_desc {
+ 	const u16 *pciidlist;
+ };
+ 
+-struct xe_gt_desc {
+-	enum xe_gt_type type;
+-	u32 mmio_adj_limit;
+-	u32 mmio_adj_offset;
+-};
+-
+ struct xe_device_desc {
+ 	/* Should only ever be set for platforms without GMD_ID */
+ 	const struct xe_graphics_desc *graphics;
+-- 
+2.45.1
+
 
