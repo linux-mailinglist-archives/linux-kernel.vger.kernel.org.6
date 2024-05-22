@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-186580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66738CC5ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E98C8CC5F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30B50B21520
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:58:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94CC4B21C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5818E1459F7;
-	Wed, 22 May 2024 17:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F737145FE9;
+	Wed, 22 May 2024 17:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WuWa1yPQ"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="2NXb5bWG"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F9A46AF
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA6282877;
+	Wed, 22 May 2024 17:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716400717; cv=none; b=c6FXq0AQP3blHbj+fRmY1yGtGDGNmE/TFye1wviIdANH8yM2zdALZhHiDw9FnIjA8tjzuFtfKe1DYUpcCOkXJErTxgc1J5c97VQP7y6Fo8oaBFxd6rz17gmr7IJEp4ZnDFoOegt3Mx2A8VTxpP7kGRJtxSkJh06TARaEDxGx6T0=
+	t=1716400727; cv=none; b=Hs0QEzdOhQWmbG8p9nQEIv7GaAidlgihz58UYKStVic6Q9aWfAp7g3wxWe4jXTvlRyazqhK+/3vZcfFThSA+M8xjY91XVm/AoycClm7KGiEM2parhCT4Gj/Nu3aZkn7WPhViVaVhXaYNd78tznh/wnpKDri/Y3vpyyHTrZD83DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716400717; c=relaxed/simple;
-	bh=KHtjUV6hq4+rlIaz3j9gjf64yGiJ3KvmjKV4jrwK75o=;
+	s=arc-20240116; t=1716400727; c=relaxed/simple;
+	bh=/fUnCyL4rXX2AQtUspHQvGeVSI9WBvUN5ojnjLO8HQA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sp5a3tm9gVm7PKQ03ccXWRMceYHdO0+99FiObXlD3/lZZWqN6VkVnzUS6aWDju84xneyUKPpJVwoWdmPF0xprEuMJqmjcgsfkJ+ku58JDoH7QS6gM0hfnqW3/N1J5BTa1t9udRHp8rexnEt72lNIZVN/moRG2CGZSHk8U6IC4D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WuWa1yPQ; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-56e47843cc7so9781935a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716400714; x=1717005514; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oDjgxjQNPkugOrLyZyXLah/SP6Onds09Ci82FsfoJ7s=;
-        b=WuWa1yPQGcy+YQAiOiMriKhhJBxbAlBpcXmOaZftj0zVD/+DjNuoLvfoxhTuFL5lD1
-         GW+Wa7vgg8jZqzeHpCrD75XFu83tSp21VquNCV2xrOC6qaGq6GbbZujBvak6lxMvQujQ
-         5GN76CrhpTfEEjbB3N5A3yug5Ey4RKHPrAtpfIQrzahnAedX5bDFcalMBHsl0+fg0ib+
-         v3uknsO8ZJjghw2RAAUz6Nqkligzdk3soZ7oQHc5U6I2dXKviIOY8MRD1YJLRlpBedT/
-         T03+oO7ywYuVOOEMtBxThA35f2XcMwuJdYgqoeP834uT2R+GRQZ0o7RCTQ3uXCpdrvBk
-         w14w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716400714; x=1717005514;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oDjgxjQNPkugOrLyZyXLah/SP6Onds09Ci82FsfoJ7s=;
-        b=XSmrnrU08FjN96ul5EUVK4zTMnehrwl+s0clxVKzkDmy8PZG+xk3r1tgVmcPUvF8oH
-         0maLnvEH4FiwwlTWzmsOAlKNL8pqyTnxnmp98bCukwGluUUEPlJQjEaoNGe9HMY9GieV
-         QQOHmlWLnK0RR/WQj/dbIre1yjNTIm+J1OIrUJ7AA8XXTgCii9a9f6vIRNMTkTeDLkjF
-         94+BRnLLy17f/Xk0zQcPKaBv1PnR9mIOz752BFxyayAkEX+ulTi7tWbquO1w9fTX4apx
-         vTFtepRI5ghEbTtGVKxUh7lijEDTT/Zj/qWhPJBq/md2v0iSRlGhG8ksNJvEFKrRAXs9
-         YXdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIGxHIGQAwOusqIhZRbEYTGCXAGCZQWCPZjpgi6zv9Bbcozb3fuORa7+4FWqSMkKshzYP2WpT6Zw2w/fQ2sthq7oMSvl7a5jdgKKPB
-X-Gm-Message-State: AOJu0Yy3EVJXRGg0ug9DDnjWRQGzTVi++OrzCl2qA2FMg7LBXeIb4VmI
-	lCemLrM3QsQJgziSIdOGOwie0ooicA9BpTWI/DnH3xFTnQDhINwrk0MZXWpFgiE=
-X-Google-Smtp-Source: AGHT+IHIXP+9W1GeGeDPzlPjLyeKLhorAeQkIesoa4XDvfytfPy0Ek37adgpCPH6xsZIk4Tj3obC4A==
-X-Received: by 2002:a17:906:2c0f:b0:a5c:3072:5084 with SMTP id a640c23a62f3a-a62281635aemr183227366b.59.1716400713983;
-        Wed, 22 May 2024 10:58:33 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:c55:53ae:8e0f:24ed:3702:e958? ([2a00:f41:c55:53ae:8e0f:24ed:3702:e958])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b014f6sm1835623066b.145.2024.05.22.10.58.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 10:58:33 -0700 (PDT)
-Message-ID: <b199a7bb-6d59-43b1-9a7e-000c661b00a5@linaro.org>
-Date: Wed, 22 May 2024 19:58:29 +0200
+	 In-Reply-To:Content-Type; b=K2nM1n8VhxLPDYzb4oIufbWjoWxQyeLgqIt+wopOelZWXvphZaWq9+bUU4ljLmX8T4ix3ViLppDHmdHW3kQZGZshlJAwAW+0dw0VxZZFZu6T/k4NUUpmHLULYbrqbCBTx4pAZl6m1HwKeKZYZWxtoafl61he5N0mlGWT8cCMaTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=2NXb5bWG; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VkzZF3LmfzlgMVN;
+	Wed, 22 May 2024 17:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1716400717; x=1718992718; bh=/fUnCyL4rXX2AQtUspHQvGeV
+	SI9WBvUN5ojnjLO8HQA=; b=2NXb5bWGOG3VkvoOW/1AJ/knPpCcKds88i+1padz
+	gFfE5fJ7PzdLZoQbo81PtZWYvVj1Q2FaHh1UQLiTDNI2ukoCNAbJ+Nl4g0u0NxC1
+	VFMGvH9ZW6chjnwY+pnV3bx1kPOLj3pBNscI2CIVjtcFel083RWJglTIwGpbB4pJ
+	bJhkKlRV4JZQ+dsHgKmxqRXb6ji4hq4XRfi27/mhn23bow5S9+pZ6h5Fg3QEfT+b
+	2LzHrguzq2mNP2MJ9Y2iMxIvL5pwEWYwp0kdwPm7JldrbYn5lI2FL0SSqRhARbEU
+	uLSMvifOyC0AND8nUQGjb/uPQ0TgHhjqr9UemL6WR7fA0Q==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 9NZjL2GE8PQb; Wed, 22 May 2024 17:58:37 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VkzZ21dlYzlgMVL;
+	Wed, 22 May 2024 17:58:33 +0000 (UTC)
+Message-ID: <53b30f65-6b0f-4c05-8372-023e5e61a035@acm.org>
+Date: Wed, 22 May 2024 10:58:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,54 +64,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spmi: pmic-arb: Pass the correct of_node to
- irq_domain_add_tree
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org
-References: <20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804@linaro.org>
- <CAA8EJprgXSF=x834=PRXrHhh7VRyynbApnO-iFoE=cLYFzM6iQ@mail.gmail.com>
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Nitesh Shetty <nj.shetty@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <20240520102033.9361-1-nj.shetty@samsung.com>
+ <CGME20240520102842epcas5p4949334c2587a15b8adab2c913daa622f@epcas5p4.samsung.com>
+ <20240520102033.9361-3-nj.shetty@samsung.com>
+ <086804a4-daa4-48a3-a7db-1d38385df0c1@acm.org>
+ <20240521111756.w4xckwbecfyjtez7@green245>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CAA8EJprgXSF=x834=PRXrHhh7VRyynbApnO-iFoE=cLYFzM6iQ@mail.gmail.com>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240521111756.w4xckwbecfyjtez7@green245>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
+On 5/21/24 04:17, Nitesh Shetty wrote:
+> On 20/05/24 04:00PM, Bart Van Assche wrote:
+>> On 5/20/24 03:20, Nitesh Shetty wrote:
+>>> +static inline bool blk_copy_offload_mergable(struct request *req,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ struct bio *bio)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 return (req_op(req) =3D=3D REQ_OP_COPY_DST &&
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bio_op(bio) =3D=3D REQ_OP=
+_COPY_SRC);
+>>> +}
+>>
+>> bios with different operation types must not be merged. Please rename =
+this function.
+>>
+> As far as function renaming, we followed discard's naming. But open to
+> any suggestion.
 
+req_attempt_discard_merge() checks whether two REQ_OP_DISCARD bios can be=
+ merged.
+The above function checks something else, namely whether REQ_OP_COPY_DST =
+and
+REQ_OP_COPY_SRC can be combined into a copy offload operation. Hence my r=
+equest
+not to use the verb "merge" for combining REQ_OP_COPY_SRC and REQ_OP_COPY=
+_DST
+operations.
 
-On 5/22/24 14:06, Dmitry Baryshkov wrote:
-> On Wed, 22 May 2024 at 14:38, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->> Currently, irqchips for all of the subnodes (which represent a given
->> bus master) point to the parent wrapper node. This is no bueno, as
->> no interrupts arrive, ever (because nothing references that node).
->>
->> Fix that by passing a reference to the respective master's of_node.
->>
->> Worth noting, this is a NOP for devices with only a single master
->> described.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
->>   drivers/spmi/spmi-pmic-arb.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
->> index 791cdc160c51..46ea93f78dcd 100644
->> --- a/drivers/spmi/spmi-pmic-arb.c
->> +++ b/drivers/spmi/spmi-pmic-arb.c
->> @@ -1737,8 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
->>
->>          dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
->>
->> -       bus->domain = irq_domain_add_tree(dev->of_node,
->> -                                         &pmic_arb_irq_domain_ops, bus);
->> +       bus->domain = irq_domain_add_tree(node, pmic_arb_irq_domain_ops, bus);
-> 
-> Shouldn't it be &pmic_arb_irq_domain_ops ?
+Thanks,
 
-Yes. Between testing and editing the patch to un-break the line I managed
-to.. break the patch..
-
-Konrad
+Bart.
 
