@@ -1,263 +1,441 @@
-Return-Path: <linux-kernel+bounces-185851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E068CBBE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:22:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE918CBBEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 960D31C212AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9B7E2829CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5702233A;
-	Wed, 22 May 2024 07:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1356F7C6CE;
+	Wed, 22 May 2024 07:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ndi6oztd"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNjMpomt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609FC79B84;
-	Wed, 22 May 2024 07:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD0179B84;
+	Wed, 22 May 2024 07:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362558; cv=none; b=PZjDct+smYByrxVin499DDv37q3KNh6Ae0VsvL4D9M9qP8FpxPXQqRbrEPWovPHtUFGycsfzEr2S94lRI21kMEw9AyvRL/3ScF13xBSo8wAxEJooql9oOEk679ko+5XEhyhiQdhK5pU87bdeZW8L0pWx0X9lDucZ23gHuHeOvgs=
+	t=1716362696; cv=none; b=joiSEaeRJTXEqVrSHb3x+mICPAuIORoe67iTF9wl9Jto1qAh5xot1c7FUT8fPU4EQchSZJs+mgHPzkZyEvLHCb9V7ieOYkqdKLWnVXpnCqfTHgJuJ+ZrVIkLj+nAjRU+kRGWf462a+WKsGIyqLyu15pgHWMD+WowFIA4tG8vwRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362558; c=relaxed/simple;
-	bh=+gQoZVjTvnl9vfPUcSZnq0UdJRBPKKt9+VqX3W+fyGo=;
+	s=arc-20240116; t=1716362696; c=relaxed/simple;
+	bh=RpsenxW2up+GVmBDLm6Dft7F/NhXAT1mwDTvcipp7Z4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnpkNrrjrWX+D0Gy5+GbQsyE/PlOzMab4rquvgEOk5TlmGuPQA3hX5/nYUpiYFXNs76Q1jfdOBhzrPovZGokyjj4b280fjR7TawTWjNVE/7GeIPuQ2L039B0trwdbwFwZvkWrf25jfB6XTsrgCJxdnjHcJO7XFk6fnvCocA+OpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ndi6oztd; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A8AD0581;
-	Wed, 22 May 2024 09:22:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716362541;
-	bh=+gQoZVjTvnl9vfPUcSZnq0UdJRBPKKt9+VqX3W+fyGo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPXwL03WBp+zAty242WP6gsrDnoucd+ZXIoocRwjfGiq8V0DCStVKnfJuZwNQ4U342M8jIQSbjVfhfpSgGvsiCha57Z6CsVhvkWkA9io4NzaUII7/qHZuYOcGXX3hMJPAWw68KqHh2sB99Hz5Ud8KYeCuTylZFLXZMGMvOsfF10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNjMpomt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF7ABC2BD11;
+	Wed, 22 May 2024 07:24:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716362695;
+	bh=RpsenxW2up+GVmBDLm6Dft7F/NhXAT1mwDTvcipp7Z4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ndi6oztds2yWefxeeLePVRYfNP75J9SdKohS01rLzVLEAbRWXUKXuvMSWgJkQq9S1
-	 sXl+Fhrgeq0r5VVfa/jHXp6zEyFpaP40u4HNXt3kH0CX/WTj5FnN40mUx6RtXnZMa6
-	 h28nAKW9Zdux1c5SAa60goM5IEu7mxUp68u1bTQg=
-Date: Wed, 22 May 2024 10:22:24 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Alexandru Ardelean <alexandru.ardelean@analog.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-Message-ID: <20240522072224.GC8863@pendragon.ideasonboard.com>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
- <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
- <20240521194309.GA8863@pendragon.ideasonboard.com>
- <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
+	b=pNjMpomtvjQBv5Hjcg8V1knk5U1Ck3kyAAQp4cjLRRTanqbSYUMaj02eE4mjlpq3F
+	 HAznm5C5tJDnvm5TS+VET8UqIDlRhdIqIBWHdTrmINV0s4BY/Pfv/TrTNrBh9hKHTQ
+	 5g9iAsOpw2ZNmIYrrq2KdlesxXzBsl8XW1yheNRucWLzxUkRTmCAXkkGsw9k0O0zPv
+	 Jle/fGczN58C6Yk61zkp9nuyyYkgpNFxjdBbBwFtsB7ojnkUft1m+zFSOLKUIKm564
+	 5//jvMdcCydazkmRoxECUhk6h3VUi/dyJKfi8CjbO+hAhT0k+IDeH4jEDc6RDhf2fj
+	 3HvC0AOE7IPow==
+Date: Wed, 22 May 2024 09:24:52 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: keith <keith.zhao@starfivetech.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, hjc@rock-chips.com, 
+	heiko@sntech.de, andy.yan@rock-chips.com, xingyu.wu@starfivetech.com, 
+	p.zabel@pengutronix.de, jack.zhu@starfivetech.com, shengyang.chen@starfivetech.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 03/10] drm/rockchip:hdmi: migrate to use inno-hdmi
+ bridge driver
+Message-ID: <20240522-opalescent-orchid-worm-2996ad@houat>
+References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
+ <20240521105817.3301-4-keith.zhao@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="sz2tqw6l7ovh4mjb"
 Content-Disposition: inline
-In-Reply-To: <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
+In-Reply-To: <20240521105817.3301-4-keith.zhao@starfivetech.com>
 
-On Wed, May 22, 2024 at 08:57:56AM +0200, Krzysztof Kozlowski wrote:
-> On 21/05/2024 21:43, Laurent Pinchart wrote:
-> > Hi Krzysztof,
-> > 
-> > On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
-> >> On 20/05/2024 21:59, Laurent Pinchart wrote:
-> >>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> >>> matrix decoder, programmable logic, reset generator, and PWM generator.
-> >>> These bindings model the device as an MFD, and support the GPIO expander
-> >>> and PWM functions.
-> >>>
-> >>> These bindings support the GPIO and PWM functions.
-> >>>
-> >>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>> ---
-> >>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
-> >>> implement and test the rest of the features the chip supports.
-> >>> ---
-> >>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
-> >>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
-> >>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
-> >>>  MAINTAINERS                                   |   7 ++
-> >>>  4 files changed, 195 insertions(+)
-> >>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> >>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> >>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..210e4d53e764
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> >>> @@ -0,0 +1,36 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Analog Devices ADP5585 GPIO Expander
-> >>> +
-> >>> +maintainers:
-> >>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>> +
-> >>> +description: |
-> >>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
-> >>> +  node of the parent MFD device. See
-> >>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
-> >>> +  well as an example.
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    const: adi,adp5585-gpio
-> >>> +
-> >>> +  gpio-controller: true
-> >>> +
-> >>> +  '#gpio-cells':
-> >>> +    const: 2
-> >>> +
-> >>> +  gpio-reserved-ranges: true
-> >>
-> >> There are no resources here, so new compatible is not really warranted.
-> >> Squash the node into parent.
-> > 
-> > Child nodes seem (to me) to be the standard way to model functions in
-> > MFD devices. Looking at mfd_add_device(), for OF-based systems, the
-> > function iterates over child nodes. I don't mind going a different
-> 
-> Only to assign of node, which could be skipped as well.
 
-It has to be assigned somehow, otherwise the GPIO and PWM lookups won't
-work. That doesn't have to be done in mfd_add_device() though, it can
-also be done manually by the driver. Looking at the example you gave,
-cs42l43_pin_probe() handles that assignment. I would have considered
-that a bit of a hack, but if that's your preferred approach, I'm fine
-with it. Could you confirm you're OK with that ?
+--sz2tqw6l7ovh4mjb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > routes, could you indicate what you have in mind, perhaps pointing to an
-> > existing driver as an example ?
-> 
-> Most of them? OK, let's take the last added driver in MFD directory:
-> cirrus,cs42l43
-> It has three children and only two nodes, because only these two devices
-> actually need/use/benefit the subnodes.
+Hi,
 
-Still trying to understand what bothers you here, is it the child nodes,
-or the fact that they have a compatible string and are documented in a
-separate binding ? Looking at the cirrus,cs42l43 bindings and the
-corresponding drivers, the pinctrl child node serves the purpose of
-grouping properties related to the pinctrl function, and allows
-referencing pinctrl entries from other DT nodes. All those properties
-could have been placed in the parent node. Are you fine with the
-adi,adp5585 having gpio and pwm child nodes, as long as they don't have
-compatible strings, and are documented in a single binding ?
+On Tue, May 21, 2024 at 06:58:10PM GMT, keith wrote:
+> Add the ROCKCHIP inno hdmi driver that uses the Inno DesignWare
+> HDMI TX bridge and remove the old separate one.
+>=20
+> Signed-off-by: keith <keith.zhao@starfivetech.com>
+> ---
+>  drivers/gpu/drm/rockchip/Kconfig              |    1 +
+>  drivers/gpu/drm/rockchip/Makefile             |    2 +-
+>  drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c |  517 ++++++++
+>  .../{inno_hdmi.h =3D> inno_hdmi-rockchip.h}     |   45 -
+>  drivers/gpu/drm/rockchip/inno_hdmi.c          | 1073 -----------------
+>  5 files changed, 519 insertions(+), 1119 deletions(-)
+>  create mode 100644 drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
+>  rename drivers/gpu/drm/rockchip/{inno_hdmi.h =3D> inno_hdmi-rockchip.h} =
+(85%)
+>  delete mode 100644 drivers/gpu/drm/rockchip/inno_hdmi.c
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/=
+Kconfig
+> index 1bf3e2829cd0..cc6cfd5a30d6 100644
+> --- a/drivers/gpu/drm/rockchip/Kconfig
+> +++ b/drivers/gpu/drm/rockchip/Kconfig
+> @@ -74,6 +74,7 @@ config ROCKCHIP_DW_MIPI_DSI
+> =20
+>  config ROCKCHIP_INNO_HDMI
+>  	bool "Rockchip specific extensions for Innosilicon HDMI"
+> +	select DRM_INNO_HDMI
+>  	help
+>  	  This selects support for Rockchip SoC specific extensions
+>  	  for the Innosilicon HDMI driver. If you want to enable
+> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip=
+/Makefile
+> index 3ff7b21c0414..4b2d0cba8db3 100644
+> --- a/drivers/gpu/drm/rockchip/Makefile
+> +++ b/drivers/gpu/drm/rockchip/Makefile
+> @@ -12,7 +12,7 @@ rockchipdrm-$(CONFIG_ROCKCHIP_ANALOGIX_DP) +=3D analogi=
+x_dp-rockchip.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) +=3D cdn-dp-core.o cdn-dp-reg.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI) +=3D dw_hdmi-rockchip.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) +=3D dw-mipi-dsi-rockchip.o
+> -rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) +=3D inno_hdmi.o
+> +rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) +=3D inno_hdmi-rockchip.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_LVDS) +=3D rockchip_lvds.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_RGB) +=3D rockchip_rgb.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_RK3066_HDMI) +=3D rk3066_hdmi.o
+> diff --git a/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c b/drivers/gpu/=
+drm/rockchip/inno_hdmi-rockchip.c
+> new file mode 100644
+> index 000000000000..69d0e913e13b
+> --- /dev/null
+> +++ b/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
+> @@ -0,0 +1,517 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + *    Zheng Yang <zhengyang@rock-chips.com>
+> + *    Yakir Yang <ykk@rock-chips.com>
+> + */
+> +
+> +#include <linux/irq.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/hdmi.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <drm/bridge/inno_hdmi.h>
+> +#include <drm/drm_atomic.h>
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_edid.h>
+> +#include <drm/drm_of.h>
+> +#include <drm/drm_probe_helper.h>
+> +#include <drm/drm_simple_kms_helper.h>
+> +
+> +#include "rockchip_drm_drv.h"
+> +
+> +#include "inno_hdmi-rockchip.h"
+> +
+> +#define INNO_HDMI_MIN_TMDS_CLOCK  25000000U
+> +
+> +struct rk_inno_hdmi {
+> +	struct rockchip_encoder encoder;
+> +	struct inno_hdmi inno_hdmi;
+> +	struct clk *pclk;
+> +	struct clk *refclk;
+> +};
+> +
+> +static struct inno_hdmi *rk_encoder_to_inno_hdmi(struct drm_encoder *enc=
+oder)
+> +{
+> +	struct rockchip_encoder *rkencoder =3D to_rockchip_encoder(encoder);
+> +	struct rk_inno_hdmi *rk_hdmi =3D container_of(rkencoder, struct rk_inno=
+_hdmi, encoder);
+> +
+> +	return &rk_hdmi->inno_hdmi;
+> +}
+> +
+> +enum {
+> +	CSC_RGB_0_255_TO_ITU601_16_235_8BIT,
+> +	CSC_RGB_0_255_TO_ITU709_16_235_8BIT,
+> +	CSC_RGB_0_255_TO_RGB_16_235_8BIT,
+> +};
+> +
+> +static const char coeff_csc[][24] =3D {
+> +	/*
+> +	 * RGB2YUV:601 SD mode:
+> +	 *   Cb =3D -0.291G - 0.148R + 0.439B + 128
+> +	 *   Y  =3D 0.504G  + 0.257R + 0.098B + 16
+> +	 *   Cr =3D -0.368G + 0.439R - 0.071B + 128
+> +	 */
+> +	{
+> +		0x11, 0x5f, 0x01, 0x82, 0x10, 0x23, 0x00, 0x80,
+> +		0x02, 0x1c, 0x00, 0xa1, 0x00, 0x36, 0x00, 0x1e,
+> +		0x11, 0x29, 0x10, 0x59, 0x01, 0x82, 0x00, 0x80
+> +	},
+> +	/*
+> +	 * RGB2YUV:709 HD mode:
+> +	 *   Cb =3D - 0.338G - 0.101R + 0.439B + 128
+> +	 *   Y  =3D 0.614G   + 0.183R + 0.062B + 16
+> +	 *   Cr =3D - 0.399G + 0.439R - 0.040B + 128
+> +	 */
+> +	{
+> +		0x11, 0x98, 0x01, 0xc1, 0x10, 0x28, 0x00, 0x80,
+> +		0x02, 0x74, 0x00, 0xbb, 0x00, 0x3f, 0x00, 0x10,
+> +		0x11, 0x5a, 0x10, 0x67, 0x01, 0xc1, 0x00, 0x80
+> +	},
+> +	/*
+> +	 * RGB[0:255]2RGB[16:235]:
+> +	 *   R' =3D R x (235-16)/255 + 16;
+> +	 *   G' =3D G x (235-16)/255 + 16;
+> +	 *   B' =3D B x (235-16)/255 + 16;
+> +	 */
+> +	{
+> +		0x00, 0x00, 0x03, 0x6F, 0x00, 0x00, 0x00, 0x10,
+> +		0x03, 0x6F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
+> +		0x00, 0x00, 0x00, 0x00, 0x03, 0x6F, 0x00, 0x10
+> +	},
+> +};
+> +
+> +static struct inno_hdmi_phy_config rk3036_hdmi_phy_configs[] =3D {
+> +	{  74250000, 0x3f, 0xbb },
+> +	{ 165000000, 0x6f, 0xbb },
+> +	{      ~0UL, 0x00, 0x00 }
+> +};
+> +
+> +static struct inno_hdmi_phy_config rk3128_hdmi_phy_configs[] =3D {
+> +	{  74250000, 0x3f, 0xaa },
+> +	{ 165000000, 0x5f, 0xaa },
+> +	{      ~0UL, 0x00, 0x00 }
+> +};
+> +
+> +static int inno_hdmi_find_phy_config(struct inno_hdmi *hdmi,
+> +				     unsigned long pixelclk)
+> +{
+> +	const struct inno_hdmi_phy_config *phy_configs =3D hdmi->plat_data->phy=
+_configs;
+> +	int i;
+> +
+> +	for (i =3D 0; phy_configs[i].pixelclock !=3D ~0UL; i++) {
+> +		if (pixelclk <=3D phy_configs[i].pixelclock)
+> +			return i;
+> +	}
+> +
+> +	DRM_DEV_DEBUG(hdmi->dev, "No phy configuration for pixelclock %lu\n",
+> +		      pixelclk);
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static void inno_hdmi_standby(struct inno_hdmi *hdmi)
+> +{
+> +	inno_hdmi_sys_power(hdmi, false);
+> +
+> +	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, 0x00);
+> +	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, 0x00);
+> +	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x00);
+> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
+> +};
+> +
+> +static void inno_hdmi_power_up(struct inno_hdmi *hdmi,
+> +			       unsigned long mpixelclock)
+> +{
+> +	struct inno_hdmi_phy_config *phy_config;
+> +	int ret =3D inno_hdmi_find_phy_config(hdmi, mpixelclock);
+> +
+> +	if (ret < 0) {
+> +		phy_config =3D hdmi->plat_data->default_phy_config;
+> +		DRM_DEV_ERROR(hdmi->dev,
+> +			      "Using default phy configuration for TMDS rate %lu",
+> +			      mpixelclock);
+> +	} else {
+> +		phy_config =3D &hdmi->plat_data->phy_configs[ret];
+> +	}
+> +
+> +	inno_hdmi_sys_power(hdmi, false);
+> +
+> +	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, phy_config->pre_emphasis);
+> +	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, phy_config->voltage_level_control);
+> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
+> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x14);
+> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x10);
+> +	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x0f);
+> +	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x00);
+> +	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x01);
+> +
+> +	inno_hdmi_sys_power(hdmi, true);
+> +};
+> +
+> +static void inno_hdmi_reset(struct inno_hdmi *hdmi)
+> +{
+> +	u32 val;
+> +	u32 msk;
+> +
+> +	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_DIGITAL, v_NOT_RST_DIGITAL);
+> +	udelay(100);
+> +
+> +	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_ANALOG, v_NOT_RST_ANALOG);
+> +	udelay(100);
+> +
+> +	msk =3D m_REG_CLK_INV | m_REG_CLK_SOURCE | m_POWER | m_INT_POL;
+> +	val =3D v_REG_CLK_INV | v_REG_CLK_SOURCE_SYS | v_PWR_ON | v_INT_POL_HIG=
+H;
+> +	hdmi_modb(hdmi, HDMI_SYS_CTRL, msk, val);
+> +
+> +	inno_hdmi_standby(hdmi);
+> +}
+> +
+> +static int inno_hdmi_config_video_csc(struct inno_hdmi *hdmi)
+> +{
+> +	struct drm_connector *connector =3D &hdmi->connector;
+> +	struct drm_connector_state *conn_state =3D connector->state;
+> +	struct inno_hdmi_connector_state *inno_conn_state =3D
+> +					to_inno_hdmi_conn_state(conn_state);
+> +	int c0_c2_change =3D 0;
+> +	int csc_enable =3D 0;
+> +	int csc_mode =3D 0;
+> +	int auto_csc =3D 0;
+> +	int value;
+> +	int i;
+> +
+> +	/* Input video mode is SDR RGB24bit, data enable signal from external */
+> +	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL1, v_DE_EXTERNAL |
+> +		    v_VIDEO_INPUT_FORMAT(VIDEO_INPUT_SDR_RGB444));
+> +
+> +	/* Input color hardcode to RGB, and output color hardcode to RGB888 */
+> +	value =3D v_VIDEO_INPUT_BITS(VIDEO_INPUT_8BITS) |
+> +		v_VIDEO_OUTPUT_COLOR(0) |
+> +		v_VIDEO_INPUT_CSP(0);
+> +	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL2, value);
+> +
+> +	if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_RGB) {
+> +		if (inno_conn_state->rgb_limited_range) {
+> +			csc_mode =3D CSC_RGB_0_255_TO_RGB_16_235_8BIT;
+> +			auto_csc =3D AUTO_CSC_DISABLE;
+> +			c0_c2_change =3D C0_C2_CHANGE_DISABLE;
+> +			csc_enable =3D v_CSC_ENABLE;
+> +
+> +		} else {
+> +			value =3D v_SOF_DISABLE | v_COLOR_DEPTH_NOT_INDICATED(1);
+> +			hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
+> +
+> +			hdmi_modb(hdmi, HDMI_VIDEO_CONTRL,
+> +				  m_VIDEO_AUTO_CSC | m_VIDEO_C0_C2_SWAP,
+> +				  v_VIDEO_AUTO_CSC(AUTO_CSC_DISABLE) |
+> +				  v_VIDEO_C0_C2_SWAP(C0_C2_CHANGE_DISABLE));
+> +			return 0;
+> +		}
+> +	} else {
+> +		if (inno_conn_state->colorimetry =3D=3D HDMI_COLORIMETRY_ITU_601) {
+> +			if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_YUV444) {
+> +				csc_mode =3D CSC_RGB_0_255_TO_ITU601_16_235_8BIT;
+> +				auto_csc =3D AUTO_CSC_DISABLE;
+> +				c0_c2_change =3D C0_C2_CHANGE_DISABLE;
+> +				csc_enable =3D v_CSC_ENABLE;
+> +			}
+> +		} else {
+> +			if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_YUV444) {
+> +				csc_mode =3D CSC_RGB_0_255_TO_ITU709_16_235_8BIT;
+> +				auto_csc =3D AUTO_CSC_DISABLE;
+> +				c0_c2_change =3D C0_C2_CHANGE_DISABLE;
+> +				csc_enable =3D v_CSC_ENABLE;
+> +			}
+> +		}
+> +	}
+> +
+> +	for (i =3D 0; i < 24; i++)
+> +		hdmi_writeb(hdmi, HDMI_VIDEO_CSC_COEF + i,
+> +			    coeff_csc[csc_mode][i]);
+> +
+> +	value =3D v_SOF_DISABLE | csc_enable | v_COLOR_DEPTH_NOT_INDICATED(1);
+> +	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
+> +	hdmi_modb(hdmi, HDMI_VIDEO_CONTRL, m_VIDEO_AUTO_CSC |
+> +		  m_VIDEO_C0_C2_SWAP, v_VIDEO_AUTO_CSC(auto_csc) |
+> +		  v_VIDEO_C0_C2_SWAP(c0_c2_change));
+> +
+> +	return 0;
+> +}
+> +
+> +static int inno_hdmi_setup(struct inno_hdmi *hdmi,
+> +			   struct drm_display_mode *mode)
+> +{
+> +	struct drm_display_info *display =3D &hdmi->connector.display_info;
+> +	unsigned long mpixelclock =3D mode->clock * 1000;
+> +
+> +	/* Mute video and audio output */
+> +	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
+> +		  v_AUDIO_MUTE(1) | v_VIDEO_MUTE(1));
+> +
+> +	/* Set HDMI Mode */
+> +	hdmi_writeb(hdmi, HDMI_HDCP_CTRL,
+> +		    v_HDMI_DVI(display->is_hdmi));
+> +
+> +	inno_hdmi_config_video_timing(hdmi, mode);
+> +
+> +	inno_hdmi_config_video_csc(hdmi);
+> +
+> +	if (display->is_hdmi)
+> +		inno_hdmi_config_video_avi(hdmi, mode);
+> +
+> +	/*
+> +	 * When IP controller have configured to an accurate video
+> +	 * timing, then the TMDS clock source would be switched to
+> +	 * DCLK_LCDC, so we need to init the TMDS rate to mode pixel
+> +	 * clock rate, and reconfigure the DDC clock.
+> +	 */
+> +	inno_hdmi_i2c_init(hdmi, mpixelclock);
+> +
+> +	/* Unmute video and audio output */
+> +	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
+> +		  v_AUDIO_MUTE(0) | v_VIDEO_MUTE(0));
+> +
+> +	inno_hdmi_power_up(hdmi, mpixelclock);
+> +
+> +	return 0;
+> +}
+>
 
-> >>> +
-> >>> +required:
-> >>> +  - compatible
-> >>> +  - gpio-controller
-> >>> +  - "#gpio-cells"
-> >>> +
-> >>> +additionalProperties: false
-> >>> +
-> >>> +...
-> >>> diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> >>> new file mode 100644
-> >>> index 000000000000..217c038b2842
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> >>> @@ -0,0 +1,117 @@
-> >>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> >>> +%YAML 1.2
-> >>> +---
-> >>> +$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: Analog Devices ADP5585 Keypad Decoder and I/O Expansion
-> >>> +
-> >>> +maintainers:
-> >>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>> +
-> >>> +description: |
-> >>
-> >> Do not need '|' unless you need to preserve formatting.
-> >>
-> >>> +  The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> >>> +  matrix decoder, programmable logic, reset generator, and PWM generator.
-> >>> +
-> >>> +properties:
-> >>> +  compatible:
-> >>> +    items:
-> >>> +      - enum:
-> >>> +          - adi,adp5585-00  # Default
-> >>> +          - adi,adp5585-01  # 11 GPIOs
-> >>> +          - adi,adp5585-02  # No pull-up resistors by default on special pins
-> >>> +          - adi,adp5585-03  # Alternate I2C address
-> >>> +          - adi,adp5585-04  # Pull-down resistors on all pins by default
-> >>> +      - const: adi,adp5585
-> >>> +
-> >>> +  reg:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +  interrupts:
-> >>> +    maxItems: 1
-> >>> +
-> >>> +  vdd-supply: true
-> >>> +
-> >>> +  gpio:
-> >>> +    $ref: /schemas/gpio/adi,adp5585-gpio.yaml
-> >>> +
-> >>> +  pwm:
-> >>> +    $ref: /schemas/pwm/adi,adp5585-pwm.yaml
-> >>> +
-> >>> +required:
-> >>> +  - compatible
-> >>> +  - reg
-> >>> +  - gpio
-> >>> +  - pwm
-> >>> +
-> >>> +allOf:
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          contains:
-> >>> +            const: adi,adp5585-01
-> >>> +    then:
-> >>> +      properties:
-> >>> +        gpio:
-> >>> +          properties:
-> >>> +            gpio-reserved-ranges: false
-> >>
-> >> This also points to fact your child node is pointless. It does not stand
-> >> on its own...
-> > 
-> > That doesn't make the child pointless just for that reason. There are
-> > numerous examples of child nodes that don't stand on their own.
-> 
-> No, your if-then must be in the schema defining it. This is just
-> unmaintianable code. It proves that child's compatible means nothing. If
-> you cannot use child's compatible to make any meaningful choices, then
-> it is useless.
+It's kind of a general comment, but I don't think that's the right
+abstraction. You should create a inno_hdmi bridge that allows to
+supplement some of the atomic hooks, but not reimplement them entirely
+each time.
 
-The compatible string may not be very useful. The child nodes have a
-use.
+You can have a look at how dw-hdmi does it for example. Also, why do you
+still need the encoder and connectors?
 
--- 
-Regards,
+Maxime
 
-Laurent Pinchart
+--sz2tqw6l7ovh4mjb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZk2duwAKCRAnX84Zoj2+
+dkF2AX9jQnZV3sONCKFSJhi4lZ/Ymcq3X6xWZyt2lmjwp1iEsJhOqYHPKEqQQ6AM
+GoKkbb0BgI+VNaNW48TQaT/S1RTayRRJCu/a3d4teB5nzeFKgubg71rRHSYXQRsI
+YSGF1RP4Vw==
+=jc7l
+-----END PGP SIGNATURE-----
+
+--sz2tqw6l7ovh4mjb--
 
