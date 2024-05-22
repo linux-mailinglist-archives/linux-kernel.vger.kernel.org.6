@@ -1,306 +1,247 @@
-Return-Path: <linux-kernel+bounces-186319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C99E8CC2B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4A58CC2B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A56B20EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA4811F2132A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDC01419A0;
-	Wed, 22 May 2024 13:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AC71411DD;
+	Wed, 22 May 2024 13:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iVCIMDAn"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZnFvyLAZ"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2068.outbound.protection.outlook.com [40.107.93.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3570413DBBD;
-	Wed, 22 May 2024 13:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716386342; cv=none; b=qhZNTTpubamiV8cdfPUeSHgNPabQdq8TY0gDt81AbqMhuInqclhpZtaqtAhc4w/iEvTtMULcuDoyKT5l/XUZZJQq1sNIY/CwzkCh8VmrLYwWIXoaV82cVWQBXEeBAL1eEB/gq1fDNJMUZW/yzWUVeqfWL5HktSzfyPPbQk4cf7c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716386342; c=relaxed/simple;
-	bh=RAF+fDJD2gJKn9LhD0AWd6OtY8lyYdzDCeVqZEqxhcA=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=Im81mBPNcD2BLcbx2jP6zdZowIYD+lKHd6CU1fOzT81DtU/CT3uI54NGCsH+msuvFloquffcSHduGBF3bYtZ3naB3wtLr7NdPNKxs4aBK0FIpFrdm66g1Mb0KK/Zs0IFqEdoj/LWer+aiY7qGONRe73+xsg15BOenHXroLtAF+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iVCIMDAn; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44MDpU1R003290;
-	Wed, 22 May 2024 13:58:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=content-type : subject :
- from : in-reply-to : date : cc : message-id : references : to :
- content-transfer-encoding : mime-version; s=pp1;
- bh=NlHpFkO2XzyQYTgQjwRf1r6z1Yjofq48OQhaKBG4X9E=;
- b=iVCIMDAnRghT3ya5Qa8lZZyyEYKhYZgqVasVevYFl42l/RSqi8/TZR8RwZAgO/lCvE2R
- j3tpl1X2WYTdO4DMhbSs06Lja5dVpjSdl1JFmXuM9BsgwjVpZUAFQcCAnbTTjMjwVDPc
- Fa/wWk77E8b++xDbI7lq8BWBXTmo4tO40AZIyO7+hl77DO17Vo4mlQr5EZL/owJoxkUY
- ybCi3J7Lot0lXZdSGfDImYuU+oG6u0ukIZmtmm1QldHNmViIbhpq0JF49fp1kWkKN8wb
- /ZHt7u/FukEhKDN8wO6RUQYziYW33kxXJTYSIQUWS6Ub0soVrUSgT5ywWgKsP/csknyn OQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y9hrm82de-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 13:58:43 +0000
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44MDwhNq015403;
-	Wed, 22 May 2024 13:58:43 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y9hrm82da-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 13:58:43 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44MCAGMt008090;
-	Wed, 22 May 2024 13:58:42 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y79c33un5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 13:58:42 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44MDwaH727656788
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 22 May 2024 13:58:38 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7EF2420043;
-	Wed, 22 May 2024 13:58:36 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9605220040;
-	Wed, 22 May 2024 13:58:33 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.69.167])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 22 May 2024 13:58:33 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [PATCH V2 4/9] tools/perf: Add support to capture and parse raw
- instruction in objdump
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <Zj4ujanupo0eKyby@x1>
-Date: Wed, 22 May 2024 19:28:21 +0530
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Ian Rogers <irogers@google.com>, "jolsa@kernel.org" <jolsa@kernel.org>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "segher@kernel.crashing.org" <segher@kernel.crashing.org>,
-        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "maddy@linux.ibm.com" <maddy@linux.ibm.com>,
-        "kjain@linux.ibm.com" <kjain@linux.ibm.com>,
-        "disgoel@linux.vnet.ibm.com" <disgoel@linux.vnet.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akanksha@linux.ibm.com" <akanksha@linux.ibm.com>
-Message-Id: <476EE92D-D9B6-466F-A827-5BB8A1276D3A@linux.vnet.ibm.com>
-References: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com>
- <20240506121906.76639-5-atrajeev@linux.vnet.ibm.com>
- <f2efdb9d-e636-4678-b492-83d3a28d8134@csgroup.eu>
- <E21FF3FD-1080-4A6C-99B0-7239AD831532@linux.vnet.ibm.com>
- <Zj4ujanupo0eKyby@x1>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TsX9NSCmu8Ggaz0XVdQBGN6J6VyNI3tF
-X-Proofpoint-GUID: zOeTV4_tiX1rJjrHub1teADWsZmC57Mh
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352CD1411C9;
+	Wed, 22 May 2024 13:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716386395; cv=fail; b=sVsH6yaU+cH8DeeGZoGUUjgL/pg57BkIbv/lbbOXDU2dclu0cCthgx0Pk4kzMHPpekS+/TtTJpFs5wwknimXiZDmcmFhTrKDLCAjrCjkomnA0oEfIhHWctaGJaGeapGCqaGO07aVeAn4bG4VgpxpOsgNMH/+1GglA20CWXaJGHo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716386395; c=relaxed/simple;
+	bh=4ZVJF0KC8ineZHkiwUDz4HcuRwo9iL7b6EEYZXv+cvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PK+zLLazuidTkESKf7S2qr8z7sXW40lAYl6TaES3aV1u9o15h+cjcsEUKeppCsP8I5iGIvCuo29FQjmXYuCvda1RpRHPoB7tmZ3vy7t20LnECNGTwPlHEzU37G7/yc0Rt5vP2w2oWqsBM/Swo0s8Qc7ig8YFv1i0xYhykGLluRY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZnFvyLAZ; arc=fail smtp.client-ip=40.107.93.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kIjkxE6nAj/RBtpKBreBcgYIMX+VQcf2UOrtbW5HdIU+r17BjTAeO9L7ykZ++S6+BT/z86qR1UamHP+zv2gPV6CJI4ZGpS/7YTCOHW9pd0mT0NVnRuGIi1OCh9wNXhkIKW4UAmiS8SkuSIGTBdlcllKQF8NZ6tWHi37M/uA4pFYL9kmJbW+0lH9UJ2oi4ZmT/w+oyqJVCnwbYqt5+i7BqwtMsRIUF4cFI3u3in9emJcmamuJKW/PQTJI6d8uU0lwEmmf28MkDpueetXu9h9xHnwOnIHEVbccazIQgUmbUu0yVk28zgV58HScSB0U6mMD8qqLkuHNh+UD7SWFahdJyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gP4zmQRsC7nT8InGyYwVkXe9G+rdEs/n29cbz2MFyOE=;
+ b=d+MUq2KbpE/kPuTY4J27VRnsPoWNpk1sPYWhhqWIjVF56YKoSaJ2E5WJaOVsfq2ZgaZrsDvGGmJbtsZeJvare5ILZoE4CWpByCw2/3TWjd/PTw+/UxQp3vr2kHZ8BGe+AyP1SbHu01H7J1Bl+rFR2bOii5jsUpaUcYRbxrSMB2cyG/jk/zySejPmyJfbY+M9MnHnkmpvQt7Mr1H/e0CMaU3SAbiJVzod7MS3wRpwytVdoU5B14aFjc5z3P4P/n7TQzCgIbby27FB99zXkLdHc6fKPqvB6g/F0ePf7IlVlY6rSOnv0rLUfSQYjeLaea3MtagwcUMdBpp7ErGk/fjeJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gP4zmQRsC7nT8InGyYwVkXe9G+rdEs/n29cbz2MFyOE=;
+ b=ZnFvyLAZVhj1jyopuqpnvBOqvyEQBSpiHgqG/SETinBswHws6yP6M8ZUyk33I0rHFwqeIQGVo2zDxq5Q5YAywuzm84u/MUGe7nF7Nz7jbTUnlh/i5SSo9PwsuSV5NzfoH0Ew2VOAkMRhq14NIpZElJ7b4V5HB/xrzWF2Wp6JclQYZX/zxTvDvTmiD1t94bsDUYguOtvdSfs/WY8hOa6Dzo18XVbNmruXR9vltp3xmg6dAcr+G2/3wYGOojGZX8UZt40guHDvEVnBipgt+7K9B4VQv4MW1JNjkG8MmgphaJB2+xcpDnfn9+YAn0y4Ab42aI+m+AGCDqMrdO19fWeXxw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by PH8PR12MB6841.namprd12.prod.outlook.com (2603:10b6:510:1c8::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Wed, 22 May
+ 2024 13:59:46 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7587.035; Wed, 22 May 2024
+ 13:59:46 +0000
+Date: Wed, 22 May 2024 10:59:44 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, kevin.tian@intel.com,
+	suravee.suthikulpanit@amd.com, joro@8bytes.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	yi.l.liu@intel.com, eric.auger@redhat.com, vasant.hegde@amd.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, Dhaval.Giani@amd.com,
+	shameerali.kolothum.thodi@huawei.com
+Subject: Re: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
+Message-ID: <20240522135944.GZ20229@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
+ <ZkDWXnPW7CaX5TtA@nvidia.com>
+ <ZkGZc5dvLigXcWib@nvidia.com>
+ <ZkOI8ztR1mUMJ8oe@nvidia.com>
+ <ZkQW6/OAQ8MzN6Go@nvidia.com>
+ <20240521182448.GN20229@nvidia.com>
+ <Zk0ftlf3f4gBaNgy@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zk0ftlf3f4gBaNgy@nvidia.com>
+X-ClientProxiedBy: BL0PR05CA0002.namprd05.prod.outlook.com
+ (2603:10b6:208:91::12) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_07,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- adultscore=0 clxscore=1011 spamscore=0 impostorscore=0 malwarescore=0
- mlxlogscore=999 priorityscore=1501 phishscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405220093
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH8PR12MB6841:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2deb7fe2-0a0e-4bad-d011-08dc7a677058
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?J+zElvFERxXPgzDopn160/Im1pAY6gQXeQulog8S8WOFIztFbLWIzVFh8v6x?=
+ =?us-ascii?Q?54RPuiolzujFOhtQCHyh3dwAwcr5JEQC7pGlTfgBfrrv4DV4/H11YXs7LWcb?=
+ =?us-ascii?Q?4Gdv/xVQgOstw272BrkcyvEEnaJF700FVA6eljVrUjhNfk4VB+LzPcgWkcbT?=
+ =?us-ascii?Q?zZM8um093Uh4VGf4we6TKg6PMy2FAIBE90bBkf5+FUm8k+cmY78SsWf0ecQP?=
+ =?us-ascii?Q?OO6SiQbeVWyP0qyG8eTdDzhVV5NEdyqddEG2gGY/9cvUBwnCb8z2o4CV4LpI?=
+ =?us-ascii?Q?utQ3zZ+RViOP79fuiqTW1Z3TmhuFkLUjDkkAleZmCyB0cmVWp0V8c60ZIiOx?=
+ =?us-ascii?Q?RnCRlqCDiNub3M2RVHfgpOGWncTXiD1WluAVYw2Iei5Uptut0Vab+koirLpx?=
+ =?us-ascii?Q?0b/sMVPgN0yG0mj/jaJ4oFZ4Sx8GSegbc/IBbGSQgINhuZNzDJW3Zuu4kw4T?=
+ =?us-ascii?Q?Y/Krl4huEKVMOcUHzZ2tXbLhGYRGaFvdx7FHh+TNbX2bNS5bTZRbJZbUe0Hk?=
+ =?us-ascii?Q?ipYwht5rgtCM9tWytFlUxSqfGKWXP9Is1sTVTOPp+kiaENw98YzF8zvFub2a?=
+ =?us-ascii?Q?yWufDf02NW+giy/3mT/SWhwDcOoNPHjK1bA47Xf6TFbgw6Yhx2I+uJ7PjMzq?=
+ =?us-ascii?Q?W9vhucCEM84AuXZkwfzFRdLmGaw1nSL4doqVcVaVQNaF/6fTcrP/plUxHzGp?=
+ =?us-ascii?Q?URWdnpJq2UzCHthoPkjzZti+qJKTMjW/9s5I0+j0gmRlzIDYsoj1ShYgPvP+?=
+ =?us-ascii?Q?cYeF8DnYlc3uS0mjw2Mt8/rp/+3NJcRF8JdcttyILtERWV9A+EyFrZPD/tf6?=
+ =?us-ascii?Q?rcnMX69DwDqcejFzMN28RiQymJgthq7ZhxlvbCKs3oUkBnKAVkEsnPQEDHSJ?=
+ =?us-ascii?Q?J/2/uVFNbUa1CgunqoJDI2GBlI950nvwOXErtlcpt33+qV1spFQjhD/0vVA1?=
+ =?us-ascii?Q?qG7FYfFKKaTqhdRmmjzm975Gvf59/L93dtGOjKPbG77r8+Jh0QE8sCVScY80?=
+ =?us-ascii?Q?165ZX2CaJ6ca3HoL+gLAx+dJIV5on6I6VbDyNOM9Qsp5hR5rL2dvrHV/Upsy?=
+ =?us-ascii?Q?jnych80hjonzmv6pxZn3AFPZTdBfFF/j2dm6X+AhrzepHOtN1i6eEM3xcqqK?=
+ =?us-ascii?Q?lHF9F/3Niw1MhbbN3dGkEM0ClntqvOzcN1XDzydUAZ3XfhTc16ULgImDrFDc?=
+ =?us-ascii?Q?uUU9eGA/wmqK7zP0sTrmszG4+f1YagCfm0mIf1z0fAUwAH6XWkcKSW8fpRIc?=
+ =?us-ascii?Q?1sGKNDbm2Q/0nRhNvyMoHXMg+FgJORe1PcKyUVQOEQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?epMLSKaQSdkRMUqA24cKrgICEmn/QNnfY/5jbA/C4W+eEcOfQFSzfemnQ8ZW?=
+ =?us-ascii?Q?WSlOTBk6zWhmDLRuoFhTr0YtlYCmv6p1Pu8NFT/7ZNQuqVSjTdM934BcTNJU?=
+ =?us-ascii?Q?Llum5G42Jtf1CuBRFvkMEQIvNZlvlMdIszWBap4UDwGSED9tn6ab2RY2WnrV?=
+ =?us-ascii?Q?vUC1YRAnk3jp4io74YJPHlaWveIK4miDBO3FCBvh0FgEBBoR42nkaFUwnpeE?=
+ =?us-ascii?Q?7ylsxTT0P2uyLIIQOXn5ei3NB6ebYdZDJWB29LWB3uLN7WuPnPvbZawbVsoO?=
+ =?us-ascii?Q?Ai9VlwDOjv9Xt10PYPD6gm9CwjDI57sCwUewtXFkxtkAiCagrPSTRefBc1s8?=
+ =?us-ascii?Q?XiXRTiXxX33arNGen2rcJhnz8GZLSiujCBNL+csAvLc19/EL7H7DUX4qOiXF?=
+ =?us-ascii?Q?CTbFmMPnrKBnQK2KeaVs21qRrI0ZvyArMzG8HSDaMg1PElGIxFMRm4uOMB9l?=
+ =?us-ascii?Q?w17ESZZ/mBJO/ssanJRLc6bFTYL49oBgvS43Vi2pmLtdWRDXu0iRxmUMJvkV?=
+ =?us-ascii?Q?Lddk0H1r4PCwFMgW+N+Hjp16/GnIf9F7CZfNeIu4dVe6DAp17IWnmH020azv?=
+ =?us-ascii?Q?I3knF8KhIFd01fUf3m+tYJXbJ+TQocUKx64G0dhWY0TvgWhRUZC4DXc+DoBB?=
+ =?us-ascii?Q?YwCa5a6R3tUf96jc4vyK1I3FnXroCoqpYpwCkPdAxXAwR+d/fvt6pME4+Ip0?=
+ =?us-ascii?Q?85hLANf2ymUNMU3ktzl+BTY/LuUApvPkoR/YI3e8FH0pi6hY/TLlMV0MWcBC?=
+ =?us-ascii?Q?JcZaI2xHc20U8MV0VztKZ++iLDs22gcgKVq9iEaeC6Ru1/xhGzz89vvJXVAT?=
+ =?us-ascii?Q?lBMOc9rknPE1N05I79JzPZ/6WPnyWjuEhiDQ8WN9nkUlMSWCH0/hnhsBTlQb?=
+ =?us-ascii?Q?fZnIP6snEDInYkVwQqTqkN2Lc/3g1Gn3LWE0QblKZbOa3KJUq0zjDGBzBMD0?=
+ =?us-ascii?Q?PYl5wbEcX5SMGLZUN3PYSNM4loIav7bGmjjZeTKL31pulP4n9Z/cS8tG/E4v?=
+ =?us-ascii?Q?dQE1sosrn/GjS3A0FYriQbIXydKBWbDSL2UewT0Q5TMv+FXzpQjS+Js/qaGM?=
+ =?us-ascii?Q?nXWECTF3De+A9PpWQ/toYglCJMfjeEKS2KqsP/FyeirjRcjR2devnKt9P7Wu?=
+ =?us-ascii?Q?A3MfjCJ7adg2LvQQkt3A/7kX9GcYPrsKvq4uCis/8qlRfGYhKJ7xcsMJ+KEC?=
+ =?us-ascii?Q?uzROT8TKmwZn619X85RiF+x0liU/m7XoWg3yxBxzKjiaUqTTRADjs7XIGUth?=
+ =?us-ascii?Q?eqfIdY3aPLfVdtK/qDKvNl/UZYjwq6W/lp/Qua6Cuj7vXu1/GyzIDRaPNJ4y?=
+ =?us-ascii?Q?g2nzrxGECSr62drpcsg/6LBVAb7Z1nK18IOtbTGyxmKV49hge1cF2Y6EIUVJ?=
+ =?us-ascii?Q?4x2O4frHz430bnK11fL0XpKVZyLcM7Vr5J2aZcB2dhCpVRwYuZjfNJu/WnoB?=
+ =?us-ascii?Q?o6rQo0r1SN03+CGOjef+jnUGHwJshWLg4uhiLR6gjBWG8zPD15lhviTvwUbm?=
+ =?us-ascii?Q?eiigtSh2Hb/UJclHGF49PIosQZc8ZOKHmLimcWatM4EyZs97zopMOfmz627u?=
+ =?us-ascii?Q?hv9AaOSSmg3HjqRy9Ks=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2deb7fe2-0a0e-4bad-d011-08dc7a677058
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 13:59:46.5874
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ATZITZr1KNB/K16WcnzzkHRlGin7lmyFlZp94b38pWItA7g2o8p7HXCFY4ncm/p+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6841
 
+On Tue, May 21, 2024 at 03:27:02PM -0700, Nicolin Chen wrote:
+> On Tue, May 21, 2024 at 03:24:48PM -0300, Jason Gunthorpe wrote:
+> > On Tue, May 14, 2024 at 06:59:07PM -0700, Nicolin Chen wrote:
+> > > So, you want a proxy S1 domain for a device to attach, in case
+> > > of a stage-2 only setup, because an S2 domain will no longer has
+> > > a VMID, since it's shared among viommus. In the SMMU driver case,
+> > > an arm_smmu_domain won't have an smmu pointer, so a device can't
+> > > attach to an S2 domain but always an nested S1 domain, right?
+> > 
+> > That seems like a simple solution to the VMID lifetime, but it means
+> > the kernel has to decode more types of vSTE.
+> 
+> Yea. For vSTE=abort, likely we need a nested block domain too?
 
+Sure, it is easy to do
+ 
+> > I don't know if there is merit one way or the other. A more specific
+> > API surface is nice, but the two APIs are completely duplicating.
+> > 
+> > So maybe:
+> > 
+> > #define IOMMU_VIOMMU_INVALIDATE IOMMU_HWPT_INVALIDATE
+> > 
+> > As documentation and have the kernel just detect based on the type of
+> > the passed ID?
+> 
+> Yea, the only difference is viommu_id v.s. hwpt_id that we can
+> document.
+> 
+> Then in this case, we have two mostly identical uAPIs for the
+> SMMU driver to use. Should we implement both?
 
-> On 10 May 2024, at 7:56=E2=80=AFPM, Arnaldo Carvalho de Melo <acme@kernel=
-org> wrote:
->=20
-> On Thu, May 09, 2024 at 10:56:23PM +0530, Athira Rajeev wrote:
->>=20
->>=20
->>> On 7 May 2024, at 3:05=E2=80=AFPM, Christophe Leroy <christophe.leroy@c=
-sgroup.eu> wrote:
->>>=20
->>>=20
->>>=20
->>> Le 06/05/2024 =C3=A0 14:19, Athira Rajeev a =C3=A9crit :
->>>> Add support to capture and parse raw instruction in objdump.
->>>=20
->>> What's the purpose of using 'objdump' for reading raw instructions ?=20
->>> Can't they be read directly without invoking 'objdump' ? It looks odd t=
-o=20
->>> me to use objdump to provide readable text and then parse it back.
->>=20
->> Hi Christophe,
->>=20
->> Thanks for your review comments.
->>=20
->> Current implementation for data type profiling on X86 uses "objdump" too=
-l to get the disassembled code.
->=20
-> commit 6d17edc113de1e21fc66afa76be475a4f7c91826
-> Author: Namhyung Kim <namhyung@kernel.org>
-> Date:   Fri Mar 29 14:58:11 2024 -0700
->=20
->    perf annotate: Use libcapstone to disassemble
->=20
->    Now it can use the capstone library to disassemble the instructions.
->    Let's use that (if available) for perf annotate to speed up.  Currently
->    it only supports x86 architecture.  With this change I can see ~3x spe=
-ed
->    up in data type profiling.
->=20
->    But note that capstone cannot give the source file and line number inf=
-o.
->    For now, users should use the external objdump for that by specifying
->    the --objdump option explicitly.
->=20
->    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
->    Tested-by: Ian Rogers <irogers@google.com>
->    Cc: Adrian Hunter <adrian.hunter@intel.com>
->    Cc: Changbin Du <changbin.du@huawei.com>
->    Cc: Ingo Molnar <mingo@kernel.org>
->    Cc: Jiri Olsa <jolsa@kernel.org>
->    Cc: Kan Liang <kan.liang@linux.intel.com>
->    Cc: Peter Zijlstra <peterz@infradead.org>
->    Link: https://lore.kernel.org/r/20240329215812.537846-5-namhyung@kerne=
-l.org
->    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
->=20
-> From a quick look at http://www.capstone-engine.org/compile.html it
-> seems PowerPC is supported.
->=20
-> But since we did it first with objdump output parsing, its good to have
-> it as an alternative and sometimes a fallback:
+I suspect it will turn out nicely naturally, lets try and see
+ 
+> > > > We can add ATS invalidation after either as an enhancement as part of
+> > > > adding the VIOMMU either as DEV_INVALIDATE or VIOMMU_INVALIDATE (or
+> > > > both)
+> > > 
+> > > Yea, maybe step by step like this:
+> > > 
+> > > Part-1 VIOMMU_ALLOC and VIOMMU_ATTACH
+> > > Part-2 VIOMMU_SET/UNSET_VDEV_ID
+> > > Part-3 VIOMMU_INVALIDATE
+> > > Part-4 VQUEUE_ALLOC
+> > > ...
+> > 
+> > So we have this stuff still open:
+> >  - Identity STE with PASID (part 2b)
+> >  - IOMMU_GET_HW_INFO (part 3)
+> >  - IOMMU_HWPT_ALLOC_NEST_PARENT (part 3)
+> >  - IOMMU_HWPT_DATA_ARM_SMMUV3 (part 3)
+> >  - IOMMU_HWPT_INVALIDATE_DATA_ARM_SMMUV3
+> >  - VIOMMU_ALLOC, VIOMMU_ATTACH
+> >  - VIOMMU_INVALIDATE
+> >  - VIOMMU_SET/UNSET_VDEV_ID
+> >  - VQUEUE_ALLOC / vCMDQ
+> > 
+> > I feel like IOMMU_HWPT_INVALIDATE_DATA_ARM_SMMUV3 is a reasonable fit
+> > to part 3. Then part 4 would be VIOMMU_ALLOC -> VIOMMU_SET/UNSET_VDEV_ID
+> > which brings ATS support the API.
+> 
+> There is some conflict at passing in viommu_id/viommu v.s. parent
+> hwpt_id/domain for a nested domain allocation. Do you think that
+> should be addressed later in VIOMMU series v.s. part3?
+>
+> More specifically, I have two drafts in my viommu series:
+> 87a659e65229 WAR: iommufd: Allow pt_it to carry viommu_id
+> 7c5fd8f50bc9 WAR pass in viommu pointer to domain_alloc_user op
 
-Hi Arnaldo, Namhyung
+It would be good for viommu to come with all the uAPI changes in one
+shot, so all the pt_ids should be updated to accept viommu to pass the
+S2 HWPT.
 
-Thanks for the suggestions. libcapstone is a good option and it is faster t=
-oo.
-I will address these changes in V3.
+Then whatever driver changes are needed to make ATS work should come
+together too.
 
-Thanks
-Athira
->=20
-> commit f35847de2a65137e011e559f38a3de5902a5463f
-> Author: Namhyung Kim <namhyung@kernel.org>
-> Date:   Wed Apr 24 17:51:56 2024 -0700
->=20
->    perf annotate: Fallback disassemble to objdump when capstone fails
->=20
->    I found some cases that capstone failed to disassemble.  Probably my
->    capstone is an old version but anyway there's a chance it can fail.  A=
-nd
->    then it silently stopped in the middle.  In my case, it didn't
->    understand "RDPKRU" instruction.
->=20
->    Let's check if the capstone disassemble reached the end of the function
->    and fallback to objdump if not
->=20
-> ---------------
->=20
-> - Arnaldo
->=20
->> And then the objdump result lines are parsed to get the instruction
->> name and register fields. The initial patchset I posted to enable the
->> data type profiling feature in powerpc was using the same way by
->> getting disassembled code from objdump and parsing the disassembled
->> lines. But in V2, we are introducing change for powerpc to use "raw
->> instruction" and fetch opcode, reg fields from the raw instruction.
->=20
->> I tried to explain below that current objdump uses option
->> "--no-show-raw-insn" which doesn't capture raw instruction.  So to
->> capture raw instruction, V2 patchset has changes to use default option
->> "--show-raw-insn" and get the raw instruction [ for powerpc ] along
->> with human readable annotation [ which is used by other archs ]. Since
->> perf tool already has objdump implementation in place, I went in the
->> direction to enhance it to use "--show-raw-insn" for powerpc purpose.
->=20
->> But as you mentioned, we can directly read raw instruction without
->> using "objdump" tool.  perf has support to read object code. The dso
->> open/read utilities and helper functions are already present in
->> "util/dso.c" And "dso__data_read_offset" function reads data from dso
->> file offset. We can use these functions and I can make changes to
->> directly read binary instruction without using objdump.
->=20
->> Namhyung, Arnaldo, Christophe
->> Looking for your valuable feedback on this approach. Please suggest if t=
-his approach looks fine
->>=20
->>=20
->> Thanks
->> Athira
->>>=20
->>>> Currently, the perf tool infrastructure uses "--no-show-raw-insn" opti=
-on
->>>> with "objdump" while disassemble. Example from powerpc with this option
->>>> for an instruction address is:
->>>=20
->>> Yes and that makes sense because the purpose of objdump is to provide=20
->>> human readable annotations, not to perform automated analysis. Am I=20
->>> missing something ?
->>>=20
->>>>=20
->>>> Snippet from:
->>>> objdump  --start-address=3D<address> --stop-address=3D<address>  -d --=
-no-show-raw-insn -C <vmlinux>
->>>>=20
->>>> c0000000010224b4: lwz     r10,0(r9)
->>>>=20
->>>> This line "lwz r10,0(r9)" is parsed to extract instruction name,
->>>> registers names and offset. Also to find whether there is a memory
->>>> reference in the operands, "memory_ref_char" field of objdump is used.
->>>> For x86, "(" is used as memory_ref_char to tackle instructions of the
->>>> form "mov  (%rax), %rcx".
->>>>=20
->>>> In case of powerpc, not all instructions using "(" are the only memory
->>>> instructions. Example, above instruction can also be of extended form =
-(X
->>>> form) "lwzx r10,0,r19". Inorder to easy identify the instruction categ=
-ory
->>>> and extract the source/target registers, patch adds support to use raw
->>>> instruction. With raw instruction, macros are added to extract opcode
->>>> and register fields.
->>>>=20
->>>> "struct ins_operands" and "struct ins" is updated to carry opcode and
->>>> raw instruction binary code (raw_insn). Function "disasm_line__parse"
->>>> is updated to fill the raw instruction hex value and opcode in newly
->>>> added fields. There is no changes in existing code paths, which parses
->>>> the disassembled code. The architecture using the instruction name and
->>>> present approach is not altered. Since this approach targets powerpc,
->>>> the macro implementation is added for powerpc as of now.
->>>>=20
->>>> Example:
->>>> representation using --show-raw-insn in objdump gives result:
->>>>=20
->>>> 38 01 81 e8     ld      r4,312(r1)
->>>>=20
->>>> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
->>>> this translates to instruction form: "ld RT,DS(RA)" and binary code
->>>> as:
->>>> _____________________________________
->>>> | 58 |  RT  |  RA |      DS       | |
->>>> -------------------------------------
->>>> 0    6     11    16              30 31
->>>>=20
->>>> Function "disasm_line__parse" is updated to capture:
->>>>=20
->>>> line:    38 01 81 e8     ld      r4,312(r1)
->>>> opcode and raw instruction "38 01 81 e8"
->>>> Raw instruction is used later to extract the reg/offset fields.
->>>>=20
->>>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->>>> ---
+> I know that these two only make sense with VIOMMU_ALOC. Yet, will
+> there be a problem, if we establish nested domain allocation with
+> parent domain/hwpt by part3, in the uAPI, and then change later?
+> Will we end up with supporting two for backward compatibility?
 
+I think this is fairly minor compatability, let's see.
 
+Jason
 
