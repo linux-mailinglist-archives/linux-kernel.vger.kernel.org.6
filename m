@@ -1,133 +1,192 @@
-Return-Path: <linux-kernel+bounces-186418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62A28CC402
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:22:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1318CC3F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1563A1F2218D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:16:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF293B21960
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C552770F1;
-	Wed, 22 May 2024 15:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7766381734;
+	Wed, 22 May 2024 15:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MR8HfGt/"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPppyMsJ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC5A2B9CD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF642574D;
+	Wed, 22 May 2024 15:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716390982; cv=none; b=P0rJ9iAqtSW38wow7AQc2+GaRW9EKQ0Hm51Jlp/iWgpaaCqy6xRtsVyHqyq+K9TuaX9WzUwEUyD2nK1Rvqky5NrIHJvdSRobndl+8psk9dv8F5KvtpN9mGzZ+d+hQ52F6qGdZZzlGf+XV53eaPFo+Q6+i+EV5oqIKbRvmrjTjFw=
+	t=1716390983; cv=none; b=BrZ68vWc02Pc91zZl2Gwkle7EoPVffLh2zaajsScg0RCPkGLtAyP2X0YkmUP8Xa0NmSWoJGhQKkjnaE/J9R1j6MT922v1bRaZHU3fGgYVpoFogrtlgZ/ZrMyIHWF+4A1GCW8ILcOUP73Uc+qFLE/VsT7oJD/9iF55JWJ/Kiaa04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716390982; c=relaxed/simple;
-	bh=LBsuxRIt25iSTct1CaOFF4pb8q9+nLplzWcPNkULdk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5YhSkKWqejiee7ekEq0w6WzHFDzfu3lzmJKx11i1PMD9gzUzIslBqv2onzQ7A7gB/842jXc0Jrib0LSDUMWv1ABPeZLJLENWGpikZtIWQ4n/QB05S6Gie5oO66LG1qYEREiTU93ei6MGy9usbrgdt9/zP2b2cMmXgTVc/eZ+Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MR8HfGt/; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: seanjc@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716390977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qPx5VBeAtVusPub5h8jjoS2Zp/k7LiSDo3T23EUz3Cc=;
-	b=MR8HfGt/7NWj1OeZKFuwxnVF9+ndS7xCoaOY+r1JI2bWBzf2MynLiEMDjC1DrcozAH8hei
-	TUnFiYL5Pyj+E10/+shwWi4h/9LVvu0Mc6mkr1yRH6n++3msAFiuDQVzo86zkrGkaVb0hH
-	6NbyKC1AGLafKPP8z0hv7d6a9IuqBaQ=
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: zhaotianrui@loongson.cn
-X-Envelope-To: maobibo@loongson.cn
-X-Envelope-To: chenhuacai@kernel.org
-X-Envelope-To: mpe@ellerman.id.au
-X-Envelope-To: anup@brainfault.org
-X-Envelope-To: paul.walmsley@sifive.com
-X-Envelope-To: palmer@dabbelt.com
-X-Envelope-To: aou@eecs.berkeley.edu
-X-Envelope-To: borntraeger@linux.ibm.com
-X-Envelope-To: frankja@linux.ibm.com
-X-Envelope-To: imbrenda@linux.ibm.com
-X-Envelope-To: pbonzini@redhat.com
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: kvm@vger.kernel.org
-X-Envelope-To: loongarch@lists.linux.dev
-X-Envelope-To: linux-mips@vger.kernel.org
-X-Envelope-To: linuxppc-dev@lists.ozlabs.org
-X-Envelope-To: kvm-riscv@lists.infradead.org
-X-Envelope-To: linux-riscv@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Wed, 22 May 2024 08:16:07 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	s=arc-20240116; t=1716390983; c=relaxed/simple;
+	bh=EI0HTnk8GGjk6iqjpuIdqvCDyPO+TCTJmp5zSzG0huU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZAntf36WtPXjkcNTsz/YjtAFShimS9aCycnbUKF1p/XhTSk7XIBJ9ms71POrXH34tESbXQK0SGU1eXiP/l5mlF92G7yQYUA+7R23ACLn26uJBFzW+Jw2uQ/vZmax/GsMfe/OfLCM2dYcs6DbYQs/ybkWu/ShutFDTdWTgrN8VTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPppyMsJ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52742fdd363so592798e87.1;
+        Wed, 22 May 2024 08:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716390980; x=1716995780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=roXuzAP03ERlPT/E+g7wXJxWMv9lSxxfHo4i6eclxyA=;
+        b=hPppyMsJx4dhjxGqou4bhBjLf3ep/UCoHlE+ZAMYqNcthTdUs8gdk/2Dl9HvFOj+VB
+         LNGhjFxfCRtIkjyoXQX+gdt7Se+BTjb0Ki8bKXgxA8jN+oOSpHlxXYaAWYUHJNwKfA6z
+         +ZaSNJ5MJ4Bx0xiYBWMdqam1FP5hOd/xYLqMH2Nf07zsG5VwCWdaNwwIlYgg38YioRCr
+         j3KG4hMIDW82ZO3qbkd9sny+8W+ogydfFF9aIXbvxQE7NatMlWXBiVh6W/VUo1gyLjzO
+         NuLx0X9RQTe8m7OfKh2zukn4VwcDOT5k9rXE/L1WYvEFlKI24MU+gyp6vupI8dkNYR5c
+         BnEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716390980; x=1716995780;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=roXuzAP03ERlPT/E+g7wXJxWMv9lSxxfHo4i6eclxyA=;
+        b=Vb9RZmckvPv+tbkg3X3ohVn0YNVs2uigxNKFZ3PHLpQSwMsjAmiJsp1g5X57MvGrdS
+         8EShCAgLzU0xG85KXcQS2lL2PZTicTGXeElgkpiPJeoBLJqNycvIJP9pccdauu9xhSpV
+         Mt44xzg40iZPQyYOlJ94R/32brLayQrI49OodTrZPXVbFrqP9N9C3ufZVv0zadwZBjHx
+         h3LzJKv8ppxwMiN3g2imk8GF8Hz1g1Nzi3EeRFVv7E0z6IZFTzCLTiXSQP3PsFuu5dYo
+         7KriqjS4Oe+LCAHNhbN6/OAFcgDg8T2PWqqlXgb37zPyIvHa+JZnBAhnuvpWDZJ4Hc7+
+         lN5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUbcfDB/wXppFuAC2RpiWRWtcLqV7zls4Nj4vEFh5q3/li+u+BiCSeZSXm9O8mh9/xQllQsyQDulG+HF/tzttgS+9joCR1baIAXxjtSHIXyQTw3S9d8bmUMiiUmwZEiK1szmupZRzXg5Krs0JuX+PRASblkniC2T28QnlCfbaM4hEe6QlQ=
+X-Gm-Message-State: AOJu0Yw+FWnstLylBbSVINoCJO296/pfwi4eeN3iIOd4AYYI2vM0hyHK
+	rO00zRmG9/B2h9e0avAQLj85L3wwrXbBl3MacxwZ0u++YQ8BINBL
+X-Google-Smtp-Source: AGHT+IEHZB1bTFFnwygf0GprRyBd/WmnlMoYX642oxz0uKZTkPF6xjNsqg/DDepqC2ncSek6hdG3rg==
+X-Received: by 2002:ac2:57c2:0:b0:51a:c913:a9ce with SMTP id 2adb3069b0e04-526bf642cb9mr1366242e87.50.1716390978862;
+        Wed, 22 May 2024 08:16:18 -0700 (PDT)
+Received: from pratik-IdeaPad.lan (customer-145-40-29-195.stosn.net. [145.40.29.195])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-525e6cb5ed4sm335634e87.247.2024.05.22.08.16.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 08:16:18 -0700 (PDT)
+From: Pratik Farkase <pratikfarkase94@gmail.com>
+X-Google-Original-From: Pratik Farkase <pratik.farkase@wsisweden.com>
+To: 
+Cc: Pratik Farkase <pratik.farkase@wsisweden.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Pratik Farkase <pratikfarkase94@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] KVM: Add a flag to track if a loaded vCPU is
- scheduled out
-Message-ID: <Zk4MN49212SaW1_z@linux.dev>
-References: <20240522014013.1672962-1-seanjc@google.com>
- <20240522014013.1672962-2-seanjc@google.com>
+Subject: [PATCH v4] dt-bindings: gpio: lsi,zevio-gpio: convert to dtschema
+Date: Wed, 22 May 2024 17:16:13 +0200
+Message-Id: <20240522151616.27397-1-pratik.farkase@wsisweden.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522014013.1672962-2-seanjc@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21, 2024 at 06:40:08PM -0700, Sean Christopherson wrote:
-> Add a kvm_vcpu.scheduled_out flag to track if a vCPU is in the process of
-> being scheduled out (vCPU put path), or if the vCPU is being reloaded
-> after being scheduled out (vCPU load path).  In the short term, this will
-> allow dropping kvm_arch_sched_in(), as arch code can query scheduled_out
-> during kvm_arch_vcpu_load().
-> 
-> Longer term, scheduled_out opens up other potential optimizations, without
-> creating subtle/brittle dependencies.  E.g. it allows KVM to keep guest
-> state (that is managed via kvm_arch_vcpu_{load,put}()) loaded across
-> kvm_sched_{out,in}(), if KVM knows the state isn't accessed by the host
-> kernel.  Forcing arch code to coordinate between kvm_arch_sched_{in,out}()
-> and kvm_arch_vcpu_{load,put}() is awkward, not reusable, and relies on the
-> exact ordering of calls into arch code.
-> 
-> Adding scheduled_out also obviates the need for a kvm_arch_sched_out()
-> hook, e.g. if arch code needs to do something novel when putting vCPU
-> state.
-> 
-> And even if KVM never uses scheduled_out for anything beyond dropping
-> kvm_arch_sched_in(), just being able to remove all of the arch stubs makes
-> it worth adding the flag.
-> 
-> Link: https://lore.kernel.org/all/20240430224431.490139-1-seanjc@google.com
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Convert Zevio GPIO Controller from text to dtschema.
+Adding `interrupts` property fixes the following warning:
+linux/out/arch/arm/boot/dts/nspire/nspire-tp.dtb: gpio@90000000:
+'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'`
+while executing `make dtbs_check` on Texas Instruments
+nspire boards.
 
-Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+Signed-off-by: Pratik Farkase <pratik.farkase@wsisweden.com>
+---
+Changes in v4:
+- Updated commit message to describe addition of `interrupt`
+property
+Changes in v3:
+- Updated relative path filename to match actual path filename
+- Added `interrupts` property
+Changes in v2:
+- Renamed file from `gpio-zevio.yaml` to `lsi,zevio-gpio.yaml`
+- Fixed the space indentation in example
+---
+---
+ .../devicetree/bindings/gpio/gpio-zevio.txt   | 16 -------
+ .../bindings/gpio/lsi,zevio-gpio.yaml         | 44 +++++++++++++++++++
+ 2 files changed, 44 insertions(+), 16 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
 
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt b/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
+deleted file mode 100644
+index a37bd9ae2730..000000000000
+--- a/Documentation/devicetree/bindings/gpio/gpio-zevio.txt
++++ /dev/null
+@@ -1,16 +0,0 @@
+-Zevio GPIO controller
+-
+-Required properties:
+-- compatible: Should be "lsi,zevio-gpio"
+-- reg: Address and length of the register set for the device
+-- #gpio-cells: Should be two. The first cell is the pin number and the
+-  second cell is used to specify optional parameters (currently unused).
+-- gpio-controller: Marks the device node as a GPIO controller.
+-
+-Example:
+-	gpio: gpio@90000000 {
+-		compatible = "lsi,zevio-gpio";
+-		reg = <0x90000000 0x1000>;
+-		gpio-controller;
+-		#gpio-cells = <2>;
+-	};
+diff --git a/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+new file mode 100644
+index 000000000000..37df0e6cfec5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/lsi,zevio-gpio.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/lsi,zevio-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Zevio GPIO controller
++
++maintainers:
++  - Pratik Farkase <pratikfarkase94@gmail.com>
++
++properties:
++  compatible:
++    items:
++      - const: lsi,zevio-gpio
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  "#gpio-cells":
++    const: 2
++
++  gpio-controller: true
++
++required:
++  - compatible
++  - reg
++  - "#gpio-cells"
++  - gpio-controller
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    gpio@90000000 {
++        compatible = "lsi,zevio-gpio";
++        reg = <0x90000000 0x1000>;
++        gpio-controller;
++        #gpio-cells = <2>;
++    };
 -- 
-Thanks,
-Oliver
+2.34.1
+
 
