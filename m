@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-185899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A708CBCAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:08:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64E28CBCAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22520282760
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:08:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31CE5B216CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A29C7F7D5;
-	Wed, 22 May 2024 08:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9591F7F476;
+	Wed, 22 May 2024 08:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ub7dQRRY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XgseVKqi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDBB7F484;
-	Wed, 22 May 2024 08:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73852182DB
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716365293; cv=none; b=PrLQdPCScf1kgggKV738k9opTkwzFYojGtoxxpAcIr8NLTbefXRXcAcUZPBEu5/tHzcdAPPrXGDQREEZxBEj+ALkNmvXhfFolBxkZbxigUALBqXEOeXADm+TGE07xkyiYiSJznu9offi8HwZWvGsDdDtEwM84/3Ke5JJzQyEBco=
+	t=1716365404; cv=none; b=contpOQtuiPZjc6CFQJcZ00PyrivMOxXBWCZwzdsB+tSrWDZ0SRX0IMzUVGHdvmZz2cQTM2ZHtrtDr4plePokMc+lOZkmwopxIXuDgcvey91Y76n0Nik3o96RqaDuweOEVdVR1O8hWqu8IswgTfLjPyeJs7e+jY1mAC6VK5SnYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716365293; c=relaxed/simple;
-	bh=XsVorddufHJHW9jCOTtwIqAeudeLJX7nT1NbKFEuzSk=;
+	s=arc-20240116; t=1716365404; c=relaxed/simple;
+	bh=zoBhkj0M1tl/VH3w++vytNO/kHH6JAySc7ds3DgwG/o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jfCU2W4aeL5Un6WU6Q7aSscHbRDfx+kNPCGiQehEy01vl69opQEMGswV2dwiza7CoigwQcU9dNMrpsdUXhMlIbYkYcrZBxifMDAS16ymA3n9hpYBgm7WjA+NusrTaf8HH/0sLnQpyzPAfJtIA7GoTTZha9s37jdeoRzFZsdZWu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ub7dQRRY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE70C4AF09;
-	Wed, 22 May 2024 08:08:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716365293;
-	bh=XsVorddufHJHW9jCOTtwIqAeudeLJX7nT1NbKFEuzSk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ub7dQRRYmgvGQIXOKkzcALnqKjdM+kZsOun7dJb4WOMFCtRCQ6V0yqAVNS+H+zhHw
-	 xkU1tyazOtIdw3SzINSIjctScF0rx5MEFgSwgiWSZtLfFhX4rhkY4oLAJBWlVUdwJh
-	 kQ1lvutc25IUT12jL0ca6Q/8hjIkbXin+2EkNxTdqNObXC0E0T/0xU4YEbk0PAn8OS
-	 isDDEVKBw5YBZtGcW94r7rF2qi+X28SIkuwWXgeXyV11s7cPFUEB+p9f6o5tR9+sg2
-	 OlvSMsAX/GNRfNsLzO7ZtAcRvL/w36Cz7rL66F3R/GHCa9Z6RpACM7XOxGPXNQQ0OF
-	 rgtZ3Zlm6+BQQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5238b7d0494so6259471e87.3;
-        Wed, 22 May 2024 01:08:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUM+1mdMv44phN1sm93CR73wEq/ShahYZD4fEIh3Ct9aHel+OYEe9mV6HXTUgv7rPadJYDuIOWsOP2nin0CkOTqX6+NtknEMBUAsgP3rhSQ41AjkeO23z8h/7jbRqVPpD3wbvPM
-X-Gm-Message-State: AOJu0YwRLRM2N5MWqlRPokAVp++VlaaQYVdF3IT3bzLqdDOtx08yEklS
-	SugaZXyy8a2qKN5ip7EO2MA2d3gXpgSDWYeY08MH0bhYRvlXf9nrCxDSljwA70S5IVAE+MaXz9/
-	J3j+ahTJg7bSecIXS+qYpfbDXEGo=
-X-Google-Smtp-Source: AGHT+IFAwGmgLyWddo6GG2KC4+9FOm3Fivw6BZNWf4Z82XgHm/o2gbsmxHaMbRAHB6CWe4Pb1CXzQJ+VgCtRrBSM6SM=
-X-Received: by 2002:ac2:4884:0:b0:524:34ad:ba7d with SMTP id
- 2adb3069b0e04-526c0a68f31mr1201735e87.42.1716365291354; Wed, 22 May 2024
- 01:08:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=m0HyOpod2LHw8NfsEfsmY5JqK8rQVII3QLg8r6hN4MHjaL2h2/b4r7w9Yg72EZLkbtKtg0TZg0lybtLN0t2rQgTTKfisIq9eMuhpP2AHqnnjcviWKfszy94QMauZVnTfNvBDwUQ90l6fPSyj4g6pnNeXraCic5xPr30jiHbUU5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XgseVKqi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716365402;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=otRYgCVJq92Yfm4kUIiopkxd1yl6k4G597cBFQJGQUs=;
+	b=XgseVKqi8B4k70+JYaWZc7ROZ4guQ4iSFPcWiYhrec32af4q9nS0HQPgePfKvsYA9/WWt6
+	KXybRQLB7mkW6VbPJhQ8OZSBKHs5TSOtvuXS89kwmzlP+mTDN7Fh7FmlJN4BPVNYhTkdUI
+	sQZevA+aTeY2XH9zoqGZ/0xizeynHco=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-250-XKb2_tPVObWdF52ztpGjzQ-1; Wed, 22 May 2024 04:10:00 -0400
+X-MC-Unique: XKb2_tPVObWdF52ztpGjzQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-34da03e19beso9381550f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:10:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716365399; x=1716970199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=otRYgCVJq92Yfm4kUIiopkxd1yl6k4G597cBFQJGQUs=;
+        b=o8dG0KLVf3mO5QNePu3wMLQiSOo3jLnLkHefHtJUl5McTxKq6BCc0daLOb3u5Y/Ivh
+         XsrqDDq0XQzgEn6OsCAnxzlyEFfjVhqxyDDnHyVKPi+l88sn/GhW4qf2O5A86rrD/ZwS
+         p+bjJ8+eSXohiiVzMnlENOa9CZ/g/zn8K9L+bLKJIcrV+or+WBqVU3uiZl+2Ew/mAauq
+         yCcs7DArDzLKcaJk37NYybyPQv0oH/QWxE6kHWbkHZPH1X7K6OAw9MzUgm1IOuf2gnu8
+         0L/LZ+Sx+83jljS1n6CPitKu1L9l9SWJhzsrPoybfkgjq3LfXbfgqcCe/MyyRco/o0HF
+         KfIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2sOFhBcUSfY51+DSNv2KfdqOxyuWuFxt2du4JLWvYFk/QtheoRCc8oksks4qiFKY3TRNVwEC26Id8LUx6PoxAmf0BrcrgcBqmaiBR
+X-Gm-Message-State: AOJu0YyRm5amep87LveGskVsMbEjH7FTAG6zf036kqz2hHnU8owWOp76
+	GWdxrgWxQ9+r7FBo4Y6neJGzPJDeSRydcnGJ7TzSeiCH+vKVfcSbUnydJ6/odmLVo4XZs9GVdEL
+	xD7nwsd6O7qC5XVK3exO9MbhHEGsAWsWxZN7+rkG1vTqpU731/rBJ7hq4rB4GLUXXG7mEpQkaM6
+	18NUVdJ7aC53iQDxroKpScQSr8pHlYVfBRPoem
+X-Received: by 2002:adf:f2c6:0:b0:354:cc58:7af9 with SMTP id ffacd0b85a97d-354d8d957a6mr867156f8f.50.1716365399670;
+        Wed, 22 May 2024 01:09:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYZBYweqSpzhVIi5/ML5GYyo4XnBFBMEWZWo5UVwE6v2E2Gk1I/ozaiDWRy6Q2pBOBbwPfOn4UcSnQaZ2DjDI=
+X-Received: by 2002:adf:f2c6:0:b0:354:cc58:7af9 with SMTP id
+ ffacd0b85a97d-354d8d957a6mr867137f8f.50.1716365399303; Wed, 22 May 2024
+ 01:09:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522-loongarch-booting-fixes-v2-0-727edb96e548@flygoat.com> <20240522-loongarch-booting-fixes-v2-2-727edb96e548@flygoat.com>
-In-Reply-To: <20240522-loongarch-booting-fixes-v2-2-727edb96e548@flygoat.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 22 May 2024 16:07:59 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4r=2LbOBsM8oas=ewXGA+4Z=Y==iSgZfsdSk7GHOrieA@mail.gmail.com>
-Message-ID: <CAAhV-H4r=2LbOBsM8oas=ewXGA+4Z=Y==iSgZfsdSk7GHOrieA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] LoongArch: smp: Add all CPUs enabled by fdt to
- NUMA node 0
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240416050338.517-1-ravi.bangoria@amd.com> <ZjQnFO9Pf4OLZdLU@google.com>
+ <9252b68e-2b6a-6173-2e13-20154903097d@amd.com> <Zjp8AIorXJ-TEZP0@google.com>
+ <305b84aa-3897-40f4-873b-dc512a2da61f@amd.com> <ZkdqW8JGCrUUO3RA@google.com>
+ <b66ea07a-f57e-014c-68b4-729f893c2fbd@amd.com> <Zk0ErRQt3XH7xK6O@google.com>
+ <CABgObfaXAERePMQrrpWg8PqM1TOq8TJT65i3WgU0n0-vePDGNg@mail.gmail.com> <d543ac68-346a-4439-8f29-ceb7aa1b3b50@amd.com>
+In-Reply-To: <d543ac68-346a-4439-8f29-ceb7aa1b3b50@amd.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 22 May 2024 10:09:46 +0200
+Message-ID: <CABgObfZL7dfczyeY=7Xh1YGqEZEzVsdMnM+D6yumFSNfLO7cfA@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: SEV-ES: Don't intercept MSR_IA32_DEBUGCTLMSR for
+ SEV-ES guests
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>, thomas.lendacky@amd.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, santosh.shukla@amd.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Jiaxun,
-
-On Wed, May 22, 2024 at 2:30=E2=80=AFPM Jiaxun Yang <jiaxun.yang@flygoat.co=
+On Wed, May 22, 2024 at 8:11=E2=80=AFAM Ravi Bangoria <ravi.bangoria@amd.co=
 m> wrote:
+> >>> LBR Virtualization overhead for guest entry + exit roundtrip is ~450 =
+cycles* on
+> >>
+> >> Ouch.  Just to clearify, that's for LBR Stack Virtualization, correct?
+> >
+> > And they are all in the VMSA, triggered by LBR_CTL_ENABLE_MASK, for
+> > non SEV-ES guests?
 >
-> NUMA enabled kernel on FDT based machine fails to boot
-> because CPUs are all in NUMA_NO_NODE and mm subsystem
-> won't accept that.
->
-> Fix by adding them to default NUMA node for now.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 88d4d957edc7 ("LoongArch: Add FDT booting support from efi system =
-table")
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  arch/loongarch/kernel/smp.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
-> index 0dfe2388ef41..866757b76ecb 100644
-> --- a/arch/loongarch/kernel/smp.c
-> +++ b/arch/loongarch/kernel/smp.c
-> @@ -273,7 +273,6 @@ static void __init fdt_smp_setup(void)
->
->                 if (cpuid =3D=3D loongson_sysconf.boot_cpu_id) {
->                         cpu =3D 0;
-> -                       numa_add_cpu(cpu);
->                 } else {
->                         cpu =3D cpumask_next_zero(-1, cpu_present_mask);
->                 }
-> @@ -283,6 +282,10 @@ static void __init fdt_smp_setup(void)
->                 set_cpu_present(cpu, true);
->                 __cpu_number_map[cpuid] =3D cpu;
->                 __cpu_logical_map[cpu] =3D cpuid;
-> +
-> +               early_numa_add_cpu(cpu, 0);
-> +               set_cpuid_to_node(cpuid, 0);
-> +               numa_add_cpu(cpu);
-What's wrong exactly? Real machine has no problem here, and at least
-numa_add_cpu() should not be called for non-zero cpu so early, because
-it need per-cpu area be setup. I guess the root cause is that there is
-something wrong and "cpuid =3D=3D loongson_sysconf.boot_cpu_id" is
-skipped.
+> Not sure I follow. LBR_CTL_ENABLE_MASK works same for all types of guests=
+.
+> Just that, it's mandatory for SEV-ES guests and optional for SVM and SEV
+> guests.
 
-Huacai
+I think you confirmed I mean: when you set LBR_CTL_ENABLE_MASK, you
+get the 450 cycle penalty because the whole set of LBR Stack MSRs is
+in the VMSA for both SVM/SEV guests (optional) and SEV-ES guests
+(mandatory).
 
->         }
->
->         loongson_sysconf.nr_cpus =3D num_processors;
->
-> --
-> 2.43.0
->
+Paolo
+
 
