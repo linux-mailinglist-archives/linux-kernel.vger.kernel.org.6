@@ -1,150 +1,190 @@
-Return-Path: <linux-kernel+bounces-186271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B76B8CC1FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DB48CC201
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE899B20E6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB9D284931
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4D013E02C;
-	Wed, 22 May 2024 13:21:49 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BF413F429;
+	Wed, 22 May 2024 13:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vOt2aZ2Y"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7109D8061B;
-	Wed, 22 May 2024 13:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D84E8061B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716384109; cv=none; b=dD36IilVwM/7bhwrnp7CG24O5H4se/5UisMwIvANC/Py10NJ6DuPiAYDcOHUnRZraBXm26Ika1CjKirDaKNJZgK/f7+K7prbpgI/cwhts9mwlsV861GEqdW1zOCCsqvnsoEQqy2/fwdK/cY97ZVdzWa/jSYxkCPgbQQ+WJk6TeM=
+	t=1716384115; cv=none; b=BuSWtdganT7hBN9H+WchStRVmkm8yM0AK2KvYOD4oOmO0r/OlS0F1H8UgA8pjT2WS0gRuU7g7ivLz719o92q42JLeyXfZfCnd56kRpTarQkC7PtKFYcpA8sdzqB38OyjvC9aV4QwMUmuLEcWaLaZId/VB7Fh2kBz+Np0rYchYos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716384109; c=relaxed/simple;
-	bh=1zHWV9lrir7bcF6ZsXjm0Dm5UaAg89JLGm6bgIZ8wRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OIGQWiqUhJe9J0Q2dP0eFGgZ5dZo425nzXkCXjQmWNWdM5h5bwHnMX/i02f3pofhaFXTgPgu9tcmSPmj+pQXXRC++9XdXK0Q12Cebf4+qERQ/gScEg61PLQWAs723sXKcIrHPWrov2sW6T6Su6wXEYHL0SDXYD4vuNo6UF7wOv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-61bed738438so49578287b3.2;
-        Wed, 22 May 2024 06:21:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716384106; x=1716988906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pwO3V0ef+iewPljIZQdQy9oZrW8vxT6y27HOdLh4pwc=;
-        b=jGX2EeH3QndnhCzshAY+iCS0D9gEl3vq9DrGrrk2TwG6BscwHC1ZxXW8EWRuZsQOi2
-         FVeFAw54Vpl4AhAcJzdGWq8yPrGfdLdBw/KdlLp+VhovmjmPZmfjU7vtzs59ZLIqzzCW
-         nGyIDlW19lWCksXmQPmptZ2tTQuOLxB6FOqjedSXbrd4p6s6mK+8nFkn/EYTpUdaHT43
-         dj5wxiJ+ksIW8WwKq20SNHR0mIW0oa91mN+HTG+yppuaV81N5xAmkRLgqUwejB+pQgZt
-         aqLZuh8lg7WBWOk6zOD7FRnaQLgkAL7EqUiIlEMhIZZXFwTln/tl+4K0zKRINBR4k3WU
-         q96Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYTZy1PgIK+u86Ny0zMtnTWcFc6wbWt3lyTJM/UetLFlOspGiXTI1XHsLl+aSmwm7hwNX1M0t6rZKSR/uaUXoxHW4CN/VQLH9OzElPoh577FXkKAl1Aq2ytt7VbV3ZmrG9Utmdrt0AJrptf6yDufkuGsGf8PMKG0In706PHCpvdHeKu9dBmT7xi54gBbNn9giX2q707bDJgQkvA1qLRy2bkVbAxciQgw==
-X-Gm-Message-State: AOJu0Yw8ZaNbX2kzu9h9FJ0iHSvfkXv203JltQoo4ax9tsqDeh1adQ+t
-	SjrI1R1kTpFmC4bRfDi/HyAw8l6NWt9qEbarZM9f1agYRb7UCBqLkivdcAFJ
-X-Google-Smtp-Source: AGHT+IFP4p3lCRUBVGwOq/TLnR8fdUV9Ioulf7bIfz0Dj5W31c/p0FlTCSJ+kVJA7j3AREcIh9Fl/w==
-X-Received: by 2002:a81:92d7:0:b0:618:8a27:6150 with SMTP id 00721157ae682-627e46df567mr19733137b3.24.1716384105775;
-        Wed, 22 May 2024 06:21:45 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e3790dasm59151617b3.110.2024.05.22.06.21.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 06:21:45 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61bed738438so49577947b3.2;
-        Wed, 22 May 2024 06:21:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWqa8bpEpj5wKN26+EYt5s0zq5Ht1N1tnN8QXIBHxD9ANXuXenjCu29NKuCsCJ//pYJeXcnQH3YYTa+zC5N7PwM7TklpLMzlswhNZjhQJYvBinaNukt2bW4gOQv56iwBuOGzNCRWoKBkRkrzUY176d2go3D9w0d9y0wb0EiNE1ACq4+pVZ5OjLmlvoeT66GTJjQfwji2yR4XNaXvmojSqtzv3HKG1r1cg==
-X-Received: by 2002:a05:690c:d8f:b0:61e:a3a:2538 with SMTP id
- 00721157ae682-627e46c7296mr24311947b3.18.1716384105266; Wed, 22 May 2024
- 06:21:45 -0700 (PDT)
+	s=arc-20240116; t=1716384115; c=relaxed/simple;
+	bh=mYSAmhsQtJ0PDxq3WdA7gK5lRtv9WoXaj1HB0gLlhTM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YzxRFINaIEUE7ej6/IdWuevOgiMlaKHianuUfL+GW8FzNxjOW7zdC+HC3WQM0lb9i4Y6XUMELq/uHloe6LqGnlbUmye25vxoxpqmKK7Ud3IRKfpX89/QdLHbyDDH97ADYJ7ywtZbUGVItvVo4XfKpUyfKYkWEiqPA1IIGB2p8r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vOt2aZ2Y; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: jack@suse.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716384110;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w3U75sxnOeZdFGOwo1OVSElYeJTqXT6eZMDMxenHS3Y=;
+	b=vOt2aZ2Y9/UJ1YxmIkQijMwxaEiEiRznlwvMdfhDBB9j0LYCWaPqhK4XOPVPyJVG36jIwT
+	ahgBcq3oeBLlOJuBfd7AaWVeLe7jaxhxPsIDHOQygAFn/Snna7Zcb4HsplYNZSoch7vFpI
+	y7JHs0igR4dZm4KpBXYdwnUAGxyp1F4=
+X-Envelope-To: tytso@mit.edu
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: luis.henriques@linux.dev
+X-Envelope-To: jack@suse.com
+X-Envelope-To: adilger@dilger.ca
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,  Theodore Ts'o
+ <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Jan Kara
+ <jack@suse.com>,  linux-ext4@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] ext4: fix fast commit inode enqueueing during a
+ full journal commit
+In-Reply-To: <20240522103545.ypmmoyxvls52i6yl@quack3> (Jan Kara's message of
+	"Wed, 22 May 2024 12:35:45 +0200")
+References: <20240521154535.12911-1-luis.henriques@linux.dev>
+	<20240521154535.12911-2-luis.henriques@linux.dev>
+	<20240522103545.ypmmoyxvls52i6yl@quack3>
+Date: Wed, 22 May 2024 14:21:47 +0100
+Message-ID: <87pltedlsk.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240423175900.702640-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 May 2024 15:21:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXA8hnV6NTSNdYQNvuBsK5Os9CDgE64xLN3R0wAAmtJgA@mail.gmail.com>
-Message-ID: <CAMuHMdXA8hnV6NTSNdYQNvuBsK5Os9CDgE64xLN3R0wAAmtJgA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/13] pinctrl: renesas: pinctrl-rzg2l: Add support for
- custom parameters
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-Hi Prabhakar,
+On Wed 22 May 2024 12:35:45 PM +02, Jan Kara wrote;
 
-On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On Tue 21-05-24 16:45:34, Luis Henriques (SUSE) wrote:
+>> When a full journal commit is on-going, any fast commit has to be enqueued
+>> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
+>> is done only once, i.e. if an inode is already queued in a previous fast
+>> commit entry it won't be enqueued again.  However, if a full commit starts
+>> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
+>> be done into FC_Q_STAGING.  And this is not being done in function
+>> ext4_fc_track_template().
 >
-> In preparation for passing custom params for RZ/V2H(P) SoC assign the
-> custom params that is being passed via struct rzg2l_pinctrl_data.
+> Ah, good catch.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> RFC->v2
-> - No change
-
-Thanks for your patch!
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -262,6 +262,9 @@ struct rzg2l_pinctrl_data {
->         const struct rzg2l_hwcfg *hwcfg;
->         const struct rzg2l_variable_pin_cfg *variable_pin_cfg;
->         unsigned int n_variable_pin_cfg;
-> +       unsigned int num_custom_params;
-> +       const struct pinconf_generic_params *custom_params;
-> +       const struct pin_config_item *custom_conf_items;
-
-Perhaps this should be protected by #ifdef CONFIG_DEBUG_FS, too?
-
->         void (*pwpr_pfc_unlock)(struct rzg2l_pinctrl *pctrl);
->         void (*pwpr_pfc_lock)(struct rzg2l_pinctrl *pctrl);
->         void (*pmc_writeb)(struct rzg2l_pinctrl *pctrl, u8 val, void __io=
-mem *addr);
-> @@ -2374,6 +2377,13 @@ static int rzg2l_pinctrl_register(struct rzg2l_pin=
-ctrl *pctrl)
->         pctrl->desc.pmxops =3D &rzg2l_pinctrl_pmxops;
->         pctrl->desc.confops =3D &rzg2l_pinctrl_confops;
->         pctrl->desc.owner =3D THIS_MODULE;
-> +       if (pctrl->data->num_custom_params) {
-> +               pctrl->desc.num_custom_params =3D pctrl->data->num_custom=
-_params;
-> +               pctrl->desc.custom_params =3D pctrl->data->custom_params;
-> +#ifdef CONFIG_DEBUG_FS
-> +               pctrl->desc.custom_conf_items =3D pctrl->data->custom_con=
-f_items;
-> +#endif
-> +       }
+>> This patch fixes the issue by simply re-enqueuing the inode from the MAIN
+>> into the STAGING queue.
+>> 
+>> This bug was found using fstest generic/047.  This test creates several 32k
+>> bytes files, sync'ing each of them after it's creation, and then shutting
+>> down the filesystem.  Some data may be loss in this operation; for example a
+>> file may have it's size truncated to zero.
+>> 
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>> ---
+>>  fs/ext4/fast_commit.c | 19 +++++++++++++------
+>>  1 file changed, 13 insertions(+), 6 deletions(-)
+>> 
+>> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+>> index 87c009e0c59a..337b5289cf11 100644
+>> --- a/fs/ext4/fast_commit.c
+>> +++ b/fs/ext4/fast_commit.c
+>> @@ -396,12 +396,19 @@ static int ext4_fc_track_template(
+>>  		return ret;
+>>  
+>>  	spin_lock(&sbi->s_fc_lock);
+>> -	if (list_empty(&EXT4_I(inode)->i_fc_list))
+>> -		list_add_tail(&EXT4_I(inode)->i_fc_list,
+>> -				(sbi->s_journal->j_flags & JBD2_FULL_COMMIT_ONGOING ||
+>> -				 sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) ?
+>> -				&sbi->s_fc_q[FC_Q_STAGING] :
+>> -				&sbi->s_fc_q[FC_Q_MAIN]);
+>> +	if (sbi->s_journal->j_flags & JBD2_FULL_COMMIT_ONGOING ||
+>> +	    sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) {
+>> +		if (list_empty(&EXT4_I(inode)->i_fc_list))
+>> +			list_add_tail(&EXT4_I(inode)->i_fc_list,
+>> +				      &sbi->s_fc_q[FC_Q_STAGING]);
+>> +		else
+>> +			list_move_tail(&EXT4_I(inode)->i_fc_list,
+>> +				       &sbi->s_fc_q[FC_Q_STAGING]);
 >
->         pins =3D devm_kcalloc(pctrl->dev, pctrl->desc.npins, sizeof(*pins=
-), GFP_KERNEL);
->         if (!pins)
+> So I'm not sure this is actually safe. I'm concerned about the following
+> race:
+>
+> Task1					Task2
+>
+> 					handle = ext4_journal_start(..)
+> modify inode_X
+>   ext4_fc_track_inode(inode_X)
+> ext4_fsync(inode_X)
+>   ext4_fc_commit()
+>     jbd2_fc_begin_commit()
+>       journal->j_flags |= JBD2_FAST_COMMIT_ONGOING;
+>       ...
+>       jbd2_journal_lock_updates()
+>         blocks waiting for handle of Task2
+> 					modify inode_X
+> 					  ext4_fc_track_inode(inode_X)
+> 					    - moves inode out of FC_Q_MAIN
+> 					ext4_journal_stop()
+>     fast commit proceeds but skips inode_X...
 
-Gr{oetje,eeting}s,
+Hmm... I see, the problem is deeper that I thought.
 
-                        Geert
+> How we deal with a similar issue in jbd2 for ordinary buffers is that we
+> just mark the buffer as *also* belonging to the next transaction (by
+> setting jh->b_next_transaction) and during commit cleanup we move the bh to
+> the appropriate list of the next transaction. Here, we could mark the inode
+> as also being part of the next fast commit and during fastcommit cleanup we
+> could move it to FC_Q_STAGING which is then spliced back to FC_Q_MAIN.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+Yeah, I guess that would work.  I'll need to add a new field to flag the
+'next commit' in struct ext4_inode_info.  I'll need to play a bit with it
+and see what I can came up with.  Thanks for the suggestion.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> Also Harshad has recently posted changes to fast commit code that modify
+> how fast commits are serialized (in particular jbd2_journal_lock_updates()
+> is gone). I didn't read them yet but your change definitely needs a careful
+> verification against those changes to make sure we don't introduce new data
+> integrity issues.
+>
+
+Right, I saw his patchset only after sending my RFC (and I should have
+probably included him on the CC as well; probably get_maintainer.pl isn't
+picking his email).
+
+I'll need to look at those changes too, which will probably take me some
+time as most of that code isn't familiar to me.
+
+Thanks a lot for your review, Jan.  Much appreciated.
+
+Cheers,
+-- 
+Luis
+
+>> +	} else {
+>> +		if (list_empty(&EXT4_I(inode)->i_fc_list))
+>> +			list_add_tail(&EXT4_I(inode)->i_fc_list,
+>> +				      &sbi->s_fc_q[FC_Q_MAIN]);
+>> +	}
+>>  	spin_unlock(&sbi->s_fc_lock);
+>>  
+>>  	return ret;
+>
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
