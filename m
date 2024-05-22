@@ -1,121 +1,130 @@
-Return-Path: <linux-kernel+bounces-186189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC398CC0DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:05:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45CBF8CC0DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7BD1C2264B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11179B225D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674FA13D608;
-	Wed, 22 May 2024 12:05:34 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C634413D53D;
+	Wed, 22 May 2024 12:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bV5BEHyS"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747E42E419;
-	Wed, 22 May 2024 12:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956A22E419
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716379534; cv=none; b=bWT3tqu9HsqAE1BiStZkzR7Oi2c+VuTaSQssZ8joz/D2pJoH9+4aHseyIInabRISWyGtqg3upULiazsrc5DXMqq+nkLeiMSIydziQxmvOKcukcdwNHhvmFmeSobcsXq9ksqnnf/OgOMZgpXq+cgipc4mWV7thlqwLQnrORClj+M=
+	t=1716379618; cv=none; b=PKSnFiiB0Hq8ErpR+iZSCMBS/MQv+qoXkex6yLSLkhVs7paW41XN1smMOy3cN8FrtCVFORNibhA1t78uHqjMoYtEqF5rZ7wDau7QeY+x4xhGG82p8rb6Vuv3LVYLG/x+laNyyS7dWdhutL670D0ncNOg/MrQvQs5Al+XUntSWJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716379534; c=relaxed/simple;
-	bh=7y9vClOkU7FWL+oFpmG0VlpA1FZaoENIvh+QxkS8kRg=;
+	s=arc-20240116; t=1716379618; c=relaxed/simple;
+	bh=l8mGvknHTzWtFbj5RUpRFzn09JwVZLzdQmHbClmO2uI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dOHkdqN9fHYbwkIMMdc2W3lUwj0G8p7xF1JeAbIYm/fuA8AVTLBmS/7ugxN90zDxtm4/sswznIuRCtEBUWVGFBLx3cRlr9Le9eOjHU6JjLASWFhK5kWkvli09M5YPhqIuEIoeqE5oL9AG4bt/UMUQmPAp+Qw3/vn8dDdUlHRE5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62036051972so52245167b3.1;
-        Wed, 22 May 2024 05:05:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=e/qjmv9DBqgW5fptd2AmSbBgg0Qbxw+NLt4PA3hP8Ja6370ZdUrzmTpDM/oeAa4vEvJoUOhJM+qjcrwKTRYX55FY1zp4klWyWvQ48oniLvYB1KUX79NINoWZPNKmYh5mu/Guu0w2VDO7D75ghPJZPo7sH1nVUeghHDWh6nHelQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bV5BEHyS; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-db4364ecd6aso4591724276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716379615; x=1716984415; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lc8MH/ERVz0/zNRsbw+EsJ3jxruPmzSxi4vyb2sdC0U=;
+        b=bV5BEHySJmtr4V554q2h2MUNKLO8j98dC6bIG7O6vpae4kMu9e9KxOhGsjKDymemW2
+         xMyaQXnWamDEXSWn1T01Z3Mx5UJPVOUvuvUw0Gj8iXHNfwDPC76MITpvCYLL5Un91sDz
+         xA7Q34GDv3KmucrX/MihcPW7LaXLS7xxm3eMT80vgC46aAkK9wE+YMEKNTHWptYQPgVE
+         Y6Jv5kPvctqdVu2tzbGpWrblpInBf0OivKVOPC6GWREZg783H1Hp41sE30LUHBqctPDn
+         CMe37xTh+N23z2OeGiUFsiETuvagAWbLBx355Z6m2pWCqjCYcDlmjau/5mm0GP/u8Xd7
+         AA4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716379531; x=1716984331;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n7jjRFLOKWFdHtOrX+3Wl4TBJG5yJ/lUgTzrcC6RTu4=;
-        b=g9zTVIeEYEnjCA5Tr0TGXc/egQe5in8WRn5NxEZhPOYNjCTGbBQPQGZmQTmkHROAwW
-         8yFtJCW1DLeIcIDRoL1T2f6vAYj3kn6Eus9XkGZmylqpPZFF74tNO3nMUnlYhE+AfHM3
-         JCTf46zLg0SrW7hDKmLrBmlmGtNbN6dud6tD1/L9CGEv+QrlwAkWwsERJbzB6ioWFZDb
-         FsHEGsrcPbi6e60SdxhCJfc8uuFLg3i9uCfUwYGL93r2CflrfuUnNl93MUgn/J2YtF27
-         4KnBTeVEuaJDBbbQMdBqpwbKwlQdfyuKJzKfhzEmvXQS7no1/8Vi1dj1rglbqKacdXrz
-         oEBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwlVPYKTPhDzqUvXcbyQ/2W7LCPjAQylisS1DJadwoX6z67AnrD8tUHhcnqR0vvFKkUSnTGIuDAzHWgR+QghoWXLlRNirMfVfMhV1r5FkpdSBzRKss7tYPtMs4su0DKh+8Z265yg0sxBrAvgR6pWWWBkshLYZ+pRclZZJAc2u5wZb6GWFtp5pRWhf786/oHy7zPBUus3OM+0V341W/sLDaHkV99Eut3g==
-X-Gm-Message-State: AOJu0Yy7BOES991O5vHHD0epiPDmYrvhdCdd8ayyQApKvrlZ4zRrmDbT
-	k6ZUQPOvzUA36PIArqSKaWjaI9QfnoM5GzJ6uueh9lCxQSQpJYdVbXScUr/+
-X-Google-Smtp-Source: AGHT+IGJYej+sw9fJo8JbG3GIFyfu0vG7873YpSGh+UFs7cdpOTxfW9piJ6itN1Xe0xjcq6il7m1nQ==
-X-Received: by 2002:a05:690c:e1a:b0:615:a86:f77b with SMTP id 00721157ae682-627e46ee0a0mr20891587b3.26.1716379530894;
-        Wed, 22 May 2024 05:05:30 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e233fc3sm58550197b3.8.2024.05.22.05.05.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 05:05:30 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df4e0d8fa10so752356276.1;
-        Wed, 22 May 2024 05:05:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXaQEBDgReWMn+6A0cJ8Zg2LipcfCuASEyzvxsDSHXJc8DWgF1/nQOnKpXfLXWsPUyDtLDgsNN362OMD/d+WWRdNnJN7G/fgLC3+wJBxgVCu0XpqKpDOq33TLbdXlzOFWeTt8vgKFacAQ9JvWpk5W7aaFX4oquZkS2AAVMA0Kxh+qti5z1yxZCLkyKkG/hpM5bMloZILlumBOiH1Cdh5Of6DyUrr32nUA==
-X-Received: by 2002:a05:6902:510:b0:df4:b435:c3f with SMTP id
- 3f1490d57ef6-df4e0db98c1mr1815537276.42.1716379530525; Wed, 22 May 2024
- 05:05:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716379615; x=1716984415;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lc8MH/ERVz0/zNRsbw+EsJ3jxruPmzSxi4vyb2sdC0U=;
+        b=qeheYYxiV2OxxKa9AiHUGnEA9Dz5k9MEJjChLOzRnrH7Y2a1W09W1h7rlJaQzPGiuZ
+         85U6B6tox3+YdEZaXf4oyzB2fbyd665JWkOHTjivesZtHKDi/7NNkJRUAG/84iU8KH8m
+         yVM9jvauzx7KClo+zkjB7L5N1soWzJyLy/08rHPfh+VcBUgdts6rdCBjw1vPM1VjI63g
+         I03JEIFUk6hZ2pKYDumVc37CYBuxv4z+c4l9DVmtZHiGXxM9HUb9U7d0LrSC5N3Xt2SD
+         2U+vGxKHHU4unT1Lb/r+UqfeVhSVAW3wZaSZBYEJxMRqqxRFCcRoENM5tk7GN5nSPonc
+         Qx7A==
+X-Forwarded-Encrypted: i=1; AJvYcCV0XuyCSdJnRVVlLaowNMY8l4Aff9MCeEPY22gz+f2Kuw4u25VUa2Vat8BhAw2aGYhv1k1/5uF6DatZei7F1/CR46wKriQiuvEJrRZh
+X-Gm-Message-State: AOJu0YxJY/6ABaSK4pbPxCD/nuCe5TZfy+UJuib71vK5hiZiD/65pnyy
+	tPy3/TEawcYjQ+RIf9AFMs/moygI4NjI/ER2kXYHbWCpjSpKWvRO3N3XmGb+zKIBkl5VLy2SdRq
+	mop84LVe9gRaM67+N2QC2hwcQw/OiDcBLwExxmQ==
+X-Google-Smtp-Source: AGHT+IHpHyUKG/GmLqQoeg1vLPIB9eeB0AaJTW12HFTA+hrVpt0r/xZ6/4Tabaj9XPGjQKIDdgxhVHeK1BqnFdQpUFA=
+X-Received: by 2002:a25:e08b:0:b0:df4:80fa:c0c4 with SMTP id
+ 3f1490d57ef6-df4e0c0153dmr1704301276.34.1716379615443; Wed, 22 May 2024
+ 05:06:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240423175900.702640-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 22 May 2024 14:05:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV6UVPKhXcwYaY915JBwram8jSm0i=Ky9tkyehJM2w6jg@mail.gmail.com>
-Message-ID: <CAMuHMdV6UVPKhXcwYaY915JBwram8jSm0i=Ky9tkyehJM2w6jg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/13] pinctrl: renesas: pinctrl-rzg2l: Add function
- pointers for locking/unlocking the PFC register
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804@linaro.org>
+In-Reply-To: <20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 22 May 2024 15:06:44 +0300
+Message-ID: <CAA8EJprgXSF=x834=PRXrHhh7VRyynbApnO-iFoE=cLYFzM6iQ@mail.gmail.com>
+Subject: Re: [PATCH] spmi: pmic-arb: Pass the correct of_node to irq_domain_add_tree
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, 22 May 2024 at 14:38, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
 >
-> On the RZ/G2L SoC, the PFCWE bit controls writing to PFC registers.
-> However, on the RZ/V2H(P) SoC, the PFCWE (REGWE_A on RZ/V2H) bit controls
-> writing to both PFC and PMC registers. Additionally, BIT(7) B0WI is
-> undocumented for the PWPR register on RZ/V2H(P) SoC. To accommodate these
-> differences across SoC variants, introduce the set_pfc_mode() and
-> pm_set_pfc() function pointers.
+> Currently, irqchips for all of the subnodes (which represent a given
+> bus master) point to the parent wrapper node. This is no bueno, as
+> no interrupts arrive, ever (because nothing references that node).
 >
-> Note, in rzg2l_pinctrl_set_pfc_mode() the pwpr_pfc_unlock() call is now
-> called before PMC read/write and pwpr_pfc_lock() call is now called after
-> PMC read/write this is to keep changes minimal for RZ/V2H(P).
+> Fix that by passing a reference to the respective master's of_node.
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Worth noting, this is a NOP for devices with only a single master
+> described.
+>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
-> RFC->v2
-> - Introduced function pointer for (un)lock
+>  drivers/spmi/spmi-pmic-arb.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+> index 791cdc160c51..46ea93f78dcd 100644
+> --- a/drivers/spmi/spmi-pmic-arb.c
+> +++ b/drivers/spmi/spmi-pmic-arb.c
+> @@ -1737,8 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+>
+>         dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
+>
+> -       bus->domain = irq_domain_add_tree(dev->of_node,
+> -                                         &pmic_arb_irq_domain_ops, bus);
+> +       bus->domain = irq_domain_add_tree(node, pmic_arb_irq_domain_ops, bus);
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Shouldn't it be &pmic_arb_irq_domain_ops ?
 
-Gr{oetje,eeting}s,
+>         if (!bus->domain) {
+>                 dev_err(&pdev->dev, "unable to create irq_domain\n");
+>                 return -ENOMEM;
+>
+> ---
+> base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
+> change-id: 20240522-topic-spmi_multi_master_irqfix-f63ebf47b02c
+>
+> Best regards,
+> --
+> Konrad Dybcio <konrad.dybcio@linaro.org>
+>
 
-                        Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
 
