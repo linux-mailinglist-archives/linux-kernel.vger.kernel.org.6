@@ -1,106 +1,128 @@
-Return-Path: <linux-kernel+bounces-186604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3E98CC62B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:14:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305AA8CC627
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19DEF1C20EF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD0F2812A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CE2145B2D;
-	Wed, 22 May 2024 18:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337E5145B03;
+	Wed, 22 May 2024 18:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="PwQLBlMz"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="sDFdTlS8"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA1DA929;
-	Wed, 22 May 2024 18:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3658AA929
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716401658; cv=none; b=Hvyp4wCcHqBqeNqbMIqbdmyX22KTIScnN+ZAF0C9twf4rr7nCLOrt6DWgnpf5VL7pYK5/SGRGh3CQro/3aKiSmVIMBYvnocfbP6KG4LzpV+M7fBBXv9abdddGTDsk7J42L7DqpzTDDHEeuKu4HCehQ+EhYSq30aoKDqiswvLLrE=
+	t=1716401639; cv=none; b=uu7pjbCZlQ0OSHRiwjtnhIZAAXMn425G55CGj6aF6qj7yl4Lpw54aWXwiMshXsMbeGXy6axUZC7/hOL8y6AL8aITPj9W0m88xIpinqtToW4T0HxXTw1o2sm6Gxnf7CGUXlhS5AUMreZURNGivIQIK/pBns/8+4KJZI7aIa0vsNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716401658; c=relaxed/simple;
-	bh=RvVkosRpeyj9j/AnzllgMBKI6qNAPpxdxuaRh0mQIMs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=snA4ZSSxHFcPwsRbWzsZ/UXc9IjDOc42rMPSo7lXy/M/SRJtfDZzbDayHF6OFMz7P2jCB6o5lnxT6pkFCEedjpUr+bf6H7CXoFdpnqcuNXGBOIzEUnbE5YKxAyE+e+7lT0gi4aCUQUolgRsO8VZb3I2glVLQ6XMhEtPl73mQDSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=PwQLBlMz; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc.intra.ispras.ru (unknown [10.10.165.15])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 000114078505;
-	Wed, 22 May 2024 18:14:10 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 000114078505
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1716401651;
-	bh=Imz5WELE7gK/KIIyH94s3uVtNby+XXwDNZ6i3Up+9+0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PwQLBlMzotLiAng0Y2FrLpGSywzTylbdpLcYvuBEyzGO+5gnFrxHojCLr7ct+78VE
-	 BzFqINVtD47vCYbX4L0MHhj+7MhSAVZOhRfwwYypmZcnRco90zR3GmuWErKqL3kiit
-	 uPz6LmvIw3lrJaC0BWvQq+ZfGf9IAoLr+hDtmHC0=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	lvc-project@linuxtesting.org,
-	"T.J. Mercier" <tjmercier@google.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] dma-buf: handle testing kthreads creation failure
-Date: Wed, 22 May 2024 21:13:08 +0300
-Message-Id: <20240522181308.841686-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716401639; c=relaxed/simple;
+	bh=5NMsDfY6VTABrDzPgIWhs/3DIYKZtHGT8JJUJOlXrjE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OJiNHIF0ujwR29Fsk6BW8vdgHCRgrwn/Wl3iKlbGHgxlmDOHQPClgCpYJZEE8zjHGJeW1bURappas6c2S7/Iw4o4hXwzVFT2flomulqpzO/X5IEL1eDV6X/4s3C4H5Uu7H2HOK09RBUal45S9jy0x42be+VEhYp/349uvNFwVTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=sDFdTlS8; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-36d92f4e553so2570675ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:13:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716401636; x=1717006436; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tGhFk+6Mn+aFTeEhhRU2V2oXQp27/bTpuMCUZ0uMfqc=;
+        b=sDFdTlS8EOzGAOHHLTGwbBbK8QPgMUI1LZJ/aFXTmJNHuh4Dhj0rEeTGzYW723BxQl
+         jgVZS00+3VaDoeFk3sCytEgvFrDBeqo8PntiCMXpDT+ybg0X3SGpO414j1ejYz5KX7es
+         6ZG+NisAD20kc4hPuuA+F9f4tHIkPDwHEH1yWpRfd6wKhjp4xjLs1E4MjtVnzsMd6L38
+         z2Pk6QaNvnWl/69X1IRe+Iuj+oLH5uNbp7saNfsltDLwIMgcYfjG4dMX9/hCrHmClCAB
+         NK1yG/BKHJipV3iu6HuPf5EeANiqFALYgLQp2mO6sXR2nZQ3YrsHnfqh5/M7uCyRhu97
+         Sbig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716401636; x=1717006436;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tGhFk+6Mn+aFTeEhhRU2V2oXQp27/bTpuMCUZ0uMfqc=;
+        b=buaTsA4bSE7XkWNw1zCEMDik+utNhiqepmJ+WTMSIcw9KHoZ1bazF5O9bC1JXYxRWA
+         7IuRkG5IX++79oKrogSuImLKQjxgGU0xUr/l8Ho0ZR64AzrJOvzF4ckuAjaHgu2jWkSl
+         kLZmOpTclaZneRb+h/9iH3QPyBOqJ4R8DHkBHgq1CpTSWJWMyXKvyIxYiqFwgkP6Ikum
+         Wn+HMGWtPJNg/SMbndS0r5L6av6HzURXCUHs3h9JOsujVcdj5gXkfFmw7eIdDcMGpuBH
+         9GdcDBEjfJqSYmrqUwYcToOqrCgsrEteDgFz6S29fMV3VKbp1wSUUedVmT3N4Via9Bjy
+         Q76w==
+X-Forwarded-Encrypted: i=1; AJvYcCVGFiKIZjDPONwBz5GKiAq5i3muCywn2Xl8mUSOaRDS8b0o6drH6VXGQS7pMpXzlo1Z6zSaHHUFkrRQX8JXEtQG0Ecokqotj9LvsBOE
+X-Gm-Message-State: AOJu0Yza1xRJjAU6JGy7SKYGYwWDQ2yXjZG9HK+GMv1zixxq01dF94fs
+	5/iKu3LGAiJPsf6nOMrlARZf1p3DcTx+ay4xR69a62f7eAYbkorDOTm6K/0GNUQ=
+X-Google-Smtp-Source: AGHT+IG5ECb2ChN21OliaANFfuAG3aNrPryJwmc8jxQsxZ2EjfcJpXARxHMFz1c3VkuESsX03wb0sQ==
+X-Received: by 2002:a5e:cb03:0:b0:7e1:d865:e700 with SMTP id ca18e2360f4ac-7e38b2004fbmr306212539f.2.1716401636350;
+        Wed, 22 May 2024 11:13:56 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376dc51esm7796324173.122.2024.05.22.11.13.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 11:13:55 -0700 (PDT)
+Message-ID: <d9795483-ef64-4fd6-be71-a3946ae8fb3e@kernel.dk>
+Date: Wed, 22 May 2024 12:13:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] loop: inherit the ioprio in loop woker thread
+To: Bart Van Assche <bvanassche@acm.org>,
+ Yunlong Xing <yunlong.xing@unisoc.com>, yunlongxing23@gmail.com,
+ niuzhiguo84@gmail.com, Hao_hao.Wang@unisoc.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240522074829.1750204-1-yunlong.xing@unisoc.com>
+ <5166bc31-1fd9-4f7f-bc51-f1f50d9d5483@acm.org>
+ <68cfbc08-6d39-4bc6-854d-5df0c94dbfd4@kernel.dk>
+ <f6d3e1f2-e004-49bb-b6c1-969915ccab37@acm.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <f6d3e1f2-e004-49bb-b6c1-969915ccab37@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-kthread creation may possibly fail inside race_signal_callback(). In
-such a case stop the already started threads, put the already taken
-references to them and return with error code.
+On 5/22/24 12:12 PM, Bart Van Assche wrote:
+> On 5/22/24 10:57, Jens Axboe wrote:
+>> On 5/22/24 11:38 AM, Bart Van Assche wrote:
+>>> On 5/22/24 00:48, Yunlong Xing wrote:
+>>>> @@ -1913,6 +1921,10 @@ static void loop_handle_cmd(struct loop_cmd *cmd)
+>>>>            set_active_memcg(old_memcg);
+>>>>            css_put(cmd_memcg_css);
+>>>>        }
+>>>> +
+>>>> +    if (ori_ioprio != cmd_ioprio)
+>>>> +        set_task_ioprio(current, ori_ioprio);
+>>>> +
+>>>>     failed:
+>>>>        /* complete non-aio request */
+>>>>        if (!use_aio || ret) {
+>>>
+>>> Does adding this call in the hot path have a measurable performance impact?
+>>
+>> It's loop, I would not be concerned with overhead. But it does look pretty
+>> bogus to modify the task ioprio from here.
+> 
+> Hi Jens,
+> 
+> Maybe Yunlong uses that call to pass the I/O priority to the I/O submitter?
+> 
+> I think that it is easy to pass the I/O priority to the kiocb submitted by
+> lo_rw_aio() without calling set_task_ioprio().
 
-Found by Linux Verification Center (linuxtesting.org).
+Yeah that was my point, it's both the completely wrong way to do it, nor
+is it a sane way to do it. If the current stack off that doesn't allow
+priority to be passed, then that work would need to be done first.
 
-Fixes: 2989f6451084 ("dma-buf: Add selftests for dma-fence")
-Cc: stable@vger.kernel.org
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
-v2: use kthread_stop_put() to actually put the last reference as
-    T.J. Mercier noticed;
-    link to v1: https://lore.kernel.org/lkml/20240522122326.696928-1-pchelkin@ispras.ru/
-
- drivers/dma-buf/st-dma-fence.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/dma-buf/st-dma-fence.c b/drivers/dma-buf/st-dma-fence.c
-index b7c6f7ea9e0c..6a1bfcd0cc21 100644
---- a/drivers/dma-buf/st-dma-fence.c
-+++ b/drivers/dma-buf/st-dma-fence.c
-@@ -540,6 +540,12 @@ static int race_signal_callback(void *arg)
- 			t[i].before = pass;
- 			t[i].task = kthread_run(thread_signal_callback, &t[i],
- 						"dma-fence:%d", i);
-+			if (IS_ERR(t[i].task)) {
-+				ret = PTR_ERR(t[i].task);
-+				while (--i >= 0)
-+					kthread_stop_put(t[i].task);
-+				return ret;
-+			}
- 			get_task_struct(t[i].task);
- 		}
- 
 -- 
-2.39.2
+Jens Axboe
 
 
