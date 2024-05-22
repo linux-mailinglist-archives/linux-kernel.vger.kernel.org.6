@@ -1,160 +1,168 @@
-Return-Path: <linux-kernel+bounces-185705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F668CB91B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:49:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F0B8CB93C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE74281822
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E338C282651
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9C72A1AA;
-	Wed, 22 May 2024 02:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bqnYvvHF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9716CDA6;
+	Wed, 22 May 2024 02:55:35 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78C55234
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5B7200B7
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716346138; cv=none; b=U0JyjWCGuX2pT37yCx0qkuWoH3g5LXy7T1iDz6ucaP9G4+wdr9VIeJOqRYZcInc1YBE0Pt1srf5OnbyVVkPeyVmW0bQFe6VDp4lNaV9Jzs24r1YLT4+TnLbo4zxFY1MX9CkCTH8tvn7Cx3AB4EznPE5fMB2TZ4EGVHN0J6qaFko=
+	t=1716346534; cv=none; b=H0Uo2NwVnhJGd+rzP7DGqMllIKhqItuqdj0032XBPpzw8UctTcEdVuz9Km7snXieE/+aC0pXfAZuYBZwUkY7l8A2A5KpeYo1cWPrWwzEeB1csEzefJA9UTA6gZbk6hjFW9nFZmutjHxNZgZP4nMWik4FMc71Q500MxnKoXW5rP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716346138; c=relaxed/simple;
-	bh=FXn+sW2b8pPqs9iRjnbpeOqZcaBe8BKOgcf5H+CLA1c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TzkHCsxNo8DrW7ziLwbaUFzwFrqJA3MtHCmtzCmoa/fVaToicjNiwa2medSqRcXONDhdwMwlTcfiEmHKI/Emuc0fRjIYEnusNUXiifrrA10HBrGnaaaNa0rGdMDE6ghYTibixEAXBHabszWF8jjRU99BluAqDh040a/+iF9TuKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bqnYvvHF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44M2acGh024457;
-	Wed, 22 May 2024 02:48:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=KZVjtFqG2zUl61nuJqUPa
-	eabQtJxILRk3ZoCdA3MJaI=; b=bqnYvvHFfHKvH8mKNYQRLlM/NtZBpx65nS4/D
-	nEHoAdwtPScIvQwXuv4kpT21FH6iUxgWBj2AYQZAv/VNkUSN1BmkbrS6Sa5vglAh
-	8Z2FTDXSGzVhdw+HgoMml1Pcw+2IfGFE76Lc3eNKmHbWKZ7xjfVto6RtARf55ilX
-	JVwod/ojiQEZiwPO/MLgREdh+qQBxLp7Y7PmNW3uRig1lshbYmaG1NQg7p52Y0wQ
-	G4NGAlWAYlx1D/qJKSSBiNA+AwT0pHDkdfl1rkZZkbtApB/zvADFGbkEEZxa5INv
-	/zTGg5OcbFqtpsCV7u6AL8TC/mb+np7p8P2rH2UFvc6HY2mCw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6psnfemw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 02:48:51 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44M2moHl016238
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 May 2024 02:48:50 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 21 May 2024 19:48:50 -0700
-Date: Tue, 21 May 2024 19:48:50 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Xiong Nandi <xndchn@gmail.com>
-CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <quic_bjorande@quicinc.com>, <cmllamas@google.com>
-Subject: Re: [PATCH] scripts/decode_stacktrace.sh: better support to ARM32
- module stack trace
-Message-ID: <20240521194010043-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240521005649.12144-1-xndchn@gmail.com>
- <20240522010559.10551-1-xndchn@gmail.com>
+	s=arc-20240116; t=1716346534; c=relaxed/simple;
+	bh=Fmq4cfmTdTx1iUl4iK3aruK2b4BklXedhpLLjn/V3gg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ifo9Yfc3fpPq5NSrVfN9ALMY9QUZrE6Cd0yOOuAoyzBvNoChsck25kfgUGqc/fyq0sZvCTxacCcaSHR2uHrwnDomiNrU9Zrzf3X2bTx+eN+VQxQ9hcNbh31UEG5mp0Uzoc2zp0tJldPOKKMwnDjKku0RVf4fkaWbRt4IapTFyg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-36c96503424so2892335ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 19:55:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716346532; x=1716951332;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+Ry/8RZHi+cirGva08ioXvtiJ6dGry8jsjjnUdJmvrA=;
+        b=e/o2aM72v00VRITqT2mfgcd9C9vYj0GnQHnyhewmtU2tAMmA6XYY80iu8tc3G1LRYV
+         YYuYvvBvgp4jMl6DfJS6x47XpXYO8iZzM8rV/bXYUYL+7osdml9smcflue6tkp8zK+wC
+         ZS2uzMdUocT5hNY5gyuBZHQ1oXq9aVNf2yrAA+LG+I1nfYs+JwwaHu6Gs2ZBY6HPeNzS
+         J9X66duMbmzwaPAYTBgkIq6Mm0x5mS8cHlWuu6Edbs0vSygxnGgOxKKu+vAAC0NLUT/v
+         CD9qctTihLI07Gh3kW4KNPtVn8RZIPArga8Hhjz2porIbZV4frRIQU4An7V/Fah7f8SK
+         DjCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl2VeJwpvuekApAW8wksa+VI6R773/OhAG6aUT9guohPM/mmwaZJIskHGlXscI9vaqwoso1rg9hqFzepTKaEU3N50eJywZeCXr9qpr
+X-Gm-Message-State: AOJu0YxPBxA/GmC6tKcdCxbCXPwyUyP2rz2o+9E7QJfwhIazBW8lB3CI
+	mUuXxiYBNs+x9x6C2SzMTRTOR9U9AFaNru7V+AAkWYLVTuD7kZNeDi+i26aD9J6gKjXfZNAPw3k
+	99naO0v7jNloyXudrsEd/U30yqxrXn8EjDRj3yvxDpcTVFxW7qD9jj0Y=
+X-Google-Smtp-Source: AGHT+IE8dA3Y436YSv7w4/IDzm52Ag7PNo4+j3PLSkNAq1wZDNdZDmA0MipCEBB/rcPn+CkVUest9bxdsZlwz9iQbnABinemAg3b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240522010559.10551-1-xndchn@gmail.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: GJw0aVTj1GalgJdFY1fA86zvO109Ynwd
-X-Proofpoint-ORIG-GUID: GJw0aVTj1GalgJdFY1fA86zvO109Ynwd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_01,2024-05-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 phishscore=0 impostorscore=0 adultscore=0
- mlxlogscore=675 clxscore=1011 priorityscore=1501 suspectscore=0
- spamscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405220019
+X-Received: by 2002:a05:6e02:1a26:b0:36c:2ed4:8d4c with SMTP id
+ e9e14a558f8ab-371f96ed3aemr617085ab.4.1716346532155; Tue, 21 May 2024
+ 19:55:32 -0700 (PDT)
+Date: Tue, 21 May 2024 19:55:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005c66ec061902110a@google.com>
+Subject: [syzbot] [nilfs?] [btrfs?] WARNING in filemap_unaccount_folio
+From: syzbot <syzbot+026119922c20a8915631@syzkaller.appspotmail.com>
+To: brauner@kernel.org, clm@fb.com, dsterba@suse.com, jack@suse.cz, 
+	josef@toxicpanda.com, konishi.ryusuke@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 22, 2024 at 09:05:59AM +0800, Xiong Nandi wrote:
-> Sorry about the name, it is some kind of abbreviation. So I re-post here:
-> ---
-> Since System.map is generated by cross-compile nm tool, we should use it
-> here too. Otherwise host nm may not recognize thumb2 function address well.
-> 
-> Beside, sometimes special characters around module name, such as ARM32
-> with BACKTRACE_VERBOSE in "(%pS)" format, such as:
-> [<806e4845>] (dump_stack_lvl) from [<7f806013>] (hello_init+0x13/0x1000 [test])
-> 
-> After stripping other characters around "[module]", it can be finally decoded:
-> (dump_stack_lvl) from hello_init (/foo/test.c:10) test
-> 
-> Signed-off-by: Xiong Nandi <xndchn@gmail.com>
-> ---
->  scripts/decode_stacktrace.sh | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-> index fa5be6f57b00..324e4a6c260a 100755
-> --- a/scripts/decode_stacktrace.sh
-> +++ b/scripts/decode_stacktrace.sh
-> @@ -30,6 +30,7 @@ fi
->  
->  READELF=${UTIL_PREFIX}readelf${UTIL_SUFFIX}
->  ADDR2LINE=${UTIL_PREFIX}addr2line${UTIL_SUFFIX}
-> +NM=${UTIL_PREFIX}nm${UTIL_SUFFIX}
->  
->  if [[ $1 == "-r" ]] ; then
->  	vmlinux=""
-> @@ -158,7 +159,7 @@ parse_symbol() {
->  	if [[ $aarray_support == true && "${cache[$module,$name]+isset}" == "isset" ]]; then
->  		local base_addr=${cache[$module,$name]}
->  	else
-> -		local base_addr=$(nm "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
-> +		local base_addr=$(${NM} "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
+Hello,
 
-The nm parts should be a separate patch.
+syzbot found the following issue on:
 
->  		if [[ $base_addr == "" ]] ; then
->  			# address not found
->  			return
-> @@ -282,8 +283,8 @@ handle_line() {
->  
->  	if [[ ${words[$last]} =~ \[([^]]+)\] ]]; then
->  		module=${words[$last]}
-> -		module=${module#\[}
-> -		module=${module%\]}
-> +		module=${module#*\[}
-> +		module=${module%\]*}
+HEAD commit:    b6394d6f7159 Merge tag 'pull-misc' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=142a7cb2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=713476114e57eef3
+dashboard link: https://syzkaller.appspot.com/bug?extid=026119922c20a8915631
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14d43f84980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d4fadc980000
 
-I need to get a moment to play with it. Is my understanding correct that
-the problem is that the last word ($module) is:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e8e1377d4772/disk-b6394d6f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/19fbbb3b6dd5/vmlinux-b6394d6f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4dcce16af95d/bzImage-b6394d6f.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/e197bb1019a1/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/1c62d475ecf4/mount_2.gz
 
-[test])
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+026119922c20a8915631@syzkaller.appspotmail.com
 
-and after the existing strip logic, $module becomes test]) whereas
-expecting just "test"? Your change is to strip any leading/trailing
-characters before/after the [ / ] respectively? Isn't this a problem for
-$symbol as well -- it would be "(hello_init+0x13/0x1000" in the example.
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5096 at mm/filemap.c:217 filemap_unaccount_folio+0x6be/0xe40 mm/filemap.c:216
+Modules linked in:
+CPU: 1 PID: 5096 Comm: syz-executor306 Not tainted 6.9.0-syzkaller-10729-gb6394d6f7159 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:filemap_unaccount_folio+0x6be/0xe40 mm/filemap.c:216
+Code: 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 0f 85 e5 00 00 00 8b 6d 00 ff c5 e9 45 fa ff ff e8 c3 66 ca ff 90 <0f> 0b 90 48 b8 00 00 00 00 00 fc ff df 41 80 3c 06 00 74 0a 48 8b
+RSP: 0018:ffffc9000382f1f8 EFLAGS: 00010093
+RAX: ffffffff81cbd3ad RBX: ffff888079ef0380 RCX: ffff88802d4f5a00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000003 R08: ffffffff81cbd2c9 R09: 1ffffd40000c1ec8
+R10: dffffc0000000000 R11: fffff940000c1ec9 R12: 1ffffd40000c1ec8
+R13: ffffea000060f640 R14: 1ffff1100f3de070 R15: ffffea000060f648
+FS:  00007f13ab0c76c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000002ca92000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ delete_from_page_cache_batch+0x173/0xc70 mm/filemap.c:341
+ truncate_inode_pages_range+0x364/0xfc0 mm/truncate.c:359
+ truncate_inode_pages mm/truncate.c:439 [inline]
+ truncate_pagecache mm/truncate.c:732 [inline]
+ truncate_setsize+0xcf/0xf0 mm/truncate.c:757
+ simple_setattr+0xbe/0x110 fs/libfs.c:886
+ notify_change+0xbb4/0xe70 fs/attr.c:499
+ do_truncate+0x220/0x310 fs/open.c:65
+ handle_truncate fs/namei.c:3308 [inline]
+ do_open fs/namei.c:3654 [inline]
+ path_openat+0x2a3d/0x3280 fs/namei.c:3807
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_creat fs/open.c:1496 [inline]
+ __se_sys_creat fs/open.c:1490 [inline]
+ __x64_sys_creat+0x123/0x170 fs/open.c:1490
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f13ab131c99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f13ab0c7198 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007f13ab1bf6d8 RCX: 00007f13ab131c99
+RDX: 00007f13ab131c99 RSI: 0000000000000000 RDI: 00000000200001c0
+RBP: 00007f13ab1bf6d0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f13ab18c160
+R13: 000000000000006e R14: 0030656c69662f2e R15: 00007f13ab186bc0
+ </TASK>
 
-- Elliot
 
->  		modbuildid=${module#* }
->  		module=${module% *}
->  		if [[ $modbuildid == $module ]]; then
-> -- 
-> 2.25.1
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
