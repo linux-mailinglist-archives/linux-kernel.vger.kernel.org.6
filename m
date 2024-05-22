@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-186680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA3E8CC76F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:45:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776B28CC772
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2C701F21DBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:45:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFD57B20DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EF98174C;
-	Wed, 22 May 2024 19:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE450146A63;
+	Wed, 22 May 2024 19:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gp9t78h5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="az6VapnM"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A75A929;
-	Wed, 22 May 2024 19:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97420A929;
+	Wed, 22 May 2024 19:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716407148; cv=none; b=mhEJxP3BIy3WkBJAkIjZUz5B89yc8cTPwo6tmuDdPb39r3S2lZGaPvtkWZijrDFes8kC9mXxx+iOEBVW2YLcwGCl8Vqp1gKoxqOdlZlmk9Wnw44lOrDTbejg7qXeyMsnIV4bdAHLJ+lBtb2P6fgMZyIaBuimv3tD+NxczTP96dM=
+	t=1716407189; cv=none; b=Llh94VUPU9dFWDZEv14bNVDZfhrr8CSqJs5/UH08MMXuXHKAMuXaojwb9UZ0fA/fczWI0Q5JwqjJAapjlbIj3R5Ft9Zhdgqd2/zGV6QNILTvtJbQM3YqTVSUljkmvvA++dkuBF3tt+taW6bpYxp51LjOL95PAvsWdiRBCI4lgCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716407148; c=relaxed/simple;
-	bh=VNy3X1gCkM1Q2lQt+/I2zG7AyOiV6ah49bD+X8inkw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YE5uGjShWOn9mPS2FNIpX4NvWwInQwzbB86sHTzq+j+6jlPRMt6YAKbcEknjbJTBvY0pbeQAOd5uchq0MHPonuje4zZib6ITxOROo3NlC158mHTMg7ZWwhP9HDZWWH/iH9XsRphJFp7yvIFM+/qbcTMIubBvy0jyJ9jz1dPAAVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gp9t78h5; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716407147; x=1747943147;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VNy3X1gCkM1Q2lQt+/I2zG7AyOiV6ah49bD+X8inkw4=;
-  b=Gp9t78h57p+ribgoWSp6DYpU7YLPAd8Bp0T5TxtBNTyTTs6Lz2CgnUJx
-   CSyobItc5FgGJGQPMSIgp91ELpKtkR4j3mnT9cBFKQf87tAeB0/Goeogk
-   lrBZ4i5gl4RQ+C2AHsj2OWD4FOAitmpnWuEQDdu4pY/ywuzbKNo3l37RE
-   NcOk9aKXD900Dt1p7Sm9CFhZT3FpmcJSNn+F8t/8EYTXG9lUik+VAA8Mm
-   xy+yAss4xhWxPK4c+9CSE7FZKe022yWeMwxsNv1y9Q+XPXC++edpK2Th0
-   oV+o28t4Id8pEQNrLp61mlWZRvc9h9u0H/z9ZYYkM9wnmkUm5F/Jg5z+u
-   A==;
-X-CSE-ConnectionGUID: mafGFH3KRBKPvFzw0r3fUw==
-X-CSE-MsgGUID: EN1rdK+bSkC0keokfFFThA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="23822285"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="23822285"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 12:45:46 -0700
-X-CSE-ConnectionGUID: rp48xsGlTcSri1Fl61eRFg==
-X-CSE-MsgGUID: jvSo1K/UT1echsxPpGbLqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="37883105"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 22 May 2024 12:45:41 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s9ru7-0001vN-0N;
-	Wed, 22 May 2024 19:45:39 +0000
-Date: Thu, 23 May 2024 03:45:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiaojian Du <Xiaojian.Du@amd.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
-	pawan.kumar.gupta@linux.intel.com, sandipan.das@amd.com,
-	kai.huang@intel.com, perry.yuan@amd.com, x86@kernel.org,
-	ray.huang@amd.com, rafael@kernel.org,
-	Xiaojian Du <Xiaojian.Du@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 2/2] cpufreq: amd-pstate: change cpu freq transition
- delay for some models
-Message-ID: <202405230325.UPlOikDm-lkp@intel.com>
-References: <b2c8fb2da41f9fb21f095f67d99cbdbd0aa34091.1716356681.git.Xiaojian.Du@amd.com>
+	s=arc-20240116; t=1716407189; c=relaxed/simple;
+	bh=2CLGln2zgzW+HisWTsBgru7f8PYezcmku6NM5WBH6NI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TF8x2fdgR8K79OLZu1bXc6nOBZ5vQW76pY8xC05NJvE5c3ER0OPYcTc6jSPA9i2HCzg2X0lHBSkqunyyZWgKB/AUa7ZdG81JKio2z4bF9jB+YqUZ4PmuulK7nThkPstukmEApKvkssjCMc08ENdMVdl7GKTUcOw0+NWTUSY/v+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=az6VapnM; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5a4bc9578cso1013161666b.2;
+        Wed, 22 May 2024 12:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716407186; x=1717011986; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cNRKSkhfeBfdl1/YLhNkI/YGV4nmuFQs+U3x5z3R5T8=;
+        b=az6VapnMtgY4m/yx8R7ek18CEKYyZ/UxONMvXH34oze5y8kVBGn67ab4NR33M6Bm07
+         guHchQC9ZDliR3XxnouskYuHXE0fpj1aEsAfk3rixtI6K1eUzQplbaOob/IlU+XWe3a6
+         aHv9wubMWlTlraWOlurYNAaH8j7TV8dNNx/+Iqk/7AV89Nvnbt018Hv9A6JD+oZgvI0W
+         8FZOqQaGh0hBVt7JCeeyQ+VSrlUOU2xbhZNej8+dbLcCEYbYlhJxjG9ithvspAfuB1We
+         +0OSFhozSv4j0H5wne1LwWwXJUW9UUiTeIxLBCakDIfHbUkR5uRHyYooUgB7apMowqOY
+         9jQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716407186; x=1717011986;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cNRKSkhfeBfdl1/YLhNkI/YGV4nmuFQs+U3x5z3R5T8=;
+        b=kjO+ewl/4K2XgleuX50y/pd0HDfSjVNNkLjOHEMGKXowxytxyGGfDT8sIJ6Qx2iiuW
+         +sbrgz180Mu7ZKuC/IPg7jIcHr7XmQVwjKinQpti9GsAbWEKh3HTdugXrVVxDWl67Jpw
+         BXb6qJzAsw2My091OQT36HUwouuQfO/5LXqU2civTLX/Mlz4Fwr3DYgJP8B0lbHZ3xtB
+         LMV+7JMbMIFBNC5E5+1nlmxPabTVpCqyLHQ/hvON6n6Gv36x3d08wtHGOIA/5yMVB9Gp
+         LX3WZXfriX0T0CdlGhS90MjOWVkgiorJgn1UhrJxkScIIRDuB/y+V36dd63X46fB5LuU
+         H4Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJsqBZFnFq45lLTqEm9/plROPFhM6cJ0mNQPDM4NAEMRWyee2k8LWgMbiy6lBGObThBF2CXpw/M7HSRWuN6/+uTzulBLmOdGZRHspaC0qkPzly96oPgYBPhi7liDJuKsyTw0lMdoPBzbg=
+X-Gm-Message-State: AOJu0YzSRdO+9Ne9OZRk8B05+JJfOa07bRLkPk1wlcnmnJ+jmr/lnbeT
+	qWlfIvri+l1Xr/ASvQKdhcrIfO+KelZ644kxKRXIb1HStUXiNdaN
+X-Google-Smtp-Source: AGHT+IEM0LbYjeqrk1h+RNEsBFNp+7qjFe8R1PmbfLpgAKY9VpGnbi+gJvPkd3oMLBdEe2q4KmAOCw==
+X-Received: by 2002:a17:906:3857:b0:a5c:e43a:2bd5 with SMTP id a640c23a62f3a-a62281e18e6mr269701066b.59.1716407185764;
+        Wed, 22 May 2024 12:46:25 -0700 (PDT)
+Received: from [192.168.0.31] (84-115-212-250.cable.dynamic.surfer.at. [84.115.212.250])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17a06sm1800861566b.219.2024.05.22.12.46.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 12:46:25 -0700 (PDT)
+Message-ID: <97567de0-895d-4a23-907f-506551e86362@gmail.com>
+Date: Wed, 22 May 2024 21:46:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b2c8fb2da41f9fb21f095f67d99cbdbd0aa34091.1716356681.git.Xiaojian.Du@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] hwmon: (ltc2992) use
+ fwnode_for_each_available_child_node_scoped()
+To: Guenter Roeck <linux@roeck-us.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Jean Delvare
+ <jdelvare@suse.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20240522-fwnode_for_each_available_child_node_scoped-v1-0-1188b0da12dc@gmail.com>
+ <20240522-fwnode_for_each_available_child_node_scoped-v1-2-1188b0da12dc@gmail.com>
+ <57645247-fb14-4180-bef0-1638e9f522fe@roeck-us.net>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <57645247-fb14-4180-bef0-1638e9f522fe@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Xiaojian,
+On 22/05/2024 21:08, Guenter Roeck wrote:
+> On 5/22/24 02:18, Javier Carrasco wrote:
+>> The error path from a zero value of the "shunt-resistor-micro-ohms"
+>> property does not decrement the refcount of the child node.
+>>
+>> Instead of adding the missing fwnode_handle_put(), a safer fix for
+>> future modifications is using the _scoped version of the macro,
+>> which removes the need for fwnode_handle_put() in all error paths.
+>>
+>> The macro defines the child node internally, which removes the need for
+>> the current child node declaration as well.
+>>
+>> Fixes: 10b029020487 ("hwmon: (ltc2992) Avoid division by zero")
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> 
+> I really don't like fixes which depend on an API change.
+> 
+> Guenter
+> 
 
-kernel test robot noticed the following build warnings:
+We could split the fix into two steps as suggested by Andy, where the
+fix would simply add the missing fwnode_handle_put(), adding the
+corresponding tag to include it in the stable kernels (the bug was
+introduced with v6.7). By doing that, the new macro would not need to be
+backported, which is probably a safer approach.
 
-[auto build test WARNING on tip/master]
-[also build test WARNING on rafael-pm/linux-next rafael-pm/bleeding-edge linus/master next-20240522]
-[cannot apply to tip/x86/core tip/auto-latest v6.9]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The patch with the new macro would be left as it is, and another patch
+would convert the the loop to use the new macro to avoid that a similar
+bug arises again. That would be this 2/2 + dropping the additional
+fwnode_handle_put().
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiaojian-Du/cpufreq-amd-pstate-change-cpu-freq-transition-delay-for-some-models/20240522-135241
-base:   tip/master
-patch link:    https://lore.kernel.org/r/b2c8fb2da41f9fb21f095f67d99cbdbd0aa34091.1716356681.git.Xiaojian.Du%40amd.com
-patch subject: [PATCH v2 2/2] cpufreq: amd-pstate: change cpu freq transition delay for some models
-config: x86_64-randconfig-006-20240522 (https://download.01.org/0day-ci/archive/20240523/202405230325.UPlOikDm-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405230325.UPlOikDm-lkp@intel.com/reproduce)
+Best regards,
+Javier Carrasco
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405230325.UPlOikDm-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/cpufreq/amd-pstate.c:824:3: warning: add explicit braces to avoid dangling else [-Wdangling-else]
-     824 |                 else
-         |                 ^
-   1 warning generated.
-
-
-vim +824 drivers/cpufreq/amd-pstate.c
-
-   811	
-   812	/*
-   813	 * Get pstate transition delay time from ACPI tables that firmware set
-   814	 * instead of using hardcode value directly.
-   815	 */
-   816	static u32 amd_pstate_get_transition_delay_us(unsigned int cpu)
-   817	{
-   818		u32 transition_delay_ns;
-   819	
-   820		transition_delay_ns = cppc_get_transition_latency(cpu);
-   821		if (transition_delay_ns == CPUFREQ_ETERNAL)
-   822			if (cpu_feature_enabled(X86_FEATURE_FAST_CPPC))
-   823				return AMD_PSTATE_FAST_CPPC_TRANSITION_DELAY;
- > 824			else
-   825				return AMD_PSTATE_TRANSITION_DELAY;
-   826	
-   827		return transition_delay_ns / NSEC_PER_USEC;
-   828	}
-   829	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
