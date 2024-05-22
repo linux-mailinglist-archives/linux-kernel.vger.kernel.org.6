@@ -1,254 +1,203 @@
-Return-Path: <linux-kernel+bounces-185947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31F98CBD2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:43:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA9B8CBD2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6919B282B99
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02A71C20921
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056997FBA8;
-	Wed, 22 May 2024 08:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6D67FBBD;
+	Wed, 22 May 2024 08:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="P+djzFDZ"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="Pbe7PI5Q"
+Received: from MRZP264CU002.outbound.protection.outlook.com (mail-francesouthazon11020003.outbound.protection.outlook.com [52.101.165.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C49770FB
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716367397; cv=none; b=GkXsy8aFjs1/8pBSWCgOMmVfm91uJOvSP16MD3IO/Yrr/rlfefI4tYbO08Qg3ym0fFxi3We0wBYilcqzJWyfIl1HEQ1jBesiXn7R8Xy3Ykow8zqeRgqb1V53hw7h38g09lEHbOXdeL9rznBq5RS0LvKY/MUqrlRkLI1oWQuOfD0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716367397; c=relaxed/simple;
-	bh=08lKOkLNL3XdBTW43tCGVeymxKCeJCPxZgN9ppxVj4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ccvDGzqT/vPYJ/Pf3dLTiJjEH/LKV3Vvk4QL3aweez9OIk/RfC8gIBKeaBYgmKMiwHQayUSp2V6NmyTYe2pXUYvNGT85CscDwjOOUzPIVDzPoHpqGBKpwgXZvhzRqT0gureWP4XNiyQKIWcDK2O+AS7GLyQ/hRuflaEVSC+hVsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=P+djzFDZ; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WpmsIJrbdQjP0ANo+jHMzdspWIJkHRqfkFoQSba9FGg=; b=P+djzFDZOZ/Syt5F8K7tOLrh/u
-	Uoh7PWH9dkw0ujql2O0okGKdogAoD3ILGJK6jaTTrc31pGMs7IYoA/GsN4Ne1pRpTL2CWSLeGDLiN
-	9Q8kvoJFpYaaM0MseVSSdBVAU9xkudLxi3EqvSdFoyfAh7OV/R8eVMLkMiGQzD40dqIvvsyIDor1m
-	yiFVDRJdoDT5WtaU/1DfrOgdbAJs5CIHY2j9knspyuFRHTWCFFjYq5RYYyMtpmJQjmZX+D9dA1hwu
-	MPHDaZyLgwvHNbQ0VRxN+csu+pl2rnilLlyNNDSGuF+oy5/ziBHYYsEEh7WeDDgwE4NMVnJW/sivf
-	kxTy1Ysw==;
-Received: from [84.69.19.168] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1s9hYo-00B19C-7R; Wed, 22 May 2024 10:42:58 +0200
-Message-ID: <86542894-d085-41da-840f-26045ef590e0@igalia.com>
-Date: Wed, 22 May 2024 09:42:57 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0697B768FD
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.165.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716367510; cv=fail; b=UDxWWea3pgLc9FW5HDc4pDmIsBGcCRzLnqgeFbChsUdYpKzGyY9zLd7WLfcdX1jV6b+QK6rzS4hNnI+U4s9XHFtXvuO4sJ2R/vKni80sm8dYWg2N+jhrUpIFTK4lrgdr2Kk5XPYyKi/mUfbY/NXfCv0rIcf/AWTfGqD2CxKc6IE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716367510; c=relaxed/simple;
+	bh=PtAZa8wwtG1FKZPmZMs0yLVUpb1OQr9eTYzrQiB2W4s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Y2iHEaepPq/xM1ai/Ogn+aI4wfgKu60M6uwxgymAleWQsEA0kcf4ZqM3iLPM8YeMiPghx2h3EuC5trLJlIxeqy6pVU/fzvzZVSy76FvCL7545nSJZ2f2X3snt9SGsUAbkBC58Fk77S2PEmWEsi9Des6OtSTNSVFEZpAwkRS5BcM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=Pbe7PI5Q; arc=fail smtp.client-ip=52.101.165.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jUxpAALpaIZ3VDJORGkTorXiMWm2zRevF7DYrtiioHay1846Ro3eXUFY/Y5QYIQexqna4wtAWmOP6BP9fx3ZKY870Xn8w5dN0EEpWNCReXtV/aMxYI7JJJWJ9NyeW79OBGqtTjeJXU1+6mknaNR47SVrlKLKTU8wBxNFZFaUdBNJxO53DKXbUJ/doltkYiMtlLvoSRdEq9SAzzb7oLsxmEm990KIYLvGYiw5+PAEeO8xeSwIiWLM+tLus1q+vnsJ/fGWVCb9ZmszLXFgyqLoCX9n3JALgodNrWBzFHJWPsR7amo5/exor+eEcYu5NYg1xcUqB6F76rRNLjKMYvHqaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PtAZa8wwtG1FKZPmZMs0yLVUpb1OQr9eTYzrQiB2W4s=;
+ b=FTeHNTMGaiiKP5/LbPx/EAZO29BLwGoEk19a51NEZEAzHCO6bxkvjmq1HZuZpsG5WuUbMoZVTwIMOSr3YsXrDoPg1e8+McHBeXGNifDAYH9P2BNjJUIFKVItD1v6hJFZg1B27rw4AghocTDBggDt4JBYomFvES/dLwpCCee8a/8UvJnWPTdlkNZu33yqrBwe+Ic8ghlIE545VPBxWFbpJgUoxjHWAHBH3jbaaAdhEpV5MTe6uu1zdygjZolkpyl4pWQhyCxaIo4NMpu7YnwPp5uDfPy9hs7Bhn3fFUMdQaLhZVlxoOzfY8nceQr6mX4vDIcgGC1ulekRd4fReD6RFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
+ dkim=pass header.d=csgroup.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PtAZa8wwtG1FKZPmZMs0yLVUpb1OQr9eTYzrQiB2W4s=;
+ b=Pbe7PI5QZqXvlZx2zOaZEnPsjAaKjCeSqvNY2/9blAh7HWh+K0L8H3lHsXUuauYCBXssWcmeQgH/C6Wkq9dCHVa3T9DvK7iX6D9qoFrpHlNg3vDdWpybBb55PfdyCsFMZ/rJ/j6p7NYRTR/ycNaqRpWqFecIGyQkeUx1U9KMSAOxa+iqehU6kuMyc6262IWWgXpfYX4TiGqUlM4xwiNSUISKWjT8XlP3789FXFXpKTT+CZcs3sNbNXIbPEaXJBPJJkcxfq/qpM5KydZOg/U2UHcB3DQwCtA9hnqbdIIHu9Yp/1VjwtH7BYkejoyQQf7mv7SXMVupymdchOlrhRHgZw==
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
+ by PASP264MB5491.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:43e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
+ 2024 08:45:06 +0000
+Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::96ff:7284:1fa1:b02a]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::96ff:7284:1fa1:b02a%4]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 08:45:06 +0000
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Oscar Salvador <osalvador@suse.de>
+CC: Michael Ellerman <mpe@ellerman.id.au>, Andrew Morton
+	<akpm@linux-foundation.org>, Jason Gunthorpe <jgg@nvidia.com>, Peter Xu
+	<peterx@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [RFC PATCH v2 06/20] powerpc/8xx: Fix size given to
+ set_huge_pte_at()
+Thread-Topic: [RFC PATCH v2 06/20] powerpc/8xx: Fix size given to
+ set_huge_pte_at()
+Thread-Index: AQHaqIxxLOw0k+xnhUqWHgWN6F7AE7Gf2z2AgAB6CICAABPKAIACjoeA
+Date: Wed, 22 May 2024 08:45:06 +0000
+Message-ID: <37987c7b-e9e1-4969-82b3-84da47b2c6ff@csgroup.eu>
+References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
+ <04f4e737608ea0b177b88057db138fbf0d6ab138.1715971869.git.christophe.leroy@csgroup.eu>
+ <ZksUiwNaKx2n1fJO@localhost.localdomain>
+ <f26807dd-bbd2-405d-9a88-c0654c525a5c@csgroup.eu>
+ <ZkuLgtujN1C2cpaH@localhost.localdomain>
+In-Reply-To: <ZkuLgtujN1C2cpaH@localhost.localdomain>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=csgroup.eu;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MRZP264MB2988:EE_|PASP264MB5491:EE_
+x-ms-office365-filtering-correlation-id: 2d9a8ea2-29c7-472b-6033-08dc7a3b7acc
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|376005|366007|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bUo0N1JPUzEwRm02WVRkTDVCYW5iQUxtWnd4bFp1Kzk0TTRjem1sdUx5dmNT?=
+ =?utf-8?B?NktXdDVPckI4Q0p2eGE5M1hYZWNJNU1ob2FFeE5tcTB2d1FaeGM4Zzg2Tk5B?=
+ =?utf-8?B?ZDc2MUVnNUx6WVBONllJR3ZPRStWOE9IQUhKNGwxU3NZaWp4YU1qL2lMak9a?=
+ =?utf-8?B?L09CRG8yTmxiaUVXRWIyWUQyby80TERMMW1reHZJZGp5d0VkQlFCdDFYN2Z4?=
+ =?utf-8?B?VXJOV3RrNngreEluQlQ3THhVUmljNHpBT1ZNVFF4TEtKVlNoTCtzUVJFSG8v?=
+ =?utf-8?B?TVFyVmM2WDh0alh3SHlxbDhidUVKTUpWMVZkVlFOVmhyVlIxVzVieFlRMkov?=
+ =?utf-8?B?anNFT29kRHIzWWpKZzF5OTNRMHFnUEQ5R2VlbDcyQWFFcGRRWTRTVUt0MG0v?=
+ =?utf-8?B?NHdQWWN3L3BVOVg5MWlscmlVbzNuT21ld3hKMGJyM0xLSFdXTnVkRk11Y3Nq?=
+ =?utf-8?B?K0o0OXJPTXNwUDNQdXRVUFJ4SnBCanlRV01KdHZGejU3UGt5Qk1IMDJUT1U3?=
+ =?utf-8?B?b3dodkRTMmZmdWZaUEU2NTFkTk5yYmx1bUFXRlFjckpJSWJhMU9rZUU0SHhz?=
+ =?utf-8?B?Q3JEVVJQOG04TVBWZEVnMldEcExBVzd2cGVSMWZERHp2VGpRVFhZM28xSGp4?=
+ =?utf-8?B?dkhENXJqMzVwY2ZVNWtiK2tjcWJuckR0RnIwd1U3UnlSc2Y3aW9PQzlRUCtz?=
+ =?utf-8?B?endMQWtCK0lDdmIyZ3hacEpwdWJqWHRkK1ROTmNjUWxUTWVYeThhVndsMXI1?=
+ =?utf-8?B?REtFSmpkNnRvT1o2NUYyRjU3c214YjBlamEzVUtqTG0xQ2Ixa1dNS1dBN25n?=
+ =?utf-8?B?UmRKMlk5a01xNDJsYmIvZXlnN0VqK2xLZWNNeWZWbmc5WmFMNVhBMkhsdENu?=
+ =?utf-8?B?bnJqdzk1ejdRV215NVV5bEhJKzQ2YVJCNzN6L01RcTBVZWE1VXFHNE1kUlVY?=
+ =?utf-8?B?RTI1K3k1amlzazFJL29DZVA5RVZTV0IvcC9idGdlRk1WbFJlOWJub0NSZTlD?=
+ =?utf-8?B?VUt4VHAxUUxuNDE3VUh2TFlWN1lJZ1k1cUpsYStZN0g5QzhjM3F6TGFiejV5?=
+ =?utf-8?B?R2VtM2tlREpFWndjZ3dzYmY4NDBFVXE0TXB4bHNHNlUxWVNLbjRKTHVUejda?=
+ =?utf-8?B?ZS8rbm1FbGc2NzBYR2dNcnVpZnlmb0hLaTZNQmtrdWo0QmN6UC9xVVR1bFZQ?=
+ =?utf-8?B?dnBudXJBQW1VcFQyOWx6VWpPc1Q3dUR0aUxoYU5od0E5bUpVUnR0b0thU3ZR?=
+ =?utf-8?B?cDFBdkYyMnoyRVplQ2g4RlZCdzVETDJRN1M1VkQyTE1VaEdBTk1acUszRnZW?=
+ =?utf-8?B?Lys2NVczbTY3RHFoc1pRejh0cEFNRi9DQlFWRllUZU9mTGVxSGhOV0gvUC82?=
+ =?utf-8?B?enhsK0xnTlpBcGRKSjBJUnRGa0JtZEo3eXB2UmFsL0VMSmthTXFhNTR2OXds?=
+ =?utf-8?B?TTYvTzRxMzM3cURuT2FWamNCSlYvaEVISTNnTWJoYUdmMUFXRE8yZ1hLMHZw?=
+ =?utf-8?B?R2Z0SGN4WnNaSkxZWmJyMktuWEVTTHpnZlBmK3NVTi9YcFI3UXQvYWphU3BS?=
+ =?utf-8?B?eE5tRk4xelZ0bGkySUtDRG9DL2xBVDlTZVdNc0t2NUJZYTVjQmdVU3pHOURN?=
+ =?utf-8?B?S2ZPNitZOHBHQlpXMzk5YW9vREpHcTlOZG5MZHNxODdoRVNadG5KVTBDcjk2?=
+ =?utf-8?B?WmZrQnRVei9ic214aW9kelFySHZMMXFOazY3Skx0aFZ5RERlVTNUK0h0cC84?=
+ =?utf-8?B?MzZydk5tRktNZHA5QkZxSHpGNVBqS0pEdENnMjU0bkVzZjhyd3JLSm1zazJI?=
+ =?utf-8?B?eUNhakM5dnM2dzFkYnhIdz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YXRWOVZRWG5wTFNuS1NsMGlRUjIxaXpqUm1xRndHOVZDUzA1dGlReWpvZkM5?=
+ =?utf-8?B?Z1hvaUFubzA3K1dwamV0UXE5bWFmZVI4bkJHQmZIYk9maGc2c05kT00rdUwr?=
+ =?utf-8?B?VzNxRmk4dFNOam9nTHR3M1ZaZFVwTWVaZFp6cDBoUzZhNmVscjdMUzdLS3FG?=
+ =?utf-8?B?d1JGSEdBelkzZXNoZ3hhTzhheGx2elRmaXVpZklZaEVtMWUvdWQzZWFlMXFu?=
+ =?utf-8?B?bUQzUGgwQURIMTlBRE1jTVNxNFZPT2JlRFQwbCtYM3hLb0dTTVBNdDJlMkhB?=
+ =?utf-8?B?c0NnTHdGd3h4bjZCZ05JUUpsekVhR1RkRWtzTW81TDBaeWhGSzZWN2hFSXJR?=
+ =?utf-8?B?VC9Ja09qNFZTd0RUSWZGSEhXUmQ3UThUOE1QeWVydE5Jb2NwbUQ2aVFQc3BP?=
+ =?utf-8?B?S2tPei8ybGdSRHJLcHNKa2s4QWhJaDJIL2ZDTkhrcDVsdjRabjdRaGw4RENC?=
+ =?utf-8?B?TzdxWXgyY3FXeG1xcUF3Vno2UENpRUdOVVdUd0RTdkxBR3JoN3BydzZqcVQr?=
+ =?utf-8?B?b21JMnJJOEprZ2ltTXJhbVE0Y3VSdUhtRFlBbWZiZGF4am4rdEl6SC8vUGNH?=
+ =?utf-8?B?S00rYUc0TEFpVmFnTzNzNDFxa1NSQTVsTnIybmlaLzI0aW9QcVQ3TnhseGl1?=
+ =?utf-8?B?UVVJbi94M3dEQm81WDloZWc3akNwZXZNVU91Tm1XWmNncE84c1E1NldxNlVO?=
+ =?utf-8?B?M0xHSW4xWlY3YzVvNUJ5WVJxSUFXWmxvSFJvaVdIbG52RlVDcmJISjJCZXJn?=
+ =?utf-8?B?enVrZTFPMnVLK1BYRTFrVFZrVVBvY0Q2Y0crNDYwRG9Cbm5SLy8xNWhFSERM?=
+ =?utf-8?B?MElQUnRiM01wTng5K0x6ZDl2Z093N2RkZDArQmhLS053ZFlwSlZXdGxVRUlH?=
+ =?utf-8?B?WmluSHBtSE5IelFvT0N4R2VIdmZzVFNLQ0xDeVhUbWFmWGVnRU1OSmczZkQ4?=
+ =?utf-8?B?cXJGd0FnbWRtUktVeTdMdDZ3N3RYUGxDVEx4NmVKMHYrbGtCanM1Z3JyN3Bo?=
+ =?utf-8?B?bXVSQjhIVFRhMUtnSXJKTUVxTnNwRklTdk9DUUM0QXhNTmhMd3BhMHN3dWd4?=
+ =?utf-8?B?L3RQMXB3QXBSU1RxOHlLci9iSUJRaVcwaGxVVSs2MUxrendra2FNTUkwMVRK?=
+ =?utf-8?B?RHZCdHIwd215QmUvZUpsOFdtem5kRnN6dTNEU01xRVdFU1hBWWJsbURqVUJM?=
+ =?utf-8?B?L0hJWjF4ZEdKVXRqQkhkZFVsMGQrR2lXZHMvcllIUWR4bHJTa0QxWnc5aUtF?=
+ =?utf-8?B?ZCtOeVJzR1p5R2lPNTRqeENvOHJWQXNPUGdhVDliZ2FVOEFLN2ZIOVpDbmtU?=
+ =?utf-8?B?eUxXKzBsTWxIR0RoQXBrN1loSlJHU0pWS3dxQ2ZVYzl2Tm9wY0xYQ2RpRGtF?=
+ =?utf-8?B?M2tpYlA3cTR2eGsxQmdPNHZkVE84cFc5eGllRmVYS0xrUnhrSzBXK2YySkZx?=
+ =?utf-8?B?aExPTFdaME1NTnlpNGZuU3R4enI0NVBVQnovRkoxM3RkZ0ZYdGw2U2tuMWJK?=
+ =?utf-8?B?bHByUWZzcHBCUDlaaEl6ak5WeDhjbEUvcEVzell0Szc3WEE0T2FIeVlHbnlZ?=
+ =?utf-8?B?TUxOK3hOUlhTaGtvRWlhdWV0OEE1K21qT2VsMUw1VDIrY0RQU2g0eEFoVUZl?=
+ =?utf-8?B?QTg2bnROUEZqeU9jdWQwekUveGdRRzBPR2oxNFM5NGdnMTdpZklnS0J4S0Ja?=
+ =?utf-8?B?b2E5ZWp6akNHNlA4V05OWEZ2czZuU2o1VVVEaTNFMS9WVGNmOWhFa1h4eWw4?=
+ =?utf-8?B?cWZCZTVSaVFWdzNoaThwUENNYWw0djVLZ3RUV0dta0tyalJLVTd6N2YvWm94?=
+ =?utf-8?B?QkhyOGI4STFHM2JCandtclNCTnV6S0l3eTBqVzg5Uk5JWGRURndaRjdrVUlI?=
+ =?utf-8?B?M1ZqaUE3OS90OEdHSkJQdTVIR3VBalljQ2Z0QXRRYUJwOGtUNGhUa2ZuU0pT?=
+ =?utf-8?B?TlNRZXJldFRPQUNjQTNKaTh6bHFpS2FTRFRpenpaaXRWY01BMmJuaTlJd3Zm?=
+ =?utf-8?B?KzAyZlREaFU4VkV6cjJrc2o3b1BmMks3RlE4RWI5Qzl1NVFqVGxicy9URVpn?=
+ =?utf-8?B?T3Vyd1QvVmd2OFBVV3BVNDkxSFJwRzJRZmczS253WFVRQ3NuWS8yV0h6U0p3?=
+ =?utf-8?Q?XEkbpqMQyoo/OFRH5tOqZH2D8?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CB36D259EF87044C969CFCDA6BF83CEE@FRAP264.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/psi: Optimise psi_group_change a bit
-Content-Language: en-GB
-To: Tvrtko Ursulin <tursulin@igalia.com>
-Cc: linux-kernel@vger.kernel.org, Tvrtko Ursulin <tursulin@ursulin.net>,
- Suren Baghdasaryan <surenb@google.com>, Peter Ziljstra
- <peterz@infradead.org>, kernel-dev@igalia.com,
- Johannes Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>, Ingo Molnar <mingo@kernel.org>
-References: <20240329160648.86999-1-tursulin@igalia.com>
- <20240329185147.GA877460@cmpxchg.org> <20240409223847.GE1057805@cmpxchg.org>
- <99b39d9e-1fae-41a5-96f9-d1298c7cc29c@igalia.com>
- <91c82905-4319-470c-8797-3c6effa7e32c@igalia.com>
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <91c82905-4319-470c-8797-3c6effa7e32c@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: csgroup.eu
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d9a8ea2-29c7-472b-6033-08dc7a3b7acc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 08:45:06.1273
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oKKXG34IZ1YUFkCokHtD3FnW2WZrR5pxOaB6j1VTrciTcWICK/oPhtFjgXU4tfIrq91P5WoQXgjyf4gFtn9JHISaDJt/EGN3bDgPbXQeNa8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB5491
 
-
-Hi,
-
-Any chance of getting this in somewhere? I am gradually implementing an 
-exponential back-off in terms of pinging this thread but it is a simple 
-and clear improvement so I don't know why it is stuck really.
-
-Kind regards,
-
-Tvrtko
-
-On 01/05/2024 16:09, Tvrtko Ursulin wrote:
-> 
-> Hi,
-> 
-> Adding more scheduler maintainers to Cc - hopefully someone can merge to 
-> the relevant tree?
-> 
-> Thanks,
-> 
-> Tvrtko
-> 
-> On 18/04/2024 09:54, Tvrtko Ursulin wrote:
->>
->> Hi Ingo,
->>
->> On 09/04/2024 23:38, Johannes Weiner wrote:
->>> [ Oops, I still had an old mutt alias for Ingo's address. ]
->>>
->>> Ingo, would you mind taking this through the scheduler tree?
->>
->> Gentle reminder so this one does not fall through the cracks.
->>
->> Regards,
->>
->> Tvrtko
->>
->>> On Fri, Mar 29, 2024 at 02:51:53PM -0400, Johannes Weiner wrote:
->>>> On Fri, Mar 29, 2024 at 04:06:48PM +0000, Tvrtko Ursulin wrote:
->>>>> From: Tvrtko Ursulin <tursulin@ursulin.net>
->>>>>
->>>>> The current code loops over the psi_states only to call a helper which
->>>>> then resolves back to the action needed for each state using a switch
->>>>> statement. That is effectively creating a double indirection of a kind
->>>>> which, given how all the states need to be explicitly listed and 
->>>>> handled
->>>>> anyway, we can simply remove. Both the for loop and the switch 
->>>>> statement
->>>>> that is.
->>>>>
->>>>> The benefit is both in the code size and CPU time spent in this 
->>>>> function.
->>>>> YMMV but on my Steam Deck, while in a game, the patch makes the CPU 
->>>>> usage
->>>>> go from ~2.4% down to ~1.2%. Text size at the same time went from 
->>>>> 0x323 to
->>>>> 0x2c1.
->>>>>
->>>>> Signed-off-by: Tvrtko Ursulin <tursulin@ursulin.net>
->>>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
->>>>> Cc: Suren Baghdasaryan <surenb@google.com>
->>>>> Cc: Peter Ziljstra <peterz@infradead.org>
->>>>> Cc: linux-kernel@vger.kernel.org
->>>>> Cc: kernel-dev@igalia.com
->>>>
->>>> This is great.
->>>>
->>>> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->>>>
->>>> Ingo, would you mind please taking this through the scheduler tree? I
->>>> think Peter is still out.
->>>>
->>>> Remaining quote below.
->>>>
->>>> Thanks
->>>>
->>>>> ---
->>>>>   kernel/sched/psi.c | 54 
->>>>> +++++++++++++++++++++++-----------------------
->>>>>   1 file changed, 27 insertions(+), 27 deletions(-)
->>>>>
->>>>> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
->>>>> index 7b4aa5809c0f..55720ecf420e 100644
->>>>> --- a/kernel/sched/psi.c
->>>>> +++ b/kernel/sched/psi.c
->>>>> @@ -218,28 +218,32 @@ void __init psi_init(void)
->>>>>       group_init(&psi_system);
->>>>>   }
->>>>> -static bool test_state(unsigned int *tasks, enum psi_states state, 
->>>>> bool oncpu)
->>>>> +static u32 test_states(unsigned int *tasks, u32 state_mask)
->>>>>   {
->>>>> -    switch (state) {
->>>>> -    case PSI_IO_SOME:
->>>>> -        return unlikely(tasks[NR_IOWAIT]);
->>>>> -    case PSI_IO_FULL:
->>>>> -        return unlikely(tasks[NR_IOWAIT] && !tasks[NR_RUNNING]);
->>>>> -    case PSI_MEM_SOME:
->>>>> -        return unlikely(tasks[NR_MEMSTALL]);
->>>>> -    case PSI_MEM_FULL:
->>>>> -        return unlikely(tasks[NR_MEMSTALL] &&
->>>>> -            tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING]);
->>>>> -    case PSI_CPU_SOME:
->>>>> -        return unlikely(tasks[NR_RUNNING] > oncpu);
->>>>> -    case PSI_CPU_FULL:
->>>>> -        return unlikely(tasks[NR_RUNNING] && !oncpu);
->>>>> -    case PSI_NONIDLE:
->>>>> -        return tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] ||
->>>>> -            tasks[NR_RUNNING];
->>>>> -    default:
->>>>> -        return false;
->>>>> +    const bool oncpu = state_mask & PSI_ONCPU;
->>>>> +
->>>>> +    if (tasks[NR_IOWAIT]) {
->>>>> +        state_mask |= BIT(PSI_IO_SOME);
->>>>> +        if (!tasks[NR_RUNNING])
->>>>> +            state_mask |= BIT(PSI_IO_FULL);
->>>>>       }
->>>>> +
->>>>> +    if (tasks[NR_MEMSTALL]) {
->>>>> +        state_mask |= BIT(PSI_MEM_SOME);
->>>>> +        if (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
->>>>> +            state_mask |= BIT(PSI_MEM_FULL);
->>>>> +    }
->>>>> +
->>>>> +    if (tasks[NR_RUNNING] > oncpu)
->>>>> +        state_mask |= BIT(PSI_CPU_SOME);
->>>>> +
->>>>> +    if (tasks[NR_RUNNING] && !oncpu)
->>>>> +        state_mask |= BIT(PSI_CPU_FULL);
->>>>> +
->>>>> +    if (tasks[NR_IOWAIT] || tasks[NR_MEMSTALL] || tasks[NR_RUNNING])
->>>>> +        state_mask |= BIT(PSI_NONIDLE);
->>>>> +
->>>>> +    return state_mask;
->>>>>   }
->>>>>   static void get_recent_times(struct psi_group *group, int cpu,
->>>>> @@ -770,7 +774,6 @@ static void psi_group_change(struct psi_group 
->>>>> *group, int cpu,
->>>>>   {
->>>>>       struct psi_group_cpu *groupc;
->>>>>       unsigned int t, m;
->>>>> -    enum psi_states s;
->>>>>       u32 state_mask;
->>>>>       groupc = per_cpu_ptr(group->pcpu, cpu);
->>>>> @@ -841,10 +844,7 @@ static void psi_group_change(struct psi_group 
->>>>> *group, int cpu,
->>>>>           return;
->>>>>       }
->>>>> -    for (s = 0; s < NR_PSI_STATES; s++) {
->>>>> -        if (test_state(groupc->tasks, s, state_mask & PSI_ONCPU))
->>>>> -            state_mask |= (1 << s);
->>>>> -    }
->>>>> +    state_mask = test_states(groupc->tasks, state_mask);
->>>>>       /*
->>>>>        * Since we care about lost potential, a memstall is FULL
->>>>> @@ -1194,7 +1194,7 @@ void psi_cgroup_restart(struct psi_group *group)
->>>>>       /*
->>>>>        * After we disable psi_group->enabled, we don't actually
->>>>>        * stop percpu tasks accounting in each psi_group_cpu,
->>>>> -     * instead only stop test_state() loop, record_times()
->>>>> +     * instead only stop test_states() loop, record_times()
->>>>>        * and averaging worker, see psi_group_change() for details.
->>>>>        *
->>>>>        * When disable cgroup PSI, this function has nothing to sync
->>>>> @@ -1202,7 +1202,7 @@ void psi_cgroup_restart(struct psi_group *group)
->>>>>        * would see !psi_group->enabled and only do task accounting.
->>>>>        *
->>>>>        * When re-enable cgroup PSI, this function use 
->>>>> psi_group_change()
->>>>> -     * to get correct state mask from test_state() loop on tasks[],
->>>>> +     * to get correct state mask from test_states() loop on tasks[],
->>>>>        * and restart groupc->state_start from now, use .clear = 
->>>>> .set = 0
->>>>>        * here since no task status really changed.
->>>>>        */
->>>>> -- 
->>>>> 2.44.0
->>>>>
+DQoNCkxlIDIwLzA1LzIwMjQgw6AgMTk6NDIsIE9zY2FyIFNhbHZhZG9yIGEgw6ljcml0wqA6DQo+
+IE9uIE1vbiwgTWF5IDIwLCAyMDI0IGF0IDA0OjMxOjM5UE0gKzAwMDAsIENocmlzdG9waGUgTGVy
+b3kgd3JvdGU6DQo+PiBIaSBPc2NhciwgaGkgTWljaGFlbCwNCj4+DQo+PiBMZSAyMC8wNS8yMDI0
+IMOgIDExOjE0LCBPc2NhciBTYWx2YWRvciBhIMOpY3JpdMKgOg0KPj4+IE9uIEZyaSwgTWF5IDE3
+LCAyMDI0IGF0IDA5OjAwOjAwUE0gKzAyMDAsIENocmlzdG9waGUgTGVyb3kgd3JvdGU6DQo+Pj4+
+IHNldF9odWdlX3B0ZV9hdCgpIGV4cGVjdHMgdGhlIHJlYWwgcGFnZSBzaXplLCBub3QgdGhlIHBz
+aXplIHdoaWNoIGlzDQo+Pj4NCj4+PiAiZXhwZWN0cyB0aGUgc2l6ZSBvZiB0aGUgaHVnZSBwYWdl
+IiBzb3VuZHMgYmV0dHRlcj8NCj4+DQo+PiBQYXJhbWV0ZXIgJ3B6aXplJyBhbHJlYWR5IHByb3Zp
+ZGVzIHRoZSBzaXplIG9mIHRoZSBodWdlcGFnZSwgYnV0IG5vdCBpbg0KPj4gdGhlIHdheSBzZXRf
+aHVnZV9wdGVfYXQoKSBleHBlY3RzIGl0Lg0KPj4NCj4+IHBzaXplIGhhcyBvbmUgb2YgdGhlIHZh
+bHVlcyBkZWZpbmVkIGJ5IE1NVV9QQUdFX1hYWCBtYWNyb3MgZGVmaW5lZCBpbg0KPj4gYXJjaC9w
+b3dlcnBjL2luY2x1ZGUvYXNtL21tdS5oIHdoaWxlIHNldF9odWdlX3B0ZV9hdCgpIGV4cGVjdHMg
+dGhlIHNpemUNCj4+IGFzIGEgdmFsdWUuDQo+IA0KPiBZZXMsIHBzaXplIGlzIGFuIGluZGV4LCB3
+aGljaCBpcyBub3QgYSBzaXplIGJ5IGl0c2VsZiBidXQgdXNlZCB0byBnZXQNCj4gbW11X3BzaXpl
+X2RlZi5zaGlmdCB0byBzZWUgdGhlIGFjdHVhbCBzaXplLCBJIGd1ZXNzLg0KPiBUaGlzIGlzIHdo
+eSBJIHRob3VnaHQgdGhhdCBiZWluZyBleHBsaWNpdCBhYm91dCAiZXhwZWN0cyB0aGUgc2l6ZSBv
+ZiB0aGUNCj4gaHVnZSBwYWdlIiB3YXMgYmV0dGVyLg0KPiANCj4gQnV0IG5vIHN0cm9uZyBmZWVs
+aW5ncyBoZXJlLg0KPiANCg0KVGhhbmtzLCBJJ2xsIHRyeSBhIHJlcGhyYXNlLg0KDQpDaHJpc3Rv
+cGhlDQo=
 
