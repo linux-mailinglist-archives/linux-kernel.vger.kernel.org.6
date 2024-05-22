@@ -1,287 +1,116 @@
-Return-Path: <linux-kernel+bounces-186688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 471478CC7A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:06:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D3D8CC7A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFEB4B21181
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E7B1C20D4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA21F4E7;
-	Wed, 22 May 2024 20:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723B31465A2;
+	Wed, 22 May 2024 20:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HkZa7hGc"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v9fId9EF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U7cZLAkc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111CD78C9D
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 20:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215413D97F;
+	Wed, 22 May 2024 20:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716408367; cv=none; b=qYK+VM+cB18GXL/xcImZOPQKzZb00X14Lj5fDVgYb0cIN7kBTThJi3sNTVc1pwxNf4hzDqJOJGvFbND1YA8EZzEY/b4dgr2GfmwVrQkzHzhtU3m+YyugadAzXqQHX9M2gG1gs9UyYgCHXrAYR0y/KgaDaMVjLAAn4QbNK6CPMUU=
+	t=1716409223; cv=none; b=diyoiT7rNOOHwp0H3WY7Eo2qOrzS5BkYOU/ntNdU6yxj6cRzeW0hwKpDP2YwQGFDvFhW/5imcaZQsVZbeLPbYye26Rs1at0d3EsfhtgwfbsVxqLukl7gV3MtuKFK05o50ugQ7Q4f1Ykzj1djhzr67rPWS2ftoOwB9AUaBgoYiXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716408367; c=relaxed/simple;
-	bh=zkCJWYYFlcj5D3tT+xTyw8Pg3kAf4fTMTuu0pKc9aJE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qlkWOnIzLKafYWcMdf+ozy+MI0UoMOyDZkNKdbCzXHPlAb22seGnIk9mRA/3NtI73RIG5x5wirqE6vItXgh40ym92eteqgrd+kaCBgo2OYpm98FcO2OZ8ICCcCRotUyA1axTAZEaXV/ZHEXo0GiZU7P8ZGFj59Ar4/5s5bCJSdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HkZa7hGc; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-792b8c9046bso137944685a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:06:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716408363; x=1717013163; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Dd7GrKK6qrVpweRGgoT/fw8t7w7OjlAlF8Ebyefp99A=;
-        b=HkZa7hGc7qW3wUC3MJ5LHI8JbKnnBNPZWfpqPPWlXrRSMRteOK/e2iFFSuW0eaPaj7
-         9pkMOy37mKY3F1GdyyQz3W85TwMv+X7SjC235fw9J9f6WIPeHGRe7oSUUxg9HJ3ZAq8M
-         ppgI8BsQRVSmDkfMwYj6Ij2IBYK8AYQCytmxIGdN1FPAT9syBc57wv5AgFE3Si+ePINg
-         hR5PQxy6FWXG7RHPqFPwLu12l4UsiUVc+pD1UZqgDtSpXrlcnxP7H3HpvM5g1k8hCAzK
-         EPBr5DJB+ZNIjGUGAIi9EuFqg6AF4KUAshv7DfwP1v+7Iv5RWgR6EMydVHcLbrOQfSev
-         xDcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716408363; x=1717013163;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dd7GrKK6qrVpweRGgoT/fw8t7w7OjlAlF8Ebyefp99A=;
-        b=rF5tu8YERIjdzHm66Wfx5QY26Ez/A75nG71ydDb3U/EgWM1DtbzX/+TUXyZ6E8e1oW
-         hZsMXF/yxiuGTZAQk4v0HjVP4Tr9tGzIfFPuW8A4sPHPWk3YjirBaCgQbBOgndeDxLqT
-         s8xSLh1TBlSLtxlj3KAOwPHIhSABNsrLSP5UCM3k8vlqHIwfHE4323wQ1s64/I9ZnjWn
-         rGUjq3kFJj06BIj9k2jEpFRwrs6p0xdZkjAJ9I/gkWYyERdfmhm0iud1KsQ5PD235Y0Z
-         +OxTsBzsLXZ1ed8oCUu+lVEXQMhm4q+2KqmY608PKgQehgSbjJTLALqm2Sx+UFKX4XbS
-         QWUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6HunyzY6OQK9kXPe8T91iaCnqUnfLREu1XM9d6ILO4OTK9odekyYmIgkXaZLQLIRzRdiXKlVa4/73YEG9AQ/2W4mvud10grSmEG1l
-X-Gm-Message-State: AOJu0YxKnSnyaPYgxO3G2TsLJ5TCmt9WFglQUN0MMBqz48ZL1iIt+v4R
-	Nb+Rhq488Sj/jHwIwpjDppIwIdQxjUxjXPkzJUzmhF6K7C/Y2d2kbBuDxTvjmQk=
-X-Google-Smtp-Source: AGHT+IGGldJXhqigbx8J7LMJWdYC3ut5BDoxC+SGxjvsaI+ZsTWHQpthKxu5elgY1i6ljiF++PxgQw==
-X-Received: by 2002:a05:620a:20cb:b0:794:7969:5d66 with SMTP id af79cd13be357-794994b20d4mr274602485a.55.1716408362773;
-        Wed, 22 May 2024 13:06:02 -0700 (PDT)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf275229sm1428443185a.18.2024.05.22.13.06.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 13:06:02 -0700 (PDT)
-Message-ID: <8cd080ef-e1f3-4752-8f92-d61c5fd321b5@baylibre.com>
-Date: Wed, 22 May 2024 16:06:00 -0400
+	s=arc-20240116; t=1716409223; c=relaxed/simple;
+	bh=F2xmOV7bgrVkwiNtggsuXeIJFbpdRdBJcYc6gTTGxjQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JPTdCqLiTzmYtZr3YAWjWg/NynMoysDbaHQ7m/L+y34jCvSQeq9qAXs3xZMuYSz2r9Prp8Szay4KmZG4MaeM/GCY07T+ncrjUdkhcdw2WEdwmqE3q7jXcHDUUUXHP4W9way5JMYkcPLxJO5mxpy3e9lUM0Sol23u/6YWyM2W5AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v9fId9EF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U7cZLAkc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716409214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2DMJSM7Oa5HYtwPggEvWY9KVgsO4BWl3ByYqO2+nYDw=;
+	b=v9fId9EF1EI9dTrREN1vupIBY53gNyx8SuIfQITUmEel0Y3nRMRx0tdSzMwmE6R2dlA+lP
+	GUKuS6JJDuBdbYpQHuacnZQJw5D0CxewJIZnkN3fQhPgm5m4VvQo8rI8gWRN5MCCk9TUMB
+	rKKsbrhhV4R3jayzTDvay8iodficuYocWUpLGsXGVqt/IhIKFhWJncACq29TNm80VdnFgL
+	sIlv69XeSUZHIsgKM+zHjtera42YlLZJJeaY8uJ0LR0c6R19yhQUkxfDO9ZDXLoknCrUVZ
+	JKLmZ+F0RaXos5PAZf9OASy2IgJir97gJLwEsfpqgZrbSM38DFc8Wl12brjOmQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716409214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2DMJSM7Oa5HYtwPggEvWY9KVgsO4BWl3ByYqO2+nYDw=;
+	b=U7cZLAkcwWGoRzBFryEp0fGuiQbnBiKLDhkkMwypWFCIwrbgYx6ELPgOKdkej/zotInkb6
+	93jllOkHPR4W76Aw==
+To: Jim Mattson <jmattson@google.com>, Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini
+ <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Marc
+ Zyngier <maz@kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: Re: RFC: NTP adjustments interfere with KVM emulation of TSC
+ deadline timers
+In-Reply-To: <CALMp9eSPXP-9u7Fd+QMmeKzO6+fbTfn3iAHUn83Og+F=SvcQ4A@mail.gmail.com>
+References: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
+ <CALMp9eSy2r+iUzqHV+V2mbPaPWfn=Y=a1aM+9C65PGtE0=nGqA@mail.gmail.com>
+ <481be19e33915804c855a55181c310dd8071b546.camel@redhat.com>
+ <CALMp9eQcRF_oS2rc_xF1H3=pfHB7ggts44obZgvh-K03UYJLSQ@mail.gmail.com>
+ <7cb1aec718178ee9effe1017dad2ef7ab8b2a714.camel@redhat.com>
+ <CALMp9eSPXP-9u7Fd+QMmeKzO6+fbTfn3iAHUn83Og+F=SvcQ4A@mail.gmail.com>
+Date: Wed, 22 May 2024 22:20:13 +0200
+Message-ID: <87cypdha4i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2 v3] pwm: add duty offset support
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- michael.hennerich@analog.com, nuno.sa@analog.com, dlechner@baylibre.com
-References: <20240521194916.1897909-1-tgamblin@baylibre.com>
- <20240521194916.1897909-2-tgamblin@baylibre.com>
- <73y7ovftjv35gw3sjeu3jisg7feplhyebmcnldqvszuofqnn7q@eh4lyicuhfmq>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <73y7ovftjv35gw3sjeu3jisg7feplhyebmcnldqvszuofqnn7q@eh4lyicuhfmq>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-On 2024-05-22 11:53 a.m., Uwe Kleine-König wrote:
-> Hello Trevor,
->
-> On Tue, May 21, 2024 at 03:49:15PM -0400, Trevor Gamblin wrote:
->> Some PWM chips support a "phase" or "duty_offset" feature. This patch
->> continues adding support for configuring this property in the PWM
->> subsystem.
+On Thu, May 16 2024 at 09:53, Jim Mattson wrote:
+> On Wed, May 15, 2024 at 2:03=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat.c=
+om> wrote:
+>> > Today, I believe that we only use the hardware VMX-preemption timer to
+>> > deliver the virtual local APIC timer. However, it shouldn't be that
+>> > hard to pick the first deadline of {VMX-preemption timer, local APIC
+>> > timer} at each emulated VM-entry to L2.
 >>
->> Functions duty_offset_show(), duty_offset_store(), and
->> pwm_get_duty_offset() are added to match what exists for duty_cycle.
+>> I assume that this is possible but it might add some complexity.
 >>
->> Add a check to disallow applying a state with both inversed polarity and
->> a nonzero duty_offset.
+>> AFAIK the design choice here was that L1 uses the hardware VMX preemptio=
+n timer always,
+>> while L2 uses the software preemption timer which is relatively simple.
 >>
->> Also add duty_offset to TP_printk in include/trace/events/pwm.h so that
->> it is reported with other properties when using the event tracing pipe
->> for debug.
+>> I do agree that this might work and if it does work it might be even wor=
+thwhile
+>> change on its own.
 >>
->> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
->> ---
->> v3 changes:
->> * rebased on top of latest pwm/for-next
->> * removed changes related to cdev to match current pwm tree
->> * fixed minor whitespace issue caught by checkpatch
->>
->> v2 changes:
->> * Address feedback for driver in v1:
->>    * Remove line setting supports_offset flag in pwm_chip, since that has
->>      been removed from the struct in core.c.
->>
->> ---
->>   drivers/pwm/core.c         | 79 +++++++++++++++++++++++++++++++++++---
->>   include/linux/pwm.h        | 15 ++++++++
->>   include/trace/events/pwm.h |  6 ++-
->>   3 files changed, 93 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
->> index 18574857641e..2ebfc7f3de8a 100644
->> --- a/drivers/pwm/core.c
->> +++ b/drivers/pwm/core.c
->> @@ -62,6 +62,7 @@ static void pwm_apply_debug(struct pwm_device *pwm,
->>   	 */
->>   	if (s1.enabled && s1.polarity != state->polarity) {
->>   		s2.polarity = state->polarity;
->> +		s2.duty_offset = s1.duty_cycle;
-> s/duty_cycle/duty_offset/
-Thanks for the catch.
+>> If you agree that this is a good idea, I can prepare a patch series for =
+that.
 >
->>   		s2.duty_cycle = s1.period - s1.duty_cycle;
->>   		s2.period = s1.period;
->>   		s2.enabled = s1.enabled;
->> @@ -103,6 +104,23 @@ static void pwm_apply_debug(struct pwm_device *pwm,
->>   			 state->duty_cycle, state->period,
->>   			 s2.duty_cycle, s2.period);
->>   
->> +	if (state->enabled &&
->> +	    last->polarity == state->polarity &&
->> +	    last->period == s2.period &&
->> +	    last->duty_offset > s2.duty_offset &&
->> +	    last->duty_offset <= state->duty_offset)
->> +		dev_warn(pwmchip_parent(chip),
->> +			 ".apply didn't pick the best available duty offset (requested: %llu/%llu, applied: %llu/%llu, possible: %llu/%llu)\n",
->> +			 state->duty_offset, state->period,
-> Does it make sense to emit $duty_offset/$period here? Establishing a
-> consistent way to write this would be nice. Something like:
->
-> 	$duty_cycle/$period [+$duty_offset]
->
-> maybe?
-I like that. I'll clean it up.
->
->> +			 s2.duty_offset, s2.period,
->> +			 last->duty_offset, last->period);
->> +
->> +	if (state->enabled && state->duty_offset < s2.duty_offset)
->> +		dev_warn(pwmchip_parent(chip),
->> +			 ".apply is supposed to round down duty_offset (requested: %llu/%llu, applied: %llu/%llu)\n",
->> +			 state->duty_offset, state->period,
->> +			 s2.duty_offset, s2.period);
->> +
->>   	if (!state->enabled && s2.enabled && s2.duty_cycle > 0)
->>   		dev_warn(pwmchip_parent(chip),
->>   			 "requested disabled, but yielded enabled with duty > 0\n");
->> @@ -126,12 +144,13 @@ static void pwm_apply_debug(struct pwm_device *pwm,
->>   	if (s1.enabled != last->enabled ||
->>   	    s1.polarity != last->polarity ||
->>   	    (s1.enabled && s1.period != last->period) ||
->> +	    (s1.enabled && s1.duty_offset != last->duty_offset) ||
->>   	    (s1.enabled && s1.duty_cycle != last->duty_cycle)) {
->>   		dev_err(pwmchip_parent(chip),
->> -			".apply is not idempotent (ena=%d pol=%d %llu/%llu) -> (ena=%d pol=%d %llu/%llu)\n",
->> +			".apply is not idempotent (ena=%d pol=%d %llu/%llu/%llu) -> (ena=%d pol=%d %llu/%llu/%llu)\n",
->>   			s1.enabled, s1.polarity, s1.duty_cycle, s1.period,
->> -			last->enabled, last->polarity, last->duty_cycle,
->> -			last->period);
->> +			s1.duty_offset, last->enabled, last->polarity,
->> +			last->duty_cycle, last->period, last->duty_offset);
->>   	}
->>   }
->>   
->> @@ -146,13 +165,24 @@ static int __pwm_apply(struct pwm_device *pwm, const struct pwm_state *state)
->>   	int err;
->>   
->>   	if (!pwm || !state || !state->period ||
->> -	    state->duty_cycle > state->period)
->> +	    state->duty_cycle > state->period ||
->> +	    state->duty_offset > state->period)
->>   		return -EINVAL;
->>   
->>   	chip = pwm->chip;
->>   
->> +	/*
->> +	 * There is no need to set duty_offset with inverse polarity,
->> +	 * since signals with duty_offset values greater than 0.5 *
->> +	 * period can equivalently be represented by an inverted signal
->> +	 * without offset.
-> This isn't exact. The equation is:
->
-> 	state_with_offset.period = inverted_state.period
-> 	state_with_offset.duty_cycle = inverted_state.period - inverted_state.duty_cycle
-> 	state_with_offset.duty_offset = inverted_state.duty_cycle
->
-> And with duty_offset you can express more wave-forms than with
-> inversion.
-Thanks for the clarification, I'll change this too.
->
->> +	 */
->> +	if (state->polarity == PWM_POLARITY_INVERSED && state->duty_offset)
->> +		return -EINVAL;
->> +
->>   	if (state->period == pwm->state.period &&
->>   	    state->duty_cycle == pwm->state.duty_cycle &&
->> +	    state->duty_offset == pwm->state.duty_offset &&
->>   	    state->polarity == pwm->state.polarity &&
->>   	    state->enabled == pwm->state.enabled &&
->>   	    state->usage_power == pwm->state.usage_power)
-> While I like the added expressiveness of having .duty_offset, I think we
-> shouldn't let the low-level drivers face both .duty_offset and
-> .polarity.
->
-> I suggest to add a new callback similar to .apply that gets passed a
-> variant of pwm_state that only has
->
-> 	u64 period
-> 	u64 duty_cycle
-> 	u64 duty_offset
->
-> period = 0 then signals disable. Implementers are then supposed to first
-> round down period to a possible period (> 0), then duty_cycle to a
-> possible duty_cycle for the picked period and then duty_offset to a
-> possible duty_offset with the picked period and duty_cycle.
->
-> Then there is a single code location that handles the translation
-> between state with polarity and state with duty_offset in the core,
-> instead of case switching in each lowlevel driver. And I wouldn't
-> add .duty_offset to the sysfs interface, to lure people into using the
-> character device support which has several advantages over the sysfs
-> API. (One reasonable justification is that we cannot remove polarity
-> there, and we also cannot report polarity = normal + some duty_offset
-> without possibly breaking assumptions in sysfs users.)
-Makes sense. On a related note, will your pwm/chardev branch be merged soon?
->
-> What is missing in my plan is a nice name for the new struct pwm_state
-> and the .apply() (and matching .get_state()) callback. Maybe pwm_nstate,
-> .apply_nstate() and .get_nstate()? n for "new", which however won't age
-> nicely. Maybe it also makes sense to add a .round_nstate() in the same
-> go. We'd have to touch all drivers anyhow and implementing a rounding
-> callback (that has similar semantics to clk_round_rate() for clocks,
-> i.e. it reports what would be configured for a given (n)state) isn't
-> much more work. With rounding in place we could also request that
-> .apply_nstate() only succeeds if rounding down decrements the values by
-> less than 1, which gives still more control. (The more lax variant can
-> then be implemented by first passing an nstate to .round_nstate and then
-> .apply_nstate that one.)
+> I do think it would be worthwhile to provide the infrastructure for
+> multiple clients of the VMX-preemption timer.
 
-Instead of "new", what about something like "raw", "base", "signal", or 
-"waveform"? I think those (even abbreviated) might make it more clear 
-what the purpose of the new struct is. "wstate" seems to be fairly 
-unique to me - a quick grep caught other uses of the string only in:
+That only solves the problem when the guests are on the CPU, but it does
+not solve anything when they are off the CPU because they are waiting
+for a timer to expire. In that case you are back at square one, no?
 
-- tools/testing/selftests/net/mptcp/mptcp_connect.c
+> (Better yet would be to provide a CLOCK_MONOTONIC_RAW hrtimer, but
+> that's outwith our domain.)
 
-- arch/sparc/include/asm/hibernate.h
+That's a non-trivial exercise. I respond to that in a separate mail.
 
-- arch/sparc/kernel/asm-offsets.c
+Thanks,
 
-Thanks again for the feedback. I'll spend some time thinking about this 
-and aim to come back with a v4 soon.
-
-Trevor
-
->
-> Best regards
-> Uwe
->
+        tglx
 
