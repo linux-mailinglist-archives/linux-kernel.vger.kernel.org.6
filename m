@@ -1,242 +1,188 @@
-Return-Path: <linux-kernel+bounces-186776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF388CC90B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:28:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB608CC90E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A3D7B21521
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:28:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB3E1F21B0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223A31487C6;
-	Wed, 22 May 2024 22:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEC71487CF;
+	Wed, 22 May 2024 22:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FFLmzmEG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rg0SdRCD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B1E148303;
-	Wed, 22 May 2024 22:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716416888; cv=fail; b=Hj0S+AJHG3UnL6etGGh/5Nt9DBUFx9Fp8j1eI9dg7zHWY1tALwElRkbuNpH4LrLjtrl9omj9P5+x5QhiTfksg/w4pnh/WxhnhCV6uFLSeIWubwbcGjze3plhANyrKxeC3KU/kyZkdXarB634QpROItWbwrhpo59SHYQsH0ZgDwk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716416888; c=relaxed/simple;
-	bh=4Z31vLTjN/S12BkII/URMJQnGrboNI6b6WQsSo+Ibjc=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SQhrl1Nawv7dZcNWHLLSTKXWA8ZWQcMtQy+fhvEKhU7LyICbBw8e9HiTtAS+pc8xnby0cQ/7CWFumzfCgnPEYxSPfnYjj0EesQxetDxXdaCa4zhTqzPggVq0VfZUCtjrxl6effHpg1M9rjmjsgUYsIFXJSkSCkxR8ZxQb+oRTTA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FFLmzmEG; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716416886; x=1747952886;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=4Z31vLTjN/S12BkII/URMJQnGrboNI6b6WQsSo+Ibjc=;
-  b=FFLmzmEGj9lU2bjgOitUQypASPd7E1A5IB3k9bFa60VvKVhUKJcfsmRw
-   86X80G5V/z2k0K+U+W219yi+LRUeCtpHqzzRGn+8M5buXydWlvZ385JJm
-   Z31CNPhLxUzwIX4xsUckYc/v8iS/LLsnx71EHTcSW7hwrzo6E03Pq+Q37
-   6GCTeNq7CROrQobxKEzMr11sGKbQhmS1sPN/C8y4FvIxEGsnouYAgD1Ij
-   d9zFQiHfPBvK65j/Dn/vbZc0SZDj6vAc4cdxFf6AviKknAF6IIEpCYhTW
-   KeZgQv/nmgPPXH/bDFgDyo4SePiSuZvKQ67EWgsQ2tiJywKDpL57WLzbb
-   Q==;
-X-CSE-ConnectionGUID: mG62dZoxTJ2wKn+DNwnygA==
-X-CSE-MsgGUID: yOp19mmoSE+Ge41/iHpA9A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12481933"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12481933"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 15:28:05 -0700
-X-CSE-ConnectionGUID: p3UBkDgKQQeG4aT1oKthPw==
-X-CSE-MsgGUID: Zb+icH01Rb2I394tUeS/gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="64678086"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 15:28:05 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 22 May 2024 15:28:04 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 22 May 2024 15:28:04 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 15:28:04 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 22 May 2024 15:28:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JWcyCf4Uj95lTeFx6vLN0ffLyDZIS9BEZ0Ng6NGJSg7yC9O9pHxkIQCBgQu9Xs7L7v8XPBMb6dJOvxpF4grKsEWPL5TbX03H69r6i+6c2hBug4TpfSw4F4WOWT84xssbY7Bo/UlHPYDcIyPGoKaqWuUca+Zmo/W4DgK0GYa0wWwON2DDKZa+79a/umz4fWqAI8lkxrKLaHPDhCkLxwW96TCMNopKcF37JiCqeIko2tsDwfjJhAvVdDAcK412umqKc/5YDZCbw7Yjeg+Q/OqMzr3aSPm+ATSSfxHlSAyqb7ajbgH9bhrg2VKY6ORTIPzDphLtXqi0Nlle78Rk7qiQ9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+NFPFa+kr2zCEiO7kmGuo4pMHe0siwiygJ3CD0PRFTU=;
- b=hRqCpdgyHQUQJ9hV84fWlY0Y+8dT8m65d11FcdgttEoPxSoNsaww/+pfmQQP5ZKA04UJBJfA91LP+Xct7SzMRQHu7Pm1AYL1fHLMVWQZNgWDyuTSafVkfTi+aG2dCpQ82CLQ3qZmx4TZsxQpebBM/cC5FFSDn3lOxD6EFRdg9cmpAKsdS7W9QCa9aRuBtmBriLBrCwKkEJQttBtLBeZgee7HIOxCNyphXB2rGAUxNlZ0yVOx65tGIjmNk6bRIMEwhYoocACQz54C9i7AcbtklDhG7kiuhPaZ7AjCp9J/Z38N2YcoQmfQdwUoG/SjH8RDY2Dk4rodnxOXzglqMgfp9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by PH7PR11MB7122.namprd11.prod.outlook.com (2603:10b6:510:20d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Wed, 22 May
- 2024 22:28:01 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7611.016; Wed, 22 May 2024
- 22:28:01 +0000
-Message-ID: <8b344a16-b28a-4f75-9c1a-a4edf2aa4a11@intel.com>
-Date: Thu, 23 May 2024 10:27:53 +1200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] KVM: Add a module param to allow enabling
- virtualization when KVM is loaded
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
-	<pbonzini@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chao Gao
-	<chao.gao@intel.com>
-References: <20240522022827.1690416-1-seanjc@google.com>
- <20240522022827.1690416-4-seanjc@google.com>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <20240522022827.1690416-4-seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR05CA0046.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::21) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC966148308;
+	Wed, 22 May 2024 22:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716416917; cv=none; b=BSoU+gO+t0XCpHX4LeC3OqWV0PMr55VGcjBYodAJ97Jx9o2pYItpCJAStEN02GvbriUbS4l8GafTsW2JrLlpnCfuMNZ3m77W7qd5E8CTz7YhFtqTk7ydVQoNE2JU35NMft2ZI7aBfMeSL+ISs+OpsYXg8F2ZlbWAGk//CLOGl0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716416917; c=relaxed/simple;
+	bh=iPEcTEaSVmPMU3drT0qtv/3prDhf9jxctPjLd5VISnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=s4sRkeCAsUncLMUapnDIN9yrXCgLPkxgqVzzXq7BsQSxpebTPwc/uGhbCKkzyXAlYiBdl8BX8PNBKdbELx7jbLKifUVIS8hvDqEdSlNzBUQG5z8SJfvRTkd91ofYyMZMsBo5EpRPzo5hh1hrZ2A+9/jDdK1+NjJ0LuG0i/ShPtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rg0SdRCD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D8FEC2BBFC;
+	Wed, 22 May 2024 22:28:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716416916;
+	bh=iPEcTEaSVmPMU3drT0qtv/3prDhf9jxctPjLd5VISnw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Rg0SdRCD8tMxBFmuNkrT8piCf4KssC8nQakQrYsiP7YRocQMcKmpAMXLGNqLVbd43
+	 s36IRJfasXi7J7y43s9kzGSzrrSo3NY5KkZt46iKr0Q+mZtivJD0Jo5auMSBaxAPjD
+	 S4UZyBr734C7q4P7tGRn91ifXbAo6cX25N3E6jZAGXiYLSLtPqVi4xFJIYkWXwSiJ0
+	 EQdZRdg17nIzAxFqe9npLQLO+swx7u+zrZ/RRgNT9pAJjhgWemzSyls8I35ZGODq5u
+	 ExiTao3WJgwnDDi+smYpK4tG/cRcanaKRqVl/nOgsFP9lr+SBwBiM/fhgja9xSiDAd
+	 H0aLGFMDyD/Rw==
+Date: Wed, 22 May 2024 17:28:34 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
+	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Bharat Kumar Gogada <bharatku@xilinx.com>
+Subject: Re: [PATCH v3 2/7] PCI: xilinx-nwl: Fix off-by-one in IRQ handler
+Message-ID: <20240522222834.GA101664@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|PH7PR11MB7122:EE_
-X-MS-Office365-Filtering-Correlation-Id: e973f8e4-b771-40b1-9046-08dc7aae70b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?S05kSlVqMDR4YXJyV1FVV3FXNG9YSGlNVGlpRzYxdzNFMXVWeVdWbjQvRmtH?=
- =?utf-8?B?cG1uTFVyWmVBMTRyendFei9QQVNPSFJJQUNDUy9JSVh2V3R6SWhPUmczVHkw?=
- =?utf-8?B?VW5Vem9KWUVnckdKbG9BUXRPMlBQRkhvNnkrQ0FHWnQ0MTBLZ1REZlZlY0Nx?=
- =?utf-8?B?SVh1ak5RTnZ2QW1paHFvcm5MSmlmTTdmVUtXdE0xc0FISENyNnRSVVlqVlFs?=
- =?utf-8?B?N3F2UnllV1hGZ1ltQWlNT2hXQ2NwMXlwZDFtNVpwVUhMQUUyMG5VemVpMGVT?=
- =?utf-8?B?Z052MGFvRWtRM3o1NWVaWUtENDhlQjViSG1UcGpkVmFtN2N1RURzVW1YYm5x?=
- =?utf-8?B?VFU0RzBDOEwxYmFqZ2F2anRxa1Z1UGFCYW9LdHBCc2Frdi9ic0RnYzBMYllj?=
- =?utf-8?B?SFBsdzJrek5rT0o2QnFoVjdSQlRRNnI3RHUxbG1sdHV6V1hqVDBFcCtBTFpP?=
- =?utf-8?B?cnhYcjgyR0JoU0NnU2kxdVlIc0p4UC9Mc212aUZ0R0ltTFE1Wisxd1pKVmla?=
- =?utf-8?B?VkZTUTI4eHllL2YwZjBaR1BRMlpaeEw4c056bWtnRWlvVjNyREdFSTdNQUo3?=
- =?utf-8?B?MksvREJjQUxiYWdUbngwbTFqanYxeVRza1VRYVBCcVlaa3Z2eGxJSzFLUm9o?=
- =?utf-8?B?dWRuME0rWEVVWFBoOENwR3ZlNDNuaFNDajA5cThJRXJjcUlKdjJvQW1mS2ts?=
- =?utf-8?B?QVVPU2gyUTVZQktpU3g4dzIxb1BDZ2FyekU3UUJHVGExekRNSk9pQ2JpYXRN?=
- =?utf-8?B?WW9wVDdRejd6dlpzMVlOT0pzTjFYaCtsWDVUV3hUQXVzUWdLU3Q5Z016RGtE?=
- =?utf-8?B?S09UMmplTlduYlhJRlZObmNvT1BmUVdjbVNoWUppZTF5dGEyRW1NRnoycU5s?=
- =?utf-8?B?cFoyWm8xWWhvSElqUmFDT2ltVXZsTi9CYy84T3hJMFJsUjk1UnI4OE5NS1BU?=
- =?utf-8?B?UHZkeHRtR0EyK1hLVG1JbnJvRFJBMk9XOU9GRnBWdFVneE9mNnlhS3k4QnY1?=
- =?utf-8?B?MlFTVFJMRHJhUnMyWkVYTUVQTnpRM3g2T3dXVmN2QnZNa3QwQU9PYVFhOGR1?=
- =?utf-8?B?bkROZW9MREhBSXhIU2szbU9yaWh2OHNXRXZ5S2xVMnJQaUxjdnpqczVqdndx?=
- =?utf-8?B?Z0VHblhmN21xWjNKc21CVDAvY05DWVhZaDIyS2picC9YVzFoVEFpcFhCTSto?=
- =?utf-8?B?UGdrSW9RR3FrQUlJZGRYVUhrYW5kaVVHNURtNXhtOVUwTUNrd3VReFB0SFRz?=
- =?utf-8?B?R2tyY25VVVUvYnZtTW5oU1FtbUcrd21ZWjg2ZzNERllpVm4yZXprSStlYXY2?=
- =?utf-8?B?WkpNc2diRGJhZCtzOUpsOGZVRmtmeW4wMWU0cHZpVkp4aWFMZjhPOEZlc2d2?=
- =?utf-8?B?R0xmNkYyS0ZoZ042WjI1Z1JtVEJ1WER6d0pHNEg3OGtFdW5XUGpzazE5Uko2?=
- =?utf-8?B?czRjQTJ5eS9jSkMzbnB6MmlHZWhGWWVLTEM0RUM0b25lbmxZaGNYVytQd1dD?=
- =?utf-8?B?TkNMdEt6QVA3ZWNUWGZ5VFAyZVJZZHY3cnduWmpTQTNaRnFrM3I3WGZCUllI?=
- =?utf-8?B?bkl5eEg5dlpCUWlBaStxbnZnLzJHdk9zTjV3R0ZtUWZ2Z1FMcEZCYzRGNy9s?=
- =?utf-8?B?TEI3VjVQUktqdzU0L3ltNmZCSnlDYWZxajByRzZDZUV2MHBkcElpSlY2eVRo?=
- =?utf-8?B?QUNYTmw1S2NGY29JVFdzdThCQ1UzaWpGQzFiZ3pvaXFaaElqVHRWR1JnPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y2NreThUYVc3NVJWMGM4TEpNZHp0UXVuelMwS2JTOWtkKzhpUVQ5b0RYQzZi?=
- =?utf-8?B?dXppeTg0RUI4clk5bGFLZE5TMkxqeGkzcHpVSFFLM1J0M2w5VWRrTW5oaXg3?=
- =?utf-8?B?NUh1cTI2RjhxTmNackJtOXUzdGhLRzZSb2ZsNFBnb0k1RUozWG11bjFlLys5?=
- =?utf-8?B?Qm9iQ09SYXZVTEFhUndoYVRoRFJidW05K28vd1lYV2ZaS2hGaHJZMm91b3RH?=
- =?utf-8?B?TXJEcWVqWlh2ZHV2aTRyTWtOeHh4blgrcmtUUlE3Z00vOHh2V201dzZSSzZv?=
- =?utf-8?B?eEMwOVBKdHV3WGFWdnRBVCtpM2U4OEJFd2ZZQVp0bVlaN2N3c05kWnpOK21r?=
- =?utf-8?B?ZTJjazZZS0VFSGlEeGFKUWF4M0FOTVNuOUcvVFYwWHlKRmhFMlNkMkIzbFVK?=
- =?utf-8?B?bjBSL3N0cjJzT1VsZlRqL05HcWRqSHlCcXVaWWF4VWlPb2xLNnNTZHlEc0Z3?=
- =?utf-8?B?SXZhOFpETjN4WVpwUUJiMHQ3cjBvUHJsTHdxeVVaaXlVMW4zNjNCY3JNbUsv?=
- =?utf-8?B?ZGRidUZsWHdQcWZKZjliYXc4ajczZGF3UHFIREJmOURDRDlLZzRSMEtCdnVY?=
- =?utf-8?B?NHlZV29FU2lGMkEybHNpT1JLMno5RTNNSWg2MU5GMVloZ0pRQVBpRnQ5Z2dl?=
- =?utf-8?B?eUZTbit1ZTgxOS84U1ZOK2tEbVJNaDZsQWUxclluT1E3WHdRYk9OL1NPdzlk?=
- =?utf-8?B?ZC9sWm4xN3pOYXY3UmtSZmR3K0d4TVg5SjUrOU01czg3UzZMRVJqQzhtbGxO?=
- =?utf-8?B?ZGUveXlGWEcyb2p6cnJ6Qk0zaUhmdlBNeHE0WEtKMUptM1dUV2p0WlVEVzVM?=
- =?utf-8?B?ZXlIWDZMNDlpQ0xnTkJEWXlEZ3pTMnp6M3ZOV3BIa3FiSFZkaHE3MnFlaUxM?=
- =?utf-8?B?ekVoNHpEbDFwOXNnRTZ4b0lEdTIwc1dvdWNUWUNjcjVwa2xoMVZNRlpqZXhv?=
- =?utf-8?B?R3YvZTJpV24zaFRPY3FNdUVOOWpiRmVGNG91R3pwZGp6R1NWSWs1aVdpQzla?=
- =?utf-8?B?d2syY1Zpd3JsWjlGTHNXNUNFK1E2RXlnWEtMeWVOTk9wNGJOVGgwdlpmZWor?=
- =?utf-8?B?L1pod3JNNE40ZlMyWTBUUHIwMEN1WUJDMHc0VkdISzhudG5DZjZGRDRLejBu?=
- =?utf-8?B?TjVKbTA1WWlnR3AxMWwzbnVLWEtmc0hyYUxwcFZvejZXa0lPUEM3NTJCbjV5?=
- =?utf-8?B?dGlDMU1KbmQwa1RXdlhaY3hwNjcwNWxRZDY0bmJHUXBCZmpMTks3elJFakp5?=
- =?utf-8?B?L2FEOE9nNHc5b2pFQ1BVOTJuemwrRTJSZzM5d2pXbXd5dGcvYlkvcE0wUGhq?=
- =?utf-8?B?UzBFMUtuUnVuaFRTNXJybGZjaUl4ZEtkdG5GemRWcjFhWXdYVm1EbllkdlJQ?=
- =?utf-8?B?aVRhdDBCTDZ4cmNiZFFrTmtuS1kxRWhBM0Z5T3graDBNaitlWVFPZjhaY2pM?=
- =?utf-8?B?QWFDdGg1MUVsczdldU1lc2F0dGhYYmJ6S0NDenBjSHFTV1VWMzVPVVBBaGFO?=
- =?utf-8?B?aisxdlR5ZTk1MisyUDRFMER6M2laakVDQXpNVWNlQUNRRGhQa2VtNTNMQ2VC?=
- =?utf-8?B?cHMvZHlKMG0zSDUwY2thcmhZbGJMZlpUVG5CS3B6V0szemU3c2RuQ2pBaWxC?=
- =?utf-8?B?dTdUeERQRHB3RENYUGVvRFN0Q1ZIK1dPUkMyNG9nSlgzYms1cEEzNEowaVd6?=
- =?utf-8?B?cWx0T3I3UlFMREhneGEzdXI3UXFyRXRnK09uVWticWtvQnBuL2h5TTlWdlp4?=
- =?utf-8?B?NVFCcHlZdXdlOVk4RGdxMGdwQURpN0U4NmhhVU42c0ZLdCtiWEEvN2QxU1du?=
- =?utf-8?B?dlI4a2YzK0htNEsxOWIxNXBQajZtQmwyell1WTFubUw2KzlLb0hPdVZ1QkVH?=
- =?utf-8?B?R2d3ckw5RTBYRVFMbUwwdXUwZWJ3U3QreUZkc3VsU1FSVkF6WnlOQllpbDg2?=
- =?utf-8?B?SmVjbnFSbXVYNndxeDZuS0FqNnN6RnlobmxmM29rdXhSZkdQSUNNVGRET1BV?=
- =?utf-8?B?SU1wbDk3V2Z5WHFWL2dhY0dFeGVKRnoxUzFnbTA5WnRmc21wZ1AxK1FTQVhY?=
- =?utf-8?B?UG5VK3VmQVFGLzdXbVpvMW1qdGc0bkdLVVIrS01lRTNwa0txRHIzY2swcXlk?=
- =?utf-8?Q?FeR89zcNJf0/BHtb/nBkWk9eB?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e973f8e4-b771-40b1-9046-08dc7aae70b8
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2024 22:28:01.5867
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vs7uA3XcvORExQtNZbOeVa0psFntvhu3tuw9ohMm6trcrh9rrEuAFv7okc4S6YLe8HOWTnZR64SrsrwfpbYTYQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7122
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520145402.2526481-3-sean.anderson@linux.dev>
 
+On Mon, May 20, 2024 at 10:53:57AM -0400, Sean Anderson wrote:
+> MSGF_LEG_MASK is laid out with INTA in bit 0, INTB in bit 1, INTC in bit
+> 2, and INTD in bit 3. Hardware IRQ numbers start at 0, and we register
+> PCI_NUM_INTX irqs. So to enable INTA (aka hwirq 0) we should set bit 0.
+> Remove the subtraction of one. This fixes the following UBSAN error:
 
+Thanks for these details!
 
-On 22/05/2024 2:28 pm, Sean Christopherson wrote:
-> Add an off-by-default module param, enable_virt_at_load, to let userspace
-> force virtualization to be enabled in hardware when KVM is initialized,
-> i.e. just before /dev/kvm is exposed to userspace.  Enabling virtualization
-> during KVM initialization allows userspace to avoid the additional latency
-> when creating/destroying the first/last VM.  Now that KVM uses the cpuhp
-> framework to do per-CPU enabling, the latency could be non-trivial as the
-> cpuhup bringup/teardown is serialized across CPUs, e.g. the latency could
-> be problematic for use case that need to spin up VMs quickly.
+I guess UBSAN == "undefined behavior sanitizer", right?  That sounds
+like an easy way to find this but not the way users are likely to find
+it.
 
-How about we defer this until there's a real complain that this isn't 
-acceptable?  To me it doesn't sound "latency of creating the first VM" 
-matters a lot in the real CSP deployments.
+I assume users would notice spurious and missing interrupts, e.g.,
+a driver that tried to enable INTB would have actually enabled INTA,
+so we'd see spurious INTA interrupts and the driver would never see
+the INTB it expected.
 
-The concern of adding a new module param is once we add it, we need to 
-maintain it even it is no longer needed in the future for backward 
-compatibility.  Especially this param is in kvm.ko, and for all ARCHs.
+And a driver that tried to enable INTA would never see that interrupt,
+and we might not set any bit in MSGF_LEG_MASK?
 
-E.g., I think _IF_ the core cpuhp code is enhanced to call those 
-callbacks in parallel in cpuhp_setup_state(), then this issue could be 
-mitigated to an unnoticeable level.
+I think the normal way people would trip over this, i.e., spurious and
+missing INTx interrupts, is the important thing to mention here.
 
-Or we just still do:
+> [    5.037483] ================================================================================
+> [    5.046260] UBSAN: shift-out-of-bounds in ../drivers/pci/controller/pcie-xilinx-nwl.c:389:11
+> [    5.054983] shift exponent 18446744073709551615 is too large for 32-bit type 'int'
+> [    5.062813] CPU: 1 PID: 61 Comm: kworker/u10:1 Not tainted 6.6.20+ #268
+> [    5.070008] Hardware name: xlnx,zynqmp (DT)
+> [    5.074348] Workqueue: events_unbound deferred_probe_work_func
+> [    5.080410] Call trace:
+> [    5.082958] dump_backtrace (arch/arm64/kernel/stacktrace.c:235)
+> [    5.086850] show_stack (arch/arm64/kernel/stacktrace.c:242)
+> [    5.090292] dump_stack_lvl (lib/dump_stack.c:107)
+> [    5.094095] dump_stack (lib/dump_stack.c:114)
+> [    5.097540] __ubsan_handle_shift_out_of_bounds (lib/ubsan.c:218 lib/ubsan.c:387)
+> [    5.103227] nwl_unmask_leg_irq (drivers/pci/controller/pcie-xilinx-nwl.c:389 (discriminator 1))
+> [    5.107386] irq_enable (kernel/irq/internals.h:234 kernel/irq/chip.c:170 kernel/irq/chip.c:439 kernel/irq/chip.c:432 kernel/irq/chip.c:345)
+> [    5.110838] __irq_startup (kernel/irq/internals.h:239 kernel/irq/chip.c:180 kernel/irq/chip.c:250)
+> [    5.114552] irq_startup (kernel/irq/chip.c:270)
+> [    5.118266] __setup_irq (kernel/irq/manage.c:1800)
+> [    5.121982] request_threaded_irq (kernel/irq/manage.c:2206)
+> [    5.126412] pcie_pme_probe (include/linux/interrupt.h:168 drivers/pci/pcie/pme.c:348)
 
-	cpus_read_lock();
-	on_each_cpu(hardware_enable_nolock, ...);
-	cpuhp_setup_state_nocalls_cpuslocked(...);
-	cpus_read_unlock();
+The rest of the stacktrace below is not relevant and could be omitted.
+The timestamps don't add useful information either.
 
-I think the main benefit of series is to put all virtualization enabling 
-related things into one single function.  Whether using 
-cpuhp_setup_state() or using on_each_cpu() shouldn't be the main point.
-
+> [    5.130303] pcie_port_probe_service (drivers/pci/pcie/portdrv.c:528)
+> [    5.134915] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658)
+> [    5.138720] __driver_probe_device (drivers/base/dd.c:800)
+> [    5.143236] driver_probe_device (drivers/base/dd.c:830)
+> [    5.147571] __device_attach_driver (drivers/base/dd.c:959)
+> [    5.152179] bus_for_each_drv (drivers/base/bus.c:457)
+> [    5.156163] __device_attach (drivers/base/dd.c:1032)
+> [    5.160147] device_initial_probe (drivers/base/dd.c:1080)
+> [    5.164488] bus_probe_device (drivers/base/bus.c:532)
+> [    5.168471] device_add (drivers/base/core.c:3638)
+> [    5.172098] device_register (drivers/base/core.c:3714)
+> [    5.175994] pcie_portdrv_probe (drivers/pci/pcie/portdrv.c:309 drivers/pci/pcie/portdrv.c:363 drivers/pci/pcie/portdrv.c:695)
+> [    5.180338] pci_device_probe (drivers/pci/pci-driver.c:324 drivers/pci/pci-driver.c:392 drivers/pci/pci-driver.c:417 drivers/pci/pci-driver.c:460)
+> [    5.184410] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658)
+> [    5.188213] __driver_probe_device (drivers/base/dd.c:800)
+> [    5.192729] driver_probe_device (drivers/base/dd.c:830)
+> [    5.197064] __device_attach_driver (drivers/base/dd.c:959)
+> [    5.201672] bus_for_each_drv (drivers/base/bus.c:457)
+> [    5.205657] __device_attach (drivers/base/dd.c:1032)
+> [    5.209641] device_attach (drivers/base/dd.c:1074)
+> [    5.213357] pci_bus_add_device (drivers/pci/bus.c:352)
+> [    5.217518] pci_bus_add_devices (drivers/pci/bus.c:371 (discriminator 2))
+> [    5.221774] pci_host_probe (drivers/pci/probe.c:3099)
+> [    5.225581] nwl_pcie_probe (drivers/pci/controller/pcie-xilinx-nwl.c:938)
+> [    5.229562] platform_probe (drivers/base/platform.c:1404)
+> [    5.233367] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658)
+> [    5.237169] __driver_probe_device (drivers/base/dd.c:800)
+> [    5.241685] driver_probe_device (drivers/base/dd.c:830)
+> [    5.246020] __device_attach_driver (drivers/base/dd.c:959)
+> [    5.250628] bus_for_each_drv (drivers/base/bus.c:457)
+> [    5.254612] __device_attach (drivers/base/dd.c:1032)
+> [    5.258596] device_initial_probe (drivers/base/dd.c:1080)
+> [    5.262938] bus_probe_device (drivers/base/bus.c:532)
+> [    5.266920] deferred_probe_work_func (drivers/base/dd.c:124)
+> [    5.271619] process_one_work (arch/arm64/include/asm/jump_label.h:21 include/linux/jump_label.h:207 include/trace/events/workqueue.h:108 kernel/workqueue.c:2632)
+> [    5.275788] worker_thread (kernel/workqueue.c:2694 (discriminator 2) kernel/workqueue.c:2781 (discriminator 2))
+> [    5.279686] kthread (kernel/kthread.c:388)
+> [    5.283048] ret_from_fork (arch/arm64/kernel/entry.S:862)
+> [    5.286765] ================================================================================
+> 
+> Fixes: 9a181e1093af ("PCI: xilinx-nwl: Modify IRQ chip for legacy interrupts")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
+> 
+> Changes in v3:
+> - Expand commit message
+> 
+>  drivers/pci/controller/pcie-xilinx-nwl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+> index 0408f4d612b5..437927e3bcca 100644
+> --- a/drivers/pci/controller/pcie-xilinx-nwl.c
+> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+> @@ -371,7 +371,7 @@ static void nwl_mask_intx_irq(struct irq_data *data)
+>  	u32 mask;
+>  	u32 val;
+>  
+> -	mask = 1 << (data->hwirq - 1);
+> +	mask = 1 << data->hwirq;
+>  	raw_spin_lock_irqsave(&pcie->leg_mask_lock, flags);
+>  	val = nwl_bridge_readl(pcie, MSGF_LEG_MASK);
+>  	nwl_bridge_writel(pcie, (val & (~mask)), MSGF_LEG_MASK);
+> @@ -385,7 +385,7 @@ static void nwl_unmask_intx_irq(struct irq_data *data)
+>  	u32 mask;
+>  	u32 val;
+>  
+> -	mask = 1 << (data->hwirq - 1);
+> +	mask = 1 << data->hwirq;
+>  	raw_spin_lock_irqsave(&pcie->leg_mask_lock, flags);
+>  	val = nwl_bridge_readl(pcie, MSGF_LEG_MASK);
+>  	nwl_bridge_writel(pcie, (val | mask), MSGF_LEG_MASK);
+> -- 
+> 2.35.1.1320.gc452695387.dirty
+> 
 
