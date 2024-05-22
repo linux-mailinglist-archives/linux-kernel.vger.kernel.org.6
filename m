@@ -1,203 +1,247 @@
-Return-Path: <linux-kernel+bounces-185948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA9B8CBD2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:45:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CAA8CBD32
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02A71C20921
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:45:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B43282B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6D67FBBD;
-	Wed, 22 May 2024 08:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDD480039;
+	Wed, 22 May 2024 08:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b="Pbe7PI5Q"
-Received: from MRZP264CU002.outbound.protection.outlook.com (mail-francesouthazon11020003.outbound.protection.outlook.com [52.101.165.3])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pUzlynIf"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0697B768FD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.165.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716367510; cv=fail; b=UDxWWea3pgLc9FW5HDc4pDmIsBGcCRzLnqgeFbChsUdYpKzGyY9zLd7WLfcdX1jV6b+QK6rzS4hNnI+U4s9XHFtXvuO4sJ2R/vKni80sm8dYWg2N+jhrUpIFTK4lrgdr2Kk5XPYyKi/mUfbY/NXfCv0rIcf/AWTfGqD2CxKc6IE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716367510; c=relaxed/simple;
-	bh=PtAZa8wwtG1FKZPmZMs0yLVUpb1OQr9eTYzrQiB2W4s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y2iHEaepPq/xM1ai/Ogn+aI4wfgKu60M6uwxgymAleWQsEA0kcf4ZqM3iLPM8YeMiPghx2h3EuC5trLJlIxeqy6pVU/fzvzZVSy76FvCL7545nSJZ2f2X3snt9SGsUAbkBC58Fk77S2PEmWEsi9Des6OtSTNSVFEZpAwkRS5BcM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; dkim=pass (2048-bit key) header.d=csgroup.eu header.i=@csgroup.eu header.b=Pbe7PI5Q; arc=fail smtp.client-ip=52.101.165.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jUxpAALpaIZ3VDJORGkTorXiMWm2zRevF7DYrtiioHay1846Ro3eXUFY/Y5QYIQexqna4wtAWmOP6BP9fx3ZKY870Xn8w5dN0EEpWNCReXtV/aMxYI7JJJWJ9NyeW79OBGqtTjeJXU1+6mknaNR47SVrlKLKTU8wBxNFZFaUdBNJxO53DKXbUJ/doltkYiMtlLvoSRdEq9SAzzb7oLsxmEm990KIYLvGYiw5+PAEeO8xeSwIiWLM+tLus1q+vnsJ/fGWVCb9ZmszLXFgyqLoCX9n3JALgodNrWBzFHJWPsR7amo5/exor+eEcYu5NYg1xcUqB6F76rRNLjKMYvHqaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PtAZa8wwtG1FKZPmZMs0yLVUpb1OQr9eTYzrQiB2W4s=;
- b=FTeHNTMGaiiKP5/LbPx/EAZO29BLwGoEk19a51NEZEAzHCO6bxkvjmq1HZuZpsG5WuUbMoZVTwIMOSr3YsXrDoPg1e8+McHBeXGNifDAYH9P2BNjJUIFKVItD1v6hJFZg1B27rw4AghocTDBggDt4JBYomFvES/dLwpCCee8a/8UvJnWPTdlkNZu33yqrBwe+Ic8ghlIE545VPBxWFbpJgUoxjHWAHBH3jbaaAdhEpV5MTe6uu1zdygjZolkpyl4pWQhyCxaIo4NMpu7YnwPp5uDfPy9hs7Bhn3fFUMdQaLhZVlxoOzfY8nceQr6mX4vDIcgGC1ulekRd4fReD6RFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=csgroup.eu; dmarc=pass action=none header.from=csgroup.eu;
- dkim=pass header.d=csgroup.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=csgroup.eu;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PtAZa8wwtG1FKZPmZMs0yLVUpb1OQr9eTYzrQiB2W4s=;
- b=Pbe7PI5QZqXvlZx2zOaZEnPsjAaKjCeSqvNY2/9blAh7HWh+K0L8H3lHsXUuauYCBXssWcmeQgH/C6Wkq9dCHVa3T9DvK7iX6D9qoFrpHlNg3vDdWpybBb55PfdyCsFMZ/rJ/j6p7NYRTR/ycNaqRpWqFecIGyQkeUx1U9KMSAOxa+iqehU6kuMyc6262IWWgXpfYX4TiGqUlM4xwiNSUISKWjT8XlP3789FXFXpKTT+CZcs3sNbNXIbPEaXJBPJJkcxfq/qpM5KydZOg/U2UHcB3DQwCtA9hnqbdIIHu9Yp/1VjwtH7BYkejoyQQf7mv7SXMVupymdchOlrhRHgZw==
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:31::15)
- by PASP264MB5491.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:43e::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Wed, 22 May
- 2024 08:45:06 +0000
-Received: from MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a]) by MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
- ([fe80::96ff:7284:1fa1:b02a%4]) with mapi id 15.20.7611.016; Wed, 22 May 2024
- 08:45:06 +0000
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Oscar Salvador <osalvador@suse.de>
-CC: Michael Ellerman <mpe@ellerman.id.au>, Andrew Morton
-	<akpm@linux-foundation.org>, Jason Gunthorpe <jgg@nvidia.com>, Peter Xu
-	<peterx@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [RFC PATCH v2 06/20] powerpc/8xx: Fix size given to
- set_huge_pte_at()
-Thread-Topic: [RFC PATCH v2 06/20] powerpc/8xx: Fix size given to
- set_huge_pte_at()
-Thread-Index: AQHaqIxxLOw0k+xnhUqWHgWN6F7AE7Gf2z2AgAB6CICAABPKAIACjoeA
-Date: Wed, 22 May 2024 08:45:06 +0000
-Message-ID: <37987c7b-e9e1-4969-82b3-84da47b2c6ff@csgroup.eu>
-References: <cover.1715971869.git.christophe.leroy@csgroup.eu>
- <04f4e737608ea0b177b88057db138fbf0d6ab138.1715971869.git.christophe.leroy@csgroup.eu>
- <ZksUiwNaKx2n1fJO@localhost.localdomain>
- <f26807dd-bbd2-405d-9a88-c0654c525a5c@csgroup.eu>
- <ZkuLgtujN1C2cpaH@localhost.localdomain>
-In-Reply-To: <ZkuLgtujN1C2cpaH@localhost.localdomain>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=csgroup.eu;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MRZP264MB2988:EE_|PASP264MB5491:EE_
-x-ms-office365-filtering-correlation-id: 2d9a8ea2-29c7-472b-6033-08dc7a3b7acc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|366007|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bUo0N1JPUzEwRm02WVRkTDVCYW5iQUxtWnd4bFp1Kzk0TTRjem1sdUx5dmNT?=
- =?utf-8?B?NktXdDVPckI4Q0p2eGE5M1hYZWNJNU1ob2FFeE5tcTB2d1FaeGM4Zzg2Tk5B?=
- =?utf-8?B?ZDc2MUVnNUx6WVBONllJR3ZPRStWOE9IQUhKNGwxU3NZaWp4YU1qL2lMak9a?=
- =?utf-8?B?L09CRG8yTmxiaUVXRWIyWUQyby80TERMMW1reHZJZGp5d0VkQlFCdDFYN2Z4?=
- =?utf-8?B?VXJOV3RrNngreEluQlQ3THhVUmljNHpBT1ZNVFF4TEtKVlNoTCtzUVJFSG8v?=
- =?utf-8?B?TVFyVmM2WDh0alh3SHlxbDhidUVKTUpWMVZkVlFOVmhyVlIxVzVieFlRMkov?=
- =?utf-8?B?anNFT29kRHIzWWpKZzF5OTNRMHFnUEQ5R2VlbDcyQWFFcGRRWTRTVUt0MG0v?=
- =?utf-8?B?NHdQWWN3L3BVOVg5MWlscmlVbzNuT21ld3hKMGJyM0xLSFdXTnVkRk11Y3Nq?=
- =?utf-8?B?K0o0OXJPTXNwUDNQdXRVUFJ4SnBCanlRV01KdHZGejU3UGt5Qk1IMDJUT1U3?=
- =?utf-8?B?b3dodkRTMmZmdWZaUEU2NTFkTk5yYmx1bUFXRlFjckpJSWJhMU9rZUU0SHhz?=
- =?utf-8?B?Q3JEVVJQOG04TVBWZEVnMldEcExBVzd2cGVSMWZERHp2VGpRVFhZM28xSGp4?=
- =?utf-8?B?dkhENXJqMzVwY2ZVNWtiK2tjcWJuckR0RnIwd1U3UnlSc2Y3aW9PQzlRUCtz?=
- =?utf-8?B?endMQWtCK0lDdmIyZ3hacEpwdWJqWHRkK1ROTmNjUWxUTWVYeThhVndsMXI1?=
- =?utf-8?B?REtFSmpkNnRvT1o2NUYyRjU3c214YjBlamEzVUtqTG0xQ2Ixa1dNS1dBN25n?=
- =?utf-8?B?UmRKMlk5a01xNDJsYmIvZXlnN0VqK2xLZWNNeWZWbmc5WmFMNVhBMkhsdENu?=
- =?utf-8?B?bnJqdzk1ejdRV215NVV5bEhJKzQ2YVJCNzN6L01RcTBVZWE1VXFHNE1kUlVY?=
- =?utf-8?B?RTI1K3k1amlzazFJL29DZVA5RVZTV0IvcC9idGdlRk1WbFJlOWJub0NSZTlD?=
- =?utf-8?B?VUt4VHAxUUxuNDE3VUh2TFlWN1lJZ1k1cUpsYStZN0g5QzhjM3F6TGFiejV5?=
- =?utf-8?B?R2VtM2tlREpFWndjZ3dzYmY4NDBFVXE0TXB4bHNHNlUxWVNLbjRKTHVUejda?=
- =?utf-8?B?ZS8rbm1FbGc2NzBYR2dNcnVpZnlmb0hLaTZNQmtrdWo0QmN6UC9xVVR1bFZQ?=
- =?utf-8?B?dnBudXJBQW1VcFQyOWx6VWpPc1Q3dUR0aUxoYU5od0E5bUpVUnR0b0thU3ZR?=
- =?utf-8?B?cDFBdkYyMnoyRVplQ2g4RlZCdzVETDJRN1M1VkQyTE1VaEdBTk1acUszRnZW?=
- =?utf-8?B?Lys2NVczbTY3RHFoc1pRejh0cEFNRi9DQlFWRllUZU9mTGVxSGhOV0gvUC82?=
- =?utf-8?B?enhsK0xnTlpBcGRKSjBJUnRGa0JtZEo3eXB2UmFsL0VMSmthTXFhNTR2OXds?=
- =?utf-8?B?TTYvTzRxMzM3cURuT2FWamNCSlYvaEVISTNnTWJoYUdmMUFXRE8yZ1hLMHZw?=
- =?utf-8?B?R2Z0SGN4WnNaSkxZWmJyMktuWEVTTHpnZlBmK3NVTi9YcFI3UXQvYWphU3BS?=
- =?utf-8?B?eE5tRk4xelZ0bGkySUtDRG9DL2xBVDlTZVdNc0t2NUJZYTVjQmdVU3pHOURN?=
- =?utf-8?B?S2ZPNitZOHBHQlpXMzk5YW9vREpHcTlOZG5MZHNxODdoRVNadG5KVTBDcjk2?=
- =?utf-8?B?WmZrQnRVei9ic214aW9kelFySHZMMXFOazY3Skx0aFZ5RERlVTNUK0h0cC84?=
- =?utf-8?B?MzZydk5tRktNZHA5QkZxSHpGNVBqS0pEdENnMjU0bkVzZjhyd3JLSm1zazJI?=
- =?utf-8?B?eUNhakM5dnM2dzFkYnhIdz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YXRWOVZRWG5wTFNuS1NsMGlRUjIxaXpqUm1xRndHOVZDUzA1dGlReWpvZkM5?=
- =?utf-8?B?Z1hvaUFubzA3K1dwamV0UXE5bWFmZVI4bkJHQmZIYk9maGc2c05kT00rdUwr?=
- =?utf-8?B?VzNxRmk4dFNOam9nTHR3M1ZaZFVwTWVaZFp6cDBoUzZhNmVscjdMUzdLS3FG?=
- =?utf-8?B?d1JGSEdBelkzZXNoZ3hhTzhheGx2elRmaXVpZklZaEVtMWUvdWQzZWFlMXFu?=
- =?utf-8?B?bUQzUGgwQURIMTlBRE1jTVNxNFZPT2JlRFQwbCtYM3hLb0dTTVBNdDJlMkhB?=
- =?utf-8?B?c0NnTHdGd3h4bjZCZ05JUUpsekVhR1RkRWtzTW81TDBaeWhGSzZWN2hFSXJR?=
- =?utf-8?B?VC9Ja09qNFZTd0RUSWZGSEhXUmQ3UThUOE1QeWVydE5Jb2NwbUQ2aVFQc3BP?=
- =?utf-8?B?S2tPei8ybGdSRHJLcHNKa2s4QWhJaDJIL2ZDTkhrcDVsdjRabjdRaGw4RENC?=
- =?utf-8?B?TzdxWXgyY3FXeG1xcUF3Vno2UENpRUdOVVdUd0RTdkxBR3JoN3BydzZqcVQr?=
- =?utf-8?B?b21JMnJJOEprZ2ltTXJhbVE0Y3VSdUhtRFlBbWZiZGF4am4rdEl6SC8vUGNH?=
- =?utf-8?B?S00rYUc0TEFpVmFnTzNzNDFxa1NSQTVsTnIybmlaLzI0aW9QcVQ3TnhseGl1?=
- =?utf-8?B?UVVJbi94M3dEQm81WDloZWc3akNwZXZNVU91Tm1XWmNncE84c1E1NldxNlVO?=
- =?utf-8?B?M0xHSW4xWlY3YzVvNUJ5WVJxSUFXWmxvSFJvaVdIbG52RlVDcmJISjJCZXJn?=
- =?utf-8?B?enVrZTFPMnVLK1BYRTFrVFZrVVBvY0Q2Y0crNDYwRG9Cbm5SLy8xNWhFSERM?=
- =?utf-8?B?MElQUnRiM01wTng5K0x6ZDl2Z093N2RkZDArQmhLS053ZFlwSlZXdGxVRUlH?=
- =?utf-8?B?WmluSHBtSE5IelFvT0N4R2VIdmZzVFNLQ0xDeVhUbWFmWGVnRU1OSmczZkQ4?=
- =?utf-8?B?cXJGd0FnbWRtUktVeTdMdDZ3N3RYUGxDVEx4NmVKMHYrbGtCanM1Z3JyN3Bo?=
- =?utf-8?B?bXVSQjhIVFRhMUtnSXJKTUVxTnNwRklTdk9DUUM0QXhNTmhMd3BhMHN3dWd4?=
- =?utf-8?B?L3RQMXB3QXBSU1RxOHlLci9iSUJRaVcwaGxVVSs2MUxrendra2FNTUkwMVRK?=
- =?utf-8?B?RHZCdHIwd215QmUvZUpsOFdtem5kRnN6dTNEU01xRVdFU1hBWWJsbURqVUJM?=
- =?utf-8?B?L0hJWjF4ZEdKVXRqQkhkZFVsMGQrR2lXZHMvcllIUWR4bHJTa0QxWnc5aUtF?=
- =?utf-8?B?ZCtOeVJzR1p5R2lPNTRqeENvOHJWQXNPUGdhVDliZ2FVOEFLN2ZIOVpDbmtU?=
- =?utf-8?B?eUxXKzBsTWxIR0RoQXBrN1loSlJHU0pWS3dxQ2ZVYzl2Tm9wY0xYQ2RpRGtF?=
- =?utf-8?B?M2tpYlA3cTR2eGsxQmdPNHZkVE84cFc5eGllRmVYS0xrUnhrSzBXK2YySkZx?=
- =?utf-8?B?aExPTFdaME1NTnlpNGZuU3R4enI0NVBVQnovRkoxM3RkZ0ZYdGw2U2tuMWJK?=
- =?utf-8?B?bHByUWZzcHBCUDlaaEl6ak5WeDhjbEUvcEVzell0Szc3WEE0T2FIeVlHbnlZ?=
- =?utf-8?B?TUxOK3hOUlhTaGtvRWlhdWV0OEE1K21qT2VsMUw1VDIrY0RQU2g0eEFoVUZl?=
- =?utf-8?B?QTg2bnROUEZqeU9jdWQwekUveGdRRzBPR2oxNFM5NGdnMTdpZklnS0J4S0Ja?=
- =?utf-8?B?b2E5ZWp6akNHNlA4V05OWEZ2czZuU2o1VVVEaTNFMS9WVGNmOWhFa1h4eWw4?=
- =?utf-8?B?cWZCZTVSaVFWdzNoaThwUENNYWw0djVLZ3RUV0dta0tyalJLVTd6N2YvWm94?=
- =?utf-8?B?QkhyOGI4STFHM2JCandtclNCTnV6S0l3eTBqVzg5Uk5JWGRURndaRjdrVUlI?=
- =?utf-8?B?M1ZqaUE3OS90OEdHSkJQdTVIR3VBalljQ2Z0QXRRYUJwOGtUNGhUa2ZuU0pT?=
- =?utf-8?B?TlNRZXJldFRPQUNjQTNKaTh6bHFpS2FTRFRpenpaaXRWY01BMmJuaTlJd3Zm?=
- =?utf-8?B?KzAyZlREaFU4VkV6cjJrc2o3b1BmMks3RlE4RWI5Qzl1NVFqVGxicy9URVpn?=
- =?utf-8?B?T3Vyd1QvVmd2OFBVV3BVNDkxSFJwRzJRZmczS253WFVRQ3NuWS8yV0h6U0p3?=
- =?utf-8?Q?XEkbpqMQyoo/OFRH5tOqZH2D8?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CB36D259EF87044C969CFCDA6BF83CEE@FRAP264.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A637752F7A
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716367664; cv=none; b=PbHRlz8fmIC7XHQQXJvEW7sDHpiCU+16FA3F49nd//J9H036lQ6WJ8MjDrQPDeiVOuYMuoSNbfSc2rYBeNxxxJVXhuTOqO6Hd1xi/T3rwG/BOR8W4Iujpcw3n4sqB9ZQb78w/Cy+7/XItGvFPFpoIZw0PG2vGzfXCvX6lDGidAo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716367664; c=relaxed/simple;
+	bh=50VXnMxJSNkPmkgscx0DHxvrGAkH/2hNhQErC44Hgew=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=lVmYmthz4MiERn+pU4SNcYlJZ5vRmmZXqGFvZOqWI+LNVZ1pu9ZlMkGIrdKf7/2lSDkTGPZ4hOW7REEsqLpEhVK5gP87Nz2I+uHgJMglNTpUBmenXXyKdAMUAlIlmb+HElc7B/9vDlECrvew4W5VjHSv9a8CM596EUTMshj7JEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pUzlynIf; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240522084739epoutp02d5accdc8be1f6e2d6c42edbb367804c8~Rw0rfIztL0265802658epoutp02U
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:47:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240522084739epoutp02d5accdc8be1f6e2d6c42edbb367804c8~Rw0rfIztL0265802658epoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716367659;
+	bh=sApdrTDcxJLh0HLqv5y8ADHj/I20cdtvXEXkLtEjN0g=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=pUzlynIfCQulHOwhCS6U0bS2kw3/eUmJpIiC6ZNUAZFWXwniFqPvTBAiTtzPcTdkC
+	 U1qAgOhOZpA3KRVmmGHZsCkSSW0KdqHYrS590OraYhl07/Fvo9MxmNghzqVzZ71iwH
+	 27eaGHfOZBW5gmEcZ7bOMPV/7bMjFc171adxmOZ4=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240522084738epcas1p4713c0abfa4742bbe63c044a18340781e~Rw0rDtVlH2790827908epcas1p4N;
+	Wed, 22 May 2024 08:47:38 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.241]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4VklLL3Xccz4x9Q2; Wed, 22 May
+	2024 08:47:38 +0000 (GMT)
+X-AuditID: b6c32a38-164c8a80000027ae-2d-664db12a8290
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A9.1F.10158.A21BD466; Wed, 22 May 2024 17:47:38 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: csgroup.eu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MRZP264MB2988.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d9a8ea2-29c7-472b-6033-08dc7a3b7acc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 08:45:06.1273
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 9914def7-b676-4fda-8815-5d49fb3b45c8
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oKKXG34IZ1YUFkCokHtD3FnW2WZrR5pxOaB6j1VTrciTcWICK/oPhtFjgXU4tfIrq91P5WoQXgjyf4gFtn9JHISaDJt/EGN3bDgPbXQeNa8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB5491
+Mime-Version: 1.0
+Subject: RE: [RESEND PATCH 00/10] memblock: introduce memsize showing
+ reserved memory
+Reply-To: jaewon31.kim@samsung.com
+Sender: Jaewon Kim <jaewon31.kim@samsung.com>
+From: Jaewon Kim <jaewon31.kim@samsung.com>
+To: "richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, Jaewon Kim
+	<jaewon31.kim@samsung.com>
+CC: Mike Rapoport <rppt@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "jaewon31.kim@gmail.com"
+	<jaewon31.kim@gmail.com>, "tkjos@google.com" <tkjos@google.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20240522081647.zlwenenrbrjemlp6@master>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20240522084738epcms1p80845ffecee4fbab97b34fdf2ce1595a7@epcms1p8>
+Date: Wed, 22 May 2024 17:47:38 +0900
+X-CMS-MailID: 20240522084738epcms1p80845ffecee4fbab97b34fdf2ce1595a7
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEJsWRmVeSWpSXmKPExsWy7bCmrq7WRt80g7vNUhZz1q9hs3h5SNOi
+	e/NMRove96+YLC7vmsNmcW/Nf1aLO32vWCyOrN/OZPF+crHF7MY+Rgcuj52z7rJ7LNhU6rFp
+	VSebx6ZPk9g9Tsz4zeLRt2UVo8eZBUfYPT5vkgvgiMq2yUhNTEktUkjNS85PycxLt1XyDo53
+	jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAG6UEmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xi
+	q5RakJJTYFagV5yYW1yal66Xl1piZWhgYGQKVJiQnfHv/wSWgic+FaeWbmZrYFzj1cXIySEh
+	YCIxY+I1pi5GLg4hgR2MEg/b57J2MXJw8AoISvzdIQxSIywQLjFn/yomEFtIQEni7I8r7BBx
+	XYmm7tUsIDabgLbE+wWTWEFsEYEUidZFh9lBZjILnGaS2PXpOgvEMl6JGe1PoWxpie3LtzKC
+	2JwCphLn/76EiotK3Fz9lh3Gfn9sPiOELSLReu8sM4QtKPHg525GmDl/jj9ng7CLJZZ1PmCC
+	sGskVpxbBRU3l2h4uxLM5hXwlfjf1w1WwyKgKrFs+yKoXS4S3Xv2gsWZgZ5ZtvA1MygcmAU0
+	Jdbv0ocI80m8+9rDCvNKw8bf7NjYO+Y9gTpBTaLl2VeoehmJv/+eQdkeEnev7WaZwKg4CxHS
+	s5AsnoWweAEj8ypGsdSC4tz01GLDAhN45Cbn525iBCdWLYsdjHPfftA7xMjEwXiIUYKDWUmE
+	N3qlb5oQb0piZVVqUX58UWlOavEhRlOglycyS4km5wNTe15JvKGJpYGJmZGJhbGlsZmSOO+Z
+	K2WpQgLpiSWp2ampBalFMH1MHJxSDUwWF2X8Tu6N81h5qlmpuMMg5qjq2vnMGvmtns7rmVUe
+	ZKjNiFx95MYCho8h+fUhNa8LHFb0C8SoJLSV656syawPVZ0wK1+w4HOIQ3heoK+M/jfv78LT
+	TqyNaes+O2kJo3LqpsjZ/GzPEmY7Rnsc/fzc6EQX14HlLxU8YyS9D1UfkvcUf3rEv1Yg+ACb
+	lO7VnE8CFf88+j1mZvS4XL3O5Gt+vY+1aPX1QJcZyRs0HH7GTHzB+OHInFcfM2TYu5TnTJp/
+	UXDy8b6zbayRm/e23LjcfcfiziUTvoay8q1N/0pyb08zEJ+x5FOoavkGR/cWK9tvcZUvz8SH
+	XNaaXvvl5hL15RbN1rkti2fcu/D0oRJLcUaioRZzUXEiAFbV2j01BAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76
+References: <20240522081647.zlwenenrbrjemlp6@master>
+	<ZkxN0yQ7Fb0X26hT@kernel.org>
+	<20240521023957.2587005-1-jaewon31.kim@samsung.com>
+	<20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
+	<20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
+	<CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p8>
 
-DQoNCkxlIDIwLzA1LzIwMjQgw6AgMTk6NDIsIE9zY2FyIFNhbHZhZG9yIGEgw6ljcml0wqA6DQo+
-IE9uIE1vbiwgTWF5IDIwLCAyMDI0IGF0IDA0OjMxOjM5UE0gKzAwMDAsIENocmlzdG9waGUgTGVy
-b3kgd3JvdGU6DQo+PiBIaSBPc2NhciwgaGkgTWljaGFlbCwNCj4+DQo+PiBMZSAyMC8wNS8yMDI0
-IMOgIDExOjE0LCBPc2NhciBTYWx2YWRvciBhIMOpY3JpdMKgOg0KPj4+IE9uIEZyaSwgTWF5IDE3
-LCAyMDI0IGF0IDA5OjAwOjAwUE0gKzAyMDAsIENocmlzdG9waGUgTGVyb3kgd3JvdGU6DQo+Pj4+
-IHNldF9odWdlX3B0ZV9hdCgpIGV4cGVjdHMgdGhlIHJlYWwgcGFnZSBzaXplLCBub3QgdGhlIHBz
-aXplIHdoaWNoIGlzDQo+Pj4NCj4+PiAiZXhwZWN0cyB0aGUgc2l6ZSBvZiB0aGUgaHVnZSBwYWdl
-IiBzb3VuZHMgYmV0dHRlcj8NCj4+DQo+PiBQYXJhbWV0ZXIgJ3B6aXplJyBhbHJlYWR5IHByb3Zp
-ZGVzIHRoZSBzaXplIG9mIHRoZSBodWdlcGFnZSwgYnV0IG5vdCBpbg0KPj4gdGhlIHdheSBzZXRf
-aHVnZV9wdGVfYXQoKSBleHBlY3RzIGl0Lg0KPj4NCj4+IHBzaXplIGhhcyBvbmUgb2YgdGhlIHZh
-bHVlcyBkZWZpbmVkIGJ5IE1NVV9QQUdFX1hYWCBtYWNyb3MgZGVmaW5lZCBpbg0KPj4gYXJjaC9w
-b3dlcnBjL2luY2x1ZGUvYXNtL21tdS5oIHdoaWxlIHNldF9odWdlX3B0ZV9hdCgpIGV4cGVjdHMg
-dGhlIHNpemUNCj4+IGFzIGEgdmFsdWUuDQo+IA0KPiBZZXMsIHBzaXplIGlzIGFuIGluZGV4LCB3
-aGljaCBpcyBub3QgYSBzaXplIGJ5IGl0c2VsZiBidXQgdXNlZCB0byBnZXQNCj4gbW11X3BzaXpl
-X2RlZi5zaGlmdCB0byBzZWUgdGhlIGFjdHVhbCBzaXplLCBJIGd1ZXNzLg0KPiBUaGlzIGlzIHdo
-eSBJIHRob3VnaHQgdGhhdCBiZWluZyBleHBsaWNpdCBhYm91dCAiZXhwZWN0cyB0aGUgc2l6ZSBv
-ZiB0aGUNCj4gaHVnZSBwYWdlIiB3YXMgYmV0dGVyLg0KPiANCj4gQnV0IG5vIHN0cm9uZyBmZWVs
-aW5ncyBoZXJlLg0KPiANCg0KVGhhbmtzLCBJJ2xsIHRyeSBhIHJlcGhyYXNlLg0KDQpDaHJpc3Rv
-cGhlDQo=
+>Sender : Wei Yang <richard.weiyang=40gmail.com>
+>Date   : 2024-05-22 17:16 (GMT+9)
+>Title  : Re: (2) =5BRESEND PATCH 00/10=5D memblock: introduce memsize show=
+ing reserved memory
+>?
+>On Tue, May 21, 2024 at 07:17:53PM +0900, Jaewon Kim wrote:
+>>>On Tue, May 21, 2024 at 11:53:29AM +0900, Jaewon Kim wrote:
+>>>> >--------- Original Message ---------
+>>>> >Sender : =EA=B9=80=EC=9E=AC=EC=9B=90=20<jaewon31.kim=40samsung.com>Sy=
+stem=20Performance=20Lab.(MX)/=EC=82=BC=EC=84=B1=EC=A0=84=EC=9E=90=0D=0A>>>=
+>=20>Date?=20=20:=202024-05-21=2011:40=20(GMT+9)=0D=0A>>>>=20>Title?=20:=20=
+=5BRESEND=20PATCH=2000/10=5D=20memblock:=20introduce=20memsize=20showing=20=
+reserved=20memory=0D=0A>>>>=20>?=0D=0A>>>>=20>Some=20of=20memory=20regions=
+=20can=20be=20reserved=20for=20a=20specific=20purpose.=20They=20are=0D=0A>>=
+>>=20>usually=20defined=20through=20reserved-memory=20in=20device=20tree.=
+=20If=20only=20size=0D=0A>>>>=20>without=20address=20is=20specified=20in=20=
+device=20tree,=20the=20address=20of=20the=20region=0D=0A>>>>=20>will=20be=
+=20determined=20at=20boot=20time.=0D=0A>>>>=20>=0D=0A>>>>=20>We=20may=20fin=
+d=20the=20address=20of=20the=20memory=20regions=20through=20booting=20log,=
+=20but=0D=0A>>>>=20>it=20does=20not=20show=20all.=20And=20it=20could=20be=
+=20hard=20to=20catch=20the=20very=20beginning=0D=0A>>>>=20>log.=20The=20mem=
+block_dump_all=20shows=20all=20memblock=20status=20but=20it=20does=20not=0D=
+=0A>>>>=20>show=20region=20name=20and=20its=20information=20is=20difficult=
+=20to=20summarize.=0D=0A>>>>=20>=0D=0A>>>>=20>This=20patch=20introduce=20a=
+=20debugfs=20node,=20memblock/memsize,=20to=20see=20reserved=0D=0A>>>>=20>m=
+emory=20easily.=0D=0A>>>>=20>=0D=0A>>>>=20>Here's=20an=20example=0D=0A>>>>=
+=20>=0D=0A>>>>=20>=24=20cat=20debugfs/memblock/memsize=0D=0A>>>>=20>=0D=0A>=
+>>>=20>0x0000000000000000-0x0000000000000000=200x02000000=20(??=2032768=20K=
+B=20)??=20map=20reusable=20linux,cma=0D=0A>>>>=20>0x0000000000000000-0x0000=
+000000000000=200x01000000=20(??=2016384=20KB=20)??=20map=20reusable=20vxxxx=
+x=0D=0A>>>>=20>...=0D=0A>>>>=20>0x0000000000000000-0x0000000000000000=200x0=
+04e0000=20(?=20?=204992=20KB=20)=20nomap=20unusable=20unknown=0D=0A>>>>=20>=
+0x0000000000000000-0x0000000000000000=200x00400000=20(?=20?=204096=20KB=20)=
+=20nomap=20unusable=20cxxxxx=0D=0A>>>>=20>0x0000000000000000-0x000000000000=
+0000=200x00e00000=20(??=2014336=20KB=20)=20nomap=20unusable=20gxxxxx=0D=0A>=
+>>>=20>=0D=0A>>>>=20>Reserved?=20?=20:=201223856=20KB=0D=0A>>>>=20>=20.kern=
+el?=20?=20:?=20275208=20KB=0D=0A>>>>=20>?=20.text?=20??=20:??=2016576=20KB=
+=0D=0A>>>>=20>?=20.rwdata??=20:?=20?=201963=20KB=0D=0A>>>>=20>?=20.rodata??=
+=20:??=2011920=20KB=0D=0A>>>>=20>?=20.bss?=20?=20?=20:?=20?=202450=20KB=0D=
+=0A>>>>=20>?=20.memmap??=20:?=20186368=20KB=0D=0A>>>>=20>?=20.etc?=20?=20?=
+=20:??=2055933=20KB=0D=0A>>>>=20>=20.unusable?=20:?=20948648=20KB=0D=0A>>>>=
+=20>System?=20?=20?=20:=2011359056=20KB=0D=0A>>>>=20>=20.common?=20?=20:=20=
+10306384=20KB=0D=0A>>>>=20>=20.reusable?=20:=201052672=20KB=0D=0A>>>>=20>To=
+tal?=20?=20??=20:=2012582912=20KB=20(=2012288.00=20MB=20)=0D=0A>>>>=20>=0D=
+=0A>>>>=20>Jaewon=20Kim=20(10):=0D=0A>>>>=20>?=20memblock:=20introduce=20me=
+msize=20showing=20reserved=20memory=0D=0A>>>>=20>?=20memblock:=20detect=20h=
+idden=20memory=20hole=20size=0D=0A>>>>=20>?=20memblock:=20handle=20overlapp=
+ed=20reserved=20memory=20region=0D=0A>>>>=20>?=20memblock:=20take=20a=20reg=
+ion=20intersecting=20an=20unknown=20region=0D=0A>>>>=20>?=20memblock:=20tra=
+ck=20memblock=20changed=20at=20early=20param=0D=0A>>>>=20>?=20memblock:=20r=
+ecognize=20late=20freed=20size=20by=20checking=20PageReserved=0D=0A>>>>=20>=
+?=20memblock:=20track=20kernel=20size=20on=20memsize=0D=0A>>>>=20>?=20membl=
+ock:=20print=20memsize=20summary=20information=0D=0A>>>>=20>?=20memblock:=
+=20print=20kernel=20internal=20size=0D=0A>>>>=20>?=20memblock:=20support=20=
+memsize=20reusable=20to=20consider=20as=20reusable=0D=0A>>>>=20>=0D=0A>>>>=
+=20>=20drivers/of/fdt.c?=20?=20?=20?=20?=20??=20=7C?=2011=20+=0D=0A>>>>=20>=
+=20drivers/of/of_reserved_mem.c=20=7C?=2012=20+-=0D=0A>>>>=20>=20include/li=
+nux/memblock.h?=20??=20=7C?=2029=20++=0D=0A>>>>=20>=20init/main.c?=20?=20?=
+=20?=20?=20?=20?=20?=20?=20=7C?=2013=20+-=0D=0A>>>>=20>=20kernel/dma/contig=
+uous.c?=20?=20?=20=7C??=209=20+-=0D=0A>>>>=20>=20mm/Kconfig?=20?=20?=20?=20=
+?=20?=20?=20?=20??=20=7C?=2016=20++=0D=0A>>>>=20>=20mm/memblock.c?=20?=20?=
+=20?=20?=20?=20?=20?=20=7C=20502=20++++++++++++++++++++++++++++++++++-=0D=
+=0A>>>>=20>=20mm/mm_init.c?=20?=20?=20?=20?=20?=20?=20??=20=7C??=206=20+-=
+=0D=0A>>>>=20>=20mm/page_alloc.c?=20?=20?=20?=20?=20?=20?=20=7C?=2010=20+-=
+=0D=0A>>>>=20>=209=20files=20changed,=20597=20insertions(+),=2011=20deletio=
+ns(-)=0D=0A>>>>=20>=0D=0A>>>>=20>--=20=0D=0A>>>>=20>2.25.1=0D=0A>>>>=20=0D=
+=0A>>>>=20Hello=20Mike=20=0D=0A>>>>=20=0D=0A>>>>=20This=20is=20actually=20R=
+ESEND=20as=20it=20was=20introduced=202=20years=20ago.=0D=0A>>>>=20Please=20=
+refer=20to=20https://lore.kernel.org/linux-mm/YkQB6Ah603yPR3qf=40kernel.org=
+/=23t=0D=0A>>>>=20=0D=0A>>>>=20>=20But=20you=20never=20provided=20details=
+=20about=20*why*=20you=20want=20this=20information=20exposed.=0D=0A>>>>=20=
+=0D=0A>>>>=20For=20your=20question,=20I'd=20like=20to=20say=20;=0D=0A>>>>=
+=20We=20can=20see=20the=20same=20format=20and=20exact=20information=20betwe=
+en=20different=20version=20of=20kernel=20status.=0D=0A>>>>=20=0D=0A>>>>=201=
+)=20Internally=20we=20can=20check=20if=20the=20reserved=20memory=20changes.=
+=0D=0A>>>>=202)=20Externally=20we=20can=20communicate=20between=20chipset=
+=20vendors=20and=20OEM,=20with=20a=20same=20format.=0D=0A=0D=0A=0D=0AHi=0D=
+=0A=0D=0A>=20Maybe=20you=20can=20show=20the=20log=20difference,=20so=20that=
+=20we=20can=20see=20how=20it=20helps=20you.=0D=0A=0D=0AFor=20your=20new=20e=
+mail,=20could=20you=20elaborate=20the=20difference=20you=20meant?=20=0D=0AD=
+o=20you=20mean=20difference=20between=20existing=20debugfs=20membock=20inte=
+rfaces=20and=20the=20one=20I=20introdued=20here?=0D=0A=0D=0A=0D=0A>>>=0D=0A=
+>>>Why=20the=20existing=20debugfs=20interface=20is=20not=20sufficient?=0D=
+=0A>>=0D=0A>>debugfs/memblock/memory=20&=20debugfs/memblock/reserved=20have=
+=20changed=20its=20format=20but=20still=20does=20not=20show=20name,=20reusa=
+ble,=20kernel=20size.=0D=0A>=0D=0A>Would=20you=20mind=20showing=20which=20i=
+nformation=20matters=20to=20you=20most=20in=20the=20following=0D=0A>example=
+=20log=20message?=20What=20you=20expect=20to=20see=20and=20helps=20you=20on=
+=20locating=20problem?=0D=0A>=0D=0A>0x0000000000000000-0x0000000000000000=
+=200x02000000=20(?=20=2032768=20KB=20)?=20=20map=20reusable=20linux,cma=0D=
+=0A>0x0000000000000000-0x0000000000000000=200x01000000=20(?=20=2016384=20KB=
+=20)?=20=20map=20reusable=20vxxxxx=0D=0A>..=0D=0A>0x0000000000000000-0x0000=
+000000000000=200x004e0000=20(?=20?=204992=20KB=20)=20nomap=20unusable=20unk=
+nown=0D=0A>0x0000000000000000-0x0000000000000000=200x00400000=20(?=20?=2040=
+96=20KB=20)=20nomap=20unusable=20cxxxxx=0D=0A>0x0000000000000000-0x00000000=
+00000000=200x00e00000=20(?=20=2014336=20KB=20)=20nomap=20unusable=20gxxxxx=
+=0D=0A>=0D=0A>Reserved?=20?=20:=201223856=20KB=0D=0A>=20.kernel?=20?=20:?=
+=20275208=20KB=0D=0A>?=20.text?=20?=20=20:?=20=2016576=20KB=0D=0A>?=20.rwda=
+ta?=20=20:?=20?=201963=20KB=0D=0A>?=20.rodata?=20=20:?=20=2011920=20KB=0D=
+=0A>?=20.bss?=20?=20?=20:?=20?=202450=20KB=0D=0A>?=20.memmap?=20=20:?=20186=
+368=20KB=0D=0A>?=20.etc?=20?=20?=20:?=20=2055933=20KB=0D=0A>=20.unusable?=
+=20:?=20948648=20KB=0D=0A>System?=20?=20?=20:=2011359056=20KB=0D=0A>=20.com=
+mon?=20?=20:=2010306384=20KB=0D=0A>=20.reusable?=20:=201052672=20KB=0D=0A>T=
+otal?=20?=20?=20=20:=2012582912=20KB=20(=2012288.00=20MB=20)=0D=0A>=0D=0A=
+=0D=0A=0D=0AI=20need=20all=20those=20information=20actually.=20address,=20s=
+ize,=20map/nomap,=20reusable/unusable,=0D=0Aname.=20For=20me=20it=20was=20v=
+ery=20helpful=20to=20rearrange=20the=20memory=20regions=20as=20it=20shows=
+=20clearly.=0D=0AThe=20address=20could=20be=20seen=20after=20allowing=20it=
+=20through=20/proc/sys/kernel/kptr_restrict.=0D=0A=0D=0AKernel=20size=20inf=
+ormation=20is=20also=20helpful=20to=20me.=20The=20memmap=20size=20for=20str=
+uct=20pages=0D=0Acould=20be=20increased=20according=20to=20DRAM=20memory=20=
+size.=20By=20rearranging=20the=20reserved=20regions=0D=0Ato=20be=20packed=
+=20we=20can=20save=20memmap=20memory,=20then=20we=20can=20see=20the=20resul=
+ts=20easily=20from=20this.=0D=0AWe=20can=20compare=20other=20text,=20ro,=20=
+rw,=20etc=20so=20that=20we=20can=20find=20which=20part=20of=20kernel=20has=
+=0D=0Achanged.=0D=0A=0D=0A=0D=0A>>If=20memory=20is=20reserved=20from=20memb=
+lock,=20and=20did=20not=20freed=20back=20to=20memblock.=20Memblock=20does=
+=20not=20know=20even=20after=20the=20memory=20is=20freed=20to=20system.=0D=
+=0A>=0D=0A>You=20mean=20we=20may=20reserve=20memory=20in=20memblock.reserve=
+d,=20but=20still=20have=20it=20freed=0D=0A>to=20system?=20This=20sounds=20a=
+=20bug=20to=20me.=0D=0A=0D=0AI=20mean=20something=20like=20free_reserved_ar=
+ea.=20The=20reserved=20free=20pages=20would=20be=20free=20to=0D=0Asystem=20=
+buddy=20allocator=20directly=20without=20reporting=20it=20to=20memblock.=0D=
+=0A=0D=0A>=0D=0A>>I=20think=20a=20simple=20debug=20interface=20is=20needed=
+=20to=20easily=20communicate=20with=20others=20or=20compare=20different=20S=
+W=20releases.=0D=0A>>=0D=0A>>>=20=0D=0A>>>>=20This=20helps=20us=20to=20comm=
+unitcate=20well,=20to=20easily=20detect=20changes=20or=20just=20to=20see=20=
+differences.=0D=0A>>>>=20=0D=0A>>>>=20Jaewon=20Kim=0D=0A>>>>=20=0D=0A>>>=0D=
+=0A>>>--=20=0D=0A>>>Sincerely=20yours,=0D=0A>>>Mike.=0D=0A>>=0D=0A>>=0D=0A>=
+=0D=0A>--=20=0D=0A>Wei=20Yang=0D=0A>Help=20you,=20Help=20me=0D=0A>=0D=0A=0D=
+=0A=0D=0A
 
