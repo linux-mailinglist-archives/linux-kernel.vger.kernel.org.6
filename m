@@ -1,98 +1,136 @@
-Return-Path: <linux-kernel+bounces-186447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249E48CC44D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:45:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8BB38CC450
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD61E1F2147E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:45:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4141F212E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A62130E27;
-	Wed, 22 May 2024 15:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8A36EB5D;
+	Wed, 22 May 2024 15:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TqKuDo6x"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MijpRaPT"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E527D3EF;
-	Wed, 22 May 2024 15:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0201D28EA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716392694; cv=none; b=SGEFguyxYCTjJTwjohqyMk6sw47Xzp4f/OO8Tvkgrwv3AU5btnl4JsyCWbKwmRMprUs8gTK3CAkTPp4DnDeWZ1Mx1Vd8XhHUGLaXKYanqkJS90R+zUhS52UwoDZ0Tcrne4uROOmh6Iw/W0b8qGFSzC093flloDbW8ZYOnZaI1/I=
+	t=1716392741; cv=none; b=e5UQIdP8AFJKAZJSNJrn/VJG0WmBelzuEQEvMF1hlJXnyexnwbaIDtfHttPnVTCDTDWsHk2ul/0VgHFadJpsbJ8FE/y7wuGvyBecFw5+jO3U7NvFHcUeOE4e0b9K90c7Gd3g0Cr+a/k4E6r1fcwzLTP6xPUWwsQNr0Jg1b6F8WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716392694; c=relaxed/simple;
-	bh=oB88OGiBRzAoayxRZBetm6e625rVBGs2HTQ0OrqFGWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=q75D4VPkwgjg05tINIKB5a4yB/XrZ/IeMx34CCZAlP0PNJA3NfjYNcFO7ZZHw8/Q5NDS3LtHDZEaJfNUwT/5758esYa1ya63FEyOcghr2URnVvQNTZLvn+VkG8MRI363jBqiYWoS92XQM0OvDufJb/wY5lVADJgSkxsax16tUX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TqKuDo6x; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44MFif50043991;
-	Wed, 22 May 2024 10:44:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716392681;
-	bh=f+pEerrIm5HmFx7I6laOSLnzNWBKHizBP6ZI3HxvWK0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=TqKuDo6xSu0marhlI7MQdWabVwJnrKQPUqF9sr0X9+8AGvvYPzMTUv3l0to17Pf9N
-	 RUQ5zLORNtV+JszAiMCN5DaS084qgHIh1J93udYWAPO8qBd3FJRWK7Xrx8QpLDQGND
-	 5baxfG8MB2KfmXReiBTu/Eaun55OKeRJOIK26DdQ=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44MFifvo097080
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 May 2024 10:44:41 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 22
- May 2024 10:44:41 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 22 May 2024 10:44:41 -0500
-Received: from [137.167.6.219] (lt5cg1094w5k.dhcp.ti.com [137.167.6.219])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44MFicXH095048;
-	Wed, 22 May 2024 10:44:39 -0500
-Message-ID: <cdb9e99a-d0f5-47f8-9efb-77a661f53928@ti.com>
-Date: Wed, 22 May 2024 18:44:38 +0300
+	s=arc-20240116; t=1716392741; c=relaxed/simple;
+	bh=fKcCOsO4NNeLFnYkRnTn7t5xMARBcbBgiNAr8ZKdLj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GcStWWEJkuYJjPjvxks3Jhwbhl6jQ23AjrQBC4R6cAOb3X+7H2WEEFpTD0wV3h2u8PstiXDMfVEy8yW1qZRZ0Yrdg2pJ4GZYaFHWe6+6Pmx41W4QEw4tUn+SipXTYP9PTiR/b2BB/p5iPOyD84nHX6ECrEmMOHETHa9jawn1xsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MijpRaPT; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B2F18C67;
+	Wed, 22 May 2024 17:45:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716392724;
+	bh=fKcCOsO4NNeLFnYkRnTn7t5xMARBcbBgiNAr8ZKdLj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MijpRaPT8SEi4hN1+goFLDZp29Rl64oVy52jvnwYBbNG1gSWCelpwX0I1L0v/KWOX
+	 uRYejZOU9lAcj/oTXVden6YncFRkhkw/iLwfgjVehN+C1I1X2f7eTJhvfIXFlkmVW9
+	 mpk4YubWRGNL1QoVux3OPtH4ILlCGnvlFh22WmE8=
+Date: Wed, 22 May 2024 18:45:28 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Palmer Dabbelt <palmer@rivosinc.com>
+Cc: tomi.valkeinen@ideasonboard.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, michal.simek@amd.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+Subject: Re: [PATCH] drm: xlnx: zynqmp_disp: Fix WARN_ON build warning
+Message-ID: <20240522154528.GA15832@pendragon.ideasonboard.com>
+References: <20240521142814.32145-2-palmer@rivosinc.com>
+ <20240522144401.GA9789@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/17] Add cc33xx.h, cc33xx_i.h
-To: Krzysztof Kozlowski <krzk@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Breno Leitao <leitao@debian.org>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-2-michael.nemanov@ti.com>
- <383554c5-aef5-4c3f-bf67-dfdc83324897@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <383554c5-aef5-4c3f-bf67-dfdc83324897@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240522144401.GA9789@pendragon.ideasonboard.com>
 
-On 5/22/2024 12:38 PM, Krzysztof Kozlowski wrote:
-> Please also confirm that you also fixed all warnings from:
-> 1. checkpatch --strict
-> 2. smatch
-> 3. sparse
-> 4. coccinelle/coccicheck
+On Wed, May 22, 2024 at 05:44:02PM +0300, Laurent Pinchart wrote:
+> Hi Palmer,
+> 
+> (CC'ing Anatoliy)
+> 
+> Thank you for the patch.
+> 
+> On Tue, May 21, 2024 at 07:28:15AM -0700, Palmer Dabbelt wrote:
+> > From: Palmer Dabbelt <palmer@rivosinc.com>
+> > 
+> > Without this I get warnings along the lines of
+> > 
+> >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: error: logical not is only applied to the left hand side of this comparison [-Werror,-Wlogical-not-parentheses]
+> >       949 |         if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> >           |                     ^            ~~
+> >     arch/s390/include/asm/bug.h:54:25: note: expanded from macro 'WARN_ON'
+> >        54 |         int __ret_warn_on = !!(x);                      \
+> >           |                                ^
+> >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses after the '!' to evaluate the comparison first
+> >     drivers/gpu/drm/xlnx/zynqmp_disp.c:949:14: note: add parentheses around left hand side expression to silence this warning
+> > 
+> > which get promoted to errors in my test builds.  Adding the suggested
+> > parens elides those warnings.
+> 
+> I think this should have
+> 
+> Fixes: b0f0469ab662 ("drm: xlnx: zynqmp_dpsub: Anounce supported input formats")
+> 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202405080553.tfH9EmS8-lkp@intel.com/
+> > Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> > ---
+> > I couldn't find a patch for this in Linus' tree or on the lists, sorry
+> > if someone's already fixed it.  No rush on my end, I'll just stash this
+> > in a local branch for the tester.
+> > ---
+> >  drivers/gpu/drm/xlnx/zynqmp_disp.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > index 13157da0089e..d37b4a9c99ea 100644
+> > --- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > +++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+> > @@ -981,7 +981,7 @@ u32 *zynqmp_disp_layer_drm_formats(struct zynqmp_disp_layer *layer,
+> >  	unsigned int i;
+> >  	u32 *formats;
+> >  
+> > -	if (WARN_ON(!layer->mode == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> > +	if (WARN_ON((!layer->mode) == ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> 
+> That doesn't seem right. layer->mode isn't a boolean, it's an enum. The
+> right fix seems to be
+> 
+> 	if (WARN_ON(layer->mode != ZYNQMP_DPSUB_LAYER_NONLIVE)) {
+> 
+> Anatoliy, could you check this ? Palmer, do you plan to submit a new
+> version of the patch, or should I send the right fix separately ?
 
-I was running checkpatch --strict and sparse. I'll add smatch and 
-coccinelle/coccicheck to the test list as well as testing on other 
-architectures.
+I see a fix is already present in the drm-misc-fixes branch. Please
+ignore my previous e-mail.
 
-Thanks and regards, Michael.
+> >  		*num_formats = 0;
+> >  		return NULL;
+> >  	}
 
+-- 
+Regards,
+
+Laurent Pinchart
 
