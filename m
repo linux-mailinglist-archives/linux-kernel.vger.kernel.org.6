@@ -1,190 +1,165 @@
-Return-Path: <linux-kernel+bounces-186272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7DB48CC201
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FBC8CC204
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB9D284931
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:22:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE9F285375
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BF413F429;
-	Wed, 22 May 2024 13:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3517613DBB7;
+	Wed, 22 May 2024 13:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vOt2aZ2Y"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fagkg2fP"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D84E8061B
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA40513D532
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716384115; cv=none; b=BuSWtdganT7hBN9H+WchStRVmkm8yM0AK2KvYOD4oOmO0r/OlS0F1H8UgA8pjT2WS0gRuU7g7ivLz719o92q42JLeyXfZfCnd56kRpTarQkC7PtKFYcpA8sdzqB38OyjvC9aV4QwMUmuLEcWaLaZId/VB7Fh2kBz+Np0rYchYos=
+	t=1716384142; cv=none; b=bsE/sE4G0TxE27gAwyHwqhAlpPhNHHT6asuh1hfzM5YiDXFIu0IZX8vpuYNfs4/hkNA279+OktYjQRVq/EMOCCSsy2LtCNRvcxnhn3X8+81gPxph9FLzh3W+yFeSeLmsqJ/n3J4SaxWfcIBkQj5sOuQBOe+1JMLMbNjyWI7orWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716384115; c=relaxed/simple;
-	bh=mYSAmhsQtJ0PDxq3WdA7gK5lRtv9WoXaj1HB0gLlhTM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YzxRFINaIEUE7ej6/IdWuevOgiMlaKHianuUfL+GW8FzNxjOW7zdC+HC3WQM0lb9i4Y6XUMELq/uHloe6LqGnlbUmye25vxoxpqmKK7Ud3IRKfpX89/QdLHbyDDH97ADYJ7ywtZbUGVItvVo4XfKpUyfKYkWEiqPA1IIGB2p8r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vOt2aZ2Y; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: jack@suse.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716384110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w3U75sxnOeZdFGOwo1OVSElYeJTqXT6eZMDMxenHS3Y=;
-	b=vOt2aZ2Y9/UJ1YxmIkQijMwxaEiEiRznlwvMdfhDBB9j0LYCWaPqhK4XOPVPyJVG36jIwT
-	ahgBcq3oeBLlOJuBfd7AaWVeLe7jaxhxPsIDHOQygAFn/Snna7Zcb4HsplYNZSoch7vFpI
-	y7JHs0igR4dZm4KpBXYdwnUAGxyp1F4=
-X-Envelope-To: tytso@mit.edu
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: luis.henriques@linux.dev
-X-Envelope-To: jack@suse.com
-X-Envelope-To: adilger@dilger.ca
-X-Envelope-To: linux-ext4@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,  Theodore Ts'o
- <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Jan Kara
- <jack@suse.com>,  linux-ext4@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] ext4: fix fast commit inode enqueueing during a
- full journal commit
-In-Reply-To: <20240522103545.ypmmoyxvls52i6yl@quack3> (Jan Kara's message of
-	"Wed, 22 May 2024 12:35:45 +0200")
-References: <20240521154535.12911-1-luis.henriques@linux.dev>
-	<20240521154535.12911-2-luis.henriques@linux.dev>
-	<20240522103545.ypmmoyxvls52i6yl@quack3>
-Date: Wed, 22 May 2024 14:21:47 +0100
-Message-ID: <87pltedlsk.fsf@brahms.olymp>
+	s=arc-20240116; t=1716384142; c=relaxed/simple;
+	bh=dKNZ5CJsAFXaKBWxbAsUexD9QKQL1d8lHCe0m3TQcIw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MFm4fI1szZKmQl4ftZO67Y4kTqyW1wdpgwqViGnv1wbV9j3aN+eG84hDSx9I9Eq7w9L5F4VOedCpzxsdJicje0M+N6Rsy2MY0LSy3o0sm0dOQMpn8SAR8xdBc00RqkVJpLQYZPKQyUGvz2l1A7rhAUYnSOdKi6G/KcnHVT0bE+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fagkg2fP; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a61b70394c0so386863966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716384138; x=1716988938; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9bKLL5XIAHEVLvDN5YrC/ZHxoZSNxD9MKEhKk6FUBOU=;
+        b=Fagkg2fPSzzXmrNhjbKmD0GbnOfG6NgD28LPxw9nunpkYkNgxtOhBLzLvIcMf/UcBj
+         cXYyonZ68F1E/zkeTsJa5PO9Kv9uL12Ql1T7BB9A3SK9Wy7lhj+7l9m4UH0AnoKVC7F7
+         wjC3Ds8rhJPhrwawFtxf5Wk58v4Qiq3oOpyYBbQl/68hRKBti0CokqZq7Hy9p0aNJW1e
+         UKX2OAbmn4hdfOPPAEkIkrJ3T7vGXkJBdxGct7Li/MhjpYZ3zVe74Snwar9U40WRV+hz
+         o9vz+jBASjY0/A+iZm1EHrXQTkIjX7I1s3bgOfUNxziyrHcs/CX7hMpHgCseYBw1chT7
+         95nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716384138; x=1716988938;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9bKLL5XIAHEVLvDN5YrC/ZHxoZSNxD9MKEhKk6FUBOU=;
+        b=jYL8rmiUIMV0IFrR8tnV0jKrcL/eV/dbVlaTXI6StDu0yhoUXf1OboG2xYz3O/mAkK
+         6K0IG0AJC3oDclTaWRpBnTgtF3FQGZ2zlfEXrP0UltvVtPsY10+pd36CasurJUejQBnb
+         DKsv+uQ2MoqBt+SCyIRLSZkNc+V0T1rTN6yg9L8II0e8SUXVQhLWMscxOSYMxed/Uj67
+         wH+uuV9YAxPBh9MsMvpnbybc4TDuf6j5p+8MihP5OxFNvLneTPYdNWG54nWszmrh8sJw
+         XM0y8ulbQAj13m/asEgBqZMSXisdLDw6K2cfGMKK1iXm8LRvhGAXYcEvJ8m7VU0l0zuU
+         +pcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaTeJJUBjw9DuwFomAss7gWuIxXtpAhag8lzK/ka5Hgo79J9zgKx3LNSqBMA/hMiGRqJSUYFjReRcEjU6wIQUx6aUm97BsvHGObTTP
+X-Gm-Message-State: AOJu0YwR5MaEAoqhj0VppaKuGLQyMeP1c+OTOjVVg+L1BAvDI1zy2krA
+	AvslPgZahvOq1tYbQbOFLGc6mrDw7b7QjSXQ1vtHiDD5IyCsutuAY+NT4XuiBWI=
+X-Google-Smtp-Source: AGHT+IEm0saGodh7RpUehh6ch8U1BxsILC9cvXZJ83PFyYVR48QbRteA8MXQzFg1qIXy7mSDgn8IiQ==
+X-Received: by 2002:a17:906:f28e:b0:a59:a857:85ce with SMTP id a640c23a62f3a-a62281c9fa6mr123890766b.52.1716384138369;
+        Wed, 22 May 2024 06:22:18 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10? ([2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01932sm1770472566b.168.2024.05.22.06.22.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 06:22:17 -0700 (PDT)
+Message-ID: <4221943d-b0cf-4b78-992a-b2226589b745@linaro.org>
+Date: Wed, 22 May 2024 15:22:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 3/3] drm/panel/lg-sw43408: mark sw43408_backlight_ops
+ as static
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Caleb Connolly <caleb.connolly@linaro.org>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>, Vinod Koul
+ <vkoul@kernel.org>, Caleb Connolly <caleb@connolly.tech>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+ kernel test robot <lkp@intel.com>
+References: <20240522-panel-sw43408-fix-v3-0-6902285adcc0@linaro.org>
+ <20240522-panel-sw43408-fix-v3-3-6902285adcc0@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240522-panel-sw43408-fix-v3-3-6902285adcc0@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 22 May 2024 12:35:45 PM +02, Jan Kara wrote;
+On 22/05/2024 08:25, Dmitry Baryshkov wrote:
+> Fix sparse warning regarding symbol 'sw43408_backlight_ops' not being
+> declared.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202404200739.hbWZvOhR-lkp@intel.com/
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Fixes: 069a6c0e94f9 ("drm: panel: Add LG sw43408 panel driver")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/panel/panel-lg-sw43408.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-lg-sw43408.c b/drivers/gpu/drm/panel/panel-lg-sw43408.c
+> index 115f4702d59f..2b3a73696dce 100644
+> --- a/drivers/gpu/drm/panel/panel-lg-sw43408.c
+> +++ b/drivers/gpu/drm/panel/panel-lg-sw43408.c
+> @@ -182,7 +182,7 @@ static int sw43408_backlight_update_status(struct backlight_device *bl)
+>   	return mipi_dsi_dcs_set_display_brightness_large(dsi, brightness);
+>   }
+>   
+> -const struct backlight_ops sw43408_backlight_ops = {
+> +static const struct backlight_ops sw43408_backlight_ops = {
+>   	.update_status = sw43408_backlight_update_status,
+>   };
+>   
+> 
 
-> On Tue 21-05-24 16:45:34, Luis Henriques (SUSE) wrote:
->> When a full journal commit is on-going, any fast commit has to be enqueued
->> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
->> is done only once, i.e. if an inode is already queued in a previous fast
->> commit entry it won't be enqueued again.  However, if a full commit starts
->> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
->> be done into FC_Q_STAGING.  And this is not being done in function
->> ext4_fc_track_template().
->
-> Ah, good catch.
->
->> This patch fixes the issue by simply re-enqueuing the inode from the MAIN
->> into the STAGING queue.
->> 
->> This bug was found using fstest generic/047.  This test creates several 32k
->> bytes files, sync'ing each of them after it's creation, and then shutting
->> down the filesystem.  Some data may be loss in this operation; for example a
->> file may have it's size truncated to zero.
->> 
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->> ---
->>  fs/ext4/fast_commit.c | 19 +++++++++++++------
->>  1 file changed, 13 insertions(+), 6 deletions(-)
->> 
->> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
->> index 87c009e0c59a..337b5289cf11 100644
->> --- a/fs/ext4/fast_commit.c
->> +++ b/fs/ext4/fast_commit.c
->> @@ -396,12 +396,19 @@ static int ext4_fc_track_template(
->>  		return ret;
->>  
->>  	spin_lock(&sbi->s_fc_lock);
->> -	if (list_empty(&EXT4_I(inode)->i_fc_list))
->> -		list_add_tail(&EXT4_I(inode)->i_fc_list,
->> -				(sbi->s_journal->j_flags & JBD2_FULL_COMMIT_ONGOING ||
->> -				 sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) ?
->> -				&sbi->s_fc_q[FC_Q_STAGING] :
->> -				&sbi->s_fc_q[FC_Q_MAIN]);
->> +	if (sbi->s_journal->j_flags & JBD2_FULL_COMMIT_ONGOING ||
->> +	    sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) {
->> +		if (list_empty(&EXT4_I(inode)->i_fc_list))
->> +			list_add_tail(&EXT4_I(inode)->i_fc_list,
->> +				      &sbi->s_fc_q[FC_Q_STAGING]);
->> +		else
->> +			list_move_tail(&EXT4_I(inode)->i_fc_list,
->> +				       &sbi->s_fc_q[FC_Q_STAGING]);
->
-> So I'm not sure this is actually safe. I'm concerned about the following
-> race:
->
-> Task1					Task2
->
-> 					handle = ext4_journal_start(..)
-> modify inode_X
->   ext4_fc_track_inode(inode_X)
-> ext4_fsync(inode_X)
->   ext4_fc_commit()
->     jbd2_fc_begin_commit()
->       journal->j_flags |= JBD2_FAST_COMMIT_ONGOING;
->       ...
->       jbd2_journal_lock_updates()
->         blocks waiting for handle of Task2
-> 					modify inode_X
-> 					  ext4_fc_track_inode(inode_X)
-> 					    - moves inode out of FC_Q_MAIN
-> 					ext4_journal_stop()
->     fast commit proceeds but skips inode_X...
-
-Hmm... I see, the problem is deeper that I thought.
-
-> How we deal with a similar issue in jbd2 for ordinary buffers is that we
-> just mark the buffer as *also* belonging to the next transaction (by
-> setting jh->b_next_transaction) and during commit cleanup we move the bh to
-> the appropriate list of the next transaction. Here, we could mark the inode
-> as also being part of the next fast commit and during fastcommit cleanup we
-> could move it to FC_Q_STAGING which is then spliced back to FC_Q_MAIN.
-
-Yeah, I guess that would work.  I'll need to add a new field to flag the
-'next commit' in struct ext4_inode_info.  I'll need to play a bit with it
-and see what I can came up with.  Thanks for the suggestion.
-
-> Also Harshad has recently posted changes to fast commit code that modify
-> how fast commits are serialized (in particular jbd2_journal_lock_updates()
-> is gone). I didn't read them yet but your change definitely needs a careful
-> verification against those changes to make sure we don't introduce new data
-> integrity issues.
->
-
-Right, I saw his patchset only after sending my RFC (and I should have
-probably included him on the CC as well; probably get_maintainer.pl isn't
-picking his email).
-
-I'll need to look at those changes too, which will probably take me some
-time as most of that code isn't familiar to me.
-
-Thanks a lot for your review, Jan.  Much appreciated.
-
-Cheers,
--- 
-Luis
-
->> +	} else {
->> +		if (list_empty(&EXT4_I(inode)->i_fc_list))
->> +			list_add_tail(&EXT4_I(inode)->i_fc_list,
->> +				      &sbi->s_fc_q[FC_Q_MAIN]);
->> +	}
->>  	spin_unlock(&sbi->s_fc_lock);
->>  
->>  	return ret;
->
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
