@@ -1,244 +1,86 @@
-Return-Path: <linux-kernel+bounces-185780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF7F8CBAC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C61A8CBAC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 317B31C212E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD3F280E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 05:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B3D78C8D;
-	Wed, 22 May 2024 05:40:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B3577113;
+	Wed, 22 May 2024 05:45:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256EE78C75
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4187710C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716356411; cv=none; b=NFFR405fMSaG0Kh3RJUU6jq52HrYCHzBaJRkBrbbhINsDz/BGnue2/n+gYn+pwfCOSrWUVGhrtW/AgwEUab/MBiyKrZ1wooD1zAB6DNJ5KUeYFw+MHTQ4OtzBgfu7sqO7Fe7iqh1slUcJgZzbL6Jkc0WPdaWeAVCtoPV4D8c41U=
+	t=1716356705; cv=none; b=c8CptzKAL1FT35aUwOVm1FWyRUdMefAYdentnlnbC5qi9C9C2CHrC95u10Hatgpaj4buZ8xl+XnR6TwBiVQ0aN58m5rNQU2OKz+ojUPGuB2OORMAFeHJttYmAFjQX1lmWuZaXtv6SyaDi93huUIU1JfVzNLX//cHeI5cNp/AbsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716356411; c=relaxed/simple;
-	bh=8hsIHvnWZEEkivcvCStIVXwcX0bR4VLqPBmUMAb7D6Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pI7R7B+VAtU6rIQI9eh4LKhtTgXkpRUtHq/piRsE6HHjqZQR8M4+Aa2SZDFOeZFJyljba7pLrgzDNktmEODKA0rNUnf51FB2FD9w0EVTd4Vd7W1x/6nt5aPnGlplO42UmUY9BTM/vQJMoaMF8WQmEP3025zrzV+VkI5L04V5ttw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1s9ehj-0003dc-JI; Wed, 22 May 2024 07:39:59 +0200
-Received: from [2a0a:edc0:0:1101:1d::28] (helo=dude02.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1s9ehg-002U0t-Oa; Wed, 22 May 2024 07:39:56 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1s9ehg-00Dqu2-29;
-	Wed, 22 May 2024 07:39:56 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 22 May 2024 07:39:53 +0200
-Subject: [PATCH v4 3/3] mtd: nand: mxc_nand: support software ECC
+	s=arc-20240116; t=1716356705; c=relaxed/simple;
+	bh=GUNzKR17ExrlXxqaZ0pILUvwkdrZ3pQ14y1UNPvZkto=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Z1QLfnRXnsgCNy/bjMK+bzON88qzIrwV/cMerz0wis8xgYg3tOjFsZtQSn1yOcbidphfVlPMZMQN4a+H+0E1m3DEduLqmEaR5G98HP9enOiQ+Zd5H0uCHmQZ6YEHF5LtZt32HdlRDWXshO9nedro5f6e/586HZjvUm+9Et7fY68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1fe2ba2e1so969072339f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2024 22:45:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716356703; x=1716961503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rgty7Pfnmfl9KQwoZJU67HqbxOvFg+UokW7KT8OAsAU=;
+        b=B/FDZuKW7dKfq1hzW8rTFUFnARf5z0GkcgpcZ5yny4Q534mbOghFHkRZxxyQRVAKb2
+         dOyRrfFsCo5OydshrmaUdOtBA5Yh4LfTPKbUIMo7wDgiJ+wfwdJs4Ofx8BTRyn+FPv91
+         oMIMS3v1xmrzEUibQ7e7lr2FOxcj/J80Wk7TPOyAx1BMMfYO8RmpKffDWf4OQ/UWJNg5
+         BsDcAWVr3mxXM4NamX73OgnDJihrRu4Olk01hhdWEapjB0mJBTRkLbC4Vd7qN+3MBv1P
+         f/8zjJTkMBK8+zPmLne3wreFIAemtSTCuoPehl487dJ5waQ+XiYXP+0SHd8xgG5xT6Ag
+         J6qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ7py5nmqiuvKZILXTGrJ9CKXg8JMLNDx8JuRWCizmhP+ztNmhnWVEbCkYxFv6qdsdZTHjp9MnwnZefbqArCn9cMiXHHf0k5TwkNiy
+X-Gm-Message-State: AOJu0Yxm+0GqDf7FMyeZNQUTxS2z6qRPM5jqdL+Mbb3GPUgyR60LTQ4J
+	h7uTvkkU9S/ACX3/qcKcBDbum8HioG2xZ3swmxKUqv8+cYhtqiKmnRBIBzW9nfl25HbnoCQwT91
+	BXNOSfosOvmEnymyqREPvASvQUsDZlNJrNH1xDrwCJBV/C254m18FB4M=
+X-Google-Smtp-Source: AGHT+IFlXDjgQcMSg1MbONcL/etxR6wlTAo+jyX+GNoqh/OcR+Z6aOn0RzVOiLRANV/tkRDG60ybRjo1nTv5BU1FFXH88VBbnvi4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240522-mtd-nand-mxc-nand-exec-op-v4-3-75b611e0ac44@pengutronix.de>
-References: <20240522-mtd-nand-mxc-nand-exec-op-v4-0-75b611e0ac44@pengutronix.de>
-In-Reply-To: <20240522-mtd-nand-mxc-nand-exec-op-v4-0-75b611e0ac44@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716356396; l=5790;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=8hsIHvnWZEEkivcvCStIVXwcX0bR4VLqPBmUMAb7D6Y=;
- b=xMs7fL+OSmRpD7JYHqoBUo/7yMtL2llPYioVsFPbmV8QMGCf+FfzBfJoMD0ZXq8Ko2W8l5MDc
- ClOvZW4mzmNAuKXqVhoNT0kfEoqsdSKLynAwnfinNAeC650B2wK1Df6
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1d92:b0:36c:11a0:7878 with SMTP id
+ e9e14a558f8ab-371f73d553emr948305ab.2.1716356703406; Tue, 21 May 2024
+ 22:45:03 -0700 (PDT)
+Date: Tue, 21 May 2024 22:45:03 -0700
+In-Reply-To: <tencent_11C652F8465D499BEEC06EC00CAFE7D30606@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009d5c0f0619046f5f@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-With these changes the driver can be used with software BCH ECC which
-is useful for NAND chips that require a stronger ECC than the i.MX
-hardware supports.
+Hello,
 
-The controller normally interleaves user data with OOB data when
-accessing the NAND chip. With Software BCH ECC we write the data
-to the NAND in a way that the raw data on the NAND chip matches the
-way the NAND layer sees it. This way commands like NAND_CMD_RNDOUT
-work as expected.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-This was tested on i.MX27 but should work on the other SoCs supported
-by this driver as well.
+Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/mtd/nand/raw/mxc_nand.c | 102 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 97 insertions(+), 5 deletions(-)
+Tested on:
 
-diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
-index 6f8b8f4b118ec..9d50f41b3d5a1 100644
---- a/drivers/mtd/nand/raw/mxc_nand.c
-+++ b/drivers/mtd/nand/raw/mxc_nand.c
-@@ -1404,10 +1404,10 @@ static int mxcnd_attach_chip(struct nand_chip *chip)
- 	chip->ecc.bytes = host->devtype_data->eccbytes;
- 	host->eccsize = host->devtype_data->eccsize;
- 	chip->ecc.size = 512;
--	mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
- 
- 	switch (chip->ecc.engine_type) {
- 	case NAND_ECC_ENGINE_TYPE_ON_HOST:
-+		mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
- 		chip->ecc.read_page = mxc_nand_read_page;
- 		chip->ecc.read_page_raw = mxc_nand_read_page_raw;
- 		chip->ecc.read_oob = mxc_nand_read_oob;
-@@ -1417,6 +1417,8 @@ static int mxcnd_attach_chip(struct nand_chip *chip)
- 		break;
- 
- 	case NAND_ECC_ENGINE_TYPE_SOFT:
-+		chip->ecc.write_page_raw = nand_monolithic_write_page_raw;
-+		chip->ecc.read_page_raw = nand_monolithic_read_page_raw;
- 		break;
- 
- 	default:
-@@ -1472,6 +1474,88 @@ static int mxcnd_setup_interface(struct nand_chip *chip, int chipnr,
- 	return host->devtype_data->setup_interface(chip, chipnr, conf);
- }
- 
-+static void memff16_toio(void *buf, int n)
-+{
-+	__iomem u16 *t = buf;
-+	int i;
-+
-+	for (i = 0; i < (n >> 1); i++)
-+		__raw_writew(0xffff, t++);
-+}
-+
-+static void copy_page_to_sram(struct mtd_info *mtd, const void *buf, int buf_len)
-+{
-+	struct nand_chip *this = mtd_to_nand(mtd);
-+	struct mxc_nand_host *host = nand_get_controller_data(this);
-+	unsigned int no_subpages = mtd->writesize / 512;
-+	int oob_per_subpage, i;
-+
-+	oob_per_subpage = (mtd->oobsize / no_subpages) & ~1;
-+
-+	/*
-+	 * During a page write the i.MX NAND controller will read 512b from
-+	 * main_area0 SRAM, then oob_per_subpage bytes from spare0 SRAM, then
-+	 * 512b from main_area1 SRAM and so on until the full page is written.
-+	 * For software ECC we want to have a 1:1 mapping between the raw page
-+	 * data on the NAND chip and the view of the NAND core. This is
-+	 * necessary to make the NAND_CMD_RNDOUT read the data it expects.
-+	 * To accomplish this we have to write the data in the order the controller
-+	 * reads it. This is reversed in copy_page_from_sram() below.
-+	 *
-+	 * buf_len can either be the full page including the OOB or user data only.
-+	 * When it's user data only make sure that we fill up the rest of the
-+	 * SRAM with 0xff.
-+	 */
-+	for (i = 0; i < no_subpages; i++) {
-+		int now = min(buf_len, 512);
-+
-+		if (now)
-+			memcpy16_toio(host->main_area0 + i * 512, buf, now);
-+
-+		if (now < 512)
-+			memff16_toio(host->main_area0 + i * 512 + now, 512 - now);
-+
-+		buf += 512;
-+		buf_len -= now;
-+
-+		now = min(buf_len, oob_per_subpage);
-+		if (now)
-+			memcpy16_toio(host->spare0 + i * host->devtype_data->spare_len,
-+				      buf, now);
-+
-+		if (now < oob_per_subpage)
-+			memff16_toio(host->spare0 + i * host->devtype_data->spare_len + now,
-+				     oob_per_subpage - now);
-+
-+		buf += oob_per_subpage;
-+		buf_len -= now;
-+	}
-+}
-+
-+static void copy_page_from_sram(struct mtd_info *mtd)
-+{
-+	struct nand_chip *this = mtd_to_nand(mtd);
-+	struct mxc_nand_host *host = nand_get_controller_data(this);
-+	void *buf = host->data_buf;
-+	unsigned int no_subpages = mtd->writesize / 512;
-+	int oob_per_subpage, i;
-+
-+	/* mtd->writesize is not set during ident scanning */
-+	if (!no_subpages)
-+		no_subpages = 1;
-+
-+	oob_per_subpage = (mtd->oobsize / no_subpages) & ~1;
-+
-+	for (i = 0; i < no_subpages; i++) {
-+		memcpy16_fromio(buf, host->main_area0 + i * 512, 512);
-+		buf += 512;
-+
-+		memcpy16_fromio(buf, host->spare0 + i * host->devtype_data->spare_len,
-+				oob_per_subpage);
-+		buf += oob_per_subpage;
-+	}
-+}
-+
- static int mxcnd_do_exec_op(struct nand_chip *chip,
- 			    const struct nand_subop *op)
- {
-@@ -1510,7 +1594,10 @@ static int mxcnd_do_exec_op(struct nand_chip *chip,
- 			buf_write = instr->ctx.data.buf.out;
- 			buf_len = instr->ctx.data.len;
- 
--			memcpy32_toio(host->main_area0, buf_write, buf_len);
-+			if (chip->ecc.engine_type == NAND_ECC_ENGINE_TYPE_ON_HOST)
-+				memcpy32_toio(host->main_area0, buf_write, buf_len);
-+			else
-+				copy_page_to_sram(mtd, buf_write, buf_len);
- 
- 			host->devtype_data->send_page(mtd, NFC_INPUT);
- 
-@@ -1545,10 +1632,15 @@ static int mxcnd_do_exec_op(struct nand_chip *chip,
- 
- 			host->devtype_data->read_page(chip);
- 
--			if (IS_ALIGNED(buf_len, 4)) {
--				memcpy32_fromio(buf_read, host->main_area0, buf_len);
-+			if (chip->ecc.engine_type == NAND_ECC_ENGINE_TYPE_ON_HOST) {
-+				if (IS_ALIGNED(buf_len, 4)) {
-+					memcpy32_fromio(buf_read, host->main_area0, buf_len);
-+				} else {
-+					memcpy32_fromio(host->data_buf, host->main_area0, mtd->writesize);
-+					memcpy(buf_read, host->data_buf, buf_len);
-+				}
- 			} else {
--				memcpy32_fromio(host->data_buf, host->main_area0, mtd->writesize);
-+				copy_page_from_sram(mtd);
- 				memcpy(buf_read, host->data_buf, buf_len);
- 			}
- 
+commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=116d7244980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=127284e8980000
 
--- 
-2.39.2
-
+Note: testing is done by a robot and is best-effort only.
 
