@@ -1,133 +1,118 @@
-Return-Path: <linux-kernel+bounces-185988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9DC8CBDD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:27:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C688CBDD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3501C20A30
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:27:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2DD1F2187D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED39781205;
-	Wed, 22 May 2024 09:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSHPEaob"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9498181219;
+	Wed, 22 May 2024 09:28:12 +0000 (UTC)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B633811E0;
-	Wed, 22 May 2024 09:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E88680628;
+	Wed, 22 May 2024 09:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716370062; cv=none; b=sMIfqagQ+jUBi/dH+RMVNRK8VRSxOv9/pFhZS3ETIWmIWYjD72z7V0PbRl5qxtDtWgcHd188z37d+bteCySd/I3kz6U6mB/kuXSqL5c5WeP3eUlFcdBKhXZnu/qmTR/7PnhNdr936N+gKHgwSE9GFkjpbUYtMHw7vGIwkYHSB7s=
+	t=1716370092; cv=none; b=ukm99g9AhoH0O2N26/51YF1R0nLOhv4MnEo9/pzpIcUU3f2mn3TMirHfz4dDlhiCbQE5e/j72j8a/qLjXa5L5A7RNHLLJ7C+bPQ/JUTDGh9GeTKkANDkdXks4IUQpIDM+fGZ13d+PdoUb3r2TqCvAzvzNPSaXSnKTDyBYpVL/b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716370062; c=relaxed/simple;
-	bh=yIYBXGdl869XX2pTr1QmDY+AP5o/usnaarQJoGjwRv8=;
+	s=arc-20240116; t=1716370092; c=relaxed/simple;
+	bh=1FO/sgLl6FDv5gfjdaHH8VjZE5pw6mczMQNGvmUXG44=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tdw6sfM0zILYY9mHLy7o2IDkgo6ykfUAjmipjD/1QLdh6MhHIa69PbsECOmJa47p6ZuggkwPahFIL/oWaG4mRgfDoJWv1DMSQO6W1Idlzzolm4BNYj1tZAzAPlB5bP82LBb7w4fbUy9VMqyyV4fa+ZqwCK/Z2N3fOfjbioYLzTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSHPEaob; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=G8ZjOWUG37teZDzwAPnS2HpjUm8k3noQ+sLZKmTO8gTiYaaV1wC2GgkqO8YQ5eKPXCg/YqVLQLyUiunaQkv6ac7yB1wmjz1//eiV/REALgV0MfIMr3OkYYuNrQ6OCh+Jq5XfL16ukz6VK6lx/1w1XQDzWxeaDVb4By9/WqK7gLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5238b5c080cso7793190e87.1;
-        Wed, 22 May 2024 02:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716370057; x=1716974857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J3RHkz1PAC1a1gnJwaqPWf+2yMWWiU1EZBBXLHMWkG0=;
-        b=XSHPEaobQ9QyC7TaRkhuj1XVfte7fqlmkl1zwI76QejmgcVXIb3TtjszCV3XaUSBHL
-         iejQNE4sIzbvqr9onGJaOShqjfFQRbubQ955RukW8YccLlUEqL3e6kIuU6SIIZt6N9In
-         6GKfJekFmwChbTjTafGbrdVGivvZYuUVnV7X7xRK5X6M6ukPLNMUP5DhRmhHR7nCJ0Yp
-         1N20QOodKBW2Y46hF9DZe16/GuxFgRnehcqZGCO2wXq0LRArn5isHJewuYVUby4OOOSS
-         2IUEgs6WOZb5RKq9rq0IEcoxZhIfE7m4oIEbLcESoSkDwB7HZS5KmQHEj0ph0nD3n19O
-         ZoSg==
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-de607ab52f4so4677116276.2;
+        Wed, 22 May 2024 02:28:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716370057; x=1716974857;
+        d=1e100.net; s=20230601; t=1716370089; x=1716974889;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J3RHkz1PAC1a1gnJwaqPWf+2yMWWiU1EZBBXLHMWkG0=;
-        b=M4vQv7ieRtTYvfAmu0uY2iLbFjEpRamcI4zJwpf6ajg4IOzdYZZEwKE03koXATYBhj
-         G4FV0CLwyvE0icLM8FgPR4ya84peIomm/tAKSi1jKVoLh0KtAAtUVAnCr9kak8dGNYWn
-         VchPSKO1nTt5Ec1ZK+iXvtxS2XFcHKBXJFUOwvlLN33Hzl+4vvuj1dTbboPtu5DQxRhf
-         mp99imDqnzifVUjhVSEM0lZ/m4gg2dYPejiw5i7Kd+lgyz7+p4LRbH4q4WqNy+xqPI8q
-         z2euO1wDLi7TctUddxKPtNPa5y+DeMkvL/76pXaadUsrhJZtRcAxPP4D/nJsFkjFrLKM
-         C12g==
-X-Forwarded-Encrypted: i=1; AJvYcCUYf6PtWMOKbJIKkT/NNcCZN12mJ+sF1nusUUslL6AG8BKTANquIMsBtDGz0/k5ymqhxG/8Q7ie4PoM+HEtpH4IU0xKHsXWVA+kmUuX6cuvur0URZBN6bSyFxsAQ6M0ho9IOq85lxIiJEiDTT8UFooGfEHI5bk+75PuxGuZqrpZfqDIibSzcbk=
-X-Gm-Message-State: AOJu0YyVnFyGk+djvmk3YaO2icKogXF7DQ7u49nZbE8dwky3HwL+U4v+
-	iWJ+fmFdFLRIfV+GRiGKTeJIEEjdvYHlScaTkatZEVAeWCs0xiHOe3QftawrrtpvHsyqHV+R0i1
-	hnXDbDXQqML6u/eosPw6nihQ57uw=
-X-Google-Smtp-Source: AGHT+IEFyirCOQaf4B+kNykUPvpKVUgbY2KUycXUHf9UnyJn6uHYcrCR1+MiVHLL/L30cClXAAGye9v+HQ0A/uuAH5M=
-X-Received: by 2002:a05:6512:4dc:b0:519:2d60:d71b with SMTP id
- 2adb3069b0e04-526bdd47f63mr896360e87.22.1716370057087; Wed, 22 May 2024
- 02:27:37 -0700 (PDT)
+        bh=HY0tgCg39/NnBEpMS6GQXLZcisZtDxsqIOp1WN1FAW0=;
+        b=RG9yvR8DdBHD27DszdYZMP53pUQoUdlYV5rZ2F8fC+f/WOCA9haB0AOSdlBulNQt0/
+         VMMKQecdOTuS1ZZXMPiDRNQcPqbgJruQdBO9zDcEtvIc93l3mPnCdepc+3ipuLdNI1CV
+         g4alkXVhSYiBfShO5dcNwd1Iej1H+CHGFqv2bv3Vh/qbXLrM/YkWe90sqSbP2xG02oAc
+         beMS/htF0TLcb9uqNdRVrEPGZZ5CcB6lq4gSsHTxkPDKcAtfadZMjLs/wWH0HAvZo4rf
+         tBzHkU9IaF9nXmJs4/pJxsy1UouYUnE6cSSd4Z1nuOG1mQz96KwrscUTpeVLbgPMmTZI
+         5jJg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0KgPltlnxJgRYycjZ9o+thJy2k0EZpeYAAZQEt3e9SDwm2Poy49K6D/zo4qJn2QmtENu/zn39fdOxC4dNgQBAcTvuTxWxZZ7FPfeqZ0msPmYaPr3SV96fQeSGnNGz+KadvFRezNTTNDHpEUoIxv0RTNbMuVNG0m8qtKEiBDlYzDcERNGoG2LJCIkm5unPmARJxPHv9OviEVZrY8J8FNjJB2qDELGY1cc/2gs=
+X-Gm-Message-State: AOJu0Yx5/qLLAoiRuYQYDCt2OD9qHpU5XCKWedSfB47PnLX0vXpCMbt4
+	H3GlQAlBW7BKzH0NCr6BzEfcNfU0uErGu7Oje4Tanx65Q0n5z2X1df19c45t
+X-Google-Smtp-Source: AGHT+IF8nVVTZJI3hiakbOkeAIZ1KK0TQPe1mmNUE2XYnNGuSMEsveooOrMRCuJlw3caYZCj4o0z/g==
+X-Received: by 2002:a25:ae56:0:b0:df4:dd95:cc87 with SMTP id 3f1490d57ef6-df4e3ddd045mr1023363276.10.1716370089026;
+        Wed, 22 May 2024 02:28:09 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-debd3b90a1dsm5912372276.24.2024.05.22.02.28.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 02:28:08 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-622f5a0badcso51487407b3.2;
+        Wed, 22 May 2024 02:28:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+I4UNQmQxgwYvqXBDK6MnlZWdu4pFEL7CzQqjaVAzvN0uumrSj88GaYKX/3nRkyiXdWBN5VPzV3o+3HVCkB0CGNGfbmdwryw/dcvYFp1r2qf2WBBTLKQ/V+3Mz27ujTVnopiP7uoSfNXt6eEtm/KEHZ7J8cVgSfWk1SJSj6rK5i6IFiTcW6CpTeLhlXUie9qNBqg3R9CXJXuznpeb21ocy3KI+yMNVDNxuPo=
+X-Received: by 2002:a81:490e:0:b0:61a:b54d:5925 with SMTP id
+ 00721157ae682-627e4865888mr14394627b3.38.1716370087335; Wed, 22 May 2024
+ 02:28:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <367856.1716367128@warthog.procyon.org.uk>
-In-Reply-To: <367856.1716367128@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 22 May 2024 04:27:24 -0500
-Message-ID: <CAH2r5mvhyrtXSvS4du4_iHO_X=bjrhPoyn4iFCrTVhbSo1eVew@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix smb3_insert_range() to move the zero_point
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Shyam Prasad N <nspmangalore@gmail.com>, 
-	Rohith Surabattula <rohiths.msft@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240522055421.2842689-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240522055421.2842689-1-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 May 2024 11:27:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVN3O2O4VYmyXKAsUp=19-1=J8BU2NJ3PLaCYdgV98VyQ@mail.gmail.com>
+Message-ID: <CAMuHMdVN3O2O4VYmyXKAsUp=19-1=J8BU2NJ3PLaCYdgV98VyQ@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: renesas: rzg2l: Use spin_{lock,unlock}_irq{save,restore}
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linus.walleij@linaro.org, didi.debian@cknow.org, efault@gmx.de, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Added the patch to the test branch and rerunning tests on it now
-
-http://smb311-linux-testing.southcentralus.cloudapp.azure.com/#/builders/3/=
-builds/122
-
-On Wed, May 22, 2024 at 3:39=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
+On Wed, May 22, 2024 at 7:54=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> Fix smb3_insert_range() to move the zero_point over to the new EOF.
-> Without this, generic/147 fails as reads of data beyond the old EOF point
-> return zeroes.
+> On PREEMPT_RT kernels the spinlock_t maps to an rtmutex. Using
+> raw_spin_lock_irqsave()/raw_spin_unlock_irqrestore() on
+> &pctrl->lock.rlock breaks the PREEMPT_RT builds. To fix this use
+> spin_lock_irqsave()/spin_unlock_irqrestore() on &pctrl->lock.
 >
-> Fixes: 3ee1a1fc3981 ("cifs: Cut over to using netfslib")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Shyam Prasad N <nspmangalore@gmail.com>
-> cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
+> Fixes: 02cd2d3be1c3 ("pinctrl: renesas: rzg2l: Configure the interrupt ty=
+pe on resume")
+> Reported-by: Diederik de Haas <didi.debian@cknow.org>
+> Closes: https://lore.kernel.org/all/131999629.KQPSlr0Zke@bagend
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  fs/smb/client/smb2ops.c |    1 +
->  1 file changed, 1 insertion(+)
 >
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index ef18cd30f66c..b87b70edd0be 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -3636,6 +3636,7 @@ static long smb3_insert_range(struct file *file, st=
-ruct cifs_tcon *tcon,
->         rc =3D smb2_copychunk_range(xid, cfile, cfile, off, count, off + =
-len);
->         if (rc < 0)
->                 goto out_2;
-> +       cifsi->netfs.zero_point =3D new_eof;
->
->         rc =3D smb3_zero_data(file, tcon, off, len, xid);
->         if (rc < 0)
->
->
+> Changes in v2:
+> - use proper commit id in "Fixes" section
+> - s/use/Use in patch title
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl-fixes for v6.10.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --=20
-Thanks,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
 
-Steve
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
