@@ -1,441 +1,171 @@
-Return-Path: <linux-kernel+bounces-185852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE918CBBEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3948CBBF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 09:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9B7E2829CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A438E1F22516
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 07:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1356F7C6CE;
-	Wed, 22 May 2024 07:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CEB7D071;
+	Wed, 22 May 2024 07:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNjMpomt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYH8z2PF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD0179B84;
-	Wed, 22 May 2024 07:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D695E79B84;
+	Wed, 22 May 2024 07:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716362696; cv=none; b=joiSEaeRJTXEqVrSHb3x+mICPAuIORoe67iTF9wl9Jto1qAh5xot1c7FUT8fPU4EQchSZJs+mgHPzkZyEvLHCb9V7ieOYkqdKLWnVXpnCqfTHgJuJ+ZrVIkLj+nAjRU+kRGWf462a+WKsGIyqLyu15pgHWMD+WowFIA4tG8vwRc=
+	t=1716362770; cv=none; b=i55GA/MUdktcWqQ3lauizYFT/qmR0zvo1gPtDYWXj/7bqlhBcLFTCfqJsTIEwiG9c193SFU1ZuLvSSL6fG7OaRzWEBSrpDKTZd9xv5iynrkoNRSxrc1eiQ09xQ/YjksCMm+w1vPq3JH0II5rRAtIHIuFbuaI88JWiovRg31CLGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716362696; c=relaxed/simple;
-	bh=RpsenxW2up+GVmBDLm6Dft7F/NhXAT1mwDTvcipp7Z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPXwL03WBp+zAty242WP6gsrDnoucd+ZXIoocRwjfGiq8V0DCStVKnfJuZwNQ4U342M8jIQSbjVfhfpSgGvsiCha57Z6CsVhvkWkA9io4NzaUII7/qHZuYOcGXX3hMJPAWw68KqHh2sB99Hz5Ud8KYeCuTylZFLXZMGMvOsfF10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pNjMpomt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF7ABC2BD11;
-	Wed, 22 May 2024 07:24:54 +0000 (UTC)
+	s=arc-20240116; t=1716362770; c=relaxed/simple;
+	bh=n5LLv9bSswZF/D//73kPSDD+5Lxdyao4a0l3XWOscVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X0h39d1cp5bzdXVpoqOPe/ifQ+7eyZneSOWOoJgSkfDZ3Xv//edF3YkFk2cK3qsDzzpEi8jHLi1/qIQwNEflAIhOIHYre7iE0BPljTW6zxW2GQyfXRi1rluLze9aks2AM81oT0JVZ2s6TfMKCC6Rb2SGuQUTUrB76C1mBW+fYKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYH8z2PF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2329CC2BD11;
+	Wed, 22 May 2024 07:26:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716362695;
-	bh=RpsenxW2up+GVmBDLm6Dft7F/NhXAT1mwDTvcipp7Z4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pNjMpomtvjQBv5Hjcg8V1knk5U1Ck3kyAAQp4cjLRRTanqbSYUMaj02eE4mjlpq3F
-	 HAznm5C5tJDnvm5TS+VET8UqIDlRhdIqIBWHdTrmINV0s4BY/Pfv/TrTNrBh9hKHTQ
-	 5g9iAsOpw2ZNmIYrrq2KdlesxXzBsl8XW1yheNRucWLzxUkRTmCAXkkGsw9k0O0zPv
-	 Jle/fGczN58C6Yk61zkp9nuyyYkgpNFxjdBbBwFtsB7ojnkUft1m+zFSOLKUIKm564
-	 5//jvMdcCydazkmRoxECUhk6h3VUi/dyJKfi8CjbO+hAhT0k+IDeH4jEDc6RDhf2fj
-	 3HvC0AOE7IPow==
-Date: Wed, 22 May 2024 09:24:52 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: keith <keith.zhao@starfivetech.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, hjc@rock-chips.com, 
-	heiko@sntech.de, andy.yan@rock-chips.com, xingyu.wu@starfivetech.com, 
-	p.zabel@pengutronix.de, jack.zhu@starfivetech.com, shengyang.chen@starfivetech.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 03/10] drm/rockchip:hdmi: migrate to use inno-hdmi
- bridge driver
-Message-ID: <20240522-opalescent-orchid-worm-2996ad@houat>
-References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
- <20240521105817.3301-4-keith.zhao@starfivetech.com>
+	s=k20201202; t=1716362769;
+	bh=n5LLv9bSswZF/D//73kPSDD+5Lxdyao4a0l3XWOscVY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EYH8z2PFFr9Q6wEmLwnjgunv6W/i6KhHIoRRkdS0gDls0UL05iPDuFwOVg+sfncAU
+	 sm+fs0vxwUT3Xhn5WiFSstRChl46M0x0HMVFXfePC7jypxQaEWePW8ohdM+IojL2F9
+	 AJmcUgzz8TQMu4E3AlGimv2ucFdwvsbSwDCPoAPqilLjM1dx7ZNEV2CN1N2ot09hfa
+	 g9dG7ZeIim117uTV+npXhquFOVda9kq/peI71W2RLJftsubnW+tiP7hXJDkJhiNFFP
+	 WVmUCrL1XSo8iHApZdziE+wUR2x0KMhPi0p3Sc0T8uXSi/Iy0BNrnbDLAuX8lTyyQD
+	 ZHTTM5Ryvgm1g==
+Message-ID: <92dcd555-69b1-4111-92dd-debe5107d526@kernel.org>
+Date: Wed, 22 May 2024 09:26:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="sz2tqw6l7ovh4mjb"
-Content-Disposition: inline
-In-Reply-To: <20240521105817.3301-4-keith.zhao@starfivetech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
+ <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
+ <a944418a-1699-44fa-bdfc-2e57129adea1@quicinc.com>
+ <c9882ba0-bbbf-44ec-9606-ebe68bcb8866@kernel.org>
+ <ZkzzY311XiRigJPt@hu-bjorande-lv.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZkzzY311XiRigJPt@hu-bjorande-lv.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 21/05/2024 21:17, Bjorn Andersson wrote:
+>>>
+>>> Hi Krzysztof,
+>>>
+>>> Sorry for the confusion, I dont think I meant that the smem driver will 
+>>> ever crash. The referred to crash in the cover letter is a crash in the 
+>>> firmware running on the remoteproc. The remoteproc could crash for any 
+>>> unexpected reason, related or unrelated to smem, while holding the tcsr 
+>>> mutex. I want to ensure that all resources that a remoteproc might be 
+>>> using are released as part of remoteproc stop.
+>>>
+>>> The SMEM driver manages the lock/unlock operations on the tcsr mutex 
+>>> from the Linux CPU's perspective. This case is for cleaning up from the 
+>>> remote side's perspective.
+>>>
+>>> In this case it's the hwspinlock used to synchronize SMEM, but it's 
+>>> conceivable that firmware running on the remoteproc has additional locks 
+>>> that need to be busted in order for the system to continue executing 
+>>> until the firmware is reinitialized.
+>>>
+>>> We did consider tying this to the SMEM instance, but the entitiy 
+>>> relating to firmware is the remoteproc instance.
+>>
+>> I still do not understand why you have to add hwlock to remoteproc, even
+>> though it is not directly used. Your driver problem looks like lack of
+>> proper driver architecture - you want to control the locks not from the
+>> layer took the lock, but one layer up. Sorry, no, fix the driver
+>> architecture.
+>>
+> 
+> No, it is the firmware's reference to the lock that is represented in
+> the remoteproc node, while SMEM deals with Linux's reference to the lock.
+> 
+> This reference would be used to release the lock - on behalf of the
+> firmware - in the event that the firmware held it when it
+> stopped/crashed.
 
---sz2tqw6l7ovh4mjb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I understood, but the remoteproc driver did not acquire the hardware
+lock. It was taken by smem, if I got it correctly, so you should poke
+smem to bust the spinlock.
 
-Hi,
+The hwlock is not a property of remote proc, because remote proc does
+not care, right? Other device cares... and now for every smem user you
+will add new binding property?
 
-On Tue, May 21, 2024 at 06:58:10PM GMT, keith wrote:
-> Add the ROCKCHIP inno hdmi driver that uses the Inno DesignWare
-> HDMI TX bridge and remove the old separate one.
->=20
-> Signed-off-by: keith <keith.zhao@starfivetech.com>
-> ---
->  drivers/gpu/drm/rockchip/Kconfig              |    1 +
->  drivers/gpu/drm/rockchip/Makefile             |    2 +-
->  drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c |  517 ++++++++
->  .../{inno_hdmi.h =3D> inno_hdmi-rockchip.h}     |   45 -
->  drivers/gpu/drm/rockchip/inno_hdmi.c          | 1073 -----------------
->  5 files changed, 519 insertions(+), 1119 deletions(-)
->  create mode 100644 drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
->  rename drivers/gpu/drm/rockchip/{inno_hdmi.h =3D> inno_hdmi-rockchip.h} =
-(85%)
->  delete mode 100644 drivers/gpu/drm/rockchip/inno_hdmi.c
->=20
-> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/=
-Kconfig
-> index 1bf3e2829cd0..cc6cfd5a30d6 100644
-> --- a/drivers/gpu/drm/rockchip/Kconfig
-> +++ b/drivers/gpu/drm/rockchip/Kconfig
-> @@ -74,6 +74,7 @@ config ROCKCHIP_DW_MIPI_DSI
-> =20
->  config ROCKCHIP_INNO_HDMI
->  	bool "Rockchip specific extensions for Innosilicon HDMI"
-> +	select DRM_INNO_HDMI
->  	help
->  	  This selects support for Rockchip SoC specific extensions
->  	  for the Innosilicon HDMI driver. If you want to enable
-> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip=
-/Makefile
-> index 3ff7b21c0414..4b2d0cba8db3 100644
-> --- a/drivers/gpu/drm/rockchip/Makefile
-> +++ b/drivers/gpu/drm/rockchip/Makefile
-> @@ -12,7 +12,7 @@ rockchipdrm-$(CONFIG_ROCKCHIP_ANALOGIX_DP) +=3D analogi=
-x_dp-rockchip.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) +=3D cdn-dp-core.o cdn-dp-reg.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI) +=3D dw_hdmi-rockchip.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) +=3D dw-mipi-dsi-rockchip.o
-> -rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) +=3D inno_hdmi.o
-> +rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) +=3D inno_hdmi-rockchip.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_LVDS) +=3D rockchip_lvds.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_RGB) +=3D rockchip_rgb.o
->  rockchipdrm-$(CONFIG_ROCKCHIP_RK3066_HDMI) +=3D rk3066_hdmi.o
-> diff --git a/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c b/drivers/gpu/=
-drm/rockchip/inno_hdmi-rockchip.c
-> new file mode 100644
-> index 000000000000..69d0e913e13b
-> --- /dev/null
-> +++ b/drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
-> @@ -0,0 +1,517 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-> + *    Zheng Yang <zhengyang@rock-chips.com>
-> + *    Yakir Yang <ykk@rock-chips.com>
-> + */
-> +
-> +#include <linux/irq.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/hdmi.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <drm/bridge/inno_hdmi.h>
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_edid.h>
-> +#include <drm/drm_of.h>
-> +#include <drm/drm_probe_helper.h>
-> +#include <drm/drm_simple_kms_helper.h>
-> +
-> +#include "rockchip_drm_drv.h"
-> +
-> +#include "inno_hdmi-rockchip.h"
-> +
-> +#define INNO_HDMI_MIN_TMDS_CLOCK  25000000U
-> +
-> +struct rk_inno_hdmi {
-> +	struct rockchip_encoder encoder;
-> +	struct inno_hdmi inno_hdmi;
-> +	struct clk *pclk;
-> +	struct clk *refclk;
-> +};
-> +
-> +static struct inno_hdmi *rk_encoder_to_inno_hdmi(struct drm_encoder *enc=
-oder)
-> +{
-> +	struct rockchip_encoder *rkencoder =3D to_rockchip_encoder(encoder);
-> +	struct rk_inno_hdmi *rk_hdmi =3D container_of(rkencoder, struct rk_inno=
-_hdmi, encoder);
-> +
-> +	return &rk_hdmi->inno_hdmi;
-> +}
-> +
-> +enum {
-> +	CSC_RGB_0_255_TO_ITU601_16_235_8BIT,
-> +	CSC_RGB_0_255_TO_ITU709_16_235_8BIT,
-> +	CSC_RGB_0_255_TO_RGB_16_235_8BIT,
-> +};
-> +
-> +static const char coeff_csc[][24] =3D {
-> +	/*
-> +	 * RGB2YUV:601 SD mode:
-> +	 *   Cb =3D -0.291G - 0.148R + 0.439B + 128
-> +	 *   Y  =3D 0.504G  + 0.257R + 0.098B + 16
-> +	 *   Cr =3D -0.368G + 0.439R - 0.071B + 128
-> +	 */
-> +	{
-> +		0x11, 0x5f, 0x01, 0x82, 0x10, 0x23, 0x00, 0x80,
-> +		0x02, 0x1c, 0x00, 0xa1, 0x00, 0x36, 0x00, 0x1e,
-> +		0x11, 0x29, 0x10, 0x59, 0x01, 0x82, 0x00, 0x80
-> +	},
-> +	/*
-> +	 * RGB2YUV:709 HD mode:
-> +	 *   Cb =3D - 0.338G - 0.101R + 0.439B + 128
-> +	 *   Y  =3D 0.614G   + 0.183R + 0.062B + 16
-> +	 *   Cr =3D - 0.399G + 0.439R - 0.040B + 128
-> +	 */
-> +	{
-> +		0x11, 0x98, 0x01, 0xc1, 0x10, 0x28, 0x00, 0x80,
-> +		0x02, 0x74, 0x00, 0xbb, 0x00, 0x3f, 0x00, 0x10,
-> +		0x11, 0x5a, 0x10, 0x67, 0x01, 0xc1, 0x00, 0x80
-> +	},
-> +	/*
-> +	 * RGB[0:255]2RGB[16:235]:
-> +	 *   R' =3D R x (235-16)/255 + 16;
-> +	 *   G' =3D G x (235-16)/255 + 16;
-> +	 *   B' =3D B x (235-16)/255 + 16;
-> +	 */
-> +	{
-> +		0x00, 0x00, 0x03, 0x6F, 0x00, 0x00, 0x00, 0x10,
-> +		0x03, 0x6F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10,
-> +		0x00, 0x00, 0x00, 0x00, 0x03, 0x6F, 0x00, 0x10
-> +	},
-> +};
-> +
-> +static struct inno_hdmi_phy_config rk3036_hdmi_phy_configs[] =3D {
-> +	{  74250000, 0x3f, 0xbb },
-> +	{ 165000000, 0x6f, 0xbb },
-> +	{      ~0UL, 0x00, 0x00 }
-> +};
-> +
-> +static struct inno_hdmi_phy_config rk3128_hdmi_phy_configs[] =3D {
-> +	{  74250000, 0x3f, 0xaa },
-> +	{ 165000000, 0x5f, 0xaa },
-> +	{      ~0UL, 0x00, 0x00 }
-> +};
-> +
-> +static int inno_hdmi_find_phy_config(struct inno_hdmi *hdmi,
-> +				     unsigned long pixelclk)
-> +{
-> +	const struct inno_hdmi_phy_config *phy_configs =3D hdmi->plat_data->phy=
-_configs;
-> +	int i;
-> +
-> +	for (i =3D 0; phy_configs[i].pixelclock !=3D ~0UL; i++) {
-> +		if (pixelclk <=3D phy_configs[i].pixelclock)
-> +			return i;
-> +	}
-> +
-> +	DRM_DEV_DEBUG(hdmi->dev, "No phy configuration for pixelclock %lu\n",
-> +		      pixelclk);
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static void inno_hdmi_standby(struct inno_hdmi *hdmi)
-> +{
-> +	inno_hdmi_sys_power(hdmi, false);
-> +
-> +	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, 0x00);
-> +	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, 0x00);
-> +	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x00);
-> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
-> +};
-> +
-> +static void inno_hdmi_power_up(struct inno_hdmi *hdmi,
-> +			       unsigned long mpixelclock)
-> +{
-> +	struct inno_hdmi_phy_config *phy_config;
-> +	int ret =3D inno_hdmi_find_phy_config(hdmi, mpixelclock);
-> +
-> +	if (ret < 0) {
-> +		phy_config =3D hdmi->plat_data->default_phy_config;
-> +		DRM_DEV_ERROR(hdmi->dev,
-> +			      "Using default phy configuration for TMDS rate %lu",
-> +			      mpixelclock);
-> +	} else {
-> +		phy_config =3D &hdmi->plat_data->phy_configs[ret];
-> +	}
-> +
-> +	inno_hdmi_sys_power(hdmi, false);
-> +
-> +	hdmi_writeb(hdmi, HDMI_PHY_PRE_EMPHASIS, phy_config->pre_emphasis);
-> +	hdmi_writeb(hdmi, HDMI_PHY_DRIVER, phy_config->voltage_level_control);
-> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x15);
-> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x14);
-> +	hdmi_writeb(hdmi, HDMI_PHY_SYS_CTL, 0x10);
-> +	hdmi_writeb(hdmi, HDMI_PHY_CHG_PWR, 0x0f);
-> +	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x00);
-> +	hdmi_writeb(hdmi, HDMI_PHY_SYNC, 0x01);
-> +
-> +	inno_hdmi_sys_power(hdmi, true);
-> +};
-> +
-> +static void inno_hdmi_reset(struct inno_hdmi *hdmi)
-> +{
-> +	u32 val;
-> +	u32 msk;
-> +
-> +	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_DIGITAL, v_NOT_RST_DIGITAL);
-> +	udelay(100);
-> +
-> +	hdmi_modb(hdmi, HDMI_SYS_CTRL, m_RST_ANALOG, v_NOT_RST_ANALOG);
-> +	udelay(100);
-> +
-> +	msk =3D m_REG_CLK_INV | m_REG_CLK_SOURCE | m_POWER | m_INT_POL;
-> +	val =3D v_REG_CLK_INV | v_REG_CLK_SOURCE_SYS | v_PWR_ON | v_INT_POL_HIG=
-H;
-> +	hdmi_modb(hdmi, HDMI_SYS_CTRL, msk, val);
-> +
-> +	inno_hdmi_standby(hdmi);
-> +}
-> +
-> +static int inno_hdmi_config_video_csc(struct inno_hdmi *hdmi)
-> +{
-> +	struct drm_connector *connector =3D &hdmi->connector;
-> +	struct drm_connector_state *conn_state =3D connector->state;
-> +	struct inno_hdmi_connector_state *inno_conn_state =3D
-> +					to_inno_hdmi_conn_state(conn_state);
-> +	int c0_c2_change =3D 0;
-> +	int csc_enable =3D 0;
-> +	int csc_mode =3D 0;
-> +	int auto_csc =3D 0;
-> +	int value;
-> +	int i;
-> +
-> +	/* Input video mode is SDR RGB24bit, data enable signal from external */
-> +	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL1, v_DE_EXTERNAL |
-> +		    v_VIDEO_INPUT_FORMAT(VIDEO_INPUT_SDR_RGB444));
-> +
-> +	/* Input color hardcode to RGB, and output color hardcode to RGB888 */
-> +	value =3D v_VIDEO_INPUT_BITS(VIDEO_INPUT_8BITS) |
-> +		v_VIDEO_OUTPUT_COLOR(0) |
-> +		v_VIDEO_INPUT_CSP(0);
-> +	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL2, value);
-> +
-> +	if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_RGB) {
-> +		if (inno_conn_state->rgb_limited_range) {
-> +			csc_mode =3D CSC_RGB_0_255_TO_RGB_16_235_8BIT;
-> +			auto_csc =3D AUTO_CSC_DISABLE;
-> +			c0_c2_change =3D C0_C2_CHANGE_DISABLE;
-> +			csc_enable =3D v_CSC_ENABLE;
-> +
-> +		} else {
-> +			value =3D v_SOF_DISABLE | v_COLOR_DEPTH_NOT_INDICATED(1);
-> +			hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
-> +
-> +			hdmi_modb(hdmi, HDMI_VIDEO_CONTRL,
-> +				  m_VIDEO_AUTO_CSC | m_VIDEO_C0_C2_SWAP,
-> +				  v_VIDEO_AUTO_CSC(AUTO_CSC_DISABLE) |
-> +				  v_VIDEO_C0_C2_SWAP(C0_C2_CHANGE_DISABLE));
-> +			return 0;
-> +		}
-> +	} else {
-> +		if (inno_conn_state->colorimetry =3D=3D HDMI_COLORIMETRY_ITU_601) {
-> +			if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_YUV444) {
-> +				csc_mode =3D CSC_RGB_0_255_TO_ITU601_16_235_8BIT;
-> +				auto_csc =3D AUTO_CSC_DISABLE;
-> +				c0_c2_change =3D C0_C2_CHANGE_DISABLE;
-> +				csc_enable =3D v_CSC_ENABLE;
-> +			}
-> +		} else {
-> +			if (inno_conn_state->enc_out_format =3D=3D HDMI_COLORSPACE_YUV444) {
-> +				csc_mode =3D CSC_RGB_0_255_TO_ITU709_16_235_8BIT;
-> +				auto_csc =3D AUTO_CSC_DISABLE;
-> +				c0_c2_change =3D C0_C2_CHANGE_DISABLE;
-> +				csc_enable =3D v_CSC_ENABLE;
-> +			}
-> +		}
-> +	}
-> +
-> +	for (i =3D 0; i < 24; i++)
-> +		hdmi_writeb(hdmi, HDMI_VIDEO_CSC_COEF + i,
-> +			    coeff_csc[csc_mode][i]);
-> +
-> +	value =3D v_SOF_DISABLE | csc_enable | v_COLOR_DEPTH_NOT_INDICATED(1);
-> +	hdmi_writeb(hdmi, HDMI_VIDEO_CONTRL3, value);
-> +	hdmi_modb(hdmi, HDMI_VIDEO_CONTRL, m_VIDEO_AUTO_CSC |
-> +		  m_VIDEO_C0_C2_SWAP, v_VIDEO_AUTO_CSC(auto_csc) |
-> +		  v_VIDEO_C0_C2_SWAP(c0_c2_change));
-> +
-> +	return 0;
-> +}
-> +
-> +static int inno_hdmi_setup(struct inno_hdmi *hdmi,
-> +			   struct drm_display_mode *mode)
-> +{
-> +	struct drm_display_info *display =3D &hdmi->connector.display_info;
-> +	unsigned long mpixelclock =3D mode->clock * 1000;
-> +
-> +	/* Mute video and audio output */
-> +	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
-> +		  v_AUDIO_MUTE(1) | v_VIDEO_MUTE(1));
-> +
-> +	/* Set HDMI Mode */
-> +	hdmi_writeb(hdmi, HDMI_HDCP_CTRL,
-> +		    v_HDMI_DVI(display->is_hdmi));
-> +
-> +	inno_hdmi_config_video_timing(hdmi, mode);
-> +
-> +	inno_hdmi_config_video_csc(hdmi);
-> +
-> +	if (display->is_hdmi)
-> +		inno_hdmi_config_video_avi(hdmi, mode);
-> +
-> +	/*
-> +	 * When IP controller have configured to an accurate video
-> +	 * timing, then the TMDS clock source would be switched to
-> +	 * DCLK_LCDC, so we need to init the TMDS rate to mode pixel
-> +	 * clock rate, and reconfigure the DDC clock.
-> +	 */
-> +	inno_hdmi_i2c_init(hdmi, mpixelclock);
-> +
-> +	/* Unmute video and audio output */
-> +	hdmi_modb(hdmi, HDMI_AV_MUTE, m_AUDIO_MUTE | m_VIDEO_BLACK,
-> +		  v_AUDIO_MUTE(0) | v_VIDEO_MUTE(0));
-> +
-> +	inno_hdmi_power_up(hdmi, mpixelclock);
-> +
-> +	return 0;
-> +}
->
+No, you are adding a binding based on your driver solution.
 
-It's kind of a general comment, but I don't think that's the right
-abstraction. You should create a inno_hdmi bridge that allows to
-supplement some of the atomic hooks, but not reimplement them entirely
-each time.
+Best regards,
+Krzysztof
 
-You can have a look at how dw-hdmi does it for example. Also, why do you
-still need the encoder and connectors?
-
-Maxime
-
---sz2tqw6l7ovh4mjb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZk2duwAKCRAnX84Zoj2+
-dkF2AX9jQnZV3sONCKFSJhi4lZ/Ymcq3X6xWZyt2lmjwp1iEsJhOqYHPKEqQQ6AM
-GoKkbb0BgI+VNaNW48TQaT/S1RTayRRJCu/a3d4teB5nzeFKgubg71rRHSYXQRsI
-YSGF1RP4Vw==
-=jc7l
------END PGP SIGNATURE-----
-
---sz2tqw6l7ovh4mjb--
 
