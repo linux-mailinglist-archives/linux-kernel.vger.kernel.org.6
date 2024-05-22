@@ -1,47 +1,51 @@
-Return-Path: <linux-kernel+bounces-185826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3198CBB94
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9EA8CBB9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0713CB21C3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A94C31C2164A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2C67C6C9;
-	Wed, 22 May 2024 06:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F27179B84;
+	Wed, 22 May 2024 06:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0iMaK/V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="07PPa+uj"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEC6763EE;
-	Wed, 22 May 2024 06:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD7F74E3D;
+	Wed, 22 May 2024 06:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716360591; cv=none; b=g2PzQ/pipeoD0IPZWDUv2uWxPJnMdnNFc6H6pheHS0v4H0h9AJ5EZAmD5wgMu1iSYy4kngv9e1QMd2pcgsj5KJ9ZJKZbgFG/t9mCAMzS82Bfe2IONrG/BJzG/PDzlKLiCRMsAYgPwgGCapiXafpEUfWgTxfxAk+EO8TJTED4mog=
+	t=1716360813; cv=none; b=sYhT41268BMXTp6JJ+XP8/0BzFSjENb8DhhojMq/50BcZxlI7sPqxcZ3rBW7fSnxEIpKMvaT/qryyb+k1BPotgNwdR6ZJ3zyREB5NbhhAcw3MjR0AsIIxUmahFePlxspnp4C4Ld5k1tm6GPg4TAk9vXg+VpfmQk5+T1CzmIU0lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716360591; c=relaxed/simple;
-	bh=GKIxfqewTLJtrl909K/lWYRo22JlV2kAJyJlmMIgcdk=;
+	s=arc-20240116; t=1716360813; c=relaxed/simple;
+	bh=0mAkOOhMcbnebMfj3VoT6zoaOWdTvUepTjv2NCjvS8w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S+MVE7RzmTRYErdJI+XKGyabM2qspwykuJ3WuBRybRVWxBCe/ZoLjecw3rXOnWksF0CnxSaGaw9qBCi2Prl/oRNOYOlm5vYK8M0O0l/jfd2QmCDfTnYqTdGMasC7vUbj7jyRvFVW3+aPkM4JP8iU37zABWgvcWVubaRr4fIyc90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0iMaK/V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F1E0C2BD11;
-	Wed, 22 May 2024 06:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716360590;
-	bh=GKIxfqewTLJtrl909K/lWYRo22JlV2kAJyJlmMIgcdk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G0iMaK/VQKUmVBS/mUPHbx5BAqNY2L/ABCvPvsS9rgGRHuVKv68sj3R5foOr2b2D3
-	 FTN7q4GRFuFDokzSvj/Uv9icsUNoN/n/UYEedheYjXUsWb0aKna2YlbmWzcJUju6CC
-	 nFUF3po1fEP83Vlu9rXp9LPfNnLZZxIYp017YN8gYClJFXj9DQhYsIHnNKeBF1wUfd
-	 KhzZz0U8FTJ1UHutaWA5EPPQ6UbNyudKv4mEibQIdWWFta2hNNIMe4CVN6hMICSQb7
-	 Fy3B+kXzA731ACzVlnKTOS0TzcEUlX1qZq9B9XXSHTU6GHMifwqltwnsOISMATltqd
-	 bRDkTio+eHHCw==
-Message-ID: <12896bf6-412c-40af-9ad5-f9391ff81f63@kernel.org>
-Date: Wed, 22 May 2024 08:49:43 +0200
+	 In-Reply-To:Content-Type; b=e+12mBVH6hbR+/Vtnf+o97DLfkM4sjC38cWkiEdhsRxvRANLqc09aaOihb/rvYVxRLC8kHFiRTTkfcPpEGl4qbXZ4K9KVL0XchMv54K53Yf/gv+HGQf983VVoQ4N9ghjppDxMnJK9rjC1pbJK3Cif2n6XtgiQO280i4tGiXs2/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=07PPa+uj; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=wCsD+31ajuIXtxvWN+GeqHb82CwWDjQT/JUQKKBx8cc=;
+	t=1716360811; x=1716792811; b=07PPa+ujrpvD6UaYCylsz8vC/xdLUMQjLuVopZkB5hEqOgn
+	XHiDqMzUz+nlVJcuNaSGP1NAPBPJc8HfrVPcrO6ZLEWNi8JGK8Lx97/4f6rEXoWzbAgF91Y6+Ssiq
+	Gyt3t2EKaNWiowdWYkq68X75eAbX0CZQunn3npGv4MjC5EmmojfFdbh79NuwYnudqbFUwOduUwFV2
+	k5qzSbCN4es2XM/X/KpmxOSsq1l3dc4SYeo1gyzOm8DM4vl+1WhWuHhQelM84dnp4lQXeL9pPwuVU
+	+/DOfhgjywGD6tT1Mda5Yl+c1oA188CuLcIX3uSnuG39rOt6lom9O6PuYjJnH/CA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1s9fqh-0008O2-FW; Wed, 22 May 2024 08:53:19 +0200
+Message-ID: <44151fe7-1822-4b95-8981-9a1f1884d662@leemhuis.info>
+Date: Wed, 22 May 2024 08:53:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,125 +53,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying
- mboxes instead of qcom,ipc
-To: Luca Weiss <luca@z3ntu.xyz>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz>
- <12437992.O9o76ZdvQC@g550jk>
- <06565532-987a-465a-b2ab-a03fce7279e1@kernel.org> <5780452.DvuYhMxLoT@g550jk>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <5780452.DvuYhMxLoT@g550jk>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+ entries
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Guenter Roeck <linux@roeck-us.net>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
+ <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
+ <ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk>
+ <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
+ <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
+ <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
+ <ZkhSOvkaAwsTe7Dm@shell.armlinux.org.uk>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <ZkhSOvkaAwsTe7Dm@shell.armlinux.org.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716360811;6e228e67;
+X-HE-SMSGID: 1s9fqh-0008O2-FW
 
-On 21/05/2024 22:35, Luca Weiss wrote:
-> On Dienstag, 21. Mai 2024 10:58:07 MESZ Krzysztof Kozlowski wrote:
->> On 20/05/2024 17:11, Luca Weiss wrote:
->>> Hi Krzysztof
+[CCing the regression list, as it should be in the loop for regressions:
+https://docs.kernel.org/admin-guide/reporting-regressions.html]
+
+On 18.05.24 09:01, Russell King (Oracle) wrote:
+> On Fri, May 17, 2024 at 08:24:19PM -0700, Guenter Roeck wrote:
+>> On 5/17/24 16:37, Russell King (Oracle) wrote:
+>>> On Fri, May 17, 2024 at 04:34:06PM -0700, Guenter Roeck wrote:
+>>>> On 5/17/24 15:22, Russell King (Oracle) wrote:
+>>>>> On Fri, May 17, 2024 at 03:09:12PM -0700, Guenter Roeck wrote:
+>>>>>> On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+>>>>>>> Report an error when an attempt to register a clkdev entry results in a
+>>>>>>> truncated string so the problem can be easily spotted.
+>>>>>>>
+>>>>>>> Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+>>>>>>> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+>>>>>>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>>>>>>
+>>>>>> With this patch in the mainline kernel, I get
+>>>>>>
+>>>>>> 10000000.clock-controller:corepll: device ID is greater than 24
+>>>>>> sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for corepll: -12
+>>>>>> sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
+>>>>>> sifive-clk-prci 10000000.clock-controller: probe with driver sifive-clk-prci failed with error -12
+>>>>>> ...
+>>>>>> platform 10060000.gpio: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>>>> platform 10010000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>>>> platform 10011000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>>>> platform 10040000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>>>> platform 10050000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>>>> platform 10090000.ethernet: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>>>>
+>>>>>> when trying to boot sifive_u in qemu.
+>>>>>>
+>>>>>> Apparently, "10000000.clock-controller" is too long. Any suggestion on
+>>>>>> how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
+>>>>>> for clk_hw_register_clkdev() is not or no longer a good idea.
+>>>>>> What else should be used instead ?
+>>>>>
+>>>>> It was *never* a good idea. clkdev uses a fixed buffer size of 20
+>>>>> characters including the NUL character, and "10000000.clock-controller"
+>>>>> would have been silently truncated to "10000000.clock-cont", and thus
+>>>>>
+>>>>>                           if (!dev_id || strcmp(p->dev_id, dev_id))
+>>>>>
+>>>>> would never have matched.
+>>>>>
+>>>>> We need to think about (a) whether your use of clk_hw_register_clkdev()
+>>>>> is still appropriate, and (b) whether we need to increase the size of
+>>>>> the strings.
+>>>>
+>>>> It isn't _my_ use, really. I only run a variety of boot tests with qemu.
+>>>> I expect we'll see reports from others trying to boot the mainline kernel
+>>>> on real sifive_u hardware or other hardware using the same driver or other
+>>>> drivers using dev_name() as dev_id parameter. Coccinelle finds the
+>>>> following callers:
 >>>
->>> Ack, sounds good.
+>>> Using dev_name() is not an issue. It's when dev_name() exceeds 19
+>>> characters that it becomes an issue (and always has been an issue
+>>> due to the truncation.) clk_get(dev, ...) uses dev_name(dev) to match
+>>> against its entry in the table.
 >>>
->>> Maybe also from you, any opinion between these two binding styles?
+>>> As I say, dev_name() itself is not an issue. The length used for the
+>>> name is.
 >>>
->>> So first using index of mboxes for the numbering, where for the known
->>> usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
->>>
->>> The second variant is using mbox-names to get the correct channel-mbox
->>> mapping.
->>>
->>> -               qcom,ipc-1 = <&apcs 8 13>;
->>> -               qcom,ipc-2 = <&apcs 8 9>;
->>> -               qcom,ipc-3 = <&apcs 8 19>;
->>> +               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
->>>
->>> vs.
->>>
->>> -               qcom,ipc-1 = <&apcs 8 13>;
->>> -               qcom,ipc-2 = <&apcs 8 9>;
->>> -               qcom,ipc-3 = <&apcs 8 19>;
->>> +               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
->>> +               mbox-names = "ipc-1", "ipc-2", "ipc-3";
 >>
->> Sorry, don't get, ipc-1 is the first mailbox, so why would there be <0>
->> in first case?
+>> Maybe, but the existence of best_dev_name() suggests that this has been seen
+>> before and that, as you mentioned, it is not a good idea. Anyway, the patch
+>> below fixes the problem for me. I don't know if it is acceptable / correct,
+>> so it might serve as guidance for others when fixing the problem for real.
 > 
-> Actually not, ipc-0 would be permissible by the driver, used for the 0th host
-> 
-> e.g. from:
-> 
-> 	/* Iterate over all hosts to check whom wants a kick */
-> 	for (host = 0; host < smsm->num_hosts; host++) {
-> 		hostp = &smsm->hosts[host];
-> 
-> Even though no mailbox is specified in any upstream dts for this 0th host I
-> didn't want the bindings to restrict that, that's why in the first example
-> there's an empty element (<0>) for the 0th smsm host
-> 
->> Anyway, the question is if you need to know that some
->> mailbox is missing. But then it is weird to name them "ipc-1" etc.
-> 
-> In either case we'd just query the mbox (either by name or index) and then
-> see if it's there? Not quite sure I understand the sentence..
-> Pretty sure either binding would work the same way.
+> I get the impression that there's a communication problem here, so I'm
+> not going to continue replying. Thanks.
 
-The question is: does the driver care only about having some mailboxes
-or the driver cares about each specific mailbox? IOW, is skipping ipc-0
-important for the driver?
+Hmmm. Communication problem aside, this in the end seems to be a
+regression that is caused by a change of yours. Maybe not a major one
+that is making a fuzz about, but still one that would be good to get
+fixed. So who will take care of that? Alternatively:
 
+Guenter, I assume we could simply fix this by reverting the culprit if
+Linus wanted to?
 
-Best regards,
-Krzysztof
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
+#regzbot poke
 
