@@ -1,133 +1,235 @@
-Return-Path: <linux-kernel+bounces-186040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3AA8CBF14
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AC28CBF18
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D821F22F14
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1C11F23327
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3123E81AC7;
-	Wed, 22 May 2024 10:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A745D81ADA;
+	Wed, 22 May 2024 10:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b="V2AzULBm";
-	dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b="I6xvTTPg"
-Received: from mx.bitactive.com (mx.bitactive.com [178.32.63.155])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LMGMBDev"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D11CD13
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.32.63.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C11E81AA7;
+	Wed, 22 May 2024 10:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716372810; cv=none; b=eODo/E+6yVg7WgnMMVVqcGC9ZhKJodM/HginVjBZsCGvBpHUbprj9J+Rd9jeMz2xMgWwyS/2DfKxUREz8eVjVlBj2QWOgoZv3AYijkO4Hbirj8qEZOXVrQXC/3sxEjiqkXWsn6GunY9dWzNeP9VRopaDQ0MgwasKBROX2VFAr2s=
+	t=1716372827; cv=none; b=gpkUWP4WLxxkc/i0t7QI//LBKu9/3k0MMhsS07l8GLK05u4EowhHWxy7I5DO6h3nuCy+1GYoPyCmf2kEmJOVkOdFPRqnLIv3y8zdA04U1C4ivUA6qDhymdjwXZcZE+3T87ctvoZfIgMkmHBn8WL0H+PDpkQWQuFn+iSU+d4ED+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716372810; c=relaxed/simple;
-	bh=f6uxh30zMm2VrV2fxQMmLGBXNp4mKz7OmD1+JtVasf0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type; b=uxdCWpTAzZlryaQtCvLtideVB29p1UN/YSlgQIkuMI+tbk3mTwXAEAcauq/5MqYzpITuhS2UosindNSr/Q4meYW9Rxcflx/nEInkx0yVUJiv7UR+dbUlOQOJAtsdtO0h6AXRuA8tTwaW9ioBwGyZlZg6ebVv2L7ESz1APuRpBQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marcinwanat.pl; spf=pass smtp.mailfrom=marcinwanat.pl; dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b=V2AzULBm; dkim=pass (2048-bit key) header.d=marcinwanat.pl header.i=@marcinwanat.pl header.b=I6xvTTPg; arc=none smtp.client-ip=178.32.63.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marcinwanat.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcinwanat.pl
-Received: by mx.bitactive.com (Postfix, from userid 1044)
-	id 4VknFD5NZrz7mgc; Wed, 22 May 2024 12:13:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marcinwanat.pl;
-	s=s2048; t=1716372800;
-	bh=vwogVyT1ERaJqCbtt35UMJYwBhprISHU+UzKOErpRZI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=V2AzULBmkBbI9nSndOmNy+octXyzb/U9BiEy/QL5uOZRBgH0zIUZjxkSLns+Fy+Uz
-	 8iRZWrX6tsTnrQQ5JQFmA09zFnRfh2ZfFyKbFtl30jn5+knOnOneRAyCau94izHf9Y
-	 Wr4EPCDrg2CLskc89HsiOZqEMu/DaG8QLn9NpkVY1+IRuulI+8HrXZblZN6DzVqh0J
-	 q5AJTgBRCDGQqPHTxo2bx6SweuoS3VmnYssR1D/yDkDMbhfosyt+JGJk+6SXbOkg6q
-	 eOlPgmM8uCTkKxqnoXRJjQpaV6WIzgYiHywUvXXdxB1wCuxYHze/xQL92I+HU9eJLh
-	 cGQ1uOOM6404g==
-X-Spam-Level: 
-X-Spam-Virus: No
-Message-ID: <b4883f83-9f5d-46b2-b30e-f2e78506bf30@marcinwanat.pl>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marcinwanat.pl;
-	s=s2048; t=1716372794;
-	bh=vwogVyT1ERaJqCbtt35UMJYwBhprISHU+UzKOErpRZI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=I6xvTTPgd8AbX5YRJV4/QLxDN2cp6/xs9z/YtVk3Dfl+0zUUWh61BNanaJ01aAKqJ
-	 YEVB27YWFa1YLIfKpMAuvauphmQUHWoQd5L/ftsOxlF7NPU46SwGUjVM1vK+O5vdY5
-	 qwhRmLwq1W6CL5dxcpT+TdV/Y5VDX3+AWfLEpSLmSDAi7Zc3UpckjDHdCvdqFO+nnB
-	 iZmoVozdyzkZGrMF9QMK6geNKj+pBZMqTrcVGkn1kCAkYHQCUipui6IJKNWnBzqtwb
-	 fRzPRGDYSUoRNBicZ/+d5y5TnbizkWChYSIH7xJax9bf3AVyNMZOfEYRRSjERfB7L2
-	 Ntqptwirdv4qw==
-Date: Wed, 22 May 2024 12:13:12 +0200
-Subject: Re: [PATCH 1/1] mm: protect xa split stuff under lruvec->lru_lock
- during migration
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Alex Shi <alexs@kernel.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Hugh Dickins <hughd@google.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-References: <20240412064353.133497-1-zhaoyang.huang@unisoc.com>
- <20240412143457.5c6c0ae8f6df0f647d7cf0be@linux-foundation.org>
- <CAGWkznHRyZDuumF=70DncgPHFM0+pgxuONh98Bykz5b-=rCjCQ@mail.gmail.com>
- <ZhxwIh2M8jr6IZaF@dread.disaster.area>
- <CAGWkznHDpw5Sw5pAfB=TdgRqsf=bmwUQ6+kvvLht3=wumNNo6Q@mail.gmail.com>
- <d9f7c779-acc0-4b8b-993e-e56e9475438e@marcinwanat.pl>
- <CAGWkznESMXeOhWnK93q1JJxhP0r4wR16cRJxiVzKZmM47GiEWw@mail.gmail.com>
- <CAGWkznEG78ppUXyoM2HKoo9MCOBJQaW=vSdSKDYXJj6kWH6zjA@mail.gmail.com>
- <2652f0c1-acc9-4288-8bca-c95ee49aa562@marcinwanat.pl>
- <CAGWkznE0psiqZYSRjF+Joq73--Yo-xUhGD0gnBa42fYC55BFdA@mail.gmail.com>
-Content-Language: en-US
-From: Marcin Wanat <private@marcinwanat.pl>
-In-Reply-To: <CAGWkznE0psiqZYSRjF+Joq73--Yo-xUhGD0gnBa42fYC55BFdA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.6 at mx.bitactive.com
-X-Virus-Status: Clean
+	s=arc-20240116; t=1716372827; c=relaxed/simple;
+	bh=1mP4oCCZIocHPEfXo/hwjMohvwOhWaSus8BGK7ZMHLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3SFXNbHHKCwyBWGyyUJDkLy0w7tkYPsTyu63rPb+clQzFzCciegRP2aU+V1v3sKG1sxE3PPihKOluZubBmlbRpIRJXLpUY9w7IwnAz+ttPW1S0Up1O2pc7CrEhtxF0bk8pHA4FMSBNVskpashn8mxwk98bIidY8Rtb0E5FuPwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LMGMBDev; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 70FBAFD6;
+	Wed, 22 May 2024 12:13:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1716372811;
+	bh=1mP4oCCZIocHPEfXo/hwjMohvwOhWaSus8BGK7ZMHLU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LMGMBDev4PAjWhtqVUMjdqFbaSJpAqgilatWhqlbIIY/WUBls4LzhOAnmggVXpziL
+	 8UROPQlZp2DW/GLFYwUAexLeOH/DpKJIpDOFG9wljMtXYZ6ZCAsKZF9e6ybbodcRE2
+	 L5OS7yQRtXmrygLrnKrPZYGUxubH0r6jBtyTlaUc=
+Date: Wed, 22 May 2024 13:13:35 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Clark Wang <xiaoning.wang@nxp.com>
+Subject: Re: [PATCH 5/5] pwm: adp5585: Add Analog Devices ADP5585 support
+Message-ID: <20240522101335.GE1935@pendragon.ideasonboard.com>
+References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
+ <20240520195942.11582-6-laurent.pinchart@ideasonboard.com>
+ <dl7a6puox5lc36fpto2fgyfgmpd3uboqc4lcfdtuaxzzsboqld@alw7vyi7pqjz>
+ <20240521100922.GF16345@pendragon.ideasonboard.com>
+ <xobmekjwqanow765yr42tsgknc5gc7szjublq6ywgbmoxovlr5@v3sofz5bmkol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xobmekjwqanow765yr42tsgknc5gc7szjublq6ywgbmoxovlr5@v3sofz5bmkol>
 
-On 22.05.2024 07:37, Zhaoyang Huang wrote:
-> On Tue, May 21, 2024 at 11:47 PM Marcin Wanat <private@marcinwanat.pl> wrote:
->>
->> On 21.05.2024 03:00, Zhaoyang Huang wrote:
->>> On Tue, May 21, 2024 at 8:58 AM Zhaoyang Huang <huangzhaoyang@gmail.com> wrote:
->>>>
->>>> On Tue, May 21, 2024 at 3:42 AM Marcin Wanat <private@marcinwanat.pl> wrote:
->>>>>
->>>>> On 15.04.2024 03:50, Zhaoyang Huang wrote:
->>>>> I have around 50 hosts handling high I/O (each with 20Gbps+ uplinks
->>>>> and multiple NVMe drives), running RockyLinux 8/9. The stock RHEL
->>>>> kernel 8/9 is NOT affected, and the long-term kernel 5.15.X is NOT affected.
->>>>> However, with long-term kernels 6.1.XX and 6.6.XX,
->>>>> (tested at least 10 different versions), this lockup always appears
->>>>> after 2-30 days, similar to the report in the original thread.
->>>>> The more load (for example, copying a lot of local files while
->>>>> serving 20Gbps traffic), the higher the chance that the bug will appear.
->>>>>
->>>>> I haven't been able to reproduce this during synthetic tests,
->>>>> but it always occurs in production on 6.1.X and 6.6.X within 2-30 days.
->>>>> If anyone can provide a patch, I can test it on multiple machines
->>>>> over the next few days.
->>>> Could you please try this one which could be applied on 6.6 directly. Thank you!
->>> URL: https://lore.kernel.org/linux-mm/20240412064353.133497-1-zhaoyang.huang@unisoc.com/
->>>
->>
->> Unfortunately, I am unable to cleanly apply this patch against the
->> latest 6.6.31
-> Please try below one which works on my v6.6 based android. Thank you
-> for your test in advance :D
+On Tue, May 21, 2024 at 03:05:53PM +0200, Uwe Kleine-König wrote:
+> Hello,
 > 
-> mm/huge_memory.c | 22 ++++++++++++++--------
->   1 file changed, 14 insertions(+), 8 deletions(-)
+> [dropping Alexandru Ardelean from Cc as their address bounces]
 > 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> On Tue, May 21, 2024 at 01:09:22PM +0300, Laurent Pinchart wrote:
+> > On Tue, May 21, 2024 at 10:51:26AM +0200, Uwe Kleine-König wrote:
+> > > On Mon, May 20, 2024 at 10:59:41PM +0300, Laurent Pinchart wrote:
+> > > > +	ret = regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
+> > > > +				 ADP5585_OSC_EN, ADP5585_OSC_EN);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	return 0;
+> > > 
+> > > The last four lines are equivalent to
+> > > 
+> > > 	return ret;
+> > 
+> > I prefer the existing code but can also change it.
+> 
+> Well, I see the upside of your approach. If this was my only concern I
+> wouldn't refuse to apply the patch.
 
-I have compiled 6.6.31 with this patch and will test it on multiple 
-machines over the next 30 days. I will provide an update after 30 days 
-if everything is fine or sooner if any of the hosts experience the same 
-soft lockup again.
+While I have my preferences, I also favour consistency, so I'm happy to
+comply with the preferred coding style for the subsystem :-) I'll
+update this in the next version.
+
+> > > > +	regmap_update_bits(adp5585_pwm->regmap, ADP5585_GENERAL_CFG,
+> > > > +			   ADP5585_OSC_EN, 0);
+> > > > +}
+> > > > +
+> > > > +static int pwm_adp5585_apply(struct pwm_chip *chip,
+> > > > +			     struct pwm_device *pwm,
+> > > > +			     const struct pwm_state *state)
+> > > > +{
+> > > > +	struct adp5585_pwm_chip *adp5585_pwm = to_adp5585_pwm_chip(chip);
+> > > > +	u32 on, off;
+> > > > +	int ret;
+> > > > +
+> > > > +	if (!state->enabled) {
+> > > > +		guard(mutex)(&adp5585_pwm->lock);
+> > > > +
+> > > > +		return regmap_update_bits(adp5585_pwm->regmap, ADP5585_PWM_CFG,
+> > > > +					  ADP5585_PWM_EN, 0);
+> > > > +	}
+> > > > +
+> > > > +	if (state->period < ADP5585_PWM_MIN_PERIOD_NS ||
+> > > > +	    state->period > ADP5585_PWM_MAX_PERIOD_NS)
+> > > > +		return -EINVAL;
+> > > 
+> > > Make this:
+> > > 
+> > > 	if (state->period < ADP5585_PWM_MIN_PERIOD_NS)
+> > > 		return -EINVAL;
+> > > 
+> > > 	period = min(ADP5585_PWM_MAX_PERIOD_NS, state->period)
+> > > 	duty_cycle = min(period, state->period);
+> > 
+> > I haven't been able to find documentation about the expected behaviour.
+> > What's the rationale for returning an error if the period is too low,
+> > but silently clamping it if it's too high ?
+> 
+> Well, it's only implicitly documented in the implementation of
+> PWM_DEBUG. The reasoning is a combination of the following thoughts:
+> 
+>  - Requiring exact matches is hard to work with, so some deviation
+>    between request and configured value should be allowed.
+>  - Rounding in both directions has strange and surprising effects. The
+>    corner cases (for all affected parties (=consumer, lowlevel driver
+>    and pwm core)) are easier if you only round in one direction.
+>    One ugly corner case in your suggested patch is:
+>    ADP5585_PWM_MAX_PERIOD_NS corresponds to 0xffff clock ticks.
+>    If the consumer requests period=64000.2 clock ticks, you configure
+>    for 64000. If the consumer requests period=65535.2 clock ticks you
+>    return -EINVAL.
+>    Another strange corner case is: Consider a hardware that can
+>    implement the following periods 499.7 ns, 500.2 ns, 500.3 ns and then
+>    only values >502 ns.
+>    If you configure for 501 ns, you'd get 500.3 ns. get_state() would
+>    tell you it's running at 500 ns. If you then configure 500 ns you
+>    won't get 500.3 ns any more.
+>  - If you want to allow 66535.2 clock ticks (and return 65535), what
+>    should be the maximal value that should yield 65535? Each cut-off
+>    value is arbitrary, so using \infty looks reasonable (to me at
+>    least).
+>  - Rounding down is easier than rounding up, because that's what C's /
+>    does. (Well, this is admittedly a bit arbitrary, because if you round
+>    down in .apply() you have to round up in .get_state().)
+
+Thank you for the detailed explanation.
+
+> > > round-closest is wrong. Testing with PWM_DEBUG should point that out.
+> > > The right algorithm is:
+> > > 
+> > > 	on = duty_cycle / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ)
+> > > 	off = period / (NSEC_PER_SEC / ADP5585_PWM_OSC_FREQ_HZ) - on
+> > > 
+> > > 
+> > > > +	if (state->polarity == PWM_POLARITY_INVERSED)
+> > > > +		swap(on, off);
+> > > 
+> > > Uhh, no. Either you can do inverted polarity or you cannot. Don't claim
+> > > you can.
+> > 
+> > OK, but what's the rationale ? This is also an area where I couldn't
+> > find documentation.
+> 
+> I don't have a good rationale here. IMHO this inverted polarity stuff is
+> only a convenience for consumers because the start of the period isn't
+> visible from the output wave form (apart from (maybe) the moment where
+> you change the configuration) and so
+> 
+> 	.period = 5000, duty_cycle = 1000, polarity = PWM_POLARITY_NORMAL
+> 
+> isn't distinguishable from
+> 
+> 	.period = 5000, duty_cycle = 4000, polarity = PWM_POLARITY_INVERSED
+> 
+> . But it's a historic assumption of the pwm core that there is a
+> relevant difference between the two polarities and I want at least a
+> consistent behaviour among the lowlevel drivers. BTW, this convenience
+> is the reason I'm not yet clear how I want to implemement a duty_offset.
+
+Consistency is certainly good. Inverting the duty cycle to implement
+inverted polarity would belong in the PWM core if we wanted to implement
+it in software I suppose. I'll drop it from the driver.
+
+> > > > +	ret = devm_pwmchip_add(&pdev->dev, &adp5585_pwm->chip);
+> > > > +	if (ret) {
+> > > > +		mutex_destroy(&adp5585_pwm->lock);
+> > > > +		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
+> > > > +	}
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static void adp5585_pwm_remove(struct platform_device *pdev)
+> > > > +{
+> > > > +	struct adp5585_pwm_chip *adp5585_pwm = platform_get_drvdata(pdev);
+> > > > +
+> > > > +	mutex_destroy(&adp5585_pwm->lock);
+> > > 
+> > > Huh, this is a bad idea. The mutex is gone while the pwmchip is still
+> > > registered. AFAIK calling mutex_destroy() is optional, and
+> > > adp5585_pwm_remove() can just be dropped. Ditto in the error paths of
+> > > .probe().
+> > 
+> > mutex_destroy() is a no-op when !CONFIG_DEBUG_MUTEXES. When the config
+> > option is selected, it gets more useful. I would prefer moving away from
+> > the devm_* registration, and unregister the pwm_chip in .remove()
+> > manually, before destroying the mutex.
+> 
+> In that case I'd prefer a devm_mutex_init()?!
+
+Maybe that would be useful :-) Let's see if I can drop the mutex though.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
