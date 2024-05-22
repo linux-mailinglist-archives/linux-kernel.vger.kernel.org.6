@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-185940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4828CBD18
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:38:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5818CBD1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 463A02815C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C6F11C21229
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C967E782;
-	Wed, 22 May 2024 08:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CBF7FBBE;
+	Wed, 22 May 2024 08:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HcYERscd"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RRJ8dHUr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244F37FBA2
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689B47710B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716367125; cv=none; b=WZ7QVkTiW3TWGkApU1uQ4u//EEkMRLXKd4nT1HF+jX+E1f1aOYL1tOk80mjbFApzxsVNq67EU3FFweQ4PIY5In1JsvQQXs+XKbFEDdLgqMMiHXot7Woa3DSJny6oGkzVRFr+kc6O/X6i2V7f/jpq1qtEgcueeL0lqDLdd6lcxKA=
+	t=1716367137; cv=none; b=C3BeLQ4pKOSjH9Xw0qE0/gUgvgyhgUE63bI4X4UTJJfN/pf3pBBHJff1J8DvolkKiHedgS9aMqG72sn4MXJCqSJZ5ytWxQd66Am3ge1DW/fwGe7y7iN2U/ej2vBTLFnsESlNitDK3HBAjyC5RUO7lcCGfJk/5b2sz22xLmVT/M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716367125; c=relaxed/simple;
-	bh=UUF1Xl3WF/inRUVbCOLgMd/fbD1vWfQB+LFC7jXVyy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IFpB82fZztdklHWXV9nuEaVqrkuCk+H2SG4sC2n+QoJ7/fCPn6WXqleu1eBrdjh6a8T8h2LRrw/ezjV/BCqBMEbFnHt2Zcki0GPCeweZ4lTfBRHnwgGWqcV34P/ohSW8OB72Wx2+7Zbn/N2TDpXCLxOB7espCgxPrtM6EERiTQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HcYERscd; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso11956a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 01:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716367122; x=1716971922; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=m+G67b4GxIThbEafe87WEoBwf+8+QKS2G2eyvZIlV5E=;
-        b=HcYERscdHmNwFiGCriBRIuSZu3R7fTkcZfYGgArgGupJaW15Hs55T5q3BYApokuC3F
-         y9myIM50uMcGHo7W+8VjKbmAVcGOofKn3WqPBv1BU+VHVADhw74mO/fSSlcinAW0rWHh
-         BpuIAq4E3FmpNxRe7WDV4IdBvAm281HybSwyOpvbXPcjE2ppiDGboNJ2CvEhvBrcj8ng
-         hozjtqMTJvxeYTnsJlDSsT6OANXpA3WIxtUHb/9qqL1YB4MFnNuyWfduLi2nr5W/w/Pk
-         OsxHh+YrTfbk8umyzztXZIGo5pX09v93VFK67xei3iUEfMhaXXPaC31S8iqrkAndcd4P
-         Nf3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716367122; x=1716971922;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m+G67b4GxIThbEafe87WEoBwf+8+QKS2G2eyvZIlV5E=;
-        b=KvVLHuf0beiinae48Ir14ZAGrN+wMfMDuWeVG9BJ2OiXBzZaJDmz8P+/1Czzifl5sy
-         FoVblyG4I6ek9DinCdudRXgmUaRui/sDiRqwAReXmzKm2PAfdUHqeqjgLuCJVTARF360
-         gjPLi6VXwsB1i1+YfetBdOt381wNCLdg6JKtzkg93l4LcMidxGLD8FP6VCG90mfQU5D6
-         uRFzEcYDbnI+sKiff8v3YwdEYaRLkODmpi9e3vfwJj5IuH9RILH/0pnrU9FZ7sEi8OyF
-         j7CnMLZqetaWbUXKMF+cWLSlKp5zR6IbP2F2GJedXVFe6ySCoKYALEjgwwSwEkR+pnJO
-         Qu1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFZNmRGzDOLR4jR1IQUCbLghP2ZnbTCA/Vxy5sgxX2ATrRpLW84ZkPsjEh/XXMt9uf1Nnf04UyeRqkbUFBflm990dm8th99UhxULQM
-X-Gm-Message-State: AOJu0YygptOdEWyzK3Aw2DJSn7rEjmnZwwaLzj7DTAAm8LXEsj/Prly9
-	CUrXOuUeBsB+mgJge1gnwv0ufTfuAoAzZiJJ57JM1LB5MlOYvk12p4wtz/TZRw==
-X-Google-Smtp-Source: AGHT+IHH7O6UHB3CPQsag/IvObOgeU2NNagvZ48JB2VhjbHMXHJqB6094MVSZkbPabRRQ/efkorrQQ==
-X-Received: by 2002:a05:6402:2904:b0:578:33c0:f00e with SMTP id 4fb4d7f45d1cf-57833c0f3a4mr63801a12.0.1716367122156;
-        Wed, 22 May 2024 01:38:42 -0700 (PDT)
-Received: from google.com (49.240.189.35.bc.googleusercontent.com. [35.189.240.49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354f1664c7dsm275885f8f.86.2024.05.22.01.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 01:38:41 -0700 (PDT)
-Date: Wed, 22 May 2024 08:38:37 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: Lance Yang <ioworker0@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@suse.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] mm,memory_hotplug: {READ,WRITE}_ONCE unsynchronized
- zone data
-Message-ID: <Zk2vDeQ3feZ3hsf0@google.com>
-References: <20240521-mm-hotplug-sync-v1-0-6d53706c1ba8@google.com>
- <20240521-mm-hotplug-sync-v1-2-6d53706c1ba8@google.com>
- <CABzRoyZXq3u4DYxO39Fcezo56HAbkNh6xLuK9jnuiNK5gVmV1w@mail.gmail.com>
+	s=arc-20240116; t=1716367137; c=relaxed/simple;
+	bh=/RnVnFs+KBCUyJM9I5ehIQyQQbahNe1uMoXF8W9mSLQ=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=W2uJZL54DKNbpjQb/bbeknDr+oA2JBYeP+PMZeO/2vws+zuOtEzorxCkfScKkw5EySZfzOIsuowWZgd8e9bFjJNLUgeXnX3nvW6p9VnIZH8GQqLtZJT+gaDTbMox3muS0rrKo3P4iszcIoZhcQ2SVyS7+pMAyvLkp5owGXMYGls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RRJ8dHUr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716367135;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yQwhx3neX6nMoV4M7dECoGraKOSt02xj+EKmgIl1zZ4=;
+	b=RRJ8dHUrSEpnEuDi1h+4sD/zDB69TgocZ3p4x46UABflA4SPACvMcxk17skwDwOCI54Flp
+	4fNd+gzyCBgtBPDD/q1fWFYzfwZKoUVrWQWMYD5UKYq6OxtvkG5V2+IeaDrnjLzquDbirw
+	vikS+cCoc2zdN7TKDgtVfq+96E8FxI4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-311-hqowDmYNMsW252bSaIgkLQ-1; Wed, 22 May 2024 04:38:51 -0400
+X-MC-Unique: hqowDmYNMsW252bSaIgkLQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 07227101A52C;
+	Wed, 22 May 2024 08:38:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 419C3200A35C;
+	Wed, 22 May 2024 08:38:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Steve French <sfrench@samba.org>
+cc: dhowells@redhat.com, Shyam Prasad N <nspmangalore@gmail.com>,
+    Rohith Surabattula <rohiths.msft@gmail.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Christian Brauner <brauner@kernel.org>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Fix smb3_insert_range() to move the zero_point
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABzRoyZXq3u4DYxO39Fcezo56HAbkNh6xLuK9jnuiNK5gVmV1w@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <367855.1716367128.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 22 May 2024 09:38:48 +0100
+Message-ID: <367856.1716367128@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-Hi Lance, thanks for taking a look.
+Fix smb3_insert_range() to move the zero_point over to the new EOF.
+Without this, generic/147 fails as reads of data beyond the old EOF point
+return zeroes.
 
-On Wed, May 22, 2024 at 12:25:30PM +0800, Lance Yang wrote:
-> Hi Brendan,
-> 
-> On Tue, May 21, 2024 at 8:57 PM Brendan Jackman <jackmanb@google.com> wrote:
-> > @@ -1077,7 +1081,7 @@ void adjust_present_page_count(struct page *page, struct memory_group *group,
-> >          */
-> >         if (early_section(__pfn_to_section(page_to_pfn(page))))
-> >                 zone->present_early_pages += nr_pages;
-> > -       zone->present_pages += nr_pages;
-> > +       WRITE_ONCE(zone->present_pages, zone->present_pages + nr_pages);
-> 
-> I'm not sure that using the WRITE_ONCE() wrapper would prevent load tearing
-> on 'zone->present_pages', but it's probably just me overthinking it :)
+Fixes: 3ee1a1fc3981 ("cifs: Cut over to using netfslib")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+---
+ fs/smb/client/smb2ops.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Hmm.. this isn't for load-tearing, it's for store-tearing. I have a
-feeling I might be missing your pont here though, can you elaborate?
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index ef18cd30f66c..b87b70edd0be 100644
+--- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -3636,6 +3636,7 @@ static long smb3_insert_range(struct file *file, str=
+uct cifs_tcon *tcon,
+ 	rc =3D smb2_copychunk_range(xid, cfile, cfile, off, count, off + len);
+ 	if (rc < 0)
+ 		goto out_2;
++	cifsi->netfs.zero_point =3D new_eof;
+ =
 
-I have just noticed that the original "big bad optimizing compiler"
-article[1] only says store-tearing has been observed in the wild when
-the value being stored can be split into immediates (i.e. is
-constant). But it doesn't really seem wise to rely on that. From what
-I can tell from tools/memory-model/Documentation you are really out in
-the wild with unmarked accesses.
+ 	rc =3D smb3_zero_data(file, tcon, off, len, xid);
+ 	if (rc < 0)
 
-[1] https://lwn.net/Articles/793253
 
