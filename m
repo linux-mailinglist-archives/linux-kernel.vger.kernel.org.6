@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-185698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A818CB902
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:39:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FD08CB903
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7019D282CD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:39:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4F7AB21EDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E326757E3;
-	Wed, 22 May 2024 02:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F58339A8;
+	Wed, 22 May 2024 02:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDHH/GXu"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qpx3mrnv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8317573189;
-	Wed, 22 May 2024 02:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E01168DA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716345570; cv=none; b=uSp0mDfLS0orOgZsfkCCsEvC+o301xCyY7/toFAj/mKm4guFdoWqLF3Q8YedhboMS6y+qcgY5lcCQje+GezpzyIELgbvUd6R/Ol+3kIYl2rbS1wDN4FDt025zhyufKzJYicu12CJb2+Odc6bGxL20vNyxkCoZw0vcSuDofhcSSI=
+	t=1716345889; cv=none; b=d8DboIMMfp67vu9vyVIbMg9Ss1XyauBnJpLTIIN0bkpcxund+xgVeh1IR4aWlgT99lMzxJOp3r0IzpwLuMmM0eGNuP0yj1tG6CXu2mZf9U66puSaljv9ZUnbjUxE3LvphykpyOQ90ZETP8mg1kXtT4slBQlFZMGNmjElsuFoFro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716345570; c=relaxed/simple;
-	bh=5vYKAz0vYuM7ZmedsvMTR6TOI29PHirgtV9WSXn22lg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i2f9jZUG+6g8MGQxoGRM9lFyL8ZL+LYXcW8W7JCixgJUBzCNB9vk7QGw6INo3pi+AH49q+zpOALTLA/M0yIraCpYlPJprtvDNMm9wL1z1TcUiGFArZ3O4J/gRPuZwr+H+iQkPvRAvee1C/OFVkEvKjrzv9BjEeVSboJWdxXC754=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDHH/GXu; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2bda88e2b23so34492a91.1;
-        Tue, 21 May 2024 19:39:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716345569; x=1716950369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HhRERJ2JMt78LFDeSWT8MFFp6Nkr6mefqh6SZ/M3HyM=;
-        b=MDHH/GXuMHtbCxmeNmt2c5YQgmVnqgyFx6lAeMaFKPqvy16xZrj4Yc9GMuB6eSLUk2
-         QHP5WmCgqmBDvH7KicFQjdoGyustIY45zNtR8K2nTuKh33R4IXLeOoKL80IyWdU1XimR
-         Fqk9/Y6+o7X2X147mKY2yQtCESLZOAGmbGLLVALBxI4aFG0oKn5efHKDyxSIrMtEK/GD
-         ijkKMV4bPA6dKwqXny1Actp71sutFM8LzYXQGLvi9yzdmXaI2IJ7uBaOqOCZXm7uOlTi
-         J2wpsDvWzpoR28rs3JFa7Ru0ncrcc5vGvFOnWPXr4vVWKi53T3w/W1hssBZ11cXB+S6j
-         qV+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716345569; x=1716950369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HhRERJ2JMt78LFDeSWT8MFFp6Nkr6mefqh6SZ/M3HyM=;
-        b=UEJ7WBeHThg8+0MhCkApt+66tYgtqOG2QwZfHaVOUT5ix7AfFDA0pKCdFco0jbnSVY
-         N5r6Tl/eHtQ8kSdnsXUxF16ehd3Wwrurwnl9N9xSa4qAvscwabTmKb4dT6R5MONJw8+e
-         SvwajGNurkQjFq9ifXPS6dfl/F5NnRZg80/igRmateLzF6CxFIR/pJjyyWrpgbRvcv46
-         c4CLTAplnz3+mvvW/VkoaeOjrIQCAT5l7Ess8Wkkj2/iHr2PzBQjbqnQp2hC27rcHwDS
-         p59RJnVFDFBXWPVjSVMGTvOayE/QypRNhFNuPr0gywWU5yz3sjueOU1eOuTP/+A91z1z
-         lQ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWVCsi2bop6HUE3sLKPfyyGR2vXnkorYP9VhMrPhEQu8foY5ULXCBjbt9NGl/nD7wjeEhSnxtZ+oy6mQ+WhMfw1ShzUa7ElqM9Ju7YY
-X-Gm-Message-State: AOJu0YzN6+ugDqUhlcQ9LHNe2QTsB2c67IjhAcs8hpFeMludnOCFe198
-	/y0anaj2eCy0TYJR0SiVvkib+GBlJm7rVLF9CPiIw5FJoeIn968x
-X-Google-Smtp-Source: AGHT+IGDovZdlgBmcAC2bcCcTpreEMoPAy9xWW4vdpGDARNp9iaeOZMWNHMjKnjkRWNq6bMsXdtXrw==
-X-Received: by 2002:a17:90b:10f:b0:2ac:69b:886b with SMTP id 98e67ed59e1d1-2bd9f4688c7mr887237a91.1.1716345568820;
-        Tue, 21 May 2024 19:39:28 -0700 (PDT)
-Received: from localhost.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b973234901sm14593157a91.19.2024.05.21.19.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 May 2024 19:39:28 -0700 (PDT)
-From: Kuangyi Chiang <ki.chiang65@gmail.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ki.chiang65@gmail.com
-Subject: [PATCH 1/2] xhci: Apply reset resume quirk to Etron EJ188 xHCI host
-Date: Wed, 22 May 2024 10:39:18 +0800
-Message-Id: <20240522023918.7613-2-ki.chiang65@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240522023918.7613-1-ki.chiang65@gmail.com>
-References: <20240522023918.7613-1-ki.chiang65@gmail.com>
+	s=arc-20240116; t=1716345889; c=relaxed/simple;
+	bh=huhjTH5GzNM7RVVLwwLnShp+NRi1N4SW8y0eQ50p21I=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=NOX2pX/tUUTMtRKyvPg03qjPe8iUGB0zMjor/XpDIeOfFIdkhLzcnWJD8NcJSTZuKF8Ex2IKj8X7RUYnkR2i4LhFv1KGurD4kGcNvAT/OKP2TvFYTleD5oGQwbYylDpiICqFDmp/+pjKxxJMXuLlbzqDApKxXG9drcyiUI+dNfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qpx3mrnv; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716345887; x=1747881887;
+  h=date:from:to:cc:subject:message-id;
+  bh=huhjTH5GzNM7RVVLwwLnShp+NRi1N4SW8y0eQ50p21I=;
+  b=Qpx3mrnv4cZJWyO/owPCAJE5Cg8y1jg3Sz/+yQ5/zjQKJejDKa7eJkpD
+   VPHNqB0UL9HVdaIQ8Zyr3GpxWDEqebzssRPJzdev6pPlAbLZQdr6QtwkZ
+   OEruiiaN3qiGJ+XPVhQm8vfP2+L06/KYSLzFcYk4v2Zn66Loet6/evxSu
+   h4VFWNcrSyoSb0UyinA2GZ0wdB0MaNEmL4lB+ge9sileZkmaw4Ailu6x0
+   LcZaqVM3dRUqR1DjnpRxbFcCfpzC5q161/TnKUtrA6/z/GlnSffUWBtj2
+   X+TGsC3TCN3RehtUeFtFS6z09185imFKjTbxtMJxuKQrKc6brD/Tr6/Jj
+   g==;
+X-CSE-ConnectionGUID: misbYX1KRteknLLFSswSGQ==
+X-CSE-MsgGUID: tf42JtjGQvmMRRP8LuQeSg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12686945"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="12686945"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 19:44:47 -0700
+X-CSE-ConnectionGUID: RWqxMgYQTCSzM/FZvp/fHQ==
+X-CSE-MsgGUID: 50GvMBB0RrO1KkJx9R53Nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="33552738"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 21 May 2024 19:44:46 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s9by6-0000xv-1y;
+	Wed, 22 May 2024 02:44:42 +0000
+Date: Wed, 22 May 2024 10:43:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 9d22c96316ac59ed38e80920c698fed38717b91b
+Message-ID: <202405221055.i7h3ifZq-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-As described in commit c877b3b2ad5c ("xhci: Add reset on resume quirk for
-asrock p67 host"), EJ188 have the same issue as EJ168, where completely
-dies on resume. So apply XHCI_RESET_ON_RESUME quirk to EJ188 as well.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 9d22c96316ac59ed38e80920c698fed38717b91b  x86/topology: Handle bogus ACPI tables correctly
 
-Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
----
- drivers/usb/host/xhci-pci.c | 5 +++++
- 1 file changed, 5 insertions(+)
+elapsed time: 726m
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index ef513c2..a0beb41 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -31,6 +31,7 @@
- 
- #define PCI_VENDOR_ID_ETRON		0x1b6f
- #define PCI_DEVICE_ID_EJ168		0x7023
-+#define PCI_DEVICE_ID_EJ188		0x7052
- 
- #define PCI_DEVICE_ID_INTEL_LYNXPOINT_XHCI	0x8c31
- #define PCI_DEVICE_ID_INTEL_LYNXPOINT_LP_XHCI	0x9c31
-@@ -238,6 +239,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
- 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
- 		xhci->quirks |= XHCI_BROKEN_STREAMS;
- 	}
-+	if (pdev->vendor == PCI_VENDOR_ID_ETRON &&
-+			pdev->device == PCI_DEVICE_ID_EJ188) {
-+		xhci->quirks |= XHCI_RESET_ON_RESUME;
-+	}
- 	if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
- 	    pdev->device == 0x0014) {
- 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
+configs tested: 26
+configs skipped: 135
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240522   clang
+i386         buildonly-randconfig-002-20240522   clang
+i386         buildonly-randconfig-003-20240522   gcc  
+i386         buildonly-randconfig-004-20240522   clang
+i386         buildonly-randconfig-005-20240522   clang
+i386         buildonly-randconfig-006-20240522   gcc  
+i386                                defconfig   clang
+i386                  randconfig-001-20240522   clang
+i386                  randconfig-002-20240522   clang
+i386                  randconfig-003-20240522   clang
+i386                  randconfig-004-20240522   clang
+i386                  randconfig-005-20240522   clang
+i386                  randconfig-006-20240522   clang
+i386                  randconfig-011-20240522   clang
+i386                  randconfig-012-20240522   gcc  
+i386                  randconfig-013-20240522   gcc  
+i386                  randconfig-014-20240522   gcc  
+i386                  randconfig-015-20240522   gcc  
+i386                  randconfig-016-20240522   gcc  
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64                              defconfig   gcc  
+x86_64                          rhel-8.3-rust   clang
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
