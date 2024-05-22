@@ -1,182 +1,206 @@
-Return-Path: <linux-kernel+bounces-186393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D32F8CC39F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F1C8CC3A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41FC528368E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E211A283D24
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B698F2135A;
-	Wed, 22 May 2024 14:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 208BC22331;
+	Wed, 22 May 2024 14:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RR8qWjsc"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGq/vWpx"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AFC1CD16;
-	Wed, 22 May 2024 14:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3A20DC3;
+	Wed, 22 May 2024 14:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716389884; cv=none; b=MnogDyaDJl/WtcdK0RM4DI0/HQ2REjd3rL2lY4ENcDUTE04B/+FCvScejk109Z0SOOflk+O12EG7sqNobYaLKSujp1Ekmkuz/zmGE8jvuhgSGZiCBtfcEM5nBkMzgwXT2k07xQiDBKLVtGlzm/oH6pH5BYUnk9K2JF0WrP1vLzw=
+	t=1716389905; cv=none; b=MIMoj1RBYpcSJl5H1JX86fbqre2zwSAUSLNv1w5HXcdDvc8uWUZ85vZ5hf6hOu+6TTdsP8MWDtj0ydzbmrIyFHxWKyHujtgQT2v4X0J9r1zS4gyoNBs8pVxtKM1JkBLxxx8Kc8FKYxGCRIpdwuee62HZH5HjYEKcZSgCx7U04MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716389884; c=relaxed/simple;
-	bh=sNIJpRfP4ZNAO3JZryCVD2MT1kP8J4iERxQvnvO9sG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kINKROJsWxcK6W+snX/vNQI/SlU3JwDai1V8WNYhIo7P/T46N/PBQS1lORA3TjKSxKBfhQrlZgzzviSu49HCs56AK8AJ68TwBZ7hsgpsbkBdVWPb2ssvL9I33dRauNrF5CWwsAPi12SKLyrtlFdF+fn+lAvVP1iOiegyBvA11Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RR8qWjsc; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1716389905; c=relaxed/simple;
+	bh=XN9q7pfoZyp2ltqc8vW26QnT8MPfP4Q9y9CZKqpIp2Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jDFJ3ZwdQQp0+ddfmjlIv23yohJQw34k/VLTSAhyBNmJMx7XL+GYGe5ZoKMLhyG2jOFmijnYK/L4kHNs+CLumQUBCSrJkcAV7LxWBGwuo79+Oq0ZTiOT8UfNHOgGqMRRnKUJS556XIWOO5f3sS/6PObLGnz2iKWg0lyXNQepkeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DGq/vWpx; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4202cea9a2fso8572845e9.3;
-        Wed, 22 May 2024 07:58:02 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-351b683f2d8so731274f8f.3;
+        Wed, 22 May 2024 07:58:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716389880; x=1716994680; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L+dDeIIv4/uhDcs1sA4p7D8qsofH0JyJ1gi8ixGWHQQ=;
-        b=RR8qWjscOEWGd/zTC5iGf++mSoOvtRsqndoZ6wLecoxwOVIyHZ4K4j0D7O0frsM8nz
-         kpuyDZgdkgA1Iru2N4vsxBw7CrdwKA1khsM5wd2Z9G6JyQi/qpbGjdmIehZpSB0hHnav
-         tWVxa5l43mEFMiW9wu9Mo7yXwPNhMRokFcX+VoWhMd1BY1ixXJRtfCdF52loSXg5t4jX
-         sdXv/h9fphYVwmBel+n0GOU+UZh4yrwkbmoLbtDl3/kIxzAtGrTskD8UK+9Ronfen3j5
-         N+0lANn00UCF/SQfzX5N5Tq9bucUiegSrOmZtDBIUhycgXVPwAT+8mzK2expX7YnLq+L
-         bLtA==
+        d=gmail.com; s=20230601; t=1716389902; x=1716994702; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7IEPcq2lTeRu7a0OQTydzeGeJjKD2AmTI+1q/3ymA0s=;
+        b=DGq/vWpxhKU8zZ0Ot8HFsA0BadqS3vEY1f9lHv57Lrf1fijC458ELFkOzJs695boDo
+         G2/EGJgjAnk0+fhgHekaARyd2CDS5xpTht9GIplrqEiuPRoUKvXFwhSgdFQDYgW5An0x
+         GEYVdRKAp1bB6Y1thJPA0rFaY2Pne1s1HZVHVZrrPqT2exuFcXQWnYjjrogLjN5GMegA
+         uV0kxPWVBF5dsio5VldzvkbzwJZJLrKaCERCTMyA3R5ybSlQnNZfOy7ca32NOgb/ABGp
+         c+kOvvypJboL6vJZLfZCn8ObOLRzGTGDs/MkfIVTfgSr7uh+WJrdk1O9I5Pyacoxw7Ua
+         000w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716389880; x=1716994680;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L+dDeIIv4/uhDcs1sA4p7D8qsofH0JyJ1gi8ixGWHQQ=;
-        b=bdQmGXZ4gqYbMG6ZEIdv09IFzKy8DHyvCvvJRbtCkkE3zAZRQqACsbQVxFN9EBbsvF
-         t8WPcxTy10IWY8gTyuzbzctZj+ocLx+R+LsR9dZVvTeoT1wgUPsIbgEq1L8DJak39xK8
-         /UeIPq2c82iGiZ3mOppZ8rEmMwei/eEW4H+MTWVJR4ji2BJpjvaE9t6wCm8FAlhqc3vS
-         ot/B+s2PgRmkfbBMs6bNoe4vr57xP2xLaVaelwtO7J459leQzbPEBaA/g4jmPu77optO
-         8DjsQ9Z2zb/IHqFJTKq/skxInSptI/zoEotceFfaIPKAJT8IFyI1jiF5lLtiTQqWCJ+W
-         SXAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbdpOlD3knYJIVtWuIOuvTE+zGtWyUmtF0390NPyu8FgqBwhoVe2ZBxeUc+XP2TH0zrLp0OeF+G7hfkRZVWFIp0lJtpAaFp2WcIQ4TpqJW0+Ap8vLiRNIh7ZTiMp05iuk1
-X-Gm-Message-State: AOJu0YwVU7ktygAtLEEJLfCUQEkD43Q9UDnsxrTKDQ+01diplJhfVQeH
-	KyI8MTVwiosVFlXWk025xQw+4fme4UVB/pTwUkY3x157lrozCz3ppI/xiywES0Exvpcz0aL17oO
-	JOHlPEvkx9KDt1LxG9TKAaZZ3nXHauA==
-X-Google-Smtp-Source: AGHT+IG3r58WVQJ64mCHF4QO8x24ODELD9v3yHURR/2VERPceKZUjEwp6WIgfT5kbQEBQ5zTYq4VaAFNPdoQ4g7iNbc=
-X-Received: by 2002:a05:600c:2311:b0:420:ee24:9b26 with SMTP id
- 5b1f17b1804b1-420fd31a43emr16094795e9.24.1716389880339; Wed, 22 May 2024
- 07:58:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716389902; x=1716994702;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7IEPcq2lTeRu7a0OQTydzeGeJjKD2AmTI+1q/3ymA0s=;
+        b=QhZhQjD97dobeyfWtCUR+PjEGYBUi/FwKVYiIffhcSUG8XqLV66pFFs3RxN859SZTP
+         jA/RE+gqaXL5Ww7dBKS4Jzh5wo2urd155wdfpjq04qBHSaIDTuJxN/E3I9hxwEGmhVpV
+         4bScnjvfObjNux0+xXKaUNLsVM7wwey3IY5pDmBM68BPoVKb6Z7xHlXtWL1MqWLAuNNX
+         s2I27f0b91n9vyuENp83iDwL+zE9LHrYiPJr5+cL9Zg/NyWu81s9wXYUCO/SQYjo2wbo
+         p5kP7K1I8jujIyEsqf1G27BmhDJo2hHUtzHaMUKjXYbyfrfq5x2dxtW2nOlyX/sztP68
+         oJyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJeE4UWifTtd4tjIzoKQ3NGRdxQmx/TZ6QFs7U+nTXwlQGA2x9YT7I1cmCIWREaM/h+Mbmx5ezJ4sF9NlRUEKVNBqd4/JVv6ghHfcUjwZ0y2A/QKXz/b3qUGFk4ephd2A7H22w5EFQb/kQ03Eiv2406UW3krI7RUDgj98CtPOLvjo/H+xmen+B7GxWKsqACRLMav4a
+X-Gm-Message-State: AOJu0YzJIgRylKaLP7awlR9Fj427lwqf2wRd3GxuK+Wuz0SFvbaRXuj1
+	ZWMQ8IQ/KTrR7H0f/CI0tMjzIE+QNXwFnViMPfopXKSSUCPGjuQc
+X-Google-Smtp-Source: AGHT+IGk6oQ6BcwPJumweQH7i5dvpil/X4R33QMqHg4uhptf+9bkM+ey5K+ROmbS85J8j6eUkancoQ==
+X-Received: by 2002:adf:ea02:0:b0:34a:d5e:afd2 with SMTP id ffacd0b85a97d-354d8c7c9ffmr1471648f8f.4.1716389901816;
+        Wed, 22 May 2024 07:58:21 -0700 (PDT)
+Received: from ?IPv6:2001:8a0:e622:f700:597:127d:3af6:7529? ([2001:8a0:e622:f700:597:127d:3af6:7529])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-352f264c7f1sm14682397f8f.42.2024.05.22.07.58.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 07:58:21 -0700 (PDT)
+Message-ID: <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
+Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
+From: Vitor Soares <ivitro@gmail.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, James Bottomley
+	 <James.Bottomley@HansenPartnership.com>, linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+ <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Wed, 22 May 2024 15:58:20 +0100
+In-Reply-To: <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
+References: <20240519235122.3380-1-jarkko@kernel.org>
+	 <20240519235122.3380-2-jarkko@kernel.org>
+	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
+	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
+	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
+	 <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
+	 <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
+	 <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
- <20240521225918.2147-1-hdanton@sina.com> <20240522113349.2202-1-hdanton@sina.com>
- <87o78yvydx.fsf@cloudflare.com>
-In-Reply-To: <87o78yvydx.fsf@cloudflare.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 22 May 2024 07:57:48 -0700
-Message-ID: <CAADnVQKfbaY-pm2H-6U_c=-XyvocSAkNqXg4+Kj7cXGtmajaAA@mail.gmail.com>
-Subject: Re: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
-To: Jakub Sitnicki <jakub@cloudflare.com>, John Fastabend <john.fastabend@gmail.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>
-Cc: Hillf Danton <hdanton@sina.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Eric Dumazet <edumazet@google.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 5:12=E2=80=AFAM Jakub Sitnicki <jakub@cloudflare.co=
-m> wrote:
->
-> On Wed, May 22, 2024 at 07:33 PM +08, Hillf Danton wrote:
-> > On Wed, 22 May 2024 11:50:49 +0200 Jakub Sitnicki <jakub@cloudflare.com=
->
-> > On Wed, May 22, 2024 at 06:59 AM +08, Hillf Danton wrote:
-> >> > On Tue, 21 May 2024 08:38:52 -0700 Alexei Starovoitov <alexei.starov=
-oitov@gmail.com>
-> >> >> On Sun, May 12, 2024 at 12:22=3DE2=3D80=3DAFAM Tetsuo Handa <pengui=
-n-kernel@i-love.sakura.ne.jp> wrote:
-> >> >> > --- a/net/core/sock_map.c
-> >> >> > +++ b/net/core/sock_map.c
-> >> >> > @@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk=
-,
-> >> >> >         bool strp_stop =3D3D false, verdict_stop =3D3D false;
-> >> >> >         struct sk_psock_link *link, *tmp;
-> >> >> >
-> >> >> > +       rcu_read_lock();
-> >> >> >         spin_lock_bh(&psock->link_lock);
-> >> >>
-> >> >> I think this is incorrect.
-> >> >> spin_lock_bh may sleep in RT and it won't be safe to do in rcu cs.
-> >> >
-> >> > Could you specify why it won't be safe in rcu cs if you are right?
-> >> > What does rcu look like in RT if not nothing?
-> >>
-> >> RCU readers can't block, while spinlock RT doesn't disable preemption.
-> >>
-> >> https://docs.kernel.org/RCU/rcu.html
-> >> https://docs.kernel.org/locking/locktypes.html#spinlock-t-and-preempt-=
-rt
-> >>
-> >> I've finally gotten around to testing proposed fix that just disallows
-> >> map_delete_elem on sockmap/sockhash from BPF tracing progs
-> >> completely. This should put an end to this saga of syzkaller reports.
-> >>
-> >> https://lore.kernel.org/all/87jzjnxaqf.fsf@cloudflare.com/
+On Wed, 2024-05-22 at 17:13 +0300, Jarkko Sakkinen wrote:
+> On Wed May 22, 2024 at 4:35 PM EEST, James Bottomley wrote:
+> > On Wed, 2024-05-22 at 09:18 +0100, Vitor Soares wrote:
+> > > On Tue, 2024-05-21 at 08:33 -0400, James Bottomley wrote:
+> > > > On Tue, 2024-05-21 at 10:10 +0300, Jarkko Sakkinen wrote:
+> > > > > This benchmark could be done in user space using /dev/tpm0.
+> > > >=20
+> > > > Let's actually try that.=C2=A0 If you have the ibmtss installed, th=
+e
+> > > > command to time primary key generation from userspace on your tpm
+> > > > is
+> > > >=20
+> > > > time tsscreateprimary -hi n -ecc nistp256
+> > > >=20
+> > > >=20
+> > > > And just for chuckles and grins, try it in the owner hierarchy as
+> > > > well (sometimes slow TPMs cache this)
+> > > >=20
+> > > > time tsscreateprimary -hi o -ecc nistp256
+> > > >=20
+> > > > And if you have tpm2 tools, the above commands should be:
+> > > >=20
+> > > > time tpm2_createprimary -C n -G ecc256
+> > > > time tpm2_createprimary -C o -G ecc256
+> > > >=20
+> > > > James
+> > > >=20
+> > > >=20
+> > >=20
+> > > Testing on an arm64 platform I get the following results.
+> > >=20
+> > > hmac disabled:
+> > > =C2=A0 time modprobe tpm_tis_spi
+> > > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m2.776s
+> > > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.006s
+> > > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.015s
+> > >=20
+> > > =C2=A0 time tpm2_createprimary -C n -G ecc256
+> > > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.686s
+> > > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.044s
+> > > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.025s
+> > >=20
+> > > =C2=A0 time tpm2_createprimary -C o -G ecc256
+> > > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.638s
+> > > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.048s
+> > > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.009s
+> > >=20
+> > >=20
+> > > hmac enabled:
+> > > =C2=A0 time modprobe tpm_tis_spi
+> > > =C2=A0 real=C2=A0=C2=A0=C2=A0 8m5.840s
+> > > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.005s
+> > > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.018s
+> > >=20
+> > >=20
+> > > =C2=A0 time tpm2_createprimary -C n -G ecc256
+> > > =C2=A0 real=C2=A0=C2=A0=C2=A0 5m27.678s
+> > > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.059s
+> > > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.009s
+> > >=20
+> > > =C2=A0 (after first command)
+> > > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.395s
+> > > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.040s
+> > > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.015s
+> > >=20
+> > > =C2=A0 time tpm2_createprimary -C o -G ecc256
+> > > =C2=A0 real=C2=A0=C2=A0=C2=A0 0m0.418s
+> > > =C2=A0 user=C2=A0=C2=A0=C2=A0 0m0.049s
+> > > =C2=A0 sys=C2=A0=C2=A0=C2=A0=C2=A0 0m0.009s
+> >=20
+> > That's interesting: it suggests the create primary is fast (as
+> > expected) but that the TPM is blocked for some reason.=C2=A0 Is there
+> > anything else in dmesg if you do
+> >=20
+> > dmesg|grep -i tpm
+> >=20
+> > ?
+> >=20
+> > Unfortunately we don't really do timeouts on our end (we have the TPM
+> > do it instead), but we could instrument your kernel with command and
+> > time sent and returned.=C2=A0 That may tell us where the problem lies.
+>=20
+> If there was possibility to use bpftrace it is trivial to get histogram
+> of time used where. I can bake a script but I need to know first if it
+> is available in the first place before going through that trouble.
+>=20
+> BR, Jarkko
 
-Agree. Let's do that. According to John the delete path is not something
-that is used in production. It's only a source of trouble with syzbot.
+I did run with ftrace, but need some more time to go through it.
 
+Here the step I did:
+kernel config:
+  CONFIG_FUNCTION_TRACER
+  CONFIG_FUNCTION_GRAPH_TRACER
 
-> >>
-> > The locking info syzbot reported [2] suggests a known issue that like A=
-lexei
-> > you hit the send button earlier than expected.
-> >
-> > 4 locks held by syz-executor361/5090:
-> >  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire=
- include/linux/rcupdate.h:329 [inline]
-> >  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock in=
-clude/linux/rcupdate.h:781 [inline]
-> >  #0: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: map_delete_elem+=
-0x388/0x5e0 kernel/bpf/syscall.c:1695
-> >  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: spin_lo=
-ck_bh include/linux/spinlock.h:356 [inline]
-> >  #1: ffff88807b2af8f8 (&htab->buckets[i].lock){+...}-{2:2}, at: sock_ha=
-sh_delete_elem+0x17c/0x400 net/core/sock_map.c:945
-> >  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: spin_lock_bh=
- include/linux/spinlock.h:356 [inline]
-> >  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_del=
-_link net/core/sock_map.c:145 [inline]
-> >  #2: ffff88801c2a4290 (&psock->link_lock){+...}-{2:2}, at: sock_map_unr=
-ef+0xcc/0x5e0 net/core/sock_map.c:180
-> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire=
- include/linux/rcupdate.h:329 [inline]
-> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock in=
-clude/linux/rcupdate.h:781 [inline]
-> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run =
-kernel/trace/bpf_trace.c:2380 [inline]
-> >  #3: ffffffff8e334d20 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run2+0=
-x114/0x420 kernel/trace/bpf_trace.c:2420
-> >
-> > [2] https://lore.kernel.org/all/000000000000d0b87206170dd88f@google.com=
-/
-> >
-> >
-> > If CONFIG_PREEMPT_RCU=3Dy rcu_read_lock() does not disable
-> > preemption. This is even true for !RT kernels with CONFIG_PREEMPT=3Dy
-> >
-> > [3] Subject: Re: [patch 30/63] locking/spinlock: Provide RT variant
-> > https://lore.kernel.org/all/874kc6rizr.ffs@tglx/
->
-> That locking issue is related to my earlier, as it turned out -
-> incomplete, fix:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3Dff91059932401894e6c86341915615c5eb0eca48
->
-> We don't expect map_delete_elem to be called from map_update_elem for
-> sockmap/sockhash, but that is what syzkaller started doing by attaching
-> BPF tracing progs which call map_delete_elem.
+ftrace:
+  # set filters
+  echo tpm* > set_ftrace_filter
+
+  # set tracer
+  echo function_graph > current_tracer
+
+  # take the sample
+  echo 1 > tracing_on; time modprobe tpm_tis_spi; echo 0 > tracing_on
+
+regards,
+Vitor Soares
 
