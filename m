@@ -1,244 +1,95 @@
-Return-Path: <linux-kernel+bounces-186746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0325A8CC846
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:50:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 048658CC848
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7621F21E4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:50:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361831C21337
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5655146A6F;
-	Wed, 22 May 2024 21:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kP3CxdsV"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3613146A91;
+	Wed, 22 May 2024 21:51:00 +0000 (UTC)
+Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDD7146013;
-	Wed, 22 May 2024 21:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E58A146A79;
+	Wed, 22 May 2024 21:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716414634; cv=none; b=FAmk/0d2844ihGfjC64gGcObE25NuP4h2hDPIeTokMlTUEU25RgrurSqOExNCnEE0rSssDzmN6YIsT+4lVwtLxes2HWM1CzmPC64HWd8LaQFBx2/B8RHhhkVim8PsV0HcBypTByQojKxU3ofZW9E8x/Vlc+jmcwpXNIQ5RakSIk=
+	t=1716414660; cv=none; b=WPvrdCb6VWVM2/rse8TLjKIewHjovUYR3BNVNaS+HqGmNqkZWq19IeuWci/o4yZV9vHOzpQSUwC8dBxPBZPooSuwrdMng/KImEcEAkqy7bGZobJl3rmbxSrl4tylvdtOmCurtZQ0SEsGnLWsac9HBJhZcJzqL6fKFxHyfhl8/cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716414634; c=relaxed/simple;
-	bh=OY84vnQmaOpm/ilqJFzeIS3mAQRqPDAKOALOTSxAdhM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ev4Ua6re19A6Ial+/e4t+DUiw8nRwd6ZJizaBhbANeF31FpKKKesuoVbAwT3qRPJoIFv8qzUfocKa58L/JYn3TW6jWkj0YOSmiOcrfQinVlqEZ8nWSanxaWO3JDGIp/1Qcw5gJjkudD6Rp3qH93/Uj+7szdTKPF58cD5P+ysXcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kP3CxdsV; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-5c6bd3100fcso1360065a12.3;
-        Wed, 22 May 2024 14:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716414631; x=1717019431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2sOHXqCncBU6birEuX4uwSPwzlGfl/T4qQvFWke/kK8=;
-        b=kP3CxdsV86KIPho/BskeN17UkX8H5pauXxGwIOxhJCrELRO+uzvMaBIKfnHqt7l5+4
-         pwE6DwSEK26c+lB12w55pUOvpp8a9gBhbDrjEoXajnuvBkGpOOJL7bPGO/asCp1UeigN
-         5m67N9hUqFwMT5BZhcrCIRJgWQuv9eyyaK9eW55WGxiuaa60gHRjyMk4ENV5y6KHzcbt
-         VVTvTjMQogCBsiRIyLu+b51mHe9IxxmbtIN183v2rM0xAVPGTZxZB405h/N+N7l1MUsj
-         OJtNg1aYBm/qMZtRgWrAiE8x1zvC+pkgq2pFuK7Sc7BnTj7NXFkId4kjAr2USktDa+Te
-         Q9lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716414631; x=1717019431;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2sOHXqCncBU6birEuX4uwSPwzlGfl/T4qQvFWke/kK8=;
-        b=tbPoXOFZm4lVWLhh5n31tu10xIrzKbB/D5tayPmYfKjSomd0EVVjbtL4LTKKlol6NN
-         hepXAhIymB3IL/IsASXeH0e/fSx1VTEaPYuQXlV1lgIOENn3Lp0Lt7r1+QIhAGVR/0e3
-         FSOJ4u65CW95I4ECbI05xXAYLXqe3gWQVxWgJkK2lKJDKJtwyNSkXhvR9Kf7ETUcj94p
-         NP68auzaduW/0H6QbRtYQnhgBl9fh7aC068Rka7R7FzNiqIMGG5fWCRMFk8EoNI3M08C
-         8zZBLDOtOTYQLKyT2OUCTPw8vBeyKp6+kaz/FFrdtIVqp3wJEABknduOMA/in7COkxBS
-         Rb8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ljTKF9d4zHAw4wCO9xXW0iQ3rb405srZ8yyIxs3fE6DWB0cixRxbvo1nNhA/MPTXdc9WPEXvGJEP+Noe6+M4cqYIiBnckMjJ6LSAcfuUBB9rFROIG94b3RkueUtEUZQEDuftqf2YdQvSpw==
-X-Gm-Message-State: AOJu0Yx+TbUB5hNlWMLeaX8ftXHypJXZF0h3e1T5SqTn9J7DSrdBN9ny
-	nov9z7rJ1JcHktMrRisT6Xk4r56ETvDfUNzIvrVRSX/qcjb1Haxn
-X-Google-Smtp-Source: AGHT+IGhcdngXeOZ1/FBm5uE53ZfqMOTB5KQa3ihColXh2Hmq51yPoqYvbtOiaX7FpcBfqnJz7jmYg==
-X-Received: by 2002:a17:90a:69c6:b0:2b4:329e:e363 with SMTP id 98e67ed59e1d1-2bd9f45675fmr3112466a91.1.1716414631285;
-        Wed, 22 May 2024 14:50:31 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bdd9f4c604sm252342a91.41.2024.05.22.14.50.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 14:50:30 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 2/2] drm/msm: Extend gpu devcore dumps with pgtbl info
-Date: Wed, 22 May 2024 14:50:05 -0700
-Message-ID: <20240522215014.26007-3-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240522215014.26007-1-robdclark@gmail.com>
-References: <20240522215014.26007-1-robdclark@gmail.com>
+	s=arc-20240116; t=1716414660; c=relaxed/simple;
+	bh=gdS9zOp1Th6sAT7JgkhhosETF34ZaNUOWBvkZs5hl2I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lLdmZhjmufqBUKjEIR5/6+TReDoTxmfR19SZy9NepXIEmJ08nHlQzF3VdS2pZf2L3AfXxjtlXImT0dUWMWfIxT0Rq29Hmmvh657UdT9EX6l1vnL2e9+JMhHkjLi9Gl4Qu382oEOj1XVReCHfyUR5tUwr9F9kn5090XNcrWQH+wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
+	by finn.localdomain with esmtp (Exim 4.95)
+	(envelope-from <tharvey@gateworks.com>)
+	id 1s9trJ-00BO3S-4u;
+	Wed, 22 May 2024 21:50:53 +0000
+From: Tim Harvey <tharvey@gateworks.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Li Yang <leoyang.li@nxp.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Cc: Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+Date: Wed, 22 May 2024 14:50:42 -0700
+Message-Id: <20240522215043.3747651-1-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Rob Clark <robdclark@chromium.org>
+The GW7905 was renamed to GW7500 before production release.
 
-In the case of iova fault triggered devcore dumps, include additional
-debug information based on what we think is the current page tables,
-including the TTBR0 value (which should match what we have in
-adreno_smmu_fault_info unless things have gone horribly wrong), and
-the pagetable entries traversed in the process of resolving the
-faulting iova.
-
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
 ---
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++++++++
- drivers/gpu/drm/msm/msm_gpu.c           | 22 ++++++++++++++++++++++
- drivers/gpu/drm/msm/msm_gpu.h           |  8 ++++++++
- drivers/gpu/drm/msm/msm_iommu.c         | 18 ++++++++++++++++++
- drivers/gpu/drm/msm/msm_mmu.h           |  5 ++++-
- 5 files changed, 62 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index a00241e3373b..3b4c75df0a5f 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -861,6 +861,16 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 		drm_printf(p, "  - dir=%s\n", info->flags & IOMMU_FAULT_WRITE ? "WRITE" : "READ");
- 		drm_printf(p, "  - type=%s\n", info->type);
- 		drm_printf(p, "  - source=%s\n", info->block);
-+
-+		/* Information extracted from what we think are the current
-+		 * pgtables.  Hopefully the TTBR0 matches what we've extracted
-+		 * from the SMMU registers in smmu_info!
-+		 */
-+		drm_puts(p, "pgtable-fault-info:\n");
-+		drm_printf(p, "  - ttbr0: %.16llx\n", (u64)info->pgtbl_ttbr0);
-+		drm_printf(p, "  - asid: %d\n", info->asid);
-+		drm_printf(p, "  - ptes: %.16llx %.16llx %.16llx %.16llx\n",
-+			   info->ptes[0], info->ptes[1], info->ptes[2], info->ptes[3]);
- 	}
- 
- 	drm_printf(p, "rbbm-status: 0x%08x\n", state->rbbm_status);
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 43cde0590250..647bddc897f2 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -256,6 +256,18 @@ static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
- 	state->nr_bos++;
- }
- 
-+static int pgtable_walk_cb(void *cb_data, void *pte, int level)
-+{
-+	struct msm_gpu_fault_info *info = cb_data;
-+
-+	if (level > ARRAY_SIZE(info->ptes))
-+		return -EINVAL;
-+
-+	info->ptes[level] = *(u64 *)pte;
-+
-+	return 0;
-+}
-+
- static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
- 		struct msm_gem_submit *submit, char *comm, char *cmd)
- {
-@@ -281,6 +293,16 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
- 	if (submit) {
- 		int i;
- 
-+		if (state->fault_info.ttbr0) {
-+			struct msm_gpu_fault_info *info = &state->fault_info;
-+			struct msm_mmu *mmu = submit->aspace->mmu;
-+
-+			msm_iommu_pagetable_params(mmu, &info->pgtbl_ttbr0,
-+						   &info->asid);
-+			msm_iommu_pagetable_walk(mmu, info->iova,
-+						 pgtable_walk_cb, info);
-+		}
-+
- 		state->bos = kcalloc(submit->nr_bos,
- 			sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
- 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-index 04a696ac4626..82fbb626461a 100644
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -101,6 +101,14 @@ struct msm_gpu_fault_info {
- 	int flags;
- 	const char *type;
- 	const char *block;
-+
-+	/* Information about what we think/expect is the current SMMU state,
-+	 * for example expected_ttbr0 should match smmu_info.ttbr0 which
-+	 * was read back from SMMU registers.
-+	 */
-+	phys_addr_t pgtbl_ttbr0;
-+	u64 ptes[4];
-+	int asid;
- };
- 
- /**
-diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
-index d5512037c38b..f46ed4667475 100644
---- a/drivers/gpu/drm/msm/msm_iommu.c
-+++ b/drivers/gpu/drm/msm/msm_iommu.c
-@@ -195,6 +195,24 @@ struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu)
- 	return &iommu->domain->geometry;
- }
- 
-+int msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova,
-+			     int (*cb)(void *cb_data, void *pte, int level),
-+			     void *cb_data)
-+{
-+	struct msm_iommu_pagetable *pagetable;
-+
-+	if (mmu->type != MSM_MMU_IOMMU_PAGETABLE)
-+		return -EINVAL;
-+
-+	pagetable = to_pagetable(mmu);
-+
-+	if (!pagetable->pgtbl_ops->pgtable_walk)
-+		return -EINVAL;
-+
-+	return pagetable->pgtbl_ops->pgtable_walk(pagetable->pgtbl_ops, iova,
-+						  cb, cb_data);
-+}
-+
- static const struct msm_mmu_funcs pagetable_funcs = {
- 		.map = msm_iommu_pagetable_map,
- 		.unmap = msm_iommu_pagetable_unmap,
-diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
-index 88af4f490881..46b2550b9b7a 100644
---- a/drivers/gpu/drm/msm/msm_mmu.h
-+++ b/drivers/gpu/drm/msm/msm_mmu.h
-@@ -53,7 +53,10 @@ static inline void msm_mmu_set_fault_handler(struct msm_mmu *mmu, void *arg,
- struct msm_mmu *msm_iommu_pagetable_create(struct msm_mmu *parent);
- 
- int msm_iommu_pagetable_params(struct msm_mmu *mmu, phys_addr_t *ttbr,
--		int *asid);
-+			       int *asid);
-+int msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova,
-+			     int (*cb)(void *cb_data, void *pte, int level),
-+			     void *cb_data);
- struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu);
- 
- #endif /* __MSM_MMU_H__ */
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 0027201e19f8..d8bc295079e3 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -920,8 +920,8 @@ properties:
+               - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK Board
+               - fsl,imx8mm-evk            # i.MX8MM EVK Board
+               - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
++              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks Board
+               - gateworks,imx8mm-gw7904
+-              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Board
+               - gw,imx8mm-gw71xx-0x       # i.MX8MM Gateworks Development Kit
+               - gw,imx8mm-gw72xx-0x       # i.MX8MM Gateworks Development Kit
+               - gw,imx8mm-gw73xx-0x       # i.MX8MM Gateworks Development Kit
+@@ -1055,7 +1055,7 @@ properties:
+               - gateworks,imx8mp-gw72xx-2x # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw73xx-2x # i.MX8MP Gateworks Board
+               - gateworks,imx8mp-gw74xx   # i.MX8MP Gateworks Board
+-              - gateworks,imx8mp-gw7905-2x # i.MX8MP Gateworks Board
++              - gateworks,imx8mp-gw75xx-2x # i.MX8MP Gateworks Board
+               - skov,imx8mp-skov-revb-hdmi # SKOV i.MX8MP climate control without panel
+               - skov,imx8mp-skov-revb-lt6 # SKOV i.MX8MP climate control with 7” panel
+               - skov,imx8mp-skov-revb-mi1010ait-1cp1 # SKOV i.MX8MP climate control with 10.1" panel
 -- 
-2.45.1
+2.25.1
 
 
