@@ -1,214 +1,483 @@
-Return-Path: <linux-kernel+bounces-185538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E288CB671
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:02:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C6F8CB675
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DB29281C2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CF111C20FDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 00:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45815234;
-	Wed, 22 May 2024 00:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gjaRfiYL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A75517F3;
+	Wed, 22 May 2024 00:08:23 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6035417FE
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CBC368
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 00:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716336161; cv=none; b=LQfqx5zZ5ySXG+4jhlH6JiSfCmmaVYH9qDMOwYyHdA2izovDZ4ASKdHrhKUEBpkyip33AE8mjysmjBAwG6SM0eTiBwdP94bkGxx4e9jHQHRAgb132jPNMLh4oPZ0H3xQNypqaxAcD/EGlPXAJ5fC8XKcSM5KF3G0pqdB88tXg0g=
+	t=1716336502; cv=none; b=SV20FRUlr3VGOFUKzXawR572ugr4rj6kXjAthGqYztdPiDvro/nxLYzwjlB7+pQcoH0uo7wPtYM+/8U/PNMKFyfpM90mK76Sks8WY4yuufIG5oUJoaevwRxL6TVvG5yYFuCkX8FQqvgsyd8iaGywCfNPQvmvXIibpapOOUdMZgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716336161; c=relaxed/simple;
-	bh=mFQLmK0u0L6PeEG0M4FAs/47qdfzUrU/wDLiUWnZizc=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Tq2SpVidrECXQ/LWMY0JJh2M86ldzE7DuVt7Xeis5hcOZqKuU1NGvPRV3Y7tw+oS7bOsSAG7MvrY1n5kJMSn7sNWVmjaRhwrE3fvmfT+GcEJqHyYQrffK91z2U4/DMIidxmInWYPUvQEwWQ4WkVI1YFVJrlIAuSi+nvj8w0SM+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gjaRfiYL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716336158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oDcaJ/Lp2AwW/U3NTUWORaonQ76tpE8JccALy7WD+Ks=;
-	b=gjaRfiYL36VLzx6CxKzNZxEpm/VvW78+2+WkycL3CRgy4E+iV6TH5Ycv0wnVIEWB9jYr5C
-	Yi3CL1x9mSIIdrAj1G2WOpL2ZklR53e73JNCYpbMFs2fWu/qFkspIesFvlMvCimzl5PKc7
-	Ywd7qWpUYb40RnFOOeoMZaPomcGcCZA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-CnM72DXNOiq9R9tznT5T_A-1; Tue, 21 May 2024 20:02:32 -0400
-X-MC-Unique: CnM72DXNOiq9R9tznT5T_A-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 52DEC812296;
-	Wed, 22 May 2024 00:02:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 03A3C492BC6;
-	Wed, 22 May 2024 00:02:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <stfrench@microsoft.com>
-cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Enzo Matsumiya <ematsumiya@suse.de>,
-    Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v2] netfs: Fix io_uring based write-through
+	s=arc-20240116; t=1716336502; c=relaxed/simple;
+	bh=9HsyJVgv0upEiigP2Jga9c2Tlm6NtmtYXmCe7XwkN5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hht8B73N0DdXFihqqJJQf+LOT8+JEjMR25iR4K4+eyILNFJfIp5cci6c8abuqaVM1j/tei1IFy86jif4QhPEMVCCyQstWga5f49aE9MHMOiXQpgTWxfreVmUXqnKO5wP2zEjAvURWftydlLgs+H1zRu5xfyJ7yQpUuWU9wU2Y9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s9ZWW-00070C-Tj; Wed, 22 May 2024 02:08:04 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s9ZWU-002SIM-U7; Wed, 22 May 2024 02:08:02 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s9ZWU-007oDU-2h;
+	Wed, 22 May 2024 02:08:02 +0200
+Date: Wed, 22 May 2024 02:08:02 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Avichal Rakesh <arakesh@google.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jayant Chowdhary <jchowdhary@google.com>,
+	"etalvala@google.com" <etalvala@google.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
+ interval length and buffersize
+Message-ID: <Zk03Ys1rA0I5yiZy@pengutronix.de>
+References: <ZiWga5Kqno1ICv97@pengutronix.de>
+ <dcad0089-4105-44bc-a2b4-3cfc6f44164b@google.com>
+ <ZifEvUi9-E8M4dp8@pengutronix.de>
+ <17192e0f-7f18-49ae-96fc-71054d46f74a@google.com>
+ <20240424022806.uo73nwpeg63vexiv@synopsys.com>
+ <ZkE-O0yJ33T9hWa0@pengutronix.de>
+ <20240517014359.p2s44ypl4bix4odm@synopsys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <351481.1716336150.1@warthog.procyon.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FJN5bpTf2Oav326M"
+Content-Disposition: inline
+In-Reply-To: <20240517014359.p2s44ypl4bix4odm@synopsys.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--FJN5bpTf2Oav326M
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 22 May 2024 01:02:30 +0100
-Message-ID: <351482.1716336150@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-This can be triggered by mounting a cifs filesystem with a cache=3Dstrict
-mount option and then, using the fsx program from xfstests, doing:
+On Fri, May 17, 2024 at 01:44:05AM +0000, Thinh Nguyen wrote:
+>On Mon, May 13, 2024, Michael Grzeschik wrote:
+>> On Wed, Apr 24, 2024 at 02:28:10AM +0000, Thinh Nguyen wrote:
+>> > On Tue, Apr 23, 2024, Avichal Rakesh wrote:
+>> > >
+>> > >
+>> > > On 4/23/24 07:25, Michael Grzeschik wrote:
+>> > > > Ccing:
+>> > > >
+>> > > > Michael Riesch <michael.riesch@wolfvision.net>
+>> > > > Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+>> > > >
+>> > > > On Mon, Apr 22, 2024 at 05:21:09PM -0700, Avichal Rakesh wrote:
+>> > > >> On 4/21/24 16:25, Michael Grzeschik wrote:
+>> > > >>> On Tue, Apr 09, 2024 at 11:24:56PM +0200, Michael Grzeschik wrot=
+e:
+>> > > >>>> This patch series is improving the size calculation and allocat=
+ion
+>> > > >>>> of the uvc requests. Using the currenlty setup frame duration o=
+f the
+>> > > >>>> stream it is possible to calculate the number of requests based=
+ on the
+>> > > >>>> interval length.
+>> > > >>>
+>> > > >>> The basic concept here is right. But unfortunatly we found out t=
+hat
+>> > > >>> together with Patch [1] and the current zero length request pump
+>> > > >>> mechanism [2] and [3] this is not working as expected.
+>> > > >>>
+>> > > >>> The conclusion that we can not queue more than one frame at once=
+ into
+>> > > >>> the hw led to [1]. The current implementation of zero length req=
+eusts
+>> > > >>> which will be queued while we are waiting for the frame to finish
+>> > > >>> transferring will enlarge the frame duration. Since every zero-l=
+ength
+>> > > >>> request is still taking up at least one frame interval of 125 us.
+>> > > >>
+>> > > >> I haven't taken a super close look at your patches, so please fee=
+l free
+>> > > >> to correct me if I am misunderstanding something.
+>> > > >>
+>> > > >> It looks like the goal of the patches is to determine a better nu=
+mber
+>> > > >> and size of usb_requests from the given framerate such that we se=
+nd exactly
+>> > > >> nreqs requests per frame where nreqs is determined to be the exac=
+t number
+>> > > >> of requests that can be sent in one frame interval?
+>> > > >
+>> > > > It does not need to be the exact time, actually it may not be exac=
+t.
+>> > > > Scattering the data over all requests would not leave any headroom=
+ for
+>> > > > any latencies or overhead.
+>> > >
+>> > > IIUC, patch 3/3 sets the number of requests to frameinterval / 125 u=
+s,
+>> > > which gives us the number of requests we can send in exactly one fra=
+me interval,
+>> > > and then sets the size of the request as max framesize / nreq, which=
+ means the
+>> > > frames will be evenly divided up into all available requests (with a=
+ little
+>> > > fuzz factor here and there).
+>> > >
+>> > > This effectively means that (assuming no other delays) one frame wil=
+l take
+>> > > ~one frameinterval to be transmitted?
+>> > >
+>> > > >
+>> > > >> As the logic stands, we need some 0-length requests to be circula=
+ting to
+>> > > >> ensure that we don't miss ISOC deadlines. The current logic uncon=
+ditionally
+>> > > >> sends half of all allocated requests to be circulated.
+>> > > >>
+>> > > >> With those two things in mind, this means than video_pump can at =
+encode
+>> > > >> at most half a frame in one go, and then has to wait for complete
+>> > > >> callbacks to come in. In such cases, the theoretical worst case f=
+or
+>> > > >> encode time is
+>> > > >> 125us * (number of requests needed per frame / 2) + scheduling de=
+lays
+>> > > >> as after the first half of the frame has been encoded, the video_=
+pump
+>> > > >> thread will have to wait 125us for each of the zero length reques=
+ts to
+>> > > >> be returned.
+>> > > >>
+>> > > >> The underlying assumption behind the "queue 0-length requests" ap=
+proach
+>> > > >> was that video_pump encodes the frames in as few requests as poss=
+ible
+>> > > >> and that there are spare requests to maintain a pressure on the
+>> > > >> ISOC queue without hindering the video_pump thread, and unfortuna=
+tely
+>> > > >> it seems like patch 3/3 is breaking both of them?
+>> > > >
+>> > > > Right.
+>> > > >
+>> > > >> Assuming my understanding of your patches is correct, my question
+>> > > >> is: Why do we want to spread the frame uniformly over the requests
+>> > > >> instead of encoding it in as few requests as possible. Spreading
+>> > > >> the frame over more requests artificially increases the encode ti=
+me
+>> > > >> required by video_pump, and AFAICT there is no real benefit to it?
+>> > > >
+>> > > > Thinh gave me the advise that it is better to use the isoc stream
+>> > > > constantly filled. Rather then streaming big amounts of data in the
+>> > > > beginning of an frameinterval and having then a lot of spare time
+>> > > > where the bandwidth is completely unsused.
+>> > > >
+>> > > > In our reallife scenario streaming big requests had the impact, th=
+at
+>> > > > the dwc3 core could not keep up with reading the amount of data
+>> > > > from the memory bus, as the bus is already under heavy load. When =
+the
+>> > > > HW was then not able to transfer the requested and actually availa=
+ble
+>> > > > amount of data in the interval, the hw did give us the usual missed
+>> > > > interrupt answer.
+>> > > >
+>> > > > Using smaller requests solved the problem here, as it really was
+>> > > > unnecessary to stress the memory and usb bus in the beginning as
+>> > > > we had enough headroom in the temporal domain.
+>> > >
+>> > > Ah, I see. This was not a consideration, and it makes sense if USB
+>> > > bus is under contention from a few different streams. So the solution
+>> > > seems to be to spread the frame of as many requests as we can transm=
+it
+>> > > in one frameinterval?
+>> > >
+>> > > As an experiment, while we wait for others to respond, could you try
+>> > > doubling (or 2.5x'ing to be extra safe) the number of requests alloc=
+ated
+>> > > by patch 3/3 without changing the request's buffer size?
+>> > >
+>> > > It won't help with the error reporting but should help with ensuring
+>> > > that frames are sent out in one frameinterval with little to no
+>> > > 0-length requests between them.
+>> > >
+>> > > The idea is that video_pump will have enough requests available to f=
+ully
+>> > > encode the frame in one burst, and another frame's worth of request =
+will be
+>> > > re-added to req_free list for video_pump to fill up in the time that=
+ the next
+>> > > frame comes in.
+>> > >
+>> > > >
+>> > > > Which then led to the conclusion that the number of needed requests
+>> > > > per image frame interval is calculatable since we know the usb
+>> > > > interval length.
+>> > > >
+>> > > > @Thinh: Correct me if I am saying something wrong here.
+>> >
+>> > Right, if you max out the data rate per uframe, there's less opportuni=
+ty
+>> > for the host to schedule everything for that interval (e.g. affected
+>> > from other endpoint/device traffics, link commands etc). It also
+>> > increases the latency of DMA. In many cases, many other vendor hosts
+>> > can't handle 48KB/uframe for SuperSpeed and 96KB/uframe for SuperSpeed
+>> > Plus. So, you'd need to test your platform find the optimal request si=
+ze
+>> > so it can work for most hosts.
+>> >
+>> > > >
+>> > > >>> Therefor to properly make those patches work, we will have to ge=
+t rid of
+>> >
+>> > Sorry if I may have missed the explaination, but why do we need to rid
+>> > of this?
+>>
+>>
+>> The uvc_video gadget is queueing requests with ep_queue whenever they
+>> are prepared. However for uvc we may not send EOF to the host until
+>> we know that the frame was transmitted correct or wrong.
+>>
+>> To ensure this the gadget is waiting for the last request to be
+>> completed from dwc3. Until this request was not received, the current
+>> workflow is to enqueue zero-length requests into the dwc3 hw. With that,
+>> the final EOF request for the frame will be transmitted after the
+>> zero-length requests have passed the hw. (They have no data, but they
+>> still take one frameinterval durtion). This sparsed frame with
+>> zero-requests inbetween will interfere with the precalculation for
+>> request data we fill every request with based on the expected frame
+>> duration.
+>>
+>> I know this seems very interlocked. It is very complex indeed. Tell
+>> me if you still have questions and I will come up with some more
+>> details to the current uvc_video driver.
+>>
+>> > > >>> the zero length pump mechanism again and make sure that the whole
+>> > > >>> business logic of what to be queued and when will only be done i=
+n the
+>> > > >>> pump worker. It is possible to let the dwc3 udc run dry, as we a=
+re
+>> > > >>> actively waiting for the frame to finish, the last request in the
+>> > > >>> prepared and started list will stop the current dwc3 stream and=
+=A0 for
+>> > > >>> no underruns will occur with the next ep_queue.
+>> > > >>
+>> > > >> One thing to note here: The reason we moved to queuing 0-length r=
+equests
+>> > > >> from complete callback was because even with realtime priority, v=
+ideo_pump
+>> > > >> thread doesn't always meet the ISOC queueing cadence. I think sto=
+pping and
+>> > > >> starting the stream was briefly discussed in our initial discussi=
+on in
+>> > > >> https://urldefense.com/v3/__https://lore.kernel.org/all/202304190=
+01143.pdxflhzyecf4kvee@synopsys.com/__;!!A4F2R9G_pg!ZmfvrPq4rs7MIhxNrrEqmgG=
+rlYTJ12WgdzaqQhfEehKfjKqxPr2bC1RzUqaa9tvdBtAvXdyK2GpxYzvslpV6$
+>> > > >> and Thinh mentioned that dwc3 controller does it if it detects an=
+ underrun,
+>> > > >> but I am not sure if starting and stopping an ISOC stream is good=
+ practice.
+>> >
+>> > There's a workaround specific for UVC in dwc3 to "guess" when underrun
+>> > happen. It's not foolproof. dwc3 should not need to do that.
+>> >
+>> > Isoc data is periodic and continuous. We should not expect this
+>> > unconventional re-synchronization.
+>>
+>> I think we have to discuss what is ment by resynchronization here. If
+>> the trb ring buffer did run dry and the software is aware of this
+>> (elemnt in the started and prepared list) then the interrupt handler
+>> already is calling End Stream Command.
+>
+>The driver only aware of this when the controller tells it, which may be
+>already too late.
 
-        ltp/fsx -A -d -N 1000 -S 11463 -P /tmp /cifs-mount/foo \
-          --replay-ops=3Dgen112-fsxops
+In our special case there should not be any too late any more. Since we
+ensure that all requests will be enqueued for one transfer (which will
+represent one frame) in time and we are not dependent on the complete
+handler for nothing else than telling the uvc driver that the last
+request came back or if there was some error in the current active
+frame.
 
-Where gen112-fsxops holds:
+As already stated we also have to wait with enqueueing the next frame
+to the hardware and only are allowed to enqueue one frame at a time.
+Otherwise it is not possible to tell the host if the frame was broken or
+not.
 
-        fallocate 0x6be7 0x8fc5 0x377d3
-        copy_range 0x9c71 0x77e8 0x2edaf 0x377d3
-        write 0x2776d 0x8f65 0x377d3
+I have the following scheme in my mind. It is simplified to take frames
+of only 4 requests into account. (>80 chars warning)
 
-The problem is that netfs_io_request::len is being used for two purposes
-and ends up getting set to the amount of data we transferred, not the
-amount of data the caller asked to be transferred (for various reasons,
-such as mmap'd writes, we might end up rounding out the data written to th=
-e
-server to include the entire folio at each end).
 
-Fix this by keeping the amount we were asked to write in ->len and using
-->submitted to track what we issued ops for.  Then, when we come to callin=
-g
-->ki_complete(), ->len is the right size.
+frameinterval:                |       125 us       |       125 us       |  =
+     125 us       |       125 us       |       125 us       |       125 us =
+      |       125 us       |
+                               |                    |                    | =
+                   |                    |                    |             =
+       |                    |
+pump thread:   queue          |rqA1 rqA2 rqA3 rqA4'|                    |  =
+                  |                    |                    |rqB0 rqB1 rqB2=
+ rqB3 |rqB4'               |
+irq  thread:   complete       |                    |rqA1                |rq=
+A2                |rqA3                |rqA4'               |              =
+      |rqB0                | rqB1
+qbuf thread:   encode         |rqB1 rqB2 rqB3 rqB4'|                    |  =
+                  |                    |                    |rqA1 rqA2 rqA3=
+ rqA4'|                    |
 
-This also required netfs_cleanup_dio_write() to change since we're no
-longer advancing wreq->len.  Use wreq->transferred instead as we might hav=
-e
-done a short read and wreq->len must be set when setting up a direct write=
-.
+dwc3 thread:   Hardware                            < Start Transfer        =
+                                               End Transfer >              =
+      < Start Transfer      ....
 
-With this, the generic/112 xfstest passes if cifs is forced to put all
-non-DIO opens into write-through mode.
+legend:
+- rq'  : last request of a frame
+- rqB0 : first request of the next transfer with no payload but the header =
+only
+          telling the host that the last frame was ok/broken
 
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Steve French <stfrench@microsoft.com>
-cc: Enzo Matsumiya <ematsumiya@suse.de>
-cc: netfs@lists.linux.dev
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/295086.1716298663@warthog.procyon.org.uk/ =
-# v1
----
- Changes
- =3D=3D=3D=3D=3D=3D=3D
- ver #2)
-  - Set wreq->len when doing direct writes.
+assumption:
 
- fs/netfs/direct_write.c  |    5 +++--
- fs/netfs/write_collect.c |    7 ++++---
- fs/netfs/write_issue.c   |    2 +-
- 3 files changed, 8 insertions(+), 6 deletions(-)
+- pump thread is never interrupted by a kernel thread but only by some shor=
+t running irq
+- if one request comes back with -EXDEV the rest of the enqueued requests s=
+hould be flushed
 
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index 608ba6416919..93b41e121042 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -12,7 +12,7 @@
- static void netfs_cleanup_dio_write(struct netfs_io_request *wreq)
- {
- 	struct inode *inode =3D wreq->inode;
--	unsigned long long end =3D wreq->start + wreq->len;
-+	unsigned long long end =3D wreq->start + wreq->transferred;
- =
+In the no_interrupt case we would also only generate the interrupt for
+the last request and giveback all four requests in the last interval.
+This should still work fine.
 
- 	if (!wreq->error &&
- 	    i_size_read(inode) < end) {
-@@ -92,8 +92,9 @@ static ssize_t netfs_unbuffered_write_iter_locked(struct=
- kiocb *iocb, struct iov
- 	__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
- 	if (async)
- 		wreq->iocb =3D iocb;
-+	wreq->len =3D iov_iter_count(&wreq->io_iter);
- 	wreq->cleanup =3D netfs_cleanup_dio_write;
--	ret =3D netfs_unbuffered_write(wreq, is_sync_kiocb(iocb), iov_iter_count=
-(&wreq->io_iter));
-+	ret =3D netfs_unbuffered_write(wreq, is_sync_kiocb(iocb), wreq->len);
- 	if (ret < 0) {
- 		_debug("begin =3D %zd", ret);
- 		goto out;
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 60112e4b2c5e..426cf87aaf2e 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -510,7 +510,7 @@ static void netfs_collect_write_results(struct netfs_i=
-o_request *wreq)
- 	 * stream has a gap that can be jumped.
- 	 */
- 	if (notes & SOME_EMPTY) {
--		unsigned long long jump_to =3D wreq->start + wreq->len;
-+		unsigned long long jump_to =3D wreq->start + READ_ONCE(wreq->submitted)=
-;
- =
+We also only start streaming when one frame is totally available to be
+enqueued in one run. So in case frames with rqA and rqB both did come back
+with errors the start of the next frame will only begin after the next
+frame was completely and fully encoded.
 
- 		for (s =3D 0; s < NR_IO_STREAMS; s++) {
- 			stream =3D &wreq->io_streams[s];
-@@ -690,10 +690,11 @@ void netfs_write_collection_worker(struct work_struc=
-t *work)
- 	wake_up_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS);
- =
+>> When the stream is stopped, what implications does this have on the bus?
+>>
+>> When the Endpoint is enabled, will the hardware then send zero-length
+>> requests on its own?
+>
+>For isoc endpoint IN, yes. If the host requests for isoc data IN while
+>no TRB is prepared, then the controller will automatically send 0-length
+>packet respond.
 
- 	if (wreq->iocb) {
--		wreq->iocb->ki_pos +=3D wreq->transferred;
-+		size_t written =3D min(wreq->transferred, wreq->len);
-+		wreq->iocb->ki_pos +=3D written;
- 		if (wreq->iocb->ki_complete)
- 			wreq->iocb->ki_complete(
--				wreq->iocb, wreq->error ? wreq->error : wreq->transferred);
-+				wreq->iocb, wreq->error ? wreq->error : written);
- 		wreq->iocb =3D VFS_PTR_POISON;
- 	}
- =
+Perfect! This will help a lot and will make active queueing of own
+zero-length requests run unnecessary.
 
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index acbfd1f5ee9d..3aa86e268f40 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -254,7 +254,7 @@ static void netfs_issue_write(struct netfs_io_request =
-*wreq,
- 	stream->construct =3D NULL;
- =
+>> With the next ep_queue we start another stream and when we keep up with
+>> this stream there is no underruns, right?
+>>
+>> I picture this scenario in my mind:
+>>
+>> thread 1: uvc->queue_buf is called:
+>>   - we encode the frame buffer data into all available requests
+>>     and put them into the per uvc_buffer perpared list
+>>     (as we precalculated the amount of requests properly to the expected
+>>      frame duration and buffer size there will be enough requests
+>>      available)
+>>   - wake up the pump thread
+>>
+>> thread 2: pump_worker is triggered
+>>   - take all requests from the prepared available buffer and enqueue them
+>>     into the hardware
+>>     (The pump worker is running with while(1) while it finds requests in
+>>      the per buffer prepared list) and therefor will have a high chance
+>>      to finish the pumping for one complete frame.
+>>   - check for any errors reported from the complete handlers
+>>     - on error
+>>       - stop enqueing new requests from current frame
+>>       - wait for the last request from errornous frame has returned
+>>   - only start pumping new requests from the next buffer when the last
+>>     request from the active frame has finished
+>>   - In the beginning of the next frame send one extra request with
+>>     EOF/ERR tag so the host knows that the last one was ok or not.
+>>
+>> thread 3: complete handler (interrupt)
+>>   - give back the requests into the empty_list
+>>   - report EXDEV and errors
+>>   - wake up the pump thread
+>>
+>> With this method we will continously drain the hw trb stream of the dwc3
+>> controller per frame and therefor will not shoot into one window where
+>> the current stream could be missed. With the data spreading over the
+>> many requests we also avoid the missed requests when the DMA was to
+>> slow.
+>>
+>
+>This sounds good.
+>
+>As long as we can maintain more than X number of requests enqueued to
+>accomodate for the worst latency, then we can avoid underrun. The driver
+>should monitor how many requests are enqueued and hopefully can keep up
+>the queue with zero-length requests.
 
- 	if (subreq->start + subreq->len > wreq->start + wreq->submitted)
--		wreq->len =3D wreq->submitted =3D subreq->start + subreq->len - wreq->s=
-tart;
-+		WRITE_ONCE(wreq->submitted, subreq->start + subreq->len - wreq->start);
- 	netfs_do_issue_write(stream, subreq);
- }
- =
+Except I totally misunderstood something or did oversimplify to much,
+the above explanation should run this unnecessary.
 
+Although we are able to track the amount of enqueued requests in the udc
+driver and compare that with the amount of completed requests.
+
+Also we have the usb_gadget_frame_number callback to the udc controller
+to ask in which frame it is operating at the moment. This way we would
+be able to calculate not to enqueue requests into a transfer that did
+not come back yet completely but would run into missed transfers.
+
+Michael
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--FJN5bpTf2Oav326M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmZNN18ACgkQC+njFXoe
+LGQkXRAAvf2PS6WGbXqYYFZekKfZNID7RmWsKD2fPAaGS7HrREZKYmwecjXlcOPt
+RB8iXc3rz3azCKAfFgcOchkGoJdJTMjWmz7bUgKJ/v1fOpVlGN6kWEpzKQP8tHuR
+ecNIYDo7KtbEqQapttUR4x5nDqGplpts0APntLFq30DJp9GwPsPnz2M2STSy21Ah
+mneACn+FUMNLa/OYVRcqBIe33rbdn/ksSNAaJZmj7j0e08Lxu0hu/ALw9kg+HLL3
+lkWSEH3jDmOgXZgjn2WFbWGlhaPj8XwLdt4lLWejz99UXtMrrx4iZAo+VPNXtxe4
+t05GN6azx/HWBSPNTA8pIAhxohIybgBh2BD2GGKufXm+93K8l66cxud1eoZSd35N
+yFG1mKl+ozagowWcTETbNAOSpkRSCMBHbT460tR+yPKgYPi1j/wnPEuqqWFs44DP
+J5iDxIBWWTS8zk38VIBXJ2pAF6i/Dd8IeprduP99nyZnkDkDf6waGLcVUr+gYFNF
+QwRdosirq7G63M6s38gUuTqnXpIFyiER+1YEoOEObbF2ixGqWdvkyGdFx9I3z6/3
+4dNByTJtMWi441PMNnq/W4z4/N6LT+GM1h7gMQMKdrSpkL2584RjZoPF2RQ2LIb1
+u0qNEeRfYM0JacV4l+E+96L3PLfxLa0c17N+yN8vlVuLW2eup2c=
+=7biu
+-----END PGP SIGNATURE-----
+
+--FJN5bpTf2Oav326M--
 
