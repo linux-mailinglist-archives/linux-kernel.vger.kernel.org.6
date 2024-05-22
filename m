@@ -1,145 +1,173 @@
-Return-Path: <linux-kernel+bounces-186557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3028CC59E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:34:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA578CC5A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9B91F22E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 500E81C20D5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445B21422D6;
-	Wed, 22 May 2024 17:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3381422DF;
+	Wed, 22 May 2024 17:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b="NdyuhZ7m"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="DAsC82GC"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A05E1422C8;
-	Wed, 22 May 2024 17:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615C91422AE
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716399269; cv=none; b=uCUzI2myW+4lv9g4dkuJUIQnXfrPMDggHRN74G8JQ6/lK5JmmZoGuY5l7VHwm+JpUmy24eLT4dFfKuvu2WF5Cz/Cc14z6ksYn7YeBiueupU40OokMWaKyQHpPUkBjtXvEDkQsnV1dMGPv4OOi4uV/KFRRict26LELjqja50i3Jw=
+	t=1716399323; cv=none; b=ggfh/YowLQkIyaVzPfNGuSEf1HxOsAJaQYKQQpSSUb8TkYMuf0FVTsN2ZgFmU+pVonKBRwggMgmPDdjAyMqKApb9werxGE9wrNgk4k/mdKrb0kHuNmIVoa5WxzvU9/59QgkvlZmtLfjMZe+7Gv5vnJiKkaE7NUuORDKelciLEZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716399269; c=relaxed/simple;
-	bh=sgZi3p6+Ujbhbh0wnjkTq4Cg1SkQ5TFVSBkMVQkT6zU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ELYKcZr6sak/2iyObwQg5X8kxBMmXrpiJPhZvcktOSkNwKpXBJdTX1iVVHrTBTnrnW6npseX4JbXCDrUJT2HLQFT1Kc04CSrX97L7R+CH9H+sIHP3h+FvlE94vFwXY05u/NQk1kcb7ajjKPSKWMzDVZ8zRBmvWcr1p84lQ105aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz; spf=pass smtp.mailfrom=z3ntu.xyz; dkim=pass (1024-bit key) header.d=z3ntu.xyz header.i=@z3ntu.xyz header.b=NdyuhZ7m; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=z3ntu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=z3ntu.xyz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=s1;
-	t=1716399265; bh=sgZi3p6+Ujbhbh0wnjkTq4Cg1SkQ5TFVSBkMVQkT6zU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NdyuhZ7mpvBDPjLBkFhlcA25t2Mstyfkw79p+Yv3moIbz0CZc0b3Yky5RX4tVrvbL
-	 3T3Vcfy2sv4AD+AZajnD2L8wdsyyBIhYySgpTrxoegyx/u7+Ii/PmpEi7KDr9e9/r0
-	 80cJD9EX5NFLg6bQ83DUhqQF7Uy3G36odVnU3b20=
-From: Luca Weiss <luca@z3ntu.xyz>
-To: Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH RFC 1/2] dt-bindings: soc: qcom,smsm: Allow specifying mboxes
- instead of qcom,ipc
-Date: Wed, 22 May 2024 19:34:23 +0200
-Message-ID: <6253429.lOV4Wx5bFT@g550jk>
-In-Reply-To: <12896bf6-412c-40af-9ad5-f9391ff81f63@kernel.org>
-References:
- <20240424-smsm-mbox-v1-0-555f3f442841@z3ntu.xyz> <5780452.DvuYhMxLoT@g550jk>
- <12896bf6-412c-40af-9ad5-f9391ff81f63@kernel.org>
+	s=arc-20240116; t=1716399323; c=relaxed/simple;
+	bh=h4xDjoVBbGCwsS9xKPDSs0gCw1+IXJwG83x1dxLD/vE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dNMo4hDKQHORzql0eFbZQP5XwGAUVw61GDpoZGl0JLfdokho5VO5OQcEBZERlGpA5ShsfRitbBOCxJ0Xg6s/fKPW+URGzsksi7yON6tNgHxl4uUG5H+qH3KkeXA8Lx3hHz9DQtcZbEDL3NmEPOBCn+v7qKQyXeMpYwchjrqmD5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=DAsC82GC; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f6911d16b4so1900720b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:35:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1716399322; x=1717004122; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jtcwHXQhuywjWtHL8fvX3LFZZ/ytDiic4eCWATEojeU=;
+        b=DAsC82GCCi/9D+bWWykzRIg8kz1HH1AccNbltetZKDu2pJ+CJHlGbO7mm8hxJbP5bZ
+         AZHKm6y+UGpt+sCXnLKMAjkeTg3O2JZveMZJQY9GmMFzHjZ7ahOvFOEr9e7rTy86wqgs
+         Qwhpo8ryAuSdGCNMU7TRKJVI+VinDwA1CElmZOD26NxLQ22a6PWV0TLP1jdv7YGzsMKM
+         HShunNEKq4FD+t/LaccNSLEQra0YDuwDXndEVu4tUs0qK5CSfH29xf2gOtNwBlxshyaH
+         rfCUWuZLdfVgWGoLep1iTJ4psN7PkF6mjnixxg4fKpelWHJsfACTiHEdr6TXyIyfKxo9
+         czEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716399322; x=1717004122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jtcwHXQhuywjWtHL8fvX3LFZZ/ytDiic4eCWATEojeU=;
+        b=Qy0hAB1QchZgHplCzuykk+6Sd2uAuI5I6G3vKQ8zasO9WnCnrcl+9fplvuc91tf2YI
+         tagQUhGTSQZJyNMtG8lqR1Jm0X957B2UgT+Fl+1fyXilbDjKbBUONRz3HG0e13HnhVix
+         IbNwPOPqd7dwV7kvH/yFpG8ziYJKqd8dFlRu1hSprtTnUhRlIfncelGsshIMoOs64DUo
+         +xWhcZHomVE/vZL9o9CKFw026CGtE2YGxaxLq90etRR9zGiYQJMYg7JOxl9yfzTq9qB5
+         81tv1kaTLJB8uMABm/eS2FOH/hm8bfmNeGqLmFNA+VQ4WzEhAjTiUM0vrLxSwNOVsXty
+         eC1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWEXKzs+94YfSIo4niLin+cxWTvZQeZAjl+dsKok7SaQJaH7Ddla0kh/yUNM2+C3YycGYeJJszj7nZ5yRaUmdCuEjEMwdacjUoHpvFi
+X-Gm-Message-State: AOJu0YxhsKfolV55kJy56eP1mGqWseKO3OiJ0y8eHwWzRu793QLyLoBv
+	bcwXc8ZK3iVEgm5SzSZZHGctNhOs5YKfahFVej5E6QyudAajiOIOSYaGa2OYpoU=
+X-Google-Smtp-Source: AGHT+IFnVExZ9w4FLsmZMki4aPDFIr85cfle6enyYjYsVAi4+pfoOCqX9NTQeS826YOJ4cg7meMOkA==
+X-Received: by 2002:a05:6a00:3cc7:b0:6f3:ecdc:220e with SMTP id d2e1a72fcca58-6f6d617a507mr3058370b3a.24.1716399321714;
+        Wed, 22 May 2024 10:35:21 -0700 (PDT)
+Received: from sunil-laptop ([106.51.188.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a9d976sm22673408b3a.89.2024.05.22.10.35.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 10:35:21 -0700 (PDT)
+Date: Wed, 22 May 2024 23:05:03 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Haibo Xu <haibo1.xu@intel.com>
+Cc: arnd@arndb.de, xiaobo55x@gmail.com, ajones@ventanamicro.com,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Guo Ren <guoren@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Zong Li <zong.li@sifive.com>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+	Chen Jiahao <chenjiahao16@huawei.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	James Morse <james.morse@arm.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Evan Green <evan@rivosinc.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ard Biesheuvel <ardb@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-acpi@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v3 5/6] ACPI: NUMA: change the ACPI_NUMA to a hidden
+ option
+Message-ID: <Zk4sxy4a5gy6ZfdJ@sunil-laptop>
+References: <cover.1713778236.git.haibo1.xu@intel.com>
+ <5c3a005a67096010cf3c465f8e3362651763fe3b.1713778236.git.haibo1.xu@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c3a005a67096010cf3c465f8e3362651763fe3b.1713778236.git.haibo1.xu@intel.com>
 
-On Mittwoch, 22. Mai 2024 08:49:43 MESZ Krzysztof Kozlowski wrote:
-> On 21/05/2024 22:35, Luca Weiss wrote:
-> > On Dienstag, 21. Mai 2024 10:58:07 MESZ Krzysztof Kozlowski wrote:
-> >> On 20/05/2024 17:11, Luca Weiss wrote:
-> >>> Hi Krzysztof
-> >>>
-> >>> Ack, sounds good.
-> >>>
-> >>> Maybe also from you, any opinion between these two binding styles?
-> >>>
-> >>> So first using index of mboxes for the numbering, where for the known
-> >>> usages the first element (and sometimes the 3rd - ipc-2) are empty <>.
-> >>>
-> >>> The second variant is using mbox-names to get the correct channel-mbox
-> >>> mapping.
-> >>>
-> >>> -               qcom,ipc-1 = <&apcs 8 13>;
-> >>> -               qcom,ipc-2 = <&apcs 8 9>;
-> >>> -               qcom,ipc-3 = <&apcs 8 19>;
-> >>> +               mboxes = <0>, <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> >>>
-> >>> vs.
-> >>>
-> >>> -               qcom,ipc-1 = <&apcs 8 13>;
-> >>> -               qcom,ipc-2 = <&apcs 8 9>;
-> >>> -               qcom,ipc-3 = <&apcs 8 19>;
-> >>> +               mboxes = <&apcs 13>, <&apcs 9>, <&apcs 19>;
-> >>> +               mbox-names = "ipc-1", "ipc-2", "ipc-3";
-> >>
-> >> Sorry, don't get, ipc-1 is the first mailbox, so why would there be <0>
-> >> in first case?
-> > 
-> > Actually not, ipc-0 would be permissible by the driver, used for the 0th host
-> > 
-> > e.g. from:
-> > 
-> > 	/* Iterate over all hosts to check whom wants a kick */
-> > 	for (host = 0; host < smsm->num_hosts; host++) {
-> > 		hostp = &smsm->hosts[host];
-> > 
-> > Even though no mailbox is specified in any upstream dts for this 0th host I
-> > didn't want the bindings to restrict that, that's why in the first example
-> > there's an empty element (<0>) for the 0th smsm host
-> > 
-> >> Anyway, the question is if you need to know that some
-> >> mailbox is missing. But then it is weird to name them "ipc-1" etc.
-> > 
-> > In either case we'd just query the mbox (either by name or index) and then
-> > see if it's there? Not quite sure I understand the sentence..
-> > Pretty sure either binding would work the same way.
+On Wed, Apr 24, 2024 at 01:46:25PM +0800, Haibo Xu wrote:
+> x86/arm64/loongarch would select ACPI_NUMA by default and riscv
+> would do the same thing, so change it to a hidden option and the
+> select statements except for the X86_64_ACPI_NUMA can also go away.
 > 
-> The question is: does the driver care only about having some mailboxes
-> or the driver cares about each specific mailbox? IOW, is skipping ipc-0
-> important for the driver?
-
-There's nothing special from driver side about any mailbox. Some SoCs have
-a mailbox for e.g. hosts 1&2&3, some have only 1&3, and apq8064 even has
-1&2&3&4.
-
-And if the driver doesn't find a mailbox for a host, it just ignores it
-but then of course it can't 'ring' the mailbox for that host when necessary.
-
-Not sure how much more I can add here, to be fair I barely understand what
-this driver is doing myself apart from the obvious.
-
-Regards
-Luca
-
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Suggested-by: Sunil V L <sunilvl@ventanamicro.com>
+> Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
+> ---
+>  arch/arm64/Kconfig        | 1 -
+>  arch/loongarch/Kconfig    | 1 -
+>  drivers/acpi/numa/Kconfig | 5 +----
+>  3 files changed, 1 insertion(+), 6 deletions(-)
 > 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 7b11c98b3e84..c6c667898da6 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1439,7 +1439,6 @@ config HOTPLUG_CPU
+>  config NUMA
+>  	bool "NUMA Memory Allocation and Scheduler Support"
+>  	select GENERIC_ARCH_NUMA
+> -	select ACPI_NUMA if ACPI
+>  	select OF_NUMA
+>  	select HAVE_SETUP_PER_CPU_AREA
+>  	select NEED_PER_CPU_EMBED_FIRST_CHUNK
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index a5f300ec6f28..29d574a5c34c 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -465,7 +465,6 @@ config NR_CPUS
+>  config NUMA
+>  	bool "NUMA Support"
+>  	select SMP
+> -	select ACPI_NUMA if ACPI
+>  	help
+>  	  Say Y to compile the kernel with NUMA (Non-Uniform Memory Access)
+>  	  support.  This option improves performance on systems with more
+> diff --git a/drivers/acpi/numa/Kconfig b/drivers/acpi/numa/Kconfig
+> index 849c2bd820b9..f33194d1e43f 100644
+> --- a/drivers/acpi/numa/Kconfig
+> +++ b/drivers/acpi/numa/Kconfig
+> @@ -1,9 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  config ACPI_NUMA
+> -	bool "NUMA support"
+> -	depends on NUMA
+> -	depends on (X86 || ARM64 || LOONGARCH)
+> -	default y if ARM64
+> +	def_bool NUMA && !X86
+>  
+LGTM.
 
-
-
-
+Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
 
