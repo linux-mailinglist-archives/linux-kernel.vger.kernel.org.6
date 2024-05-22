@@ -1,165 +1,146 @@
-Return-Path: <linux-kernel+bounces-186794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2048CC941
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:58:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A02218CC944
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B2C1F220FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09DA1C21C0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 22:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C531494C8;
-	Wed, 22 May 2024 22:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9AB1494D2;
+	Wed, 22 May 2024 22:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BU7JfUok"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OH76cNwF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9671494BF
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2508F1494AC
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716418721; cv=none; b=LCDCd29zChsyDJ0zoZ+8m8j56FlJUczG8g/TgxMW9WNGLS+2h1ZEEdM/OxpHoBs3YR4BJ4ug7OLsvcMDaIEqe8kCXmKhikHnjkI07F2xrQUQN32yaXBVbxCnuHMh4VbdtU6rMy4TrY3JBN4fLYsoScvow8nwyvsvWNBTOV8ovSw=
+	t=1716418750; cv=none; b=h+W/P+og8J4LAC7VEuY3H2EQlG0A8f6m3giiLIDac6nx7jGkJj3aiIIVTCURDJQM69tq53RI2TYJ2q70eUZWlYNQJ7NfToNfllViX2gsvceOB9b0kIWFz3EEDNbQMslOZ38bLf68ePpkBUP+eNpHupb6XPjZQngdAyWwzhXOmMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716418721; c=relaxed/simple;
-	bh=2/WOKg2UsryvuOjF0tR4aFm9e3Gmo9fdiQK9MaRQs0s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=P9KSjMB/mgFB+nvwHKMya4Zkoje6Sh3wTDLfViWJ3StB+9lvjE/Eyu55wc+9XdICuZ+bAfb8yzHBqXyHZ3Wr/sudRELmMSfVClNA28LgaaG8rj+vb4DDEgjX/8FXybo3gw7YV/5fBIqivoCFHb0O+J9+EwfGm/gjApSns26bjxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BU7JfUok; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f44e3fd382so2831293b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716418719; x=1717023519; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F29FxmiJU2YNXfIAoVsgdy2y8g4QcTv30E2TRMskf9w=;
-        b=BU7JfUoknrK48JusYMIxANGp4Xltelt36LuBKJPMAOYHd/S1+G8r5lcOduQybjYpjf
-         q0VLet7mnbNzpqetq1Oc363kn3/uqt8jn2vS3QU57AHcXJGLzC4bolup1ianatSwf4MP
-         9rFQq1EeZnydHEk4UJg18oeFzPPSo4fovlrL6tJmcymFgJhgx3fNwC5LsYk5cX0S6eV9
-         ID5AswqCLjqPXYFUQLRPXJv00O0FAZDO1oS/23NwV8iDkSGqq1lF6hGHYVN/EZySMNvV
-         LulWNH7OSk8psXs3On4umWlTpBlQTrrlKltbTqDjgg3UA+co+Xhy8TLn52QTSaYKnA4y
-         BBqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716418719; x=1717023519;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F29FxmiJU2YNXfIAoVsgdy2y8g4QcTv30E2TRMskf9w=;
-        b=lHuCbHW7ZRCyGhrKxPJKrbMNO83izB+zPyXG1YVqKJ8atf/Ie18WP1tUCb2IvOmfIZ
-         /OrbIpjyk4XrcfVFGPxu2k+vrGLKnL0jFNZbuIcq0j5D0JnniB/RjLMXLurzGli1Eupj
-         GhuH0rFp0Hdb2C8XwWyyzM0jYR16xDmyCht2RW+dvp5+qkzpP5OBBw+6vxTiBwHH57rb
-         yNRQMMU/tJztFZ9+6zduPkZL7DBdxMk262ZgzSyERfkFNyme2quh+uUaEke7SzNWEt3u
-         fuS55ZguB65WbrlY2sx4KQTKDDZkOhh25ln5lSeLrAdBLtnyOqZaGuADR4UHwZocIDPY
-         zeJg==
-X-Gm-Message-State: AOJu0YzctTR7AmbdRmbYSz4S6sJ0ZpcyhILSVmDX5cUkXQJ38zwvMEdw
-	tc45VAoD6Du65n9k9tI8aAsclE31y52JuKg9Dx6sla5myAC9jwTGxgjJkg==
-X-Google-Smtp-Source: AGHT+IH6wH03Yfk/IYbMHWOePxbAmrGG18YvuLW+vaqOqRN32MhJyA7J41ir0sYCJqm2lLy3jMpWmQ==
-X-Received: by 2002:a05:6a00:9285:b0:6e7:20a7:9fc0 with SMTP id d2e1a72fcca58-6f6d620bb5cmr3564729b3a.34.1716418719336;
-        Wed, 22 May 2024 15:58:39 -0700 (PDT)
-Received: from localhost ([216.228.127.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a9d981sm23534566b3a.94.2024.05.22.15.58.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 15:58:38 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Yoann Congal <yoann.congal@smile.fr>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S . Miller" <davem@davemloft.net>
-Subject: [PATCH] gcc: disable '-Warray-bounds' for gcc-9
-Date: Wed, 22 May 2024 15:58:30 -0700
-Message-Id: <20240522225830.1201778-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1716418750; c=relaxed/simple;
+	bh=lUyseyhrTphGdKiHxqU49ao7Ry2K6n4epBhRL331XWI=;
+	h=To:cc:Subject:MIME-Version:Content-Type:From:Date:Message-ID; b=tltsFUjgX8RM9vrCjJeOGlbu4VBjlq++maO9CR4k8Vgi+/zQwMMGqJ11s8z92C8h3s2fqA05jB6PgIPOKGUeJcwgcYxI2mQ+tl4JB5sg5Zh8LwTGF4QMiQ5cRUbGzaWUbAusdOcdy7nvCzp84XbS6lN4PoQLFfT4pNTvbc1LQgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OH76cNwF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716418748;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aLGhBNxsqVskXvt4vSfXPq+TZr8BC8vuqNTuesM2U10=;
+	b=OH76cNwFyNEIDxT12ZdxcqrnOjiVWS+fb0w6uihUwL+jRVwNwnp7mx1zY3vz3ZjVMCC5SY
+	Knc4naw6zzeWx4bZjw33oXWgz+nG66POhEUPYEMni4V87zD1ixnNNYufxKxJo8TMwCjyAl
+	GmA0SnNte9Wi5Wazl1Ds8p3/rsX67hQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-N82oH1LtPryF20wyqw928w-1; Wed, 22 May 2024 18:59:04 -0400
+X-MC-Unique: N82oH1LtPryF20wyqw928w-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1E4BA800169;
+	Wed, 22 May 2024 22:59:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 0871C561A;
+	Wed, 22 May 2024 22:59:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>
+cc: dhowells@redhat.com, Shyam Prasad N <nspmangalore@gmail.com>,
+    Rohith Surabattula <rohiths.msft@gmail.com>,
+    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] cifs: Fix credit handling in cifs_io_subrequest cleanup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <469429.1716418699.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From: David Howells <dhowells@redhat.com>
+Date: Wed, 22 May 2024 23:59:02 +0100
+Message-ID: <469451.1716418742@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-'-Warray-bounds' is already disabled for gcc-10+. Now that we've merged
-bitmap_{read,write), I see the following error when building the kernel
-with gcc-9.4 (Ubuntu 20.04.4 LTS) for x86_64 allmodconfig:
+    =
 
-drivers/pinctrl/pinctrl-cy8c95x0.c: In function ‘cy8c95x0_read_regs_mask.isra.0’:
-include/linux/bitmap.h:756:18: error: array subscript [1, 288230376151711744] is outside array bounds of ‘long unsigned int[1]’ [-Werror=array-bounds]
-  756 |  value_high = map[index + 1] & BITMAP_LAST_WORD_MASK(start + nbits);
-      |               ~~~^~~~~~~~~~~
+When a cifs_io_subrequest (wrapping a netfs_io_subrequest) is cleaned up i=
+n
+cifs_free_subrequest(), it releases any credits that are left in
+rdata->credits.  However, this is a problem because smb2_writev_callback()
+calls add_credits() to add the new credits from the response header
+CreditRequest to the available pool.
 
-The immediate reason is that the commit b44759705f7d ("bitmap: make
-bitmap_{get,set}_value8() use bitmap_{read,write}()") switched the
-bitmap_get_value8() to an alias of bitmap_read(); the same for 'set'.
+This can cause a warning to be emitted in smb2_add_credits() as
+server->in_flight gets doubly decremented and a later operation sees it
+having prematurely reached 0.
 
-Now; the code that triggers Warray-bounds, calls the function like this:
+Fix this by clearing the credit count after actually issuing the request o=
+n
+the assumption that we've given the credits back to the server (it will
+give us new credits in the reply).
 
-  #define MAX_BANK 8
-  #define BANK_SZ 8
-  #define MAX_LINE        (MAX_BANK * BANK_SZ)
-  DECLARE_BITMAP(tval, MAX_LINE); // 64-bit map: unsigned long tval[1]
-  
-  read_val |= bitmap_get_value8(tval, i * BANK_SZ) & ~bits;
-
-bitmap_read() is implemented such that it may conditionally dereference
-a pointer beyond the boundary like this:
-
-	unsigned long offset = start % BITS_PER_LONG;
-        unsigned long space = BITS_PER_LONG - offset;
-
-        if (space >= nbits)
-                return (map[index] >> offset) & BITMAP_LAST_WORD_MASK(nbits);
-
-        value_low = map[index] & BITMAP_FIRST_WORD_MASK(start);
-        value_high = map[index + 1] & BITMAP_LAST_WORD_MASK(start + nbits);
-        return (value_low >> offset) | (value_high << space);
-
-In case of bitmap_get_value8(), it's impossible to violate the boundary
-because 'space >= nbits' is never the true for byte-aligned 8-bit access.
-So, this is clearly a false-positive. 
-
-The same type of false-positives break my allmodconfig build in many
-places. gcc-8, is clear, however.
-
-Signed-off-by: Yury Norov <yury.norov@gmail.com>
-
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <sfrench@samba.org>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
 ---
-It has already been spotted in this thread:
+ fs/smb/client/file.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-https://lore.kernel.org/linux-kernel//457b9cbb-9a5f-47ef-9eac-3e4f135d6a96@intel.com/T/#mc833ceac1b05d7156a864dcfe21435d01d77a0d7
+diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
+index 9d5c2440abfc..73e2765c4d2f 100644
+--- a/fs/smb/client/file.c
++++ b/fs/smb/client/file.c
+@@ -110,6 +110,7 @@ static void cifs_issue_write(struct netfs_io_subreques=
+t *subreq)
+ 		goto fail;
+ =
 
-And I suggested to use the OPTIMIZER_HIDE_VAR() there. But now that I
-see the warning disabled for gcc-10+, it looks simpler to just extend
-it to gcc-9+.
+ 	wdata->server->ops->async_writev(wdata);
++	wdata->credits.value =3D 0;
+ out:
+ 	return;
+ =
 
----
- init/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+@@ -205,10 +206,12 @@ static void cifs_req_issue_read(struct netfs_io_subr=
+equest *subreq)
+ =
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 72404c1f2157..febdea2afc3b 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -883,7 +883,7 @@ config GCC10_NO_ARRAY_BOUNDS
- 
- config CC_NO_ARRAY_BOUNDS
- 	bool
--	default y if CC_IS_GCC && GCC_VERSION >= 100000 && GCC10_NO_ARRAY_BOUNDS
-+	default y if CC_IS_GCC && GCC_VERSION >= 90000 && GCC10_NO_ARRAY_BOUNDS
- 
- # Currently, disable -Wstringop-overflow for GCC globally.
- config GCC_NO_STRINGOP_OVERFLOW
--- 
-2.40.1
+ 	rc =3D adjust_credits(rdata->server, &rdata->credits, rdata->subreq.len)=
+;
+ 	if (!rc) {
+-		if (rdata->req->cfile->invalidHandle)
++		if (rdata->req->cfile->invalidHandle) {
+ 			rc =3D -EAGAIN;
+-		else
++		} else {
+ 			rc =3D rdata->server->ops->async_readv(rdata);
++			rdata->credits.value =3D 0;
++		}
+ 	}
+ =
+
+ out:
 
 
