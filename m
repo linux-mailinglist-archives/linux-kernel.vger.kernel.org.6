@@ -1,147 +1,130 @@
-Return-Path: <linux-kernel+bounces-186628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537A68CC697
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:54:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349578CC69B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 20:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01306282D40
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664E01C21A5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081FC146582;
-	Wed, 22 May 2024 18:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0419E146582;
+	Wed, 22 May 2024 18:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZqZcOV9F"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EquQbhP7"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B0E1420C6;
-	Wed, 22 May 2024 18:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB302143C5B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716404067; cv=none; b=YKeCTJLPOjMIF7B6GM85n3/QcjmGMvbwL+d/S+B+FAJBj/nYf1zN9TAJcD75kX50xD51Qxf5bwq23i+BsFeLFuJeGWwPyieGdSDm7PLQy2RyiryspFXMsAwz18CnFwcjmncM33mlMj3Zn72IlyRyWBhso1DgTHob49a9hG0muPE=
+	t=1716404089; cv=none; b=c1QtN4pABYK6xyqnXdKVek2kp6rtLWI1Y5SS11jMxDLl5ZMqiOoHlZOOuLQ7VGFaaLnFK9cAxFaidU2zD2iO2V84x5c4/cp6FI7UVpGJeQDjvrAnOchyrDM5+iD8Ym4FCFPHDPgdCmA4RSXJeoP1PV8GkGZKe/0x0eESFgGV1dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716404067; c=relaxed/simple;
-	bh=zG6DmFSvOlwxNqFRYCCoNVfO0/oFcnar3wPos47WTUg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNWw73OFeXQXwVN6zIGk4IibDcuzuj9Dqe6CXdfY+VE/gYW+K/83bP8/sTAgftV6qEM+yUNeYuh2uVOgwmw8283iTrBfjlLBSAph3Uh8ehcUTjXayb/z/oC93X4uAt5LdbWQJ64PRXvoMOR46w+EChrMrJOYyApm2vZDU+LjeEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZqZcOV9F; arc=none smtp.client-ip=209.85.160.41
+	s=arc-20240116; t=1716404089; c=relaxed/simple;
+	bh=Vi9DFTwatCAsZzZscB9uKauVl3qhNxSUs3JBSABQJPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GHrW98clHTThEYeJ8C7NA7pqFKMxnWoV8O+DBvcRlFGwOV947WHdKDQw++6G0neDF5HbgkhWuZvMHU9gEfV/I0cVABSelZIjIk7VhDM92aiUpNaNFJUcdu88k0l4MqHWtW1e9WdnoneweRfqV89OU7MFqr4vo0sI9+0UYXuuA8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EquQbhP7; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-23dd94111cfso3230736fac.2;
-        Wed, 22 May 2024 11:54:25 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-56e48d0a632so14471877a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:54:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716404065; x=1717008865; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=tA1Sbti/zXxCiItQT/p43hpVbiyvW9x3fEN/x9VummA=;
-        b=ZqZcOV9FE0wb6bhtVBX1cDPvHGQ9ySQsdSOV6Tn0g5t0M+8LGN2tCiY4Sq9TIf6Xfj
-         rdV1k6B8Xdvac4ffNB2lQQjMqr63HSIoa1xyG+4DzNWf+rfVOTgzZCudEpetvaCpqOb5
-         RvXfXj+Y6MOnHe4tC5BXGC7y/g6wSzcyCeCNyPp1LODSQ7hvrll+8FVHOK2JUviwbfx1
-         yIzmsbLfOqncwdeIqOClG3TPu9u27FH7+i9OicSwnekBiqKYyTanWnpy3tFCO+rcXESf
-         fP1nx+CcG6Tf+qf0Q9XQeuAGDydMrxTyZMClHu2srXWns7bgzV+uOZRCCkWC01z6g4fD
-         mvxw==
+        d=gmail.com; s=20230601; t=1716404086; x=1717008886; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hNDn38cEa80EVnk6aX9NYeZhhjh+9i1BJ/R1mRMwIHY=;
+        b=EquQbhP71b+2p/uuI5NN5ig6NhK2eeu0/HSQtP85HZko7yV+uR+ka1LqCAy66hUYE3
+         JEYkfQ5Wmn/XYY+F+l3d7IFUuwdjKPE9E0Ym8/Td8c1uPoC7Uw496W+AtdAS675TTcAN
+         aYWJ5HQKzRBITKjEeY1hSu06v+CQEf+mFiJ6L6Hf+qw1A8W7irhz2F+ONjUOP12mZJHq
+         /p/aAiyoLPJdjebDoN56h0OM5/jWu/FVFuwXySLuf3lJ5bwGfjNhQfvAMeUWzRBVugRU
+         qJq+3GDs9OTULBMHlL8yqLGnWjtZ7cpMFxSkkwe1R+h8YDEqpJeRPpJNmoQD6sQ+48s1
+         l5OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716404065; x=1717008865;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tA1Sbti/zXxCiItQT/p43hpVbiyvW9x3fEN/x9VummA=;
-        b=D9Lytqp5VQLEju34Bb5QcbYI9ZCtZfsfJFQg/VCHT9VLUEoCydaU4jCD8xv9CzihJ+
-         Gc4MojzS0JgyawUD2ewDR058uf8rCtXoghFTEZv179zAwWX3EGO74lpaULcwLkXekI+S
-         SA9x1eTFH3wcrBGy6loHt2adA697GLW64MQOHexEPMXrvAaw7JIo9RtvO0rtXyD8Nfvx
-         FaDYn8xDDa8lfcGj4LdWNpZVvFKf1SjgAh1LjJ3RKlSbViZ6yH/GXz1R54rhdL16TmgT
-         hwVcvp9yM+Xt1LVwSXr3Ud5+tzgDv7EqNc9XVMjEwGLKdJZhpHP4Y5ejAVfr6ZlpACyS
-         6y2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXfKaaJEpKNUYJwkaFlMQaaSIJ+sQ9G1RkDqfMtzjUAbSM3iHA4OBHewrTIXfWvVeftfWsOXxO18sDGpOgt3BoC/kCmk0a4NMsDWdqa5TvU9APMmwqzpphXtPi6ghV5EjcMlagncqTHug==
-X-Gm-Message-State: AOJu0YzGiTONGuzDmGon/luJhYN69ZObbqSeEEijyQ/izbTkRDYu9Oi4
-	aLpb9gkNKh9i1EZT/4ArekIgfaH6Bhd4gX0ZPKnXNO/hRQBU7TsV
-X-Google-Smtp-Source: AGHT+IH7JgZdAZmLwabI70Yi9CqaHBGi7W8WOVJdXpnbIcGSDoJHNF9GVVWCI9iFTCJBiWCAtrSgiQ==
-X-Received: by 2002:a05:6871:581e:b0:23c:2cf7:9ff9 with SMTP id 586e51a60fabf-24c68aeeeb5mr3242325fac.7.1716404063187;
-        Wed, 22 May 2024 11:54:23 -0700 (PDT)
-Received: from neuromancer. ([75.28.21.198])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-24c8227e303sm44531fac.30.2024.05.22.11.54.22
+        d=1e100.net; s=20230601; t=1716404086; x=1717008886;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hNDn38cEa80EVnk6aX9NYeZhhjh+9i1BJ/R1mRMwIHY=;
+        b=ilDGopZjLks3hbeeI7GdgSj7yBXF9t/qtIj9082lEy4RaBujFE11ekRAVR2GVXC+2r
+         +P2VMCcymqKJ2pWrK86Zg3GYF2EFvXaTCqc3mBfr0fv6Vsg1FDrsKa3O1Lheys/v+lCc
+         P8PUjNAhIHHHNnf8EFrpgm5hX83MyyB529Pjbm96DXPHzGJGwR1flnwTb//S6OsnNZOP
+         PwWjoDIxnLL9XAmrnxAf3FX/mECXoPKrNr5oFBrgYXf4wEIRhIm40ZHHK3zzROxFdH0t
+         pI/eLAh6yF91Idya8gXXJ/YbZ/nTvz5BY9cIAsdat2PvxglEiEhS9rjha4FrDNBfunHW
+         zUEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJfubadKnkE3Yl/5alADnk1jbL9LG20CqRyUHU98lvNNJDqYTO4oDSoKY4wTGjg2I8kIbcNRe1scbCACoNd3B/0qH/b4QgNB2WU5ya
+X-Gm-Message-State: AOJu0Yw+qMDHUldoP9pzlCLcOolFt6msg/1IM4lAIYHT4wnsRCeP6saM
+	UBlPJsxHg6uOLBlQNJszsotMMvcEHn7mEWRS5w3/PYM2pkeLKj22
+X-Google-Smtp-Source: AGHT+IHFhfdm8S8hnJxiL1+33zmX8kFcIX8huxUkbefY+/1cpVAZi1uwrF4Tx5K2sxB/NcCD8y3YRg==
+X-Received: by 2002:a50:9ec9:0:b0:56e:7722:553 with SMTP id 4fb4d7f45d1cf-57832a3b8fdmr2743928a12.24.1716404085920;
+        Wed, 22 May 2024 11:54:45 -0700 (PDT)
+Received: from f.. (cst-prg-19-178.cust.vodafone.cz. [46.135.19.178])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea6a36sm18638275a12.12.2024.05.22.11.54.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 11:54:22 -0700 (PDT)
-Message-ID: <664e3f5e.050a0220.ae493.07d7@mx.google.com>
-X-Google-Original-Message-ID: <Zk4/Xcjv/KKYwuHu@neuromancer.>
-Date: Wed, 22 May 2024 13:54:21 -0500
-From: Chris Morgan <macroalpha82@gmail.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Ryan Walklin <ryan@testtoast.com>
-Subject: Re: [PATCH v2 4/5] mfd: axp20x: AXP717: Add support for boost
- regulator
-References: <20240418000736.24338-1-andre.przywara@arm.com>
- <20240418000736.24338-5-andre.przywara@arm.com>
+        Wed, 22 May 2024 11:54:45 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: longman@redhat.com
+Cc: peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org,
+	boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] locking/rwsem: cpu_relax before re-reading owner in rwsem_spin_on_owner
+Date: Wed, 22 May 2024 20:54:21 +0200
+Message-ID: <20240522185421.424344-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240418000736.24338-5-andre.przywara@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 18, 2024 at 01:07:35AM +0100, Andre Przywara wrote:
-> The AXP717 also contains a boost regulator, to provide the 5V USB VBUS
-> rail when running on battery.
-> 
-> Add the registers to the MFD description to be able to use them from the
-> regulator driver.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Reviewed-by: John Watts <contact@jookia.org>
-> ---
->  drivers/mfd/axp20x.c       | 2 ++
->  include/linux/mfd/axp20x.h | 2 ++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-> index d8ad4e120d379..02513b1eff2e8 100644
-> --- a/drivers/mfd/axp20x.c
-> +++ b/drivers/mfd/axp20x.c
-> @@ -209,6 +209,8 @@ static const struct regmap_access_table axp313a_volatile_table = {
->  };
->  
->  static const struct regmap_range axp717_writeable_ranges[] = {
-> +	regmap_reg_range(AXP717_MODULE_EN_CONTROL, AXP717_MODULE_EN_CONTROL),
-> +	regmap_reg_range(AXP717_BOOST_CONTROL, AXP717_BOOST_CONTROL),
->  	regmap_reg_range(AXP717_IRQ0_EN, AXP717_IRQ4_EN),
->  	regmap_reg_range(AXP717_IRQ0_STATE, AXP717_IRQ4_STATE),
->  	regmap_reg_range(AXP717_DCDC_OUTPUT_CONTROL, AXP717_CPUSLDO_CONTROL),
-> diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
-> index 8c0a33a2e9ce2..4dad54fdf67ee 100644
-> --- a/include/linux/mfd/axp20x.h
-> +++ b/include/linux/mfd/axp20x.h
-> @@ -115,6 +115,8 @@ enum axp20x_variants {
->  #define AXP313A_IRQ_STATE		0x21
->  
->  #define AXP717_ON_INDICATE		0x00
-> +#define AXP717_MODULE_EN_CONTROL	0x19
+The function starts with establishing whether there is an owner it can
+spin waiting on and proceeds to immediately do it again when entering
+the loop, adding another lock word access and possibly an avoidable
+cacheline bounce. Subsequent iterations don't have this problem.
 
-Could we name this register something like "AXP717_MODULE_EN_CONTROL_2"?
-We're going to need register 0x0b later for usb and battery, and that's
-also marked as a control register (control_1 per the datasheet).
+The sound thing to do is to cpu_relax() first.
 
-Thank you,
-Chris
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-> +#define AXP717_BOOST_CONTROL		0x1e
->  #define AXP717_IRQ0_EN			0x40
->  #define AXP717_IRQ1_EN			0x41
->  #define AXP717_IRQ2_EN			0x42
-> -- 
-> 2.35.8
-> 
+This is a borderline cosmetic patch I did not bother benchmarking.
+If you don't like it that's fine with me, I'm not going to fight for it.
+
+Cheers.
+
+ kernel/locking/rwsem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index c6d17aee4209..a6c5bb68920e 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -758,6 +758,8 @@ rwsem_spin_on_owner(struct rw_semaphore *sem)
+ 		return state;
+ 
+ 	for (;;) {
++		cpu_relax();
++
+ 		/*
+ 		 * When a waiting writer set the handoff flag, it may spin
+ 		 * on the owner as well. Once that writer acquires the lock,
+@@ -784,8 +786,6 @@ rwsem_spin_on_owner(struct rw_semaphore *sem)
+ 			state = OWNER_NONSPINNABLE;
+ 			break;
+ 		}
+-
+-		cpu_relax();
+ 	}
+ 
+ 	return state;
+-- 
+2.39.2
+
 
