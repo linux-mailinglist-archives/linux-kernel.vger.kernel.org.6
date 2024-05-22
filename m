@@ -1,136 +1,125 @@
-Return-Path: <linux-kernel+bounces-186244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881DE8CC1A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:55:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E2B8CC1A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42DD5283689
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E189C1F2332C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A9313D538;
-	Wed, 22 May 2024 12:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CFB130E27;
+	Wed, 22 May 2024 12:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V3SDMK7H"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LOvzzPqj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E608D17C9
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC17E17C9
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 12:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716382506; cv=none; b=e/bB3NDxiOGpZktf7Fpn3bcsdt49cc8YGcTA2ZQwT9JO2R/7KOTzAyrWd3Q+GM4czlrorNi/cH+dKlkDIWvLJ1fnqz40Q7MublZMOYRgt9EdtEb1axJ29UPwlzqsEeXK5MpHCa+f3agoUIfHxbmR5+LlrhbC1SGyFhlJo4teL+Y=
+	t=1716382642; cv=none; b=S/gYFEoA4pnezK+TJu+QzQzipTSZVay/LV6GvobCvQR3rD/7+FECp49egEy7lWeRgLefCyeNGNwH6bW5e7x+6oxusB3LhqNUPTOvIK68BJdy9FYQaUvrcGJVOIkMKt6L427oP6aGYHjnFTSjHYhfkfjoWmwkNMhUlurKoQ8S8G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716382506; c=relaxed/simple;
-	bh=BinNhgcEH42gS3lWUSSUP7U6VJyoBPjo0uHCGJBaX60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CVmlWxc7EqEu1/UNP8qvGEBprWihhEPnMrHbbdgm/QCj1VvOUqGpsBfdrHjdyCEwtKM7qU+HM1NMpIp0fhn8tMQtibm5cfSEOg2+D6eOpAIq8W/8JQsvhYSqMpxvbaNFUsPk2qaX/eBNckg6QOoid+OpMC7gCHsqkRHhXYZ3+zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=V3SDMK7H; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43e06d21a06so7318181cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:55:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716382504; x=1716987304; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qRSyPLhJtHsuvnS9t5bdddtQaBryY+zRRpKLYbkoicI=;
-        b=V3SDMK7H0HgZdCRNVCpyafoAuNcPjYq42TfE+SiPJg+xx7XM+ol+uvVY+3Vsk0pfGG
-         F4u8mZaXBePzVrFzYmx4FSUiE8l1iQsaPtT8SBblOAyyqpl0iXRzmDorl1Fze7GG34WX
-         6QIjYKkgaarbi5UWlmFdqfl8ZyuIRHuSis8Qw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716382504; x=1716987304;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qRSyPLhJtHsuvnS9t5bdddtQaBryY+zRRpKLYbkoicI=;
-        b=cE8mCETioryKOvT4Oe8GqBqXitzIGwMbpj9qrwdq8MpHqlpLkS8eInRziFTEOFm5Ae
-         5v2FPyjZYesRvNvHkurNuksVCTpS703h9VNXUKcuuDKk47S8F4Z74Fuen4lhNDSuus19
-         sap3UP6grXEQRPs6OIaiEpNxf9c42SYDPCzaj99coCOm5F/ShSKS8kVB4mN1VSEy3B9+
-         V0k95kd9DqqEnNsqpbiJRoT7dqszB5fnQPt9aYKKdGl9xCKRI4ZImqINdEyvAry75Z5t
-         Qdit0p+vBcY+Us3a1UuCTaqJo7CbYn2Hq8FNCMWtyDxHE0McJMTPaVhah0Sc6vxv+KVN
-         4q0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZfxmu4+/+96g9asQuOyO98NOC9Eq4KJ7jNyjdZc86djFGD0kSbpUaKCfLg2HR0/ntt+WAMM5TzFfCxtl5f2q7ndlelVjPEpPKl41e
-X-Gm-Message-State: AOJu0YxK8YHK/fkSsAlAFz1Ka0iJrKhyLhZf4dfkTWt4PY0PayJaFrDS
-	9hHX7wj9tDA2AoP3jogoDVZhoGKprjA6i6LiiXkteu++RnIp7C7xwG2VTK7XEon4R78ihOOEYyx
-	x/A==
-X-Google-Smtp-Source: AGHT+IGLMJObC8uUhbR6pecNcAPo6m+nUXq9nK63ytfqL6L/NE7ZPgbA1D9QmaE0Jhcg0Okr4bQ+uQ==
-X-Received: by 2002:a05:622a:2d5:b0:43a:a4e9:6ca8 with SMTP id d75a77b69052e-43f9e1b4c66mr20291131cf.60.1716382503628;
-        Wed, 22 May 2024 05:55:03 -0700 (PDT)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com. [209.85.219.46])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e166e3755sm131233241cf.40.2024.05.22.05.55.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 05:55:02 -0700 (PDT)
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6a8691d724eso7788556d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 05:55:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVrsP5qn9M2TKk40cG5BEUNWLdTds3MiYKgZHZeHO6x/Tk0SSq+WiZX68DVCS4iDmZkQ3D+ktBXEhjEgGTyHGwsM+UFn74yGdhSmpxt
-X-Received: by 2002:a05:6214:3903:b0:6ab:6c2e:e425 with SMTP id
- 6a1803df08f44-6ab7f356954mr17023246d6.24.1716382501399; Wed, 22 May 2024
- 05:55:01 -0700 (PDT)
+	s=arc-20240116; t=1716382642; c=relaxed/simple;
+	bh=R7VE9+fLKmBOLpnrP084vfG0UQrc8BBWSiV8jddInkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nAGkCVV2LxtoHkpfIlmlK0IW/ginjX+G6AdOzGeryLZZbYIBubQ/HUEPAbGLpipy//Mn7svFmv5N7k8SxTdP5XlbTtN99/1i/sIY75zC3RV9kt+zOwF0iDh2F5ffzXZs3yMi7a7/58kZ1wxxyCrSqgIxeoYRZTC+QeanIEClRN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LOvzzPqj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716382639;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o/utX1MEHc2TwOEpLKg+wlbdf8OjMA6nlb8SpmUn5jQ=;
+	b=LOvzzPqjNjoPKNEbRzmiU87KbrZBaPrvtduEd2/dzFgZUCUNcYOIMKJIYbQNmv4tKA4sI/
+	n37QhyswLyph/5Fp6ypnjp0J+OTYyE37Ts3Y7DD57s9UZpsU1SBG00FT2B+TdyeJ2hPYhs
+	IHwDBRWlxsSoyiWHgsEtETIg7a5/hkM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590-AwzxaaifN8WmtjwIMvUPeQ-1; Wed, 22 May 2024 08:57:15 -0400
+X-MC-Unique: AwzxaaifN8WmtjwIMvUPeQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5C2EE185A780;
+	Wed, 22 May 2024 12:57:15 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.39.195.53])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 13B5040C6EB7;
+	Wed, 22 May 2024 12:57:13 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH v2 0/3] mm/memory: cleanly support zeropage in vm_insert_page*(), vm_map_pages*() and vmf_insert_mixed()
+Date: Wed, 22 May 2024 14:57:10 +0200
+Message-ID: <20240522125713.775114-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org>
- <20240507-cocci-flexarray-v2-10-7aea262cf065@chromium.org>
- <284a3096-cc2d-45bf-9075-fcd1bc60a599@linaro.org> <96593105-0ca3-43c7-86da-7a059cad287f@linaro.org>
-In-Reply-To: <96593105-0ca3-43c7-86da-7a059cad287f@linaro.org>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 22 May 2024 14:54:43 +0200
-X-Gmail-Original-Message-ID: <CANiDSCtpSQWfe8Jj=L__kYJa74N7KnqMeaW0=cGzagMtBrHiUg@mail.gmail.com>
-Message-ID: <CANiDSCtpSQWfe8Jj=L__kYJa74N7KnqMeaW0=cGzagMtBrHiUg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/18] media: venus: Use flex array for hfi_session_release_buffer_pkt
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Michael Tretter <m.tretter@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
-	Andy Walls <awalls@md.metrocast.net>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-Hi Bryan
+There is interest in mapping zeropages via vm_insert_pages() [1] into
+MAP_SHARED mappings.
 
+For now, we only get zeropages in MAP_SHARED mappings via
+vmf_insert_mixed() from FSDAX code, and I think it's a bit shaky in some
+cases because we refcount the zeropage when mapping it but not necessarily
+always when unmapping it ... and we should actually never refcount it.
 
-On Fri, 10 May 2024 at 02:10, Bryan O'Donoghue
-<bryan.odonoghue@linaro.org> wrote:
->
-> On 10/05/2024 00:37, Bryan O'Donoghue wrote:
-> >> -    u32 buffer_info[1];
-> >> +    u32 buffer_info[];
-> >>   };
-> >>   struct hfi_session_release_resources_pkt {
-> >>
-> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->
-> Oops no.
->
-> Please don't change the size of the structure.
+It's all a bit tricky, especially how zeropages in MAP_SHARED mappings
+interact with GUP (FOLL_LONGTERM), mprotect(), write-faults and s390x
+forbidding the shared zeropage (rewrite [2] s now upstream).
 
-In this case buffer_info[] is a real flexible array, so there is not
-much we can do.
+This series tries to take the careful approach of only allowing the
+zeropage where it is likely safe to use (which should cover the existing
+FSDAX use case and [1]), preventing that it could accidentally get mapped
+writable during a write fault, mprotect() etc, and preventing issues
+with FOLL_LONGTERM in the future with other users.
 
-The driver seems to only uses the structure to address memory. It is
-not allocating the structure or doing any calculations based on its
-size, so it should be fine (famous last words).
+Tested with a patch from Vincent that uses the zeropage in context of
+[1]. Vincent will post that patch based on this series soon. (not tested
+with FSDAX, but I don't expect surprises).
 
-If anyone has access to the hardware it would be great if they tested it :)
+[1] https://lkml.kernel.org/r/20240430111354.637356-1-vdonnefort@google.com
+[2] https://lkml.kernel.org/r/20240411161441.910170-1-david@redhat.com
 
->
-> u32 buffer_info;
->
-> ---
-> bod
+v1 -> v2:
+* "mm/memory: move page_count() check into validate_page_before_insert()"
+ -> Added
+* "mm/memory: cleanly support zeropage in vm_insert_page*(), ..."
+ -> Fixed "return true;" for never-writable VMAs
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vincent Donnefort <vdonnefort@google.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+
+David Hildenbrand (3):
+  mm/memory: move page_count() check into validate_page_before_insert()
+  mm/memory: cleanly support zeropage in vm_insert_page*(),
+    vm_map_pages*() and vmf_insert_mixed()
+  mm/rmap: sanity check that zeropages are not passed to RMAP
+
+ include/linux/rmap.h |  3 ++
+ mm/memory.c          | 97 ++++++++++++++++++++++++++++++++------------
+ mm/mprotect.c        |  2 +
+ 3 files changed, 77 insertions(+), 25 deletions(-)
 
 
-
+base-commit: 29c73fc794c83505066ee6db893b2a83ac5fac63
 -- 
-Ricardo Ribalda
+2.45.0
+
 
