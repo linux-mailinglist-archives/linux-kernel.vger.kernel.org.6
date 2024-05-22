@@ -1,151 +1,327 @@
-Return-Path: <linux-kernel+bounces-186050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EFF8CBF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:23:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7C28CBF37
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7504E282C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:23:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20A81C2184E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 10:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1114B823BC;
-	Wed, 22 May 2024 10:23:48 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C60A81ABA;
+	Wed, 22 May 2024 10:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yN/EHl9k"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69F37C097
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104098173C
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716373427; cv=none; b=KG8TL0LmJWVvHqBDk4/ugeqVia9uAwMhmk5fL3Un49B1CfwZu7v9LeqmSUElbkcZpN7Qg/5uBVezyMRnei/3+g5h+0w+Nd1AKoH4wTyFB9NCS9SiJSE9mF00Iy1MsHlpPu7RBWts3/BKL4hfcLTunoiXzD8sKd9o5xjo2h9bOCs=
+	t=1716373474; cv=none; b=p8m3KusZD6BPN6P5zheE3n5u3NBlmnO7j0DgF5s3yRKqNH+gjmhdEbQsThb3B3+AtPojV7s1yBdcmko+3ATGUUa3l8fT7txt2qXwOfP+D+HE6eCQ1j4xSxK6fGCdZ6BRzesy/DMMgUnJ3rJoTlaDliaCpkNrLI4PWChqXpTlnzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716373427; c=relaxed/simple;
-	bh=8Jv2FoH6NJPjGOP0LC/PqVRnbeV7oAwm/+X5xjFYdEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZ0aUMojf6ycFIXK204ke/t2I5E381vvWJAbI5/lrJMTHFoRrrIKRt2awwKig4QSvj3rO4nczogSTNCf7cRztVKLErqmE0ibr0jCvdFtvmu4kGiGPTZZj1REYs83Aq0dVqSjGv/Nqo6p4pCRlPphTOeMXdSI9aabOLmwuCTnvyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1s9j8I-0000WW-JS; Wed, 22 May 2024 12:23:42 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1s9j8H-002Vkx-RJ; Wed, 22 May 2024 12:23:41 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1s9j8H-009uTO-2Q;
-	Wed, 22 May 2024 12:23:41 +0200
-Date: Wed, 22 May 2024 12:23:41 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Clark Wang <xiaoning.wang@nxp.com>
-Subject: Re: [PATCH 5/5] pwm: adp5585: Add Analog Devices ADP5585 support
-Message-ID: <kn46i4ejb7demlieowowwur7mps6bmlaiqctxuh2gufi7vnon3@ourzmteng7gk>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-6-laurent.pinchart@ideasonboard.com>
- <dl7a6puox5lc36fpto2fgyfgmpd3uboqc4lcfdtuaxzzsboqld@alw7vyi7pqjz>
- <20240521100922.GF16345@pendragon.ideasonboard.com>
- <xobmekjwqanow765yr42tsgknc5gc7szjublq6ywgbmoxovlr5@v3sofz5bmkol>
- <20240522101335.GE1935@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1716373474; c=relaxed/simple;
+	bh=/wEmGaBmLdTni55W6XkvEa18Wfmd70BaIonNgCkUxsI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aJJl9IUAThOQ+XdATu6LzQ24fU1ABoh1z4/BUhYsv/dlhKuHeYksBBb0EuPgM3NhtYQDoQ9St8ehxvto6IcQA7Zls5ux1m2THDCA9xHovpRSIgqrxEh1VhDrUv0VVsZk6qvW1x6QAb26dHvSPrpftqi4zwhJPfoU/n4rei6ThO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yN/EHl9k; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51ffff16400so10294904e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 03:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716373470; x=1716978270; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IuuZbtTxQbyoy45odG0qTznmh20zGHX67BYPrGUhl7w=;
+        b=yN/EHl9kq/Y8cpHEZznPdurqH8KVDW8/hutSatWWVx36XDbVXHTGJtUJxrGgRU3Y8l
+         ZZ4tFk1ki3+Rbw/5tdg8eZoUZ0X21FKgficEUW4Ilaot4/Aak5cl6G7RrFFkY3FuSUyw
+         jN5GpNFhNrSVD8e+dW239xsyodcVNK90V60zet4twZ3W95jIhaOJbRSSBC+yMz4DpT+5
+         1koyt6pKGFTo6Xz+X4wH0X9g5/10VZT6h0pG7GP4wwUeZLkDfq9+/9xlZBegqMJMJIjQ
+         GVjHSsUN2e8d5lWuTZUliIi0coi31uv8fU9vCZOyfl/yRaIXQZFrvSacfc3wdfwElJKg
+         lU7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716373470; x=1716978270;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IuuZbtTxQbyoy45odG0qTznmh20zGHX67BYPrGUhl7w=;
+        b=rVTjqhldSbPNv7mgpEKKOL4tAvkGlFemXfC7YcaYccLHLKWIXMOMCNw2KyEezUZC5Y
+         CyMyjdnWH9+XB/dOTH7HIAemKk9AQjPUIn0eEr75c57IFBRjsNYGmuOd7Hpt97SaoHq1
+         AbmxpkxnJsLlGiEgRU502xPevKZwsAUS5WewusJzr8y9O2pti/K+D7Xv8mzY6q7r00aS
+         R3LsEjDGaeB2/YrsE5hLmYYleVt7gchY0SycUtdUReQ7f26jLZtrz+Sk4SXT5YA2hVw+
+         QL5VGwKTclXawh2FEb1Rw9AI9Em/g2Ptis+tK9S27+bBzOdCfrUhOE8W8WKCjyKbnSNG
+         4glw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsnNdxq3HrhbHr3vs1n44Q3JlTrOkfNMhRqEITbBVHbq9NnpyovgyA5dguHuKybkIL3VYs1unoA/42oijWzD+pXQZ17ibaGC06QbqB
+X-Gm-Message-State: AOJu0Yx3NYbhKiEiCKGHlSNgdVxVNvxEHVhYb2LqSeyo3A40R0dWGfRt
+	TSwEYwBR58AVS82Tb7bPh3UOZX9th2aWUhQYinpfPdLrU3SmfN/eel50sNAbA0g=
+X-Google-Smtp-Source: AGHT+IHPbVr1ifPzejL1oqr8FOtzXHojewq+wtSz0YT2lBxTujeSpXY3ge7i7C++WLRBRstGJcuY6Q==
+X-Received: by 2002:ac2:5466:0:b0:521:cc8a:46dd with SMTP id 2adb3069b0e04-526bebb3e10mr1075615e87.11.1716373470166;
+        Wed, 22 May 2024 03:24:30 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f9a9563dsm4801499e87.74.2024.05.22.03.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 03:24:29 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 22 May 2024 13:24:28 +0300
+Subject: [PATCH v2] Revert "drm/msm/dpu: drop
+ dpu_encoder_phys_ops.atomic_mode_set"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="njhuclhgrbcf33b5"
-Content-Disposition: inline
-In-Reply-To: <20240522101335.GE1935@pendragon.ideasonboard.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240522-dpu-revert-ams-v2-1-b37825d708e1@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANvHTWYC/3WMQQ6CMBBFr0Jm7RimFKKuuIdhUegAkyglUyQaw
+ t2t7F2+n//eBpFVOMIt20B5lShhSmBOGXSjmwZG8YnB5MbmJVn08wvTkXVB94x4tZS7tiNme4E
+ kzcq9vI/gvUk8SlyCfo7+Sr/1b2olJGypqEzhq86Xff2QyWk4Bx2g2ff9C04CNlutAAAA
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9785;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=/wEmGaBmLdTni55W6XkvEa18Wfmd70BaIonNgCkUxsI=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmTcfdOeXb51BBPnr7B3dfbxayUHEHecGFAvX7E
+ YByYqKbkiGJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZk3H3QAKCRCLPIo+Aiko
+ 1V1pB/sG2eavn1innxyXOIT0CghxLl/OiBSpT7gFwrxWpk6n8SUzavY3m8SSzEY2qQLUoRldXk3
+ nUe+5zeQowbTJcqeqWpegGZ7FRf8NFCElx/WD77fyEJG5KTvFKG4G8gt41Odo+pnWXOtCgBsbVs
+ cIOG6ZfY8O9y5S31FQ++sUw/qxLoWUuWWXzumEogg4aMtBkUdM4qe9+kzFWGQcsQrmZ9qiFNXDj
+ 3C4AdI93ExZKF9JSgXLVeXwUZfd27VWgA7Dz50p2LhauMnNnffI40L1URwnVk6yh0JPmlF92sdf
+ X2L5s80LK6kQ7Yb215nQEWbUqDfd2opRMZiD8cvoymKCiGe1
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
+In the DPU driver blank IRQ handling is called from a vblank worker and
+can happen outside of the irq_enable / irq_disable pair. Using the
+worker makes that completely asynchronous with the rest of the code.
+Revert commit d13f638c9b88 ("drm/msm/dpu: drop
+dpu_encoder_phys_ops.atomic_mode_set") to fix vblank IRQ assignment for
+CMD DSI panels.
 
---njhuclhgrbcf33b5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Call trace:
+ dpu_encoder_phys_cmd_control_vblank_irq+0x218/0x294
+  dpu_encoder_toggle_vblank_for_crtc+0x160/0x194
+  dpu_crtc_vblank+0xbc/0x228
+  dpu_kms_enable_vblank+0x18/0x24
+  vblank_ctrl_worker+0x34/0x6c
+  process_one_work+0x218/0x620
+  worker_thread+0x1ac/0x37c
+  kthread+0x114/0x118
+  ret_from_fork+0x10/0x20
 
-Hello Laurent,
+Fixes: d13f638c9b88 ("drm/msm/dpu: drop dpu_encoder_phys_ops.atomic_mode_set")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Expanded commit message to describe the reason for revert and added a
+  call trace (Abhinav)
+- Link to v1: https://lore.kernel.org/r/20240514-dpu-revert-ams-v1-1-b13623d6cd5f@linaro.org
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  2 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h   |  5 ++++
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c   | 32 ++++++++++++----------
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   | 13 +++++++--
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    | 11 +++++++-
+ 5 files changed, 46 insertions(+), 17 deletions(-)
 
-On Wed, May 22, 2024 at 01:13:35PM +0300, Laurent Pinchart wrote:
-> On Tue, May 21, 2024 at 03:05:53PM +0200, Uwe Kleine-K=F6nig wrote:
-> > On Tue, May 21, 2024 at 01:09:22PM +0300, Laurent Pinchart wrote:
-> > > On Tue, May 21, 2024 at 10:51:26AM +0200, Uwe Kleine-K=F6nig wrote:
-> > > > On Mon, May 20, 2024 at 10:59:41PM +0300, Laurent Pinchart wrote:
-> > > > > +	if (state->polarity =3D=3D PWM_POLARITY_INVERSED)
-> > > > > +		swap(on, off);
-> > > >=20
-> > > > Uhh, no. Either you can do inverted polarity or you cannot. Don't c=
-laim
-> > > > you can.
-> > >=20
-> > > OK, but what's the rationale ? This is also an area where I couldn't
-> > > find documentation.
-> >=20
-> > I don't have a good rationale here. IMHO this inverted polarity stuff is
-> > only a convenience for consumers because the start of the period isn't
-> > visible from the output wave form (apart from (maybe) the moment where
-> > you change the configuration) and so
-> >=20
-> > 	.period =3D 5000, duty_cycle =3D 1000, polarity =3D PWM_POLARITY_NORMAL
-> >=20
-> > isn't distinguishable from
-> >=20
-> > 	.period =3D 5000, duty_cycle =3D 4000, polarity =3D PWM_POLARITY_INVER=
-SED
-> >=20
-> > . But it's a historic assumption of the pwm core that there is a
-> > relevant difference between the two polarities and I want at least a
-> > consistent behaviour among the lowlevel drivers. BTW, this convenience
-> > is the reason I'm not yet clear how I want to implemement a duty_offset.
->=20
-> Consistency is certainly good. Inverting the duty cycle to implement
-> inverted polarity would belong in the PWM core if we wanted to implement
-> it in software I suppose. I'll drop it from the driver.
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+index 119f3ea50a7c..a7d8ecf3f5be 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+@@ -1200,6 +1200,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+ 		phys->hw_ctl = to_dpu_hw_ctl(hw_ctl[i]);
+ 
+ 		phys->cached_mode = crtc_state->adjusted_mode;
++		if (phys->ops.atomic_mode_set)
++			phys->ops.atomic_mode_set(phys, crtc_state, conn_state);
+ 	}
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+index 002e89cc1705..30470cd15a48 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
+@@ -69,6 +69,8 @@ struct dpu_encoder_phys;
+  * @is_master:			Whether this phys_enc is the current master
+  *				encoder. Can be switched at enable time. Based
+  *				on split_role and current mode (CMD/VID).
++ * @atomic_mode_set:		DRM Call. Set a DRM mode.
++ *				This likely caches the mode, for use at enable.
+  * @enable:			DRM Call. Enable a DRM mode.
+  * @disable:			DRM Call. Disable mode.
+  * @control_vblank_irq		Register/Deregister for VBLANK IRQ
+@@ -93,6 +95,9 @@ struct dpu_encoder_phys;
+ struct dpu_encoder_phys_ops {
+ 	void (*prepare_commit)(struct dpu_encoder_phys *encoder);
+ 	bool (*is_master)(struct dpu_encoder_phys *encoder);
++	void (*atomic_mode_set)(struct dpu_encoder_phys *encoder,
++			struct drm_crtc_state *crtc_state,
++			struct drm_connector_state *conn_state);
+ 	void (*enable)(struct dpu_encoder_phys *encoder);
+ 	void (*disable)(struct dpu_encoder_phys *encoder);
+ 	int (*control_vblank_irq)(struct dpu_encoder_phys *enc, bool enable);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+index 489be1c0c704..95cd39b49668 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
+@@ -142,6 +142,23 @@ static void dpu_encoder_phys_cmd_underrun_irq(void *arg)
+ 	dpu_encoder_underrun_callback(phys_enc->parent, phys_enc);
+ }
+ 
++static void dpu_encoder_phys_cmd_atomic_mode_set(
++		struct dpu_encoder_phys *phys_enc,
++		struct drm_crtc_state *crtc_state,
++		struct drm_connector_state *conn_state)
++{
++	phys_enc->irq[INTR_IDX_CTL_START] = phys_enc->hw_ctl->caps->intr_start;
++
++	phys_enc->irq[INTR_IDX_PINGPONG] = phys_enc->hw_pp->caps->intr_done;
++
++	if (phys_enc->has_intf_te)
++		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_intf->cap->intr_tear_rd_ptr;
++	else
++		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_pp->caps->intr_rdptr;
++
++	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
++}
++
+ static int _dpu_encoder_phys_cmd_handle_ppdone_timeout(
+ 		struct dpu_encoder_phys *phys_enc)
+ {
+@@ -280,14 +297,6 @@ static void dpu_encoder_phys_cmd_irq_enable(struct dpu_encoder_phys *phys_enc)
+ 					  phys_enc->hw_pp->idx - PINGPONG_0,
+ 					  phys_enc->vblank_refcount);
+ 
+-	phys_enc->irq[INTR_IDX_CTL_START] = phys_enc->hw_ctl->caps->intr_start;
+-	phys_enc->irq[INTR_IDX_PINGPONG] = phys_enc->hw_pp->caps->intr_done;
+-
+-	if (phys_enc->has_intf_te)
+-		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_intf->cap->intr_tear_rd_ptr;
+-	else
+-		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_pp->caps->intr_rdptr;
+-
+ 	dpu_core_irq_register_callback(phys_enc->dpu_kms,
+ 				       phys_enc->irq[INTR_IDX_PINGPONG],
+ 				       dpu_encoder_phys_cmd_pp_tx_done_irq,
+@@ -318,10 +327,6 @@ static void dpu_encoder_phys_cmd_irq_disable(struct dpu_encoder_phys *phys_enc)
+ 	dpu_core_irq_unregister_callback(phys_enc->dpu_kms, phys_enc->irq[INTR_IDX_UNDERRUN]);
+ 	dpu_encoder_phys_cmd_control_vblank_irq(phys_enc, false);
+ 	dpu_core_irq_unregister_callback(phys_enc->dpu_kms, phys_enc->irq[INTR_IDX_PINGPONG]);
+-
+-	phys_enc->irq[INTR_IDX_CTL_START] = 0;
+-	phys_enc->irq[INTR_IDX_PINGPONG] = 0;
+-	phys_enc->irq[INTR_IDX_RDPTR] = 0;
+ }
+ 
+ static void dpu_encoder_phys_cmd_tearcheck_config(
+@@ -698,6 +703,7 @@ static void dpu_encoder_phys_cmd_init_ops(
+ 		struct dpu_encoder_phys_ops *ops)
+ {
+ 	ops->is_master = dpu_encoder_phys_cmd_is_master;
++	ops->atomic_mode_set = dpu_encoder_phys_cmd_atomic_mode_set;
+ 	ops->enable = dpu_encoder_phys_cmd_enable;
+ 	ops->disable = dpu_encoder_phys_cmd_disable;
+ 	ops->control_vblank_irq = dpu_encoder_phys_cmd_control_vblank_irq;
+@@ -736,8 +742,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_cmd_init(struct drm_device *dev,
+ 
+ 	dpu_encoder_phys_cmd_init_ops(&phys_enc->ops);
+ 	phys_enc->intf_mode = INTF_MODE_CMD;
+-	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
+-
+ 	cmd_enc->stream_sel = 0;
+ 
+ 	if (!phys_enc->hw_intf) {
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+index ef69c2f408c3..636a97432d51 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+@@ -356,6 +356,16 @@ static bool dpu_encoder_phys_vid_needs_single_flush(
+ 	return phys_enc->split_role != ENC_ROLE_SOLO;
+ }
+ 
++static void dpu_encoder_phys_vid_atomic_mode_set(
++		struct dpu_encoder_phys *phys_enc,
++		struct drm_crtc_state *crtc_state,
++		struct drm_connector_state *conn_state)
++{
++	phys_enc->irq[INTR_IDX_VSYNC] = phys_enc->hw_intf->cap->intr_vsync;
++
++	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
++}
++
+ static int dpu_encoder_phys_vid_control_vblank_irq(
+ 		struct dpu_encoder_phys *phys_enc,
+ 		bool enable)
+@@ -699,6 +709,7 @@ static int dpu_encoder_phys_vid_get_frame_count(
+ static void dpu_encoder_phys_vid_init_ops(struct dpu_encoder_phys_ops *ops)
+ {
+ 	ops->is_master = dpu_encoder_phys_vid_is_master;
++	ops->atomic_mode_set = dpu_encoder_phys_vid_atomic_mode_set;
+ 	ops->enable = dpu_encoder_phys_vid_enable;
+ 	ops->disable = dpu_encoder_phys_vid_disable;
+ 	ops->control_vblank_irq = dpu_encoder_phys_vid_control_vblank_irq;
+@@ -737,8 +748,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_vid_init(struct drm_device *dev,
+ 
+ 	dpu_encoder_phys_vid_init_ops(&phys_enc->ops);
+ 	phys_enc->intf_mode = INTF_MODE_VIDEO;
+-	phys_enc->irq[INTR_IDX_VSYNC] = phys_enc->hw_intf->cap->intr_vsync;
+-	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
+ 
+ 	DPU_DEBUG_VIDENC(phys_enc, "created intf idx:%d\n", p->hw_intf->idx);
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+index d3ea91c1d7d2..356dca5e5ea9 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
+@@ -404,6 +404,15 @@ static void dpu_encoder_phys_wb_irq_disable(struct dpu_encoder_phys *phys)
+ 		dpu_core_irq_unregister_callback(phys->dpu_kms, phys->irq[INTR_IDX_WB_DONE]);
+ }
+ 
++static void dpu_encoder_phys_wb_atomic_mode_set(
++		struct dpu_encoder_phys *phys_enc,
++		struct drm_crtc_state *crtc_state,
++		struct drm_connector_state *conn_state)
++{
++
++	phys_enc->irq[INTR_IDX_WB_DONE] = phys_enc->hw_wb->caps->intr_wb_done;
++}
++
+ static void _dpu_encoder_phys_wb_handle_wbdone_timeout(
+ 		struct dpu_encoder_phys *phys_enc)
+ {
+@@ -640,6 +649,7 @@ static bool dpu_encoder_phys_wb_is_valid_for_commit(struct dpu_encoder_phys *phy
+ static void dpu_encoder_phys_wb_init_ops(struct dpu_encoder_phys_ops *ops)
+ {
+ 	ops->is_master = dpu_encoder_phys_wb_is_master;
++	ops->atomic_mode_set = dpu_encoder_phys_wb_atomic_mode_set;
+ 	ops->enable = dpu_encoder_phys_wb_enable;
+ 	ops->disable = dpu_encoder_phys_wb_disable;
+ 	ops->wait_for_commit_done = dpu_encoder_phys_wb_wait_for_commit_done;
+@@ -685,7 +695,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_wb_init(struct drm_device *dev,
+ 
+ 	dpu_encoder_phys_wb_init_ops(&phys_enc->ops);
+ 	phys_enc->intf_mode = INTF_MODE_WB_LINE;
+-	phys_enc->irq[INTR_IDX_WB_DONE] = phys_enc->hw_wb->caps->intr_wb_done;
+ 
+ 	atomic_set(&wb_enc->wbirq_refcount, 0);
+ 
 
-This isn't as easy as it sounds however. From the POV of the PWM core
-the capabilities of the currently used hardware are unclear. So if a
-request with (say) normal polarity and a certain duty_cycle + period
-fails, it's unknown if it would be beneficial to try with inverted
-polarity and if that is OK for the requesting consumer. So there is
-information missing in both directions.
+---
+base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
+change-id: 20240514-dpu-revert-ams-9410abc1ee48
 
-Best regards
-Uwe
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---njhuclhgrbcf33b5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZNx6wACgkQj4D7WH0S
-/k7gSQf/eP3kBKkVvjsZKN2YXLxC/e3LV/e5b/nZfHIgt3CEctZeTQcGfZLQa5V+
-WVkCjKeolCGJXYxsB84okaHK/6GPQ+cWMquFk4qbN28WgIHSj+7HJCkaqDY14Ar/
-9oW8fVNG4s9ZpbeQPJ4iH4b5zrx+JSQRzeW2hw9l+XvCeMG8d9Eno8m9CERF72ud
-6dL1fkPvxjtFklYNgqwGavc65n+kqme2GvfHu87ZkPHb4lLH14tMtlZOmlaIKGpS
-hUJSMQugUreF6MndO9VsMpmKK80YigNY7L4d8D19W1H5nwvTaxuO5kwahMbYas0f
-4LqNkFV5ycdF43EAUXChc/1w57dTyQ==
-=s0N3
------END PGP SIGNATURE-----
-
---njhuclhgrbcf33b5--
 
