@@ -1,204 +1,269 @@
-Return-Path: <linux-kernel+bounces-186713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80DC8CC7F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:05:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B988CC7F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187091C20EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:05:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F0A9B21711
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BFB146D5D;
-	Wed, 22 May 2024 21:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B6514658D;
+	Wed, 22 May 2024 21:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ba5Q/g+/"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MdKmbhKV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A741420BC;
-	Wed, 22 May 2024 21:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1217D1422D2
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716411870; cv=none; b=NJKpHNI8MWl1bCPGzUEOyxuPvfSZappXHlaDHbxzK+f8JqjzCMbMEEotGS/w8BfUNyQRfZM+/4pBTkJbTwNUJI2VY07tf2X7V0JkRkH8g6qET1oP6ZeGtUaUzbduimagG6inWGbjLmE1QY0RMQYZS/qxgMAiv5po6rwVQmzq9SU=
+	t=1716411959; cv=none; b=DiYFx2hrD9KM/ghDdbyz5enDUiIH/KPMVjNkKV7MKxUN8k+1TDweBNH3fzlMmQ6v0vdzINFb7q6XfuLiyHDhjsdoDD7zp3AUAoVnMvIx0/qyVxIaMvs+mLAeOKnvBmEPV0yyJq01G42TVmL8x3LpYZ/GDseuqwKObV2uGo313bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716411870; c=relaxed/simple;
-	bh=qHjnq+q1rDFyIJsTYH3KxBmEa98h8Xrh2Lzj6tZlWpo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=S+nQU8uft48bRQe2DKqWI46e23xAcyI1dcNNI0RF9k566jjQEPn7mdu0ec5YIU1IkC+L5AgSV/Op/lUlWunVrDyg40B6UYednJj4C9Egcv3ONwNAD2wRTEzs5mvkUPKUxSDt4GDSljN42WZK1YKh8JNX/tu67XUvol1GiayZrTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ba5Q/g+/; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f449ea8e37so1755307b3a.3;
-        Wed, 22 May 2024 14:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716411868; x=1717016668; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iT1AOadXKdkeYb8c0TgcpuQB1WGmLOhZwg6j5OThiw8=;
-        b=ba5Q/g+/VGcbHQj5RHIRgCFg/V/Z+umH2dMrpBpxor2PyJplJkTcHkPMuX/DDg56kD
-         92E5tRPpQif0C8PomHZDT0VZrHiJlqSEvqfH/8LQGabPYWphmMv3OUbFphbzhamf81XT
-         oj59rq+qwkXmDaCc2fB398uP5107r9ds7DFOjuxmM0BkLxJSvF1+e0NVh8z7GVBK8en5
-         6GgENAU76+0x2wusWSkhDDF8pe0E91GOwdz6JuO6KsY5Qh/Eo+lOBgwMI3c+7Qnhr3D8
-         N48ftcOfwzsx1jXgXA00UTQ8IKFb2lYsbKCqHmNSKbMLmO/aaQoLLS1LasqmwMMmChdh
-         /+iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716411868; x=1717016668;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iT1AOadXKdkeYb8c0TgcpuQB1WGmLOhZwg6j5OThiw8=;
-        b=XWYP6iim4E6o1/tgnigu1RZWniLkG+bUGZ7lgnMfTD7WxP/MRY5Rjlvq2zLB7NGZ/7
-         HVPkeLT4LjJR7cOcprUu7fy8QwPiECFqOUVoDBPcAeqLjPWTZYBohtpjjDbGzfP6cyq1
-         Zq0gquqOFCOl47mDPc8CvXdgya4lAA3pOrsqBYwpCI6GRRn2fVQFhTS7b7eN6TdM4L2w
-         1g88WYpNBY9gkoPyGomHOgryXGRjTE+beJUDgrviTSS8XorV9HNYMaAZMP0Zjh0M5+vL
-         DoOskuRuVgK4tbaDYB64sYJR2V5eFGRMTt1vduaxsBmUZaCuBFwzHTM+lBFtvsXOTfwT
-         K1ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU96BmA24a60u7KDBoc9qRhMRU9mpATR9ioW65GqeDIfBG0GWBlcjdcihTeQ82/39ggUsmY0TSLaB998DXtb4vINCjvToXgCLGiHd6nu8jNEp2NZ9Zb+UM/7FwTTxEXZPqG3o3htsSPgw==
-X-Gm-Message-State: AOJu0Ywe9xdoZWjQcetWaSKovy/h4lvb0TU3cP4S27yRPI798r7NKdt9
-	90ggCC5cfnlU/TcbLTzislWPiDzqIF2Rv/kMAZMjl6rN7pRbPhf7
-X-Google-Smtp-Source: AGHT+IHyvIyJqabzGn2pk+6jufjKdtxxS7JXm8ZDJHA57VzobiooDn0JOUAk0HMf2Nxvd5Pxfsf4dg==
-X-Received: by 2002:a05:6a21:3483:b0:1af:cfca:e515 with SMTP id adf61e73a8af0-1b1f87386a9mr4758616637.12.1716411868131;
-        Wed, 22 May 2024 14:04:28 -0700 (PDT)
-Received: from [10.5.5.43] ([103.139.191.219])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a663bbsm23606465b3a.17.2024.05.22.14.04.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 14:04:27 -0700 (PDT)
-Message-ID: <dc8a05ee-ed84-4517-baad-a220d8702f07@gmail.com>
-Date: Thu, 23 May 2024 02:34:20 +0530
+	s=arc-20240116; t=1716411959; c=relaxed/simple;
+	bh=UuN+TNfyvWOM2QErKz9AgxlRgNIUw9Xz6smYUuJ2Xwg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gRW5iI4KC6qPOgdXx2KxpEdvutcV4qJIHYbhAtsEuUOw5OEyFj5XiViFcfinbFRLvMa2Y2KDq7y1Mk8PnZhfKkwRfD2SrHRRCvU4g9Hw56gLTBegSzQdxy0WLBxiMgN0XWcUtSlHhUfjcf6Mxss4skKRup22BT9iWtVQLzD/mKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MdKmbhKV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716411956;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fbWdfGX3ZmKUSYN5RjcaKLdCuKumShJmeeAR8Ld2BSY=;
+	b=MdKmbhKVKAGvA2pPY1jTXIVj2UXVvGGUx/k6aqt77PutC6c2a4CEkF5yb6eZBBPL6GRT7i
+	QC8Gum5W/SE4qlp6u8igc1lOJaDqpz49rCHxsi4O/hLeCFXByWg0KIrGwRiPCIVtIbuCBP
+	yu2tHN6xV2GhtvDDmmX50K3LDqoNzhg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-132-42JCeEzPO8mAr3Hb6u2fxg-1; Wed, 22 May 2024 17:05:53 -0400
+X-MC-Unique: 42JCeEzPO8mAr3Hb6u2fxg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 281BE185A780;
+	Wed, 22 May 2024 21:05:53 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 18E46100046D;
+	Wed, 22 May 2024 21:05:53 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id 0074B30C1C33; Wed, 22 May 2024 21:05:52 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id EFA3F3FB52;
+	Wed, 22 May 2024 23:05:52 +0200 (CEST)
+Date: Wed, 22 May 2024 23:05:52 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Mike Snitzer <snitzer@kernel.org>
+cc: Benjamin Marzinski <bmarzins@redhat.com>, Yang Yang <yang.yang@vivo.com>, 
+    Alasdair Kergon <agk@redhat.com>, dm-devel@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: Re: dm: optimize flushes
+In-Reply-To: <Zk4Y6DMgK71UuoKd@kernel.org>
+Message-ID: <9a0db0-4415-2013-6132-f1788b76a4ee@redhat.com>
+References: <20240514090445.2847-1-yang.yang@vivo.com> <20240514090445.2847-4-yang.yang@vivo.com> <ZkTXzG1yrPmW64Z6@redhat.com> <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com> <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com> <Zk4Y6DMgK71UuoKd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Kartik Agarwala <agarwala.kartik@gmail.com>
-Subject: Re: [PATCH] ASoC: dt-bindings: mt6358: Convert to dtschema
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240518081621.63386-1-agarwala.kartik@gmail.com>
- <c05f91f5-a878-4f36-b325-0ac8e038a7e5@linaro.org>
-Content-Language: en-US, ar-LB
-In-Reply-To: <c05f91f5-a878-4f36-b325-0ac8e038a7e5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On 5/20/24 12:39 PM, Krzysztof Kozlowski wrote:
-> On 18/05/2024 10:16, Kartik Agarwala wrote:
->> Convert Mediatek MT6358 Audio Codec bindings from text to dtschema.
->>
->> Signed-off-by: Kartik Agarwala <agarwala.kartik@gmail.com>
->> ---
->>  .../bindings/sound/mediatek,mt6358.yaml       | 47 +++++++++++++++++++
->>  .../devicetree/bindings/sound/mt6358.txt      | 26 ----------
->>  2 files changed, 47 insertions(+), 26 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml
->>  delete mode 100644 Documentation/devicetree/bindings/sound/mt6358.txt
->>
->> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml
->> new file mode 100644
->> index 000000000..f57ef2aa5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt6358.yaml
->> @@ -0,0 +1,47 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/sound/mediatek,mt6358.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Mediatek MT6358 Audio Codec
->> +
->> +maintainers:
->> +  - Kartik Agarwala <agarwala.kartik@gmail.com>
->> +
->> +description: |
+
+
+On Wed, 22 May 2024, Mike Snitzer wrote:
+
+> On Thu, May 16, 2024 at 10:49:55PM +0200, Mikulas Patocka wrote:
+> > Device mapper sends flush bios to all the targets and the targets send it
+> > to the underlying device. That may be inefficient, for example if a table
+> > contains 10 linear targets pointing to the same physical device, then
+> > device mapper would send 10 flush bios to that device - despite the fact
+> > that only one bio would be sufficient.
+> > 
+> > This commit optimizes the flush behavior. It introduces a per-target
+> > variable flush_pass_around - it is set when the target supports flush
+> > optimization - currently, the dm-linear and dm-stripe targets support it.
+> > When all the targets in a table have flush_pass_around, flush_pass_around
+> > on the table is set. __send_empty_flush tests if the table has
+> > flush_pass_around - and if it has, no flush bios are sent to the targets
+> > and the list dm_table->devices is iterated and the flush bios are sent to
+> > each member of the list.
 > 
-> Do not need '|' unless you need to preserve formatting.
+> What does "pass around" mean?  Seems like an awkward name for this.
+> (Naming can be hard, I don't have better suggestions at the moment.)
 
-Noted
+What about "flush_bypass" or "flush_bypasses_map"?
 
+> > Index: linux-2.6/drivers/md/dm-table.c
+> > ===================================================================
+> > --- linux-2.6.orig/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
+> > +++ linux-2.6/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
+> > @@ -160,6 +160,7 @@ int dm_table_create(struct dm_table **re
+> >  	t->type = DM_TYPE_NONE;
+> >  	t->mode = mode;
+> >  	t->md = md;
+> > +	t->flush_pass_around = 1;
+> >  	*result = t;
+> >  	return 0;
+> >  }
 > 
->> +  The communication between MT6358 and SoC is through Mediatek PMIC wrapper.
->> +  For more detail, please visit Mediatek PMIC wrapper documentation.
->> +  Must be a child node of PMIC wrapper.
-> 
-> Did you update the PMIC wrapper binding with ref to this?
+> Should be: t->flush_pass_around = true;
 
-I am sorry but if I understand this comment, you are asking me to update this
-file [1], correct?
+Yes.
 
-1. https://www.kernel.org/doc/Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> > +
+> > +	/*
+> > +	 * Set if the target supports flush optimization
+> > +	 */
+> > +	bool flush_pass_around:1;
+> >  };
+> 
+> How does a developer _know_ if a target can set this flag?  Please
+> elaborate on the requirements in this code comment.
 
-> 
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - mediatek,mt6358-sound
->> +      - mediatek,mt6366-sound
-> 
-> You did not test the DTS.
-> 
-> I think I raised the issue already: please make necessary fixes to the
-> binding (with explanation) or to the DTS, when converting the binding.
->
+What about:
 
-Apologies again. Just to be sure, am I correct to assume that you want 
-me to fix the dts file [1] as it has both these compatibles 
-mentioned instead of only one and I should fix that by dropping one of 
-the two compatibles?
+"The target supports flush optimization. When all the targets in the table 
+support flush optimization, flushes will not use the "map" method and they 
+will be sent directly to all the devices in the table. This optimization 
+reduces the number of flushes that are being sent if multiple targets use 
+the same underlying device."
 
-[1] https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi#L1246
+> >  
+> >  void *dm_per_bio_data(struct bio *bio, size_t data_size);
+> > Index: linux-2.6/drivers/md/dm.c
+> > ===================================================================
+> > --- linux-2.6.orig/drivers/md/dm.c	2024-05-15 16:56:49.000000000 +0200
+> > +++ linux-2.6/drivers/md/dm.c	2024-05-16 20:06:32.000000000 +0200
+> > @@ -645,7 +645,7 @@ static struct bio *alloc_tio(struct clon
+> >  
+> >  	/* Set default bdev, but target must bio_set_dev() before issuing IO */
+> >  	clone->bi_bdev = md->disk->part0;
+> > -	if (unlikely(ti->needs_bio_set_dev))
+> > +	if (likely(ti != NULL) && unlikely(ti->needs_bio_set_dev))
+> >  		bio_set_dev(clone, md->disk->part0);
+> >  
+> >  	if (len) {
+> > @@ -1107,7 +1107,7 @@ static void clone_endio(struct bio *bio)
+> >  	blk_status_t error = bio->bi_status;
+> >  	struct dm_target_io *tio = clone_to_tio(bio);
+> >  	struct dm_target *ti = tio->ti;
+> > -	dm_endio_fn endio = ti->type->end_io;
+> > +	dm_endio_fn endio = likely(ti != NULL) ? ti->type->end_io : NULL;
+> >  	struct dm_io *io = tio->io;
+> >  	struct mapped_device *md = io->md;
+> >  
+> > @@ -1154,7 +1154,7 @@ static void clone_endio(struct bio *bio)
+> >  	}
+> >  
+> >  	if (static_branch_unlikely(&swap_bios_enabled) &&
+> > -	    unlikely(swap_bios_limit(ti, bio)))
+> > +	    likely(ti != NULL) && unlikely(swap_bios_limit(ti, bio)))
+> >  		up(&md->swap_bios_semaphore);
+> >  
+> >  	free_tio(bio);
+> 
+> What is it about this commit that makes it important to verify ti
+> isn't NULL in the above 3 hunks?
+> 
+> Should these NULL checks be factored out as a separate fix?
+> 
+> Or can these hunks be dropped?
 
->> +
->> +  Avdd-supply:
->> +    description: power source of AVDD
->> +
->> +  mediatek,dmic-mode:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
->> +      Indicates how many data pins are used to transmit two channels of PDM
->> +      signal. 0 means two wires, 1 means one wire. Default value is 0.
->> +    enum:
->> +      - 0 # one wire
->> +      - 1 # two wires
->> +
->> +required:
->> +  - compatible
->> +  - Avdd-supply
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    mt6358_snd {
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-> 
-> Definitely no underscores. Probably this is "codec" or "audio-codec".
+They can't be dropped.
 
-Noted
+When performing the flush bypass optimization, the dm core creates a 
+dm_target_io structure that isn't associated with any specific target. So, 
+the pointer "tio->ti" is NULL.
 
+I could set "tio->ti" to any target, but I think it's better to set it to 
+NULL, just to mark that there is no target association.
+
+> > @@ -1566,17 +1566,36 @@ static void __send_empty_flush(struct cl
+> >  	ci->sector_count = 0;
+> >  	ci->io->tio.clone.bi_iter.bi_size = 0;
+> >  
+> > -	for (unsigned int i = 0; i < t->num_targets; i++) {
+> > -		unsigned int bios;
+> > -		struct dm_target *ti = dm_table_get_target(t, i);
+> > -
+> > -		if (unlikely(ti->num_flush_bios == 0))
+> > -			continue;
+> > -
+> > -		atomic_add(ti->num_flush_bios, &ci->io->io_count);
+> > -		bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
+> > -					     NULL, GFP_NOWAIT);
+> > -		atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
+> > +	if (!t->flush_pass_around) {
+> > +		for (unsigned int i = 0; i < t->num_targets; i++) {
+> > +			unsigned int bios;
+> > +			struct dm_target *ti = dm_table_get_target(t, i);
+> > +
+> > +			if (unlikely(ti->num_flush_bios == 0))
+> > +				continue;
+> > +
+> > +			atomic_add(ti->num_flush_bios, &ci->io->io_count);
+> > +			bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
+> > +						     NULL, GFP_NOWAIT);
+> > +			atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
+> > +		}
+> > +	} else {
+> > +		/*
+> > +		 * Note that there's no need to grab t->devices_lock here
+> > +		 * because the targets that support flush pass-around don't
+> > +		 * modify the list of devices.
+> > +		 */
+> > +		struct list_head *devices = dm_table_get_devices(t);
+> > +		unsigned int len = 0;
+> > +		struct dm_dev_internal *dd;
+> > +		list_for_each_entry(dd, devices, list) {
+> > +			struct bio *clone;
+> > +			clone = alloc_tio(ci, NULL, 0, &len, GFP_NOIO);
+                                              ^^^^
+Here we set tio->ti to NULL.
+
+> > +			atomic_add(1, &ci->io->io_count);
+> > +			bio_set_dev(clone, dd->dm_dev->bdev);
+> > +			clone->bi_end_io = clone_endio;
+> > +			dm_submit_bio_remap(clone, NULL);
+> > +		}
+> >  	}
+> >  
+> >  	/*
+> > 
+> > 
 > 
-> Best regards,
-> Krzysztof
-> 
+> Still missing what "pass-around" is meant to convey given that you
+> aren't passing around the same flush... you're cloning a new flush and
+> issuing one per device.  Probably worth explaining that's what you
+> mean by "flush_pass_around" (both in commit header and elaborate in
+> code)?
 
-Thanks for the review!
+I mean that flushes bypass the map method.
 
-Regards,
-Kartik Agarwala
+> Also, you're issuing a flush to _all_ devices in a table. Not just
+> the data devices.  .iterate_devices returns only the data devices.
+> If/when there is a need to extend this feature to targets that have
+> metadata devices (e.g. dm-thin, cache, etc): would it make sense to
+> filter out non-data devices (by stepping through each target in the
+> table and using iterate_devices)?
+
+This optimization only makes sense if there are multiple targets in the 
+table. dm-thin, dm-cache, dm-raid is usually the only target in the table, 
+so the optimization doesn't make sense for them. Trying to support the 
+"flush bypass" optimization for them would bloat the code without reducing 
+the number of flush requests at all.
+
+> Mike
+
+Mikulas
+
 
