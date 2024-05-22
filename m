@@ -1,42 +1,37 @@
-Return-Path: <linux-kernel+bounces-186128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9608A8CC022
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:22:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5654D8CC026
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 493362813BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 115A6282D52
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBBC824BF;
-	Wed, 22 May 2024 11:22:27 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D2482C7D;
+	Wed, 22 May 2024 11:22:42 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C8381ADA;
-	Wed, 22 May 2024 11:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877968289A;
+	Wed, 22 May 2024 11:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716376946; cv=none; b=gr1iRUTN9Ta4oT8wHj3uhCsyiWtjVzyxVOnxiI49t/8l2/1MHPDN4qBdgnYtc1ZBNZZJmGH7GWhDLZEcq6IibH4aHhgFifbu13+UtIu53s69gIe8+qZoEPngjGQd3wRfQqFoMao2kIjB3Y4d/lvrrxFix/RLq9FrujqxXz9HmCo=
+	t=1716376962; cv=none; b=BowvoyVYBTD7O3T5Vkcbi14LvQVQ9uRkX+yF4VCR/prWT5MeSj56L1AyhkAG9vfA01mC2/TmllHnXxPR6anEK84oBpNrF5D6z7UvYWTI1CPq5/Om52nNi5/wax89vG/qceo1SFEDbSb+W9OaDipeKyIUCWQhukfr3G2RNukcshU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716376946; c=relaxed/simple;
-	bh=LUVwJ1pZJuL47lMD/FlPmXI7ySajAjBDC1CjmQ/ApVg=;
+	s=arc-20240116; t=1716376962; c=relaxed/simple;
+	bh=F+eLMP7vomG4vgGnf2QTGMnK4y1oDm374YCutBXL7wU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lpmwbT5pdRFxp/yA1fGzZKH1PRg0A2xnmqktZAVkL/dl2b+uR1077z51pLuGwN58p1R5DOlbUXbcZUYV+/wMv4/F1YWy45M/pDgzrsgLDBCfsYxWvDSmLUUXASe1q5iAIX4gsbsrBFjHLZK/qF34LzT7XjNb7cF9c6wwJA6WNtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.3] (ip5f5af1e5.dynamic.kabel-deutschland.de [95.90.241.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D6FE561E5FE05;
-	Wed, 22 May 2024 13:22:04 +0200 (CEST)
-Message-ID: <e132145c-0da9-4b2d-aba8-5d02690a5fee@molgen.mpg.de>
-Date: Wed, 22 May 2024 13:22:04 +0200
+	 In-Reply-To:Content-Type; b=mZStDywAVhFGYMF4ff7lXLFDjIOhRQEaYw9S3dUVJplgBPYajMu/K05U4HaCUDdrqPaf/MJ/enrA2wj44FJsPK7EwCUMvYmdfMCaBGHQqo7WJtfSFCzOyDKWHbPYDiLkt8ga7EC5V7RfDk1a1KClnFfBLOKOuTp7QRoK8213ths=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E86A61BF207;
+	Wed, 22 May 2024 11:22:32 +0000 (UTC)
+Message-ID: <fd2100a8-a17c-460c-a8e8-b5cede3d51c1@ghiti.fr>
+Date: Wed, 22 May 2024 13:22:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,110 +39,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: vendor specific ISO data packet identification
- by handle
-To: Ying Hsu <yinghsu@chromium.org>
-Cc: chromeos-bluetooth-upstreaming@chromium.org,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240522111139.2612601-1-yinghsu@chromium.org>
+Subject: Re: [PATCH 2/2] riscv: rewrite __kernel_map_pages() to fix sleeping
+ in invalid context
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240522111139.2612601-1-yinghsu@chromium.org>
+To: Nam Cao <namcao@linutronix.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <cover.1715750938.git.namcao@linutronix.de>
+ <1289ecba9606a19917bc12b6c27da8aa23e1e5ae.1715750938.git.namcao@linutronix.de>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <1289ecba9606a19917bc12b6c27da8aa23e1e5ae.1715750938.git.namcao@linutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Dear Ying,
-
-
-Thank you for your patch. Some minor comments.
-
-Could you please make the summary/title a statement by using a verb (in 
-imperative mood).
-
-Am 22.05.24 um 13:11 schrieb Ying Hsu:
-> When HCI raw sockets are opened, the Bluetooth kernel module doesn't
-> track CIS/BIS connections. User-space applications have to identify
-> ISO data by maintaining connection information and look up the mapping
-> for each ACL data packet received. Besides, btsnoop log catpured in
-
-captured
-
-> kernel would couldn't tell ISO data from ACL data in this case.
-
-Excessive *would*?
-
-> By differentiating ISO data from ACL data earlier in btusb, we can
-> eliminate unnecessary lookups and improve btsnoop log clarity.
-> This patch enables vendor-specific differentiation between ISO and
-> ACL data packets.
-
-Make it clear, that this is only done for Intel devices?
-
-> Signed-off-by: Ying Hsu <yinghsu@chromium.org>
+On 15/05/2024 07:50, Nam Cao wrote:
+> __kernel_map_pages() is a debug function which clears the valid bit in page
+> table entry for deallocated pages to detect illegal memory accesses to
+> freed pages.
+>
+> This function set/clear the valid bit using __set_memory(). __set_memory()
+> acquires init_mm's semaphore, and this operation may sleep. This is
+> problematic, because  __kernel_map_pages() can be called in atomic context,
+> and thus is illegal to sleep. An example warning that this causes:
+>
+> BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1578
+> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 2, name: kthreadd
+> preempt_count: 2, expected: 0
+> CPU: 0 PID: 2 Comm: kthreadd Not tainted 6.9.0-g1d4c6d784ef6 #37
+> Hardware name: riscv-virtio,qemu (DT)
+> Call Trace:
+> [<ffffffff800060dc>] dump_backtrace+0x1c/0x24
+> [<ffffffff8091ef6e>] show_stack+0x2c/0x38
+> [<ffffffff8092baf8>] dump_stack_lvl+0x5a/0x72
+> [<ffffffff8092bb24>] dump_stack+0x14/0x1c
+> [<ffffffff8003b7ac>] __might_resched+0x104/0x10e
+> [<ffffffff8003b7f4>] __might_sleep+0x3e/0x62
+> [<ffffffff8093276a>] down_write+0x20/0x72
+> [<ffffffff8000cf00>] __set_memory+0x82/0x2fa
+> [<ffffffff8000d324>] __kernel_map_pages+0x5a/0xd4
+> [<ffffffff80196cca>] __alloc_pages_bulk+0x3b2/0x43a
+> [<ffffffff8018ee82>] __vmalloc_node_range+0x196/0x6ba
+> [<ffffffff80011904>] copy_process+0x72c/0x17ec
+> [<ffffffff80012ab4>] kernel_clone+0x60/0x2fe
+> [<ffffffff80012f62>] kernel_thread+0x82/0xa0
+> [<ffffffff8003552c>] kthreadd+0x14a/0x1be
+> [<ffffffff809357de>] ret_from_fork+0xe/0x1c
+>
+> Rewrite this function with apply_to_existing_page_range(). It is fine to
+> not have any locking, because __kernel_map_pages() works with pages being
+> allocated/deallocated and those pages are not changed by anyone else in the
+> meantime.
+>
+> Fixes: 5fde3db5eb02 ("riscv: add ARCH_SUPPORTS_DEBUG_PAGEALLOC support")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
 > ---
-> Tested LE unicast recording on a ChromeOS device with Intel AX211
-
-I’d add that to the commit message, and also name the exact device name 
-you used.
-
->   drivers/bluetooth/btusb.c | 14 ++++++++++++++
->   1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 79aefdb3324d..543961b6c671 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -889,6 +889,8 @@ struct btusb_data {
->   	int (*recv_acl)(struct hci_dev *hdev, struct sk_buff *skb);
->   	int (*recv_bulk)(struct btusb_data *data, void *buffer, int count);
->   
-> +	int (*is_iso_data_pkt)(struct sk_buff *skb);
-> +
->   	int (*setup_on_usb)(struct hci_dev *hdev);
->   
->   	int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
-> @@ -1229,6 +1231,8 @@ static int btusb_recv_bulk(struct btusb_data *data, void *buffer, int count)
->   
->   		if (!hci_skb_expect(skb)) {
->   			/* Complete frame */
-> +			if (data->is_iso_data_pkt && data->is_iso_data_pkt(skb))
-> +				hci_skb_pkt_type(skb) = HCI_ISODATA_PKT;
->   			btusb_recv_acl(data, skb);
->   			skb = NULL;
->   		}
-> @@ -2539,6 +2543,13 @@ static int btusb_recv_bulk_intel(struct btusb_data *data, void *buffer,
->   	return btusb_recv_bulk(data, buffer, count);
+>   arch/riscv/mm/pageattr.c | 28 ++++++++++++++++++++++------
+>   1 file changed, 22 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/riscv/mm/pageattr.c b/arch/riscv/mm/pageattr.c
+> index 410056a50aa9..271d01a5ba4d 100644
+> --- a/arch/riscv/mm/pageattr.c
+> +++ b/arch/riscv/mm/pageattr.c
+> @@ -387,17 +387,33 @@ int set_direct_map_default_noflush(struct page *page)
 >   }
 >   
-> +static int btusb_is_iso_data_pkt_intel(struct sk_buff *skb)
-
-Why not return `bool`?
-
+>   #ifdef CONFIG_DEBUG_PAGEALLOC
+> +static int debug_pagealloc_set_page(pte_t *pte, unsigned long addr, void *data)
 > +{
-> +	__u16 handle = (__le16_to_cpu(hci_acl_hdr(skb)->handle) & 0xfff);
+> +	int enable = *(int *)data;
 > +
-> +	return (handle >= 0x900);
-
-Define a macro?
-
+> +	unsigned long val = pte_val(ptep_get(pte));
+> +
+> +	if (enable)
+> +		val |= _PAGE_PRESENT;
+> +	else
+> +		val &= ~_PAGE_PRESENT;
+> +
+> +	set_pte(pte, __pte(val));
+> +
+> +	return 0;
 > +}
 > +
->   static int btusb_send_frame_intel(struct hci_dev *hdev, struct sk_buff *skb)
+>   void __kernel_map_pages(struct page *page, int numpages, int enable)
 >   {
->   	struct urb *urb;
-> @@ -4361,6 +4372,9 @@ static int btusb_probe(struct usb_interface *intf,
->   		/* Override the rx handlers */
->   		data->recv_event = btintel_recv_event;
->   		data->recv_bulk = btusb_recv_bulk_intel;
+>   	if (!debug_pagealloc_enabled())
+>   		return;
+>   
+> -	if (enable)
+> -		__set_memory((unsigned long)page_address(page), numpages,
+> -			     __pgprot(_PAGE_PRESENT), __pgprot(0));
+> -	else
+> -		__set_memory((unsigned long)page_address(page), numpages,
+> -			     __pgprot(0), __pgprot(_PAGE_PRESENT));
+> +	unsigned long start = (unsigned long)page_address(page);
+> +	unsigned long size = PAGE_SIZE * numpages;
 > +
-> +		/* Override for ISO data packet*/
+> +	apply_to_existing_page_range(&init_mm, start, size, debug_pagealloc_set_page, &enable);
+> +
+> +	flush_tlb_kernel_range(start, start + size);
+>   }
+>   #endif
+>   
 
-Please add a space before */.
 
-> +		data->is_iso_data_pkt = btusb_is_iso_data_pkt_intel;
->   	} else if (id->driver_info & BTUSB_REALTEK) {
->   		/* Allocate extra space for Realtek device */
->   		priv_size += sizeof(struct btrealtek_data);
+And you can add:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks!
+
+Alex
+
 
