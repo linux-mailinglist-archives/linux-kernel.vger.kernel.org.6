@@ -1,163 +1,339 @@
-Return-Path: <linux-kernel+bounces-186435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECE08CC424
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:32:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605A88CC427
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315231F24C5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:32:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E3B284350
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C2D7D412;
-	Wed, 22 May 2024 15:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D0A1171C;
+	Wed, 22 May 2024 15:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbigJODn"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xA7BBIC0"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492C0770F1;
-	Wed, 22 May 2024 15:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F302D058
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716391945; cv=none; b=DQckZd6YQplZXjyHm6UHc7p5f2wu+kcsXBNP2cDBiHJqjQItllwV1K3EoW5ifXk/v0LVMI5X6LARFOiRQkqZ6grBW08spjrne2H4MS/yUSSO45orCK5aQFcWctvPucXfQ5zMjPgAOCiy6IG+TvqoH2omkYP4MHtBpnYXxijqZqU=
+	t=1716392001; cv=none; b=GFywxSSJ4kgAFZR/Qcpn62gr54nAuwSiZxl9Rc5hjDOm1cjvzIAELWSjRPEOP8LOOTku6kjPEmFc9x0ziUfxtN3iQReiyKRPWPF6N1y5T71ZUA+2O60lPOntQbJVLmNrgPwVJH2KcwWkvn/sXT+uaJXLh5U6X/DRocHVT6GAkNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716391945; c=relaxed/simple;
-	bh=pk7gL9KFnLHCIcDNZkl0FBoe2u3ggrO0NEiXwJ6x+Lk=;
+	s=arc-20240116; t=1716392001; c=relaxed/simple;
+	bh=DTuPHVySPIrytSlQQAkraU05lJwg/nz9VAI6mBTkiOI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KxXjx+ugMgzecvCH6ydef2IyEA3pQMciWC3Xl3OfoFQjiRk2U0A/+E0bDvSTcSLSbBIpDbuPN6XPYPXEQd2CAgmuHR9XOFp8UeoZe5tEQvGLdg7ki0MD0Tk3r0/bOBWeoTav83GVjxEV/fVXJ/8wYNxezXaW6SZT0KVeLN0h2L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbigJODn; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-572b37afd73so11673335a12.2;
-        Wed, 22 May 2024 08:32:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=eSzAFPMhUcWd2vyayIRcIdg2dfRRi1YWqORXQQSynivUBwcfKid0OAQucMziOisRhJvPfOTfVZo5R8Mk6GZi5FG7Ep1g86da6feiEFvf3A3ldHQJ6v4t+0oS2/FrN15tz8M6kJli5d72bmHfAJchLTT7hlfHu72dFUztkezPO2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xA7BBIC0; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24157800275so2400643fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:33:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716391942; x=1716996742; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716391999; x=1716996799; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l3Viv2LgBYblTqqidUO+On3iQhxj1js86l0CizZE8cQ=;
-        b=LbigJODn1m80IK0Dm4FuIlvdDZ/2PjmFBS/vF7Q5UfsBP28clOZ5V2O68D4RwMOtus
-         CIi0/Xs3VNIewFDAWH2CbgnQApMhIFSvyNZylncN/or8UnM9yItrD3mMfditJ8xRdmnL
-         me8qBN0ArOQl/gI/wY4GghhyNKs5+XyO+ZR7aVzrfq2Up0v9b1W2LB5liUCbJpvYBDmF
-         lVD/IHHzR2c/rHGKmavDMTBKlNJGOB1MMbvLoXr2t6fm34qzt7+jVOjmC68O4JZHTDvE
-         Mk7HXMd2vA12+P22IjQL1ttCPiDi/NLVZNK8iZdfNOKFbmlTeIuWZTDprMglfyerXpcX
-         pTzA==
+        bh=n8aume3L1m03D35QJaau4/HSPmv1c3Gln6h9PVmEraw=;
+        b=xA7BBIC0mOnoCOMdmfocHSV3iV4fWe18bFiZ/1QrO6YSTcTtQDdG7EvIP0wG2I56jE
+         OUnqTcK2TNin+A5bpev4qTnndmGKpZmEbY72Nf6qYfYVixHDmD+I4Vb+JblI9iuu8NaD
+         tkIoezzWAFJDF/Oj87lSpwfTsKEcaDtEhvOCpGpXAnM8Cr/YuJivMVq56/2te9FYUnkg
+         YtCHPybuLHmZFXe2npjlpk9uRVS3aD0f2EBU9ZCbVw3oL3Y7i56+zzWkyAUHcV04eT9K
+         rmfCvXG1MNjw8ZYYiiRy9aGkG0nz+sFqP85PuENeT/a3TpxdCzUYz7YF8HSyRpMbXpFl
+         BXFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716391942; x=1716996742;
+        d=1e100.net; s=20230601; t=1716391999; x=1716996799;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l3Viv2LgBYblTqqidUO+On3iQhxj1js86l0CizZE8cQ=;
-        b=ZsTq+l6DZoK401QCTqWa79EnVgPXES1rwQvITYW+zfRZ33qqre7fUNGMNO7Nqb0gtX
-         /JH4PmYziI5FsTSwsyk17x2vtU/+pPiIMTocrRRwdEoMGCOrLfPZV2LCZBg3HmAkgZig
-         uI1ITvxJblUerTv2u+XZWN/ktqFJrurrzDmQoy8lxIfuvO3dDQtqvE//aYT7nttoDfuS
-         Kz6VJXln1uc9XI7lUklmkP7fnpv0R2scrS2Zzu2RuVbpsgIulQezUAdZio0hNO0kS7et
-         6pamZTVMtczqbz9wl29gmK217LaLElmf/MnIx/woA/rIX9A7igGXWgY/5tmjAfgxRVmE
-         Bi+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPWvq/BP0oKYnyI3GAlFJjaNq7TMAgxruu4kUGiOzoOCU5XAA5n2z/EN6vxk7MkJzrmjJbw88eQaBrTpSsGIsHkP2mioWRl+eIi4CkE6vms4Cqqzt3m54qy0HvEFPLI2ejrKmWkse97lk0Gg==
-X-Gm-Message-State: AOJu0Yw0H9CZMC08AQ3oxMxcv3DHA6DbHQ83I20yVmg2kO5xoPPz05e7
-	y8rkeNlWy2TFbn0i9HMeZW6TnIG/f7mdhTFJve75ELlfzVvAdtDRcSD0ntee1fBULA4pvjR8SXk
-	HGYmW2PuCfnI4CnUXnU7OvcfVhYk=
-X-Google-Smtp-Source: AGHT+IH5HcME7lGOWDOdDwP9jdihZAipJCFAzwf/J2QQDekZihZ5LC0rYZLOM07LyJYn+gzVqndQwHXb7J+X2KnN/mU=
-X-Received: by 2002:a50:9349:0:b0:571:fc6b:966c with SMTP id
- 4fb4d7f45d1cf-57832a2678dmr1401490a12.13.1716391942380; Wed, 22 May 2024
- 08:32:22 -0700 (PDT)
+        bh=n8aume3L1m03D35QJaau4/HSPmv1c3Gln6h9PVmEraw=;
+        b=iYfF6L2+XIlW0Hi+Hwn1mWs55DX5kLOzelzW5h70cPYCKU/UGK2npcnG2PSINEB9zv
+         8xIxblUKszMDOzYxcTaJPUn97JJ72/rvfb2ONXcDWK7X/iR4ACczkZT4A0xjry0rW39/
+         2Oo//Coqk5VAF01pHSkptgnlG/2+gia7Js/+jQkBrv8w4USn31nsKAznpF/XaiEVmzoW
+         pTAqUybOX1BcL7NRSQA3GXf/bSJfyZcmsS++msGSwzl0YcbJ2Tf/rcB5fA5/SQjgDET9
+         BDzGrBkWczV9jSOI/lz9RmRer5DOiMWzQOgp9qSJ+B2KUpoJRvbn1auznYQj/2nu2WuE
+         NcJw==
+X-Gm-Message-State: AOJu0YzIPFVO9qGAfE1H2OPYUMWUtxSVXsYUJrN/SFxoj5OrcpfTcA1e
+	fKQhfEvLrW+N1PntNgJrk9SzUbHNUViJNMl3+bwQTqhkMSWTQWQ90gbFPT914d95Td8k3Nk9K/Q
+	iGa4J68LXB1VXNsXY04blzB5619rpzmNh3OBMMQ==
+X-Google-Smtp-Source: AGHT+IFqMvpvJULYdcMKR8qQoteoVfPgW/n3o9HiXEiJrvf8hH9SUOAqQhKFIXnTWQfl6tadPMlJegrjTgx3js5xpo0=
+X-Received: by 2002:a05:6870:15c4:b0:23c:a6f8:9362 with SMTP id
+ 586e51a60fabf-24c68af82a2mr2585031fac.13.1716391998683; Wed, 22 May 2024
+ 08:33:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240407072330.229076-1-pvkumar5749404@gmail.com>
- <Zkzz7PZUnU/xP/O2@hu-bjorande-lv.qualcomm.com> <CAH8oh8UY9FkHy=RyMU2AOZr+1x_KyH4m166kVmQd6peRNvFVTw@mail.gmail.com>
- <Zkz5WtB0pBLqlc+3@hu-bjorande-lv.qualcomm.com>
-In-Reply-To: <Zkz5WtB0pBLqlc+3@hu-bjorande-lv.qualcomm.com>
-From: prabhav kumar <pvkumar5749404@gmail.com>
-Date: Wed, 22 May 2024 21:02:09 +0530
-Message-ID: <CAH8oh8VL8Tn_w_pDRzW9UzwS27RF_Zq3OFa_aNqPPyuH8z=5Eg@mail.gmail.com>
-Subject: Re: [PATCH next] drivers: soc: qcom: Auto cleanup using __free(device_node)
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc: andersson@kernel.org, konrad.dybcio@linaro.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	julia.lawall@inria.fr, javier.carrasco@wolfvision.net, 
-	skhan@linuxfoundation.org
+References: <20240507091619.2208810-1-jens.wiklander@linaro.org> <ZkODCTnCe7l0KiFs@mecka.net>
+In-Reply-To: <ZkODCTnCe7l0KiFs@mecka.net>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Wed, 22 May 2024 17:33:07 +0200
+Message-ID: <CAHUa44GFd0-jB7VV2=iL0YWT9+NyY+jDZNdxpERGWODO08pFDA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] Replay Protected Memory Block (RPMB) subsystem
+To: Manuel Traut <manut@mecka.net>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, 
+	Shyam Saini <shyamsaini@linux.microsoft.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
+	Sumit Garg <sumit.garg@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 1:13=E2=80=AFAM Bjorn Andersson
-<quic_bjorande@quicinc.com> wrote:
->
-> On Wed, May 22, 2024 at 01:01:22AM +0530, prabhav kumar wrote:
-> > On Wed, May 22, 2024 at 12:50=E2=80=AFAM Bjorn Andersson
-> > <quic_bjorande@quicinc.com> wrote:
-> > >
-> > > On Sun, Apr 07, 2024 at 12:53:30PM +0530, Prabhav Kumar Vaish wrote:
-> > > > Use automated cleanup to replace of_node_put() in qcom_smem_resolve=
-_mem().
-> > > >
-> > >
-> > > I don't find this easier to read or maintain.
-> > Should I change it , explaining the change ??
-> > >
-> > > Also, your subject prefix does not match other changes to this driver=
-.
-> > The patch is to add a __free function attribute to np pointer
-> > initialization ensuring
-> > the pointers are freed as soon as they go out of scope, thus removing
-> > the work to
-> > manually free them using of_node_put.
->
-> Yes, that is what the __free() attribute does, but I don't find it
-> easier to read and unless I'm missing something you're not fixing an
-> actual issue here?
->
-There is not any issue here, the patch sent is the cleanup of unnecessary
-of_node_put() function call.
+Hi Manuel,
 
-Thanks,
-Prabhav
-
-> Regards,
-> Bjorn
+On Tue, May 14, 2024 at 5:28=E2=80=AFPM Manuel Traut <manut@mecka.net> wrot=
+e:
 >
-> > >
-> > > Regards,
-> > > Bjorn
-> > >
-> > > > Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
-> > > > ---
-> > > > drivers/soc/qcom/smem.c | 4 +---
-> > > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
-> > > > index 7191fa0c087f..ad1cf8dcc6ec 100644
-> > > > --- a/drivers/soc/qcom/smem.c
-> > > > +++ b/drivers/soc/qcom/smem.c
-> > > > @@ -1032,18 +1032,16 @@ static int qcom_smem_resolve_mem(struct qco=
-m_smem *smem, const char *name,
-> > > >                                struct smem_region *region)
-> > > >  {
-> > > >       struct device *dev =3D smem->dev;
-> > > > -     struct device_node *np;
-> > > >       struct resource r;
-> > > >       int ret;
-> > > > +     struct device_node *np __free(device_node) =3D of_parse_phand=
-le(dev->of_node, name, 0);
-> > > >
-> > > > -     np =3D of_parse_phandle(dev->of_node, name, 0);
-> > > >       if (!np) {
-> > > >               dev_err(dev, "No %s specified\n", name);
-> > > >               return -EINVAL;
-> > > >       }
-> > > >
-> > > >       ret =3D of_address_to_resource(np, 0, &r);
-> > > > -     of_node_put(np);
-> > > >       if (ret)
-> > > >               return ret;
-> > > >
-> > > > --
-> > > > 2.34.1
-> > > >
+> Hi Jens,
+>
+> thank you very much for v6! It took me some time to figure out why it is
+> not working.. However it seems to be on the OP-TEE side and not related
+> to this kernel series.
+>
+> I need this change:
+>
+> @@ -1214,12 +1225,13 @@ static TEE_Result tee_rpmb_init(void)
+>         }
+>
+>         if (rpmb_ctx->reinit) {
+>                 if (rpmb_ctx->legacy_operation || !rpmb_ctx->key_verified=
+) {
+>                         rpmb_ctx->wr_cnt_synced =3D false;
+>                         rpmb_ctx->key_derived =3D false;
+>                         rpmb_ctx->dev_info_synced =3D false;
+>                         rpmb_ctx->reinit =3D false;
+> -                       goto next;
+>                 }
+>                 res =3D rpmb_probe_reset();
+>                 if (res) {
+>
+> @@ -1236,17 +1248,23 @@ static TEE_Result tee_rpmb_init(void)
+>                         if (!memcmp(rpmb_ctx->cid, dev_info.cid,
+>                                    RPMB_EMMC_CID_SIZE)) {
+>                                 rpmb_ctx->reinit =3D false;
+> +                               rpmb_ctx->legacy_operation =3D false;
+>                                 return TEE_SUCCESS;
+>                         }
+>                 }
+>         }
+>
+> to ensure that the non legacy mode is selected, even if the first RPMB
+> request comes from a compiled in TA.
+
+That patch didn't quite work in my case, but I think I understand
+what's needed at your end.
+
+I've prepared patches at https://github.com/OP-TEE/optee_os/pull/6852
+can you try those, please?
+
+>
+> Thanks for your work, it makes it really easy now to implement ARM
+> System Ready IR with an fTPM and continue the boot measurements in the
+> initrd with the new tpm2.target in systemd v256.
+
+Thanks, much appreciated.
+
+Cheers,
+Jens
+
+>
+> Regards
+> Manuel
+>
+> On Tue, May 07, 2024 at 11:16:16AM +0200, Jens Wiklander wrote:
+> > Hi,
+> >
+> > This patch set introduces a new RPMB subsystem, based on patches from [=
+1],
+> > [2], and [3]. The RPMB subsystem aims at providing access to RPMB
+> > partitions to other kernel drivers, in particular the OP-TEE driver. A =
+new
+> > user space ABI isn't needed, we can instead continue using the already
+> > present ABI when writing the RPMB key during production.
+> >
+> > I've added and removed things to keep only what is needed by the OP-TEE
+> > driver. Since the posting of [3], there has been major changes in the M=
+MC
+> > subsystem so "mmc: block: register RPMB partition with the RPMB subsyst=
+em"
+> > is in practice completely rewritten.
+> >
+> > With this OP-TEE can access RPMB during early boot instead of having to
+> > wait for user space to become available as in the current design [4].
+> > This will benefit the efi variables [5] since we wont rely on userspace=
+ as
+> > well as some TPM issues [6] that were solved.
+> >
+> > The OP-TEE driver finds the correct RPMB device to interact with by
+> > iterating over available devices until one is found with a programmed
+> > authentication matching the one OP-TEE is using. This enables coexistin=
+g
+> > users of other RPMBs since the owner can be determined by who knows the
+> > authentication key.
+> >
+> > The corresponding secure world OP-TEE patches are available at [7].
+> >
+> > I've put myself as a maintainer for the RPMB subsystem as I have an
+> > interest in the OP-TEE driver to keep this in good shape. However, if y=
+ou'd
+> > rather see someone else taking the maintainership that's fine too. I'll
+> > help keep the subsystem updated regardless.
+> >
+> > [1] https://lore.kernel.org/lkml/20230722014037.42647-1-shyamsaini@linu=
+x.microsoft.com/
+> > [2] https://lore.kernel.org/lkml/20220405093759.1126835-2-alex.bennee@l=
+inaro.org/
+> > [3] https://lore.kernel.org/linux-mmc/1478548394-8184-2-git-send-email-=
+tomas.winkler@intel.com/
+> > [4] https://optee.readthedocs.io/en/latest/architecture/secure_storage.=
+html#rpmb-secure-storage
+> > [5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+commit/?id=3Dc44b6be62e8dd4ee0a308c36a70620613e6fc55f
+> > [6] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
+commit/?id=3D7269cba53d906cf257c139d3b3a53ad272176bca
+> > [7] https://github.com/jenswi-linaro/optee_os/tree/rpmb_probe_v6
+> >
+> > Thanks,
+> > Jens
+> >
+> > Changes since v5:
+> > Manuel Traut reported and investigated an error on an i.MX8MM, the root
+> > cause was identified as insufficient alignment on frames sent to the RP=
+MB
+> > device. Fixed in the OP-TEE driver as described below.
+> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+> >   - Adding a missing EXPORT_SYMBOL_GPL()
+> > * "optee: probe RPMB device using RPMB subsystem"
+> >   - Replacing the old OPTEE_RPC_CMD_RPMB ABI with OPTEE_RPC_CMD_RPMB_FR=
+AMES
+> >     to get rid of the small header struct rpmb_req (now removed) causin=
+g
+> >     the problem.
+> >   - Matching changes on the secure side + support for re-initializing
+> >     RPMB in case a boot stage has used RPMB, the latter also reported b=
+y
+> >     Manuel Traut.
+> >
+> > Changes since v4:
+> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+> >   - Describing struct rpmb_descr as RPMB description instead of descrip=
+tor
+> > * "mmc: block: register RPMB partition with the RPMB subsystem"
+> >   - Addressing review comments
+> >   - Adding more comments for struct rpmb_frame
+> >   - Fixing assignment of reliable_wr_count and capacity in mmc_blk_rpmb=
+_add()
+> > * "optee: probe RPMB device using RPMB subsystem"
+> >   - Updating struct rpmb_dev_info to match changes in "rpmb: add Replay
+> >     Protected Memory Block (RPMB) subsystem"
+> >
+> > Changes since v3:
+> > * Move struct rpmb_frame into the MMC driver since the format of the RP=
+MB
+> >   frames depend on the implementation, one format for eMMC, another for
+> >   UFS, and so on
+> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+> >   - Adding Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> >   - Adding more description of the API functions
+> >   - Removing the set_dev_info() op from struct rpmb_ops, the needed inf=
+ormation
+> >     is supplied in the arguments to rpmb_dev_register() instead.
+> >   - Getting rid of struct rpmb_ops since only the route_frames() op was
+> >     remaining, store that op directly in struct rpmb_dev
+> >   - Changed rpmb_interface_register() and rpmb_interface_unregister() t=
+o use
+> >     notifier_block instead of implementing the same thing ourselves
+> > * "mmc: block: register RPMB partition with the RPMB subsystem"
+> >   - Moving the call to rpmb_dev_register() to be done at the end of
+> >     mmc_blk_probe() when the device is fully available
+> > * "optee: probe RPMB device using RPMB subsystem"
+> >   - Use IS_REACHABLE(CONFIG_RPMB) to determine if the RPMB subsystem is
+> >     available
+> >   - Translate TEE_ERROR_STORAGE_NOT_AVAILABLE if encountered in get_dev=
+ices()
+> >     to recognize the error in optee_rpmb_scan()
+> >   - Simplified optee_rpmb_scan() and optee_rpmb_intf_rdev()
+> >
+> > Changes since v2:
+> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+> >   - Fixing documentation issues
+> >   - Adding a "depends on MMC" in the Kconfig
+> >   - Removed the class-device and the embedded device, struct rpmb_dev n=
+ow
+> >     relies on the parent device for reference counting as requested
+> >   - Removed the now unneeded rpmb_ops get_resources() and put_resources=
+()
+> >     since references are already taken in mmc_blk_alloc_rpmb_part() bef=
+ore
+> >     rpmb_dev_register() is called
+> >   - Added rpmb_interface_{,un}register() now that
+> >     class_interface_{,un}register() can't be used ay longer
+> > * "mmc: block: register RPMB partition with the RPMB subsystem"
+> >   - Adding the missing error cleanup in alloc_idata()
+> >   - Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part(=
+)
+> >     instead of in mmc_rpmb_chrdev_open() and rpmb_op_mmc_get_resources(=
+)
+> > * "optee: probe RPMB device using RPMB subsystem"
+> >   - Registering to get a notification when an RPMB device comes online
+> >   - Probes for RPMB devices each time an RPMB device comes online, unti=
+l
+> >     a usable device is found
+> >   - When a usable RPMB device is found, call
+> >     optee_enumerate_devices(PTA_CMD_GET_DEVICES_RPMB)
+> >   - Pass type of rpmb in return value from OPTEE_RPC_CMD_RPMB_PROBE_NEX=
+T
+> >
+> > Changes since Shyam's RFC:
+> > * Removed the remaining leftover rpmb_cdev_*() function calls
+> > * Refactored the struct rpmb_ops with all the previous ops replaced, in
+> >   some sense closer to [3] with the route_frames() op
+> > * Added rpmb_route_frames()
+> > * Added struct rpmb_frame, enum rpmb_op_result, and enum rpmb_type from=
+ [3]
+> > * Removed all functions not needed in the OP-TEE use case
+> > * Added "mmc: block: register RPMB partition with the RPMB subsystem", =
+based
+> >   on the commit with the same name in [3]
+> > * Added "optee: probe RPMB device using RPMB subsystem" for integration
+> >   with OP-TEE
+> > * Moved the RPMB driver into drivers/misc/rpmb-core.c
+> > * Added my name to MODULE_AUTHOR() in rpmb-core.c
+> > * Added an rpmb_mutex to serialize access to the IDA
+> > * Removed the target parameter from all rpmb_*() functions since it's
+> >   currently unused
+> >
+> > Jens Wiklander (3):
+> >   rpmb: add Replay Protected Memory Block (RPMB) subsystem
+> >   mmc: block: register RPMB partition with the RPMB subsystem
+> >   optee: probe RPMB device using RPMB subsystem
+> >
+> >  MAINTAINERS                       |   7 +
+> >  drivers/misc/Kconfig              |  10 ++
+> >  drivers/misc/Makefile             |   1 +
+> >  drivers/misc/rpmb-core.c          | 233 +++++++++++++++++++++++++++++
+> >  drivers/mmc/core/block.c          | 241 +++++++++++++++++++++++++++++-
+> >  drivers/tee/optee/core.c          |  30 ++++
+> >  drivers/tee/optee/device.c        |   7 +
+> >  drivers/tee/optee/ffa_abi.c       |   8 +
+> >  drivers/tee/optee/optee_private.h |  21 ++-
+> >  drivers/tee/optee/optee_rpc_cmd.h |  35 +++++
+> >  drivers/tee/optee/rpc.c           | 166 ++++++++++++++++++++
+> >  drivers/tee/optee/smc_abi.c       |   7 +
+> >  include/linux/rpmb.h              | 136 +++++++++++++++++
+> >  13 files changed, 899 insertions(+), 3 deletions(-)
+> >  create mode 100644 drivers/misc/rpmb-core.c
+> >  create mode 100644 include/linux/rpmb.h
+> >
+> > --
+> > 2.34.1
+> >
 
