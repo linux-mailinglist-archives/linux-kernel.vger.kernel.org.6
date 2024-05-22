@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-186399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DD88CC3B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E538CC3B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237002832B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:03:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2DA284F5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEAF3CF51;
-	Wed, 22 May 2024 15:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FDA1E535;
+	Wed, 22 May 2024 15:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LckNCFsD"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mh1NEQPS"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71DD921362
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CED28DBF
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716390174; cv=none; b=KHPaOOW+9h3E7z8Z7MSLMPfThWif4+1gxKlIY+40LksfWzOUCzIJNWPu7gxzp5C37bS5vvbNR119t+4qS6oLbnvwUXdJGwhB8LVFSKqRmgEYCbrvbZ5GmhmgXKbu+kZjWi8gLWinIgFlXQ92avVkxYAoIOvbed9E1ohItqK3kkY=
+	t=1716390175; cv=none; b=Y5mEX2hG2d28MnOeTnlkpmSoFwA+pyknZRCprMF+kwY8RSVPM9l5dTPbcGnogP4wGkXKqmFijbI3L0fU5LfKACHxoTz8drO7L+IecQRhzClk4yvV89RdOXHR8wrd1MCtXYesbePaw9n1pgOr8MA0fKp45evbJ27+hZxGzqJ+j5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716390174; c=relaxed/simple;
-	bh=Oyivc8v0nPgyt25Ej8yA93bFsXe74OIpIMbFcFJaQZE=;
+	s=arc-20240116; t=1716390175; c=relaxed/simple;
+	bh=JkVbE4Y3WkBnzc/N2Xv7o2O7qEwpm7OELDM+ScIxCWM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XRdulwvS6iA/oipC4NMOHblszkr5Vj9pC9fkm1xsQFnxDw6j8azu14xXK7KCW4fkTQiF5jk6z6c4A4Uuy9jikxdOE8cYN4PACz2L3qq5Dw0Cq70uTKa93zCVoA3qXmjCjF+wkW1jB5EpnGMXj2lEwiHYXogjziqxaPV+YN57LzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LckNCFsD; arc=none smtp.client-ip=209.85.208.174
+	 MIME-Version; b=Hj4Sg8ql2qornjEGOPFmGKNLyqD0fbdtLwl/O50l3Qm4ZdhG4suRlm9RaQSeX0deDSoY9vbiagCNRd0yuJESmG5kx+lAxts+fN2Z9zCkpthxKaq71Tz3Nc6YND83Yby3c8Q/wABIVZAwxT6CMzd0HzY3ouzBOyPqy8cJkvlyNik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mh1NEQPS; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e6f2534e41so52499941fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:02:52 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41fd5dc0439so9311915e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:02:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716390171; x=1716994971; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716390172; x=1716994972; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TB4aFrxJGRpEFoDCF3w8d3C8gCv5YBGExDQ2YOzvshA=;
-        b=LckNCFsDKH+aWSA8Li2pAvIW5abUE0UIKW3jCXJNPgpjHu0T68hIF7DRduCkbWTUUv
-         fk791piCxcn7hhgSZt1aPt+XTw6aoTBWZ7s6qDUrZba80Be83EBBNo0gazwE+0PlZhJC
-         qCMUGYgshQV+OlUkEjWwMe/uZOtGvzkuBluGiA8kn/eWzCEjq8t6tcg0cBXAp4iy1bSG
-         glrVRH0LoZRvLC2gO7lIWeicakvlSIKidLYX09sOeYiluQdp6dAfk47xqnBdfdnNochA
-         xsrdwHET0P4TaPCFXnHmBSZEOV1sG9xofKdxQPFbFYsJUOqQajuHZvOLpSA8Hdnd+ZmX
-         MNQg==
+        bh=7hVNU4a78SiOOCC9kV1Z6zz+W5lUlkPH0msGia4TH6k=;
+        b=mh1NEQPSJT7edR1mUFG6jXxxfmYkx5PQ1gyJ/6ZxnfTVsM0mUne63V+z6txuYfvcMH
+         slV93Hum6nzf6Me3wRtEE8B/LRnNO0wiyMsRKRF3lMnwl7gM2e9TYnMT3Y6eXkxqy/i6
+         JMT4fCAFzFSlhsCjwII3oDGZXYscln2F5Enf24tQpJVx62Ric12YeIbiHyQoHI7NBSWL
+         /ioQSjLwulomN92/t/B1Y1N1K/L606Ii6U0sfEDcpzndMf8IQgOMCFohgU2QxlPlqRIA
+         QlnNKuAWpuzLn9nAO3RqdoVVy9sRSEmcgzlfQhIWD8T/D/PRyl1grNBUat23rNKPw9Pp
+         T5TA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716390171; x=1716994971;
+        d=1e100.net; s=20230601; t=1716390172; x=1716994972;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TB4aFrxJGRpEFoDCF3w8d3C8gCv5YBGExDQ2YOzvshA=;
-        b=YwYW/igBuihUPOb23bxo46CHRs50VCrGuLy7MX4DLUsolL8ulez5K3whyktf8FjnYo
-         sQwfchwsFd+elHAt4A0ipUGokkyVhNOBsD+mzOK838WOW47bA8Fy0Rh2W7K/2Zw4eYIJ
-         Aqsq0ZkhERH3bJAZZ7seM7IfgSG1nVQX3vHIxhmnDAUiQSbif225Hg4NlU45HegOQPn8
-         dkkCnTtsVvd0RyjZ6JzrCz2AyiEiQYQudp3FknSrD6YqueJGyoVDSozBYut6hXI5Ct4p
-         RLU6taevldO/+KMD4tegvvGFBmkvtYHoCH4QHuzqZ+8ln8xABCceeMWbSuSwlnlHMdxS
-         ni2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVGlUFO3/kpMdwm+kHoQkUvjBiofGbzEUmBKD4ac50iM7EcBPzCNw9V0Jna6vbCh1pN4VwbBDpoH8x/pLBKVm0B7ulSELaZYPUVqYVy
-X-Gm-Message-State: AOJu0Yyzqoaw1j7FwtGXWY0Csk1HJPAR0iAbeBZCa6zE1Ig74dfjkP4v
-	6579D5mZZpM8IpaIIGvJnZZgnRBlfKlPQN40euiqywFNDC9H51/tZauNlc2MznI=
-X-Google-Smtp-Source: AGHT+IGlikuVJrqPYvrWxSHDc7Uj9hjg+XjhYNt1RjMzI7JQOL8qSiKK1w02HqMK2osgyUdoEB1T/w==
-X-Received: by 2002:a2e:720c:0:b0:2e4:f8e:3a64 with SMTP id 38308e7fff4ca-2e949518e3emr15052791fa.30.1716390170644;
-        Wed, 22 May 2024 08:02:50 -0700 (PDT)
+        bh=7hVNU4a78SiOOCC9kV1Z6zz+W5lUlkPH0msGia4TH6k=;
+        b=pNyP8+9UN2QUXqQbMCiW6kIh9nWnjOHANMDvCpKuhiTNtybuf2/UHqZlgIcu7J2Qnf
+         J/pILuJbm0oqFCJ1yhs7V1Fm6uuClPRquFvh9iNt98bJykuJaYfRmmB3dIJCaabsOrck
+         8WB2z/lQumKuibsZ5dPZVzC/oz1s2YXcXE08NG74zQ0Kt0j0tk1Pmd2qaO5Gpzk820TS
+         6Ak2SJo1x1HdbUASuBYs9gFtM3IUK1C0X/+xkee3HZ7EbdpDy60l0d9c9ZJ1Xt6xXBjL
+         1fe5LXdbCDFo/Y0FAYbu9c5Y/ct5BUwXHHlc9xSkB0Rj2j+O7nCJWYSpKGvaLnIZH7jr
+         6grg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjwNVcP3RXJqOmzAhtN8TQD5fXe3zVIF6OJTNpYoO6p4EWL1ABPu9Uv3zCpzb/KCkFf48W8UuOC/HYh1q7+9gGlPUaxE/aM5xK4jXu
+X-Gm-Message-State: AOJu0YyFYEYd9KWUK1NpAn9BOPOcfTw5JzKWRDmPlKp9A8Nz+HZzb5/k
+	eN45MlJexyBCOmJ9bMQS4Gif3V3NhErITz+YEVWdl3VNQzZJKdPOSnsYppe1U3M=
+X-Google-Smtp-Source: AGHT+IF27wX7armSFJqEp/cFvKhhk93XUz8Ir9vmAoGFDVZiERrS9gpV1gcC/aNyMjhDab9+ifJTVA==
+X-Received: by 2002:a05:600c:2108:b0:420:ef93:cd2f with SMTP id 5b1f17b1804b1-420fd321a7dmr18341595e9.21.1716390171912;
+        Wed, 22 May 2024 08:02:51 -0700 (PDT)
 Received: from localhost.localdomain (host-79-16-6-145.retail.telecomitalia.it. [79.16.6.145])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm531370515e9.9.2024.05.22.08.02.49
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa90e93absm531370515e9.9.2024.05.22.08.02.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 08:02:50 -0700 (PDT)
+        Wed, 22 May 2024 08:02:51 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
 To: jic23@kernel.org,
@@ -79,9 +79,9 @@ Cc: nuno.sa@analog.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Angelo Dureghello <adureghello@baylibre.com>
-Subject: [PATCH v2 2/6] dt-bindings: iio: dac: add ad35xxr single output variants
-Date: Wed, 22 May 2024 17:01:37 +0200
-Message-ID: <20240522150141.1776196-3-adureghello@baylibre.org>
+Subject: [PATCH v2 3/6] iio: dac: ad3552r: add model data structure
+Date: Wed, 22 May 2024 17:01:38 +0200
+Message-ID: <20240522150141.1776196-4-adureghello@baylibre.org>
 X-Mailer: git-send-email 2.45.0.rc1
 In-Reply-To: <20240522150141.1776196-1-adureghello@baylibre.org>
 References: <20240522150141.1776196-1-adureghello@baylibre.org>
@@ -95,82 +95,228 @@ Content-Transfer-Encoding: 8bit
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-Add support for ad3541r and ad3551r single output variants.
+Add a "model data" structure to keep useful hardware-related
+information as from datasheet, avoiding id-based conditional
+choices later on.
+
+Removed id-based checks and filled model-specific structures
+with device specific features, In particular, num_hw_channels
+is introduced to keep the number of hardware implemented
+channels, since 1-channel versions of the DACs are added
+in this same patchset.
 
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
 Changes for v2:
-- bounds reg value to 0 and channel nodes for the 1-channel models.
+- patch added in v2
 ---
- .../bindings/iio/dac/adi,ad3552r.yaml         | 27 +++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ drivers/iio/dac/ad3552r.c | 98 +++++++++++++++++++++++----------------
+ 1 file changed, 59 insertions(+), 39 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-index 4e9f80445405..fc8b97f82077 100644
---- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-+++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-@@ -13,13 +13,17 @@ maintainers:
- description: |
-   Bindings for the Analog Devices AD3552R DAC device and similar.
-   Datasheet can be found here:
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/ad3541r.pdf
-     https://www.analog.com/media/en/technical-documentation/data-sheets/ad3542r.pdf
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/ad3551r.pdf
-     https://www.analog.com/media/en/technical-documentation/data-sheets/ad3552r.pdf
+diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
+index a492e8f2fc0f..6a40c7eece1f 100644
+--- a/drivers/iio/dac/ad3552r.c
++++ b/drivers/iio/dac/ad3552r.c
+@@ -261,7 +261,17 @@ struct ad3552r_ch_data {
+ 	bool	range_override;
+ };
  
- properties:
-   compatible:
-     enum:
-+      - adi,ad3541r
-       - adi,ad3542r
-+      - adi,ad3551r
-       - adi,ad3552r
- 
-   reg:
-@@ -128,7 +132,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: adi,ad3542r
-+            enum:
-+              - adi,ad3541r
-+              - adi,ad3542r
-     then:
-       patternProperties:
-         "^channel@([0-1])$":
-@@ -158,7 +164,9 @@ allOf:
-       properties:
-         compatible:
-           contains:
--            const: adi,ad3552r
-+            enum:
-+              - adi,ad3551r
-+              - adi,ad3552r
-     then:
-       patternProperties:
-         "^channel@([0-1])$":
-@@ -182,6 +190,21 @@ allOf:
-                     - const: -10000000
-                     - const: 10000000
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - adi,ad3541r
-+              - adi,ad3551r
-+    then:
-+      properties:
-+        channel@1: false
-+        channel@0:
-+          properties:
-+            reg:
-+              const: 0
++struct ad3552r_model_data {
++	const char *model_name;
++	enum ad3542r_id chip_id;
++	unsigned int num_hw_channels;
++	const s32 (*ranges_table)[2];
++	int num_ranges;
++	bool requires_output_range;
++};
 +
- required:
-   - compatible
-   - reg
+ struct ad3552r_desc {
++	const struct ad3552r_model_data *model_data;
+ 	/* Used to look the spi bus for atomic operations where needed */
+ 	struct mutex		lock;
+ 	struct gpio_desc	*gpio_reset;
+@@ -271,7 +281,6 @@ struct ad3552r_desc {
+ 	struct iio_chan_spec	channels[AD3552R_NUM_CH + 1];
+ 	unsigned long		enabled_ch;
+ 	unsigned int		num_ch;
+-	enum ad3542r_id		chip_id;
+ };
+ 
+ static const u16 addr_mask_map[][2] = {
+@@ -745,13 +754,8 @@ static void ad3552r_calc_gain_and_offset(struct ad3552r_desc *dac, s32 ch)
+ 	} else {
+ 		/* Normal range */
+ 		idx = dac->ch_data[ch].range;
+-		if (dac->chip_id == AD3542R_ID) {
+-			v_min = ad3542r_ch_ranges[idx][0];
+-			v_max = ad3542r_ch_ranges[idx][1];
+-		} else {
+-			v_min = ad3552r_ch_ranges[idx][0];
+-			v_max = ad3552r_ch_ranges[idx][1];
+-		}
++		v_min = dac->model_data->ranges_table[idx][0];
++		v_max = dac->model_data->ranges_table[idx][1];
+ 	}
+ 
+ 	/*
+@@ -775,22 +779,14 @@ static void ad3552r_calc_gain_and_offset(struct ad3552r_desc *dac, s32 ch)
+ 	dac->ch_data[ch].offset_dec = div_s64(tmp, span);
+ }
+ 
+-static int ad3552r_find_range(u16 id, s32 *vals)
++static int ad3552r_find_range(const struct ad3552r_model_data *model_data,
++			      s32 *vals)
+ {
+-	int i, len;
+-	const s32 (*ranges)[2];
++	int i;
+ 
+-	if (id == AD3542R_ID) {
+-		len = ARRAY_SIZE(ad3542r_ch_ranges);
+-		ranges = ad3542r_ch_ranges;
+-	} else {
+-		len = ARRAY_SIZE(ad3552r_ch_ranges);
+-		ranges = ad3552r_ch_ranges;
+-	}
+-
+-	for (i = 0; i < len; i++)
+-		if (vals[0] == ranges[i][0] * 1000 &&
+-		    vals[1] == ranges[i][1] * 1000)
++	for (i = 0; i < model_data->num_ranges; i++)
++		if (vals[0] == model_data->ranges_table[i][0] * 1000 &&
++		    vals[1] == model_data->ranges_table[i][1] * 1000)
+ 			return i;
+ 
+ 	return -EINVAL;
+@@ -955,9 +951,9 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 			dev_err(dev, "mandatory reg property missing\n");
+ 			goto put_child;
+ 		}
+-		if (ch >= AD3552R_NUM_CH) {
++		if (ch >= dac->model_data->num_hw_channels) {
+ 			dev_err(dev, "reg must be less than %d\n",
+-				AD3552R_NUM_CH);
++				dac->model_data->num_hw_channels);
+ 			err = -EINVAL;
+ 			goto put_child;
+ 		}
+@@ -973,7 +969,7 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 				goto put_child;
+ 			}
+ 
+-			err = ad3552r_find_range(dac->chip_id, vals);
++			err = ad3552r_find_range(dac->model_data, vals);
+ 			if (err < 0) {
+ 				dev_err(dev,
+ 					"Invalid adi,output-range-microvolt value\n");
+@@ -987,9 +983,10 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 				goto put_child;
+ 
+ 			dac->ch_data[ch].range = val;
+-		} else if (dac->chip_id == AD3542R_ID) {
++		} else if (dac->model_data->requires_output_range) {
+ 			dev_err(dev,
+-				"adi,output-range-microvolt is required for ad3542r\n");
++				"adi,output-range-microvolt is required for %s\n",
++				dac->model_data->model_name);
+ 			err = -EINVAL;
+ 			goto put_child;
+ 		} else {
+@@ -1011,7 +1008,8 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 	}
+ 
+ 	/* Disable unused channels */
+-	for_each_clear_bit(ch, &dac->enabled_ch, AD3552R_NUM_CH) {
++	for_each_clear_bit(ch, &dac->enabled_ch,
++			   dac->model_data->num_hw_channels) {
+ 		err = ad3552r_set_ch_value(dac, AD3552R_CH_AMPLIFIER_POWERDOWN,
+ 					   ch, 1);
+ 		if (err)
+@@ -1058,7 +1056,7 @@ static int ad3552r_init(struct ad3552r_desc *dac)
+ 	}
+ 
+ 	id |= val << 8;
+-	if (id != dac->chip_id) {
++	if (id != dac->model_data->chip_id) {
+ 		dev_err(&dac->spi->dev, "Product id not matching\n");
+ 		return -ENODEV;
+ 	}
+@@ -1068,7 +1066,6 @@ static int ad3552r_init(struct ad3552r_desc *dac)
+ 
+ static int ad3552r_probe(struct spi_device *spi)
+ {
+-	const struct spi_device_id *id = spi_get_device_id(spi);
+ 	struct ad3552r_desc *dac;
+ 	struct iio_dev *indio_dev;
+ 	int err;
+@@ -1079,7 +1076,9 @@ static int ad3552r_probe(struct spi_device *spi)
+ 
+ 	dac = iio_priv(indio_dev);
+ 	dac->spi = spi;
+-	dac->chip_id = id->driver_data;
++	dac->model_data = spi_get_device_match_data(spi);
++	if (!dac->model_data)
++		return -EINVAL;
+ 
+ 	mutex_init(&dac->lock);
+ 
+@@ -1088,10 +1087,7 @@ static int ad3552r_probe(struct spi_device *spi)
+ 		return err;
+ 
+ 	/* Config triggered buffer device */
+-	if (dac->chip_id == AD3552R_ID)
+-		indio_dev->name = "ad3552r";
+-	else
+-		indio_dev->name = "ad3542r";
++	indio_dev->name = dac->model_data->model_name;
+ 	indio_dev->dev.parent = &spi->dev;
+ 	indio_dev->info = &ad3552r_iio_info;
+ 	indio_dev->num_channels = dac->num_ch;
+@@ -1109,16 +1105,40 @@ static int ad3552r_probe(struct spi_device *spi)
+ 	return devm_iio_device_register(&spi->dev, indio_dev);
+ }
+ 
++static const struct ad3552r_model_data ad3542r_model_data = {
++	.model_name = "ad3542r",
++	.chip_id = AD3542R_ID,
++	.num_hw_channels = 2,
++	.ranges_table = ad3542r_ch_ranges,
++	.num_ranges = ARRAY_SIZE(ad3542r_ch_ranges),
++	.requires_output_range = true,
++};
++
++static const struct ad3552r_model_data ad3552r_model_data = {
++	.model_name = "ad3552r",
++	.chip_id = AD3552R_ID,
++	.num_hw_channels = 2,
++	.ranges_table = ad3552r_ch_ranges,
++	.num_ranges = ARRAY_SIZE(ad3552r_ch_ranges),
++	.requires_output_range = false,
++};
++
+ static const struct spi_device_id ad3552r_id[] = {
+-	{ "ad3542r", AD3542R_ID },
+-	{ "ad3552r", AD3552R_ID },
++	{
++		.name = "ad3542r",
++		.driver_data = (kernel_ulong_t)&ad3542r_model_data
++	},
++	{
++		.name = "ad3552r",
++		.driver_data = (kernel_ulong_t)&ad3552r_model_data
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(spi, ad3552r_id);
+ 
+ static const struct of_device_id ad3552r_of_match[] = {
+-	{ .compatible = "adi,ad3542r"},
+-	{ .compatible = "adi,ad3552r"},
++	{ .compatible = "adi,ad3542r", .data = &ad3542r_model_data },
++	{ .compatible = "adi,ad3552r", .data = &ad3552r_model_data },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ad3552r_of_match);
 -- 
 2.45.0.rc1
 
