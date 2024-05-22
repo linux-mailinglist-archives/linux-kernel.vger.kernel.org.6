@@ -1,285 +1,242 @@
-Return-Path: <linux-kernel+bounces-185829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30EB58CBBA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:58:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EC58CBBA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 08:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6F8E1F21650
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44451C21B92
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 06:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5477A158;
-	Wed, 22 May 2024 06:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F917A158;
+	Wed, 22 May 2024 06:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1PieJV5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="gn9q03Z8"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2064.outbound.protection.outlook.com [40.92.102.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA51459147;
-	Wed, 22 May 2024 06:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716361082; cv=none; b=giIJbHW5kqG5T1M7TWvGhhS15uBqEwcGBbeYH3ZtvSqTW/hVGs/9hTus7+8KcxXysBlxtoFPSYyZwOhYfwqquW1O67+FG+VtwZO1j3uvCJM3oHn0WF6odPGZpqDO53/gq5NoXIoC3b4Yw8tNAk/Wz/HlIiziCyqkcn4s2mKGEBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716361082; c=relaxed/simple;
-	bh=zW4bTdJWK81AR2+O8wSlEJaH4FcFXtOYcg1BuXGhn9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JnE3x6GWmoiV60MZPJ8XfMMgJyv/GRdXqhHSmDHUPRW1nNxgge87CsB4i/ut1avsvTGIP/mFZQH3dGg9pSq+OCsj2JgNB7foavYly8NCjRqt8xF8vzNGlPeLuHN8mb3vYOCdUGpMk/pi5MUa3k9I79NNAP2ZnQcXedrAFsdjzQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1PieJV5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39181C2BD11;
-	Wed, 22 May 2024 06:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716361082;
-	bh=zW4bTdJWK81AR2+O8wSlEJaH4FcFXtOYcg1BuXGhn9k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n1PieJV5GQxwoN6cinS+3f6pE72OKEoAUIa0NA8eOl045vEbW4KG+TBaS2FLMcYFi
-	 hoqtJXIJlLu+b+t5lpPtYujk/3HCY2Fle1dMrj8uRb539SUzWdygSg1Yd3pbOvqDkG
-	 iAX4e5Rb7riYGqZIn03i2wAw11jlIeI9ecCoLuVmmBAiuMEeikrei2v3hbVDD+NqBm
-	 rMN/z0Rqa5VSedNhqlvReMqTxzLPHt2ku5HHHezgDJbRQ+12h35sIY8Wovxme2sxwN
-	 BUq8mBLYvm4xjLetB8qhJsIG9MW2SPyJ3xqVqcUTwlo8X52/Le62oYdYS7r16QozJz
-	 yzi7UEd3B1c/g==
-Message-ID: <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
-Date: Wed, 22 May 2024 08:57:56 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAA459147;
+	Wed, 22 May 2024 06:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716361123; cv=fail; b=CLUicvhyOTA0fiV4f9Yl4HKrS4RNC+GD6o5LGZ1LQoA278Mq+0dkjHsVTHSChINFBBlYy2hC9MIFK7w0D5QRgJpPTn/A5DeQUmp522L20DftoNsEHm+dhKJVZ7f1fqQIRtp3RvXwLPF3NRcu6dlG/BjYBy970WPxvaC96+7BWAA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716361123; c=relaxed/simple;
+	bh=1LtT1FePzDzMKsri7UUNGig21jjVUABwpPr+5jono6A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=oySp5d3Q5U4hIKAEZqmk2E+7ZuB5hw3XhN4Qh+sZqScxM4RVrhnle+TS4l3AkW7LErFT2JAQ0sT/WgwWZhXN6qXu+d0uDXnK3s2SJqEM8kJD71ZxvpeR5Qs8tYJgkU2/aw0aI++aEyux8J/uOa2ddufPd6FDjZ/mrqIWCn0zKbc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=gn9q03Z8; arc=fail smtp.client-ip=40.92.102.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=StCfFf3Fbrp62RORbbAzkOK/ma5vxztUFIx1mbMowvck9MIwom6z0Oq57aLaxY7EfQYBq3KOjJyBa83aiw6wXlu/dCRvSDAIQgD5y7d7gD0Rota5gAo3CKw0khrR/XjlVjAGpqO1HSalA/Y3WFR8DQK4XOMZxLSWhkWI3w5uwScTI6U/Mr/60V65M3OQisvRDZ000Tkw/fSuwY5RMMOkhE+WYEWo5TYjE6Y6ogcVbolWrbJKEguiLYO8Hw4uTfLsXGyGXq4q5FydZJlRRBnZdlUnYyrvmhAMn1ru8HR2XAjcYj48D4wWr5GBiOSJONDuUtOlVUz5VPYn/0gR1HK+oA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1LtT1FePzDzMKsri7UUNGig21jjVUABwpPr+5jono6A=;
+ b=WuUxq8Hd8X94Nk0te/6m31YlXdm/AccH0UWXiWTZRqDA37OZCD5qjTO1tm38Kf5aMG3ZEMQzu4oAogjACO1Fky136LoGMg0NrzeSoMnxlmcFEZjt2JwUH8hae6qNnGzJzEt5RDxn+k/lElaB2amygD7k/izs0f8oAP3+MOQJWAXQpjoy5yNhLff80q/rncnZ+vgGawqz9z+UVf7g7w5HQ6ib9zUMXQKu7KnfvhLcmGBWScUTgxKZS+KBas6n2GJIcfMyvtITD4A7ZqVXGMtFP0/5Vg9egE9Pg7yPZ7vY6UwKHHuug/yVzbTu/78Wqr61uxlbWGoDL60hE4VhcWgcIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1LtT1FePzDzMKsri7UUNGig21jjVUABwpPr+5jono6A=;
+ b=gn9q03Z8UYHshRUhR7Dy8PD0C6pZOsvA5ZQxh/CXD+39x2W9NFDIG+zQwgCrTMg1EguZLd8MFR8c7iZPiWXwd6Lx5f23kW5lCowQEaio6dBEm7feLihHWThBydzxkAYkSr2IEGmgxxWJ8RBZLLXektgz937z6ef3WYZFUJBE5ZOcm5d9QfQpbU7UP/cPkA6xo7heWSA2L3xdaHJeWv/sHXo9kAlRzBxUo4qCsMdrK67VErod3EUPK+Jmlf7d14Kf8XomsibgORspcmIgzbKZUEGvycHPet/cPjfoeyh3h/21yC5/u7AflK2n31lI7DBWEAIfg16A/ohWx1X4TfpNvQ==
+Received: from PN0P287MB0216.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:e7::9) by
+ PN0P287MB2151.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1c0::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.19; Wed, 22 May 2024 06:58:36 +0000
+Received: from PN0P287MB0216.INDP287.PROD.OUTLOOK.COM
+ ([fe80::ab9f:304e:eba9:e991]) by PN0P287MB0216.INDP287.PROD.OUTLOOK.COM
+ ([fe80::ab9f:304e:eba9:e991%4]) with mapi id 15.20.7611.016; Wed, 22 May 2024
+ 06:58:36 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Nobuaki Tsunashima <nobuaki.tsunashima@infineon.com>, Marcel Holtmann
+	<marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] Bluetooth: Apply HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER
+ to CYW4373
+Thread-Topic: [PATCH v3] Bluetooth: Apply HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER
+ to CYW4373
+Thread-Index: AQHarAKK84ZnIBFVMk25DNY7ErtxebGi0uYk
+Date: Wed, 22 May 2024 06:58:36 +0000
+Message-ID:
+ <PN0P287MB0216914307B53414954BCB6CB8EB2@PN0P287MB0216.INDP287.PROD.OUTLOOK.COM>
+References: <20240522081735.469503-1-nobuaki.tsunashima@infineon.com>
+ <1c194c94-54f1-4dfe-a790-913e3d9529c6@molgen.mpg.de>
+In-Reply-To: <1c194c94-54f1-4dfe-a790-913e3d9529c6@molgen.mpg.de>
+Accept-Language: en-IN, en-US
+Content-Language: en-IN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:
+ [jJENYjkJE+Nppr8DxYJSiMLvOA3lXTxYZVsaKQzkWk+cpqt7OHiTamrWZCTJDrlyfNwlkCukwC4=]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN0P287MB0216:EE_|PN0P287MB2151:EE_
+x-ms-office365-filtering-correlation-id: f72a301b-69d8-4dc1-e9b7-08dc7a2c9a58
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199019|440099019|3412199016|102099023;
+x-microsoft-antispam-message-info:
+ egwK6THE/ZO7uq4FSRZosViMSlAUIxeIptS5Sea4BVUIPug4g38wobOlkXsF1aClTOo6Z7w6UbmePEnGuy59WjbFglBqmPgHh38VyRsZMTAi5uHDfAC/aLeGsBfMj6rrtqUfEOzp8f9slwwnD1N8GMqCFTaxK7c3XIDjpPut5EoSZrULmPhEakgV1X5B8KSRbZWcSEAFZAu4cnppkDMa41wk4V+E7xQ+dno5H4pyZwkAs2+JMuG3C+KSB+//jEOPooJTPl7t9dbYzrKSAfyROJ2e3r/47wWzGmmx+sujTjQMo/2j9uQ4lFlNJwjFXuVdQ9KoCztecJNpTFF7kxMNA9LjFMSBiZitjwJkPaVl/OoheDxEJKzYNd+WcbqRGsYoawqK0KkWtg4QO82UxHd6BmEQ4IXQBuC154DDzpbkiU2dasJMBSZ/5iNzgYpbE8TXsI4XrcOiX2EGNaTh2tWXxyaP0L7BjhqG5B9JRC/3Z2nCjQ44h6VMnJE5dQwpjX4fBo8oxIovhllNzTEG6+Q/2JVHiOiGwHUZtLnIktpN7ImQk4onLJCjhxo6WBEl7rDN
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?L1ZXUHVoM0RUdE1IemZSb3NNRldENmRJZlRJUHZJbTNtYTBTczI3TkMzVWUx?=
+ =?utf-8?B?SE1rcjFHdVp5NnhOS0x2azI5Uldld082T1lhNWI0T2ZxUzdCV3lKeGRlWlNL?=
+ =?utf-8?B?OUNYV3R3NUZaV0hMVTFaY0tPRzFuZmVEaGg0YlFLVVd0UC9GOFRhQW1xQlJY?=
+ =?utf-8?B?dmJzeHJjb1dtNThETk9YQWZEYnl2aEZtSXY3SEpGV1p0VjVkbnpBb2NWWnFE?=
+ =?utf-8?B?MGFJOE9TdEwrU0JuMGtNUzNHSncxcGV6Mmt5dlZHTHhtM0xxQ2NNckU5TlFm?=
+ =?utf-8?B?cnFYN2dUSXM3TDlDNmtKdXM0dld0K1V2NG9QQ21oVmkrdnJrb1VTd1FmN2xu?=
+ =?utf-8?B?STYwV0JWeEFFYVhjTWNlNGEzUlJjOG5WaUtYUThySTlQMzg3cTF4MEVLL241?=
+ =?utf-8?B?dWJhMUR1b29YelM1RWovUGRVRjRwWVd1bEVDN3BpVHJUT1NOazExOGhlV0ln?=
+ =?utf-8?B?THRxTlJ3Z3daNVV1ZkdlR0FZTysyS2oyYld1OGRqU05UWUovc1VBdjBwdTBt?=
+ =?utf-8?B?SkNuc3d4b3RrbjZUenlKMmhrUElKT0p3NysrQm5KS1Q1eUNBZ0x6enV6NkdZ?=
+ =?utf-8?B?K0pKL0E4bi9EbHk4OWkzZ0tqQ3dSdC9aMFFlVVdoRTdNUEhEMk9HK1F0WVVz?=
+ =?utf-8?B?V3owUzJyRFIrTDB1L2JiZXRVZkw2emY0c015WVFuQUxTcHZ2YUNqQlkrOXVZ?=
+ =?utf-8?B?aDF4bkg0R0VoRmJOSXBIcTF2N2MwVjloVFhYeUUxS2hUcmc3eFBJZUF0aERH?=
+ =?utf-8?B?d3l3SDJ1T1A0dDRlTlJUVlFHT2N4aDUrUXdFL24wcFFmQlpUaGNSTzVmZDl6?=
+ =?utf-8?B?U3dmZElORWdrNTF2bWhBcVgvakxtYXBQVkR0c0djWEZaVWo5ZGMwL3RDSDdk?=
+ =?utf-8?B?UndZdHJDWWVHUEtkZ0hWWjhGdGx2K1Zrdy9vakNkaVlyajdSdlR5VzJ0VFdy?=
+ =?utf-8?B?V0FhNUl6aHJMbzBYMUVqWGRUbDQ1dzdQNFR3a2t3S205ZnZzUGJpN1NodTFE?=
+ =?utf-8?B?bkFtZG04bTdTYmlqMm9GYVJzY0FCeVM2ekJDSXIydW1jaEVvajhaa21jTURx?=
+ =?utf-8?B?VjVjWmFTT1JlYmo3cDV0TUZVUHF2U2p3YnU3NGxGVmUvNE1HNm5DR0MrVlN0?=
+ =?utf-8?B?TTFJRmVERVFQc3pXMU4yeStHVlMxdThlVHpRN2xVclVHSHRBcXhuamkzNzlN?=
+ =?utf-8?B?ZmJaMWFvL1JoMm5rWC9ZK2huektMZ1FROWdVNTNJVys5S0FndnB3QThRU0Qw?=
+ =?utf-8?B?bFhBcXZHdVorZEtSZzRlOG1OaDFXVFhiUDA0TmNEbE9hSDBDUkVmaU5yeWpn?=
+ =?utf-8?B?WU9HSW9XT0p2MjdyMytQVzlKRElmUGR2S0p4MktEN3hMS3ZUbjcxM1ErWnp0?=
+ =?utf-8?B?eUYwTGVPeTk0aExXUm5EZWc2K3ZWRlVPcUtZeFhKdng3Mm5EWG9udFE0MFBD?=
+ =?utf-8?B?RTRzcTJOOWVUWWdRR2Q2Uzc4YStXakpVbkJ4cExrVE1ZMzB2UTk5OGlIMTI0?=
+ =?utf-8?B?S01PVmRsVEZVbjc4YWNOVGdXRUZOYzc5RFgwbENuTDJ5bTFOWE1LS3kyR3k4?=
+ =?utf-8?B?aERuTFo2R1VXbDlKdDVyOHN1c0pMTkdXQ0NoZ3AxSWRXdlIvTkYrWWpRRitr?=
+ =?utf-8?B?MjE0R0ZsZlUvK3dXd0c2L25odnlISUpQVHAzS05udTBYTG4xMUc1U2QrdkpZ?=
+ =?utf-8?B?dG1mZ3RMeHRsZW9UZWtwUGpGcGZPc084dkNpWjl1SDh5SnJOSWZZTkJvN1Mv?=
+ =?utf-8?Q?eULT1MCk3t2rWeTUaY=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
- Alexandru Ardelean <alexandru.ardelean@analog.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
- <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
- <20240521194309.GA8863@pendragon.ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240521194309.GA8863@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-bafef.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB0216.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: f72a301b-69d8-4dc1-e9b7-08dc7a2c9a58
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2024 06:58:36.6082
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB2151
 
-On 21/05/2024 21:43, Laurent Pinchart wrote:
-> Hi Krzysztof,
-> 
-> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
->> On 20/05/2024 21:59, Laurent Pinchart wrote:
->>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
->>> matrix decoder, programmable logic, reset generator, and PWM generator.
->>> These bindings model the device as an MFD, and support the GPIO expander
->>> and PWM functions.
->>>
->>> These bindings support the GPIO and PWM functions.
->>>
->>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>> ---
->>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
->>> implement and test the rest of the features the chip supports.
->>> ---
->>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
->>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
->>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
->>>  MAINTAINERS                                   |   7 ++
->>>  4 files changed, 195 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
->>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>> new file mode 100644
->>> index 000000000000..210e4d53e764
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
->>> @@ -0,0 +1,36 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Analog Devices ADP5585 GPIO Expander
->>> +
->>> +maintainers:
->>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>> +
->>> +description: |
->>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
->>> +  node of the parent MFD device. See
->>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
->>> +  well as an example.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: adi,adp5585-gpio
->>> +
->>> +  gpio-controller: true
->>> +
->>> +  '#gpio-cells':
->>> +    const: 2
->>> +
->>> +  gpio-reserved-ranges: true
->>
->> There are no resources here, so new compatible is not really warranted.
->> Squash the node into parent.
-> 
-> Child nodes seem (to me) to be the standard way to model functions in
-> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
-> function iterates over child nodes. I don't mind going a different
-
-Only to assign of node, which could be skipped as well.
-
-> routes, could you indicate what you have in mind, perhaps pointing to an
-> existing driver as an example ?
-
-Most of them? OK, let's take the last added driver in MFD directory:
-cirrus,cs42l43
-It has three children and only two nodes, because only these two devices
-actually need/use/benefit the subnodes.
-
-
-> 
->>> +
->>> +required:
->>> +  - compatible
->>> +  - gpio-controller
->>> +  - "#gpio-cells"
->>> +
->>> +additionalProperties: false
->>> +
->>> +...
->>> diff --git a/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
->>> new file mode 100644
->>> index 000000000000..217c038b2842
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
->>> @@ -0,0 +1,117 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/mfd/adi,adp5585.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Analog Devices ADP5585 Keypad Decoder and I/O Expansion
->>> +
->>> +maintainers:
->>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>> +
->>> +description: |
->>
->> Do not need '|' unless you need to preserve formatting.
->>
->>> +  The ADP5585 is a 10/11 input/output port expander with a built in keypad
->>> +  matrix decoder, programmable logic, reset generator, and PWM generator.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - adi,adp5585-00  # Default
->>> +          - adi,adp5585-01  # 11 GPIOs
->>> +          - adi,adp5585-02  # No pull-up resistors by default on special pins
->>> +          - adi,adp5585-03  # Alternate I2C address
->>> +          - adi,adp5585-04  # Pull-down resistors on all pins by default
->>> +      - const: adi,adp5585
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 1
->>> +
->>> +  vdd-supply: true
->>> +
->>> +  gpio:
->>> +    $ref: /schemas/gpio/adi,adp5585-gpio.yaml
->>> +
->>> +  pwm:
->>> +    $ref: /schemas/pwm/adi,adp5585-pwm.yaml
->>> +
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - gpio
->>> +  - pwm
->>> +
->>> +allOf:
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: adi,adp5585-01
->>> +    then:
->>> +      properties:
->>> +        gpio:
->>> +          properties:
->>> +            gpio-reserved-ranges: false
->>
->> This also points to fact your child node is pointless. It does not stand
->> on its own...
-> 
-> That doesn't make the child pointless just for that reason. There are
-> numerous examples of child nodes that don't stand on their own.
-
-No, your if-then must be in the schema defining it. This is just
-unmaintianable code. It proves that child's compatible means nothing. If
-you cannot use child's compatible to make any meaningful choices, then
-it is useless.
-
-
-Best regards,
-Krzysztof
-
+SGkNCg0KPiBPbiAyMiBNYXkgMjAyNCwgYXQgMTA6MTPigK9BTSwgUGF1bCBNZW56ZWwgPHBtZW56
+ZWxAbW9sZ2VuLm1wZy5kZT4gd3JvdGU6DQo+IA0KPiDvu79EZWFyIE5vYnVha2ksDQo+IA0KPiAN
+Cj4gVGhhbmsgeW91IGZvciB5b3VyIHBhdGNoIGFuZCBhZGRyZXNzaW5nIHRoZSBjb21tZW50cy4g
+UGxlYXNlIG5vdGUsIHRoYXQgdGhlIHRpbWUgb24gdGhlIHN5c3RlbSB5b3Ugc2VudCB0aGUgcGF0
+Y2ggZnJvbSBpcyBpbiB0aGUgZnV0dXJlOg0KPiANCj4gICAgRGF0ZTogV2VkLCAyMiBNYXkgMjAy
+NCAxNzoxNzozNSArMDkwMA0KPiANCj4gQnV0Og0KPiANCj4gICAgUmVjZWl2ZWQ6IGZyb20gc210
+cDkuaW5maW5lb24uY29tIChzbXRwOS5pbmZpbmVvbi5jb20gWzIxNy4xMC41Mi4yMDRdKQ0KPiAg
+ICAgICAgKHVzaW5nIFRMU3YxLjIgd2l0aCBjaXBoZXIgRUNESEUtUlNBLUFFUzI1Ni1HQ00tU0hB
+Mzg0ICgyNTYvMjU2IGJpdHMpKQ0KPiAgICAgICAgKE5vIGNsaWVudCBjZXJ0aWZpY2F0ZSByZXF1
+ZXN0ZWQpDQo+ICAgICAgICBieSBzbXRwLnN1YnNwYWNlLmtlcm5lbC5vcmcgKFBvc3RmaXgpIHdp
+dGggRVNNVFBTIGlkIDgzRUMzMjhFQTsNCj4gICAgICAgIFdlZCwgMjIgTWF5IDIwMjQgMDE6Mjg6
+NDUgKzAwMDAgKFVUQykNCj4gDQo+PiBBbSAyMi4wNS4yNCB1bSAxMDoxNyBzY2hyaWViIE5vYnVh
+a2kgVHN1bmFzaGltYToNCj4+IEZyb206IE5vYnVha2kgVHN1bmFzaGltYSA8Tm9idWFraS5Uc3Vu
+YXNoaW1hQGluZmluZW9uLmNvbT4NCj4gDQo+IEkgZm9yZ290IHRvIGFkZCBidGJjbSBpbiB0aGUg
+c3VtbWFyeToNCj4gDQo+IEJsdWV0b290aDogYnRiY206IOKApg0KPiANCj4+IENZVzQzNzMgUk9N
+IEZXIGhhcyBhbiBpc3N1ZSB0aGF0IGl0IGNsYWltcyBMRV9SZWFkX1RyYW5zbWl0X1Bvd2VyIGNv
+bW1hbmQNCj4+IGFzIHN1cHBvcnRlZCBpbiBhIHJlc3BvbnNlIG9mIFJlYWRfTG9jYWxfU3VwcG9y
+dGVkX0NvbW1hbmQgY29tbWFuZCBidXQNCj4+IHJlamVjdHMgdGhlIExFX1JlYWRfVHJhbnNtaXRf
+UG93ZXIgY29tbWFuZCB3aXRoICJVbmtub3duIEhDSSBDb21tYW5kIg0KPj4gc3RhdHVzLiBEdWUg
+dG8gdGhlIGlzc3VlLCBCbHVldG9vdGggZHJpdmVyIG9mIDUuMTUgYW5kIGxhdGVyIGtlcm5lbCBm
+YWlscw0KPj4gdG8gaGNpIHVwLg0KDQpJIHJlbWVtYmVyIHRoZSBMRSBUcmFuc21pdCBwb3dlciBp
+c3N1ZSBjYW1lIHVwIGluIDUuMTEga2VybmVsLCBzbyBpZiB5b3UgYXJlIGdldHRpbmcgdGhlIGlz
+c3VlIHN0YXJ0aW5nIGZyb20gNS4xNSwgeW91IHByb2JhYmx5IHdhbnQgdG8gYmlzZWN0Lg0KPiAN
+Cj4gQXMgd3JpdHRlbiBpbiB0aGUgb3RoZXIgdGhyZWFkLCBpdOKAmWQgYmUgZ3JlYXQgaWYgeW91
+IGJpc2VjdGVkIHRoZSBjb21taXQuDQo+IA0KPj4gRXNwZWNpYWxseSBpbiBVU0IgaS9mIGNhc2Us
+IGl0IHdvdWxkIGJlIGRpZmZpY3VsdCB0byBkb3dubG9hZCBwYXRjaCBGVyB0aGF0DQo+PiBpbmNs
+dWRlcyBJdHMgZml4IHVubGVzcyBoY2kgaXMgdXAuDQo+IA0KPiBsb3dlcmNhc2U6IGl0cw0KPiAN
+Cj4gV2hpY2ggZmlybXdhcmUgdmVyc2lvbnMgYXJlIGZpeGVkPw0KPiANCj4+IFRoZSBwYXRjaCBm
+b3JjZXMgdGhlIGRyaXZlciB0byBza2lwIExFX1JlYWRfVHJhbnNtaXRfUG93ZXIgQ29tbWFuZCB3
+aGVuIGl0DQo+PiBkZXRlY3RzIENZVzQzNzMgd2l0aCBST00gRlcgYnVpbGQuDQo+IA0KPiBNYXli
+ZSBhZGQgc29tZXRoaW5nIGxpa2U6DQo+IA0KPiBUaGUgZHJpdmVyIGFscmVhZHkgY29udGFpbnMg
+aW5mcmFzdHJ1Y3R1cmUgdG8gYXBwbHkgdGhlIHF1aXJrLCBidXQgY3VycmVudGx5IGl0IG9ubHkg
+c3VwcG9ydHMgRE1JIGJhc2VkIG1hdGNoaW5nLiBBZGQgc3VwcG9ydCB0byBtYXRjaCBieSBjaGlw
+IGlkIGFuZCBiYXNlbGluZSwgd2hpY2gg4oCmLg0KPiANCj4+IFNpZ25lZC1vZmYtYnk6IE5vYnVh
+a2kgVHN1bmFzaGltYSA8Tm9idWFraS5Uc3VuYXNoaW1hQGluZmluZW9uLmNvbT4NCj4+IC0tLQ0K
+Pj4gVjIgLT4gVjM6IEZpeCBhIGZldyBjb2Rpbmcgc3R5bGUgd2FybmluZ3MgYW5kIGNoYW5nZSB0
+aGUgc3ViamVjdCBhcyBtb3JlIHNwZWNpZmljLg0KPj4gVjEgLT4gVjI6IEZpeCBzZXZlcmFsIGNv
+ZGluZyBzdHlsZSB3YXJuaW5ncy4NCj4+ICBkcml2ZXJzL2JsdWV0b290aC9idGJjbS5jIHwgMzIg
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0NCj4+ICBkcml2ZXJzL2JsdWV0b290aC9i
+dHVzYi5jIHwgIDQgKysrKw0KPj4gIDIgZmlsZXMgY2hhbmdlZCwgMzUgaW5zZXJ0aW9ucygrKSwg
+MSBkZWxldGlvbigtKQ0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvYmx1ZXRvb3RoL2J0YmNtLmMg
+Yi9kcml2ZXJzL2JsdWV0b290aC9idGJjbS5jDQo+PiBpbmRleCAwYTU0NDVhYzVlMWIuLmM3NjNl
+MzY4ZDZhZCAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvYmx1ZXRvb3RoL2J0YmNtLmMNCj4+ICsr
+KyBiL2RyaXZlcnMvYmx1ZXRvb3RoL2J0YmNtLmMNCj4+IEBAIC00MzcsMTggKzQzNyw0OCBAQCBz
+dGF0aWMgY29uc3Qgc3RydWN0IGRtaV9zeXN0ZW1faWQgZGlzYWJsZV9icm9rZW5fcmVhZF90cmFu
+c21pdF9wb3dlcltdID0gew0KPj4gICAgICB7IH0NCj4+ICB9Ow0KPj4gICtzdHJ1Y3QgYmNtX2No
+aXBfdmVyc2lvbl90YWJsZSB7DQo+PiArICAgIHU4ICAgIGNoaXBfaWQ7DQo+IA0KPiBQbGVhc2Ug
+dXNlIG9uZSBzcGFjZS4gKFBsZWFzZSBhbHNvIGNoZWNrIHRoZSBsaW5lIGJlbG93LikNCj4gDQo+
+PiArICAgIHUxNiBiYXNlbGluZTsNCj4gDQo+IEFkZCBhIGNvbW1lbnQgYWJvdmUgdGhlIHN0cnVj
+dCwgd2hhdCBiYXNlbGluZSBtZWFucz8NCj4gDQo+PiArfTsNCj4+ICsjZGVmaW5lIEJDTV9ST01G
+V19CQVNFTElORV9OVU0gICAgMHhGRkZGDQo+PiArc3RhdGljIGNvbnN0IHN0cnVjdCBiY21fY2hp
+cF92ZXJzaW9uX3RhYmxlIGRpc2FibGVfYnJva2VuX3JlYWRfdHJhbnNtaXRfcG93ZXJfYnlfY2hp
+cF92ZXJbXSA9IHsNCj4+ICsgICAgezB4ODcsIEJDTV9ST01GV19CQVNFTElORV9OVU19ICAgICAg
+ICAvKiBDWVc0MzczLzQzNzNFICovDQo+IA0KPiBBZGQgb25lIHNwYWNlIGFmdGVyIHsgYW5kIGJl
+Zm9yZSB9Pw0KPiANCllvdSBtYXkgd2FudCB0byByZW5hbWUgdGhlIGV4aXN0aW5nIHZhcmlhYmxl
+IGJ0YmNtX2lzX2Rpc2FibGVfYnJva2VuX3JlYWRfdHhfcG93ZXIgdG8gYnRiY21faXNfZGlzYWJs
+ZV9icm9rZW5fcmVhZF90eF9wb3dlcl9ieV9kbWkgdG8gYXZvaWQgY29uZnVzaW9uLiBBbHRob3Vn
+aCwgSSdtIG5vdCBhIG1haW50YWluZXIgc28gY29uc2lkZXIgaXQgYXMganVzdCBhIHN1Z2dlc3Rp
+b24uDQo+IA0KPj4gK307DQo+PiArc3RhdGljIGJvb2wgYnRiY21faXNfZGlzYWJsZV9icm9rZW5f
+cmVhZF90eF9wb3dlcl9ieV9jaGlwX3Zlcih1OCBjaGlwX2lkLCB1MTYgYmFzZWxpbmUpDQo+PiAr
+ew0KPj4gKyAgICBpbnQgaTsNCj4+ICsgICAgaW50IHRhYmxlX3NpemUgPSBBUlJBWV9TSVpFKGRp
+c2FibGVfYnJva2VuX3JlYWRfdHJhbnNtaXRfcG93ZXJfYnlfY2hpcF92ZXIpOw0KPiANCj4gVXNl
+IHNpemVfdD8NCj4gDQo+PiArICAgIGNvbnN0IHN0cnVjdCBiY21fY2hpcF92ZXJzaW9uX3RhYmxl
+ICplbnRyeSA9DQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgJmRpc2FibGVfYnJva2VuX3Jl
+YWRfdHJhbnNtaXRfcG93ZXJfYnlfY2hpcF92ZXJbMF07DQo+PiArDQo+PiArICAgIGZvciAoaSA9
+IDAgOyBpIDwgdGFibGVfc2l6ZSA7IGkrKywgZW50cnkrKykgICAgew0KPj4gKyAgICAgICAgaWYg
+KChjaGlwX2lkID09IGVudHJ5LT5jaGlwX2lkKSAmJiAoYmFzZWxpbmUgPT0gZW50cnktPmJhc2Vs
+aW5lKSkNCj4+ICsgICAgICAgICAgICByZXR1cm4gdHJ1ZTsNCj4+ICsgICAgfQ0KPj4gKw0KPj4g
+KyAgICByZXR1cm4gZmFsc2U7DQo+PiArfQ0KPj4gKw0KPj4gIHN0YXRpYyBpbnQgYnRiY21fcmVh
+ZF9pbmZvKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQ0KPj4gIHsNCj4+ICAgICAgc3RydWN0IHNrX2J1
+ZmYgKnNrYjsNCj4+ICsgICAgdTggY2hpcF9pZDsNCj4+ICsgICAgdTE2IGJhc2VsaW5lOw0KPj4g
+ICAgICAgIC8qIFJlYWQgVmVyYm9zZSBDb25maWcgVmVyc2lvbiBJbmZvICovDQo+PiAgICAgIHNr
+YiA9IGJ0YmNtX3JlYWRfdmVyYm9zZV9jb25maWcoaGRldik7DQo+PiAgICAgIGlmIChJU19FUlIo
+c2tiKSkNCj4+ICAgICAgICAgIHJldHVybiBQVFJfRVJSKHNrYik7DQo+PiAtDQo+PiArICAgIGNo
+aXBfaWQgPSBza2ItPmRhdGFbMV07DQo+PiArICAgIGJhc2VsaW5lID0gc2tiLT5kYXRhWzNdIHwg
+KHNrYi0+ZGF0YVs0XSA8PCA4KTsNCj4+ICAgICAgYnRfZGV2X2luZm8oaGRldiwgIkJDTTogY2hp
+cCBpZCAldSIsIHNrYi0+ZGF0YVsxXSk7DQo+PiAgICAgIGtmcmVlX3NrYihza2IpOw0KPj4gICsg
+ICAgLyogQ2hlY2sgQ2hpcCBJRCBhbmQgZGlzYWJsZSBicm9rZW4gUmVhZCBMRSBNaW4vTWF4IFR4
+IFBvd2VyICovDQo+PiArICAgIGlmIChidGJjbV9pc19kaXNhYmxlX2Jyb2tlbl9yZWFkX3R4X3Bv
+d2VyX2J5X2NoaXBfdmVyKGNoaXBfaWQsIGJhc2VsaW5lKSkNCj4+ICsgICAgICAgIHNldF9iaXQo
+SENJX1FVSVJLX0JST0tFTl9SRUFEX1RSQU5TTUlUX1BPV0VSLCAmaGRldi0+cXVpcmtzKTsNCj4+
+ICsNCj4gDQo+IENvbW1pdCA4MDFiNGMwMjdiNDQgKEJsdWV0b290aDogYnRiY206IGRpc2FibGUg
+cmVhZCB0eCBwb3dlciBmb3Igc29tZSBNYWNzIHdpdGggdGhlIFQyIFNlY3VyaXR5IGNoaXApIGFk
+ZGVkIHRoZSBjaGVjayBpbiBgYnRiY21fcHJpbnRfY29udHJvbGxlcl9mZWF0dXJlcygpYD8gTm8g
+aWRlYSwgd2hlcmUgdGhlIGJlc3QgcGxhY2UgaXMuDQoNCkkgYWRkZWQgdGhlIGNoZWNrIGluIGBi
+dGJjbV9wcmludF9jb250cm9sbGVyX2ZlYXR1cmVzKClgIGJlY2F1c2UgdGhlIHRoZSBpc3N1ZSB3
+YXMgbm90IGJlaW5nIGZpeGVkIGF0IG90aGVyIHBsYWNlcy4gSSByZW1lbWJlciBjb21waWxpbmcg
+YW5kIHRlc3RpbmcgaXQgYXQgdmFyaW91cyBvdGhlciBwbGFjZXMuIEknbSBub3QgcmVhbGx5IHN1
+cmUgd2h5IGl0IHNwZWNpZmljYWxseSB3b3JrcyBpbiBgYnRiY21fcHJpbnRfY29udHJvbGxlcl9m
+ZWF0dXJlcygpYA0KPiANCj4gDQo+PiAgICAgIHJldHVybiAwOw0KPj4gIH0NCj4+ICBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ibHVldG9vdGgvYnR1c2IuYyBiL2RyaXZlcnMvYmx1ZXRvb3RoL2J0dXNi
+LmMNCj4+IGluZGV4IGQzMWVkYWQ3YTA1Ni4uNTI1NjFjOGQ4ODI4IDEwMDY0NA0KPj4gLS0tIGEv
+ZHJpdmVycy9ibHVldG9vdGgvYnR1c2IuYw0KPj4gKysrIGIvZHJpdmVycy9ibHVldG9vdGgvYnR1
+c2IuYw0KPj4gQEAgLTE0Miw2ICsxNDIsMTAgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCB1c2JfZGV2
+aWNlX2lkIGJ0dXNiX3RhYmxlW10gPSB7DQo+PiAgICAgIHsgVVNCX1ZFTkRPUl9BTkRfSU5URVJG
+QUNFX0lORk8oMHgwNGNhLCAweGZmLCAweDAxLCAweDAxKSwNCj4+ICAgICAgICAuZHJpdmVyX2lu
+Zm8gPSBCVFVTQl9CQ01fUEFUQ0hSQU0gfSwNCj4+ICArICAgIC8qIEN5cHJlc3MgZGV2aWNlcyB3
+aXRoIHZlbmRvciBzcGVjaWZpYyBpZCAqLw0KPj4gKyAgICB7IFVTQl9WRU5ET1JfQU5EX0lOVEVS
+RkFDRV9JTkZPKDB4MDRiNCwgMHhmZiwgMHgwMSwgMHgwMSksDQo+PiArICAgICAgLmRyaXZlcl9p
+bmZvID0gQlRVU0JfQkNNX1BBVENIUkFNIH0sDQo+PiArDQo+IA0KPiBPcmRlciAweDA0YjQgYmVm
+b3JlIDB4MDRjYT8NCj4gDQo+PiAgICAgIC8qIEJyb2FkY29tIGRldmljZXMgd2l0aCB2ZW5kb3Ig
+c3BlY2lmaWMgaWQgKi8NCj4+ICAgICAgeyBVU0JfVkVORE9SX0FORF9JTlRFUkZBQ0VfSU5GTygw
+eDBhNWMsIDB4ZmYsIDB4MDEsIDB4MDEpLA0KPj4gICAgICAgIC5kcml2ZXJfaW5mbyA9IEJUVVNC
+X0JDTV9QQVRDSFJBTSB9LA0KPiANCj4gDQo+IEtpbmQgcmVnYXJkcywNCj4gDQo+IFBhdWwNCg0K
+UmVnYXJkcw0KDQpBZGl0eWE=
 
