@@ -1,144 +1,155 @@
-Return-Path: <linux-kernel+bounces-186149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6828CC05A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:37:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABEE8CC061
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E45282CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:37:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C6221F2365C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 11:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279088288C;
-	Wed, 22 May 2024 11:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA48882C63;
+	Wed, 22 May 2024 11:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CHuq6u2J"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W96hvT8j"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB7D7F7FD
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 11:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E1356B72;
+	Wed, 22 May 2024 11:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716377841; cv=none; b=lUUVJ7bNay9e3QK+fqpgZhj6wSfe3acOZ6YK63ml0jt2tFQfg3r/5UarBkMG6lePyx2HlD/W7iemujqOxMRUynOJfmyESYehhLSogovxwXJ2pSgkdkAlfHW7NQZPRIhOhiA70384CtAcEG8N4GvAtXv5WQaz1PRtcxM+3s7yoAI=
+	t=1716377886; cv=none; b=Xy/7OeacX2bng/FDOiIGZ98gZwLGwubaDMtC2slju0neMq4YgiWCDLGSKfFN25bzh0fgauwSgLbrgvGPRHXmH71R0uhlOJ1FlLpWnXuhZjqRxmluxQQ9irfYPPpHxlFmE6vQjokksFk5v4oSeVQqVHnTXfgdbiFXVY2cHvQ1tIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716377841; c=relaxed/simple;
-	bh=ohpms8ssANJVFoaDki2np0GgbqsNCMxT9R6sKGwuFqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYKsj4yp4/L6zQUbNOCsH7rnXcJ3vyP2kPspG6eVPbcYfaEL1qlB3NZXbCVrqshWzxw5n3Srj+oZeC/w0KhDeb3QWvvWnpNlI19YnenxL4AMZiEdBbGBla1V2M7r6jhtDR3zRoY8U9qy8gVlHmFgJlrmad7NU5u3+QEXFReldBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CHuq6u2J; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-56e48d0a632so13592557a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 04:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716377838; x=1716982638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Ptb2sWzcgU+/pWuZsipU8bjPMNKPiOC3GCFAmIOk8I=;
-        b=CHuq6u2JY4JsBv01TIOR6O6dddh/pS876vZ2qtQsPChYsw5tzRLhDxZYqZBJcqkbx6
-         vnoPkpTxKOApGe6G8SEqBnWwMdASPRUEx46iSbPNupsRKqTlOK2y4yKia6Xo8v43dS+X
-         hCxHW7yrRkoxOlibokHT8twiKOs6AhdKgNQBm4MrtiW8QsHqsFUseflBuV5PDX/wSabU
-         lzNV3q50EHrIZflvrds58S8RlTuwc4XR1tUkuJFlwd0bkcbueQkmSqvkQipU1ylAOjhi
-         gCS0B54YIldyrRCfMoE9CLe+FcPDf8gY3YCHUq8eEhorHzNpeysqtoBBY1APAhkSqLVN
-         2r7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716377838; x=1716982638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Ptb2sWzcgU+/pWuZsipU8bjPMNKPiOC3GCFAmIOk8I=;
-        b=n3VKEXA6AQKfARXesEnEu0WeoE6LixEaQbTkQ1e8I4Z0wXWYmXpvu8LSa/SfkagUE+
-         eOE2FMtt7B36Ny75xgIVByxgni/nwFPF6ywSUwa/t2LEeiCF4/qMNpsk0R/zcUKgfgw4
-         1/rBs+tcU4pWkx3NVz73sc0a2o0bU5bDnWIaopaYZQzjOpUQddHhW9zER6U+f6a7aKjf
-         OjarZDMf8+U2p+ggJw6+yUNQJvhYwi67GmN3L6GmZu3qun5ow9RdFOygD/JRQ0F1bVYE
-         uN3eBH5xeIOluKJMXl+TtvdxC3bF9i7icpMaECfrnDOclP8zJiSAubNsAYNC+jgpg7qj
-         SM5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWyzgBIzQXaYHvexjZTwHb5g8qshm2ryv5Gt13UB7RuHJfsXlh4y5cmIx9j0OICKZKlvFE+XLCWrKN6NHWczFqb233FkkSmlOiK1UQi
-X-Gm-Message-State: AOJu0YwAULky8cqC8+pwlXI+Eb76Jgu7tPiRSpB+7e/JZpxSqKsQcDu9
-	/t2HCBQ7Gpni8b/vkmloQyvDiF9VIqmiYRwtfswtNhx+uJkVfEaNLH6fPpJ1Rvk=
-X-Google-Smtp-Source: AGHT+IExl6EGuLlspJ3UkC1uRIX9L3WPWeeW1cTdzJEV7Da71NsJLbwitPi51l2QjtpfQ62N0ScZlg==
-X-Received: by 2002:a17:906:fa88:b0:a5a:2d0d:2aef with SMTP id a640c23a62f3a-a62280d4fdemr164881566b.21.1716377837646;
-        Wed, 22 May 2024 04:37:17 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a44f9581fsm1562314666b.196.2024.05.22.04.37.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 04:37:17 -0700 (PDT)
-Date: Wed, 22 May 2024 13:37:15 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Lukas Hruska <lhruska@suse.cz>
-Cc: mbenes@suse.cz, jpoimboe@kernel.org, joe.lawrence@redhat.com,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, mpdesouza@suse.com,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v2 4/6] livepatch: Add sample livepatch module
-Message-ID: <Zk3Y60KxKfbrVc9s@pathway.suse.cz>
-References: <20240516133009.20224-1-lhruska@suse.cz>
- <20240516133009.20224-5-lhruska@suse.cz>
+	s=arc-20240116; t=1716377886; c=relaxed/simple;
+	bh=j+W4GcZJGISa77lDIEBfrxFXmjiKU9BCqC2sLBGFabQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n+jToij07stIaBg40NI60QgTrxjCrFF8JCT3NU78ijVQmA8UDxZvTvIqEN8KkCCIIAPp6yzGdh4mKllncAuR+/slRQ2J+vaalucOZvN7JWIZUPOw2iW1MqBmNLLgkKhkuDvybabMHnWHEJzmlq+YGCap5RWIdp2ktAnID5fT2aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=W96hvT8j; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44MBDjON004375;
+	Wed, 22 May 2024 11:37:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=tLtkLaJdZcABEuKym7kQ0uGy5iDx/Mdabykmq2f/jnw=;
+ b=W96hvT8jTsH9kRl7AZDQ+nNDpUDzk3m954evYLx301G0VZel/cWErybTqmIh4ProGWGl
+ dQGcdL8jFGKIgGUASAYCTZ7hZO0u8ozgeeRAV59Kq1alfSomqiWWljVjpw0kAsLuY+qm
+ kx6ExyANJdff/8Rabx0tg6D00oM+ElKLWGKD6v5MpOuAcFnJfMGHHxwJnefc26HsYlEZ
+ or43uwWG/wGmzEX6dOP4WiLERsDhwCDVAUpv40AVhfgn0LN54wb2qKpGoiKn3l/RwJj8
+ YmfcZrbj/fNx7mglqcfzEjUtC2AmXZIxrPlcZRRpgdu6YDXOcNad+J6xtS+nrVyNukBe cQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y9fmw022k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 11:37:36 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44MBbaA4009010;
+	Wed, 22 May 2024 11:37:36 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y9fmw022f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 11:37:36 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44M8c9gK008090;
+	Wed, 22 May 2024 11:37:35 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y79c338t2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 22 May 2024 11:37:35 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44MBbVUM48693692
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 22 May 2024 11:37:33 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BC51D2004B;
+	Wed, 22 May 2024 11:37:31 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 75D4120043;
+	Wed, 22 May 2024 11:37:29 +0000 (GMT)
+Received: from [9.203.115.195] (unknown [9.203.115.195])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 22 May 2024 11:37:29 +0000 (GMT)
+Message-ID: <922473a0-7e74-45e8-9929-154d0590d124@linux.ibm.com>
+Date: Wed, 22 May 2024 17:07:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516133009.20224-5-lhruska@suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] powerpc64/bpf: jit support for unconditional byte
+ swap
+To: Artem Savkov <asavkov@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240517075650.248801-1-asavkov@redhat.com>
+ <20240517075650.248801-3-asavkov@redhat.com>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <20240517075650.248801-3-asavkov@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: B1XldeUENKxGYq5S-5rVvIhGUSDaHHY-
+X-Proofpoint-GUID: X_i3t_4zqRLlNLATCKOrtc6kfWhvOpTC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-22_05,2024-05-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 clxscore=1011 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405220077
 
-On Thu 2024-05-16 15:30:07, Lukas Hruska wrote:
-> From: Josh Poimboeuf <jpoimboe@redhat.com>
+
+
+On 17/05/24 1:26 pm, Artem Savkov wrote:
+> Add jit support for unconditional byte swap. Tested using BSWAP tests
+> from test_bpf module.
 > 
-> Add a new livepatch sample in samples/livepatch/ to make use of symbols
-> that must be post-processed to enable load-time relocation resolution.
-> As the new sample is to be used as an example, it is annotated with
-> KLP_RELOC_SYMBOL macro.
-> 
-> The livepatch sample updates the function cmdline_proc_show to print the
-> string referenced by the symbol saved_command_line appended by the
-> string "livepatch=1".
-> 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> Signed-off-by: Lukas Hruska <lhruska@suse.cz>
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Artem Savkov <asavkov@redhat.com>
 > ---
->  samples/livepatch/Makefile                  |  1 +
->  samples/livepatch/livepatch-extern-symbol.c | 84 +++++++++++++++++++++
->  2 files changed, 85 insertions(+)
->  create mode 100644 samples/livepatch/livepatch-extern-symbol.c
+>   arch/powerpc/net/bpf_jit_comp64.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/samples/livepatch/Makefile b/samples/livepatch/Makefile
-> index 9f853eeb6140..f2b41f4d6c16 100644
-> --- a/samples/livepatch/Makefile
-> +++ b/samples/livepatch/Makefile
-> @@ -6,3 +6,4 @@ obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-shadow-fix2.o
->  obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-callbacks-demo.o
->  obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-callbacks-mod.o
->  obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-callbacks-busymod.o
-> +obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-annotated-sample.o
+> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+> index 3071205782b15..97191cf091bbf 100644
+> --- a/arch/powerpc/net/bpf_jit_comp64.c
+> +++ b/arch/powerpc/net/bpf_jit_comp64.c
+> @@ -699,11 +699,12 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+>   		 */
+>   		case BPF_ALU | BPF_END | BPF_FROM_LE:
+>   		case BPF_ALU | BPF_END | BPF_FROM_BE:
 
-It seems that the sample has been renamed without updating
-the Makefile rule. There should be:
+> +		case BPF_ALU64 | BPF_END | BPF_FROM_LE:
 
-+obj-$(CONFIG_SAMPLE_LIVEPATCH) += livepatch-extern-symbol.o
+A comment here indicating this case does unconditional swap
+could improve readability.
 
-Otherwise, I get:
+Other than this minor nit, the patchset looks good to me.
+Also, tested the changes with test_bpf module and selftests.
+For the series..
 
-make[4]: *** No rule to make target 'samples/livepatch/livepatch-annotated-sample.o', needed by 'samples/livepatch/'.  Stop.
-make[3]: *** [scripts/Makefile.build:485: samples/livepatch] Error 2
-make[2]: *** [scripts/Makefile.build:485: samples] Error 2
-make[1]: *** [/prace/kernel/linux/Makefile:1921: .] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+Reviewed-by: Hari Bathini <hbathini@linux.ibm.com>
 
-> diff --git a/samples/livepatch/livepatch-extern-symbol.c b/samples/livepatch/livepatch-extern-symbol.c
-> new file mode 100644
-> index 000000000000..276a43d157b4
-> --- /dev/null
-> +++ b/samples/livepatch/livepatch-extern-symbol.c
-> @@ -0,0 +1,84 @@
-
-The test module works as expected after fixing the Makefile.
-
-Best Regards,
-Petr
+>   #ifdef __BIG_ENDIAN__
+>   			if (BPF_SRC(code) == BPF_FROM_BE)
+>   				goto emit_clear;
+>   #else /* !__BIG_ENDIAN__ */
+> -			if (BPF_SRC(code) == BPF_FROM_LE)
+> +			if (BPF_CLASS(code) == BPF_ALU && BPF_SRC(code) == BPF_FROM_LE)
+>   				goto emit_clear;
+>   #endif
+>   			switch (imm) {
 
