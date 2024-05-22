@@ -1,339 +1,233 @@
-Return-Path: <linux-kernel+bounces-186436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605A88CC427
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:33:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0628CC429
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E3B284350
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:33:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B22B241AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D0A1171C;
-	Wed, 22 May 2024 15:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411DF770F1;
+	Wed, 22 May 2024 15:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xA7BBIC0"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ybil0vUk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F302D058
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4ED052F9E
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716392001; cv=none; b=GFywxSSJ4kgAFZR/Qcpn62gr54nAuwSiZxl9Rc5hjDOm1cjvzIAELWSjRPEOP8LOOTku6kjPEmFc9x0ziUfxtN3iQReiyKRPWPF6N1y5T71ZUA+2O60lPOntQbJVLmNrgPwVJH2KcwWkvn/sXT+uaJXLh5U6X/DRocHVT6GAkNo=
+	t=1716392068; cv=none; b=QY/qVA33iD22/cSsEQpNwbgQtQ+uEuODgxST3VOizZ/ZeK41d07BjUmJ+IVsl+mE/yqHXTa6DhOvtaPJK/M8CISmcSi2dnE10Elx59TDfOcv40k72mGo/kzmvHXwEigqqsu694yJs8le4gje6UtCQyw1s7aL4nFCnPEI1SKzYeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716392001; c=relaxed/simple;
-	bh=DTuPHVySPIrytSlQQAkraU05lJwg/nz9VAI6mBTkiOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eSzAFPMhUcWd2vyayIRcIdg2dfRRi1YWqORXQQSynivUBwcfKid0OAQucMziOisRhJvPfOTfVZo5R8Mk6GZi5FG7Ep1g86da6feiEFvf3A3ldHQJ6v4t+0oS2/FrN15tz8M6kJli5d72bmHfAJchLTT7hlfHu72dFUztkezPO2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xA7BBIC0; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24157800275so2400643fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716391999; x=1716996799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n8aume3L1m03D35QJaau4/HSPmv1c3Gln6h9PVmEraw=;
-        b=xA7BBIC0mOnoCOMdmfocHSV3iV4fWe18bFiZ/1QrO6YSTcTtQDdG7EvIP0wG2I56jE
-         OUnqTcK2TNin+A5bpev4qTnndmGKpZmEbY72Nf6qYfYVixHDmD+I4Vb+JblI9iuu8NaD
-         tkIoezzWAFJDF/Oj87lSpwfTsKEcaDtEhvOCpGpXAnM8Cr/YuJivMVq56/2te9FYUnkg
-         YtCHPybuLHmZFXe2npjlpk9uRVS3aD0f2EBU9ZCbVw3oL3Y7i56+zzWkyAUHcV04eT9K
-         rmfCvXG1MNjw8ZYYiiRy9aGkG0nz+sFqP85PuENeT/a3TpxdCzUYz7YF8HSyRpMbXpFl
-         BXFQ==
+	s=arc-20240116; t=1716392068; c=relaxed/simple;
+	bh=dkKkX0o1dApBwNsHpRx9CFVSlHoQigRarHpWWYkVbbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HOG0Du9fPBYXfRKne8TcE7zIJ2TaRBrB7mQgFplaSAvrdiMyx/1i7+rTTDOOsebtEpq//v8F5Xqd78ilrwcafI1kHGlO93PUSA2nG1JiSm8+tDKgNY65Fu7V2enngRq4eZz61ZbvZuSAWs0GElN/Brpi+jb1lXlw/e1MJLl5woM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ybil0vUk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716392065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=meUlYAD0K8iaqhY2CeiyuYcEyIGM48r9y+HaAjRd2E0=;
+	b=Ybil0vUkYO+BHV/B1hr3Vkds1Sv+WCWhaq3flYH44ZjYeaF2ew5m+knUb992qSghjkXlqj
+	KT4sfImhD4zTWDUhTinKzz5NkUcAnAR/WWdwTPep31hzMk1yygPKa6gSgdfljV98ypntP2
+	EyEYcigSxNwWmSq6SktjKHM3jzOf4DY=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-160-MEA9g3itNt2eiMUwyEXgaQ-1; Wed, 22 May 2024 11:34:24 -0400
+X-MC-Unique: MEA9g3itNt2eiMUwyEXgaQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42011360193so89388415e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 08:34:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716391999; x=1716996799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n8aume3L1m03D35QJaau4/HSPmv1c3Gln6h9PVmEraw=;
-        b=iYfF6L2+XIlW0Hi+Hwn1mWs55DX5kLOzelzW5h70cPYCKU/UGK2npcnG2PSINEB9zv
-         8xIxblUKszMDOzYxcTaJPUn97JJ72/rvfb2ONXcDWK7X/iR4ACczkZT4A0xjry0rW39/
-         2Oo//Coqk5VAF01pHSkptgnlG/2+gia7Js/+jQkBrv8w4USn31nsKAznpF/XaiEVmzoW
-         pTAqUybOX1BcL7NRSQA3GXf/bSJfyZcmsS++msGSwzl0YcbJ2Tf/rcB5fA5/SQjgDET9
-         BDzGrBkWczV9jSOI/lz9RmRer5DOiMWzQOgp9qSJ+B2KUpoJRvbn1auznYQj/2nu2WuE
-         NcJw==
-X-Gm-Message-State: AOJu0YzIPFVO9qGAfE1H2OPYUMWUtxSVXsYUJrN/SFxoj5OrcpfTcA1e
-	fKQhfEvLrW+N1PntNgJrk9SzUbHNUViJNMl3+bwQTqhkMSWTQWQ90gbFPT914d95Td8k3Nk9K/Q
-	iGa4J68LXB1VXNsXY04blzB5619rpzmNh3OBMMQ==
-X-Google-Smtp-Source: AGHT+IFqMvpvJULYdcMKR8qQoteoVfPgW/n3o9HiXEiJrvf8hH9SUOAqQhKFIXnTWQfl6tadPMlJegrjTgx3js5xpo0=
-X-Received: by 2002:a05:6870:15c4:b0:23c:a6f8:9362 with SMTP id
- 586e51a60fabf-24c68af82a2mr2585031fac.13.1716391998683; Wed, 22 May 2024
- 08:33:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716392063; x=1716996863;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=meUlYAD0K8iaqhY2CeiyuYcEyIGM48r9y+HaAjRd2E0=;
+        b=M/bEJrXjSd9Dq5jG8Kf303UubOlOnSuMmJ7x4/N+CTzHoF+tUiHAOKuXDwAx10svP/
+         ZC1lbVTPPoyW9mhurHYxVMy5sTMIEIei0vh3DGrbdVykCGNIec1qBuBt28bIy4pXUC7A
+         RYUIJuU97GBYWdDC83iiCj8aga+Oq1T83a/ukmJc7TIfFVCQPHASA3K92IG6xf9TLiUR
+         KlrSzKdic5wDyxky91vKnfN9QybnGLPL3znbXsFT2HVCm56NdnoRP7HCSlnNO6njMzzm
+         yQNFOtFGarPTcKdxWTjQZVsmCOd9X8Zry5EYVuFKpEEkwkM2p9vxBsiHidzZiKg1exUl
+         Nd1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVwEtCIfiM5WDw2jTwCy8qbDRDso5jBqEsx921bkcEVBzNV5RJVlEb58AevHiSWXeeGsUyQ+r4YQMn+Ssv2g7wNrUJbsCaNZGnaySjc
+X-Gm-Message-State: AOJu0Yxl8X3v4rpy9uRh46aZ1zP158wXJPlBf5QPdjDIVTqehvVUeOTQ
+	+yvJlN8lIwa2+c7zr2M2Yrpkyt7/I/PXiSgLHsT4jWK7EON3EXTkFtF7OfgYfktCR1PNX47OLxF
+	JAbxQF3G7lPz5PMCglItUnxQgQwzyOLtTqtMXlhpvo1zl3+qOk/oXcyYh2xQ15g==
+X-Received: by 2002:a05:600c:19cb:b0:420:1426:8485 with SMTP id 5b1f17b1804b1-420fd314c12mr22454545e9.14.1716392062986;
+        Wed, 22 May 2024 08:34:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF2rVhYY/esKYAMi9qnbxwb00vAtPgZht4N4/xXpVgcua4dM3DZ2CSvkMo13Xm4+rHZ5M25Kg==
+X-Received: by 2002:a05:600c:19cb:b0:420:1426:8485 with SMTP id 5b1f17b1804b1-420fd314c12mr22454335e9.14.1716392062533;
+        Wed, 22 May 2024 08:34:22 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:d500:4044:6d4c:f060:f677? (p200300cbc709d50040446d4cf060f677.dip0.t-ipconnect.de. [2003:cb:c709:d500:4044:6d4c:f060:f677])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4200f86ab7csm424078435e9.19.2024.05.22.08.34.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 08:34:22 -0700 (PDT)
+Message-ID: <03faa624-1685-4a21-81fc-cc9e8b760e97@redhat.com>
+Date: Wed, 22 May 2024 17:34:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507091619.2208810-1-jens.wiklander@linaro.org> <ZkODCTnCe7l0KiFs@mecka.net>
-In-Reply-To: <ZkODCTnCe7l0KiFs@mecka.net>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Wed, 22 May 2024 17:33:07 +0200
-Message-ID: <CAHUa44GFd0-jB7VV2=iL0YWT9+NyY+jDZNdxpERGWODO08pFDA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] Replay Protected Memory Block (RPMB) subsystem
-To: Manuel Traut <manut@mecka.net>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Jerome Forissier <jerome.forissier@linaro.org>, 
-	Sumit Garg <sumit.garg@linaro.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Bart Van Assche <bvanassche@acm.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.10/bisected/regression - commit 8430557fc584 cause warning at
+ mm/page_table_check.c:198 __page_table_check_ptes_set+0x306
+To: Peter Xu <peterx@redhat.com>,
+ Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>, axelrasmussen@google.com,
+ nadav.amit@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com>
+ <Zk0HxVODITGKqYCw@x1n>
+ <CABXGCsNbcMn0Z0RudFrBW78rZPE+cDY+f9r+yKf_AZwJZUOrQg@mail.gmail.com>
+ <Zk0UA6wABOB9X_Dx@x1n>
+ <CABXGCsOZnxrSHd0y6QrFhzAiY-uTJiRSmo__C_P8Y2qjFV6bRA@mail.gmail.com>
+ <Zk0h0V8kvZRKu6F4@x1n> <a3d54407-87aa-4f59-adac-c9b79fe1ecef@redhat.com>
+ <Zk4MsGxhP5x5aURG@x1n>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zk4MsGxhP5x5aURG@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Manuel,
+On 22.05.24 17:18, Peter Xu wrote:
+> On Wed, May 22, 2024 at 09:48:51AM +0200, David Hildenbrand wrote:
+>> On 22.05.24 00:36, Peter Xu wrote:
+>>> On Wed, May 22, 2024 at 03:21:04AM +0500, Mikhail Gavrilov wrote:
+>>>> On Wed, May 22, 2024 at 2:37 AM Peter Xu <peterx@redhat.com> wrote:
+>>>>> Hmm I still cannot reproduce.  Weird.
+>>>>>
+>>>>> Would it be possible for you to identify which line in debug_vm_pgtable.c
+>>>>> triggered that issue?
+>>>>>
+>>>>> I think it should be some set_pte_at() but I'm not sure, as there aren't a
+>>>>> lot and all of them look benign so far.  It could be that I missed
+>>>>> something important.
+>>>>
+>>>> I hope it's helps:
+>>>
+>>> Thanks for offering this, it's just that it doesn't look coherent with what
+>>> was reported for some reason.
+>>>
+>>>>
+>>>>> sh /usr/src/kernels/(uname -r)/scripts/faddr2line /lib/debug/lib/modules/(uname -r)/vmlinux debug_vm_pgtable+0x1c04
+>>>> debug_vm_pgtable+0x1c04/0x3360:
+>>>> native_ptep_get_and_clear at arch/x86/include/asm/pgtable_64.h:94
+>>>> (inlined by) ptep_get_and_clear at arch/x86/include/asm/pgtable.h:1262
+>>>> (inlined by) ptep_clear at include/linux/pgtable.h:509
+>>>
+>>> This is a pte_clear(), and pte_clear() shouldn't even do the set() checks,
+>>> and shouldn't stumble over what I added.
+>>>
+>>> IOW, it doesn't match with the real stack dump previously:
+>>>
+>>> [    5.581003]  ? __page_table_check_ptes_set+0x306/0x3c0
+>>> [    5.581274]  ? __pfx___page_table_check_ptes_set+0x10/0x10
+>>> [    5.581544]  ? __pfx_check_pgprot+0x10/0x10
+>>> [    5.581806]  set_ptes.constprop.0+0x66/0xd0
+>>> [    5.582072]  ? __pfx_set_ptes.constprop.0+0x10/0x10
+>>> [    5.582333]  ? __pfx_pte_val+0x10/0x10
+>>> [    5.582595]  debug_vm_pgtable+0x1c04/0x3360
+>>>
+>>
+>> Staring at pte_clear_tests():
+>>
+>> #ifndef CONFIG_RISCV
+>> 	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
+>> #endif
+>> 	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
+>>
+>> So we set random PTE bits, probably setting the present, uffd and write bit
+>> at the same time. That doesn't make too much sense when we want to perform
+>> that such combinations cannot exist.
+> 
+> Here the issue is I don't think it should set W bit anyway, as we init
+> page_prot to be RWX but !shared:
+> 
+> 	args->page_prot          = vm_get_page_prot(VM_ACCESS_FLAGS);
+> 
+> On x86_64 (Mikhail's system) it should have W bit cleared afaict, meanwhile
+> the RANDOM_ORVALUE won't touch bit W due to S390_SKIP_MASK (which contains
+> bit W / bit 1, which is another "accident"..).  Then even if with that it
+> should not trigger..  I think that's also why I cannot reproduce this
+> problem locally.
 
-On Tue, May 14, 2024 at 5:28=E2=80=AFPM Manuel Traut <manut@mecka.net> wrot=
-e:
->
-> Hi Jens,
->
-> thank you very much for v6! It took me some time to figure out why it is
-> not working.. However it seems to be on the OP-TEE side and not related
-> to this kernel series.
->
-> I need this change:
->
-> @@ -1214,12 +1225,13 @@ static TEE_Result tee_rpmb_init(void)
->         }
->
->         if (rpmb_ctx->reinit) {
->                 if (rpmb_ctx->legacy_operation || !rpmb_ctx->key_verified=
-) {
->                         rpmb_ctx->wr_cnt_synced =3D false;
->                         rpmb_ctx->key_derived =3D false;
->                         rpmb_ctx->dev_info_synced =3D false;
->                         rpmb_ctx->reinit =3D false;
-> -                       goto next;
->                 }
->                 res =3D rpmb_probe_reset();
->                 if (res) {
->
-> @@ -1236,17 +1248,23 @@ static TEE_Result tee_rpmb_init(void)
->                         if (!memcmp(rpmb_ctx->cid, dev_info.cid,
->                                    RPMB_EMMC_CID_SIZE)) {
->                                 rpmb_ctx->reinit =3D false;
-> +                               rpmb_ctx->legacy_operation =3D false;
->                                 return TEE_SUCCESS;
->                         }
->                 }
->         }
->
-> to ensure that the non legacy mode is selected, even if the first RPMB
-> request comes from a compiled in TA.
+Why oh why are skip mask applied independently of the architecture.
 
-That patch didn't quite work in my case, but I think I understand
-what's needed at your end.
+While _PAGE_RW should indeed be masked out by RANDOM_ORVALUE.
 
-I've prepared patches at https://github.com/OP-TEE/optee_os/pull/6852
-can you try those, please?
+But with shadow stacks we consider a PTE writable (see 
+pte_write()->pte_shstk()) if
+(1) X86_FEATURE_SHSTK is enabled
+(2) _PAGE_RW is clear
+(3) _PAGE_DIRTY is set
 
->
-> Thanks for your work, it makes it really easy now to implement ARM
-> System Ready IR with an fTPM and continue the boot measurements in the
-> initrd with the new tpm2.target in systemd v256.
+_PAGE_DIRTY is bit 6.
 
-Thanks, much appreciated.
+Likely your CPU does not support shadow stacks.
 
+
+-- 
 Cheers,
-Jens
 
->
-> Regards
-> Manuel
->
-> On Tue, May 07, 2024 at 11:16:16AM +0200, Jens Wiklander wrote:
-> > Hi,
-> >
-> > This patch set introduces a new RPMB subsystem, based on patches from [=
-1],
-> > [2], and [3]. The RPMB subsystem aims at providing access to RPMB
-> > partitions to other kernel drivers, in particular the OP-TEE driver. A =
-new
-> > user space ABI isn't needed, we can instead continue using the already
-> > present ABI when writing the RPMB key during production.
-> >
-> > I've added and removed things to keep only what is needed by the OP-TEE
-> > driver. Since the posting of [3], there has been major changes in the M=
-MC
-> > subsystem so "mmc: block: register RPMB partition with the RPMB subsyst=
-em"
-> > is in practice completely rewritten.
-> >
-> > With this OP-TEE can access RPMB during early boot instead of having to
-> > wait for user space to become available as in the current design [4].
-> > This will benefit the efi variables [5] since we wont rely on userspace=
- as
-> > well as some TPM issues [6] that were solved.
-> >
-> > The OP-TEE driver finds the correct RPMB device to interact with by
-> > iterating over available devices until one is found with a programmed
-> > authentication matching the one OP-TEE is using. This enables coexistin=
-g
-> > users of other RPMBs since the owner can be determined by who knows the
-> > authentication key.
-> >
-> > The corresponding secure world OP-TEE patches are available at [7].
-> >
-> > I've put myself as a maintainer for the RPMB subsystem as I have an
-> > interest in the OP-TEE driver to keep this in good shape. However, if y=
-ou'd
-> > rather see someone else taking the maintainership that's fine too. I'll
-> > help keep the subsystem updated regardless.
-> >
-> > [1] https://lore.kernel.org/lkml/20230722014037.42647-1-shyamsaini@linu=
-x.microsoft.com/
-> > [2] https://lore.kernel.org/lkml/20220405093759.1126835-2-alex.bennee@l=
-inaro.org/
-> > [3] https://lore.kernel.org/linux-mmc/1478548394-8184-2-git-send-email-=
-tomas.winkler@intel.com/
-> > [4] https://optee.readthedocs.io/en/latest/architecture/secure_storage.=
-html#rpmb-secure-storage
-> > [5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-commit/?id=3Dc44b6be62e8dd4ee0a308c36a70620613e6fc55f
-> > [6] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-commit/?id=3D7269cba53d906cf257c139d3b3a53ad272176bca
-> > [7] https://github.com/jenswi-linaro/optee_os/tree/rpmb_probe_v6
-> >
-> > Thanks,
-> > Jens
-> >
-> > Changes since v5:
-> > Manuel Traut reported and investigated an error on an i.MX8MM, the root
-> > cause was identified as insufficient alignment on frames sent to the RP=
-MB
-> > device. Fixed in the OP-TEE driver as described below.
-> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
-> >   - Adding a missing EXPORT_SYMBOL_GPL()
-> > * "optee: probe RPMB device using RPMB subsystem"
-> >   - Replacing the old OPTEE_RPC_CMD_RPMB ABI with OPTEE_RPC_CMD_RPMB_FR=
-AMES
-> >     to get rid of the small header struct rpmb_req (now removed) causin=
-g
-> >     the problem.
-> >   - Matching changes on the secure side + support for re-initializing
-> >     RPMB in case a boot stage has used RPMB, the latter also reported b=
-y
-> >     Manuel Traut.
-> >
-> > Changes since v4:
-> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
-> >   - Describing struct rpmb_descr as RPMB description instead of descrip=
-tor
-> > * "mmc: block: register RPMB partition with the RPMB subsystem"
-> >   - Addressing review comments
-> >   - Adding more comments for struct rpmb_frame
-> >   - Fixing assignment of reliable_wr_count and capacity in mmc_blk_rpmb=
-_add()
-> > * "optee: probe RPMB device using RPMB subsystem"
-> >   - Updating struct rpmb_dev_info to match changes in "rpmb: add Replay
-> >     Protected Memory Block (RPMB) subsystem"
-> >
-> > Changes since v3:
-> > * Move struct rpmb_frame into the MMC driver since the format of the RP=
-MB
-> >   frames depend on the implementation, one format for eMMC, another for
-> >   UFS, and so on
-> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
-> >   - Adding Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> >   - Adding more description of the API functions
-> >   - Removing the set_dev_info() op from struct rpmb_ops, the needed inf=
-ormation
-> >     is supplied in the arguments to rpmb_dev_register() instead.
-> >   - Getting rid of struct rpmb_ops since only the route_frames() op was
-> >     remaining, store that op directly in struct rpmb_dev
-> >   - Changed rpmb_interface_register() and rpmb_interface_unregister() t=
-o use
-> >     notifier_block instead of implementing the same thing ourselves
-> > * "mmc: block: register RPMB partition with the RPMB subsystem"
-> >   - Moving the call to rpmb_dev_register() to be done at the end of
-> >     mmc_blk_probe() when the device is fully available
-> > * "optee: probe RPMB device using RPMB subsystem"
-> >   - Use IS_REACHABLE(CONFIG_RPMB) to determine if the RPMB subsystem is
-> >     available
-> >   - Translate TEE_ERROR_STORAGE_NOT_AVAILABLE if encountered in get_dev=
-ices()
-> >     to recognize the error in optee_rpmb_scan()
-> >   - Simplified optee_rpmb_scan() and optee_rpmb_intf_rdev()
-> >
-> > Changes since v2:
-> > * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
-> >   - Fixing documentation issues
-> >   - Adding a "depends on MMC" in the Kconfig
-> >   - Removed the class-device and the embedded device, struct rpmb_dev n=
-ow
-> >     relies on the parent device for reference counting as requested
-> >   - Removed the now unneeded rpmb_ops get_resources() and put_resources=
-()
-> >     since references are already taken in mmc_blk_alloc_rpmb_part() bef=
-ore
-> >     rpmb_dev_register() is called
-> >   - Added rpmb_interface_{,un}register() now that
-> >     class_interface_{,un}register() can't be used ay longer
-> > * "mmc: block: register RPMB partition with the RPMB subsystem"
-> >   - Adding the missing error cleanup in alloc_idata()
-> >   - Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part(=
-)
-> >     instead of in mmc_rpmb_chrdev_open() and rpmb_op_mmc_get_resources(=
-)
-> > * "optee: probe RPMB device using RPMB subsystem"
-> >   - Registering to get a notification when an RPMB device comes online
-> >   - Probes for RPMB devices each time an RPMB device comes online, unti=
-l
-> >     a usable device is found
-> >   - When a usable RPMB device is found, call
-> >     optee_enumerate_devices(PTA_CMD_GET_DEVICES_RPMB)
-> >   - Pass type of rpmb in return value from OPTEE_RPC_CMD_RPMB_PROBE_NEX=
-T
-> >
-> > Changes since Shyam's RFC:
-> > * Removed the remaining leftover rpmb_cdev_*() function calls
-> > * Refactored the struct rpmb_ops with all the previous ops replaced, in
-> >   some sense closer to [3] with the route_frames() op
-> > * Added rpmb_route_frames()
-> > * Added struct rpmb_frame, enum rpmb_op_result, and enum rpmb_type from=
- [3]
-> > * Removed all functions not needed in the OP-TEE use case
-> > * Added "mmc: block: register RPMB partition with the RPMB subsystem", =
-based
-> >   on the commit with the same name in [3]
-> > * Added "optee: probe RPMB device using RPMB subsystem" for integration
-> >   with OP-TEE
-> > * Moved the RPMB driver into drivers/misc/rpmb-core.c
-> > * Added my name to MODULE_AUTHOR() in rpmb-core.c
-> > * Added an rpmb_mutex to serialize access to the IDA
-> > * Removed the target parameter from all rpmb_*() functions since it's
-> >   currently unused
-> >
-> > Jens Wiklander (3):
-> >   rpmb: add Replay Protected Memory Block (RPMB) subsystem
-> >   mmc: block: register RPMB partition with the RPMB subsystem
-> >   optee: probe RPMB device using RPMB subsystem
-> >
-> >  MAINTAINERS                       |   7 +
-> >  drivers/misc/Kconfig              |  10 ++
-> >  drivers/misc/Makefile             |   1 +
-> >  drivers/misc/rpmb-core.c          | 233 +++++++++++++++++++++++++++++
-> >  drivers/mmc/core/block.c          | 241 +++++++++++++++++++++++++++++-
-> >  drivers/tee/optee/core.c          |  30 ++++
-> >  drivers/tee/optee/device.c        |   7 +
-> >  drivers/tee/optee/ffa_abi.c       |   8 +
-> >  drivers/tee/optee/optee_private.h |  21 ++-
-> >  drivers/tee/optee/optee_rpc_cmd.h |  35 +++++
-> >  drivers/tee/optee/rpc.c           | 166 ++++++++++++++++++++
-> >  drivers/tee/optee/smc_abi.c       |   7 +
-> >  include/linux/rpmb.h              | 136 +++++++++++++++++
-> >  13 files changed, 899 insertions(+), 3 deletions(-)
-> >  create mode 100644 drivers/misc/rpmb-core.c
-> >  create mode 100644 include/linux/rpmb.h
-> >
-> > --
-> > 2.34.1
-> >
+David / dhildenb
+
 
