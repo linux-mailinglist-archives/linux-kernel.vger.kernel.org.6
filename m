@@ -1,121 +1,121 @@
-Return-Path: <linux-kernel+bounces-186188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235BD8CC0D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEC398CC0DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 14:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6D71C226D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:04:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7BD1C2264B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 12:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CCB13D607;
-	Wed, 22 May 2024 12:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOBd36Sp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674FA13D608;
+	Wed, 22 May 2024 12:05:34 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81354823DD;
-	Wed, 22 May 2024 12:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747E42E419;
+	Wed, 22 May 2024 12:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716379480; cv=none; b=e+K4J9ZHh/4VvRCWcY4ZyhzuYmFJbDaXFudvfy0S905vMk9rR670CR50pF/kXiqe6ClWlgnEslO0G0ZYd6cAmCWAblRWBeije6A+Wtz0AFLwMl1wbIzSwusga+MKMVnliFA9KNxJf36pLr6HclvQlPYH9FlGh+JysbupAKthn8w=
+	t=1716379534; cv=none; b=bWT3tqu9HsqAE1BiStZkzR7Oi2c+VuTaSQssZ8joz/D2pJoH9+4aHseyIInabRISWyGtqg3upULiazsrc5DXMqq+nkLeiMSIydziQxmvOKcukcdwNHhvmFmeSobcsXq9ksqnnf/OgOMZgpXq+cgipc4mWV7thlqwLQnrORClj+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716379480; c=relaxed/simple;
-	bh=XoYGy7De4iTTJPgjMdPND90OnPf0ReGU/f6Jtd3TQxM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rysDKkz/ECtD6FTh17lrghRLPyIZ/moc8VmhW+p+MmhHtf5w+AI4VfrcBi/mH5whgf86YLnbvAnPCwhfsE1MVhfzPLQsJsq9tlcU+hH1hVYToraJgrzJZGLvczmsUgtr+jNCPaGOuHhAyyILy0Ywa4gCDwDws8gfhjmSojdyTQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOBd36Sp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4429BC2BD11;
-	Wed, 22 May 2024 12:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716379480;
-	bh=XoYGy7De4iTTJPgjMdPND90OnPf0ReGU/f6Jtd3TQxM=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=vOBd36SpyvEp5LnY280fRu48qj7wLvndK77XNrLgoz47MB7yNTc9J6fpBmLzaoO/4
-	 vrNOe6l/R5B0k79FmNnQ+mNtA84azDWHjP3aLBlDL0ODrPY33d31itDMSyBusFI/8c
-	 s1WfgqSQAbY5/Y9ZwOs0ior3iULeSVj+B7oYtJoYBvsAasj8v++TV6FsQeFKvgGSVe
-	 Ys1DqMkga07qnXCKrbWB1l4m1L6EF3iiWFXdw+340GAup5TU8BTRXfWVw4sap+/WhV
-	 tBFSXu+GUs2/5OJAuFitUvU0WFEtLgAic8fTSs8RDJPIZmYJnbooTyPsWbVnDE4Gg6
-	 uTsSocxdB+mFQ==
+	s=arc-20240116; t=1716379534; c=relaxed/simple;
+	bh=7y9vClOkU7FWL+oFpmG0VlpA1FZaoENIvh+QxkS8kRg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dOHkdqN9fHYbwkIMMdc2W3lUwj0G8p7xF1JeAbIYm/fuA8AVTLBmS/7ugxN90zDxtm4/sswznIuRCtEBUWVGFBLx3cRlr9Le9eOjHU6JjLASWFhK5kWkvli09M5YPhqIuEIoeqE5oL9AG4bt/UMUQmPAp+Qw3/vn8dDdUlHRE5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62036051972so52245167b3.1;
+        Wed, 22 May 2024 05:05:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716379531; x=1716984331;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n7jjRFLOKWFdHtOrX+3Wl4TBJG5yJ/lUgTzrcC6RTu4=;
+        b=g9zTVIeEYEnjCA5Tr0TGXc/egQe5in8WRn5NxEZhPOYNjCTGbBQPQGZmQTmkHROAwW
+         8yFtJCW1DLeIcIDRoL1T2f6vAYj3kn6Eus9XkGZmylqpPZFF74tNO3nMUnlYhE+AfHM3
+         JCTf46zLg0SrW7hDKmLrBmlmGtNbN6dud6tD1/L9CGEv+QrlwAkWwsERJbzB6ioWFZDb
+         FsHEGsrcPbi6e60SdxhCJfc8uuFLg3i9uCfUwYGL93r2CflrfuUnNl93MUgn/J2YtF27
+         4KnBTeVEuaJDBbbQMdBqpwbKwlQdfyuKJzKfhzEmvXQS7no1/8Vi1dj1rglbqKacdXrz
+         oEBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwlVPYKTPhDzqUvXcbyQ/2W7LCPjAQylisS1DJadwoX6z67AnrD8tUHhcnqR0vvFKkUSnTGIuDAzHWgR+QghoWXLlRNirMfVfMhV1r5FkpdSBzRKss7tYPtMs4su0DKh+8Z265yg0sxBrAvgR6pWWWBkshLYZ+pRclZZJAc2u5wZb6GWFtp5pRWhf786/oHy7zPBUus3OM+0V341W/sLDaHkV99Eut3g==
+X-Gm-Message-State: AOJu0Yy7BOES991O5vHHD0epiPDmYrvhdCdd8ayyQApKvrlZ4zRrmDbT
+	k6ZUQPOvzUA36PIArqSKaWjaI9QfnoM5GzJ6uueh9lCxQSQpJYdVbXScUr/+
+X-Google-Smtp-Source: AGHT+IGJYej+sw9fJo8JbG3GIFyfu0vG7873YpSGh+UFs7cdpOTxfW9piJ6itN1Xe0xjcq6il7m1nQ==
+X-Received: by 2002:a05:690c:e1a:b0:615:a86:f77b with SMTP id 00721157ae682-627e46ee0a0mr20891587b3.26.1716379530894;
+        Wed, 22 May 2024 05:05:30 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e233fc3sm58550197b3.8.2024.05.22.05.05.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 05:05:30 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df4e0d8fa10so752356276.1;
+        Wed, 22 May 2024 05:05:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXaQEBDgReWMn+6A0cJ8Zg2LipcfCuASEyzvxsDSHXJc8DWgF1/nQOnKpXfLXWsPUyDtLDgsNN362OMD/d+WWRdNnJN7G/fgLC3+wJBxgVCu0XpqKpDOq33TLbdXlzOFWeTt8vgKFacAQ9JvWpk5W7aaFX4oquZkS2AAVMA0Kxh+qti5z1yxZCLkyKkG/hpM5bMloZILlumBOiH1Cdh5Of6DyUrr32nUA==
+X-Received: by 2002:a05:6902:510:b0:df4:b435:c3f with SMTP id
+ 3f1490d57ef6-df4e0db98c1mr1815537276.42.1716379530525; Wed, 22 May 2024
+ 05:05:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240423175900.702640-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 May 2024 14:05:18 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV6UVPKhXcwYaY915JBwram8jSm0i=Ky9tkyehJM2w6jg@mail.gmail.com>
+Message-ID: <CAMuHMdV6UVPKhXcwYaY915JBwram8jSm0i=Ky9tkyehJM2w6jg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/13] pinctrl: renesas: pinctrl-rzg2l: Add function
+ pointers for locking/unlocking the PFC register
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 22 May 2024 15:04:36 +0300
-Message-Id: <D1G5QU7X1NK0.VACMWFR8IB49@kernel.org>
-Cc: <va@nvidia.com>, <csoto@nvidia.com>
-Subject: Re: [PATCH v2] tpm_tis_spi: Account for SPI header when allocating
- TPM SPI xfer buffer
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Matthew R. Ochs" <mochs@nvidia.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <kyarlagadda@nvidia.com>, <linux-tegra@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240521154028.3339742-1-mochs@nvidia.com>
- <20240522015932.3742421-1-mochs@nvidia.com>
-In-Reply-To: <20240522015932.3742421-1-mochs@nvidia.com>
 
-On Wed May 22, 2024 at 4:59 AM EEST, Matthew R. Ochs wrote:
-> The TPM SPI transfer mechanism uses MAX_SPI_FRAMESIZE for computing the
-> maximum transfer length and the size of the transfer buffer. As such, it
-> does not account for the 4 bytes of header that prepends the SPI data
-> frame. This can result in out-of-bounds accesses and was confirmed with
-> KASAN.
+On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Introduce SPI_HDRSIZE to account for the header and use to allocate the
-> transfer buffer.
+> On the RZ/G2L SoC, the PFCWE bit controls writing to PFC registers.
+> However, on the RZ/V2H(P) SoC, the PFCWE (REGWE_A on RZ/V2H) bit controls
+> writing to both PFC and PMC registers. Additionally, BIT(7) B0WI is
+> undocumented for the PWPR register on RZ/V2H(P) SoC. To accommodate these
+> differences across SoC variants, introduce the set_pfc_mode() and
+> pm_set_pfc() function pointers.
 >
-> Fixes: a86a42ac2bd6 ("tpm_tis_spi: Add hardware wait polling")
-> Signed-off-by: Matthew R. Ochs <mochs@nvidia.com>
-> Tested-by: Carol Soto <csoto@nvidia.com>
+> Note, in rzg2l_pinctrl_set_pfc_mode() the pwpr_pfc_unlock() call is now
+> called before PMC read/write and pwpr_pfc_lock() call is now called after
+> PMC read/write this is to keep changes minimal for RZ/V2H(P).
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
-> v2: Removed MAX_SPI_BUFSIZE in favor of open coding the buffer allocation
-> ---
->  drivers/char/tpm/tpm_tis_spi_main.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_t=
-is_spi_main.c
-> index 3f9eaf27b41b..c9eca24bbad4 100644
-> --- a/drivers/char/tpm/tpm_tis_spi_main.c
-> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
-> @@ -37,6 +37,7 @@
->  #include "tpm_tis_spi.h"
-> =20
->  #define MAX_SPI_FRAMESIZE 64
-> +#define SPI_HDRSIZE 4
-> =20
->  /*
->   * TCG SPI flow control is documented in section 6.4 of the spec[1]. In =
-short,
-> @@ -247,7 +248,7 @@ static int tpm_tis_spi_write_bytes(struct tpm_tis_dat=
-a *data, u32 addr,
->  int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy=
-,
->  		     int irq, const struct tpm_tis_phy_ops *phy_ops)
->  {
-> -	phy->iobuf =3D devm_kmalloc(&spi->dev, MAX_SPI_FRAMESIZE, GFP_KERNEL);
-> +	phy->iobuf =3D devm_kmalloc(&spi->dev, SPI_HDRSIZE + MAX_SPI_FRAMESIZE,=
- GFP_KERNEL);
->  	if (!phy->iobuf)
->  		return -ENOMEM;
-> =20
+> RFC->v2
+> - Introduced function pointer for (un)lock
 
-Thanks, this is much better. Now when reading the code after months go
-by, it is easy to see why the metrics for buffer size are what they
-are.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Gr{oetje,eeting}s,
 
-Given that it is a bug fix, I can put this to rc2 pull request. Thanks
-for finding and fixing the bug.
+                        Geert
 
-BR, Jarkko
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
