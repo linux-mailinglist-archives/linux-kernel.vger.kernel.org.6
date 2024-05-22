@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-186565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D278CC5B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:40:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A7D8CC5BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B86281155
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE9AA285BBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0ED144304;
-	Wed, 22 May 2024 17:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EE5142E9C;
+	Wed, 22 May 2024 17:40:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lbnWxyF2"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Va+DFblz"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B457D071;
-	Wed, 22 May 2024 17:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A27E1422DA
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716399610; cv=none; b=aqTtbg2KZVPE8Uueg0fuOyahzddNqMpKtglre52/mpRxViO9QufZKkH0BAPchzQsIMfqWhVGg5dhaHY4EsL6v2puDrzN7crJMQBOwtogcYHl89xmlXOJKk3qlOWRIJ1mbvrjnagoC6l474d8Xl4aWYkiHsgku1HDf/BmceO2/e4=
+	t=1716399654; cv=none; b=iUlGwbBF8bvanj7eIv8doMbC2+Os8OJ3lYFa6Px+YMzEaiHCHYkIgQ8lWtOVIKTqT0KQ5BOOApcJQ20bToyhcvTgDZZ/1AaMrpc2lR1qyj7d+3Wu3i9b1Vx0hYuvBGjT5waGfr8kQ+B4asxAhy4NLUiNuvWmbbBTwvds8Ivjsjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716399610; c=relaxed/simple;
-	bh=rvyON9Eez4+bgszygh1Bb1QcvHtLRDv9uBENZwvOqgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HvuITG6YRcU1FX9yt3/PCgs1pnJwCTFalA9vy9unmW2pvjPU017MJPiWb3+fG6qWIlhiqQoRYbMuTZfqHbLDTSfPxIdx61NswSMpfAvt/V6zx1kdv9Em/bRhajoHmfECDLnlfKePb8W3mD6yiKgbNO5U2dYwk2naenum8xyLxak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=lbnWxyF2; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44MHdgZ2058268;
-	Wed, 22 May 2024 12:39:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716399583;
-	bh=96umGE7Q8x9vdEdBBDF/Aa24QRAMgPy3dYLj6BJie8k=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=lbnWxyF2XCnoOX2VMR21xaTV+WQlRqXc/+PCmgxkXrFUkHlyUtAJfF5OrLaPD67J5
-	 h4u5U7qoxy7u9LjpgIUxZtzcTN7ZR19a1eHDhfv3e7HpnWER/dJDV0ahkhykCG26CQ
-	 rvtKjnvwJGPpfelmmrHdOBvyrC94axaVqDm/HUxw=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44MHdgTM024507
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 22 May 2024 12:39:42 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 22
- May 2024 12:39:42 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 22 May 2024 12:39:42 -0500
-Received: from [10.249.141.75] ([10.249.141.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44MHdaJM018757;
-	Wed, 22 May 2024 12:39:37 -0500
-Message-ID: <c2fe8d96-677a-4779-b46b-1c50698ef6a0@ti.com>
-Date: Wed, 22 May 2024 23:09:36 +0530
+	s=arc-20240116; t=1716399654; c=relaxed/simple;
+	bh=9Sf2fhKuvu8tkTp39Symjm4BKM51pxxuc1V5R+6KeU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=On2kJ3yE4xeNqvQ2hr0cSH6br8RkhVwen5l4Emoq1foatihFofC5LFJftiaAwlndmC7AmeD2b9o9ydz8YwN2swXMo+qipVzjp7TlG/WCwVFee7uqVVEFVDLg5MCEg7XxU0lHw8Ny4aBXFOlhxGJ3b4OOw6tqFkYHDO6e9LF2o84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Va+DFblz; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-de607ab52f4so5248340276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 10:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716399652; x=1717004452; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m+KExuXY6x2RNXAGihFUdQFtzxyzRd1UAydMgLYyZeM=;
+        b=Va+DFblzR94AUco0PnOXQeIFm052mEU6OAf0V6XRaBsIhEp7Apsmt3WCtZi3hkyoSz
+         CBvSGAU4iL2P/Raf4ex7hjqEz0/nf+4gzlI3WIRZ2REfbGsZ+Akc/pPK4DxJOQH+77pe
+         iUeFdronwjetQ3leoyFqrH76tJBP51RjNcmZZ5lx77EFli2PBcGgAVWX7NTe2CLcoJeN
+         oMVM2OJ9eAB4Utv7eH7YO2GCWx0fxW8wi9idWOjvpQYHJgOAGVo60aeUrxtBE87wtCFF
+         v9edRbQLiAluaRL+8RdKE5rBUQw4uuqTF+p1dcxsZST/OeYJKLvZ2kA0HmrTQ6SHxo8U
+         wkDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716399652; x=1717004452;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m+KExuXY6x2RNXAGihFUdQFtzxyzRd1UAydMgLYyZeM=;
+        b=bece/S+EVR2KRyiq0bK7DGp+kA2FjMFGCjCdUQr4hOnsG4TCl5v/Vtbm898Dy2hn5P
+         yM4bBqMMSwISTLjzjYebsPLpkmGhUjbi2UECWDdv9zc3l81Z6ZEtTkCFBzAKIOG7VWqD
+         CR1Oz+gEccK2HkA7aHB8j5l6riCPCzDTApFnuah1BnMIRte5C9fqq0kJXUjyS51sfcfO
+         XOcvw/nJbixVqDVsZ4Dt2JD/OcXbnl0RvpfpVPj3j8sUG5xqsTGBd/m1Z+DK4DVcxHi8
+         phDaWRqSXk9H9ePA3NZASPRIObheosbH7WQP0WTLdBtMvCn1jz8EeYwQeRH2RUYIqHdW
+         PJoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxp9Wq74gHNlFfcH4HS+KBdWoIX4HhzGfEZ3PYesu3OtPwPMIZ6UzpuqKuhy0GmKGBFhc8YssLJDqxk0gvXgL9ffpfKOcdTZFGSGkE
+X-Gm-Message-State: AOJu0YxYJtQMwTrw4Lo4olNUiuG3yymPTXU9q3juBQJjjW8fByWxZRjG
+	lkMq9tuyClUUk8WWbDTK3xG/BT5TEK69d+WeFTwc/XU/e7xMgzhN62q7QtZULH71hnya89YRNfO
+	K6xYXn4mdukoM8eNjAXygR65c63OdUH6VgZ0Z
+X-Google-Smtp-Source: AGHT+IFEar4omGEdEg7p1pIeJHpqJdxEZysSMoFwL4CvUt49f3bponvnO1J/Gp3qNrH1hFjfFb/lUdHwXQMMQUkAlvw=
+X-Received: by 2002:a25:e08c:0:b0:de4:5d85:6928 with SMTP id
+ 3f1490d57ef6-df4e0bc6db1mr3041714276.31.1716399651838; Wed, 22 May 2024
+ 10:40:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: net: dp8386x: Add MIT license along with
- GPL-2.0
-To: Nishanth Menon <nm@ti.com>, Conor Dooley <conor@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Andrew Lunn
-	<andrew@lunn.ch>
-CC: <vigneshr@ti.com>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Kip Broadhurst <kbroadhurst@ti.com>,
-        <w.egorov@phytec.de>, <u-kumar1@ti.com>
-References: <20240517104226.3395480-1-u-kumar1@ti.com>
- <20240517-poster-purplish-9b356ce30248@spud>
- <20240517-fastball-stable-9332cae850ea@spud>
- <8e56ea52-9e58-4291-8f7f-4721dd74c72f@ti.com>
- <20240520-discard-fanatic-f8e686a4faad@spud>
- <20240520201807.GA1410789-robh@kernel.org>
- <e257de5f54d361da692820f72048ed06a8673380.camel@redhat.com>
- <20240522-vanquish-twirl-4f767578ee8d@spud>
- <20240522134001.tjgvzglufwmi3k75@imitate>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <20240522134001.tjgvzglufwmi3k75@imitate>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240522122326.696928-1-pchelkin@ispras.ru>
+In-Reply-To: <20240522122326.696928-1-pchelkin@ispras.ru>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Wed, 22 May 2024 10:40:39 -0700
+Message-ID: <CABdmKX2tb_Vn8sF_hXVOMZ7HV9cU9KMwu_WyKrJuoeNjWF85bQ@mail.gmail.com>
+Subject: Re: [PATCH] dma-buf: handle testing kthreads creation failure
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Chris Wilson <chris@chris-wilson.co.uk>, 
+	Daniel Vetter <daniel.vetter@ffwll.ch>, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-kernel@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>, 
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks all for review
-
-On 5/22/2024 7:10 PM, Nishanth Menon wrote:
-> On 11:25-20240522, Conor Dooley wrote:
->> On Wed, May 22, 2024 at 10:04:39AM +0200, Paolo Abeni wrote:
->>> On Mon, 2024-05-20 at 15:18 -0500, Rob Herring wrote:
->>>> On Mon, May 20, 2024 at 06:17:52PM +0100, Conor Dooley wrote:
->>>>> On Sat, May 18, 2024 at 02:18:55PM +0530, Kumar, Udit wrote:
->>>>>> Hi Conor
->>>>>>
->>>>>> On 5/17/2024 8:11 PM, Conor Dooley wrote:
->>>>>>> On Fri, May 17, 2024 at 03:39:20PM +0100, Conor Dooley wrote:
->>>>>>>> On Fri, May 17, 2024 at 04:12:26PM +0530, Udit Kumar wrote:
->>>>>>>>> Modify license to include dual licensing as GPL-2.0-only OR MIT
->>>>>>>>> license for TI specific phy header files. This allows for Linux
->>>>>>>>> kernel files to be used in other Operating System ecosystems
->>>>>>>>> such as Zephyr or FreeBSD.
->>>>>>>> What's wrong with BSD-2-Clause, why not use that?
->>>>>>> I cut myself off, I meant to say:
->>>>>>> What's wrong with BSD-2-Clause, the standard dual license for
->>>>>>> bindings, why not use that?
->>>>>> want to be inline with License of top level DTS, which is including this
->>>>>> header file
->>>>> Unless there's a specific reason to use MIT (like your legal won't even
->>>>> allow you to use BSD-2-Clause) then please just use the normal license
->>>>> for bindings here.
->>>> Aligning with the DTS files is enough reason for me as that's where
->>>> these files are used. If you need to pick a permissive license for both,
->>>> then yes, use BSD-2-Clause. Better yet, ask your lawyer.
->>> Conor would you agree with Rob? - my take is that he is ok with this
->>> patch.
->> I don't think whether or not I agree matters, Rob said it's fine so it's
->> fine.
-> Just to close the loop here: Udit pointed me to this thread and having
-> gone through this already[1] with internal TI teams, the feedback we
-> have gotten from our licensing team (including legal) is to go with
-> GPL2 or MIT. BSD (2 and 3 clauses) were considered, but due to varied
-> reasons, dropped.
+On Wed, May 22, 2024 at 5:24=E2=80=AFAM Fedor Pchelkin <pchelkin@ispras.ru>=
+ wrote:
 >
-> That said, Udit, since you are touching this, please update in the next
-> revision:
-> Copyright:   (C) 2015-2024 Texas Instruments, Inc.
->   to
-> Copyright (C) 2015-2024 Texas Instruments Incorporated - https://www.ti.com/
+> kthread creation may possibly fail inside race_signal_callback(). In
+> such case stop the already started threads and return with error code.
+>
+> Found by Linux Verification Center (linuxtesting.org).
+>
+> Fixes: 2989f6451084 ("dma-buf: Add selftests for dma-fence")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>  drivers/dma-buf/st-dma-fence.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/dma-buf/st-dma-fence.c b/drivers/dma-buf/st-dma-fenc=
+e.c
+> index b7c6f7ea9e0c..ab1ec4631578 100644
+> --- a/drivers/dma-buf/st-dma-fence.c
+> +++ b/drivers/dma-buf/st-dma-fence.c
+> @@ -540,6 +540,12 @@ static int race_signal_callback(void *arg)
+>                         t[i].before =3D pass;
+>                         t[i].task =3D kthread_run(thread_signal_callback,=
+ &t[i],
+>                                                 "dma-fence:%d", i);
+> +                       if (IS_ERR(t[i].task)) {
+> +                               ret =3D PTR_ERR(t[i].task);
+> +                               while (--i >=3D 0)
+> +                                       kthread_stop(t[i].task);
 
+This looks like it needs to be kthread_stop_put since get_task_struct
+was called for previous successful kthread_run calls.
 
-will post v2 with these changes after merge window is open.
-
-Along with that in v2 will copy other contributors as well, who are 
-including these files.
-
-
-> [1] https://serenity.dal.design.ti.com/lore/linux-patch-review/20240109231804.3879513-1-nm@ti.com/
+> +                               return ret;
+> +                       }
+>                         get_task_struct(t[i].task);
+>                 }
+>
+> --
+> 2.39.2
 >
 
