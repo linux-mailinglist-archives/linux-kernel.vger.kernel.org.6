@@ -1,183 +1,132 @@
-Return-Path: <linux-kernel+bounces-186548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC8A28CC57B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:25:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC70D8CC57C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 19:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B925B22925
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:25:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7051C21722
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA6D1422CA;
-	Wed, 22 May 2024 17:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="MD3YR4Ix"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8349D2B9C3;
-	Wed, 22 May 2024 17:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9611422C2;
+	Wed, 22 May 2024 17:27:20 +0000 (UTC)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6182B9C3;
+	Wed, 22 May 2024 17:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716398740; cv=none; b=BTfwDm9zHYmgw7SOJTvxd33s2gGKRMQECSv+hDW1kb3myvJmR035tVvzfwqOOvLNVc2NxAFiwu2kJokZvimbLEVXh/rAO0XIOq/+YV0ZdiSds+nkN1k8BFuqD/y5GMpWgHfjmXflAoGoM9VzH0/qcwAPp5jgDTT1EoBAflhqj/E=
+	t=1716398840; cv=none; b=CgmdfmxnsV42fmXUTCwthQ7aAQYfxGmxtbPGZTulSsM2A76kAVJfQgHRjrrYD7q0JSJfL8GefvDTgfXDN4m0YBg9VNYG3/0JjQggFwZc7F2/kQ3yleZcBGQPsIHYB+4YDqNqAULIdiI8AeSdaUZD8tYDU/R3IYnjwMrnB662TA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716398740; c=relaxed/simple;
-	bh=iMNRZ7+0rdrHnxvP4fjqemrREgUEcpP0yPTxazQ+uZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frLmEccHmhvqCpo0S9Mqmqx52/IkSeE1zRlY6LWLn30S8hm2Xty7nkjp0EDRBJxuSLDAABEQ+qLB2SnRVR1S9RIsuGGcnkLWn2TU6yXKNTe+Ql2+4TehYYUN80IEsMiamrxW8tCsVIN8lzixQhcyrTWrmE9/aIqKqj3ICq/omGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=MD3YR4Ix; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 6E59714C2DB;
-	Wed, 22 May 2024 19:25:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1716398729;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MjYx+oNvZPdABC1fXs5E8e+EjlgfWp0VoNQKSmEu+fQ=;
-	b=MD3YR4Ixj7oVgewBNwgIsxglU5w4112AoNmfjYY1jtMl8C7k2cBzw4AbcIgQk7rh4jB1LG
-	Us+7l55fj/p3iepLENOckJxNGoa/GP37ZV2FGxExEZGI89/AHadkWdExALrgZQ5aGy8v72
-	zT0G0dMYmUNfuZue8NN+qdT0+gcL71KVq/Y8uGQXTENOCK/bqjjYjJcUqMPdbdPcGL83vZ
-	fsxJ3m09AFHJxHQxoFvVJOpiiNnqMD6BE9S2niC4YWDlmBWiXBNmqUA0ZObA3a2J0JdEZa
-	FyYMUUunbaKNKJAn3nGCFp7rqem7TEltF9YtISKD8oWkBGHDb4aB1K/KgyIItw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 4bffc3c6;
-	Wed, 22 May 2024 17:25:21 +0000 (UTC)
-Date: Thu, 23 May 2024 02:25:06 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>,
-	Jianyong Wu <jianyong.wu@arm.com>, stable@vger.kernel.org,
-	Eric Van Hensbergen <ericvh@gmail.com>, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: add missing locking around taking dentry fid list
-Message-ID: <Zk4qcmtot6WEC1Xx@codewreck.org>
-References: <20240521122947.1080227-1-asmadeus@codewreck.org>
- <1738699.kjPCCGL2iY@silver>
+	s=arc-20240116; t=1716398840; c=relaxed/simple;
+	bh=isyLFE4nn9JkPj3yuYJLcuNMQfnvsjEH3eMkyQFFqJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DDPH0wZYEiHzjnzCmsNL/JE32HBq/59Ra0XaTXnbVuQejw7lXD/ucyq7vHQiaA3HOE4JQAy2LlxwvZxxG2YtrB2buWKYbdyLdJve0Mh4ZGMpVe3SoER3zK/mn3pJnMcEwh3oAEZxJ6kEG3ZUl37Cl786jZ39RWHuqzgmzUt/6jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f6bddf57f6so1865449b3a.0;
+        Wed, 22 May 2024 10:27:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716398838; x=1717003638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F6RZqGC/IieWl5jEMbER/7byAZJN8EBKfaX/pw1gzjI=;
+        b=I7ytUdy7XtBHVAeRNEHcPDcrSXQG7gIWDYxva+XB0qqpXv6wDi6SmyqItIIKJzSs4P
+         a7RhOwr2U9Don2NyldSA+qG/rG33/HpATEHshcpUhnQjpW67STabglsnJS2l25Xyn0IC
+         wZDH6HecZvtNkFMRxAAZ4d4lW2u4WPKNanBhH8/XNP6l+dYgNpQCNYcdnpVg5ID2bQRc
+         RgftFha9NvUKa25iva1dWIkffatKTuQmXd1tSAZyhaGapJUvDqZfJq+JeqALW5aVhH4r
+         PT7zePdLR48qJ0YPg/Xl/euD80PMY5AeRhVsTa1xqXm5g0AGfG7WJyZrUNoAj9y/O/Hy
+         NFVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXT41XD81lBWYxbgCYemG/wGT7DoDSzgcpqPRvnwXYrxoWTcSU8eDLaOk35vrWv/LTfLgmPnEVgGOvj5s5mpPRPMQStYmxFhWHDoXux5lVAIxgH31zKh9oUzl69wd+buT4Rb8GsphO+g8shksSIfg==
+X-Gm-Message-State: AOJu0Yz7QTDaqo8bhBw2YjsrLis/C99KAIy+vX+OnqTPNEVAAi3u58A4
+	hsdcooXrQNmCjhRfewAA71JGfN1wc8jaQb3ZrRcw39fQAUi7yB97YKmqCav3mY7Q7gO54w+QSbc
+	yIPxn6NtQNr75QAv+lqc+MorbUg8=
+X-Google-Smtp-Source: AGHT+IH388lysTpiWY9ZpiHOtOthmG/5+kBxu8TK1z21CE5unFX2giv7x8Pxm6u55KapP2L9XGL01sjIoWN23mXp7OI=
+X-Received: by 2002:a17:90a:df10:b0:2ad:e004:76e6 with SMTP id
+ 98e67ed59e1d1-2bd9f456db5mr2800809a91.7.1716398838039; Wed, 22 May 2024
+ 10:27:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1738699.kjPCCGL2iY@silver>
+References: <20240520083048.322863-1-sesse@google.com>
+In-Reply-To: <20240520083048.322863-1-sesse@google.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 22 May 2024 10:27:06 -0700
+Message-ID: <CAM9d7cgBZVfur8S3QC2woUA2C6O3Dme0YHP8PbFcwc_o0k-dWg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] perf report: Support LLVM for addr2line()
+To: "Steinar H. Gunderson" <sesse@google.com>
+Cc: acme@kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, irogers@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Christian Schoenebeck wrote on Wed, May 22, 2024 at 04:35:19PM +0200:
+Hello,
 
-Thanks for the review!
+Thanks a lot for the patches!
 
-> On Tuesday, May 21, 2024 2:29:46 PM CEST Dominique Martinet wrote:
-> > Fix a use-after-free on dentry's d_fsdata fid list when a thread
-> > lookups a fid through dentry while another thread unlinks it:
-> 
-> I guess that's "looks up". :)
+On Mon, May 20, 2024 at 1:31=E2=80=AFAM Steinar H. Gunderson <sesse@google.=
+com> wrote:
+>
+> In addition to the existing support for libbfd and calling out to
+> an external addr2line command, add support for using libllvm directly.
+> This is both faster than libbfd, and can be enabled in distro builds
+> (the LLVM license has an explicit provision for GPLv2 compatibility).
+> Thus, it is set as the primary choice if available.
+>
+> As an example, running perf report on a medium-size profile with
+> DWARF-based backtraces took 58 seconds with LLVM, 78 seconds with
+> libbfd, 153 seconds with external llvm-addr2line, and I got tired
+> and aborted the test after waiting for 55 minutes with external
+> bfd addr2line (which is the default for perf as compiled by distributions
+> today). Evidently, for this case, the bfd addr2line process needs
+> 18 seconds (on a 5.2 GHz Zen 3) to load the .debug ELF in question,
+> hits the 1-second timeout and gets killed during initialization,
+> getting restarted anew every time. Having an in-process addr2line
+> makes this much more robust.
+>
+> As future extensions, libllvm can be used in many other places where
+> we currently use libbfd or other libraries:
+>
+>  - Symbol enumeration (in particular, for PE binaries).
+>  - Demangling (including non-Itanium demangling, e.g. Microsoft
+>    or Rust).
+>  - Disassembling (perf annotate).
 
-Err, I guess.
+I think it should support other DWARF use cases like
+unwinding and type info?
 
-> > UAF thread:
-> > refcount_t: addition on 0; use-after-free.
-> >  p9_fid_get linux/./include/net/9p/client.h:262
-> >  v9fs_fid_find+0x236/0x280 linux/fs/9p/fid.c:129
-> >  v9fs_fid_lookup_with_uid linux/fs/9p/fid.c:181
-> >  v9fs_fid_lookup+0xbf/0xc20 linux/fs/9p/fid.c:314
-> >  v9fs_vfs_getattr_dotl+0xf9/0x360 linux/fs/9p/vfs_inode_dotl.c:400
-> >  vfs_statx+0xdd/0x4d0 linux/fs/stat.c:248
-> > 
-> > Freed by:
-> >  p9_client_clunk+0xb0/0xe0 linux/net/9p/client.c:1456
-> 
-> That line number looks weird.
+>
+> However, these are much less pressing; most people don't profile
+> PE binaries, and perf has non-bfd paths for ELF. The same with
+> demangling; the default _cxa_demangle path works fine for most
+> users. Disassembling is coming in a later patch in the series;
+> however do note that while bfd objdump can be slow on large binaries,
+> it is possible to use --objdump=3Dllvm-objdump to get the speed benefits.
 
-I have a p9_fid_destroy there (as of a v6.9-rc5 tree); might have moved
-a bit though.
-Unfortunately it's inlined so the stack trace only has kfree() next
-which is why I cut the trace there; I don't think it really matters?
+I remember bfd objdump is sometimes faster than llvm-objdump
+especially when no line numbers are requested IIRC.
 
-> >  p9_fid_put linux/./include/net/9p/client.h:278
-> >  v9fs_dentry_release+0xb5/0x140 linux/fs/9p/vfs_dentry.c:55
-> >  v9fs_remove+0x38f/0x620 linux/fs/9p/vfs_inode.c:518
-> >  vfs_unlink+0x29a/0x810 linux/fs/namei.c:4335
-> > 
-> > The problem is that d_fsdata was not accessed under d_lock, because
-> > d_release() normally is only called once the dentry is otherwise no
-> > longer accessible but since we also call it explicitly in v9fs_remove
-> > that lock is required:
-> > move the hlist out of the dentry under lock then unref its fids once
-> > they are no longer accessible.
-> > 
-> > Fixes: 154372e67d40 ("fs/9p: fix create-unlink-getattr idiom")
-> > Cc: stable@vger.kernel.org
-> > Reported-by: Meysam Firouzi
-> > Reported-by: Amirmohammad Eftekhar
-> > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> > ---
-> >  fs/9p/vfs_dentry.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
-> > index f16f73581634..01338d4c2d9e 100644
-> > --- a/fs/9p/vfs_dentry.c
-> > +++ b/fs/9p/vfs_dentry.c
-> > @@ -48,12 +48,17 @@ static int v9fs_cached_dentry_delete(const struct dentry *dentry)
-> >  static void v9fs_dentry_release(struct dentry *dentry)
-> >  {
-> >  	struct hlist_node *p, *n;
-> > +	struct hlist_head head;
-> >  
-> >  	p9_debug(P9_DEBUG_VFS, " dentry: %pd (%p)\n",
-> >  		 dentry, dentry);
-> > -	hlist_for_each_safe(p, n, (struct hlist_head *)&dentry->d_fsdata)
-> > +
-> > +	spin_lock(&dentry->d_lock);
-> > +	hlist_move_list((struct hlist_head *)&dentry->d_fsdata, &head);
-> > +	spin_unlock(&dentry->d_lock);
-> > +
-> > +	hlist_for_each_safe(p, n, &head)
-> >  		p9_fid_put(hlist_entry(p, struct p9_fid, dlist));
-> > -	dentry->d_fsdata = NULL;
-> >  }
-> 
-> I'm not sure if that works out. So you are moving the list from dentry to a
-> local variable. But if you look at v9fs_fid_find() [fs/9p/fid.c#123] it reads
-> dentry->d_fsdata (twice) and holds it as local variable before taking a
-> lock. So the lock in v9fs_fid_find() should happen earlier, no?
 
-The comment still works -- if detry->d_fsdata is NULL then
-hlist_for_each_entry will stop short and not iterate over anything (it
-won't bug out), so that part is fine in my opinion.
+> (It appears LLVM-based demangling is very simple, should we want
+> that.)
+>
+> Tested with LLVM 14, 15, 16, 18 and 19. For some reason, LLVM 12 was not
+> correctly detected using feature_check, and thus was not tested.
 
-What should be improved though is that if dentry->d_inode we can still
-look by inode even if there was a d_fsdata as log as fid wasn't found,
-e.g.:
------
-diff --git a/fs/9p/fid.c b/fs/9p/fid.c
-index de009a33e0e2..c72825fb0ece 100644
---- a/fs/9p/fid.c
-+++ b/fs/9p/fid.c
-@@ -131,9 +131,9 @@ static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
- 			}
- 		}
- 		spin_unlock(&dentry->d_lock);
--	} else {
--		if (dentry->d_inode)
--			ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
-+	}
-+	if (!ret && dentry->d_inode)
-+		ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
- 	}
- 
- 	return ret;
-----
+Anyway, nice work.  Maybe we can implement other use cases
+using LLVM and reduce the dependencies.
 
-I don't think that has to be part of this commit though, the worst that
-can happen here is an extra lookup to server instead of a use after
-free; I'll send a separate patch for this.
+Thanks,
+Namhyung
 
--- 
-Dominique Martinet | Asmadeus
+>
+> Signed-off-by: Steinar H. Gunderson <sesse@google.com>
 
