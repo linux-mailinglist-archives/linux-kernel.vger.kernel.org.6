@@ -1,185 +1,269 @@
-Return-Path: <linux-kernel+bounces-186269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7798CC1F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:18:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0A68CC1F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34D71F24AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCFD01C22518
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 13:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE0113E04E;
-	Wed, 22 May 2024 13:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFCA140361;
+	Wed, 22 May 2024 13:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BG8iZIx9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uz91kDpC"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D0113DDCF;
-	Wed, 22 May 2024 13:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDD413FD6D
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 13:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716383885; cv=none; b=cq9OkNRf2bJsjh3i/JVk2toVSKxdhgRfSGiMiMrSM8WYcOK2s6VaLToYjeOkpfqJI5sDW0ncnkH6ktdvkRwpXVM4bHQu3XRshgAVDT4i9ViDl0yecXGvg2byHR5ymMG5jXfmVCDbi6gSU16VgeEe/ltnobhZ2NtmapR1JnlKLhA=
+	t=1716383903; cv=none; b=Ado7WcIeF7c7pwQQJAp7MhfgXMbUbWaNMitFM5p+vjiB5yZTy7fA+tAXnlQrhYu5B9yebsZiEeCmTB82JSuMotUkDdl+f9XWPb7HA4JY52vGbVC20mvns2ZPuOwPvERTGsm78k8hz7IhF2BmhQ3LttdVfGfw79JXTifBVFPQeOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716383885; c=relaxed/simple;
-	bh=SS8NQ2qI1N6VAQAHONvDSqaVdH40rCdkvanu7fSkmF0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILk34GVUWrqmk2fAL4IcHm9kWzL5J6iPugb5CW0QMqmIhmPhd1FEqkAxsx6DZ11yYhNbYG5oiyy1uD28y574aBTPZpJpWVnXKJLUFgIiBsch4XjUURWYbUwudi3lM1oU5chOKaTja/YIlyYOdN1xYWMXQXzZX6YknabHNnj9Nsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BG8iZIx9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD6DC2BD11;
-	Wed, 22 May 2024 13:18:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716383884;
-	bh=SS8NQ2qI1N6VAQAHONvDSqaVdH40rCdkvanu7fSkmF0=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=BG8iZIx91+Ie+2UsCYkTy/GKOfYELHhEYG9HMdOpesEnWOabp0kTVznDXIVA1HeOk
-	 4/nStEikie+/W5UV4ZU97/qJ824apR9GTZuFG5RjJ95TP9+jUlMOtsDPv7JCdoIWet
-	 wZcoX7eDAn21xTdj3etJy7Dwig0uKWDBf1xQGU/rth/iGP4VpmBc+pSTzGVJ1cNVSw
-	 qsG/16620AK5euzv6NpNupJyY/cgPk+OTOybTXGrwJK+k13/11LELqH5b0ik0xxBF0
-	 s6hujDttQ9IQX3DVR7syIWfT8gIawnngFdoDvZd5jVBroroW2Q+PZkswDjPU6bBYOj
-	 bboTJaEGFX4FA==
-Date: Wed, 22 May 2024 15:18:02 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: John Stultz <jstultz@google.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <20240522-coral-fennec-from-uranus-fb7263@houat>
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
- <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
- <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
- <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
+	s=arc-20240116; t=1716383903; c=relaxed/simple;
+	bh=jEwM0kOo09rp2TUsgk4DTGHqwE3eLNGg1VYjTBvYx9k=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LIEfdVX6G7Z2uUSMRUWSzsLpBaa2wNXXGNKnhthbcYKPAHj8xaz1BP3Nobvel15VKLg+MJygT+oc6HQmOFmGm1xayX+2Mgtf0XYSWpiVa1zlRWlF6KhPsOnVEq4GUzndPVnz5XzyzSZMD3TeYkFJutkDITtiL/fjgqVsVzFsjdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uz91kDpC; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59cf8140d0so818050666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 06:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716383900; x=1716988700; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:reply-to:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qqcESmaWM8FJOpyOPS0sprtY1tr2oWGLmcOcBYk/KFo=;
+        b=uz91kDpCUh+/THhMhR1Q9VDeR58HCmaY7pNeT+8qu0htbp1PVEFymWDT8YkMqVmlgx
+         rucT1gxYnQ6pzn1JVayP3rwUy2cpYXLTmn0COQ+iOqUB+g1cjQfNlbnwMneD8ck5ahJ9
+         qYdBbgaeRDX0fyIBQfHUzhX5ge8q/E4ba2a+zQ/YY3pZZ1khYErjB2bm+a59nmeR+Yav
+         ohazTrJ/n1GSNA9V/Ef4aXcgo6vw8D9Aa8oK4omE4Z3DYQeu49cR3pWFOiJ4ASfUpNcb
+         iWKSOqrEkrllMxFfhauPLMRbvLMatZatekUzuds2ZrE41RzztryvV08JAa0rYa+xgyC2
+         sJsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716383900; x=1716988700;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:reply-to:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qqcESmaWM8FJOpyOPS0sprtY1tr2oWGLmcOcBYk/KFo=;
+        b=WzL4pOYpEB+EM/xOS4fTLCjdToS6XjPg0VF5AYWuevB8snI/ewHEEoM20LgchPoPLD
+         m5P0h5788iiTwmv7UXkLoQnhJuNfQKahEbjdNlOkY89LbCPfie/rShLUns8CtbyWAB8I
+         M9knk0fvFNBcZnlIbi7xI54HyksVVcCYnAnZszY/jLIdv9pDArC6cQuCi6hAtIoWqmg+
+         2Gps/MUOsdPhXwkQ9NAXc97VL0+ST9/yekGltw97fUoC7wEvtzGmTQ0PCHtl1tAY1a7N
+         jOItFlaaok8IdtZIffCH+hCPo+hW9jD5/95oAo2E68M0c6Wb6Oe5txiGsYfKIOUoXNI5
+         srmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGi861sKLRVwYYP4abuEd31l1bPxhbZb05rH5/QthoSu6V+hjbIthdjaUPdN9+CN1ItZE/lPvu5aMWkc5vQ07nBS6h8oWSlSCVAGNB
+X-Gm-Message-State: AOJu0YxEMpDeRyBgBqlsWqrCvUvgOD1UGiZbdKiOda+ZZ8wuIc8lduPy
+	dOzPeK1tjQ3Gq6ZBvzIz7+UUG2iRHOdm7Ri3g+AI5zXL7YS1KKzef++zbpdPXN4=
+X-Google-Smtp-Source: AGHT+IEUk2Li2IEfcrnOb1ftgQowl3n2MBBBZ16yurpy908Ne1i0rXR90Z7ga35SnRf3k14JJ3/mKg==
+X-Received: by 2002:a17:906:259a:b0:a59:a0b6:638 with SMTP id a640c23a62f3a-a622819aea3mr113715266b.61.1716383899523;
+        Wed, 22 May 2024 06:18:19 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10? ([2a01:e0a:982:cbb0:8b9d:52bd:4757:6b10])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a178923fesm1778659866b.64.2024.05.22.06.18.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 06:18:19 -0700 (PDT)
+Message-ID: <71e7b6f8-67f2-4c03-b83a-71d7e747ad04@linaro.org>
+Date: Wed, 22 May 2024 15:18:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="hjuhspbk6bfp7v2t"
-Content-Disposition: inline
-In-Reply-To: <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
+User-Agent: Mozilla Thunderbird
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>
+References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
+ <d8930bce-6db6-45f4-8f09-8a00fa48e607@notapiano>
+ <8ae675b5-fcf9-4c9b-b06a-4462f70e1322@linaro.org>
+ <Zk3X7Dgst5kVzJxy@smile.fi.intel.com>
+ <5c32d7fd-4a7f-4d9c-805c-87d4d14f741e@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <5c32d7fd-4a7f-4d9c-805c-87d4d14f741e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
---hjuhspbk6bfp7v2t
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 22/05/2024 13:53, Neil Armstrong wrote:
+> On 22/05/2024 13:33, Andy Shevchenko wrote:
+>> On Wed, May 22, 2024 at 12:03:33PM +0200, Neil Armstrong wrote:
+>>> On 15/05/2024 23:09, Nícolas F. R. A. Prado wrote:
+>>>> On Tue, May 07, 2024 at 11:10:27PM +0300, Andy Shevchenko wrote:
+>>>>> Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
+>>>>> have checks for orig_nents against 0. No need to duplicate this.
+>>>>> All the same applies to other DMA mapping API calls.
+>>>>>
+>>>>> Also note, there is no other user in the kernel that does this kind of
+>>>>> checks.
+>>>>>
+>>>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>>>
+>>>> Hi,
+>>>>
+>>>> this commit caused a regression which I reported here:
+>>>>
+>>>> https://lore.kernel.org/all/d3679496-2e4e-4a7c-97ed-f193bd53af1d@notapiano
+>>>>
+>>>> along with some thoughts on the cause and a possible solution, though I'm not
+>>>> familiar with this code base at all and would really appreciate any feedback you
+>>>> may have.
+>>>
+>>> I also see the same regression on the SM8550 and SM8650 platforms,
+>>> please CC linux-arm-msm@vger.kernel.org and me for a potential fix to test on those platforms.
+>>
+>> There is still no answer from IOMMU patch author. Do you have the same trace
+>> due to IOMMU calls? Anyway, I guess it would be nice to see it.
+> 
+> Yes :
+> [    6.404623] Unable to handle kernel NULL pointer dereference at virtual address 000000000000001c
+> <snip>
+> [    6.641597] lr : __dma_sync_sg_for_device+0x3c/0x40
+> <snip>
+> [    6.688286] Call trace:
+> [    6.688287]  iommu_dma_sync_sg_for_device+0x28/0x100
+> [    6.717582]  __dma_sync_sg_for_device+0x3c/0x40
+> [    6.717585]  spi_transfer_one_message+0x358/0x680
+> [    6.732229]  __spi_pump_transfer_message+0x188/0x494
+> [    6.732232]  __spi_sync+0x2a8/0x3c4
+> [    6.732234]  spi_sync+0x30/0x54
+> [    6.732236]  goodix_berlin_spi_write+0xf8/0x164 [goodix_berlin_spi]
+> [    6.739854]  _regmap_raw_write_impl+0x538/0x674
+> [    6.750053]  _regmap_raw_write+0xb4/0x144
+> [    6.750056]  regmap_raw_write+0x7c/0xc0
+> [    6.750058]  goodix_berlin_power_on+0xb0/0x1b0 [goodix_berlin_core]
+> [    6.765520]  goodix_berlin_probe+0xc0/0x660 [goodix_berlin_core]
+> [    6.765522]  goodix_berlin_spi_probe+0x12c/0x14c [goodix_berlin_spi]
+> [    6.772339]  spi_probe+0x84/0xe4
+> [    6.772342]  really_probe+0xbc/0x29c
+> [    6.784313]  __driver_probe_device+0x78/0x12c
+> [    6.784316]  driver_probe_device+0x3c/0x15c
+> [    6.784319]  __driver_attach+0x90/0x19c
+> [    6.784322]  bus_for_each_dev+0x7c/0xdc
+> [    6.794520]  driver_attach+0x24/0x30
+> [    6.794523]  bus_add_driver+0xe4/0x208
+> [    6.794526]  driver_register+0x5c/0x124
+> [    6.802586]  __spi_register_driver+0xa4/0xe4
+> [    6.802589]  goodix_berlin_spi_driver_init+0x20/0x1000 [goodix_berlin_spi]
+> [    6.802591]  do_one_initcall+0x80/0x1c8
+> [    6.902310]  do_init_module+0x60/0x218
+> [    6.921988]  load_module+0x1bcc/0x1d8c
+> [    6.925847]  init_module_from_file+0x88/0xcc
+> [    6.930238]  __arm64_sys_finit_module+0x1dc/0x2e4
+> [    6.935074]  invoke_syscall+0x48/0x114
+> [    6.938944]  el0_svc_common.constprop.0+0xc0/0xe0
+> [    6.943781]  do_el0_svc+0x1c/0x28
+> [    6.947195]  el0_svc+0x34/0xd8
+> [    6.950348]  el0t_64_sync_handler+0x120/0x12c
+> [    6.954833]  el0t_64_sync+0x190/0x194
+> [    6.958600] Code: 2a0203f5 2a0303f6 a90363f7 aa0003f7 (b9401c2
+> 
+> Reverting  8cc3bad9d9d6 ("spi: Remove unneded check for orig_nents") removes the crash.
+> 
+>>
+>> Meanwhile, I have three changes I posted in the replies to the initial report,
+>> can you combine them all and test? This will be a plan B (? or A, depending on
+>> the culprit).
+>>
+> 
+> I'll try to apply them and test.
 
-On Tue, May 21, 2024 at 02:06:19PM GMT, Daniel Vetter wrote:
-> On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
-> > On Thu, May 16, 2024 at 3:56=E2=80=AFAM Daniel Vetter <daniel@ffwll.ch>=
- wrote:
-> > > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > > > But it makes me a little nervous to add a new generic allocation fl=
-ag
-> > > > for a feature most hardware doesn't support (yet, at least). So it's
-> > > > hard to weigh how common the actual usage will be across all the
-> > > > heaps.
-> > > >
-> > > > I apologize as my worry is mostly born out of seeing vendors really
-> > > > push opaque feature flags in their old ion heaps, so in providing a
-> > > > flags argument, it was mostly intended as an escape hatch for
-> > > > obviously common attributes. So having the first be something that
-> > > > seems reasonable, but isn't actually that common makes me fret some.
-> > > >
-> > > > So again, not an objection, just something for folks to stew on to
-> > > > make sure this is really the right approach.
-> > >
-> > > Another good reason to go with full heap names instead of opaque flag=
-s on
-> > > existing heaps is that with the former we can use symlinks in sysfs to
-> > > specify heaps, with the latter we need a new idea. We haven't yet got=
-ten
-> > > around to implement this anywhere, but it's been in the dma-buf/heap =
-todo
-> > > since forever, and I like it as a design approach. So would be a good=
- idea
-> > > to not toss it. With that display would have symlinks to cma-ecc and =
-cma,
-> > > and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for=
- a
-> > > SoC where the display needs contig memory for scanout.
-> >=20
-> > So indeed that is a good point to keep in mind, but I also think it
-> > might re-inforce the choice of having ECC as a flag here.
-> >=20
-> > Since my understanding of the sysfs symlinks to heaps idea is about
-> > being able to figure out a common heap from a collection of devices,
-> > it's really about the ability for the driver to access the type of
-> > memory. If ECC is just an attribute of the type of memory (as in this
-> > patch series), it being on or off won't necessarily affect
-> > compatibility of the buffer with the device.  Similarly "uncached"
-> > seems more of an attribute of memory type and not a type itself.
-> > Hardware that can access non-contiguous "system" buffers can access
-> > uncached system buffers.
->=20
-> Yeah, but in graphics there's a wide band where "shit performance" is
-> defacto "not useable (as intended at least)".
+I stacked the 3 changes, and it works:
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
 
-Right, but "not useable" is still kind of usage dependent, which
-reinforces the need for flags (and possibly some way to discover what
-the heap supports).
+For reference, the changeset looks like:
+============><============================================================================================
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 289feccca376..0851c5e1fd1f 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1220,6 +1220,11 @@ void spi_unmap_buf(struct spi_controller *ctlr, struct device *dev,
+  	spi_unmap_buf_attrs(ctlr, dev, sgt, dir, 0);
+  }
 
-Like, if I just want to allocate a buffer for a single writeback frame,
-then I probably don't have the same requirements than a compositor that
-needs to output a frame at 120Hz.
++/* Dummy SG for unidirect transfers */
++static struct scatterlist dummy_sg = {
++	.page_link = SG_END,
++};
++
+  static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+  {
+  	struct device *tx_dev, *rx_dev;
+@@ -1243,6 +1248,7 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+  	else
+  		rx_dev = ctlr->dev.parent;
 
-The former probably doesn't care about the buffer attributes aside that
-it's accessible by the device. The latter probably can't make any kind
-of compromise over what kind of memory characteristics it uses.
++	ret = -ENOMSG;
+  	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+  		/* The sync is done before each transfer. */
+  		unsigned long attrs = DMA_ATTR_SKIP_CPU_SYNC;
+@@ -1257,6 +1263,9 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+  						attrs);
+  			if (ret != 0)
+  				return ret;
++		} else {
++			memset(&xfer->tx_sg, 0, sizeof(xfer->tx_sg));
++			xfer->tx_sg.sgl = &dummy_sg;
+  		}
 
-If we look into the current discussions we have, a compositor would
-probably need a buffer without ECC, non-secure, and probably wouldn't
-care about caching and being physically contiguous.
+  		if (xfer->rx_buf != NULL) {
+@@ -1270,8 +1279,14 @@ static int __spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
 
-Libcamera's SoftISP would probably require that the buffer is cacheable,
-non-secure, without ECC and might ask for physically contiguous buffers.
+  				return ret;
+  			}
++		} else {
++			memset(&xfer->rx_sg, 0, sizeof(xfer->rx_sg));
++			xfer->rx_sg.sgl = &dummy_sg;
+  		}
+  	}
++	/* No transfer has been mapped, bail out with success */
++	if (ret)
++		return 0;
 
-As we add more memory types / attributes, I think being able to discover
-and enforce a particular set of flags will be more and more important,
-even more so if we tie heaps to devices, because it just gives a hint
-about the memory being reachable from the device, but as you said, you
-can still get a buffer with shit performance that won't be what you
-want.
+  	ctlr->cur_rx_dma_dev = rx_dev;
+  	ctlr->cur_tx_dma_dev = tx_dev;
+============><============================================================================================
 
-> So if we limit the symlink idea to just making sure zero-copy access is
-> possible, then we might not actually solve the real world problem we need
-> to solve. And so the symlinks become somewhat useless, and we need to
-> somewhere encode which flags you need to use with each symlink.
->=20
-> But I also see the argument that there's a bit a combinatorial explosion
-> possible. So I guess the question is where we want to handle it ...
->=20
-> Also wondering whether we should get the symlink/allocator idea off the
-> ground first, but given that that hasn't moved in a decade it might be too
-> much. But then the question is, what userspace are we going to use for all
-> these new heaps (or heaps with new flags)?
+Thanks,
+Neil
+> 
+> Neil
+> 
 
-For ECC here, the compositors are the obvious target. Which loops backs
-into the discussion with John. Do you consider dma-buf code have the
-same uapi requirements as DRM?
-
-Maxime
-
---hjuhspbk6bfp7v2t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZk3whQAKCRAnX84Zoj2+
-dqWtAYDEzyt+3FSvODb9lRG7mNxDmuod5zqt8l6YWNV4pyI1NI0RiRJM5n2Ktxtl
-NQjg/b0BfRKprpRHNgDfswuVhX6aDRtUvWEDBIzM+/B02WVcs/nEEFFqbgS8OJ3g
-2elrGf/LOQ==
-=gNHz
------END PGP SIGNATURE-----
-
---hjuhspbk6bfp7v2t--
 
