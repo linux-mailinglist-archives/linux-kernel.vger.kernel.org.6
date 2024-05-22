@@ -1,269 +1,213 @@
-Return-Path: <linux-kernel+bounces-186714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B988CC7F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49608CC7F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 23:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F0A9B21711
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524FC1F21F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 21:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B6514658D;
-	Wed, 22 May 2024 21:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65261465B2;
+	Wed, 22 May 2024 21:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MdKmbhKV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZMsAi/rB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jLnOj0g4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1217D1422D2
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B6D182DB;
+	Wed, 22 May 2024 21:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716411959; cv=none; b=DiYFx2hrD9KM/ghDdbyz5enDUiIH/KPMVjNkKV7MKxUN8k+1TDweBNH3fzlMmQ6v0vdzINFb7q6XfuLiyHDhjsdoDD7zp3AUAoVnMvIx0/qyVxIaMvs+mLAeOKnvBmEPV0yyJq01G42TVmL8x3LpYZ/GDseuqwKObV2uGo313bI=
+	t=1716412034; cv=none; b=NPLknpZhC8w3MoSz5CsFELX6HgYzUHAO2suT15ldQqBCWUEykws6diK+6q+CcRgHGI0hfQX38qELmZv5xU1AuxabogadDtSLw+7eevYNl/TBCCjx6fjrcIPIsnOvcCvrJYCzsVPjhqC6mjJN26N+7xL2xELDrsaOrw3/hrtk/a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716411959; c=relaxed/simple;
-	bh=UuN+TNfyvWOM2QErKz9AgxlRgNIUw9Xz6smYUuJ2Xwg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gRW5iI4KC6qPOgdXx2KxpEdvutcV4qJIHYbhAtsEuUOw5OEyFj5XiViFcfinbFRLvMa2Y2KDq7y1Mk8PnZhfKkwRfD2SrHRRCvU4g9Hw56gLTBegSzQdxy0WLBxiMgN0XWcUtSlHhUfjcf6Mxss4skKRup22BT9iWtVQLzD/mKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MdKmbhKV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716411956;
+	s=arc-20240116; t=1716412034; c=relaxed/simple;
+	bh=IXX192pD0raczuPL13k5ksQg23Qrdji8/ReRatFWZOY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=f1y+Dd9xL2Hce1pidZWyrsPEn8n4JJmE+V/x8tIx4mRig/nqnBtclRI/mNdl8IXE030rRITTCzq0qHaTMPG5BSeCQ04OYc7z1dJ9Q3DK5llAwL8MvSHfAt2DPT0+tRzyTFXD2TB0G7206hYxjTua9NYWdqC11gVDmAb1MKPVnmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZMsAi/rB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jLnOj0g4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716412030;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fbWdfGX3ZmKUSYN5RjcaKLdCuKumShJmeeAR8Ld2BSY=;
-	b=MdKmbhKVKAGvA2pPY1jTXIVj2UXVvGGUx/k6aqt77PutC6c2a4CEkF5yb6eZBBPL6GRT7i
-	QC8Gum5W/SE4qlp6u8igc1lOJaDqpz49rCHxsi4O/hLeCFXByWg0KIrGwRiPCIVtIbuCBP
-	yu2tHN6xV2GhtvDDmmX50K3LDqoNzhg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-132-42JCeEzPO8mAr3Hb6u2fxg-1; Wed, 22 May 2024 17:05:53 -0400
-X-MC-Unique: 42JCeEzPO8mAr3Hb6u2fxg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 281BE185A780;
-	Wed, 22 May 2024 21:05:53 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 18E46100046D;
-	Wed, 22 May 2024 21:05:53 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id 0074B30C1C33; Wed, 22 May 2024 21:05:52 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id EFA3F3FB52;
-	Wed, 22 May 2024 23:05:52 +0200 (CEST)
-Date: Wed, 22 May 2024 23:05:52 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Mike Snitzer <snitzer@kernel.org>
-cc: Benjamin Marzinski <bmarzins@redhat.com>, Yang Yang <yang.yang@vivo.com>, 
-    Alasdair Kergon <agk@redhat.com>, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: dm: optimize flushes
-In-Reply-To: <Zk4Y6DMgK71UuoKd@kernel.org>
-Message-ID: <9a0db0-4415-2013-6132-f1788b76a4ee@redhat.com>
-References: <20240514090445.2847-1-yang.yang@vivo.com> <20240514090445.2847-4-yang.yang@vivo.com> <ZkTXzG1yrPmW64Z6@redhat.com> <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com> <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com> <Zk4Y6DMgK71UuoKd@kernel.org>
+	bh=jLVxSCQfoVeR8U2ERh+IiooD/MtttiK7XavkulJ8Sz8=;
+	b=ZMsAi/rBw+STsdRVRyLD14gUdNDkd+kZfJcbn1yBmydUm4lwQV8f0h2lG+hlKfER2WUzqi
+	CGN8pdvwlTCC7srgMxwuL3Cn6yW9SyPBYq2MUox0pBYBmkLaLAYrDTUz+xhzexmQ/HgQBP
+	UOPsmgdENY8SpivY6JVeDwHOl0cOGcAYAvVmUMMweb8N0J17zKkXYK6SZlVgqA+asshM2j
+	QUYj9AB/0Nx7Y0cF+X8p56Rqjzrp1zrNepGKU/fq+59/8yiefjH0ys87MbEJD1Moxm2f3v
+	VIbom4CjiP1ozjmTONJTZSeET0ipafyLQ+4MeSFMCoBt1wiC0K39KJhwPVfMTA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716412030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jLVxSCQfoVeR8U2ERh+IiooD/MtttiK7XavkulJ8Sz8=;
+	b=jLnOj0g48+pWO/rtZVTMq1YU81uGsKgOYmL0kb6c0mTC927Zqax2FcBY6lOfP0+tCpETOV
+	gE0bEdFJPfICm7BA==
+To: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+ <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: RFC: NTP adjustments interfere with KVM emulation of TSC
+ deadline timers
+In-Reply-To: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
+References: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
+Date: Wed, 22 May 2024 23:07:10 +0200
+Message-ID: <875xv5h7y9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+Content-Type: text/plain
 
+On Thu, Dec 21 2023 at 18:51, Maxim Levitsky wrote:
+> The test usually fails because L2 observes TSC after the 
+> preemption timer deadline, before the VM exit happens.
 
+That's an arguably silly failure condition.
 
-On Wed, 22 May 2024, Mike Snitzer wrote:
+Timer interrupt delivery can be late even on bare metal, so observing
+TSC ahead of the expected timer event is not really wrong.
 
-> On Thu, May 16, 2024 at 10:49:55PM +0200, Mikulas Patocka wrote:
-> > Device mapper sends flush bios to all the targets and the targets send it
-> > to the underlying device. That may be inefficient, for example if a table
-> > contains 10 linear targets pointing to the same physical device, then
-> > device mapper would send 10 flush bios to that device - despite the fact
-> > that only one bio would be sufficient.
-> > 
-> > This commit optimizes the flush behavior. It introduces a per-target
-> > variable flush_pass_around - it is set when the target supports flush
-> > optimization - currently, the dm-linear and dm-stripe targets support it.
-> > When all the targets in a table have flush_pass_around, flush_pass_around
-> > on the table is set. __send_empty_flush tests if the table has
-> > flush_pass_around - and if it has, no flush bios are sent to the targets
-> > and the list dm_table->devices is iterated and the flush bios are sent to
-> > each member of the list.
-> 
-> What does "pass around" mean?  Seems like an awkward name for this.
-> (Naming can be hard, I don't have better suggestions at the moment.)
+Btw, the kernel also handles it nicely when the timer event arrives
+_before_ the expected time. It simply reprograms the timer and is done
+with it. That's actually required because clocksource (which determines
+time) and clockevent (which expires timers) can be on different clocks
+which might drift against each other.
 
-What about "flush_bypass" or "flush_bypasses_map"?
+>     In particular, NTP performing a forward correction will result in
+>     a timer expiring sooner than expected from a guest point of view.
+>     Not a big deal, we kick the vcpu anyway.
+>
+>     But on wake-up, the vcpu thread is going to perform a check to
+>     find out whether or not it should block. And at that point, the
+>     timer check is going to say "timer has not expired yet, go back
+>     to sleep". This results in the timer event being lost forever.
 
-> > Index: linux-2.6/drivers/md/dm-table.c
-> > ===================================================================
-> > --- linux-2.6.orig/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
-> > +++ linux-2.6/drivers/md/dm-table.c	2024-05-15 16:56:49.000000000 +0200
-> > @@ -160,6 +160,7 @@ int dm_table_create(struct dm_table **re
-> >  	t->type = DM_TYPE_NONE;
-> >  	t->mode = mode;
-> >  	t->md = md;
-> > +	t->flush_pass_around = 1;
-> >  	*result = t;
-> >  	return 0;
-> >  }
-> 
-> Should be: t->flush_pass_around = true;
+That's obviously a real problem.
 
-Yes.
+>     There are multiple ways to handle this. One would be record that
+>     the timer has expired and let kvm_cpu_has_pending_timer return
+>     true in that case, but that would be fairly invasive. Another is
+>     to check for the "short sleep" condition in the hrtimer callback,
+>     and restart the timer for the remaining time when the condition
+>     is detected.
 
-> > +
-> > +	/*
-> > +	 * Set if the target supports flush optimization
-> > +	 */
-> > +	bool flush_pass_around:1;
-> >  };
-> 
-> How does a developer _know_ if a target can set this flag?  Please
-> elaborate on the requirements in this code comment.
+:)
 
-What about:
+> So to solve this issue there are two options:
 
-"The target supports flush optimization. When all the targets in the table 
-support flush optimization, flushes will not use the "map" method and they 
-will be sent directly to all the devices in the table. This optimization 
-reduces the number of flushes that are being sent if multiple targets use 
-the same underlying device."
+There is a third option:
 
-> >  
-> >  void *dm_per_bio_data(struct bio *bio, size_t data_size);
-> > Index: linux-2.6/drivers/md/dm.c
-> > ===================================================================
-> > --- linux-2.6.orig/drivers/md/dm.c	2024-05-15 16:56:49.000000000 +0200
-> > +++ linux-2.6/drivers/md/dm.c	2024-05-16 20:06:32.000000000 +0200
-> > @@ -645,7 +645,7 @@ static struct bio *alloc_tio(struct clon
-> >  
-> >  	/* Set default bdev, but target must bio_set_dev() before issuing IO */
-> >  	clone->bi_bdev = md->disk->part0;
-> > -	if (unlikely(ti->needs_bio_set_dev))
-> > +	if (likely(ti != NULL) && unlikely(ti->needs_bio_set_dev))
-> >  		bio_set_dev(clone, md->disk->part0);
-> >  
-> >  	if (len) {
-> > @@ -1107,7 +1107,7 @@ static void clone_endio(struct bio *bio)
-> >  	blk_status_t error = bio->bi_status;
-> >  	struct dm_target_io *tio = clone_to_tio(bio);
-> >  	struct dm_target *ti = tio->ti;
-> > -	dm_endio_fn endio = ti->type->end_io;
-> > +	dm_endio_fn endio = likely(ti != NULL) ? ti->type->end_io : NULL;
-> >  	struct dm_io *io = tio->io;
-> >  	struct mapped_device *md = io->md;
-> >  
-> > @@ -1154,7 +1154,7 @@ static void clone_endio(struct bio *bio)
-> >  	}
-> >  
-> >  	if (static_branch_unlikely(&swap_bios_enabled) &&
-> > -	    unlikely(swap_bios_limit(ti, bio)))
-> > +	    likely(ti != NULL) && unlikely(swap_bios_limit(ti, bio)))
-> >  		up(&md->swap_bios_semaphore);
-> >  
-> >  	free_tio(bio);
-> 
-> What is it about this commit that makes it important to verify ti
-> isn't NULL in the above 3 hunks?
-> 
-> Should these NULL checks be factored out as a separate fix?
-> 
-> Or can these hunks be dropped?
+   3. Unconditionally inject the timer interrupt into the guest when the
+      underlying hrtimer has expired
 
-They can't be dropped.
+      That's fine because timer interrupts can be early (see above) and
+      any sane OS has to be able to handle it.
 
-When performing the flush bypass optimization, the dm core creates a 
-dm_target_io structure that isn't associated with any specific target. So, 
-the pointer "tio->ti" is NULL.
+> 1. Have another go at implementing support for CLOCK_MONOTONIC_RAW timers. 
+>    I don't know if that is feasible and I would be very happy to hear
+>    a feedback from you.
 
-I could set "tio->ti" to any target, but I think it's better to set it to 
-NULL, just to mark that there is no target association.
+That's a non-trivial exercise.
 
-> > @@ -1566,17 +1566,36 @@ static void __send_empty_flush(struct cl
-> >  	ci->sector_count = 0;
-> >  	ci->io->tio.clone.bi_iter.bi_size = 0;
-> >  
-> > -	for (unsigned int i = 0; i < t->num_targets; i++) {
-> > -		unsigned int bios;
-> > -		struct dm_target *ti = dm_table_get_target(t, i);
-> > -
-> > -		if (unlikely(ti->num_flush_bios == 0))
-> > -			continue;
-> > -
-> > -		atomic_add(ti->num_flush_bios, &ci->io->io_count);
-> > -		bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
-> > -					     NULL, GFP_NOWAIT);
-> > -		atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-> > +	if (!t->flush_pass_around) {
-> > +		for (unsigned int i = 0; i < t->num_targets; i++) {
-> > +			unsigned int bios;
-> > +			struct dm_target *ti = dm_table_get_target(t, i);
-> > +
-> > +			if (unlikely(ti->num_flush_bios == 0))
-> > +				continue;
-> > +
-> > +			atomic_add(ti->num_flush_bios, &ci->io->io_count);
-> > +			bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
-> > +						     NULL, GFP_NOWAIT);
-> > +			atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-> > +		}
-> > +	} else {
-> > +		/*
-> > +		 * Note that there's no need to grab t->devices_lock here
-> > +		 * because the targets that support flush pass-around don't
-> > +		 * modify the list of devices.
-> > +		 */
-> > +		struct list_head *devices = dm_table_get_devices(t);
-> > +		unsigned int len = 0;
-> > +		struct dm_dev_internal *dd;
-> > +		list_for_each_entry(dd, devices, list) {
-> > +			struct bio *clone;
-> > +			clone = alloc_tio(ci, NULL, 0, &len, GFP_NOIO);
-                                              ^^^^
-Here we set tio->ti to NULL.
+The charm of having all clocks related to CLOCK_MONOTONIC is that there
+is zero requirement to take NTP frequency adjustments into account,
+which makes the implementation reasonably simple and robust.
 
-> > +			atomic_add(1, &ci->io->io_count);
-> > +			bio_set_dev(clone, dd->dm_dev->bdev);
-> > +			clone->bi_end_io = clone_endio;
-> > +			dm_submit_bio_remap(clone, NULL);
-> > +		}
-> >  	}
-> >  
-> >  	/*
-> > 
-> > 
-> 
-> Still missing what "pass-around" is meant to convey given that you
-> aren't passing around the same flush... you're cloning a new flush and
-> issuing one per device.  Probably worth explaining that's what you
-> mean by "flush_pass_around" (both in commit header and elaborate in
-> code)?
+Changing everything over in that area (hrtimers, clockevents, NOHZ) to
+be raw hardware frequency based would be an Herculean task and just a
+huge pile of horrors.
 
-I mean that flushes bypass the map method.
+So the only realistic way to do that is to correlate a
+CLOCK_MONOTONIC_RAW timer to CLOCK_MONOTONIC, which obviously has the
+same problem you are trying to solve :)
 
-> Also, you're issuing a flush to _all_ devices in a table. Not just
-> the data devices.  .iterate_devices returns only the data devices.
-> If/when there is a need to extend this feature to targets that have
-> metadata devices (e.g. dm-thin, cache, etc): would it make sense to
-> filter out non-data devices (by stepping through each target in the
-> table and using iterate_devices)?
+But we could be smart about it. Let's look at the math:
 
-This optimization only makes sense if there are multiple targets in the 
-table. dm-thin, dm-cache, dm-raid is usually the only target in the table, 
-so the optimization doesn't make sense for them. Trying to support the 
-"flush bypass" optimization for them would bloat the code without reducing 
-the number of flush requests at all.
+    mraw  = base_mraw + (tsc - base_r) * factor_r;
+    mono  = base_mono + (tsc - base_m) * factor_m;
 
-> Mike
+So converting a MONOTONIC_RAW time into MONOTONIC would be:
 
-Mikulas
+   tsc = (mraw - base_mraw)/factor_r + base_r
 
+   mono = base_mono + ((mraw - base_mraw)/factor_r + base_r - base_m) * factor_m;
+
+It's guaranteed that base_r == base_m, so:
+
+   mono = base_mono + (mraw - base_mraw) * factor_m / factor_r;
+
+The conversion factors are actually implemented with scaled math:
+
+   mono = base_mono + (((delta_raw * mult_m) >> sft_m) << sft_r) / mult_r;
+
+As sft_m and sft_r are guaranteed to be identical:
+
+   mono = base_mono + (delta_raw * mult_m) / mult_r;
+
+That obviously only works correctly when mult_m is constant between the
+time the timer is enqueued and the time the timer is expired as you
+figured out.
+
+But even if mult_m changes this will be correct if we take NOHZ out of
+the picture for a moment. Why?
+
+In a NOHZ=n scenario the next expiring timer is at least reevaluated
+once every tick. As mult_m is stable between ticks any MONOTONIC_RAW
+timer which expires before the next tick will be pretty accurately
+mapped back onto MONOTONIC and therefore expire at the expected time.
+
+Now NOHZ comes into play and ruins everything under the following
+condition:
+
+   1) CPU takes an idle nap for a longer period of time
+   
+   2) Time synchronization (NTP/PTP/PPS) is adjusting mult_m during that
+      #1 period
+
+That's the only condition where the conversion fails. If NTP slows down
+the conversion then the timer is going to be late. If it speeds it up
+then the hrtimer core will take care of it and guarantee that the timer
+callback is never invoked early.
+
+But that's going to be a rare problem because it requires:
+
+    1) the CPU to be in idle for a longer period
+
+    2) the MONOTONIC_RAW timer to be the effective first timer to fire
+       after that idle period
+
+    3) Time synchronization adjusting right during that idle period
+
+Sure that can happen, but the question is whether it's really a
+problem. As I said before timer events coming late is to be expected
+even on bare metal (think SMI, NMI, long interrupt disabled regions).
+
+So the main benefit of such a change would be to spare the various
+architecture specific implementations the stupid exercise of
+implementing half baked workarounds which will suffer from
+the very same problems.
+
+If done right then the extra overhead of the division will be not really
+noticable and only take effect when there is a MONOTONIC_RAW timer
+queued. IOW, it's a penalty on virtualization hosts, but not for
+everyone. The facility will introduce some extra cycles due to
+conditionals vs. MONOTONIC_RAW in a few places, but that's probably
+something which can't even be measured.
+
+Thanks,
+
+        tglx
 
