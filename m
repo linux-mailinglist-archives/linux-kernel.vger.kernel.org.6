@@ -1,231 +1,118 @@
-Return-Path: <linux-kernel+bounces-185702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-185703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5318CB90C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:46:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1094B8CB914
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 04:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82DF92815F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:46:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1A80B21DF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 02:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0032057CAC;
-	Wed, 22 May 2024 02:46:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99A72A1AA;
+	Wed, 22 May 2024 02:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C4y69eYl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335CEC138;
-	Wed, 22 May 2024 02:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAB74C7B
+	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 02:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716345976; cv=none; b=B08JPj8DBjZFAE4flrYUW4sLccOqA/bGPy1752Yup+cHriMgJjZCK66Y+ho1mHb9MM3rh0zbK6EAWrPmMskpzKPg/AUf4eLixpNaHComB2dIgvFq3bUzKqXlfzE3QYz6CZu1SX76q0Up4L5mC2a3f5Dj142vlgME4sUEh4GSl8I=
+	t=1716346068; cv=none; b=rVM+3kyMh4DQys6e/pBMOJiaaAnUFXV78z76Gs7d53P8SRhd3hUrtZJbggvQ12YifpEJxCifXa5uaVCskExaSwkJ50TWwtYuBYsX+kr/fRHbZNrHycdiJD7p6QUrJTjvRjU2LHsT265cDJSXWLPQHMV54Vs4YAW4uPNKE4QByqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716345976; c=relaxed/simple;
-	bh=SERIfTUtjRLtnnTyu2LrMnGylfL7UiRq1W08iv8nLQM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=M5/PZiyKoBWAHdIqquvXHbBgb12g8+ajE0YJHPgLRNacxzvF1bev2i8ArvTEyOOkMmqNrqnzdqmchXS9JhHYcs/74PPS2ac5i6RISnNCx1JPgVhhzOCdNEvw4hFN+S/K9FpQ/64hGqkI7CDsT/oCBtdEgRfhpirQEKv1CWA1aYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VkbK317gNz4f3m7G;
-	Wed, 22 May 2024 10:45:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9B5F61A0F41;
-	Wed, 22 May 2024 10:46:09 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAX6RFrXE1mMDtTNQ--.18221S3;
-	Wed, 22 May 2024 10:46:05 +0800 (CST)
-Subject: Re: [PATCH md-6.10 5/9] md: replace sysfs api sync_action with new
- helpers
-To: Xiao Ni <xni@redhat.com>, Oliver Sang <oliver.sang@intel.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-raid@vger.kernel.org, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, song@kernel.org, dm-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>,
- Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-References: <202405202204.4e3dc662-oliver.sang@intel.com>
- <c9406496-7b97-a3c5-b48c-32f8248cee39@huaweicloud.com>
- <ZkwOpD8rjYeb+4eT@xsang-OptiPlex-9020>
- <CALTww29kyA71WVRxh32W0NkOwZbHkFcs=fTCL5in=e5OhtJ-HA@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <ef9e7de5-9ae5-faae-1c4c-9d6357fb6ae2@huaweicloud.com>
-Date: Wed, 22 May 2024 10:46:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1716346068; c=relaxed/simple;
+	bh=vhEKlZY+ZZVrdklK0X1j7CdcEeoH0jWqQGuJYxTk3Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=MpZxXeHJPW66CsP0ey3qxvLNWchu+0psrUKPNX335T6+yCnu9JCTfa3ICeNi/oZOLqmJ6axZD2XJLY1X/IJdCnE7UvwQ6/VrBMx7Lp3APFNWJyI+PDvjQ+bROzRmJuPP3bLSjdw4tC2E5aQRcFdGoWR58ldIaCSnYM+b8I6OBxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C4y69eYl; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716346067; x=1747882067;
+  h=date:from:to:cc:subject:message-id;
+  bh=vhEKlZY+ZZVrdklK0X1j7CdcEeoH0jWqQGuJYxTk3Bk=;
+  b=C4y69eYl7iahPT0tDGC2jQ0RoZMlCm+EJpTJtAZhjoDEHfWqPQmAaGlE
+   4XMgR4Z0NG0hu3cqNpx+fJ+9gNgVYBufd41I97BuFhtOkbV4H8clELh9A
+   oB5a3o+3uOrB/+vTvCAqyguk6fpdnR3zwVtdFy3z1KWFMZ0OffNaCkgtg
+   92/LSrA08Ghfv8cls2wMlhicvUnjKSc//kvIabZNLG06Tq4VjYqU1A4x7
+   NfkQY45Jr/hrp13RIH0YTXIyUt+1K087pvsiX3fPPKImkvHOgC6yGlOj7
+   N5wwxIhWvYPajroEzVGIB04o3Z6OpOxWrQ5Qun3MiizuofG8I+qmXvo1w
+   A==;
+X-CSE-ConnectionGUID: W1JQTJzdRGiFwMOI5m4EpQ==
+X-CSE-MsgGUID: 6oEb0DyATlWmCF54ZmHvJw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11079"; a="12514988"
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="12514988"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2024 19:47:46 -0700
+X-CSE-ConnectionGUID: RNzcBumjR8mfk2SBkPveBw==
+X-CSE-MsgGUID: IeiHSlpSQaq7Yf9t3yU2Bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,179,1712646000"; 
+   d="scan'208";a="32996880"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 21 May 2024 19:47:45 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s9c10-0000yP-2V;
+	Wed, 22 May 2024 02:47:42 +0000
+Date: Wed, 22 May 2024 10:47:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:master] BUILD SUCCESS
+ 5242c6fd8c29e620393d7f12763bdf1efb1ab164
+Message-ID: <202405221017.9tpjyznb-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <CALTww29kyA71WVRxh32W0NkOwZbHkFcs=fTCL5in=e5OhtJ-HA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX6RFrXE1mMDtTNQ--.18221S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxKr15Cr18XF45ZFWkAry3CFg_yoW7Xr45pw
-	48J3Z8tF4rJ3Z5AFW8Ka10qa4Fqw4fJry5W34DG340yF4qyr1Svr1Syr1akryqkrZ0k3y2
-	v3yxXr9xWw4jg3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
-	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+branch HEAD: 5242c6fd8c29e620393d7f12763bdf1efb1ab164  Merge branch into tip/master: 'x86/percpu'
 
-在 2024/05/21 11:21, Xiao Ni 写道:
-> Hi Kuai
-> 
-> I've tested 07reshape5intr with the latest upstream kernel 15 times
-> without failure. So it's better to have a try with 07reshape5intr with
-> your patch set.
+elapsed time: 729m
 
-I just discussed with Xiao on slack, for conclusion here:
+configs tested: 26
+configs skipped: 135
 
-The test 07reshape5intr will add a new disk to array, then start
-reshape:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-mdadm /dev/md0 --add /dev/xxx
-mdadm --grow /dev/md0 -n 3
+tested configs:
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240522   clang
+i386         buildonly-randconfig-002-20240522   clang
+i386         buildonly-randconfig-003-20240522   gcc  
+i386         buildonly-randconfig-004-20240522   clang
+i386         buildonly-randconfig-005-20240522   clang
+i386         buildonly-randconfig-006-20240522   gcc  
+i386                                defconfig   clang
+i386                  randconfig-001-20240522   clang
+i386                  randconfig-002-20240522   clang
+i386                  randconfig-003-20240522   clang
+i386                  randconfig-004-20240522   clang
+i386                  randconfig-005-20240522   clang
+i386                  randconfig-006-20240522   clang
+i386                  randconfig-011-20240522   clang
+i386                  randconfig-012-20240522   gcc  
+i386                  randconfig-013-20240522   gcc  
+i386                  randconfig-014-20240522   gcc  
+i386                  randconfig-015-20240522   gcc  
+i386                  randconfig-016-20240522   gcc  
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64                              defconfig   gcc  
+x86_64                          rhel-8.3-rust   clang
 
-However, the grow will fail:
-mdadm: Failed to initiate reshape!
-
-Root cause is that in kernel, action_store() will return -EBUSY
-if MD_RECOVERY_RUNNING is set:
-
-// mdadm add
-add_bound_rdev
-  set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
-
-// daemon thread
-md_check_recovery
-  set_bit(MD_RECOVERY_RUNNING, &mddev->recovery);
-  // do nothing
-		// mdadm grow
-		action_store
-		 if (test_bit(MD_RECOVERY_RUNNING, &mddev->recovery))
-		  return -EBUSY
-  clear_bit(MD_RECOVERY_RUNNING, &mddev->recovery)
-
-This is a long term problem, and we need new synchronization in kernel
-to make sure the grow won't fail.
-
-Thanks,
-Kuai
-
-> 
-> Regards
-> Xiao
-> 
-> 
-> 
-> 
-> On Tue, May 21, 2024 at 11:02 AM Oliver Sang <oliver.sang@intel.com> wrote:
->>
->> hi, Yu Kuai,
->>
->> On Tue, May 21, 2024 at 10:20:54AM +0800, Yu Kuai wrote:
->>> Hi,
->>>
->>> 在 2024/05/20 23:01, kernel test robot 写道:
->>>>
->>>>
->>>> Hello,
->>>>
->>>> kernel test robot noticed "mdadm-selftests.07reshape5intr.fail" on:
->>>>
->>>> commit: 18effaab5f57ef44763e537c782f905e06f6c4f5 ("[PATCH md-6.10 5/9] md: replace sysfs api sync_action with new helpers")
->>>> url: https://github.com/intel-lab-lkp/linux/commits/Yu-Kuai/md-rearrange-recovery_flage/20240509-093248
->>>> base: https://git.kernel.org/cgit/linux/kernel/git/device-mapper/linux-dm.git for-next
->>>> patch link: https://lore.kernel.org/all/20240509011900.2694291-6-yukuai1@huaweicloud.com/
->>>> patch subject: [PATCH md-6.10 5/9] md: replace sysfs api sync_action with new helpers
->>>>
->>>> in testcase: mdadm-selftests
->>>> version: mdadm-selftests-x86_64-5f41845-1_20240412
->>>> with following parameters:
->>>>
->>>>      disk: 1HDD
->>>>      test_prefix: 07reshape5intr
->>>>
->>>>
->>>>
->>>> compiler: gcc-13
->>>> test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4790T CPU @ 2.70GHz (Haswell) with 16G memory
->>>>
->>>> (please refer to attached dmesg/kmsg for entire log/backtrace)
->>>>
->>>>
->>>>
->>>>
->>>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>>> the same patch/commit), kindly add following tags
->>>> | Reported-by: kernel test robot <oliver.sang@intel.com>
->>>> | Closes: https://lore.kernel.org/oe-lkp/202405202204.4e3dc662-oliver.sang@intel.com
->>>>
->>>> 2024-05-14 21:36:26 mkdir -p /var/tmp
->>>> 2024-05-14 21:36:26 mke2fs -t ext3 -b 4096 -J size=4 -q /dev/sda1
->>>> 2024-05-14 21:36:57 mount -t ext3 /dev/sda1 /var/tmp
->>>> sed -e 's/{DEFAULT_METADATA}/1.2/g' \
->>>> -e 's,{MAP_PATH},/run/mdadm/map,g'  mdadm.8.in > mdadm.8
->>>> /usr/bin/install -D -m 644 mdadm.8 /usr/share/man/man8/mdadm.8
->>>> /usr/bin/install -D -m 644 mdmon.8 /usr/share/man/man8/mdmon.8
->>>> /usr/bin/install -D -m 644 md.4 /usr/share/man/man4/md.4
->>>> /usr/bin/install -D -m 644 mdadm.conf.5 /usr/share/man/man5/mdadm.conf.5
->>>> /usr/bin/install -D -m 644 udev-md-raid-creating.rules /lib/udev/rules.d/01-md-raid-creating.rules
->>>> /usr/bin/install -D -m 644 udev-md-raid-arrays.rules /lib/udev/rules.d/63-md-raid-arrays.rules
->>>> /usr/bin/install -D -m 644 udev-md-raid-assembly.rules /lib/udev/rules.d/64-md-raid-assembly.rules
->>>> /usr/bin/install -D -m 644 udev-md-clustered-confirm-device.rules /lib/udev/rules.d/69-md-clustered-confirm-device.rules
->>>> /usr/bin/install -D  -m 755 mdadm /sbin/mdadm
->>>> /usr/bin/install -D  -m 755 mdmon /sbin/mdmon
->>>> Testing on linux-6.9.0-rc2-00012-g18effaab5f57 kernel
->>>> /lkp/benchmarks/mdadm-selftests/tests/07reshape5intr... FAILED - see /var/tmp/07reshape5intr.log and /var/tmp/fail07reshape5intr.log for detail
->>> [root@fedora mdadm]# ./test --dev=loop --tests=07reshape5intr
->>> test: skipping tests for multipath, which is removed in upstream 6.8+
->>> kernels
->>> test: skipping tests for linear, which is removed in upstream 6.8+ kernels
->>> Testing on linux-6.9.0-rc2-00023-gf092583596a2 kernel
->>> /root/mdadm/tests/07reshape5intr... FAILED - see /var/tmp/07reshape5intr.log
->>> and /var/tmp/fail07reshape5intr.log for details
->>>    (KNOWN BROKEN TEST: always fails)
->>>
->>> So, since this test is marked BROKEN.
->>>
->>> Please share the whole log, and is it possible to share the two logs?
->>
->>
->> we only captured one log as attached log-18effaab5f.
->> also attached parent log FYI.
->>
->>
->>>
->>> Thanks,
->>> Kuai
->>>
->>>>
->>>>
->>>>
->>>> The kernel config and materials to reproduce are available at:
->>>> https://download.01.org/0day-ci/archive/20240520/202405202204.4e3dc662-oliver.sang@intel.com
->>>>
->>>>
->>>>
->>>
-> 
-> 
-> .
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
