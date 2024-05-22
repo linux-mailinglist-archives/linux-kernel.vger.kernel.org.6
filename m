@@ -1,138 +1,381 @@
-Return-Path: <linux-kernel+bounces-186429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA208CC410
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:27:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B12FA8CC415
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 17:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28840B218DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 263ED1F23210
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 15:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4B3770F1;
-	Wed, 22 May 2024 15:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="A8fJFvta"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A7C7D3E6;
+	Wed, 22 May 2024 15:30:18 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654E4200DE
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 15:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342523BE;
+	Wed, 22 May 2024 15:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716391661; cv=none; b=Vc38reJaZPhAclu0ObwybEefXhm/cH80CjXY5U61bq9lP2RCVYvbX96CHpddJewCN94xVvsVbo2PNaXsDMLtWi3YcEwJZwJN82h2jt4C5RwgI3OMZbe5qHllRL7A1fyXPapkte/Jc6RRzrIK+Y2vldwkK1Dav8a7eo0Bi0YY78E=
+	t=1716391818; cv=none; b=sIauBMgzEf/wzOFye7WrghLpfdArtKs7ZWN7ZK3uChWCMSimNLjHRv62DuYT0SyKkGHpl91wE+qBYncQ15IKYxPAW84gC9qsHAv2bh7TpsrQB6CuWq1hvRXZ+1rV3dy62Kco1Qg+zGQEpzx4KBuhTsUW13ycCdpMHhshCMV1xsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716391661; c=relaxed/simple;
-	bh=MfXp2+EG7ERX2DY/SopiVU4eFwkrfqmHs9m9kRKheAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uryZjXht1vRyupYcniw1Kl7qXVbDITYoFQDrKYk+TG64OpqlBKgXjqhIVeIYeLlcTyIePolocvZ3rjDCVQTCvMkTf+4wl3bmVzR49yN9s/lPwsu+IX4t2piZVFdF9W4rxsQlUFZ3A2Dq+iNhpajTGMAlgX+X8oZi30mQ9H5F4V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=A8fJFvta; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D4EDD40E0254;
-	Wed, 22 May 2024 15:27:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id W8sZeqrRUy6c; Wed, 22 May 2024 15:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716391651; bh=OB6gaqSjxiAFW2RlpmSCnZD7Qhpu4drPtRMxzaVxZVU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A8fJFvtaQXZh+IL0mQwaxVMveFNb0QaGouYARbnD32GFsrOSxHs2vSfrlSvWx8b3q
-	 8lGZBwsSfTj864KzXx/ix/EpMEfgk/n3juA6cjSkdyBf+id1aSxWyi8j3oIjWbeSNE
-	 cpCYADDFi2pVs5ywMf9m2E9QdQY5NER4FJnDXqa4t+tNnVN3Pz61c/dFlDY6ormuQa
-	 98znUkYr3r8VPxX1Pc7y+142KbgLiAuAq2UJsNC08fY+PyDsIs36f8bGSjl6UYCRVc
-	 j278zltej0G+BTKXXM7U7zLosQMjnK1c7/U+jBDXqU69V9LqNPFydqbeSs+ryv+Dhq
-	 9BysgszjnuutjF0s0gZeNyZMv9/RCs7Ej5R5iB4ega8J0ZLrVu8ojtE3VU9wQARuAB
-	 czOq3WxNbEuEbyV8kTylOrU/hHikgLwVXG/TKCShxqNwat1Aac6twPuYzpbHdzCL2r
-	 IKxAYL1MSZe4TMnZczgyFvjt3OnKc9U1CZHqab36ipRTvI3cQeu7D+w9FRDaL25tqZ
-	 jpWxJd2DSePTMNKR+dJS2k18uMiae1r3Gt6lfAu8/jo6Fq1/kZBpXQLn+vV3GWI4Jo
-	 USwLrSY/1tkfpdTWR84zycBGaOnwsuAkFue5w0hwMrZYb7GB4sFrD1DUXHOc9TFdeu
-	 bbY2n7Ph8A+OoBSJWeKq9mFg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 929BE40E023A;
-	Wed, 22 May 2024 15:27:17 +0000 (UTC)
-Date: Wed, 22 May 2024 17:27:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>
-Subject: Re: [PATCH v4 04/15] x86/sev: Check for the presence of an SVSM in
- the SNP Secrets page
-Message-ID: <20240522152712.GBZk4O0LIl2r0dH--H@fat_crate.local>
-References: <cover.1713974291.git.thomas.lendacky@amd.com>
- <6cf54cac47f212f4c2b59b123855d8c183989022.1713974291.git.thomas.lendacky@amd.com>
- <20240502093520.GRZjNeWLXU5j2UMOAM@fat_crate.local>
- <66928741-aa5c-4bbb-9155-dc3a0609c50a@amd.com>
- <20240517155858.GDZkd-wkWmYegos-eT@fat_crate.local>
- <f8a92b19-9090-40ea-c2cf-707005f583a5@amd.com>
+	s=arc-20240116; t=1716391818; c=relaxed/simple;
+	bh=zZru86fIXiFkTYCb5WmuVf8xA/JutLp3XSO05kRVxc4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y9CrfHOwKOMLAnTzNbPUkZaDplfQpB4qHLu6DPLquZ7Hzk1MsmjeSVxdI15Aq7HW/HMBumFDD/DG+5qtF/ICj/iIohCUZHu8Dt4EXaPcqAN3ZNrT2H99DolQkynZgBQG1hcRDHR2rpeKqLcZUNsu7qE2PWs+b3t0WzKM6QqDWS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-61af74a010aso10588607b3.0;
+        Wed, 22 May 2024 08:30:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716391814; x=1716996614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l65IJZn4qXBceTFbbW0vUcMQ48LpmB2S34V/Jdhwaec=;
+        b=GqFcSZfBHdDdw7Tu8MV8c04gfFTu2T3qDA1iYiF+kZhSvqQJIBFXyRLJe4P6qsRHjl
+         k/dvCg2mAGl+RQCJ9mZj9Nitw0gKXoft0mTFi/XEpaUeaFUrTjKD5RBfaPR1zb3ltoDo
+         zoJx8VGxvYWYIOpElyLhGTK1lzz5qg22pm3eYfVeLZ8tu9p7fOqEDrBIZjLJXY82NRje
+         lNrhvvNpmYdRywl1xySS6dGi5ceAK4vml1eN0oe+WAThZ/AYP6Ewb7ga1jYqmmjK33cV
+         LgIRExAXj1IWzcCSZ5lzAXjhoxJE454i3HaRqTl4Fx6CQxBlAJfC3lY8TBgb1Q+Dh/IO
+         2goA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQIMAJ3p5M1nX5JJ02eDchyYZqljSgeNIf1uAQ7F0ZuBBWs5s87iklpSTykB+Qld7uYg2ve/184WBVmqjeGaebYN5noKvSJ+s3w2XJaEtqqn6gmCnH98enkSJaW3cf5Zh1kRq0RI8RJiLCZ9Mq6pRra1NTlpzS8NJTSLOkK1av6iC6adP+mI5qhaKHYoCZE3q0zHN/LJluNTRSqBcf9diHZbK+88A96Q==
+X-Gm-Message-State: AOJu0YxAtEVOwPegUk+furVgTryoo4ag4WhegFBqoxfGosm3BrGqoLH8
+	NaqiorGnux73sb2Lx6/Ulw/QADtRZ7FSxzVyGTcFtavMn2zI1lpFLlawt1fq
+X-Google-Smtp-Source: AGHT+IFjvEWTFF3xgoAg8yF7+SlgfOFknTwxIi1jcT6MCYpiKsi5SqbT+UNhW/RE49l5g5xlersAUA==
+X-Received: by 2002:a05:690c:d06:b0:61b:3454:8ff9 with SMTP id 00721157ae682-627e46c775cmr29741847b3.10.1716391813685;
+        Wed, 22 May 2024 08:30:13 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e26ae7esm59103057b3.57.2024.05.22.08.30.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 08:30:13 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-620390308e5so12182797b3.3;
+        Wed, 22 May 2024 08:30:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfmYjoB7LfUUxaY2QWRKimEUQfRkcrhOAx/AWILFaM5BXzlzPSfaJsMV3qGllv7SZeWway+seYjsLmwxqI8f05+5PwQer6XHtUKHBCtTLMzFantVuAp3CL+KTI0SWdH5wl5z887XFgvd3XMGWbBttXc4GQ6UYm8YHYIkp8radcmn2Hiji5p8BhTUD9P/BSMNnOntQ2+DWPMHlvshVTPRQezuY9LS9aYQ==
+X-Received: by 2002:a0d:d4d5:0:b0:61a:d846:9858 with SMTP id
+ 00721157ae682-627e46f8610mr23496397b3.20.1716391812363; Wed, 22 May 2024
+ 08:30:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f8a92b19-9090-40ea-c2cf-707005f583a5@amd.com>
+References: <20240423175900.702640-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240423175900.702640-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240423175900.702640-14-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 May 2024 17:29:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVig3M_UY8i=+gJD-gkW90tQiS_cNDJqdRe5e-Z8kNoDg@mail.gmail.com>
+Message-ID: <CAMuHMdVig3M_UY8i=+gJD-gkW90tQiS_cNDJqdRe5e-Z8kNoDg@mail.gmail.com>
+Subject: Re: [PATCH v2 13/13] pinctrl: renesas: pinctrl-rzg2l: Add support for
+ RZ/V2H SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 20, 2024 at 08:57:43AM -0500, Tom Lendacky wrote:
-> So this will be a new shared directory in the top level include directory
-> (as PAGE_ALIGNED is defined in include/linux/mm.h), not just in the
-> arch/x86/include directory like the others (io.h, msr.h and tdx.h). Is that
-> what you want?
+Hi Prabhakar,
 
-You can actually do this - it is a lot easier and still clean:
+On Tue, Apr 23, 2024 at 7:59=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add pinctrl driver support for RZ/V2H(P) SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> RFC->v2
+> - Renamed renesas-rzv2h,output-impedance -> renesas,output-impedance
+> - Dropped IOLH groups
+> - Fixed dedicated pin configs
+> - Updated r9a09g057_variable_pin_cfg
+> - Added support OEN
+> - Added support for bias settings
+> - Added function pointers for pwpr (un)lock
+> - Added support for slew-rate
 
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index cb771b380a6b..5ee53a7a060e 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -12,7 +12,6 @@
-  */
- #include "misc.h"
- 
--#include <linux/mm.h>
- #include <asm/bootparam.h>
- #include <asm/pgtable_types.h>
- #include <asm/sev.h>
-diff --git a/arch/x86/kernel/sev-shared.c b/arch/x86/kernel/sev-shared.c
-index 46ea4e5e118a..bd4bbb30ef0c 100644
---- a/arch/x86/kernel/sev-shared.c
-+++ b/arch/x86/kernel/sev-shared.c
-@@ -1329,7 +1329,12 @@ static void __head setup_svsm_ca(const struct cc_blob_sev_info *cc_info)
- 	vmpl = secrets_page->svsm_guest_vmpl;
- 
- 	caa = secrets_page->svsm_caa;
--	if (!PAGE_ALIGNED(caa))
-+
-+	/*
-+	 * Open-code PAGE_ALIGNED() to avoid pulling in the world and
-+	 * more by including linux/mm.h.
-+	 */
-+	if (caa & (PAGE_SIZE - 1))
- 		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SVSM_CAA);
- 
- 	/*
+Thanks for the update!
 
--- 
-Regards/Gruss,
-    Boris.
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -59,6 +59,10 @@
+>  #define PIN_CFG_OEN                    BIT(15)
+>  #define PIN_CFG_VARIABLE               BIT(16)
+>  #define PIN_CFG_NOGPIO_INT             BIT(17)
+> +#define PIN_CFG_OPEN_DRAIN             BIT(18)
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Or PIN_CFG_NOD, to match the docs?
+You can always add a comment if the meaning is unclear:
+/* N-ch Open Drain */
+
+> +#define PIN_CFG_SCHMIT_CTRL            BIT(19)
+
+SCHMITT (double T). Or just call it PIN_CFG_SMT, to match the docs?
+/* Schmitt-trigger input control */
+
+> +#define PIN_CFG_ELC                    BIT(20)
+
+/* Event Link Control */
+
+> +#define PIN_CFG_IOLH_RZV2H             BIT(21)
+>
+>  #define RZG2L_MPXED_COMMON_PIN_FUNCS(group) \
+>                                         (PIN_CFG_IOLH_##group | \
+> @@ -73,6 +77,10 @@
+>  #define RZG3S_MPXED_PIN_FUNCS(group)   (RZG2L_MPXED_COMMON_PIN_FUNCS(gro=
+up) | \
+>                                          PIN_CFG_SOFT_PS)
+>
+> +#define RZV2H_MPXED_PIN_FUNCS          (RZG2L_MPXED_COMMON_PIN_FUNCS(RZV=
+2H) | \
+> +                                        PIN_CFG_OPEN_DRAIN | \
+> +                                        PIN_CFG_SR)
+
+I think you can include PIN_CFG_SCHMIT_CTRL here, and thus drop it
+from all tables below?
+
+> +
+>  #define RZG2L_MPXED_ETH_PIN_FUNCS(x)   ((x) | \
+>                                          PIN_CFG_FILONOFF | \
+>                                          PIN_CFG_FILNUM | \
+> @@ -128,13 +136,15 @@
+>  #define ETH_POC(off, ch)       ((off) + (ch) * 4)
+>  #define QSPI                   (0x3008)
+>  #define ETH_MODE               (0x3018)
+> +#define PFC_OEN                        (0x3C40) /* known on RZ/V2H(P) on=
+ly */
+>
+>  #define PVDD_2500              2       /* I/O domain voltage 2.5V */
+>  #define PVDD_1800              1       /* I/O domain voltage <=3D 1.8V *=
+/
+>  #define PVDD_3300              0       /* I/O domain voltage >=3D 3.3V *=
+/
+>
+>  #define PWPR_B0WI              BIT(7)  /* Bit Write Disable */
+
+FWIW, this should be PWPR_BOWI (O like in Oscar, not 0 =3D Zero).
+
+> -#define PWPR_PFCWE             BIT(6)  /* PFC Register Write Enable */
+> +#define              BIT(6)  /* PFC (and PMC on RZ/V2H) Register Write E=
+nable */
+
+As this bit is called differently on RZ/V2H, and there are different
+code paths to handle PWPR on RZ/V2H vs. RZ/G2L, please add an extra
+definition for PWPR_REGWE_A, and use that in RZ/V2H-specific
+functions.
+
+> +#define PWPR_REGWE_B           BIT(5)  /* OEN Register Write Enable, kno=
+wn only in RZ/V2H(P) */
+>
+>  #define PM_MASK                        0x03
+>  #define PFC_MASK               0x07
+                                   \
+> @@ -330,6 +353,8 @@ struct rzg2l_pinctrl {
+>         spinlock_t                      lock; /* lock read/write register=
+s */
+>         struct mutex                    mutex; /* serialize adding groups=
+ and functions */
+>
+> +       raw_spinlock_t                  pwpr_lock; /* serialize PWPR regi=
+ster access */
+
+Do you need this lock?
+I.e. can't you use the existing .lock above instead? (see below)
+
+> +
+>         struct rzg2l_pinctrl_pin_settings *settings;
+>         struct rzg2l_pinctrl_reg_cache  *cache;
+>         struct rzg2l_pinctrl_reg_cache  *dedicated_cache;
+
+> @@ -480,6 +538,19 @@ static void rzg2l_pmc_writeb(struct rzg2l_pinctrl *p=
+ctrl, u8 val, void __iomem *
+>         writeb(val, addr);
+>  }
+>
+> +static void rzv2h_pmc_writeb(struct rzg2l_pinctrl *pctrl, u8 val, void _=
+_iomem *addr)
+> +{
+> +       const struct rzg2l_register_offsets *regs =3D &pctrl->data->hwcfg=
+->regs;
+> +       u8 pwpr;
+> +
+> +       raw_spin_lock(&pctrl->pwpr_lock);
+
+rzg2l_pinctrl_data.pmc_write() is always called with rzg2l_pinctrl.lock
+held.
+
+> +       pwpr =3D readb(pctrl->base + regs->pwpr);
+> +       writeb(pwpr | PWPR_PFCWE, pctrl->base + regs->pwpr);
+
+PWPR_REGWE_A
+
+> +       writeb(val, addr);
+> +       writeb(pwpr & ~PWPR_PFCWE, pctrl->base + regs->pwpr);
+
+PWPR_REGWE_A
+
+> +       raw_spin_unlock(&pctrl->pwpr_lock);
+> +}
+> +
+>  static void rzg2l_pinctrl_set_pfc_mode(struct rzg2l_pinctrl *pctrl,
+>                                        u8 pin, u8 off, u8 func)
+>  {
+
+> +static u8 rzv2h_pin_to_oen_bit(struct rzg2l_pinctrl *pctrl, u32 offset)
+> +{
+> +       static const char * const pin_names[] =3D { "ET0_TXC_TXCLK", "ET1=
+_TXC_TXCLK",
+> +                                                 "XSPI0_RESET0N", "XSPI0=
+_CS0N",
+> +                                                 "XSPI0_CKN", "XSPI0_CKP=
+" };
+
+        static const char * const pin_names[] =3D {
+                "ET0_TXC_TXCLK", "ET1_TXC_TXCLK", "XSPI0_RESET0N",
+                "XSPI0_CS0N", "XSPI0_CKN", "XSPI0_CKP"
+        };
+
+> +       const struct pinctrl_pin_desc *pin_desc =3D &pctrl->desc.pins[off=
+set];
+> +       u8 bit_array[] =3D { 0, 1, 2, 3, 4, 5 };
+
+Do you need this identity-transforming array? ;-)
+
+> +       unsigned int i;
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(bit_array); i++) {
+
+ARRAY_SIZE(pin_names)
+
+> +               if (!strcmp(pin_desc->name, pin_names[i]))
+> +                       return bit_array[i];
+
+return i;
+
+> +       }
+> +
+> +       /* Should not happen. */
+> +       return 0;
+> +}
+> +
+> +static u32 rzv2h_read_oen(struct rzg2l_pinctrl *pctrl, u32 caps, u32 off=
+set, u8 pin)
+> +{
+> +       u8 bit;
+> +
+> +       if (!(caps & PIN_CFG_OEN))
+> +               return 0;
+> +
+> +       bit =3D rzv2h_pin_to_oen_bit(pctrl, offset);
+> +
+> +       return !(readb(pctrl->base + PFC_OEN) & BIT(bit));
+> +}
+> +
+> +static int rzv2h_write_oen(struct rzg2l_pinctrl *pctrl, u32 caps, u32 of=
+fset, u8 pin, u8 oen)
+> +{
+> +       const struct rzg2l_hwcfg *hwcfg =3D pctrl->data->hwcfg;
+> +       const struct rzg2l_register_offsets *regs =3D &hwcfg->regs;
+> +       unsigned long flags;
+> +       u8 val, bit;
+> +       u8 pwpr;
+> +
+> +       if (!(caps & PIN_CFG_OEN))
+> +               return -EINVAL;
+> +
+> +       bit =3D rzv2h_pin_to_oen_bit(pctrl, offset);
+> +       spin_lock_irqsave(&pctrl->lock, flags);
+> +       val =3D readb(pctrl->base + PFC_OEN);
+> +       if (oen)
+> +               val &=3D ~BIT(bit);
+> +       else
+> +               val |=3D BIT(bit);
+> +
+> +       raw_spin_lock(&pctrl->pwpr_lock);
+
+rzg2l_pinctrl.lock is taken above.
+
+> +       pwpr =3D readb(pctrl->base + regs->pwpr);
+> +       writeb(pwpr | PWPR_REGWE_B, pctrl->base + regs->pwpr);
+> +       writeb(val, pctrl->base + PFC_OEN);
+> +       writeb(pwpr & ~PWPR_REGWE_B, pctrl->base + regs->pwpr);
+> +       raw_spin_unlock(&pctrl->pwpr_lock);
+> +       spin_unlock_irqrestore(&pctrl->lock, flags);
+> +
+> +       return 0;
+> +}
+
+> @@ -2747,6 +3098,32 @@ static void rzg2l_pwpr_pfc_lock(struct rzg2l_pinct=
+rl *pctrl)
+>         writel(PWPR_B0WI, pctrl->base + regs->pwpr);    /* B0WI=3D1, PFCW=
+E=3D0 */
+>  }
+>
+> +static void rzv2h_pwpr_pfc_unlock(struct rzg2l_pinctrl *pctrl)
+> +{
+> +       const struct rzg2l_register_offsets *regs =3D &pctrl->data->hwcfg=
+->regs;
+> +       u8 pwpr;
+> +
+> +       /*
+> +        * lock is acquired in pfc unlock call back and then released in
+> +        * pfc lock callback
+> +        */
+> +       raw_spin_lock(&pctrl->pwpr_lock);
+
+Except for rzg2l_pinctrl_pm_setup_pfc(), this function is always
+called while holding rzg2l_pinctrl.lock.  So I think you can just
+take rzg2l_pinctrl.lock in rzg2l_pinctrl_pm_setup_pfc(), and get rid
+of pwpr_lock?
+
+> +       /* Set the PWPR register to allow PFC and PMC register to write *=
+/
+> +       pwpr =3D readb(pctrl->base + regs->pwpr);
+> +       writeb(PWPR_PFCWE | pwpr, pctrl->base + regs->pwpr);
+
+PWPR_REGWE_A
+
+> +}
+> +
+> +static void rzv2h_pwpr_pfc_lock(struct rzg2l_pinctrl *pctrl)
+> +{
+> +       const struct rzg2l_register_offsets *regs =3D &pctrl->data->hwcfg=
+->regs;
+> +       u8 pwpr;
+> +
+> +       /* Set the PWPR register to be write-protected */
+> +       pwpr =3D readb(pctrl->base + regs->pwpr);
+> +       writeb(pwpr & ~PWPR_PFCWE, pctrl->base + regs->pwpr);
+
+PWPR_REGWE_A
+
+> +       raw_spin_unlock(&pctrl->pwpr_lock);
+> +}
+> +
+>  static const struct rzg2l_hwcfg rzg2l_hwcfg =3D {
+>         .regs =3D {
+>                 .pwpr =3D 0x3014,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
