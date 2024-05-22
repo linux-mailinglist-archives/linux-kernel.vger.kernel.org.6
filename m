@@ -1,69 +1,73 @@
-Return-Path: <linux-kernel+bounces-186488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3CE8CC4D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:19:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E2D8CC4D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 18:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5FA1F236C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1161F2342A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2024 16:20:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACA8141987;
-	Wed, 22 May 2024 16:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFF0140E23;
+	Wed, 22 May 2024 16:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M+yRx/qJ"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUEAW0uv"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C625713E8A0
-	for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 16:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8912642AB9;
+	Wed, 22 May 2024 16:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716394777; cv=none; b=LVEsrw6YGDhWqvxCygxuSDWaWiFdybUj0KvBTHA9KxYA/aWxHu9fOS12VWqK/ZjN4ISknthk9Shnn+XUfgRwKgzud2uNqaGF7+6n0y3QHuXvB1GcPC60DYEHNy3yQmhnIdQ97H5Ch9zIXZ8DfgGoJXOUSVNQdBqOZ6hdEkBlA5I=
+	t=1716394820; cv=none; b=i4gPhFLOk0ePXPNQRl4xm4GZ6Ia8Gc6bOiwwPdHMyUue18yAgoVzvFla9DVii0Rryg8YkbVZ98/9FzPmNMtAFYCdBX5ruNrDemr475KQx8BqSKdTUmGf489+iwPtGOhtsnWY5/YK2YFJY1IKnRWaCdMvap1L41zhVDymx4kTTww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716394777; c=relaxed/simple;
-	bh=gRGdiC32qyMGfj6WpEKPIdOaphnyHadvcat7Ef04QOU=;
+	s=arc-20240116; t=1716394820; c=relaxed/simple;
+	bh=Q0YYgomuZ7a/Ey+Ex03pRVCfua6lfh9KBm3qhFwLyAg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q/B9PfVnUo24H7vbr5owG/jn+bwhgxVBirRYQVJOBe96PJP7DoU362jNU+nS3nFHAb7B4WKd81yQRAHNfcpPVuyMyjIsU3qxo+dkQnYh9QMpg5mc9iusNmX9K4cVjceQCXqKXpVmoWgRpIObIHjE3OSY9BI7ciI4PuP07eNwTZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M+yRx/qJ; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-7e1b520812fso35658939f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 09:19:35 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=F138G1rHXh7R9AJ4OwVKqCryeQyQRsRIDhiJ6dR/gp9iviAvi5rWnAYvIgfn68D+JLAoZAgZQUi8V+xtLl2mtQ9OIq+Ihxdow3wJcuRFuBewqnkYob7hwfDZ3AsEWt0MqymNJz9KTGDKdKms9e7k4v19xwRfvFikQb7dIVRqySc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUEAW0uv; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a621cb07d8fso155847566b.2;
+        Wed, 22 May 2024 09:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1716394775; x=1716999575; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716394817; x=1716999617; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=26coTTJPMwihRdwvqlxfLCNSgtD/ruUTDG9z4IGxkNE=;
-        b=M+yRx/qJyV3krTJFoIJpvzfi5HD9gPOjhWMFsZvS2WRQuzcBNB/hwbz/AHOa4wY+th
-         melQpBTsw3k8gyBdsCQAWDwm4ORJZG7qTjNgWuvT9k0e08W5V/6Bbgm1DM3CKge55wHg
-         EooZNmGoEJrYgfRZu5Gh0qTVOiGcGlDf3K0y4=
+        bh=rAmYmReX6PJbiPANH3CQQN4HAh3/OEfTwrGvBy42nz0=;
+        b=DUEAW0uvAAX5PjhG/Et0QkkPybkUG27toqovsjAvwtT58rajcX7A1jX1lnfGqe3FQR
+         SMGzilhMAUwdUPiiMTFeZHZh2B/uJ6kDedSx2owEFyU95+GlMiCY/UA1tF8TAzecOmGk
+         ykqNduk5wFqOklf1GoKIN+rNZtG9b7JFDrBSDMbNDi80y5TPOL0UgCArKLa3+iIl/g0o
+         Fh0iBKCB3aN6XoTEvGIjQYGwRRVnlp5JxwTAWExYl5grhISnLoJ+UGg06d3/YeSlxyfw
+         ceW+r/3msIaI+LXEkWFZBx2f9KqdgaJ0wdB98S8JOiOwk910EN2675hmvC+LL9eFjO9S
+         zxTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716394775; x=1716999575;
+        d=1e100.net; s=20230601; t=1716394817; x=1716999617;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=26coTTJPMwihRdwvqlxfLCNSgtD/ruUTDG9z4IGxkNE=;
-        b=cdzWrjHq+mbZ2WL+PtKaTT6llBYd5gBoGJnP/VAiLKDS/JU4ZCeh+wmfjqmhQeFW3U
-         UPDFMsQQfsgySSlo7eSvokxK/ncQAnTMQFr9EtL6Au9HDBICzTjBnjP/VCP882uJGB/r
-         r0+DLfxuCIafSqu9xZEgeNeVd+iCexXYHOKYP+lCaEW5l8Jld+66WzJOksEgRuMfY/Ul
-         Lm13w8Djw1EQ+38sIr80jPNsIBSiYxlhXspOy1Qb4bhkPwqOcq02GqFO9lkWsKKx/eSL
-         CkJ/LlJ8bJq8EpHqeQGs2e8XW/CMFABm+ZvGFls9DyXu5cYOIUPAupdjg+VUn0rdoVlr
-         DvNQ==
-X-Gm-Message-State: AOJu0Yyh9uFN7bdvH9DAmZBYub3lJkVLHTU59b09L7rnacZOWd6d4TRg
-	++//83PRhD7FTk9cWsIcNIPvC0tCixXDyK4vn2qcrGnOzERziksJfTVddxpWHq0=
-X-Google-Smtp-Source: AGHT+IH/KZa0o+v3YObJYKHyHITiD47mIwmwbzcFdaePVDylL6T1KHgx+UsgI0x7EBrdYtRJOKeT1w==
-X-Received: by 2002:a5e:cb03:0:b0:7e1:d865:e700 with SMTP id ca18e2360f4ac-7e38b2004fbmr274656739f.2.1716394774799;
-        Wed, 22 May 2024 09:19:34 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376fc6aasm7421787173.174.2024.05.22.09.19.33
+        bh=rAmYmReX6PJbiPANH3CQQN4HAh3/OEfTwrGvBy42nz0=;
+        b=Z40EKG/m+hgouVWOyf6bcmc5krbyvL6Fk8AqlI5HHYAFrMuG2YaBlAzyGryc4zSyVv
+         RWjisFiXHcMDmFSx3vEVeEfpGiBOlek3AkOEqfKq76PxJ6Q345LEHUmubj+XJAqdRS0a
+         2RCyIgUE6Gmltnpkb+yk5+SmQQcOkr97fEnuy94yYNkNIsLj2knfiVDR1R3FkCmdYuJw
+         CGUqTPEQ7AUtFJ2CZNV4qSc+LckXVzswUMhjxITxv86AmgvSAeseQ11J3zgIykyPMvdJ
+         CYL9PKEo5Zcqy3WD6tpPAPiMsj9KRkFbEr58iK5+bBuicaF+pzFokG0CmnAhBb9iusjd
+         afSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTtvawIpH8HGtyoZl//rQiMc0Hn7RWjobVadQMxSvpN5+BNBtHroBFQ+c950jiFTgXLsyU5ZUcJ6YTCYC2s6bo+HcCSaTbuEqD7ZTU07KchTIuWt+q3WmfQpKvQUTjcrCZJPp8kV0XDotJE7JAQUCyLSAj5EJRZCbx7JKvP2AXc0ju3MYqa04I1fo0zx4kiKZcUR+cHc3QTGduAInXRktNzHNSpCNPnhg=
+X-Gm-Message-State: AOJu0Yz2L7wmZcm7BPKH6A+b9zXTNp391JKZAFTpAmEgfEVc9psaenpH
+	JKsrytl3YLtAfSa9U/+lSQhkn5YTZgJL8mpZSDjsE9i7BB0h3pOg
+X-Google-Smtp-Source: AGHT+IHX16TQSndzssQgcqAzfbd1WNux9/z8SsMd1HxgJsKinbW/Bh1wbsuSCjyy29FD+JAs7+9gIQ==
+X-Received: by 2002:a17:906:f80e:b0:a5c:f73d:67b3 with SMTP id a640c23a62f3a-a6228153fe5mr162987766b.63.1716394816651;
+        Wed, 22 May 2024 09:20:16 -0700 (PDT)
+Received: from [192.168.50.244] (83.8.125.62.ipv4.supernova.orange.pl. [83.8.125.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7dd4sm1798467266b.139.2024.05.22.09.20.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 09:19:34 -0700 (PDT)
-Message-ID: <6caf3332-9ed9-4257-9532-4fd71c465c0d@linuxfoundation.org>
-Date: Wed, 22 May 2024 10:19:33 -0600
+        Wed, 22 May 2024 09:20:16 -0700 (PDT)
+Message-ID: <52428c0d-4b18-4707-9cda-4e6a11e256bc@gmail.com>
+Date: Wed, 22 May 2024 18:20:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,50 +75,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/68] Define _GNU_SOURCE for sources using
-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Christian Brauner <brauner@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-team@android.com, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
- bpf@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240522005913.3540131-1-edliaw@google.com>
+Subject: Re: [PATCH v3 3/8] ASoC: samsung: midas_wm1811: Add headset mic bias
+ supply support
+To: Mark Brown <broonie@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240519-midas-wm1811-gpio-jack-v3-0-0c1736144c0e@gmail.com>
+ <20240519-midas-wm1811-gpio-jack-v3-3-0c1736144c0e@gmail.com>
+ <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240522005913.3540131-1-edliaw@google.com>
+From: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <1aed24a7-ab2a-4c2b-a3bc-2b907e091624@sirena.org.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/21/24 18:56, Edward Liaw wrote:
-> Centralizes the definition of _GNU_SOURCE into KHDR_INCLUDES and removes
-> redefinitions of _GNU_SOURCE from source code.
+On 20.05.2024 16:35, Mark Brown wrote:
+> On Sun, May 19, 2024 at 10:17:49AM +0200, Artur Weber wrote:
 > 
-> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> asprintf into kselftest_harness.h, which is a GNU extension and needs
-
-Easier solution to define LINE_MAX locally. In gerenal it is advisable
-to not add local defines, but it is desirable in some cases to avoid
-churn like this one.
-
-> _GNU_SOURCE to either be defined prior to including headers or with the
-> -D_GNU_SOURCE flag passed to the compiler.
+>> +static int midas_headset_mic_bias(struct snd_soc_dapm_widget *w,
+>> +			     struct snd_kcontrol *kcontrol, int event)
+>> +{
+>> +	struct snd_soc_card *card = w->dapm->card;
+>> +	struct midas_priv *priv = snd_soc_card_get_drvdata(card);
+>> +
+>> +	if (!priv->reg_headset_mic_bias)
+>> +		return 0;
+>> +
+>> +	switch (event) {
+>> +	case SND_SOC_DAPM_PRE_PMU:
+>> +		return regulator_enable(priv->reg_headset_mic_bias);
+>> +	case SND_SOC_DAPM_POST_PMD:
+>> +		return regulator_disable(priv->reg_headset_mic_bias);
+>> +	}
 > 
+> We have SND_SOC_DAPM_REGULATOR_SUPPLY?
 
-This is huge churn to all the tests and some maintainers aren't
-onboard to take this change.
+This is pretty much copied from the implementation of the mic bias
+and sub mic bias regulator handling in the same driver; they all use
+SND_SOC_DAPM_MIC combined with an enable/disable function like this one.
 
-Is there an wasier way to fix this instead? Please explore
-localized options before asking me to take this series.
+What would be the correct thing to do here - add a secondary DAPM widget
+of type REGULATOR_SUPPLY and connect it to the MIC widget via audio-
+routing, or replace the entire MIC widget with a REGULATOR_SUPPLY (or
+something else entirely)?
+And should this be done with the Main Mic and Sub Mic as well?
 
-thanks,
--- Shuah
+Best regards
+Artur
 
