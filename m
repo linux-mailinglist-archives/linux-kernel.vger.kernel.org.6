@@ -1,188 +1,150 @@
-Return-Path: <linux-kernel+bounces-187110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025D78CCD3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:44:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FCE8CCD42
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712AE1F21CE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:44:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDD79B21D86
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C36713CAAD;
-	Thu, 23 May 2024 07:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dJsGiVzE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bT/5Rrsi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dJsGiVzE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bT/5Rrsi"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0B313CFA0;
+	Thu, 23 May 2024 07:46:36 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2F513BAFE;
-	Thu, 23 May 2024 07:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C6E7B3C1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716450278; cv=none; b=D1zKO9Rp2QdNNUl4KXf1PafLzKqQF7Auz7uYoowfjrWvIYnSC7gu7VjhEN9J0YMA5xuLPXiBhV+X2+nV6CyGC7XrYF77UxkvZq7IwyCsxlucAqI4LBMnkC7/19RV5EDSdeDaHcnKuGd4Qwlio+sU3FFauoLouEPb1pWhMQd2KCU=
+	t=1716450395; cv=none; b=lUdTvyO3lBwwg2UrdZdedPiBHejuvoiEyJbQwppa7lT/+SPaDhttiRzBnJR1N9aJx080VwP6Ga6BtV+yShW1fgpaHXYUjQVJQjRlPjIrbTcjxWafJGQlxoRdVXo4TcgM9JtlWPENSUepcFwq8+qK0CZP1Si7vmEMTu5l2FQ4d3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716450278; c=relaxed/simple;
-	bh=FkWsxJsUCyg1I1EBmpnZ1Cou5Ibt2llv0P05zVskbQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+WxrZXi2Hjeb1cYpVmidyWHhzO59o0a45DX0k0bKt2wVEyFz9zrjLxFB3MvTz8L8NwK4BQEhqrk4kVWwEI2Oe2GLb0+1SLV1NLPwIgVGBUPmjHMDLa7bgSxY1UNtMSuTY+3CR05nMA3bqxfOrSNF8L9et245olgHu9aRb0G5DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dJsGiVzE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bT/5Rrsi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dJsGiVzE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bT/5Rrsi; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C68022304;
-	Thu, 23 May 2024 07:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716450275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
-	b=dJsGiVzE043vdPvF4XLVfB5hlmA/ithXT7afY8YwAHGeyGprQrSflsExWko89JrJ63Gr9w
-	4+QQqZkPc9H0P13yjs64fJKfj+09eEadCMHatDLH9UuKS3pfBCDgDtXPICVn4CNi+sW6m7
-	C7LQcHD9MQqNK5nBJqlOtO9UlvH2DpE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716450275;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
-	b=bT/5RrsiU6NftYlREQoYHQLi5BsfvsUU8yytLUnWOVjgTc9r1KYYfLvKO02SdCS/ZISl7z
-	eeIqBWDJTZ3KUPCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716450275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
-	b=dJsGiVzE043vdPvF4XLVfB5hlmA/ithXT7afY8YwAHGeyGprQrSflsExWko89JrJ63Gr9w
-	4+QQqZkPc9H0P13yjs64fJKfj+09eEadCMHatDLH9UuKS3pfBCDgDtXPICVn4CNi+sW6m7
-	C7LQcHD9MQqNK5nBJqlOtO9UlvH2DpE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716450275;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
-	b=bT/5RrsiU6NftYlREQoYHQLi5BsfvsUU8yytLUnWOVjgTc9r1KYYfLvKO02SdCS/ZISl7z
-	eeIqBWDJTZ3KUPCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 220A113A6C;
-	Thu, 23 May 2024 07:44:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3nFJCOPzTmawSAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 23 May 2024 07:44:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C0AD9A0770; Thu, 23 May 2024 09:44:34 +0200 (CEST)
-Date: Thu, 23 May 2024 09:44:34 +0200
-From: Jan Kara <jack@suse.cz>
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] jbd2: reset fast commit offset only after fs
- cleanup is done
-Message-ID: <20240523074434.xdpyso46v5l6qvze@quack3>
-References: <20240521154535.12911-1-luis.henriques@linux.dev>
- <20240521154535.12911-3-luis.henriques@linux.dev>
- <20240522104500.z343a6xqfduuq5i3@quack3>
- <87le42dl4b.fsf@brahms.olymp>
+	s=arc-20240116; t=1716450395; c=relaxed/simple;
+	bh=X1IUARsKujsDFRnxlLdxfmtcj0gfHJSfI3M9uf952PM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kfhqapFzRMsodSQntwcAkDYM4lwd+xMYV52WWSsD7hXUNQBz6ytOfXcFOY5haHVUVEwXixjgIYabsoDYwj3UiM0AU5Yv1g240rX58MiC9lw2tGfHaWmu3XB+SheXl53S6vDjpYCHs/AL+kEH3Y/AIpwxh5JevK1mFoUdNhcNn2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1e409d1f4so140613339f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:46:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716450393; x=1717055193;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/JSb/i2gD6c9fSgYzXiWuZto76mKs4deQ4sFdwc39TU=;
+        b=LsqiFwyr4myNiBLyytIvQ1HdZwsD3xEhp96jtz9VqXxCntvn7cFX0v4+9bQtgT006i
+         RnaGYE/oQJZlcTOk/If1PDyeIUt6zwtlV55yMGOsuSQORjwSHAtEvgKPSWfjrh1+THT2
+         l+nwoKsPeAeSP3m7qDHr1cSmceKl9azzNV9Qnj+x/lLG21BsptsRZ8MLhGYqah8MUEG8
+         Hf2Q8RPYSC5B5Q+4N8SVlSUPTcrxEi5ob3mUinal/sqKZlZeuyUM+FmkrBDKucnyUsuT
+         b4U/m1TqMQxYAfNUjsc+KSajclDlb/5daXjainhyE1qSclHLEaJJupT27FR7AjfMle5q
+         UfgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSqc0Q1GidF71IvJjL1sF9vBVA6eq0vYbwCq0TxtejMFXRChc6gb+369XkaMltMCuqIl/qLoS4HH86ha4tXG0eTeuNaf0YqespxRlJ
+X-Gm-Message-State: AOJu0YwU+K+oD0MSPeh1HIIu/fgREuRrx6UQs6Y55xwGOLM7s0ZNXCHA
+	sBFgHt38FPOQ/XeVig5rAQkOqgJ+UzC4u66yunpWeayLN1BeQBtVup7xJ6XXYMyxygg960gKbPo
+	On6gc47ERWlOxTF45iIE4lqKZCAMskYK+6tNvxuugFbc4adyAgXmLI6I=
+X-Google-Smtp-Source: AGHT+IFKjr2T2mLKa9hndWc16xzs0P6jYcnPNbb75LC9YUPqzntLRpMQdJ7igxZRkhSbZPGtkMXVaXtQEujlW1OZnVGcLaVHpj5y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87le42dl4b.fsf@brahms.olymp>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+X-Received: by 2002:a05:6638:8619:b0:488:59cc:eb4c with SMTP id
+ 8926c6da1cb9f-4afe3b46381mr281202173.3.1716450393710; Thu, 23 May 2024
+ 00:46:33 -0700 (PDT)
+Date: Thu, 23 May 2024 00:46:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fdef8706191a3f7b@google.com>
+Subject: [syzbot] [wireless?] WARNING in __rate_control_send_low (2)
+From: syzbot <syzbot+8dd98a9e98ee28dc484a@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 22-05-24 14:36:20, Luis Henriques wrote:
-> On Wed 22 May 2024 12:45:00 PM +02, Jan Kara wrote;
-> 
-> > On Tue 21-05-24 16:45:35, Luis Henriques (SUSE) wrote:
-> >> When doing a journal commit, the fast journal offset (journal->j_fc_off) is
-> >> set to zero too early in the process.  Since ext4 filesystem calls function
-> >> jbd2_fc_release_bufs() in its j_fc_cleanup_callback (ext4_fc_cleanup()),
-> >> that call will be a no-op exactly because the offset is zero.
-> >> 
-> >> Move the fast commit offset further down in the journal commit code, until
-> >> it's mostly done, immediately before clearing the on-going commit flags.
-> >> 
-> >> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
-> >
-> > Did you see any particular failure because of this? Because AFAICS the
-> > buffers cleaned up by jbd2_fc_release_bufs() are only allocated during fast
-> > commit (from ext4_fc_reserve_space()). And the code in
-> > jbd2_journal_commit_transaction() is making sure fast commit isn't running
-> > before we set journal->j_fc_off to 0.
-> 
-> No, I did not see any failure caused by this, this patch is simply based
-> on my understanding of the code after spending some time reviewing it.
-> 
-> The problem I saw was that jbd2_journal_commit_transaction() will run the
-> clean-up callbacks, which includes ext4_fc_cleanup().  One of the first
-> things that this callback will do is to call jbd2_fc_release_bufs().
-> Because journal->j_fc_off is zero, this call is useless:
-> 
-> 	j_fc_off = journal->j_fc_off;
-> 
-> 	for (i = j_fc_off - 1; i >= 0; i--) {
-> 		[...]
-> 	}
-> 
-> (It's even a bit odd to start the loop with 'i = -1'...)
-> 
-> So the question is whether this call is actually useful at all.  Maybe the
-> thing to do is to simply remove the call to jbd2_fc_release_bufs()?  (And
-> in that case, remove the function too, as this is the only call site.)
+Hello,
 
-What is I guess confusing for you (and somewhat for me as well) is that
-journal->j_fc_cleanup_callback() gets called from __jbd2_fc_end_commit()
-*and* from jbd2_journal_commit_transaction(). I agree the
-jbd2_fc_release_bufs() is useless for the call from
-jbd2_journal_commit_transaction(), it is however needed for the call from
-__jbd2_fc_end_commit(). There are however other bits - namely the
-s_fc_dentry_q and s_fc_q list handling that need to happen both for normal
-and fast commit...
+syzbot found the following issue on:
 
-								Honza
+HEAD commit:    4b377b4868ef kprobe/ftrace: fix build error due to bad fun..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f96934980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=17ffd15f654c98ba
+dashboard link: https://syzkaller.appspot.com/bug?extid=8dd98a9e98ee28dc484a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6f4c61bc9252/disk-4b377b48.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/841f1b24d3a1/vmlinux-4b377b48.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/017b655dca3d/bzImage-4b377b48.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8dd98a9e98ee28dc484a@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+no supported rates for sta (null) (0xffffffff, band 0) in rate_mask 0x0 with flags 0x0
+WARNING: CPU: 0 PID: 8812 at net/mac80211/rate.c:385 __rate_control_send_low+0x659/0x890 net/mac80211/rate.c:380
+Modules linked in:
+CPU: 0 PID: 8812 Comm: kworker/u8:20 Not tainted 6.9.0-syzkaller-08544-g4b377b4868ef #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Workqueue: events_unbound cfg80211_wiphy_work
+RIP: 0010:__rate_control_send_low+0x659/0x890 net/mac80211/rate.c:380
+Code: 8b 14 24 0f 85 de 01 00 00 8b 0a 48 c7 c7 80 69 e1 8c 48 8b 74 24 10 44 89 f2 44 8b 44 24 1c 44 8b 4c 24 0c e8 08 9b 5e f6 90 <0f> 0b 90 90 e9 71 fe ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c db
+RSP: 0018:ffffc90005d074a0 EFLAGS: 00010246
+RAX: d769b2aeaeba2800 RBX: 000000000000000c RCX: ffff88802e348000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffff88807ec45168 R08: ffffffff81585642 R09: fffffbfff1c3995c
+R10: dffffc0000000000 R11: fffffbfff1c3995c R12: 0000000000000800
+R13: 000000000000000c R14: 00000000ffffffff R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f61c4d3cd58 CR3: 000000004aca6000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ rate_control_send_low+0x1a8/0x770 net/mac80211/rate.c:405
+ rate_control_get_rate+0x20e/0x5e0 net/mac80211/rate.c:921
+ ieee80211_tx_h_rate_ctrl+0xc88/0x1a10 net/mac80211/tx.c:763
+ invoke_tx_handlers_late+0xb3/0x18e0 net/mac80211/tx.c:1848
+ ieee80211_tx+0x2e3/0x470 net/mac80211/tx.c:1969
+ __ieee80211_tx_skb_tid_band+0x4e2/0x620 net/mac80211/tx.c:6103
+ ieee80211_tx_skb_tid_band net/mac80211/ieee80211_i.h:2266 [inline]
+ ieee80211_handle_roc_started+0x267/0x440 net/mac80211/offchannel.c:248
+ _ieee80211_start_next_roc+0x7a1/0xb00 net/mac80211/offchannel.c:381
+ cfg80211_wiphy_work+0x221/0x260 net/wireless/core.c:437
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
