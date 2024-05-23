@@ -1,138 +1,131 @@
-Return-Path: <linux-kernel+bounces-187831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8ADE8CD91D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:22:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A808CD924
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCA5283199
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 064261F21F3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86F06EB73;
-	Thu, 23 May 2024 17:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C07762DC;
+	Thu, 23 May 2024 17:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="dYq99Ek+"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ty0u1J3e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9861CFBE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB041CFBE;
+	Thu, 23 May 2024 17:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716484918; cv=none; b=hI+GBKaDhHTyY80vWkmbLYmhU4nl7lyniRb2TS6VE4GlM5C1ynlA3AAmw/M6agG97C4JmNUBPEg87PKM2X3RRUFO+LGIlqttyklwMftEA6PH168PHNgbRtfH8HhDGozluMKBs1l6VZgDVwiURy7ZBSDl9c7/F3Llg/JqrFDOGLc=
+	t=1716485050; cv=none; b=tWuLHshgP6ZtvUNnavWo1EnDy11Fmaw6B+y1vuyi8auYHLYCoXSKXSCLSVJuTM0GNtBPnHjHML3LEkvGehrSNzlYLu3g21GIoP5QgvSLyXg5uMKVI1YjmQENKar/++OoNk+DIdSn0XgxNx82DpkxHuEvVfD+DRoye5GQPNd2dvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716484918; c=relaxed/simple;
-	bh=p4l2t6I+lwT3BEpz+lNnMTPic01xwFiPS/KX8MJ/Md4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a+/nOAAXPhGJJrCer3E7J9Wv/MwxJ5WviRYOyhTB4W2TwqT3mdWfRWvtnVJ6SLD4mB/YZuDfr6k+6dSMW3EOlEsBZPjtPIWozAi1hv3VVt6knxCGrEbQOGIE/X67TVYx43cmOa28ajuQh16YpFnZGjpZBKKbTi09BnNDmFoLgOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dYq99Ek+; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso1058a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:21:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716484915; x=1717089715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kguOkz8BBoxZq/59dTE1BE5v78wz8qUVU81MIvbz22g=;
-        b=dYq99Ek+2a1lDql+wYWGSwzyiWey+I0Pz5ghCrNs56V/zm2Ib36luuclnMPFkQJ9xp
-         U0+5LyMD807dTHNxPabjU5ePgJ8LnlTYEpZBl9pQf2VhZDJzMN5knBtmkoLIWoDfhOHQ
-         MiBS3XoqmahO7PaCVrwTkqOP9KjAkUsHj7WFkL+bEv3zLk3EnJLJTpBRM5Si1DC9QUdQ
-         S+nJbLlEreGJVW/JxVUZkK4FIPTXnv9i+kkEIVyTHwM9HXDm5Hz89k5d9jQuxroNAzKj
-         YsOSrjb4j/jepc8KQF4a+coKwSdVaRJxYVmtN+c8uVP7y1aGdVTuY3AnaHA/zaT0DqFr
-         7EkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716484915; x=1717089715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kguOkz8BBoxZq/59dTE1BE5v78wz8qUVU81MIvbz22g=;
-        b=Wry8lVzfueOJKqNbXyNQTku+9KJlhrtMqDmPRWAbOhCGyYn8wk+4HbW3HqDsmyTJh9
-         QauUmkrgML+rF2Dfj7aKLZjdN2cteCcmW/AZDSAXG4L+yQPnMv55v9OVK/si6TgAUEUg
-         8oCGK8vRBZeyKorHeGpAWbVnYg2naJweOSTRLOBYZ29l5li0zXYCGyVRZf0YIdxy+l83
-         wjYE3+8k35rQCQ2cat+y8Ml8/9hRHdK5d6GO+4XydsOPPAmL4ZkeXBq0/znQkZuWQuC8
-         EYtg5irkdb9xITLRWImfMvJ+cyKkLvXwRADPKFK9OtG7KQ5Rfmmox4FuIY0TgKJlrvuL
-         AcGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9+1ExI76u+OJNTc6FHYyBYa1ewJXhf5ATytZew7Jf7wE7vH8SwrKwGoI8SsIE2mXPOfWEotjEZFWW6xg2GAxJVphN0ypgLFNa6/ZX
-X-Gm-Message-State: AOJu0Ywm/f2iKcZt3+1i7aAOToKtlt3cwK6WcpuHLg0OFdG1bQJuIGvl
-	k2hnjxUUtFHF6denVgzAuGKjHfmURfgWrp77gXja1Vti7J+96EWGXGVgt2w+FsFzDZkH2819xEP
-	FZ8SPqpOOnpsZwWnP/hQ9MtlhL6VrKXFvf5KC
-X-Google-Smtp-Source: AGHT+IH+78xJj6jnX1rb2rKorVGrZ9GXUUGh5OuKw+d0r72nAyfAyGgJ+q4JesoTazL/0S+HDYKfZPbqF4LoZrYt1/g=
-X-Received: by 2002:a05:6402:254a:b0:573:4a04:619 with SMTP id
- 4fb4d7f45d1cf-57843f58ae3mr255037a12.4.1716484914607; Thu, 23 May 2024
- 10:21:54 -0700 (PDT)
+	s=arc-20240116; t=1716485050; c=relaxed/simple;
+	bh=/CGFc+blNV0486kFVxY2jABx+nPgrejqbf4p3JDqyQA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=o3F3x9mEsSgTqXvdnNfpqWbadvc9lYJALFUYU7s7bKuqdAerM2vnbhSJdFvhoJzUW9Uz6zuRuAZ7/UiSff8DVEJwddbWo3tI+J04ngyjVx+KjFlYSbbCHpQUrCIgXommL051W5DGJfQ5xb5uXfhyLlfgFNdVdpLD/GWerBiTq7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ty0u1J3e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 133C2C2BD10;
+	Thu, 23 May 2024 17:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716485050;
+	bh=/CGFc+blNV0486kFVxY2jABx+nPgrejqbf4p3JDqyQA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=Ty0u1J3eEheCXO8OBuK9DmM1ZmA0o6JkNgNnsm/kz6lSqYAYqeA6NCqJ1a7W1lRPy
+	 hO4gyLSCLLF/3/ZUOpMertLE9jAd0VDSOwgagho0WYkYmApOX+yeP9uFf8zsbFkFDR
+	 q9QW3UuwmTJo0S/eC4T/P5hqnd+4Ac8dKYKtCHOIQ+lXlMMZ1pVXzsMLFCXNWiYIId
+	 hUb0qFmWd2FlArY28dhu+FvmOh5VwT7efq9S5S9c1uylrte9ONgvEZrc7e7n1wCBVb
+	 wnsVPizoGTy0OYYe6U7a6OsKN/CtHm+MDopoZJARDRFiYInNeM5cDZnvENi8ovDgPX
+	 QzTDAg0nGRbVA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20c9c21619aa44363c2c7503db1581cb816a1c0f.camel@redhat.com>
- <CALMp9eSy2r+iUzqHV+V2mbPaPWfn=Y=a1aM+9C65PGtE0=nGqA@mail.gmail.com>
- <481be19e33915804c855a55181c310dd8071b546.camel@redhat.com>
- <CALMp9eQcRF_oS2rc_xF1H3=pfHB7ggts44obZgvh-K03UYJLSQ@mail.gmail.com>
- <7cb1aec718178ee9effe1017dad2ef7ab8b2a714.camel@redhat.com>
- <CALMp9eSPXP-9u7Fd+QMmeKzO6+fbTfn3iAHUn83Og+F=SvcQ4A@mail.gmail.com> <87cypdha4i.ffs@tglx>
-In-Reply-To: <87cypdha4i.ffs@tglx>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 23 May 2024 10:21:42 -0700
-Message-ID: <CALMp9eTCu0P79rX4f4j=9NFSy0L5DqoWqruAe95Qq9P1R=ucKA@mail.gmail.com>
-Subject: Re: RFC: NTP adjustments interfere with KVM emulation of TSC deadline timers
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 May 2024 20:24:04 +0300
+Message-Id: <D1H75ZOA69LC.3OO4RAW8JBNHY@kernel.org>
+Cc: <keyrings@vger.kernel.org>, "David Woodhouse" <dwmw2@infradead.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH RESEND] KEYS: trusted: Use ASN.1 encoded OID
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240523131931.22350-1-jarkko@kernel.org>
+ <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
+ <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
+ <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
+ <cb7510433c13aaaa9bc64d624331f1a3a958fcf3.camel@HansenPartnership.com>
+In-Reply-To: <cb7510433c13aaaa9bc64d624331f1a3a958fcf3.camel@HansenPartnership.com>
 
-On Wed, May 22, 2024 at 1:20=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
+On Thu May 23, 2024 at 8:08 PM EEST, James Bottomley wrote:
+> On Thu, 2024-05-23 at 11:30 -0400, James Bottomley wrote:
+> > On Thu, 2024-05-23 at 16:54 +0300, Jarkko Sakkinen wrote:
+> > > On Thu May 23, 2024 at 4:38 PM EEST, James Bottomley wrote:
+> > > > On Thu, 2024-05-23 at 16:19 +0300, Jarkko Sakkinen wrote:
+> > > > > There's no reason to encode OID_TPMSealedData at run-time, as
+> > > > > it
+> > > > > never changes.
+> > > > >=20
+> > > > > Replace it with the encoded version, which has exactly the same
+> > > > > size:
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A067 81 05 0A 01 05
+> > > > >=20
+> > > > > Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue
+> > > > > so
+> > > > > that the OID can be simply copied to the blob.
+> > > >=20
+> > > > This is true, but if we're going to do this, we should expand the
+> > > > OID
+> > > > registry functions (in lib/oid_registry.c) to do something like
+> > > > encode_OID.=C2=A0 The registry already contains the hex above minus
+> > > > the
+> > > > two
+> > > > prefixes (which are easy to add).
+> > >=20
+> > > Yes, I do agree with this idea, and I named variable the I named
+> > > it to make it obvious that generation is possible.
+> > >=20
+> > > It would be best to have a single source, which could be just
+> > > a CSV file with entries like:
+> > >=20
+> > > <Name>,<OID number>
+> > >=20
+> > > And then in scripts/ there should be a script that takes this
+> > > source and generates oid_registry.gen.{h,c}. The existing
+> > > oid_registry.h should really just include oid_registry.gen.h
+> > > then to make this transparent change.
+> > >=20
+> > > And then in the series where OID's are encoded per-subsystem
+> > > patch that takes pre-encoded OID into use.
+> > >=20
+> > > Happy to review such patch set if it is pushed forward.
+> >=20
+> > Heh, OK, since I'm the one who thinks it's quite easy, I'll give it a
+> > go.
 >
-> On Thu, May 16 2024 at 09:53, Jim Mattson wrote:
-> > On Wed, May 15, 2024 at 2:03=E2=80=AFPM Maxim Levitsky <mlevitsk@redhat=
-com> wrote:
-> >> > Today, I believe that we only use the hardware VMX-preemption timer =
-to
-> >> > deliver the virtual local APIC timer. However, it shouldn't be that
-> >> > hard to pick the first deadline of {VMX-preemption timer, local APIC
-> >> > timer} at each emulated VM-entry to L2.
-> >>
-> >> I assume that this is possible but it might add some complexity.
-> >>
-> >> AFAIK the design choice here was that L1 uses the hardware VMX preempt=
-ion timer always,
-> >> while L2 uses the software preemption timer which is relatively simple=
-.
-> >>
-> >> I do agree that this might work and if it does work it might be even w=
-orthwhile
-> >> change on its own.
-> >>
-> >> If you agree that this is a good idea, I can prepare a patch series fo=
-r that.
-> >
-> > I do think it would be worthwhile to provide the infrastructure for
-> > multiple clients of the VMX-preemption timer.
->
-> That only solves the problem when the guests are on the CPU, but it does
-> not solve anything when they are off the CPU because they are waiting
-> for a timer to expire. In that case you are back at square one, no?
+> Turns out it's actually really simple.  This would go as three patches:
+> adding the feature to lib/oid_registry.c using it in trusted keys and
+> removing the now unused OID encode from lib/asn1_encode.c but I'm
+> attaching here (minus the removal) to give an idea.
 
-If the vCPU is in virtual VMX non-root operation while not running,
-and the timer fires late, then we just emulate a VM-exit from L2 to L1
-the next time the vCPU gets a chance to run. The L2 guest will not run
-past the deadline, nor will the L1 guest run before the deadline.
-That's all fine.
+This looks pretty good to me at least in this level. I could repeal
+and replace the patch I did today with this if it plays out well.
 
-> > (Better yet would be to provide a CLOCK_MONOTONIC_RAW hrtimer, but
-> > that's outwith our domain.)
->
-> That's a non-trivial exercise. I respond to that in a separate mail.
->
-> Thanks,
->
->         tglx
+BR, Jarkko
+
 
