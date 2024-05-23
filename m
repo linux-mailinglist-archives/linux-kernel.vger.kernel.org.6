@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-187492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6028CD282
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:46:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 643888CD284
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7070A2841CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:46:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9634E1C21248
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA714A4CA;
-	Thu, 23 May 2024 12:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E64A14A4C5;
+	Thu, 23 May 2024 12:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2Fqc+qs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuDJf7NO"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F19213BAC7;
-	Thu, 23 May 2024 12:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5900813BAC7;
+	Thu, 23 May 2024 12:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716468355; cv=none; b=OE+sRQsmvFLn0hOtKQ6+LPTi7uJkCQmSgCbXX4NDZm8S1NWeh8cp+UNwSpL8Uvd9rgo8u5O4BT9vWn0jwncatlFlO1tPDiZOAwZItwPh6CzwBJbOdADweLi9J4ORxogEFhD5wJooW/gGoZptaNSCD2fMx4ghusaBSb2C/QPLlxQ=
+	t=1716468388; cv=none; b=ZVwqCzaN1KFzT7xQ/NuBni60tk3FSI1dI5IoTvZqm1z5dDQv1MXyVtgo+24xFe/XpFyNKW5Gd7IBzjKKtgW+OuWMRVJXuLEDrp2O0NWfTaA9hwPuP3CTeA0XeMpLa9/EJOmKKJO4FYa0i6sLX7EIJu/acWx9OTyyU8i+Xxo9JZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716468355; c=relaxed/simple;
-	bh=Dr5mko5as+cSEEbcfRg1MLGJNO6Fl6XswPL+RLiRfUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Si5rThk++eNIXUGfVK5NYmQsg9Id5EQagWt/gc+T+pAuvuurZs/cpRnTi5ANxqPNdIsm/P67zQ7ELejX8zO/OVfso8lpTVcu5yOZ6mMM9yTLHrICOw2xYhh21t6+4TECqSXIUfQoyUuBbkdwEqLMmRnstgrcfSqYFU8jrNBsoyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2Fqc+qs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB4BEC2BD10;
-	Thu, 23 May 2024 12:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716468355;
-	bh=Dr5mko5as+cSEEbcfRg1MLGJNO6Fl6XswPL+RLiRfUc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q2Fqc+qs8xlohHj9/B8DY0l86xciT9fBdiACVo3T2vBZpbizMUEK7yhlMtHNR5CpH
-	 G8PHTYwOB4p0hisDOJrwmpDBt/3II+1W3d4PYtjsWz6LdJx8ARAu2fKDIaA404PyZ0
-	 MuWMUE/GwPa50bonVa/bAgx50maWJYnfcRw9sR9jHXaOlQlUEU4/SmtIlltGezw+Pe
-	 gzkT2vAmok8sJEKEZz2ZsqPUhZOG0+vqI9mdYcVJUH4ZVA1mOlRthsYQETuf1dP5Pm
-	 OS1oyKDeWXZ3Si51tGPQ3iy6pIunlQQiLbUSt3xaV6SqZkySAM9RswuvyoouAQ4bg3
-	 1K/oc6GxzNMUw==
-Date: Thu, 23 May 2024 13:45:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Conor Dooley <conor@kernel.org>, David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-Message-ID: <c33b87f7-d094-4299-a48b-e977203dc8dc@sirena.org.uk>
-References: <20240513-headsman-hacking-d51fcc811695@spud>
- <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
- <20240514-aspire-ascension-449556da3615@spud>
- <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
- <20240516-rudder-reburial-dcf300504c0a@spud>
- <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
- <20240519-abreast-haziness-096a57ef57d3@spud>
- <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
- <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
- <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
+	s=arc-20240116; t=1716468388; c=relaxed/simple;
+	bh=lGMIoH5T46kzO4iwZdsC4s3lfRrC77+eDo7BvVfEl40=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=WQTexGHADIIGl3AMZp0VJtlNHLzGEPlZaponojeY8cYL8TPxwcpCShKLrDr/HF/Tws9vFrXbseSLm4ZMPBz9K+NdbIrs7cTi+RhNnVmcI/7PHCLFz0tEDSoePlTYqUrv99PYaK0YUdgWpNGGu/uKL6B753VApOUxNQPf8K9FcOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuDJf7NO; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c9b74043b1so3668702b6e.1;
+        Thu, 23 May 2024 05:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716468386; x=1717073186; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cwfzWJdq4oiCB51H48RHNVbhTyni99WzNeARyS1lZ9c=;
+        b=kuDJf7NOGfehJp7IqvkSrLbjnX2G9Uyn3RVhJ1gG3ml2qTRecRDCC8nblUtG1w1JI8
+         bljYW6noF+ht8YENBga1G37s4WcZ9N9TVNwQiGFiTA2uNFNtlJbkLA6yhi86PF5iscBH
+         C6SmhMc+q2PQVYcXTAnsIhz+iLjyJ8i+3XDTlMqfGaRNXXizfBfmZqFWGPvR33b2orkt
+         mtM+uZOVswjbEamaOhJKxE986c0YgokuHH2CyYYLePMh81gMLf2vfIkq+L2DANA6Nb+l
+         zkhO4FCjYXpxRiV2nQVtz2yg9quIazf8p4jZdNgKUki/rXCa+BiuD6xVdstZxjGvCf9r
+         hpuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716468386; x=1717073186;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cwfzWJdq4oiCB51H48RHNVbhTyni99WzNeARyS1lZ9c=;
+        b=N+vJfH1WCiFBA3Nso3JnLx/5gA0w2IAHDodrfSl6GqyLdjyA/h7g0KfIbt5UFb2DPu
+         viLxVniRCwtqjQb/cZNv087W6f/0+a9k+YqIKjFTpHShCavlh2OVoie8N7DIc824tLNQ
+         awDpPlrHp/bcVZ4AteX9wLkVXzCNdahpwqVwzlCRMbUqVEFTmemYnCeeaFuzTLY6IQ8H
+         65epoMeRzuDJ41KG0IeAGhi8Yz+Q5NJh2oH/Gk3UExGz7zAYRVGlFmiYwnmw+A6yo3qH
+         2L8VVKBTPdDR2n9OFEp05krfKmGeQGNRa0TiyBs7VdoSL3Is4sGgLe4sl7KxGqdlD9Ah
+         fcuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhCWKSALnshoi0X+HCymBoKi80FyWkm9LxliGC3hel6sWYGexzfmEan2eKQEcbes+hc5M2+mIvJs9uZeFRglx9g0PvTbdx
+X-Gm-Message-State: AOJu0YyrVKHZc14gdHhGdmBcbF3dROdQaUBzBgVIAvwAP6sH5lwOEo+a
+	7uQl8Eav/wsIWJZcLgxpjoqlY5rsIN9UaNXmhAsV+e+AJP6lYWWW
+X-Google-Smtp-Source: AGHT+IEWOQO+sHcIWd+UYUki/AQh7qn5PKnlgpaB452QBrdO+T+G7beHRM5noFPXpQvb3P9XUG0IRA==
+X-Received: by 2002:a05:6808:3a8f:b0:3c9:6cfb:bf4e with SMTP id 5614622812f47-3cdb1712ddbmr4620982b6e.7.1716468386073;
+        Thu, 23 May 2024 05:46:26 -0700 (PDT)
+Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7949cdbb4eesm123473585a.94.2024.05.23.05.46.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 05:46:25 -0700 (PDT)
+Date: Thu, 23 May 2024 08:46:25 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: =?UTF-8?B?TGVuYSBXYW5nICjnjovlqJwp?= <Lena.Wang@mediatek.com>, 
+ "kuba@kernel.org" <kuba@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+ =?UTF-8?B?U2hpbWluZyBDaGVuZyAo5oiQ6K+X5piOKQ==?= <Shiming.Cheng@mediatek.com>, 
+ "pabeni@redhat.com" <pabeni@redhat.com>, 
+ "edumazet@google.com" <edumazet@google.com>, 
+ "willemdebruijn.kernel@gmail.com" <willemdebruijn.kernel@gmail.com>, 
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+ "davem@davemloft.net" <davem@davemloft.net>
+Message-ID: <664f3aa1847cc_1a64412944f@willemb.c.googlers.com.notmuch>
+In-Reply-To: <15675c6e0facd64b1cdc2ec0ded32b84a4e5744b.camel@mediatek.com>
+References: <20240428142913.18666-1-shiming.cheng@mediatek.com>
+ <20240429064209.5ce59350@kernel.org>
+ <bc69f8cc4aed8b16daba17c0ca0199fe6d7d24a8.camel@mediatek.com>
+ <20240516081110.362cbb51@kernel.org>
+ <15675c6e0facd64b1cdc2ec0ded32b84a4e5744b.camel@mediatek.com>
+Subject: Re: [PATCH net] net: prevent pulling SKB_GSO_FRAGLIST skb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dnVW22IE+zhCJevq"
-Content-Disposition: inline
-In-Reply-To: <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
-X-Cookie: You auto buy now.
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
+> The problem now is the ethtool in ubuntu can't support "rx-gro-list"
+> and "rx-udp-gro-forwarding" although it is updated to version 6.7 from 
+> https://mirrors.edge.kernel.org/pub/software/network/ethtool. 
+> 
+> There is another verison in 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/ethtool.
+>  We download the sourcecode but don't know how to compile for ubuntu as
+> no ./configure there.
+> 
+> Is it the one we should use?  If yes, could you please show me how to
+> compile and install this ethtool?
 
---dnVW22IE+zhCJevq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+https://git.kernel.org/pub/scm/network/ethtool/ethtool.git is the
+upstream ethtool repo.
 
-On Thu, May 23, 2024 at 02:15:35PM +0200, Nuno S=C3=A1 wrote:
-> On Wed, 2024-05-22 at 19:24 +0100, Conor Dooley wrote:
-> > On Tue, May 21, 2024 at 09:54:39AM -0500, David Lechner wrote:
-> > > On Sun, May 19, 2024 at 7:53=E2=80=AFAM Conor Dooley <conor@kernel.or=
-g> wrote:
-> > > >=20
-> > > > On Fri, May 17, 2024 at 11:51:58AM -0500, David Lechner wrote:
+Since you are testing a custom built kernel, there are other hacky
+ways to configure a feature if you lack a userspace component:
 
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
-
---dnVW22IE+zhCJevq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZPOnwACgkQJNaLcl1U
-h9Bcrgf/YsNehmAOnw1qa+TJ7fsKV17/BbtOH4aEvi01QY+cmzcwWx2qiqVyKZoT
-wO5F+lXO14aar9+4jKHeNH2FtKDd24HZNncTZxDR7TKMgm7P2fjisIQwd7ZuxiED
-HNlTbRaGW6PeEs7goEG8zcgJ1jmETp4HpR7JqxlRsd9vWbii33er2/H1FUnVFMtU
-nCJ9Jm13i5EtnLLOmA77i7JwwmsGcgqaSGkKAavgP+rpxxnur24lscXfBjp86Qh+
-7+fWp/WJ50AYAjnrGKEvo+aRRIWMZB0AgN6X6aZoYn/Yq18v+jd4oEv8gZhDgCMA
-gqwBWmKLfvimnPbTvUCcYtqg9udJ4g==
-=R0tn
------END PGP SIGNATURE-----
-
---dnVW22IE+zhCJevq--
+- just hardcode on or off and reboot
+- use YNL ethtool (but features is not implemented yet?)
+- write your own netlink helper
+- abuse some existing kernel API to toggle it, like a rarely uses systl
 
