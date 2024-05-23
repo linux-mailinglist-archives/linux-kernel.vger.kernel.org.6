@@ -1,120 +1,131 @@
-Return-Path: <linux-kernel+bounces-187467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563C68CD242
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:25:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333128CD243
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6B11F22F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:25:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BA31F22F64
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FFC1487F2;
-	Thu, 23 May 2024 12:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8283148FE2;
+	Thu, 23 May 2024 12:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3uPRWnb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vu/HD1iJ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D0713B5B1;
-	Thu, 23 May 2024 12:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753FB1D6AA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:26:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716467129; cv=none; b=fO6maEGatpa6fL1URq3mqaZG0HFQ9xp1bhtt9GynTJqfCru8OR71l03PkLJOy/r/hdMK7dC8VKpdmYfJztESBzMCic61+7sOpaA0ysHiFgptxcu8cOzk9YvH4RbRgWIQho0weXRSkeogm3C9IgwC+lX8bR0bTBhQX9HBGiChRDg=
+	t=1716467170; cv=none; b=I64nkk6qcTTFRrQcgZSfnb6u5GaBZgwvT2FRHe3MzZY1VLxlQTBxLG0O7LZk+wbB7tuLqDC2Ql/C66R1yGiuazr6kx/3KSdIdXlWzjIBKIJ3byWA79Zj6uRz8Isj4MNhouHQeBszW6KGKYWACsZMqwdxBc46htkQukQxl33HF/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716467129; c=relaxed/simple;
-	bh=634cOFOD65tGG3cW/Dv64LlAod66RbAwHRiThD4dagg=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=qT566RiPqvEpPdbCRlBUTEAuxpJ+WyzGHGgXcXEmRfjbgk+iyNiofQjSNHAx5cIMk8LqU3r0yPI1JuqXysEhyr2ewMCNreNWKK/66bTrFnrhnd1lEkuNscXa1F93p4QwvTCbt+B3rzihI/WS37ZhR/q9hwXF8Y8yzdYTHE7DYrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3uPRWnb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55492C2BD10;
-	Thu, 23 May 2024 12:25:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716467128;
-	bh=634cOFOD65tGG3cW/Dv64LlAod66RbAwHRiThD4dagg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=K3uPRWnbzmbBCCxHrhCweOvj1zOzly6hK6JSpQO0p0vTbpTOrhCZlVNzqvIkm0XKh
-	 wj8i3qUozdrul3DtZx358q8nTvtxSBg4y/vC+19AEqUkeo7W6fUQKT0GFh0Ipm8vUk
-	 x9ZW/y7dmTa+nUByIyXpFeUCzeDu1HGHSN21nJDVJnPFhWwe9iw6GMxWLWxm+fXITP
-	 eH7DsDkn1EY32TOBGnphvLPVQwdYE9m7uPm80in8o8WrKXUuwTeq2uMKmqzFF9DG3Z
-	 O0Wd/xbKWCnbaLrHMHN2GkHjRGc95kCEMaudy1tjZE3wDT6SBgjioA2yJVA0P6T8S3
-	 3bEilVfQLCifQ==
-Date: Thu, 23 May 2024 07:25:27 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1716467170; c=relaxed/simple;
+	bh=Hz679FGldUumfGnK3T0dVKDX0bO5Ne8dcy8RD/sJ/7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BEJcn2Pn8ZwqrhGUrWOxvDYJTvysZBSyCN1QBrl1m/1fnGqnDAu2O8xjDX1X8C9JLc7/gQiAgPTXE6zwej9dZa0s2W8fQ6Y4AK24NjuBzcpChIbMCM9rHfi8zn5iCdoqxbzXajRdiB6Qcq1SHSmSwGWyMxvW6pryP3YtFSj3/E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vu/HD1iJ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57824fa0a8fso3456067a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716467167; x=1717071967; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/wUzztMJk6TZ3WRsNpCu6wZEy2fKtuZUq9Vt9f0V0Dk=;
+        b=Vu/HD1iJN5IOQUNEqNy2YrHNlrt9CST5Y7eMw0WrtwTYFfUhLJz+Rjy2WTWcbmaowi
+         i69o6Vp2CRGP9YIB94aUoaHsRqISgM/bIwML0t9CtNSdWp6jHk8RltGdTKQeKkosVoOV
+         f0PnapX+XgMdlI7QcOwcOhlPeav4zQXZ9oZvdCfhrM7td1GnDV4F/H+ssNPlxRyXoiNg
+         +EHvCcLoTzAdPJ32b0OOyHU3cBptAHzie4I9KQYgic7p4ZywT8A9DNhYwJU3+l/B0Ome
+         yQN3D7KoDlGssfAjrbru6hqSCqIp/P6GBcBIXxMg773laux78S6u7X3Nbrbo32axUKAk
+         P5dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716467167; x=1717071967;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/wUzztMJk6TZ3WRsNpCu6wZEy2fKtuZUq9Vt9f0V0Dk=;
+        b=R2g3HrRGt3zmVsX0uYUMgw+p4GV9II5BjrNwcHhi80PCXrLMjM+c0tCVLkBJTKUhxb
+         bqlD/mJ0ZFLEd0kOgaHca+1PxK5e5SchycwFWtXKvAmrb3WitgkrxEngaG84ECJwlwL5
+         IRf4wucil28P/hluH/K3Lb0JHG8RjZFUWbvf5aBXu92i0PB8sX1i5P82D4w5VuRXxCZW
+         zHz1HoHcVpQ9AmD271h1JDNDh8ygB123dWjDER4YhZYsF74mveMow/7ZTazg4aijvbNo
+         xzrOjxvEus8Xis6cUtA2vPrYbocml+zhFPr7CdpY/zg1copqRgJ051Mr7aFnd6aAri5C
+         aX7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXsGsJ2fkVVB6KlFI0nyJ0Jnux8frxrhTqj/YxP7VK8mSZJGn8IazuL6yErp9PKft+rr2ECgVpkBvtfTt7WqOIOpsYtbwJJ4sFYNZgq
+X-Gm-Message-State: AOJu0YwstOQHTngdHJCF0kPssUIW1Gp+ZUgr/naMc8o75ddLHiIeDhML
+	0qbQAsgKryogUxiBOqbmVQguKoih9QqW0ZIceN66Uv+yR0vJVD45
+X-Google-Smtp-Source: AGHT+IGxSknXBNirEvHJccvujR5vheSRG9wlahEtmXXtCc9qk9cdBeiBerqpUmJoeOHIrmfeNgvt+w==
+X-Received: by 2002:a17:906:682:b0:a62:2cae:c10 with SMTP id a640c23a62f3a-a622cae0f18mr298652366b.47.1716467166456;
+        Thu, 23 May 2024 05:26:06 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b0177asm1958596166b.173.2024.05.23.05.26.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2024 05:26:05 -0700 (PDT)
+Date: Thu, 23 May 2024 12:26:04 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
+Subject: Re: [Patch v2] x86/head/64: remove redundant check on
+ level2_kernel_pgt's _PAGE_PRESENT bit
+Message-ID: <20240523122604.2owqxj7fmgudewzk@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240523083752.11426-1-richard.weiyang@gmail.com>
+ <fej5k6ikc3biecm5xadxgwv2pflktpjmvrxjhzmhia4p5kipun@ny3swf6kcqwi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev, 
- Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>
-In-Reply-To: <20240523-imx-se-if-v2-2-5a6fd189a539@nxp.com>
-References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
- <20240523-imx-se-if-v2-2-5a6fd189a539@nxp.com>
-Message-Id: <171646712724.2026308.5404698488082776575.robh@kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: arm: fsl: add imx-se-fw binding
- doc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fej5k6ikc3biecm5xadxgwv2pflktpjmvrxjhzmhia4p5kipun@ny3swf6kcqwi>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
+Thanks for comment.
 
-On Thu, 23 May 2024 16:19:33 +0530, Pankaj Gupta wrote:
-> The NXP security hardware IP(s) like: i.MX EdgeLock Enclave, V2X etc.,
-> creates an embedded secure enclave within the SoC boundary to enable
-> features like:
-> - HSM
-> - SHE
-> - V2X
-> 
-> Secure-Enclave(s) communication interface are typically via message
-> unit, i.e., based on mailbox linux kernel driver. This driver enables
-> communication ensuring well defined message sequence protocol between
-> Application Core and enclave's firmware.
-> 
-> Driver configures multiple misc-device on the MU, for multiple
-> user-space applications, to be able to communicate over single MU.
-> 
-> It exists on some i.MX processors. e.g. i.MX8ULP, i.MX93 etc.
-> 
-> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
-> ---
->  .../devicetree/bindings/firmware/fsl,imx-se.yaml   | 154 +++++++++++++++++++++
->  1 file changed, 154 insertions(+)
-> 
+On Thu, May 23, 2024 at 01:33:28PM +0300, Kirill A . Shutemov wrote:
+>On Thu, May 23, 2024 at 08:37:52AM +0000, Wei Yang wrote:
+>> This patch tries to remove a redundant check on kernel code's PMD
+>> _PAGE_PRESENT attribute before fix up.
+>
+>Tries? s/This patch tries to r/R/
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Will use this one.
 
-yamllint warnings/errors:
+>
+>> Current process looks like this:
+>> 
+>>     pmd in [0, _text)
+>>         unset _PAGE_PRESENT
+>>     pmd in [_text, _end]
+>>         if (_PAGE_PRESENT)
+>>             fix up delta
+>>     pmd in (_end, 512)
+>>         unset _PAGE_PRESENT
+>> 
+>> Since we have compiled in _PAGE_PRESENT in this page table, it is not
+>> necessary to check _PAGE_PRESENT again before fixing up delta
+>
+>level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
+>redundant.
+>
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/firmware/fsl,imx-se.example.dtb: /example-2/firmware/v2x-if@0: failed to match any schema with compatible: ['fsl,imx95-v2x']
-Documentation/devicetree/bindings/firmware/fsl,imx-se.example.dtb: /example-2/firmware/v2x-if@1: failed to match any schema with compatible: ['fsl,imx95-v2x']
-Documentation/devicetree/bindings/firmware/fsl,imx-se.example.dtb: /example-2/firmware/v2x-if@2: failed to match any schema with compatible: ['fsl,imx95-v2x']
+Will use this one, thanks
 
-doc reference errors (make refcheckdocs):
+>
+>-- 
+>  Kiryl Shutsemau / Kirill A. Shutemov
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240523-imx-se-if-v2-2-5a6fd189a539@nxp.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+Wei Yang
+Help you, Help me
 
