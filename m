@@ -1,100 +1,110 @@
-Return-Path: <linux-kernel+bounces-187061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7DF8CCC6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:46:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E534E8CCC87
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D623F1F22F51
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22BFE1C21155
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0BB13C9BB;
-	Thu, 23 May 2024 06:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DDr0TuS/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0DA13C913;
+	Thu, 23 May 2024 06:51:10 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921E313C8F2
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC82413C8F4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716446758; cv=none; b=VMOgwFDTlJ083yBfNNTEW0VJGbB4NsehKmtXE2QwmrpzZtR2wki9tyUaEHMRaZqsn4xZl3mAEk1TwksZJu+XHRUBcuxBA5yX8GkPDlrjURUFkOaS4pa0kVy9gBbhwYxjpPWcLuB6MCLq1CRYLMTklAMfSBrf+cCNm+KdQiihMSs=
+	t=1716447070; cv=none; b=cP6zVuqsT1+6+KsGBgStXgdcAA7smjGEmNug65wD3WgXSsKkLcDkHHfVKAAwpx6WlF7Bkw1PKRN0fMf+diZvQH9EJzW62zlfUsBgJaSz/8kYomDw7SunRtvA8QK78D07manW34B7DdOckJhPqnDTyCps17SMtU3DJp0Z0+Ts9M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716446758; c=relaxed/simple;
-	bh=QOge68Fw0tzENrc52wcXLnWTfYP7hBED4uLrPeCT0dU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=doG1d6ZFiLmq4I+SZAhMB6oSLVUXZbeJtyfjvbIiAQ3uNCd9dS+WKGyQPdWUjksFAtrDORYzXzdmG9aSi+pYqHhzk1OdS7wlRvCVH4ai5bOoTmf/c+I/X9O6qNfQX2avsU2KE9fclg4fihcSYrfMlyYaBvpzNKRZwLUNiMSz0oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DDr0TuS/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716446755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yDmW+1GQHZyT/E1Y2bedeCzyZRugpccl1pSBaP9FTL8=;
-	b=DDr0TuS/5PmYFWEIvW/eER8qFd3afx8ogdrEeJa3QJ2/c4B8LB9TSzprN1j3lx8rOXmN3G
-	pf7jWP0pihszohQPTRGtonc15Hul7FUY0nexj7CO5r9PvNV4+EKxgjnWJnU9z6kkbrqiVs
-	xpxNwq/aKH+0pnXEfhEpEguGiTosMmY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-260-37Yvtka0PjOESfXu_snMHA-1; Thu, 23 May 2024 02:45:51 -0400
-X-MC-Unique: 37Yvtka0PjOESfXu_snMHA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 79410185A78E;
-	Thu, 23 May 2024 06:45:50 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.206])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id F13181C008BB;
-	Thu, 23 May 2024 06:45:47 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: yongqin.liu@linaro.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	inventor500@vivaldi.net,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] net: usb: ax88179_178a: fix link status when link is set to down/up
-Date: Thu, 23 May 2024 08:45:45 +0200
-Message-ID: <20240523064546.7017-1-jtornosm@redhat.com>
-In-Reply-To: <CAMSo37V5uqJ229iFk-t9DBs-1M5pkWNidM6xZocp4Osi+AOc1g@mail.gmail.com>
-References: <CAMSo37V5uqJ229iFk-t9DBs-1M5pkWNidM6xZocp4Osi+AOc1g@mail.gmail.com>
+	s=arc-20240116; t=1716447070; c=relaxed/simple;
+	bh=HbilW8+/QhxMpuv2I3szsbRjZe9iBLkmZfLbtsRhSQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9BgKTyQnOW5hTGp39MlLNSxu/bevOMYyUZA8VQh4iTqG7fJWmXsZ1DHOjW9yxu3HIZFLl1PU4Ue+T9prIE6g7FZTpzU9+li1jTV4P7nW3h662VpsvopXBX/PQUG6ykalvV081sjb6ZPYGKaGmzoJZ65Cvi/ybPRaF5QYiGXMjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1sA2I5-0001hf-DT; Thu, 23 May 2024 08:51:05 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1sA2I4-002crX-FE; Thu, 23 May 2024 08:51:04 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1sA2I4-00Aa6K-1G;
+	Thu, 23 May 2024 08:51:04 +0200
+Date: Thu, 23 May 2024 08:51:04 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Trevor Gamblin <tgamblin@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	michael.hennerich@analog.com, nuno.sa@analog.com, dlechner@baylibre.com
+Subject: Re: [PATCH 1/2 v3] pwm: add duty offset support
+Message-ID: <fqipplnnt2ppyjgvvg7klbnqqcn6phivziizgfbth4jauntsjo@reno3me4kr4o>
+References: <20240521194916.1897909-1-tgamblin@baylibre.com>
+ <20240521194916.1897909-2-tgamblin@baylibre.com>
+ <73y7ovftjv35gw3sjeu3jisg7feplhyebmcnldqvszuofqnn7q@eh4lyicuhfmq>
+ <8cd080ef-e1f3-4752-8f92-d61c5fd321b5@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="u3xcrkvxcpftqa4e"
+Content-Disposition: inline
+In-Reply-To: <8cd080ef-e1f3-4752-8f92-d61c5fd321b5@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello Yongqin,
 
-Again, not a lot of information from the logs, but perhaps you coud give me
-more information for your scenario.
+--u3xcrkvxcpftqa4e
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you try to execute the down interface operation, mac assignment and
-the up interface operation from command line? 
-That works for me.
+On Wed, May 22, 2024 at 04:06:00PM -0400, Trevor Gamblin wrote:
+> Makes sense. On a related note, will your pwm/chardev branch be merged so=
+on?
 
-Maybe some synchronization issue is happening in your boot operation.
-Could you provide more information about how/when you are doing the
-commented operations to try to reproduce?
+My plan here is to first add core support for .duty_offset, and then
+only expose those chips that implement the new .apply. The reasoning is
+that I want to assert that there is a consistent rounding for all
+new-style drivers and thus allow chardev users to rely on these rounding
+rules.
 
 Best regards
-José Ignacio
+Uwe
 
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--u3xcrkvxcpftqa4e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZO51cACgkQj4D7WH0S
+/k6C6Qf+LTGJjBboyMSSTGF03G/zNT6JcBtkPJkyoI+Av73PPmFweSy8iuE7KtDa
+W9NPdmbpbos8hJLsD9O9IUM93okpA7WSEcmyoVNAMfs7GuZNjqpMD2LrS/5NsNJv
+Z0JEycpMDx5fdF45DYU2ruVXf30j40SUN3g2QaZ6/QSl/VRQx1tOR7iNmKl2VhMV
+XTi35dXsdcdjkkVVB+iGxROHY7hA22V8D8NLjfDIx5dErZds2/UXPnaiPmQKTu+z
+f7Y8mI0K7aZzx4fFEBMrJBSI+xZr6S2kpOxCfqaYjgL92Bl80SCrTOxioHkjsl0+
+DPYIUGsisTjiVVHIHHeh97s+4XpH5w==
+=DG6d
+-----END PGP SIGNATURE-----
+
+--u3xcrkvxcpftqa4e--
 
