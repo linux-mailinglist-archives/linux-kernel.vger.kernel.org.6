@@ -1,135 +1,216 @@
-Return-Path: <linux-kernel+bounces-186869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0D18CCA34
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:59:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6CD8CCA38
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF0C1F2272B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E588A28276A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3645C1878;
-	Thu, 23 May 2024 00:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F74187F;
+	Thu, 23 May 2024 01:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GC/q9BJc"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGrJD8NY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAF31852
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488D1AD24
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716425968; cv=none; b=FnhGfvj4CGQmwFxlIchdg5GqfV9NR9HYhbpTof5ty4Lt4ktnCzBiXpY8u+9pAGPCmswlRAnIdSSvdCefdZ+AI2UVgjsyVu42gRZs/9DlidKo54cgOFs7KtzCTjjbNNymx/lqlSIBFagDKUyHx3ZX+mrKO0r4Wj9NfkhXM4d0DtE=
+	t=1716426247; cv=none; b=eLuv4tlLTuEUaiLqHK4lZbXmrUvXpIRGE2ws7bO8zDKWNQlNG6W8ks9aMo5gwQTPzMUDrJxI1iKAWkxb6ojyPCsoGA12QNqKx8ZAHSPiNtOjL51D58KzSQ7O2eKm7KQXXFFUHkWLjrBFUEH2kxbpDXn7dy+qLFEeJwl7ubqWFto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716425968; c=relaxed/simple;
-	bh=CpuEU8gkiJ0/5ye3tcoFuX+/jEymMXGuXdXJUZl0AJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIGfx1PrORFOI/R5iXs9xaUK49UpfKoGPN6f1raFcq9iG21F4fa+q9STPx+52vSISf3XSvU1WbBfdmBKhTFXGrCh9c9v8bFbtmXvr5m+nyAPYqb7TtAoeq9JoGhe97aoBzykA4HQmbYNfi7u75l/7IPiSmsrGBj8l7uT6IH+rCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GC/q9BJc; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-657a07878easo1696832a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716425966; x=1717030766; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CX8DBRwx1fNr/jRR54U+s7BTveofzSBxZ53Z/OKneyc=;
-        b=GC/q9BJcPUOxeD1PI/um9ZKzVulLIHFKYZqy/RIEvk1BdOJTzH8mRHO3iCm3opE/Lb
-         JnFa1TahhI5Elfq7PXWlmJJ5iDXlsZlUC8NlGCh5OuKf0EQOy3rpe8ixiPHeKKFOu0BY
-         DPbjEU0xQbHWGXS3nNDb0qaJIzyXyLywgCdMA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716425966; x=1717030766;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CX8DBRwx1fNr/jRR54U+s7BTveofzSBxZ53Z/OKneyc=;
-        b=srNtlabVUIJIayUEFvE2Xheys0WCVFThjibV0vwV7qBf0pD0omyLsLH7E4MQH94EJC
-         FfqJG7CRMnJ5r6yFKzWruSs5Fk5Gr4ApIT9wefTRlhQ5vVwY44IVDASrX3RQtfR8kjnJ
-         R3RI3VkQGQ1qikvmlUVHIi47XYh6Py1qhnGucZxzr+mz6rrya4FDDrfMlCZbn9rnWs7p
-         anH6TAbSlTFbIZixElVT20piAT16ZlVMb4k3VPfW95GTDEoOZqLra9siBN6SqK0AkeDE
-         8Hppmhv+bDEfSk3jdiOXkWweOGUJJMM3CyQTH5hfIXLprUiNldRabvAaR1WBCftS6NVc
-         mbzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6Cs7chPE/mqwUDlTNLONbl6fgpQ4hgVxXPleRFYQj+QTgvIhVG6EnOGXmkkZ9QBwoPDtarSv4Ly+41sF7p9bws01Wx951+6SKiSEZ
-X-Gm-Message-State: AOJu0YzXN7G17ZzK9Vgd3Bj6abS2wYxv1Nww8Tw6x7ocaS+QD2AxPwD+
-	GkkFyeeeyaEFD01Lu7tmDC1NML6oBBueFfAarE121ddWU4M0/YfOqRAQxx8iKG53ky8BSvlPC+Q
-	A/A==
-X-Google-Smtp-Source: AGHT+IF1kq0qc68Ti7q1/FxLfV3UPXpGc8WblBZGdDgOdUFW4QXyJFtxHjX5YhmqDbo6ItY/3CUtUQ==
-X-Received: by 2002:a17:902:c409:b0:1e4:3909:47c0 with SMTP id d9443c01a7336-1f31c9f7048mr51825565ad.62.1716425966480;
-        Wed, 22 May 2024 17:59:26 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:3a97:1cc8:ab6c:8d0f])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1f30fe572f2sm35823005ad.131.2024.05.22.17.59.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 17:59:26 -0700 (PDT)
-Date: Wed, 22 May 2024 17:59:24 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvalo@kernel.org, francesco@dolcini.it, tsung-hsien.hsieh@nxp.com,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP mode
-Message-ID: <Zk6U7CYW2bP-DVTM@google.com>
-References: <20240418060626.431202-1-yu-hao.lin@nxp.com>
- <20240418060626.431202-3-yu-hao.lin@nxp.com>
+	s=arc-20240116; t=1716426247; c=relaxed/simple;
+	bh=xuVimXmATg4JcE4J/zHQiQR6R8dLYbJIHSZrB0l2/6c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dTfalPLtX5it2Ghdzvxo7ymJojank93A3kaMl3n6cPuIGcpV4QcqAwqV5zKvGwKaJHJQ/4aj8Qpr5ZetmrQVHcb9+Re5aVyFVx1Pfb2Xtej7fIfWREIzfnuewGGNlKEO/Yq/KgVANdUDzkARIWZOUNdwXPXSDwL+ydfcuZYU57M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGrJD8NY; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716426245; x=1747962245;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=xuVimXmATg4JcE4J/zHQiQR6R8dLYbJIHSZrB0l2/6c=;
+  b=eGrJD8NYRuvS1EEPTOnOnK1ToVVY9+ozVHG/KQGe/AgScTg0L0wm+fmf
+   hJ8vepKBtR6mj7takRH1rcId5wm/N6WZ7a62NRWr7uT2ZOPwcQc9So07z
+   3D2yoHa1gAazor+SwGU5o8aaW3PePXr3TwxU4tfsCMYvAlHA0NKFjRsO6
+   o9YTCeRkqr2wDlilxc2kfp+TwD2kmNzQMUQj64Ci0aH2EBFO4QIvgb546
+   d0IJd176ASM3Zc4SZUCGjIJxxMV7XwDA93Nacd4dfwWIRPsXtagB4BbS/
+   SfDU2KK8TBfh7cQDCr2b12MgK3k+7qy1LiItrqIZKl0pVFPldc+DOjnMl
+   w==;
+X-CSE-ConnectionGUID: eqsKvP+AR3Cmx02luT3xLQ==
+X-CSE-MsgGUID: BJsco8VYTs6oOb/av4KA4A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12590217"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="12590217"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 18:04:05 -0700
+X-CSE-ConnectionGUID: AsK3JofGRmuXrtneQVWPmw==
+X-CSE-MsgGUID: UHc51AbVReeemWx1TNt4tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="33546735"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 18:04:02 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <21cnbao@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>,  <akpm@linux-foundation.org>,
+  <willy@infradead.org>,  <ryan.roberts@arm.com>,  <ziy@nvidia.com>,
+  <linux-mm@kvack.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: drop the 'anon_' prefix for swap-out mTHP counters
+In-Reply-To: <c55648d4-cec2-48ca-9ca9-c8fc2aecc741@linux.alibaba.com> (Baolin
+	Wang's message of "Wed, 22 May 2024 19:24:45 +0800")
+References: <0e2a6f232e7579a2e4407ecf075531980d97f286.1716367360.git.baolin.wang@linux.alibaba.com>
+	<22ac01a3-ddbb-4114-88cd-ad1a31982dad@redhat.com>
+	<51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
+	<CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
+	<c55648d4-cec2-48ca-9ca9-c8fc2aecc741@linux.alibaba.com>
+Date: Thu, 23 May 2024 09:02:10 +0800
+Message-ID: <87a5khbast.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240418060626.431202-3-yu-hao.lin@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Baolin Wang <baolin.wang@linux.alibaba.com> writes:
 
-Hopefully-last comment for patch 2:
+> On 2024/5/22 18:40, Barry Song wrote:
+>> On Wed, May 22, 2024 at 9:38=E2=80=AFPM Baolin Wang
+>> <baolin.wang@linux.alibaba.com> wrote:
+>>>
+>>>
+>>>
+>>> On 2024/5/22 16:58, David Hildenbrand wrote:
+>>>> On 22.05.24 10:51, Baolin Wang wrote:
+>>>>> The mTHP swap related counters: 'anon_swpout' and
+>>>>> 'anon_swpout_fallback' are
+>>>>> confusing with an 'anon_' prefix, since the shmem can swap out
+>>>>> non-anonymous
+>>>>> pages. So drop the 'anon_' prefix to keep consistent with the old swap
+>>>>> counter
+>>>>> names.
+>>>>>
+>>>>> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
+>>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>>> ---
+>>>>
+>>>> Am I daydreaming or did we add the anon_ for a reason and discussed the
+>>>> interaction with shmem? At least I remember some discussion around tha=
+t.
+>>>
+>>> Do you mean the shmem mTHP allocation counters in previous
+>>> discussion[1]? But for 'anon_swpout' and 'anon_swpout_fallback', I can
+>>> not find previous discussions that provided a reason for adding the
+>>> =E2=80=98anon_=E2=80=99 prefix. Barry, any comments? Thanks.
+>> HI Baolin,
+>> We had tons of emails discussing about namin and I found this email,
+>> https://lore.kernel.org/all/bca6d142-15fd-4af5-9f71-821f891e8305@redhat.=
+com/
+>> David had this comment,
+>> "I'm wondering if these should be ANON specific for now. We might want to
+>> add others (shmem, file) in the future."
+>> This is likely how the 'anon_' prefix started being added, although
+>> it
+>> wasn't specifically
+>> targeting swapout.
+>
+> That's what I missed before. Thanks Barry.
+>
+>> I sense your patch slightly alters the behavior of thp_swpout_fallback
+>> in /proc/vmstat.
+>> Previously, we didn't classify them as THP_SWPOUT_FALLBACK, even though =
+we
+>> always split them.
+>
+> Sorry I did not get you here. I just re-name the mTHP swpout_fallback,
+> how can this patch change the THP_SWPOUT_FALLBACK statistic counted by
+> count_vm_event()?
+>
+>>                  if (folio_test_anon(folio) && folio_test_swapbacked(fol=
+io)) {
+>>                          ...
+>>                                  if (!add_to_swap(folio)) {
+>>                                          int __maybe_unused order =3D
+>> folio_order(folio);
+>>                                          if
+>> (!folio_test_large(folio))
+>>                                                  goto activate_locked_sp=
+lit;
+>>                                          /* Fallback to swap normal page=
+s */
+>>                                          if (split_folio_to_list(folio,
+>> folio_list))
+>>                                                  goto activate_locked;
+>> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>                                          if (nr_pages >=3D HPAGE_PMD_NR)=
+ {
+>>                                                  count_memcg_folio_event=
+s(folio,
+>>                                                          THP_SWPOUT_FALL=
+BACK, 1);
+>> count_vm_event(THP_SWPOUT_FALLBACK);
+>>                                          }
+>>                                          count_mthp_stat(order,
+>> MTHP_STAT_ANON_SWPOUT_FALLBACK);
+>> #endif
+>>                                          if (!add_to_swap(folio))
+>>                                                  goto activate_locked_sp=
+lit;
+>>                                  }
+>>                          }
+>>                  } else if (folio_test_swapbacked(folio) &&
+>>                             folio_test_large(folio)) {
+>>                          /* Split shmem folio */
+>>                          if (split_folio_to_list(folio, folio_list))
+>>                                  goto keep_locked;
+>>                  }
+>> If the goal is to incorporate pmd-mapped shmem under thp_swpout* in
+>> /proc/vmstat,
+>> and if there is consistency between /proc/vmstat and sys regarding
+>> their definitions,
+>> then I have no objection to this patch.=20
+>
+> I think this is the goal, moreover shmem will support large folio (not
+> only THP) in future, so swpout related counters should be defined as
+> clear as possible.
+>
+> However, shmem_swpout and shmem_swpout_*
+>> appear more intuitive, given that thp_swpout_* in /proc/vmstat has
+>> never shown any
+>> increments for shmem until now - we have been always splitting shmem in =
+vmscan.
+>
+> This is somewhat similar to our previous discussion on the naming of
+> the shmem's mTHP counter[1], as David suggested, we should keep
+> counter name consistency for now and add more in the future as needed.
+>
+> [1]
+> https://lore.kernel.org/all/ce6be451-7c5a-402f-8340-be40699829c2@redhat.c=
+om/
 
-On Thu, Apr 18, 2024 at 02:06:26PM +0800, David Lin wrote:
-> --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+Yes.  I don't find that it's necessary to distinguish anonymous and
+shmem mTHP swap-out now.  If we need it in the future, we can add that
+at that time.
 
-> @@ -1712,7 +1735,7 @@ static const u32 mwifiex_cipher_suites[] = {
->  };
->  
->  /* Supported mgmt frame types to be advertised to cfg80211 */
-> -static const struct ieee80211_txrx_stypes
-> +static struct ieee80211_txrx_stypes
->  mwifiex_mgmt_stypes[NUM_NL80211_IFTYPES] = {
->  	[NL80211_IFTYPE_STATION] = {
->  		.tx = BIT(IEEE80211_STYPE_ACTION >> 4) |
-..
-> +	if (adapter->host_mlme_enabled) {
-> +		mwifiex_mgmt_stypes[NL80211_IFTYPE_AP].tx = 0xffff;
-> +		mwifiex_mgmt_stypes[NL80211_IFTYPE_AP].rx =
-> +			BIT(IEEE80211_STYPE_ASSOC_REQ >> 4) |
-> +			BIT(IEEE80211_STYPE_REASSOC_REQ >> 4) |
-> +			BIT(IEEE80211_STYPE_PROBE_REQ >> 4) |
-> +			BIT(IEEE80211_STYPE_DISASSOC >> 4) |
-> +			BIT(IEEE80211_STYPE_AUTH >> 4) |
-> +			BIT(IEEE80211_STYPE_DEAUTH >> 4) |
-> +			BIT(IEEE80211_STYPE_ACTION >> 4);
-> +	}
+>> By the way, if this patch is accepted, it must be included in
+>> version
+>> 6.10 to maintain
+>> ABI compatibility. Additionally, documentation must be updated according=
+ly.
+>
+> Sure. I missed update the documentation, and will do in next version.
 
-This doesn't look like a sound approach. I think you should keep
-'mwifiex_mgmt_stypes' const, because if you're making modifications to
-it, then you may break multi-adapter situations. Consider someone loads
-this driver with host_mlme_enabled==true, and then later registers a
-device with host_mlme_enabled==false. The second adapter will get the
-wrong values.
-
-I think 'mwifiex_mgmt_stypes' is small enough you might as well just
-make a second copy with the MLME-enabled values, rather than fiddling
-with modifying a single copy.
-
-Aside from that:
-
-Acked-by: Brian Norris <briannorris@chromium.org>
-
-(Feel free to carry that to a v11, since my only remaining substantial
-concerns are with patch 1 I think.)
-
-Brian
+--
+Best Regards,
+Huang, Ying
 
