@@ -1,119 +1,91 @@
-Return-Path: <linux-kernel+bounces-187415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AB58CD17E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:48:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991218CD182
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E566B21551
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:48:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA7491C21AD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FA913BC02;
-	Thu, 23 May 2024 11:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3167313BC0A;
+	Thu, 23 May 2024 11:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eu2MPfML"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWKOsFVD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF823307B
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781261D6AA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716464889; cv=none; b=uVSw09UaVlcfwkkAMbST77/hnR9EbR6t3rpnuL7XIWBCE2+UN/E784rfeX4uWR3e+/DZmgh/kZpQUZ/YFHWoJXxodwnM/Y3IvYygI04TBCMbJyLAsadWowsv7rRMRTEG2rbAubiWO8Sto9AhZP0xFuSQ38b5OCiTncJ4Z/SG+Ko=
+	t=1716464917; cv=none; b=KK8bA8Qb2b2aUaeEW+kFUM6Wg5Cqw7EdmfMcQ+25doYPvG9wlOwf0u6etLcLu10mN06jxE0H1VOHVhaOUZdQAQ9II0LFYBsYxppT22sE1Sbk9SgB3fSF0ZKJG3GB7hCoKnPPBZkCbcfh+luKaWPvTq9SDs1F8YlYdgyjsRnQTYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716464889; c=relaxed/simple;
-	bh=6V+8CtsowbR+5woKWil3/uTefTydyG91roAsOsQIUwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAitaW8a0THMhXA+SmflZY8Vq9UjxPAdo/CGxYZI/qhEqQp7GquGwwTWJxWl7XrT7XnihJGF+csb5t4tzPi7s6tASysYYW0rmoOPt4QYFLa/JzNvwcAi9r0DKgPUkc3XF04Mv8kao8A8qqUPni5aZ8/qIz7wFYyIQFAy0N0FCDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eu2MPfML; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51fcb7dc722so1787834e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716464886; x=1717069686; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6E61Jxzxjq7f22HqS8A7YYLGqKHl4SecZqgeLR9j6N4=;
-        b=eu2MPfML45bIbUkFG9ND0l32+AcC1mGrmcpzDDPaGNeIJBK1SaBEBWaP4r93sVEEMU
-         q6Qb9n3kziLw5Sol37PE/WmpDh61TfDG71RL3jHfK/fmaAPYVyw18mn9OtVYFVM9WIww
-         oHBWW7mZNOCNDzT1zFdi7uxz+1RbObBB4NG2CSZzRMuvMLfGYvGiR7ep3QGpZABOH/vy
-         MvGI3hW+AWwXlBix6M9RUF5apPzISk7LdGNaeMBtmFEvUD6EL3LCOTiDAQhaG7J5XOQM
-         GGHwQwFv1ZctJBjHqvkTlcJYOXyFZyU+MzeRhAHmQ1LmNQDCTrFuqPpDq48+jxe98ADc
-         wjEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716464886; x=1717069686;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6E61Jxzxjq7f22HqS8A7YYLGqKHl4SecZqgeLR9j6N4=;
-        b=f3/TDF16rNg8jtmnpj/mBVgpPW+z68CnOSUKK1lLciN0tHIQPqosTPkC1fBAGpmVkH
-         oWsrhXl1e6bOa/2Y75QMEMlXstlokBmrfEmtOagXm2HxKPCI9AmhQx8qHMWoqpc0yX8A
-         PvChxkbRVoQSXQsupPfsIdG2PJib8yPBiTGMon7BQRs6Rj8DfYm+IXaImIsBLwVXQYaO
-         cKp7WataQamb0fdJBzeFi2x0mZld1m47mp+gqMnowDFkmXF9V+YlMjnY6Oh1jFJSwFoW
-         kJTfclzQeJ47vPeOufRs25iQTl7d7vqnLoI8YTzMjwpgeORC2/sqUv0wXkmrLkk6uzKU
-         mcqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVo7++n1vtK23sYhN1T6t8Sj+GbfXJNqGEiSAsVvOno+fMaNVm8KbRUTsH0dWcTp/WIlsAWDJm0VSzQ+pJgsQfnOl3dzioAHeXCojvr
-X-Gm-Message-State: AOJu0Ywy4bVGuJI9iFcP/RE8IvKxoN2XwRZKTSA1zniOkgY5TNydpWeE
-	jj3ub0r38/6lnqf4zRdszDb4i1DfUeNVMo6t3q8X9Uc3Z0nGCCOpxgO1Z8+EIBs=
-X-Google-Smtp-Source: AGHT+IEyzI18nfzrDPezUD9GxCNOdOCNYajNRn6pfAF677xU9i/D+vNI4ocAHpHkdn63Af8sVdouJw==
-X-Received: by 2002:a19:2d45:0:b0:51f:30dd:f35f with SMTP id 2adb3069b0e04-527ef9d932bmr566891e87.14.1716464886556;
-        Thu, 23 May 2024 04:48:06 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-528ce560b22sm42924e87.238.2024.05.23.04.48.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 04:48:06 -0700 (PDT)
-Date: Thu, 23 May 2024 14:48:04 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v14 23/28] drm/connector: hdmi: Create Infoframe DebugFS
- entries
-Message-ID: <dflaec5kcwlo2y23txb5susqimiohuvf5uox5kecmbrcs4wnox@dq7xak3vcazm>
-References: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
- <20240521-kms-hdmi-connector-state-v14-23-51950db4fedb@kernel.org>
+	s=arc-20240116; t=1716464917; c=relaxed/simple;
+	bh=9RfAy/uwi35SvVSDtdvgzu2Xj2egb9k/oBLfQ8zseAI=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=sf08CwGa9FGdO6bJL28OMo8UDpbHdWLsZWam2lJU5zshVuRd5b7WzEsRM91nBiBhgyREL/se0/MDyyFEKTRkSwDg0U7p4+/RqYBqKpL9Kbbo7lohsYkH9TUdB8Qyi2xbG5oIfrqSs79lXiYX7EKprLNs2G+EqZ+TDW7dZTIjmBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWKOsFVD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D699DC2BD10;
+	Thu, 23 May 2024 11:48:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716464917;
+	bh=9RfAy/uwi35SvVSDtdvgzu2Xj2egb9k/oBLfQ8zseAI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BWKOsFVDu4Fhe9gWSCkQqYxjGZFwtj3hOzLkfftc8NZkGs4EMesmbUZpE4+N4Yr9k
+	 mytardbkCqXfXfwegI8292b7EtsM4NoestPaLXMW1phuV4HeZTnLK+UiOfHcE4rxeq
+	 f2T9CKjDp7i+9Tqjd3Dnxw6hGG2W6mH9U98Gwsvxm8wsHz8yuMZMbhCqrWWfbjYylN
+	 bn1hchHaCNTBcWY0q+GEXmi/hRSsJ3cCzCOW8iD246+o9EemkogfdJLkA9gxRKKv24
+	 rXrBp0I5c8Ft9ujilimXC7Ckm6kkeTHy457Ze7wjma5O2hey58BOSkVkXUnuMW2sb/
+	 jAM4lmZHEJQhA==
+Message-ID: <e6c886a96dc7945fa3a03d37d73a9392.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regulator fixes for v6.10-merge-window
+Date: Thu, 23 May 2024 12:48:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521-kms-hdmi-connector-state-v14-23-51950db4fedb@kernel.org>
 
-On Tue, May 21, 2024 at 12:13:56PM +0200, Maxime Ripard wrote:
-> There has been some discussions recently about the infoframes sent by
-> drivers and if they were properly generated.
-> 
-> In parallel, there's been some interest in creating an infoframe-decode
-> tool similar to edid-decode.
-> 
-> Both would be much easier if we were to expose the infoframes programmed
-> in the hardware. It won't be perfect since we have no guarantee that
-> it's actually what goes through the wire, but it's the best we can do.
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/drm_debugfs.c | 152 ++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 152 insertions(+)
-> 
+The following changes since commit 4e70b26c873dfff317039458a6ea66314bbdce99:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+  regulator: sun20i: Add Allwinner D1 LDOs driver (2024-05-09 17:44:01 +0200)
 
+are available in the Git repository at:
 
--- 
-With best wishes
-Dmitry
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.10-merge-window
+
+for you to fetch changes up to 74b38cd77d3eb63c6d0ad9cf2ae59812ae54d3ee:
+
+  regulator: tps6594-regulator: Correct multi-phase configuration (2024-05-21 12:27:36 +0100)
+
+----------------------------------------------------------------
+regulator: Fixes for v6.10
+
+A bunch of fixes that came in during the merge window, Matti found
+several issues with some of the more complexly configured Rohm
+regulators and the helpers they use and there were some errors in the
+specification of tps6594 when regulators are grouped together.
+
+----------------------------------------------------------------
+Matti Vaittinen (4):
+      regulator: bd71828: Don't overwrite runtime voltages
+      regulator: rohm-regulator: warn if unsupported voltage is set
+      regulator: pickable ranges: don't always cache vsel
+      regulator: tps6287x: Force writing VSEL bit
+
+Neha Malcom Francis (1):
+      regulator: tps6594-regulator: Correct multi-phase configuration
+
+ drivers/regulator/bd71828-regulator.c  | 58 ++--------------------------------
+ drivers/regulator/helpers.c            | 43 +++++++++++++++++--------
+ drivers/regulator/rohm-regulator.c     |  4 +++
+ drivers/regulator/tps6287x-regulator.c |  1 +
+ drivers/regulator/tps6594-regulator.c  | 16 +++++-----
+ include/linux/regulator/driver.h       |  3 ++
+ 6 files changed, 48 insertions(+), 77 deletions(-)
 
