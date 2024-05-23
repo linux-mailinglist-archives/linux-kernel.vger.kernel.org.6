@@ -1,197 +1,220 @@
-Return-Path: <linux-kernel+bounces-188043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420228CDC29
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:35:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F2E8CDC2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9797AB2448B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:35:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975511F24E62
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE3384A3C;
-	Thu, 23 May 2024 21:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601D8127E22;
+	Thu, 23 May 2024 21:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bjbk3BFa"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ywNjigyp"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2064.outbound.protection.outlook.com [40.107.244.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94050811FF;
-	Thu, 23 May 2024 21:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716500100; cv=none; b=LfRfiCuf4Y7MxrFbMuChp/1UaRVC1VJIq8ThQUxpuNRypqWgKVSqEnGQTPtVEdwlwtfUVfp+tk5h2OQhsgDgE7tna03+2LwBebmLqA6dYIBo8xmqwCT9El5YApsgimHbrrNamgLDCfsfYFoUe3zwnC2NhDDaJ2SdOq2Y77pB6uI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716500100; c=relaxed/simple;
-	bh=TtkKeCps0ejierSSi4w3QTlHUP2b6nZhMZC8/xjZifE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JwYR/qGFI07gtC3TyXuFtlMopZWW7+DGOYJRXRSYJwgCDTqxJmTNqSgQ8ChmnKyCSTkgJegRcX9clCQDeVuk6m44dDExZgPf2WdougfjA3sR+xEkzJWSKgEng0EQU2Tv0VXBnDRAopsHDz4gu6RAENWZouCnLVg8GMJ21xNZpoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bjbk3BFa; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f333e7a669so16263335ad.3;
-        Thu, 23 May 2024 14:34:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716500098; x=1717104898; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T7a2uMVZssHO/XdZkFjaZx6Fve2Wj78fROEuqBTUEKo=;
-        b=Bjbk3BFam0qDIrREoEVZ24ewxsMyexmPY+M40Pgl4Y+pIz4sfYReqb/m+r8S3h2N+Y
-         NKAtd03Kvh4MOrbe+inHjUglrbW132pKzmX9CJtLprhXIthQMf0gznEhUSG1KEVl08aB
-         4VRbq36nJJQiqsX6RwfprCIzKw7LeyoiuMfBnHkbOUJCzJI3xAVaoTI6QD+nGE74Y4qB
-         wvo2bsHPY9zXDtahdVy/LeV9PPvEiDG/dkfkLKdc15CGrOibrsgF37o/TyOOq7U/FYEb
-         Wv4zEXByXeHPqZxeJzaw/0ptnpDsfY9uJLZjO3MQUkid2vY1W0u2qqCK4Yv3P8PsZO09
-         CPLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716500098; x=1717104898;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T7a2uMVZssHO/XdZkFjaZx6Fve2Wj78fROEuqBTUEKo=;
-        b=s5TzmRUe0MA0f0WpNiePZ0EhFeO2hyAD9FM27mt3gXuoDqHY7w3tkESrB7UOXM7xAz
-         +klTPGeLHcWiQKFIncAesrOMUx3njGvWFuF3wDyIxgNjrgGJ6P27MO5IikJtHltUQidr
-         UVW+0FV8ULdA8VZRSlgAn/Rp4G5AqLf334++PBeqXESYTznj5qFb/thk5IKJexMThxxX
-         fXEbiKUtCyz7cFH/PMpa/ZvCZ1TebPw/yYBycH4oD7vydjSr6pUEXZFSF1NHcTo/x4hw
-         GRgbKmeCzdRMUtdlxqQ4q1CRgxrYcUHt54bf7dhBigtfrbCukJ4k7GvlCUtw9I87aqpv
-         FVig==
-X-Forwarded-Encrypted: i=1; AJvYcCVMXQiTJO1oM4+7+wAUgaRkCoiSmZXBgct++GOwmAEpzEvHX2L6ZDxUgDGb1w3BJRY6fpIJ0TX7tYrYRlHz5KSaxjzh374cWlPJITA4
-X-Gm-Message-State: AOJu0YxId/CqpYW8hGlIuW0pGSuuE0/ekfgyNYH6mIduKJQDDUzR5mtl
-	bjPij7n1lw4+QpY/7lWpSOe97grIM1UoeDcWklo9EDz3GF9LrqMf
-X-Google-Smtp-Source: AGHT+IHg64GfV68qCaL9nLaV71GpQJxYCS/dHS/c9zQ8wKfbt4plO5szkSRDbRHEZbACBIBwzwC+Ng==
-X-Received: by 2002:a17:902:ea0a:b0:1f2:fd9a:dbf3 with SMTP id d9443c01a7336-1f4486d1fa4mr5743115ad.11.1716500097727;
-        Thu, 23 May 2024 14:34:57 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9dd519sm399235ad.298.2024.05.23.14.34.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 14:34:57 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: iommu@lists.linux-foundation.org
-Cc: linux-arm-msm@vger.kernel.org,
-	Stephen Boyd <swboyd@chromium.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Jerry Snitselaar <jsnitsel@redhat.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
-	iommu@lists.linux.dev (open list:IOMMU SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
-Date: Thu, 23 May 2024 14:34:47 -0700
-Message-ID: <20240523213452.144108-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADDE101E2;
+	Thu, 23 May 2024 21:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716500158; cv=fail; b=Avi76g/ADKfaf7Fj3HRrTn3+4GfCgb0MjwfCaiYLUgNE+AjafgvCT+CvxdGir9stTsjlDkKIt7kyV0eQzh7GoNRPHCPJJUN3ig2wozghn+HvxOQD5ryVlSCeRmBMnX4qdT1LpIHDYLJVlw3wFd8M5LnZ5K9EZy+KolBw1R5Qfqo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716500158; c=relaxed/simple;
+	bh=tp5RJ7W4nk1cas0BLNjRz0MCuTxcon5BuxEvybRQBic=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To:
+	 Content-Type:MIME-Version; b=LZgyX4Bd0bfjFIgMKRIG6kEj3x0HmI6oiXZV2O512fazosapRW4Hk5aKHjvh5Izw1azpJ32rJ7dk/2bANfS5H2J19LSyXluEyulcb1pF9sPsuYF28wn7BQEDteyUQihpQsrU5TnjpTBQxapBaHohdtxSquXvQaw2iApvz98x5W8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ywNjigyp; arc=fail smtp.client-ip=40.107.244.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=J0Aljfa//oOJyROEs+fAZwzzV4CCrf8Iua4OZnklu0n/3EiD17wud/Pj18n9Mgqcbgp10I4Y17IU0Paa/yUraLSjgzDnOFROj/mOk9Gigbre3P6tInjQmCXnu3SAOwxrQLwb7h5w0B2WJT4K1TUS/ntwFOadbBhpJx/eNgfKs/l5uxRTCF261mEOGm7OGX5FmkOerR/DjVRF373MFR18YmMAKiaAwlHQ7xYDlSoaDX9wrwk465PsYZClISwuBxpjIXOF3dIa2F2R+1blQ+T1/c/2+WQzR8SGQRSbHqyZBPXiNfBrxCNKXCdOA7sIVkvB/VjDeFbJuQ4pCq3tA14YTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F4dqnW/Ojq3nMIfl41+2OxNYrQA0e+l/NdPVszK4bn4=;
+ b=Uh8GzpGpNXxQF7O9h6h6Rl9hxu114aLTEr26By9wRJb1+aO/klqHLs6RJYPL2pmexTcZlwbaWHq061PM3w7bdrK59PG4oGa+0kQCF0qzw7K/0f67MbsqmPkvHX/s6zSiaRDou9DSQz79rVgfh27FfT/J36T4fuc1fqrsRf8eLr4gCJH/g5B19NF99EaJiBDGRmLKHjkpXgXY8Fu3+1FlCVJT6z7CQXChnMEF07gFeQfIpVyhM27Vw58ua9Qrr7167E2jCPGNlYRBG78CcXDWwU/fa5Mo3QTn7KNCa+tJkuX/jFvy/+j9TWGRW8klu0RjchlwzMpWLlSszKTcS6GKzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F4dqnW/Ojq3nMIfl41+2OxNYrQA0e+l/NdPVszK4bn4=;
+ b=ywNjigypM40G+6TPpTQ/uOFsaGG1VgShy46TFVWgv7IxtoGuRxZgOI3DfgdOMO4D4QIB0gWMgl9mnSpLyR7oUQMtMLpFQNxSK2uiYsyQGE1uW1DXAPT4ubd93bNLG2fueeZ+gB67twmv4VZqBUFk5ocMt/cC+CoTPQIjIYZIWq4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BYAPR12MB2869.namprd12.prod.outlook.com (2603:10b6:a03:132::30)
+ by SJ0PR12MB6856.namprd12.prod.outlook.com (2603:10b6:a03:47f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Thu, 23 May
+ 2024 21:35:53 +0000
+Received: from BYAPR12MB2869.namprd12.prod.outlook.com
+ ([fe80::56a2:cd83:43e4:fad0]) by BYAPR12MB2869.namprd12.prod.outlook.com
+ ([fe80::56a2:cd83:43e4:fad0%6]) with mapi id 15.20.7611.016; Thu, 23 May 2024
+ 21:35:53 +0000
+Subject: Re: [PATCH 3/4] acpi/ghes, cxl/pci: Trace FW-First CXL Protocol
+ Errors
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>
+References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20240522150839.27578-4-Smita.KoralahalliChannabasappa@amd.com>
+ <Zk6MWMYUg77HxbVr@aschofie-mobl2>
+From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Message-ID: <34fe7471-d17e-b802-f9cc-a83ad23ef409@amd.com>
+Date: Thu, 23 May 2024 14:35:51 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+In-Reply-To: <Zk6MWMYUg77HxbVr@aschofie-mobl2>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR02CA0065.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::42) To BYAPR12MB2869.namprd12.prod.outlook.com
+ (2603:10b6:a03:132::30)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB2869:EE_|SJ0PR12MB6856:EE_
+X-MS-Office365-Filtering-Correlation-Id: b471c22b-ce89-4da9-b69c-08dc7b7052a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RzZhM0FLeEpubHFWeDNFblViV2lVU2svcCtnZThob0k3SEFmOVQ2dGlrVTUv?=
+ =?utf-8?B?eVhaRkQyck02Vkk3bmI3WktXVjI5ekV5ZC9DV1pZeTNXK2pFcVNydWRsMXlx?=
+ =?utf-8?B?MVlpSWVFTEdrZktBNGpjMkZuMjgrSzR2cElHMEIwWld2aFR1UHNYa1k4a2FK?=
+ =?utf-8?B?SDVvbzViLy83K3hLUHBjYWV5K3BYNmxSeVJQWmQrZjZoMTVtTVdCWExBb1Q2?=
+ =?utf-8?B?NzNzRGozMjJhUHhTaFJUS1dOQTRTMnlsamI5YnZ1ZlJscDYvUytMU3VJRWI4?=
+ =?utf-8?B?bjQ2N1J3VE5yeWZOM2dGalVLZEJ0MHFHdXV2Qkp2dXNXdVdDWUJVTTBZY3Rq?=
+ =?utf-8?B?Vzg2THFEL1FDZStIK0xCMVFmczhmaC9zeEFxZnNBQzc2RGdRS205bU9zbW1m?=
+ =?utf-8?B?V1RCTzJnazJ1ai9XT3hZcERNZ212TUpzbG9pRmdHaGN3R2NrbEQ3YVk4YUgw?=
+ =?utf-8?B?NW1JQjRqdGJrUWFJTlBsdW9LT1NWb1VYRXBBZnVsVTlodlFHUWw0eEtBVW1R?=
+ =?utf-8?B?MEJqNVNqbW5GR3JYaHhFRDNnRU56YXdLR1VuSHpuRlNORERyS0xUQy9LQzRQ?=
+ =?utf-8?B?aTFhd1kvU2pMVzFvQ2NybGsycmwwTU4zN3NQU3ZYaTdHdHpzUDdQMWRPcWpU?=
+ =?utf-8?B?S1BQelNubEVGZ3dXTmZGbnFRaFZLbmh3dGRuNlhwZGNXYjFIUDc4RVowVlNj?=
+ =?utf-8?B?dzNEenEzTXE0THM0YVA5ZlRWRjFORVBYeW1vOWFLUWxJdTJ2Z1NNdWh0K0ls?=
+ =?utf-8?B?MXZGVXVVNnVtMGRCVzgwRzBndVptRDZOVS9ReFBjU2taVGkrSVdyaTUxcndm?=
+ =?utf-8?B?Smt3M1RpK2ZOVitBYlpKODJ2Y0w5UnRsUEI1eERSQVBiQzNpdmhBWVpESjZP?=
+ =?utf-8?B?c1VndjdQK3UwNWVCS0lDN3FRYjFyTVkxckUxbTZlVDZGemFTcXErMEhnZlli?=
+ =?utf-8?B?Tjc5M3pVZ3pZY0lZZ2dhSlV0Sk5hQnVVSXFNQkV1dmZaUTEveGozWnVYZ3p2?=
+ =?utf-8?B?RUJSZnFPM3VMSndNUWJQYmw2MzFKNXFMNjc4SXBKSmFDNTZaTUR1Q3hqR2dr?=
+ =?utf-8?B?ZlZ1YSt2bWxtZnV2UmwzeGdsbTRqN3hvRUJKYVFMVW1TNUppdFI2R3FOSXlo?=
+ =?utf-8?B?RStTaGNWd1FEcEhjUU1aZ1gvV0x0eFg1QUc5anpZTHBtdkh3UkdXNWNuTVpp?=
+ =?utf-8?B?aW16c09VQjVTNzZjZlJ1TXlxZStyN2NOclRvTnVVWjhyU0RVa0ljN25mWUZH?=
+ =?utf-8?B?T01nRlNIUVUyTEZBOWxtRUVBdnV1S3c3RklTTkl4Ky80Y0x6Uk9aOEFMdFVz?=
+ =?utf-8?B?eUh6M2pEdHQrUWhlWGJNQ0ZkYzBNZnlTTVBSbDV5N0ZjR2IxRi9sT0JyaE1h?=
+ =?utf-8?B?SEUvVkpRcFAzTEwrVEhqS2JWNnNkN3B3Vkp2WEI2VC8yci9ObHlDWHZxM1RO?=
+ =?utf-8?B?THJRc3BOV3Q5RnpYcUFWdlA3QTRZNEZIR3JsVzdqTXJpRUJRSU95RU5sVDZz?=
+ =?utf-8?B?OEpFa0FWUUMwS3U4eWgyVENCOTNMRU5qMmNhMTd6bmszVFBIVEZ2QXFIQWJZ?=
+ =?utf-8?B?ZVFpTHJneWx6SEtNalZ4anJNdTNBUVdFMGlvSnY4N2drV01SV01ZWkpNNzBn?=
+ =?utf-8?B?eWNtRWZGSEplUitIcUU1dERFZTkvUmNDektuU2kzL0JqUTJFWlorWEpGd2c5?=
+ =?utf-8?B?cm1vQjhyVHhVRE4rd2lvWXVHU0Z2OUllTUMxL3FaR2lJWi9WYVAxQ2pRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB2869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SDhtYklUVEJIME0vME8xK3creEh4ekw5VWwwbXFyVWY2a2cxeVBhSWZmZ0RP?=
+ =?utf-8?B?ZHViZEN2emtkRjlsRGNEWFE3UjNpNHNpdDNFMllWNmdXWmY1RldJdGFOVzFj?=
+ =?utf-8?B?MGd5eGNXTmZIVnRoZ3BJOEVva2VZT25RYUQ3RTBydjJFcnE0bWZxUGpzVU5F?=
+ =?utf-8?B?Nzc3WTQ5YURiaTJYQzZESnQxMFVlR2hwd20yaWEvNVFJd09VQmtOU29pdEVD?=
+ =?utf-8?B?ajVJNHV4QXVNaHJvSmFsUm90VEFkaTI1SnY2Mzl5S1VVaTRHeHkxeHlZRDdB?=
+ =?utf-8?B?T3FvZlNsYjVVTHFNV3g5TzlFVW9xQlRBSXJRemIyOUhBckxVbThJd3dWWkJz?=
+ =?utf-8?B?bGsxMTRTZjlzdzFPU1FycGhkNCtkZ1ZLZ0RrVHdTTE9qV3BuQmVudzZYQlBY?=
+ =?utf-8?B?U1BsTE5UaXFoRkp3ekdzY3liK1pxSW1JZEgycFNvdmVub1RkYUxvSVRjNUJ6?=
+ =?utf-8?B?d0ZnM2ljOWx4RFpWdHhrMExXeUg5dW1jdklBRFZLQ1NSelJnaG8xdVVUbXdE?=
+ =?utf-8?B?bHpwMVdWN0w2b2ZRVjdrblMrTEFvcjhoem91L09MZklVNmc0Q241MFRYTjJy?=
+ =?utf-8?B?TTRoS3Vsd0dWL1B5a3JnbUpWMjczSExYYThhTmxuT3dUMm4xQW9nYlJqbTh5?=
+ =?utf-8?B?M1I2bTNxNkNCNWxkUUdjb0FuTytNNHl2dVJlY0pVQjhtSGNqSFJ5cU9vaTRN?=
+ =?utf-8?B?U2FKWGlOWXJZTGpoYWtDTDRXVGhXaTlPajRXeGpBT0ZhMHFtcUtHK24rdk1N?=
+ =?utf-8?B?RG1tOWVyODNXdUZac0J1N2lmOFV4R2ptWTNzbEdGZDdyenVLekJQa09zMXcx?=
+ =?utf-8?B?dlN3NXhzZk93YjJaMzZIa2lDaEFIMWFYWkxkY1ZIZjZlZ0x2aURKYXFiOW0r?=
+ =?utf-8?B?N2lUSmhVc1dqQjhPeWp4K3pFT3ViVWVyN2hyTDByQ2o0Znp6ZzlwSVJpbGt1?=
+ =?utf-8?B?QUtpOWIramRzaFhqWTk3bGxHWWlIMHBROHZKd1hLTHlWTzJoRjhwOFJxTktV?=
+ =?utf-8?B?a2ZqNldKWW8vS0N6dDNOTHV6dlJwOW1zYUVMNlYyMzRJU1FtcUlvWjRjZXc4?=
+ =?utf-8?B?SitZK2FxcDZFWTN4cmhkTEkwK0hJVHcrbkgrNXU0bVlSRjc3MXlJcklleHVH?=
+ =?utf-8?B?VmRaNHdrWE5ZaThQNW02RjhIUmRtenFZeDNxRE9iOVVNZFBhT1lQcWV5enVy?=
+ =?utf-8?B?RVFvKy9aOXVKR3REYXdXN2JCUFBiYnM1OTBsK1pwSi9URmJTMkhOanNQU1Q1?=
+ =?utf-8?B?Qlp2VHVueC8zb0hlVzVsZW1MU0xrdFFEdW1mQ3M1UXFzN1B5M2ZxOUJCZFFM?=
+ =?utf-8?B?ckdwTVFvK1MwSUdlalo1TFBWQnA5WXdZdXlqWHlEV00xTVVtbmYvd3JqUWVl?=
+ =?utf-8?B?RHpiaTN3VkdnM0IzWUFxQTE4UHZjckdGY3BjYWZFamhGY3ZSak8zaDlTYXZT?=
+ =?utf-8?B?MWdBN0ZjT1FoOTBTdEIzaWYrR0JSRVhSODVBeTRFU00yZGJZaThBTXY2dWlY?=
+ =?utf-8?B?SWg2MmtqeHd0Y1RHVElLMUdRUlJqaG1hNkMwL1UzbjFPNVZEUTN0TjZZMi8v?=
+ =?utf-8?B?L2N1Qkdxdi91cG5wd0dnUmQrMHpIdFJVaUxUakQ1enhmTTdVcEg1NWtPWmV5?=
+ =?utf-8?B?RnVQN1Q4V2tOTld0MndDTGpyS0lZeGZ5MEhGdWF2QUtPZU9EdmQxTUdZSXR4?=
+ =?utf-8?B?ekx5a01lVTROZW9wL202bnpVNWtqamF2MW9JSFVHU2hZOXJ6KzVUeUg0c2I4?=
+ =?utf-8?B?Q3JDYkg1SmNucmg2QUhBZkNlWXM2L1RwM2gweHB0TjV5N2NoN2EwNEJUZTJk?=
+ =?utf-8?B?ZXkwRDFKQXZPZ0RIN0JOczB5QVdWemIxdWhkRUR0d0ZEVjJBQ3ZhdUNVVyty?=
+ =?utf-8?B?QVpmWlFqaUozOGEyNks5U3NPcHlMT1BQdnYxWnM1SGtzbUtzdVdYaEtOcHJV?=
+ =?utf-8?B?S2pUTHpieFF6L09TRkcxWWFBbThUWFN3U3BCOWE5QkJJek9saHM3c0pJMEZI?=
+ =?utf-8?B?YjVGemhCWm80T0tiYUFvcmZkRjJkNlBETXhPQlZodlRjS0xnVWpVMStnMDda?=
+ =?utf-8?B?RkQrQ2NKT05NTnladEFoMFFBMEd5UytBdjljV3VTTmhjc3RTY0JRUi9Md3hM?=
+ =?utf-8?Q?dQ/pTtXhqVHRiTEGFJgIzCgnq?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b471c22b-ce89-4da9-b69c-08dc7b7052a5
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB2869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 21:35:53.3922
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JUUkcr30miH15wsSsGkVy4xmBXxDLfdC5cBWDy8otQmSeEdpsiDwwKrpQTmbcfiPLEbwAooV8mMg6s52CTsFmQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6856
 
-From: Rob Clark <robdclark@chromium.org>
+On 5/22/2024 5:22 PM, Alison Schofield wrote:
+> On Wed, May 22, 2024 at 03:08:38PM +0000, Smita Koralahalli wrote:
+>> When PCIe AER is in FW-First, OS should process CXL Protocol errors from
+>> CPER records.
+>>
+>> Reuse the existing work queue cxl_cper_work registered with GHES to notify
+>> the CXL subsystem on a Protocol error.
+>>
+>> The defined trace events cxl_aer_uncorrectable_error and
+>> cxl_aer_correctable_error currently trace native CXL AER errors. Reuse
+>> them to trace FW-First Protocol Errors.
+> 
+> Will the trace log differentiate between errors reported in FW-First
+> versus Native mode?  Wondering if that bit of info needs to be logged
+> or is discoverable elsewhere.
 
-Parse out the bitfields for easier-to-read fault messages.
+No, the trace log won't differentiate currently.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
-Stephen was wanting easier to read fault messages.. so I typed this up.
+But just a side note, FW-First also logs errors in dmesg. I'm not sure 
+if going forward, we would still continue to log errors in dmesg. But I 
+feel it might be needed so that we don't miss errors from RCH Downstream 
+Port or hexdump of unrecognized agent types.
 
- drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++++++++--
- drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
- 2 files changed, 54 insertions(+), 4 deletions(-)
+Thanks
+Smita
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index c572d877b0e1..06712d73519c 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
- 	unsigned long iova;
- 	struct arm_smmu_domain *smmu_domain = dev;
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
-+	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
-+				      DEFAULT_RATELIMIT_BURST);
- 	int idx = smmu_domain->cfg.cbndx;
- 	int ret;
- 
-@@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
- 	ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
- 		fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
- 
--	if (ret == -ENOSYS)
--		dev_err_ratelimited(smmu->dev,
--		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
--			    fsr, iova, fsynr, cbfrsynra, idx);
-+	if (ret == -ENOSYS && __ratelimit(&rs)) {
-+		static const struct {
-+			u32 mask; const char *name;
-+		} fsr_bits[] = {
-+			{ ARM_SMMU_FSR_MULTI,  "MULTI" },
-+			{ ARM_SMMU_FSR_SS,     "SS"    },
-+			{ ARM_SMMU_FSR_UUT,    "UUT"   },
-+			{ ARM_SMMU_FSR_ASF,    "ASF"   },
-+			{ ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
-+			{ ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
-+			{ ARM_SMMU_FSR_EF,     "EF"     },
-+			{ ARM_SMMU_FSR_PF,     "PF"     },
-+			{ ARM_SMMU_FSR_AFF,    "AFF"    },
-+			{ ARM_SMMU_FSR_TF,     "TF"     },
-+		}, fsynr0_bits[] = {
-+			{ ARM_SMMU_FSYNR0_WNR,    "WNR"    },
-+			{ ARM_SMMU_FSYNR0_PNU,    "PNU"    },
-+			{ ARM_SMMU_FSYNR0_IND,    "IND"    },
-+			{ ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
-+			{ ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
-+			{ ARM_SMMU_FSYNR0_AFR,    "AFR"    },
-+		};
-+
-+		pr_err("%s %s: Unhandled context fault: fsr=0x%x (",
-+		       dev_driver_string(smmu->dev), dev_name(smmu->dev), fsr);
-+
-+		for (int i = 0, n = 0; i < ARRAY_SIZE(fsr_bits); i++) {
-+			if (fsr & fsr_bits[i].mask) {
-+				pr_cont("%s%s", (n > 0) ? "|" : "", fsr_bits[i].name);
-+				n++;
-+			}
-+		}
-+
-+		pr_cont("), iova=0x%08lx, fsynr=0x%x (S1CBNDX=%u", iova, fsynr,
-+			(fsynr >> 16) & 0xff);
-+
-+		for (int i = 0; i < ARRAY_SIZE(fsynr0_bits); i++) {
-+			if (fsynr & fsynr0_bits[i].mask) {
-+				pr_cont("|%s", fsynr0_bits[i].name);
-+			}
-+		}
-+
-+		pr_cont("|PLVL=%u), cbfrsynra=0x%x, cb=%d\n",
-+			fsynr & 0x3,   /* FSYNR0.PLV */
-+			cbfrsynra, idx);
-+
-+	}
- 
- 	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
- 	return IRQ_HANDLED;
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-index 836ed6799a80..3b051273718b 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-@@ -223,6 +223,11 @@ enum arm_smmu_cbar_type {
- 
- #define ARM_SMMU_CB_FSYNR0		0x68
- #define ARM_SMMU_FSYNR0_WNR		BIT(4)
-+#define ARM_SMMU_FSYNR0_PNU		BIT(5)
-+#define ARM_SMMU_FSYNR0_IND		BIT(6)
-+#define ARM_SMMU_FSYNR0_NSATTR		BIT(8)
-+#define ARM_SMMU_FSYNR0_PTWF		BIT(10)
-+#define ARM_SMMU_FSYNR0_AFR		BIT(11)
- 
- #define ARM_SMMU_CB_FSYNR1		0x6c
- 
--- 
-2.45.1
-
+> 
+> Otherwise, LGTM,
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> 
+> 
+>>
+>> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+>> ---
+>>   drivers/acpi/apei/ghes.c  | 14 ++++++++++++++
+>>   drivers/cxl/core/pci.c    | 24 ++++++++++++++++++++++++
+>>   drivers/cxl/cxlpci.h      |  3 +++
+>>   drivers/cxl/pci.c         | 34 ++++++++++++++++++++++++++++++++--
+>>   include/linux/cxl-event.h |  1 +
+>>   5 files changed, 74 insertions(+), 2 deletions(-)
+> 
+> snip
+> 
+> 
 
