@@ -1,102 +1,197 @@
-Return-Path: <linux-kernel+bounces-187315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0E18CD014
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:14:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562348CD019
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD041F223B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58AD1F23A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C57D13E897;
-	Thu, 23 May 2024 10:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59499140E58;
+	Thu, 23 May 2024 10:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXCKIBQZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hIRBbJKA"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989F313DDA3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32BD13DDA3;
+	Thu, 23 May 2024 10:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716459276; cv=none; b=jLolZkiN5wEmOTfMsoPFgWm5bmTa1rc0ZiF0dO+kH/AnLDUCkzQcAHmOlR+rfsKL3lBwA5nuDMtENG6QC5n4rmRU1+rP9hTnWI7R8NNy/5EsZ2Mr1dchOEmCyI/WvVbTId9wJHKqOqtQEDPK9wbIVxfXxh4uBcRDIFZRKkxBXkY=
+	t=1716459288; cv=none; b=dme6kzVKMNhHfrqxXncp5+b5am+sTGXUO6BSCQOzVSCxCXjoZpcZiouaJWnWUOgsTgJpHrOpAgmdBpQwrndFhpQYbiOBzQCdiDIMGQuP26BJWK2/12afKnXC1c0NVSjjIImNmDXddyiq5ORfSRrZ4eJ8Nh/O6FDPhPXHXbNK22U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716459276; c=relaxed/simple;
-	bh=/iBsBSSY36qg1ntH/L641V63e2jJqPM62jX3pmzZfBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kd95nNDo8uOxrPr3mivgQokDuehzTzIjD9s49sV/aJfrlDhjuBHI//aucLxJiQjWbwVuHHn7fcqquenmUc/84D0jcPmFnCF7LoS6w/84m8J3HJTOGvs3vq/28FRh8N0Od5cOfI28a0n8Lh7j0XJTLM77qNeGFg4JwDtSTjci+ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aXCKIBQZ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716459275; x=1747995275;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/iBsBSSY36qg1ntH/L641V63e2jJqPM62jX3pmzZfBI=;
-  b=aXCKIBQZwVEZCZcTtS5jpb4HCsnNM8gTLjGXbQJO1ugLoGtKSt+rN6Or
-   k7P31SNCqBkAPQSFoMmOwpbUtbXUGJcb3C+sWd5Q48ZJKzwwvUn6eUJVk
-   y7xbRM1CGBufGhPXskZHqK6xSKd2jWHI4IqxqW0/bA/UHG0pY926ZaH/I
-   MOm4fBU1rO5tNln0ipdJAR45n11EiGZ7V6UJfQNcepZswitMggeT14Zlt
-   NlQ/qQc4lPSVMS+kzTzG80/NlddyST9e0Fic4vk6N3gAxvDBBOPmIcftv
-   q5owItGmeUzXqrAlIu3tiEtRYB9iGQrE22JR+jKAO2lro2ykj8Y2VR36m
-   Q==;
-X-CSE-ConnectionGUID: UoR6xfvvRgGVjJrgFx+Psw==
-X-CSE-MsgGUID: aqMC+SYdRcSveEtsOAg7ig==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12994672"
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="12994672"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 03:14:35 -0700
-X-CSE-ConnectionGUID: J5CZK5LoR4CTGoSR4wse1A==
-X-CSE-MsgGUID: sDpxEzTfQt2U9SNspZFgGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="64835066"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 23 May 2024 03:14:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 0EEA7E7; Thu, 23 May 2024 13:14:30 +0300 (EEST)
-Date: Thu, 23 May 2024 13:14:30 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, cho@microsoft.com, decui@microsoft.com, 
-	John.Starks@microsoft.com
-Subject: Re: [PATCH] x86/tdx: Generate SIGBUS on userspace MMIO
-Message-ID: <ngl63zhudmeskbcga3i3hsdtensd7bfoztnsiu7yj7pxbyzx47@tj5szegw6qrd>
-References: <20240521073505.2190633-1-kirill.shutemov@linux.intel.com>
- <38dec9ee-1dde-4b3b-87c7-a65161d4a015@linux.intel.com>
+	s=arc-20240116; t=1716459288; c=relaxed/simple;
+	bh=Y3BoaPFgHcp3e0s6XB11yfnRYltsdW/fEeJj3u9YY7s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bKPFTigBkDuMKDOuy+0EkbDQDnYtO5yscVoDBW+u3tw3LEn3Mz0D4Q8I9k0VX1lPCW72MKpI8+LFv0HrFnwVkUSqK/MzxL2SAG0RHaBCmY6Jqikzry1hEh42DeZasq9XB8MUVx9MKzii8l9oYB7BLMn7DpMjZjOuP/eQPujQsWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hIRBbJKA; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716459284;
+	bh=Y3BoaPFgHcp3e0s6XB11yfnRYltsdW/fEeJj3u9YY7s=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=hIRBbJKAv+89Th/8r3t5WoroS/VXirfeomXc3ufA+imdXW+nEQaSxOJ8vXypVY9Ey
+	 crPp7y0zsJfxn0nMkiU7dRio0rM7TJ6ZmTL854wBW4b97PUe8t5jBNBC05S0bjdpj5
+	 N6+MBelc0ZETsp7O9Xs8P+XgEwND9WZavnscf8PTjBCGL0bkKL2qdf17fntZAC4E1N
+	 9hj5X1rw/E72rLVuhKuq05R/conjrZ5spOFno+NC/rijyavg1sdMgVn5s0cg1tnpo0
+	 uwHmr8asNRQKd6CAANDsMkXMpeIfvaULptZJytZYOkR9AEzys58XjMesoLTsG2kJ61
+	 yNqQ4QTv3327g==
+Received: from [100.95.196.182] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: andrzej.p)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 33FCF37821B3;
+	Thu, 23 May 2024 10:14:43 +0000 (UTC)
+Message-ID: <537a0969-afdf-4e48-a640-2d8fc665c964@collabora.com>
+Date: Thu, 23 May 2024 12:14:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38dec9ee-1dde-4b3b-87c7-a65161d4a015@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6,14/24] media: mediatek: vcodec: Add capture format to
+ support one plane memory
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+To: Yunfei Dong <yunfei.dong@mediatek.com>,
+ Jeffrey Kardatzke <jkardatzke@google.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
+ Nathan Hebert <nhebert@chromium.org>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Tomasz Figa <tfiga@chromium.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Yong Wu <yong.wu@mediatek.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
+ Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Brian Starkey
+ <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T . J . Mercier" <tjmercier@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20240516122102.16379-1-yunfei.dong@mediatek.com>
+ <20240516122102.16379-15-yunfei.dong@mediatek.com>
+ <1d4618ac-4316-495d-afdb-5849e4b1e805@collabora.com>
+Content-Language: en-US
+In-Reply-To: <1d4618ac-4316-495d-afdb-5849e4b1e805@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 21, 2024 at 06:35:49AM -0700, Kuppuswamy Sathyanarayanan wrote:
+Hi,
+
+I'm having second thoughts, please see inline,
+
+W dniu 22.05.2024 o 14:26, Andrzej Pietrasiewicz pisze:
+> Hi Yunfei,
 > 
-> On 5/21/24 12:35 AM, Kirill A. Shutemov wrote:
-> > Currently attempt to do MMIO from userspace in TDX guest leads to
-> > warning about unexpect #VE and SIGSEGV being delivered to the process.
-> >
-> > Enlightened userspace might choose to deal with MMIO on their own if
-> > kernel doesn't emulate it.
+> W dniu 16.05.2024 o 14:20, Yunfei Dong pisze:
+>> Define one uncompressed capture format V4L2_PIX_FMT_MS21 in order to
+>> support one plane memory. The buffer size is luma + chroma, luma is
+>> stored at the start and chrome is stored at the end.
+>>
+>> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+>> ---
+>>   Documentation/userspace-api/media/v4l/pixfmt-reserved.rst | 8 ++++++++
+>>   drivers/media/v4l2-core/v4l2-common.c                     | 2 ++
+>>   drivers/media/v4l2-core/v4l2-ioctl.c                      | 1 +
+>>   include/uapi/linux/videodev2.h                            | 1 +
+>>   4 files changed, 12 insertions(+)
+>>
+>> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-reserved.rst b/Documentation/userspace-api/media/v4l/pixfmt-reserved.rst
+>> index 886ba7b08d6b..6ec899649d50 100644
+>> --- a/Documentation/userspace-api/media/v4l/pixfmt-reserved.rst
+>> +++ b/Documentation/userspace-api/media/v4l/pixfmt-reserved.rst
+>> @@ -295,6 +295,14 @@ please make a proposal on the linux-media mailing list.
+>>         - Compressed format used by Nuvoton NPCM video driver. This format is
+>>           defined in Remote Framebuffer Protocol (RFC 6143, chapter 7.7.4 Hextile
+>>           Encoding).
+>> +    * .. _V4L2-PIX-FMT-MS21:
+>> +
+>> +      - ``V4L2_PIX_FMT_MS21``
+>> +      - 'MS21'
+>> +      - This format has one plane, luma and chroma are stored in a contiguous
 > 
-> Any specific use cases ? Like who is using it?
+> Maybe s/one/single ?
+> 
+>> +        memory. Luma pixel in 16x32 tiles at the start, chroma pixel in 16x16
+> 
+> maybe the word "pixel" is reduntant here? What else than pixels could tile sizes mean?
+> Any padding between luma and chroma?
+> 
+>> +        tiles at the end. The image height must be aligned with 32 and the image
+>> +        width must be aligned with 16.
+> 
+> Maybe aligned to?
+> 
+>>   .. raw:: latex
+>>       \normalsize
+>> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+>> index 4165c815faef..5ae54cf48dc7 100644
+>> --- a/drivers/media/v4l2-core/v4l2-common.c
+>> +++ b/drivers/media/v4l2-core/v4l2-common.c
+>> @@ -271,6 +271,8 @@ const struct v4l2_format_info *v4l2_format_info(u32 format)
+>>             .block_w = { 16, 8, 0, 0 }, .block_h = { 32, 16, 0, 0 }},
+>>           { .format = V4L2_PIX_FMT_MT2110R, .pixel_enc = V4L2_PIXEL_ENC_YUV, .mem_planes = 2, .comp_planes = 2, .bpp = { 5, 10, 0, 0 }, .bpp_div = { 4, 4, 1, 1 }, .hdiv = 2, .vdiv = 2,
+>>             .block_w = { 16, 8, 0, 0 }, .block_h = { 32, 16, 0, 0 }},
+>> +        { .format = V4L2_PIX_FMT_MS21, pixel_enc = V4L2_PIXEL_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 2, .vdiv = 2,
+>> +          .block_w = { 16, 8, 0, 0 }, .block_h = { 32, 16, 0, 0 }},
+>>           /* YUV planar formats */
+>>           { .format = V4L2_PIX_FMT_NV12,    .pixel_enc = V4L2_PIXEL_ENC_YUV, .mem_planes = 1, .comp_planes = 2, .bpp = { 1, 2, 0, 0 }, .bpp_div = { 1, 1, 1, 1 }, .hdiv = 2, .vdiv = 2 },
+>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> index 4c76d17b4629..3a68f2b9e7a4 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> @@ -1529,6 +1529,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>>           case V4L2_PIX_FMT_MT2110T:    descr = "Mediatek 10bit Tile Mode"; break;
+>>           case V4L2_PIX_FMT_MT2110R:    descr = "Mediatek 10bit Raster Mode"; break;
+>>           case V4L2_PIX_FMT_HEXTILE:    descr = "Hextile Compressed Format"; break;
+>> +        case V4L2_PIX_FMT_MS21:        descr = "MediaTek One Plane Format"; break;
+> 
+> s/One/Single ?
+> 
 
-Microsoft folks wanted it. Chris, Dexuan, John, any comments?
+On the other hand "single" would be [in this case incorrectly] associated with
+single-planar API, which would be totally confusing.
 
-But it is generally right thing to do. SIGBUS is right signal to deliver.
+Still, the reality you are trying to model is complex: you use
+MPLANE, yet there's a single plane in case of secure playback.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Regards,
+
+Andrzej
+
+
+> Regards,
+> 
+> Andrzej
+> 
+>>           default:
+>>               if (fmt->description[0])
+>>                   return;
+>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>> index 89eb1a3c6555..7aff2f2c8f9c 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -800,6 +800,7 @@ struct v4l2_pix_format {
+>>   #define V4L2_PIX_FMT_MM21     v4l2_fourcc('M', 'M', '2', '1') /* Mediatek 8-bit block mode, two non-contiguous planes */
+>>   #define V4L2_PIX_FMT_MT2110T  v4l2_fourcc('M', 'T', '2', 'T') /* Mediatek 10-bit block tile mode */
+>>   #define V4L2_PIX_FMT_MT2110R  v4l2_fourcc('M', 'T', '2', 'R') /* Mediatek 10-bit block raster mode */
+>> +#define V4L2_PIX_FMT_MS21     v4l2_fourcc('M', 'S', '2', '1') /* MediaTek 8-bit block mode with one plane */
+>>   #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
+>>   #define V4L2_PIX_FMT_CNF4     v4l2_fourcc('C', 'N', 'F', '4') /* Intel 4-bit packed depth confidence information */
+>>   #define V4L2_PIX_FMT_HI240    v4l2_fourcc('H', 'I', '2', '4') /* BTTV 8-bit dithered RGB */
+> 
+
 
