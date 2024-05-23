@@ -1,93 +1,115 @@
-Return-Path: <linux-kernel+bounces-188005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90BD88CDBBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836128CDBC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341C31F246C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 334E3282DD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD37127E35;
-	Thu, 23 May 2024 21:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA035127E0E;
+	Thu, 23 May 2024 21:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="gEecZr3U"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rMjxjrtH"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535FC84D04;
-	Thu, 23 May 2024 21:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A7B84D04;
+	Thu, 23 May 2024 21:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716498442; cv=none; b=plc+YNvI184TIrtFX7QscYJrhAj6d2ZJHYRwyFsx+G3uDjWKDjrWWUs0BWKAdVvih3j+pnaFTb7Hx23ZiRveoe941yRJDSWLNihQDs2JI+Q6hVqxoafkkd5e8AQ+lFFiQYLDt7q7rtKRpjsfKDRlXnUH2DuihBZH8Nwa48CzJdE=
+	t=1716498547; cv=none; b=iGPMLIRVqxK69h8geOiezgMrndccsY2wrbhEq+9jYnBg9JIrm2wHFKsmXlZKmilcgdY0HvdXid3ZaANt8r67AqOdPqunDr2GfbgS1nJEvWcb2qQZEULdFvPU34RfrSQOQh3LDTnPfu6mkepX3tmx/tNvXPf6oZvpoEi9Qkw0kbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716498442; c=relaxed/simple;
-	bh=PbBYk8PiVv6brRSth0vNHsED/KW26oVljgJjisiPDLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N76qbs16VBtRmfKG2DwuXMVKf+O4pZUYxFFSqaI+I2AFGcMBqAbM+7g3204jX09HD+ant0K9z1hJ8TeXXh3UowDFdh9VUTnX7dqdX86vimt87kTtKpC/+yCXDelZApiZ2i5GZ05+lrpwE7P7mTYybfdPMPZwuUFfvLymxq4O3/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=gEecZr3U; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=7qG+uNQZnUaNUXVcfTHwCeuNSkeAidiwNplE21S15Ms=; b=gEecZr3UNv1lcai7
-	RTf5JGx5IhuW6X1To82r/lcaKnSI5TW5jCjpqIS0tvSFHNtJsDwZvUPEmo88C1GlMorOOgsjlSJ7d
-	GWNet6z6xr95yAqp7WCXQ63xJBow9WWZpsBSqmR3vM8+31oKLK+BM1zCwVN42NYpKvHGufKM+dZgE
-	OPPP50yjNgSGmlBKNR1Tve/7lbbwWY4/tU2XVvEPsmw0nawe/7t5BQGjHR0cI1KBcpMdKKRRrub6j
-	gZ/aL/2pn3+yE8YwYPnyN0YHK5BRlAqYVrxTRzwBifYebGZfkWgHheogTR+zWIf8XMEEFrrNNiYWk
-	QSMj6l1QhqcSeFampQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sAFef-002ISz-2f;
-	Thu, 23 May 2024 21:07:18 +0000
-From: linux@treblig.org
-To: msakai@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] dm vdo: remove unused struct 'uds_attribute'
-Date: Thu, 23 May 2024 22:07:16 +0100
-Message-ID: <20240523210716.309324-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716498547; c=relaxed/simple;
+	bh=CuLd6TYGiS2+rBvn4z08Wn3+YNLIR/6ODCNpJdMqEg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMltebJN6H63TqZTl/xP3hBF/LP+2zMS1/2sp1+vKGj5FQQDtmLHnaI5LIp17w03F8gzcPZndBCYgjJBt6nwNT9x85RFApTOO7qR/ZxnTGOqj1m0N1o1tu30AdKAqAOo3yFNuPSFDndIAeboalh0uuhZ39NtrMLNMY9wCREXipQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rMjxjrtH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kfXLI35AfLCSFV6qQpB+s4UJzywNe6zaOkdmoMWLhoA=; b=rMjxjrtHoKYBcGVQ1mLGX02Da9
+	MhBSwsAUQz8UyEwOojru4LeYNEf9ECbRJHigOYDGFkoOutPwb5OD7MzcAH0D/wRqzwmQ6ZC4znrAY
+	BsqS4JEms1QSmWH+SHakY/tLJjsKiLFL1ruP/8BTGu+tjyVi8wGgNUbxGODtUvxPQzggDDM9I/UC6
+	783sO5NBSp44JcRpEpq34873WCE0VME4hQqZW9RXBXSi/EcCwlItSaPkjoPTy7HQncXWcJwM0N2oi
+	iWFUAKV1hXtWwuog8XFzgRfMb7hPHCH2+2nZmpJ9pkrCrhjRamU06UWQd3jaiZpqximFG34AuMiE0
+	/t/t7t8g==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sAFgJ-00000002690-3zOP;
+	Thu, 23 May 2024 21:09:00 +0000
+Date: Thu, 23 May 2024 22:08:59 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Liu Wei <liuwei09@cestc.cn>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	Goldwyn Rodrigues <rgoldwyn@suse.com>,
+	Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when
+ io with IOCB_NOWAIT
+Message-ID: <Zk-wa_GvvrxpX9kn@casper.infradead.org>
+References: <20240513132339.26269-1-liuwei09@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513132339.26269-1-liuwei09@cestc.cn>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, May 13, 2024 at 09:23:39PM +0800, Liu Wei wrote:
+> After commit (6be96d3ad3 fs: return if direct I/O will trigger writeback),
 
-'uds_attribute' is unused since
-commit a9da0fb6d8c6 ("dm vdo: remove all sysfs interfaces").
+If you're reporting problems with a particular commit, it's good form
+to cc the people who actually wrote that commit.
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/md/dm-vdo/dedupe.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/md/dm-vdo/dedupe.c b/drivers/md/dm-vdo/dedupe.c
-index 117266e1b3ae..39ac68614419 100644
---- a/drivers/md/dm-vdo/dedupe.c
-+++ b/drivers/md/dm-vdo/dedupe.c
-@@ -148,11 +148,6 @@
- #include "vdo.h"
- #include "wait-queue.h"
- 
--struct uds_attribute {
--	struct attribute attr;
--	const char *(*show_string)(struct hash_zones *hash_zones);
--};
--
- #define DEDUPE_QUERY_TIMER_IDLE 0
- #define DEDUPE_QUERY_TIMER_RUNNING 1
- #define DEDUPE_QUERY_TIMER_FIRED 2
--- 
-2.45.1
-
+> when we issuing AIO with direct I/O and IOCB_NOWAIT on a block device, the
+> process context will not be blocked.
+> 
+> However, if the device already has page cache in memory, EAGAIN will be
+> returned. And even when trying to reissue the AIO with direct I/O and
+> IOCB_NOWAIT again, we consistently receive EAGAIN.
+> 
+> Maybe a better way to deal with it: filemap_fdatawrite_range dirty pages
+> with WB_SYNC_NONE flag, and invalidate_mapping_pages unmapped pages at
+> the same time.
+> 
+> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+> ---
+>  mm/filemap.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 30de18c4fd28..1852a00caf31 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2697,8 +2697,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
+>  
+>  	if (iocb->ki_flags & IOCB_NOWAIT) {
+>  		/* we could block if there are any pages in the range */
+> -		if (filemap_range_has_page(mapping, pos, end))
+> +		if (filemap_range_has_page(mapping, pos, end)) {
+> +			if (mapping_needs_writeback(mapping)) {
+> +				__filemap_fdatawrite_range(mapping,
+> +						pos, end, WB_SYNC_NONE);
+> +			}
+> +			invalidate_mapping_pages(mapping,
+> +					pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+>  			return -EAGAIN;
+> +		}
+>  	} else {
+>  		ret = filemap_write_and_wait_range(mapping, pos, end);
+>  		if (ret)
+> -- 
+> 2.42.1
+> 
+> 
+> 
 
