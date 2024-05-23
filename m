@@ -1,145 +1,192 @@
-Return-Path: <linux-kernel+bounces-186914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276CA8CCABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6D08CCAC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0B871F21077
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61ED91F21995
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C551B9475;
-	Thu, 23 May 2024 02:27:26 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B278475;
+	Thu, 23 May 2024 02:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="f0ba2GBa"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2085.outbound.protection.outlook.com [40.107.243.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFAE847B
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716431246; cv=none; b=YuulXEXCQIpToEz3B04xknI9kY+6xfqp8osW/cM7l+LKP25eDuasGqH2uQer+tOALi/SQnOHYFwzNc51uR0YMps5RXh9XtcipL2pW7jnTPBX/0IU+6g68SoygqX1B7AcvaX/V5zJwS0+hyigLTV7ae3MTYCH0bQxM88tFnV8xRo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716431246; c=relaxed/simple;
-	bh=bSFp0V3O/8ow+t83Egk4O9tbQmALaBMG+AVxfZAfrD4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KrRYJ1siz/0KQ8LVJ3d6MgC4fBlhF8ePs4EtIQPKS7O+/N1WcxE1Ynign42pb71Ufy1fKWzmLTmNRSM4uEWdEzow0vxCN4ojvIxURsZexkyaFpSUdH7umQP+FhpBawtLWq9xsA9ChOVjhzFOmXWfvUKTvme88UaBzToBXORAPOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1e409d1f4so117232739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 19:27:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716431244; x=1717036044;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rgJmmoVp+JrxU5ljaXxCBdzfp456SHHaXgodLVHwqLU=;
-        b=vvhPBOTRwSScJKOF5zv1eXDVp7ZoXweMGBr1NRHqjoSqtOznhIxDH0dK9jxkfKAZbS
-         X978/c+adDrOcj/faLn7g+4+Eu4S+2A+zZWhQKQ9mWE2bjoRW1v9uXyucTf8NlSrg81b
-         eypvv8cYNTC/wkriZAFkLnkD/kD99o8nLwEw87dcksP+WRMx7KVXQO/FW0ATLkTpPrT/
-         aTMd+CZSAY0lar2F8GYa4cB8FY3SaLzmavQE/VZ9flBeB4tne9OWDKsLijj+sTHAjeyG
-         042RnSZtMJwxAUkjJbTgNfMDfzPpdGO0L07QMt3SdpqG+FAsxXWWSWTAYX0blAwjlN+0
-         YnAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEUkZckVPLLXzwinx7LuH3OO21iOE+lR+hcpK9UhuqsqOo8J7oLfnv8XgOxWdqx8j8b2wbuxVRcO4jwjL5nKys3RkCWF/y2W3btZfK
-X-Gm-Message-State: AOJu0YzlTpaaWq2fszCir6939Bi7h7+XAOZ+8lMy7H7jF5qzALeJ1mqA
-	qJ/7RLbBWvYTxGTmu1H6uK4wpcBMEIttDIjRDNhXC3kpTQlfxKFkkdkYR8EA28m0d5ZPWMewnBE
-	eX8O8BFIy4sBdH0bPLw589iOkI5J4ulE7TR10DPoGcfjoEIxjTYvOdJA=
-X-Google-Smtp-Source: AGHT+IGiLWtutli4ybjmH9BuUV3InSOSYt1Rcxi2bqzc28tMI8TpNlDUASjdVONvrYgZ0Btznzpv9gg592hcdjpmD0VCiri33Fi+
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E5D2901;
+	Thu, 23 May 2024 02:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716431349; cv=fail; b=HkxhSNPbc3/QQRim+LPp2t0aQj/Jl7pR1bKk6N6WE2FY65/zh5N0R1cNb2wmsQ0JJJIfwDtPFTAjCBbl3i68B3BpbstTaHFIWHADLjB9yLoBqUgkIXkKDgdJMeDDjcakRh+Kd/V9EWUjkidJyG8sCL2dnAnfNvyPbWJp6yVni64=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716431349; c=relaxed/simple;
+	bh=Kth35OVTQBfcgCEasmGO5GrnJroQ2JUyU/EoeS9XYd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BENazR7ue4AKFTmDjS7xyeZG2N8relv4uE+5uO7L7ohnah6YKrv7tiQLEdNB/ZeRjbV1X0BqhaARTXT8cALZIkT4TfnPsNYHx/XYEQQ67hrShGR/7tRsZ2BXvRKowygphvFbdwS05+Csbj+gG8UJDI+YjfBeq5v61wfEzOOw4vA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=f0ba2GBa; arc=fail smtp.client-ip=40.107.243.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N9seY1n6WqpV0LecKtPypWVfDUTEJUOfoxJYDZp7xOhl6+YbqAGg8BJTNqFKRV+JrubRNl2F9OJ3eiCCWzucRlCbE5vplfbbEJzvNH+MXoo9iRy/qIC5YpcNvs7f7a8AIp/YxiZTQvChbZTiene+ak13jZd5wjbP7ArhxPZW+7DgskuoKiZs4r4rpEAT/kQk1Us2RJkyvn+jsxSxCp+ZkbxLfBkBz9haJNPn8/nhDn2AP+5V2GKY5P7hWOceN8u/7Nlk1x5H3iPrGXqLhmUOv5aHzdl/+Xe/2D61Zwo6CWZLFSAHUsUBbDEIAoujvIzfphYyLm+QXrmojOAN0nyZXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t5PZteq1ir9VyDK7/kE82+oQab2J/vlu29EWaM/TSUY=;
+ b=Irl2zzGTlHIzoh4QAi/b2gVd7SJkyx41UgGZwnhy3wXjlQU3RLNIjRwBWM9Z3BRULEESKFatxg+RNxVy+p9Bgdj+L+EjlR/llKog7Oe2RK+N15KaOewwPlMEO/rp9vZXHzM541KZhEHOEJ5BYiErmp5A17XoUHOkhHCU5CMUTBN4Zp4xq6oSLmvPI0wOUmq/5oYfEU/62bImftlDP0/F2nK2GKNgyKUP7H0osq2pTYFiLjYr9NjHXG8tV8xMOZ3ubnwhmQPzXdABWuEB8E91HcK+jZ/aqL8hClCgTTAO76dF9E9byqxUtLr10/w1tA/sLHHuloEu8GvBXyZPQNVekw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t5PZteq1ir9VyDK7/kE82+oQab2J/vlu29EWaM/TSUY=;
+ b=f0ba2GBa7wbqnN4qHNDgGwKZsAVfxkX3h2sVkf58OJfudEcXqcGjtA7sQoEBICkNjW9p74IPqcsKTY6GFxXJGk2mpla66JpBKgxOEKmplfl3euHDkZCD9X2OR6TkePqQ+WWVHFySARzb8cOu1l4f3fhxD+3FN4aPRoKt1X0YBh/5hhpfHMOIw5/TcT8fRf1f/9rKPwqxhwAGFM9Z097tPtTTqaonmuUKgtmPVbPYFIYLDbF6JeB7DEYirgcaIcfnAZj5af5iTeErOYKhSgc3ImblDWvjj6211VWtuulOWNe5tFlAf7iTPJHbLsaJAnZo/TgE4sLVt+yDcL7u/7LqBA==
+Received: from DM6PR06CA0020.namprd06.prod.outlook.com (2603:10b6:5:120::33)
+ by SJ1PR12MB6220.namprd12.prod.outlook.com (2603:10b6:a03:455::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Thu, 23 May
+ 2024 02:29:04 +0000
+Received: from DS1PEPF00017097.namprd05.prod.outlook.com
+ (2603:10b6:5:120:cafe::e2) by DM6PR06CA0020.outlook.office365.com
+ (2603:10b6:5:120::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19 via Frontend
+ Transport; Thu, 23 May 2024 02:29:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS1PEPF00017097.mail.protection.outlook.com (10.167.18.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.14 via Frontend Transport; Thu, 23 May 2024 02:29:04 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
+ 2024 19:28:50 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
+ 2024 19:28:49 -0700
+Message-ID: <9e2677ec-1d54-4969-907b-112b71ef8dd3@nvidia.com>
+Date: Wed, 22 May 2024 19:28:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2182:b0:369:f7ca:a361 with SMTP id
- e9e14a558f8ab-371f8f1cd31mr3282225ab.1.1716431243480; Wed, 22 May 2024
- 19:27:23 -0700 (PDT)
-Date: Wed, 22 May 2024 19:27:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008c9d27061915ca9c@google.com>
-Subject: [syzbot] [kernel?] WARNING in flush_cpu_slab
-From: syzbot <syzbot+50e25cfa4f917d41749f@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/68] kselftest: Desecalate reporting of missing
+ _GNU_SOURCE
+To: Edward Liaw <edliaw@google.com>, Mark Brown <broonie@kernel.org>
+CC: <shuah@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+	<mic@digikod.net>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>, Richard Cochran
+	<richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, "Palmer
+ Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David
+ S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, "Jesper
+ Dangaard Brouer" <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, Kees Cook <keescook@chromium.org>, Andy
+ Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<kernel-team@android.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<bpf@vger.kernel.org>
+References: <20240522005913.3540131-1-edliaw@google.com>
+ <20240522005913.3540131-3-edliaw@google.com>
+ <94b73291-5b8a-480d-942d-cfc72971c2f5@sirena.org.uk>
+ <CAG4es9WAASaSG+Xgp31-kLT3G8wpeT5vAqbCA4r=Z8G_zAF73w@mail.gmail.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <CAG4es9WAASaSG+Xgp31-kLT3G8wpeT5vAqbCA4r=Z8G_zAF73w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017097:EE_|SJ1PR12MB6220:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3aceb185-6cf6-42d0-9f33-08dc7ad01d6d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|1800799015|82310400017|36860700004|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?czJPOHNDanBmT0FVVFNaVzlTdnpIVmVGcUpqcHYyY2I1SDh3MVU0U2piRnZM?=
+ =?utf-8?B?SGNyWDNLRW9BUHc5UUdpZVExaTZVcmE3emlxS0c4N1gvWWozNmlMUEZmWWhl?=
+ =?utf-8?B?S25MaHVFcDVnRGpXODhqT3YvdWFkL2V1Wktaaml3T3RZcUhpWitaTjAzdTJB?=
+ =?utf-8?B?QVhMN211L0lneTUzSk92RnRIYkFOczRra3l5SWJaRkVtdDVBbUU2TDIwVDIr?=
+ =?utf-8?B?ZFlwcXBEVWxtUDY5NWthRHVnT2ErN3ZYb01UY0wvS0JHS084ZlBwcWw2SU9u?=
+ =?utf-8?B?MEhZRkZvTmpRcm93ZU9DOHk4NmJGOHJlekJ6T0k5cEh5TUpMZTdxQkhHV3I3?=
+ =?utf-8?B?aG9HYVpzOGd0YnhDQzBTSWVPaG10Rkl2clR4QVRoU05CSVR5ZmljV1FRY1NF?=
+ =?utf-8?B?TFZwckRyUGpHYXcrakJibVlZbjkvSElhdkJtMy9JSmdSdFRhWjNab0VyWUVz?=
+ =?utf-8?B?Vnd1QUkxL2RJR0dwWVJxT0dCbXFGZHhDS2M5UDZYdXp3U0FOTjN3alk5bWJ0?=
+ =?utf-8?B?c2xNZVEvRUp5N1dYVDlDcXpHMGthTWhobWsvTTh5MU5QN2dYOW1ZS0lMcFY2?=
+ =?utf-8?B?TGFNMk9Pd2tjRzJGZ3plMDFlcDV2eUNiZXg0b3NERjltYkM0TDBuMG9OQXZq?=
+ =?utf-8?B?Y1RKU0JhanorVmRvVHlJNUVVeU4xNXVmcE9yT0ZPMlE5UlJKOUYrK3h4ODVv?=
+ =?utf-8?B?RDllVG9uMCtUNDBGU1I3SWI3RTkyMmdBWkRZQmVDbFFSZXRNczZwcmViQUtQ?=
+ =?utf-8?B?VUl1T3dVK2ZuajhEVERqblVaTDVqTUhxMmNjOHFQcVVaZ1o5S0hyUVVlNVFZ?=
+ =?utf-8?B?enlzbUF3V09ZNXJGVTFXMi9aeTgvOU8zam8xMm01SFd2by8zcmpwQWJlQU11?=
+ =?utf-8?B?NUhFT0QwdUFHOFRrb1hxWjVTeTVUc1BUUDVmWlFLMHdXY2ZlVFBPaVZhalVs?=
+ =?utf-8?B?S2hIUlJUYzdGVVpMSnN1VVZIbXN0RjdMbXkydGQ4TGZhRXFxTWE5U05JZ2wy?=
+ =?utf-8?B?T3UwNzArWWJjblF6b1BNUW8wV0tjTE41aW9pdFM0NlU5OXZmejE3OENWVVli?=
+ =?utf-8?B?MElxdVFsblUrdGl2NDFIQ25TUEdjV2VNRlFRNGZySUhxMGdTc0Q0cm1Lblhn?=
+ =?utf-8?B?T2dxSHlhcTRCZzRaNG0weGtmYm9QSTlOajJkL0xHZE5sbzJsU2pxbkhtQjFL?=
+ =?utf-8?B?eW5qd25HTkVOODVuYzRtaitybTFqNndYWnYyK1crOGRQb1VuR3NqbjJIM09H?=
+ =?utf-8?B?ZStEUlFkdnJFRTNwMVAvYVAzTGhwanhpTGJyd095Mk5VR2FCMUVEWWZ1bDl0?=
+ =?utf-8?B?NThIL2dUeTNWS1FvVGZKVVVsV0xTb3RrNVI3VllVSDhSb3lkN2hzK3JjdmdM?=
+ =?utf-8?B?NlRkb1E0T29MYkYwOURocGF5S3VjNDVBT3dKRXFaSjliTVZGQ0ducUZlUDdR?=
+ =?utf-8?B?Q0Q2eDkyOVlwTVo4eU1UQVJjekUxRDE0OGpzM2RVK1Z6ejhpTkcyUGNLaVhR?=
+ =?utf-8?B?L1VsdWxocE5ienhTRVcyQm5TZTRMaHh4M203aFQyWlJSTXBidjViWHhkS2NS?=
+ =?utf-8?B?S3IwRWVDZ284ajlCbUZVRHcxblpnOXU5U21JelRDS1hzN21sYThBRmVFdVpr?=
+ =?utf-8?B?b2N3M0lFWm9uYnpoZTFWTkozUFZqdUtqNkxSaU5icHptc1Z0b1RnUXFqbkFE?=
+ =?utf-8?B?NG1WM04xUmRUeWdUNVg2R2thWGtQOWp2eEpvNkxNZHY0WTV3T3ZmYmZxSjQ4?=
+ =?utf-8?B?MDBxc29NTElTcWozU1BFd3RJbjFwTTZEZG5Qd09NeFAxS3ZHVDVhMkJKeUcz?=
+ =?utf-8?B?RzZOc3lkSlI2cTFndG9nYkpJM1VLWnk4TWJJbmV2Zm9PNFUvK2t0N2tXU1l0?=
+ =?utf-8?Q?C2SygUAB9yeUr?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(82310400017)(36860700004)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 02:29:04.3714
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3aceb185-6cf6-42d0-9f33-08dc7ad01d6d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017097.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6220
 
-Hello,
+On 5/22/24 10:46 AM, Edward Liaw wrote:
+> On Wed, May 22, 2024 at 4:21 AM Mark Brown <broonie@kernel.org> wrote:
+>> On Wed, May 22, 2024 at 12:56:48AM +0000, Edward Liaw wrote:
+..
+>> You've not provided a Signed-off-by for this so people can't do anything
+>> with it, please see Documentation/process/submitting-patches.rst for
+>> details on what this is and why it's important.
+> 
+> Sorry, my mistake, I forgot to add it after cherry-picking.  If added
 
-syzbot found the following issue on:
+Adding this to your .gitconfig would cover you for cases like this, I think
+it's pretty common to do this:
 
-HEAD commit:    2a8120d7b482 Merge tag 's390-6.10-2' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d42b0a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5dd4fde1337a9e18
-dashboard link: https://syzkaller.appspot.com/bug?extid=50e25cfa4f917d41749f
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2a8120d7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/78c72ae6bdaf/vmlinux-2a8120d7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/99dbb805b738/bzImage-2a8120d7.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+50e25cfa4f917d41749f@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(l->owner)
-WARNING: CPU: 3 PID: 5221 at include/linux/local_lock_internal.h:30 local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
-WARNING: CPU: 3 PID: 5221 at include/linux/local_lock_internal.h:30 flush_slab mm/slub.c:3088 [inline]
-WARNING: CPU: 3 PID: 5221 at include/linux/local_lock_internal.h:30 flush_cpu_slab+0x37f/0x410 mm/slub.c:3146
-Modules linked in:
-CPU: 3 PID: 5221 Comm: kworker/3:3 Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Workqueue: slub_flushwq flush_cpu_slab
-RIP: 0010:local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
-RIP: 0010:flush_slab mm/slub.c:3088 [inline]
-RIP: 0010:flush_cpu_slab+0x37f/0x410 mm/slub.c:3146
-Code: ff e8 e5 b2 fc 08 e9 25 ff ff ff e8 db b2 fc 08 e9 46 ff ff ff 90 48 c7 c6 7f 68 37 8d 48 c7 c7 b6 33 37 8d e8 72 88 6f ff 90 <0f> 0b 90 90 e9 dd fe ff ff 90 48 c7 c6 88 68 37 8d 48 c7 c7 b6 33
-RSP: 0018:ffffc90002b57c98 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: ffffe8ffac1021b0 RCX: ffffffff81510229
-RDX: ffff88801bb7c880 RSI: ffffffff81510236 RDI: 0000000000000001
-RBP: ffff88802790b540 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 000000002d2d2d2d R12: 0000000000000200
-R13: ffffe8ffac1021d0 R14: 0000000000000000 R15: ffffc90002b57d80
-FS:  0000000000000000(0000) GS:ffff88802c300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000f73ffec2 CR3: 00000000268ca000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+[format]
+     signoff = true
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
