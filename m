@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-188080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A678CDCE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4058CDCE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07877285AF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:38:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E84D1C244A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7E8128393;
-	Thu, 23 May 2024 22:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FD7128826;
+	Thu, 23 May 2024 22:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QroaYoqV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TSIyzsT8"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12A882897
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B3F12838A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716503875; cv=none; b=fjbIG99rv9nrUIiRWyC4q3M/7KGJUK5Or6bGfcelS6IHWt/CGPsPk0Lwc75Uc9AJldaeOw5eMQkLdX0xlO6fBKso3WCRDWoVJYLt/hcbXx1ol7P+yfPjW1bFggk1ACIYLaKPmwBsBbMCVbIm4Z+h+f9AIxk9xk51n31j/OCaOrY=
+	t=1716503877; cv=none; b=jNsjH89mViCYV07YI9Tsrgi3KihE029/5qFmI8jtn3N7JDb22EcnmaR/Fe0s0oz6qHcLXc6fX/DmxHGG0oEJB6FdufIxv3kSD9k9IpgpUF+7BuyXqRo2QWD2aVUnOLYImyzFSoLURdAbgUbgmkUy9MuMZzUAK0LFA7Y2hHY13OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716503875; c=relaxed/simple;
-	bh=QWzUAxT1fadAj+S8ZExg6ADwc0sLe2rrYettfgCQdmw=;
+	s=arc-20240116; t=1716503877; c=relaxed/simple;
+	bh=IAoDeqErEbowA433PRO2cf3pYs3R6ar9OHpikfiY1LE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ayk+HHhzk+Gefiadpo4RldaLVkS6dddLcskq9AYYcMwCO/W9Xw6CUGMbo9WVeNyBeQro83IiCV3payxu/Cki3aWU7ep4upC58PQzjDJBDBRI3CfeobQ/3nSszrLhJu8UnD9PLoGNxJdBPY55sN5pocTdB6hUdWGbZMqMwbmwYAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QroaYoqV; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=CWmaV15UWGKqlFzorTGf7VwE6CBCIhyOI8yKNk+3j1zbYs859aIfO8+ZBmrhUzbareMJH6xwkxIy0S5ZITj+8R+tfq3rN0JOdK4fPt7gj0gpY3+Fov7JMY5UxLLE1ea6c2sFIqa5pHCCGzSDv4TyMDr4vCFMwdhK7rVcOZvFxmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TSIyzsT8; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716503872;
+	s=mimecast20190719; t=1716503874;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C5pESLIFkXbJ9rNrzrPx/8xy3yB6kYubSyOytZTtev4=;
-	b=QroaYoqVrzrmYAj05Q1mUD4XFocC0o5KBim04zO11Z1dQmUEzclvQTqEPF80zkZHUhEbvS
-	TcrCdMVpm39Vc8PhTstNXzYynEGhALrJHt0Q/gM+Y+wxhd0pXVo3C0rKBQhMoIqczq6Y06
-	9WvCP2nCERZlJYO7cQg5WuunU3zxP9c=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=U8kmpLF+0wb5DY59Z4GvPb8KdcMgneGoHIufiMB6jJ8=;
+	b=TSIyzsT8rrQWMtJowea1OMG7lKrV8MUZpiv4xd7V8EVmnE3Hdw7L3Eaai87NmcySnl+Yw/
+	ULdVDkKYMJqiDGQbS5sSpxdW3xxy3Rq+C6dnWTFc0lk49iq/+sDtrL6Sqf/KVqn3lBufyR
+	Y6AY/H5s8E7Xwgy8we2XclmjgTZ4rhU=
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
+ [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-472-76KX8JS7NXeIQJkjyVvdWw-1; Thu, 23 May 2024 18:37:51 -0400
-X-MC-Unique: 76KX8JS7NXeIQJkjyVvdWw-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6a35d03abb4so1402576d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:37:51 -0700 (PDT)
+ us-mta-550-EOqndksYNAGt_CQ4J5IOLQ-1; Thu, 23 May 2024 18:37:52 -0400
+X-MC-Unique: EOqndksYNAGt_CQ4J5IOLQ-1
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5b96a8bb2faso56440eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:37:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716503871; x=1717108671;
+        d=1e100.net; s=20230601; t=1716503872; x=1717108672;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C5pESLIFkXbJ9rNrzrPx/8xy3yB6kYubSyOytZTtev4=;
-        b=jUph5xJIwrotIYpAuz7nWyZCjDqhqhl+ackgTPCO7eqZXWR+x1lUkcY5rhgGCtBepO
-         g4Zrpq0Hi/22tF862nRgAIkONuLjtw2QwbpnJPrUB4m5NmN9XVBI42uOA+/LGU/fkgYQ
-         H1FKYgUjjGj+INk1elcaISHT3Jaey4QkNaUn2L4qHdj2U3iS8jwW2B2L46O9kKQ5lT2k
-         koDYDXSngsvll8SNJ9d/6Pho/ok4GzAtPs5DugJxl8tFBxCwZd3KTVlerPTm35ZD6StK
-         jT20CHj0aLkxezUQgHa+v8O/9KQNu/Y1GDXWwfbWXtrxoLndGvn5T5IdFcPux6bn0pMu
-         i2og==
-X-Forwarded-Encrypted: i=1; AJvYcCXubi6bCgsw196bPZwyPBW+OD06L5hLMdBFE+5/OZm0Zq/LsfPjeZ67gJxWdoJwKMisYQij6DZiZ1S9S12VxwC7UV/FEoojVgO8szfS
-X-Gm-Message-State: AOJu0YwC7kmBfoNlpynjtWjqI+f+7zNlBCAwVCtslG+tNN4AmWGpFzaf
-	iESnwcNXhkkEKMBMuowJxC7nbxla+FCj6YDujAKolgYMSsDxNpyOfK/bVp16SuF3ioQnpZNQHer
-	JCkRsNzdvtZd89tipSCk+OvBQUMRut5nqRy0jVKVtexyi2hQSMGiyuYEdjOQ9hg==
-X-Received: by 2002:ac8:590c:0:b0:439:a36f:eaeb with SMTP id d75a77b69052e-43fb0d79eefmr5060671cf.0.1716503870450;
-        Thu, 23 May 2024 15:37:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBsa85pBg63N2c/DHFGiqK33waIm3Jb+f2auHqGTdFvIXtAgZRarZeur5jH8bVIPCG4ZRiKQ==
-X-Received: by 2002:ac8:590c:0:b0:439:a36f:eaeb with SMTP id d75a77b69052e-43fb0d79eefmr5060331cf.0.1716503869770;
-        Thu, 23 May 2024 15:37:49 -0700 (PDT)
+        bh=U8kmpLF+0wb5DY59Z4GvPb8KdcMgneGoHIufiMB6jJ8=;
+        b=fc8ejNcZktfp5ALohnITglqAsVoJg1JI0OftK/wAakQ3ILc2a8bYyhKswGJerWPmHG
+         /eWHsuZHP0+JPR7NbSTIBDGnDtvOLju9N4wJsoFxOiZy2coZlr7eNrgHNpOVsuejk90w
+         tu4Q2STBNXz3WVE22JBKKNdZx9pOMFT7goIDOQLlQnifEibqIGIt+HFxIWX7DKL8i+Lf
+         By/bZ8OShze7iRghwwDzi49FRo8spcWDpBlsjPi5xw3pOHVPMiG557WJ9FOrlJ4vdfhN
+         ILYRAWMxymz8PAK57V0fZnlasfFkXYR1x4aeCtYX6htlq/2/QcJVBALAGk84K0MSVEYQ
+         GtqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYJNy7q1hEnVymmI7LGiaPlTgbLyszcrM7w9C8OF68oSduNcvB6Uve6lbNJckzGhAKDtNNkXs+hmohYutstlr6a+ReElInBLVM9vAA
+X-Gm-Message-State: AOJu0Yx7T732Sx1sOLUzp4a33g+LRhTqB+gQEEbXunZkcwrdEkLKu6/h
+	tawd2nJRORJXbWV8l5a2ueseM+XTqIl63aRUMTDzf8jTK854azBQyUTW9SHUA16fi/OzjWbu75V
+	hTHJtdHT9ZuTjao/PfEGKKiViIwSL31wn/zodycrTzPZIjWA6QqGLWASuOoRW5w==
+X-Received: by 2002:a05:6870:f708:b0:24c:67b8:2cb8 with SMTP id 586e51a60fabf-24ca0d87c0amr711186fac.0.1716503872034;
+        Thu, 23 May 2024 15:37:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHv6EB8iQs0dh9WTeZd8gUJptLRKFfW4krudfOlO5TrsX7uonwQfj9xz3QTacSLo6+IAfGxJA==
+X-Received: by 2002:a05:6870:f708:b0:24c:67b8:2cb8 with SMTP id 586e51a60fabf-24ca0d87c0amr711127fac.0.1716503871277;
+        Thu, 23 May 2024 15:37:51 -0700 (PDT)
 Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb18af1d2sm1066701cf.65.2024.05.23.15.37.48
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb18af1d2sm1066701cf.65.2024.05.23.15.37.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 15:37:49 -0700 (PDT)
+        Thu, 23 May 2024 15:37:50 -0700 (PDT)
 From: Peter Xu <peterx@redhat.com>
 To: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
@@ -93,9 +93,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Suren Baghdasaryan <surenb@google.com>,
 	Borislav Petkov <bp@alien8.de>,
 	x86@kernel.org
-Subject: [PATCH RFC 1/2] mm/x86/pat: Only untrack the pfn range if unmap region
-Date: Thu, 23 May 2024 18:37:44 -0400
-Message-ID: <20240523223745.395337-2-peterx@redhat.com>
+Subject: [PATCH RFC 2/2] mm/x86/pat: Do proper PAT bit shift for large mappings
+Date: Thu, 23 May 2024 18:37:45 -0400
+Message-ID: <20240523223745.395337-3-peterx@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240523223745.395337-1-peterx@redhat.com>
 References: <20240523223745.395337-1-peterx@redhat.com>
@@ -107,45 +107,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-X86 uses pfn tracking to do pfnmaps.  It looks like the tracking is
-normally started at mmap() of device drivers, then untracked when munmap().
-
-However in the current code the untrack is done in unmap_single_vma().
-This might be problematic.
-
-For example, unmap_single_vma() can be used nowadays even for zapping a
-single page rather than the whole vmas.  It's very confusing to do whole
-vma untracking in this function even if a caller would like to zap one
-page.
-
-That may not yet be a problem, may because of multiple reasons:
-
- (1) Things like MADV_DONTNEED won't ever work for pfnmaps and it'll fail
-     already before reaching here.
-
- (2) If some pfn tracking is lost by accident, the default fallback is to
-     use UC-, which might be safe enough even if it may not be wanted.  One
-     can see track_pfn_insert() -> lookup_memtype() which can fall back to
-     the default _PAGE_CACHE_MODE_UC_MINUS for a MMIO range.
-
-However there's ongoing work [1] on VFIO driver to allow tearing down MMIO
-pgtables before an munmap(), in which case we may not want to untrack the
-pfns if we're only tearing down the pgtables.  IOW, we may want to keep the
-pfn tracking information as those pfn mappings can be restored later with
-the same vma object.  In VFIO's use case it can be remapped later if the
-VFIO mapped MMIO region got re-enabled (e.g. PCI_COMMAND_MEMORY set).  In
-this case we should do pfn track for the whole lifecycle of the vma.
-
-IIUC, this was overlooked when zap_page_range_single() was introduced,
-while in the past it was only used in the munmap() path which wants to
-always unmap the region completely.  E.g., commit f5cc4eef9987 ("VM: make
-zap_page_range() callers that act on a single VMA use separate helper") is
-the initial commit that introduced unmap_single_vma(), in which the chunk
-of untrack_pfn() was moved over from unmap_vmas().
-
-Recover that behavior to untrack pfnmap only when unmap regions.
-
-[1] https://lore.kernel.org/r/20240523195629.218043-1-alex.williamson@redhat.com
+For large mappings, the pgtable PAT is set on bit 12 (_PAGE_PAT_LARGE)
+rather than bit 9 (_PAGE_PAT), while bit 9 is used as PAE hint.  Do proper
+shifting when inject large pfn pgtable mappings to make cache mode alright.
 
 Cc: Alex Williamson <alex.williamson@redhat.com>
 Cc: Jason Gunthorpe <jgg@nvidia.com>
@@ -160,32 +124,31 @@ Cc: Kirill A. Shutemov <kirill@shutemov.name>
 Cc: x86@kernel.org
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- mm/memory.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ mm/huge_memory.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index b5453b86ec4b..9db5e8730d12 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1821,9 +1821,6 @@ static void unmap_single_vma(struct mmu_gather *tlb,
- 	if (vma->vm_file)
- 		uprobe_munmap(vma, start, end);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 317de2afd371..c4a2356b1a54 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1135,7 +1135,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 		goto out_unlock;
+ 	}
  
--	if (unlikely(vma->vm_flags & VM_PFNMAP))
--		untrack_pfn(vma, 0, 0, mm_wr_locked);
--
- 	if (start != end) {
- 		if (unlikely(is_vm_hugetlb_page(vma))) {
- 			/*
-@@ -1888,6 +1885,8 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
- 		unsigned long start = start_addr;
- 		unsigned long end = end_addr;
- 		hugetlb_zap_begin(vma, &start, &end);
-+		if (unlikely(vma->vm_flags & VM_PFNMAP))
-+			untrack_pfn(vma, 0, 0, mm_wr_locked);
- 		unmap_single_vma(tlb, vma, start, end, &details,
- 				 mm_wr_locked);
- 		hugetlb_zap_end(vma, &details);
+-	entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
++	entry = pmd_mkhuge(pfn_t_pmd(pfn, pgprot_4k_2_large(prot)));
+ 	if (pfn_t_devmap(pfn))
+ 		entry = pmd_mkdevmap(entry);
+ 	if (write) {
+@@ -1233,7 +1233,7 @@ static void insert_pfn_pud(struct vm_area_struct *vma, unsigned long addr,
+ 		goto out_unlock;
+ 	}
+ 
+-	entry = pud_mkhuge(pfn_t_pud(pfn, prot));
++	entry = pud_mkhuge(pfn_t_pud(pfn, pgprot_4k_2_large(prot)));
+ 	if (pfn_t_devmap(pfn))
+ 		entry = pud_mkdevmap(entry);
+ 	if (write) {
 -- 
 2.45.0
 
