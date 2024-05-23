@@ -1,112 +1,166 @@
-Return-Path: <linux-kernel+bounces-187291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4948CCFAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F8D8CCFB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776261F23542
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79691F234A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48D413D621;
-	Thu, 23 May 2024 09:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10BD13D53B;
+	Thu, 23 May 2024 09:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/7IpU9F"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKGOjzJ+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40DB13CFA3;
-	Thu, 23 May 2024 09:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245D33C2D;
+	Thu, 23 May 2024 09:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716457991; cv=none; b=UZVhxjpKLYHjX2osFgCMxTYTLf1xAKApE8ZypOp+fCNk37akBASRA2rJ85Rbl5/7+vi+WvP2+VJJceJtrVElf55j7kOqDHUvoHd+EIOZWC/f4WZqgbaIQBMykd2vuyjrsd5iji+2cdkKnS9eW2xGFw1PpL6e0xnSdNfi473a8JI=
+	t=1716458022; cv=none; b=r5baUARFVOQir7zQhuSNvZmLbhSSAbVTU7ErWyeQr9qnCICXoa3Zmmy/az3kG6yenFNU7yfRpoet+WehQvRmkpSx5CgaAWvx4GVVpONFIbnPlEwuMW+G2lgGDbhtAf5np4nS+HZ7Uv6IJTwLrmo2CWxsSBH4ByKkZ/0wSIJh5X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716457991; c=relaxed/simple;
-	bh=Z+LJ9o02AKGYyJoKzdsD0Mhmkl4h3nuqGk+uSvDjGlk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rVBpl4FAJeOYN6oYL05NnUuxtOoxswX4+A8n53QEZd3lS2l1q3I/httBtAQukd+u48erl1wAll4+BUVv6+A6wDfiVPei55nvVBumPKCsrEk/teQU4fnizTJIzyBwsEQrgBF7K0nxjFlcvkU9JPsbDPoq7eVw9ZEYz7hGt0KGPdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/7IpU9F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AACC8C2BD10;
-	Thu, 23 May 2024 09:53:06 +0000 (UTC)
+	s=arc-20240116; t=1716458022; c=relaxed/simple;
+	bh=uquqVgjr7tYR+GJ5slv940hVub5PN471/fS5dr+jBI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifjQF1kl3E91dzqcZDML6xaU/46O/EVmedwghCD389Ik449YTOOKNzyygONo9M1vw70FJykxQpossiV+zVFoPCzBDEjBZxQ1siYRXS+VnQ0VEmXdQN457mM4sXCPnDjIQaUFloft2q//7L0YKXeQX41X6D9/OlQ71lqjPnVwh5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKGOjzJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F7BC2BD10;
+	Thu, 23 May 2024 09:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716457990;
-	bh=Z+LJ9o02AKGYyJoKzdsD0Mhmkl4h3nuqGk+uSvDjGlk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=F/7IpU9FUZAvpfEh0/t33PXl93JMwcJoeQ2AOMEWlwTURqgD5s5bE3ddLqt61tRFD
-	 55A0EWMe86CTIkwwDgMd3s6pX9f3Lahh65Z1XyTNtHkoRM1v8yzOftjrp3/vkcZ01t
-	 FVvX6NIP/+def5o2ISG4QbnYYy3+azOnfJzI7Gc5nMwGjd2dY0xjfGCtyNv1EdQjeI
-	 vmY3X9TG06PKNJL8VJDTYu3dHd6gSZOK1ezA9ifCiTBRA6hIB+zjApAbJZPH9f6Fn6
-	 /TgWTUlwBBvcifgx8kUQ2lRqfG73fQ8aGiDj7F8F72D6eZo+E8TEiQYaqjmkorNPwu
-	 tDh7gMHJEz3UQ==
+	s=k20201202; t=1716458021;
+	bh=uquqVgjr7tYR+GJ5slv940hVub5PN471/fS5dr+jBI4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sKGOjzJ+yHJEnTUrpOS+e645mzix6+MSVIrN8b1qk7FRbC/cSqUespi3UZxXDjgQP
+	 Ujh9EuzHeEGkPpHssIIOaRZ2twSGj47qbmhyWZ8aKmVCNSGZE8j/fc13dxjVtSMhv2
+	 yelUmsPtGJcujZfzEwrIB6F4JY5LLmVcWTGzNlJ6l+2zDwItrj375OqWFOcBIieBhe
+	 QO23+12P0SAA7FoYfn5DzXkWoGNjcGAa7D3y0MtGIKbUOaQnqWSs/NPG0lKiNCQGOy
+	 kDUcyxe1+6G7LUGI2lMx0/7+vX8hqCP1pp7sLSYhvHQGi4gLoii8IPaeWLCQLmscZr
+	 n3te36Bi5PkpA==
+Message-ID: <ab6974a8-b345-4f9f-b051-0ae23a860a35@kernel.org>
+Date: Thu, 23 May 2024 11:53:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v2 1/2] dt-bindings: hwmon: Add mps mp2891 driver bindings
+To: Noah Wang <noahwang.wang@outlook.com>, linux@roeck-us.net,
+ jdelvare@suse.com
+Cc: robh@kernel.org, conor+dt@kernel.org, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <SEYPR04MB64828B9C1FEC5C21C60F5CE7FAF42@SEYPR04MB6482.apcprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <SEYPR04MB64828B9C1FEC5C21C60F5CE7FAF42@SEYPR04MB6482.apcprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 May 2024 12:53:04 +0300
-Message-Id: <D1GXKODMD4S8.1J12D4GOEQWPL@kernel.org>
-Cc: =?utf-8?b?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- "Eric Biggers" <ebiggers@kernel.org>, "James Bottomley"
- <James.Bottomley@hansenpartnership.com>, "Ard Biesheuvel"
- <ardb@kernel.org>, "Linux Crypto Mailing List"
- <linux-crypto@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <regressions@lists.linux.dev>,
- <kernel@collabora.com>, "Tejun Heo" <tj@kernel.org>, "Linux Kernel Mailing
- List" <linux-kernel@vger.kernel.org>, "Kees Cook" <keescook@chromium.org>,
- "Torsten Duwe" <duwe@lst.de>, "H. Peter Anvin" <hpa@zytor.com>, "Theodore
- Ts'o" <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [v3 PATCH] hwrng: core - Remove add_early_randomness
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Herbert Xu" <herbert@gondor.apana.org.au>, "Linus Torvalds"
- <torvalds@linux-foundation.org>
-X-Mailer: aerc 0.17.0
-References: <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com> <dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano> <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org> <20240518043115.GA53815@sol.localdomain> <ZkhS1zrobNwAuANI@gondor.apana.org.au> <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano> <ZkwMnrTR_CbXcjWe@gondor.apana.org.au> <07512097-8198-4a84-b166-ef9809c2913b@notapiano> <Zk2Eso--FVsZ5AF3@gondor.apana.org.au> <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com> <Zk7K7hw-XIHmPs26@gondor.apana.org.au>
-In-Reply-To: <Zk7K7hw-XIHmPs26@gondor.apana.org.au>
+Content-Transfer-Encoding: 7bit
 
-On Thu May 23, 2024 at 7:49 AM EEST, Herbert Xu wrote:
-> On Wed, May 22, 2024 at 03:53:23PM -0700, Linus Torvalds wrote:
-> >=20
-> > That said, looking at the code in question, there are other oddities
-> > going on. Even the "we found a favorite new rng" case looks rather
-> > strange. The thread we use - nice and asynchronous - seems to sleep
-> > only if the randomness source is emptied.
-> >=20
-> > What if you have a really good source of hw randomness? That looks
-> > like a busy loop to me, but hopefully I'm missing something obvious.
->
-> Yes that does look strange.  So I dug up the original patch at
->
-> 	https://lore.kernel.org/all/20140317165012.GC1763@lst.de/
->
-> and therein lies the answer.  It's relying on random.c to push back
-> when the amount of new entropy exceeds what it needs.  IOW we will
-> sleep via add_hwgenerator_randomness when random.c decides that
-> enough is enough.  In fact the rate is much less now compared to
-> when the patch was first applied.
+On 23/05/2024 11:33, Noah Wang wrote:
+> Add a device tree bindings for mp2891 device.
+> 
+> Signed-off-by: Noah Wang <noahwang.wang@outlook.com>
 
-Just throwing something because came to mind, not a serious suggestion.
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-In crypto_larval_lookup I see statements like this:
+Subject: drop driver and describe hardware
 
-	request_module("crypto-%s", name);
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-You could potentially bake up a section/table to vmlinux which would
-have entries like:
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline), work on fork of kernel
+(don't, instead use mainline) or you ignore some maintainers (really
+don't). Just use b4 and everything should be fine, although remember
+about `b4 prep --auto-to-cc` if you added new patches to the patchset.
 
-	"module name", 1/0
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time, thus I will skip this patch entirely till you follow
+the process allowing the patch to be tested.
 
-'1' would mean built-in. Then for early randomness use only stuff
-that is built-in.
+Please kindly resend and include all necessary To/Cc entries.
 
-Came to mind from arch/x86/realmode for which I baked in a table
-for relocation (this was a collaborative work with H. Peter Anvin
-in 2012 to make trampoline code relocatable but is still a legit
-example to do such shenanigans in a subystem).
 
-BR, Jarkko
+> ---
+>  .../bindings/hwmon/pmbus/mps,mp2891.yaml      | 43 +++++++++++++++++++
+>  MAINTAINERS                                   |  8 ++++
+>  2 files changed, 51 insertions(+)
+
+
+..
+
+>  
+> +MPS MP2891 DRIVER
+> +M:	Noah Wang <noahwang.wang@outlook.com>
+> +L:	linux-hwmon@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/hwmon/mps,mp2891.yaml
+> +F:	Documentation/hwmon/mp2891.rst
+
+There is no such file.
+
+> +F:	drivers/hwmon/pmbus/mp2891.c
+
+There is no such file.
+
+Are you sure your patchset is fully bisectable (including paths here)?
+
+Best regards,
+Krzysztof
+
 
