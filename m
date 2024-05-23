@@ -1,161 +1,229 @@
-Return-Path: <linux-kernel+bounces-186892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BD38CCA6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:46:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 367738CCA7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:48:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB61E2827ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF1CA28282D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA27B645;
-	Thu, 23 May 2024 01:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DDC46B8;
+	Thu, 23 May 2024 01:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2ODVpdtn"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="KemuNqjF"
+Received: from SLXP216CU001.outbound.protection.outlook.com (mail-koreacentralazon11020002.outbound.protection.outlook.com [52.101.154.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392726AAD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716428758; cv=none; b=CqUjKGjmIVHWsJwhoIkm35vBFYpRNtCyp0g00y/1X820Il7egSPk8DsUSrEvUpUCJMPH+GALKlct/+pwZPVC1QcNVKpDCKvWXIJkZ0DFmc/TwMVkdEEY/JoBxpst/OVOyk1RRO124ekkbvSftp+YNL34RgdZqxy+TVOLbTVgVss=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716428758; c=relaxed/simple;
-	bh=2S6WaDA16P3nNEFVc4XPd5L9qqvHkgJjG7hZLrjRid8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EZBu/6YQ72BFb1LNKgsPXLA5Cf4+mQJW9WAbESbjU7prZriu8Z+GeScQU/JttVk6BwZzAHIaW/C2MS7K9uyGdIJwmTENZQq9jHL80cWT4VO2WQyy1dbeyB9iDZU0gH4Yj1IytSigntTuwJhrH3atYHD0mX2G9535rlsiJYr8k5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2ODVpdtn; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--avagin.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7e17a8bed9eso100107439f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:45:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716428756; x=1717033556; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1vR6mjHSHfrdNH20F11UDXUiGSe7CBzDx3Qfe5mwFA=;
-        b=2ODVpdtnCEW/DRBUAF2ArUEz5ToG3iKhmd9vImoiMyES5uYVS6LWtA70m99LwKv6Yg
-         wWe5jx1KN7n3MiY16z/NmXKUP0GSWPTtNWXN9TnlsZHo4zrrrZJa9jl359RIGWSSfXKr
-         sG8LdQUnTPIavzivFPihAFtVU5PhkIOoG7ozWlFFkP/DhZ6V2lmuUdMQiv6bVQv4+Aiw
-         XQ4/kN2bq1fpfEr9mz/dZi2y6vXEL5mcjZQZf19lYFpZ6AGPDQHQo/7lsKD4U7zSZGpQ
-         IbM0CL+psv/86hab3ew0FfPTS5gZ8gX7AFTDlNa4e+q51LmTRxMXDNMZOXAh9vVN1Idk
-         C+Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716428756; x=1717033556;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1vR6mjHSHfrdNH20F11UDXUiGSe7CBzDx3Qfe5mwFA=;
-        b=OXvEWU8AsJZu2Bc+XVHYsmHF/EMID67PMnSoksqHJi7R8xaMQvhavW6aE+tzKPmSp1
-         1xcpA1QHrfYFXiKJxPrLcf0BRA5CPTxmVoOk8bvXWAAtcYY0SychnmrdYgTzKcg7EBXk
-         sbFkATDsv9C5Up0YVdbzKqrJb5i9bp2daSF8Ket+KtyxQS+vtiGFWx7uiAQ7fn4WBCGU
-         UEsvZupYn+aMTstLtq4/yQSLTHGgZmaVtRKLNsWeIB1dDwCTGyMQYkEZsqwOGtCNIKGC
-         MsX/uL/SwPrkuUt8CVMmMJh5T9SOxCi4Xg/sGbY4dtaZpot2TnBAmtS09GLp93coAf4/
-         LdBg==
-X-Gm-Message-State: AOJu0Yz3snD3AvmeL9Nu+YNAmgesDvAO2f85mNCnic/af/Jb5fW/Q9Su
-	rY49RVCy8icGMdeBhfCXnvbaQGA/tx7V/8a9TCblifmwGK7cvhs3y1GX/hvK+MA9r1X74lhc/M2
-	QQQ==
-X-Google-Smtp-Source: AGHT+IEbODWv9K2tpzg8xHV4V5D+WdJthqOhAYDkCC1u0RF5N4DiseepW/GU7rlhdv4cPVzNESRkk6f8OD8=
-X-Received: from avagin.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:b84])
- (user=avagin job=sendgmr) by 2002:a05:6638:2c0a:b0:48a:37e1:a543 with SMTP id
- 8926c6da1cb9f-4afe3db6b82mr56219173.6.1716428756452; Wed, 22 May 2024
- 18:45:56 -0700 (PDT)
-Date: Thu, 23 May 2024 01:45:40 +0000
-In-Reply-To: <20240523014540.372255-1-avagin@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAD5A34;
+	Thu, 23 May 2024 01:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.154.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716428920; cv=fail; b=FlnkzWxsuiJxczpp1CNUBlWfCz+b9hK4dBxGqYR+1sTSSv4/MWYsRhzf4aatOFAOYlVJNnIP6Phz/4BpN6/zG9q1DrfII+J421vJoD6TmXk/6Xh5rpxz22p0rLJ7K3VRHQU96AZ5nobajEFGcE3+HjD8bRcKKLbvRciAFs0Zaoc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716428920; c=relaxed/simple;
+	bh=oHFwQD8PyhHhgm8vBlat0Wo+6EZ8MOGJ3JfX+XVvje0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nKQ/Ge6T1adPBrhvI9FCexDBfGHX0HebOE2Qhz3q7nc+451wo5VZ/M1w2hFe2uuFyO2uTSJnv0YyUgYX+ztrv3/v1QXzpkEbDywfAZS6Jg5BSknKgJ73ihB0s+geKK1REQRqFqVODonoOkymNKP6HoWqxeISaZsWwhTeQREph6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=KemuNqjF; arc=fail smtp.client-ip=52.101.154.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MzXEhdsxzvjhkyK4fBoZ7FnKfPk2G8dqyuu4KXRpbK1w+Kw9jYSXjWwY1NaP8dovO9UNNUMSi2L52AmVuULleH81yYwhw/Dsyk5PtQG1ve6rYvT9ew6w9biSqnboDWYLMhzZA1SO1azpvwpfRZXd1m+RugTKFMnIX+hrAIbwTOjtoylnZEXq8VHcmyitWuTruP7wPkWog9WCXovKb7UeB75op0reaf4L4qlTBoTw65/knOPKnXFR+HdLWHbhYLuZITDHAQRrkdvWdZdvl9VwCTCVwbUGupnuzRJ8AoVfq1+cn8tSj6HRuXMaDh7wB14elut16cbrFM7Xb4+HUTlQrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y6sj+PUVqgxLlk55bG64X6t7Xhod5z0F9VktPbwk0xY=;
+ b=DVM/IAZne5XrGV/EMlAABNHaAV7/mvCt+HRq/HLyAUiQt/jhHBEje+6WyiPQC+74voCSAK6VKbruCp/BbGANH++ChQMW17SIvjGYYOKdXAMXhY9j9Sn1O77u3LCfw68nFUdyrFbnGCtzvakuZaIg4ES5Njds9ngt5X9W3OGlgMWahOjA4iJEMctvwwuK8SREwT3j7Skh/DbLQEMJH5HY7rIY7BpKFlofrRvejqPJb19jl9al5eZJY3pbv1Zget/Ybt2Co48m3l9Ucknqzac+50tWm96m1xmSxyIgVZgOOssRTg2SAsL6Vu1vQ3ls3xwyrTu5FCC7OQ/QdjsHl2iXaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
+ header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y6sj+PUVqgxLlk55bG64X6t7Xhod5z0F9VktPbwk0xY=;
+ b=KemuNqjFj0HEvzxi5a5x00sqbN8Y02lDSOrISsOlbLUNGgQgHd0aHQygVusEaOZb/DTY+moIc4hRHQjBEsNRPs0/2sMvDHTeGd6Xng1I96B6Jij5E8ufs6JVFsBdGdMLkl0+AIqOHefC9Ae2zGVIJo769aW2cVuirlM4EQ58SUY=
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM (2603:1096:101:a::9) by
+ SE1P216MB2190.KORP216.PROD.OUTLOOK.COM (2603:1096:101:15d::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.22; Thu, 23 May 2024 01:48:35 +0000
+Received: from SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07]) by SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+ ([fe80::9e3d:ee20:8cc7:3c07%4]) with mapi id 15.20.7611.016; Thu, 23 May 2024
+ 01:48:34 +0000
+From: Nas Chung <nas.chung@chipsnmedia.com>
+To: Michael Tretter <m.tretter@pengutronix.de>
+CC: "mchehab@kernel.org" <mchehab@kernel.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Sebastian Fricke
+	<sebastian.fricke@collabora.com>
+Subject: RE: [PATCH] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE condition
+Thread-Topic: [PATCH] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE condition
+Thread-Index: AQHaqD+OBWQuNlhl8EqlSzXRSkJlr7Gi6hIAgAEnynA=
+Date: Thu, 23 May 2024 01:48:34 +0000
+Message-ID:
+ <SL2P216MB12467C08314BA4B314A8EED6FBF42@SL2P216MB1246.KORP216.PROD.OUTLOOK.COM>
+References: <20240517094940.1169-1-nas.chung@chipsnmedia.com>
+ <Zk2kunIzL0ylxHiH@pengutronix.de>
+In-Reply-To: <Zk2kunIzL0ylxHiH@pengutronix.de>
+Accept-Language: ko-KR, en-US
+Content-Language: ko-KR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SL2P216MB1246:EE_|SE1P216MB2190:EE_
+x-ms-office365-filtering-correlation-id: d6d1e5b2-ff66-474f-cdbe-08dc7aca7542
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?rks6WF4lBaWtfPYyyYleB17snovh7ScaKk7guBkXFuzpaF/Q8nb8Jf+7jXLZ?=
+ =?us-ascii?Q?CyDSNe0qwTUBxCM2cnsN+Wdnn8/l5pJYKo/ZNGPt3GKX9HJPSTE/I4aGbC/B?=
+ =?us-ascii?Q?55J23lwA2ia/EMYhv7cnQlxXFMRCsdVWjuamE89TUcuOWvFQ013Zef1kI+Te?=
+ =?us-ascii?Q?QWya62P/96dZZPJV7YIuY1knylXhaKl/fjp28ZKjXgKKM72DPtUAMcTXEw0g?=
+ =?us-ascii?Q?UVhA+fLxRYdstmehDuQZD1lHJmn4jrCt0ekjCSscUeKa3dI629CbEs9U9Ldv?=
+ =?us-ascii?Q?CS6mmAQ2+ueAmDMWjSn/6LjcKQ3oxrFhOJJg4h8YeWrPVNt1HCsp8lHwm/fw?=
+ =?us-ascii?Q?eo8n0BqbtZTMN5tlWbj5lL4DYkMxXh93i+s2ZXeHB7gxzRJ7bADQJW2AL0Ky?=
+ =?us-ascii?Q?wzbW6q4d1n+bysFd6Zz/qIYE035pdPuaX9oyemL4ZILzIhyRbga5AAPDT5dr?=
+ =?us-ascii?Q?mdAYhXMNoou/tjpbN132OiXSgPh+l/NIwL5NMsJS1ciLR1JjesHtP3aqXH2k?=
+ =?us-ascii?Q?aaChnkmqzeoONyoEaGisgUxbnYoFYBxJojH0IWYmmr7/a4hMpmydFZagAPGT?=
+ =?us-ascii?Q?eHE5WBIh9whh7Fplucn/z8qVhgEU5MDwsxJlMaF4ICmWXgZcIjdbEBDmZ56c?=
+ =?us-ascii?Q?D4to9cWhOvuEiniYLu/hdkzWqlNuq9/sIz30GT4vdRT6m2/M0jYROBDAsoA2?=
+ =?us-ascii?Q?5XMhG75/f0Lh4ohHEHoJUYpwg4vyW93YI1McYjf4C7CZGkcBdlK2WNjkh28C?=
+ =?us-ascii?Q?WOcHbX4M3/0ElAKF26Arh9KHZZY+3HtzJ0NgWlBvo+VatZxms3uYr6nrL3UP?=
+ =?us-ascii?Q?j4R+wC4bsh2TMu9TgROqy/9yK5sqK/dFsSIqyry5o8OvsKF+E6Pfnw1axrlj?=
+ =?us-ascii?Q?GYh3LaBLvj6NH8zvLkcGNeXl+FyLaXxkJZ7Zf9q2l4OoD3g0SfSI/AcAVxwv?=
+ =?us-ascii?Q?YKEVuUlaXBw2U6tAZSY2txTsytjCXY3IKDtmNOomlfXJi6rUbjU5SuEDOWTH?=
+ =?us-ascii?Q?0mQ4ip5x8485kdDfHDA8FJ9mI4zh39+dhL4pe8qhrVKgNBvThONJKSTiftTV?=
+ =?us-ascii?Q?peo8/ooK54Ia1C438H5quMFURYgGJwOnofZzqB/0Oida4YlgkJhIasaIcEe6?=
+ =?us-ascii?Q?JYd8sfLLjrHKd8K2owxQE5L2GP3UzCZz6n9WCALvGu9Fbvk5f54zy4YOYenc?=
+ =?us-ascii?Q?/fpVOImt1Z5BbNuKM+MMZBZNtJba9MDhlAOpg6tRXRgdO7yIZKovFeqviYgc?=
+ =?us-ascii?Q?rR7l5kEcG54Z2lYorOXYVIWY+2WSoIll3oIEbzpvNkDbskrWRR1R9VxuIgIY?=
+ =?us-ascii?Q?vt3RPIRC7nkTLra4oXUqTAsjbfGOKi+WvwtG04WqFoDBWg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SL2P216MB1246.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?s5Z5zK76voRgwtR1Cxs7Vek2RkvBzcmut7unzVCYLZ1ErV5e5beRJ9yOjpbF?=
+ =?us-ascii?Q?TDkIppRqpGlnO+wSyb3pF/0uOb4oR/CWBBoIwSeYIqOOMXDthmwAU8/eyyeL?=
+ =?us-ascii?Q?i/C4N4eoggOAVpwhY1qhllTcnF2yeX2h6QS/S+UogQNkk/T5g4isEspOAhjM?=
+ =?us-ascii?Q?gmoQh23biTLAMUVzjdmly7nyXkpyPCu0e4wWyC3Jn+oeyWXxVd0UP0d/a+WQ?=
+ =?us-ascii?Q?pj/Zg6RIbPJPkFaTLKxv6TTdNWnBO7ArqrEOHkErk4C4JRHrE+d2i9IZk5xK?=
+ =?us-ascii?Q?z58HuxDTjLjLuaWTWCfG56ypycNCrF20omAPH2uMo0UiUcWJDcflVueVl1CQ?=
+ =?us-ascii?Q?92Et/yBFheutShkaDkxpDPjJYV68X37okQ2kVMotFl+B/8707+8xK8qu9bnB?=
+ =?us-ascii?Q?peVSdqVYinRhVoLskwvfX/+PiKVlevMgxVFXHcjA5r72rEVT6PZcy/7PuVHF?=
+ =?us-ascii?Q?8jHfaGZUbcAQaPKFuM4H8HefLJN37AXGsJHwIA4h7g74JBcPCZOc6W05erMR?=
+ =?us-ascii?Q?x1s8JZ7P5XEJ3FooClq/ws6646O1pGxyKIYW5csjSy34jABOMXD/kZKhihR9?=
+ =?us-ascii?Q?ca1SoQfT21mWokk49cD5PSWe4DVtYFDsSu1XBA4S/rkVeilwMtQW5itrcfdI?=
+ =?us-ascii?Q?UOu8NYxLg0NkArIU8fQgHRYs6RQkV6FAHdfc3R/npIhczuF9iybepCF4XNBk?=
+ =?us-ascii?Q?0YpN7RYNsRiMpxWYzit1R5Rff+FhaekN0k/AToQiym5nX7lirDxPrDXHHBy3?=
+ =?us-ascii?Q?KBhtOrv3kBL00V1YD4ERd3ElY7gJl09UoelKzpGSkjFrmA67lPEOve92/QJP?=
+ =?us-ascii?Q?MW7MHqw7HM1m1VMkAJLJ08QetwQObBMGXXa1Y3FEfwg0IHgrwGxI24bcyxJn?=
+ =?us-ascii?Q?19kgv0RKWzJdRyfYDjnYbBjps5d3Z6WRTy0IrOLhJhtFEwaHYuBAPND59KmT?=
+ =?us-ascii?Q?KgNRODZP4GPC1YOT1TmhGObRPEyqNGmXKOKez8OIkxL6WY75MWoRiV2vRc/s?=
+ =?us-ascii?Q?bQ/vNC/g0wmRzqlQY594q8KzeDphLmjVyGpCh94q3T9WZyvfS3ijniykRLO9?=
+ =?us-ascii?Q?sczd7VydmNu1mRgV3En1W0jiJIO+LYHdw/L9r9zbmE94rNwYZ3J7yHkmPgXi?=
+ =?us-ascii?Q?8uaU56ENjNWrw9r7U4XdmMPnVPOIzCe4dArKO+gxu8qGs1lCx1qRjQy7iR9O?=
+ =?us-ascii?Q?dtsIInYTu8DniIz1oluNzrcqqSu4NIAK92ihU9X4JPyo+VZ1ckYwJpLCaPVq?=
+ =?us-ascii?Q?S+j/q/6llATqAzujpftzLiI1/iaScoWVTdzqjmQ/KYEj0ByJPCayk1z2dwei?=
+ =?us-ascii?Q?lAdRppKzJ4mbvXJPcGA7p51O3PcEsrNH5LzHpKyh9G8BS9IzQcivpz+/a8Ze?=
+ =?us-ascii?Q?6LIyLkUlwZ5aHAGraaHU55EmchBF5siNWx9BkSexPTjMpWdRGfMAhBn3hjIR?=
+ =?us-ascii?Q?EFMs1O6Zd8rpTvhKwNGHOvENjWsaaSgwc54QmgVA7FrH7qKVcsVd5Z2XZLaX?=
+ =?us-ascii?Q?KEq+8qA0SDb+QIXxnMbMiAmfxUyOT49niq5bjNi2mBoP946lz07frmwEauQ2?=
+ =?us-ascii?Q?rOnNeRYqMe23jmXKxGSbHMYOdIJbUYunq2vN05fY?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240523014540.372255-1-avagin@google.com>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240523014540.372255-4-avagin@google.com>
-Subject: [PATCH 3/3] selftests/seccomp: add test for NOTIF_RECV and unused filters
-From: Andrei Vagin <avagin@google.com>
-To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Tycho Andersen <tandersen@netflix.com>, 
-	Andrei Vagin <avagin@google.com>, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-OriginatorOrg: chipsnmedia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SL2P216MB1246.KORP216.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6d1e5b2-ff66-474f-cdbe-08dc7aca7542
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2024 01:48:34.8700
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: z3R+eKDRojeCJTnDHRB98Q7vzHZ5PRNQuALNp5JniCrmD3KRidRk73a+5md8N0LfDCSJ4J3TyRBex70WXJiCz1T26byljfebuZqgf0P1GNQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1P216MB2190
 
-Add a new test case to check that SECCOMP_IOCTL_NOTIF_RECV returns when all
-tasks have gone.
+Hi, Michael.
 
-Signed-off-by: Andrei Vagin <avagin@google.com>
----
- tools/testing/selftests/seccomp/seccomp_bpf.c | 54 +++++++++++++++++++
- 1 file changed, 54 insertions(+)
+Thank you for the feedback.
 
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 783ebce8c4de..390781d7c951 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -3954,6 +3954,60 @@ TEST(user_notification_filter_empty)
- 	EXPECT_GT((pollfd.revents & POLLHUP) ?: 0, 0);
- }
- 
-+TEST(user_ioctl_notification_filter_empty)
-+{
-+	pid_t pid;
-+	long ret;
-+	int status, p[2];
-+	struct __clone_args args = {
-+		.flags = CLONE_FILES,
-+		.exit_signal = SIGCHLD,
-+	};
-+	struct seccomp_notif req = {};
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	ASSERT_EQ(0, ret) {
-+		TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
-+	}
-+
-+	if (__NR_clone3 < 0)
-+		SKIP(return, "Test not built with clone3 support");
-+
-+	ASSERT_EQ(0, pipe(p));
-+
-+	pid = sys_clone3(&args, sizeof(args));
-+	ASSERT_GE(pid, 0);
-+
-+	if (pid == 0) {
-+		int listener;
-+
-+		listener = user_notif_syscall(__NR_mknodat, SECCOMP_FILTER_FLAG_NEW_LISTENER);
-+		if (listener < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		if (dup2(listener, 200) != 200)
-+			_exit(EXIT_FAILURE);
-+		close(p[1]);
-+		close(listener);
-+		sleep(1);
-+
-+		_exit(EXIT_SUCCESS);
-+	}
-+	if (read(p[0], &status, 1) != 0)
-+		_exit(EXIT_SUCCESS);
-+	close(p[0]);
-+	/*
-+	 * The seccomp filter has become unused so we should be notified once
-+	 * the kernel gets around to cleaning up task struct.
-+	 */
-+	EXPECT_EQ(ioctl(200, SECCOMP_IOCTL_NOTIF_RECV, &req), -1);
-+	EXPECT_EQ(errno, ENOENT);
-+
-+	EXPECT_EQ(waitpid(pid, &status, 0), pid);
-+	EXPECT_EQ(true, WIFEXITED(status));
-+	EXPECT_EQ(0, WEXITSTATUS(status));
-+}
-+
- static void *do_thread(void *data)
- {
- 	return NULL;
--- 
-2.45.1.288.g0e0cd299f1-goog
+>-----Original Message-----
+>From: Michael Tretter <m.tretter@pengutronix.de>
+>Sent: Wednesday, May 22, 2024 4:55 PM
+>To: Nas Chung <nas.chung@chipsnmedia.com>
+>Cc: mchehab@kernel.org; linux-media@vger.kernel.org; linux-
+>kernel@vger.kernel.org; Sebastian Fricke <sebastian.fricke@collabora.com>
+>Subject: Re: [PATCH] media: uapi: v4l: Change V4L2_TYPE_IS_CAPTURE
+>condition
+>
+>On Fri, 17 May 2024 18:49:40 +0900, Nas Chung wrote:
+>> We expect V4L2_TYPE_IS_CAPTURE() macro allow only CAPTURE type.
+>> But, Inverting OUTPUT type can allow undefined v4l2_buf_type.
+>> Check CAPTURE type directly instead of inverting OUTPUT type.
+>>
+>> Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+>> ---
+>>  include/uapi/linux/videodev2.h | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/uapi/linux/videodev2.h
+>b/include/uapi/linux/videodev2.h
+>> index fe6b67e83751..32b10e2b7695 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -171,7 +171,13 @@ enum v4l2_buf_type {
+>>  	 || (type) =3D=3D V4L2_BUF_TYPE_SDR_OUTPUT			\
+>>  	 || (type) =3D=3D V4L2_BUF_TYPE_META_OUTPUT)
+>>
+>> -#define V4L2_TYPE_IS_CAPTURE(type) (!V4L2_TYPE_IS_OUTPUT(type))
+>> +#define V4L2_TYPE_IS_CAPTURE(type)				\
+>> +	((type) =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE			\
+>> +	 || (type) =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE	\
+>> +	 || (type) =3D=3D V4L2_BUF_TYPE_VBI_CAPTURE			\
+>> +	 || (type) =3D=3D V4L2_BUF_TYPE_SLICED_VBI_CAPTURE		\
+>> +	 || (type) =3D=3D V4L2_BUF_TYPE_SDR_CAPTURE			\
+>> +	 || (type) =3D=3D V4L2_BUF_TYPE_META_CAPTURE)
+>
+>Maybe adding a V4L2_TYPE_IS_VALID(type) macro would be helpful to define
+>TYPE_IS_CAPTURE as all valid types that are not OUTPUT:
+>
+>	#define V4L2_TYPE_IS_VALID(type) \
+>		((type) >=3D V4L2_BUF_TYPE_VIDEO_CAPTURE \
+>		&& (type) <=3D V4L2_BUF_TYPE_META_OUTPUT)
+>
+>	#define V4L2_TYPE_IS_CAPTURE(type) \
+>		(V4L2_TYPE_IS_VALID(type) && !V4L2_TYPE_IS_OUTPUT(type))
+>
+>This would avoid keeping the two explicit lists of OUTPUT and CAPTURE
+>types.
 
+I agree that it's better to add a V4L2_TYPE_IS_VALID(type) macro.
+I will address this in V2.
+
+Thanks.
+Nas.
+
+>
+>Michael
+>
+>>
+>>  enum v4l2_tuner_type {
+>>  	V4L2_TUNER_RADIO	     =3D 1,
+>> --
+>> 2.25.1
+>>
+>>
+>>
 
