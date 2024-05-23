@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-187620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208DF8CD55B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37658CD560
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02E4280E99
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:05:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C9F7283D59
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746BE14AD35;
-	Thu, 23 May 2024 14:05:19 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 67F4713B598
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF20F14A627;
+	Thu, 23 May 2024 14:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YSNGNko7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08017FBD2
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716473119; cv=none; b=EBGgCm6nexCF3FsBT6U8wDAA53XtnkcMXs7U9cIlCCPmddzVtqLBKdfYlpqzxVvVrJFUWoh5IMveSMmrxb6Vc8zviuRWDPItUl17GPZDbMueMZcoZM9lHXJ2ZkBhP1Ghl4F+OYp3JRSbTlVTEe3HypweedQm16aBYwBJw8N3lWY=
+	t=1716473256; cv=none; b=Hsjm77I63oqXQfZQ77X09elJo239NcgFuegL9MNmvtDLw8u9SMS5gb3nSGJrK4bxSBiy1BYbL+fwvYwdQwtw2AzhzoKudkmCjYCD3rkUNQyW8ZiUZsO3B2tE8CnfYIAm8npz71XNs+QJyr6L9sv/SY6a6Ee/Dw4e5ZXgeSX92cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716473119; c=relaxed/simple;
-	bh=nPSkzDMhQidOoMXQKG6zY45AtQrck8vaGjz3ckPaPmY=;
+	s=arc-20240116; t=1716473256; c=relaxed/simple;
+	bh=GXB683gQC5Qzq9ZnXze9zXEmAPftWpNWotP7t/rMGxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVFHl8lXVSPrh4RlhvdG/8HNWxTNvLyinpKHKJOIkjy114QgSxomMPCEUW50jyYBKFimddD7W93cOGJGTOBvEA9Rw7rOwWG27lrqmbhWptfOqihLOo2MCVGh0NpMRYiL0ETuqBui0xlAQYmFk3O+R7L8ufZUo8+YiEwkUJj/9Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 539230 invoked by uid 1000); 23 May 2024 10:05:16 -0400
-Date: Thu, 23 May 2024 10:05:16 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
-  "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
-  linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
-  boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-  Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: LKMM: Making RMW barriers explicit
-Message-ID: <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
-References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
- <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
- <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
- <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
- <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
- <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
- <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
- <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
- <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNvRnewIeXcLw/fiXQPQ9cYHXmzaZvo3gBqzmQ9I5RxavS6XNtC4XzZvq6qzDvWGDnkiD67yteg9B4pZ+2HB/Degco23GEeMOf73iUoLJ242zDZ0sCo4QLc0XbrvqGMKkwoP+lWQghgx5sjZ0beslgzFcdREYp1vWyE5GdXJ8wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YSNGNko7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6B13F40E01E8;
+	Thu, 23 May 2024 14:07:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ReU00yeVSuf2; Thu, 23 May 2024 14:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716473247; bh=qXfYRFhu2JIkgeWZDMQpdFw4OPOQczwivSNHPDfIb/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YSNGNko7IGS7Iwb/IMz2WbftiPUUZsi34JmWbuw9cF/vczn/vm8XBrBYzd6pGPT2M
+	 YImW1p8FG3vlC1Xf8Z0cAABBywLWdX/JZ6ifMWLyrZrqXdipCloCgH4/n7/Z+zJqx4
+	 UJaErATL0eF+Bb6HgUvhb+eu4VQRo2HlYojKzDft1zg/G7qyF96rsQPPl4R4+6EmfH
+	 uBS1RN18X2g3c+JjqpriuHArvNtLTQn74JpORYMQLt3tKeOBdT5n/RLRLzKE3olxs3
+	 aJb+Kvk8kYDR81MPiy2BeAYDNhvrEKT1av9ldoDuH52sEWXph7eF6YL3LGkKyFveS2
+	 Ixa4To0Xlvhl2pl3zYtXQtasJ9WRkrgsP5Z6PFp4wK55hSDZN61O/GOGIpIn4Bs2yr
+	 JNhWhu3mWTgxs8UDrqDpr+8PbI3wgwdRv2MeyjqQrm/rzWiTtJBuV5MtK3WtJa1A42
+	 OhOok4/xSvpXMkf7BtAcnC8cO/rc+7FoxnISTGFW/yNTGFs8ZNC+58U8dlKVwLc8Sz
+	 vREojVz6bstwAcDS2ethJ3b3l88VaIiiaUEL379iIhGqpWLz/Zwj5ZtDRWwcVGb8NO
+	 xwnUOieenhIbgNYvzp5mnmKKAshjRISXS9kqdHTYT3gO9NY8qxzyes9RIWg55k5ykZ
+	 5DYZCdF6z0lxJDYgeeYl8iZw=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 03FCC40E0177;
+	Thu, 23 May 2024 14:07:13 +0000 (UTC)
+Date: Thu, 23 May 2024 16:07:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Andryuk <jason.andryuk@amd.com>, Juergen Gross <jgross@suse.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] x86/kernel: Move page table macros to new header
+Message-ID: <20240523140709.GCZk9NjWBeJQ4Yqa9P@fat_crate.local>
+References: <20240410194850.39994-1-jason.andryuk@amd.com>
+ <20240410194850.39994-5-jason.andryuk@amd.com>
+ <87pltcfx2o.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
+In-Reply-To: <87pltcfx2o.ffs@tglx>
 
-On Thu, May 23, 2024 at 02:54:05PM +0200, Jonas Oberhauser wrote:
+On Thu, May 23, 2024 at 03:59:43PM +0200, Thomas Gleixner wrote:
+> On Wed, Apr 10 2024 at 15:48, Jason Andryuk wrote:
+> > ---
+> >  arch/x86/kernel/head_64.S            | 22 ++--------------------
+> >  arch/x86/kernel/pgtable_64_helpers.h | 28 ++++++++++++++++++++++++++++
 > 
+> That's the wrong place as you want to include it from arch/x86/platform.
 > 
-> Am 5/22/2024 um 4:20 PM schrieb Alan Stern:
-> > It would be better if there was a way to tell herd7 not to add the 'mb
-> > tag to failed instructions in the first place.  This approach is
-> > brittle; see below.
-> 
-> Hernan told me that in fact that is actually currently the case in herd7.
-> Failing RMW get assigned the Once tag implicitly.
-> Another thing that I'd suggest to change.
+> arch/x86/include/asm/....
 
-Indeed.
+.. and there already is a header waiting:
 
-> > An alternative would be to have a way for the .cat file to remove the
-> > 'mb tag from a failed RMW instruction.  But I don't know if this is
-> > feasible.
-> 
-> For Mb it's feasible, as there is no Mb read or Mb store.
-> 
-> Mb = Mb & (~M | dom(rmw) | range(rmw))
-> 
-> However one would want to do the same for Acq and Rel.
-> 
-> For that one would need to distinguish e.g. between a read that comes from a
-> failed rmw instruction, and where the tag would disappear, or a normal
-> standalone read.
-> 
-> For example, by using two different acquire tags, 'acquire and 'rmw-acquire,
-> and defining
-> 
-> Acquire = Acquire | Rmw-acquire & (dom(rmw) | range(rmw))
-> 
-> Anyways we can do this change independently. So for now, we don't need
-> RMW_MB.
+arch/x86/include/asm/pgtable_64.h
 
-Overall, it seems better to have herd7 assign the right tag, but change 
-the way the .def file works so that it can tell herd7 which tag to use 
-in each of the success and failure cases.
+so no need for a new one.
 
-> > 	[M] ; po ; [RMW_MB]
-> > 
-> > 	[RMW_MB] ; po ; [M]
-> > 
-> > This is because events tagged with RMW_MB always are memory accesses,
-> > and accesses that aren't part of the RMW are already covered by the
-> > fencerel(Mb) thing above.
-> 
-> This has exactly the issue mentioned above - it will cause the rmw to have
-> an internal strong fence that on powerpc probably isn't there.
+Thx.
 
-Oops, that's right.  Silly oversight on my part.  But at least you 
-understood what I meant.
+-- 
+Regards/Gruss,
+    Boris.
 
-> We could do (with the assumption that Mb applies only to successful rmw):
-> 
->  	[M] ; po ; [Mb & R]
->  	[Mb & W] ; po ; [M]
-
-That works.
-
-Alan
+https://people.kernel.org/tglx/notes-about-netiquette
 
