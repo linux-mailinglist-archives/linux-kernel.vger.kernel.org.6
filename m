@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-187899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D128CDA4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:57:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 710408CDA50
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46DEB1C21F04
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:57:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A21F61C216DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8631284A4F;
-	Thu, 23 May 2024 18:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YNouIM5W"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCF782899;
+	Thu, 23 May 2024 18:58:11 +0000 (UTC)
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AB2D82C67;
-	Thu, 23 May 2024 18:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1761D4F602;
+	Thu, 23 May 2024 18:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716490601; cv=none; b=adgdDl+c0l6Ug4LwayZftIJVBB3EpOBpBxog/0kvB8hPvjO1Vxhb0Np0XrVoQJboE02SSpB4lZFQoGsW8nBdmuIkP0IrBPBNodNxL99eGJGxK3me5HLKdw8zdgO3bigGBYCch+msdRkXHC7C51/Q1Sr0ObRIChbQpz92VyJp3mU=
+	t=1716490690; cv=none; b=gCpi9SJhTjyMGoA9O8LY0SDlYCRvTdkN4Kuz35CAaFKCvBH+pOjER5N9XzAdDoHotjY6AfmmL+hhcim5hNm9POj1aUnzsgO+x4qRuRuK8fUgvuKrjCxKDG/SkgJjfRfk9+AbmOhF6Oo152p8M8XlDAOY7QfUsVfNOym+sJpYrGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716490601; c=relaxed/simple;
-	bh=HZNVwOy63PnlLV/B4yl1rXiuzBKGyv+RHwrWFUlroEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XB1hUP/Nq1aZrU3InrnYU5T9NnEy8E6GZ2B2oiw8jZBeYLtkTx2V5fDkqdSkHpQzPFTSMI2xJv2aRaRRv2OOSTJ9uLYzvGNmDg4lqTX7zWo2up1JYoNPatB0NXYha7feiQTVhJG/mVgmo/aIlbrWP4pOczsOCNF2qvgExyjKleA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YNouIM5W; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4200ee47de7so57552485e9.2;
-        Thu, 23 May 2024 11:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716490598; x=1717095398; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aagzBVjJ/D8Y1ifoBBVOq9JBnR6o7BIp7hhz9J64Up4=;
-        b=YNouIM5WsLrLIBo/yinjjekmqWZikpjNqkamjdZvE90aogwD6m6M963Czaza4+aHMq
-         tgABzU9AQr/VaBhURo/mx/YJcZhBamJUDFm1TuQkWDc/0cF7f/+MMhlKTElesVHk38ml
-         iEUI0BMhc1jz22wGcGiPWa6d8WQ3O8WMMlXwZMQHYoNteKnBQPnNTv3ZbAeSgTMYNw7R
-         A1jJCw+6ABZo+7nv91qkjOdryTPf6ZeTI4IS2fr+CvWoBnPi53P8JwFF3ep4DGP8uwSZ
-         BxYvTrjxafsTSpOQXZvtSz+WnuGVCj9T4DbLwK7PvktJBiApbZxoO4Qk7zMCNV9VMqO0
-         HcHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716490598; x=1717095398;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aagzBVjJ/D8Y1ifoBBVOq9JBnR6o7BIp7hhz9J64Up4=;
-        b=sQsUEk9O1Vm+Q3dBx5XJtYtwsmAZMvflLoDsa5SfUK8nwT5MBE513OD+dP0cT6no2C
-         nQcQAQAIA68QsxUxpqZz/KfUbbh9DhPONzeSRGf1sn8rff+nK8r0xXSeiBqFN3bGEiKQ
-         bE745ti1UzYuKq6IuTTZ+BlnTdJLtNUq/ydGsyYzoLvDXCHPlXKo5o9iqlhozKITxWvL
-         USVyS4R4HUrVgdqyQrQMpWrrCdqLkZZF2iS+xUgarz58Qa2Jwfj1od9YLLVvEQZf+JFU
-         G1mfSC8Q4W1jMOs2R/5Uw7q2li1Y2w5B27M8YVm0Qvws6QNla1GmGUlF365eyahmfK2A
-         3khQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYxloLUhDaTGvT1lI5a0IfBJo+Iy6Zx6XaWF0WmZvz0sfHsemTgxPzXGJGh74gBtL7lvWPnNBkAyJesdiTODCcn8BuvYnfy57GnkUig5DUMzJHeEYfQei6vgrVo+6TfHAR8ve1WOVLtQ==
-X-Gm-Message-State: AOJu0YwwUA5u6T17WkFUZlGUm3f9FPxkOyA3QCW13ZLL0sVqS6vfemj2
-	e/40IJNg8Awu8x7poSkykXZLlODGUojbrFa7tyRwEfQhBXjHZ3w=
-X-Google-Smtp-Source: AGHT+IHQtIRERiIjgF0uwBvsMBAGXfHwHjUykiz+HaZvwboLaRdKEhVREw2VDEvxpSx1HgPPVohtVA==
-X-Received: by 2002:a05:600c:22d4:b0:41c:83aa:18b7 with SMTP id 5b1f17b1804b1-420fd35fcd1mr44947485e9.33.1716490598452;
-        Thu, 23 May 2024 11:56:38 -0700 (PDT)
-Received: from U4.lan ([2a02:810b:f40:4600:a453:b45b:e52a:2302])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3550c675581sm3965f8f.13.2024.05.23.11.56.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 11:56:38 -0700 (PDT)
-From: Alex Bee <knaerzche@gmail.com>
-To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH 3/3] ARM: dts: rockchip: Add vpu nodes for RK3128
-Date: Thu, 23 May 2024 20:56:33 +0200
-Message-ID: <20240523185633.71355-4-knaerzche@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240523185633.71355-1-knaerzche@gmail.com>
-References: <20240523185633.71355-1-knaerzche@gmail.com>
+	s=arc-20240116; t=1716490690; c=relaxed/simple;
+	bh=QQNdtzoOdLf6SuKfsjdq8VOWrAdYs1aQG2dt+TDRoKM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ls34WKFO/0TOGc7CjLU+ahs5Si74WilWqfomIzwfg7L8T+sOb/oUvpoI1uZmfTjrGnQDRvqZEySDAlmS86UTESvibwLB/lpGVlaLy9S4bq7otN7j5SiAVWYKd4Aksgj5XtcJSsyyWFn2vGfUPIMFSjV7IL4I5KTJxUP4rURNQjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id DA6A515364;
+	Thu, 23 May 2024 19:58:00 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id CACE3219FCA; Thu, 23 May 2024 19:58:00 +0100 (BST)
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
+ =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>, Purism Kernel Team
+ <kernel@puri.sm>, Ondrej
+ Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
+ Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
+ maximum rate
+In-Reply-To: <yw1x4jap90va.fsf@mansr.com> (=?iso-8859-1?Q?=22M=E5ns_Rullg?=
+ =?iso-8859-1?Q?=E5rd=22's?= message of "Wed,
+	22 May 2024 19:07:21 +0100")
+References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
+	<20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
+	<yw1xo78z8ez0.fsf@mansr.com>
+	<c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
+	<yw1x4jap90va.fsf@mansr.com>
+Date: Thu, 23 May 2024 19:58:00 +0100
+Message-ID: <yw1xo78w73uv.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Add nodes for the vpu and it's attached iommu which are both part of the
-RK3128_PD_VIDEO powerdomain.
+M=E5ns Rullg=E5rd <mans@mansr.com> writes:
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
----
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> Frank Oltmanns <frank@oltmanns.dev> writes:
+>
+>> Hi M=E5ns,
+>>
+>> 21.05.2024 15:43:10 M=E5ns Rullg=E5rd <mans@mansr.com>:
+>>
+>>> Frank Oltmanns <frank@oltmanns.dev> writes:
+>>>
+>>>> The Allwinner SoC's typically have an upper and lower limit for their
+>>>> clocks' rates. Up until now, support for that has been implemented
+>>>> separately for each clock type.
+>>>>
+>>>> Implement that functionality in the sunxi-ng's common part making use =
+of
+>>>> the CCF rate liming capabilities, so that it is available for all clock
+>>>> types.
+>>>>
+>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
+>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>>>> Cc: stable@vger.kernel.org
+>>>> ---
+>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
+>>>> drivers/clk/sunxi-ng/ccu_common.h |=A0 3 +++
+>>>> 2 files changed, 22 insertions(+)
+>>>
+>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
+>>> device, the clocks ending up all wrong as seen in this diff of
+>>> /sys/kernel/debug/clk/clk_summary:
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-index fb98873fd94e..c11f55677841 100644
---- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-@@ -252,6 +252,30 @@ power-domain@RK3128_PD_GPU {
- 		};
- 	};
- 
-+	vpu: video-codec@10106000 {
-+		compatible = "rockchip,rk3128-vpu", "rockchip,rk3066-vpu";
-+		reg = <0x10106000 0x800>;
-+		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "vepu", "vdpu";
-+		clocks = <&cru ACLK_VDPU>, <&cru HCLK_VDPU>,
-+			 <&cru ACLK_VEPU>, <&cru HCLK_VEPU>;
-+		clock-names = "aclk_vdpu", "hclk_vdpu",
-+			      "aclk_vepu", "hclk_vepu";
-+		iommus = <&vpu_mmu>;
-+		power-domains = <&power RK3128_PD_VIDEO>;
-+	};
-+
-+	vpu_mmu: iommu@10106800 {
-+		compatible = "rockchip,iommu";
-+		reg = <0x10106800 0x100>;
-+		interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru ACLK_VEPU>, <&cru HCLK_VDPU>;
-+		clock-names = "aclk", "iface";
-+		power-domains = <&power RK3128_PD_VIDEO>;
-+		#iommu-cells = <0>;
-+	};
-+
- 	vop: vop@1010e000 {
- 		compatible = "rockchip,rk3126-vop";
- 		reg = <0x1010e000 0x300>;
--- 
-2.45.0
+[...]
 
+>>> Reverting this commit makes it work again.
+>>
+>> Thank you for your detailed report!
+>>
+>> I've had a first look at hdmi-tmds and hdmi-ddc, and neither seems to
+>> be calling ccu_is_better_rate() in their determine_rate()
+>> functions. Their parents have the exact same rates in your diff, so,
+>> my current working assumption is that they can't be the cause either.
+>>
+>> I'll have a more detailed look over the weekend. Until then, if anyone
+>> has some ideas where I should have a look next, please share your
+>> thoughts.
+>
+> In case it's relevant, this system doesn't use the HDMI DDC, the
+> physical DDC pins being connected to a different I2C adapter for
+> various reasons.
+>
+> From the clk_summary diff, I see a few things:
+>
+> 1. hdmi-tmds has changed parent from pll-video1-2x to pll-video0-2x.
+> 2. The ratio of hdmi-tmds to its parent has changed from 1/8 to 1.
+> 3. The resulting rate bears no relation to the pixel clock from EDID.
+>
+> I tried kernel 6.9.1 as well, and that doesn't work either.  I'll keep
+> digging and try to narrow it down.
+
+It turns out HDMI output is broken in v6.9 for a different reason.
+However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
+minimum and maximum rate) requires two others as well in order not
+to break things on the A20:
+
+cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
+9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
+
+With those two (the second depends on the first) cherry-picked on top of
+v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
+
+--=20
+M=E5ns Rullg=E5rd
 
