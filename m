@@ -1,170 +1,178 @@
-Return-Path: <linux-kernel+bounces-187088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645DD8CCCF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:24:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EF98CCCFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6973F1C21BD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0091F225B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA6713CA87;
-	Thu, 23 May 2024 07:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D968113CA93;
+	Thu, 23 May 2024 07:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Gw3UHFgn"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="l2ra1qxB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B3C3CF51;
-	Thu, 23 May 2024 07:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDAC3CF51;
+	Thu, 23 May 2024 07:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716449064; cv=none; b=T/f00Rl37qWaLGKqBM5wNXqhhU4wrCUdPXD6kjuCxKlhK84fV0P8l/ekoHCmhrx14r+lRoLzULSybJtotx21PAPSgUIK9ZgIVfyt0Bxb/fAOxk89teFSV9NOmw8hdCM0MOlKhqJYovjgOg8lZgRXtT3OzGeHap4rqlb1nOB7vW4=
+	t=1716449144; cv=none; b=fDrbt9tUwvL1uzs2z7eYY3k6dyFqNY6TUY3KAtrXNqA8gretGue6QNKy5eFzxDCbRZIL9wYulfDn/GvyoTTovzv92APVDmuZnicWEhr/XpqbVK/iy3xyk4KXgetl0FWDkFcMK+KobL2o9dODg6zcRoMV3Q4Fk8rUcEmPk7z2PXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716449064; c=relaxed/simple;
-	bh=quICu62D43k69goYAzJ786xXbgVdCuVtKje/qBcaq7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bZhNjvP6vwcNukDvXRBYcFCyvTowp5l5nUJzvRF4xPUKkUe3WtN5VAbLL8szCm8haziljNuVG2fa3en3flN0+/Wmq4mEnhLWmpfgdDC+IGZQlmLw2+oWOOStiGY5TmDoYjAOMb2yTPJyDcCljw947EAAS/Y8/y5yIQRXYQTTI5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Gw3UHFgn; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1716449045; x=1717053845; i=wahrenst@gmx.net;
-	bh=3ewq43Fy7KxVWBn6uVYPi8Gd3oGUm4UZeASUASFFE7I=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Gw3UHFgneGv5EdEHoD8RrdPrg9wcnaSx5LF5JDukXYmB0kKSd3HsyFgn9F/utbLP
-	 K8RdXfMKa9WDQg3uXfevRM32ozHlQ1M2hpE8PRUqxTTHPUd65dAwffRkmCsZLALxD
-	 jeo/my5/vcvLMqpEBdUsAkm4sTn9Bo0LwjnVbdKNGRaNFe03q8wOjlCCz8RG/0ClH
-	 kHG3BYKBZWZHwxGYWLf1Rd63YfwGpo1TUwyejuQ5BZTIJKYlq9OMdFZc4F8mdTaxc
-	 sUtg9EkpdatXl4hM0I60wvT3fqA/9xfhCaj/DEI0l9AK61BML0t5M4/OhX76hC+e1
-	 VyNywiyvCIMgq/BPsg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MOzOm-1rtTtB0zgy-00MOO0; Thu, 23
- May 2024 09:24:05 +0200
-Message-ID: <be9cc413-6780-45f9-913c-056238be2451@gmx.net>
-Date: Thu, 23 May 2024 09:24:04 +0200
+	s=arc-20240116; t=1716449144; c=relaxed/simple;
+	bh=OtoMM2EnLYopfSClknn+vskVbP9LcVlEYgkZXxAy70o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSjTOXv6vn67eCfTtkH0Il/sihfgDfnfoznIAeMl/ZACq3uqn0Eu4NjQUuAPAhjOp2GZI39xBGdrtTIkWBReCgcEBZv8LcObnJOQowwQSaVBvOxm5EXVGptn2ndX5O+YRHLUxWAHVQMuZVTrMm1IfEbSFTEkctb1nm/LEyiBIYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=l2ra1qxB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD25C2BD10;
+	Thu, 23 May 2024 07:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716449143;
+	bh=OtoMM2EnLYopfSClknn+vskVbP9LcVlEYgkZXxAy70o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l2ra1qxB1P/JpnSBpEDFO9rzUWGpdqdI0rJMLESTsydrLtm6zEvZ1rDRQlxHxootq
+	 oIm5al4hs9GIeWOLK7hRRSOZ/d8US5HPO5xVjkiiXnsyaT1aP9LxqPhSkRuSdq0MVT
+	 jTSh6RT+fM5EkJuEL4KvFIK+uODE3h8jvwIi3qf4=
+Date: Thu, 23 May 2024 09:25:40 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: yangxingui <yangxingui@huawei.com>
+Cc: rafael@kernel.org, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	prime.zeng@hisilicon.com, liyihang9@huawei.com,
+	kangfenglong@huawei.com
+Subject: Re: [PATCH] driver core: Add log when devtmpfs create node failed
+Message-ID: <2024052316-confused-payback-5658@gregkh>
+References: <20240522114346.42951-1-yangxingui@huawei.com>
+ <2024052221-pulverize-worrisome-37fb@gregkh>
+ <794b5fa3-0135-80cc-4b55-f48a430a58ca@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: soc: bcm: document brcm,bcm2711-avs-monitor
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240517125138.53441-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240517125138.53441-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lpEl9pH82QtZCaEEQBU+SlhJdTRsqw/TzdYu/1R7pCIxgvKQhDq
- ZtDqozaHVbGQE8lV7/iJCXhHV+l+ZOQrNfr5FmKBH5lGyGMssqhxVnEYsDfx+XeafnVeIvp
- 5/0xWEog7gvflqIzFfKwufvmtDy8TdC9xsNb+d+jmy7OXL48VOR88Zk6JzeNcF20Lj/kHYH
- DZdcq+/aaaREJeR3yQD0Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FF5cBb4Tl4w=;a25RE8LFwJUsg79MzEK46cPjfe+
- 6+HDs3EwkjhXECGycMIVClBLvAMkvqCXr3fm8IqEx5PVnlno5Rx09xOy0fKWQxcP6NaRfHZEa
- zpJBp8TexRA4s6vajGW4VxmlvvB15+KyJxhmy9/kt1F9TblcwwtYs40nsoG3BLHH+LBjmXO+C
- el8OWqAgrY1CseQ/OTq897TbJ2+pnzERtpVjPtF4nerjRCP9sJgKLlqrBbsZkGe5jhJbCZhda
- qrn3vjzqOFp/njbdIt/MmQArGRLIyWVkA/vMz20sRRS5aTYLITlB5eSXTqdt0xe+SCZwOFKU5
- g+dJlzSNmC7e6tq1EnPLBMYTNAA8pNhl+y8nU3UVv3At2713L8H/PHkkgwJ3mbMXoNuJbChFM
- dz2aw/cZ0uyAjNTHHqPXbHS4NzBBZqF1gzGbRmaNdb4TBSkEfO9Q1MqF1S96w12x6xxl5Vx0Z
- KETPVe6H8vZ6+P9ioCed0kFmpN5CEr9pql79H4ipAtjHHP0AQJVM7XXXphoNOr8JnXowD6UDN
- NruOq/E3U9sjo9K1sQw+O112Uky47vTS8uYGQhUVXe74mhHeYOhoM/2s2l/LCr/3TjzR3V6PY
- yrNnl1rZZxyrgeE/XObbaD2M/+yDhjv+pkjNICKI6Hyn0/knnOEeZHMyLjbH1aaYJiPaXt4TF
- qip1SwbBpfeMbYq0J7rL92rPBoQxdZsbjatrnUv8rQeLfhajpDGkTnqVViU9p1fLKjUPwS8MA
- FOxCfgl4wt1tqUu/q5b8kP6Eq1EOnhl91vdbnUTz/Lf9sc6xJ+MKFsBZSu/GKIgNVPCg16Sia
- w6uVPy3w0iJ4V9DFf/MmVaJeTBCL33HNKSS071vWWmvm8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <794b5fa3-0135-80cc-4b55-f48a430a58ca@huawei.com>
 
-Hi,
+On Thu, May 23, 2024 at 09:50:09AM +0800, yangxingui wrote:
+> Hi, Greg
+> 
+> On 2024/5/22 20:23, Greg KH wrote:
+> > On Wed, May 22, 2024 at 11:43:46AM +0000, Xingui Yang wrote:
+> > > Currently, no exception information is output when devtmpfs create node
+> > > failed, so add log info for it.
+> > 
+> > Why?  Who is going to do something with this?
+> We execute the lsscsi command after the disk is connected, we occasionally
+> find that some disks do not have dev nodes and these disks cannot be used.
 
-Am 17.05.24 um 14:51 schrieb Krzysztof Kozlowski:
-> Document alreasdy used binding for Syscon / AVS monitor:
-s/alreasdy/already excepted of that: Reviewed-by: Stefan Wahren
-<wahrenst@gmx.net> Thanks
-> brcm,bcm2711-avs-monitor to fix dt_binding_check and dtbs_check warnings
-> like:
->
->    brcm,avs-ro-thermal.example.dtb: /example-0/avs-monitor@7d5d2000: fai=
-led to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'sys=
-con', 'simple-mfd']
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   .../soc/bcm/brcm,bcm2711-avs-monitor.yaml     | 44 +++++++++++++++++++
->   1 file changed, 44 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2=
-711-avs-monitor.yaml
->
-> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2711-avs-=
-monitor.yaml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2711-avs-=
-monitor.yaml
-> new file mode 100644
-> index 000000000000..e02d9d7e7d9a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2711-avs-monitor=
-yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/bcm/brcm,bcm2711-avs-monitor.yam=
-l#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Broadcom AVS Monitor
-> +
-> +maintainers:
-> +  - Stefan Wahren <wahrenst@gmx.net>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: brcm,bcm2711-avs-monitor
-> +      - const: syscon
-> +      - const: simple-mfd
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  thermal:
-> +    $ref: /schemas/thermal/brcm,avs-ro-thermal.yaml
-> +    description: Broadcom AVS ring oscillator thermal
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - thermal
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    avs-monitor@7d5d2000 {
-> +        compatible =3D "brcm,bcm2711-avs-monitor", "syscon", "simple-mf=
-d";
-> +        reg =3D <0x7d5d2000 0xf00>;
-> +
-> +        thermal: thermal {
-> +            compatible =3D "brcm,bcm2711-thermal";
-> +            #thermal-sensor-cells =3D <0>;
-> +        };
-> +    };
-> +...
+Ok, but why do you think that devtmpfs create failed?
 
+> However, there is no abnormal log output during disk scanning. We analyze
+> that it may be caused by the failure of devtmpfs create dev node, so the log
+> is added here.
+
+But is that the case?  Why is devtmpfs failing?  Shouldn't we fix that
+instead?
+
+> The lscsi command query results and kernel logs as follows:
+> 
+> [root@localhost]# lsscsi
+> [9:0:4:0]	disk	ATA	ST10000NM0086-2A SN05	-
+> 
+> kernel: [586669.541218] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
+> link_rate=10(sata)
+> kernel: [586669.541341] sas: phy-9:0 added to port-9:0, phy_mask:0x1
+> (5000000000000900)
+> kernel: [586669.541511] sas: DOING DISCOVERY on port 0, pid:2330731
+> kernel: [586669.541518] hisi_sas_v3_hw 0000:b4:04.0: dev[4:5] found
+> kernel: [586669.630816] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+> kernel: [586669.665960] hisi_sas_v3_hw 0000:b4:04.0: phydown: phy0
+> phy_state=0xe
+> kernel: [586669.665964] hisi_sas_v3_hw 0000:b4:04.0: ignore flutter phy0
+> down
+> kernel: [586669.863360] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
+> link_rate=10(sata)
+> kernel: [586670.024482] ata19.00: ATA-10: ST10000NM0086-2AA101, SN05, max
+> UDMA/133
+> kernel: [586670.024487] ata19.00: 19532873728 sectors, multi 16: LBA48 NCQ
+> (depth 32), AA
+> kernel: [586670.027471] ata19.00: configured for UDMA/133
+> kernel: [586670.027490] sas: --- Exit sas_scsi_recover_host: busy: 0 failed:
+> 0 tries: 1
+> kernel: [586670.037541] sas: ata19: end_device-9:0:
+> model:ST10000NM0086-2AA101 serial:            ZA2B3PR2
+> kernel: [586670.100856] scsi 9:0:4:0: Direct-Access     ATA ST10000NM0086-2A
+> SN05 PQ: 0 ANSI: 5
+> kernel: [586670.101114] sd 9:0:4:0: [sdk] 19532873728 512-byte logical
+> blocks: (10.0 TB/9.10 TiB)
+> kernel: [586670.101116] sd 9:0:4:0: [sdk] 4096-byte physical blocks
+> kernel: [586670.101125] sd 9:0:4:0: [sdk] Write Protect is off
+> kernel: [586670.101137] sd 9:0:4:0: [sdk] Write cache: enabled, read cache:
+> enabled, doesn't support DPO or FUA
+> kernel: [586670.101620] sd 9:0:4:0: Attached scsi generic sg10 type 0
+> kernel: [586670.101714] sas: DONE DISCOVERY on port 0, pid:2330731, result:0
+> kernel: [586670.101731] sas: sas_form_port: phy0 belongs to port0
+> already(1)!
+> kernel: [586670.152512] sd 9:0:4:0: [sdk] Attached SCSI disk
+
+Looks like sdk was found properly, what's the problem?
+
+> 
+> > 
+> > > 
+> > > Signed-off-by: Xingui Yang <yangxingui@huawei.com>
+> > > ---
+> > >   drivers/base/core.c | 5 ++++-
+> > >   1 file changed, 4 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > > index 5f4e03336e68..32a41e0472b2 100644
+> > > --- a/drivers/base/core.c
+> > > +++ b/drivers/base/core.c
+> > > @@ -3691,7 +3691,10 @@ int device_add(struct device *dev)
+> > >   		if (error)
+> > >   			goto SysEntryError;
+> > > -		devtmpfs_create_node(dev);
+> > > +		error = devtmpfs_create_node(dev);
+> > > +		if (error)
+> > > +			pr_info("devtmpfs create node for %s failed: %d\n",
+> > > +				dev_name(dev), error);
+> > 
+> > Why is an error message pr_info()?
+> Do you recommend using pr_err()?
+
+Do not print errors at the information level :)
+
+> > And again, why is this needed?  If this needs to be checked, why are you
+> > now checking it but ignoring the error?
+> > 
+> > What would this help with?
+> As above, we want to get the error info when the dev node fails to be
+> created. We currently haven't figured out how to handle this exception well.
+> But judging from the problems we are currently encountering, some may be
+> because the corresponding dev node already exists, causing the creation to
+> fail, but the node information is incorrect and the device cannot be used.
+> as follows:
+> [root@localhost]# ll /dev/sdk
+> -rw-------. 1 root root 5368709120 Jul 8 09:51 /dev/sdk
+
+Looks like the device node is created to me.  What is incorrect about
+it, the values?  What is 'll' an alias for?  And are you sure that other
+tools aren't getting the device node creation uevent and doing something
+with it in userspace?  How do you know this is the kernel failing?
+
+Wait, is /dev/sdk really a device node and not a file?  Perhaps
+something else wrote to it first, before it was created?  And that's why
+devtmpfs couldn't create it.  That sounds like a userspace error,
+nothing the kernel can do about it.
+
+thanks,
+
+greg k-h
 
