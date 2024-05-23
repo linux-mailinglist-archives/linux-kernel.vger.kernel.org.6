@@ -1,171 +1,234 @@
-Return-Path: <linux-kernel+bounces-186882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAD78CCA5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF078CCA5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4137F281F5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:24:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53A2D1F21D8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A193FF1;
-	Thu, 23 May 2024 01:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0231C36;
+	Thu, 23 May 2024 01:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9UI8cjc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dcNLzS54"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7937EC7;
-	Thu, 23 May 2024 01:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E551879
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716427432; cv=none; b=TfBpoNchCM6A95Q3gJneBJZYTi+6TGrGZB69hZ7MvWZ5oV2BIup/yShvVziTH9Hn5P6D+zZsS2+mAtNf8m+Jo7C2mMek3000wEkyQQMaoM8wpTA6btES1LvnpbDQL/b2NCsBXHXdjcZS7RIuXwd2+X3oU2/fGmGPSoUmmdUdzP8=
+	t=1716427655; cv=none; b=emhe587sU29YYOHFcYerIWfgTF+2GS3u6PjUfn8TXeTDBcr9WZniJjFdRxSYymbLb2jYMY9heqGJcjbtbe9qr4LxbLE6cyB21I1QsjE2GX2BKatiArwrr8XZdFZPUDEFTRIQ5jM4F1L2gHJLCB278WCKmdaPhys6fA6NDG0+tDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716427432; c=relaxed/simple;
-	bh=lrYPyou6GmUkuNkg168NThhIN99DFmu/CkC/pcafMpU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=kbbNLmdbjHJdULOu7t1ZH/zUOxSezFloLfbYHUywDVtsSVTDFPAwzOVf3RiP1wm1/sjAPJrLUDw2tPbaGFVcaXDAtI/qua97EEdF5Ja4ejgia59BvTPTdSx9T8Lpy388kRNv9m/jBAN/Al9arAez9u085V++xe+i1o4l8PcDVEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9UI8cjc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23063C2BBFC;
-	Thu, 23 May 2024 01:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716427431;
-	bh=lrYPyou6GmUkuNkg168NThhIN99DFmu/CkC/pcafMpU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=a9UI8cjcr7yBXmgK3G3Iq3Fi1CuTXmpqVjQlWE/hXy+AnwKIZ/6UKJVeQ7dHNQ/Np
-	 awRHaA8gGqkEB3yZlQ21/Has3Mfo9Qq6PYa99qWXoP5NA3INKL3aioSAWdANfVBn9V
-	 KKhi3nV5/N4bRaO6aJgrru2rc0AaG/TL897o+vplLedYCWudHufTm6hdfCgcHfhp5f
-	 SCpl5xb1t8mYlklON6iwsiN91Z94OIvudHz013EtuuqkJB5wDca9PR9CMAdZjNOzQR
-	 ZLUKVf9j3eQNqZravRHhnF2TsP/zO//NHr4wxOFVuqCJ1Ey2FmGWOfi+x+rG919vrx
-	 aWQ1dpudOUJEA==
-Date: Wed, 22 May 2024 20:23:50 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1716427655; c=relaxed/simple;
+	bh=gP6mZchGnRcBPPCl64YGZjtTtoXmQ7Joujf+lM4ucXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rQL8A5lZF2VsNaaWJqCyh512h8odnQOG+lIKiif7hVGS8GdPPAA0Ars7qjQI+Ch4Ot5+hJZ/6gJamABov0puYZwFgDPPeURvWK3J3iYx2kqJZe5fPY/o2JE4fE9K7dl+/hqpTL3kQW3KL0cBnF115YCUP4NFOgq9KggMGEDEAD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dcNLzS54; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716427654; x=1747963654;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=gP6mZchGnRcBPPCl64YGZjtTtoXmQ7Joujf+lM4ucXg=;
+  b=dcNLzS54cMzOMxrII2MonJUTiXLvHLxO5qvWG9Ess8PcHQh5NTGmbmKs
+   hkRxJyzarnV6vX7KvXUavHqnlNHBSujbhIvBrpMWuOt2bLQNGmPPX/BPq
+   hY8XaXStHw3UhZSpOYKGjOQ+LXPNWCihmi4WjXVQbgLQh9We/pnqF7PAJ
+   GvWaZHpcsXS/BlFQnl9NO+f103KiE4lYFURqUureOihVlSjw4wi7eLRow
+   ia9gCCvLA1n3i2If0PDIzGJ1F7X+s7betUKPAL0uqsxYZG5gr1Tr4sT3R
+   QMowob2yGVM1oYFiUv8NRtBSjBBYDl7FvaUamxBqGY6EtUgibCWRYXRAS
+   w==;
+X-CSE-ConnectionGUID: SSC1uWwoQYa2HIvgKgX0iQ==
+X-CSE-MsgGUID: c5TAJMRIR+mg9M7WGVzrmQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="30247183"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="30247183"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 18:27:33 -0700
+X-CSE-ConnectionGUID: Y4mumLR/R6K6wycpL3aEuQ==
+X-CSE-MsgGUID: kQZKPJyMTQSrj+hp7+JgcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="38327022"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 22 May 2024 18:27:31 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s9xEu-0002Jb-24;
+	Thu, 23 May 2024 01:27:28 +0000
+Date: Thu, 23 May 2024 09:27:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Saeed Nowshadi <saeed.nowshadi@amd.com>
+Subject: drivers/mailbox/zynqmp-ipi-mailbox.c:914:15: sparse: sparse:
+ incorrect type in assignment (different address spaces)
+Message-ID: <202405230902.aIsI0MHh-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Amrit Anand <quic_amrianan@quicinc.com>, Simon Glass <sjg@chromium.org>, 
- Julius Werner <jwerner@chromium.org>, Frank Rowand <frowand.list@gmail.com>, 
- devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
- Michal Simek <michal.simek@amd.com>, Conor Dooley <conor@kernel.org>, 
- Caleb Connolly <caleb.connolly@linaro.org>, 
- "Humphreys, Jonathan" <j-humphreys@ti.com>, 
- Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, 
- Andy Gross <agross@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
- linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Sumit Garg <sumit.garg@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, boot-architecture@lists.linaro.org, 
- linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
-In-Reply-To: <20240522-board-ids-v4-2-a173277987f5@quicinc.com>
-References: <20240522162545887-0700.eberman@hu-eberman-lv.qualcomm.com>
- <20240522-board-ids-v4-2-a173277987f5@quicinc.com>
-Message-Id: <171642742999.680723.11765315495034693179.robh@kernel.org>
-Subject: Re: [PATCH RFC v3 2/9] dt-bindings: board: Introduce board-id
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   de7e71ef8bed222dd144d8878091ecb6d5dfd208
+commit: 6ffb1635341bec50fa9540ae7827d1e5d75ae0b0 mailbox: zynqmp: handle SGI for shared IPI
+date:   3 days ago
+config: arm64-randconfig-r132-20240523 (https://download.01.org/0day-ci/archive/20240523/202405230902.aIsI0MHh-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project fa9b1be45088dce1e4b602d451f118128b94237b)
+reproduce: (https://download.01.org/0day-ci/archive/20240523/202405230902.aIsI0MHh-lkp@intel.com/reproduce)
 
-On Wed, 22 May 2024 16:54:23 -0700, Elliot Berman wrote:
-> Device manufcturers frequently ship multiple boards or SKUs under a
-> single softwre package. These software packages ship multiple devicetree
-> blobs and require some mechanims to pick the correct DTB for the boards
-> that use the software package. This patch introduces a common language
-> for adding board identifiers to devicetrees.
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  .../devicetree/bindings/board/board-id.yaml        | 71 ++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405230902.aIsI0MHh-lkp@intel.com/
 
-My bot found errors running 'make dt_binding_check' on your patch:
+sparse warnings: (new ones prefixed by >>)
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:914:15: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct zynqmp_ipi_pdata [noderef] __percpu *pdata @@     got void * @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:914:15: sparse:     expected struct zynqmp_ipi_pdata [noderef] __percpu *pdata
+   drivers/mailbox/zynqmp-ipi-mailbox.c:914:15: sparse:     got void *
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:921:56: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected unsigned int [usertype] *out_value @@     got unsigned int [noderef] __percpu * @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:921:56: sparse:     expected unsigned int [usertype] *out_value
+   drivers/mailbox/zynqmp-ipi-mailbox.c:921:56: sparse:     got unsigned int [noderef] __percpu *
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:936:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct zynqmp_ipi_mbox *mbox @@     got struct zynqmp_ipi_mbox [noderef] __percpu * @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:936:14: sparse:     expected struct zynqmp_ipi_mbox *mbox
+   drivers/mailbox/zynqmp-ipi-mailbox.c:936:14: sparse:     got struct zynqmp_ipi_mbox [noderef] __percpu *
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:940:29: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct zynqmp_ipi_pdata *pdata @@     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:940:29: sparse:     expected struct zynqmp_ipi_pdata *pdata
+   drivers/mailbox/zynqmp-ipi-mailbox.c:940:29: sparse:     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:964:60: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected struct zynqmp_ipi_pdata *pdata @@     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:964:60: sparse:     expected struct zynqmp_ipi_pdata *pdata
+   drivers/mailbox/zynqmp-ipi-mailbox.c:964:60: sparse:     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:974:68: sparse: sparse: incorrect type in argument 6 (different address spaces) @@     expected void *dev_id @@     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:974:68: sparse:     expected void *dev_id
+   drivers/mailbox/zynqmp-ipi-mailbox.c:974:68: sparse:     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:983:36: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *data @@     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:983:36: sparse:     expected void *data
+   drivers/mailbox/zynqmp-ipi-mailbox.c:983:36: sparse:     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata
+   drivers/mailbox/zynqmp-ipi-mailbox.c:987:32: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct zynqmp_ipi_pdata *pdata @@     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata @@
+   drivers/mailbox/zynqmp-ipi-mailbox.c:987:32: sparse:     expected struct zynqmp_ipi_pdata *pdata
+   drivers/mailbox/zynqmp-ipi-mailbox.c:987:32: sparse:     got struct zynqmp_ipi_pdata [noderef] __percpu *pdata
+>> drivers/mailbox/zynqmp-ipi-mailbox.c:918:9: sparse: sparse: dereference of noderef expression
+   drivers/mailbox/zynqmp-ipi-mailbox.c:934:9: sparse: sparse: dereference of noderef expression
+   drivers/mailbox/zynqmp-ipi-mailbox.c:963:17: sparse: sparse: dereference of noderef expression
+   drivers/mailbox/zynqmp-ipi-mailbox.c:964:48: sparse: sparse: dereference of noderef expression
+   drivers/mailbox/zynqmp-ipi-mailbox.c:972:17: sparse: sparse: dereference of noderef expression
+   drivers/mailbox/zynqmp-ipi-mailbox.c:973:45: sparse: sparse: dereference of noderef expression
+   drivers/mailbox/zynqmp-ipi-mailbox.c:973:45: sparse: sparse: dereference of noderef expression
+   drivers/mailbox/zynqmp-ipi-mailbox.c:978:17: sparse: sparse: dereference of noderef expression
 
-yamllint warnings/errors:
+vim +914 drivers/mailbox/zynqmp-ipi-mailbox.c
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/opp/opp-v2.example.dtb: opp-table-0: opp-1200000000:opp-microvolt-slow:0: [915000, 900000, 925000, 925000, 910000, 935000] is too long
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/opp/opp-v2.example.dtb: opp-table-0: opp-1200000000:opp-microvolt-fast:0: [975000, 970000, 985000, 965000, 960000, 975000] is too long
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/opp/opp-v2.example.dtb: opp-table-0: Unevaluated properties are not allowed ('opp-1000000000', 'opp-1200000000', 'opp-shared' were unexpected)
-	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
-compress: size (5) error for type uint32-matrix
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.example.dtb: uimage@100000: compress: b'lzma\x00' is not of type 'object', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-marvell,pad-type: size (11) error for type uint32-matrix
-marvell,pad-type: size (3) error for type uint32-matrix
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: marvell,pad-type: b'fixed-1-8v\x00' is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: marvell,pad-type: b'fixed-1-8v\x00' is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: Unevaluated properties are not allowed ('marvell,pad-type' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: marvell,pad-type: b'fixed-1-8v\x00' is not of type 'object', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: marvell,pad-type: b'sd\x00' is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: marvell,pad-type: b'sd\x00' is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: Unevaluated properties are not allowed ('marvell,pad-type' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: marvell,pad-type: b'sd\x00' is not of type 'object', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/sc27xx-fg.example.dtb: battery: ocv-capacity-table-0:0: [4185000, 100, 4113000, 95, 4066000, 90, 4022000, 85, 3983000, 80, 3949000, 75, 3917000, 70, 3889000, 65, 3864000, 60, 3835000, 55, 3805000, 50, 3787000, 45, 3777000, 40, 3773000, 35, 3770000, 30, 3765000, 25, 3752000, 20, 3724000, 15, 3680000, 10, 3605000, 5, 3400000, 0] is too long
-	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-table-0:0: [4185000, 100, 4113000, 95, 4066000, 90] is too long
-	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-table-1:0: [4200000, 100, 4185000, 95, 4113000, 90] is too long
-	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-table-2:0: [4250000, 100, 4200000, 95, 4185000, 90] is too long
-	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-celsius: 'anyOf' conditional failed, one must be fixed:
-	[4294967286, 0, 10] is too long
-	4294967286 is greater than the maximum of 2147483647
-	from schema $id: http://devicetree.org/schemas/property-units.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: operating-range-celsius: 'anyOf' conditional failed, one must be fixed:
-	[4294967266, 50] is too long
-	4294967266 is greater than the maximum of 2147483647
-	from schema $id: http://devicetree.org/schemas/property-units.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ambient-celsius: 'anyOf' conditional failed, one must be fixed:
-	[4294967291, 50] is too long
-	4294967291 is greater than the maximum of 2147483647
-	from schema $id: http://devicetree.org/schemas/property-units.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/afe/temperature-transducer.example.dtb: temperature-sensor-0: sense-offset-millicelsius: 'anyOf' conditional failed, one must be fixed:
-	4294694146 is greater than the maximum of 2147483647
-	from schema $id: http://devicetree.org/schemas/property-units.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/afe/temperature-transducer.example.dtb: temperature-sensor-1: sense-offset-millicelsius: 'anyOf' conditional failed, one must be fixed:
-	4294694146 is greater than the maximum of 2147483647
-	from schema $id: http://devicetree.org/schemas/property-units.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-tsa.example.dtb: tsa@ae0: tdm@0:fsl,tx-ts-routes:0: [2, 0, 24, 3, 1, 0, 5, 2] is too long
-	from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,cpm1-tsa.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-tsa.example.dtb: tsa@ae0: tdm@0:fsl,rx-ts-routes:0: [2, 0, 24, 3, 1, 0, 5, 2] is too long
-	from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,cpm1-tsa.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/board/board-id.example.dtb: /: 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
-Documentation/devicetree/bindings/board/board-id.example.dtb: /: failed to match any schema with compatible: ['example']
+4981b82ba2ff87 Wendy Liang        2019-02-21  897  
+4981b82ba2ff87 Wendy Liang        2019-02-21  898  static int zynqmp_ipi_probe(struct platform_device *pdev)
+4981b82ba2ff87 Wendy Liang        2019-02-21  899  {
+4981b82ba2ff87 Wendy Liang        2019-02-21  900  	struct device *dev = &pdev->dev;
+4981b82ba2ff87 Wendy Liang        2019-02-21  901  	struct device_node *nc, *np = pdev->dev.of_node;
+6ffb1635341bec Tanmay Shah        2024-05-03  902  	struct zynqmp_ipi_pdata __percpu *pdata;
+6ffb1635341bec Tanmay Shah        2024-05-03  903  	struct of_phandle_args out_irq;
+4981b82ba2ff87 Wendy Liang        2019-02-21  904  	struct zynqmp_ipi_mbox *mbox;
+4981b82ba2ff87 Wendy Liang        2019-02-21  905  	int num_mboxes, ret = -EINVAL;
+41bcf30100c521 Ben Levinsky       2024-04-10  906  	setup_ipi_fn ipi_fn;
+4981b82ba2ff87 Wendy Liang        2019-02-21  907  
+f72f805e72882c Tanmay Shah        2023-03-10  908  	num_mboxes = of_get_available_child_count(np);
+f72f805e72882c Tanmay Shah        2023-03-10  909  	if (num_mboxes == 0) {
+f72f805e72882c Tanmay Shah        2023-03-10  910  		dev_err(dev, "mailbox nodes not available\n");
+f72f805e72882c Tanmay Shah        2023-03-10  911  		return -EINVAL;
+f72f805e72882c Tanmay Shah        2023-03-10  912  	}
+f72f805e72882c Tanmay Shah        2023-03-10  913  
+043f85ce81cb17 Christophe JAILLET 2022-11-20 @914  	pdata = devm_kzalloc(dev, struct_size(pdata, ipi_mboxes, num_mboxes),
+4981b82ba2ff87 Wendy Liang        2019-02-21  915  			     GFP_KERNEL);
+4981b82ba2ff87 Wendy Liang        2019-02-21  916  	if (!pdata)
+4981b82ba2ff87 Wendy Liang        2019-02-21  917  		return -ENOMEM;
+4981b82ba2ff87 Wendy Liang        2019-02-21 @918  	pdata->dev = dev;
+4981b82ba2ff87 Wendy Liang        2019-02-21  919  
+4981b82ba2ff87 Wendy Liang        2019-02-21  920  	/* Get the IPI local agents ID */
+4981b82ba2ff87 Wendy Liang        2019-02-21 @921  	ret = of_property_read_u32(np, "xlnx,ipi-id", &pdata->local_id);
+4981b82ba2ff87 Wendy Liang        2019-02-21  922  	if (ret < 0) {
+4981b82ba2ff87 Wendy Liang        2019-02-21  923  		dev_err(dev, "No IPI local ID is specified.\n");
+4981b82ba2ff87 Wendy Liang        2019-02-21  924  		return ret;
+4981b82ba2ff87 Wendy Liang        2019-02-21  925  	}
+4981b82ba2ff87 Wendy Liang        2019-02-21  926  
+41bcf30100c521 Ben Levinsky       2024-04-10  927  	ipi_fn = (setup_ipi_fn)device_get_match_data(&pdev->dev);
+41bcf30100c521 Ben Levinsky       2024-04-10  928  	if (!ipi_fn) {
+41bcf30100c521 Ben Levinsky       2024-04-10  929  		dev_err(dev,
+41bcf30100c521 Ben Levinsky       2024-04-10  930  			"Mbox Compatible String is missing IPI Setup fn.\n");
+41bcf30100c521 Ben Levinsky       2024-04-10  931  		return -ENODEV;
+41bcf30100c521 Ben Levinsky       2024-04-10  932  	}
+41bcf30100c521 Ben Levinsky       2024-04-10  933  
+4981b82ba2ff87 Wendy Liang        2019-02-21  934  	pdata->num_mboxes = num_mboxes;
+4981b82ba2ff87 Wendy Liang        2019-02-21  935  
+4981b82ba2ff87 Wendy Liang        2019-02-21 @936  	mbox = pdata->ipi_mboxes;
+41bcf30100c521 Ben Levinsky       2024-04-10  937  	mbox->setup_ipi_fn = ipi_fn;
+41bcf30100c521 Ben Levinsky       2024-04-10  938  
+4981b82ba2ff87 Wendy Liang        2019-02-21  939  	for_each_available_child_of_node(np, nc) {
+4981b82ba2ff87 Wendy Liang        2019-02-21 @940  		mbox->pdata = pdata;
+4981b82ba2ff87 Wendy Liang        2019-02-21  941  		ret = zynqmp_ipi_mbox_probe(mbox, nc);
+4981b82ba2ff87 Wendy Liang        2019-02-21  942  		if (ret) {
+2453128847ca1e Wang Qing          2021-12-13  943  			of_node_put(nc);
+4981b82ba2ff87 Wendy Liang        2019-02-21  944  			dev_err(dev, "failed to probe subdev.\n");
+4981b82ba2ff87 Wendy Liang        2019-02-21  945  			ret = -EINVAL;
+4981b82ba2ff87 Wendy Liang        2019-02-21  946  			goto free_mbox_dev;
+4981b82ba2ff87 Wendy Liang        2019-02-21  947  		}
+4981b82ba2ff87 Wendy Liang        2019-02-21  948  		mbox++;
+4981b82ba2ff87 Wendy Liang        2019-02-21  949  	}
+4981b82ba2ff87 Wendy Liang        2019-02-21  950  
+6ffb1635341bec Tanmay Shah        2024-05-03  951  	ret = of_irq_parse_one(dev_of_node(dev), 0, &out_irq);
+6ffb1635341bec Tanmay Shah        2024-05-03  952  	if (ret < 0) {
+6ffb1635341bec Tanmay Shah        2024-05-03  953  		dev_err(dev, "failed to parse interrupts\n");
+6ffb1635341bec Tanmay Shah        2024-05-03  954  		goto free_mbox_dev;
+6ffb1635341bec Tanmay Shah        2024-05-03  955  	}
+6ffb1635341bec Tanmay Shah        2024-05-03  956  	ret = out_irq.args[1];
+6ffb1635341bec Tanmay Shah        2024-05-03  957  
+6ffb1635341bec Tanmay Shah        2024-05-03  958  	/*
+6ffb1635341bec Tanmay Shah        2024-05-03  959  	 * If Interrupt number is in SGI range, then request SGI else request
+6ffb1635341bec Tanmay Shah        2024-05-03  960  	 * IPI system IRQ.
+6ffb1635341bec Tanmay Shah        2024-05-03  961  	 */
+6ffb1635341bec Tanmay Shah        2024-05-03  962  	if (ret < MAX_SGI) {
+6ffb1635341bec Tanmay Shah        2024-05-03  963  		pdata->irq = ret;
+6ffb1635341bec Tanmay Shah        2024-05-03 @964  		ret = xlnx_mbox_init_sgi(pdev, pdata->irq, pdata);
+6ffb1635341bec Tanmay Shah        2024-05-03  965  		if (ret)
+6ffb1635341bec Tanmay Shah        2024-05-03  966  			goto free_mbox_dev;
+6ffb1635341bec Tanmay Shah        2024-05-03  967  	} else {
+4981b82ba2ff87 Wendy Liang        2019-02-21  968  		ret = platform_get_irq(pdev, 0);
+ec32481b1669ad Markus Elfring     2020-04-05  969  		if (ret < 0)
+4981b82ba2ff87 Wendy Liang        2019-02-21  970  			goto free_mbox_dev;
+ec32481b1669ad Markus Elfring     2020-04-05  971  
+4981b82ba2ff87 Wendy Liang        2019-02-21  972  		pdata->irq = ret;
+4981b82ba2ff87 Wendy Liang        2019-02-21  973  		ret = devm_request_irq(dev, pdata->irq, zynqmp_ipi_interrupt,
+4981b82ba2ff87 Wendy Liang        2019-02-21 @974  				       IRQF_SHARED, dev_name(dev), pdata);
+6ffb1635341bec Tanmay Shah        2024-05-03  975  	}
+6ffb1635341bec Tanmay Shah        2024-05-03  976  
+4981b82ba2ff87 Wendy Liang        2019-02-21  977  	if (ret) {
+4981b82ba2ff87 Wendy Liang        2019-02-21  978  		dev_err(dev, "IRQ %d is not requested successfully.\n",
+4981b82ba2ff87 Wendy Liang        2019-02-21  979  			pdata->irq);
+4981b82ba2ff87 Wendy Liang        2019-02-21  980  		goto free_mbox_dev;
+4981b82ba2ff87 Wendy Liang        2019-02-21  981  	}
+4981b82ba2ff87 Wendy Liang        2019-02-21  982  
+4981b82ba2ff87 Wendy Liang        2019-02-21 @983  	platform_set_drvdata(pdev, pdata);
+4981b82ba2ff87 Wendy Liang        2019-02-21  984  	return ret;
+4981b82ba2ff87 Wendy Liang        2019-02-21  985  
+4981b82ba2ff87 Wendy Liang        2019-02-21  986  free_mbox_dev:
+4981b82ba2ff87 Wendy Liang        2019-02-21  987  	zynqmp_ipi_free_mboxes(pdata);
+4981b82ba2ff87 Wendy Liang        2019-02-21  988  	return ret;
+4981b82ba2ff87 Wendy Liang        2019-02-21  989  }
+4981b82ba2ff87 Wendy Liang        2019-02-21  990  
 
-doc reference errors (make refcheckdocs):
+:::::: The code at line 914 was first introduced by commit
+:::::: 043f85ce81cb1714e14d31c322c5646513dde3fb mailbox: zynq: Switch to flexible array to simplify code
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240522-board-ids-v4-2-a173277987f5@quicinc.com
+:::::: TO: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+:::::: CC: Jassi Brar <jaswinder.singh@linaro.org>
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
