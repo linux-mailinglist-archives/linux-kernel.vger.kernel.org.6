@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-186859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F088CCA19
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:24:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193728CCA1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862941C21404
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6F2A1F21F0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061E715CE;
-	Thu, 23 May 2024 00:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590DF17C2;
+	Thu, 23 May 2024 00:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="qa6lwTvc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PXg5ilvP"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89C64685;
-	Thu, 23 May 2024 00:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1319BEC5;
+	Thu, 23 May 2024 00:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716423873; cv=none; b=W98MqEa6hH+jf+/iL7jhpeKNVHypY7kaJ/xg9EMbCBPI5Ml63E2UJW+0lDqqQ7OkKQ7mk96y+gfHUjPuAEODDb7aLR1wb5G1EG/HeeuwWPO4ej3912g246tQFlmkeTEvqsXaQQ0yMzrNSjov81AMQQSuz+oXTSqC88sTYwmS3Zg=
+	t=1716424157; cv=none; b=kfUSDu0pTkoOEPkgl2njogb56cOBrmnaopE7uOPwCal4LGJ46AxmxobCBeYFaYyosY6HmBua0UQCHBaprAg5v/7pM1ffcdMFW4BnFsNzOPxk4h/Rd74TM+1xlqOyNp6x0m4RsdsoVsOZ4n8DA82lxRjPF2fV9Ect4KRFoyP44xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716423873; c=relaxed/simple;
-	bh=tQUwEwqaIrLh2dcvKeTuI68qLcnsESgtm1sngts63H8=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=XJJMC5PSfnkihAQK2ksrfZcLjfNzTR0N+1zKIg1yOBhIFK7MavaYsTxPz7P6IGUvxxUcJzrsUvsUOgQCLQok0N3192BuOmSJmxWnjXOfzYtdIBtASJf6ptd7oFB7cql7ZyQOax8+pMnq7xIK6Pz/BurP199aWobFQTGHod07H/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=qa6lwTvc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51C98C2BBFC;
-	Thu, 23 May 2024 00:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716423872;
-	bh=tQUwEwqaIrLh2dcvKeTuI68qLcnsESgtm1sngts63H8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qa6lwTvcD+jtpUkPPXMnYrPiMCkkkVqfi9f2SVm6uKfFKAsh3HDbqBo+lT+/lAXtW
-	 TBrRt71JvvjDFVze6n9GT5a0MQOjUCksvbI6+68QQzxNxsCIpXVd6xw+1US8Ln9lRr
-	 mIwTPFPaA/VnnYqfxNb67MtiHCy0ebQYMx8cqTzM=
-Date: Wed, 22 May 2024 17:24:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] additional MM updates for 6.10-rc1
-Message-Id: <20240522172431.d2aa8775d7a48999afbc29b4@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716424157; c=relaxed/simple;
+	bh=4NT4FkdlsRTCiLWACrqX/HqDJ0fprdPV4OfeQ30nbhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tBGtiG5346n7l0x50n/3W1QzPHKB2XD7mdGZyrUMVHf6vAiKCbJTgEeTVPBugRndQK542Vrqa1MeioYZfwEfetqOa1ArKPNIOtVgjcJgfo0ZLou/063w8XWdBAGrZ1cqLc72MlKEP3pIJzLQf4AMJHni0zpxTbQPWVrY5l5BqTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PXg5ilvP; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=p0dZplKGz1Y3n2sLZ6ceBvWzawOMZWQYkOdryBQvX9I=; b=PXg5ilvPQeNXpKLX
+	IIpGIPQczydyxHk8fUd96gL+N3xeM4bsUc+fRJbtGDgNwUUjl0Wd5iMgwyRpqbfWSKkmtOp/VRH0X
+	2tmyY4Ha4WbhDkrdEUr4s9OsZesJCUAYus19ucsUD1abQ7+E0VWD49API4p9WPFJu3Ad+IEs0rdRG
+	j362OFmH/QY/dnvSyx5aDKxbJ8saeHDp/Tes85T0CbhqpZnC1k5Rh3vvGbIfDKoouTRuCBOFeVe1B
+	xcahSuAMVSRmSW/EHfUhJMVE831oleafah555oCrjXfKYRuphuOHr5cpSssr9glK9cyayTQolzor9
+	uWNCDOIosuYFUA5+oA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s9wKW-00287Y-0C;
+	Thu, 23 May 2024 00:29:12 +0000
+From: linux@treblig.org
+To: dmitry.torokhov@gmail.com
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] Input: tca6416 remove unused struct 'tca6416_drv_data'
+Date: Thu, 23 May 2024 01:29:10 +0100
+Message-ID: <20240523002910.492558-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Linus, please pull this small series, thanks.
+'tca6416_drv_data' is unused since the original
+commit 30ba3ead0576 ("Input: add keypad driver for keys interfaced to
+TCA6416").
+Remove it.
 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/input/keyboard/tca6416-keypad.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-The following changes since commit eb6a9339efeb6f3d2b5c86fdf2382cdc293eca2c:
-
-  Merge tag 'mm-nonmm-stable-2024-05-19-11-56' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2024-05-19 14:02:03 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2024-05-22-17-22
-
-for you to fetch changes up to 99b80ac45f7ec351c2d1c9fbfec702213dcae566:
-
-  mm/page-owner: use gfp_nested_mask() instead of open coded masking (2024-05-19 14:40:44 -0700)
-
-----------------------------------------------------------------
-A series from Dave Chinner which cleans up and fixes the handling of
-nested allocations within stackdepot and page-owner.
-
-----------------------------------------------------------------
-Dave Chinner (3):
-      mm: lift gfp_kmemleak_mask() to gfp.h
-      stackdepot: use gfp_nested_mask() instead of open coded masking
-      mm/page-owner: use gfp_nested_mask() instead of open coded masking
-
- include/linux/gfp.h | 25 +++++++++++++++++++++++++
- lib/stackdepot.c    | 11 ++---------
- mm/kmemleak.c       | 12 ++++--------
- mm/page_owner.c     |  7 +------
- 4 files changed, 32 insertions(+), 23 deletions(-)
+diff --git a/drivers/input/keyboard/tca6416-keypad.c b/drivers/input/keyboard/tca6416-keypad.c
+index 677bc4baa5d1..b2060229bd0f 100644
+--- a/drivers/input/keyboard/tca6416-keypad.c
++++ b/drivers/input/keyboard/tca6416-keypad.c
+@@ -32,11 +32,6 @@ static const struct i2c_device_id tca6416_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, tca6416_id);
+ 
+-struct tca6416_drv_data {
+-	struct input_dev *input;
+-	struct tca6416_button data[];
+-};
+-
+ struct tca6416_keypad_chip {
+ 	uint16_t reg_output;
+ 	uint16_t reg_direction;
+-- 
+2.45.1
 
 
