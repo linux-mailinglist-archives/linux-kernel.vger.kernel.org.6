@@ -1,101 +1,103 @@
-Return-Path: <linux-kernel+bounces-187747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B678CD7DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:56:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8390D8CD7DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E80B281A7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51131C22187
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF0920332;
-	Thu, 23 May 2024 15:55:49 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB5015E81;
+	Thu, 23 May 2024 15:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6B5koh7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFCB18029;
-	Thu, 23 May 2024 15:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B810E12E48;
+	Thu, 23 May 2024 15:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716479748; cv=none; b=BrLs98Tq/vFT9LvpXlErPcQC2zsLelVW1nLUNtpwmwIEFH0w6apQo7+ZsHoTqmVq/o6h/bQqMdIWJzzUL20dGMViZvCnQ3xSGDAr4b0jFNlIrRJgADFGG0r1lPKQpyQt9ykl0l3KotNSHqWESvN/Sli2EdsHgPqm0c+RgiVGi9A=
+	t=1716479772; cv=none; b=LlKwK/RI5S587mjPYI/hXnDwakDwKasamhEo6mvKJBquk3OofsT78LUuuzZKfOCe9dvLFScYimeevr0+VvgowsqrPNQDhTNoBqxBGo+SHWhUDBC0fK7mU61Ry/QVJ7JXASHESTRSYmVlaazw6oLiphMXauMQWFmRnvXgsp+GQqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716479748; c=relaxed/simple;
-	bh=gsY80Jzksl0YxrP84C2oha/PZ9voiI1msK1mtPRQd1o=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=MaL/6uDhb8z8nAqM8fUIQLzVzIeliX8tAzqPIN4fTVWMAbfzqoQzhJHTf37Apldmf7lhd65ekC2szfSyul5J6lLYjXaLolnz9dQl/Kv1WiNSdTXpWgZEBvgq1obyrDjp9zrGTPjz1TuHFRtRM94sUqe+lc1h5fjGJxsBJRA1oK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VlXnm2gp1z8XrS0;
-	Thu, 23 May 2024 23:55:40 +0800 (CST)
-Received: from xaxapp03.zte.com.cn ([10.88.97.17])
-	by mse-fl2.zte.com.cn with SMTP id 44NFtYS4076557;
-	Thu, 23 May 2024 23:55:34 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp03[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 23 May 2024 23:55:37 +0800 (CST)
-Date: Thu, 23 May 2024 23:55:37 +0800 (CST)
-X-Zmail-TransId: 2afb664f66f9079-84b44
-X-Mailer: Zmail v1.0
-Message-ID: <20240523235537910_yxfGMbTcSOmMkcfuK2d8@zte.com.cn>
+	s=arc-20240116; t=1716479772; c=relaxed/simple;
+	bh=kwlOr50hDecx9CSQs76/4I0/JMtKbZpx9ixjyWXqNXk=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Wd+mjugjwF9UwfaZDIlVVDhwdU4xa+CkqjWeA928Ny9Uk7x/9mHeg/WJcNYGP3klZJO/g1DS6rkzjiHUzJ0PkzfIJSlBUQozcZgviJtXxg2D/rfcqeg3GyDz/9jiAwHDlBxuRyvt22F8FS944zeUQeuXFgm1o5/2jqSw8ljiHlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6B5koh7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D9E7C2BD10;
+	Thu, 23 May 2024 15:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716479772;
+	bh=kwlOr50hDecx9CSQs76/4I0/JMtKbZpx9ixjyWXqNXk=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=W6B5koh78mxM1zYbqMEHsAzILo3+0hmqtLrrd/FSbK1CEWdIWlutnR8AkPZsR3S11
+	 EpkG7uVElOCXLDQ+NlWiMR04HUbytcN0hyH+UWvFSL/49DNsI6KOcOWlsJrMktuIed
+	 Dvt/lUbxd8EdivBpCrGja8mMJeP00B26Dms3KfmWborp/hGn12Qh1Tg/mEkQICLkRQ
+	 /muyz9hRhl+KpAZ50J9NTBlJnDjoZAdA9fuJo9E1LxVcaZFM7ITHiv9H02aAkuTiyP
+	 kDOozXTdVj5CdMNlNUYikHF5iPFSuP0MA9zdPbjU8Ki2dHzDSrMNuj/paBZk0NfQ44
+	 Q2eLzaxbEU0zg==
+From: Mark Brown <broonie@kernel.org>
+To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
+References: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 0/2] soi: Don't call DMA sync API when not needed
+Message-Id: <171647977136.55224.8875410677372985509.b4-ty@kernel.org>
+Date: Thu, 23 May 2024 16:56:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <bigeasy@linutronix.de>, <john.ogness@linutronix.de>,
-        <rostedt@goodmis.org>
-Cc: <zhang.yunkai@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <liu.chun2@zte.com.cn>, <si.hao@zte.com.cn>,
-        <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>,
-        <rostedt@goodmis.org>, <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIICA1LjEwLXJ0XSBwcmludGs6IGlnbm9yZSB0aGF0IGNvbnNvbGUgcHJlZW1wdGVkIGJ5IGlycS9zb2Z0aXJx?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 44NFtYS4076557
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 664F66FC.001/4VlXnm2gp1z8XrS0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-621fa
 
-From: xu xin <xu.xin16@zte.com.cn>
+On Wed, 22 May 2024 20:09:48 +0300, Andy Shevchenko wrote:
+> A couple of fixes to avoid calling DMA sync API when it's not needed.
+> This doesn't stop from discussing if IOMMU code is doing the right thing,
+> i.e. dereferences SG list when orig_nents == 0, but this is a separate
+> story.
+> 
+> Andy Shevchenko (2):
+>   spi: Don't mark message DMA mapped when no transfer in it is
+>   spi: Check if transfer is mapped before calling DMA sync APIs
+> 
+> [...]
 
-When we're in the unpreemptible context on the same cpu with which the
-thread of console locates on, we should ignore this console for
-pr_flush, because it's a vain and always lead to timeout until the console
-thread get cpu resource.
+Applied to
 
-Fixes: e65be5f4dc3ed("printk: Update John Ogness' printk series")
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Cc: Zhang Yunkai <zhang.yunkai@zte.com.cn>
----
-kernel/printk/printk.c | 8 ++++++++
-1 file changed, 8 insertions(+)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 7f27cfee283e..faab85dd4439 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3735,6 +3735,14 @@ bool pr_flush(int timeout_ms, bool reset_on_progress)
-diff = 0;
+Thanks!
 
-for_each_console(con) {
-+ /*
-+ * When we're in the unpreemptible context on the same cpu
-+ * with which the thread of console locates on, we should
-+ * ignore this console, because it's a vain.
-+ */
-+ if (!preemptible() && con->thread &&
-+ task_cpu(con->thread) == smp_processor_id())
-+ continue;
-if (!(con->flags & CON_ENABLED))
-continue;
-printk_seq = read_console_seq(con);
---
-2.15.2
+[1/2] spi: Don't mark message DMA mapped when no transfer in it is
+      commit: 9f788ba457b45b0ce422943fcec9fa35c4587764
+[2/2] spi: Check if transfer is mapped before calling DMA sync APIs
+      commit: da560097c05612f8d360f86528f6213629b9c395
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
