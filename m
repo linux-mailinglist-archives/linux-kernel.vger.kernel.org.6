@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-187617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B55C8CD546
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:03:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FC38CD54F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9571F242F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:03:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DEB1C228DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F39114B94F;
-	Thu, 23 May 2024 14:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401CB14B081;
+	Thu, 23 May 2024 14:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VQzAyuei"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J7SzhgsT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A3A1E892;
-	Thu, 23 May 2024 14:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EF614A62B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716472973; cv=none; b=N2aPWe54iRnPqJSo6Pb9sKicXsmfRjvSyfVxa8hirx+c0+eyGl7ADzLwVCJyxk+fbAwkQSC9D4Q8h1CiWvNFQExY8icH9LPd+M0VAqABjdaLdwG4sLvqwy2knXS6QDDr0XutW/x6zxRxUWzw0WuPuZSpWN29TfjiBqwSJd36YRQ=
+	t=1716473004; cv=none; b=lByzZM0Xus0fQlXBC3j17k30uwqGh8cX3hVNFISNZAl/6h21nJj6uiAEMS2kUS+NKpFNoToADBsjT9WqPydG5jzmRHH7gTJ4qnzZYce0JgGGk1HINCJqaPInRq/H74+o/ESKaM/agVrjLUmiYUQ7EyJlWd8D+nkKdfkhraBY9pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716472973; c=relaxed/simple;
-	bh=fbgaxrv1Zh4iR2Ow+D7HOwa6CnKsy9QA0D7kuV0ROwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f0xev+4Ax3X9fuYNCx9yT1dmeQQv+sqnY9YIOiIl5wdX1s79uXwW9te8eq6iR7BS38DFgkcLtEIj9AV6kIVVFwTaHNYYkHmwcHjAe2QPmy0Cdt1FjtSPS1rBmuhwVKAzIukL1l2+p6j6WGqGukOXR+/fo3w20KWhn1n4DGmT/bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VQzAyuei; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716472947; x=1717077747; i=markus.elfring@web.de;
-	bh=fbgaxrv1Zh4iR2Ow+D7HOwa6CnKsy9QA0D7kuV0ROwQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VQzAyueid3cWnvEB2xuZy5hR/Ztp057fM22jo+6L3rm0wS5bWrn4jDoPnbYrF3SI
-	 Lpx7Hd5aoywIHLN3I+M6KjUBnIuOaC1jKCae9zG8Z6dZpgS5mr4Wx9CZmXHlwZIJ/
-	 grJ/3GWiOi/e+SSeuCnQAEGiaM3MpH0KQwW9QROH3kIljTSSYc8sfmrEk3y3KkHXG
-	 bTbI+H7/kwC4noatniion2vvIFX49YimdL05m2dFDUmsmhqdLYceEjO0P7g8I3fg2
-	 ZRITjQ8aKiXJvBl2JIAwuzPr5QjvAs0DfqCFPMyBIeeJ+glKv5uYxl8ZgA1Lmdbmn
-	 kxY+dhLXEG+7TEwosA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9cHX-1sdgWM0EiL-015cNC; Thu, 23
- May 2024 16:02:27 +0200
-Message-ID: <dfd94898-fabb-4089-8c04-42c2917f22dc@web.de>
-Date: Thu, 23 May 2024 16:02:16 +0200
+	s=arc-20240116; t=1716473004; c=relaxed/simple;
+	bh=jxBKTzoJOVyEA32cE+YGMZK++whGJj6vvOgzMyjakoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AqDPYlCsyLNduNwQNQDhjCASVyJ+3loYEzNzEJbEUdhnrLkq/Gmp+JrNUG+MENVtTha2xopgxHfhIt6/uDl1lSdwktcjcH2GkxHN1f4ED0aagZjNQDL/4kG9BODTAvqfFl6uBjldKp+86Vh5dveMWBOabyNgQidvI/fy1hI4H7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J7SzhgsT; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716473002; x=1748009002;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=jxBKTzoJOVyEA32cE+YGMZK++whGJj6vvOgzMyjakoY=;
+  b=J7SzhgsTOmqbuXKcCC4f6XTxNt1nfIv6N+t+gUAtkd6nsQKMa/xrSi5d
+   JO06pymV/zRLb1FIKtsXf0v55PkFaTTNbyriNVjy+Q4LAIT8KiB91Phlv
+   3zeutQa+pB7QiTXW3tRx2QmM+8ZexGttYywMn/h7Ggx2uL65JzpzlRUWQ
+   Y/YBSIpPx+H5wmj+hoJY2A4+EetTJ99CjXYtRJ8HWXb0bSJXZjMgmw7XN
+   zyv0Blpozr8X/sDoDifUBeOyB3S1C1uz4PbXgMduzXiVgj/zHQ5FJiUZI
+   v8Vk0RvNHLBZvTSNfSa4tiYyOioNmsSEP+1JaegA6+4jN2IXQ/YyDEqz0
+   A==;
+X-CSE-ConnectionGUID: ZzoCrDyWTeqASW8SOmwTbw==
+X-CSE-MsgGUID: mOESHmbDQ5WbxCI0ObH3aw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="24201702"
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="24201702"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 07:03:14 -0700
+X-CSE-ConnectionGUID: ntJ1y5dDSbuxoHApWddrqw==
+X-CSE-MsgGUID: dObKMKDbSwmrqc9kclILPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="38074404"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 23 May 2024 07:03:13 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sA92E-0002xn-2Z;
+	Thu, 23 May 2024 14:03:10 +0000
+Date: Thu, 23 May 2024 22:02:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: WARNING: modpost: vmlinux: section mismatch in reference:
+ tracing_gen_ctx+0x64 (section: .text.unlikely) -> initcall_level_names
+ (section: .init.data)
+Message-ID: <202405232113.H66VwtsE-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: dvb_ca_en50221: Fix a bug for detecting CI MODULE
-To: YongSu Yoo <yongsuyoo0215@gmail.com>, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Hyunwoo Kim <v4bel@theori.io>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, yongsu.yoo@lge.com
-References: <20240308121021.1732-1-yongsuyoo0215@gmail.com>
- <f5272fc5-8d79-4717-9ad8-c503d8abda87@web.de>
- <CANXPkT59y5k_DXgk6DDHbGuR6aqwLN1ugeLhFrEmk=c246i9zg@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CANXPkT59y5k_DXgk6DDHbGuR6aqwLN1ugeLhFrEmk=c246i9zg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:1bsWcTPNCtxj98h2JDFU+8KOBxntYaFXabD8H6gAAic9rzEk8/w
- KwUcW7ST7xklvzWp6eG/r+fTMIUYOnMDcWtqkXyjJLt5OgVh617sU7YDpAIP0lZrTqTB3SJ
- Uze+WOPLJvYfcoDPQ59S6kxzXqQhe02ElY8db0sFlaSMS9F2Z70gda+Ua0YJxQ70N1yK/6h
- lDw5tC+86IRf0XWQkldIg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Apd9wtQUyYQ=;cbhDbZnEGRIp0gjSS02Apj9uGQq
- n7Clsma8FDvEwc7sdK1n2ulSIQ0EAlR0Ae+HdHUA131uzEiDxn7oWJ7uRuGmWlHo+DP4J4kv4
- Qja72LIc/fL7WPuyfrBGVx3JKipyt+upfbAhqf9ZltcXoUocUrs7RqT4gY1rf0i68Sks/KZYp
- mZEnDzOgM4JT3hPt0nvUbY7K8u6AdcyqU7x5B+a9exCLCnRK2G7JjkvNbJ0kLJnuU/5FabRRc
- KDgueVUMNuTEGBWAP8hfvn7O2Wy4qlRktEK+bxG3s60BzmvU6LEaJV43BUJdE8+yezi15SZy6
- AFZW97HjEMyBKhGCi8V/ZHeisuerx+EuEwiwR3ej5kJblV1RMGn/BRoAcZAKH+6nYXt41EySW
- W4OTySCwTM3sHbHksEusrxzBvSaB7OenS+xWzp5qMXVnbLz9nGfotp4/0Zeim0JGpYPrDLfcP
- UstPFuVzNjr02WsiT2di4kg9oXuycxceQEgzYIdwq1hnGQumPqpEZ7/24IJNMhzdU3SszRr66
- +yCiqp7kpQojUOVZqUmSd5XQbXNiyvRBgRSo2wj15sEqC6eqLRkEn6mqvSb1fXOA63cGdLqyn
- QWi2RbbK1l8KLXd7IgXNfj5Fu2h0/yr8SsCE5Rt7nbgI4CTJeY9g/CjtGMsLpWAsBlmB+vidQ
- 73AxFBl8AKpaSUsDqXBcL657PFAMilI3EZYF4COuDqgmc6N0RyfmzgI0IWeK++oChNSIxhz+m
- oloqCE6FdrhEH0jCH6zfujE5FqLXVvsFWSXvHMAX9fm6DXrlQqSvRVHqCan3mGrAYXb4op1oR
- KoiNP9rlWI9pq7ShaWWGMBUcbuz9mPOMZZ9CiS48+d6N8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 1. What is the "typo" ?
+Hi Masahiro,
 
-Please take another look at opportunities for spell checking
-also in commit messages.
+FYI, the error/warning still remains.
 
->>>> =E2=80=A6 right informtion. =E2=80=A6 a Bug. =E2=80=A6
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c760b3725e52403dc1b28644fb09c47a83cacea6
+commit: 481461f5109919babbb393d6f68002936b8e2493 linux/export.h: make <linux/export.h> independent of CONFIG_MODULES
+date:   10 months ago
+config: xtensa-randconfig-r121-20240523 (https://download.01.org/0day-ci/archive/20240523/202405232113.H66VwtsE-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240523/202405232113.H66VwtsE-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405232113.H66VwtsE-lkp@intel.com/
 
-> 2. Can you take some examples which show the "Imperative wording" ?
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-I hope that you can take published guidance better into account
-(instead of the wording =E2=80=9CWe fix this bug.=E2=80=9D in the discusse=
-d changelog).
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+WARNING: modpost: vmlinux: section mismatch in reference: put_page+0x4c (section: .text.unlikely) -> initcall_level_names (section: .init.data)
+>> WARNING: modpost: vmlinux: section mismatch in reference: tracing_gen_ctx+0x64 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
 
-
-> 3. Can you give me some examples for adding "Fixes" ?
-
-An other tag specification might be more appropriate
-than the following suggestion.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n145
-
-Fixes: a75aa90c7c2f ("media: dvb_ca_en50221: Used a helper variable")
-
-
-Regards,
-Markus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
