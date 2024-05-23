@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-187725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B8908CD743
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:37:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343918CD74E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D6DB22A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2FE1F21499
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B32E15EA6;
-	Thu, 23 May 2024 15:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B404A12B72;
+	Thu, 23 May 2024 15:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYTA96l2"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="svLxltUm"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED1513ACC;
-	Thu, 23 May 2024 15:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4845117999;
+	Thu, 23 May 2024 15:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478632; cv=none; b=ZDZgYGW3ZK0VTZQ0/2q5yQS1bMD8AGoWvaWbfUGyKkZ5EQ5mzQzuNRlrdT+uhVAtt5ur//4EbLzInkUlGeOp7cvTCWH8y95cQwxusdVMubymRLglOCngBOUNqDhVhUXxu3Ss70SvpQqCvgrobaqsichhRdz3JgMFesrgBxoz3uA=
+	t=1716478692; cv=none; b=A1IDOTUhLBr7kaONKjlkOXVw6czFAf6bmmQOhkwdkFPPes0n+DNjx57fLxl2+xgGL0ztNGRuqtS5E2Bg8m8xBCjk+EPSpS/ag0NHznWuPE8vSP37RCrQ1pSDHBOcriB4oneEzl3GBbdP7oOOEWyDBGqfuWdtNQvvYZr2bOdmDck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478632; c=relaxed/simple;
-	bh=DAu0j9XaO+BHc2+KymxPQHl8SlC0N0yHcL/u9tksZGw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sjdt7yUUuI5J7GexX32X5owZZbcZikCOKtFxFAEfgusfHcbckTNSQoqEFRwj4/7kWVq7sduMgLX8O1MRR7zmaAD3Xs3TWQq8OElwKMObaJ7cRsf5YB+mpEw+RaZ3mDPgAPSey+yUU4IiPOAMLOsTFpJLKZEHAl5vdGTYORM/V8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYTA96l2; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4201986d60aso18318045e9.3;
-        Thu, 23 May 2024 08:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716478629; x=1717083429; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qDb430+CIQ85u0Ej/5d34NhAAWYKYgLxz+dFZEGGm10=;
-        b=jYTA96l2T/CxGeiVP1luTiCFNwk45Vqz7q+tFrNc6AqzKmYqdgMNgva6O7C4nxer2p
-         hE3xUw2bvlzh61xNyyI5T/dM+ZpUSL5vLbcMzI9559/P/FMJyKQ7yEGIayZFyfG6SQLO
-         z5uoAfAqwfJQfFrxh7SS52B6yo6tW6DzIdb1Cxxtdn2CYNcMXW2x/57SBJ6O6ozC5vfR
-         m/3IJ8uTskLv9JPo1HtBXeTivZU7gUOE9RFKQQBuFj4J6krHa6Splex0KxWqVVwFdhtL
-         26SLr+MvwSM9yzfglSBNrt5GqfGHb1+aa7vl82bZaAJfHYC9K9nlkmtkl4AZ1HGzxh63
-         3kiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716478629; x=1717083429;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qDb430+CIQ85u0Ej/5d34NhAAWYKYgLxz+dFZEGGm10=;
-        b=lQABQIc+byIcBwUOc016iHuP1ns4SrcR0337n1algVcYYjpniwJbwBAhHxytqkMhwx
-         d1WJ4Qe+zMMzBxabxxlKlxB+CpltNirPSqWfPqx8PLQ+cMquHSBvWnD7Z7+QcBtQCVKC
-         LoW0uGqOIO/jif93g3HEglHYQUXjREioZfmF/PnTQ7irOsSZsflHtVQBDULAhkuJ0gcG
-         EfMMdzmUMD7g5C1EggdRH3MmsC7w+58EL5YmUDvsgU4dEoPwjx9MT4i8stSnvOEy1d74
-         vIIXfQpTQ7NX5z1Mlj3YPN4A/BEkWb0Zom3wgxho3U700DFASaoQDkDtsZUi7y5m2shQ
-         1GpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXi0ECp2TYrkM+OkoHMaENfpTwWa7Kj16PivVUGPqmrnG0bJjOmhQ/CryUqsOf6RkIuKONuY/RUZRYhLRUifvuYdEfUGyQ0ZDxrnJXWjlRGW1pmuml9Tqff21dZ3elyBmTBeX0HIV6i/U1mdK7OMJ8JTV+0LF6Yf6PlZ/QCFgzf73GIiLgBEBhBYmKDUbUf11LzntENpXhJZDO0s3y17N2ylW4
-X-Gm-Message-State: AOJu0Yz/y/EDXK3tDQL6aQe2auORCn3YWfKrWARBta6HjPM7m1Zb8wOW
-	V8HaCs428eI1JyF/JFyDHZh2iOwzdvudXhJLkWLK3aQVugVFTdRb
-X-Google-Smtp-Source: AGHT+IEUIVMFkaS08BYTq3/iyXcLgSdVBbrFOs8cO1ObYD0tOhF3B7ZYgZC33WVK4gteyLMmSMe+TA==
-X-Received: by 2002:a05:600c:35c3:b0:41f:dae4:e9b7 with SMTP id 5b1f17b1804b1-420fd349963mr31813365e9.40.1716478628647;
-        Thu, 23 May 2024 08:37:08 -0700 (PDT)
-Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42100fb7fe1sm28045695e9.45.2024.05.23.08.37.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 08:37:08 -0700 (PDT)
-Message-ID: <637ed8cb-4503-40eb-9731-eb56e6b1cd93@gmail.com>
-Date: Thu, 23 May 2024 16:37:07 +0100
+	s=arc-20240116; t=1716478692; c=relaxed/simple;
+	bh=zCQjA/5a6mMmlaYjkFL5H55+TN3ow0QoYukyt9cnByk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=O1Dd3RLV22H7+h7HKQ6xme6WPe1DAeh2q+bzqPYVR9CS+P/vvouMYMLKQcL0xxhfaOQ1hSW+ORTjVqfuWxrQ5/VG6taO0ztheGiT2COcl7z2//xPqKDBxKF9LI3+b3nZjwW7+1szTMwM3pmVem3A7kWrr3uNOUptach0/1eEWFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=svLxltUm; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716478669; x=1717083469; i=markus.elfring@web.de;
+	bh=9+nxfIAX4pQNUcpluSGV0XxummSpstZaxeh2ZeUEgLM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=svLxltUmJKc5H6C+lrIx0Thh+k1aqmPiG9PfWNsmCyHaWwmOFcb4s3l+af9+voSt
+	 gNVXX16SBXkb3/7AYxUodd7o63uZd4xMrxybFzDsogXW9JGcCXLt3nh8EwL3uQVm5
+	 BI2457n5a62986LZrx052uibVrTRSy6TVDFEjPB+7bahtf2FIAlPGdKQkwh+42Nq2
+	 gqdYE/Fc6Zx1ihflcKYCblq9ijTEyjASqVB9dP99cR7/SnqPcCsf6va3rZcXoV0z+
+	 E0lPJe62EuYprpw7TqjopZ58WZhOcDubCX+H7yFCStnVm3MICzf1KS0LnES6YMi6c
+	 h9v0y9mXm+h3PjBTEQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mft7j-1slSGy1Rc1-00gDkv; Thu, 23
+ May 2024 17:37:49 +0200
+Message-ID: <58cb9176-bedd-4219-9816-495cd6b343cc@web.de>
+Date: Thu, 23 May 2024 17:37:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,59 +56,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] selftests: kvm: fix shift of 32 bit unsigned int
- more than 32 bits
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240523113802.2195703-1-colin.i.king@gmail.com>
- <da8581c8-3d56-454b-bddb-e523a983cb44@moroto.mountain>
-Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <da8581c8-3d56-454b-bddb-e523a983cb44@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
+References: <20240522192524.3286237-5-eajames@linux.ibm.com>
+Subject: Re: [PATCH v6 04/20] dt-bindings: fsi: p9-occ: Convert to json-schema
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240522192524.3286237-5-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6uUBnjXwoYTBl65AmSP4bcUm9yYkqDShAEAbhWM6H189RdKKnxz
+ oVcolhaMOwtEJcXr+cktyel6GIa8xr80cB2NMgeeewp511zPje/1jngr+m2B8UhYPxiOGI+
+ nCe/2N4ClNmZZHeH0HGzAP2dB6XWRrD6LLsQUZyKrG5KUOaKxlB7/mW0bd+dHT5Qd83ZC8Z
+ 0jspFu+iLQADHLYV/qm+g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AMG44tVUeQ0=;gHcW+AfMMVcn0FO8GHdTGTcE2L9
+ JbmxHGHiETfcIxNUAkoM8lPOUnEm8Cqtt8IbTY6kGFJv+eumNedF6Sw1/mAxxYSJJYJKzCqW+
+ l8vF3QztykQnys9yOlSdxg0Vu5u63kdNOlfCMlvSidXL3LvNXu0X9DnhIan8eZs4fgrGi4nHa
+ j3Ek5aLNqXh1vaRlDi5OB4Ka7IzMh1tNDeY2GWpz3TQCvkLVfHMPTVyW0S4Iiv3A8RVRsKNLY
+ PK5N5v7ud2xznfxgj+m2vu7g3aWoRd28rAROp5NE//rgnXqG8OKN3Nfm+32ZWaez+nzUDq2BO
+ 2tAam1pS4nnBP04SG+oAjdnzovMYU9QjXzFV5VK4OGaXtGEwT1EVadLqVIamBrdMFUbnKrQwb
+ JKIud+t1E/NRF5gfXguFUB+0NDYuD/Fq8AreOZBl/aM+ORRH1PFyVaWSqhuVjOLp/3NpyLezS
+ whSnFB4snfj8STEEFTzXYZdC00s+DPkSS7dTqL3XsIOKgPTwNGJmDv3pOVZkXPz/nHLpsdj+m
+ ROiffKtt3PAO/ZMEzJwartiHNDcgH3wFS0HtK21MqtmMGFr+9FoRoVjhymlVVgKA+KdBCIjo5
+ Kwih5/lJqlKyveneWPTaYUKnLnqS7B2iRP5K3HjZTu5KtYZWmaVuYTisuMUNrKISvptS+lafR
+ CUE9a3R8BU21soinyJdsfOnX5POH5kla4nHqavWasP+6ZVJpztt81Taa/JsnRS8p8aZkwiTHe
+ EFa5OIFmRfak3zG7JhkbjWeWDfuMjEazOVGlyPovZYdlyH+cHSXdJUxFN1L3za80taRr6zBrA
+ Mp14C/eCWOcywrKj1Phe2oNFaHQJdWQGTJPdAGqA6GhdQ=
 
-On 23/05/2024 16:35, Dan Carpenter wrote:
-> On Thu, May 23, 2024 at 12:38:02PM +0100, Colin Ian King wrote:
->> Currrentl a 32 bit 1u value is being shifted more than 32 bits causing
->> overflow and incorrect checking of bits 32-63. Fix this by using the
->> BIT_ULL macro for shifting bits.
->>
->> Detected by cppcheck:
->> sev_init2_tests.c:108:34: error: Shifting 32-bit value by 63 bits is
->> undefined behaviour [shiftTooManyBits]
->>
->> Fixes: dfc083a181ba ("selftests: kvm: add tests for KVM_SEV_INIT2")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->> ---
->>   tools/testing/selftests/kvm/x86_64/sev_init2_tests.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
->> index 7a4a61be119b..ea09f7a06aa4 100644
->> --- a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
->> +++ b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
->> @@ -105,11 +105,11 @@ void test_features(uint32_t vm_type, uint64_t supported_features)
->>   	int i;
->>   
->>   	for (i = 0; i < 64; i++) {
->> -		if (!(supported_features & (1u << i)))
->> +		if (!(supported_features & BIT_ULL(i)))
->>   			test_init2_invalid(vm_type,
->>   				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) },
->>   				"unknown feature");
->> -		else if (KNOWN_FEATURES & (1u << i))
->> +		else if (KNOWN_FEATURES & BIT_ULL(u))
->                                                    ^
-> Should be i.  How does this build?  :P
+> Conver to json-schema for the OCC documentation. =E2=80=A6
 
-good catch, I sent the wrong one :-(
-> 
-> regards,
-> dan carpenter
-> 
+  Convert?
 
+Regards,
+Markus
 
