@@ -1,116 +1,153 @@
-Return-Path: <linux-kernel+bounces-188008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA558CDBC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:15:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD7F8CDBC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F2B1F24A59
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:15:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE032860E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3148127E04;
-	Thu, 23 May 2024 21:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0BC84D3A;
+	Thu, 23 May 2024 21:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eF0J34zu"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1cpAX/WT"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9970684E1E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 21:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD8714A82
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 21:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716498904; cv=none; b=cgfxfhOZDcTLfrBnoHTwdPLLyhTSpfU343M7199TbSl5yi/tb83EIFPoCK0cvYzRG49mGGzce2FCmox4ipdDaXdXtxERDdsB/kJiNE4VUDR64yBxtk5wiPItjO2SIBbFIpWxoe+AJ/bKwny1WJl7QDrQmQXsxOzMrmMoM0oYWTk=
+	t=1716499005; cv=none; b=WYyxry3W8Q2V25bL/jgG7XTM60F/bP9/xGNpt2yVssSK0sY4zATxoaXHw5noHIkFq+JROcxEsBWvMJbbEun9Cqjl6EgPTaAEQkmfE7t1fndYGyfW/XnebJMoYQrsslmVLhXN5tT0kJTGTOTDDA+BKzHKAHdUPmLqr8Zo4SPeHRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716498904; c=relaxed/simple;
-	bh=uc+fbO51JAgrHHKzQByvLrZwrpEye8agfALuE4RBUv4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gGEJhsZKYNZ8a9kUbXgVsjYVIs+gRniOjXFfuOU/IHldtMsAfJbBXWvcz4fGM8H13f03zmIo/k1fyGmtVYnn+2ZJ7hGwZcM+q0qLlJdce7X/9nU7jjPDyxc2XxUZvyyug+N86yY6kM7w5lvbwWRmc+pivzgORo/oZG5HE84oeQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jwylder.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eF0J34zu; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jwylder.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-627ebc309c8so37062317b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:15:02 -0700 (PDT)
+	s=arc-20240116; t=1716499005; c=relaxed/simple;
+	bh=UyvAR+rCqOFMlr/SS+1G6e+pvgKBDpk94OJDklZdVUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=slt0Uvc07excorgbHSjSzrZnq6egjgXNHgDgKdA7HFsx1feTYYYoJ20Lm6olXQxBr36k/MFe8zghyjs7UA4qFY5I+gK6mGECFnTAAlt0sphPL0lWdEIABuMCzlt3sNiaBMdvup1Vn6uDcABqCPsB+nYME6oUoDnIvfoUxWQjXoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1cpAX/WT; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f33772fa90so1496395ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:16:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716498901; x=1717103701; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2R6UodRaLm6pGjY7twVjUfcDvm1sCMloJlBSSkefp+U=;
-        b=eF0J34zuQvUerYhexvKTtFFn2vWk3EDcm41vtUM6Ocb9UkXIbluHDM2V2RZUUUoTJr
-         /v2HWaJ0fs2Nk3gDKeD6StFD3aLDb6GS5DLlDrZ3p9y8+ILBChMoOImzGGY2ZnCJANoO
-         Coe8ucbBxhK+8IfUcsFTBJKbqwsNzERuuKal/e8hNH7p3Jh7DwC75jA2iaB9K6ZwJo9e
-         +BzeJQdCV9uaCfQ16giZl8TnAdKpgQhGLlEC+9wgmi8r04FHFsYitTZLVXZvM1lFMaCs
-         uyPxgPd+XykOi25VTv5Ykzyme1bVEiEYKmNfqYXG8fzQn9GViaodtnMKtuHsCkM5XXNt
-         nAkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716498901; x=1717103701;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716499001; x=1717103801; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2R6UodRaLm6pGjY7twVjUfcDvm1sCMloJlBSSkefp+U=;
-        b=QoUJ0PnDMcqHaf0xpaRAhmuv08BDMrylzaJx8uP/qoo8NQ5nd5BcIKZFtx3ztkYgQQ
-         IJ4HuDSRnEVAhIGbUbrd7vPSAETFJ0CA81Zi41tmWV10euv8VYo3UaNVNMvt0CnY6kqO
-         8Olbxl0OlZPGrCSu4OFPiv0MYIRelaA90LnFrHr5kqZbbldJ2ANhvCnr1HlbmEI3w+S9
-         7t51k+7HujrmshjEeGSiiCP2ZfBu8OCeZSwWSNxVqi/mwV5KoKNcn7GaaL9re+q0Oufj
-         TSgRDy5P5smsXGJxGp0sXkw/2EJZtzaQ5ueBYXWtk05Qil3PHcDikFx3hcVple5UcX4/
-         e+sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSVreJzGu9L/A9pi7o+o52woFT+O/UZfsNtWAhzFcXr6DI5q25Y2V9McW3DgZjLl+fv2HG/gf7ld3fZ8s4YchRJq66yxDJavqZ4YJG
-X-Gm-Message-State: AOJu0Yy05U6Lxo8bZUB0j1UrRm8CIBWNnlG7fDWUqS8N1t8CMoGsmLc+
-	nN9MyHuwF3vAajnVYz62g5PyGPAs0eiJhALe7LeDfbazwwqExyAB24ZNixHXmoCgHwcwdLVgRk+
-	G+HHrfA==
-X-Google-Smtp-Source: AGHT+IGFgDixp9WXDzxYibbnkX86lHYmuK6aIdklTycmox1duQb6nKkn7YooMvJccyf7tOyLDItG2gadJy1J
-X-Received: from tetrad.chi.corp.google.com ([2620:15c:2:a:aa92:584:c15e:b255])
- (user=jwylder job=sendgmr) by 2002:a05:690c:4a02:b0:61a:b2d4:a3fb with SMTP
- id 00721157ae682-62a08f9ddb9mr867237b3.8.1716498901490; Thu, 23 May 2024
- 14:15:01 -0700 (PDT)
-Date: Thu, 23 May 2024 16:14:36 -0500
+        bh=dYKcD5IuchFm4IMrBOnq6lh3XNI0BhQKY7/Pq8Y41cA=;
+        b=1cpAX/WTT+llFO04wUpvHFp4KZQDZVOU582pZ9oR8mGOBhcsAwKyHqr3mfDPVX/ynQ
+         CXZoGJQFEpZ0MIlDWHem+rYrilyJHoM1fLQVuMLdYFdXFCszqF98nWWBVT+KhxF3mmRh
+         aOe4Q0z+5yzOP8NO/7QL2dFO4ygvUS/iCAFOyrl1lTt+pAAaBCPJJBNtxtRt72XrtNoH
+         MBdi84U8f7EgS+HMJI3qS7Uk4DNZXUMZBnn55Z76V8ny2cLFTnVzArduX2EjGwrebl4W
+         8HZu1PskH01AXn50nsUge0JsJUtjIcWW52sknSLyESCe8p3ayIUq0GQ4xcVtAzMom2lK
+         Uw4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716499001; x=1717103801;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dYKcD5IuchFm4IMrBOnq6lh3XNI0BhQKY7/Pq8Y41cA=;
+        b=Tefe3Gu9KRWXXfDfy7H+pJ/fXldlmyne5pwUmt8XEFXDtkwUFOVR0CxyocNBFx1ZGk
+         PQrxGJgPzIN7T/sPpIpy+dXmJhZWvkxzJpTTRFXf4eR1Yrnwoy4S0KVeAoyMd2cZIWXp
+         Tw8FFQq4FWotufKnpEoSBFIBdAU5QIXa40k9RaW3L8oHtHGqDMvKG1H1YsUIpBI8zZJD
+         YTH+oRryoDXbxi7b83CTVz0nkAS8OBQC958zz/ZjYrwHx1B3tmr8QCriAvBocRjVuXhP
+         XzNiqk0WOFc5ps4Lc0lQHjjPmv8Bd0LJMS5HZG1+fkp/yR+4hI/YTMJXpu7vNwBfBBuG
+         kSZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKlIooDpdB/sydTexFRqxgGiDy0RGrpmPbwmUNULvEYh4PH0wyWcvi6r4ek5VExolwdZhrABAKUqbVyutAthG+tSYZ57NUEK36ULz6
+X-Gm-Message-State: AOJu0YzsbtEYnHurofWf90X4u4hVsbUDTtAH4iz5d95mplSjf1MkLJmv
+	QEkOSnZ61OLeW1vyVNYacEj30+d0zVshjjF8OYsr1JEq6Ueaew/f+mI9pwrYw28=
+X-Google-Smtp-Source: AGHT+IEuoEoQ/bJet1m7gQrg83v+8LU9LhdnXxXzTFJ+8azHok2UlXv7rYJvnuhuAuTOIbgYM9Cflg==
+X-Received: by 2002:a17:903:41c6:b0:1f2:f73c:c442 with SMTP id d9443c01a7336-1f4483e91a8mr6489475ad.0.1716499001521;
+        Thu, 23 May 2024 14:16:41 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c085:21c1::1060? ([2620:10d:c090:400::5:32c6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c79d046sm373525ad.72.2024.05.23.14.16.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 14:16:40 -0700 (PDT)
+Message-ID: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk>
+Date: Thu, 23 May 2024 15:16:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240523211437.2839942-1-jwylder@google.com>
-Subject: [PATCH v2] regmap-i2c: Subtract reg size from max_write
-From: Jim Wylder <jwylder@google.com>
-To: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Jim Wylder <jwylder@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when io
+ with IOCB_NOWAIT
+To: Matthew Wilcox <willy@infradead.org>, Liu Wei <liuwei09@cestc.cn>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ Goldwyn Rodrigues <rgoldwyn@suse.com>, Christoph Hellwig <hch@lst.de>,
+ Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+References: <20240513132339.26269-1-liuwei09@cestc.cn>
+ <Zk-wa_GvvrxpX9kn@casper.infradead.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Zk-wa_GvvrxpX9kn@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently, when an adapter defines a max_write_len quirk,
-the data will be chunked into data sizes equal to the
-max_write_len quirk value.  But the payload will be increased by
-the size of the register address before transmission.  The
-resulting value always ends up larger than the limit set
-by the quirk.
+On 5/23/24 3:08 PM, Matthew Wilcox wrote:
+> On Mon, May 13, 2024 at 09:23:39PM +0800, Liu Wei wrote:
+>> After commit (6be96d3ad3 fs: return if direct I/O will trigger writeback),
+> 
+> If you're reporting problems with a particular commit, it's good form
+> to cc the people who actually wrote that commit.
 
-Avoid this error by setting regmap's max_write to the quirk's
-max_write_len minus the number of bytes for the register and
-padding.  This allows the chunking to work correctly for this
-limited case without impacting other use-cases.
+Yeah indeed...
 
-Signed-off-by: Jim Wylder <jwylder@google.com>
----
- drivers/base/regmap/regmap-i2c.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+>> when we issuing AIO with direct I/O and IOCB_NOWAIT on a block device, the
+>> process context will not be blocked.
+>>
+>> However, if the device already has page cache in memory, EAGAIN will be
+>> returned. And even when trying to reissue the AIO with direct I/O and
+>> IOCB_NOWAIT again, we consistently receive EAGAIN.
 
-diff --git a/drivers/base/regmap/regmap-i2c.c b/drivers/base/regmap/regmap-i2c.c
-index 3ec611dc0c09..a905e955bbfc 100644
---- a/drivers/base/regmap/regmap-i2c.c
-+++ b/drivers/base/regmap/regmap-i2c.c
-@@ -350,7 +350,8 @@ static const struct regmap_bus *regmap_get_i2c_bus(struct i2c_client *i2c,
- 
- 		if (quirks->max_write_len &&
- 		    (bus->max_raw_write == 0 || bus->max_raw_write > quirks->max_write_len))
--			max_write = quirks->max_write_len;
-+			max_write = quirks->max_write_len -
-+				(config->reg_bits + config->pad_bits) / BITS_PER_BYTE;
- 
- 		if (max_read || max_write) {
- 			ret_bus = kmemdup(bus, sizeof(*bus), GFP_KERNEL);
+-EAGAIN doesn't mean "just try again and it'll work".
+
+>> Maybe a better way to deal with it: filemap_fdatawrite_range dirty pages
+>> with WB_SYNC_NONE flag, and invalidate_mapping_pages unmapped pages at
+>> the same time.
+>>
+>> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+>> ---
+>>  mm/filemap.c | 9 ++++++++-
+>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/filemap.c b/mm/filemap.c
+>> index 30de18c4fd28..1852a00caf31 100644
+>> --- a/mm/filemap.c
+>> +++ b/mm/filemap.c
+>> @@ -2697,8 +2697,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
+>>  
+>>  	if (iocb->ki_flags & IOCB_NOWAIT) {
+>>  		/* we could block if there are any pages in the range */
+>> -		if (filemap_range_has_page(mapping, pos, end))
+>> +		if (filemap_range_has_page(mapping, pos, end)) {
+>> +			if (mapping_needs_writeback(mapping)) {
+>> +				__filemap_fdatawrite_range(mapping,
+>> +						pos, end, WB_SYNC_NONE);
+>> +			}
+
+I don't think WB_SYNC_NONE tells it not to block, it just says not to
+wait for it... So this won't work as-is.
+
+>> +			invalidate_mapping_pages(mapping,
+>> +					pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+>>  			return -EAGAIN;
+>> +		}
+>>  	} else {
+>>  		ret = filemap_write_and_wait_range(mapping, pos, end);
+>>  		if (ret)
+>> -- 
+>> 2.42.1
+>>
+>>
+>>
+
 -- 
-2.45.1.288.g0e0cd299f1-goog
+Jens Axboe
 
 
