@@ -1,174 +1,139 @@
-Return-Path: <linux-kernel+bounces-187094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AB88CCD0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:31:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A358A8CCD11
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A9A1F21479
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:31:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0693DB20A37
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CFE13C9D2;
-	Thu, 23 May 2024 07:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="PYYckYVX";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IvK9V8R3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B9413C9D9;
+	Thu, 23 May 2024 07:33:55 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCA413B284;
-	Thu, 23 May 2024 07:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4E13B29D;
+	Thu, 23 May 2024 07:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716449469; cv=none; b=E8NHHvrJx3b2OWbxbT+nRCOLxNMi9HwfA/nO6vOJr8WfJTOCiNdHkctjBbYrLmfun1iQjg4AmQi1LKr2N+l+gEWBiIT3lUmO+THEEV+i9j9pguSDiD1ENC6pH7A9aVZYQgtip2lLu0mXNLfDggm3ZhAPOuzPJswVZ7tSqPtdico=
+	t=1716449634; cv=none; b=JC5NogzkPA7Y8XVUne1aJWo38Eu0CYdSz+oSUZkA2nW5lsPHP5Txiiiwa4BJKnfGUX5hhWyubShLdKb5pqIR8c8ez0i2iMGWoz3APmZytJXYQ3GlqO2xOydhbocmzxKn5mYXWSv/W14cd62egweyxuXuXb333aSmNOg9h1PPLYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716449469; c=relaxed/simple;
-	bh=E6KSMHkcFqMBfxwvW0aqU0sxVmzpbZ2ANCBUp28KRoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZBgXFtEvBWhKJ38IG2epV4hlEEQ+7/qIvF+p/k/Z6RHDITQrCBkvcz03oE9QnlBka8pcP0q518UzvvFm7WKuNO/uXxn+crDj4Hxnej72cX/n0DzsgJscHuZCWqE5e2R9pTrj95kj6O9cN95pg0OHfxcBw/mkZW+JkIEIoe0nzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=PYYckYVX; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IvK9V8R3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5A207221BE;
-	Thu, 23 May 2024 07:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716449461; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VXofB/MrwbBei8swbKQAdzf6vUd6YCUPSlTpcTrnuI8=;
-	b=PYYckYVXkrSJAlsjvASJofbHz9wflc/AaIh5IEXIF568ssr4dNvTsd7gDBcw5omcxPs2vh
-	MtNKZxT0F2l13DKq/xNE3xwrvMYye/zwOraPNajynCzrenmlYTndD1+Jds6dlWyDR2xDMS
-	0iAnOJPcWDA3J1X9cN+CmNGLhIHZFmw=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716449460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VXofB/MrwbBei8swbKQAdzf6vUd6YCUPSlTpcTrnuI8=;
-	b=IvK9V8R38dhZDQYWTBxFFJai+li2mt6n1f9i5aMy9D1ZFHZv1MDfuk/cRosCnhCeMhOopp
-	ACOBVD/7U2zad7eXDKdKZHM2IPaXDBroqcXW7L3XatC4HrBgc2QMQNjcPwJFGyM5qozDwn
-	LMOxfW8UXw2ac2xUYKNkEnWTUZqwfi8=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 376CB13A6C;
-	Thu, 23 May 2024 07:31:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BzjTCrTwTmZhRwAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Thu, 23 May 2024 07:31:00 +0000
-Date: Thu, 23 May 2024 09:30:59 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Oscar Salvador <OSalvador@suse.com>
-Cc: Peter Xu <peterx@redhat.com>, cve@kernel.org,
-	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-36000: mm/hugetlb: fix missing hugetlb_lock for resv
- uncharge
-Message-ID: <Zk7ws6H0wwuiFAJW@tiehlicka>
-References: <2024052023-CVE-2024-36000-cfc4@gregkh>
- <Zkto8rbtAUBql-78@tiehlicka>
- <Zkz4RRgfwUHPbQ5z@x1n>
+	s=arc-20240116; t=1716449634; c=relaxed/simple;
+	bh=vq/FLuv6VbT6g2NgYDQa9Rizy3VZXftahQHFAk9MtV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ryVnZVb6rgszwuqNU0YnJtOBnpdveDRJYIQW+qgGKe8JfpohUuiUh+ePFU3yLhxhcu7KOb7NfkOz+wfdu6OJhlm0edGcqexbae8bKOg9FStTmoFYQPgGtJwrPQ0JPnh68x4LDtrHBwHjJmlU+wAsV8uwHUzmL/UpKY6sIra4ITg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-627dde150d0so18146707b3.3;
+        Thu, 23 May 2024 00:33:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716449630; x=1717054430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r9ll3Q17E9S4QIKzi6nGnMviZ6Gac1YwMmcDufGIpEg=;
+        b=jSnr9jNwqMwX1OxyZmffd/sL8RD6WywWq7b99EZRMImMGt1IiGts8bOG9VmNTy0I0T
+         3fDb9fgTeUiZlLrZT7DUhMbOqZw73JRZs5iQKLLSD00arL16kvOKzKdt/V5jlcWKBJew
+         fRPfCW/Ue49c3wCQ89FFx6I/o23MXvtMP46DmPyz5MG1JejTXyK9CW+kozZAOp24Xwr2
+         0rzee4XdbWVGjPl8QwNIkfPpIlO2LNdWjOW/CiLzCBgt8bHMvbBYdR5HaPYCgE3MciAp
+         aSooMmVHe5eWkiGazlOiQWqzgXEcsVpxKPDNKcRb9gI1Mk2zQ8/XHnk1BYl7T/hvYaEM
+         TFrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlHJOXI3fTaZTpl2gHtHYVjG70UbRbPzITRniiJaGi6Mgai0R9XLJBosccShvD4O0z8kBQhO3O7ycA3CwmPPXjrKEmQc0a+kRNTRzrcLMKQuukScNW+4swMcXZdMmFSlwiZio0mxDX2Qt5
+X-Gm-Message-State: AOJu0YxOv0JJT/lcdEd4DwKFZRZSJRqfDdNKGR1U6S66aQvHv+RdX8tj
+	E7Tff0zi7xuGTqKEbBOS+4G9NkhzFi7AIVlNNQzJEV+HeADT5x5IuQDxME2A
+X-Google-Smtp-Source: AGHT+IHQUH7ltbF4VOcZlPUGa/FDHLFqfEEjELB33iz06dR3b6gGlONl4x6mV5pT36A4waPQRCMWvg==
+X-Received: by 2002:a05:690c:fca:b0:61b:3484:316b with SMTP id 00721157ae682-627e46ca8a9mr56024117b3.14.1716449630514;
+        Thu, 23 May 2024 00:33:50 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e24680csm60791807b3.6.2024.05.23.00.33.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 00:33:49 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-df4e0d8fa10so1714806276.1;
+        Thu, 23 May 2024 00:33:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXRrwQxyj4AzFt8lffLP+CDnSgyxg03BdyrIBDdDAYbSfSzcZtiR8cIrgAbHFyawCGvaxfwIJE5fBOOoj+Ti+eYbF8ckAgHfdLSj/9ANvhjRpltFfTUPT59TuatPfUq/2iiTdF4jZTPPxlv
+X-Received: by 2002:a5b:c52:0:b0:deb:cd02:3688 with SMTP id
+ 3f1490d57ef6-df4e0db8368mr4502046276.48.1716449629677; Thu, 23 May 2024
+ 00:33:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zkz4RRgfwUHPbQ5z@x1n>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+References: <20240409154253.3043822-1-hugo@hugovil.com> <20240409154253.3043822-4-hugo@hugovil.com>
+ <CAMuHMdVq=rf-6o485KiA+zcwJPHMe5STKUtSWtFPs2nmvshu-A@mail.gmail.com>
+ <CAHp75Vfi2YjE0wzwABURxXhcWLozAf9Cdj_pT+DL_tm8E_zm4Q@mail.gmail.com> <CAMuHMdXqc9tZkd7YzX56QRroDhjbweQAUj+th68DU8oFxpp+jg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXqc9tZkd7YzX56QRroDhjbweQAUj+th68DU8oFxpp+jg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 May 2024 09:33:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
+Message-ID: <CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] serial: sc16is7xx: split into core and I2C/SPI
+ parts (core)
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Hugo Villeneuve <hugo@hugovil.com>, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Let me add Oscar,
+On Tue, Apr 23, 2024 at 3:11=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+> On Tue, Apr 23, 2024 at 12:37=E2=80=AFPM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Tue, Apr 23, 2024 at 1:01=E2=80=AFPM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Tue, Apr 9, 2024 at 5:48=E2=80=AFPM Hugo Villeneuve <hugo@hugovil.=
+com> wrote:
+>
+> > > > -config SERIAL_SC16IS7XX
+> > > > -       tristate "SC16IS7xx serial support"
+> > > > +       tristate "NXP SC16IS7xx UART support"
+> > >
+> > > Hence this replaces SERIAL_SC16IS7XX_CORE by SERIAL_SC16IS7XX,
+> > > so arch/mips/configs/cu1??0-neo_defconfig needs to updated.
+> >
+> >         select SERIAL_CORE
+> > -       depends on (SPI_MASTER && !I2C) || I2C
+> > +       select SERIAL_SC16IS7XX_SPI if SPI_MASTER
+> > +       select SERIAL_SC16IS7XX_I2C if I2C
+> >
+> > > So if SPI_MASTER or I2C is enabled, the corresponding SERIAL_SC16IS7X=
+X_*
+> > > subdriver can no longer be disabled?  According to
+> > > https://lore.kernel.org/all/20240403123501.8ef5c99f65a40ca2c10f635a@h=
+ugovil.com/
+> > > you did want to support that?
+> >
+> > I believe it has been taken from one of the IIO drivers as an example.
+>
+> Looks like a bad example to follow:
+>   1. The driver question now pops up if both I2C and SPI_MASTER
+>      are disabled,
+>   2. What if SERIAL_SC16IS7XX_CORE is builtin, but I2C and/or
+>      SPI_MASTER are modular?
+>
+> I believe the only way to fix that is by letting the sub-drivers select t=
+he
+> core driver, like before.
 
-On Tue 21-05-24 15:38:45, Peter Xu wrote:
-> On Mon, May 20, 2024 at 05:14:58PM +0200, Michal Hocko wrote:
-> > Peter,
-> 
-> Hi, Michal,
-> 
-> > does b76b46902c2d ("mm/hugetlb: fix missing hugetlb_lock for resv
-> > uncharge") really have any security implications? I fail to see any but
-> > UFFD is not really my area so I might be missing something very easily.
-> 
-> AFAIU that issue wasn't userfault specific, but a generic issue for hugetlb
-> - I believe that can also trigger in other paths whoever try to call
-> alloc_hugetlb_folio(), and UFFDIO_COPY is one user of it.
-> 
-> I looked at that and provided a fix only because the report originated from
-> the uffd report, so Andrew normally pointing those to me, and since I
-> looked anyway I tried to fix that.
+FTR, this issue is now upstream.
 
-OK, I see. Thanks for the clarification.
+Gr{oetje,eeting}s,
 
-> Here in general what I can see is that the lock is needed since this
-> commit:
-> 
->     commit 94ae8ba7176666d1e7d8bbb9f93670a27540b6a8
->     Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
->     Date:   Tue Jul 31 16:42:35 2012 -0700
-> 
->     hugetlb/cgroup: assign the page hugetlb cgroup when we move the page to active list.
-> 
-> That commit mentioned that we rely on the lock to make sure all hugetlb
-> folios on the active list will have a valid memcg.  However I'm not sure
-> whether it's still required now (after all that's 2012..), e.g., I'm
-> looking at hugetlb_cgroup_css_offline(), and hugetlb_cgroup_move_parent()
-> looks all safe to even take empty memcg folios with the latest code at
-> least:
-> 
-> 	/*
-> 	 * We can have pages in active list without any cgroup
-> 	 * ie, hugepage with less than 3 pages. We can safely
-> 	 * ignore those pages.
-> 	 */
-> 	if (!page_hcg || page_hcg != h_cg)
-> 		goto out;
-> 
-> In short, I don't know any further security implications on this problem
-> besides LOCKDEP enabled.  But I don't think I fully understand the hugetlb
-> reservation code, so please just take that with a grain of salt.  E.g.,
-> right now we do the hugetlb_cgroup_uncharge_folio_rsvd(), then could it
-> happen that this folio will still be used finally and got injected into the
-> pgtables (after all, alloc_hugetlb_folio() will still return this folio to
-> the caller with a success), and would that be a problem if this folio has
-> its _hugetlb_cgroup_rsvd==NULL?  That looks like another question besides
-> this specific problem, though..
+                        Geert
 
-Oscar, could you have a look please?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
 
--- 
-Michal Hocko
-SUSE Labs
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
