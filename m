@@ -1,91 +1,103 @@
-Return-Path: <linux-kernel+bounces-187687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929FD8CD683
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:02:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2327F8CD699
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DDFB287B07
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:02:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4FE7B20E1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D8E134C4;
-	Thu, 23 May 2024 15:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11230D304;
+	Thu, 23 May 2024 15:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFRp+sUa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gW2U8MdR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602131170F;
-	Thu, 23 May 2024 15:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457C76AAD;
+	Thu, 23 May 2024 15:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476513; cv=none; b=OT+2KIDziOKHemeuO/qEryfwk5WQ3TLNv/YRs5cdpJVNmZLnj7DNJF7lpHtA/fftFhuuVVQbQdq6eKNyTScuU5YwXUXlOlyOE0q8aTCLnOGU7aCQ3CKdHbVVMpE/JksbQNMKnwaudyfzDvFIQzyZ6+p3ekZSo+PjjsmYd2mpe0M=
+	t=1716476631; cv=none; b=qsxJTUyZs3lEQK8VE3QCJyQ8t9g5YrSnxLRBsvw4iKd3Ys3/ClgjKIvN0Kmi2w7M+EpC34xVCMTW50zdYo90xaEAE22iNWVVyCMLtveI+wn2gZfCgnxFj3TIX5cAvHBhJglxE5+yZcm1EqJ9TP8yeZeOHpWw/Q05Y8oMGINCh3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476513; c=relaxed/simple;
-	bh=gcY/hpUgGlbWTO7iFEHxWUYAgr45cIvkuGeBIW4nKhU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject; b=PB+FXWbaHNnXaG7cMWFUEHLQbobtH7c9CssPTIgVQAAkG6irlPxHWz2Wu2fPs4sZrSb2r6SNu5h9+Xg3GMNy8U9XtJuaypM+bhKjdG72xaV3viNe8tnzgLJ+G8rjBhtCPuQavn0J1I7TZBUZn6ctC79NNlLbgKPCkwbOtr4YZFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFRp+sUa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0910C4AF50;
-	Thu, 23 May 2024 15:01:51 +0000 (UTC)
+	s=arc-20240116; t=1716476631; c=relaxed/simple;
+	bh=N9nB2TabRE0ILucieRrFr8EiEb/dKAQ/M2yQBgPFKY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Z87W8GHpVK5Vb9Qt8nD3q0GLVRLtWqgqKRCBpUqTjDUHPBl8VSp0THVKN+dYURbbjst5AlPp6vLUcGHZUFEuDRUWeG75eflg6j/fqFCfmXbGyAPvmigdkbiRQQLLcSVM+jLcUM4bKC0ZA3hCW/NSPxWDwS7dMLCYyRcalUcojHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gW2U8MdR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92849C32786;
+	Thu, 23 May 2024 15:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716476513;
-	bh=gcY/hpUgGlbWTO7iFEHxWUYAgr45cIvkuGeBIW4nKhU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pFRp+sUaL6h39QAKlKhUGL4spDcoS7nRBaqqesiCJDG5stqrQmhVBqvI7SP4A7D0t
-	 vH7dYN9B7zvTI0coiNtpYUgQy9U1LdV4XZrG/K7pe48ZengVlRR6jzTjpueXfHgJz2
-	 d92zwuVHgEU/ZxS7JNrb6EjWLb2NGeQP7R+TOv88/FjuScwRJq0BgaxEoqh/2HBQR/
-	 4/8acQvGVMI7A4Sfu3oaOnqYaS6xViHLSLlaMrbvJaCuYPxw4qHQbafgKyI+w1fbJM
-	 S3DPtAGKdx5n87qclQoRwc/1MrjVfWYrAfHxL5ZhUn/RyAOtyFiQpm3dyf07dqvB+0
-	 dRwv5FkEhOJ8A==
+	s=k20201202; t=1716476630;
+	bh=N9nB2TabRE0ILucieRrFr8EiEb/dKAQ/M2yQBgPFKY4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gW2U8MdRupSPlhuIc29ggUoj8CTuq45vPyAXx5ABrUNtyXvTUbQSRF2zpB4eQouNp
+	 GlkNuZ4aBBLWujz1PHNOnhrFaNmZ1Fd69hmHs5ULylOlusqbVi46htoPXgEv1Ytkvc
+	 u6KwMlvcPJk6UfrvRuemSoDHsSYaSs8aTo2y2WN1qNXZtVmojFSlDKmMueuCquFvRn
+	 KtgmZg4QYYUunhZqmq8VDcs/KDde/9YVdwTkSDzEQE1PH7K/GKViOkcFT6Q88rL01g
+	 vtC+SRY9iD3M5CS8wx678JB2jCL4LcGYaSADnP3xUlM2M1jFQAAK9QWtqm+E07sqWc
+	 5p82lad0gqy9Q==
+Date: Thu, 23 May 2024 10:03:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: devi priya <quic_devipriy@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konrad.dybcio@linaro.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V5 1/6] Add PCIe pipe clock definitions for IPQ9574 SoC.
+Message-ID: <20240523150349.GA118633@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 May 2024 18:01:49 +0300
-Message-Id: <D1H452IHSLRC.1WZSPJQLCD5RD@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: <linux-modules@vger.kernel.org>
-Cc: "Luis Chamberlain" <mcgrof@kernel.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, <linux-kernel@vger.kernel.org>, "Herbert
- Xu" <herbert@gondor.apana.org.au>, <linux-crypto@vger.kernel.org>
-Subject: is_module()
-X-Mailer: aerc 0.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240512082858.1806694-2-quic_devipriy@quicinc.com>
 
-Hi,
+On Sun, May 12, 2024 at 01:58:53PM +0530, devi priya wrote:
 
-I just put this here while I still have it on my mind. Possibly I'm
-ignoring something that already enables this but at least I learn
-something by doing this then.=20
+Please run "git log --oneline include/dt-bindings/clock/qcom,ipq9574-gcc.h"
+and follow the subject line style there:
 
-This came up in a recent discussion albeit for this crypto bug it
-did not make waves because the bug fix did not require it:
+  - prefix "dt-bindings: clock: "
+  - no trailing period
+  - perhaps add commit log text if there's anything else useful to put
+    there
 
-https://lore.kernel.org/linux-integrity/D1GXKODMD4S8.1J12D4GOEQWPL@kernel.o=
-rg/
-
-So the gist of  is_module() would be that it would have different
-semantics than IS_MODULE(): it could be used to e.g. check modules in a
-loop.
-
-Compilation would generate a new ELF section with following entries:
-
-<ASCIIZ string><0 or 1>
-
-The string would contain module name, and 1 could be marking for
-being a module, and 0 for being builtin.
-
-Also, it would enabled to add lsmod -b to enumerate built-in modules,
-which would give nice way to carve up more information about a running
-test kernel. This would obviously need perhaps a new file to procfs for
-built-in modules (for regular there is /proc/modules).
-
-Not fighting for having this, just makig it visible.
-
-BR, Jarkko
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> ---
+>  Changes in V5:
+> 	- No changes
+> 
+>  include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> index 08fd3a37acaa..52123c5a09fa 100644
+> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> @@ -216,4 +216,8 @@
+>  #define GCC_CRYPTO_AHB_CLK				207
+>  #define GCC_USB0_PIPE_CLK				208
+>  #define GCC_USB0_SLEEP_CLK				209
+> +#define GCC_PCIE0_PIPE_CLK				210
+> +#define GCC_PCIE1_PIPE_CLK				211
+> +#define GCC_PCIE2_PIPE_CLK				212
+> +#define GCC_PCIE3_PIPE_CLK				213
+>  #endif
+> -- 
+> 2.34.1
+> 
 
