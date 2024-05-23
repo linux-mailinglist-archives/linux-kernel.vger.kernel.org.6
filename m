@@ -1,92 +1,66 @@
-Return-Path: <linux-kernel+bounces-187649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29278CD5DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:32:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08938CD5DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416EF2815F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58B5C1F21425
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDFD13C3C9;
-	Thu, 23 May 2024 14:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NdMTbwhM"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2925012B177;
+	Thu, 23 May 2024 14:33:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB07514BF8F;
-	Thu, 23 May 2024 14:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CD81DDC5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474757; cv=none; b=JqMg1y02CPmXz05s7Y/EQZodgH8HLJzEx3Fn1x6/AXmsx8DKw5YbZtUkAfTAFeyVnFzzePgGgOJHUlrBZ/2ecByhP6Kze7qBMIzrJHZ+Rt2YOuJT+QxY11WIXBLIWd2+bL6RgzxhsOsCIHh5ZwwMUVkWcQJBYCUOtVyQl515jEQ=
+	t=1716474784; cv=none; b=q8no9cZbwICsLnK1kUWqeAKAPvnohwYyiQdrA3z+5K9r2Fy45PAjveQamE0SfUPyrCKZCJQBXAxBafZkH5Azmj+7PNaqSMEB+8TVrNDvOXChb1SQjIMIiUmGFl78BclQniaUl6n67vatU8UVG6KOxahjJ+Q6zU1oQ0w3zxlTlCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474757; c=relaxed/simple;
-	bh=nOBwnAUrG3XTArYtlV00zl2oa7x6KdWXnkghya/eAH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ug0LmgICpZR2AkObBjxBbx14N/13zeQUVD7NgOBvpj9/E1nGkDKxBhkneJy5DUjxHySERYqDKPl9vE3XZqKiCL+mvi+r0iUCt2UpboFuhb0ZqTc7tNVOy4kgUMB3QUYvzt8H2esYDX/peATvmfm+MhgPZ1gww6i/03pkalTOScg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NdMTbwhM; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OyLpAbqIcm49EN50aC4QtDsFYC5RZ7HoWFou/ezE01w=; b=NdMTbwhMtQM5CICpSwky5B6+xe
-	Q6oL9/6VkX2WUudrsBMz1qzwMyI8G0btA9E6QpTOvf20Y/xhGRVOO6hJl9E1BU4Ey9nQZEel4e3lM
-	l/d3Ov2KO/AWTORCqiWLeSmGqjvbuQLgTkQLtVXKIgNnuAVNJViOms12LLjNQO/uw4yY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sA9UY-00Ftog-T6; Thu, 23 May 2024 16:32:26 +0200
-Date: Thu, 23 May 2024 16:32:26 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: micrel: Fix lan8841_config_intr after getting
- out of sleep mode
-Message-ID: <f73778fe-ef01-44b4-9a8d-cd2a978c1a3d@lunn.ch>
-References: <20240523074226.3540332-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1716474784; c=relaxed/simple;
+	bh=wm+MfmttqMO7R9cZbo54oiGasVEBNy92p/KPfK5pibY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KvoXXnXL3b8NO6TQ85L+YRv7IW0GB9kOYAne/bqmmsKGRHrH38M3F5x6gzCpVkEJ1AC5b+O7ncdqaUoFLn7vAGne/5vG+9axL9sniBNLxfpsKpRisGNYDji+3myeCc9xg1s2g69bacgQJM5NN0iIxmmqnxiXiqsaFTiKPlW1xSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E78ABC2BD10;
+	Thu, 23 May 2024 14:33:03 +0000 (UTC)
+Date: Thu, 23 May 2024 10:33:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [GIT PULL] tracing/treewide: Remove second parameter of
+ __assign_str()
+Message-ID: <20240523103348.07295492@gandalf.local.home>
+In-Reply-To: <20240523103204.7c50b070@gandalf.local.home>
+References: <20240523103204.7c50b070@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523074226.3540332-1-horatiu.vultur@microchip.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23, 2024 at 09:42:26AM +0200, Horatiu Vultur wrote:
-> When the interrupt is enabled, the function lan8841_config_intr tries to
-> clear any pending interrupts by reading the interrupt status, then
-> checks the return value for errors and then continue to enable the
-> interrupt. It has been seen that once the system gets out of sleep mode,
-> the interrupt status has the value 0x400 meaning that the PHY detected
-> that the link was in low power. That is correct value but the problem is
-> that the check is wrong.  We try to check for errors but we return an
-> error also in this case which is not an error. Therefore fix this by
-> returning only when there is an error.
+On Thu, 23 May 2024 10:32:04 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Is the second case also broken in the same way?
+> [
+>   I'm sending this now, near the end of the merge window. As it touches over
+>   140 files and makes over 700 updates, adding it before -rc1 would help
+>   prevent conflicts. I did a diff between the commit I based this off of and
+>   linux-next and I don't see any new __assign_str()s added. I'm doing an
+>   allmodconfig build of this merged with linux-next just to make sure.
 
-	} else {
-		err = phy_write(phydev, LAN8814_INTC, 0);
-		if (err)
-			return err;
+And just after hitting send, the allmodconfig build with this merged with
+linux-next finished with success. :-)
 
-		err = phy_read(phydev, LAN8814_INTS);
-	}
+-- Steve
 
-	return err;
-
-e.g. there was an outstanding interrupt as interrupts are
-disabled. This will cause the return value of the function to be not
-0?
-
-	Andrew
 
