@@ -1,293 +1,188 @@
-Return-Path: <linux-kernel+bounces-187109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E658CCD39
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:44:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 025D78CCD3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 995EE1C2143B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:44:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712AE1F21CE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0719913C9D4;
-	Thu, 23 May 2024 07:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C36713CAAD;
+	Thu, 23 May 2024 07:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iuL8mHpj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dJsGiVzE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bT/5Rrsi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dJsGiVzE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bT/5Rrsi"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BCC13C3C0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2F513BAFE;
+	Thu, 23 May 2024 07:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716450267; cv=none; b=uzKSdAkSh8vGP8YTJFweJcbufK7YgXpKq6pOtX2ZDVowm2acH6rF5zdfmeAHc7w2P7Y69EKLh8c1PNQ143ELU8Rqo3tIMh8vF2abp6ogIHFtBZnLUK8YOJRkxRO4043JTGTqIjDjTMW559aCIk74iFortatoBhIJ1DD7gKtiuqI=
+	t=1716450278; cv=none; b=D1zKO9Rp2QdNNUl4KXf1PafLzKqQF7Auz7uYoowfjrWvIYnSC7gu7VjhEN9J0YMA5xuLPXiBhV+X2+nV6CyGC7XrYF77UxkvZq7IwyCsxlucAqI4LBMnkC7/19RV5EDSdeDaHcnKuGd4Qwlio+sU3FFauoLouEPb1pWhMQd2KCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716450267; c=relaxed/simple;
-	bh=lnjUifyPSPVB7tejsJYdTy3kJITVOSvFjQFhkzP75y4=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=NQoHN//tW1cRF11Th4JOrhNUlVIrua/YQau4aQYdPS2DL/1AKt8jEA30BUIo/mYB9OiqrzgT4pes97IGxKrro3v/rZ3Fuk3gDAhCb+CSP13yeSCzLl4ntN3uBAUADyVvqQw6v7uV0OKLib0hu7HYSdvhHN3Kgewa3PTVlD9odOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iuL8mHpj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716450264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kLhXmfF9Sj87o1Kh7Mk5PB3h8im3PzkGpLpb1UjE6M4=;
-	b=iuL8mHpjAo8eUiv5ht7CUm0TgM+pXWSIdRHkJG/qG67E6X+5Zi10sh5m1+auh2gHsAcpBS
-	h9i1lxJdmY3kDcMUCiwKpeItbm0Zy1zbwV+38AP9inBXOzlZIsSTN85ajWsYlpycobEGYT
-	/nUV8nppm2YDThoGFO8mV8FZN8pWyHU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-211-xEhMxZGhNqmZTQdYoGCbdQ-1; Thu, 23 May 2024 03:44:21 -0400
-X-MC-Unique: xEhMxZGhNqmZTQdYoGCbdQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	s=arc-20240116; t=1716450278; c=relaxed/simple;
+	bh=FkWsxJsUCyg1I1EBmpnZ1Cou5Ibt2llv0P05zVskbQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+WxrZXi2Hjeb1cYpVmidyWHhzO59o0a45DX0k0bKt2wVEyFz9zrjLxFB3MvTz8L8NwK4BQEhqrk4kVWwEI2Oe2GLb0+1SLV1NLPwIgVGBUPmjHMDLa7bgSxY1UNtMSuTY+3CR05nMA3bqxfOrSNF8L9et245olgHu9aRb0G5DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dJsGiVzE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bT/5Rrsi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dJsGiVzE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bT/5Rrsi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E0EA881227E;
-	Thu, 23 May 2024 07:44:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 6EA96C15BED;
-	Thu, 23 May 2024 07:44:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <Zj0ErxVBE3DYT2Ea@gpd>
-References: <Zj0ErxVBE3DYT2Ea@gpd> <20231221132400.1601991-1-dhowells@redhat.com> <20231221132400.1601991-41-dhowells@redhat.com>
-To: Andrea Righi <andrea.righi@canonical.com>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Christian Brauner <christian@brauner.io>,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C68022304;
+	Thu, 23 May 2024 07:44:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716450275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
+	b=dJsGiVzE043vdPvF4XLVfB5hlmA/ithXT7afY8YwAHGeyGprQrSflsExWko89JrJ63Gr9w
+	4+QQqZkPc9H0P13yjs64fJKfj+09eEadCMHatDLH9UuKS3pfBCDgDtXPICVn4CNi+sW6m7
+	C7LQcHD9MQqNK5nBJqlOtO9UlvH2DpE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716450275;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
+	b=bT/5RrsiU6NftYlREQoYHQLi5BsfvsUU8yytLUnWOVjgTc9r1KYYfLvKO02SdCS/ZISl7z
+	eeIqBWDJTZ3KUPCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716450275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
+	b=dJsGiVzE043vdPvF4XLVfB5hlmA/ithXT7afY8YwAHGeyGprQrSflsExWko89JrJ63Gr9w
+	4+QQqZkPc9H0P13yjs64fJKfj+09eEadCMHatDLH9UuKS3pfBCDgDtXPICVn4CNi+sW6m7
+	C7LQcHD9MQqNK5nBJqlOtO9UlvH2DpE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716450275;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k6MvdHoOp3ina+pl85dJt5etpS6R/rzn9r2h6GRkL34=;
+	b=bT/5RrsiU6NftYlREQoYHQLi5BsfvsUU8yytLUnWOVjgTc9r1KYYfLvKO02SdCS/ZISl7z
+	eeIqBWDJTZ3KUPCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 220A113A6C;
+	Thu, 23 May 2024 07:44:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3nFJCOPzTmawSAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 23 May 2024 07:44:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id C0AD9A0770; Thu, 23 May 2024 09:44:34 +0200 (CEST)
+Date: Thu, 23 May 2024 09:44:34 +0200
+From: Jan Kara <jack@suse.cz>
+To: Luis Henriques <luis.henriques@linux.dev>
+Cc: Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.com>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] jbd2: reset fast commit offset only after fs
+ cleanup is done
+Message-ID: <20240523074434.xdpyso46v5l6qvze@quack3>
+References: <20240521154535.12911-1-luis.henriques@linux.dev>
+ <20240521154535.12911-3-luis.henriques@linux.dev>
+ <20240522104500.z343a6xqfduuq5i3@quack3>
+ <87le42dl4b.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <531993.1716450257.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 23 May 2024 08:44:17 +0100
-Message-ID: <531994.1716450257@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87le42dl4b.fsf@brahms.olymp>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Hi Andrea,
+On Wed 22-05-24 14:36:20, Luis Henriques wrote:
+> On Wed 22 May 2024 12:45:00 PM +02, Jan Kara wrote;
+> 
+> > On Tue 21-05-24 16:45:35, Luis Henriques (SUSE) wrote:
+> >> When doing a journal commit, the fast journal offset (journal->j_fc_off) is
+> >> set to zero too early in the process.  Since ext4 filesystem calls function
+> >> jbd2_fc_release_bufs() in its j_fc_cleanup_callback (ext4_fc_cleanup()),
+> >> that call will be a no-op exactly because the offset is zero.
+> >> 
+> >> Move the fast commit offset further down in the journal commit code, until
+> >> it's mostly done, immediately before clearing the on-going commit flags.
+> >> 
+> >> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+> >
+> > Did you see any particular failure because of this? Because AFAICS the
+> > buffers cleaned up by jbd2_fc_release_bufs() are only allocated during fast
+> > commit (from ext4_fc_reserve_space()). And the code in
+> > jbd2_journal_commit_transaction() is making sure fast commit isn't running
+> > before we set journal->j_fc_off to 0.
+> 
+> No, I did not see any failure caused by this, this patch is simply based
+> on my understanding of the code after spending some time reviewing it.
+> 
+> The problem I saw was that jbd2_journal_commit_transaction() will run the
+> clean-up callbacks, which includes ext4_fc_cleanup().  One of the first
+> things that this callback will do is to call jbd2_fc_release_bufs().
+> Because journal->j_fc_off is zero, this call is useless:
+> 
+> 	j_fc_off = journal->j_fc_off;
+> 
+> 	for (i = j_fc_off - 1; i >= 0; i--) {
+> 		[...]
+> 	}
+> 
+> (It's even a bit odd to start the loop with 'i = -1'...)
+> 
+> So the question is whether this call is actually useful at all.  Maybe the
+> thing to do is to simply remove the call to jbd2_fc_release_bufs()?  (And
+> in that case, remove the function too, as this is the only call site.)
 
-Note that there are changes to the netfslib write-side upstream and you mi=
-ght
-also want to apply the attached.
+What is I guess confusing for you (and somewhat for me as well) is that
+journal->j_fc_cleanup_callback() gets called from __jbd2_fc_end_commit()
+*and* from jbd2_journal_commit_transaction(). I agree the
+jbd2_fc_release_bufs() is useless for the call from
+jbd2_journal_commit_transaction(), it is however needed for the call from
+__jbd2_fc_end_commit(). There are however other bits - namely the
+s_fc_dentry_q and s_fc_q list handling that need to happen both for normal
+and fast commit...
 
-In https://bugs.launchpad.net/ubuntu/+source/autopkgtest/+bug/2056461 you =
-say:
+								Honza
 
-| It seems that kernel 6.8 introduced a regression in the 9pfs related to
-| caching and netfslib, that can cause some user-space apps to read conten=
-t
-| from files that is not up-to-date (when they are used in a producer/cons=
-umer
-| fashion).
-
-Can you clarify how these files are being used?
-
-David
----
-commit 39302c160390441ed5b4f4f7ad480c44eddf0962
-Author: David Howells <dhowells@redhat.com>
-Date:   Wed May 22 17:30:22 2024 +0100
-
-    netfs, 9p: Fix race between umount and async request completion
-    =
-
-    There's a problem in 9p's interaction with netfslib whereby a crash oc=
-curs
-    because the 9p_fid structs get forcibly destroyed during client teardo=
-wn
-    (without paying attention to their refcounts) before netfslib has fini=
-shed
-    with them.  However, it's not a simple case of deferring the clunking =
-that
-    p9_fid_put() does as that requires the client.
-    =
-
-    The problem is that netfslib has to unlock pages and clear the IN_PROG=
-RESS
-    flag before destroying the objects involved - including the pid - and,=
- in
-    any case, nothing checks to see if writeback completed barring looking=
- at
-    the page flags.
-    =
-
-    Fix this by keeping a count of outstanding I/O requests (of any type) =
-and
-    waiting for it to quiesce during inode eviction.
-    =
-
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    cc: Eric Van Hensbergen <ericvh@kernel.org>
-    cc: Latchesar Ionkov <lucho@ionkov.net>
-    cc: Dominique Martinet <asmadeus@codewreck.org>
-    cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-    cc: Jeff Layton <jlayton@kernel.org>
-    cc: Steve French <sfrench@samba.org>
-    cc: v9fs@lists.linux.dev
-    cc: linux-afs@lists.infradead.org
-    cc: linux-cifs@vger.kernel.org
-    cc: netfs@lists.linux.dev
-    cc: linux-fsdevel@vger.kernel.org
-
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 8c9a896d691e..57cfa9f65046 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -354,6 +354,7 @@ void v9fs_evict_inode(struct inode *inode)
- 		version =3D cpu_to_le32(v9inode->qid.version);
- 		netfs_clear_inode_writeback(inode, &version);
- =
-
-+		netfs_wait_for_outstanding_io(inode);
- 		clear_inode(inode);
- 		filemap_fdatawrite(&inode->i_data);
- =
-
-@@ -361,8 +362,10 @@ void v9fs_evict_inode(struct inode *inode)
- 		if (v9fs_inode_cookie(v9inode))
- 			fscache_relinquish_cookie(v9fs_inode_cookie(v9inode), false);
- #endif
--	} else
-+	} else {
-+		netfs_wait_for_outstanding_io(inode);
- 		clear_inode(inode);
-+	}
- }
- =
-
- struct inode *
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 94fc049aff58..c831e711a4ac 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -652,6 +652,7 @@ void afs_evict_inode(struct inode *inode)
- =
-
- 	afs_set_cache_aux(vnode, &aux);
- 	netfs_clear_inode_writeback(inode, &aux);
-+	netfs_wait_for_outstanding_io(inode);
- 	clear_inode(inode);
- =
-
- 	while (!list_empty(&vnode->wb_keys)) {
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index c90d482b1650..f4a642727479 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -72,6 +72,7 @@ struct netfs_io_request *netfs_alloc_request(struct addr=
-ess_space *mapping,
- 		}
- 	}
- =
-
-+	atomic_inc(&ctx->io_count);
- 	trace_netfs_rreq_ref(rreq->debug_id, 1, netfs_rreq_trace_new);
- 	netfs_proc_add_rreq(rreq);
- 	netfs_stat(&netfs_n_rh_rreq);
-@@ -124,6 +125,7 @@ static void netfs_free_request(struct work_struct *wor=
-k)
- {
- 	struct netfs_io_request *rreq =3D
- 		container_of(work, struct netfs_io_request, work);
-+	struct netfs_inode *ictx =3D netfs_inode(rreq->inode);
- 	unsigned int i;
- =
-
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_free);
-@@ -142,6 +144,9 @@ static void netfs_free_request(struct work_struct *wor=
-k)
- 		}
- 		kvfree(rreq->direct_bv);
- 	}
-+
-+	if (atomic_dec_and_test(&ictx->io_count))
-+		wake_up_var(&ictx->io_count);
- 	call_rcu(&rreq->rcu, netfs_free_request_rcu);
- }
- =
-
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index ec5b639f421a..21c9e173ea9a 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -435,6 +435,7 @@ cifs_evict_inode(struct inode *inode)
- 	if (inode->i_state & I_PINNING_NETFS_WB)
- 		cifs_fscache_unuse_inode_cookie(inode, true);
- 	cifs_fscache_release_inode_cookie(inode);
-+	netfs_wait_for_outstanding_io(inode);
- 	clear_inode(inode);
- }
- =
-
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index d2d291a9cdad..3ca3906bb8da 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -68,6 +68,7 @@ struct netfs_inode {
- 	loff_t			remote_i_size;	/* Size of the remote file */
- 	loff_t			zero_point;	/* Size after which we assume there's no data
- 						 * on the server */
-+	atomic_t		io_count;	/* Number of outstanding reqs */
- 	unsigned long		flags;
- #define NETFS_ICTX_ODIRECT	0		/* The file has DIO in progress */
- #define NETFS_ICTX_UNBUFFERED	1		/* I/O should not use the pagecache */
-@@ -474,6 +475,7 @@ static inline void netfs_inode_init(struct netfs_inode=
- *ctx,
- 	ctx->remote_i_size =3D i_size_read(&ctx->inode);
- 	ctx->zero_point =3D LLONG_MAX;
- 	ctx->flags =3D 0;
-+	atomic_set(&ctx->io_count, 0);
- #if IS_ENABLED(CONFIG_FSCACHE)
- 	ctx->cache =3D NULL;
- #endif
-@@ -517,4 +519,20 @@ static inline struct fscache_cookie *netfs_i_cookie(s=
-truct netfs_inode *ctx)
- #endif
- }
- =
-
-+/**
-+ * netfs_wait_for_outstanding_io - Wait for outstanding I/O to complete
-+ * @ctx: The netfs inode to wait on
-+ *
-+ * Wait for outstanding I/O requests of any type to complete.  This is in=
-tended
-+ * to be called from inode eviction routines.  This makes sure that any
-+ * resources held by those requests are cleaned up before we let the inod=
-e get
-+ * cleaned up.
-+ */
-+static inline void netfs_wait_for_outstanding_io(struct inode *inode)
-+{
-+	struct netfs_inode *ictx =3D netfs_inode(inode);
-+
-+	wait_var_event(&ictx->io_count, atomic_read(&ictx->io_count) =3D=3D 0);
-+}
-+
- #endif /* _LINUX_NETFS_H */
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
