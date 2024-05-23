@@ -1,111 +1,221 @@
-Return-Path: <linux-kernel+bounces-187436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4787C8CD1C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:06:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BA1A8CD1D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DABEB1F2264E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0B441F22C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F1B13D293;
-	Thu, 23 May 2024 12:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314D913F44A;
+	Thu, 23 May 2024 12:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kU5uEFs+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="bqSOLSqC"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B0413CF92;
-	Thu, 23 May 2024 12:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A752913B7A6;
+	Thu, 23 May 2024 12:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716465992; cv=none; b=pudvbgCJniIbZ+eL0waL8jGnFgIZEQBs3ePJ9NjDuDwNak6LO3OEMM4qNwlPloE56awQPX4GZGWehmQtz5z9UIh/L4LsXsyXikP0gqAEQWN9JR1kMHT1IVpHzOUVkF7g92aTbQIb5uYiUn69BltXRnJEyXF8bcIIZblb7KSe48s=
+	t=1716466309; cv=none; b=MYjUiaSxoJudhl1ZGbCqbzWjoFJ7OaLvt7o+Fwl6Rmt0U2fd8ZDI54Juybfr2kN5R2m1iVtY0bfT6O79PBPqWrT3hFVKXa8OpZae8Ki5Kjkd4Y0F5lk4YSnzRMxnQIccwYzBvdMPBvB8dnYUtPa/04DsXbI8qdRDew0EcGaVWaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716465992; c=relaxed/simple;
-	bh=RsCi9zpX9ZWOnbJAJ30H+QRO1giMwJefX62MyVsW714=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aqkxliKtDkjfH9rMCt1I3O9zjw0bM9A/5xjbQazoV9CFEwlEat5H1FoOo3VsjRU3IkE7igjBG4I1TSSGgZ/0F5UfBYQ9hqmz4PpAotvmpvhxYLGx//GZMY9CGkd/Sv5SodeCnRzeqAG3ErJtzpwl2YXkBk4yEjuKdFEwBC3LVdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kU5uEFs+; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716465991; x=1748001991;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RsCi9zpX9ZWOnbJAJ30H+QRO1giMwJefX62MyVsW714=;
-  b=kU5uEFs+VrC5+m6tyD1kV1m/Qh+8wXKjkB1HD7ifOho7++MfLPLdB+Yv
-   FXhIdukDchj+jFHSR2VK8Je5dN+jseADKqpoAD2sqB6pVLb2YGICpHRFa
-   hvli44+35pCga0cD14B2UwU0M6ta1CxU6EWcx2orm2jCdavzoh7wDRibB
-   4L4D4J3hfgKO8ulVEyXxxe6qJhnCXy1nADO9VehiL/IMF+97AAXeAGuaf
-   SW9I5IDxaXxXE304EZFWmLyMHnIQvMPDNi/VAWRZDlIdn7Dm3E+mL9xEm
-   dY6TwTvE2+6yS8CqgUAYD5jXnc6M4yAz3+wDHJmmBajK3n78C8qvjOElc
-   A==;
-X-CSE-ConnectionGUID: Z3pH4CfES9GFDHa6xjJQ9Q==
-X-CSE-MsgGUID: AFAjXgNpT3mtUSeSxcPoCA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12609427"
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="12609427"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 05:06:31 -0700
-X-CSE-ConnectionGUID: dNRZz+K8R9Sl4I+hdoIOAA==
-X-CSE-MsgGUID: EMuejiKDRSWP1TJHjJZKpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="38425148"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 23 May 2024 05:06:25 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 62D45E7; Thu, 23 May 2024 15:06:23 +0300 (EEST)
-Date: Thu, 23 May 2024 15:06:23 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: x86@kernel.org, linux-coco@lists.linux.dev, bp@alien8.de, 
-	dave.hansen@intel.com, dave.hansen@linux.intel.com, haiyangz@microsoft.com, 
-	hpa@zytor.com, kys@microsoft.com, luto@kernel.org, mingo@redhat.com, 
-	peterz@infradead.org, sathyanarayanan.kuppuswamy@linux.intel.com, tglx@linutronix.de, 
-	wei.liu@kernel.org, Jason@zx2c4.com, mhklinux@outlook.com, thomas.lendacky@amd.com, 
-	tytso@mit.edu, ardb@kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tianyu.Lan@microsoft.com, 
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: Re: [RFC PATCH] clocksource: hyper-v: Enable the tsc_page for a TDX
- VM in TD mode
-Message-ID: <7yos4yh6te7zcwga3swddpyjyxlif2c5vqad2rouwf7euw47df@jvouxfoakct6>
-References: <20240523022441.20879-1-decui@microsoft.com>
+	s=arc-20240116; t=1716466309; c=relaxed/simple;
+	bh=vALmUqA5Wog+zqLtOkN/QaJNWqWwzNf0U+orGc33tQU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EXXXCSSf6o3bQ5nmEpYYtco/I2s/Qaizrw0wido3EAoDe6euGg3emrpX1psCyVbNVAHUWq3ks9a2WBQxE8NW2WzXOhCs8/89XoBC2l82oY9YwsxwnCGZOKxIh65oaxSPZaVpZ44C/WoItuF4/B9xnr4p+TgISo7cJEFbEx6kANE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=bqSOLSqC; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NA1Zhg011307;
+	Thu, 23 May 2024 08:11:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=EdFbmO6SN0AAHhccZL9llajYuxh
+	Q6Qu7Stq9Fo0o8LI=; b=bqSOLSqCwZLDDbX8JoO7RBW97SCn8XuOxI+27TcJokM
+	KLZUG350eSX14K4wx79ihiNf5eW4YWaLmJ6YcfzHHIFDztXbS7krYkOrsvCMx2a2
+	v0R4N9RLY1KrsUShFhQsmtLXmk7bcKQswvR1sJgNs+Nwtj8IQg9jo32a5Gmxcqfi
+	B3UfprmhdtVLWHuTK/fWQby5z9RQFJkyhV6UYZBhPPhB8aqqpsEk9xGuYdK/6m82
+	X7V2sAunikz7si4j+nEwV0RXdBBWMDXJyJQ6PKoUbn47b1tSD3QsLPX3el6qsiRW
+	mjrceCRoa0rE9+CX+sYOMMeCeu+04S7bCIb590gqUUw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3y9xwuhgt0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 08:11:28 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 44NCBR1k024808
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 23 May 2024 08:11:27 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 23 May
+ 2024 08:11:26 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Thu, 23 May 2024 08:11:26 -0400
+Received: from radu.ad.analog.com ([10.48.65.189])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44NCBF7Y029999;
+	Thu, 23 May 2024 08:11:18 -0400
+From: Radu Sabau <radu.sabau@analog.com>
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Radu Sabau <radu.sabau@analog.com>
+Subject: [PATCH v2] drivers: hwmon: max31827: Add PEC support
+Date: Thu, 23 May 2024 15:10:56 +0300
+Message-ID: <20240523121057.5689-1-radu.sabau@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523022441.20879-1-decui@microsoft.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: h9Tr9HCB91KG15ivkVUtZyfpR07p5NaD
+X-Proofpoint-ORIG-GUID: h9Tr9HCB91KG15ivkVUtZyfpR07p5NaD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_07,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 spamscore=0 clxscore=1015 suspectscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405230083
 
-On Wed, May 22, 2024 at 07:24:41PM -0700, Dexuan Cui wrote:
-> A TDX VM on Hyper-V may run in TD mode or Partitioned TD mode (L2). For
-> the former, the VM has not enabled the Hyper-V TSC page (which is defined
-> in drivers/clocksource/hyperv_timer.c: "... tsc_pg __bss_decrypted ...")
-> because, for such a VM, the hypervisor requires that the page should be
-> shared, but currently the __bss_decrypted is not working for such a VM
-> yet.
+Add support for PEC by attaching PEC attribute to the i2c device.
+Add pec_store and pec_show function for accesing the "pec" file.
 
-I don't see how it is safe. It opens guest clock for manipulations form
-VMM. Could you elaborate on security implications?
+Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+---
+ Documentation/hwmon/max31827.rst | 13 +++++--
+ drivers/hwmon/max31827.c         | 64 ++++++++++++++++++++++++++++++++
+ 2 files changed, 74 insertions(+), 3 deletions(-)
 
-> Hyper-V TSC page can work as a clocksource device similar to KVM pv
-> clock, and it's also used by the Hyper-V timer code to get the current
-> time: see hv_init_tsc_clocksource(), which sets the global function
-> pointer hv_read_reference_counter to read_hv_clock_tsc(); when
-> Hyper-V TSC page is not enabled, hv_read_reference_counter defaults to
-> be drivers/hv/hv_common.c: __hv_read_ref_counter(), which is suboptimal
-> as it uses the slow MSR interface to get the time info.
-
-Why can't the guest just read the TSC directly? Why do we need the page?
-I am confused.
-
+diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+index 44ab9dc064cb..9c11a9518c67 100644
+--- a/Documentation/hwmon/max31827.rst
++++ b/Documentation/hwmon/max31827.rst
+@@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive temperature faults must occur
+ before overtemperature or undertemperature faults are indicated in the
+ corresponding status bits.
+ 
+-Notes
+------
++PEC Support
++-----------
++
++When reading a register value, the PEC byte is computed and sent by the chip.
++
++PEC on word data transaction respresents a signifcant increase in bandwitdh
++usage (+33% for both write and reads) in normal conditions.
+ 
+-PEC is not implemented.
++Since this operation implies there will be an extra delay to each
++transaction, PEC can be disabled or enabled through sysfs.
++Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
+diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+index f8a13b30f100..e86f8890ee72 100644
+--- a/drivers/hwmon/max31827.c
++++ b/drivers/hwmon/max31827.c
+@@ -24,6 +24,7 @@
+ 
+ #define MAX31827_CONFIGURATION_1SHOT_MASK	BIT(0)
+ #define MAX31827_CONFIGURATION_CNV_RATE_MASK	GENMASK(3, 1)
++#define MAX31827_CONFIGURATION_PEC_EN_MASK	BIT(4)
+ #define MAX31827_CONFIGURATION_TIMEOUT_MASK	BIT(5)
+ #define MAX31827_CONFIGURATION_RESOLUTION_MASK	GENMASK(7, 6)
+ #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
+@@ -475,6 +476,54 @@ static ssize_t temp1_resolution_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(temp1_resolution);
+ 
++static ssize_t pec_show(struct device *dev, struct device_attribute *devattr,
++			char *buf)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++
++	return scnprintf(buf, PAGE_SIZE, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
++}
++
++static ssize_t pec_store(struct device *dev, struct device_attribute *devattr,
++			 const char *buf, size_t count)
++{
++	struct max31827_state *st = dev_get_drvdata(dev);
++	struct i2c_client *client = to_i2c_client(dev);
++	unsigned int val;
++	int err;
++
++	err = kstrtouint(buf, 10, &val);
++	if (err < 0)
++		return err;
++
++	switch (val) {
++	case 0:
++		err = regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
++					 MAX31827_CONFIGURATION_PEC_EN_MASK,
++					 val);
++		if (err)
++			return err;
++
++		client->flags &= ~I2C_CLIENT_PEC;
++		break;
++	case 1:
++		err = regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
++					 MAX31827_CONFIGURATION_PEC_EN_MASK,
++					 val);
++		if (err)
++			return err;
++
++		client->flags |= I2C_CLIENT_PEC;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(pec);
++
+ static struct attribute *max31827_attrs[] = {
+ 	&dev_attr_temp1_resolution.attr,
+ 	NULL
+@@ -578,6 +627,11 @@ static int max31827_init_client(struct max31827_state *st,
+ 	return regmap_write(st->regmap, MAX31827_CONFIGURATION_REG, res);
+ }
+ 
++static void max31827_remove_pec(void *dev)
++{
++	device_remove_file(dev, &dev_attr_pec);
++}
++
+ static const struct hwmon_channel_info *max31827_info[] = {
+ 	HWMON_CHANNEL_INFO(temp, HWMON_T_ENABLE | HWMON_T_INPUT | HWMON_T_MIN |
+ 					 HWMON_T_MIN_HYST | HWMON_T_MIN_ALARM |
+@@ -627,6 +681,16 @@ static int max31827_probe(struct i2c_client *client)
+ 	if (err)
+ 		return err;
+ 
++	if (i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC)) {
++		err = device_create_file(dev, &dev_attr_pec);
++		if (err)
++			return err;
++
++		err = devm_add_action_or_reset(dev, max31827_remove_pec, dev);
++		if (err)
++			return err;
++	}
++
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, st,
+ 							 &max31827_chip_info,
+ 							 max31827_groups);
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.34.1
+
 
