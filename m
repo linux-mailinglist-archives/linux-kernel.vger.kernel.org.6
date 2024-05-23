@@ -1,60 +1,62 @@
-Return-Path: <linux-kernel+bounces-187858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3E28CD9A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:06:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A108CD9A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DB5AB2238C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:06:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336E31C21575
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5649B82D6D;
-	Thu, 23 May 2024 18:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5007682891;
+	Thu, 23 May 2024 18:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="g71+vPPc"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gLmirwFx"
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2C981723;
-	Thu, 23 May 2024 18:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B951378C67;
+	Thu, 23 May 2024 18:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716487553; cv=none; b=aiyC3RxN6PLJBPUenfHZ3L5aGBdGgdiMUb8KlU4I4TRahX11zwtMcFdnEfgvdjOW0vvK2TvfJr/SkVcM6lTVP8KogkhAyE8SvZ3r5HeOe35PKiiTj06o3ey7riDbY72G2Wmr07y7TCN4kY7K9f9NqVAu4rWmP9PGusMT/qWw3T8=
+	t=1716487552; cv=none; b=qgBVJGuCJv/iXh/708oMlV2lSlQp15JdZlwVQ3nomSrQfoLajNpQyBXm6H705HkCH96m/LHBzso7xBzQZ4OWeox2HIP8tuuWPBlCAIWFy9SWYvq7UH4kPWB9Ycmkf48MsgwKVZdrn4tqAc8bZd2/iPXXZYDSocHkQ87UmqF3HAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716487553; c=relaxed/simple;
-	bh=AsaeKSwTzhcRyWKh5+2LKndNSSsb37+HBmFxmiu6nfA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hUNYitDGGJnfAXU51V4c3mmCQC6BcH+QpQqb8218mRa7A7NDek5a00iMRu8rLxmdIgsX1mghB00H76vORTind74T7v7KAFaV0CuSMxrgHbZm6mYi515jYAZHMBggtI8duDIrhMNYwp8RCBxfuPMvrbC6a1iolgy58lTEKmtvqNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=g71+vPPc; arc=none smtp.client-ip=185.132.182.106
+	s=arc-20240116; t=1716487552; c=relaxed/simple;
+	bh=2UTj3wbkQPMghvusHM9ms1z8encqAQF5wAhxtxLe+88=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AiGMe5suBN+MJiVdUwQePnQ/d2kkYgWOrAv5nQ3MenGIBCVzjlHo/lv/HCKJMbHEw1fc1LdZ+eBlovQj4x7wab+bPHWvWvcLG758gZh111IaahA5aSO4xCrCEz/K5T2dJeLsWd8Nx5GdKmcps+1R7F1/KXx3+I+yBcmGHy8D/cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gLmirwFx; arc=none smtp.client-ip=185.132.182.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NHUR7w016252;
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NHUkvL014089;
 	Thu, 23 May 2024 20:05:28 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=DH8LgcGQni+MPZrykXYaYa
-	wW21NSo9zAq2v3pQC/Wms=; b=g71+vPPcNMk3qJKETtWwdKKi3gp8Dwm7pTkEcu
-	UlqyHB+nc2XPNi9vnomYZq41Rt1R46bUbfgmDDDmuJOJuzxcqDnX5JgoHTItoWWU
-	pIjSUWR2QSwXZgp0jlemCelUplSbaBBe2tRnlcXstdwZk62yxa5IKTUYhvjknISh
-	5lZ9o2fFBOt6wRUaSf/k9tjO9ZTfmbBPmNPlmy5ZbnHC8AMDYep/jDSzDZHTj8At
-	WV0t5Xm+JaepV8oI7naOiL+iDw+TLi0MEWXOFgIemQx9FBPcNvhPvq3e35yjU3hw
-	uPZyNLZ9pn9B8x2pTItfbwvgKuENX6SKg5cQlpVznrF9omdg==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	TIHHv5VnBC4M6BAYS8GF3x1yTwxcxgzzLyrVLp3iXdI=; b=gLmirwFxgIiLAdfe
+	R91WJo4kgRSNfiM0C0uT10JTEamGW6JyrmCfSV0dCR0rG5GLPP9HNq39+1f7Dvlu
+	HxbKtxrv0aGDrrA2gOROazR7BO9KsCPzmxz07pDXQfYsQW4bvvlGUyWSd0lM7lj+
+	Xy9rotRmvUyHvQXyWlxPeLh/9i7aoB/9xkatduI/HKkAv3zYDDNl5n27eMwIbztk
+	qIRxAWRLLT/8WRFVZ8NPSY2OBFaeouec53SBLtvEvMjk8574QO3XXgWyJQ3RtLj3
+	Mb1FgoJCPVrFJ6/rGYJ4OuDuetDGInPxIWxNLDHIW1JA47fVcjb7PsAeG+MhZeSF
+	TtFIhQ==
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yaa8qg2h8-1
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yaa8t82hc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Thu, 23 May 2024 20:05:28 +0200 (MEST)
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A084E4002D;
-	Thu, 23 May 2024 20:05:24 +0200 (CEST)
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 22D9F40044;
+	Thu, 23 May 2024 20:05:25 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 412EC21BF58;
-	Thu, 23 May 2024 20:04:38 +0200 (CEST)
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 715C221BF62;
+	Thu, 23 May 2024 20:04:39 +0200 (CEST)
 Received: from localhost (10.48.87.205) by SHFDAG1NODE3.st.com (10.75.129.71)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 23 May
- 2024 20:04:37 +0200
+ 2024 20:04:39 +0200
 From: Patrick Delaunay <patrick.delaunay@foss.st.com>
 To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
         Liam Girdwood
@@ -73,10 +75,12 @@ CC: Marek Vasut <marex@denx.de>,
         <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v4 0/2] ARM: st: add new compatible for PWR regulators on STM32MP13
-Date: Thu, 23 May 2024 20:04:32 +0200
-Message-ID: <20240523180435.583257-1-patrick.delaunay@foss.st.com>
+Subject: [PATCH v4 1/2] dt-bindings: regulator: st,stm32mp1-pwr-reg: add compatible for STM32MP13
+Date: Thu, 23 May 2024 20:04:33 +0200
+Message-ID: <20240523200353.v4.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240523180435.583257-1-patrick.delaunay@foss.st.com>
+References: <20240523180435.583257-1-patrick.delaunay@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,29 +95,10 @@ X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-23_11,2024-05-23_01,2024-05-17_01
 
+Add new compatible "st,stm32mp13-pwr-reg" for STM32MP13 SoC family.
 
-This patchset adds the new PWR regulators compatible for STM32MP13:
-"st,stm32mp13-pwr-reg".
-
-As this node is just introduced by [1] and it is is not used by any
-board in Linux,  it is the good time to introduced this compatible
-and update the STM32MP13 SoC dtsi without ABI break.
-
-A new compatible is needed as the content of the PWR_CR3 register,
-used by this driver change with new bits on STM32MP13 for SD IO domain:
-- bit 23: VDDSD2VALID
-- bit 22: VDDSD1VALID
-- bit 16: VDDSD2RDY
-- bit 15: VDDSD2EN
-- bit 14: VDDSD1RDY
-- bit 13: VDDSD1EN
-
-I will push a update on STM32MP13 SoC dtsi if this new compatible
-is accepted to preserve the bisectability.
-
-[1] commit f798f7079233 ("ARM: dts: stm32: add PWR regulators support on stm32mp131")
-    https://lore.kernel.org/linux-arm-kernel/b89d0531-067f-4356-91b0-ed7434cee3d7@foss.st.com/
-
+Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+---
 
 Changes in v4:
 - use fallback as proposed by Marek on V3 for STM32MP13:
@@ -123,18 +108,29 @@ Changes in v3:
 - Replace oneOf/const by enum; solve the V2 issues for dt_binding_check
 
 Changes in v2:
-- Add new compatible for STM32MP13 and change title after Rob remarks
-  V1: "ARM: st: use a correct pwr compatible for stm32mp15"
-
-Patrick Delaunay (2):
-  dt-bindings: regulator: st,stm32mp1-pwr-reg: add compatible for
-    STM32MP13
-  regulator: stm32-pwr: add support of STM32MP13
+- update for Rob review, only add compatible for STM32MP13 family
 
  .../devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml | 7 ++++++-
- drivers/regulator/stm32-pwr.c                              | 1 +
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
+index c9586d277f41..3cb2dad18781 100644
+--- a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
++++ b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
+@@ -11,7 +11,12 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: st,stm32mp1,pwr-reg
++    oneOf:
++      - items:
++          - const: st,stm32mp1,pwr-reg
++      - items:
++          - const: st,stm32mp13-pwr-reg
++          - const: st,stm32mp1,pwr-reg
+ 
+   reg:
+     maxItems: 1
 -- 
 2.25.1
 
