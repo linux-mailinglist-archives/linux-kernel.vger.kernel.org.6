@@ -1,123 +1,87 @@
-Return-Path: <linux-kernel+bounces-187406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E82B8CD158
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2E28CD15E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4004B1F22489
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 455B1B2180F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1003F1487E6;
-	Thu, 23 May 2024 11:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22151487D7;
+	Thu, 23 May 2024 11:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PaI7MKYJ"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05BE13D2A8;
-	Thu, 23 May 2024 11:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="qPXoTi4M"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DE413C8FF;
+	Thu, 23 May 2024 11:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716464287; cv=none; b=cunp3pFuntE9SfLYXLx/qbuCUI9WvZk+knLgIe3O6TCz4vHCs8hLqCymDzAeB5cddrAvhhcPCUSe7ma1HAxRVzJ2lL3YRJQv6PRk40UgY5An8CnPwXIRaZAC2yWU5BBO+ZDPFhRvxk1QA7EwWUOxgErGEeQBLpZ0fDyrCCp02iI=
+	t=1716464332; cv=none; b=bGpLQzMr1BKw+fhqIRLzQ+ob/EUmFJDrDtVQH6IW1Jrn3gXCbC2QElmoi2JTvie4YaOkLzP+tutyfLqgPf9d9Vn3X8wBz4A4lPBGDMbWDxmusjQlJGSgdISEwtquEHfan/Ee5/RcDbLU8psh3h4Yu0g3sz4q1mA7bdixh7LNXVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716464287; c=relaxed/simple;
-	bh=18slTayNbrDxXRTDHctjnSZxYHIh7ey5nRzuUlCOa8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Qxx8JqcvkdIF1KgM+QajhHjsF3rtr+IG1NRPdrTVnGSNDexuXXtsD8yOuOuCsdsc+o7ftdSnVs95Jxv8FIexqd/xGuJFSgwk1zfzmq311/dimi7HMvGiSVhtzlI1s5NAoayuKA3IDTral2jnUEIy/fQk5XVnixjhCenyijGleE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PaI7MKYJ; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-354f6ab168aso434814f8f.1;
-        Thu, 23 May 2024 04:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716464284; x=1717069084; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aqT4y2vS8dNyIczJ8/6qqGRpO0964EMbDkWUyIXs2l4=;
-        b=PaI7MKYJeA+XzTHNq89c1OyRRQ1D+/xYWl0bpmS3pgoW3Ij+exl0ZM79sQk7GvNa6i
-         343hRoMxOHvppM00b7P3J46TTSj3U+RVbJcBdd9zd98dJYVNTvL+WoQj/kj5BpUjFW9Q
-         T5xQTGWKq6V2VXkHRttmCeJcWeU3JLZcGjbv2AVoWj2BMpAGwTMW1fS7/dNHhSH1PlOp
-         prb6A0SkGDAnwdH9C/MBXJ3AjpfY65ly3YuSDDVW8sZJF8t4JpnJ9Nefuo1jN2Wu9852
-         YuJS17mf6OplleZBI2/JDUnwHF0hjB/P8qT4CH13P6oejg5DZmqtgw0fIHh0gbZJVrFC
-         95Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716464284; x=1717069084;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aqT4y2vS8dNyIczJ8/6qqGRpO0964EMbDkWUyIXs2l4=;
-        b=SNwmHygMg28nRHh6Lzz6Zd4+1q4aDqbwW5A3iVBVU7a2t/EIKxhlDDEbirsFnrjynh
-         hsSktfm1tz0IdXXJoTRrp9l2sl8k7lDkwhXcouIeKr9rAmt7b8Td5PXstY0aVQEisjs6
-         FNpgMXtnpY+NCtTAidttS2CwMSVViPZPta+noVMrCGiv0QysShUy11dYknSWJ5Attl9A
-         xsHVIlZfFDFsVFDngGmDiZNYnkrJQ+IXAtqhw2MGy+Yz+a3GBsiu1mFCmsJdbR24IugC
-         AFHmakO++isoNa84xBnS0l8MnlOTtNjiQLMi6VCJZRAGxL4Vky0subjgFJxyjx6aXurg
-         yQYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuS6ci0if0HyCRxlbwC7XuNqo1q0hHUz/CSmuTlZ3BnCKg/zbSnzzzhu7Nh/JKo10qacaD0bAQcIABU0Oqx0gXWgt2muyFBx/EW0eh+6kVXUSggaZOuF55Yh9VuTukzHevAfITIfLoQLG5GMvJTAmoqKfdVgt4PJmWiEVV9DvoC42M
-X-Gm-Message-State: AOJu0YzgMtMQJ9frvNNjE0yMYN7e+/8TRXf9KoY97CVxVYxAtIji9OSj
-	QFaMKyzE6YLr6F5fgXJ5hJNcD6GeXqUoKDj49DSmr+o7F2J+Vo3E
-X-Google-Smtp-Source: AGHT+IF0zOUS4HcsGOW8XOAHOsMjR5/9orrWORqY68lF8DKEooBrJ/0B1LJhJnM5j8Xmn6sFwitvJA==
-X-Received: by 2002:adf:e7c8:0:b0:354:f248:4aa8 with SMTP id ffacd0b85a97d-354f75218a2mr1796665f8f.18.1716464284075;
-        Thu, 23 May 2024 04:38:04 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a77easm36377801f8f.53.2024.05.23.04.38.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 04:38:03 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	s=arc-20240116; t=1716464332; c=relaxed/simple;
+	bh=t+BMAGgGVYWb3TWQl8dOTOj/tYR/7eTfx9+KgXq0piQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ds5gc86G2yhCTH8W3MQVsFmN1Sjpij9YNiklmHFNoT7dGGOjIUuaZtNUNm/8/0Thtoa297ekV7L+QiX08SIznRzyHbEEf4+GMtcwQJkq/OjMeBAcrm+FfGp6KHGnJymP/rwFmB/vFVz+/PiqTvpK33ZptBNiwfQOTsGryvkl/kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=qPXoTi4M; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 08ADB14C2DD;
+	Thu, 23 May 2024 13:38:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1716464329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+UPBUNrmPRgLZO1cfVnj+pDwyoFMA4AC4qyOLHtYS/U=;
+	b=qPXoTi4M5WqOx4aD34L9/u0oiRq3brYmaosDXbfCMPkcLS3C/dyS192+PWfzC3i/yeVDuG
+	z0PWX9QmDAIV/Z+ZkIyyu3gsJ4DfJ1hLH+VDsDZKTQYaQH94XpFs4WaThXbsjGxINShYvO
+	J0ZOHrDWqqRtKsgqHeoZojJ89egyCKwMU7ylorj4jQ5smfLxnXMuttJVtFsp1MFRmvlk3d
+	yIng+CYdkxqJlHyHiW+m/+P6dE2b2rYydH2zx5I5YAoiLlE4QbuhYoXuc4ytmJ8mlbHmp4
+	IkAnWkg4TQL8syWa1H2eTuNrmdMuFJ/O7njTWYZQ5YmkmP5lotgIjN3/mHtSPQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1a78be17;
+	Thu, 23 May 2024 11:38:43 +0000 (UTC)
+Date: Thu, 23 May 2024 20:38:28 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>,
+	Jianyong Wu <jianyong.wu@arm.com>, stable@vger.kernel.org,
+	Eric Van Hensbergen <ericvh@gmail.com>, v9fs@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests: kvm: fix shift of 32 bit unsigned int more than 32 bits
-Date: Thu, 23 May 2024 12:38:02 +0100
-Message-Id: <20240523113802.2195703-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+Subject: Re: [PATCH] 9p: add missing locking around taking dentry fid list
+Message-ID: <Zk8qtPVlhiJOZxek@codewreck.org>
+References: <20240521122947.1080227-1-asmadeus@codewreck.org>
+ <3116644.1xDzT5uuKM@silver>
+ <Zk8MAFAWIUPlhGFe@codewreck.org>
+ <2675095.dNBKFZOyUv@silver>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2675095.dNBKFZOyUv@silver>
 
-Currrentl a 32 bit 1u value is being shifted more than 32 bits causing
-overflow and incorrect checking of bits 32-63. Fix this by using the
-BIT_ULL macro for shifting bits.
+Christian Schoenebeck wrote on Thu, May 23, 2024 at 12:05:44PM +0200:
+> > I really think it's safe, but I do agree that it's hard to read, happy
+> > to move the `h = &dentry->d_fsdata` inside the lock if you prefer -- it
+> > compiles to the same code for me (x86_64/gcc 13.2.0)
+> 
+> No need, you can add my RB. Thanks for the clarification!
+> 
+> Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
 
-Detected by cppcheck:
-sev_init2_tests.c:108:34: error: Shifting 32-bit value by 63 bits is
-undefined behaviour [shiftTooManyBits]
+Thanks!
+I've fixed the typo in the commit message and queued it up in -next,
+will send this patch and the trace uninit fix to Linus early next week.
 
-Fixes: dfc083a181ba ("selftests: kvm: add tests for KVM_SEV_INIT2")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/x86_64/sev_init2_tests.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-index 7a4a61be119b..ea09f7a06aa4 100644
---- a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-+++ b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-@@ -105,11 +105,11 @@ void test_features(uint32_t vm_type, uint64_t supported_features)
- 	int i;
- 
- 	for (i = 0; i < 64; i++) {
--		if (!(supported_features & (1u << i)))
-+		if (!(supported_features & BIT_ULL(i)))
- 			test_init2_invalid(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) },
- 				"unknown feature");
--		else if (KNOWN_FEATURES & (1u << i))
-+		else if (KNOWN_FEATURES & BIT_ULL(u))
- 			test_init2(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) });
- 	}
 -- 
-2.39.2
-
+Dominique Martinet | Asmadeus
 
