@@ -1,153 +1,150 @@
-Return-Path: <linux-kernel+bounces-187341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A26A8CD06E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:36:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527608CD071
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BEB61C22A42
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE57282F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FD613D61D;
-	Thu, 23 May 2024 10:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A49142621;
+	Thu, 23 May 2024 10:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v3y7erEc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vMppQh/o"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DO7urK4D"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AEE14430E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C2D13D286
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716460586; cv=none; b=kx8uRwY+Sp4J+b0xTdXjtqp5vJPS3jMGcROEvrWpN+ZCkUy7W20gVyQIjYbtW+1afCv7Zo4nPsOrV//oPKsU9FyovGzNNK1uEwP8QiIRYiWGUMj2uhk38i6AG89CiW+J79vFeZAtxLodEOoRXcDB+GlXB6mHbDMhoEq/DB4jcOQ=
+	t=1716460675; cv=none; b=hQ5fsvtqI+spvDG4jvllJVkrhbT7vtgZ99qYNlrYk+wDodduf6e2GRvLGvdrUTXyTP9TgfXi18CzBRxZxe/RIoj7+3vS4LJ6QhyUKFpPZfXneLZd/CFcPVcxfv31z2lDUdNN6Lo/Ir7U6yLmPmFD5Ak3XD3MP99HRabamRs848I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716460586; c=relaxed/simple;
-	bh=YPYDzEnmIdlGQA4rmOFtEcJP0ZgKGNyuzzT3z8Aigr8=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RdM09mUMRJDyCMvpg6LKoE05waMA19+avtfa/hinsQhdiBvSAmsD88jzF0QK45CsTfa4qjHNXSjeFqAnWXoh21KnMAntZKMZqWNbMdMJzw7bXJzNHSsbLBeNmgfNQgYaSwy8oUXQoFVyhmF6/tK97/1R0vaOc+W3RZ6bb8afr4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v3y7erEc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vMppQh/o; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716460581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M9WIBtqCr9KxZiW4jPsXAtVnjjWF2U5b/iTP2FVHh3w=;
-	b=v3y7erEcnMB9Iq7+VNr+QP1CQf+cKZVcMnOXW2D7QDDys2CcmrfATKpmkZr9g+6b/nxqj+
-	O9h/Y7kZK1d2nXFi9RssBywIa85BUvPbIeIy3CN21Kl9zll4MNIjldx570JWmtYIuNJ1/8
-	17LAZNzsqwVQ6oOJfa445D8rkmYh76P1FYon/hl/27C/utFhL7QzXelIo1MZ+S4weuPDWa
-	dLjQs9OSQFTN6cS9wnP0mlLoCT9BjrQLz0TPvkrt2qnHsjAOcbgh6iOWn8B3m822yzuAWy
-	bCYz81rQoyLEqS7ogSttwxiipzLHc6l/dQ6ljR2sQaD+oVCHt146hI9gwyBHhw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716460581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M9WIBtqCr9KxZiW4jPsXAtVnjjWF2U5b/iTP2FVHh3w=;
-	b=vMppQh/oCXsDRDLk+MduWzocKwyCDGV4Cuj0DH6UJ8D1FGgeQLlZ6DJbS/6vwEfwiNQnw8
-	5VM8AixX6USeUlDw==
-To: syzbot <syzbot+50e25cfa4f917d41749f@syzkaller.appspotmail.com>,
- bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, x86@kernel.org, Vlastimil Babka
- <vbabka@suse.cz>, linux-mm@kvack.org
-Subject: Re: [syzbot] [kernel?] WARNING in flush_cpu_slab
-In-Reply-To: <0000000000008c9d27061915ca9c@google.com>
-References: <0000000000008c9d27061915ca9c@google.com>
-Date: Thu, 23 May 2024 12:36:20 +0200
-Message-ID: <87v834g6hn.ffs@tglx>
+	s=arc-20240116; t=1716460675; c=relaxed/simple;
+	bh=AwGWt421U9KLZgTiRjEhxg/oYE8y8Lp33lj1qoibEKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cV0QB30QiuxtrrsGET+Uz3qV/ws/hwMC8DeA8/9+aCSrCPfCiUoVGK/7Z8bUdzbFpeit/R/+xTcBGUmS1y71IwndUS42R4KaRrgbwsNtD5d37v/N6GNgXfscNgSTzlGMXrvFGD2R+TJIM4eQXuIB9reA83C6pQ24ahqeUPM8YXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DO7urK4D; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a5a2d0d8644so1002799166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716460670; x=1717065470; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D0kV23LycN4hVbBu97CSf0VaI8PE3Pmkshp0J0gEaj8=;
+        b=DO7urK4DwQ3v8YNMbjJ3fmsL5di7v86W2BNOmE8YwCjFFIrRVeZfwIrigByGc6FhUo
+         eL4osXapHZEyskzoVTbp4kcq9zigu6erChQE+50UJSTbzViJEfe5Po87fYaRaH6enLg3
+         qoj8I3pM5+6GooEuKgr4Bm24+ujCvDgqGzW/yVBL2fg/BY576vIPS13+hG/MtfLhROgm
+         HS5jfRMhShzGi9kPQBvI3f2rGcAvwr1tq6SX349VOn1bpsDWcveZ+xjbTtyWUnChX746
+         XrAJV6O5tvWayb2/t1YY8eyKeFHdQ+C2tcAkiowKISloQg1p/LyMK3g5i1yFMvblscVV
+         zHIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716460670; x=1717065470;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D0kV23LycN4hVbBu97CSf0VaI8PE3Pmkshp0J0gEaj8=;
+        b=AMDFASKuhaM7ktujRl0WfWrw6WAIP1fCiRprfGF4XLpf9xfLk9znjvYI1FVyt77JSX
+         pREFRjFtvunQlMxBbHqvFuAlLaOy9BqMcap7+81DVAZxmPreJr/7U8Cg/94CDr2kahmj
+         TK0v9UsT6xEuoGVihm70HVoHEE/ifkHY9DcWOw2zMfpHhQHxYdVVYmNbVWgUSq7n8etE
+         +XULQH17n6ejWTeBZAXMFe7ESE5pQW1hqX0JzWUheTCCwP10Nibbhg7VZ42/6qZsj9NP
+         rF5Ky4EPyoS/W5Fw2gCPNDTeTk54QdcU9G+ykq9D9hi5uwqjEBCTpjRi6zysO4IS8g81
+         s1uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYlo5s19iX3nLxLORQ35LiLoaAkKkOnnVhq8G4CCEaGW3Cq8vCkaloFjeDJAF4izM5BPJUIwWGo6VUhwB6rhfvE5Ky8eie0NkQ3R8R
+X-Gm-Message-State: AOJu0YwVsERiVMS6pfQXXiKCfany1jYgT/k6idM1HJKC82qsiyHA261V
+	sDXFGfFVQ0g8WS3HW4lCr/OPQDEGTZ15WunZvFRuXEvIPLh2djVMgorZ9UGOEQk=
+X-Google-Smtp-Source: AGHT+IGKpfsQ58eW7UeQwBZqvnYmRvbj2/zaJyvsZpCo+GaTCJyxqPMPM11FmiwsSoF6CsA2OtjG9g==
+X-Received: by 2002:a17:906:3b87:b0:a59:c28a:7eb6 with SMTP id a640c23a62f3a-a622805efc9mr323362266b.24.1716460670211;
+        Thu, 23 May 2024 03:37:50 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a691870absm1456382566b.124.2024.05.23.03.37.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 03:37:50 -0700 (PDT)
+Message-ID: <23559fcc-97ab-47a2-8832-699c05c4a387@suse.com>
+Date: Thu, 23 May 2024 12:37:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 039/130] KVM: TDX: initialize VM with TDX specific
+ parameters
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: isaku.yamahata@intel.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+ Paolo Bonzini <pbonzini@redhat.com>, erdemaktas@google.com,
+ Sean Christopherson <seanjc@google.com>, Sagi Shahar <sagis@google.com>,
+ Kai Huang <kai.huang@intel.com>, chen.bo@intel.com, hang.yuan@intel.com,
+ tina.zhang@intel.com, Xiaoyao Li <xiaoyao.li@intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <5eca97e6a3978cf4dcf1cff21be6ec8b639a66b9.1708933498.git.isaku.yamahata@intel.com>
+ <46mh5hinsv5mup2x7jv4iu2floxmajo2igrxb3haru3cgjukbg@v44nspjozm4h>
+ <de344d2c-6790-49c5-85be-180bc4d92ea4@suse.com>
+ <etso5bvvs2gq3parvzukujgbatwqfb6lhzoxhenrapav6obbgl@o6lowhrcbucp>
+ <e8b36230-d59f-44f1-ba48-5a0533238d8e@suse.com>
+ <pfbphwefaefxw2l2u26qr6ptq7rtdmnihjmxvk34zv4srlnsum@qyjumzzdnfxo>
+ <icnsupynjfh6p7ld7yungwzbplvelfue73ii6m7szezg6ryd46@5owux6sevg2w>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <icnsupynjfh6p7ld7yungwzbplvelfue73ii6m7szezg6ryd46@5owux6sevg2w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-CC+: mm folks
+On 23.05.24 12:35, Kirill A. Shutemov wrote:
+> On Fri, May 17, 2024 at 07:25:01PM +0300, Kirill A. Shutemov wrote:
+>> On Fri, May 17, 2024 at 05:00:19PM +0200, Jürgen Groß wrote:
+>>> On 17.05.24 16:53, Kirill A. Shutemov wrote:
+>>>> On Fri, May 17, 2024 at 04:37:16PM +0200, Juergen Gross wrote:
+>>>>> On 17.05.24 16:32, Kirill A. Shutemov wrote:
+>>>>>> On Mon, Feb 26, 2024 at 12:25:41AM -0800, isaku.yamahata@intel.com wrote:
+>>>>>>> @@ -725,6 +967,17 @@ static int __init tdx_module_setup(void)
+>>>>>>>     	tdx_info->nr_tdcs_pages = tdcs_base_size / PAGE_SIZE;
+>>>>>>> +	/*
+>>>>>>> +	 * Make TDH.VP.ENTER preserve RBP so that the stack unwinder
+>>>>>>> +	 * always work around it.  Query the feature.
+>>>>>>> +	 */
+>>>>>>> +	if (!(tdx_info->features0 & MD_FIELD_ID_FEATURES0_NO_RBP_MOD) &&
+>>>>>>> +	    !IS_ENABLED(CONFIG_FRAME_POINTER)) {
+>>>>>>
+>>>>>> I think it supposed to be IS_ENABLED(CONFIG_FRAME_POINTER). "!" shouldn't
+>>>>>> be here.
+>>>>>
+>>>>> No, I don't think so.
+>>>>>
+>>>>> With CONFIG_FRAME_POINTER %rbp is being saved and restored, so there is no
+>>>>> problem in case the seamcall is clobbering it.
+>>>>
+>>>> Could you check setup_tdparams() in your tree?
+>>>>
+>>>> Commit
+>>>>
+>>>> [SEAM-WORKAROUND] KVM: TDX: Don't use NO_RBP_MOD for backward compatibility
+>>>>
+>>>> in my tree comments out the setting TDX_CONTROL_FLAG_NO_RBP_MOD.
+>>>>
+>>>> I now remember there was problem in EDK2 using RBP. So the patch is
+>>>> temporary until EDK2 is fixed.
+>>>>
+>>>
+>>> I have the following line in setup_tdparams() (not commented out):
+>>>
+>>> 	td_params->exec_controls = TDX_CONTROL_FLAG_NO_RBP_MOD;
+>>
+>> Could you check if it is visible from the guest side?
+> 
+> Jürgen, have you tried it?
+> 
 
-On Wed, May 22 2024 at 19:27, syzbot wrote:
+No, I'm not yet at the point where I can boot a guest successfully.
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    2a8120d7b482 Merge tag 's390-6.10-2' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17d42b0a980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5dd4fde1337a9e18
-> dashboard link: https://syzkaller.appspot.com/bug?extid=50e25cfa4f917d41749f
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: i386
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2a8120d7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/78c72ae6bdaf/vmlinux-2a8120d7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/99dbb805b738/bzImage-2a8120d7.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+50e25cfa4f917d41749f@syzkaller.appspotmail.com
->
-> ------------[ cut here ]------------
-> DEBUG_LOCKS_WARN_ON(l->owner)
-> WARNING: CPU: 3 PID: 5221 at include/linux/local_lock_internal.h:30 local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
-> WARNING: CPU: 3 PID: 5221 at include/linux/local_lock_internal.h:30 flush_slab mm/slub.c:3088 [inline]
-> WARNING: CPU: 3 PID: 5221 at include/linux/local_lock_internal.h:30 flush_cpu_slab+0x37f/0x410 mm/slub.c:3146
-> Modules linked in:
-> CPU: 3 PID: 5221 Comm: kworker/3:3 Not tainted 6.9.0-syzkaller-10713-g2a8120d7b482 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> Workqueue: slub_flushwq flush_cpu_slab
-> RIP: 0010:local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
-> RIP: 0010:flush_slab mm/slub.c:3088 [inline]
-> RIP: 0010:flush_cpu_slab+0x37f/0x410 mm/slub.c:3146
-> Code: ff e8 e5 b2 fc 08 e9 25 ff ff ff e8 db b2 fc 08 e9 46 ff ff ff 90 48 c7 c6 7f 68 37 8d 48 c7 c7 b6 33 37 8d e8 72 88 6f ff 90 <0f> 0b 90 90 e9 dd fe ff ff 90 48 c7 c6 88 68 37 8d 48 c7 c7 b6 33
-> RSP: 0018:ffffc90002b57c98 EFLAGS: 00010086
-> RAX: 0000000000000000 RBX: ffffe8ffac1021b0 RCX: ffffffff81510229
-> RDX: ffff88801bb7c880 RSI: ffffffff81510236 RDI: 0000000000000001
-> RBP: ffff88802790b540 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 000000002d2d2d2d R12: 0000000000000200
-> R13: ffffe8ffac1021d0 R14: 0000000000000000 R15: ffffc90002b57d80
-> FS:  0000000000000000(0000) GS:ffff88802c300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00000000f73ffec2 CR3: 00000000268ca000 CR4: 0000000000350ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  process_one_work+0x958/0x1ad0 kernel/workqueue.c:3231
->  process_scheduled_works kernel/workqueue.c:3312 [inline]
->  worker_thread+0x6c8/0xf70 kernel/workqueue.c:3393
->  kthread+0x2c1/0x3a0 kernel/kthread.c:389
->  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+
+Juergen
 
