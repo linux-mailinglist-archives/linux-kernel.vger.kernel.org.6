@@ -1,213 +1,112 @@
-Return-Path: <linux-kernel+bounces-187290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085408CCF8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4948CCFAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8331A1F22FAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776261F23542
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F2547A7C;
-	Thu, 23 May 2024 09:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48D413D621;
+	Thu, 23 May 2024 09:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NWhFxiDA"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/7IpU9F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3781313A88D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40DB13CFA3;
+	Thu, 23 May 2024 09:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716457534; cv=none; b=mU3ubbCaJnPuDV8nSqF2HXBSr0pqbnJGAyy+yyaiFVEQ2+X6D84sMNeZCCHYHpdwS8TIeYYgu1q1oSmSgkXdKmrtnYsT8z15fTSmLIHAJJEqFs32AEaTyacz+VPMVmhve9NXJ9H6lIAdW4yW9u/eLO4WR+vk9JPM8QmGhwjtG/s=
+	t=1716457991; cv=none; b=UZVhxjpKLYHjX2osFgCMxTYTLf1xAKApE8ZypOp+fCNk37akBASRA2rJ85Rbl5/7+vi+WvP2+VJJceJtrVElf55j7kOqDHUvoHd+EIOZWC/f4WZqgbaIQBMykd2vuyjrsd5iji+2cdkKnS9eW2xGFw1PpL6e0xnSdNfi473a8JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716457534; c=relaxed/simple;
-	bh=AKnmMDa3xsyKPpyTzzjMqUtRMDJBkMsw9OnRetaowUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOIUfypZ1oOovQSZ67w2IeslZZp2tM1ka99rJ3n95OGtTEhAVz7NVja8iMs3NaOL+CniXmKGdRM3brX2VB2QvQg/QKAB32DRzVeZszKhxRg1+yMTUk4L+I4SL2cVQP+ewml3afevPrvVofV4vQjO0CjUVz1cBKXF83Pdp9Xtt2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=NWhFxiDA; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354fadfd8b9so70702f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1716457531; x=1717062331; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rua3OglaGtRzvLpfCStU07S245n5hB3FYrd8MuHxXyo=;
-        b=NWhFxiDAYYBwWPPiW3sg1oDiha23tvxlJbw7fPOYY1LX5Ko4Fzw/AbG8uFksH4io0n
-         1mIIPjYVHd8dH9qoTWUUU7CSaaNXaY6fBI1GMAgQdwnjey/NPn1/0r4qQYR1QfAnbxWM
-         nM3eocl26+1ToWy2qU6/uRn1APAcQGZ722ig8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716457531; x=1717062331;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rua3OglaGtRzvLpfCStU07S245n5hB3FYrd8MuHxXyo=;
-        b=By1ZFvBWqgRf7YaRYU7QBeA8SVvd+wnLF5jHABPaB4KQF8H58QEEykC3/srP9E/YFm
-         qzgOR+nzlsZOwsjoSDzTAm45LheiUh46Jb3Z3gFzgbGvGG5sjUDaDLvXZls0uxfRqADY
-         LF8yklIaZxtjqmjnqRXy93fUC7wNE74lUyvytnNnOISNR3H6Bgc3igbPFrfQj5cRzUMc
-         A6zt4FMEZI4fNZNMVVWpaMPy2W9wt9Cpb4GpHQ/sRROETfm2art71Toua+1syDvhrK0N
-         WghdzTa+Weyr0rrDDzPUejhuCYdMMJ0+AhExRnUcB6yZusmMIvrfQZHqke2p1FbiwTx4
-         JOjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJrOcqFUwuoYzL29ZTNEkUuB0O3utbr0OZxfjLnhViLzzcYe2iQcbD4bpuR+bN4O1xipI3cxnz4zX+9wuSRqFtI4HYDYgsd8QFqzYf
-X-Gm-Message-State: AOJu0YyHidzu4fMUhnnzxNgYeRosiZuJMAw4f5f6WJTuMF+cf3KjtRdu
-	68Lk/PPkg77a/7/oM2mXN3M9DqoLM7C3SilqoBpwHAo2M1SfesimlQSpqJStR88=
-X-Google-Smtp-Source: AGHT+IG15s9jGPIJ1Tt73n14VxOUlfIOXJ5tvzDkW3ed8IqDv2vSAEij8VrZEa4QLVo3Rsx8X1k4gA==
-X-Received: by 2002:a05:600c:511e:b0:41b:e58c:e007 with SMTP id 5b1f17b1804b1-420fd386158mr32798045e9.4.1716457531398;
-        Thu, 23 May 2024 02:45:31 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f7b7f9sm20030635e9.27.2024.05.23.02.45.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 02:45:30 -0700 (PDT)
-Date: Thu, 23 May 2024 11:45:28 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: John Stultz <jstultz@google.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <Zk8QOB6F4pd__WvA@phenom.ffwll.local>
-Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
-	John Stultz <jstultz@google.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
- <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
- <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
- <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
- <20240522-coral-fennec-from-uranus-fb7263@houat>
+	s=arc-20240116; t=1716457991; c=relaxed/simple;
+	bh=Z+LJ9o02AKGYyJoKzdsD0Mhmkl4h3nuqGk+uSvDjGlk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rVBpl4FAJeOYN6oYL05NnUuxtOoxswX4+A8n53QEZd3lS2l1q3I/httBtAQukd+u48erl1wAll4+BUVv6+A6wDfiVPei55nvVBumPKCsrEk/teQU4fnizTJIzyBwsEQrgBF7K0nxjFlcvkU9JPsbDPoq7eVw9ZEYz7hGt0KGPdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/7IpU9F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AACC8C2BD10;
+	Thu, 23 May 2024 09:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716457990;
+	bh=Z+LJ9o02AKGYyJoKzdsD0Mhmkl4h3nuqGk+uSvDjGlk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=F/7IpU9FUZAvpfEh0/t33PXl93JMwcJoeQ2AOMEWlwTURqgD5s5bE3ddLqt61tRFD
+	 55A0EWMe86CTIkwwDgMd3s6pX9f3Lahh65Z1XyTNtHkoRM1v8yzOftjrp3/vkcZ01t
+	 FVvX6NIP/+def5o2ISG4QbnYYy3+azOnfJzI7Gc5nMwGjd2dY0xjfGCtyNv1EdQjeI
+	 vmY3X9TG06PKNJL8VJDTYu3dHd6gSZOK1ezA9ifCiTBRA6hIB+zjApAbJZPH9f6Fn6
+	 /TgWTUlwBBvcifgx8kUQ2lRqfG73fQ8aGiDj7F8F72D6eZo+E8TEiQYaqjmkorNPwu
+	 tDh7gMHJEz3UQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240522-coral-fennec-from-uranus-fb7263@houat>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 May 2024 12:53:04 +0300
+Message-Id: <D1GXKODMD4S8.1J12D4GOEQWPL@kernel.org>
+Cc: =?utf-8?b?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ "Eric Biggers" <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, "Ard Biesheuvel"
+ <ardb@kernel.org>, "Linux Crypto Mailing List"
+ <linux-crypto@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <regressions@lists.linux.dev>,
+ <kernel@collabora.com>, "Tejun Heo" <tj@kernel.org>, "Linux Kernel Mailing
+ List" <linux-kernel@vger.kernel.org>, "Kees Cook" <keescook@chromium.org>,
+ "Torsten Duwe" <duwe@lst.de>, "H. Peter Anvin" <hpa@zytor.com>, "Theodore
+ Ts'o" <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [v3 PATCH] hwrng: core - Remove add_early_randomness
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Herbert Xu" <herbert@gondor.apana.org.au>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>
+X-Mailer: aerc 0.17.0
+References: <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com> <dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano> <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org> <20240518043115.GA53815@sol.localdomain> <ZkhS1zrobNwAuANI@gondor.apana.org.au> <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano> <ZkwMnrTR_CbXcjWe@gondor.apana.org.au> <07512097-8198-4a84-b166-ef9809c2913b@notapiano> <Zk2Eso--FVsZ5AF3@gondor.apana.org.au> <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com> <Zk7K7hw-XIHmPs26@gondor.apana.org.au>
+In-Reply-To: <Zk7K7hw-XIHmPs26@gondor.apana.org.au>
 
-On Wed, May 22, 2024 at 03:18:02PM +0200, Maxime Ripard wrote:
-> On Tue, May 21, 2024 at 02:06:19PM GMT, Daniel Vetter wrote:
-> > On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
-> > > On Thu, May 16, 2024 at 3:56 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > > > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > > > > But it makes me a little nervous to add a new generic allocation flag
-> > > > > for a feature most hardware doesn't support (yet, at least). So it's
-> > > > > hard to weigh how common the actual usage will be across all the
-> > > > > heaps.
-> > > > >
-> > > > > I apologize as my worry is mostly born out of seeing vendors really
-> > > > > push opaque feature flags in their old ion heaps, so in providing a
-> > > > > flags argument, it was mostly intended as an escape hatch for
-> > > > > obviously common attributes. So having the first be something that
-> > > > > seems reasonable, but isn't actually that common makes me fret some.
-> > > > >
-> > > > > So again, not an objection, just something for folks to stew on to
-> > > > > make sure this is really the right approach.
-> > > >
-> > > > Another good reason to go with full heap names instead of opaque flags on
-> > > > existing heaps is that with the former we can use symlinks in sysfs to
-> > > > specify heaps, with the latter we need a new idea. We haven't yet gotten
-> > > > around to implement this anywhere, but it's been in the dma-buf/heap todo
-> > > > since forever, and I like it as a design approach. So would be a good idea
-> > > > to not toss it. With that display would have symlinks to cma-ecc and cma,
-> > > > and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for a
-> > > > SoC where the display needs contig memory for scanout.
-> > > 
-> > > So indeed that is a good point to keep in mind, but I also think it
-> > > might re-inforce the choice of having ECC as a flag here.
-> > > 
-> > > Since my understanding of the sysfs symlinks to heaps idea is about
-> > > being able to figure out a common heap from a collection of devices,
-> > > it's really about the ability for the driver to access the type of
-> > > memory. If ECC is just an attribute of the type of memory (as in this
-> > > patch series), it being on or off won't necessarily affect
-> > > compatibility of the buffer with the device.  Similarly "uncached"
-> > > seems more of an attribute of memory type and not a type itself.
-> > > Hardware that can access non-contiguous "system" buffers can access
-> > > uncached system buffers.
-> > 
-> > Yeah, but in graphics there's a wide band where "shit performance" is
-> > defacto "not useable (as intended at least)".
-> 
-> Right, but "not useable" is still kind of usage dependent, which
-> reinforces the need for flags (and possibly some way to discover what
-> the heap supports).
-> 
-> Like, if I just want to allocate a buffer for a single writeback frame,
-> then I probably don't have the same requirements than a compositor that
-> needs to output a frame at 120Hz.
-> 
-> The former probably doesn't care about the buffer attributes aside that
-> it's accessible by the device. The latter probably can't make any kind
-> of compromise over what kind of memory characteristics it uses.
-> 
-> If we look into the current discussions we have, a compositor would
-> probably need a buffer without ECC, non-secure, and probably wouldn't
-> care about caching and being physically contiguous.
-> 
-> Libcamera's SoftISP would probably require that the buffer is cacheable,
-> non-secure, without ECC and might ask for physically contiguous buffers.
-> 
-> As we add more memory types / attributes, I think being able to discover
-> and enforce a particular set of flags will be more and more important,
-> even more so if we tie heaps to devices, because it just gives a hint
-> about the memory being reachable from the device, but as you said, you
-> can still get a buffer with shit performance that won't be what you
-> want.
-> 
-> > So if we limit the symlink idea to just making sure zero-copy access is
-> > possible, then we might not actually solve the real world problem we need
-> > to solve. And so the symlinks become somewhat useless, and we need to
-> > somewhere encode which flags you need to use with each symlink.
-> > 
-> > But I also see the argument that there's a bit a combinatorial explosion
-> > possible. So I guess the question is where we want to handle it ...
-> > 
-> > Also wondering whether we should get the symlink/allocator idea off the
-> > ground first, but given that that hasn't moved in a decade it might be too
-> > much. But then the question is, what userspace are we going to use for all
-> > these new heaps (or heaps with new flags)?
-> 
-> For ECC here, the compositors are the obvious target. Which loops backs
-> into the discussion with John. Do you consider dma-buf code have the
-> same uapi requirements as DRM?
+On Thu May 23, 2024 at 7:49 AM EEST, Herbert Xu wrote:
+> On Wed, May 22, 2024 at 03:53:23PM -0700, Linus Torvalds wrote:
+> >=20
+> > That said, looking at the code in question, there are other oddities
+> > going on. Even the "we found a favorite new rng" case looks rather
+> > strange. The thread we use - nice and asynchronous - seems to sleep
+> > only if the randomness source is emptied.
+> >=20
+> > What if you have a really good source of hw randomness? That looks
+> > like a busy loop to me, but hopefully I'm missing something obvious.
+>
+> Yes that does look strange.  So I dug up the original patch at
+>
+> 	https://lore.kernel.org/all/20140317165012.GC1763@lst.de/
+>
+> and therein lies the answer.  It's relying on random.c to push back
+> when the amount of new entropy exceeds what it needs.  IOW we will
+> sleep via add_hwgenerator_randomness when random.c decides that
+> enough is enough.  In fact the rate is much less now compared to
+> when the patch was first applied.
 
-Imo yes, otherwise we'll get really funny stuff like people bypass drm's
-userspace requirement for e.g. content protected buffers by just shipping
-the feature in a dma-buf heap ... Been there, done that.
+Just throwing something because came to mind, not a serious suggestion.
 
-Also I think especially with interop across components there's a huge
-difference between a quick test program toy and the real thing. And
-dma-buf heaps are kinda all about cross component interop.
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+In crypto_larval_lookup I see statements like this:
+
+	request_module("crypto-%s", name);
+
+You could potentially bake up a section/table to vmlinux which would
+have entries like:
+
+	"module name", 1/0
+
+'1' would mean built-in. Then for early randomness use only stuff
+that is built-in.
+
+Came to mind from arch/x86/realmode for which I baked in a table
+for relocation (this was a collaborative work with H. Peter Anvin
+in 2012 to make trampoline code relocatable but is still a legit
+example to do such shenanigans in a subystem).
+
+BR, Jarkko
 
