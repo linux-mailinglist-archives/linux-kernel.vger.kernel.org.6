@@ -1,169 +1,108 @@
-Return-Path: <linux-kernel+bounces-186971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F468CCB58
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:23:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904308CCB5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7727F1C211A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:23:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A0A1C20F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E41313AA24;
-	Thu, 23 May 2024 04:23:44 +0000 (UTC)
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264D5768FD;
+	Thu, 23 May 2024 04:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyPu2ARK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A678A8249A;
-	Thu, 23 May 2024 04:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E83538FA8;
+	Thu, 23 May 2024 04:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716438224; cv=none; b=qru4aL7FhkkE3JSFqJF8CwjFBGgXPlwE5XaEQgy9CxDKdLQUQK5lSrJKl5KG7tiBPXXBF1gZpyZgRRnJ74pQbrMrJmixDU9qgx5js8PEu5mcDdFGwJcro5K1PLxuUllLR0n3eTqrTSnb9uSsU0S3RNGPueAbXAn8EjOkf2DCcaQ=
+	t=1716438257; cv=none; b=hO2R3RVyK1HyiycUuyaVejtCp/uB0uSxEIE8dM7Ou4MrA2Sr6jG5o0FOwWo+96zpsAKj6PyQgzTtE7ofWiJnuTuApH80W7v3VaGfGnWkgJ/ryHwiySlpggzy31WLOeaEpPFLiBw7tzHqNTu3zJHUPHcKK7Pnx4WahSLnn3niuQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716438224; c=relaxed/simple;
-	bh=G+Qbunxj/8AnnJWdmaF3UXDeltlfHoJSxjwp7hvWXp4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TmoDJFJaU7j+q0vK1cthcSRK86giLBBWpJRsvnioXx+XiSsibdkTxyRI5xcDv86Xk+okgx8+vRZ6Q66LRm/CkfEu+l/tqvIyL0he6kxkRuwIga70NpsTgRrB41/b40t9mi7sOXegE6fiaky2FFcmT97oAhzd48rYkS09KN8hwUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so3133829b3a.1;
-        Wed, 22 May 2024 21:23:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716438222; x=1717043022;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2nbTyY0YiKMIFTBvGT1E/XGxZ2k7LnuzSV4xdZ3Jw7c=;
-        b=tUZWfJfHZQfGJCOxbtr955et9E/F64wOEOow4joWTjC678tzT0xF9LR1tuhT6kQD2e
-         qG+IzwNHEYw/nNb0EUXvLjwLMKXFS04RscEe+MUiR0GWPGt2nlHemP/oND73Xg1IWgGb
-         41qCMUWkQFFi+0QCeZf1QMhfP1X6otyjGPGPB+ZV3P9DgncqPCNFiMd1ZoVDy57P6wbD
-         boLQxfco0nfDTLEVfrS62q+Kap0KLEgZVX4OwxLzxQiJ0WKPm0+8VxNPA3Vs/SWFxPp2
-         ekcRKpDYoNbDvnC0WRlo+OgkzGoPJVF7S9igvwyhZrHvxK5VGLHqhKdDLY32zr/k1FZA
-         674g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVuRZ+U7dxNlYsjf90FJgI8ms99cQZAOJJieiPcaiXiuC/O7T9OjgFaTVlEqVImb6S9bOvxCSUGW5iJZu6mUp0poOkYjGRWdhNrMT17Y57vPKmWXL8uLSXW72pzvnuc+r4Bp2kKfP5AQ0X9Sq5UA==
-X-Gm-Message-State: AOJu0YyCMZ1dbQ/iOirGr6dlQN3hSJXTHVprda7cN0ZFGv5nS1+lUx0q
-	ugXcdTPWJp83Dw3opyGBuRyrD44mTT40xMYBnmiqjqcBW2WY21pw1B75ljb67aOO0MATTsSdT9h
-	CVUnSQglbs8rmJsiJt+tpVQdzqRQ=
-X-Google-Smtp-Source: AGHT+IGTRfQdIN7S23gX65Bq9HRt9VhqaDXWq/aYg25eV88Aqz9EEvuPB5pw8CBE6A8dowQ34jiDTbaTfIj4WkYrj7s=
-X-Received: by 2002:a05:6a20:2586:b0:1b0:1bae:6a8c with SMTP id
- adf61e73a8af0-1b1f87923admr4529877637.21.1716438221948; Wed, 22 May 2024
- 21:23:41 -0700 (PDT)
+	s=arc-20240116; t=1716438257; c=relaxed/simple;
+	bh=0wOFUajYamp8413E77jipahrUa270OFvH9nZ8xjqUDc=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=j8Usu7GqWsxik5PWCc5I5akI5coaZSPLxJA8L0vrWPjKtJSwVFGmXpIIdRK/zBvb6D+Rr0fwVsA9vfW2RoqogAcoC5hhbyg58xA+RV2qAP584Wrm1+lCaHW6smDVIpw/BxfUOaQBMXWnGU2z8FWpw3mO1a1bxJB1+YiGfTp2d3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyPu2ARK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF913C2BD10;
+	Thu, 23 May 2024 04:24:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716438257;
+	bh=0wOFUajYamp8413E77jipahrUa270OFvH9nZ8xjqUDc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=gyPu2ARKMQyxy+orRMjl2ZUXnvVy0ThmGMjqxmUU3Cc1ETH3Rg5d4YJo3APVVHitK
+	 Xiyq+5xsq4RZH8MZNnLaGyHGMY4lSuPFbPnp9Qb1JwxHUhnmNFHJOp3t2L0ym8+XnY
+	 CmYmXITon/97HnMByy6IH7DPa8oie9pOnJHA4uFdQPp5QagBW8v6OMr6PDCGfQJ+sV
+	 4SOdMErAeNrEF6srWnJWDUoRCdwsiiJlPh+nTXY7mz3+5rQWgvcdmF2XFSLwpd0g5L
+	 ghTtWvQF8sqQEdS4QFRD/7JIRILc9/+LDTNJVT9ZYKK5csNkikWk6gb+N2bwuXF4dT
+	 UnnyzKAdFlmsw==
+Date: Wed, 22 May 2024 23:24:15 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240515195252.75909-1-yskelg@gmail.com>
-In-Reply-To: <20240515195252.75909-1-yskelg@gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 22 May 2024 21:23:30 -0700
-Message-ID: <CAM9d7ciFpGhQat3esWLBUDNc1pzAqVw+8d+oX-WJeN+KJfW8Ew@mail.gmail.com>
-Subject: Re: [PATCH] buitin-kvm: Update cmd_kvm() to check perf_host value
-To: yskelg@gmail.com
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-iio@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>
+In-Reply-To: <20240523031909.19427-5-kimseer.paller@analog.com>
+References: <20240523031909.19427-1-kimseer.paller@analog.com>
+ <20240523031909.19427-5-kimseer.paller@analog.com>
+Message-Id: <171643825573.1037396.2749703571529285460.robh@kernel.org>
+Subject: Re: [PATCH v2 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
 
-Hello,
 
-On Wed, May 15, 2024 at 12:54=E2=80=AFPM <yskelg@gmail.com> wrote:
->
-> From: Yunseong Kim <yskelg@gmail.com>
->
-> According to perf-kvm.txt, the default operation is --guest, meaning
-> perf_host should be set to false and perf_guest to true. Currently,
-> the incorrect usage of --no-host and --no-guest still results in
-> the default --guest operation.
-
-Hmm, right.. This is not good.
-
->
-> This patch updates the usage messages to include the --no-guest option
-> for those who only want host data, as well as the --no-host and
-> --no-guest case.
-
-I'm not sure if it's worth mentioning the host-only use case which is
-not expected for this command.  I think it's enough to warn the
-no-host and no-guest use cases.
-
->
-> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+On Thu, 23 May 2024 11:19:08 +0800, Kim Seer Paller wrote:
+> Add documentation for ltc2672.
+> 
+> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 > ---
->  tools/perf/builtin-kvm.c | 19 +++++++++++++------
->  1 file changed, 13 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-> index 71165036e4ca..654a07658cdd 100644
-> --- a/tools/perf/builtin-kvm.c
-> +++ b/tools/perf/builtin-kvm.c
-> @@ -2129,7 +2129,7 @@ int cmd_kvm(int argc, const char **argv)
->                 OPT_BOOLEAN(0, "guest", &perf_guest,
->                             "Collect guest os data"),
->                 OPT_BOOLEAN(0, "host", &perf_host,
-> -                           "Collect host os data"),
-> +                          "Collect host os data. Host only with --host -=
--no-guest"),
->                 OPT_STRING(0, "guestmount", &symbol_conf.guestmount, "dir=
-ectory",
->                            "guest mount directory under which every guest=
- os"
->                            " instance has a subdir"),
-> @@ -2150,16 +2150,23 @@ int cmd_kvm(int argc, const char **argv)
->                                                 "buildid-list", "stat", N=
-ULL };
->         const char *kvm_usage[] =3D { NULL, NULL };
->
-> -       perf_host  =3D 0;
-> -       perf_guest =3D 1;
-> +       /*
-> +        * tools/perf/Documentation/perf-kvm.txt
-> +        *
-> +        *    Default('')         ->  perf.data.guest
-> +        *    --host              ->  perf.data.kvm
-> +        *    --guest             ->  perf.data.guest
-> +        *    --host --guest      ->  perf.data.kvm
-> +        *    --host --no-guest   ->  perf.data.host
-> +        */
-> +       perf_host =3D false;
-> +       perf_guest =3D true;
+>  .../bindings/iio/dac/adi,ltc2672.yaml         | 159 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 160 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+> 
 
-Probably not needed.
+My bot found errors running 'make dt_binding_check' on your patch:
 
->
->         argc =3D parse_options_subcommand(argc, argv, kvm_options, kvm_su=
-bcommands, kvm_usage,
->                                         PARSE_OPT_STOP_AT_NON_OPTION);
-> -       if (!argc)
-> +       if (!argc || (!perf_host && !perf_guest))
->                 usage_with_options(kvm_usage, kvm_options);
->
-> -       if (!perf_host)
-> -               perf_guest =3D 1;
+yamllint warnings/errors:
 
-Instead of showing the whole usage, I think it's better to
-print a specific message for this case.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml: patternProperties:^channel@[0-4]$:properties:adi,output-range-microamp: '$ref' should not be valid under {'const': '$ref'}
+	hint: Standard unit suffix properties don't need a type $ref
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
 
-Oh, I've realized that we have 'h' modifier for hypervisors
-(on ARM64?)  Then maybe no-host + no-guest is a valid
-combination.  Probably we need to add --hypervisor option
-then.
+doc reference errors (make refcheckdocs):
 
-Thanks,
-Namhyung
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240523031909.19427-5-kimseer.paller@analog.com
 
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
->
->         if (!file_name) {
->                 file_name =3D get_filename_for_perf_kvm();
-> --
-> 2.34.1
->
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
