@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-187884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96698CDA08
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:36:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F668CDA0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 167A11C214CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:36:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49E27B20F67
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AE97E586;
-	Thu, 23 May 2024 18:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZHHR9fm7"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F11A8287D;
+	Thu, 23 May 2024 18:36:27 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32587433A4;
-	Thu, 23 May 2024 18:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F6C31A67
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716489359; cv=none; b=ZZLktG4s+MasqHGyUxPIfbJI4tpEMcRJ2vuCaHfxdqS3RLSDp23MJSq0P8NO9Syqi3yI+9ikipFlD0u8eiNEjxuQetO27+JvBX79bsCI71cw7HQG77XUsBcgDVFLlqEb2nVGEZSgvCUsyJuj33NVHE5ndsD05+MDgrcwqKLLI+8=
+	t=1716489386; cv=none; b=QuFSOpgFcUqjuh106GGYvTLBeT5QSKIQZq3NKf+VRIjP6vdgcqXc4A4p4wxhaF8G+uMzlVAfZTqaKoTZQizGQZc+5ucldqreyj1hqt+0pce8SCKXWCRY4urWxJ+dMnZXuu4cfSfAksZWndqojL9sPC5ArOAqZKHKD5C5Y0SBjZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716489359; c=relaxed/simple;
-	bh=e1g4M6PP/Tu52fL0+f5mEFTHjeQVpZLqOhGBVTnrLWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lf4s0ZdI7KQ9YE+k4q5UoD4x0En3ewkWG+IO0nJXa0IcKPLIzXdOvfFyBNtpIfZtZXuCABDiTIrOdrKEs2Te85bxzdEkbw3mj0nNx1Em8vmKeAJ0MiKFiL9R+jgaiyh+HatU/05WZSpOW9Sz3HIRaccAAi7QaQzg9RaJiaOULZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZHHR9fm7; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6a3652a732fso13417156d6.3;
-        Thu, 23 May 2024 11:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716489357; x=1717094157; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AcM1HEYW+RYXL509g3aAc7ycNKgv1hXSbOH207bKEdQ=;
-        b=ZHHR9fm76DTpkKvPFI+5FBdZwfxppFAuwmiyGwE73qwYm+oSJhzpF8vMGEZ8aMNm8H
-         Qr6rA5jJsI6K2+LXL14xsingKoCny3egQIwJLLS5aNpR3YV1nFUxBS3dPa17P5eaY7L0
-         h5u4RYt03PwsPYUhxrk13EjMWp0ZN0gSAvnaozHwLDvPYO8ra4mqHlyv/bHsFyBict+A
-         elDfxNSkBCaFIc2NrbRZ2F01sYLlt5lvQkTpGp2s6jLeDUdXUc5DBye7RyVIuecggMKS
-         hU8LTVK0d1ojUIiEkEFfDikJG5Pwc0MsMjSDp91xH4yxEM0qIo1DCqvbDeKvhmqNM3D2
-         8tZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716489357; x=1717094157;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AcM1HEYW+RYXL509g3aAc7ycNKgv1hXSbOH207bKEdQ=;
-        b=BdeZjoDp9A8VOsWi3rlAezqz4HoGjgylJIRfCNGEfmYK8+qbIm6K6QO9IHPqwEomHE
-         z3U4E0CkrD9PnJuswL2XsWReIHCdmJiFr0hG5rwFeXGS2t60BJk4yrZHhESOB3WAg/h7
-         F4xSDjKSRwp6LCmn8fzU4BxCHRG4C7yh2xqxUcdBVk9S9fkF9Lnnif/pOkDHTtFMW0Sj
-         cAi+G+qk/7UQtL3HdtW5JfWoEmh5dvUKSRXYFamhsm+tuF0x6k2H8TKwsvh33UisiSiJ
-         SoqLL5IG1DoScsS0WG9WRlWRmHAx1UVGF4pagxLVcOGzoz4fCWJtx+uDq3MwpPeURWBL
-         EWVw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7yHKprAISg2XXUBnKLR3DWbJ++yUi3Jzn8y5py6d2prwUlkmLRn819hWcsqdwwYhOGLjp0buhPMnOfHDYD9ROhrgYJJw0WIDYwfV164WCqFkfTmakckdbUHQQw/gL1aSo8iM2
-X-Gm-Message-State: AOJu0Yyc+fd2qSVEv3HWZNVqRgZi+78MYnBzOvH9BDqOvbVcma3P8mJS
-	mYciB1NGJ3kFqn5TkdO41w0oKyWbGImki8nfLFfLOIy6aKYKtKuo
-X-Google-Smtp-Source: AGHT+IHsvP5Q7DiWwyS3W7rrKp1gK0kHW8+e5/rS/l628A9sPfGlzh23EaHca7OdXue0kQSpK451lw==
-X-Received: by 2002:a05:6214:911:b0:6ab:898b:42e7 with SMTP id 6a1803df08f44-6ab898b4406mr34770196d6.65.1716489357055;
-        Thu, 23 May 2024 11:35:57 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6a941c29753sm51784136d6.18.2024.05.23.11.35.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 11:35:56 -0700 (PDT)
-Message-ID: <44c42a1a-00d4-4d74-93cb-fb97be9191ea@gmail.com>
-Date: Thu, 23 May 2024 11:35:53 -0700
+	s=arc-20240116; t=1716489386; c=relaxed/simple;
+	bh=5RUAp8ZjGFL4XRjmweHbAxKTYu3FMUhMMQO7Zf2Hno4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2Zkox3bZKfvLUtUIbxe73EhBBqBAqhLM870c2Pnq6fWi1aH6zRQU/bhDb1v474eGGr9ar22BnKc/Q9K9qtinqxiTraqfsb3AiWdA/FJPHSnrW0ozQM3SMdlbcobZ2uoPdUD/EG7Fq06S7JsMo3XYLV6u+YmCqoiphqfZG8yU/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sADIG-0005dy-Sc; Thu, 23 May 2024 20:36:00 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sADIF-002hBH-U5; Thu, 23 May 2024 20:35:59 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sADIF-009tpb-2g;
+	Thu, 23 May 2024 20:35:59 +0200
+Date: Thu, 23 May 2024 20:35:59 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [EXT] Re: [PATCH v2 4/5] firmware: imx: add driver for NXP
+ EdgeLock Enclave
+Message-ID: <Zk-Mj43f43YFrf50@pengutronix.de>
+References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
+ <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
+ <Zk9DV6Ko-KO0kym_@pengutronix.de>
+ <AM9PR04MB86047218A243EEB5BA79F69D95F42@AM9PR04MB8604.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 00/15] 5.10.218-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240523130326.451548488@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240523130326.451548488@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM9PR04MB86047218A243EEB5BA79F69D95F42@AM9PR04MB8604.eurprd04.prod.outlook.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 5/23/24 06:12, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.218 release.
-> There are 15 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, May 23, 2024 at 01:43:46PM +0000, Pankaj Gupta wrote:
 > 
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.218-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> > -----Original Message-----
+> > From: Sascha Hauer <s.hauer@pengutronix.de>
+> > Sent: Thursday, May 23, 2024 6:54 PM
+> > To: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh+dt@kernel.org>;
+> > Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley
+> > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Pengutronix
+> > Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> > <festevam@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> > <krzk+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.dev;
+> > linux-arm-kernel@lists.infradead.org
+> > Subject: [EXT] Re: [PATCH v2 4/5] firmware: imx: add driver for NXP EdgeLock
+> > Enclave
+> >
+> > Caution: This is an external email. Please take care when clicking links or
+> > opening attachments. When in doubt, report the message using the 'Report
+> > this email' button
+> >
+> >
+> > On Thu, May 23, 2024 at 04:19:35PM +0530, Pankaj Gupta wrote:
+> > > NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE), are
+> > > embedded in the SoC to support the features like HSM, SHE & V2X, using
+> > > message based communication interface.
+> > >
+> > > The secure enclave FW communicates on a dedicated messaging unit(MU)
+> > > based interface(s) with application core, where kernel is running.
+> > > It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
+> > >
+> > > This patch adds the driver for communication interface to
+> > > secure-enclave, for exchanging messages with NXP secure enclave HW
+> > > IP(s) like EdgeLock Enclave (ELE) from Kernel-space, used by kernel
+> > > management layers like
+> > > - DM-Crypt.
+> > >
+> > > Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> > > ---
+> > >  drivers/firmware/imx/Kconfig        |  12 +
+> > >  drivers/firmware/imx/Makefile       |   2 +
+> > >  drivers/firmware/imx/ele_base_msg.c | 286 +++++++++++++++++++
+> > > drivers/firmware/imx/ele_base_msg.h |  92 +++++++
+> > >  drivers/firmware/imx/ele_common.c   | 239 ++++++++++++++++
+> > >  drivers/firmware/imx/ele_common.h   |  43 +++
+> > >  drivers/firmware/imx/se_ctrl.c      | 531
+> > ++++++++++++++++++++++++++++++++++++
+> > >  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
+> > >  include/linux/firmware/imx/se_api.h |  14 +
+> > >  9 files changed, 1318 insertions(+)
+> >
+> > [...]
+> >
+> > >
+> > > +int imx_ele_msg_send(struct se_if_priv *priv, void *tx_msg) {
+> > > +     struct se_msg_hdr *header;
+> > > +     int err;
+> > > +
+> > > +     header = (struct se_msg_hdr *) tx_msg;
+> > > +
+> > > +     if (header->tag == priv->cmd_tag)
+> > > +             lockdep_assert_held(&priv->se_if_cmd_lock);
+> > > +
+> > > +     scoped_guard(mutex, &priv->se_if_lock);
+> >
+> > scoped_guard() with an empty block doesn't make much sense. Either use
+> > scope_guard() { /* do something locked */ }; or guard().
+> >
+> Need to allow send more than one message at a time. Hence, done it after taking the lock.
+> Once message sent, scope of lock is over.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+You take the lock and release it immediately afterwards. There's nothing
+locked with this. Please have a look how scoped_guard() works.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Sascha
+
 -- 
-Florian
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
