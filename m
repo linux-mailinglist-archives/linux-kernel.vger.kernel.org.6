@@ -1,260 +1,152 @@
-Return-Path: <linux-kernel+bounces-187530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63A188CD2FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5172D8CD337
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB59FB217B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066561F23661
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CAB14AD22;
-	Thu, 23 May 2024 12:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D5414A4C1;
+	Thu, 23 May 2024 13:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Nn+MjaOx"
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="j8J6Oj+p"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9652714AD25;
-	Thu, 23 May 2024 12:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638AB13B7A3;
+	Thu, 23 May 2024 13:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716469148; cv=none; b=QXk0rOi/E4nQdlk8vy44CdwwJ1FYd5ycR3GgZhyQ+06IpwgS7+dq9O6YXtGYvHOpbIRmrnG474CkKPQNsxawghzk5Vf4+VmC+lcumMwB4Ykk32g49wGKQd1GJzaXhJT34Ts9U7C+4AmJDefapfD7MgkeENmdagXduDzhAyNf+IU=
+	t=1716469611; cv=none; b=iZaR6kWFNBjkLdOvDFhUzu7vr/SIaFFfzj4J1P6Z7hQCwjSrDRb5gRnq79K5oyBvPsqALsnRkhmGmjo4Q0kdtX0iiODosLShuZ3Ddz5+762DKsYgRuTkBNQ/h3zahKj28oNZGbUv/fdJcL3WRz3vpSMsHn1ZLP+HxjlPaHmrB/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716469148; c=relaxed/simple;
-	bh=3HMy5/V0H521gCFEHwEoQ1S0odb/OYD88xo+TVa9M1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C8/geqt6n2xrOheAh8cqGWXH3s6/qebR9p47Yy7H1yfxWcIu4pNud4WdlvXg97WlXXZaVGlzJVEeoZS1c/25X9JNSQywakHkWqP4sT1f9Z6RfhFZFoDpBapGDgZhPsHu4y64xsZkkN7hrWyAiTVZg2bSHQYT6wHePOSgT4rEOEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=Nn+MjaOx; arc=none smtp.client-ip=216.71.153.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1716469146; x=1748005146;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3HMy5/V0H521gCFEHwEoQ1S0odb/OYD88xo+TVa9M1E=;
-  b=Nn+MjaOxa1bFlkQs4ji8u/s7thvpMmIcUzYGks+x4ywdu5zoMREEGLxc
-   vRBElHd4U5MHNJFFLF4jm9xSaPdGqTK7y+WKRCFb0cSny+R0xd1qMU/Ue
-   Dlfzk0ISgk3mORZ9EVmUXAj+lXmmuYi1yeQ6gjBYCBI4lWRBeMj8lnA+l
-   JqqmfJiVRx+cJFbKZpwOnh1C7IVh1/jSBiIAKcSK4vTWbjGI0vF8swMBl
-   AxVwjKm5FsELQgUv/D625KQ25vpQPDa/U3qPgb6ep273d82458h0QE9IO
-   QMveTzLwuTAl93tw7thHDxshaeIuTg9C7UovajlFw5ZT61JSN1dmmMPxI
-   Q==;
-X-CSE-ConnectionGUID: bI+AXJepSNyAsrcrBtlNKA==
-X-CSE-MsgGUID: P8jlnTc/QN6TD6NpeZzPVA==
-X-IronPort-AV: E=Sophos;i="6.08,182,1712592000"; 
-   d="scan'208";a="16810345"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 23 May 2024 20:59:05 +0800
-IronPort-SDR: 664f2ffc_jOHC+XnS10JtpFSluGVJhlhO1csq9YlqqpSszeO6wV2jwdG
- 4edT+by8Q4VA7H68aZG0U01G33K3mtzfhLh7Sgg==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 May 2024 05:01:00 -0700
-WDCIronportException: Internal
-Received: from bxygm33.ad.shared ([10.45.31.229])
-  by uls-op-cesaip02.wdc.com with ESMTP; 23 May 2024 05:59:04 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	Bean Huo <beanhuo@micron.com>,
-	Peter Wang <peter.wang@mediatek.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v5 3/3] scsi: ufs: sysfs: Make max_number_of_rtt read-write
-Date: Thu, 23 May 2024 15:58:26 +0300
-Message-ID: <20240523125827.818-4-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20240523125827.818-1-avri.altman@wdc.com>
-References: <20240523125827.818-1-avri.altman@wdc.com>
+	s=arc-20240116; t=1716469611; c=relaxed/simple;
+	bh=kswXzuirsNRtNf+Xr5hNHJ3T/IAZOwuRlS1VozUlXz8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EEqlLRlF4Q93CGmsi48vfxLtG7ULDxzrCw+JTOJXq1QYbgzx4WsZzHgAmZwnj88tDJ9Ty7+boWULuHvLHkbZ+JYtrSTqg/0dyIYEObKzEj7/bwyAeNNbs72Pf+yA0RAS16sVny9M5QGgArLZiLOaEXbJoW8/7pWYnPsyFmm2eOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=j8J6Oj+p; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4VlSsh1ZY8z683H;
+	Thu, 23 May 2024 14:58:48 +0200 (CEST)
+Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4VlSsg66Tgz6808;
+	Thu, 23 May 2024 14:58:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1716469127;
+	bh=25qeUHlhp9AzNRH6OxC2fB+5NR3IUEhWt6Hs1OKWWBk=;
+	h=Date:To:Cc:From:Subject;
+	b=j8J6Oj+p62MHmeDS/udeSw+5DFq6D65r3kTh9B8YFkh4dZXzxHs40lP0u9jWp+nup
+	 Ygg5klzGA/FovuQqVjPgC7BurvnLDwNc+7Ff6Dns5BSCxIScGL0qJudZZy4n4NAjWL
+	 TnggXV5Td7eE7T4IYUlSsOsvVhvFV+jKUG2Tw/9A=
+Message-ID: <413928e9-8e8e-429e-bca1-5d55ed3314fb@gaisler.com>
+Date: Thu, 23 May 2024 14:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Andreas Larsson <andreas@gaisler.com>
+Subject: [GIT PULL] sparc updates for v6.10
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Given the importance of the RTT parameter, we want to be able to
-configure it via sysfs. This is because UFS users should be discouraged
-from change UFS device parameters without the UFSHCI driver being aware
-of these changes.
+Hi Linus,
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- Documentation/ABI/testing/sysfs-driver-ufs | 14 +++--
- drivers/ufs/core/ufs-sysfs.c               | 72 +++++++++++++++++++++-
- drivers/ufs/core/ufshcd-priv.h             | 12 ++++
- drivers/ufs/core/ufshcd.c                  | 12 ----
- 4 files changed, 91 insertions(+), 19 deletions(-)
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index 5bf7073b4f75..fe943ce76c60 100644
---- a/Documentation/ABI/testing/sysfs-driver-ufs
-+++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -920,14 +920,16 @@ Description:	This file shows whether the configuration descriptor is locked.
- 
- What:		/sys/bus/platform/drivers/ufshcd/*/attributes/max_number_of_rtt
- What:		/sys/bus/platform/devices/*.ufs/attributes/max_number_of_rtt
--Date:		February 2018
--Contact:	Stanislav Nijnikov <stanislav.nijnikov@wdc.com>
-+Date:		May 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
- Description:	This file provides the maximum current number of
--		outstanding RTTs in device that is allowed. The full
--		information about the attribute could be found at
--		UFS specifications 2.1.
-+		outstanding RTTs in device that is allowed. bMaxNumOfRTT is a
-+		read-write persistent attribute and is equal to two after device
-+		manufacturing. It shall not be set to a value greater than
-+		bDeviceRTTCap value, and it may be set only when the hw queues are
-+		empty.
- 
--		The file is read only.
-+		The file is read write.
- 
- What:		/sys/bus/platform/drivers/ufshcd/*/attributes/exception_event_control
- What:		/sys/bus/platform/devices/*.ufs/attributes/exception_event_control
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index 3d049967f6bc..97fe1e9e63da 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -1340,6 +1340,77 @@ static const struct attribute_group ufs_sysfs_flags_group = {
- 	.attrs = ufs_sysfs_device_flags,
- };
- 
-+static ssize_t max_number_of_rtt_show(struct device *dev,
-+				      struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	u32 rtt;
-+	int ret;
-+
-+	down(&hba->host_sem);
-+	if (!ufshcd_is_user_access_allowed(hba)) {
-+		up(&hba->host_sem);
-+		return -EBUSY;
-+	}
-+
-+	ufshcd_rpm_get_sync(hba);
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &rtt);
-+	ufshcd_rpm_put_sync(hba);
-+
-+	if (ret)
-+		goto out;
-+
-+	ret = sysfs_emit(buf, "0x%08X\n", rtt);
-+
-+out:
-+	up(&hba->host_sem);
-+	return ret;
-+}
-+
-+static ssize_t max_number_of_rtt_store(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf, size_t count)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+	struct ufs_dev_info *dev_info = &hba->dev_info;
-+	unsigned int rtt;
-+	int ret;
-+
-+	if (kstrtouint(buf, 0, &rtt))
-+		return -EINVAL;
-+
-+	if (rtt > dev_info->rtt_cap) {
-+		dev_err(dev, "rtt can be at most bDeviceRTTCap\n");
-+		return -EINVAL;
-+	}
-+
-+	down(&hba->host_sem);
-+	if (!ufshcd_is_user_access_allowed(hba)) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	ufshcd_rpm_get_sync(hba);
-+
-+	/* make sure that there are no outstanding requests when rtt is set */
-+	ufshcd_scsi_block_requests(hba);
-+	blk_mq_wait_quiesce_done(&hba->host->tag_set);
-+
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-+		QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &rtt);
-+
-+	ufshcd_scsi_unblock_requests(hba);
-+
-+	ufshcd_rpm_put_sync(hba);
-+
-+out:
-+	up(&hba->host_sem);
-+	return ret < 0 ? ret : count;
-+}
-+
-+static DEVICE_ATTR_RW(max_number_of_rtt);
-+
- static inline bool ufshcd_is_wb_attrs(enum attr_idn idn)
- {
- 	return idn >= QUERY_ATTR_IDN_WB_FLUSH_STATUS &&
-@@ -1387,7 +1458,6 @@ UFS_ATTRIBUTE(max_data_in_size, _MAX_DATA_IN);
- UFS_ATTRIBUTE(max_data_out_size, _MAX_DATA_OUT);
- UFS_ATTRIBUTE(reference_clock_frequency, _REF_CLK_FREQ);
- UFS_ATTRIBUTE(configuration_descriptor_lock, _CONF_DESC_LOCK);
--UFS_ATTRIBUTE(max_number_of_rtt, _MAX_NUM_OF_RTT);
- UFS_ATTRIBUTE(exception_event_control, _EE_CONTROL);
- UFS_ATTRIBUTE(exception_event_status, _EE_STATUS);
- UFS_ATTRIBUTE(ffu_status, _FFU_STATUS);
-diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
-index f42d99ce5bf1..691987e2e5f5 100644
---- a/drivers/ufs/core/ufshcd-priv.h
-+++ b/drivers/ufs/core/ufshcd-priv.h
-@@ -32,6 +32,18 @@ static inline bool ufshcd_is_wb_buf_flush_allowed(struct ufs_hba *hba)
- 		!(hba->quirks & UFSHCI_QUIRK_SKIP_MANUAL_WB_FLUSH_CTRL);
- }
- 
-+static inline void ufshcd_scsi_unblock_requests(struct ufs_hba *hba)
-+{
-+	if (atomic_dec_and_test(&hba->scsi_block_reqs_cnt))
-+		scsi_unblock_requests(hba->host);
-+}
-+
-+static inline void ufshcd_scsi_block_requests(struct ufs_hba *hba)
-+{
-+	if (atomic_inc_return(&hba->scsi_block_reqs_cnt) == 1)
-+		scsi_block_requests(hba->host);
-+}
-+
- #ifdef CONFIG_SCSI_UFS_HWMON
- void ufs_hwmon_probe(struct ufs_hba *hba, u8 mask);
- void ufs_hwmon_remove(struct ufs_hba *hba);
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index d8e0e80d66a5..f470180e6efb 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -332,18 +332,6 @@ static void ufshcd_configure_wb(struct ufs_hba *hba)
- 		ufshcd_wb_toggle_buf_flush(hba, true);
- }
- 
--static void ufshcd_scsi_unblock_requests(struct ufs_hba *hba)
--{
--	if (atomic_dec_and_test(&hba->scsi_block_reqs_cnt))
--		scsi_unblock_requests(hba->host);
--}
--
--static void ufshcd_scsi_block_requests(struct ufs_hba *hba)
--{
--	if (atomic_inc_return(&hba->scsi_block_reqs_cnt) == 1)
--		scsi_block_requests(hba->host);
--}
--
- static void ufshcd_add_cmd_upiu_trace(struct ufs_hba *hba, unsigned int tag,
- 				      enum ufs_trace_str_t str_t)
- {
--- 
-2.34.1
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc.git tags/sparc-for-6.10-tag1
+
+for you to fetch changes up to 1c9e709cde80fb612e07d9503ad04457e8a58da2:
+
+  sparc/leon: Remove on-stack cpumask var (2024-05-08 19:42:16 +0200)
+
+----------------------------------------------------------------
+This includes the following changes related to sparc for v6.10:
+
+- Avoid on-stack cpumask variables in a number of places.
+- Move struct termio to asm/termios.h, matching other architectures and
+  allowing certain user space applications to build also for sparc.
+- Fix missing prototype warnings for sparc64.
+- Fix version generation warnings for sparc32.
+- Fix bug where non-consecutive CPU IDs lead to some CPUs not starting.
+- Simplification using swap and cleanup using NULL for pointer.
+- Convert sparc parport and chmc drivers to use remove callbacks
+  returning void.
+
+----------------------------------------------------------------
+Dawei Li (5):
+      sparc/srmmu: Remove on-stack cpumask var
+      sparc/irq: Remove on-stack cpumask var
+      sparc/of: Remove on-stack cpumask var
+      sparc/pci_msi: Remove on-stack cpumask var
+      sparc/leon: Remove on-stack cpumask var
+
+Mike Gilbert (1):
+      sparc: move struct termio to asm/termios.h
+
+Sam Ravnborg (10):
+      sparc64: Fix prototype warning for init_vdso_image
+      sparc64: Fix prototype warnings in traps_64.c
+      sparc64: Fix prototype warning for vmemmap_free
+      sparc64: Fix prototype warning for alloc_irqstack_bootmem
+      sparc64: Fix prototype warning for uprobe_trap
+      sparc64: Fix prototype warning for dma_4v_iotsb_bind
+      sparc64: Fix prototype warnings in adi_64.c
+      sparc64: Fix prototype warning for sched_clock
+      sparc64: Fix number of online CPUs
+      sparc32: Fix version generation failed warnings
+
+Thorsten Blum (2):
+      sparc: Use swap() to fix Coccinelle warning
+      sparc: Compare pointers to NULL instead of 0
+
+Uwe Kleine-König (2):
+      sparc: parport: Convert to platform remove callback returning void
+      sparc: chmc: Convert to platform remove callback returning void
+
+ arch/sparc/include/asm/asm-prototypes.h | 17 +++++++++-----
+ arch/sparc/include/asm/floppy_64.h      |  4 +---
+ arch/sparc/include/asm/parport_64.h     |  6 ++---
+ arch/sparc/include/asm/smp_64.h         |  2 --
+ arch/sparc/include/uapi/asm/termbits.h  | 10 ---------
+ arch/sparc/include/uapi/asm/termios.h   |  9 ++++++++
+ arch/sparc/kernel/adi_64.c              | 14 ++++++------
+ arch/sparc/kernel/chmc.c                |  5 ++---
+ arch/sparc/kernel/irq_64.c              | 10 +++------
+ arch/sparc/kernel/kernel.h              |  4 ++++
+ arch/sparc/kernel/leon_kernel.c         |  7 +++---
+ arch/sparc/kernel/of_device_64.c        |  5 +----
+ arch/sparc/kernel/pci_msi.c             |  5 +----
+ arch/sparc/kernel/pci_sun4v.c           |  6 ++---
+ arch/sparc/kernel/prom_64.c             |  4 +++-
+ arch/sparc/kernel/setup_64.c            |  3 +--
+ arch/sparc/kernel/smp_64.c              | 14 ------------
+ arch/sparc/kernel/time_64.c             |  1 +
+ arch/sparc/kernel/traps_64.c            | 10 ++++-----
+ arch/sparc/kernel/uprobes.c             |  2 ++
+ arch/sparc/mm/init_64.c                 |  5 -----
+ arch/sparc/mm/srmmu.c                   | 40 ++++++++++-----------------------
+ arch/sparc/prom/tree_64.c               |  2 +-
+ arch/sparc/vdso/vma.c                   |  5 +++--
+ 24 files changed, 76 insertions(+), 114 deletions(-)
+
+Thanks,
+Andreas
 
 
