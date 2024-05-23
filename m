@@ -1,109 +1,191 @@
-Return-Path: <linux-kernel+bounces-187905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9426A8CDA5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:03:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694A08CDA5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09A0EB22E23
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:03:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F571C2190D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A0942067;
-	Thu, 23 May 2024 19:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404AC823AF;
+	Thu, 23 May 2024 19:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Kgrbl/Yd"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fk8ffNGs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5CE60BBE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F3D42067
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716491021; cv=none; b=hN/iV6qsZ105NxnSinH/yMVZHqgkObSBWntnQbg1wmP2Z1Lvc0+72t4Mc5LYZm5HYRMIJ0S9f+mMt6egF11HVZDz8im7tnJwjFRAVBbTHicYCit/JfwVYghwJ8Xc+t8/Dbg+0IYpmVUWA7YfI9b5+Nyh1+IyYzzT64SvvGQ6l1U=
+	t=1716491010; cv=none; b=qtJRz/wjPX1iZ9MpyMx1323khWqiHjPD9XHf2We1JSuYNZ0BtVxR6drfWd3diRZ+H6Qf6lagRqp6NFnIC6pU2Vs1wdm41szI8qwv3n1ugonoqE4YY8tCAyF7R5p/u6plq0u1wnI8hwNx1CqrY8Cwo7Lc3gV6VsVGe02fJ0vLsHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716491021; c=relaxed/simple;
-	bh=qz4H5gdKwMYHrWkklEVDwzWw5jC9xZru8VTxAx5zOpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B7wgEghR82wQGrgcKXQ8ZkB0+DuWsi0hqRSVKhuDWFRQZLweP4RcXAMHNZQwionBzNWMKp/Tl/vhJrK43mkQOEzWsfJZHW+NKucahXtQirhlYqVpeuPeQn9c8S06qvRMp7FqC5up9FWYO/S2HYhusEexSd3GzBG1MieyBg90lDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Kgrbl/Yd; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a626ac4d299so1236566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1716491017; x=1717095817; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SEOOe222bgD8uBXMvqgINByafZXi3I56R6e176eQiSI=;
-        b=Kgrbl/YdpHoleFz6BSXEsznRhZ/blpUtnfoaF8l5WrM6das+tPh/3JiGoj6zbbChn1
-         sV+NJPWaHl1nasUAt0Aw+hcHNFHMWRuk9QQP6gohXoxuNrzKDrjj0Hw3B3hduEd7iXUY
-         4t+xMBJpzt/rXvoD5OWqBPg0gV6RDSPE9o55Q=
+	s=arc-20240116; t=1716491010; c=relaxed/simple;
+	bh=D7okfcf2Ddj2mb6Zb05qyS285Q6O1rqPiXyMi5sYT7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cbwEouQ0jAIzoTiDLJdcjwvY5CtnmQSf2zICDxObzrHmI+V687q1VyFBdSE5qqaqA4AROhvmhXLWYeaTCSurUvcer2QWsdC9XehNRUQEgL06TNIyqz3IizZk7gTyjLQV4lOV4UGi58FwZfsz5bhqBNcycpHlfrCPy/l9YaclX8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fk8ffNGs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716491007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ZyHfRr2WLwSMfqWip/ip78bXFGU0WQWzWewHOWuVSkk=;
+	b=fk8ffNGsk1ernHgreCyJCL9dbuKRsGkmC/4V7cJAKswchS+2AHuOzSmjQ8zrKIfJwvg+YJ
+	jYLPuy7NU3gM8NiAFGtqIjuZvsf1G47Y/BKrpyA12Jareh5AbsUILOmp34WOD0caR2yKaN
+	imoS5bVJcZM+RMtJRh3mqUXxIr52MVU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-428-OeXDaYNvPdCKe62adU5sww-1; Thu, 23 May 2024 15:03:26 -0400
+X-MC-Unique: OeXDaYNvPdCKe62adU5sww-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4200efb9ac6so79984685e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:03:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716491017; x=1717095817;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SEOOe222bgD8uBXMvqgINByafZXi3I56R6e176eQiSI=;
-        b=eF+D1tG5uiWY1q5F99Sun5xerRoq11rQAA+HeFHw6Bf/EcaXGqLMrxUOU6utp3oHgc
-         dog3+iDgwuOP3NqRWspsqXj14hV0buH1ILNsmDTEkGggadOjFTChwPaZ7DiR4Urf6uPD
-         NHsy/9v55gQd778jwa/WrQA0CVMtfFiYylHUusw5/lmEHV7sbaIe/Y0Wm6t3xIc8l1kE
-         eAAWQhhaOV1S24PNmF87Z2iWaGeYrEYu00R0uOfhH9wNfP+EP0ZfB8CcuAb/SnLvX6XH
-         NJQhtWU7OmgXUyWkfrhxIiNCEWkhHOuqNN7/aABbNbVCoKnTaQRgrWaEFYWYZmvLkPL4
-         E1CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUK+MMgMPluLVAAUp98KCEdSOkv7dTo7t8TOYueiQ6toKgadDZniGpQw25kilLbcHCP218lnwP44Yj12xXHXow1WJi4NIzzjY7Ss0q
-X-Gm-Message-State: AOJu0YyQmxFQ+4Sfk22kpOQMenz8igFZPIlo0rs3kafg+iL7Qz/mhf3X
-	7kNZDgj99wqK4f13Vo9NcD+xzIWuWu5vMofhAT16Tnms50ZMD0O94xAPcrAFADOfYpEg4KhWGHU
-	m62vT1g==
-X-Google-Smtp-Source: AGHT+IFPE+Wy5vzqutCF0GM74HpspXTXaBNeyU28wFiBDjiCso9x2WNH8Znf5IhQmcWjD4dft4KSVw==
-X-Received: by 2002:a17:906:648:b0:a55:acd8:996c with SMTP id a640c23a62f3a-a62641cf94cmr14620766b.29.1716491017370;
-        Thu, 23 May 2024 12:03:37 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a90d0e919sm1249249766b.85.2024.05.23.12.03.36
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1716491005; x=1717095805;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZyHfRr2WLwSMfqWip/ip78bXFGU0WQWzWewHOWuVSkk=;
+        b=sMFSfySSNxlAqP5nvACuiXO6s/SxZOMVmiiSob3ebrKYCThPYek8zznjvZP4TYJ7/S
+         dhEepxfE+nJ+t2MaWrappK8x96V8eCbJUn6k3e9z3MemX6NX/80XFRCT4KBOe7qAeAMv
+         eZLj4fPGQ4IXtH1lLMMYS72qTMGCE43q23luWR0RS8AQnMRVLNLWZ6fcr/rB39TOBRED
+         Ef7Wc+V8vJJ5bmk4/gYtjB+sv4hb1kAbyBEjqtwFeSyDgSwifs4uzQwvlf/pEGVSF3pa
+         k8VWdT9dwa6wdQTh1PocIFXzpnMv2GJ9xhpcToPNXyyf+nOg6vr/QpDMrzbDbWawOqmE
+         UIBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw/bZ+ftMvQy0+/ACXyNJLiCS3X3H1sWIP98kDW8vzTvfpcLQ4m9kYtsrJWYBebcBQZ0tkcUoUuJQgqVcB9RWbsaiMLWpKyFZS4qo7
+X-Gm-Message-State: AOJu0YyliCQmu27jjTPG0pvLcaWKKYUwUkqZZ/KLI6YOtkH/k9rvDsbJ
+	B4sTH7X7T/o8AQew+2jlo15NEA4ng/0kFSW1+elIZvKhzJvo5M86O4DjUUIdntrsw2GfTQMTyY2
+	zE5Uypon8B+JkrL0wQoJBSH7HSEPQRjPl18Xqiz0Elqg+St/Y8A3FBFJGgGJgrg==
+X-Received: by 2002:a7b:c3d2:0:b0:41c:97e:2100 with SMTP id 5b1f17b1804b1-420fd2f2376mr44870415e9.3.1716491004919;
+        Thu, 23 May 2024 12:03:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbDufpJvfBHRHt6fz6S/dC4VYfEhS3gzHvWBUY5Wx5sWqN/iYfT1BI+OirfoRtv5LzKedxpg==
+X-Received: by 2002:a7b:c3d2:0:b0:41c:97e:2100 with SMTP id 5b1f17b1804b1-420fd2f2376mr44870205e9.3.1716491004427;
+        Thu, 23 May 2024 12:03:24 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c717:5f00:c949:6700:cce1:e60b? (p200300cbc7175f00c9496700cce1e60b.dip0.t-ipconnect.de. [2003:cb:c717:5f00:c949:6700:cce1:e60b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fb0905sm32266375e9.41.2024.05.23.12.03.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 12:03:36 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6269ad7db2so2752466b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:03:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVytfsTdb1Zk001ANhZGxEiOy+KfePujsuwkmi660GU36FORkvdd3a4uuKO5Sg7gIvl+VPeXN4zAna1ygNFiwjSuIg6gEiv4RSwR31e
-X-Received: by 2002:a17:906:8304:b0:a59:ad15:6133 with SMTP id
- a640c23a62f3a-a6265111846mr12629566b.71.1716491015917; Thu, 23 May 2024
- 12:03:35 -0700 (PDT)
+        Thu, 23 May 2024 12:03:24 -0700 (PDT)
+Message-ID: <cd609361-bf39-45c6-a01f-f88362a15847@redhat.com>
+Date: Thu, 23 May 2024 21:03:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr> <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
- <ZkvO-h7AsWnj4gaZ@slm.duckdns.org> <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
- <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
- <CALOAHbAmHTGxTLVuR5N+apSOA29k08hky5KH9zZDY8yg2SAG8Q@mail.gmail.com>
- <CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com> <Zk98B1FLIAt2SU4Y@home.goodmis.org>
-In-Reply-To: <Zk98B1FLIAt2SU4Y@home.goodmis.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 23 May 2024 12:03:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiGatHuK-QYhTa2qF+REjXZ4F=dGkQve6MiURpCZvJWJA@mail.gmail.com>
-Message-ID: <CAHk-=wiGatHuK-QYhTa2qF+REjXZ4F=dGkQve6MiURpCZvJWJA@mail.gmail.com>
-Subject: Re: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
- formatting and make wq_worker_comm() use full ID string
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, bpf <bpf@vger.kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Jan Engelhardt <jengelh@inai.de>, Craig Small <csmall@enc.com.au>, linux-kernel@vger.kernel.org, 
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/debug_vm_pgtable: Drop RANDOM_ORVALUE trick
+To: Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Pavel Tatashin <pasha.tatashin@soleen.com>,
+ "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+ Gavin Shan <gshan@redhat.com>, Anshuman Khandual
+ <anshuman.khandual@arm.com>, Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+References: <20240523132139.289719-1-peterx@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240523132139.289719-1-peterx@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 23 May 2024 at 10:25, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> FYI, I would be happy to convert the tracing events over to dynamic strings.
+On 23.05.24 15:21, Peter Xu wrote:
+> Macro RANDOM_ORVALUE was used to make sure the pgtable entry will be
+> populated with !none data in clear tests.
+> 
+> The RANDOM_ORVALUE tried to cover mostly all the bits in a pgtable entry,
+> even if there's no discussion on whether all the bits will be vaild.  Both
+> S390 and PPC64 have their own masks to avoid touching some bits.  Now it's
+> the turn for x86_64.
+> 
+> The issue is there's a recent report from Mikhail Gavrilov showing that
+> this can cause a warning with the newly added pte set check in commit
+> 8430557fc5 on writable v.s. userfaultfd-wp bit, even though the check
+> itself was valid, the random pte is not.  We can choose to mask more bits
+> out.
+> 
+> However the need to have such random bits setup is questionable, as now
+> it's already guaranteed to be true on below:
+> 
+>    - For pte level, the pgtable entry will be installed with value from
+>      pfn_pte(), where pfn points to a valid page.  Hence the pte will be
+>      !none already if populated with pfn_pte().
+> 
+>    - For upper-than-pte level, the pgtable entry should contain a directory
+>      entry always, which is also !none.
+> 
+> All the cases look like good enough to test a pxx_clear() helper.  Instead
+> of extending the bitmask, drop the "set random bits" trick completely.  Add
+> some warning guards to make sure the entries will be !none before clear().
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Cc: Gavin Shan <gshan@redhat.com>
+> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+> Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+> Link: https://lore.kernel.org/r/CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com
+> Signed-off-by: Peter Xu <peterx@redhat.com>
 
-I doubt it is worth it.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-The reason I would want to clean up the existing random memcpy is not
-so much because 15 characters wouldn't be enough for tracing, but
-because it is just ugly how we have this bad hardcoded interface
-without proper abstractions, and it would keep us from changing it.
+-- 
+Cheers,
 
-           Linus
+David / dhildenb
+
 
