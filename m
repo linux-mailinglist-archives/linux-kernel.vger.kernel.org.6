@@ -1,95 +1,138 @@
-Return-Path: <linux-kernel+bounces-187263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB52B8CCF41
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C3D8CCF43
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70BA1C22520
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 917EB283AF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7C213D285;
-	Thu, 23 May 2024 09:27:10 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E394013D28E;
+	Thu, 23 May 2024 09:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNcHYegf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C62813CFA2;
-	Thu, 23 May 2024 09:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C00F7E574;
+	Thu, 23 May 2024 09:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716456430; cv=none; b=bSkQo3qGuHicrzQlkrVlZEbav5ge8eBKAoh+5RaSwuTCLTooy7yFfFahIeLFFTgXMPzDNJ0pWu6ERPjKYNAN9bhaMYNHvhNTLS2Un8ibOr8xBnbBaj1erAk6QPRKI6WyiuFBNOr/rcDmYBfouNEc36Mp9c7nmqHHKmWV5UfCBt0=
+	t=1716456444; cv=none; b=jCptHzaBLB8GrvU+RjsITmcNcFiTohXI9+4q92zVqouh/joNPuJm7RXtbuxoTgDhX20aAdP8KWFBuuB9T7v8NBijw8gX/IYvfDBpRrqNV5A/isPC5U05Vbmh/wVzDCmHUkiHgPLMQIjINQuHYk85QeBjI1+vHBXmgtKac7LnzLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716456430; c=relaxed/simple;
-	bh=Jk2s0XLPuHA3YyAidzLdf7ogEZoebdsJWq5du8Mqp2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HyojxfqlLpbRV7/QHdsNlgIzGMmbVqvlCpwmrYqDVmxHYMdA5PePCA7eueh7GJh6Sw+8beo8umU61rLRrXoYy+Y8CcJEjngUW1UxcpqsH+QV2irIftY9RMU5AhBDGSsfUBzSCdP41TtKWej1HF+DC+D7Z1DFu7Kxq0kcxpeOWek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 0FBB71C0081; Thu, 23 May 2024 11:26:59 +0200 (CEST)
-Date: Thu, 23 May 2024 11:26:58 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Daniel Wagner <wagi@monom.org>
-Cc: Pavel Machek <pavel@denx.de>, LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>, John Kacur <jkacur@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>
-Subject: Re: 4.19-rt in May? Re: [ANNOUNCE] 4.19.269-rt119
-Message-ID: <Zk8L4jU3n7pAVR6+@duo.ucw.cz>
-References: <167144069993.3503.13484547425689613996@beryllium.lan>
- <ZjSoeyEnkJPY7ST3@duo.ucw.cz>
- <ahybli5jks4jfco7kiuotvukseqvg4vxxnlw522vs22cn5w7ok@qm5nmcskbh3j>
+	s=arc-20240116; t=1716456444; c=relaxed/simple;
+	bh=N/ArbF7qlHnI7bmUf29dhHWxFOpypeBXDi2ar0kz45E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rK4V6wsJzN2PTg4Mn7DRWmz/mMdSx4dTlbiB09ZJ2TMM8dXGVyaF1qudcLljsUVF5z4lsz67gIThZHAds+04OPuspETVm2pLQz5mjR7xSrua9WpEZC1hhW2vr6p0gbi636g2bs5FMvMb6in63BdIMi8kdPXGG8cgJFw9RGcrY0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNcHYegf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41665C2BD10;
+	Thu, 23 May 2024 09:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716456443;
+	bh=N/ArbF7qlHnI7bmUf29dhHWxFOpypeBXDi2ar0kz45E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HNcHYegfzcNl7+BpuSfIQJjboFZW4OGts7YDUkKQrKkgk8d/nQGeT413YvcYDEnfT
+	 8fFdZKuPu4RyejykXQZFHMhnmET+ZL0+1J4kPzCY9PTNawY2pVdRcexdVZRaLLja10
+	 hns5yDYUsXLYWiGMKp1UxVuAisbwIceNXT9AwCnXI/SPALH3V3op8hm7/FfzmjGbF+
+	 KWxepip8zQu1Q9VRcVZWzAMkasZ8X2ZWJ3mLZbLd962q8h2zijGY3fxUSdAwRzG6Bp
+	 uMpBWrrvs+SZfkIxCGQ3qXscCO2LnO8lUpZkhVNAzrnDzAFOJ2K8XBp9ToCwjI5Ryv
+	 j0eB5uZQmOLKQ==
+Message-ID: <21501af5-7558-4a15-bf0c-76b530792a36@kernel.org>
+Date: Thu, 23 May 2024 11:27:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FlkwNOZsC275/c1z"
-Content-Disposition: inline
-In-Reply-To: <ahybli5jks4jfco7kiuotvukseqvg4vxxnlw522vs22cn5w7ok@qm5nmcskbh3j>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] [media] s5p-fimc: fix sleep in atomic in
+ flite_hw_reset
+To: Anastasia Belova <abelova@astralinux.ru>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240521073607.19426-1-abelova@astralinux.ru>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240521073607.19426-1-abelova@astralinux.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 21/05/2024 09:36, Anastasia Belova wrote:
+> flite_hw_reset is called in fimc_lite_resume with spinlock
+> acquired that is forbidden. Replace usleep_range with udelay.
+> 
+> Fixes: 2b511edb986f ("[media] s5p-fimc: Add FIMC-LITE register definitions")
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> ---
+>  drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
+> index 2483277a6cb0..f1e7375c9a5f 100644
+> --- a/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
+> +++ b/drivers/media/platform/samsung/exynos4-is/fimc-lite-reg.c
+> @@ -30,7 +30,7 @@ void flite_hw_reset(struct fimc_lite *dev)
+>  		cfg = readl(dev->regs + FLITE_REG_CIGCTRL);
+>  		if (cfg & FLITE_REG_CIGCTRL_SWRST_RDY)
+>  			break;
+> -		usleep_range(1000, 5000);
+> +		udelay(1000);
 
---FlkwNOZsC275/c1z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > I'd like to do 4.19-cip-rt release "soon". Is there chance to get
-> > updated -rt tree? Last I see is:
->=20
-> Sorry, got interrupted and didn't finish the last release. I've to fixup
-> the rebase branch before the next release. I'll see what I can do next we=
-ek.
-
-Thank you, I see the release in -git now, and am preparing -cip-rt
-based on that.
+I think the code is rather wrong in fimc_lite_resume() - this should be
+called outside of spinlock, thus usleep is ok.
 
 Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Krzysztof
 
---FlkwNOZsC275/c1z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZk8L4gAKCRAw5/Bqldv6
-8qZUAJ9VeyLA/MN6mbx7NylV6MV12/A0sQCfbra0XK3PQecor5Qi4JMDPqLidGs=
-=dlV3
------END PGP SIGNATURE-----
-
---FlkwNOZsC275/c1z--
 
