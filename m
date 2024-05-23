@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-187639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899888CD5BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBEB8CD5BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE511C21454
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DD271C216CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9003D14BF8F;
-	Thu, 23 May 2024 14:28:03 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A25214BFA3;
+	Thu, 23 May 2024 14:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pqlvxgCI"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA51B13DBA0;
-	Thu, 23 May 2024 14:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B784813DBA0;
+	Thu, 23 May 2024 14:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474482; cv=none; b=JmZUhbhUV2CK7PaKmbge3o0neDmPTTA2bQ2aL4ycXjxiWCvk7c3gJKLzivkh+raFTKpGSd73l4B4G7ccCA6PA2Fy22QOJsBg8fmRsDULeKL4qInYLB2MwWtmjcaBumkHLmFYMe3QW1lQXLINR3avL8qVnXfCz5jzFaxcvObjYUs=
+	t=1716474535; cv=none; b=qswdAMVKmGstkZkWe8821x82ZKln7AiC/rEQWlxtpoACUu1Zr6qMMXFOzUs1nVX7rEzryV0teXHMbNL7iJNcBViYUol3w3nXbd4BhC3hodDRiBmrMMpURLrSTtdCxHP5RWbEhX/oVNTPJF7WLGlucOxhZqrUTVk+S6qrwpaX1Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474482; c=relaxed/simple;
-	bh=eB/7rWESfrYmRqM6rr4HsTv1P8DImOvlfke5DBkb77A=;
+	s=arc-20240116; t=1716474535; c=relaxed/simple;
+	bh=YRzIZV+8IYLn+F4nAiVNJuRhYPZ1yBzoJnVmLoTmfFI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FxN8HI2BcIPa8l9et6HHnltTqimcPEkX+BozQdyW4h+X9Ej5OZwXIDfpwwkXnAgSsSZQoauedbSFUv8ooJ7pCK61gJ5cEB13tdknrB7ihjmTF/2x86swuhrcb510HCDZYR7bx1RIo2f7+Am7cxEr3st7iQOdrkB/j0P/KkrPH+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VlVM46bgQz9v7Jb;
-	Thu, 23 May 2024 22:05:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id C614D1407F5;
-	Thu, 23 May 2024 22:27:43 +0800 (CST)
-Received: from [10.206.134.102] (unknown [10.206.134.102])
-	by APP2 (Coremail) with SMTP id GxC2BwAXAydUUk9moRnACA--.19046S2;
-	Thu, 23 May 2024 15:27:43 +0100 (CET)
-Message-ID: <73e08b17-cb2a-4e14-a94f-7144c5738684@huaweicloud.com>
-Date: Thu, 23 May 2024 16:27:29 +0200
+	 In-Reply-To:Content-Type; b=EcO9x1cUlRjH0/gzvTBB9uZy8iTaHe8by9mftFgNl4jc3mBUZjLGRkenSt/pZtuk0i+Vvt7zrdQOpFfIzTWMFm45I1MFSnc6TyZoJPDUmwjTxaQJD8pM6fc3YFZ1xMcfIMV+bi5Sq+CyMSvr1aabMC5dZUHNPflTtDo+h03dle0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pqlvxgCI; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716474523; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=9wPJMsA7uUhGJBy9UQb2/zbE2MRvDozVPDCHZoma3hs=;
+	b=pqlvxgCIOI5o9dB3XK5gyt1UAyhflc3P2qlqzJRGsSBghtHe9YD/DfvD4Mmwk+0Q4uOj6dJ0SnxpzQ6ANrV6TrWYXHwpm2E7HFkNAwMi+DToyV3pZV/YGlHodpWmJh4Up3ManIdoarILHggZYdSvQOImrZKM6lOzsPGrT3YPBZQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0W739OVi_1716474521;
+Received: from 30.39.171.189(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W739OVi_1716474521)
+          by smtp.aliyun-inc.com;
+          Thu, 23 May 2024 22:28:43 +0800
+Message-ID: <11f10862-9149-49c7-bac4-f0c1e0601b23@linux.alibaba.com>
+Date: Thu, 23 May 2024 22:28:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,178 +48,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: LKMM: Making RMW barriers explicit
-To: Andrea Parri <parri.andrea@gmail.com>,
- Alan Stern <stern@rowland.harvard.edu>
-Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, kernel-team@meta.com, boqun.feng@gmail.com,
- j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- Joel Fernandes <joel@joelfernandes.org>
-References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
- <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
- <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
- <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
- <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
- <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
- <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
- <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
- <Zk4jQe7Vq3N2Vip0@andrea>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <Zk4jQe7Vq3N2Vip0@andrea>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3 06/12] cachefiles: add consistency check for
+ copen/cread
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
+ jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
+References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
+ <20240522114308.2402121-7-libaokun@huaweicloud.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240522114308.2402121-7-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwAXAydUUk9moRnACA--.19046S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3XF18tF4fCF1rJFW7Xr47Arb_yoW7Wr45pF
-	WkKa40ka1DJ3409w1vvws7XFy5uFZ5Gay5JF98J34kAFs8ur929r15KayY9a4kGr4kA34j
-	vrWjqry8u3WDAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbU
-	UUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
 
 
-Am 5/22/2024 um 6:54 PM schrieb Andrea Parri:
-> Alan, all,
+On 5/22/24 7:43 PM, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> ("randomly" picking a recent post in the thread, after having observed
-> this discussion for a while...)
+> This prevents malicious processes from completing random copen/cread
+> requests and crashing the system. Added checks are listed below:
 > 
->> It would be better if there was a way to tell herd7 not to add the 'mb
->> tag to failed instructions in the first place.  This approach is
->> brittle; see below.
+>   * Generic, copen can only complete open requests, and cread can only
+>     complete read requests.
+>   * For copen, ondemand_id must not be 0, because this indicates that the
+>     request has not been read by the daemon.
+>   * For cread, the object corresponding to fd and req should be the same.
 > 
-> AFAIU, changing the herd representation to generate mb-accesses in place
-> of certain mb-fences...
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Acked-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/cachefiles/ondemand.c | 27 ++++++++++++++++++++-------
+>  1 file changed, 20 insertions(+), 7 deletions(-)
 > 
->> If you do want to use this approach, it should be simplified.  All you
->> need is:
->>
->> 	[M] ; po ; [RMW_MB]
->>
->> 	[RMW_MB] ; po ; [M]
->>
->> This is because events tagged with RMW_MB always are memory accesses,
->> and accesses that aren't part of the RMW are already covered by the
->> fencerel(Mb) thing above.
-> 
-> .. and updating the .cat file to the effects of something like
-> 
->    -let mb = ([M] ; fencerel(Mb) ; [M]) |
->    +let mb = (([M] ; po? ; [Mb] ; po? ; [M]) \ id) |
-> 
-> .. can hardly be called "making RMW barriers explicit".  (So much so
-> that the first commit in PR #865 was titled "Remove explicit barriers
-> from RMWs".  :-))
-> 
-> Overall, this discussion rather seems to confirm the close link between
-> tools/memory-model/ and herdtools7.  (After all, to what extent could
-> any putative RMW_MB be considered "explicit" without _knowing the under-
-> lying representation of the RMW operations...)  
+> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+> index bb94ef6a6f61..898fab68332b 100644
+> --- a/fs/cachefiles/ondemand.c
+> +++ b/fs/cachefiles/ondemand.c
+> @@ -82,12 +82,12 @@ static loff_t cachefiles_ondemand_fd_llseek(struct file *filp, loff_t pos,
+>  }
+>  
+>  static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+> -					 unsigned long arg)
+> +					 unsigned long id)
+>  {
+>  	struct cachefiles_object *object = filp->private_data;
+>  	struct cachefiles_cache *cache = object->volume->cache;
+>  	struct cachefiles_req *req;
+> -	unsigned long id;
+> +	XA_STATE(xas, &cache->reqs, id);
+>  
+>  	if (ioctl != CACHEFILES_IOC_READ_COMPLETE)
+>  		return -EINVAL;
+> @@ -95,10 +95,15 @@ static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+>  	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>  		return -EOPNOTSUPP;
+>  
+> -	id = arg;
+> -	req = xa_erase(&cache->reqs, id);
+> -	if (!req)
+> +	xa_lock(&cache->reqs);
+> +	req = xas_load(&xas);
+> +	if (!req || req->msg.opcode != CACHEFILES_OP_READ ||
+> +	    req->object != object) {
+> +		xa_unlock(&cache->reqs);
+>  		return -EINVAL;
+> +	}
+> +	xas_store(&xas, NULL);
+> +	xa_unlock(&cache->reqs);
+>  
+>  	trace_cachefiles_ondemand_cread(object, id);
+>  	complete(&req->done);
+> @@ -126,6 +131,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	unsigned long id;
+>  	long size;
+>  	int ret;
+> +	XA_STATE(xas, &cache->reqs, 0);
+>  
+>  	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>  		return -EOPNOTSUPP;
+> @@ -149,9 +155,16 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>  	if (ret)
+>  		return ret;
+>  
+> -	req = xa_erase(&cache->reqs, id);
+> -	if (!req)
+> +	xa_lock(&cache->reqs);
+> +	xas.xa_index = id;
+> +	req = xas_load(&xas);
+> +	if (!req || req->msg.opcode != CACHEFILES_OP_OPEN ||
+> +	    !req->object->ondemand->ondemand_id) {
+
+For a valid opened object, I think ondemand_id shall > 0.  When the
+copen is for the object which is in the reopening state, ondemand_id can
+be CACHEFILES_ONDEMAND_ID_CLOSED (actually -1)?
+
+Otherwise looks good to me.
 
 
-My view is a bit different. There's more or less standard theory for 
-weak memory models, including how operations at the source code level 
-map to events in the graph.
-
-Part of that standard theory are relations like rmw, and the 
-circumstances under which they appear in the graph.
-
-You'll see these relations in generic papers about weak memory models, 
-like GenMC, Hahn, etc. as well as in pretty much every specific memory 
-model like TSO, C11, PowerPC, VMM, etc., totally independently of herd7 
-(even though these notations have historically developed together with 
-herd).
-
-Naively I would expect that a tool like herd7 would be a generic WMM 
-exploration tool, which follows these standards with a very obvious 1:1 
-mapping of what we see in the code and the events we see in the graph, 
-plus perhaps a thin and explicit configurable herd7-specific mapping 
-layer like what we see in linux_kernel.cat to configure the syntax for a 
-specific model.
-
-In that mapping layer, we currently see that xchg() is an exchange 
-operation with an Mb tag. Just like an smp_load_acquire is a read with 
-an acquire tag.
-Or so it seems.
-
-Instead, we find that contrary to what's written in that file, and 
-contrary to the conventions, an xchg() is an F[mb] ; R[once] ; W[once] 
-; F[Mb]. And in fact a cmp_xchg could even be a R[once].
-
-That's because the herd7 tool isn't quite as generic as one might think, 
-but rather specifically "detects" that it's running the LKMM and then 
-the mapping isn't what you'd naively think, but something hidden in the 
-OCaml implementation of herd7.
-
-That would be comparable to a popular tool for matrix calculations using 
-the syntax
-[ 10  5  4
-   3   4  2 ]
-
-to define a 2x3 matrix, unless one of the values is -3, in which case it 
-becomes a vector of 6 elements, because that's what a really important 
-user of the tool wanted, and then didn't see enough of a need to change.
-
-My point is that to anyone who has seen standard matrix notation, this 
-syntax in a matrix-computation-tool looks like it would be a matrix, 
-right? And it usually is a matrix; then it should always be a matrix.
-
-I usually say I don't look much at natural language documentation and 
-only read code, because code doesn't lie. In this case, the natural 
-language documentation is saying the correct thing thanks to the hard 
-work of a lot of people, but the code (in .cat etc.) doesn't do what it 
-seems to be doing.
-
-And I think that should be changed, both to reduce the anyways high 
-mental load of reading the code without having to do mental 
-transformations in your head, and also to make herd more Lkmm-agnostic.
-In the ideal world, herd doesn't know anything about Lkmm except what we 
-tell it through tools/memory-model, and generic things like C syntax + 
-semantics.
-
-So when using syntax like dom(rmw), I don't see it as confirming the 
-close link to herd more than before, but rather depending more on 
-standard notations and conventions, and relying on herd's close link to 
-those standard notations (such as using rmw for the rmw relation and 
-dom(r) for the domain of r) for dom(rmw) to mean what anyone who has 
-deeply read a couple of modern WMM papers would expect.
-
-
-
-> My understanding is that
-> this discussion was at least in part motivated by a desire to experiment
-> and familiarize with the current herd representation
-
-I would phrase it more extreme: I want to get rid of the unnecessary 
-non-standard parts of the herd representation.
-
-Those parts have led me astray several times. Ok, who cares about me, 
-but even Luc once forgot about the non-standard parts and thought it is 
-a bug:
-
-https://github.com/herd/herdtools7/issues/384#issuecomment-1132859904
-
-I also know that Viktor stumbled over it before and also suggested we 
-change it.
-
-I think there's 0 benefit to them, they're just wasting people's time 
-and energy and lead to misunderstanding.
-
-Ok, this e-mail became long. Hope it at least helps clarify my 
-motivation :))
-
-jonas
-
+-- 
+Thanks,
+Jingbo
 
