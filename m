@@ -1,368 +1,154 @@
-Return-Path: <linux-kernel+bounces-187679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8558CD665
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:59:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3138CD680
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BA621F21DB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:59:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4053B1F22EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A418C04;
-	Thu, 23 May 2024 14:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FB41097B;
+	Thu, 23 May 2024 15:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KB/WMy7a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsR/erEG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C4AAD27;
-	Thu, 23 May 2024 14:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F4010A0A;
+	Thu, 23 May 2024 15:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476379; cv=none; b=hhNu2nm6RZw7aznj7QoFlRK/64Y+cN6BB977xr38jo8fWA2b4GSSRbRSh53B8J30lw9cMxea9brYKxT7lSinkYJdUrjQMvCk4VGZOBM8LoerHB4olmlkS1Ec6X02+DlDKzp3TTUkQ7hhLgpoZWnulL6/kRKr3QxM0ebelHM82tE=
+	t=1716476512; cv=none; b=A3aLifEI60OW7BB2fMxao1Qn6HAlnPeO9TefqgtC6WwHykVJpupVtRoUr8cuaxFNgh86WzTL4nF4j1R/qUi4yUWowBeRnwcJpkHtAyqG5W3aQmzOQMAGLYfmEuP882pSr0nNoKCQkj2/nNUfMWJPyknjdDTyQHzdlqdvRYad1ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476379; c=relaxed/simple;
-	bh=AByCXbZWFXkxLRVPN8yk5rxjf2TdytKFei9+qkOPvcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=TWjzkwX/fQNlkdGvWNMXoTyX1mJ3kNN+9J3+HFQLdCxG7AQ9+WuY5T0ndenUUA/GCd8T3flXayzwnrrG83j05N+Pw4nkFq5ImxRKfGf9QBuvnv88KuQKDB3x5Krxqd53q2HhkrT75RmyBd2RFH7uo9pKACswL3nO+zmLNHQJxkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KB/WMy7a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5469BC32781;
-	Thu, 23 May 2024 14:59:38 +0000 (UTC)
+	s=arc-20240116; t=1716476512; c=relaxed/simple;
+	bh=vjt+cmVcTd/Pb33Pdy5i3IcyArhpy6Hbpole/X6gRcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgV6kfpsSazIojmbs7X8TYBcK4XVRSYFhWDZjyBU3Wdhcy2XNb6wB/BpJL5s8Fyb85HIUXG9TjEQLwFk81UnMW917VtVKKDa6OPhLCHbk90RhhV1DKsiEXylD4tkfLr0gLSfe+C0Tj/KWOzfyRnvuaOQT/XJ97Plfu48O1evD64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsR/erEG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F92C32781;
+	Thu, 23 May 2024 15:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716476378;
-	bh=AByCXbZWFXkxLRVPN8yk5rxjf2TdytKFei9+qkOPvcU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KB/WMy7awBiH/hsZmt97sBLmrKxGXj9DRZIwl/TRSh99kSGafbvAYEW0iygRkZn4S
-	 BkhvRxQBT+2yd2WpjCxVxYLwoeH+rvigzC38IQ4d9WZsDVec9ZkdlXDqQsJqRc4pAK
-	 vMK5MMUnqIggSmzpC0hwyOJ+8QI0iJ3laDP+1AEYC0XGi5XHwEXgR+8gNhi13B2hSl
-	 8EJhUg37sGYJ136HI2eOBVDeAsgfDHokivhedZrkWQ8Kc7UVshaBxZxSoEH6czTlRS
-	 6JbH9UlT5W73callIPuynNf8ljnC26QhtcI1H4M50V+KoFCAtitfWgTinpLGaEafsO
-	 e17hWKZ4wjkLw==
-Date: Thu, 23 May 2024 09:59:36 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: corbet@lwn.net, bhelgaas@google.com, galshalom@nvidia.com,
-	leonro@nvidia.com, jgg@nvidia.com, treding@nvidia.com,
-	jonathanh@nvidia.com, mmoshrefjava@nvidia.com, shahafs@nvidia.com,
-	vsethi@nvidia.com, sdonthineni@nvidia.com, jan@nvidia.com,
-	tdave@nvidia.com, linux-doc@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
-Subject: Re: [PATCH V3] PCI: Extend ACS configurability
-Message-ID: <20240523145936.GA118272@bhelgaas>
+	s=k20201202; t=1716476511;
+	bh=vjt+cmVcTd/Pb33Pdy5i3IcyArhpy6Hbpole/X6gRcQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dsR/erEGWqTrpUYgBr8bhaGLVokjd8cGzstRgXhQ2zvCED20LY5mA0MnJl4aB4HJc
+	 La4XclaMTB3PLF5t0NJgcHpcBikZatrx9W4WY9ygCpu1jkJvp4V89pXQqDXr566CAL
+	 gTkjCgb0GVECIIBAC7rE9Vcc1BNWnE1kQBSn89vMljOj6PktOdWsJ4kFOSyrO2FQOr
+	 YJRZELiVBmkHdkK9xYQW0SBB5IY9tYW95xCXMJLE7tBB8hjy9m3a/szl7vBydpvJgo
+	 1cI8r/UjUvpLRpRRJc65nGhaaJ0KJTCyhyGWqb4hhOTwLwf4mJQ8SN2F9cBm49eRrj
+	 334Kp8GdszKmQ==
+Date: Thu, 23 May 2024 17:59:57 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Eric Chanudet <echanude@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nick Piggin <npiggin@gmail.com>, x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] mm/mm_init: use node's number of cpus in
+ deferred_page_init_max_threads
+Message-ID: <Zk9Z7S_wbumOekP6@kernel.org>
+References: <20240522203758.626932-4-echanude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240523063528.199908-1-vidyas@nvidia.com>
+In-Reply-To: <20240522203758.626932-4-echanude@redhat.com>
 
-[+cc iommu folks]
-
-On Thu, May 23, 2024 at 12:05:28PM +0530, Vidya Sagar wrote:
-> For iommu_groups to form correctly, the ACS settings in the PCIe fabric
-> need to be setup early in the boot process, either via the BIOS or via
-> the kernel disable_acs_redir parameter.
-
-Can you point to the iommu code that is involved here?  It sounds like
-the iommu_groups are built at boot time and are immutable after that?
-
-If we need per-device ACS config that depends on the workload, it
-seems kind of problematic to only be able to specify this at boot
-time.  I guess we would need to reboot if we want to run a workload
-that needs a different config?
-
-Is this the iommu usage model we want in the long term?
-
-> disable_acs_redir allows clearing the RR|CR|EC ACS flags, but the PCIe
-> spec Rev3.0 already defines 7 different ACS related flags with many more
-> useful combinations depending on the fabric design.
-
-If we need a spec citation, I'd rather use r6.x since r3.0 is from
-2010.
-
-> For backward compatibility, leave the 'disable_acs_redir' as is and add
-> a new parameter 'config_acs'so that the user can directly specify the ACS
-> flags to set on a per-device basis. Use a similar syntax to the existing
-> 'resource_alignment'  parameter by using the @ character and have the user
-> specify the ACS flags using a bit encoding. If both 'disable_acs_redir' and
-> 'config_acs' are specified for a particular device, configuration specified
-> through 'config_acs' takes precedence over the other.
+On Wed, May 22, 2024 at 04:38:01PM -0400, Eric Chanudet wrote:
+> x86_64 is already using the node's cpu as maximum threads. Make that the
+> default for all archs setting DEFERRED_STRUCT_PAGE_INIT.
 > 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> This returns to the behavior prior making the function arch-specific
+> with commit ecd096506922 ("mm: make deferred init's max threads
+> arch-specific").
+> 
+> Signed-off-by: Eric Chanudet <echanude@redhat.com>
+> 
 > ---
-> v3:
-> * Fixed a documentation issue reported by kernel test bot
+> Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64 platforms
+> shows faster deferred_init_memmap completions:
 > 
-> v2:
-> * Refactored the code as per Jason's suggestion
+> |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
+> |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
+> |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
+> |---------|-------------|--------------|-----------------|--------------|
+> | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
+> |---------|-------------|--------------|-----------------|--------------|
+> | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
+> | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
 > 
->  .../admin-guide/kernel-parameters.txt         |  22 +++
->  drivers/pci/pci.c                             | 148 +++++++++++-------
->  2 files changed, 112 insertions(+), 58 deletions(-)
+> - v1: https://lore.kernel.org/linux-arm-kernel/20240520231555.395979-5-echanude@redhat.com
+> - Changes since v1:
+>  - Make the generic function return the number of cpus of the node as
+>    max threads limit instead overriding it for arm64.
+> - Drop Baoquan He's R-b on v1 since the logic changed.
+> - Add CCs according to patch changes (ppc and s390 set
+>   DEFERRED_STRUCT_PAGE_INIT by default).
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 41644336e..b4a8207eb 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4456,6 +4456,28 @@
->  				bridges without forcing it upstream. Note:
->  				this removes isolation between devices and
->  				may put more devices in an IOMMU group.
-> +		config_acs=
-> +				Format:
-> +				=<ACS flags>@<pci_dev>[; ...]
-> +				Specify one or more PCI devices (in the format
-> +				specified above) optionally prepended with flags
-> +				and separated by semicolons. The respective
-> +				capabilities will be enabled, disabled or unchanged
-> +				based on what is specified in flags.
-> +				ACS Flags is defined as follows
-> +				bit-0 : ACS Source Validation
-> +				bit-1 : ACS Translation Blocking
-> +				bit-2 : ACS P2P Request Redirect
-> +				bit-3 : ACS P2P Completion Redirect
-> +				bit-4 : ACS Upstream Forwarding
-> +				bit-5 : ACS P2P Egress Control
-> +				bit-6 : ACS Direct Translated P2P
-> +				Each bit can be marked as
-> +				‘0‘ – force disabled
-> +				‘1’ – force enabled
-> +				‘x’ – unchanged.
-> +				Note: this may remove isolation between devices
-> +				and may put more devices in an IOMMU group.
->  		force_floating	[S390] Force usage of floating interrupts.
->  		nomio		[S390] Do not use MIO instructions.
->  		norid		[S390] ignore the RID field and force use of
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index a607f277c..a46264f83 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -887,30 +887,67 @@ void pci_request_acs(void)
+>  arch/x86/mm/init_64.c | 12 ------------
+>  mm/mm_init.c          |  2 +-
+>  2 files changed, 1 insertion(+), 13 deletions(-)
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index 7e177856ee4f..adec42928ec1 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -1354,18 +1354,6 @@ void __init mem_init(void)
+>  	preallocate_vmalloc_pages();
 >  }
 >  
->  static const char *disable_acs_redir_param;
-> +static const char *config_acs_param;
+> -#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> -int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
+> -{
+> -	/*
+> -	 * More CPUs always led to greater speedups on tested systems, up to
+> -	 * all the nodes' CPUs.  Use all since the system is otherwise idle
+> -	 * now.
+> -	 */
+> -	return max_t(int, cpumask_weight(node_cpumask), 1);
+> -}
+> -#endif
+> -
+>  int kernel_set_to_readonly;
 >  
-> -/**
-> - * pci_disable_acs_redir - disable ACS redirect capabilities
-> - * @dev: the PCI device
-> - *
-> - * For only devices specified in the disable_acs_redir parameter.
-> - */
-> -static void pci_disable_acs_redir(struct pci_dev *dev)
-> +struct pci_acs {
-> +	u16 cap;
-> +	u16 ctrl;
-> +	u16 fw_ctrl;
-> +};
-> +
-> +static void __pci_config_acs(struct pci_dev *dev, struct pci_acs *caps,
-> +			     const char *p, u16 mask, u16 flags)
+>  void mark_rodata_ro(void)
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index f72b852bd5b8..e0023aa68555 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -2126,7 +2126,7 @@ deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
+>  __weak int __init
+
+If s390 folks confirm there's no regression for them I think we can make
+this static.
+
+>  deferred_page_init_max_threads(const struct cpumask *node_cpumask)
 >  {
-> +	char *delimit;
->  	int ret = 0;
-> -	const char *p;
-> -	int pos;
-> -	u16 ctrl;
->  
-> -	if (!disable_acs_redir_param)
-> +	if (!p)
->  		return;
->  
-> -	p = disable_acs_redir_param;
->  	while (*p) {
-> +		if (!mask) {
-> +			/* Check for ACS flags */
-> +			delimit = strstr(p, "@");
-> +			if (delimit) {
-> +				int end;
-> +				u32 shift = 0;
-> +
-> +				end = delimit - p - 1;
-> +
-> +				while (end > -1) {
-> +					if (*(p + end) == '0') {
-> +						mask |= 1 << shift;
-> +						shift++;
-> +						end--;
-> +					} else if (*(p + end) == '1') {
-> +						mask |= 1 << shift;
-> +						flags |= 1 << shift;
-> +						shift++;
-> +						end--;
-> +					} else if ((*(p + end) == 'x') || (*(p + end) == 'X')) {
-> +						shift++;
-> +						end--;
-> +					} else {
-> +						pci_err(dev, "Invalid ACS flags... Ignoring\n");
-> +						return;
-> +					}
-> +				}
-> +				p = delimit + 1;
-> +			} else {
-> +				pci_err(dev, "ACS Flags missing\n");
-> +				return;
-> +			}
-> +		}
-> +
-> +		if (mask & ~(PCI_ACS_SV | PCI_ACS_TB | PCI_ACS_RR | PCI_ACS_CR |
-> +			    PCI_ACS_UF | PCI_ACS_EC | PCI_ACS_DT)) {
-> +			pci_err(dev, "Invalid ACS flags specified\n");
-> +			return;
-> +		}
-> +
->  		ret = pci_dev_str_match(dev, p, &p);
->  		if (ret < 0) {
-> -			pr_info_once("PCI: Can't parse disable_acs_redir parameter: %s\n",
-> -				     disable_acs_redir_param);
-> -
-> +			pr_info_once("PCI: Can't parse acs command line parameter\n");
->  			break;
->  		} else if (ret == 1) {
->  			/* Found a match */
-> @@ -930,56 +967,38 @@ static void pci_disable_acs_redir(struct pci_dev *dev)
->  	if (!pci_dev_specific_disable_acs_redir(dev))
->  		return;
->  
-> -	pos = dev->acs_cap;
-> -	if (!pos) {
-> -		pci_warn(dev, "cannot disable ACS redirect for this hardware as it does not have ACS capabilities\n");
-> -		return;
-> -	}
-> -
-> -	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
-> +	pci_dbg(dev, "ACS mask  = 0x%X\n", mask);
-> +	pci_dbg(dev, "ACS flags = 0x%X\n", flags);
->  
-> -	/* P2P Request & Completion Redirect */
-> -	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
-> +	/* If mask is 0 then we copy the bit from the firmware setting. */
-> +	caps->ctrl = (caps->ctrl & ~mask) | (caps->fw_ctrl & mask);
-> +	caps->ctrl |= flags;
->  
-> -	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
-> -
-> -	pci_info(dev, "disabled ACS redirect\n");
-> +	pci_info(dev, "Configured ACS to 0x%x\n", caps->ctrl);
+> -	return 1;
+> +	return max_t(int, cpumask_weight(node_cpumask), 1);
 >  }
 >  
->  /**
->   * pci_std_enable_acs - enable ACS on devices using standard ACS capabilities
->   * @dev: the PCI device
-> + * @caps: default ACS controls
->   */
-> -static void pci_std_enable_acs(struct pci_dev *dev)
-> +static void pci_std_enable_acs(struct pci_dev *dev, struct pci_acs *caps)
->  {
-> -	int pos;
-> -	u16 cap;
-> -	u16 ctrl;
-> -
-> -	pos = dev->acs_cap;
-> -	if (!pos)
-> -		return;
-> -
-> -	pci_read_config_word(dev, pos + PCI_ACS_CAP, &cap);
-> -	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
-> -
->  	/* Source Validation */
-> -	ctrl |= (cap & PCI_ACS_SV);
-> +	caps->ctrl |= (caps->cap & PCI_ACS_SV);
->  
->  	/* P2P Request Redirect */
-> -	ctrl |= (cap & PCI_ACS_RR);
-> +	caps->ctrl |= (caps->cap & PCI_ACS_RR);
->  
->  	/* P2P Completion Redirect */
-> -	ctrl |= (cap & PCI_ACS_CR);
-> +	caps->ctrl |= (caps->cap & PCI_ACS_CR);
->  
->  	/* Upstream Forwarding */
-> -	ctrl |= (cap & PCI_ACS_UF);
-> +	caps->ctrl |= (caps->cap & PCI_ACS_UF);
->  
->  	/* Enable Translation Blocking for external devices and noats */
->  	if (pci_ats_disabled() || dev->external_facing || dev->untrusted)
-> -		ctrl |= (cap & PCI_ACS_TB);
-> -
-> -	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
-> +		caps->ctrl |= (caps->cap & PCI_ACS_TB);
->  }
->  
->  /**
-> @@ -988,23 +1007,33 @@ static void pci_std_enable_acs(struct pci_dev *dev)
->   */
->  static void pci_enable_acs(struct pci_dev *dev)
->  {
-> -	if (!pci_acs_enable)
-> -		goto disable_acs_redir;
-> +	struct pci_acs caps;
-> +	int pos;
-> +
-> +	pos = dev->acs_cap;
-> +	if (!pos)
-> +		return;
->  
-> -	if (!pci_dev_specific_enable_acs(dev))
-> -		goto disable_acs_redir;
-> +	pci_read_config_word(dev, pos + PCI_ACS_CAP, &caps.cap);
-> +	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &caps.ctrl);
-> +	caps.fw_ctrl = caps.ctrl;
->  
-> -	pci_std_enable_acs(dev);
-> +	/* If an iommu is present we start with kernel default caps */
-> +	if (pci_acs_enable) {
-> +		if (pci_dev_specific_enable_acs(dev))
-> +			pci_std_enable_acs(dev, &caps);
-> +	}
->  
-> -disable_acs_redir:
->  	/*
-> -	 * Note: pci_disable_acs_redir() must be called even if ACS was not
-> -	 * enabled by the kernel because it may have been enabled by
-> -	 * platform firmware.  So if we are told to disable it, we should
-> -	 * always disable it after setting the kernel's default
-> -	 * preferences.
-> +	 * Always apply caps from the command line, even if there is no iommu.
-> +	 * Trust that the admin has a reason to change the ACS settings.
->  	 */
-> -	pci_disable_acs_redir(dev);
-> +	__pci_config_acs(dev, &caps, disable_acs_redir_param,
-> +			 PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC,
-> +			 ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC));
-> +	__pci_config_acs(dev, &caps, config_acs_param, 0, 0);
-> +
-> +	pci_write_config_word(dev, pos + PCI_ACS_CTRL, caps.ctrl);
->  }
->  
->  /**
-> @@ -7023,6 +7052,8 @@ static int __init pci_setup(char *str)
->  				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
->  			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
->  				disable_acs_redir_param = str + 18;
-> +			} else if (!strncmp(str, "config_acs=", 11)) {
-> +				config_acs_param = str + 11;
->  			} else {
->  				pr_err("PCI: Unknown option `%s'\n", str);
->  			}
-> @@ -7047,6 +7078,7 @@ static int __init pci_realloc_setup_params(void)
->  	resource_alignment_param = kstrdup(resource_alignment_param,
->  					   GFP_KERNEL);
->  	disable_acs_redir_param = kstrdup(disable_acs_redir_param, GFP_KERNEL);
-> +	config_acs_param = kstrdup(config_acs_param, GFP_KERNEL);
->  
->  	return 0;
->  }
+>  /* Initialise remaining memory on a node */
 > -- 
-> 2.25.1
+> 2.44.0
 > 
+
+-- 
+Sincerely yours,
+Mike.
 
