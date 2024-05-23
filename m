@@ -1,109 +1,168 @@
-Return-Path: <linux-kernel+bounces-187483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA808CD262
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:41:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D486B8CD263
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B04A1F22ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ABE1283BEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28084148834;
-	Thu, 23 May 2024 12:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7ED149012;
+	Thu, 23 May 2024 12:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fuS+e5JH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Tg7XhoIH"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADC01E4B3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B74E148FF4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716468063; cv=none; b=svUf4/YRUUrQKLZhCz+3mB2PHnKRKacmrE0t/lbQf5W8474VzGK8aRxIT6618mD8XIFhDrHEI7ah7F9IhEAVzxSdLctrS6+hEcyF9eLhJ3sVB161ztRXpvg5VDkjmQW+hLA5h/Vyo+C3vOPuCrnnGp7Q34cjHzN/WBFghgLEgG0=
+	t=1716468139; cv=none; b=NFn1TxZW9r5IHO86Tu6B+bu65/tVfJutcrEZ6YGYzHAc3VVE3FXybmgXaZB5ZtYsD/Ha1mS3d+N/6Tyf4k371D/c1Rl48lwmHW/P7dughSDsVeeUqs8jt0NNn5XuRSe9Xf0k1jt6sXTBcTidmvTqmnhRc7Oqs0eWdyQgdlUjlsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716468063; c=relaxed/simple;
-	bh=TACJdT4OuSHZHHTmCDOU5pephYt4f6iNsHPpUY1BkX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFJWSmbM6n8tqrPl4ZdJ5f/PcO3n4hpX1z4CypUOWXhr71qDl1PhVF1TvlVUuSwqGI9IV7e/wzP5HqmMA/gVF+cRTw5WOVkIOiB71JJLtE/HWWB3KD0N3vgOM0JTvraPMcB75WUaBZ5B9ywWqRouOp/mDXGpv3qp4iPFZBMyM2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fuS+e5JH; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716468060; x=1748004060;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TACJdT4OuSHZHHTmCDOU5pephYt4f6iNsHPpUY1BkX0=;
-  b=fuS+e5JHvi3d+yVlpEY6oZuRBzoqGd9gWyRQxXBsrDrJcoUj6btrq4KC
-   YQ2XsRLi4INOgvPRzRbmRS5uFSXearIBOErEJQZcSyO+RPTPR6Lcl0Exq
-   PZEQwH4LuFfAqsrnirr63KlEOSuvEOg3x1oitI6webXITmChMrCOo8Fi3
-   aqWSY1bZa0bgZtSr2BastHup6mL9c7/m8G9usWcnQJH8x8IQqa8ONfTF4
-   NA74F9N04ny1QrbJRjMoeZd97EahASC3prWuqViDPNchgDnCxKlUU+cMX
-   8SKHdRSFv8i/W5UmbmzFgpovpO7rX7ByZuTn33Bs30XiONat0A+TSHQHP
-   w==;
-X-CSE-ConnectionGUID: BetmY28SShKMU8D8jRIMCw==
-X-CSE-MsgGUID: 7Nggqdh+TUqNAfPUoRrrmA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="24191185"
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="24191185"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 05:40:59 -0700
-X-CSE-ConnectionGUID: 09+nUypJTuqZaMuj77Scsw==
-X-CSE-MsgGUID: 3oFoL+ayQF+Oxc1jncHy0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="71067955"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 23 May 2024 05:40:59 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id CD271E7; Thu, 23 May 2024 15:40:57 +0300 (EEST)
-Date: Thu, 23 May 2024 15:40:57 +0300
-From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
-Subject: Re: [Patch v3] x86/head/64: remove redundant check on
- level2_kernel_pgt's _PAGE_PRESENT bit
-Message-ID: <wwmqtzeukfrzriysxe3b5ueo5iehqnaf55puaok33cbu56pemb@rzq2m7naja4q>
-References: <20240523123539.14260-1-richard.weiyang@gmail.com>
+	s=arc-20240116; t=1716468139; c=relaxed/simple;
+	bh=U4MP831/hb1ixJbb1U8C6JGQJEg4/rE8FZTtu0IhBAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E2K5pQ+57DoPbVCdSGc/oe65r/0N1kd5JyQzluRZaBNa8MCev7WC5jg96fox+SLCXZADZ2Zq01l7DCPETE/8vseaO4TPfddz4//idPfV9zV6k6nCSi8SeiyVselx/laYwHgvjxJCfQtX54pJ1cBP3vjg1ARw+P3PVbIqlHGSfTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Tg7XhoIH; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-792ba098eccso458880885a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1716468137; x=1717072937; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0TO7M+YunjW2XWp159sTlTrU8T1iTyPmvxS8aAeSJU=;
+        b=Tg7XhoIHACrJ+Yi6K/1FQHszPfIuorJiwDWkr1nLnQIz/vtB+11c3AcQ76pz2q2utN
+         KE3WH0vtj4EAOX4XmHh60iUA9uq9JzxB/2hxMFEjN8tnDHw+2vovWrsQsS02seDCjrEh
+         tl0HEYOBhEfOw7Poio7Tx9NWMDDUZzysX1L5w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716468137; x=1717072937;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u0TO7M+YunjW2XWp159sTlTrU8T1iTyPmvxS8aAeSJU=;
+        b=Scd2riPAR4h/mHGW544Uy6KIF5eJUd1ADQoWBVUfsnHfYFAQ5G5Lrv4Ujn+eOs5whb
+         +ohCd0g/wGm0B9TygHI9oBvgtuSJVrd9TFiYH97WMtvNJo/sh5kiBoBRYRT86SbvPNQ9
+         30ZKls5zTh20bXLC5/C4mj1nUrAaF5lDY1A5/gCo7bqmkbUXQ+or9EUCGsLpJxDydg3e
+         TY+wN1uYI1vf4v0+Q1YJ6CoAaSRN+y5hdxz2IfSAH2QdwCggknLBvFptG2Wl8G0HdPSr
+         jqREuUPwfHnUv2q3o47aNF0eQtgG4TblaIJY96spAEmyvsB84fMqAMaeY6/Wl6gOh9o+
+         bFMg==
+X-Gm-Message-State: AOJu0YwfayGXSDxg6dUVLdwRCL/y/yOdr/3wCzsqZFBkA6AVFbek5dgT
+	QK1SFt5jQD95vxiG1gfZ0HOYz5Qysw7aAKNxBps7WSR2plk4FoZG2m+eJ/oh6Xo=
+X-Google-Smtp-Source: AGHT+IE6LURKo3NpFLCHpZprZ836WdrwU50TxnOb6beTJvjxmMIz9dBYSTdfVMB8TZZ0LLBTtRAlQg==
+X-Received: by 2002:a05:620a:424e:b0:790:fc5a:1ffd with SMTP id af79cd13be357-794994c0aebmr572293385a.66.1716468136824;
+        Thu, 23 May 2024 05:42:16 -0700 (PDT)
+Received: from [10.125.231.30] ([217.156.233.157])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc57asm1488675685a.81.2024.05.23.05.42.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 05:42:16 -0700 (PDT)
+Message-ID: <771bbaa3-0fa5-4b0a-a0a2-6516b4f42867@citrix.com>
+Date: Thu, 23 May 2024 13:42:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523123539.14260-1-richard.weiyang@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
+ handler
+To: Alexandre Chartre <alexandre.chartre@oracle.com>, x86@kernel.org,
+ kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
+ pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
+ konrad.wilk@oracle.com, peterz@infradead.org, gregkh@linuxfoundation.org,
+ seanjc@google.com, dave.hansen@linux.intel.com, nik.borisov@suse.com,
+ kpsingh@kernel.org, longman@redhat.com, bp@alien8.de, pbonzini@redhat.com,
+ "Kaplan, David" <david.kaplan@amd.com>
+References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 23, 2024 at 12:35:39PM +0000, Wei Yang wrote:
-> Remove a redundant check on kernel code's PMD _PAGE_PRESENT attribute
-> before fix up.
-> 
-> Current process looks like this:
-> 
->     pmd in [0, _text)
->         unset _PAGE_PRESENT
->     pmd in [_text, _end]
->         if (_PAGE_PRESENT)
->             fix up delta
->     pmd in (_end, 512)
->         unset _PAGE_PRESENT
-> 
-> level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
-> redundant
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> CC: Ingo Molnar <mingo@kernel.org>
-> CC: Steve Wahl <steve.wahl@hpe.com>
+On 23/05/2024 1:33 pm, Alexandre Chartre wrote:
+> diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+> index 11c9b8efdc4c..7fa04edc87e9 100644
+> --- a/arch/x86/entry/entry_64_compat.S
+> +++ b/arch/x86/entry/entry_64_compat.S
+> @@ -91,7 +91,6 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>  
+>  	IBRS_ENTER
+>  	UNTRAIN_RET
+> -	CLEAR_BRANCH_HISTORY
+>  
+>  	/*
+>  	 * SYSENTER doesn't filter flags, so we need to clear NT and AC
+> @@ -116,6 +115,12 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>  	jnz	.Lsysenter_fix_flags
+>  .Lsysenter_flags_fixed:
+>  
+> +	/*
+> +	 * CLEAR_BRANCH_HISTORY can call other functions. It should be invoked
+> +	 * after making sure TF is cleared because single-step is ignored only
+> +	 * for instructions inside the entry_SYSENTER_compat function.
+> +	 */
+> +	CLEAR_BRANCH_HISTORY
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Exactly the same is true of UNTRAIN_RET, although it will only manifest
+in i386 builds running on AMD hardware (SYSENTER is #UD on AMD hardware
+in Long mode.)
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+#DB is IST so does handle it's own speculation safety.  It should be
+safe to move all the speculation safety logic in the sysenter handler to
+after .Lsysenter_flags_fixed:, I think?
+
+~Andrew
 
