@@ -1,151 +1,108 @@
-Return-Path: <linux-kernel+bounces-187205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC698CCE91
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DED58CCE95
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1EB1C22396
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05481F2532B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603ED13D29D;
-	Thu, 23 May 2024 08:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD8D13D259;
+	Thu, 23 May 2024 08:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmI1lbDD"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ujVp4Rig"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76DD13D28C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B09513D246
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716453814; cv=none; b=qKrXsVYMAiulI6Q5Y7ZZdxXIcQLeEuJ32ZOFZ8+o76+voUxFFi+1jgHth10EGwWfJJC85cznkIcFh0Jti5c7iW0YpI3FJMcyswY5FouK1eJkjhZuryMaP28t0npb0pzCDqs7xPKoOI2Gy/ikUwp2zUqjp0ZULjlk01CEpZNhcSQ=
+	t=1716453971; cv=none; b=Jrzgl2KXIjr8/g0hTyXAqLO4dXUsbPHfqG4WGpYfMLAMea0ZYFeFZAkTd0s+s3pp4aiuRjUaid9TefUSpdvK5V7UOhvW0tYwjTpFoJIeZ2JoIgCn9BjiAcc2RAxOoLqvxLz5k1KMyHvDupQgD+RMZfVp+pWffVy8hfc77Z3fnv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716453814; c=relaxed/simple;
-	bh=7Nx57xzjK255CGbSbs92Xr9PidgVaqywyNdpKJ9s3Bs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FMJp5Y/+h52cfiXaB8lp4unq7Obni1Dl3Oi0tPpe7PKK63nsKX16Oi2cIOrU9gGnlh0YrJe/bsc3KpVpVE3JgF50nCaGmV27w1i6Who6ykEIaJrNlYb/1eZ2wNizcTLWr6bqRwFzK70GfCwuzFcbzvOBNLNcTsh8IcthC+Jtc80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JmI1lbDD; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso71353101fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716453811; x=1717058611; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8xm4aIfmcPgLaTdq2sWutAdQtLGIZwY55+PCwPzLdWE=;
-        b=JmI1lbDDXeQkjTzOZ3FOej+YWVzO8Jnys196AFG7sKvOJNP20eXxKD9EgRiYkRVqlq
-         ZUAxv2Z8HQxmSUAilUdH1m3hTujxbNGKuHfACIxyYPzAYN0ijbofGgCYMEcjEKTMmHAo
-         x55BXhTh17Oc6c7fUy26QEXA+we21IAio3ymUdUwp+hRMxvqd6Ha0AE0KdyKEWYNvGit
-         pR6BxdyZ5HbWBTxWXsXOv2qfyOAtsYjE2suME9pibJCVqRxP1YK5MMyyEukQCCr4T/zQ
-         DrCP9AvmaPp/sXR9f/zPQ46xcqcGq+W79lqd3iY6M6BezpnJ036XuOwfDb7bva53PU3F
-         xcYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716453811; x=1717058611;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8xm4aIfmcPgLaTdq2sWutAdQtLGIZwY55+PCwPzLdWE=;
-        b=kxYt3CVG99Sn4FYrkB8czhSMeT8S1WMTz93nasTZklBpfKBMj4aPwPLfUSsixkmkoI
-         3NTzFlARCEpG8Sdf6ydV66xWYKWn/QcEPKvsL3bT2/vkJZ+TkjlCSNvh69nmoFwrXveK
-         gqCjXL5QkzuCD+dYmKFewMlv57k+8rgPaPtv1ihKpQQf19ZozNNpMeTdLWCFLD+tgzfm
-         APxIYwh1ljERpkt22MYgaVoosSgstfgXe7t7jrAAK5w6OojMq3NuKzKb/Fm6cwTBE353
-         q/czzXy4keIut4h/k/kQPSosENXoP3qr4pv5Bm1z5AzsCYPaEGihFEpBvN51slNhSEyU
-         6Yhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9+17qOfwtaj1B+lsd4y7sggPIDBtgflw1PNU1dJEiX7hge7Mr55iFYfilppTMcIMMzoP94lPExl70nbcSYlzQe7Ep5mHVUGYEq0eN
-X-Gm-Message-State: AOJu0YwEgJEu1fzY3ziNG1euzjdJB2j4OyUbnFdM4XaBJyghLEYwJGLp
-	7aOQVYwPLIid1LSxhnxS1qiaBZ6kxvv83ReQpOf4OUml8v7axWh5
-X-Google-Smtp-Source: AGHT+IFuJT+Iycu4zUWyrnDMP2GPSB3ySw2LtbIA56wh9nYmdvR4vP/m7p0AEJR7txQa+azNtF7EjQ==
-X-Received: by 2002:a2e:3609:0:b0:2e1:ae29:f28a with SMTP id 38308e7fff4ca-2e94959c736mr34882401fa.34.1716453810739;
-        Thu, 23 May 2024 01:43:30 -0700 (PDT)
-Received: from localhost.localdomain ([5.188.167.245])
-        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2e706ee0a65sm19233781fa.112.2024.05.23.01.43.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 01:43:29 -0700 (PDT)
-From: Sergey Matyukevich <geomatsi@gmail.com>
-To: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Sergey Matyukevich <sergey.matyukevich@syntacore.com>
-Subject: [PATCH v2] riscv: prevent pt_regs corruption for secondary idle threads
-Date: Thu, 23 May 2024 11:43:23 +0300
-Message-ID: <20240523084327.2013211-1-geomatsi@gmail.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1716453971; c=relaxed/simple;
+	bh=yj7Hf/rOLr1AgYBCC7C+5E7w8ubSJZrqEgnnz4pLIIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NyxpcLPLpRUcTVh1wHS5I4eSz3jpM07aybABg5ehWjGavD/tOWpYL71zzQFHVt718ag2pzOMj1FMYNmRj8AQ5CaCNEa0+0VZt+zQsCm+OeDiwYgnpxr8zdQqT03StSn4rPXuiecjKGbdjRK7jGdLYN5dQ5xLRteQckzpxRiGqnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ujVp4Rig; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OzaeIm3CEcZ/rg0C2pbEPEQ3M4jZVchEi4wcYEBg0NI=; b=ujVp4RigCCxMueW6p1w6NVq8Rn
+	DsLFxa9QuA5/JsfGds7CybKxTzGGY0Wwr9gflOhIx0IDRnzfuF6BsWb1O7LFxye6e3XK0bmJH4aUv
+	7o1bbOU3Hc7H2PP65XRQg59OKUlMHpobt66HIma2ObapCq48DivozY0Ppgs1mioUwmUd+z5XXPwIW
+	UJw3jLdyS/jCevjfcghrqquOnEGGJ+Dz/cNkSobetYEmi41kKR1IQVRbgTDCNPvWfPpsVK4soxcFI
+	+NVokI8cxDNKAqzEBLE5vY9cMaU94hhSyyrEf9kOOjuglnLSyN8Zh38UcHJHYxssvfgijaeGu60Nn
+	A+N4DBCQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sA459-00000001a2K-35ly;
+	Thu, 23 May 2024 08:45:51 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B5F5330057C; Thu, 23 May 2024 10:45:48 +0200 (CEST)
+Date: Thu, 23 May 2024 10:45:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Luis Machado <luis.machado@arm.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+	wuyun.abel@bytedance.com, tglx@linutronix.de, efault@gmx.de,
+	nd <nd@arm.com>, John Stultz <jstultz@google.com>,
+	Hongyan.Xia2@arm.com
+Subject: Re: [RFC][PATCH 08/10] sched/fair: Implement delayed dequeue
+Message-ID: <20240523084548.GI40213@noisy.programming.kicks-ass.net>
+References: <20240405102754.435410987@infradead.org>
+ <20240405110010.631664251@infradead.org>
+ <3888d7c8-660e-479c-8c10-8295204e5f36@arm.com>
+ <1461277e-af68-41e7-947c-9178b55810b1@arm.com>
+ <20240425104220.GE21980@noisy.programming.kicks-ass.net>
+ <20240425114949.GH12673@noisy.programming.kicks-ass.net>
+ <20240426093241.GI12673@noisy.programming.kicks-ass.net>
+ <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
 
-From: Sergey Matyukevich <sergey.matyukevich@syntacore.com>
+On Mon, Apr 29, 2024 at 03:33:04PM +0100, Luis Machado wrote:
 
-Top of the kernel thread stack should be reserved for pt_regs. However
-this is not the case for the idle threads of the secondary boot harts.
-Their stacks overlap with their pt_regs, so both may get corrupted.
+> (2) m6.6-eevdf-complete: m6.6-stock plus this series.
+> (3) m6.6-eevdf-complete-no-delay-dequeue: (2) + NO_DELAY_DEQUEUE
 
-Similar issue has been fixed for the primary hart, see c7cdd96eca28
-("riscv: prevent stack corruption by reserving task_pt_regs(p) early").
-However that fix was not propagated to the secondary harts. The problem
-has been noticed in some CPU hotplug tests with V enabled. The function
-smp_callin stored several registers on stack, corrupting top of pt_regs
-structure including status field. As a result, kernel attempted to save
-or restore inexistent V context.
+> +------------+------------------------------------------------------+-----------+
+> |  cluster   |                         tag                          | perc_diff |
+> +------------+------------------------------------------------------+-----------+
+> |    CPU     |                   m6.6-stock                         |   0.0%    |
+> |  CPU-Big   |                   m6.6-stock                         |   0.0%    |
+> | CPU-Little |                   m6.6-stock                         |   0.0%    |
+> |  CPU-Mid   |                   m6.6-stock                         |   0.0%    |
+> |    GPU     |                   m6.6-stock                         |   0.0%    |
+> |   Total    |                   m6.6-stock                         |   0.0%    |
 
-Fixes: 9a2451f18663 ("RISC-V: Avoid using per cpu array for ordered booting")
-Fixes: 2875fe056156 ("RISC-V: Add cpu_ops and modify default booting method")
-Signed-off-by: Sergey Matyukevich <sergey.matyukevich@syntacore.com>
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
+> |    CPU     |        m6.6-eevdf-complete-no-delay-dequeue          |  117.77%  |
+> |  CPU-Big   |        m6.6-eevdf-complete-no-delay-dequeue          |  113.79%  |
+> | CPU-Little |        m6.6-eevdf-complete-no-delay-dequeue          |  97.47%   |
+> |  CPU-Mid   |        m6.6-eevdf-complete-no-delay-dequeue          |  189.0%   |
+> |    GPU     |        m6.6-eevdf-complete-no-delay-dequeue          |  -6.74%   |
+> |   Total    |        m6.6-eevdf-complete-no-delay-dequeue          |  103.84%  |
 
-Changes since v1 [1]:
-- fixed git revisions in commit message
+This one is still flummoxing me. I've gone over the patch a few times on
+different days and I'm not seeing it. Without DELAY_DEQUEUE it should
+behave as before.
 
-[1] https://lore.kernel.org/linux-riscv/20240424221927.900612-1-geomatsi@gmail.com/
-
----
- arch/riscv/kernel/cpu_ops_sbi.c      | 2 +-
- arch/riscv/kernel/cpu_ops_spinwait.c | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/arch/riscv/kernel/cpu_ops_sbi.c b/arch/riscv/kernel/cpu_ops_sbi.c
-index 1cc7df740edd..e6fbaaf54956 100644
---- a/arch/riscv/kernel/cpu_ops_sbi.c
-+++ b/arch/riscv/kernel/cpu_ops_sbi.c
-@@ -72,7 +72,7 @@ static int sbi_cpu_start(unsigned int cpuid, struct task_struct *tidle)
- 	/* Make sure tidle is updated */
- 	smp_mb();
- 	bdata->task_ptr = tidle;
--	bdata->stack_ptr = task_stack_page(tidle) + THREAD_SIZE;
-+	bdata->stack_ptr = task_pt_regs(tidle);
- 	/* Make sure boot data is updated */
- 	smp_mb();
- 	hsm_data = __pa(bdata);
-diff --git a/arch/riscv/kernel/cpu_ops_spinwait.c b/arch/riscv/kernel/cpu_ops_spinwait.c
-index 613872b0a21a..24869eb88908 100644
---- a/arch/riscv/kernel/cpu_ops_spinwait.c
-+++ b/arch/riscv/kernel/cpu_ops_spinwait.c
-@@ -34,8 +34,7 @@ static void cpu_update_secondary_bootdata(unsigned int cpuid,
- 
- 	/* Make sure tidle is updated */
- 	smp_mb();
--	WRITE_ONCE(__cpu_spinwait_stack_pointer[hartid],
--		   task_stack_page(tidle) + THREAD_SIZE);
-+	WRITE_ONCE(__cpu_spinwait_stack_pointer[hartid], task_pt_regs(tidle));
- 	WRITE_ONCE(__cpu_spinwait_task_pointer[hartid], tidle);
- }
- 
--- 
-2.44.0
+Let me try and split this patch up into smaller parts such that you can
+try and bisect this.
 
 
