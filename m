@@ -1,178 +1,455 @@
-Return-Path: <linux-kernel+bounces-187089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EF98CCCFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91E278CCD03
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0091F225B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227521F21644
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D968113CA93;
-	Thu, 23 May 2024 07:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6414013CAA3;
+	Thu, 23 May 2024 07:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="l2ra1qxB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYBbpD+W"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDAC3CF51;
-	Thu, 23 May 2024 07:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1403CF51;
+	Thu, 23 May 2024 07:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716449144; cv=none; b=fDrbt9tUwvL1uzs2z7eYY3k6dyFqNY6TUY3KAtrXNqA8gretGue6QNKy5eFzxDCbRZIL9wYulfDn/GvyoTTovzv92APVDmuZnicWEhr/XpqbVK/iy3xyk4KXgetl0FWDkFcMK+KobL2o9dODg6zcRoMV3Q4Fk8rUcEmPk7z2PXo=
+	t=1716449284; cv=none; b=QQyooO+GHvG8xGyfo9mrbD5xHFg6jTYmhZPS7soOClK4rjw/MCWKTOd8ux4HPzF/OjFCXNysaXEORIKNsBebCKPOkujmxhpEkMUk5Xb3cg7z8vNH+XVYGuF9c5tI8q/J66Ic6Ltq+eTGqt40zf98LJNnim2fiR7lU0MBLgbVMOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716449144; c=relaxed/simple;
-	bh=OtoMM2EnLYopfSClknn+vskVbP9LcVlEYgkZXxAy70o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSjTOXv6vn67eCfTtkH0Il/sihfgDfnfoznIAeMl/ZACq3uqn0Eu4NjQUuAPAhjOp2GZI39xBGdrtTIkWBReCgcEBZv8LcObnJOQowwQSaVBvOxm5EXVGptn2ndX5O+YRHLUxWAHVQMuZVTrMm1IfEbSFTEkctb1nm/LEyiBIYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=l2ra1qxB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD25C2BD10;
-	Thu, 23 May 2024 07:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716449143;
-	bh=OtoMM2EnLYopfSClknn+vskVbP9LcVlEYgkZXxAy70o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l2ra1qxB1P/JpnSBpEDFO9rzUWGpdqdI0rJMLESTsydrLtm6zEvZ1rDRQlxHxootq
-	 oIm5al4hs9GIeWOLK7hRRSOZ/d8US5HPO5xVjkiiXnsyaT1aP9LxqPhSkRuSdq0MVT
-	 jTSh6RT+fM5EkJuEL4KvFIK+uODE3h8jvwIi3qf4=
-Date: Thu, 23 May 2024 09:25:40 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: yangxingui <yangxingui@huawei.com>
-Cc: rafael@kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	prime.zeng@hisilicon.com, liyihang9@huawei.com,
-	kangfenglong@huawei.com
-Subject: Re: [PATCH] driver core: Add log when devtmpfs create node failed
-Message-ID: <2024052316-confused-payback-5658@gregkh>
-References: <20240522114346.42951-1-yangxingui@huawei.com>
- <2024052221-pulverize-worrisome-37fb@gregkh>
- <794b5fa3-0135-80cc-4b55-f48a430a58ca@huawei.com>
+	s=arc-20240116; t=1716449284; c=relaxed/simple;
+	bh=dbQ1zA0hMCiYq0xZ6uYNu5O6nicAdG1uIGOE/78xGg0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=aFCArMI0x9BsbukLDLvm6pXN3W0Hgf0UF9sfsQrPu0a/hzJtLydQPBu6dk/tpdFM+qQm6BB8U+aWqioXrl2rMomMcO+TvBT5cCGLL0vG/+M6oYZp+8AvjdEPDpgbhEWdTFV16LWLRHjXLzr5A0cHqQ+cxRSQM5sThSCUDeqljWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYBbpD+W; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a623cf23927so113171866b.0;
+        Thu, 23 May 2024 00:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716449280; x=1717054080; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:from:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ztK1B8LJ6Qg/XjmvoFi7X/nQ7NpaJ1m645YbkJDt3Lg=;
+        b=UYBbpD+WnayzG3AsDhRv8IlOscuR6UJOyvLKTIDCCti80CE2Ba4XNSiw4cos9Sq8LE
+         YptMEq6Ln1Y7BRYkLLyKAiVfnM9XhKejuWLQH0YH2kagg5erbqxZxDbA8bhzO4eJSHel
+         40G7reVNu3FlJ5kgv+2Dnw2Ttchh0H+urdwlQabBmZwme5fiMOkMUypp7wdYlxHswfrh
+         /dUg4auG9ekwMiubbMF9b9nwCll6rPhk+dEOjd2kLJiq+Ovp1GU+/hGLoMaWJCk1u51z
+         UI5Q5nABLqs9tXm0kO5b+cIPh1xnjEGEfR9BENVOGMKQkf6eOkDVe+g4DOBBc2fmqQR/
+         D9+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716449280; x=1717054080;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ztK1B8LJ6Qg/XjmvoFi7X/nQ7NpaJ1m645YbkJDt3Lg=;
+        b=NkyzHmmc34zjkHVqFC2cpqq3DJj1wCfKA7a3L1NfYwhJJcF2ZmKT+cmTBubmyhGeAQ
+         +aKRHmMSulWYlzlV2OqmUImoEVSNSudswLQdxODNs6EB4qkGWnmTYxssG3whoqql3d3Z
+         T9k37H/basCcOF1zut1RJ3OteV+td/xmOMZMuWEqCGPJgIfVK8+mNgMljV0+1tppFDMt
+         74x2WU1L1Ozy2TUU+aW5LQSXkLwL7N1tPIN+k9bMmGlpFmWrrl7sVzwlte4SgSGPu+g/
+         ayG2NYxPNZDlH+rwVMWxJRNKyBMWQNfAegPbPfROSiBb1JzhcIkSPQieJ8ywRSUNQCre
+         kfPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzvZFcOlBjWgbqWbZT7S6zb6RhbSqeAKy64kuq/VjULInsEvLyVmM5RrBb2b/eLJiBHaW1sFQnuQy/8CDTFtZFJC7gVUSbZ8uaR+Qzfkrp88RbCBQLq2AtLbACXvg9xIa+LCd3VeQ4CDh2QmQXi24/1OuXKbJOy9NG0P0M7sXCeQ==
+X-Gm-Message-State: AOJu0Yx1UFHI4Ry15f/2pJE3SdCiVDjZ85GRZSOaKHNGvJrRfcOc+3ny
+	eHUs13qtbSY0HaEV2c21thbp9Dq6LiFhmXtxChst44XollW1tq/k
+X-Google-Smtp-Source: AGHT+IEaLiBCRuYYgeVlPJ5W3rDX1Lckw/fQ21dksdMpOlIYZIyfTKGBXeI4xCT+g+32linp1GNZEg==
+X-Received: by 2002:a17:907:130f:b0:a59:a3ad:c3f6 with SMTP id a640c23a62f3a-a623e8cb2bbmr106331366b.3.1716449280130;
+        Thu, 23 May 2024 00:28:00 -0700 (PDT)
+Received: from [172.27.49.176] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5cfbd73547sm952888366b.171.2024.05.23.00.27.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 00:27:59 -0700 (PDT)
+Message-ID: <68225941-f3c3-4335-8f3d-edee43f59033@gmail.com>
+Date: Thu, 23 May 2024 10:27:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <794b5fa3-0135-80cc-4b55-f48a430a58ca@huawei.com>
+User-Agent: Mozilla Thunderbird
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+Subject: Re: [PATCH net-next v2 1/1] net/mlx5e: Add per queue netdev-genl
+ stats
+To: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, zyjzyj2000@gmail.com, nalramli@fastly.com,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <20240510041705.96453-1-jdamato@fastly.com>
+ <20240510041705.96453-2-jdamato@fastly.com>
+ <230701b9-c52a-4b59-9969-4cd5a5d697f4@gmail.com>
+ <ZkRiBQXlWPPTNKFf@LQ3V64L9R2>
+Content-Language: en-US
+In-Reply-To: <ZkRiBQXlWPPTNKFf@LQ3V64L9R2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23, 2024 at 09:50:09AM +0800, yangxingui wrote:
-> Hi, Greg
+
+
+On 15/05/2024 10:19, Joe Damato wrote:
+> On Tue, May 14, 2024 at 09:44:37PM +0300, Tariq Toukan wrote:
+>>
+>>
+>> On 10/05/2024 7:17, Joe Damato wrote:
+>>> Add functions to support the netdev-genl per queue stats API.
+>>>
+>>> ./cli.py --spec netlink/specs/netdev.yaml \
+>>> --dump qstats-get --json '{"scope": "queue"}'
+>>>
+>>> ...snip
+>>>
+>>>    {'ifindex': 7,
+>>>     'queue-id': 62,
+>>>     'queue-type': 'rx',
+>>>     'rx-alloc-fail': 0,
+>>>     'rx-bytes': 105965251,
+>>>     'rx-packets': 179790},
+>>>    {'ifindex': 7,
+>>>     'queue-id': 0,
+>>>     'queue-type': 'tx',
+>>>     'tx-bytes': 9402665,
+>>>     'tx-packets': 17551},
+>>>
+>>> ...snip
+>>>
+>>> Also tested with the script tools/testing/selftests/drivers/net/stats.py
+>>> in several scenarios to ensure stats tallying was correct:
+>>>
+>>> - on boot (default queue counts)
+>>> - adjusting queue count up or down (ethtool -L eth0 combined ...)
+>>> - adding mqprio TCs
+>>>
+>>> Signed-off-by: Joe Damato <jdamato@fastly.com>
+>>> ---
+>>>    .../net/ethernet/mellanox/mlx5/core/en_main.c | 144 ++++++++++++++++++
+>>>    1 file changed, 144 insertions(+)
+>>>
+>>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+>>> index ffe8919494d5..4a675d8b31b5 100644
+>>> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+>>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+>>> @@ -39,6 +39,7 @@
+>>>    #include <linux/debugfs.h>
+>>>    #include <linux/if_bridge.h>
+>>>    #include <linux/filter.h>
+>>> +#include <net/netdev_queues.h>
+>>>    #include <net/page_pool/types.h>
+>>>    #include <net/pkt_sched.h>
+>>>    #include <net/xdp_sock_drv.h>
+>>> @@ -5282,6 +5283,148 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
+>>>    	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
+>>>    }
+>>> +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
+>>> +				     struct netdev_queue_stats_rx *stats)
+>>> +{
+>>> +	struct mlx5e_priv *priv = netdev_priv(dev);
+>>> +
+>>> +	if (mlx5e_is_uplink_rep(priv))
+>>> +		return;
+>>> +
+>>> +	struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+>>> +	struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
+>>> +	struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
+>>> +
+>>
+>> Don't we allow variable declaration only at the beginning of a block?
+>> Is this style accepted in the networking subsystem?
+>>
+>>> +	stats->packets = rq_stats->packets + xskrq_stats->packets;
+>>> +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
+>>> +	stats->alloc_fail = rq_stats->buff_alloc_err +
+>>> +			    xskrq_stats->buff_alloc_err;
+>>> +}
+>>> +
+>>> +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
+>>> +				     struct netdev_queue_stats_tx *stats)
+>>> +{
+>>> +	struct mlx5e_priv *priv = netdev_priv(dev);
+>>> +	struct net_device *netdev = priv->netdev;
+>>> +	struct mlx5e_txqsq *sq;
+>>> +	int j;
+>>> +
+>>> +	if (mlx5e_is_uplink_rep(priv))
+>>> +		return;
+>>> +
+>>> +	for (j = 0; j < netdev->num_tx_queues; j++) {
+>>> +		sq = priv->txq2sq[j];
+>>
+>> No sq instance in case interface is down.
 > 
-> On 2024/5/22 20:23, Greg KH wrote:
-> > On Wed, May 22, 2024 at 11:43:46AM +0000, Xingui Yang wrote:
-> > > Currently, no exception information is output when devtmpfs create node
-> > > failed, so add log info for it.
-> > 
-> > Why?  Who is going to do something with this?
-> We execute the lsscsi command after the disk is connected, we occasionally
-> find that some disks do not have dev nodes and these disks cannot be used.
-
-Ok, but why do you think that devtmpfs create failed?
-
-> However, there is no abnormal log output during disk scanning. We analyze
-> that it may be caused by the failure of devtmpfs create dev node, so the log
-> is added here.
-
-But is that the case?  Why is devtmpfs failing?  Shouldn't we fix that
-instead?
-
-> The lscsi command query results and kernel logs as follows:
+> This seems easily fixable by checking:
 > 
-> [root@localhost]# lsscsi
-> [9:0:4:0]	disk	ATA	ST10000NM0086-2A SN05	-
+>    priv->channels.num > 0
 > 
-> kernel: [586669.541218] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
-> link_rate=10(sata)
-> kernel: [586669.541341] sas: phy-9:0 added to port-9:0, phy_mask:0x1
-> (5000000000000900)
-> kernel: [586669.541511] sas: DOING DISCOVERY on port 0, pid:2330731
-> kernel: [586669.541518] hisi_sas_v3_hw 0000:b4:04.0: dev[4:5] found
-> kernel: [586669.630816] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
-> kernel: [586669.665960] hisi_sas_v3_hw 0000:b4:04.0: phydown: phy0
-> phy_state=0xe
-> kernel: [586669.665964] hisi_sas_v3_hw 0000:b4:04.0: ignore flutter phy0
-> down
-> kernel: [586669.863360] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
-> link_rate=10(sata)
-> kernel: [586670.024482] ata19.00: ATA-10: ST10000NM0086-2AA101, SN05, max
-> UDMA/133
-> kernel: [586670.024487] ata19.00: 19532873728 sectors, multi 16: LBA48 NCQ
-> (depth 32), AA
-> kernel: [586670.027471] ata19.00: configured for UDMA/133
-> kernel: [586670.027490] sas: --- Exit sas_scsi_recover_host: busy: 0 failed:
-> 0 tries: 1
-> kernel: [586670.037541] sas: ata19: end_device-9:0:
-> model:ST10000NM0086-2AA101 serial:            ZA2B3PR2
-> kernel: [586670.100856] scsi 9:0:4:0: Direct-Access     ATA ST10000NM0086-2A
-> SN05 PQ: 0 ANSI: 5
-> kernel: [586670.101114] sd 9:0:4:0: [sdk] 19532873728 512-byte logical
-> blocks: (10.0 TB/9.10 TiB)
-> kernel: [586670.101116] sd 9:0:4:0: [sdk] 4096-byte physical blocks
-> kernel: [586670.101125] sd 9:0:4:0: [sdk] Write Protect is off
-> kernel: [586670.101137] sd 9:0:4:0: [sdk] Write cache: enabled, read cache:
-> enabled, doesn't support DPO or FUA
-> kernel: [586670.101620] sd 9:0:4:0: Attached scsi generic sg10 type 0
-> kernel: [586670.101714] sas: DONE DISCOVERY on port 0, pid:2330731, result:0
-> kernel: [586670.101731] sas: sas_form_port: phy0 belongs to port0
-> already(1)!
-> kernel: [586670.152512] sd 9:0:4:0: [sdk] Attached SCSI disk
 
-Looks like sdk was found properly, what's the problem?
+yes, or test_bit(MLX5E_STATE_OPENED, &priv->state).
 
+>> This should be a simple arithmetic calculation.
 > 
-> > 
-> > > 
-> > > Signed-off-by: Xingui Yang <yangxingui@huawei.com>
-> > > ---
-> > >   drivers/base/core.c | 5 ++++-
-> > >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > index 5f4e03336e68..32a41e0472b2 100644
-> > > --- a/drivers/base/core.c
-> > > +++ b/drivers/base/core.c
-> > > @@ -3691,7 +3691,10 @@ int device_add(struct device *dev)
-> > >   		if (error)
-> > >   			goto SysEntryError;
-> > > -		devtmpfs_create_node(dev);
-> > > +		error = devtmpfs_create_node(dev);
-> > > +		if (error)
-> > > +			pr_info("devtmpfs create node for %s failed: %d\n",
-> > > +				dev_name(dev), error);
-> > 
-> > Why is an error message pr_info()?
-> Do you recommend using pr_err()?
+> I'm not sure why I can't use txq2sq? Please see below for my
+> explanation about why I think txq2sq might be all I need.
+> 
+>> Need to expose the proper functions for this calculation, and use it here
+>> and in the sq create flows.
+> 
+> I re-read the code several times and my apologies, but I am probably
+> still missing something.
+> 
+> I don't think a calculation function is necessary (see below), but
+> if one is really needed, I'd probably add something like:
+> 
+>    static inline int tc_to_txq_ix(struct mlx5e_channel *c,
+>                                   struct mlx5e_params *params,
+>                                   int tc)
+>    {
+>           return c->ix + tc * params->num_channels;
 
-Do not print errors at the information level :)
+We need the opposite direction.
 
-> > And again, why is this needed?  If this needs to be checked, why are you
-> > now checking it but ignoring the error?
-> > 
-> > What would this help with?
-> As above, we want to get the error info when the dev node fails to be
-> created. We currently haven't figured out how to handle this exception well.
-> But judging from the problems we are currently encountering, some may be
-> because the corresponding dev node already exists, causing the creation to
-> fail, but the node information is incorrect and the device cannot be used.
-> as follows:
-> [root@localhost]# ll /dev/sdk
-> -rw-------. 1 root root 5368709120 Jul 8 09:51 /dev/sdk
+The goal is to calculate the proper pair of (ch_ix, tc) in order to 
+access the correct sq_stats struct in the stats array:
+priv->channel_stats[ch_ix]->sq[tc];
 
-Looks like the device node is created to me.  What is incorrect about
-it, the values?  What is 'll' an alias for?  And are you sure that other
-tools aren't getting the device node creation uevent and doing something
-with it in userspace?  How do you know this is the kernel failing?
+Given i in [0, real_num_tx_queues), we should extract the pair as follows:
 
-Wait, is /dev/sdk really a device node and not a file?  Perhaps
-something else wrote to it first, before it was created?  And that's why
-devtmpfs couldn't create it.  That sounds like a userspace error,
-nothing the kernel can do about it.
+ch_ix = i % params->num_channels;
+tc = i / params->num_channels;
 
-thanks,
+>    }
+> 
+> And call it from mlx5e_open_sqs.
+> 
+> But, I don't understand why any calculation is needed in
+> mlx5e_get_queue_stats_tx. Please see below for explanation.
+> 
+>>
+>> Here it seems that you need a very involved user, so he passes the correct
+>> index i of the SQ that he's interested in..
+>>
+>>> +		if (sq->ch_ix == i) {
+>>
+>> So you're looking for the first SQ on channel i?
+>> But there might be multiple SQs on channel i...
+>> Also, this SQ might be already included in the base stats.
+>> In addition, this i might be too large for a channel index (num_tx_queues
+>> can be 8 * num_channels)
+>>
+>> The logic here (of mapping from i in num_tx_queues to SQ stats) needs
+>> careful definition.
+> 
+> I read your comments a few times and read the mlx5 source and I am
+> probably still missing something obvious here; my apologies.
+> 
+> In net/core/netdev-genl.c, calls to the driver's get_queue_stats_tx
+> appear to pass [0, netdev->real_num_tx_queues) as i.
+> 
+> I think this means i is a txq_ix in mlx5, because mlx5 sets
+> netdev->real_num_tx_queues in mlx5e_update_tx_netdev_queues, as:
+> 
+>    nch * ntc + qos_queues
+> 
+> which when expanded is
+> 
+>    priv->channels.params.num_channels * mlx5e_get_dcb_num_tc + qos_queues
+> 
+> So, net/core/netdev-genl.c will be using 0 up to that expression as
+> i when calling mlx5e_get_queue_stats_tx.
+> 
 
-greg k-h
+Right.
+
+> In mlx5:
+>    - mlx5e_activate_priv_channels calls mlx5e_build_txq_maps which
+>      generates priv->txq2sq[txq_ix] = sq for every mlx5e_get_dcb_num_tc
+>      of every priv->channels.num.
+>   
+> This seems to happen every time mlx5e_activate_priv_channels is
+> called, which I think means that priv->txq2sq is always up to date
+> and will give the right sq for a given txq_ix (assuming the device
+> isn't down).
+> 
+
+Right.
+
+> Putting all of this together, I think that mlx5e_get_queue_stats_tx
+> might need to be something like:
+> 
+>    mutex_lock(&priv->state_lock);
+>    if (priv->channels.num > 0) {
+>            sq = priv->txq2sq[i];
+>            stats->packets = sq->stats->packets;
+>            stats->bytes = sq->stats->bytes;
+>    }
+>    mutex_unlock(&priv->state_lock);
+> 
+
+Right.
+But you can also access the sq_stats directly without going through the 
+sq. This is important as the channels might be down.
+
+
+> Is this still incorrect somehow?
+> 
+> If so, could you explain a bit more about why a calculation is
+> needed? It seems like txq2sq would provide the mapping from txq_ix's
+> (which is what mlx5e_get_queue_stats_tx gets as 'i') and an sq,
+> which seems like all I would need?
+> 
+> Sorry if I am still not following here.
+> 
+
+I see two possible solutions:
+
+1.
+a. in the base, sum all stats for entries that are no longer available 
+in the current configuration (independently to if the netdev is up or 
+down), like sqs for ch_ix >= params->num_channels.
+b. in mlx5e_get_queue_stats_tx, access the sq_stats without going 
+through the sq (as it might not exist), this will be done for all i in 0 
+ti real_num_tx_queues.
+
+2.
+a. in the base, sum all stats for all non existing sqs. if interface is 
+down, then no sqs exist, so you sum the whole array.
+b. in mlx5e_get_queue_stats_tx, go through the txq2sq and the sq, if it 
+exists, if interface is down just return empty stats.
+
+I don't have strong preference, although #1 looks slightly better to me.
+
+
+>>> +			stats->packets = sq->stats->packets;
+>>> +			stats->bytes = sq->stats->bytes;
+>>> +			return;
+>>> +		}
+>>> +	}
+>>> +}
+>>> +
+>>> +static void mlx5e_get_base_stats(struct net_device *dev,
+>>> +				 struct netdev_queue_stats_rx *rx,
+>>> +				 struct netdev_queue_stats_tx *tx)
+>>> +{
+>>> +	struct mlx5e_priv *priv = netdev_priv(dev);
+>>> +	int i, j;
+>>> +
+>>> +	if (!mlx5e_is_uplink_rep(priv)) {
+>>> +		rx->packets = 0;
+>>> +		rx->bytes = 0;
+>>> +		rx->alloc_fail = 0;
+>>> +
+>>> +		/* compute stats for deactivated RX queues
+>>> +		 *
+>>> +		 * if priv->channels.num == 0 the device is down, so compute
+>>> +		 * stats for every queue.
+>>> +		 *
+>>> +		 * otherwise, compute only the queues which have been deactivated.
+>>> +		 */
+>>> +		if (priv->channels.num == 0)
+>>> +			i = 0;
+>>> +		else
+>>> +			i = priv->channels.params.num_channels;
+>>> +
+>>> +		for (; i < priv->stats_nch; i++) {
+>>> +			struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+>>> +			struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
+>>> +			struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
+>>> +
+>>> +			rx->packets += rq_stats->packets + xskrq_stats->packets;
+>>> +			rx->bytes += rq_stats->bytes + xskrq_stats->bytes;
+>>> +			rx->alloc_fail += rq_stats->buff_alloc_err +
+>>> +					  xskrq_stats->buff_alloc_err;
+>>
+>> Isn't this equivalent to mlx5e_get_queue_stats_rx(i) ?
+>>
+>>> +		}
+>>> +
+>>> +		if (priv->rx_ptp_opened) {
+>>> +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
+>>> +
+>>> +			rx->packets += rq_stats->packets;
+>>> +			rx->bytes += rq_stats->bytes;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	tx->packets = 0;
+>>> +	tx->bytes = 0;
+>>> +
+>>> +	/* three TX cases to handle:
+>>> +	 *
+>>> +	 * case 1: priv->channels.num == 0, get the stats for every TC
+>>> +	 *         on every queue.
+>>> +	 *
+>>> +	 * case 2: priv->channel.num > 0, so get the stats for every TC on
+>>> +	 *         every deactivated queue.
+>>> +	 *
+>>> +	 * case 3: the number of TCs has changed, so get the stats for the
+>>> +	 *         inactive TCs on active TX queues (handled in the second loop
+>>> +	 *         below).
+>>> +	 */
+>>> +	if (priv->channels.num == 0)
+>>> +		i = 0;
+>>> +	else
+>>> +		i = priv->channels.params.num_channels;
+>>> +
+>>
+>> All reads/writes to priv->channels must be under the priv->state_lock.
+>>
+>>> +	for (; i < priv->stats_nch; i++) {
+>>> +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+>>> +
+>>> +		for (j = 0; j < priv->max_opened_tc; j++) {
+>>> +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+>>> +
+>>> +			tx->packets += sq_stats->packets;
+>>> +			tx->bytes += sq_stats->bytes;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	/* Handle case 3 described above. */
+>>> +	for (i = 0; i < priv->channels.params.num_channels; i++) {
+>>> +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+>>> +		u8 dcb_num_tc = mlx5e_get_dcb_num_tc(&priv->channels.params);
+>>> +
+>>> +		for (j = dcb_num_tc; j < priv->max_opened_tc; j++) {
+>>> +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+>>> +
+>>> +			tx->packets += sq_stats->packets;
+>>> +			tx->bytes += sq_stats->bytes;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	if (priv->tx_ptp_opened) {
+>>> +		for (j = 0; j < priv->max_opened_tc; j++) {
+>>> +			struct mlx5e_sq_stats *sq_stats = &priv->ptp_stats.sq[j];
+>>> +
+>>> +			tx->packets    += sq_stats->packets;
+>>> +			tx->bytes      += sq_stats->bytes;
+>>> +		}
+>>> +	}
+>>> +}
+>>> +
+>>> +static const struct netdev_stat_ops mlx5e_stat_ops = {
+>>> +	.get_queue_stats_rx     = mlx5e_get_queue_stats_rx,
+>>> +	.get_queue_stats_tx     = mlx5e_get_queue_stats_tx,
+>>> +	.get_base_stats         = mlx5e_get_base_stats,
+>>> +};
+>>> +
+>>>    static void mlx5e_build_nic_netdev(struct net_device *netdev)
+>>>    {
+>>>    	struct mlx5e_priv *priv = netdev_priv(netdev);
+>>> @@ -5299,6 +5442,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
+>>>    	netdev->watchdog_timeo    = 15 * HZ;
+>>> +	netdev->stat_ops          = &mlx5e_stat_ops;
+>>>    	netdev->ethtool_ops	  = &mlx5e_ethtool_ops;
+>>>    	netdev->vlan_features    |= NETIF_F_SG;
 
