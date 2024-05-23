@@ -1,114 +1,86 @@
-Return-Path: <linux-kernel+bounces-187521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BEF8CD2DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:56:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600548CD2E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B816B20D94
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:56:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114391F21DC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC49A14A4EB;
-	Thu, 23 May 2024 12:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBoelqo2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2BC14A4DD;
+	Thu, 23 May 2024 12:58:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1841C8174C;
-	Thu, 23 May 2024 12:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B778174C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716468954; cv=none; b=Y+ijDVZqLMw5Q7proWnqw006uxXzLArerjz5eI+S6tQzW7eM20uv09a0r+dZBOXDEBxlFycww7ULId/jcBaaSZPUt7Vlcv90m4wj3AXGSuR0W3TJGBkzbOvhM6FXDp5sUiKFRWLIoxhi0ffO1ZXZQDdJaConosztsAZrdsvP0lk=
+	t=1716469086; cv=none; b=QI0pugDOhKj62wm+qwvOw/WyFKHMT5m4QzE8CsiZBZuPdm3gz5kcgr2ZWBxmFANJaf0cpQX1RUVameasKpwAckw8DBYzOzNxnMK5rJXvew+bkZNQ4DcdBbzUhep5TRfdw3VRpIYpYUCFk/Vrok4OQMga1JUusuyCoWAigHhvLOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716468954; c=relaxed/simple;
-	bh=lZWCDNLYdh3G7nFtzihodDsqvt7voL9bMlCo0OYVZFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfXylvGCh+bsOG7ZVWGBhxxUHr3acAkIt+XpKJamQr6fBRr1fJTI6fL2zkNYO7+VzshI1YI1VPGObGzPOu7QyLsXvAMFGDbrALliPIJ9OuZeZZcoW/C7aNAt4h5yNDKNg56tfQVVAxGkny2e/KnzuMFGiuPa+dt8/OI1nblPOKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBoelqo2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E257C2BD10;
-	Thu, 23 May 2024 12:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716468953;
-	bh=lZWCDNLYdh3G7nFtzihodDsqvt7voL9bMlCo0OYVZFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QBoelqo2F9lLszwI4GhC1WFQ9QqyxA3cwVF7viiB0crQWhNITasNNPo7vMZiaCvdo
-	 oZ9te/h4q6n2Vstmr73apygmKDo20pvnOu94o95UuzGxgzuvg7oxWXS2BC0ugcK3oG
-	 KmZkfG7+UO2Fz+aAFWdpuaIvXc1S4HWj5pV/TNSz7qBagioDvOl/64D6I7a8RtyyMU
-	 Q42tLqzKF9CmvM8XjkIxw0meTPIOgCmF/oIFJii+5DlDrHsp3x+6x2sb6Hbw/1y/QD
-	 npiK30rk6isdOmP15+O2+pyL7gBHDkI0aCXwzRcGW3uY2/U9MVvHaoMgF+9dBADeMI
-	 mRNvvntnQai+Q==
-Date: Thu, 23 May 2024 13:55:49 +0100
-From: Simon Horman <horms@kernel.org>
-To: Lin Ma <linma@zju.edu.cn>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, yuehaibing@huawei.com,
-	larysa.zaremba@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 net-next] ila: avoid genlmsg_reply when not ila_map
- found
-Message-ID: <20240523125549.GM883722@kernel.org>
-References: <20240522031537.51741-1-linma@zju.edu.cn>
- <20240522170302.GA883722@kernel.org>
- <44456b54.180f2.18fa31eca2b.Coremail.linma@zju.edu.cn>
+	s=arc-20240116; t=1716469086; c=relaxed/simple;
+	bh=bbSus61IPENCd63/yVddN6wUXqhHRUWd8Wd8rLl1FWY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BaMH3ya4S3lBYPAOCdHPJDZXHU4BoolAkDOEPoWNrXsPhm8GnDJQQyeLtV8M6qKxFfIeTW+xcJwdqdBga/44oElaXuqdFoy53l/mOl8dZSZGo2rCddAXynm9iGR9iG61Lq0Rkbn0mB6Cf4XrBKPQxuIaO5TMcpd5T1lDnbxhstU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c74ef7261so20762405ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716469084; x=1717073884;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=00aUEodfde1jONRp4lAPPFzzYhdOBLt8pgnc6kVNvis=;
+        b=A1Sogke3Nfg8AmNDIZjwiWIKyV0KDEWzWMLSUzBnNE1nl8TaY2PVeYiaDxywKz+N3r
+         3MnHl2ct4Il+54y8Zsy9Hj4b5sK9ppDOP2R6Jd9teiV+nj5+NXsPTlsxs0BMj+dLtOEN
+         S0XKsy/biiO3U3gResAbSC/ouwCBxKVW0XpZV96PqERlnP3clHWj2md5nVQWS/zzHlB9
+         XRj58NgUp7p3KMnVlop2v0jvH4Nj14qtB23kJ9lkzBrsesh/c4NGdQhzLub9U5rmGrLp
+         NNzzRu9jzN9hjKSDq8HZ5Z3kWCn1BxpgI8VrO+CYUsn6MfkuX61vAvL+5O72/vbeaVPN
+         /shQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbI6PrfuLh8IWuw9crPa+Q9JY2R8OAzg+0I/C3R9Vl/tC8X6Q3q0ksPAKtsozrHlNPtI92Ve9Adb1gkw0Nzux1QgzmS+Gpk1Ab65Ki
+X-Gm-Message-State: AOJu0Yys6N3NjrsE+Ejz1gR4TPHLkJ15HfWnhqTm+V9BSB3PyffO5LrL
+	0/VW+uxIQ9KHPQpdMtZtTDnQi0NTyB8VmhjM8530CsryyaAMOHerWlkI1S9BhG7+D5QG+8gPyj5
+	/zDmyvX27q1mGZpLtewfSsttKS9IgWLazyISzif+C74BoO2NJTjNSqZ0=
+X-Google-Smtp-Source: AGHT+IFlo32G3yL5vHTGnAePlWuaAvPcmq2p6c19AgKelnWb0GVuvwRm+qjtSKpWOY/Bmt+tbcqHVtoMWPIbpYDUGJyfUayQfT5g
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44456b54.180f2.18fa31eca2b.Coremail.linma@zju.edu.cn>
+X-Received: by 2002:a05:6e02:1d85:b0:36d:b5df:f478 with SMTP id
+ e9e14a558f8ab-371fc9cd989mr3921985ab.4.1716469083927; Thu, 23 May 2024
+ 05:58:03 -0700 (PDT)
+Date: Thu, 23 May 2024 05:58:03 -0700
+In-Reply-To: <tencent_4DA6DD13732376296683B4645AF76CB76205@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000004089806191e9a51@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 23, 2024 at 09:44:15AM +0800, Lin Ma wrote:
-> Hi Simon.
-> 
-> > 
-> > Hi Lin Ma,
-> > 
-> > The lines immediately above those covered by this patch are as follows:
-> > 
-> > 	ret = -ESRCH;
-> > 	ila = ila_lookup_by_params(&xp, ilan);
-> > 	if (ila) {
-> > 		ret = ila_dump_info(ila,
-> > 
-> > > @@ -483,6 +483,8 @@ int ila_xlat_nl_cmd_get_mapping(struct sk_buff *skb, struct genl_info *info)
-> > >  				    info->snd_portid,
-> > >  				    info->snd_seq, 0, msg,
-> > >  				    info->genlhdr->cmd);
-> > > +	} else {
-> > > +		ret = -EINVAL;
-> > >  	}
-> > >  
-> > >  	rcu_read_unlock();
-> > 
-> > And the lines following, up to the end of the function, are:
-> > 
-> > 	if (ret < 0)
-> > 		goto out_free;
-> > 
-> > 	return genlmsg_reply(msg, info);
-> > 
-> > out_free:
-> > 	nlmsg_free(msg);
-> > 	return ret;
-> > 
-> > By my reading, without your patch, if ila is not found (NULL)
-> > then ret will be -ESRCH, and genlmsg_reply will not be called.
-> > 
-> > I feel that I am missing something here.
-> 
-> Oh my bad, it seems this bug was already fixed by the
-> commit 693aa2c0d9b6 ("ila: do not generate empty messages
-> in ila_xlat_nl_cmd_get_mapping()") last year.
-> And my dated kernel does not apply that one.
-> 
-> Thanks for reminding me of this false alarm.
+Hello,
 
-Thanks for checking.
-I think we can retire this patch.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d87942980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=133e9f7c980000
+
+Note: testing is done by a robot and is best-effort only.
 
