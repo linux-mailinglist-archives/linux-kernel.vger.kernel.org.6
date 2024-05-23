@@ -1,129 +1,162 @@
-Return-Path: <linux-kernel+bounces-188072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29F78CDCD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C258CDCDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583861F2344F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758691C210F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6CB128375;
-	Thu, 23 May 2024 22:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C5812837B;
+	Thu, 23 May 2024 22:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUuXozQK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jq6eWdjw"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AA7823B0;
-	Thu, 23 May 2024 22:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EB884D1D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716503071; cv=none; b=HSxj0tBCCtyrlb/qQ9KFomtL5ZBLADc2LVDI66uL9VFY3xgCIlgpi0R5oqo3SSwBea3G/GvRWxhuFwWpRe9ep/qUV6LwQEcW+ar5+k9QheXX8uJ14f1XXxfcQQ35GQPdCyCayHiNeFjhCnHtSuaepSfkk3SO7NNT2VyWbXv4aBk=
+	t=1716503127; cv=none; b=hc3oFHEb3CFnEutm7GDzERAnwVeHlQ5TYSTylC5IV8qs2fhMg8L7vvIqSGzhj7AJOE2Adpu5o+YSt4TuH1nLenj+WZprJNURQhALcxwoBYUF3CM0oLtyyfXL0QRShlzOaFyKQaSWouGLXJiAO4fFKSdVcAGOb7TXLdjw+oDl8IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716503071; c=relaxed/simple;
-	bh=qvjSTZmZ1/mjUKQP4iIvyLHbx4J/qnta8BUfTpCvlog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfxHuJPxDln66EgC4ML935iJK8xvS8OOl/lzAmMV6kYteAAc+B52JLA1ydbLyLqPCe2Sb63pfzxd4NG3WUPLJ1ManAKEDub0XtIVHMdSce1d6Ch9cs71hp1z5fqk0+9fi3kJViV4/vJsAr/xBFBKt6fxoW5ePhSIrqlE+VXl51I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUuXozQK; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716503069; x=1748039069;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qvjSTZmZ1/mjUKQP4iIvyLHbx4J/qnta8BUfTpCvlog=;
-  b=IUuXozQKfWfRq2pzJn7pjJ22AAeTAlhTb1yRMWaSq9i3MhZK8DspdWVc
-   W0uqqfTbtZ0Jry/BUd2jyM6CpMMpJ/Ghq/RFxdGB9NyVA1UXQr6unFYB5
-   e8da36YJK6gYx2CmjYVayox/Wa8KqpVt/SaBhfRKCOo/QWcKwg0gtIbh2
-   J8c5k1V+UjZctNX377/BkFFNurbleRi/QkynP7ax+vg0UvdLc9QvP3IwV
-   w11i4udXIa6kyro0MFQMeYL3Av45xBl5M3QoA4JN19qCHQBBWRIlzOuCR
-   iqrD7zncdb9v/KJ3oyFwuxH3AecHE3bw2MF8ZVnwHanAWjefxEHvfQoM7
-   A==;
-X-CSE-ConnectionGUID: gqerkGlnRie+ooZJA55kBA==
-X-CSE-MsgGUID: kOdcUO9BQeOZzkaW3YwMuA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12793020"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="12793020"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:24:29 -0700
-X-CSE-ConnectionGUID: Nz/KrK75TAmGZgRqaDn3lw==
-X-CSE-MsgGUID: WTYszIGbQZ6eo95wCKKvFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="38271888"
-Received: from jbalogun-mobl.amr.corp.intel.com (HELO desk) ([10.212.227.156])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:24:28 -0700
-Date: Thu, 23 May 2024 15:24:22 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Xiaojian Du <Xiaojian.Du@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-pm@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com,
-	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
-	sandipan.das@amd.com, kai.huang@intel.com, ray.huang@amd.com,
-	rafael@kernel.org, Perry.Yuan@amd.com, gautham.shenoy@amd.com,
-	Borislav.Petkov@amd.com, mario.limonciello@amd.com
-Subject: Re: [PATCH v3 1/2] x86/cpufeatures: Add AMD FAST CPPC feature flag
-Message-ID: <20240523222422.mezuc3qj35nix3iu@desk>
-References: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
- <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
+	s=arc-20240116; t=1716503127; c=relaxed/simple;
+	bh=twa6gKc4Ja8rI61KLX/gmR2tcMYRjGwbQv1wJFVxwtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pOmOdxeigwIW4dqwZojxy2wrJ0Qtu+kuCQGSa6hwfBUAbwxfB5+4ob38BqvZ7bvFwWvx2cVOz+bB7RHig/z3Pqr+zFRkVMiRwa4HAOrIhlawaGSVxyCrZNBAyHpVqZXMVsVlGGCxgIMaA2fvO17MUySo6eR8R+3xiWCvs+wcHgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jq6eWdjw; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6a8d467aa23so32550436d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:25:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716503124; x=1717107924; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4WULqNW39evuzHzZCXCVZ3XQhyYSJZ/maSvMgmWDC3c=;
+        b=jq6eWdjwiInLk8BKDEM5MKiiwcx4RhHvhGecPWkruHcs9V8YZi+sh64LNt5zVk1WtM
+         OdGnqAT776WPbylKOTBlPolG76/zHX5UVP0FUJp1qd0DaoDTP2XWPclQV+HIlaSb05L6
+         gZm8svTKuGQKCH3irUOhH8U6OxK+BsqgOnLRk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716503124; x=1717107924;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4WULqNW39evuzHzZCXCVZ3XQhyYSJZ/maSvMgmWDC3c=;
+        b=FmBIF6HJKjqrqXUKadpeyHNENu8qy4R+rCluft/G94HDdCAEUGv6XCuji7H7JKdsMX
+         vvfni1Ashg/T6pAlR7GS0UFPrbxZsFWHzuuyI1r9mFAA0RN+sbysH6sa7QWiEMmbp4LF
+         pOc9DWHPJrf9e6EVYL7NrwDT2m7ZkXi65/TQQLrsMWI8w2g9pI7Axc+2HKsPT901+6DP
+         X9FlpMJTwUeENG7HCuEefhyRMa2lvZRDe8Kp5ntTvnVbXogOY9to8btRhRFYkVnjU9pG
+         vwuGcOJWTwgEiL9qePSovaFuheYB7J5uaOUpEQZEmZ5Brv4+HAwjmZv/aPf72KsxeBQV
+         F97w==
+X-Forwarded-Encrypted: i=1; AJvYcCUv0AtmkhAQWBWlBlADvhxt2OqwSj3dyhSAa1xu2iwecZ+MQWF6qESp1JLq5tt1rfNuiBoloIIx/H3og+xuTakpj0wRt8STGtqjfBwY
+X-Gm-Message-State: AOJu0YwK4nOosPU4WLShTM8fyYsZdvxM1inM7CpaEJIPxHc2Lpt/UevW
+	s0+Wrk5cqlqhxiqeW9wTX+PtLWAmHmAJnfO67vAIyXgTYCXC4E6DQ8IPJUT/44t/BpAMx7vJWTg
+	=
+X-Google-Smtp-Source: AGHT+IFaP9n7c9taJbwlYNU4M22uJroMjqJKQgNg5cYDxldhTkaVoujkwjd0S2Rto22qLlTH47nYgA==
+X-Received: by 2002:a05:6214:3a0a:b0:6aa:4a99:eaba with SMTP id 6a1803df08f44-6abcd18e43dmr4534446d6.55.1716503124495;
+        Thu, 23 May 2024 15:25:24 -0700 (PDT)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb17f348dsm1042261cf.38.2024.05.23.15.25.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 15:25:24 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-43f87dd6866so117741cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:25:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVTlEv6h0/RaeONx1gl4qEN4c0X293ELexWaMSY599QmjxU6YiuIQIPSUuVOkqUQLa9uvrOEQWpHlftcy/LdHP+/+z0vk9yOYqc+aH9
+X-Received: by 2002:a05:622a:4acd:b0:43e:398a:b0c0 with SMTP id
+ d75a77b69052e-43fb0194a6cmr918141cf.12.1716503122909; Thu, 23 May 2024
+ 15:25:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
+References: <20240318194902.3290795-1-khazhy@google.com> <20240318194902.3290795-2-khazhy@google.com>
+ <6bc61553-6c8e-4705-9cbb-8e73d3f8c801@oracle.com>
+In-Reply-To: <6bc61553-6c8e-4705-9cbb-8e73d3f8c801@oracle.com>
+From: Khazhy Kumykov <khazhy@chromium.org>
+Date: Thu, 23 May 2024 15:25:09 -0700
+X-Gmail-Original-Message-ID: <CACGdZYKihs6Zfc9vpN5LrFVwx7+qqxV-cMzsO8=cpXpFYWt6ig@mail.gmail.com>
+Message-ID: <CACGdZYKihs6Zfc9vpN5LrFVwx7+qqxV-cMzsO8=cpXpFYWt6ig@mail.gmail.com>
+Subject: Re: [PATCH 2/2] iscsi_tcp: disallow binding the same connection twice
+To: Mike Christie <michael.christie@oracle.com>
+Cc: Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>, 
+	"James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
+	open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 02:16:59PM +0800, Xiaojian Du wrote:
-> From: Perry Yuan <perry.yuan@amd.com>
-> 
-> Some AMD Zen 4 processors support a new feature FAST CPPC which
-> allows for a faster CPPC loop due to internal architectual
+On Tue, Mar 19, 2024 at 12:34=E2=80=AFPM Mike Christie
+<michael.christie@oracle.com> wrote:
+>
+> On 3/18/24 2:49 PM, Khazhismel Kumykov wrote:
+> > iscsi_sw_tcp_conn_bind does not check or cleanup previously bound
+> > sockets, nor should we allow binding the same connection twice.
+> >
+>
+> This looks like a problem for all the iscsi drivers.
+>
+> I think you could:
+>
+> 1. Add a check for ISCSI_CONN_FLAG_BOUND in iscsi_conn_bind.
+> 2. Have iscsi_sw_tcp_conn_stop do:
+>
+>         /* stop xmit side */
+> -       iscsi_suspend_tx(conn);
+> +       iscsi_conn_unbind(cls_conn, true);
+>
+> to clear the flag when we clean up the conn for relogin.
+>
+> 3. Fix up the other iscsi drivers so they call:
+>
+> iscsi_conn_unbind(cls_conn, true);
 
-s/architectual/architectural/
+I took a look, and it seems like the other drivers in-tree all use
+iscsi_conn_unbind already, and iscsi_tcp is the odd one out - only
+supporting stop_conn, and not setting ep_disconnect. Just swapping the
+iscsi_suspend_tx call for iscsi_conn_unbind works, and makes sense to
+me - but makes me wonder why we were using suspend_tx directly in the
+first place.
 
-> enhancements. The goal of this faster loop is higher performance
-> at the same power consumption.
-> 
-> Reference:
-> See the page 99 of PPR for AMD Family 19h Model 61h rev.B1, docID 56713
-> 
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Signed-off-by: Xiaojian Du <Xiaojian.Du@amd.com>
-> Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
-> ---
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  arch/x86/kernel/cpu/scattered.c    | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 3c7434329661..6c128d463a14 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -470,6 +470,7 @@
->  #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* "" BHI_DIS_S HW control available */
->  #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
->  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
-> +#define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
->  
->  /*
->   * BUG word(s)
-> diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
-> index af5aa2c754c2..9c273c231f56 100644
-> --- a/arch/x86/kernel/cpu/scattered.c
-> +++ b/arch/x86/kernel/cpu/scattered.c
-> @@ -51,6 +51,7 @@ static const struct cpuid_bit cpuid_bits[] = {
->  	{ X86_FEATURE_PERFMON_V2,	CPUID_EAX,  0, 0x80000022, 0 },
->  	{ X86_FEATURE_AMD_LBR_V2,	CPUID_EAX,  1, 0x80000022, 0 },
->  	{ X86_FEATURE_AMD_LBR_PMC_FREEZE,	CPUID_EAX,  2, 0x80000022, 0 },
-> +	{ X86_FEATURE_FAST_CPPC,	CPUID_EDX,  15, 0x80000007, 0 },
-                                                  ^
-						  Extra space here.
+The only other side effects I see are we set the session to failed
+momentarily if we stop the conn while still logging in (iscsi_tcp will
+quickly change this to _TERMINATE or _IN_RECOVERY once we hit the
+stop_conn), which seems OK.
+
+
+>
+> in their failure paths so when they fail they clear ISCSI_CONN_FLAG_BOUND=
+ and
+> iscsi_conn_bind can be called on the retry.
+>
+>
+>
+> > Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+> > ---
+> >  drivers/scsi/iscsi_tcp.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
+> > index e8ed60b777c6..8cf5dc203a82 100644
+> > --- a/drivers/scsi/iscsi_tcp.c
+> > +++ b/drivers/scsi/iscsi_tcp.c
+> > @@ -716,6 +716,9 @@ iscsi_sw_tcp_conn_bind(struct iscsi_cls_session *cl=
+s_session,
+> >       struct socket *sock;
+> >       int err;
+> >
+> > +     if (tcp_sw_conn->sock)
+> > +             return -EINVAL;
+> > +
+> >       /* lookup for existing socket */
+> >       sock =3D sockfd_lookup((int)transport_eph, &err);
+> >       if (!sock) {
+>
 
