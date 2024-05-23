@@ -1,133 +1,133 @@
-Return-Path: <linux-kernel+bounces-187718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0588CD71C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:31:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC6D8CD724
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 365E5B21A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 723C61C2161F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4A41EF1D;
-	Thu, 23 May 2024 15:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37466168C7;
+	Thu, 23 May 2024 15:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="g43oAHcT";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="qbWJ2rO4"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FRI1bwmt"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4CF17BA6;
-	Thu, 23 May 2024 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8430113AF9
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478253; cv=none; b=B83q2uG7U7oLI067W6Hhl1ZkXNCYZsw+k06w0JxBT64Bpr6PJhH0LHHHagA+IbLafODOCPz0eNfEMKAv2i38CQ0O8IgTyXpOY9oMlDOB5l+t9GWfbD5PVXq3rf/gWEub0KCkwuHs7jjdYLEkDokRt6GufF3zoPXVZLTK1sbeKTM=
+	t=1716478458; cv=none; b=oE2LStIyLzuTBZ4+cuFBwBoKGFEIpAHYNI/nPHCOz3C6JwsJkeDY6EzAD3RWqfIsFBcxaVl5GHz/OpavbNOECOnHgMEOa5PXvgwT0lM+w8TplTJcUSL37w74RJeJyRs7YisK+qP0BWr9UJ9iHxe6XKGf8SvNG7Yp6bx6pqMEgGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478253; c=relaxed/simple;
-	bh=eRv++RtTMbGGKt3sM0Qg0vdSeba5nbe3+wVeKfd8zio=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TxHl+mV5AgsM/DJEzW6+BBz/bL++7ZZZVsPOgSC77LoblJIqRJFnmQ0T38QHI2eWbPvDQMTAcqZuVjmW2tp6YjHEnmXtJvffDQcCshp+Ngkg5m9HzPcjnsCSDlq8P0YSLx6s2G4SMg2xCo9xvpNcUoQV9W/TyZ0WojTQ5MCJmbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=g43oAHcT; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=qbWJ2rO4; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716478251;
-	bh=eRv++RtTMbGGKt3sM0Qg0vdSeba5nbe3+wVeKfd8zio=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=g43oAHcTcvfMrhAvQOkxeUKtwoHt3NN8Nc+/EQlAa72XQl7BpkFjR1uN36q9zeAbC
-	 a/hJlF58ii8yi1g1dFRtTHIS/pcHYwDmDQlw2RNDz15o6YC7eqndPdyNABEF4QOaDc
-	 bfW8eBZvYwlYUuSg6aPG0q1kc3Ou6KqyMi00/NXI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1AB811286D83;
-	Thu, 23 May 2024 11:30:51 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id U16E3k5rrxQQ; Thu, 23 May 2024 11:30:51 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1716478250;
-	bh=eRv++RtTMbGGKt3sM0Qg0vdSeba5nbe3+wVeKfd8zio=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=qbWJ2rO4zA9JMpnSR2fBDKZhC7Ip/YnRTlLDUOztgsxh6L7fNhZf+1GJAHX2Zn6Vv
-	 ceib3sMdsbSH2G4shd9g6boLBsIBKv2ohYC2ey7N7sZ5d/zo+eDwaoZBfVulI16RiB
-	 kI0fUinUOLMQMt1PaEAFptlzseYD2CJkcdZZlo18=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A5F2E1286C23;
-	Thu, 23 May 2024 11:30:49 -0400 (EDT)
-Message-ID: <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
-Subject: Re: [PATCH RESEND] KEYS: trusted: Use ASN.1 encoded OID
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Eric
- Biggers <ebiggers@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Andrew Morton
- <akpm@linux-foundation.org>, Mimi Zohar <zohar@linux.ibm.com>, David
- Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James
- Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "open
- list:CRYPTO API" <linux-crypto@vger.kernel.org>,  open list
- <linux-kernel@vger.kernel.org>, "open list:SECURITY SUBSYSTEM"
- <linux-security-module@vger.kernel.org>
-Date: Thu, 23 May 2024 11:30:47 -0400
-In-Reply-To: <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
-References: <20240523131931.22350-1-jarkko@kernel.org>
-	 <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
-	 <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1716478458; c=relaxed/simple;
+	bh=IXvAeHORzB9N47O6Gcio6TB3UnH3uZXgM7JC1Q6ZjAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqXO7mAJ3gc2Syd18XyjJWS/5JfFKgHr8GV5v7DsiCWlrdgGqmV9jPU4Pj+Ml4rHQcGUlsjwtKQRUSMj80UrPHmpTlfjCaU96hqySoLJl+2SVdQHcbg+CctGiI/MnLLFg8iiqlFo7/rOfImrmafR6boXWrl66nQBdfCxGzusMdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FRI1bwmt; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: shakeel.butt@linux.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716478454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZIHvhELzd5UhchILcKZOt4tYNK+q26kPzDIOyxA1o+U=;
+	b=FRI1bwmtkW4sTlSM6pNJyAhv33dAfkqpZaEmcdX7J5Hgq98BxUlxtIf4uvR8gTtSjvq6ZI
+	/80Hp73IEwCcfZZksUGHrZYQ/9VNnNbo7vlU7RJTWi7YlV1zUuPaHKo6Kopn4/prSlXczu
+	sCKy15pxcS62iwkjBdUNZnEEHmow8ZU=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: muchun.song@linux.dev
+X-Envelope-To: yosryahmed@google.com
+X-Envelope-To: ying.huang@intel.com
+X-Envelope-To: feng.tang@intel.com
+X-Envelope-To: fengwei.yin@intel.com
+X-Envelope-To: oliver.sang@intel.com
+X-Envelope-To: kernel-team@meta.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Thu, 23 May 2024 08:34:09 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>, ying.huang@intel.com,
+	feng.tang@intel.com, fengwei.yin@intel.com, oliver.sang@intel.com,
+	kernel-team@meta.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg: rearrage fields of mem_cgroup_per_node
+Message-ID: <Zk9h8YFiYhqEWq1A@P9FQF9L96D.corp.robot.car>
+References: <20240523034824.1255719-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523034824.1255719-1-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 2024-05-23 at 16:54 +0300, Jarkko Sakkinen wrote:
-> On Thu May 23, 2024 at 4:38 PM EEST, James Bottomley wrote:
-> > On Thu, 2024-05-23 at 16:19 +0300, Jarkko Sakkinen wrote:
-> > > There's no reason to encode OID_TPMSealedData at run-time, as it
-> > > never changes.
-> > > 
-> > > Replace it with the encoded version, which has exactly the same
-> > > size:
-> > > 
-> > >         67 81 05 0A 01 05
-> > > 
-> > > Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue
-> > > so
-> > > that the OID can be simply copied to the blob.
-> > 
-> > This is true, but if we're going to do this, we should expand the
-> > OID
-> > registry functions (in lib/oid_registry.c) to do something like
-> > encode_OID.  The registry already contains the hex above minus the
-> > two
-> > prefixes (which are easy to add).
+On Wed, May 22, 2024 at 08:48:24PM -0700, Shakeel Butt wrote:
+> Kernel test robot reported [1] performance regression for will-it-scale
+> test suite's page_fault2 test case for the commit 70a64b7919cb ("memcg:
+> dynamically allocate lruvec_stats"). After inspection it seems like the
+> commit has unintentionally introduced false cache sharing.
 > 
-> Yes, I do agree with this idea, and I named variable the I named
-> it to make it obvious that generation is possible.
+> After the commit the fields of mem_cgroup_per_node which get read on the
+> performance critical path share the cacheline with the fields which
+> get updated often on LRU page allocations or deallocations. This has
+> caused contention on that cacheline and the workloads which manipulates
+> a lot of LRU pages are regressed as reported by the test report.
 > 
-> It would be best to have a single source, which could be just
-> a CSV file with entries like:
+> The solution is to rearrange the fields of mem_cgroup_per_node such that
+> the false sharing is eliminated. Let's move all the read only pointers
+> at the start of the struct, followed by memcg-v1 only fields and at the
+> end fields which get updated often.
 > 
-> <Name>,<OID number>
+> Experiment setup: Ran fallocate1, fallocate2, page_fault1, page_fault2
+> and page_fault3 from the will-it-scale test suite inside a three level
+> memcg with /tmp mounted as tmpfs on two different machines, one a single
+> numa node and the other one, two node machine.
 > 
-> And then in scripts/ there should be a script that takes this
-> source and generates oid_registry.gen.{h,c}. The existing
-> oid_registry.h should really just include oid_registry.gen.h
-> then to make this transparent change.
+>  $ ./[testcase]_processes -t $NR_CPUS -s 50
 > 
-> And then in the series where OID's are encoded per-subsystem
-> patch that takes pre-encoded OID into use.
+> Results for single node, 52 CPU machine:
 > 
-> Happy to review such patch set if it is pushed forward.
+> Testcase        base        with-patch
+> 
+> fallocate1      1031081     1431291  (38.80 %)
+> fallocate2      1029993     1421421  (38.00 %)
+> page_fault1     2269440     3405788  (50.07 %)
+> page_fault2     2375799     3572868  (50.30 %)
+> page_fault3     28641143    28673950 ( 0.11 %)
+> 
+> Results for dual node, 80 CPU machine:
+> 
+> Testcase        base        with-patch
+> 
+> fallocate1      2976288     3641185  (22.33 %)
+> fallocate2      2979366     3638181  (22.11 %)
+> page_fault1     6221790     7748245  (24.53 %)
+> page_fault2     6482854     7847698  (21.05 %)
+> page_fault3     28804324    28991870 ( 0.65 %)
+> 
+> Fixes: 70a64b7919cb ("memcg: dynamically allocate lruvec_stats")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202405171353.b56b845-oliver.sang@intel.com
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Heh, OK, since I'm the one who thinks it's quite easy, I'll give it a
-go.
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 
-James
-
+Thanks!
 
