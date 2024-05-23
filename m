@@ -1,211 +1,222 @@
-Return-Path: <linux-kernel+bounces-187392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7FB8CD128
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D948CD132
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A0828316F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:21:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF81F28195B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EE41474C2;
-	Thu, 23 May 2024 11:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360101474C2;
+	Thu, 23 May 2024 11:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dlmcoavo"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jfio/S6P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40B02746F;
-	Thu, 23 May 2024 11:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DA01474A8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716463312; cv=none; b=l1tdSIlfoG/+2pRgg9Qp4H4ry5J2K3tAyWj7N18MTZUziko4S5X85FMGhWmCbgCwGTVgMFrLNvEQilWut8v8TwCIj9Sy7/Oi2uOjrDCx9W17TKzg/Dsue/5rv8W6/hC67uJ9A06CH/mz5x0zJwGjQIBMU+JD4xu8/u7vp7xeXFA=
+	t=1716463535; cv=none; b=MQwp4SLdRWAeKNUV9Ty7HWNbYzYTXnCbBHnPuI/BrpsQFg24EoyiXsU0BaLIpT8JtbeNtHiaEsg9I613Cr7rUBj+eJ76tUeUWPRRdM+FmXU4VffQ3N1AJOo06p4KFaXrkcM2LEPjp8YTJGMkY7OwmA2XXfZXycKwiNlQe2WZ2YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716463312; c=relaxed/simple;
-	bh=eNlIxiqDzedCnOeX0xoj9OjpK35zUFeGYBak2boMgzM=;
+	s=arc-20240116; t=1716463535; c=relaxed/simple;
+	bh=5d7gBEEtqgoJFSVtfgG8pmQVA8NzkEGPyrNimcZ2liU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gZ/t85Tfd7YNQ6ZM98AtXIvYzNzKOsinjyUU8VSFtwbs/7wWgS11pRerdsyqqDDiRiSBOiPCAmQYkk1JnSebnC2YgcgfRKFIfdEjxL2bHTOJxqNJcvsegXJHq30Ioy7TnQE5XKGPM+SFYzEZAS0VQjdW6k5jjxRUR0QbV/QrfyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dlmcoavo; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e576057c2bso111158351fa.1;
-        Thu, 23 May 2024 04:21:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716463309; x=1717068109; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=asqwjj/YdEsrYXQGdSoC0a/xfkjKBOz+Tei0ANsb2Oo=;
-        b=DlmcoavoIP87jmLMNeSvCLRE0cJrQmj7cqNALOm83UpbUgZQ+hSGeze0v+Yl5Hm+Rb
-         bCU7/Q3LHGsGtunDAnuUSz0pkjnyT9zsp9/7Jay2s2PY9zX5sy7g/O8L+CnJXwLklTlB
-         3BlcMuOR8BdlL/tgKfroG2rENfEhBYBKSjbLvbvbAzXn98uYBpExmEtebaYidk5PI+lp
-         zKNEJt3+HmG0bErx/Boxe22S513JaEFZ8e5BXsI8eIqdgme6dgFk+mEbW4/MfYnIm23q
-         bJ+FgrYWMbthJC/aw5d24UfwvW6dkPcxv1TuJ7eYpKChXLHfVVagPfmLE7jHKSIQvesY
-         uaqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716463309; x=1717068109;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=asqwjj/YdEsrYXQGdSoC0a/xfkjKBOz+Tei0ANsb2Oo=;
-        b=QUYfNxcEXAMeQSpdcCKRWzhTP/zrTh/L8oyCtyeaTNFgObysOi5B7UTRngz1+G9Bwu
-         Avr9g5OS4McLT1MRc4TJOCMPIn6G77np/c/UjfteGO7ZVqnBavtU9EYfiaz2KuZfSsxe
-         ZIysvfhroSYvswrhqktd4N4hiGfpZE2vLcXXBPT0cy5EYfR+zsaMrN5caFhAWLteuv9Z
-         lNi9NOGqd207GWYNkp9A2AZGZYwoiznugkHWbcumR2mi2f2Ox0ZtfDO281D1hJPv3POz
-         7uQwhc2e3tieswg9F6Q4lE8hxuVgC6QUI7OOLYtC0uSYGKWZ5KoG3EDYUc2SMixrQVYo
-         71VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTDtn+ZQ8pw5Uoq+OEiMaQUFEMXcMTfAmfzV13uyHYkb9n4DQzrnfUBj5v9lFsqDZqotWjyblw7id100G2ovHu1wPgF2RjOKQA6QvJyCS1D0wl3MX8202r35k+t7NzH3YKgT6DHaRw
-X-Gm-Message-State: AOJu0YwHSlvpJ+YceeE+B8JUxEVp8zGzC/Zxx9Vl4n/Zj94jFAm3H+nT
-	+Xv77b9M9bjLa4Ir6ZF8UldKerVS5SZBrc+FswcfJcev4DvYKWlY
-X-Google-Smtp-Source: AGHT+IGM0g3nsTRP7Ys88GWXMtA5nlv5SymajA2Gk9zudU0Qveo6rp3T5jqP/JjGaQHLkUG+t2U+ig==
-X-Received: by 2002:a05:651c:10a7:b0:2e9:485d:45a4 with SMTP id 38308e7fff4ca-2e949466b84mr35709191fa.16.1716463308741;
-        Thu, 23 May 2024 04:21:48 -0700 (PDT)
-Received: from debian ([93.184.186.109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7dd4sm1920033566b.139.2024.05.23.04.21.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 04:21:48 -0700 (PDT)
-Date: Thu, 23 May 2024 13:21:46 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Andrew Hepp <andrew.hepp@ahepp.dev>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: Re: [PATCH v2 1/2] iio: temperature: mcp9600: Provide index for both
- channels
-Message-ID: <20240523112146.GB513807@debian>
-References: <20240517081050.168698-1-dima.fedrau@gmail.com>
- <20240517081050.168698-2-dima.fedrau@gmail.com>
- <20240519171438.08810789@jic23-huawei>
- <23efcf4c-b5b2-d245-931f-0420e61701fe@ahepp.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJVpWgjfq9+dfYwMHbSYFH4bQIudgjU5zB59gM8PSCf+Jkb4ViFrusWnNC2NLOzkvWo89XQyXVlKSEDD8XbqHj+l4lNmMyn4U0ys4FT6Gxgf0YxEiAVTegaMNLUTcSvMSCnwoiiDbOdNxXWB/HOgcIXs5+tVdL6eGgaaTtz+5gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jfio/S6P; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716463533; x=1747999533;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5d7gBEEtqgoJFSVtfgG8pmQVA8NzkEGPyrNimcZ2liU=;
+  b=jfio/S6PIcu9JkH3mDP0a7pPnmSd3miLMKaYgEp/ki03dSwt6RXbnF2b
+   kYtra7HIcCxAe7j32thP/XAua8oFNOPGDPXKI8AMMI76OMMoQubNWpyGS
+   M/xkVfJveqyMNGexrxwHyJhvyMFnCtx/sx/EoUqMqC2fMrwZMyejsIuFP
+   DsMwhVP75tvbyyYpnvM4gZ5nbb6PCmKfQCgcEV6T14wpYKZX8yN9yFlKs
+   +CqptCEOZgDJuYEKEbQQ4QlCjrhTTsl62uyjfRd+Jstr0QxFZmjiD1EpI
+   Be4Dq+es/RoX9A+wo3jCikOh9mYiiHy9RFVUYIlpYcOL2onxolfFtJXDb
+   Q==;
+X-CSE-ConnectionGUID: xl9gTKsqQdGHN/T5I9AayQ==
+X-CSE-MsgGUID: aylrbCHjSUy5DTIXBOpEbA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="24180432"
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="24180432"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 04:25:32 -0700
+X-CSE-ConnectionGUID: 8ziTzgasTdCrAFe7Ed/iOA==
+X-CSE-MsgGUID: YLt+ERgsR5mmtUZRDeKyWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="56870927"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 23 May 2024 04:25:30 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sA6Zb-0002mn-37;
+	Thu, 23 May 2024 11:25:27 +0000
+Date: Thu, 23 May 2024 19:24:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH] spmi: pmic-arb: Pass the correct of_node to
+ irq_domain_add_tree
+Message-ID: <202405231902.xK5xVGdb-lkp@intel.com>
+References: <20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <23efcf4c-b5b2-d245-931f-0420e61701fe@ahepp.dev>
+In-Reply-To: <20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804@linaro.org>
 
-Am Mon, May 20, 2024 at 10:28:10PM -0400 schrieb Andrew Hepp:
-> Hi all,
-> 
-> I attempted to send this yesterday, but I guess I leaked some HTML into the
-> message and it was rejected from the lists. I am resending it now as plain
-> text. Apologies for any inconvenience or confusion.
-> 
-> On 5/19/24 12:14 PM, Jonathan Cameron wrote:
-> > On Fri, 17 May 2024 10:10:49 +0200
-> > Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
-> > 
-> > > The mapping from cold junction to ambient temperature is inaccurate. We
-> > > provide an index for hot and cold junction temperatures.
-> > > 
-> > > Suggested-by: Jonathan Cameron <jic23@kernel.org>
-> > > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
-> > Hi Dmitri,
-> >
-> > I'm not sure you replied to the question in previous review of what
-> > sysfs files exist for this device.  Whilst I am at least a little
-> > open to changing the ABI, I'd like to fully understand what
-> > is currently presented and why iio_info is having trouble with it.
-> > 
-> > I also want an ack from Andrew on this one given might break it existing
-> > usage.
-> 
-> I’m not actively using the cold junction temperature reading, so I would be
-> happy to see any deficiencies in the ABI corrected.
-> 
-> > 
-> > The current interface is perhaps less than ideal, but I don't think it
-> > is wrong as such. Whilst I wasn't particularly keen on the cold junction
-> > == ambient I'm not sure moving to just indexed is an improvement.
-> > Hence looking for input from Andrew. +CC Nuno as someone who is both
-> > active in IIO and has written thermocouple front end drivers in
-> > the past.
-> 
-> The ABI docs state
-> 
->     The ambient and object modifiers distinguish between ambient (reference)
-> and distant temperatures for contactless measurements
-> Reading more of the Linux Driver API docs, those say that .modified is "used
-> to indicate a physically unique characteristic of the channel”, and that
-> .indexed is "simply another instance”.
-> 
-> I’m not sure whether measuring temperature at a different location meets the
-> bar of a “physically unique characteristic”. Maybe it does. But I don’t
-> think of the cold junction temperature as “simply another instance”. Perhaps
-> that’s a mistake on my behalf.
-> 
-> Reviewing temperature drivers using IIO_MOD_TEMP_AMBIENT, they all seem to
-> be reporting die temperatures. Some are IR sensors, but there are a couple
-> other thermocouples like the MCP9600.
-> 
-> Reviewing drivers using “.indexed”, one is an IR sensor and one is a
-> thermocouple. In both cases, the indexed channels seem to represent a “full
-> featured” channel. The IR sensor also reports IIO_MOD_TEMP_AMBIENT, so they
-> chose not to make it an additional index.
-> 
-> It seems to me that using IIO_MOD_TEMP_AMBIENT is more in line with what has
-> been done in the past. But I may be misunderstanding something and I am not
-> opposed to using and index if it’s determined that is more correct.
->
+Hi Konrad,
 
-Thanks for the explanation and the effort, must have taken some time. I
-think you are right. I will remove the patch from the series, so that no
-ABI change takes place.
+kernel test robot noticed the following build errors:
 
-Best regards,
-Dimitri
+[auto build test ERROR on 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b]
 
-> Thanks,
-> Andrew
-> 
-> > 
-> > Jonathan
-> > 
-> > 
-> > > ---
-> > >   drivers/iio/temperature/mcp9600.c | 9 +++++++--
-> > >   1 file changed, 7 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/iio/temperature/mcp9600.c b/drivers/iio/temperature/mcp9600.c
-> > > index 46845804292b..22451d1d9e1f 100644
-> > > --- a/drivers/iio/temperature/mcp9600.c
-> > > +++ b/drivers/iio/temperature/mcp9600.c
-> > > @@ -14,6 +14,9 @@
-> > >   #include <linux/iio/iio.h>
-> > > +#define MCP9600_CHAN_HOT_JUNCTION	0
-> > > +#define MCP9600_CHAN_COLD_JUNCTION	1
-> > > +
-> > >   /* MCP9600 registers */
-> > >   #define MCP9600_HOT_JUNCTION 0x0
-> > >   #define MCP9600_COLD_JUNCTION 0x2
-> > > @@ -25,17 +28,19 @@
-> > >   static const struct iio_chan_spec mcp9600_channels[] = {
-> > >   	{
-> > >   		.type = IIO_TEMP,
-> > > +		.channel = MCP9600_CHAN_HOT_JUNCTION,
-> > >   		.address = MCP9600_HOT_JUNCTION,
-> > >   		.info_mask_separate =
-> > >   			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> > > +		.indexed = 1,
-> > >   	},
-> > >   	{
-> > >   		.type = IIO_TEMP,
-> > > +		.channel = MCP9600_CHAN_COLD_JUNCTION,
-> > >   		.address = MCP9600_COLD_JUNCTION,
-> > > -		.channel2 = IIO_MOD_TEMP_AMBIENT,
-> > > -		.modified = 1,
-> > >   		.info_mask_separate =
-> > >   			BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INFO_SCALE),
-> > > +		.indexed = 1,
-> > >   	},
-> > >   };
-> > 
+url:    https://github.com/intel-lab-lkp/linux/commits/Konrad-Dybcio/spmi-pmic-arb-Pass-the-correct-of_node-to-irq_domain_add_tree/20240522-194023
+base:   8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
+patch link:    https://lore.kernel.org/r/20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804%40linaro.org
+patch subject: [PATCH] spmi: pmic-arb: Pass the correct of_node to irq_domain_add_tree
+config: arm64-randconfig-001-20240523 (https://download.01.org/0day-ci/archive/20240523/202405231902.xK5xVGdb-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 7aa382fd7257d9bd4f7fc50bb7078a3c26a1628c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405231902.xK5xVGdb-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405231902.xK5xVGdb-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/spmi/spmi-pmic-arb.c:1740:42: error: passing 'const struct irq_domain_ops' to parameter of incompatible type 'const struct irq_domain_ops *'; take the address with &
+    1740 |         bus->domain = irq_domain_add_tree(node, pmic_arb_irq_domain_ops, bus);
+         |                                                 ^~~~~~~~~~~~~~~~~~~~~~~
+         |                                                 &
+   include/linux/irqdomain.h:369:36: note: passing argument to parameter 'ops' here
+     369 |                                          const struct irq_domain_ops *ops,
+         |                                                                       ^
+   1 error generated.
+
+
+vim +1740 drivers/spmi/spmi-pmic-arb.c
+
+  1663	
+  1664	static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
+  1665					  struct device_node *node,
+  1666					  struct spmi_pmic_arb *pmic_arb)
+  1667	{
+  1668		int bus_index = pmic_arb->buses_available;
+  1669		struct spmi_pmic_arb_bus *bus;
+  1670		struct device *dev = &pdev->dev;
+  1671		struct spmi_controller *ctrl;
+  1672		void __iomem *intr;
+  1673		void __iomem *cnfg;
+  1674		int index, ret;
+  1675		int irq;
+  1676	
+  1677		ctrl = devm_spmi_controller_alloc(dev, sizeof(*bus));
+  1678		if (IS_ERR(ctrl))
+  1679			return PTR_ERR(ctrl);
+  1680	
+  1681		ctrl->cmd = pmic_arb_cmd;
+  1682		ctrl->read_cmd = pmic_arb_read_cmd;
+  1683		ctrl->write_cmd = pmic_arb_write_cmd;
+  1684	
+  1685		bus = spmi_controller_get_drvdata(ctrl);
+  1686	
+  1687		pmic_arb->buses[bus_index] = bus;
+  1688	
+  1689		raw_spin_lock_init(&bus->lock);
+  1690	
+  1691		bus->ppid_to_apid = devm_kcalloc(dev, PMIC_ARB_MAX_PPID,
+  1692						 sizeof(*bus->ppid_to_apid),
+  1693						 GFP_KERNEL);
+  1694		if (!bus->ppid_to_apid)
+  1695			return -ENOMEM;
+  1696	
+  1697		bus->apid_data = devm_kcalloc(dev, pmic_arb->max_periphs,
+  1698					      sizeof(*bus->apid_data),
+  1699					      GFP_KERNEL);
+  1700		if (!bus->apid_data)
+  1701			return -ENOMEM;
+  1702	
+  1703		index = of_property_match_string(node, "reg-names", "cnfg");
+  1704		if (index < 0) {
+  1705			dev_err(dev, "cnfg reg region missing");
+  1706			return -EINVAL;
+  1707		}
+  1708	
+  1709		cnfg = devm_of_iomap(dev, node, index, NULL);
+  1710		if (IS_ERR(cnfg))
+  1711			return PTR_ERR(cnfg);
+  1712	
+  1713		index = of_property_match_string(node, "reg-names", "intr");
+  1714		if (index < 0) {
+  1715			dev_err(dev, "intr reg region missing");
+  1716			return -EINVAL;
+  1717		}
+  1718	
+  1719		intr = devm_of_iomap(dev, node, index, NULL);
+  1720		if (IS_ERR(intr))
+  1721			return PTR_ERR(intr);
+  1722	
+  1723		irq = of_irq_get_byname(node, "periph_irq");
+  1724		if (irq <= 0)
+  1725			return irq ?: -ENXIO;
+  1726	
+  1727		bus->pmic_arb = pmic_arb;
+  1728		bus->intr = intr;
+  1729		bus->cnfg = cnfg;
+  1730		bus->irq = irq;
+  1731		bus->spmic = ctrl;
+  1732		bus->id = bus_index;
+  1733	
+  1734		ret = pmic_arb->ver_ops->init_apid(bus, bus_index);
+  1735		if (ret)
+  1736			return ret;
+  1737	
+  1738		dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
+  1739	
+> 1740		bus->domain = irq_domain_add_tree(node, pmic_arb_irq_domain_ops, bus);
+  1741		if (!bus->domain) {
+  1742			dev_err(&pdev->dev, "unable to create irq_domain\n");
+  1743			return -ENOMEM;
+  1744		}
+  1745	
+  1746		irq_set_chained_handler_and_data(bus->irq,
+  1747						 pmic_arb_chained_irq, bus);
+  1748	
+  1749		ctrl->dev.of_node = node;
+  1750		dev_set_name(&ctrl->dev, "spmi-%d", bus_index);
+  1751	
+  1752		ret = devm_spmi_controller_add(dev, ctrl);
+  1753		if (ret)
+  1754			return ret;
+  1755	
+  1756		pmic_arb->buses_available++;
+  1757	
+  1758		return 0;
+  1759	}
+  1760	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
