@@ -1,90 +1,78 @@
-Return-Path: <linux-kernel+bounces-187984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82008CDB8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:47:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D448CDB8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9391228455F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35C41F230DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F4484FA7;
-	Thu, 23 May 2024 20:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DE585297;
+	Thu, 23 May 2024 20:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ihx1ovZG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1fy7NJu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D12953E31;
-	Thu, 23 May 2024 20:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573BD84FB1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716497233; cv=none; b=u+XZFVWi46KvSXjYR/6l1DrBW1RwayOhazLZwkFqvuMFrwUSJSShfm0tuXWPgAQY66Tf49BVtoON7MxFmdFQe4jZpzo5klJaqRwmnpm4VOnApzOiSUCt98zZSmYyypkV77BAQ23klnPhbuvpX5LaeRRMRRE2Wy6DBH0j8SVKWzo=
+	t=1716497361; cv=none; b=i45xxHvPfqmQAioUK2smD/Bl99cxTkO1rC2TffEZazLtf0r9rqJuwDfgQzymfld9YbJtFpS69bJgX5yFbFUxakQdgamCnibuCgg+zvZhSm8yyxzKLR77prVNtcYylp0xk9wBVYaPBJeLZiklHKjovdHltLztwFBncXZQGIAJ5g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716497233; c=relaxed/simple;
-	bh=0kaKeD5ajy7QjM1HCLCiLb+fHLclywW8P5rBkBL8O1w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Xtc7Uaf5iGdzwtE3MCRdtvUuL6FJUVukB1AJX4x+9VZZjqdFCYYFIc0BhPxo32SzaF622M3UoWhG12YdXeUQmga7H05Wboe0bzmBWHcK79RJp1VghngnQ+rSp7wKsjJ7RuwaAgSpAyAgcuAtyS5+3kW5qNH+kohBr7ZCf8Hoetg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ihx1ovZG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 081F8C32782;
-	Thu, 23 May 2024 20:47:13 +0000 (UTC)
+	s=arc-20240116; t=1716497361; c=relaxed/simple;
+	bh=sE5LdrfRbtc5RihEkwMMPQocx59A0eaEmY01/DKE0AQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HR6umsCpMms6bjZ/VNT23pn7fM9WlVQqlJJBIVhlkjDujsqaSYBPF/k4tIvWeTaOiMfS5v037eZvTPTtrlZu5bmZn6UFAdsoykxL24cYJ1HRA+COXFmzg2Wf0Cfda+2+wFBIKtK0l1nUhYkPBrMnoThOeaqwjRXcPH06rXgb0/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1fy7NJu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C1AB0C2BD10;
+	Thu, 23 May 2024 20:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716497233;
-	bh=0kaKeD5ajy7QjM1HCLCiLb+fHLclywW8P5rBkBL8O1w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ihx1ovZG1slVGXWLTQXUpftJcKYRzcjyIfbyWtQqPdmJtr1afxv627gA0c4XERb2v
-	 /j5bC/ysmZzjtwpTvuTKL3MCVk/+QeT44xKYfqLcqtcLnbjx+nrEed/13piXadQO2n
-	 /+Ypk6FzzXaVFLZgCHh7tg262cu4Cse50tRj3NPQGmc+MtE3usyjuLSIiR6l93uEOO
-	 5deGcQ+UDsvFMfdzS4Zojt2xtRbsqwx6Qcw1CS4mA/bawYiycTSHXO5b77za9Y2oHT
-	 pwQ2Wqbtu0GdxGHaDwmN/fxFpdHupZcey54zQUHpOcWEiZ84QbsDNwoUMMCIBGg+UD
-	 d6Fe1LJoPvwRg==
+	s=k20201202; t=1716497360;
+	bh=sE5LdrfRbtc5RihEkwMMPQocx59A0eaEmY01/DKE0AQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=O1fy7NJuwy2izmdqqrpkq3lKtLg5/kT8JeYopv8dq1T8F7OukJMKOg2fzouxfWThI
+	 KZsdkKCuMksRPu2unYe97FpYQtOSovFmxhwPehOXryQKFIpiA9qzxjSpBAJJzpdwY7
+	 4yyQpJymgsPXshrmNdrGEqJ/XRhup//lRERO6u61RE9NQwgm/uJqvlmmDrS8OVqNiM
+	 YMj3CZ0aRj93q/Eq1pM4+qQxUmcsz/WDbeecQHNR+yrpQeawUJ22fqH3/PUXsNzzy+
+	 2E1XBadWTYnIaE0f9oNEgk5z1CL7EqRIOKdCtZN7nyKEBVMAv/F/WggrvGXw6t9wQI
+	 3Io4F5c7EPAlA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D837AC54BB2;
-	Thu, 23 May 2024 20:47:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B17D4C54BB2;
+	Thu, 23 May 2024 20:49:20 +0000 (UTC)
+Subject: Re: [GIT PULL] regmap fixes for v6.10-merge-window
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <e6cfc0e5425a26caf92012a9021e6a47.broonie@kernel.org>
+References: <e6cfc0e5425a26caf92012a9021e6a47.broonie@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <e6cfc0e5425a26caf92012a9021e6a47.broonie@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-fix-v6.10-merge-window
+X-PR-Tracked-Commit-Id: 7ba822189e6060a8a2833b721d430f833bf0db43
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 09f8f2c4ca4263b40f766238a92ef9c5f93ea5a5
+Message-Id: <171649736072.28255.9570261418373653619.pr-tracker-bot@kernel.org>
+Date: Thu, 23 May 2024 20:49:20 +0000
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.10
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171649723288.14313.13144191838694065480.git-patchwork-notify@kernel.org>
-Date: Thu, 23 May 2024 20:47:12 +0000
-References: <ZktYriALqC7ZNQpa@infradead.org>
-In-Reply-To: <ZktYriALqC7ZNQpa@infradead.org>
-To: hch@infradead.org <hch@infradead.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, netdev@vger.kernel.org
 
-Hello:
+The pull request you sent on Thu, 23 May 2024 12:47:59 +0100:
 
-This pull request was applied to netdev/net.git (main)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-fix-v6.10-merge-window
 
-On Mon, 20 May 2024 07:05:34 -0700 you wrote:
-> Note that the the dma sync optimizations reach into the networking code
-> and promptly caused a conflict where the netdev tree constifies the page
-> argument to page_pool_dma_sync_for_device and this tree renames that
-> function to page_pool_dma_sync_for_device.  The dma-mapping version of
-> the merge just works, but you might want to pick the contification
-> manually if you think it is useful.
-> 
-> [...]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/09f8f2c4ca4263b40f766238a92ef9c5f93ea5a5
 
-Here is the summary with links:
-  - [GIT,PULL] dma-mapping updates for Linux 6.10
-    https://git.kernel.org/netdev/net/c/daa121128a2d
+Thank you!
 
-You are awesome, thank you!
 -- 
 Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+https://korg.docs.kernel.org/prtracker.html
 
