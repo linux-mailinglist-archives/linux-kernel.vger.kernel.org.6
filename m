@@ -1,267 +1,133 @@
-Return-Path: <linux-kernel+bounces-187475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 823A18CD251
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:34:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD80C8CD255
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF541F21FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:34:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7983D282013
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61D81487F2;
-	Thu, 23 May 2024 12:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272381482EB;
+	Thu, 23 May 2024 12:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzCdnMwf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nho/kuZV"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E8A1E4A0;
-	Thu, 23 May 2024 12:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22011E4A0
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716467632; cv=none; b=VCAjgvMEXPp+pFImEa1HKK/rVnZ18MOICg0eme5r4jiP8uMIsflktqgGzkTeczPs5m4ski8x+H+93KUJfBTu9pUHgn3aWrhjRfnLtbBNbac5fzJQrTTcpx79OWgET8dI6eGfDDKJ9RwAxCUor/+c36WLcZiw2GStVqqr7Ek59lE=
+	t=1716467782; cv=none; b=T7CWI0h2YdNShO671AJ32MXSQZLC6/aI2yL027pcBTeAjNb2V/szZ2dPTCQr2XWYLV2gloKdfCzt5EsSss8kkdtpkFKqo/WcY+iOoMojDJ7+Qfplash6cjDUKYXXqPPPGtKus+KedYr9tRnWCDK5IDJyMr44tj8teyrvptN17QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716467632; c=relaxed/simple;
-	bh=a8MmbzJBeepTahbb6Q+q7oc8lvq89ytBLirdGd192iY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qg2JTcpkJXqbScaX1lCdBr/BCc37V5gweqpTqU7ezMpTdCiT14nOxtZKIXQFuT9N37l59QXzkDBLJP2fNHVnn6Vck14CPgo9cIB6pirrr7Hg1a/+QKXt/lZyMufAfqE6WseFLpOL5KnabYsyl+AFW6oVCQFPoXeRYNtIFTuQ8so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzCdnMwf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 216F7C2BD10;
-	Thu, 23 May 2024 12:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716467632;
-	bh=a8MmbzJBeepTahbb6Q+q7oc8lvq89ytBLirdGd192iY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XzCdnMwf9+VrGY2+RNwqK6SHIEV1J7zTUdWsHAHpcOrzQgLud8Zf8Ckxhll/Sz69g
-	 kT74aFgaG66KcSgbsmgwfjT7aMt3+I9NWfDZyGDJpt0iRKO0bSxSBOBzIGsmd7jJVL
-	 YGMNvC/2j73m6P1PPGJrhk8OIC29gfqsJpAMlyNkrYFsrIlE2Y2oqv8hG0fID752D9
-	 0KRwR+zZygOZBFIhGrcWzsoo5EBHzzZHkZep3JL7Zu84ypYZXXQvE00XuINBo1Us44
-	 VZ5rIr+T9a2CP4uDNK/zLhVlRd3NGDOxNtj9JGDcKRFSQXxudXyKOq9/iSKDQ4mNNf
-	 bufHMtKR6bF5w==
-Date: Thu, 23 May 2024 07:33:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v2 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
-Message-ID: <20240523123351.GA2067525-robh@kernel.org>
-References: <20240523031909.19427-1-kimseer.paller@analog.com>
- <20240523031909.19427-5-kimseer.paller@analog.com>
+	s=arc-20240116; t=1716467782; c=relaxed/simple;
+	bh=m6UgnpbMbTrWQXZDKtHkcHfxNFrx8RIBUE5CV8NUdwQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=j4qZDEopgnDLdJOKUFQnC2SObvbcfA+ldsjBDUlGPnQqQzO7mhDQWG3t1HvFA1/ckiRemLYAUIIsKJrjsbdA3bdZJ+DRD6v3dwuJ73Qfl/VsMGh8bKVJNKFzCDkQZR/jAQBwOjXKbGftjaB4Oz8m+08LJgIWchlqIaCfZtmBCQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nho/kuZV; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51fc01b6fe7so6646485e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716467779; x=1717072579; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K8lRq3lXsKaaPmtAV1QU0P9el+kdsmzCNC+w8uH7qfk=;
+        b=Nho/kuZVCueIRFvS5mYOvkIpRwRZlavQL01TI2hNjavZRDAhnUQwJ0P/wCZN7AeFQJ
+         T10PrUfKxcKbTwjh4MuacTy0gFFAuWbw8A1grJVypC4RY35idwwyEFy0DYd5NsxHz31K
+         /f/EeQGwPOxmdZADZXmAq9TkAVCPVXELej/pc8/OkBisZA7d93TSpq0BA3JMW+s5EEL1
+         0LOYaKN0rYrU6QuxpSgxvZfxQXsVPDGqp8S5hT8D9tR8EUzt8U9rcbX4bIJKjHrHsMso
+         CUhUNIvVtl8bqQmqyi2i/37iGjb/Pijnz1xxgLzSWbll61a2RibPvwIxmtV5ZH3CBJou
+         TOXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716467779; x=1717072579;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K8lRq3lXsKaaPmtAV1QU0P9el+kdsmzCNC+w8uH7qfk=;
+        b=JFsgGTwXG5NSr95z4sUbqXyQn1taLo43G7SFsDihV4VU4s9gFyIoE8FDS0BYVevJwl
+         yhP3UDDiORCeujnPz9L1aK5jP9YyvibITyxqdojFqmmlyPt5/CM0jLTqxaV+Atck39CF
+         4lZowevynn76EtwvP5NGiaAk0uz49MGKIKJmui64Q19OVJXazptefilutTtEHXskDpkc
+         SyNczmy2/6g7Qm8sjY9xJXyAE8Jk+mRBpyT/bRGb0bG65Wf5HhFK8Zl31djLx6mrcJNE
+         /VNwZ+E43qkg87ZXxr1WZYlZJzanQLbUJSUj31jBkzyPsOZr8JzvNkPnjr6vSD3YZWKr
+         RoRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnwGdUx42DKHJk7svRfamREHO/HDV9kCt6HDm5izaTevnyFa96eT8rFQuEHttxzUbspAeamL3Vc0sOKMW7xd9Wjd8pkFPCBCcAqIMh
+X-Gm-Message-State: AOJu0Yw4701Kk6YaQu/lKJxrllktMYyO5WE4VFMs76HCg71VXOMCo2ta
+	axRRMB7ebgHZEFDp4IlHkz7MoVaXTTWtTOhIgXptwblA5QrvT6km
+X-Google-Smtp-Source: AGHT+IGTi2EkzmV53tv/VPuEYvVAiRUh6FoyVlq2SqgaxVOnc556D9mbr1HGWrV7XXHBopeoqrkJ/g==
+X-Received: by 2002:a19:7511:0:b0:523:e756:2838 with SMTP id 2adb3069b0e04-526bdc5255fmr2777702e87.39.1716467778569;
+        Thu, 23 May 2024 05:36:18 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578366176e9sm2388421a12.74.2024.05.23.05.36.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2024 05:36:18 -0700 (PDT)
+From: Wei Yang <richard.weiyang@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wei Yang <richard.weiyang@gmail.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Steve Wahl <steve.wahl@hpe.com>
+Subject: [Patch v3] x86/head/64: remove redundant check on level2_kernel_pgt's _PAGE_PRESENT bit
+Date: Thu, 23 May 2024 12:35:39 +0000
+Message-Id: <20240523123539.14260-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240523031909.19427-5-kimseer.paller@analog.com>
 
-On Thu, May 23, 2024 at 11:19:08AM +0800, Kim Seer Paller wrote:
-> Add documentation for ltc2672.
-> 
-> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
->  .../bindings/iio/dac/adi,ltc2672.yaml         | 159 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  2 files changed, 160 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
-> new file mode 100644
-> index 000000000000..996aae315640
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
-> @@ -0,0 +1,159 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2672.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices LTC2672 DAC
-> +
-> +maintainers:
-> +  - Michael Hennerich <michael.hennerich@analog.com>
-> +  - Kim Seer Paller <kimseer.paller@analog.com>
-> +
-> +description: |
-> +  Analog Devices LTC2672 5 channel, 16 bit, 300mA DAC
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc2672.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ltc2672
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    maximum: 50000000
-> +
-> +  vcc-supply:
-> +    description: Analog Supply Voltage Input.
-> +
-> +  v-neg-supply:
-> +    description: Negative Supply Voltage Input.
-> +
-> +  vdd0-supply:
-> +    description: Positive Supply Voltage Input for DAC OUT0.
-> +
-> +  vdd1-supply:
-> +    description: Positive Supply Voltage Input for DAC OUT1.
-> +
-> +  vdd2-supply:
-> +    description: Positive Supply Voltage Input for DAC OUT2.
-> +
-> +  vdd3-supply:
-> +    description: Positive Supply Voltage Input for DAC OUT3.
-> +
-> +  vdd4-supply:
-> +    description: Positive Supply Voltage Input for DAC OUT4.
-> +
-> +  iovcc-supply:
-> +    description: Digital Input/Output Supply Voltage.
-> +
-> +  ref-supply:
-> +    description:
-> +      Reference Input/Output. The voltage at the REF pin sets the full-scale
-> +      range of all channels. If not provided the internal reference is used and
-> +      also provided on the VREF pin.
-> +
-> +  clr-gpios:
-> +    description:
-> +      Active Low Asynchronous Clear Input. A logic low at this level triggered
-> +      input clears the device to the default reset code and output range, which
-> +      is zero-scale with the outputs off. The control registers are cleared to
-> +      zero.
-> +    maxItems: 1
-> +
-> +  adi,rfsadj-ohms:
-> +    description:
-> +      If FSADJ is tied to VCC, an internal RFSADJ (20 kΩ) is selected, which
-> +      results in nominal output ranges. When an external resistor of 19 kΩ to
-> +      41 kΩ can be used instead by connecting the resistor between FSADJ and GND
-> +      it controls the scaling of the ranges, and the internal resistor is
-> +      automatically disconnected.
-> +    minimum: 19000
-> +    maximum: 41000
-> +    default: 20000
-> +
-> +  io-channels:
-> +    description:
-> +      Analog multiplexer output. Pin voltages and currents can be monitored by
-> +      measuring the voltage at MUX.
+Remove a redundant check on kernel code's PMD _PAGE_PRESENT attribute
+before fix up.
 
-You need constraints for how many entries and what is each one.
+Current process looks like this:
 
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^channel@[0-4]$":
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        description: The channel number representing the DAC output channel.
-> +        maximum: 4
-> +
-> +      adi,toggle-mode:
-> +        description:
-> +          Set the channel as a toggle enabled channel. Toggle operation enables
-> +          fast switching of a DAC output between two different DAC codes without
-> +          any SPI transaction.
-> +        type: boolean
-> +
-> +      adi,output-range-microamp:
-> +        description: Specify the channel output full scale range.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [3125000, 6250000, 12500000, 25000000, 50000000, 100000000,
-> +               200000000, 300000000]
-> +
-> +    required:
-> +      - reg
-> +      - adi,output-range-microamp
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - spi-max-frequency
-> +  - vcc-supply
-> +  - iovcc-supply
-> +  - v-neg-supply
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        dac@0 {
-> +            compatible = "adi,ltc2672";
-> +            reg = <0>;
-> +            spi-max-frequency = <10000000>;
-> +
-> +            vcc-supply = <&vcc>;
-> +            iovcc-supply = <&vcc>;
-> +            ref-supply = <&vref>;
-> +            v-neg-supply = <&vneg>;
-> +
-> +            io-channels = <&adc 0>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            channel@0 {
-> +                    reg = <0>;
-> +                    adi,toggle-mode;
-> +                    adi,output-range-microamp = <3125000>;
-> +            };
-> +
-> +            channel@1 {
-> +                    reg = <1>;
-> +                    adi,output-range-microamp = <6250000>;
-> +            };
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 7becbdf7d1df..3320b7af4c0b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12858,6 +12858,7 @@ S:	Supported
->  W:	https://ez.analog.com/linux-software-drivers
->  F:	Documentation/ABI/testing/sysfs-bus-iio-dac
->  F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
-> +F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
->  
->  LTC2688 IIO DAC DRIVER
->  M:	Nuno Sá <nuno.sa@analog.com>
-> -- 
-> 2.34.1
-> 
+    pmd in [0, _text)
+        unset _PAGE_PRESENT
+    pmd in [_text, _end]
+        if (_PAGE_PRESENT)
+            fix up delta
+    pmd in (_end, 512)
+        unset _PAGE_PRESENT
+
+level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
+redundant
+
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: Steve Wahl <steve.wahl@hpe.com>
+
+---
+v3: refine the change log per kirill's comment
+v2: adjust the change log to emphasize the redundant check
+---
+ arch/x86/kernel/head64.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index a817ed0724d1..bac33ec19aa2 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -260,8 +260,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 
+ 	/* fixup pages that are part of the kernel image */
+ 	for (; i <= pmd_index((unsigned long)_end); i++)
+-		if (pmd[i] & _PAGE_PRESENT)
+-			pmd[i] += load_delta;
++		pmd[i] += load_delta;
+ 
+ 	/* invalidate pages after the kernel image */
+ 	for (; i < PTRS_PER_PMD; i++)
+-- 
+2.34.1
+
 
