@@ -1,89 +1,114 @@
-Return-Path: <linux-kernel+bounces-187286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988FB8CCF7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:41:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AA98CCF7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380A41F2324A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:41:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515271F23014
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECA513D296;
-	Thu, 23 May 2024 09:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1681B13D2A6;
+	Thu, 23 May 2024 09:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5NYLLE2"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="A7BKMpgH"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8834317F6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870B94685
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716457273; cv=none; b=RTFf/0xSWDc6uaTzjBukCFyOqb1lcgsOy8rHmpAkFm9KZ/Pkq1BrgEU994U0R8eF1T53/b2fiFgkXR4eUpDoFtOGV2JPxTOZ0XINeyxUHt2YAUJ3rHuXaQHRk+My/4SkZgVYI3P2JN6nw2NcATAdiLnkmQN/+InmGjXgNVj2UqY=
+	t=1716457293; cv=none; b=fnYI8WH+6n+0bSRaEKeXM+XHyX85C/Y8KndCnMn872FExyjDC2/+8p0rA0Kj3SEtSk94ukeCxY56jhS4xRaktEpjg+KwNwt7PejmmV3c8D2B/Tq1r1n180FPThprWQDuv2UF7HXUtdJ7IrSf8WJ/EJXrAdbP8ftlpNA4MJ/C5dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716457273; c=relaxed/simple;
-	bh=j2zx3VaHX0GsfKBrlQgn1untBcEyimrqEdjGH5+DWdc=;
+	s=arc-20240116; t=1716457293; c=relaxed/simple;
+	bh=j2zvU3m0yzWo1+kw71p/VfCXySbVS/PxKnovAE6DvVE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3/HOMAzguKb28tO2L4qXO2oIodSa0dvO0kVD6keIv6j3zPa5+6D6dRAy60/j2/5fZ7vg88fDeyrHaVo+e58mPoCTmTcAtC4Is/39G1D0BF4kn/Ls4Fq/Fdx759HoIPMQxSCQFSRTQlYpAx5u44VF+vhhXF3VV3gZh9ViUbIVWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E5NYLLE2; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51f57713684so8996839e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:41:11 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFp10GcGqQxdCL68wjjeCnSFVu1HRETHoN5t+6Ijb/ixH+9v/BL6qtqbx0WDHn7/oBHYA39OrA1Un3XGMOXI6BGWpaaa96dy8V2/qaE5OTYUOjxk9KmGhokJfmIxpa4l9KQkDdEPYmYccaVlQdeUoLa3ONf8JGdQD/Kjjyc/GFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=A7BKMpgH; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e20088184cso11244051fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:41:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716457270; x=1717062070; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ymOIxLRXX6/t992boJGrCdN0THAC8qBuamXJNsylAfs=;
-        b=E5NYLLE2otA5YJCF3nLVWisS/DzmSW2A0uqi6T4ZhdoRKjLe7LLqbSCX9/WS1vWBsB
-         Za9COMKgC3G4chCxrt97Umzv9xuceDHoVQD4vywBhAsxxfDFscGNlG1Ws+ncyuyfsJsB
-         LSQprJnj4VqnMO8qY8/h/aQmZrjLV5HGPh8whUw8HJJxf/ynW5W01PEuj8K92yY9b23t
-         FKppsKdzuhLTSUrVILe0WtJxx4rVnkqvBDAOlQ98O7uHt4ctCwl4EWdH5a2q+Mx8/qbk
-         fI6rg9f0+4CBwOYtYM/BRlfaa/YhAk2iJfYPN2PIKj7WY+3PCIBHgmBUJ76S5IbO2Dzo
-         xHtg==
+        d=ffwll.ch; s=google; t=1716457289; x=1717062089; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7P0FBG/QIqolUidBUOAk5xSpyavQelBrO3qhLkdkCo4=;
+        b=A7BKMpgH4ry3m1y24XN02Euv9t7X+SIKSTFivWGVX4sz1v8D4dX1ZIoO/13Mw9A3JI
+         iavQSwWhm23vGsi0Z25bOqGWWOoxAmFuqvjI4lDqxG/SGpFzFdGFEOLKjWnY+k8Iswga
+         UMXgaNDEinuWp7G0Pp2lekJjLOti1NQNpU7dg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716457270; x=1717062070;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ymOIxLRXX6/t992boJGrCdN0THAC8qBuamXJNsylAfs=;
-        b=tFm8zP3SAmPXI32SVt8gHZM8VR8DREZnStTm50AAE4lknNG3T73T+UnqumbcDPdLG+
-         B/IJPbbtof8fS1wHHrOgAcubzkgfLobkmqwLNpcRrETzlGWjQPnuNu0heOD2K9mgUDQ3
-         gcPTMDLeHoaqcRm0IXB6cVz/+5g1MbP/MQ2NfGhQO78gDV/AdX5Tc2E+JD1OBTo6wSVE
-         Fmw4HcC0LXbL39tEqec+Gb3gKb3NuMttWKxCF/XIjIpDhbzEKc6FoiHXiA3FS+efXK+v
-         M5lcLwkbflpb6EEL0mI+E/cu26SS117UpD3hSEMqPabW7lS+Jzly6Pw2eaST2J6vnK27
-         kDYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWd36fWlK0dolyMs6rnmeUTkK09+E7ZGB0NWrmzJCGeWHDvkfPMADxPno3LXQlmkSJKTkLr0AyGAUeiiK20QTjBM8sAJf0H8iIs/ylU
-X-Gm-Message-State: AOJu0YxglRZX2juLBbaKE437zLUfC1DyVbAV0fbRxh4Cs+I+2lXyk6fg
-	F8WTestH7kFXzwA96A+aSfKBudIUrnb5W/ZC1TQSdyLvB5iwr9sqdy8srBfG91w=
-X-Google-Smtp-Source: AGHT+IGDBnS6Yxc91Ez/LJRvHEhoF+0Je5SmLoZcaOOlSUX1bIaRGc7t5bjpMnVmIRgP+hN+dWcqmQ==
-X-Received: by 2002:a05:6512:611:b0:51e:f1a6:ac39 with SMTP id 2adb3069b0e04-526be6ea79amr2624505e87.12.1716457269807;
-        Thu, 23 May 2024 02:41:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52394a319f1sm2983965e87.64.2024.05.23.02.41.09
+        d=1e100.net; s=20230601; t=1716457289; x=1717062089;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7P0FBG/QIqolUidBUOAk5xSpyavQelBrO3qhLkdkCo4=;
+        b=O7Yznwx2ktkgP61diK0hXIXDM5LiHAtQLKiE4X6pIYM059r8c6UsgxWQGTEk+jzBMa
+         007IY/X/GE3WfhNZ+O8Ne8dCeXXcdomdk0V4f/N5EhTv4aWBMLPzpOdie2LQqbv87MLp
+         fd+lhTCMCm95GBsRSyJ/MnZ0jkqfoQjjxV0+18JZleWXcYvX6fMNTORR0prW7gigpi0d
+         RG2eoXn1/hnaTKzjUi9AVaZsXcG8veaMFQ2DrUJ0e76YbbCwGUYJdBqe+Ubigm4psrjm
+         kl+XLmHK06yAvU30Pu59xL8q1HvZR+v8NVAr3N+Z8Oy1ysUlcXzHn6pbHJQ/DQlBPzMS
+         C7DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgJ4HfCCabXyoukZijYT7k8PcBT7RYfUEy++l1XlFySlqmcVyAmLLP9iqcjV0uJ4PTN0PxGaFU2y6Vc9R4QQx9v66aw1RpQn4n7R90
+X-Gm-Message-State: AOJu0YwAjS5TqEsj08CWxrwRtgbxhAhYx01PGK0mzHFngKuE3s2AbY5g
+	5CgczqscGnbZj8liEnwS3d04jmM2Bo822ApGNsR872dFLS7qFuEpVDLWIN8RtidgqvKQxbMisub
+	L
+X-Google-Smtp-Source: AGHT+IFaHOu/jiCn9us1S7Kl07ly0fz0c0NxfGK+ttvGXc3VpkRIbozFwpms36yompxRaMGcJtJGuA==
+X-Received: by 2002:a2e:7214:0:b0:2e8:e8db:34ea with SMTP id 38308e7fff4ca-2e9496214edmr30640171fa.5.1716457288819;
+        Thu, 23 May 2024 02:41:28 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee806esm20062515e9.3.2024.05.23.02.41.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 02:41:09 -0700 (PDT)
-Date: Thu, 23 May 2024 12:41:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v14 12/28] drm/tests: Add TDMS character rate connector
- state tests
-Message-ID: <ghotwzdstmtpnovbmt2fgvxxkcno67hfwydzjzbyfn6dkt247c@52ycrfinmimo>
-References: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
- <20240521-kms-hdmi-connector-state-v14-12-51950db4fedb@kernel.org>
+        Thu, 23 May 2024 02:41:28 -0700 (PDT)
+Date: Thu, 23 May 2024 11:41:26 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Maxime Ripard <mripard@redhat.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+Message-ID: <Zk8PRuDHiS0QZLD-@phenom.ffwll.local>
+Mail-Followup-To: Maxime Ripard <mripard@redhat.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <20240506-dazzling-nippy-rhino-eabccd@houat>
+ <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
+ <20240522-thankful-cow-of-freedom-f0cbf8@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,24 +117,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240521-kms-hdmi-connector-state-v14-12-51950db4fedb@kernel.org>
+In-Reply-To: <20240522-thankful-cow-of-freedom-f0cbf8@houat>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Tue, May 21, 2024 at 12:13:45PM +0200, Maxime Ripard wrote:
-> The previous patch stores in the connector state the expected TMDS
-> character rate matching the configuration of the HDMI connector. Let's
-> add a few tests to make sure it works as expected.
+On Wed, May 22, 2024 at 03:34:52PM +0200, Maxime Ripard wrote:
+> Hi,
 > 
-> Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 166 ++++++++++++++++
->  drivers/gpu/drm/tests/drm_kunit_edid.h             | 216 +++++++++++++++++++++
->  2 files changed, 382 insertions(+)
+> On Mon, May 06, 2024 at 03:38:24PM GMT, Daniel Vetter wrote:
+> > On Mon, May 06, 2024 at 02:05:12PM +0200, Maxime Ripard wrote:
+> > > Hi,
+> > > 
+> > > On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
+> > > > Hi dma-buf maintainers, et.al.,
+> > > > 
+> > > > Various people have been working on making complex/MIPI cameras work OOTB
+> > > > with mainline Linux kernels and an opensource userspace stack.
+> > > > 
+> > > > The generic solution adds a software ISP (for Debayering and 3A) to
+> > > > libcamera. Libcamera's API guarantees that buffers handed to applications
+> > > > using it are dma-bufs so that these can be passed to e.g. a video encoder.
+> > > > 
+> > > > In order to meet this API guarantee the libcamera software ISP allocates
+> > > > dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
+> > > > the Fedora COPR repo for the PoC of this:
+> > > > https://hansdegoede.dreamwidth.org/28153.html
+> > > 
+> > > For the record, we're also considering using them for ARM KMS devices,
+> > > so it would be better if the solution wasn't only considering v4l2
+> > > devices.
+> > > 
+> > > > I have added a simple udev rule to give physically present users access
+> > > > to the dma_heap-s:
+> > > > 
+> > > > KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
+> > > > 
+> > > > (and on Rasperry Pi devices any users in the video group get access)
+> > > > 
+> > > > This was just a quick fix for the PoC. Now that we are ready to move out
+> > > > of the PoC phase and start actually integrating this into distributions
+> > > > the question becomes if this is an acceptable solution; or if we need some
+> > > > other way to deal with this ?
+> > > > 
+> > > > Specifically the question is if this will have any negative security
+> > > > implications? I can certainly see this being used to do some sort of
+> > > > denial of service attack on the system (1). This is especially true for
+> > > > the cma heap which generally speaking is a limited resource.
+> > > 
+> > > There's plenty of other ways to exhaust CMA, like allocating too much
+> > > KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
+> > > differently than those if it's part of our threat model.
+> > 
+> > So generally for an arm soc where your display needs cma, your render node
+> > doesn't. And user applications only have access to the later, while only
+> > the compositor gets a kms fd through logind. At least in drm aside from
+> > vc4 there's really no render driver that just gives you access to cma and
+> > allows you to exhaust that, you need to be a compositor with drm master
+> > access to the display.
+> > 
+> > Which means we're mostly protected against bad applications, and that's
+> > not a threat the "user physically sits in front of the machine accounts
+> > for", and which giving cma access to everyone would open up. And with
+> > flathub/snaps/... this is very much an issue.
+> > 
+> > So you need more, either:
+> > 
+> > - cgroups limits on dma-buf and dma-buf heaps. This has been bikeshedded
+> >   for years and is just not really moving.
+> 
+> For reference, are you talking about:
+> 
+> https://lore.kernel.org/r/20220502231944.3891435-1-tjmercier@google.com
+> 
+> Or has there been a new version of that recently?
 
+I think the design feedback from Tejun has changed to that system memory
+should be tracked with memcg instead (but that kinda leaves the open of
+what to do with cma), and only device memory be tracked with a separate
+cgroups controller.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+But I'm also not sure whether that would actually solve all the
+tracking/isolation requirements people tossed around or just gives us
+something that wont get the job done.
 
+Either way, yes I think that was the most recent code.
+-Sima
 -- 
-With best wishes
-Dmitry
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
