@@ -1,39 +1,61 @@
-Return-Path: <linux-kernel+bounces-187591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3D98CD4F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:41:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366DA8CD4FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F1A1F23B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:41:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44B951C21607
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1454614B086;
-	Thu, 23 May 2024 13:41:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BFE13C80E;
-	Thu, 23 May 2024 13:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F3814A4FF;
+	Thu, 23 May 2024 13:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d/uPAAe8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9656D13B7BC
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716471678; cv=none; b=PrB7rckc4mCOFwXJX/M1b+iR0UKYxvLq68eVSDE3KNRvyfk7JGpGtfrTw9Ag3z6Es4w8B82MlOOxXuPg06rbVVbu0yqALvqo46TArlw91rjs/6aResX/e0877Aa8MY1cz21Js4kDvp0/BrAMtEOAkxLLPvXBmE/jOGBnftSq3DQ=
+	t=1716471766; cv=none; b=HrHJWtgJlUioG5fdLeLSjo4DjsPiAJFGvBJh7RTbsYETRCMqoXknt9jPe+afaS/AMpruqFtel/R7bJr7NeWD0SxljvFa5aCcHF5PoFFpHlAz423sGu+pWRJcdo4EDmBSwhbJRwv5sdjhLqPFTV/fczs82hsg8J/p2MrPo5Fj910=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716471678; c=relaxed/simple;
-	bh=ks/+jIX9/JNl5qEusE2VtlXC4Pkhhyxy6RcAKxsnmkc=;
+	s=arc-20240116; t=1716471766; c=relaxed/simple;
+	bh=z6wVFsjjscl3k4EzCgG7KUwdsYsl9hOldzdujFC3OJE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gEslz0sqWxfRrhKdw2DSV2wbHanTQTVLpTArtUNINlBT+g5o10u5sB0UNVSEzVhmej2OS6K/IpUEMcmcLSU2x2TPK1VGLdvipMOvtGonYVh9G3l89C10Jp+OFNZWzMF7OPwy+Y8uPJ4V9n2TQgbOmTbx7coKqST6iBRH1vfC3r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15852DA7;
-	Thu, 23 May 2024 06:41:39 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95D5E3F881;
-	Thu, 23 May 2024 06:41:13 -0700 (PDT)
-Message-ID: <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
-Date: Thu, 23 May 2024 14:41:12 +0100
+	 In-Reply-To:Content-Type; b=mOS1qQzO7RFjcnsCvsmuM9UmtQuTPlTx7n2vJmnmzUUJaCwq4oe6dOsQWdvkkOBwxPdIaPYs2aWFTCWLEwSX0mzOkpTl1BhKOs1AznhZa2c3pWyT7Kd+ZMrQJ6HN5w+vICPqlK3a3lUAvLPVnUp6IjwQwEmuCpFPXBr2e4xdfOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d/uPAAe8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716471763;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=afci6CJ76Zp6xoepc357nE1IL04qiOxBOsa2LoqZWNY=;
+	b=d/uPAAe8doUvWK2E13JDk8cmBssbX3AFNZ2OpzopemxpZ4Ccu8XY/XqxhO8LyWjUyhEAwN
+	nsmYYLN3hQvVVAVY/To5AXFJT9DUF0T8dNGN+LeUmKSLXLO3c/kb2fQQzGHpm71k3FYh/K
+	QYDO3RqsWD5uysbHZQ61a7goSy3vuLs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-157--11Nvb4yOCmLIs3x9nbQrw-1; Thu, 23 May 2024 09:42:40 -0400
+X-MC-Unique: -11Nvb4yOCmLIs3x9nbQrw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BD12A101A54F;
+	Thu, 23 May 2024 13:42:39 +0000 (UTC)
+Received: from [10.18.25.182] (unknown [10.18.25.182])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 6531828E2;
+	Thu, 23 May 2024 13:42:39 +0000 (UTC)
+Message-ID: <4d90d565-c156-4e4c-8a16-f32aa73fc809@redhat.com>
+Date: Thu, 23 May 2024 09:42:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,132 +63,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
-To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org,
- linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
- Boris Brezillon <boris.brezillon@collabora.com>
-Cc: vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
- jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240523031935.90856-1-amhetre@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240523031935.90856-1-amhetre@nvidia.com>
+Subject: Re: [PATCH v5] nvme: multipath: Implemented new iopolicy
+ "queue-depth"
+To: Hannes Reinecke <hare@suse.de>, Chaitanya Kulkarni
+ <chaitanyak@nvidia.com>, "emilne@redhat.com" <emilne@redhat.com>
+Cc: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ "hch@lst.de" <hch@lst.de>, "sagi@grimberg.me" <sagi@grimberg.me>,
+ "kbusch@kernel.org" <kbusch@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "jrani@purestorage.com" <jrani@purestorage.com>,
+ "randyj@purestorage.com" <randyj@purestorage.com>,
+ "hare@kernel.org" <hare@kernel.org>
+References: <20240522165406.702362-1-jmeneghi@redhat.com>
+ <935f7e10-ccb4-4891-8f29-84909c061e7a@nvidia.com>
+ <60758e4d-4bdc-4a99-a151-a9009a8a460f@suse.de>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <60758e4d-4bdc-4a99-a151-a9009a8a460f@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On 23/05/2024 4:19 am, Ashish Mhetre wrote:
-> The current __arm_lpae_unmap() function calls dma_sync() on individual
-> PTEs after clearing them. By updating the __arm_lpae_unmap() to call
-> dma_sync() once for all cleared PTEs, the overall performance can be
-> improved 25% for large buffer sizes.
-> Below is detailed analysis of average unmap latency(in us) with and
-> without this optimization obtained by running dma_map_benchmark for
-> different buffer sizes.
-> 
-> Size	Time W/O	Time With	% Improvement
-> 	Optimization	Optimization
-> 	(us)		(us)
-> 
-> 4KB	3.0		3.1		-3.33
-> 1MB	250.3		187.9		24.93
 
-This seems highly suspect - the smallest possible block size is 2MB so a 
-1MB unmap should not be affected by this path at all.
+On 5/23/24 02:28, Hannes Reinecke wrote:
+> As presented at LSF by Daniel; ALUA support (and, with that, multipath 
+> support) is one of the topics to be implemented for blktests.
+> And without that we can't have a meaningful QD test.
 
-> 2MB	493.7		368.7		25.32
-> 4MB	974.7		723.4		25.78
+So as a part of this patch you want a blktest that verifies queue-depth multipathing?
 
-I'm guessing this is on Tegra with the workaround to force everything to 
-PAGE_SIZE? In the normal case a 2MB unmap should be nominally *faster* 
-than 4KB, since it would also be a single PTE, but with one fewer level 
-of table to walk to reach it. The 25% figure is rather misleading if 
-it's only a mitigation of an existing erratum workaround, and the actual 
-impact on the majority of non-broken systems is unmeasured.
+Or are your just tying acceptance of this patch to a blktest that tests multipath testing over all?
 
-(As an aside, I think that workaround itself is a bit broken, since at 
-least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which MMU-500 
-doesn't support.)
+Seems to me you have a patch designed to do that...
 
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->   drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++++++---------
->   1 file changed, 25 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index 3d23b924cec1..94094b711cba 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -256,13 +256,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
->   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
->   }
->   
-> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
-> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
->   {
-> +	int i;
->   
-> -	*ptep = 0;
-> +	for (i = 0; i < num_entries; i++)
-> +		ptep[i] = 0;
->   
->   	if (!cfg->coherent_walk)
-> -		__arm_lpae_sync_pte(ptep, 1, cfg);
-> +		__arm_lpae_sync_pte(ptep, num_entries, cfg);
->   }
->   
->   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   	if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
->   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
->   		num_entries = min_t(int, pgcount, max_entries);
-> -
-> -		while (i < num_entries) {
-> -			pte = READ_ONCE(*ptep);
-> +		arm_lpae_iopte *pte_flush;
-> +		int j = 0;
-> +
-> +		pte_flush = kvcalloc(num_entries, sizeof(*pte_flush), GFP_ATOMIC);
+https://github.com/osandov/blktests/pull/114
 
-kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if there 
-isn't a more fundamental problem here - Rob, Boris; was it just the map 
-path, or would any allocation on unmap risk the GPU reclaim deadlock 
-thing as well?
+/John
 
-Thanks,
-Robin.
-
-> +		if (pte_flush) {
-> +			for (j = 0; j < num_entries; j++) {
-> +				pte_flush[j] = READ_ONCE(ptep[j]);
-> +				if (WARN_ON(!pte_flush[j]))
-> +					break;
-> +			}
-> +			__arm_lpae_clear_pte(ptep, &iop->cfg, j);
-> +		}
-> +		while (i < (pte_flush ? j : num_entries)) {
-> +			pte = pte_flush ? pte_flush[i] : READ_ONCE(*ptep);
->   			if (WARN_ON(!pte))
->   				break;
->   
-> -			__arm_lpae_clear_pte(ptep, &iop->cfg);
-> +			if (!pte_flush)
-> +				__arm_lpae_clear_pte(ptep, &iop->cfg, 1);
->   
->   			if (!iopte_leaf(pte, lvl, iop->fmt)) {
->   				/* Also flush any partial walks */
-> @@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->   			} else if (!iommu_iotlb_gather_queued(gather)) {
->   				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
->   			}
-> -
-> -			ptep++;
-> +			if (!pte_flush)
-> +				ptep++;
->   			i++;
->   		}
-> +		if (pte_flush)
-> +			kvfree(pte_flush);
->   
->   		return i * size;
->   	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
 
