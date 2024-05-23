@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-187982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74678CDB87
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF1C8CDB88
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2D2C1C21DE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502FB1C21E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E21C84D1C;
-	Thu, 23 May 2024 20:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1382F84E07;
+	Thu, 23 May 2024 20:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jB4Rs3vj"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iGZoICi1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFDF20DC8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E746839F4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716497121; cv=none; b=i03tzCTVZ45BLDej78plS6qkxXgUJRC3LfIocflo0Hq8hLEEGbHzvBodMI/a8bl8ZPbGBaGJMAAdKO96LHC7f4Fp/0YLUynC4QO7uvfHW+sht2vOCUxtF0R00KgQ1sgNT88TF8LxtoG/PEaAejp8VqVX5Nko8O1UAlyKeKv4mIM=
+	t=1716497220; cv=none; b=EmL9Lu9j25ZonNFRR+L+qZ+lIUk7MeEG3gieXHQQE4Eb8+1sR33gAChZIE1sBy0YCjx3+XbSZXBvTUyr1nv7a+DDDBrYEf/7epWy/3bzlvhPwDW9wGTBImcgNSMg8kR3BmUT/nXrvom3QKHjVko1uW2G1TzhMMbVqgcRn75Gj5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716497121; c=relaxed/simple;
-	bh=5dGe5QSNm8MPWLK7sICCTXvKZfye7pmwp96T7kASauo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A06eD92+AD73wvZtkbt2y3eL+arDbpOyEIj+AdUsQt6SmgN8HX4Lac0uDjfJgPccK5jQ2Dp8ayqaWX3j702pg+B9sAuvsIrxJCWTEgXGT2FvkOgRC2PoS2cCciRTzU0scqdCyOclElzHkWMlGypL9h0M7nJ3Yuc8Cg0y4N0fmiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jB4Rs3vj; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so4954a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:45:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716497118; x=1717101918; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y6N+gKnd70b4DwOAlz3Ao0iTefD/C31XiD4R/jKiITw=;
-        b=jB4Rs3vj9ttBGeLLve7j64vo1hV2zvX0SoCVR8m0nNLzriPPIyz1U+48QyUrTbGT89
-         3/ra/QF/ZgnKQQDpqjqZde68YUbe/NjXqvzDmv47hrikbKUqWcfD/5gBwAT9SC5lB8ez
-         RllM3JF+wPdVcGWk+W5nsj9g91iNvxpa4DA3zifPdmHiT0n14Syqaakbd2VlPYEwUqCI
-         fyFkAN+pTKAJWN3Mn6V0VeAU/B3UT9k92OvLn23hZSU/djsHpO7i0C4DJf8wNKQ6oWkj
-         rbh1gloAfqbt8xN0R5WlmmPkMm/cfjzr4LvGKJGj1S4Aa3ChfbBI4RBH4uFzyE+JQsTV
-         Yofw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716497118; x=1717101918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y6N+gKnd70b4DwOAlz3Ao0iTefD/C31XiD4R/jKiITw=;
-        b=sqJIwXJ1WkeCEhFDIOqIyu2gNoTi0BzhIbqpOWB4Q9su7ikuqfGHkDpxl4b1ZNWpq4
-         jAU/cpiFW+6g6Sd0Wms+j5QIzbEjl+mw56t3zpJ42HBsXfPpxMJZzwYSv6TsgZfcfHcG
-         P/X2FHDMD3bhShFVjw7HHE3nn1aWzAFyALRF5KjbUdhoBmxcwmwMgZYCHa0b206LrX6+
-         oHFtep7leQaqAzyitF55jNMVvbei1Az739hgq1LluQEGB+JcrpoX4b9BIEpLi1xJT6+w
-         2Zw8BTy7JR+YL02qIQLS58994R58fpDs+u8HpDyVSy2wTxCjVnMoQllxSZgAoEG09eMC
-         ap0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXAzPTZivDibNlBNS6ykHxg8yQ0sCreX2cGfeneAPe2TThBO2WWzTh/+0CPxS2tf1GB2/LuhYRvX1Y7T1DnWyKO2TQgaafR6m3ddCoA
-X-Gm-Message-State: AOJu0YykYFefA+jcmRll+jnE1xfP9uBvwyZb0WD5HbQvk4WvEt4AuUDP
-	DPq7MhOdY0VhteCLjyhlHoKwxA8P1PhrJNnrt2zK9lmBSlF++vsBYmcZdhsi0zm63fxe27n3MRA
-	zVUO8y+En6bU4O8dmjq+3zA6KtN+bu2IuGjWX
-X-Google-Smtp-Source: AGHT+IHiTb7B2MfFZEs9Qb5GzWN3bD/f4uhDiXHK/UKzqmvTIF1G3MsIOI76EbjynZVznxCrfIiN5R+oVDmmd2wfv/o=
-X-Received: by 2002:a05:6402:74e:b0:572:a33d:437f with SMTP id
- 4fb4d7f45d1cf-578516800dcmr52317a12.2.1716497118262; Thu, 23 May 2024
- 13:45:18 -0700 (PDT)
+	s=arc-20240116; t=1716497220; c=relaxed/simple;
+	bh=xZkhsNby25scCAdWs5FhZQpcKQIj7bsSVEO615BqzQw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pAsfDMVPiNTzRMIk9qvW4WKIRZW8EW9+B74JxKUyNp9WLgqf0r6VrdV+4Jy99nV4qybwMhwT/+X0SW8dBEZCuhOS6vPrpJKvfUvmYvIYw3cOIUh3dhna/OkQXCv1UyKu2GcbGOX5vk5IyVqdjNn5iCQ7n7VmejRDrRYWYlOEGTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iGZoICi1; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716497218; x=1748033218;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xZkhsNby25scCAdWs5FhZQpcKQIj7bsSVEO615BqzQw=;
+  b=iGZoICi1eNxuABlRQZyv9oqQesV3QktFcQWa0EMNWA1NM5hfigI3r1IN
+   svqqsC92Ij6VkPJ6Dhx0sXP7yE70tsJM4F+3gb6YCn2tMNoUpLb7vyX+I
+   JymHy/W+bo1OVDGUEMtdoXGHbjpmgays+JHqTLKY7Kt71DZNt/vDUSuAT
+   coVOuIuDxSje2jL+J3rFb00ivl69OtULm8DmNcoOt/ZOLU0s1VaTt6ovU
+   TCp0IQdQqZTYpR6zboD6gLDkoS+LuitI0u5WqK8xEKo0uWfH8d3G0Z37I
+   f2uqCKDPOgEQjFwCvx7bThaUGFQHEKavty2inD/M57VjDGuWo7OI3ImLK
+   A==;
+X-CSE-ConnectionGUID: FUIxHH6dRBixVbuE1cMY0A==
+X-CSE-MsgGUID: 78NMontrQQmcqe45lyfX7Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12694240"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="12694240"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 13:46:56 -0700
+X-CSE-ConnectionGUID: hnxjkh/iSUSoNhXxD4P/hA==
+X-CSE-MsgGUID: +OykMZGtR/e35b+SZUs5Mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="71213569"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 23 May 2024 13:46:49 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sAFKo-0003WL-2B;
+	Thu, 23 May 2024 20:46:46 +0000
+Date: Fri, 24 May 2024 04:46:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: oe-kbuild-all@lists.linux.dev, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: v9fs_fid_find: also lookup by inode if not found
+ dentry
+Message-ID: <202405240419.mUEPAfWQ-lkp@intel.com>
+References: <20240523113638.1196299-1-asmadeus@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513191544.94754-1-pobrn@protonmail.com> <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
- <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
- <CALmYWFuLe6RaJkZ4koQpgZR-77b9PP=wooPYN-jFFw1KQ5K3aQ@mail.gmail.com> <20240523124521.99a798d645b0939d331d70c1@linux-foundation.org>
-In-Reply-To: <20240523124521.99a798d645b0939d331d70c1@linux-foundation.org>
-From: Jeff Xu <jeffxu@google.com>
-Date: Thu, 23 May 2024 13:44:38 -0700
-Message-ID: <CALmYWFtNtyzkbUVR+cQ+3zxMf9TU4SHDoMsH0267n=8V-2ENcw@mail.gmail.com>
-Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: =?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, dmitry.torokhov@gmail.com, 
-	dverkamp@chromium.org, hughd@google.com, jorgelo@chromium.org, 
-	skhan@linuxfoundation.org, keescook@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523113638.1196299-1-asmadeus@codewreck.org>
 
-Hi Barnab=C3=A1s
+Hi Dominique,
 
-Is that OK that I work on V2 ? It will be based on your V1 change and
-I will also add more test cases.
+kernel test robot noticed the following build warnings:
 
-Thanks
--Jeff
+[auto build test WARNING on v6.9]
+[also build test WARNING on linus/master next-20240523]
+[cannot apply to ericvh-v9fs/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
--
+url:    https://github.com/intel-lab-lkp/linux/commits/Dominique-Martinet/9p-v9fs_fid_find-also-lookup-by-inode-if-not-found-dentry/20240523-193912
+base:   v6.9
+patch link:    https://lore.kernel.org/r/20240523113638.1196299-1-asmadeus%40codewreck.org
+patch subject: [PATCH] 9p: v9fs_fid_find: also lookup by inode if not found dentry
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240524/202405240419.mUEPAfWQ-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405240419.mUEPAfWQ-lkp@intel.com/reproduce)
 
-On Thu, May 23, 2024 at 12:45=E2=80=AFPM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Wed, 22 May 2024 19:32:35 -0700 Jeff Xu <jeffxu@google.com> wrote:
->
-> > >
-> > > It's a change to a userspace API, yes?  Please let's have a detailed
-> > > description of why this is OK.  Why it won't affect any existing user=
-s.
-> > >
-> > Unfortunately, this is a breaking change that might break a
-> > application if they do below:
-> > memfd_create("", MFD_NOEXEC_SEAL)
-> > fcntl(fd, F_ADD_SEALS, F_SEAL_WRITE); <-- this will fail in new
-> > semantics, due to mfd not being sealable.
-> >
-> > However, I still think the new semantics is a better, the reason is
-> > due to  the sysctl: memfd_noexec_scope
-> > Currently, when the sysctl  is set to MEMFD_NOEXEC_SCOPE_NOEXEC_SEAL
-> > kernel adds MFD_NOEXEC_SEAL to memfd_create, and the memfd  becomes sea=
-lable.
-> > E.g.
-> > When the sysctl is set to MEMFD_NOEXEC_SCOPE_NOEXEC_SEAL
-> > The app calls memfd_create("",0)
-> > application will get sealable memfd, which might be a surprise to appli=
-cation.
-> >
-> > If the app doesn't want this behavior, they will need one of two below
-> > in current implementation.
-> > 1>
-> > set the sysctl: memfd_noexec_scope to 0.
-> > So the kernel doesn't overwrite the mdmfd_create
-> >
-> > 2>
-> > modify their code  to get non-sealable NOEXEC memfd.
-> > memfd_create("", MEMFD_NOEXEC_SCOPE_NOEXEC)
-> > fcntl(fd, F_ADD_SEALS, F_SEAL_SEAL)
-> >
-> > The new semantics works better with the sysctl.
-> >
-> > Since memfd noexec is new, maybe there is no application using the
-> > MFD_NOEXEC_SEAL to create
-> > sealable memfd. They mostly likely use
-> > memfd(MFD_NOEXEC_SEAL|MFD_ALLOW_SEALING) instead.
-> > I think it might benefit in the long term with the new semantics.
->
-> Yes, it's new so I expect any damage will be small.  Please prepare a
-> v2 which fully explains/justifies the thinking for this
-> non-backward-compatible change and which include the cc:stable.
->
->
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405240419.mUEPAfWQ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   fs/9p/fid.c: In function 'v9fs_fid_find':
+>> fs/9p/fid.c:137:9: warning: no return statement in function returning non-void [-Wreturn-type]
+     137 |         }
+         |         ^
+   fs/9p/fid.c: At top level:
+   fs/9p/fid.c:139:9: error: expected identifier or '(' before 'return'
+     139 |         return ret;
+         |         ^~~~~~
+   fs/9p/fid.c:140:1: error: expected identifier or '(' before '}' token
+     140 | }
+         | ^
+
+
+vim +137 fs/9p/fid.c
+
+987a64850996db Greg Kurz           2020-09-23  103  
+987a64850996db Greg Kurz           2020-09-23  104  
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  105  /**
+ba17674fe02909 Latchesar Ionkov    2007-10-17  106   * v9fs_fid_find - retrieve a fid that belongs to the specified uid
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  107   * @dentry: dentry to look for fid in
+ba17674fe02909 Latchesar Ionkov    2007-10-17  108   * @uid: return fid that belongs to the specified user
+ba17674fe02909 Latchesar Ionkov    2007-10-17  109   * @any: if non-zero, return any fid associated with the dentry
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  110   *
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  111   */
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  112  
+b464255699077c Eric W. Biederman   2013-01-30  113  static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  114  {
+ba17674fe02909 Latchesar Ionkov    2007-10-17  115  	struct p9_fid *fid, *ret;
+bd238fb431f319 Latchesar Ionkov    2007-07-10  116  
+4b8e992392a246 Al Viro             2014-08-19  117  	p9_debug(P9_DEBUG_VFS, " dentry: %pd (%p) uid %d any %d\n",
+4b8e992392a246 Al Viro             2014-08-19  118  		 dentry, dentry, from_kuid(&init_user_ns, uid),
+b464255699077c Eric W. Biederman   2013-01-30  119  		 any);
+ba17674fe02909 Latchesar Ionkov    2007-10-17  120  	ret = NULL;
+aaeb7ecfb48ad4 Al Viro             2013-02-28  121  	/* we'll recheck under lock if there's anything to look in */
+22e424feb6658c Dominique Martinet  2022-01-29  122  	if (dentry->d_fsdata) {
+aaeb7ecfb48ad4 Al Viro             2013-02-28  123  		struct hlist_head *h = (struct hlist_head *)&dentry->d_fsdata;
+9a268faa5f8627 Sohaib Mohamed      2021-10-01  124  
+634095dab2a200 Al Viro             2013-02-27  125  		spin_lock(&dentry->d_lock);
+56a79b7b021bf1 Linus Torvalds      2013-03-03  126  		hlist_for_each_entry(fid, h, dlist) {
+b464255699077c Eric W. Biederman   2013-01-30  127  			if (any || uid_eq(fid->uid, uid)) {
+ba17674fe02909 Latchesar Ionkov    2007-10-17  128  				ret = fid;
+b48dbb998d70b7 Dominique Martinet  2022-06-12  129  				p9_fid_get(ret);
+ba17674fe02909 Latchesar Ionkov    2007-10-17  130  				break;
+ba17674fe02909 Latchesar Ionkov    2007-10-17  131  			}
+ba17674fe02909 Latchesar Ionkov    2007-10-17  132  		}
+634095dab2a200 Al Viro             2013-02-27  133  		spin_unlock(&dentry->d_lock);
+7894f99a4c6ef6 Dominique Martinet  2024-05-23  134  	}
+7894f99a4c6ef6 Dominique Martinet  2024-05-23  135  	if (!ret && dentry->d_inode)
+1543b4c5071c54 Eric Van Hensbergen 2023-03-27  136  		ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
+ba17674fe02909 Latchesar Ionkov    2007-10-17 @137  	}
+bd238fb431f319 Latchesar Ionkov    2007-07-10  138  
+ba17674fe02909 Latchesar Ionkov    2007-10-17  139  	return ret;
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  140  }
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  141  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
