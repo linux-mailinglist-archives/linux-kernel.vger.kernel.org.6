@@ -1,91 +1,131 @@
-Return-Path: <linux-kernel+bounces-187099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A648CCD19
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:36:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27B68CCD1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E5401F21B6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:36:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57EEFB218D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF0713CAA5;
-	Thu, 23 May 2024 07:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CD213CA99;
+	Thu, 23 May 2024 07:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YdJ/BuzX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="VMvJA7Az"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CFC13C809;
-	Thu, 23 May 2024 07:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1E8339A0;
+	Thu, 23 May 2024 07:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716449772; cv=none; b=UZ0vMnx50Hz8VuOMg0ODHPXcKgB+3TE1fQL5eieR1jkhJq0TQP6fVnFfb+LQOIst4C+0rPspZeFhe/zydqiU8tyBSpZl8Uok14yAI+w7uauO3aZ6D2EnlRNH9+iY2IrIRNzRQqrv3dArklAiWqEX0p3Il7SEEygSDT3c+kLM3E8=
+	t=1716449807; cv=none; b=mguWZbjEKxJYoVyQfDoMRFik1ftngBNydcGUmNTLCA/odoCN2CALrTK2qv0MAZgSsMuHDNucjI+Pb+OiRBSPx2Ns3+GSAK+GXrnnMKQDHj0bCBT3a7NujLVWK7SgLDDGjGJe75vvdz+G4BZJy14GuwKp4RSmKNZR/c2hG9hH6ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716449772; c=relaxed/simple;
-	bh=ZVXhu+FLBy1CzMwEfEAguNuZ/zCGkVR+Om75Tniq6VI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxkkq0JNNSE76jIGkZ8gq/j3DzUV8ZKHMS/Idrys7RksiUWOPcI3vUbdJceogntONO4uwWzdKmofM2X1NkWPQuKT9ZYXyMAawU1bs75E5crYHUuE7SQ4tJvdmU9kbjS8hS5KkuCYfTjlk5kVXV5FVSsqFDIm1z87+U80smLk7Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YdJ/BuzX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46206C2BD10;
-	Thu, 23 May 2024 07:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716449771;
-	bh=ZVXhu+FLBy1CzMwEfEAguNuZ/zCGkVR+Om75Tniq6VI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YdJ/BuzXaIAP99iZyNFDJXjbUPTHNjoyJLzESWTB9nd+x1QI54nNI8fCBHNQEKek3
-	 YRrZet6z87ETJa38yZ4RgjXDTF97rdHAhoNt1Hf9lDiNbIY08bYobjQ40n3a+YS51M
-	 PI1T/+HHFuQ5MZf0FnGO2ZHV18pYNAyNMU4FCQyo=
-Date: Thu, 23 May 2024 09:36:08 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shichao Lai <shichaorai@gmail.com>
-Cc: stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-	xingwei lee <xrivendell7@gmail.com>,
-	yue sun <samsun1006219@gmail.com>
-Subject: Re: [PATCH] Check whether divisor is non-zero before division
-Message-ID: <2024052349-gossip-blurry-eda0@gregkh>
-References: <20240523072242.787164-1-shichaorai@gmail.com>
+	s=arc-20240116; t=1716449807; c=relaxed/simple;
+	bh=1dupYVzHMBIKdXDOUWquSr5ptPsMO6bdaJA+3SW+QhU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=POtlYyuc7VrzbP65lbq8ImFLPYS56qEVok68IokJzR7QSzqbGMJ0Js3OEFEHGGErJtI4ND1lYOB4WXWdzfPgHp0OlHf6cS94msniqoc1pOTzW+D0zXB1daVrc52nMuUNR0wyrfYcCi/sVQM+9WIPHoXC+RTW7EbwST6N7h8QMqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=VMvJA7Az; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44N4lN0u003907;
+	Thu, 23 May 2024 00:36:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=omQIKGTAw0G43e4lrwbPbbU3X9ktPiGbrIhpY/YNGhc=; b=VMv
+	JA7AzJZE+IaJUdNgurzGrAQePD6KUw980a3J0VMgJYm3EswaKkgd24uwtzqErcW5
+	T5yjQkxlGNuF7Fmm0/mnXEx7brERpAUpgKgMs4ggwGKvU3eQx8i4zPtTAnSdIor4
+	VIE9dvjAkhgsmtw9Oau82L36cah/lym9zp95tgnlMYpl9Pm5oGzxVHBfqdWmjh3f
+	sgUAjr+3Zzff3naypVk0xywzOCizmeWjIz8J/OIYjXfk8FRL1eQ6g59bsn8CN3WN
+	mNCnDLc8pApAuW+wkx1xaLzYfKNb4w8HPozmi9LHu3EKk1gzMNl1zK3VRaCDGb3p
+	CXLdg8odH6an93Jexpg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3y9y310eb4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 00:36:32 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 23 May 2024 00:36:31 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 23 May 2024 00:36:31 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id 110C63F7045;
+	Thu, 23 May 2024 00:36:27 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <sbhatta@marvell.com>, <gakula@marvell.com>,
+        <sgoutham@marvell.com>, <naveenm@marvell.com>
+Subject: [net] Octeontx2-pf: Free send queue buffers incase of leaf to inner
+Date: Thu, 23 May 2024 13:06:26 +0530
+Message-ID: <20240523073626.4114-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523072242.787164-1-shichaorai@gmail.com>
+Content-Type: text/plain
+X-Proofpoint-GUID: EYgap4YHGi4DU8Dsp84L535Q8sqcytRG
+X-Proofpoint-ORIG-GUID: EYgap4YHGi4DU8Dsp84L535Q8sqcytRG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_04,2024-05-22_01,2024-05-17_01
 
-On Thu, May 23, 2024 at 03:22:42PM +0800, Shichao Lai wrote:
-> Since uzonesize may be zero, so a judgement for non-zero is nessesary.
-> 
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Reported-by: yue sun <samsun1006219@gmail.com>
-> Signed-off-by: Shichao Lai <shichaorai@gmail.com>
-> ---
->  drivers/usb/storage/alauda.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-> index 115f05a6201a..db075a8c03cb 100644
-> --- a/drivers/usb/storage/alauda.c
-> +++ b/drivers/usb/storage/alauda.c
-> @@ -947,6 +947,8 @@ static int alauda_read_data(struct us_data *us, unsigned long address,
->  	sg = NULL;
->  
->  	while (sectors > 0) {
-> +		if (!uzonesize)
-> +			return USB_STOR_TRANSPORT_ERROR;
->  		unsigned int zone = lba / uzonesize; /* integer division */
->  		unsigned int lba_offset = lba - (zone * uzonesize);
->  		unsigned int pages;
-> -- 
-> 2.34.1
-> 
-> 
+There are two type of classes. "Leaf classes" that are  the
+bottom of the class hierarchy. "Inner classes" that are neither
+the root class nor leaf classes. QoS rules can only specify leaf
+classes as targets for traffic.
 
-Looks good, thanks!  I'll queue this up after 6.10-rc1 is out.
+			 Root
+		        /  \
+		       /    \
+                      1      2
+                             /\
+                            /  \
+                           4    5
+               classes 1,4 and 5 are leaf classes.
+               class 2 is a inner class.
 
-greg k-h
+When a leaf class made as inner, or vice versa, resources associated
+with send queue (send queue buffers and transmit schedulers) are not
+getting freed.
+
+Fixes: 5e6808b4c68d ("octeontx2-pf: Add support for HTB offload")
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/qos.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+index 070711df612e..edac008099c0 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+@@ -1422,7 +1422,10 @@ static int otx2_qos_leaf_to_inner(struct otx2_nic *pfvf, u16 classid,
+ 	otx2_qos_read_txschq_cfg(pfvf, node, old_cfg);
+ 
+ 	/* delete the txschq nodes allocated for this node */
++	otx2_qos_disable_sq(pfvf, qid);
++	otx2_qos_free_hw_node_schq(pfvf, node);
+ 	otx2_qos_free_sw_node_schq(pfvf, node);
++	pfvf->qos.qid_to_sqmap[qid] = OTX2_QOS_INVALID_SQ;
+ 
+ 	/* mark this node as htb inner node */
+ 	WRITE_ONCE(node->qid, OTX2_QOS_QID_INNER);
+@@ -1632,6 +1635,7 @@ static int otx2_qos_leaf_del_last(struct otx2_nic *pfvf, u16 classid, bool force
+ 		dwrr_del_node = true;
+ 
+ 	/* destroy the leaf node */
++	otx2_qos_disable_sq(pfvf, qid);
+ 	otx2_qos_destroy_node(pfvf, node);
+ 	pfvf->qos.qid_to_sqmap[qid] = OTX2_QOS_INVALID_SQ;
+ 
+-- 
+2.17.1
+
 
