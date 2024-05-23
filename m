@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-187489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C1B8CD273
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:43:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F548CD278
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED0D283DA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:43:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F731C21049
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB822149E19;
-	Thu, 23 May 2024 12:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF55014A085;
+	Thu, 23 May 2024 12:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKBcYf1D"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b="DyO73YN/"
+Received: from dianne.skoll.ca (dianne.skoll.ca [144.217.161.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE8D149C71;
-	Thu, 23 May 2024 12:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4771494A6;
+	Thu, 23 May 2024 12:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.217.161.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716468208; cv=none; b=tdAgIdQ+l8uRy4ie7A0k1VF6SyoZ+TFDJolWL3zqStOJfzSyTsqLr303dCpKSbdiI681dcJn0Tl3zIZ+XafKnwsHqx/W22YgRJ0qRyppKALBQKNBwK+qWl5IOCd8kk9HZ6oow2d/ymL14Bd24wbeP+RCtD0stW/zn7HoVgFzbTc=
+	t=1716468278; cv=none; b=bAqz/KJ1Rp/kH2fH9kk6ACEtKZFq9hpW1k2XZ0zMSVOPI3RpvWC4eJnCsKhSfvfsmZyYva1iqoDbLhrSN74+xkm9nFsaaQtFu6rEa6fqYVbDtWvpsfZwb4zz1IduKdHBxg/5J6GKVe/3PnfrmfcOXzW6StChza1cIvKHnSCdyng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716468208; c=relaxed/simple;
-	bh=xk4xnHqN0grVK7+fCaiEcFYz7W4saCv3WHp+/xmBYhQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dlPCVdRhV8zlpZA7UNYSBbJjUejPbG5ggaga3tc2r7AWNWFDQ1TVARQmlTNRru6Rw+ezwFSCWszaZdTagH1CDG74AUD5n9z8KkGwSaeYBvdTHnjgHCkhXtiDhxAg/A5hb1XIF+bAoJi7+QJkfBso2vG9FcsZhCaL3UftFFTCOHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKBcYf1D; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-354f8a0cd08so992551f8f.2;
-        Thu, 23 May 2024 05:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716468205; x=1717073005; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3hOvCdCz3/jqUGYWDYqxQaKJIB9B1Pmy+qUcKaYVmB0=;
-        b=dKBcYf1DxbFx9p4PYAYIvvb66MbdsweXIo5aC/xj2tBgB7tTLdwuxlVfpl9tNH0Vq3
-         eP1WgjOaJ2jqf1O/6Aj9BgIu5+5ZYTHkjyPiErd+xLmnT43vTaFfu9YbHya6Rs5W2LEX
-         PVvr9k7E3lGd86ZQ1c1f1H5+xwTC34yw/iJTlGDe4sG3nOPsM+BaFCVLyB0yIu+P6Sm8
-         mA/VnWDCKLuAoJWyJ4S7bjJOaahDH21YH2JB9YgZl3x2RaK/SoRCqnaq2jhBj/eVEBUK
-         87S2616QjU4/8WpBX/wpR8BMd35NB5NroUWq74atDD0aTIkpxEYkAqeOAWK4ISArUYAf
-         A0qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716468205; x=1717073005;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3hOvCdCz3/jqUGYWDYqxQaKJIB9B1Pmy+qUcKaYVmB0=;
-        b=aJGfht6HuBX73zoa231tLe1qYZNxJgwx2xtn6mFaj7psLE+4SbL3OzSCiIhRprCe7X
-         HgtlGzgJV+zJXTjE2Qzm01Rhr5z8P6oaUbmdVoxTe6G5mchHwelIMCqOulhVHlrr/rGR
-         zwlSVotQTz3snBs8+JBCCLQED9d9LBlCj59jnWnCEJe7R9FnNk4CMGTBaHCxU0e9kIXK
-         WNjRLXWhu1w201sTIa7ZflmBWJbflfkE4Kui2c39oeyPQ60VxbsZcyoNk5aL5Ht9ZLXE
-         ut3BlQ7ikx2WlfxwqCoQXrKpLcYkeCCF17k+zyoEA7M8oDa3+SmzDd1+IoCevxknv73Z
-         JUIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLOWCWA1oZo8v+hVIg4TWZE7K5DCSnf5urUqI4Zb0U9vLtX5OWjsy0nlFsMQxYeZ8cPFLjSANFsp+4Ex0KTbhpv+hxST33s4AO3jX7pSmZqWbtrr2xz+rVw0t2Qu5lpGPP5CuY/XaZa5fB20s2wXV1yV1kys+WlLsiE0PAEP1/nT4lAg==
-X-Gm-Message-State: AOJu0YxD17+orCYWMC4JSNZepDA3jfdTMTb7W62l7dr7IM69SyuQsc7E
-	kKMmIIsilgAXA6mNGAI90z02YJmSDkLGr9Lqd+fBwQA9Fh4QPxtnrkKo8gJJr4s=
-X-Google-Smtp-Source: AGHT+IFrsetAgfxlaH3jKAc3SxFxgFAtfwlIE9FtlnNu70i8hs8ya/Bq9UEMF2NGDCfqstzkruRRTg==
-X-Received: by 2002:a05:6000:459c:b0:354:e775:19fd with SMTP id ffacd0b85a97d-354e7751b2cmr3081085f8f.26.1716468204755;
-        Thu, 23 May 2024 05:43:24 -0700 (PDT)
-Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbc077sm36479176f8f.104.2024.05.23.05.43.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 05:43:24 -0700 (PDT)
-Message-ID: <6cf8a292252aafce6ecb787c0e28e30c35b98fa3.camel@gmail.com>
-Subject: Re: [PATCH v2 3/6] iio: dac: ad3552r: add model data structure
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: nuno.sa@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 23 May 2024 14:43:23 +0200
-In-Reply-To: <20240522150141.1776196-4-adureghello@baylibre.org>
-References: <20240522150141.1776196-1-adureghello@baylibre.org>
-	 <20240522150141.1776196-4-adureghello@baylibre.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+	s=arc-20240116; t=1716468278; c=relaxed/simple;
+	bh=FJWa/uNCr7cJhmS3SUB0xxF/4J8jPMsmYlv7f5oQz3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e2y4s0JhND/P1o5DEKX4Yw07D2pmU+x9gjFz/DyrJVRAseDP/FiQIiPrsg0MP0zisZ6FyfqetpMAdAFs1U/iMKl8nI97P84kaWmiluRju2Kll7F42EDMIhTlBzK413ocnf+Kn0MFJFXaoOSwCaWkE0xQ1isKNlEEL7EVMiqh70A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca; spf=pass smtp.mailfrom=skoll.ca; dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b=DyO73YN/; arc=none smtp.client-ip=144.217.161.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skoll.ca
+Received: from pi4.skoll.ca ([192.168.84.18])
+	by dianne.skoll.ca (8.17.1.9/8.17.1.9/Debian-2) with ESMTPS id 44NCiF9M495868
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 08:44:16 -0400
+Received: from gato.skoll.ca (gato.skoll.ca [192.168.83.21])
+	by pi4.skoll.ca (Postfix) with ESMTPS id 4VlSXt54VRzgd52Y;
+	Thu, 23 May 2024 08:44:14 -0400 (EDT)
+Date: Thu, 23 May 2024 08:44:09 -0400
+From: Dianne Skoll <dianne@skoll.ca>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: N_HDLC line discipline: Race condition
+Message-ID: <20240523084409.150fccb1@gato.skoll.ca>
+In-Reply-To: <93ace08e-deb3-46e1-b318-18aecc210a85@kernel.org>
+References: <20240424173114.035ddd7b@gato.skoll.ca>
+	<20240425140127.6504ade1@gato.skoll.ca>
+	<63a5a3c5-8362-4b93-a50e-10c9cdcffdd2@kernel.org>
+	<20240521101435.0b6b3420@gato.skoll.ca>
+	<93ace08e-deb3-46e1-b318-18aecc210a85@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=skoll.ca; h=date
+	:from:to:cc:subject:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=canit2;
+	 bh=5mf8k+q+wrhHknLna1GJnYemKxsMiU0vjw4WRkKWE8Y=; b=DyO73YN/mfLm
+	TEkbOo+PW0u/6+wcMkcWw15ED10uLoqUjEacT+S053Oymz//TL6/J7vyJF9+H8b8
+	nk9yr6akSKyRQYZE3ntDXfMbjFLyI5pWvdFU++fQa1jbBwDCYurMmFsbAZDOjSsQ
+	Iu1D16A7w3KyirYrLOUtwx/UCE5B+HFwUlMd/vY4VzPL7Yu2S5sgnD66KXJeoa+I
+	H0z/Qp9eBMhx69NsMhBLhwcEj2jUlTUYzHbgko6LhZz0C7Q1C+AlCWQEFSb7lfGf
+	mgtnDhjrvxUDK2NlX24VMKZ2pEgz0zSSASumMFFWHdP9bHOJa1T6zJomqHUvUK7g
+	z5Nxje7Okw==
+X-Scanned-By: CanIt (www . roaringpenguin . com)
+X-Scanned-By: mailmunge 3.16 on 192.168.83.18
+X-Spam-Score: undef - relay 192.168.84.18 marked with skip_spam_scan
+X-CanIt-Geo: No geolocation information available for 192.168.84.18
+X-CanItPRO-Stream: outbound (inherits from default)
+X-Canit-Stats-ID: Bayes signature not available
+X-CanIt-Archive-Cluster: tWKWaF/NcZkqjWIj0BEJTBHJhwY
+X-CanIt-Archived-As: base/20240523 / 01cqAIg3k
 
-On Wed, 2024-05-22 at 17:01 +0200, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
->=20
-> Add a "model data" structure to keep useful hardware-related
-> information as from datasheet, avoiding id-based conditional
-> choices later on.
->=20
-> Removed id-based checks and filled model-specific structures
-> with device specific features, In particular, num_hw_channels
-> is introduced to keep the number of hardware implemented
-> channels, since 1-channel versions of the DACs are added
-> in this same patchset.
->=20
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
-> Changes for v2:
-> - patch added in v2
-> ---
-> =C2=A0drivers/iio/dac/ad3552r.c | 98 +++++++++++++++++++++++-------------=
----
-> =C2=A01 file changed, 59 insertions(+), 39 deletions(-)
->=20
-> diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
-> index a492e8f2fc0f..6a40c7eece1f 100644
-> --- a/drivers/iio/dac/ad3552r.c
-> +++ b/drivers/iio/dac/ad3552r.c
-> @@ -261,7 +261,17 @@ struct ad3552r_ch_data {
-> =C2=A0	bool	range_override;
-> =C2=A0};
-> =C2=A0
-> +struct ad3552r_model_data {
-> +	const char *model_name;
-> +	enum ad3542r_id chip_id;
-> +	unsigned int num_hw_channels;
-> +	const s32 (*ranges_table)[2];
-> +	int num_ranges;
-> +	bool requires_output_range;
-> +};
-> +
+On Thu, 23 May 2024 10:01:51 +0200
+Jiri Slaby <jirislaby@kernel.org> wrote:
 
-nit: we often would call this (in IIO) ad3552r_chip_info. Then...
-> =C2=A0struct ad3552r_desc {
-> +	const struct ad3552r_model_data *model_data;
+> The driver definitely behaves as described. If the ldisc is used on a
+> real HW. ptys are a different story -- it's not guaranteed there.
+> Does it make sense to use nhdlc on a pty pair? I believe not.
 
-*chip_info;
+OK.  Well, the use case was as follows:  pppd has an option called `pty`
+that makes it execute an arbitrary program, connect to its standard
+input and output via a pty pair, and send and receive PPP frames over that
+pty pair.
 
-Anyways, not really something worth a re-spin. But if you need one, somethi=
-ng to
-consider :)
+rp-pppoe (https://dianne.skoll.ca/projects/rp-pppoe/) includes a
+program called `pppoe` designed to be on the other end of that pty
+pair and receive/transmit the PPP frames via PPPoE.  pppd includes a
+`sync` option, and pppoe a `-s` option that enable N_HDLC on the pty.
+This lets pppoe just read/write a frame at a time without worrying
+about PPP framing bytes or dealing with PPP escape characters, which
+reduces the CPU overhead of pppoe.
 
-- Nuno S=C3=A1
+Now, the Linux kernel has had built-in support for PPPoE for many
+years, and I was thinking of dropping userspace PPPoE support, but I
+heard from a user who wants to keep it.  ucLinux, it seems, does not
+support dlopen(), so this user can't use pppd's `plugin` option to
+load the kernel-mode PPPoE support module and has to keep using
+user-space PPPoE.
 
+Sync support was added to pppoe decades ago and either it worked well,
+nobody used it, or nobody reported a bug until recently.  But anyway,
+if the consensus is that N_HDLC shouldn't be used on a pty pair, I'm
+fine with that.  Perhaps a comment in the source file and a note in
+the N_HDLC documentation would be good, and then I'll just remove
+support for `sync` and `-s` from pppoe, since it can't be guaranteed
+to work correctly.
+
+Regards,
+
+Dianne.
 
 
