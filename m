@@ -1,259 +1,167 @@
-Return-Path: <linux-kernel+bounces-187113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F06A8CCD4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:48:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF298CCD5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6FB1F21FC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A4761F2200E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8678B39FD6;
-	Thu, 23 May 2024 07:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E6A13CF98;
+	Thu, 23 May 2024 07:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M2qG3/j5"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yBaEPaHv"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDA8171C4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A0D1869
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716450472; cv=none; b=PKmbURNX56duSOI2DL7lD+C2+O5VEIVqdjYB6oUBkAqH0t3WogpVvKi0uiq/wK7FDH7Jq3uob1tIFgNkKXhlQrJNj/RNgfkwN21e85JHHu5c4V2uEOUSyulVglpP9xVo9DJth533JtwY1C0Ylp7e6Ml/BdcfNdj18Nf5zGhKqQo=
+	t=1716450867; cv=none; b=TvbdMP/+j03t4tzNX8f1/MmnMXWPVCs6afCYZotCyMzkXsgVVFGzwr7CS9ZpomT9i9SzqUfAaadpLB45Nf9YTw2PkSQFhv8rb1EMpRHzczvYrCaYB0OOoAPKL2F4JLOvRDwSryUSy0+2FciVP3U9WGvxNzmrFfSLZ/yuIo1guc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716450472; c=relaxed/simple;
-	bh=3VcyvrFnO7doF59IEE6uY58W6g/UohPkURgPYmCd9BM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dXalVSpYslxzCSHH6dczIYJ9eYoqUPBfeqkqyvGAlAzhyA23tCw8nJBwGQMlvzKazsSkt4PajvuqftyVwWEsWH5HYgznYQe4VIuu2C10P468lmcLAJXaEYzB8HzqjOmy3JmIjOJuxUyVAHDG2UKR6ZQWZItRQANACCR2VH07suw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M2qG3/j5; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: yukuai1@huaweicloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716450468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=34wC+r4eDKWNrguibnYho4habD3+PHHInxhgG8ZZ6+s=;
-	b=M2qG3/j5npO2qd52j1LiOg4Npg5g+fRu99+v55ZrMUiYSS2+DKdnjVoC3Oa78F/aORl3um
-	HtexQNkuRidwejUhkNgOEGEw2dwH9LAR39Zr7lKIJVfPoh9ui4Cv2mMkf3PbxU+Whx6v46
-	eCjcqGjjELz6H3x7+YBljbRGi+KKEX0=
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: yi.zhang@redhat.com
-X-Envelope-To: dlemoal@kernel.org
-X-Envelope-To: hare@suse.de
-X-Envelope-To: johannes.thumshirn@wdc.com
-X-Envelope-To: kch@nvidia.com
-X-Envelope-To: zhouchengming@bytedance.com
-X-Envelope-To: bvanassche@acm.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: yukuai3@huawei.com
-X-Envelope-To: yi.zhang@huawei.com
-X-Envelope-To: yangerkun@huawei.com
-Message-ID: <48a8a735-d735-45dd-9811-2557ffbc545d@linux.dev>
-Date: Thu, 23 May 2024 09:47:44 +0200
+	s=arc-20240116; t=1716450867; c=relaxed/simple;
+	bh=6TUTSQLYTCUXIs3aeg91Rm5y9++WOvlHb8bfQgVmnOo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yht7U5rMzlv7caFImyV+Xa1O1aCg0GVclhn7igAOuLNljwlTNGbmw3M0b0viSRPPhEFCdiJqOGQz7LcSBziTfjZ6G2say0l7zSGoUecJMIVPm/+uRTcHp2DOBWdvDy7cJokuL3peAZRAr+pTlg7PbUuFRNcY1yU4VL5fhl5dnw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yBaEPaHv; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e3b1b6e9d1so86401991fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:54:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716450863; x=1717055663; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NO+7TP5WD33s7UxZDGhnr50qHmYrw+DG3n3RuvKTKAk=;
+        b=yBaEPaHvMhb6JhqKTT7NICNmNkBb7AcJDdinIQxt+Wje26d/lB74llcw+xJ14oGq7Y
+         ouXflFjtN89OI5+MsRnSXoLZeIeBGLMA/IwU1pNP1Tt3rGGrry9WgiLr59WZDgWBTxzs
+         oEA1aQddfbDiSMHJNNbg5YbOzAxjwmtKCvqU8eEHX+rLJUws4au4BtmPpe4QXOkYlraH
+         V1vckaPyMShn6cGqZD9DzzVxiVZgCTtftqhnSzXOVp/SEFVpZFUIbdjx7lKYko2NKHwY
+         KQyBKvoS7LrmFvis3zY5OnNaWQaEHz3I+NBCrI8YGy+JWg4O/no0cLyR3mSgy+rq5feb
+         c3tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716450863; x=1717055663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NO+7TP5WD33s7UxZDGhnr50qHmYrw+DG3n3RuvKTKAk=;
+        b=K+yJLl0pp3pj4krMvU/7heayIp1vyCM5pOK493zDqFLfn+LN0Al5AUA9kkyrec8aio
+         LILF6lRWyqdUNz++B+hjTM4gD3JcDESGU8PPy7m2mpw9hOosWpVfSZCFU0i9irE2CaJO
+         ONbC8sGKUL8W+8M0j7Z8VJnlqlQeGkQj0xm1qp82KJmNDvNt7yrsQdZiaSPOkpF3vuIx
+         iO8T4Iz56vlk6B6TwhvszPqQDKW6FEhQxBrN2f5/1rNaSEgKk+UhEESNQh5T/9Sixi2T
+         i1/9DMddMRz8KYMVX7MWj1UYd9hlbbQ1e7dNsRTiZgTuSpxKdLeXPNPAATcmzWKhiiug
+         eusQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDQfFDj2nTUs3fm0OEwTwTDSHaLcXHtsY03aBwEd7cCza3X2Vc5fCDuLe5Q0wT40AlofAEJ8Mdwc9oJDjx7D0nFrsQPxjwnF+I4+k7
+X-Gm-Message-State: AOJu0Yz+A4kFoEUGfgzzqfYbrFADtEpDTHYdqyBHjex3xdM/ENT+KFzr
+	s24vYcDJM04pG+xNG/CW7ixKmEEZaMjcShSAYSYvfYn8ezvyd4zk35uoSxmQ8fw=
+X-Google-Smtp-Source: AGHT+IG1TPrM5IWcLsL0gQR7Oe9oP76a2EOliWzZVJoOaGxGy+vZJRo/X57iPhY+5O8GnBw4G2JH9A==
+X-Received: by 2002:a2e:874c:0:b0:2e7:2907:a63b with SMTP id 38308e7fff4ca-2e94946e2bfmr26921751fa.21.1716450862499;
+        Thu, 23 May 2024 00:54:22 -0700 (PDT)
+Received: from blmsp.fritz.box ([2001:4091:a246:821e:6f3b:6b50:4762:8343])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad074sm36501833f8f.70.2024.05.23.00.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 00:54:22 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>
+Cc: Vibhore Vardhan <vibhore@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	=?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH 0/7] can: m_can: Add am62 wakeup support
+Date: Thu, 23 May 2024 09:53:40 +0200
+Message-ID: <20240523075347.1282395-1-msp@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] null_blk: fix null-ptr-dereference while configuring
- 'power' and 'submit_queues'
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, yi.zhang@redhat.com,
- dlemoal@kernel.org, hare@suse.de, johannes.thumshirn@wdc.com,
- kch@nvidia.com, zhouchengming@bytedance.com, bvanassche@acm.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-References: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On 23.05.24 17:39, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> Writing 'power' and 'submit_queues' concurrently will trigger kernel
-> panic:
->
-> Test script:
->
-> modprobe null_blk nr_devices=0
-> mkdir -p /sys/kernel/config/nullb/nullb0
-> while true; do echo 1 > submit_queues; echo 4 > submit_queues; done &
-> while true; do echo 1 > power; echo 0 > power; done
->
-> Test result:
->
-> BUG: kernel NULL pointer dereference, address: 0000000000000148
-> Oops: 0000 [#1] PREEMPT SMP
-> RIP: 0010:__lock_acquire+0x41d/0x28f0
-> Call Trace:
->   <TASK>
->   lock_acquire+0x121/0x450
->   down_write+0x5f/0x1d0
->   simple_recursive_removal+0x12f/0x5c0
->   blk_mq_debugfs_unregister_hctxs+0x7c/0x100
->   blk_mq_update_nr_hw_queues+0x4a3/0x720
->   nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
->   nullb_device_submit_queues_store+0x79/0xf0 [null_blk]
->   configfs_write_iter+0x119/0x1e0
->   vfs_write+0x326/0x730
->   ksys_write+0x74/0x150
->
-> This is because del_gendisk() can concurrent with
-> blk_mq_update_nr_hw_queues():
->
-> nullb_device_power_store	nullb_apply_submit_queues
->   null_del_dev
->   del_gendisk
-> 				 nullb_update_nr_hw_queues
-> 				  if (!dev->nullb)
-> 				  // still set while gendisk is deleted
-> 				   return 0
-> 				  blk_mq_update_nr_hw_queues
->   dev->nullb = NULL
->
-> Fix this problem by resuing the global mutex to protect
-> nullb_device_power_store() and nullb_update_nr_hw_queues() from configfs.
->
-> Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after an instance has been configured")
-> Reported-and-tested-by: Yi Zhang <yi.zhang@redhat.com>
-> Closes: https://lore.kernel.org/all/CAHj4cs9LgsHLnjg8z06LQ3Pr5cax-+Ps+xT7AP7TPnEjStuwZA@mail.gmail.com/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
-> Changes in v2:
->   - remove the unrelated code.
+am62, am62a and am62p support Partial-IO, a poweroff SoC state with a
+few pin groups being active for wakeup.
 
-Thanks. I am fine with it.
+To support mcu_mcan0 and mcu_mcan1 wakeup for the mentioned SoCs, the
+series introduces a notion of wake-on-lan for m_can. If the user decides
+to enable wake-on-lan for a m_can device, the device is set to wakeup
+enabled. A 'wakeup' pinctrl state is selected to enable wakeup flags for
+the relevant pins. If wake-on-lan is disabled the default pinctrl is
+selected.
 
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+It is based on v6.9-rc1.
 
-Zhu Yanjun
+This series is part of a bigger topic to support Partial-IO on am62,
+am62a and am62p. Partial-IO is a poweroff state in which some pins are
+able to wakeup the SoC. In detail MCU m_can and two serial port pins can
+trigger the wakeup.
 
->
->   drivers/block/null_blk/main.c | 40 +++++++++++++++++++++++------------
->   2 files changed, 27 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-> index 5d56ad4ce01a..eb023d267369 100644
-> --- a/drivers/block/null_blk/main.c
-> +++ b/drivers/block/null_blk/main.c
-> @@ -413,13 +413,25 @@ static int nullb_update_nr_hw_queues(struct nullb_device *dev,
->   static int nullb_apply_submit_queues(struct nullb_device *dev,
->   				     unsigned int submit_queues)
->   {
-> -	return nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
-> +	int ret;
-> +
-> +	mutex_lock(&lock);
-> +	ret = nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
-> +	mutex_unlock(&lock);
-> +
-> +	return ret;
->   }
->   
->   static int nullb_apply_poll_queues(struct nullb_device *dev,
->   				   unsigned int poll_queues)
->   {
-> -	return nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
-> +	int ret;
-> +
-> +	mutex_lock(&lock);
-> +	ret = nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
-> +	mutex_unlock(&lock);
-> +
-> +	return ret;
->   }
->   
->   NULLB_DEVICE_ATTR(size, ulong, NULL);
-> @@ -468,28 +480,31 @@ static ssize_t nullb_device_power_store(struct config_item *item,
->   	if (ret < 0)
->   		return ret;
->   
-> +	ret = count;
-> +	mutex_lock(&lock);
->   	if (!dev->power && newp) {
->   		if (test_and_set_bit(NULLB_DEV_FL_UP, &dev->flags))
-> -			return count;
-> +			goto out;
-> +
->   		ret = null_add_dev(dev);
->   		if (ret) {
->   			clear_bit(NULLB_DEV_FL_UP, &dev->flags);
-> -			return ret;
-> +			goto out;
->   		}
->   
->   		set_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
->   		dev->power = newp;
->   	} else if (dev->power && !newp) {
->   		if (test_and_clear_bit(NULLB_DEV_FL_UP, &dev->flags)) {
-> -			mutex_lock(&lock);
->   			dev->power = newp;
->   			null_del_dev(dev->nullb);
-> -			mutex_unlock(&lock);
->   		}
->   		clear_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
->   	}
->   
-> -	return count;
-> +out:
-> +	mutex_unlock(&lock);
-> +	return ret;
->   }
->   
->   CONFIGFS_ATTR(nullb_device_, power);
-> @@ -1932,15 +1947,12 @@ static int null_add_dev(struct nullb_device *dev)
->   	nullb->q->queuedata = nullb;
->   	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
->   
-> -	mutex_lock(&lock);
->   	rv = ida_alloc(&nullb_indexes, GFP_KERNEL);
-> -	if (rv < 0) {
-> -		mutex_unlock(&lock);
-> +	if (rv < 0)
->   		goto out_cleanup_disk;
-> -	}
-> +
->   	nullb->index = rv;
->   	dev->index = rv;
-> -	mutex_unlock(&lock);
->   
->   	if (config_item_name(&dev->group.cg_item)) {
->   		/* Use configfs dir name as the device name */
-> @@ -1969,9 +1981,7 @@ static int null_add_dev(struct nullb_device *dev)
->   	if (rv)
->   		goto out_ida_free;
->   
-> -	mutex_lock(&lock);
->   	list_add_tail(&nullb->list, &nullb_list);
-> -	mutex_unlock(&lock);
->   
->   	pr_info("disk %s created\n", nullb->disk_name);
->   
-> @@ -2020,7 +2030,9 @@ static int null_create_dev(void)
->   	if (!dev)
->   		return -ENOMEM;
->   
-> +	mutex_lock(&lock);
->   	ret = null_add_dev(dev);
-> +	mutex_unlock(&lock);
->   	if (ret) {
->   		null_free_dev(dev);
->   		return ret;
+These two other series are relevant for the support of Partial-IO:
+
+ - firmware: ti_sci: Partial-IO support
+ - serial: 8250: omap: Add am62 wakeup support
+
+A test branch is available here that includes all patches required to
+test Partial-IO:
+
+https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-lp-sk-partialio/v6.9?ref_type=heads
+
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+I tested these patches on am62-lp-sk.
+
+Best,
+Markus
+
+Markus Schneider-Pargmann (6):
+  dt-bindings: can: m_can: Add wakeup-source property
+  dt-bindings: can: m_can: Add wakeup pinctrl state
+  can: m_can: Map WoL to device_set_wakeup_enable
+  can: m_can: Support pinctrl wakeup state
+  arm64: dts: ti: k3-am62: Mark mcu_mcan0/1 as wakeup-source
+  arm64: dts: ti: k3-am62a-mcu: Mark mcu_mcan0/1 as wakeup-source
+
+Vibhore Vardhan (1):
+  arm64: dts: ti: k3-am62p-mcu: Mark mcu_mcan0/1 as wakeup-source
+
+ .../bindings/net/can/bosch,m_can.yaml         | 20 +++++++++
+ arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi       |  2 +
+ arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi      |  2 +
+ arch/arm64/boot/dts/ti/k3-am62p-mcu.dtsi      |  2 +
+ drivers/net/can/m_can/m_can.c                 | 43 +++++++++++++++++++
+ drivers/net/can/m_can/m_can.h                 |  4 ++
+ 6 files changed, 73 insertions(+)
 
 -- 
-Best Regards,
-Yanjun.Zhu
+2.43.0
 
 
