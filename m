@@ -1,141 +1,96 @@
-Return-Path: <linux-kernel+bounces-187647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850B28CD5D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0827A8CD5DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 273FE1F21F85
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B403A1F22179
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D82F14A4DC;
-	Thu, 23 May 2024 14:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDBD13C3E7;
+	Thu, 23 May 2024 14:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLo2wGmT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="w4xREilk"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62E01EA6F;
-	Thu, 23 May 2024 14:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CE81DDEE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474717; cv=none; b=sXyxwp+XzcFy7PzETKcZY3WqBnzY57lzocU4+N0cUHDJms5yO13+LmiuYM4ExgdAJ1ociC9Jw0hefnAC8Gfj8jL1TLTYB42kLiVX1vQ034ainz0Us1h4DAuqTrrJQOrTcxbYz4N515yCaaoQkZqN4c10ezgtjoNdFzZ0UT1SEa8=
+	t=1716474727; cv=none; b=CslzIm4ojm2hElmzkC7M/Cq++quSGQ7laNoowZBKVL9LPQ9mtfq9vFUzFT6GPf1Favt5W3gOJv2/tILrC7hF8AXkZdTF9lpiCjy8khP7sLQAg5ZWHnD45oHs3/txiM+RIa+Ds79EAnQ+QWpewxEovqk756z8PplCRSCfvfwVI+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474717; c=relaxed/simple;
-	bh=z+/P8L5KjNx907uaz+/G1K7pVGEzXZy7/dsMvxUblY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0vfeOP9Xz0L8CdxCJWj60JPrkRVwhKISv6APake2XvJ+NHMWGEKC0duKF4m6hT+EC4NHtD5h0IPHRjuGCS1MtcnDz1kZhRdHa/HQ5xezFbDDHNVZIZGoDd2wusOyjkns7+7hFWVeRI9ZLBQpMUQh+oJXXAXUHrjvKCC5wvxbfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLo2wGmT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282C6C2BD10;
-	Thu, 23 May 2024 14:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716474717;
-	bh=z+/P8L5KjNx907uaz+/G1K7pVGEzXZy7/dsMvxUblY0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fLo2wGmTg6txQgIoshiVsLwUvoY7/xKWZMSxVOYB3O85VZCq5alt62eezKWuas3px
-	 DjCVEcadDbuUC89D7N5lCnTjD8Dyh/UVvqiwu75V9SwiRFZfxHkPAlnlNLt4O012lj
-	 poL3iHuakngtyKHf+2CqGsOfomtvn/AJRECZsWBOGP26Dw8DAlXzUqV7OanHBQ0K/3
-	 4zjzrTbgKJmHWaEdIZYperJDQR3g4Q1JcEz0E/JyjvAWkJPEyMd3OaSM1AyFVlMj3K
-	 7XD5I8cNhK1z7ufAVZF0OgkPDxbsTwXjmCmLrHwABC+sFdVRSdhVMx9/qtQGIjI/GL
-	 kZenvq60TQETQ==
-Date: Thu, 23 May 2024 15:31:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-Message-ID: <20240523-divided-herbicide-11396549e05f@spud>
-References: <20240513-headsman-hacking-d51fcc811695@spud>
- <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
- <20240514-aspire-ascension-449556da3615@spud>
- <CAMknhBFFpEGcMoLo5gsC11Syv+CwUM0mnq1yDMUzL1uutUtB+Q@mail.gmail.com>
- <20240516-rudder-reburial-dcf300504c0a@spud>
- <CAMknhBF_s0btus4yqPe-T=F3z7Asi9KkRGsGr7FHDFi=k4EQjw@mail.gmail.com>
- <20240519-abreast-haziness-096a57ef57d3@spud>
- <CAMknhBHvEse2FyDoBXR1PvymGpSGq8dotKfm+8XH+0+k+xKtQw@mail.gmail.com>
- <20240522-gullible-ibuprofen-cf9111c25f6f@spud>
- <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
+	s=arc-20240116; t=1716474727; c=relaxed/simple;
+	bh=BgtQCP6BWnj0hRmGehM9bywN+sdsudwiKyVkchOsOcE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kPAMw+3+Sj/10DYR3qJgr+Q2SIo6NJ/za0IMZHq3cnrmeYbuXfb2dhQV0llT0eAfdzhuVrYzfhYPzg3uf5oRvnx7bLgut35bfw2hN6hl9xi5HroU8dTJmQ+fZAEU+XrXRCeMF9dNF6BLDTCBOS6lgUH8CX7jTJo4Xouk01U+ZYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=w4xREilk; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=BgtQCP6BWnj0hRmGehM9bywN+sdsudwiKyVkchOsOcE=; b=w4xREilkyEQQd0NwD/AflGGIMg
+	7OJ6VqBJ01JHn+GLQJXsH9U8HZ1hrOYGWv46vofTf9uYokTE67ZpgU9ASXFsN4MMnUsDuruGp5dCQ
+	wcf/gNi/kS3jaoGMbJAsTB55QITEdL703+ck/zu26irY54bst09AR/wF5SULbetN1pyp3ayi8akq+
+	BtTSIXUXCNkpsuZQhOb4wp5qN7neMFAVSIZm8jTwS8uWKtjtxq+zuQbx4qJiTfO5YnjsR6Juxp8kn
+	fuL0PqIM+ujJ+kCTCYGLcam0t+GfO6nPligH28OmMMCHPFslorQvYcnWjLmvUg7sda/VqLwxP3tFM
+	wn4GRwig==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sA9UA-000FCg-Po; Thu, 23 May 2024 16:32:02 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sA9UA-000NG2-27;
+	Thu, 23 May 2024 16:32:02 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
+  linux-kernel@vger.kernel.org,  linux-mtd@lists.infradead.org
+Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
+ selectable
+In-Reply-To: <979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org> (Krzysztof
+	Kozlowski's message of "Thu, 23 May 2024 16:01:49 +0200")
+References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
+	<979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org>
+Date: Thu, 23 May 2024 16:32:01 +0200
+Message-ID: <87cypc38gu.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gf9CS1NJgXAMKbNH"
-Content-Disposition: inline
-In-Reply-To: <5ad0b5782434eaf4cf565cffb0e4c14b7414ae38.camel@gmail.com>
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27284/Thu May 23 10:32:30 2024)
 
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
---gf9CS1NJgXAMKbNH
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 23/05/2024 15:58, Esben Haabendal wrote:
+>> While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
+>> driver selects FSL_IFC automatically, we need the option to be selectable
+>> for platforms using fsl_ifc with NOR flash.
+>
+> Which driver is that?
 
-On Thu, May 23, 2024 at 02:15:35PM +0200, Nuno S=C3=A1 wrote:
-> On Wed, 2024-05-22 at 19:24 +0100, Conor Dooley wrote:
-> > On Tue, May 21, 2024 at 09:54:39AM -0500, David Lechner wrote:
-> > > On Sun, May 19, 2024 at 7:53=E2=80=AFAM Conor Dooley <conor@kernel.or=
-g> wrote:
-> > > >=20
-> > > > On Fri, May 17, 2024 at 11:51:58AM -0500, David Lechner wrote:
-> > > > > On Thu, May 16, 2024 at 4:32=E2=80=AFPM Conor Dooley <conor@kerne=
-l.org> wrote:
-> > > > > > On Tue, May 14, 2024 at 05:56:47PM -0500, David Lechner wrote:
-> > > >=20
-> > I think you're right something like that is a stretch to say that that
-> > is a feature of the SPI controller - but I still don't believe that
-> > modelling it as part of the ADC is correct. I don't fully understand the
-> > io-backends and how they work yet, but the features you describe there
-> > seem like something that should/could be modelled as one, with its own
-> > node and compatible etc. Describing custom RTL stuff ain't always
-> > strightforward, but the stuff from Analog is versioned and documented
-> > etc so it shouldn't be quite that hard.
-> >=20
->=20
-> Putting this in io-backends is likely a stretch but one thing to add is t=
-hat the
-> peripheral is always (I think) kind of the consumer of the resources. Tak=
-ing the
-> trigger (PWM) as an example and even when it is directly connected with t=
-he offload
-> block, the peripheral still needs to know about it. Think of sampling fre=
-quency...
-> The period of the trigger signal is strictly connected with the sampling =
-frequency of
-> the peripheral for example. So I see 2 things:
+This is drivers/memory/fsl_ifc.o driver. It is for Integrated Flash
+Controller (IFC) from NXP. It is used in various Layerscape socs.
 
-Cherry picking this one thing to reply to cos I'm not sure if it was
-understood as I intended. When I talked about io-backends I was not
-suggesting that we drop the spi-offload idea, I was suggesting that if
-something has a dedicated register region & resources that handles both
-offloading and some usecase specific data processing that it should be a
-device of its own, acting as a provider of both spi-offloads and
-io-backends.
-I'll look at the rest of the mail soonTM.
+> Which DTS?
 
---gf9CS1NJgXAMKbNH
-Content-Type: application/pgp-signature; name="signature.asc"
+It is for "fsl,ifc" compatible devices.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk9TVwAKCRB4tDGHoIJi
-0hN/APsFPaTQxDK3YqRUJgT5J20VxUY1KBTNxCCt0kwkMu/iygD9EE5MiES4Ipue
-iL0dC3Lu3LuqcZ78q0lv9bkm/bhYLAk=
-=gfAt
------END PGP SIGNATURE-----
-
---gf9CS1NJgXAMKbNH--
+/Esben
 
