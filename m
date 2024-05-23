@@ -1,357 +1,249 @@
-Return-Path: <linux-kernel+bounces-188111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AE68CDD8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:18:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434428CDD8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9C27B23830
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666591C21822
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6601292CF;
-	Thu, 23 May 2024 23:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9592A128818;
+	Thu, 23 May 2024 23:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VmDDgdVI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MSGIDmgP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE629128813;
-	Thu, 23 May 2024 23:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716506215; cv=none; b=Nx9G17DRqfme55CxuCNy7aD0Houk54d3+UDU/eoWB4fDnisI3qk5U0gi7UgJhmuJ7n5Pu5R3UVGA7m7MsLhAnXrUub9IEZZg3fIcoKs7jA8VqfjSSCiNOg5mlNrC/uWQgdLSr24Z2uUCbwtq2WQXkUFGNary7SeIynWqzOZp3/M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716506215; c=relaxed/simple;
-	bh=iInzZtl5DmousXS3xfA+CEeE4VY23v6nxCWdWAghjLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPRuqoVMHajyfTDfrSlKQtDj2a+sjTLmoWr2iOo2jUOqKMic3u8YzQdZ3X53QZ9sPmjf9jRVNzFQNB8PQQh2J6o3/1nh59z9jp8BlYZGUUzwx/3LAshi020ZaTXSprh5MjCCuXISsML21edgxK9HYaIYZBJQzxhJi0DOXeTvm1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VmDDgdVI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DC702471;
-	Fri, 24 May 2024 01:16:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1716506198;
-	bh=iInzZtl5DmousXS3xfA+CEeE4VY23v6nxCWdWAghjLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VmDDgdVINI1OzSfvVRBAj+7MKw8O2pZNA/G1BjXxXPYXulqs1Gn03nWyVOudTCSb1
-	 69Fc4rR6HHybg3Ve5sspfutGtklPfdKGq211nFCHiDL0ExiiDQ4R8SJW0QccMoGmeO
-	 8cDtTD59Cy8kOMye0NR/FgLODYwKH6B8QG8wS6oY=
-Date: Fri, 24 May 2024 02:16:41 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	Alexandru Ardelean <alexandru.ardelean@analog.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: Add bindings for the Analog Devices
- ADP5585
-Message-ID: <20240523231641.GJ6640@pendragon.ideasonboard.com>
-References: <20240520195942.11582-1-laurent.pinchart@ideasonboard.com>
- <20240520195942.11582-3-laurent.pinchart@ideasonboard.com>
- <11a383f3-a6db-4de7-a5f8-2938c69e98fc@kernel.org>
- <20240521194309.GA8863@pendragon.ideasonboard.com>
- <075f5a03-f288-4dfb-a293-3a6c0675881b@kernel.org>
- <20240522072224.GC8863@pendragon.ideasonboard.com>
- <92e85dff-ad02-4673-a625-2248b249c262@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31E0128365
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716506338; cv=fail; b=mD8vbq4txL/CXd8uGDzKKSxadFkzMAV+7UH8jXhjWTBemQipel07Z1tW5lm7kiK+CJhDCMwXg+5S3pE9SiPkb7ugsPBbvEM8YOiNlUTCGwd72Jrn2YJVjiIpVFrAsHzU+76ouilGKHpY/8IrZyTZhVKuouEPhFJCHkpbjncGFps=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716506338; c=relaxed/simple;
+	bh=ev7xCdR+7y4lYIb8Nq+fIsn9P4C3Nz9ygh+57OYaQ1s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ESzoCohI5tXCoqBm/BVCtl4lKwzAGmqWYsA4ZMD4WGljTGiI273Hxsqx4M10SncqMT/F6bj68a9Vly4Z9kum1wl8aTqzrsHiYvuetg1ajtRSzgwMdxPGPvBsZdsGYhmtHDAb0yAUIkudn6u6sDg/MSuPY2Gh+AM+xlqOjhywQEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MSGIDmgP; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716506337; x=1748042337;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=ev7xCdR+7y4lYIb8Nq+fIsn9P4C3Nz9ygh+57OYaQ1s=;
+  b=MSGIDmgPOzyNxupslQuSMGPQ0DOWb09XjU/dhrC5Bi9Vwr7ErHj26HYy
+   ZWLRlO85owz4uqHUeNU5e6xJRvbLbcI/+UbHHX10IfVlWk8e38CLnBjzj
+   RdxpvH+VAaWpJMvPqH3InheRTAtcMep+AX7yNp9kz+qea9k94JFaPDJAL
+   h/gu5TzE+c5tThVwpnZdET63vMT7ENKLSohovbhwLSu9bT/fZnyljtFV/
+   83Ti1vo/FPOQZqNCCnrDUmtn+ng1+9trd1prAkWhM+jY5x0v9iRqizzOi
+   8XabqEvrWBvMY2KUJcCgSlgxiNfsbum+18uaZewIKT+2Mk5hViosmNrH3
+   g==;
+X-CSE-ConnectionGUID: oPSNmfb4QpuovmB+85wkDw==
+X-CSE-MsgGUID: l9Y+6wljQKqV4Jc7n3p0Hg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="15805006"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="15805006"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 16:18:56 -0700
+X-CSE-ConnectionGUID: k0Meq6mWTmKZtx7101FTbQ==
+X-CSE-MsgGUID: T0fIIXusTp6T92r+R1CA2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="71245825"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 May 2024 16:18:56 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 23 May 2024 16:18:55 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 23 May 2024 16:18:55 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 23 May 2024 16:18:55 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.101)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 23 May 2024 16:18:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i7uWIWsjRuJK/gWqmcxYzNqWKY4jyQDwlN7Y5kD4bIwVd94ocR8mP4HmjA6+sT0POPLP5FxhGHHMVVdRbxt3J++4Mh/hVTt+NvzBIJ6KLUjbMYB7vmZXKBRJqktrYQxDROISiqzZgE75oqF9SN8ealF/MMfIotPu1IdaRAq9pti6STfK8QnsQdym9asQJjH3i+Zr+/s4qOyYOuSQkQXhMN4ffBmSN0xjYTT4dHdoLJDFWnONoMiPrBZpUeBRpDOBdgLbe++WZcZiPiIVT18wmr2o9W7FPY7id8VzU/kM2NFcME8n2iFT0ApxkNpi4IdRUD5Gt/uE0aA66DhXynB/pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ev7xCdR+7y4lYIb8Nq+fIsn9P4C3Nz9ygh+57OYaQ1s=;
+ b=OihNI8xqcr8+yzYIyKRwzsRpEVTmLO8QJS1bPndJbY7Vwq1ThJsi76Be6WVVtvgTZQBFyRbBCn0DIOGnRkuH90InN69hRe5czZTKE/y1Wg+w3LHAy+Lh/TiKInEOfA7kCtjbhJrF6b6MqIgJWJVK7S9E+o0Q9wo6soGdFt6Ggrcf48ieXRKjDBXJIxLQpmsNCzxKx0FmdlIO5/HvYvG5nyitiAmkfTQzC17fAIatiOdlMXem4VYlane1yOnhi2aeaxFENDvd5zkaIWPj0ydzdOEyjxMJ50koCVL+VZyCix1iiYcPA3tJN655yX2KRVg1xlrrT642njQA0k2orAmH7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by SN7PR11MB6849.namprd11.prod.outlook.com (2603:10b6:806:2a1::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Thu, 23 May
+ 2024 23:18:53 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.7587.028; Thu, 23 May 2024
+ 23:18:53 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Chatre, Reinette" <reinette.chatre@intel.com>, "Yu, Fenghua"
+	<fenghua.yu@intel.com>, "Wieczor-Retman, Maciej"
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
+	<patches@lists.linux.dev>
+Subject: RE: [PATCH v18 06/17] x86/resctrl: Introduce snc_nodes_per_l3_cache
+Thread-Topic: [PATCH v18 06/17] x86/resctrl: Introduce snc_nodes_per_l3_cache
+Thread-Index: AQHapxaLlE5h/oF4QUmt1DBuxjvwvLGjyhSAgAFrFfCAACP5gIAAB3DwgAATPICAAAkiwA==
+Date: Thu, 23 May 2024 23:18:53 +0000
+Message-ID: <SJ1PR11MB60832095AC783D064541F0E3FCF42@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20240515222326.74166-1-tony.luck@intel.com>
+ <20240515222326.74166-7-tony.luck@intel.com>
+ <beee3369-0075-462e-8449-88fee807463e@intel.com>
+ <SJ1PR11MB6083117715CD53FA4360C56CFCF42@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <013c9532-cacf-4604-b1d9-e90fdc80e7dd@intel.com>
+ <SJ1PR11MB6083C6A9DFFF58FE305A33F3FCF42@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <f326387d-9636-4377-b82f-10e8d335c6ff@intel.com>
+In-Reply-To: <f326387d-9636-4377-b82f-10e8d335c6ff@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SN7PR11MB6849:EE_
+x-ms-office365-filtering-correlation-id: 65232ba6-48d7-4948-e7f7-08dc7b7eb678
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|366007|376005|921011|38070700009;
+x-microsoft-antispam-message-info: =?utf-8?B?MDZYdWpjb0xub1NZSENNYlA1TWdYNUgyOU83QVRuR2NrNWlBK0orY2ZxeFc2?=
+ =?utf-8?B?c3c1UmlKaU1GUWkvQ1JSOUp4OGtOcjZWdDlMNDkzbmJtbTNqWHA2ZG5yVnVT?=
+ =?utf-8?B?N0pvQWpNV0xVNU5kaHNub0pjem5LUGZMeWlYalp6RGtJN00yb29xUEdQWDU1?=
+ =?utf-8?B?d1Q5bUt5VVN3aVdKb1pLNmlTSEU5UFVqelpTZGhNaW1JRFNzR051M1NFb2dW?=
+ =?utf-8?B?ejN3RHFHODRaNW9YNGt4ZlVkdkViVG53cTJMUms2Umw5YWlYdkZyYmxRM0VE?=
+ =?utf-8?B?V016bU12Zm5kRkpqRlV0UWRJTWk4VHBxWjdkR25IeFF1WEhzTUpHaStGMUZ5?=
+ =?utf-8?B?NWdhZGI5cEVMR3o0YnJ3akpVc1pCOWs5RGVVelFGR2M3aXdsZGZyeU1VK3Rs?=
+ =?utf-8?B?eWp3OXI1SU9LdkUvTUN1YlUrVmhZZnp3MTJQcDJTMzV4dW0zOTJsWEE4Y3pR?=
+ =?utf-8?B?eVY5VkthakRRSXFyMWpoT01tT2FiSHkxeVFzYm1XTUFPbFQzUXRZU2FkelBD?=
+ =?utf-8?B?RTE2a01GRm01OHFXaktZdUFxSXRnOWRJenpQSkhjN05OR2drMFBhcWFEOUdL?=
+ =?utf-8?B?dS8rVFRqZ2pBY0pSMjY0ZnN3Tm1kdjBKc0FQZzlLZWhCVUFjc1MvL25PbEVD?=
+ =?utf-8?B?V3h4ODhpbE5HQTNsTW9KRWc2MHovQjhLeWs4QkxhckdFZmhlNmZKcEhBamhh?=
+ =?utf-8?B?M1k2Tll1NnZNSEFwYnRkNzlxZnF0bklNSDVpOXpzdXRVajlQY0NvdmwzUyt2?=
+ =?utf-8?B?aDVnYW9WU0ZEOHZmU2ZaSmF5UzlSN1U3V1FiUHluZncvQmdXTVM4VlcwaG5i?=
+ =?utf-8?B?TzRRWTNEd0N1YlpZbklWU0p4MXpqYzlGN2JTK1ArR3BsTStHUC9qNnU2WXlY?=
+ =?utf-8?B?bkdnVHh1enNwWVlXamZtNUVSNVZZMVBaNUFBNy81M0pOeUJhUGIzNzg0THB4?=
+ =?utf-8?B?NTlvK21rTWVER3hZZW4zU1lseFdGc0hVR0xVR0hQT1VIbi8zWGhBREQ5S1Mx?=
+ =?utf-8?B?dHdrQkt2WDQrTkh4SWZCSXJMKzFKMmFad3lpSHEzeGMyK0Rjb3I5QjE1cG83?=
+ =?utf-8?B?RjJ2MFdmRzhmRkt5aWtLUHZodktNK0l4K1cvYlZmdituVjVQdDFYc2d1ODY3?=
+ =?utf-8?B?SHVvVnJtMksyZTl3aVhkT3ZGSmZSemVlS05ZY2ZsNkpZRkYzYW9Hd0dWejNj?=
+ =?utf-8?B?WUVGbk0zaWl1eFE4NzZnSHNWcTBUQm9sOXlvTkZYdUxwWTlLWkRxL0phTEVr?=
+ =?utf-8?B?eW1rSzdrTUdQako3T2ZnMHlUWC9VaGRYS1FxTXVENjNVS0NKcHF1NFYxMVVJ?=
+ =?utf-8?B?ZCt2YTB1TVIxcDNhbVIrSGUyV2l5TWhjOENEZE1EclZzSGxGOFphSC82L3Fw?=
+ =?utf-8?B?T0R3YnlXV0VBSjZMWUU4NkRYTnNNUEZpNlZadEdhc2dVV2JRN3BzUzllRDk3?=
+ =?utf-8?B?dlBVU1phT1ZBOFRNelo5bTdzSkVWZXA2Wm1iNnl1dmdWSVRXQjQ4L0pvRm9y?=
+ =?utf-8?B?Ny85K3E3eVVqZUF5REd4bGhvVHdrMW5hemhGL0JFaWdnSUxRS25jWi8zUUF2?=
+ =?utf-8?B?L3dodHpPM0ZnZkxZZUpRRWNQNlJ4bFBsREg4ZHErWWIxVTlrbnB0VldVS2tm?=
+ =?utf-8?B?b284cWFvVkx5WGlSQlY4czZ5WUdCcGhRL00wMjBhd0FndmttSWNtUTVIL3pL?=
+ =?utf-8?B?WGtPYzhYT2IwSHRvVnVnS0RtR0tMa3ZRdlYzNHU0NklROVFNQi9YSFFIMVFt?=
+ =?utf-8?B?YXlkZEl3VmRnRVFmSUp4VkhVamxhZGVpTWxxcWFXeHFSdStVazZTb3hYdzNk?=
+ =?utf-8?Q?aJuVeTMAwUW2bPILYO19zajcWLnKKGjWRrU0U=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(921011)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?N0hwUnhDck55aTNYQ1RmV3pzR3ZOWDNZTFNraGVJUDU2WWE5dXB2clh4Tmly?=
+ =?utf-8?B?eFVYbWU0U0F4eGpOSXZiWnUramQ4VTVTMTJ6d3JyREx0YUd2ZHQzemhvUHlj?=
+ =?utf-8?B?WU9IKzVNTXh5dFRCZitZcFZhdlZyN1doZXdGaHk1UTBKOURIeDl2TnNzV1ZY?=
+ =?utf-8?B?V0owa3I1YnIxd0NhZVovaHA3a2grWVE1cHFubUJjUFM1aERRY2cwTnNxTXlG?=
+ =?utf-8?B?dVJaTnd0aXRIS1FNL1l5Y2p1NDhHSVF5TFMwZjQ4RVpJUHlqaDRNWmN5T203?=
+ =?utf-8?B?MUNHWUlFSDR6RWpGc2lMWWtiWjNuRTlhdnJEN2lVeTdRY1VNaHdrQTY5d1Bv?=
+ =?utf-8?B?eUM2RDJlSUt3YVBlSWFRQkk5N2JpZEpHVExxL3Z2V2ZtQ0FEd1lXUGJDNUl4?=
+ =?utf-8?B?YWNZbXhBTDFsRDF2NG9aendTdlNpSWl2MjhDRzliVmpPYnA3K1ZCaFc5OFp2?=
+ =?utf-8?B?SVVkeEE4UVlNUGRYcHFNQTVqU1dMM29oSGJWU1hzTG84Snp0S3E5Y3AreS9u?=
+ =?utf-8?B?U2tOVGJCTG1icXJidGFYeEhNeHB2WFZtOWhuYUkyTERMcHBFS3A5UHF0bndC?=
+ =?utf-8?B?amszVHlJajlJT0g5WWZKYm5wUXlzNDZnclhiS2ljdlBDL1dnd1ZXeUVVNFNw?=
+ =?utf-8?B?R0xOYkxwR3BycTJOYTJkenJGMm9Mb2YweGxhZ1YyRVhRcnhWVFF5S0tMOUt5?=
+ =?utf-8?B?ODBTeldGSGpVcVAvMG1jeDBnTnRGMHdqU2J3aWdCRFJPVzVMcnRaSzRzNndK?=
+ =?utf-8?B?eVltemg2K29vaVhEVXdxc3NhakdseHNrODRacmpMTm5PQnpxUDk3ZEFaN0Rk?=
+ =?utf-8?B?V25vdE9peDFReks1anMydVc0TDJoRGFLbjN0RlNqWTFUb2tzRElTWU5HS2VY?=
+ =?utf-8?B?NFU2dkFvdEVRTSs4YWYzV0IxNXFyV05ZLzBlRHp2ZGowTHdrU0VEdVFTZEVp?=
+ =?utf-8?B?T0hiVHkrTktYRTBzdFJRdEZyc21XNDdXL0VWSnpvdjZmOFI0blErSTVuTmdX?=
+ =?utf-8?B?eG4yc2xTc3JoWmhZN3dtcFV5bHhySFRNOURnQUF0Nm8weWlmRmxRRlFoUnJh?=
+ =?utf-8?B?dURJaU9hc1dMQUtJdHJNZTFTcXJPVEk4bFJkNHhIbUdTRHp5dUtwMTFYOFpC?=
+ =?utf-8?B?ZWFaak1sTFRTTlVwREloWXZ1VFBTdHd5OEM3NDNOTXF1UnZrbjBZNmhZWk9w?=
+ =?utf-8?B?eWxDYTRPb0xLZkkrYk1qU0NVc2FPdXFlaFcrU3NCb1g5cFNCUVhnUlBEWHd3?=
+ =?utf-8?B?Vk5zZG5FWllVeUsxbXB1SDBDc3loUkhWUk5zZjB2QW9sbFFmWGs1R2YycG4v?=
+ =?utf-8?B?VTZycFJNMW1lWjFPSkg3cUNBWGsyaStlQXdENmt0ZXBUbFBKYTNlcVY4K1ZY?=
+ =?utf-8?B?bTBYcXZsODRxN3owVTRlSEw2NTNlU3BzVmZIZEpjZ0lJV0ttT05mQWV3eHpy?=
+ =?utf-8?B?cnhvZlY0TCtOKzlHMTR2KzY0U2QwVndyTFJpdW5lcVIycnVqV0phWEhIOWhK?=
+ =?utf-8?B?OE9JRjdqR3JMckhBU05XWS9FVzBHWnl4NW9HRFlXVVQ4UVlIbyt3UDV4VFpC?=
+ =?utf-8?B?dnRGd2hFb01Bcm1HSFpERUpQazdZeC9INWRuVDl2SDlvVitHOEozNEdKSjNB?=
+ =?utf-8?B?a3hsMGxyVnBMK0tjZ2tjSklpamtmejF1Z05Xd051M2VvcXNnakN3cXYrQ1Ja?=
+ =?utf-8?B?bFM0M3ZBZ3VUOHY3VVlRSFZKZVQzbWg2UlNPSGRERG9QYUVaYnVWckN5Y1Fr?=
+ =?utf-8?B?MlFldDR5dWxETS9wek9ham9tNk9JN014Y1dRQTF3aUJPcnRHUkoyVnFhMDRN?=
+ =?utf-8?B?V2VTM2diOVhiUFo3VTdEdjdHRDlEYnl2bVdaaTVwaFFycEREckFmNjBXY1ds?=
+ =?utf-8?B?V3BqTTArNENSalp4c1dmRzZOL2VXMkVoTmxIVjZYRHhsbkp0SzBDK1dzUFM0?=
+ =?utf-8?B?NjM0dHhpZS9aN01uYXlkdTh0YU5GaEhXV0plcWtqcFplc3J5NXRRU2ZtRHJY?=
+ =?utf-8?B?SkRTRjBEa0Z1cWVLQ0NycC81eG40R2dHUFVYdERtUzlONkd4WXdtZDJkQVUy?=
+ =?utf-8?B?NDdleS9FazN1RnNQdEU5a1d2Qy93cWhpcXZDOVZzOVdtallSMkJKTjZ5VURJ?=
+ =?utf-8?Q?2RUHAkcr5pQBp3Od0UW+18OjI?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <92e85dff-ad02-4673-a625-2248b249c262@kernel.org>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65232ba6-48d7-4948-e7f7-08dc7b7eb678
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2024 23:18:53.6630
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eCPkXKHQABHJHJU1bpjOblTL59lXPwuLyQ3CIoO4xOS+8dbIiIXW0KIE7E9otqjDQuLvAHhNmDvQg5bBBJ3M3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6849
+X-OriginatorOrg: intel.com
 
-Hi Krzysztof,
-
-(There's a question for the GPIO and PWM maintainers below)
-
-On Wed, May 22, 2024 at 09:40:02AM +0200, Krzysztof Kozlowski wrote:
-> On 22/05/2024 09:22, Laurent Pinchart wrote:
-> > On Wed, May 22, 2024 at 08:57:56AM +0200, Krzysztof Kozlowski wrote:
-> >> On 21/05/2024 21:43, Laurent Pinchart wrote:
-> >>> On Tue, May 21, 2024 at 09:05:50PM +0200, Krzysztof Kozlowski wrote:
-> >>>> On 20/05/2024 21:59, Laurent Pinchart wrote:
-> >>>>> The ADP5585 is a 10/11 input/output port expander with a built in keypad
-> >>>>> matrix decoder, programmable logic, reset generator, and PWM generator.
-> >>>>> These bindings model the device as an MFD, and support the GPIO expander
-> >>>>> and PWM functions.
-> >>>>>
-> >>>>> These bindings support the GPIO and PWM functions.
-> >>>>>
-> >>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>> ---
-> >>>>> I've limited the bindings to GPIO and PWM as I lack hardware to design,
-> >>>>> implement and test the rest of the features the chip supports.
-> >>>>> ---
-> >>>>>  .../bindings/gpio/adi,adp5585-gpio.yaml       |  36 ++++++
-> >>>>>  .../devicetree/bindings/mfd/adi,adp5585.yaml  | 117 ++++++++++++++++++
-> >>>>>  .../bindings/pwm/adi,adp5585-pwm.yaml         |  35 ++++++
-> >>>>>  MAINTAINERS                                   |   7 ++
-> >>>>>  4 files changed, 195 insertions(+)
-> >>>>>  create mode 100644 Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> >>>>>  create mode 100644 Documentation/devicetree/bindings/mfd/adi,adp5585.yaml
-> >>>>>  create mode 100644 Documentation/devicetree/bindings/pwm/adi,adp5585-pwm.yaml
-> >>>>>
-> >>>>> diff --git a/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> >>>>> new file mode 100644
-> >>>>> index 000000000000..210e4d53e764
-> >>>>> --- /dev/null
-> >>>>> +++ b/Documentation/devicetree/bindings/gpio/adi,adp5585-gpio.yaml
-> >>>>> @@ -0,0 +1,36 @@
-> >>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >>>>> +%YAML 1.2
-> >>>>> +---
-> >>>>> +$id: http://devicetree.org/schemas/gpio/adi,adp5585-gpio.yaml#
-> >>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>>>> +
-> >>>>> +title: Analog Devices ADP5585 GPIO Expander
-> >>>>> +
-> >>>>> +maintainers:
-> >>>>> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>> +
-> >>>>> +description: |
-> >>>>> +  The Analog Devices ADP5585 has up to 11 GPIOs represented by a "gpio" child
-> >>>>> +  node of the parent MFD device. See
-> >>>>> +  Documentation/devicetree/bindings/mfd/adi,adp5585.yaml for further details as
-> >>>>> +  well as an example.
-> >>>>> +
-> >>>>> +properties:
-> >>>>> +  compatible:
-> >>>>> +    const: adi,adp5585-gpio
-> >>>>> +
-> >>>>> +  gpio-controller: true
-> >>>>> +
-> >>>>> +  '#gpio-cells':
-> >>>>> +    const: 2
-> >>>>> +
-> >>>>> +  gpio-reserved-ranges: true
-> >>>>
-> >>>> There are no resources here, so new compatible is not really warranted.
-> >>>> Squash the node into parent.
-> >>>
-> >>> Child nodes seem (to me) to be the standard way to model functions in
-> >>> MFD devices. Looking at mfd_add_device(), for OF-based systems, the
-> >>> function iterates over child nodes. I don't mind going a different
-> >>
-> >> Only to assign of node, which could be skipped as well.
-> > 
-> > It has to be assigned somehow, otherwise the GPIO and PWM lookups won't
-> > work. That doesn't have to be done in mfd_add_device() though, it can
-> > also be done manually by the driver. Looking at the example you gave,
-> > cs42l43_pin_probe() handles that assignment. I would have considered
-> > that a bit of a hack, but if that's your preferred approach, I'm fine
-> > with it. Could you confirm you're OK with that ?
-> 
-> I am fine with the drivers doing that. It's not a hack, for all
-> sub-devices (e.g. also auxiliary bus) you won't have automatic of_node
-> assignment.
-
-I gave this a try, and here's what I came up with to drop the compatible
-string. Please ignore for a moment the fact that the child nodes are
-still there, that's an orthogonal question which I can address
-separately. What I would like is feedback on how the OF nodes are
-handled.
-
-diff --git a/drivers/gpio/gpio-adp5585.c b/drivers/gpio/gpio-adp5585.c
-index 9696a4cdcfc1..8480ceef05ce 100644
---- a/drivers/gpio/gpio-adp5585.c
-+++ b/drivers/gpio/gpio-adp5585.c
-@@ -174,6 +174,7 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
- 	struct adp5585_dev *adp5585 = dev_get_drvdata(pdev->dev.parent);
- 	struct adp5585_gpio_dev *adp5585_gpio;
- 	struct device *dev = &pdev->dev;
-+	struct device_node *node;
- 	struct gpio_chip *gc;
- 	int ret;
-
-@@ -187,6 +188,13 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
-
- 	mutex_init(&adp5585_gpio->lock);
-
-+	node = of_get_child_by_name(dev->parent->of_node, "gpio");
-+	if (!node)
-+		return dev_err_probe(dev, -ENXIO, "'gpio' child node not found\n");
-+
-+	dev->of_node = node;
-+	dev->fwnode = &node->fwnode;
-+
- 	gc = &adp5585_gpio->gpio_chip;
- 	gc->parent = dev;
- 	gc->direction_input = adp5585_gpio_direction_input;
-@@ -204,6 +212,9 @@ static int adp5585_gpio_probe(struct platform_device *pdev)
- 	ret = devm_gpiochip_add_data(&pdev->dev, &adp5585_gpio->gpio_chip,
- 				     adp5585_gpio);
- 	if (ret) {
-+		of_node_put(dev->of_node);
-+		dev->of_node = NULL;
-+		dev->fwnode = NULL;
- 		mutex_destroy(&adp5585_gpio->lock);
- 		return dev_err_probe(&pdev->dev, ret, "failed to add GPIO chip\n");
- 	}
-@@ -215,6 +226,10 @@ static void adp5585_gpio_remove(struct platform_device *pdev)
- {
- 	struct adp5585_gpio_dev *adp5585_gpio = platform_get_drvdata(pdev);
-
-+	of_node_put(pdev->dev.of_node);
-+	pdev->dev.of_node = NULL;
-+	pdev->dev.fwnode = NULL;
-+
- 	mutex_destroy(&adp5585_gpio->lock);
- }
-
-diff --git a/drivers/pwm/pwm-adp5585.c b/drivers/pwm/pwm-adp5585.c
-index e39a6ea5f794..3b190567ea0b 100644
---- a/drivers/pwm/pwm-adp5585.c
-+++ b/drivers/pwm/pwm-adp5585.c
-@@ -146,6 +146,8 @@ static const struct pwm_ops adp5585_pwm_ops = {
- static int adp5585_pwm_probe(struct platform_device *pdev)
- {
- 	struct adp5585_dev *adp5585 = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node;
- 	struct pwm_chip *chip;
- 	int ret;
-
-@@ -153,16 +155,34 @@ static int adp5585_pwm_probe(struct platform_device *pdev)
- 	if (IS_ERR(chip))
- 		return PTR_ERR(chip);
-
-+	node = of_get_child_by_name(dev->parent->of_node, "pwm");
-+	if (!node)
-+		return dev_err_probe(dev, -ENXIO, "'pwm' child node not found\n");
-+
-+	dev->of_node = node;
-+	dev->fwnode = &node->fwnode;
-+
- 	pwmchip_set_drvdata(chip, adp5585->regmap);
- 	chip->ops = &adp5585_pwm_ops;
-
- 	ret = devm_pwmchip_add(&pdev->dev, chip);
--	if (ret)
-+	if (ret) {
-+		of_node_put(dev->of_node);
-+		dev->of_node = NULL;
-+		dev->fwnode = NULL;
- 		return dev_err_probe(&pdev->dev, ret, "failed to add PWM chip\n");
-+	}
-
- 	return 0;
- }
-
-+static void adp5585_pwm_remove(struct platform_device *pdev)
-+{
-+	of_node_put(pdev->dev.of_node);
-+	pdev->dev.of_node = NULL;
-+	pdev->dev.fwnode = NULL;
-+}
-+
- static struct platform_driver adp5585_pwm_driver = {
- 	.driver	= {
- 		.name = "adp5585-pwm",
-
-Is this acceptable ? I'm a bit concerned about poking the internals of
-struct device directly from drivers.
-
-I have also refrained from setting fnode->dev to point back to the
-device as fone by cs42l43_pin_probe(), as a comment in struct
-fwnode_handle indicates that the dev field is for device links only and
-shouldn't be touched by anything else. I'm not sure if I should set it.
-
-> >>> routes, could you indicate what you have in mind, perhaps pointing to an
-> >>> existing driver as an example ?
-> >>
-> >> Most of them? OK, let's take the last added driver in MFD directory:
-> >> cirrus,cs42l43
-> >> It has three children and only two nodes, because only these two devices
-> >> actually need/use/benefit the subnodes.
-> > 
-> > Still trying to understand what bothers you here, is it the child nodes,
-> > or the fact that they have a compatible string and are documented in a
-> > separate binding ? Looking at the cirrus,cs42l43 bindings and the
-> 
-> What bothers me (and as expressed in many reviews by us) is representing
-> driver structure directly in DT. People model DT based how their Linux
-> drivers are represented. I don't care about driver stuff here, but DT/DTS.
-
-DT models the hardware as seen from a software point of view. It
-shouldn't reflect the structure of Linux drivers, but it has to be
-usable by drivers.
-
-> > corresponding drivers, the pinctrl child node serves the purpose of
-> > grouping properties related to the pinctrl function, and allows
-> > referencing pinctrl entries from other DT nodes. All those properties
-> 
-> If you have sub-subnodes, it warrants for me such child. Why? Because it
-> makes DTS easier to read.
-> 
-> > could have been placed in the parent node. Are you fine with the
-> > adi,adp5585 having gpio and pwm child nodes, as long as they don't have
-> > compatible strings, and are documented in a single binding ?
-> 
-> As well not, because then you have even less reasons to have them as
-> separate nodes. With compatible, one could at least try to argue that
-> sub-devices are re-usable across families.
-
-I'll reuse your argument, I think the child nodes make the DTS easier to
-read :-)
-
-> >>>>> +required:
-> >>>>> +  - compatible
-> >>>>> +  - reg
-> >>>>> +  - gpio
-> >>>>> +  - pwm
-> >>>>> +
-> >>>>> +allOf:
-> >>>>> +  - if:
-> >>>>> +      properties:
-> >>>>> +        compatible:
-> >>>>> +          contains:
-> >>>>> +            const: adi,adp5585-01
-> >>>>> +    then:
-> >>>>> +      properties:
-> >>>>> +        gpio:
-> >>>>> +          properties:
-> >>>>> +            gpio-reserved-ranges: false
-> >>>>
-> >>>> This also points to fact your child node is pointless. It does not stand
-> >>>> on its own...
-> >>>
-> >>> That doesn't make the child pointless just for that reason. There are
-> >>> numerous examples of child nodes that don't stand on their own.
-> >>
-> >> No, your if-then must be in the schema defining it. This is just
-> >> unmaintianable code. It proves that child's compatible means nothing. If
-> >> you cannot use child's compatible to make any meaningful choices, then
-> >> it is useless.
-> > 
-> > The compatible string may not be very useful. The child nodes have a
-> > use.
-> 
-> What is their use? Grouping few properties? As mentioned above -
-> grouping subnodes like pinctrl does, is argument on its own for code
-> readability. Grouping few properties, which in many other devices are in
-> top-node (see last 100 reviews of new drivers doing exactly the same),
-> is not that argument.
-> 
-> OTOH, my first, main argument was:
-> 
-> They do not have any resources on their own. Otherwise please point me -
-> which property represents their resource, like clock, reset, gpio,
-> suppy, IO address?
-
--- 
-Regards,
-
-Laurent Pinchart
+PiA+IFNvIChpbiBhcmNoL3g4Ni9rZXJuZWwvY3B1L3Jlc2N0cmwvbW9uaXRvci5jKQ0KPiA+DQo+
+ID4gc3RhdGljIGludCBzbmNfbm9kZXNfcGVyX2wzX2NhY2hlID0gMTsNCj4gPiANCj4gPiBTZXQg
+YW5kIHVzZSBvbmx5IGluIHRoaXMgKGFyY2ggc3BlY2lmaWMpIGZpbGUuDQo+DQo+IFNpbmNlIHRo
+aXMgc2VyaWVzIGluaXRpYWxpemVzIHRoaXMgdmFsdWUgaW4NCj4gYXJjaC94ODYva2VybmVsL2Nw
+dS9yZXNjdHJsL2NvcmUuYyBpdCBpcyBub3QgY2xlYXIgdG8NCj4gbWUgZnJvbSBqdXN0IHRoaXMg
+b25lIGxpbmUgaG93IHlvdSBlbnZpc2lvbiB0aGUgY2hhbmdlcy4NCg0KdjE4IGRpZCB0aGUgaW5p
+dGlhbGl6YXRpb24gaW4gY29yZS5jLiBCdXQgc2luY2UgU05DIGlzIGFsbCBhYm91dCBtb25pdG9y
+DQpmZWF0dXJlcyBpdCBsb29rcyBtb3JlIGxvZ2ljYWwgdG8gZG8gdGhpcyBoZXJlOg0KDQpyZXNj
+dHJsX2xhdGVfaW5pdCgpDQogICAgZ2V0X3JkdF9yZXNvdXJjZXMoKQ0KCWdldF9yZHRfbW9uX3Jl
+c291cmNlcygpDQoJICAgIHJkdF9nZXRfbW9uX2wzX2NvbmZpZygpICA8PDw8IERvIFNOQyBlbnVt
+ZXJhdGlvbiBoZXJlDQoJICAgIA0KDQo+IEp1c3QgdG8gYmUgY2xlYXIgLi4uIHdoZW4gSSByZWZl
+ciB0byBhcmNoIHNwZWNpZmljIGFuZA0KPiBmaWxlc3lzdGVtIGNvZGUgSSBhbSBjb25zaWRlcmlu
+ZyBob3cgdGhpcyBzZXJpZXMgaW50ZWdyYXRlcyB3aXRoIFsxXQ0KPiBzaW5jZSB0aGF0IGlzIHRo
+ZSBkaXJlY3Rpb24gcmVzY3RybCBpcyBoZWFkZWQgaW4uDQo+IEJlaW5nICJhcmNoIHNwZWNpZmlj
+IiB0aHVzIGRvZXMgbm90IHJlcXVpcmUgdGhhdCBpdCBiZSBtb3ZlZCBpbnRvDQo+IG1vbml0b3Iu
+YyAtIGl0IGNvdWxkIGJlIGFkZGVkIHRvIGFyY2gveDg2L2tlcm5lbC9jcHUvcmVzY3RybC9pbnRl
+cm5hbC5oDQo+IHdoZXJlIGl0IGNhbiByZW1haW4gYWZ0ZXIgdGhlIGZzL2FyY2ggc3BsaXQuDQoN
+ClRoZSBsb2dpY2FsIHBsYWNlIHRvIGNvbnZlcnQgZnJvbSBsb2dpY2FsIFJNSUQgdG8gcGh5c2lj
+YWwgUk1JRCBsb29rcw0KdG8gYmUgaW4gX19ybWlkX3JlYWQoKS4gSnVzdCBuZWVkIHRvIHBhc3Mg
+aW4gdGhlIGRvbWFpbiBwb2ludGVyIChmcm9tDQpib3RoIHJlc2N0cmxfYXJjaF9yZXNldF9ybWlk
+KCkgYW5kIHJlc2N0cmxfYXJjaF9ybWlkX3JlYWQoKS4NCj4NCj4gSXQgd2lsbCBiZSB2ZXJ5IGhl
+bHBmdWwgaWYgeW91IHZpZXcgeW91ciBzZXJpZXMgd2hpbGUgdGFraW5nDQo+IFsxXSBpbnRvIGFj
+Y291bnQuIEZvciBleGFtcGxlLCB3aGVuIGxvb2tpbmcgYXQgWzFdIHlvdSB3aWxsIHNlZSB0aGF0
+DQo+IG1vbl9ldmVudF9jb3VudCgpIGFuZCBfX21vbl9ldmVudF9jb3VudCgpIGFyZSByZXNjdHJs
+IGZpbGVzeXN0ZW0NCj4gZnVuY3Rpb25zLiBXaGVuIHlvdSBjb25zaWRlciB0aGF0IGl0IHNob3Vs
+ZCBiZSBjbGVhciB0aGF0IGFkZGluZw0KPiBhbiBhcmNoIHNwZWNpZmljIGdldF9ub2RlX3JtaWQo
+KSBiZXR3ZWVuIHRoZXNlIGZ1bmN0aW9ucyB3aWxsIG1ha2UNCj4gdGhlIGFyY2gvZnMgc3BsaXQg
+bW9yZSBkaWZmaWN1bHQuDQoNCkknbGwgdHJ5IHRvIGtlZXAgdGhhdCBpbiBtaW5kIGFzIEkgcmV3
+b3JrIG15IHNlcmllcy4gSW4gdjE4IG15ICJzdW0iIGNvZGUNCndlbnQgaW50byBfX21vbl9ldmVu
+dF9jb3VudCgpLiAgSSdsbCBzZWUgaWYgSSBjYW4gcHVzaCB0aGF0IGRvd24gYW5vdGhlcg0KbGV2
+ZWwuDQoNCi1Ub255DQo=
 
