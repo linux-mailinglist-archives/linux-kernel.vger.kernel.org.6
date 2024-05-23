@@ -1,210 +1,135 @@
-Return-Path: <linux-kernel+bounces-187992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07878CDB9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:51:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EDD98CDBA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D08284B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02191C22470
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2DE84FD6;
-	Thu, 23 May 2024 20:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16EE28562E;
+	Thu, 23 May 2024 20:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Cxyn3lWg"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nli7FNZO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155BF85280;
-	Thu, 23 May 2024 20:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B5B85277;
+	Thu, 23 May 2024 20:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716497476; cv=none; b=hY7htP3E4I0/dkO2AFScaJHcwn1VQI16A01twmoFJ+/Ayur2olYciQ+Xbx7NTdSWXHutL5n52ZAiRfubWHyNtwZr5jjj/K9bRmV7us/+/TwMlN26FNg2v31Zun36iaa6Tb/1YcoxHor1p3jZ0ERmB3Ld4LV2KFvBf2y8rEsF4Q0=
+	t=1716497525; cv=none; b=cG5uxTtpWof798Jksi+96q1M8w8LTLTTldIoS0r0B+ajgeVvaYJ4PSsCMRi0sZxllpOvy1cE8+wWvpLloznUQYNWahthplqUiAniDCD2XHKAzzDKuC5Z2uCuQrkYjOSx4+hdnamW9Wzf19WI60KxqqC+ERDYUAjq+eTzj7nFzok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716497476; c=relaxed/simple;
-	bh=qCDeyfO04dhekItSi0mjMM0uFYDyrtCWscgp+KdPtrg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=by0TGstbCfeyOmyAh5lQjcX3883G4sIavafcX6yf62egKto/3VcEb7SvX8TGWa1ATq10+8f5yFQgrFkgOpTL3td7ma9CM7lr2XV0kK3U4K+XV+RdY6YoK+Aq1h4E47p8peoSB6fCmdMWUNYUnYZXmkaPA2YQAyIhdcN1N0fBRXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Cxyn3lWg; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1716497463; x=1716756663;
-	bh=18i3/SzNqk7N9vvvs6RCob8+nMoLtrDWnp5u15Ezqno=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Cxyn3lWgUdY+wgFWr19GeIF66D7HaGUCKHDj90GGXp2Kz0jYJDIgRWmzVsKtpU+tc
-	 T8xFPiTEmpHMGTtf7q8wcjAjnDVuvG+XEl4TKtYEu/Y8M17LHyeaXgaRcLENYE3QOg
-	 oN6qTV9IntZhit7ZqNAXvUjxl6lKWw7hrvKufg+UNLgN2kCYZjOAAAN+H9VWxk3SUq
-	 pSYeHsUwIziNr1+5ztaLFeZ7u7/jiOquXj82jqKDDodNh6yRnbBodkYqUBQdhTITVG
-	 keiIiw0fWWxDSkV7BS0FNcdHKn5Yg33MU7IADNTpQ2vZ/xhKQJ8wWGW/Cl2q/i8yEY
-	 CZelDLs5B+SWg==
-Date: Thu, 23 May 2024 20:50:58 +0000
-To: Jeff Xu <jeffxu@google.com>
-From: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com, jorgelo@chromium.org, skhan@linuxfoundation.org, keescook@chromium.org
-Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
-Message-ID: <GTqwAy-YlNIACA_YFuJsxsV3yJdf-Xcv7jxRaCQrUPf8VN2MKrsb2O_37I3Pi5YyUtFa6WVoC-a_lnu_NF-bt5fjOcDHTFYBuVbSAWNpRDs=@protonmail.com>
-In-Reply-To: <CALmYWFtNtyzkbUVR+cQ+3zxMf9TU4SHDoMsH0267n=8V-2ENcw@mail.gmail.com>
-References: <20240513191544.94754-1-pobrn@protonmail.com> <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com> <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org> <CALmYWFuLe6RaJkZ4koQpgZR-77b9PP=wooPYN-jFFw1KQ5K3aQ@mail.gmail.com> <20240523124521.99a798d645b0939d331d70c1@linux-foundation.org> <CALmYWFtNtyzkbUVR+cQ+3zxMf9TU4SHDoMsH0267n=8V-2ENcw@mail.gmail.com>
-Feedback-ID: 20568564:user:proton
-X-Pm-Message-ID: 6e2c55039883f8444e85eb2b710969c08b235ce4
+	s=arc-20240116; t=1716497525; c=relaxed/simple;
+	bh=a8xk6RChx36XVnYBqEzPd31J2jDkpPLdySnC/hT5oAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eqw4FRL7vkSQk23pcBQLkSpGTYo3HjK17SqpnKOFY0DGsMgJNYqHKRs2aU6ICNaZ7F8OEHLtOrb69Sa2DPmxh1a4PLjkjUvhm62u0WnMMxK+3Bw2xjt5mIzZGgVJJqcApXNI/002UtIwaz7sQG6tYB8BlSXSRkxknTI+5VnmsA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nli7FNZO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E94C2BD10;
+	Thu, 23 May 2024 20:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716497524;
+	bh=a8xk6RChx36XVnYBqEzPd31J2jDkpPLdySnC/hT5oAM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nli7FNZOH7mmh6eropuP3Yqrbu1VbfI6DhqqpkIQWttthMFFlG+6+XO5otUe2aJXO
+	 XSh3VwS6Y15HgLC6OCgMjodyqAkyV3p4/xoo5Py59qpHC+ngqGXhZJAi2qqx82kfCB
+	 97XyxEWCEHryso+Nn8p+CYRvCEG9hbhrhQy/Zc36SZ5S7eLuQBnkzET92/d/rwhSd7
+	 rHaT+fXHnsib/mzoqiyJaf9U1Ma5pAR7jn235PWwP8SxdAcS62s35iIxEVmYb9nINp
+	 BGDwq/KQ8gFpyvZtNrXSRPJ6ZiQC8uGS5Nj+Kz8Z0L/PnKJRxjiiVX4jpw/VTAS/nR
+	 cA1vBQbXKb0Ww==
+Message-ID: <ecdefda0-08e9-409b-8cc8-b1783b984049@kernel.org>
+Date: Thu, 23 May 2024 22:51:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom,pmic-gpio: Document
+ PMC8380
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240522-topic-pmc8380_gpio-v1-0-7298afa9e181@linaro.org>
+ <20240522-topic-pmc8380_gpio-v1-1-7298afa9e181@linaro.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240522-topic-pmc8380_gpio-v1-1-7298afa9e181@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-2024. m=C3=A1jus 23., cs=C3=BCt=C3=B6rt=C3=B6k 22:44 keltez=C3=A9ssel, Jeff=
- Xu <jeffxu@google.com> =C3=ADrta:
+On 22/05/2024 13:30, Konrad Dybcio wrote:
+> PMC8380 is a new PMIC used with X1 SoCs. Document it
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+> index 50846a2d09c8..a52949526a2a 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
+> @@ -57,6 +57,7 @@ properties:
+>            - qcom,pma8084-gpio
+>            - qcom,pmc8180-gpio
+>            - qcom,pmc8180c-gpio
+> +          - qcom,pmc8380-gpio
 
-> Hi Barnab=C3=A1s
->=20
-> Is that OK that I work on V2 ? It will be based on your V1 change and
-> I will also add more test cases.
+There is also allOf: with if: constraining number of lines and reserved
+ranges.
 
-Sure, please go ahead. At the very end of this letter you'll find
-the commit message that I would have sent in v2, maybe you can salvage
-some of it.
+Best regards,
+Krzysztof
 
-
-Regards,
-Barnab=C3=A1s P=C5=91cze
-
-
->=20
-> Thanks
-> -Jeff
->=20
-> -
->=20
-> On Thu, May 23, 2024 at 12:45=E2=80=AFPM Andrew Morton
-> <akpm@linux-foundation.org> wrote:
-> >
-> > On Wed, 22 May 2024 19:32:35 -0700 Jeff Xu <jeffxu@google.com> wrote:
-> >
-> > > >
-> > > > It's a change to a userspace API, yes?  Please let's have a detaile=
-d
-> > > > description of why this is OK.  Why it won't affect any existing us=
-ers.
-> > > >
-> > > Unfortunately, this is a breaking change that might break a
-> > > application if they do below:
-> > > memfd_create("", MFD_NOEXEC_SEAL)
-> > > fcntl(fd, F_ADD_SEALS, F_SEAL_WRITE); <-- this will fail in new
-> > > semantics, due to mfd not being sealable.
-> > >
-> > > However, I still think the new semantics is a better, the reason is
-> > > due to  the sysctl: memfd_noexec_scope
-> > > Currently, when the sysctl  is set to MEMFD_NOEXEC_SCOPE_NOEXEC_SEAL
-> > > kernel adds MFD_NOEXEC_SEAL to memfd_create, and the memfd  becomes s=
-ealable.
-> > > E.g.
-> > > When the sysctl is set to MEMFD_NOEXEC_SCOPE_NOEXEC_SEAL
-> > > The app calls memfd_create("",0)
-> > > application will get sealable memfd, which might be a surprise to app=
-lication.
-> > >
-> > > If the app doesn't want this behavior, they will need one of two belo=
-w
-> > > in current implementation.
-> > > 1>
-> > > set the sysctl: memfd_noexec_scope to 0.
-> > > So the kernel doesn't overwrite the mdmfd_create
-> > >
-> > > 2>
-> > > modify their code  to get non-sealable NOEXEC memfd.
-> > > memfd_create("", MEMFD_NOEXEC_SCOPE_NOEXEC)
-> > > fcntl(fd, F_ADD_SEALS, F_SEAL_SEAL)
-> > >
-> > > The new semantics works better with the sysctl.
-> > >
-> > > Since memfd noexec is new, maybe there is no application using the
-> > > MFD_NOEXEC_SEAL to create
-> > > sealable memfd. They mostly likely use
-> > > memfd(MFD_NOEXEC_SEAL|MFD_ALLOW_SEALING) instead.
-> > > I think it might benefit in the long term with the new semantics.
-> >
-> > Yes, it's new so I expect any damage will be small.  Please prepare a
-> > v2 which fully explains/justifies the thinking for this
-> > non-backward-compatible change and which include the cc:stable.
-> >
-> >
->=20
-
----
-
-memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
-
-`MFD_NOEXEC_SEAL` should remove the executable bits and
-set `F_SEAL_EXEC` to prevent further modifications to the
-executable bits as per the comment in the uapi header file:
-
-  not executable and sealed to prevent changing to executable
-
-However, currently, it also unsets `F_SEAL_SEAL`, essentially
-acting as a superset of `MFD_ALLOW_SEALING`. Nothing implies that
-it should be so, and indeed up until the second version of the of
-the patchset[0] that introduced `MFD_EXEC` and `MFD_NOEXEC_SEAL`,
-`F_SEAL_SEAL` was not removed, however it was changed in the
-third revision of the patchset[1] without a clear explanation.
-
-This behaviour is surprising for application developers, there
-is no documentation that would reveal that `MFD_NOEXEC_SEAL`
-has the additional effect of `MFD_ALLOW_SEALING`.
-Additionally, combined with `vm.memfd_noexec=3D2` it has
-the effect of making all memfds initially sealable.
-
-So do not remove `F_SEAL_SEAL` when `MFD_NOEXEC_SEAL` is
-requested, thereby returning to the pre-Linux 6.3 behaviour of
-only allowing sealing when `MFD_ALLOW_SEALING` is specified.
-
-Now, this is technically a uAPI break. However, the
-damage is expected to be minimal. To trigger user
-visible change, a program has to do the following steps:
-
- - create memfd:
-   - with `MFD_NOEXEC_SEAL`,
-   - without `MFD_ALLOW_SEALING`;
- - try to add seals / check the seals.
-
-But that seems unlikely to happen intentionally since this
-change essentially reverts the kernel's behaviour to that of
-Linux <6.3, so if a program worked correctly on those older
-kernels, it will likely work correctly after this change.
-
-I have used Debian Code Search and GitHub to try to find potential
-breakages, and I could only find a single one. dbus-broker's
-memfd_create() wrapper is aware of this implicit `MFD_ALLOW_SEALING`
-behaviour, and tries to work around it[2]. This workaround will
-break. Luckily, this only affects the test suite, it does not affect
-the normal operations of dbus-broker. There is a PR with a fix[3].
-
-There was also a previous attempt to address
-this peculiarity by introducing a new flag[4].
-
-[0]: https://lore.kernel.org/lkml/20220805222126.142525-3-jeffxu@google.com=
-/
-[1]: https://lore.kernel.org/lkml/20221202013404.163143-3-jeffxu@google.com=
-/
-[2]: https://github.com/bus1/dbus-broker/blob/9eb0b7e5826fc76cad7b025bc46f2=
-67d4a8784cb/src/util/misc.c#L114
-[3]: https://github.com/bus1/dbus-broker/pull/366
-[4]: https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahead.e=
-u/
-
-Cc: stable@vger.kernel.org
-Fixes: 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC")
-Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
-Reviewed-by: Jeff Xu <jeffxu@google.com>
-Reviewed-by: David Rheinsberg <david@readahead.eu>
-
----
 
