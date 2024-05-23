@@ -1,65 +1,73 @@
-Return-Path: <linux-kernel+bounces-187783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFFF8CD86D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BD78CD86F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED491C21148
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8549D1F22727
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E07818029;
-	Thu, 23 May 2024 16:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DE118026;
+	Thu, 23 May 2024 16:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MUGDpc8C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtVl1yCb"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A8D14A84
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD16B1CF8F;
+	Thu, 23 May 2024 16:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716481866; cv=none; b=ZbzECH60TO8AYvBLZzGo6DQu+q6Tbc37fonSZdNTcxJkfPh7OzlLDldQ7v5M1d/pFkruH/f5FNjSQoKB6LnytGfv9bDpyxZzqAqg+Pqomh1XhZ6F9ZM7me2yX30BM7eIG1fio0SNtpZPc5hPMeHQSIqIYm7J0EFCof8MOfpvcW8=
+	t=1716481898; cv=none; b=gehDIJ6+RO7imdpCghp1kek7g1eLeZyNWf5iutoUlI6XghgdCsXdp19ET2GzTwsi/oFnFammC14eOF0HsTMBNHk5fxf6dQY0uw5g1Xosim0SDCfzmVCAqvHWpgwrfd1g0q93ouVAGDLA4LASi/uvvsRGMNPC4iEtwua1JKftabo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716481866; c=relaxed/simple;
-	bh=9p3g05jxI3LMH1prQIFLRK+R90YPXBe6/L06ltUbEKI=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=fEyFuZqWfaNKskYEIwczRZ4pmjlz0DlLE4rF9Lx7acaU72uhxuyMTxiEtZdIA04auPna5VaQbZ9twHCRwhZ77tt2q+XEtQ6+9xc28KHsClHzAiy2i4mFMA4x6CSVbOlkOJeZQYkrkDkLe9ekwneTVsyQCjrOOxALmyKxoIauBCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MUGDpc8C; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716481864; x=1748017864;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to;
-  bh=9p3g05jxI3LMH1prQIFLRK+R90YPXBe6/L06ltUbEKI=;
-  b=MUGDpc8C3PT4CqDvHO3s+FeW4aarqBUw8AEHSBUDDtz88CikYaXS/YGO
-   5eCAGa8uXnQiUY5rM+gvH/TNnQiMO3RC4q4LSyiMsVn2d2gwKar9Snbxn
-   kZWTKcNEH9wHGNoKQA2EOOIPAGmcyLRgd5M73PDx0gjG7GzOaW4wt5prx
-   s/pMM8XXZjMgUnrEzTgtX0ciffPNCBFHGRsz0GlX5yBhKDWvJb9w3SogJ
-   m871Y7PBmBeQ7wHC+rHohXLp+sMIA2I9eZp21tokSYdKdeP0/Gw2hbSsS
-   n798cpyOCCQLsahXypq/W3KeePi1OzIotiRcxhA2R0GkjhkifbckjNfEn
-   Q==;
-X-CSE-ConnectionGUID: cKp2f9Y8RyW8q1w7mSCIQQ==
-X-CSE-MsgGUID: aA0TexboTrCl/bMC9A91Cg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12990677"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="12990677"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:03 -0700
-X-CSE-ConnectionGUID: pux5fJh7QX6lNJCjnd/gIA==
-X-CSE-MsgGUID: ptyOQWxfTvqiKFbtV35Nww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="33790415"
-Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.110.49]) ([10.125.110.49])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:02 -0700
-Content-Type: multipart/mixed; boundary="------------8q0W9NnK5AWL6oGobfSlsKZb"
-Message-ID: <7b8d1dd6-3913-45fe-941e-aac2c15916dc@intel.com>
-Date: Thu, 23 May 2024 09:30:59 -0700
+	s=arc-20240116; t=1716481898; c=relaxed/simple;
+	bh=yFdXknMEp6BoBRx9d/a3Xb7qQPDAPn3S0QNRYt4ZMwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FR84PJYkLp/o0zTiAM9Wa1Z3n3lPL3c0GJvoUdyZj1ulxKnYubhQTdveDRPYaIqvwbvPOfGhEk2VBqXNJabxd6ugUeFg7rXTsfSLKtdo2yXavRHydJT0wIp1NTi62BwtcmblZf87r57JOlQNtXNwRWMYjODgPL7RASFy5HsytMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtVl1yCb; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42016c8db2aso21208065e9.0;
+        Thu, 23 May 2024 09:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716481895; x=1717086695; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BkFgbsBHw567DO162agH6xtszv6nFxh3v/OqHAXAYQA=;
+        b=XtVl1yCbHcsASENET0tbWaPdkK/ToyDTNTbRtiG4NlXpZhNkBWWd7MnMy578pnhfG2
+         7bLHEaLNqZ+ESZ2kB4xzJ2Xx8k5T6oj2NVKV+MsJo1EL3hQlLpPWKUseh1pAV3YcJriB
+         sMKMeKXbF3G8S6ETEiPJPuZt1BGrsz3sRWhE/fFkvx9wAdDpU80Aecn+2I1t/OKL7TXI
+         cXcKpBabwob6xoo+r6iLJ36Cr1/UnjSyA59WklhZF6sBi76XcBywcY1p/Aqa5udCoLnv
+         6CmVsCZn0gzG5CA5iTWcBZ7ZLCgWNqCGkR3TS4AoN5gggl6i8QqUwRDEYHBv79ogpmPP
+         fmCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716481895; x=1717086695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BkFgbsBHw567DO162agH6xtszv6nFxh3v/OqHAXAYQA=;
+        b=wOSrM2cv2CIRlZVpl9vzJII4S8uj4uycSY51qqSzStpvlFWTiEYz4GfKCXmUNNxws8
+         lDxB39US65D5KZL1EG0OgPHQNMiCyzYjcxAUf5Lsqc4OpOSNsbNJJ5N6b4r388HVqnfC
+         mzElOORV5VqVZexAi/sktO4HJ6WO2gXXpsl223j1Za1XM+Zb/Sb0MMHztelYhQmLarOz
+         5KcZyy/lHJxD/TvM6Hsje4aZULVOcWicClzQ2+fGjqBe2Bf51lfa6FC1i5w74LSkpSSo
+         C1bS5uxWWAdqzhBJNNTIRxeEZSmrdRMqNR/YbMMhrJO7pB7Jsgd83lRKEJOhbWbyX04u
+         pwVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNB5bq3exj4r6dDHlAxL9CejA2jV8Gi4k0dK8tMGb4LxMRk8wHvw2l6vp5GP0ALqZP3cotScE4eaXz1VqELladsBtmaTCot7EdECg1kOVdxEeiWQoriTIi5swNVYCP4SD6tTk5WSqm0A==
+X-Gm-Message-State: AOJu0YwPBhj6Ye5xgLUffIGnSTCrHYiw9k5K+8ufpgrUoPR/RqakGgmZ
+	oWW4Vx6rPRi2cZH6z6hg/Av2pdIBZul2HZ8aL5p0TnGkLSegKBKv
+X-Google-Smtp-Source: AGHT+IGERajLeL6v45YR+OnIu7rQ+Rz0hkkeUorXN4ovcimgSqTBgypDrtLU+Fnhe8uBHynPnppIZw==
+X-Received: by 2002:a5d:5612:0:b0:354:eb32:6d1a with SMTP id ffacd0b85a97d-354eb326e3amr3792720f8f.59.1716481894901;
+        Thu, 23 May 2024 09:31:34 -0700 (PDT)
+Received: from [192.168.0.31] (84-115-212-250.cable.dynamic.surfer.at. [84.115.212.250])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354c2a40548sm12143109f8f.34.2024.05.23.09.31.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 09:31:34 -0700 (PDT)
+Message-ID: <865295e7-30c8-4abf-9992-fcb9b3186ebb@gmail.com>
+Date: Thu, 23 May 2024 18:31:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,139 +75,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/paravirt: Disable virt spinlock when
- CONFIG_PARAVIRT_SPINLOCKS disabled
-To: Chen Yu <yu.c.chen@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Juergen Gross <jgross@suse.com>, Ajay Kaher <ajay.kaher@broadcom.com>,
- Alexey Makhalov <alexey.amakhalov@broadcom.com>,
- Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>,
- x86@kernel.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- Prem Nath Dey <prem.nath.dey@intel.com>,
- Xiaoping Zhou <xiaoping.zhou@intel.com>
-References: <20240516130244.893573-1-yu.c.chen@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240516130244.893573-1-yu.c.chen@intel.com>
-
-This is a multi-part message in MIME format.
---------------8q0W9NnK5AWL6oGobfSlsKZb
+Subject: Re: DT schema bindings conversion mentorships (was Re: [PATCH v5]
+ ASoC: dt-bindings: omap-mcpdm: Convert to DT schema)
+To: Rob Herring <robh@kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>, Julia Lawall
+ <julia.lawall@inria.fr>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
+ linux-kernel@vger.kernel.org
+References: <20240522075245.388-1-bavishimithil@gmail.com>
+ <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
+ <4f722e53-011f-4176-b6af-080522165007@kernel.org>
+ <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
+ <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org>
+ <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
+ <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
+ <60989c44-6d16-4698-bf3f-b3c5dcd7b3e0@kernel.org>
+ <dc31c4ba-1bea-4056-a68f-87d742eb8da3@nxp.com>
+ <CAL_JsqJp133hGSkja9tabtsE9D7MSA9JErVkmkcy91piHMgfwg@mail.gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <CAL_JsqJp133hGSkja9tabtsE9D7MSA9JErVkmkcy91piHMgfwg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/16/24 06:02, Chen Yu wrote:
-> Performance drop is reported when running encode/decode workload and
-> BenchSEE cache sub-workload.
-> Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
-> native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
-> is disabled the virt_spin_lock_key is set to true on bare-metal.
-> The qspinlock degenerates to test-and-set spinlock, which decrease the
-> performance on bare-metal.
+On 23/05/2024 18:24, Rob Herring wrote:
+> On Thu, May 23, 2024 at 7:30 AM Daniel Baluta <daniel.baluta@nxp.com> wrote:
+>>
+>>
+>> On 5/22/24 20:05, Krzysztof Kozlowski wrote:
+>>> Dear Daniel, Shuah, Julia, Javier and other mentorship managers,
+>>>
+>>> I see some contributions regarding Devicetree bindings which look like
+>>> efforts of some mentorship programs. It's great, I really like it. Only
+>>> sadness is that no one ever asked us, Devicetree maintainers, about some
+>>> sort of guidelines. This leads to sub-optimal allocation of tasks and
+>>> quite a strain on reviewers side: for example we receive contributions
+>>> which were never tested (tested as in make target - make
+>>> dt_binding_check). Or people converted bindings which really do not
+>>> matter thus their work soon will become obsolete.
+>>>
+>>
+>> Hi Krzysztof,
+>>
+>> Some of the faulty patches are on me! Sorry for that. We had an
+>> unexpected high
+>>
+>> number of people sending contributions for Google Summer of Code and I
+>> couldn't watch them all.
+>>
+>> Now, the application period has ended and we have 1 intern working for
+>> the summer!
+>>
+>> Will follow your guidance! Thanks a lot for your help!
 > 
-> Fix this by disabling virt_spin_lock_key if CONFIG_PARAVIRT_SPINLOCKS
-> is not set, or it is on bare-metal.
+> To be specific, there are several ways to prioritize what to work on.
+> 
+> - There's a list maintained in CI of number of occurrences of
+> undocumented (by schema) compatibles[1]. Start at the top.
+> - Pick a platform (or family of platform) and get the warnings down to
+> 0 or close. There's a grouping of warnings and undocumented
+> compatibles by platform family at the same link.
+> - Prioritize newer platforms over older (arm64 rather than
+> arm32(though there's still new arm32 stuff)).
+> - Fix warnings treewide from common schemas (i.e. from dtschema).
+> That's not conversions, but related.
+> 
+> Rob
+> 
+> [1] https://gitlab.com/robherring/linux-dt/-/jobs/6918723853
 
-This is missing some background:
+Thank you Rob, I forwarded your recommendations to the LFX mentees.
 
-The kernel can change spinlock behavior when running as a guest.  But
-this guest-friendly behavior causes performance problems on bare metal.
-So there's a 'virt_spin_lock_key' static key to switch between the two
-modes.
-
-The static key is always enabled by default (run in guest mode) and
-should be disabled for bare metal (and in some guests that want native
-behavior).
-
-.. then describe the regression and the fix
-
-> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-> index 5358d43886ad..ee51c0949ed8 100644
-> --- a/arch/x86/kernel/paravirt.c
-> +++ b/arch/x86/kernel/paravirt.c
-> @@ -55,7 +55,7 @@ DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
->  
->  void __init native_pv_lock_init(void)
->  {
-> -	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
-> +	if (!IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) ||
->  	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
->  		static_branch_disable(&virt_spin_lock_key);
->  }
-This gets used at a single site:
-
-        if (pv_enabled())
-                goto pv_queue;
-
-        if (virt_spin_lock(lock))
-                return;
-
-which is logically:
-
-	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS))
-		goto ...; // don't look at virt_spin_lock_key
-
-	if (virt_spin_lock_key)
-		return; // On virt, but non-paravirt.  Did Test-and-Set
-			// spinlock.
-
-So I _think_ Arnd was trying to optimize native_pv_lock_init() away when
-it's going to get skipped over anyway by the 'goto'.
-
-But this took me at least 30 minutes of scratching my head and trying to
-untangle the whole thing.  It's all far too subtle for my taste, and all
-of that to save a few bytes of init text in a configuration that's
-probably not even used very often (PARAVIRT=y, but PARAVIRT_SPINLOCKS=n).
-
-Let's just keep it simple.  How about the attached patch?
---------------8q0W9NnK5AWL6oGobfSlsKZb
-Content-Type: text/x-patch; charset=UTF-8; name="pv.patch"
-Content-Disposition: attachment; filename="pv.patch"
-
-
---------------8q0W9NnK5AWL6oGobfSlsKZb--
+Best regards,
+Javier Carrasco
 
