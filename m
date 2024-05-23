@@ -1,135 +1,138 @@
-Return-Path: <linux-kernel+bounces-187809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71C58CD8DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:03:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8598CD8DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6283F282425
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:03:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FDC1F21F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E7C762C9;
-	Thu, 23 May 2024 17:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9647876034;
+	Thu, 23 May 2024 17:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnFeYTQ/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpJ5Se70"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25B0AD2C;
-	Thu, 23 May 2024 17:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC82BAD2C;
+	Thu, 23 May 2024 17:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716483789; cv=none; b=KRLS3LXHcqJvOD6d4merDUsxqHq3BAKS+PyHHNj6R+rV4O1W2TmbePGfXW+qR+tUUrOx0zvB5CZPVdG5L2ofSKp2jrFvJlVOpuqLQ8AeucZeemev8oa0GJFgQwWogCvPy+N6lkcolRJTlnYy3UEcZkCiOCS0Eys2VBVU0u8EBT0=
+	t=1716483800; cv=none; b=Hc9mP1szySFOWPy9zQax3VKTt/40CSay0Xz4wv9mY6KOrnxXFoTT7BZos8cxBOOZA90RAOSG0O2juLjS+DZpqrZDTEADOBocLr2xHbxBCAlJmA0cf3DCXoLuHZWRYGk4a1zBJlNpRZ5xKNAyaiff8Oc3/EyWXkKg3RONobCEQw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716483789; c=relaxed/simple;
-	bh=TPIiHymDivYK+505g1ZXFIowtVhYD5MQi73bkIsZX80=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=r+8mrxnIwtaU7ZI682KYggVCVMaFgEYZydGFZfAWeVTFyHkCEX6pgY96e3WiDPgBCVGEjpQHmOipY7UVasVKH6zANAOTrXdVAORMt8UfEU5cgwDzwsRdaeMhVyG7EwmNMLtg/LsiEQWMafRtFIw+6/cVVXBCnHF+Yn120dUMnvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnFeYTQ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6B94C2BD10;
-	Thu, 23 May 2024 17:03:05 +0000 (UTC)
+	s=arc-20240116; t=1716483800; c=relaxed/simple;
+	bh=grZLcm/jAuY92MQ3Lh8EjEksXhM59l10I+ShgzNYUtU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=b1sYAI5B/ee67TaOTlTl35bTWJKI4fzH+76ZWhg6U/e38xAoiVZmPY1NNbqnvWH+JODei9LYvyMQI1tO13JlNV0h/eXqSF5PrB6t4sbW9YhXNLd9GlNPzJP/qRsUCzKVDp+ARV/p/gr3ZiVhH88gYMAEwIzeWFhKDT4SX/c5HL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MpJ5Se70; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2D8FC2BD10;
+	Thu, 23 May 2024 17:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716483789;
-	bh=TPIiHymDivYK+505g1ZXFIowtVhYD5MQi73bkIsZX80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fnFeYTQ/wYo2O8RrJilNL/Z9eWolf9sV07k6ANJAi+PFOxO0i3b8e9EG9s6oKCAg2
-	 WuTNsAuaeoB3RcJhw3ESriM3iV+vOxpTL7kCKx+c9KX9ssz3JK/qL2sej0gXOropl+
-	 UIWKwj7HT/YVqWtGCxljuC/5kaTZVsWakYdQul6UDHNtWs0Jjd3zD8ukim2879LKka
-	 pdJgrRHZ9+gMLgpQB4EOwIAdC0ijjOnXnRiiYhFj+j3XcMuw2mjEEagGSowA+5SFiR
-	 egQ4s6voaIRWyCnb+kR/ZrhXNVvcu36f72fy5PJbcGW7hKceSAFAGpHpjOikmcY/3W
-	 azOjBtNo0Zcag==
+	s=k20201202; t=1716483800;
+	bh=grZLcm/jAuY92MQ3Lh8EjEksXhM59l10I+ShgzNYUtU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MpJ5Se70YdOu6d2YOKgVzU5rzCLxCFiC9YYFXQzLKjJIh1XFljKZEYOREgABxiDFL
+	 J+5rS/monbhz93umiHCGL4CuQm7n0YDZEVMMJDDj5n6i5s5BtxQpv4eL83NSI+hKhJ
+	 xlB3x7vbFSl0Gr40NvlqSsQCS9uuIKuAoUasK19C/WuPWhlA8/ZQKqMQw2UWXr8nv1
+	 C2V6GE/Nlb7DeG5RRfeGF57Tu20OAoOf4GZtlf9OKF0LiHUxl0lZUwY21EMUyWf5xw
+	 4xo1NvtXSzOE2wEYY1Izedxzt7HmBUkFY5bWxZyWXUX3n8I380jzUk4z6sbd80pXY5
+	 iBS4OsUO2aKGQ==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.1 00/45] 6.1.92-rc1 review
+Date: Thu, 23 May 2024 10:03:15 -0700
+Message-Id: <20240523170315.95602-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240523130332.496202557@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 May 2024 20:03:03 +0300
-Message-Id: <D1H6PWDP0EPE.1PD74CKI5KKCP@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-Cc: <keyrings@vger.kernel.org>, "David Woodhouse" <dwmw2@infradead.org>,
- "Eric Biggers" <ebiggers@kernel.org>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Andrew Morton" <akpm@linux-foundation.org>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "open list:CRYPTO API"
- <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
- "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
- "Alex Gaynor" <alex.gaynor@gmail.com>
-Subject: Re: [PATCH RESEND] KEYS: trusted: Use ASN.1 encoded OID
-X-Mailer: aerc 0.17.0
-References: <20240523131931.22350-1-jarkko@kernel.org>
- <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
- <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
- <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
- <D1H4WNKWCB5K.2HJG7RMX7L33V@kernel.org>
- <4d33654876b91a954e581727b6eb2c5e94128cb1.camel@HansenPartnership.com>
- <D1H5A2BM6RBM.1RHCXHHO1SKDX@kernel.org>
-In-Reply-To: <D1H5A2BM6RBM.1RHCXHHO1SKDX@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu May 23, 2024 at 6:55 PM EEST, Jarkko Sakkinen wrote:
-> I was already considering do we need the encoder at all but I think
-> for dynamic assets like octect strings and variable size integers
-> it has its place. Obviously is not very mature at this point.
+Hello,
 
-Also, I've been opening up discussion of opt-in and *experimental*
-ASN1_RUST feature.
+On Thu, 23 May 2024 15:12:51 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-I think it is inevident that it needs to be done at some point because
-for ASN.1 like format this would have benefits, and also given that it
-used to process security sensitive data.
+> This is the start of the stable review cycle for the 6.1.92 release.
+> There are 45 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.92-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 
-So metrics for this would something along the lines:
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
-- Depending on ASN1_RUST setting, the C API's would be implemented
-  either C or Rust.
-- OID database could be shared from C-side to Rust simply with
-  bindgen.
-- C API should be streamline and matured a bit to cover mostly
-  dynamic assets (integers, octect strings and such). Since the
-  number of call sites is small improving should be easy.
-- After tpm2_key_rsa is landed as it is now as per how buffer
-  processing goes it can be brought to use encoder.
-- I'd consider have just a single ASN1 flag instead of a separate
-  ASN1_ENCODER flag. It simplifies thing and is not significant
-  cost for vmlinux size so not worth it IMHO.
+Tested-by: SeongJae Park <sj@kernel.org>
 
-As for sending patches for e.g. improving OID database, I'd like to
-land the current tpm2_key_rsa first because then in possible OID
-series that can be also applied to it (and encoder). It does stuff
-that affects all this work. And as said we need also tpm2_key_ecdsa.
+[1] https://github.com/awslabs/damon-tests/tree/next/corr
+[2] 662b26bd104f ("Linux 6.1.92-rc1")
 
-Right, there's also
+Thanks,
+SJ
 
-https://datatracker.ietf.org/doc/draft-woodhouse-cert-best-practice/
+[...]
 
-I checked from David that this TPM2 asymmetric key work is relevant
-for this spec although I readily know some applications for it, and=20
-he acknowledged that. I should probably link that to the next
-version.
+---
 
-Asymmetric keys essentially make TPM2 a peer in x.509 ecosystem,
-which has bunch of especially enterprise and data center type
-of use cases.
-
-I guess this summarizes the big picture. I've been messing around
-mailing lists and developed these thoughts but this along the
-lines how I see big picture, including integration to the Rust
-ecosystem (in non-intrusive way).
-
-But yeah, tpm2_key_rsa needs to be the first step.
-
-I don't have an employer for kernel development at the moment (probably
-at some point I do, my contract researcher sabbatical ends at end of
-Sep) no money to come to the plumbers to discuss about all this at the
-boot-time security mc so I need to spam my input for that I guess ;-)
-
-BR, Jarkko
+ok 1 selftests: damon: debugfs_attrs.sh
+ok 2 selftests: damon: debugfs_schemes.sh
+ok 3 selftests: damon: debugfs_target_ids.sh
+ok 4 selftests: damon: debugfs_empty_targets.sh
+ok 5 selftests: damon: debugfs_huge_count_read_write.sh
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: sysfs.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh
+ok 12 selftests: damon-tests: build_m68k.sh
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
+_remote_run_corr.sh SUCCESS
 
