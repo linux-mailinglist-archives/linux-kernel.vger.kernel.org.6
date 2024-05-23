@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-187727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343918CD74E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 978A58CD74A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2FE1F21499
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 354FB1F21714
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B404A12B72;
-	Thu, 23 May 2024 15:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AFF1401F;
+	Thu, 23 May 2024 15:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="svLxltUm"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUb2iX3o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4845117999;
-	Thu, 23 May 2024 15:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A613F125C9;
+	Thu, 23 May 2024 15:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478692; cv=none; b=A1IDOTUhLBr7kaONKjlkOXVw6czFAf6bmmQOhkwdkFPPes0n+DNjx57fLxl2+xgGL0ztNGRuqtS5E2Bg8m8xBCjk+EPSpS/ag0NHznWuPE8vSP37RCrQ1pSDHBOcriB4oneEzl3GBbdP7oOOEWyDBGqfuWdtNQvvYZr2bOdmDck=
+	t=1716478676; cv=none; b=Qaq8nw+JDAJt3OXISTzsDHn5iQIBHFGTweBhpp8PJDqf0+8+apbqxK0hq8JAnnvIXFophoKPmZXPGQ0epuJ/PcH0/EwcanN2Fff7OMncap2rFwhqYvTvf9pmCVnb2YVt7uds3nkszlr1zqH7YX/YAJKxy2lQr47m6rheBAlehhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478692; c=relaxed/simple;
-	bh=zCQjA/5a6mMmlaYjkFL5H55+TN3ow0QoYukyt9cnByk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=O1Dd3RLV22H7+h7HKQ6xme6WPe1DAeh2q+bzqPYVR9CS+P/vvouMYMLKQcL0xxhfaOQ1hSW+ORTjVqfuWxrQ5/VG6taO0ztheGiT2COcl7z2//xPqKDBxKF9LI3+b3nZjwW7+1szTMwM3pmVem3A7kWrr3uNOUptach0/1eEWFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=svLxltUm; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716478669; x=1717083469; i=markus.elfring@web.de;
-	bh=9+nxfIAX4pQNUcpluSGV0XxummSpstZaxeh2ZeUEgLM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=svLxltUmJKc5H6C+lrIx0Thh+k1aqmPiG9PfWNsmCyHaWwmOFcb4s3l+af9+voSt
-	 gNVXX16SBXkb3/7AYxUodd7o63uZd4xMrxybFzDsogXW9JGcCXLt3nh8EwL3uQVm5
-	 BI2457n5a62986LZrx052uibVrTRSy6TVDFEjPB+7bahtf2FIAlPGdKQkwh+42Nq2
-	 gqdYE/Fc6Zx1ihflcKYCblq9ijTEyjASqVB9dP99cR7/SnqPcCsf6va3rZcXoV0z+
-	 E0lPJe62EuYprpw7TqjopZ58WZhOcDubCX+H7yFCStnVm3MICzf1KS0LnES6YMi6c
-	 h9v0y9mXm+h3PjBTEQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mft7j-1slSGy1Rc1-00gDkv; Thu, 23
- May 2024 17:37:49 +0200
-Message-ID: <58cb9176-bedd-4219-9816-495cd6b343cc@web.de>
-Date: Thu, 23 May 2024 17:37:45 +0200
+	s=arc-20240116; t=1716478676; c=relaxed/simple;
+	bh=3oAjIlkP7/L4zMK25MNZgmLkv0DGvWKMHVkhOywzgkc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rWVeGmS4D2QjZN3TlB3IlVjNWqQJQgNIHmRo3wyIzwRX6Fordp1kG/FCXDbK5t+2YGaSyAQGf0XZndjWjLsWiTC1sDMlJFBjE4D1DiPQLaUQpkSjt/yWEIMMhqVpbDnpA7sx4onHHndqZ5hyOcJZM5CLKnxa7OzTwwW/Lz9XToI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUb2iX3o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80E8C2BD10;
+	Thu, 23 May 2024 15:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716478676;
+	bh=3oAjIlkP7/L4zMK25MNZgmLkv0DGvWKMHVkhOywzgkc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=GUb2iX3opnNDNylUyIPZiqg9aeN2XWexSm+KGpy+z0kDFp1iaWJjmnaf9lMLXv3W/
+	 JG/6KcHtndYh6MSlkpZW5jK++7hQLalbGNuNBpXbTxGgoxyKJbcahz4SGxsjfBimeu
+	 9IzSjiG/NJFULpv32Zo1/znQ+7xBAkMxyMmBxjmmWTYYhMfKMkLFe7pnUXBzDL+gst
+	 NnMMVBOGbar4b2xJ8r6k/awsvltVaPjHmZukwXx88EXONXR1vkeq4ymBTQD3uAVKSK
+	 ECraJF7aVPEIcCQagzG2E0MtJjBtJncBJSAaf5WiRMmR3ioPitT2SXUR8+bcecyjj9
+	 53UbAGJU4/j1w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org,
- linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
- Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
-References: <20240522192524.3286237-5-eajames@linux.ibm.com>
-Subject: Re: [PATCH v6 04/20] dt-bindings: fsi: p9-occ: Convert to json-schema
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240522192524.3286237-5-eajames@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6uUBnjXwoYTBl65AmSP4bcUm9yYkqDShAEAbhWM6H189RdKKnxz
- oVcolhaMOwtEJcXr+cktyel6GIa8xr80cB2NMgeeewp511zPje/1jngr+m2B8UhYPxiOGI+
- nCe/2N4ClNmZZHeH0HGzAP2dB6XWRrD6LLsQUZyKrG5KUOaKxlB7/mW0bd+dHT5Qd83ZC8Z
- 0jspFu+iLQADHLYV/qm+g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:AMG44tVUeQ0=;gHcW+AfMMVcn0FO8GHdTGTcE2L9
- JbmxHGHiETfcIxNUAkoM8lPOUnEm8Cqtt8IbTY6kGFJv+eumNedF6Sw1/mAxxYSJJYJKzCqW+
- l8vF3QztykQnys9yOlSdxg0Vu5u63kdNOlfCMlvSidXL3LvNXu0X9DnhIan8eZs4fgrGi4nHa
- j3Ek5aLNqXh1vaRlDi5OB4Ka7IzMh1tNDeY2GWpz3TQCvkLVfHMPTVyW0S4Iiv3A8RVRsKNLY
- PK5N5v7ud2xznfxgj+m2vu7g3aWoRd28rAROp5NE//rgnXqG8OKN3Nfm+32ZWaez+nzUDq2BO
- 2tAam1pS4nnBP04SG+oAjdnzovMYU9QjXzFV5VK4OGaXtGEwT1EVadLqVIamBrdMFUbnKrQwb
- JKIud+t1E/NRF5gfXguFUB+0NDYuD/Fq8AreOZBl/aM+ORRH1PFyVaWSqhuVjOLp/3NpyLezS
- whSnFB4snfj8STEEFTzXYZdC00s+DPkSS7dTqL3XsIOKgPTwNGJmDv3pOVZkXPz/nHLpsdj+m
- ROiffKtt3PAO/ZMEzJwartiHNDcgH3wFS0HtK21MqtmMGFr+9FoRoVjhymlVVgKA+KdBCIjo5
- Kwih5/lJqlKyveneWPTaYUKnLnqS7B2iRP5K3HjZTu5KtYZWmaVuYTisuMUNrKISvptS+lafR
- CUE9a3R8BU21soinyJdsfOnX5POH5kla4nHqavWasP+6ZVJpztt81Taa/JsnRS8p8aZkwiTHe
- EFa5OIFmRfak3zG7JhkbjWeWDfuMjEazOVGlyPovZYdlyH+cHSXdJUxFN1L3za80taRr6zBrA
- Mp14C/eCWOcywrKj1Phe2oNFaHQJdWQGTJPdAGqA6GhdQ=
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 May 2024 18:37:51 +0300
+Message-Id: <D1H4WNKWCB5K.2HJG7RMX7L33V@kernel.org>
+Cc: <keyrings@vger.kernel.org>, "David Woodhouse" <dwmw2@infradead.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH RESEND] KEYS: trusted: Use ASN.1 encoded OID
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240523131931.22350-1-jarkko@kernel.org>
+ <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
+ <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
+ <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
+In-Reply-To: <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
 
-> Conver to json-schema for the OCC documentation. =E2=80=A6
+On Thu May 23, 2024 at 6:30 PM EEST, James Bottomley wrote:
+> On Thu, 2024-05-23 at 16:54 +0300, Jarkko Sakkinen wrote:
+> > On Thu May 23, 2024 at 4:38 PM EEST, James Bottomley wrote:
+> > > On Thu, 2024-05-23 at 16:19 +0300, Jarkko Sakkinen wrote:
+> > > > There's no reason to encode OID_TPMSealedData at run-time, as it
+> > > > never changes.
+> > > >=20
+> > > > Replace it with the encoded version, which has exactly the same
+> > > > size:
+> > > >=20
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A067 81 05 0A 01 05
+> > > >=20
+> > > > Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue
+> > > > so
+> > > > that the OID can be simply copied to the blob.
+> > >=20
+> > > This is true, but if we're going to do this, we should expand the
+> > > OID
+> > > registry functions (in lib/oid_registry.c) to do something like
+> > > encode_OID.=C2=A0 The registry already contains the hex above minus t=
+he
+> > > two
+> > > prefixes (which are easy to add).
+> >=20
+> > Yes, I do agree with this idea, and I named variable the I named
+> > it to make it obvious that generation is possible.
+> >=20
+> > It would be best to have a single source, which could be just
+> > a CSV file with entries like:
+> >=20
+> > <Name>,<OID number>
+> >=20
+> > And then in scripts/ there should be a script that takes this
+> > source and generates oid_registry.gen.{h,c}. The existing
+> > oid_registry.h should really just include oid_registry.gen.h
+> > then to make this transparent change.
+> >=20
+> > And then in the series where OID's are encoded per-subsystem
+> > patch that takes pre-encoded OID into use.
+> >=20
+> > Happy to review such patch set if it is pushed forward.
+>
+> Heh, OK, since I'm the one who thinks it's quite easy, I'll give it a
+> go.
 
-  Convert?
+I guess if it cleaned up multiple sites in kernel then it could
+be considered useful. I'd guess that there is at least a few
+locations that also encode OID.
 
-Regards,
-Markus
+BR, Jarkko
 
