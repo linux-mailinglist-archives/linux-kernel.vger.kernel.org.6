@@ -1,96 +1,197 @@
-Return-Path: <linux-kernel+bounces-188042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E97A8CDC27
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:34:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420228CDC29
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB3A1C209D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:34:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9797AB2448B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0696B127B66;
-	Thu, 23 May 2024 21:34:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE3384A3C;
+	Thu, 23 May 2024 21:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bjbk3BFa"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90488811FF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 21:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94050811FF;
+	Thu, 23 May 2024 21:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716500079; cv=none; b=Whb0oHWL8Gyiz7hEV8uVZUnjgR0+nuLPNT9NCeGwJJXZgbPTwRuws3TJO9JlnxShWmXAMYGebhS37Tlq2Cy7PVMi9x/Gi1v0tfQ+B9VqSsw0BsQ0xzsY4kBDp7d7154CsxmQPAET/MytZJtURD7tf6dB3eh8yTWdx0Oi+JdLlpc=
+	t=1716500100; cv=none; b=LfRfiCuf4Y7MxrFbMuChp/1UaRVC1VJIq8ThQUxpuNRypqWgKVSqEnGQTPtVEdwlwtfUVfp+tk5h2OQhsgDgE7tna03+2LwBebmLqA6dYIBo8xmqwCT9El5YApsgimHbrrNamgLDCfsfYFoUe3zwnC2NhDDaJ2SdOq2Y77pB6uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716500079; c=relaxed/simple;
-	bh=K7OioervpsduQtFyeU96++HOAKnvbyCclRoqOWrO4Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aup2+1Gdl76x2ovRGv959hQGWJSUVoOw+m5Lp05vPKIs0ggKs3+wsoLTIQxQMZXlzVP0QiNLvLttU1I43uvzZOpado6toNGO3AJAvAPu3Y1G4SGSCMB/zLtTIUDwF4KK+7GGG2Bjl4UvOOZI6vTI4TnybA8bW0/keKFP3jo73hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C89C2BD10;
-	Thu, 23 May 2024 21:34:37 +0000 (UTC)
-Date: Thu, 23 May 2024 22:34:35 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Christoph Lameter (Ampere)" <cl@linux.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
-	anshuman.khandual@arm.com, scott@os.amperecomputing.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Message-ID: <Zk-2a7s2pvkVsm2C@arm.com>
-References: <20240520165636.802268-1-yang@os.amperecomputing.com>
- <Zk93vBqAD3LgmbGb@arm.com>
- <640f8606-2757-4e82-721f-9625d48ded65@gentwo.org>
- <Zk-SNVyEHT1UsxqD@arm.com>
- <ad87bb77-a9a5-2c0d-b4b2-13db09615d7c@linux.com>
+	s=arc-20240116; t=1716500100; c=relaxed/simple;
+	bh=TtkKeCps0ejierSSi4w3QTlHUP2b6nZhMZC8/xjZifE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JwYR/qGFI07gtC3TyXuFtlMopZWW7+DGOYJRXRSYJwgCDTqxJmTNqSgQ8ChmnKyCSTkgJegRcX9clCQDeVuk6m44dDExZgPf2WdougfjA3sR+xEkzJWSKgEng0EQU2Tv0VXBnDRAopsHDz4gu6RAENWZouCnLVg8GMJ21xNZpoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bjbk3BFa; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f333e7a669so16263335ad.3;
+        Thu, 23 May 2024 14:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716500098; x=1717104898; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T7a2uMVZssHO/XdZkFjaZx6Fve2Wj78fROEuqBTUEKo=;
+        b=Bjbk3BFam0qDIrREoEVZ24ewxsMyexmPY+M40Pgl4Y+pIz4sfYReqb/m+r8S3h2N+Y
+         NKAtd03Kvh4MOrbe+inHjUglrbW132pKzmX9CJtLprhXIthQMf0gznEhUSG1KEVl08aB
+         4VRbq36nJJQiqsX6RwfprCIzKw7LeyoiuMfBnHkbOUJCzJI3xAVaoTI6QD+nGE74Y4qB
+         wvo2bsHPY9zXDtahdVy/LeV9PPvEiDG/dkfkLKdc15CGrOibrsgF37o/TyOOq7U/FYEb
+         Wv4zEXByXeHPqZxeJzaw/0ptnpDsfY9uJLZjO3MQUkid2vY1W0u2qqCK4Yv3P8PsZO09
+         CPLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716500098; x=1717104898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T7a2uMVZssHO/XdZkFjaZx6Fve2Wj78fROEuqBTUEKo=;
+        b=s5TzmRUe0MA0f0WpNiePZ0EhFeO2hyAD9FM27mt3gXuoDqHY7w3tkESrB7UOXM7xAz
+         +klTPGeLHcWiQKFIncAesrOMUx3njGvWFuF3wDyIxgNjrgGJ6P27MO5IikJtHltUQidr
+         UVW+0FV8ULdA8VZRSlgAn/Rp4G5AqLf334++PBeqXESYTznj5qFb/thk5IKJexMThxxX
+         fXEbiKUtCyz7cFH/PMpa/ZvCZ1TebPw/yYBycH4oD7vydjSr6pUEXZFSF1NHcTo/x4hw
+         GRgbKmeCzdRMUtdlxqQ4q1CRgxrYcUHt54bf7dhBigtfrbCukJ4k7GvlCUtw9I87aqpv
+         FVig==
+X-Forwarded-Encrypted: i=1; AJvYcCVMXQiTJO1oM4+7+wAUgaRkCoiSmZXBgct++GOwmAEpzEvHX2L6ZDxUgDGb1w3BJRY6fpIJ0TX7tYrYRlHz5KSaxjzh374cWlPJITA4
+X-Gm-Message-State: AOJu0YxId/CqpYW8hGlIuW0pGSuuE0/ekfgyNYH6mIduKJQDDUzR5mtl
+	bjPij7n1lw4+QpY/7lWpSOe97grIM1UoeDcWklo9EDz3GF9LrqMf
+X-Google-Smtp-Source: AGHT+IHg64GfV68qCaL9nLaV71GpQJxYCS/dHS/c9zQ8wKfbt4plO5szkSRDbRHEZbACBIBwzwC+Ng==
+X-Received: by 2002:a17:902:ea0a:b0:1f2:fd9a:dbf3 with SMTP id d9443c01a7336-1f4486d1fa4mr5743115ad.11.1716500097727;
+        Thu, 23 May 2024 14:34:57 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9dd519sm399235ad.298.2024.05.23.14.34.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 14:34:57 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: iommu@lists.linux-foundation.org
+Cc: linux-arm-msm@vger.kernel.org,
+	Stephen Boyd <swboyd@chromium.org>,
+	Rob Clark <robdclark@chromium.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
+	iommu@lists.linux.dev (open list:IOMMU SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] iommu/arm-smmu: Pretty-print context fault related regs
+Date: Thu, 23 May 2024 14:34:47 -0700
+Message-ID: <20240523213452.144108-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad87bb77-a9a5-2c0d-b4b2-13db09615d7c@linux.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 23, 2024 at 12:43:34PM -0700, Christoph Lameter (Ampere) wrote:
-> On Thu, 23 May 2024, Catalin Marinas wrote:
-> > > > While this class includes all atomics that currently require write
-> > > > permission, there's some unallocated space in this range and we don't
-> > > > know what future architecture versions may introduce. Unfortunately we
-> > > > need to check each individual atomic op in this class (not sure what the
-> > > > overhead will be).
-> > > 
-> > > Can you tell us which bits or pattern is not allocated? Maybe we can exclude
-> > > that from the pattern.
-> > 
-> > Yes, it may be easier to exclude those patterns. See the Arm ARM K.a
-> > section C4.1.94.29 (page 791).
-> 
-> Hmmm. We could consult an exception table once the pattern matches to reduce
-> the overhead.
+From: Rob Clark <robdclark@chromium.org>
 
-Yeah, check the atomic class first and then go into the finer-grained
-details. I think this would reduce the overhead for non-atomic
-instructions.
+Parse out the bitfields for easier-to-read fault messages.
 
-> However, the harm done I think is acceptable even if we leave things as is.
-> In the worst case we create unnecesssary write fault processing for an
-> "atomic op" that does not need write access. Also: Why would it need to be
-> atomic if it does not write???
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+Stephen was wanting easier to read fault messages.. so I typed this up.
 
-I'm thinking of some conditional instruction that states no write if
-condition fails. But it could be even worse if the architects decide to
-reuse that unallocated space for some instructions that have nothing to
-do with the atomic accesses.
+ drivers/iommu/arm/arm-smmu/arm-smmu.c | 53 +++++++++++++++++++++++++--
+ drivers/iommu/arm/arm-smmu/arm-smmu.h |  5 +++
+ 2 files changed, 54 insertions(+), 4 deletions(-)
 
-It's something we need to clarify with them but I'm about to go on
-holiday for a week, so I won't be able to check.
-
-> The ultimate solution would be to change the spec so that arm processors can
-> skip useless read faults.
-
-I raised this already, waiting for feedback from the architects.
-
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index c572d877b0e1..06712d73519c 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -411,6 +411,8 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+ 	unsigned long iova;
+ 	struct arm_smmu_domain *smmu_domain = dev;
+ 	struct arm_smmu_device *smmu = smmu_domain->smmu;
++	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
++				      DEFAULT_RATELIMIT_BURST);
+ 	int idx = smmu_domain->cfg.cbndx;
+ 	int ret;
+ 
+@@ -425,10 +427,53 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+ 	ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
+ 		fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+ 
+-	if (ret == -ENOSYS)
+-		dev_err_ratelimited(smmu->dev,
+-		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+-			    fsr, iova, fsynr, cbfrsynra, idx);
++	if (ret == -ENOSYS && __ratelimit(&rs)) {
++		static const struct {
++			u32 mask; const char *name;
++		} fsr_bits[] = {
++			{ ARM_SMMU_FSR_MULTI,  "MULTI" },
++			{ ARM_SMMU_FSR_SS,     "SS"    },
++			{ ARM_SMMU_FSR_UUT,    "UUT"   },
++			{ ARM_SMMU_FSR_ASF,    "ASF"   },
++			{ ARM_SMMU_FSR_TLBLKF, "TLBLKF" },
++			{ ARM_SMMU_FSR_TLBMCF, "TLBMCF" },
++			{ ARM_SMMU_FSR_EF,     "EF"     },
++			{ ARM_SMMU_FSR_PF,     "PF"     },
++			{ ARM_SMMU_FSR_AFF,    "AFF"    },
++			{ ARM_SMMU_FSR_TF,     "TF"     },
++		}, fsynr0_bits[] = {
++			{ ARM_SMMU_FSYNR0_WNR,    "WNR"    },
++			{ ARM_SMMU_FSYNR0_PNU,    "PNU"    },
++			{ ARM_SMMU_FSYNR0_IND,    "IND"    },
++			{ ARM_SMMU_FSYNR0_NSATTR, "NSATTR" },
++			{ ARM_SMMU_FSYNR0_PTWF,   "PTWF"   },
++			{ ARM_SMMU_FSYNR0_AFR,    "AFR"    },
++		};
++
++		pr_err("%s %s: Unhandled context fault: fsr=0x%x (",
++		       dev_driver_string(smmu->dev), dev_name(smmu->dev), fsr);
++
++		for (int i = 0, n = 0; i < ARRAY_SIZE(fsr_bits); i++) {
++			if (fsr & fsr_bits[i].mask) {
++				pr_cont("%s%s", (n > 0) ? "|" : "", fsr_bits[i].name);
++				n++;
++			}
++		}
++
++		pr_cont("), iova=0x%08lx, fsynr=0x%x (S1CBNDX=%u", iova, fsynr,
++			(fsynr >> 16) & 0xff);
++
++		for (int i = 0; i < ARRAY_SIZE(fsynr0_bits); i++) {
++			if (fsynr & fsynr0_bits[i].mask) {
++				pr_cont("|%s", fsynr0_bits[i].name);
++			}
++		}
++
++		pr_cont("|PLVL=%u), cbfrsynra=0x%x, cb=%d\n",
++			fsynr & 0x3,   /* FSYNR0.PLV */
++			cbfrsynra, idx);
++
++	}
+ 
+ 	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
+ 	return IRQ_HANDLED;
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+index 836ed6799a80..3b051273718b 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+@@ -223,6 +223,11 @@ enum arm_smmu_cbar_type {
+ 
+ #define ARM_SMMU_CB_FSYNR0		0x68
+ #define ARM_SMMU_FSYNR0_WNR		BIT(4)
++#define ARM_SMMU_FSYNR0_PNU		BIT(5)
++#define ARM_SMMU_FSYNR0_IND		BIT(6)
++#define ARM_SMMU_FSYNR0_NSATTR		BIT(8)
++#define ARM_SMMU_FSYNR0_PTWF		BIT(10)
++#define ARM_SMMU_FSYNR0_AFR		BIT(11)
+ 
+ #define ARM_SMMU_CB_FSYNR1		0x6c
+ 
 -- 
-Catalin
+2.45.1
+
 
