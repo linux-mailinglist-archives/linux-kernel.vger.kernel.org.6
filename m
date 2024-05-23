@@ -1,119 +1,186 @@
-Return-Path: <linux-kernel+bounces-187554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E57C8CD384
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:16:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F12F8CD393
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54091282328
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:16:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268001F245B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAAD14A4C1;
-	Thu, 23 May 2024 13:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C5514B083;
+	Thu, 23 May 2024 13:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CsPp0LI5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1NdlwvX"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B79114A60C;
-	Thu, 23 May 2024 13:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9A41D52D;
+	Thu, 23 May 2024 13:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470155; cv=none; b=BmEtGfAKzHrshPoDdADCeo78bLkvEA51CXNYrOOQCPTSuSk9Hv2oEUlhmcK0M4hgHg1VL6Iz8x2qo78+fW/aN/5gFeLtS8BZyYT1+a+Bu10rHs+MoO9e6okAKFqxYt0eCb/Ot9pY86vG/ZbMCsegu9893ZDcwaFJKkUbcp7rQC8=
+	t=1716470188; cv=none; b=XR6F82KXcpcCecV8wQO4Qy5m7I+1LFu43UUFJYPp9Fiz2SGBNRf/dqkTw+QrmulI3ShuECzuGTBxVjHR1xrEzZWoZZhI5gJJcXD7GHfGTOj+kH0ezAXU4azW6c3OTBuWdNLySuGfBwZkR7QIQ3BKrtChp5cV7w6lR7JNBOgxozA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470155; c=relaxed/simple;
-	bh=Ux+x518pl7/uep26zN3pHNo6TJlFmAenHd5rKrgkXkY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AOkwLfuiurkTLQBafkYVTFDkREYbm9ohyCxaszhKJObgR3iULV7nOD7N0no0Fqlmz+HML7JUaRXcRJp7lAGzrdUOqhs24G6xunPOGTUxMsRMbpQHmklKfiQsVG2eUK3/lC8fMGjgrhre3YtNwWlgRHH4/vSuqHmy0K+wNBVaIs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CsPp0LI5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NCjM4H016562;
-	Thu, 23 May 2024 13:15:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=10591ahE1WkTed7Dc8TeF5
-	gdlCW9JVXi5D/o2l11h90=; b=CsPp0LI5+qMyZ4K5+GQK5NKFak0EpHZG2nLXY7
-	pAcKldGi0g8WXpRvRVcnG9ZGAg9X70c1T3FLcSfANZjAvXB/xyRjE+AXEW+18wId
-	Mp3u+w03MtNQKW0zkuzfkLMldOTrnIm+nobd3ycEwL6aM840iWTTvW6Hjthsd1ib
-	fw0EaUF5xAeQvo0v3KQIF5+sbQKudEuwe+NW/2UsXtDFe8PDPXptpAQV5tincWqT
-	b9JR3XrlLsale48LbTSYyy20wUotfAzgySYOnmTSxCoM6i8sDmBLtZXlrFVPeyiR
-	z4KZMUzFJ3tzlhNtGZe4QLcNTTWjCtn4sNim8h8QJPE7O0QQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y9y04s5vp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 13:15:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44NDFj2o004185
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 13:15:45 GMT
-Received: from hu-uchheda-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 23 May 2024 06:15:41 -0700
-From: Umang Chheda <quic_uchheda@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <quic_uchheda@quicinc.com>, <quic_kamalw@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Enable PMK8350 RTC module
-Date: Thu, 23 May 2024 18:45:28 +0530
-Message-ID: <20240523131528.3454431-1-quic_uchheda@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716470188; c=relaxed/simple;
+	bh=HfO10miRj/En55ix6RsWM7ErWsVGO7O8xMQcsVwjejI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=e5pQcAen4mZmsWAjc7la3w3HSgI5HRTE1PF61HwkZMljV4PeCy2K9n5mNVBQDHr3FkWcyWnxCEHUnmUSbaGrkM4MSG6JV5qxCt2Q1xs1cHbHUJorZy0oXYMuQwNELqFgdMcrC/zP4zORvecr5XXilpLz23GVRZxUkRe7hOKSsXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1NdlwvX; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2bd8e2fba43so2043314a91.1;
+        Thu, 23 May 2024 06:16:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716470186; x=1717074986; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=krAgymTN13Qe0M2nWYZtjIVSErtkmVKszicusS4cC9A=;
+        b=G1NdlwvXjtM9o7OkyCXbg4/EYmyczH2B7kUKdRuHDPq0obhE8AmVPtreFJlKNsfmhw
+         NoBj/rSCcDPX+2QDAAnJ0P+xmMFMClRVIEfl8yfuGFjoVrVRBSRZPkgnp9922JcM1QFN
+         YnKmR62OqPMK0Wn9+MuuLVQOwRD6BtPhB3NiJO0Asd8KL2OCjnV8hjd+wBZi0Rp6QEAo
+         rK+SK5C+QX+V91uugNTujEEpyOgi9p5SZqMiUE71MYSaPlvWi/aDNh4+nzH6+Wavx/s9
+         H1yLutvEgJVUdyelz+qO5nHiMzOAgsXpu/uG+LFJvDQC661bpMUygWgmkiIa9vVtQfiq
+         Fwlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716470186; x=1717074986;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=krAgymTN13Qe0M2nWYZtjIVSErtkmVKszicusS4cC9A=;
+        b=Zk9aWeufOZ/bPs0jerZX9nHBoSWuniEXklWd1sLp3nSgEE8/FBUFCTnb0NLJT+I3Ev
+         XHeKDJxcB3MKVxqeoEnG4sOUMvkMy13E+fgVDCLd1TmfxAwdrh8koTK/tyZ5BqmeLelN
+         WXfbjP8z+uGZma/1OwqVqcWoc0aw5UOZPx6vm/4m49p0AGumRBUR225NtWIEVjU6y0KD
+         BS74pNJWSaDubJPC/hyhaLFNychAzeCN1CtAwTBZbkfsfNksnt0sTPHnIgA7n8BcpF9t
+         XDTLuZmR0CwxAmtF3sNjLh3fJ0w//HSK4D+ejSbxGllY2oNDBjXLstcSl/+wm/Erz0S4
+         9YUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpI8HJA9oSAbk5BXwWLwN/AkEfqb6fcyn+ORtac0ElXRIwp/DSxKzBliA3dx2eBuj5m2VI+s97mwqYLyF7exxUzAaTYPLAPppsOon1UI9we0OPcm+giAxoemiMbczCg+przMZZOam/uf0=
+X-Gm-Message-State: AOJu0YwE2sQiCXQVxI+302uedoQkvOSnWMh5+xvUregbuX8wv1imqbVA
+	DTXSKoqC/5H5w1n3+UmiYhuvc+sggOwQ1M03bsFT8eXhHN4Vt9ix51+omUjOIKWs1RqpVt0ohgJ
+	ycSPKQAujnu83N0E95oCSeQAO9Bg=
+X-Google-Smtp-Source: AGHT+IGGKXZE1/r1vCy2g5iZb2l6KTFjQQ+D0yfJv8nQ7uq+0DQUFpfSrtuv/8ELCMJoYu/xdvdwecFz4i+iDwweleo=
+X-Received: by 2002:a17:90b:1916:b0:2be:c0:f088 with SMTP id
+ 98e67ed59e1d1-2be00c0f107mr286624a91.38.1716470186007; Thu, 23 May 2024
+ 06:16:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YI5QQNDMSc4tyFl8BLXQeBJ73NLUh6a7
-X-Proofpoint-ORIG-GUID: YI5QQNDMSc4tyFl8BLXQeBJ73NLUh6a7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_08,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 phishscore=0 clxscore=1011 malwarescore=0
- mlxlogscore=676 impostorscore=0 mlxscore=0 adultscore=0 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405230091
+References: <20240308121338.1983-1-yongsuyoo0215@gmail.com>
+ <CANXPkT6Bcj0Xbn308jNGp-vqTEcB9LKtUjZ1_zS-tc7KuBEMwA@mail.gmail.com> <CANXPkT7Sv3TSNaPuPMVdpST4vGYZrvh+cfuEX7WjO+i0SP__PA@mail.gmail.com>
+In-Reply-To: <CANXPkT7Sv3TSNaPuPMVdpST4vGYZrvh+cfuEX7WjO+i0SP__PA@mail.gmail.com>
+From: YongSu Yoo <yongsuyoo0215@gmail.com>
+Date: Thu, 23 May 2024 22:16:15 +0900
+Message-ID: <CANXPkT6GdjfmRr5rzJfqc0N1O2dAOneZKhLA4yCejGc3hV2kTA@mail.gmail.com>
+Subject: Re: [PATCH] media: dvb_ca_en50221: Add a returing EBUSY logic into CA_RESET
+To: mchehab@kernel.org, yongsuyoo0215@gmail.com, v4bel@theori.io, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Enable PMK8350 RTC module that is found on qcs6490-rb3gen2.
+Dear All
 
-Signed-off-by: Umang Chheda <quic_uchheda@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Can you review this patch ?
+Can you share how this modification is going ?
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index a085ff5b5fb2..5cc259c5b262 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -602,6 +602,10 @@ &mdss_edp_phy {
- 	status = "okay";
- };
- 
-+&pmk8350_rtc {
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
--- 
-2.25.1
-
+2024=EB=85=84 5=EC=9B=94 1=EC=9D=BC (=EC=88=98) =EC=98=A4=ED=9B=84 4:54, Yo=
+ngSu Yoo <yongsuyoo0215@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> Dear All
+>
+> Can you review this patch ?
+> Can you share how this modification is going ?
+>
+> 2024=EB=85=84 4=EC=9B=94 11=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 9:02,=
+ YongSu Yoo <yongsuyoo0215@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+> >
+> > Dear All
+> >
+> > Can you review this patch ?
+> > Can you share how this modification is going ?
+> >
+> > 2024=EB=85=84 3=EC=9B=94 8=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 9:13=
+, <yongsuyoo0215@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+> > >
+> > > From: Yongsu yoo <yongsuyoo0215@gmail.com>
+> > >
+> > > Signed-off-by:Yongsu Yoo <yongsuyoo0215@gmail.com>
+> > >
+> > > In source/drivers/media/dvb-core/dvb_ca_en50221.c, if the CA_RESET io=
+ctl
+> > > is called, in a normal case, the state of the thread of the
+> > > dvb_ca_en50221_thread_state_machine will transit like below order.
+> > > DVB_CA_SLOTSTATE_NONE -> DVB_CA_SLOTSTATE_UNINITIALISED ->
+> > > DVB_CA_SLOTSTATE_WAITREADY -> DVB_CA_SLOTSTATE_VALIDATE ->
+> > > DVB_CA_SLOTSTATE_WAITFR -> DVB_CA_SLOTSTATE_LINKINIT ->
+> > > DVB_CA_SLOTSTATE_RUNNING
+> > > But in some problem cases, the state will become DVB_CA_SLOTSTATE_INV=
+ALID.
+> > > Among the above mentioned states, the DVB_CA_SLOTSTATE_NONE and
+> > > the DVB_CA_SLOTSTATE_INVALID are "already stablized" states,
+> > > whereas other states are "transiting" states.
+> > > The "already stablized" states mean no matter how long time we wait,
+> > > the state will not be changed.
+> > > The "transiting" states mean the states whose final state is not yet
+> > > determined. The state keeps to be changed. Only after some time passe=
+s,
+> > > we get to know whether the final state will be DVB_CA_SLOTSTATE_RUNNI=
+NG
+> > > or DVB_CA_SLOTSTATE_INVALID.
+> > > During the "transiting" states, we do not yet know whether the
+> > > CA_RESET operation, which triggered the "transiting" states, will
+> > > succeed or fail. For this reason, during the "transiting" states, if
+> > > another CA_RESET ioctl is called and if this new CA_RESET ioctl
+> > > operation begins again, it will be meaningless and waste time.
+> > > For preventing this problem from happening, we make CA_RESET ioctl do
+> > > nothing and only return EBUSY if the ioctl is called during the
+> > > "transiting" states.
+> > > ---
+> > >  drivers/media/dvb-core/dvb_ca_en50221.c | 8 +++++++-
+> > >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/media/dvb-core/dvb_ca_en50221.c b/drivers/media/=
+dvb-core/dvb_ca_en50221.c
+> > > index baf64540dc00..2e8aec354b7c 100644
+> > > --- a/drivers/media/dvb-core/dvb_ca_en50221.c
+> > > +++ b/drivers/media/dvb-core/dvb_ca_en50221.c
+> > > @@ -1362,13 +1362,19 @@ static int dvb_ca_en50221_io_do_ioctl(struct =
+file *file,
+> > >                         struct dvb_ca_slot *sl =3D &ca->slot_info[slo=
+t];
+> > >
+> > >                         mutex_lock(&sl->slot_lock);
+> > > -                       if (sl->slot_state !=3D DVB_CA_SLOTSTATE_NONE=
+) {
+> > > +                       if ((sl->slot_state =3D=3D DVB_CA_SLOTSTATE_R=
+UNNING) ||
+> > > +                           (sl->slot_state =3D=3D DVB_CA_SLOTSTATE_I=
+NVALID)) {
+> > >                                 dvb_ca_en50221_slot_shutdown(ca, slot=
+);
+> > >                                 if (ca->flags & DVB_CA_EN50221_FLAG_I=
+RQ_CAMCHANGE)
+> > >                                         dvb_ca_en50221_camchange_irq(=
+ca->pub,
+> > >                                                                      =
+slot,
+> > >                                                                      =
+DVB_CA_EN50221_CAMCHANGE_INSERTED);
+> > >                         }
+> > > +                       else {
+> > > +                               if (sl->slot_state !=3D DVB_CA_SLOTST=
+ATE_NONE) {
+> > > +                                       err =3D -EBUSY;
+> > > +                               }
+> > > +                       }
+> > >                         mutex_unlock(&sl->slot_lock);
+> > >                 }
+> > >                 ca->next_read_slot =3D 0;
+> > > --
+> > > 2.17.1
+> > >
 
