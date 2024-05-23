@@ -1,255 +1,132 @@
-Return-Path: <linux-kernel+bounces-186978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5628CCB6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:38:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B6C8CCB6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09D4F1F21E04
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:38:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14965B21777
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D22446AE;
-	Thu, 23 May 2024 04:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2AA60BBE;
+	Thu, 23 May 2024 04:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="liIPBVxt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z3BDGhl4"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5226320DF7;
-	Thu, 23 May 2024 04:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B0B20DF7
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716439085; cv=none; b=nxlZM4fRxSVHYTrYuUjSL7A86jxjfmvkY+URV6flwQomlBigxvpRx8MEz2icAwkiTvtarDsyrjDiRy2E78CxxR1ct9sHTm6lwGFTe4gTFyZlP842Jd1/LQmzBi8RQPkAXFzTrdIs7DQUiOpFLX6QqEFUfTeoIy6F/vLSzG9zJzM=
+	t=1716439120; cv=none; b=uXMnAJcmAqwwZ89KN7dEdxZe6PcakYNE3dsU0P3DVbEqklUoh/jXM5h1kunZzFIeSPad6iHbOcZcPbl9UFMf3qApDJmXHm6kt5kXNTuJYc1M4ZzklA3Qse1eciJ/O6D7hna0F1BskUvRUVYIpqu7FCrma2O3KMAPw0T92hYqpII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716439085; c=relaxed/simple;
-	bh=Zb53/ycD+rQozQIXsykjBaWlJ41ME07FtWQn9Xg2uc8=;
+	s=arc-20240116; t=1716439120; c=relaxed/simple;
+	bh=sLqwxYRWLi/EknlqTLKKf6eEdx7TZyvIBF8Tl5eh5dQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKyWKUh/6gOnWirBArvroSV6zW2XO+kz0fM0c0ejr8RRhgFyTxKk7B3V64wI7kXTjk7N6rD+/VW664431e0C3gakwHdEyITaZDipFfGuKQepKkkxLR/ML/IY1nlm4XcVZh8bjrasjbvru8QWLm9oYVcSIZRrsingdzTzjx7GBPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=liIPBVxt; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716439083; x=1747975083;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zb53/ycD+rQozQIXsykjBaWlJ41ME07FtWQn9Xg2uc8=;
-  b=liIPBVxtTr9XpiiAoCfuuZesQyaYcsYuIZyiOTY5hMwnMFgYhvl7zl8Z
-   yhNUfxxfHNFBEp0QsuL4g2da3X9S+xt8tdXHV1oHTJ3AKATvkBBsvtB90
-   7juW1cPfJdutO0TOa+Vw/t9rbwuaNso63qXCY5i8ZYgbSHPVbId1dQ8Y6
-   h1CqajDedD0P/Twhn8w2u0I/VlScDQBd0/3aJa8WZwbru9onIlRtSPVby
-   vbZy6aWy3Az8zsOhZ7dsV36ZnyO+65mS82xEtBecgU9f8v04k+qZuF1hY
-   fUcyyfW+LtyljKOjfnrPYciSqTQNWFptkEnLSCQ5wfc+iZtMnTr6LgIyL
-   g==;
-X-CSE-ConnectionGUID: ZrJc9BLIRNS21YbtEHUFFA==
-X-CSE-MsgGUID: d/NcOA83SPil0DGTLk6xnA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="23299349"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="23299349"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 21:38:02 -0700
-X-CSE-ConnectionGUID: 06AurqnZSRqg7Mv0OH4uLA==
-X-CSE-MsgGUID: E69/rulbSYaiL4pCyJ4UNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="38502052"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.255.230.167])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 21:38:02 -0700
-Date: Wed, 22 May 2024 21:38:01 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>
-Cc: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Bowman Terry <terry.bowman@amd.com>
-Subject: Re: [PATCH 3/4] acpi/ghes, cxl/pci: Trace FW-First CXL Protocol
- Errors
-Message-ID: <Zk7IKYklBHPQief+@aschofie-mobl2>
-References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
- <20240522150839.27578-4-Smita.KoralahalliChannabasappa@amd.com>
- <7dc64418-6821-49c2-b9af-ee4ab148ba9f@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mh5OI4vZeh483j9pEpVVgnqp1Jx62yLukzjVLbvj3NsElMeT/02mo3gAxmWnpKowtafVl0oq/Ivb6hnIVnzqiOQ7Y9a2ISQkXmYmgjo5BFwTH/5/PehBJS0tBNth7nDWC8qCy2f01QGiNwtRaqXdZZk8NsZZsJyW6zNf3JjSBdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z3BDGhl4; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2b4a7671abaso1735346a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716439118; x=1717043918; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yx/IyOCYfXpCeY7uF5ICIIriQlpze5QD3ipJLntQuhY=;
+        b=z3BDGhl4L7hVgR7A2mvoeqtyAqssNuZAV1chPNZwMwaPOJFZRJVZZjZMlxMcU95vLO
+         N+moIEM7chbEf1YcBZ1Rdgb3dO4zt1wZpgTXcax0GvmoTf6/Oa/B0cWCJCbhy0za0dFw
+         k6W9eO0nyRwOU0ymjKtTtQgx08eeZe/Qwc++qLVAYH9e6Bmflo8PApREdKdznoLbIy0L
+         QOiLlEvWACBkMnnYFUHqtUTvjtjMacduR78lKPpGXtGjFxN0YatKc7RXdhE71Gu9Aeuf
+         MnAhEXvI4JfgHGhFk8NmiBgHV59inIzFxIuImKi9YDWI3OdbLXgWyV4N88OTM/yw71Sd
+         OjCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716439118; x=1717043918;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yx/IyOCYfXpCeY7uF5ICIIriQlpze5QD3ipJLntQuhY=;
+        b=QuSLNFpNSYYx6K0FFNEUnT1sA+unFz/Wt1eSRMFO1y0WdtfPH+3QW288IIHnIgvFJF
+         riABL03QvKz6fjklCiUPcyka4HPRN6bYMe5jknQS708UB74ETVdpsKMjy2zYTqA5U2Jv
+         S6FXoStl9PGO63lhSE5GN8w9XSZAWaFQvoD5uHwCXu4zF4sZmqgvzJpdbq/OfJgM+se7
+         WkXiSMj+UR6YPdR8/7Q/qZRgQ2AAbftmiHsjojf/iPlFHxgI4VloDR0d/3Q9cmfzmDdp
+         yGKq/VWzyLvNBZxRKcB5lsoVkqFW57ekuCPw0LnqUIvzTIoOWnMfJjVS3DJWoaaqZMs3
+         brLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWISGsmxnwueYsph3It8Cm6H4T/zjkmldxOYMf2JGu60R04XQH/Bg2btq4IMUcuGb6tXUX31qk8C7NHGEpZaFru2A3FPE1L6N2aO8at
+X-Gm-Message-State: AOJu0YzqADjbvHPqxFmUsCc+oyV17QShxP2+qAZOsOlALqfe/mHuAX89
+	yl1s7WHhLt9n/X0mSlU/6Kzqrr+hcAcHW2bIEeXWuVvMxTKxkiXTGs/NznHU9A==
+X-Google-Smtp-Source: AGHT+IGFia7qcvwiNk7C0cFGAA4kfsQWTt46R5waKo9eNbE72+nSC/qxM96B5ZKcnaWLZtd7r5qMFA==
+X-Received: by 2002:a17:90b:3545:b0:2bd:ed72:29dd with SMTP id 98e67ed59e1d1-2bded722a42mr183089a91.27.1716439116882;
+        Wed, 22 May 2024 21:38:36 -0700 (PDT)
+Received: from thinkpad ([120.60.139.242])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bdd9f4c604sm633634a91.41.2024.05.22.21.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 21:38:36 -0700 (PDT)
+Date: Thu, 23 May 2024 10:08:28 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, quic_cang@quicinc.com,
+	quic_nitirawa@quicinc.com, avri.altman@wdc.com, beanhuo@micron.com,
+	adrian.hunter@intel.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	Stanley Chu <stanley.chu@mediatek.com>,
+	Peter Wang <peter.wang@mediatek.com>,
+	Po-Wen Kao <powen.kao@mediatek.com>,
+	Maramaina Naresh <quic_mnaresh@quicinc.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/2] scsi: ufs: core: Support Updating UIC Command
+ Timeout
+Message-ID: <20240523043828.GA5758@thinkpad>
+References: <cover.1716359578.git.quic_nguyenb@quicinc.com>
+ <292d7702e946ca513af51236ca9e38bf1b1eb269.1716359578.git.quic_nguyenb@quicinc.com>
+ <cb05bc3f-5fb0-45aa-961b-bb9edc007407@acm.org>
+ <d4d7ac49-1055-5305-99b5-af8e1428c746@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7dc64418-6821-49c2-b9af-ee4ab148ba9f@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d4d7ac49-1055-5305-99b5-af8e1428c746@quicinc.com>
 
-On Wed, May 22, 2024 at 11:05:49AM -0700, Dave Jiang wrote:
-> 
-> 
-> On 5/22/24 8:08 AM, Smita Koralahalli wrote:
-> > When PCIe AER is in FW-First, OS should process CXL Protocol errors from
-> > CPER records.
+On Wed, May 22, 2024 at 01:51:06PM -0700, Bao D. Nguyen wrote:
+> On 5/22/2024 11:16 AM, Bart Van Assche wrote:
+> > On 5/22/24 00:01, Bao D. Nguyen wrote:
+> > > interrupt starvations happen occasionally because the uart may
+> > > print long debug messages from different modules in the system.
 > > 
-> > Reuse the existing work queue cxl_cper_work registered with GHES to notify
-> > the CXL subsystem on a Protocol error.
-> > 
-> > The defined trace events cxl_aer_uncorrectable_error and
-> > cxl_aer_correctable_error currently trace native CXL AER errors. Reuse
-> > them to trace FW-First Protocol Errors.
-> > 
-> > Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> > ---
-> >  drivers/acpi/apei/ghes.c  | 14 ++++++++++++++
-> >  drivers/cxl/core/pci.c    | 24 ++++++++++++++++++++++++
-> >  drivers/cxl/cxlpci.h      |  3 +++
-> >  drivers/cxl/pci.c         | 34 ++++++++++++++++++++++++++++++++--
-> >  include/linux/cxl-event.h |  1 +
-> >  5 files changed, 74 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> > index 1a58032770ee..a31bd91e9475 100644
-> > --- a/drivers/acpi/apei/ghes.c
-> > +++ b/drivers/acpi/apei/ghes.c
-> > @@ -723,6 +723,20 @@ static void cxl_cper_handle_prot_err(struct acpi_hest_generic_data *gdata)
-> >  
-> >  	if (cxl_cper_handle_prot_err_info(gdata, &wd.p_err))
-> >  		return;
-> > +
-> > +	guard(spinlock_irqsave)(&cxl_cper_work_lock);
-> > +
-> > +	if (!cxl_cper_work)
-> > +		return;
-> > +
-> > +	wd.event_type = CXL_CPER_EVENT_PROT_ERR;
-> > +
-> > +	if (!kfifo_put(&cxl_cper_fifo, wd)) {
-> > +		pr_err_ratelimited("CXL CPER kfifo overflow\n");
-> > +		return;
-> > +	}
-> > +
-> > +	schedule_work(cxl_cper_work);
-> >  }
-> >  
-> >  int cxl_cper_register_work(struct work_struct *work)
-> > diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-> > index 0df09bd79408..ef9438cb1dd6 100644
-> > --- a/drivers/cxl/core/pci.c
-> > +++ b/drivers/cxl/core/pci.c
-> > @@ -686,6 +686,30 @@ void read_cdat_data(struct cxl_port *port)
-> >  }
-> >  EXPORT_SYMBOL_NS_GPL(read_cdat_data, CXL);
-> >  
-> > +void cxl_trace_prot_err(struct cxl_dev_state *cxlds,
-> > +			struct cxl_cper_prot_err *p_err)
-> > +{
-> > +	u32 status, fe;
-> > +
-> > +	if (p_err->severity == CXL_AER_CORRECTABLE) {
-> > +		status = p_err->cxl_ras.cor_status & ~p_err->cxl_ras.cor_mask;
-> > +
-> > +		trace_cxl_aer_correctable_error(cxlds->cxlmd, status);
-> > +	} else {
-> > +		status = p_err->cxl_ras.uncor_status & ~p_err->cxl_ras.uncor_mask;
-> > +
-> > +		if (hweight32(status) > 1)
-> > +			fe = BIT(FIELD_GET(CXL_RAS_CAP_CONTROL_FE_MASK,
-> > +					   p_err->cxl_ras.cap_control));
-> > +		else
-> > +			fe = status;
-> > +
-> > +		trace_cxl_aer_uncorrectable_error(cxlds->cxlmd, status, fe,
-> > +						  p_err->cxl_ras.header_log);
-> > +	}
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(cxl_trace_prot_err, CXL);
-> > +
-> >  static void __cxl_handle_cor_ras(struct cxl_dev_state *cxlds,
-> >  				 void __iomem *ras_base)
-> >  {
-> > diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
-> > index 93992a1c8eec..0ba3215786e1 100644
-> > --- a/drivers/cxl/cxlpci.h
-> > +++ b/drivers/cxl/cxlpci.h
-> > @@ -130,4 +130,7 @@ void read_cdat_data(struct cxl_port *port);
-> >  void cxl_cor_error_detected(struct pci_dev *pdev);
-> >  pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
-> >  				    pci_channel_state_t state);
-> > +struct cxl_cper_prot_err;
-> > +void cxl_trace_prot_err(struct cxl_dev_state *cxlds,
-> > +			struct cxl_cper_prot_err *p_err);
-> >  #endif /* __CXL_PCI_H__ */
-> > diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> > index 74876c9835e8..3e3c36983686 100644
-> > --- a/drivers/cxl/pci.c
-> > +++ b/drivers/cxl/pci.c
-> > @@ -1011,12 +1011,42 @@ static void cxl_handle_cper_event(enum cxl_event_type ev_type,
-> >  			       &uuid_null, &rec->event);
-> >  }
-> >  
-> > +static void cxl_handle_prot_err(struct cxl_cper_prot_err *p_err)
-> > +{
-> > +	struct pci_dev *pdev __free(pci_dev_put) = NULL;
-> > +	struct cxl_dev_state *cxlds;
-> > +	unsigned int devfn;
-> > +
-> > +	devfn = PCI_DEVFN(p_err->device, p_err->function);
-> > +	pdev = pci_get_domain_bus_and_slot(p_err->segment,
-> > +					   p_err->bus, devfn);
-> > +	if (!pdev)
-> > +		return;
-> > +
-> > +	guard(device)(&pdev->dev);
-> > +	if (pdev->driver != &cxl_pci_driver)
-> > +		return;
-> > +
-> > +	cxlds = pci_get_drvdata(pdev);
-> > +	if (!cxlds)
-> > +		return;
-> > +
-> > +	if (((u64)p_err->upper_dw << 32 | p_err->lower_dw) != cxlds->serial)
-> > +		pr_warn("CPER-reported device serial number does not match expected value\n");
+> > I think that's a bug in the UART driver that should be fixed in the
+> > UART driver.
 > 
-> Given that we are operating on a device, perhaps dev_warn(&pdev->dev, ...) may be better served.
+> Thanks Bart.
+> I am not familiar with the UART drivers. I looked at some UART code and it
+> could be interpreted as their choice of implementation.
+> During product development, the UART may be used. However, when the
+> development completes, most likely the UART logging is disabled due to
+> performance reason.
 > 
-> DJ
+> This change is to give flexibility to the SoCs to use the UART
+> implementation of their choice and to choose the desired UIC command timeout
+> without affecting the system stability or the default hardcoded UIC timeout
+> value of 500ms that others may be using.
+> 
 
-Good point. Providing the dev lets the user look up the serial number,
-meaning this message doesn't need to include an 'expected' but not found
-value.
+If UART runs in atomic context for 500ms, then it is doomed.
 
--- Alison
+But for increasing the UIC timeout, I agree that the flexibility is acceptable.
+In that case, please use a user configurable option like cmdline etc... instead
+of hardcoding the value in glue drivers.
 
-> > +
-> > +	cxl_trace_prot_err(cxlds, p_err);
-> > +}
-> > +
-> >  static void cxl_cper_work_fn(struct work_struct *work)
-> >  {
-> >  	struct cxl_cper_work_data wd;
-> >  
-> > -	while (cxl_cper_kfifo_get(&wd))
-> > -		cxl_handle_cper_event(wd.event_type, &wd.rec);
-> > +	while (cxl_cper_kfifo_get(&wd)) {
-> > +		if (wd.event_type == CXL_CPER_EVENT_PROT_ERR)
-> > +			cxl_handle_prot_err(&wd.p_err);
-> > +		else
-> > +			cxl_handle_cper_event(wd.event_type, &wd.rec);
-> > +	}
-> >  }
-> >  static DECLARE_WORK(cxl_cper_work, cxl_cper_work_fn);
-> >  
-> > diff --git a/include/linux/cxl-event.h b/include/linux/cxl-event.h
-> > index 9c7b69e076a0..5562844df850 100644
-> > --- a/include/linux/cxl-event.h
-> > +++ b/include/linux/cxl-event.h
-> > @@ -122,6 +122,7 @@ struct cxl_event_record_raw {
-> >  } __packed;
-> >  
-> >  enum cxl_event_type {
-> > +	CXL_CPER_EVENT_PROT_ERR,
-> >  	CXL_CPER_EVENT_GENERIC,
-> >  	CXL_CPER_EVENT_GEN_MEDIA,
-> >  	CXL_CPER_EVENT_DRAM,
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
