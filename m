@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-187940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587B98CDB06
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D94938CDB0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D891C22008
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16EEF1C21DFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F54084A5E;
-	Thu, 23 May 2024 19:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A6484A3F;
+	Thu, 23 May 2024 19:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="gnqzY1q2"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BP4BAo/B";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KIpZqn5t"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792B18061B;
-	Thu, 23 May 2024 19:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D5E156E4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716493550; cv=none; b=pw5btizX7bnl9+GOEDqtanEtCSlFBrGInCkcm0dFmvclflLWAsl8boFGK39DbHUGuCPVti53jSM25yo5595H6n7q/gX1KVeGh2PeLd7dsMbiMJX2PNQ1j8WttKaL9QE40lmarb1sn5xJTdo6fyVdTxzSO6G+f01RSKhigZfOhm0=
+	t=1716493600; cv=none; b=pWO468GjaizW4Jf4EZLL3SSPfKhoDdFvRf6P+2XL95dakHJiKNKRh6C8FichpxQKl1aKWNuFgsQXTRvVxX4tz8GPlFqI39s0MOAN3lvYu8Msm21ha3l0jreBGBN/NyvQYC8xr78W6vuKQqlqTHfEiU+ofrKbk4x3U0mnd5x8YNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716493550; c=relaxed/simple;
-	bh=suW3GGRHrjJIcAY7OW7Ok5VFj60O4sU6Cm3t0FyJG/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ec/BgClSRyqG7FT0eZhkBPzgQ8Baq6Npjfj5UTwu5qyCV8jftzrCoZGxvJOUXfaOHZBXt6kHPZL8gOfRInT9QAQiGgV7GnqHWrFMCl+7sn8hph4VLdIxVsdI3pfgONTxiz2+ho0NabNT/TVNzG6MoqajuAgubWt/JxrY1qP8k2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=gnqzY1q2; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 102131C0093; Thu, 23 May 2024 21:45:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1716493544;
+	s=arc-20240116; t=1716493600; c=relaxed/simple;
+	bh=5zKe1tosn+En0xcnx35KM6LvuL/99qWEMzzDoUejKVM=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=PaBqDW8SzNiHKG+S9FcDEqh6J3Y/MsPCTS+DIVT34fs1+ftwvb9qCensOnvw3qul5Ufvbm57jpmu9PyWanFckd50eyENU2uSlyKKGWAPtiEavy5mPe6yk0UNlv51ixGInWFX4USVeJs6O1bdaFXLUx4lRrd0mwqYFw5qFe+bzzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BP4BAo/B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KIpZqn5t; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716493597;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5bgmiF1OU1Nbz7ymvjKqnLxWQ/rqAzYMDHgcf+JIeIo=;
-	b=gnqzY1q2qxuY04uz4lhAFpzGKfBhzyoCNZswDSWL7JTPNGCkGwRRiP2C2iOIYzGFKk02h3
-	zICksWzbKD2PbrkaXkha+Hp6oLPHsnHe68aoZHLEofvjs6Tuq7osJSwDb4R1yqgKGDdHwP
-	Enbo1nY19hwC0WFcisGawecfK3SfgTA=
-Date: Thu, 23 May 2024 21:45:43 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sukrit Bhatnagar <Sukrit.Bhatnagar@sony.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 0/2] Improve dmesg output for swapfile+hibernation
-Message-ID: <Zk+c532nfSCcjx+u@duo.ucw.cz>
-References: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
+	 in-reply-to:in-reply-to; bh=uosf8zJX/OrVrpzgWdisB0fvzDFsKDb8UYB9Oox95ds=;
+	b=BP4BAo/B69jc8ERVWFG98sNHLN1mENEzNZNBioaIc8i+Z2nQvyDhWBpGZ7Q8bSagQvkp0r
+	Qkoi9ly8VwbHcND/epo5p1JbpdIcYEl8tlsHT3u4xHypR3RHOL7tG0w8bz2Hs1dJWWmU4f
+	9xsJRC4V8XwLgNg3s+4rrrW0j57j58gUKlsP0mm4TFoC4IEnh+vHVVLtKkBKChvC4BS5PP
+	x3QInGMT3WmYjyr3TGr2x/BzBXD64Poz1/wfVeDDy//JS+wnJmjvWB0xYZfjR1BtJyVed4
+	Cr4QI2aVIO72pN618+SVkrXSP15TSfdaEaa+FZckgMIw022PRgqfwsae1NffWw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716493597;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=uosf8zJX/OrVrpzgWdisB0fvzDFsKDb8UYB9Oox95ds=;
+	b=KIpZqn5taXmZz3LONsNtK4wwCWpj93R/8rFGP6l7jO5arnhLumMZWFiopXw87IZFZtKX1z
+	eYmvNXSkHlMUZVDA==
+To: "dicken.ding" <dicken.ding@mediatek.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>
+Cc: wsd_upstream@mediatek.com, hanks.chen@mediatek.com,
+ ivan.tseng@mediatek.com, cheng-jui.wang@mediatek.com,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, "dicken.ding"
+ <dicken.ding@mediatek.com>
+Subject: Re: [PATCH 1/1] irq: Fix uaf issue in irq_find_at_or_after
+In-Reply-To: <20240523113949.10444-1-dicken.ding@mediatek.com>
+Date: Thu, 23 May 2024 21:46:36 +0200
+Message-ID: <87cypcfh0j.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2vHzQoJ74uUpPseM"
-Content-Disposition: inline
-In-Reply-To: <20240522074658.2420468-1-Sukrit.Bhatnagar@sony.com>
+Content-Type: text/plain
 
+On Thu, May 23 2024 at 19:39, dicken.ding wrote:
+> The function "irq_find_at_or_after" is at the risk of use-after-free
+> due to the race condition between the functions "delayer_free_desc"
+> and "irq_desc_get_irq". The function "delayer_free_desc" could be
+> called between "mt_find" and "irq_desc_get_irq" due to the absence
+> of any locks to ensure atomic operations on the "irq_desc" structure.
+>
+> In this patch, we introduce a pair of locks, namely "rcu_read_lock"
+> and "rcu_read_unlock" to prevent the occurrence of use-after-free in
+> "irq_find_at_or_after".
 
---2vHzQoJ74uUpPseM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please read Documentation/process/maintainers-tip.rst and the general
+documentation how changelogs should be written.
 
-Hi!
+Something like this:
 
-> While trying to use a swapfile for hibernation, I noticed that the suspend
-> process was failing when it tried to search for the swap to use for snaps=
-hot.
-> I had created the swapfile on ext4 and got the starting physical block of=
-fset
-> using the filefrag command.
+  irq_find_at_or_after() dereferences the interrupt descriptor which is
+  returned by mt_find() while neither holding sparse_irq_lock nor RCU
+  read lock, which means the descriptor can be freed between mt_find()
+  and the dereference.
 
-How is swapfile for hibernation supposed to work? I'm afraid that
-can't work, and we should just not allow hibernation if there's
-anything else than just one swap partition.
+  Guard the access with a RCU read lock section.
 
-Best regards,
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
+Hmm?
 
---2vHzQoJ74uUpPseM
-Content-Type: application/pgp-signature; name="signature.asc"
+> --- a/kernel/irq/irqdesc.c
+> +++ b/kernel/irq/irqdesc.c
+> @@ -160,9 +160,15 @@ static int irq_find_free_area(unsigned int from, unsigned int cnt)
+>  static unsigned int irq_find_at_or_after(unsigned int offset)
+>  {
+>  	unsigned long index = offset;
+> +	unsigned int irq = nr_irqs;
+> +
+> +	rcu_read_lock();
+>  	struct irq_desc *desc = mt_find(&sparse_irqs, &index, nr_irqs);
+> +	if (desc)
+> +		irq = irq_desc_get_irq(desc);
+> +	rcu_read_unlock();
+>  
+> -	return desc ? irq_desc_get_irq(desc) : nr_irqs;
+> +	return irq;
 
------BEGIN PGP SIGNATURE-----
+I wrote guard above because that's what should be used for this:
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZk+c5wAKCRAw5/Bqldv6
-8tcBAKCDy74KhiOm4q60gSEHa8GDlI+zgQCfb5XaPSZ5oKNmTg/9KAjVG3czEZY=
-=6unp
------END PGP SIGNATURE-----
+  	unsigned long index = offset;
+  	struct irq_desc *desc;
 
---2vHzQoJ74uUpPseM--
+        guard(rcu)();
+        desc = mt_find(&sparse_irqs, &index, nr_irqs);
+	return desc ? irq_desc_get_irq(desc) : nr_irqs;
+
+Thanks,
+
+        tglx
 
