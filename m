@@ -1,121 +1,92 @@
-Return-Path: <linux-kernel+bounces-187284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E03788CCF75
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:40:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E1C48CCF77
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77D5AB22373
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F7C1C222DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5123213D2A4;
-	Thu, 23 May 2024 09:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311C513D297;
+	Thu, 23 May 2024 09:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eCLSAXFQ"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzYuenIM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DE913D260
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA0E4685;
+	Thu, 23 May 2024 09:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716457191; cv=none; b=D3zRazzeyIo3YjDngoFDcG78wPbLMShzZdE8gsFvJrnvRx8/vOuoS/8Pqdq8HEDUlNeAc63CJCg+TY8C0VW958pAKG7Xbh4Bml6RQPLMOFRyE1VRih43KSay9H0Auzzm2f1KNg5ZFw91WoOHHpw7FzGb9jz1KND9XIQDqtl9rQI=
+	t=1716457238; cv=none; b=QV6zQ26Djyz6x39ms3k7vv0u/LJ5viorafrwnBTcw6zvMPVi8MIisHzlsjMfrvHJ6rcINVRIDnrN5PDbLg0dMHEipKaI+9dahkG1E5K4EnH0BZKz5PS/qbEeM6VzJeTbQ/EmCV5LgEJW30D1C2P4H0pVj0CUtv7pFKHdQOqkeGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716457191; c=relaxed/simple;
-	bh=pANZ9BOe7lIjdlZajVdcF6HeMjTV5Ks8Me0Z1rWXSv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwsyBMIDhV+GwPtjYnh+JUah7YU8y2JRGt7K9is6ckoCNtWkSiWd41Qe7fNek1W1dXEqSwnc4ii2sSs+D2Jo7BQ/By2AnPPesLjiKihwMBfeyhXxT6Zt1TC4Hy8DAtu+exUN2uIPjBsUPdwfZNpY6dvOR9D98LW6tVGMKhwjsUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eCLSAXFQ; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5238b7d0494so7938038e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:39:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716457188; x=1717061988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZr+4M+DoXpeV8oSkkFyzaRfzRj8DnnoccV995epHpo=;
-        b=eCLSAXFQ7bExLPPfCPtPAeQgqwoDoGfHQEDfg8YN/W4q96n96fa6EynxLFvwvaMD/T
-         xjqq1vFWRl7M2pZPYldKTj7X504AfXLHT7Jtb6WuHa5DDZ3Bh6zR15LK8t78oPr4Ask+
-         0gjl+P2BGsjVRP1bvP1QnqX+HWP6j/WYkICPrTeqGbhrpFx0mJHNM8gJzMTRJHzOFGZQ
-         NxtYhVGEw/XYu0qAYobNJ21tj24znub/lJwQ9vUMSeS2M8DPArKSNz/3TvWWkefVoxNH
-         e96g9WH2Jq9mxA8B1eKoMsE5NwHNvdv5xG5mcjmtNrPpznTODvTn7pvACUdHFgachYTi
-         abrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716457188; x=1717061988;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nZr+4M+DoXpeV8oSkkFyzaRfzRj8DnnoccV995epHpo=;
-        b=I3uuFUpDcX3lkzx7AO+g9990uXPqsYM4dpunS028B3iPM4VnuhUM7FHw5JQEd07VWZ
-         gc8r9pbgVfEBfH79OodFarf/lEtkCeLbqSlOgKWXSVgFfgFqm2fknOwo0H/u82cljv/B
-         EtvpPqYg1bOzlTKmhXCu1huQoV6qfD63E2gDyuH9COWaWaMMMrNubCjsdrHCfiYTX8Gw
-         aqP0ytKMRO3/TtU1TkJySVv2VwmwXB9DUKijVWgi6WGlurU3vc1CkPMnlDoJVKkh8EV0
-         +oS7SF1BB/v8zFWCpLYJjoyX4FosBEyHCMmzP9nFd6nDU4yk6is/Fu9ljHuZvlA+oR6F
-         +How==
-X-Forwarded-Encrypted: i=1; AJvYcCVQSiNgmFRmz1BoGUVRhNer7Ox8JFfkVwub8mtQh5345GdeOSs0xrh5yGpzUe+5g80m81oALp+BVExzI0uvE6mGknb+cun/7I12Io29
-X-Gm-Message-State: AOJu0YzdGH10l/Bop+tPpR4+5+T037sxrYCeOPA3q1T1oCPVkaz5vm3l
-	2HUVszcWZpUIzyhyFYGdeUHPQFbLn5UCCZieIsCCo5E7bbfxXwnMZam/PPVRp8E=
-X-Google-Smtp-Source: AGHT+IHZxrSIuUr68retAsDGyT49V7Bjyk+0v3vLZlctFxxYj5K8ZOcu4gphFsf8YhaZBtcNl5CRiw==
-X-Received: by 2002:a19:520a:0:b0:518:eef0:45c0 with SMTP id 2adb3069b0e04-526c0a68dcbmr3895711e87.48.1716457188090;
-        Thu, 23 May 2024 02:39:48 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f39d2c63sm5212392e87.278.2024.05.23.02.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 02:39:47 -0700 (PDT)
-Date: Thu, 23 May 2024 12:39:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v14 11/28] drm/connector: hdmi: Calculate TMDS character
- rate
-Message-ID: <2drjirwwj3cwm4saboa5qnhwi7wev5gnilg24u7svz2iw3gtef@jainjgtog3uf>
-References: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
- <20240521-kms-hdmi-connector-state-v14-11-51950db4fedb@kernel.org>
+	s=arc-20240116; t=1716457238; c=relaxed/simple;
+	bh=0a8Cvw4MRnzhALmRdstt3jzS71JOV55Hiq8Rf4MC7GY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=QzWi+iRWk+/JS22iAOtIK5yRfG7tWR3ECtYzQ0VUThUXrSqO24g1NvN7ohWHI7gqp+zkDKt8g9rVqXCwrmxrY9B6zHPJC3gjFggILDO9ad3tzePMd/Uoe9IOHI1WbZI4fHFuNM/nS5w2Iw8TUH+9DfaMwmh67gur1tnMY4i5q4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzYuenIM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DE9F1C32782;
+	Thu, 23 May 2024 09:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716457237;
+	bh=0a8Cvw4MRnzhALmRdstt3jzS71JOV55Hiq8Rf4MC7GY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=VzYuenIM80nW7ntnPLMKGkabfZFxJEqKpu1MT/FiN+h5oFOZBVMiEsfRjHy+DhGrV
+	 ajbVyu5aWI+qS78OM9nSfFtJFWM5oyYpZiZ3v//0MVpbCXSBnGUGvA1m+1Ux87pn3K
+	 IjQGMWw+XPCWkcC12U7w0naAxTXNyhWIffhiKOUQl4Gcsk0biafl0gKidkq/03f9iK
+	 hdsKVIfZrCuBv1E1ZfFANtZZ3zG+01sprUaiNeMjhthCv1qE4uKwHCmbNDRliElsdJ
+	 fYD6aQLgtkCRIseVUSWikuXFaIJpg4KPTSy+JN/q73HvLdKQxas3a0TUdA+ORHrihU
+	 qMDKs7lv+agqg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CE823C43617;
+	Thu, 23 May 2024 09:40:37 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521-kms-hdmi-connector-state-v14-11-51950db4fedb@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net] net: fec: avoid lock evasion when reading pps_enable
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171645723783.24100.7721910085063661458.git-patchwork-notify@kernel.org>
+Date: Thu, 23 May 2024 09:40:37 +0000
+References: <20240521023800.17102-1-wei.fang@nxp.com>
+In-Reply-To: <20240521023800.17102-1-wei.fang@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, shenwei.wang@nxp.com, xiaoning.wang@nxp.com,
+ richardcochran@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
 
-On Tue, May 21, 2024 at 12:13:44PM +0200, Maxime Ripard wrote:
-> Most HDMI drivers have some code to calculate the TMDS character rate,
-> usually to adjust an internal clock to match what the mode requires.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Tue, 21 May 2024 10:38:00 +0800 you wrote:
+> The assignment of pps_enable is protected by tmreg_lock, but the read
+> operation of pps_enable is not. So the Coverity tool reports a lock
+> evasion warning which may cause data race to occur when running in a
+> multithread environment. Although this issue is almost impossible to
+> occur, we'd better fix it, at least it seems more logically reasonable,
+> and it also prevents Coverity from continuing to issue warnings.
 > 
-> Since the TMDS character rates mostly depends on the resolution, whether
-> we need to repeat pixels or not, the bpc count and the format, we can
-> now derive it from the HDMI connector state that stores all those infos
-> and remove the duplication from drivers.
-> 
-> Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/display/drm_hdmi_state_helper.c    | 67 ++++++++++++++++++++++
->  drivers/gpu/drm/drm_atomic.c                       |  1 +
->  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  3 +
->  include/drm/drm_connector.h                        |  5 ++
->  4 files changed, 76 insertions(+)
+> [...]
 
+Here is the summary with links:
+  - [v2,net] net: fec: avoid lock evasion when reading pps_enable
+    https://git.kernel.org/netdev/net/c/3b1c92f8e537
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+You are awesome, thank you!
 -- 
-With best wishes
-Dmitry
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
