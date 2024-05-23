@@ -1,224 +1,137 @@
-Return-Path: <linux-kernel+bounces-188117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C158CDDB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:23:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FE58CDDB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 188A628845D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73851F218B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1FC1292D4;
-	Thu, 23 May 2024 23:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DC812882D;
+	Thu, 23 May 2024 23:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ODAborJh"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Po23fLZc"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492D21292C3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EF4127E38
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716506575; cv=none; b=rHOh6ZmPQpXsILk4TDAX1HmgkyRES4o9Ax4eD4v0NNEBo7a5OUNoc93Nx3WOJ3WcDtEtDA5fzf4caAtA3So7+YxOlx7R+/qbTSHH5P3gU4c3beni2qzNyosBN7Nd11K3MfoZS4RYWoq/MXQm1jVnNmRA3jB3NCTU5sJd5hCcTic=
+	t=1716506640; cv=none; b=ac7ME1ZdRNqx5Oze2VwvkR+Dw6IPodvRUJBhNkcYoRc79UWYiRdLs8P54M4gt6uR9+mNFKpLWpl70aREp3BiULLG5/6T3uCaf8Jm4IoAi0wRHhVcUbcLSBenAqK8gTBV3oFXGnLOVTIt+Q24oaSIZQomt4BhlcUBazjD4wgAo5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716506575; c=relaxed/simple;
-	bh=hBAK2EWjRxlWbq3h3sA3ZssGoYxqnIqX959k0jCqFLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NmUXLtnqpvJf03ntEBsUdJJcKLJC0/GU6Xit5ay5nz0HCOKTozZdnZW/lYG0o8E7n0ZgjdptdyQapLUUNmzLhufJcGWr4eWXMP1Ti91GXZt7DAnH46LUNnFHsIPTxIYwoMcqsZdWF5XgdIqy1XugOxvLmn244pcda0Najd+Vjhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ODAborJh; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e73359b8fbso53496221fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:22:52 -0700 (PDT)
+	s=arc-20240116; t=1716506640; c=relaxed/simple;
+	bh=Gamjr1Kq5QKTSqFGHszIUfbG/qhtiy3XUEScc83qRsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=euvrLVUcF2taZh50MC1wGkOjWFQxXb1CGFS5cF3und2WTbFP96gtNcMP3wtK3SJN1HkP9Hpawnl0C+rVU4FDu5rfTe8v1U44ATYBrlP2x0fzmspvpNpklE1Xx2BeOqiydQCX9Y1tGTgbc4lxG3L8/BBh5AiqL7YAgtccmhHdU6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Po23fLZc; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-794ab1bafedso15756585a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:23:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716506571; x=1717111371; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JFndDbSEPFGWTHHMY8d+FZXd6zTs2WlrRGp5IfPBkeI=;
-        b=ODAborJhHIoh9mpT1sfCPYY4CqalvZ6vDcVC8zCfq6exyk5HmzvJW7DG+fI9CYujbW
-         28tJKIRgB0JFJf4Y0Rg+VxyTGuV8CPBukja+QvLOZbVe+rNdbT42YbVCzZSX6sx4teB7
-         LB9EkRHVleinDcHb6PQTZ+1pNP3sNfEutX8HPa2Y1bZEDqz9yTOcq8NDwOIUZxMS7kjD
-         cHidNaYp9iO5znAw6AKec3opZlRyaWdw5VKDOOfdQYjnvp9I+RmIq2kHJOsrqHdkIr9s
-         rBWke/heC5zrQcyj3vfQBWf10yu1HH/dJJpu2gwWMhcdnEeXNEbqEYvA535E4kRgFjjw
-         65+g==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1716506637; x=1717111437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RCsJAhAICDD0J2ZUXO/j6avgWN3eOAMHb3WgznL0auw=;
+        b=Po23fLZcGyctEAeiDOpOviQZ2i4Sdt1dWX9zS505f2f7KNrGye+U68xwnSJ7SbmSZK
+         bu2wedWuT3bQO9Xn7Agd3qgneNrCRNbaSDkQNA/eLGUCCTgd7oyFGt+5AYf3h8/gr2XT
+         O9wDxbQWeKat+tT/EgC18PuoKsmktkMF0UxEiwufuCLIZDbSKbz9jZobBeQKQfRBaAaO
+         2wUqrUln0J9uOdoM5+R3O7NH4VWnJ2PxYCAnga1vsoHwIyeFLgy7DUqnaNfmgyqaAj4q
+         nD0QkwW/qOVZDvHp3CL+VsBflnZ7ojP9pqlEMDsX+S1nvQocCgrIRmrd7J4EK08FZn30
+         VXfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716506571; x=1717111371;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JFndDbSEPFGWTHHMY8d+FZXd6zTs2WlrRGp5IfPBkeI=;
-        b=i/qGBfg6YXXIeh3Tm2uZSHHg2Nlyv6ruwyMwolze9RvSQQ2DRIOYAaed7Ognz91ht0
-         CTDGrUW/9P2lYO4x3pUXDdJjraGvxt62uPpN1XH7Jh6og/qSYXDUJaT4kioGqDYGjYD0
-         /lz5l+KtkiS++C1o/YrEIA0yFBkexVGSbUxJwVhHJuT19RcnKRyuPN6AdPdjEMSfRlAr
-         Cpq847FO3QGxShXZ3R95G9HfyLmyy9OMt09XAH1iKO1ojkEIPxy/hvkbsYOE6hooTL6I
-         5xaz1UyAGqMhfLvKSpppRLgFl8A7N+60hJ5tuSnkBmRL/poqHiB8EznTHkhfyLaBoT36
-         r6xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsHeGsUszZ4HU7WMh1y/hujzqwej7v+cuquLXoidqKFgoFOf2atL9SDcRMOsaeYU+oKuOoAEGww4Teg7dTAmwLIAlLa81ecql7veL+
-X-Gm-Message-State: AOJu0Yw80pbrDfiSsuCbgsXZw74oRvys6iaQKvwW6aTZgbqpDzvDqFJf
-	FT+mHE+0EHkRDTDRHAEQJd+KsAKXilidu73D/xJXP4irqI/A+H0CuzUPMP+8gTriuoNhIStF0Ou
-	d
-X-Google-Smtp-Source: AGHT+IF4P8BB0TG4cx6LOlYv3K27CXQM5lsuUzYsdgB4XMRi7GyT4ZdjwvZ5ytrxEpqVrOoi24g7HQ==
-X-Received: by 2002:a2e:b784:0:b0:2e0:3f37:5af5 with SMTP id 38308e7fff4ca-2e95b2564a0mr3991731fa.41.1716506571062;
-        Thu, 23 May 2024 16:22:51 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95bcd7c20sm231521fa.33.2024.05.23.16.22.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 16:22:50 -0700 (PDT)
-Date: Fri, 24 May 2024 02:22:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Doug Anderson <dianders@chromium.org>, Yakir Yang <ykk@rock-chips.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH RFC] drm/panel-edp: add fat warning against adding new
- panel compatibles
-Message-ID: <6pivdkrvtknj4g4nniq3fesdzp2pyskkkhn57kg2huro7v253q@ygco3sc23u76>
-References: <20240523-edp-panel-drop-v1-1-045d62511d09@linaro.org>
- <CAD=FV=Xz1VsF8jG0q-Ldk+p=NY-ChJkTk0iW8fq2bO=oRFvXRA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1716506637; x=1717111437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RCsJAhAICDD0J2ZUXO/j6avgWN3eOAMHb3WgznL0auw=;
+        b=u1v0tBcYfoR91y9LRXdxGF2Zz3Tug2raVQIGy9FSqj/e97XMX0Mo25SyRGhj+0nNx+
+         ol9JG57I4HSoixOb0ffR7sC96VHAxqBQ3uJVs/yLlcv3UkyFzlLJh7kwNoSEhKHihymt
+         VtohpS+ySVqINByqFrbwxam0Fyy64aWkVoQon0zMZrqeEztS1NXLLH/hZe4w/6fFQtZ3
+         rVxARQsxYJuzvj8WPXe7Z6Qi1Fj3m/Nog6cS+oar7U6JrjoxZIulIm1numMDOM4ojw5x
+         kfDyivCGlGem129znFCxjAODeUG3u1/zwWGevpLdRbNUytPNvhVa+AbFKphkTfUiOs46
+         Y1Bg==
+X-Gm-Message-State: AOJu0YzNKzc6folX9JbdVANpAz9oaq1xBphma3OmUwvfMxXzg9HQxQaC
+	3oYVAiMhn9MAEPh6NWE43ZK2qouIlhja77IeQOEuxxc/43fiAWxw3e4rpSRE7TfT0RzW1v4QC8H
+	SWyy5aniacGFQAjLG6lqxCbknnKMezBpDiIXyAw==
+X-Google-Smtp-Source: AGHT+IFR4OHciC4416nU/Vadzzwje6/rqkHG0oe8lwzmS6LuTsftY2iNl1Gq5BEhPp6lD/4SkUqnuWlmnfdeVgnr8Jc=
+X-Received: by 2002:a05:620a:a19:b0:790:f843:db57 with SMTP id
+ af79cd13be357-794ab0f8b0bmr65876085a.58.1716506637454; Thu, 23 May 2024
+ 16:23:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=Xz1VsF8jG0q-Ldk+p=NY-ChJkTk0iW8fq2bO=oRFvXRA@mail.gmail.com>
+References: <20240523132139.289719-1-peterx@redhat.com>
+In-Reply-To: <20240523132139.289719-1-peterx@redhat.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 23 May 2024 19:23:19 -0400
+Message-ID: <CA+CK2bDhAOto1A+TAvGSuNzNTTUd9FZ4m3wV_3rou6AfXJzXzA@mail.gmail.com>
+Subject: Re: [PATCH] mm/debug_vm_pgtable: Drop RANDOM_ORVALUE trick
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, Gavin Shan <gshan@redhat.com>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 08:36:39AM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, May 22, 2024 at 3:07 PM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > Add a fat warning against adding new panel compatibles to the panel-edp
-> > driver. All new users of the eDP panels are supposed to use the generic
-> > "edp-panel" compatible device on the AUX bus. The remaining compatibles
-> > are either used by the existing DT or were used previously and are
-> > retained for backwards compatibility.
-> >
-> > Suggested-by: Doug Anderson <dianders@chromium.org>
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> > The following compatibles were never used by the devices supported by
-> > the upstream kernel and are a subject to possible removal:
-> >
-> > - auo,b133han05
-> 
-> Ack. Looks like this was added by Bjorn but by the time the dts for
-> the board (from context, sc8180x-primus) using it made it upstream it
-> was using "edp-panel".
-> 
-> 
-> > - auo,b140han06
-> 
-> Ack. Same as above, but this time the board was "sc8180x-lenovo-flex-5g".
-> 
-> 
-> > - ivo,m133nwf4-r0
-> 
-> Ack. Also added by Bjorn but not easy to tell from context which board
-> it was from. "m133nwf4" never shows up in the history of arm64 qcom
-> dts files.
-> 
-> 
-> > - lg,lp097qx1-spa1
-> 
-> Maybe. Added by Yakir at Rockchip. I don't think this was ChromeOS
-> related so I don't have any inside knowledge. Presumably this is for
-> some other hardware they were using. Probably worth CCing Rockchip
-> mailing list. It's entirely possible that they have downstream dts
-> files using this and there's no requirement to upstream dts files that
-> I'm aware of.
+On Thu, May 23, 2024 at 9:21=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
+>
+> Macro RANDOM_ORVALUE was used to make sure the pgtable entry will be
+> populated with !none data in clear tests.
+>
+> The RANDOM_ORVALUE tried to cover mostly all the bits in a pgtable entry,
+> even if there's no discussion on whether all the bits will be vaild.  Bot=
+h
+> S390 and PPC64 have their own masks to avoid touching some bits.  Now it'=
+s
+> the turn for x86_64.
+>
+> The issue is there's a recent report from Mikhail Gavrilov showing that
+> this can cause a warning with the newly added pte set check in commit
+> 8430557fc5 on writable v.s. userfaultfd-wp bit, even though the check
+> itself was valid, the random pte is not.  We can choose to mask more bits
+> out.
+>
+> However the need to have such random bits setup is questionable, as now
+> it's already guaranteed to be true on below:
+>
+>   - For pte level, the pgtable entry will be installed with value from
+>     pfn_pte(), where pfn points to a valid page.  Hence the pte will be
+>     !none already if populated with pfn_pte().
+>
+>   - For upper-than-pte level, the pgtable entry should contain a director=
+y
+>     entry always, which is also !none.
+>
+> All the cases look like good enough to test a pxx_clear() helper.  Instea=
+d
+> of extending the bitmask, drop the "set random bits" trick completely.  A=
+dd
+> some warning guards to make sure the entries will be !none before clear()=
+.
+>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Cc: Gavin Shan <gshan@redhat.com>
+> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+> Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+> Link: https://lore.kernel.org/r/CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM=
+-Lzk58-DGA@mail.gmail.com
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>  mm/debug_vm_pgtable.c | 31 +++++--------------------------
+>  1 file changed, 5 insertions(+), 26 deletions(-)
 
-I see. Adding him to the CC list.
-
-> 
-> 
-> > - lg,lp129qe
-> 
-> NAK. See "arch/arm/boot/dts/nvidia/tegra124-venice2.dts"
-
-Yes. I even had a comment next to it. And then blindly posted it here.
-
-> 
-> 
-> > - samsung,lsn122dl01-c01
-> 
-> Maybe. Also by Yakir at Rockchip and also doesn't appear to be
-> ChromeOS, so you should ask them.
-> 
-> 
-> > - samsung,ltn140at29-301
-> 
-> NAK. arch/arm/boot/dts/nvidia/tegra124-nyan-blaze.dts
-> 
-> 
-> > - sharp,ld-d5116z01b
-> 
-> Added by Jeffrey Hugo. Maybe Cc him to make sure it's OK to delete?
-
-I pinged him on IRC.
-
-> 
-> 
-> > - sharp,lq140m1jw46
-> 
-> Ack. Feel free to delete. This was used in the sc7280 reference board
-> (hoglin/zoglin) and by the time the dts made it upstream it was
-> already using generic edp-panel.
-> 
-> 
-> > - starry,kr122ea0sra
-> 
-> Ack. From my previous notes: "starry,kr122ea0sra - rk3399-gru-gru
-> (reference board, not upstream)". Nobody needs this.
-> 
-> 
-> > I'm considering dropping them, unless there is a good reason not to do
-> > so.
-> > ---
-> >  drivers/gpu/drm/panel/panel-edp.c | 18 +++++++++++++++++-
-> >  1 file changed, 17 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-> > index 6db277efcbb7..95b25ec67168 100644
-> > --- a/drivers/gpu/drm/panel/panel-edp.c
-> > +++ b/drivers/gpu/drm/panel/panel-edp.c
-> > @@ -1776,7 +1776,23 @@ static const struct of_device_id platform_of_match[] = {
-> >         {
-> >                 /* Must be first */
-> >                 .compatible = "edp-panel",
-> > -       }, {
-> > +       },
-> > +       /*
-> > +        * Do not add panels to the list below unless they cannot be handled by
-> > +        * the generic edp-panel compatible.
-> > +        *
-> > +        * The only two valid reasons are:
-> > +        * - because of the panel issues (e.g. broken EDID or broken
-> > +        *   identification),
-> > +        * - because the platform which uses the panel didn't wire up the AUX
-> > +        *   bus properly.
-> 
-> You mean that they physically didn't wire up the AUX bus? I don't
-> think that's actually possible. I don't believe you can use an eDP
-> panel without this working. Conceivably a reason to add here is if
-> there's some old platform that hasn't coded up support for AUX bus.
-> ...but it would be much preferred to update the platform driver to
-> support it.
-
-I was thinking about the DT/driver side of the story. Let me rephrase it
-in a cleaner way.
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
