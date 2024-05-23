@@ -1,166 +1,127 @@
-Return-Path: <linux-kernel+bounces-187292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F8D8CCFB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3728CCFB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79691F234A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:53:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8CE1C223BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10BD13D53B;
-	Thu, 23 May 2024 09:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BBE13DDD0;
+	Thu, 23 May 2024 09:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKGOjzJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LnIRAqyF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245D33C2D;
-	Thu, 23 May 2024 09:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5921213E032
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716458022; cv=none; b=r5baUARFVOQir7zQhuSNvZmLbhSSAbVTU7ErWyeQr9qnCICXoa3Zmmy/az3kG6yenFNU7yfRpoet+WehQvRmkpSx5CgaAWvx4GVVpONFIbnPlEwuMW+G2lgGDbhtAf5np4nS+HZ7Uv6IJTwLrmo2CWxsSBH4ByKkZ/0wSIJh5X8=
+	t=1716458027; cv=none; b=q8FbCD6Y+fY/V3Gsvl+Rsgzx+1UZUnu2WOzkj9xbA7HGg6qlBlGFt3xxcSJCI83jjfEKoVmSwGX4gNqWXqrBhKry183R6aOlu7A3oM0HZQnB979SOZHlMktntYEAUzCe40qNLK7Aug0ptBSv0zoUIZIrv0fAnIw2gfKhSb1yrHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716458022; c=relaxed/simple;
-	bh=uquqVgjr7tYR+GJ5slv940hVub5PN471/fS5dr+jBI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ifjQF1kl3E91dzqcZDML6xaU/46O/EVmedwghCD389Ik449YTOOKNzyygONo9M1vw70FJykxQpossiV+zVFoPCzBDEjBZxQ1siYRXS+VnQ0VEmXdQN457mM4sXCPnDjIQaUFloft2q//7L0YKXeQX41X6D9/OlQ71lqjPnVwh5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKGOjzJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F7BC2BD10;
-	Thu, 23 May 2024 09:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716458021;
-	bh=uquqVgjr7tYR+GJ5slv940hVub5PN471/fS5dr+jBI4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sKGOjzJ+yHJEnTUrpOS+e645mzix6+MSVIrN8b1qk7FRbC/cSqUespi3UZxXDjgQP
-	 Ujh9EuzHeEGkPpHssIIOaRZ2twSGj47qbmhyWZ8aKmVCNSGZE8j/fc13dxjVtSMhv2
-	 yelUmsPtGJcujZfzEwrIB6F4JY5LLmVcWTGzNlJ6l+2zDwItrj375OqWFOcBIieBhe
-	 QO23+12P0SAA7FoYfn5DzXkWoGNjcGAa7D3y0MtGIKbUOaQnqWSs/NPG0lKiNCQGOy
-	 kDUcyxe1+6G7LUGI2lMx0/7+vX8hqCP1pp7sLSYhvHQGi4gLoii8IPaeWLCQLmscZr
-	 n3te36Bi5PkpA==
-Message-ID: <ab6974a8-b345-4f9f-b051-0ae23a860a35@kernel.org>
-Date: Thu, 23 May 2024 11:53:36 +0200
+	s=arc-20240116; t=1716458027; c=relaxed/simple;
+	bh=bvmlXM882SJJ7a/SlHp+JarjIUmF72VGflVQCEhgnSs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DdMS0Aon+pBSQkRK4uDioa4Mtq/Hy8QmaJX123pmYx/ZzlBteytjDi2SysnyXpQurbp95//Ja6oOSm+9b7U0X8MWtapwQnbiRyx66rUjBQ36sj5XBI3PCGIgh+SH6fXCUqLx7jGp9ZfAF/Z3G78N+8i24UCcq/mUbNgygUCxRuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LnIRAqyF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716458024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bvmlXM882SJJ7a/SlHp+JarjIUmF72VGflVQCEhgnSs=;
+	b=LnIRAqyFqpS/8T4+E5lkkFZU7j2WALYLOpMokEvElJpvuvY1sIwewGeEbX4Kv0z+hgYlBK
+	H0/uDj5hfn+2PFVAL93eTtuU04sveb+YF6dnUomYI7syj6dtTXUe7Gj24nsusVJeOPJB7u
+	th6YVuXm++trPxuINAORMuUsijj/WHM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-427-Hh7qznBOOpa7Y6ybCEicTQ-1; Thu, 23 May 2024 05:53:41 -0400
+X-MC-Unique: Hh7qznBOOpa7Y6ybCEicTQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-354e222dcc5so110052f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:53:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716458020; x=1717062820;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bvmlXM882SJJ7a/SlHp+JarjIUmF72VGflVQCEhgnSs=;
+        b=dDqTyfAD/L/sRLeP7nPnAKXcQAUnYo68EJQqPRopg2IZh15YkOk79Ofu55wzawtZs/
+         aLKhtHSpI5Rr565Rdc/QfOvzAatoObYIkpUpvR2kSUkEi6QpDSNfze+ny9dRiWjhbb3o
+         XqB1MciMwsV95vpTVB4KXCXqSq9psOWZiC+orzYCz61OY+eGCEZ7NYsCskJJ3cxBMEcv
+         APzy0kXKXUTK3t38GFcRHe+eePc9Xnokwfg758no+e2mwxlG+QOY4GY2P0NN9Hfq9FlB
+         BCupdW2Os6F7iDpnYscDPbJmGfViOdbuym7oCEqxTMLAUueOgxZXwD9Lh5P1FEY5F1x2
+         7EbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWL5vHz3eGrNM4rTwBez1P9cfcdEEdZFq0wjeOUv4/mYubM97wafyBYXSIHqJXfYzMfrmIbflmaEsq8zKOM3aG/f11BKJLzjURi3G0X
+X-Gm-Message-State: AOJu0Yypq8IzrKW5hkK2EICfmlSJj0az6+rNAGF/fRruzOZ8pgTv+5RO
+	bAt4JOGdiUNGCHGzk8BbpJYqTJa58hcgdmFgvMiuVR8C5lbfdBMepNlDWkshePf9wVGb5plv6/r
+	r/Yu9IdzBXajoMVv/uMva6F2AQi6c7getZJtK6UEka+nq8prunLj8gAmMKK1dQw==
+X-Received: by 2002:a05:600c:4584:b0:419:f68e:118c with SMTP id 5b1f17b1804b1-420fd2d8f86mr33132285e9.1.1716458020366;
+        Thu, 23 May 2024 02:53:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHU/TtU54fCJQnu8JGghdk4MAqQlJESU5RjrvZLcY+i36udMW0PMc2+QaXC02jWu30O/x6Xuw==
+X-Received: by 2002:a05:600c:4584:b0:419:f68e:118c with SMTP id 5b1f17b1804b1-420fd2d8f86mr33132125e9.1.1716458019931;
+        Thu, 23 May 2024 02:53:39 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b094:ab10:29ae:cdc:4db4:a22a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f99d7fsm20366065e9.31.2024.05.23.02.53.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 02:53:39 -0700 (PDT)
+Message-ID: <52077a99395935c60bafb3c81d96fc64dee5261a.camel@redhat.com>
+Subject: Re: [PATCH] net: phy: micrel: set soft_reset callback to
+ genphy_soft_reset for KSZ8061
+From: Paolo Abeni <pabeni@redhat.com>
+To: Mathieu Othacehe <othacehe@gnu.org>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Florian
+ Fainelli <f.fainelli@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Karim Ben Houcine
+	 <karim.benhoucine@landisgyr.com>
+Date: Thu, 23 May 2024 11:53:37 +0200
+In-Reply-To: <20240521065406.4233-1-othacehe@gnu.org>
+References: <20240521065406.4233-1-othacehe@gnu.org>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 1/2] dt-bindings: hwmon: Add mps mp2891 driver bindings
-To: Noah Wang <noahwang.wang@outlook.com>, linux@roeck-us.net,
- jdelvare@suse.com
-Cc: robh@kernel.org, conor+dt@kernel.org, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <SEYPR04MB64828B9C1FEC5C21C60F5CE7FAF42@SEYPR04MB6482.apcprd04.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <SEYPR04MB64828B9C1FEC5C21C60F5CE7FAF42@SEYPR04MB6482.apcprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 23/05/2024 11:33, Noah Wang wrote:
-> Add a device tree bindings for mp2891 device.
-> 
-> Signed-off-by: Noah Wang <noahwang.wang@outlook.com>
+On Tue, 2024-05-21 at 08:54 +0200, Mathieu Othacehe wrote:
+> Following a similar reinstate for the KSZ8081 and KSZ9031.
+>=20
+> Older kernels would use the genphy_soft_reset if the PHY did not implemen=
+t
+> a .soft_reset.
+>=20
+> The KSZ8061 errata described here:
+> https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ8061-Errata-DS8000068=
+8B.pdf
+> and worked around with 232ba3a51c ("net: phy: Micrel KSZ8061: link failur=
+e after cable connect")
+> is back again without this soft reset.
+>=20
+> Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
+> Tested-by: Karim Ben Houcine <karim.benhoucine@landisgyr.com>
+> Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+LGTM, but waiting a little longer for anyone from phy crew to ack it.
 
-Subject: drop driver and describe hardware
+Thanks,
 
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline), work on fork of kernel
-(don't, instead use mainline) or you ignore some maintainers (really
-don't). Just use b4 and everything should be fine, although remember
-about `b4 prep --auto-to-cc` if you added new patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time, thus I will skip this patch entirely till you follow
-the process allowing the patch to be tested.
-
-Please kindly resend and include all necessary To/Cc entries.
-
-
-> ---
->  .../bindings/hwmon/pmbus/mps,mp2891.yaml      | 43 +++++++++++++++++++
->  MAINTAINERS                                   |  8 ++++
->  2 files changed, 51 insertions(+)
-
-
-..
-
->  
-> +MPS MP2891 DRIVER
-> +M:	Noah Wang <noahwang.wang@outlook.com>
-> +L:	linux-hwmon@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/hwmon/mps,mp2891.yaml
-> +F:	Documentation/hwmon/mp2891.rst
-
-There is no such file.
-
-> +F:	drivers/hwmon/pmbus/mp2891.c
-
-There is no such file.
-
-Are you sure your patchset is fully bisectable (including paths here)?
-
-Best regards,
-Krzysztof
+Paolo
 
 
