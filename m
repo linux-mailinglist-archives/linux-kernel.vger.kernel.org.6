@@ -1,164 +1,133 @@
-Return-Path: <linux-kernel+bounces-187829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880E88CD917
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4398CD91A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284EE1F2196B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8A11F219B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9368763F2;
-	Thu, 23 May 2024 17:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA7A41C92;
+	Thu, 23 May 2024 17:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="t4BEUZKJ"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BNGa4RW1"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B04F1CFBE;
-	Thu, 23 May 2024 17:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83989537FF
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716484693; cv=none; b=Ve8RVt7uCO3GCakpFY1Sf2Z2bba94Mn0UTVDInNyKsY47rUg9a97Sopa+yuUc4OmJIama5FoLQfMITeT/B+ta0OHN8aOl/1DEldjUETVTpStErmnvzyK4TQ8lDCBxn1ZAYLJQe9uY+Mil4qs4J7ey5CyJ5021Yr416Q0AJZbQvU=
+	t=1716484755; cv=none; b=BzwRxQty1Fi5VahDRKhtdTDkfTa6EXNpNA1I7rBxW+QXCVluTdV2bTszD94EH0O/Sd7S11goLfVzUPh9MjcoLjIr/ButGrvdxN3tf4kkgESZafgok03xY3S5tdiYEnZBKHNIZE6DgtIGS/LS91yI1VB8k21R6m0ILYeeA33jrro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716484693; c=relaxed/simple;
-	bh=KTKxHsL5GgQd/RymDOm5ZQw9KJwWaBDPIsYCic3kzu0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CJzjZc7C55xEJKCA11AoTguOzYmZr2eHC/2riWOt6GU7+WDkcuzfKJGfDHDnonoI1yOkqh4KNCPP4BVLxosNYF/vg8DZYS6p2IOsWW2MAMZYpKj1haICWox2Y7OyQ98z+Uyopr7LGJ0WTYT2z8KtfAbKQ75NUYION4WkQVlCKB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=t4BEUZKJ; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716484689;
-	bh=KTKxHsL5GgQd/RymDOm5ZQw9KJwWaBDPIsYCic3kzu0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=t4BEUZKJ/6ZaH+Y3XfIz0pektCrP7Cg1f9dQdvNRzc+Bxoz3ui7P6ARxJA+NTnrKl
-	 C57W2HeLT1OhbIEU3TMMvmWzA3UH0E2OR48qrmYoTRGUyzPt0NiAnnGHljPsMldnWK
-	 ya7H/LUM/YRlMJMwRlFZGIVPRguAKCceQZdh7cqCy3ErJFhs8OmSc+pZNkhfD0rUtV
-	 gB5yXVOPFHy8UC417vfUZ+q3lKd75uqhl13maaQgUiwMjERGQpNExAJ/UYa/stzRX+
-	 Ni7sxDWmSH1hxjl7z3dkmc5v3ytJpa26mPq/Ngssi+3UCUTiVz2rO6dx5H3+TTlG5A
-	 8N5FxyqbGEGFw==
-Received: from jupiter.universe (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BB10437821B3;
-	Thu, 23 May 2024 17:18:09 +0000 (UTC)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 71FB34800C9; Thu, 23 May 2024 19:18:09 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	linux-kernel@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH v1 1/1] usb: typec: tcpm: avoid resets for missing source capability messages
-Date: Thu, 23 May 2024 19:17:52 +0200
-Message-ID: <20240523171806.223727-1-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1716484755; c=relaxed/simple;
+	bh=DVnE5XXFyKqacmVrhhH8fswgU1m18DxHHd6q0OWNAvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+YSKX2aCzCntA3gMZ0RcT+WKspm20raKj2ZSIxfTXuyB+QqiGyk9sKJXa1PnESj5JkBRxh6i0tw0lQF0+6Y00uf6064udaV96lwyhVVj/lezDsO5mh0pwbY+Teg1kadBYtxwX/zvENxV+WDb9JR9Sy2RBhOOn2C2wKsBE1RZPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BNGa4RW1; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6a8691d736cso16032466d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716484752; x=1717089552; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Ta2jNkRpZUf8cR3CbSoBhJLjM5SlewpEAM0Rhg+alQ=;
+        b=BNGa4RW1xwwfDOv0Op7iSciIqli7m028tR2dfhuTRSBqP25+Xy6ytUPHJfl8EE6sga
+         LW9smymZjOzFWUdwws7tNMF4jI5R19xKlB8HI7bmThA2ZtJ3w5tbrRuNTYagqIWkql3E
+         5z0aJB/KoJKTB6eZogEl7c938zcoFSiw0NyGw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716484752; x=1717089552;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+Ta2jNkRpZUf8cR3CbSoBhJLjM5SlewpEAM0Rhg+alQ=;
+        b=nitMltIZsJFQBS0E2/uuc7bEuEI17N7yyBTSJG/VyLFH379sYcD+6hkB8BK3R6YnFK
+         3vjkfEQBCD+TK0twklXms5oe71Ec6rzYUsybrszYdFk7Jp0uYothjqDe7ZgJIJouUfQ0
+         aEzoYZhXIWB33D4DgVe6zwC/ZnmHM9IybZbvy/jSBcd8tbBUaCorAQoqPDKpxjMcJZIZ
+         oP2hwO5XgXlTO+hJLFEN1WYpuFeII9oa60meWPvAiUmTdyaZ6rd12Fk/WgMMkjqDb9Z0
+         L1QSyY8yzCXdgB8LyEX3w+UEF26cGCdYjHh/cTRi9fT0kANHir6d6P6RFxrjT4ZR8Kop
+         U9CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7TnFo2ZvefuXQNVBU6Gwwa5ih2NUG5KMDI6y/6Oh+qGj1vd8P1wvkzs/mrLZ2gxRRS1RO54MaB0PGMr0scErSgMnh0OTyC+lYoQu0
+X-Gm-Message-State: AOJu0Yz87BtENiZPYVD4+YRNfA95zBusBndBToaIMoE3ZoASpimRCujx
+	BHAYNgagfRT1hVuaIfcK6H1JwHpMRW2xrxrNR+9AifwGA8NOGYejrddUn2F0AfJCxCkNH9+cNPG
+	UdSCnvKLV7mOMy53nex4sR4U9d+W3V2bYsRtn
+X-Google-Smtp-Source: AGHT+IEzHEVz7KmL0hBsjecHbCGnKuvYcYFJBfwFeptZXU3FzAvGW0lTgosvxriDDLx0KaipYh/KwrJ1Lwa1XOxgc5c=
+X-Received: by 2002:a05:6214:2b9c:b0:6ab:9a03:ff96 with SMTP id
+ 6a1803df08f44-6ab9cfbe9d3mr1298086d6.7.1716484752442; Thu, 23 May 2024
+ 10:19:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240521065107.30371-1-wenst@chromium.org> <20240521065107.30371-2-wenst@chromium.org>
+In-Reply-To: <20240521065107.30371-2-wenst@chromium.org>
+From: Simon Glass <sjg@chromium.org>
+Date: Thu, 23 May 2024 11:19:01 -0600
+Message-ID: <CAFLszTgJpaWzJneZ-uReEGrE85MgGYOjJKxOL7jGCYMuVMPKUg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] scripts/make_fit: Drop fdt image entry compatible string
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-When the Linux Type-C controller drivers probe, they requests a soft
-reset, which should result in the source restarting to send Source
-Capability messages again independently of the previous state.
-Unfortunately some USB PD sources do not follow the specification and
-do not send them after a soft reset when they already negotiated a
-specific contract before. The current way (and what is described in the
-specificiation) to resolve this problem is triggering a hard reset.
+Hi Chen-Yu,
 
-But a hard reset is fatal on batteryless platforms powered via USB-C PD,
-since that removes VBUS for some time. Since this is triggered at boot
-time, the system will be stuck in a boot loop. Examples for platforms
-affected by this are the Radxa Rock 5B or the Libre Computer Renegade
-Elite ROC-RK3399-PC.
+On Tue, 21 May 2024 at 00:51, Chen-Yu Tsai <wenst@chromium.org> wrote:
+>
+> According to the FIT image spec, the compatible string in the fdt image
 
-Instead of directly trying a hard reset when no Source Capability
-message is send by the USB-PD source automatically, this changes the
-state machine to try explicitly asking for the capabilities by sending
-a Get Source Capability control message.
+Can you please add a link to where it says this in the spec? I cannot
+find it after a short search.
 
-For me this solves issues with 2 different USB-PD sources - a RAVPower
-powerbank and a Lemorele USB-C dock. Every other PD source I own
-follows the specification and automatically sends the Source Capability
-message after a soft reset, which works with or without this change.
+I believe this patch is correct. Since the information is in the
+configuration node it does not need to be in the FDT.
 
-I decided against making this extra step limited to devices not having
-the self_powered flag set, since I don't see any huge drawbacks in this
-approach and it keeps the logic simpler. The worst case scenario would
-be a power source, which is really stuck. In that case the hard reset
-is delayed by another 310ms.
+> node or any image node specifies the method to load the image, not the
+> compatible string embedded in the FDT or used for matching.
+>
+> Drop the compatible string from the fdt image entry node.
+>
+> While at it also fix up a typo in the document section of output_dtb.
+>
+> Fixes: 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+>  scripts/make_fit.py | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+> index 3de90c5a094b..263147df80a4 100755
+> --- a/scripts/make_fit.py
+> +++ b/scripts/make_fit.py
+> @@ -190,7 +190,7 @@ def output_dtb(fsw, seq, fname, arch, compress):
+>      Args:
+>          fsw (libfdt.FdtSw): Object to use for writing
+>          seq (int): Sequence number (1 for first)
+> -        fmame (str): Filename containing the DTB
+> +        fname (str): Filename containing the DTB
+>          arch: FIT architecture, e.g. 'arm64'
+>          compress (str): Compressed algorithm, e.g. 'gzip'
+>
+> @@ -211,7 +211,6 @@ def output_dtb(fsw, seq, fname, arch, compress):
+>          fsw.property_string('type', 'flat_dt')
+>          fsw.property_string('arch', arch)
+>          fsw.property_string('compression', compress)
+> -        fsw.property('compatible', bytes(compat))
+>
+>          with open(fname, 'rb') as inf:
+>              compressed = compress_data(inf, compress)
+> --
+> 2.45.0.215.g3402c0e53f-goog
+>
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/usb/typec/tcpm/tcpm.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index 375bc84d14a2..bac6866617c8 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -57,6 +57,7 @@
- 	S(SNK_DISCOVERY_DEBOUNCE),		\
- 	S(SNK_DISCOVERY_DEBOUNCE_DONE),		\
- 	S(SNK_WAIT_CAPABILITIES),		\
-+	S(SNK_WAIT_CAPABILITIES_TIMEOUT),	\
- 	S(SNK_NEGOTIATE_CAPABILITIES),		\
- 	S(SNK_NEGOTIATE_PPS_CAPABILITIES),	\
- 	S(SNK_TRANSITION_SINK),			\
-@@ -3108,7 +3109,8 @@ static void tcpm_pd_data_request(struct tcpm_port *port,
- 						   PD_MSG_CTRL_REJECT :
- 						   PD_MSG_CTRL_NOT_SUPP,
- 						   NONE_AMS);
--		} else if (port->state == SNK_WAIT_CAPABILITIES) {
-+		} else if (port->state == SNK_WAIT_CAPABILITIES ||
-+			   port->state == SNK_WAIT_CAPABILITIES_TIMEOUT) {
- 		/*
- 		 * This message may be received even if VBUS is not
- 		 * present. This is quite unexpected; see USB PD
-@@ -5039,10 +5041,31 @@ static void run_state_machine(struct tcpm_port *port)
- 			tcpm_set_state(port, SNK_SOFT_RESET,
- 				       PD_T_SINK_WAIT_CAP);
- 		} else {
--			tcpm_set_state(port, hard_reset_state(port),
-+			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
- 				       PD_T_SINK_WAIT_CAP);
- 		}
- 		break;
-+	case SNK_WAIT_CAPABILITIES_TIMEOUT:
-+		/*
-+		 * There are some USB PD sources in the field, which do not
-+		 * properly implement the specification and fail to start
-+		 * sending Source Capability messages after a soft reset. The
-+		 * specification suggests to do a hard reset when no Source
-+		 * capability message is received within PD_T_SINK_WAIT_CAP,
-+		 * but that might effectively kil the machine's power source.
-+		 *
-+		 * This slightly diverges from the specification and tries to
-+		 * recover from this by explicitly asking for the capabilities
-+		 * using the Get_Source_Cap control message before falling back
-+		 * to a hard reset. The control message should also be supported
-+		 * and handled by all USB PD source and dual role devices
-+		 * according to the specification.
-+		 */
-+		if (tcpm_pd_send_control(port, PD_CTRL_GET_SOURCE_CAP, TCPC_TX_SOP))
-+			tcpm_set_state_cond(port, hard_reset_state(port), 0);
-+		else
-+			tcpm_set_state(port, hard_reset_state(port), PD_T_SINK_WAIT_CAP);
-+		break;
- 	case SNK_NEGOTIATE_CAPABILITIES:
- 		port->pd_capable = true;
- 		tcpm_set_partner_usb_comm_capable(port,
--- 
-2.43.0
-
+Regards,
+Simon
 
