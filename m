@@ -1,179 +1,113 @@
-Return-Path: <linux-kernel+bounces-187346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE32A8CD07F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:41:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D03F8CD081
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84E80284A1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23331F22789
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D411422B4;
-	Thu, 23 May 2024 10:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD851411F7;
+	Thu, 23 May 2024 10:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BEYa+G6O"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qLqvAqAx"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7209E13CF98
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6356713CF98
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716460877; cv=none; b=FDFAzAru0HiF0TWnKWfinrJMI19bP5HSQJyNUiBJVfe1xdbvVxx9uUw1GUKm31Allt/QfrdruwMzvd+i14+tPYfYESDu/HYjiBMDEP3no2gb0o2RE35gBZOgRvE3lodmCPo/mkxjQ/+cu7LFcP3lKUvZKv3pTlMS4q566jBxeiE=
+	t=1716460964; cv=none; b=bcs0+9ufZKeHefDVKLhV1Q++mqnePsFiJOMtu1woZ/WiimWZ7X+Z17c60ro1VHqK3jxhR3G5x2YXnw5ik5irLsLek79ERNQRjgOZpIwxw49nS3Xsg7IucKwp/+mwjr9NCpOosvjcOWzYuM2hxbX6JFPb12E+Zgqwp8VGK/xIhrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716460877; c=relaxed/simple;
-	bh=q06YPbRgNkgxbn7RemtS9UbVzl2I7UzZ5jwZDFiVGoc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NC9P0gWZ72280ZIvEBCKFaBbVJ0D5IIm+CHJU+c7aBudZFHTuCMXP2A2yuez9/QmgBPnVrPvurRzmQ3NpFSZyBQvl93PUtm1N8IyTsmiv5qL84VLkoXyZPsYbxwTuEQHk4GAEWrJC2xQlDn2ZjVNw6btn6xddenqE+60+KEXu3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BEYa+G6O; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e95125e257so7240021fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:41:15 -0700 (PDT)
+	s=arc-20240116; t=1716460964; c=relaxed/simple;
+	bh=pPD2rS1ZgskYhKHjT7ris9b/z5/qXBC9txcXhZDWUvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fs7pen1nXzwtF9WTQGL9CVUvKA2XE29Kx8YbA0PUyH/UtxJic2I3lVR3zRSpwGXEFHTwe//hCElnycqN6XeHUAS5Sv0X5to3VotpUwtH7en1iB4mH8GRRtve2F94YtUbMJT4+QX4Z3L8mPDFHIBS9vLscOS5WYBID4UpeL9cyX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qLqvAqAx; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-354f69934feso447181f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:42:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716460873; x=1717065673; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BL1+X00ACKL/bv+6PDk9L99Rw1muN1ABKKcgYAgwe5Y=;
-        b=BEYa+G6O4zaXbqCqlaCokQfaIxUXw6GqwtJjXo9w+edzRqpY63WkUeHTfiM6LAACCc
-         xB5Nju24Grvg+uF6cJbJGPRXDHsVbSg51fM5be4PEYHnuOTuKJUHj09p00J2EeEbtXDS
-         mellnWYrqlTqIzx1i5bzvlC2sBCVzC16xLEyE=
+        d=linaro.org; s=google; t=1716460961; x=1717065761; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DaH0WUaVpR/8gbZR869sa1sk2qXADEzmLsvjAUS36EU=;
+        b=qLqvAqAxBAmV2dcEbWWmJ2aN44v2W4mx1zSiv5TYDy8H6inMDeblmMXB1B7H5XtuoS
+         rZCrCYXqYQBSCtipj3oPsxwIUN9kGhG+U60C/YMEWXV0IUn1Vz+6Ac0Jifpja2d/aqAx
+         2yyKG7Hf1DgodQNQ0ANpGw60WECI8Wlbc/uRSuIo0Jz4iywv2fw+pWvY1msm/0XEZI03
+         m4FBDiPVD8gEvWITFjmDqCgqSaFed1DfqRZ+qYnfYCja9lCFGWCfWSQvo/jFaRTFhpL3
+         A8hyHVpdy9y1vjyvoTof7YRK9DE9cUhooZeiUoCwWyUIiJJupYVbVd8CsNV1znGfQIGu
+         Myyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716460873; x=1717065673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BL1+X00ACKL/bv+6PDk9L99Rw1muN1ABKKcgYAgwe5Y=;
-        b=C47IWGiqzz8mif/xU1fYtdmVqk5/buk+s4qfkiCU7kTFWw0kGKLdOOyhOh3Gw3iBV/
-         4co6mIT+48n5zk+94ie390jAwQ+mCJE6AYpIRVaZKS1J+BrCR0HtWplfj8yYXXL/F610
-         zrDZEXZsjh3o91nvns1zeXfUh0Xco6ZuR1RwxOPKOhD5mjWzJtixUOBNkXSzaKArGEQL
-         FGozx6+AWerIB4yTGLzY8ulpVTmr1W2TLVs1tYQWChrYQN6JkAtrEbj82xd18RPk7dA1
-         QR86ZSBhUnmUxUyrw8FOaSaNEXmLr2mx2VdkizcVqcRrHuGzVklTi9EeTvJqgaHOaWJA
-         YmEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTLo7l86Qjo9NvG8DI1J5NUMY3UvtSE40ZtCwfp6/rD/Ejwsw3ML8vSFUnSL0Z7hXgTswaKOxryOyMCVdKh1u27XE4d1t8UcWTDiIS
-X-Gm-Message-State: AOJu0YyU3DYppgsdK43idzdnI5jDVWcB11ghAUWf8KKOMyaAVe93tYWp
-	w/MO8OImHOVoak+9dUlMKJcXoQsZALVzE1Rk7NxuZMmqiToyMnGWFOmTj0kNb40P7LD4U82DTFP
-	/xEwYVDus5bH76kvvFh+yZXsCQsoHzc+UhS7i
-X-Google-Smtp-Source: AGHT+IFqTEnp78PCvWoQDhZCseLpuI/oZewTrl4O4PyV0liWJOGAHT0/ixjwOP3rlpfNlPgDIVcGQNWnWwCWzn66LzI=
-X-Received: by 2002:ac2:4e45:0:b0:51b:efc:df39 with SMTP id
- 2adb3069b0e04-527ef4f5d09mr587927e87.10.1716460873562; Thu, 23 May 2024
- 03:41:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716460961; x=1717065761;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DaH0WUaVpR/8gbZR869sa1sk2qXADEzmLsvjAUS36EU=;
+        b=OJqh3rybXW7DXrolpTon4OnUTq1qbsHZbgdUxuKz+MoQmSvuaKifUjkWN/iV9Xhllj
+         40GRjMA46WaqjR1jN+3UU8pyr4S7zLHzwcelSIj/d8YTulB/jhJ/Rmv3MlGbaXqY7Uq9
+         9v+4P/eW9GALDxW26nXbtD6PztRTEr/YAUmohEQWokcmU7OaTUIMu2oOo9tAF8KJIN2+
+         0DV6T+gdIPl/EhBvG94AZc26O6HuT9uRjM2zlTJAahJ7I6imV2usHUSpCfznH3WH6s+/
+         hXPfWpEBj8z1bgEF7faO9H9YsGyAFg6vp4cZGII9Pdsnx+/O68EtimVK6vlg7CMHedpy
+         E07A==
+X-Forwarded-Encrypted: i=1; AJvYcCWVXHCxzzWY1F4zpJwYMPcqrlHJCjIao2NkRNTYhx2oBj/60G5mCwSL7ee3035sABwpmFlwAWP/NhGSbV9VRM96RcqWjl/h6JnbaaWA
+X-Gm-Message-State: AOJu0YyrF13q4Nq92qSAiW7gHKRdwYPMkNGUL7At61AGUst+nSgzmHP7
+	SemEOD68TYwRAhVLNU/KUAqvJLZfeC3ZgZraJ9rrwbl+IuRX7rhHXmMouTgN15Y=
+X-Google-Smtp-Source: AGHT+IH/fm458wBPdlXEb1gtuOzqmAIVNW1EA1Cak44UuBRZM5nh6/eqhRkhg2PYFkM2VvDBrDPuFA==
+X-Received: by 2002:a5d:456f:0:b0:348:7e75:4d75 with SMTP id ffacd0b85a97d-354f753b77emr1706027f8f.22.1716460960667;
+        Thu, 23 May 2024 03:42:40 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35501491c40sm516038f8f.28.2024.05.23.03.42.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 03:42:40 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/4] ASoC: codecs: wcd938x: Drop unused duplicated MIC2 bias register defines
+Date: Thu, 23 May 2024 12:42:25 +0200
+Message-ID: <20240523104228.36263-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521075717.50330-4-angelogioacchino.delregno@collabora.com> <eca4d113-ba59-45aa-9224-22235fb09ddc@bosc.ac.cn>
-In-Reply-To: <eca4d113-ba59-45aa-9224-22235fb09ddc@bosc.ac.cn>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 23 May 2024 18:41:02 +0800
-Message-ID: <CAGXv+5Gzau7qFrsOrKsm7yXNX7AKadgNM5S3SaTNNu57=5-8EQ@mail.gmail.com>
-Subject: Re: [v5,3/3] drm/mediatek: Implement OF graphs support for display paths
-To: Sui Jingfeng <suijingfeng@bosc.ac.cn>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, chunkuang.hu@kernel.org, 
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com, 
-	ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	kernel@collabora.com, Alexandre Mergnat <amergnat@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 22, 2024 at 8:32=E2=80=AFPM Sui Jingfeng <suijingfeng@bosc.ac.c=
-n> wrote:
->
-> Hi,
->
->
-> On 5/21/24 15:57, AngeloGioacchino Del Regno wrote:
-> > +static int mtk_drm_of_ddp_path_build(struct device *dev, struct device=
-_node *node,
-> > +                                  struct mtk_mmsys_driver_data *data)
-> > +{
-> > +     struct device_node *ep_node;
-> > +     struct of_endpoint of_ep;
-> > +     bool output_present[MAX_CRTC] =3D { false };
-> > +     int ret;
-> > +
-> > +     for_each_endpoint_of_node(node, ep_node) {
-> > +             ret =3D of_graph_parse_endpoint(ep_node, &of_ep);
-> > +             of_node_put(ep_node);
->
-> There is going to *double* decline the reference counter, as the
-> __of_get_next_child() will decrease the reference counter for us
-> on the next iteration.
->
->
-> > +             if (ret) {
-> > +                     dev_err_probe(dev, ret, "Cannot parse endpoint\n"=
-);
-> > +                     break;
-> > +             }
->
-> Move the 'of_node_put(ep_node)' into brace '{}' here, if we really cares
-> about the reference count.
->
-> > +
-> > +             if (of_ep.id >=3D MAX_CRTC) {
->
-> ditto ?
+All MIC1-4 bias registers are the same and the header already defines
+register fields for them.  Drop unused, duplicated defines for MIC2
+bias enable register.
 
-Maybe we should just add a scoped version of for_each_endpoint_of_node().
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ sound/soc/codecs/wcd938x.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-See https://lore.kernel.org/all/20240223124432.26443-1-Jonathan.Cameron@hua=
-wei.com/
+diff --git a/sound/soc/codecs/wcd938x.h b/sound/soc/codecs/wcd938x.h
+index 74b1498fec38..df07e92d9d97 100644
+--- a/sound/soc/codecs/wcd938x.h
++++ b/sound/soc/codecs/wcd938x.h
+@@ -75,9 +75,7 @@
+ #define WCD938X_MICB_PULL_UP			2
+ #define WCD938X_MICB_PULL_DOWN			3
+ #define WCD938X_ANA_MICB2                       (0x3023)
+-#define WCD938X_ANA_MICB2_ENABLE		BIT(6)
+ #define WCD938X_ANA_MICB2_ENABLE_MASK		GENMASK(7, 6)
+-#define WCD938X_ANA_MICB2_VOUT_MASK		GENMASK(5, 0)
+ #define WCD938X_ANA_MICB2_RAMP                  (0x3024)
+ #define WCD938X_RAMP_EN_MASK			BIT(7)
+ #define WCD938X_RAMP_SHIFT_CTRL_MASK		GENMASK(4, 2)
+-- 
+2.43.0
 
-ChenYu
-
-> > +                     ret =3D dev_err_probe(dev, -EINVAL,
-> > +                                         "Invalid endpoint%u number\n"=
-, of_ep.port);
-> > +                     break;
-> > +             }
-> > +
-> > +             output_present[of_ep.id] =3D true;
-> > +     }
-> > +
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     if (output_present[CRTC_MAIN]) {
-> > +             ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_MAIN,
-> > +                                                 &data->main_path, &da=
-ta->main_len);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     if (output_present[CRTC_EXT]) {
-> > +             ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_EXT,
-> > +                                                 &data->ext_path, &dat=
-a->ext_len);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     if (output_present[CRTC_THIRD]) {
-> > +             ret =3D mtk_drm_of_ddp_path_build_one(dev, CRTC_THIRD,
-> > +                                                 &data->third_path, &d=
-ata->third_len);
-> > +             if (ret)
-> > +                     return ret;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
->
-> --
-> Best regards
-> Sui Jingfeng
->
 
