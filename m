@@ -1,160 +1,192 @@
-Return-Path: <linux-kernel+bounces-187048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5B98CCC41
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:29:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C53C8CCC47
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F352839B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:29:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A50FB21DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73BD13B59B;
-	Thu, 23 May 2024 06:29:27 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98C13C3CC;
+	Thu, 23 May 2024 06:30:34 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D9D13B590
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9773F13BAC4;
+	Thu, 23 May 2024 06:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716445767; cv=none; b=rMghx61RuoRMZfOM85Tyu7Q9E+zuf8Ge8N/dNltcBmno6LTJAm7t93kjv8a4u9Uh5XTRSF2SMW6FkTuZCyJZIupr4zYraVwBMgoK0jcgSDe1vM4m5MynahCyAakaIFTaTzQw0MoErwSPWx+sMaGpJSR66Bs59HFixk9yys1pIEY=
+	t=1716445833; cv=none; b=IC1a1ac3E398uiMHOa9k9a4hqpb8wR0l9/KEg2u0MwBXc0qZOBP0ycFjxDQzn45lUhAuSXEw8QHNjydwyKOQ1Y1Df3A9YKalzDCjL7OLASEJpCEPJQwmEgGmQw8Lv4czDpYlmsdsgJ77WmkmsR0KtiCmVG4wT7Q/qyKPGtmdAGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716445767; c=relaxed/simple;
-	bh=J5ZpVyVAUpg4pyUCflJLXJxbcwWcZMn/drjfnI+AD/g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HHsDW7S9xxZECKlcnIEkqQr3U7SJmW3pClTWDzRqQ6NvDTkR+/dFcZLlcaTUb3HAqT5DLIN73wykv/8bnFXi0eaTF66dWjVw89m/mTYrgHhwyeyY6q2HDFT3+ZZbrtemxUYNuxWdv0kFwzq/S/JQaLuqvO5Jgtyg7IQQViqoV5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-36d98ad0c7eso16395765ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:29:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716445765; x=1717050565;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n8NprSr1ChIB9sOY5kSoYkl/O9cUSM9fplRC4s3tYng=;
-        b=gCj1xIuDM3WjQIZnB/UrM0XtX5Urso7kkaHHctwdf/fIFuq3y10pRq5MAZeJPUweMZ
-         VGU3/zFkAIAPnASlvci2kI0vRBcTu559hpt0aZ+/nBiGVDLoeMCrq1WzSYCEfNlUfnCx
-         KLkv9QlOZ+oA7u0UHawqyEunNoV0Wl0Qr0JaJItXXNHvcbVFcBs6ibbnk/73/+7bWLFt
-         iLIb/OpYjCCe/8DZWq6l1+/pMr+WIOSy64Gx5AoYD72eGiUY/S+8VMpJFF8bKPJaih5+
-         8FTvbIPMsczcWIxfs5z0TazClfsxL8t3hCq14YgQ6rMJcpPVeUqFrmGRV7macglmmRse
-         1uYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCpJXyrKStJfpmA+ULJQYRZUnBBF+/kNbbNc7CTDFf4rVk8TRvbipEL9nXMSYZGWGhYmK54wr1zL0XSLr9NkBPQhHggpHdo7i2tA/C
-X-Gm-Message-State: AOJu0YzfXCFLsfHnmCCMkt4Z2ip9ZJgF/Tv0eLGgIivN24QSlxRV60XI
-	Xur4HYJJQLZ+MJb3T04qi95OJlTKv3DmR67BJdjeEa6P5VRnO/2orXMSny0flEHxrmiCAioNoBo
-	nLHheoCDl3e2LB5tQDW6KVCKD9CLEuqUtL6y57nMyw4ab1ivdEeNt50E=
-X-Google-Smtp-Source: AGHT+IHN2y3KnTn3x8xNNPvRVm6HbPg02D7Zv4zP0a7ndXO9ZLfhjbbhLqpnCoZk2d+jCz3iQrBEgNnjqhB9GQli9lr+icrLbTqa
+	s=arc-20240116; t=1716445833; c=relaxed/simple;
+	bh=81Q1awJnNJfynjAXnpzDQLqLmBBnJY2qpDFu3JBihuU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=smA60nU8IFYSuYK7/FfADHFtO/ksmC9+BiKsyG1m0IHISMxRP4HZAWC8DXw2YdC6UG4kMuPeAAyLHNbSKeoSAeDVFscoK0/97yxhADcvVOdmPbZM+0ITHD0gOgUU2ltzxKqBTZSInn3hok4ilaHQi767CZmQa4Zs1DZLUEkiB9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44N6TtYiA615525, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44N6TtYiA615525
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 May 2024 14:29:55 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 23 May 2024 14:29:56 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 23 May 2024 14:29:55 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::b9ff:7c04:a2d:c266]) by
+ RTEXMBS03.realtek.com.tw ([fe80::b9ff:7c04:a2d:c266%2]) with mapi id
+ 15.01.2507.035; Thu, 23 May 2024 14:29:55 +0800
+From: Larry Chiu <larry.chiu@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Justin Lai <justinlai0215@realtek.com>,
+        "kuba@kernel.org"
+	<kuba@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com"
+	<pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org" <horms@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>
+Subject: RE: [PATCH net-next v19 01/13] rtase: Add pci table supported in this module
+Thread-Topic: [PATCH net-next v19 01/13] rtase: Add pci table supported in
+ this module
+Thread-Index: AQHaqC9Rjgvgl8xidUGsWwGzPtgZ5LGa66SAgAZDQWCAAA0PoP//58SAgAGQIND///9jAIAAjjtw//+ocQAAJ0pZ0A==
+Date: Thu, 23 May 2024 06:29:55 +0000
+Message-ID: <48072595c9c344fea9c268fd81e4d06e@realtek.com>
+References: <20240517075302.7653-1-justinlai0215@realtek.com>
+ <20240517075302.7653-2-justinlai0215@realtek.com>
+ <d840e007-c819-42df-bc71-536328d4f5d7@lunn.ch>
+ <e5d7a77511f746bdb0b38b6174ef5de4@realtek.com>
+ <97e30c5f-1656-46d0-b06c-3607a90ec96f@lunn.ch>
+ <f9133a36bbae41138c3080f8f6282bfd@realtek.com>
+ <7aab03ba-d8ed-4c9c-8bfd-b2bbed0a922d@lunn.ch>
+ <5270598ca3fc4712ac46600fcc844d73@realtek.com>
+ <0ec88b78-a9d3-4934-96cb-083b2abf7e2b@lunn.ch>
+In-Reply-To: <0ec88b78-a9d3-4934-96cb-083b2abf7e2b@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d19:b0:36f:4a03:6406 with SMTP id
- e9e14a558f8ab-371faf4c83bmr3593655ab.5.1716445765033; Wed, 22 May 2024
- 23:29:25 -0700 (PDT)
-Date: Wed, 22 May 2024 23:29:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000019f4c00619192c05@google.com>
-Subject: [syzbot] [ext4?] WARNING in __fortify_report
-From: syzbot <syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    0450d2083be6 Merge tag '6.10-rc-smb-fix' of git://git.samb..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=152aa7d0980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=769d2e801ee872cc
-dashboard link: https://syzkaller.appspot.com/bug?extid=50835f73143cc2905b9e
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103cb2a4980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16502844980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/8ead8862021c/non_bootable_disk-0450d208.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/11a51fed42ca/vmlinux-0450d208.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1df7cb920c72/zImage-0450d208.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 3004 at lib/string_helpers.c:1029 __fortify_report+0x6c/0x74 lib/string_helpers.c:1029
-strnlen: detected buffer overflow: 17 byte read of buffer size 16
-Modules linked in:
-Kernel panic - not syncing: kernel: panic_on_warn set ...
-CPU: 0 PID: 3004 Comm: syz-executor296 Not tainted 6.9.0-syzkaller #0
-Hardware name: ARM-Versatile Express
-Call trace: 
-[<818df678>] (dump_backtrace) from [<818df774>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:256)
- r7:00000000 r6:82622e04 r5:00000000 r4:81fe2534
-[<818df75c>] (show_stack) from [<818fcdd8>] (__dump_stack lib/dump_stack.c:88 [inline])
-[<818df75c>] (show_stack) from [<818fcdd8>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:114)
-[<818fcd84>] (dump_stack_lvl) from [<818fce18>] (dump_stack+0x18/0x1c lib/dump_stack.c:123)
- r5:00000000 r4:82860d18
-[<818fce00>] (dump_stack) from [<818e021c>] (panic+0x120/0x358 kernel/panic.c:347)
-[<818e00fc>] (panic) from [<80243d54>] (check_panic_on_warn kernel/panic.c:240 [inline])
-[<818e00fc>] (panic) from [<80243d54>] (print_tainted+0x0/0xa0 kernel/panic.c:235)
- r3:8260c5c4 r2:00000001 r1:81fcb130 r0:81fd2d44
- r7:8080fe7c
-[<80243ce0>] (check_panic_on_warn) from [<80243f48>] (__warn+0x7c/0x180 kernel/panic.c:693)
-[<80243ecc>] (__warn) from [<80244234>] (warn_slowpath_fmt+0x1e8/0x1f4 kernel/panic.c:726)
- r8:00000009 r7:8202fe0c r6:df969db4 r5:836e6c00 r4:00000000
-[<80244050>] (warn_slowpath_fmt) from [<8080fe7c>] (__fortify_report+0x6c/0x74 lib/string_helpers.c:1029)
- r10:8271c1c8 r9:00000005 r8:df969ec3 r7:8372e000 r6:00000000 r5:836be478
- r4:82e27000
-[<8080fe10>] (__fortify_report) from [<818e9a40>] (__fortify_panic+0x10/0x14 lib/string_helpers.c:1036)
-[<818e9a30>] (__fortify_panic) from [<8062a3b0>] (strnlen include/linux/fortify-string.h:221 [inline])
-[<818e9a30>] (__fortify_panic) from [<8062a3b0>] (sized_strscpy include/linux/fortify-string.h:295 [inline])
-[<818e9a30>] (__fortify_panic) from [<8062a3b0>] (ext4_ioctl_getlabel fs/ext4/ioctl.c:1154 [inline])
-[<818e9a30>] (__fortify_panic) from [<8062a3b0>] (ext4_fileattr_get+0x0/0x78 fs/ext4/ioctl.c:1609)
-[<8062829c>] (__ext4_ioctl) from [<8062aaac>] (ext4_ioctl+0x10/0x14 fs/ext4/ioctl.c:1626)
- r10:836e6c00 r9:00000005 r8:845e7900 r7:00000000 r6:845e7900 r5:00000000
- r4:81009431
-[<8062aa9c>] (ext4_ioctl) from [<80518930>] (vfs_ioctl fs/ioctl.c:51 [inline])
-[<8062aa9c>] (ext4_ioctl) from [<80518930>] (do_vfs_ioctl fs/ioctl.c:861 [inline])
-[<8062aa9c>] (ext4_ioctl) from [<80518930>] (__do_sys_ioctl fs/ioctl.c:905 [inline])
-[<8062aa9c>] (ext4_ioctl) from [<80518930>] (sys_ioctl+0x134/0xda4 fs/ioctl.c:893)
-[<805187fc>] (sys_ioctl) from [<80200060>] (ret_fast_syscall+0x0/0x1c arch/arm/mm/proc-v7.S:67)
-Exception stack(0xdf969fa8 to 0xdf969ff0)
-9fa0:                   00000000 00000000 00000005 81009431 00000000 00000000
-9fc0: 00000000 00000000 0008e060 00000036 000f4240 00000000 00000001 00003a97
-9fe0: 7e98ac70 7e98ac60 00010764 0002e8c0
- r10:00000036 r9:836e6c00 r8:8020029c r7:00000036 r6:0008e060 r5:00000000
- r4:00000000
-Rebooting in 86400 seconds..
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > Thank you very much for your clear reply.
+> >
+> > As I mentioned, it works like a NIC connected to an Ethernet Switch, no=
+t a
+> > Management port.
+> > The packets from this GMAC are routed according to switch rules such as
+> > ACL, L2, .... and it does not control packet forwarding through any spe=
+cial
+> > header or descriptor. In this case, we have our switch tool which is us=
+ed
+> > for provisioning these rules in advance. Once the switch boots up, the
+> > rules will be configured into the switch after the initialization. With=
+ this
+> > driver and the provisioning by our switch tool, it can make switch forw=
+ard
+> > the frame as what you want. So it's not a DSA like device.
+>=20
+> How does spanning tree work? You need to send bridge PDUs out specific
+> ports. Or do you not support STP and your network must never have
+> loops otherwise it dies in a broadcast storm? That does not sound very
+> reliable.
+>=20
+> There are other protocols which require sending packets out specific
+> ports. Are they simply not supported?
+>=20
+This port is not a CPU port, nor a management port, and therefore does not=
+=20
+manage any protocols of the switch. These protocols are implemented by the
+CPU inside the Ethernet switch core.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > In another case, we do have other function which is used for controllin=
+g
+> > the switch registers instead of sending packets from the switch ports.
+> > At the meanwhile, we are investigating how to implement the function to
+> > Integrate into switchdev.
+>=20
+> In general, we don't support configuration of hardware from user
+> space, which is what your switch tool sounds like. We will want to see
+> a switchdev driver of some form.
+>=20
+> It might be you need to use VLAN overlays, using
+> net/dsa/tag_8021q.c. Each port of the switch is given a dedicated
+> VLAN, and the switch needs to add/strip the VLAN header. Its not
+> great, but it does allow 'simple' switches to have basic functionality
+> if they are missing header/dma descriptor support for selecting ports.
+>=20
+>         Andrew
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Typically, a NIC connected to the network may go through a switch, as show
+below. Our design saves the two PHYs in the middle and connects to the Host
+through PCIe.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+This driver just service the transmit/receive packets for one port in the R=
+TL90xx
+with PCIe interface. Other programs that the switch needs to execute are
+managed by the CPU inside the switch core.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+*               *************************
+*               *                       *
+*               *        PC/Host        *
+*               *                       *
+*               *   +-------------+     *
+*               *   |      NIC    |     *
+*               ***********++************
+*                        | PHY |
+*                          ||
+*                        | PHY |                 =20
+*            +-------------++----------------+   =20
+*            |           | MAC |             |   =20
+*            |           +-----+             |   =20
+*            |                               |   =20
+*            |     Ethernet Switch Core      |   =20
+*            |                               |   =20
+*            |   +-----+           +-----+   |   =20
+*            |   | MAC |...........| MAC |   |   =20
+*            +---+-----+-----------+-----+---+   =20
+*                | PHY |...........| PHY |=20
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+                            |
+                            |
+                            |
+                            V
 
-If you want to undo deduplication, reply with:
-#syz undup
+*               *************************
+*               *                       *
+*               *        PC/Host        *
+*               *                       *
+*               *   +-------------+     *
+*               *   |      NIC    |     *
+*               ***********++************
+*                          ||
+*            +-------------++----------------+   =20
+*            |           | MAC |             |   =20
+*            |           +-----+             |   =20
+*            |                               |   =20
+*            |     Ethernet Switch Core      |   =20
+*            |                               |   =20
+*            |   +-----+           +-----+   |   =20
+*            |   | MAC |...........| MAC |   |   =20
+*            +---+-----+-----------+-----+---+   =20
+*                | PHY |...........| PHY |=20
 
