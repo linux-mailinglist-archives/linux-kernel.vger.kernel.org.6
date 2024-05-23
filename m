@@ -1,163 +1,128 @@
-Return-Path: <linux-kernel+bounces-186895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A9F48CCA7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:50:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5580F8CCA89
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B211B282371
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:50:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7E2B214E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBF346B8;
-	Thu, 23 May 2024 01:50:15 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815AA4685;
+	Thu, 23 May 2024 01:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z76hBx5t"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2220D4685;
-	Thu, 23 May 2024 01:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC01A34
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716429015; cv=none; b=HCZrR9DcKHpASZepNWbW7kuVQegfZ+kXSduP9r/ZF82njTUIjP4z8WSy0vMiTdp+hBTLqNHxOHEgU9mGjW77WLwKqC058CQeNreANfJmVs0ln7lObCGxZubQAxNyw9ZcjwSKxAxZLWRWnXDaD8Scuv0vXXBMvOEtV7UJ/HqL/D0=
+	t=1716429401; cv=none; b=c0loQ8PlRaQNDT4gmK6obXuHkTXkCw+/VJBe735pQwFu9c91tucsX3aKxk3q9ZQMIsbdXQWBROi6DVKYnOForEGv8YkbtxHfPPthF03N3O0uh6aAidtkOQ3//k0Zw96IFp0Kh0GSWSkDuu7KvAzWFTOoumK/XbqqSOBO9Xz0QMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716429015; c=relaxed/simple;
-	bh=7Dn4o0QiVmmMDv2LKj+uI/z8kXliyMJZw5mnMU+G7bQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I0RmIiL0BAZOWpZ9qOcp1Fc6YLFNkC/7FUCTDDLxLAopLBiutJ3XqDsEPd13ROO4QZHGtCAZRfejosoHA4wsP4OiwQoD4mc/NIMTeM7YQ+VfszU9A/6zAEL2EERB/HWgvIOSIHNTjCKp0HE+edkrOt9M/1t4MXNhzGczy1hQzDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VlB0P2n8yz1HCX9;
-	Thu, 23 May 2024 09:48:37 +0800 (CST)
-Received: from dggpemd100001.china.huawei.com (unknown [7.185.36.94])
-	by mail.maildlp.com (Postfix) with ESMTPS id 222831A0188;
-	Thu, 23 May 2024 09:50:10 +0800 (CST)
-Received: from [10.67.120.108] (10.67.120.108) by
- dggpemd100001.china.huawei.com (7.185.36.94) with Microsoft SMTP Server
+	s=arc-20240116; t=1716429401; c=relaxed/simple;
+	bh=odqsliIp1bqB03SOjUukVLUc8qbuCHFi+9Xo8awy+IQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTP1tCAAS22Ju08NgncvhAs9GJHO7VCb0IosgNq2LBW8JkQkViN56m2+CKwFvQ9cQ+9TavqWz0GzG6f6h3zme7/4omsr1yGtZ+QbNIi3JDaXfPoI71ciC0uWCSKyfDJKOadg91wNjoKvJoqu2g+/eRqeA0IIdbNkDptpjVHihvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z76hBx5t; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MHXLut010132;
+	Thu, 23 May 2024 01:56:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=xCFv3e6r0rcQyZLLSdgTL
+	+V8y45gOmc5gjoqM82CGt0=; b=Z76hBx5tMQsXewixk7qlbnkp0tSSEp/llANtO
+	iqFW/9IZr2GGIJCHNxn7TGGJw0VX6FMj0UunwDqVFb+X5MHkTMQ3svGcJS8VUbVt
+	RGXIs3Eixcq/AIDegYWfMvhPVpp8/DaKU7ukMfk0tMfF7mrioEbcg+LtLG14M8+V
+	reBBcPWMSyI1vWX1CGzr6FttY5PntQeRI7CzNIOexUDb3mHzkSSCBdthXKP8RTkF
+	65UHkVRB3A/0K2mtR/eq5R0jtYSW8874FV7wXSYN6f/RDpEP/NLFcuElWexr32Wy
+	O+ljcUqvf+bQRfcBB0pFfTI957B74HElk8aX4+bT0qC1sO8OQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqat8tg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 01:56:35 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44N1uYN6009240
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 01:56:34 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 23 May 2024 09:50:09 +0800
-Message-ID: <794b5fa3-0135-80cc-4b55-f48a430a58ca@huawei.com>
-Date: Thu, 23 May 2024 09:50:09 +0800
+ 15.2.1544.9; Wed, 22 May 2024 18:56:34 -0700
+Date: Wed, 22 May 2024 18:56:34 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Xiong Nandi <xndchn@gmail.com>
+CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <quic_bjorande@quicinc.com>, <cmllamas@google.com>
+Subject: Re: [PATCH v2 1/2] scripts/decode_stacktrace.sh: wrap nm with
+ UTIL_PREFIX and UTIL_SUFFIX
+Message-ID: <20240522185039245-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240521194010043-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <20240523010318.12934-1-xndchn@gmail.com>
+ <20240523010318.12934-2-xndchn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.1
-Subject: Re: [PATCH] driver core: Add log when devtmpfs create node failed
-Content-Language: en-CA
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <rafael@kernel.org>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<prime.zeng@hisilicon.com>, <liyihang9@huawei.com>, <kangfenglong@huawei.com>
-References: <20240522114346.42951-1-yangxingui@huawei.com>
- <2024052221-pulverize-worrisome-37fb@gregkh>
-From: yangxingui <yangxingui@huawei.com>
-In-Reply-To: <2024052221-pulverize-worrisome-37fb@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpemm500017.china.huawei.com (7.185.36.178) To
- dggpemd100001.china.huawei.com (7.185.36.94)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240523010318.12934-2-xndchn@gmail.com>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tX6hcs2pQ3mkCwgg2uFScb_dj3eDzK8q
+X-Proofpoint-ORIG-GUID: tX6hcs2pQ3mkCwgg2uFScb_dj3eDzK8q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-22_14,2024-05-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=475 clxscore=1015
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405010000 definitions=main-2405230012
 
-Hi, Greg
-
-On 2024/5/22 20:23, Greg KH wrote:
-> On Wed, May 22, 2024 at 11:43:46AM +0000, Xingui Yang wrote:
->> Currently, no exception information is output when devtmpfs create node
->> failed, so add log info for it.
+On Thu, May 23, 2024 at 09:03:17AM +0800, Xiong Nandi wrote:
+> Since System.map is generated by cross-compile nm tool, we should use it here
+> too. Otherwise host nm may not recognize ARM Thumb-2 instruction address well.
 > 
-> Why?  Who is going to do something with this?
-We execute the lsscsi command after the disk is connected, we 
-occasionally find that some disks do not have dev nodes and these disks 
-cannot be used.
-However, there is no abnormal log output during disk scanning. We 
-analyze that it may be caused by the failure of devtmpfs create dev 
-node, so the log is added here.
-The lscsi command query results and kernel logs as follows:
+> Signed-off-by: Xiong Nandi <xndchn@gmail.com>
 
-[root@localhost]# lsscsi
-[9:0:4:0]	disk	ATA	ST10000NM0086-2A SN05	-
+Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
 
-kernel: [586669.541218] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0 
-link_rate=10(sata)
-kernel: [586669.541341] sas: phy-9:0 added to port-9:0, phy_mask:0x1 
-(5000000000000900)
-kernel: [586669.541511] sas: DOING DISCOVERY on port 0, pid:2330731
-kernel: [586669.541518] hisi_sas_v3_hw 0000:b4:04.0: dev[4:5] found
-kernel: [586669.630816] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
-kernel: [586669.665960] hisi_sas_v3_hw 0000:b4:04.0: phydown: phy0 
-phy_state=0xe
-kernel: [586669.665964] hisi_sas_v3_hw 0000:b4:04.0: ignore flutter phy0 
-down
-kernel: [586669.863360] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0 
-link_rate=10(sata)
-kernel: [586670.024482] ata19.00: ATA-10: ST10000NM0086-2AA101, SN05, 
-max UDMA/133
-kernel: [586670.024487] ata19.00: 19532873728 sectors, multi 16: LBA48 
-NCQ (depth 32), AA
-kernel: [586670.027471] ata19.00: configured for UDMA/133
-kernel: [586670.027490] sas: --- Exit sas_scsi_recover_host: busy: 0 
-failed: 0 tries: 1
-kernel: [586670.037541] sas: ata19: end_device-9:0: 
-model:ST10000NM0086-2AA101 serial:            ZA2B3PR2
-kernel: [586670.100856] scsi 9:0:4:0: Direct-Access     ATA 
-ST10000NM0086-2A SN05 PQ: 0 ANSI: 5
-kernel: [586670.101114] sd 9:0:4:0: [sdk] 19532873728 512-byte logical 
-blocks: (10.0 TB/9.10 TiB)
-kernel: [586670.101116] sd 9:0:4:0: [sdk] 4096-byte physical blocks
-kernel: [586670.101125] sd 9:0:4:0: [sdk] Write Protect is off
-kernel: [586670.101137] sd 9:0:4:0: [sdk] Write cache: enabled, read 
-cache: enabled, doesn't support DPO or FUA
-kernel: [586670.101620] sd 9:0:4:0: Attached scsi generic sg10 type 0
-kernel: [586670.101714] sas: DONE DISCOVERY on port 0, pid:2330731, result:0
-kernel: [586670.101731] sas: sas_form_port: phy0 belongs to port0 
-already(1)!
-kernel: [586670.152512] sd 9:0:4:0: [sdk] Attached SCSI disk
-
+> ---
+>  scripts/decode_stacktrace.sh | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->>
->> Signed-off-by: Xingui Yang <yangxingui@huawei.com>
->> ---
->>   drivers/base/core.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/core.c b/drivers/base/core.c
->> index 5f4e03336e68..32a41e0472b2 100644
->> --- a/drivers/base/core.c
->> +++ b/drivers/base/core.c
->> @@ -3691,7 +3691,10 @@ int device_add(struct device *dev)
->>   		if (error)
->>   			goto SysEntryError;
->>   
->> -		devtmpfs_create_node(dev);
->> +		error = devtmpfs_create_node(dev);
->> +		if (error)
->> +			pr_info("devtmpfs create node for %s failed: %d\n",
->> +				dev_name(dev), error);
+> diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+> index fa5be6f57b00..2bc3a54ffba5 100755
+> --- a/scripts/decode_stacktrace.sh
+> +++ b/scripts/decode_stacktrace.sh
+> @@ -30,6 +30,7 @@ fi
+>  
+>  READELF=${UTIL_PREFIX}readelf${UTIL_SUFFIX}
+>  ADDR2LINE=${UTIL_PREFIX}addr2line${UTIL_SUFFIX}
+> +NM=${UTIL_PREFIX}nm${UTIL_SUFFIX}
+>  
+>  if [[ $1 == "-r" ]] ; then
+>  	vmlinux=""
+> @@ -158,7 +159,7 @@ parse_symbol() {
+>  	if [[ $aarray_support == true && "${cache[$module,$name]+isset}" == "isset" ]]; then
+>  		local base_addr=${cache[$module,$name]}
+>  	else
+> -		local base_addr=$(nm "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
+> +		local base_addr=$(${NM} "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
+>  		if [[ $base_addr == "" ]] ; then
+>  			# address not found
+>  			return
+> -- 
+> 2.25.1
 > 
-> Why is an error message pr_info()?
-Do you recommend using pr_err()?
-> 
-> And again, why is this needed?  If this needs to be checked, why are you
-> now checking it but ignoring the error?
-> 
-> What would this help with?
-As above, we want to get the error info when the dev node fails to be 
-created. We currently haven't figured out how to handle this exception 
-well. But judging from the problems we are currently encountering, some 
-may be because the corresponding dev node already exists, causing the 
-creation to fail, but the node information is incorrect and the device 
-cannot be used. as follows:
-[root@localhost]# ll /dev/sdk
--rw-------. 1 root root 5368709120 Jul 8 09:51 /dev/sdk
-
-Do you have any suggestions?
-
-Thanks,
-Xingui
-
 
