@@ -1,183 +1,78 @@
-Return-Path: <linux-kernel+bounces-187925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FB38CDAD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:24:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FD78CDAD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1031C22667
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:24:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C287B2327F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DE483A14;
-	Thu, 23 May 2024 19:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2806C83CD9;
+	Thu, 23 May 2024 19:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="u5210E6G"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ax57mVbZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9264839F7
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B30DEC7;
+	Thu, 23 May 2024 19:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716492258; cv=none; b=ELt1swr25yxHuG6ZchmsCKqMpQ2wxZhIt6ldtl4/qd+2ZF56RZv2P7xF3oIbJErGNVFK+ZfGp4PEX2chiSpGDK0vfO1jgyWafi9MMFXHP8BDqRuWgnzF/dCyhw1bh+Ga2sZyMtbLW8d58+4O6+hy5c5d0IqPfgjetuin5PIocDo=
+	t=1716492483; cv=none; b=Z5VMO/mPTML7ZKylJZBCP5oTb1jPQMC7Y8XAfVVlWetAqQpC8uwAr1821ekW8TGIr3UJqwBhgvnoPM3ZFrMXQ88EWSOFavyB8RPr4NC8isoFjJ/zYh6Klby4ErPOdorD5naa8m5gVx7HbOjvdphpVgGjghVADfI7zJ4Dy/sZY04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716492258; c=relaxed/simple;
-	bh=94JABJQL8qy9viN4gm+3mpt7FpZocvO5K7xLPSuAe3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Osn0B/ZeanKxjpLkydTARSa1MbCjR9M4i1f67xl1OSB8QNfwi8nWsxm3gp5EOFGvFT0UesqTrX5zWqmeRc73gBJSQ+rofRIZdK2uY7/2h550+8hcYR0S7Qg7K+ovYn19MvSSDeaz2IpUZFPfgPiQyVMw+oFRZKv9gblJ/JKNjtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=u5210E6G; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6f8d0a1e500so51790a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:24:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716492255; x=1717097055; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=48sL3fNRN0eMYa6c0uqUHGXJzqXQ/QJQAI5gLVy3hB8=;
-        b=u5210E6G9ZP9aFx6ij9nLe65Qi3JPSx5eSZhw6OicFL54zA/j5POneNNZE6x3f9Vw8
-         MQWuyhNyeLqJn/ZR4Pe80cRsKiBDiE8Kcka1Y0hFFlK80GS7k0fJ6IXyVIk6yo9TmNOt
-         XpjIAmisBg88TxtUQ1F89exi/c8J2PBThj41gAFoIddBWowKTmNt8eyhU9/UfyJAymgD
-         vi3q9d4qlZF8duG8NSZTtuKBx/HGWIKpLIGXMcGWhkkc18Df7JUbyvEAJmrrBM47FE78
-         0gGZhdbqeOL8HFTPnDr8CHKkwNI3TpBn3MZ+3dzOOya09v9h9SanadDwrFBnSjS9DWeY
-         ZThA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716492255; x=1717097055;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=48sL3fNRN0eMYa6c0uqUHGXJzqXQ/QJQAI5gLVy3hB8=;
-        b=tCK1O9WGjOwg/CkI+aHwmb/+RNrCZeAFgPf81Cjn+dXed4ISfQrAZGuB3sZFvQKl6i
-         6BJSn7dlKBkcDcHc/LnPHC5qjBu82H4NKJYT3aSPC0n3DqQjsHkaerEWDhe9odxcBt98
-         ZxfAXAX0BzDudtLO6YtQ2y+DqCSD76p9/WnMW9LWdB2NHY+mfFUfdSaxDJuizazHf2We
-         5D+ZIZOniztD2l3z4A/nmsxTheVoqa1DyQ1WJJc5oHwh6WRa/o5qAVRj26sLEY0YwpDe
-         jf8kddxR0bgfQv1RCeykapJJA2AEYIx8rjLtRcfi1Pd0Ao5CH4S33gWpMG5Kk+fYUQF5
-         8zJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXgFuQU0WGInU0F5WLVzUekty+rkKQUIt8WGD/xNun+bXC0yG3UPrtcvrUd0LTLCsB6s38rbiyHBC+fzKs5uR6Qpk0zZpnKz0d+OVP
-X-Gm-Message-State: AOJu0YyN39HKJxmWMelv4+W8v0wXEq146yacfMSMyCf5Z9PGdIt7vto/
-	WBp1vieP/oCeuj+0pqcQd6sK1e7qnk93Pz8IEcFX5d5XRIdmZCjriJFKosHvnKA=
-X-Google-Smtp-Source: AGHT+IE0KSJaVQb6UV/RuQW/BtUj1l1s6DTa7CZLmUnwSD8HHOuMHqiGy7vjsHo5+oFSDkod4Kl15A==
-X-Received: by 2002:a05:6830:1618:b0:6f0:6864:eee6 with SMTP id 46e09a7af769-6f8d0a73937mr150380a34.10.1716492254835;
-        Thu, 23 May 2024 12:24:14 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f8d0de62f3sm13145a34.42.2024.05.23.12.24.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 12:24:14 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: sort Makefile
-Date: Thu, 23 May 2024 14:24:10 -0500
-Message-ID: <20240523192412.3220547-1-dlechner@baylibre.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716492483; c=relaxed/simple;
+	bh=tvcn4t4beKheL9H/x+fSj1XLbpUqByppEr7H5kgRrHU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nk83haDazzwFtAur6QG/Cp1VO03SFcHAw7Ykx8ODRweCPjiG5Hj86t7epV5OohLSlcCI4lFF3AybxjXoyNS09vApAKE9vSjXwKSQdMb+t0v8x5Sha+QeT0wd7hWsRRy7/CaKkoNvlUr//J6NARI2ijnCJtBekRT3Txly3ZureH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ax57mVbZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3AC84C2BD10;
+	Thu, 23 May 2024 19:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716492483;
+	bh=tvcn4t4beKheL9H/x+fSj1XLbpUqByppEr7H5kgRrHU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ax57mVbZ01Feg1Y+eRtIEc0Bpwsir089k06Zmh/FcSPpS8nvNs0Im9fHm9hOW/Ixl
+	 3LSVrx/zSjsOaK1HCNbcA4CiDEGSRYP5CFRXeuaoj3UlBr9L8i4035q1rvYG33e1Ea
+	 1gyM8KBI+TT+xDa8OL9TvJgIOtxEoHdBARgFi7zGGs3SzRQ1/krryGguCiqMPDccHd
+	 DNXf9As4IOkVdyA0+HoHnH4Q6BDh4YPD6YhZzQ/sVprEtYsczcIVwlkHSqHrkxzuYm
+	 WMjX9U6ccgYQrAEUuEdMZzPHQvi73DuE+htx2gVTu+512Jm5IFSe6wRSn020anRKTb
+	 5XUmBuW5vQUTw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 281E9C43617;
+	Thu, 23 May 2024 19:28:03 +0000 (UTC)
+Subject: Re: [GIT PULL v2] virtio: features, fixes, cleanups
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Zk7bX3XlEWtaPbxZ@redhat.com>
+References: <Zk7bX3XlEWtaPbxZ@redhat.com>
+X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Zk7bX3XlEWtaPbxZ@redhat.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
+X-PR-Tracked-Commit-Id: c8fae27d141a32a1624d0d0d5419d94252824498
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2ef32ad2241340565c35baf77fc95053c84eeeb0
+Message-Id: <171649248315.6115.15871807359949037854.pr-tracker-bot@kernel.org>
+Date: Thu, 23 May 2024 19:28:03 +0000
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, anton.yakovlev@opensynergy.com, bartosz.golaszewski@linaro.org, christophe.jaillet@wanadoo.fr, dave.jiang@intel.com, david@redhat.com, eperezma@redhat.com, herbert@gondor.apana.org.au, jasowang@redhat.com, jiri@nvidia.com, jiri@resnulli.us, johannes@sipsolutions.net, krzysztof.kozlowski@linaro.org, lingshan.zhu@intel.com, linus.walleij@linaro.org, lizhijian@fujitsu.com, martin.petersen@oracle.com, maxime.coquelin@redhat.com, michael.christie@oracle.com, mst@redhat.com, sgarzare@redhat.com, stevensd@chromium.org, sudeep.holla@arm.com, syzbot+98edc2df894917b3431f@syzkaller.appspotmail.com, u.kleine-koenig@pengutronix.de, viresh.kumar@linaro.org, xuanzhuo@linux.alibaba.com, yuxue.liu@jaguarmicro.com, zhanglikernel@gmail.com, Srujana Challa <schalla@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The Makefile for IIO ADC drivers is intended to be sorted alphabetically.
-I can be tricky to keep it sorted when adding new drivers when not all
-of the existing drivers are sorted. So let's sort everything now to make
-it easier to keep it sorted in the future.
+The pull request you sent on Thu, 23 May 2024 02:00:17 -0400:
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
+> https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
 
-This was done mechanically using the sort feature in my text editor,
-with the exception of the line starting with "xilinx-xadc-y".
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2ef32ad2241340565c35baf77fc95053c84eeeb0
 
- drivers/iio/adc/Makefile | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Thank you!
 
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index edb32ce2af02..6a8c2da0e707 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -18,7 +18,6 @@ obj-$(CONFIG_AD7280) += ad7280a.o
- obj-$(CONFIG_AD7291) += ad7291.o
- obj-$(CONFIG_AD7292) += ad7292.o
- obj-$(CONFIG_AD7298) += ad7298.o
--obj-$(CONFIG_AD7923) += ad7923.o
- obj-$(CONFIG_AD7476) += ad7476.o
- obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
- obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
-@@ -29,6 +28,7 @@ obj-$(CONFIG_AD7780) += ad7780.o
- obj-$(CONFIG_AD7791) += ad7791.o
- obj-$(CONFIG_AD7793) += ad7793.o
- obj-$(CONFIG_AD7887) += ad7887.o
-+obj-$(CONFIG_AD7923) += ad7923.o
- obj-$(CONFIG_AD7944) += ad7944.o
- obj-$(CONFIG_AD7949) += ad7949.o
- obj-$(CONFIG_AD799X) += ad799x.o
-@@ -90,42 +90,43 @@ obj-$(CONFIG_NAU7802) += nau7802.o
- obj-$(CONFIG_NPCM_ADC) += npcm_adc.o
- obj-$(CONFIG_PAC1934) += pac1934.o
- obj-$(CONFIG_PALMAS_GPADC) += palmas_gpadc.o
-+obj-$(CONFIG_QCOM_PM8XXX_XOADC) += qcom-pm8xxx-xoadc.o
- obj-$(CONFIG_QCOM_SPMI_ADC5) += qcom-spmi-adc5.o
- obj-$(CONFIG_QCOM_SPMI_IADC) += qcom-spmi-iadc.o
- obj-$(CONFIG_QCOM_SPMI_RRADC) += qcom-spmi-rradc.o
--obj-$(CONFIG_QCOM_VADC_COMMON) += qcom-vadc-common.o
- obj-$(CONFIG_QCOM_SPMI_VADC) += qcom-spmi-vadc.o
--obj-$(CONFIG_QCOM_PM8XXX_XOADC) += qcom-pm8xxx-xoadc.o
-+obj-$(CONFIG_QCOM_VADC_COMMON) += qcom-vadc-common.o
- obj-$(CONFIG_RCAR_GYRO_ADC) += rcar-gyroadc.o
-+obj-$(CONFIG_RICHTEK_RTQ6056) += rtq6056.o
- obj-$(CONFIG_RN5T618_ADC) += rn5t618-adc.o
- obj-$(CONFIG_ROCKCHIP_SARADC) += rockchip_saradc.o
--obj-$(CONFIG_RICHTEK_RTQ6056) += rtq6056.o
- obj-$(CONFIG_RZG2L_ADC) += rzg2l_adc.o
- obj-$(CONFIG_SC27XX_ADC) += sc27xx_adc.o
-+obj-$(CONFIG_SD_ADC_MODULATOR) += sd_adc_modulator.o
- obj-$(CONFIG_SPEAR_ADC) += spear_adc.o
--obj-$(CONFIG_SUN4I_GPADC) += sun4i-gpadc-iio.o
--obj-$(CONFIG_SUN20I_GPADC) += sun20i-gpadc-iio.o
- obj-$(CONFIG_STM32_ADC_CORE) += stm32-adc-core.o
- obj-$(CONFIG_STM32_ADC) += stm32-adc.o
--obj-$(CONFIG_STM32_DFSDM_CORE) += stm32-dfsdm-core.o
- obj-$(CONFIG_STM32_DFSDM_ADC) += stm32-dfsdm-adc.o
-+obj-$(CONFIG_STM32_DFSDM_CORE) += stm32-dfsdm-core.o
- obj-$(CONFIG_STMPE_ADC) += stmpe-adc.o
-+obj-$(CONFIG_SUN20I_GPADC) += sun20i-gpadc-iio.o
-+obj-$(CONFIG_SUN4I_GPADC) += sun4i-gpadc-iio.o
- obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
- obj-$(CONFIG_TI_ADC0832) += ti-adc0832.o
- obj-$(CONFIG_TI_ADC084S021) += ti-adc084s021.o
--obj-$(CONFIG_TI_ADC12138) += ti-adc12138.o
- obj-$(CONFIG_TI_ADC108S102) += ti-adc108s102.o
-+obj-$(CONFIG_TI_ADC12138) += ti-adc12138.o
- obj-$(CONFIG_TI_ADC128S052) += ti-adc128s052.o
- obj-$(CONFIG_TI_ADC161S626) += ti-adc161s626.o
- obj-$(CONFIG_TI_ADS1015) += ti-ads1015.o
- obj-$(CONFIG_TI_ADS1100) += ti-ads1100.o
-+obj-$(CONFIG_TI_ADS124S08) += ti-ads124s08.o
- obj-$(CONFIG_TI_ADS1298) += ti-ads1298.o
-+obj-$(CONFIG_TI_ADS131E08) += ti-ads131e08.o
- obj-$(CONFIG_TI_ADS7924) += ti-ads7924.o
- obj-$(CONFIG_TI_ADS7950) += ti-ads7950.o
- obj-$(CONFIG_TI_ADS8344) += ti-ads8344.o
- obj-$(CONFIG_TI_ADS8688) += ti-ads8688.o
--obj-$(CONFIG_TI_ADS124S08) += ti-ads124s08.o
--obj-$(CONFIG_TI_ADS131E08) += ti-ads131e08.o
- obj-$(CONFIG_TI_AM335X_ADC) += ti_am335x_adc.o
- obj-$(CONFIG_TI_LMP92064) += ti-lmp92064.o
- obj-$(CONFIG_TI_TLC4541) += ti-tlc4541.o
-@@ -134,7 +135,6 @@ obj-$(CONFIG_TWL4030_MADC) += twl4030-madc.o
- obj-$(CONFIG_TWL6030_GPADC) += twl6030-gpadc.o
- obj-$(CONFIG_VF610_ADC) += vf610_adc.o
- obj-$(CONFIG_VIPERBOARD_ADC) += viperboard_adc.o
-+obj-$(CONFIG_XILINX_AMS) += xilinx-ams.o
- xilinx-xadc-y := xilinx-xadc-core.o xilinx-xadc-events.o
- obj-$(CONFIG_XILINX_XADC) += xilinx-xadc.o
--obj-$(CONFIG_XILINX_AMS) += xilinx-ams.o
--obj-$(CONFIG_SD_ADC_MODULATOR) += sd_adc_modulator.o
 -- 
-2.45.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
