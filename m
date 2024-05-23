@@ -1,102 +1,133 @@
-Return-Path: <linux-kernel+bounces-187597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE108CD50A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:51:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB9F8CD513
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3E41F23925
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:51:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA97D28109A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9FB14A633;
-	Thu, 23 May 2024 13:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513014B064;
+	Thu, 23 May 2024 13:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FjsqnGa7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayKX1bTr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC7C1E520;
-	Thu, 23 May 2024 13:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD4614A623;
+	Thu, 23 May 2024 13:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716472301; cv=none; b=V8DULV6TVU17fdw++6mOmBIzS33jrYxASUMjr6bVn0mm3H9k8q2o+Snt0Un2Ks+DPb2yzB8jgK/3tK+Ov/AZvC1v9yx3AaFY6SHccIBVbpnniXcoph6atPCNDWAJye4KGdwkuKvwVw03vSlMgbeXJSWXW0aaXbL9MMRMmB3SDeQ=
+	t=1716472448; cv=none; b=vF2AXGfx2R2laVAWdKF4af38abTMnDVSkOKE7728hVEg/8NoHBpVqlw0EpA865SnS52kjwqIrUPAaG9gnF7KqKbQXBVKJtIg8XrbtZKSTsVSF9vSEqmp/8nuPlqC6VabUULJc5pPKVTHjaE9HYF8YT3oupYxJwgXlMLKQpHz9iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716472301; c=relaxed/simple;
-	bh=1et2PxtbezH44I/Nd1x4uPl/r56dJ2xZ4EP8a2FYE5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p9yBtRfcDVyEjNtErqpOmHkoLMSTiY8aVtIahJHJzDUbWJJJjyEzTYtt83GbdnPsgrwTPTaB4Di4OqoONzwtsIWzHr8LyBVynJxiR+LkxfByAvUTUkmZ58A+z9J48fTRvIkE7TqLu44VjE4rdKNkBw+eBiidgLt1jTnWHbjNgX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FjsqnGa7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D83BC2BD10;
-	Thu, 23 May 2024 13:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716472300;
-	bh=1et2PxtbezH44I/Nd1x4uPl/r56dJ2xZ4EP8a2FYE5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FjsqnGa7A1brIi8LHk/vqWUtAhg1Tnr4COtATu3EYpNNtfkJUnrRkAudBU7XUvb4e
-	 aog/a933kJfA85OP2svrPj1XxXXd6KJq2irIVOKUHMHEVLHHpStmAiphKBs75zPgve
-	 8Qa+4W81r9Q/S5jbjvIOIxGWLIWmmpAdk/3WF1a0=
-Date: Thu, 23 May 2024 15:51:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: zhengzucheng <zhengzucheng@huawei.com>
-Cc: Michal Hocko <mhocko@suse.com>, linux-cve-announce@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Jun.Ma2@amd.com, cve@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: CVE-2024-26650: platform/x86: p2sb: Allow p2sb_bar() calls
- during PCI device probe
-Message-ID: <2024052316-subtotal-fragrance-15e3@gregkh>
-References: <20240326175007.1388794-18-lee@kernel.org>
- <Zkz2qpUP-HVROO1I@tiehlicka>
- <da7e8c85-52fd-b2f4-83da-751f812de6ae@huawei.com>
+	s=arc-20240116; t=1716472448; c=relaxed/simple;
+	bh=P+hLj/xeIZCtao3ZdxaW6Pa3wcEv0A+M9crGMZXsRZ4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=msLhCMN70f9AC9UV1nucmM+5RV9erRWdSan3j6cXaiHwDtyPtrcZuagpYwc342TjX3MwRg+X9ng/9se3qU4NZ03M/RZfH3oCADijAiHE134+KntPOh2cMxTq+RWeSIDzItJY6a3Z6i5Vr3ubU/inNxV4kvYmooy9DS4MAtvg50A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayKX1bTr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D114C2BD10;
+	Thu, 23 May 2024 13:54:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716472447;
+	bh=P+hLj/xeIZCtao3ZdxaW6Pa3wcEv0A+M9crGMZXsRZ4=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ayKX1bTreCUTqoASDyJPYr6TE6auh/UCZhEgX9iyrQ048n9MrNmMqI8bnIkveOVc9
+	 QaIhEo6wh7Y5FDsOhpCqmt2qOHIVoCgmWkAhsEzqlFZMCienHNRGAutLrxJH6hu3aY
+	 dJ36BDJY+07Q+4Gmw3lan86Zam2WO+X6JWltZ0N+8ZAVqaFZTAzI9July0mKXfSZG6
+	 UL1fdhJa2vBqoR8rImFxT5c/gbiEJly4SpAeMAkfsn3HqSITRsC5IHYBNX+H6VStPp
+	 +1+WvFXKpQ+uB5oY0bGGsKUydK/tti03cklTBbUZGlHc8z2Oa1cegL+3yNfi9Tz8qd
+	 sNHXUH8+ytmxQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <da7e8c85-52fd-b2f4-83da-751f812de6ae@huawei.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 May 2024 16:54:02 +0300
+Message-Id: <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
+Cc: <keyrings@vger.kernel.org>, "David Woodhouse" <dwmw2@infradead.org>,
+ "Eric Biggers" <ebiggers@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH RESEND] KEYS: trusted: Use ASN.1 encoded OID
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.17.0
+References: <20240523131931.22350-1-jarkko@kernel.org>
+ <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
+In-Reply-To: <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
 
-On Thu, May 23, 2024 at 04:50:18PM +0800, zhengzucheng wrote:
-> 
-> 在 2024/5/22 3:31, Michal Hocko 写道:
-> > This patch has been reverted in upstream by 03c6284df179 ("Revert
-> > "drm/amd/amdgpu: Fix potential ioremap() memory leaks in
-> > amdgpu_device_init()"") and based on the changelog the CVE should be
-> > rejected.
-> 
-> hi Michal Hocko
-> 
-> This reverted patch was previously used to resolve CVE-2024-35928 ?
-> 
-> so CVE-2024-35928 should be rejected?
-> 
-> 
-> commit 03c6284df179de3a4a6e0684764b1c71d2a405e2
-> Author: Ma Jun <Jun.Ma2@amd.com>
-> Date:   Tue Mar 19 15:24:03 2024 +0800
-> 
->     Revert "drm/amd/amdgpu: Fix potential ioremap() memory leaks in
-> amdgpu_device_init()"
-> 
->     This patch causes the following iounmap erorr and calltrace
->     iounmap: bad address 00000000d0b3631f
-> 
->     The original patch was unjustified because amdgpu_device_fini_sw() will
->     always cleanup the rmmio mapping.
-> 
->     This reverts commit eb4f139888f636614dab3bcce97ff61cefc4b3a7.
-> 
->     Signed-off-by: Ma Jun <Jun.Ma2@amd.com>
->     Suggested-by: Christian König <christian.koenig@amd.com>
->     Reviewed-by: Christian König <christian.koenig@amd.com>
->     Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+On Thu May 23, 2024 at 4:38 PM EEST, James Bottomley wrote:
+> On Thu, 2024-05-23 at 16:19 +0300, Jarkko Sakkinen wrote:
+> > There's no reason to encode OID_TPMSealedData at run-time, as it
+> > never changes.
+> >=20
+> > Replace it with the encoded version, which has exactly the same size:
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A067 81 05 0A 01 05
+> >=20
+> > Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue so
+> > that the OID can be simply copied to the blob.
+>
+> This is true, but if we're going to do this, we should expand the OID
+> registry functions (in lib/oid_registry.c) to do something like
+> encode_OID.  The registry already contains the hex above minus the two
+> prefixes (which are easy to add).
 
-Yes, this should be rejected, I'll go do that now, thanks for pointing
-out the revert, we missed that.
+Yes, I do agree with this idea, and I named variable the I named
+it to make it obvious that generation is possible.
 
-greg k-h
+It would be best to have a single source, which could be just
+a CSV file with entries like:
+
+<Name>,<OID number>
+
+And then in scripts/ there should be a script that takes this
+source and generates oid_registry.gen.{h,c}. The existing
+oid_registry.h should really just include oid_registry.gen.h
+then to make this transparent change.
+
+And then in the series where OID's are encoded per-subsystem
+patch that takes pre-encoded OID into use.
+
+Happy to review such patch set if it is pushed forward.
+
+> > @ -51,8 +52,8 @@ static int tpm2_key_encode(struct
+> > trusted_key_payload *payload,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!scratch)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return -ENOMEM;
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0work =3D asn1_encode_oid(wor=
+k, end_work, tpm2key_oid,
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 asn1_oid_len(tpm2key_oid));
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0work =3D memcpy(work, OID_TP=
+MSealedData_ASN1,
+> > sizeof(OID_TPMSealedData_ASN1));
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0work +=3D sizeof(OID_TPMSeal=
+edData_ASN1);
+>
+> You lost the actually fits check.  This is somewhat irrelevant for TPM
+> keys because the OID is first in the structure and thus will never
+> overflow, but it might matter for other uses.
+
+Yep, it is irrelevant IMHO, there is 8 bytes, and also its location
+never changes.
+
+> James
+
+BR, Jarkko
 
