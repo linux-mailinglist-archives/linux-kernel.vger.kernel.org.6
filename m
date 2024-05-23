@@ -1,208 +1,127 @@
-Return-Path: <linux-kernel+bounces-187287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AA98CCF7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:41:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7068CCF85
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515271F23014
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29EC2838F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1681B13D2A6;
-	Thu, 23 May 2024 09:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9FD13D28F;
+	Thu, 23 May 2024 09:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="A7BKMpgH"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UACOWmmc"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870B94685
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4472B4685
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716457293; cv=none; b=fnYI8WH+6n+0bSRaEKeXM+XHyX85C/Y8KndCnMn872FExyjDC2/+8p0rA0Kj3SEtSk94ukeCxY56jhS4xRaktEpjg+KwNwt7PejmmV3c8D2B/Tq1r1n180FPThprWQDuv2UF7HXUtdJ7IrSf8WJ/EJXrAdbP8ftlpNA4MJ/C5dc=
+	t=1716457416; cv=none; b=KAk4SsiTT+vtzSBh8sBC4ogpF542yNDSUEtSCjOSKkBoGZGM17F7RCk3oxgTwfowGCpv6OGIT0yaWXSdGr10NzkrSPrmymP/X0HtiRrISSGkBvv6tGZoiQdDkY5yIlhEaeSxPEERxJTwbVcM48VGVX17gsTbtPbGQqsd0uF2o2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716457293; c=relaxed/simple;
-	bh=j2zvU3m0yzWo1+kw71p/VfCXySbVS/PxKnovAE6DvVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dFp10GcGqQxdCL68wjjeCnSFVu1HRETHoN5t+6Ijb/ixH+9v/BL6qtqbx0WDHn7/oBHYA39OrA1Un3XGMOXI6BGWpaaa96dy8V2/qaE5OTYUOjxk9KmGhokJfmIxpa4l9KQkDdEPYmYccaVlQdeUoLa3ONf8JGdQD/Kjjyc/GFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=A7BKMpgH; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e20088184cso11244051fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:41:30 -0700 (PDT)
+	s=arc-20240116; t=1716457416; c=relaxed/simple;
+	bh=nA1Zf/kgSsU6UpZUR2FlaBVKB2tbpqFGLzwaZl6BRd4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hAdWU/+o7jj77KIGHHJ7h0dfE3HYwoSbUEqQ1xa2juihYTz5FOY1ea7kvNSV+D92OzNMRFgeU6/acnFeIixHcWNcS2KxgHXIyVKWVEeo4oWfn+K3FYcFGHCwrskZAtTqwKWmUpSD4D3eq+lfjdvNEyy36f+qJzHxXjrUfgDeD1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UACOWmmc; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f2ecea41deso114363235ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1716457289; x=1717062089; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7P0FBG/QIqolUidBUOAk5xSpyavQelBrO3qhLkdkCo4=;
-        b=A7BKMpgH4ry3m1y24XN02Euv9t7X+SIKSTFivWGVX4sz1v8D4dX1ZIoO/13Mw9A3JI
-         iavQSwWhm23vGsi0Z25bOqGWWOoxAmFuqvjI4lDqxG/SGpFzFdGFEOLKjWnY+k8Iswga
-         UMXgaNDEinuWp7G0Pp2lekJjLOti1NQNpU7dg=
+        d=gmail.com; s=20230601; t=1716457415; x=1717062215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZLzDnmvqDgSFmrLKy4OzG8kv1xRa1IoHZC1hMXaY53Y=;
+        b=UACOWmmcH9Xzs+F8LUQH8DYQGey8R2Gj4W4U9Bwi6MtRHTfJy/FdwkEI/2QAAwkPrS
+         AaYLj2avRNOX/EJWEBRLax63UmgrGQ6oaohFSuPeLgVnUJ4a84RQ7bc1vqDivhRC1qmQ
+         jhrwE9vZmjVZYkYawaoYYRmaJcnRXao2lEi85Qa0u+e+Oa+7QDaeRAW9dSngl8/ZQEJa
+         mXohlTQOmJkDL2UF4hj1qdwXnRMlUrjYyFY1ZfbW2zs57Q6hk99yMD5sX5f+dLqJHoRP
+         6Nl0on3D9AQ4mqqXD0TU5sSgZUhiZrooBxptMOqYe1E5izYOTWK30bjeuRnU8MMC9fFJ
+         wzTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716457289; x=1717062089;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7P0FBG/QIqolUidBUOAk5xSpyavQelBrO3qhLkdkCo4=;
-        b=O7Yznwx2ktkgP61diK0hXIXDM5LiHAtQLKiE4X6pIYM059r8c6UsgxWQGTEk+jzBMa
-         007IY/X/GE3WfhNZ+O8Ne8dCeXXcdomdk0V4f/N5EhTv4aWBMLPzpOdie2LQqbv87MLp
-         fd+lhTCMCm95GBsRSyJ/MnZ0jkqfoQjjxV0+18JZleWXcYvX6fMNTORR0prW7gigpi0d
-         RG2eoXn1/hnaTKzjUi9AVaZsXcG8veaMFQ2DrUJ0e76YbbCwGUYJdBqe+Ubigm4psrjm
-         kl+XLmHK06yAvU30Pu59xL8q1HvZR+v8NVAr3N+Z8Oy1ysUlcXzHn6pbHJQ/DQlBPzMS
-         C7DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgJ4HfCCabXyoukZijYT7k8PcBT7RYfUEy++l1XlFySlqmcVyAmLLP9iqcjV0uJ4PTN0PxGaFU2y6Vc9R4QQx9v66aw1RpQn4n7R90
-X-Gm-Message-State: AOJu0YwAjS5TqEsj08CWxrwRtgbxhAhYx01PGK0mzHFngKuE3s2AbY5g
-	5CgczqscGnbZj8liEnwS3d04jmM2Bo822ApGNsR872dFLS7qFuEpVDLWIN8RtidgqvKQxbMisub
-	L
-X-Google-Smtp-Source: AGHT+IFaHOu/jiCn9us1S7Kl07ly0fz0c0NxfGK+ttvGXc3VpkRIbozFwpms36yompxRaMGcJtJGuA==
-X-Received: by 2002:a2e:7214:0:b0:2e8:e8db:34ea with SMTP id 38308e7fff4ca-2e9496214edmr30640171fa.5.1716457288819;
-        Thu, 23 May 2024 02:41:28 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee806esm20062515e9.3.2024.05.23.02.41.27
+        d=1e100.net; s=20230601; t=1716457415; x=1717062215;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZLzDnmvqDgSFmrLKy4OzG8kv1xRa1IoHZC1hMXaY53Y=;
+        b=drAm0gZ3HNtQzyU0ObpvoClxh690VMCNS9RcgwRfc7OrEIp7S70QW7WWVKN0pVLsoa
+         5i/iDsK+5bKiLo25TXaosY4hHPM/UpFtAG9ctAjT9eqDtOpvHGKX+bwk2EEaWFYQosjm
+         +bGwvrIzLu9VQko4gi+9zNwSyFq3CJNLs0JK8RoWXOWaarxWPTHELATttEAl7q/u9usd
+         HaSAk+6G24QOqv9lAJYuU56yhrIk0R6CuDxgcE8LTLG4tslguVcuCeJGODp97AmtSAiS
+         QA1UXNBkZ/Um6xmkTPM/fsMxaBSwyZ34yBc9JNhJW2uF8ekkueL2cvyOT6rTNj8ka3+w
+         bVXg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8L9dFAeWUeawIRt3niyX0M9Nn97tHoYkDR8v4x88ji5qU/EGkS/mAQ+030t5Oj+ZSW80idQ+zqzlkaxSEk/C/bkBXq00t81Z+kynr
+X-Gm-Message-State: AOJu0Yztyorp2YXj4Wy5ItO/rxUAYhT2zwt1R36WH8wnaFidhmODajlM
+	rB3qd3KeWsd4lB8ZrQj+8oLwEBkLlRPukIpA2U1L1TNkIeiKb6h/
+X-Google-Smtp-Source: AGHT+IEAU0OshgEKaoU32gTdPHX8D7QDVD1bKWrWAjLH6mLhA8ftQ4r/dhtz/a1/jyxEPLqOWA6CRg==
+X-Received: by 2002:a17:902:e3c2:b0:1eb:3d68:fc2d with SMTP id d9443c01a7336-1f31c997f10mr32554475ad.34.1716457414397;
+        Thu, 23 May 2024 02:43:34 -0700 (PDT)
+Received: from gmail.com ([2a09:bac5:6249:183c::26a:4f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2fb7a1ae3sm74139295ad.299.2024.05.23.02.43.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 02:41:28 -0700 (PDT)
-Date: Thu, 23 May 2024 11:41:26 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Maxime Ripard <mripard@redhat.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <Zk8PRuDHiS0QZLD-@phenom.ffwll.local>
-Mail-Followup-To: Maxime Ripard <mripard@redhat.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <20240506-dazzling-nippy-rhino-eabccd@houat>
- <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
- <20240522-thankful-cow-of-freedom-f0cbf8@houat>
+        Thu, 23 May 2024 02:43:33 -0700 (PDT)
+From: Qingfang Deng <dqfext@gmail.com>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Xiao Wang <xiao.w.wang@intel.com>,
+	Qingfang Deng <qingfang.deng@siflower.com.cn>
+Subject: [PATCH] riscv: hweight: relax assembly constraints
+Date: Thu, 23 May 2024 17:43:25 +0800
+Message-Id: <20240523094325.3514-1-dqfext@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522-thankful-cow-of-freedom-f0cbf8@houat>
-X-Operating-System: Linux phenom 6.8.9-amd64 
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 22, 2024 at 03:34:52PM +0200, Maxime Ripard wrote:
-> Hi,
-> 
-> On Mon, May 06, 2024 at 03:38:24PM GMT, Daniel Vetter wrote:
-> > On Mon, May 06, 2024 at 02:05:12PM +0200, Maxime Ripard wrote:
-> > > Hi,
-> > > 
-> > > On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
-> > > > Hi dma-buf maintainers, et.al.,
-> > > > 
-> > > > Various people have been working on making complex/MIPI cameras work OOTB
-> > > > with mainline Linux kernels and an opensource userspace stack.
-> > > > 
-> > > > The generic solution adds a software ISP (for Debayering and 3A) to
-> > > > libcamera. Libcamera's API guarantees that buffers handed to applications
-> > > > using it are dma-bufs so that these can be passed to e.g. a video encoder.
-> > > > 
-> > > > In order to meet this API guarantee the libcamera software ISP allocates
-> > > > dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
-> > > > the Fedora COPR repo for the PoC of this:
-> > > > https://hansdegoede.dreamwidth.org/28153.html
-> > > 
-> > > For the record, we're also considering using them for ARM KMS devices,
-> > > so it would be better if the solution wasn't only considering v4l2
-> > > devices.
-> > > 
-> > > > I have added a simple udev rule to give physically present users access
-> > > > to the dma_heap-s:
-> > > > 
-> > > > KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
-> > > > 
-> > > > (and on Rasperry Pi devices any users in the video group get access)
-> > > > 
-> > > > This was just a quick fix for the PoC. Now that we are ready to move out
-> > > > of the PoC phase and start actually integrating this into distributions
-> > > > the question becomes if this is an acceptable solution; or if we need some
-> > > > other way to deal with this ?
-> > > > 
-> > > > Specifically the question is if this will have any negative security
-> > > > implications? I can certainly see this being used to do some sort of
-> > > > denial of service attack on the system (1). This is especially true for
-> > > > the cma heap which generally speaking is a limited resource.
-> > > 
-> > > There's plenty of other ways to exhaust CMA, like allocating too much
-> > > KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
-> > > differently than those if it's part of our threat model.
-> > 
-> > So generally for an arm soc where your display needs cma, your render node
-> > doesn't. And user applications only have access to the later, while only
-> > the compositor gets a kms fd through logind. At least in drm aside from
-> > vc4 there's really no render driver that just gives you access to cma and
-> > allows you to exhaust that, you need to be a compositor with drm master
-> > access to the display.
-> > 
-> > Which means we're mostly protected against bad applications, and that's
-> > not a threat the "user physically sits in front of the machine accounts
-> > for", and which giving cma access to everyone would open up. And with
-> > flathub/snaps/... this is very much an issue.
-> > 
-> > So you need more, either:
-> > 
-> > - cgroups limits on dma-buf and dma-buf heaps. This has been bikeshedded
-> >   for years and is just not really moving.
-> 
-> For reference, are you talking about:
-> 
-> https://lore.kernel.org/r/20220502231944.3891435-1-tjmercier@google.com
-> 
-> Or has there been a new version of that recently?
+From: Qingfang Deng <qingfang.deng@siflower.com.cn>
 
-I think the design feedback from Tejun has changed to that system memory
-should be tracked with memcg instead (but that kinda leaves the open of
-what to do with cma), and only device memory be tracked with a separate
-cgroups controller.
+rd and rs don't have to be the same.
 
-But I'm also not sure whether that would actually solve all the
-tracking/isolation requirements people tossed around or just gives us
-something that wont get the job done.
+Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
+---
+ arch/riscv/include/asm/arch_hweight.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Either way, yes I think that was the most recent code.
--Sima
+diff --git a/arch/riscv/include/asm/arch_hweight.h b/arch/riscv/include/asm/arch_hweight.h
+index 85b2c443823e..613769b9cdc9 100644
+--- a/arch/riscv/include/asm/arch_hweight.h
++++ b/arch/riscv/include/asm/arch_hweight.h
+@@ -26,9 +26,9 @@ static __always_inline unsigned int __arch_hweight32(unsigned int w)
+ 
+ 	asm (".option push\n"
+ 	     ".option arch,+zbb\n"
+-	     CPOPW "%0, %0\n"
++	     CPOPW "%0, %1\n"
+ 	     ".option pop\n"
+-	     : "+r" (w) : :);
++	     : "=r" (w) : "r" (w) :);
+ 
+ 	return w;
+ 
+@@ -57,9 +57,9 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
+ 
+ 	asm (".option push\n"
+ 	     ".option arch,+zbb\n"
+-	     "cpop %0, %0\n"
++	     "cpop %0, %1\n"
+ 	     ".option pop\n"
+-	     : "+r" (w) : :);
++	     : "=r" (w) : "r" (w) :);
+ 
+ 	return w;
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.34.1
+
 
