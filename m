@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-188071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CE68CDCD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:23:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29F78CDCD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:24:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACC21F23260
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583861F2344F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551F3128809;
-	Thu, 23 May 2024 22:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6CB128375;
+	Thu, 23 May 2024 22:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aPZhhoXs"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUuXozQK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3363512838A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AA7823B0;
+	Thu, 23 May 2024 22:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716502987; cv=none; b=WoOzfdwk+OdWWRSEE2Y7YNPxTtPsrDb99nMDaZh1mBSlt6hh1jpzPzeD9yPJB6dzwEEGcMAeKQHtZaMKmKV9H7YKG4uibdArdN+rjEys2KD/600SL0EMpczkjBETSyOdqYW5NnOZP69xU/tHPNzJL6307CJuaaiqXbzbAgvN2VI=
+	t=1716503071; cv=none; b=HSxj0tBCCtyrlb/qQ9KFomtL5ZBLADc2LVDI66uL9VFY3xgCIlgpi0R5oqo3SSwBea3G/GvRWxhuFwWpRe9ep/qUV6LwQEcW+ar5+k9QheXX8uJ14f1XXxfcQQ35GQPdCyCayHiNeFjhCnHtSuaepSfkk3SO7NNT2VyWbXv4aBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716502987; c=relaxed/simple;
-	bh=Yw893T+VjD34w4x4yV0pVt0ig1FaascDQOJmlsUUHNg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UAT2hIMVL7R9Jf1LvyhMkpbhYg98+WAKDj9cgcAVkH+/3eTo4L5yvON3vSpOMh9mVkhIti+KMUj1m4j79l9y4eq8dB2B0+aDd43tfx0qmBswIaTmx6exKlOUf8YG4+FrJU1WiMV7wTKYYyU5QoqvYoCF8MoMbDb5+n6eMesJIY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aPZhhoXs; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f44b45d6abso1708635ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716502985; x=1717107785; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7hlo/0USYgm45RKgbQV7mEAT0VdxfPiKQOpjReznKyw=;
-        b=aPZhhoXsm0SxwtGla0KDtTur4S6A2NK90ijrFgZkvz3iafftzIyCxlUt+A9k/z/oSs
-         NaDMSx+MJVE4zs7x5KAt5bj1BQE1Hz2WoPiCMa05Tw0/4k69LXeMwIsUUd/QkSG6i6s2
-         jcoRHWjnZWAectaHvKKggBFQmfIwNpDgpGy1g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716502985; x=1717107785;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7hlo/0USYgm45RKgbQV7mEAT0VdxfPiKQOpjReznKyw=;
-        b=eMphTcf+T12JR6FtvCRZf/gsdAwKK1jQWWk5nzb73oMldkDW4JY/6P6vHHAw+J0lVi
-         dIKN7T5mna7TAsHYnx5DRTSYkwxe6jQwx6fPYESQc4WfEy5pK/LdzcFAABkdC5G4Kv2n
-         /2fjafJV8l3UaMYvWtzEwZMLmhgkaEa2QQkYP41KgZ8yx0ok6FUSEPYvd0H7a20dZKSv
-         CxV4urCKprn8PxSgEbOy0/v/l22BhU5BT+3VZPtYm+SUeAZz+B/pcX04IMr4YSkHF7h5
-         iCzPGh4t2t8MhZgbCwkQoe+qCHmHt+GTlqs7lewlzyfOXoMYhq0dcTa22uOiRxx8pVZI
-         FF+A==
-X-Forwarded-Encrypted: i=1; AJvYcCV6YChNS7nJoLerLcex+9hsz80wgtH20rIZ+kqrQDmmaBhhA8nFwIrwymUAM+rA/uZpaovXESEGdKrPfRoGq8v9XHP2zcxdiYLQbI3F
-X-Gm-Message-State: AOJu0YyUuWV26XV7LcXW8UY0M9d6S4/iiTSSrwHYrgj9PKof6NSjIg9q
-	vcaYHnDCXGp3N3D0pLHD3ocmHWQxPFN2n5ZQDv3WyLTWGTiQ+nFAfLnXIoY0lA==
-X-Google-Smtp-Source: AGHT+IGgIlNycjUsworvnOTSYRhzHICvSHqnm+Q8HMxMdqvYn9kNEPLpT7lzSpNUJI8vxu3lm8gSKQ==
-X-Received: by 2002:a17:902:ea11:b0:1f3:4d44:7000 with SMTP id d9443c01a7336-1f448a36c0amr6257655ad.41.1716502985499;
-        Thu, 23 May 2024 15:23:05 -0700 (PDT)
-Received: from khazhy-linux.svl.corp.google.com ([2620:15c:2a3:200:6f10:db2c:e2ea:44ad])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c7c59ebsm819125ad.105.2024.05.23.15.23.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 15:23:05 -0700 (PDT)
-From: Khazhismel Kumykov <khazhy@chromium.org>
-X-Google-Original-From: Khazhismel Kumykov <khazhy@google.com>
-To: Lee Duncan <lduncan@suse.com>,
-	Chris Leech <cleech@redhat.com>,
-	Mike Christie <michael.christie@oracle.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	open-iscsi@googlegroups.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Khazhismel Kumykov <khazhy@google.com>
-Subject: [PATCH v2 2/2] libiscsi: disallow binding an already-bound connection
-Date: Thu, 23 May 2024 15:21:28 -0700
-Message-ID: <20240523222128.786137-2-khazhy@google.com>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-In-Reply-To: <20240523222128.786137-1-khazhy@google.com>
-References: <20240523222128.786137-1-khazhy@google.com>
+	s=arc-20240116; t=1716503071; c=relaxed/simple;
+	bh=qvjSTZmZ1/mjUKQP4iIvyLHbx4J/qnta8BUfTpCvlog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfxHuJPxDln66EgC4ML935iJK8xvS8OOl/lzAmMV6kYteAAc+B52JLA1ydbLyLqPCe2Sb63pfzxd4NG3WUPLJ1ManAKEDub0XtIVHMdSce1d6Ch9cs71hp1z5fqk0+9fi3kJViV4/vJsAr/xBFBKt6fxoW5ePhSIrqlE+VXl51I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUuXozQK; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716503069; x=1748039069;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qvjSTZmZ1/mjUKQP4iIvyLHbx4J/qnta8BUfTpCvlog=;
+  b=IUuXozQKfWfRq2pzJn7pjJ22AAeTAlhTb1yRMWaSq9i3MhZK8DspdWVc
+   W0uqqfTbtZ0Jry/BUd2jyM6CpMMpJ/Ghq/RFxdGB9NyVA1UXQr6unFYB5
+   e8da36YJK6gYx2CmjYVayox/Wa8KqpVt/SaBhfRKCOo/QWcKwg0gtIbh2
+   J8c5k1V+UjZctNX377/BkFFNurbleRi/QkynP7ax+vg0UvdLc9QvP3IwV
+   w11i4udXIa6kyro0MFQMeYL3Av45xBl5M3QoA4JN19qCHQBBWRIlzOuCR
+   iqrD7zncdb9v/KJ3oyFwuxH3AecHE3bw2MF8ZVnwHanAWjefxEHvfQoM7
+   A==;
+X-CSE-ConnectionGUID: gqerkGlnRie+ooZJA55kBA==
+X-CSE-MsgGUID: kOdcUO9BQeOZzkaW3YwMuA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12793020"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="12793020"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:24:29 -0700
+X-CSE-ConnectionGUID: Nz/KrK75TAmGZgRqaDn3lw==
+X-CSE-MsgGUID: WTYszIGbQZ6eo95wCKKvFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="38271888"
+Received: from jbalogun-mobl.amr.corp.intel.com (HELO desk) ([10.212.227.156])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:24:28 -0700
+Date: Thu, 23 May 2024 15:24:22 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Xiaojian Du <Xiaojian.Du@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-pm@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	daniel.sneddon@linux.intel.com, jpoimboe@kernel.org,
+	sandipan.das@amd.com, kai.huang@intel.com, ray.huang@amd.com,
+	rafael@kernel.org, Perry.Yuan@amd.com, gautham.shenoy@amd.com,
+	Borislav.Petkov@amd.com, mario.limonciello@amd.com
+Subject: Re: [PATCH v3 1/2] x86/cpufeatures: Add AMD FAST CPPC feature flag
+Message-ID: <20240523222422.mezuc3qj35nix3iu@desk>
+References: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
+ <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
 
-This fixes issue where misbehaving userspace initiator could bind the
-same connection multiple times, which would leak the old connection
-socket without cleaning it up.
+On Thu, May 23, 2024 at 02:16:59PM +0800, Xiaojian Du wrote:
+> From: Perry Yuan <perry.yuan@amd.com>
+> 
+> Some AMD Zen 4 processors support a new feature FAST CPPC which
+> allows for a faster CPPC loop due to internal architectual
 
-For iscsi_tcp, it calls iscsi_suspend_tx directly in stop_conn. Update
-this to iscsi_conn_unbind, which matches the lifecycle of other drivers,
-and clears the CONN_FLAG_BOUND.
+s/architectual/architectural/
 
-Suggested-by: Mike Christie <michael.christie@oracle.com>
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
----
- drivers/scsi/iscsi_tcp.c | 2 +-
- drivers/scsi/libiscsi.c  | 6 ++++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-index deb9252e02e6..1d93404515ae 100644
---- a/drivers/scsi/iscsi_tcp.c
-+++ b/drivers/scsi/iscsi_tcp.c
-@@ -696,7 +696,7 @@ static void iscsi_sw_tcp_conn_stop(struct iscsi_cls_conn *cls_conn, int flag)
- 	wake_up_interruptible(sk_sleep(sock->sk));
- 
- 	/* stop xmit side */
--	iscsi_suspend_tx(conn);
-+	iscsi_conn_unbind(cls_conn, true);
- 
- 	/* stop recv side and release socket */
- 	iscsi_sw_tcp_release_conn(conn);
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index 0fda8905eabd..0fb98eb53584 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -3453,6 +3453,12 @@ int iscsi_conn_bind(struct iscsi_cls_session *cls_session,
- 	struct iscsi_conn *conn = cls_conn->dd_data;
- 
- 	spin_lock_bh(&session->frwd_lock);
-+	if (test_bit(ISCSI_CONN_FLAG_BOUND, &conn->flags)) {
-+		spin_unlock_bh(&session->frwd_lock);
-+		return -EBUSY;
-+	}
-+
-+
- 	if (is_leading)
- 		session->leadconn = conn;
- 
--- 
-2.45.1.288.g0e0cd299f1-goog
-
+> enhancements. The goal of this faster loop is higher performance
+> at the same power consumption.
+> 
+> Reference:
+> See the page 99 of PPR for AMD Family 19h Model 61h rev.B1, docID 56713
+> 
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> Signed-off-by: Xiaojian Du <Xiaojian.Du@amd.com>
+> Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  arch/x86/kernel/cpu/scattered.c    | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 3c7434329661..6c128d463a14 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -470,6 +470,7 @@
+>  #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* "" BHI_DIS_S HW control available */
+>  #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
+>  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
+> +#define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
+>  
+>  /*
+>   * BUG word(s)
+> diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+> index af5aa2c754c2..9c273c231f56 100644
+> --- a/arch/x86/kernel/cpu/scattered.c
+> +++ b/arch/x86/kernel/cpu/scattered.c
+> @@ -51,6 +51,7 @@ static const struct cpuid_bit cpuid_bits[] = {
+>  	{ X86_FEATURE_PERFMON_V2,	CPUID_EAX,  0, 0x80000022, 0 },
+>  	{ X86_FEATURE_AMD_LBR_V2,	CPUID_EAX,  1, 0x80000022, 0 },
+>  	{ X86_FEATURE_AMD_LBR_PMC_FREEZE,	CPUID_EAX,  2, 0x80000022, 0 },
+> +	{ X86_FEATURE_FAST_CPPC,	CPUID_EDX,  15, 0x80000007, 0 },
+                                                  ^
+						  Extra space here.
 
