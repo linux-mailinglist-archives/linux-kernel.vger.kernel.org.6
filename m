@@ -1,152 +1,76 @@
-Return-Path: <linux-kernel+bounces-187542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5172D8CD337
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8128CD2F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 066561F23661
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24B8A1F22037
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D5414A4C1;
-	Thu, 23 May 2024 13:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B31314B084;
+	Thu, 23 May 2024 12:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="j8J6Oj+p"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638AB13B7A3;
-	Thu, 23 May 2024 13:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hchj5BtQ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E4A14A4E7;
+	Thu, 23 May 2024 12:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716469611; cv=none; b=iZaR6kWFNBjkLdOvDFhUzu7vr/SIaFFfzj4J1P6Z7hQCwjSrDRb5gRnq79K5oyBvPsqALsnRkhmGmjo4Q0kdtX0iiODosLShuZ3Ddz5+762DKsYgRuTkBNQ/h3zahKj28oNZGbUv/fdJcL3WRz3vpSMsHn1ZLP+HxjlPaHmrB/g=
+	t=1716469145; cv=none; b=rLXx1pnFe/LYoc+SSo2MwRxmjK/uxaWs5pgudgV9QBus0nxEe7FzjAOOo2nGr3NOG5cxpHaFNnWo8bjREfQP3LBDSBfLabhy6LIi5eSJgK3oJNGKODglioldgpchp2eL0BB+o4lJTmW//fBL8Fb3TnzIwfV3jehVcbGQ2IxOzG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716469611; c=relaxed/simple;
-	bh=kswXzuirsNRtNf+Xr5hNHJ3T/IAZOwuRlS1VozUlXz8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EEqlLRlF4Q93CGmsi48vfxLtG7ULDxzrCw+JTOJXq1QYbgzx4WsZzHgAmZwnj88tDJ9Ty7+boWULuHvLHkbZ+JYtrSTqg/0dyIYEObKzEj7/bwyAeNNbs72Pf+yA0RAS16sVny9M5QGgArLZiLOaEXbJoW8/7pWYnPsyFmm2eOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=j8J6Oj+p; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4VlSsh1ZY8z683H;
-	Thu, 23 May 2024 14:58:48 +0200 (CEST)
-Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4VlSsg66Tgz6808;
-	Thu, 23 May 2024 14:58:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=unoeuro; t=1716469127;
-	bh=25qeUHlhp9AzNRH6OxC2fB+5NR3IUEhWt6Hs1OKWWBk=;
-	h=Date:To:Cc:From:Subject;
-	b=j8J6Oj+p62MHmeDS/udeSw+5DFq6D65r3kTh9B8YFkh4dZXzxHs40lP0u9jWp+nup
-	 Ygg5klzGA/FovuQqVjPgC7BurvnLDwNc+7Ff6Dns5BSCxIScGL0qJudZZy4n4NAjWL
-	 TnggXV5Td7eE7T4IYUlSsOsvVhvFV+jKUG2Tw/9A=
-Message-ID: <413928e9-8e8e-429e-bca1-5d55ed3314fb@gaisler.com>
-Date: Thu, 23 May 2024 14:58:46 +0200
+	s=arc-20240116; t=1716469145; c=relaxed/simple;
+	bh=hcftNYsddadnCv048GeLawzgKXG7zWe4Ir3rA4XXvNE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=CF5byKLDo7bFN5Zj4SGme9BoZaqF+MgA2I5Etfb/czT61WQ2ZMtTiSioXoPbR7/2CW+hhxqINEVnvtrvL/RZIO8JeZwPji/5zjriHyQEdKnKuLTpjM8BVAamoHs4yVR+mZ8KljmPFUp+lkmZcR5/Thmx+M8KEDNhzWXCJzsM0To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hchj5BtQ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7A63C20B915B;
+	Thu, 23 May 2024 05:59:03 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A63C20B915B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1716469143;
+	bh=AZEYm5GuhW1ZsBqFWlHzvoubnwpJ3VMSyRQiDDS9XOM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hchj5BtQg1EZf2QFbV0PSfyyssMZRES/bDhzFQIbX/mZxc2amHrqU5ksn4oexkAGq
+	 CePgfLtoMmgXCDegUq3L/+XIzpN8/NCRQIirm+BJphjg+NOXT2NndaOrJI0unJmm/F
+	 /FFLytXWLoNN8bCZ1IOKbKTY/przN2yMKGFiDqJI=
+From: Konstantin Taranov <kotaranov@linux.microsoft.com>
+To: kotaranov@microsoft.com,
+	sharmaajay@microsoft.com,
+	longli@microsoft.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH rdma-next 0/2] Fill in capabilities and guid
+Date: Thu, 23 May 2024 05:58:55 -0700
+Message-Id: <1716469137-16844-1-git-send-email-kotaranov@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Miller <davem@davemloft.net>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Andreas Larsson <andreas@gaisler.com>
-Subject: [GIT PULL] sparc updates for v6.10
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+From: Konstantin Taranov <kotaranov@microsoft.com>
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+This patch series fills in GUID and device properties.
+Most of these properties are required for CM.
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+Konstantin Taranov (2):
+  RDMA/mana_ib: set node_guid
+  RDMA/mana_ib: extend query device
 
-are available in the Git repository at:
+ drivers/infiniband/hw/mana/device.c  |  2 ++
+ drivers/infiniband/hw/mana/main.c    | 19 ++++++++++++++++---
+ drivers/infiniband/hw/mana/mana_ib.h |  5 +++++
+ 3 files changed, 23 insertions(+), 3 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc.git tags/sparc-for-6.10-tag1
-
-for you to fetch changes up to 1c9e709cde80fb612e07d9503ad04457e8a58da2:
-
-  sparc/leon: Remove on-stack cpumask var (2024-05-08 19:42:16 +0200)
-
-----------------------------------------------------------------
-This includes the following changes related to sparc for v6.10:
-
-- Avoid on-stack cpumask variables in a number of places.
-- Move struct termio to asm/termios.h, matching other architectures and
-  allowing certain user space applications to build also for sparc.
-- Fix missing prototype warnings for sparc64.
-- Fix version generation warnings for sparc32.
-- Fix bug where non-consecutive CPU IDs lead to some CPUs not starting.
-- Simplification using swap and cleanup using NULL for pointer.
-- Convert sparc parport and chmc drivers to use remove callbacks
-  returning void.
-
-----------------------------------------------------------------
-Dawei Li (5):
-      sparc/srmmu: Remove on-stack cpumask var
-      sparc/irq: Remove on-stack cpumask var
-      sparc/of: Remove on-stack cpumask var
-      sparc/pci_msi: Remove on-stack cpumask var
-      sparc/leon: Remove on-stack cpumask var
-
-Mike Gilbert (1):
-      sparc: move struct termio to asm/termios.h
-
-Sam Ravnborg (10):
-      sparc64: Fix prototype warning for init_vdso_image
-      sparc64: Fix prototype warnings in traps_64.c
-      sparc64: Fix prototype warning for vmemmap_free
-      sparc64: Fix prototype warning for alloc_irqstack_bootmem
-      sparc64: Fix prototype warning for uprobe_trap
-      sparc64: Fix prototype warning for dma_4v_iotsb_bind
-      sparc64: Fix prototype warnings in adi_64.c
-      sparc64: Fix prototype warning for sched_clock
-      sparc64: Fix number of online CPUs
-      sparc32: Fix version generation failed warnings
-
-Thorsten Blum (2):
-      sparc: Use swap() to fix Coccinelle warning
-      sparc: Compare pointers to NULL instead of 0
-
-Uwe Kleine-König (2):
-      sparc: parport: Convert to platform remove callback returning void
-      sparc: chmc: Convert to platform remove callback returning void
-
- arch/sparc/include/asm/asm-prototypes.h | 17 +++++++++-----
- arch/sparc/include/asm/floppy_64.h      |  4 +---
- arch/sparc/include/asm/parport_64.h     |  6 ++---
- arch/sparc/include/asm/smp_64.h         |  2 --
- arch/sparc/include/uapi/asm/termbits.h  | 10 ---------
- arch/sparc/include/uapi/asm/termios.h   |  9 ++++++++
- arch/sparc/kernel/adi_64.c              | 14 ++++++------
- arch/sparc/kernel/chmc.c                |  5 ++---
- arch/sparc/kernel/irq_64.c              | 10 +++------
- arch/sparc/kernel/kernel.h              |  4 ++++
- arch/sparc/kernel/leon_kernel.c         |  7 +++---
- arch/sparc/kernel/of_device_64.c        |  5 +----
- arch/sparc/kernel/pci_msi.c             |  5 +----
- arch/sparc/kernel/pci_sun4v.c           |  6 ++---
- arch/sparc/kernel/prom_64.c             |  4 +++-
- arch/sparc/kernel/setup_64.c            |  3 +--
- arch/sparc/kernel/smp_64.c              | 14 ------------
- arch/sparc/kernel/time_64.c             |  1 +
- arch/sparc/kernel/traps_64.c            | 10 ++++-----
- arch/sparc/kernel/uprobes.c             |  2 ++
- arch/sparc/mm/init_64.c                 |  5 -----
- arch/sparc/mm/srmmu.c                   | 40 ++++++++++-----------------------
- arch/sparc/prom/tree_64.c               |  2 +-
- arch/sparc/vdso/vma.c                   |  5 +++--
- 24 files changed, 76 insertions(+), 114 deletions(-)
-
-Thanks,
-Andreas
+-- 
+2.43.0
 
 
