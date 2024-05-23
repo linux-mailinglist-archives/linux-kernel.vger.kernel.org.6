@@ -1,150 +1,259 @@
-Return-Path: <linux-kernel+bounces-187112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FCE8CCD42
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:46:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F06A8CCD4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDD79B21D86
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6FB1F21FC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0B313CFA0;
-	Thu, 23 May 2024 07:46:36 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8678B39FD6;
+	Thu, 23 May 2024 07:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M2qG3/j5"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C6E7B3C1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDA8171C4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716450395; cv=none; b=lUdTvyO3lBwwg2UrdZdedPiBHejuvoiEyJbQwppa7lT/+SPaDhttiRzBnJR1N9aJx080VwP6Ga6BtV+yShW1fgpaHXYUjQVJQjRlPjIrbTcjxWafJGQlxoRdVXo4TcgM9JtlWPENSUepcFwq8+qK0CZP1Si7vmEMTu5l2FQ4d3E=
+	t=1716450472; cv=none; b=PKmbURNX56duSOI2DL7lD+C2+O5VEIVqdjYB6oUBkAqH0t3WogpVvKi0uiq/wK7FDH7Jq3uob1tIFgNkKXhlQrJNj/RNgfkwN21e85JHHu5c4V2uEOUSyulVglpP9xVo9DJth533JtwY1C0Ylp7e6Ml/BdcfNdj18Nf5zGhKqQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716450395; c=relaxed/simple;
-	bh=X1IUARsKujsDFRnxlLdxfmtcj0gfHJSfI3M9uf952PM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kfhqapFzRMsodSQntwcAkDYM4lwd+xMYV52WWSsD7hXUNQBz6ytOfXcFOY5haHVUVEwXixjgIYabsoDYwj3UiM0AU5Yv1g240rX58MiC9lw2tGfHaWmu3XB+SheXl53S6vDjpYCHs/AL+kEH3Y/AIpwxh5JevK1mFoUdNhcNn2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1e409d1f4so140613339f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:46:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716450393; x=1717055193;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/JSb/i2gD6c9fSgYzXiWuZto76mKs4deQ4sFdwc39TU=;
-        b=LsqiFwyr4myNiBLyytIvQ1HdZwsD3xEhp96jtz9VqXxCntvn7cFX0v4+9bQtgT006i
-         RnaGYE/oQJZlcTOk/If1PDyeIUt6zwtlV55yMGOsuSQORjwSHAtEvgKPSWfjrh1+THT2
-         l+nwoKsPeAeSP3m7qDHr1cSmceKl9azzNV9Qnj+x/lLG21BsptsRZ8MLhGYqah8MUEG8
-         Hf2Q8RPYSC5B5Q+4N8SVlSUPTcrxEi5ob3mUinal/sqKZlZeuyUM+FmkrBDKucnyUsuT
-         b4U/m1TqMQxYAfNUjsc+KSajclDlb/5daXjainhyE1qSclHLEaJJupT27FR7AjfMle5q
-         UfgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSqc0Q1GidF71IvJjL1sF9vBVA6eq0vYbwCq0TxtejMFXRChc6gb+369XkaMltMCuqIl/qLoS4HH86ha4tXG0eTeuNaf0YqespxRlJ
-X-Gm-Message-State: AOJu0YwU+K+oD0MSPeh1HIIu/fgREuRrx6UQs6Y55xwGOLM7s0ZNXCHA
-	sBFgHt38FPOQ/XeVig5rAQkOqgJ+UzC4u66yunpWeayLN1BeQBtVup7xJ6XXYMyxygg960gKbPo
-	On6gc47ERWlOxTF45iIE4lqKZCAMskYK+6tNvxuugFbc4adyAgXmLI6I=
-X-Google-Smtp-Source: AGHT+IFKjr2T2mLKa9hndWc16xzs0P6jYcnPNbb75LC9YUPqzntLRpMQdJ7igxZRkhSbZPGtkMXVaXtQEujlW1OZnVGcLaVHpj5y
+	s=arc-20240116; t=1716450472; c=relaxed/simple;
+	bh=3VcyvrFnO7doF59IEE6uY58W6g/UohPkURgPYmCd9BM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dXalVSpYslxzCSHH6dczIYJ9eYoqUPBfeqkqyvGAlAzhyA23tCw8nJBwGQMlvzKazsSkt4PajvuqftyVwWEsWH5HYgznYQe4VIuu2C10P468lmcLAJXaEYzB8HzqjOmy3JmIjOJuxUyVAHDG2UKR6ZQWZItRQANACCR2VH07suw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M2qG3/j5; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yukuai1@huaweicloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716450468;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=34wC+r4eDKWNrguibnYho4habD3+PHHInxhgG8ZZ6+s=;
+	b=M2qG3/j5npO2qd52j1LiOg4Npg5g+fRu99+v55ZrMUiYSS2+DKdnjVoC3Oa78F/aORl3um
+	HtexQNkuRidwejUhkNgOEGEw2dwH9LAR39Zr7lKIJVfPoh9ui4Cv2mMkf3PbxU+Whx6v46
+	eCjcqGjjELz6H3x7+YBljbRGi+KKEX0=
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: yi.zhang@redhat.com
+X-Envelope-To: dlemoal@kernel.org
+X-Envelope-To: hare@suse.de
+X-Envelope-To: johannes.thumshirn@wdc.com
+X-Envelope-To: kch@nvidia.com
+X-Envelope-To: zhouchengming@bytedance.com
+X-Envelope-To: bvanassche@acm.org
+X-Envelope-To: linux-block@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: yukuai3@huawei.com
+X-Envelope-To: yi.zhang@huawei.com
+X-Envelope-To: yangerkun@huawei.com
+Message-ID: <48a8a735-d735-45dd-9811-2557ffbc545d@linux.dev>
+Date: Thu, 23 May 2024 09:47:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8619:b0:488:59cc:eb4c with SMTP id
- 8926c6da1cb9f-4afe3b46381mr281202173.3.1716450393710; Thu, 23 May 2024
- 00:46:33 -0700 (PDT)
-Date: Thu, 23 May 2024 00:46:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fdef8706191a3f7b@google.com>
-Subject: [syzbot] [wireless?] WARNING in __rate_control_send_low (2)
-From: syzbot <syzbot+8dd98a9e98ee28dc484a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    4b377b4868ef kprobe/ftrace: fix build error due to bad fun..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f96934980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=17ffd15f654c98ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=8dd98a9e98ee28dc484a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6f4c61bc9252/disk-4b377b48.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/841f1b24d3a1/vmlinux-4b377b48.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/017b655dca3d/bzImage-4b377b48.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8dd98a9e98ee28dc484a@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-no supported rates for sta (null) (0xffffffff, band 0) in rate_mask 0x0 with flags 0x0
-WARNING: CPU: 0 PID: 8812 at net/mac80211/rate.c:385 __rate_control_send_low+0x659/0x890 net/mac80211/rate.c:380
-Modules linked in:
-CPU: 0 PID: 8812 Comm: kworker/u8:20 Not tainted 6.9.0-syzkaller-08544-g4b377b4868ef #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Workqueue: events_unbound cfg80211_wiphy_work
-RIP: 0010:__rate_control_send_low+0x659/0x890 net/mac80211/rate.c:380
-Code: 8b 14 24 0f 85 de 01 00 00 8b 0a 48 c7 c7 80 69 e1 8c 48 8b 74 24 10 44 89 f2 44 8b 44 24 1c 44 8b 4c 24 0c e8 08 9b 5e f6 90 <0f> 0b 90 90 e9 71 fe ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c db
-RSP: 0018:ffffc90005d074a0 EFLAGS: 00010246
-RAX: d769b2aeaeba2800 RBX: 000000000000000c RCX: ffff88802e348000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff88807ec45168 R08: ffffffff81585642 R09: fffffbfff1c3995c
-R10: dffffc0000000000 R11: fffffbfff1c3995c R12: 0000000000000800
-R13: 000000000000000c R14: 00000000ffffffff R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f61c4d3cd58 CR3: 000000004aca6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- rate_control_send_low+0x1a8/0x770 net/mac80211/rate.c:405
- rate_control_get_rate+0x20e/0x5e0 net/mac80211/rate.c:921
- ieee80211_tx_h_rate_ctrl+0xc88/0x1a10 net/mac80211/tx.c:763
- invoke_tx_handlers_late+0xb3/0x18e0 net/mac80211/tx.c:1848
- ieee80211_tx+0x2e3/0x470 net/mac80211/tx.c:1969
- __ieee80211_tx_skb_tid_band+0x4e2/0x620 net/mac80211/tx.c:6103
- ieee80211_tx_skb_tid_band net/mac80211/ieee80211_i.h:2266 [inline]
- ieee80211_handle_roc_started+0x267/0x440 net/mac80211/offchannel.c:248
- _ieee80211_start_next_roc+0x7a1/0xb00 net/mac80211/offchannel.c:381
- cfg80211_wiphy_work+0x221/0x260 net/wireless/core.c:437
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Subject: Re: [PATCH v2] null_blk: fix null-ptr-dereference while configuring
+ 'power' and 'submit_queues'
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, yi.zhang@redhat.com,
+ dlemoal@kernel.org, hare@suse.de, johannes.thumshirn@wdc.com,
+ kch@nvidia.com, zhouchengming@bytedance.com, bvanassche@acm.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 23.05.24 17:39, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> Writing 'power' and 'submit_queues' concurrently will trigger kernel
+> panic:
+>
+> Test script:
+>
+> modprobe null_blk nr_devices=0
+> mkdir -p /sys/kernel/config/nullb/nullb0
+> while true; do echo 1 > submit_queues; echo 4 > submit_queues; done &
+> while true; do echo 1 > power; echo 0 > power; done
+>
+> Test result:
+>
+> BUG: kernel NULL pointer dereference, address: 0000000000000148
+> Oops: 0000 [#1] PREEMPT SMP
+> RIP: 0010:__lock_acquire+0x41d/0x28f0
+> Call Trace:
+>   <TASK>
+>   lock_acquire+0x121/0x450
+>   down_write+0x5f/0x1d0
+>   simple_recursive_removal+0x12f/0x5c0
+>   blk_mq_debugfs_unregister_hctxs+0x7c/0x100
+>   blk_mq_update_nr_hw_queues+0x4a3/0x720
+>   nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
+>   nullb_device_submit_queues_store+0x79/0xf0 [null_blk]
+>   configfs_write_iter+0x119/0x1e0
+>   vfs_write+0x326/0x730
+>   ksys_write+0x74/0x150
+>
+> This is because del_gendisk() can concurrent with
+> blk_mq_update_nr_hw_queues():
+>
+> nullb_device_power_store	nullb_apply_submit_queues
+>   null_del_dev
+>   del_gendisk
+> 				 nullb_update_nr_hw_queues
+> 				  if (!dev->nullb)
+> 				  // still set while gendisk is deleted
+> 				   return 0
+> 				  blk_mq_update_nr_hw_queues
+>   dev->nullb = NULL
+>
+> Fix this problem by resuing the global mutex to protect
+> nullb_device_power_store() and nullb_update_nr_hw_queues() from configfs.
+>
+> Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after an instance has been configured")
+> Reported-and-tested-by: Yi Zhang <yi.zhang@redhat.com>
+> Closes: https://lore.kernel.org/all/CAHj4cs9LgsHLnjg8z06LQ3Pr5cax-+Ps+xT7AP7TPnEjStuwZA@mail.gmail.com/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+> Changes in v2:
+>   - remove the unrelated code.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Thanks. I am fine with it.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Zhu Yanjun
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+>
+>   drivers/block/null_blk/main.c | 40 +++++++++++++++++++++++------------
+>   2 files changed, 27 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+> index 5d56ad4ce01a..eb023d267369 100644
+> --- a/drivers/block/null_blk/main.c
+> +++ b/drivers/block/null_blk/main.c
+> @@ -413,13 +413,25 @@ static int nullb_update_nr_hw_queues(struct nullb_device *dev,
+>   static int nullb_apply_submit_queues(struct nullb_device *dev,
+>   				     unsigned int submit_queues)
+>   {
+> -	return nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
+> +	int ret;
+> +
+> +	mutex_lock(&lock);
+> +	ret = nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
+> +	mutex_unlock(&lock);
+> +
+> +	return ret;
+>   }
+>   
+>   static int nullb_apply_poll_queues(struct nullb_device *dev,
+>   				   unsigned int poll_queues)
+>   {
+> -	return nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
+> +	int ret;
+> +
+> +	mutex_lock(&lock);
+> +	ret = nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
+> +	mutex_unlock(&lock);
+> +
+> +	return ret;
+>   }
+>   
+>   NULLB_DEVICE_ATTR(size, ulong, NULL);
+> @@ -468,28 +480,31 @@ static ssize_t nullb_device_power_store(struct config_item *item,
+>   	if (ret < 0)
+>   		return ret;
+>   
+> +	ret = count;
+> +	mutex_lock(&lock);
+>   	if (!dev->power && newp) {
+>   		if (test_and_set_bit(NULLB_DEV_FL_UP, &dev->flags))
+> -			return count;
+> +			goto out;
+> +
+>   		ret = null_add_dev(dev);
+>   		if (ret) {
+>   			clear_bit(NULLB_DEV_FL_UP, &dev->flags);
+> -			return ret;
+> +			goto out;
+>   		}
+>   
+>   		set_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
+>   		dev->power = newp;
+>   	} else if (dev->power && !newp) {
+>   		if (test_and_clear_bit(NULLB_DEV_FL_UP, &dev->flags)) {
+> -			mutex_lock(&lock);
+>   			dev->power = newp;
+>   			null_del_dev(dev->nullb);
+> -			mutex_unlock(&lock);
+>   		}
+>   		clear_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
+>   	}
+>   
+> -	return count;
+> +out:
+> +	mutex_unlock(&lock);
+> +	return ret;
+>   }
+>   
+>   CONFIGFS_ATTR(nullb_device_, power);
+> @@ -1932,15 +1947,12 @@ static int null_add_dev(struct nullb_device *dev)
+>   	nullb->q->queuedata = nullb;
+>   	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
+>   
+> -	mutex_lock(&lock);
+>   	rv = ida_alloc(&nullb_indexes, GFP_KERNEL);
+> -	if (rv < 0) {
+> -		mutex_unlock(&lock);
+> +	if (rv < 0)
+>   		goto out_cleanup_disk;
+> -	}
+> +
+>   	nullb->index = rv;
+>   	dev->index = rv;
+> -	mutex_unlock(&lock);
+>   
+>   	if (config_item_name(&dev->group.cg_item)) {
+>   		/* Use configfs dir name as the device name */
+> @@ -1969,9 +1981,7 @@ static int null_add_dev(struct nullb_device *dev)
+>   	if (rv)
+>   		goto out_ida_free;
+>   
+> -	mutex_lock(&lock);
+>   	list_add_tail(&nullb->list, &nullb_list);
+> -	mutex_unlock(&lock);
+>   
+>   	pr_info("disk %s created\n", nullb->disk_name);
+>   
+> @@ -2020,7 +2030,9 @@ static int null_create_dev(void)
+>   	if (!dev)
+>   		return -ENOMEM;
+>   
+> +	mutex_lock(&lock);
+>   	ret = null_add_dev(dev);
+> +	mutex_unlock(&lock);
+>   	if (ret) {
+>   		null_free_dev(dev);
+>   		return ret;
 
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Best Regards,
+Yanjun.Zhu
+
 
