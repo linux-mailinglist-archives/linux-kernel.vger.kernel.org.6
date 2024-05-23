@@ -1,86 +1,132 @@
-Return-Path: <linux-kernel+bounces-187522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600548CD2E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8CA8CD2E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114391F21DC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:58:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21FB128338E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2BC14A4DD;
-	Thu, 23 May 2024 12:58:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2027914A4EC;
+	Thu, 23 May 2024 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Mkd3Bh4L"
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B778174C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED598174C;
+	Thu, 23 May 2024 12:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.154.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716469086; cv=none; b=QI0pugDOhKj62wm+qwvOw/WyFKHMT5m4QzE8CsiZBZuPdm3gz5kcgr2ZWBxmFANJaf0cpQX1RUVameasKpwAckw8DBYzOzNxnMK5rJXvew+bkZNQ4DcdBbzUhep5TRfdw3VRpIYpYUCFk/Vrok4OQMga1JUusuyCoWAigHhvLOw=
+	t=1716469122; cv=none; b=rj3Z2ohpF+5N+wDSoxD01t0b0Cu/o4HCw69PFmlmh77r1buDJpBeDy7JwRU9x4cXJqJZq21aMyTZ4LKobCcZTLhnNYGtyGZAkyDrx4sv5Pe339HY7hkcbiz9jtfN5aAH6JNJBugccVZ1mvL+3my1boBcGQhDmZfnDdYF2LZHZzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716469086; c=relaxed/simple;
-	bh=bbSus61IPENCd63/yVddN6wUXqhHRUWd8Wd8rLl1FWY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BaMH3ya4S3lBYPAOCdHPJDZXHU4BoolAkDOEPoWNrXsPhm8GnDJQQyeLtV8M6qKxFfIeTW+xcJwdqdBga/44oElaXuqdFoy53l/mOl8dZSZGo2rCddAXynm9iGR9iG61Lq0Rkbn0mB6Cf4XrBKPQxuIaO5TMcpd5T1lDnbxhstU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c74ef7261so20762405ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716469084; x=1717073884;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=00aUEodfde1jONRp4lAPPFzzYhdOBLt8pgnc6kVNvis=;
-        b=A1Sogke3Nfg8AmNDIZjwiWIKyV0KDEWzWMLSUzBnNE1nl8TaY2PVeYiaDxywKz+N3r
-         3MnHl2ct4Il+54y8Zsy9Hj4b5sK9ppDOP2R6Jd9teiV+nj5+NXsPTlsxs0BMj+dLtOEN
-         S0XKsy/biiO3U3gResAbSC/ouwCBxKVW0XpZV96PqERlnP3clHWj2md5nVQWS/zzHlB9
-         XRj58NgUp7p3KMnVlop2v0jvH4Nj14qtB23kJ9lkzBrsesh/c4NGdQhzLub9U5rmGrLp
-         NNzzRu9jzN9hjKSDq8HZ5Z3kWCn1BxpgI8VrO+CYUsn6MfkuX61vAvL+5O72/vbeaVPN
-         /shQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbI6PrfuLh8IWuw9crPa+Q9JY2R8OAzg+0I/C3R9Vl/tC8X6Q3q0ksPAKtsozrHlNPtI92Ve9Adb1gkw0Nzux1QgzmS+Gpk1Ab65Ki
-X-Gm-Message-State: AOJu0Yys6N3NjrsE+Ejz1gR4TPHLkJ15HfWnhqTm+V9BSB3PyffO5LrL
-	0/VW+uxIQ9KHPQpdMtZtTDnQi0NTyB8VmhjM8530CsryyaAMOHerWlkI1S9BhG7+D5QG+8gPyj5
-	/zDmyvX27q1mGZpLtewfSsttKS9IgWLazyISzif+C74BoO2NJTjNSqZ0=
-X-Google-Smtp-Source: AGHT+IFlo32G3yL5vHTGnAePlWuaAvPcmq2p6c19AgKelnWb0GVuvwRm+qjtSKpWOY/Bmt+tbcqHVtoMWPIbpYDUGJyfUayQfT5g
+	s=arc-20240116; t=1716469122; c=relaxed/simple;
+	bh=oV2ZFplCblWKmN/I2j0dD142TAdaLRkSzUlqV4hF1yw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UVHOGJYw4BNsK2XFMA4H0XmPITH1HGxtfspuebeeBo4cLmBNLEMmsI2YQ/RvNVvfKN+xecVxukP17FuHrXnRF511aLxPJIiozviBwOhJ572ad1z+gQQK8D4p3J9y8VDUEUILaY71KLG17YZwpkn45TxJ+cqEEvmVkegKP78y1zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=Mkd3Bh4L; arc=none smtp.client-ip=216.71.154.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1716469120; x=1748005120;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=oV2ZFplCblWKmN/I2j0dD142TAdaLRkSzUlqV4hF1yw=;
+  b=Mkd3Bh4L9L4QcsfG96chEZ1gX7gfq0IvK4RMLWJ+LIyw5nYlYkLoLByc
+   oolW+pbEayY/91spqDHckmLYDZa9jStsW7Zs11uIlA13ZJOh6uwBEUiIK
+   M4DJOecVD14nhMUxP3OlHG5ZN0sJ0oYl5QVJJwQkY0eSKD0EqaKLNFaaJ
+   TfKzGqn3+3thnDgObg0NQNnDvALzg8Eymm+QzH4+kk1kCf3YjUh8NojIJ
+   foDvKRxPjtYz/U54vEBQaKpQ86bJGV4IC6VlfklM2C1H4EPsgzK233XQc
+   eNl/eVhFYeWLB0tE90vCqrFbI97KXFoyulhG1ToKOH6XVKqniUoTNrgd+
+   A==;
+X-CSE-ConnectionGUID: B1vBICsYTTuwkvbP7gcZhQ==
+X-CSE-MsgGUID: K+g1x1t8Rg+4LYSgjzX96w==
+X-IronPort-AV: E=Sophos;i="6.08,182,1712592000"; 
+   d="scan'208";a="17062539"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 23 May 2024 20:58:39 +0800
+IronPort-SDR: 664f3136_ZssmQlMpJAR0S2alNUERHDIT1Ml7xFl4ZRQpOX5+WaltTJS
+ 0WIQvBy2mg1Myl1BL6ika/A38lJZM7LsO8ZFa7g==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 May 2024 05:06:14 -0700
+WDCIronportException: Internal
+Received: from bxygm33.ad.shared ([10.45.31.229])
+  by uls-op-cesaip02.wdc.com with ESMTP; 23 May 2024 05:58:38 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>,
+	Bean Huo <beanhuo@micron.com>,
+	Peter Wang <peter.wang@mediatek.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v5 0/3] scsi: ufs: Allow RTT negotiation
+Date: Thu, 23 May 2024 15:58:23 +0300
+Message-ID: <20240523125827.818-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d85:b0:36d:b5df:f478 with SMTP id
- e9e14a558f8ab-371fc9cd989mr3921985ab.4.1716469083927; Thu, 23 May 2024
- 05:58:03 -0700 (PDT)
-Date: Thu, 23 May 2024 05:58:03 -0700
-In-Reply-To: <tencent_4DA6DD13732376296683B4645AF76CB76205@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000004089806191e9a51@google.com>
-Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
-From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The rtt-upiu packets precede any data-out upiu packets, thus
+synchronizing the data input to the device: this mostly applies to write
+operations, but there are other operations that requires rtt as well.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+There are several rules binding this rtt - data-out dialog, specifically
+There can be at most outstanding bMaxNumOfRTT such packets.  This might
+have an effect on write performance (sequential write in particular), as
+each data-out upiu must wait for its rtt sibling.
 
-Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+UFSHCI expects bMaxNumOfRTT to be min(bDeviceRTTCap, NORTT). However,
+as of today, there does not appear to be no-one who sets it: not the
+host controller nor the driver.  It wasn't an issue up to now:
+bMaxNumOfRTT is set to 2 after manufacturing, and wasn't limiting the
+write performance.
 
-Tested on:
+UFS4.0, and specifically gear 5 changes this, and requires the device to
+be more attentive.  This doesn't come free - the device has to allocate
+more resources to that end, but the sequential write performance
+improvement is significant. Early measurements shows 25% gain when
+moving from rtt 2 to 9. Therefore, set bMaxNumOfRTT to be
+min(bDeviceRTTCap, NORTT) as UFSHCI expects.
 
-commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d87942980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133e9f7c980000
+v4 -> v5:
+Quiesce the queues before writing bMaxNumOfRTT (Bart)
+Make bDeviceRTTCap available in ufshcd_device_params_init() (Bart)
 
-Note: testing is done by a robot and is best-effort only.
+v3 -> v4:
+Allow bMaxNumOfRTT to be configured via sysfs (Bart)
+
+v2 -> v3:
+Allow platform vendors to take precedence having their own rtt
+negotiation mechanism (Peter)
+
+v1 -> v2:
+bMaxNumOfRTT is a Persistent attribute - do not override if it was
+written (Bean)
+
+Avri Altman (3):
+  scsi: ufs: Allow RTT negotiation
+  scsi: ufs: Allow platform vendors to set rtt
+  scsi: ufs: sysfs: Make max_number_of_rtt read-write
+
+ Documentation/ABI/testing/sysfs-driver-ufs | 14 +++--
+ drivers/ufs/core/ufs-sysfs.c               | 72 +++++++++++++++++++++-
+ drivers/ufs/core/ufshcd-priv.h             | 12 ++++
+ drivers/ufs/core/ufshcd.c                  | 53 ++++++++++++----
+ include/ufs/ufs.h                          |  2 +
+ include/ufs/ufshcd.h                       |  4 ++
+ include/ufs/ufshci.h                       |  1 +
+ 7 files changed, 139 insertions(+), 19 deletions(-)
+
+-- 
+2.34.1
+
 
