@@ -1,185 +1,149 @@
-Return-Path: <linux-kernel+bounces-188091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDDB8CDD0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:51:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A228CDD0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ED9828816B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:51:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AD3B21C18
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D4E128389;
-	Thu, 23 May 2024 22:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BC8128398;
+	Thu, 23 May 2024 22:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HFmoZeEb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UpBwIAxP"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566DAAD2C;
-	Thu, 23 May 2024 22:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165C784DE9
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716504706; cv=none; b=pL7xzFLyMeULKZ4FU248Kxog3spPSvW0mxWUc0Zyb2kON6gLSKB07PRZm87mKqEQOwZGhnGjgzkpLV/Zeyw9neQZIQwBkZtu15A8NYYjdCqwC6yELt+KkUIW5WezAMvr20P3jKuF06kbbUwW38qf3nNF+QYreRZtlXAGVHCXOQc=
+	t=1716504859; cv=none; b=MbQmKScJFpjRQa9odT8iX+4Ma+vAfXols6ef+8d2MS8+2gKQ0ra2RwDEwT8ZQ3JEa4IBGxy2LD2c31v2s8vA53B0Az7Rt7mC1iNlkv0ZxeIeI+QT91a2WGwD1AyMDa7u33KM/rBniZu74uYTwu4ce1bwRcFThT/C39VvfEbaoUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716504706; c=relaxed/simple;
-	bh=giJ5QDjLDfVV2cOpY+mASzmzACsrekg/cRgM9xcuAUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s875IIgMmcg/5K8mxIQjsynrRjc6VLmNnacNwUoBeJVFzOXTod7oo2PDLI4J/R2CZ5lDLzjegbNal7SCB1eNS7lyYjM4BD6c6knxjwDslYlZI6dn4bACYjs1CSMGEbk0FtZgsTmzW9z66JNUN6a2QMrT8HLNsSHH363EHgh/5aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HFmoZeEb; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716504704; x=1748040704;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=giJ5QDjLDfVV2cOpY+mASzmzACsrekg/cRgM9xcuAUA=;
-  b=HFmoZeEbrIhUg8N0qANhk4Q6TubfFJYTHeiUTPCqS8cyx0YT+qW/IrSr
-   1nKs2ITWCGvBnmfDvobYm3Jh553JukeuSI4y1j9nm/y/cU/jMUXRreUAQ
-   7NzEZERyQA19G7Fh2plPVDGxFoFzB13n3bUYF1zesQgJSwwmAgiKpeZ/r
-   E3HjDmYlZZcWAhpRWx43OGzDdkla/vzXCf85JcPcCgeQjr+GWaHiNTCK4
-   OO+iL6dOSeUQtHNMyDOAGM4Jy4gVb2TRdOZf9PrYH+8bH1xjGcY/2ZsfK
-   dU8SDa9susHFKUO/cMzbsUS7UItEvMc1N+vVnjHWdhyxqFuGxwgTtNGQk
-   w==;
-X-CSE-ConnectionGUID: UV9q8AZKTDqzX/2IK1ROww==
-X-CSE-MsgGUID: KgyOc1PuS4yDlpNjizx38w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="30392880"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="30392880"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:51:44 -0700
-X-CSE-ConnectionGUID: A1AX1DW8RWiVfriUcdUDTw==
-X-CSE-MsgGUID: 60l+yT6OQdit+dQ4JACT5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="38231893"
-Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.110.61]) ([10.125.110.61])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:51:42 -0700
-Message-ID: <cf799922-d5f5-4f8d-96ef-5a526d5ae643@intel.com>
-Date: Thu, 23 May 2024 15:51:41 -0700
+	s=arc-20240116; t=1716504859; c=relaxed/simple;
+	bh=8xZg34USATzGqgSCdoZnVM1prsayTUdOdmM7joOB0uo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X8D24nQxBfEaEaGYw4Z+GGkB/6UqhZbx3vriv3I6BjIvKBj+EQ6LSBlwPYlCCj2jhXcFvPH67/20R7VlWK7YmPBlnr8221Oz7R35eaIeuOvYMv/q7xoTVlq5Y6skZpcnJY1X2odfpeVoO/UVNmSTAEp8drTFe9oEZor+uIvh3cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UpBwIAxP; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f67f4bebadso2754764b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716504857; x=1717109657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K+HxhhwWxpOnO+u12YpT/sUY3evQxw+3Sm/bBnvujtM=;
+        b=UpBwIAxP8CCxW4jrWfS3V6bDC0IBR265o0PqFnhQOSS9UjRwxYPYuMIhVOA9tuRoL7
+         cvjcFx3WbI8B8NMKhdNErcOHfxjFmc5c6W+aJQAIoXRgOt7zERzNV/YXpXdEYpabbi5v
+         +JcQ/4v4qsd4qCvD+wn07HLYxoB6A+KJctbM8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716504857; x=1717109657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K+HxhhwWxpOnO+u12YpT/sUY3evQxw+3Sm/bBnvujtM=;
+        b=CN+4INBgJDsbLCA/t+Rk7T8Ip/zrGZfNWFHTHC07ARdNqtjFgnpPapecZgQ09ivMIX
+         WiwXA62uTBr7s6kqHlPp6gpU1zzGPjf3e6f9it1aUfMebSEG7NvPW9WERt1BqQoq5U3M
+         JT6sVS8fmNrP9c7YVpm/xjTJ2ZJ4t+u5PB6gTKtRysMcVXPEWUQIsxrhiXGG4//or67d
+         mpcmWLIUErI7f5o+QwmSzsa2duMEvMEF2QzTSQVaWkBs/x6e+wlzWqd2aQhdkpnNHVwK
+         kHXN/WxYm+HKMlagA2v/QIBVA23+Tj2dDAUH6Y3GkCjF1PoL+6xLEboxAX4AA1hWG7AW
+         Pf5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVACpbzmsRZ2liPiesSK1zSB5VWuqrctSEgnkFsiAtvw/tygNYrvg+0ZXHjMc/bMnvxevXMKjYwr6xp126ebfWVql9Sx7Z45B1DwILu
+X-Gm-Message-State: AOJu0Yzx9WKnnlXTOOpky8U7DL/K7rx69wHe1pYgj7Do4Nxge71RljCi
+	EXiuA2w7XQu4j9FloLnRkcVmYTJa9eY5ZuXlwUF9GIdXsINyozAEYhNDXmPh8A==
+X-Google-Smtp-Source: AGHT+IFJDeRVzR/CmcQh9/usRPuj/9gA0/y1cIEjghi9Zyo54TlF+rIffB8Oldl/5AWX2fVfA4L5Cg==
+X-Received: by 2002:a05:6a20:43ac:b0:1aa:43f4:3562 with SMTP id adf61e73a8af0-1b212d38fd6mr1062643637.11.1716504857311;
+        Thu, 23 May 2024 15:54:17 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75f5d0sm1074095ad.43.2024.05.23.15.54.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 15:54:16 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Kees Cook <keescook@chromium.org>,
+	syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com,
+	Justin Stitt <justinstitt@google.com>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] ext4: Use memtostr_pad() for s_volume_name
+Date: Thu, 23 May 2024 15:54:12 -0700
+Message-Id: <20240523225408.work.904-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] acpi/ghes, efi/cper: Recognize and process CXL
- Protocol Errors.
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>
-References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
- <20240522150839.27578-3-Smita.KoralahalliChannabasappa@amd.com>
- <8470dcc5-fbd4-4977-b8e8-5f7bfbf4b220@intel.com>
- <08dc0027-371c-5783-fd65-ad6f8b228fee@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <08dc0027-371c-5783-fd65-ad6f8b228fee@amd.com>
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2019; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=8xZg34USATzGqgSCdoZnVM1prsayTUdOdmM7joOB0uo=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmT8kTsKNHKThRJmlbWkYa4+mZSvIto0827ZvNs
+ WCZOoohy+yJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZk/JEwAKCRCJcvTf3G3A
+ JuH4D/0YcQozks4yjfdJp7U58EIbhq/lnbt7NB1OWxBMXL9t98LlkWEIMinU56rGRalVUDuONy3
+ JDueXhRyT1F3e+zrD0GTObAxCL+cvcb6QGy9ILi7yKZvMcQFZgARmHPilFPpWQL0UUMIgAWFjps
+ 3PbD1qw/GJ1vEbRl2zmEf/GWEF9CoCfoLqEcyXKNuuj3qqiHAagfo6tZebDx7lmD2k57aAE6Vab
+ cI3ZvCeoF+fw9DJ4omnVjn7IQYdwX3ECToeHhowoa1CB09PmtTjkZqkEh8wTXFrF119OFPOG2Ye
+ cQKslnD1VeKZJYzUoEo6nCphqN73cOIcrgYlXsAs0nIwUbXwXtvEsTlqO+uuQMokwX/x/5h4yNC
+ 6aGovyqMkokthVPQqiW3z8UwM0iQzG0FFmbcrKshIlWt6HdDxHVrCEHhExxQJ1YAIYs9Yr/4Xl1
+ CYXQOFQU9cMFrojObq15H8Ek9AYQPGtoeS8RJhSYSlhjPdPIG2+Z2j8blrvnX17w/OZrOYdSgwN
+ fkWX3rVJzXA7XqWyxFlg9+MGW8Ku0pB8my8aXfXqeXhkiW0Ic1dDzSbiHkFpVGNhCsJQ1f6RmxQ
+ 1dKYTnbs6SwF8rh9r2ICYOhfwTqsMEOrYoIN/L+5KW215bnvyMyt3M3XOZqEeEM+d7J4mhb14uB
+ LDpJFno Vq6wsq4Q==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
+As with the other strings in struct ext4_super_block, s_volume_name is
+not NUL terminated. The other strings were marked in commit 072ebb3bffe6
+("ext4: add nonstring annotations to ext4.h"). Using strscpy() isn't
+the right replacement for strncpy(); it should use memtostr_pad()
+instead.
 
+Reported-by: syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/00000000000019f4c00619192c05@google.com/
+Fixes: 744a56389f73 ("ext4: replace deprecated strncpy with alternatives")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Cc: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org
+---
+ fs/ext4/ext4.h  | 2 +-
+ fs/ext4/ioctl.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-On 5/23/24 2:19 PM, Smita Koralahalli wrote:
-> Hi Dave,
-> 
-> On 5/22/2024 10:59 AM, Dave Jiang wrote:
->>
->>
->> On 5/22/24 8:08 AM, Smita Koralahalli wrote:
->>> UEFI v2.10 section N.2.13 defines a CPER record for CXL Protocol errors.
->>>
->>> Add GHES support to detect CXL CPER Protocol Error Record and Cache Error
->>> Severity, Device ID, Device Serial number and CXL RAS capability struct in
->>> struct cxl_cper_prot_err. Include this struct as a member of struct
->>> cxl_cper_work_data.
->>>
->>> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
->>> ---
->>>   drivers/acpi/apei/ghes.c        | 10 +++++
->>>   drivers/firmware/efi/cper_cxl.c | 66 +++++++++++++++++++++++++++++++++
->>>   include/linux/cxl-event.h       | 26 +++++++++++++
->>>   3 files changed, 102 insertions(+)
->>>
-> 
-> [snip]
-> 
-> 
->>> +     * The device ID or agent address is required for CXL RCD, CXL
->>> +     * SLD, CXL LD, CXL Fabric Manager Managed LD, CXL Root Port,
->>> +     * CXL Downstream Switch Port and CXL Upstream Switch Port.
->>> +     */
->>> +    if (prot_err->agent_type <= 0x7 && prot_err->agent_type != RCH_DP) {
->>
->> Perhaps define an enum CXL_AGENT_TYPE_MAX instead of 0x7 magic number? Otherwise if a new type is introduced, it would break this code.
-> 
-> Agreed. I will define a boolean array indexed by agent type as suggested by Alison. That would avoid all these comparisons and not worry about breaking code in future.
-> 
->>  
->>> +        p_err->segment = prot_err->agent_addr.segment;
->>> +        p_err->bus = prot_err->agent_addr.bus;
->>> +        p_err->device = prot_err->agent_addr.device;
->>> +        p_err->function = prot_err->agent_addr.function;
->>> +    } else {
->>> +        pr_err(FW_WARN "Invalid agent type\n");
->>> +        return -EINVAL;
->>> +    }
->>
->> Up to you if you want to do this or not, but maybe:
->>
->>     if (prot_err->agent_type >= CXL_AGENT_TYPE_MAX || prot_err->agent_type == RCH_DP) {
->>         pr_warn(...);
->>         return -EINVAL;
->>     }
->>
->>     p_err->segment = ...;
->>     p_err->bus = ...;
-> 
-> Noted.
-> 
->>     ...
->>
->> Although perhaps a helper function cxl_cper_valid_agent_type() that checks invalid agent type by checking the valid_bits, the agent_type boundary, and if agent_type != RCH_DP?
-> 
-> Okay.
-> 
->>> +
->>> +    if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
->>> +        pr_err(FW_WARN "Invalid Protocol Error log\n");
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    dvsec_start = (u8 *)(prot_err + 1);
->>> +    cap_start = dvsec_start + prot_err->dvsec_len;
->>> +    p_err->cxl_ras = *(struct cxl_ras_capability_regs *)cap_start;
->>> +
->>> +    /*
->>> +     * Set device serial number unconditionally.
->>> +     *
->>> +     * Print a warning message if it is not valid. The device serial
->>> +     * number is required for CXL RCD, CXL SLD, CXL LD and CXL Fabric
->>> +     * Manager Managed LD.
->>> +     */
->>> +    if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER) ||
->>> +          prot_err->agent_type > 0x4 || prot_err->agent_type == RCH_DP)
->>
->> prot_err->agent_type > FM_LD? Although maybe it would be a clearer read if a helper function is defined to identify the agent types such as cxl_cper_prot_err_serial_needed() or cxl_cper_prot_agent_type_device() and with it a switch statement to explicitly identify all the agent types that require serial number. If a future device is defined, the > 0x4 logic may break.
-> 
-> Probably helper function is not required if boolean array is defined? What do you think?
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 983dad8c07ec..efed7f09876d 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -1347,7 +1347,7 @@ struct ext4_super_block {
+ /*60*/	__le32	s_feature_incompat;	/* incompatible feature set */
+ 	__le32	s_feature_ro_compat;	/* readonly-compatible feature set */
+ /*68*/	__u8	s_uuid[16];		/* 128-bit uuid for volume */
+-/*78*/	char	s_volume_name[EXT4_LABEL_MAX];	/* volume name */
++/*78*/	char	s_volume_name[EXT4_LABEL_MAX] __nonstring; /* volume name */
+ /*88*/	char	s_last_mounted[64] __nonstring;	/* directory where last mounted */
+ /*C8*/	__le32	s_algorithm_usage_bitmap; /* For compression */
+ 	/*
+diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+index dab7acd49709..e8bf5972dd47 100644
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
+ 	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
+ 
+ 	lock_buffer(sbi->s_sbh);
+-	strscpy_pad(label, sbi->s_es->s_volume_name);
++	memtostr_pad(label, sbi->s_es->s_volume_name);
+ 	unlock_buffer(sbi->s_sbh);
+ 
+ 	if (copy_to_user(user_label, label, sizeof(label)))
+-- 
+2.34.1
 
-That works for me. My main concern is to clarify the code and remove possibility of breakage from future changes.
-> 
-> Thanks,
-> Smita
-> 
-> [snip]
 
