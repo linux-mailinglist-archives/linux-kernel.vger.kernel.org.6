@@ -1,70 +1,116 @@
-Return-Path: <linux-kernel+bounces-187818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06238CD8F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:07:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA4D8CD8F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C002831F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:07:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2BC81F2321F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A5B6EB74;
-	Thu, 23 May 2024 17:07:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845CD6EB74;
+	Thu, 23 May 2024 17:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GXZs3O21"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A685AD2C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A608AD2C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716484032; cv=none; b=CDs2tQc114pBSf+M1YPlLI5Q28X/gWBlQDoHKfS2EAnxcLTgNAYIwOY1B04g8w7YxQh24mYAR+XGpV2nPUrpiEQayhICT2p8bN5lHbFv07GHHKWKIUKetMfFzG6eBhrrjp6WTTg3+fxxEZRP8sSPfAqPQeE85Muo+kGsPZn482E=
+	t=1716484074; cv=none; b=pv+AYxYQnMH9ASjJU55SO43OdRg6n09rJsg3LQoOnEBwo7eerl00pDE+6Ihc7Bo12g/sVxsPucpPlIXJ7xJV5+89yamzedk/+qZwTyhffGAsfazw2AzTIhFfhZ3nyeOitguq7EkU6q3OogSC5hffiN8mAucsuKub+c1ecRCraoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716484032; c=relaxed/simple;
-	bh=6gSCyEIu5zPIbY9kgFjP5bVY1DREQG7gIcxL+TAUGPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SmAwlUTrNT2SRqqFJ0ipn/BlsxoDFcvebnA86hUQsjYhukeYDo1zL7mpcggKTxagDPEB2nFPtBwH3bbuSg1GrDQ10Och3d8oHKBSjQWg5k0yLSXIJWZcsNvT13Ah0bpnlMyn98YXX03eacIZp8kN45B0zhvFjpDQtB30caIudmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757D2C2BD10;
-	Thu, 23 May 2024 17:07:10 +0000 (UTC)
-Date: Thu, 23 May 2024 18:07:08 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: will@kernel.org, anshuman.khandual@arm.com,
-	scott@os.amperecomputing.com, cl@gentwo.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Message-ID: <Zk93vBqAD3LgmbGb@arm.com>
-References: <20240520165636.802268-1-yang@os.amperecomputing.com>
+	s=arc-20240116; t=1716484074; c=relaxed/simple;
+	bh=LgdFMV3pwxfUlloQIhIUMD+jd5nlRZUYHb2VjgHE3PU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X2DCCn5f9Ac2Lt0Unt3iCK+x9KZp/+zHZ+TVIItJanPJpH747zcr8y/fIi0SfUIKudSzr95HdmYuO1Fyj69ntlgd2eqCrF3xWP1WPfuXeK5ySeEG+6xthJd1fI1xY/NxpGXHsBBBtXk5kFa39aC7u5xFXQ60qKfUAm3VBJR4ZJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GXZs3O21; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716484071;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pNKN9QPxUfTkYzMYoD5TJ5z2UvASg+iEgjNAxXTL0Ss=;
+	b=GXZs3O216pPAMNbEq5fbJrIBPxOa0/wMZ54fVcuSLy+35llskZOKdVOQZOhddHBj1HkDLc
+	gFG4T10/FlCTHVceDckaPoNsweHM5L7lYM0bQCEQfCQ4FyQf+XWgNVwD4sdsP6l3GH0N9v
+	RuRVSHhxwJO1kCV2ISRk13+6AhwMsWE=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-324-V7-Bz9f5O2SBRyKb_L7eyA-1; Thu,
+ 23 May 2024 13:07:46 -0400
+X-MC-Unique: V7-Bz9f5O2SBRyKb_L7eyA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9A1103803909;
+	Thu, 23 May 2024 17:07:46 +0000 (UTC)
+Received: from shalem.redhat.com (unknown [10.39.193.88])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id C6111C15BF3;
+	Thu, 23 May 2024 17:07:45 +0000 (UTC)
+From: Hans de Goede <hdegoede@redhat.com>
+To: Andy Shevchenko <andy@kernel.org>,
+	Lee Jones <lee@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mfd: intel_soc_pmic_crc: Use PWM_LOOKUP_WITH_MODULE() for the PWM lookup
+Date: Thu, 23 May 2024 19:07:45 +0200
+Message-ID: <20240523170745.92166-1-hdegoede@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240520165636.802268-1-yang@os.amperecomputing.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Mon, May 20, 2024 at 09:56:36AM -0700, Yang Shi wrote:
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-> index db1aeacd4cd9..1cc73664fc55 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -319,6 +319,7 @@ static __always_inline u32 aarch64_insn_get_##abbr##_value(void)	\
->   * "-" means "don't care"
->   */
->  __AARCH64_INSN_FUNCS(class_branch_sys,	0x1c000000, 0x14000000)
-> +__AARCH64_INSN_FUNCS(class_atomic,	0x3b200c00, 0x38200000)
+The primary use of the CRC PMIC's PWM is for LCD panel backlight
+control by the i915 driver.
 
-While this class includes all atomics that currently require write
-permission, there's some unallocated space in this range and we don't
-know what future architecture versions may introduce. Unfortunately we
-need to check each individual atomic op in this class (not sure what the
-overhead will be).
+Due to its complexity the probe() function of the i915 driver does not
+support -EPROBE_DEFER handling. So far the pwm-crc driver must be built
+into the kernel to ensure that the pwm_get() done by the i915 driver
+succeeds at once (rather then returning -EPROBE_DEFER).
 
+But the PWM core can load the module from pwm_get() if a module-name is
+provided in the pwm_lookup associated with the consumer device.
+
+Switch to using PWM_LOOKUP_WITH_MODULE() for the lookup added for
+the Intel integrated GPU, so that the PWM core can load the module from
+pwm_get() as needed allowing the pwm-crc driver to be safely build as
+module.
+
+This has been successfully tested on an Asus T100TAM with pwm-crc
+build as module.
+
+Link: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/11081
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/mfd/intel_soc_pmic_crc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mfd/intel_soc_pmic_crc.c b/drivers/mfd/intel_soc_pmic_crc.c
+index 581f81cbaa24..876d017f74fe 100644
+--- a/drivers/mfd/intel_soc_pmic_crc.c
++++ b/drivers/mfd/intel_soc_pmic_crc.c
+@@ -137,7 +137,9 @@ static const struct regmap_irq_chip crystal_cove_irq_chip = {
+ 
+ /* PWM consumed by the Intel GFX */
+ static struct pwm_lookup crc_pwm_lookup[] = {
+-	PWM_LOOKUP("crystal_cove_pwm", 0, "0000:00:02.0", "pwm_pmic_backlight", 0, PWM_POLARITY_NORMAL),
++	PWM_LOOKUP_WITH_MODULE("crystal_cove_pwm", 0, "0000:00:02.0",
++			       "pwm_pmic_backlight", 0, PWM_POLARITY_NORMAL,
++			       "pwm-crc"),
+ };
+ 
+ struct crystal_cove_config {
 -- 
-Catalin
+2.45.1
+
 
