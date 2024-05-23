@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-187561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3716E8CD3D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:19:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2288CD435
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D015E28263A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAE31F226E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB1814B084;
-	Thu, 23 May 2024 13:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C3314AD25;
+	Thu, 23 May 2024 13:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FwzfM1vP"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WG2+xg8z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA9913C66A;
-	Thu, 23 May 2024 13:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835D41E497;
+	Thu, 23 May 2024 13:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470331; cv=none; b=sh2fYVPYbdCXzl4Qtk5qpw5gXzQd3M1WPhowEYvxO8++Dtt1Yxb2Kc25DS0zyULcmOrbmCm2cs/eOkZy5qRVqS92DPa0EjOZKCred9VJmS8RjAko0XvmuJHa2EBdCk4365CxCdZ5aI5MArZyHh3daVggPb8b/m66zhw+UYqqs/0=
+	t=1716470547; cv=none; b=aaVL6FpKs0MnzG9JESbJaWmzPnON4BAE9cH+tMDk2uu+Ipmi9enT1mVTKk0IJFgDatWzRi+z4T6OPPRXoJX/Dlro13u31DRfgUtVQuL90X/RXIfhkF9dgTbJIfK5tbm1JoKzOkIQesNnKysHHqiJIpyEV6c6I+0mNWDQzHxkahs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470331; c=relaxed/simple;
-	bh=rf0H/0zXq6MWa/jgcYccnJNhQhS7/5+iqtLrcPg9K8o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IckVHZCY5sHN+tRWR/NPHYPDYFWfMN5IDEgpLzAkJiR7jGoMDWBzNlXfm3kyyeRIpo8yTDLV8gmW7d0lBw2y3tAoLFP5Bpd3AsNTO0rYy9kS5iDhWrmiFFtEx5i3vTrkgkWkiDY9xSggMoXQYBbpjoJ+KtWKBO588DQzc97AChU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FwzfM1vP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E10CC32781;
-	Thu, 23 May 2024 13:18:51 +0000 (UTC)
+	s=arc-20240116; t=1716470547; c=relaxed/simple;
+	bh=cAMqcshjNY7oZ9DZf6rf0+n+26VChVTtA6o+CUumKfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GH79jmQIgjdvCSWRdFOkoeJ43aw5Rq8mThmjiI+GJCPSGtAXCujlx/SLsWUmuyzTxvk16W3WCxhtSFoabBs7rc5jrR+jm4ftZgOaOZzdNNRTLFm0mcIQvZ+aGA6WF/5+6kLCcholRmv1iSblBkUn48GJmqeKz3OEOKlP0s6SlJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WG2+xg8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD395C3277B;
+	Thu, 23 May 2024 13:22:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716470331;
-	bh=rf0H/0zXq6MWa/jgcYccnJNhQhS7/5+iqtLrcPg9K8o=;
+	s=korg; t=1716470547;
+	bh=cAMqcshjNY7oZ9DZf6rf0+n+26VChVTtA6o+CUumKfU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=FwzfM1vPePs3kcDanivbTCC+jQ91ERA+HhmErhRZ8HTF819qlBabg7Th2RNAPUoE1
-	 P+Govhe/c303VXcaEkDma0yk908l+3nf0AWUuCrEwqykEdx6mDw0b0RTZ510njfKmD
-	 YPzioB+spGi4l2rMvOntLBB3JThZXPK6pKlhoOzA=
+	b=WG2+xg8z0tKbQBMIbvIaZrKyc0jfVSfwwUGLyu+MJnR6PJJpcn02jZbAvukxh33gi
+	 DNGRVPr1C03ajhy3YlUeh4esjC0XYK+0SeQE9wTmynOlj2vQc5UJuNPiE26H2vaeIJ
+	 SeUIVEyfd08MqzSFI4UTBlMI/XRnFHVgqLeI3IYE=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	conor@kernel.org,
 	allen.lkml@gmail.com,
 	broonie@kernel.org
-Subject: [PATCH 5.15 00/23] 5.15.160-rc1 review
-Date: Thu, 23 May 2024 15:12:56 +0200
-Message-ID: <20240523130327.956341021@linuxfoundation.org>
+Subject: [PATCH 6.8 00/23] 6.8.11-rc1 review
+Date: Thu, 23 May 2024 15:13:27 +0200
+Message-ID: <20240523130329.745905823@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,16 +69,16 @@ MIME-Version: 1.0
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.160-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.11-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.15.y
+X-KernelTest-Branch: linux-6.8.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.15.160-rc1
+X-KernelTest-Version: 6.8.11-rc1
 X-KernelTest-Deadline: 2024-05-25T13:03+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 5.15.160 release.
+This is the start of the stable review cycle for the 6.8.11 release.
 There are 23 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
@@ -87,9 +87,9 @@ Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.160-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.11-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.8.y
 and the diffstat can be found below.
 
 thanks,
@@ -100,7 +100,16 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.15.160-rc1
+    Linux 6.8.11-rc1
+
+Christoph Hellwig <hch@lst.de>
+    block: add a partscan sysfs attribute for disks
+
+Christoph Hellwig <hch@lst.de>
+    block: add a disk_has_partscan helper
+
+SeongJae Park <sj@kernel.org>
+    Docs/admin-guide/mm/damon/usage: fix wrong example of DAMOS filter matching sysfs file
 
 Akira Yokosawa <akiyks@gmail.com>
     docs: kernel_include.py: Cope with docutils 0.21
@@ -117,56 +126,47 @@ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Daniel Thompson <daniel.thompson@linaro.org>
     serial: kgdboc: Fix NMI-safety problems from keyboard reset code
 
+Javier Carrasco <javier.carrasco@wolfvision.net>
+    usb: typec: tipd: fix event checking for tps6598x
+
+Javier Carrasco <javier.carrasco@wolfvision.net>
+    usb: typec: tipd: fix event checking for tps25750
+
 Heikki Krogerus <heikki.krogerus@linux.intel.com>
     usb: typec: ucsi: displayport: Fix potential deadlock
+
+Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+    net: usb: ax88179_178a: fix link status when link is set to down/up
+
+Prashanth K <quic_prashk@quicinc.com>
+    usb: dwc3: Wait unconditionally after issuing EndXfer command
 
 Carlos Llamas <cmllamas@google.com>
     binder: fix max_thread type inconsistency
 
-Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
-    drm/amdgpu: Fix possible NULL dereference in amdgpu_ras_query_error_status_helper()
+Christian Brauner <brauner@kernel.org>
+    erofs: reliably distinguish block based and fscache mode
 
-Sean Christopherson <seanjc@google.com>
-    KVM: x86: Clear "has_error_code", not "error_code", for RM exception injection
-
-Eric Dumazet <edumazet@google.com>
-    netlink: annotate data-races around sk->sk_err
-
-Eric Dumazet <edumazet@google.com>
-    netlink: annotate lockless accesses to nlk->max_recvmsg_len
-
-Jakub Kicinski <kuba@kernel.org>
-    net: tls: handle backlogging of crypto requests
-
-Jakub Kicinski <kuba@kernel.org>
-    tls: fix race between async notify and socket close
-
-Jakub Kicinski <kuba@kernel.org>
-    net: tls: factor out tls_*crypt_async_wait()
-
-Sabrina Dubroca <sd@queasysnail.net>
-    tls: extract context alloc/initialization out of tls_set_sw_offload
-
-Jakub Kicinski <kuba@kernel.org>
-    tls: rx: simplify async wait
-
-Doug Berger <opendmb@gmail.com>
-    net: bcmgenet: synchronize UMAC_CMD access
-
-Doug Berger <opendmb@gmail.com>
-    net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access
-
-Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-    Revert "selftests: mm: fix map_hugetlb failure on 64K page size systems"
+Baokun Li <libaokun1@huawei.com>
+    erofs: get rid of erofs_fs_context
 
 Jarkko Sakkinen <jarkko@kernel.org>
     KEYS: trusted: Fix memory leak in tpm2_key_encode()
 
-NeilBrown <neilb@suse.de>
-    nfsd: don't allow nfsd threads to be signalled.
+Sungwoo Kim <iam@sung-woo.kim>
+    Bluetooth: L2CAP: Fix div-by-zero in l2cap_le_flowctl_init()
 
-Sergey Shtylyov <s.shtylyov@omp.ru>
-    pinctrl: core: handle radix_tree_insert() errors in pinctrl_register_one_pin()
+Sungwoo Kim <iam@sung-woo.kim>
+    Bluetooth: L2CAP: Fix slab-use-after-free in l2cap_connect()
+
+Jacob Keller <jacob.e.keller@intel.com>
+    ice: remove unnecessary duplicate checks for VF VSI ID
+
+Jacob Keller <jacob.e.keller@intel.com>
+    ice: pass VSI pointer into ice_vc_isvalid_q_id
+
+Ronald Wahl <ronald.wahl@raritan.com>
+    net: ks8851: Fix another TX stall caused by wrong ISR flag handling
 
 Jose Fernandez <josef@netflix.com>
     drm/amd/display: Fix division by zero in setup_dsc_config
@@ -176,32 +176,38 @@ Jose Fernandez <josef@netflix.com>
 
 Diffstat:
 
+ Documentation/ABI/stable/sysfs-block               |  10 ++
  .../admin-guide/hw-vuln/core-scheduling.rst        |   4 +-
+ Documentation/admin-guide/mm/damon/usage.rst       |   2 +-
  Documentation/sphinx/kernel_include.py             |   1 -
  Makefile                                           |   4 +-
- arch/x86/kvm/x86.c                                 |  11 +-
+ block/genhd.c                                      |  15 ++-
+ block/partitions/core.c                            |   5 +-
  drivers/android/binder.c                           |   2 +-
  drivers/android/binder_internal.h                  |   2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c            |   3 +
  drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c        |   7 +-
- drivers/net/ethernet/broadcom/genet/bcmgenet.c     |  12 +-
- drivers/net/ethernet/broadcom/genet/bcmgenet.h     |   2 +
- drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |   6 +
- drivers/net/ethernet/broadcom/genet/bcmmii.c       |   4 +
- drivers/pinctrl/core.c                             |  14 +-
+ drivers/net/ethernet/intel/ice/ice_virtchnl.c      |  22 ++--
+ drivers/net/ethernet/intel/ice/ice_virtchnl_fdir.c |   3 -
+ drivers/net/ethernet/micrel/ks8851_common.c        |  18 +--
+ drivers/net/usb/ax88179_178a.c                     |  37 ++++--
  drivers/remoteproc/mtk_scp.c                       |  10 +-
- drivers/tty/serial/kgdboc.c                        |  30 +++-
+ drivers/tty/serial/kgdboc.c                        |  30 ++++-
+ drivers/usb/dwc3/gadget.c                          |   4 +-
+ drivers/usb/typec/tipd/core.c                      |  51 ++++++---
+ drivers/usb/typec/tipd/tps6598x.h                  |  11 ++
  drivers/usb/typec/ucsi/displayport.c               |   4 -
- fs/nfs/callback.c                                  |   9 +-
- fs/nfsd/nfs4proc.c                                 |   5 +-
- fs/nfsd/nfssvc.c                                   |  12 --
- include/net/tls.h                                  |   6 -
- net/netlink/af_netlink.c                           |  23 +--
- net/sunrpc/svc_xprt.c                              |  16 +-
- net/tls/tls_sw.c                                   | 199 +++++++++++----------
- security/keys/trusted-keys/trusted_tpm2.c          |  25 ++-
- tools/testing/selftests/vm/map_hugetlb.c           |   7 -
- 25 files changed, 243 insertions(+), 175 deletions(-)
+ fs/erofs/internal.h                                |   7 --
+ fs/erofs/super.c                                   | 124 +++++++++------------
+ include/linux/blkdev.h                             |  13 +++
+ include/net/bluetooth/hci.h                        |   9 ++
+ include/net/bluetooth/hci_core.h                   |   1 +
+ net/bluetooth/hci_conn.c                           |  71 ++++++++----
+ net/bluetooth/hci_event.c                          |  31 ++++--
+ net/bluetooth/iso.c                                |   2 +-
+ net/bluetooth/l2cap_core.c                         |  38 +++----
+ net/bluetooth/sco.c                                |   6 +-
+ security/keys/trusted-keys/trusted_tpm2.c          |  25 ++++-
+ 31 files changed, 339 insertions(+), 230 deletions(-)
 
 
 
