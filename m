@@ -1,97 +1,124 @@
-Return-Path: <linux-kernel+bounces-187922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5888CDAC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:18:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24998CDAC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54958285D48
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F55F1C22E85
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7450384D07;
-	Thu, 23 May 2024 19:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED37101F7;
+	Thu, 23 May 2024 19:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="NKfYcF2Q"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ur5wel49"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042F183CDC
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D962E82D9E;
+	Thu, 23 May 2024 19:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716491832; cv=none; b=bwChV4B3HgTfmXYZZOCZAK9dbBZDshq99wsbfcjS/ghGVtTIhl5L+aZDb7XrfY03H8f6xdu3rHhPunXLaqAVjH/00pid4wTSZijr9WbKzqn/03d1hfr0m0qaV5kBk/3WAgqKC1DKyALe9vnuDtlHgvAUJ9YumZX6xxUwt9ay7ws=
+	t=1716491928; cv=none; b=qkHkUoLPl0Vzjn0NNxEd0Ctp9TvVIKIuSgOORGxqaHHgRJBeBZV5cCDHp2Xb+QPa7+9TPVZUtfYBQ6BjdThM07YuN3mz7XMr6uQQEcreJNk9GvqP2VVR+naKOZMivD/a3Ve2igS5SaJIclTTAfaL6BM3FqyyBUf5vpp05d7P6uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716491832; c=relaxed/simple;
-	bh=XHGnzUbAu/lgtI7aJJ/7Q88s6FreZQE3Eor2XeaNWGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AJpBsbW3NsLpxeqJCFL+innxkkEP+4Zqrs107wvIS0y/NAkgLZ0+SzmFR0/v+5HnKY/HTgmbIlrGLfWQ6KNrTyOB4ysI8lJyQpbGZZbFOGOmTBCraRMCB5Qed/gAh0yA4fNepGcTBt2mBVXIfYcEBDjk34NjIb8nya4HyydZcrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=NKfYcF2Q; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f693fb0ad4so3112441b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:17:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1716491829; x=1717096629; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XHGnzUbAu/lgtI7aJJ/7Q88s6FreZQE3Eor2XeaNWGQ=;
-        b=NKfYcF2QymbfEMgdfzIMJ/eOYu5EXDWmWkCu7rRrIoIhFxG+Zrow+loBYerUX2dWb9
-         Sq4bI1tPlEtpvz6Xjgcs5c9TklJmbFI5p44RJzFm7AlB7aPdM7i27IE0lLs8oGpUhLfC
-         dM9dxBdsLGPQkzE3/Qo+nQlSC80ThntMlR1fU9KNRPz5KgIO32ViDPwwnOO1qduttzKB
-         psRkR5P+iRp80aee3FDUIjiN6wKy8hHykXLaymQa5UuIi8S+EeULXk3wnLJ4z/z10L3r
-         jzPFA15W7x2Me8nfVYpii9pUvP3FOKrMkdVg7cZsMuPCD2qUyP87Qp0HJf14rDEoxbye
-         m/Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716491829; x=1717096629;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XHGnzUbAu/lgtI7aJJ/7Q88s6FreZQE3Eor2XeaNWGQ=;
-        b=E2+ZxNMQlSwquIbCOdTmppjqdwPgql0eIMhXt93yAoXm3d4i0a+VTiQdRF+YiZuFmi
-         1tY2T+TmahJ8Q3kkk6whhgaqODch4nvGv41Tt1kXVentOnwRsj3mqaXJmf6fhgFPNA+n
-         Jtp11dxZEndfuW9kcne7kTPpvP1/kq22/5R+YXsLf2TWE77IqgrlchdWOdiOpPrLuzuR
-         Mz6pYUBdEfJPx6aUd63Ymr3iXtKPRj19QLCZSEkG/N/4IGANZ1XVlkQUbbscYyqETrH3
-         g6n5qP9IhIxr+4proaCVD8FwZXe2vI+5fSbD+Smns9Y5BSBHeSLxIz/3DyTMYggmehnM
-         nVKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG8ixbQdr6wPojkoNdb7xA+uCIJlE5vZcRk/vlvzjYrawDer7ebX/7HxPYXmlcz+jt1V4aAS8qALQJmTk/V7qoqXVd2DXs2KmaSe1l
-X-Gm-Message-State: AOJu0YyIykTlxdhNUZ6OfA76sgJ9G4+nwYXkXHTE8y9kf5ZgVIb0Q7p8
-	85IDVcpI65Z6/FjS3GNVIi87VJfNY/32/KKcjopvD6uPyQWtL1UF2LUZ0irX92yIqPYH7Yrq6ef
-	v+yeIzQ2nARD0FM/k2I18KDEq8FEg+enw+RmJ4g==
-X-Google-Smtp-Source: AGHT+IGqZmCccDYDP41dqxMcdyQX91RuVAfV5QMY8fV/5WDcPW4VLauQTYRVutnuQ7xeHpjgAi5vfKFxBN65XkeCoGQ=
-X-Received: by 2002:a05:6a00:28cd:b0:6f6:7c17:704f with SMTP id
- d2e1a72fcca58-6f8f2c626e6mr187429b3a.5.1716491829330; Thu, 23 May 2024
- 12:17:09 -0700 (PDT)
+	s=arc-20240116; t=1716491928; c=relaxed/simple;
+	bh=fWjejW9xdfNmZJGNqDJuH/uLBlAoUAHTMlP8yBrQ9BI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=L5LZX1fFoNw1GL5DzmFbyC2Ke2C6MJFaS5UM8JOd0y5238Z21IW91pvFqroRSszOsR2rzN11199Eag2HIz1CRkU484yZYt1nE9FLRL7S4BxRpLQ6FXMFGt5j+DNtI2bovSH0Dpm1+6X+61MYC6LwBVwS5XB1A6/4CKDjLAnu3tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ur5wel49; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716491891; x=1717096691; i=markus.elfring@web.de;
+	bh=RpyON3/SfYcEJHYsAQeK/+128bvG84+TmTn7Ylhqq3g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Ur5wel49Lecfw87HRpHs4NyKVR2Kypstx1Y8bCIa8PEfYtZjz+u1799K0AJDpyLV
+	 h+aLTXpORjWMchHbE8CJDzYtmPBCERjdadNyhHYQNCxylGfFFRadD5sqlpKGUxAYS
+	 Y3gtgLGHUjyLG+Z9jszvG4fQ5OjjgOkPGBpJCMVMLHEEGulqZ72nhAixgdxVkUCX6
+	 Aojt8KTk36NbFrlqOrM+BbBOLY+5EpwzzPq3MLyyPqMjD74rlXphO/NIGrk6IHtDV
+	 aU6XxQhT4k4E/1X9Lcj+bm+eB89jjEKcCoqTX7S0V5OUwFyxMw6OfyW4kbMsjUhBM
+	 y1iXbLSlcZOG1QSdpg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MElV3-1sKQHY2Ds3-00GH3C; Thu, 23
+ May 2024 21:18:11 +0200
+Message-ID: <4a43cda4-dfa4-4156-b616-75e740f6fd64@web.de>
+Date: Thu, 23 May 2024 21:18:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523183531.2535436-1-yzhong@purestorage.com> <20240523115624.d068dfb43afc067ed9307cfe@linux-foundation.org>
-In-Reply-To: <20240523115624.d068dfb43afc067ed9307cfe@linux-foundation.org>
-From: Yuanyuan Zhong <yzhong@purestorage.com>
-Date: Thu, 23 May 2024 12:16:57 -0700
-Message-ID: <CA+AMecHUo-sPy5wDszWgX5BWPAqMwrXqCWO1jGE5uMRq2U=BVw@mail.gmail.com>
-Subject: Re: [PATCH] mm: /proc/pid/smaps_rollup: avoid skipping vma after
- getting mmap_lock again
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Mohamed Khalfella <mkhalfella@purestorage.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Sean Anderson <sean.anderson@linux.dev>,
+ linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Michal Simek <michal.simek@amd.com>, Michal Simek <michal.simek@xilinx.com>,
+ Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+References: <20240520145402.2526481-6-sean.anderson@linux.dev>
+Subject: Re: [PATCH v3 5/7] PCI: xilinx-nwl: Clean up clock on probe
+ failure/removal
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240520145402.2526481-6-sean.anderson@linux.dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nuwOBf+zdPyIUVq+GEAxoVouepil547lApNGdbhuDbe8v1rRdR4
+ ED+u2uuHe8I03Z84sAuohUsNEhUsSLRFwixYaDpksaoXddI0z+nxHoH6Bz5qOIFduJME0Fe
+ f+g/4fghfXCHTszN6flTIWbdy09Oqx6JjcEP57gmJ3JGXD64iqDLfTgWARxf2NnKARo/mMh
+ p1hvETCSrzhPqGNTfaPGA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8904RJMpJ9s=;JCdx0Wo9Q99BWW96f6JOVg6LGWm
+ LfsVgGkVDiGOWkaLD+6IlQ19BwbXymHEY5wAkAxJPs4HLHTe6gc533PPj/pd9A413cpYTvVzO
+ 0pSZNJtInjL9SXUbWNjXZT52JplYKE3e3xvxFMcNtMwrcr+ypTdmy3PRX9iJLNlSBgiMbE980
+ icgFe9m1X0Q8ibra/KXnD3oqJFN38RFCyJ67kWibhqvRCJqRjbPlOscxylyei5hG+ddJJYngh
+ bVPH6kNtf8w0/CU7pqavi78vcsr8sGI7ayVjP+rSsciYK0qR9s+CHbfT/0L1WGssx4FnQPUAN
+ Mu/cizYp+8FY5qWwcK06y4sGeutiPxwAUG9DR0cQS/bHUYNTAAAMX5N6kQI93ckuR6r4g9QE1
+ Uyp2fkOnaSAhTpQymtfqv6M3LEQaASspMEG6rC81XBz1V7pypm2nlgE0DvccPVfURCyOwumLq
+ LEveRUL/+Z2XtD4Cjf9yB+UB8/fxLkKCHWy633eaDRgWgbloTpOskTnw2Mgh/FVLvFcCuy2ti
+ 2jhq9jTWTCML2lTRFWPevvdmOxMwr95OUHwUGkP/VMztNdVrwZe4AVMV+JXnHtt0yMZ6LBIMG
+ WO0wlk7Xv8KhLylz+G8pphyCXJGKgot769BQBEV0139ijhV7OEGsccyT4s4y22f6Kd8z6zWx6
+ K+zBua0IsI1XHP0rV8MWNhdfUUjtutwb0h0klVtRXWAq+p4gURyJupfOfMxN83bnBTzNWAEyp
+ SDlOjSl2x+Bo8SUOw0GIzOf1ww6HpVyafDKKf0PKExOrtyCnSGTHmcJZDjKVY1ndy23YzuwhJ
+ UvzcxnF+gBzYIyEkr/R9531wUVjiOBlfqlUjxWWN0pEHE=
 
-On Thu, May 23, 2024 at 11:56=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
+> Make sure we turn off the clock on probe failure and device removal.
+=E2=80=A6
+> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+=E2=80=A6
+> @@ -817,11 +818,23 @@ static int nwl_pcie_probe(struct platform_device *=
+pdev)
+>  		err =3D nwl_pcie_enable_msi(pcie);
+>  		if (err < 0) {
+>  			dev_err(dev, "failed to enable MSI support: %d\n", err);
+> -			return err;
+> +			goto err_clk;
+>  		}
+>  	}
 >
-> Please describe the userspace-visible runtime effects of this bug.
-> This aids others in deciding which kernel version(s) need the patch.
->
-Otherwise, with some VMAs skipped, userspace observed memory consumption
-from /proc/pid/smaps_rollup will be smaller than the sum of the
-corresponding fields from /proc/pid/smaps.
+> -	return pci_host_probe(bridge);
+> +	err =3D pci_host_probe(bridge);
+> +
+> +err_clk:
+> +	if (err)
+> +		clk_disable_unprepare(pcie->clk);
 
-Please let me know if separate v2 is needed. Thanks
+I suggest to use the label =E2=80=9Cdisable_unprepare_clock=E2=80=9D direc=
+tly before this function call
+(in the if branch) so that a duplicate check would be avoided after some e=
+rror cases.
+
+Regards,
+Markus
 
