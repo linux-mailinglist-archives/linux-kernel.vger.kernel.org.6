@@ -1,127 +1,131 @@
-Return-Path: <linux-kernel+bounces-187384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E49FC8CD106
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:14:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBD18CD100
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832691F21F5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29648281A1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8331474CD;
-	Thu, 23 May 2024 11:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2170B14532E;
+	Thu, 23 May 2024 11:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="IponsUZf"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+seZe7t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1E31474AD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A81313D297;
+	Thu, 23 May 2024 11:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716462836; cv=none; b=kSoxsDBl3yg4G7l38qsjOnheQrtcWv/xfaes2cuMI4B7VQkM2AkOr6zU/1Ek0Hg1V8T/XxX4xhoXvmYkkOmO+hqS0WBgHhSx19ZWij6jk9YGJMb4o87Mn94mb7zMmE42uJnt+/c5wIGGxC3Skb1k0JJBYuuKzH19ZBOWo5ZIPTw=
+	t=1716462826; cv=none; b=eGxfJw6B0gtx6+YF2kugxGYf295j5DTevv4PMmH8ltW4yoTnLxM0uefqRJeC56GnPCNoC3vydjrrlWCYSo9jtfzdT9Zg20yHQyvtrxqMLLcUPgxbo5PidMZdGzMjVsIiR57jckNeMwoP1PRKO3eXn9BMlx8rneT7R/E/zgxlSBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716462836; c=relaxed/simple;
-	bh=vniUVQGgbZH5XUSS0fWMGrRPi3jnpi6vMBuF5oFpj5c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=X3mLeva6jM3GxCY9o3r6fjRl7JdIixnAeIsk2bSfTLZClbCiiQZbDCd7bfpYx7RFTOYZDXoj/LySpyTKg2GMSzV5ODwFb9vaf2+/+6OaJDcLXLdp6TQ2elnXSUR/t8aSQ07ZQ1NpRDZHqrYgqnK7LDxS5J87Rw/PbZ6i3ACtDE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=IponsUZf; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f304533064so13856075ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1716462834; x=1717067634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rKyIwcUjX1px2GE9S/CV6LaiV7WK04/0FO5MZQuO7/8=;
-        b=IponsUZfWWnVFxsS8C9Y2srnxHBmJBe0FJ3Xcvg/Tqi4kX8Byp7/JgU5BHzyKL9FCc
-         vDGjwKPLhk0qrZiAF7ZLzI7IgHs/Z7O9I24P5hb9DhviPdneK6TwVOKBDh+ebOKkSUWk
-         6Z/yLKaW5iv1VjH9lCdH4uk7ZhGvPMNoCwb4YIbVFBejMYeSaGCEejxSCY+ox7xey49H
-         GvoItSHrNenaq4RUsIfIJxW2Q36wE+CprS2IrmzHtUz3HUlPF8h1ibS0E1JA5j213RXZ
-         avFhdGf35sMP0KDk8hw+zPm7eK1IbzVnx1VLNO/HJ1OraYAfnX6THpxT6frKW5IHEnXZ
-         S6mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716462834; x=1717067634;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rKyIwcUjX1px2GE9S/CV6LaiV7WK04/0FO5MZQuO7/8=;
-        b=ovJiYmMV6Yq+57GrXWHPjUhzT4smUaRcrh/18VwqxVE3efw2XOAKxUFkANObre++CO
-         9eJdkpUgYGHZuhA/WJgUwWBNnc4ra02blWyBn8AgsJgY1aCAC7AhP8saVX+ySqkbPCZf
-         cBiej9BWf7eDO6QuTg8PUiFp4IWmZV5LNvImZK3ioUyS0Vrm428zGliDQsf1km9JzYl8
-         z7B5lIQ3YWXEXVRv+AihRah4PMDdtdDF3Rz0AgBxsaDXOswGSzjTNEHyT+0CB9yavguU
-         LZpge3M/WP4dowkFnrNoSBMuhsCdlhQSHfQKYI/j6/1N68OVuqRUMvjno9k+4jfBb/p7
-         PjRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYDmv68KARaQm+1q8rVyl8Wj+I45MovsfJSyZlAAS9PXAlgpsDsu9znpRPS92BF/4Z+3W/JguVXeHTkDFdevT1UQ4bOTqaOi9jOyd0
-X-Gm-Message-State: AOJu0YxL8rIZkQoFoDJh41Ay50MdkevZrG4WPGP95GmmRmdP6a7X56Qg
-	5gk3UGv9pqprsr/gssZnrhXum7IlnrNJ8C5RqE/M4d8QCFaKXixVUXWLzAOfStU=
-X-Google-Smtp-Source: AGHT+IF28aGrHScmfXD9R1tHK/6jmVsl792vI89tw9o1F0p1t+mCK4U7dtx62wkc9E7Mq6lP3ETRug==
-X-Received: by 2002:a17:903:1245:b0:1f2:fbe5:7d62 with SMTP id d9443c01a7336-1f339f602aemr23791545ad.33.1716462834501;
-        Thu, 23 May 2024 04:13:54 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([61.213.176.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2fb4ca0ebsm76399555ad.119.2024.05.23.04.13.49
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 23 May 2024 04:13:54 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	sunilvl@ventanamicro.com,
-	aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org,
-	bhelgaas@google.com,
-	james.morse@arm.com,
-	jeremy.linton@arm.com,
-	Jonathan.Cameron@huawei.com,
-	pierre.gondois@arm.com,
-	sudeep.holla@arm.com,
-	tiantao6@huawei.com
-Cc: Yunhui Cui <cuiyunhui@bytedance.com>
-Subject: [PATCH RESEND v5 3/3] RISC-V: Select ACPI PPTT drivers
-Date: Thu, 23 May 2024 19:13:22 +0800
-Message-Id: <20240523111322.19243-3-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
-In-Reply-To: <20240523111322.19243-1-cuiyunhui@bytedance.com>
-References: <20240523111322.19243-1-cuiyunhui@bytedance.com>
+	s=arc-20240116; t=1716462826; c=relaxed/simple;
+	bh=8Iv96qeK3XO6FCLRf729LFGYnVsyZm+QYnohsytJjMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RtkEG+UFJvYsSIp1QIghjjCB99cXXBktr/aVRTXOnsW7BqJNgJr/fxssx6HRSsm6v9hBWuuKnFZn2MPnbmFxFiUMKaOIqqhjlFIEo/vsrKtBFVEVzWtFbtwmLJTRwzWgCrMUO8uIc7cVCqA7Q1Unyy1PK5+ew86zrf+OdhKWIFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+seZe7t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF729C4AF09;
+	Thu, 23 May 2024 11:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716462825;
+	bh=8Iv96qeK3XO6FCLRf729LFGYnVsyZm+QYnohsytJjMQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H+seZe7tia9XlPVFbMv1VD3pMpCR28zP+PYcUgiD0HO1ott5vOkK+LXl8bv8ATOEV
+	 Ad7Ijqn3GCoXbbBre2uB55H4H1dRQNmRXl/deA5egIYXocWhAF9rjgR8lVkJ5+o8NZ
+	 OG5SDUld0NahdcHQMt64J6N7ht+au3cZ7TP09Urx3Iapvq5rotxpP0AiIYeXXglQ+6
+	 eZ6rD75sGB4BUdqavP/iRsVStenQOXZHzPwo0753UW4DF8n8g0eL1BvpVIdVLbJYOM
+	 wm7k3mmwTOQHb3zq+xrznKr/qzcbVsen8qnT1gcW3fzAwIv2+ZiRq09Avg0ymvLDR1
+	 yv6vXxM56UoxA==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b2fbe85f82so947956eaf.1;
+        Thu, 23 May 2024 04:13:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKsIadf99X0BzkPk+l6LddPS9eZ9A6+jRMez0YTqkp7wEXO0YKFWS9JWCMRQBKNKZHtudmCb+rCO2IJDurGvSzkFQz1a2wLgjHaMh8iewwNxZLdBGcXPLLxLQVe8QFCbE66dCZFhRLS592oLfBB78rpdaTQBrs4jhwnN3yhQORWQ+lhIGhf1CZl+hJ20zfeWuEqHxRMLnUjAnsAQf6juZfjcFryIHPM4EPJWinszlC0CjsHtqXHwlKeT6AEQ==
+X-Gm-Message-State: AOJu0Yw98/6IyxrJn++77Nj+MCIXnjt+u8gS22J55flQtqgm6K2hN+vS
+	q2Ca/cPUE3um+2E9wFZDOOimyekt0TRyaOBaPp343DmTQXCZUsM1T9aRp2wY0Ng7SFAi2kYmQ//
+	j3DDs1ISqFC3oGKBpiVMxDavdJoM=
+X-Google-Smtp-Source: AGHT+IGDJUzVNILe+89DNDK58fKL2girzfjapTcy0TAMQFrntEneDV5GD9qcXO8dgV6h6vsQw1LQsO6L8qszS/mlEfc=
+X-Received: by 2002:a05:6820:2c8a:b0:5b2:89f:452 with SMTP id
+ 006d021491bc7-5b6a240fad5mr4236608eaf.1.1716462825087; Thu, 23 May 2024
+ 04:13:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <2024052334-nape-wanting-0a2a@gregkh> <05f4290439a58730738a15b0c99cd8576c4aa0d9.1716461752.git.lukas@wunner.de>
+In-Reply-To: <05f4290439a58730738a15b0c99cd8576c4aa0d9.1716461752.git.lukas@wunner.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 23 May 2024 13:13:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ihKzCbFxfVn9s5zB3WJepzi+dUPk1LFRMnbFF-9EV6nw@mail.gmail.com>
+Message-ID: <CAJZ5v0ihKzCbFxfVn9s5zB3WJepzi+dUPk1LFRMnbFF-9EV6nw@mail.gmail.com>
+Subject: Re: [PATCH] sysfs: Unbreak the build around sysfs_bin_attr_simple_read()
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+	Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, 
+	linux-acpi@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org, 
+	Zhenyu Wang <zhenyuw@linux.intel.com>, Zhi Wang <zhi.wang.linux@gmail.com>, 
+	intel-gvt-dev@lists.freedesktop.org, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-pm@vger.kernel.org, 
+	Luis Chamberlain <mcgrof@kernel.org>, linux-modules@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After adding ACPI support to populate_cache_leaves(), RISC-V can build
-cacheinfo through the ACPI PPTT table, thus enabling the ACPI_PPTT
-configuration.
+On Thu, May 23, 2024 at 1:00=E2=80=AFPM Lukas Wunner <lukas@wunner.de> wrot=
+e:
+>
+> G=C3=BCnter reports build breakage for m68k "m5208evb_defconfig" plus
+> CONFIG_BLK_DEV_INITRD=3Dy caused by commit 66bc1a173328 ("treewide:
+> Use sysfs_bin_attr_simple_read() helper").
+>
+> The defconfig disables CONFIG_SYSFS, so sysfs_bin_attr_simple_read()
+> is not compiled into the kernel.  But init/initramfs.c references
+> that function in the initializer of a struct bin_attribute.
+>
+> Add an empty static inline to avoid the build breakage.
+>
+> Fixes: 66bc1a173328 ("treewide: Use sysfs_bin_attr_simple_read() helper")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/r/e12b0027-b199-4de7-b83d-668171447ccc@ro=
+eck-us.net
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
----
- arch/riscv/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Works for me.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index f961449ca077..a9ebecd72052 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -14,6 +14,7 @@ config RISCV
- 	def_bool y
- 	select ACPI_GENERIC_GSI if ACPI
- 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
-+	select ACPI_PPTT if ACPI
- 	select ARCH_DMA_DEFAULT_COHERENT
- 	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
- 	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
--- 
-2.20.1
+Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
 
+> ---
+>  include/linux/sysfs.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> index a7d725fbf739..c4e64dc11206 100644
+> --- a/include/linux/sysfs.h
+> +++ b/include/linux/sysfs.h
+> @@ -750,6 +750,15 @@ static inline int sysfs_emit_at(char *buf, int at, c=
+onst char *fmt, ...)
+>  {
+>         return 0;
+>  }
+> +
+> +static inline ssize_t sysfs_bin_attr_simple_read(struct file *file,
+> +                                                struct kobject *kobj,
+> +                                                struct bin_attribute *at=
+tr,
+> +                                                char *buf, loff_t off,
+> +                                                size_t count)
+> +{
+> +       return 0;
+> +}
+>  #endif /* CONFIG_SYSFS */
+>
+>  static inline int __must_check sysfs_create_file(struct kobject *kobj,
+> --
+> 2.43.0
+>
 
