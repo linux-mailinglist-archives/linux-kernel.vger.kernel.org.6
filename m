@@ -1,119 +1,155 @@
-Return-Path: <linux-kernel+bounces-187605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E89F8CD527
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:58:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA35C8CD52A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A00F284F15
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469D31F21A31
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C6514B940;
-	Thu, 23 May 2024 13:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB3114D282;
+	Thu, 23 May 2024 13:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qx88CsH6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TpKVo3id"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F1614AD17;
-	Thu, 23 May 2024 13:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB74D14C580
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716472699; cv=none; b=Gn0sFqLhcQQXayVZKmKWRnKuIVFFvJF7GHMHEJQo+DkgP8utYgUBhMcFbepORCoeqc8aGIC/+XHDYyIlWb/xM9rGHEwyXn4CvkLoamjBidVuTT45Gsuzf4qUAcr5L8Tbed+sN6UdfSr3FFAdZRGm5YPNku3Cvcvqm5/5OEUDXXY=
+	t=1716472705; cv=none; b=oIwJUxf2Tdd/tXZ1ykFRmeUFtZf614q7vS+/Fs4Ypzp3Qqa85ck7FxPCKcfDu7CZwmKFNwDc9Nz/KQHZ2JLS3hIOIlJQ8gkSoJ9CpI/8x80K10L+XHFrddxuiFOds8pntFJOrjlp5ViebcaedzIgcvcTTc7htzimJZSKWxJbnAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716472699; c=relaxed/simple;
-	bh=YPfQzZYPkBwZc3FLAffaI2QalYlcnxIGXbskf7Lt0V8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=CtR0tJJv1vHRs0bVeO5nRg6zsau9Am9ywLdo+QUedLHTzt5U0T0qq4abL5jLotDHfl6hUBiwhs9s9Lcxy0hR5rX9e1ZDpg5hfPZJvlL7inz2qqYPWrArJLm+CJh1p+Bs6kV2K+ElzZf1YAbcVtt7rqaI+/yQsa33dvjcCFcUBj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qx88CsH6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NCs08d012860;
-	Thu, 23 May 2024 13:58:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=WeLFUlJqNSyS7HG9uH4T8X
-	0EVSX5fdcaflLT4csqs4I=; b=Qx88CsH6UQxCdjUK3QJO1FoXtMCoM+jXXmYJGK
-	FGMhrcY47RFLKFGgFffFPWs5GOlRPwVtmq9HmTwpYCPPmkMRJh3KJIU8ftAXLAvG
-	GH2imnCnG15sQDPkCbrNrsKyyKaERJVwRcR5+LFqp/KxK9n0n3p1o/6pcQX6/6P2
-	gQE8beXQFNIj+MyJLIQul5RlySzI2pfg9pSq+2kP6wSL6JM6ict4DLiM3YBs3eUs
-	xob0Rl/CoCq213EUEET9SAeo5uvxnG+QoFyHnUOCGn4c4LmPaQwBAxcC9Njh9Zuo
-	WcfOwoaA9p/nQZHy+g4ma/FiBmbh8HkSlg82dL3HE6OVWcgw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y9y2019jj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 13:58:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44NDw61J023670
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 13:58:06 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 23 May
- 2024 06:58:05 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 23 May 2024 06:58:01 -0700
-Subject: [PATCH] fs/adfs: add MODULE_DESCRIPTION
+	s=arc-20240116; t=1716472705; c=relaxed/simple;
+	bh=212Gl8h1rXjBVeHBEMErcUaBPXisMBYH41rMSxPPewY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sk2nsln7KYtmaGPN6JbPrj7Q5W62is2lkiRVi0OgNFk805WVHJ9pTN4ydUh6Luz6QZtkOsrnd2ewKboGmtNoB7yGStS4/+NHf8Via8qSAaD/rfPxNTEJow8uGtg6XRx78sCmo2KMFnhIb0RXPcVo/htPgMiKCk9AyOS68aKTfOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TpKVo3id; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e716e3030aso57962671fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716472701; x=1717077501; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lb8AP4zKFyYxQSiWmyeAqfHSQQwp0NPir9RZByqHMOI=;
+        b=TpKVo3id8vT24INgd3uJnDMY2Vi2suMTB02Ionl/ztdow4nIH9AebxuK7odxD6aNZM
+         BOH9BVLYLfsTEHPvE18PdrGzEUe1H8x5BOd/23cd0hgV09ZjElAfXiUqClDt5buE/OR6
+         hnmjyOedi/lHrWOJO9B5WYikLfj8FQv7v82YCgIBo6nxmIdzn54QsjoBFKH7+z41a0+X
+         tEdO/rgtPn3Zcr6LzoOb7PX5rS0/zDagQ3V1p8uptMXHlTQTzwQoET4YbSFLydVh522P
+         npe3L2vlmjlRU5uv83JJ0USh19x7a/5graMPIPJzDm9MzOym/gVsfvR3wYnBfUTV88dW
+         dbkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716472701; x=1717077501;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lb8AP4zKFyYxQSiWmyeAqfHSQQwp0NPir9RZByqHMOI=;
+        b=tU+tnFYZAcirNj0lMDnRpeZXdMO04VqFgvgYBDa7OvmoJif2aVCTg0Irde9+NjTaAf
+         M5ssxyOBYm0taB9nwM77LlROXuulPCKT+Ut9tt6S0bYwW6VJkxw+3Kx7n66WXThvn43y
+         ZUaC3+Z34IZdR5xvM6VkrV8oRvQKyN8BIy1UCvajPoRSNhO/Z2QR93WUL/yx3Mr0Y4pj
+         8mqYiO4GG7dqLXmT3SbzUdRBZaUFo3NNbE00F8NDEGgqr/Sgimsdp1c2E8OTy6CRDjah
+         r9oDGoQTn/HVQFfVb9dlZ/j99L1MWnDKDbvvkIvVVU4h7AwQ0epL2S8l9rbwjzKeadsF
+         Xybw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXtzLHpipPzUpOdfRIM5iv50ITX+K/OoDl6mxe0dJcfQkZqp81wdlKFLgnmIcqPm62GaX9UEVxbkGnejd4pgor2kkrNLmxN2YnVnvA
+X-Gm-Message-State: AOJu0Yxoj0VRkv5WV7UhWJO7tpAO0vTw2lL5HhBkUyiPyvOn4k6gS6QP
+	lw3bRLl4WswlkFSUMkXU4cWyEp63xUURuukGsXsAgDegH9W+z8J5bTZPxA9Pp/w=
+X-Google-Smtp-Source: AGHT+IGJG5E+2H4z+LjeMsNRuleOZIOXJ6BQDgFSOsKyk8u1N0Hs+3dPnKJWldfjS23hay4d530Ewg==
+X-Received: by 2002:a19:f50f:0:b0:521:6c38:6949 with SMTP id 2adb3069b0e04-526c0d48addmr2970750e87.45.1716472700965;
+        Thu, 23 May 2024 06:58:20 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7315:e681:bab5:4646:cf21? ([2a10:bac0:b000:7315:e681:bab5:4646:cf21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781e97bsm1925536266b.32.2024.05.23.06.58.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 06:58:20 -0700 (PDT)
+Message-ID: <01e1183c-46c3-41ca-8b47-d008747c164a@suse.com>
+Date: Thu, 23 May 2024 16:58:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240523-md-adfs-v1-1-364268e38370@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAGhLT2YC/x3M0QrCMAyF4VcZuTbQlYrTVxEv0jZ1AVdHMmUy9
- u5WLz/4z9nAWIUNLt0Gym8xedaG/tBBGqneGSU3g3c+uKP3OGWkXAzDMJxcSSHSuYdWz8pF1v/
- T9dYcyRijUk3jb/+Q+lpxIltYcf60FPb9Cyi1UrF+AAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner
-	<brauner@kernel.org>, Jan Kara <jack@suse.cz>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 79gAgrbAqP8qnLRjvLTO4tSCXgsLNQyg
-X-Proofpoint-GUID: 79gAgrbAqP8qnLRjvLTO4tSCXgsLNQyg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_08,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=955 suspectscore=0
- spamscore=0 bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405230096
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2024-35876: x86/mce: Make sure to grab mce_sysfs_mutex in
+ set_bank()
+To: Vegard Nossum <vegard.nossum@oracle.com>, cve@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+References: <2024051943-CVE-2024-35876-d9b5@gregkh>
+ <3eadcc8c-d302-4a70-a16f-604285c1257d@suse.com>
+ <a7bc8570-4001-43b6-902f-d45de27fcb02@oracle.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <a7bc8570-4001-43b6-902f-d45de27fcb02@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Fix the 'make W=1' issue:
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-fs/adfs has no MAINTAINERS entry so falling back to the entry for
-FILESYSTEMS (VFS and infrastructure)
----
- fs/adfs/super.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index 9354b14bbfe3..f0b999a4961b 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -491,4 +491,5 @@ static void __exit exit_adfs_fs(void)
- 
- module_init(init_adfs_fs)
- module_exit(exit_adfs_fs)
-+MODULE_DESCRIPTION("Acorn Disc Filing System");
- MODULE_LICENSE("GPL");
+On 23.05.24 г. 16:54 ч., Vegard Nossum wrote:
+> 
+> On 23/05/2024 12:24, Nikolay Borisov wrote:
+>> On 19.05.24 г. 11:34 ч., Greg Kroah-Hartman wrote:
+>>> Description
+>>> ===========
+>>>
+>>> In the Linux kernel, the following vulnerability has been resolved:
+>>>
+>>> x86/mce: Make sure to grab mce_sysfs_mutex in set_bank()
+>>>
+>>> Modifying a MCA bank's MCA_CTL bits which control which error types to
+>>> be reported is done over
+>>>
+>>>    /sys/devices/system/machinecheck/
+>>>    ├── machinecheck0
+>>>    │   ├── bank0
+>>>    │   ├── bank1
+>>>    │   ├── bank10
+>>>    │   ├── bank11
+>>>    ...
+>>>
+>>> sysfs nodes by writing the new bit mask of events to enable.
+>>>
+>>> When the write is accepted, the kernel deletes all current timers and
+>>> reinits all banks.
+>>>
+>>> Doing that in parallel can lead to initializing a timer which is already
+>>> armed and in the timer wheel, i.e., in use already:
+>>>
+>>>    ODEBUG: init active (active state 0) object: ffff888063a28000 object
+>>>    type: timer_list hint: mce_timer_fn+0x0/0x240 
+>>> arch/x86/kernel/cpu/mce/core.c:2642
+>>>    WARNING: CPU: 0 PID: 8120 at lib/debugobjects.c:514
+>>>    debug_print_object+0x1a0/0x2a0 lib/debugobjects.c:514
+>>>
+>>> Fix that by grabbing the sysfs mutex as the rest of the MCA sysfs code
+>>> does.
+>>>
+>>> Reported by: Yue Sun <samsun1006219@gmail.com>
+>>> Reported by: xingwei lee <xrivendell7@gmail.com>
+>>>
+>>> The Linux kernel CVE team has assigned CVE-2024-35876 to this issue.
+>>
+>>
+>> I'd like to dispute the CVE for this issue. Those sysfs entries are 
+>> owned by root and can only be written by it. There are innumerable 
+>> ways in which root can corrupt/crash the state of the machine and I 
+>> don't see why this is anything special.
+> 
+> I haven't looked at the issue in detail but it sounds like this
+> potentially breaks lockdown (which is arguably a security feature) so
 
----
-base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
-change-id: 20240522-md-adfs-48870fc4ba91
+How exactly does it break lockdown ?
 
+> "requires root" to reach is not really an argument against this having a
+> CVE assigned.
+> 
+> 
+> Vegard
 
