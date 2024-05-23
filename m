@@ -1,119 +1,245 @@
-Return-Path: <linux-kernel+bounces-186854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2EF58CCA04
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630E28CCA09
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06061C213B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8911F21A4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A69EAD8;
-	Thu, 23 May 2024 00:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAA9136A;
+	Thu, 23 May 2024 00:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R/iPEnmF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hZAw7k6I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507D517FF;
-	Thu, 23 May 2024 00:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2341A29;
+	Thu, 23 May 2024 00:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716422463; cv=none; b=SksrW7BtlElgk26KdMcEMI+UVpSedV+4i7zNMJugvmo3GSpBFA0cn4JWU3lZSB+2yBiKvlPvA9PlJtCObRBrenn5CUqrbiKJGlqu+Q2IBchPzgy0kgZSzxRz1U2FwlclbGt+mJ34Dg9mxVRctX4iUuJfPTn5eK46nQPbl/7kQJ8=
+	t=1716422636; cv=none; b=kEqj1QdV7IGPJrPNvFRJd57NdbmGFkWBJFm57eN5ocVE8g+OWpjzNnSzEUnfxAN9+9zeh8VwKNn0Yxnu+0cMdd8TwyIVg71AyFI1maRlwcp4pPcWQKP4XYi9X65YdJZBx6l0bXIdgRu8VSIg1UUg/QTkin11up+H2v0Fd+kMZm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716422463; c=relaxed/simple;
-	bh=BZ+7rdCk+IntnuBSK4LDC88qXx4JwQPsKs5wSrREZhM=;
+	s=arc-20240116; t=1716422636; c=relaxed/simple;
+	bh=RT+caFpkAm8/AIPivntwX9aXZiZnGg/DtgFipSNqI6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O2PFS8+09EPer50+Q5mSsLwq5oxtX8xHD3vb6ulm/JJzQTGmW8p5DK7tayUgUlJS8HOwR3wdouP0WfhY8XrAx64opiyvKGR/BnlaLBITO2hKfa5wUmDBpEzGoWSN80wCFdhcCxT5bGIs7OAqfU/bOElNicm/pw6qTBpxMyfXYGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R/iPEnmF; arc=none smtp.client-ip=192.198.163.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zic3r8iaxQZl+ZDIhadgOENnBzqXOQlL/7saQUGTPvLHp0S/CfQzWWVnRB/DeHORHm0eec/fz06/uDzeI9qmkklhHhQOl1pvyYUEofCYzGOd2g122vvVmlBCK4+jc59hUonjvYn/qGDdv4HCbNY6bXt0DwQqVNlj2IIfgcH3Ydc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hZAw7k6I; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716422461; x=1747958461;
+  t=1716422634; x=1747958634;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=BZ+7rdCk+IntnuBSK4LDC88qXx4JwQPsKs5wSrREZhM=;
-  b=R/iPEnmFavdV6xeDF3WC3xqxSOm9mZqGV7918sIl0zHos0ClxtRY+XcU
-   6L5xOEIM0XLtZNKOAb9vMzYI3Js5Tqz3U4nqMkBYTveWJxP5L+1jqnVDr
-   QwyRLcVj3fo3Tt8hmx1aJNtUmLz/F6bORmT8UuFNbI40cBsIQvX4cC0sY
-   FuZcrXeHJxH6hpAf0Ieu/TAPB8+TelO6pGg7s7q/Al+SvwCEYVeT+5b9s
-   HpLi5dvhtUy5ZK4nsnxvpeh4SaO0ZmdWCtAKSZzWfQMVZEQqVrmtDAA/Q
-   siv75hN1uLZ5CyBp6KxsTmZuHeH053JOjCrcnugAkmvA3Ojf0cmm5ANe7
-   A==;
-X-CSE-ConnectionGUID: g4yuMW90Qf21ryp5IKk36Q==
-X-CSE-MsgGUID: Whfb7xkKR5KcVzAiI+YKgg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="24119363"
+  bh=RT+caFpkAm8/AIPivntwX9aXZiZnGg/DtgFipSNqI6A=;
+  b=hZAw7k6IhQfXovVUd2c94xuI4/9kRHZaeVaP/qWaGxpMGPPPfth6q/Xm
+   NMggRQTzARTt61ci6Ms8zkA+6TeRzS1keOdAO0MPYuUySDuQf2HXK9Rqa
+   f88hY1ViOvSCUNF3/l0BObaz3k4zIYXihQ4+8D0UCgmYhBVuvnhjpcEjW
+   vHf2seicL9pVnohZVv+i3Kn0Q8ZNHNkDfqmAfFMfh9VCCUB1kiIo73jhS
+   rMybHuXixg0rJCFz8MJp5k+55D1/6p21AG4ZrKIBYHOLVL3xeJS8z7Mff
+   9uUyoqdWHxZ9MRJnI01WUHQCDDC3yE0/PKIpdg1S+TLhfeGfP0FsSwiu1
+   Q==;
+X-CSE-ConnectionGUID: 3jDGynsvTymHtkQaGm6IWg==
+X-CSE-MsgGUID: /8ALuBZxSfW3KEidi2A/8w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="16550767"
 X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="24119363"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 17:01:00 -0700
-X-CSE-ConnectionGUID: SofhWmZ1QcKnKRKkbNhunA==
-X-CSE-MsgGUID: 0s3Cl7JQQ9+C2kwjCpjErw==
+   d="scan'208";a="16550767"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 17:03:53 -0700
+X-CSE-ConnectionGUID: NcroTDNgQg2DVSyzolN95g==
+X-CSE-MsgGUID: qnFzbpJoTi6mM829vak6Pg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33363914"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 17:01:00 -0700
-Date: Wed, 22 May 2024 17:01:00 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"sagis@google.com" <sagis@google.com>,
-	"isaku.yamahata@linux.intel.com" <isaku.yamahata@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"dmatlack@google.com" <dmatlack@google.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"Aktas, Erdem" <erdemaktas@google.com>
-Subject: Re: [PATCH 10/16] KVM: x86/tdp_mmu: Support TDX private mapping for
- TDP MMU
-Message-ID: <20240523000100.GE212599@ls.amr.corp.intel.com>
-References: <20240517090348.GN168153@ls.amr.corp.intel.com>
- <d7b5a1e327d6a91e8c2596996df3ff100992dc6c.camel@intel.com>
- <20240517191630.GC412700@ls.amr.corp.intel.com>
- <20240520233227.GA29916@ls.amr.corp.intel.com>
- <a071748328e5c0a85d91ea89bb57c4d23cd79025.camel@intel.com>
- <20240521161520.GB212599@ls.amr.corp.intel.com>
- <20240522223413.GC212599@ls.amr.corp.intel.com>
- <9bc661643e3ce11f32f0bac78a2dbfd62d9cd283.camel@intel.com>
- <20240522234754.GD212599@ls.amr.corp.intel.com>
- <4a6e393c6a1f99ee45b9020fbd2ac70f48c980b4.camel@intel.com>
+   d="scan'208";a="33309965"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.68.11])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 17:03:52 -0700
+Date: Wed, 22 May 2024 17:03:50 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Bowman Terry <terry.bowman@amd.com>
+Subject: Re: [PATCH 2/4] acpi/ghes, efi/cper: Recognize and process CXL
+ Protocol Errors.
+Message-ID: <Zk6H5jTdVfN4aFhF@aschofie-mobl2>
+References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
+ <20240522150839.27578-3-Smita.KoralahalliChannabasappa@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4a6e393c6a1f99ee45b9020fbd2ac70f48c980b4.camel@intel.com>
+In-Reply-To: <20240522150839.27578-3-Smita.KoralahalliChannabasappa@amd.com>
 
-On Wed, May 22, 2024 at 11:50:58PM +0000,
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
-
-> On Wed, 2024-05-22 at 16:47 -0700, Isaku Yamahata wrote:
-> > > How about we leave option 1 as a separate patch and note it is not
-> > > functionally
-> > > required? Then we can shed it if needed. At the least it can serve as a
-> > > conversation piece in the meantime.
-> > 
-> > Ok. We understand the situation correctly. I think it's okay to do nothing for
-> > now with some notes somewhere as record because it doesn't affect much for
-> > usual
-> > case.
+On Wed, May 22, 2024 at 03:08:37PM +0000, Smita Koralahalli wrote:
+> UEFI v2.10 section N.2.13 defines a CPER record for CXL Protocol errors.
 > 
-> I meant we include your proposed option 1 as a separate patch in the next
-> series. I'm writing am currently writing a log for the iterator changes, and
-> I'll note it as an issue. And then we include this later in the same series. No?
+> Add GHES support to detect CXL CPER Protocol Error Record and Cache Error
+> Severity, Device ID, Device Serial number and CXL RAS capability struct in
+> struct cxl_cper_prot_err. Include this struct as a member of struct
+> cxl_cper_work_data.
+> 
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+> ---
+>  drivers/acpi/apei/ghes.c        | 10 +++++
+>  drivers/firmware/efi/cper_cxl.c | 66 +++++++++++++++++++++++++++++++++
+>  include/linux/cxl-event.h       | 26 +++++++++++++
+>  3 files changed, 102 insertions(+)
+> 
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 623cc0cb4a65..1a58032770ee 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -717,6 +717,14 @@ static void cxl_cper_post_event(enum cxl_event_type event_type,
+>  	schedule_work(cxl_cper_work);
+>  }
+>  
+> +static void cxl_cper_handle_prot_err(struct acpi_hest_generic_data *gdata)
+> +{
+> +	struct cxl_cper_work_data wd;
+> +
+> +	if (cxl_cper_handle_prot_err_info(gdata, &wd.p_err))
+> +		return;
+> +}
+> +
+>  int cxl_cper_register_work(struct work_struct *work)
+>  {
+>  	if (cxl_cper_work)
+> @@ -791,6 +799,8 @@ static bool ghes_do_proc(struct ghes *ghes,
+>  			struct cxl_cper_event_rec *rec = acpi_hest_get_payload(gdata);
+>  
+>  			cxl_cper_post_event(CXL_CPER_EVENT_MEM_MODULE, rec);
+> +		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
+> +			cxl_cper_handle_prot_err(gdata);
+>  		} else {
+>  			void *err = acpi_hest_get_payload(gdata);
+>  
+> diff --git a/drivers/firmware/efi/cper_cxl.c b/drivers/firmware/efi/cper_cxl.c
+> index 4fd8d783993e..03b9839f3b73 100644
+> --- a/drivers/firmware/efi/cper_cxl.c
+> +++ b/drivers/firmware/efi/cper_cxl.c
+> @@ -8,6 +8,7 @@
+>   */
+>  
+>  #include <linux/cper.h>
+> +#include <acpi/ghes.h>
+>  #include "cper_cxl.h"
+>  
+>  #define PROT_ERR_VALID_AGENT_TYPE		BIT_ULL(0)
+> @@ -44,6 +45,17 @@ enum {
+>  	USP,	/* CXL Upstream Switch Port */
+>  };
+>  
+> +static enum cxl_aer_err_type cper_severity_cxl_aer(int cper_severity)
+> +{
+> +	switch (cper_severity) {
+> +	case CPER_SEV_RECOVERABLE:
+> +	case CPER_SEV_FATAL:
+> +		return CXL_AER_UNCORRECTABLE;
+> +	default:
+> +		return CXL_AER_CORRECTABLE;
+> +	}
+> +}
+> +
+>  void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_err)
+>  {
+>  	if (prot_err->valid_bits & PROT_ERR_VALID_AGENT_TYPE)
+> @@ -176,3 +188,57 @@ void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_e
+>  			       sizeof(cxl_ras->header_log), 0);
+>  	}
+>  }
+> +
+> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
+> +				  struct cxl_cper_prot_err *p_err)
+> +{
+> +	struct cper_sec_prot_err *prot_err = acpi_hest_get_payload(gdata);
+> +	u8 *dvsec_start, *cap_start;
+> +
+> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_DEVICE_ID)) {
+> +		pr_err(FW_WARN "No Device ID\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * The device ID or agent address is required for CXL RCD, CXL
+> +	 * SLD, CXL LD, CXL Fabric Manager Managed LD, CXL Root Port,
+> +	 * CXL Downstream Switch Port and CXL Upstream Switch Port.
+> +	 */
+> +	if (prot_err->agent_type <= 0x7 && prot_err->agent_type != RCH_DP) {
 
-Ok, Let's include the patch.
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+For this check against agent_type, and the similar one below, would a boolean
+array indexed by the agent type work? That would avoid the <= 0x7 and > 0x4 
+below. It seems one array would suffice for this case, but naming it isn't obvious
+to me. Maybe it'll be to you.
+
+Something similar to what is done for prot_err_agent_type_strs[]
+
+static const bool agent_requires_id_address_serial[] = {
+	true,	/* RDC */ 	
+	false,	/* RCH_DP */
+	.
+	.
+	.
+};
+
+
+> +		p_err->segment = prot_err->agent_addr.segment;
+> +		p_err->bus = prot_err->agent_addr.bus;
+> +		p_err->device = prot_err->agent_addr.device;
+> +		p_err->function = prot_err->agent_addr.function;
+> +	} else {
+> +		pr_err(FW_WARN "Invalid agent type\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
+> +		pr_err(FW_WARN "Invalid Protocol Error log\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dvsec_start = (u8 *)(prot_err + 1);
+> +	cap_start = dvsec_start + prot_err->dvsec_len;
+> +	p_err->cxl_ras = *(struct cxl_ras_capability_regs *)cap_start;
+> +
+> +	/*
+> +	 * Set device serial number unconditionally.
+> +	 *
+> +	 * Print a warning message if it is not valid. The device serial
+> +	 * number is required for CXL RCD, CXL SLD, CXL LD and CXL Fabric
+> +	 * Manager Managed LD.
+> +	 */
+> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER) ||
+> +	      prot_err->agent_type > 0x4 || prot_err->agent_type == RCH_DP)
+
+then this also can be replaced with
+		agent_requires_id_address_serial[prot_err->agent_type]
+
+
+-- Alison
+
+
+> +		pr_warn(FW_WARN "No Device Serial number\n");
+> +
+> +	p_err->lower_dw = prot_err->dev_serial_num.lower_dw;
+> +	p_err->upper_dw = prot_err->dev_serial_num.upper_dw;
+> +
+> +	p_err->severity = cper_severity_cxl_aer(gdata->error_severity);
+> +
+> +	return 0;
+> +}
+
+snip
+
 
