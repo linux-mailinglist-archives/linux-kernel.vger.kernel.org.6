@@ -1,153 +1,123 @@
-Return-Path: <linux-kernel+bounces-188129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983138CDDDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:01:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0038CDED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31F41C21AE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:01:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7812A2879DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A3F81F;
-	Fri, 24 May 2024 00:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA2215A5;
+	Fri, 24 May 2024 00:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="asSNy4Fa"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="UU7k9q7j"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B475F19A;
-	Fri, 24 May 2024 00:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78883EDF;
+	Fri, 24 May 2024 00:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716508883; cv=none; b=OvRscNebhTTK8IEEELJB2EhXPDJdW1RGSjs3CgYjBC+TbgrzFGd1F023glwiH9LnaRO+2oN6IjzXU1U9LCSOI91FdU8SzrQbTyKfO7WhVDRs/HDMoR4cUtmou2/wi9u41Xz0ACNk8Y+mwtCvIvIBc9OO2YtgUSpk40482e+XBJg=
+	t=1716509780; cv=none; b=bQE7LtQ4QHt904vhWb3DS+jIgMwQURDbTidJxREScEWIQp3gHwdXLBm6o8GCBErUmJuruebCzliEJdcd1cPo436Ho64EKjKZZ8rsneyft41EOe73DYDCbjzMrkrFxV3sBt+qPv6Cqcz7B51WAh+ct79c1Ckhvo1Ey5IYSPJeGW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716508883; c=relaxed/simple;
-	bh=F3Vl6maBpSObnSnLyMANYRh0J6RgnvUUfsR2qaphZYk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=U2BGt6xz6GlxcD4o8j2/+iNuGCbB0EAKtnzDEcmmglnwtvu7AFE3wQED3nED8YNznGwMuYqEU887Bpu+SPPc+sYTtdNeqVtHPw+ykCBXxqlyjyHkiJC1WdfH59b8qh7oW34Hi8h3qXlLCrF+6hzZihSZYFZh3fKFzx1M81R6G6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=asSNy4Fa; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [192.168.68.112] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 9453C20075;
-	Fri, 24 May 2024 08:01:11 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1716508876;
-	bh=FRh3v+DpUqq0irMJLtFl1AS9WmSx+bJ219CeU6lA6XE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=asSNy4FaG4rCai1mMhq1l1iBz6v3bmu7J95cNw2rd46+MrZEuQsGsiec6v4UYpRXn
-	 hra5+gjbvazAljrMSm29uryjeAm7VO5/pywW4nYn31Z2+knQXJztSenjgcK1aIknk5
-	 jSbEhZlnLcwGqourbjISIeHlkIBLisCebh80wJCzo08ssruvLaCcEtS5yz5ksQqKtV
-	 rH2VUMnzc1Dp/DJL8AtuNFgSUJ4haK6T03roNi6nta9aPdwCeuSZWAbs9siUhbiims
-	 0wpGhSYtpMqbdlq7Tpy9C41eK7ITmKfqi3gNzVPOm7+tvAherXs70okjIP2d2+n2el
-	 FxTZol/o9bfwg==
-Message-ID: <6cf99700841ac27c74821e92b5d7d9fe778b9e67.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v8 00/23] Add i2c-mux and eeprom devices for Meta
- Yosemite 4
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
-Date: Fri, 24 May 2024 09:31:10 +0930
-In-Reply-To: <20240523091812.2032933-1-Delphine_CC_Chiu@wiwynn.com>
-References: <20240523091812.2032933-1-Delphine_CC_Chiu@wiwynn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1716509780; c=relaxed/simple;
+	bh=An7QDABjUyeXMgQPlCNFAn0hOnKqKCWC8bpn8L7lUmc=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=X5dhUfCinmUJ5tPYh8ty0TjGVJ5tifXR3PIK6PbLmD/psIu1ulxs9yMPBLDMv8OeCoPiM7kqy0//81mUYYg9D9NPvMWliPUpeio9XQh3WdeeqdnL4PTa5Nl/W9adGbVOdNki56Skm/kwzcpUQpdDaP7cAFOdxvCcmgWjNOJQwvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=UU7k9q7j; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=bsNx66CWNPzOVgmvYU9g1FX7pZwySMGx2SwEOaCqt18=; b=UU7k9q7jSmaQO8GSp3Mn4dAN7M
+	ewoGgkcMukvFbu9FfUURLiQmeDOrlLsy/PjXUB71FI/+AcXQtwLMqxTawoLTs0ShmkSVj9CZblR9J
+	H5iJaeQoztwlFxbMiCkVNKXBITVm0tviDm7Hn02FXtVdlHSvSO4WlQo7wzQFZ9VBR4GE=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:40780 helo=debian-acer)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1sAIIM-00054Q-1x; Thu, 23 May 2024 19:56:26 -0400
+Date: Thu, 23 May 2024 19:56:25 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, peterz@infradead.org, mingo@kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>
+Message-Id: <20240523195625.fa40049802a43a76dbc2a96d@hugovil.com>
+In-Reply-To: <CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
+References: <20240409154253.3043822-1-hugo@hugovil.com>
+	<20240409154253.3043822-4-hugo@hugovil.com>
+	<CAMuHMdVq=rf-6o485KiA+zcwJPHMe5STKUtSWtFPs2nmvshu-A@mail.gmail.com>
+	<CAHp75Vfi2YjE0wzwABURxXhcWLozAf9Cdj_pT+DL_tm8E_zm4Q@mail.gmail.com>
+	<CAMuHMdXqc9tZkd7YzX56QRroDhjbweQAUj+th68DU8oFxpp+jg@mail.gmail.com>
+	<CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -1.2 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH v4 3/5] serial: sc16is7xx: split into core and I2C/SPI
+ parts (core)
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-There's still no response to my comments (either replies or adjustments
-to the patches) on v5, and we're now at v8.
+On Thu, 23 May 2024 09:33:36 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Upstreaming the patches won't progress if you don't engage with the
-feedback.
+> On Tue, Apr 23, 2024 at 3:11 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Tue, Apr 23, 2024 at 12:37 PM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Tue, Apr 23, 2024 at 1:01 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > On Tue, Apr 9, 2024 at 5:48 PM Hugo Villeneuve <hugo@hugovil.com> wrote:
+> >
+> > > > > -config SERIAL_SC16IS7XX
+> > > > > -       tristate "SC16IS7xx serial support"
+> > > > > +       tristate "NXP SC16IS7xx UART support"
+> > > >
+> > > > Hence this replaces SERIAL_SC16IS7XX_CORE by SERIAL_SC16IS7XX,
+> > > > so arch/mips/configs/cu1??0-neo_defconfig needs to updated.
+> > >
+> > >         select SERIAL_CORE
+> > > -       depends on (SPI_MASTER && !I2C) || I2C
+> > > +       select SERIAL_SC16IS7XX_SPI if SPI_MASTER
+> > > +       select SERIAL_SC16IS7XX_I2C if I2C
+> > >
+> > > > So if SPI_MASTER or I2C is enabled, the corresponding SERIAL_SC16IS7XX_*
+> > > > subdriver can no longer be disabled?  According to
+> > > > https://lore.kernel.org/all/20240403123501.8ef5c99f65a40ca2c10f635a@hugovil.com/
+> > > > you did want to support that?
+> > >
+> > > I believe it has been taken from one of the IIO drivers as an example.
+> >
+> > Looks like a bad example to follow:
+> >   1. The driver question now pops up if both I2C and SPI_MASTER
+> >      are disabled,
+> >   2. What if SERIAL_SC16IS7XX_CORE is builtin, but I2C and/or
+> >      SPI_MASTER are modular?
+> >
+> > I believe the only way to fix that is by letting the sub-drivers select the
+> > core driver, like before.
+> 
+> FTR, this issue is now upstream.
 
-Andrew
+Hi Geert,
+I replied to you and Andy a few weeks ago about this (multiple emails with suggestions/explanations), and I even asked if you were satisfied with what I proposed, but never got anything from you, so I am still waiting on feedback to send a patch to fix this:
 
-On Thu, 2024-05-23 at 17:17 +0800, Delphine CC Chiu wrote:
-> Changelog:
->   - v8
->     - add fan led config
->   - v7
->     - Revise pca9506 i2c address
->   - v6
->     - Revise i2c duty-cycle for meeting 400khz spec
->   - v5
->     - Support medusa board adc sensors
->     - support NIC eeprom
->   - v4
->     - Re-format gpio linename
->     - Revise i2c device node names
->     - Split patches by logic changes
->   - v3
->     - Correct patch for revising gpio name
->   - v2
->     - Revise mx31790 fan tach config
->     - Add mctp config for NIC
->     - Support mux to cpld
->     - Revise gpio name
->   - v1
->     - Add gpio and eeprom behind i2c-mux
->     - Remove redundant idle-state setting for i2c-mux
->     - Enable adc 15, wdt2,spi gpio for yosemite4 use
->     - Revise quad mode to dual mode to avoid WP pin influnece the SPI
->     - Revise power sensor adm1281 for yosemite4 schematic change
->     - Add gpio pca9506 I/O expander for yosemite4 use
->     - remove space for adm1272 compatible
->     - enable interrupt setting for pca9555
->     - add eeprom for yosemite4 medusa board/BSM use
->     - remove temperature sensor for yosemite4 schematic change
->     - add power sensor for power module reading
->     - Revise adc128d818 adc mode for yosemite4 schematic change
->     - Revise ina233 for yosemite4 schematic change
->     - Remove idle state setting for yosemite4 NIC connection
->     - Initialize bmc gpio state
->     - Revise mx31790 fan tach config
->     - Add mctp config for NIC
->     - Support mux to cpld
->     - Revise gpio name
->=20
-> Delphine CC Chiu (23):
->   ARM: dts: aspeed: yosemite4: Revise i2c-mux devices
->   ARM: dts: aspeed: yosemite4: Enable adc15
->   ARM: dts: aspeed: yosemite4: Enable spi-gpio setting
->   ARM: dts: aspeed: yosemite4: Enable watchdog2
->   ARM: dts: aspeed: yosemite4: Revise quad mode to dual mode
->   ARM: dts: aspeed: yosemite4: Revise power sensor adm1281 for schematic
->     change
->   ARM: dts: aspeed: yosemite4: Add gpio pca9506
->   ARM: dts: aspeed: yosemite4: Remove space for adm1272 compatible
->   ARM: dts: aspeed: yosemite4: Enable interrupt setting for pca9555
->   ARM: dts: aspeed: yosemite4: Add power sensor for power module reading
->   ARM: dts: aspeed: yosemite4: Add eeprom for yosemite4 use
->   ARM: dts: aspeed: yosemite4: Remove temperature sensor for yosemite4
->     schematic change
->   ARM: dts: aspeed: yosemite4: Revise adc128d818 adc mode for yosemite4
->     schematic change
->   ARM: dts: aspeed: yosemite4: Revise ina233 config for yosemite4
->     schematic change
->   ARM: dts: aspeed: yosemite4: Remove idle state setting for yosemite4
->     NIC connection
->   ARM: dts: aspeed: yosemite4: Initialize bmc gpio state
->   ARM: dts: aspeed: yosemite4: Revise mx31790 fan tach config
->   ARM: dts: aspeed: yosemite4: add mctp config for NIC
->   ARM: dts: aspeed: yosemite4: support mux to cpld
->   ARM: dts: aspeed: yosemite4: support medusa board adc sensors
->   ARM: dts: aspeed: yosemite4: support NIC eeprom
->   ARM: dts: aspeed: yosemite4: Revise i2c duty-cycle
->   ARM: dts: aspeed: yosemite4: add fan led config
->=20
->  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 1410 +++++++++++++++--
->  1 file changed, 1301 insertions(+), 109 deletions(-)
->=20
+https://lore.kernel.org/all/20240430090333.5c5f029553cabcdf699310cb@hugovil.com/
 
+Hugo.
 
