@@ -1,168 +1,197 @@
-Return-Path: <linux-kernel+bounces-187484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D486B8CD263
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:42:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D108CD268
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ABE1283BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:42:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6BB9B21A23
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7ED149012;
-	Thu, 23 May 2024 12:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1096F149DF3;
+	Thu, 23 May 2024 12:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Tg7XhoIH"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i/m+ByQR"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B74E148FF4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877F0149DEC
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716468139; cv=none; b=NFn1TxZW9r5IHO86Tu6B+bu65/tVfJutcrEZ6YGYzHAc3VVE3FXybmgXaZB5ZtYsD/Ha1mS3d+N/6Tyf4k371D/c1Rl48lwmHW/P7dughSDsVeeUqs8jt0NNn5XuRSe9Xf0k1jt6sXTBcTidmvTqmnhRc7Oqs0eWdyQgdlUjlsY=
+	t=1716468145; cv=none; b=Ovt1evkYGpnqWTrDS6gLHm/Xm9UNDPsLf06pQrSq4JCYgh5MVBIjws7K5MnHLciCaABj1CIT/K1ngdIISTFYyAyZV5E8m2MeF3+dwVlNE5NVR3wlSv8azidarFFUM1kQBjkrOCZJbRLN6bFcrsEAxzta1tzCr5/f8VhShYFlQy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716468139; c=relaxed/simple;
-	bh=U4MP831/hb1ixJbb1U8C6JGQJEg4/rE8FZTtu0IhBAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E2K5pQ+57DoPbVCdSGc/oe65r/0N1kd5JyQzluRZaBNa8MCev7WC5jg96fox+SLCXZADZ2Zq01l7DCPETE/8vseaO4TPfddz4//idPfV9zV6k6nCSi8SeiyVselx/laYwHgvjxJCfQtX54pJ1cBP3vjg1ARw+P3PVbIqlHGSfTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Tg7XhoIH; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-792ba098eccso458880885a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:42:17 -0700 (PDT)
+	s=arc-20240116; t=1716468145; c=relaxed/simple;
+	bh=NxkdAdrJdInDnQmRVOBymr54RQlzSPSCJD6k5LWkhYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qJM63qHyC/y11UUGobxOeOAKOOaWqhrScJiUlbbbHEyIow166OV2UCcCms3Q60gpcrfx+xCz/Ds0vRofrjC7QiGsNxPYcBNY8VUOeYtSvQ3VDBm4OgCN2ZKoF+MTPBa3fWI+JiXK/0USS3IAq1cjyLmsjXdhlwaXmUdmb0KAS18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i/m+ByQR; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e576057c06so72848301fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1716468137; x=1717072937; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=u0TO7M+YunjW2XWp159sTlTrU8T1iTyPmvxS8aAeSJU=;
-        b=Tg7XhoIHACrJ+Yi6K/1FQHszPfIuorJiwDWkr1nLnQIz/vtB+11c3AcQ76pz2q2utN
-         KE3WH0vtj4EAOX4XmHh60iUA9uq9JzxB/2hxMFEjN8tnDHw+2vovWrsQsS02seDCjrEh
-         tl0HEYOBhEfOw7Poio7Tx9NWMDDUZzysX1L5w=
+        d=linaro.org; s=google; t=1716468141; x=1717072941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JFU7oe29wmWrSHAWUNO1lKOXXAdRLnYpFR9nmVzit9Y=;
+        b=i/m+ByQRqn8Nd+LNIObZSaInmdiknv2iVi28VA+/w3Y6mXM/aaobtCzek/vuWp1hyu
+         Kz9p7+KjYW7olySkalcUQNyjcMF/r3gkhZhgCT+lM5qBy9i42TnVjVZswORcKAJNRHFE
+         05WE6pPGVud9tHrCpTQKPl62vb5/OyP35mggQdMtodUYLodh3jo3vqnFhz8AvaVtEVxb
+         O7BT2Fio8cQmZGfRhvNXmc3VCBB5dQgHn77QvWasfb3wA0fUw/OWxZ56gmzTVOTTuAgC
+         LC3+AWsCcdLhUauKokr9i53WfcWJyJ8Ra2Tug8j3GuOP3CbY0/PhsUOY+7v+GfjQ6LZi
+         9S2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716468137; x=1717072937;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u0TO7M+YunjW2XWp159sTlTrU8T1iTyPmvxS8aAeSJU=;
-        b=Scd2riPAR4h/mHGW544Uy6KIF5eJUd1ADQoWBVUfsnHfYFAQ5G5Lrv4Ujn+eOs5whb
-         +ohCd0g/wGm0B9TygHI9oBvgtuSJVrd9TFiYH97WMtvNJo/sh5kiBoBRYRT86SbvPNQ9
-         30ZKls5zTh20bXLC5/C4mj1nUrAaF5lDY1A5/gCo7bqmkbUXQ+or9EUCGsLpJxDydg3e
-         TY+wN1uYI1vf4v0+Q1YJ6CoAaSRN+y5hdxz2IfSAH2QdwCggknLBvFptG2Wl8G0HdPSr
-         jqREuUPwfHnUv2q3o47aNF0eQtgG4TblaIJY96spAEmyvsB84fMqAMaeY6/Wl6gOh9o+
-         bFMg==
-X-Gm-Message-State: AOJu0YwfayGXSDxg6dUVLdwRCL/y/yOdr/3wCzsqZFBkA6AVFbek5dgT
-	QK1SFt5jQD95vxiG1gfZ0HOYz5Qysw7aAKNxBps7WSR2plk4FoZG2m+eJ/oh6Xo=
-X-Google-Smtp-Source: AGHT+IE6LURKo3NpFLCHpZprZ836WdrwU50TxnOb6beTJvjxmMIz9dBYSTdfVMB8TZZ0LLBTtRAlQg==
-X-Received: by 2002:a05:620a:424e:b0:790:fc5a:1ffd with SMTP id af79cd13be357-794994c0aebmr572293385a.66.1716468136824;
-        Thu, 23 May 2024 05:42:16 -0700 (PDT)
-Received: from [10.125.231.30] ([217.156.233.157])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc57asm1488675685a.81.2024.05.23.05.42.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 05:42:16 -0700 (PDT)
-Message-ID: <771bbaa3-0fa5-4b0a-a0a2-6516b4f42867@citrix.com>
-Date: Thu, 23 May 2024 13:42:13 +0100
+        d=1e100.net; s=20230601; t=1716468141; x=1717072941;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JFU7oe29wmWrSHAWUNO1lKOXXAdRLnYpFR9nmVzit9Y=;
+        b=ci2pM2Sxkw4Ae8a3fALe5wqN9DCSTrGJdAcf0PgGR3o6/8SmhShbZX7xiwrVEUfn/F
+         Qd6nNg/ByzLRE5zot/PDbnwfdEVAG4zr2XVqG0LJBHNsUedWQsk0g5vOMbPuulwVxlo7
+         09yGbntJrgNCaq4D9009pCWD0MswegEFyAW8UHE/PBRcGJqQ+GXqmZW2Mt14XdxnZfx6
+         f/1+11XKPBmRxl4Uv067x3zwdQoM75QXz3r9M12meJ2twWqr5R2Xf7sX1+2tczGzs4dG
+         I8VleFcdUjLjjKc/1Th+RerbGiasQ3ZGpoyOooN73+aYo+trKD9pZNFaygGXrj42hstO
+         W8fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUdukY88s+/4HV3FvrQrWXyNXNs9zoKK19DoBSR32o2sTyvhnWhregdEesWT9bgZ3lejukm/MlqF5KXTQx5oOnLkMisU04D/BumkJk
+X-Gm-Message-State: AOJu0Ywu6k/+jpioRZaWltz/lluRRIDq4y51VF+mY8Ii+qamQI8ro6oF
+	0wTVHBRdYzEcZuzbJpRnlgc1ug6A4OSOreyHs1TyJJpzYNqvG9e1otc+hVTb9dc=
+X-Google-Smtp-Source: AGHT+IG3pezFMtkMlzalGpaEUoGKwhfiLMGTt+4yA3z1pbJAP8F/Z0+LeagQc9XdwWQbIpirFEUQzA==
+X-Received: by 2002:a2e:a549:0:b0:2df:b7cf:9607 with SMTP id 38308e7fff4ca-2e9494f2a5bmr38375081fa.22.1716468140465;
+        Thu, 23 May 2024 05:42:20 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-420fc82eeb4sm26079305e9.0.2024.05.23.05.42.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 05:42:20 -0700 (PDT)
+Date: Thu, 23 May 2024 15:42:16 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Yasin Lee <yasin.lee.x@outlook.com>,
+	jic23@kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, lars@metafoo.de,
+	swboyd@chromium.org, nuno.a@analog.com, andy.shevchenko@gmail.com,
+	u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yasin.lee.x@gmail.com,
+	yasin.lee.x@outlook.com
+Subject: Re: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor
+ driver
+Message-ID: <59869d5f-3d97-48a2-8a96-127f7b46c0e8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
- handler
-To: Alexandre Chartre <alexandre.chartre@oracle.com>, x86@kernel.org,
- kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
- pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
- konrad.wilk@oracle.com, peterz@infradead.org, gregkh@linuxfoundation.org,
- seanjc@google.com, dave.hansen@linux.intel.com, nik.borisov@suse.com,
- kpsingh@kernel.org, longman@redhat.com, bp@alien8.de, pbonzini@redhat.com,
- "Kaplan, David" <david.kaplan@amd.com>
-References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
 
-On 23/05/2024 1:33 pm, Alexandre Chartre wrote:
-> diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-> index 11c9b8efdc4c..7fa04edc87e9 100644
-> --- a/arch/x86/entry/entry_64_compat.S
-> +++ b/arch/x86/entry/entry_64_compat.S
-> @@ -91,7 +91,6 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
->  
->  	IBRS_ENTER
->  	UNTRAIN_RET
-> -	CLEAR_BRANCH_HISTORY
->  
->  	/*
->  	 * SYSENTER doesn't filter flags, so we need to clear NT and AC
-> @@ -116,6 +115,12 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
->  	jnz	.Lsysenter_fix_flags
->  .Lsysenter_flags_fixed:
->  
-> +	/*
-> +	 * CLEAR_BRANCH_HISTORY can call other functions. It should be invoked
-> +	 * after making sure TF is cleared because single-step is ignored only
-> +	 * for instructions inside the entry_SYSENTER_compat function.
-> +	 */
-> +	CLEAR_BRANCH_HISTORY
+Hi Yasin,
 
-Exactly the same is true of UNTRAIN_RET, although it will only manifest
-in i386 builds running on AMD hardware (SYSENTER is #UD on AMD hardware
-in Long mode.)
+kernel test robot noticed the following build warnings:
 
-#DB is IST so does handle it's own speculation safety.  It should be
-safe to move all the speculation safety logic in the sysenter handler to
-after .Lsysenter_flags_fixed:, I think?
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-~Andrew
+url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/iio-proximity-hx9031as-Add-TYHX-HX9031AS-HX9023S-sensor-driver/20240515-083021
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/SN7PR12MB8101EDFA7F91A59761095A28A4E72%40SN7PR12MB8101.namprd12.prod.outlook.com
+patch subject: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor driver
+config: alpha-randconfig-r081-20240516 (https://download.01.org/0day-ci/archive/20240517/202405170824.uhEslLI0-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202405170824.uhEslLI0-lkp@intel.com/
+
+smatch warnings:
+drivers/iio/proximity/hx9031as.c:1118 hx9031as_raw_data_show() error: snprintf() is printing too much 8192 vs 512
+drivers/iio/proximity/hx9031as.c:1240 hx9031as_channel_en_show() error: snprintf() is printing too much 8192 vs 512
+drivers/iio/proximity/hx9031as.c:1466 hx9031as_threshold_show() error: snprintf() is printing too much 8192 vs 512
+drivers/iio/proximity/hx9031as.c:1491 hx9031as_dump_show() error: snprintf() is printing too much 8192 vs 1024
+drivers/iio/proximity/hx9031as.c:1513 hx9031as_offset_dac_show() error: snprintf() is printing too much 8192 vs 512
+
+vim +1118 drivers/iio/proximity/hx9031as.c
+
+5e5a419c9407f6 Yasin Lee 2024-05-10  1110  static ssize_t hx9031as_raw_data_show(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
+5e5a419c9407f6 Yasin Lee 2024-05-10  1111  {
+5e5a419c9407f6 Yasin Lee 2024-05-10  1112  	char buf[BUF_SIZE] = {0};
+5e5a419c9407f6 Yasin Lee 2024-05-10  1113  	char *p = buf;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1114  	int ii = 0;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1115  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1116  	hx9031as_sample();
+5e5a419c9407f6 Yasin Lee 2024-05-10  1117  	for (ii = 0; ii < HX9031AS_CH_NUM; ii++) {
+5e5a419c9407f6 Yasin Lee 2024-05-10 @1118  		p += snprintf(p, PAGE_SIZE, "ch[%d]: DIFF=%-8d, RAW=%-8d, OFFSET=%-8d, BL=%-8d, LP=%-8d\n",
+                                                                         ^^^^^^^^^
+This doesn't work at all.  It should be BUF_SIZE instead of PAGE_SIZE
+but also PAGE_SIZE is a fixed size where the number of bytes remaining
+should get smaller as we write further into the buffer.
+
+Also use scnprintf() instead of snprintf() unless you need to check the
+results.  The normal way to write this is:
+
+	int off = 0;
+
+	hx9031as_sample();
+	for (ii = 0; ii < HX9031AS_CH_NUM; ii++) {
+		off += scnprintf(buf + off, BUF_SIZE - off,
+                                 ^^^^^^^^^  ^^^^^^^^^^^^^^
+
+				 "ch[%d]: DIFF=%-8d, RAW=%-8d, OFFSET=%-8d, BL=%-8d, LP=%-8d\n",
+				 ii, hx9031as_pdata.diff[ii], hx9031as_pdata.raw[ii], ...
+
+5e5a419c9407f6 Yasin Lee 2024-05-10  1119  						ii, hx9031as_pdata.diff[ii], hx9031as_pdata.raw[ii], hx9031as_pdata.dac[ii],
+5e5a419c9407f6 Yasin Lee 2024-05-10  1120  						hx9031as_pdata.bl[ii], hx9031as_pdata.lp[ii]);
+5e5a419c9407f6 Yasin Lee 2024-05-10  1121  	}
+5e5a419c9407f6 Yasin Lee 2024-05-10  1122  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1123  	return simple_read_from_buffer(user_buf, count, ppos, buf, strlen(buf));
+5e5a419c9407f6 Yasin Lee 2024-05-10  1124  }
+5e5a419c9407f6 Yasin Lee 2024-05-10  1125  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1126  static const struct file_operations hx9031as_raw_data_fops = {
+5e5a419c9407f6 Yasin Lee 2024-05-10  1127  	.read = hx9031as_raw_data_show,
+5e5a419c9407f6 Yasin Lee 2024-05-10  1128  };
+5e5a419c9407f6 Yasin Lee 2024-05-10  1129  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1130  static ssize_t hx9031as_reg_write_store(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos)
+5e5a419c9407f6 Yasin Lee 2024-05-10  1131  {
+5e5a419c9407f6 Yasin Lee 2024-05-10  1132  	int ret = -1;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1133  	unsigned int reg_address = 0;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1134  	unsigned int val = 0;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1135  	uint8_t addr = 0;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1136  	uint8_t tx_buf[1] = {0};
+5e5a419c9407f6 Yasin Lee 2024-05-10  1137  	char buf[BUF_SIZE];
+5e5a419c9407f6 Yasin Lee 2024-05-10  1138  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1139  	ENTER;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1140  	if (count > BUF_SIZE)
+5e5a419c9407f6 Yasin Lee 2024-05-10  1141  		return -EINVAL;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1142  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1143  	if (copy_from_user(buf, user_buf, count))
+
+We don't know that this is NUL terminated.  What about if count == 1
+and the rest of the buffer is uninitialized.  Same issues in other
+functions as well.
+
+5e5a419c9407f6 Yasin Lee 2024-05-10  1144  		return -EFAULT;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1145  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1146  	if (sscanf(buf, "%x,%x", &reg_address, &val) != 2) {
+5e5a419c9407f6 Yasin Lee 2024-05-10  1147  		PRINT_ERR("please input two HEX numbers: aa,bb (aa: reg_address, bb: value_to_be_set)\n");
+5e5a419c9407f6 Yasin Lee 2024-05-10  1148  		return -EINVAL;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1149  	}
+5e5a419c9407f6 Yasin Lee 2024-05-10  1150  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1151  	addr = (uint8_t)reg_address;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1152  	tx_buf[0] = (uint8_t)val;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1153  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1154  	ret = hx9031as_write(addr, tx_buf, 1);
+5e5a419c9407f6 Yasin Lee 2024-05-10  1155  	if (ret != 0)
+5e5a419c9407f6 Yasin Lee 2024-05-10  1156  		PRINT_ERR("hx9031as_write failed\n");
+5e5a419c9407f6 Yasin Lee 2024-05-10  1157  
+5e5a419c9407f6 Yasin Lee 2024-05-10  1158  	PRINT_INF("WRITE:Reg0x%02X=0x%02X\n", addr, tx_buf[0]);
+5e5a419c9407f6 Yasin Lee 2024-05-10  1159  	return count;
+5e5a419c9407f6 Yasin Lee 2024-05-10  1160  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
