@@ -1,155 +1,213 @@
-Return-Path: <linux-kernel+bounces-187681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CADB8CD66C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:00:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B004E8CD66E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE37F1F22091
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FCA1F22D48
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72001170F;
-	Thu, 23 May 2024 15:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F5E14287;
+	Thu, 23 May 2024 15:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+aH0G6d"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="LiAF9et4"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7F66FB9;
-	Thu, 23 May 2024 15:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4762F125A9
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476403; cv=none; b=ZXEDd1k4tVF1HnKCFaKSKkBPx+Y6U6c/QEiiH9W/TsPKYXtNgy+lH3+5W1m3De3VCTk92cygLy4aDMt+0UOxkH4VSHBfu+mtJWkY6xCnHPHA8gr+bvLa8BbKe5ZleBUjMvRE2Ladbh0XNGpCTYXp6nfxdp7jO5tPJAV+/jPjyz4=
+	t=1716476405; cv=none; b=b1XiubKpGCPtMdRl4DV/L5l/qqgR9u24bPsHPUwoJkB1IQU1WFDR4bp5OZOIn4GzC+NA3udv0e35DX1/pmOCtO5y0r23Bls2HnBVJeoIqADD+rS9oaS1LXn+bdpcYw1DQzlEXoBqneWNT5Djlt4GjQ5RN7aCO250vxjeZRgoCsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476403; c=relaxed/simple;
-	bh=SAOCWyE5winR3sfCd14gHp7mco0EGetdVtps2eCt62I=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=cwoqXEnTathjcPL8KoAYu8NusMayplHLvnGtOrNyDkqcrpLBCveO6WoGGw6j4Bwphc5xzMlQ1vC8/wB+xq2p8cR0FmeYj9GSaS3sllLk4soWsIH21orUO9M7Glj3KTm8Kr/BJdsT9/aRYcUF5pVzpctzmc8cYmmrl6QYq805kCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+aH0G6d; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-df4e81e0b22so1939625276.3;
-        Thu, 23 May 2024 08:00:01 -0700 (PDT)
+	s=arc-20240116; t=1716476405; c=relaxed/simple;
+	bh=s2lYMgKhqmOoc2ZsDL1yCZHZwFkT2+ILqBEJ2uaDiAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JNB3Poj/W+DM2L/7OpFRPetaHft3S0QDfLtTP1JtU6994/Y+jxaij31AOMuDAwp0NuXQgO0+s/OGDFuipBzcHZuQiohxj8qw6/wvkULxFMLBn3OHKXJ/HWTeue5JchtSYyxCYLwjD0q+l+cFPiKnh1FWW5OdfQvW2ucBAtv4hoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=LiAF9et4; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43df7f42ac9so12043851cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716476400; x=1717081200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2pzvpZz45nT1lL1/WYOVJvhpVhqZ+zX2th+ykDS47iw=;
-        b=E+aH0G6d+xzpc+LKTNxursx2/AhEsiZOjRu2NXSXSayVWfjdtyK8NqbIAmUsrGrxE/
-         2vF6ciAocDLh5p1LyrBWxxJPKBPCr6OD9DCvs4d1shrpt/M5NtdwoLnUor4Hq8SLKiz2
-         bzEHbs2yXAwFmMgJMUo0Jm2PTc1Ns5vz3lCV6CLnEnsrIanzHXdDidfz7XlNmjoHom3L
-         2tsUh5AWtZRIaPD4ykYEDc6WMS7Fn5VL6pUAgjzhM7RtOaOVCmgsw7gv0JxvO/zizPHJ
-         DD0p4h57x4qkYrTGkSe3zBZp/Px/OYBWPYtvqlSkZ9hecyRDbBWRL34I0MA6E3Bou0xg
-         0DhA==
+        d=citrix.com; s=google; t=1716476403; x=1717081203; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=s2lYMgKhqmOoc2ZsDL1yCZHZwFkT2+ILqBEJ2uaDiAI=;
+        b=LiAF9et4e6YqmOY1K4Nm8yJO97KIGfkUcf4SiqVOOEFSFS+SiaH49u/zW/Wm3Bps42
+         5Ry0I2FCbrs9YwlnKnuIaZY3JMWZQ4ltGv7K2U3DwSPMHeCxVurwmfU9ZJ8rSTP5Mw+P
+         FLxs9qRWuMCG+9PHCNi38Y5/m8T6jA7mYooTc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716476400; x=1717081200;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2pzvpZz45nT1lL1/WYOVJvhpVhqZ+zX2th+ykDS47iw=;
-        b=WoOVVTx4FFXdJYMmGy7/Oq2USnTITUQCOQH1Xmg2EUHfp7PB7f07ewutrmaD7HZAgF
-         XX7kednpDuTAZAi3Nq/hBgVg8Svk3cBaiVbquJbUnMuIvRBhqzs8zeW38wwK2ZO33mT/
-         N1C+jFa/E0f/yx16kUBChgfj/6xsQEGqVqetWah9utSbGOVewbvdYvorSpHziWqF+E6X
-         oH0MFcrAuOauALU31YVMqRaCn+0keVZPE1PTADLkeQnLsjOJlrEwE4gws9e2dvSv1Lkp
-         tMlPNqPAGNMz8iwnI9cp4/gc0DDV8SuM3UAGhrkoQmc6eAFJTRQA8R7QespknEzW58yZ
-         5gfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcde5K76dFgKPNAOHRXoa6othsNKMTk6M9Tvu6oo/RObLVpaukya3npxRc5PrG8c4Sm8pc9webswT+zC9M64IWCT/dPsG7
-X-Gm-Message-State: AOJu0YyzUsd8/VM6M1DzGjhbLXbApbnHL6z6CNF+Mb/aTv6XazLtzRPQ
-	d+wc86H3an9q17uaa5LanzVzLlf4oCkOo5UJmDCBMSekSudd59WeC8UDtA==
-X-Google-Smtp-Source: AGHT+IF0s0+xHBS8iHKnTWrDlRyAwmj/nJRi3prOJDDqcze2NocDRfUC22GnS69mlHtKPLHdp7ulLw==
-X-Received: by 2002:a05:6902:2211:b0:de5:6a82:49dd with SMTP id 3f1490d57ef6-df4e0a760eemr6165214276.13.1716476400389;
-        Thu, 23 May 2024 08:00:00 -0700 (PDT)
-Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab8be59ba7sm11024876d6.24.2024.05.23.07.59.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 07:59:59 -0700 (PDT)
-Date: Thu, 23 May 2024 10:59:58 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- =?UTF-8?B?TGVuYSBXYW5nICjnjovlqJwp?= <Lena.Wang@mediatek.com>, 
- "kuba@kernel.org" <kuba@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
- =?UTF-8?B?U2hpbWluZyBDaGVuZyAo5oiQ6K+X5piOKQ==?= <Shiming.Cheng@mediatek.com>, 
- "pabeni@redhat.com" <pabeni@redhat.com>, 
- "edumazet@google.com" <edumazet@google.com>, 
- "willemdebruijn.kernel@gmail.com" <willemdebruijn.kernel@gmail.com>, 
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
- "davem@davemloft.net" <davem@davemloft.net>
-Message-ID: <664f59eedbee7_1b5d24294ef@willemb.c.googlers.com.notmuch>
-In-Reply-To: <664f3aa1847cc_1a64412944f@willemb.c.googlers.com.notmuch>
-References: <20240428142913.18666-1-shiming.cheng@mediatek.com>
- <20240429064209.5ce59350@kernel.org>
- <bc69f8cc4aed8b16daba17c0ca0199fe6d7d24a8.camel@mediatek.com>
- <20240516081110.362cbb51@kernel.org>
- <15675c6e0facd64b1cdc2ec0ded32b84a4e5744b.camel@mediatek.com>
- <664f3aa1847cc_1a64412944f@willemb.c.googlers.com.notmuch>
-Subject: Re: [PATCH net] net: prevent pulling SKB_GSO_FRAGLIST skb
+        d=1e100.net; s=20230601; t=1716476403; x=1717081203;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s2lYMgKhqmOoc2ZsDL1yCZHZwFkT2+ILqBEJ2uaDiAI=;
+        b=psrEn4FKQbMKwSTXgQZ87r9BlBp7YEYE5ckmn1NM7mpd0V1odae0uHmF1/CPO3sMsa
+         qifXS2aye2S21uTO75sDrfx7CKO6xWGhCz1mCLYbMvw3CBpvDxVQOuzcy2pkVjLCa1CI
+         mrLObsnX3QYM8drMdHbQSFHY3hsc/4Mn0l+Ef/PEufY91FxOpZ1fRdy0TI4OXkTBs9tX
+         cnW+sPFouQ3gGvKEh5dyiisBtkz/L9LQ4/2OThOki48kX0SEwrBxNdvG/XiXfzi3HuPf
+         Iw/lk9s13USwhDq9uqk/r4WjHUVEIWxufYgF+I+v2frVdFc73WT/HcjmzwWqKiGAFsiO
+         Rbtw==
+X-Gm-Message-State: AOJu0YyNXqm+9/Nj4eH5OG7pDtufFEums0pX7y9nVgS5OBRxizklHG9W
+	OFsqx3NzbRgckRHsYtEz9l2c4f0fx/l1WVMuyjI43W5NTRuJVrP87iGOYiVJatg=
+X-Google-Smtp-Source: AGHT+IFFne2Xc83fYsFcLXZ3LBNtSJ3tgYmYGJNiUdED+FVyEy1/5AXrTpHr/PEuTUViuJNCQf792g==
+X-Received: by 2002:a05:622a:54d:b0:43a:f58b:2e71 with SMTP id d75a77b69052e-43f9e0849fbmr48737101cf.10.1716476403146;
+        Thu, 23 May 2024 08:00:03 -0700 (PDT)
+Received: from [10.125.231.30] ([217.156.233.157])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e17a8315csm144060261cf.32.2024.05.23.08.00.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 08:00:02 -0700 (PDT)
+Message-ID: <6fbc9a1e-fc3b-4034-a56d-3e8e64413b2c@citrix.com>
+Date: Thu, 23 May 2024 15:59:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
+ handler
+To: Alexandre Chartre <alexandre.chartre@oracle.com>, x86@kernel.org,
+ kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
+ pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
+ konrad.wilk@oracle.com, peterz@infradead.org, gregkh@linuxfoundation.org,
+ seanjc@google.com, dave.hansen@linux.intel.com, nik.borisov@suse.com,
+ kpsingh@kernel.org, longman@redhat.com, bp@alien8.de, pbonzini@redhat.com,
+ "Kaplan, David" <david.kaplan@amd.com>
+References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
+ <771bbaa3-0fa5-4b0a-a0a2-6516b4f42867@citrix.com>
+ <5f064eb5-cabd-4adc-8c6f-6b2e449e3fe9@oracle.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <5f064eb5-cabd-4adc-8c6f-6b2e449e3fe9@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Willem de Bruijn wrote:
-> > The problem now is the ethtool in ubuntu can't support "rx-gro-list"
-> > and "rx-udp-gro-forwarding" although it is updated to version 6.7 from 
-> > https://mirrors.edge.kernel.org/pub/software/network/ethtool. 
-> > 
-> > There is another verison in 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/ethtool.
-> >  We download the sourcecode but don't know how to compile for ubuntu as
-> > no ./configure there.
-> > 
-> > Is it the one we should use?  If yes, could you please show me how to
-> > compile and install this ethtool?
-> 
-> https://git.kernel.org/pub/scm/network/ethtool/ethtool.git is the
-> upstream ethtool repo.
-> 
-> Since you are testing a custom built kernel, there are other hacky
-> ways to configure a feature if you lack a userspace component:
-> 
-> - just hardcode on or off and reboot
-> - use YNL ethtool (but features is not implemented yet?)
-> - write your own netlink helper
-> - abuse some existing kernel API to toggle it, like a rarely uses systl
+On 23/05/2024 1:59 pm, Alexandre Chartre wrote:
+>
+>
+> On 5/23/24 14:42, Andrew Cooper wrote:
+>> On 23/05/2024 1:33 pm, Alexandre Chartre wrote:
+>>> diff --git a/arch/x86/entry/entry_64_compat.S
+>>> b/arch/x86/entry/entry_64_compat.S
+>>> index 11c9b8efdc4c..7fa04edc87e9 100644
+>>> --- a/arch/x86/entry/entry_64_compat.S
+>>> +++ b/arch/x86/entry/entry_64_compat.S
+>>> @@ -91,7 +91,6 @@
+>>> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>>>         IBRS_ENTER
+>>>       UNTRAIN_RET
+>>> -    CLEAR_BRANCH_HISTORY
+>>>         /*
+>>>        * SYSENTER doesn't filter flags, so we need to clear NT and AC
+>>> @@ -116,6 +115,12 @@
+>>> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>>>       jnz    .Lsysenter_fix_flags
+>>>   .Lsysenter_flags_fixed:
+>>>   +    /*
+>>> +     * CLEAR_BRANCH_HISTORY can call other functions. It should be
+>>> invoked
+>>> +     * after making sure TF is cleared because single-step is
+>>> ignored only
+>>> +     * for instructions inside the entry_SYSENTER_compat function.
+>>> +     */
+>>> +    CLEAR_BRANCH_HISTORY
+>>
+>> Exactly the same is true of UNTRAIN_RET, although it will only manifest
+>> in i386 builds running on AMD hardware (SYSENTER is #UD on AMD hardware
+>> in Long mode.)
+>>
+>> #DB is IST so does handle it's own speculation safety.  It should be
+>> safe to move all the speculation safety logic in the sysenter handler to
+>> after .Lsysenter_flags_fixed:, I think?
+>>
+>
+> Right, so something like this:
+>
+> --- a/arch/x86/entry/entry_64_compat.S
+> +++ b/arch/x86/entry/entry_64_compat.S
+> @@ -89,10 +89,6 @@
+> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>  
+>         cld
+>  
+> -       IBRS_ENTER
+> -       UNTRAIN_RET
+> -       CLEAR_BRANCH_HISTORY
+> -
+>         /*
+>          * SYSENTER doesn't filter flags, so we need to clear NT and AC
+>          * ourselves.  To save a few cycles, we can check whether
+> @@ -116,6 +112,15 @@
+> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>         jnz     .Lsysenter_fix_flags
+>  .Lsysenter_flags_fixed:
+>  
+> +       /*
+> +        * CPU bugs mitigations mechanisms can call other functions. They
+> +        * should be invoked after making sure TF is cleared because
+> +        * single-step is ignored only for instructions inside the
+> +        * entry_SYSENTER_compat function.
+> +        */
+> +       IBRS_ENTER
+> +       UNTRAIN_RET
+> +       CLEAR_BRANCH_HISTORY
 
-And as shared off-line, virtme-ng (vng) can be a good option for
-working on tools/testing/selftests too.
+Yeah - this looks rather better.
 
-Ideally
+Although I'd suggest a blank line here if you're going to formalise the
+patch.
 
-```
-vng -v -b -f tools/testing/selftests/net
-make headers
-make -C tools/testing/selftests/net
-
-vng -v -r arch/x86/boot/bzImage --user root
-# inside the VM
-make -C tools/testing/selftests TARGETS=net run_tests
-```
-
-Though last time I tried I had to use a slightly more roundabout
-
-```
-make defconfig; make kvm_guest.config
-/scripts/kconfig/merge_config.sh -m .config tools/testing/selftests/net/config
-make olddefconfig
-make -j $(nproc) bzImage
-make headers
-make -C tools/testing/selftests/net
-
-vng -v -r arch/x86/boot/bzImage --user root
-```
-
-
-https://lpc.events/event/17/contributions/1506/attachments/1143/2441/virtme-ng.pdf
+~Andrew
 
