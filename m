@@ -1,281 +1,290 @@
-Return-Path: <linux-kernel+bounces-187840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3B38CD93C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:41:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2276E8CD95B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C6EB2147A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5EC71F21FA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C607D417;
-	Thu, 23 May 2024 17:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EAF763F2;
+	Thu, 23 May 2024 17:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qjR0JJum"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bt3Ed6Mn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703112746F
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD982628D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716486083; cv=none; b=qFIPz84OAFURVDji+0cnqdpb67pyc07LmGW6aKX9YPAfPj5OxUQsemC91UdKdgkffwac+Ft1jjuIvCCX3pfQp3uF4RhX4802wqlts/StIP8kiobMEWD88vbdjtLPhDOB7nCGANv7QyyIAxJQo93Wt6Ak7sSzQaW7MN4sfwbwvEA=
+	t=1716486390; cv=none; b=aqcPE2bqluGH/N627T7kuL5jEd17Gwed9uSry2crYwe7XDQZi32AUzg6uoNlnFbfSLdH/n4Rw/m1HoSeUsFJbnS9WimrGeAdmBkyUDmdxf2kCMheRPHoX8eueRo7oKjGaWAxjB/vAG6rSFN7S4VUxUE86ZOYt2CRzxYNCxHq+wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716486083; c=relaxed/simple;
-	bh=mgcCj63r/rqJ9WAumHxvSQWYHZYpsmagWDbi6uVpq30=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dz8hKQe4F5mBTmureBi/a43C2+6dD4avc4W/3g3f07PE5acQvr5MNB95zFtNf1b8Lgy70J3H7WfeaDhm1sX5eDL0ZewMdAt1Wc+7WbWm7njWiVpLM6JG9RTQQtBllfS7aAUj6rgZCLEG1iCpuXsLf9geLAzod7u3Q8KFn0yk9+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qjR0JJum; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df7713034bfso57073276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:41:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716486080; x=1717090880; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/Uryc1Ca/yfNSkrAtNfcb1TkId2P2HjsoQz4zGkthUc=;
-        b=qjR0JJumKNrZ7UwcPP3s3GetHd8W89GLTthgINDn8zXK2tp9xfYk8qBTbgZRmXoCFA
-         HLWfW0D2IZLwnnxs/HNLrQtkKFPdtoBv403UP4UnO1x0PCYvZEqokaSbQHvWzK7dxdjh
-         VJWXHVWdel+9kBDAo3bZyrjsyCZcwZORpeNixhRcrpf9aYANwwBUsj04IU5+pbmo3d5/
-         3EjHCeejdhp6Vy299A2P9ykhic6fVG5SGahZo3Vsa/zu8HrZiE1caS7chZYloNqedDIW
-         NL7m7UM5ROyaRVefbX/e+lPwVaB+AdPC/JsPu06JWh67JbJ+XyCsHjwfdvbMGwEO/9og
-         buOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716486080; x=1717090880;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/Uryc1Ca/yfNSkrAtNfcb1TkId2P2HjsoQz4zGkthUc=;
-        b=kKSYV8SVYySP/uXae6+2jr7X6YmjK+BTr6fT46d86Nh3sPd4ONaYFzzx8+U0PaRqSP
-         Wd168VoavNb7mR0T1E623/S4dJViIo7WIUBupOgQYS31npK3oCtHopmVYhyobslb8llx
-         hCuzDoHIud59Tomn1OqpM+wjn1pMclJSsJjpIWkYyiG8MgIn8oCq/uI29t+k7HE/XPgc
-         8nhUMEnRE2GmmXtxW+R3nPylw68TVhycS07qaCofegajG5VQkcc9/Dp0Uu/5Tgu5dzSy
-         iPRIhp+nK6g8Qpo75u+bCwlsTSpJ3NhVg0mXUbC9tl9tGgQxAxNdEGubPbdkrbGm3EK5
-         zXIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAeQKS7OkQ70keEAMW3XIp3j2TM4kDnrJYk78B/rz97iK1nHsgOr8o/04dZWd/DTgrzMxMK/K70VcfF6y3tAyjbQR4iKlXI08FWxP0
-X-Gm-Message-State: AOJu0Yy58BE0FHWtnjzO/vzwlYpTYmJs+nILhxJEEKmk+Pwuj6i043gJ
-	3OOO3tjDI84ivQP8v3vT43YxufnBY0gmDTPGhLPp2BH4+d78XXAfLqrQufe6LwI9GT3p+olbTcH
-	9t7n54rdRmxa7ZTw8RpqMmA==
-X-Google-Smtp-Source: AGHT+IFlRiZywpr57pi877qryPKiafj4uJohWbfZpe5cezs8n2FI0sD1i4QJM+bXmI8glD4J/d2mQ77lr+EZuSzvnQ==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
- (user=coltonlewis job=sendgmr) by 2002:a05:6902:100a:b0:df7:66dd:5fbd with
- SMTP id 3f1490d57ef6-df766dd6536mr116228276.3.1716486080473; Thu, 23 May 2024
- 10:41:20 -0700 (PDT)
-Date: Thu, 23 May 2024 17:40:55 +0000
+	s=arc-20240116; t=1716486390; c=relaxed/simple;
+	bh=tLgT8AhTD8pN9M4DhxMiIOgV+LdbYQ9pzR1x18cpiwU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=bvNTmouUkWmTjcC8SHfWqVBt/Z6tLNA9h65WVvrusyB9m9ZIn7jU2R+/jYs8bCK98wNkFgrPMz+tuLKz4Sc/qsJF0nKsxcifd+AchpZo9hRmk5efg89Rf1r/9aX0ohvYeVRKpKqowQGkp/rHDi3hxoKyyUyg0UBIOWjLye8GWjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bt3Ed6Mn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716486387;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M1qpHcNh09kJV0OIN7/sr6zVseHslB9whCm0Wl5k5xE=;
+	b=bt3Ed6Mn3JyoKyuke3umF4dke4h5pzmQSAX5mmBkBjhP4gNVAAMqISfegIjf/1Eh0/p532
+	MhaNo7wS4JhqIvd9d8NAwC0lL0/HvlR/DUVfPVPeZhzl5iyOLWNadL2fNzIfQSBqoR3bey
+	zAv9zldz21YiHqiTIwxMdaIJQp7DbVs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-452-t1irxCAqPYGKN8h7d4fHZQ-1; Thu, 23 May 2024 13:46:26 -0400
+X-MC-Unique: t1irxCAqPYGKN8h7d4fHZQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D9F81800994;
+	Thu, 23 May 2024 17:46:25 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id B0D41100046D;
+	Thu, 23 May 2024 17:46:25 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id 9CD2B30C1C33; Thu, 23 May 2024 17:46:25 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 99C723FB52;
+	Thu, 23 May 2024 19:46:25 +0200 (CEST)
+Date: Thu, 23 May 2024 19:46:25 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Mike Snitzer <snitzer@kernel.org>
+cc: Benjamin Marzinski <bmarzins@redhat.com>, Yang Yang <yang.yang@vivo.com>, 
+    Alasdair Kergon <agk@redhat.com>, dm-devel@lists.linux.dev, 
+    linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dm: optimize flushes
+In-Reply-To: <Zk4Y6DMgK71UuoKd@kernel.org>
+Message-ID: <44afd6c8-d36a-4b9d-e77f-fca269a9897b@redhat.com>
+References: <20240514090445.2847-1-yang.yang@vivo.com> <20240514090445.2847-4-yang.yang@vivo.com> <ZkTXzG1yrPmW64Z6@redhat.com> <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com> <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com> <Zk4Y6DMgK71UuoKd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240523174056.1565133-1-coltonlewis@google.com>
-Subject: [PATCH v6] KVM: arm64: Add early_param to control WFx trapping
-From: Colton Lewis <coltonlewis@google.com>
-To: kvm@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, Colton Lewis <coltonlewis@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Add an early_params to control WFI and WFE trapping. This is to
-control the degree guests can wait for interrupts on their own without
-being trapped by KVM. Options for each param are trap and notrap. trap
-enables the trap. notrap disables the trap. Note that when enabled,
-traps are allowed but not guaranteed by the CPU architecture. Absent
-an explicitly set policy, default to current behavior: disabling the
-trap if only a single task is running and enabling otherwise.
+Hi
 
-Signed-off-by: Colton Lewis <coltonlewis@google.com>
+Here I'm resending the patch, with more comments and explanations added.
+
+Mikulas
+
+
+From: Mikulas Patocka <mpatocka@redhat.com>
+
+Device mapper sends flush bios to all the targets and the targets send it
+to the underlying device. That may be inefficient, for example if a table
+contains 10 linear targets pointing to the same physical device, then
+device mapper would send 10 flush bios to that device - despite the fact
+that only one bio would be sufficient.
+
+This commit optimizes the flush behavior. It introduces a per-target
+variable flush_bypasses_map - it is set when the target supports flush
+optimization - currently, the dm-linear and dm-stripe targets support it.
+When all the targets in a table have flush_bypasses_map,
+flush_bypasses_map on the table is set. __send_empty_flush tests if the
+table has flush_bypasses_map - and if it has, no flush bios are sent to
+the targets via the "map" method and the list dm_table->devices is
+iterated and the flush bios are sent to each member of the list.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Suggested-by: Yang Yang <yang.yang@vivo.com>
+
 ---
-v6:
- * Rebase to v6.9.1
- * Move decision to enable WFx traps back to vcpu load time
- * Move policy enum to arm.c and mark variable as __read_mostly
- * Add explicit disclaimer traps are not guaranteed even when setting enabled
- * Remove explicit "default" case from early param handling as it is not needed
+ drivers/md/dm-core.h          |    4 ++-
+ drivers/md/dm-linear.c        |    1 
+ drivers/md/dm-stripe.c        |    1 
+ drivers/md/dm-table.c         |    4 +++
+ drivers/md/dm.c               |   54 +++++++++++++++++++++++++++++++-----------
+ include/linux/device-mapper.h |   15 +++++++++++
+ 6 files changed, 64 insertions(+), 15 deletions(-)
 
-v5:
-https://lore.kernel.org/kvmarm/20240430181444.670773-1-coltonlewis@google.com/
-
-v4:
-https://lore.kernel.org/kvmarm/20240422181716.237284-1-coltonlewis@google.com/
-
-v3:
-https://lore.kernel.org/kvmarm/20240410175437.793508-1-coltonlewis@google.com/
-
-v2:
-https://lore.kernel.org/kvmarm/20240319164341.1674863-1-coltonlewis@google.com/
-
-v1:
-https://lore.kernel.org/kvmarm/20240129213918.3124494-1-coltonlewis@google.com/
-
- .../admin-guide/kernel-parameters.txt         | 18 +++++
- arch/arm64/include/asm/kvm_emulate.h          | 16 -----
- arch/arm64/kvm/arm.c                          | 68 ++++++++++++++++++-
- 3 files changed, 83 insertions(+), 19 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 396137ee018d..f334265a9cfa 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2693,6 +2693,24 @@
- 			[KVM,ARM,EARLY] Allow use of GICv4 for direct
- 			injection of LPIs.
-
-+	kvm-arm.wfe_trap_policy=
-+			[KVM,ARM] Control when to set WFE instruction trap for
-+			KVM VMs. Traps are allowed but not guaranteed by the
-+			CPU architecture.
-+
-+			trap: set WFE instruction trap
-+
-+			notrap: clear WFE instruction trap
-+
-+	kvm-arm.wfi_trap_policy=
-+			[KVM,ARM] Control when to set WFI instruction trap for
-+			KVM VMs. Traps are allowed but not guaranteed by the
-+			CPU architecture.
-+
-+			trap: set WFI instruction trap
-+
-+			notrap: clear WFI instruction trap
-+
- 	kvm_cma_resv_ratio=n [PPC,EARLY]
- 			Reserves given percentage from system memory area for
- 			contiguous memory allocation for KVM hash pagetable
-diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-index 975af30af31f..68c4a170b871 100644
---- a/arch/arm64/include/asm/kvm_emulate.h
-+++ b/arch/arm64/include/asm/kvm_emulate.h
-@@ -109,22 +109,6 @@ static inline unsigned long *vcpu_hcr(struct kvm_vcpu *vcpu)
- 	return (unsigned long *)&vcpu->arch.hcr_el2;
+Index: linux-2.6/drivers/md/dm-core.h
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-core.h	2024-05-23 19:00:00.000000000 +0200
++++ linux-2.6/drivers/md/dm-core.h	2024-05-23 19:00:00.000000000 +0200
+@@ -206,7 +206,9 @@ struct dm_table {
+ 
+ 	bool integrity_supported:1;
+ 	bool singleton:1;
+-	unsigned integrity_added:1;
++	bool integrity_added:1;
++	/* set if all the targets in the table have "flush_bypasses_map" set */
++	bool flush_bypasses_map:1;
+ 
+ 	/*
+ 	 * Indicates the rw permissions for the new logical device.  This
+Index: linux-2.6/drivers/md/dm-linear.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-linear.c	2024-05-23 19:00:00.000000000 +0200
++++ linux-2.6/drivers/md/dm-linear.c	2024-05-23 19:00:00.000000000 +0200
+@@ -62,6 +62,7 @@ static int linear_ctr(struct dm_target *
+ 	ti->num_discard_bios = 1;
+ 	ti->num_secure_erase_bios = 1;
+ 	ti->num_write_zeroes_bios = 1;
++	ti->flush_bypasses_map = true;
+ 	ti->private = lc;
+ 	return 0;
+ 
+Index: linux-2.6/drivers/md/dm-stripe.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-stripe.c	2024-05-23 19:00:00.000000000 +0200
++++ linux-2.6/drivers/md/dm-stripe.c	2024-05-23 19:00:00.000000000 +0200
+@@ -157,6 +157,7 @@ static int stripe_ctr(struct dm_target *
+ 	ti->num_discard_bios = stripes;
+ 	ti->num_secure_erase_bios = stripes;
+ 	ti->num_write_zeroes_bios = stripes;
++	ti->flush_bypasses_map = true;
+ 
+ 	sc->chunk_size = chunk_size;
+ 	if (chunk_size & (chunk_size - 1))
+Index: linux-2.6/drivers/md/dm-table.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm-table.c	2024-05-23 19:00:00.000000000 +0200
++++ linux-2.6/drivers/md/dm-table.c	2024-05-23 19:00:00.000000000 +0200
+@@ -160,6 +160,7 @@ int dm_table_create(struct dm_table **re
+ 	t->type = DM_TYPE_NONE;
+ 	t->mode = mode;
+ 	t->md = md;
++	t->flush_bypasses_map = true;
+ 	*result = t;
+ 	return 0;
  }
-
--static inline void vcpu_clear_wfx_traps(struct kvm_vcpu *vcpu)
--{
--	vcpu->arch.hcr_el2 &= ~HCR_TWE;
--	if (atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
--	    vcpu->kvm->arch.vgic.nassgireq)
--		vcpu->arch.hcr_el2 &= ~HCR_TWI;
--	else
--		vcpu->arch.hcr_el2 |= HCR_TWI;
--}
+@@ -738,6 +739,9 @@ int dm_table_add_target(struct dm_table
+ 	if (ti->limit_swap_bios && !static_key_enabled(&swap_bios_enabled.key))
+ 		static_branch_enable(&swap_bios_enabled);
+ 
++	if (!ti->flush_bypasses_map)
++		t->flush_bypasses_map = false;
++
+ 	return 0;
+ 
+  bad:
+Index: linux-2.6/include/linux/device-mapper.h
+===================================================================
+--- linux-2.6.orig/include/linux/device-mapper.h	2024-05-23 19:00:00.000000000 +0200
++++ linux-2.6/include/linux/device-mapper.h	2024-05-23 19:18:01.000000000 +0200
+@@ -397,6 +397,21 @@ struct dm_target {
+ 	 * bio_set_dev(). NOTE: ideally a target should _not_ need this.
+ 	 */
+ 	bool needs_bio_set_dev:1;
++
++	/*
++	 * Set if the target supports flush optimization. If all the targets in
++	 * a table have flush_bypasses_map set, the dm core will not send
++	 * flushes to the targets via a ->map method. It will iterate over
++	 * dm_table->devices and send flushes to the devices directly. This
++	 * optimization reduces the number of flushes being sent when multiple
++	 * targets in a table use the same underlying device.
++	 *
++	 * This optimization may be enabled on targets that just pass the
++	 * flushes to the underlying devices without performing any other
++	 * actions on the flush request. Currently, dm-linear and dm-stripe
++	 * support it.
++	 */
++	bool flush_bypasses_map:1;
+ };
+ 
+ void *dm_per_bio_data(struct bio *bio, size_t data_size);
+Index: linux-2.6/drivers/md/dm.c
+===================================================================
+--- linux-2.6.orig/drivers/md/dm.c	2024-05-23 19:00:00.000000000 +0200
++++ linux-2.6/drivers/md/dm.c	2024-05-23 19:31:14.000000000 +0200
+@@ -645,7 +645,7 @@ static struct bio *alloc_tio(struct clon
+ 
+ 	/* Set default bdev, but target must bio_set_dev() before issuing IO */
+ 	clone->bi_bdev = md->disk->part0;
+-	if (unlikely(ti->needs_bio_set_dev))
++	if (likely(ti != NULL) && unlikely(ti->needs_bio_set_dev))
+ 		bio_set_dev(clone, md->disk->part0);
+ 
+ 	if (len) {
+@@ -1107,7 +1107,7 @@ static void clone_endio(struct bio *bio)
+ 	blk_status_t error = bio->bi_status;
+ 	struct dm_target_io *tio = clone_to_tio(bio);
+ 	struct dm_target *ti = tio->ti;
+-	dm_endio_fn endio = ti->type->end_io;
++	dm_endio_fn endio = likely(ti != NULL) ? ti->type->end_io : NULL;
+ 	struct dm_io *io = tio->io;
+ 	struct mapped_device *md = io->md;
+ 
+@@ -1154,7 +1154,7 @@ static void clone_endio(struct bio *bio)
+ 	}
+ 
+ 	if (static_branch_unlikely(&swap_bios_enabled) &&
+-	    unlikely(swap_bios_limit(ti, bio)))
++	    likely(ti != NULL) && unlikely(swap_bios_limit(ti, bio)))
+ 		up(&md->swap_bios_semaphore);
+ 
+ 	free_tio(bio);
+@@ -1566,17 +1566,43 @@ static void __send_empty_flush(struct cl
+ 	ci->sector_count = 0;
+ 	ci->io->tio.clone.bi_iter.bi_size = 0;
+ 
+-	for (unsigned int i = 0; i < t->num_targets; i++) {
+-		unsigned int bios;
+-		struct dm_target *ti = dm_table_get_target(t, i);
 -
--static inline void vcpu_set_wfx_traps(struct kvm_vcpu *vcpu)
--{
--	vcpu->arch.hcr_el2 |= HCR_TWE;
--	vcpu->arch.hcr_el2 |= HCR_TWI;
--}
+-		if (unlikely(ti->num_flush_bios == 0))
+-			continue;
 -
- static inline void vcpu_ptrauth_enable(struct kvm_vcpu *vcpu)
- {
- 	vcpu->arch.hcr_el2 |= (HCR_API | HCR_APK);
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index c4a0a35e02c7..1cd58ca5d410 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -47,6 +47,15 @@
+-		atomic_add(ti->num_flush_bios, &ci->io->io_count);
+-		bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
+-					     NULL, GFP_NOWAIT);
+-		atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
++	if (!t->flush_bypasses_map) {
++		for (unsigned int i = 0; i < t->num_targets; i++) {
++			unsigned int bios;
++			struct dm_target *ti = dm_table_get_target(t, i);
++
++			if (unlikely(ti->num_flush_bios == 0))
++				continue;
++
++			atomic_add(ti->num_flush_bios, &ci->io->io_count);
++			bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
++						     NULL, GFP_NOWAIT);
++			atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
++		}
++	} else {
++		/*
++		 * Note that there's no need to grab t->devices_lock here
++		 * because the targets that support flush optimization don't
++		 * modify the list of devices.
++		 */
++		struct list_head *devices = dm_table_get_devices(t);
++		unsigned int len = 0;
++		struct dm_dev_internal *dd;
++		list_for_each_entry(dd, devices, list) {
++			struct bio *clone;
++			/*
++			 * Note that the structure dm_target_io is not
++			 * associated with any target (because the device may be
++			 * used by multiple targets), so we set tio->ti = NULL.
++			 * We must check for NULL in the I/O processing path, to
++			 * avoid NULL pointer dereference.
++			 */
++			clone = alloc_tio(ci, NULL, 0, &len, GFP_NOIO);
++			atomic_add(1, &ci->io->io_count);
++			bio_set_dev(clone, dd->dm_dev->bdev);
++			clone->bi_end_io = clone_endio;
++			dm_submit_bio_remap(clone, NULL);
++		}
+ 	}
+ 
+ 	/*
 
- static enum kvm_mode kvm_mode = KVM_MODE_DEFAULT;
-
-+enum kvm_wfx_trap_policy {
-+	KVM_WFX_NOTRAP_SINGLE_TASK, /* Default option */
-+	KVM_WFX_NOTRAP,
-+	KVM_WFX_TRAP,
-+};
-+
-+static enum kvm_wfx_trap_policy kvm_wfi_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
-+static enum kvm_wfx_trap_policy kvm_wfe_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
-+
- DECLARE_KVM_HYP_PER_CPU(unsigned long, kvm_hyp_vector);
-
- DEFINE_PER_CPU(unsigned long, kvm_arm_hyp_stack_page);
-@@ -428,6 +437,24 @@ void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu)
-
- }
-
-+static bool kvm_vcpu_should_clear_twi(struct kvm_vcpu *vcpu)
-+{
-+	if (likely(kvm_wfi_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
-+		return single_task_running() &&
-+			(atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
-+			 vcpu->kvm->arch.vgic.nassgireq);
-+
-+	return kvm_wfi_trap_policy == KVM_WFX_NOTRAP;
-+}
-+
-+static bool kvm_vcpu_should_clear_twe(struct kvm_vcpu *vcpu)
-+{
-+	if (likely(kvm_wfe_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
-+		return single_task_running();
-+
-+	return kvm_wfe_trap_policy == KVM_WFX_NOTRAP;
-+}
-+
- void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct kvm_s2_mmu *mmu;
-@@ -461,10 +488,15 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 	if (kvm_arm_is_pvtime_enabled(&vcpu->arch))
- 		kvm_make_request(KVM_REQ_RECORD_STEAL, vcpu);
-
--	if (single_task_running())
--		vcpu_clear_wfx_traps(vcpu);
-+	if (kvm_vcpu_should_clear_twe(vcpu))
-+		vcpu->arch.hcr_el2 &= ~HCR_TWE;
-+	else
-+		vcpu->arch.hcr_el2 |= HCR_TWE;
-+
-+	if (kvm_vcpu_should_clear_twi(vcpu))
-+		vcpu->arch.hcr_el2 &= ~HCR_TWI;
- 	else
--		vcpu_set_wfx_traps(vcpu);
-+		vcpu->arch.hcr_el2 |= HCR_TWI;
-
- 	if (vcpu_has_ptrauth(vcpu))
- 		vcpu_ptrauth_disable(vcpu);
-@@ -2663,6 +2695,36 @@ static int __init early_kvm_mode_cfg(char *arg)
- }
- early_param("kvm-arm.mode", early_kvm_mode_cfg);
-
-+static int __init early_kvm_wfx_trap_policy_cfg(char *arg, enum kvm_wfx_trap_policy *p)
-+{
-+	if (!arg)
-+		return -EINVAL;
-+
-+	if (strcmp(arg, "trap") == 0) {
-+		*p = KVM_WFX_TRAP;
-+		return 0;
-+	}
-+
-+	if (strcmp(arg, "notrap") == 0) {
-+		*p = KVM_WFX_NOTRAP;
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int __init early_kvm_wfi_trap_policy_cfg(char *arg)
-+{
-+	return early_kvm_wfx_trap_policy_cfg(arg, &kvm_wfi_trap_policy);
-+}
-+early_param("kvm-arm.wfi_trap_policy", early_kvm_wfi_trap_policy_cfg);
-+
-+static int __init early_kvm_wfe_trap_policy_cfg(char *arg)
-+{
-+	return early_kvm_wfx_trap_policy_cfg(arg, &kvm_wfe_trap_policy);
-+}
-+early_param("kvm-arm.wfe_trap_policy", early_kvm_wfe_trap_policy_cfg);
-+
- enum kvm_mode kvm_get_mode(void)
- {
- 	return kvm_mode;
---
-2.45.1.288.g0e0cd299f1-goog
 
