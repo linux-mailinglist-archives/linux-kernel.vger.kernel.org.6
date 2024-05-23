@@ -1,279 +1,240 @@
-Return-Path: <linux-kernel+bounces-187023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B298CCBF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:00:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C498CCBF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 474C4283A3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 119FE2848A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA80B13B2BF;
-	Thu, 23 May 2024 06:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFC713B5A0;
+	Thu, 23 May 2024 06:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fAM1gbHA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UBEdAASG"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC7E47A7C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD14013B58C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716444032; cv=none; b=jR2FVWnulu7Jem6kFDGfa4n5dPKdzMpUqooydVAI6YmJsa43ngyR+NmvQkRsNCEAd3KvmNVjIXoDRUCF/z5vKoikKNontr5Qw7PLq3WOrrmWs0hz0etyiXWwanM7+YS1juM3Aj7q/ZF+AFwvh+7W2PbZCmAiclt5ij8CBfzI6vo=
+	t=1716444143; cv=none; b=X2UTl6sj+dJ/QOwq2++iDfDVysi49jJGYDwd4ySFHObSz0ioDUG9LqaHBo2cKf4nZT76xscDSyTUrB/UNtoYvKy85jm9g7807zCrpYZnVrJ6C6B7B9rZpcBWHoJFVlCvq/RslQoj7pbxXYnq2oAMdWXf/PQCFpblouwF/s5WTc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716444032; c=relaxed/simple;
-	bh=Se4JJHuUK1YAcPMwJrWNIBI9Ci1nNIC9TTJtr6ON0KA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=k+K3FDtFAxJpAysWKCYHlTq0t9rIXYhJtcgSiwwNDk3umrv2h1XbotEQoLGjWsp50ewxSiIG/UMAacT6TVhTrHIy3JmBtgBi7A572zdgRzGpokZTFOiPSNmlB6kfKfRZsvgCmNy7GCqABW24Ohu1/xR6wa1d8Zupss6y04Alxc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fAM1gbHA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716444029;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yeUwdxW+9athxBr6SBuU13bYsy0ba7pdIdq8UligVLc=;
-	b=fAM1gbHAldiX+d8bGSYMGxW6Q5Cqnau4+9+hAc7s0dLxJKfMUf3BoaTLzhJJS8ITC18Uwb
-	4UgkuEf8uuTrShjZ38sT/PUg+B1STZi8UEbQTGuUzQE7UTX6HH7xJKbNwN0sJ55qzs+PxM
-	GKg2/o/70neTe4CmTeiEvKwaxaITS6g=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-313-uIJilW3gPxmRhpqi9UJpgA-1; Thu, 23 May 2024 02:00:27 -0400
-X-MC-Unique: uIJilW3gPxmRhpqi9UJpgA-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34d7e948a41so8221095f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:00:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716444026; x=1717048826;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yeUwdxW+9athxBr6SBuU13bYsy0ba7pdIdq8UligVLc=;
-        b=hOUTvdcZyRoukqVKruhc/Q6KOX32dv8DrXAz7i3pvtp5+xUW8AzlqP8q8HNj23tj+r
-         CfOBo7zJqt04vFFHyaufoz1eqc5ubdECSI7hTrZViccYDlxTmEPUNAmTarrEBaiPEuIE
-         KQVD74qROHf7+7K8JbPbez8m04eO4iz9tQ9XzZNZZRb4Q8BmqgPXtSIix428eNRE4CMQ
-         0rYicNC9PW8RsI1CimKuemebhvPI51W50t7lljReDdN/rYLwQ0UP3IyeGtBQPJGSif3r
-         /9DjMQUiK0UigHAPybB1MvBU3K79+EnNLIsHVU7kcSj0Jt0OVSn3m/bAOWBSTD4V9SI+
-         ok0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXX+34MK98cI1rTZ3weNaKqQiYarjtEtIz23/W8BpI/lpMfiEXeo7YiDw6ayOrEogaSV/JVl2+8HNGQailo9gQ5KxRZGvuFJQ/zWF3i
-X-Gm-Message-State: AOJu0YzOQqwd7i0yNbxONpBK2V+32bbEUKKatBMNZ6mG1uuvFH84rdGy
-	7zapogf23tI9sZ1Rfh3O5A1Qk5I+1U/Kl0OFu9I5bVlAlBZE3+trZTbvqL9s4+upMLgI7a4sZQs
-	eFlMJCVDvxBSmQwIRkFl6BLPnm0HdzdzA0+lwFbn0BNM/YSXMfee6x3wiO8qdWQ==
-X-Received: by 2002:a5d:4104:0:b0:354:f2a7:97dc with SMTP id ffacd0b85a97d-354f2a79916mr2112175f8f.2.1716444025800;
-        Wed, 22 May 2024 23:00:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHggXEqAc5WDd25UhTKUSbGqVNdQxbTGJOXdMfMSLslbIWkT+TDNK7KDuOftvOQ4EXBOWM/fg==
-X-Received: by 2002:a5d:4104:0:b0:354:f2a7:97dc with SMTP id ffacd0b85a97d-354f2a79916mr2112094f8f.2.1716444024784;
-        Wed, 22 May 2024 23:00:24 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1f8:1442:5e01:de24:22c0:6071])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b896a34sm35664458f8f.35.2024.05.22.23.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 23:00:23 -0700 (PDT)
-Date: Thu, 23 May 2024 02:00:17 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anton.yakovlev@opensynergy.com, bartosz.golaszewski@linaro.org,
-	christophe.jaillet@wanadoo.fr, dave.jiang@intel.com,
-	david@redhat.com, eperezma@redhat.com, herbert@gondor.apana.org.au,
-	jasowang@redhat.com, jiri@nvidia.com, jiri@resnulli.us,
-	johannes@sipsolutions.net, krzysztof.kozlowski@linaro.org,
-	lingshan.zhu@intel.com, linus.walleij@linaro.org,
-	lizhijian@fujitsu.com, martin.petersen@oracle.com,
-	maxime.coquelin@redhat.com, michael.christie@oracle.com,
-	mst@redhat.com, sgarzare@redhat.com, stevensd@chromium.org,
-	sudeep.holla@arm.com,
-	syzbot+98edc2df894917b3431f@syzkaller.appspotmail.com,
-	u.kleine-koenig@pengutronix.de, viresh.kumar@linaro.org,
-	xuanzhuo@linux.alibaba.com, yuxue.liu@jaguarmicro.com,
-	zhanglikernel@gmail.com, Srujana Challa <schalla@marvell.com>
-Subject: [GIT PULL v2] virtio: features, fixes, cleanups
-Message-ID: <Zk7bX3XlEWtaPbxZ@redhat.com>
+	s=arc-20240116; t=1716444143; c=relaxed/simple;
+	bh=GiC1/29g+riWl9jigqmNj06ehPx8Mc9F/yQNF8jHzww=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FkALySKOVElo9bd+V9gqHeMus3rcy2iEjlFCx7cRXdctI6gyRkKRV5GNqigUESgHEL82L5RLcQvU+/y/SqGZ2+jVzR7LG1p/kozHcyNax1sJPUbKaorIPrmYfdju1bJmaMWEi6EM36mFzL0oQdQv4qnlIOLxWVgeM9fUoSIS0WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UBEdAASG; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44N610ce017771;
+	Thu, 23 May 2024 01:01:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716444060;
+	bh=flB9YyX59B3W/vLZiFwnfLNmPjVnTHkd549ZfjsYUhQ=;
+	h=From:To:CC:Subject:Date;
+	b=UBEdAASGRmSJymRWCTcTsHh+sUcR5/imTpFhN2+zWzM8TBo6NQWBjFDiC2KRIJBY0
+	 +RGOYsPXYrOoLvmyk9+3RGw48yOcCoa6Yz1dk+Hl92Z6vSyDNkhNsL6kEtbboEnd1E
+	 7mtYObwvSL+qytkYnS2mn+oXJDND/Kw2iKaIkoxo=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44N610aL110322
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 23 May 2024 01:01:00 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 23
+ May 2024 01:01:00 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 23 May 2024 01:01:00 -0500
+Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.138])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44N60p8t109680;
+	Thu, 23 May 2024 01:00:52 -0500
+From: Shenghao Ding <shenghao-ding@ti.com>
+To: <broonie@kernel.org>
+CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
+        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
+        <13916275206@139.com>, <judyhsiao@google.com>,
+        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
+        <liam.r.girdwood@intel.com>, <bard.liao@intel.com>,
+        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <kevin-lu@ti.com>,
+        <yuhsuan@google.com>, <tiwai@suse.de>, <baojun.xu@ti.com>,
+        <soyer@irl.hu>, <Baojun.Xu@fpt.com>, <navada@ti.com>,
+        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
+        Shenghao Ding <shenghao-ding@ti.com>
+Subject: [PATCH v1] ASoc: tas2781: Support still work when only RCA binary loading well without dsp firmware loading.
+Date: Thu, 23 May 2024 14:00:46 +0800
+Message-ID: <20240523060047.934-1-shenghao-ding@ti.com>
+X-Mailer: git-send-email 2.33.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+In only RCA binary loading case, only default dsp program will be work
+inside the chip.
 
-Things to note here:
-- dropped a couple of patches at the last moment. Did a bunch
-  of testing in the last day to make sure that's not causing
-  any fallout, it's a revert and no other changes in the same area
-  so I feel rather safe doing that.
-- the new Marvell OCTEON DPU driver is not here: latest v4 keeps causing
-  build failures on mips. I kept deferring the pull hoping to get it in
-  and I might try to merge a new version post rc1 (supposed to be ok for
-  new drivers as they can't cause regressions), but we'll see.
-- there are also a couple bugfixes under review, to be merged after rc1
-- there is a trivial conflict in the header file. Shouldn't be any
-  trouble to resolve, but fyi the resolution by Stephen is here
-        diff --cc drivers/virtio/virtio_mem.c
-        index e8355f55a8f7,6d4dfbc53a66..000000000000
-        --- a/drivers/virtio/virtio_mem.c
-        +++ b/drivers/virtio/virtio_mem.c
-        @@@ -21,7 -21,7 +21,8 @@@
-          #include <linux/bitmap.h>
-          #include <linux/lockdep.h>
-          #include <linux/log2.h>
-         +#include <linux/vmalloc.h>
-        + #include <linux/suspend.h>
-  Also see it here:
-  https://lore.kernel.org/all/20240423145947.142171f6@canb.auug.org.au/
+Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
+---
+v1:
+ - Split out the different logical changes into different patches.
+ - rename tasdevice_dsp_fw_state -> tasdevice_fw_state, the fw are not
+   only dsp fw, but also RCA(Reconfigurable data, such as acoustic data
+   and register setting, etc).
+ - Add TASDEVICE_RCA_FW_OK in tasdevice_fw_state to identify the state
+   that only RCA binary file has been download successfully, but dsp fw
+   is not loaded or loading failure.
+ - Add the this strategy into tasdevice_tuning_switch.
+ - If one side of the if/else has a braces both should in
+   tasdevice_tuning_switch.
+ - Identify whehter both RCA and DSP have been loaded or only RCA has
+   been loaded in tasdevice_fw_ready.
+ - Add check fw load status in tasdevice_startup.
+ - remove ret in tasdevice_startup to make th code neater.
+---
+ include/sound/tas2781-dsp.h       |  3 ++-
+ sound/soc/codecs/tas2781-fmwlib.c | 14 ++++++++++----
+ sound/soc/codecs/tas2781-i2c.c    | 30 ++++++++++++++++++------------
+ 3 files changed, 30 insertions(+), 17 deletions(-)
 
-The following changes since commit 18daea77cca626f590fb140fc11e3a43c5d41354:
-
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2024-04-30 12:40:41 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git tags/for_linus
-
-for you to fetch changes up to c8fae27d141a32a1624d0d0d5419d94252824498:
-
-  virtio-pci: Check if is_avq is NULL (2024-05-22 08:39:41 -0400)
-
-----------------------------------------------------------------
-virtio: features, fixes, cleanups
-
-Several new features here:
-
-- virtio-net is finally supported in vduse.
-
-- Virtio (balloon and mem) interaction with suspend is improved
-
-- vhost-scsi now handles signals better/faster.
-
-Fixes, cleanups all over the place.
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      vhost-vdpa: Remove usage of the deprecated ida_simple_xx() API
-
-David Hildenbrand (1):
-      virtio-mem: support suspend+resume
-
-David Stevens (2):
-      virtio_balloon: Give the balloon its own wakeup source
-      virtio_balloon: Treat stats requests as wakeup events
-
-Eugenio Pérez (1):
-      MAINTAINERS: add Eugenio Pérez as reviewer
-
-Jiri Pirko (1):
-      virtio: delete vq in vp_find_vqs_msix() when request_irq() fails
-
-Krzysztof Kozlowski (24):
-      virtio: balloon: drop owner assignment
-      virtio: input: drop owner assignment
-      virtio: mem: drop owner assignment
-      um: virt-pci: drop owner assignment
-      virtio_blk: drop owner assignment
-      bluetooth: virtio: drop owner assignment
-      hwrng: virtio: drop owner assignment
-      virtio_console: drop owner assignment
-      crypto: virtio - drop owner assignment
-      firmware: arm_scmi: virtio: drop owner assignment
-      gpio: virtio: drop owner assignment
-      drm/virtio: drop owner assignment
-      iommu: virtio: drop owner assignment
-      misc: nsm: drop owner assignment
-      net: caif: virtio: drop owner assignment
-      net: virtio: drop owner assignment
-      net: 9p: virtio: drop owner assignment
-      vsock/virtio: drop owner assignment
-      wifi: mac80211_hwsim: drop owner assignment
-      nvdimm: virtio_pmem: drop owner assignment
-      rpmsg: virtio: drop owner assignment
-      scsi: virtio: drop owner assignment
-      fuse: virtio: drop owner assignment
-      sound: virtio: drop owner assignment
-
-Li Zhang (1):
-      virtio-pci: Check if is_avq is NULL
-
-Li Zhijian (1):
-      vdpa: Convert sprintf/snprintf to sysfs_emit
-
-Maxime Coquelin (3):
-      vduse: validate block features only with block devices
-      vduse: Temporarily fail if control queue feature requested
-      vduse: enable Virtio-net device type
-
-Michael S. Tsirkin (1):
-      Merge tag 'stable/vduse-virtio-net' into vhost
-
-Mike Christie (9):
-      vhost-scsi: Handle vhost_vq_work_queue failures for events
-      vhost-scsi: Handle vhost_vq_work_queue failures for cmds
-      vhost-scsi: Use system wq to flush dev for TMFs
-      vhost: Remove vhost_vq_flush
-      vhost_scsi: Handle vhost_vq_work_queue failures for TMFs
-      vhost: Use virtqueue mutex for swapping worker
-      vhost: Release worker mutex during flushes
-      vhost_task: Handle SIGKILL by flushing work and exiting
-      kernel: Remove signal hacks for vhost_tasks
-
-Uwe Kleine-König (1):
-      virtio-mmio: Convert to platform remove callback returning void
-
-Yuxue Liu (2):
-      vp_vdpa: Fix return value check vp_vdpa_request_irq
-      vp_vdpa: don't allocate unused msix vectors
-
-Zhu Lingshan (1):
-      MAINTAINERS: apply maintainer role of Intel vDPA driver
-
- MAINTAINERS                                   |  10 +-
- arch/um/drivers/virt-pci.c                    |   1 -
- drivers/block/virtio_blk.c                    |   1 -
- drivers/bluetooth/virtio_bt.c                 |   1 -
- drivers/char/hw_random/virtio-rng.c           |   1 -
- drivers/char/virtio_console.c                 |   2 -
- drivers/crypto/virtio/virtio_crypto_core.c    |   1 -
- drivers/firmware/arm_scmi/virtio.c            |   1 -
- drivers/gpio/gpio-virtio.c                    |   1 -
- drivers/gpu/drm/virtio/virtgpu_drv.c          |   1 -
- drivers/iommu/virtio-iommu.c                  |   1 -
- drivers/misc/nsm.c                            |   1 -
- drivers/net/caif/caif_virtio.c                |   1 -
- drivers/net/virtio_net.c                      |   1 -
- drivers/net/wireless/virtual/mac80211_hwsim.c |   1 -
- drivers/nvdimm/virtio_pmem.c                  |   1 -
- drivers/rpmsg/virtio_rpmsg_bus.c              |   1 -
- drivers/scsi/virtio_scsi.c                    |   1 -
- drivers/vdpa/vdpa.c                           |   2 +-
- drivers/vdpa/vdpa_user/vduse_dev.c            |  24 ++++-
- drivers/vdpa/virtio_pci/vp_vdpa.c             |  27 ++++--
- drivers/vhost/scsi.c                          |  70 ++++++++------
- drivers/vhost/vdpa.c                          |   6 +-
- drivers/vhost/vhost.c                         | 130 ++++++++++++++++++--------
- drivers/vhost/vhost.h                         |   3 +-
- drivers/virtio/virtio_balloon.c               |  85 +++++++++++------
- drivers/virtio/virtio_input.c                 |   1 -
- drivers/virtio/virtio_mem.c                   |  69 ++++++++++++--
- drivers/virtio/virtio_mmio.c                  |   6 +-
- drivers/virtio/virtio_pci_common.c            |   6 +-
- fs/coredump.c                                 |   4 +-
- fs/fuse/virtio_fs.c                           |   1 -
- include/linux/sched/vhost_task.h              |   3 +-
- include/uapi/linux/virtio_mem.h               |   2 +
- kernel/exit.c                                 |   5 +-
- kernel/signal.c                               |   4 +-
- kernel/vhost_task.c                           |  53 +++++++----
- net/9p/trans_virtio.c                         |   1 -
- net/vmw_vsock/virtio_transport.c              |   1 -
- sound/virtio/virtio_card.c                    |   1 -
- 40 files changed, 355 insertions(+), 177 deletions(-)
+diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
+index 7fba7ea26a4b..92d68ca5eafb 100644
+--- a/include/sound/tas2781-dsp.h
++++ b/include/sound/tas2781-dsp.h
+@@ -117,10 +117,11 @@ struct tasdevice_fw {
+ 	struct device *dev;
+ };
+ 
+-enum tasdevice_dsp_fw_state {
++enum tasdevice_fw_state {
+ 	TASDEVICE_DSP_FW_NONE = 0,
+ 	TASDEVICE_DSP_FW_PENDING,
+ 	TASDEVICE_DSP_FW_FAIL,
++	TASDEVICE_RCA_FW_OK,
+ 	TASDEVICE_DSP_FW_ALL_OK,
+ };
+ 
+diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+index 265a8ca25cbb..cfa022ef4a59 100644
+--- a/sound/soc/codecs/tas2781-fmwlib.c
++++ b/sound/soc/codecs/tas2781-fmwlib.c
+@@ -2324,13 +2324,18 @@ void tasdevice_tuning_switch(void *context, int state)
+ 	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
+ 	int profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
+ 
+-	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
+-		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
++	/*
++	 * Only RCA file loaded can still work with default dsp program inside
++	 * the chip?
++	 */
++	if (!(tas_priv->fw_state == TASDEVICE_RCA_FW_OK ||
++		tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK)) {
++		dev_err(tas_priv->dev, "No firmware loaded\n");
+ 		return;
+ 	}
+ 
+ 	if (state == 0) {
+-		if (tas_priv->cur_prog < tas_fmw->nr_programs) {
++		if (tas_fmw && tas_priv->cur_prog < tas_fmw->nr_programs) {
+ 			/*dsp mode or tuning mode*/
+ 			profile_cfg_id = tas_priv->rcabin.profile_cfg_id;
+ 			tasdevice_select_tuningprm_cfg(tas_priv,
+@@ -2340,9 +2345,10 @@ void tasdevice_tuning_switch(void *context, int state)
+ 
+ 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
+ 			TASDEVICE_BIN_BLK_PRE_POWER_UP);
+-	} else
++	} else {
+ 		tasdevice_select_cfg_blk(tas_priv, profile_cfg_id,
+ 			TASDEVICE_BIN_BLK_PRE_SHUTDOWN);
++	}
+ }
+ EXPORT_SYMBOL_NS_GPL(tasdevice_tuning_switch,
+ 	SND_SOC_TAS2781_FMWLIB);
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index 9350972dfefe..ccb9313ada9b 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -380,23 +380,30 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	mutex_lock(&tas_priv->codec_lock);
+ 
+ 	ret = tasdevice_rca_parser(tas_priv, fmw);
+-	if (ret)
++	if (ret) {
++		tasdevice_config_info_remove(tas_priv);
+ 		goto out;
++	}
+ 	tasdevice_create_control(tas_priv);
+ 
+ 	tasdevice_dsp_remove(tas_priv);
+ 	tasdevice_calbin_remove(tas_priv);
+-	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
++	tas_priv->fw_state = TASDEVICE_RCA_FW_OK;
+ 	scnprintf(tas_priv->coef_binaryname, 64, "%s_coef.bin",
+ 		tas_priv->dev_name);
++
+ 	ret = tasdevice_dsp_parser(tas_priv);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+ 			tas_priv->coef_binaryname);
+-		tas_priv->fw_state = TASDEVICE_DSP_FW_FAIL;
+ 		goto out;
+ 	}
+-	tasdevice_dsp_create_ctrls(tas_priv);
++
++	ret = tasdevice_dsp_create_ctrls(tas_priv);
++	if (ret) {
++		dev_err(tas_priv->dev, "dsp controls error\n");
++		goto out;
++	}
+ 
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_ALL_OK;
+ 
+@@ -417,9 +424,8 @@ static void tasdevice_fw_ready(const struct firmware *fmw,
+ 	tasdevice_prmg_load(tas_priv, 0);
+ 	tas_priv->cur_prog = 0;
+ out:
+-	if (tas_priv->fw_state == TASDEVICE_DSP_FW_FAIL) {
+-		/*If DSP FW fail, kcontrol won't be created */
+-		tasdevice_config_info_remove(tas_priv);
++	if (tas_priv->fw_state == TASDEVICE_RCA_FW_OK) {
++		/*If DSP FW fail, DSP kcontrol won't be created */
+ 		tasdevice_dsp_remove(tas_priv);
+ 	}
+ 	mutex_unlock(&tas_priv->codec_lock);
+@@ -466,14 +472,14 @@ static int tasdevice_startup(struct snd_pcm_substream *substream,
+ {
+ 	struct snd_soc_component *codec = dai->component;
+ 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
+-	int ret = 0;
+ 
+-	if (tas_priv->fw_state != TASDEVICE_DSP_FW_ALL_OK) {
+-		dev_err(tas_priv->dev, "DSP bin file not loaded\n");
+-		ret = -EINVAL;
++	if (!(tas_priv->fw_state == TASDEVICE_DSP_FW_ALL_OK ||
++		tas_priv->fw_state == TASDEVICE_RCA_FW_OK)) {
++		dev_err(tas_priv->dev, "Bin file not loaded\n");
++		return -EINVAL;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int tasdevice_hw_params(struct snd_pcm_substream *substream,
+-- 
+2.34.1
 
 
