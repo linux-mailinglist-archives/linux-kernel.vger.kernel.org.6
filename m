@@ -1,176 +1,97 @@
-Return-Path: <linux-kernel+bounces-187779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCF88CD857
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:21:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34868CD859
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C649C280C9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:21:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3831F2275E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9475017BDC;
-	Thu, 23 May 2024 16:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43C017C8B;
+	Thu, 23 May 2024 16:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gvBuEoG2"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUA7l/Z4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204D317736
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFEDD17C77;
+	Thu, 23 May 2024 16:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716481298; cv=none; b=ijNa0NYWQTMYlZ2svRcCA6xL7teo4XesPjhRWGhOh+aDDUeq/BJg3XJ7Dsbveieunv38RSv6PTO3ga0zJglwy6QwLj+o3BImpEG1HwwvoIVm6/SuYsZ/3kI6BsdhDMHfbuTXc0bwGpqmdB3BUf93EtosnDNrlxn4FnHugGJCSsk=
+	t=1716481367; cv=none; b=hZgO31Iq2FzJIG6qD2VBQsjdAn4MbUS63e5ZLrGE9J4edpMON0AJzwFBh0esoTUGshF9R8eOwrt+iv2pHeSwjAQaWGiSN2F9wqLnY9MrtigTlCk52R+GGh454YwPNrWdtEFV5+QcRoZllhWE2jymravw4+jrmWGx8+MyAoatd68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716481298; c=relaxed/simple;
-	bh=+ehJ0HgY9Kbm/BV+/w1j7XuMWnlOPM8zqAp0NNdOWC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GM1/tYuj0lltgbseC+O4iSMp+5jg3a0z+OAeCzJmApP/o1mAZMmITTjCJ6jB+aw5Z1bGqwpcO39tYTGeYDqwSdwT55F1bF4m3afRcwbtkDpuxfROgonlapsip1NQlMGHKj2pOQdEObf42PeKIBcw1BZ3RUf0iQ42Wm6Xb7OJuN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gvBuEoG2; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-572a1b3d6baso15104a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:21:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716481295; x=1717086095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FB9/RUM+ns3PLgFlSVcvmGls/4xMPa5pg/Lm96fgSy4=;
-        b=gvBuEoG2+2LlQrHQKxL+PCzfImapP1Mn9YmBZVOtGBNhHbDJmL/b4vZgyZTJ2f5QmW
-         SWmlkr2fX2oD5AVJcaW5oa4GHKQUkjcC0q8gNLeLQLoFJbk45EcANubiJW9OVcTqj8yY
-         u7boBKZs32kkHBMilro/NI+oNkeRFTDAMcZFPyNwJQNtyAy92PB5ovRojNbI32xaX4Af
-         ATrF0eSAzlSnOjpr6UhER1yUIFzfYVM2mDr8aFHtZIgzne81LcjJJEXUGce92e2ILsav
-         KwZaoCVxC+DXe2uQ/JXoFbCgGPH70IwfmjzmPrJOED/FSkEmSU3BSA2MqcIX0OMKeDyC
-         1gbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716481295; x=1717086095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FB9/RUM+ns3PLgFlSVcvmGls/4xMPa5pg/Lm96fgSy4=;
-        b=JUfYC6jV/03f7206cyzGjAOoYXkQdwBl/H9fZ7rcG49WaM+JwYRoRzkMBk/158kWOO
-         yrQgZK0c/THgWWXxuJ5Vi3wIJpo+xlsQBNAp9dP32FwrXfFvCv1DM5+P/wC8Gijy7A5/
-         QmnhGWqHbwt1iGKJS4cRC1LfRN4L2zlkuoHsULFuI8fYrmu/CrkS41BH5qrAy0njuQuB
-         wimTRHvoyumJ7hvA0RALRJAt/nLeY6+UiEc74xiKgOHVT1BKsAvwH2WeRBi2IQV6/Wqg
-         bjnp+LCZu2uFfCaXJb9M1JoeR5PMRZ8QGbxrnDRO3gxLbIg2EbTIQu5ie71KAYozubtR
-         17KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyK1/gdhRNQ7wwV9NWWZJzvGzR4XJQxw+8U2JKc7MQlrbI/OCYl83D9+i6rPBUqjdPW/grBivSB4cB2H5m/qHnNbXh++4CPLd83N1w
-X-Gm-Message-State: AOJu0Yy0arKaG2+DEzREI8vWzSJNmQlWT4u+ZulmyDXjI/rTx2B1+N7J
-	wQgJ3TXhHmY8Fr5CxIQiscV8OWk6zDkGmLWFrbpKWdlxG4eBdK/G24s9FucgEPza19JPeKLlUn4
-	F8glbphBL4CteU3MG5oH+xMGQL1/huUCGkyckJ1iB32sOE9sqDWsJ
-X-Google-Smtp-Source: AGHT+IGwZjQzBM7QW+l92UBGowEyvL4YIjIqR4mt4bRhFqZ40GRMBXjmulC2dCc7aOz5TMEW+XWiI6fiAZVRymPuD1w=
-X-Received: by 2002:a50:8d85:0:b0:574:e7e1:35bf with SMTP id
- 4fb4d7f45d1cf-57845bac601mr156326a12.7.1716481295251; Thu, 23 May 2024
- 09:21:35 -0700 (PDT)
+	s=arc-20240116; t=1716481367; c=relaxed/simple;
+	bh=bEqsYoTZmKvk/obsauDZCGPuVstpPNMLuVJ46NiUL6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4Ivw3hhyNXYfkmXnnVf+8xLSnCVm5fd4NbqwehNPgCDXyF0WDkLbcW+4P7JB3ZUEZFwA+oSZNMf0wbSo/NSM1BofUm5PfKcuBmF+d7DhH+86B0XVH1f+8W6X8zUW9ObDnohI73JAPmFu62cwL0BaYfPOZToUg393sYaG1mk+l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUA7l/Z4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C94FEC2BD10;
+	Thu, 23 May 2024 16:22:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716481366;
+	bh=bEqsYoTZmKvk/obsauDZCGPuVstpPNMLuVJ46NiUL6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BUA7l/Z42aZHm6bZu6cvdP4cU0o6OQD/j4m4DeMo7LtONrkNKt0CqCBddI1N/Jhfx
+	 VO/SWv5hiAbW+UNLL7cWsWKPTyMzdSgZzZWnGpzAWI3xJHv8/TDeP2Yo350ai3iJl9
+	 6b5H26UjUPnrOtP6evKC0CXCqc+jDElGfA4wLbHah2pJszcPvItcVIk6K+Vpd9NHhf
+	 O8vN5wGRUDiJo3QQo0hSG2SG1LDcqiOaRGWMIQ6CKlxY/evh6xh+bl3g57CgwAeYnt
+	 mwlKuiZo8NTkI7KDBEaf6/iq1uCKc2UwB89PlT/6DIMUSsfaBRl2hyOtWLt2PSYOdP
+	 CjPhmLEcOJNUw==
+Date: Thu, 23 May 2024 17:22:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.9 00/25] 6.9.2-rc1 review
+Message-ID: <582f22bf-d6ff-4214-8fe7-63b913945b3c@sirena.org.uk>
+References: <20240523130330.386580714@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513191544.94754-1-pobrn@protonmail.com> <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
- <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
- <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
- <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com>
-In-Reply-To: <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com>
-From: Jeff Xu <jeffxu@google.com>
-Date: Thu, 23 May 2024 09:20:55 -0700
-Message-ID: <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
-Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
-To: David Rheinsberg <david@readahead.eu>, Aleksa Sarai <cyphar@cyphar.com>
-Cc: =?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	dmitry.torokhov@gmail.com, Daniel Verkamp <dverkamp@chromium.org>, hughd@google.com, 
-	jorgelo@chromium.org, skhan@linuxfoundation.org, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7bDdeMFkXa2K2ZgZ"
+Content-Disposition: inline
+In-Reply-To: <20240523130330.386580714@linuxfoundation.org>
+X-Cookie: You auto buy now.
 
-On Thu, May 23, 2024 at 1:24=E2=80=AFAM David Rheinsberg <david@readahead.e=
-u> wrote:
->
-> Hi
->
-> On Thu, May 23, 2024, at 4:25 AM, Barnab=C3=A1s P=C5=91cze wrote:
-> > 2024. m=C3=A1jus 23., cs=C3=BCt=C3=B6rt=C3=B6k 1:23 keltez=C3=A9ssel, A=
-ndrew Morton
-> > <akpm@linux-foundation.org> =C3=ADrta:
-> >> It's a change to a userspace API, yes?  Please let's have a detailed
-> >> description of why this is OK.  Why it won't affect any existing users=
-.
-> >
-> > Yes, it is a uAPI change. To trigger user visible change, a program has=
- to
-> >
-> >  - create a memfd
-> >    - with MFD_NOEXEC_SEAL,
-> >    - without MFD_ALLOW_SEALING;
-> >  - try to add seals / check the seals.
-> >
-> > This change in essence reverts the kernel's behaviour to that of Linux
-> > <6.3, where
-> > only `MFD_ALLOW_SEALING` enabled sealing. If a program works correctly
-> > on those
-> > kernels, it will likely work correctly after this change.
-> >
-> > I have looked through Debian Code Search and GitHub, searching for
-> > `MFD_NOEXEC_SEAL`.
-> > And I could find only a single breakage that this change would case:
-> > dbus-broker
-> > has its own memfd_create() wrapper that is aware of this implicit
-> > `MFD_ALLOW_SEALING`
-> > behaviour[0], and tries to work around it. This workaround will break.
-> > Luckily,
-> > however, as far as I could tell this only affects the test suite of
-> > dbus-broker,
-> > not its normal operations, so I believe it should be fine. I have
-> > prepared a PR
-> > with a fix[1].
->
-> We asked for exactly this fix before, so I very much support this. Our te=
-st-suite in `dbus-broker` merely verifies what the current kernel behavior =
-is (just like the kernel selftests). I am certainly ok if the kernel breaks=
- it. I will gladly adapt the test-suite.
->
-> Previous discussion was in:
->
->     [PATCH] memfd: support MFD_NOEXEC alongside MFD_EXEC
->     https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahead.=
-eu/
->
-> Note that this fix is particularly important in combination with `vm.memf=
-d_noexec=3D2`, since this breaks existing user-space by enabling sealing on=
- all memfds unconditionally. I also encourage backporting to stable kernels=
-.
->
-Also with vm.memfd_noexec=3D1.
-I think that problem must be addressed either with this patch, or with
-a new flag.
 
-Regarding vm.memfd_noexec, on another topic.
-I think in addition to  vm.memfd_noexec =3D 1 and 2,  there still could
-be another state: 3
+--7bDdeMFkXa2K2ZgZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-=3D0. Do nothing.
-=3D1. This will add MFD_NOEXEC_SEAL if application didn't set EXEC or
-MFD_NOEXE_SEAL (to help with the migration)
-=3D2: This will reject all calls without MFD_NOEXEC_SEAL (the whole
-system doesn't allow executable memfd)
-=3D3:  Application must set MFD_EXEC or MFD_NOEXEC_SEAL explicitly, or
-else it will be rejected.
+On Thu, May 23, 2024 at 03:12:45PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.2 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-3 is useful because it lets applications choose what to use, and
-forces applications to migrate to new semantics (this is what 2 did
-before 9876cfe8).
-The caveat is 3 is less restrictive than 2, so must document it clearly.
+Tested-by: Mark Brown <broonie@kernel.org>
 
--Jeff
+--7bDdeMFkXa2K2ZgZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Reviewed-by: David Rheinsberg <david@readahead.eu>
->
-> Thanks
-> David
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZPbU8ACgkQJNaLcl1U
+h9BeYggAg7sTWHL7PXVHI6EK0UVx0Da/s2zKFCrAaNEmWk0DUn7J1aEn4vsmjflT
+OTaLoWxR7X6lbfS9GQDkeLdygxHtScTOCXlnTcpx8o+pqDveq7Dm/NSS0OxxWgH0
+eOPZyg1o0khRCGSDLVDNoBrJrCwGfxLeIdaWoFRSrI+YVKIt3VjNEzCv1Lz2oJxb
+oTNrazSjM+4/YtnG+BdNRy2At42DdAUpVE179dndFHtzg3fCPGwwOCIcoJoUWKZX
+pfaJAQuB3opSCVWNhcJJdZ5a4CJFTNXoTaefx71UH2YFTDsbaivapgKe00iw8Tdy
+v1lrLFZB4Y88C5SA7/E+wwxY2lM6KA==
+=t122
+-----END PGP SIGNATURE-----
+
+--7bDdeMFkXa2K2ZgZ--
 
