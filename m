@@ -1,130 +1,171 @@
-Return-Path: <linux-kernel+bounces-186880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB538CCA52
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:15:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAD78CCA5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6F1BB21CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:15:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4137F281F5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B1A4A2F;
-	Thu, 23 May 2024 01:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A193FF1;
+	Thu, 23 May 2024 01:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AGc+tg3U"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9UI8cjc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067E11852
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7937EC7;
+	Thu, 23 May 2024 01:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716426890; cv=none; b=hzfJ00bBb11bzK1jJm8UjXbBEG8ddIiAT6xaAx9F9CrwYfT823w+qHazjNJiKII5VWkiyc64S5+S5zc0seh5dCBA1WINBZ/N+n0YVSffB/6kLxM3DbIcGWRqjqXHicvquPg0gEfn6YSYZ/RvYKtX4i4phGstw0SASXa2aCNLn2E=
+	t=1716427432; cv=none; b=TfBpoNchCM6A95Q3gJneBJZYTi+6TGrGZB69hZ7MvWZ5oV2BIup/yShvVziTH9Hn5P6D+zZsS2+mAtNf8m+Jo7C2mMek3000wEkyQQMaoM8wpTA6btES1LvnpbDQL/b2NCsBXHXdjcZS7RIuXwd2+X3oU2/fGmGPSoUmmdUdzP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716426890; c=relaxed/simple;
-	bh=F6aTYxhT26oFwWZ67Ld502s2Po3+Xcgbu+9VvbthueI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m94yH7+87/E1BW0amzRR4c80fHJGsLEQyV0DmzZcxczGQu2MbcndKh8GqZWquY5HjPEQfrTenbJ6k3RyxmcQ8BAuMRct5pAq0yjHU2gRqd4pA7APOROZUtuHwjZalI9DAwpcTMjNk5Qr+GPp+DLe/ZP/yrvyKe+8tgmmk4T+pTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=AGc+tg3U; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2b9702e05easo2647994a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:14:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716426888; x=1717031688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ggg+vU4NzAtpKME671SbzqiVssDUIpzqRXRtZ78AP3g=;
-        b=AGc+tg3UybDOW3aXsoS6q+WCEN4SAEaK82cy4MdraW193bOI8rCfEdGhcIUHhKVMkj
-         UnMfbQMetndoJgNnacpamn53zETSm6/ADa6Z15VSLjLx0IZFh/yQE/92fdNYUN7GbRLN
-         qj431krkIukCq7krtanCX6aysNuGJJ7IbktPhaDWn4VFhVFdQkzAX4XgcO4LxgY6s1OS
-         m9lVQLcg5R2of4AGoRU0iss9GFD6kGlTxb/ug7plz0nMKyokTwCwoeMdqGpfpOP8G+4f
-         KAA0xFIKV/t3dFAP0ThDbXnuYwnYhu/2f3ds3bd+JhezYRLXXK+FYp+gFvSNHug/kLMP
-         VcLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716426888; x=1717031688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ggg+vU4NzAtpKME671SbzqiVssDUIpzqRXRtZ78AP3g=;
-        b=LRi6gAjDbwSt2TYispYveHru96i1c+crURiNL/DG/1KKeGiV7A7bNo3VbBXv0teRTv
-         KLW6uTqqBJex2FjBZHou3B+35PciQVVxMnnyLGp+IkeH/2EBdbzeKok9GgC3pBz9crBu
-         CI55qtlIkvAzdZ5ssngXWl3nFhyIevhJnvuZhUbJBY24hcJsD0Qfr1+wvUfTjZi3X9Xd
-         TCRYbOrgpnZQhs8MlQ3HLdvyB1vSebLRMoDskju87hUDO2ujp1axrxi0TFxOF3sGAE/m
-         XiSSEOPkkpajKd2JaGl/XJl7uj1pSNZkkLX5zPR6pMVZInrPP2pbZumWYRNQs9tWDt6m
-         9FVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJnsUAynT8WXrcyM8mgG4F/8lah5TS3/fte/P/CjHKskmQpEn55tdgt72QGqD9nicPOOdZthcuhhCx3CclunbNfeN+84ECJsOKm/bK
-X-Gm-Message-State: AOJu0Yy80EjNPr9OLyVhE0TbJiYbPRDWzhIK9vbUub2UN0QqqeVkmdT7
-	u77Ieiwtb3qAklLvW39FD4wYBbCXQ5tPZoeRfTFfPinmipRgn1tIXpMSwNC0JVI=
-X-Google-Smtp-Source: AGHT+IGrhJ7h989jjAjSMtYNfzU+Yi3+mZLiquC92tnMfDp+of2ZtyY0LfEoupYObDtgvUJLtg9k7A==
-X-Received: by 2002:a17:90a:d706:b0:2ae:b8df:89e7 with SMTP id 98e67ed59e1d1-2bd9f5a2611mr3687386a91.38.1716426888226;
-        Wed, 22 May 2024 18:14:48 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bdd9f0adfdsm413976a91.34.2024.05.22.18.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 18:14:47 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1s9x2a-0077HZ-2j;
-	Thu, 23 May 2024 11:14:44 +1000
-Date: Thu, 23 May 2024 11:14:44 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
-Message-ID: <Zk6YhF/DsbOy66EZ@dread.disaster.area>
-References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
- <20240517111355.233085-4-yi.zhang@huaweicloud.com>
- <ZkwJJuFCV+WQLl40@dread.disaster.area>
- <20240522030020.GU25518@frogsfrogsfrogs>
+	s=arc-20240116; t=1716427432; c=relaxed/simple;
+	bh=lrYPyou6GmUkuNkg168NThhIN99DFmu/CkC/pcafMpU=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=kbbNLmdbjHJdULOu7t1ZH/zUOxSezFloLfbYHUywDVtsSVTDFPAwzOVf3RiP1wm1/sjAPJrLUDw2tPbaGFVcaXDAtI/qua97EEdF5Ja4ejgia59BvTPTdSx9T8Lpy388kRNv9m/jBAN/Al9arAez9u085V++xe+i1o4l8PcDVEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9UI8cjc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23063C2BBFC;
+	Thu, 23 May 2024 01:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716427431;
+	bh=lrYPyou6GmUkuNkg168NThhIN99DFmu/CkC/pcafMpU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=a9UI8cjcr7yBXmgK3G3Iq3Fi1CuTXmpqVjQlWE/hXy+AnwKIZ/6UKJVeQ7dHNQ/Np
+	 awRHaA8gGqkEB3yZlQ21/Has3Mfo9Qq6PYa99qWXoP5NA3INKL3aioSAWdANfVBn9V
+	 KKhi3nV5/N4bRaO6aJgrru2rc0AaG/TL897o+vplLedYCWudHufTm6hdfCgcHfhp5f
+	 SCpl5xb1t8mYlklON6iwsiN91Z94OIvudHz013EtuuqkJB5wDca9PR9CMAdZjNOzQR
+	 ZLUKVf9j3eQNqZravRHhnF2TsP/zO//NHr4wxOFVuqCJ1Ey2FmGWOfi+x+rG919vrx
+	 aWQ1dpudOUJEA==
+Date: Wed, 22 May 2024 20:23:50 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522030020.GU25518@frogsfrogsfrogs>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Amrit Anand <quic_amrianan@quicinc.com>, Simon Glass <sjg@chromium.org>, 
+ Julius Werner <jwerner@chromium.org>, Frank Rowand <frowand.list@gmail.com>, 
+ devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
+ Michal Simek <michal.simek@amd.com>, Conor Dooley <conor@kernel.org>, 
+ Caleb Connolly <caleb.connolly@linaro.org>, 
+ "Humphreys, Jonathan" <j-humphreys@ti.com>, 
+ Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+ Andy Gross <agross@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Sumit Garg <sumit.garg@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, boot-architecture@lists.linaro.org, 
+ linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+In-Reply-To: <20240522-board-ids-v4-2-a173277987f5@quicinc.com>
+References: <20240522162545887-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <20240522-board-ids-v4-2-a173277987f5@quicinc.com>
+Message-Id: <171642742999.680723.11765315495034693179.robh@kernel.org>
+Subject: Re: [PATCH RFC v3 2/9] dt-bindings: board: Introduce board-id
 
-On Tue, May 21, 2024 at 08:00:20PM -0700, Darrick J. Wong wrote:
-> On Tue, May 21, 2024 at 12:38:30PM +1000, Dave Chinner wrote:
-> > [RFC] iomap: zeroing needs to be pagecache aware
-> > 
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > Unwritten extents can have page cache data over the range being
-> > zeroed so we can't just skip them entirely. Fix this by checking for
-> > an existing dirty folio over the unwritten range we are zeroing
-> > and only performing zeroing if the folio is already dirty.
-> > 
-> > XXX: how do we detect a iomap containing a cow mapping over a hole
-> > in iomap_zero_iter()? The XFS code implies this case also needs to
-> > zero the page cache if there is data present, so trigger for page
-> > cache lookup only in iomap_zero_iter() needs to handle this case as
-> > well.
+
+On Wed, 22 May 2024 16:54:23 -0700, Elliot Berman wrote:
+> Device manufcturers frequently ship multiple boards or SKUs under a
+> single softwre package. These software packages ship multiple devicetree
+> blobs and require some mechanims to pick the correct DTB for the boards
+> that use the software package. This patch introduces a common language
+> for adding board identifiers to devicetrees.
 > 
-> Hmm.  If memory serves, we probably need to adapt the
-> xfs_buffered/direct_write_iomap_begin functions to return the hole in
-> srcmap and the cow mapping in the iomap.  RN I think it just returns the
-> hole.
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>  .../devicetree/bindings/board/board-id.yaml        | 71 ++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+> 
 
-Yes, that is what I was thinking we need to do -
-xfs_buffered_write_iomap_begin() doesn't even check for COW mappings
-if IOMAP_ZERO is set, so there's a bunch of refactoring work needed
-to let iomap know that there is a COW mapping over the hole so it
-can do the same page cache lookup stuff that I added for unwritten
-extents....
+My bot found errors running 'make dt_binding_check' on your patch:
 
--Dave.
+yamllint warnings/errors:
 
--- 
-Dave Chinner
-david@fromorbit.com
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/opp/opp-v2.example.dtb: opp-table-0: opp-1200000000:opp-microvolt-slow:0: [915000, 900000, 925000, 925000, 910000, 935000] is too long
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/opp/opp-v2.example.dtb: opp-table-0: opp-1200000000:opp-microvolt-fast:0: [975000, 970000, 985000, 965000, 960000, 975000] is too long
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/opp/opp-v2.example.dtb: opp-table-0: Unevaluated properties are not allowed ('opp-1000000000', 'opp-1200000000', 'opp-shared' were unexpected)
+	from schema $id: http://devicetree.org/schemas/opp/opp-v2.yaml#
+compress: size (5) error for type uint32-matrix
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.example.dtb: uimage@100000: compress: b'lzma\x00' is not of type 'object', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+marvell,pad-type: size (11) error for type uint32-matrix
+marvell,pad-type: size (3) error for type uint32-matrix
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: marvell,pad-type: b'fixed-1-8v\x00' is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: marvell,pad-type: b'fixed-1-8v\x00' is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: Unevaluated properties are not allowed ('marvell,pad-type' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@aa0000: marvell,pad-type: b'fixed-1-8v\x00' is not of type 'object', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: marvell,pad-type: b'sd\x00' is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: marvell,pad-type: b'sd\x00' is not of type 'array'
+	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: Unevaluated properties are not allowed ('marvell,pad-type' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/marvell,xenon-sdhci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.example.dtb: mmc@ab0000: marvell,pad-type: b'sd\x00' is not of type 'object', 'array', 'boolean', 'null'
+	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/sc27xx-fg.example.dtb: battery: ocv-capacity-table-0:0: [4185000, 100, 4113000, 95, 4066000, 90, 4022000, 85, 3983000, 80, 3949000, 75, 3917000, 70, 3889000, 65, 3864000, 60, 3835000, 55, 3805000, 50, 3787000, 45, 3777000, 40, 3773000, 35, 3770000, 30, 3765000, 25, 3752000, 20, 3724000, 15, 3680000, 10, 3605000, 5, 3400000, 0] is too long
+	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-table-0:0: [4185000, 100, 4113000, 95, 4066000, 90] is too long
+	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-table-1:0: [4200000, 100, 4185000, 95, 4113000, 90] is too long
+	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-table-2:0: [4250000, 100, 4200000, 95, 4185000, 90] is too long
+	from schema $id: http://devicetree.org/schemas/power/supply/battery.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ocv-capacity-celsius: 'anyOf' conditional failed, one must be fixed:
+	[4294967286, 0, 10] is too long
+	4294967286 is greater than the maximum of 2147483647
+	from schema $id: http://devicetree.org/schemas/property-units.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: operating-range-celsius: 'anyOf' conditional failed, one must be fixed:
+	[4294967266, 50] is too long
+	4294967266 is greater than the maximum of 2147483647
+	from schema $id: http://devicetree.org/schemas/property-units.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/battery.example.dtb: battery: ambient-celsius: 'anyOf' conditional failed, one must be fixed:
+	[4294967291, 50] is too long
+	4294967291 is greater than the maximum of 2147483647
+	from schema $id: http://devicetree.org/schemas/property-units.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/afe/temperature-transducer.example.dtb: temperature-sensor-0: sense-offset-millicelsius: 'anyOf' conditional failed, one must be fixed:
+	4294694146 is greater than the maximum of 2147483647
+	from schema $id: http://devicetree.org/schemas/property-units.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/afe/temperature-transducer.example.dtb: temperature-sensor-1: sense-offset-millicelsius: 'anyOf' conditional failed, one must be fixed:
+	4294694146 is greater than the maximum of 2147483647
+	from schema $id: http://devicetree.org/schemas/property-units.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-tsa.example.dtb: tsa@ae0: tdm@0:fsl,tx-ts-routes:0: [2, 0, 24, 3, 1, 0, 5, 2] is too long
+	from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,cpm1-tsa.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-tsa.example.dtb: tsa@ae0: tdm@0:fsl,rx-ts-routes:0: [2, 0, 24, 3, 1, 0, 5, 2] is too long
+	from schema $id: http://devicetree.org/schemas/soc/fsl/cpm_qe/fsl,cpm1-tsa.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/board/board-id.example.dtb: /: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+Documentation/devicetree/bindings/board/board-id.example.dtb: /: failed to match any schema with compatible: ['example']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240522-board-ids-v4-2-a173277987f5@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
