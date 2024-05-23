@@ -1,156 +1,163 @@
-Return-Path: <linux-kernel+bounces-187653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EB58CD5EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:36:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED058CD5F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6747B1C2130C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C304BB225EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACED514A4D9;
-	Thu, 23 May 2024 14:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="uNwBYL7e"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D18914A4C7;
+	Thu, 23 May 2024 14:37:16 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6782912B16E;
-	Thu, 23 May 2024 14:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6891412B171;
+	Thu, 23 May 2024 14:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474996; cv=none; b=aVodoD1xb6O3S9rRbrwQARSZD0vbqqy/wifAsU0w9V9HZAVBUcHzhbysbPdf8StVqiXxiQinMV/bJ8qZoxGF2pQ7xnKY6urgYnnwgi3X1QIdAAyOT6oKiHNB0OwY0ahLrbP51cuFEeq9++vGNzbHRj3eor03w1cR7MSs0Y1EzJM=
+	t=1716475035; cv=none; b=ueMwAO+4XPGQqVoBRTZ0q6xse/Klhqi4kLTzkQbBjAb26JuvpGEQ7ijU9XDFFzxp5MIWk7qnrIydJOKg5tl344V0KnId1d2YG3thUYwYuuDbP8uIpi9FoJoz4/l710hKJcpngbb38N5e0PvaDL/vADv71EdIKHcSYlJ4CHkpOyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474996; c=relaxed/simple;
-	bh=9sS78x2ZdckMIB2ktWRxsrmJpPyzQYRCURWv7oKVTdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oPob9SngPjArAsJnwlwgScGam11T9eXedjQKm9tqNBWYudoRR5NFGwMD71H8zyvDy1Ulv858PWdZO3UpokIvrgU34BKfoyzmFX3+r6orTOBWxDR5gGm4/GN3Gpgfzv5YBegAugUjfgTycjVTObTBHPNZs9Fj4h4f3wGUBZIZLOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=uNwBYL7e; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716474992;
-	bh=9sS78x2ZdckMIB2ktWRxsrmJpPyzQYRCURWv7oKVTdE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uNwBYL7eeBCRiwhJoArAWBijyr722eWCnaXDG72gHvyA0Ao3uvd9iqn0XvIygcB47
-	 XWldqcAS/CLL5wX0Yh3O9yVI2WQ0u3vowpL3mr8M69+0Vx/4Y4BHpYh8c7k00cn06d
-	 ysm4kXfzZh2zKimil0ZGPPFqOsoPEgM/rH3uu+xgsdoGTxav3jtwye14fHUGHAHLjx
-	 DP5olZUQaRVi0kyYeEfdUsnCLpawtkGX2vmkut/pvpiuRyTpQx8qz+iNsOd+ys/i+X
-	 5fGZoX/sQ+P+gpQ3bn/pZWUv4mo5eZXSSiU8PdvjKeQt/YZLNCv8J/BVJLQC10INrz
-	 Ebs1cM7S6Rydw==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BC5F637820FA;
-	Thu, 23 May 2024 14:36:31 +0000 (UTC)
-Date: Thu, 23 May 2024 16:36:30 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org,
- linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
- vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
- jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
-Message-ID: <20240523163630.24992c28@collabora.com>
-In-Reply-To: <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
-References: <20240523031935.90856-1-amhetre@nvidia.com>
-	<6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1716475035; c=relaxed/simple;
+	bh=gbTUHrtXsQLEAfxPpyRzN9dLmybrI0g1EIZJvIeWbS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OboPz89fREzqJr9FePsjhS9+spB0x+SqpQ/nLoK5ItKa8BfQu47iFk65GngdnYkRJXDFnZyTArH7xYX6X9jQFPYcJNnXe4Fii8lE7aHx7yz+WX/fTBASq11YBS1vKB2W1qsnjKnv1RfmxtwwAYNh1EwsAe5PnkKSjl7Ee9gA/Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VlVYq34Lbz9v7Js;
+	Thu, 23 May 2024 22:15:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 19CF8140665;
+	Thu, 23 May 2024 22:37:01 +0800 (CST)
+Received: from [10.206.134.102] (unknown [10.206.134.102])
+	by APP2 (Coremail) with SMTP id GxC2BwCn4CSDVE9mLzXACA--.32576S2;
+	Thu, 23 May 2024 15:37:00 +0100 (CET)
+Message-ID: <edc0665a-6301-428b-9611-f53d5f05eb69@huaweicloud.com>
+Date: Thu, 23 May 2024 16:36:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: LKMM: Making RMW barriers explicit
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
+ boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ Joel Fernandes <joel@joelfernandes.org>
+References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
+ <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+ <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+ <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+ <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
+ <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+ <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
+ <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwCn4CSDVE9mLzXACA--.32576S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFy5Cr4DWw4kCw1UGw1DGFg_yoW8uF48p3
+	yfK3WrKF1ktFWI9ryUZw42ya4S93W0qFWUJrn5J3yayFs093WxtF48Jw4rCFy3Zrs3X3Wj
+	vFW0v34xAa98AFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUZa9
+	-UUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Thu, 23 May 2024 14:41:12 +0100
-Robin Murphy <robin.murphy@arm.com> wrote:
 
-> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
-> > The current __arm_lpae_unmap() function calls dma_sync() on individual
-> > PTEs after clearing them. By updating the __arm_lpae_unmap() to call
-> > dma_sync() once for all cleared PTEs, the overall performance can be
-> > improved 25% for large buffer sizes.
-> > Below is detailed analysis of average unmap latency(in us) with and
-> > without this optimization obtained by running dma_map_benchmark for
-> > different buffer sizes.
-> > 
-> > Size	Time W/O	Time With	% Improvement
-> > 	Optimization	Optimization
-> > 	(us)		(us)
-> > 
-> > 4KB	3.0		3.1		-3.33
-> > 1MB	250.3		187.9		24.93  
-> 
-> This seems highly suspect - the smallest possible block size is 2MB so a 
-> 1MB unmap should not be affected by this path at all.
-> 
-> > 2MB	493.7		368.7		25.32
-> > 4MB	974.7		723.4		25.78  
-> 
-> I'm guessing this is on Tegra with the workaround to force everything to 
-> PAGE_SIZE? In the normal case a 2MB unmap should be nominally *faster* 
-> than 4KB, since it would also be a single PTE, but with one fewer level 
-> of table to walk to reach it. The 25% figure is rather misleading if 
-> it's only a mitigation of an existing erratum workaround, and the actual 
-> impact on the majority of non-broken systems is unmeasured.
-> 
-> (As an aside, I think that workaround itself is a bit broken, since at 
-> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which MMU-500 
-> doesn't support.)
-> 
-> > Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> > ---
-> >   drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++++++---------
-> >   1 file changed, 25 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> > index 3d23b924cec1..94094b711cba 100644
-> > --- a/drivers/iommu/io-pgtable-arm.c
-> > +++ b/drivers/iommu/io-pgtable-arm.c
-> > @@ -256,13 +256,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
-> >   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
-> >   }
-> >   
-> > -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
-> > +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
-> >   {
-> > +	int i;
-> >   
-> > -	*ptep = 0;
-> > +	for (i = 0; i < num_entries; i++)
-> > +		ptep[i] = 0;
-> >   
-> >   	if (!cfg->coherent_walk)
-> > -		__arm_lpae_sync_pte(ptep, 1, cfg);
-> > +		__arm_lpae_sync_pte(ptep, num_entries, cfg);
-> >   }
-> >   
-> >   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> > @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-> >   	if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
-> >   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
-> >   		num_entries = min_t(int, pgcount, max_entries);
-> > -
-> > -		while (i < num_entries) {
-> > -			pte = READ_ONCE(*ptep);
-> > +		arm_lpae_iopte *pte_flush;
-> > +		int j = 0;
-> > +
-> > +		pte_flush = kvcalloc(num_entries, sizeof(*pte_flush), GFP_ATOMIC);  
-> 
-> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if there 
-> isn't a more fundamental problem here - Rob, Boris; was it just the map 
-> path, or would any allocation on unmap risk the GPU reclaim deadlock 
-> thing as well?
 
-Unmap as well, because of the 'split huge page into small pages'
-logic when the unmap region is not aligned on 2MB.
+Am 5/23/2024 um 4:05 PM schrieb Alan Stern:
+> On Thu, May 23, 2024 at 02:54:05PM +0200, Jonas Oberhauser wrote:
+>>
+>>
+>> Am 5/22/2024 um 4:20 PM schrieb Alan Stern:
+>>> It would be better if there was a way to tell herd7 not to add the 'mb
+>>> tag to failed instructions in the first place.  This approach is
+>>> brittle; see below.
+>>
+>> Hernan told me that in fact that is actually currently the case in herd7.
+>> Failing RMW get assigned the Once tag implicitly.
+>> Another thing that I'd suggest to change.
+> 
+> Indeed.
+> 
+>>> An alternative would be to have a way for the .cat file to remove the
+>>> 'mb tag from a failed RMW instruction.  But I don't know if this is
+>>> feasible.
+>>
+>> For Mb it's feasible, as there is no Mb read or Mb store.
+>>
+>> Mb = Mb & (~M | dom(rmw) | range(rmw))
+>>
+>> However one would want to do the same for Acq and Rel.
+>>
+>> For that one would need to distinguish e.g. between a read that comes from a
+>> failed rmw instruction, and where the tag would disappear, or a normal
+>> standalone read.
+>>
+>> For example, by using two different acquire tags, 'acquire and 'rmw-acquire,
+>> and defining
+>>
+>> Acquire = Acquire | Rmw-acquire & (dom(rmw) | range(rmw))
+>>
+>> Anyways we can do this change independently. So for now, we don't need
+>> RMW_MB.
+> 
+> Overall, it seems better to have herd7 assign the right tag, but change
+> the way the .def file works so that it can tell herd7 which tag to use
+> in each of the success and failure cases.
+
+Yes, that would be good.
+In principle herd should already support this kind of logic for e.g. C11 
+which also has distinct success and failure modes.
+But of course I don't know if there's syntax to make this change in 
+def, let alone what it would look like.
+
+
+> But at least you
+> understood what I meant.
+
+I do try :) (: :)
+
+> 
+>> We could do (with the assumption that Mb applies only to successful rmw):
+>>
+>>   	[M] ; po ; [Mb & R]
+>>   	[Mb & W] ; po ; [M]
+> 
+> That works.
+
+Ok, I'll prepare a patch for this and Andrea or anyone else can still 
+interject.
+I suppose the patch would not change the semantics at all with the 
+current herd7, since Mb does not appear on any reads and writes for the 
+time being.
+
+best wishes,
+   jonas
+
+
+
 
