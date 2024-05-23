@@ -1,80 +1,95 @@
-Return-Path: <linux-kernel+bounces-187713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484078CD706
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:27:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F318CD70A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6C2FB21C34
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553B71F21723
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5281171D;
-	Thu, 23 May 2024 15:27:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34F411720;
+	Thu, 23 May 2024 15:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MOdsXZ1+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="gSDqsHyG"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C74101CA;
-	Thu, 23 May 2024 15:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9799811711
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478025; cv=none; b=AAv9XXneCyXc06Kc+0hYMWWGCjsepVnZNyykoSJJj50XA09UTptVc4J9/r1P7PKUBrkiKzgMK1DgyiXMHKYjPn3AxC3NZ95NY8iD7hEE5DdxLRDNFquZ7JM7InJA5ZX8egeQf2uK8CdGwgx0jCXa8aZ0F1hc8qE7OT7n8/pR6ZQ=
+	t=1716478097; cv=none; b=oE8S2Yan4SJerUpKGFp2gX5Wsqye42hrrvqE7V70YsElFnr0dXD0gmr8JAsPRC6ND2FeOU1eZXscJaGZW13Swc6kDvrg9JhOs32gVRad4Jm/V6TgBkND9UpQ5Gd4T4N6TFXM82dRCpr5N32/FIaOSGdbNbc7oLwdtHojMyWbnIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478025; c=relaxed/simple;
-	bh=NZIAADL48S28HX9Sw3C6Ue42pIMIpL17ADa3oygMCE4=;
+	s=arc-20240116; t=1716478097; c=relaxed/simple;
+	bh=lHxOGmWdlihXCTgHVfb+T5jI7AtAtZWCWZ88p7h5se0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YjA1cZk0KxxCLq2LszIptI+LX2zIYgazcvHR/5mBWuOHBYnwWQ8KN6LakVAU+f/TRNoW+R6+8wMzxH+cHWpLeHizCU6vGzf36HEHfCf3PtaCdmjhYppbwpVacLiJTlNohiqa3gFI+JDpAQYvuvda37fzqSVBXNZtSRxCqaQB7T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MOdsXZ1+; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716478024; x=1748014024;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NZIAADL48S28HX9Sw3C6Ue42pIMIpL17ADa3oygMCE4=;
-  b=MOdsXZ1+VhRjmiH4AmwXPErb3ZLUSU3cSi97TU78LJE019T1Furkvuqq
-   HxOEpPVof5uEtkv+brvCqnJE54az8cQm3c5LL0PQS0/eHsDrcfFkgzriX
-   sDh4pniLpRDsMD1SkkfdqlYmkPC3eDHXfQyp28mEc2pyMPMCKevIBS/M0
-   4rEfJQqL4nQto5JFuez3blxDy+jWaQG7uRAJ8gLyDY4/ifhkGxwShmCEM
-   cxnXSbHxLQIjc56t2QJ0oWmJ7Ohp1TS5LvxgRQSXoN9WRRIQZvXBTbfl8
-   El5Z9JvTs6xEOd9RwVeFZQiZZ4QPL2i1ZOHk5gToj+jtpk3fz/w7OhKHH
-   Q==;
-X-CSE-ConnectionGUID: v1jKVdXnQWuO0JOHIevt5A==
-X-CSE-MsgGUID: YqHFWQCGSn6XJ1jeCTUafg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="23376920"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="23376920"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 08:27:03 -0700
-X-CSE-ConnectionGUID: x/v4x+V/S7iFT1q2gBqK8Q==
-X-CSE-MsgGUID: gNM+u2JyQAWvBQR8C+ocjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="64910341"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 23 May 2024 08:26:59 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sAALI-00030n-2I;
-	Thu, 23 May 2024 15:26:56 +0000
-Date: Thu, 23 May 2024 23:26:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alistair Francis <alistair23@gmail.com>, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	lukas@wunner.de
-Cc: oe-kbuild-all@lists.linux.dev, alex.williamson@redhat.com,
-	christian.koenig@amd.com, kch@nvidia.com,
-	gregkh@linuxfoundation.org, logang@deltatee.com,
-	linux-kernel@vger.kernel.org, alistair23@gmail.com,
-	chaitanyak@nvidia.com, rdunlap@infradead.org,
-	Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v10 3/4] PCI/DOE: Expose the DOE features via sysfs
-Message-ID: <202405232329.5RfYqVrs-lkp@intel.com>
-References: <20240522101142.559733-3-alistair.francis@wdc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tns0YyyedSbQ7eBhPpPtSGhxcUSqMn/m6CbbHuiCUcwGpkgoCqxmSXqsg6KZwE97FUZgJd4D1qybHg8YBj+MvkixeoGL8VasqUECpYIasIb9FZn7mT6h84YUQ7QNCYjzsFL91Ebuu9HPZB8iFMitQ6Qw1UkMNY1Ny6P6KJMc6RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=gSDqsHyG; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79305314956so168577685a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1716478094; x=1717082894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hmfyLYVCfyswQ3c7xb61Hr7O417fd5EFVF7yNKTH3w8=;
+        b=gSDqsHyGsOcsBt5SvjKR7sU1nSqFoxJueeACqx5yt/MllU2s416ZjOM9lrDCh53QDI
+         FFxmxXP0+D8KjGUd2EDlsNXBV7nqWQnBifaM39U6IBqXy20yAffFZ3I1qGPJP30xSacx
+         xe7C/3mEB2SkSRTUqbX84uQe015fxVKlT1NdobcTwbM+JD7tQgXJ7ZqCgfOiGyFPcJwD
+         iiYpFMjGd7WxGt/fzZZnn+aIdv2enMWPjI/Z8RlBL4/kRrC2L1ngQDoSNXwLGAG91sRK
+         svoZamPEk2fwm54unYH9UWDYWsk+RcJrTAJVLGk/BikofGjzWdVuwh2QcAXXH0nGMEWO
+         HicQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716478094; x=1717082894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hmfyLYVCfyswQ3c7xb61Hr7O417fd5EFVF7yNKTH3w8=;
+        b=l+HcO3xcermjJxwG3An7qHjQq4qEL67qoaDeFvReC8ZCy32CdDFwUkxQowBk/umkIZ
+         7M2pxs5DcaMe6TUEAbEqZnRny2QdZKdzbvztAuntDCNbqbqAnCQ6xj4v1S0le3SJAf93
+         Z8eMaY909BLNGMgtBjkIJKEq8pyVRfLMVo0NFWO9lERwtq+QoAE1n/2WiORbx8qXa7/u
+         BgFbrHfKPz+82IRikJ0DBBqV/hhWO270cOP17dRDFeVDynPWgGagx5hPJzbFUOgXdBdF
+         oZzJJla5ikM38nI8Nh1fQm83rgDYI48d4wDWiD7vZQ1CicnBsyqntNn3/7Cle6uTmkwp
+         22qw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoWf3EFY6CwJO+h+VYv3D6hnYDdHQhWGYUH5LoMSzemH3XD8LVSH0Iw/9l9LKic/B4Jy+miE+bkas2N/23eZurrvrKU0q/Hsa+bt3N
+X-Gm-Message-State: AOJu0YxiPAz/EB5OZOLSzSsJ2MmMIPCb4V1f9fIz/zPv2W0a6Psp5Bm0
+	PUBNA9bjsAVj8wtdKUnJuqUuWssn1VHZ+IHI+4/VdLMBHmr+kqVYFGFwPFUbTMI=
+X-Google-Smtp-Source: AGHT+IHTBzzwi4PjhcyoMTsLG+C6xPlPNq6v4XQ9szwtINNcWYZzWlV7kEZtWT8wPy12nifAJzgm5Q==
+X-Received: by 2002:a0c:f593:0:b0:6ab:8cbb:79f4 with SMTP id 6a1803df08f44-6ab8cbb7b85mr30572656d6.56.1716478094519;
+        Thu, 23 May 2024 08:28:14 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.89])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab84cd6d93sm15777036d6.127.2024.05.23.08.28.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 08:28:12 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sAAMU-00Frqn-OL;
+	Thu, 23 May 2024 12:28:10 -0300
+Date: Thu, 23 May 2024 12:28:10 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Tomasz Jeznach <tjeznach@rivosinc.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Anup Patel <apatel@ventanamicro.com>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v5 7/7] iommu/riscv: Paging domain support
+Message-ID: <20240523152810.GL69273@ziepe.ca>
+References: <cover.1715708679.git.tjeznach@rivosinc.com>
+ <1ddb50a47c86d384157a979a7475b45f807ba81e.1715708679.git.tjeznach@rivosinc.com>
+ <20240522-b25680db03b547123f1cd59a@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,49 +98,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240522101142.559733-3-alistair.francis@wdc.com>
+In-Reply-To: <20240522-b25680db03b547123f1cd59a@orel>
 
-Hi Alistair,
+On Wed, May 22, 2024 at 10:07:14AM +0200, Andrew Jones wrote:
+> On Tue, May 14, 2024 at 11:16:19AM GMT, Tomasz Jeznach wrote:
+> ...
+> > +static int riscv_iommu_bond_link(struct riscv_iommu_domain *domain,
+> > +				 struct device *dev)
+> > +{
+> > +	struct riscv_iommu_device *iommu = dev_to_iommu(dev);
+> > +	struct riscv_iommu_bond *bond;
+> > +	struct list_head *bonds;
+> > +
+> > +	bond = kzalloc(sizeof(*bond), GFP_KERNEL);
+> > +	if (!bond)
+> > +		return -ENOMEM;
+> > +	bond->dev = dev;
+> > +
+> > +	/*
+> > +	 * List of devices attached to the domain is arranged based on
+> > +	 * managed IOMMU device.
+> > +	 */
+> > +
+> > +	spin_lock(&domain->lock);
+> > +	list_for_each_rcu(bonds, &domain->bonds)
+> > +		if (dev_to_iommu(list_entry(bonds, struct riscv_iommu_bond, list)->dev) == iommu)
+> > +			break;
+> 
+> We should wrap this list_for_each_rcu() in rcu_read_lock() and
+> rcu_read_unlock().
 
-kernel test robot noticed the following build warnings:
+Not quite this is the write side, it is holding the spinlock so it
+doesn't need RCU. It should just call the normal list_for_each_entry()
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master next-20240523]
-[cannot apply to v6.9]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Francis/PCI-DOE-Rename-Discovery-Response-Data-Object-Contents-to-type/20240522-181416
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240522101142.559733-3-alistair.francis%40wdc.com
-patch subject: [PATCH v10 3/4] PCI/DOE: Expose the DOE features via sysfs
-config: x86_64-randconfig-123-20240523 (https://download.01.org/0day-ci/archive/20240523/202405232329.5RfYqVrs-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405232329.5RfYqVrs-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405232329.5RfYqVrs-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/pci/doe.c:107:1: sparse: sparse: symbol 'dev_attr_doe_discovery' was not declared. Should it be static?
-
-vim +/dev_attr_doe_discovery +107 drivers/pci/doe.c
-
-    99	
-   100	#ifdef CONFIG_SYSFS
-   101	static ssize_t doe_discovery_show(struct device *dev,
-   102					  struct device_attribute *attr,
-   103					  char *buf)
-   104	{
-   105		return sysfs_emit(buf, "0001:00\n");
-   106	}
- > 107	DEVICE_ATTR_RO(doe_discovery);
-   108	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jason
 
