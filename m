@@ -1,245 +1,210 @@
-Return-Path: <linux-kernel+bounces-186879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCDF8CCA4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:13:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F4D8CCA53
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3B1FB218D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:13:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E1D282581
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01F74C8C;
-	Thu, 23 May 2024 01:13:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319E31878;
+	Thu, 23 May 2024 01:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KYVuueve"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A4417EF;
-	Thu, 23 May 2024 01:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4732BEC7
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716426799; cv=none; b=slX7gEce0tzWVNfNafvCJmReDQx5KLEUQ0D9PkdjzW2iOlhCSMBt3ML/qguw2Vi9fm4tvgu5m9b2Gor7iy7iJmOsGx/CCGePgXc4xk9le9psmXsVNldLeC0KoMXLc0kcCKTrX0abx8l06/VvBabilAkYwj/l/Rfoe0azRJP/4xU=
+	t=1716426967; cv=none; b=AgnV/ybGjjdKtr5mHfrHLLWb2ELScBbOr4CuVsuV932wP44fM62Cu2pcZw2Y2KQWweBULXIDcNyiFpdbB/aVc5JwZIrbZa+5TfVZNOnd9tUEarlk/1YQ3Z6A5TqfgxthMbtJyikBktehgOCnIKm0zlXtJTF/Dnusm6k6koW3Kfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716426799; c=relaxed/simple;
-	bh=uk0dhUH7Tl+BGR0/TQ3xckwGBxB5edtNoSpUztM1za0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Kp6Zy971Lv54ZrcaBOckfO7gorN9nCYrrKiHxQMKLH1jALoQV62UUYO2eXF5rF6QS6/JmeDsRWl8PhFnUg+MtC25pcjWpyt8cWJXJlyN+10b4nJVlhYVBulk7dneSxy9X8GKLaaC77eQn4VxT+Vekpk8mOTp32OjKFqslZlnjxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vl9CP5c5zz4f3jLf;
-	Thu, 23 May 2024 09:13:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 967D41A0BF7;
-	Thu, 23 May 2024 09:13:11 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g4lmE5m+VCqNQ--.42702S3;
-	Thu, 23 May 2024 09:13:11 +0800 (CST)
-Subject: Re: [PATCH V2 for-6.10/block 1/2] loop: Fix a race between loop
- detach and loop open
-To: Gulam Mohamed <gulam.mohamed@oracle.com>,
- Yu Kuai <yukuai1@huaweicloud.com>, Jens Axboe <axboe@kernel.dk>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "shinichiro.kawasaki@wdc.com" <shinichiro.kawasaki@wdc.com>,
- "chaitanyak@nvidia.com" <chaitanyak@nvidia.com>, "hch@lst.de" <hch@lst.de>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240521224249.7389-1-gulam.mohamed@oracle.com>
- <dcd2dac3-07d2-4ee8-addf-b9266a84f7fd@kernel.dk>
- <c7eb562c-97ae-455a-3859-0ed28ebdf7ae@huaweicloud.com>
- <IA1PR10MB7240AB2157B46F325669859D98EB2@IA1PR10MB7240.namprd10.prod.outlook.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <3c1c654b-a80c-c257-4a36-863c4b148615@huaweicloud.com>
-Date: Thu, 23 May 2024 09:13:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1716426967; c=relaxed/simple;
+	bh=CcmpbpVJhasgLmfwQZTQL9+xSZY9u/4K8p1LLNjO9is=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uZr0NmN+7IeF9nJLU+ZepcbKDy+eWN13xM1/yEBpYYXM6ps2GLPA2dOYS+RatztgXpvTIV7VkmzrLRH8KDPl+uburtKWM0x0hmccgtGX4iqNrqRB5PrR6bsXL/pdLXLak6Hsg3Sa0Np3WRabJ30ZlNzal1lOOBTJbIsh+Dhv9ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KYVuueve; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716426965; x=1747962965;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=CcmpbpVJhasgLmfwQZTQL9+xSZY9u/4K8p1LLNjO9is=;
+  b=KYVuueveiaEH7cqsh9tPWIHdYX1uvd0nkUdlvdDSi3br+83eq1gFrz+q
+   /o3kdGUxAp69LF7ckjxdlInmWH09/49tE4EDT0rA5lkk4GQf0FXZabbEQ
+   00LkVwZ/v0jzmbQNOz3wjk+sICxWyg9L9oOt+hLwkoujq1YTwUS5Icq/e
+   mN99j2v8qQbIB9YNM9AjEk4NiOLN3dPPiLZ7qHNdOtkREeS8gIQOWYAKs
+   ChQN5FICNdsZgmdofbzZjUJ5zcqibdmiSm1tSnt+feAnFnX1uIRPlsroX
+   0g7W/+1vaR2cE6OBw6c61ef3K2iWM3Zk2o+YRY4ASdgtgQ8VUZIwvIo+O
+   A==;
+X-CSE-ConnectionGUID: V+U/EoZjQquRs6oqw+DI8g==
+X-CSE-MsgGUID: YwlO8DDWQeCcxn7UPLXF6g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12945507"
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="12945507"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 18:16:04 -0700
+X-CSE-ConnectionGUID: UCpiy+V+RKOtiYFej2ZQHQ==
+X-CSE-MsgGUID: TeAwZUKuRM6ypEBLA74fXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
+   d="scan'208";a="38325908"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 18:16:02 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,  David Hildenbrand
+ <david@redhat.com>,  akpm@linux-foundation.org,  willy@infradead.org,
+  ryan.roberts@arm.com,  ziy@nvidia.com,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: drop the 'anon_' prefix for swap-out mTHP counters
+In-Reply-To: <CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
+	(Barry Song's message of "Wed, 22 May 2024 22:40:20 +1200")
+References: <0e2a6f232e7579a2e4407ecf075531980d97f286.1716367360.git.baolin.wang@linux.alibaba.com>
+	<22ac01a3-ddbb-4114-88cd-ad1a31982dad@redhat.com>
+	<51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
+	<CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
+Date: Thu, 23 May 2024 09:14:10 +0800
+Message-ID: <875xv5ba8t.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <IA1PR10MB7240AB2157B46F325669859D98EB2@IA1PR10MB7240.namprd10.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn9g4lmE5m+VCqNQ--.42702S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw45ArWrKF45XF4xKryrXrb_yoWrKw4xpF
-	Z3WF42krWDKFsxCw12q3Wkuw1Sq3ZFqr48Wrn7G34fCr1qyFnIqFy2qryY9FyjgrW8Aa1j
-	vr1UXrW3u34UArUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UU
-	UUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Barry Song <21cnbao@gmail.com> writes:
 
-在 2024/05/23 3:12, Gulam Mohamed 写道:
-> Hi Kuai,
-> 
->> -----Original Message-----
->> From: Yu Kuai <yukuai1@huaweicloud.com>
->> Sent: Wednesday, May 22, 2024 8:01 AM
->> To: Jens Axboe <axboe@kernel.dk>; Gulam Mohamed
->> <gulam.mohamed@oracle.com>; linux-block@vger.kernel.org; linux-
->> kernel@vger.kernel.org
->> Cc: shinichiro.kawasaki@wdc.com; chaitanyak@nvidia.com; hch@lst.de;
->> yukuai (C) <yukuai3@huawei.com>
->> Subject: Re: [PATCH V2 for-6.10/block 1/2] loop: Fix a race between loop
->> detach and loop open
+> On Wed, May 22, 2024 at 9:38=E2=80=AFPM Baolin Wang
+> <baolin.wang@linux.alibaba.com> wrote:
 >>
->> Hi,
 >>
->> 在 2024/05/22 9:39, Jens Axboe 写道:
->>> On 5/21/24 4:42 PM, Gulam Mohamed wrote:
->>>> Description
->>>> ===========
->>>>
->>>> 1. Userspace sends the command "losetup -d" which uses the open() call
->>>>      to open the device
->>>> 2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
->>>>      function loop_clr_fd()
->>>> 3. If LOOP_CLR_FD is the first command received at the time, then the
->>>>      AUTOCLEAR flag is not set and deletion of the
->>>>      loop device proceeds ahead and scans the partitions (drop/add
->>>>      partitions)
->>>>
->>>> 	if (disk_openers(lo->lo_disk) > 1) {
->>>> 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
->>>> 		loop_global_unlock(lo, true);
->>>> 		return 0;
->>>> 	}
->>>>
->>>>    4. Before scanning partitions, it will check to see if any partition of
->>>>       the loop device is currently opened
->>>>    5. If any partition is opened, then it will return EBUSY:
->>>>
->>>>       if (disk->open_partitions)
->>>> 		return -EBUSY;
->>>>    6. So, after receiving the "LOOP_CLR_FD" command and just before the
->> above
->>>>       check for open_partitions, if any other command
->>>>       (like blkid) opens any partition of the loop device, then the partition
->>>>       scan will not proceed and EBUSY is returned as shown in above code
->>>>    7. But in "__loop_clr_fd()", this EBUSY error is not propagated
->>>>    8. We have noticed that this is causing the partitions of the loop to
->>>>       remain stale even after the loop device is detached resulting in the
->>>>       IO errors on the partitions
->>>>
->>>> Fix
->>>> ---
->>>> Re-introduce the lo_open() call to restrict any process to open the
->>>> loop device when its being detached
->>>>
->>>> Test case
->>>> =========
->>>> Test case involves the following two scripts:
->>>>
->>>> script1.sh
->>>> ----------
->>>> while [ 1 ];
->>>> do
->>>> 	losetup -P -f /home/opt/looptest/test10.img
->>>> 	blkid /dev/loop0p1
->>>> done
->>>>
->>>> script2.sh
->>>> ----------
->>>> while [ 1 ];
->>>> do
->>>> 	losetup -d /dev/loop0
->>>> done
->>>>
->>>> Without fix, the following IO errors have been observed:
->>>>
->>>> kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
->>>> kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
->>>>           phys_seg 1 prio class 0
->>>> kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
->>>>           phys_seg 1 prio class 0
->>>> kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
->>>>           read
->>>>
->>>> V1->V2:
->>>> 	Added a test case, 010, in blktests in tests/loop/
->>>> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
->>>> ---
->>>>    drivers/block/loop.c | 19 +++++++++++++++++++
->>>>    1 file changed, 19 insertions(+)
->>>>
->>>> diff --git a/drivers/block/loop.c b/drivers/block/loop.c index
->>>> 28a95fd366fe..9a235d8c062d 100644
->>>> --- a/drivers/block/loop.c
->>>> +++ b/drivers/block/loop.c
->>>> @@ -1717,6 +1717,24 @@ static int lo_compat_ioctl(struct block_device
->> *bdev, blk_mode_t mode,
->>>>    }
->>>>    #endif
->>>>
->>>> +static int lo_open(struct gendisk *disk, blk_mode_t mode) {
->>>> +        struct loop_device *lo = disk->private_data;
->>>> +        int err;
->>>> +
->>>> +        if (!lo)
->>>> +                return -ENXIO;
->>>> +
->>>> +        err = mutex_lock_killable(&lo->lo_mutex);
->>>> +        if (err)
->>>> +                return err;
->>>> +
->>>> +        if (lo->lo_state == Lo_rundown)
->>>> +                err = -ENXIO;
->>>> +        mutex_unlock(&lo->lo_mutex);
 >>
->> This doesn't fix the problem completely, there is still a race window.
+>> On 2024/5/22 16:58, David Hildenbrand wrote:
+>> > On 22.05.24 10:51, Baolin Wang wrote:
+>> >> The mTHP swap related counters: 'anon_swpout' and
+>> >> 'anon_swpout_fallback' are
+>> >> confusing with an 'anon_' prefix, since the shmem can swap out
+>> >> non-anonymous
+>> >> pages. So drop the 'anon_' prefix to keep consistent with the old swap
+>> >> counter
+>> >> names.
+>> >>
+>> >> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
+>> >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> >> ---
+>> >
+>> > Am I daydreaming or did we add the anon_ for a reason and discussed the
+>> > interaction with shmem? At least I remember some discussion around tha=
+t.
 >>
->> lo_release
->>    if (disk_openers(disk) > 0)
->>     reutrn
->>     -> no openers now
->> 		lo_open
->> 		 if (lo->lo_state == Lo_rundown)
->> 		 -> no set yet
->> 		 open succeed
->>    mutex_lock(lo_mutex)
->>    lo->lo_state = Lo_rundown
->>    mutex_unlock(lo_mutex)
->>    __loop_clr_fd
-> We have noticed that, at block layer, both open() and release() are protected by gendisk->open_mutex.
-> So, this race may not happen. Can you please let me know if I understand correctly?
+>> Do you mean the shmem mTHP allocation counters in previous
+>> discussion[1]? But for 'anon_swpout' and 'anon_swpout_fallback', I can
+>> not find previous discussions that provided a reason for adding the
+>> =E2=80=98anon_=E2=80=99 prefix. Barry, any comments? Thanks.
+>
+> HI Baolin,
+> We had tons of emails discussing about namin and I found this email,
+>
+> https://lore.kernel.org/all/bca6d142-15fd-4af5-9f71-821f891e8305@redhat.c=
+om/
+>
+> David had this comment,
+> "I'm wondering if these should be ANON specific for now. We might want to
+> add others (shmem, file) in the future."
+>
+> This is likely how the 'anon_' prefix started being added, although it
+> wasn't specifically
+> targeting swapout.
+>
+> I sense your patch slightly alters the behavior of thp_swpout_fallback
+> in /proc/vmstat.
+> Previously, we didn't classify them as THP_SWPOUT_FALLBACK, even though we
+> always split them.
 
-Yes, __loop_clr_fd from lo_release can't concurrent with lo_open.
->>
->> And with the respect, loop_clr_fd() has the same problem.
+IIUC, "fallback" means you try to do something, but fail, so try
+something else as fallback.  If so, then we don't need to count
+splitting shmem large folio as fallback.
 
-Did you check __loop_clr_fd from lo_ioctl?
+For example, before commit 5ed890ce5147 ("mm: vmscan: avoid split during
+shrink_folio_list()"), if folio_entire_mapcount() =3D=3D 0, we will split
+the THP.  But we will not count it as "fallback" because we haven't
+tried to swap it out as a whole.
 
-Thanks,
-Kuai
+>
+>                 if (folio_test_anon(folio) && folio_test_swapbacked(folio=
+)) {
+>                         ...
+>                                 if (!add_to_swap(folio)) {
+>                                         int __maybe_unused order =3D
+> folio_order(folio);
+>
+>                                         if (!folio_test_large(folio))
+>                                                 goto activate_locked_spli=
+t;
+>                                         /* Fallback to swap normal pages =
+*/
+>                                         if (split_folio_to_list(folio,
+> folio_list))
+>                                                 goto activate_locked;
+> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>                                         if (nr_pages >=3D HPAGE_PMD_NR) {
+>                                                 count_memcg_folio_events(=
+folio,
+>                                                         THP_SWPOUT_FALLBA=
+CK, 1);
+>
+> count_vm_event(THP_SWPOUT_FALLBACK);
+>                                         }
+>                                         count_mthp_stat(order,
+> MTHP_STAT_ANON_SWPOUT_FALLBACK);
+> #endif
+>                                         if (!add_to_swap(folio))
+>                                                 goto activate_locked_spli=
+t;
+>                                 }
+>                         }
+>                 } else if (folio_test_swapbacked(folio) &&
+>                            folio_test_large(folio)) {
+>                         /* Split shmem folio */
+>                         if (split_folio_to_list(folio, folio_list))
+>                                 goto keep_locked;
+>                 }
+>
+>
+>
+> If the goal is to incorporate pmd-mapped shmem under thp_swpout* in
+> /proc/vmstat,
+> and if there is consistency between /proc/vmstat and sys regarding
+> their definitions,
+> then I have no objection to this patch. However, shmem_swpout and shmem_s=
+wpout_*
+> appear more intuitive, given that thp_swpout_* in /proc/vmstat has
+> never shown any
+> increments for shmem until now - we have been always splitting shmem in v=
+mscan.
+>
+> By the way, if this patch is accepted, it must be included in version
+> 6.10 to maintain
+> ABI compatibility. Additionally, documentation must be updated accordingl=
+y.
+>
+>>
+>> [1]
+>> https://lore.kernel.org/all/05d0096e4ec3e572d1d52d33a31a661321ac1551.171=
+3755580.git.baolin.wang@linux.alibaba.com/
+>
 
->>
->> I think probably loop need a open counter for itself.
-> We are looking to see how to handle this case
->>
->> Thanks,
->> Kuai
->>
->>>> +	return err;
->>>> +}
->>>
->>> Most of this function uses spaces rather than tabs.
->>>
-> 
-
+--
+Best Regards,
+Huang, Ying
 
