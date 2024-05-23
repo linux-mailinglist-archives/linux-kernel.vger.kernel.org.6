@@ -1,138 +1,251 @@
-Return-Path: <linux-kernel+bounces-187785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41098CD874
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:32:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C428CD87B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E261F22E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:32:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 263AC282467
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECF91CFB2;
-	Thu, 23 May 2024 16:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CC01CF8A;
+	Thu, 23 May 2024 16:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fJp6Xc4x"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MblfHEwQ"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905651BC39;
-	Thu, 23 May 2024 16:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0997411720;
+	Thu, 23 May 2024 16:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716481916; cv=none; b=WDbtRssZ7Z5nUjpgTTy5whlikpcoej5AaLdKplRO5wQhDfdMCzRQXbyFopv2Kbqnw1l5G9QtkeKvAPJWrp4EmMipI81Vjpe8875dEW0d7WMi3fTrC+C4UZtCt5bni3HK8V1atLne4yUGzR2i2JNiqzfMOkoUc1MzzVnwrgxJRXo=
+	t=1716482080; cv=none; b=Adqyu749NtI8j4tos49KBFTrctfMK0zDhLRc50Qio4SLvzl8tf9LJlXklIMFUjamIcgwBZKRyDCB2WKYJXlXXg+kdlhWFMOcJN6KmL6vgy427MEb8tdJJc4rw++cgoS/fVxyyXh9khQMqcz8unFz9QMLf/FpvF2kkHB6YU8/XhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716481916; c=relaxed/simple;
-	bh=BIV4oelLREsw1BHdiAVnVRU0aKkmcra+o9gjdpAyFV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uJuftAozJk7MsQSJFH+ttkY32P/Gx6Ed3YOMFk/jAvqldtNJODmT/yRB7VXnmd6kxaC3DPOsIUyx6LWxMZiIIh2DO/G64bP+SIiR/JufDBtnIIO0tSOmQ1Ia0rkSs5jvyOcWfdSwvvKtx/X6jeQYrnGABpmHQdZtueEZG8KphzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fJp6Xc4x; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716481914; x=1748017914;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BIV4oelLREsw1BHdiAVnVRU0aKkmcra+o9gjdpAyFV4=;
-  b=fJp6Xc4xOor6IKa3Oh70l2NK2d0CjB6G2FWlyoVhsgG3TVQ4+/zXTFTM
-   i92R+dPfwfG+EHPsPyeLCCR7I8RspCz5K72pypKNADayMi0rAMsNbMn8X
-   lPiqpiBffSpZw9LtNfcVYQPEoRRFgUhsmsyRJRP48MeJVxOPDkQugGLer
-   yD8F/U/JHBNvrH+TTM+udmoOQZl90TAKkFQCS84N/9TEN5qGJkL21o+1C
-   tiTUYCbx6YLvEPLnSovmz8XnNbbWLbq9UGUofV8TAHgbMcboVG1pKGTnZ
-   mdBOWQiuojH13C0bH7XTqoK/z7W037OxLpmbn+FygZ2uBCrVFgjH8So4C
-   A==;
-X-CSE-ConnectionGUID: /zL5pCHBSKylQfmxldJYKA==
-X-CSE-MsgGUID: dcRcnhcVTrO4n8KO6tyTyA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12990880"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="12990880"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:54 -0700
-X-CSE-ConnectionGUID: TKPBX1INQzCGxw1D2USyNw==
-X-CSE-MsgGUID: Ab2krLjGRyuQnHQIVXw/iA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="33790563"
-Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.110.49]) ([10.125.110.49])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:52 -0700
-Message-ID: <5c14a151-25c9-41f5-af65-d2a8ffe548fa@intel.com>
-Date: Thu, 23 May 2024 09:31:51 -0700
+	s=arc-20240116; t=1716482080; c=relaxed/simple;
+	bh=L78QcW1WN+AWEud7mRm7LZni1MC/yOU7IM66UMmp1TQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tS+xsTX1wyoQowveLXdLHqgOkSVsjkPnTwbgwPp+SrGkh3regIzjBBaKapnhtuQAQmyfm5s+w6riQTlj4g0aYlut0uMYmf1T2mZWwupqpjUc3If/1VzhuFKDLuAxyZF71ffqBSShGDfGGCkVHs18oBMPf1i+SaPgjP36maAkZv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MblfHEwQ; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-df4ea041bd7so1918408276.2;
+        Thu, 23 May 2024 09:34:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716482078; x=1717086878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RF564b7ceuJtJUxskBv60/ls7oKCNIrLuMPsIluNfCk=;
+        b=MblfHEwQ76SIJUIQ7PVoLN/BWIYKOPutHZVSe8i1M5+S8TbOmsh4t0eph6ECzKWijW
+         fy3boPxPv3+/whLoeWXZxkB82SMs9vPi9YxmUMAtSwjI7Ca8RGVhzMjClQnIGOy35RDQ
+         R/wIBxs1nhREJ+3BVNWMi55lHBK/semTRBXWReEfdWuJ3CXrQzb0m14RiTq5+Egq6ZPP
+         bP5chayeBV+FvW7eKQTba22JMAOAuNNnKTHoZZr+rKzhFG7GkGaKH2UBWxuOduekw8HO
+         WPTt89QndswvlNTXYgax4+o+WG0NCvjFX/KqBzQZS8qe/WXloLyW5Axd/iilnC5bAct6
+         /j/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716482078; x=1717086878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RF564b7ceuJtJUxskBv60/ls7oKCNIrLuMPsIluNfCk=;
+        b=AAwlUxkOTjVvtId8cnWdC33Js0yDAhBT3HsMBwy79ZCcDFDohcapZcYksDTwPP9k8f
+         ATmvqmdRBsl1MLtkLlzYVkmqeS6sxJ/XTh5ixjdCW8O4Fn+aQ9ueQxG0zbxRA63CyX9h
+         hBHQZCTNNEAeXgjvuTdGeeBWujBWWxrX3i5sbVrmIa9XVU/uJUyBA4H7UQHm7eiuQGwe
+         Md0r7xrdOPwCuOBOssrOMA+cs1C2HV8DIpDlzs9q3Q8fIS+3xtk9CzqMwYxCtt0ZGQA8
+         VIUzj5a9YkJyKigM9BLfiPdmuTMvkQBDbT2+fijbJMiw76TKfHvXZqqCGPq2Z/vQlcMk
+         bokA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0UI26IKG/Yaps6YAp+XvZvxZsQXTmtNXqe6zEQt7udy7oYTQQKwdNkaT6wsp307nKJtk5AEi7AYLzAqYSZ3kvwK7nbPvQUzadFrt8p/VctKVpffFKQ5WwEaV2YaBkVHRozSPZ0+14Z0SBOMVqu/kO3+Keg5wyxVMqOvQlSVIbMT2PtQ==
+X-Gm-Message-State: AOJu0Yy6XL6fyPMRu2yoXzNCVxdxGoeUr48neyETGADxRjKlzBumSJGc
+	N6MUZBljm53bmXqUcPOkcan+DbH2i0IlxxwVNR/dxbM5gTIHtafSVgpbYn9UcWlSY29WqjZgFG+
+	eu45fAeUgYzOlU7Dp+MLAOqHscNY=
+X-Google-Smtp-Source: AGHT+IGHMycQCXAXdn9GPA0HqIe63sdLvbaqaA8StclYtMKe9+LaaPGxeDpnBD2iYljhDYWbHNS1PnIpcZzKN/PQrdU=
+X-Received: by 2002:a25:2c3:0:b0:df4:978c:3794 with SMTP id
+ 3f1490d57ef6-df4e0bcb476mr7516169276.1.1716482077767; Thu, 23 May 2024
+ 09:34:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] x86/cpufeatures: Add AMD FAST CPPC feature flag
-To: Xiaojian Du <Xiaojian.Du@amd.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-pm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, daniel.sneddon@linux.intel.com,
- jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
- sandipan.das@amd.com, kai.huang@intel.com, ray.huang@amd.com,
- rafael@kernel.org, Perry.Yuan@amd.com, gautham.shenoy@amd.com,
- Borislav.Petkov@amd.com, mario.limonciello@amd.com
-References: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240424024805.144759-1-howardchu95@gmail.com>
+ <CAM9d7chOdrPyeGk=O+7Hxzdm5ziBXLES8PLbpNJvA7_DMrrGHA@mail.gmail.com>
+ <Zil1ZKc7mibs6ONQ@x1> <CAP-5=fVYHjUk8OyidXbutBvZMPxf48LW7v-N3zvHBe5QME1vVQ@mail.gmail.com>
+ <CAM9d7cggak7qZcX7tFZvJ69H3cwEnWvNOnBsQrkFQkQVf+bUjQ@mail.gmail.com>
+ <CAH0uvohPg7LtSOLDNaPwnC5ePwjwg0NtKzLZ_oJcAz7zOwdwdw@mail.gmail.com>
+ <CAP-5=fUzD8VZRnsxEBNPK_7PAGzdFjzmBAupA-eh=7VCDHBkbA@mail.gmail.com> <CAM9d7cgqr0Op5UuTcV2q8-Ju3yB7cYPvG7=Nrb4K=oW4Lt4Lcg@mail.gmail.com>
+In-Reply-To: <CAM9d7cgqr0Op5UuTcV2q8-Ju3yB7cYPvG7=Nrb4K=oW4Lt4Lcg@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Fri, 24 May 2024 00:34:27 +0800
+Message-ID: <CAH0uvojme5j0scQTztiCWxSichhPdAokWy1Lw_D9cFx-SWfHFA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] Dump off-cpu samples directly
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, peterz@infradead.org, 
+	mingo@redhat.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	zegao2021@gmail.com, leo.yan@linux.dev, ravi.bangoria@amd.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/22/24 23:16, Xiaojian Du wrote:
->  #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* "" BHI_DIS_S HW control available */
->  #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
->  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
-> +#define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
+Hello,
 
-It'd be nice to expand the CPPC acronym at least _once_.
+On Thu, May 23, 2024 at 12:34=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hello,
+>
+> On Wed, May 15, 2024 at 9:56=E2=80=AFPM Ian Rogers <irogers@google.com> w=
+rote:
+> >
+> > On Wed, May 15, 2024 at 9:24=E2=80=AFPM Howard Chu <howardchu95@gmail.c=
+om> wrote:
+> > >
+> > > Hello,
+> > >
+> > > Here is a little update on --off-cpu.
+> > >
+> > > > > It would be nice to start landing this work so I'm wondering what=
+ the
+> > > > > minimal way to do that is. It seems putting behavior behind a fla=
+g is
+> > > > > a first step.
+> > >
+> > > The flag to determine output threshold of off-cpu has been implemente=
+d.
+> > > If the accumulated off-cpu time exceeds this threshold, output the sa=
+mple
+> > > directly; otherwise, save it later for off_cpu_write.
+> > >
+> > > But adding an extra pass to handle off-cpu samples introduces perform=
+ance
+> > > issues, here's the processing rate of --off-cpu sampling(with the
+> > > extra pass to extract raw
+> > > sample data) and without. The --off-cpu-threshold is in nanoseconds.
+> > >
+> > > +-----------------------------------------------------+--------------=
+-------------------------+----------------------+
+> > > | comm                                                | type
+> > >                        | process rate         |
+> > > +-----------------------------------------------------+--------------=
+-------------------------+----------------------+
+> > > | -F 4999 -a                                          | regular
+> > > samples (w/o extra pass)      | 13128.675 samples/ms |
+> > > +-----------------------------------------------------+--------------=
+-------------------------+----------------------+
+> > > | -F 1 -a --off-cpu --off-cpu-threshold 100           | offcpu sample=
+s
+> > > (extra pass)           |  2843.247 samples/ms |
+> > > +-----------------------------------------------------+--------------=
+-------------------------+----------------------+
+> > > | -F 4999 -a --off-cpu --off-cpu-threshold 100        | offcpu &
+> > > regular samples (extra pass) |  3910.686 samples/ms |
+> > > +-----------------------------------------------------+--------------=
+-------------------------+----------------------+
+> > > | -F 4999 -a --off-cpu --off-cpu-threshold 1000000000 | few offcpu &
+> > > regular (extra pass)     |  4661.229 samples/ms |
+> > > +-----------------------------------------------------+--------------=
+-------------------------+----------------------+
+>
+> What does the process rate mean?  Is the sample for the
+> off-cpu event or other (cpu-cycles)?  Is it from a single CPU
+> or system-wide or per-task?
 
-Also, this is used _once_ at boot and not exposed in /proc/cpuinfo.  Is
-it even worth defining an X86_FEATURE_ for it?
+Process rate is just a silly name for the time record__pushfn() takes
+to write data from the ring buffer.
+record__pushfn() is where I added the extra pass to strip the off-cpu
+samples from the original raw
+samples that eBPF's perf_output collected.
+
+With -a option it runs on all cpu, system-wide. Sorry that I only
+tested on extreme cases.
+
+I ran perf record on `-F 4999 -a `, `-F 1 -a --off-cpu
+--off-cpu-threshold 100`, `-F 4999 -a --off-cpu
+--off-cpu-threshold 100`, and `-F 4999 -a --off-cpu
+--off-cpu-threshold 1000000000`.
+`-F 4999 -a` is only cpu-cycles samples which is the fastest(13128.675
+samples/ms)
+when it comes to writing samples to perf.data, because there's no
+extra pass for stripping
+extra data from BPF's raw samples.
+
+`-F 1 -a --off-cpu --off-cpu-threshold 100` is mostly off-cpu samples,
+which requires considerably
+more time to strip the data, being the slowest(2843.247 samples/ms).
+
+ `-F 4999 -a --off-cpu --off-cpu-threshold 100` is half and half, lots
+of cpu-cycle samples so
+a little faster than the former one(3910.686 samples/ms). Because for cpu-c=
+ycles
+samples, there's no extra handling(but there's still cost on copying
+memory back and forth).
+
+`-F 4999 -a --off-cpu --off-cpu-threshold 1000000000` is a blend of a
+large amount of cpu-cycles
+samples and only a couple of off-cpu samples. It is the
+fastest(4661.229 samples/ms) but still
+nowhere near the original one, which doesn't have the extra pass of
+off_cpu_strip().
+
+What I'm trying to say is just, stripping/handling off-cpu samples at
+runtime is a bad idea, the extra
+pass of off_cpu_strip() should be reconsidered. Reading events one by
+one, put together samples,
+and checking sample_id and stuff introduces lots of overhead. It
+should be done at save time.
+
+By the way, the default off_cpu_write() is perfectly fine.
+
+Sorry about the horrible data table and explanation; they will be more
+readable next time.
+
+>
+> > >
+> > > It's not ideal. I will find a way to reduce overhead. For example
+> > > process them samples
+> > > at save time as Ian mentioned.
+> > >
+> > > > > To turn the bpf-output samples into off-cpu events there is a pas=
+s
+> > > > > added to the saving. I wonder if that can be more generic, like a=
+ save
+> > > > > time perf inject.
+> > >
+> > > And I will find a default value for such a threshold based on perform=
+ance
+> > > and common use cases.
+> > >
+> > > > Sounds good.  We might add an option to specify the threshold to
+> > > > determine whether to dump the data or to save it for later.  But id=
+eally
+> > > > it should be able to find a good default.
+> > >
+> > > These will be done before the GSoC kick-off on May 27.
+> >
+> > This all sounds good. 100ns seems like quite a low threshold and 1s
+> > extremely high, shame such a high threshold is marginal for the
+
+> > context switch performance change. I wonder 100 microseconds may be a
+> > more sensible threshold. It's 100 times larger than the cost of 1
+> > context switch but considerably less than a frame redraw at 60FPS (16
+> > milliseconds).
+>
+> I don't know what's the sensible default.  But 1 msec could be
+> another candidate for the similar reason. :)
+
+Sure, I'll give them all a test and see the overhead they cause.
+
+I understand that all I'm talking about is optimization, and that premature
+optimization is the root of all evil. However, being almost three times
+slower for only a few dozen direct off-CPU samples sounds weird to me.
+
+Thanks,
+Howard
+>
+> Thanks,
+> Namhyung
 
