@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-187064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C388CCC8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:52:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACCA8CCD3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C131F219FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC281C21569
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1235513C90F;
-	Thu, 23 May 2024 06:52:33 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E7E13CA91;
+	Thu, 23 May 2024 07:46:29 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8C813A86E;
-	Thu, 23 May 2024 06:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65D7171C4;
+	Thu, 23 May 2024 07:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716447152; cv=none; b=A8WGCRoXHB22UaOmu6pLgZLrzMmJm4EFe9wlONHOtla2Jd621zv63izHC6A0kTeY0Hx0Sa13d1liT9YtRY6TAlorWu3QC9TnF4M2P1Jvmc/+Jt7XgXjkkWcc7X6O7hR1S72BR/rGFNaLmwRcrVU/JXpPML1GfafjbvXWo6TgqNA=
+	t=1716450389; cv=none; b=nXtISPpajCbn19SsGqEMjElhkMTT1RqGWNtePqrdKoWfvTomR8Kg6VGqhQLVj2LEJpDCgOYzbgqNQT7QsRDHWuDAdWFnnGEWmKZVhIJwRpb0wXijNolcbtEPNx9NiDxe4o7EIAv7dXhgZZhiC9u9UU9VfUAeEeqXRMPw1nOlGQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716447152; c=relaxed/simple;
-	bh=LNL1OJwC1hk8UpwDDg0RBclYysbMQZ2LxjkPjxcZlzM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K+VTSkMTdKiDWNbQzxZ0p8FuIaS1c/4W8VOgPh+w6J8fjIvTdSLxPJ0R+oQvqDnWf98zvAv9UGIpY5Ab4aNdSuu2njAYDFZbDLDI1neBOTAdUL1NdVkDRYeQnplTwfWiWwpNFqiODd8AO8dGofjS1VaNbxDUF151FsPjSelfZ20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+	s=arc-20240116; t=1716450389; c=relaxed/simple;
+	bh=EJrS8nDXNgKWdYcCMgEmQeHUCpRdL5fEAEBB5pLnuAM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KJNxlsAOfzgAtccez+lbUWfLAtLfc4mOgeOIuHLgrLivnim4gD8uvn2OqeVkOaxJ1bwRr5ylSzmPneE9vdBwTf4QcuxVX58ClBvRQAgIs/oupFK267/tsdVdPaAO8ZkEf7ty8/UJwvS7hRp3ZkSBcMbXiItCVznkwjq3X7p4Zjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VlJkm01mLz4f3jrd;
-	Thu, 23 May 2024 14:52:15 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VlKx42tydz4f3jM1;
+	Thu, 23 May 2024 15:46:16 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0179C1A017F;
-	Thu, 23 May 2024 14:52:25 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 3D52C1A01A7;
+	Thu, 23 May 2024 15:46:22 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxCl505mJwvANQ--.28210S4;
-	Thu, 23 May 2024 14:52:23 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RFL9E5mSXPDNQ--.10759S4;
+	Thu, 23 May 2024 15:46:21 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: axboe@kernel.dk,
 	yi.zhang@redhat.com,
@@ -52,9 +52,9 @@ Cc: linux-block@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH RESEND] null_blk: fix null-ptr-dereference while configuring 'power' and 'submit_queues'
-Date: Thu, 23 May 2024 22:45:36 +0800
-Message-Id: <20240523144536.1376904-1-yukuai1@huaweicloud.com>
+Subject: [PATCH v2] null_blk: fix null-ptr-dereference while configuring 'power' and 'submit_queues'
+Date: Thu, 23 May 2024 23:39:34 +0800
+Message-Id: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,9 +63,9 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxCl505mJwvANQ--.28210S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ar1fKw4DtF1xGF45AFWrZrb_yoW7Xr1rpF
-	W5GFWak340gF47Xwsrtw1DWFy5Aw1jva4xGrWxAayxCa42vrnavr1vyFy5XrW8Ga9xCrWY
+X-CM-TRANSID:cCh0CgAn+RFL9E5mSXPDNQ--.10759S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZr1xWFWrtF4UuF45Kr13XFb_yoWrtF4rpF
+	W5GFWak3y8WF4xXwsFqw1DWF9xAw1jvFyxGrWxGayxCa4jvrn2vr1vyFW5WrW8G393CrWY
 	qa1DXFs0ka1UWFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUU9q14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2ocxC64kIII
@@ -126,30 +126,19 @@ nullb_device_power_store	nullb_apply_submit_queues
  dev->nullb = NULL
 
 Fix this problem by resuing the global mutex to protect
-nullb_device_power_store() and nullb_update_nr_hw_queues() from configs.
+nullb_device_power_store() and nullb_update_nr_hw_queues() from configfs.
 
 Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after an instance has been configured")
 Reported-and-tested-by: Yi Zhang <yi.zhang@redhat.com>
 Closes: https://lore.kernel.org/all/CAHj4cs9LgsHLnjg8z06LQ3Pr5cax-+Ps+xT7AP7TPnEjStuwZA@mail.gmail.com/
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- drivers/block/loop.c          |  2 +-
+Changes in v2:
+ - remove the unrelated code.
+
  drivers/block/null_blk/main.c | 40 +++++++++++++++++++++++------------
  2 files changed, 27 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 28a95fd366fe..3e1c4f5ef714 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -2140,7 +2140,7 @@ static int loop_control_remove(int idx)
- 		pr_warn_once("deleting an unspecified loop device is not supported.\n");
- 		return -EINVAL;
- 	}
--		
-+
- 	/* Hide this loop device for serialization. */
- 	ret = mutex_lock_killable(&loop_ctl_mutex);
- 	if (ret)
 diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
 index 5d56ad4ce01a..eb023d267369 100644
 --- a/drivers/block/null_blk/main.c
