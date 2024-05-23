@@ -1,113 +1,129 @@
-Return-Path: <linux-kernel+bounces-187394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75338CD12F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F608CD136
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2384A1C21923
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18591C20BA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A611474B6;
-	Thu, 23 May 2024 11:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8177E1474C8;
+	Thu, 23 May 2024 11:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="JQLKM0vm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="VWUdpLN2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oXhXplw+"
+Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F41C2746F
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCE513C91D;
+	Thu, 23 May 2024 11:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716463507; cv=none; b=Vpc2D4nqFBxVJR9YcQIVJlLRhuSuyiRPnAGlstSCCE55isex5xd295+X3EFu6K9pd5NTmnQv3RGlTuemVGVICghP/kf4XtZbiKexsGijbgntKLwtnoYQPEZJNV/XFC6f5YCMOHNK0raSr/ryX8nErtzxh/H9ypofxWjsZChSDA4=
+	t=1716463699; cv=none; b=tqXTUoycrad0Q5YDYnZY4tkbzAQjkOTT917O2YtQj66Rhx9WjWVRyC2OV9JG9YFEBYeA1AMQGXuDL5nOuAXJyPLB4PDBXnRBqWUWxNS8rA3rDn2+ZpJIbUsSMNPyJ8guOduG/A7wgXxFkXHf8xk4Kd9UC+fMk9uzeA0zhrp1l6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716463507; c=relaxed/simple;
-	bh=wVoiOdM1e88Oro+D0GZXjKOg70saQD3b27grWmj2enM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BBKHvQr+lwRP+YF3/eO00SxrZLM1Nnh9gt152em1naWN785rp8nBLUk1s5fN63757mq/hNHIlM2vorVDjsKYp4vDrLLB1sk24f+F14jfrkShPL9SAynHfs8kvE7VxT7sQNiSPE80MSNtPb099UjRc6FPX9gGCkxEHeNXynX5O90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=JQLKM0vm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1716463503;
-	bh=xz5HmwISGE6JPRBQj3ZIbQI4h9QCSU4QHSIcfScVatg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JQLKM0vmOL055TJl+XXGRzzbmUvRLCww8tlf6nddVcsrtzh+WvpCorTP+wKrHCjgk
-	 CKPEjguPEXgyQ6lX9w4lfTqTk3GV3lUWMf7zFzz4NZGRmNiXA8pfbq6nSKdmi1+rcF
-	 9fjamtltw2z0Y4NHnL94nwlifGqvjyUNaBOdZgz18tmOsxobeguHV6rUnuHuunbaAO
-	 G5JdBc6IAQrt+8Bgdbh10jDHGwpcIkcsUmeJYJB+bkyv7BbIAXdR/XucRU/Do9Ivh/
-	 /sa8oFuB6ITwLPSXlbch2gfXNjws6fkbLdLZUXxe+VpOgJ4f2w73grRTKIydwQvOET
-	 3jaBF9LmQY4xA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VlQnV2GSdz4wb0;
-	Thu, 23 May 2024 21:25:02 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>, akpm@linux-foundation.org
-Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu,
- naveen.n.rao@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- julia.lawall@inria.fr, javier.carrasco.cruz@gmail.com, Prabhav Kumar Vaish
- <pvkumar5749404@gmail.com>
-Subject: Re: [PATCH next] arch: powerpc: platforms: Remove unnecessary call
- to of_node_get
-In-Reply-To: <20240522194250.1165568-1-pvkumar5749404@gmail.com>
-References: <20240522194250.1165568-1-pvkumar5749404@gmail.com>
-Date: Thu, 23 May 2024 21:25:01 +1000
-Message-ID: <87h6eo3h4i.fsf@mail.lhotse>
+	s=arc-20240116; t=1716463699; c=relaxed/simple;
+	bh=98af4TZTxoNtCMAu0GpqxIFWTOMAVwBIl44PAzZ2++s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhTLVVtpw5S5xPsQrRkCyBfvL85CW3dj3xv5bKzBxDRU3JEsyOE6XPXTN0dvDpRq95mK6pHjDyN1U/029vyRS0CRnR+5haR6Ov3OYOycNvgibrQRnLflrynUBAN9QU6tvUO9+mj0KCaJB/2sxxQ14Cgju0JhlnFFPXsqGavYIeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=VWUdpLN2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oXhXplw+; arc=none smtp.client-ip=64.147.123.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id BC46C1C001DE;
+	Thu, 23 May 2024 07:28:15 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 23 May 2024 07:28:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1716463695; x=1716550095; bh=if5e5WwkzJ
+	eIoOCzGj7W+4ffr1RWsZHFOpu3DQ7P8u8=; b=VWUdpLN2a8RsBDIf+rC1CIxc2g
+	mVsXBBruEuC0bqMUUP0T+xTp3vR2BS/SNGcEETCnv2Ifxj+etUKDu13EMVJuZ2EP
+	xWtggkkA6jkGcfsy3/omIPPCvtW4fjaWzN6BoMf2WL1wfR9ohoVK3rNCHolFP1Sk
+	H0+Fp5661//u+Ymqz3T6H/7z457lc6L/aDVuWpDQG+W4k8dvtGy8QWaULEqERuhe
+	hU/G3fEclOgwXF62255tomnwim2ErSKe8+bN+hDK0ZWmX4aW+n+D3ocvnxJxAAOt
+	3Rxzubp1f1/+RZSrYyyqdDXW0xcmL39RNyhWyIED451PTG9aW/MXg9RvzkwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1716463695; x=1716550095; bh=if5e5WwkzJeIoOCzGj7W+4ffr1RW
+	sZHFOpu3DQ7P8u8=; b=oXhXplw+/HmJEAscFsdO5pb1D1C9as6Rvi3qlyQe6mnT
+	d87YfTHZcpTWMb4Je7IuJe+qDsBji+v3IIb75f+Nn6OvzJ5wsxJAW9jg69oYYu7v
+	pF8CV7DLyN907NI6diN0/6rJMkjeJwXgRBhC9ej+gXZ+0TqUOW/ePQ9JzVRHmXsK
+	o8DS6JiVyCo0SIoInElOkRu+84lism8uJru6Az6RPTy5MGpKwdTAggII7w1fTeLQ
+	M8zVO4k0OAW8ioXbnl87yG119OY8w9jBkXTAU4LiYhF0e5dGdJewExiQcJK6KXsP
+	acv58S8opmE05SsLLNaixlvp5Vl0KqumlXnjISXg6g==
+X-ME-Sender: <xms:TyhPZjVwgqpUNUJJ7oVmfiYEgJJs68sCeZCSjG9t6GldNpcQbgoPQQ>
+    <xme:TyhPZrmAK3kfMIK-V2bGdDhKhW5BbUlTWZ4F94aLj9YyHZQ7DWAcp5qFafwfpOGSN
+    E5Yh-zx1uviJw>
+X-ME-Received: <xmr:TyhPZvZcGL2-h8KWLmhzfsZPMVBC5kWbwtvQLNXGcwbS0Tcf8tIDCRuzyyReQ8P70iR2kai5XaCqQUp62lpx80S8HCc8wiNRbVYX7A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeiiedggedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
+    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
+    hhrdgtohhm
+X-ME-Proxy: <xmx:TyhPZuUEkLI2nCjDUFJlx4000_ffEMpr7MR-1XqNR_Jy1BsXCftn0g>
+    <xmx:TyhPZtmXF8FFpbQhgH-uvYrx2B3ens5Wkq0tLUyPnIB5vLVc_qY_Lg>
+    <xmx:TyhPZrc5axTrFTajOVnfhRHfQlX_dEjCGqsAY1db5w2TxHFsjC9SYA>
+    <xmx:TyhPZnGO02CXTelJD2VDrDtVczcdc2c5twWV99ov0MLm582bZe04yA>
+    <xmx:TyhPZscJOFBfrKh3kFp6ezJF_hSni6Qe0qW_QNpsHY9V2ZKHldLB61rM>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 May 2024 07:28:14 -0400 (EDT)
+Date: Thu, 23 May 2024 13:28:12 +0200
+From: Greg KH <greg@kroah.com>
+To: Edward Liaw <edliaw@google.com>
+Cc: stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+	kernel-team@android.com, Mark Brown <broonie@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 6.6.y] kselftest: Add a ksft_perror() helper
+Message-ID: <2024052305-unmapped-renewably-b3fc@gregkh>
+References: <20240520175629.162697-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520175629.162697-1-edliaw@google.com>
 
-Prabhav Kumar Vaish <pvkumar5749404@gmail.com> writes:
-> `dev->of_node` has a pointer to device node, of_node_get call seems
-> unnecessary.
-
-Sorry but it is necessary.
-
-> Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+On Mon, May 20, 2024 at 05:56:28PM +0000, Edward Liaw wrote:
+> From: Mark Brown <broonie@kernel.org>
+> 
+> [ Upstream commit 907f33028871fa7c9a3db1efd467b78ef82cce20 ]
+> 
+> The standard library perror() function provides a convenient way to print
+> an error message based on the current errno but this doesn't play nicely
+> with KTAP output. Provide a helper which does an equivalent thing in a KTAP
+> compatible format.
+> 
+> nolibc doesn't have a strerror() and adding the table of strings required
+> doesn't seem like a good fit for what it's trying to do so when we're using
+> that only print the errno.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> Stable-dep-of: 071af0c9e582 ("selftests: timers: Convert posix_timers test to generate KTAP output")
+> Signed-off-by: Edward Liaw <edliaw@google.com>
 > ---
->  arch/powerpc/platforms/cell/iommu.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
-> index 4cd9c0de22c2..5b794ce08689 100644
-> --- a/arch/powerpc/platforms/cell/iommu.c
-> +++ b/arch/powerpc/platforms/cell/iommu.c
-> @@ -780,14 +780,13 @@ static int __init cell_iommu_init_disabled(void)
->  static u64 cell_iommu_get_fixed_address(struct device *dev)
->  {
->  	u64 cpu_addr, size, best_size, dev_addr = OF_BAD_ADDR;
-> -	struct device_node *np;
-> +	struct device_node *np = dev->of_node;
->  	const u32 *ranges = NULL;
->  	int i, len, best, naddr, nsize, pna, range_size;
->  
->  	/* We can be called for platform devices that have no of_node */
-> -	np = of_node_get(dev->of_node);
->  	if (!np)
-> -		goto out;
-> +		return dev_addr;
->  
->  	while (1) {
->  		naddr = of_n_addr_cells(np);
+>  tools/testing/selftests/kselftest.h | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
 
-		nsize = of_n_size_cells(np);
-		np = of_get_next_parent(np);
-		if (!np)
-			break;
+Now queued up, thanks.
 
-of_get_next_parent() drops the reference of the node passed to it (np).
-
-So if you actually tested your patch you should see a recount underflow.
-
-cheers
+greg k-h
 
