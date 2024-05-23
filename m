@@ -1,299 +1,212 @@
-Return-Path: <linux-kernel+bounces-187920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193BC8CDABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:18:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06EC08CDABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026E21C22C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:18:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2804C1C22DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC24B8565F;
-	Thu, 23 May 2024 19:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD1283A19;
+	Thu, 23 May 2024 19:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cgI4moMm"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="kTSDAl7v"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393EE85643
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7101FEC7;
+	Thu, 23 May 2024 19:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716491751; cv=none; b=BR+tuMSq0/3SU9o0b0gj2ZuCPAJWVPdW344S1wknqxVHOMhXiL4+OoRwDZ/9oEx/6F1qv+xLAe8rU8FMTsrKyzWhmTDEeTftGcyv2HSnrE9gyNNCF4DbTtRLS5x4n0KjY7NUg2s+6OR8+zHSMkOXI+1mOuJqy81Gar8F2gd/+h4=
+	t=1716491828; cv=none; b=ZzSZ2l34AMS8PXDupLgBGvSv0AqCOYh1hiL3q8AT4YTxNpSuGclpGXoqI2rNmhi/Q3C8P4y6mNWxaMESMp8qq8wVpXvy780Eo+0EqN+FpFbc4JA6KcM1IkQBSvZLkBe+5iqiaXomjTjOZdRQ5fxSaHtIi4At7lG5NySGnsuEDkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716491751; c=relaxed/simple;
-	bh=CtLXgavYKdr/P8ISBNI90oH6x47hhuCLLXFyLqS812I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GZAi6Ahu5xDx30vIlQ2lMlEsWqR579koxy2V5/Rpd4XZMZHOI9VjmauXVH1TymNeEnCiav9cLKrgBqCgNeJr1/Y7nzvmv/WpIVresLMgEMMUVJJN7JKvR9p134ThV7J5Ibk0QNOS0aR02MEiH2YIADyALidkkPxYfYlI3Nzi9y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cgI4moMm; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f361af4cb6so1743234a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1716491749; x=1717096549; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fgzBKFVe3W/OltftBIQOvr5AHwhCBi+hZRdG/bf/ttU=;
-        b=cgI4moMm9F+RgkeoK0uq6bvHfLI4iChKy9tCEWbicj5aRmBp+SmfoJEwCE0rXiuRkR
-         CvHiYtWQg0ze3HAXSLFc00jWuk0GHEd4WPiF46NDuz0vs/ZrUNVWuGkjx9d8MUL+mFli
-         0qOQU7WbNuHnB2dNdIY8q1Jwo1AhbUzJIRCaU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716491749; x=1717096549;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fgzBKFVe3W/OltftBIQOvr5AHwhCBi+hZRdG/bf/ttU=;
-        b=LYAmhj0hESBo+r/qwHxpyYa54SSweJQT0w3h4rW2cw1uGrAILWpJ/TO8PyqroMzDQ0
-         EIPGtZ13BWERBMquSCG+HcoQqGllDprBfVAq/aWNEzZbbJlEOazdnE0amdHHn1XkvDR3
-         Xyhp2bxJ4Ux336QsEeW3r+kQXuoxKG9aw4FL14Ht1prefBK1379iy2oCke1m2xCK5rPb
-         wKOMseaUERrLXlqWYXbmQKHynFWZNRXjyNjKah4yLfJD1ihzJ2lCHpLHSDqztV+hve+r
-         J1wQ1sPMBk4CdfJ/rFXvjma5C3HtSABR/2N7RZSySZJRfp5r0xE8ebOEDe6JL2NSPg8k
-         O87A==
-X-Gm-Message-State: AOJu0YyF/EfyUU/BTq4ld/T1DxpbmWItVJcw6eGA7bfJds/7+jpB+Psf
-	XSp3xFiTWbA5AQwcHwjxvzwxrZStc9gFWCc/WfMkuPCYFLy57qAPrAfXe9gmexDY6kdFOhWJDli
-	mDVldj1tAKl5Qcil/uxL7uXs+FsQVcvZCEu+pCFDRGWMqZ3Kt/NYrtnds+QiytQ/hk6b3Qc3NPg
-	muA/i+PuV56/gPVNZq7x5y/vsdjoa3hZw4CmwxamZEhfZfVxaZz0r/
-X-Google-Smtp-Source: AGHT+IFIES0y9tyA39bbH0WcsYXfN6xUHyXubvmnxKL37VPcvXYxEo1GXmXuPClunC8egt2W/hJcDQ==
-X-Received: by 2002:a9d:6c11:0:b0:6f0:e8a8:da6b with SMTP id 46e09a7af769-6f8d0b30fd1mr116700a34.36.1716491748866;
-        Thu, 23 May 2024 12:15:48 -0700 (PDT)
-Received: from amakhalov-build-vm.eng.vmware.com ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e4a89b61dsm21219821cf.45.2024.05.23.12.15.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 12:15:48 -0700 (PDT)
-From: Alexey Makhalov <alexey.makhalov@broadcom.com>
-To: linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	bp@alien8.de,
-	hpa@zytor.com,
-	dave.hansen@linux.intel.com,
-	mingo@redhat.com,
-	tglx@linutronix.de
-Cc: x86@kernel.org,
-	netdev@vger.kernel.org,
-	richardcochran@gmail.com,
-	linux-input@vger.kernel.org,
-	dmitry.torokhov@gmail.com,
-	zackr@vmware.com,
-	linux-graphics-maintainer@vmware.com,
-	pv-drivers@vmware.com,
-	timothym@vmware.com,
-	akaher@vmware.com,
-	dri-devel@lists.freedesktop.org,
-	daniel@ffwll.ch,
-	airlied@gmail.com,
-	tzimmermann@suse.de,
-	mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	horms@kernel.org,
-	kirill.shutemov@linux.intel.com,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Tim Merrifield <tim.merrifield@broadcom.com>
-Subject: [PATCH v10 8/8] x86/vmware: Add TDX hypercall support
-Date: Thu, 23 May 2024 12:14:46 -0700
-Message-Id: <20240523191446.54695-9-alexey.makhalov@broadcom.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20240523191446.54695-1-alexey.makhalov@broadcom.com>
-References: <20240523191446.54695-1-alexey.makhalov@broadcom.com>
+	s=arc-20240116; t=1716491828; c=relaxed/simple;
+	bh=uNGUNQ9KsgsDZadcwyQlZ1D5JgSmqisnB6q4PPRM+co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=otfuWsHBO2xls9Bzi+BZm98p5o363imXQjA6vfjW8NGKjYZMOPLuCNoyrdtECIbCmMbW9qtwMS2UyMNPV9qXdY0raBh+iEOSeQP81IlY8uyBRkZSOu2QZmwJzn5HMqvkZHCBwxu0BpaMTG2Lcs5CYDhxRm34lvZ2d5gsHLjr8Og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=kTSDAl7v; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4VldG44NCDz9sqJ;
+	Thu, 23 May 2024 21:17:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1716491820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uNGUNQ9KsgsDZadcwyQlZ1D5JgSmqisnB6q4PPRM+co=;
+	b=kTSDAl7vHeF57kcnonDRQSc3BeqErTPPT6cDqYrdAkfygq+3nVu7aBINjkNaa6sA92i71Q
+	bCJwynKZkXM07tVt6/NJeu3c5YaWiiEOb8/rWep3kIN4bTHmL8ZuqVZcEN+8g3huITrzF1
+	XfDWYqnQxLaBTsgJory/gvVRMTuGZvJ99V5UVp+nsFM7xLeyRTsV6lVIqC6vsFRPCgfA0k
+	Xtn2AK87xA/mSlJPglyPUOdXuxGbEMDNZK1DNL/vyCC985nIbT1F7bqnCGp+regWjB2oLn
+	oa0Z7IbTCoABUna5UUEvLCQ4/95+rwrWVAcwCNbKp/K8YW9v6h5ZrYw1qPW88g==
+Date: Thu, 23 May 2024 13:16:53 -0600
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
+Message-ID: <20240523.173855-tight.bourbon.gnarly.guest-p8Vv3g4JQ9A9@cyphar.com>
+References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
+ <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
+ <20240521-patentfrei-weswegen-0395678c9f9a@brauner>
+ <d225561221f558fe917e5554102394ce778a3758.camel@kernel.org>
+ <CAOQ4uxhbOzzawKeCNSCbFtPZAfiZFDXCqK4b_VSXeNyHxpbQsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="koyebb3xfqadvath"
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhbOzzawKeCNSCbFtPZAfiZFDXCqK4b_VSXeNyHxpbQsw@mail.gmail.com>
 
-VMware hypercalls use I/O port, VMCALL or VMMCALL instructions.
-Add __tdx_hypercall path to support TDX guests.
 
-No change in high bandwidth hypercalls, as only low bandwidth
-ones are supported for TDX guests.
+--koyebb3xfqadvath
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Co-developed-by: Tim Merrifield <tim.merrifield@broadcom.com>
-Signed-off-by: Tim Merrifield <tim.merrifield@broadcom.com>
-Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
----
- arch/x86/include/asm/vmware.h | 45 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/vmware.c  | 51 +++++++++++++++++++++++++++++++++++
- 2 files changed, 96 insertions(+)
+On 2024-05-21, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Tue, May 21, 2024 at 5:27=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
+wrote:
+> >
+> > On Tue, 2024-05-21 at 16:11 +0200, Christian Brauner wrote:
+> > > On Tue, May 21, 2024 at 03:46:06PM +0200, Christian Brauner wrote:
+> > > > On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
+> > > > > Now that we have stabilised the unique 64-bit mount ID interface =
+in
+> > > > > statx, we can now provide a race-free way for name_to_handle_at(2=
+) to
+> > > > > provide a file handle and corresponding mount without needing to =
+worry
+> > > > > about racing with /proc/mountinfo parsing.
+> > > > >
+> > > > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_=
+* bit
+> > > > > that doesn't make sense for name_to_handle_at(2).
+> > > > >
+> > > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > > > ---
+> > > >
+> > > > So I think overall this is probably fine (famous last words). If it=
+'s
+> > > > just about being able to retrieve the new mount id without having to
+> > > > take the hit of another statx system call it's indeed a bit much to
+> > > > add a revised system call for this. Althoug I did say earlier that I
+> > > > wouldn't rule that out.
+> > > >
+> > > > But if we'd that then it'll be a long discussion on the form of the=
+ new
+> > > > system call and the information it exposes.
+> > > >
+> > > > For example, I lack the grey hair needed to understand why
+> > > > name_to_handle_at() returns a mount id at all. The pitch in commit
+> > > > 990d6c2d7aee ("vfs: Add name to file handle conversion support") is=
+ that
+> > > > the (old) mount id can be used to "lookup file system specific
+> > > > information [...] in /proc/<pid>/mountinfo".
+> > > >
+> > > > Granted, that's doable but it'll mean a lot of careful checking to =
+avoid
+> > > > races for mount id recycling because they're not even allocated
+> > > > cyclically. With lots of containers it becomes even more of an issu=
+e. So
+> > > > it's doubtful whether exposing the mount id through name_to_handle_=
+at()
+> > > > would be something that we'd still do.
+> > > >
+> > > > So really, if this is just about a use-case where you want to spare=
+ the
+> > > > additional system call for statx() and you need the mnt_id then
+> > > > overloading is probably ok.
+> > > >
+> > > > But it remains an unpleasant thing to look at.
+> > >
+> > > And I'd like an ok from Jeff and Amir if we're going to try this. :)
+> >
+> > I don't have strong feelings about it other than "it looks sort of
+> > ugly", so I'm OK with doing this.
+> >
+> > I suspect we will eventually need name_to_handle_at2, or something
+> > similar, as it seems like we're starting to grow some new use-cases for
+> > filehandles, and hitting the limits of the old syscall. I don't have a
+> > good feel for what that should look like though, so I'm happy to put
+> > that off for a while.
+>=20
+> I'm ok with it, but we cannot possibly allow it without any bikeshedding.=
+=2E.
+>=20
+> Please call it AT_HANDLE_MNT_ID_UNIQUE to align with
+> STATX_MNT_ID_UNIQUE
+>=20
+> and as I wrote, I do not like overloading the AT_*_SYNC flags
+> and as there is no other obvious candidate to overload, so
+> I think that it is best to at least declare in a comment that
+>=20
+> /* 0x00ff flags are reserved for per-syscall flags */
+>=20
+> and use one of those bits for AT_HANDLE_MNT_ID_UNIQUE.
 
-diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
-index 78567920b23f..e9acce119be0 100644
---- a/arch/x86/include/asm/vmware.h
-+++ b/arch/x86/include/asm/vmware.h
-@@ -18,6 +18,12 @@
-  * arg2 - Hypercall command
-  * arg3 bits [15:0] - Port number, LB and direction flags
-  *
-+ * - Low bandwidth TDX hypercalls (x86_64 only) are similar to LB
-+ * hypercalls. They also have up to 6 input and 6 output on registers
-+ * arguments, with different argument to register mapping:
-+ * %r12 (arg0), %rbx (arg1), %r13 (arg2), %rdx (arg3),
-+ * %rsi (arg4), %rdi (arg5).
-+ *
-  * - High bandwidth (HB) hypercalls are I/O port based only. They have
-  * up to 7 input and 7 output arguments passed and returned using
-  * registers: %eax (arg0), %ebx (arg1), %ecx (arg2), %edx (arg3),
-@@ -54,12 +60,27 @@
- #define VMWARE_CMD_GETHZ		45
- #define VMWARE_CMD_GETVCPU_INFO		68
- #define VMWARE_CMD_STEALCLOCK		91
-+/*
-+ * Hypercall command mask:
-+ *   bits [6:0] command, range [0, 127]
-+ *   bits [19:16] sub-command, range [0, 15]
-+ */
-+#define VMWARE_CMD_MASK			0xf007fU
- 
- #define CPUID_VMWARE_FEATURES_ECX_VMMCALL	BIT(0)
- #define CPUID_VMWARE_FEATURES_ECX_VMCALL	BIT(1)
- 
- extern u8 vmware_hypercall_mode;
- 
-+#define VMWARE_TDX_VENDOR_LEAF 0x1af7e4909ULL
-+#define VMWARE_TDX_HCALL_FUNC  1
-+
-+extern unsigned long vmware_tdx_hypercall(unsigned long cmd,
-+					  unsigned long in1, unsigned long in3,
-+					  unsigned long in4, unsigned long in5,
-+					  u32 *out1, u32 *out2, u32 *out3,
-+					  u32 *out4, u32 *out5);
-+
- /*
-  * The low bandwidth call. The low word of %edx is presumed to have OUT bit
-  * set. The high word of %edx may contain input data from the caller.
-@@ -88,6 +109,10 @@ unsigned long vmware_hypercall1(unsigned long cmd, unsigned long in1)
- {
- 	unsigned long out0;
- 
-+	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
-+		return vmware_tdx_hypercall(cmd, in1, 0, 0, 0,
-+					    NULL, NULL, NULL, NULL, NULL);
-+
- 	asm_inline volatile (VMWARE_HYPERCALL
- 		: "=a" (out0)
- 		: [port] "i" (VMWARE_HYPERVISOR_PORT),
-@@ -106,6 +131,10 @@ unsigned long vmware_hypercall3(unsigned long cmd, unsigned long in1,
- {
- 	unsigned long out0;
- 
-+	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
-+		return vmware_tdx_hypercall(cmd, in1, 0, 0, 0,
-+					    out1, out2, NULL, NULL, NULL);
-+
- 	asm_inline volatile (VMWARE_HYPERCALL
- 		: "=a" (out0), "=b" (*out1), "=c" (*out2)
- 		: [port] "i" (VMWARE_HYPERVISOR_PORT),
-@@ -124,6 +153,10 @@ unsigned long vmware_hypercall4(unsigned long cmd, unsigned long in1,
- {
- 	unsigned long out0;
- 
-+	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
-+		return vmware_tdx_hypercall(cmd, in1, 0, 0, 0,
-+					    out1, out2, out3, NULL, NULL);
-+
- 	asm_inline volatile (VMWARE_HYPERCALL
- 		: "=a" (out0), "=b" (*out1), "=c" (*out2), "=d" (*out3)
- 		: [port] "i" (VMWARE_HYPERVISOR_PORT),
-@@ -143,6 +176,10 @@ unsigned long vmware_hypercall5(unsigned long cmd, unsigned long in1,
- {
- 	unsigned long out0;
- 
-+	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
-+		return vmware_tdx_hypercall(cmd, in1, in3, in4, in5,
-+					    NULL, out2, NULL, NULL, NULL);
-+
- 	asm_inline volatile (VMWARE_HYPERCALL
- 		: "=a" (out0), "=c" (*out2)
- 		: [port] "i" (VMWARE_HYPERVISOR_PORT),
-@@ -164,6 +201,10 @@ unsigned long vmware_hypercall6(unsigned long cmd, unsigned long in1,
- {
- 	unsigned long out0;
- 
-+	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
-+		return vmware_tdx_hypercall(cmd, in1, in3, 0, 0,
-+					    NULL, out2, out3, out4, out5);
-+
- 	asm_inline volatile (VMWARE_HYPERCALL
- 		: "=a" (out0), "=c" (*out2), "=d" (*out3), "=S" (*out4),
- 		  "=D" (*out5)
-@@ -185,6 +226,10 @@ unsigned long vmware_hypercall7(unsigned long cmd, unsigned long in1,
- {
- 	unsigned long out0;
- 
-+	if (cpu_feature_enabled(X86_FEATURE_TDX_GUEST))
-+		return vmware_tdx_hypercall(cmd, in1, in3, in4, in5,
-+					    out1, out2, out3, NULL, NULL);
-+
- 	asm_inline volatile (VMWARE_HYPERCALL
- 		: "=a" (out0), "=b" (*out1), "=c" (*out2), "=d" (*out3)
- 		: [port] "i" (VMWARE_HYPERVISOR_PORT),
-diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index 58442c2581e7..5bea95039690 100644
---- a/arch/x86/kernel/cpu/vmware.c
-+++ b/arch/x86/kernel/cpu/vmware.c
-@@ -428,6 +428,57 @@ static bool __init vmware_legacy_x2apic_available(void)
- 		(eax & GETVCPU_INFO_LEGACY_X2APIC);
- }
- 
-+#ifdef CONFIG_INTEL_TDX_GUEST
-+/*
-+ * TDCALL[TDG.VP.VMCALL] uses %rax (arg0) and %rcx (arg2). Therefore,
-+ * we remap those registers to %r12 and %r13, respectively.
-+ */
-+unsigned long vmware_tdx_hypercall(unsigned long cmd,
-+				   unsigned long in1, unsigned long in3,
-+				   unsigned long in4, unsigned long in5,
-+				   u32 *out1, u32 *out2, u32 *out3,
-+				   u32 *out4, u32 *out5)
-+{
-+	struct tdx_module_args args;
-+
-+	if (!hypervisor_is_type(X86_HYPER_VMWARE)) {
-+		pr_warn_once("Incorrect usage\n");
-+		return ULONG_MAX;
-+	}
-+
-+	if (cmd & ~VMWARE_CMD_MASK) {
-+		pr_warn_once("Out of range command %lx\n", cmd);
-+		return ULONG_MAX;
-+	}
-+
-+	args.rbx = in1;
-+	args.rdx = in3;
-+	args.rsi = in4;
-+	args.rdi = in5;
-+	args.r10 = VMWARE_TDX_VENDOR_LEAF;
-+	args.r11 = VMWARE_TDX_HCALL_FUNC;
-+	args.r12 = VMWARE_HYPERVISOR_MAGIC;
-+	args.r13 = cmd;
-+	args.r15 = 0; /* CPL */
-+
-+	__tdx_hypercall(&args);
-+
-+	if (out1)
-+		*out1 = args.rbx;
-+	if (out2)
-+		*out2 = args.r13;
-+	if (out3)
-+		*out3 = args.rdx;
-+	if (out4)
-+		*out4 = args.rsi;
-+	if (out5)
-+		*out5 = args.rdi;
-+
-+	return args.r12;
-+}
-+EXPORT_SYMBOL_GPL(vmware_tdx_hypercall);
-+#endif
-+
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- static void vmware_sev_es_hcall_prepare(struct ghcb *ghcb,
- 					struct pt_regs *regs)
--- 
-2.39.0
+I can switch the flag to use 0x80, but given there are already
+exceptions to that rule, it seems unlikely that this is going to be a
+strong guarantee going forward. I will add a comment though.
 
+Note that this will mean that we are planning to only have 15 remaining
+generic AT_* flags.
+
+> It does not matter whether we decide to unify the AT_ flags
+> namespace with RENAME_ flags namespace or not.
+>=20
+> The fact that there is a syscall named renameat2() with a flags
+> argument, means that someone is bound to pass in an AT_ flags
+> in this syscall sooner or later, so the least we can do is try to
+> delay the day that this will not result in EINVAL.
+
+While there is a risk this could happen, in theory a user could also
+incorrectly pass AT_* to open(). While ergonomics is important, I think
+that most users generally read the docs when figuring out how to use
+flags for syscalls (mainly because we don't have a unified flag
+namespace for all syscalls) so I don't think this is a huge problem.
+
+(But I'm sure I was part of making this problem worse with RESOLVE_*
+flags.)
+
+> Thanks,
+> Amir.
+>=20
+> P.S.: As I mentioned to Jeff in LSFMM, I have a patch in my tree
+> to add AT_HANDLE_CONNECTABLE which I have not yet
+> decided if it is upstream worthy.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--koyebb3xfqadvath
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZk+WJQAKCRAol/rSt+lE
+by4TAQCQNUX2D7HCh+NV0JF21tYfwHBNUcQ/1BWdJAddqW2nqgD9Hwc/zOJ0PXj2
+huGbDPFBr/cHKpn0xPi/6A7iy0pjuAU=
+=2vgL
+-----END PGP SIGNATURE-----
+
+--koyebb3xfqadvath--
 
