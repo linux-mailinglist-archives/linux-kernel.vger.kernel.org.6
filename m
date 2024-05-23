@@ -1,189 +1,174 @@
-Return-Path: <linux-kernel+bounces-187093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E078CCD0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AB88CCD0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A37A3B21313
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A9A1F21479
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F1113B592;
-	Thu, 23 May 2024 07:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CFE13C9D2;
+	Thu, 23 May 2024 07:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HR6Tzz0+"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="PYYckYVX";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IvK9V8R3"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65253A1BF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCA413B284;
+	Thu, 23 May 2024 07:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716449440; cv=none; b=dGP2sP9cATWYiL1qnjQBdmeQIlSaNIO/KVNJT1MNIPLQqbz4Md56wmvdGStMITelbft3mR9GjyRysnUhLtWtn7AoJ8MdiSR4ZQxJmEVKhyg9eP4STcy4iyYPwVT7E6ZnlyILYEYiJIgPXI0M85EawXo+oWUEeqmFd+6UA1UKKac=
+	t=1716449469; cv=none; b=E8NHHvrJx3b2OWbxbT+nRCOLxNMi9HwfA/nO6vOJr8WfJTOCiNdHkctjBbYrLmfun1iQjg4AmQi1LKr2N+l+gEWBiIT3lUmO+THEEV+i9j9pguSDiD1ENC6pH7A9aVZYQgtip2lLu0mXNLfDggm3ZhAPOuzPJswVZ7tSqPtdico=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716449440; c=relaxed/simple;
-	bh=wOxDKcGbG4teddMtysYkv+GMqM+lZeairyyUbKJet9o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VYpf3fw6hyIRO9S4Lx0nxoTGh2zKrr3cT2VTI7i1INF7tJkWmhEARmrLNMSy9NezVFd6Y0XTmcCJcCb+d2ReG4SMHp7j+HkD0HeK/dEa9CcTD6IBd3ztYdjK8B4uM+ng42OSqnm3QxYt1cQ7PHWBE9o0jmM2QVuL02LTS9E4T0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HR6Tzz0+; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a599c55055dso1054680866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716449437; x=1717054237; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YUckpd3f12M8kYaJMY5HnA/Fu7ehVQRJEnQQrDzdFKA=;
-        b=HR6Tzz0+arRlIIuFiHwckFKxtQm7bDbNVwBgQiiDn6Kf2p36jNQenS1DhhoKoqcxC2
-         yYmjA52vhKPqf674KkljHkUnuEt9IAmCc+EOwIvdPxPDc/kABjqi0EmD/IElkjeD6Wzq
-         HvxQPsbLFujbL42HJvqtLYcs28p9EFOSY2O8vFQnJ70QV7DqNkoKx7ZOr2zuLylFETcT
-         DvBpuPTcKYl1ZxSrcE1lnZ/fvTCWitPHI7M6sON5wGZkiYbNUrfbLM3tSUP1PH2ntp9r
-         evw1yWEqw9o4N0wcEJ6dLW6n3PhxLsc7RgZt7yIHOfR0v22V/GlN6pWbhN2+lRlEbdAA
-         uoZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716449437; x=1717054237;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YUckpd3f12M8kYaJMY5HnA/Fu7ehVQRJEnQQrDzdFKA=;
-        b=I7lB47qhcrmEs7SCcxNJYpQ2lBeTtnQhKZ91wwqkGwHEXHzyN4hmAy+YGh00f212FX
-         tzg8IiYOeYZNcMv52ZoexhMBV9b8y3IqxN7nTMCdAI8mOJ8z6iaR1NgWTkrf6FcuA+US
-         Jpb+JY5NJ2/XulCI78g6fbxk6iumhkT57fBghlBcqVkr+ig+cwyKZgFUxUKtMNfWEkQ6
-         5tsteNfnVfrqi7SF+NWJ613/tAr9UYJZHvOBMnI+8wec7eqfjipT379Pzd24kcukAfzC
-         ySyayZAwaThkBAinuJ8+idgnOUGekpVZYMpKa6np81c4PeT/XIAuZChf3OWeqvgg1JKe
-         lDSA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9i27e+5uVqw1ajUOFJlIHr+69Ja9WBBPnr/ThJoxmJXlQsvt6vAMe6AVz+pM5gIPYo/cHKMMGJGdZwIvnzemSixf87b2R8q5UvKXU
-X-Gm-Message-State: AOJu0Yw526fQvuR1xRWi11t7T1VHOgPnUqAclQlbm3nFg4mh5GJB/qQ6
-	w7hf5ArdIBiIHlQexC+J4GM8yoafYHSRe5FcqSquYCds01zGx2MampHeyvR4F5k=
-X-Google-Smtp-Source: AGHT+IEg8yrUmCNlfpPlVHZKKpplSIhv6sL7GTGMIAgYNR9Fx/APKeFhT3bY1HqnCGw2fw6dqJEnqw==
-X-Received: by 2002:a17:906:c799:b0:a59:d2ac:3858 with SMTP id a640c23a62f3a-a622806b89amr257389966b.11.1716449436803;
-        Thu, 23 May 2024 00:30:36 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:825d:600a:c16:a973? ([2a01:e0a:982:cbb0:825d:600a:c16:a973])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d2dcsm1892573566b.44.2024.05.23.00.30.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 00:30:36 -0700 (PDT)
-Message-ID: <b55df123-4e22-4cba-b36f-41b4cf117e15@linaro.org>
-Date: Thu, 23 May 2024 09:30:34 +0200
+	s=arc-20240116; t=1716449469; c=relaxed/simple;
+	bh=E6KSMHkcFqMBfxwvW0aqU0sxVmzpbZ2ANCBUp28KRoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZBgXFtEvBWhKJ38IG2epV4hlEEQ+7/qIvF+p/k/Z6RHDITQrCBkvcz03oE9QnlBka8pcP0q518UzvvFm7WKuNO/uXxn+crDj4Hxnej72cX/n0DzsgJscHuZCWqE5e2R9pTrj95kj6O9cN95pg0OHfxcBw/mkZW+JkIEIoe0nzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=PYYckYVX; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IvK9V8R3; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5A207221BE;
+	Thu, 23 May 2024 07:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716449461; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VXofB/MrwbBei8swbKQAdzf6vUd6YCUPSlTpcTrnuI8=;
+	b=PYYckYVXkrSJAlsjvASJofbHz9wflc/AaIh5IEXIF568ssr4dNvTsd7gDBcw5omcxPs2vh
+	MtNKZxT0F2l13DKq/xNE3xwrvMYye/zwOraPNajynCzrenmlYTndD1+Jds6dlWyDR2xDMS
+	0iAnOJPcWDA3J1X9cN+CmNGLhIHZFmw=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716449460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VXofB/MrwbBei8swbKQAdzf6vUd6YCUPSlTpcTrnuI8=;
+	b=IvK9V8R38dhZDQYWTBxFFJai+li2mt6n1f9i5aMy9D1ZFHZv1MDfuk/cRosCnhCeMhOopp
+	ACOBVD/7U2zad7eXDKdKZHM2IPaXDBroqcXW7L3XatC4HrBgc2QMQNjcPwJFGyM5qozDwn
+	LMOxfW8UXw2ac2xUYKNkEnWTUZqwfi8=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 376CB13A6C;
+	Thu, 23 May 2024 07:31:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BzjTCrTwTmZhRwAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Thu, 23 May 2024 07:31:00 +0000
+Date: Thu, 23 May 2024 09:30:59 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Oscar Salvador <OSalvador@suse.com>
+Cc: Peter Xu <peterx@redhat.com>, cve@kernel.org,
+	linux-kernel@vger.kernel.org, linux-cve-announce@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: CVE-2024-36000: mm/hugetlb: fix missing hugetlb_lock for resv
+ uncharge
+Message-ID: <Zk7ws6H0wwuiFAJW@tiehlicka>
+References: <2024052023-CVE-2024-36000-cfc4@gregkh>
+ <Zkto8rbtAUBql-78@tiehlicka>
+ <Zkz4RRgfwUHPbQ5z@x1n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH RFC] drm/panel-edp: add fat warning against adding new
- panel compatibles
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Douglas Anderson <dianders@chromium.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240523-edp-panel-drop-v1-1-045d62511d09@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240523-edp-panel-drop-v1-1-045d62511d09@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zkz4RRgfwUHPbQ5z@x1n>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On 23/05/2024 00:07, Dmitry Baryshkov wrote:
-> Add a fat warning against adding new panel compatibles to the panel-edp
-> driver. All new users of the eDP panels are supposed to use the generic
-> "edp-panel" compatible device on the AUX bus. The remaining compatibles
-> are either used by the existing DT or were used previously and are
-> retained for backwards compatibility.
-> 
-> Suggested-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> The following compatibles were never used by the devices supported by
-> the upstream kernel and are a subject to possible removal:
-> 
-> - auo,b133han05
-> - auo,b140han06
-> - ivo,m133nwf4-r0
-> - lg,lp097qx1-spa1
-> - lg,lp129qe
-> - samsung,lsn122dl01-c01
-> - samsung,ltn140at29-301
-> - sharp,ld-d5116z01b
-> - sharp,lq140m1jw46
-> - starry,kr122ea0sra
-> 
-> I'm considering dropping them, unless there is a good reason not to do
-> so.
-> ---
->   drivers/gpu/drm/panel/panel-edp.c | 18 +++++++++++++++++-
->   1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-> index 6db277efcbb7..95b25ec67168 100644
-> --- a/drivers/gpu/drm/panel/panel-edp.c
-> +++ b/drivers/gpu/drm/panel/panel-edp.c
-> @@ -1776,7 +1776,23 @@ static const struct of_device_id platform_of_match[] = {
->   	{
->   		/* Must be first */
->   		.compatible = "edp-panel",
-> -	}, {
-> +	},
-> +	/*
-> +	 * Do not add panels to the list below unless they cannot be handled by
-> +	 * the generic edp-panel compatible.
-> +	 *
-> +	 * The only two valid reasons are:
-> +	 * - because of the panel issues (e.g. broken EDID or broken
-> +	 *   identification),
-> +	 * - because the platform which uses the panel didn't wire up the AUX
-> +	 *   bus properly.
-> +	 *
-> +	 * In all other cases the platform should use the aux-bus and declare
-> +	 * the panel using the 'edp-panel' compatible as a device on the AUX
-> +	 * bus. The lack of the aux-bus support is not a valid case. Platforms
-> +	 * are urged to be converted to declaring panels in a proper way.
-> +	 */
-> +	{
->   		.compatible = "auo,b101ean01",
->   		.data = &auo_b101ean01,
->   	}, {
-> 
-> ---
-> base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
-> change-id: 20240523-edp-panel-drop-00aa239b3c6b
-> 
-> Best regards,
+Let me add Oscar,
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+On Tue 21-05-24 15:38:45, Peter Xu wrote:
+> On Mon, May 20, 2024 at 05:14:58PM +0200, Michal Hocko wrote:
+> > Peter,
+> 
+> Hi, Michal,
+> 
+> > does b76b46902c2d ("mm/hugetlb: fix missing hugetlb_lock for resv
+> > uncharge") really have any security implications? I fail to see any but
+> > UFFD is not really my area so I might be missing something very easily.
+> 
+> AFAIU that issue wasn't userfault specific, but a generic issue for hugetlb
+> - I believe that can also trigger in other paths whoever try to call
+> alloc_hugetlb_folio(), and UFFDIO_COPY is one user of it.
+> 
+> I looked at that and provided a fix only because the report originated from
+> the uffd report, so Andrew normally pointing those to me, and since I
+> looked anyway I tried to fix that.
+
+OK, I see. Thanks for the clarification.
+
+> Here in general what I can see is that the lock is needed since this
+> commit:
+> 
+>     commit 94ae8ba7176666d1e7d8bbb9f93670a27540b6a8
+>     Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+>     Date:   Tue Jul 31 16:42:35 2012 -0700
+> 
+>     hugetlb/cgroup: assign the page hugetlb cgroup when we move the page to active list.
+> 
+> That commit mentioned that we rely on the lock to make sure all hugetlb
+> folios on the active list will have a valid memcg.  However I'm not sure
+> whether it's still required now (after all that's 2012..), e.g., I'm
+> looking at hugetlb_cgroup_css_offline(), and hugetlb_cgroup_move_parent()
+> looks all safe to even take empty memcg folios with the latest code at
+> least:
+> 
+> 	/*
+> 	 * We can have pages in active list without any cgroup
+> 	 * ie, hugepage with less than 3 pages. We can safely
+> 	 * ignore those pages.
+> 	 */
+> 	if (!page_hcg || page_hcg != h_cg)
+> 		goto out;
+> 
+> In short, I don't know any further security implications on this problem
+> besides LOCKDEP enabled.  But I don't think I fully understand the hugetlb
+> reservation code, so please just take that with a grain of salt.  E.g.,
+> right now we do the hugetlb_cgroup_uncharge_folio_rsvd(), then could it
+> happen that this folio will still be used finally and got injected into the
+> pgtables (after all, alloc_hugetlb_folio() will still return this folio to
+> the caller with a success), and would that be a problem if this folio has
+> its _hugetlb_cgroup_rsvd==NULL?  That looks like another question besides
+> this specific problem, though..
+
+Oscar, could you have a look please?
+
+-- 
+Michal Hocko
+SUSE Labs
 
