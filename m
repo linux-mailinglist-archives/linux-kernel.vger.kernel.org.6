@@ -1,424 +1,124 @@
-Return-Path: <linux-kernel+bounces-187134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D918CCDA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:01:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E97F8CCDA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F21FB22355
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:01:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5DF28175B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C05713E027;
-	Thu, 23 May 2024 07:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDBE12AAF0;
+	Thu, 23 May 2024 08:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vC3KHeFL"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsbNDiAq"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1C113D29E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142907CF39
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716451191; cv=none; b=iCqMvabq2h9BZfNp72ehW4TSF0CA+k533u1fR5bSUTgwiAlNk+xGjAAjuM2l1FxkU53fKqlqJn5y5JQn9Jk/+bSZ3SiAyWIxpkAntB11nplqHbK4hxEexLzbRysMQYa2rGLMJ+Ngp0VWikV4pwAFG9v7Gj7PMoeHEukP9cizFQk=
+	t=1716451304; cv=none; b=i8svwJGHrpv3oIXuxjK0Iz/tnd0OXrJl05EyvNFbrL1e1LP/wedoRtLi1UzPRyW7G4igkjhwCUBE//qk1Ao8AcpAHyJRqe2xDsum7/z+i9QQl7gNP2ldIbc6FfaVNjENKlw9aFtb7feLfy2Gj7ricfDID8b+y4z+oqm7eP4n0HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716451191; c=relaxed/simple;
-	bh=EMPeNyzBpqMjF6F7TP+1J/G1NKheB8Yvdxf4QEA8UKg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qoPQ7hICY0AZSGJ1RLxLqZ3k+sr6pyxYvQJW5I5ybZdDnYKVPMHZ+CCAVcXyJ4l6SLYJe4QJ0ukrL+2Oue6Wr6JCEoIZKtCb/5DfxckvNwPWbNCuzT87Hki2LOIeKi4JAVDMake3W5JQLUOIR4a6Wfe3rRN5TnI5lQ3/22KJC0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vC3KHeFL; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59ad344f7dso888315766b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:59:48 -0700 (PDT)
+	s=arc-20240116; t=1716451304; c=relaxed/simple;
+	bh=OngIlb47S3YobCM0VNUm0ihKj9vQJT696KAhiM1x5/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LDsD+hl6gxEf1ScmgkPCNiHSKBrU8wZ16BdLY3Fl+lt/x9mEALOAP1/ds26VumY+WDYemxHaeKslaKZVM4aNAatwS808CumR/ritBMmj1H+VHCAoEn0mgZJab17dpeSykSjZCam0F2gP9StMrBTf93kRjMJwhEap9LT/yjMp/dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsbNDiAq; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e719bab882so57053321fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:01:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716451187; x=1717055987; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xAaEs9RkQ8GaTEt79EKKeWtnQKePqeTaokONVnHxvj4=;
-        b=vC3KHeFLTX5ueqkOc4OpSasoRTULlb1xv6tKmlkOXRRH++IksyqD7ip5ecRBwfCvoa
-         A2yk9ucmjh5ynRmC2aHvxXPqbABEw/iQBjCrzWpbD1tRfseLAfx9liNqd/cq0tT/Mod2
-         1SSeLEJKNIM2+Af80yKzWSQZo9aBjMUhHUHJKT+gKHBKseklAJOySVQ/QqoQdgpSMDgy
-         MendY3s4II0x2i9lZOObmdsrTCsSjmpMO/F7RR4zt3/tQq6qsZBZM9+rbCrRR5NLIesG
-         +PYaCdk8Cdkc/X+0dpyjR5nrNxTsNSZlwhotIXTCdVqo14eD1XUSSILnzuZ88phnMeJ5
-         sn5Q==
+        d=gmail.com; s=20230601; t=1716451301; x=1717056101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZluRRQ9XyXo20qI6tf/Kv1PIsqdwtqNbch7EYxePXUk=;
+        b=bsbNDiAq+QgNMisKI+r1tsB7vYS3rt7oMt0zwUPs88GxPIUpUBZ9xhIqALN9Zf+Da/
+         +Lp1HjEep3AxOkPmRAOoXwPNxWCln7wJO26dACtw3Bx4U3t1fH+8LuxQSOT3vdoaur0C
+         DOyNrPS4i5PsEcL9KqNcpYU6X2RIU17GE3vsDm5DrUt73DbM1UnFF4Pt9BRA6HJp8Ns5
+         IgJvFwVafDaSGRrmYkmvA/VrhEthiJTzC+8yjTEUf7Y00SoR9mpWCQqfR3PBOydlVwa+
+         IafSSCiBb1eHa0n5jxe+CdhuSO94m2ZQmaC5WCdqLuEd+QVwYII5X7lNip5Zr7sRloFC
+         7WWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716451187; x=1717055987;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xAaEs9RkQ8GaTEt79EKKeWtnQKePqeTaokONVnHxvj4=;
-        b=iSh/UJZBOWLbsxhyiiz3ZegPqz0Ys4axiX/8XNesANVQQBHCIJYHf4kHO5c/jbpxN/
-         Is9x4D4He83XOW1xDHDbM71cLth4HZnhjn6iTbOPBJAPfigN/4dn7fcmSa1Y69RH4ox+
-         VDwKxorXV1ooKuGYaXwFAFtwpfvDRgUc5GGxwccg5dC61Hp5x9Wn0jEYZYZ3ejZJ1B+Z
-         y6LbeOymfkrYdND5HCCWWE0gDlfLWw0l5e6Lk50W0OjUno3c5WhurQARZRbwhxCNPUlH
-         9qKWOZ58b915z82WIcPH8wj4XKPh74BsZxvTgMFU3xiXvLQZ86gK+SIC63kHpv71yHS1
-         zP+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVrTomfLP28FF/OOkSiBsmkqmJYSD2dtku2a/2AuWL2N+TbXHQ+eClRGtKuqZAzSN/JGlAJmHu0omeuhX/z0QB03GguKBvdQu3ajGZ1
-X-Gm-Message-State: AOJu0YxYOpRI7MAsuhFDwX8Av6WClSrbM/J9isLYfd9Pw2zssbb3qNhO
-	yTdtE4+gS5+KioxwSAZT+/lxMH2d1O9HwpAHvPfJsJZPg+dK/nXasycl/ZXhe2w=
-X-Google-Smtp-Source: AGHT+IFzIRW5KpKYhr1bcsYmnRmMVcvlJKlZWsXcd8k4uOMAlIusT89UAXldyn+Zj9Kv6XaA2ZHUlw==
-X-Received: by 2002:a17:906:1b1a:b0:a59:9eab:1630 with SMTP id a640c23a62f3a-a6228170ac8mr251396266b.69.1716451187124;
-        Thu, 23 May 2024 00:59:47 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:e0a:982:cbb0:825d:600a:c16:a973])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5ec2a8f320sm719100066b.170.2024.05.23.00.59.46
+        d=1e100.net; s=20230601; t=1716451301; x=1717056101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZluRRQ9XyXo20qI6tf/Kv1PIsqdwtqNbch7EYxePXUk=;
+        b=bs2Nal9nP5HGYhpkB8DdMYnehRYWVDOqMxijw4hJv3N6BwdFLItbNwGbBUnGthOkFa
+         vvtgHk6eiGk1LmtHdG19W+1qQr4knK2pFGlQUU5f+CyMEZk+EKepXdibJgy3Li5PtHMv
+         LjEwwkIDDjQ1ucQ24QnpCE6IqVuaajBrdsXNf1SNnkE0IwfZSwvkEP23MspzCvEzWBnZ
+         fYlm0j5w3WA5rG7nOlyPMWHgz6Ih1EEg4QtLFxJnOXo10QrxtIiOcMF/faFzqFrtAi9r
+         hxCF61+k9PaTj+gz76uMq2oBR75YYgsX04qRvNpLV3hN0UHA7VcidxV/dU03TZI0B4+/
+         io0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXA2YPYAZAGKhilfmZnxPHh9Ur3SNN5kN6OcQhkgM+BHjQZJYcg3dJaFry4xIeGKSNm3vvi9430EelPxy7iEBuD54655Y/9GjUQgPbr
+X-Gm-Message-State: AOJu0Yw/y2uSmRbQVuQzjvy+EY4RC/OKMJ3PMV0Gc9+0itXOtlDlf7JI
+	3WxgaB+hsXdrYXNuBTZt7jEp9UP4sZUQQIpJTyouR5tZtOICH//h
+X-Google-Smtp-Source: AGHT+IEP8QHHLCRarDBboaWu7hRaU4vf5dunldJNtpdKLpOgkI7yExL6vlD475Ef66rcj4+zUc8fIg==
+X-Received: by 2002:a2e:850a:0:b0:2d6:c43e:f0b3 with SMTP id 38308e7fff4ca-2e9496ba782mr25884081fa.50.1716451301010;
+        Thu, 23 May 2024 01:01:41 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f1548bsm17489045e9.11.2024.05.23.01.01.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 00:59:46 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 23 May 2024 09:59:35 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: sdm450: add Lenovo Smart Tab M10 DTS
+        Thu, 23 May 2024 01:01:40 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>
+Subject: [PATCH 1/2] percpu: Add __this_cpu_try_cmpxchg()
+Date: Thu, 23 May 2024 10:00:31 +0200
+Message-ID: <20240523080136.9863-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240523-topic-sdm450-upstream-tbx605f-v1-3-e52b89133226@linaro.org>
-References: <20240523-topic-sdm450-upstream-tbx605f-v1-0-e52b89133226@linaro.org>
-In-Reply-To: <20240523-topic-sdm450-upstream-tbx605f-v1-0-e52b89133226@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7632;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=EMPeNyzBpqMjF6F7TP+1J/G1NKheB8Yvdxf4QEA8UKg=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmTvdssFfIE2msY0iYo5LB2llo4qkeVujTPB5kY
- 2zhBBjDUCiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZk73bAAKCRB33NvayMhJ
- 0Qe5D/9TDRmZl5J334RwgT+Dvm0oC8psBIp6gnDjAWUxn8nSItA9dXih21QkImb2UaA1EtIML+B
- PaKqAZq8Rx+1YAxdz7btW7F0/cjCD9m/tUUQKkwghsveCZ9sRlIhYP2ObqCVzx7Lhxy1bIoZAw2
- JfCcOnO9w3Bl7qO2mUqGHzrlhYVnTDs/y2xYI2Uvisz+DnYXD5V2Lv7gaFkFsPFyVjQ6eNBBxhC
- RFnHXrls+4fB7oQtT0lARnnJrGYzUKAorolOI94klTkb2n8qFRZI6iSS7YZZ0JuQ2FW7c193HfR
- fZC3W8TYdxVRFVyncYR+h5EvFlXcultJGw1tI80TbIblke2GesbDBH4um4Z7x40BvLfYzjOQndv
- 3UDwxYYiYBTulPVNnDMMb1R5SRiDdv5pBS96Rsd7qKIYMy9Bzml+0Pc8J07bYmmqrlIvZTbGEe1
- 8Q9EchtSz7QALsj/egSdEiwA5icrn3lDPW3HrSR4oUfuQ7Ocf9mrznCu00y/zaoV/gPULqP1Z8F
- qxZr1KLbX5mTQsH68qE0ZoJmbiZbf+uM17Fwr7fXU2RnKfIhrIFJJI5uoPiPkBJr+eA4IcTK+Sf
- l0UqcCG10jlJOf3sL0yM6KZ2P5omf1jlkvFpP51lUAZicrmlB2QLVUJde6Gjn9TWjd1l+lOtX93
- psiDbMhkRmxUjrg==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Transfer-Encoding: 8bit
 
-This add initial support for the Lenovo Smart Tab M10 (WiFi)
-(model tbx605f) which is a 10.1" tablet by Lenovo based on the
-SDM450 SoC.
+Add __this_cpu_try_cmpxchg() version of the percpu op.
 
-It has a 10.1" LCP touch panel, SDCard slot, Volume+Power buttons,
-USB-C port amd front-facing camera (not supported).
-
-The proper LCP Panel support will be added later, for now using the
-simeple-framebuffer with the bootloader-initialized video memory.
-
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Lorenzo Stoakes <lstoakes@gmail.com>
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
 ---
- arch/arm64/boot/dts/qcom/Makefile                  |   1 +
- arch/arm64/boot/dts/qcom/sdm450-lenovo-tbx605f.dts | 276 +++++++++++++++++++++
- 2 files changed, 277 insertions(+)
+ include/linux/percpu-defs.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 7d40ec5e7d21..f163eedd2af2 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -175,6 +175,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sc8180x-primus.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc8280xp-crd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc8280xp-lenovo-thinkpad-x13s.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sda660-inforce-ifc6560.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= sdm450-lenovo-tbx605f.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm450-motorola-ali.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm630-sony-xperia-ganges-kirin.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sdm630-sony-xperia-nile-discovery.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sdm450-lenovo-tbx605f.dts b/arch/arm64/boot/dts/qcom/sdm450-lenovo-tbx605f.dts
-new file mode 100644
-index 000000000000..175befc02b22
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sdm450-lenovo-tbx605f.dts
-@@ -0,0 +1,276 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Neil Armstrong <neil.armstrong@linaro.org>
-+ */
-+/dts-v1/;
+diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
+index ec3573119923..8efce7414fad 100644
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -475,6 +475,12 @@ do {									\
+ 	raw_cpu_cmpxchg(pcp, oval, nval);				\
+ })
+ 
++#define __this_cpu_try_cmpxchg(pcp, ovalp, nval)			\
++({									\
++	__this_cpu_preempt_check("try_cmpxchg");			\
++	raw_cpu_try_cmpxchg(pcp, ovalp, nval);				\
++})
 +
-+#include "sdm450.dtsi"
-+#include "pm8953.dtsi"
-+#include "pmi8950.dtsi"
-+
-+/ {
-+	model = "Lenovo Smart Tab M10";
-+	compatible = "lenovo,tbx605f", "qcom,sdm450";
-+	chassis-type = "tablet";
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer@90001000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0x90001000 0 (1200 * 1920 * 3)>;
-+
-+			width = <1200>;
-+			height = <1920>;
-+			stride = <(1200 * 3)>;
-+			format = "r8g8b8";
-+
-+			power-domains = <&gcc MDSS_GDSC>;
-+
-+			clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+				 <&gcc GCC_MDSS_AXI_CLK>,
-+				 <&gcc GCC_MDSS_VSYNC_CLK>,
-+				 <&gcc GCC_MDSS_MDP_CLK>,
-+				 <&gcc GCC_MDSS_BYTE0_CLK>,
-+				 <&gcc GCC_MDSS_PCLK0_CLK>,
-+				 <&gcc GCC_MDSS_ESC0_CLK>;
-+		};
-+	};
-+
-+	reserved-memory {
-+		other_ext_region@0 {
-+			no-map;
-+			reg = <0x00 0x84500000 0x00 0x2300000>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		key-volume-up {
-+			label = "volume_up";
-+			gpios = <&tlmm 85 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+		};
-+	};
-+
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&hsusb_phy {
-+	vdd-supply = <&pm8953_l3>;
-+	vdda-pll-supply = <&pm8953_l7>;
-+	vdda-phy-dpdm-supply = <&pm8953_l13>;
-+
-+	status = "okay";
-+};
-+
-+&i2c_3 {
-+	status = "okay";
-+
-+	touchscreen@38 {
-+		compatible = "edt,edt-ft5506";
-+		reg = <0x38>;
-+		interrupt-parent = <&tlmm>;
-+		interrupts = <65 IRQ_TYPE_EDGE_FALLING>;
-+		vcc-supply = <&pm8953_l10>;
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
-+
-+		reset-gpios = <&tlmm 64 GPIO_ACTIVE_LOW>;
-+		touchscreen-size-x = <1200>;
-+		touchscreen-size-y = <1920>;
-+	};
-+};
-+
-+&pm8953_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators {
-+		compatible = "qcom,rpm-pm8953-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_s2-supply = <&vph_pwr>;
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+		vdd_s5-supply = <&vph_pwr>;
-+		vdd_s6-supply = <&vph_pwr>;
-+		vdd_s7-supply = <&vph_pwr>;
-+		vdd_l1-supply = <&pm8953_s3>;
-+		vdd_l2_l3-supply = <&pm8953_s3>;
-+		vdd_l4_l5_l6_l7_l16_l19-supply = <&pm8953_s4>;
-+		vdd_l8_l11_l12_l13_l14_l15-supply = <&vph_pwr>;
-+		vdd_l9_l10_l17_l18_l22-supply = <&vph_pwr>;
-+
-+		pm8953_s1: s1 {
-+			regulator-min-microvolt = <870000>;
-+			regulator-max-microvolt = <1156000>;
-+		};
-+
-+		pm8953_s3: s3 {
-+			regulator-min-microvolt = <1224000>;
-+			regulator-max-microvolt = <1224000>;
-+		};
-+
-+		pm8953_s4: s4 {
-+			regulator-min-microvolt = <1900000>;
-+			regulator-max-microvolt = <2050000>;
-+		};
-+
-+		pm8953_l1: l1 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1100000>;
-+		};
-+
-+		pm8953_l2: l2 {
-+			regulator-min-microvolt = <975000>;
-+			regulator-max-microvolt = <1225000>;
-+		};
-+
-+		pm8953_l3: l3 {
-+			regulator-min-microvolt = <925000>;
-+			regulator-max-microvolt = <925000>;
-+		};
-+
-+		pm8953_l5: l5 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8953_l6: l6 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8953_l7: l7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1900000>;
-+		};
-+
-+		pm8953_l8: l8 {
-+			regulator-min-microvolt = <2900000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8953_l9: l9 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8953_l10: l10 {
-+			regulator-min-microvolt = <2850000>;
-+			regulator-max-microvolt = <2850000>;
-+		};
-+
-+		pm8953_l11: l11 {
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8953_l12: l12 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+		};
-+
-+		pm8953_l13: l13 {
-+			regulator-min-microvolt = <3125000>;
-+			regulator-max-microvolt = <3125000>;
-+		};
-+
-+		pm8953_l16: l16 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8953_l17: l17 {
-+			regulator-min-microvolt = <2850000>;
-+			regulator-max-microvolt = <2850000>;
-+		};
-+
-+		pm8953_l19: l19 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1350000>;
-+		};
-+
-+		pm8953_l22: l22 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2850000>;
-+		};
-+
-+		pm8953_l23: l23 {
-+			regulator-min-microvolt = <975000>;
-+			regulator-max-microvolt = <1225000>;
-+		};
-+	};
-+};
-+
-+&sdhc_1 {
-+	vmmc-supply = <&pm8953_l8>;
-+	vqmmc-supply = <&pm8953_l5>;
-+
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	vmmc-supply = <&pm8953_l11>;
-+	vqmmc-supply = <&pm8953_l12>;
-+
-+	cd-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
-+
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_off>;
-+	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
-+
-+	status = "okay";
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <0 4>, <135 4>;
-+
-+	ts_int_active: ts-int-active-state {
-+		pins = "gpio65";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-up;
-+	};
-+
-+	ts_reset_active: ts-reset-active-state {
-+		pins = "gpio64";
-+		function = "gpio";
-+		drive-strength = <0x08>;
-+		bias-pull-up;
-+	};
-+};
-+
-+&usb3 {
-+	status = "okay";
-+};
-+
-+&usb3_dwc3 {
-+	dr_mode = "peripheral";
-+};
-+
-+&wcnss {
-+	vddpx-supply = <&pm8953_l5>;
-+
-+	status = "okay";
-+};
-+
-+&wcnss_iris {
-+	compatible = "qcom,wcn3660b";
-+
-+	vddxo-supply = <&pm8953_l7>;
-+	vddrfa-supply = <&pm8953_l19>;
-+	vddpa-supply = <&pm8953_l9>;
-+	vdddig-supply = <&pm8953_l5>;
-+};
-
+ #define __this_cpu_sub(pcp, val)	__this_cpu_add(pcp, -(typeof(pcp))(val))
+ #define __this_cpu_inc(pcp)		__this_cpu_add(pcp, 1)
+ #define __this_cpu_dec(pcp)		__this_cpu_sub(pcp, 1)
 -- 
-2.34.1
+2.45.1
 
 
