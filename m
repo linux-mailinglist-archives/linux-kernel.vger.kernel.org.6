@@ -1,118 +1,161 @@
-Return-Path: <linux-kernel+bounces-186857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43ACE8CCA16
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:23:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E955E8CCA18
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17AD1F22317
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172BA1C2114F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670151370;
-	Thu, 23 May 2024 00:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7E717F6;
+	Thu, 23 May 2024 00:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZwjnPYb5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cOYMj7fs"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A147B1852;
-	Thu, 23 May 2024 00:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C23365
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716423777; cv=none; b=QzSbXNMxD2lKaFrFuG8V2pxDcppkgdCsx/qH5MHQZH08ADI7KPJKL766bzUmWS0XdkGkplceB5uFZ07WaPfXQpsFfmRqJ2/nAVhXJU0PrWy7pzowEMklc9Et7FY+m4wtfGF+M/zkZxXcYn/G8vc160Q1LLYJxl8Ms2YLDtnUHSY=
+	t=1716423811; cv=none; b=QhrCrHMJSpqHy/mF7zdtrMJbhDMtVDtCrhtpynkEZqGGedsvx56awCLhSFTam7MOivklx9/LAyrfiILVNNJoegR2uVHeFec+K2SyXwCptQ4s2rjAGgfKqMRp9ENNntMSkbbW6YnXowrrSYAMNG6VUVK9MVdxfrjRE17OHf/22Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716423777; c=relaxed/simple;
-	bh=VLpY7qGGY9Uj9hsj8eL1ZfMyVa4v25mTJX9xhzdLAww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgf5WUq+1qRag5ujiFvXFAzvXeVS4M2TcBTDlFKBmReA2ha/uHj0N4fBoPc4S0eHtJNAUrnZMpa4KqmS3b93yxY3LHozTVyQK+64nBLDC4XF4ryZujOGPehi1TXrdHvKmeY4kTY/lhCz0zJ4ed6mfTwfvjH4fPwN+7E50FRTUK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZwjnPYb5; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716423775; x=1747959775;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VLpY7qGGY9Uj9hsj8eL1ZfMyVa4v25mTJX9xhzdLAww=;
-  b=ZwjnPYb5WgJSvPhctOpW5DkkTTI/n5RncwYC+t1Ge81vbQLCU1QdWKR8
-   1wLV79uqBUeoCKjTsH/5B/jBOup3zgaidDTWptz8hJAMGwVrL/Of/ZsF8
-   3oXGUXUXBbAjgnxVkruE3W9rus81S4fosqB0agkD+UOkbO1PPbwpuv63h
-   UfEw7A2YOwsCGGUTL6OMhtt+Gx89ZBnrsV3tntmLGetnr/4pDrhK2AVsz
-   WQoM5RT727TInGi35veykeFBOPWrKCbYlAZJfTEMsh15CblRCas7CyyDC
-   9HYwy04ccMxTth/5Tw7g9DJFUFfMQsi2Yuq9HV+bZC1GL6oiI6DyBkkzN
-   g==;
-X-CSE-ConnectionGUID: DYw18mtET5uwH8XhvyXUbQ==
-X-CSE-MsgGUID: qJAyBzThSMikeY0EWXKiow==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12491659"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12491659"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 17:22:51 -0700
-X-CSE-ConnectionGUID: wOj3XFDFRHavHiTz3vtlPw==
-X-CSE-MsgGUID: DOeJ2TUmQxGXKYVPwZ0FKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="64318609"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.68.11])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 17:22:50 -0700
-Date: Wed, 22 May 2024 17:22:48 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Bowman Terry <terry.bowman@amd.com>
-Subject: Re: [PATCH 3/4] acpi/ghes, cxl/pci: Trace FW-First CXL Protocol
- Errors
-Message-ID: <Zk6MWMYUg77HxbVr@aschofie-mobl2>
-References: <20240522150839.27578-1-Smita.KoralahalliChannabasappa@amd.com>
- <20240522150839.27578-4-Smita.KoralahalliChannabasappa@amd.com>
+	s=arc-20240116; t=1716423811; c=relaxed/simple;
+	bh=aBFl6NoNCYEgzTWuk4Xg5V4yj/L2vRLZ5FrXJZWqsW4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=q5gLpJMHWhersIRVMUsYDHo1Uf+8mPZz5JiA7DFhElkWQ8oAMwvCs+dotJ2P1wzzxqYFkP0mc2jUy8dE9XvIr9iRLaAAqo9Up+3VUMdzuxFyu+ttkwBTa138t71oVZqfbC3sm+3J4VIV/WHi72kbQz9ILRGBnkk9VYZsCJXGTIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cOYMj7fs; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240523002324epoutp03848818061ae2773964aec95cce493cb0~R9lser3302305723057epoutp03F
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:23:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240523002324epoutp03848818061ae2773964aec95cce493cb0~R9lser3302305723057epoutp03F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716423804;
+	bh=bxbj9vt7C7y18tsnTS/FCojRnLKLZliPPTlfmq6LKHk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=cOYMj7fsIsfk/fNJzC94alFaVCdj/iXqCk6zyzsUqlOh0AQgkl1h4oR0LlGLf0Xbh
+	 z5VGbco7Hq25/tE7CMzjSibb0pUPQ8eoSsvjBMgSUF0t+5YgwoSpX8ZI61T+kcdXMR
+	 i2gU0pspcJjK20B9Tp8DY/sexZZJPAaPLP9HACG4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240523002323epcas1p4740006fec15f67c3c7fe37592d4e89a1~R9lsAclkC1730517305epcas1p4d;
+	Thu, 23 May 2024 00:23:23 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.248]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Vl863202Kz4x9Pt; Thu, 23 May
+	2024 00:23:23 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7E.88.10158.B7C8E466; Thu, 23 May 2024 09:23:23 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240523002322epcas1p2a63dfc646a2b2dd8fcadad2a8807bcee~R9lrCKqcu0290602906epcas1p24;
+	Thu, 23 May 2024 00:23:22 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240523002322epsmtrp2cc595954cd7d71202618b62dc197f8c4~R9lrBRRF80430204302epsmtrp2l;
+	Thu, 23 May 2024 00:23:22 +0000 (GMT)
+X-AuditID: b6c32a38-8e1ff700000027ae-3b-664e8c7b8a8e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AE.89.08390.A7C8E466; Thu, 23 May 2024 09:23:22 +0900 (KST)
+Received: from lee.. (unknown [10.253.100.232]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240523002322epsmtip2601973feec3adc41b834b58dfd4c5949~R9lqzQNzn1770717707epsmtip2m;
+	Thu, 23 May 2024 00:23:22 +0000 (GMT)
+From: Chanwoo Lee <cw9316.lee@samsung.com>
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+	stanley.chu@mediatek.com, quic_nguyenb@quicinc.com, quic_cang@quicinc.com,
+	powen.kao@mediatek.com, yang.lee@linux.alibaba.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Chanwoo Lee <cw9316.lee@samsung.com>
+Subject: [PATCH] ufs:mcq:Fixing Error Output for ufshcd_try_to_abort_task in
+ ufshcd_mcq_abort
+Date: Thu, 23 May 2024 09:22:57 +0900
+Message-Id: <20240523002257.1068373-1-cw9316.lee@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522150839.27578-4-Smita.KoralahalliChannabasappa@amd.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIJsWRmVeSWpSXmKPExsWy7bCmgW51j1+aQWsHt8WDedvYLF7+vMpm
+	Me3DT2aLGafaWC029nNYXN41h82i+/oONovlx/8xWby9+5/FYtK1DWwWU18cZ7dYuvUmo8W7
+	xsOMDrwel694e0ybdIrNY+dDS4+Wk/tZPD4+vcXiMXFPnUffllWMHp83yXm0H+hmCuCMyrbJ
+	SE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMATpaSaEsMacU
+	KBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgVqBXnJhbXJqXrpeXWmJlaGBgZApUmJCd8fHZ
+	ApaCj+wVp/pFGxh3snUxcnBICJhInJ1k1sXIxSEksINR4u30bjYI5xOjROvu04wQzjdGibU/
+	VrJ2MXKCdTxe0gOV2MsosevHNWYI5wmjRMOeLnaQuWwCWhK3j3mDNIgInGCSuPMsGcRmFtCQ
+	+NN2kQ3EFhaIl7h8cjcjiM0ioCqxp/Et2AJeAVuJbyuWMEMsk5fYf/AsM0RcUOLkzCcsEHPk
+	JZq3zgbbKyHQyyFxZ+49qAYXieY5J5kgbGGJV8e3sEPYUhKf3+1lg2hoZpRY+OY4VPcERokv
+	H2+zQVTZSzS3NoNDhllAU2L9Ln2IbXwS7772sEICjFeio00IolpFYk7XOTaY+R9vPIaGkIfE
+	9P1TwA4VEoiV2PZuLeMERrlZSH6YheSHWQjLFjAyr2IUSy0ozk1PLTYsMIFHZHJ+7iZGcFrV
+	stjBOPftB71DjEwcjIcYJTiYlUR4o1f6pgnxpiRWVqUW5ccXleakFh9iNAWG6kRmKdHkfGBi
+	zyuJNzSxNDAxMzKxMLY0NlMS5z1zpSxVSCA9sSQ1OzW1ILUIpo+Jg1OqgcnV4rXc1UWex6ct
+	nGpdfWXSx6Z5ae9XlxStXaudrcotbmLMEuD8lP1b3N0fbZyXBZbfOLN2ieCm9Ek/TR3DPBQm
+	m11bHu8yJ7nrm+yaiYoBj0NFq6Z98ktmcuMO/KTrdqBF9eD31yuX/RAxZS7r38g3+fS8pa7T
+	C/bz+08v6gw980DkdYpg2IZnKT7xc7cdNcreU5Z59MnpjftmWnCnqpmUfhSSDxD5q2zzJE13
+	UqdD1Zoff18XmfTErWC/cu/L63c+V4tNii9e1VjzqenEAV3NBukdPgwvN01cblLyWPRT3uaz
+	B168L5+iv+Vhq4Hot6QG+bkXl6uyaSuu/MU1+5vaUl7VCqvwTdyvtCLK7x1WYinOSDTUYi4q
+	TgQAHS5u3DQEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNLMWRmVeSWpSXmKPExsWy7bCSvG5Vj1+awfs2ZYsH87axWbz8eZXN
+	YtqHn8wWM061sVps7OewuLxrDptF9/UdbBbLj/9jsnh79z+LxaRrG9gspr44zm6xdOtNRot3
+	jYcZHXg9Ll/x9pg26RSbx86Hlh4tJ/ezeHx8eovFY+KeOo++LasYPT5vkvNoP9DNFMAZxWWT
+	kpqTWZZapG+XwJXx8dkCloKP7BWn+kUbGHeydTFyckgImEg8XtLD2MXIxSEksJtR4t/cl1AJ
+	KYnd+88D2RxAtrDE4cPFEDWPGCWuv+gEi7MJaEncPuYNEhcRuMYk0Xz7GStIL7OAhsSftotg
+	c4QFYiV2zJkFZrMIqErsaXwLVsMrYCvxbcUSZohd8hL7D55lhogLSpyc+YQFYo68RPPW2cwT
+	GPlmIUnNQpJawMi0ilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOPy1tHYw7ln1Qe8Q
+	IxMH4yFGCQ5mJRHe6JW+aUK8KYmVValF+fFFpTmpxYcYpTlYlMR5v73uTRESSE8sSc1OTS1I
+	LYLJMnFwSjUwzdLcIKjiMUn30NVnhXPtNv/ITpfQWrnG8iKL4anplcU+e5dsPVzFdT25+uGK
+	lVvMf67QY2K3XrKn4di/15z6fpdYP548ukcqbtfbKy82C/I99/RaFLBZWXHm01SPPSvqzBK3
+	d9sWLn91SOqgh3vKpOU+W+ddcnr8yUdLVU/hx96a++u+d6qeNGJluzJh8zOpR8rXnXYdf50W
+	x6vPzXJJ54n9vStKfBZLbjFtORnFMvve/D7tQz8TmOTfhfwy3mNsyaq2gfW5ybNYgUktq3oe
+	uqutmuR9wvC2fbmPqMVS74yPHP/SmH3q/TMq5HT/c7xXffHTPT7m4rGOzXrJHbsYM98x+u3K
+	2PdBeHvo55KWGiWW4oxEQy3mouJEABuUXQ3uAgAA
+X-CMS-MailID: 20240523002322epcas1p2a63dfc646a2b2dd8fcadad2a8807bcee
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240523002322epcas1p2a63dfc646a2b2dd8fcadad2a8807bcee
+References: <CGME20240523002322epcas1p2a63dfc646a2b2dd8fcadad2a8807bcee@epcas1p2.samsung.com>
 
-On Wed, May 22, 2024 at 03:08:38PM +0000, Smita Koralahalli wrote:
-> When PCIe AER is in FW-First, OS should process CXL Protocol errors from
-> CPER records.
-> 
-> Reuse the existing work queue cxl_cper_work registered with GHES to notify
-> the CXL subsystem on a Protocol error.
-> 
-> The defined trace events cxl_aer_uncorrectable_error and
-> cxl_aer_correctable_error currently trace native CXL AER errors. Reuse
-> them to trace FW-First Protocol Errors.
+An error unrelated to ufshcd_try_to_abort_task is being output and
+can cause confusion. So, I modified it to output the result of abort
+fail. This modification was similarly revised by referring to the
+ufshcd_abort function.
 
-Will the trace log differentiate between errors reported in FW-First
-versus Native mode?  Wondering if that bit of info needs to be logged
-or is discoverable elsewhere.
+Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
+---
+ drivers/ufs/core/ufs-mcq.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Otherwise, LGTM,
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-
-
-> 
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> ---
->  drivers/acpi/apei/ghes.c  | 14 ++++++++++++++
->  drivers/cxl/core/pci.c    | 24 ++++++++++++++++++++++++
->  drivers/cxl/cxlpci.h      |  3 +++
->  drivers/cxl/pci.c         | 34 ++++++++++++++++++++++++++++++++--
->  include/linux/cxl-event.h |  1 +
->  5 files changed, 74 insertions(+), 2 deletions(-)
-
-snip
-
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index 005d63ab1f44..fc24d1af1fe8 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -667,9 +667,11 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
+ 	 * in the completion queue either. Query the device to see if
+ 	 * the command is being processed in the device.
+ 	 */
+-	if (ufshcd_try_to_abort_task(hba, tag)) {
++	err = ufshcd_try_to_abort_task(hba, tag);
++	if (err) {
+ 		dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
+ 		lrbp->req_abort_skip = true;
++		err = FAILED;
+ 		goto out;
+ 	}
+ 
+-- 
+2.34.1
 
 
