@@ -1,83 +1,89 @@
-Return-Path: <linux-kernel+bounces-187398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F187C8CD13A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:31:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCD88CD13F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927711F21C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:31:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1851F21B1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7785C144300;
-	Thu, 23 May 2024 11:31:23 +0000 (UTC)
-Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411C41487C9;
+	Thu, 23 May 2024 11:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KpeF3hQU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B4A13D293
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7897D13D293;
+	Thu, 23 May 2024 11:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716463883; cv=none; b=e94SrVmgBHFiUeKLQwiztPNvwnyW+ME0SrUGy8VmAQMT/wsjugz2qLoFqlsU4zf8hucURjvKyjfixQROBFAREiHYmrC1ZQab7LRiWigvqEhOFIhQ1o9yRjODogttTWFvj156bns7GZPslgb4hq0KgXFLJkFzDp/bzfrAfkutmL4=
+	t=1716463895; cv=none; b=YOD36iIUHjtmilhhwoOQEOk3t7qIx0kSul7LUcotILDAO6a4lkUAh95Xb1gNRpVxQWSIRw/7Gkfu9WnyTl/v02T4AcVYYChrPSWOXTtOOWR7V63I4JaK7BTMS9LjbzJp/kDh5s7kjmHLXwd1omW09/xxCoQkgeG+bv1aExreObA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716463883; c=relaxed/simple;
-	bh=nmX2kYBeqtVLSelimdPXKQDwxlk8oBAMzgJXaoBP15A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Xk1TovyKW505FkuX8Y9gDbXJuXaxnhVlTkLhCc4DX7YxXq7ox7OK5zq5yW3lXy1IBbUYaEWaMFwh0suTn2J0WlUYhp8rQ5foZUUUiuqI35eye6StVSM6spcDz605hSamjgGo0C+r6niaLPD2sL8qKSWE1uXl8WI90GPTo7VY7L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.48.155])
-	by sina.com (10.75.12.45) with ESMTP
-	id 664F28F900002574; Thu, 23 May 2024 19:31:10 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 91507531457636
-X-SMAIL-UIID: D166617DAB7D4799AB52F0DDBD3CB121-20240523-193110-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+57cc2f20a84cb4346354@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [serial?] possible deadlock in uart_write (2)
-Date: Thu, 23 May 2024 19:30:57 +0800
-Message-Id: <20240523113057.2386-1-hdanton@sina.com>
-In-Reply-To: <000000000000be49b106191916f0@google.com>
-References: 
+	s=arc-20240116; t=1716463895; c=relaxed/simple;
+	bh=TdT3Z/oqpZMtGUX0UvJK5EHjrgJ+sgTczuon/rWERhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmeLKx2Se4rQ1gnlmEYBceOC3GO1oLScxdD+trZ12z4tbPen7iDrO5pBCkv0YVc5fxQN6Pb/CyQyc8Qa0t7/DOypAv/LTpxYfhh1Vn/BflDK9cxC6RaStaBUlo7bVRk3HktckFU7Ky1EwdhTIyJkaRTols0xGJcvNl++9Cs3O8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KpeF3hQU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90586C2BD10;
+	Thu, 23 May 2024 11:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716463894;
+	bh=TdT3Z/oqpZMtGUX0UvJK5EHjrgJ+sgTczuon/rWERhw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KpeF3hQUzv+3UWwu+hrFkDpJEazX5xxsXqpzXSFJ6JVwSf8OBzjHP7vt+swefQRkK
+	 b5gLwbBEz0G6EfN7suYujD8I5uwZA/3wpTTnlWSufhnhfcIlv3gVBuLhhalcrJjs4p
+	 K4Fp3K5tnEsD5TlXMd1pkle8OHoGf6kblxJ4Cjqo=
+Date: Thu, 23 May 2024 13:31:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Doug Berger <opendmb@gmail.com>
+Cc: stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH stable 5.4 0/3] net: bcmgenet: protect contended accesses
+Message-ID: <2024052326-popcorn-chloride-b06c@gregkh>
+References: <20240516230151.1031190-1-opendmb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240516230151.1031190-1-opendmb@gmail.com>
 
-On Wed, 22 May 2024 23:23:26 -0700
-> syzbot has found a reproducer for the following issue on:
+On Thu, May 16, 2024 at 04:01:48PM -0700, Doug Berger wrote:
+> Some registers may be modified by parallel execution contexts and
+> require protections to prevent corruption.
 > 
-> HEAD commit:    de7e71ef8bed mm: simplify and improve print_vma_addr() out..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140480ec980000
+> A review of the driver revealed the need for these additional
+> protections.
+> 
+> Doug Berger (3):
+>   net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access
+>   net: bcmgenet: synchronize use of bcmgenet_set_rx_mode()
+>   net: bcmgenet: synchronize UMAC_CMD access
+> 
+>  drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 14 +++++++++++++-
+>  drivers/net/ethernet/broadcom/genet/bcmgenet.h     |  2 ++
+>  drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |  6 ++++++
+>  drivers/net/ethernet/broadcom/genet/bcmmii.c       |  4 ++++
+>  4 files changed, 25 insertions(+), 1 deletion(-)
+> 
+> -- 
+> These commits are dependent on the previously submitted:
+> [PATCH stable 5.4 0/2] net: bcmgenet: revisit MAC reset
+> 
+> 2.34.1
+> 
+> 
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  de7e71ef8bed
+All now queued up, thanks.
 
---- x/drivers/tty/serial/serial_core.c
-+++ y/drivers/tty/serial/serial_core.c
-@@ -622,8 +622,9 @@ static ssize_t uart_write(struct tty_str
- 		return -EL3HLT;
- 
- 	port = uart_port_lock(state, flags);
--	if (WARN_ON_ONCE(!state->port.xmit_buf)) {
-+	if (!state->port.xmit_buf) {
- 		uart_port_unlock(port, flags);
-+		WARN_ON_ONCE(1);
- 		return 0;
- 	}
- 
---
+greg k-h
 
