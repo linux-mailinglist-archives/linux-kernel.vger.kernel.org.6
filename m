@@ -1,202 +1,223 @@
-Return-Path: <linux-kernel+bounces-187031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D6A8CCC15
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:09:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DFB8CCC17
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF265B212BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB3181C21EAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D4F13B586;
-	Thu, 23 May 2024 06:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC1B13B584;
+	Thu, 23 May 2024 06:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JCMPdrMH"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YjpYsZRD"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABF81BDD0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716444582; cv=none; b=jf17/NB8BNn+ibr4M+fl1ZNIanrrPyIx6Jk12cjlSQiSijUFHvb+3U8mHnR52NA40R4CER7EdlTLZU3dEKh0/+NYRvAxZNs2ecAXR1SnZUU6lnI29xjBs98pChSOJRO9yDFv0kA0IoE6XVY5eZpblxxy1uOOObOWoX950dpYcQ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716444582; c=relaxed/simple;
-	bh=ClT9vX/HM+flAX4WR6xtfhx/WHDU8FGjIiz340H6hw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D9Lf5kKTm5MQhcJ1q/jU5HT6EaYcdbAdpRCcSzGB1/egR9VjtQZnyJ4J/S3qD/8RmUvZsfJ3kBBfvjFpQSpyU2S45YYa0MFmztNVEgyXvg5xFG8sj4+z4pFtGROdqh2PO8bTQfTh3q9JqTJLDp2dQ//ZeNchsdzE4Xw4m7NBRkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JCMPdrMH; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ee5235f5c9so117304145ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716444580; x=1717049380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+LuT33Y3K3mqEN1LulXHyyOGhBSjgsuD2IY0DLKvAdM=;
-        b=JCMPdrMHS15qLu5W5Mlfh/P637EJkIJWJCTAMK+4uDObym/ZzdLwP418tK4lFj05bZ
-         rq4I/vV3X+ShPix4UqcMRBUGkswGlIk5OidWDdW2NTBJncoZp62qAOr9Y26hSvcc7x6C
-         2C9b8icOXo9xXIue6PFZfMn3jgSYSkuN4GCD4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716444580; x=1717049380;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+LuT33Y3K3mqEN1LulXHyyOGhBSjgsuD2IY0DLKvAdM=;
-        b=vEeVNqFHN/njFDXdwKWOuir9lczAjR+jV2VsA814brfR+rW3qh8SbqP8xSXFJ3+d7d
-         U833BbQAZnVm8MtWvYJqOL9TmumVuIAsrcvd4XK9tUb6cKK28xlomS4OsB2+v2j29TY4
-         szfz62IJW/VNqM28dLQgirStj6LmvGsl8JztBloX6809rxLOuYaJJSuB6yRNyurmkVGT
-         fv+5uynx32ngEogmQ3N35+2mNz1zVWp+odRSCIudcGKir5JPNd9zm53976EDkl6T7awe
-         BanEWc1qY9/UlSmWAhiKngrYisV5w8S3gCw8MjSvyJt/nTZlrVC/5wOEsYsFP0cWjFo3
-         mi1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUnit0p2I5gQeKdAz1dnjnuXtBNS1Gf6yHgX/xUuAdu5ibcPR4Vf+MQZ3yi40N3C+GsGaemXoykQWMH9KACJ9Ez6gf+MoQiFfWyrlbG
-X-Gm-Message-State: AOJu0Yyg1Hatx5Qi++NniSxAcYHml2yVJ5ddfpX+PgFgb2IKhWHUS3QX
-	TWvhGkUukAyFBszUj50lg8QZnA6ShdI0p7Qhq1w51ugnft3GJwHBIl9oW1uV6/bMGQWdlXAhWFg
-	=
-X-Google-Smtp-Source: AGHT+IFzqjFDtCbz7oQ/B9H7RRX0BLXKo/ipyGeyF4VKxCBCN922m2tCj4WCeBeJkUAgYz5GU89FoA==
-X-Received: by 2002:a17:903:40d2:b0:1f3:a5b:9705 with SMTP id d9443c01a7336-1f31c9ed4cbmr52027645ad.48.1716444579913;
-        Wed, 22 May 2024 23:09:39 -0700 (PDT)
-Received: from localhost (60.252.199.104.bc.googleusercontent.com. [104.199.252.60])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1ef0badcbacsm250027495ad.97.2024.05.22.23.09.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 23:09:39 -0700 (PDT)
-From: Ying Hsu <yinghsu@chromium.org>
-To: linux-bluetooth@vger.kernel.org,
-	luiz.dentz@gmail.com,
-	pmenzel@molgen.mpg.de
-Cc: chromeos-bluetooth-upstreaming@chromium.org,
-	Ying Hsu <yinghsu@chromium.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v2] Bluetooth: Add vendor-specific packet classification for ISO data
-Date: Thu, 23 May 2024 06:09:31 +0000
-Message-ID: <20240523060934.2883716-1-yinghsu@chromium.org>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3A713AA3C;
+	Thu, 23 May 2024 06:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716444600; cv=fail; b=BDpfn7UzQ3cZm+nwe08Cn7NylxP8PED8RFsi/Nskgy8aCeuGiAd/cku00wBerjuwoDvB+6bq99+PKO/oEv1zwhZxJaj5IMqcx+EKvH+eve/MXtbGrbbSO+mcq+XhNZwFcyegN5n7UUu145JcgEsCqtjFB7C90j4qKwtQGf1E4Fg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716444600; c=relaxed/simple;
+	bh=+tPN09fcKUTXy9O9cmDO+WLZeiaGaqGTn4wsU2KqRFI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AyL7WYsvOhDh0Ba5jjeCWQgLPzxEf+wUIOUiSDMVcEdvThvVM3j2XFlbTvOJGXWRjb5z+1ONEC1g3qamg9kPMgeRgnrTSsb7g/YL+5c54lcGHpUDaUs8pfnJ51Nv2FYOh0lAUSWDpXhuh9UDpjtXblFNjEKxxGAcD2BZG0nWP4g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YjpYsZRD; arc=fail smtp.client-ip=40.107.236.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iuOZuomFTe6FtdmmcVT/KKleeLWUSvPclA42WQyCbt1rzzGMX1AS3vrwh5cB53J44IDof4nJvpZCz62Us844GCbS3zX+RUxmmNYD0rGHVREnLKRAYjEOGzKb135PxicQEuYWwK3Nwn37N3NPMO2NldJJTLmaW9DCh+adkIVMzGgrJPp8G2deWLGSKVO3P3SbrMHt6rcxpFoihLKCvjs4a898NZicFhTGIeg9/RhK1YpanXz+f0EfiSUSbWlBKWS+piRHYpnA1yI/r8ab6ImgVmapwdFcrN60/jxCTSWuLntBCv7BdG+zgdWcrS4j96zjC3Hh8ZweYPXDAx+jJMrhAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m+yEwAFMpRhUg09sISsKYbRYCBoSQ3j4ZM36tP+XBQA=;
+ b=XTNHWCuCWf2irpAQNC3nK6H9cGfmujXK0298R5cbEv/g9ej5y6QDI3ynX/O0YB7F5q9UKjqbtoQdQW+Booyr/4m+cjxtJ99+oaNmu/L7iQvanJ5xNKkKWtNGFQcMJspY8P0iM5Jyx6Z2fQ0QWvo1cjyUuYvYgXRyDlQWdSklqa30JXB+2fMsIr0QGQYnRA54qlVrVllD9bYnK9mAEQVyiTo9gGlnFkHzWyVyxkzafKBfwB/bYd+ByLw6HGNa/QASiv2CP+Z9MT9peSfTxMW18F3enHmzeL+lsZ3Eg21OXs7PfIg8pGE+SZhLkkzQAI1tX2R4dZIRXxv/MJgFEPzgig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m+yEwAFMpRhUg09sISsKYbRYCBoSQ3j4ZM36tP+XBQA=;
+ b=YjpYsZRD/1LZ9MgGaeM/ICosf28/IaybPCUxa+qKAnvUVhIHKR/OPHfMo8j/ZWcE9lhytNFQC2AEtmYIfvuQUuTCk1aqOVuUuKRZcGBLFcYlFcYXEnI+cGxg/MVj5Q1xl7yE4b6JcTPSzBtuf9dTrecpeUODOEHVC3+N5gf/dFqln1xU+TFFwvTup+bi/0OX7j6o7MFOO3/de38ddS5aovVO7N0sX6t+vjkbsgfNeOFW9mJ6bIQARyI8DTVzpNmlS94AEi/1IoGGRyUpIe7ZXEZjawmHtPuwu/4bYfJzpkKyJdhwX+bEsmGzjy+mKldwHZ2vUpOsRPBlaR+tuHxa5A==
+Received: from MN2PR18CA0016.namprd18.prod.outlook.com (2603:10b6:208:23c::21)
+ by SA1PR12MB7174.namprd12.prod.outlook.com (2603:10b6:806:2b1::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Thu, 23 May
+ 2024 06:09:55 +0000
+Received: from BL02EPF00021F68.namprd02.prod.outlook.com
+ (2603:10b6:208:23c:cafe::c6) by MN2PR18CA0016.outlook.office365.com
+ (2603:10b6:208:23c::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35 via Frontend
+ Transport; Thu, 23 May 2024 06:09:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BL02EPF00021F68.mail.protection.outlook.com (10.167.249.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.14 via Frontend Transport; Thu, 23 May 2024 06:09:54 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
+ 2024 23:09:45 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 22 May 2024 23:09:44 -0700
+Received: from nvidia.com (10.127.8.10) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 22 May 2024 23:09:41 -0700
+Date: Wed, 22 May 2024 23:09:39 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
+	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
+	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
+	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
+Message-ID: <Zk7dozLpy67ZY+RI@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
+ <ZkDWXnPW7CaX5TtA@nvidia.com>
+ <ZkGZc5dvLigXcWib@nvidia.com>
+ <BN9PR11MB52764728D4A8F54CCDE9B6C38CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB52764728D4A8F54CCDE9B6C38CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F68:EE_|SA1PR12MB7174:EE_
+X-MS-Office365-Filtering-Correlation-Id: e909c375-e80f-4429-9b5f-08dc7aeef75d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|376005|7416005|1800799015|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7P4uS78JOC8Zk4pGSMRKaOhVXyg/7+Y0R1zGwi7C/hrQN9fhqfwN7m/CDN43?=
+ =?us-ascii?Q?WxXpCUrVAlBrTj+8iR/hqKatUEIR6pphGZ5oD2q0TNuHp3aHMnJgzxdwWW+d?=
+ =?us-ascii?Q?4sKYta4Vnxw+nYMRlCu0zfPRhOX3oLjbkm2nEfT2Xg7BrmuqDL7VeWYnMO0D?=
+ =?us-ascii?Q?9NiPZYlMo7nN+eE6Lmel/23HTiHX92AAxA+9rR18QkQVlAlbECEz6B91WkGp?=
+ =?us-ascii?Q?+ADfH5OtUwjquhob55JQ4FAMdqnefq97bQts6cAjv0G8qsfwSNvx32fSsGPM?=
+ =?us-ascii?Q?YbY2qKD521CHsJ/j5i57ybiPOhzQ71cDYmmS5yhgzEAHA9i8sDZf3xudEO0j?=
+ =?us-ascii?Q?cV1NqjFPgDtu4IC7e0IsIi/FVUne5mtk97eRk35Voj1fqWqjEr+9WhihA8a3?=
+ =?us-ascii?Q?hBq75jr4C/kFD6T32q5K1IIZe1TqSzfqkZlWS5a7o9f3hXn0uu8bmrhmWPAW?=
+ =?us-ascii?Q?ZhwyaCbC1F3RD8KAwD2Wa7gxlOtN/D0H88slBkGL95HwKDa/nIjk35QuOiV0?=
+ =?us-ascii?Q?2P+aouFwLG8PqU6vttMJjKvGOlfW4J1SrenRlNQh6bJ9MzQlvjMzn3HNqZUV?=
+ =?us-ascii?Q?WpIKBh23/quXqCKWeJgn0jFfTP0r62c8LZJU4dc3TZVLM192Iy0oXMr+zZtJ?=
+ =?us-ascii?Q?aA4WItbJy13l7IFtnfz1RI2nw7FYdzq/sj6SbR3811D7Cd9xl1KZzu/T/7H7?=
+ =?us-ascii?Q?GJ2RDLTudP+Z/CMGpbGFvIaeOxodo3wlMRT0j8qrYUR/fqb4TRjd5BZ5VtmX?=
+ =?us-ascii?Q?0FHYQ5jlujCJrJPvI5cUkcKVQcI782DiDMZkjfkMdFWnhvEdtGtfOGYebu10?=
+ =?us-ascii?Q?nVR2/C7k6pCPoi80H3FnaeYZcdju018RDvEV9+0D29F4k3z8Znjc13ket9IP?=
+ =?us-ascii?Q?BpHbjxwqIovAKp/0EcviyjEBkh7aId3n+OLzV6yeSnWFBepwmyEI77Hds3qd?=
+ =?us-ascii?Q?vfUa7YdXXBl9NL2mmIt1J5fUD6m8nOFHnTOgm3AG4jRVibWxRTWOliouDScB?=
+ =?us-ascii?Q?wv4radjXKIPFU1TLKmknQG0RhevUClgYcaGr4SxZ6ni3vBrKGzDU64+Zwm+h?=
+ =?us-ascii?Q?LU+p4kQoaaf6adaWe8jBJ/ss7qAdpoLbN81JM+Aiu2zh28zuegudw9/6RtCt?=
+ =?us-ascii?Q?RmO75NNRL0RHnLVBxLdEVr3OAgFmIClNw2QvA5yU714y47oS3w7odaf6cIvX?=
+ =?us-ascii?Q?RfgJZV2RJ5KTIZcnfh+LClJyhY7SmUctjuLnjnZIjDj6jHAT3dh7UpUQ9nNV?=
+ =?us-ascii?Q?pa9GzBT5TpFGwwMkpRcOVEx+W6aTWRQTL44cabFO9rUZr34Kt9owXlux4xvQ?=
+ =?us-ascii?Q?zHfzRHrOf1nKn2XFIuctXtFeB01euAfwO588kVYfF5TCLSHudNJNRGTO1xqG?=
+ =?us-ascii?Q?xe6veQphSPf2C15atyq0R0LhJAnm?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(376005)(7416005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 06:09:54.8804
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e909c375-e80f-4429-9b5f-08dc7aeef75d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F68.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7174
 
-When HCI raw sockets are opened, the Bluetooth kernel module doesn't
-track CIS/BIS connections. User-space applications have to identify
-ISO data by maintaining connection information and look up the mapping
-for each ACL data packet received. Besides, btsnoop log captured in
-kernel couldn't tell ISO data from ACL data in this case.
+On Thu, May 23, 2024 at 05:44:40AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Monday, May 13, 2024 12:39 PM
+> >
+> > On Sun, May 12, 2024 at 11:46:54AM -0300, Jason Gunthorpe wrote:
+> > > On Fri, Apr 12, 2024 at 08:47:04PM -0700, Nicolin Chen wrote:
+> > > > Add a pair of ops to set and unet device's virtual ID that belongs to
+> > > > a viommu object. They will be used, in the following patch, by iommufd
+> > > > to support some HW-acceleration feature from the host level.
+> > > >
+> > > > For instance, every device behind an ARM SMMU has a Stream ID. The ID
+> > > > is used by ATC invalidation commands so SMMU HW can direct
+> > invalidation
+> > > > requests to the corresponding PCI device where the ID belongs to. In a
+> > > > virtualization use case, a passthroughed device in the VM will have a
+> > > > virtuail Stream ID, used by the ATC invalidation commands in the guest
+> > > > system. NVIDIA's CMDQV extension for SMMUv3 provides a v-interface
+> > to
+> > > > execute the guest-level ATC invalidation commands directly, yet needs
+> > > > the HW to be aware of its virtual Stream ID so it can replace with its
+> > > > physical Stream ID.
+> > >
+> > > I imagine using this as well for the ATC invalidation commands. It
+> > > would be very easy and simplifying if the command fixup just extracted
+> > > the vSID from the ATC invalidation and used an xarray to turn it into
+> > > a pSID and then pushed the resulting command.
+> >
+> > You mean the nested SMMU series right? Actually the set_dev_id
+> > ioctl was a part of that until we wanted to try DEV_INVALIDATE.
+> >
+> > So again, yes, it makes sense to me that we move viommu and the
+> > set_dev_id to the nested series, and then drop DEV_INVALIDATE.
+> 
+> I'm right about to ask how the nesting series is going. Per earlier
+> discussion iirc the nesting series will go in before VCMDQ?
 
-To avoid additional lookups, this patch introduces vendor-specific
-packet classification for Intel BT controllers to distinguish
-ISO data packets from ACL data packets.
+Yes. It still should. Yet we ended up with adding VIOMMU to the
+nested SMMU series too. A shared S2 domain/hwpt isn't exclusive
+for VCMDQ use case but also for regular nesting on a multi-SMMU
+setup. So, VIOMMU turns out to be the best object that we have
+at this moment to hold individual VMIDs for different physical
+SMMUs sharing a single S2 domain. Its virtual device ID lookup
+feature can also allow us to forget about DEV_INVALIDATE ioctl
+for now.
 
-Signed-off-by: Ying Hsu <yinghsu@chromium.org>
----
-Tested LE audio unicast recording on a ChromeOS device with Intel AX211
+Jason listed all the tasks ahead in this thread too, using SMMU
+as an example:
+> So we have this stuff still open:
+>  - Identity STE with PASID (part 2b)
+>  - IOMMU_GET_HW_INFO (part 3)
+>  - IOMMU_HWPT_ALLOC_NEST_PARENT (part 3)
+>  - IOMMU_HWPT_DATA_ARM_SMMUV3 (part 3)
+>  - IOMMU_HWPT_INVALIDATE_DATA_ARM_SMMUV3
+>  - VIOMMU_ALLOC, VIOMMU_ATTACH
+>  - VIOMMU_INVALIDATE
 
-Changes in v2:
-- Adds vendor-specific packet classificaton in hci_dev.
-- Keeps reclassification in hci_recv_frame.
+By this series nesting setup is done. We need Baolu's solution
+or VQUEUE for fault reporting after that.
 
- drivers/bluetooth/btusb.c        | 19 +++++++++++++++++++
- include/net/bluetooth/hci_core.h |  1 +
- net/bluetooth/hci_core.c         | 16 ++++++++++++++++
- 3 files changed, 36 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 79aefdb3324d..75561e749c50 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -966,6 +966,24 @@ static void btusb_intel_cmd_timeout(struct hci_dev *hdev)
- 	gpiod_set_value_cansleep(reset_gpio, 0);
- }
- 
-+#define BT_USB_INTEL_ISODATA_HANDLE_BASE 0x900
-+
-+static u8 btusb_intel_classify_pkt_type(struct hci_dev *hdev, struct sk_buff *skb)
-+{
-+	/*
-+	 * Distinguish ISO data packets form ACL data packets
-+	 * based on their conneciton handle value range.
-+	 */
-+	if (hci_skb_pkt_type(skb) == HCI_ACLDATA_PKT) {
-+		__u16 handle = __le16_to_cpu(hci_acl_hdr(skb)->handle);
-+
-+		if (hci_handle(handle) >= BT_USB_INTEL_ISODATA_HANDLE_BASE)
-+			return HCI_ISODATA_PKT;
-+	}
-+
-+	return hci_skb_pkt_type(skb);
-+}
-+
- #define RTK_DEVCOREDUMP_CODE_MEMDUMP		0x01
- #define RTK_DEVCOREDUMP_CODE_HW_ERR		0x02
- #define RTK_DEVCOREDUMP_CODE_CMD_TIMEOUT	0x03
-@@ -4451,6 +4469,7 @@ static int btusb_probe(struct usb_interface *intf,
- 		/* Transport specific configuration */
- 		hdev->send = btusb_send_frame_intel;
- 		hdev->cmd_timeout = btusb_intel_cmd_timeout;
-+		hdev->classify_pkt_type = btusb_intel_classify_pkt_type;
- 
- 		if (id->driver_info & BTUSB_INTEL_NO_WBS_SUPPORT)
- 			btintel_set_flag(hdev, INTEL_ROM_LEGACY_NO_WBS_SUPPORT);
-diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
-index 9231396fe96f..7b7068a84ff7 100644
---- a/include/net/bluetooth/hci_core.h
-+++ b/include/net/bluetooth/hci_core.h
-@@ -649,6 +649,7 @@ struct hci_dev {
- 	int (*get_codec_config_data)(struct hci_dev *hdev, __u8 type,
- 				     struct bt_codec *codec, __u8 *vnd_len,
- 				     __u8 **vnd_data);
-+	u8 (*classify_pkt_type)(struct hci_dev *hdev, struct sk_buff *skb);
- };
- 
- #define HCI_PHY_HANDLE(handle)	(handle & 0xff)
-diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-index b3ee9ff17624..8b817a99cefd 100644
---- a/net/bluetooth/hci_core.c
-+++ b/net/bluetooth/hci_core.c
-@@ -2941,15 +2941,31 @@ int hci_reset_dev(struct hci_dev *hdev)
- }
- EXPORT_SYMBOL(hci_reset_dev);
- 
-+static u8 hci_dev_classify_pkt_type(struct hci_dev *hdev, struct sk_buff *skb)
-+{
-+	if (hdev->classify_pkt_type)
-+		return hdev->classify_pkt_type(hdev, skb);
-+
-+	return hci_skb_pkt_type(skb);
-+}
-+
- /* Receive frame from HCI drivers */
- int hci_recv_frame(struct hci_dev *hdev, struct sk_buff *skb)
- {
-+	u8 dev_pkt_type;
-+
- 	if (!hdev || (!test_bit(HCI_UP, &hdev->flags)
- 		      && !test_bit(HCI_INIT, &hdev->flags))) {
- 		kfree_skb(skb);
- 		return -ENXIO;
- 	}
- 
-+	/* Check if the driver agree with packet type classification */
-+	dev_pkt_type = hci_dev_classify_pkt_type(hdev, skb);
-+	if (hci_skb_pkt_type(skb) != dev_pkt_type) {
-+		hci_skb_pkt_type(skb) = dev_pkt_type;
-+	}
-+
- 	switch (hci_skb_pkt_type(skb)) {
- 	case HCI_EVENT_PKT:
- 		break;
--- 
-2.45.1.288.g0e0cd299f1-goog
+Thanks
+Nicolin
 
 
