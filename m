@@ -1,98 +1,139 @@
-Return-Path: <linux-kernel+bounces-188094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63838CDD18
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:05:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0732C8CDD1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 913C8284DB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:05:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8793EB21479
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573E112839A;
-	Thu, 23 May 2024 23:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E673128389;
+	Thu, 23 May 2024 23:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="k+Zg+Euq"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKOYZL+L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1EC84E1B;
-	Thu, 23 May 2024 23:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1B6763E6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716505522; cv=none; b=nG7CtYXI4i7bWz+k8diDt4B4IgnYW8MgukJpEg36NXOGwM5YobtcjiKB8umeKDTwN113phRfmGvGR0mxlbq027cnCgmFVKJJtmXfbf9B51jru2W+0TtZ0AAYSX4uODdMvVodSqCPb0VDdyihbdzIP3xOrexwmMsDlsiAjwXA+lI=
+	t=1716505635; cv=none; b=aTsk6ktiBXSCC3P82A3ey3nBCIH5J7+kA8/1ae41caKds2PWQ47gb5FCusY2tcwgABarO4Ir8g9T/dWPJJwm466YKF7BCvTJlnJBuNGUa5ycf+WJe/wgQSK+WR1oecI8ef3fgOAxxYq88z7lXKHyKpPVKYxlSo4uMkV0pdUw/jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716505522; c=relaxed/simple;
-	bh=ApocRwH2Vn9taDK8+OJBUVTJaclziFTi19+EROmkatI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KKrjTE+q+VaqDg9ndwmS/fga4gr12i6kRf3s+iMWix0cnV9aahyLrSz29OPONB8JF+mP5y7XK0SGa/UlXv9qFmKbQIjgIhbNXGP6jTXDuGkKOa9byDfOhslujs90fTDk1pFleBzVsviy58EG6kcQMpmHxrM0kWI2K9ymgdyQwi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=k+Zg+Euq; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VlkKX2zTSz6Cnk97;
-	Thu, 23 May 2024 23:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1716505518; x=1719097519; bh=fFfOkCfkcI++0Am6bIxelOyN
-	B0sFMViu10l+J0YzZbU=; b=k+Zg+EuqsDVyQxfqzDRMOPrDuR41py6+HTqIOL+L
-	EPK491x+P3Lu/wP0BQq1FPdGY8roWC8zg3vzweroSDEa8FHhnjiHKsmawlaBIUvZ
-	urJd8W5rjLfrFiOYQI8FzPYv+DxMmyeSBD3CpLkZkQh8N+JV05Cgu/KJXH2TapwF
-	Tjvsjfb3kDz2HwjQNgHV5DopktCryJirb5WJo/nAxK+3uY5YyeYF4movXFOVRl2O
-	FPt0sY17p/BunQcZ48F9Gb/1l5Q4ovBmQAM5yeBm+iWdRbHu78UvZnQTccj+O2rh
-	TU5bNbIenJP7ShDAkxVyVxmRkqUPemqU8QyFXPjF0Aowqg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 0ITViHZB_ZHR; Thu, 23 May 2024 23:05:18 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VlkKS4WDRz6Cnk95;
-	Thu, 23 May 2024 23:05:16 +0000 (UTC)
-Message-ID: <61984ab3-1bcf-44e4-8b2a-0760af3cefd9@acm.org>
-Date: Thu, 23 May 2024 16:05:14 -0700
+	s=arc-20240116; t=1716505635; c=relaxed/simple;
+	bh=IVN/mtqfTzSQz5DOSJd2FkfrtcnQCqUA3LMLgp5J74w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O6m8HWbWfAvU+Jrvr6C3jbTnTAbChZ3Op3mAiIN5pl8osJcd6xh7oC/SWC05hlsiNAgqzMj/bXoMkv6PbE4NCIkNXznh9B8vYJa1wLywRI+yg5AHxhXMhpZppkjqYKC2Yb4FWkq2tRvesfgJx6xHD8LKtSleQcnLLJB+kCWzvGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKOYZL+L; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716505633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9qOKzlr6EnmYdUBbeyGsYX+lnRnuf7tx0Aba9aPBtzo=;
+	b=TKOYZL+LOEh/5NHOi3PA38DFsQtWX+/h5lT1IAD/6EoXZ3VsEs/k6RsZeFK2MxNJsmKocZ
+	giacGBajqRh8NBN8pEBdD6kkys0TKPJs3uXBE10ahLC0jhvOMVSXpnk6m1RvGAZWBdkOmy
+	z7uchTXEJaYOc5rqIf9eyydIqpAvxV8=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-b1QWOzH8MyOEXg-l_JzWBA-1; Thu, 23 May 2024 19:07:11 -0400
+X-MC-Unique: b1QWOzH8MyOEXg-l_JzWBA-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b96a7cc02dso55782eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:07:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716505631; x=1717110431;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9qOKzlr6EnmYdUBbeyGsYX+lnRnuf7tx0Aba9aPBtzo=;
+        b=CnJBTtUz2AaO7DxzzZK2P5cxUZh0ScGyj7MF/WdfHqZCH008lSWT0J5YhDLHjO3Qq3
+         4sd2We615oSr9b6lphEmE78V97wS9f07xzmqt5E7jldgnrX+IpK6S2ITJ8a/B3FUyidg
+         7YAAm1tA3vkcK37SCxnU/b3/yGCDH4hEiWuQVH+EZ4CNxjYVXWZsyOtqsk/kdauw29sd
+         Etzct1Hj6rO/1a/F8YbTpMDgUpIhFWqhO/aRMLhY/LrMRki2IsH+c2gafhcvS1/MsiD+
+         kkLS+w49mMZ38h8SsFTgQXK3/U69Bqpxzq2tRJU7OdeURamqmT83AZZw50AMJaQzYxc2
+         QESA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdnaZ/t06qoCEy06Hn4clAMlW3lRJCTFxgFvRCE+0Y3tE34GTZ9bRdifGWXW/FA3Nh6/qVosPJeD1HRjAr1OGrmW9MGphf7NkXNOcP
+X-Gm-Message-State: AOJu0YzUJtXh5tJDDAA52iOawym8q8BG9yxAUi68h2MMyP1Tp1cnZEEj
+	mrQ9vGq/Mc3b6EIyU7N8t5JdBru1HDIi3psJzBy/fut6ziS3GoTNo9a3nypBYjyH+pD1aY+HLXF
+	ie9Ztgn956+pGlM4PVWrC+yCZI3ZzTF42zOck3qan0Bmtr+l7EJVR1SrFBx3Epg==
+X-Received: by 2002:a05:6358:895:b0:191:f9d:3468 with SMTP id e5c5f4694b2df-197e4844d1cmr101528555d.0.1716505630326;
+        Thu, 23 May 2024 16:07:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHkP8dUkBKBmrDPjNCP4ODSid8uay1YJsaPr84UgiuUBd25LP9SzmvCs1fRe5ULhTEy/LrP7Q==
+X-Received: by 2002:a05:6358:895:b0:191:f9d:3468 with SMTP id e5c5f4694b2df-197e4844d1cmr101525455d.0.1716505629618;
+        Thu, 23 May 2024 16:07:09 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac070f3298sm1303906d6.66.2024.05.23.16.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 16:07:09 -0700 (PDT)
+Date: Thu, 23 May 2024 19:07:06 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Kirill A . Shutemov" <kirill@shutemov.name>,
+	Mike Rapoport <rppt@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Borislav Petkov <bp@alien8.de>, x86@kernel.org
+Subject: Re: [PATCH RFC 2/2] mm/x86/pat: Do proper PAT bit shift for large
+ mappings
+Message-ID: <Zk_MGmfYsY9dt2Uo@x1n>
+References: <20240523223745.395337-1-peterx@redhat.com>
+ <20240523223745.395337-3-peterx@redhat.com>
+ <f19f63ba-c436-4e39-ab86-78c80b1af667@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] scsi: ufs: sysfs: Make max_number_of_rtt
- read-write
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240523125827.818-1-avri.altman@wdc.com>
- <20240523125827.818-4-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240523125827.818-4-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f19f63ba-c436-4e39-ab86-78c80b1af667@intel.com>
 
-On 5/23/24 05:58, Avri Altman wrote:
-> +	/* make sure that there are no outstanding requests when rtt is set */
-> +	ufshcd_scsi_block_requests(hba);
-> +	blk_mq_wait_quiesce_done(&hba->host->tag_set);
-> +
-> +	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-> +		QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &rtt);
-> +
-> +	ufshcd_scsi_unblock_requests(hba);
+On Thu, May 23, 2024 at 03:48:22PM -0700, Dave Hansen wrote:
+> On 5/23/24 15:37, Peter Xu wrote:
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 317de2afd371..c4a2356b1a54 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -1135,7 +1135,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+> >  		goto out_unlock;
+> >  	}
+> >  
+> > -	entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
+> > +	entry = pmd_mkhuge(pfn_t_pmd(pfn, pgprot_4k_2_large(prot)));
+> >  	if (pfn_t_devmap(pfn))
+> >  		entry = pmd_mkdevmap(entry);
+> >  	if (write) {
+> 
+> Does this even compile on non-x86 architectures?
 
-The above doesn't look correct to me. ufshcd_scsi_block_requests() does
-not guarantee that all pending commands have finished by the time it
-returns. Please blk_mq_freeze_queue() / blk_mq_unfreeze_queue() instead.
+Probably not..  I think I can define a pgprot_to_large() globally, pointing
+that to pgprot_4k_2_large() on x86 and make the fallback to be noop.  And
+if there's a new version I'll guarantee to run over my cross compilers.
+
+Any comments on the idea itself?  Do we have a problem, or maybe I
+overlooked something?
 
 Thanks,
 
-Bart.
+-- 
+Peter Xu
+
 
