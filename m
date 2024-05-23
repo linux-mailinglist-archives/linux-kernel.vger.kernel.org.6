@@ -1,146 +1,198 @@
-Return-Path: <linux-kernel+bounces-186934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CABF8CCAEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C738CCAEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF6E1C2103B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641071C211EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0858413AA37;
-	Thu, 23 May 2024 03:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="FhxcBbdS"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0F613AD28;
+	Thu, 23 May 2024 03:05:30 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACD1A34
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F83A34;
+	Thu, 23 May 2024 03:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716433546; cv=none; b=pXrI66OF4arZl5IThBS2ymk1b36erzkgU7YRH7a76uHGkLI8RZ4jfUvtXgKCDmKYH2wB5ZXFR+aFWRPHJQ+KsbNn9yLImUBzkdxKXEh7QJvxhjZFy/mKurhXCYRePrg215dGVv2m1dFwTlnfXQuU8TSV2FwCZ4psvoAmhRCfqn8=
+	t=1716433529; cv=none; b=YqXRbcHeGBhuDzoT9RYdKICJv8NLMMd7caB6qnDVGh7qjssJNI+BO8zkG7Nq+gkaF3v5Fymo8r19uj0GwrTbawk8d/LvJbBfopEQ7xC2Q07kAq2l5aDi+l10Zopsngf3jr+lqxO3SEBxekDfLe23zSazcBqE3CyLnB7JFuc0mgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716433546; c=relaxed/simple;
-	bh=7DaPTZBGkttvXDB8AfLhqx6sF7jNWK9QRVpfv2fzxfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NOrPmzXGZUyHTic+kRNBD4nJ5wr1fdIza1S/9PH9SO+ySX2YgNm7pB+UccZpUz2Ej/S/iPwQz7bFG8A2THomKFOBynPliWU0Jboom+lLnNCD8lrx+3tWTwU6v/TVT6duLtcJAMUb843f26V6I9rh2amRKbtUbKvzOxi/u4u2dq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=none smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=FhxcBbdS; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jookia.org
-X-Envelope-To: kikuchan98@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1716433542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5pCVOTMBUtF61UbWtvu2nKJhMTtTjKGnydb/Jdcjr8w=;
-	b=FhxcBbdSQ46OFbvgAWdxQJA7GZW9tW+Rqg67JJJviT54ZJTH6ulBW8YIa9jNvxyuDsNw2f
-	2M/1OGKt48ujYuqKtg2WOKVbf9LUj5QLVbw/xYFNEUyfmwF6cxVDatxWTSgeHR7Hpj3lwo
-	p4TZSrMq25uv13sjXX7HUuRJ+wBZu1717d/7y3dAv8crxXQdQAn4NIQ2pxyxbdK73ytwhD
-	CnU1avWfaB1loIYCZTer/ek+TfsfD6DdW2iZ7ZFrVwJf8eiQ0i9voPBMW9Fv0CpU0s6OfJ
-	NzE/w7FHeZbUlwG2pXmyhTBWO+UfBPnwD4Mq+W+09cbkaS04YQFNocDyVfIOOg==
-X-Envelope-To: privatesub2@gmail.com
-X-Envelope-To: aou@eecs.berkeley.edu
-X-Envelope-To: bigunclemax@gmail.com
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: fusibrandon13@gmail.com
-X-Envelope-To: jernej.skrabec@gmail.com
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-pwm@vger.kernel.org
-X-Envelope-To: linux-riscv@lists.infradead.org
-X-Envelope-To: linux-sunxi@lists.linux.dev
-X-Envelope-To: mkl@pengutronix.de
-X-Envelope-To: p.zabel@pengutronix.de
-X-Envelope-To: palmer@dabbelt.com
-X-Envelope-To: paul.walmsley@sifive.com
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: samuel@sholland.org
-X-Envelope-To: ukleinek@kernel.org
-X-Envelope-To: wens@csie.org
-Date: Thu, 23 May 2024 13:04:11 +1000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: =?utf-8?B?44GN44GP44Gh44KD44KT44GV44KT?= <kikuchan98@gmail.com>
-Cc: privatesub2@gmail.com, aou@eecs.berkeley.edu, bigunclemax@gmail.com,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	fusibrandon13@gmail.com, jernej.skrabec@gmail.com,
-	krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	mkl@pengutronix.de, p.zabel@pengutronix.de, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, robh@kernel.org, samuel@sholland.org,
-	ukleinek@kernel.org, wens@csie.org
-Subject: Re: [PATCH v9 0/3] Add support for Allwinner PWM on D1/T113s/R329
- SoCs
-Message-ID: <Zk6yK3U9tgxOxcBb@titan>
-References: <CAG40kxGMu-TSchNezkcC_A97hzPnWU3KxeL-X-hJfPhjr_COyQ@mail.gmail.com>
+	s=arc-20240116; t=1716433529; c=relaxed/simple;
+	bh=1vrrouj2B9h5XoTvPjkuIgqi3Fy8+yw106GjxM1Xwjk=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BsTCIwfQGvHGDcOs3NqOeGzhXjf9F5O1GJtX0CipoitplgjJIyPs/Gu0j3z9U2UK1HSib6tuTtiGynI5mS67LlnXynyMUJi4YKDxoCwu9zfgAx6Wz7AGxqc3DgYDC2DrA03rpGqTEsSLgCQarWvuxyYck0pOvdcWZK9SEmEqX+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44N35Di24423723, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44N35Di24423723
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 May 2024 11:05:13 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 23 May 2024 11:05:14 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 23 May 2024 11:05:13 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Thu, 23 May 2024 11:05:13 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Shichao Lai <phyhac@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
+Subject: RE: INFO: trying to register non-static key in skb_dequeue
+Thread-Topic: INFO: trying to register non-static key in skb_dequeue
+Thread-Index: AQHarBxzMJWY0Vu27kehlktUAsNdF7GkIKig
+Date: Thu, 23 May 2024 03:05:13 +0000
+Message-ID: <54dbdd605bca48a68ae9a7423b4c994f@realtek.com>
+References: <CAEk6kZuuezkH1dVRJf3EAVZK-83=OpTz62qCugkpTkswj8JF6w@mail.gmail.com>
+In-Reply-To: <CAEk6kZuuezkH1dVRJf3EAVZK-83=OpTz62qCugkpTkswj8JF6w@mail.gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: yes
+Content-Type: multipart/mixed;
+	boundary="_002_54dbdd605bca48a68ae9a7423b4c994frealtekcom_"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG40kxGMu-TSchNezkcC_A97hzPnWU3KxeL-X-hJfPhjr_COyQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, May 23, 2024 at 11:26:07AM +0900, きくちゃんさん wrote:
-> Hello Aleksandr,
-> 
-> I had coincidentally developed a PWM driver for the device.
-> Based on my experience, I find that dynamically changing the coupled
-> DIV_M value is quite complex.
-> The current approach has limitations, especially with resolution
-> changes, which can be unpredictable for users. For example:
-> 
->   1. Enabling channel A automatically selects DIV_M.
->   2. Enabling coupled channel B with a specific period may result in
-> poor resolution for channel B, as the DIV_M value depends on the
-> period of channel A.
->   3. If channel B is enabled first, channel A may not be enabled if
-> its period doesn't fit the DIV_M range selected by channel B.
-> 
-> Additionally, using APB as a clock source for the channels would
-> further complicate the process.
-> 
-> To simplify this, I suggest (maybe for the future) specifying these
-> values directly in the Device Tree like this:
-> ```
-> allwinner,pwm-coupled-channel-clock-sources="hosc", "apb", "hosc";
-> allwinner,pwm-coupled-channel-clock-prescales=<0>, <3>, <8>;
-> ```
-> This would delegate the complexity to the DT, making the resolution
-> predictable for users.
-> As a bonus, it introduces a way to select clock sources for each
-> coupled channels.
-> 
-> For the meantime, I think it is enough to use fixed "hosc" and <0> for
-> regular use.
-> 
-> Looking forward to your thoughts.
-> 
-> Best regards,
-> kikuchan.
+--_002_54dbdd605bca48a68ae9a7423b4c994frealtekcom_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-I have a somewhat opposite opinion. I've developed a driver too and posted it
-on the u-boot mailing list that is deterministic and handles both channels:
+U2hpY2hhbyBMYWkgPHBoeWhhY0BnbWFpbC5jb20+ICB3cm90ZToNCj4gSGVsbG8gRGVhciBtYWlu
+dGFpbmVyIQ0KPiBBIG5ldyBidWcgd2FzIGZvdW5kIGJ5IG91ciBtb2RpZmllZCBzeXprYWxsZXIu
+DQo+IA0KPiBLZXJuZWwgdmVyc2lvbjogdjYuOS1yYzcNCj4gQ29tcGlsZXI6IGdjYyAxMS40LjAN
+Cj4gUmVwcm9kdWNlciAmIEtlcm5lbDogYXR0YWNobWVudCANCj4gDQo+ID09PT09PT09PT09PT0g
+DQo+IHVzYiAyLTE6IFVTQiBkaXNjb25uZWN0LCBkZXZpY2UgbnVtYmVyIDc2DQo+IElORk86IHRy
+eWluZyB0byByZWdpc3RlciBub24tc3RhdGljIGtleS4NCj4gVGhlIGNvZGUgaXMgZmluZSBidXQg
+bmVlZHMgbG9ja2RlcCBhbm5vdGF0aW9uLCBvciBtYXliZQ0KPiB5b3UgZGlkbid0IGluaXRpYWxp
+emUgdGhpcyBvYmplY3QgYmVmb3JlIHVzZT8NCj4gdHVybmluZyBvZmYgdGhlIGxvY2tpbmcgY29y
+cmVjdG5lc3MgdmFsaWRhdG9yLg0KDQpJJ20gbm90IGZhbWlsaWFyIHdpdGggc3l6a2FsbGVyLCB3
+aGljaCBzZWVtcyBsaWtlIHRvIGdlbmVyYXRlIGEgVVNCIHBhdHRlcm4NCnRvIHRyaWdnZXIgZHJp
+dmVyIHByb2JlLCBub3QgYSByZWFsIGhhcmR3YXJlLiBJZiBteSB0aG91Z2h0IGlzIGNvcnJlY3Qs
+DQphdHRhY2htZW50IGNvdWxkIGJlIGEgZml4IHRoYXQgY2F1c2VzIGZhaWxlZCB0byBwcm9iZSBk
+ZXZpY2UsIGFuZCB0aGVuDQpub3QgZXhlY3V0ZSBVU0IgZGlzY29ubmVjdGlvbi4gDQoNCkkgdXNl
+ZCB5b3VyIGF0dGFjaGVkIGxpbnV4LXY2LjlfdXNiX2NvbmZpZyB0byBidWlsZCBhIGtlcm5lbCwg
+YnV0IGZhaWxlZA0KdG8gcnVuIG9uIGEgcmVhbCBOQi4gU28gaXMgaXQgcG9zc2libGUgdG8gaGVs
+cCB0ZXN0IG15IGF0dGFjaGVkIHBhdGNoPw0KT3IsIGNhbiBJIHVzZSBhICIgI3N5eiB0ZXN0OiIg
+Y29tbWFuZCB0byB0cmlnZ2VyIHJvYm90IGxpa2UgWzFdPw0KDQpbMV0gaHR0cHM6Ly9sb3JlLmtl
+cm5lbC5vcmcvbGludXgtcmRtYS8zY2M5ZjEyYS1kNjgwLWUwNWMtNzJjNi1kNGNiNTU5ZmU1ZWVA
+bGludXguZGV2L1QvI20yZDM3NDk0OWQ2MmIwMTcwNzQ1NDVjMmYyYTFkZjkyNTFlMGJkZTMyDQoN
+ClBpbmctS2UNCg0K
 
-https://lore.kernel.org/all/20240518-pwm_d1-v1-0-311fc5fe2248@jookia.org/
+--_002_54dbdd605bca48a68ae9a7423b4c994frealtekcom_
+Content-Type: application/octet-stream;
+	name="0001-wifi-rtlwifi-handle-return-value-of-usb-init-TX-RX.patch"
+Content-Description: 0001-wifi-rtlwifi-handle-return-value-of-usb-init-TX-RX.patch
+Content-Disposition: attachment;
+	filename="0001-wifi-rtlwifi-handle-return-value-of-usb-init-TX-RX.patch";
+	size=5123; creation-date="Thu, 23 May 2024 02:53:04 GMT";
+	modification-date="Thu, 23 May 2024 02:53:02 GMT"
+Content-Transfer-Encoding: base64
 
-It does this by remembering the settings for channels and disabling then
-setting both channels at once whenever there's an update.
+RnJvbSAwMWRmZTIxZjg0ZGJhMWQzMjY1NTNhZTlkZGI2Y2FiMmUyN2Q5ZjQzIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBQaW5nLUtlIFNoaWggPHBrc2hpaEByZWFsdGVrLmNvbT4KRGF0
+ZTogVGh1LCAyMyBNYXkgMjAyNCAxMDo0NTowNyArMDgwMApTdWJqZWN0OiBbUEFUQ0hdIHdpZmk6
+IHJ0bHdpZmk6IGhhbmRsZSByZXR1cm4gdmFsdWUgb2YgdXNiIGluaXQgVFgvUlgKCkhhbmRsZSBl
+cnJvciBjb2RlIHRvIGNhdXNlIFVTQiBwcm9iZSBmYWlsdXJlIFVTQiBFUCBudW1iZXIgaXMgdW5l
+eHBlY3RlZCwKb3RoZXJ3aXNlIHdoZW4gVVNCIGRpc2Nvbm5lY3Qgc2tiX2RlcXVldWUoKSBhbiB1
+bml0aWFsaXplZCBza2IgbGlzdCBhbmQKY2F1c2Ugd2FybmluZ3MgYmVsb3cuCgpDb21waWxlIHRl
+c3RlZCBvbmx5LgoKdXNiIDItMTogVVNCIGRpc2Nvbm5lY3QsIGRldmljZSBudW1iZXIgNzYKSU5G
+TzogdHJ5aW5nIHRvIHJlZ2lzdGVyIG5vbi1zdGF0aWMga2V5LgpUaGUgY29kZSBpcyBmaW5lIGJ1
+dCBuZWVkcyBsb2NrZGVwIGFubm90YXRpb24sIG9yIG1heWJlCnlvdSBkaWRuJ3QgaW5pdGlhbGl6
+ZSB0aGlzIG9iamVjdCBiZWZvcmUgdXNlPwp0dXJuaW5nIG9mZiB0aGUgbG9ja2luZyBjb3JyZWN0
+bmVzcyB2YWxpZGF0b3IuCkNQVTogMCBQSUQ6IDU0MDYwIENvbW06IGt3b3JrZXIvMDoxIE5vdCB0
+YWludGVkIDYuOS4wLXJjNyAjMQpIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQw
+RlggKyBQSUlYLCAxOTk2KSwgQklPUyByZWwtMS4xNi4yLTAtZ2VhMWI3YTA3MzM5MC1wcmVidWls
+dC5xZW11Lm9yZyAwNC8wMS8yMDE0CldvcmtxdWV1ZTogdXNiX2h1Yl93cSBodWJfZXZlbnQKQ2Fs
+bCBUcmFjZToKIDxUQVNLPgogX19kdW1wX3N0YWNrIGxpYi9kdW1wX3N0YWNrLmM6ODggW2lubGlu
+ZV0KIGR1bXBfc3RhY2tfbHZsKzB4MTE2LzB4MWIwIGxpYi9kdW1wX3N0YWNrLmM6MTE0CiBhc3Np
+Z25fbG9ja19rZXkga2VybmVsL2xvY2tpbmcvbG9ja2RlcC5jOjk3NiBbaW5saW5lXQogcmVnaXN0
+ZXJfbG9ja19jbGFzcysweGMxOC8weGZhMCBrZXJuZWwvbG9ja2luZy9sb2NrZGVwLmM6MTI4OQog
+X19sb2NrX2FjcXVpcmUrMHgxMDgvMHgzYmMwIGtlcm5lbC9sb2NraW5nL2xvY2tkZXAuYzo1MDE0
+CiBsb2NrX2FjcXVpcmUga2VybmVsL2xvY2tpbmcvbG9ja2RlcC5jOjU3NTQgW2lubGluZV0KIGxv
+Y2tfYWNxdWlyZSsweDFiMC8weDU1MCBrZXJuZWwvbG9ja2luZy9sb2NrZGVwLmM6NTcxOQogX19y
+YXdfc3Bpbl9sb2NrX2lycXNhdmUgaW5jbHVkZS9saW51eC9zcGlubG9ja19hcGlfc21wLmg6MTEw
+IFtpbmxpbmVdCiBfcmF3X3NwaW5fbG9ja19pcnFzYXZlKzB4M2QvMHg2MCBrZXJuZWwvbG9ja2lu
+Zy9zcGlubG9jay5jOjE2Mgogc2tiX2RlcXVldWUrMHgyMC8weDE4MCBuZXQvY29yZS9za2J1ZmYu
+YzozODQ2CiBydGxfdXNiX2NsZWFudXAgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3
+aWZpL3VzYi5jOjcwNiBbaW5saW5lXQogcnRsX3VzYl9kZWluaXQgZHJpdmVycy9uZXQvd2lyZWxl
+c3MvcmVhbHRlay9ydGx3aWZpL3VzYi5jOjcyMSBbaW5saW5lXQogcnRsX3VzYl9kaXNjb25uZWN0
+KzB4NGE0LzB4ODUwIGRyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS91c2IuYzox
+MDUxCiB1c2JfdW5iaW5kX2ludGVyZmFjZSsweDFlOC8weDk4MCBkcml2ZXJzL3VzYi9jb3JlL2Ry
+aXZlci5jOjQ2MQogZGV2aWNlX3JlbW92ZSBkcml2ZXJzL2Jhc2UvZGQuYzo1NjggW2lubGluZV0K
+IGRldmljZV9yZW1vdmUrMHgxMjIvMHgxNzAgZHJpdmVycy9iYXNlL2RkLmM6NTYwCiBfX2Rldmlj
+ZV9yZWxlYXNlX2RyaXZlciBkcml2ZXJzL2Jhc2UvZGQuYzoxMjcwIFtpbmxpbmVdCiBkZXZpY2Vf
+cmVsZWFzZV9kcml2ZXJfaW50ZXJuYWwrMHg0NDMvMHg2MjAgZHJpdmVycy9iYXNlL2RkLmM6MTI5
+MwogYnVzX3JlbW92ZV9kZXZpY2UrMHgyMmYvMHg0MjAgZHJpdmVycy9iYXNlL2J1cy5jOjU3NAog
+ZGV2aWNlX2RlbCsweDM5NS8weDlmMCBkcml2ZXJzL2Jhc2UvY29yZS5jOjM5MDkKIHVzYl9kaXNh
+YmxlX2RldmljZSsweDM2MC8weDdiMCBkcml2ZXJzL3VzYi9jb3JlL21lc3NhZ2UuYzoxNDE4CiB1
+c2JfZGlzY29ubmVjdCsweDJkYi8weDkzMCBkcml2ZXJzL3VzYi9jb3JlL2h1Yi5jOjIzMDUKIGh1
+Yl9wb3J0X2Nvbm5lY3QgZHJpdmVycy91c2IvY29yZS9odWIuYzo1MzYyIFtpbmxpbmVdCiBodWJf
+cG9ydF9jb25uZWN0X2NoYW5nZSBkcml2ZXJzL3VzYi9jb3JlL2h1Yi5jOjU2NjIgW2lubGluZV0K
+IHBvcnRfZXZlbnQgZHJpdmVycy91c2IvY29yZS9odWIuYzo1ODIyIFtpbmxpbmVdCiBodWJfZXZl
+bnQrMHgxZTM5LzB4NGNlMCBkcml2ZXJzL3VzYi9jb3JlL2h1Yi5jOjU5MDQKIHByb2Nlc3Nfb25l
+X3dvcmsrMHg5N2IvMHgxYTkwIGtlcm5lbC93b3JrcXVldWUuYzozMjY3CiBwcm9jZXNzX3NjaGVk
+dWxlZF93b3JrcyBrZXJuZWwvd29ya3F1ZXVlLmM6MzM0OCBbaW5saW5lXQogd29ya2VyX3RocmVh
+ZCsweDY4MC8weGYwMCBrZXJuZWwvd29ya3F1ZXVlLmM6MzQyOQoga3RocmVhZCsweDJjNy8weDNi
+MCBrZXJuZWwva3RocmVhZC5jOjM4OAogcmV0X2Zyb21fZm9yaysweDQ1LzB4ODAgYXJjaC94ODYv
+a2VybmVsL3Byb2Nlc3MuYzoxNDcKIHJldF9mcm9tX2ZvcmtfYXNtKzB4MWEvMHgzMCBhcmNoL3g4
+Ni9lbnRyeS9lbnRyeV82NC5TOjI0NAogPC9UQVNLPgoKTGluazogaHR0cHM6Ly9sb3JlLmtlcm5l
+bC5vcmcvbGludXgtd2lyZWxlc3MvQ0FFazZrWnV1ZXprSDFkVlJKZjNFQVZaSy04Mz1PcFR6NjJx
+Q3Vna3BUa3N3ajhKRjZ3QG1haWwuZ21haWwuY29tL1QvI3UKU2lnbmVkLW9mZi1ieTogUGluZy1L
+ZSBTaGloIDxwa3NoaWhAcmVhbHRlay5jb20+Ci0tLQogZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVh
+bHRlay9ydGx3aWZpL3VzYi5jIHwgMzEgKysrKysrKysrKysrKysrKy0tLS0tLQogMSBmaWxlIGNo
+YW5nZWQsIDIzIGluc2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3VzYi5jIGIvZHJpdmVycy9uZXQvd2ly
+ZWxlc3MvcmVhbHRlay9ydGx3aWZpL3VzYi5jCmluZGV4IDJlYTcyZDllMzk1Ny4uNTI1YTkwNzQx
+ZGZiIDEwMDY0NAotLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvdXNi
+LmMKKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3VzYi5jCkBAIC0y
+Myw2ICsyMyw4IEBAIE1PRFVMRV9ERVNDUklQVElPTigiVVNCIGJhc2ljIGRyaXZlciBmb3IgcnRs
+d2lmaSIpOwogCiAjZGVmaW5lIE1BWF9VU0JDVFJMX1ZFTkRPUlJFUV9USU1FUwkJMTAKIAorc3Rh
+dGljIHZvaWQgX3J0bF91c2JfY2xlYW51cF90eChzdHJ1Y3QgaWVlZTgwMjExX2h3ICpodyk7CisK
+IHN0YXRpYyB2b2lkIF91c2JjdHJsX3ZlbmRvcnJlcV9zeW5jKHN0cnVjdCB1c2JfZGV2aWNlICp1
+ZGV2LCB1OCByZXF0eXBlLAogCQkJCSAgIHUxNiB2YWx1ZSwgdm9pZCAqcGRhdGEsIHUxNiBsZW4p
+CiB7CkBAIC0yODUsOSArMjg3LDIwIEBAIHN0YXRpYyBpbnQgX3J0bF91c2JfaW5pdChzdHJ1Y3Qg
+aWVlZTgwMjExX2h3ICpodykKIAl9CiAJLyogdXNiIGVuZHBvaW50IG1hcHBpbmcgKi8KIAllcnIg
+PSBydGxwcml2LT5jZmctPnVzYl9pbnRlcmZhY2VfY2ZnLT51c2JfZW5kcG9pbnRfbWFwcGluZyho
+dyk7Ci0JcnRsdXNiLT51c2JfbXFfdG9faHdxID0gIHJ0bHByaXYtPmNmZy0+dXNiX2ludGVyZmFj
+ZV9jZmctPnVzYl9tcV90b19od3E7Ci0JX3J0bF91c2JfaW5pdF90eChodyk7Ci0JX3J0bF91c2Jf
+aW5pdF9yeChodyk7CisJaWYgKGVycikKKwkJcmV0dXJuIGVycjsKKwlydGx1c2ItPnVzYl9tcV90
+b19od3EgPSBydGxwcml2LT5jZmctPnVzYl9pbnRlcmZhY2VfY2ZnLT51c2JfbXFfdG9faHdxOwor
+CWVyciA9IF9ydGxfdXNiX2luaXRfdHgoaHcpOworCWlmIChlcnIpCisJCXJldHVybiBlcnI7CisJ
+ZXJyID0gX3J0bF91c2JfaW5pdF9yeChodyk7CisJaWYgKGVycikKKwkJZ290byBlcnJfb3V0Owor
+CisJcmV0dXJuIDA7CisKK2Vycl9vdXQ6CisJX3J0bF91c2JfY2xlYW51cF90eChodyk7CiAJcmV0
+dXJuIGVycjsKIH0KIApAQCAtNjkxLDE3ICs3MDQsMTMgQEAgc3RhdGljIGludCBydGxfdXNiX3N0
+YXJ0KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3KQogfQogCiAvKj09PT09PT09PT09PT09PT09PT09
+PT09ICB0eCA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSovCi1zdGF0
+aWMgdm9pZCBydGxfdXNiX2NsZWFudXAoc3RydWN0IGllZWU4MDIxMV9odyAqaHcpCitzdGF0aWMg
+dm9pZCBfcnRsX3VzYl9jbGVhbnVwX3R4KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3KQogewogCXUz
+MiBpOwogCXN0cnVjdCBza19idWZmICpfc2tiOwogCXN0cnVjdCBydGxfdXNiICpydGx1c2IgPSBy
+dGxfdXNiZGV2KHJ0bF91c2Jwcml2KGh3KSk7CiAJc3RydWN0IGllZWU4MDIxMV90eF9pbmZvICp0
+eGluZm87CiAKLQkvKiBjbGVhbiB1cCByeCBzdHVmZi4gKi8KLQlfcnRsX3VzYl9jbGVhbnVwX3J4
+KGh3KTsKLQotCS8qIGNsZWFuIHVwIHR4IHN0dWZmICovCiAJZm9yIChpID0gMDsgaSA8IFJUTF9V
+U0JfTUFYX0VQX05VTTsgaSsrKSB7CiAJCXdoaWxlICgoX3NrYiA9IHNrYl9kZXF1ZXVlKCZydGx1
+c2ItPnR4X3NrYl9xdWV1ZVtpXSkpKSB7CiAJCQlydGx1c2ItPnVzYl90eF9jbGVhbnVwKGh3LCBf
+c2tiKTsKQEAgLTcxNSw2ICs3MjQsMTIgQEAgc3RhdGljIHZvaWQgcnRsX3VzYl9jbGVhbnVwKHN0
+cnVjdCBpZWVlODAyMTFfaHcgKmh3KQogCXVzYl9raWxsX2FuY2hvcmVkX3VyYnMoJnJ0bHVzYi0+
+dHhfc3VibWl0dGVkKTsKIH0KIAorc3RhdGljIHZvaWQgcnRsX3VzYl9jbGVhbnVwKHN0cnVjdCBp
+ZWVlODAyMTFfaHcgKmh3KQoreworCV9ydGxfdXNiX2NsZWFudXBfcngoaHcpOworCV9ydGxfdXNi
+X2NsZWFudXBfdHgoaHcpOworfQorCiAvKiBXZSBtYXkgYWRkIHNvbWUgc3RydWN0IGludG8gc3Ry
+dWN0IHJ0bF91c2IgbGF0ZXIuIERvIGRlaW5pdCBoZXJlLiAgKi8KIHN0YXRpYyB2b2lkIHJ0bF91
+c2JfZGVpbml0KHN0cnVjdCBpZWVlODAyMTFfaHcgKmh3KQogewotLSAKMi4yNS4xCgo=
 
-I think this is a decent enough solution to the problem and just works
-automatically without people having to micromanage the controller.
-
-John.
+--_002_54dbdd605bca48a68ae9a7423b4c994frealtekcom_--
 
