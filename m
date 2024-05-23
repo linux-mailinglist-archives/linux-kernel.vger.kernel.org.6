@@ -1,161 +1,111 @@
-Return-Path: <linux-kernel+bounces-187744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE208CD7D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:55:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DA98CD7DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D45F1C22182
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:55:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4661B22CDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C825156E4;
-	Thu, 23 May 2024 15:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AE21BC49;
+	Thu, 23 May 2024 15:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBWxgsZL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NhtO7cb9"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E9F125DE;
-	Thu, 23 May 2024 15:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DDB17583
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716479727; cv=none; b=JY+PDavdeGg/u2fLyk6Uca0H3xIkNaqnyZXZ9e3E70Z+WpSNDgUwVy0tdi14HAqvhv0orCuoAey6SE/LoUVWz4lSKqQmg7Z78R5uIVE4StN9/zqceTm8dZ1pOaqZnAvNyzDBwDlxyZUNJOJoD3GEmJdSRRoJtGv++N5R/GgxwZk=
+	t=1716479747; cv=none; b=J1LnZl/6QFRi9iPNUwUvwiHLFMTQOqQpHSAYq/Jzt4lZ3oEr1HjtrSLwDNfy6yoTru0HxaHMx4R75lg5LkDZe/GxMvnuE0ietP7KOETux1edM6SNhhaCyGqoA8yciNWvda8NOkisXsA2QtKO5SA6BRy+TmAQPKXu3MXca29lJdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716479727; c=relaxed/simple;
-	bh=54+b4cyegsL99qAcG8FhAJJnqbtwB/M+afVJhDobI/k=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=pAnkzKwO/2TnmrO2ZRlYfv4bq+qa9ebztT/3BphK3vPQrRx5zTcxhSI7+DPdven1Kvd6vlLWVVI69iJCOY2LUSzIE12jjXn6NVGrx6RRNBBfJ8Hy4p6SD37Zn1T2KHVtAYfu8LYJYhA+TrF6TlKlWZQM9tFj9J/0YOiwPMVxa3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBWxgsZL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4114C3277B;
-	Thu, 23 May 2024 15:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716479726;
-	bh=54+b4cyegsL99qAcG8FhAJJnqbtwB/M+afVJhDobI/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FBWxgsZLdnHrqucLI1ShGVZFmnRG0ZRU7v5DJNOvNu8jZaXZbtAOL0+ZQgM2C0b6+
-	 u9GSflyGWJUi5/nGTyaWp0YQAruE2uyEytQgB8OQ75McNLDcwBlTQB3QfidY1/kZGy
-	 mO0bJpAodvMQcwr56OCdKKyGlFOEmuWAmwNiq60/HyeaJVK7BfYJAvI1njD/dJ56zv
-	 GzZXG6VMJwnbnw2E2/fQkD0vsh1a8O6fQcnNy7OWikHK9wDKYu8QaObGDYWeo9tbak
-	 0nc6d1jUWb6nyfuI9hpououUX0Vok4uOahDNT7Zir6wThRuJiM0uMsTHkaOpE40Eio
-	 yOwz9jD221WcQ==
+	s=arc-20240116; t=1716479747; c=relaxed/simple;
+	bh=3gX3Ztjr7i64c5zaCwKW9awJ+IB6EVe8caKn295fLcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WeXtZDgCXBDsLQI/IVI79SE1JvUUd7RVRl0LOuN42y1+aotSUxHWMF0bKs39g5rlh7cacZUa73iofBJXT0AzJf9UDY5c5I2Hb17iZEtPvm8jL3GfBckQEqFWkS69SU02nssnNzvy4PqI2AColQ2n8UjQLFLZyh/OHkZkRVgsxPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NhtO7cb9; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f60817e34so8978031e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:55:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1716479744; x=1717084544; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4Cxm+I9SW1RzY9dhQ4rpc6mA9qWWtUSwtKxHenGgOw=;
+        b=NhtO7cb9lspavmAPINrIgc7/qtxGD2hhrhX0MF1ZH4yMVg6hSlwWRw3dRIsYbbCkZn
+         0wMZ8kJH/qz4cnTd3+zBXnjACcJHY9tov9AMCdyGhlcmmNKtZBfKCUQDYSAYLdtbP2F1
+         IhA5FFr6NK2qcmhH1aYEZOonnta9TOLYc6nms=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716479744; x=1717084544;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u4Cxm+I9SW1RzY9dhQ4rpc6mA9qWWtUSwtKxHenGgOw=;
+        b=oO7XR8Dpsx3L8V6vGgUrvoc0rIjAvNZ3tPtvPjEjeBLevp8MEdCK4fQuA+VmYFZFge
+         CSvBLiibpO+PInk3K/9FpzE5lM7MjKMMuM7xSniRTFgqoUfGeEd9yGqWrms2Zbo5AgIE
+         /RrAKuXnVmDHckAKwsS9BfPECANS5E5LoGShubX8wXoEueJIdm83CVeSdPcEfhLbxQHb
+         6voPBf20cXTr3gexO1YVoTBvXAxZ+rqoQvAsEWuVXDEFVGYsG/sHr1anhhaN+ZZATzLB
+         MDfQsuwodVe6lX0oZHXBQanb630XQzblojbo2B/kudJQ5lkz0+eN1lkDv96kRIua2pkE
+         0cbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXazcDfupdKRDamVURBQRMI1eA10u/IOXqYYNJRS3CywzDtaKo5+Dd3lAd3f4AkB5nzS0PTSE58Z01cGtazAILTGYOoaIh/qvfy3kFF
+X-Gm-Message-State: AOJu0YwLBgq26mvJ8w+/ZnDal8XriwuoeI0vulI86TmVLJIh3bTAZ6eA
+	dwIwWA0vs/WzpH4Vvk77/Jc0pIcLFIrz8TNzQqn0AzvhxkPtS8P57EbH6a27ni5OWlSVEb0O1VD
+	sxawsVg==
+X-Google-Smtp-Source: AGHT+IHVRnh+PbiqQnC9DSvnwwTENbWW5rc9oqb7jYHyaKisBKz+Nz+xRGDOYet/mYM8vs0Ds1swzQ==
+X-Received: by 2002:ac2:5606:0:b0:51d:7d5a:af05 with SMTP id 2adb3069b0e04-526bf82d168mr2993852e87.32.1716479744015;
+        Thu, 23 May 2024 08:55:44 -0700 (PDT)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f39d2cf8sm5364851e87.255.2024.05.23.08.55.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 08:55:43 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5238b5c07efso7287005e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:55:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVeap7OlCK3+3s+2+UjG3LljqUkiDbbbFZx5ZcKijTwQO44Y74cICAv3Mq2AltCvDAt7y71zi6enLGyy51sry8ZLow5/7Zpl6ud6sJt
+X-Received: by 2002:a19:e001:0:b0:51d:70d9:f6ce with SMTP id
+ 2adb3069b0e04-526c0a68e9amr2936135e87.53.1716479742873; Thu, 23 May 2024
+ 08:55:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 May 2024 18:55:21 +0300
-Message-Id: <D1H5A2BM6RBM.1RHCXHHO1SKDX@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>,
- <linux-integrity@vger.kernel.org>
-Cc: <keyrings@vger.kernel.org>, "David Woodhouse" <dwmw2@infradead.org>,
- "Eric Biggers" <ebiggers@kernel.org>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Andrew Morton" <akpm@linux-foundation.org>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "open list:CRYPTO API"
- <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
- "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH RESEND] KEYS: trusted: Use ASN.1 encoded OID
-X-Mailer: aerc 0.17.0
-References: <20240523131931.22350-1-jarkko@kernel.org>
- <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
- <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
- <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
- <D1H4WNKWCB5K.2HJG7RMX7L33V@kernel.org>
- <4d33654876b91a954e581727b6eb2c5e94128cb1.camel@HansenPartnership.com>
-In-Reply-To: <4d33654876b91a954e581727b6eb2c5e94128cb1.camel@HansenPartnership.com>
+MIME-Version: 1.0
+References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr> <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
+ <ZkvO-h7AsWnj4gaZ@slm.duckdns.org> <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
+ <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
+ <CALOAHbAmHTGxTLVuR5N+apSOA29k08hky5KH9zZDY8yg2SAG8Q@mail.gmail.com>
+ <CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com> <CALOAHbAAAU9MTQFc56GYoYWR3TsLbkncp5QrrwHMbqJ9SECivw@mail.gmail.com>
+In-Reply-To: <CALOAHbAAAU9MTQFc56GYoYWR3TsLbkncp5QrrwHMbqJ9SECivw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 23 May 2024 08:55:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whwtEFJnDVrkkMtb6SWcmBQMK8+qXGtqvBO+xH8y2i6nA@mail.gmail.com>
+Message-ID: <CAHk-=whwtEFJnDVrkkMtb6SWcmBQMK8+qXGtqvBO+xH8y2i6nA@mail.gmail.com>
+Subject: Re: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
+ formatting and make wq_worker_comm() use full ID string
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Jan Engelhardt <jengelh@inai.de>, 
+	Craig Small <csmall@enc.com.au>, linux-kernel@vger.kernel.org, 
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu May 23, 2024 at 6:43 PM EEST, James Bottomley wrote:
-> On Thu, 2024-05-23 at 18:37 +0300, Jarkko Sakkinen wrote:
-> > On Thu May 23, 2024 at 6:30 PM EEST, James Bottomley wrote:
-> > > On Thu, 2024-05-23 at 16:54 +0300, Jarkko Sakkinen wrote:
-> > > > On Thu May 23, 2024 at 4:38 PM EEST, James Bottomley wrote:
-> > > > > On Thu, 2024-05-23 at 16:19 +0300, Jarkko Sakkinen wrote:
-> > > > > > There's no reason to encode OID_TPMSealedData at run-time, as
-> > > > > > it never changes.
-> > > > > >=20
-> > > > > > Replace it with the encoded version, which has exactly the
-> > > > > > same size:
-> > > > > >=20
-> > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A067 81 05 0A 01 =
-05
-> > > > > >=20
-> > > > > > Include OBJECT IDENTIFIER (0x06) tag and length as the
-> > > > > > epilogue so that the OID can be simply copied to the blob.
-> > > > >=20
-> > > > > This is true, but if we're going to do this, we should expand
-> > > > > the OID registry functions (in lib/oid_registry.c) to do
-> > > > > something like encode_OID.=C2=A0 The registry already contains th=
-e
-> > > > > hex above minus the two prefixes (which are easy to add).
-> > > >=20
-> > > > Yes, I do agree with this idea, and I named variable the I named
-> > > > it to make it obvious that generation is possible.
-> > > >=20
-> > > > It would be best to have a single source, which could be just
-> > > > a CSV file with entries like:
-> > > >=20
-> > > > <Name>,<OID number>
-> > > >=20
-> > > > And then in scripts/ there should be a script that takes this
-> > > > source and generates oid_registry.gen.{h,c}. The existing
-> > > > oid_registry.h should really just include oid_registry.gen.h
-> > > > then to make this transparent change.
-> > > >=20
-> > > > And then in the series where OID's are encoded per-subsystem
-> > > > patch that takes pre-encoded OID into use.
-> > > >=20
-> > > > Happy to review such patch set if it is pushed forward.
-> > >=20
-> > > Heh, OK, since I'm the one who thinks it's quite easy, I'll give it
-> > > a go.
-> >=20
-> > I guess if it cleaned up multiple sites in kernel then it could
-> > be considered useful. I'd guess that there is at least a few
-> > locations that also encode OID.
+On Thu, 23 May 2024 at 06:04, Yafang Shao <laoar.shao@gmail.com> wrote:
 >
-> This should be the only one currently.  The ASN.1 encoding was added to
-> the kernel to support the trusted keys pipe use case.  However, if you
-> want the kernel to construct and pipe out asymmetric keys, that would
-> be the second use case.
+> If it's not urgent and no one else will handle it, I'll take care of
+> it. However, I might not be able to complete it quickly.
 
-Yes, we definitely need tpm2_key_ecdsa, and that is actually probably
-more important than RSA but I think both are needed. It was easier to
-use RSA to carve stuff to fit as there some off-the-shelf code that
-could be modified for the purpose.
+It's not urgent. In fact, I'm not convinced we need to even increase
+the current comm[] size, since for normal user programs the main way
+'ps' and friends get it is by just reading the full command line etc.
 
-I was already considering do we need the encoder at all but I think
-for dynamic assets like octect strings and variable size integers
-it has its place. Obviously is not very mature at this point.
+But I think it would be good to at least do the cleanup and walk away
+from the bare hardcoded memcpy() so that we can move in that
+direction.
 
-I think I keep the "dump" strategy for RSA keys at least for first
-to keep the series as tight as possible but at least v3 included
-already a patch to make asn1_encode_integer() eat variable size
-stuff:
-
-https://lore.kernel.org/linux-integrity/20240521152659.26438-3-jarkko@kerne=
-l.org/
-
-So my proposal here is that I land RSA keys without using encoder
-but that said it can take them into use in ECDSA keys when the
-encoder has been carved up properly. There's already bunch of
-things changed in v4, so thus I did not want to keep this
-in that series:
-
-https://lore.kernel.org/linux-integrity/20240522005252.17841-1-jarkko@kerne=
-l.org/
-
-I.e. the dump can be considered as first iteration. There's
-bunch of uses for these keys, e.g. WIFI passwords, Ethereum
-keypairs (requires ECDSA) and many others. It is really awesome
-application feature for TPM2.
-
-BR, Jarkko
+                 Linus
 
