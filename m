@@ -1,155 +1,137 @@
-Return-Path: <linux-kernel+bounces-187451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9848CD20C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:15:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD478CD1FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B0291F21103
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B52FCB2233D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD76149C5F;
-	Thu, 23 May 2024 12:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20974149E19;
+	Thu, 23 May 2024 12:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oerBvj3h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LsRnHD7U"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1314778C8B;
-	Thu, 23 May 2024 12:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84CD149E08;
+	Thu, 23 May 2024 12:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716466428; cv=none; b=JGGEu89J4U5XQQAXZ4UlB7zXFcia3mOjZT7tc0IeVVx+BUN3bx1kQnSaCa7UcMID83yQUV9jtSS8xdXEAO7nWGGKnizYmyeDCcUEVAeENF0fN1bicViGxKAJKqycbpsJeeSstKXPz+akLbaNBkKAoA5jwnAu4DXXFZnGY268uLI=
+	t=1716466396; cv=none; b=SIib0OWi2eBukFHvGpOJjhXM69MFIfOF0OLTeMc8SfoTinW8AE2O2ee4JCIvJ7SQDXy0FyerRDLbjYI7pet+S9nGRRAFnvX4FELWqDnEm1mSi85mtLxJL99JUXb9nwbqO/kwflGzZ3Jl2c+ftXjBBCyyMmptBsKw9fY9OIwe0eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716466428; c=relaxed/simple;
-	bh=MfUbeJoTsjQv1oAgkHcvkP4o8mZqbSse0UJ8mAO3EvU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E/C860NmTUCQItPBoGrS5zbEUl2SWP4Cv6tBZ8wtXKSZ8dlo1nGGKUMNM6pF4RDV4T2VBeOFpiw61SxImNp0fipkOn6BavmlSzyTCXUSMQm7s2n0o7QlI+44MjUUo98pbkiqEMnV+1HKJaGPNICxk6tBZPdwDI1BQ2xtjGjMfyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oerBvj3h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC32AC2BD10;
-	Thu, 23 May 2024 12:13:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716466427;
-	bh=MfUbeJoTsjQv1oAgkHcvkP4o8mZqbSse0UJ8mAO3EvU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oerBvj3h3QKjPUtyfXJaHNzzjfYa/N7eUF/3TlAAqIT11+KljwgDP6PsbAMCnM77e
-	 nYKcjeINjpVZjePyZHmxLlKIIrAohYv6Rv+apTvTS+qiPZCrSQegaI83EJlzwpot/H
-	 O0NqdO1g6da4w3HlAGCj2FUulCiwT44Thax2f27r44DENF8oBkgNXez5PbBCvaT6ni
-	 9hmLZSXExvBnKdrMKsCrFbMjKnQbiCgOzUC6jCRWAsYxUuyYNAmjV0mG3OcjGFn94j
-	 yKTHtbkSVNrhiPraDpVWWxMz7AalL7wr7OBwsg4vxRyOQxqwLLyRe/MoJ9S1Vs7+Bq
-	 LNgrSWOR2XTJw==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	x86@kernel.org,
-	bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>
-Subject: [PATCHv7 9/9] man2: Add uretprobe syscall page
-Date: Thu, 23 May 2024 14:11:49 +0200
-Message-ID: <20240523121149.575616-10-jolsa@kernel.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240523121149.575616-1-jolsa@kernel.org>
-References: <20240523121149.575616-1-jolsa@kernel.org>
+	s=arc-20240116; t=1716466396; c=relaxed/simple;
+	bh=133f/ppm7e5WBFptxyFQbVG8EMvUy33o+cg2kVvmScs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q45WOyzfEXYSlw+YG3d1bMsNEWRFSetw5HgAWuCgMS38yyAHUV5wSLSKNTbTrAks84N7VXRd0NrlZRRTo/lDGf9u1xX10TXCc5Sbigh14nW+6wJrRlhKLRBtcIxWNb6pHh526b4ujDGxCahv8oMQqc4d1/OosR66U15F841Ftu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LsRnHD7U; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716466392;
+	bh=133f/ppm7e5WBFptxyFQbVG8EMvUy33o+cg2kVvmScs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LsRnHD7Uog2ITakq18wy7ygWug9EUT5qq3HeLJPOLkNCEWXIWvV3jEGvKsSXitW+L
+	 +Q0s/o0GlcJv03qWXltfU4ZIym4/y+4S6bo/4euqa865crfewK2SsJTDcIg7cnnHtw
+	 2pqgNAqpF3qEH0uZ00g9b0ouzJcI+qPVx613LpkpINUCHcAjq2h51ZXh9ZbPIWKGhD
+	 aTK9hMQYrG0cJKzQopG+cFrea36aO3ueov7NiMz3A2uRovuGwfbVuNCcWbvu0fqsnk
+	 utNHZm4Aio+FkPH03/08V8ZwbzBhDvAmIbOvJ8M5hGHwQQDLPMowTlweFEkRqhLxrT
+	 c1Evhc1QMnppQ==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E5B303782039;
+	Thu, 23 May 2024 12:13:11 +0000 (UTC)
+Date: Thu, 23 May 2024 14:13:10 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Steven Price <steven.price@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Dmitry Osipenko
+ <dmitry.osipenko@collabora.com>, Zack Rusin <zack.rusin@broadcom.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v4 1/3] drm/panfrost: Fix dma_resv deadlock at drm
+ object pin time
+Message-ID: <20240523141310.0b12c83c@collabora.com>
+In-Reply-To: <20240523113236.432585-2-adrian.larumbe@collabora.com>
+References: <20240523113236.432585-1-adrian.larumbe@collabora.com>
+	<20240523113236.432585-2-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Adding man page for new uretprobe syscall.
+On Thu, 23 May 2024 12:32:17 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Reviewed-by: Alejandro Colomar <alx@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- man/man2/uretprobe.2 | 56 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 man/man2/uretprobe.2
+> When Panfrost must pin an object that is being prepared a dma-buf
+> attachment for on behalf of another driver, the core drm gem object pinni=
+ng
+> code already takes a lock on the object's dma reservation.
+>=20
+> However, Panfrost GEM object's pinning callback would eventually try taki=
+ng
+> the lock on the same dma reservation when delegating pinning of the object
+> onto the shmem subsystem, which led to a deadlock.
+>=20
+> This can be shown by enabling CONFIG_DEBUG_WW_MUTEX_SLOWPATH, which throws
+> the following recursive locking situation:
+>=20
+> weston/3440 is trying to acquire lock:
+> ffff000000e235a0 (reservation_ww_class_mutex){+.+.}-{3:3}, at: drm_gem_sh=
+mem_pin+0x34/0xb8 [drm_shmem_helper]
+> but task is already holding lock:
+> ffff000000e235a0 (reservation_ww_class_mutex){+.+.}-{3:3}, at: drm_gem_pi=
+n+0x2c/0x80 [drm]
+>=20
+> Fix it by replacing drm_gem_shmem_pin with its locked version, as the lock
+> had already been taken by drm_gem_pin().
+>=20
+> Cc: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> Cc: Boris Brezillon <boris.brezillon@collabora.com>
+> Cc: Steven Price <steven.price@arm.com>
+> Fixes: a78027847226 ("drm/gem: Acquire reservation lock in drm_gem_{pin/u=
+npin}()")
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
 
-diff --git a/man/man2/uretprobe.2 b/man/man2/uretprobe.2
-new file mode 100644
-index 000000000000..cf1c2b0d852e
---- /dev/null
-+++ b/man/man2/uretprobe.2
-@@ -0,0 +1,56 @@
-+.\" Copyright (C) 2024, Jiri Olsa <jolsa@kernel.org>
-+.\"
-+.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-+.\"
-+.TH uretprobe 2 (date) "Linux man-pages (unreleased)"
-+.SH NAME
-+uretprobe \- execute pending return uprobes
-+.SH SYNOPSIS
-+.nf
-+.B int uretprobe(void)
-+.fi
-+.SH DESCRIPTION
-+The
-+.BR uretprobe ()
-+system call is an alternative to breakpoint instructions for triggering return
-+uprobe consumers.
-+.P
-+Calls to
-+.BR uretprobe ()
-+system call are only made from the user-space trampoline provided by the kernel.
-+Calls from any other place result in a
-+.BR SIGILL .
-+.SH RETURN VALUE
-+The
-+.BR uretprobe ()
-+system call return value is architecture-specific.
-+.SH ERRORS
-+.TP
-+.B SIGILL
-+The
-+.BR uretprobe ()
-+system call was called by a user-space program.
-+.SH VERSIONS
-+Details of the
-+.BR uretprobe ()
-+system call behavior vary across systems.
-+.SH STANDARDS
-+None.
-+.SH HISTORY
-+TBD
-+.SH NOTES
-+The
-+.BR uretprobe ()
-+system call was initially introduced for the x86_64 architecture
-+where it was shown to be faster than breakpoint traps.
-+It might be extended to other architectures.
-+.P
-+The
-+.BR uretprobe ()
-+system call exists only to allow the invocation of return uprobe consumers.
-+It should
-+.B never
-+be called directly.
-+Details of the arguments (if any) passed to
-+.BR uretprobe ()
-+and the return value are architecture-specific.
--- 
-2.45.1
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_gem.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/pa=
+nfrost/panfrost_gem.c
+> index d47b40b82b0b..8e0ff3efede7 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> @@ -192,7 +192,7 @@ static int panfrost_gem_pin(struct drm_gem_object *ob=
+j)
+>  	if (bo->is_heap)
+>  		return -EINVAL;
+> =20
+> -	return drm_gem_shmem_pin(&bo->base);
+> +	return drm_gem_shmem_pin_locked(&bo->base);
+>  }
+> =20
+>  static enum drm_gem_object_status panfrost_gem_status(struct drm_gem_obj=
+ect *obj)
 
 
