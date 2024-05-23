@@ -1,221 +1,210 @@
-Return-Path: <linux-kernel+bounces-187701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045C48CD6D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:14:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9BE8CD6D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1B9281EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823E51F22979
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78761107A8;
-	Thu, 23 May 2024 15:14:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B76107B3;
+	Thu, 23 May 2024 15:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U68Vj9hY"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fFqKmqRc"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2053.outbound.protection.outlook.com [40.107.212.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B99E545;
-	Thu, 23 May 2024 15:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716477284; cv=none; b=hTTGx7bqDBi3y7mSSUXjJ4NnOwQr2/KXo26yu4Xsj5BV8g7VJbxuXz37rUM0GLyoXhLADKP61gaBOGDxFsOi8pccQ9zn7Ik8pmnehg72oYyRej/txuwLohHHe7dzZrqJC+Nu3utn+/1YIv1xllVShVwXfHmSi1VFW9ZwRBuwkYA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716477284; c=relaxed/simple;
-	bh=UrWgmzHv1FvzYHZJUCRMrXiFsSf179Ng9+f1Nwk0uRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgAOMMBjmO9dvHAp3o0SUTH4F+lcFnpEoQHT2wYK1gXqmGwef+nbtTtrsJiogzy+nKjVJQ1xP11E4TvFhRMrTF+8x5/Z4DGZJXWav3xfNVNJftc3NUiHfv2TefmMuYlHdoUhPhdXdUVwEpHtDuLd6n70yJWvd6RVgr4IyZmp/yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U68Vj9hY; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7930531494aso176666085a.0;
-        Thu, 23 May 2024 08:14:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716477282; x=1717082082; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F8tJgJ7tnegSk3eOfTcfQWXDGNN5K68hG1wm4R9804w=;
-        b=U68Vj9hYXNmLD6tgzjigUEsT3alZ5frqdHkwNbDAh3tcWnHM00pwhxnNqZB+uGobA/
-         0Zn1laokqTjz2KRasyN/mEkqBVxKZb9yWmExHi5t9GDnNZeFXHj5Kv7Xfzf2Rz6TldhS
-         1B4TDvp8ycYAEwAnB0wi56UfuHVxYLI+OJq4ezgD6aUuFsUZJDDG/qJ91qlTX2fjdvAl
-         YeUEA4/mKjaaOb21hzLx99H+U8JEGuCBz0cYaM1nPRqpnGsJ0WuVCdgokTmYQ82LXNa/
-         NRSCIvX9AbYUrLAIar2JA0jCk3Th50E60Jg48FCXqg8OZ3JL+9FY0+QrKGeUrgbYoW1c
-         DdOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716477282; x=1717082082;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F8tJgJ7tnegSk3eOfTcfQWXDGNN5K68hG1wm4R9804w=;
-        b=OV6+ryxen/0ueR+uECkec0qyfCHUnKaYR5QcZuTlkWnwSPA36NK9UBmNScNr7xZPwy
-         FFkORYA5jTL3RZf/xTx/Lb228kFbVbcBNqnvyxMDQWpJSvlbJvDKAYOYYFWxAZPQS9pL
-         Gbbp2UrHqO/W0ToYJs+/FC3ZFVTS2Pny/NdDuzgEaXPCMgZVgALVSBOl6/fCHxFOiIaO
-         Xq1DpH3EXrsBAySkIvv+6cUbSh73jB9f3j3uaC9uS8LjbrWYia0Lltuo/+n+zq+qsqsy
-         YlrzRKRnUvTnHv/wcttxPxSjavNhajmcrObQ7TvedxGEvsh6GX8EJ5O/8FCx2uVLTjwW
-         3Iqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ/YgqFiWItvVyCloMIdRIwnXrpIDOqnnYqjVKbXv6rYx7maackWLmLTNqD97Tk5WJ2AFr/zQkCYtmcWrDcynBEs8fvrDDKUFJU5K6dvNA67HxW5hyL7AuUinBo6zA1vxlhkJ/Z9iLXg==
-X-Gm-Message-State: AOJu0YxtW/81R1gc8h5RNOw1+K59CTJAE/79NbOVojx55GCWuCdiBYgg
-	Uc568CKgnlvSB5iOJXca10hIoNsS/hTW0Roqj5lgHQWa8ohyD6w4
-X-Google-Smtp-Source: AGHT+IG4+l/SaBj0IEGvVm91vS0aJMOfPCnw8bk773pySnINJ/OlT3nqC61iyIFrQm8ikavJ8A4ETw==
-X-Received: by 2002:a37:f505:0:b0:793:d25:7b1 with SMTP id af79cd13be357-7949942d7aemr605246585a.23.1716477281641;
-        Thu, 23 May 2024 08:14:41 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79319319b50sm629413085a.33.2024.05.23.08.14.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 08:14:41 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 7A4051200068;
-	Thu, 23 May 2024 11:14:40 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Thu, 23 May 2024 11:14:40 -0400
-X-ME-Sender: <xms:YF1PZqfTlDsVhpypnBjzb5PZZJcZ_VAj1qM7V_UGH0E9lRe_RwFO1g>
-    <xme:YF1PZkNEcEwtu3EpD6pxgPG-j-Val-oFZhWoE5Q2lkWDulkUWNnj3OODaYnN82X9j
-    LoYuoJkcawyoilosw>
-X-ME-Received: <xmr:YF1PZriaRWhVYQvx2DPYcl8mpySrw1sr_C_FQz8AW_ZDXj3kXFmv6d4kww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeiiedgkeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:YF1PZn-cJ2XfxNgbZ3vE0NIEl2JPLIYH6m5dULNYyik1_M7ppM6RJg>
-    <xmx:YF1PZmuAz0ssgv505BGjSjwWHYh64vTVpHqXTP0iPyABfX6acV2qEQ>
-    <xmx:YF1PZuFrRGJWCv_R4NHdcU6Vu1fCONUy55R89QzHU3B_NLltXv2Q2A>
-    <xmx:YF1PZlOmF1R8U6Bqa650p31jLEaxh2AhmDKPqQFuH6EbztiY29c7WQ>
-    <xmx:YF1PZjMwtWRTwEEYYki2w8O1Kk6jH2l-8V0stTUc4KzsOeYynIGsp_B->
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 May 2024 11:14:39 -0400 (EDT)
-Date: Thu, 23 May 2024 08:14:38 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	kernel-team@meta.com, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: LKMM: Making RMW barriers explicit
-Message-ID: <Zk9dXj-f4rANxPep@Boquns-Mac-mini.home>
-References: <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
- <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
- <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
- <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
- <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
- <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
- <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
- <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
- <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
- <a25f9654-e681-1bad-47ae-ddc519610504@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8565F847B;
+	Thu, 23 May 2024 15:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716477378; cv=fail; b=ZkkfZiR80epShVuskCkaSVPmdZzoZ1+sq0enY+c77hVeYhapJc2ygUJCNN/GS6RpfoZcFy8l0OWeeF8ScircEEhhFxPAWlSJOmWm5fPC2RAbAfpkaFh2/ZwGJ5YpMKwweM+7ap/s0F3OQVsPVu4uUy+//+WlRc3LpFqQLVzszsI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716477378; c=relaxed/simple;
+	bh=klOTExRgwtT+r0FjMGtEWH+d8J4VhqFY2BmGqD6NCWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uwTUjirCJturKoLsj64d0YasqXOln91Rdnioi3QVUgrdmnBOZIv+N9iaj7U6+g37wGHa8uYhG0PKTtWWcj1uRf/0Nj5FN6hxYhxaVTvv4mt10MYH/nOYvizi900PNmlaOJ0/WNFnOjcAa/vJDidZr3eU/Egm5mRvJG4qBWOiYz0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fFqKmqRc; arc=fail smtp.client-ip=40.107.212.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PxQE4iO+q+8gxYou3rL2s3UAmfu5KdTd31wHLC4l1CCGwk+FZC+FGp15ycb2Ypb2xv2jD7XIAdd4jgaccLCqYG1lBLhI3Bxa5v8g/INq6nrbUyQaGdziP1743p4qf1UfXZ75wTD7+DcpIWGrrWV7cLCqchbiYfZrCNgK8DYy2xxMleWqUMwURBt3wbFb5DNkhg9oX7FB6FDL13onbT24Ap738G7ub8EVnqFAZYC/16GkU7+EUwdaZAyJKSl5SRCMMcoiJg542WS89j0H9NB6205V3eHCQO4E+FPIjAYJiDqY8MKvgKQjWnX2Gjk2U2tvjc4p85xHWr1dXirIL/en1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KTeE+XxXlR4JbX3Hj7xP+90RhgfjP6o86858gZVy/dA=;
+ b=ICw2QfxKWGOotvlfS2VCQuWke8jDFVcXW5ZSrQ88WEbsa4ocYpsI3YXkvQrdQqzFCSsdj21ZNDzquNHo8zfSpjiX0JudLrY8INH8icqzfhCHRhBpAEk26Xf1oet3DhhCYcZZod7/MNpWdKtqrOUgQb1bOI9ZGC4zmxUlXLfdjwSnlTW+rM9i88qDhx3cnMNLavh1jQOr1DRl6oVR+gmX8ZF7f/53bFodtU/OyReIJsSFpg4nPH9l4b4CeWQJfvnHhOofg5zQpAyaMp4+KD3KrH/c4IRxAq25eawdzg4Df7gqyRAG7JZqLWW5AFxFQaKZomClf/UsxlkKlKhwyTIeaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KTeE+XxXlR4JbX3Hj7xP+90RhgfjP6o86858gZVy/dA=;
+ b=fFqKmqRca1coY4WBZDPQ/z/0+m/qqvTijBtAXa7EKCFFWWLwL2xR5ivmFXSK5W0j63rz/7borGSsuWaAD/K1sUr3ZMzXRKxU+k7g+rVfDFoHuJXMl9fAEJb3+CeDSocmN+C7F7Qjl0WqUbf8IzuIgQS1BJOWu9VEMx2EXiv6I77ansN4wCMa3KAKu5ZHEAWgWyz0E76SSv38+QMDbiF4SQOYm2JllApmM4+odkJfJ4B4LcLyu2OSboIid5ZG+ZnJTIrmlDWLnao90obBrg0DEEUS9R5/rmhGfrcKI5PBCLjmi3ctecro84G5IFLUvMS32DRa6sPyXX2NNoryzgvizg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by CH3PR12MB8658.namprd12.prod.outlook.com (2603:10b6:610:175::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Thu, 23 May
+ 2024 15:16:08 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7611.016; Thu, 23 May 2024
+ 15:16:08 +0000
+Date: Thu, 23 May 2024 12:16:05 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
+	galshalom@nvidia.com, leonro@nvidia.com, treding@nvidia.com,
+	jonathanh@nvidia.com, mmoshrefjava@nvidia.com, shahafs@nvidia.com,
+	vsethi@nvidia.com, sdonthineni@nvidia.com, jan@nvidia.com,
+	tdave@nvidia.com, linux-doc@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
+Subject: Re: [PATCH V3] PCI: Extend ACS configurability
+Message-ID: <20240523151605.GP20229@nvidia.com>
+References: <20240523063528.199908-1-vidyas@nvidia.com>
+ <20240523145936.GA118272@bhelgaas>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523145936.GA118272@bhelgaas>
+X-ClientProxiedBy: MN2PR19CA0004.namprd19.prod.outlook.com
+ (2603:10b6:208:178::17) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a25f9654-e681-1bad-47ae-ddc519610504@huaweicloud.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CH3PR12MB8658:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68a0a0df-bc4e-4b98-dc97-08dc7b3b4599
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|7416005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?58ap8wQFKFJyLnbREGsdQeqnFSs5XdLXxIlgp9NuUbjPiDdXANVWpKoLPf+7?=
+ =?us-ascii?Q?0r8HEdICqXeRuNZ5/FSlHQRWF9ps3xuIM3epzV0jCUHT7uG2H4frXtX9jDYe?=
+ =?us-ascii?Q?m/7dCR5VShAHue6NRu/APVpfh0eGmkD2ob804BZQiCatjGQtkbFF2UNXyc3M?=
+ =?us-ascii?Q?vz6WLO2HxzIxOSWOniMmv/mSQ2LG9E4akIDtWgMwAJbYm3fXH46jD0Xw+1fr?=
+ =?us-ascii?Q?ODfz6K5XjyH41MOIfz6K2dqLLskxD03gh4q0jUfEGzMY9NufHshG7L26+Wy0?=
+ =?us-ascii?Q?DGeWOcXTgGEuM4fO7pj5rYlJ41RYAp2M+q5UN8WcuN5DOQ39/UFKpxdzBCyz?=
+ =?us-ascii?Q?WKYPvqGH5fgSMzUKYxTdKHa6CzqvLHBtcjOT2XRqNE1dQiZbszNxqlK9j/tR?=
+ =?us-ascii?Q?FJ3V10uCnJMNif3H2hChiirqgt2HIkQXJsTIfLO7CMZBfNMxAi7SDBvx19DJ?=
+ =?us-ascii?Q?JklUVFHBpwuQmd+mQ0f6seAeYj8ND2D3DbqhJnNUZtViXgEeS4GnyRQ5odwE?=
+ =?us-ascii?Q?w4NbHQeAUBG3s/YfslSbQ51HwvA15LAnmuzuiBxR26RfKENANdMwi8bEyyxH?=
+ =?us-ascii?Q?cikY5czHe++ufYk6ohxe2EhrxbdBQjHnYxrUlV24KFHfvHgQ2anJX5HmbGyh?=
+ =?us-ascii?Q?tKfH1PrIjU5gB7oLbdePUsDjZQB8YLv5meWRt1EPBoLzhf5+VIF5v0eBqubM?=
+ =?us-ascii?Q?kc0rv3oCBn8lSoqZ5ngYp5KBji816rz6uZk6ciOgLzINHXKvDvC8p0DI6UwP?=
+ =?us-ascii?Q?TXv2ncelHJtR7GI9w5qrtFzr/ZD63pdsO3/COKGZz5V8rPp2OLxwQtqWPSyl?=
+ =?us-ascii?Q?Q3wLOBLwYYVk75tOwMbmz6HM3OHaceKVBNvZpNAZlCX0xzzwlEaYqT7sK5cz?=
+ =?us-ascii?Q?wtoolzPOzuz4txw/6t2brzvv1EadvkN53kMm/HlrDQ+pYnOMt2p6FBpSjkkz?=
+ =?us-ascii?Q?+l9NjKz9iyKzYdOQ/IYVmBA0DhTLoLDO41YL5kYPnENcf8f84yCIg3C2PnOc?=
+ =?us-ascii?Q?xvCD3rKJf98iW31SeZtIc2oTV+aShN4Iy7KIdIZnZ6c/ZMcnP2zXNp9UZkJv?=
+ =?us-ascii?Q?OG4Yi3bHfQ3CLhUVQPece7xX1I1Alr8Hd5djk3LYmII92QJBqUTtmbyzSZ4t?=
+ =?us-ascii?Q?dQs4+mGAnxft+cu9Ig+n9ZGOdsP78Tu4kWOpbsnEA/3BpCsUBhnGCw0K2dlz?=
+ =?us-ascii?Q?2E4xxsTd7m+xt5FStK8w+DD+YNrMXGHVxcnzn6YAnKNF5BKzi9bG+2JNrliB?=
+ =?us-ascii?Q?is5Dajeb8c30O6Gnu/4YBGbhmFxqHx7c8QeOmQGX+g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?qk2qnUvO/ZvwuNenEfO6mmgyOGF/a8l4G7236ghsMN0kaH8SOCxdeDipv4mW?=
+ =?us-ascii?Q?buRQCpVYOPh1bzdFJJrAkI5zd7aKKZ1uEQA6HpaQIQnvE9xN9IGSA1wfJ733?=
+ =?us-ascii?Q?0Fyg5LZrigSWSJLFDOq0KaPTbxWnI+yzUhPF7MwDvF2v3+5E4EDRyOCDq+X7?=
+ =?us-ascii?Q?8kc2K+9xLUN3xvUooHEIWAPeN2oznjp27oZQ+TVDQkz4Ivz4OD6GfX2Hjdkq?=
+ =?us-ascii?Q?Iq+Y67NVUlcB4DCp+gxK/xOAWyIOgCGerEKtehF7TwPUnIR7bmGq5Vd8LGjI?=
+ =?us-ascii?Q?6laEOy89rBjV59scUGcQY3ICadcrdg6NH/43NihGQJdlUdLFD05EF90GpCoH?=
+ =?us-ascii?Q?nfffsHvEOgBN2XO3o60rbNujVrNUXQ8QGhkq8K9zlqBQRdVv60jZ2/zUjyjZ?=
+ =?us-ascii?Q?swAsRXvv/oaf9xovBSY2cmWJsrELv0o758TtljXlA5/8F1vEDOI8FaxNMDJc?=
+ =?us-ascii?Q?neqXeRdkhA0141QAQ0WlwdlemH+INxWV+io5OE6aybviaJ6/73i8BxzE3Kvp?=
+ =?us-ascii?Q?tCgVXH853r0nuD0hpz4k0SCjvthspe1/FKqH4KLu6G4w64Xbpgu+WV/4v3lb?=
+ =?us-ascii?Q?BXD/lp3xa8k8PJyfoxFYNbLsMhtC0llySWkrj2M3Pqm84VHESaYiU+SScyKH?=
+ =?us-ascii?Q?jODK7iBuZy8RkFREX5FEFUboSLlWY0gI37HfT+9UEjQQsp31xlOIcuYzrytj?=
+ =?us-ascii?Q?m8/OrjHkRzmfn9sXXkrMwIPMNb0f5EPpfdW0Qw2VJNWlX6I4pTtEK5R4ZZjy?=
+ =?us-ascii?Q?YVpwsil8dhMvnVhLKMMLLxcAyuMZAXgR6QWDamTgk96Pe/F69McnDHSqVZpB?=
+ =?us-ascii?Q?XrhLv2Ajx17Zi4MGarlPP6AV+SasgCxkyQtujoC7pNF1wnxB0/L4hGXq/HS2?=
+ =?us-ascii?Q?YjOOYr+n0Dt01BDCZJcdrDBtfNILzY343U9Ayl+tt+8eMXI3++Yu62zTyIP7?=
+ =?us-ascii?Q?5rN1B1VnH6S0Nz2TuujI4g0cQjkoSKErUWfnRpcX2nUpYiYj80ILYNLnQsFN?=
+ =?us-ascii?Q?IEBoLgsT8pQdsXH/PFInKSWj5OUXuXpr+SbrKSAjS7xd2GLOq/g3CNX7/kFn?=
+ =?us-ascii?Q?5+oXbdDrlG9GQlCGAm63CTpEefqgo+8IML86Uzmm5+nDzD8APcMK9Zv2GiKB?=
+ =?us-ascii?Q?A4wAASyuqoyHG+3Tobvn2huuE8QvOVH9asfiYQvX5MjTM/Yq+hCHbk8gvcVW?=
+ =?us-ascii?Q?KB98R3AshHexSuOs6GJojLdyu56CMd2s19XOQTTQOG8OR0tdYRbBHHV2pfee?=
+ =?us-ascii?Q?P6ogw2Gfgq2BFJvmKw1d/Bo722kgH9HpsRLfUeN6R8rKee0big4NsVnfgu+b?=
+ =?us-ascii?Q?LGlCGepTHFCndumlx4tEN3iZooY8QHtT37HDe9Osqk3dYIooXrSh6z0O19GM?=
+ =?us-ascii?Q?tcmiGRxWDcNwRW9fC/Z3Sz3eIIzkmtXHijYAGhJCQFvTuKxy+yClnnK0xMxk?=
+ =?us-ascii?Q?ApvSgXnVl5EmbWW5Wd8PrYqsVxeIHtqXiaLBNBnNnPJEVIcoviXdS/8C9gUS?=
+ =?us-ascii?Q?+TvRyIoTnnqppCSvOw+Z7aS/cNnO95dh+ZhtUdJ/SljOVP66QbkxeQIhsn8i?=
+ =?us-ascii?Q?zX/VOGvwKcTpSwYqcdo=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68a0a0df-bc4e-4b98-dc97-08dc7b3b4599
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 15:16:08.1990
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZkuQyvRZTk7emY+speGnHFovBD1jOcDM+B6t+Oeuoangt59sLr3sxt6YCK0cjasT
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8658
 
-On Thu, May 23, 2024 at 04:26:23PM +0200, Hernan Ponce de Leon wrote:
-> On 5/23/2024 4:05 PM, Alan Stern wrote:
-> > On Thu, May 23, 2024 at 02:54:05PM +0200, Jonas Oberhauser wrote:
-> > > 
-> > > 
-> > > Am 5/22/2024 um 4:20 PM schrieb Alan Stern:
-> > > > It would be better if there was a way to tell herd7 not to add the 'mb
-> > > > tag to failed instructions in the first place.  This approach is
-> > > > brittle; see below.
-> > > 
-> > > Hernan told me that in fact that is actually currently the case in herd7.
-> > > Failing RMW get assigned the Once tag implicitly.
-> > > Another thing that I'd suggest to change.
-> > 
-> > Indeed.
-> > 
-> > > > An alternative would be to have a way for the .cat file to remove the
-> > > > 'mb tag from a failed RMW instruction.  But I don't know if this is
-> > > > feasible.
-> > > 
-> > > For Mb it's feasible, as there is no Mb read or Mb store.
-> > > 
-> > > Mb = Mb & (~M | dom(rmw) | range(rmw))
-> > > 
-> > > However one would want to do the same for Acq and Rel.
-> > > 
-> > > For that one would need to distinguish e.g. between a read that comes from a
-> > > failed rmw instruction, and where the tag would disappear, or a normal
-> > > standalone read.
-> > > 
-> > > For example, by using two different acquire tags, 'acquire and 'rmw-acquire,
-> > > and defining
-> > > 
-> > > Acquire = Acquire | Rmw-acquire & (dom(rmw) | range(rmw))
-> > > 
-> > > Anyways we can do this change independently. So for now, we don't need
-> > > RMW_MB.
-> > 
-> > Overall, it seems better to have herd7 assign the right tag, but change
-> > the way the .def file works so that it can tell herd7 which tag to use
-> > in each of the success and failure cases.
+On Thu, May 23, 2024 at 09:59:36AM -0500, Bjorn Helgaas wrote:
+> [+cc iommu folks]
 > 
-> I am not fully sure how herd7 uses the .def file, but I guess something like
-> adding a second memory tag to __cmpxchg could work
+> On Thu, May 23, 2024 at 12:05:28PM +0530, Vidya Sagar wrote:
+> > For iommu_groups to form correctly, the ACS settings in the PCIe fabric
+> > need to be setup early in the boot process, either via the BIOS or via
+> > the kernel disable_acs_redir parameter.
 > 
-> cmpxchg(X,V,W) __cmpxchg{mb, once}(X,V,W)
-> cmpxchg_relaxed(X,V,W) __cmpxchg{once, once}(X,V,W)
-> cmpxchg_acquire(X,V,W) __cmpxchg{acquire, acquire}(X,V,W)
-> cmpxchg_release(X,V,W) __cmpxchg{release, release}(X,V,W)
-> 
+> Can you point to the iommu code that is involved here?  It sounds like
+> the iommu_groups are built at boot time and are immutable after that?
 
-Note that cmpxchg_acquire() and cmpxchg_release() don't have _acqurie
-or _release ordering if they fails.
+They are created when the struct device is plugged
+in. pci_device_group() does the logic.
 
-Besides, I'm not sure this is a good idea. Because the "{mb}, {once},
-etc" part is a syntax thing, you write a cmpxchg(), it should be
-translated to a cmpxchg event with MB tag on. As to failed cmpxchg()
-doesn't provide ordering, it's a semantics thing, as Jonas showed that
-it can be represent in cat file. As long as it's a semanitc thing and we
-can represent in cat file, I don't think we want herd to give a special
-treatment.
+Notably groups can't/don't change if details like ACS change after the
+groups are setup.
 
-What you and Jonas looks fine to me, since it moves the semantic bits
-from herd internal to cat file.
+There are alot of instructions out there telling people to boot their
+servers and then manually change the ACS flags with set_pci or
+something, and these are not good instructions since it defeats the
+VFIO group based security mechanisms.
 
-Regards,
-Boqun
+> If we need per-device ACS config that depends on the workload, it
+> seems kind of problematic to only be able to specify this at boot
+> time.  I guess we would need to reboot if we want to run a workload
+> that needs a different config?
 
-> Hernan
-> 
-> > 
-> > > > 	[M] ; po ; [RMW_MB]
-> > > > 
-> > > > 	[RMW_MB] ; po ; [M]
-> > > > 
-> > > > This is because events tagged with RMW_MB always are memory accesses,
-> > > > and accesses that aren't part of the RMW are already covered by the
-> > > > fencerel(Mb) thing above.
-> > > 
-> > > This has exactly the issue mentioned above - it will cause the rmw to have
-> > > an internal strong fence that on powerpc probably isn't there.
-> > 
-> > Oops, that's right.  Silly oversight on my part.  But at least you
-> > understood what I meant.
-> > 
-> > > We could do (with the assumption that Mb applies only to successful rmw):
-> > > 
-> > >   	[M] ; po ; [Mb & R]
-> > >   	[Mb & W] ; po ; [M]
-> > 
-> > That works.
-> > 
-> > Alan
-> 
+Basically. The main difference I'd see is if the server is a VM host
+or running bare metal apps. You can get more efficicenty if you change
+things for the bare metal case, and often bare metal will want to turn
+the iommu off while a VM host often wants more of it turned on.
+
+> Is this the iommu usage model we want in the long term?
+
+There is some path to more dynamic behavior here, but it would require
+separating groups into two components - devices that are together
+because they are physically sharing translation (aliases and things)
+from devices that are together because they share a security boundary
+(ACS).
+
+It is more believable we could dynamically change security group
+assigments for VFIO than translation group assignment. I don't know
+anyone interested in this right now - Alex and I have only talked
+about it as a possibility a while back.
+
+FWIW I don't view patch as excluding more dynamisism in the future,
+but it is the best way to work with the current state of affairs, and
+definitely better than set_pci instructions.
+
+Thanks,
+Jason
 
