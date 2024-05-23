@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-186994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2AB8CCBA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C548CCBA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9DB1F22C2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8A72832D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496B813BADF;
-	Thu, 23 May 2024 05:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFDD38DF2;
+	Thu, 23 May 2024 05:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UugR7HhO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+sfbEyR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C64213BAD5
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F9413B585
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716440724; cv=none; b=Q5tgiPpxQmbus4hxPVDmo0y9nNH8UFsI7xhXSzSzctI+Xh3CziWoRZM0kbCABay7qlvfRtv7fKjoEas2ZV2bB5B+F4vF+rJ4BaAX+3E+LW11e5vgi9IOwdC3Fk8b0LvDwjtTGb+vgMQd7RH3FSqSAMIr7NBgD36VhF+I0xPkn/s=
+	t=1716440731; cv=none; b=UVxrWVwbjbgae+KNQAVbr6K1lgH38oueqTvRX1YRoj+6DMvx0NNSYdjUTvxOC/uM7TRVZZRkaqqjqGPSXOi3gCP2FRkTJrfrJKaB+8adClrVUbTSji0VKm6hi3l8okE7G27yztIqf7U+luaRA7U3Ap5uU2uGE5Spby4lh81CIQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716440724; c=relaxed/simple;
-	bh=KrGpaMekyTRuOSDlmtTjCMBOb9Ydu/BZISecKqMIkbQ=;
+	s=arc-20240116; t=1716440731; c=relaxed/simple;
+	bh=iSl7KS3PS3+oGvrAX46xbBGgBquJcY7x8oR/0G0ZIdc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K/QjR9J4eYSMjFK8i1AyU1a8DCM5bGtfkoa0FGq7b+EP4+9Y4FQtUhKfGhD9UfEQBs0FcQjKm4tsZTJDelGEkZOcQmvNGApavwARNQC/WRHsmW7UtUAhV/CuvUOTl++dw1CoYABGHeGPE7gRTKT71qe7SByC39MJHTGRO7sid8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UugR7HhO; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=dzBwy7u3+NMBpSbzwaOpTi3FG1h2rMSoxDCHKCcHhx4PnBMACj4GVE8wTOzX2hd3M3wC3C+IkDQrDJHI0bLr8j8MnF8gqQHxCyMHw9Rjid9sj4XXzsZo1YZIuez7/GveZOWveWOk9txyX90SGLpI/rfzbVi5qUpyna+3In2ozUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+sfbEyR; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716440722;
+	s=mimecast20190719; t=1716440728;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iXqG8tM8YcaI9rGWt1KJ0lfMUtcaUoa1T7IYtFP1N5A=;
-	b=UugR7HhOJ9XUY6AbI+hmgEdo2rlQfNGuHsxNQn11PmmUfSdnzrx4ojzD1/yA8/d1y5s1U7
-	m0qIKoLsuUONFeGCuBJRy5IJVEn0HWau7nZMe3zVb472m82/mBS0mXcSrIy8NZeGPx3QJl
-	4TFvxGjGhqp4LHiTn/tnrCRC+eWtP60=
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
- [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=rgyDYqAPwEwrwLxe8ILuedZgvx3RZsbJnZUXSZSXc28=;
+	b=e+sfbEyRePB04i4pD3UvlGylmHTu7I+kl1SKcPPTF4QcPoQZGQLoTv++CGxwHK2lMovkle
+	dA5aP5sh4jvn+hgtfy0XsgLrmfo2NNd8+Eh819FZLLb+M6HTKh3m2bUKyQ7F2Y4/YyFElJ
+	bLjV5la934awv7jzFf3DmwiUIgEVZg8=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-646-fn22c9HnMG63SF5ut5hIjw-1; Thu, 23 May 2024 01:05:20 -0400
-X-MC-Unique: fn22c9HnMG63SF5ut5hIjw-1
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-6f0ff1a4fddso955448a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:05:20 -0700 (PDT)
+ us-mta-153-IeYNd67fMiqA4HgWR1rO7g-1; Thu, 23 May 2024 01:05:27 -0400
+X-MC-Unique: IeYNd67fMiqA4HgWR1rO7g-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-65e7c88cb40so742395a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:05:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716440719; x=1717045519;
+        d=1e100.net; s=20230601; t=1716440726; x=1717045526;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iXqG8tM8YcaI9rGWt1KJ0lfMUtcaUoa1T7IYtFP1N5A=;
-        b=uFIY+kXCHxl5xLO1TX8D4+KHBjh+QFtfwX5GXZyjy6OMIx04Suz3+ZMYB8rV5NTi2T
-         XokFB7TmQYVkgn4p5qZ+SyPa+5KPHhfWsgEynpjLOq6CNjgZI6Gt69pJw4GRmFiPR6xv
-         p+y/jJaSEWcPizQ0N3078/QQshIbzMLv8L3fN19zbcut+XyMzftqp8cdVUeKHz/ymC6e
-         ggQ/xC1zbFG5HkJGMmmqXAxcv2lZJPNNJcs+E9Mt3EX/4x/z9Y2cKnmM0Fhgj8w6jzjq
-         UUvf6ZZ9/s2U4u3xNdZEuYINsmZ5+F8HnPw06I0TFwzBawbUftXKSbfS1IIKHLg/6156
-         lazg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMC3LT8k3hUqMzLB8wldBeuCGfLrSYhpJtpHMVF7eImKVaqAKv+HIyewXRLiFbxvdpfXhYDsE8nZRP1M7eruvEoJ6eRi7LT41N+YI+
-X-Gm-Message-State: AOJu0YwmxPH13qDSw/Pbj7ejz67F4VV3J8fAZoZ1l/8L+XIktX0Yhkn9
-	J0QKYrElXS2OxQYQhuT5ERepKPbT9x90NWmoERIly5aJMcQAABUCLD+S4nM9P9M2uE3MfcaO/KZ
-	qrFgmwGcXEFHifsZ83vpIktPZ3Kai7jFWqiarv2V1RsKEQc5VrRneH8IP2+8Htg==
-X-Received: by 2002:a05:6830:10cd:b0:6f0:bf65:9c42 with SMTP id 46e09a7af769-6f666f7914bmr3888022a34.15.1716440719371;
-        Wed, 22 May 2024 22:05:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWQA1xavODDuyHNmo2P3AvBsnEdbuteghicukf23qUMHJD1rGUHnEt8+t2eLKuyEOwcoEKaA==
-X-Received: by 2002:a05:6830:10cd:b0:6f0:bf65:9c42 with SMTP id 46e09a7af769-6f666f7914bmr3888000a34.15.1716440718826;
-        Wed, 22 May 2024 22:05:18 -0700 (PDT)
+        bh=rgyDYqAPwEwrwLxe8ILuedZgvx3RZsbJnZUXSZSXc28=;
+        b=ZusonY8jFTi5zNV7c+Etx4VEaKGaADATdPETmaX+sIS0NIasYx4Rwb4czBbUQ4Zf53
+         BrDktWiQP1qaOqleN+FH11/2jY2C+HDH909HStmcjqillgpwbyKzw1mzEkzpMvjkwc/H
+         kqgAe0Z4uutzDxAo4Q5HbN/TYyogYtbGZU9vB2jnYigZy3pypZPHk8cPrJymAHCUTh88
+         0a0byMouuO/U+Mw0UYC7OuCgtZmR8ZcL6+MElN2oHUmLJs+FhOVcJQSb1FeoF4FuSOVP
+         +DzYxh8Fi8zfgARfy3Rm4ULcX4R+u+97dchXsPHHaUzwRhFbXqUa9X3mRzDiiUVtc8wT
+         kKhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnIemmO9UXzDlpcmWJ71TRtGe8u5f853lVVqdWj8GJkyYB1ix+kAe4Fto6QE6KEpktejq90fcPyHd4w53e9ZqmYXjO3VW1ONJkyEua
+X-Gm-Message-State: AOJu0Yz91mCb0kIL/YGKXOjTqSECQ4M7EOdq6ZAWmFi9SMdpPAxJFFu/
+	M20pRJUDDuZzxJTi7TwPQX6Tr5HP7ZuQGrWmCRa0ym7aUio2BLHiWqaS6T8JcQSmWUl6fWD5+fA
+	JzHEvBRTB3uhY6V9i/rdGKAFSiuLodSEYuvI+tDVz8wt1nJ0upphQ7Oi0FFgQgg==
+X-Received: by 2002:a05:6a21:2792:b0:1b1:ea57:d6ac with SMTP id adf61e73a8af0-1b1f8a749c2mr3773802637.51.1716440725499;
+        Wed, 22 May 2024 22:05:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPjibNNUlzkGUbJC55LkT4ayzeyD3K0jDKK0WT1v3T+lpkRCBTbOfygRm48CKMedkbGJzihQ==
+X-Received: by 2002:a05:6a21:2792:b0:1b1:ea57:d6ac with SMTP id adf61e73a8af0-1b1f8a749c2mr3773771637.51.1716440724853;
+        Wed, 22 May 2024 22:05:24 -0700 (PDT)
 Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63a917264d6sm20539102a12.73.2024.05.22.22.05.17
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c036272sm247051165ad.188.2024.05.22.22.05.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 22:05:18 -0700 (PDT)
+        Wed, 22 May 2024 22:05:24 -0700 (PDT)
 From: Coiby Xu <coxu@redhat.com>
 To: kexec@lists.infradead.org
 Cc: Ondrej Kozina <okozina@redhat.com>,
@@ -92,9 +92,9 @@ Cc: Ondrej Kozina <okozina@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v4 6/7] x86/crash: pass dm crypt keys to kdump kernel
-Date: Thu, 23 May 2024 13:04:47 +0800
-Message-ID: <20240523050451.788754-7-coxu@redhat.com>
+Subject: [PATCH v4 7/7] x86/crash: make the page that stores the dm crypt keys inaccessible
+Date: Thu, 23 May 2024 13:04:48 +0800
+Message-ID: <20240523050451.788754-8-coxu@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240523050451.788754-1-coxu@redhat.com>
 References: <20240523050451.788754-1-coxu@redhat.com>
@@ -106,74 +106,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-1st kernel will build up the kernel command parameter dmcryptkeys as
-similar to elfcorehdr to pass the memory address of the stored info of
-dm crypt key to kdump kernel.
+This adds an addition layer of protection for the saved copy of dm
+crypt key. Trying to access the saved copy will cause page fault.
 
+Suggested-by: Pingfan Liu <kernelfans@gmail.com>
 Signed-off-by: Coiby Xu <coxu@redhat.com>
 ---
- arch/x86/kernel/crash.c           | 15 ++++++++++++++-
- arch/x86/kernel/kexec-bzimage64.c |  7 +++++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ arch/x86/kernel/machine_kexec_64.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index f06501445cd9..74b3844ae53c 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -266,6 +266,7 @@ static int memmap_exclude_ranges(struct kimage *image, struct crash_mem *cmem,
- 				 unsigned long long mend)
- {
- 	unsigned long start, end;
-+	int r;
- 
- 	cmem->ranges[0].start = mstart;
- 	cmem->ranges[0].end = mend;
-@@ -274,7 +275,19 @@ static int memmap_exclude_ranges(struct kimage *image, struct crash_mem *cmem,
- 	/* Exclude elf header region */
- 	start = image->elf_load_addr;
- 	end = start + image->elf_headers_sz - 1;
--	return crash_exclude_mem_range(cmem, start, end);
-+	r = crash_exclude_mem_range(cmem, start, end);
-+
-+	if (r)
-+		return r;
-+
-+	/* Exclude dm crypt keys region */
-+	if (image->dm_crypt_keys_addr) {
-+		start = image->dm_crypt_keys_addr;
-+		end = start + image->dm_crypt_keys_sz - 1;
-+		return crash_exclude_mem_range(cmem, start, end);
-+	}
-+
-+	return r;
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index b180d8e497c3..fc0a80f4254e 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -545,13 +545,34 @@ static void kexec_mark_crashkres(bool protect)
+ 	kexec_mark_range(control, crashk_res.end, protect);
  }
  
- /* Prepare memory map for crash dump kernel */
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 68530fad05f7..9c94428927bd 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -76,6 +76,10 @@ static int setup_cmdline(struct kimage *image, struct boot_params *params,
- 	if (image->type == KEXEC_TYPE_CRASH) {
- 		len = sprintf(cmdline_ptr,
- 			"elfcorehdr=0x%lx ", image->elf_load_addr);
++static void kexec_mark_dm_crypt_keys(bool protect)
++{
++	unsigned long start_paddr, end_paddr;
++	unsigned int nr_pages;
 +
-+		if (image->dm_crypt_keys_addr != 0)
-+			len += sprintf(cmdline_ptr + len,
-+					"dmcryptkeys=0x%lx ", image->dm_crypt_keys_addr);
- 	}
- 	memcpy(cmdline_ptr + len, cmdline, cmdline_len);
- 	cmdline_len += len;
-@@ -441,6 +445,9 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
- 		ret = crash_load_segments(image);
- 		if (ret)
- 			return ERR_PTR(ret);
-+		ret = crash_load_dm_crypt_keys(image);
-+		if (ret)
-+			pr_debug("Either no dm crypt key or error to retrieve the dm crypt key\n");
- 	}
- #endif
++	if (kexec_crash_image->dm_crypt_keys_addr) {
++		start_paddr = kexec_crash_image->dm_crypt_keys_addr;
++		end_paddr = start_paddr + kexec_crash_image->dm_crypt_keys_sz - 1;
++		nr_pages = (PAGE_ALIGN(end_paddr) - PAGE_ALIGN_DOWN(start_paddr))/PAGE_SIZE;
++		if (protect)
++			set_memory_np((unsigned long)phys_to_virt(start_paddr), nr_pages);
++		else
++			__set_memory_prot(
++				(unsigned long)phys_to_virt(start_paddr),
++				nr_pages,
++				__pgprot(_PAGE_PRESENT | _PAGE_NX | _PAGE_RW));
++	}
++}
++
+ void arch_kexec_protect_crashkres(void)
+ {
+ 	kexec_mark_crashkres(true);
++	kexec_mark_dm_crypt_keys(true);
+ }
  
+ void arch_kexec_unprotect_crashkres(void)
+ {
++	kexec_mark_dm_crypt_keys(false);
+ 	kexec_mark_crashkres(false);
+ }
+ #endif
 -- 
 2.45.0
 
