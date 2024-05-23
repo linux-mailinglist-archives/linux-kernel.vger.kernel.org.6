@@ -1,119 +1,72 @@
-Return-Path: <linux-kernel+bounces-187893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C30C38CDA36
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22408CDA3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F389E1C20C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 661231F21E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F2880624;
-	Thu, 23 May 2024 18:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C53380624;
+	Thu, 23 May 2024 18:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L8Z76W0b"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J2Nraw2g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62654AEE9;
-	Thu, 23 May 2024 18:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744C0171A5;
+	Thu, 23 May 2024 18:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716490216; cv=none; b=K037nrAhbQ26O5NWgcjqzX71IYFIpgLngXCDtF467alAN6KDa6+v7gi8vg5bjZpngcRR9xAXIIlVTt5lwjPhZoEB3e5beAesdnZNKRiB1jHBg9aKoMMr5IVjSqKRBpH3pI7JsPJM327nN+iZgYJaBs93IbNjlkFQU8K2d35nIq8=
+	t=1716490587; cv=none; b=RrEezAFNo0zO6hVKuNp0GTRbpb6vroDgFPaYsFunMLH4bK7VJdPQry1znkmLz0qe8CNYdct2XzfZ3M6KHay1gGja/2M3s03RB6qWz8hKJoGekWMK9Q8N8EWY+7SgSoszYaZs5wHAX1M7F2yLJ5QyHicQXWX9FuCRfr6S6hZWm+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716490216; c=relaxed/simple;
-	bh=kyE+MwN/uIjHh3K6ejdqz58qWZ5WZfIAknWZx2NbxUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Aw5oDjCVqGZYBBWT2U/BDImY3QU3lJvsa6ymaSgSRhxZbeQqES3vcuo7RwXVVGSnlTP1L/9/q3DgxblovJcmy9XbDCFn4+Oc/7Y/andmutEUBG6SZIxnOIzWBukdqM8PM22YPkngucKqzDKaG5nteQ83RE8m4ZSj2yk/cASSotQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L8Z76W0b; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ee5235f5c9so122955415ad.2;
-        Thu, 23 May 2024 11:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716490214; x=1717095014; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T5jWOQ5e4KuXtG3+BV+nC19AzmmlYRZIw5wGYbugR1o=;
-        b=L8Z76W0bkIvF0JdeaS+QqGRE3E6HOrRf+YTUMY2mB1EgHA8H3gU0LIMrgpQmbwYaX/
-         dOBstVDGBT81Z1cuIuWcOSt6gQTloooRcnycY1wiBLeljRcI+P3zUT/W151gMfOPyBee
-         p3YLiSBHBWu6IuWtSQdL797stP35tRlhXTRk+eup3A7ekThjoovAHPHuT2tpLLR7vMxa
-         Z8ekDntQjUKttr22XCveALbbtsjDI0xVOpRP2TsW3RovN3PVYR31y59OeDpTEny6Df4A
-         qicgs2l93YMvZ6vH/pnJpNqBrK7EpH8Coyf0Nsvj3v6dd7mHFTjW0kg1699S7afsDCqs
-         FgNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716490214; x=1717095014;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T5jWOQ5e4KuXtG3+BV+nC19AzmmlYRZIw5wGYbugR1o=;
-        b=oXCCqHyuhi4YD3MlSjxJWgQMLywuCDxIA/BG9TIUY6/j/YyzBAA7f8Kmd+U50tHE47
-         zIbOUro2K8VorCY+WOt5ppbjWoOIcAiBpOOL3PkV2kgIMiyIjlLink06WHzm93k+9Z6j
-         bFCQTsM7i6HImFc2F9WDHNRzeBzJrjnBA6lH1ZAFQMX0QL11TqXw+vIiYLpR87H3ocf2
-         Xsn6OMcSips67+Io3x+w9AR1+2U+cXfFj5M2252pr41dWBpiavJjA4ffTo868XZNc1T8
-         zKAQ2C6a89/4e3HtC/unCG9aPQYEvswmdug2w2zj+bk9Q/IQuY0VTWueMbFj46pUrEAT
-         jRWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVC3s0lObWE15Hjl4O00rkDVAjVokXA4GA0rNU5J+7GF7XnWCqqaUD2gRDUi2iiKi1iwsOFvK4iCjPYgOqha04s+rTZwSxdiYsbwicseTU6kRD4v38gAha65FpLCWD8agKoIaC0
-X-Gm-Message-State: AOJu0YzutcEaVAtGjqhYrQE/jVGKQk+HnjanH5+E69yfjuOAX0Xo6EnW
-	UaAEWueVMrdUQ3edFSTW9wapzJz+gd+eq3i6W6Eh5fRmnSqy41nl
-X-Google-Smtp-Source: AGHT+IH8TfXPmp+k2+6BFrZp7D5q+d4zjU2H10O3j9gFv9PYr2beC6QHykVOAGJXFo/xesXdoPw53Q==
-X-Received: by 2002:a17:902:f987:b0:1e6:7700:1698 with SMTP id d9443c01a7336-1f448c266e3mr1967485ad.35.1716490214038;
-        Thu, 23 May 2024 11:50:14 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0bbde9d7sm266512825ad.106.2024.05.23.11.50.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 11:50:13 -0700 (PDT)
-Message-ID: <19753311-98f5-40af-8e53-173e12e83503@gmail.com>
-Date: Thu, 23 May 2024 11:50:11 -0700
+	s=arc-20240116; t=1716490587; c=relaxed/simple;
+	bh=GMvp4ZUa5auyWW48u3nDaI5JWsfDmBZz1W/ehEXgqs8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bcizJ6YmYfZ6Q1p5eqPDeF50Ns4ppP+tBP77Qk0CjlRH+VzbP5xe1ixwvHKUZkywtPDl5o0xp6weVtPwQo+llFkIPzYJKDYwGKcgxv9yqY19qURPWgaDtf9RSwdAo8AA9gzw1xGXxb04AZTMl64tnp42Gw2Q5c+jujBpCJge7A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=J2Nraw2g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD8BC2BD10;
+	Thu, 23 May 2024 18:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1716490586;
+	bh=GMvp4ZUa5auyWW48u3nDaI5JWsfDmBZz1W/ehEXgqs8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J2Nraw2gaH6n3MhgobyWRQcVgP6jAWECBzB95SjfoVBQJmBDmSNJZDtSOjFJ4JlAt
+	 F4W6jfmG+4pH2rfoHIiPlrLeKyO9ulz746Hu/tTOEZGDO51VthSHB81abHQHqj2vKY
+	 OI3ineFKsxEaxMgE/dRhUP0goHVQ7NaCG+OwWmGI=
+Date: Thu, 23 May 2024 11:56:24 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yuanyuan Zhong <yzhong@purestorage.com>
+Cc: David Hildenbrand <david@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Mohamed Khalfella
+ <mkhalfella@purestorage.com>
+Subject: Re: [PATCH] mm: /proc/pid/smaps_rollup: avoid skipping vma after
+ getting mmap_lock again
+Message-Id: <20240523115624.d068dfb43afc067ed9307cfe@linux-foundation.org>
+In-Reply-To: <20240523183531.2535436-1-yzhong@purestorage.com>
+References: <20240523183531.2535436-1-yzhong@purestorage.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240523130327.956341021@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240523130327.956341021@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 5/23/24 06:12, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.160 release.
-> There are 23 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.160-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Thu, 23 May 2024 12:35:31 -0600 Yuanyuan Zhong <yzhong@purestorage.com> wrote:
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+> After switching smaps_rollup to use VMA iterator, searching for next
+> entry is part of the condition expression of the do-while loop. So the
+> current VMA needs to be addressed before the continue statement.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Please describe the userspace-visible runtime effects of this bug. 
+This aids others in deciding which kernel version(s) need the patch.
 
+Thanks.
 
