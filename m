@@ -1,139 +1,268 @@
-Return-Path: <linux-kernel+bounces-187095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A358A8CCD11
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:34:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C6928CCD13
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0693DB20A37
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9521C21409
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B9413C9D9;
-	Thu, 23 May 2024 07:33:55 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7FE13CA99;
+	Thu, 23 May 2024 07:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EDoneBkV"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4E13B29D;
-	Thu, 23 May 2024 07:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B01D13B592
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716449634; cv=none; b=JC5NogzkPA7Y8XVUne1aJWo38Eu0CYdSz+oSUZkA2nW5lsPHP5Txiiiwa4BJKnfGUX5hhWyubShLdKb5pqIR8c8ez0i2iMGWoz3APmZytJXYQ3GlqO2xOydhbocmzxKn5mYXWSv/W14cd62egweyxuXuXb333aSmNOg9h1PPLYI=
+	t=1716449653; cv=none; b=krC9/ibhzWIlZ33VRQGNti9DJLRrAlH2k+l0lLhrPf5/yNTpWTtoTCP1iQ6bzerbgncdkJ9D5JjuFo70RoG6Q8xDP2hXl+LYc64gCn1d104n/H255Y1t/1ronNqSsJQAZ/UoVcKBJNg8UBvNKeyE2Y6x1GgHJpQuXOFfHJ3XYeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716449634; c=relaxed/simple;
-	bh=vq/FLuv6VbT6g2NgYDQa9Rizy3VZXftahQHFAk9MtV0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ryVnZVb6rgszwuqNU0YnJtOBnpdveDRJYIQW+qgGKe8JfpohUuiUh+ePFU3yLhxhcu7KOb7NfkOz+wfdu6OJhlm0edGcqexbae8bKOg9FStTmoFYQPgGtJwrPQ0JPnh68x4LDtrHBwHjJmlU+wAsV8uwHUzmL/UpKY6sIra4ITg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-627dde150d0so18146707b3.3;
-        Thu, 23 May 2024 00:33:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716449630; x=1717054430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r9ll3Q17E9S4QIKzi6nGnMviZ6Gac1YwMmcDufGIpEg=;
-        b=jSnr9jNwqMwX1OxyZmffd/sL8RD6WywWq7b99EZRMImMGt1IiGts8bOG9VmNTy0I0T
-         3fDb9fgTeUiZlLrZT7DUhMbOqZw73JRZs5iQKLLSD00arL16kvOKzKdt/V5jlcWKBJew
-         fRPfCW/Ue49c3wCQ89FFx6I/o23MXvtMP46DmPyz5MG1JejTXyK9CW+kozZAOp24Xwr2
-         0rzee4XdbWVGjPl8QwNIkfPpIlO2LNdWjOW/CiLzCBgt8bHMvbBYdR5HaPYCgE3MciAp
-         aSooMmVHe5eWkiGazlOiQWqzgXEcsVpxKPDNKcRb9gI1Mk2zQ8/XHnk1BYl7T/hvYaEM
-         TFrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlHJOXI3fTaZTpl2gHtHYVjG70UbRbPzITRniiJaGi6Mgai0R9XLJBosccShvD4O0z8kBQhO3O7ycA3CwmPPXjrKEmQc0a+kRNTRzrcLMKQuukScNW+4swMcXZdMmFSlwiZio0mxDX2Qt5
-X-Gm-Message-State: AOJu0YxOv0JJT/lcdEd4DwKFZRZSJRqfDdNKGR1U6S66aQvHv+RdX8tj
-	E7Tff0zi7xuGTqKEbBOS+4G9NkhzFi7AIVlNNQzJEV+HeADT5x5IuQDxME2A
-X-Google-Smtp-Source: AGHT+IHQUH7ltbF4VOcZlPUGa/FDHLFqfEEjELB33iz06dR3b6gGlONl4x6mV5pT36A4waPQRCMWvg==
-X-Received: by 2002:a05:690c:fca:b0:61b:3484:316b with SMTP id 00721157ae682-627e46ca8a9mr56024117b3.14.1716449630514;
-        Thu, 23 May 2024 00:33:50 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e24680csm60791807b3.6.2024.05.23.00.33.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 00:33:49 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-df4e0d8fa10so1714806276.1;
-        Thu, 23 May 2024 00:33:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXRrwQxyj4AzFt8lffLP+CDnSgyxg03BdyrIBDdDAYbSfSzcZtiR8cIrgAbHFyawCGvaxfwIJE5fBOOoj+Ti+eYbF8ckAgHfdLSj/9ANvhjRpltFfTUPT59TuatPfUq/2iiTdF4jZTPPxlv
-X-Received: by 2002:a5b:c52:0:b0:deb:cd02:3688 with SMTP id
- 3f1490d57ef6-df4e0db8368mr4502046276.48.1716449629677; Thu, 23 May 2024
- 00:33:49 -0700 (PDT)
+	s=arc-20240116; t=1716449653; c=relaxed/simple;
+	bh=e+pnxPro/Bk2iXBaKon9OkDQYn2dOQdUYnKE1vh//Tg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q1Sym/B0rYvrm67L60IuhCGwl7WEp5EiWKJXBMN+CdyOwAhrM58rErsceBMo0wPH2QULRklk6FtUgn4zFdZht14W0KFkJQCw2G1j1YFr8jQUyyt07Q3w15XOrfaezfME/izcXruB1rhNWLGZyYVlibjARsEgQsw/kXS5ce1tb44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EDoneBkV; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yukuai1@huaweicloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716449648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0euZuNBXt/t1L6vvrwtCCno1ncTQZXfg8PJkHBUVkU4=;
+	b=EDoneBkV46ZBClIvfya7xeBbTQkoiIBTRa19Wm0/C6mfxQM/jtaC5dGTwsZQGAuvsboDoV
+	bSH8FuSU2W5OLrxGp1UoKlBDTzzvg3Vg4we6skpr2XRXA0YdgJ+kSrRtj1S4yf66dvasqd
+	TqBBxG/ZLg38UaZLh4DonZFUcVfuOyI=
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: yi.zhang@redhat.com
+X-Envelope-To: dlemoal@kernel.org
+X-Envelope-To: hare@suse.de
+X-Envelope-To: johannes.thumshirn@wdc.com
+X-Envelope-To: kch@nvidia.com
+X-Envelope-To: zhouchengming@bytedance.com
+X-Envelope-To: bvanassche@acm.org
+X-Envelope-To: linux-block@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: yukuai3@huawei.com
+X-Envelope-To: yi.zhang@huawei.com
+X-Envelope-To: yangerkun@huawei.com
+Message-ID: <c30465e7-ced2-4732-993f-9d9eba2f8403@linux.dev>
+Date: Thu, 23 May 2024 09:34:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240409154253.3043822-1-hugo@hugovil.com> <20240409154253.3043822-4-hugo@hugovil.com>
- <CAMuHMdVq=rf-6o485KiA+zcwJPHMe5STKUtSWtFPs2nmvshu-A@mail.gmail.com>
- <CAHp75Vfi2YjE0wzwABURxXhcWLozAf9Cdj_pT+DL_tm8E_zm4Q@mail.gmail.com> <CAMuHMdXqc9tZkd7YzX56QRroDhjbweQAUj+th68DU8oFxpp+jg@mail.gmail.com>
-In-Reply-To: <CAMuHMdXqc9tZkd7YzX56QRroDhjbweQAUj+th68DU8oFxpp+jg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 May 2024 09:33:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
-Message-ID: <CAMuHMdX2rrncANhCVf5bo+Md5bpMOeacYAu+Sgiy7noo55PYew@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] serial: sc16is7xx: split into core and I2C/SPI
- parts (core)
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Hugo Villeneuve <hugo@hugovil.com>, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	peterz@infradead.org, mingo@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RESEND] null_blk: fix null-ptr-dereference while
+ configuring 'power' and 'submit_queues'
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, yi.zhang@redhat.com,
+ dlemoal@kernel.org, hare@suse.de, johannes.thumshirn@wdc.com,
+ kch@nvidia.com, zhouchengming@bytedance.com, bvanassche@acm.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20240523144536.1376904-1-yukuai1@huaweicloud.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240523144536.1376904-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Apr 23, 2024 at 3:11=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Tue, Apr 23, 2024 at 12:37=E2=80=AFPM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Tue, Apr 23, 2024 at 1:01=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Tue, Apr 9, 2024 at 5:48=E2=80=AFPM Hugo Villeneuve <hugo@hugovil.=
-com> wrote:
+
+On 23.05.24 16:45, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 >
-> > > > -config SERIAL_SC16IS7XX
-> > > > -       tristate "SC16IS7xx serial support"
-> > > > +       tristate "NXP SC16IS7xx UART support"
-> > >
-> > > Hence this replaces SERIAL_SC16IS7XX_CORE by SERIAL_SC16IS7XX,
-> > > so arch/mips/configs/cu1??0-neo_defconfig needs to updated.
-> >
-> >         select SERIAL_CORE
-> > -       depends on (SPI_MASTER && !I2C) || I2C
-> > +       select SERIAL_SC16IS7XX_SPI if SPI_MASTER
-> > +       select SERIAL_SC16IS7XX_I2C if I2C
-> >
-> > > So if SPI_MASTER or I2C is enabled, the corresponding SERIAL_SC16IS7X=
-X_*
-> > > subdriver can no longer be disabled?  According to
-> > > https://lore.kernel.org/all/20240403123501.8ef5c99f65a40ca2c10f635a@h=
-ugovil.com/
-> > > you did want to support that?
-> >
-> > I believe it has been taken from one of the IIO drivers as an example.
+> Writing 'power' and 'submit_queues' concurrently will trigger kernel
+> panic:
 >
-> Looks like a bad example to follow:
->   1. The driver question now pops up if both I2C and SPI_MASTER
->      are disabled,
->   2. What if SERIAL_SC16IS7XX_CORE is builtin, but I2C and/or
->      SPI_MASTER are modular?
+> Test script:
 >
-> I believe the only way to fix that is by letting the sub-drivers select t=
-he
-> core driver, like before.
+> modprobe null_blk nr_devices=0
+> mkdir -p /sys/kernel/config/nullb/nullb0
+> while true; do echo 1 > submit_queues; echo 4 > submit_queues; done &
+> while true; do echo 1 > power; echo 0 > power; done
+>
+> Test result:
+>
+> BUG: kernel NULL pointer dereference, address: 0000000000000148
+> Oops: 0000 [#1] PREEMPT SMP
+> RIP: 0010:__lock_acquire+0x41d/0x28f0
+> Call Trace:
+>   <TASK>
+>   lock_acquire+0x121/0x450
+>   down_write+0x5f/0x1d0
+>   simple_recursive_removal+0x12f/0x5c0
+>   blk_mq_debugfs_unregister_hctxs+0x7c/0x100
+>   blk_mq_update_nr_hw_queues+0x4a3/0x720
+>   nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
+>   nullb_device_submit_queues_store+0x79/0xf0 [null_blk]
+>   configfs_write_iter+0x119/0x1e0
+>   vfs_write+0x326/0x730
+>   ksys_write+0x74/0x150
+>
+> This is because del_gendisk() can concurrent with
+> blk_mq_update_nr_hw_queues():
+>
+> nullb_device_power_store	nullb_apply_submit_queues
+>   null_del_dev
+>   del_gendisk
+> 				 nullb_update_nr_hw_queues
+> 				  if (!dev->nullb)
+> 				  // still set while gendisk is deleted
+> 				   return 0
+> 				  blk_mq_update_nr_hw_queues
+>   dev->nullb = NULL
+>
+> Fix this problem by resuing the global mutex to protect
+> nullb_device_power_store() and nullb_update_nr_hw_queues() from configs.
+>
+> Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after an instance has been configured")
+> Reported-and-tested-by: Yi Zhang <yi.zhang@redhat.com>
+> Closes: https://lore.kernel.org/all/CAHj4cs9LgsHLnjg8z06LQ3Pr5cax-+Ps+xT7AP7TPnEjStuwZA@mail.gmail.com/
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   drivers/block/loop.c          |  2 +-
+>   drivers/block/null_blk/main.c | 40 +++++++++++++++++++++++------------
+>   2 files changed, 27 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 28a95fd366fe..3e1c4f5ef714 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -2140,7 +2140,7 @@ static int loop_control_remove(int idx)
+>   		pr_warn_once("deleting an unspecified loop device is not supported.\n");
+>   		return -EINVAL;
+>   	}
+> -		
+> +
 
-FTR, this issue is now upstream.
+This snippet changes nothing. Can we remove it?
 
-Gr{oetje,eeting}s,
+Zhu Yanjun
 
-                        Geert
+>   	/* Hide this loop device for serialization. */
+>   	ret = mutex_lock_killable(&loop_ctl_mutex);
+>   	if (ret)
+> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+> index 5d56ad4ce01a..eb023d267369 100644
+> --- a/drivers/block/null_blk/main.c
+> +++ b/drivers/block/null_blk/main.c
+> @@ -413,13 +413,25 @@ static int nullb_update_nr_hw_queues(struct nullb_device *dev,
+>   static int nullb_apply_submit_queues(struct nullb_device *dev,
+>   				     unsigned int submit_queues)
+>   {
+> -	return nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
+> +	int ret;
+> +
+> +	mutex_lock(&lock);
+> +	ret = nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
+> +	mutex_unlock(&lock);
+> +
+> +	return ret;
+>   }
+>   
+>   static int nullb_apply_poll_queues(struct nullb_device *dev,
+>   				   unsigned int poll_queues)
+>   {
+> -	return nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
+> +	int ret;
+> +
+> +	mutex_lock(&lock);
+> +	ret = nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
+> +	mutex_unlock(&lock);
+> +
+> +	return ret;
+>   }
+>   
+>   NULLB_DEVICE_ATTR(size, ulong, NULL);
+> @@ -468,28 +480,31 @@ static ssize_t nullb_device_power_store(struct config_item *item,
+>   	if (ret < 0)
+>   		return ret;
+>   
+> +	ret = count;
+> +	mutex_lock(&lock);
+>   	if (!dev->power && newp) {
+>   		if (test_and_set_bit(NULLB_DEV_FL_UP, &dev->flags))
+> -			return count;
+> +			goto out;
+> +
+>   		ret = null_add_dev(dev);
+>   		if (ret) {
+>   			clear_bit(NULLB_DEV_FL_UP, &dev->flags);
+> -			return ret;
+> +			goto out;
+>   		}
+>   
+>   		set_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
+>   		dev->power = newp;
+>   	} else if (dev->power && !newp) {
+>   		if (test_and_clear_bit(NULLB_DEV_FL_UP, &dev->flags)) {
+> -			mutex_lock(&lock);
+>   			dev->power = newp;
+>   			null_del_dev(dev->nullb);
+> -			mutex_unlock(&lock);
+>   		}
+>   		clear_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
+>   	}
+>   
+> -	return count;
+> +out:
+> +	mutex_unlock(&lock);
+> +	return ret;
+>   }
+>   
+>   CONFIGFS_ATTR(nullb_device_, power);
+> @@ -1932,15 +1947,12 @@ static int null_add_dev(struct nullb_device *dev)
+>   	nullb->q->queuedata = nullb;
+>   	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
+>   
+> -	mutex_lock(&lock);
+>   	rv = ida_alloc(&nullb_indexes, GFP_KERNEL);
+> -	if (rv < 0) {
+> -		mutex_unlock(&lock);
+> +	if (rv < 0)
+>   		goto out_cleanup_disk;
+> -	}
+> +
+>   	nullb->index = rv;
+>   	dev->index = rv;
+> -	mutex_unlock(&lock);
+>   
+>   	if (config_item_name(&dev->group.cg_item)) {
+>   		/* Use configfs dir name as the device name */
+> @@ -1969,9 +1981,7 @@ static int null_add_dev(struct nullb_device *dev)
+>   	if (rv)
+>   		goto out_ida_free;
+>   
+> -	mutex_lock(&lock);
+>   	list_add_tail(&nullb->list, &nullb_list);
+> -	mutex_unlock(&lock);
+>   
+>   	pr_info("disk %s created\n", nullb->disk_name);
+>   
+> @@ -2020,7 +2030,9 @@ static int null_create_dev(void)
+>   	if (!dev)
+>   		return -ENOMEM;
+>   
+> +	mutex_lock(&lock);
+>   	ret = null_add_dev(dev);
+> +	mutex_unlock(&lock);
+>   	if (ret) {
+>   		null_free_dev(dev);
+>   		return ret;
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+-- 
+Best Regards,
+Yanjun.Zhu
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
