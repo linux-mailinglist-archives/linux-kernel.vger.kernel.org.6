@@ -1,322 +1,127 @@
-Return-Path: <linux-kernel+bounces-187174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8BB8CCE14
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:16:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 051868CCE19
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1130F1F21630
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B4041F21657
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3ED13C911;
-	Thu, 23 May 2024 08:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B009113CABE;
+	Thu, 23 May 2024 08:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IVZdZR1h"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eQrOMy2/"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0F07CF39
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF3513CA8A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716452205; cv=none; b=Ceqqo18NflGa0/NEKIF1qRFqIsApOEUon8z0sk4DrUHnMuaw+U9MdffIzo1yS9zAl1xtWQ0gU/h5z5wSjj1fDIjnZvLx8F07dkpsOTKeFKu3BSWQh+HVvntpv7uwe5/Dm1NXNi15eF+pDx5ArZesa4cx67dL5LJViFDQ9Qx4FQo=
+	t=1716452292; cv=none; b=esHTv6GlJ2uOsq2wf8z3cQoG6rUFHgaztbRr0KhfpYFXBDQLwdk/7lnNGJz+CEeHEc0auz/ZGyvkEpB88H6M5SiZNyn9iPyUDp0joa6b57rzupWwjnWgnrWRGKVT1gPUDZjh0QpyQqA4H1C7rYqigQY1cQJCnEoZ7ubn3Cnotg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716452205; c=relaxed/simple;
-	bh=iVB6R+9lup4O53ru9mlVbwoJET6l2j4XPo+Am1zi2Vo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KaxyNEhdYa+FLZ0Obf6S8fG9A4CtY04EFHCO8N7CLsOT4oExfO0smrvzyWwUnmzkfT13EGMQyLcUvLCAC9d3jUMO6nzf15kXIv4CIfqa53+O0b68iAL/cnd3iJIojdsOByS5/NRPiVAPYPxHrI+F/67JE6nvgsfi9RwCMmArPME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IVZdZR1h; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6a0b68733f5so32814486d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:16:43 -0700 (PDT)
+	s=arc-20240116; t=1716452292; c=relaxed/simple;
+	bh=2KTk0vFDTtEskeGWDlVvZUG9LfaG410pCuPrRVCCZ7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kah6RJVzyd0PR8I2WJoFHwNI7OZ6zHORvSe9OXT2WOoCU/i9AsFALH8+piKZm2rXzwuUzUeiukeBVEJbA3Ss2FxOpCXmlz4Y+GfqmoJ8fbjsZG9wLdvytzjHojisxcGGGbxGThSvrTVLDKahyuyHo6fZU9K/zsWwbjOrOv7WjKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eQrOMy2/; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-574bf7ab218so11829091a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716452202; x=1717057002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LTaESpYY+wl1YLZy1AQipksxU7lItUKGkm8Z12GjNmY=;
-        b=IVZdZR1hPCWVnuVCMf0b728T53316TyF0u6PIwR3gAhqhVmWL1/K/7iDqMyL3s89qy
-         N5Ts2k7MWcFBjmhcJaSp15YJzfnolJ0RNab/y/p+Sl5pAJh0uWb9v+87Nw4Qj/uyxjFb
-         +c46pVITa9LqLjL9TBJoc62rhKG5eI+fFpe+JpKfnYXrudJ/AUYB0UzGkqvyTkJN14Eu
-         jXX4QgVcy/E5upbzC015JQXM6AnBlvyXzjEr3VQaIhYrtptrJ3sq/+tlmLDFWEuNoKOl
-         yJqGnLKTYtRoeOpIGQpZDUMXBzuxSe+V+0fwC4+vbul9xaZbcoMJRWHbP3Tu2jPbhxOm
-         F34Q==
+        d=suse.com; s=google; t=1716452287; x=1717057087; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=21lU/wOObW9nHRj3Ls7LD5UYrlZfeNZ8c3JM7X95WyY=;
+        b=eQrOMy2/E2lxM0Zp+aSbKFGDd/hxKIVYn1uSGJFnYDoQjKh434t6OBYAr/T04UoxYw
+         vE53M6tbtpeIBeK7N7eYayHYI4u3IHi86iFpZN7b5N3WTdVuUgYgGWsXVxKOVONr0FrS
+         wuCf7vIiG5V/NkH+67Qb4Z980V0t63onPU9+02gH3rtglQrpxMxs9IoBJRHwIBR8GUCU
+         XKthEpZxDAvoKraJsUywebdFSas0crtA0oezv7AUofxdVP3aJ/lVKjkN8KnmoEqV5xNL
+         NRsDNkWa9iqORkPkIy2KWMxARpdIgWnejGtgcFVaRkqgzKrUwQEpQAa8uuW3USnNGLAO
+         jSSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716452202; x=1717057002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LTaESpYY+wl1YLZy1AQipksxU7lItUKGkm8Z12GjNmY=;
-        b=KDVDkxgscAOHavrGIS+JyGBrr2U3Jb/WQm3mLxe/fv+5MHAd+DAHLLfjF2OpOJFKOL
-         s6Ne3ejYhJkPFdA3JvxzFa7xYsBoegKP15LrvI1VqP2haXKrWDDn6CIsynGBS45OsDzf
-         UPh7w5a7tgnlTyfrVkVleyfJ5laCz1VPZOQf4JLXBqmDNJNiq+NXpRcZbLEWsc6JOAoJ
-         rQtL+N2/oWPLIqzGWlZ+nnrn65q9aCX1Xzsaehnaa8Itk6urWsGjHvFn1jnwsPqDZd34
-         ER1o4JUcnYA+x02yUnY10jOMAJ60cqWghwvHd3WLipCse4CLYn+9klVQeuTxpm88kj8r
-         qpKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBdZfIOGqiOYr1RUuHYsj/jzxxEzBNKoobbrIEDJXvzIgkSep8uFpw9QmlppsTJ+eDFhvKFycjPxYxgcQTm8XPHutfEsZUQuRUJdAi
-X-Gm-Message-State: AOJu0Yyd9fpZijKR3kfoiC8vmDb3KcluLnTZsIXPm3z5MUBxCzHLfVpV
-	ZC1v1k8FkL/BxSNM2QW25Fplz4GgmRYdIJtFmZCjdmq4+FLMNWZbD7rRLh09qcNktWFhr8hxGPE
-	XjXyrxWVIrfRdsLq7W0NMbr0dHTXcBeTFs6L5
-X-Google-Smtp-Source: AGHT+IHQ3gshivlAYHl6QnLWGwSD/PBeni0Jz3oqtj1hucG6MOjHlL2K4xa1KPFbNlbdcW+IxPYVBKQtm5DMHibaBPM=
-X-Received: by 2002:a05:6214:418e:b0:69b:12a0:295c with SMTP id
- 6a1803df08f44-6ab80907055mr48174716d6.57.1716452202083; Thu, 23 May 2024
- 01:16:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716452287; x=1717057087;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=21lU/wOObW9nHRj3Ls7LD5UYrlZfeNZ8c3JM7X95WyY=;
+        b=F19NeYvD/ucudmH8I4kM0exZRmFx6PlJP501viGUTms263d1YJZIOpatlbpHLAPF7Y
+         HtMqalMZgE0bDqzGtYkggiemJSJuXdgabZNCqp6BshACTtI52uNyCwYQb/UGkz+XpG73
+         TjsXrB1I0Myz11/JGt5fMzvNAMMLaJABm0tqFC6VmT/QQvNg/Sib5sgea7tFsdMkzbon
+         fEO3jLPCxQg+/W9Jd9kyWmdO0w0fJ5lcT+P0aLNrrSWsGQZGVHfv9x4IY9f5H3fSyTG0
+         HjPGI4RUyHa6Vw9pJt7thd0uvDbaxE5g3NqxP2490aC5YRocnOuzrGfbqK5JFXTgid2N
+         kZnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzEEUWduZQ/89CXKlk728Hw8kcWB/ZxmEOyB+MozIDQZyBKZSSl5+Gl1VWySCXQzv5KhRgfxIEeG6BRW9R2/CpQPbO8SXx6P817XO9
+X-Gm-Message-State: AOJu0YxvJ6avSi/0TQynCl/UplDmhppuUnXbWa9PTwAN/J17wPxvdUoE
+	lqze3w5vnLkFH2GvYI15yZ7o/cKLX2QZN3U7L0xRGS3Slb2ZNMZxBVfRv56xFqY=
+X-Google-Smtp-Source: AGHT+IHe+teHQABE5Mik2uPAaKR/j5ry4BDHhUfTX+msAC0v/2NUn5aVNWy8rF5dBb9ysWTD2wEmIQ==
+X-Received: by 2002:a05:6402:35c2:b0:578:341f:86b8 with SMTP id 4fb4d7f45d1cf-578341f8744mr2826677a12.38.1716452287314;
+        Thu, 23 May 2024 01:18:07 -0700 (PDT)
+Received: from ?IPV6:2001:a61:139b:bf01:e8eb:4d8f:8770:df82? ([2001:a61:139b:bf01:e8eb:4d8f:8770:df82])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5784898d04bsm451835a12.61.2024.05.23.01.18.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 01:18:07 -0700 (PDT)
+Message-ID: <a218cac3-9d9d-4ac9-8ea3-0ea9822b2261@suse.com>
+Date: Thu, 23 May 2024 10:18:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000009f9447061833d477@google.com> <jgtxdyooy6zyettrj53qi7s7z5fs5zpnwdjm7eqpihwo32lxzx@v2234ezsba4d>
-In-Reply-To: <jgtxdyooy6zyettrj53qi7s7z5fs5zpnwdjm7eqpihwo32lxzx@v2234ezsba4d>
-From: Alexander Potapenko <glider@google.com>
-Date: Thu, 23 May 2024 10:15:59 +0200
-Message-ID: <CAG_fn=WmDCOXxAzaEJtDYuEY4b3Nq99Z7=1-tmwTx9Ox7BG0AA@mail.gmail.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_extent_update_i_size_sectors
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: syzbot <syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com>, 
-	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Check whether divisor is non-zero before division
+To: Shichao Lai <shichaorai@gmail.com>, stern@rowland.harvard.edu,
+ gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+ linux-kernel@vger.kernel.org, xingwei lee <xrivendell7@gmail.com>,
+ yue sun <samsun1006219@gmail.com>
+References: <20240523072242.787164-1-shichaorai@gmail.com>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <20240523072242.787164-1-shichaorai@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23, 2024 at 1:49=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> This (and a few others I've looked at) look more likely to be bugs in
-> KMSAN, not bcachefs.
+On 23.05.24 09:22, Shichao Lai wrote:
 
-Yeah, this is possible if we are missing some initialization.
+Hi,
 
->
-> here, the supposedly uninitialized key was read in from disk, so the key
-> couldn't possibly have been legitimately marked uninitialized.
+> Since uzonesize may be zero, so a judgement for non-zero is nessesary.
+> 
+> Reported-by: xingwei lee <xrivendell7@gmail.com>
+> Reported-by: yue sun <samsun1006219@gmail.com>
+> Signed-off-by: Shichao Lai <shichaorai@gmail.com>
+> ---
+>   drivers/usb/storage/alauda.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+> index 115f05a6201a..db075a8c03cb 100644
+> --- a/drivers/usb/storage/alauda.c
+> +++ b/drivers/usb/storage/alauda.c
+> @@ -947,6 +947,8 @@ static int alauda_read_data(struct us_data *us, unsigned long address,
+>   	sg = NULL;
+>   
+>   	while (sectors > 0) {
+> +		if (!uzonesize)
+> +			return USB_STOR_TRANSPORT_ERROR;
 
-Am I right that the key is supposed to be initialized before the first
-call of memcpy_u64s_small() (the _lower_ "Uninit was stored to memory
-at:" stack trace)?
-Do you have an idea what code performed the actual load of the data from di=
-sk?
-If that load was done by some assembly routine, we could've easily
-missed that - in that case we'll need to annotate it to fix the false
-positives.
+May I point out that uzonesize does not change in this function?
+There is no need to retest within the loop.
 
->
-> All the suspicious KMSAN splats I'm looking at involve bkeys, but I'm
-> not seeing any other common factors besides that.
->
-> On Sat, May 11, 2024 at 01:52:29PM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.k=
-ern..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D14c66e24980=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D617171361dd=
-3cd47
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Deceea46e8838b=
-aeeba67
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/fdbc7be30633/d=
-isk-dccb07f2.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/a9e4c11aa835/vmli=
-nux-dccb07f2.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/43c3a343ea93=
-/bzImage-dccb07f2.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com
-> >
-> > bcachefs (loop0): snapshots_read... done
-> > bcachefs (loop0): journal_replay... done
-> > bcachefs (loop0): resume_logged_ops... done
-> > bcachefs (loop0): going read-write
-> > bcachefs (loop0): done starting filesystem
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > BUG: KMSAN: uninit-value in bch2_extent_update_i_size_sectors+0x140f/0x=
-17d0 fs/bcachefs/io_write.c:237
-> >  bch2_extent_update_i_size_sectors+0x140f/0x17d0 fs/bcachefs/io_write.c=
-:237
-> >  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
-> >  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
-> >  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
-> >  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
-> >  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
-> >  closure_queue include/linux/closure.h:257 [inline]
-> >  closure_call include/linux/closure.h:390 [inline]
-> >  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
-> >  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
-> >  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
-> >  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
-> >  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
-> >  sync_file_range+0x316/0x450 fs/sync.c:292
-> >  ksys_sync_file_range fs/sync.c:364 [inline]
-> >  __do_sys_sync_file_range fs/sync.c:373 [inline]
-> >  __se_sys_sync_file_range fs/sync.c:370 [inline]
-> >  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
-> >  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h=
-:278
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > Uninit was stored to memory at:
-> >  memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
-> >  bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
-> >  __bch2_bkey_make_mut_noupdate fs/bcachefs/btree_update.h:225 [inline]
-> >  __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:282 [inline]
-> >  bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
-> >  bch2_extent_update_i_size_sectors+0x9a9/0x17d0 fs/bcachefs/io_write.c:=
-219
-> >  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
-> >  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
-> >  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
-> >  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
-> >  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
-> >  closure_queue include/linux/closure.h:257 [inline]
-> >  closure_call include/linux/closure.h:390 [inline]
-> >  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
-> >  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
-> >  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
-> >  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
-> >  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
-> >  sync_file_range+0x316/0x450 fs/sync.c:292
-> >  ksys_sync_file_range fs/sync.c:364 [inline]
-> >  __do_sys_sync_file_range fs/sync.c:373 [inline]
-> >  __se_sys_sync_file_range fs/sync.c:370 [inline]
-> >  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
-> >  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h=
-:278
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > Uninit was stored to memory at:
-> >  memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
-> >  bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
-> >  btree_key_cache_fill fs/bcachefs/btree_key_cache.c:454 [inline]
-> >  bch2_btree_path_traverse_cached_slowpath+0x5f02/0x79f0 fs/bcachefs/btr=
-ee_key_cache.c:530
-> >  bch2_btree_path_traverse_cached+0xd1a/0x1140
-> >  bch2_btree_path_traverse_one+0x737/0x5290 fs/bcachefs/btree_iter.c:115=
-5
-> >  bch2_btree_path_traverse fs/bcachefs/btree_iter.h:225 [inline]
-> >  bch2_btree_iter_peek_slot+0x128c/0x3840 fs/bcachefs/btree_iter.c:2473
-> >  __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:549 [inline]
-> >  __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:278 [inline]
-> >  bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
-> >  bch2_extent_update_i_size_sectors+0x404/0x17d0 fs/bcachefs/io_write.c:=
-219
-> >  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
-> >  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
-> >  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
-> >  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
-> >  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
-> >  closure_queue include/linux/closure.h:257 [inline]
-> >  closure_call include/linux/closure.h:390 [inline]
-> >  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
-> >  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
-> >  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
-> >  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
-> >  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
-> >  sync_file_range+0x316/0x450 fs/sync.c:292
-> >  ksys_sync_file_range fs/sync.c:364 [inline]
-> >  __do_sys_sync_file_range fs/sync.c:373 [inline]
-> >  __se_sys_sync_file_range fs/sync.c:370 [inline]
-> >  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
-> >  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h=
-:278
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > Uninit was created at:
-> >  __kmalloc_large_node+0x231/0x370 mm/slub.c:3927
-> >  __do_kmalloc_node mm/slub.c:3960 [inline]
-> >  __kmalloc_node+0xb10/0x10c0 mm/slub.c:3979
-> >  kmalloc_node include/linux/slab.h:648 [inline]
-> >  kvmalloc_node+0xc0/0x2d0 mm/util.c:634
-> >  kvmalloc include/linux/slab.h:766 [inline]
-> >  btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
-> >  bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
-> >  btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
-> >  bch2_btree_node_read+0x3d42/0x4b50
-> >  __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
-> >  bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
-> >  read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
-> >  bch2_fs_recovery+0x7adb/0x9310 fs/bcachefs/recovery.c:785
-> >  bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
-> >  bch2_fs_open+0x135f/0x1670 fs/bcachefs/super.c:2102
-> >  bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1903
-> >  legacy_get_tree+0x114/0x290 fs/fs_context.c:662
-> >  vfs_get_tree+0xa7/0x570 fs/super.c:1779
-> >  do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
-> >  path_mount+0x742/0x1f20 fs/namespace.c:3679
-> >  do_mount fs/namespace.c:3692 [inline]
-> >  __do_sys_mount fs/namespace.c:3898 [inline]
-> >  __se_sys_mount+0x725/0x810 fs/namespace.c:3875
-> >  __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
-> >  x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.=
-h:166
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > CPU: 1 PID: 6218 Comm: syz-executor.0 Not tainted 6.9.0-rc7-syzkaller-0=
-0012-gdccb07f2914c #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 03/27/2024
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> >
-> >
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> >
-> > If the report is already addressed, let syzbot know by replying with:
-> > #syz fix: exact-commit-title
-> >
-> > If you want to overwrite report's subsystems, reply with:
-> > #syz set subsystems: new-subsystem
-> > (See the list of subsystem names on the web dashboard)
-> >
-> > If the report is a duplicate of another one, reply with:
-> > #syz dup: exact-subject-of-another-report
-> >
-> > If you want to undo deduplication, reply with:
-> > #syz undup
+>   		unsigned int zone = lba / uzonesize; /* integer division */
+>   		unsigned int lba_offset = lba - (zone * uzonesize);
+>   		unsigned int pages;
 
+Secondly, alauda_write_lba() has the same issue.
+You also need to check in alauda_write_data().
 
-
---
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+	Regards
+		Oliver
 
