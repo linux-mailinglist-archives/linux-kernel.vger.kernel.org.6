@@ -1,176 +1,121 @@
-Return-Path: <linux-kernel+bounces-187297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1903C8CCFCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:59:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31D78CCFD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 889EE1F2375E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23FC61C2265C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6F213D8AF;
-	Thu, 23 May 2024 09:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0795C13DDA3;
+	Thu, 23 May 2024 10:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z0nP5/Lv"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dR7zJ40l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD18813D538
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C28113B592;
+	Thu, 23 May 2024 10:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716458390; cv=none; b=IZlTynoot7jj2n9bX33yEAMxhX+Yf87QuywGa1flp3Pt13/lNNEHymcOvo4NBWwXx1LCnwsD0ljefJu8Xu5V9Bf/bQ9CjPrj7X7CS9VxQ4iI7+vf0vM1O6cgm+1fVfLTRAN82v8ReEZmCFhXMBBanX3JHKfyBKbA7xJPLeTsBZs=
+	t=1716458531; cv=none; b=qg7SDnltq/fpLe4a1TeyrhMPUv/POUG6MdixcqafhAGauoRtAu0119sq8ZGUJ3Py0Vp68ZySfh3oyzDC8R5cl/rwz3tFwW9aQUd3AZ7TqC5o5NxtNmKP2932wMGyWuSmg0A9Xm7UYIWufsN8mtLlmoPMh/PYmAPZFYlC9lVSYSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716458390; c=relaxed/simple;
-	bh=+59I1LMHz5513L5Tt9Gn+0+i8+g532fE4EtvdMuItaE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fy0j6UcD+t8YCSRg3u+ck3Qy3aSIvIYR4tDby8iBRrVSVE3RoZxp0m9cYJMIKkFOAz60/eDA367GaLbg3sel8OLIzJ822lOOag8tmwzhJvTsPHAdJvaPYNs4aaSGc95vo9YHpwE2JdC5qer8vnRcre7ibfWzNlCFOBFUa5bLQTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z0nP5/Lv; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-de462979e00so2141340276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716458387; x=1717063187; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4eLg5W63v6nyWYGdaPlQGL+64DpELLePyMxWT5qrNUU=;
-        b=z0nP5/LvIxvVLOMeNooQdvUytMDrVgTnDiIhr83FXLgKBp3m4dE7VGLZwXZNLGEEDc
-         KuWYQZyeYZ/NRsYOHtxZ4ud/6VOy65ygkLfS7jR1zCZM7EA+17oaKnnlSTVfaeLhXWaM
-         f7kNzbmEQTvftoT8F9YLLqifFrBA6rIUWhFq5JE424JbDSVv9pa+oVAUZhYAv8VRNuAf
-         Vm1bpR8yz6vIelJ9s/4cSM9OeyMVNVz35hZfNgU4uo4cgCesa/CA+k8X6I7NrTyvbOPe
-         /0xQOGV5vM8JaS3Q9Za/Jg2zn3O4wmYv6WwdCJgC6o6PwEzMZzawrH6Gnt7g5xK2D2Z0
-         IzRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716458387; x=1717063187;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4eLg5W63v6nyWYGdaPlQGL+64DpELLePyMxWT5qrNUU=;
-        b=plk9dRv+IZtV065ORAzhbunuNX/MAmwtKKTCJExgk+hiEA+V1tN8iehrLa7hJ2Erpg
-         rdJp/v2CNHbxlEwmqqkdcqbKMWFtCVarXCPHwhK8EM4jMvoMWHahVZIgTxJsOSaVq/sQ
-         zgP9KIMQa5NUJpWRENUQTdyprXlBjSEXrP8GSiXz2qfTpPfT4R7HEW3uIhka8/epDCKg
-         pmbQHad2r7iUi1JGwf5W2tSDrGg7OcAUqudUWn0Ks5tdw608lfgREsn52u6dqmSmSUj/
-         8hHNo5+pZPxMVAC7mOh2Wr6ZVRFqa16mWzS1Eb+zaxRIQOHXuz3jywc6ntvIFa7pZ7CV
-         uxwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzsO3a+6kwik9TN0MmzwJl1W7UShGlKLFylLEWgm1Eo5+lrPMqyGyiGLZNtRes5Fk2EQb2nZm6BPNAu2RVNg7wCoLobVj/vdv+vYYP
-X-Gm-Message-State: AOJu0Yxy35cjGO6Rece/z6oIu+Kt1QSC9mDZXCr6MspDxdOwi66jHlcr
-	yQxjhoepjSJolZBQIlVJt3q4/K2vxf/6MA4GePvheMFcKFewt2uvn7FzQjIacTh3tLMEESPd4hM
-	UCg56Pb1qzZ7krZ8Yzg+L4M6cY0saBJmLJHVtOnDA+/Yrm4pD
-X-Google-Smtp-Source: AGHT+IEH2bet0vxbyQkGUI55R017CbgvtHVbrVup5m0zjkPeCkh3N7ZUjMndzd5BhJJAs4TMZp+oQ52G6r3Sss4urHM=
-X-Received: by 2002:a25:b181:0:b0:dee:607c:3528 with SMTP id
- 3f1490d57ef6-df4e0a9cfa9mr4821493276.3.1716458387642; Thu, 23 May 2024
- 02:59:47 -0700 (PDT)
+	s=arc-20240116; t=1716458531; c=relaxed/simple;
+	bh=UPgFW9vuL3g5qypadrRDJdjIEzGJX3EMLiS63N0hICM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=S6vqVPp6vJ7LhmdO4MisnaAEYcj2QdGe4V+tVI0HwwXjtz5eqDIYtWJFMbWwhDK1bDoaIb9pCfmeVm8xVHj015gBOqmkt68qlr7wTnuQRHApRK6KYD8lF9lld1qT7QB0fGPytaDp6g82s0MKFqdgXOL1Z7/qSmdBUSLFS8zrrcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dR7zJ40l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E295EC2BD10;
+	Thu, 23 May 2024 10:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716458530;
+	bh=UPgFW9vuL3g5qypadrRDJdjIEzGJX3EMLiS63N0hICM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dR7zJ40lwquVtY7dVKnnYTIz+66EOJk8cFguLQ4mvLH7tQIZ8lgnKOJKCoCLjXUoh
+	 8cocuvw4pJt7A1VanISjFFVDDKu5hgPXgg510vMUYaH/ODAaM9WWv9X/cptiNx/sp8
+	 cni4bMODk/lWLV9RX0KxO53rpboDWMis3NzCeh2/xG8VK9ehCv6Pdsq7eAtOuz4Nal
+	 KS8jWCj7sa/hPUncnTHA3IOLy4RVYHogYbG4HvC0CKVmtIrQKqwjzHt6p1MPPujPCq
+	 HOOoYAdO84c6DyqtFAJf8x0xIK0xegDPKzin27kYfQ5gNdlAsB8kr4MPXdP3VNOcem
+	 KyCh8iakZNFug==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240517092502.647420-1-vignesh.raman@collabora.com>
- <20240517092502.647420-2-vignesh.raman@collabora.com> <2qzmfv3oc6feihwxu3tl37rg6w3qsj2vddu5olvqk6vhqr26cc@bxu5y6ijvtfa>
- <9cd0667a-12ee-4d45-80e8-dc34259bf01d@collabora.com>
-In-Reply-To: <9cd0667a-12ee-4d45-80e8-dc34259bf01d@collabora.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 23 May 2024 12:59:36 +0300
-Message-ID: <CAA8EJprVVkQO7aPkehwL2zhYkGRkm4Foc13ErfuY6ikBA_4nLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] drm/ci: uprev mesa version
-To: Vignesh Raman <vignesh.raman@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com, 
-	helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch, 
-	robdclark@gmail.com, david.heidelberg@collabora.com, 
-	guilherme.gallo@collabora.com, sergi.blanch.torne@collabora.com, 
-	mcanal@igalia.com, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, virtualization@lists.linux-foundation.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 May 2024 13:02:05 +0300
+Message-Id: <D1GXRKNG42V4.1ZHV4H7HVNXHO@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "Linus Torvalds"
+ <torvalds@linux-foundation.org>
+Cc: =?utf-8?b?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ "Eric Biggers" <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, "Ard Biesheuvel"
+ <ardb@kernel.org>, "Linux Crypto Mailing List"
+ <linux-crypto@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+ <keyrings@vger.kernel.org>, <regressions@lists.linux.dev>,
+ <kernel@collabora.com>, "Tejun Heo" <tj@kernel.org>, "Linux Kernel Mailing
+ List" <linux-kernel@vger.kernel.org>, "Kees Cook" <keescook@chromium.org>,
+ "Torsten Duwe" <duwe@lst.de>, "H. Peter Anvin" <hpa@zytor.com>, "Theodore
+ Ts'o" <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [v3 PATCH] hwrng: core - Remove add_early_randomness
+X-Mailer: aerc 0.17.0
+References: <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com> <dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano> <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org> <20240518043115.GA53815@sol.localdomain> <ZkhS1zrobNwAuANI@gondor.apana.org.au> <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano> <ZkwMnrTR_CbXcjWe@gondor.apana.org.au> <07512097-8198-4a84-b166-ef9809c2913b@notapiano> <Zk2Eso--FVsZ5AF3@gondor.apana.org.au> <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com> <Zk7K7hw-XIHmPs26@gondor.apana.org.au> <D1GXKODMD4S8.1J12D4GOEQWPL@kernel.org>
+In-Reply-To: <D1GXKODMD4S8.1J12D4GOEQWPL@kernel.org>
 
-On Thu, 23 May 2024 at 09:07, Vignesh Raman <vignesh.raman@collabora.com> wrote:
->
-> Hi Dmitry,
->
-> On 20/05/24 16:13, Dmitry Baryshkov wrote:
-> > On Fri, May 17, 2024 at 02:54:57PM +0530, Vignesh Raman wrote:
-> >> zlib.net is not allowing tarball download anymore and results
-> >> in below error in kernel+rootfs_arm32 container build,
-> >> urllib.error.HTTPError: HTTP Error 403: Forbidden
-> >> urllib.error.HTTPError: HTTP Error 415: Unsupported Media Type
-> >>
-> >> Uprev mesa to latest version which includes a fix for this issue.
-> >> https://gitlab.freedesktop.org/mesa/mesa/-/commit/908f444e
-> >>
-> >> Use id_tokens for JWT authentication. Since s3 bucket is migrated to
-> >> mesa-rootfs, update the variables accordingly. Also copy helper scripts
-> >> to install, so that the ci jobs can use these scripts for logging.
-> >>
-> >> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> >> ---
-> >>
-> >> v2:
-> >>    - Uprev to recent version and use id_tokens for JWT authentication
-> >>
-> >> ---
-> >>   drivers/gpu/drm/ci/build-igt.sh   |  2 +-
-> >>   drivers/gpu/drm/ci/build.sh       |  6 +++--
-> >>   drivers/gpu/drm/ci/container.yml  | 12 +++------
-> >>   drivers/gpu/drm/ci/gitlab-ci.yml  | 44 +++++++++++++++++++++----------
-> >>   drivers/gpu/drm/ci/image-tags.yml |  2 +-
-> >>   drivers/gpu/drm/ci/lava-submit.sh |  4 +--
-> >>   drivers/gpu/drm/ci/test.yml       |  2 ++
-> >>   7 files changed, 44 insertions(+), 28 deletions(-)
-> >>
+On Thu May 23, 2024 at 12:53 PM EEST, Jarkko Sakkinen wrote:
+> On Thu May 23, 2024 at 7:49 AM EEST, Herbert Xu wrote:
+> > On Wed, May 22, 2024 at 03:53:23PM -0700, Linus Torvalds wrote:
+> > >=20
+> > > That said, looking at the code in question, there are other oddities
+> > > going on. Even the "we found a favorite new rng" case looks rather
+> > > strange. The thread we use - nice and asynchronous - seems to sleep
+> > > only if the randomness source is emptied.
+> > >=20
+> > > What if you have a really good source of hw randomness? That looks
+> > > like a busy loop to me, but hopefully I'm missing something obvious.
 > >
-> > [skipped]
+> > Yes that does look strange.  So I dug up the original patch at
 > >
-> >> diff --git a/drivers/gpu/drm/ci/test.yml b/drivers/gpu/drm/ci/test.yml
-> >> index 8bc63912fddb..612c9ede3507 100644
-> >> --- a/drivers/gpu/drm/ci/test.yml
-> >> +++ b/drivers/gpu/drm/ci/test.yml
-> >> @@ -150,6 +150,8 @@ msm:sdm845:
-> >>       BM_KERNEL: https://${PIPELINE_ARTIFACTS_BASE}/arm64/cheza-kernel
-> >>       GPU_VERSION: sdm845
-> >>       RUNNER_TAG: google-freedreno-cheza
-> >> +    DEVICE_TYPE: sdm845-cheza-r3
-> >> +    FARM: google
+> > 	https://lore.kernel.org/all/20140317165012.GC1763@lst.de/
 > >
-> > I see that this is the only user of the FARM: tag. Is it correct?
+> > and therein lies the answer.  It's relying on random.c to push back
+> > when the amount of new entropy exceeds what it needs.  IOW we will
+> > sleep via add_hwgenerator_randomness when random.c decides that
+> > enough is enough.  In fact the rate is much less now compared to
+> > when the patch was first applied.
 >
-> No, we need to add FARM variable for other jobs as well.
-
-Why? Even if we have to, we don't have them now and the change doesn't
-seem to be related to the uprev'ing of mesa. So this probably should
-go to a separate commit.
-
+> Just throwing something because came to mind, not a serious suggestion.
 >
-> > Also we miss DEVICE_TYPE for several other boards. Should we be adding
-> > them?
+> In crypto_larval_lookup I see statements like this:
 >
-> Yes, device type needs to be added for msm:apq8016, msm:apq8096, virtio_gpu.
+> 	request_module("crypto-%s", name);
 >
-> I will add this. Thanks.
-
-I'd guess, separate commit too.
-
+> You could potentially bake up a section/table to vmlinux which would
+> have entries like:
 >
-> Regards,
-> Vignesh
+> 	"module name", 1/0
 >
-> >
-> >>     script:
-> >>       - ./install/bare-metal/cros-servo.sh
-> >>
-> >> --
-> >> 2.40.1
-> >>
-> >
+> '1' would mean built-in. Then for early randomness use only stuff
+> that is built-in.
+>
+> Came to mind from arch/x86/realmode for which I baked in a table
+> for relocation (this was a collaborative work with H. Peter Anvin
+> in 2012 to make trampoline code relocatable but is still a legit
+> example to do such shenanigans in a subystem).
 
+This could be even parameter in __request_module() itself e.g.
 
+int __request_module(bool wait, bool builtin_only, const char *fmt, ...);
 
--- 
-With best wishes
-Dmitry
+And would not matter which initcall layer we are running at.
+
+BR, Jarkko
+
 
