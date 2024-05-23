@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-187481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5F228CD25E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA808CD262
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6CA31C21082
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B04A1F22ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2101487DB;
-	Thu, 23 May 2024 12:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28084148834;
+	Thu, 23 May 2024 12:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yvy4Ocf6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fuS+e5JH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203FD13B7AB
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADC01E4B3
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716467927; cv=none; b=Cx8ZxFlYkS36lNe0v7TqnlOIgZtp0iQ8AEPX/k2gk8lAz72D9+ygVheP+rGgifu5n1iM6ZX7ac+9fle5lld4OOZMUtMhrZ0yBmLwdC9x31EGQVMZN+UybVkJVn2YR9wC/HUpYtAA6CEQvLHnU0XRYM/aU5qwHEF2wSjLNmevc7o=
+	t=1716468063; cv=none; b=svUf4/YRUUrQKLZhCz+3mB2PHnKRKacmrE0t/lbQf5W8474VzGK8aRxIT6618mD8XIFhDrHEI7ah7F9IhEAVzxSdLctrS6+hEcyF9eLhJ3sVB161ztRXpvg5VDkjmQW+hLA5h/Vyo+C3vOPuCrnnGp7Q34cjHzN/WBFghgLEgG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716467927; c=relaxed/simple;
-	bh=m00Q3ogbphRbhlXUK4PkU1xACqq/hZrQhWigS4xsD7A=;
+	s=arc-20240116; t=1716468063; c=relaxed/simple;
+	bh=TACJdT4OuSHZHHTmCDOU5pephYt4f6iNsHPpUY1BkX0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6dkJmse71yYoyeifQ3ccGvEDooZjK22EzzJJYC1jH78LAnD+mGEavXnjm8raD89TaMnU4rwNpobM/T4GZCZBSJ3ECqB5rlM0ZRHR+zddV8VycOctGam6pL8fDSa5Vs0nwPvdDoDtJaR6zkLoBdh6r0qwS8nNznzumcEEu5Wcn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yvy4Ocf6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53ECEC2BD10;
-	Thu, 23 May 2024 12:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716467926;
-	bh=m00Q3ogbphRbhlXUK4PkU1xACqq/hZrQhWigS4xsD7A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yvy4Ocf6rkI7K5TOcE8CiQ99FdXJqCnLKq3ijRr7nMDPtbT2LMkffHL6Emc0w6T3Y
-	 h9ZHet2yJlfPLdazLAI5NIT5hcwa4eNt0/wX6NIBqWOdK986cYIUP79aCJu21lzRAV
-	 Dz/omRVcYG18yk+nI5ezmNwUQzk2bNo3t+kJN2x8=
-Date: Thu, 23 May 2024 14:38:44 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2024-35802: x86/sev: Fix position dependent variable
- references in startup code
-Message-ID: <2024052327-cider-finance-d040@gregkh>
-References: <2024051738-CVE-2024-35802-959d@gregkh>
- <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
- <2024052334-cable-serotonin-fa2b@gregkh>
- <5ea91ae6-091d-4378-950b-833561eef48c@suse.com>
- <2024052310-undermost-cramp-5d81@gregkh>
- <d6981cc9-ea89-47fb-9084-267eba05c7a1@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFJWSmbM6n8tqrPl4ZdJ5f/PcO3n4hpX1z4CypUOWXhr71qDl1PhVF1TvlVUuSwqGI9IV7e/wzP5HqmMA/gVF+cRTw5WOVkIOiB71JJLtE/HWWB3KD0N3vgOM0JTvraPMcB75WUaBZ5B9ywWqRouOp/mDXGpv3qp4iPFZBMyM2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fuS+e5JH; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716468060; x=1748004060;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TACJdT4OuSHZHHTmCDOU5pephYt4f6iNsHPpUY1BkX0=;
+  b=fuS+e5JHvi3d+yVlpEY6oZuRBzoqGd9gWyRQxXBsrDrJcoUj6btrq4KC
+   YQ2XsRLi4INOgvPRzRbmRS5uFSXearIBOErEJQZcSyO+RPTPR6Lcl0Exq
+   PZEQwH4LuFfAqsrnirr63KlEOSuvEOg3x1oitI6webXITmChMrCOo8Fi3
+   aqWSY1bZa0bgZtSr2BastHup6mL9c7/m8G9usWcnQJH8x8IQqa8ONfTF4
+   NA74F9N04ny1QrbJRjMoeZd97EahASC3prWuqViDPNchgDnCxKlUU+cMX
+   8SKHdRSFv8i/W5UmbmzFgpovpO7rX7ByZuTn33Bs30XiONat0A+TSHQHP
+   w==;
+X-CSE-ConnectionGUID: BetmY28SShKMU8D8jRIMCw==
+X-CSE-MsgGUID: 7Nggqdh+TUqNAfPUoRrrmA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="24191185"
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="24191185"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 05:40:59 -0700
+X-CSE-ConnectionGUID: 09+nUypJTuqZaMuj77Scsw==
+X-CSE-MsgGUID: 3oFoL+ayQF+Oxc1jncHy0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="71067955"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 23 May 2024 05:40:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id CD271E7; Thu, 23 May 2024 15:40:57 +0300 (EEST)
+Date: Thu, 23 May 2024 15:40:57 +0300
+From: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>
+Subject: Re: [Patch v3] x86/head/64: remove redundant check on
+ level2_kernel_pgt's _PAGE_PRESENT bit
+Message-ID: <wwmqtzeukfrzriysxe3b5ueo5iehqnaf55puaok33cbu56pemb@rzq2m7naja4q>
+References: <20240523123539.14260-1-richard.weiyang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d6981cc9-ea89-47fb-9084-267eba05c7a1@suse.com>
+In-Reply-To: <20240523123539.14260-1-richard.weiyang@gmail.com>
 
-On Thu, May 23, 2024 at 03:21:05PM +0300, Nikolay Borisov wrote:
+On Thu, May 23, 2024 at 12:35:39PM +0000, Wei Yang wrote:
+> Remove a redundant check on kernel code's PMD _PAGE_PRESENT attribute
+> before fix up.
 > 
+> Current process looks like this:
 > 
-> On 23.05.24 г. 15:17 ч., Greg Kroah-Hartman wrote:
-> > On Thu, May 23, 2024 at 03:01:56PM +0300, Nikolay Borisov wrote:
-> > > 
-> > > 
-> > > On 23.05.24 г. 14:21 ч., Greg Kroah-Hartman wrote:
-> > > > Isn't crashing SEV guests a problem with "availability"?  That term
-> > > > comes from the CVE definition of what we need to mark as a CVE, which is
-> > > > why this one was picked.
-> > > 
-> > > But availability has never been one of the tenets of CoCo, in fact in
-> > > sev-snp/tdx the VMM is explicitly considered outside of the TCB so
-> > > availability cannot be guaranteed.
-> > 
-> > This has nothing to do with CoCo (but really, ability of the host to
-> > crash the guest seems like it should be as I would assume that CoCo
-> > guests would want to be able to be run...)
-> > 
-> > Official CVE definition of vulnerability from cve.org:
-> > 	An instance of one or more weaknesses in a Product that can be
-> > 	exploited, causing a negative impact to confidentiality, integrity, or
+>     pmd in [0, _text)
+>         unset _PAGE_PRESENT
+>     pmd in [_text, _end]
+>         if (_PAGE_PRESENT)
+>             fix up delta
+>     pmd in (_end, 512)
+>         unset _PAGE_PRESENT
 > 
-> I don't see how this is exactly "explotaible" i.e if a guest is run and it
-> crashes during bootup it simply won't run. Can this be considered active
-> exploitation of an issue?
+> level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
+> redundant
+> 
+> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> CC: Ingo Molnar <mingo@kernel.org>
+> CC: Steve Wahl <steve.wahl@hpe.com>
 
-Isn't preventing a guest from running something that causes a lack of
-avaiability?  Again, that's why we picked this commit, it keeps the
-system from working properly as expected.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-thanks,
-
-greg k-h
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
