@@ -1,142 +1,120 @@
-Return-Path: <linux-kernel+bounces-187466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72CA8CD23C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:24:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563C68CD242
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07F611C21356
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6B11F22F3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D671411F5;
-	Thu, 23 May 2024 12:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FFC1487F2;
+	Thu, 23 May 2024 12:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOWmuiWA"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3uPRWnb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D0013B5B3;
-	Thu, 23 May 2024 12:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D0713B5B1;
+	Thu, 23 May 2024 12:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716467051; cv=none; b=A3c6c3zE1SaDxgT6/YDssbseoGSmD48exVIubUdzC+N4oJLLdlsXAXVHbtk0E51LdJXceXOo50GEykKjis6T63332tc/2j4s7wq0S/McCTOQ6OZgHQ8AcL0j8FNhgH1sohEWwNwDv5K04BTlWl9ueK8LgJOBAiVvgnwVsYbaTmo=
+	t=1716467129; cv=none; b=fO6maEGatpa6fL1URq3mqaZG0HFQ9xp1bhtt9GynTJqfCru8OR71l03PkLJOy/r/hdMK7dC8VKpdmYfJztESBzMCic61+7sOpaA0ysHiFgptxcu8cOzk9YvH4RbRgWIQho0weXRSkeogm3C9IgwC+lX8bR0bTBhQX9HBGiChRDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716467051; c=relaxed/simple;
-	bh=nMyW6qilbUVDIw0ZZRVu1L3/IxlbetTsYTWk2xoJ1Jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rJRFX5cQGHKJC1LqKPR6MRxcZrDWe0Er2jNqjUUij/aoMvXntslFruyOo6Ku2qBb0wZWTU2z9En79h899j74LVx3OcMwPz+E2425NCTHv3iPnWwxhLmLyVrlISSPvkBthS3CXABUZXsa2xn55MrFf49H28paBCVWez5YtLDBCjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOWmuiWA; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4e160984c30so1136738e0c.0;
-        Thu, 23 May 2024 05:24:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716467049; x=1717071849; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iGInZ8XJKUbjr8yafmcP//JVQaWFhcuQkEdM0iAp5Tw=;
-        b=KOWmuiWANpf+f0ToegJmCJQBh7af+xgxDzwCM2YuJeBknhNn8Nzgi8sf2puV9dnSc+
-         0TNpTQmDX2tvc4mk96Oh7iVwq2tuzwFtlNvmMHP621F14ImN4u4ezeBTJe0de2Td7fTz
-         n/GdygdKz3aNDlsgBOZpeA8x4RVwOhJfgbiSvEaknIvJTkYJbOfOQOYHuD1MGT/zaqTq
-         JoxdwovtvnozKei7xXn8SSx7lUnzhvLl1S5Lc7Aw+qG24DWun1L3RHpdYSpDdlWZg1DP
-         xi19NDft4rvh8HfBxb7UCUkCgd0EUnveIni1L1Vy/v7UMDcnJ22qRfnGqjty8J/JFiKG
-         RuLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716467049; x=1717071849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iGInZ8XJKUbjr8yafmcP//JVQaWFhcuQkEdM0iAp5Tw=;
-        b=QLp+nTMOOcRw5E/d8yOJ9HIdSSjs92VU+xuSm/B+5n5pjbXfMHKYYqRK67VAplTsvZ
-         xUnd+D7xFnnS8Q+e5Cx3UU9C+8mnkgGSfMc02cWwxZekhDZiE0N4yxwgjRxBHRxcZVLx
-         yihaMc83I51SMIYakmRAOCfdI55aovaMoHtYcdykDKoP5dyqO9ZCRglTZwwg5Q5UKD0h
-         ge2E6BwgLBzX29/fzZwRyb3kXhjWNp8ohBD11QsLZGO62Z+ppSIdt5IJtjgeU9SuzwTE
-         Z17SAIMpbuprfdAjDL6l+MSn5iwProwY7n57JEzqiu75O3MdY3C78VxwwKNRKGBzmcdI
-         of4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXoTw1CB2fZ8JecZJX5ptc1DHT8J4ZE0CsrrcE2uZnUaaYB1hRVn3vr6lA+AUYS47mJpizLXBAlIzobnaX7C9n3kRNuzd0lJeg463u03tLtAhYbgUMLNWguC34Zb6uTwabxWCa0Ce9U
-X-Gm-Message-State: AOJu0YxdcfU02iXVkmJseEFwIb8AfgAHE86Ih1VM+hiRiqXlmAKLUIyG
-	XDhgRN4zkRyZQxxoQOEYorX5v+zkDiKpABneohrgUx+5so51fTnqO1HthitsdqPnnnXM8+fLGOn
-	6+QRkDXINCfCRThJLFBoj97VlK1M=
-X-Google-Smtp-Source: AGHT+IElrfcItijCEePsCGzO2XStERDXwXp8+ZZ2vY9L1TDW/53QGq23TR7ewNqRE3uPRGLBodVfQuBNOACKxmh8MBw=
-X-Received: by 2002:a05:6122:a01:b0:4ce:96b7:c2f6 with SMTP id
- 71dfb90a1353d-4e4e4d15e1dmr1647042e0c.5.1716467048796; Thu, 23 May 2024
- 05:24:08 -0700 (PDT)
+	s=arc-20240116; t=1716467129; c=relaxed/simple;
+	bh=634cOFOD65tGG3cW/Dv64LlAod66RbAwHRiThD4dagg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=qT566RiPqvEpPdbCRlBUTEAuxpJ+WyzGHGgXcXEmRfjbgk+iyNiofQjSNHAx5cIMk8LqU3r0yPI1JuqXysEhyr2ewMCNreNWKK/66bTrFnrhnd1lEkuNscXa1F93p4QwvTCbt+B3rzihI/WS37ZhR/q9hwXF8Y8yzdYTHE7DYrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3uPRWnb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55492C2BD10;
+	Thu, 23 May 2024 12:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716467128;
+	bh=634cOFOD65tGG3cW/Dv64LlAod66RbAwHRiThD4dagg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=K3uPRWnbzmbBCCxHrhCweOvj1zOzly6hK6JSpQO0p0vTbpTOrhCZlVNzqvIkm0XKh
+	 wj8i3qUozdrul3DtZx358q8nTvtxSBg4y/vC+19AEqUkeo7W6fUQKT0GFh0Ipm8vUk
+	 x9ZW/y7dmTa+nUByIyXpFeUCzeDu1HGHSN21nJDVJnPFhWwe9iw6GMxWLWxm+fXITP
+	 eH7DsDkn1EY32TOBGnphvLPVQwdYE9m7uPm80in8o8WrKXUuwTeq2uMKmqzFF9DG3Z
+	 O0Wd/xbKWCnbaLrHMHN2GkHjRGc95kCEMaudy1tjZE3wDT6SBgjioA2yJVA0P6T8S3
+	 3bEilVfQLCifQ==
+Date: Thu, 23 May 2024 07:25:27 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523113410.983875-1-shichaorai@gmail.com> <2024052351-demote-gangly-74b0@gregkh>
-In-Reply-To: <2024052351-demote-gangly-74b0@gregkh>
-From: shichao lai <shichaorai@gmail.com>
-Date: Thu, 23 May 2024 20:23:57 +0800
-Message-ID: <CACjpba7k2+GS3c+NGgOeP=9=DU8Mh1DFEGUB_WAkX_VFKBBtrA@mail.gmail.com>
-Subject: Re: [PATCH v2] usb-storage: Check whether divisor is non-zero before division
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: oneukum@suse.com, stern@rowland.harvard.edu, linux-usb@vger.kernel.org, 
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org, 
-	xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, May 23, 2024 at 7:47=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Thu, May 23, 2024 at 07:34:10PM +0800, Shichao Lai wrote:
-> > Since uzonesize may be zero, so judgements for non-zero
-> > are necessary in both place.
-> >
-> > Changes since v1:
-> > - Add one more check in alauda_write_lba().
-> > - Move check ahead of loop in alauda_read_data().
->
-> Nit, this changes list should go below the --- line, as the
-> documentation asks for.
-
-Sorry for my inexperience. I have read the document and found some
-examples but I am still a little confused about this.
-I guess this is what you mean?
-
-Since uzonesize may be zero ... (context)
-
-Reported-by: xingwei lee <xrivendell7@gmail.com>
-Reported-by: yue sun <samsun1006219@gmail.com>
-Signed-off-by: Shichao Lai <shichaorai@gmail.com>
----
-Changes since v1:
-- Add one more check in alauda_write_lba().
-- Move check ahead of loop in alauda_read_data().
-
- drivers/usb/storage/alauda.c | 4 ++++
- 1 file changed, 4 insertions(+)
-..
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, imx@lists.linux.dev, 
+ Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+ linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+In-Reply-To: <20240523-imx-se-if-v2-2-5a6fd189a539@nxp.com>
+References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
+ <20240523-imx-se-if-v2-2-5a6fd189a539@nxp.com>
+Message-Id: <171646712724.2026308.5404698488082776575.robh@kernel.org>
+Subject: Re: [PATCH v2 2/5] dt-bindings: arm: fsl: add imx-se-fw binding
+ doc
 
 
+On Thu, 23 May 2024 16:19:33 +0530, Pankaj Gupta wrote:
+> The NXP security hardware IP(s) like: i.MX EdgeLock Enclave, V2X etc.,
+> creates an embedded secure enclave within the SoC boundary to enable
+> features like:
+> - HSM
+> - SHE
+> - V2X
+> 
+> Secure-Enclave(s) communication interface are typically via message
+> unit, i.e., based on mailbox linux kernel driver. This driver enables
+> communication ensuring well defined message sequence protocol between
+> Application Core and enclave's firmware.
+> 
+> Driver configures multiple misc-device on the MU, for multiple
+> user-space applications, to be able to communicate over single MU.
+> 
+> It exists on some i.MX processors. e.g. i.MX8ULP, i.MX93 etc.
+> 
+> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> ---
+>  .../devicetree/bindings/firmware/fsl,imx-se.yaml   | 154 +++++++++++++++++++++
+>  1 file changed, 154 insertions(+)
+> 
 
-> Check after the list of variables please, not in the middle of them.  I
-> think checkpatch will complain about this, right?
+My bot found errors running 'make dt_binding_check' on your patch:
 
-In fact this script doesn't warn about these problems, but I will
-adjust my code style later.
-But the check in alauda_write_lba() is due to some variable like
-lba_offset and zone will perform modulo and divide operations,
-which may throw divide errors when uzonesize is 0.
-So I think I prefer to adjust the order of the variable list later.
-Changes like this.
-```c
-unsigned int uzonesize =3D MEDIA_INFO(us).uzonesize;
-unsigned int zonesize =3D MEDIA_INFO(us).zonesize;
-unsigned int pagesize =3D MEDIA_INFO(us).pagesize;
-unsigned int blocksize =3D MEDIA_INFO(us).blocksize;
-unsigned int new_pba_offset;
-if (!uzonesize)
-    return USB_STOR_TRANSPORT_ERROR;
-unsigned int lba_offset =3D lba % uzonesize;
-unsigned int zone =3D lba / uzonesize;
-```
-If it's ok, I will post the patch v3 soon.
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/firmware/fsl,imx-se.example.dtb: /example-2/firmware/v2x-if@0: failed to match any schema with compatible: ['fsl,imx95-v2x']
+Documentation/devicetree/bindings/firmware/fsl,imx-se.example.dtb: /example-2/firmware/v2x-if@1: failed to match any schema with compatible: ['fsl,imx95-v2x']
+Documentation/devicetree/bindings/firmware/fsl,imx-se.example.dtb: /example-2/firmware/v2x-if@2: failed to match any schema with compatible: ['fsl,imx95-v2x']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240523-imx-se-if-v2-2-5a6fd189a539@nxp.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
