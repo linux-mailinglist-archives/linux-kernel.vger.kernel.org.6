@@ -1,93 +1,128 @@
-Return-Path: <linux-kernel+bounces-188027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A286C8CDBEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902DD8CDBF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B087B236D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42ABC2853A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8816D127E27;
-	Thu, 23 May 2024 21:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E7812837B;
+	Thu, 23 May 2024 21:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvmKpBhr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWIfwZbT"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55A1127E11;
-	Thu, 23 May 2024 21:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBDB126F37;
+	Thu, 23 May 2024 21:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716499425; cv=none; b=pcpPtiTti42RGa1OauOybYox8URcdGZ4ozGHSPwqjjMBABLUZRMep6wkdyodhfokbEFf1gle9uwcRmkMyCUlInva8gQ7y5BCguqBi6xMNtIFFW7adsM4GtHs+kVdkcHQpxtz1J2ay6lXIy+VS8P2IzEpax2nLi5AQ1GwivwjnOQ=
+	t=1716499511; cv=none; b=kMAR6qDXYoXVr43uMf2m/YTZOs9JJtyxYVXOG+W1i7ZPWhNQKhUUdkpIg89C+evyE4s2jiAYUXByZ7zrKB8rcBCOyooeJTOkFOZKcTHWHmj6IC7kRfOPi6akJovMIqKMvF9jldnjzKLzbjJzPtOFVJr7BvC6HWJPzIgrfjbw1+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716499425; c=relaxed/simple;
-	bh=BhxisE82YS2Tm+kO+YbMq/cbnu147OOHSg8vMxpz28k=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDOZzXCxxZAA01QYzw5IgrhBSDlIxjoluiwAbAeFZ/2Z4AV+KLoA4aglCGpeGe0/wrAMr5KTCLVyz4BiOm8+kqWZnCGXBGhc6f1DuyDVkzotDNEY6nPr51LZ5rBiTX0IkLrWFWwn9KskxHx0azPNJA/p7lLP26h4L8g4Vp2wYDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvmKpBhr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE986C2BD10;
-	Thu, 23 May 2024 21:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716499425;
-	bh=BhxisE82YS2Tm+kO+YbMq/cbnu147OOHSg8vMxpz28k=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=ZvmKpBhrvMWjR1iq7qqKvXe57frza9lO7Z8+7RT+u6DINvy05B+kczyUBQKKiltRX
-	 tKJCP6Vm/Hv+e6zxwLl6kzZ1gtAe7ibl1EHk98OcePebj1gp3PsvRNDL1pI+3VgbXE
-	 EFKxgwQm6v1QeIo7AoyYVFrLctsqjWW9ZNPbor8BBZ0dSYQz95eZkbUrInrEmymKu0
-	 QOVhfWVZWqzRQrKCaDIpOJlMXw4IFgq3dOcvxhupuVqcJj+E3lvh607NnZc6zpH1gq
-	 IB3WL3+7iTQ73aQYms2mFvyCVJ2tTLIQzohRHAeO4ylgBMUrSNFcyq7Wb9AURmbsFM
-	 3iRoR0mxzHjyA==
-Date: Thu, 23 May 2024 23:23:41 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Wolfram Sang <wsa@kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [GIT PULL] i2c-host changes for v6.10 - pt. 2
-Message-ID: <eaph6dm5rk3ispqucu27n5uwoe7y6l2cljyiffns6c5gixqh5w@tomfq4l34l6m>
-References: <2qtn3bk6pat2xkw7qz34pjpgh6zariuz6zjxhmuuo2jcddfpi4@xn6aqqppl3hi>
- <20240523154820.vza7xbdkgqyyth6w@ninjato>
- <fnznf6fb6vzk72b42lkir3jbopb6cog6mmjjr3f44o5ejmyelj@ehkhoevbn6dr>
- <20240523201850.yl253jum4sqnykji@ninjato>
+	s=arc-20240116; t=1716499511; c=relaxed/simple;
+	bh=VHdjSkKxWm5rfyGLl7Yk8K1zO0mB7odDFsgg9+Tfu8s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qic4VedKoX/kUbbmtxTMynylGZgeeiE/qgZAxi9xLfAmEf6FuxvitJkQxc/uliXjR1FbsJowm7GqaEHpLOs+NcErr0U9znxey0ozroHfFIY2V0ce3Ggj0jWvZieMPRl/1NK1VS6gWkCkfO8yyVrg129wkBGxNA8TQVjgC0iWobk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWIfwZbT; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-354f5fb80d5so1311176f8f.2;
+        Thu, 23 May 2024 14:25:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716499507; x=1717104307; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+I9c44cbx3EWc9H7lfkabZH5dwju+xdfdQpItJBfjY=;
+        b=QWIfwZbTOC0zEO33zgidA8aomQoEMAc7IufXEgzDrQWlv2hpHckHBomumWqhpxlAAc
+         tn7C5qtv8anrIYE2UiYgfl5wormneDaRUjwrvUEdm/Zn02Cxtg23cr4E9cEM7GeEtAmD
+         rHtoqE7JrmCjnYdwASNQ+nRdH7mLmY66sT5fwFExmLNBWz6dQBahc+96V/byn7iRBW43
+         FyuoUYbRsw1V64l4NoqQW153QfP+zcuHU/llMWFtFtTr5bgKcZkn2O/wuiLzleC+MMnr
+         UHHYecMQElpyQpXdM0fzKiY2WKWAuCFVV3XdDhIrnTiollXHdJ2LAfVoUYbM8z3P00Sq
+         aHQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716499507; x=1717104307;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U+I9c44cbx3EWc9H7lfkabZH5dwju+xdfdQpItJBfjY=;
+        b=TJTWdFdE8khAB8/NpCLRVqnNZoP7F62l3LB+Fnn8Y04aQY/ADBEEP4gjtqRaBYlkWs
+         Y6Ljpybjb0dqScqytWpfkNMqJQhr1rYsqqL/rIVo9bd/MIdlCVHPoEgYtCZVIPmpsL3J
+         /0a9c5WE9fFKPgqKtF++c8cnWMo6ujgwXZybLptSNh/AykBZK8YghygVDFTMZszpMp+d
+         t6WDlQ7+Hs1Km8OPGh78dfEXzfZddh7OnjyS1WmYRH3GxqiBNko7CptOIMoGg8+tXvE+
+         Y1uA/Yg0PcJkvdSq3u11mZiKagq1sumRqYR0AIeQ4rzfvBlv3PNCJJmHFrYjwKPV43Js
+         SC3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUufJrHGoGi0Nc58UaBXSHMZHcDBE61rcwfLR8MUXKlXksb5boMdURnZLVzztX6h+xWfS9Xew+ksYjYsVRJqLC7QQH1pwfJQK38QxbGNO0MmgDpCoVX9rPHrD4/59c07qo01OLxsH+RkRCAk/FlBFlv+U9+wEgO78Jd72rkNpE=
+X-Gm-Message-State: AOJu0YzQaSqxT5dNFdm9mhaEpO95aTUilPD9Mq3S85sFRG5XefwjvzoD
+	eLIK0cdgklZP3bkj1hrgmo6MeH7B2+ZCoH2nFtsKuRxB1XPU4mmyzehjuAJ3zXY=
+X-Google-Smtp-Source: AGHT+IH8OD5gV8/1smKKDoZX9EgdPWl5N+fjjkenQw6jr7OYD/hRr8503cKcLcTN5wI0POCJ16VABQ==
+X-Received: by 2002:a05:600c:54c4:b0:421:17d:1ec1 with SMTP id 5b1f17b1804b1-421089f9d92mr2601535e9.18.1716499506783;
+        Thu, 23 May 2024 14:25:06 -0700 (PDT)
+Received: from [127.0.1.1] (84-115-212-250.cable.dynamic.surfer.at. [84.115.212.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ae976sm2522955e9.38.2024.05.23.14.25.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 14:25:06 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] cpufreq: qcom-nvmem: fix memory leaks and add auto
+ device node cleanup
+Date: Thu, 23 May 2024 23:24:58 +0200
+Message-Id: <20240523-qcom-cpufreq-nvmem_memleak-v1-0-e57795c7afa7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523201850.yl253jum4sqnykji@ninjato>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACq0T2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyNj3cLk/Fzd5ILStKLUQt28stzU3HggzklNzNY1SzKzMDJMSTI1SjJ
+ UAhpQUJSallkBNjw6trYWAK274S1sAAAA
+To: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716499505; l=1291;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=VHdjSkKxWm5rfyGLl7Yk8K1zO0mB7odDFsgg9+Tfu8s=;
+ b=14d9eQKhZyHNHy3nsPQ8V1gTIq1GdV//SoUiwVSvFMrNQfJq/NT5EnqCuIOUXdL29hOEemMpn
+ 1x9zo3p7LKYAt1mKWn9Bwdn+AKuTBdXDc4saqt3Npwyf1jsQKQphVHX
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Thu, May 23, 2024 at 10:18:50PM +0200, Wolfram Sang wrote:
-> > > Pulled, but I can't send out to Linus because
-> > > e22e0e483b2c76728ccd119fdcfea81eb176b3a5 (drm/amd/pm: remove deprecated
-> > > I2C_CLASS_SPD support from newly added SMU_14_0_2) is not in his tree
-> > > yet, only in next.
-> > 
-> > argh! Good catch! I don't have drm amd in my config.
-> 
-> Me neither, I just checked with 'git grep I2C_CLASS_SPD' :)
-> 
-> > OK that needs to shift to the 6.11 pull request.
-> 
-> Hmm, that gives too much time for new users to appear IMO. If you don't
-> mind, I'll take over and I'll ping them to apply the drm patch soonish,
-> so I can apply the removal. Doesn't matter if it becomes rc2 or rc3.
+There are a number of error paths in the probe function that do not call
+of_node_put() to decrement the np device node refcount, leading to
+memory leaks if those errors occur.
 
-DRM pull requests for merge window are normally sent during -rc5
-and only urgent patches are accepted latest in -rc6.
+In order to ease backporting, the fix has been divided into two patches:
+the first one simply adds the missing calls to of_node_put(), and the
+second one adds the __free() macro to the existing device nodes to
+remove the need for of_node_put(), ensuring that the same bug will not
+arise in the future.
 
-Heiner's patch was taken later.
+The issue was found by chance while analyzing the code, and I do not
+have the hardware to test it beyond compiling and static analysis tools.
+Although the issue is clear and the fix too, if someone wants to
+volunteer to test the series with real hardware, it would be great.
 
-I can try to to ping Alex Deucher on that specific patch.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      cpufreq: qcom-nvmem: fix memory leaks in probe error paths
+      cpufreq: qcom-nvmem: eliminate uses of of_node_put()
 
-In the meantime, I will send a pull request with just
-Christophe's patch that can safely be taken.
+ drivers/cpufreq/qcom-cpufreq-nvmem.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+---
+base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+change-id: 20240523-qcom-cpufreq-nvmem_memleak-6b6821db52b1
 
-Thanks,
-Andi
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
