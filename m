@@ -1,78 +1,153 @@
-Return-Path: <linux-kernel+bounces-187953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56E68CDB32
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF44E8CDB36
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 767A3B23644
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0FB1F22377
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B6984D34;
-	Thu, 23 May 2024 20:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642E484D35;
+	Thu, 23 May 2024 20:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYkh0PFQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="PVfROZdl"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5453584A48
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C109A7CF30;
+	Thu, 23 May 2024 20:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716494570; cv=none; b=uoH+4bznpBtEEWMzg7Vj7e2nMi/ljhEpqAVqCJn7r5pr74zeRQHPvuz+3U0ComhZHxo4v9lNRVi9LvYFU2HtlS63fCtdIHRh6YqAjI8zVcm1WNL5FCxdIWl9geRadWd4sVWm3ZN02Y1wLdG/5ItmIesXlUOl5vfy7Xf9Qv9EdCY=
+	t=1716494860; cv=none; b=j0hIdkJzo2OKc8T8ML5Ih7zgvrA+oBl5moL4CleTx2CHu5WAPFOpqwJbijQuWxarKLPddJFvmVAfubcvM8Qw31NqW6OrZiQDfmbykDBT42ZQw846HaYu0AH8nxDSZ3xOmsZXktfowGwYdp/2/NMsKDm1asEZvCd4UVfLK6YY7Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716494570; c=relaxed/simple;
-	bh=q+ZBbTJifV/LLgZEiPvBP8bass4cqbesaOylCX4qpWI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=PEsTSzPCnE3tYO7RHEMFYsTzMggfu4o+h4yDL7sr2eVeqwqawyc20/gqeq/mOZ6OVU5RWGAPIWRb3gSCOUOyamRuDP9DDnyIq4r0HFHRURYHV7ZvqYGgZFmRsQCU7GyKyDIy+BRqNyYzWW3rAYCmCnFur3CbuJatf1dwTyBdiBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYkh0PFQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A175C4AF07;
-	Thu, 23 May 2024 20:02:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716494570;
-	bh=q+ZBbTJifV/LLgZEiPvBP8bass4cqbesaOylCX4qpWI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=SYkh0PFQGcNjH8Evl8WM3etsF7jmjIoU2z5OlMtqcm9/B1BraXIej5uqoJ94/5rNy
-	 k8K6f1okApxzsCI84pRIK3qvH1i4jkgybaRSHLbcpie9OX9TOxn+wI6yw2Eepffp/w
-	 Lm7/7v7rQGgysIDvbuVd/sYBcEoo5RXKvCLM3UZpvI+k0mD4u81/ZGpofd4BPGYMvi
-	 069Te15juOWl9l4ERkkQSuyUlxbBdNoWDCY7W3hPNbDlGkrcYE3ZRF/GvWO9PEDSzk
-	 Q3ici6itK3qpukZ7Pyif4s+vSQHzXdyNIb4cl2Skq0TssBXJHKboh3/M6m9/25iZDU
-	 nwokewg9N5NZQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1EAEDC43617;
-	Thu, 23 May 2024 20:02:50 +0000 (UTC)
-Subject: Re: [GIT PULL] tracing: Small last minute fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240523123640.0316a063@gandalf.local.home>
-References: <20240523123640.0316a063@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240523123640.0316a063@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-fixes-v6.10
-X-PR-Tracked-Commit-Id: 1e8b7b3dbb3103d577a586ca72bc329f7b67120b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 404001ddf3e40369510a08b8b7e895c2da692b79
-Message-Id: <171649457012.26887.12610862740684296878.pr-tracker-bot@kernel.org>
-Date: Thu, 23 May 2024 20:02:50 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, Petr Pavlu <petr.pavlu@suse.com>, Yang Li <yang.lee@linux.alibaba.com>
+	s=arc-20240116; t=1716494860; c=relaxed/simple;
+	bh=iZrphTEqMOGCT96r7nEcEQdllx5byLvE5QbEGAdCWpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iu2Z76737d4YlP30Nzqz+t5ADawEA8c2LJiceugXHwt9OQcQ/ae2GWyyJ92A/6sZhX4nOt8927NcT/mjLi3H36ODXMS+E/Wqc8yiSrJhhxPs8lg5ePyUB8RMJP29tbJgqo+vLT2zo8b8RFnhBoMiz0ctjZZ068hJsu8qVZpLD+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=PVfROZdl; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=+RKBUDWRrMarm2gr40PiqR7AOLsy7jlxbXPbY/6bQJk=; b=PVfROZdlzV1Gg2kWL64WllVIep
+	0ZKKCFJX1vGJKZ3JXyemRZ1TQCy7dYgNSuLs8IK9gM1KznqiQ0XINruQ7L/DrI7KEvriBhMVvcLgy
+	XA1tQ3u4hHYOpwJwUJuFs1HkNGdZsLTy26PBJ3GaKz3YEUOSZc0iSu3YofnWLl3GDQrRHnxtzfZ5H
+	f6qChLd4lQZywfmETtlJhFi26U0mob6W4LWsgDNzLREIZD7zQyeHwLGngKVjWvxE7ROmITknoX6rL
+	E4Kmo37vO1ux+kYXzVif0O1mMnkkhUnyQbJDb2gr+nbBxpcfwgyKU33bHs/FIe0HcqWQqTPZOQXYM
+	wVSMKYsw==;
+Received: from [191.8.29.37] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sAEiZ-00BhS0-BS; Thu, 23 May 2024 22:07:15 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	"Thomas Gleixner" <tglx@linutronix.de>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	"Boqun Feng" <boqun.feng@gmail.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Paul Turner" <pjt@google.com>,
+	linux-api@vger.kernel.org,
+	"Christian Brauner" <brauner@kernel.org>,
+	"Florian Weimer" <fw@deneb.enyo.de>,
+	David.Laight@ACULAB.COM,
+	carlos@redhat.com,
+	"Peter Oskolkov" <posk@posk.io>,
+	"Alexander Mikhalitsyn" <alexander@mihalicyn.com>,
+	"Chris Kennelly" <ckennelly@google.com>,
+	"Ingo Molnar" <mingo@redhat.com>,
+	"Darren Hart" <dvhart@infradead.org>,
+	"Davidlohr Bueso" <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	libc-alpha@sourceware.org,
+	"Steven Rostedt" <rostedt@goodmis.org>,
+	"Jonathan Corbet" <corbet@lwn.net>,
+	"Noah Goldstein" <goldstein.w.n@gmail.com>,
+	"Daniel Colascione" <dancol@google.com>,
+	longman@redhat.com,
+	kernel-dev@igalia.com
+Subject: [PATCH v2 0/1] Add FUTEX_SPIN operation
+Date: Thu, 23 May 2024 17:07:03 -0300
+Message-ID: <20240523200704.281514-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Thu, 23 May 2024 12:36:40 -0400:
+Hi,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-fixes-v6.10
+In the last LPC, Mathieu Desnoyers and I presented[0] a proposal to extend the
+rseq interface to be able to implement spin locks in userspace correctly. Thomas
+Gleixner agreed that this is something that Linux could improve, but asked for
+an alternative proposal first: a futex operation that allows to spin a user
+lock inside the kernel. This patchset implements a prototype of this idea for
+further discussion.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/404001ddf3e40369510a08b8b7e895c2da692b79
+With FUTEX2_SPIN flag set during a futex_wait(), the futex value is expected to
+be the TID of the lock owner. Then, the kernel gets the task_struct of the
+corresponding TID, and checks if it's running. It spins until the futex
+is awaken, the task is scheduled out or if a timeout happens.  If the lock owner
+is scheduled out at any time, then the syscall follows the normal path of
+sleeping as usual. The user input is masked with FUTEX_TID_MASK so we have some
+bits to play.
 
-Thank you!
+If the futex is awaken and we are spinning, we can return to userspace quickly,
+avoid the scheduling out and in again to wake from a futex_wait(), thus
+speeding up the wait operation. The user input is masked with FUTEX_TID_MASK so
+we have some bits to play.
+
+Christian Brauner suggested using pidfd to avoid race conditions, and I will
+implement that in the next patch iteration. I benchmarked the implementation
+measuring the time required to wait for a futex for a simple loop using the code
+at [2]. In my setup, the total wait time for 1000 futexes using the spin method
+was almost 10% lower than just using the normal futex wait:
+
+	Testing with FUTEX2_SPIN | FUTEX_WAIT
+	Total wait time: 8650089 usecs
+
+	Testing with FUTEX_WAIT
+	Total wait time: 9447291 usecs
+
+However, as I played with how long the lock owner would be busy, the
+benchmark results of spinning vs no spinning would match, showing that the
+spinning will be effective for some specific scheduling scenarios, but depending
+on the wait time, there's no big difference either spinning or not.
+
+[0] https://lpc.events/event/17/contributions/1481/
+
+You can find a small snippet to play with this interface here:
+
+[1] https://gist.github.com/andrealmeid/f0b8c93a3c7a5c50458247c47f7078e1
+
+Changelog:
+
+v1: - s/PID/TID
+    - masked user input with FUTEX_TID_MASK
+    - add benchmark tool to the cover letter
+    - dropped debug prints
+    - added missing put_task_struct()
+
+André Almeida (1):
+  futex: Add FUTEX_SPIN operation
+
+ include/uapi/linux/futex.h |  2 +-
+ kernel/futex/futex.h       |  6 ++-
+ kernel/futex/waitwake.c    | 78 +++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 82 insertions(+), 4 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.45.1
+
 
