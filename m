@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-187277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7090B8CCF5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:35:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792668CCF59
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134CA1F21907
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:35:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6513B221F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3E113D27A;
-	Thu, 23 May 2024 09:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85C813D260;
+	Thu, 23 May 2024 09:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fpbygn7/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hNOqFYp2"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4CE17F6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00B3A929
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716456911; cv=none; b=tkJnuxPiPM12/9yO/QpaPCP/ENNhCu7LZucdMeAa4GYAvNDS9PLslVsI0/e/eh6oSCKFPsAUgn7hU7aBGo7Dd5b+cgpcPCVWKlcV1yPevTyPKdmzRQvP5gWrbm34eZU3tNTYp5cHuUFIUI+crgq++HzWwQeqGsGhLscospBR/s4=
+	t=1716456845; cv=none; b=jqQjYzeuas00tqLbHkNQRcgZTDTB4ya486P4el8bHPmQBJwki/mrE6gg7a2Jw8Rj57Xxgc1xlQOcmWg8fLmPPr7goW1Y+FoC8z3t5HMPLMGnKv6yrGqYnUyBZ+cmH++vOq4CQPycdlu0RBv9D/30BMHQ2B8uk5r3ohlleZdriwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716456911; c=relaxed/simple;
-	bh=3RdzRMF61KiMbeEgHAOewoeGsgX0t3vtk/NZFBB30OQ=;
+	s=arc-20240116; t=1716456845; c=relaxed/simple;
+	bh=Zny2wNgqTamRWkejdl43i5F34DfV9GBO0UMNYMGeFdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NIQf/EEl8HSidoyZRvBIvN7LRYjTxkmi/3WAIfN/65SC7C5++9kPIcUpnrfPv0amIP79xmh4S6RA5sTVfwMjpJoi5lmiGkFGTX5b2HyOH3+81cFKHwUhlTFzJZwBsaWPPCVzfQVE+3RnXb0gOK5y9gtdYLVzijmz7f5NGcULjd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fpbygn7/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716456909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lfk0mvv6ZfCRNrrlaQ0pNTuzMUrG6EPTfySp33FAHbY=;
-	b=Fpbygn7/VPkA0d+7PBn6AbIb+uKLhRYizrZxRZfnrkykFSGUgOTGB5enyGKn43n4r1HaIm
-	tUOjU/a1qyOac+dq/F6zdbzQECLDzSr32j9DXSVg8BrimNu57CD9JW38CWYKBBk159PHGu
-	/MmqCLUGLp97rTEXoZlWtJDYa4TpSAs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-h6UX6NhuNf2mmpSngUDQ-Q-1; Thu, 23 May 2024 05:35:05 -0400
-X-MC-Unique: h6UX6NhuNf2mmpSngUDQ-Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D4304800281;
-	Thu, 23 May 2024 09:35:04 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.7])
-	by smtp.corp.redhat.com (Postfix) with SMTP id E3CDE200A790;
-	Thu, 23 May 2024 09:35:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 23 May 2024 11:33:37 +0200 (CEST)
-Date: Thu, 23 May 2024 11:33:35 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrei Vagin <avagin@google.com>
-Cc: Kees Cook <keescook@chromium.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 0/3 v2] seccomp: improve handling of
- SECCOMP_IOCTL_NOTIF_RECV
-Message-ID: <20240523093334.GD15163@redhat.com>
-References: <20240523014540.372255-1-avagin@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dA7QN7dK2hfbHbxzhVSmv7n25hCzPcGD3w/Q1toXjySS1ENk88Bfi2JXa2SgUqdaCpyZ/jGHGNpvsi6H3tR5oLmgiQSDhckLyvZ6MLfk8SijWkutQtAJWiwoQGDXj4XcoOFX6tGEtkqrN+rN108+Md1o8LfvgKJf/D2hjtY/yA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hNOqFYp2; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8hhCRUqXEu3HdppjYK3fgpfFwQbKZJat1RgK7sPaU7k=; b=hNOqFYp2FwMo1mse8DQ9+ENnlE
+	H8cZNIhc35T7cOWBsjtVXSgx4LJuW1EIogLfhHRy1xfHOcquHp6ZTmg5YflAf3pvLbOF0JaiK12Vt
+	fGJDGvLdktm96FGx9KNtjPhaLq4tpHRSnP9e3SMPYbvSvZAqFS+x3345gfm7/3WmLGkX+USINEs44
+	Gcx+Mbdbow8wV21B6hVEPdh4Mmnosesf5qpiB7d+wgtGSNRIBwRC1CzwcxnOJLyNJCGgkhtJlF0uO
+	ZhDhUD+BTabQKDVW89dYH/GSIuIBmx99lWypNiCQcYnFPgJqny9uw9uw9aOV4V1D8+IdkYxYdXnWH
+	w3MpIqeA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sA4pR-00000009ER6-3f9J;
+	Thu, 23 May 2024 09:33:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EC50D30057C; Thu, 23 May 2024 11:33:38 +0200 (CEST)
+Date: Thu, 23 May 2024 11:33:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Luis Machado <luis.machado@arm.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+	wuyun.abel@bytedance.com, tglx@linutronix.de, efault@gmx.de,
+	nd <nd@arm.com>, John Stultz <jstultz@google.com>,
+	Hongyan.Xia2@arm.com
+Subject: Re: [RFC][PATCH 08/10] sched/fair: Implement delayed dequeue
+Message-ID: <20240523093338.GJ40213@noisy.programming.kicks-ass.net>
+References: <20240405102754.435410987@infradead.org>
+ <20240405110010.631664251@infradead.org>
+ <3888d7c8-660e-479c-8c10-8295204e5f36@arm.com>
+ <1461277e-af68-41e7-947c-9178b55810b1@arm.com>
+ <20240425104220.GE21980@noisy.programming.kicks-ass.net>
+ <20240425114949.GH12673@noisy.programming.kicks-ass.net>
+ <20240426093241.GI12673@noisy.programming.kicks-ass.net>
+ <c6152855-ef92-4c24-a3f5-64d4256b6789@arm.com>
+ <20240523084548.GI40213@noisy.programming.kicks-ass.net>
+ <e4b472c9-ad8b-4423-81ad-02a1ab231f95@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,31 +76,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240523014540.372255-1-avagin@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+In-Reply-To: <e4b472c9-ad8b-4423-81ad-02a1ab231f95@arm.com>
 
-On 05/23, Andrei Vagin wrote:
->
-> This patch set addresses two problems with the SECCOMP_IOCTL_NOTIF_RECV
-> ioctl:
-> * it doesn't return when the seccomp filter becomes unused (all tasks
->   have exited).
-> * EPOLLHUP is triggered not when a task exits, but rather when its zombie
->   is collected.
+On Thu, May 23, 2024 at 10:06:04AM +0100, Luis Machado wrote:
 
-It seems that 2/3 also fixes another minor problem.
+> Booting the kernel with NO_DELAY_DEQUEUE (default to false), things work fine. Then
+> if I switch to DELAY_DEQUEUE at runtime, things start using a lot more power.
+> 
+> The interesting bit is if I switch to NO_DELAY_DEQUEUE again at runtime, things don't
+> go back to normal. Rather they stay the same, using a lot more energy.
 
-Suppose that a group leader installs the new filter without
-SECCOMP_FILTER_FLAG_TSYNC, exits, and becomes a zombie. It can't be
-released until all its sub-threads exit.
-
-After that, without 2/3, SECCOMP_FILTER_FLAG_TSYNC from any other thread
-can never succeed, seccomp_can_sync_threads() will check a zombie leader
-and is_ancestor() will fail.
-
-Right?
-
-Oleg.
-
+Ooh, cute.. weird. I'll try and see if we leak state somehow.
 
