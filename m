@@ -1,347 +1,192 @@
-Return-Path: <linux-kernel+bounces-187800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8ED8CD8B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:52:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E78B8CD8B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1445F281ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813A71C213FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DE51CFA9;
-	Thu, 23 May 2024 16:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmF5XcwJ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ED0381B0;
+	Thu, 23 May 2024 16:52:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F5511711
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1912C1A2;
+	Thu, 23 May 2024 16:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716483153; cv=none; b=SsqOHUqw+16mg+Qs9DscrxI80Z0/OE/tNOclU2aLkGm63T8J1FvF+MLI8LIvQlEFRCPv4i4voqH36k9u0SWWKSXtkT+F3nK5kB2w6b18R/M9T/s10RFPoxMPhFtK4NqL+5dhct4IiEZHQUhGO2P603KKXElocI6EZ3ttoWYiaEY=
+	t=1716483160; cv=none; b=dX7iXHbN/U28WzQH13iQiSKGBQAWsCB+rPnZWf9A1jGGEeT17cHYJN9fahCkzgVd7B/XGWWWvhhLosYg2sUoDhHOVt93CmAUZs1Y4OLFbPX+Aunt5dyrf7cxNFRqS4uIYAhgL9P3T7C7G7RErb5O9+EFuuyBDuBzkwgQ4/lX1kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716483153; c=relaxed/simple;
-	bh=ZBjQfebbku4/bUBs8h6x5TlCQhdiMEMTiX8BrAQapqE=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=kDxqeZAfEzRcD9Tqgw0j8vQ/aOGcssiQ8EV4gtT7iTOV8lnIrDllImSCJ4lLMgtuZYuNsIbqEfes1HXf4gFfqTlg3OFuSo9N+ZdvIQwD765FWH8ir+RpPIDgP1Ji7OJg4DEHnbkbOe/ob806Eyd7rMVF1HTgTn3oa6I4YRIo9Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QmF5XcwJ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41fd5dc0480so53665505e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716483149; x=1717087949; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:user-agent
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yr7A7+twaEG4YGP37jOqGZ1oZyO9dZYdh1Mba7skUqI=;
-        b=QmF5XcwJCAdyngOgFXD8LPTZeNz1gbUYdOrkW+iUEM3wqAejc3OrHP3z+LWz4m98oU
-         0ossx4a8M+UdpAx+oLgZPCbTtgNoCg/c4hGU7Y3VQbd8penQl+Y8tr61qZ00duY8SHEh
-         rswMwA37eiWTXa4UKDX+/tLJtgwF2XKVshZ/i58JLHFYjRA5MlxCG4NIDimcqwoSnIlU
-         RSRJOe3esffOUm9/s9nl5eOk58i2SiR7SB24CZyrMZyVU1GXRtwDYNOZli6PFiPKJhw6
-         SlXBNbIwJbmMCg+yDzSBVM09YvfkQscZuGI1nBGnfXZv6L6usRGJ/eOD0UWT1iFE+Xtc
-         I51A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716483149; x=1717087949;
-        h=content-transfer-encoding:mime-version:message-id:user-agent
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yr7A7+twaEG4YGP37jOqGZ1oZyO9dZYdh1Mba7skUqI=;
-        b=ZRBCeaonjtH/x8sC1XM1g1vxCL8ZzVsvY+owSTFEhDeFJJUK7LP7Jywqy/W/6qId5k
-         UkTb3Xfiawm8upKm4XyeWrttvojyAcYVC/q+83CwfXogat6OqUOP5H0XYtCb5evsrHlU
-         m0RYI2qEXUtTeIIYNf+w+uAKvc6qTIvr3Ue0rDEPmrrA8oKgfd/BhTuC0V15bfGRkbUJ
-         h0TGke1b2nOJ4Yb7x4K1y7m/KWpGxms1Sf9cC8O8li62qEdN44KLLIcW6uEYiwoZouXe
-         TlSQ0IXNjL1xIPXMeMA2uavhq9YZPBcmFqz1O0Wp8fL9eIRssNcbNb4cqi8rro2xuevG
-         RJnw==
-X-Gm-Message-State: AOJu0YwVABOPSBU8JJ91SHtbtJbdBL1w4mpwIedH8C42ouVoCETq/PYD
-	Z9C3rrHe/1+094+g2K4O/FHsaB4RsHXwsUcbW8NAjX55jl+9SvZrvDNlygkyyYo=
-X-Google-Smtp-Source: AGHT+IE1OcM6D20yPxmwS7Sc6+erb6rrOllYaqJGoOAfCCd0TaQ30P3GNaj2UJexM78WpgQ9JWR7FQ==
-X-Received: by 2002:a05:600c:5607:b0:41a:41c8:d8e7 with SMTP id 5b1f17b1804b1-420fd2d7033mr40411635e9.3.1716483149108;
-        Thu, 23 May 2024 09:52:29 -0700 (PDT)
-Received: from [127.0.0.1] ([86.120.163.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacecasm37052283f8f.82.2024.05.23.09.52.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 09:52:28 -0700 (PDT)
-Date: Thu, 23 May 2024 19:52:22 +0300
-From: Marcel <nitan.marcel@gmail.com>
-To: linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?How_to_properly_fix_reading_user_po?=
- =?US-ASCII?Q?inters_in_bpf_in_android_kernel_4=2E9=3F?=
-User-Agent: K-9 Mail for Android
-Message-ID: <42DD54A2-D0C2-4A70-B461-7C16D3ECB8D2@gmail.com>
+	s=arc-20240116; t=1716483160; c=relaxed/simple;
+	bh=Jw3ekEjuKFoUIPIkpKYN7WVXSRJdpf5zIWvM7wH9bGc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nJootb7nBbjK2Tv2dWChqvR+YQIk3sEvekEiADSUY3XvqfDdl8kdivuwQtw+O8hicFmzQChbsjifthtqjRGoXFINs7ccm2w6P09xj9vZEezxx+znIEL8ih3obIHmrGvQQzP9GZcgFP5dwGCVXjBz6JUXajvioWgdAmgUTmVU7Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VlZ2R0BRjz6K9Nl;
+	Fri, 24 May 2024 00:51:43 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id A1E301400DB;
+	Fri, 24 May 2024 00:52:34 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 23 May
+ 2024 17:52:34 +0100
+Date: Thu, 23 May 2024 17:52:33 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, "David
+ Lechner" <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, "Liam
+ Girdwood" <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Dimitri
+ Fedrau" <dima.fedrau@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Michael
+ Hennerich" <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	<noname.nuno@gmail.com>
+Subject: Re: [PATCH v2 1/5] iio: ABI: Generalize ABI documentation for DAC
+Message-ID: <20240523175233.00006e8b@Huawei.com>
+In-Reply-To: <20240523031909.19427-2-kimseer.paller@analog.com>
+References: <20240523031909.19427-1-kimseer.paller@analog.com>
+	<20240523031909.19427-2-kimseer.paller@analog.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-This seems that it was a long standing problem with the Linux kernel in gen=
-eral=2E bpf_probe_read should have worked for both kernel and user pointers=
- but it fails with access error when reading an user one instead=2E=20
+On Thu, 23 May 2024 11:19:05 +0800
+Kim Seer Paller <kimseer.paller@analog.com> wrote:
 
-I know there's a patch upstream that fixes this by introducing new helpers=
- for reading kernel and userspace pointers and I tried to back port them ba=
-ck to my kernel but with no success=2E Tools like bcc fail to use them and =
-instead they report that the arguments sent to the helpers are invalid=2E I=
- assume this is due to the arguments ARG_CONST_STACK_SIZE and ARG_PTR_TO_RA=
-W_STACK handle data different in the 4=2E9 android version and the upstream=
- version but I'm not sure that this is the cause=2E I left the patch I did =
-below and with a link to the kernel I'm working on and maybe someone can ta=
-ke a look and give me an hand (the patch isn't applied yet)
+> Introduces a more generalized ABI documentation for DAC. Instead of
+> having separate ABI files for each DAC, we now have a single ABI file
+> that covers the common sysfs interface for all DAC.
+>=20
+> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio-dac   | 61 +++++++++++++++++++
+>  .../ABI/testing/sysfs-bus-iio-dac-ltc2688     | 31 ----------
+>  MAINTAINERS                                   |  8 +++
+>  3 files changed, 69 insertions(+), 31 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-dac
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dac b/Documentation/=
+ABI/testing/sysfs-bus-iio-dac
+> new file mode 100644
+> index 000000000000..53d5213520c6
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-dac
+> @@ -0,0 +1,61 @@
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_toggle_en
+> +KernelVersion:	5.18
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Toggle enable. Write 1 to enable toggle or 0 to disable it. This is
+> +		useful when one wants to change the DAC output codes. The way it should
+> +		be done is:
+> +
+> +		- disable toggle operation;
+> +		- change out_currentY_raw0 and out_currentY_raw1;
 
-<https://github=2Ecom/nitanmarcel/android_kernel_oneplus_sdm845-bpf>
+Generalize to [0...N] or something like that to allow more symbols.
 
-diff --git a/include/uapi/linux/bpf=2Eh b/include/uapi/linux/bpf=2Eh
-index 744b4763b80e=2E=2Ede94c13b7193 100644
---- a/include/uapi/linux/bpf=2Eh
-+++ b/include/uapi/linux/bpf=2Eh
-@@ -559,6 +559,43 @@ enum bpf_func_id {
-    */
-    BPF_FUNC_probe_read_user,
+> +		- enable toggle operation.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_raw0
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_raw1
+> +KernelVersion:	5.18
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		It has the same meaning as out_currentY_raw. This attribute is
+> +		specific to toggle enabled channels and refers to the DAC output
+> +		code in INPUT_A (_raw0) and INPUT_B (_raw1). The same scale and offset
+> +		as in out_currentY_raw applies.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_symbol
+> +KernelVersion:	5.18
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Performs a SW toggle. This attribute is specific to toggle
+> +		enabled channels and allows to toggle between out_currentY_raw0
+> +		and out_currentY_raw1 through software. Writing 0 will select
+> +		out_currentY_raw0 while 1 selects out_currentY_raw1.
+Perhaps write this more generally.  The ABI handles more than 2 symbol valu=
+es.
+
+                Performs a SW switch to a predefined output symbol, allowing
+		switching between current symbol A with output
+		out_currentY_rawA and new symbol B with output
+		out_currentY_rawB by writing integer value B.
 =20
-+   /**
-+   * int bpf_probe_read_kernel(void *dst, int size, void *src)
-+   *     Read a kernel pointer safely=2E
-+   *     Return: 0 on success or negative error
-+   */
-+   BPF_FUNC_probe_read_kernel,
-+
-+	/**
-+	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
-+	 *     Copy a NUL terminated string from user unsafe address=2E In case =
-the string
-+	 *     length is smaller than size, the target is not padded with furthe=
-r NUL
-+	 *     bytes=2E In case the string length is larger than size, just coun=
-t-1
-+	 *     bytes are copied and the last byte is set to NUL=2E
-+	 *     @dst: destination address
-+	 *     @size: maximum number of bytes to copy, including the trailing NU=
-L
-+	 *     @unsafe_ptr: unsafe address
-+	 *     Return:
-+	 *       > 0 length of the string including the trailing NUL on success
-+	 *       < 0 error
-+	 */
-+	BPF_FUNC_probe_read_user_str,
-+
-+	/**
-+	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
-+	 *     Copy a NUL terminated string from unsafe address=2E In case the s=
-tring
-+	 *     length is smaller than size, the target is not padded with furthe=
-r NUL
-+	 *     bytes=2E In case the string length is larger than size, just coun=
-t-1
-+	 *     bytes are copied and the last byte is set to NUL=2E
-+	 *     @dst: destination address
-+	 *     @size: maximum number of bytes to copy, including the trailing NU=
-L
-+	 *     @unsafe_ptr: unsafe address
-+	 *     Return:
-+	 *       > 0 length of the string including the trailing NUL on success
-+	 *       < 0 error
-+	 */
-+	BPF_FUNC_probe_read_kernel_str,
-+
- 	__BPF_FUNC_MAX_ID,
- };
-=20
-diff --git a/kernel/trace/bpf_trace=2Ec b/kernel/trace/bpf_trace=2Ec
-index a1e37a5d8c88=2E=2E3478ca744a45 100644
---- a/kernel/trace/bpf_trace=2Ec
-+++ b/kernel/trace/bpf_trace=2Ec
-@@ -94,7 +94,7 @@ static const struct bpf_func_proto bpf_probe_read_proto =
-=3D {
- 	=2Earg3_type	=3D ARG_ANYTHING,
- };
-=20
--BPF_CALL_3(bpf_probe_read_user, void *, dst, u32, size, const void *, uns=
-afe_ptr)
-+BPF_CALL_3(bpf_probe_read_user, void *, dst, u32, size, const void  __use=
-r *, unsafe_ptr)
- {
- 	int ret;
-=20
-@@ -115,6 +115,27 @@ static const struct bpf_func_proto bpf_probe_read_use=
-r_proto =3D {
- };
-=20
-=20
-+BPF_CALL_3(bpf_probe_read_kernel, void *, dst, u32, size, const void *, u=
-nsafe_ptr)
-+{
-+	int ret;
-+
-+	ret =3D probe_kernel_read(dst, unsafe_ptr, size);
-+	if (unlikely(ret < 0))
-+		memset(dst, 0, size);
-+
-+	return ret;
-+}
-+
-+static const struct bpf_func_proto bpf_probe_read_kernel_proto =3D {
-+	=2Efunc		=3D bpf_probe_read_kernel,
-+	=2Egpl_only	=3D true,
-+	=2Eret_type	=3D RET_INTEGER,
-+	=2Earg1_type	=3D ARG_PTR_TO_RAW_STACK,
-+	=2Earg2_type	=3D ARG_CONST_STACK_SIZE,
-+	=2Earg3_type	=3D ARG_ANYTHING,
-+};
-+
-+
- BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
- 	   u32, size)
- {
-@@ -487,6 +508,69 @@ static const struct bpf_func_proto bpf_probe_read_str=
-_proto =3D {
- 	=2Earg3_type	=3D ARG_ANYTHING,
- };
-=20
-+
-+
-+BPF_CALL_3(bpf_probe_read_user_str, void *, dst, u32, size,
-+	   const void __user *, unsafe_ptr)
-+{
-+	int ret;
-+
-+	/*
-+	 * The strncpy_from_unsafe() call will likely not fill the entire
-+	 * buffer, but that's okay in this circumstance as we're probing
-+	 * arbitrary memory anyway similar to bpf_probe_read() and might
-+	 * as well probe the stack=2E Thus, memory is explicitly cleared
-+	 * only in error case, so that improper users ignoring return
-+	 * code altogether don't copy garbage; otherwise length of string
-+	 * is returned that can be used for bpf_perf_event_output() et al=2E
-+	 */
-+	ret =3D strncpy_from_unsafe_user(dst, unsafe_ptr, size);
-+	if (unlikely(ret < 0))
-+		memset(dst, 0, size);
-+
-+	return ret;
-+}
-+
-+static const struct bpf_func_proto bpf_probe_read_user_str_proto =3D {
-+	=2Efunc		=3D bpf_probe_read_user_str,
-+	=2Egpl_only	=3D true,
-+	=2Eret_type	=3D RET_INTEGER,
-+	=2Earg1_type	=3D ARG_PTR_TO_RAW_STACK,
-+	=2Earg2_type	=3D ARG_CONST_STACK_SIZE,
-+	=2Earg3_type	=3D ARG_ANYTHING,
-+};
-+
-+
-+BPF_CALL_3(bpf_probe_read_kernel_str, void *, dst, u32, size,
-+	   const void *, unsafe_ptr)
-+{
-+	int ret;
-+
-+	/*
-+	 * The strncpy_from_unsafe() call will likely not fill the entire
-+	 * buffer, but that's okay in this circumstance as we're probing
-+	 * arbitrary memory anyway similar to bpf_probe_read() and might
-+	 * as well probe the stack=2E Thus, memory is explicitly cleared
-+	 * only in error case, so that improper users ignoring return
-+	 * code altogether don't copy garbage; otherwise length of string
-+	 * is returned that can be used for bpf_perf_event_output() et al=2E
-+	 */
-+	ret =3D strncpy_from_unsafe(dst, unsafe_ptr, size);
-+	if (unlikely(ret < 0))
-+		memset(dst, 0, size);
-+
-+	return ret;
-+}
-+
-+static const struct bpf_func_proto bpf_probe_read_kernel_str_proto =3D {
-+	=2Efunc		=3D bpf_probe_read_kernel_str,
-+	=2Egpl_only	=3D true,
-+	=2Eret_type	=3D RET_INTEGER,
-+	=2Earg1_type	=3D ARG_PTR_TO_RAW_STACK,
-+	=2Earg2_type	=3D ARG_CONST_STACK_SIZE,
-+	=2Earg3_type	=3D ARG_ANYTHING,
-+};
-+
- static const struct bpf_func_proto *tracing_func_proto(enum bpf_func_id f=
-unc_id)
- {
- 	switch (func_id) {
-@@ -500,8 +584,14 @@ static const struct bpf_func_proto *tracing_func_prot=
-o(enum bpf_func_id func_id)
- 		return &bpf_probe_read_proto;
- 	case BPF_FUNC_probe_read_user:
- 		return &bpf_probe_read_user_proto;
-+	case BPF_FUNC_probe_read_kernel:
-+		return &bpf_probe_read_kernel_proto;
- 	case BPF_FUNC_probe_read_str:
- 		return &bpf_probe_read_str_proto;
-+	case BPF_FUNC_probe_read_user_str:
-+		return &bpf_probe_read_user_str_proto;
-+	case BPF_FUNC_probe_read_kernel_str:
-+		return &bpf_probe_read_kernel_proto;
- 	case BPF_FUNC_ktime_get_ns:
- 		return &bpf_ktime_get_ns_proto;
- 	case BPF_FUNC_tail_call:
-diff --git a/tools/include/uapi/linux/bpf=2Eh b/tools/include/uapi/linux/b=
-pf=2Eh
-index 155ce25c069d=2E=2E91d5691288a7 100644
---- a/tools/include/uapi/linux/bpf=2Eh
-+++ b/tools/include/uapi/linux/bpf=2Eh
-@@ -522,7 +522,44 @@ enum bpf_func_id {
-    *     Return: 0 on success or negative error
-    */
-    BPF_FUNC_probe_read_user,
-+
-+   /**
-+   * int bpf_probe_read_kernel(void *dst, int size, void *src)
-+   *     Read a kernel pointer safely=2E
-+   *     Return: 0 on success or negative error
-+   */
-+   BPF_FUNC_probe_read_kernel,
- =09
-+	/**
-+	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
-+	 *     Copy a NUL terminated string from user unsafe address=2E In case =
-the string
-+	 *     length is smaller than size, the target is not padded with furthe=
-r NUL
-+	 *     bytes=2E In case the string length is larger than size, just coun=
-t-1
-+	 *     bytes are copied and the last byte is set to NUL=2E
-+	 *     @dst: destination address
-+	 *     @size: maximum number of bytes to copy, including the trailing NU=
-L
-+	 *     @unsafe_ptr: unsafe address
-+	 *     Return:
-+	 *       > 0 length of the string including the trailing NUL on success
-+	 *       < 0 error
-+	 */
-+	BPF_FUNC_probe_read_user_str,
-+
-+	/**
-+	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
-+	 *     Copy a NUL terminated string from unsafe address=2E In case the s=
-tring
-+	 *     length is smaller than size, the target is not padded with furthe=
-r NUL
-+	 *     bytes=2E In case the string length is larger than size, just coun=
-t-1
-+	 *     bytes are copied and the last byte is set to NUL=2E
-+	 *     @dst: destination address
-+	 *     @size: maximum number of bytes to copy, including the trailing NU=
-L
-+	 *     @unsafe_ptr: unsafe address
-+	 *     Return:
-+	 *       > 0 length of the string including the trailing NUL on success
-+	 *       < 0 error
-+	 */
-+	BPF_FUNC_probe_read_kernel_str,
-+ =20
-   __BPF_FUNC_MAX_ID,
- };
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_toggle_en
+> +KernelVersion:	5.18
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Toggle enable. Write 1 to enable toggle or 0 to disable it. This is
+> +		useful when one wants to change the DAC output codes. The way it should
+> +		be done is:
+> +
+> +		- disable toggle operation;
+> +		- change out_voltageY_raw0 and out_voltageY_raw1;
+> +		- enable toggle operation.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_raw0
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_raw1
+> +KernelVersion:	5.18
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		It has the same meaning as out_voltageY_raw. This attribute is
+> +		specific to toggle enabled channels and refers to the DAC output
+> +		code in INPUT_A (_raw0) and INPUT_B (_raw1). The same scale and offset
+> +		as in out_voltageY_raw applies.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_symbol
+> +KernelVersion:	5.18
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Performs a SW toggle. This attribute is specific to toggle
+> +		enabled channels and allows to toggle between out_voltageY_raw0
+> +		and out_voltageY_raw1 through software. Writing 0 will select
+> +		out_voltageY_raw0 while 1 selects out_voltageY_raw1.
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 758c202ec712..b3be54c09159 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12850,6 +12850,14 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
+>  F:	drivers/iio/dac/ltc1660.c
+> =20
+> +LTC2664 IIO DAC DRIVER
+> +M:	Michael Hennerich <michael.hennerich@analog.com>
+> +M:	Kim Seer Paller <kimseer.paller@analog.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Supported
+> +W:	https://ez.analog.com/linux-software-drivers
+> +F:	Documentation/ABI/testing/sysfs-bus-iio-dac
+
+As it's a general doc, doesn't really belong in a driver specific entry.
+So far we haven't listed these generic docs as having specific maintainers
+and people have to rely on history to figure out who to cc.
+
+> +
+>  LTC2688 IIO DAC DRIVER
+>  M:	Nuno S=E1 <nuno.sa@analog.com>
+>  L:	linux-iio@vger.kernel.org
+
 
