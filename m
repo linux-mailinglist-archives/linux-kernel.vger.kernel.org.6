@@ -1,134 +1,134 @@
-Return-Path: <linux-kernel+bounces-187210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3333C8CCEA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3558CCEA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC4A2830A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6DF21F21D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5136713D251;
-	Thu, 23 May 2024 08:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD7313D27F;
+	Thu, 23 May 2024 08:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VHb0oO4z"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mUlfm8Lk"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4858B13C809
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68F2339A0;
+	Thu, 23 May 2024 08:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716454364; cv=none; b=kJd6JJrPgE8eieLrffnTTjxEtkXEOmP1nrnaoU4GAHQedlSifUCo+oiVHy6+OJ5un9zpX6eTsz9tdAOV2rAKZRoh/2uGNYtFVrV/huBRqiTvUug9ZKdQJx7phLmtlHNu9tQvBiHS41ebJtx/vjBmTXv95m494yYxhe834L1wFvI=
+	t=1716454419; cv=none; b=pQ3J4B1ASnWlIrG8jVdjrp+w0taHTj6gv4V0mwsq/MNizCZCs0N9ccip0chC8Ma2S85H4IeBg8624LcW/4gA/siPEcWXLqAapsXxbD3lavjfqJheytM6eZJ5X/wDmpPYXYcntebfNoqZCcxA01cT5meA4EPSm649mkXrDNmVpOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716454364; c=relaxed/simple;
-	bh=Ne8K3aZIklrSsnXiC2eKNCa51ju/79uUNxOtDo/KL88=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=np3P6ozvSEpqEjBIHm6a1LedUq1YKcS+xP1W7OcBMoUfxtR6wjb56hz0gZntjcrABdJHnz4siXoA6PUUfkMZONE+N3toYbp32au6hWdRjxPzpTWyYC2JdPW2GkI4NDhjIP7oWaUbmssHXkVhzHbjd+A9mPRiH6jQxtMPeY/l4KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VHb0oO4z; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: tytso@mit.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716454360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7wET50NqYkTKouiyULS5A8Rly72qStBQjSusl5+Kp6g=;
-	b=VHb0oO4ziDGfLYG2tedWj5KU0fXc704vWqP3wZ0XLeVkY861wUWrGV4FZp3PC+Vx9rSqZ1
-	SAgO6AUSMPYqWo6fteQbx36X6BV8xO1FAL7gH4dS9pDLm/x6e77efP/Tq30q2XuFfny2RA
-	5wqX8MEWED6HAW9hxLEcNrZB8xUXM/Y=
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-ext4@vger.kernel.org
-X-Envelope-To: luis.henriques@linux.dev
-X-Envelope-To: jack@suse.com
-X-Envelope-To: adilger@dilger.ca
-X-Envelope-To: jack@suse.cz
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: Luis Henriques <luis.henriques@linux.dev>,  Theodore Ts'o
- <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Jan Kara
- <jack@suse.com>,  linux-ext4@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] jbd2: reset fast commit offset only after fs
- cleanup is done
-In-Reply-To: <20240523074434.xdpyso46v5l6qvze@quack3> (Jan Kara's message of
-	"Thu, 23 May 2024 09:44:34 +0200")
-References: <20240521154535.12911-1-luis.henriques@linux.dev>
-	<20240521154535.12911-3-luis.henriques@linux.dev>
-	<20240522104500.z343a6xqfduuq5i3@quack3> <87le42dl4b.fsf@brahms.olymp>
-	<20240523074434.xdpyso46v5l6qvze@quack3>
-Date: Thu, 23 May 2024 09:52:32 +0100
-Message-ID: <87wmnk3o6n.fsf@brahms.olymp>
+	s=arc-20240116; t=1716454419; c=relaxed/simple;
+	bh=f+FM0Szq7PCxoqI/dTytc3od6T5lYIl+Cf/sm7v/EZk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=te93kWul4wFr8+NsneF6x5t7Em0Lne3EKx4vwNEyiQ1oceKdMonNo74aC7dM4ytigfyl/b5CJ+C2REXzHGKZtM83YLkPWHLl1+e/slV1UMA3jViK0YPstzVgg8eg7f39CxpZ6cDMzuOJsMwnzszCS+Ntx4/1gPrQXFFpZYC02a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mUlfm8Lk; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1716454418; x=1747990418;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=f+FM0Szq7PCxoqI/dTytc3od6T5lYIl+Cf/sm7v/EZk=;
+  b=mUlfm8LknpJilAKLZ/v8Ti5dukx8fZ3iSQ0lg4+C2Su+FOgJFUo1mNv4
+   5i33v/fqHUQ8xHoCjOmvyh/eIEilGZMkWIOb5rbo8TX5plkxiM7V1cFK/
+   ZZ6i5UUxbQOqwbD2HPLB4IPvUb17gsyS5GzlRW6zgwOU9d4IgJ1u4wuwC
+   Dq2vtZ/xCsLkvYNEOk6xEdRqBxxlJODgqfRqDFl9+yvdPxzDkcfyu0/U8
+   KYdTYG/hel+VECimt/7wlmt7sg5vR8Vgy2svlAp+69WO2z8C/TvrbVlBe
+   E7iExowHWJbvSm/7zHTmDQ15lc4C2KXmYlRDaX+mzcMRKnfyi/no8Uu1B
+   g==;
+X-CSE-ConnectionGUID: W9KaXAE6RECszhEZa8KEWg==
+X-CSE-MsgGUID: d514tyr7Q9KlyWa+X27VZA==
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="25876177"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 May 2024 01:53:36 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 23 May 2024 01:53:21 -0700
+Received: from che-ll-i17164.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 23 May 2024 01:53:17 -0700
+From: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+To: <steve.glendinning@shawell.net>, <UNGLinuxDriver@microchip.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>
+Subject: [PATCH] net: usb: smsc95xx: fix changing LED_SEL bit value updated from EEPROM
+Date: Thu, 23 May 2024 14:23:14 +0530
+Message-ID: <20240523085314.167650-1-Parthiban.Veerasooran@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
 
-On Thu 23 May 2024 09:44:34 AM +02, Jan Kara wrote;
+LED Select (LED_SEL) bit in the LED General Purpose IO Configuration
+register is used to determine the functionality of external LED pins
+(Speed Indicator, Link and Activity Indicator, Full Duplex Link
+Indicator). The default value for this bit is 0 when no EEPROM is
+present. If a EEPROM is present, the default value is the value of the
+LED Select bit in the Configuration Flags of the EEPROM. A USB Reset or
+Lite Reset (LRST) will cause this bit to be restored to the image value
+last loaded from EEPROM, or to be set to 0 if no EEPROM is present.
 
-> On Wed 22-05-24 14:36:20, Luis Henriques wrote:
->> On Wed 22 May 2024 12:45:00 PM +02, Jan Kara wrote;
->> 
->> > On Tue 21-05-24 16:45:35, Luis Henriques (SUSE) wrote:
->> >> When doing a journal commit, the fast journal offset (journal->j_fc_off) is
->> >> set to zero too early in the process.  Since ext4 filesystem calls function
->> >> jbd2_fc_release_bufs() in its j_fc_cleanup_callback (ext4_fc_cleanup()),
->> >> that call will be a no-op exactly because the offset is zero.
->> >> 
->> >> Move the fast commit offset further down in the journal commit code, until
->> >> it's mostly done, immediately before clearing the on-going commit flags.
->> >> 
->> >> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->> >
->> > Did you see any particular failure because of this? Because AFAICS the
->> > buffers cleaned up by jbd2_fc_release_bufs() are only allocated during fast
->> > commit (from ext4_fc_reserve_space()). And the code in
->> > jbd2_journal_commit_transaction() is making sure fast commit isn't running
->> > before we set journal->j_fc_off to 0.
->> 
->> No, I did not see any failure caused by this, this patch is simply based
->> on my understanding of the code after spending some time reviewing it.
->> 
->> The problem I saw was that jbd2_journal_commit_transaction() will run the
->> clean-up callbacks, which includes ext4_fc_cleanup().  One of the first
->> things that this callback will do is to call jbd2_fc_release_bufs().
->> Because journal->j_fc_off is zero, this call is useless:
->> 
->> 	j_fc_off = journal->j_fc_off;
->> 
->> 	for (i = j_fc_off - 1; i >= 0; i--) {
->> 		[...]
->> 	}
->> 
->> (It's even a bit odd to start the loop with 'i = -1'...)
->> 
->> So the question is whether this call is actually useful at all.  Maybe the
->> thing to do is to simply remove the call to jbd2_fc_release_bufs()?  (And
->> in that case, remove the function too, as this is the only call site.)
->
-> What is I guess confusing for you (and somewhat for me as well) is that
-> journal->j_fc_cleanup_callback() gets called from __jbd2_fc_end_commit()
-> *and* from jbd2_journal_commit_transaction(). I agree the
-> jbd2_fc_release_bufs() is useless for the call from
-> jbd2_journal_commit_transaction(), it is however needed for the call from
-> __jbd2_fc_end_commit(). There are however other bits - namely the
-> s_fc_dentry_q and s_fc_q list handling that need to happen both for normal
-> and fast commit...
+While configuring the dual purpose GPIO/LED pins to LED outputs in the
+LED General Purpose IO Configuration register, the LED_SEL bit is changed
+as 0 and resulting the configured value from the EEPROM is cleared. The
+issue is fixed by using read-modify-write approach.
 
-Oops!  I totally missed that second callback execution.  Yeah, it does
-make sense now, of course.  Sorry for the noise and thank you for looking
-into it.  I'll go back and focus on reworking on the other patch (and also
-look into Harshad's patchset).
+Fixes: f293501c61c5 ("smsc95xx: configure LED outputs")
+Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+---
+ drivers/net/usb/smsc95xx.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Cheers,
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index cbea24666479..8e82184be5e7 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -879,7 +879,7 @@ static int smsc95xx_start_rx_path(struct usbnet *dev)
+ static int smsc95xx_reset(struct usbnet *dev)
+ {
+ 	struct smsc95xx_priv *pdata = dev->driver_priv;
+-	u32 read_buf, write_buf, burst_cap;
++	u32 read_buf, burst_cap;
+ 	int ret = 0, timeout;
+ 
+ 	netif_dbg(dev, ifup, dev->net, "entering smsc95xx_reset\n");
+@@ -1003,10 +1003,13 @@ static int smsc95xx_reset(struct usbnet *dev)
+ 		return ret;
+ 	netif_dbg(dev, ifup, dev->net, "ID_REV = 0x%08x\n", read_buf);
+ 
++	ret = smsc95xx_read_reg(dev, LED_GPIO_CFG, &read_buf);
++	if (ret < 0)
++		return ret;
+ 	/* Configure GPIO pins as LED outputs */
+-	write_buf = LED_GPIO_CFG_SPD_LED | LED_GPIO_CFG_LNK_LED |
+-		LED_GPIO_CFG_FDX_LED;
+-	ret = smsc95xx_write_reg(dev, LED_GPIO_CFG, write_buf);
++	read_buf |= LED_GPIO_CFG_SPD_LED | LED_GPIO_CFG_LNK_LED |
++		    LED_GPIO_CFG_FDX_LED;
++	ret = smsc95xx_write_reg(dev, LED_GPIO_CFG, read_buf);
+ 	if (ret < 0)
+ 		return ret;
+ 
+
+base-commit: 4b377b4868ef17b040065bd468668c707d2477a5
 -- 
-Luis
+2.34.1
+
 
