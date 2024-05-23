@@ -1,193 +1,241 @@
-Return-Path: <linux-kernel+bounces-186987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55C68CCB90
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A9C88CCB9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFEDA1C20FB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:00:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839CB1F22EC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD7412B16A;
-	Thu, 23 May 2024 05:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612B84437C;
+	Thu, 23 May 2024 05:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QU9AWjrY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RaH6BGHB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4938B33FE
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F33017F6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716440400; cv=none; b=IbrWM7IdsaLELcZ4PcFJ/Sw11Bi3X2+Fm5uL2AIrjUxj93LGDhMAvpK8dpnGAwbh8QNgI+LvsXNypULmETNGF3Zb2CNjqQDMi5boA9F8LxJNwna3SYzWL/u9zWirQ1V5/edHH9TA/VZNk2qQbSXzyBz+RUBzbM1y6v9Goi6Sk/w=
+	t=1716440702; cv=none; b=JRboyVK7HqLPbTiGKVkTYCBYowVzwBnFncZ/jX9ft0dMXNkcEcPqE1+kqkW5hZL38tmB4f28JKmV/lBHaVE39CpkzJ1ztB7usGDmzx/fNTLr+1gnR9o8Ra8Zh807KDU8SLSNstZy9njsnGFLXXJJEmrtuUaEU/lWVfksMcBO8G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716440400; c=relaxed/simple;
-	bh=A2QBbXynwqnZ9fu0/bXHhoUd9bxc6wEdKm48fxOs8cA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=QD4kdfCY1cRjw1Oqoy/BTAauI4wSnntP6OIArqeESxu9ygYC2AtmAFeR53Bt7/l8koP4YMgBqsNYqQ0PAdC+6zZ78RxsY8mFuey8Cwm0iDT/WtZJYqX+02DWkABuVroFg3VwC2wcn8quTJ6wbnxcbNRlum2gZaRRgGTnl7TowKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QU9AWjrY; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716440398; x=1747976398;
-  h=date:from:to:cc:subject:message-id;
-  bh=A2QBbXynwqnZ9fu0/bXHhoUd9bxc6wEdKm48fxOs8cA=;
-  b=QU9AWjrYy8LfGM0KafRGlWQx5aSMBLmaeknKDV0jsGIax3N90LyAZ8hY
-   /crJENVIHZoSczi0B/c8Fa9b881SnzMrhQaH9KqBTcDFv0wGG1xbyY+1t
-   HODXDX01I62D/qOkX0Wem1biSV779Zow4ZHPFfIBd1DILSA/9g5XUpvJK
-   PZRusSFMsvJLjJLFwiXA3YOVjOGz1bA03liME9V6MTPnjA/ILXKsgBLaG
-   B2h8VmaceScBnt+0ZreHdN8Dsxzi+3FjQwjurTOd7sr7Tr6EKf2VGEKQE
-   CaBMYF7lYexpq558kn7aLui5fs2OlIFpR5JpKkm+NuOj5t8t18AXJ03F0
-   g==;
-X-CSE-ConnectionGUID: 1q8aapbJQjmCZgXZdKcuyA==
-X-CSE-MsgGUID: sFmSG8K2TZ6BXU8+JfNajQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12906087"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12906087"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 21:59:58 -0700
-X-CSE-ConnectionGUID: 6QjoGF1CRIiZBkiwbhpO0g==
-X-CSE-MsgGUID: YG7XXvOLQiaGVyzS9AIWwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33644883"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 22 May 2024 21:59:56 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sA0YT-0002TL-3A;
-	Thu, 23 May 2024 04:59:53 +0000
-Date: Thu, 23 May 2024 12:59:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 93022482b2948a9a7e9b5a2bb685f2e1cb4c3348
-Message-ID: <202405231228.3owNfTUv-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1716440702; c=relaxed/simple;
+	bh=zyo+bdDZ/N4/djYtySqHnjirGhVeeIsejhfBljnEiJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bYxQLeY5eZWg84d/y065Ffs0gMN5f+CVEwp7J9+5ty7KTguSwA0yTUUse1LhazK4OWXsDLqSK01GsnmAHs5B+TD1+XK64R1Ari+LhaNCXEpQSLDFApQAqFzJ6jGEgzCijYSVtb17lk5+nAwi3U92nZia2opd6u5XUTHRVynVzRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RaH6BGHB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716440699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=A6LQSflM3pR3q8h/egcBZjfFQkSwg8BugxkzeSq0Hfw=;
+	b=RaH6BGHBRuTb9csvewPDWmAp0VRgRs7sQvXRCouQqBE+EvIaio6ytWgtPmDH7Xl8HSH8rb
+	ZKXf4KVr+Cuwp3jjleq9R9pfqMUnBpN5ZxgXe4FvtfmIXnuD5IFb82AMawMIdLRX/p0WRn
+	Ua4l2pSMhzoxBoNAiLCZskcgLnUKAoY=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-519-ZmTR9C-eMaayKYC7_WiKPg-1; Thu, 23 May 2024 01:04:58 -0400
+X-MC-Unique: ZmTR9C-eMaayKYC7_WiKPg-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1f09617bc59so85584805ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:04:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716440696; x=1717045496;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A6LQSflM3pR3q8h/egcBZjfFQkSwg8BugxkzeSq0Hfw=;
+        b=nfmcT+WbuWBRPuAnbX3cs8r5Rk+geSbuOi+MwUDNLDow67BNm7V8CXOhID0gBtVfM6
+         yuCJOKylEKf/o78IvqGaLIp8vOb94Bu2bJcp11U7o44WpzSx9Lop63yZGbXNDf9QSxSZ
+         PrlSQfpAigK01xNOAeiT9GQgZk7W2Y6Q4FJHCnwy4R/K5yxWTFttOqHR8YmZovtKUgzl
+         XdbDi7oRd0mEkb9X13bA+ijYeQ+ayPc/Z39vXFtQK7H3cLVljYNkP7ArVQkahRRLt/cf
+         /99o7dNRmTFCtgPhRHA2SA/y2MATHmyMFyeT1Fl05kuF2UXImejP2kPUNPzyZZ9YrtRt
+         Hd9g==
+X-Forwarded-Encrypted: i=1; AJvYcCW9XXmie/Ewt1njIQS7ur3jsR2MmgTr0NNNmFWDDbSx8hENtkwezJKMCERTsa2x+i0eEcr3UiJf4psF1FiC/rsGMmSyKTXO8YDjI70s
+X-Gm-Message-State: AOJu0YwhZd2MOsdT2MNah/9mPBhK8Yq2xag/joE643KeVFaXiyiSJzyI
+	0nALIXSKIxFV7hOlq/zNgEGZyCz3s03Zni95ntlp46In8perxl9QM8DifD5o1bKeqz04Hl7Xg01
+	78qvdu8g2qzbrZw5xAqzofH0lxa4VygpykClIFjt6GMdSAwhn+RQNcc4EekVnI6GBC/BPcX7h1E
+	U=
+X-Received: by 2002:a17:902:eccc:b0:1f2:ffca:87ae with SMTP id d9443c01a7336-1f31c9f8b2cmr58843535ad.61.1716440695866;
+        Wed, 22 May 2024 22:04:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvYOJLV1NN+/ltuXghvjIaiwVQ9rZZdHDWAALqHVUxL4bK0WWsLcXf2YSuPMSFTcU+jdUshA==
+X-Received: by 2002:a17:902:eccc:b0:1f2:ffca:87ae with SMTP id d9443c01a7336-1f31c9f8b2cmr58843035ad.61.1716440694938;
+        Wed, 22 May 2024 22:04:54 -0700 (PDT)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f333e051ecsm10154345ad.73.2024.05.22.22.04.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 22:04:54 -0700 (PDT)
+From: Coiby Xu <coxu@redhat.com>
+To: kexec@lists.infradead.org
+Cc: Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	=?UTF-8?q?Daniel=20P=20=2E=20Berrang=C3=A9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>,
+	Jan Pazdziora <jpazdziora@redhat.com>,
+	Pingfan Liu <kernelfans@gmail.com>,
+	Baoquan He <bhe@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>
+Subject: [PATCH v4 0/7] Support kdump with LUKS encryption by reusing LUKS volume keys
+Date: Thu, 23 May 2024 13:04:41 +0800
+Message-ID: <20240523050451.788754-1-coxu@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 93022482b2948a9a7e9b5a2bb685f2e1cb4c3348  x86/cpu: Fix x86_match_cpu() to match just X86_VENDOR_INTEL
+LUKS is the standard for Linux disk encryption. Many users choose LUKS
+and in some use cases like Confidential VM it's mandated. With kdump
+enabled, when the 1st kernel crashes, the system could boot into the
+kdump/crash kernel and dump the memory image i.e. /proc/vmcore to a
+specified target. Currently, when dumping vmcore to a LUKS
+encrypted device, there are two problems,
 
-elapsed time: 1143m
+ - Kdump kernel may not be able to decrypt the LUKS partition. For some
+   machines, a system administrator may not have a chance to enter the
+   password to decrypt the device in kdump initramfs after the 1st kernel
+   crashes; For cloud confidential VMs, depending on the policy the
+   kdump kernel may not be able to unseal the keys with TPM and the
+   console virtual keyboard is untrusted.
 
-configs tested: 101
-configs skipped: 3
+ - LUKS2 by default use the memory-hard Argon2 key derivation function
+   which is quite memory-consuming compared to the limited memory reserved
+   for kdump. Take Fedora example, by default, only 256M is reserved for
+   systems having memory between 4G-64G. With LUKS enabled, ~1300M needs
+   to be reserved for kdump. Note if the memory reserved for kdump can't
+   be used by 1st kernel i.e. an user sees ~1300M memory missing in the
+   1st kernel.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Besides users (at least for Fedora) usually expect kdump to work out of
+the box i.e. no manual password input is needed. And it doesn't make
+sense to derivate the keys again in kdump kernel which seems to be
+redundant work.
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                                 defconfig   clang
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240523   clang
-i386         buildonly-randconfig-002-20240523   gcc  
-i386         buildonly-randconfig-003-20240523   clang
-i386         buildonly-randconfig-004-20240523   clang
-i386         buildonly-randconfig-005-20240523   clang
-i386         buildonly-randconfig-006-20240523   gcc  
-i386                                defconfig   clang
-i386                  randconfig-001-20240523   gcc  
-i386                  randconfig-002-20240523   clang
-i386                  randconfig-003-20240523   clang
-i386                  randconfig-004-20240523   clang
-i386                  randconfig-005-20240523   gcc  
-i386                  randconfig-006-20240523   clang
-i386                  randconfig-011-20240523   gcc  
-i386                  randconfig-012-20240523   clang
-i386                  randconfig-013-20240523   clang
-i386                  randconfig-014-20240523   gcc  
-i386                  randconfig-015-20240523   gcc  
-i386                  randconfig-016-20240523   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-riscv                            allmodconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   clang
-riscv                               defconfig   clang
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64                              defconfig   gcc  
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
+This patch set addresses the above issues by make the LUKS volume keys
+persistent for kdump kernel with the help of cryptsetup's new APIs
+(--link-vk-to-keyring/--volume-key-keyring). Here is the life cycle of
+this kdump copy of LUKS volume keys,
 
+ 1. After the 1st kernel loads the initramfs during boot, systemd
+    use an user-input passphrase or TPM-sealed key to de-crypt the LUKS
+    volume keys and then save the volume keys to specified keyring
+    (using the --link-vk-to-keyring API) and the key will expire within
+    specified time.
+
+ 2. A user space tool (kdump initramfs builder) writes a key description to
+    /sys/kernel/crash_dm_crypt_keys to inform the 1st kernel to record the
+    key while building the kdump initramfs
+
+ 3. The kexec_file_load syscall read the volume keys by recored key
+    descriptions and then save them key to kdump reserved memory and wipe the
+    copy.
+
+ 4. When the 1st kernel crashes and the kdump initramfs is booted, the kdump
+    initramfs asks the kdump kernel to create a user key using the key stored in
+    kdump reserved memory by writing to to /sys/kernel/crash_dm_crypt_keys. Then
+    the LUKS encrypted devide is unlocked with libcryptsetup's
+    --volume-key-keyring API.
+
+ 5. The system gets rebooted to the 1st kernel after dumping vmcore to
+    the LUKS encrypted device is finished
+
+After libcryptsetup saving the LUKS volume keys to specified keyring,
+whoever takes this should be responsible for the safety of these copies
+of keys. The keys will be saved in the memory area exclusively reserved
+for kdump where even the 1st kernel has no direct access. And further
+more, two additional protections are added,
+ - save the copy randomly in kdump reserved memory as suggested by Jan
+ - clear the _PAGE_PRESENT flag of the page that stores the copy as
+   suggested by Pingfan
+
+This patch set only supports x86. There will be patches to support other
+architectures once this patch set gets merged.
+
+v4
+- rebase onto latest Linus tree so Baoquan can apply the patches for
+  code review
+- fix kernel test robot warnings
+
+v3
+ - Support CPU/memory hot-plugging [Baoquan]
+ - Don't save the keys temporarily to simplify the implementation [Baoquan]
+ - Support multiple LUKS encrypted volumes
+ - Read logon key instead of user key to improve security [Ondrej]
+ - A kernel config option CRASH_DM_CRYPT for this feature (disabled by default)
+ - Fix warnings found by kernel test robot
+ - Rebase the code onto 6.9.0-rc5+
+
+v2
+ - work together with libscryptsetup's --link-vk-to-keyring/--volume-key-keyring APIs [Milan and Ondrej]
+ - add the case where console virtual keyboard is untrusted for confidential VM
+ - use dm_crypt_key instead of LUKS volume key [Milan and Eric]
+ - fix some code format issues
+ - don't move "struct kexec_segment" declaration
+ - Rebase the code onto latest Linus tree (6.7.0)
+
+v1
+ - "Put the luks key handling related to crash_dump out into a separate
+   file kernel/crash_dump_luks.c" [Baoquan]
+ - Put the generic luks handling code before the x86 specific code to
+   make it easier for other arches to follow suit [Baoquan]
+ - Use phys_to_virt instead of "pfn -> page -> vaddr" [Dave Hansen]
+ - Drop the RFC prefix [Dave Young]
+ - Rebase the code onto latest Linus tree (6.4.0-rc4)
+
+RFC v2
+ - libcryptsetup interacts with the kernel via sysfs instead of "hacking"
+   dm-crypt
+   - to save a kdump copy of the LUKS volume key in 1st kernel
+   - to add a logon key using the copy for libcryptsetup in kdump kernel [Milan]
+   - to avoid the incorrect usage of LUKS master key in dm-crypt [Milan]
+ - save the kdump copy of LUKS volume key randomly [Jan]
+ - mark the kdump copy inaccessible [Pingfan]
+ - Miscellaneous
+   - explain when operations related to the LUKS volume key happen [Jan]
+   - s/master key/volume key/g
+   - use crash_ instead of kexec_ as function prefix
+   - fix commit subject prefixes e.g. "x86, kdump" to x86/crash
+
+Coiby Xu (7):
+  kexec_file: allow to place kexec_buf randomly
+  crash_dump: make dm crypt keys persist for the kdump kernel
+  crash_dump: store dm keys in kdump reserved memory
+  crash_dump: reuse saved dm crypt keys for CPU/memory hot-plugging
+  crash_dump: retrieve dm crypt keys in kdump kernel
+  x86/crash: pass dm crypt keys to kdump kernel
+  x86/crash: make the page that stores the dm crypt keys inaccessible
+
+ arch/x86/kernel/crash.c            |  15 +-
+ arch/x86/kernel/kexec-bzimage64.c  |   7 +
+ arch/x86/kernel/machine_kexec_64.c |  21 ++
+ include/linux/crash_core.h         |   9 +-
+ include/linux/crash_dump.h         |   2 +
+ include/linux/kexec.h              |   6 +
+ kernel/Kconfig.kexec               |   8 +
+ kernel/Makefile                    |   1 +
+ kernel/crash_dump_dm_crypt.c       | 319 +++++++++++++++++++++++++++++
+ kernel/kexec_file.c                |  15 ++
+ kernel/ksysfs.c                    |  22 ++
+ 11 files changed, 423 insertions(+), 2 deletions(-)
+ create mode 100644 kernel/crash_dump_dm_crypt.c
+
+
+base-commit: de7e71ef8bed222dd144d8878091ecb6d5dfd208
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.0
+
 
