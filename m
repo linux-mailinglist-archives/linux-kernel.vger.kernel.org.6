@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-187370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084A18CD0CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:02:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B6E8CD0DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFBEC1F21A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 312D31C21141
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904F014430E;
-	Thu, 23 May 2024 11:02:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B606146013;
+	Thu, 23 May 2024 11:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LpLtzae7"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D546C3BB21;
-	Thu, 23 May 2024 11:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C631214036D;
+	Thu, 23 May 2024 11:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716462161; cv=none; b=oMhwCP43UC3FbzdjdmPZr1YQ6uLyJcXMZOuHWL3Jv8V++IZ2jGHiCpthVzVAMD2bvcIB8HDx4x/zZxrl+KmrIAXx1+jzoRXRQNFm6tYeAbUW+1x0TI8mEhIVLX4MW2FBxfjr6kGJTB0+VIY51tJ3cG97MdmKQr3vGn2JNHBePlc=
+	t=1716462365; cv=none; b=YzKjENjb+s2jcmYb+5sdIOndlrpXi5udkpKTDfm31liJ60oG2jHDhEmA3qvI5NbfwNlpGBjf2FYnVUB9ExMo3aptuouFGMxY3wN9Di2cVca5qxmhdkBSsU5IgIFuQE7s1P7O3teW5nmYv0nylv50FNa0TZFMoC5V4N1scst7sqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716462161; c=relaxed/simple;
-	bh=Y++RLciD3ipTi4wP81sYlEWtvFzfWcwijReeMZc3xZ8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IRtxJFm8kbmPiLFWgB4bB4zYEAEzNLOMBRmwwqQkBo+xGq+GWooCb9elNNl2ZqhyoG1FZJHAEIZRQHWWHBdSuWcbwZ/7Hxj/u73IXvBWOPV15bj/2P0av57uOTyJWonYPwejoTSX32pZ/LGox3S2si+TxHSOl5GkjxroVhJwAvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VlQGW4561z6K9NH;
-	Thu, 23 May 2024 19:01:39 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D118F140B2A;
-	Thu, 23 May 2024 19:02:30 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 23 May
- 2024 12:02:29 +0100
-Date: Thu, 23 May 2024 12:02:26 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Alistair Francis <alistair23@gmail.com>
-CC: <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, <lukas@wunner.de>,
-	<alex.williamson@redhat.com>, <christian.koenig@amd.com>, <kch@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <logang@deltatee.com>,
-	<linux-kernel@vger.kernel.org>, <chaitanyak@nvidia.com>,
-	<rdunlap@infradead.org>, Alistair Francis <alistair.francis@wdc.com>
-Subject: Re: [PATCH v10 2/4] PCI/DOE: Rename Discovery Response Data Object
- Contents to type
-Message-ID: <20240523120226.0000781b@Huawei.com>
-In-Reply-To: <20240522101142.559733-2-alistair.francis@wdc.com>
-References: <20240522101142.559733-1-alistair.francis@wdc.com>
-	<20240522101142.559733-2-alistair.francis@wdc.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1716462365; c=relaxed/simple;
+	bh=gYGpWw1dwKwYXbTMuHWCYz3vW9FamyeQy+MaNMDyXQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CPDssvMnoI3ztt5S1y9GUhdypPKynE26/2bls95VrkgNpUw6+tpDZHenmtCykmRpdOyWQMTW+irPpwzPPYh/okdIvw32G9aSKhEUrOPNZ9dJr/Kq/IuChT72MPdspdRfmlY23kOp4G0MriFZgiMeKZeuUlHZyHbPyAKihMukiJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LpLtzae7; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716462329; x=1717067129; i=markus.elfring@web.de;
+	bh=gYGpWw1dwKwYXbTMuHWCYz3vW9FamyeQy+MaNMDyXQk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=LpLtzae7k7PGKt5CH/219ViPUnt0svgwRR965UkDeNCI5x1p1CkiWMongjV5X+lY
+	 i5DLXwXw31baly1omeTzIDsy9UYDSoceCL5dbspMZPG7TFfUTsknbQeQ1KNvkU6SJ
+	 yi9lG2RDA/RNG+MWsUNgWqQllc4FiJC1b++c1C4iJrWLCmYh1myPcBHEnwyVIxqR9
+	 lOJbOw3GrW+GroY1xZrn4Eur4sZOVicyLx003vjF1JMYI1Xd/R3DPFqDZiDr5D9KO
+	 FBQkZqS4eTLU3vTyl7iN8tCR2AgVENT46IVX9/hrRdDVEUEn3M6NQc51NsTqpR7Wv
+	 sc++cHwgmJ1ixNYMzQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N8Vsx-1seoPp3Rq5-00sRYp; Thu, 23
+ May 2024 13:05:28 +0200
+Message-ID: <8fb9a0ce-0a25-4fbe-9a8f-c2789c1553fa@web.de>
+Date: Thu, 23 May 2024 13:05:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 03/20] dt-bindings: fsi: Document the IBM SCOM engine
+To: Conor Dooley <conor.dooley@microchip.com>,
+ Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
+References: <20240522192524.3286237-4-eajames@linux.ibm.com>
+ <bee0888c-f81b-46c8-8a1c-802d108dc0c0@web.de>
+ <20240523-armband-utopia-66892e08b90d@wendy>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240523-armband-utopia-66892e08b90d@wendy>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:o7i1z0ffw/sWelUqhm9HyOezHTgMOzYA8t77RncB11/ez3M/wDb
+ UuHT8Lnovhq4bgS/KpsKcRxPEEVZN7YohbH5GTBSvC68ZjsJ5nlLiIth8Bi6K/J1+s7AYyP
+ udETwbHCI0hsTmNHARRG8rN1YNiNf6d8Y1WYuTQxLOA6N/1dndf0oX/ayLfD7WUvt92/d9F
+ rNyB2ahjl/3ti347klAOg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KI+1kjpW9rI=;+qnjuxKLSMLhUuyHZ0TmL5l93GY
+ OvI2k30qXI+RE+3HDSUwIoGgElWYXIK7FEEkTBEVlHxW1SiyCCs0BTNcVxn/l3Zq8Ws0CeIEp
+ QZINKzZcaKn9eNu2Dz1kxEyuKrDPbu5c+Efj8DLZ/L6esJAhBn6LmkCwkfa+zQVEG13tJqNXU
+ kSFF/zcKybqlqXCZVpYPxAclkNySRHgD4Al8iOHz2gyWwK08M6YLR9e8BBnv6ZJJkqK/UhwcY
+ xMwgwZ5J11M8iMXAwLUTLmgZqlpHe8r5DwrQ8P965i7Ref2UBf5X3K6rxXiLcwTLX0oSDlbct
+ tCduY4v6XpLjf5YCdSRPTXKozh4bjVqGD6WQYl1G98oSYMdTKDEmr5bcmiSDBjdvRUD1muufR
+ vMjFEJa+D3F8t/QZd1CgqwYWaEdHx2Ljz+ROCADzwyOW4WZmyYBlmfyoYlYHlxpgeHFfEiUts
+ 1Uc1PYCd4gP2ATAudVgf6jhNFAM/K3JshCsb3FsCio+W5dyRrE7plE3ZmU8JBAk5aKhAn7KHO
+ ZxzBvSQaCnYpXLePWBdRnq72MYcj3m/UMiCKcUp1id7vlts78exdPIp3ExK7eT2KQuX8OxJ5r
+ kzMQpHCO89zrjba8ILgnGZMXhwHWNj/r1spWpImwLdQyDVWadzx1NJrAt9TxXC+8ZwpEZtlgz
+ zWmEpkdGa0bXePLcD1v6WYHzRE+AGQVW1GpGu9vh5z4nX831O+Zv8X55N1Cqz+IInTsx0JDkH
+ wxuVPJAHDrcpk5AQ/YTteexE7tK8yMP9vYS4hl+mnJBR6xLo8CReXEro9WmY8WDIW+o2XzDj6
+ 2xQNJRNo3NOosW4TSbQJsHJGB8/OljHJn5LkTaw3lHaHI=
 
-On Wed, 22 May 2024 20:11:40 +1000
-Alistair Francis <alistair23@gmail.com> wrote:
+>>> The SCOM engine provides an interface to the POWER processor PIB
+>>> (Pervasive Interconnect Bus).
+>>
+>> Please improve this change description with a corresponding imperative =
+wording.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.9#n94
+>
+> The tense used here is fine.
 
-> PCIe r6.1 (which was published July 24) describes a "Vendor ID", a
-> "Data Object Type" and "Next Index" as the fields in the DOE
-> Discovery Response Data Object. The DOE driver currently uses
-> both the terms type and prot for the second element.
-> 
-> This patch renames all uses of the DOE Discovery Response Data Object
-> to use type as the second element of the object header, instead of
-> type/prot as it currently is.
-> 
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+Is the imperative mood preferred for the final commit message (besides the=
+ summary phrase)?
 
-Other than the below query on it being a potentially breaking change
-for userspace code this looks fine to me.
-
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 94c00996e633..4fa1ec622177 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -1146,7 +1146,7 @@
->  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_INDEX		0x000000ff
->  #define PCI_DOE_DATA_OBJECT_DISC_REQ_3_VER		0x0000ff00
->  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_VID		0x0000ffff
-> -#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		0x00ff0000
-> +#define PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE		0x00ff0000
-
-Safe to change a userspace header?  I've no idea if any external project
-is using this define but probably shouldn't make this change or should
-leave a compatibility define in place.
-
->  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_NEXT_INDEX	0xff000000
->  
->  /* Compute Express Link (CXL r3.1, sec 8.1.5) */
-
+Regards,
+Markus
 
