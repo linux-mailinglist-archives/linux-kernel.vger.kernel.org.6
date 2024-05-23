@@ -1,200 +1,118 @@
-Return-Path: <linux-kernel+bounces-188064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14C28CDCC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:00:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B411C8CDCC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 342F4B24B66
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549C61F24E0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F5C128377;
-	Thu, 23 May 2024 22:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A312712836D;
+	Thu, 23 May 2024 22:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AbYeiDrh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hG7nVsQd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSnhl9Z0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F38784A4E;
-	Thu, 23 May 2024 22:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70F682D9A;
+	Thu, 23 May 2024 22:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716501624; cv=none; b=lVmlH+tqNbbfpPy1HlCiVipnecqM+jEklsr0X5X1LeicfAXQL2eHi39U4pn7lgieJhFR1iO3/EqGRTQRal4uxxvb3xmCmcPKvKppVdct1oAqhtAkvRafEr1c9GGl02ygBOcsBz67nWrHagSpKwSgzErXQwuJqCGPHv6EJx1qy2Q=
+	t=1716501771; cv=none; b=mCXQRFyPiv7ZgkD/0zQEPD5UB4+wqp/b5g3L8v53PNnLeozvls1d3vsvNBjhe39Cz1zsZlocG/q6+MGR/sPDl00HaT6FgFOVn340kMSfXaI3q1n3qajbErXn+yf6tLcZmnJi/UZ/LsuKBZEcVT4OsbbXdbK259IIG3/s7J2+wQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716501624; c=relaxed/simple;
-	bh=U3zNsDx6nW/dLYh1FM2TrjCHAPkf8MnEIVyZTcNJdnY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mTW3CpJRGXwR8ZuUrnMF/o3lTJj+R1Q46Um8bM5x0QTBZBrfCMCDlUvQIxYAzdHl88fHLyTndBgkYHhA5l3rZW12ycXBR40XfoGmVNKIIvUwhYLAtmteeTYjhcGmPw+IPSIt9FcUka3mf+Uh848EetcGfmOxdko3pzIAwGMLjsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AbYeiDrh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hG7nVsQd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716501621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=18bFCkDiE5Sbgi4NXueQ8erF60YbZu7PrN26lvvIIBA=;
-	b=AbYeiDrhr7a8f7DpLWT7jPVQsX5p8BYnloO9JHGWZo1jwWM2TNA1GkS+RXgQQZ4kwveXJA
-	uO2F3wxgENt5+tKqVIgI6LKhXREauGP4TyVSnMEjWlqAQaaQOAFEqtPs/deTAO0TFZJ7Ty
-	XF8dZT5GJXGueFBS1ZHnF05S7WpTqg0DfkUciatQMe2lVzrH9N7yj6h8ufGhwlj3MNvTIQ
-	EyaFwwIde5NjZXu/+dN8DnAO4TXG/44owA2GfGZdyYXZKje8Uxr03QDeKC3OlmZc4fjhmF
-	yOl2dALXgw8lwL0coqnq1DwlyJLRFqb5paIzqkr2HPPs4pBa2EKFPyuWxO8WYg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716501621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=18bFCkDiE5Sbgi4NXueQ8erF60YbZu7PrN26lvvIIBA=;
-	b=hG7nVsQdEZxaAwZk4oZt4Q8Vn66oqj4h5KlI8OqVC3M2q2XO0TFXx9+UzcEfwt+sQD2dkW
-	Gavtq8THOFkIrzAw==
-To: Sunil V L <sunilvl@ventanamicro.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
- acpica-devel@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou
- <aou@eecs.berkeley.edu>, "Rafael J . Wysocki" <rafael@kernel.org>, Len
- Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Anup Patel
- <anup@brainfault.org>, Samuel Holland <samuel.holland@sifive.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Robert Moore <robert.moore@intel.com>, Conor
- Dooley <conor.dooley@microchip.com>, Andrew Jones
- <ajones@ventanamicro.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Marc Zyngier <maz@kernel.org>, Atish
- Kumar Patra <atishp@rivosinc.com>, Andrei Warkentin
- <andrei.warkentin@intel.com>, Haibo1 Xu <haibo1.xu@intel.com>,
- =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>
-Subject: Re: [PATCH v5 14/17] irqchip/riscv-imsic: Add ACPI support
-In-Reply-To: <20240501121742.1215792-15-sunilvl@ventanamicro.com>
-References: <20240501121742.1215792-1-sunilvl@ventanamicro.com>
- <20240501121742.1215792-15-sunilvl@ventanamicro.com>
-Date: Fri, 24 May 2024 00:00:21 +0200
-Message-ID: <871q5sfatm.ffs@tglx>
+	s=arc-20240116; t=1716501771; c=relaxed/simple;
+	bh=MkxHSfTiHM+Phs6yvFjdnUfl4fNZsmBCrS3G4WLC9yA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=RrJ7FeeMY7yMfqwqeRMltpjPDdXVOyjPPrTDdA8MA3DrHWwOz1VuKhdWbLymgxQw8SSkm2gCOLDTf0FUaRClPAxOAWDcfw4V/VrecRsygAun2fXm21cSptp57bizpg/BEiECSd4CJ3Jt0pvKd39Megt7s3weGrmMq6sk48ZqtuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSnhl9Z0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0648C2BD10;
+	Thu, 23 May 2024 22:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716501770;
+	bh=MkxHSfTiHM+Phs6yvFjdnUfl4fNZsmBCrS3G4WLC9yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RSnhl9Z0jhBQu9KzKaFJyVrRTIFvATUsrIKLnfrcI+nx/QP8EQVlnfLmfeRUaSo4B
+	 8jvghvNNpuKcMsGWXeHfR68oat6DzbfT6y70dFzveqgCeQetzMU+cRh/p/viAhSaA9
+	 uJpgD2B7BdvLcWupM62XOQrxC7N9DpEezCmrPrwaEHalXGRCh05Y/39fRgMpN9xz87
+	 Eg5xR34cupGUvqHq2Qqh8VedsEQmEKmtFz+IBjlAL3u1Qm47fkWJswh5Ma7cDiyMtC
+	 ssi+CishOGjcDohlUr15JO6D27+/PI089/R4Cf0YIIdfrDgXpdsTpEbyzvqZQIXKE4
+	 jd22eg6ekW+6g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 24 May 2024 01:02:45 +0300
+Message-Id: <D1HD3CW2C38O.3DTAGBUHF8AO9@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <Andreas.Fuchs@infineon.com>, "James Prestwood" <prestwoj@gmail.com>,
+ "David Woodhouse" <dwmw2@infradead.org>, "Eric Biggers"
+ <ebiggers@kernel.org>, "James Bottomley"
+ <James.Bottomley@hansenpartnership.com>, <linux-crypto@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, "open list"
+ <linux-kernel@vger.kernel.org>, "David Howells" <dhowells@redhat.com>,
+ "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Stefan Berger"
+ <stefanb@linux.ibm.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>
+Subject: Re: [PATCH v5 5/5] keys: asymmetric:
+ ASYMMETRIC_TPM2_KEY_RSA_SUBTYPE
+X-Mailer: aerc 0.17.0
+References: <20240523212515.4875-1-jarkko@kernel.org>
+ <20240523212515.4875-6-jarkko@kernel.org>
+ <D1HCLFMAEXX5.17QYXMTZQCRYE@kernel.org>
+ <D1HCVOZ1IN7S.1SUZ75QRE8QUZ@kernel.org>
+In-Reply-To: <D1HCVOZ1IN7S.1SUZ75QRE8QUZ@kernel.org>
 
-On Wed, May 01 2024 at 17:47, Sunil V L wrote:
+On Fri May 24, 2024 at 12:52 AM EEST, Jarkko Sakkinen wrote:
+> On Fri May 24, 2024 at 12:39 AM EEST, Jarkko Sakkinen wrote:
+> > On Fri May 24, 2024 at 12:25 AM EEST, Jarkko Sakkinen wrote:
+> > > +	/*
+> > > +	 * ABI requires this according include/crypto/akcipher.h, which say=
+s
+> > > +	 * that there is epilogue with algorithm OID and parameters length.
+> > > +	 * Neither size nor semantics is documented *anywhere*, and there's=
+ no
+> > > +	 * struct to hold them.
+> > > +	 *
+> > > +	 * So zeroing out the last eight bytes after the key blob seems lik=
+e the
+> > > +	 * best bet, given no better (or any) information. The size of the
+> > > +	 * parameters (two u32's) was found from crypto/asymmetric/public_k=
+ey.c.
+> > > +	 */
+> > > +	memset(work, 0, 8);
+> >
+> > This is a mystery (or nightmare).
+>
+> This is from akchiper_alg documentation:
+>
+>  * @set_pub_key: Function invokes the algorithm specific set public key
+>  *		function, which knows how to decode and interpret
+>  *		the BER encoded public key and parameters
+>
+> No struct, no size information and no description what they are used for.
+>
+> Can we get these properly documented? My documentation at the moment
+> is grep and kprobes, literally.
 
-> RISC-V IMSIC interrupt controller provides IPI and MSI support.
-> Currently, DT based drivers setup the IPI feature early during boot but
-> defer setting up the MSI functionality. However, in ACPI systems, ACPI,
-> both IPI and MSI features need to be initialized early itself.
+That said, zero issues with the interface, just pointing out the
+part that is not right, and should be fixed.
 
-Why?
+I mean I have three layers: this, rsa-pcks1 and rsa. How I can be
+sure that either of two layers below never ever up until sun melts
+will do any changes that would break, with the data that I put
+there? Is this a contract that will hold forever?
 
-> +
-> +#ifdef CONFIG_ACPI
-> +
-> +static struct fwnode_handle *imsic_acpi_fwnode;
-> +
-> +struct fwnode_handle *imsic_acpi_get_fwnode(struct device *dev)
+This is concerning so I have to point this out.
 
-Why is this function global? It's only used in the very same file and
-under the same CONFIG_ACPI #ifdef, no?
-
-> +{
-> +	return imsic_acpi_fwnode;
-> +}
-> +
-> +static int __init imsic_early_acpi_init(union acpi_subtable_headers *header,
-> +					const unsigned long end)
-> +{
-> +	struct acpi_madt_imsic *imsic = (struct acpi_madt_imsic *)header;
-> +	int rc;
-> +
-> +	imsic_acpi_fwnode = irq_domain_alloc_named_fwnode("imsic");
-> +	if (!imsic_acpi_fwnode) {
-> +		pr_err("unable to allocate IMSIC FW node\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* Setup IMSIC state */
-> +	rc = imsic_setup_state(imsic_acpi_fwnode, (void *)imsic);
-
-Pointless (void *) cast.
-
-> +	if (rc) {
-> +		pr_err("%pfwP: failed to setup state (error %d)\n", imsic_acpi_fwnode, rc);
-> +		return rc;
-> +	}
-> +
-> +	/* Do early setup of IMSIC state and IPIs */
-> +	rc = imsic_early_probe(imsic_acpi_fwnode);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = imsic_platform_acpi_probe(imsic_acpi_fwnode);
-> +
-> +#ifdef CONFIG_PCI
-> +	if (!rc)
-> +		pci_msi_register_fwnode_provider(&imsic_acpi_get_fwnode);
-> +#endif
-> +
-> +	return rc;
-
-Any error return in this function leaks the firmware node and probably
-some more stuff.
-
-> +}
-> +
-> +IRQCHIP_ACPI_DECLARE(riscv_imsic, ACPI_MADT_TYPE_IMSIC, NULL,
-> +		     1, imsic_early_acpi_init);
-> +#endif
-
-..
-
-> -	/* Find number of interrupt identities */
-> -	rc = of_property_read_u32(to_of_node(fwnode), "riscv,num-ids",
-> -				  &global->nr_ids);
-> -	if (rc) {
-> -		pr_err("%pfwP: number of interrupt identities not found\n", fwnode);
-> -		return rc;
-> +		/* Find number of guest interrupt identities */
-> +		rc = of_property_read_u32(to_of_node(fwnode), "riscv,num-guest-ids",
-> +					  &global->nr_guest_ids);
-> +		if (rc)
-> +			global->nr_guest_ids = global->nr_ids;
-> +	} else {
-> +		global->guest_index_bits = imsic->guest_index_bits;
-> +		global->hart_index_bits = imsic->hart_index_bits;
-> +		global->group_index_bits = imsic->group_index_bits;
-> +		global->group_index_shift = imsic->group_index_shift;
-> +		global->nr_ids = imsic->num_ids;
-> +		global->nr_guest_ids = imsic->num_guest_ids;
->  	}
-
-Seriously?
-
-Why can't you just split out the existing DT code into a separate
-function in an initial patch which avoulds all of this unreviewable
-churn of making the DT stuff indented ?
-
-> +#ifdef CONFIG_ACPI
-> +int imsic_platform_acpi_probe(struct fwnode_handle *fwnode);
-> +struct fwnode_handle *imsic_acpi_get_fwnode(struct device *dev);
-> +#else
-> +static inline struct fwnode_handle *imsic_acpi_get_fwnode(struct device *dev)
-> +{
-> +	return NULL;
-> +}
-> +#endif
-
-Oh well.
-
->  #endif
-
-Thanks,
-
-        tglx
+BR, Jarkko
 
