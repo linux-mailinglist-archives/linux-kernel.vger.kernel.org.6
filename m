@@ -1,74 +1,322 @@
-Return-Path: <linux-kernel+bounces-187172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CDF8CCE11
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:15:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8BB8CCE14
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E17A282616
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:15:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1130F1F21630
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BD313CAA2;
-	Thu, 23 May 2024 08:14:51 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3ED13C911;
+	Thu, 23 May 2024 08:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IVZdZR1h"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9724214267
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0F07CF39
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716452091; cv=none; b=MOom4BuHalgIUS98DCKuUJQiUei6gN4XI0tfo+JvbXvttjI9jHwNXE1CPY+qldPRdwZTqjNOQRMXQfxDeMif3jxY1dUI6D7PrVoYEAGoi/ro37YiztR4BEp6GMCszOU65bl3ey2rzskDfXssz15FBiaB2YB+UGw5kkBb/O5qW0w=
+	t=1716452205; cv=none; b=Ceqqo18NflGa0/NEKIF1qRFqIsApOEUon8z0sk4DrUHnMuaw+U9MdffIzo1yS9zAl1xtWQ0gU/h5z5wSjj1fDIjnZvLx8F07dkpsOTKeFKu3BSWQh+HVvntpv7uwe5/Dm1NXNi15eF+pDx5ArZesa4cx67dL5LJViFDQ9Qx4FQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716452091; c=relaxed/simple;
-	bh=Xcc1ZDw2E6VO6q+cCy/cZuPnl8pMCZiZzdSK67s8CoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+LsoJnj1fO1l3sY86m4wmrRfBNNLOXFIfhF575nqPD+Ygamw079wWiUqlKlk6GssdRb79PddhRRdmsRzPgNdva7ltkX5mhLaOY1lOss11es/RLGZQrWArUsTdjak10rsxSr+b+VPVVY0xG7GC/3kDcznJh9qrNWNmgUOcJrcVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2896868BFE; Thu, 23 May 2024 10:14:44 +0200 (CEST)
-Date: Thu, 23 May 2024 10:14:43 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: John Meneghini <jmeneghi@redhat.com>
-Cc: kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, emilne@redhat.com,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	jrani@purestorage.com, randyj@purestorage.com, hare@kernel.org
-Subject: Re: [PATCH v5] nvme: multipath: Implemented new iopolicy
- "queue-depth"
-Message-ID: <20240523081443.GD1086@lst.de>
-References: <20240522165406.702362-1-jmeneghi@redhat.com>
+	s=arc-20240116; t=1716452205; c=relaxed/simple;
+	bh=iVB6R+9lup4O53ru9mlVbwoJET6l2j4XPo+Am1zi2Vo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaxyNEhdYa+FLZ0Obf6S8fG9A4CtY04EFHCO8N7CLsOT4oExfO0smrvzyWwUnmzkfT13EGMQyLcUvLCAC9d3jUMO6nzf15kXIv4CIfqa53+O0b68iAL/cnd3iJIojdsOByS5/NRPiVAPYPxHrI+F/67JE6nvgsfi9RwCMmArPME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IVZdZR1h; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6a0b68733f5so32814486d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716452202; x=1717057002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LTaESpYY+wl1YLZy1AQipksxU7lItUKGkm8Z12GjNmY=;
+        b=IVZdZR1hPCWVnuVCMf0b728T53316TyF0u6PIwR3gAhqhVmWL1/K/7iDqMyL3s89qy
+         N5Ts2k7MWcFBjmhcJaSp15YJzfnolJ0RNab/y/p+Sl5pAJh0uWb9v+87Nw4Qj/uyxjFb
+         +c46pVITa9LqLjL9TBJoc62rhKG5eI+fFpe+JpKfnYXrudJ/AUYB0UzGkqvyTkJN14Eu
+         jXX4QgVcy/E5upbzC015JQXM6AnBlvyXzjEr3VQaIhYrtptrJ3sq/+tlmLDFWEuNoKOl
+         yJqGnLKTYtRoeOpIGQpZDUMXBzuxSe+V+0fwC4+vbul9xaZbcoMJRWHbP3Tu2jPbhxOm
+         F34Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716452202; x=1717057002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LTaESpYY+wl1YLZy1AQipksxU7lItUKGkm8Z12GjNmY=;
+        b=KDVDkxgscAOHavrGIS+JyGBrr2U3Jb/WQm3mLxe/fv+5MHAd+DAHLLfjF2OpOJFKOL
+         s6Ne3ejYhJkPFdA3JvxzFa7xYsBoegKP15LrvI1VqP2haXKrWDDn6CIsynGBS45OsDzf
+         UPh7w5a7tgnlTyfrVkVleyfJ5laCz1VPZOQf4JLXBqmDNJNiq+NXpRcZbLEWsc6JOAoJ
+         rQtL+N2/oWPLIqzGWlZ+nnrn65q9aCX1Xzsaehnaa8Itk6urWsGjHvFn1jnwsPqDZd34
+         ER1o4JUcnYA+x02yUnY10jOMAJ60cqWghwvHd3WLipCse4CLYn+9klVQeuTxpm88kj8r
+         qpKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBdZfIOGqiOYr1RUuHYsj/jzxxEzBNKoobbrIEDJXvzIgkSep8uFpw9QmlppsTJ+eDFhvKFycjPxYxgcQTm8XPHutfEsZUQuRUJdAi
+X-Gm-Message-State: AOJu0Yyd9fpZijKR3kfoiC8vmDb3KcluLnTZsIXPm3z5MUBxCzHLfVpV
+	ZC1v1k8FkL/BxSNM2QW25Fplz4GgmRYdIJtFmZCjdmq4+FLMNWZbD7rRLh09qcNktWFhr8hxGPE
+	XjXyrxWVIrfRdsLq7W0NMbr0dHTXcBeTFs6L5
+X-Google-Smtp-Source: AGHT+IHQ3gshivlAYHl6QnLWGwSD/PBeni0Jz3oqtj1hucG6MOjHlL2K4xa1KPFbNlbdcW+IxPYVBKQtm5DMHibaBPM=
+X-Received: by 2002:a05:6214:418e:b0:69b:12a0:295c with SMTP id
+ 6a1803df08f44-6ab80907055mr48174716d6.57.1716452202083; Thu, 23 May 2024
+ 01:16:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522165406.702362-1-jmeneghi@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <0000000000009f9447061833d477@google.com> <jgtxdyooy6zyettrj53qi7s7z5fs5zpnwdjm7eqpihwo32lxzx@v2234ezsba4d>
+In-Reply-To: <jgtxdyooy6zyettrj53qi7s7z5fs5zpnwdjm7eqpihwo32lxzx@v2234ezsba4d>
+From: Alexander Potapenko <glider@google.com>
+Date: Thu, 23 May 2024 10:15:59 +0200
+Message-ID: <CAG_fn=WmDCOXxAzaEJtDYuEY4b3Nq99Z7=1-tmwTx9Ox7BG0AA@mail.gmail.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_extent_update_i_size_sectors
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: syzbot <syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com>, 
+	bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Oh, and there is really something of with the patch format.
+On Thu, May 23, 2024 at 1:49=E2=80=AFAM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> This (and a few others I've looked at) look more likely to be bugs in
+> KMSAN, not bcachefs.
 
-First the subject line is completely wrong, this should be:
+Yeah, this is possible if we are missing some initialization.
 
-nvme-multipath: implement "queue-depth" iopolicy.
+>
+> here, the supposedly uninitialized key was read in from disk, so the key
+> couldn't possibly have been legitimately marked uninitialized.
 
-On Wed, May 22, 2024 at 12:54:06PM -0400, John Meneghini wrote:
-> From: "Ewan D. Milne" <emilne@redhat.com>
+Am I right that the key is supposed to be initialized before the first
+call of memcpy_u64s_small() (the _lower_ "Uninit was stored to memory
+at:" stack trace)?
+Do you have an idea what code performed the actual load of the data from di=
+sk?
+If that load was done by some assembly routine, we could've easily
+missed that - in that case we'll need to annotate it to fix the false
+positives.
 
-> Signed-off-by: Thomas Song <tsong@purestorage.com>
-> [emilne: patch developed by Thomas Song @ Pure Storage, fixed whitespace
->       and compilation warnings, updated MODULE_PARM description, and
->       fixed potential issue with ->current_path[] being used]
-> Signed-off-by: Ewan D. Milne <emilne@redhat.com>
+>
+> All the suspicious KMSAN splats I'm looking at involve bkeys, but I'm
+> not seeing any other common factors besides that.
+>
+> On Sat, May 11, 2024 at 01:52:29PM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.k=
+ern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D14c66e24980=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D617171361dd=
+3cd47
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Deceea46e8838b=
+aeeba67
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/fdbc7be30633/d=
+isk-dccb07f2.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/a9e4c11aa835/vmli=
+nux-dccb07f2.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/43c3a343ea93=
+/bzImage-dccb07f2.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com
+> >
+> > bcachefs (loop0): snapshots_read... done
+> > bcachefs (loop0): journal_replay... done
+> > bcachefs (loop0): resume_logged_ops... done
+> > bcachefs (loop0): going read-write
+> > bcachefs (loop0): done starting filesystem
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> > BUG: KMSAN: uninit-value in bch2_extent_update_i_size_sectors+0x140f/0x=
+17d0 fs/bcachefs/io_write.c:237
+> >  bch2_extent_update_i_size_sectors+0x140f/0x17d0 fs/bcachefs/io_write.c=
+:237
+> >  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+> >  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+> >  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+> >  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+> >  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+> >  closure_queue include/linux/closure.h:257 [inline]
+> >  closure_call include/linux/closure.h:390 [inline]
+> >  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+> >  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+> >  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+> >  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+> >  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+> >  sync_file_range+0x316/0x450 fs/sync.c:292
+> >  ksys_sync_file_range fs/sync.c:364 [inline]
+> >  __do_sys_sync_file_range fs/sync.c:373 [inline]
+> >  __se_sys_sync_file_range fs/sync.c:370 [inline]
+> >  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+> >  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h=
+:278
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > Uninit was stored to memory at:
+> >  memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
+> >  bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
+> >  __bch2_bkey_make_mut_noupdate fs/bcachefs/btree_update.h:225 [inline]
+> >  __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:282 [inline]
+> >  bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
+> >  bch2_extent_update_i_size_sectors+0x9a9/0x17d0 fs/bcachefs/io_write.c:=
+219
+> >  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+> >  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+> >  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+> >  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+> >  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+> >  closure_queue include/linux/closure.h:257 [inline]
+> >  closure_call include/linux/closure.h:390 [inline]
+> >  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+> >  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+> >  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+> >  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+> >  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+> >  sync_file_range+0x316/0x450 fs/sync.c:292
+> >  ksys_sync_file_range fs/sync.c:364 [inline]
+> >  __do_sys_sync_file_range fs/sync.c:373 [inline]
+> >  __se_sys_sync_file_range fs/sync.c:370 [inline]
+> >  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+> >  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h=
+:278
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > Uninit was stored to memory at:
+> >  memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
+> >  bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
+> >  btree_key_cache_fill fs/bcachefs/btree_key_cache.c:454 [inline]
+> >  bch2_btree_path_traverse_cached_slowpath+0x5f02/0x79f0 fs/bcachefs/btr=
+ee_key_cache.c:530
+> >  bch2_btree_path_traverse_cached+0xd1a/0x1140
+> >  bch2_btree_path_traverse_one+0x737/0x5290 fs/bcachefs/btree_iter.c:115=
+5
+> >  bch2_btree_path_traverse fs/bcachefs/btree_iter.h:225 [inline]
+> >  bch2_btree_iter_peek_slot+0x128c/0x3840 fs/bcachefs/btree_iter.c:2473
+> >  __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:549 [inline]
+> >  __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:278 [inline]
+> >  bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
+> >  bch2_extent_update_i_size_sectors+0x404/0x17d0 fs/bcachefs/io_write.c:=
+219
+> >  bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+> >  bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+> >  __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+> >  bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+> >  bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+> >  closure_queue include/linux/closure.h:257 [inline]
+> >  closure_call include/linux/closure.h:390 [inline]
+> >  bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+> >  bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+> >  do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+> >  filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+> >  __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+> >  sync_file_range+0x316/0x450 fs/sync.c:292
+> >  ksys_sync_file_range fs/sync.c:364 [inline]
+> >  __do_sys_sync_file_range fs/sync.c:373 [inline]
+> >  __se_sys_sync_file_range fs/sync.c:370 [inline]
+> >  __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+> >  x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h=
+:278
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > Uninit was created at:
+> >  __kmalloc_large_node+0x231/0x370 mm/slub.c:3927
+> >  __do_kmalloc_node mm/slub.c:3960 [inline]
+> >  __kmalloc_node+0xb10/0x10c0 mm/slub.c:3979
+> >  kmalloc_node include/linux/slab.h:648 [inline]
+> >  kvmalloc_node+0xc0/0x2d0 mm/util.c:634
+> >  kvmalloc include/linux/slab.h:766 [inline]
+> >  btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
+> >  bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
+> >  btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
+> >  bch2_btree_node_read+0x3d42/0x4b50
+> >  __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
+> >  bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
+> >  read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
+> >  bch2_fs_recovery+0x7adb/0x9310 fs/bcachefs/recovery.c:785
+> >  bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
+> >  bch2_fs_open+0x135f/0x1670 fs/bcachefs/super.c:2102
+> >  bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1903
+> >  legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+> >  vfs_get_tree+0xa7/0x570 fs/super.c:1779
+> >  do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
+> >  path_mount+0x742/0x1f20 fs/namespace.c:3679
+> >  do_mount fs/namespace.c:3692 [inline]
+> >  __do_sys_mount fs/namespace.c:3898 [inline]
+> >  __se_sys_mount+0x725/0x810 fs/namespace.c:3875
+> >  __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
+> >  x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.=
+h:166
+> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >  do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >
+> > CPU: 1 PID: 6218 Comm: syz-executor.0 Not tainted 6.9.0-rc7-syzkaller-0=
+0012-gdccb07f2914c #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
+ Google 03/27/2024
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> >
+> >
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
+> >
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> >
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> >
+> > If you want to undo deduplication, reply with:
+> > #syz undup
 
-Second the patch author needs to be the first signoff.  I'm not entirely
-sure who is supposed to be the author, but either it should be Thomas,
-or if the patch has changed so much that it's someone else the original
-signoff should turn into a Co-Developed-by.
 
+
+--
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
 
