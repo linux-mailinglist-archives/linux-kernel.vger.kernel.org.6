@@ -1,272 +1,159 @@
-Return-Path: <linux-kernel+bounces-186965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76C28CCB4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:04:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B798F8CCB4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2DE283012
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:04:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74051C20C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0D353E31;
-	Thu, 23 May 2024 04:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA0F33997;
+	Thu, 23 May 2024 04:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="lyoPPAmX"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H07uzoty"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8021F5E6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFAB33EA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716437050; cv=none; b=MvcGxNCYHsUVEsOabbMhHbTP02xZHl6i1bI3EMiAlRgmnrwHNIr2kDj44qxyfeMksZOknKkg8SNNH15uBm34rNch1TKZANzeeiKeV7o+rcxerASJ8Ocy+bgaD1c+8M3KskKIVEcIpleX3/7jaOgD9IPIwnHxNG7G/yog30ZgsQI=
+	t=1716437402; cv=none; b=SJybN5f6YLRpfZNIUqepnhrrUOtEgT4FE2gxAnPn1WE9MbFjBsb79ObH71iYsPvFXIVOSqn9j8bRWOADt24ozkeK7h46s3bYYN7YTjhn0WuBDsiwPGwi+F2pkiuuXKkBdejDWIXna4CCK7vDHRpT/OyYxHNbbIRr3UnScqVxZbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716437050; c=relaxed/simple;
-	bh=XTUe5aCnw3K/pMpLtTkLFD0FKOvZqW9DD/Kq3k7RHg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uOoT8n2+AipvRMnT48DkERD3ic07qfjPx6kicaIcGA4IfBrbsSOtaCWC38DaoyTuCKfGNrf7auGVtHOCJVfmqZMgazYiTbbHZLuo81SSPFbXrskc9+KiM66sla9XZ1IWQ3CwL7kRJdPxyBdOM9fo5SXLd9WEb88OOpHhzZKE5oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lyoPPAmX; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-43dfe020675so305831cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:04:08 -0700 (PDT)
+	s=arc-20240116; t=1716437402; c=relaxed/simple;
+	bh=6Qsfgxn0ZtZxpVvIBFFX1mQlHeNqRm+EvO0tyESQalY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dndvmF8TfPPk3r5egfUvGOlA/axOl8XBohDcnhfvHAF1JeW9nnM+a7tK3nWxL2n6kSkQ9/zOAfsg8q3Cgc3o/qHocPkBUBnDDdkuYkBhkePsREZNoRiuolZ+DOYjAG8qxz8GTSl+cwW4taSs5LSarwVpoQ4ftWH8TIl/oC/NrOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H07uzoty; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f32a3b9491so9649995ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:10:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716437048; x=1717041848; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KQ0/oTNt/XNBJvSuQqhte1CxCjwKvN4ey33h/UCL+Tc=;
-        b=lyoPPAmXARvarbo/wZnblGrnuX6dze7u34Cx9DEyFJ+L+ZHvGTB9nbnRra12vmVV2Z
-         3YnDtyYhxJQbLgL+zY4TAARbWzw7Q3JJeEk3izJMhJx8lMrYcWgCsazTbQRA9uU95rYs
-         QO04d0a39G25GqfEniFDxfZN+UBllaQolFhzpgHy8D5ziDVJnbc/hxEZ/zkb4hpt/fp2
-         AAoNRNhSrkW7NFKLirUc6UCyFoGO8joEmsAfM/6hZbvBzVshYAwvxvKSW8ZAi982+bIR
-         tuAKGEOD19gPhM/w2J/jaeOiH7WrefWC6M0wwdjcedtHFUEo4fjbppq33mtI2XmURsjm
-         MVbw==
+        d=gmail.com; s=20230601; t=1716437400; x=1717042200; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YKSyw6WGP8oc1c5/355QNnMu26FbGL5V8Gm62pHtX8U=;
+        b=H07uzoty6tzz8ejyaKh1LYcRVNZ8LWVTsfq27Q8rBTNMX9HMwSYzoayz/0Ia8MPzWk
+         uee5Srwx3IqYPmLhfWHG6Y2ivOQGXXrdUfh41WWosBM1cuHo2rXCcpnECczzy/leTw8r
+         rmmOkD3OQqY+awnsa2kOZuTqmuz/Cjh4oEZj0gcpVvuTclmY8T9KSpqWS45VVKopCvll
+         HTGHV1QEC5nz/zNSEXqtMUrsTGkyrnPN+oXU6UexawF3e8kYu6as6n+95xYvyFOIPL8R
+         I5hgQpmzo+aHwGQo8UBOq/4Q2WQhhK+RwZjdBAsh3cRJMbxSOlzJMJHZxs0HBKyj/94D
+         X/wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716437048; x=1717041848;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KQ0/oTNt/XNBJvSuQqhte1CxCjwKvN4ey33h/UCL+Tc=;
-        b=Ype1zEXNCjkXujPzsl3Ocdo6Oz4NS9JJBep1bDbDz7Q7sQXmOjri8qemyMAgPKLy0M
-         LEjDHPe6Wwg1rKNr9F1CEaX3Zzj+zb/Pp7ODHwZG1YQ/UeFtN0286q1YuH81c9RVS4fu
-         Ln9UySXCP/dIaPrQ3CPt9ImKP2wrDS/CTTFKGAzke2u64A66ET7zk/B9jX5O/KVf0iaD
-         qyAhsEPQjCzDGlbmPCn3dgdH7j5sYkuO6D5AeAZpaiemrO3GrBQ3WlmD5ip6OrKE4U8Z
-         X/SW3mp+Wwfc/HbhDGB5RBMsqduQsjDwFH7IuhC5EtEFLiySvWG15z50OsCNV2MzEDR0
-         4l1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMQ01uKe3dLo7UqMw64dCJi7n2iKB2Fz4vvGWvc/NCyvEzR5yxvhiZbg9pBS3cOA9RDduSuChciB/zYcxmNhOS4jP9bO7r+MwQQdFZ
-X-Gm-Message-State: AOJu0YyCCjA+OqxYmE8j1hkcOS+ybsWJjHyRJHSWqj6gWvJ1JtEdFMZb
-	jqJS0Fn3AK65vlJfwMqMWX+hTo3rogBQNWa8VV0PbfNnAtY36wng0A0INGl7MdMZaFyO+z+4pbl
-	6Pi15jDGAa1FyM5g4xnTZCSAybbpQB73veC97aveDbjkv2X3KKHKB
-X-Google-Smtp-Source: AGHT+IGqllYxOUfGCyA3rl6J1Jk1N/Z/YMMqp/pujhDjVukawgCJ2WGf2kAu+w1xf1XXebK+gmnt79RYn0wDxMj7N10=
-X-Received: by 2002:a05:622a:418b:b0:43e:3b12:8bb0 with SMTP id
- d75a77b69052e-43fa80bf918mr875721cf.17.1716437047593; Wed, 22 May 2024
- 21:04:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716437400; x=1717042200;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKSyw6WGP8oc1c5/355QNnMu26FbGL5V8Gm62pHtX8U=;
+        b=nUwJakBo8P6A40ViVhaTCZei05d21kY7zQ+4gAiP1WJAh5gBmzi2ugzxfofi8GIRgJ
+         Z5j2hbc3e+e8LfpVXhboi8kWjrGFdQ1OruvXRHbtXCblA4QtoP6dA/Kfp9SEOTs6TFd7
+         a9I0sqKHjT94QRxv/ohYC+cPOCQVuEGgfuIhAhmXrVfTvJI//nLwYx/P9xVb5sttK0p2
+         k+1hbxt8c9JACxWOswXKz0gAw/dVoP/IXsQsj+SfcpQR9yMyMFPRXcAof2cSrv5w9S2e
+         RifUttNc/thEslmHSfSSaydiTHQ/fekUImOB6EpA/1hmfxMurySpjZ5JqW/Qag1RygG8
+         Iapw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPSpAymJghlOl/8JB7lotfqNduilAYf2sGCKRCn6V/Im7hc1KZWnB5j24ypEaHgTPAnsYEDRJwAxuxxSHRAGIOLPoz/IijjyL7e6eb
+X-Gm-Message-State: AOJu0YxKSnuO8Bk+lLjLbCRyMhzH+AFu3ET80hiS+KnPB2UY9C6zZI6o
+	WTiFmi26lURSRpQOMiYnAMFhYwpMh5IyMip94KHvx8gueAkqfffA
+X-Google-Smtp-Source: AGHT+IEQwG0Ah8JNIp+nts9Fmu4aOOHwzYGESz0lsmxX20hoewkxC9gHhtTDM/PwZ/pCJm20EjLhtQ==
+X-Received: by 2002:a17:902:d4c3:b0:1f2:fab6:294 with SMTP id d9443c01a7336-1f31c9ea3e1mr42062845ad.56.1716437399762;
+        Wed, 22 May 2024 21:09:59 -0700 (PDT)
+Received: from [0.0.0.0] (42-3-109-144.ptr.netvigator.com. [42.3.109.144])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f3356bf498sm8083705ad.191.2024.05.22.21.09.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 May 2024 21:09:59 -0700 (PDT)
+Message-ID: <dd14e3ff-3ff7-426e-88e0-b16a49eafaf0@gmail.com>
+Date: Thu, 23 May 2024 12:09:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521173952.3397644-1-weilin.wang@intel.com>
-In-Reply-To: <20240521173952.3397644-1-weilin.wang@intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 22 May 2024 21:03:56 -0700
-Message-ID: <CAP-5=fU2-9WFZAewj_B7phusZyarA3xrenGVz6PMwy5B+B=RPg@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 0/7] TPEBS counting mode support
-To: weilin.wang@intel.com
-Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
-	Caleb Biggers <caleb.biggers@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] ASoC: qcom: display port changes
+To: srinivas.kandagatla@linaro.org, broonie@kernel.org
+Cc: perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20240422134354.89291-1-srinivas.kandagatla@linaro.org>
+Content-Language: en-US
+From: Xilin Wu <wuxilin123@gmail.com>
+In-Reply-To: <20240422134354.89291-1-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 10:39=E2=80=AFAM <weilin.wang@intel.com> wrote:
->
-> From: Weilin Wang <weilin.wang@intel.com>
->
-> Changes in v9:
-> - Update the retire_latency result print and metric calculation method. P=
-lugin
-> the value to evsel so that no special code is required.
-> - Update --control:fifo to use pipe instead of named pipe.
-> - Add test for TPEBS counting mode.
-> - Update Document with more details.
->
-> Changes in v8:
-> - In this revision, the code is updated to base on Ian's patch on R modif=
-ier
-> parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@goog=
-le.com/
+On 2024/4/22 21:43, srinivas.kandagatla@linaro.org wrote:
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> This patchset adds support for.
+> 	1. parse Display Port module tokens from ASoC topology
+> 	2. add support to DP/HDMI Jack events.
+> 	3. fixes a typo in function name in sm8250
+> 
+> Verified these patches on X13s along with changes to tplg in
+> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
+> and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
+> 
+> Thanks,
+> Srini
+> 
+> Changes since v1:
+> 	- Fixed unused variable warning.
+> 	- fixed warning 'break;' to avoid fall-through
+> 
+> Srinivas Kandagatla (4):
+>    ASoC: qcom: q6dsp: parse Display port tokens
+>    ASoC: qcom: common: add Display port Jack function
+>    ASoC: qcom: sc8280xp: add Display port Jack
+>    ASoC: qcom: sm8250: fix a typo in function name
+> 
+>   sound/soc/qcom/common.c         | 29 +++++++++++++++++++++++++++++
+>   sound/soc/qcom/common.h         |  3 +++
+>   sound/soc/qcom/qdsp6/topology.c | 26 ++++++++++++++++++++++++++
+>   sound/soc/qcom/sc8280xp.c       | 14 ++++++++++++++
+>   sound/soc/qcom/sm8250.c         |  4 ++--
+>   5 files changed, 74 insertions(+), 2 deletions(-)
+> 
 
-I pulled the first patch of these 3, to clean up the tool events into
-its own patch and hopefully addressed Namhyung's feedback:
-https://lore.kernel.org/lkml/20240503232849.17752-1-irogers@google.com/
-It is looking for review.
+Hi Srini,
 
-I think in general it'd be useful when posting the series to include
-the patches it is dependent on, that way we can also make changes to
-those patches (for example the missed perf-list documentation of the
-'R' modifier).
+I tested this series on SM8550 with tplg in [1] and ucm in [2]. But the 
+kernel output errors attached below. Headphone does work properly 
+without DisplayPort in the ucm.
 
+What could be the possible cause of this? Is there any significant 
+change from sc8280xp to sm8550?
+
+-- 
 Thanks,
-Ian
+Xilin Wu
 
+[1] 
+https://github.com/edk2-porting/audioreach-topology/blob/sakuramist/QCS8550-AYN-ODIN2.m4
+[2] 
+https://github.com/strongtz/alsa-ucm-conf/blob/odin2/ucm2/Qualcomm/sm8550/HiFi.conf
 
+[ 1552.313713] qcom-apm gprsvc:service:2:1: Error (1) Processing 
+0x01001000 cmd
+[ 1552.313730] qcom-apm gprsvc:service:2:1: DSP returned error[1001000] 1
+[ 1552.314455] qcom-apm gprsvc:service:2:1: Error (1) Processing 
+0x01001006 cmd
+[ 1552.314463] qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+[ 1552.315496] qcom-apm gprsvc:service:2:1: Error (1) Processing 
+0x01001006 cmd
+[ 1552.315506] qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
+[ 1552.316033] qcom-apm gprsvc:service:2:1: Error (1) Processing 
+0x01001001 cmd
+[ 1552.316042] qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
+[ 1552.316045] q6apm-lpass-dais 
+30000000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to prepare 
+Graph -22
+[ 1552.316047] q6apm-lpass-dais 
+30000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at 
+snd_soc_pcm_dai_prepare on DISPLAY_PORT_RX_0: -22
 
-> After this change, there is no special code required for R modifier in
-> metricgroup.c and metricgroup.h files.
->
-> Caveat of this change:
->   Ideally, we will need to add special handling to skip counting events w=
-ith R
-> modifier in evsel. Currently, this is not implemented so the event with :=
-R will
-> be both counted and sampled. Usually, in a metric formula that uses retir=
-e_latency,
-> it would already require to count the event. As a result, we will endup c=
-ount the
-> same event twice. This should be able to be handled properly when we fina=
-lize our
-> design on evsel R modifier support.
->
-> - Move TPEBS specific code out from main perf stat code to separate files=
- in
-> util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
-> - Use --control:fifo to ack perf stat from forked perf record instead of =
-sleep(2) [Namhyung]
-> - Add introductions about TPEBS and R modifier in Documents. [Namhyung]
->
->
-> Changes in v7:
-> - Update code and comments for better code quality [Namhyung]
-> - Add a separate commit for perf data [Namhyung]
-> - Update retire latency print function to improve alignment [Namhyung]
->
-> Changes in v6:
-> - Update code and add comments for better code quality [Namhyung]
-> - Remove the added fd var and directly pass the opened fd to data.file.fd=
- [Namhyung]
-> - Add kill() to stop perf record when perf stat exists early [Namhyung]
-> - Add command opt check to ensure only start perf record when -a/-C given=
- [Namhyung]
-> - Squash commits [Namhyung]
->
-> Changes in v5:
-> - Update code and add comments for better code quality [Ian]
->
-> Changes in v4:
-> - Remove uncessary debug print and update code and comments for better
-> readability and quality [Namhyung]
-> - Update mtl metric json file with consistent TmaL1 and TopdownL1 metricg=
-roup
->
-> Changes in v3:
-> - Remove ':' when event name has '@' [Ian]
-> - Use 'R' as the modifier instead of "retire_latency" [Ian]
->
-> Changes in v2:
-> - Add MTL metric file
-> - Add more descriptions and example to the patch [Arnaldo]
->
-> Here is an example of running perf stat to collect a metric that uses
-> retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL s=
-ystem.
->
-> In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES samp=
-le.
-> Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latenc=
-y value
-> are all 0.
->
-> ./perf stat -M tma_dtlb_store -a -- sleep 1
->
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.000 MB - ]
->
->  Performance counter stats for 'system wide':
->
->        181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tm=
-a_dtlb_store
->          3,195,608      cpu_core/topdown-retiring/
->         40,156,649      cpu_core/topdown-mem-bound/
->          3,550,925      cpu_core/topdown-bad-spec/
->        117,571,818      cpu_core/topdown-fe-bound/
->         57,118,087      cpu_core/topdown-be-bound/
->             69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
->              4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
->         30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
->         30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
->            168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
->               0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
->
->        1.003105924 seconds time elapsed
->
-> v1:
-> TPEBS is one of the features provided by the next generation of Intel PMU=
-.
-> Please refer to Section 8.4.1 of "Intel=C2=AE Architecture Instruction Se=
-t Extensions
-> Programming Reference" [1] for more details about this feature.
->
-> This set of patches supports TPEBS in counting mode. The code works in th=
-e
-> following way: it forks a perf record process from perf stat when retire_=
-latency
-> of one or more events are used in a metric formula. Perf stat would send =
-a
-> SIGTERM signal to perf record before it needs the retire latency value fo=
-r
-> metric calculation. Perf stat will then process sample data to extract th=
-e
-> retire latency data for metric calculations. Currently, the code uses the
-> arithmetic average of retire latency values.
->
-> [1] https://www.intel.com/content/www/us/en/content-details/812218/intel-=
-architecture-instruction-set-extensions-programming-reference.html?wapkw=3D=
-future%20features
->
->
-> Weilin Wang (7):
->   perf vendor events intel: Add MTL metric json files
->   perf data: Allow to use given fd in data->file.fd
->   perf stat: Fork and launch perf record when perf stat needs to get
->     retire latency value for a metric.
->   perf stat: Plugin retire_lat value from sampled data to evsel
->   perf stat: Add command line option for enabling tpebs recording
->   perf Document: Add TPEBS to Documents
->   perf test: Add test for Intel TPEBS counting mode
->
->  tools/perf/Documentation/perf-list.txt        |    1 +
->  tools/perf/Documentation/topdown.txt          |   30 +
->  tools/perf/arch/x86/util/evlist.c             |    6 +
->  tools/perf/builtin-stat.c                     |   24 +
->  .../arch/x86/meteorlake/metricgroups.json     |  127 +
->  .../arch/x86/meteorlake/mtl-metrics.json      | 2551 +++++++++++++++++
->  .../perf/tests/shell/test_stat_intel_tpebs.sh |   27 +
->  tools/perf/util/Build                         |    1 +
->  tools/perf/util/data.c                        |    7 +-
->  tools/perf/util/evsel.c                       |   53 +
->  tools/perf/util/evsel.h                       |    5 +
->  tools/perf/util/intel-tpebs.c                 |  301 ++
->  tools/perf/util/intel-tpebs.h                 |   30 +
->  tools/perf/util/stat.h                        |    1 +
->  14 files changed, 3163 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/metricgroup=
-s.json
->  create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/mtl-metrics=
-json
->  create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
->  create mode 100644 tools/perf/util/intel-tpebs.c
->  create mode 100644 tools/perf/util/intel-tpebs.h
->
-> --
-> 2.43.0
->
 
