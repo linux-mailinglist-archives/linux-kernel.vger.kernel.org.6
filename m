@@ -1,176 +1,154 @@
-Return-Path: <linux-kernel+bounces-187379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66838CD0F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:12:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4492B8CD101
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D826282CFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADEF81F21AFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA37F148FE9;
-	Thu, 23 May 2024 11:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7099145B3C;
+	Thu, 23 May 2024 11:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iQ0zFqkT"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="HR57gyKi"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6FF148851;
-	Thu, 23 May 2024 11:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E7181AC7
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716462644; cv=none; b=he67MBCvejrkj83+aelGZqHblPDMpEQE6w64iOQV5I12aYGqvqkMFaR7jRuhMmnDSpQ/5x7ybLAnxSa3qHPAq4CKY5sBF1KIvesvTE2rV9Xkf+aX8WZEoxZkAxDfZDGav5H/zQrhy0sqCp9+IFAThmZsq+/q4YwGFJkYOBlOjH4=
+	t=1716462826; cv=none; b=ohzVT/JUJH3QAIwy2t5t4t/ZElfhvRwrpINAEKeRgYyFn0nsYVV3vTGjVxu5VKTXaKiGkVSroArcgzM3MdNfrKLiPap07vC/+TNjFy4hjwx8033kNDZZ2fp0wk6xBoI/RWXpwaQAkLr5qldisa1bNYetfrvMoI3frGjpjw3obUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716462644; c=relaxed/simple;
-	bh=xFDYkQ31agauxEnb+RJfu3aRPWfDgM3XvcsjfdaOPYI=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=N6TTNOskwZCcydeGWSh2+nL2wK6YF9PqIGkCeMwonGrx9wSiPr6i/wkII8CNsyFXeI8VCrenZPKWQdymXU5ZvZ98bPOeq4Yk3O6asq9iYg4qLFud4Bh0dMehEHXeF6fe/eJI7bRoJpeLjKF5hyX98ij+zJOP2vSYxs+Ur4QcM6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iQ0zFqkT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44NAcFgL016159;
-	Thu, 23 May 2024 11:10:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : date : subject :
- content-type : message-id : references : in-reply-to : to : cc :
- content-transfer-encoding : mime-version; s=pp1;
- bh=Y8onIuiYoME4KQUFK1+RysiIFUJ20afFaE21ZSfAPXQ=;
- b=iQ0zFqkTpjg3kZh26q2+GutGvMCreBdAfZ7MJUxydkce12P8QjWykkpAWYxVCmdBDnn3
- JKtSojL7+YI40G17gE2+Yz+Hdnaf2QlcuO/EVRxH/ML+8OpQM/nV+7xU2VrfG080GNMm
- 72jMkayrhShtjKVhv2kFAUdEK4t6n6S59bTIKsPRUFT7jFXax+z3tnwj/qNLnoZx9ERZ
- QNd8miTEYFfpAm/X+bWblGww4IXqKP4qxJVndnn97ktWF7k7tMGaAzuiRm247KSFonzF
- Okz8yvB4fLmdWz8jahyYDTmSAZ8mrItKaGVYy6Jd3b3pTmGyIGD2ZG2Kzr2nTFv1eYdS qQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ya47hg2gx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 11:10:40 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44NBAe1D031822;
-	Thu, 23 May 2024 11:10:40 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ya47hg2gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 11:10:40 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44NAu9nF023498;
-	Thu, 23 May 2024 11:10:39 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y77nphng5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 11:10:39 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44NBAabg34341310
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 May 2024 11:10:38 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3FA9A58056;
-	Thu, 23 May 2024 11:10:36 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D819358064;
-	Thu, 23 May 2024 11:10:33 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 23 May 2024 11:10:33 +0000 (GMT)
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-Date: Thu, 23 May 2024 13:10:16 +0200
-Subject: [PATCH v2 3/3] vfio/pci: Enable PCI resource mmap() on s390 and
- remove VFIO_PCI_MMAP
-Content-Type: text/plain; charset="utf-8"
-Message-Id: <20240523-vfio_pci_mmap-v2-3-0dc6c139a4f1@linux.ibm.com>
-References: <20240523-vfio_pci_mmap-v2-0-0dc6c139a4f1@linux.ibm.com>
-In-Reply-To: <20240523-vfio_pci_mmap-v2-0-0dc6c139a4f1@linux.ibm.com>
-To: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Gerd Bayer <gbayer@linux.ibm.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1747;
- i=schnelle@linux.ibm.com; h=from:subject:message-id;
- bh=xFDYkQ31agauxEnb+RJfu3aRPWfDgM3XvcsjfdaOPYI=;
- b=owGbwMvMwCH2Wz534YHOJ2GMp9WSGNL8VRQFt/wQ+WVylOOgePOTsB+r9jnujUnsMFrmZneOY
- xVDxFHljlIWBjEOBlkxRZZFXc5+6wqmmO4J6u+AmcPKBDKEgYtTACayYi8jw1T2WVX/t2xM6Nrg
- xr7np8ySOdy8L86Fpa46/Ssl2uiY7FJGhltHy+8eEglw9mU/lS2tcC5PKKJaV7H3tRqH8P1Zrts
- ncgIA
-X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
- fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: P_BSAzHhTWNgdymQtQERI6gc8iQGG_aM
-X-Proofpoint-GUID: n5WkyoZqob1aPPrHcsBhKTzwqkEbfWGk
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1716462826; c=relaxed/simple;
+	bh=f1DDzJv3xHeLtz/8Uh38H6uqD2mqnmTd8LGL7fsQk2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rg0cx+/pKZ4Mq2zqNUpI8Js1MTjO0dHh8LL1D8fn1nP9/JuISZqvzVVETKtkcBN54A/YxfOCEDTkRPlDC0b/XF++2hYd8jRYb4mitRc3IVlUX2c/xQ4i1Krx9oxgypljOsHxRatcL7Mz64C43q/ovuvCfgf1jO2iMc20gK2dC14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=HR57gyKi; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f3406f225bso3678665ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:13:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1716462824; x=1717067624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+aKuxY2Fk4OLcsa0CSr6w7+nYt28fnnuhVioZfggdrc=;
+        b=HR57gyKi5zIzh0IZ1XOhdMr/xGQYMgBsTFhXHRufptcwgNjM+zeUrYCeN2P4blt9Rj
+         jxO22nqdFpcFZGKLvV2Fyf4NSvRb9uVhDEi+8C5Qb+q4BMbnQpmBut6FWHvJKMtwTvnv
+         IMn5e11KZ4exqSAIYLHOtf8sIWOfgAhh2FNQlLpmHR+tpqGDZWDyGbXA9RmvRlJNkBHH
+         eXqtwKQYI63oTBImgDAiKtfGjtsHbxCI23xavOmltUo6BCLpeoQ15qotIMhcEExPwQZb
+         AoV5ztfDBFG/cMIVPfnsFYM64a6Wnj2p2Eer4fRPZeVTKdW8sCFNhix1dLPNXYlmB/JS
+         WdlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716462824; x=1717067624;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+aKuxY2Fk4OLcsa0CSr6w7+nYt28fnnuhVioZfggdrc=;
+        b=bKbGC0ur6YYpAxa4aW75qnJgtpknkm7sUGigNXbUq24Uo39byUUKHpGhNqz1oN9nTl
+         tFsxVIhm5BithT9zaZiq/+FdPIyWjUDisCdTUvKbxj8eeIzp+S4GPJbAczpn9AL2viJ6
+         GWQz5/EQy+sj9S1botLcM9C69fqKCMNpG3mkWeWV43/oP5YrHkamuHj6UPYwo0nZ3/6f
+         dcQve2UsQiNIdIT9ZDXWI/j0QemL68rtM5UhtIttY8bT7BQ56HyCrfUSc4AEyQAj/ISF
+         Dt1fZvbsiJoSsboqyVeTZJHDe6jlSZMvru/J4+BUpXMgQxRvs3bjkvhcn76CtU1JGpHe
+         +F6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUdgWYvcVSKk3y2skCr04QJHwmQYg6AM3uLUo94wt3b52d0bZw/EQwo+gDRfqQk+bXFImlaqzWI2n3f3R8SRwiYRM1MfFPEaThHZ9wi
+X-Gm-Message-State: AOJu0Yyo0lges3ZZJSTIrzvH1NoXaTAlSfO+TKk6IBz3HYS29zMbpkKO
+	yDUQQQq3CpRlXWMUpiuBRNiXdvh5Rj6//RrEEDS+qsvRJwcA40z3mOxqxROOh9M=
+X-Google-Smtp-Source: AGHT+IGfvwX4nHErQyEQ6tKcNt4WXio4qE4pV5EfAuWWShz5bnwIL0deO6asuZ7WelH2PvE/SRuq2w==
+X-Received: by 2002:a17:903:1104:b0:1e5:3c5:55a5 with SMTP id d9443c01a7336-1f31c95d67emr50609535ad.8.1716462824368;
+        Thu, 23 May 2024 04:13:44 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.14])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2fb4ca0ebsm76399555ad.119.2024.05.23.04.13.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 23 May 2024 04:13:44 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	sunilvl@ventanamicro.com,
+	aou@eecs.berkeley.edu,
+	linux-riscv@lists.infradead.org,
+	bhelgaas@google.com,
+	james.morse@arm.com,
+	jeremy.linton@arm.com,
+	Jonathan.Cameron@huawei.com,
+	pierre.gondois@arm.com,
+	sudeep.holla@arm.com,
+	tiantao6@huawei.com
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH RESEND v5 1/3] riscv: cacheinfo: remove the useless input parameter (node) of ci_leaf_init()
+Date: Thu, 23 May 2024 19:13:20 +0800
+Message-Id: <20240523111322.19243-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_07,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 impostorscore=0 adultscore=0 mlxlogscore=782 malwarescore=0
- spamscore=0 phishscore=0 suspectscore=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405230075
+Content-Transfer-Encoding: 8bit
 
-With the introduction of memory I/O (MIO) instructions enbaled in commit
-71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
-gained support for direct user-space access to mapped PCI resources.
-Even without those however user-space can access mapped PCI resources
-via the s390 specific MMIO syscalls. Thus mmap() can and should be
-supported on all s390 systems with native PCI. Since VFIO_PCI_MMAP
-enablement for s390 would make it unconditionally true and thus
-pointless just remove it entirely.
+ci_leaf_init() is a declared static function. The implementation of the
+function body and the caller do not use the parameter (struct device_node
+*node) input parameter, so remove it.
 
-Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+Fixes: 6a24915145c9 ("Revert "riscv: Set more data to cacheinfo"")
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/vfio/pci/Kconfig         | 4 ----
- drivers/vfio/pci/vfio_pci_core.c | 3 ---
- 2 files changed, 7 deletions(-)
+ arch/riscv/kernel/cacheinfo.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-index 15821a2d77d2..9c88e3a6d06b 100644
---- a/drivers/vfio/pci/Kconfig
-+++ b/drivers/vfio/pci/Kconfig
-@@ -7,10 +7,6 @@ config VFIO_PCI_CORE
- 	select VFIO_VIRQFD
- 	select IRQ_BYPASS_MANAGER
+diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+index 09e9b88110d1..30a6878287ad 100644
+--- a/arch/riscv/kernel/cacheinfo.c
++++ b/arch/riscv/kernel/cacheinfo.c
+@@ -64,7 +64,6 @@ uintptr_t get_cache_geometry(u32 level, enum cache_type type)
+ }
  
--config VFIO_PCI_MMAP
--	def_bool y if !S390
--	depends on VFIO_PCI_CORE
--
- config VFIO_PCI_INTX
- 	def_bool y if !S390
- 	depends on VFIO_PCI_CORE
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 23961299b695..35b8e8f214af 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -121,9 +121,6 @@ static void vfio_pci_probe_mmaps(struct vfio_pci_core_device *vdev)
+ static void ci_leaf_init(struct cacheinfo *this_leaf,
+-			 struct device_node *node,
+ 			 enum cache_type type, unsigned int level)
+ {
+ 	this_leaf->level = level;
+@@ -80,11 +79,11 @@ int populate_cache_leaves(unsigned int cpu)
+ 	int levels = 1, level = 1;
  
- 		res = &vdev->pdev->resource[bar];
+ 	if (of_property_read_bool(np, "cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_UNIFIED, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
+ 	if (of_property_read_bool(np, "i-cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_INST, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
+ 	if (of_property_read_bool(np, "d-cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
  
--		if (!IS_ENABLED(CONFIG_VFIO_PCI_MMAP))
--			goto no_mmap;
--
- 		if (!(res->flags & IORESOURCE_MEM))
- 			goto no_mmap;
- 
-
+ 	prev = np;
+ 	while ((np = of_find_next_cache_node(np))) {
+@@ -97,11 +96,11 @@ int populate_cache_leaves(unsigned int cpu)
+ 		if (level <= levels)
+ 			break;
+ 		if (of_property_read_bool(np, "cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_UNIFIED, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
+ 		if (of_property_read_bool(np, "i-cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_INST, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
+ 		if (of_property_read_bool(np, "d-cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
+ 		levels = level;
+ 	}
+ 	of_node_put(np);
 -- 
-2.40.1
+2.20.1
 
 
