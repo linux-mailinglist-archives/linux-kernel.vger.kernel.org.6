@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-187304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337F78CCFE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 462288CCFEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646FF1C226A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 763561C2269C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1901442FF;
-	Thu, 23 May 2024 10:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3425A13DDA3;
+	Thu, 23 May 2024 10:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IUmTPRz1"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="o8PXcoLF"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DA113CF96
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F58654FA9;
+	Thu, 23 May 2024 10:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716458668; cv=none; b=Wewq5xgd+eWn448v5Z3OrSwczVzF+b1Bhjv4HruSxwnfjfMemxJ/ZYTWI/qc8NEjKokULh9sV7zQeFqDMsRDgjV9OTq7aj/IbqeCNHDIduW8gEMS9s7LA6YIwO85tK13shRn69u5AVaiYQpx23AGYep2nAa0+Y5BfHAjnqmL0MQ=
+	t=1716458767; cv=none; b=lREXmyNzv/CJa378ZnBy3C1KPx414oy8V5BoG3oV9fX4dkWFiiWjCN46T2XP/rlFhkkivF7L5+qrOrQUD+cqlRbyKF3S3qxlaAw4GaApq4chLHC+Hn2rvF1WVOQUeD5VlvslFqGFEz3BqkhXxQNOC8Z4K0DjrnE6TjH2WP/Q7RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716458668; c=relaxed/simple;
-	bh=O4KCTeshkfk5LZ7Q0POVGtoHwRI1v4DW1pm6Bzo+dLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BajBmgkJ5PGPzeT7xcgBvpFgmSxU1TYdPXFwxFBHYBRX/xJxHUAUGKp4XL76Yw0NBROa9gkv5RL169UHh8AAc6f7whBOmpBkN9sdORQQQ3MBza76medn5v7K7vxL24qU7sDk1RDYdBsgOolEg3RODCIFsrIZjkyt8QXigKBYCT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IUmTPRz1; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f40b5e059so8306359e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:04:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716458665; x=1717063465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4dfGDIGi6g96GxO6el+LliDi+3YKJVZHbevMlNSfR0=;
-        b=IUmTPRz1rQTLY5sqgbORbhdC7q1l8+4EYrbwB+is2yP1d+KRkLzeSKvMVpYKTX/SAZ
-         uC3HNnvPrXvtm7mG+7HOV3PyW7kUfsuypz2KEMCeKjdk3BPzH6c+pMzDiWeUnqf++Grq
-         iRTVIWxwg1rvGMapONiTolSahr13mdMtgAINLW6icmS9lkDMpqlWChGBaf/ITC4ubjOs
-         8mOtuHRYQsE/sQrAtLl1R3Auh74pZiMMMOR1l0Ak5wU/0bGdvpoJd8GeMatcKIPXA6zt
-         gLZbXZNr7g0MTU2d25j2NqMjtB5uWOTu8hF7nRuYzQjbBmLUbxBpdyo1deIsmq8bfmvr
-         ZTbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716458665; x=1717063465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y4dfGDIGi6g96GxO6el+LliDi+3YKJVZHbevMlNSfR0=;
-        b=EZ7MtsQ3kOMTIO5WeH2HW1C0/N5GfwzaD5kSI+3yvvzayfqTEaRLUfQ7F8tIPbFvRg
-         fyeq2RNB3RIAfU5US2LXNj9nkSv3KVqtuzYAGA3DqZX64RL5N4NBiJHlDYWyHH1wXmod
-         MB09jmueNTbA1Jymh7OPfhqgaS2cozTDvbwylJK3TVw9YvedtJPh664YCDUhFpdAdKkK
-         m5huCRcK832uyRejA1YZ5am62L3FS4fKJU+0tPtoXIKOzvvLQ0YEE9VNDaoxzqjElcsd
-         YchM1nMUyYgO8e7M0wCAlCtfoNuvcQdVqNjxl1ZKDCOUaLLSpuq/HZ3GOSqgc3d+7nl2
-         pGvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgftkBZAyiWahuYNZ22LOj2eWdvIlY1B8g86Pb0mJ892LUghqGchx3n+I8gCHR/QTZbe0JTg7fGJReL9CuS6FtIBwRd/hj/R3SwO88
-X-Gm-Message-State: AOJu0YzriNj+/KCBtMkqEygJQHKfA37m74RRKUpTzmbNfFihZB/trh+Y
-	GBElPL6FrH49hTYsq4R4FBFhF8P2fCKPJynaf627SAP0mSs75hn3G49Oz8/lTvI=
-X-Google-Smtp-Source: AGHT+IHI9JqXzb0Cyfhcs6KeNERwPEvQfkeVQfr9ZS+SMw0TkOUBh/ztRskPl/+x+XS30MmAlFxklg==
-X-Received: by 2002:ac2:5044:0:b0:523:3be3:cbfe with SMTP id 2adb3069b0e04-526bfc02bbemr2577217e87.65.1716458665403;
-        Thu, 23 May 2024 03:04:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5236d2e9ad9sm3382898e87.178.2024.05.23.03.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 03:04:24 -0700 (PDT)
-Date: Thu, 23 May 2024 13:04:22 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
-	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v14 14/28] drm/tests: Add HDMI connector rate filter hook
- tests
-Message-ID: <zds53yg36qf7ft7mrvvgv2k5avbjib3zy2pdd2azrnvthppngu@2bep5gso3wic>
-References: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
- <20240521-kms-hdmi-connector-state-v14-14-51950db4fedb@kernel.org>
+	s=arc-20240116; t=1716458767; c=relaxed/simple;
+	bh=6hZfU/vZlrz4/bVBw0R53ZF51GPkuNffAAaPgUYgJMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dett5vARAR1lZPlSHBh8o9e60PRY+b2CKJr8DNhuk9/sUhwSgmlTfMf/j8D0HvaHK5avA0IGskPclNQlcIdP3a0IVove6yImYBb9qeP8ZPkStiBf/r2FiFHbxVikTrDBUAl9HMAIBRgNaEq5dqwcLsWMR5X74G1+exQFffwfJ1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=o8PXcoLF; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=f8jC17nCt232w/3lqbKjfEROHlbH51l5S8kUPNZoSNw=; b=o8PXcoLFtZFkuMCBmDWq+qpc+k
+	Z1muJ0pfMgOzZJ6+41nkyh0+fyRmX27rfctbCLX4Pe2SH7oVYsR6RUifgKykHr3prBkVOD8cVKWae
+	jOsAbsLdpKwjbHD/LCCk9eoVOF9avnwEk/9FyPaRfIVZEj+q1qjimPCJio7KYuCt4GcKCw0DIjOk5
+	Gf7sKHCppxAE+qQJ3ETeBcr4m+9v+klRmLiSOiNswLvzVjISMCnW+GDLRJATaHLp4QEB9KxLnkVGy
+	MLMgq+2YzSsBMMNJ7ipirr+zYb/5haXrY5XUO08JWTH40ldZJTsDrZU9JvbF1wjrynDQWNnrHQsvY
+	2gXfa7Z+xV6INwNd8bjats2GjC+ZCXKMBN4TWir1r9fkgEgfeaODFRmPe4wsjDdVR5/Kcw39zwjLn
+	ytAUyuVRlmJZsEi36i8/kNm1Po9NQHo8yqGu4I6BSRSdau9eYkQh5Z6dPxkanT8bf1XhFO16yW+WA
+	Q1FcCWKz9WL8p7DJm+sQeKHCjlT6dkw3B76soDP8JbrKP9o5xTBthhEIm2EtbCLBaxSf3O3YwDcPt
+	foSkcm9qYyOWwpeR+NAVjBfeMaTlD3n2SeUCQRLLKjdFxnhA0Fz8tHYq3OzVEvaEMjnExWGjwzPhz
+	u2+lq7c0KNPraDlCrd8qwBZw68g/RqLL6AeKfI+qs=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>,
+ Jianyong Wu <jianyong.wu@arm.com>, stable@vger.kernel.org,
+ Eric Van Hensbergen <ericvh@gmail.com>, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: add missing locking around taking dentry fid list
+Date: Thu, 23 May 2024 12:05:44 +0200
+Message-ID: <2675095.dNBKFZOyUv@silver>
+In-Reply-To: <Zk8MAFAWIUPlhGFe@codewreck.org>
+References:
+ <20240521122947.1080227-1-asmadeus@codewreck.org> <3116644.1xDzT5uuKM@silver>
+ <Zk8MAFAWIUPlhGFe@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521-kms-hdmi-connector-state-v14-14-51950db4fedb@kernel.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, May 21, 2024 at 12:13:47PM +0200, Maxime Ripard wrote:
-> The previous patch adds a new hook for HDMI connectors to filter out
-> configurations based on the TMDS character rate. Let's add some tests to
-> make sure it works as expected.
+On Thursday, May 23, 2024 11:27:28 AM CEST Dominique Martinet wrote:
+> Christian Schoenebeck wrote on Thu, May 23, 2024 at 10:34:14AM +0200:
+> > > The comment still works -- if detry->d_fsdata is NULL then
+> > > hlist_for_each_entry will stop short and not iterate over anything (it
+> > > won't bug out), so that part is fine in my opinion.
+> > 
+> > I meant the opposite: dentry->d_fsdata not being NULL.
 > 
-> Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 65 ++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
+> I also meant that in the d_fsdata not being NULL branch, if d_fsdata
+> turns out to be NULL when it is read under lock later.
 > 
+> > In this case v9fs_fid_find() takes a local copy of the list head
+> > pointer as `h` without taking a lock before.
+> 
+> It doesn't, it takes &dentry->d_fsdata so the address of d_fsdata before
+> the lock, but that address cannot change here (another thread cannot
+> change the address of the dentry) ...(continuing below)
+
+Aaah right, I was missing the `&`, my bad!
+
+> > Then v9fs_fid_find() takes the lock to run hlist_for_each_entry(), but at this
+> > point `h` could already point at garbage.
+> 
+> ... so *h (in practice, head->first in hlist_for_each_entry()) will
+> properly contain the first node of the list under lock: either NULL if
+> we just cleared it (at which point the loop won't iterate anything), or
+> a new list if other items have been added meanwhile.
+
+Yeah, looks fine to me.
+
+> I really think it's safe, but I do agree that it's hard to read, happy
+> to move the `h = &dentry->d_fsdata` inside the lock if you prefer -- it
+> compiles to the same code for me (x86_64/gcc 13.2.0)
+
+No need, you can add my RB. Thanks for the clarification!
+
+Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
--- 
-With best wishes
-Dmitry
 
