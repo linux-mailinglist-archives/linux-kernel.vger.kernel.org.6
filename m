@@ -1,177 +1,116 @@
-Return-Path: <linux-kernel+bounces-187390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859F38CD113
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:16:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A4428CD122
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E7A28254D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9A471C2162F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736031465B2;
-	Thu, 23 May 2024 11:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126011474B1;
+	Thu, 23 May 2024 11:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oL5myX0a"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LPTyNLCv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234B014659F
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DEE145B33;
+	Thu, 23 May 2024 11:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716462987; cv=none; b=gofAhuie2H3/jA0TBbIrumQ44pqjYYN/Xi/FHtibXQEPqUMGx0JMMfT6IMTRTCwj5xprCiw0xkEq0ygT1hZJ/xMjxfcIInACeYP5QW0kjQI1R7+MDpgUX54B+BFaRx/xG4kinQZo0EAb8PFPnUZEJ5AUx69zzqmjKBVN3QJHX28=
+	t=1716463275; cv=none; b=nMxsg+TZm7Hp6jtp1yZXYruJl6fNOeU9CGkUjPckco7jDQLJjQc9A6FL6cRPfQysXH8QZL3hGxCmcipLUKVe//kNHI0ZkziiSHTBAmBwwxPt1fPgUcBDumc8ik8m0Js/CyQGsk+udaOpk8rtvZMnbIae3NB9AklaSt0IdnqqLUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716462987; c=relaxed/simple;
-	bh=NtWHZ0S6uruFC/CoeNcH7BzMxeAQxoesFu6LY3wrFvk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fW/XPi8vaUQLfEz2He9u1CIZYA1rukkLEF/dk7HdFWFtvBMGREN+mtH3zNOhvudARYZYXrPDTN/EedtL9LW0y5csEe+6LJVhz/PHbHDsgeI+6oGVUFdSAaC9e01e8lhtdGrK8uycmRwMQyBnHMhOD8vR6bNTHxYUfefcmGLgqoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oL5myX0a; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: tytso@mit.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716462983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rXeNfA493tYgxtMQKHtku9ZfX9GDeRnviC1JlvIusEI=;
-	b=oL5myX0akLeu28dNXLuCXviIdU85moWLY/axN+6K/ezP8uvxYpAI9O7+pEvGIPuYYayRrr
-	cid50YYRVnidbC/3qyJCL7cYBseBxso9qItaFS3W+IfHRpvnFvpDBaJikFuD8vhRmsP7aI
-	QhRJORjhuBVyDtNNP+nRLHwEHzmTfBA=
-X-Envelope-To: jack@suse.cz
-X-Envelope-To: adilger@dilger.ca
-X-Envelope-To: harshadshirwadkar@gmail.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-ext4@vger.kernel.org
-X-Envelope-To: luis.henriques@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Subject: [PATCH v2] ext4: fix fast commit inode enqueueing during a full journal commit
-Date: Thu, 23 May 2024 12:16:18 +0100
-Message-ID: <20240523111618.17012-1-luis.henriques@linux.dev>
+	s=arc-20240116; t=1716463275; c=relaxed/simple;
+	bh=+ufxBA931R+9/+mWjq15kbP9r+F/Bytauh3yDryr+P8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTp7/TqAkbJWqk8G9fad5dm6HYrKUEMT3Pf8nXcydt0eOaP7nXFa63PJPLfzg2WCKdHi+sEP6KN853EhmvDaGzTesz6uXCshpSTz6fcUCSl/Faowrd0k+fQhM9fqRim5e+Pz1oJkmcvMTv6QjuaskJGmN2iHivhswgsT+XMcaJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LPTyNLCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7326C2BD10;
+	Thu, 23 May 2024 11:21:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716463275;
+	bh=+ufxBA931R+9/+mWjq15kbP9r+F/Bytauh3yDryr+P8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LPTyNLCvh3BXn9nne8Byz/D9+HbuUenFTOmirI0dVuh+vj89a6yiSmLQMZxuyA49g
+	 2KLSKpJbc7V7cdNvnsE1LwEsQF4A7s1obJpyQcsgQMUMW97zkFpKkw/FS3a3OUeRG2
+	 gHht4E/RfoVUo5OdoIKPxIfqGussu2Gef4SaPBuU=
+Date: Thu, 23 May 2024 13:21:12 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-35802: x86/sev: Fix position dependent variable
+ references in startup code
+Message-ID: <2024052334-cable-serotonin-fa2b@gregkh>
+References: <2024051738-CVE-2024-35802-959d@gregkh>
+ <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
 
-When a full journal commit is on-going, any fast commit has to be enqueued
-into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
-is done only once, i.e. if an inode is already queued in a previous fast
-commit entry it won't be enqueued again.  However, if a full commit starts
-_after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
-be done into FC_Q_STAGING.  And this is not being done in function
-ext4_fc_track_template().
+On Thu, May 23, 2024 at 02:14:57PM +0300, Nikolay Borisov wrote:
+> 
+> 
+> On 17.05.24 г. 16:23 ч., Greg Kroah-Hartman wrote:
+> > Description
+> > ===========
+> > 
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > x86/sev: Fix position dependent variable references in startup code
+> > 
+> > The early startup code executes from a 1:1 mapping of memory, which
+> > differs from the mapping that the code was linked and/or relocated to
+> > run at. The latter mapping is not active yet at this point, and so
+> > symbol references that rely on it will fault.
+> > 
+> > Given that the core kernel is built without -fPIC, symbol references are
+> > typically emitted as absolute, and so any such references occuring in
+> > the early startup code will therefore crash the kernel.
+> > 
+> > While an attempt was made to work around this for the early SEV/SME
+> > startup code, by forcing RIP-relative addressing for certain global
+> > SEV/SME variables via inline assembly (see snp_cpuid_get_table() for
+> > example), RIP-relative addressing must be pervasively enforced for
+> > SEV/SME global variables when accessed prior to page table fixups.
+> > 
+> > __startup_64() already handles this issue for select non-SEV/SME global
+> > variables using fixup_pointer(), which adjusts the pointer relative to a
+> > `physaddr` argument. To avoid having to pass around this `physaddr`
+> > argument across all functions needing to apply pointer fixups, introduce
+> > a macro RIP_RELATIVE_REF() which generates a RIP-relative reference to
+> > a given global variable. It is used where necessary to force
+> > RIP-relative accesses to global variables.
+> > 
+> > For backporting purposes, this patch makes no attempt at cleaning up
+> > other occurrences of this pattern, involving either inline asm or
+> > fixup_pointer(). Those will be addressed later.
+> > 
+> >    [ bp: Call it "rip_rel_ref" everywhere like other code shortens
+> >      "rIP-relative reference" and make the asm wrapper __always_inline. ]
+> > 
+> > The Linux kernel CVE team has assigned CVE-2024-35802 to this issue.
+> 
+> 
+> I'd like to dispute this CVE since it doesn't constitute a security related
+> bug. Sure, it might crash a SEV guest during boot but it doesn't constitute
+> a security issue per-se.
 
-This patch fixes the issue by flagging an inode that is already enqueued in
-either queues.  Later, during the fast commit clean-up callback, if the
-inode has a tid that is bigger than the one being handled, that inode is
-re-enqueued into STAGING and the spliced back into MAIN.
+Isn't crashing SEV guests a problem with "availability"?  That term
+comes from the CVE definition of what we need to mark as a CVE, which is
+why this one was picked.
 
-This bug was found using fstest generic/047.  This test creates several 32k
-bytes files, sync'ing each of them after it's creation, and then shutting
-down the filesystem.  Some data may be loss in this operation; for example a
-file may have it's size truncated to zero.
+thanks,
 
-Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
----
-Hi!
-
-(Now Cc'ing Harshad, as I should have done in the initial RFC.)
-
-This v2 is a complete different solution, hinted by Jan Kara.  I hope my
-understanding of his suggestion is correct.  Also, I've dropped the second
-patch as it didn't made sense, as Jan also pointed out.
-
-Finally, I haven't yet done a review of Harshad's patchset [1] (hope to
-get to it soon), but a quick test shows the issue is still present there.
-The good news is that patch can be trivially applied on top of it.
-
-[1] https://lore.kernel.org/all/20240520055153.136091-1-harshadshirwadkar@gmail.com
-
-Cheers,
---
-Luis
-
- fs/ext4/ext4.h        | 11 ++++++++++-
- fs/ext4/fast_commit.c | 11 +++++++++++
- fs/ext4/super.c       |  1 +
- 3 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 983dad8c07ec..4c308c18c3da 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1062,9 +1062,18 @@ struct ext4_inode_info {
- 	/* Fast commit wait queue for this inode */
- 	wait_queue_head_t i_fc_wait;
- 
--	/* Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len */
-+	/*
-+	 * Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len,
-+	 * i_fc_next
-+	 */
- 	struct mutex i_fc_lock;
- 
-+	/*
-+	 * Used to flag an inode as part of the next fast commit; will be
-+	 * reset during fast commit clean-up
-+	 */
-+	tid_t i_fc_next;
-+
- 	/*
- 	 * i_disksize keeps track of what the inode size is ON DISK, not
- 	 * in memory.  During truncate, i_size is set to the new size by
-diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-index 87c009e0c59a..bfdf249f0783 100644
---- a/fs/ext4/fast_commit.c
-+++ b/fs/ext4/fast_commit.c
-@@ -402,6 +402,8 @@ static int ext4_fc_track_template(
- 				 sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) ?
- 				&sbi->s_fc_q[FC_Q_STAGING] :
- 				&sbi->s_fc_q[FC_Q_MAIN]);
-+	else
-+		ei->i_fc_next = tid;
- 	spin_unlock(&sbi->s_fc_lock);
- 
- 	return ret;
-@@ -1280,6 +1282,15 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
- 	list_for_each_entry_safe(iter, iter_n, &sbi->s_fc_q[FC_Q_MAIN],
- 				 i_fc_list) {
- 		list_del_init(&iter->i_fc_list);
-+		if (iter->i_fc_next == tid)
-+			iter->i_fc_next = 0;
-+		else if (iter->i_fc_next > tid)
-+			/*
-+			 * re-enqueue inode into STAGING, which will later be
-+			 * splice back into MAIN
-+			 */
-+			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
-+				      &sbi->s_fc_q[FC_Q_STAGING]);
- 		ext4_clear_inode_state(&iter->vfs_inode,
- 				       EXT4_STATE_FC_COMMITTING);
- 		if (iter->i_sync_tid <= tid)
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 893ab80dafba..56f416656d96 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1437,6 +1437,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
- 	INIT_WORK(&ei->i_rsv_conversion_work, ext4_end_io_rsv_work);
- 	ext4_fc_init_inode(&ei->vfs_inode);
- 	mutex_init(&ei->i_fc_lock);
-+	ei->i_fc_next = 0;
- 	return &ei->vfs_inode;
- }
- 
+greg k-h
 
