@@ -1,50 +1,73 @@
-Return-Path: <linux-kernel+bounces-187964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D088CDB49
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:20:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363B98CDB50
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335A11F2305E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCACA1F22EF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556F484A40;
-	Thu, 23 May 2024 20:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966084D34;
+	Thu, 23 May 2024 20:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="umfVpYwE"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIYe5b3C"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F5884D26;
-	Thu, 23 May 2024 20:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BE084D1D;
+	Thu, 23 May 2024 20:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716495585; cv=none; b=twb7SWH2HkU4ge63Vm77mvCCHxXrCHEBmk7Tw8Ts+Sbf9nEzNypkzGGEB2NnatzmbDPf+gQPzU6Mr1ym+VB08UcMnXFMZcRa0zNhNkwSiDh9u6hJtJ6hsg9s8HLcFUOcjszAEOPp5httliSfGVTe+LDhf/W+XfHREReKG43RO9w=
+	t=1716495707; cv=none; b=e4oJDvuYJs3KUzETUaKgPwggwoxKWA4Li8VD02OUlktM9Xq8PsIUB4WtltOO78xWS2FWOEcrW71EqpG8Ob3XBe7X+0tGxyMode/3w8foFtACvRZ+KzAtf6WUXj0dshtyaFfjrygG+onDx2cnMhepYxpG5+Ysx0tti2HXgiTM8M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716495585; c=relaxed/simple;
-	bh=DmtE3NmDfeuWXwvfKTneK6k7HMV4HXj51KzM63yhWco=;
+	s=arc-20240116; t=1716495707; c=relaxed/simple;
+	bh=xFPhAF+c5QEV3qf+5MftTNugrA1PKs9N2ZFb5mAFR8I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDQJW9dIaVCohDCE4VS7g/rWoeV+2shO7IeLMwAwLmYu6IWLo/qlSJpzhj88DyEVhimN/+pwIfJ41Bd0/GQVntciqUdtlFa64uU+qYFhZ5dws2Wjr6MuGViEQ1mXc9Gs4SI4zDxLND05iYq2gjE8a1WO6v0BhHuuogG5ZeoIy0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=umfVpYwE; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1716495581;
-	bh=DmtE3NmDfeuWXwvfKTneK6k7HMV4HXj51KzM63yhWco=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=umfVpYwE4XiDyWL8dEt2yo1JMis6pngumarv4ZxNgvohxA0ncOapHILTr2ADJnA1Y
-	 II052msbqiMz3jrhE2WiNsx1h5trLVtbd3trxAOw3ZRY1B3gnJil5L1ICOl/XNe9TT
-	 pYHed4mPQ9GRRJPYgxC0alZ9SaYmF9MG/t8fktfaYH9HryxK9jLH53rz9mURFwJhiD
-	 VE9KZQS8BmJQmCTzt5m9u4UYnFEKmiKZji9HWszPg3fTfl4mfsbSy8OHyHnfdVt5Ky
-	 CDIQteUZudFjkx7iTmfJ4VnAS6hil0pnyvEfqaXHsT1EQbIoThIiwQedzGgepbuTSo
-	 tV7xpgx0LphGQ==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4VlffP05fSz116k;
-	Thu, 23 May 2024 16:19:40 -0400 (EDT)
-Message-ID: <62825712-36bc-483c-9bca-db3d9233b0d2@efficios.com>
-Date: Thu, 23 May 2024 16:20:16 -0400
+	 In-Reply-To:Content-Type; b=Be0zKfGM+ulmBGftPRx/ZuVudR/w8a+k7XbtbyWI96fcPaHYAmYy1ZwClwRLkX6B8dd3cwGdVBSkYRHcgSE9+IBbbDX/gHXiq2aN5Mksp26ZNVrFNIN3rM9KB1lyUW7EMhK3V3mw0OAV1rpTOTXMIQ0d5RqVIfdQHaSkQrzD6RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIYe5b3C; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-681adefa33fso115747a12.3;
+        Thu, 23 May 2024 13:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716495705; x=1717100505; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YLMUv+lcr/QWFTV4u1WTHn7mf8KnhpBd9b1FZrkGgZ0=;
+        b=kIYe5b3CyktUYF/aBoMcxm+VVJt7Dxwuxog8SBPjaveGNt67Ts7iNaIUB6leXHA4z6
+         mJq1ycKflQiH14uHDeUpbsa6FkTOJc/HADqr6osh0ZOsKkluloag3Bo+yrlggchCokHP
+         N5Y1EW4wdabtK5WABURgQnq4ckFAyPxqBbD4mFZIHfSdrP70EYHFQjfQYzcYUhvpnOgd
+         G7G2zC9+HBd05vJAYR3++L6T3tiZRkIcA+fIeWFRqBBXyJgQ1rOYzefWTaLuhKkf9mbQ
+         1RBYOA9W41hFZskS2ncby0U/+f73f8nW67qyKSyZx4EhJeGi8dMFdwC5DJ2gNXPvokNy
+         w0YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716495705; x=1717100505;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YLMUv+lcr/QWFTV4u1WTHn7mf8KnhpBd9b1FZrkGgZ0=;
+        b=DqaOPw7rxyfU5u/cU/ncWZEmuw52CkeH2FO0najvKbfg0pEGLTgj8DG6BMl/IUVTls
+         5LxEuhJXpqpQBnkbYIjcE/U0F/s8leCBT0t0UR3WV2RaZrs/d2+BYdJGgjGVTodpvIsk
+         ar+sKM3C7onb8Zr3q76AR6YQWTFBeHXqyhLrihRkUZUdn+5FQBwyzoBkzyXtdPyZBRmP
+         DTB3bYSefG6XGwsxDrANkm2ZlvCfp+/DzQCdYXufNAMWU+3FhOMDEwu5XkvyMM5Buerd
+         80U6xQ/WVsIwsV+jOMrxOFXa9nKvJwdagpJO5YySjtYox75WRQvE5sTHHlLCCDaZi4Wj
+         87/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBoxFyUP26TggESYGH/WyZu5mGtDEs0PI51fxHt2NmgoozSvjKVDdLXLTKuXakaz9WxvqIUtfWRlpESEKcTzZTMCKB5vQHp/TH3Qx8Na8pp3SgW7KdJK3zd/e0HI7QXuWqkvaF
+X-Gm-Message-State: AOJu0YyvJ/lHGxFTKZwPn0FCUt0gaKeq13NYlaZ/D0pockhbtWA3EKJe
+	phNrvWS1hJYP8mgLrJit7RI87uPIqAa3nxzzxhpuCLKS8hsFiMPo
+X-Google-Smtp-Source: AGHT+IEP+8/4v7Ac4RENllwAWNIDui9pwuOgSmeJ+NMPaISNVgjis+faohHNev+cfODhvoMJ+MS4yg==
+X-Received: by 2002:a17:90a:c082:b0:2b4:329e:e373 with SMTP id 98e67ed59e1d1-2bf5e84a9d7mr284563a91.6.1716495705402;
+        Thu, 23 May 2024 13:21:45 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2bdd9ef2182sm1961359a91.13.2024.05.23.13.21.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 13:21:44 -0700 (PDT)
+Message-ID: <a994f8ce-2c3f-4aa6-b345-bb443b133804@gmail.com>
+Date: Thu, 23 May 2024 13:21:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,163 +75,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] futex: Add FUTEX_SPIN operation
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- "Paul E . McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
- linux-api@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Florian Weimer <fw@deneb.enyo.de>, David.Laight@ACULAB.COM,
- carlos@redhat.com, Peter Oskolkov <posk@posk.io>,
- Alexander Mikhalitsyn <alexander@mihalicyn.com>,
- Chris Kennelly <ckennelly@google.com>, Ingo Molnar <mingo@redhat.com>,
- Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- libc-alpha@sourceware.org, Steven Rostedt <rostedt@goodmis.org>,
- Jonathan Corbet <corbet@lwn.net>, Noah Goldstein <goldstein.w.n@gmail.com>,
- Daniel Colascione <dancol@google.com>, longman@redhat.com,
- kernel-dev@igalia.com
-References: <20240523200704.281514-1-andrealmeid@igalia.com>
- <20240523200704.281514-2-andrealmeid@igalia.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH 6.1 00/45] 6.1.92-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240523130332.496202557@linuxfoundation.org>
 Content-Language: en-US
-In-Reply-To: <20240523200704.281514-2-andrealmeid@igalia.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240523130332.496202557@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2024-05-23 16:07, André Almeida wrote:
-> Add a new mode for futex wait, the futex spin.
+On 5/23/24 06:12, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.92 release.
+> There are 45 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Given the FUTEX2_SPIN flag, parse the futex value as the TID of the lock
-> owner. Then, before going to the normal wait path, spins while the lock
-> owner is running in a different CPU, to avoid the whole context switch
-> operation and to quickly return to userspace. If the lock owner is not
-> running, just sleep as the normal futex wait path.
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
 > 
-> The user value is masked with FUTEX_TID_MASK, to allow some bits for
-> future use.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.92-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> The check for the owner to be running or not is important to avoid
-> spinning for something that won't be released quickly. Userspace is
-> responsible on providing the proper TID, the kernel does a basic check.
+> thanks,
 > 
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
+> greg k-h
 
-[...]
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-> +
-> +static int futex_spin(struct futex_hash_bucket *hb, struct futex_q *q,
-> +		       struct hrtimer_sleeper *timeout, u32 uval)
-> +{
-> +	struct task_struct *p;
-> +	pid_t pid = uval & FUTEX_TID_MASK;
-> +
-> +	p = find_get_task_by_vpid(pid);
-> +
-> +	/* no task found, maybe it already exited */
-> +	if (!p) {
-> +		futex_q_unlock(hb);
-> +		return -EAGAIN;
-> +	}
-> +
-> +	/* can't spin in a kernel task */
-> +	if (unlikely(p->flags & PF_KTHREAD)) {
-> +		put_task_struct(p);
-> +		futex_q_unlock(hb);
-> +		return -EPERM;
-> +	}
-> +
-> +	futex_queue(q, hb);
-> +
-> +	if (timeout)
-> +		hrtimer_sleeper_start_expires(timeout, HRTIMER_MODE_ABS);
-> +
-> +	while (1) {
-
-Infinite loops in other kernel/futex/ files appear to use "for (;;) {"
-instead.
-
-> +		if (likely(!plist_node_empty(&q->list))) {
-> +			if (timeout && !timeout->task)
-> +				goto exit;
-> +
-> +			if (task_on_cpu(p)) {
-> +				/* spin */
-
-You may want to add a "cpu_relax();" here to lessen the
-power consumption of this busy-loop.
-
-> +				continue;
-> +			} else {
-> +				/* task is not running, sleep */
-> +				break;
-> +			}
-> +		} else {
-> +			goto exit;
-> +		}
-> +	}
-> +
-> +	/* spinning didn't work, go to the normal path */
-> +	set_current_state(TASK_INTERRUPTIBLE|TASK_FREEZABLE);
-
-I wonder if flipping the order between:
-
-         set_current_state(TASK_INTERRUPTIBLE|TASK_FREEZABLE);
-         futex_queue(q, hb);
-
-as done in futex_wait_queue() and what is done here matters ?
-Does it introduce a race where a wakeup could be missed ?
-
-If it's an issue, then setting the current state could be done
-before invoking futex_queue(), and whenever the spin exits,
-set it back to TASK_RUNNING.
-
-
-> +
-> +	if (likely(!plist_node_empty(&q->list))) {
-> +		if (!timeout || timeout->task)
-> +			schedule();
-> +	}
-> +
-> +	__set_current_state(TASK_RUNNING);
-> +
-> +exit:
-> +	put_task_struct(p);
-> +	return 0;
-> +}
-> +
->   /**
->    * futex_unqueue_multiple - Remove various futexes from their hash bucket
->    * @v:	   The list of futexes to unqueue
-> @@ -665,8 +732,15 @@ int __futex_wait(u32 __user *uaddr, unsigned int flags, u32 val,
->   	if (ret)
->   		return ret;
->   
-> -	/* futex_queue and wait for wakeup, timeout, or a signal. */
-> -	futex_wait_queue(hb, &q, to);
-> +	if (flags & FLAGS_SPIN) {
-> +		ret = futex_spin(hb, &q, to, val);
-The empty line below could be removed.
-
-Thanks,
-
-Mathieu
-
-> +
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		/* futex_queue and wait for wakeup, timeout, or a signal. */
-> +		futex_wait_queue(hb, &q, to);
-> +	}
->   
->   	/* If we were woken (and unqueued), we succeeded, whatever. */
->   	if (!futex_unqueue(&q))
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Florian
 
 
