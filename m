@@ -1,162 +1,96 @@
-Return-Path: <linux-kernel+bounces-188073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C258CDCDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:25:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2588CDCDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758691C210F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD951F24D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C5812837B;
-	Thu, 23 May 2024 22:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA805128393;
+	Thu, 23 May 2024 22:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jq6eWdjw"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fk5GCNxh"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EB884D1D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719F9823B0
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716503127; cv=none; b=hc3oFHEb3CFnEutm7GDzERAnwVeHlQ5TYSTylC5IV8qs2fhMg8L7vvIqSGzhj7AJOE2Adpu5o+YSt4TuH1nLenj+WZprJNURQhALcxwoBYUF3CM0oLtyyfXL0QRShlzOaFyKQaSWouGLXJiAO4fFKSdVcAGOb7TXLdjw+oDl8IQ=
+	t=1716503248; cv=none; b=lsPUrNM95BxRSOVingExLWLrrPj2odnHbbA0InEWQ3kQMGp32uhfRem/jqcqK/4QP+vldHnkwMI9sTy+I4N5gsAH3dVbgMJVdCKytx5Chwz3k/PpOQTkCD1e834Q1/dtbiZYln4m0azkJUS9KsGNisij0Wvj7T1sCjElUn6spk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716503127; c=relaxed/simple;
-	bh=twa6gKc4Ja8rI61KLX/gmR2tcMYRjGwbQv1wJFVxwtQ=;
+	s=arc-20240116; t=1716503248; c=relaxed/simple;
+	bh=c0mUxdCgsi2KrVeRpxcSZB8MmwArsNnruIBgy6wP7iI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pOmOdxeigwIW4dqwZojxy2wrJ0Qtu+kuCQGSa6hwfBUAbwxfB5+4ob38BqvZ7bvFwWvx2cVOz+bB7RHig/z3Pqr+zFRkVMiRwa4HAOrIhlawaGSVxyCrZNBAyHpVqZXMVsVlGGCxgIMaA2fvO17MUySo6eR8R+3xiWCvs+wcHgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jq6eWdjw; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6a8d467aa23so32550436d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:25:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=dnrQTp79Uc0zvIDwHSTMkYbGb31Nz1fO1Yy14woWZAgnASNOmUO+AH0pHFkrOhMqYr9xSWXVWM0UeogvVGaAUP/qLA/ZVAs+xnF/KN7nUNsRf7dvH0azufQn+CzXnsMQ/uwPZwWjzyfrsLIx57cf44zzN4fWJHZPjjK/7Nw7tMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fk5GCNxh; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41ff3a5af40so12625e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:27:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716503124; x=1717107924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4WULqNW39evuzHzZCXCVZ3XQhyYSJZ/maSvMgmWDC3c=;
-        b=jq6eWdjwiInLk8BKDEM5MKiiwcx4RhHvhGecPWkruHcs9V8YZi+sh64LNt5zVk1WtM
-         OdGnqAT776WPbylKOTBlPolG76/zHX5UVP0FUJp1qd0DaoDTP2XWPclQV+HIlaSb05L6
-         gZm8svTKuGQKCH3irUOhH8U6OxK+BsqgOnLRk=
+        d=google.com; s=20230601; t=1716503245; x=1717108045; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=c0mUxdCgsi2KrVeRpxcSZB8MmwArsNnruIBgy6wP7iI=;
+        b=Fk5GCNxhPiar+UgjNqjnKxi3IrfdHjW+vWX1rl0MwDv2tlTs+VPfAHSQd1NVMLJ/oj
+         WdBIQh9qnx7y55/v7xKhuDVIVtlQB8E7EoJtsOFq8HuCOAZ6n7NK4wOHkFH0FOxN109P
+         sMmfcWa5GWHiOvEv/ub+4QWHvduAa2wQDvMzvrNyXgnNu0GUYRXqiZ+nQqp5I3//awaa
+         Kr6byBq2exfk0RwXSaZEYeMouLmyq1HR8Bq5qMpzRkf7Hkfap1fxczP6PYxOpS89vMB9
+         Fov9woabWfVVxo7QZrjljmf01fb6NERXovNLbGUXP7cLU+A6ImjpOekKQ0qaH5IJLmWe
+         JpHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716503124; x=1717107924;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4WULqNW39evuzHzZCXCVZ3XQhyYSJZ/maSvMgmWDC3c=;
-        b=FmBIF6HJKjqrqXUKadpeyHNENu8qy4R+rCluft/G94HDdCAEUGv6XCuji7H7JKdsMX
-         vvfni1Ashg/T6pAlR7GS0UFPrbxZsFWHzuuyI1r9mFAA0RN+sbysH6sa7QWiEMmbp4LF
-         pOc9DWHPJrf9e6EVYL7NrwDT2m7ZkXi65/TQQLrsMWI8w2g9pI7Axc+2HKsPT901+6DP
-         X9FlpMJTwUeENG7HCuEefhyRMa2lvZRDe8Kp5ntTvnVbXogOY9to8btRhRFYkVnjU9pG
-         vwuGcOJWTwgEiL9qePSovaFuheYB7J5uaOUpEQZEmZ5Brv4+HAwjmZv/aPf72KsxeBQV
-         F97w==
-X-Forwarded-Encrypted: i=1; AJvYcCUv0AtmkhAQWBWlBlADvhxt2OqwSj3dyhSAa1xu2iwecZ+MQWF6qESp1JLq5tt1rfNuiBoloIIx/H3og+xuTakpj0wRt8STGtqjfBwY
-X-Gm-Message-State: AOJu0YwK4nOosPU4WLShTM8fyYsZdvxM1inM7CpaEJIPxHc2Lpt/UevW
-	s0+Wrk5cqlqhxiqeW9wTX+PtLWAmHmAJnfO67vAIyXgTYCXC4E6DQ8IPJUT/44t/BpAMx7vJWTg
-	=
-X-Google-Smtp-Source: AGHT+IFaP9n7c9taJbwlYNU4M22uJroMjqJKQgNg5cYDxldhTkaVoujkwjd0S2Rto22qLlTH47nYgA==
-X-Received: by 2002:a05:6214:3a0a:b0:6aa:4a99:eaba with SMTP id 6a1803df08f44-6abcd18e43dmr4534446d6.55.1716503124495;
-        Thu, 23 May 2024 15:25:24 -0700 (PDT)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb17f348dsm1042261cf.38.2024.05.23.15.25.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 15:25:24 -0700 (PDT)
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-43f87dd6866so117741cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:25:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVTlEv6h0/RaeONx1gl4qEN4c0X293ELexWaMSY599QmjxU6YiuIQIPSUuVOkqUQLa9uvrOEQWpHlftcy/LdHP+/+z0vk9yOYqc+aH9
-X-Received: by 2002:a05:622a:4acd:b0:43e:398a:b0c0 with SMTP id
- d75a77b69052e-43fb0194a6cmr918141cf.12.1716503122909; Thu, 23 May 2024
- 15:25:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716503245; x=1717108045;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c0mUxdCgsi2KrVeRpxcSZB8MmwArsNnruIBgy6wP7iI=;
+        b=PqugD/De6efaJe24uYG1BtNgbE0tnEu516JG8GXfOXP+qC/8x2fRe/GSSBLA6Kchmo
+         7f9KgqSMU3Vy1bR5SE6F/J1UBIjyWZ4A6O1uFQzk4wguofQl0wi4YWpKZKRlwghPHd3l
+         ECfhg9fQkzAiecO0LYjNIWMq1LE/sYloK/X9wfjnpsbk4zyy/gEg/ZDuMxQqECKffHpb
+         129BGbW3GW6IDf/1OXJhrQdblLqPWynm1Cjs4dvNlxhXGUa971iAaVhpedcZD47oH6yA
+         X2Jxj+jhQt9n7srxnc+9LNXzdmhg50U773Ho1CwdZKAyoCr/jT4wiQZC8S+gQbgaM71c
+         6rbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlT4MlckolPtgy8VQr9icdh30g3zdaxob0VS1wY8jLuS+cSJBpeNeDFDG9Eepf7FdFFBqTABOFkdVTalJVpqZSR8awpwH0NKTpZAQi
+X-Gm-Message-State: AOJu0Yx0MvnzKHpORnzY8uhlAVQcEwBiJ8KJmN65nZuww6jrlURLRMJ9
+	MjBPhgt/9f55YdGGqApdum5TwaroZ4dvAy0SNryjLi2LN2DNRPDP9TVKe9NGEQ6AoJwdFVS0ZaJ
+	nzM2/gyQlMl42Ucehm1cWxUwEzt64PHSbzD7C
+X-Google-Smtp-Source: AGHT+IFynCndXxQSRyQxEh3uszYlhUwS4moW4riJN/2gUPi0KmtIvL9iA7r73v9YHUvtIeizmNWwYHzCkJkFOKSr2sg=
+X-Received: by 2002:a05:600c:3d8f:b0:41f:a15d:220a with SMTP id
+ 5b1f17b1804b1-42108625e09mr650055e9.4.1716503244634; Thu, 23 May 2024
+ 15:27:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240318194902.3290795-1-khazhy@google.com> <20240318194902.3290795-2-khazhy@google.com>
- <6bc61553-6c8e-4705-9cbb-8e73d3f8c801@oracle.com>
-In-Reply-To: <6bc61553-6c8e-4705-9cbb-8e73d3f8c801@oracle.com>
-From: Khazhy Kumykov <khazhy@chromium.org>
-Date: Thu, 23 May 2024 15:25:09 -0700
-X-Gmail-Original-Message-ID: <CACGdZYKihs6Zfc9vpN5LrFVwx7+qqxV-cMzsO8=cpXpFYWt6ig@mail.gmail.com>
-Message-ID: <CACGdZYKihs6Zfc9vpN5LrFVwx7+qqxV-cMzsO8=cpXpFYWt6ig@mail.gmail.com>
-Subject: Re: [PATCH 2/2] iscsi_tcp: disallow binding the same connection twice
-To: Mike Christie <michael.christie@oracle.com>
-Cc: Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>, 
-	"James E . J . Bottomley" <jejb@linux.ibm.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
-	open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <CAAzPG9M+KNowPwkoYo+QftrN3u6zdN1cWq0XMvgS8UBEmWt+0g@mail.gmail.com>
+ <20240510060826.44673-1-jtornosm@redhat.com>
+In-Reply-To: <20240510060826.44673-1-jtornosm@redhat.com>
+From: Jeffery Miller <jefferymiller@google.com>
+Date: Thu, 23 May 2024 17:27:12 -0500
+Message-ID: <CAAzPG9MMHoHjR=EAAM9Rgkaih9QjU08tF6d8JrjQ43td=-oAVA@mail.gmail.com>
+Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address
+ before first reading
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, inventor500@vivaldi.net, 
+	jarkko.palviainen@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	stable@vger.kernel.org, vadim.fedorenko@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 19, 2024 at 12:34=E2=80=AFPM Mike Christie
-<michael.christie@oracle.com> wrote:
->
-> On 3/18/24 2:49 PM, Khazhismel Kumykov wrote:
-> > iscsi_sw_tcp_conn_bind does not check or cleanup previously bound
-> > sockets, nor should we allow binding the same connection twice.
-> >
->
-> This looks like a problem for all the iscsi drivers.
->
-> I think you could:
->
-> 1. Add a check for ISCSI_CONN_FLAG_BOUND in iscsi_conn_bind.
-> 2. Have iscsi_sw_tcp_conn_stop do:
->
->         /* stop xmit side */
-> -       iscsi_suspend_tx(conn);
-> +       iscsi_conn_unbind(cls_conn, true);
->
-> to clear the flag when we clean up the conn for relogin.
->
-> 3. Fix up the other iscsi drivers so they call:
->
-> iscsi_conn_unbind(cls_conn, true);
+Hello Jose,
+I can confirm that
+https://lore.kernel.org/netdev/20240510090846.328201-1-jtornosm@redhat.com/
+resolves the up/down link issue for me when applied to my 6.6 kernel.
 
-I took a look, and it seems like the other drivers in-tree all use
-iscsi_conn_unbind already, and iscsi_tcp is the odd one out - only
-supporting stop_conn, and not setting ep_disconnect. Just swapping the
-iscsi_suspend_tx call for iscsi_conn_unbind works, and makes sense to
-me - but makes me wonder why we were using suspend_tx directly in the
-first place.
+Thank you for resolving the issue.
 
-The only other side effects I see are we set the session to failed
-momentarily if we stop the conn while still logging in (iscsi_tcp will
-quickly change this to _TERMINATE or _IN_RECOVERY once we hit the
-stop_conn), which seems OK.
-
-
->
-> in their failure paths so when they fail they clear ISCSI_CONN_FLAG_BOUND=
- and
-> iscsi_conn_bind can be called on the retry.
->
->
->
-> > Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
-> > ---
-> >  drivers/scsi/iscsi_tcp.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/scsi/iscsi_tcp.c b/drivers/scsi/iscsi_tcp.c
-> > index e8ed60b777c6..8cf5dc203a82 100644
-> > --- a/drivers/scsi/iscsi_tcp.c
-> > +++ b/drivers/scsi/iscsi_tcp.c
-> > @@ -716,6 +716,9 @@ iscsi_sw_tcp_conn_bind(struct iscsi_cls_session *cl=
-s_session,
-> >       struct socket *sock;
-> >       int err;
-> >
-> > +     if (tcp_sw_conn->sock)
-> > +             return -EINVAL;
-> > +
-> >       /* lookup for existing socket */
-> >       sock =3D sockfd_lookup((int)transport_eph, &err);
-> >       if (!sock) {
->
+Regards,
+Jeff
 
