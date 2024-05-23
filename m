@@ -1,94 +1,134 @@
-Return-Path: <linux-kernel+bounces-187426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794DF8CD19D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:59:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6C58CD19E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AA741F22A7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7DE81C21A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD1413BC0D;
-	Thu, 23 May 2024 11:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1B213BC3F;
+	Thu, 23 May 2024 11:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oq5Y/6bv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ZVFQaf7E"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B4113BC13;
-	Thu, 23 May 2024 11:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9881913BC0D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716465542; cv=none; b=k72WITAKLDqy8t/F48RUnbxYwV0Qd781idLrtAhPF7x5pxpKgHGojeEZahonP5iNLI+Qfw6Cmo/IYdD+g3lCKbCW/kX4YVNR1K9HW15hA2xFtz438E04o6NUG3vpxMg+x8W6h316uc9et3bhAdlyOcskqCA5L9Vri9fo/ESRuRU=
+	t=1716465563; cv=none; b=Z7BOMCEfUKhmgUmnd2nsApClJHAObPBxUCF+rkoQllAvq6WmyY39D/8R/rbsPFRw5jZBfT9D03cJCiSSJsZRhVV0DqVafr333mqm/sG7PlMvZ3MT/buoacohRHpYa7zgOwrEjRyK4aRxHoAJOox/cy5qqlUvrbAv0EI2DplAHHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716465542; c=relaxed/simple;
-	bh=ovB6iL5IBWmYqxJJOaGrT6tWCnVgJJf3GENQRYszLvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPL2hHnhkj39v7VV4QR4hTE3UKcHOaXQdFeYJQp963IMbk+7zauxM2tRykBnIxKFvgGx+7JrQOS1CdQdebh3wrII/5HWxuIppy+/+v4x0yvxZ0v4bbrlsPklLn/RJCRX8+8ZFa7gfCEjhEg/gPt1JG49y4CJixEuk2cj9UTASJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oq5Y/6bv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E3A6C2BD10;
-	Thu, 23 May 2024 11:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716465541;
-	bh=ovB6iL5IBWmYqxJJOaGrT6tWCnVgJJf3GENQRYszLvg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oq5Y/6bvRjWdw7HFKcnz6DhROjLv61OtHELAPMTdCf/sVtGEfO5SKEr3bek2LxRS2
-	 URyZbxxyAB3t9iethVKZrGuan0nXcyAQ55yPdW5jYNhNwn6IOFFS2qgKikZjUP64km
-	 lPX/nR9U/4GrAu/XRBoguYNjTc/uggApkbzeawUw=
-Date: Thu, 23 May 2024 13:58:59 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: Re: [PATCH 5.4 / 5.10] firmware: arm_scmi: Harden accesses to the
- reset domains
-Message-ID: <2024052351-outward-skinny-c38b@gregkh>
-References: <20240513003837.810709-1-dominique.martinet@atmark-techno.com>
- <ZkHbzRahnQgptrVr@bogus>
+	s=arc-20240116; t=1716465563; c=relaxed/simple;
+	bh=nCYyWaFGLLT7ScHfTFWeiiMhfHnpnv3BAEhybJUG9A4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qSLD8S0hCrgAlQBwlJDRAiaH4mOXoN0GMPFg5/syD8j2Lij5FmOq2Oo8d9QyL79B7q97OvZvHhWFImoyTci00jirESCRo/RozK7kf6OgjmUsp4qOI//FHn4X4WtPRUBG7RWU0ECCPDtAHkcdVaT3uIt0YZshm5ZDsHalXWePtls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ZVFQaf7E; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1716465558;
+	bh=MyKrkfyh6coOYh8JbTipr70bfsFYaSpyWOIp4W1neZs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ZVFQaf7E2zMMMzhb3+1ZMWVsQ8PClWLWieXPc49DYI1gbsc96gPXIaEoNgy1zBuiL
+	 LpqUF+uV07ofe2G1PfOMosiD8+uu3otXR5JROLvcKgNDCUCez/ZAmozlbAyRoDJUGH
+	 +OJLO7wpBv+gExkoaJd9O3KKVaCMw4AxSL7IjdAV45GbClx5m1CVfftaRkQtAlYrC6
+	 szRqm6ZzRDmZKHFeC1L1HUEV6Z9vA4QzRTQM7csJ5jXXSdChkzOk+lDhOGjQOQ9N4C
+	 4/F3hZ9TFP13C8VzsJEgdqLfCLLKFuwIjBqTJBJZww51pStCeiiuXEgUD/4P+eOjEL
+	 qXV7J6NFZnJjg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VlRY25NmDz4wcg;
+	Thu, 23 May 2024 21:59:18 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Masahiro Yamada <masahiroy@kernel.org>, Palmer Dabbelt
+ <palmer@rivosinc.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] RISC-V Patches for the 6.10 Merge Window, Part 1
+In-Reply-To: <CAK7LNASVhbtJ2=72TsCu1C7+uLsXySNffPcNZU2NiFKitM6-Ew@mail.gmail.com>
+References: <mhng-e73e59bf-92fc-4122-9f9e-a329d20eba55@palmer-ri-x1c9>
+ <CAK7LNASVhbtJ2=72TsCu1C7+uLsXySNffPcNZU2NiFKitM6-Ew@mail.gmail.com>
+Date: Thu, 23 May 2024 21:59:15 +1000
+Message-ID: <87ed9s3fjg.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkHbzRahnQgptrVr@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 10:22:21AM +0100, Sudeep Holla wrote:
-> On Mon, May 13, 2024 at 09:38:37AM +0900, Dominique Martinet wrote:
-> > From: Cristian Marussi <cristian.marussi@arm.com>
-> >
-> > [ Upstream commit e9076ffbcaed5da6c182b144ef9f6e24554af268 ]
-> >
-> > Accessing reset domains descriptors by the index upon the SCMI drivers
-> > requests through the SCMI reset operations interface can potentially
-> > lead to out-of-bound violations if the SCMI driver misbehave.
-> >
-> > Add an internal consistency check before any such domains descriptors
-> > accesses.
-> >
-> > Link: https://lore.kernel.org/r/20220817172731.1185305-5-cristian.marussi@arm.com
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
-> > ---
-> > This is the backport I promised for CVE-2022-48655[1]
-> > [1] https://lkml.kernel.org/r/Zj4t4q_w6gqzdvhz@codewreck.org
-> >
-> 
-> The backport looks good and thanks for doing that. Sometimes since we
-> know all the users are in the kernel, we tend to ignore the facts that
-> they need to be backport as this was considered as theoretical issue when
-> we pushed the fix. We try to keep that in mind and add fixes tag more
-> carefully in the future. Thanks for your effort and bring this to our
-> attention.
+Masahiro Yamada <masahiroy@kernel.org> writes:
+> On Thu, May 23, 2024 at 1:13=E2=80=AFAM Palmer Dabbelt <palmer@rivosinc.c=
+om> wrote:
+>>
+>> The following changes since commit 4cece764965020c22cff7665b18a012006359=
+095:
+>>
+>>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+>>
+>> are available in the Git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/ris=
+cv-for-linus-6.10-mw1
+>>
+>> for you to fetch changes up to 92cce91949a497a8a4615f9ba5813b03f7a1f1d5:
+>>
+>>   riscv: defconfig: Enable CONFIG_CLK_SOPHGO_CV1800 (2024-05-13 14:26:34=
+ -0700)
+..
+>>
+>> Masahiro Yamada (2):
+>>       riscv: merge two if-blocks for KBUILD_IMAGE
+>>       export.h: remove include/asm-generic/export.h
+>
+>
+> I am confused.
+>
+>
+> This commit was applied two months ago by myself,
+> and it already existed in the mainline.
+>
+>
+> After this pull request, I do not see no such a commit
+> applied by Palmer.
 
-Now queued up, thanks
+It is in there:
 
-greg k-h
+$ git log --pretty=3Dfuller -1 36d37f11f555812b0ded5d15aa686a6b9da57f61
+commit 36d37f11f555812b0ded5d15aa686a6b9da57f61
+Author:     Masahiro Yamada <masahiroy@kernel.org>
+AuthorDate: Sat Mar 23 18:06:15 2024 +0900
+Commit:     Palmer Dabbelt <palmer@rivosinc.com>
+CommitDate: Wed Mar 27 07:14:19 2024 -0700
+
+    export.h: remove include/asm-generic/export.h
+
+    Commit 3a6dd5f614a1 ("riscv: remove unneeded #include
+    <asm-generic/export.h>") removed the last use of
+    include/asm-generic/export.h.
+
+    This deprecated header can go away.
+
+    Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+    Link: https://lore.kernel.org/r/20240323090615.1244904-1-masahiroy@kern=
+el.org
+    Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+
+Or via:
+
+$ git log --oneline -2 92cce91949a497a8a4615f9ba5813b03f7a1f1d5 origin/mast=
+er -- include/asm-generic/export.h
+0316e4b04e01 export.h: remove include/asm-generic/export.h
+36d37f11f555 export.h: remove include/asm-generic/export.h
+
+cheers
 
