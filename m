@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-187558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF158CD39F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:17:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 857A58CD3B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1092FB21714
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98B91C222E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBFB14A4F1;
-	Thu, 23 May 2024 13:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A1614A4F1;
+	Thu, 23 May 2024 13:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TVsu1lVh"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QVJU7Nmr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6563A13A897;
-	Thu, 23 May 2024 13:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62CC14A62D;
+	Thu, 23 May 2024 13:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470211; cv=none; b=cQp0W8z5Vta4fC8Bm+r1whJ7eslZDyqzwaGqfeypoc0ZkxhPvRqnLZE92G6RZdbMYQPMeM8+YxdiiT/+lGHoQdXHbqVJqK2RwOXc3fjjaRssAJw6uECE4uMd0eGWxroWlJ2uYA3TX0K9N0br/PSlAOIyeklQz7v9wTyBWCKQuJo=
+	t=1716470252; cv=none; b=GDKb1H0j3T7l86619y9FvulhtgGa7xMCAEwa8IgNFr0JVYh7PmXy13yH0TUnkJi/bIAazRHw92Uo48cLSCfw3hT/88hTI7VlfCLJfBeHeAZF3IfODK2P1Yek+ggxVPl1N8wUXaxPxEEqsHtcPeDyfp26Q0r9FcRFwFU1UELtGiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470211; c=relaxed/simple;
-	bh=EvnzBjcmnpVtd570HCf9DX1kYFonpcTI0KodIPfqSrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RCypsbYCyr7m9AmQFnOQLiqCD3O0nWM6re2An+CVVxt1RzHp0AY9BVnyfDv8ZSiO9k7SuwDal0ropur4eKW3E5dodkXeqA5kRfw/vIfX7YFvzrall3QDST0b6YwCbrhgCJhKsK4fDiBc/lMrkamn1Jdpphv2H+O4JRaNrUPVBFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TVsu1lVh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F80C32781;
-	Thu, 23 May 2024 13:16:50 +0000 (UTC)
+	s=arc-20240116; t=1716470252; c=relaxed/simple;
+	bh=/4a/xj7cfRIZDCnPtNaV7cN+oIvMYqd0ViXOU/2Moz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IVXN+XCEX5oIcfkX6Fe5Yy+P5ksYJ7H6O3KcL+p3VEOLByQvYc9Zrc3LPpbFskeqt9wqXabs+vwNOdGZ6UVwyl9jUO39/VOltl5blpkST88/wsQOz9XTvN287ao1MbId4Z+mFv+6RsNXu0J/8Ao6qpRXao0zLGuRYY+0R2R4zpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QVJU7Nmr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F06C2BD10;
+	Thu, 23 May 2024 13:17:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716470211;
-	bh=EvnzBjcmnpVtd570HCf9DX1kYFonpcTI0KodIPfqSrA=;
+	s=korg; t=1716470251;
+	bh=/4a/xj7cfRIZDCnPtNaV7cN+oIvMYqd0ViXOU/2Moz4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=TVsu1lVh6MqJSZNWRPRg49vKnV6g4DLmbwnQbc7ZWM53119Gaaw5WosC5R9WOt1IT
-	 XTJzkRqvvKvdX6Kz6/5FrQ5cAeh4OywYdPa5LyJWgSZZg+L8m5cvQav1uOrPmdIZpj
-	 LemXiaSuXjrF9dW51Iw7qS+g/1QAfkLR0yyXPajQ=
+	b=QVJU7NmrrdI6MAaUJzDIiO8XRmKm+T4mMIvoj6UTrJHXfh6dfpQIjcvRlZQy5xZCT
+	 Y7FNDfTtOum7zzevN7ATi4TQnYH9Xx3TNOl9OuKXpggLXiXN5B9+SUNbB/lnNcn4ht
+	 N4LWp5mAioQ9ejDUKoWxPtH0UxSMzZ8QAPZMkIEI=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	conor@kernel.org,
 	allen.lkml@gmail.com,
 	broonie@kernel.org
-Subject: [PATCH 5.10 00/15] 5.10.218-rc1 review
-Date: Thu, 23 May 2024 15:12:42 +0200
-Message-ID: <20240523130326.451548488@linuxfoundation.org>
+Subject: [PATCH 6.9 00/25] 6.9.2-rc1 review
+Date: Thu, 23 May 2024 15:12:45 +0200
+Message-ID: <20240523130330.386580714@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,16 +69,17 @@ MIME-Version: 1.0
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.218-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.2-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.10.y
+X-KernelTest-Branch: linux-6.9.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.10.218-rc1
+X-KernelTest-Version: 6.9.2-rc1
 X-KernelTest-Deadline: 2024-05-25T13:03+00:00
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 5.10.218 release.
-There are 15 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 6.9.2 release.
+There are 25 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -86,9 +87,9 @@ Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.218-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.2-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
 and the diffstat can be found below.
 
 thanks,
@@ -99,86 +100,125 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.10.218-rc1
+    Linux 6.9.2-rc1
+
+Christoph Hellwig <hch@lst.de>
+    block: add a partscan sysfs attribute for disks
+
+Christoph Hellwig <hch@lst.de>
+    block: add a disk_has_partscan helper
+
+SeongJae Park <sj@kernel.org>
+    Docs/admin-guide/mm/damon/usage: fix wrong schemes effective quota update command
+
+SeongJae Park <sj@kernel.org>
+    Docs/admin-guide/mm/damon/usage: fix wrong example of DAMOS filter matching sysfs file
 
 Akira Yokosawa <akiyks@gmail.com>
     docs: kernel_include.py: Cope with docutils 0.21
 
+Thomas Weißschuh <linux@weissschuh.net>
+    admin-guide/hw-vuln/core-scheduling: fix return type of PR_SCHED_CORE_GET
+
+Jarkko Sakkinen <jarkko@kernel.org>
+    KEYS: trusted: Do not use WARN when encode fails
+
+Hans Verkuil <hverkuil-cisco@xs4all.nl>
+    Revert "media: v4l2-ctrls: show all owned controls in log_status"
+
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+    remoteproc: mediatek: Make sure IPI buffer fits in L2TCM
+
 Daniel Thompson <daniel.thompson@linaro.org>
     serial: kgdboc: Fix NMI-safety problems from keyboard reset code
+
+Javier Carrasco <javier.carrasco@wolfvision.net>
+    usb: typec: tipd: fix event checking for tps6598x
+
+Javier Carrasco <javier.carrasco@wolfvision.net>
+    usb: typec: tipd: fix event checking for tps25750
 
 Heikki Krogerus <heikki.krogerus@linux.intel.com>
     usb: typec: ucsi: displayport: Fix potential deadlock
 
-Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
-    drm/amdgpu: Fix possible NULL dereference in amdgpu_ras_query_error_status_helper()
+Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+    net: usb: ax88179_178a: fix link status when link is set to down/up
 
-Dominique Martinet <dominique.martinet@atmark-techno.com>
-    btrfs: add missing mutex_unlock in btrfs_relocate_sys_chunks()
+Prashanth K <quic_prashk@quicinc.com>
+    usb: dwc3: Wait unconditionally after issuing EndXfer command
 
-Paolo Abeni <pabeni@redhat.com>
-    mptcp: ensure snd_nxt is properly initialized on connect
+Carlos Llamas <cmllamas@google.com>
+    binder: fix max_thread type inconsistency
 
-Cristian Marussi <cristian.marussi@arm.com>
-    firmware: arm_scmi: Harden accesses to the reset domains
+Bard Liao <yung-chuan.liao@linux.intel.com>
+    ASoC: Intel: sof_sdw: use generic rtd_init function for Realtek SDW DMICs
 
-Sean Christopherson <seanjc@google.com>
-    KVM: x86: Clear "has_error_code", not "error_code", for RM exception injection
+Jarkko Sakkinen <jarkko@kernel.org>
+    KEYS: trusted: Fix memory leak in tpm2_key_encode()
 
-Eric Dumazet <edumazet@google.com>
-    netlink: annotate lockless accesses to nlk->max_recvmsg_len
+Sungwoo Kim <iam@sung-woo.kim>
+    Bluetooth: L2CAP: Fix div-by-zero in l2cap_le_flowctl_init()
 
-liqiong <liqiong@nfschina.com>
-    ima: fix deadlock when traversing "ima_default_rules".
+Uros Bizjak <ubizjak@gmail.com>
+    x86/percpu: Use __force to cast from __percpu address space
 
-Doug Berger <opendmb@gmail.com>
-    net: bcmgenet: synchronize UMAC_CMD access
+Ronald Wahl <ronald.wahl@raritan.com>
+    net: ks8851: Fix another TX stall caused by wrong ISR flag handling
 
-Doug Berger <opendmb@gmail.com>
-    net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access
+Jose Fernandez <josef@netflix.com>
+    drm/amd/display: Fix division by zero in setup_dsc_config
 
-Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-    Revert "selftests: mm: fix map_hugetlb failure on 64K page size systems"
+Perry Yuan <perry.yuan@amd.com>
+    cpufreq: amd-pstate: fix the highest frequency issue which limits performance
 
-Juergen Gross <jgross@suse.com>
-    x86/xen: Drop USERGS_SYSRET64 paravirt call
+Ben Greear <greearb@candelatech.com>
+    wifi: iwlwifi: Use request_module_nowait
 
-Sergey Shtylyov <s.shtylyov@omp.ru>
-    pinctrl: core: handle radix_tree_insert() errors in pinctrl_register_one_pin()
+Peter Tsao <peter.tsao@mediatek.com>
+    Bluetooth: btusb: Fix the patch for MT7920 the affected to MT7921
 
 
 -------------
 
 Diffstat:
 
+ Documentation/ABI/stable/sysfs-block               | 10 +++
+ .../admin-guide/hw-vuln/core-scheduling.rst        |  4 +-
+ Documentation/admin-guide/mm/damon/usage.rst       |  6 +-
  Documentation/sphinx/kernel_include.py             |  1 -
- Makefile                                           |  4 +--
- arch/x86/entry/entry_64.S                          | 17 ++++++------
- arch/x86/include/asm/irqflags.h                    |  7 -----
- arch/x86/include/asm/paravirt.h                    |  5 ----
- arch/x86/include/asm/paravirt_types.h              |  8 ------
- arch/x86/kernel/asm-offsets_64.c                   |  2 --
- arch/x86/kernel/paravirt.c                         |  5 +---
- arch/x86/kernel/paravirt_patch.c                   |  4 ---
- arch/x86/kvm/x86.c                                 | 11 ++++++--
- arch/x86/xen/enlighten_pv.c                        |  1 -
- arch/x86/xen/xen-asm.S                             | 21 ---------------
- arch/x86/xen/xen-ops.h                             |  2 --
- drivers/firmware/arm_scmi/reset.c                  |  6 ++++-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c            |  3 +++
- drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 12 ++++++++-
- drivers/net/ethernet/broadcom/genet/bcmgenet.h     |  2 ++
- drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |  6 +++++
- drivers/net/ethernet/broadcom/genet/bcmmii.c       |  4 +++
- drivers/pinctrl/core.c                             | 14 +++++++---
- drivers/tty/serial/kgdboc.c                        | 30 +++++++++++++++++++++-
- drivers/usb/typec/ucsi/displayport.c               |  4 ---
- fs/btrfs/volumes.c                                 |  1 +
- net/mptcp/protocol.c                               |  2 ++
- net/netlink/af_netlink.c                           | 15 ++++++-----
- security/integrity/ima/ima_policy.c                | 29 ++++++++++++++-------
- tools/testing/selftests/vm/map_hugetlb.c           |  7 -----
- 27 files changed, 123 insertions(+), 100 deletions(-)
+ Makefile                                           |  4 +-
+ arch/x86/include/asm/percpu.h                      |  6 +-
+ block/genhd.c                                      | 15 +++--
+ block/partitions/core.c                            |  5 +-
+ drivers/android/binder.c                           |  2 +-
+ drivers/android/binder_internal.h                  |  2 +-
+ drivers/bluetooth/btusb.c                          |  1 +
+ drivers/cpufreq/amd-pstate.c                       | 22 ++++++-
+ drivers/gpu/drm/amd/display/dc/dsc/dc_dsc.c        |  7 +-
+ drivers/media/v4l2-core/v4l2-ctrls-core.c          | 18 ++----
+ drivers/net/ethernet/micrel/ks8851_common.c        | 18 +-----
+ drivers/net/usb/ax88179_178a.c                     | 37 +++++++----
+ drivers/net/wireless/intel/iwlwifi/iwl-drv.c       | 10 +--
+ drivers/remoteproc/mtk_scp.c                       | 10 ++-
+ drivers/tty/serial/kgdboc.c                        | 30 ++++++++-
+ drivers/usb/dwc3/gadget.c                          |  4 +-
+ drivers/usb/typec/tipd/core.c                      | 51 ++++++++++-----
+ drivers/usb/typec/tipd/tps6598x.h                  | 11 ++++
+ drivers/usb/typec/ucsi/displayport.c               |  4 --
+ include/linux/blkdev.h                             | 13 ++++
+ include/net/bluetooth/hci.h                        |  9 +++
+ include/net/bluetooth/hci_core.h                   |  1 +
+ net/bluetooth/hci_conn.c                           | 75 +++++++++++++++-------
+ net/bluetooth/hci_event.c                          | 31 +++++----
+ net/bluetooth/iso.c                                |  2 +-
+ net/bluetooth/l2cap_core.c                         | 17 +----
+ net/bluetooth/sco.c                                |  6 +-
+ security/keys/trusted-keys/trusted_tpm2.c          | 25 ++++++--
+ sound/soc/intel/boards/Makefile                    |  1 +
+ sound/soc/intel/boards/sof_sdw.c                   | 12 ++--
+ sound/soc/intel/boards/sof_sdw_common.h            |  1 +
+ sound/soc/intel/boards/sof_sdw_rt_dmic.c           | 52 +++++++++++++++
+ 36 files changed, 357 insertions(+), 166 deletions(-)
 
 
 
