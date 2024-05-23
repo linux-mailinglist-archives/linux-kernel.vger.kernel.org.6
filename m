@@ -1,200 +1,359 @@
-Return-Path: <linux-kernel+bounces-187822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4828CD901
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE1E8CD903
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E128B1C212FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:09:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 677121C21585
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F91B6EB73;
-	Thu, 23 May 2024 17:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A24B7D086;
+	Thu, 23 May 2024 17:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="LCqnKpui"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11020003.outbound.protection.outlook.com [40.93.193.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K6HQUfdG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC676EB60
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.193.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716484125; cv=fail; b=SlrQZaFVcQ3oqyHsMDQNoYNN1ubSHuQLSipcC6u4itCm5LtEjCRc8vx/D8N2jy7l7qHQkRyRnyjk6ig0dkV3lf55aldrzgpJvz1+5HIMyP0qyfYCQmudI7IdreyUXEbqdjuxyEGLPR9fdkvhZwEawrzJ50uiUUfyk16o1L43Zpw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716484125; c=relaxed/simple;
-	bh=vJoLWyIT2VteW10SnSBLbRekKxzCFn2xyVB/EeuSN1w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ikaB0mQtlz8y61jMpZM8yzbLjYhQHGJ642gi1qiRiKDSxHN73Z8g4IFb0iHo1cE2IzqafLKgbs2fo5CX5rQO+gdacllXBj92q7jzHb/8juyDliIfXbwlgJBxUVHv5sUZ+8IDDzUseHi1UnR42GRo6Fi05yrYcGLLOZQ3K8JYWyU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=LCqnKpui; arc=fail smtp.client-ip=40.93.193.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j1zUFTEMzXV5GXfMMeohny63KjvxBBu8bOHqp31yvCYKMBcpwJZid7X/QLz4dkUv+UgHHIa91M0ulWe0RvVH+kr/hxJE/bTLZ0liylHmaIiHadTtrLYWqWyBe2i4KhM48EpH7RKyaCRi6GYneKUoMhcw25jhvoegAhRLFo/3vRrFPWvqCUaeyoh19eZGkUh33+MZC8n/oULIsnkoJKG4Xl+XaCwQFsI2D4LDgbTxQzdT556FrpOCKvbUccqF3O+rO7UiEEvDN0rFam7HkQXMtc45kbWG4NyyZGttM9u4IhgynXcIcHA7VMDlwkP/XqDhauskt3H4LzCtNoaWTAWfPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eUsfgpLLUPEmsslQestXQQ/CTiH6WXhBDlRIbHnv7P8=;
- b=mh294Y/cwhptOerOYHAKyim6f/x+qFb3llBLQk0DbOf9x4A76dne+85ouTgQ8iW8DRRH1rcTK87sPMcc2qASbSaPRzBeoZATEnTtpVIZ9cHMdjKLlV5EToqN500mKnWE2TLsWdalyUVpQ630jArP58fKx2lMhi6OMMiobOh1t3e128RCkwmhWW3HzPOSYPgzUn0MVeyq9QnfrDTvI0BbjKq62l8cO7f5pY/RUDxEo2GJlG8N38enOeF3XWiFOuIjT/HYCScL8n2P338kSfCJE01VuBJIwvx8YrSKXlDFOdF7e1j+x1i2UBs9imJYaYyy5Cxx+lLFyVV6+PyuKgG4Pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eUsfgpLLUPEmsslQestXQQ/CTiH6WXhBDlRIbHnv7P8=;
- b=LCqnKpuiCtyvLLxBKghlq320VMIpPwJY5/6o8IRPqX4Vle8LcPmec9eYDJbpNrKfrBYoirwcoAdhpkVnAGZ4011fJzZpCt1R2q1u9wC9N0SrDazD7n5UD9JQmUcxchp9gKqtB2JvR0bwfdWxrel63Te32Xxquiz6z21ETmqSLxQ=
-Received: from DS0PR21MB3863.namprd21.prod.outlook.com (2603:10b6:8:122::11)
- by DS1PR21MB4178.namprd21.prod.outlook.com (2603:10b6:8:1e0::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.9; Thu, 23 May
- 2024 17:08:41 +0000
-Received: from DS0PR21MB3863.namprd21.prod.outlook.com
- ([fe80::b7d2:74d2:a9a6:4a6e]) by DS0PR21MB3863.namprd21.prod.outlook.com
- ([fe80::b7d2:74d2:a9a6:4a6e%4]) with mapi id 15.20.7633.001; Thu, 23 May 2024
- 17:08:40 +0000
-From: Chris Oo <cho@microsoft.com>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Kuppuswamy
- Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dexuan Cui
-	<decui@microsoft.com>, John Starks <John.Starks@microsoft.com>
-Subject: RE: [EXTERNAL] Re: [PATCH] x86/tdx: Generate SIGBUS on userspace MMIO
-Thread-Topic: [EXTERNAL] Re: [PATCH] x86/tdx: Generate SIGBUS on userspace
- MMIO
-Thread-Index: AQHaq4POpB86nlvWk0KLe74GGBU5r7GknPgAgABzPFA=
-Date: Thu, 23 May 2024 17:08:40 +0000
-Message-ID:
- <DS0PR21MB38631CD53B4355E576DAE385A5F42@DS0PR21MB3863.namprd21.prod.outlook.com>
-References: <20240521073505.2190633-1-kirill.shutemov@linux.intel.com>
- <38dec9ee-1dde-4b3b-87c7-a65161d4a015@linux.intel.com>
- <ngl63zhudmeskbcga3i3hsdtensd7bfoztnsiu7yj7pxbyzx47@tj5szegw6qrd>
-In-Reply-To: <ngl63zhudmeskbcga3i3hsdtensd7bfoztnsiu7yj7pxbyzx47@tj5szegw6qrd>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=5afe96b0-bb71-442f-ad91-fd850a5f2341;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-05-23T17:06:56Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR21MB3863:EE_|DS1PR21MB4178:EE_
-x-ms-office365-filtering-correlation-id: 351d6079-e579-4306-1d65-08dc7b4afe43
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|376005|7416005|366007|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?EESlB1VVclyLV184ek7bmCvd+TTaRXmvUuuP2TXC+lTi2hx46YNjeYguMZom?=
- =?us-ascii?Q?/60EiisccQlsdJiQZAz9xXF3eiklWtPhOhw2ZakSXWFb5wjhI7R/DWXpbRGY?=
- =?us-ascii?Q?OBNGxNpSdBW/BZvkc1tl9mt8siykgtqyHFvhgTF0r55jeVUtJcB3JPTgS7RO?=
- =?us-ascii?Q?6doprKCvxRrXoFGYbIHGpP8xueohmN3ltt8TGa364nX14IOoL6aSfBRjjOBT?=
- =?us-ascii?Q?liPLGWh2oXV0Vik9GRy65c/WBGc2dTR77VPZaDVYgjUacn2f0cWuN3V8nrdo?=
- =?us-ascii?Q?IC0ivg5Wm5URdAlZEG60kt/nFv0hGF7T6VRlhHpCUAC6BYzPre+w4RCqw294?=
- =?us-ascii?Q?Z3X+TRbsC5H6z3RGNzuUeKKJ2tmVTZ2wajZ9QLRwkWsos0pYC0HY6bZe3gjX?=
- =?us-ascii?Q?Ci177/WoAjprTRatzHChqdR1EiY1qJuYMZgztrEevRJABawgkxPEma3YzlDi?=
- =?us-ascii?Q?ZRhwqJTWZvWFyDPg0F/MH4moZzXaPjsEuYVooIXWNvfpBZEXMVoPgYBSwjTl?=
- =?us-ascii?Q?XR0mh31GatOW1QzQVqafT+te6qAk81JXUT9+pXwz2xehKLcwOKW+cJxR3s9L?=
- =?us-ascii?Q?qHvSz2VBi4lmOizR8d7zIgx0jGRTrIIWiIn051ku9Sj8AZs/AggRByh6988C?=
- =?us-ascii?Q?09714jd3O5m5trQWKqVUsXqi1JIMOR+JfsAdURhosMVbxTt1yVgw5qSfR9/o?=
- =?us-ascii?Q?IlBHnvGWTXwSZxWkcBo5SONDFvxxQLbxNDlfoa9ZKoVo4ljY6HSpCK8qIfJX?=
- =?us-ascii?Q?avF1xWNkSrl5RcmLzamqbeNIWHsyN5B9V5Q6KM5yXrYbXA7qtJAEf6+k41/n?=
- =?us-ascii?Q?4vjFZXBh3kw7ZJoIQbZaEIQ/iST/MWWLL0I8aVxGdW72/5NjN7prgi0QWRmV?=
- =?us-ascii?Q?J9MPbfdRen/z1ECnrC9+rOcxBwFxAXLjlqQYS3Wv9X5j7yf0mhEdDRA02Cqb?=
- =?us-ascii?Q?+N+hC2EnD1Z/WwBNtK7N+tEWS/TuAaJhGEBkvT6FMgCtKiKP589xNCYKoc2I?=
- =?us-ascii?Q?TzvnrupXi7TjRnmNmx2az3X778ij1ZhOtcMnIRVIIZSh8RVGpWtaPPuXqIxL?=
- =?us-ascii?Q?L3bXoYkv9/mCItj/JDlfOfOcZ8rlXPuV2CRjRj7o78MSWGYylTR4fz/R3ScZ?=
- =?us-ascii?Q?k8F8ORGu1RTihlM+rdP3rT0Qk/G5Zc59BxV3eJdCVkZOrwMIPl7Hu/RGFOW8?=
- =?us-ascii?Q?4qJIyGHz7AR2gj82Fq44MRf6F8Hgm584qbQPpF1H3XGcQ8c3dnqkT//kj+Tj?=
- =?us-ascii?Q?cWQMHEny592bcS7r4RpRQ+twgzHLJxmLybTGVzxZNgf+sXfgUzbkmJcjh9FE?=
- =?us-ascii?Q?w91F6TI8+4QJuLpmU5o8OA9I?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR21MB3863.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?joXxTpnkjZ196Qy6RQHBEKpsF2sZTR5B4kXMs/c7/GK0T3iPoJVssn4/Y2fu?=
- =?us-ascii?Q?9Bf0MaM6Xz686aA3pKX+rknols7xyz561UxaOpFpBU0cwFH5s6cqUeMgGCVQ?=
- =?us-ascii?Q?SrSteSx8XgHfiMgVH0JJxblGYdAt/oOdT9RQp1hUrLiKswzMfaN4s/Ivfqcs?=
- =?us-ascii?Q?BYt1Qj/CVqyR4HkfmQwr4zFnN+rXNCY8Kx3NNOuvMw2sOqr3rXK1mVGSWfsZ?=
- =?us-ascii?Q?YHuujqDRts3v551SNQZlwF6UX6JbZSmMp+yRTvWpJayWKThbIH1j2NDTKitI?=
- =?us-ascii?Q?qDBoQMbJQ+YlcGwlM7nfTHHNBgiiVp5ggxYJkSu7q0xhrPH52D0hngvNBOub?=
- =?us-ascii?Q?eYig5veGiZgOD/Xvca/Xut7VWANzRDEM3vmh34f920WcBcQDLJBawmenedib?=
- =?us-ascii?Q?3RQ7jSpXDLC2ox3IFQvFjOF/43HtexM41HxSv2PIsbce8sHEVqn+4358qBAk?=
- =?us-ascii?Q?CX29sHrsIqpLoUizQIk+6+E3CEM3vxFv8KW9tf9Q08hijt+xZDYLopVwidJI?=
- =?us-ascii?Q?0jm0KdjS67y9OJpugTbc6WMSO8RppO2A3KV3E9E/QbRNyt0+VmIwg6H9SYfQ?=
- =?us-ascii?Q?6JwRTVT/iCmoieO74rqbQ6GNooxghyzQNbk/8CUBmlS/+1EiodLntveTKrHd?=
- =?us-ascii?Q?L7FC4oGbODE5m4S6+pvzI1Q8InrDQ4u5bAw7IeAPoYc0dfOy2HzZ1icwgmfd?=
- =?us-ascii?Q?SXHI/nxcKCHL49P7BOc7lHeupHQLWCeq5xPVRtEwGvyB1iq6K/OtpoNhnafq?=
- =?us-ascii?Q?NsDYxlNV2pYrDf5h1YARfGMgBAHvdyVpRlrxIK1AhzrAmcX5vzuWNNnQdPlM?=
- =?us-ascii?Q?/Sc4ledMhKdMDCO0pPACjuJrARBEXhzcFSEfrJQwdZ1HKQf0psKrra6kO3TR?=
- =?us-ascii?Q?NgjJ84Zqpa+A0XCKSM5h51lc3tYNZTyrHl6v+uCws92SxtmD+JLanPaOQKTj?=
- =?us-ascii?Q?Ool35rCP97hVEjcgjDuOBwL4VoZGS9Aq8Xoj+raOcT931PTV5q+rupr9pGaf?=
- =?us-ascii?Q?19fHGt2qYY6NwittcqjGJ/nDsNTWvexFB7AIphg3Ee8CuRfzH3HTKYUmVwWt?=
- =?us-ascii?Q?4YJiUcURXpEHqUPCQV6tWGJEDkNl2Jj0BrVPLe3G1bnbSEzK68oQe+07B+Bp?=
- =?us-ascii?Q?h5VHfebevtVYssLAm+Vsv02p9Dn3N/zn7tANBAKHkBHIM+uIm2E2AJ76irH/?=
- =?us-ascii?Q?Kg3y3Y7T03rjVqkoWDaXn/N2oV/ZYhDUzM0UB5w8DSfrNYStRQ6V3ykMv/XC?=
- =?us-ascii?Q?1XIfV+1hwsHkfHvz0qxzCR4te1U2xf0OdfVS4qNk+aHgvNTMhdpR4mpTnz+R?=
- =?us-ascii?Q?DJ+vMEtrd+Xv/JFl+oT0UgMNJ8AuGUIGc7DWQ4DQbcd5FFQZiqaP13+kNMW/?=
- =?us-ascii?Q?qbl3L5ArNp3P4hVdOZtywOGYCojYzhcAdDPPQyDmQc6tmQ1fU3gxKjoYyunN?=
- =?us-ascii?Q?CDfq7rELW3oviaCXfyc/JBAXNDtHwkZTb/Lej4MxKQrNN7jnOVq1LCSCcvFQ?=
- =?us-ascii?Q?WyldfNQTZv4A3d3hySHKDEkP0M8SrKmChxtLpKzWyKGvVfvFA27vm/XLMFnd?=
- =?us-ascii?Q?t8Ut20kq8AMXqw+vrUA=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C97AD2C;
+	Thu, 23 May 2024 17:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716484197; cv=none; b=IN+jxJ+t0mOByz7ZyJa/mlfR+PQfOB1fBs1Z16OomxZtnaaGYhbzENlvEeWb3KrfyNizgCze6zFv6KUaMk2cww15RvuYemKqCrKtGyzpTDegfbvAoY6zDlKApMfZd+JxNyp4Q6OM4VfgsGF93yzh1uOLybP++etVSVOlGHMyfqo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716484197; c=relaxed/simple;
+	bh=5yWPOER3Cws9HMq0dWVLRKmFRFwVmYgXF2Os7cck9k0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZaonQBFpTTSuaqnThtylGOu9TukwQZVuiUFa7JQL8XvI/abTnP1qa+T2+t3FCavy0dKeDnW5j5Fsak2XcKjOIRGgBJ81R/s9UsIane6Tsdwl+g8cW/WLEFGb5GeHkoUhA876XTiwijCv4IzD/hr1jIkjHVl7RBUcuwe53yQ7+Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K6HQUfdG; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716484195; x=1748020195;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5yWPOER3Cws9HMq0dWVLRKmFRFwVmYgXF2Os7cck9k0=;
+  b=K6HQUfdGRTsygQOvQcGeMzpZyKK05cQCX474b+1CtBjhpBgBO2IB6epi
+   jqpSDcuMja92y1ohs9tP+V5NbxSvKG7ZjRtk0qvY9XfqRF+A4FbYdmfK9
+   av+DoQuYvJLtLcetedBmdjl0wl+atfFpkuJBeSX1HvHQWA1JCuQPaQ2dO
+   smv36ejc1rhtB//yn3/6+gnSy1s6V5WMiaPSc6pwdhHJYyMa6KbRgHCmg
+   KMNzOv1k9nrVlbTnbGfnjgEP59mjmJXJqu0zxHdLqa9GId2Ll8FOyQDoC
+   milM/m/59h3Cbbaqqp/VIfoEc9W4MLjHcujEXL4CTEWVQfWbN5jcjXyhS
+   g==;
+X-CSE-ConnectionGUID: bUE0vLkxS7C042ipX4kPGA==
+X-CSE-MsgGUID: gEkjfxoTTDCltfQnlps4DQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12939928"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="12939928"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 10:09:55 -0700
+X-CSE-ConnectionGUID: cz2rOkgPSue8AI23o4IG0g==
+X-CSE-MsgGUID: P7gmAOPHTCuWLxT8MJCdtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="56976048"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.38])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 10:09:49 -0700
+Message-ID: <81adac4f-edc5-4e3d-8c74-68a33183c3e3@intel.com>
+Date: Thu, 23 May 2024 20:09:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR21MB3863.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 351d6079-e579-4306-1d65-08dc7b4afe43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2024 17:08:40.3096
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wy+OCTvfZjjtREqFC0uglRYtij/4uQewg5az9SNkNZ2pB57W9UirsjfQRIYRZ3zHfzOXCPAN2ZgCakx5siQCug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR21MB4178
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V16 23/23] mmc: sdhci-pci-gli: enable UHS-II mode for
+ GL9767
+To: Victor Shih <victorshihgli@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
+ Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org,
+ dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
+References: <20240522110909.10060-1-victorshihgli@gmail.com>
+ <20240522110909.10060-24-victorshihgli@gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240522110909.10060-24-victorshihgli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-We use this to handle MMIO issued by userspace that the kernel does not han=
-dle in a #VE, for devices assigned to a TDX VM.=20
+On 22/05/24 14:09, Victor Shih wrote:
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> 
+> Changes are:
+>  * Enable the internal clock when do reset on UHS-II mode.
+>  * Increase timeout value before detecting UHS-II interface.
+>  * Add vendor settings for UHS-II mode.
+> 
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> ---
+> 
+> Updates in V15:
+>  - Add gl9767 to support uhs2 function.
+> 
+> ---
+> 
+>  drivers/mmc/host/sdhci-pci-gli.c | 152 ++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci-uhs2.c    |   3 +-
+>  drivers/mmc/host/sdhci-uhs2.h    |   1 +
+>  3 files changed, 153 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
+> index 5df6be758b06..20f19cec6e64 100644
+> --- a/drivers/mmc/host/sdhci-pci-gli.c
+> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> @@ -210,6 +210,10 @@
+>  #define   PCIE_GLI_9767_SCR_CORE_PWR_D3_OFF		  BIT(21)
+>  #define   PCIE_GLI_9767_SCR_CFG_RST_DATA_LINK_DOWN	  BIT(30)
+>  
+> +#define PCIE_GLI_9767_UHS2_PHY_SET_REG1				0x90C
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR		  GENMASK(31, 29)
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE	  0x3
+> +
+>  #define PCIE_GLI_9767_SDHC_CAP			0x91C
+>  #define   PCIE_GLI_9767_SDHC_CAP_SDEI_RESULT	  BIT(5)
+>  
+> @@ -228,9 +232,15 @@
+>  #define   PCIE_GLI_9767_SD_EXPRESS_CTL_SD_EXPRESS_MODE	  BIT(1)
+>  
+>  #define PCIE_GLI_9767_SD_DATA_MULTI_CTL				0x944
+> +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2		  BIT(5)
+> +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL	  BIT(8)
+>  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME	  GENMASK(23, 16)
+>  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME_VALUE	  0x64
+>  
+> +#define PCIE_GLI_9767_UHS2_PHY_SET_REG2					0x948
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING		  GENMASK(22, 21)
+> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE		  0x0
+> +
+>  #define PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2			0x950
+>  #define   PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2_SDEI_COMPLETE	  BIT(0)
+>  
+> @@ -240,6 +250,28 @@
+>  #define PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2				0x958
+>  #define   PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2_SDEI_COMPLETE_SIGNAL_EN	  BIT(0)
+>  
+> +#define PCIE_GLI_9767_UHS2_CTL1				0x95C
+> +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS		  BIT(5)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE	  0x1
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL		  BIT(6)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE	  0x1
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN		  GENMASK(10, 7)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE	  0x3
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV		  GENMASK(14, 11)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE	  0xf
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS		  GENMASK(16, 15)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE	  0x3
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV		  GENMASK(18, 17)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE	  0x0
+> +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST			  BIT(25)
+> +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE		  0x1
+> +
+> +#define PCIE_GLI_9767_UHS2_CTL2			0x964
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC		  GENMASK(3, 0)
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE	  0xb
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL	  BIT(6)
+> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE	  0x1
+> +
+>  #define GLI_MAX_TUNING_LOOP 40
+>  
+>  /* Genesys Logic chipset */
+> @@ -1198,8 +1230,35 @@ static void gl9767_hw_setting(struct sdhci_pci_slot *slot)
+>  
+>  static void sdhci_gl9767_reset(struct sdhci_host *host, u8 mask)
+>  {
+> -	sdhci_reset(host, mask);
+> -	gli_set_9767(host);
+> +	u16 clk_ctrl;
+> +	u16 ctrl2;
+> +
+> +	if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
+> +		/* need internal clock */
+> +		if (mask & SDHCI_RESET_ALL) {
+> +			ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +			clk_ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +
+> +			if ((ctrl2 & SDHCI_CTRL_V4_MODE) && (ctrl2 & SDHCI_CTRL_UHS2_ENABLE)) {
+> +				sdhci_writew(host, SDHCI_CLOCK_INT_EN, SDHCI_CLOCK_CONTROL);
+> +			} else {
+> +				sdhci_writew(host, SDHCI_CLOCK_INT_EN, SDHCI_CLOCK_CONTROL);
+> +				sdhci_wait_clock_stable(host);
+> +				sdhci_writew(host, SDHCI_CTRL_V4_MODE, SDHCI_HOST_CONTROL2);
+> +			}
+> +		}
+> +		if ((mask & SDHCI_RESET_CMD) | (mask & SDHCI_RESET_DATA))
+> +			sdhci_gli_uhs2_reset_sd_tran(host);
+> +
+> +		sdhci_uhs2_reset(host, mask);
+> +		gli_set_9767(host);
+> +	} else {
+> +		sdhci_reset(host, mask);
+> +		gli_set_9767(host);
+> +	}
+>  }
+>  
+>  static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
+> @@ -1289,6 +1348,87 @@ static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	return 0;
+>  }
+>  
+> +static void gl9767_vendor_init(struct sdhci_host *host)
+> +{
+> +	struct sdhci_pci_slot *slot = sdhci_priv(host);
+> +	struct pci_dev *pdev = slot->chip->pdev;
+> +	u32 value;
+> +
+> +	gl9767_vhs_write(pdev);
+> +
+> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, &value);
+> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR,
+> +			    PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE);
+> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, value);
+> +
+> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, &value);
+> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING,
+> +			    PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE);
+> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, value);
+> +
+> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, &value);
+> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS,
+> +			    PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE) |
+> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL,
+> +			    PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE) |
+> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN,
+> +			    PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE) |
+> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV,
+> +			    PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE) |
+> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS,
+> +			    PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE) |
+> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_RECV,
+> +			    PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE) |
+> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_PDRST,
+> +			    PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE);
+> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, value);
+> +
+> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
+> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC,
+> +			    PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE) |
+> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC_CTL,
+> +			    PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE);
+> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
+> +
+> +	gl9767_vhs_read(pdev);
+> +}
+> +
+> +static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned char mode,	unsigned short vdd)
+> +{
+> +	struct sdhci_pci_slot *slot = sdhci_priv(host);
+> +	struct pci_dev *pdev;
+> +	u32 value;
+> +
+> +	pdev = slot->chip->pdev;
+> +
+> +	if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
+> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
+> +		gl9767_vhs_write(pdev);
+> +
+> +		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
+> +		value |= PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
+> +			 PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL;
+> +		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
+> +
+> +		gl9767_vhs_read(pdev);
+> +
+> +		sdhci_uhs2_set_power(host, mode, vdd);
+> +	} else {
+> +		gl9767_vhs_write(pdev);
+> +
+> +		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
+> +		value &= ~(PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
+> +			   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL);
+> +		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
+> +
+> +		gl9767_vhs_read(pdev);
+> +
+> +		sdhci_set_power(host, mode, vdd);
+> +	}
+> +}
+> +
+>  static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
+>  {
+>  	struct sdhci_host *host = slot->host;
+> @@ -1325,6 +1465,7 @@ static int gli_probe_slot_gl9767(struct sdhci_pci_slot *slot)
+>  	host->mmc->caps2 |= MMC_CAP2_SD_EXP;
+>  	host->mmc_host_ops.init_sd_express = gl9767_init_sd_express;
+>  	sdhci_enable_v4_mode(host);
+> +	gl9767_vendor_init(host);
+>  
+>  	return 0;
+>  }
+> @@ -1828,12 +1969,19 @@ static const struct sdhci_ops sdhci_gl9767_ops = {
+>  	.reset			 = sdhci_gl9767_reset,
+>  	.set_uhs_signaling	 = sdhci_set_uhs_signaling,
+>  	.voltage_switch		 = sdhci_gl9767_voltage_switch,
+> +	.dump_uhs2_regs		 = sdhci_uhs2_dump_regs,
+> +	.set_timeout		 = sdhci_uhs2_set_timeout,
+> +	.irq			 = sdhci_uhs2_irq,
+> +	.set_power		 = sdhci_gl9767_set_power,
+> +	.uhs2_pre_detect_init	 = sdhci_gli_pre_detect_init,
+>  };
+>  
+>  const struct sdhci_pci_fixes sdhci_gl9767 = {
+>  	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+>  	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
+>  	.probe_slot	= gli_probe_slot_gl9767,
+> +	.add_host	= sdhci_pci_uhs2_add_host,
+> +	.remove_host	= sdhci_pci_uhs2_remove_host,
+>  	.ops		= &sdhci_gl9767_ops,
+>  #ifdef CONFIG_PM_SLEEP
+>  	.resume		= sdhci_pci_gli_resume,
+> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
+> index c830ee352504..47180429448b 100644
+> --- a/drivers/mmc/host/sdhci-uhs2.c
+> +++ b/drivers/mmc/host/sdhci-uhs2.c
+> @@ -125,7 +125,7 @@ static void sdhci_uhs2_reset_cmd_data(struct mmc_host *mmc)
+>  	}
+>  }
+>  
+> -static void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd)
+> +void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd)
+>  {
+>  	struct mmc_host *mmc = host->mmc;
+>  	u8 pwr = 0;
+> @@ -165,6 +165,7 @@ static void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, un
+>  		mdelay(5);
+>  	}
+>  }
+> +EXPORT_SYMBOL_GPL(sdhci_uhs2_set_power);
 
-Chris
+Might as well export sdhci_uhs2_set_power() when it is first added
 
------Original Message-----
-From: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>=20
-Sent: Thursday, May 23, 2024 3:15 AM
-To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>; Thomas Gleixner <tglx@linutr=
-onix.de>; Ingo Molnar <mingo@redhat.com>; Borislav Petkov <bp@alien8.de>; x=
-86@kernel.org; H. Peter Anvin <hpa@zytor.com>; linux-coco@lists.linux.dev; =
-linux-kernel@vger.kernel.org; Chris Oo <cho@microsoft.com>; Dexuan Cui <dec=
-ui@microsoft.com>; John Starks <John.Starks@microsoft.com>
-Subject: [EXTERNAL] Re: [PATCH] x86/tdx: Generate SIGBUS on userspace MMIO
+>  
+>  static u8 sdhci_calc_timeout_uhs2(struct sdhci_host *host, u8 *cmd_res, u8 *dead_lock)
+>  {
+> diff --git a/drivers/mmc/host/sdhci-uhs2.h b/drivers/mmc/host/sdhci-uhs2.h
+> index 42f34ca75275..c4a860f4e1e0 100644
+> --- a/drivers/mmc/host/sdhci-uhs2.h
+> +++ b/drivers/mmc/host/sdhci-uhs2.h
+> @@ -185,5 +185,6 @@ void sdhci_uhs2_clear_set_irqs(struct sdhci_host *host, u32 clear, u32 set);
+>  u32 sdhci_uhs2_irq(struct sdhci_host *host, u32 intmask);
+>  int sdhci_uhs2_add_host(struct sdhci_host *host);
+>  void sdhci_uhs2_remove_host(struct sdhci_host *host, int dead);
+> +void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd);
+>  
+>  #endif /* __SDHCI_UHS2_H */
 
-On Tue, May 21, 2024 at 06:35:49AM -0700, Kuppuswamy Sathyanarayanan wrote:
->=20
-> On 5/21/24 12:35 AM, Kirill A. Shutemov wrote:
-> > Currently attempt to do MMIO from userspace in TDX guest leads to=20
-> > warning about unexpect #VE and SIGSEGV being delivered to the process.
-> >
-> > Enlightened userspace might choose to deal with MMIO on their own if=20
-> > kernel doesn't emulate it.
->=20
-> Any specific use cases ? Like who is using it?
-
-Microsoft folks wanted it. Chris, Dexuan, John, any comments?
-
-But it is generally right thing to do. SIGBUS is right signal to deliver.
-
---
-  Kiryl Shutsemau / Kirill A. Shutemov
 
