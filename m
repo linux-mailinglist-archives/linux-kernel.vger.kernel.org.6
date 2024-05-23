@@ -1,125 +1,211 @@
-Return-Path: <linux-kernel+bounces-187282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8380B8CCF6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:37:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5758CCF71
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C1E9B21D38
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADE0F1F22661
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6FF13D28E;
-	Thu, 23 May 2024 09:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE3E13D2B6;
+	Thu, 23 May 2024 09:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="xGt2xCZZ"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSFNtl4h"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57C13D51B;
-	Thu, 23 May 2024 09:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8901A42040
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716457051; cv=none; b=FPUbLkAzCaArRPTogRlfdyGZ6t9s4Iq7X/1NKP7Ds8zJKuHrsAwMJmuS7Mp3OnEOvzMx9qZ589L0yW9NFZ57m6ciW+xADUlJv8blTQwTS7EC/+3pl2jXV9OpIeECig8l6pVRaRWZw9VorxnB4hF4YY/I5xRkB4eBMb+Jl4xvGUw=
+	t=1716457069; cv=none; b=IqIF+y3cPkRTgYWiU+ozw18Bu4pdBPhxVqEhSKGGEe6hfHIuuH5XJ5RkMAxyvN2IRUYTcBG+Cqb39uyVC3o+vwpmWsIlChkVFPu2keb8p4WDj7Y4p1bIMIBZrqtT4tHqBkaYy4w0I5fb9CvfkJlhaEkJDaBX3oyElSK19vTlfyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716457051; c=relaxed/simple;
-	bh=JY2WbpEI+mWUW18lUIt92d13APRa1KMU3S+PnCTrQYY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nKgKXv+WpN9snucgxaFgD4ZkDlZR0dvc30IPbo/3ivqQCJTBijYLecTxV27I7Qh6oq0GKqKtq3YCxZ5Bu4XvB/ILp4jWTbKcwoFCBGnAjEHQoKPvH4p04TvKcc8xRte/o6x7of+oQKSRatkj8WzP9AlSCsMgV/rNtIa/O9iVkfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=xGt2xCZZ; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1716457049; x=1747993049;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JY2WbpEI+mWUW18lUIt92d13APRa1KMU3S+PnCTrQYY=;
-  b=xGt2xCZZw8T14V00c3PF6kJnYSvlkzn/WNWe1PJrV2kALZ7oIi++9PKv
-   rxO/hemZTtp+ke78TYKGfISDagGHhGOViVANbWFE9xyRhu/OuyJSzBe/n
-   mT3OA/eg0+FMNRqQiRJcxC8XFDuZqUoYXZ8bi9DvXKopB4Ntkc6W6udSJ
-   04IxdUv2o7ZGjG4Q3UPgoAL5cBvyXoEmuh4Xm4ND0Tq+upZUIOPHhO3M5
-   N8OUI3OpTM6Ry9jw0ItfCfCut0N1zIHhT0htKBdzPXlLdO8LlRqb7+aJC
-   LaV0qwbkKrrHOCL+mRNtTImBI36H4VDyw+1wVgRR6y2JjPyUv561FV86d
-   A==;
-X-CSE-ConnectionGUID: HkvOnEM3TYyKWZsRs1HTVA==
-X-CSE-MsgGUID: A7IIXf1OSrWGf5ZNODCYxQ==
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="asc'?scan'208";a="26488561"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 May 2024 02:37:27 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 23 May 2024 02:36:51 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 23 May 2024 02:36:47 -0700
-Date: Thu, 23 May 2024 10:36:29 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Minda Chen <minda.chen@starfivetech.com>
-CC: Bjorn Helgaas <helgaas@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Conor Dooley <conor@kernel.org>, Krzysztof
- =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh+dt@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Daire McNamara <daire.mcnamara@microchip.com>, Emil Renner Berthing
-	<emil.renner.berthing@canonical.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	"Palmer Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	"Philipp Zabel" <p.zabel@pengutronix.de>, Mason Huo
-	<mason.huo@starfivetech.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Kevin Xie <kevin.xie@starfivetech.com>
-Subject: Re: [PATCH v16 08/22] PCI: microchip: Change the argument of
- plda_pcie_setup_iomems()
-Message-ID: <20240523-scroll-sloping-a297ef0ab464@wendy>
-References: <SHXPR01MB086345C911E227889E3A4211E6F42@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
- <20240523023549.GA105928@bhelgaas>
- <SHXPR01MB08637281B32AEE455F030081E6F42@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1716457069; c=relaxed/simple;
+	bh=jPJ6DzLDX2BHRE6KsBDDylqHgEYcMKmyxOvYuUL0H/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWgwOAPReK82oMwk+QO5OhKXLSfQ8QjTCxl1zeXBmlVHDVjitaAdIM8wdKaz0kd9dq9Dl6uZ43zR83pYx2OIca3RXn76RExqMvQoxB9/LDM9zarYM1q3lA6+CP1Z57+UpIe0xDkVL+ZPqXsh2/n+Ws4Ko6AP0ps1DKKHNIlamSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VSFNtl4h; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e1fa824504so72408431fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716457066; x=1717061866; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SbtplpmpPo1tIVSyyQuZaq4Je2fwXqMCocDbrqYpVcE=;
+        b=VSFNtl4hG1k8YZRDcZdV7eFS0IL95wYuOnr0Xf4Z2nQEk/Cl1tBP42S9tK7nmTA/6p
+         ysnZveBbnv6MXEvCAD4r4905+MnHQ6z0qeXNVU2QvwdEY8u2mdRJZ7C/LATsj7JZXcKd
+         /3XjKHA4F23EzWplMEfsWjt2e23zdW0OT++hcQhrNbYjGgYwo4mE66sRqfet5dDHjdhH
+         MPQcoYimJCjaxCrL4/G8Hvd4sZIxjTjTqxiis58AA71PsnRbD1e41DDuCvacWerg2k5f
+         zjy3IdrztMRZcQRItj6XwIAoe30Mz1ua6n7JeEz/vZlXWq6Tlv2SgIBu4wQQP6ydXj22
+         PrMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716457066; x=1717061866;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SbtplpmpPo1tIVSyyQuZaq4Je2fwXqMCocDbrqYpVcE=;
+        b=wycx6xhhrOb/c2qNNuWABAbxTxuVpGYdnDnZvU+5RsvDojc9/BMBdpCWCZfffgsTeB
+         QwfDKod+ReIa8Wv7p5HsDQwP3TF3HMnah2eA6Ig9HxjADt1tTFMQhjkOk69ehJJwVlaU
+         LJQzB0tnt+Wskd2omNQ6dBITJbhwaUPMG/rIIOzCYdWZNs3WifBcD1hKMn0DQQ0XP+Wz
+         9hrEyCcyQqwwTyEpLEZItNvICV3zoG2S05BxZ5u8PpGpkNv9/vGcphOBL0fLn1RVYZLB
+         5xo0g0UJDlsiyIPnttngkTCH96p35tW17WcyJqn7a+cwOe0XzlC8X9or0FSlUyxJLoLs
+         kl9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXxf0Z/ysgPfkHec3eRrV7lXVCEI7w7q8tNN/kunLNLqslYtSMZaesxINh6Fl+15A79qwo4bBeJsnQHm2+4Y2gHO5ontwqXreUFQho/
+X-Gm-Message-State: AOJu0YxKybLHdt1gAmAtCbUmLXw+ZOJvs4BNmQD4ZVtwc+JEBg5MRuWb
+	fsx9qtjhyd2JnaNelvngVeD3AyN2bJc4WLKEzZpuOlyDm+1kaA2iqbw3dMCNmGQ=
+X-Google-Smtp-Source: AGHT+IHqJtv15hUgyIuf/PqlwYbirx+pXbxomvRBOWOOi94YU/Q64qb1oAcP8REV+yec+knrG9zq/Q==
+X-Received: by 2002:a2e:9dc8:0:b0:2e1:18d:5b4f with SMTP id 38308e7fff4ca-2e949540b40mr26515691fa.42.1716457065632;
+        Thu, 23 May 2024 02:37:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d0bbcba8sm42053591fa.2.2024.05.23.02.37.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 02:37:45 -0700 (PDT)
+Date: Thu, 23 May 2024 12:37:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
+	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v14 09/28] drm/display: hdmi: Add HDMI compute clock
+ helper
+Message-ID: <vjsv2fn4wdlzkcu6bkssbzv26hjihzrjvzzoynyabuju7sigo6@gnmyc4nqfk22>
+References: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
+ <20240521-kms-hdmi-connector-state-v14-9-51950db4fedb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jqWlq/BhKECf1ah8"
-Content-Disposition: inline
-In-Reply-To: <SHXPR01MB08637281B32AEE455F030081E6F42@SHXPR01MB0863.CHNPR01.prod.partner.outlook.cn>
-
---jqWlq/BhKECf1ah8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240521-kms-hdmi-connector-state-v14-9-51950db4fedb@kernel.org>
 
-On Thu, May 23, 2024 at 09:22:01AM +0000, Minda Chen wrote:
-> Hi Conor
->    Thanks for help us for this patch set !
->    I see mars dts have been merged to mainline, this version dts patch can not be merged
->    I will resend the dts patch on v6.10-rc1.
+On Tue, May 21, 2024 at 12:13:42PM +0200, Maxime Ripard wrote:
+> A lot of HDMI drivers have some variation of the formula to calculate
+> the TMDS character rate from a mode, but few of them actually take all
+> parameters into account.
+> 
+> Let's create a helper to provide that rate taking all parameters into
+> account.
+> 
+> Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/display/drm_hdmi_helper.c | 57 +++++++++++++++++++++++++++++++
+>  include/drm/display/drm_hdmi_helper.h     |  4 +++
+>  2 files changed, 61 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_helper.c b/drivers/gpu/drm/display/drm_hdmi_helper.c
+> index faf5e9efa7d3..679eb3e81393 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_helper.c
+> @@ -193,5 +193,62 @@ void drm_hdmi_avi_infoframe_content_type(struct hdmi_avi_infoframe *frame,
+>  	}
+>  
+>  	frame->itc = conn_state->content_type != DRM_MODE_CONTENT_TYPE_NO_DATA;
+>  }
+>  EXPORT_SYMBOL(drm_hdmi_avi_infoframe_content_type);
+> +
+> +/**
+> + * drm_hdmi_compute_mode_clock() - Computes the TMDS Character Rate
+> + * @mode: Display mode to compute the clock for
+> + * @bpc: Bits per character
+> + * @fmt: Output Pixel Format used
+> + *
+> + * Returns the TMDS Character Rate for a given mode, bpc count and output format.
+> + *
+> + * RETURNS:
+> + * The TMDS Character Rate, in Hertz, or 0 on error.
+> + */
+> +unsigned long long
+> +drm_hdmi_compute_mode_clock(const struct drm_display_mode *mode,
+> +			    unsigned int bpc, enum hdmi_colorspace fmt)
+> +{
+> +	unsigned long long clock = mode->clock * 1000ULL;
+> +	unsigned int vic = drm_match_cea_mode(mode);
+> +
+> +	/*
+> +	 * CTA-861-G Spec, section 5.4 - Color Coding and Quantization
+> +	 * mandates that VIC 1 always uses 8 bpc.
+> +	 */
+> +	if (vic == 1 && bpc != 8)
+> +		return 0;
+> +
+> +	if (fmt == HDMI_COLORSPACE_YUV422) {
+> +		/*
+> +		 * HDMI 1.4b Spec, section 6.2.3 - Pixel Encoding Requirements
 
-No worries, the dts patches in this series are long gone out of
-patchwork anyway so I wouldn't have even tried to apply them ;)
+This is probably 6.2.4, but it doesn't specify that it is 36-bit _only_.
 
-Cheers,
-Conor.
+> +		 * specifies that YUV422 is 36-bit only.
+> +		 */
+> +		if (bpc != 12)
+> +			return 0;
 
---jqWlq/BhKECf1ah8
-Content-Type: application/pgp-signature; name="signature.asc"
+6.5.1 allows using less than 12 bits (If fewer than 12 bits are
+used...). So I think it would be more correct to allow less than 12 bpc,
+but we'd still have to use 8 for the matter of the calculating the
+clock.
 
------BEGIN PGP SIGNATURE-----
+> +
+> +		/*
+> +		 * HDMI 1.0 Spec, section 6.5 - Pixel Encoding
+> +		 * specifies that YUV422 requires two 12-bits components per
+> +		 * pixel clock, which is equivalent in our calculation to three
+> +		 * 8-bits components
+> +		 */
+> +		bpc = 8;
+> +	}
+> +
+> +	/*
+> +	 * HDMI 2.0 Spec, Section 7.1 - YCbCr 4:2:0 Pixel Encoding
+> +	 * specifies that YUV420 encoding is carried at a TMDS Character Rate
+> +	 * equal to half the pixel clock rate.
+> +	 */
+> +	if (fmt == HDMI_COLORSPACE_YUV420)
+> +		clock = clock / 2;
+> +
+> +	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+> +		clock = clock * 2;
+> +
+> +	return DIV_ROUND_CLOSEST_ULL(clock * bpc, 8);
+> +}
+> +EXPORT_SYMBOL(drm_hdmi_compute_mode_clock);
+> diff --git a/include/drm/display/drm_hdmi_helper.h b/include/drm/display/drm_hdmi_helper.h
+> index 76d234826e22..57e3b18c15ec 100644
+> --- a/include/drm/display/drm_hdmi_helper.h
+> +++ b/include/drm/display/drm_hdmi_helper.h
+> @@ -22,6 +22,10 @@ drm_hdmi_infoframe_set_hdr_metadata(struct hdmi_drm_infoframe *frame,
+>  				    const struct drm_connector_state *conn_state);
+>  
+>  void drm_hdmi_avi_infoframe_content_type(struct hdmi_avi_infoframe *frame,
+>  					 const struct drm_connector_state *conn_state);
+>  
+> +unsigned long long
+> +drm_hdmi_compute_mode_clock(const struct drm_display_mode *mode,
+> +			    unsigned int bpc, enum hdmi_colorspace fmt);
+> +
+>  #endif
+> 
+> -- 
+> 2.45.0
+> 
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk8OHAAKCRB4tDGHoIJi
-0hGZAP9XeCytwAGiMDsRE76sT98+KIjp7JPfuV4CVnQSht2O6gD9EaIZJ/+EM0dy
-O+M3hpVKvaItendrAIFPy+CvMDC6yw4=
-=YxeV
------END PGP SIGNATURE-----
-
---jqWlq/BhKECf1ah8--
+-- 
+With best wishes
+Dmitry
 
