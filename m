@@ -1,92 +1,210 @@
-Return-Path: <linux-kernel+bounces-187911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2A48CDA8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:13:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6938CDA94
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC855282DC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:13:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB6EB2197A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE2082D9A;
-	Thu, 23 May 2024 19:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A2583CB2;
+	Thu, 23 May 2024 19:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0PL4Ar5s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QXXVze6l"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A40860BBE;
-	Thu, 23 May 2024 19:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8A9839FF
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716491627; cv=none; b=pUX9NKjImsWhOPKdnsRFQRAuK+IN3rjE4ibdWWUf94HWEjF868NzjHi2AVYJbtbZcsqy6YeIuKrMhx9KJEmvYUbFg8NeAWjope9mG7mSbyJUwcmLTC+pxEtR4VfYZRq9VBEadjOWCD/QP0pzvY2cQIgM22f/tLzPaRK9e+shDq8=
+	t=1716491712; cv=none; b=VCO84ao6Sgs87gQef847u+YC6CSVJtlOBhZlJbG2hhTAFx1qj7akMDXPwkdRf4fFisVJ8oTy6xQNwfXC63qGYY4v4WSLXXZ0AXpEoPlSsfe4F7VT7G5aZ95WHNmPJgryA6jIa5pEAgyu8dh9grFjrHuO1z4FXkqREUenqQspszI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716491627; c=relaxed/simple;
-	bh=+JOFaXZ73U5uGnk9S9gTiM6JcwXiBpR5hDiNMxbHwEs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kiiWXtmVbEfkDnGZnCBhiRNLnbEIAFcgIiHuNnN818UXM25cS2ac8L8uUtTnT8LQJUWcwH1n8YDIgqyuPpD6avJUB4U4XZQPEggLiFBy08dxu8EtHxchOERqsH0xEzNaFn4qRococ31rqH66q6E+eJ9DCNnetOhwnjjBikkKdhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0PL4Ar5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88791C2BD10;
-	Thu, 23 May 2024 19:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716491625;
-	bh=+JOFaXZ73U5uGnk9S9gTiM6JcwXiBpR5hDiNMxbHwEs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=0PL4Ar5sbdb9hd+8AwsrwqUSMI0PeChmRoviG1HBMJXK22+BmiR2yY5/loVJ7TH86
-	 /kUFqgPLQNauTjDcASYiUW/QhCFYj5Vtngv18YndVjQ85l4RGgnMzIDl4cO9IOgmQo
-	 GwEFRy1I4FOOsvUe0iHS0V+Llx4IUJN1X/03mynw=
-Date: Thu, 23 May 2024 12:13:44 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Tony Battersby <tonyb@cybernetics.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Ritesh
- Harjani <ritesh.list@gmail.com>, Mike Rapoport <rppt@kernel.org>, Muchun
- Song <songmuchun@bytedance.com>, David Hildenbrand <david@redhat.com>,
- stable@vger.kernel.org
-Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked
- during __bio_release_pages()
-Message-Id: <20240523121344.6a67a109e0af2ba70973b34b@linux-foundation.org>
-In-Reply-To: <20240523063905.3173-1-donettom@linux.ibm.com>
-References: <20240523063905.3173-1-donettom@linux.ibm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716491712; c=relaxed/simple;
+	bh=1TBF/VNkoH1JflS/P6I+j9LKBPOuIDfXCd97BmtR6mc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tqHnMMlQc1lBP0zMkYJ7bfTYX2hnEfPgBwDxXZa0PCZy8817/A3tPY4gweZJSZt808jU0g4Czru+gcRTgzSup00UDc0/Bysx3DpbCSTnHEz4vsCn6JqaGm4gUmqyP1jquQ5RSSNdqs+/xevrfZIm75FjT98UtCxu4+AdpyyfQdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QXXVze6l; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9cc681ee0so3392750b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:15:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1716491709; x=1717096509; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=neX9Rj9kbD2Mta30BndIslB9399YLTZUQPcD/TShwW8=;
+        b=QXXVze6lB9TbU1uiLWq9i4nTMn0HhGKcOkb+7kkwwuJQK16gm6txEmLVMv6Kej2USW
+         pZ0yImMB/Nsq454T7Ku6nF4uoKGffcwRnhWvyXh+pNQZuagw/eGPPmwx6ec3p5SzN/ah
+         K7y3ojzrVrF83XQvu3k0yfVymLNTWJZ3oox0c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716491709; x=1717096509;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=neX9Rj9kbD2Mta30BndIslB9399YLTZUQPcD/TShwW8=;
+        b=w8uFlSm31JRNNOQR9fv9B6sBpDzmdHGO00tphk43urk6Q9bsY2sqwJILRMPaeHVuYm
+         QID9h0RbcyA6hPfre8UDZZrdCX0OJLG9EEHI0QWhWyvm48WzRs3SP6uM7duZqsSusL9n
+         kmEYdBbQzsCAt5TZd4nEeMr5F964neSfkV7BbAVIMqMneWtZWaZHW5EFq4qMp9OeGBw0
+         FL0CJipUKQga/TFe8kdyEBxSifOiNxY0VI29ldW8clZu8QM/mWtuLmUfRp9wQivW7khJ
+         AHc4pZ7N+GGbZNHQYuRqJY8Yb7ofO5MvHI21syp2Sn0UJADkSn0oqN9r5kAr2+TWbs4C
+         +YwA==
+X-Gm-Message-State: AOJu0YycngPQznIL1+LNSAOEjATL5+FOg6BJ2zAvNH48arUOAsEjRXr5
+	0cJlxljqn9wOE1N2f3baRRKsbSWu4RnZjhvdSy6JzFp+YyAG78l051496JIsxJOYklNm5m3k/Gm
+	HkmP60mwwuVOm1YOqQkYdlj2uBoM46XWnIs+AT/t+lwfP864N2XYoUPBO9s1u+55TyUNysgoyR7
+	HZR/jNvpwfSKsWhIDsAouRnZT28tq1CxA680bEOJea2eukBb0aTiC9
+X-Google-Smtp-Source: AGHT+IH/Ysnno2TkFzRL2UNNhoEarRPKJ9VjuR8XSFIlVnpcZKrEaxTEc2+rptviFCowPSempZ9ABw==
+X-Received: by 2002:a05:6808:10d4:b0:3c7:366b:980a with SMTP id 5614622812f47-3d1a54835c7mr396574b6e.5.1716491704120;
+        Thu, 23 May 2024 12:15:04 -0700 (PDT)
+Received: from amakhalov-build-vm.eng.vmware.com ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e4a89b61dsm21219821cf.45.2024.05.23.12.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 12:15:03 -0700 (PDT)
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+To: linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	bp@alien8.de,
+	hpa@zytor.com,
+	dave.hansen@linux.intel.com,
+	mingo@redhat.com,
+	tglx@linutronix.de
+Cc: x86@kernel.org,
+	netdev@vger.kernel.org,
+	richardcochran@gmail.com,
+	linux-input@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	zackr@vmware.com,
+	linux-graphics-maintainer@vmware.com,
+	pv-drivers@vmware.com,
+	timothym@vmware.com,
+	akaher@vmware.com,
+	dri-devel@lists.freedesktop.org,
+	daniel@ffwll.ch,
+	airlied@gmail.com,
+	tzimmermann@suse.de,
+	mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	horms@kernel.org,
+	kirill.shutemov@linux.intel.com,
+	Alexey Makhalov <alexey.makhalov@broadcom.com>
+Subject: [PATCH v10 0/8] VMware hypercalls enhancements
+Date: Thu, 23 May 2024 12:14:38 -0700
+Message-Id: <20240523191446.54695-1-alexey.makhalov@broadcom.com>
+X-Mailer: git-send-email 2.39.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 23 May 2024 01:39:05 -0500 Donet Tom <donettom@linux.ibm.com> wrote:
+VMware hypercalls invocations were all spread out across the kernel
+implementing same ABI as in-place asm-inline. With encrypted memory
+and confidential computing it became harder to maintain every changes
+in these hypercall implementations.
 
-> Commit 1b151e2435fc ("block: Remove special-casing of compound
-> pages") caused a change in behaviour when releasing the pages
-> if the buffer does not start at the beginning of the page. This
-> was because the calculation of the number of pages to release
-> was incorrect.
-> This was fixed by commit 38b43539d64b ("block: Fix page refcounts
-> for unaligned buffers in __bio_release_pages()").
-> 
-> We pin the user buffer during direct I/O writes. If this buffer is a
-> hugepage, bio_release_page() will unpin it and decrement all references
-> and pin counts at ->bi_end_io. However, if any references to the hugepage
-> remain post-I/O, the hugepage will not be freed upon unmap, leading
-> to a memory leak.
-> 
-> This patch verifies that a hugepage, used as a user buffer for DIO
-> operations, is correctly freed upon unmapping, regardless of whether
-> the offsets are aligned or unaligned w.r.t page boundary.
-> 
+Intention of this patchset is to introduce arch independent VMware
+hypercall API layer other subsystems such as device drivers can call
+to, while hiding architecture specific implementation behind.
 
-You have stable@vger.kernel.org in the mail headers, so I assume you're
-proposing this for backporting.  When doing this, please include 
+First patch introduces the vmware_hypercall low and high bandwidth
+families of functions, with little enhancements there. And the last
+patch adds tdx hypercall support
 
-Cc: <stable@vger.kernel.org>
+arm64 implementation of vmware_hypercalls is in drivers/gpu/drm/
+vmwgfx/vmwgfx_msg_arm64.h and going to be moved to arch/arm64 with
+a separate patchset with the introduction of VMware Linux guest
+support for arm64.
 
-in the changelog footers and also include a Fixes: target.  I'm
-assuming the suitable Fixes: target for this patch is 38b43539d64b?
+No functional changes in drivers/input/mouse/vmmouse.c and
+drivers/ptp/ptp_vmw.c
+
+v9->v10 changes:
+- Restructure the patchset as was suggested by Borislav Petkov to
+  introduce vmware_hypercalls API first, then move callers to use this
+  API, and then remove the old mechanism.  
+- Reduce alternative portion of VMWARE_HYPERCALL by moving common code
+  outside of alternative block. Suggested by Borislav Petkov.
+- Use u32 instead of uint32_t in vmware_hypercall API and across vmware.c
+  as was suggested by Simon Horman.
+- Remove previous Reviewed-by and Acked-by.
+- Fix typos in comments and commit descriptions.
+- No major changes in patches 2,3,4,8 compare to v9.
+
+v8->v9 change:
+First patch "x86/vmware: Move common macros to vmware.h" was split on 2 pieces:
+  "x86/vmware: Move common macros to vmware.h" - just code movement, and
+  "x86/vmware: Correct macro names" - macro renaming.
+
+v7->v8 no functional changes. Updated authors and reviewers emails to
+@broadcom.com
+
+v6->v7 changes (only in patch 7):
+- Addressed comments from H. Peter Anvin:
+  1. Removed vmware_tdx_hypercall_args(), moved args handling inside
+     vmware_tdx_hypercall().
+  2. Added pr_warn_once() for !hypervisor_is_type(X86_HYPER_VMWARE) case.
+- Added ack by Dave Hansen.
+
+v5->v6 change:
+- Added ack by Kirill A. Shutemov in patch 7. 
+
+v4->v5 changes:
+  [patch 2]:
+- Fixed the problem reported by Simon Horman where build fails after
+  patch 2 application. Do not undefine VMWARE_HYPERCALL for now, and
+  update vmwgfx, vmmouse and ptp_vmw code for new VMWARE_HYPERCALL macro.
+- Introduce new patch 6 to undefine VMWARE_HYPERCALL, which is safe to do
+  after patches 3 to 5.
+- [patch 7 (former patch 6)]: Add missing r15 (CPL) initialization.
+
+v3->v4 changes: (no functional changes in patches 1-5)
+  [patch 2]:
+- Added the comment with VMware hypercall ABI description.
+  [patch 6]:
+- vmware_tdx_hypercall_args remove in6/out6 arguments as excessive.
+- vmware_tdx_hypercall return ULONG_MAX on error to mimic bad hypercall
+  command error from the hypervisor.
+- Replaced pr_warn by pr_warn_once as pointed by Kirill Shutemov.
+- Fixed the warning reported by Intel's kernel test robot.
+- Added the comment describing VMware TDX hypercall ABI.
+
+v2->v3 changes: (no functional changes in patches 1-5)
+- Improved commit message in patches 1, 2 and 5 as was suggested by
+  Borislav Petkov.
+- To address Dave Hansen's concern, patch 6 was reorganized to avoid
+  exporting bare __tdx_hypercall and to make exported vmware_tdx_hypercall
+  VMWare guest specific.
+
+v1->v2 changes (no functional changes):
+- Improved commit message in patches 2 and 5.
+- Added Reviewed-by for all patches.
+- Added Ack from Dmitry Torokhov in patch 4. No fixes regarding reported
+  by Simon Horman gcc error in this patch.
+
+Alexey Makhalov (8):
+  x86/vmware: Introduce VMware hypercall API
+  ptp/vmware: Use VMware hypercall API
+  input/vmmouse: Use VMware hypercall API
+  drm/vmwgfx: Use VMware hypercall API
+  x86/vmware: Use VMware hypercall API
+  x86/vmware: Correct macro names
+  x86/vmware: Remove legacy VMWARE_HYPERCALL* macros
+  x86/vmware: Add TDX hypercall support
+
+ arch/x86/include/asm/vmware.h             | 333 +++++++++++++++++++---
+ arch/x86/kernel/cpu/vmware.c              | 165 ++++++-----
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg.c       | 173 ++++-------
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg_arm64.h | 196 +++++++++----
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg_x86.h   | 185 ------------
+ drivers/input/mouse/vmmouse.c             |  76 ++---
+ drivers/ptp/ptp_vmw.c                     |  12 +-
+ 7 files changed, 602 insertions(+), 538 deletions(-)
+
+-- 
+2.39.0
+
 
