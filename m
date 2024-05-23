@@ -1,134 +1,156 @@
-Return-Path: <linux-kernel+bounces-187652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094888CD5E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:36:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EB58CD5EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0451F21D22
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6747B1C2130C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E9A13C3E7;
-	Thu, 23 May 2024 14:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACED514A4D9;
+	Thu, 23 May 2024 14:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khRhRiGL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="uNwBYL7e"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AC5433C3
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6782912B16E;
+	Thu, 23 May 2024 14:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474981; cv=none; b=IZ5k4MjxA7uS+LzR93sCma8sDq/S4U85tft8hur5xvJ+XYPbAL+KJbV/hwyp9LiZwoEBfW4n4qcwFIXxzlNmSB9NQXeaJbsBl2NfnNUnP9fO/Wb0vwvXXhSstHPeqsrBVXSbrEed8HULFiOC1gQOaXJw1Ici2hbOM4QP3YVCJxk=
+	t=1716474996; cv=none; b=aVodoD1xb6O3S9rRbrwQARSZD0vbqqy/wifAsU0w9V9HZAVBUcHzhbysbPdf8StVqiXxiQinMV/bJ8qZoxGF2pQ7xnKY6urgYnnwgi3X1QIdAAyOT6oKiHNB0OwY0ahLrbP51cuFEeq9++vGNzbHRj3eor03w1cR7MSs0Y1EzJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474981; c=relaxed/simple;
-	bh=rsdSuMuHmlMiO59EQatovr1eBEyHOXTD0zhp1Jass5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hF4COC/ArUJ40aT6Y1pigMyWVtgyCq74ArMkAHwL5m03+NCIkX31h4WvEIcg93ZFRaigJCFk7Q180f4tnUzoFTXusfwZ3Hh0oCiY+uyUH5ZfEO9kMkf6/znodvS65dL7BVRnNVtwwwu6kX1pC5nIUABVU++VhDIOOFjXLfBA+3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khRhRiGL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697D1C2BD10;
-	Thu, 23 May 2024 14:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716474980;
-	bh=rsdSuMuHmlMiO59EQatovr1eBEyHOXTD0zhp1Jass5g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=khRhRiGL+YGmtdhEuxMCDy1UxhwKpjk6x0tk0g9pVBmceHadXp4DCdEu8ZeSZ/2ls
-	 qLJoE5A4pi6zB0i18pfrQY1taTMqwU8jWfwPlMNM3Bf95K+JBcwoPugphzituztdmC
-	 2pzWS0rTdZ44aNdXDPJkZqQMl+J22Oy3NMVr4N80gMyyfTTgcIR7A/dB/+9RLzGfhR
-	 IDj0sBeIeiM51C4kd/imXgjXkcXvHmy/o39FScTX+LQvv0QW36MtmNBTTuatHWB6/d
-	 00kAeqiHYr/obAUbQoGb+fH9UNDP1RPYv3DG959yBaXSXIxVcUAoVCIiaZ6P0l0X6i
-	 mwl6HN742onKg==
-Message-ID: <9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org>
-Date: Thu, 23 May 2024 16:36:17 +0200
+	s=arc-20240116; t=1716474996; c=relaxed/simple;
+	bh=9sS78x2ZdckMIB2ktWRxsrmJpPyzQYRCURWv7oKVTdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oPob9SngPjArAsJnwlwgScGam11T9eXedjQKm9tqNBWYudoRR5NFGwMD71H8zyvDy1Ulv858PWdZO3UpokIvrgU34BKfoyzmFX3+r6orTOBWxDR5gGm4/GN3Gpgfzv5YBegAugUjfgTycjVTObTBHPNZs9Fj4h4f3wGUBZIZLOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=uNwBYL7e; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716474992;
+	bh=9sS78x2ZdckMIB2ktWRxsrmJpPyzQYRCURWv7oKVTdE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uNwBYL7eeBCRiwhJoArAWBijyr722eWCnaXDG72gHvyA0Ao3uvd9iqn0XvIygcB47
+	 XWldqcAS/CLL5wX0Yh3O9yVI2WQ0u3vowpL3mr8M69+0Vx/4Y4BHpYh8c7k00cn06d
+	 ysm4kXfzZh2zKimil0ZGPPFqOsoPEgM/rH3uu+xgsdoGTxav3jtwye14fHUGHAHLjx
+	 DP5olZUQaRVi0kyYeEfdUsnCLpawtkGX2vmkut/pvpiuRyTpQx8qz+iNsOd+ys/i+X
+	 5fGZoX/sQ+P+gpQ3bn/pZWUv4mo5eZXSSiU8PdvjKeQt/YZLNCv8J/BVJLQC10INrz
+	 Ebs1cM7S6Rydw==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BC5F637820FA;
+	Thu, 23 May 2024 14:36:31 +0000 (UTC)
+Date: Thu, 23 May 2024 16:36:30 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org,
+ linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
+ vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
+Message-ID: <20240523163630.24992c28@collabora.com>
+In-Reply-To: <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+References: <20240523031935.90856-1-amhetre@nvidia.com>
+	<6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
- selectable
-To: Esben Haabendal <esben@geanix.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
- <979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org> <87cypc38gu.fsf@geanix.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <87cypc38gu.fsf@geanix.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 23/05/2024 16:32, Esben Haabendal wrote:
-> Krzysztof Kozlowski <krzk@kernel.org> writes:
+On Thu, 23 May 2024 14:41:12 +0100
+Robin Murphy <robin.murphy@arm.com> wrote:
+
+> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
+> > The current __arm_lpae_unmap() function calls dma_sync() on individual
+> > PTEs after clearing them. By updating the __arm_lpae_unmap() to call
+> > dma_sync() once for all cleared PTEs, the overall performance can be
+> > improved 25% for large buffer sizes.
+> > Below is detailed analysis of average unmap latency(in us) with and
+> > without this optimization obtained by running dma_map_benchmark for
+> > different buffer sizes.
+> > 
+> > Size	Time W/O	Time With	% Improvement
+> > 	Optimization	Optimization
+> > 	(us)		(us)
+> > 
+> > 4KB	3.0		3.1		-3.33
+> > 1MB	250.3		187.9		24.93  
 > 
->> On 23/05/2024 15:58, Esben Haabendal wrote:
->>> While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
->>> driver selects FSL_IFC automatically, we need the option to be selectable
->>> for platforms using fsl_ifc with NOR flash.
->>
->> Which driver is that?
+> This seems highly suspect - the smallest possible block size is 2MB so a 
+> 1MB unmap should not be affected by this path at all.
 > 
-> This is drivers/memory/fsl_ifc.o driver. It is for Integrated Flash
-> Controller (IFC) from NXP. It is used in various Layerscape socs.
-
-? I know that, I mean the NOR flash working here.
-
+> > 2MB	493.7		368.7		25.32
+> > 4MB	974.7		723.4		25.78  
 > 
->> Which DTS?
+> I'm guessing this is on Tegra with the workaround to force everything to 
+> PAGE_SIZE? In the normal case a 2MB unmap should be nominally *faster* 
+> than 4KB, since it would also be a single PTE, but with one fewer level 
+> of table to walk to reach it. The 25% figure is rather misleading if 
+> it's only a mitigation of an existing erratum workaround, and the actual 
+> impact on the majority of non-broken systems is unmeasured.
 > 
-> It is for "fsl,ifc" compatible devices.
+> (As an aside, I think that workaround itself is a bit broken, since at 
+> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which MMU-500 
+> doesn't support.)
+> 
+> > Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> > ---
+> >   drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++++++---------
+> >   1 file changed, 25 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> > index 3d23b924cec1..94094b711cba 100644
+> > --- a/drivers/iommu/io-pgtable-arm.c
+> > +++ b/drivers/iommu/io-pgtable-arm.c
+> > @@ -256,13 +256,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
+> >   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
+> >   }
+> >   
+> > -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
+> > +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
+> >   {
+> > +	int i;
+> >   
+> > -	*ptep = 0;
+> > +	for (i = 0; i < num_entries; i++)
+> > +		ptep[i] = 0;
+> >   
+> >   	if (!cfg->coherent_walk)
+> > -		__arm_lpae_sync_pte(ptep, 1, cfg);
+> > +		__arm_lpae_sync_pte(ptep, num_entries, cfg);
+> >   }
+> >   
+> >   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+> > @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+> >   	if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
+> >   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
+> >   		num_entries = min_t(int, pgcount, max_entries);
+> > -
+> > -		while (i < num_entries) {
+> > -			pte = READ_ONCE(*ptep);
+> > +		arm_lpae_iopte *pte_flush;
+> > +		int j = 0;
+> > +
+> > +		pte_flush = kvcalloc(num_entries, sizeof(*pte_flush), GFP_ATOMIC);  
+> 
+> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if there 
+> isn't a more fundamental problem here - Rob, Boris; was it just the map 
+> path, or would any allocation on unmap risk the GPU reclaim deadlock 
+> thing as well?
 
-That's not a NOR flash.
-
-Best regards,
-Krzysztof
-
+Unmap as well, because of the 'split huge page into small pages'
+logic when the unmap region is not aligned on 2MB.
 
