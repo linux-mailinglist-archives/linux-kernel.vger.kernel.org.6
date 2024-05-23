@@ -1,172 +1,267 @@
-Return-Path: <linux-kernel+bounces-187476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CAF78CD252
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:34:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823A18CD251
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC4D281454
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:34:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECF541F21FD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01DF149017;
-	Thu, 23 May 2024 12:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61D81487F2;
+	Thu, 23 May 2024 12:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Qt/z69XK"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzCdnMwf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FB7148824;
-	Thu, 23 May 2024 12:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E8A1E4A0;
+	Thu, 23 May 2024 12:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716467635; cv=none; b=d4h+cgqlyrfjSm+m0ezkbBM8r7ywH4gLr4U6BD7prrDtTUfI/M2NajJoOkVpWnDejcF/JlMP39uKJlcb0PSUs+lMRdCggGRM4Qg1eyP8TlPkL1Zh09OMNvJtfmXm2b8EX1CuxLktWNUdZVSxC3NhMuvTFEQ6gQVGeKY7+2o9//M=
+	t=1716467632; cv=none; b=VCAjgvMEXPp+pFImEa1HKK/rVnZ18MOICg0eme5r4jiP8uMIsflktqgGzkTeczPs5m4ski8x+H+93KUJfBTu9pUHgn3aWrhjRfnLtbBNbac5fzJQrTTcpx79OWgET8dI6eGfDDKJ9RwAxCUor/+c36WLcZiw2GStVqqr7Ek59lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716467635; c=relaxed/simple;
-	bh=smrF2fUmUHA7xyyomoTkTTinVqiDpVSE9fy64YqQQIw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ADwMS0kk6/gkUQEPEWE0neV/58Ja9NsmFd9+FeeJDK/wbVYx8sJXWimIS5GlA5LrkOiP2YQ51GSZkicx24f8H+8jDZeYdYBhFE3qkAnEq0qj7bnNzTfzsKVqB3z17PdyaOePoOmDLKkHaWsppxzWEk1YbeCHlkFoE8NgcUbOT5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Qt/z69XK; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44N4xBDA032362;
-	Thu, 23 May 2024 12:33:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=TG9RpsRGFzzFo4NixL4rHOJgwqr4kHslcW8q4P+LGVM=;
- b=Qt/z69XKEHsvrxyNZ+5fmHvUp118mNkGvV5fLuAKclnXE3MxnaMOg+gkfZFos4YJtAoU
- hA98aC0FtfmRYMvRgADAw8zbRUPEz+X+nX5mxyis5SoEKGHaNdyAt/9gftEouPgHCWM1
- RCob7mwm8HQrurZqD7/8TXBqHLk1yLtqWhDzFDZp3StI1BEUCDWD3ScHe65nTH/NEt+5
- 8jSbI3/OkDDDxGWrg7LpoO8d3koMxMx+Gf2A9ftHwzGMQfAIOUDEgcqX+8jw2p9PA2jr
- oC6rhj5uvxTyHZi7bL6Zo5e5pCBWI9hG2rnhOeLC81Bj3Gphm8A6GQmExN5gpDqs76IY Kw== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y6kxva1g8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 May 2024 12:33:26 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44NCC6o5019515;
-	Thu, 23 May 2024 12:33:26 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y6jsahjg1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 May 2024 12:33:26 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44NCXP6F016719;
-	Thu, 23 May 2024 12:33:25 GMT
-Received: from laptop-dell-latitude7430.nl.oracle.com (dhcp-10-175-24-91.vpn.oracle.com [10.175.24.91])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3y6jsahje8-1;
-	Thu, 23 May 2024 12:33:25 +0000
-From: Alexandre Chartre <alexandre.chartre@oracle.com>
-To: x86@kernel.org, kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
-        pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
-        konrad.wilk@oracle.com, peterz@infradead.org,
-        gregkh@linuxfoundation.org, seanjc@google.com,
-        andrew.cooper3@citrix.com, dave.hansen@linux.intel.com,
-        nik.borisov@suse.com, kpsingh@kernel.org, longman@redhat.com,
-        bp@alien8.de, pbonzini@redhat.com, alexandre.chartre@oracle.com
-Subject: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB handler
-Date: Thu, 23 May 2024 14:33:22 +0200
-Message-Id: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1716467632; c=relaxed/simple;
+	bh=a8MmbzJBeepTahbb6Q+q7oc8lvq89ytBLirdGd192iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg2JTcpkJXqbScaX1lCdBr/BCc37V5gweqpTqU7ezMpTdCiT14nOxtZKIXQFuT9N37l59QXzkDBLJP2fNHVnn6Vck14CPgo9cIB6pirrr7Hg1a/+QKXt/lZyMufAfqE6WseFLpOL5KnabYsyl+AFW6oVCQFPoXeRYNtIFTuQ8so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzCdnMwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 216F7C2BD10;
+	Thu, 23 May 2024 12:33:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716467632;
+	bh=a8MmbzJBeepTahbb6Q+q7oc8lvq89ytBLirdGd192iY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XzCdnMwf9+VrGY2+RNwqK6SHIEV1J7zTUdWsHAHpcOrzQgLud8Zf8Ckxhll/Sz69g
+	 kT74aFgaG66KcSgbsmgwfjT7aMt3+I9NWfDZyGDJpt0iRKO0bSxSBOBzIGsmd7jJVL
+	 YGMNvC/2j73m6P1PPGJrhk8OIC29gfqsJpAMlyNkrYFsrIlE2Y2oqv8hG0fID752D9
+	 0KRwR+zZygOZBFIhGrcWzsoo5EBHzzZHkZep3JL7Zu84ypYZXXQvE00XuINBo1Us44
+	 VZ5rIr+T9a2CP4uDNK/zLhVlRd3NGDOxNtj9JGDcKRFSQXxudXyKOq9/iSKDQ4mNNf
+	 bufHMtKR6bF5w==
+Date: Thu, 23 May 2024 07:33:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v2 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+Message-ID: <20240523123351.GA2067525-robh@kernel.org>
+References: <20240523031909.19427-1-kimseer.paller@analog.com>
+ <20240523031909.19427-5-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_07,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
- adultscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405230086
-X-Proofpoint-GUID: dVpr_7H5SXUK8Sw610ASeh_7ItQhnjVO
-X-Proofpoint-ORIG-GUID: dVpr_7H5SXUK8Sw610ASeh_7ItQhnjVO
+In-Reply-To: <20240523031909.19427-5-kimseer.paller@analog.com>
 
-When BHI mitigation is enabled, if sysenter is invoked with the TF flag
-set then entry_SYSENTER_compat uses CLEAR_BRANCH_HISTORY and calls the
-clear_bhb_loop() before the TF flag is cleared. This causes the #DB
-handler (exc_debug_kernel) to issue a warning because single-step is
-used outside the entry_SYSENTER_compat function.
+On Thu, May 23, 2024 at 11:19:08AM +0800, Kim Seer Paller wrote:
+> Add documentation for ltc2672.
+> 
+> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
+>  .../bindings/iio/dac/adi,ltc2672.yaml         | 159 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  2 files changed, 160 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+> new file mode 100644
+> index 000000000000..996aae315640
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+> @@ -0,0 +1,159 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/dac/adi,ltc2672.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices LTC2672 DAC
+> +
+> +maintainers:
+> +  - Michael Hennerich <michael.hennerich@analog.com>
+> +  - Kim Seer Paller <kimseer.paller@analog.com>
+> +
+> +description: |
+> +  Analog Devices LTC2672 5 channel, 16 bit, 300mA DAC
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc2672.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ltc2672
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-max-frequency:
+> +    maximum: 50000000
+> +
+> +  vcc-supply:
+> +    description: Analog Supply Voltage Input.
+> +
+> +  v-neg-supply:
+> +    description: Negative Supply Voltage Input.
+> +
+> +  vdd0-supply:
+> +    description: Positive Supply Voltage Input for DAC OUT0.
+> +
+> +  vdd1-supply:
+> +    description: Positive Supply Voltage Input for DAC OUT1.
+> +
+> +  vdd2-supply:
+> +    description: Positive Supply Voltage Input for DAC OUT2.
+> +
+> +  vdd3-supply:
+> +    description: Positive Supply Voltage Input for DAC OUT3.
+> +
+> +  vdd4-supply:
+> +    description: Positive Supply Voltage Input for DAC OUT4.
+> +
+> +  iovcc-supply:
+> +    description: Digital Input/Output Supply Voltage.
+> +
+> +  ref-supply:
+> +    description:
+> +      Reference Input/Output. The voltage at the REF pin sets the full-scale
+> +      range of all channels. If not provided the internal reference is used and
+> +      also provided on the VREF pin.
+> +
+> +  clr-gpios:
+> +    description:
+> +      Active Low Asynchronous Clear Input. A logic low at this level triggered
+> +      input clears the device to the default reset code and output range, which
+> +      is zero-scale with the outputs off. The control registers are cleared to
+> +      zero.
+> +    maxItems: 1
+> +
+> +  adi,rfsadj-ohms:
+> +    description:
+> +      If FSADJ is tied to VCC, an internal RFSADJ (20 kΩ) is selected, which
+> +      results in nominal output ranges. When an external resistor of 19 kΩ to
+> +      41 kΩ can be used instead by connecting the resistor between FSADJ and GND
+> +      it controls the scaling of the ranges, and the internal resistor is
+> +      automatically disconnected.
+> +    minimum: 19000
+> +    maximum: 41000
+> +    default: 20000
+> +
+> +  io-channels:
+> +    description:
+> +      Analog multiplexer output. Pin voltages and currents can be monitored by
+> +      measuring the voltage at MUX.
 
-To address this issue, entry_SYSENTER_compat() should use
-CLEAR_BRANCH_HISTORY after making sure flag the TF flag is cleared.
+You need constraints for how many entries and what is each one.
 
-The problem can be reproduced with the following sequence:
-
- $ cat sysenter_step.c
- int main()
- { asm("pushf; pop %ax; bts $8,%ax; push %ax; popf; sysenter"); }
-
- $ gcc -o sysenter_step sysenter_step.c
-
- $ ./sysenter_step
- Segmentation fault (core dumped)
-
-The program is expected to crash, and the #DB handler will issue a warning.
-
-Kernel log:
-
-  WARNING: CPU: 27 PID: 7000 at arch/x86/kernel/traps.c:1009 exc_debug_kernel+0xd2/0x160
-  ...
-  RIP: 0010:exc_debug_kernel+0xd2/0x160
-  ...
-  Call Trace:
-  <#DB>
-   ? show_regs+0x68/0x80
-   ? __warn+0x8c/0x140
-   ? exc_debug_kernel+0xd2/0x160
-   ? report_bug+0x175/0x1a0
-   ? handle_bug+0x44/0x90
-   ? exc_invalid_op+0x1c/0x70
-   ? asm_exc_invalid_op+0x1f/0x30
-   ? exc_debug_kernel+0xd2/0x160
-   exc_debug+0x43/0x50
-   asm_exc_debug+0x1e/0x40
-  RIP: 0010:clear_bhb_loop+0x0/0xb0
-  ...
-  </#DB>
-  <TASK>
-   ? entry_SYSENTER_compat_after_hwframe+0x6e/0x8d
-  </TASK>
-
-Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
-Reported-by: Suman Maity <suman.m.maity@oracle.com>
-Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
----
- arch/x86/entry/entry_64_compat.S | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index 11c9b8efdc4c..7fa04edc87e9 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -91,7 +91,6 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
- 
- 	IBRS_ENTER
- 	UNTRAIN_RET
--	CLEAR_BRANCH_HISTORY
- 
- 	/*
- 	 * SYSENTER doesn't filter flags, so we need to clear NT and AC
-@@ -116,6 +115,12 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
- 	jnz	.Lsysenter_fix_flags
- .Lsysenter_flags_fixed:
- 
-+	/*
-+	 * CLEAR_BRANCH_HISTORY can call other functions. It should be invoked
-+	 * after making sure TF is cleared because single-step is ignored only
-+	 * for instructions inside the entry_SYSENTER_compat function.
-+	 */
-+	CLEAR_BRANCH_HISTORY
- 	movq	%rsp, %rdi
- 	call	do_SYSENTER_32
- 	jmp	sysret32_from_system_call
--- 
-2.39.3
-
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^channel@[0-4]$":
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description: The channel number representing the DAC output channel.
+> +        maximum: 4
+> +
+> +      adi,toggle-mode:
+> +        description:
+> +          Set the channel as a toggle enabled channel. Toggle operation enables
+> +          fast switching of a DAC output between two different DAC codes without
+> +          any SPI transaction.
+> +        type: boolean
+> +
+> +      adi,output-range-microamp:
+> +        description: Specify the channel output full scale range.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [3125000, 6250000, 12500000, 25000000, 50000000, 100000000,
+> +               200000000, 300000000]
+> +
+> +    required:
+> +      - reg
+> +      - adi,output-range-microamp
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - spi-max-frequency
+> +  - vcc-supply
+> +  - iovcc-supply
+> +  - v-neg-supply
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        dac@0 {
+> +            compatible = "adi,ltc2672";
+> +            reg = <0>;
+> +            spi-max-frequency = <10000000>;
+> +
+> +            vcc-supply = <&vcc>;
+> +            iovcc-supply = <&vcc>;
+> +            ref-supply = <&vref>;
+> +            v-neg-supply = <&vneg>;
+> +
+> +            io-channels = <&adc 0>;
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            channel@0 {
+> +                    reg = <0>;
+> +                    adi,toggle-mode;
+> +                    adi,output-range-microamp = <3125000>;
+> +            };
+> +
+> +            channel@1 {
+> +                    reg = <1>;
+> +                    adi,output-range-microamp = <6250000>;
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7becbdf7d1df..3320b7af4c0b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12858,6 +12858,7 @@ S:	Supported
+>  W:	https://ez.analog.com/linux-software-drivers
+>  F:	Documentation/ABI/testing/sysfs-bus-iio-dac
+>  F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> +F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+>  
+>  LTC2688 IIO DAC DRIVER
+>  M:	Nuno Sá <nuno.sa@analog.com>
+> -- 
+> 2.34.1
+> 
 
