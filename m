@@ -1,162 +1,245 @@
-Return-Path: <linux-kernel+bounces-186878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4725A8CCA48
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:11:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BCDF8CCA4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A741C20EEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:11:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3B1FB218D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F41A939;
-	Thu, 23 May 2024 01:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Dji7+uYF"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01F74C8C;
+	Thu, 23 May 2024 01:13:19 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A36F6AAD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A4417EF;
+	Thu, 23 May 2024 01:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716426670; cv=none; b=HMTJo+8GU7MnVSllsAeJ9ikkayCGdCBzKyXNMBZSMQGPK9KlHZMKtFVDGaer4JQNUczACA35OazJmSrI9Owkl4SKN+MMqaFsF9qe8ppox3QMXpdCB5nAu7xGRXLryDnj+8XrasczfabK7Dc1MFzoyCtplnveErWggW0SkUvOZ6A=
+	t=1716426799; cv=none; b=slX7gEce0tzWVNfNafvCJmReDQx5KLEUQ0D9PkdjzW2iOlhCSMBt3ML/qguw2Vi9fm4tvgu5m9b2Gor7iy7iJmOsGx/CCGePgXc4xk9le9psmXsVNldLeC0KoMXLc0kcCKTrX0abx8l06/VvBabilAkYwj/l/Rfoe0azRJP/4xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716426670; c=relaxed/simple;
-	bh=irmPEB0EJHZap0scHqXlwAoFaMpePoW3FnqN7BaOryk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBYVtnvsRtj1aHgfH2YeEnmYslfO9diwt82rrQDZ9AtoJjKqrowK23aFDOwKWFveJq1Ed9GC78US47pGpqLi0tMRDUZFf1Z2+fhqrJbjKx8mCV3+nG2hyfWF/TYOutXjiKkjDAmVDESnzfM3F4BBSrZWb8nQWbhytaVFYasyK7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Dji7+uYF; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5b53bb4bebaso1754243eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 18:11:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1716426668; x=1717031468; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XmvUqD+Lw4cLCsEe0vSwF972lL7nlr8Q3vsLBnKUsoc=;
-        b=Dji7+uYFTPtSdPwm2cXr8wjncXPx+e1dWVj7qrpHYjJ7T6l3XIVsCUkv/UDMwtOFQ/
-         KpXm3NRTkB9POaEAxRUcvzQ8uAN6o6ALv5WzfQTDjkFT/i6/MKPCt8zb1QwMNbpKGmSs
-         1WBO6JHhNfHnlWA4AXwS4++xG79uNrQcFSAbIujB0AbaP08cYlVPLF7kMRQmc8EZSCvP
-         loyIyNqq06i46/mxIGKcCoPwh4NU/S9ZsqtMITsfu7M9cYkAPu9Ku1va5nV7ycQsEeYd
-         m5KjCXfIlacnd3CMEjT7imUxPlb2n+E4wWv1EHOUE58lxlT3f8HeqRXrOWlm9hqsCOSM
-         +UyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716426668; x=1717031468;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XmvUqD+Lw4cLCsEe0vSwF972lL7nlr8Q3vsLBnKUsoc=;
-        b=KM6faKNi2Kr/vZHWIthgK3Numtc2csYYRTOoyddQJB64gQwHYEU7ivltOit+Bw0xxi
-         MD/DmEzIh7hAmC8A6uRtHxe87i2doF6YzBtozBCG+7HeVQegNi2giQQOu/52J7Y+oKj6
-         JpgbWUjVdRzfIWXlJR+iDdeMaLWZLIbF7rRjsi46gvQQvWdCx/RvAqA4oG9t476sEdZT
-         EcPca2Bxs2ul/on5fFRMTwTgWwc7BXd3j6XIf9JMusY0v80Txb2m9F+ynD8q3dWstlIn
-         URuDAVPHwgm1zY+dugqSyTVGujF+IIckb8mPklynwXm0y3yCFxVHTmkgw+NjzjWLsRIh
-         NCUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4T2+rhznITLTaC/UEo0LNOHTHAYUUcKFsTCalIa8mkj3PGq2tFShuwFPA7qa6t8mEN79XXYex/+f0IPz7NYpbjcXe9DRC3HvMNwrd
-X-Gm-Message-State: AOJu0YyRQLgDkW3frjsmmG/UJEDgHFKpzS1qQP3ukLXjy8vA+5iZmdO+
-	KZdq3GMsOUYesM7jbt+8qX8FqxOpNnNJlOtD9/nqyK2lyXsKbFdZaO/9IOvL3EA=
-X-Google-Smtp-Source: AGHT+IHLpQjpY/ZDizwGZZhnZO6kNpcNVrezvsSVGVdrwzcu/g7Obm3i7DB5DFERDBG9ikNNOGjsXw==
-X-Received: by 2002:a05:6358:614b:b0:183:a0ac:b638 with SMTP id e5c5f4694b2df-19791b6fceemr296203455d.11.1716426667893;
-        Wed, 22 May 2024 18:11:07 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6341180dc5csm20062714a12.93.2024.05.22.18.11.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 18:11:07 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1s9wz2-007786-19;
-	Thu, 23 May 2024 11:11:04 +1000
-Date: Thu, 23 May 2024 11:11:04 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-	djwong@kernel.org, hch@infradead.org, brauner@kernel.org,
-	chandanbabu@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
-Message-ID: <Zk6XqIcO+7+VPn35@dread.disaster.area>
-References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
- <20240517111355.233085-4-yi.zhang@huaweicloud.com>
- <ZkwJJuFCV+WQLl40@dread.disaster.area>
- <122ab6ed-147b-517c-148d-7cb35f7f888b@huaweicloud.com>
+	s=arc-20240116; t=1716426799; c=relaxed/simple;
+	bh=uk0dhUH7Tl+BGR0/TQ3xckwGBxB5edtNoSpUztM1za0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Kp6Zy971Lv54ZrcaBOckfO7gorN9nCYrrKiHxQMKLH1jALoQV62UUYO2eXF5rF6QS6/JmeDsRWl8PhFnUg+MtC25pcjWpyt8cWJXJlyN+10b4nJVlhYVBulk7dneSxy9X8GKLaaC77eQn4VxT+Vekpk8mOTp32OjKFqslZlnjxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vl9CP5c5zz4f3jLf;
+	Thu, 23 May 2024 09:13:05 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 967D41A0BF7;
+	Thu, 23 May 2024 09:13:11 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g4lmE5m+VCqNQ--.42702S3;
+	Thu, 23 May 2024 09:13:11 +0800 (CST)
+Subject: Re: [PATCH V2 for-6.10/block 1/2] loop: Fix a race between loop
+ detach and loop open
+To: Gulam Mohamed <gulam.mohamed@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>, Jens Axboe <axboe@kernel.dk>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "shinichiro.kawasaki@wdc.com" <shinichiro.kawasaki@wdc.com>,
+ "chaitanyak@nvidia.com" <chaitanyak@nvidia.com>, "hch@lst.de" <hch@lst.de>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240521224249.7389-1-gulam.mohamed@oracle.com>
+ <dcd2dac3-07d2-4ee8-addf-b9266a84f7fd@kernel.dk>
+ <c7eb562c-97ae-455a-3859-0ed28ebdf7ae@huaweicloud.com>
+ <IA1PR10MB7240AB2157B46F325669859D98EB2@IA1PR10MB7240.namprd10.prod.outlook.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <3c1c654b-a80c-c257-4a36-863c4b148615@huaweicloud.com>
+Date: Thu, 23 May 2024 09:13:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <122ab6ed-147b-517c-148d-7cb35f7f888b@huaweicloud.com>
+In-Reply-To: <IA1PR10MB7240AB2157B46F325669859D98EB2@IA1PR10MB7240.namprd10.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn9g4lmE5m+VCqNQ--.42702S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw45ArWrKF45XF4xKryrXrb_yoWrKw4xpF
+	Z3WF42krWDKFsxCw12q3Wkuw1Sq3ZFqr48Wrn7G34fCr1qyFnIqFy2qryY9FyjgrW8Aa1j
+	vr1UXrW3u34UArUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UU
+	UUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, May 22, 2024 at 09:57:13AM +0800, Zhang Yi wrote:
-> On 2024/5/21 10:38, Dave Chinner wrote:
-> > We can do all this with a single writeback operation if we are a
-> > little bit smarter about the order of operations we perform and we
-> > are a little bit smarter in iomap about zeroing dirty pages in the
-> > page cache:
-> > 
-> > 	1. change iomap_zero_range() to do the right thing with
-> > 	dirty unwritten and cow extents (the patch I've been working
-> > 	on).
-> > 
-> > 	2. pass the range to be zeroed into iomap_truncate_page()
-> > 	(the fundamental change being made here).
-> > 
-> > 	3. zero the required range *through the page cache*
-> > 	(iomap_zero_range() already does this).
-> > 
-> > 	4. write back the XFS inode from ip->i_disk_size to the end
-> > 	of the range zeroed by iomap_truncate_page()
-> > 	(xfs_setattr_size() already does this).
-> > 
-> > 	5. i_size_write(newsize);
-> > 
-> > 	6. invalidate_inode_pages2_range(newsize, -1) to trash all
-> > 	the page cache beyond the new EOF without doing any zeroing
-> > 	as we've already done all the zeroing needed to the page
-> > 	cache through iomap_truncate_page().
-> > 
-> > 
-> > The patch I'm working on for step 1 is below. It still needs to be
-> > extended to handle the cow case, but I'm unclear on how to exercise
-> > that case so I haven't written the code to do it. The rest of it is
-> > just rearranging the code that we already use just to get the order
-> > of operations right. The only notable change in behaviour is using
-> > invalidate_inode_pages2_range() instead of truncate_pagecache(),
-> > because we don't want the EOF page to be dirtied again once we've
-> > already written zeroes to disk....
-> > 
+Hi,
+
+在 2024/05/23 3:12, Gulam Mohamed 写道:
+> Hi Kuai,
 > 
-> Indeed, this sounds like the best solution. Since Darrick recommended
-> that we could fix the stale data exposure on realtime inode issue by
-> convert the tail extent to unwritten, I suppose we could do this after
-> fixing the problem.
+>> -----Original Message-----
+>> From: Yu Kuai <yukuai1@huaweicloud.com>
+>> Sent: Wednesday, May 22, 2024 8:01 AM
+>> To: Jens Axboe <axboe@kernel.dk>; Gulam Mohamed
+>> <gulam.mohamed@oracle.com>; linux-block@vger.kernel.org; linux-
+>> kernel@vger.kernel.org
+>> Cc: shinichiro.kawasaki@wdc.com; chaitanyak@nvidia.com; hch@lst.de;
+>> yukuai (C) <yukuai3@huawei.com>
+>> Subject: Re: [PATCH V2 for-6.10/block 1/2] loop: Fix a race between loop
+>> detach and loop open
+>>
+>> Hi,
+>>
+>> 在 2024/05/22 9:39, Jens Axboe 写道:
+>>> On 5/21/24 4:42 PM, Gulam Mohamed wrote:
+>>>> Description
+>>>> ===========
+>>>>
+>>>> 1. Userspace sends the command "losetup -d" which uses the open() call
+>>>>      to open the device
+>>>> 2. Kernel receives the ioctl command "LOOP_CLR_FD" which calls the
+>>>>      function loop_clr_fd()
+>>>> 3. If LOOP_CLR_FD is the first command received at the time, then the
+>>>>      AUTOCLEAR flag is not set and deletion of the
+>>>>      loop device proceeds ahead and scans the partitions (drop/add
+>>>>      partitions)
+>>>>
+>>>> 	if (disk_openers(lo->lo_disk) > 1) {
+>>>> 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+>>>> 		loop_global_unlock(lo, true);
+>>>> 		return 0;
+>>>> 	}
+>>>>
+>>>>    4. Before scanning partitions, it will check to see if any partition of
+>>>>       the loop device is currently opened
+>>>>    5. If any partition is opened, then it will return EBUSY:
+>>>>
+>>>>       if (disk->open_partitions)
+>>>> 		return -EBUSY;
+>>>>    6. So, after receiving the "LOOP_CLR_FD" command and just before the
+>> above
+>>>>       check for open_partitions, if any other command
+>>>>       (like blkid) opens any partition of the loop device, then the partition
+>>>>       scan will not proceed and EBUSY is returned as shown in above code
+>>>>    7. But in "__loop_clr_fd()", this EBUSY error is not propagated
+>>>>    8. We have noticed that this is causing the partitions of the loop to
+>>>>       remain stale even after the loop device is detached resulting in the
+>>>>       IO errors on the partitions
+>>>>
+>>>> Fix
+>>>> ---
+>>>> Re-introduce the lo_open() call to restrict any process to open the
+>>>> loop device when its being detached
+>>>>
+>>>> Test case
+>>>> =========
+>>>> Test case involves the following two scripts:
+>>>>
+>>>> script1.sh
+>>>> ----------
+>>>> while [ 1 ];
+>>>> do
+>>>> 	losetup -P -f /home/opt/looptest/test10.img
+>>>> 	blkid /dev/loop0p1
+>>>> done
+>>>>
+>>>> script2.sh
+>>>> ----------
+>>>> while [ 1 ];
+>>>> do
+>>>> 	losetup -d /dev/loop0
+>>>> done
+>>>>
+>>>> Without fix, the following IO errors have been observed:
+>>>>
+>>>> kernel: __loop_clr_fd: partition scan of loop0 failed (rc=-16)
+>>>> kernel: I/O error, dev loop0, sector 20971392 op 0x0:(READ) flags 0x80700
+>>>>           phys_seg 1 prio class 0
+>>>> kernel: I/O error, dev loop0, sector 108868 op 0x0:(READ) flags 0x0
+>>>>           phys_seg 1 prio class 0
+>>>> kernel: Buffer I/O error on dev loop0p1, logical block 27201, async page
+>>>>           read
+>>>>
+>>>> V1->V2:
+>>>> 	Added a test case, 010, in blktests in tests/loop/
+>>>> Signed-off-by: Gulam Mohamed <gulam.mohamed@oracle.com>
+>>>> ---
+>>>>    drivers/block/loop.c | 19 +++++++++++++++++++
+>>>>    1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/drivers/block/loop.c b/drivers/block/loop.c index
+>>>> 28a95fd366fe..9a235d8c062d 100644
+>>>> --- a/drivers/block/loop.c
+>>>> +++ b/drivers/block/loop.c
+>>>> @@ -1717,6 +1717,24 @@ static int lo_compat_ioctl(struct block_device
+>> *bdev, blk_mode_t mode,
+>>>>    }
+>>>>    #endif
+>>>>
+>>>> +static int lo_open(struct gendisk *disk, blk_mode_t mode) {
+>>>> +        struct loop_device *lo = disk->private_data;
+>>>> +        int err;
+>>>> +
+>>>> +        if (!lo)
+>>>> +                return -ENXIO;
+>>>> +
+>>>> +        err = mutex_lock_killable(&lo->lo_mutex);
+>>>> +        if (err)
+>>>> +                return err;
+>>>> +
+>>>> +        if (lo->lo_state == Lo_rundown)
+>>>> +                err = -ENXIO;
+>>>> +        mutex_unlock(&lo->lo_mutex);
+>>
+>> This doesn't fix the problem completely, there is still a race window.
+>>
+>> lo_release
+>>    if (disk_openers(disk) > 0)
+>>     reutrn
+>>     -> no openers now
+>> 		lo_open
+>> 		 if (lo->lo_state == Lo_rundown)
+>> 		 -> no set yet
+>> 		 open succeed
+>>    mutex_lock(lo_mutex)
+>>    lo->lo_state = Lo_rundown
+>>    mutex_unlock(lo_mutex)
+>>    __loop_clr_fd
+> We have noticed that, at block layer, both open() and release() are protected by gendisk->open_mutex.
+> So, this race may not happen. Can you please let me know if I understand correctly?
 
-We also need to fix the truncate issue for the upcoming forced
-alignment feature (for atomic writes), and in that case we are
-required to write zeroes to the entire tail extent. i.e. forced
-alignment does not allow partial unwritten extent conversion of
-the EOF extent.
+Yes, __loop_clr_fd from lo_release can't concurrent with lo_open.
+>>
+>> And with the respect, loop_clr_fd() has the same problem.
 
-Hence I think we want to fix the problem by zeroing the entire EOF
-extent first, then optimise the large rtextsize case to use
-unwritten extents if that tail zeroing proves to be a performance
-issue.
+Did you check __loop_clr_fd from lo_ioctl?
 
-I say "if" because the large rtextsize case will still need to write
-zeroes for the fsb that spans EOF. Adding conversion of the rest of
-the extent to unwritten may well be more expensive (in terms of both
-CPU and IO requirements for the transactional metadata updates) than
-just submitting a slightly larger IO containing real zeroes and
-leaving it as a written extent....
+Thanks,
+Kuai
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>>
+>> I think probably loop need a open counter for itself.
+> We are looking to see how to handle this case
+>>
+>> Thanks,
+>> Kuai
+>>
+>>>> +	return err;
+>>>> +}
+>>>
+>>> Most of this function uses spaces rather than tabs.
+>>>
+> 
+
 
