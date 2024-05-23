@@ -1,244 +1,347 @@
-Return-Path: <linux-kernel+bounces-187799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91ECD8CD8AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:46:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D8ED8CD8B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D6C21F229EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:46:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1445F281ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B981865B;
-	Thu, 23 May 2024 16:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DE51CFA9;
+	Thu, 23 May 2024 16:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="FrKCnitC"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05597111A8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QmF5XcwJ"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F5511711
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716482807; cv=none; b=ZeSWpzZ4Z0t/6CVzjYtBKR1Its9mPACJ6qXF+XhgL6UJsl+zK8zc1rw6yjcmb9wPowS3Pt5dCsO1ruUdcai810IJAnioLtx16YDOYrpY8Lf8Ugw8b0xlFmdy7WILkYTs6PjdxAAx83oO3YsgaPQEc3CRFx+0bS129MP31lvd+14=
+	t=1716483153; cv=none; b=SsqOHUqw+16mg+Qs9DscrxI80Z0/OE/tNOclU2aLkGm63T8J1FvF+MLI8LIvQlEFRCPv4i4voqH36k9u0SWWKSXtkT+F3nK5kB2w6b18R/M9T/s10RFPoxMPhFtK4NqL+5dhct4IiEZHQUhGO2P603KKXElocI6EZ3ttoWYiaEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716482807; c=relaxed/simple;
-	bh=I5i5zGWNMuOn7J0ifnx4MX+hfaa783FB4e5FYDh8VpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7KEKxk9C4HTvrQ9dpP4ZNlanv/U3IAPJvGWIUY2Cf+FKJNXKbu1PJ1sNJN8QBQNo/40oX+MRNUk1QgOIAZo08tfizvKAK/44bSss3PvDY4+7aYWU6LMkMw84xmGmauTxYuIi1Widpf9DOs2c121F3MLLIsEJ4uVKkSmdZHXxoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=FrKCnitC; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id E12CA14C2DB;
-	Thu, 23 May 2024 18:46:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1716482801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JvEPhPj2os2isBRCT9aAq8KPK2HYIqjnLtKO1iVZGac=;
-	b=FrKCnitCbwWOQTRH+bsW+6nQoWETt+Aoyn7FIG1jfij0hIXut0Q8ZmaIJZRS0pKdx0W2cI
-	em6FitXMbPNjQM/DFeB8f61tzkCkFA6qDzjstiYHflEuULbG+dLdthcw7B5683npjsAyPs
-	0vs2qAo72JqKgoJIuoFW2sP4yTFTBbUs36AQfEaPJDsPJuDKONtvutLfZ/n06SfSGK2cPM
-	KzcxRwpQE+6UBJ3hNqBP76OxEAFVwIUXa5vF3ITJB81n9X2ZLlMY8BZERjldRXMpYbUOhy
-	vpkGMI92BJIEiqLyURgsvYH4Iy+tO7P0QY+LqVY9ZHxvCSE3fjsv9SDtMOayjA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id bff7c78c;
-	Thu, 23 May 2024 16:46:34 +0000 (UTC)
-Date: Fri, 24 May 2024 01:46:19 +0900
-From: asmadeus@codewreck.org
-To: David Howells <dhowells@redhat.com>
-Cc: syzbot <syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com>,
-	brauner@kernel.org, hdanton@sina.com, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [v9fs?] KASAN: slab-use-after-free Read in
- p9_fid_destroy
-Message-ID: <Zk9y21FktxyLGqDJ@codewreck.org>
-References: <00000000000092914806191382ac@google.com>
- <580959.1716475058@warthog.procyon.org.uk>
+	s=arc-20240116; t=1716483153; c=relaxed/simple;
+	bh=ZBjQfebbku4/bUBs8h6x5TlCQhdiMEMTiX8BrAQapqE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=kDxqeZAfEzRcD9Tqgw0j8vQ/aOGcssiQ8EV4gtT7iTOV8lnIrDllImSCJ4lLMgtuZYuNsIbqEfes1HXf4gFfqTlg3OFuSo9N+ZdvIQwD765FWH8ir+RpPIDgP1Ji7OJg4DEHnbkbOe/ob806Eyd7rMVF1HTgTn3oa6I4YRIo9Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QmF5XcwJ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41fd5dc0480so53665505e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:52:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716483149; x=1717087949; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:user-agent
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yr7A7+twaEG4YGP37jOqGZ1oZyO9dZYdh1Mba7skUqI=;
+        b=QmF5XcwJCAdyngOgFXD8LPTZeNz1gbUYdOrkW+iUEM3wqAejc3OrHP3z+LWz4m98oU
+         0ossx4a8M+UdpAx+oLgZPCbTtgNoCg/c4hGU7Y3VQbd8penQl+Y8tr61qZ00duY8SHEh
+         rswMwA37eiWTXa4UKDX+/tLJtgwF2XKVshZ/i58JLHFYjRA5MlxCG4NIDimcqwoSnIlU
+         RSRJOe3esffOUm9/s9nl5eOk58i2SiR7SB24CZyrMZyVU1GXRtwDYNOZli6PFiPKJhw6
+         SlXBNbIwJbmMCg+yDzSBVM09YvfkQscZuGI1nBGnfXZv6L6usRGJ/eOD0UWT1iFE+Xtc
+         I51A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716483149; x=1717087949;
+        h=content-transfer-encoding:mime-version:message-id:user-agent
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yr7A7+twaEG4YGP37jOqGZ1oZyO9dZYdh1Mba7skUqI=;
+        b=ZRBCeaonjtH/x8sC1XM1g1vxCL8ZzVsvY+owSTFEhDeFJJUK7LP7Jywqy/W/6qId5k
+         UkTb3Xfiawm8upKm4XyeWrttvojyAcYVC/q+83CwfXogat6OqUOP5H0XYtCb5evsrHlU
+         m0RYI2qEXUtTeIIYNf+w+uAKvc6qTIvr3Ue0rDEPmrrA8oKgfd/BhTuC0V15bfGRkbUJ
+         h0TGke1b2nOJ4Yb7x4K1y7m/KWpGxms1Sf9cC8O8li62qEdN44KLLIcW6uEYiwoZouXe
+         TlSQ0IXNjL1xIPXMeMA2uavhq9YZPBcmFqz1O0Wp8fL9eIRssNcbNb4cqi8rro2xuevG
+         RJnw==
+X-Gm-Message-State: AOJu0YwVABOPSBU8JJ91SHtbtJbdBL1w4mpwIedH8C42ouVoCETq/PYD
+	Z9C3rrHe/1+094+g2K4O/FHsaB4RsHXwsUcbW8NAjX55jl+9SvZrvDNlygkyyYo=
+X-Google-Smtp-Source: AGHT+IE1OcM6D20yPxmwS7Sc6+erb6rrOllYaqJGoOAfCCd0TaQ30P3GNaj2UJexM78WpgQ9JWR7FQ==
+X-Received: by 2002:a05:600c:5607:b0:41a:41c8:d8e7 with SMTP id 5b1f17b1804b1-420fd2d7033mr40411635e9.3.1716483149108;
+        Thu, 23 May 2024 09:52:29 -0700 (PDT)
+Received: from [127.0.0.1] ([86.120.163.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacecasm37052283f8f.82.2024.05.23.09.52.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 09:52:28 -0700 (PDT)
+Date: Thu, 23 May 2024 19:52:22 +0300
+From: Marcel <nitan.marcel@gmail.com>
+To: linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?How_to_properly_fix_reading_user_po?=
+ =?US-ASCII?Q?inters_in_bpf_in_android_kernel_4=2E9=3F?=
+User-Agent: K-9 Mail for Android
+Message-ID: <42DD54A2-D0C2-4A70-B461-7C16D3ECB8D2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <580959.1716475058@warthog.procyon.org.uk>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-David Howells wrote on Thu, May 23, 2024 at 03:37:38PM +0100:
-> #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> 
-> netfs, 9p: Fix race between umount and async request completion [v2]
-> 
-> There's a problem in 9p's interaction with netfslib whereby a crash occurs
-> because the 9p_fid structs get forcibly destroyed during client teardown
-> (without paying attention to their refcounts) before netfslib has finished
-> with them.  However, it's not a simple case of deferring the clunking that
-> p9_fid_put() does as that requires the client.
+This seems that it was a long standing problem with the Linux kernel in gen=
+eral=2E bpf_probe_read should have worked for both kernel and user pointers=
+ but it fails with access error when reading an user one instead=2E=20
 
-"as that requires the client" doesn't parse
+I know there's a patch upstream that fixes this by introducing new helpers=
+ for reading kernel and userspace pointers and I tried to back port them ba=
+ck to my kernel but with no success=2E Tools like bcc fail to use them and =
+instead they report that the arguments sent to the helpers are invalid=2E I=
+ assume this is due to the arguments ARG_CONST_STACK_SIZE and ARG_PTR_TO_RA=
+W_STACK handle data different in the 4=2E9 android version and the upstream=
+ version but I'm not sure that this is the cause=2E I left the patch I did =
+below and with a link to the kernel I'm working on and maybe someone can ta=
+ke a look and give me an hand (the patch isn't applied yet)
 
-> The problem is that netfslib has to unlock pages and clear the IN_PROGRESS
-> flag before destroying the objects involved - including the pid - and, in
+<https://github=2Ecom/nitanmarcel/android_kernel_oneplus_sdm845-bpf>
 
-s/pid/fid/
-
-> any case, nothing checks to see if writeback completed barring looking at
-> the page flags.
-> 
-> Fix this by keeping a count of outstanding I/O requests (of any type) and
-> waiting for it to quiesce during inode eviction.
-> 
-> Reported-by: syzbot+df038d463cca332e8414@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/all/0000000000005be0aa061846f8d6@google.com/
-> Reported-by: syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/all/000000000000b86c5e06130da9c6@google.com/
-> Reported-by: syzbot+1527696d41a634cc1819@syzkaller.appspotmail.com
-> Link: https://lore.kernel.org/all/000000000000041f960618206d7e@google.com/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Eric Van Hensbergen <ericvh@kernel.org>
-> cc: Latchesar Ionkov <lucho@ionkov.net>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
-
-With these two nitpicks in commit message addressed, looks good to me,
-thanks!
-
-Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
-
-> cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Steve French <sfrench@samba.org>
-> cc: Hillf Danton <hdanton@sina.com>
-> cc: v9fs@lists.linux.dev
-> cc: linux-afs@lists.infradead.org
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> 
-> Notes:
->     Changes
->     =======
->     ver #2)
->      - Wait for outstanding I/O before clobbering the pagecache.
-> 
-> ---
->  fs/9p/vfs_inode.c      |    1 +
->  fs/afs/inode.c         |    1 +
->  fs/netfs/objects.c     |    5 +++++
->  fs/smb/client/cifsfs.c |    1 +
->  include/linux/netfs.h  |   18 ++++++++++++++++++
->  5 files changed, 26 insertions(+)
-> 
-> diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-> index 8c9a896d691e..effb3aa1f3ed 100644
-> --- a/fs/9p/vfs_inode.c
-> +++ b/fs/9p/vfs_inode.c
-> @@ -349,6 +349,7 @@ void v9fs_evict_inode(struct inode *inode)
->  	__le32 __maybe_unused version;
->  
->  	if (!is_bad_inode(inode)) {
-> +		netfs_wait_for_outstanding_io(inode);
->  		truncate_inode_pages_final(&inode->i_data);
->  
->  		version = cpu_to_le32(v9inode->qid.version);
-> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-> index 94fc049aff58..15bb7989c387 100644
-> --- a/fs/afs/inode.c
-> +++ b/fs/afs/inode.c
-> @@ -648,6 +648,7 @@ void afs_evict_inode(struct inode *inode)
->  
->  	ASSERTCMP(inode->i_ino, ==, vnode->fid.vnode);
->  
-> +	netfs_wait_for_outstanding_io(inode);
->  	truncate_inode_pages_final(&inode->i_data);
->  
->  	afs_set_cache_aux(vnode, &aux);
-> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-> index c90d482b1650..f4a642727479 100644
-> --- a/fs/netfs/objects.c
-> +++ b/fs/netfs/objects.c
-> @@ -72,6 +72,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
->  		}
->  	}
->  
-> +	atomic_inc(&ctx->io_count);
->  	trace_netfs_rreq_ref(rreq->debug_id, 1, netfs_rreq_trace_new);
->  	netfs_proc_add_rreq(rreq);
->  	netfs_stat(&netfs_n_rh_rreq);
-> @@ -124,6 +125,7 @@ static void netfs_free_request(struct work_struct *work)
->  {
->  	struct netfs_io_request *rreq =
->  		container_of(work, struct netfs_io_request, work);
-> +	struct netfs_inode *ictx = netfs_inode(rreq->inode);
->  	unsigned int i;
->  
->  	trace_netfs_rreq(rreq, netfs_rreq_trace_free);
-> @@ -142,6 +144,9 @@ static void netfs_free_request(struct work_struct *work)
->  		}
->  		kvfree(rreq->direct_bv);
->  	}
-> +
-> +	if (atomic_dec_and_test(&ictx->io_count))
-> +		wake_up_var(&ictx->io_count);
->  	call_rcu(&rreq->rcu, netfs_free_request_rcu);
->  }
->  
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index ec5b639f421a..14810ffd15c8 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -431,6 +431,7 @@ cifs_free_inode(struct inode *inode)
->  static void
->  cifs_evict_inode(struct inode *inode)
->  {
-> +	netfs_wait_for_outstanding_io(inode);
->  	truncate_inode_pages_final(&inode->i_data);
->  	if (inode->i_state & I_PINNING_NETFS_WB)
->  		cifs_fscache_unuse_inode_cookie(inode, true);
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index d2d291a9cdad..3ca3906bb8da 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -68,6 +68,7 @@ struct netfs_inode {
->  	loff_t			remote_i_size;	/* Size of the remote file */
->  	loff_t			zero_point;	/* Size after which we assume there's no data
->  						 * on the server */
-> +	atomic_t		io_count;	/* Number of outstanding reqs */
->  	unsigned long		flags;
->  #define NETFS_ICTX_ODIRECT	0		/* The file has DIO in progress */
->  #define NETFS_ICTX_UNBUFFERED	1		/* I/O should not use the pagecache */
-> @@ -474,6 +475,7 @@ static inline void netfs_inode_init(struct netfs_inode *ctx,
->  	ctx->remote_i_size = i_size_read(&ctx->inode);
->  	ctx->zero_point = LLONG_MAX;
->  	ctx->flags = 0;
-> +	atomic_set(&ctx->io_count, 0);
->  #if IS_ENABLED(CONFIG_FSCACHE)
->  	ctx->cache = NULL;
->  #endif
-> @@ -517,4 +519,20 @@ static inline struct fscache_cookie *netfs_i_cookie(struct netfs_inode *ctx)
->  #endif
->  }
->  
-> +/**
-> + * netfs_wait_for_outstanding_io - Wait for outstanding I/O to complete
-> + * @ctx: The netfs inode to wait on
-> + *
-> + * Wait for outstanding I/O requests of any type to complete.  This is intended
-> + * to be called from inode eviction routines.  This makes sure that any
-> + * resources held by those requests are cleaned up before we let the inode get
-> + * cleaned up.
-> + */
-> +static inline void netfs_wait_for_outstanding_io(struct inode *inode)
-> +{
-> +	struct netfs_inode *ictx = netfs_inode(inode);
-> +
-> +	wait_var_event(&ictx->io_count, atomic_read(&ictx->io_count) == 0);
-> +}
-> +
->  #endif /* _LINUX_NETFS_H */
-> 
-
--- 
-Dominique Martinet | Asmadeus
+diff --git a/include/uapi/linux/bpf=2Eh b/include/uapi/linux/bpf=2Eh
+index 744b4763b80e=2E=2Ede94c13b7193 100644
+--- a/include/uapi/linux/bpf=2Eh
++++ b/include/uapi/linux/bpf=2Eh
+@@ -559,6 +559,43 @@ enum bpf_func_id {
+    */
+    BPF_FUNC_probe_read_user,
+=20
++   /**
++   * int bpf_probe_read_kernel(void *dst, int size, void *src)
++   *     Read a kernel pointer safely=2E
++   *     Return: 0 on success or negative error
++   */
++   BPF_FUNC_probe_read_kernel,
++
++	/**
++	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
++	 *     Copy a NUL terminated string from user unsafe address=2E In case =
+the string
++	 *     length is smaller than size, the target is not padded with furthe=
+r NUL
++	 *     bytes=2E In case the string length is larger than size, just coun=
+t-1
++	 *     bytes are copied and the last byte is set to NUL=2E
++	 *     @dst: destination address
++	 *     @size: maximum number of bytes to copy, including the trailing NU=
+L
++	 *     @unsafe_ptr: unsafe address
++	 *     Return:
++	 *       > 0 length of the string including the trailing NUL on success
++	 *       < 0 error
++	 */
++	BPF_FUNC_probe_read_user_str,
++
++	/**
++	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
++	 *     Copy a NUL terminated string from unsafe address=2E In case the s=
+tring
++	 *     length is smaller than size, the target is not padded with furthe=
+r NUL
++	 *     bytes=2E In case the string length is larger than size, just coun=
+t-1
++	 *     bytes are copied and the last byte is set to NUL=2E
++	 *     @dst: destination address
++	 *     @size: maximum number of bytes to copy, including the trailing NU=
+L
++	 *     @unsafe_ptr: unsafe address
++	 *     Return:
++	 *       > 0 length of the string including the trailing NUL on success
++	 *       < 0 error
++	 */
++	BPF_FUNC_probe_read_kernel_str,
++
+ 	__BPF_FUNC_MAX_ID,
+ };
+=20
+diff --git a/kernel/trace/bpf_trace=2Ec b/kernel/trace/bpf_trace=2Ec
+index a1e37a5d8c88=2E=2E3478ca744a45 100644
+--- a/kernel/trace/bpf_trace=2Ec
++++ b/kernel/trace/bpf_trace=2Ec
+@@ -94,7 +94,7 @@ static const struct bpf_func_proto bpf_probe_read_proto =
+=3D {
+ 	=2Earg3_type	=3D ARG_ANYTHING,
+ };
+=20
+-BPF_CALL_3(bpf_probe_read_user, void *, dst, u32, size, const void *, uns=
+afe_ptr)
++BPF_CALL_3(bpf_probe_read_user, void *, dst, u32, size, const void  __use=
+r *, unsafe_ptr)
+ {
+ 	int ret;
+=20
+@@ -115,6 +115,27 @@ static const struct bpf_func_proto bpf_probe_read_use=
+r_proto =3D {
+ };
+=20
+=20
++BPF_CALL_3(bpf_probe_read_kernel, void *, dst, u32, size, const void *, u=
+nsafe_ptr)
++{
++	int ret;
++
++	ret =3D probe_kernel_read(dst, unsafe_ptr, size);
++	if (unlikely(ret < 0))
++		memset(dst, 0, size);
++
++	return ret;
++}
++
++static const struct bpf_func_proto bpf_probe_read_kernel_proto =3D {
++	=2Efunc		=3D bpf_probe_read_kernel,
++	=2Egpl_only	=3D true,
++	=2Eret_type	=3D RET_INTEGER,
++	=2Earg1_type	=3D ARG_PTR_TO_RAW_STACK,
++	=2Earg2_type	=3D ARG_CONST_STACK_SIZE,
++	=2Earg3_type	=3D ARG_ANYTHING,
++};
++
++
+ BPF_CALL_3(bpf_probe_write_user, void *, unsafe_ptr, const void *, src,
+ 	   u32, size)
+ {
+@@ -487,6 +508,69 @@ static const struct bpf_func_proto bpf_probe_read_str=
+_proto =3D {
+ 	=2Earg3_type	=3D ARG_ANYTHING,
+ };
+=20
++
++
++BPF_CALL_3(bpf_probe_read_user_str, void *, dst, u32, size,
++	   const void __user *, unsafe_ptr)
++{
++	int ret;
++
++	/*
++	 * The strncpy_from_unsafe() call will likely not fill the entire
++	 * buffer, but that's okay in this circumstance as we're probing
++	 * arbitrary memory anyway similar to bpf_probe_read() and might
++	 * as well probe the stack=2E Thus, memory is explicitly cleared
++	 * only in error case, so that improper users ignoring return
++	 * code altogether don't copy garbage; otherwise length of string
++	 * is returned that can be used for bpf_perf_event_output() et al=2E
++	 */
++	ret =3D strncpy_from_unsafe_user(dst, unsafe_ptr, size);
++	if (unlikely(ret < 0))
++		memset(dst, 0, size);
++
++	return ret;
++}
++
++static const struct bpf_func_proto bpf_probe_read_user_str_proto =3D {
++	=2Efunc		=3D bpf_probe_read_user_str,
++	=2Egpl_only	=3D true,
++	=2Eret_type	=3D RET_INTEGER,
++	=2Earg1_type	=3D ARG_PTR_TO_RAW_STACK,
++	=2Earg2_type	=3D ARG_CONST_STACK_SIZE,
++	=2Earg3_type	=3D ARG_ANYTHING,
++};
++
++
++BPF_CALL_3(bpf_probe_read_kernel_str, void *, dst, u32, size,
++	   const void *, unsafe_ptr)
++{
++	int ret;
++
++	/*
++	 * The strncpy_from_unsafe() call will likely not fill the entire
++	 * buffer, but that's okay in this circumstance as we're probing
++	 * arbitrary memory anyway similar to bpf_probe_read() and might
++	 * as well probe the stack=2E Thus, memory is explicitly cleared
++	 * only in error case, so that improper users ignoring return
++	 * code altogether don't copy garbage; otherwise length of string
++	 * is returned that can be used for bpf_perf_event_output() et al=2E
++	 */
++	ret =3D strncpy_from_unsafe(dst, unsafe_ptr, size);
++	if (unlikely(ret < 0))
++		memset(dst, 0, size);
++
++	return ret;
++}
++
++static const struct bpf_func_proto bpf_probe_read_kernel_str_proto =3D {
++	=2Efunc		=3D bpf_probe_read_kernel_str,
++	=2Egpl_only	=3D true,
++	=2Eret_type	=3D RET_INTEGER,
++	=2Earg1_type	=3D ARG_PTR_TO_RAW_STACK,
++	=2Earg2_type	=3D ARG_CONST_STACK_SIZE,
++	=2Earg3_type	=3D ARG_ANYTHING,
++};
++
+ static const struct bpf_func_proto *tracing_func_proto(enum bpf_func_id f=
+unc_id)
+ {
+ 	switch (func_id) {
+@@ -500,8 +584,14 @@ static const struct bpf_func_proto *tracing_func_prot=
+o(enum bpf_func_id func_id)
+ 		return &bpf_probe_read_proto;
+ 	case BPF_FUNC_probe_read_user:
+ 		return &bpf_probe_read_user_proto;
++	case BPF_FUNC_probe_read_kernel:
++		return &bpf_probe_read_kernel_proto;
+ 	case BPF_FUNC_probe_read_str:
+ 		return &bpf_probe_read_str_proto;
++	case BPF_FUNC_probe_read_user_str:
++		return &bpf_probe_read_user_str_proto;
++	case BPF_FUNC_probe_read_kernel_str:
++		return &bpf_probe_read_kernel_proto;
+ 	case BPF_FUNC_ktime_get_ns:
+ 		return &bpf_ktime_get_ns_proto;
+ 	case BPF_FUNC_tail_call:
+diff --git a/tools/include/uapi/linux/bpf=2Eh b/tools/include/uapi/linux/b=
+pf=2Eh
+index 155ce25c069d=2E=2E91d5691288a7 100644
+--- a/tools/include/uapi/linux/bpf=2Eh
++++ b/tools/include/uapi/linux/bpf=2Eh
+@@ -522,7 +522,44 @@ enum bpf_func_id {
+    *     Return: 0 on success or negative error
+    */
+    BPF_FUNC_probe_read_user,
++
++   /**
++   * int bpf_probe_read_kernel(void *dst, int size, void *src)
++   *     Read a kernel pointer safely=2E
++   *     Return: 0 on success or negative error
++   */
++   BPF_FUNC_probe_read_kernel,
+ =09
++	/**
++	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
++	 *     Copy a NUL terminated string from user unsafe address=2E In case =
+the string
++	 *     length is smaller than size, the target is not padded with furthe=
+r NUL
++	 *     bytes=2E In case the string length is larger than size, just coun=
+t-1
++	 *     bytes are copied and the last byte is set to NUL=2E
++	 *     @dst: destination address
++	 *     @size: maximum number of bytes to copy, including the trailing NU=
+L
++	 *     @unsafe_ptr: unsafe address
++	 *     Return:
++	 *       > 0 length of the string including the trailing NUL on success
++	 *       < 0 error
++	 */
++	BPF_FUNC_probe_read_user_str,
++
++	/**
++	 * int bpf_probe_read_str(void *dst, int size, const void *unsafe_ptr)
++	 *     Copy a NUL terminated string from unsafe address=2E In case the s=
+tring
++	 *     length is smaller than size, the target is not padded with furthe=
+r NUL
++	 *     bytes=2E In case the string length is larger than size, just coun=
+t-1
++	 *     bytes are copied and the last byte is set to NUL=2E
++	 *     @dst: destination address
++	 *     @size: maximum number of bytes to copy, including the trailing NU=
+L
++	 *     @unsafe_ptr: unsafe address
++	 *     Return:
++	 *       > 0 length of the string including the trailing NUL on success
++	 *       < 0 error
++	 */
++	BPF_FUNC_probe_read_kernel_str,
++ =20
+   __BPF_FUNC_MAX_ID,
+ };
 
