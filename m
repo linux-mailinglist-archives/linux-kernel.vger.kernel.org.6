@@ -1,126 +1,96 @@
-Return-Path: <linux-kernel+bounces-187941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94938CDB0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:46:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D751F8CDB11
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16EEF1C21DFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:46:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899341F238EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A6484A3F;
-	Thu, 23 May 2024 19:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D41156E4;
+	Thu, 23 May 2024 19:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BP4BAo/B";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KIpZqn5t"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7MfGGDv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D5E156E4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E9A84D03;
+	Thu, 23 May 2024 19:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716493600; cv=none; b=pWO468GjaizW4Jf4EZLL3SSPfKhoDdFvRf6P+2XL95dakHJiKNKRh6C8FichpxQKl1aKWNuFgsQXTRvVxX4tz8GPlFqI39s0MOAN3lvYu8Msm21ha3l0jreBGBN/NyvQYC8xr78W6vuKQqlqTHfEiU+ofrKbk4x3U0mnd5x8YNo=
+	t=1716493603; cv=none; b=qpFCDAIDexZKMIVbISNAxazXiLAyMi+IA9Raa9lHbnd5JQfuCBd8Q1eZRqQ7y1QnvLpKdCKE9VvcBohFCNXy8IRkh7MPeKiTl7RuLOCnOl1XeBZhMOdxAg31begkCHtfKhvbqCgnNX5GmYWKKV1RnLQq6qQARwIJsgf10RYSa8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716493600; c=relaxed/simple;
-	bh=5zKe1tosn+En0xcnx35KM6LvuL/99qWEMzzDoUejKVM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=PaBqDW8SzNiHKG+S9FcDEqh6J3Y/MsPCTS+DIVT34fs1+ftwvb9qCensOnvw3qul5Ufvbm57jpmu9PyWanFckd50eyENU2uSlyKKGWAPtiEavy5mPe6yk0UNlv51ixGInWFX4USVeJs6O1bdaFXLUx4lRrd0mwqYFw5qFe+bzzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BP4BAo/B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KIpZqn5t; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716493597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=uosf8zJX/OrVrpzgWdisB0fvzDFsKDb8UYB9Oox95ds=;
-	b=BP4BAo/B69jc8ERVWFG98sNHLN1mENEzNZNBioaIc8i+Z2nQvyDhWBpGZ7Q8bSagQvkp0r
-	Qkoi9ly8VwbHcND/epo5p1JbpdIcYEl8tlsHT3u4xHypR3RHOL7tG0w8bz2Hs1dJWWmU4f
-	9xsJRC4V8XwLgNg3s+4rrrW0j57j58gUKlsP0mm4TFoC4IEnh+vHVVLtKkBKChvC4BS5PP
-	x3QInGMT3WmYjyr3TGr2x/BzBXD64Poz1/wfVeDDy//JS+wnJmjvWB0xYZfjR1BtJyVed4
-	Cr4QI2aVIO72pN618+SVkrXSP15TSfdaEaa+FZckgMIw022PRgqfwsae1NffWw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716493597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=uosf8zJX/OrVrpzgWdisB0fvzDFsKDb8UYB9Oox95ds=;
-	b=KIpZqn5taXmZz3LONsNtK4wwCWpj93R/8rFGP6l7jO5arnhLumMZWFiopXw87IZFZtKX1z
-	eYmvNXSkHlMUZVDA==
-To: "dicken.ding" <dicken.ding@mediatek.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>
-Cc: wsd_upstream@mediatek.com, hanks.chen@mediatek.com,
- ivan.tseng@mediatek.com, cheng-jui.wang@mediatek.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, "dicken.ding"
- <dicken.ding@mediatek.com>
-Subject: Re: [PATCH 1/1] irq: Fix uaf issue in irq_find_at_or_after
-In-Reply-To: <20240523113949.10444-1-dicken.ding@mediatek.com>
-Date: Thu, 23 May 2024 21:46:36 +0200
-Message-ID: <87cypcfh0j.ffs@tglx>
+	s=arc-20240116; t=1716493603; c=relaxed/simple;
+	bh=CNMblmqVNA2x8vqn+HiJkT+FDFOXwcL+13QaZX5Oh+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bd+nTGrCtxl5nwEdtH7fI54Dg/B+KgVFne3cuaKgeWToC/SL4G4D5QQ8l6Ee0dTHu9JUvVOObc4dJvNy3Rn8BYlsuO++S+MjVNq9b/FrNJFl2j3Cf8shqLH2WBswOhGczf46kVSf2lwEIUQ1gSKzv85pvy2k30VxHh+ZF2Ho/m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7MfGGDv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C586CC32789;
+	Thu, 23 May 2024 19:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716493602;
+	bh=CNMblmqVNA2x8vqn+HiJkT+FDFOXwcL+13QaZX5Oh+g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=N7MfGGDv43k//EXXxDaT78UMClX9z4BWj3Ah8Prrtroqda09n9OB3crXWwaAlSbjd
+	 ET2oo3+E7EC2OE2LH/IA4tRjZesCZIKUnemd8/5eDmN1Y6DNCa2EdT0M8sHuLKDU4J
+	 Wj1tbDCh1fPeDgFhEGrJCgeI0vkLLcEdywgUNmFS8ZIVPLOMlr3repCghGPDR70+u1
+	 3FPhWDZZZPMICnM/HRXS60bG7rRSt/EE80dcdJ/8HXndkHKtpNz9vebf4OUUgbxHTY
+	 T3WrEBDxK47O4/gGcmh+/qmSnSEXFjVnUi44z1c0PCe7xnhGExc1dqxuCZmQP5HNcs
+	 UvR2sAI/P50HQ==
+Date: Thu, 23 May 2024 12:46:40 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>, Ahmed
+ Zaki <ahmed.zaki@intel.com>, Pavan Chebbi <pavan.chebbi@broadcom.com>,
+ Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, Konstantin
+ Taranov <kotaranov@microsoft.com>, Kees Cook <keescook@chromium.org>, Paolo
+ Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "David S.
+ Miller" <davem@davemloft.net>, Dexuan Cui <decui@microsoft.com>, Wei Liu
+ <wei.liu@kernel.org>, Haiyang Zhang <haiyangz@microsoft.com>, "K. Y.
+ Srinivasan" <kys@microsoft.com>, Leon Romanovsky <leon@kernel.org>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Ajay Sharma <sharmaajay@microsoft.com>, Long Li
+ <longli@microsoft.com>, Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next] net: mana: Allow variable size indirection
+ table
+Message-ID: <20240523124640.40ccd9f8@kernel.org>
+In-Reply-To: <1716483314-19028-1-git-send-email-shradhagupta@linux.microsoft.com>
+References: <1716483314-19028-1-git-send-email-shradhagupta@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23 2024 at 19:39, dicken.ding wrote:
-> The function "irq_find_at_or_after" is at the risk of use-after-free
-> due to the race condition between the functions "delayer_free_desc"
-> and "irq_desc_get_irq". The function "delayer_free_desc" could be
-> called between "mt_find" and "irq_desc_get_irq" due to the absence
-> of any locks to ensure atomic operations on the "irq_desc" structure.
->
-> In this patch, we introduce a pair of locks, namely "rcu_read_lock"
-> and "rcu_read_unlock" to prevent the occurrence of use-after-free in
-> "irq_find_at_or_after".
+On Thu, 23 May 2024 09:55:14 -0700 Shradha Gupta wrote:
+> Allow variable size indirection table allocation in MANA instead
+> of using a constant value MANA_INDIRECT_TABLE_SIZE.
+> The size is now derived from the MANA_QUERY_VPORT_CONFIG and the
+> indirection table is allocated dynamically.
+> 
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
 
-Please read Documentation/process/maintainers-tip.rst and the general
-documentation how changelogs should be written.
+## Form letter - net-next-closed
 
-Something like this:
+The merge window for v6.10 has begun and we have already posted our pull
+request. Therefore net-next is closed for new drivers, features, code
+refactoring and optimizations. We are currently accepting bug fixes only.
 
-  irq_find_at_or_after() dereferences the interrupt descriptor which is
-  returned by mt_find() while neither holding sparse_irq_lock nor RCU
-  read lock, which means the descriptor can be freed between mt_find()
-  and the dereference.
+Please repost when net-next reopens after May 26th.
 
-  Guard the access with a RCU read lock section.
+RFC patches sent for review only are obviously welcome at any time.
 
-Hmm?
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+-- 
+pw-bot: defer
 
-> --- a/kernel/irq/irqdesc.c
-> +++ b/kernel/irq/irqdesc.c
-> @@ -160,9 +160,15 @@ static int irq_find_free_area(unsigned int from, unsigned int cnt)
->  static unsigned int irq_find_at_or_after(unsigned int offset)
->  {
->  	unsigned long index = offset;
-> +	unsigned int irq = nr_irqs;
-> +
-> +	rcu_read_lock();
->  	struct irq_desc *desc = mt_find(&sparse_irqs, &index, nr_irqs);
-> +	if (desc)
-> +		irq = irq_desc_get_irq(desc);
-> +	rcu_read_unlock();
->  
-> -	return desc ? irq_desc_get_irq(desc) : nr_irqs;
-> +	return irq;
-
-I wrote guard above because that's what should be used for this:
-
-  	unsigned long index = offset;
-  	struct irq_desc *desc;
-
-        guard(rcu)();
-        desc = mt_find(&sparse_irqs, &index, nr_irqs);
-	return desc ? irq_desc_get_irq(desc) : nr_irqs;
-
-Thanks,
-
-        tglx
 
