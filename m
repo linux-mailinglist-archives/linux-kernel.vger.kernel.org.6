@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-187602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890E08CD51E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:57:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1718CD51F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13B68B23367
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:57:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F85B23633
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E41814B07E;
-	Thu, 23 May 2024 13:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58F814B06C;
+	Thu, 23 May 2024 13:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="oe/tO5NX"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZF4ZtN7"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5721414AD23
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADA814AD17
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716472643; cv=none; b=k5tLKhS19KbwRh1aKTSrvZlBckLMMRRt0SnOCyl39RARlfgaxcdg/Oi92MBweVUviGYp2yUFcEGcsz8bKIl9sdaJqvhhUPJvy9nCaQ6xacVNkB4AcGt9eHp36cb3GJ7n/W7hZuyq+TqAhVI3Fm6Xapj+pkDuIxMkIaXrQIVJJjw=
+	t=1716472676; cv=none; b=fdxr+yUkszzFvHSA7+WYzkUI3IUA5ROkSAevwblHuCesFec7r30e/vLCWUtuhE4otqSFj/M8Tay6yxxcXX42fk+NKJIIL15Vamw8dj1zxbEEt8tHonK0uFKvkAiIftQ+jbUj1vUC2QaUDqP+HZmnLFNDA9F7l1fxH8L9jUMFlA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716472643; c=relaxed/simple;
-	bh=tuKuhB5jKCD9ovubFiP3ySRu6UTcL+RGfPwzZ6vpe1s=;
+	s=arc-20240116; t=1716472676; c=relaxed/simple;
+	bh=9x+M+9APIGN3rhHl/tijNJMgK0ojb20CQmY/C3fB0G8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K9qwfC5NXUftzJfXAD2oudBQ3hQLDQCqIgEnBy4UL+TvSkhOhAAeIfX28MDUl89MBZSYEwSUoV4baE+AF9FRs4Q/5hc4xLqT9kOW+7u9gT0ZtOa3Wjt03hfzJuKp6N+QPsplcGBgdF7H8ZhCql9CWjF9tUeCzWv2FnszRP6kp7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=oe/tO5NX; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5a5cce2ce6so1026293966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:57:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=lk/slsZN5Bkr+8i8WgVpaX+qnjMlwJD1lxzd4a8yNX6JhuDC3R/8HU/l6xUh9qcwtyFF8KPC6oVGgSK7IbpgZGsqiCoeYdG9SSN5lU9hGVfpzPcVWU5cCEfpRMCizW+lXo7ox9TJ1FQ38cRPA+FaA38SYPd5JJqFu3YFQt5pz1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZF4ZtN7; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e8a8ff4083so19308781fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1716472639; x=1717077439; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tuKuhB5jKCD9ovubFiP3ySRu6UTcL+RGfPwzZ6vpe1s=;
-        b=oe/tO5NXew7bYAcCMZTgooo65CAJaNh+nU4nrMjKPgLI8ZF9fqObOWFfJ7F8/rROo4
-         ZeDLWWJpmJkEz189X3RsWutArzSwFFTMtfye8gomqXvqYwHYz2Oey/gCE5GAe6rF8uab
-         8t1sXZJOsgnIe9vZsMGJfcLATDCzBoy8kYtyU=
+        d=gmail.com; s=20230601; t=1716472673; x=1717077473; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OMOUYCMFihJdUjCJHbJ9rJQeq23/qVjfUy+xhBp831s=;
+        b=UZF4ZtN70DUqUlcCiUtNrvPG9Gi3Vvl0eAP6SWtwXOzk+yxCEFJhuY+HB48QmZQb1T
+         h12mdi+Vzl5DC3wY75Oq01ssl+wUJJTARO1cDExgeZApPa/GkGMC7synFQHVTjITQkL4
+         BmdnmHZuxTpfrKJA6dga92N0DR2gsyzP1E7UMicfL7OI+h8fKrmV113H9pRA+tx9DvTK
+         WiD/ZSmptMLR8+T3/zTDqEFYJRS+fgkkBKEhfRzD+ca3YmJiKzooyUVLBJJCOxCTjdNa
+         A4ig2x3kIb4wa/lC5no1gX/bzLw2SQmPpzFXiSRLKyy9B9e7Vr499YdwCRyCXRcToPK0
+         WqBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716472639; x=1717077439;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tuKuhB5jKCD9ovubFiP3ySRu6UTcL+RGfPwzZ6vpe1s=;
-        b=a2KIlv1lWX9kTkR6KhljgQC5sH8Mk623dQHHE8la0sEq/aUZaAUTPZ5igvmZhB+O8b
-         qz6q1g4hci3Va3bo0dcxXMzaxcyquAD2Nj3w4WqDrS5T8NHrQyEFcCZbiNb0kLHr5Agn
-         kDgFw8Nlx27md4fzQx60CriFbZKRuts1ddCWDSL2fSwbPdqsoPTPMsaTzeLibLtfXRBU
-         fwfkSf3PAeSlCCT+Y6sz9fcY+4MhEVK/OO9Llal+dNnfW6kqKpR0v/J3bKS31jmSz189
-         zCupuoYgH138QbQQME4aPG6zHITDB49rxSuI5RvZnrZF/sfwvQuHHoXHXewjGyKaZknk
-         tpug==
-X-Forwarded-Encrypted: i=1; AJvYcCULhLDlNAlfFrB4AC6DaZnfA6chxgQuFzt+XfV/3qgvKku4jI0vO+2O9lW6xuh8foLE+ya1jJw8qulb+2nGZtYjlsYhmFT0dpDB4jmv
-X-Gm-Message-State: AOJu0Yw4s+TixeGWH+wgefvIO0Cp9asrZvM5LWb0/IzdVjkPi1xUtzkS
-	QHaTcUAcIcps3azVvpJBy1xeIcmnPic6ntm5hc0Qe6c4c/0rmec/iMhbrDkj+YLeTPNtKb/tPzB
-	6iQ4n/lqPc8EyQlD8s4CyjSGiwtXJTGAZIArCF/9piLwvo9saL1Y=
-X-Google-Smtp-Source: AGHT+IGwv/ScwkgRjHdhiQCyyMyxcHqcpFc8OI2A5ZkS8UBdb6YncY2x/XHvnylSUc6CgnNomJmj0gUZnl/IESJ46A4=
-X-Received: by 2002:a17:906:b202:b0:a59:c23d:85d2 with SMTP id
- a640c23a62f3a-a622814319bmr302308266b.55.1716472639470; Thu, 23 May 2024
- 06:57:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716472673; x=1717077473;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OMOUYCMFihJdUjCJHbJ9rJQeq23/qVjfUy+xhBp831s=;
+        b=Poas+JrNbv3XkbJNR+9SlE1qF0vq4hsA0E38cVYK1TZkpKoaEV2X5UEa8AoSY0bNVz
+         cM/Pasq2ilbJLk2WFMLJzWXl4/d6N9RECLvS4akAr10ZSTcOAaCbL5Ha/pmDIioo+MIa
+         XAOrFEDgFlx4qgdMS5b3ahHvg2FQ7UHREbSvJ5V3pkW/dcTOjUWPtzd48TlzHDEW4p/0
+         3pspo6PWIt0bVcbD9v2ilXaYnaS34cHqVH4XLUN5J/W7akyz8RqYuwHFlT3FxwPfxerV
+         fq6fR4oeUhNQlejl1Zszpn+FkgWISFRFa80ljaLIlwvo5+5zrjHnC48LiVVrOSkRGAfc
+         DaCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwQ4oNXunpMM0PmCt4z8k0aPRkk2k7/B+d/VBd0TEz3LDg8FLje7fmexgfYbtDZIe60FvVjNsdBNBx6w/RjhLCWwjaOdKn8GIWSHyC
+X-Gm-Message-State: AOJu0YyyFbfCs5ZT1sligumD8PA1QGcnBnms1txdm7OP4KKqZoNEcFUa
+	tibhodwQPvZzHmGHYPFZTg6h5w8+Ui8gA5mE3n/Y7dx2INLDt0xGUjUHp5LasBdlS8UVxCz4BkV
+	5/E15g2eNpBtPlgEPIsEKojlMduLOzDtVt62K6Q==
+X-Google-Smtp-Source: AGHT+IG1AWvf7EzaCj7fIX4aVnfazLDZAwIEGt9b/u9Mld7qpT6ogzIh7jbUih6lnSJBTd3lTfPQEccB+HOkQQTlk0Q=
+X-Received: by 2002:a2e:9087:0:b0:2e1:c97b:6f25 with SMTP id
+ 38308e7fff4ca-2e951b4f30bmr7752721fa.1.1716472672458; Thu, 23 May 2024
+ 06:57:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1708709155.git.john@groves.net> <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
- <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
- <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
- <kejfka5wyedm76eofoziluzl7pq3prys2utvespsiqzs3uxgom@66z2vs4pe22v>
- <CAJfpegvQefgKOKMWC8qGTDAY=qRmxPvWkg2QKzNUiag1+q5L+Q@mail.gmail.com> <l2zbsuyxzwcozrozzk2ywem7beafmidzp545knnrnkxlqxd73u@itmqyy4ao43i>
-In-Reply-To: <l2zbsuyxzwcozrozzk2ywem7beafmidzp545knnrnkxlqxd73u@itmqyy4ao43i>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 23 May 2024 15:57:07 +0200
-Message-ID: <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-To: John Groves <John@groves.net>
-Cc: linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240522082729.971123-1-ubizjak@gmail.com> <20240522082729.971123-2-ubizjak@gmail.com>
+ <c1892ba9-4eae-40fc-b3ab-73d0f82a74ea@linux.intel.com> <CAFULd4Z=YkV1Hbs4DikPBwO-6rg8tfDLGeacSCnfbC02E5y+Cg@mail.gmail.com>
+ <b100a3c4-e5c3-41da-8c02-3a4986b49eec@linux.intel.com>
+In-Reply-To: <b100a3c4-e5c3-41da-8c02-3a4986b49eec@linux.intel.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 23 May 2024 15:57:40 +0200
+Message-ID: <CAFULd4aXBAxPS7hXJ_RKMzZu60yTr7gK1m3K8z0yq1mjYn3dyA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] iommu/vt-d: Use try_cmpxchg64() in intel_pasid_get_entry()
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[trimming CC list]
+On Thu, May 23, 2024 at 3:44=E2=80=AFPM Baolu Lu <baolu.lu@linux.intel.com>=
+ wrote:
+>
+> On 2024/5/23 21:34, Uros Bizjak wrote:
+> >>> +             if (!try_cmpxchg64(&dir[dir_index].val, &tmp,
+> >>> +                                (u64)virt_to_phys(entries) | PASID_P=
+TE_PRESENT)) {
+> >> Above change will cause a dead loop during boot. It should be
+> > No, it is correct as written:
+> >
+> > if (cmpxchg64(*ptr, 0, new))
+> >
+> > can be written as:
+> >
+> > if (cmpxchg64(*ptr, 0, new) !=3D 0)
+> >
+> > this is equivalent to:
+> >
+> > tmp =3D 0ULL;
+> > if (!try_cmpxchg64(*ptr, &tmp, new))
+>
+> The return value of both cmpxchg64() and try_cmpxchg64() is the old
+> value that was loaded from the memory location, right?
 
-On Thu, 23 May 2024 at 04:49, John Groves <John@groves.net> wrote:
+Actually, try_cmpxchg() returns true if successful and false if it fails.
 
-> - memmap=<size>!<hpa_offset> will reserve a pretend pmem device at <hpa_offset>
-> - memmap=<size>$<hpa_offset> will reserve a pretend dax device at <hpa_offset>
+            tmp =3D 0ULL;
+            if (!try_cmpxchg64(*ptr, &tmp, new))
 
-Doesn't get me a /dev/dax or /dev/pmem
+The logic in the above snippet can be interpreted as:
 
-Complete qemu command line:
+if we fail to compare *ptr with 0, then:
 
-qemu-kvm -s -serial none -parallel none -kernel
-/home/mszeredi/git/linux/arch/x86/boot/bzImage -drive
-format=raw,file=/home/mszeredi/root_fs,index=0,if=virtio -drive
-format=raw,file=/home/mszeredi/images/ubd1,index=1,if=virtio -chardev
-stdio,id=virtiocon0,signal=off -device virtio-serial -device
-virtconsole,chardev=virtiocon0 -cpu host -m 8G -net user -net
-nic,model=virtio -fsdev local,security_model=none,id=fsdev0,path=/home
--device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare -device
-virtio-rng-pci -smp 4 -append 'root=/dev/vda console=hvc0
-memmap=4G$4G'
+            iommu_free_page(entries);
+            goto retry;
 
-root@kvm:~/famfs# scripts/chk_efi.sh
-This system is neither Ubuntu nor Fedora. It is identified as debian.
-/sys/firmware/efi not found; probably not efi
- not found; probably nof efi
-/boot/efi/EFI not found; probably not efi
-/boot/efi/EFI/BOOT not found; probably not efi
-/boot/efi/EFI/ not found; probably not efi
-/boot/efi/EFI//grub.cfg not found; probably nof efi
-Probably not efi; errs=6
+as intended in the original code.
 
 Thanks,
-Miklos
+Uros.
 
