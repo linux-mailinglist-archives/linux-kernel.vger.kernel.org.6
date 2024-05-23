@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-187637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C608CD5B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:26:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B598CD5B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D1981C2139F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:26:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84364B21737
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB8C14C584;
-	Thu, 23 May 2024 14:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z670RNwT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB66B14BF89;
+	Thu, 23 May 2024 14:26:50 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC0F14B963;
-	Thu, 23 May 2024 14:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B094714B95F;
+	Thu, 23 May 2024 14:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474386; cv=none; b=VD5LdrOsm6MD582WCawTvcnli4eNEvzzpttdTWY2UY9EM3Cg9WmWQsghfBv2SjCZ9q9kK8kSbHGGIT1PR6Dk+XJrqUN4L2nWone5il4JwnU7Z3EdpQJ7/jUwWpe/gKubgq4co2WScW1kh+CGmzMgA35MQjnJm47MeGsqEt3AzqA=
+	t=1716474410; cv=none; b=S1M+nZOWcQ+Ydkw2t+fOj2yiEhcwYOBWNH+HlEM8V6XwALyKqoDUi9OR+Zjmcps1Ik3SK+qrvY691NCMV/zQzgh+EikN0CT40IDowcizX9A4+ev7r7WH9JyjgNWfhWbl6TmTh3SLt5GQmLD4RjJt4N9GRuXTB7Syk+7Fm7Mbt3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474386; c=relaxed/simple;
-	bh=BRelUIXHRNbgKGr9uiec6fA7kfy2IAO96U7wtTdHOvA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=DM3ljbnksQmvV3K5aBW7qkdNfBOAqVMu1HqpJF4mr9NjQ87udct5CKllkdM7kSeJ+O8fTZZPfzxHgO9IVgl1sqj6f6YxMdPq2SL/fyonKn/VwSpzBSvb6mlByLlIFQ51GrZb/ZrsqC3QqaHYw36jblx+m8YTZDgHlLIc1UTrm0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z670RNwT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003FDC2BD10;
-	Thu, 23 May 2024 14:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716474385;
-	bh=BRelUIXHRNbgKGr9uiec6fA7kfy2IAO96U7wtTdHOvA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Z670RNwTpMiq5Ropebg1SSzUGgmihspQHBUatXA6Zxb38ecj8kvHRNiVQ/rOPyXSK
-	 pexclw0Ro64CFUkzd/xtmc9Yctiukv3Ru2Od/yExS6oKWk7lA4Iu3VW1bjmjB10aqG
-	 HG+nU6EWLzJxbVScmQG1Ch7AcSduL4lvcYA5Z+SYvBQu/9dIksubwIOQhls82gRqLr
-	 fmnih4zlqEArYM/cZE+2zhnRKzX8lDlge1PbvL+tIwsNc9j2k/YgrOzgQmVUxXgFeJ
-	 QAtiBUqAeYrqFuwGah49rEAwUTuv5xzb6O7fEHf/lpC4tFRN8JStK5YJ0jRUq3I+cg
-	 CRe9ywQ1MSqTw==
+	s=arc-20240116; t=1716474410; c=relaxed/simple;
+	bh=4ZTfeHLk7LxYh2MHgfFTHV1Mkbq6o/Rj4CDuHvRj8qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zc0DDeoZqHLB63gv9tsXkvxcfwoL9CkUDV2M/dc9KRWw7QLDwAoi+N6ADKxla7VdOSbAR1WP47aq4usbPcoKNgTQuFwlS4fiaGTeyFWD2MfPqjgq6hAPnphtVIhWUO67meFF/EoyL4h99NSnaiX0CI0RYYwVWiGTdYFklRihIMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4VlVRJ23Ydz9v7Hl;
+	Thu, 23 May 2024 22:09:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 3D7FD1405E1;
+	Thu, 23 May 2024 22:26:36 +0800 (CST)
+Received: from [10.221.98.131] (unknown [10.221.98.131])
+	by APP1 (Coremail) with SMTP id LxC2BwC3qxQSUk9mdIXECA--.15568S2;
+	Thu, 23 May 2024 15:26:35 +0100 (CET)
+Message-ID: <a25f9654-e681-1bad-47ae-ddc519610504@huaweicloud.com>
+Date: Thu, 23 May 2024 16:26:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 May 2024 17:26:19 +0300
-Message-Id: <D1H3DW5XHHBS.3V527WMDQ829U@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "David Woodhouse" <dwmw2@infradead.org>,
- "Eric Biggers" <ebiggers@kernel.org>, "James Bottomley"
- <James.Bottomley@hansenpartnership.com>, "Ben Boeckel" <me@benboeckel.net>,
- "David Howells" <dhowells@redhat.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Andrew Morton" <akpm@linux-foundation.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "Paul Moore" <paul@paul-moore.com>, "James Morris"
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "open
- list:CRYPTO API" <linux-crypto@vger.kernel.org>, "open list"
- <linux-kernel@vger.kernel.org>, "open list:SECURITY SUBSYSTEM"
- <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3] KEYS: trusted: Use ASN.1 encoded OID
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240523142056.17159-1-jarkko@kernel.org>
-In-Reply-To: <20240523142056.17159-1-jarkko@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: LKMM: Making RMW barriers explicit
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, parri.andrea@gmail.com,
+ boqun.feng@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ Joel Fernandes <joel@joelfernandes.org>
+References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
+ <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+ <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+ <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+ <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
+ <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+ <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
+ <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
+Content-Language: en-US
+From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+In-Reply-To: <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwC3qxQSUk9mdIXECA--.15568S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AryxuryUAFW5uw1fXrWUurg_yoW8Kw17p3
+	ySkas5KF9Yq34Ikry09w47A34FkrW0qF15Jrn5trWakFn09F1Sqw4xA3yruF98Arsaq3W0
+	vay5A34DAayDAFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
+	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-On Thu May 23, 2024 at 5:20 PM EEST, Jarkko Sakkinen wrote:
-> There's no reason to encode OID_TPMSealedData at run-time, as it never
-> changes.
->
-> Replace it with an encoded u8-array, which has the same number of
-> elements:
->
-> 	67 81 05 0A 01 05
->
-> Include OBJECT IDENTIFIER (0x06) tag and length as the prologue so that
-> the OID can be simply copied to the blob leading to:
->
-> 	06 06 67 81 05 0A 01 05
->
-> Since this in stationary place in the buffer it is guaranteed to always
-> fit and not further checks are required.
->
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On 5/23/2024 4:05 PM, Alan Stern wrote:
+> On Thu, May 23, 2024 at 02:54:05PM +0200, Jonas Oberhauser wrote:
+>>
+>>
+>> Am 5/22/2024 um 4:20 PM schrieb Alan Stern:
+>>> It would be better if there was a way to tell herd7 not to add the 'mb
+>>> tag to failed instructions in the first place.  This approach is
+>>> brittle; see below.
+>>
+>> Hernan told me that in fact that is actually currently the case in herd7.
+>> Failing RMW get assigned the Once tag implicitly.
+>> Another thing that I'd suggest to change.
+> 
+> Indeed.
+> 
+>>> An alternative would be to have a way for the .cat file to remove the
+>>> 'mb tag from a failed RMW instruction.  But I don't know if this is
+>>> feasible.
+>>
+>> For Mb it's feasible, as there is no Mb read or Mb store.
+>>
+>> Mb = Mb & (~M | dom(rmw) | range(rmw))
+>>
+>> However one would want to do the same for Acq and Rel.
+>>
+>> For that one would need to distinguish e.g. between a read that comes from a
+>> failed rmw instruction, and where the tag would disappear, or a normal
+>> standalone read.
+>>
+>> For example, by using two different acquire tags, 'acquire and 'rmw-acquire,
+>> and defining
+>>
+>> Acquire = Acquire | Rmw-acquire & (dom(rmw) | range(rmw))
+>>
+>> Anyways we can do this change independently. So for now, we don't need
+>> RMW_MB.
+> 
+> Overall, it seems better to have herd7 assign the right tag, but change
+> the way the .def file works so that it can tell herd7 which tag to use
+> in each of the success and failure cases.
 
-Does not really substitute distribution kernel testing, which is
-IMHO essential for something like TPM2 boot in systemd but for
-simple patches like this, the following does a trivial smoke
-test:
+I am not fully sure how herd7 uses the .def file, but I guess something 
+like adding a second memory tag to __cmpxchg could work
 
-export LINUX_OVERRIDE_SRCDIR=3D<path to a kernel tree with a trusted keys p=
-atch>
-git clone https://gitlab.com/jarkkojs/linux-tpmdd-test.git
-cd linux-tpmdd-test
-cmake -Bbuild && make -Cbuild buildroot-prepare
-make -Cbuild/buildroot/build
-build/buildroot/build/images/run-tests.sh
+cmpxchg(X,V,W) __cmpxchg{mb, once}(X,V,W)
+cmpxchg_relaxed(X,V,W) __cmpxchg{once, once}(X,V,W)
+cmpxchg_acquire(X,V,W) __cmpxchg{acquire, acquire}(X,V,W)
+cmpxchg_release(X,V,W) __cmpxchg{release, release}(X,V,W)
 
-I'm planning to migrate at some point to systemd and make it
-appear more like distribution tho..
+Hernan
 
-For recompiling just kernel only thing needed is:
+> 
+>>> 	[M] ; po ; [RMW_MB]
+>>>
+>>> 	[RMW_MB] ; po ; [M]
+>>>
+>>> This is because events tagged with RMW_MB always are memory accesses,
+>>> and accesses that aren't part of the RMW are already covered by the
+>>> fencerel(Mb) thing above.
+>>
+>> This has exactly the issue mentioned above - it will cause the rmw to have
+>> an internal strong fence that on powerpc probably isn't there.
+> 
+> Oops, that's right.  Silly oversight on my part.  But at least you
+> understood what I meant.
+> 
+>> We could do (with the assumption that Mb applies only to successful rmw):
+>>
+>>   	[M] ; po ; [Mb & R]
+>>   	[Mb & W] ; po ; [M]
+> 
+> That works.
+> 
+> Alan
 
-rm -rf build/buildroot/build/build/linux-custom
-make -Cbuild/buildroot/build
-
-I've put this also to the MAINTAINERS entry of TPM driver although
-I use it also for keyrings etc. Also it is open for contributions
-via Gitlab merge requests (not requesting them per se but I'm open
-to such possibility).
-
-BR, Jarkko
 
