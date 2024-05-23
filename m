@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-188222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A9B8CDF57
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:59:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8B08CDFD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1661D282063
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:59:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C3AB1C22295
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F14022331;
-	Fri, 24 May 2024 01:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1043376E4;
+	Fri, 24 May 2024 03:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eUGIU/x4"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KHoiGwQs"
 Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC44A3C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F4A3BBEB
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716515953; cv=none; b=q0Mh3ogGpmrsZa5oBTPlnRASa+Iln4JhICd/7KgCiiHq/ljE0W/6jXtE8p8yGRXIMHo/VMXaHZFfpq1N8JyjoCKIZ46ajqWIzQ9m4cNjfmXDayIuboTRwoedcXN16T4NYkn3r4AWMcd6yjcwfxl+4GgexQHzZwGNrUvr7DemJu4=
+	t=1716521927; cv=none; b=h7TNHENGv7ZTCmhdJcF4OSHtvPULWdnOzwUTyV+/SWYaIBTxR7CUd3pGuqjlw7UUSI+Mpn7Ah8X3/Bl7PYM7OmkmWutPi2ahThuHIjeVqhmkNRDBd1BL8jbjDTWql9vjPKx1UuWy3XW5YYC0ArOjR2Z0iQAwzdg99eafV4gMit4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716515953; c=relaxed/simple;
-	bh=8HvXOKkqios4yzwlfe0hQTKvICnw8ZVW3mMRcplGCRQ=;
+	s=arc-20240116; t=1716521927; c=relaxed/simple;
+	bh=wW8O7z9qSta8iJBZz+Yf7/g2CiXdzTnbWPgH1S5yp8w=;
 	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=A4gTl4lvApbRITX1Vi45JA49NCl+0j+VK/FxC6aymsPi/i8nT3qwtAMGbZGtkObEQposj007QpYmzdwn7PR6fxn5LtNCVJyyZKLo+fKMBCDMWg6YWUrHwgetZ4eDABdLo1lMVaTVr5/uSeoopBB0/XyetCKqt+8bx3vBDxk4EhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eUGIU/x4; arc=none smtp.client-ip=203.254.224.25
+	 References; b=d3hfcs1Sg8dfnGochee6EPAx1Lg4OMQKUbfoOc7STToljsnoXX1A46lqK1ZHghmbT0hwHh4YSQB5Pvz5BZePfEkmrwVZfXHVG9DhEH2kGwSdi2aD8OFixDzdSPgenuCK11rBw0uFm+YbASBlGKNCEentyZF0O9X6DbCDXWc4QaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KHoiGwQs; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240524015908epoutp021cdf4345fee1d98cf712f937ff088ae9~SSikg2QAK2789727897epoutp02S
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:59:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240524015908epoutp021cdf4345fee1d98cf712f937ff088ae9~SSikg2QAK2789727897epoutp02S
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240524033842epoutp02b0de6370dea53f16d0c2077b821a1724~ST5fyXvj-1999019990epoutp02M
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:38:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240524033842epoutp02b0de6370dea53f16d0c2077b821a1724~ST5fyXvj-1999019990epoutp02M
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716515948;
-	bh=Lc51D5b48Af/XQTwq2XFWVLT/g5JdkG0gRQi0KSFZYs=;
+	s=mail20170921; t=1716521922;
+	bh=XsRGoW8s9vJOipXIlr8NX6JmpQmQL952tUCYOjgPQ3A=;
 	h=From:To:Cc:Subject:Date:References:From;
-	b=eUGIU/x4rpJ18TdxQtu955Ex+a4Ej/90jHUUIc6CjNxr3fQfAKDhRE7pi2DDIoCx+
-	 1Q9jyOXFkkvEMek2pJewtZNRZnv8SQ4LC+bvRBjXnJq75idkmaLdcb6uK5TCIZq5B8
-	 DJYDO6J+eWVeAc19KyQ8aOZTGdQWuY2uRLjSPWwM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240524015908epcas1p466445ee52a12daa12ceffe0f86919b88~SSikMFJbf2205322053epcas1p4M;
-	Fri, 24 May 2024 01:59:08 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.38.249]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VlpB35Vz3z4x9QK; Fri, 24 May
-	2024 01:59:07 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D2.9A.10158.B64FF466; Fri, 24 May 2024 10:59:07 +0900 (KST)
+	b=KHoiGwQs3VPYiAx7kQd1vgtHl/tSoTQLaFbILNrszd6veU0xOhBQbsT7poK3bREPW
+	 xIGqhtbp4ixLfFbdZgXV2LOqwlrTiDEq1UHp7TL+dP7U8dEd6a+iUowKOFVaGeR/NH
+	 RQIap1dvDrY2hG7kEsf7uMil9FRjXOtm8e2AokqA=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240524033841epcas5p2ea91080a8473a302b9f70ff390e17dc8~ST5e_7jEZ1803418034epcas5p2A;
+	Fri, 24 May 2024 03:38:41 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VlrNv2m7Cz4x9Pw; Fri, 24 May
+	2024 03:38:39 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	09.D1.09688.FBB00566; Fri, 24 May 2024 12:38:39 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b~SSijih1Oj0170501705epcas1p2T;
-	Fri, 24 May 2024 01:59:07 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240523113915epcas5p32626cec7fb138355e74415534a3ece36~SGzzKUYrE3035030350epcas5p3G;
+	Thu, 23 May 2024 11:39:15 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240524015907epsmtrp26cd1de8f56036ec4a4f8df6a7014b87d~SSijh1hrc0720707207epsmtrp2K;
-	Fri, 24 May 2024 01:59:07 +0000 (GMT)
-X-AuditID: b6c32a38-8e1ff700000027ae-47-664ff46bb858
+	20240523113915epsmtrp2d6392fc0f682cae0dda45327d97e8922~SGzzJNpo40362203622epsmtrp2f;
+	Thu, 23 May 2024 11:39:15 +0000 (GMT)
+X-AuditID: b6c32a4a-837fa700000025d8-95-66500bbf5cde
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D7.D6.08924.B64FF466; Fri, 24 May 2024 10:59:07 +0900 (KST)
-Received: from lee.. (unknown [10.253.100.232]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240524015907epsmtip1067e709a65e6b21fb946d5f0a5616f2d~SSijWM8Sg2280522805epsmtip1c;
-	Fri, 24 May 2024 01:59:07 +0000 (GMT)
-From: Chanwoo Lee <cw9316.lee@samsung.com>
-To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
-	quic_nguyenb@quicinc.com, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Chanwoo Lee <cw9316.lee@samsung.com>
-Subject: [PATCH v2] ufs:mcq:Fixing Error Output and cleanup for
- ufshcd_mcq_abort
-Date: Fri, 24 May 2024 10:59:04 +0900
-Message-Id: <20240524015904.1116005-1-cw9316.lee@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C8.82.19234.3EA2F466; Thu, 23 May 2024 20:39:15 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240523113913epsmtip167f1d1e2c0aaccfa58070d62138619a4~SGzxXxFlK0320903209epsmtip1m;
+	Thu, 23 May 2024 11:39:13 +0000 (GMT)
+From: Kundan Kumar <kundan.kumar@samsung.com>
+To: axboe@kernel.dk, hch@lst.de, kbusch@kernel.org, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	joshi.k@samsung.com, anuj20.g@samsung.com, nj.shetty@samsung.com,
+	c.gameti@samsung.com, gost.dev@samsung.com, Kundan Kumar
+	<kundan.kumar@samsung.com>
+Subject: [PATCH] nvme: adjust multiples of NVME_CTRL_PAGE_SIZE in offset
+Date: Thu, 23 May 2024 17:01:49 +0530
+Message-Id: <20240523113149.29174-1-kundan.kumar@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,128 +84,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdljTQDf7i3+awftDGhYP5m1js3j58yqb
-	xbQPP5ktZpxqY7XY2M9hcXnXHDaL7us72CyWH//HZDH1xXF2B06Py1e8PaZNOsXm8fHpLRaP
-	iXvqPPq2rGL0+LxJzqP9QDdTAHtUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5
-	kkJeYm6qrZKLT4CuW2YO0F1KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKzAr3i
-	xNzi0rx0vbzUEitDAwMjU6DChOyM6Q+WMRe8E664uc+ugfEPfxcjB4eEgInE933GXYycHEIC
-	OxglWl/7djFyAdmfGCWuP5/ADOF8Y5R4dreTEaQKpGHLus3sEIm9jBJX+k+xQ7Q/YZToWO4J
-	MpVNQEvi9jFvkLCIwENGif63gSA2s4CGxJ+2i2wgtrBAkET7hIVgrSwCqhLfTu8Cs3kFbCV+
-	HDvJDLFLXmL/wbPMEHFBiZMzn7BAzJGXaN46G+w4CYG37BLb726FanCROH31KguELSzx6vgW
-	dghbSuLzu71sEA3NjBIL3xyH6p7AKPHl4202iCp7iebWZjaQD5gFNCXW79KH2MYn8e5rDysk
-	uHglOtqEIKpVJOZ0nWODmf/xxmNWCNtD4tqdVlZImMRKtHR/Z5/AKDcLyQ+zkPwwC2HZAkbm
-	VYxiqQXFuempxYYFJvBoTM7P3cQIToxaFjsY5779oHeIkYmD8RCjBAezkghv9ErfNCHelMTK
-	qtSi/Pii0pzU4kOMpsBQncgsJZqcD0zNeSXxhiaWBiZmRiYWxpbGZkrivGeulKUKCaQnlqRm
-	p6YWpBbB9DFxcEo1MCny/Tox4WOq61lmd/sPJ9I0lq5Mufl2ne0Mloa7Sg9Od/XNkuAozt3w
-	MiEqPjDD6vOvW0vNr9/5wHt6T+XkH8uSWc2y5jG4n0iW/PClYs/9N/pTjvlGxH9aaqO6W5Hh
-	7b2yZ2sWTXq4YHL0/j/LxK8e33BenCv4xqZ703c9vToj71bqHIcuu7STqq75XY9evLvaHukg
-	Ezsn+sPnjZ7mW9ZLNhgFbVRtXq6iIrpqPlvCM42jLekLv9ycVWlcGvVPIN9n3sqLjQ6LNzwU
-	MuHZGFob586y+i6zzTM9hua7XitZz+3vit4ekbnC7osha0J/jI3TmhObPIssPk148bT9/0ou
-	68x5X1Zx3e+LjFdw/SCqxFKckWioxVxUnAgA5Xcm5xUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSnG72F/80gzPLRSwezNvGZvHy51U2
-	i2kffjJbzDjVxmqxsZ/D4vKuOWwW3dd3sFksP/6PyWLqi+PsDpwel694e0ybdIrN4+PTWywe
-	E/fUefRtWcXo8XmTnEf7gW6mAPYoLpuU1JzMstQifbsErozpD5YxF7wTrri5z66B8Q9/FyMn
-	h4SAicSWdZvZuxi5OIQEdjNK7FrVyw6RkJLYvf88WxcjB5AtLHH4cDFIWEjgEaPEoVnWIGE2
-	AS2J28e8QVpFBF4ySvy+t4gJpIZZQEPiT9tFNhBbWCBA4v3jRWA2i4CqxLfTu8DG8wrYSvw4
-	dpIZYpW8xP6DZ5kh4oISJ2c+YYGYIy/RvHU28wRGvllIUrOQpBYwMq1ilEwtKM5Nzy02LDDM
-	Sy3XK07MLS7NS9dLzs/dxAgOYS3NHYzbV33QO8TIxMF4iFGCg1lJhDd6pW+aEG9KYmVValF+
-	fFFpTmrxIUZpDhYlcV7xF70pQgLpiSWp2ampBalFMFkmDk6pBqbYa6clajfIhqzxCrzEr6nU
-	tIFjZZrg2ZnCXwJ/fRO5MX+pvng1d1fqw4XT5CMWbtrNfr5uQpWwJjPv25JlR2tfXDu/PHva
-	CpbzbTee/b0h8V58X9y2HVaME+12iM1xfzr30RpJZSeRtAVPFj4u679z6MRnoWv5cV+/vzNW
-	M0zxmXv0W4BC83vF5MJj4izXTHlD17FJ3glWfXA66s2feRoFSyat0WZfn9U2y/+qSKjs9j3/
-	4ren2+r3+5otXzL/cJ6yUu52tvjwbRcEi46yHezw3fpgdvDruEVqBqz6+pu/XmNZOuFHUWdh
-	9P7HnG/Onq4I7YxxSZ7ufH6x0fo/xzJ1mtZmtnasuzq15My0Be+FlViKMxINtZiLihMB94Vy
-	GtACAAA=
-X-CMS-MailID: 20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmhu5+7oA0g/49ghZNE/4yW6y+289m
+	8X17H4vFzQM7mSxWrj7KZHH0/1s2i0mHrjFabP3yldXi8q45bBbzlz1lt9j2ez6zxbrX71kc
+	eDzO39vI4nH5bKnHplWdbB6bl9R77L7ZwObRt2UVo8fnTXIB7FHZNhmpiSmpRQqpecn5KZl5
+	6bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAdyoplCXmlAKFAhKLi5X07WyK8ktL
+	UhUy8otLbJVSC1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjOmLHnFVjCbs+LRJKEGxmPs
+	XYycHBICJhKrjr9k7GLk4hAS2M0o8bxxHhOE84lR4u+5j4xwztQlb9i6GDnAWk6tsoCI72SU
+	OLJnP1THZ0aJP6u+sIAUsQnoSvxoCgVZISLgInFp5Tc2EJtZ4C6jxMtPWiAlwgIeEo2PakDC
+	LAKqEhdegFzBwcErYCuxdoswxHHyEjMvfQc7lFdAUOLkzCcsEFPkJZq3zmYG2Soh0Mghcbn9
+	K9Q3LhL7HpxhhrCFJV4d3wIVl5L4/G4vG4SdLXGocQMThF0isfNIA1SNvUTrqX5mkBuYBTQl
+	1u/ShwjLSkw9tY4JYi+fRO/vJ1CtvBI75sHYahJz3k1lgbBlJBZemgEV95C4dHM32HghgViJ
+	dVtnME1glJ+F5J1ZSN6ZhbB5ASPzKkbJ1ILi3PTUYtMCo7zUcnikJufnbmIEJ1Utrx2MDx98
+	0DvEyMTBeIhRgoNZSYQ3eqVvmhBvSmJlVWpRfnxRaU5q8SFGU2AQT2SWEk3OB6b1vJJ4QxNL
+	AxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamLh2SBzQehljY3aKsWXijPdp
+	gbt+Zfitu+h8V/xdjeuEqV18piU+3/7+t3Ep7tqp3XfTmit+13FH1v07L6icuhT/1u/FNpsD
+	TfbNL7/tXbK0Q0hQUrd818zTrzy/7H8z+8HzuHl7H73kzjRc1Xd2+/fF79ZN6Li3bOX1f78S
+	jk4W3hBRr5I/TetwxXHn58ks5+5/M6z3OvVdd87t9HMvyv/GbTjO015kr317AW+4qMqHSbdu
+	578V/Nl26qrCwar1t/7c/imRvGKO0jPH8NY+1dWbtuWWbEypmDCbUzV4bUqN3yaufZ8CC/xy
+	IhWktRfWn3wwXTM5Ve+X7T+O6faG3xRefJvhdChp75/cF/nF0af+K7EUZyQaajEXFScCANYt
+	7vAzBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBLMWRmVeSWpSXmKPExsWy7bCSnO5jLf80g69H9SyaJvxltlh9t5/N
+	4vv2PhaLmwd2MlmsXH2UyeLo/7dsFpMOXWO02PrlK6vF5V1z2CzmL3vKbrHt93xmi3Wv37M4
+	8Hicv7eRxePy2VKPTas62Tw2L6n32H2zgc2jb8sqRo/Pm+QC2KO4bFJSczLLUov07RK4MqYs
+	ecVWMJuz4tEkoQbGY+xdjBwcEgImEqdWWXQxcnEICWxnlDi8cQJjFyMnUFxGYvfdnawQtrDE
+	yn/P2SGKPjJKPNo6jQ2kmU1AV+JHUyhIjYiAl8SZPa+YQWqYBZ4ySryb0c8KUiMs4CHR+KgG
+	pIZFQFXiwouXjCBhXgFbibVbhCHGy0vMvPSdHcTmFRCUODnzCQuIzQwUb946m3kCI98sJKlZ
+	SFILGJlWMYqmFhTnpucmFxjqFSfmFpfmpesl5+duYgQHtlbQDsZl6//qHWJk4mA8xCjBwawk
+	whu90jdNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK9yTmeKkEB6YklqdmpqQWoRTJaJg1Oqgamx
+	9LyUX/gkmxt7WgVmfXp0IWq74dUHkx/uqf/xJydxkmnwNuHE47ecPY/Pnm8wd7n4x4xXr8wl
+	O+YYTzLz+nL0kNuXvXMXVPZmng6qyhSYLsVsXJ7BfPPTw5lX/22w6l0fyb7dbbbBr63hS20M
+	ir7UHO/9oJf6wOx885pX1/quzeu+7lMVEVZ0gqFGpmGed6pAhOHp/YuO+W09leL3xk2xsOrz
+	wTc5IuUqSVpNE75bTRPOuydYc7FRwURJ1/ud1ZJMFcl+ntUuHp0p/Td4eKM/vW0MPGtRuPTY
+	n0kvt0zYsTn+q4Pvxxdx7ncjbvkanzmYM9eU46aCwc9TN9zlPj5ZW3QxYuv03j3qd36+LzRQ
+	YinOSDTUYi4qTgQA2FO3pNsCAAA=
+X-CMS-MailID: 20240523113915epcas5p32626cec7fb138355e74415534a3ece36
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b
-References: <CGME20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b@epcas1p2.samsung.com>
+X-CMS-RootMailID: 20240523113915epcas5p32626cec7fb138355e74415534a3ece36
+References: <CGME20240523113915epcas5p32626cec7fb138355e74415534a3ece36@epcas5p3.samsung.com>
 
-An error unrelated to ufshcd_try_to_abort_task is being output and
-can cause confusion. So, I modified it to output the result of abort
-fail.
-  * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
+bio_vec start offset may be relatively large particularly when large
+folio gets added to the bio. A bigger offset will result in avoiding the
+single-segment mapping optimization and end up using expensive
+mempool_alloc further.
 
-And for readability,I modified it to return immediately instead of 'goto'.
+Rather than using absolute value, adjust bv_offset by
+NVME_CTRL_PAGE_SIZE while checking if segment can be fitted into one/two
+PRP entries.
 
-Fixes: f1304d442077 ("scsi: ufs: mcq: Added ufshcd_mcq_abort()")
-Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
-
+Suggested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Kundan Kumar <kundan.kumar@samsung.com>
 ---
-v1->v2:
- - Change title and description
- - Change all 'goto out' statements into 'return FAILED'.
- - Add 'return SUCCESS' at the end.
-   v1 : https://patchwork.kernel.org/project/linux-scsi/patch/20240523002257.1068373-1-cw9316.lee@samsung.com/
----
- drivers/ufs/core/ufs-mcq.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/nvme/host/pci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
-index 005d63ab1f44..8944548c30fa 100644
---- a/drivers/ufs/core/ufs-mcq.c
-+++ b/drivers/ufs/core/ufs-mcq.c
-@@ -634,20 +634,20 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
- 	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
- 	struct ufs_hw_queue *hwq;
- 	unsigned long flags;
--	int err = FAILED;
-+	int err;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 710043086dff..102a9fb0c65f 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -778,7 +778,8 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
+ 		struct bio_vec bv = req_bvec(req);
  
- 	if (!ufshcd_cmd_inflight(lrbp->cmd)) {
- 		dev_err(hba->dev,
- 			"%s: skip abort. cmd at tag %d already completed.\n",
- 			__func__, tag);
--		goto out;
-+		return FAILED;
- 	}
+ 		if (!is_pci_p2pdma_page(bv.bv_page)) {
+-			if (bv.bv_offset + bv.bv_len <= NVME_CTRL_PAGE_SIZE * 2)
++			if ((bv.bv_offset & (NVME_CTRL_PAGE_SIZE - 1)) +
++			     bv.bv_len <= NVME_CTRL_PAGE_SIZE * 2)
+ 				return nvme_setup_prp_simple(dev, req,
+ 							     &cmnd->rw, &bv);
  
- 	/* Skip task abort in case previous aborts failed and report failure */
- 	if (lrbp->req_abort_skip) {
- 		dev_err(hba->dev, "%s: skip abort. tag %d failed earlier\n",
- 			__func__, tag);
--		goto out;
-+		return FAILED;
- 	}
- 
- 	hwq = ufshcd_mcq_req_to_hwq(hba, scsi_cmd_to_rq(cmd));
-@@ -659,7 +659,7 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
- 		 */
- 		dev_err(hba->dev, "%s: cmd found in sq. hwq=%d, tag=%d\n",
- 			__func__, hwq->id, tag);
--		goto out;
-+		return FAILED;
- 	}
- 
- 	/*
-@@ -667,18 +667,17 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
- 	 * in the completion queue either. Query the device to see if
- 	 * the command is being processed in the device.
- 	 */
--	if (ufshcd_try_to_abort_task(hba, tag)) {
-+	err = ufshcd_try_to_abort_task(hba, tag);
-+	if (err) {
- 		dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
- 		lrbp->req_abort_skip = true;
--		goto out;
-+		return FAILED;
- 	}
- 
--	err = SUCCESS;
- 	spin_lock_irqsave(&hwq->cq_lock, flags);
- 	if (ufshcd_cmd_inflight(lrbp->cmd))
- 		ufshcd_release_scsi_cmd(hba, lrbp);
- 	spin_unlock_irqrestore(&hwq->cq_lock, flags);
- 
--out:
--	return err;
-+	return SUCCESS;
- }
 -- 
-2.34.1
+2.25.1
 
 
