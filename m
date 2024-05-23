@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-187965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363B98CDB50
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:21:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A378CDB55
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCACA1F22EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54551B20F06
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4966084D34;
-	Thu, 23 May 2024 20:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150D784DF5;
+	Thu, 23 May 2024 20:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIYe5b3C"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LtVdXSrZ"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BE084D1D;
-	Thu, 23 May 2024 20:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14E184D1D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716495707; cv=none; b=e4oJDvuYJs3KUzETUaKgPwggwoxKWA4Li8VD02OUlktM9Xq8PsIUB4WtltOO78xWS2FWOEcrW71EqpG8Ob3XBe7X+0tGxyMode/3w8foFtACvRZ+KzAtf6WUXj0dshtyaFfjrygG+onDx2cnMhepYxpG5+Ysx0tti2HXgiTM8M8=
+	t=1716495856; cv=none; b=Y0u8qw2oJ7/Ae831TQycIh0U0e879sXddu3kl/Hi5ssi2Le0RWdJ0kvfId2BTHxgUDWYSJC+cjYqKnu/+mR3FNLJvXSJ95/9V9Ly9iUXs0TCLGC8OJNb6/I/XPyb+Sv/OXWg14wOEaXSX+YkFzvlgZfNjx5rVbUKILhrkjHOQ4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716495707; c=relaxed/simple;
-	bh=xFPhAF+c5QEV3qf+5MftTNugrA1PKs9N2ZFb5mAFR8I=;
+	s=arc-20240116; t=1716495856; c=relaxed/simple;
+	bh=trLp/zqMsxPkYHNpAoOaUAFirZpTDPAcqutqKmdqkvo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Be0zKfGM+ulmBGftPRx/ZuVudR/w8a+k7XbtbyWI96fcPaHYAmYy1ZwClwRLkX6B8dd3cwGdVBSkYRHcgSE9+IBbbDX/gHXiq2aN5Mksp26ZNVrFNIN3rM9KB1lyUW7EMhK3V3mw0OAV1rpTOTXMIQ0d5RqVIfdQHaSkQrzD6RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIYe5b3C; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-681adefa33fso115747a12.3;
-        Thu, 23 May 2024 13:21:46 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=SIJXx2kkUeNpFZCUckuN/3IkJAzMaQuqHo5RfHM4Xt4JwC+8U0HZ01+DXc+kQxyFzauxzSZ4+wkon7FrmxaxTSupUSbth5ClTMTy00/Az0uqMNhaEugnRloz8HyFOxA0BeBw6VaAEeDMq69ds3c9eSwwUHGFAr16Z9idXoSJ5AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LtVdXSrZ; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57851e8b891so164495a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:24:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716495705; x=1717100505; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YLMUv+lcr/QWFTV4u1WTHn7mf8KnhpBd9b1FZrkGgZ0=;
-        b=kIYe5b3CyktUYF/aBoMcxm+VVJt7Dxwuxog8SBPjaveGNt67Ts7iNaIUB6leXHA4z6
-         mJq1ycKflQiH14uHDeUpbsa6FkTOJc/HADqr6osh0ZOsKkluloag3Bo+yrlggchCokHP
-         N5Y1EW4wdabtK5WABURgQnq4ckFAyPxqBbD4mFZIHfSdrP70EYHFQjfQYzcYUhvpnOgd
-         G7G2zC9+HBd05vJAYR3++L6T3tiZRkIcA+fIeWFRqBBXyJgQ1rOYzefWTaLuhKkf9mbQ
-         1RBYOA9W41hFZskS2ncby0U/+f73f8nW67qyKSyZx4EhJeGi8dMFdwC5DJ2gNXPvokNy
-         w0YA==
+        d=linaro.org; s=google; t=1716495853; x=1717100653; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=pLYxifaBnTwd6v2VqQzlnZWV2Y1C/HZmXP7m6TLRDnI=;
+        b=LtVdXSrZMCsgOfKYNo2WYLkvO1759Y+cusrAS9k2xrDkeNqvtzMlLJQxBO2wbN82Lf
+         Xh7O5lY33oQ/PIm26Hg82Ouevq8T44F5UikezP1CMGMQId5w0gWKnnT354eWdNk4XBpf
+         nVwfcgOEUmFOGEW2ntp0i7mby9p1ihLYLQhqlPhs3li++/7c2EgSVzi7jDls/UkaAGLr
+         FeYFrLC+cvG6gxQF9939PoJh68k6xedj1QoY87zVlQQneEU67QbhocwBtbVn3WqUqdNT
+         kkk4QuNE/+BB4ydsWQKGcKAp5axPV4KH+brd/fOEbyuJ6eUAuD5Mi3eyBl1ZAJwCMI99
+         zxeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716495705; x=1717100505;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YLMUv+lcr/QWFTV4u1WTHn7mf8KnhpBd9b1FZrkGgZ0=;
-        b=DqaOPw7rxyfU5u/cU/ncWZEmuw52CkeH2FO0najvKbfg0pEGLTgj8DG6BMl/IUVTls
-         5LxEuhJXpqpQBnkbYIjcE/U0F/s8leCBT0t0UR3WV2RaZrs/d2+BYdJGgjGVTodpvIsk
-         ar+sKM3C7onb8Zr3q76AR6YQWTFBeHXqyhLrihRkUZUdn+5FQBwyzoBkzyXtdPyZBRmP
-         DTB3bYSefG6XGwsxDrANkm2ZlvCfp+/DzQCdYXufNAMWU+3FhOMDEwu5XkvyMM5Buerd
-         80U6xQ/WVsIwsV+jOMrxOFXa9nKvJwdagpJO5YySjtYox75WRQvE5sTHHlLCCDaZi4Wj
-         87/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVBoxFyUP26TggESYGH/WyZu5mGtDEs0PI51fxHt2NmgoozSvjKVDdLXLTKuXakaz9WxvqIUtfWRlpESEKcTzZTMCKB5vQHp/TH3Qx8Na8pp3SgW7KdJK3zd/e0HI7QXuWqkvaF
-X-Gm-Message-State: AOJu0YyvJ/lHGxFTKZwPn0FCUt0gaKeq13NYlaZ/D0pockhbtWA3EKJe
-	phNrvWS1hJYP8mgLrJit7RI87uPIqAa3nxzzxhpuCLKS8hsFiMPo
-X-Google-Smtp-Source: AGHT+IEP+8/4v7Ac4RENllwAWNIDui9pwuOgSmeJ+NMPaISNVgjis+faohHNev+cfODhvoMJ+MS4yg==
-X-Received: by 2002:a17:90a:c082:b0:2b4:329e:e373 with SMTP id 98e67ed59e1d1-2bf5e84a9d7mr284563a91.6.1716495705402;
-        Thu, 23 May 2024 13:21:45 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2bdd9ef2182sm1961359a91.13.2024.05.23.13.21.43
+        d=1e100.net; s=20230601; t=1716495853; x=1717100653;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pLYxifaBnTwd6v2VqQzlnZWV2Y1C/HZmXP7m6TLRDnI=;
+        b=mtjjhi1MVH8oLy/T5sosCy9hW5zQ027jfQv8VGwBw+sHN0UGlYhxhEZo74PI20TXYx
+         Aqoj8u7/Q25OFGJRuHsIbJR8EHbPPViv0m5Pbk1fUI5KxUxrKwFpyeTUMAL8NcOag5AQ
+         rjHUcI1OSoSh03qsg5oYlLu3Wu7qwh1uX+fL0/u4jwwd0ijz7RJ5FkHbM3KWwm3eVOKf
+         iI/S7JJ3YxsDahqMZQIG8vvPHJ2K+Ht+TGh4VSdVIxQHDhT0s2qHAwE+FM/h9YFxZjHu
+         RTK25QC1TpRFZjjAYeYjhnIpZ15bIzkyyiFf3Zs0PnwGH9NC5OEDfjREb9vjXj/v16zK
+         3hng==
+X-Gm-Message-State: AOJu0Yxu2Dr05dtAJirmGvgICK1OW9SGW6R2CQ2MklppqQYvK7kHrbxP
+	cpuD8oktEs3nnBs2t5egSe9JS1RG0I9N+lBq6Af3A+CwMelI2wZB1YKTXuoo6uk=
+X-Google-Smtp-Source: AGHT+IEpQcnn/MO2wXSF2wIEtLlbmHIff5/dN2bTkKyHBGbFjuDdyMLgtnQ37NUeIArnmaObSLQcJw==
+X-Received: by 2002:a17:906:34d3:b0:a59:ac10:9be5 with SMTP id a640c23a62f3a-a626250e4dfmr40903166b.27.1716495853059;
+        Thu, 23 May 2024 13:24:13 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cda5698sm5134066b.205.2024.05.23.13.24.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 13:21:44 -0700 (PDT)
-Message-ID: <a994f8ce-2c3f-4aa6-b345-bb443b133804@gmail.com>
-Date: Thu, 23 May 2024 13:21:42 -0700
+        Thu, 23 May 2024 13:24:12 -0700 (PDT)
+Message-ID: <acced98c-79fb-4c32-abf3-66fe93031f36@linaro.org>
+Date: Thu, 23 May 2024 22:24:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,45 +75,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 00/45] 6.1.92-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240523130332.496202557@linuxfoundation.org>
+Subject: Re: [PATCH v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
+To: Eddie James <eajames@linux.ibm.com>,
+ Markus Elfring <Markus.Elfring@web.de>, linux-fsi@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
+References: <20240522192524.3286237-18-eajames@linux.ibm.com>
+ <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
+ <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240523130332.496202557@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/23/24 06:12, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.92 release.
-> There are 45 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 23/05/2024 21:00, Eddie James wrote:
 > 
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
+> On 5/23/24 13:45, Markus Elfring wrote:
+>>> The Huygens is a Rainier with modifed FSI wiring.
+>> Will imperative wordings become helpful for a better commit message here?
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.92-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
 > 
-> thanks,
-> 
-> greg k-h
+> This statement is a description of hardware. I cannot word that 
+> imperatively. The commit message is imperative - "Add Huygens system".
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Feel free to ignore all comments coming from Markus (or implement,
+entirely up to you).
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Markus is banned from mailing lists and most of maintainers already
+ignore him or already marked as spam.
+
+Best regards,
+Krzysztof
 
 
