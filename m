@@ -1,249 +1,151 @@
-Return-Path: <linux-kernel+bounces-187204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BD88CCE8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC698CCE91
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9049B224C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1EB1C22396
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D667414EC7A;
-	Thu, 23 May 2024 08:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603ED13D29D;
+	Thu, 23 May 2024 08:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jXQ8JlEa"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JmI1lbDD"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414C814D283
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76DD13D28C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716453790; cv=none; b=BIFsQlv3y6zyND8q3jzZ+l4iB4OoBr2l6f9vWlEyP4JvRK65KRsOUvSgSTLjPrrgMB9GPb0Tzgje+AlhZMgQ34ZyttA4B4vzAr3JvM6sCuZOeLw1RJr750YE3TDcuxH8IanVOyLyfKaw3c983mcxf7nZEIx6IKKN1VRndz5FQAc=
+	t=1716453814; cv=none; b=qKrXsVYMAiulI6Q5Y7ZZdxXIcQLeEuJ32ZOFZ8+o76+voUxFFi+1jgHth10EGwWfJJC85cznkIcFh0Jti5c7iW0YpI3FJMcyswY5FouK1eJkjhZuryMaP28t0npb0pzCDqs7xPKoOI2Gy/ikUwp2zUqjp0ZULjlk01CEpZNhcSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716453790; c=relaxed/simple;
-	bh=UuxD5pLm61p5B/k8KPZWLUQ0/L/5Kc/UQPpFC3tu7EE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RoSkLhIdixfb2+jjGptb/GGDUsJHQZR20KKxiupV7ahgWWrWPBqSen/dAPpRWeOQNHpUBdVcFQVQoRO4sy2CTrTg4qzFDHZZua1JjWsrnS49Pjsk3wgI54HEoU6ZIGM9dFrWyldeFBr61ZT4aMoonf3pK61sKVzRCjsBv7uPrH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jXQ8JlEa; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-420180b5922so20895735e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:43:08 -0700 (PDT)
+	s=arc-20240116; t=1716453814; c=relaxed/simple;
+	bh=7Nx57xzjK255CGbSbs92Xr9PidgVaqywyNdpKJ9s3Bs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FMJp5Y/+h52cfiXaB8lp4unq7Obni1Dl3Oi0tPpe7PKK63nsKX16Oi2cIOrU9gGnlh0YrJe/bsc3KpVpVE3JgF50nCaGmV27w1i6Who6ykEIaJrNlYb/1eZ2wNizcTLWr6bqRwFzK70GfCwuzFcbzvOBNLNcTsh8IcthC+Jtc80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JmI1lbDD; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso71353101fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:43:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716453786; x=1717058586; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qj6N1XCYi9OkzD42tPPAcjKt9khuBDH5NgwwQe/Q8Ps=;
-        b=jXQ8JlEaIBQiS6iBjKCAEKCZbmxV/D6Ocj4YzNLz8QZGdAh+txxCulsfh2JiGz5rb7
-         riPfQHmzbQH0K9MzkSly5/gSFouFR8aVPKRwGt/l0aI6XXLVGbUo16TZ/tHyuBDKaPXc
-         PGS8NQa0tktrXwDp3KSgSo7ipCidohejuVP7s0qkAxiMJu+LB5O93NExOefvboNjEMrY
-         VA43P1Ititaa+ruBfX3sH1w/pEQ0+UM4nvFMQU2lNcZ59fWzJQBduEqtsQTfhPt7umZy
-         qEhU/BPSsws0TGOlaFB3xXamjI1a4dkzQLv4EyAkw+emCWRnCavhu1IxX0pFbvC5OEql
-         GFHA==
+        d=gmail.com; s=20230601; t=1716453811; x=1717058611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8xm4aIfmcPgLaTdq2sWutAdQtLGIZwY55+PCwPzLdWE=;
+        b=JmI1lbDDXeQkjTzOZ3FOej+YWVzO8Jnys196AFG7sKvOJNP20eXxKD9EgRiYkRVqlq
+         ZUAxv2Z8HQxmSUAilUdH1m3hTujxbNGKuHfACIxyYPzAYN0ijbofGgCYMEcjEKTMmHAo
+         x55BXhTh17Oc6c7fUy26QEXA+we21IAio3ymUdUwp+hRMxvqd6Ha0AE0KdyKEWYNvGit
+         pR6BxdyZ5HbWBTxWXsXOv2qfyOAtsYjE2suME9pibJCVqRxP1YK5MMyyEukQCCr4T/zQ
+         DrCP9AvmaPp/sXR9f/zPQ46xcqcGq+W79lqd3iY6M6BezpnJ036XuOwfDb7bva53PU3F
+         xcYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716453786; x=1717058586;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qj6N1XCYi9OkzD42tPPAcjKt9khuBDH5NgwwQe/Q8Ps=;
-        b=GRIo1An4/P6oyg6wj0Opx+NuK9eubKQv8xtjNpunfczy1WbxHbDappsZMRWjxzjb0D
-         hGgHePaHQuoGKuHMeYZgGFmKaXy5WtahHYK8uaPg5G6kmXpzePr+m195AQeuXuWDE8hq
-         ko/gOc2mIpxVjUD8mkJwjLOEInQQO9gRAp7ZbA+fCeiLrwbgoplxqZI3lwYuLtsWNYA+
-         6k7BoPAyZ7/p0+FCmu3CG8gxewB4oz9KQ1Gok1CzRpByHn8JcTfCBpchW7QccMQ2Eau0
-         odf4/f9MAUpkk75ZWQmG0BxtLL1Ynit6FFUORlepf7f1yPkiRmRou9lfUtn77kpL921M
-         yl3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVF/jnKi2vMMy8SnzAYPH4v7ZRzb2GkVqn9riDUIBbq/pW26DCp/eILn4gVIoXST6fgOzea2H1Oup5VH2UhQfgkr3rJfAnEd/UBUjow
-X-Gm-Message-State: AOJu0YzME8yMixphsTdHK6NeROG4pXkGVKi79sxq0pLw3NgUjo2QibxQ
-	1g1Gyc9QH1gPcBmsDR3R4Himm/FkeTMBuQYzGx2vNaRb8/JX84mc4SYcXT1Opvo=
-X-Google-Smtp-Source: AGHT+IFMxan85JMvlhZzNK1inKnN/olhsGGF3fE8oyneffHwEACsul7Buo/M9+QQDSM/sWz6EKTdlQ==
-X-Received: by 2002:a05:600c:21d5:b0:420:2cbe:7f16 with SMTP id 5b1f17b1804b1-420fd3726d5mr44037415e9.34.1716453786677;
-        Thu, 23 May 2024 01:43:06 -0700 (PDT)
-Received: from [127.0.1.1] ([93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42100f3e03asm18556645e9.17.2024.05.23.01.43.05
+        d=1e100.net; s=20230601; t=1716453811; x=1717058611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8xm4aIfmcPgLaTdq2sWutAdQtLGIZwY55+PCwPzLdWE=;
+        b=kxYt3CVG99Sn4FYrkB8czhSMeT8S1WMTz93nasTZklBpfKBMj4aPwPLfUSsixkmkoI
+         3NTzFlARCEpG8Sdf6ydV66xWYKWn/QcEPKvsL3bT2/vkJZ+TkjlCSNvh69nmoFwrXveK
+         gqCjXL5QkzuCD+dYmKFewMlv57k+8rgPaPtv1ihKpQQf19ZozNNpMeTdLWCFLD+tgzfm
+         APxIYwh1ljERpkt22MYgaVoosSgstfgXe7t7jrAAK5w6OojMq3NuKzKb/Fm6cwTBE353
+         q/czzXy4keIut4h/k/kQPSosENXoP3qr4pv5Bm1z5AzsCYPaEGihFEpBvN51slNhSEyU
+         6Yhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9+17qOfwtaj1B+lsd4y7sggPIDBtgflw1PNU1dJEiX7hge7Mr55iFYfilppTMcIMMzoP94lPExl70nbcSYlzQe7Ep5mHVUGYEq0eN
+X-Gm-Message-State: AOJu0YwEgJEu1fzY3ziNG1euzjdJB2j4OyUbnFdM4XaBJyghLEYwJGLp
+	7aOQVYwPLIid1LSxhnxS1qiaBZ6kxvv83ReQpOf4OUml8v7axWh5
+X-Google-Smtp-Source: AGHT+IFuJT+Iycu4zUWyrnDMP2GPSB3ySw2LtbIA56wh9nYmdvR4vP/m7p0AEJR7txQa+azNtF7EjQ==
+X-Received: by 2002:a2e:3609:0:b0:2e1:ae29:f28a with SMTP id 38308e7fff4ca-2e94959c736mr34882401fa.34.1716453810739;
+        Thu, 23 May 2024 01:43:30 -0700 (PDT)
+Received: from localhost.localdomain ([5.188.167.245])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2e706ee0a65sm19233781fa.112.2024.05.23.01.43.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 01:43:06 -0700 (PDT)
-From: Alexandre Mergnat <amergnat@baylibre.com>
-Date: Thu, 23 May 2024 10:42:45 +0200
-Subject: [PATCH v5 16/16] arm64: dts: mediatek: add audio support for
- mt8365-evk
+        Thu, 23 May 2024 01:43:29 -0700 (PDT)
+From: Sergey Matyukevich <geomatsi@gmail.com>
+To: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Sergey Matyukevich <sergey.matyukevich@syntacore.com>
+Subject: [PATCH v2] riscv: prevent pt_regs corruption for secondary idle threads
+Date: Thu, 23 May 2024 11:43:23 +0300
+Message-ID: <20240523084327.2013211-1-geomatsi@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240226-audio-i350-v5-16-e7e2569df481@baylibre.com>
-References: <20240226-audio-i350-v5-0-e7e2569df481@baylibre.com>
-In-Reply-To: <20240226-audio-i350-v5-0-e7e2569df481@baylibre.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- Alexandre Mergnat <amergnat@baylibre.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3674; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=UuxD5pLm61p5B/k8KPZWLUQ0/L/5Kc/UQPpFC3tu7EE=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBmTwGAyKEOwovbtoYcOuUP+1kNqMlqBHxH+fBJIpyW
- ZwNDuz2JAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZk8BgAAKCRArRkmdfjHURegwD/
- 9pP2p6C/mj0ZjZa0DuLTwTiFr0fCqnc53uXDOszeVilSx9V0w78yKnj0jmYLzMIeD795tuMlag5dwI
- aXHddglxL1jl8eZLslBYLDB60NEsBTzaw1ZCoMwEyAQ/Jjjs+QROVQL5KkoxNGRRWvx/D+fifhpwKy
- A26wfqqJroPS22VzW5IExhKlbtzWhXaXqABt5RWDQTc7OiQ9W/97F6gtGrxbK1sjD+4j3PPiTnpdIA
- WQL0k7JUDhG6TqbY8HUwhbQRMas1bl0nCAA3mwc0RtGtQxdVTDEg6T6zpMogA2JxsKTdOaT/B+QkzH
- YBbmE1/gcL/ptpvG9Hsma1Im7JoEPDpWjAJ/6jaiPvNp0ANU01fsbxz9hwlvKTPcQeug5bSp+8qxcL
- k2M88IiQiGAraDEAcATnArTpe+FHHhGJJ4O8BBda+jbmdvbTDcbYsBBViTvppuN+FTuUIal7XNHH+O
- RmfW6a4PLQEDwwNa5OjD+yRh9win0SJeCVmQ1uSqtRrhc8JeJ4WE8OPDzEQPOtTbcHzUjA3oXTBx/G
- 0tthCBA0/+lwhPVFXrq/MIHOBYNJVnPRiprUBiBjBvnrjzhrmDvU5qllQ1gneBokm+MDse+e/G9q40
- jGbeydbNzcr4b9XzMzt1sO8g8zZ8o9AS7/7Sn7jE6DcHgNByoAaIN4jTayag==
-X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
- fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-Add the sound node which is linked to the MT8365 SoC AFE and
-the MT6357 audio codec.
+From: Sergey Matyukevich <sergey.matyukevich@syntacore.com>
 
-Update the file header.
+Top of the kernel thread stack should be reserved for pt_regs. However
+this is not the case for the idle threads of the secondary boot harts.
+Their stacks overlap with their pt_regs, so both may get corrupted.
 
-Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+Similar issue has been fixed for the primary hart, see c7cdd96eca28
+("riscv: prevent stack corruption by reserving task_pt_regs(p) early").
+However that fix was not propagated to the secondary harts. The problem
+has been noticed in some CPU hotplug tests with V enabled. The function
+smp_callin stored several registers on stack, corrupting top of pt_regs
+structure including status field. As a result, kernel attempted to save
+or restore inexistent V context.
+
+Fixes: 9a2451f18663 ("RISC-V: Avoid using per cpu array for ordered booting")
+Fixes: 2875fe056156 ("RISC-V: Add cpu_ops and modify default booting method")
+Signed-off-by: Sergey Matyukevich <sergey.matyukevich@syntacore.com>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8365-evk.dts | 89 +++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-index 50cbaefa1a99..1d5457f9a4c2 100644
---- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-@@ -4,6 +4,7 @@
-  * Authors:
-  * Fabien Parent <fparent@baylibre.com>
-  * Bernhard Rosenkränzer <bero@baylibre.com>
-+ * Alexandre Mergnat <amergnat@baylibre.com>
-  */
- 
- /dts-v1/;
-@@ -86,6 +87,28 @@ optee_reserved: optee@43200000 {
- 			reg = <0 0x43200000 0 0x00c00000>;
- 		};
- 	};
-+
-+	sound: sound {
-+		compatible = "mediatek,mt8365-mt6357";
-+		pinctrl-names = "default",
-+				"dmic",
-+				"miso_off",
-+				"miso_on",
-+				"mosi_off",
-+				"mosi_on";
-+		pinctrl-0 = <&aud_default_pins>;
-+		pinctrl-1 = <&aud_dmic_pins>;
-+		pinctrl-2 = <&aud_miso_off_pins>;
-+		pinctrl-3 = <&aud_miso_on_pins>;
-+		pinctrl-4 = <&aud_mosi_off_pins>;
-+		pinctrl-5 = <&aud_mosi_on_pins>;
-+		mediatek,platform = <&afe>;
-+	};
-+};
-+
-+&afe {
-+	mediatek,dmic-mode = <1>;
-+	status = "okay";
- };
- 
- &cpu0 {
-@@ -178,9 +201,75 @@ &mt6357_pmic {
- 	interrupts-extended = <&pio 145 IRQ_TYPE_LEVEL_HIGH>;
- 	interrupt-controller;
- 	#interrupt-cells = <2>;
-+	vaud28-supply = <&mt6357_vaud28_reg>;
-+	audio-codec {
-+		mediatek,micbias0-microvolt = <1900000>;
-+		mediatek,micbias1-microvolt = <1700000>;
-+	};
- };
- 
- &pio {
-+	aud_default_pins: audiodefault-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_72_CMDAT4__FUNC_I2S3_BCK>,
-+				 <MT8365_PIN_73_CMDAT5__FUNC_I2S3_LRCK>,
-+				 <MT8365_PIN_74_CMDAT6__FUNC_I2S3_MCK>,
-+				 <MT8365_PIN_75_CMDAT7__FUNC_I2S3_DO>;
-+		};
-+	};
-+
-+	aud_dmic_pins: audiodmic-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_117_DMIC0_CLK__FUNC_DMIC0_CLK>,
-+				 <MT8365_PIN_118_DMIC0_DAT0__FUNC_DMIC0_DAT0>,
-+				 <MT8365_PIN_119_DMIC0_DAT1__FUNC_DMIC0_DAT1>;
-+		};
-+	};
-+
-+	aud_miso_off_pins: misooff-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_53_AUD_CLK_MISO__FUNC_GPIO53>,
-+				 <MT8365_PIN_54_AUD_SYNC_MISO__FUNC_GPIO54>,
-+				 <MT8365_PIN_55_AUD_DAT_MISO0__FUNC_GPIO55>,
-+				 <MT8365_PIN_56_AUD_DAT_MISO1__FUNC_GPIO56>;
-+			input-enable;
-+			bias-pull-down;
-+			drive-strength = <MTK_DRIVE_2mA>;
-+		};
-+	};
-+
-+	aud_miso_on_pins: misoon-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_53_AUD_CLK_MISO__FUNC_AUD_CLK_MISO>,
-+				 <MT8365_PIN_54_AUD_SYNC_MISO__FUNC_AUD_SYNC_MISO>,
-+				 <MT8365_PIN_55_AUD_DAT_MISO0__FUNC_AUD_DAT_MISO0>,
-+				 <MT8365_PIN_56_AUD_DAT_MISO1__FUNC_AUD_DAT_MISO1>;
-+			drive-strength = <MTK_DRIVE_6mA>;
-+		};
-+	};
-+
-+	aud_mosi_off_pins: mosioff-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_49_AUD_CLK_MOSI__FUNC_GPIO49>,
-+				 <MT8365_PIN_50_AUD_SYNC_MOSI__FUNC_GPIO50>,
-+				 <MT8365_PIN_51_AUD_DAT_MOSI0__FUNC_GPIO51>,
-+				 <MT8365_PIN_52_AUD_DAT_MOSI1__FUNC_GPIO52>;
-+			input-enable;
-+			bias-pull-down;
-+			drive-strength = <MTK_DRIVE_2mA>;
-+		};
-+	};
-+
-+	aud_mosi_on_pins: mosion-pins {
-+		pins {
-+			pinmux = <MT8365_PIN_49_AUD_CLK_MOSI__FUNC_AUD_CLK_MOSI>,
-+				 <MT8365_PIN_50_AUD_SYNC_MOSI__FUNC_AUD_SYNC_MOSI>,
-+				 <MT8365_PIN_51_AUD_DAT_MOSI0__FUNC_AUD_DAT_MOSI0>,
-+				 <MT8365_PIN_52_AUD_DAT_MOSI1__FUNC_AUD_DAT_MOSI1>;
-+			drive-strength = <MTK_DRIVE_6mA>;
-+		};
-+	};
-+
- 	ethernet_pins: ethernet-pins {
- 		phy_reset_pins {
- 			pinmux = <MT8365_PIN_133_TDM_TX_DATA1__FUNC_GPIO133>;
+Changes since v1 [1]:
+- fixed git revisions in commit message
 
+[1] https://lore.kernel.org/linux-riscv/20240424221927.900612-1-geomatsi@gmail.com/
+
+---
+ arch/riscv/kernel/cpu_ops_sbi.c      | 2 +-
+ arch/riscv/kernel/cpu_ops_spinwait.c | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/riscv/kernel/cpu_ops_sbi.c b/arch/riscv/kernel/cpu_ops_sbi.c
+index 1cc7df740edd..e6fbaaf54956 100644
+--- a/arch/riscv/kernel/cpu_ops_sbi.c
++++ b/arch/riscv/kernel/cpu_ops_sbi.c
+@@ -72,7 +72,7 @@ static int sbi_cpu_start(unsigned int cpuid, struct task_struct *tidle)
+ 	/* Make sure tidle is updated */
+ 	smp_mb();
+ 	bdata->task_ptr = tidle;
+-	bdata->stack_ptr = task_stack_page(tidle) + THREAD_SIZE;
++	bdata->stack_ptr = task_pt_regs(tidle);
+ 	/* Make sure boot data is updated */
+ 	smp_mb();
+ 	hsm_data = __pa(bdata);
+diff --git a/arch/riscv/kernel/cpu_ops_spinwait.c b/arch/riscv/kernel/cpu_ops_spinwait.c
+index 613872b0a21a..24869eb88908 100644
+--- a/arch/riscv/kernel/cpu_ops_spinwait.c
++++ b/arch/riscv/kernel/cpu_ops_spinwait.c
+@@ -34,8 +34,7 @@ static void cpu_update_secondary_bootdata(unsigned int cpuid,
+ 
+ 	/* Make sure tidle is updated */
+ 	smp_mb();
+-	WRITE_ONCE(__cpu_spinwait_stack_pointer[hartid],
+-		   task_stack_page(tidle) + THREAD_SIZE);
++	WRITE_ONCE(__cpu_spinwait_stack_pointer[hartid], task_pt_regs(tidle));
+ 	WRITE_ONCE(__cpu_spinwait_task_pointer[hartid], tidle);
+ }
+ 
 -- 
-2.25.1
+2.44.0
 
 
