@@ -1,238 +1,217 @@
-Return-Path: <linux-kernel+bounces-186948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298C38CCB14
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:20:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B708CCB1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A539E1F22D80
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:20:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81106B2207D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1D013B5B5;
-	Thu, 23 May 2024 03:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17EAF12B14A;
+	Thu, 23 May 2024 03:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rUF/lxnS"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2078.outbound.protection.outlook.com [40.107.244.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FonYZArD"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EFD13B2B2;
-	Thu, 23 May 2024 03:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716434402; cv=fail; b=TlteEc2ZSzNY4ntn0y8lIwWoB/eUmQo3MEUdSFzrb0qrwsyQaRdvSTWk8Q2KVuAfgvsUZELJGTqxFEJ5YYEzCwETZOie673Y3yyf2NZ+POTxj+ls80d39JO9446fRY7BmCuzUElchT8YHZ7kNwfDoTe+K0s+9cIHZftfGioJqQ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716434402; c=relaxed/simple;
-	bh=6QlmdXW5kyFM/T7oIL5yu4drlXwrl4R7bVg4kL5bnHk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CtVL7jKV3UH3mjGUBaTHUaOnaKqBYPr5TWUlczcEzmWBk3ABFjHhpmJVgk76V6O+SrQukkcl+BAFzT1vOSiseKFmXPPVuSH3ma4s91YGmU1mGeTY+B6ke22kTHRj1Ql48BMZcZO9hw+w4GVh3sc0cm+GNnBAHk5vSyyKGzCkzV4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rUF/lxnS; arc=fail smtp.client-ip=40.107.244.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TfwfmMxxuUwtAIX5EAg3973uJ8bTxY4HyBxvYFEN9OLAHo6fcYUM2WlfO6n49TzuNRzrhzskSDWhh326RWz0gEoG2CMzvC00hru/IUfCvHnskcTSXgIsiIUjcSiC7T37VZH2NTqW0q6PENxEXHUNEqBBgCyrsS4nCM6la04KhxkKbUlfZ1iKCaUk0PiqxY4miNo59IEnMVCIxVmakt6q3WoqWYAwc5C/YkZpX0fPHuYookLvMj2IH5XISKTTDJHzjVg2mTdSnlHCUiI/EU8PUk/sBZtZnMOCPjmfS8xy/P0eALiX18mJFMp7YKmst7PnuY6kPzLqA10YKpOhR4qr/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9STHWwWg51TeZjiq97CvnN3cIPG+FqJJ8OijIJ8J6L4=;
- b=itJWiiXGGIN8NcLoj58M8P6pNBG8Oof5scjLpimNelDywsuTpsXb3P++CBCp82yjZlebbr+lxA6ZwrrY0REFj+INEwnOfsGFl2vrMe8L5Lg5HxhTLMz2fO9EeR2c5fUZvX96fdNFBYVW8wAL4fVVuJ35QacQhtl26ZLi/XTiVHALVspxZJNueIrouxThVj2BrCm7TJQe6IMeFvTOmYdsxZcmlD00Du+Gx6pC43TCbQlPdgJvyCseJGMMQXYdztWzhUfLFjXMFTcHGJ+12r+F+VsVKAvW/v+CowW5erNpyQwAezgSJEepL1bXaBt27FMUVI1uzYF4a5OPpHZjpjqi8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9STHWwWg51TeZjiq97CvnN3cIPG+FqJJ8OijIJ8J6L4=;
- b=rUF/lxnS4ANPI6EO5Eob9MwQjPjHj+alsUyRVGno+o5Y6Xwrx1VTM95/S6qpCh2n92BPOek/57YcXNAVWDFx7vEgu4QRcQaSeDtLNISq2fpiaip70ORuAAo1+JsuYmgxXhE06q4SMvaA73SbAWDYcLCpeVA0d1CEH45F4BRDfmt+3WtO0ar4w5rTNz4ly4HGYvQx9lrIZ2g8NZuY+76gPF9cQ/9fc3rtlhvTEi21aEzh4r6sBsMQm6/uzQZju2hgCWxYCIZ8AxgmdSM4iyb4RlGF69k6AhzXW9eEFAc5HGhhsGKlxzQ0PPrJTMjcwUMrpsFyhQL7UV9GmU9mpfg0Tg==
-Received: from MW4PR04CA0352.namprd04.prod.outlook.com (2603:10b6:303:8a::27)
- by CH3PR12MB8726.namprd12.prod.outlook.com (2603:10b6:610:17b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Thu, 23 May
- 2024 03:19:55 +0000
-Received: from MWH0EPF000989E9.namprd02.prod.outlook.com
- (2603:10b6:303:8a:cafe::be) by MW4PR04CA0352.outlook.office365.com
- (2603:10b6:303:8a::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.18 via Frontend
- Transport; Thu, 23 May 2024 03:19:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- MWH0EPF000989E9.mail.protection.outlook.com (10.167.241.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.14 via Frontend Transport; Thu, 23 May 2024 03:19:55 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
- 2024 20:19:52 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 22 May 2024 20:19:52 -0700
-Received: from build-amhetre-20240519T173508142.nvidia.com (10.127.8.10) by
- mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4
- via Frontend Transport; Wed, 22 May 2024 20:19:52 -0700
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <vdumpa@nvidia.com>, <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, Ashish Mhetre <amhetre@nvidia.com>
-Subject: [RFC PATCH] iommu: Optimize IOMMU UnMap
-Date: Thu, 23 May 2024 03:19:35 +0000
-Message-ID: <20240523031935.90856-1-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19B126AF6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716434525; cv=none; b=AWFvFlhRXp+9dusmsNYUJ7axHtzYmvrG0dXwy4XUtHobzPZlQv2o7Dg+B8LtjQ8h76jOKBGeBKpjDiFJprBsksE/t5r923yv6elG+kNB4zsV9WSVwwEjUXo1sUNjPjs7wOacoQeLvLryqgIH0AWZv0YtGDjkmRWUPBxX+ObMgHg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716434525; c=relaxed/simple;
+	bh=3boAGRMvf3jbGONMwxHiwTZ3kyfv5q7izkn9Z2CircI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J+ElEcp81QrTghPTmZWlQTrw0UG6fS+jl9P12wtIz2T2BkVeEjzycpItC2jzXy3LvglmxfXTqN5e5DIBeX2Lzi3MZxq/1pBU7FBIaf08jwrvqICIKh1KbEMKH6QdjraE7sm/zYNYycJZWVNHEt/iQxF++uKXEwWwKyfPN/2vWWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FonYZArD; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-47efcb120feso2322611137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 20:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716434522; x=1717039322; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5cBMgH/meb7DXHpqDFrMQs3sMI8ZwAwTzDkQlsuKAC8=;
+        b=FonYZArDDQAvEHNe11QoXRADp2v1ImGoPBhp4oaqBG0j0+qOJcXAEcDZ8wks2k2+Pg
+         g+zLMwuQJxrD9dGajhmF7cCwgL/zfGk1H6LTkXBItlBKsKXbQRzof2yNT3Zg3wwpsgk6
+         yX9sNMRYosFvAPzOVww7D6dXsc9SCP+3zWYeyGpczaLHxBN2L7WEJUYusXSDVRsDjTSZ
+         Tvpvz15BrLI4xLjmQyEe9KYYwEcl1XyzjDPA87o1DcZ8Uf93Dk8nb4PEt6daaJW4fM4J
+         Z0KYgFjrgLb2NSITgMuD6q+Z+H9hdhBQeBOqIim0anJTmS90UaqyFVEMtD7ah5weVMsU
+         3F6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716434522; x=1717039322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5cBMgH/meb7DXHpqDFrMQs3sMI8ZwAwTzDkQlsuKAC8=;
+        b=PVAjTJHwsbblhtHTwCrSHAv3psTOETOeQqGbu1Xa0F/rWREkyxIVMMS5D6keoSIluL
+         ct1cqr7g9iWJniJ0LxIalVyqKw8JoT7hIwHB8zJusDZ/6bIekCDRlCUX2rAdzLphVaU9
+         bZRqn0wLX1DR0FytjRH7yuSBk1FbEtfXDzDsQGdwzmJ8qVe1LxOeALSpNrhefyDPQHx9
+         iO+E456uuA47auARsOIhp3VU0EhUjBdfyF2qZ2VHfwbannmE8I/GjIOkkXQczkMZjK+E
+         t8FMOZQ6s5uDFez3bJzLgm1O9FUIejWkrD793nHa33cAcC5UrcA/l0ubOwHupw3DeyZ7
+         D1tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLUKK5v1V+fGe4UQl8NLKDk2GMW/51RO9kFxxSrAyhLv+ZvGHJEYiJGCWzcG9oKDNZkJFS35aSQkFkUeNqwxen7nEIYfKpp4/i09I7
+X-Gm-Message-State: AOJu0YwLH8J2iA5PC1Oc0q1qOMQpUINkb9yW2t42bcbaq7NEOVx1eRIR
+	0RXhbffPs3Fais3qz06eC3kJO0dQeFmIurGf5OaxO1c6qPAwUuAyQTsdJLNNBZOMCGBat5FAyzY
+	FrjOmho/dsiU6v9q2Q+4NDyUUbbE=
+X-Google-Smtp-Source: AGHT+IFcH/gCwsAZh05Z9mcAv7Lon2D94TeRNOA6KqgmMMrmWQHTwznzdaCwb5CQJw6jDVriF5EfR7RacvHkkKRox38=
+X-Received: by 2002:a05:6102:6cb:b0:47f:2dde:2304 with SMTP id
+ ada2fe7eead31-489009364f8mr3889758137.5.1716434522508; Wed, 22 May 2024
+ 20:22:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E9:EE_|CH3PR12MB8726:EE_
-X-MS-Office365-Filtering-Correlation-Id: de019a6c-e93f-47a4-c6f2-08dc7ad737f8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|1800799015|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JutOxr3a2/MVnHBBHnA3+xmyhjBjCWpnNWTxYh2iNFe8PaTUuikS/hBDmMe8?=
- =?us-ascii?Q?7ZueDKxcjWWgAzTHsAHvKdwR6pGFHTGeQH3diTJ9N72WNPlVdqGFVdS0dup5?=
- =?us-ascii?Q?TROH4jrHcqdog2hzxP6zV7iUY+Z1FbAXUGIxgPJGw8MTVtxgeK7QQDRq251L?=
- =?us-ascii?Q?F7Me6k7nShnfwnkhVhYZuZo4jPFnxCfcmUypzy9+3uiBe0yVk/eaKPnqeK2o?=
- =?us-ascii?Q?cViWPkOCwvjTeQpvhKq4MKernNdoV5kqftILfKypdXRpaB+yVCtxf1AFfWAw?=
- =?us-ascii?Q?BooGDpUMJOYW1vwb2i+H+iYQz42tAa+oD8DtYREWiLZ2YmRPykRhQSUm1Lt8?=
- =?us-ascii?Q?6xChe2e+Swy+B503uE2NkiyUxDWg7o3TUAkaHz2DEWytpsY0K/3SrScOpQNr?=
- =?us-ascii?Q?J+ItvLFhiV/qaZXrHJ1iVq2AsARJ4p3NCh9CoxaHbr6AEXO9sIkVMyw54vUk?=
- =?us-ascii?Q?hXWYd3g+iHM8x8se7Mv2Jb8Vhe1n6/mzjeKOPVQYUPxfzOzCXuXOycJmo2/E?=
- =?us-ascii?Q?KjByJmGlTGOaSzcGuGpKcdsewjeJy/IEiZbniuBeG8ldzuvoLKkXG8YqKls+?=
- =?us-ascii?Q?ygm7Z9DmEvPPo2oKLmu593GbHeDnsZmxmyZ15shMNJgjqYdXJIPX6KOEyqGv?=
- =?us-ascii?Q?06r3GcoAVgGpQQUmq+ZRPmpFvCwzTPQFqmWcaT4LpwDc2h473F7hww/uiJcm?=
- =?us-ascii?Q?GM7rO9GZ9fsUt1uhkwbUYxUtTayah+N4yz6cKdw3CQ6ri/SVYvbxKx3wNE/K?=
- =?us-ascii?Q?whusmu/lKozW2wOuNc4vslFrLvQE/XQqN51VSSNh6DRjieLEsnOFzUvxHHWw?=
- =?us-ascii?Q?vMSQfNxtbFEwRM8UuoTFqd8FgjlrizAyQ0NHOg0qMTyQ/OlwVvBI/fJwfZQ6?=
- =?us-ascii?Q?UH7WyTaePNWCzcdW9NRoE9H/eI01hATDkg9A9BUQ6ZNG+gD+kSAhmJPDX1h7?=
- =?us-ascii?Q?triKy/q67YA/OuMg12Dw/C28ZZdX7YgQGiYletu187ZdTZcrAThz72NuGAqR?=
- =?us-ascii?Q?TpoGhoqCBWT8Q4omN4jKrOJuQwB6jL+HirVPxsW8EMUYHAIxNohZcZdOpl/h?=
- =?us-ascii?Q?CDIny19I3nIlMxMMA6hZ6zagEZ6RZkAUGR2N3zAdduGbBTc+S9Nu3oau19gm?=
- =?us-ascii?Q?Du298UND6mvx7eQIHtKHSXNeF6WugitqWO1Xxd2kRQ2p6zoHVWcY3Hq3vzOg?=
- =?us-ascii?Q?rk/IXziul73CbdBbuSNyPWm3Kfog0dNcdRuKtJtQ1odgdYwplGHQgOOzksAJ?=
- =?us-ascii?Q?JvI67E1SF746b5LtjOXGd5XNzHamTmqjP/3P5QIGBIlHisTFwcSzqQfpfOSh?=
- =?us-ascii?Q?ir5Sj2Wq47Gsyy4C4GQyPqJHQZwsxOblD9blYb7eq7y1KsbNj4N/WOSQlr1g?=
- =?us-ascii?Q?2zmjajw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 03:19:55.4438
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: de019a6c-e93f-47a4-c6f2-08dc7ad737f8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E9.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8726
+References: <7a8989c13299920d7589007a30065c3e2c19f0e0.1716431702.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <7a8989c13299920d7589007a30065c3e2c19f0e0.1716431702.git.baolin.wang@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 23 May 2024 15:21:51 +1200
+Message-ID: <CAGsJ_4x0CnEdmo=Nk8Gp8a0Rjeiny3tX8PSk9X2SLLx6946YJg@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: drop the 'anon_' prefix for swap-out mTHP counters
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, david@redhat.com, 
+	ying.huang@intel.com, ryan.roberts@arm.com, ziy@nvidia.com, 
+	ioworker0@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The current __arm_lpae_unmap() function calls dma_sync() on individual
-PTEs after clearing them. By updating the __arm_lpae_unmap() to call
-dma_sync() once for all cleared PTEs, the overall performance can be
-improved 25% for large buffer sizes.
-Below is detailed analysis of average unmap latency(in us) with and
-without this optimization obtained by running dma_map_benchmark for
-different buffer sizes.
+On Thu, May 23, 2024 at 2:37=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
+>
+> The mTHP swap related counters: 'anon_swpout' and 'anon_swpout_fallback' =
+are
+> confusing with an 'anon_' prefix, since the shmem can swap out non-anonym=
+ous
+> pages. So drop the 'anon_' prefix to keep consistent with the old swap co=
+unter
+> names.
+>
+> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-Size	Time W/O	Time With	% Improvement
-	Optimization	Optimization
-	(us)		(us)
+Acked-by: Barry Song <baohua@kernel.org>
 
-4KB	3.0		3.1		-3.33
-1MB	250.3		187.9		24.93
-2MB	493.7		368.7		25.32
-4MB	974.7		723.4		25.78
-
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++++++---------
- 1 file changed, 25 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 3d23b924cec1..94094b711cba 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -256,13 +256,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
- 				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
- }
- 
--static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
-+static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
- {
-+	int i;
- 
--	*ptep = 0;
-+	for (i = 0; i < num_entries; i++)
-+		ptep[i] = 0;
- 
- 	if (!cfg->coherent_walk)
--		__arm_lpae_sync_pte(ptep, 1, cfg);
-+		__arm_lpae_sync_pte(ptep, num_entries, cfg);
- }
- 
- static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-@@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 	if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
- 		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
- 		num_entries = min_t(int, pgcount, max_entries);
--
--		while (i < num_entries) {
--			pte = READ_ONCE(*ptep);
-+		arm_lpae_iopte *pte_flush;
-+		int j = 0;
-+
-+		pte_flush = kvcalloc(num_entries, sizeof(*pte_flush), GFP_ATOMIC);
-+		if (pte_flush) {
-+			for (j = 0; j < num_entries; j++) {
-+				pte_flush[j] = READ_ONCE(ptep[j]);
-+				if (WARN_ON(!pte_flush[j]))
-+					break;
-+			}
-+			__arm_lpae_clear_pte(ptep, &iop->cfg, j);
-+		}
-+		while (i < (pte_flush ? j : num_entries)) {
-+			pte = pte_flush ? pte_flush[i] : READ_ONCE(*ptep);
- 			if (WARN_ON(!pte))
- 				break;
- 
--			__arm_lpae_clear_pte(ptep, &iop->cfg);
-+			if (!pte_flush)
-+				__arm_lpae_clear_pte(ptep, &iop->cfg, 1);
- 
- 			if (!iopte_leaf(pte, lvl, iop->fmt)) {
- 				/* Also flush any partial walks */
-@@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 			} else if (!iommu_iotlb_gather_queued(gather)) {
- 				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
- 			}
--
--			ptep++;
-+			if (!pte_flush)
-+				ptep++;
- 			i++;
- 		}
-+		if (pte_flush)
-+			kvfree(pte_flush);
- 
- 		return i * size;
- 	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
--- 
-2.17.1
-
+> ---
+> Hi Andrew,
+>
+> Hope this patch can be merged into kernel 6.10-rc to maintain ABI compati=
+bility.
+> Thanks.
+>
+> Changes from v1:
+>  - Update the documentation per Barry Song.
+> ---
+>  Documentation/admin-guide/mm/transhuge.rst | 4 ++--
+>  include/linux/huge_mm.h                    | 4 ++--
+>  mm/huge_memory.c                           | 8 ++++----
+>  mm/page_io.c                               | 2 +-
+>  mm/vmscan.c                                | 2 +-
+>  5 files changed, 10 insertions(+), 10 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
+dmin-guide/mm/transhuge.rst
+> index 076443cc10a6..d414d3f5592a 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -467,11 +467,11 @@ anon_fault_fallback_charge
+>         instead falls back to using huge pages with lower orders or
+>         small pages even though the allocation was successful.
+>
+> -anon_swpout
+> +swpout
+>         is incremented every time a huge page is swapped out in one
+>         piece without splitting.
+>
+> -anon_swpout_fallback
+> +swpout_fallback
+>         is incremented if a huge page has to be split before swapout.
+>         Usually because failed to allocate some continuous swap space
+>         for the huge page.
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index c8d3ec116e29..8c72d3786583 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -269,8 +269,8 @@ enum mthp_stat_item {
+>         MTHP_STAT_ANON_FAULT_ALLOC,
+>         MTHP_STAT_ANON_FAULT_FALLBACK,
+>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+> -       MTHP_STAT_ANON_SWPOUT,
+> -       MTHP_STAT_ANON_SWPOUT_FALLBACK,
+> +       MTHP_STAT_SWPOUT,
+> +       MTHP_STAT_SWPOUT_FALLBACK,
+>         __MTHP_STAT_COUNT
+>  };
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 317de2afd371..89932fd0f62e 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -558,15 +558,15 @@ static struct kobj_attribute _name##_attr =3D __ATT=
+R_RO(_name)
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK=
+);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
+ALLBACK_CHARGE);
+> -DEFINE_MTHP_STAT_ATTR(anon_swpout, MTHP_STAT_ANON_SWPOUT);
+> -DEFINE_MTHP_STAT_ATTR(anon_swpout_fallback, MTHP_STAT_ANON_SWPOUT_FALLBA=
+CK);
+> +DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+> +DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+>
+>  static struct attribute *stats_attrs[] =3D {
+>         &anon_fault_alloc_attr.attr,
+>         &anon_fault_fallback_attr.attr,
+>         &anon_fault_fallback_charge_attr.attr,
+> -       &anon_swpout_attr.attr,
+> -       &anon_swpout_fallback_attr.attr,
+> +       &swpout_attr.attr,
+> +       &swpout_fallback_attr.attr,
+>         NULL,
+>  };
+>
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index 46c603dddf04..0a150c240bf4 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -217,7 +217,7 @@ static inline void count_swpout_vm_event(struct folio=
+ *folio)
+>                 count_memcg_folio_events(folio, THP_SWPOUT, 1);
+>                 count_vm_event(THP_SWPOUT);
+>         }
+> -       count_mthp_stat(folio_order(folio), MTHP_STAT_ANON_SWPOUT);
+> +       count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+>  #endif
+>         count_vm_events(PSWPOUT, folio_nr_pages(folio));
+>  }
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 6981a71c8ef0..18b796605aa5 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1244,7 +1244,7 @@ static unsigned int shrink_folio_list(struct list_h=
+ead *folio_list,
+>                                                         THP_SWPOUT_FALLBA=
+CK, 1);
+>                                                 count_vm_event(THP_SWPOUT=
+_FALLBACK);
+>                                         }
+> -                                       count_mthp_stat(order, MTHP_STAT_=
+ANON_SWPOUT_FALLBACK);
+> +                                       count_mthp_stat(order, MTHP_STAT_=
+SWPOUT_FALLBACK);
+>  #endif
+>                                         if (!add_to_swap(folio))
+>                                                 goto activate_locked_spli=
+t;
+> --
+> 2.39.3
+>
 
