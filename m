@@ -1,137 +1,161 @@
-Return-Path: <linux-kernel+bounces-187007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44D48CCBCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:34:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625C68CCBCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 347B4B21DF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80D081C21712
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0451213B29F;
-	Thu, 23 May 2024 05:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E63C13A878;
+	Thu, 23 May 2024 05:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rb//aCy7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZZb6tY+7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C6539AF9;
-	Thu, 23 May 2024 05:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC4642A87
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716442472; cv=none; b=arqkkCKBjOeU4BGaTBsMKhJTwLXHkrTvQEBXM960qROyx5eRXC+g+8VqseU/m3OMwyUjSBZnGAiNkkLoDqR8GoB/JxmqRNZATcSGtE6LLePkF19tTAB6lflU9OTT5gdZzarfyY6eVdLCJPCLO1z7IboEm6IVqsgLSHZYWqFpnMk=
+	t=1716442523; cv=none; b=bQ4mZ6vJlqGnU5Tezky9DRJ1o6u7rZQbEvN2tkfU6m2oUHYe6vx3IvAGzZq+642n/4sGXqFXolTozIXllJuibv4Y8mCKcG+hAl/4cD6HO6aswQgeqr3Utl+GLeHUrwknTnY2ZaW8Gx9DshgEZ4kC1DUvsp8Igyh1Kn/ypERJjDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716442472; c=relaxed/simple;
-	bh=E1+GhCRQlYYBxQ40XhLAHyOCsamK05NaoIq6WUuBjt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sT3cyFxYkyYlJDjc9oBDrSCXcpL6TXZYbsSGvzIR9pL1Q2kLzfMaY+y4+PnK8uEpRLZEe5EZtmbR5Uj9LDy2D/nR/eTChQlM6m8o5/g9joEG/ndez/lBY0hCaIJ58jfeUY/1526m4CIeh3U9sv/xRPqtq+jAjYEIUpMHS0+FsnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rb//aCy7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44N4kq1Z016760;
-	Thu, 23 May 2024 05:34:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rgKVUL89+PifOagCpEXhssK6ZCPIGpsjwpvdTh5PvIU=; b=Rb//aCy7ojlykzfH
-	BFBI0vlMHYRzRcTQOxDxTDut24YfblepYIXLZenPPz1wonN50dMue37r7NF+Ynd3
-	uNbATwFknf4D6jv8KW1J7vkeqzfq9nMCg5MP4YYz2XEeHl9L8A8t4j1g1hQuWzJo
-	DUTm3vepaRtIzZyMBWOn2tTsz8L3o9pPm6xDQpwZBaxyJNKb27KG/4uTSX4HBD/J
-	HlWHx4uUXpavv/oBeIH3UZLaArpoqcaS68iU4821HaZ6EmTUmQOeMKwQoYeOQn6U
-	3Cb2FeLPK2QlO3FMWfgYbzJF5TEXC6KkejxI5yR5JWHLhy7ogReqyYrYlZWfM2I9
-	5R99xw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y9y20g2gy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 05:34:17 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44N5YFjU017507
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 05:34:15 GMT
-Received: from [192.168.143.77] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 22 May
- 2024 22:34:14 -0700
-Message-ID: <60cd9300-d022-65a2-2804-1539a648b3a4@quicinc.com>
-Date: Wed, 22 May 2024 22:34:14 -0700
+	s=arc-20240116; t=1716442523; c=relaxed/simple;
+	bh=9MSePypnN2x7tkFIRXGJk1Lfzb+uoHj4i2u0JdsvilY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYGhLmoRWXzVFwZTvdu2VPqM5E7DDuUcqO9LuAVTYEaXYSmN0jsDwuVGeUv615Gl78YmVj2N2kOKElTthQzxE/Rav5KQeR2kV2IgIemBgOBQwu1XK52+18TYTKKCszB1K8nBTdmALtT41bwz72mxXM4TMPTJD8wEXsdCzXlQYcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZZb6tY+7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716442520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NkVYYwuuRqZJhdNUMtbXmkO5vXRSiVRryfoV8WYL+q0=;
+	b=ZZb6tY+7e9en80uM08iYl6kjXi6ZDzsUKAq5xLvd1mCG3fXm9XoSRlrAdZNdlRi9jj0gRe
+	Ya5Leq1Fw3um8gmDIZY+ElrrP3qO/GyA1V4tQhNdCgyGCKbBdjhK4QTjohuKaBBKD3TSAI
+	uSBeJXx6g1kxDJEKJ2nT1lrEYIZDmCg=
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com
+ [209.85.167.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-67-FfEMeLvpN8SK-ekGpe-uQg-1; Thu, 23 May 2024 01:35:19 -0400
+X-MC-Unique: FfEMeLvpN8SK-ekGpe-uQg-1
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3c9a56ffb64so722157b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:35:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716442518; x=1717047318;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NkVYYwuuRqZJhdNUMtbXmkO5vXRSiVRryfoV8WYL+q0=;
+        b=rH8PetNkvoA/zQDH4mR5gK5WxnAhwRXz2Eth0mJfGeg4Ei7MlXNDNNvICpzPIGQDWh
+         Te9YZyTkULKCaqe5w1HoKYUcjny4UUGxRBUZ6/w8sK35TV9YJT8+IO7XafNoQHZrmp/q
+         3QTepbvUb3bkHO7Oogipit24g3j+IjAS6xSPhZPj8cdf9mm23oA/0YPt/4xz6qDFoGO8
+         KvFbApjxAmMQCptpf2j3ZsZ6nRZCTEGqP/1yOh/iepwdDRa4uGrmIyKaP9AEdhCbYyLK
+         tzsIJOYoxsMMfsMppCm4XvYPd4V6RAFRH9yjFtSVQ/MRR7BuR3OTVhmSaO9UAm93ZWQb
+         DLmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAd2jzZN6sRxJviZE4Y5Fjmw4uFnwxmqOOMETyavzMFnOAxI5BvE1l8PQkD9T/tLiLZq/9gJdFaq5Xf3ya2Gl29OdX2mCmomNp4R5z
+X-Gm-Message-State: AOJu0Yy/Y9fNuw14hPtUjn+XkOSBFU4mmrscsK3dGyng4qC9Czv5Q2Us
+	B6wf0+mbT2f2YssB0Oa7qYfLPLEU27oNJH6sIBnLiji1NMkeeyRWeNtXB7UtmGR63XzSpYZVkcU
+	ikTERraSS6ppvoHshq1ARWVuttuzT38Z+M7QWJOmIV/z29skLGxsal7tsNUUmlg==
+X-Received: by 2002:a05:6808:1cf:b0:3c9:924c:8304 with SMTP id 5614622812f47-3cdabd20d70mr3851750b6e.0.1716442517758;
+        Wed, 22 May 2024 22:35:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHU9TCM4OePsLNJcyJGxLImpn1NPmzuyatA+WiPDO4CMkcIyNbE/3eCPkgw29C+PBMkQ6fM4w==
+X-Received: by 2002:a05:6808:1cf:b0:3c9:924c:8304 with SMTP id 5614622812f47-3cdabd20d70mr3851705b6e.0.1716442516284;
+        Wed, 22 May 2024 22:35:16 -0700 (PDT)
+Received: from localhost ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2d767sm23300983b3a.186.2024.05.22.22.35.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 May 2024 22:35:15 -0700 (PDT)
+Date: Thu, 23 May 2024 13:34:23 +0800
+From: Coiby Xu <coxu@redhat.com>
+To: Baoquan He <bhe@redhat.com>, kernel test robot <lkp@intel.com>
+Cc: kexec@lists.infradead.org, oe-kbuild-all@lists.linux.dev, 
+	Ondrej Kozina <okozina@redhat.com>, Milan Broz <gmazyland@gmail.com>, 
+	Thomas Staudt <tstaudt@de.ibm.com>, Daniel P =?utf-8?B?LiBCZXJyYW5nw6k=?= <berrange@redhat.com>, 
+	Kairui Song <ryncsn@gmail.com>, Jan Pazdziora <jpazdziora@redhat.com>, 
+	Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Dave Hansen <dave.hansen@intel.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
+	Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	"(open list:KERNEL HARDENING (not covered by other areas):Keyword:b__counted_byb)" <linux-hardening@vger.kernel.org>
+Subject: Re: [PATCH v3 2/7] crash_dump: make dm crypt keys persist for the
+ kdump kernel
+Message-ID: <xnsvk5wlfuxomr3aayz6essyzgofux5orj366cizh5525ygbbx@tpdunjmf53m7>
+References: <20240425100434.198925-3-coxu@redhat.com>
+ <202404262003.qsWvGwZU-lkp@intel.com>
+ <ZkwSEUEW/RKFLubx@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 2/2] scsi: ufs: qcom: Update the UIC Command Timeout
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>, <quic_cang@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <avri.altman@wdc.com>,
-        <beanhuo@micron.com>, <adrian.hunter@intel.com>,
-        <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        "James E.J. Bottomley"
-	<jejb@linux.ibm.com>,
-        "open list:ARM/QUALCOMM SUPPORT"
-	<linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <cover.1716359578.git.quic_nguyenb@quicinc.com>
- <8e5593feaac75660ff132d67ee5d9130e628fefb.1716359578.git.quic_nguyenb@quicinc.com>
- <2ec8a7a6-c2cd-4861-9a43-8a4652e0f116@acm.org>
- <f9595b82-66f9-dce2-7fba-c42b1eacf962@quicinc.com>
- <bdd52dc0-85dd-4000-b5dd-c2c22f5b8ba1@acm.org>
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-In-Reply-To: <bdd52dc0-85dd-4000-b5dd-c2c22f5b8ba1@acm.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5guV2Ji9zj_JPjtwyPjpYs_x3MjeUFTG
-X-Proofpoint-GUID: 5guV2Ji9zj_JPjtwyPjpYs_x3MjeUFTG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_02,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 bulkscore=0 clxscore=1015
- impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405230035
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ZkwSEUEW/RKFLubx@MiWiFi-R3L-srv>
 
-On 5/22/2024 2:01 PM, Bart Van Assche wrote:
-> On 5/22/24 13:56, Bao D. Nguyen wrote:
->> On 5/22/2024 11:18 AM, Bart Van Assche wrote:
->>> Since the described issue is only encountered during development, why to
->>> modify the UIC command timeout unconditionally?
+On Tue, May 21, 2024 at 11:20:35AM +0800, Baoquan He wrote:
+>On 04/26/24 at 09:10pm, kernel test robot wrote:
+>> Hi Coiby,
 >>
->> The vendors can enjoy the default 500ms UIC timeout if they prefer.
->> As long as they don't write to hba->uic_cmd_timeout in the vendor's 
->> initialization routine, the default value of 500ms will be used.
-> 
-> Since this issue is not vendor specific, I think it would be better to
-> modify the UFSHCI core driver only. Has it been considered to introduce a
-> kernel module parameter for setting the UIC command timeout instead of the
-> approach of this patch? As you probably know there are multiple mechanisms
-> for specifying kernel module parameters, e.g. the bootargs parameter in the
-> device tree.
+>> kernel test robot noticed the following build warnings:
+>>
+>> [auto build test WARNING on linus/master]
+>> [also build test WARNING on v6.9-rc5 next-20240426]
+>> [cannot apply to tip/x86/core]
+>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> And when submitting patch, we suggest to use '--base' as documented in
+>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Coiby-Xu/kexec_file-allow-to-place-kexec_buf-randomly/20240425-180836
+>> base:   linus/master
+>> patch link:    https://lore.kernel.org/r/20240425100434.198925-3-coxu%40redhat.com
+>> patch subject: [PATCH v3 2/7] crash_dump: make dm crypt keys persist for the kdump kernel
+>> config: x86_64-randconfig-r113-20240426 (https://download.01.org/0day-ci/archive/20240426/202404262003.qsWvGwZU-lkp@intel.com/config)
+>> compiler: gcc-10 (Ubuntu 10.5.0-1ubuntu1) 10.5.0
+>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240426/202404262003.qsWvGwZU-lkp@intel.com/reproduce)
+>
+>
+>Please respond to the lkp report in time whether it's a problem or not,
+>otherwise the link will be unavailable.
 
-The proposal here uses similar implementation as the auto hibern8 timer 
-(hba->ahit). The ahit mechanism has been working well and stable, so I 
-thought why not keep using it? Let see if other members have any 
-comments about kernel module parameter/bootargs suggestion.
+Thanks for the reminder! I've fixed the reported problem in v4.
 
-Thanks, Bao
+>
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202404262003.qsWvGwZU-lkp@intel.com/
+>>
+>> sparse warnings: (new ones prefixed by >>)
+>> >> kernel/crash_dump_dm_crypt.c:31:3: sparse: sparse: symbol 'keys_header' was not declared. Should it be static?
 
-> 
-> Thanks,
-> 
-> Bart.
-> 
+Yes, symbol 'keys_header' should be static! Thanks for the report!
+
+>>
+>> vim +/keys_header +31 kernel/crash_dump_dm_crypt.c
+>>
+>>     27	
+>>     28	struct keys_header {
+>>     29		unsigned int key_count;
+>>     30		struct dm_crypt_key keys[] __counted_by(key_count);
+>>   > 31	} *keys_header;
+>>     32	
+>>
+>> --
+>> 0-DAY CI Kernel Test Service
+>> https://github.com/intel/lkp-tests/wiki
+>>
+>
+
+-- 
+Best regards,
+Coiby
 
 
