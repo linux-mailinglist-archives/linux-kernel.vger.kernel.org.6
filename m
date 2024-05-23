@@ -1,140 +1,151 @@
-Return-Path: <linux-kernel+bounces-188087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8158CDCFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:48:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BC18CDD00
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3958A281AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:48:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C3F71C22827
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A00AA128830;
-	Thu, 23 May 2024 22:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D765128377;
+	Thu, 23 May 2024 22:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U57Sh1V8"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DLwlbxNB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D81128812
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3090782D9A
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716504484; cv=none; b=GqzVlt3k+MPStQsx0BUEWE9cn9lNYw3iaSdUx3qPfY4F4M4e6lbXjE0fkf+nRar8veMkPzuX4Us+e24ZAAC+sb1efBeIh/kOTLoJ5JOMNiaMcQcfs5q/FaolHin4S+5CgWmvbyECdOLGYa/BA3TFD38DMcoR+tvFAvYv8VAK3O4=
+	t=1716504515; cv=none; b=OTJ+c6hIPQiUyE2A8+GkYEsAaa25LCLJs0HjEGz9GSnzDokf77IpMBZEK5xYmt5THQHEVNoRPfWR6pgWl63sT8BQsQFLD3AdZpUnGcgYtu8wqxWk4UkONzfZUNND6x62fSeJCQLulr6MRYAmogIobA0n1AlEAgDE1f84vZG/Hrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716504484; c=relaxed/simple;
-	bh=gz0PkwjZapZ313UpBb/0ZCcYeCPvCTVsQ+dYKgCkRYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AdYQoyY6GlJOEsU8QV+7kpdnsoWkLc4aOgT+uB1amZiw51HfBI8miMwOwsmk7oFNA2ay75XVHnBGeeNpdyBizpeXs0GJ4sm0EZO/eSPEyJBGuOzsrAvKwukJK7Qmbwa8RZW1k/4ulsZeP5B17uwGgrmFgLfiEuTttn+XlOp9jTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=U57Sh1V8; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f3434c36baso8787205ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716504483; x=1717109283; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EA4oat8jyy3CDEKkZfrcdIUDv0o+HLO5NbY98ff+pUo=;
-        b=U57Sh1V8YyODu9+AZPf+p+WnEA3anP4y64iyy/fes3u3L+Wcj81oCO8RFSj+/5Ae5F
-         qxgbajzWSaQ7GstdM6AJ5MEbkOO2YKYeo8HvJN+JnPwyPROuYHy2bN2vPY5V4/Xuf4Zd
-         BXTdKE690HlAerrTp56EUkJ0l5dUyrNgfDMxg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716504483; x=1717109283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EA4oat8jyy3CDEKkZfrcdIUDv0o+HLO5NbY98ff+pUo=;
-        b=DMC7yLpsDn1VdMrXDmCays/TlFJxLYJtY6w0zhSSabdrg3imvXew76MELyeqEiJba2
-         pB2hdAwTJydHlPEowst5/HZzQ6kS8HJGJUK94rZwZ3PRv0DW3ks9VMoPPgVfR0UxYtZl
-         BDxQS+wjdZpS6Jj7TLjfUvusFJ3BNheAk51n/K6/cNHgCIFwGPCQHMERH7AQmsF+Wccc
-         atnfDKW9exdbRioVXRpK9bxZEtE4stbVRyqHxAHj6O6SJ3iWm4dXDwgtVIFMIOA8VhIh
-         HUbVubNcJjZnD4BP2O9dVErQCcRGrJjwUdcaP/fpPvHOint2WpUvOi0E4wyi1kQKxmQI
-         1/ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWCeNX7u5RjWFLZRHGKWIM1BZ9fFte2ScKqyuvnGgw4HBCT9pXyZ5nJ6I6vHEHO466qt7kJoLMRUnJKvA/blDN/ckh9eP8wsujTTeJN
-X-Gm-Message-State: AOJu0YxDMa0d6f1nRHBEnlpK8gOyfKmM6B78QUSQi1vVDZm2HO5lRsKd
-	iVeEDj26y143+/FFbpLtfh5A/CE+AUQ618V8PLYdorSw31zGn8hECU7dpXvAlQ==
-X-Google-Smtp-Source: AGHT+IGJGZpQ4rf9EhpaVQHn1iwjcML//bMqKC3QEgcf7g6/WJcRFjAa7WIIEUgfb/nq9jE8JKVYSQ==
-X-Received: by 2002:a17:902:cecd:b0:1f3:35e8:d309 with SMTP id d9443c01a7336-1f4486d9f35mr8074405ad.20.1716504482757;
-        Thu, 23 May 2024 15:48:02 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9aa1f1sm942125ad.241.2024.05.23.15.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 15:48:02 -0700 (PDT)
-Date: Thu, 23 May 2024 15:48:01 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: syzbot <syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com>,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in __fortify_report
-Message-ID: <202405231540.84B3DBE841@keescook>
-References: <00000000000019f4c00619192c05@google.com>
- <20240523130456.GH65648@mit.edu>
+	s=arc-20240116; t=1716504515; c=relaxed/simple;
+	bh=FVjf8wrlV7NMGMbPBklu5L3+XCMuQXEvjmuSJKVs8nA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z6aIY7LBZSlNhYbWwvo2tM38fpcZVb6gmD1GdbbHhAJVEYEfdkQ87v1FwHns/kksMmOUxk8QrEDt8bTSqwWcQinJNC8KhQrUhbEHlrZUZNli0jnSRDK02rmKsTOYcdLnQdofZtJzodlJ0kqX+ksD9YTTxTE6h07E0Mov/YiUsCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DLwlbxNB; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716504514; x=1748040514;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FVjf8wrlV7NMGMbPBklu5L3+XCMuQXEvjmuSJKVs8nA=;
+  b=DLwlbxNBNA0Un0oQv3ok8NoIwD1Pa36HzjWqa5D4WZV5qHTHjNfgUgYJ
+   +DLCzlBeh+jHh7XNyyMtL0+bCRY+cK+35gEQEiqnr6aio1ecvyQ1yUZG0
+   DUWvva2mzpmD+q6EO/zJ92rPSmixKtuRQylW+6pAXtJEaYZHEGWeMM9gM
+   FyVQ3L8E3cUOlZyQE/NgqKhr/GZwBgw2hB04fuLCWaFTYNe9pa1lUCzzX
+   Hx29v1Cndves7fq/NIMTVDDSdpU1l6vJ76ax8XM+h8iMuNiDIP8oCXO70
+   NbiuMVOk/2W63BiNMPTqw6rPIsfdIezgYdii+UB2zU78DJDcpc45TlSH8
+   A==;
+X-CSE-ConnectionGUID: 9Ipa2gl9ToyLwgxbB7aXLA==
+X-CSE-MsgGUID: 8oFf9p+1Rau6e8SH+K1lVg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="23467783"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="23467783"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:48:24 -0700
+X-CSE-ConnectionGUID: MoVaye90TUGa3MBDutcPlw==
+X-CSE-MsgGUID: u7aNR404Qpmcpe3YXuvdyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="38390291"
+Received: from unknown (HELO [10.125.110.91]) ([10.125.110.91])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:48:23 -0700
+Message-ID: <f19f63ba-c436-4e39-ab86-78c80b1af667@intel.com>
+Date: Thu, 23 May 2024 15:48:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523130456.GH65648@mit.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] mm/x86/pat: Do proper PAT bit shift for large
+ mappings
+To: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Gunthorpe <jgg@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Andy Lutomirski <luto@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ "Kirill A . Shutemov" <kirill@shutemov.name>, Mike Rapoport
+ <rppt@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Michal Hocko <mhocko@suse.com>, Alex Williamson
+ <alex.williamson@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Suren Baghdasaryan <surenb@google.com>, Borislav Petkov <bp@alien8.de>,
+ x86@kernel.org
+References: <20240523223745.395337-1-peterx@redhat.com>
+ <20240523223745.395337-3-peterx@redhat.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240523223745.395337-3-peterx@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23, 2024 at 09:04:56AM -0400, Theodore Ts'o wrote:
-> On Wed, May 22, 2024 at 11:29:25PM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=50835f73143cc2905b9e
-> 
-> > ...
-> > strnlen: detected buffer overflow: 17 byte read of buffer size 16
-> > [<8080fe10>] (__fortify_report) from [<818e9a40>] (__fortify_panic+0x10/0x14 lib/string_helpers.c:1036)
-> > [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (strnlen include/linux/fortify-string.h:221 [inline])
-> > [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (sized_strscpy include/linux/fortify-string.h:295 [inline])
-> > [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (ext4_ioctl_getlabel fs/ext4/ioctl.c:1154 [inline])
-> 
-> > [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (ext4_fileattr_get+0x0/0x78 fs/ext4/ioctl.c:1609)
-> > [<8062829c>] (__ext4_ioctl) from [<8062aaac>] (ext4_ioctl+0x10/0x14 fs/ext4/ioctl.c:1626)
-> >  r10:836e6c00 r9:00000005 r8:845e7900 r7:00000000 r6:845e7900 r5:00000000
-> 
-> This is caused by commit 744a56389f73 ("ext4: replace deprecated
-> strncpy with alternatives") and it's unclear whether this is being
-> caused by a buggy implementation of strscpy_pad(), or a buggy fortify,
-> but a simple way to fix is to go back to the good-old strncpy(), which
-> is perfectly safe, and perfectly secure.
-> 
-> (And this is a great example of "security initiatives" being an
-> exercise in pain alocation tradeoffs between overworked maintainers
-> and security teams...  regardless of whether the bug is in fortify,
-> syzkaller, or an effort to completely convert away from strncpy()
-> because it makes security analysis easier.)
+On 5/23/24 15:37, Peter Xu wrote:
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 317de2afd371..c4a2356b1a54 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1135,7 +1135,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  		goto out_unlock;
+>  	}
+>  
+> -	entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
+> +	entry = pmd_mkhuge(pfn_t_pmd(pfn, pgprot_4k_2_large(prot)));
+>  	if (pfn_t_devmap(pfn))
+>  		entry = pmd_mkdevmap(entry);
+>  	if (write) {
 
-It looks like this is another case of a non-terminated string being made
-terminated by strncpy into a string with 1 extra byte at the end:
-
-        char label[EXT4_LABEL_MAX + 1];
-	...
--       memset(label, 0, sizeof(label));
-        lock_buffer(sbi->s_sbh);
--       strncpy(label, sbi->s_es->s_volume_name, EXT4_LABEL_MAX);
-+       strscpy_pad(label, sbi->s_es->s_volume_name);
-        unlock_buffer(sbi->s_sbh);
-
-This should be using memtostr_pad() as:
-
-	memtostr_pad(label, sbi->s_es->s_volume_name);
-
-I'll send a patch. It looks like __nonstring markings from commit
-072ebb3bffe6 ("ext4: add nonstring annotations to ext4.h") were
-incomplete.
-
--Kees
-
--- 
-Kees Cook
+Does this even compile on non-x86 architectures?
 
