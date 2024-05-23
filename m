@@ -1,126 +1,85 @@
-Return-Path: <linux-kernel+bounces-187781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403E18CD85D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB56B8CD86A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CAD31C21059
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D0B28296A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3233A1802E;
-	Thu, 23 May 2024 16:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+b2/vN0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A72179AD;
-	Thu, 23 May 2024 16:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ECD1804A;
+	Thu, 23 May 2024 16:30:55 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id C9D02B65D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716481507; cv=none; b=rWOaRcU/7Jysx+WqOKSazl12q0F7cuKHVjgKVEp2Y7ycgzdYlBmYBhEebLGujU6UGBNJs0HSwdEfUxVPn+6S2PioQL4WBLgHmCC2vqrtHLfuovqzRQjO06ceeSvKXUuPRfxAcuEhsk4GgQpcziid97cMnySLyZBZ5CaQiqCzRzQ=
+	t=1716481855; cv=none; b=USwXFSVKUk+bdcuzYiuCsVaoUr5EjNpJR4QQlnMF9hTsYY/sOF0OjAOWZ9uEOr8JwJwkqBMKTTHDT52h6NSMpOsbH7B3dQm5XMHOppkDUj+LGgpaKMGe1MOJUHuF3NHyMFOcLjzkHx4qfDt7S3Q3Q2B3qTCq+sFjec/4DFsftWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716481507; c=relaxed/simple;
-	bh=0d9jGHiS/2QcS8go3KAI4U3yHH1hr3uqvHpXEVKGgwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WQwTGKCNqDVRRZsRRsJOPHB6QgY0KgMn30ttp38JTEJUjYWxcOU5JoMh/y+kWqLbO8kUvdXpgw89mayMitAKS2mMOXuKhD33apK34U3N+SpVsZrXm370/vpVcGCVYI+WdMchMWkIwKaliOJaoBnfDKOmQYBOkcHnoA0SKHS1VOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+b2/vN0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C75C2BD10;
-	Thu, 23 May 2024 16:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716481507;
-	bh=0d9jGHiS/2QcS8go3KAI4U3yHH1hr3uqvHpXEVKGgwE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=i+b2/vN05CZGzYkIwZ0aOh6tjKsNf4GI4YmNbyMrgsigZ4qiYbcAOh1oR4hrcXEBe
-	 iw37vTu0Jci1CJaOjgMCJelJ7Sd+A+2Xb7TNiHU7cjidIKK/Tt/BRmU/5iLxCc9Pn+
-	 hJwRIEeszXM0jB43I+RDa6nUK6YJ8uXIPdWODbmkyQRB8J7x6Pc57PhItUsWIlfix0
-	 rx4UQL5+aQWCUHHXxsw2gHVb62+GZsbfzt3AIWeIcvas5umd4SKVfa9nQe6sGrbs/Y
-	 ej1qC5zGh1+f0WpYHXE+592YWGubzePnPSKKBL3Z8nSPrZ1wJPjt+VKPqrrN84bVaJ
-	 PdWEQEwFnz1AQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-51f45104ef0so8009946e87.3;
-        Thu, 23 May 2024 09:25:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXNZ9Vhx5GqcEnbOC7/mK7X0ja2thLMR9GzKNBJ+TyWk/ZivZRlb4MdTEAwBBCxwqRWkIuXbplcXuA3a4emFqbSAMhwt96jDo8hkns8fc3fRw7mua9DDdFTqQyCZBpKCW8FdkUig6HSaw==
-X-Gm-Message-State: AOJu0Ywuww89WNGWtfPy0pkW5B1yL3KIGHDOTLTxUwSEnMVMq+HC2B3Y
-	Wpwxn96NE5E9VekmuLgQR4WY5Zh2Up9cnCVJADunLqJ/G58MMWBZ7T6bLlqPOzBKU/VLczgKfZE
-	tBiTpaS01kXoSA+pBDslNFGLqNg==
-X-Google-Smtp-Source: AGHT+IEwyaYcKJXBDjUkbrJmbuC4zU8pOxR/uiL3UmvR1pJ9hgEoj1G35B71P9d7FtZvw5LZNl1t3vm0CcbNfJN05Ng=
-X-Received: by 2002:ac2:5b51:0:b0:51f:6324:4b77 with SMTP id
- 2adb3069b0e04-526c068ea87mr3215856e87.49.1716481505373; Thu, 23 May 2024
- 09:25:05 -0700 (PDT)
+	s=arc-20240116; t=1716481855; c=relaxed/simple;
+	bh=zsvWlc1vONWVLufrWVoYcSWo8o0jgMR2VZPSYk4F15E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nmcVN5g+SUExkyfqkqC9uKoh4LP2gDMeRa8sZhSembPKnb5DZ+lpgqE2Sx7SSSKoCtQPMbBgVbOj/a7S3TFIz2HSSiM1dbsK7NlcMpm87LhJKZGDvQEaBVtXl+WZ5p1B76NLLSzW7C9vfINmg92UInl05O+uQyw41iON32HaVzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 543687 invoked by uid 1000); 23 May 2024 12:30:52 -0400
+Date: Thu, 23 May 2024 12:30:52 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: shichao lai <shichaorai@gmail.com>
+Cc: gregkh@linuxfoundation.org, oneukum@suse.com, linux-usb@vger.kernel.org,
+  usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
+  xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>
+Subject: Re: [PATCHv2] Check whether divisor is non-zero before division
+Message-ID: <eb995078-1923-43d5-a20f-9d4a7edee719@rowland.harvard.edu>
+References: <20240523092608.874986-1-shichaorai@gmail.com>
+ <a0afa88b-f84c-4b45-a265-2e6bcbb84b35@rowland.harvard.edu>
+ <bb581989-4ac5-4ffe-9f80-01b5f993146f@rowland.harvard.edu>
+ <CACjpba5iJ5dC=rB_Ckaqe4BKesrAN2VmsDCPZJ=frufNgA96Uw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522075245.388-1-bavishimithil@gmail.com> <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
- <4f722e53-011f-4176-b6af-080522165007@kernel.org> <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
- <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org> <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
- <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org> <60989c44-6d16-4698-bf3f-b3c5dcd7b3e0@kernel.org>
- <dc31c4ba-1bea-4056-a68f-87d742eb8da3@nxp.com>
-In-Reply-To: <dc31c4ba-1bea-4056-a68f-87d742eb8da3@nxp.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 23 May 2024 11:24:51 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJp133hGSkja9tabtsE9D7MSA9JErVkmkcy91piHMgfwg@mail.gmail.com>
-Message-ID: <CAL_JsqJp133hGSkja9tabtsE9D7MSA9JErVkmkcy91piHMgfwg@mail.gmail.com>
-Subject: Re: DT schema bindings conversion mentorships (was Re: [PATCH v5]
- ASoC: dt-bindings: omap-mcpdm: Convert to DT schema)
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Julia Lawall <julia.lawall@inria.fr>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACjpba5iJ5dC=rB_Ckaqe4BKesrAN2VmsDCPZJ=frufNgA96Uw@mail.gmail.com>
 
-On Thu, May 23, 2024 at 7:30=E2=80=AFAM Daniel Baluta <daniel.baluta@nxp.co=
-m> wrote:
->
->
-> On 5/22/24 20:05, Krzysztof Kozlowski wrote:
-> > Dear Daniel, Shuah, Julia, Javier and other mentorship managers,
-> >
-> > I see some contributions regarding Devicetree bindings which look like
-> > efforts of some mentorship programs. It's great, I really like it. Only
-> > sadness is that no one ever asked us, Devicetree maintainers, about som=
-e
-> > sort of guidelines. This leads to sub-optimal allocation of tasks and
-> > quite a strain on reviewers side: for example we receive contributions
-> > which were never tested (tested as in make target - make
-> > dt_binding_check). Or people converted bindings which really do not
-> > matter thus their work soon will become obsolete.
-> >
->
-> Hi Krzysztof,
->
-> Some of the faulty patches are on me! Sorry for that. We had an
-> unexpected high
->
-> number of people sending contributions for Google Summer of Code and I
-> couldn't watch them all.
->
-> Now, the application period has ended and we have 1 intern working for
-> the summer!
->
-> Will follow your guidance! Thanks a lot for your help!
+On Thu, May 23, 2024 at 11:13:08PM +0800, shichao lai wrote:
+> Thanks for your comprehensive analysis.
+> I added some pr_info() to check the workflow, and I found that the
+> uzonesize was not initialized in fact!
+> 
+> The workflow is shown as below.
+> Before alauda_read_data(), there are in fact many alauda_check_media(),
+> but none of them enter the branch of alauda_init_media(), where
+> uzonesize is set to nonzero value.
+> The key branch condition is "status[0] & 0x08", which is always
+> unsatisfied in this repro.
+> 
+> ```
+> alauda_transport
+>     alauda_check_media
+>         if (status[0] & 0x08) // not satisfied
+>             alauda_init_media()
+>                 // initialize uzonesize
+>     alauda_read_data
+> ```
 
-To be specific, there are several ways to prioritize what to work on.
+Good work!  So the problem is that the driver believes the status[0] & 
+0x08 test.  
 
-- There's a list maintained in CI of number of occurrences of
-undocumented (by schema) compatibles[1]. Start at the top.
-- Pick a platform (or family of platform) and get the warnings down to
-0 or close. There's a grouping of warnings and undocumented
-compatibles by platform family at the same link.
-- Prioritize newer platforms over older (arm64 rather than
-arm32(though there's still new arm32 stuff)).
-- Fix warnings treewide from common schemas (i.e. from dtschema).
-That's not conversions, but related.
+The way to fix this is to add an "initialized" flag to the alauda_info 
+structure.  Then alauda_check_media() should call alauda_init_media() if 
+the 0x08 bit is set in status[0] _or_ if info->initialized is 0.  And of 
+course, alauda_check_media() should then set info->initialized to 1 if 
+the alauda_init_media() call succeeds.
 
-Rob
+Would you like to write and test a patch that does this?
 
-[1] https://gitlab.com/robherring/linux-dt/-/jobs/6918723853
+Alan Stern
 
