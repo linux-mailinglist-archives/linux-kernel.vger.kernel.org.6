@@ -1,165 +1,84 @@
-Return-Path: <linux-kernel+bounces-187278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D178CCF61
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C12B8CCF65
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 181581F23145
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:35:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D7891C221B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0590C13D28E;
-	Thu, 23 May 2024 09:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p0i+HBp7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3181313D2B1;
+	Thu, 23 May 2024 09:36:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED4278C8B;
-	Thu, 23 May 2024 09:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B0E13D260
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716456945; cv=none; b=rB/zrQLSEk3O7BYaCMDV77NbVq1W/6un419j8eK6qJXJ2idObyXCy7E2FnFdC5yjHkg6V9HlkolZ+Ud1ccv3mHjkJK3V0/5bwes6UGDWCJpSsQPw04fP4p5Vv6JVnyWf8F7oiY2lQ4Ys0pz4VM9RT6z+4Y9YfCY72knfow7clC4=
+	t=1716456966; cv=none; b=CoKRxOrMQxwP2T5m7uzUl3x5AQtHiwn4ktN+bwwyOJRFIqX1R2tmu5cLb9Elkg3pycAI54enTfHqKz5/v4VC8+9KRmjEdrCcSgLK3GfiUszu17X6TlUHu2/lI/WG9ep38o7C1UZ2v8phjXPKUuytXWW/YGUU52WUyDUubErGL00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716456945; c=relaxed/simple;
-	bh=gUFYD+H6fjG94sAYR9rMeCjL/q0ruoo74U+lISGMCMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUGy+2Ypb58QAfshUGgr+CXqki3FGiRVtX9lKv3JQvYy+jnA8WRUAqhcK/JWmbxKZrUyLyIkB/CNnbKrE1GdxoaLYOV6u0WJRSMrVQMrf9IXGwZY9XwlsZiWvPRci1xjrirCBDLAsbnoKq/esrseKQOmQ889IUp8JQQbxKZGEso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p0i+HBp7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E77DC3277B;
-	Thu, 23 May 2024 09:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716456944;
-	bh=gUFYD+H6fjG94sAYR9rMeCjL/q0ruoo74U+lISGMCMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p0i+HBp7xrV8/YlymDXIf/TUrqbmRJ32NK0OgPTE+pqffTAkoGV5+dDGAqOwK5Hzr
-	 7JNeffpuZshUweYnrZC1q7Ssis8f+OSfm8wtTJyv0qLZFn9D78MGRPFJPXhnAFrnJF
-	 pCLUy60d/0F/FCuWsw1lFwGbmcufs4+4pW0HY6OI=
-Date: Thu, 23 May 2024 11:35:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: yangxingui <yangxingui@huawei.com>
-Cc: rafael@kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	prime.zeng@hisilicon.com, liyihang9@huawei.com,
-	kangfenglong@huawei.com
-Subject: Re: [PATCH] driver core: Add log when devtmpfs create node failed
-Message-ID: <2024052354-legibly-willow-7134@gregkh>
-References: <20240522114346.42951-1-yangxingui@huawei.com>
- <2024052221-pulverize-worrisome-37fb@gregkh>
- <794b5fa3-0135-80cc-4b55-f48a430a58ca@huawei.com>
- <2024052316-confused-payback-5658@gregkh>
- <68b110da-ea20-fa03-be26-49dd3a04f835@huawei.com>
+	s=arc-20240116; t=1716456966; c=relaxed/simple;
+	bh=sAy9KDLJjy8l/XObHRC74k4b3Iv4z0NNrI1xYigUmaY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=P7R/YmapDWytfsYLGAh0NDcguGioR01GkQRCP2TbYgTxWZEA6xIcRD0tS9bZTRduyLuh+bh+ZPpH032QUSS2LhU3KvneW+3+KZnKrzM3Slpu6oF9FvLi5/sdhtRXxV/LlnTkVKAJACJpeTaLcJH8nMHr5w0BdjgcWo1mucG8fYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e1d3928fd4so136989339f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:36:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716456964; x=1717061764;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4LY/Fc5dxnacD2OPmHzoGAJ57Psli24OWbbcR8OaQAM=;
+        b=YqY0gs2QziE+BoV4C4w4LlF+LTKdIejwPIL37GoWcG6eY0yRFn44ulGGTvLATKop5o
+         ZqToJsWYrh5K93JLjnJRe0FKEsYZYM5QQaXsA+aKpljQJdfWm5Z13ZLVwpanodZE6H/i
+         9UPiw4BbRFQt2tsIgZPAZSlzjS0G0sJheeXBYEEaVVmVBH/KZHP97UImycN06PDyzpYq
+         SiYpdHGEiOV58oVb+Olvja1fEVTgM8zqOAN1t3N6GHiQ2S0PfeI9autYz3zRFmX0s6Gz
+         Qe47q47aOJ9RUjjTHmBQiG6QPtnhb+a6tPOz1jiF3CbZKvBinodfUqUGLoVXXuwXNux+
+         ZxYA==
+X-Gm-Message-State: AOJu0Yywx5afxOQ49vlMXMQZn3SObogxZGFpbk6cwsLHS6SidQcOlHW9
+	GoOnMwlfDp0mI3Z6ZLDRI68sIQdMYU1Gz2dnU9pyLYcM7T8sBxEifgJbPtHR4lmvr7dNlNRN/w5
+	n0G+duy4psCUgkP6vse0Qvk8XHHB8QwaXM9Lm9uM8xlUFfnV/uywYSnY=
+X-Google-Smtp-Source: AGHT+IHgIGSAdz150wvrhr2nFUpFCKPE/aMuNcytMdCuI6S7taRUJPsYciZkoG1jMWg1DoQEEJAlhfj7DMAsP48rjFOwVKXvqgiF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68b110da-ea20-fa03-be26-49dd3a04f835@huawei.com>
+X-Received: by 2002:a05:6602:3424:b0:7d6:5f6:831b with SMTP id
+ ca18e2360f4ac-7e36f131faemr11004339f.1.1716456964646; Thu, 23 May 2024
+ 02:36:04 -0700 (PDT)
+Date: Thu, 23 May 2024 02:36:04 -0700
+In-Reply-To: <20240523092352.1279292-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a679a106191bc722@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 23, 2024 at 05:23:07PM +0800, yangxingui wrote:
-> Hi Greg,
-> 
-> On 2024/5/23 15:25, Greg KH wrote:
-> > On Thu, May 23, 2024 at 09:50:09AM +0800, yangxingui wrote:
-> > > Hi, Greg
-> > > 
-> > > On 2024/5/22 20:23, Greg KH wrote:
-> > > > On Wed, May 22, 2024 at 11:43:46AM +0000, Xingui Yang wrote:
-> > > > > Currently, no exception information is output when devtmpfs create node
-> > > > > failed, so add log info for it.
-> > > > 
-> > > > Why?  Who is going to do something with this?
-> > > We execute the lsscsi command after the disk is connected, we occasionally
-> > > find that some disks do not have dev nodes and these disks cannot be used.
-> > 
-> > Ok, but why do you think that devtmpfs create failed?
-> I found that lsscsi will traverse the dev node and obtain device major and
-> min. If no matching dev node is found, it will display "-       ".
-> > 
-> > > However, there is no abnormal log output during disk scanning. We analyze
-> > > that it may be caused by the failure of devtmpfs create dev node, so the log
-> > > is added here.
-> > 
-> > But is that the case?  Why is devtmpfs failing?  Shouldn't we fix that
-> > instead?
-> My subsequent reply touches on these points.
-> > 
-> > > The lscsi command query results and kernel logs as follows:
-> > > 
-> > > [root@localhost]# lsscsi
-> > > [9:0:4:0]	disk	ATA	ST10000NM0086-2A SN05	-
-> > > 
-> > > kernel: [586669.541218] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
-> > > link_rate=10(sata)
-> > > kernel: [586669.541341] sas: phy-9:0 added to port-9:0, phy_mask:0x1
-> > > (5000000000000900)
-> > > kernel: [586669.541511] sas: DOING DISCOVERY on port 0, pid:2330731
-> > > kernel: [586669.541518] hisi_sas_v3_hw 0000:b4:04.0: dev[4:5] found
-> > > kernel: [586669.630816] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
-> > > kernel: [586669.665960] hisi_sas_v3_hw 0000:b4:04.0: phydown: phy0
-> > > phy_state=0xe
-> > > kernel: [586669.665964] hisi_sas_v3_hw 0000:b4:04.0: ignore flutter phy0
-> > > down
-> > > kernel: [586669.863360] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
-> > > link_rate=10(sata)
-> > > kernel: [586670.024482] ata19.00: ATA-10: ST10000NM0086-2AA101, SN05, max
-> > > UDMA/133
-> > > kernel: [586670.024487] ata19.00: 19532873728 sectors, multi 16: LBA48 NCQ
-> > > (depth 32), AA
-> > > kernel: [586670.027471] ata19.00: configured for UDMA/133
-> > > kernel: [586670.027490] sas: --- Exit sas_scsi_recover_host: busy: 0 failed:
-> > > 0 tries: 1
-> > > kernel: [586670.037541] sas: ata19: end_device-9:0:
-> > > model:ST10000NM0086-2AA101 serial:            ZA2B3PR2
-> > > kernel: [586670.100856] scsi 9:0:4:0: Direct-Access     ATA ST10000NM0086-2A
-> > > SN05 PQ: 0 ANSI: 5
-> > > kernel: [586670.101114] sd 9:0:4:0: [sdk] 19532873728 512-byte logical
-> > > blocks: (10.0 TB/9.10 TiB)
-> > > kernel: [586670.101116] sd 9:0:4:0: [sdk] 4096-byte physical blocks
-> > > kernel: [586670.101125] sd 9:0:4:0: [sdk] Write Protect is off
-> > > kernel: [586670.101137] sd 9:0:4:0: [sdk] Write cache: enabled, read cache:
-> > > enabled, doesn't support DPO or FUA
-> > > kernel: [586670.101620] sd 9:0:4:0: Attached scsi generic sg10 type 0
-> > > kernel: [586670.101714] sas: DONE DISCOVERY on port 0, pid:2330731, result:0
-> > > kernel: [586670.101731] sas: sas_form_port: phy0 belongs to port0
-> > > already(1)!
-> > > kernel: [586670.152512] sd 9:0:4:0: [sdk] Attached SCSI disk
-> > 
-> > Looks like sdk was found properly, what's the problem?
-> 
-> Yes, this problem occurs occasionally. There is no exception log when
-> scanning the disk, but the disk cannot be used. It has been confirmed that
-> it is related to fio testing. When the dev node does not exist, fio may
-> actively create this file.
+Hello,
 
-So that's a userspace issue.  If a device node is to be created, and the
-file is already present with that name, yes, we will fail to create it
-as obviously userspace did not want us to do so.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-It's not the kernel's job to protect userspace from doing foolish things
-itself, right?  :)
+/include/linux/build_bug.h:16:51: error: negative width in bit-field '<anonymous>'
 
-> If we want to solve this problem, should we delete the existing files first
-> when creating a dev node?
 
-No.
+Tested on:
 
-> Or just print a prompt indicating that the dev node creation failed.
+commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16f52fa2980000
 
-We can do that, but will that cause error messages to be printed out for
-normal situations today where userspace does this on purpose?
-
-Again, this isn't fixing the root problem here (which is userspace doing
-something it shouldn't be doing), adding kernel log messages might be
-just noise at this point in time given that it has been operating this
-way for many years, if not decades.
-
-thanks,
-
-greg k-h
 
