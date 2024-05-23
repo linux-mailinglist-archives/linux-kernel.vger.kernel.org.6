@@ -1,159 +1,285 @@
-Return-Path: <linux-kernel+bounces-186966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B798F8CCB4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768C98CCB4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74051C20C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:10:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126431F21C1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA0F33997;
-	Thu, 23 May 2024 04:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248876BB39;
+	Thu, 23 May 2024 04:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H07uzoty"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nR2jow7H"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFAB33EA
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2C21DFD0
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716437402; cv=none; b=SJybN5f6YLRpfZNIUqepnhrrUOtEgT4FE2gxAnPn1WE9MbFjBsb79ObH71iYsPvFXIVOSqn9j8bRWOADt24ozkeK7h46s3bYYN7YTjhn0WuBDsiwPGwi+F2pkiuuXKkBdejDWIXna4CCK7vDHRpT/OyYxHNbbIRr3UnScqVxZbo=
+	t=1716437715; cv=none; b=uxi+ANaSR3FGk30oz7nv2JY+OIOPQtVPDlt2P1zye6ZNS9xamI2SVNFdLdkSOSUBF+FJrtWSSfbgGmOD8SUvmt979OJi+pqxq11m3m+URYP3fnTrrqqIo5yvhJvHBzN5ABr/dANbmh68hiFaF3efgI+zdXzC7PUldIFE6cMh1Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716437402; c=relaxed/simple;
-	bh=6Qsfgxn0ZtZxpVvIBFFX1mQlHeNqRm+EvO0tyESQalY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dndvmF8TfPPk3r5egfUvGOlA/axOl8XBohDcnhfvHAF1JeW9nnM+a7tK3nWxL2n6kSkQ9/zOAfsg8q3Cgc3o/qHocPkBUBnDDdkuYkBhkePsREZNoRiuolZ+DOYjAG8qxz8GTSl+cwW4taSs5LSarwVpoQ4ftWH8TIl/oC/NrOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H07uzoty; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f32a3b9491so9649995ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:10:00 -0700 (PDT)
+	s=arc-20240116; t=1716437715; c=relaxed/simple;
+	bh=zvCTIHs5YqJAlk7Ohu27hGvHT/jfiV6FMeApCgHcMnQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dq3n3aVYN1r7PYVwudDNej81Rhdp/RDTWpmDAzH5qFhsH15WLpsWscLcbMsQcBUXxtHabfVFgLaV9zmPEx+T8BERnUgjL+g0iVgDSrqPglwf2S0gT225LVl74+E1QnUW5NrHrFfH/y7R53mrSDscGuGEJiY0fUfAPoWL41MuzSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nR2jow7H; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-627f46fbe14so8538797b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716437400; x=1717042200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YKSyw6WGP8oc1c5/355QNnMu26FbGL5V8Gm62pHtX8U=;
-        b=H07uzoty6tzz8ejyaKh1LYcRVNZ8LWVTsfq27Q8rBTNMX9HMwSYzoayz/0Ia8MPzWk
-         uee5Srwx3IqYPmLhfWHG6Y2ivOQGXXrdUfh41WWosBM1cuHo2rXCcpnECczzy/leTw8r
-         rmmOkD3OQqY+awnsa2kOZuTqmuz/Cjh4oEZj0gcpVvuTclmY8T9KSpqWS45VVKopCvll
-         HTGHV1QEC5nz/zNSEXqtMUrsTGkyrnPN+oXU6UexawF3e8kYu6as6n+95xYvyFOIPL8R
-         I5hgQpmzo+aHwGQo8UBOq/4Q2WQhhK+RwZjdBAsh3cRJMbxSOlzJMJHZxs0HBKyj/94D
-         X/wg==
+        d=linaro.org; s=google; t=1716437712; x=1717042512; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=MET5FIAW2m/C0sBmsEV+FEl5MEocq9FyxllKEm3F0/Q=;
+        b=nR2jow7H8vmBxPsIpl9rspXzEP0FIDRS+RniwgtVv8KCkuAzX8brFRjesJJDuHvNx0
+         FJA/Idl/9vy8n/UsTp4Hvve0afrveSM9nHf4HhUGoTZKDevo75Tl1iw6mLUdCT7RFIjO
+         r0wNTa8gQHAWllnQm3HbV7NvBRim3+A2kkdE4lh5TRJaMPBaa9zMzIZWkhxREeFVMoAZ
+         YDleR4VHPHxX/e0Ar49y+bNwTvG/4HOZd+uyebMyvRLFkQE8WaOTIT7Ff695uA3swEw7
+         khIJ/CxOOAB5Zxv/uWkGolmR7VyQNxoMYTI5Ne/JHFs4RiPhh+uzC74YmnkJ4cjq4zTa
+         8Wsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716437400; x=1717042200;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YKSyw6WGP8oc1c5/355QNnMu26FbGL5V8Gm62pHtX8U=;
-        b=nUwJakBo8P6A40ViVhaTCZei05d21kY7zQ+4gAiP1WJAh5gBmzi2ugzxfofi8GIRgJ
-         Z5j2hbc3e+e8LfpVXhboi8kWjrGFdQ1OruvXRHbtXCblA4QtoP6dA/Kfp9SEOTs6TFd7
-         a9I0sqKHjT94QRxv/ohYC+cPOCQVuEGgfuIhAhmXrVfTvJI//nLwYx/P9xVb5sttK0p2
-         k+1hbxt8c9JACxWOswXKz0gAw/dVoP/IXsQsj+SfcpQR9yMyMFPRXcAof2cSrv5w9S2e
-         RifUttNc/thEslmHSfSSaydiTHQ/fekUImOB6EpA/1hmfxMurySpjZ5JqW/Qag1RygG8
-         Iapw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPSpAymJghlOl/8JB7lotfqNduilAYf2sGCKRCn6V/Im7hc1KZWnB5j24ypEaHgTPAnsYEDRJwAxuxxSHRAGIOLPoz/IijjyL7e6eb
-X-Gm-Message-State: AOJu0YxKSnuO8Bk+lLjLbCRyMhzH+AFu3ET80hiS+KnPB2UY9C6zZI6o
-	WTiFmi26lURSRpQOMiYnAMFhYwpMh5IyMip94KHvx8gueAkqfffA
-X-Google-Smtp-Source: AGHT+IEQwG0Ah8JNIp+nts9Fmu4aOOHwzYGESz0lsmxX20hoewkxC9gHhtTDM/PwZ/pCJm20EjLhtQ==
-X-Received: by 2002:a17:902:d4c3:b0:1f2:fab6:294 with SMTP id d9443c01a7336-1f31c9ea3e1mr42062845ad.56.1716437399762;
-        Wed, 22 May 2024 21:09:59 -0700 (PDT)
-Received: from [0.0.0.0] (42-3-109-144.ptr.netvigator.com. [42.3.109.144])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f3356bf498sm8083705ad.191.2024.05.22.21.09.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 21:09:59 -0700 (PDT)
-Message-ID: <dd14e3ff-3ff7-426e-88e0-b16a49eafaf0@gmail.com>
-Date: Thu, 23 May 2024 12:09:55 +0800
+        d=1e100.net; s=20230601; t=1716437712; x=1717042512;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MET5FIAW2m/C0sBmsEV+FEl5MEocq9FyxllKEm3F0/Q=;
+        b=p9M43HhyaIUaV9lLtvsx4qKFEiFaTzKfmeNMSP7pNLicKckM8IJ0hn7kbyZrsg9uEB
+         fuVv3Xkl+Of0MAnvsffwNJlxtJfgnq3iSjIk0Xf2CQq7FifFpT8Kiprf0KisQ9TTOEO2
+         55cbPRW/eJGKO+BherclmCOTnbjoTT2KmUd9fZM8nTvvpQC0YsFzqcpHCErLlxWSfNoK
+         DdndwSn+fmpcueFnPdK060B0wFWfTbrCaq0V43hgYQb8Hyp6mjI95wIhm5Hvi+WNVAer
+         M092g0DYtxjvkhvs8YDyPBInqCCHeH/eci6Dopf5fgnuHLg/DIHf7n48dFoaX/BJUykM
+         zw0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVT8dMSWVvrcdB6Q977+dytFWo8Aa8yeLoWhWta0SP0fX/BBxg3Fs85SmlFnie4/CdPeYstnK3dFYPG3AXPWXiSlrosauhg7bNmPRGB
+X-Gm-Message-State: AOJu0YzLVh8aXerZWhGCUi3xqV7eaHCZTMNDKks/DuYk0XNEtzcuJWwm
+	YnXBjo0jJ+7oFbE+sVSMxuwXlz6V978jbAmRqjSJK638V2TzLkCr7gB6gRYQcdDkqH02/x71N43
+	et4qgSILsTyjpbWw2umJeJvK7DUCYLZ4tUAiFJw==
+X-Google-Smtp-Source: AGHT+IHkorZjav4Gf4d1OozhsH8Pxc0dMg8/LiEOsXhzjkpYSCLGHEfn/HFnM6PbS2MvI8LGr5ycTQTnUTfx3eftbnY=
+X-Received: by 2002:a81:4f4d:0:b0:61b:748:55a1 with SMTP id
+ 00721157ae682-627e46ca1a9mr40027607b3.13.1716437712376; Wed, 22 May 2024
+ 21:15:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] ASoC: qcom: display port changes
-To: srinivas.kandagatla@linaro.org, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com,
- alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20240422134354.89291-1-srinivas.kandagatla@linaro.org>
-Content-Language: en-US
-From: Xilin Wu <wuxilin123@gmail.com>
-In-Reply-To: <20240422134354.89291-1-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240510090846.328201-1-jtornosm@redhat.com>
+In-Reply-To: <20240510090846.328201-1-jtornosm@redhat.com>
+From: Yongqin Liu <yongqin.liu@linaro.org>
+Date: Thu, 23 May 2024 12:15:01 +0800
+Message-ID: <CAMSo37V5uqJ229iFk-t9DBs-1M5pkWNidM6xZocp4Osi+AOc1g@mail.gmail.com>
+Subject: Re: [PATCH] net: usb: ax88179_178a: fix link status when link is set
+ to down/up
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, linux-usb@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Isaac Ganoung <inventor500@vivaldi.net>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/4/22 21:43, srinivas.kandagatla@linaro.org wrote:
-> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> This patchset adds support for.
-> 	1. parse Display Port module tokens from ASoC topology
-> 	2. add support to DP/HDMI Jack events.
-> 	3. fixes a typo in function name in sm8250
-> 
-> Verified these patches on X13s along with changes to tplg in
-> https://git.codelinaro.org/linaro/qcomlt/audioreach-topology/-/tree/topic/x13s-dp?ref_type=heads
-> and ucm changes from https://github.com/Srinivas-Kandagatla/alsa-ucm-conf/tree/topic/x13s-dp
-> 
-> Thanks,
-> Srini
-> 
-> Changes since v1:
-> 	- Fixed unused variable warning.
-> 	- fixed warning 'break;' to avoid fall-through
-> 
-> Srinivas Kandagatla (4):
->    ASoC: qcom: q6dsp: parse Display port tokens
->    ASoC: qcom: common: add Display port Jack function
->    ASoC: qcom: sc8280xp: add Display port Jack
->    ASoC: qcom: sm8250: fix a typo in function name
-> 
->   sound/soc/qcom/common.c         | 29 +++++++++++++++++++++++++++++
->   sound/soc/qcom/common.h         |  3 +++
->   sound/soc/qcom/qdsp6/topology.c | 26 ++++++++++++++++++++++++++
->   sound/soc/qcom/sc8280xp.c       | 14 ++++++++++++++
->   sound/soc/qcom/sm8250.c         |  4 ++--
->   5 files changed, 74 insertions(+), 2 deletions(-)
-> 
+Hi, Jose
 
-Hi Srini,
+On Fri, 10 May 2024 at 17:09, Jose Ignacio Tornos Martinez
+<jtornosm@redhat.com> wrote:
+>
+> The idea was to keep only one reset at initialization stage in order to
+> reduce the total delay, or the reset from usbnet_probe or the reset from
+> usbnet_open.
+>
+> I have seen that restarting from usbnet_probe is necessary to avoid doing
+> too complex things. But when the link is set to down/up (for example to
+> configure a different mac address) the link is not correctly recovered
+> unless a reset is commanded from usbnet_open.
+>
+> So, detect the initialization stage (first call) to not reset from
+> usbnet_open after the reset from usbnet_probe and after this stage, always
+> reset from usbnet_open too (when the link needs to be rechecked).
+>
+> Apply to all the possible devices, the behavior now is going to be the same.
+>
+> cc: stable@vger.kernel.org # 6.6+
+> Fixes: 56f78615bcb1 ("net: usb: ax88179_178a: avoid writing the mac address before first reading")
+> Reported-by: Isaac Ganoung <inventor500@vivaldi.net>
+> Reported-by: Yongqin Liu <yongqin.liu@linaro.org>
+> Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+> ---
+Sorry, I just have a time to test this patch, and it does not help for the issue
+I reported here:
+https://lore.kernel.org/all/CAMSo37UN11V8UeDM4cyD+iXyRR1Us53a00e34wTy+zP6vx935A@mail.gmail.com/
 
-I tested this series on SM8550 with tplg in [1] and ucm in [2]. But the 
-kernel output errors attached below. Headphone does work properly 
-without DisplayPort in the ucm.
+Here is the serial console log after I cherry picked this change:
+https://gist.github.com/liuyq/6255f2ccd98fa98ac0ed296a61f49883
 
-What could be the possible cause of this? Is there any significant 
-change from sc8280xp to sm8550?
+Could you please help to check it again?
+Please let me know if there is anything I could provide for the investigation.
+
+Thanks,
+Yongqin Liu
+>  drivers/net/usb/ax88179_178a.c | 37 ++++++++++++++++++++++++----------
+>  1 file changed, 26 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/net/usb/ax88179_178a.c b/drivers/net/usb/ax88179_178a.c
+> index 377be0d9ef14..a0edb410f746 100644
+> --- a/drivers/net/usb/ax88179_178a.c
+> +++ b/drivers/net/usb/ax88179_178a.c
+> @@ -174,6 +174,7 @@ struct ax88179_data {
+>         u32 wol_supported;
+>         u32 wolopts;
+>         u8 disconnecting;
+> +       u8 initialized;
+>  };
+>
+>  struct ax88179_int_data {
+> @@ -1672,6 +1673,18 @@ static int ax88179_reset(struct usbnet *dev)
+>         return 0;
+>  }
+>
+> +static int ax88179_net_reset(struct usbnet *dev)
+> +{
+> +       struct ax88179_data *ax179_data = dev->driver_priv;
+> +
+> +       if (ax179_data->initialized)
+> +               ax88179_reset(dev);
+> +       else
+> +               ax179_data->initialized = 1;
+> +
+> +       return 0;
+> +}
+> +
+>  static int ax88179_stop(struct usbnet *dev)
+>  {
+>         u16 tmp16;
+> @@ -1691,6 +1704,7 @@ static const struct driver_info ax88179_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> +       .reset = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1703,6 +1717,7 @@ static const struct driver_info ax88178a_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> +       .reset = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1715,7 +1730,7 @@ static const struct driver_info cypress_GX3_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset = ax88179_reset,
+> +       .reset = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1728,7 +1743,7 @@ static const struct driver_info dlink_dub1312_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset = ax88179_reset,
+> +       .reset = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1741,7 +1756,7 @@ static const struct driver_info sitecom_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset = ax88179_reset,
+> +       .reset = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1754,7 +1769,7 @@ static const struct driver_info samsung_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset = ax88179_reset,
+> +       .reset = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1767,7 +1782,7 @@ static const struct driver_info lenovo_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset = ax88179_reset,
+> +       .reset = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1780,7 +1795,7 @@ static const struct driver_info belkin_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset  = ax88179_reset,
+> +       .reset  = ax88179_net_reset,
+>         .stop   = ax88179_stop,
+>         .flags  = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1793,7 +1808,7 @@ static const struct driver_info toshiba_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset  = ax88179_reset,
+> +       .reset  = ax88179_net_reset,
+>         .stop = ax88179_stop,
+>         .flags  = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1806,7 +1821,7 @@ static const struct driver_info mct_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset  = ax88179_reset,
+> +       .reset  = ax88179_net_reset,
+>         .stop   = ax88179_stop,
+>         .flags  = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1819,7 +1834,7 @@ static const struct driver_info at_umc2000_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset  = ax88179_reset,
+> +       .reset  = ax88179_net_reset,
+>         .stop   = ax88179_stop,
+>         .flags  = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1832,7 +1847,7 @@ static const struct driver_info at_umc200_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset  = ax88179_reset,
+> +       .reset  = ax88179_net_reset,
+>         .stop   = ax88179_stop,
+>         .flags  = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> @@ -1845,7 +1860,7 @@ static const struct driver_info at_umc2000sp_info = {
+>         .unbind = ax88179_unbind,
+>         .status = ax88179_status,
+>         .link_reset = ax88179_link_reset,
+> -       .reset  = ax88179_reset,
+> +       .reset  = ax88179_net_reset,
+>         .stop   = ax88179_stop,
+>         .flags  = FLAG_ETHER | FLAG_FRAMING_AX,
+>         .rx_fixup = ax88179_rx_fixup,
+> --
+> 2.44.0
+>
+
 
 -- 
-Thanks,
-Xilin Wu
-
-[1] 
-https://github.com/edk2-porting/audioreach-topology/blob/sakuramist/QCS8550-AYN-ODIN2.m4
-[2] 
-https://github.com/strongtz/alsa-ucm-conf/blob/odin2/ucm2/Qualcomm/sm8550/HiFi.conf
-
-[ 1552.313713] qcom-apm gprsvc:service:2:1: Error (1) Processing 
-0x01001000 cmd
-[ 1552.313730] qcom-apm gprsvc:service:2:1: DSP returned error[1001000] 1
-[ 1552.314455] qcom-apm gprsvc:service:2:1: Error (1) Processing 
-0x01001006 cmd
-[ 1552.314463] qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-[ 1552.315496] qcom-apm gprsvc:service:2:1: Error (1) Processing 
-0x01001006 cmd
-[ 1552.315506] qcom-apm gprsvc:service:2:1: DSP returned error[1001006] 1
-[ 1552.316033] qcom-apm gprsvc:service:2:1: Error (1) Processing 
-0x01001001 cmd
-[ 1552.316042] qcom-apm gprsvc:service:2:1: DSP returned error[1001001] 1
-[ 1552.316045] q6apm-lpass-dais 
-30000000.remoteproc:glink-edge:gpr:service@1:bedais: Failed to prepare 
-Graph -22
-[ 1552.316047] q6apm-lpass-dais 
-30000000.remoteproc:glink-edge:gpr:service@1:bedais: ASoC: error at 
-snd_soc_pcm_dai_prepare on DISPLAY_PORT_RX_0: -22
-
+Best Regards,
+Yongqin Liu
+---------------------------------------------------------------
+#mailing list
+linaro-android@lists.linaro.org
+http://lists.linaro.org/mailman/listinfo/linaro-android
 
