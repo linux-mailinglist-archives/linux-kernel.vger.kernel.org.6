@@ -1,133 +1,177 @@
-Return-Path: <linux-kernel+bounces-187477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD80C8CD255
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF738CD256
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7983D282013
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:36:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 166D72820C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272381482EB;
-	Thu, 23 May 2024 12:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4FF1487F2;
+	Thu, 23 May 2024 12:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nho/kuZV"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zweQfHxG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22011E4A0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235EA14532F;
+	Thu, 23 May 2024 12:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716467782; cv=none; b=T7CWI0h2YdNShO671AJ32MXSQZLC6/aI2yL027pcBTeAjNb2V/szZ2dPTCQr2XWYLV2gloKdfCzt5EsSss8kkdtpkFKqo/WcY+iOoMojDJ7+Qfplash6cjDUKYXXqPPPGtKus+KedYr9tRnWCDK5IDJyMr44tj8teyrvptN17QM=
+	t=1716467809; cv=none; b=KnWYE2sVN4/G9FGiiNfIFtzcDyVjnfvIhd7ham2FgiAt2FizD6uSugIg6JOomL2vSJRij6H7vtg9XJMQlzLzZYYiwnLvhg+INaEHbvy/kl1heRvVuHWiKNhwn31S8ULiSH89zz5/YEUndgs3REhPKRCI7x9N34k6T/a0PSVxoV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716467782; c=relaxed/simple;
-	bh=m6UgnpbMbTrWQXZDKtHkcHfxNFrx8RIBUE5CV8NUdwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=j4qZDEopgnDLdJOKUFQnC2SObvbcfA+ldsjBDUlGPnQqQzO7mhDQWG3t1HvFA1/ckiRemLYAUIIsKJrjsbdA3bdZJ+DRD6v3dwuJ73Qfl/VsMGh8bKVJNKFzCDkQZR/jAQBwOjXKbGftjaB4Oz8m+08LJgIWchlqIaCfZtmBCQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nho/kuZV; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51fc01b6fe7so6646485e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716467779; x=1717072579; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K8lRq3lXsKaaPmtAV1QU0P9el+kdsmzCNC+w8uH7qfk=;
-        b=Nho/kuZVCueIRFvS5mYOvkIpRwRZlavQL01TI2hNjavZRDAhnUQwJ0P/wCZN7AeFQJ
-         T10PrUfKxcKbTwjh4MuacTy0gFFAuWbw8A1grJVypC4RY35idwwyEFy0DYd5NsxHz31K
-         /f/EeQGwPOxmdZADZXmAq9TkAVCPVXELej/pc8/OkBisZA7d93TSpq0BA3JMW+s5EEL1
-         0LOYaKN0rYrU6QuxpSgxvZfxQXsVPDGqp8S5hT8D9tR8EUzt8U9rcbX4bIJKjHrHsMso
-         CUhUNIvVtl8bqQmqyi2i/37iGjb/Pijnz1xxgLzSWbll61a2RibPvwIxmtV5ZH3CBJou
-         TOXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716467779; x=1717072579;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K8lRq3lXsKaaPmtAV1QU0P9el+kdsmzCNC+w8uH7qfk=;
-        b=JFsgGTwXG5NSr95z4sUbqXyQn1taLo43G7SFsDihV4VU4s9gFyIoE8FDS0BYVevJwl
-         yhP3UDDiORCeujnPz9L1aK5jP9YyvibITyxqdojFqmmlyPt5/CM0jLTqxaV+Atck39CF
-         4lZowevynn76EtwvP5NGiaAk0uz49MGKIKJmui64Q19OVJXazptefilutTtEHXskDpkc
-         SyNczmy2/6g7Qm8sjY9xJXyAE8Jk+mRBpyT/bRGb0bG65Wf5HhFK8Zl31djLx6mrcJNE
-         /VNwZ+E43qkg87ZXxr1WZYlZJzanQLbUJSUj31jBkzyPsOZr8JzvNkPnjr6vSD3YZWKr
-         RoRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnwGdUx42DKHJk7svRfamREHO/HDV9kCt6HDm5izaTevnyFa96eT8rFQuEHttxzUbspAeamL3Vc0sOKMW7xd9Wjd8pkFPCBCcAqIMh
-X-Gm-Message-State: AOJu0Yw4701Kk6YaQu/lKJxrllktMYyO5WE4VFMs76HCg71VXOMCo2ta
-	axRRMB7ebgHZEFDp4IlHkz7MoVaXTTWtTOhIgXptwblA5QrvT6km
-X-Google-Smtp-Source: AGHT+IGTi2EkzmV53tv/VPuEYvVAiRUh6FoyVlq2SqgaxVOnc556D9mbr1HGWrV7XXHBopeoqrkJ/g==
-X-Received: by 2002:a19:7511:0:b0:523:e756:2838 with SMTP id 2adb3069b0e04-526bdc5255fmr2777702e87.39.1716467778569;
-        Thu, 23 May 2024 05:36:18 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578366176e9sm2388421a12.74.2024.05.23.05.36.17
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2024 05:36:18 -0700 (PDT)
-From: Wei Yang <richard.weiyang@gmail.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wei Yang <richard.weiyang@gmail.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Steve Wahl <steve.wahl@hpe.com>
-Subject: [Patch v3] x86/head/64: remove redundant check on level2_kernel_pgt's _PAGE_PRESENT bit
-Date: Thu, 23 May 2024 12:35:39 +0000
-Message-Id: <20240523123539.14260-1-richard.weiyang@gmail.com>
-X-Mailer: git-send-email 2.11.0
+	s=arc-20240116; t=1716467809; c=relaxed/simple;
+	bh=zx5wVeCKb3Bhjyf1r6rlKAj945Wu95U1u9RY3R+rMhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBn7RbCzgf1fLKAbjoC9dVfk0A2u3wsGk2Hg3BtnoL9nRBEp/uwayYo6bIR7Gue3uE/E/v4gy54TPDMW3sGyeYxJoiB6es2HVoblBuyQ/EAMykdhqEGpgXOQ9V0nRjfxvG8mlg1eYirKL5X41v8z6lYK9XMfbO9/wsnMUozg6c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zweQfHxG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E0EEC3277B;
+	Thu, 23 May 2024 12:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716467808;
+	bh=zx5wVeCKb3Bhjyf1r6rlKAj945Wu95U1u9RY3R+rMhw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zweQfHxGyIEx+N7wW8KuT+AFwhxLaC8zdGtdJG+1vJ0RfoluWcYZCHdd+IluyE2g3
+	 ZeHwSdSKBOaLHsP9YmI3u6estAcifqGrYaFNvnLF9TGinG2qGsPwWrqpsyOxAeXoaV
+	 jvOXNrAu2RvX1OVkO8n3/KY88Kux7J+2pzZi2fEg=
+Date: Thu, 23 May 2024 14:36:45 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	daniel.sneddon@linux.intel.com, pawan.kumar.gupta@linux.intel.com,
+	tglx@linutronix.de, konrad.wilk@oracle.com, peterz@infradead.org,
+	seanjc@google.com, andrew.cooper3@citrix.com,
+	dave.hansen@linux.intel.com, nik.borisov@suse.com,
+	kpsingh@kernel.org, longman@redhat.com, bp@alien8.de,
+	pbonzini@redhat.com
+Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
+ handler
+Message-ID: <2024052336-mandarin-spiritism-51d2@gregkh>
+References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
 
-Remove a redundant check on kernel code's PMD _PAGE_PRESENT attribute
-before fix up.
+On Thu, May 23, 2024 at 02:33:22PM +0200, Alexandre Chartre wrote:
+> When BHI mitigation is enabled, if sysenter is invoked with the TF flag
+> set then entry_SYSENTER_compat uses CLEAR_BRANCH_HISTORY and calls the
+> clear_bhb_loop() before the TF flag is cleared. This causes the #DB
+> handler (exc_debug_kernel) to issue a warning because single-step is
+> used outside the entry_SYSENTER_compat function.
+> 
+> To address this issue, entry_SYSENTER_compat() should use
+> CLEAR_BRANCH_HISTORY after making sure flag the TF flag is cleared.
+> 
+> The problem can be reproduced with the following sequence:
+> 
+>  $ cat sysenter_step.c
+>  int main()
+>  { asm("pushf; pop %ax; bts $8,%ax; push %ax; popf; sysenter"); }
+> 
+>  $ gcc -o sysenter_step sysenter_step.c
+> 
+>  $ ./sysenter_step
+>  Segmentation fault (core dumped)
+> 
+> The program is expected to crash, and the #DB handler will issue a warning.
+> 
+> Kernel log:
+> 
+>   WARNING: CPU: 27 PID: 7000 at arch/x86/kernel/traps.c:1009 exc_debug_kernel+0xd2/0x160
+>   ...
+>   RIP: 0010:exc_debug_kernel+0xd2/0x160
+>   ...
+>   Call Trace:
+>   <#DB>
+>    ? show_regs+0x68/0x80
+>    ? __warn+0x8c/0x140
+>    ? exc_debug_kernel+0xd2/0x160
+>    ? report_bug+0x175/0x1a0
+>    ? handle_bug+0x44/0x90
+>    ? exc_invalid_op+0x1c/0x70
+>    ? asm_exc_invalid_op+0x1f/0x30
+>    ? exc_debug_kernel+0xd2/0x160
+>    exc_debug+0x43/0x50
+>    asm_exc_debug+0x1e/0x40
+>   RIP: 0010:clear_bhb_loop+0x0/0xb0
+>   ...
+>   </#DB>
+>   <TASK>
+>    ? entry_SYSENTER_compat_after_hwframe+0x6e/0x8d
+>   </TASK>
+> 
+> Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
+> Reported-by: Suman Maity <suman.m.maity@oracle.com>
+> Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+> ---
+>  arch/x86/entry/entry_64_compat.S | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
+> index 11c9b8efdc4c..7fa04edc87e9 100644
+> --- a/arch/x86/entry/entry_64_compat.S
+> +++ b/arch/x86/entry/entry_64_compat.S
+> @@ -91,7 +91,6 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>  
+>  	IBRS_ENTER
+>  	UNTRAIN_RET
+> -	CLEAR_BRANCH_HISTORY
+>  
+>  	/*
+>  	 * SYSENTER doesn't filter flags, so we need to clear NT and AC
+> @@ -116,6 +115,12 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+>  	jnz	.Lsysenter_fix_flags
+>  .Lsysenter_flags_fixed:
+>  
+> +	/*
+> +	 * CLEAR_BRANCH_HISTORY can call other functions. It should be invoked
+> +	 * after making sure TF is cleared because single-step is ignored only
+> +	 * for instructions inside the entry_SYSENTER_compat function.
+> +	 */
+> +	CLEAR_BRANCH_HISTORY
+>  	movq	%rsp, %rdi
+>  	call	do_SYSENTER_32
+>  	jmp	sysret32_from_system_call
+> -- 
+> 2.39.3
+> 
 
-Current process looks like this:
+Hi,
 
-    pmd in [0, _text)
-        unset _PAGE_PRESENT
-    pmd in [_text, _end]
-        if (_PAGE_PRESENT)
-            fix up delta
-    pmd in (_end, 512)
-        unset _PAGE_PRESENT
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-level2_kernel_pgt compiled with _PAGE_PRESENT set. The check is
-redundant
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-CC: Ingo Molnar <mingo@kernel.org>
-CC: Steve Wahl <steve.wahl@hpe.com>
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
----
-v3: refine the change log per kirill's comment
-v2: adjust the change log to emphasize the redundant check
----
- arch/x86/kernel/head64.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index a817ed0724d1..bac33ec19aa2 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -260,8 +260,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 
- 	/* fixup pages that are part of the kernel image */
- 	for (; i <= pmd_index((unsigned long)_end); i++)
--		if (pmd[i] & _PAGE_PRESENT)
--			pmd[i] += load_delta;
-+		pmd[i] += load_delta;
- 
- 	/* invalidate pages after the kernel image */
- 	for (; i < PTRS_PER_PMD; i++)
--- 
-2.34.1
+thanks,
 
+greg k-h's patch email bot
 
