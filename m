@@ -1,128 +1,123 @@
-Return-Path: <linux-kernel+bounces-187603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1718CD51F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:58:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F5A8CD524
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F85B23633
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:58:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B12B3B238BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58F814B06C;
-	Thu, 23 May 2024 13:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9ED14B969;
+	Thu, 23 May 2024 13:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZF4ZtN7"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1LB9ruq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADA814AD17
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E22F14AD17;
+	Thu, 23 May 2024 13:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716472676; cv=none; b=fdxr+yUkszzFvHSA7+WYzkUI3IUA5ROkSAevwblHuCesFec7r30e/vLCWUtuhE4otqSFj/M8Tay6yxxcXX42fk+NKJIIL15Vamw8dj1zxbEEt8tHonK0uFKvkAiIftQ+jbUj1vUC2QaUDqP+HZmnLFNDA9F7l1fxH8L9jUMFlA0=
+	t=1716472679; cv=none; b=dm5wwYbOH8HkRZRVpNscxb+N5aJQ/4NktCYzd5XzM7eEkGlP5PBaHZrDKEW5VaTlfoqrDd2lBUQnmLF0kA1LoBxD29+nky6vd5FGCdfz/5+Y0uElQXPKe5OwZyZ5P7TRBLkBvvgoFpdIONWsmTUJWoOE8QbNwQ+FdLDzdWkT390=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716472676; c=relaxed/simple;
-	bh=9x+M+9APIGN3rhHl/tijNJMgK0ojb20CQmY/C3fB0G8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lk/slsZN5Bkr+8i8WgVpaX+qnjMlwJD1lxzd4a8yNX6JhuDC3R/8HU/l6xUh9qcwtyFF8KPC6oVGgSK7IbpgZGsqiCoeYdG9SSN5lU9hGVfpzPcVWU5cCEfpRMCizW+lXo7ox9TJ1FQ38cRPA+FaA38SYPd5JJqFu3YFQt5pz1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZF4ZtN7; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e8a8ff4083so19308781fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716472673; x=1717077473; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OMOUYCMFihJdUjCJHbJ9rJQeq23/qVjfUy+xhBp831s=;
-        b=UZF4ZtN70DUqUlcCiUtNrvPG9Gi3Vvl0eAP6SWtwXOzk+yxCEFJhuY+HB48QmZQb1T
-         h12mdi+Vzl5DC3wY75Oq01ssl+wUJJTARO1cDExgeZApPa/GkGMC7synFQHVTjITQkL4
-         BmdnmHZuxTpfrKJA6dga92N0DR2gsyzP1E7UMicfL7OI+h8fKrmV113H9pRA+tx9DvTK
-         WiD/ZSmptMLR8+T3/zTDqEFYJRS+fgkkBKEhfRzD+ca3YmJiKzooyUVLBJJCOxCTjdNa
-         A4ig2x3kIb4wa/lC5no1gX/bzLw2SQmPpzFXiSRLKyy9B9e7Vr499YdwCRyCXRcToPK0
-         WqBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716472673; x=1717077473;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OMOUYCMFihJdUjCJHbJ9rJQeq23/qVjfUy+xhBp831s=;
-        b=Poas+JrNbv3XkbJNR+9SlE1qF0vq4hsA0E38cVYK1TZkpKoaEV2X5UEa8AoSY0bNVz
-         cM/Pasq2ilbJLk2WFMLJzWXl4/d6N9RECLvS4akAr10ZSTcOAaCbL5Ha/pmDIioo+MIa
-         XAOrFEDgFlx4qgdMS5b3ahHvg2FQ7UHREbSvJ5V3pkW/dcTOjUWPtzd48TlzHDEW4p/0
-         3pspo6PWIt0bVcbD9v2ilXaYnaS34cHqVH4XLUN5J/W7akyz8RqYuwHFlT3FxwPfxerV
-         fq6fR4oeUhNQlejl1Zszpn+FkgWISFRFa80ljaLIlwvo5+5zrjHnC48LiVVrOSkRGAfc
-         DaCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwQ4oNXunpMM0PmCt4z8k0aPRkk2k7/B+d/VBd0TEz3LDg8FLje7fmexgfYbtDZIe60FvVjNsdBNBx6w/RjhLCWwjaOdKn8GIWSHyC
-X-Gm-Message-State: AOJu0YyyFbfCs5ZT1sligumD8PA1QGcnBnms1txdm7OP4KKqZoNEcFUa
-	tibhodwQPvZzHmGHYPFZTg6h5w8+Ui8gA5mE3n/Y7dx2INLDt0xGUjUHp5LasBdlS8UVxCz4BkV
-	5/E15g2eNpBtPlgEPIsEKojlMduLOzDtVt62K6Q==
-X-Google-Smtp-Source: AGHT+IG1AWvf7EzaCj7fIX4aVnfazLDZAwIEGt9b/u9Mld7qpT6ogzIh7jbUih6lnSJBTd3lTfPQEccB+HOkQQTlk0Q=
-X-Received: by 2002:a2e:9087:0:b0:2e1:c97b:6f25 with SMTP id
- 38308e7fff4ca-2e951b4f30bmr7752721fa.1.1716472672458; Thu, 23 May 2024
- 06:57:52 -0700 (PDT)
+	s=arc-20240116; t=1716472679; c=relaxed/simple;
+	bh=wUzOBAOX+9O+l9O6ECannahrBqHm9nXvPZwXexU/1AE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Xjj1GqAG/lfCTiFWr20sGouINsaaOvoE8tX4Y7WD2vEoSjuQRuFQgli8tUjeCL6ZS7Jc1GuJ2parYAfiLl8A5NkyJDbRDCWPcU3bCrnwjZ3psu5yi8P9H1mGEkwGPw0gFX3ad111whwkzd7MpF5vViS6oZQ1tg5bGqnOHxuVCm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1LB9ruq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E18C32781;
+	Thu, 23 May 2024 13:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716472679;
+	bh=wUzOBAOX+9O+l9O6ECannahrBqHm9nXvPZwXexU/1AE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=O1LB9ruq/QZVg14GfunSnd5B0E1BwJgP4+vyJ+R6abbihZ4k2k6tH99mK7SyIwGt5
+	 5xLQKOSGElfnipOXvnECikXkZbUAL6+QqLibO6TkQXqsDp/if1Pyb+cZxI9PF6thg6
+	 RV1/TYY++ZdcnwTrtIAluoXcNmTdwS1/J2KmJ0GHgQXVFM3oBERKMaaVc7j370thpU
+	 mrE4IC3qzqyPy1MMMrLLKWbPdoThXptyeYLoLe2tLIYpP0IYraTXnLX97oukMV78Y0
+	 cI/VqDg7hNI4w8L69ExG+XWP2UKUb7SFklnlItqeyEPqAIkKRrmaxmemEhB3Mn1fsC
+	 244h2b53fJiYQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240522082729.971123-1-ubizjak@gmail.com> <20240522082729.971123-2-ubizjak@gmail.com>
- <c1892ba9-4eae-40fc-b3ab-73d0f82a74ea@linux.intel.com> <CAFULd4Z=YkV1Hbs4DikPBwO-6rg8tfDLGeacSCnfbC02E5y+Cg@mail.gmail.com>
- <b100a3c4-e5c3-41da-8c02-3a4986b49eec@linux.intel.com>
-In-Reply-To: <b100a3c4-e5c3-41da-8c02-3a4986b49eec@linux.intel.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 23 May 2024 15:57:40 +0200
-Message-ID: <CAFULd4aXBAxPS7hXJ_RKMzZu60yTr7gK1m3K8z0yq1mjYn3dyA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] iommu/vt-d: Use try_cmpxchg64() in intel_pasid_get_entry()
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 May 2024 16:57:53 +0300
+Message-Id: <D1H2S4HVRADC.297K3OZ53GVIN@kernel.org>
+Cc: <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>, "David
+ Woodhouse" <dwmw2@infradead.org>, "Eric Biggers" <ebiggers@kernel.org>,
+ "James Bottomley" <James.Bottomley@hansenpartnership.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
+ <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "open list:CRYPTO API"
+ <linux-crypto@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2] KEYS: trusted: Use ASN.1 encoded OID
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Ben Boeckel" <me@benboeckel.net>
+X-Mailer: aerc 0.17.0
+References: <20240523132341.32092-1-jarkko@kernel.org>
+ <Zk9Hb-whVYvJrfLY@farprobe>
+In-Reply-To: <Zk9Hb-whVYvJrfLY@farprobe>
 
-On Thu, May 23, 2024 at 3:44=E2=80=AFPM Baolu Lu <baolu.lu@linux.intel.com>=
- wrote:
+On Thu May 23, 2024 at 4:41 PM EEST, Ben Boeckel wrote:
+> On Thu, May 23, 2024 at 16:23:37 +0300, Jarkko Sakkinen wrote:
+> > There's no reason to encode OID_TPMSealedData at run-time, as it never
+> > changes.
+> >=20
+> > Replace it with the encoded version, which has exactly the same size:
+> >=20
+> > 	67 81 05 0A 01 05
 >
-> On 2024/5/23 21:34, Uros Bizjak wrote:
-> >>> +             if (!try_cmpxchg64(&dir[dir_index].val, &tmp,
-> >>> +                                (u64)virt_to_phys(entries) | PASID_P=
-TE_PRESENT)) {
-> >> Above change will cause a dead loop during boot. It should be
-> > No, it is correct as written:
-> >
-> > if (cmpxchg64(*ptr, 0, new))
-> >
-> > can be written as:
-> >
-> > if (cmpxchg64(*ptr, 0, new) !=3D 0)
-> >
-> > this is equivalent to:
-> >
-> > tmp =3D 0ULL;
-> > if (!try_cmpxchg64(*ptr, &tmp, new))
+> Is it the same size? It looks considerably smaller to me (6*4 bytes
+> versus 8 bytes).
+
+Not in that sense but in practice the old array stored byte values.
+Forgot for that reason that it was actually u32 array.
+
+I can change it to "same number of elements".
+
 >
-> The return value of both cmpxchg64() and try_cmpxchg64() is the old
-> value that was loaded from the memory location, right?
+> > Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue so that
+> > the OID can be simply copied to the blob.
+>
+> An "epilogue" occurs at the end, but it seems to be at the beginning
+> here (that would be a "prologue").
 
-Actually, try_cmpxchg() returns true if successful and false if it fails.
+Yup, typo.
 
-            tmp =3D 0ULL;
-            if (!try_cmpxchg64(*ptr, &tmp, new))
+> > -static u32 tpm2key_oid[] =3D { 2, 23, 133, 10, 1, 5 };
+> > +/* Encoded OID_TPMSealedData. */
+> > +static u8 OID_TPMSealedData_ASN1[] =3D {0x06, 0x06, 0x67, 0x81, 0x05, =
+0x0a, 0x01, 0x05};
+>
+> I'd say that a comment of what it encodes would be good to have for
+> context, but the source tree has `OID_TPMSealedData` in a header with
+> the value in a comment there, so that seems good enough to me.
 
-The logic in the above snippet can be interpreted as:
+OK. I named it this way to promote generation these from CSV file=20
+(see my other response to James).
 
-if we fail to compare *ptr with 0, then:
 
-            iommu_free_page(entries);
-            goto retry;
+>
+> > as it never changes.
+>
+> Should it, perhaps be `const` too?
 
-as intended in the original code.
+Yup.
 
-Thanks,
-Uros.
+>
+> --Ben
+
+Thanks for the remarks!
+
+BR, Jarkko
 
