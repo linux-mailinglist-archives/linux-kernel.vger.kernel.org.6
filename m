@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-187403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05608CD14B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:33:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77B88CD150
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B62E28360E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 621F528345B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2821494D3;
-	Thu, 23 May 2024 11:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047471487CB;
+	Thu, 23 May 2024 11:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LNUJpLZP"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NycWAibO"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E839314830F;
-	Thu, 23 May 2024 11:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19214BA2F;
+	Thu, 23 May 2024 11:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716463973; cv=none; b=HzgyTkHTxfxyE5hO48xD0sKC8W1fRuRM+RawKZdD/ah7BHWX30TolA5kEm8POg5fSIBR+1q9cpwuwiCK4rV4cX9o8uYOXMnaTTQpUw9gtpq01FmeH4HoWXWffIm7K5UkP+CDaei7I1oOAtoffkow1XE2elLQ+c9XS4wjFCE3oeQ=
+	t=1716464078; cv=none; b=kbaNwJwyeskX+EhpjZtFyU9AMpm/0huIJ3WCZ3GS6M/rcaYo9QNNS41Ooic+VPDGy8a2taq5c0BbiRdZtEIAYiSHWC/Mx3K3V6wRRGEa1/IlvGibKqnnuub9lJ+L7xNEQLzh0nSmGH8buKwoNsSUugU4LTNaYcCnew4tI+w8/yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716463973; c=relaxed/simple;
-	bh=xxwOORKXpYRuv1uSmAvP8hybhQbv42S6rKt7i+RykoE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ND0mZBf5T/al5gTxw2djeUk/THEgG6q7AgZ7dKIKz8ouPuReOxUuKzh/5pm8Wqt2ve4AkWG5dtt4KbQ+9+DRQgdTK+lQuO75SQ3s1rOzT1kklYiTyLfKljOs6p8zsxRHTckdWyIk3c8Bgb5pdUBYOPuNMAD+IPh8CrHbU8necEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LNUJpLZP; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716463970;
-	bh=xxwOORKXpYRuv1uSmAvP8hybhQbv42S6rKt7i+RykoE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LNUJpLZPkFeJowEbnPonKue9SSW32Xo/8RewwMBwlI4V0Y9OKEIehgnw5uliyLMSw
-	 8pIFNmXXEmGow99diw1Nxu9lpnN7/ft5I0Fiy5kGFFMXdJZaze4sGKrNgV5IkSpL0c
-	 5vw8lo+iTNzUagaWT2qnWzDFL2WSl/5kd7UfRF2qUmZqn+MaL+WW63UHkc4SVbVcRF
-	 QRJYroAMWzWhNesF6yWXCmtqT7ugIRNQ4RlQ/H+nqN0PTPtnWvnlW9+AcQnp1Y01Ye
-	 npXQ21OcEVY/g19Kn3SXC0UTXqXTRZwyBlDT6XxTdsFk5uLKrBbucyP/lmdjVRNu5P
-	 meXGFS7MV5Ebw==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: alarumbe)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A909E37821C5;
-	Thu, 23 May 2024 11:32:49 +0000 (UTC)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Zack Rusin <zack.rusin@broadcom.com>
-Cc: kernel@collabora.com,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1716464078; c=relaxed/simple;
+	bh=CeK6Tivq/xGw727Ec9ebA2/E9iSfftkX0NerKQy2wQw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TUdHUL6MrSscSFIyNvmosysnHBH+rdUIqUSIqTUpqKa85KsYGfpvXu/9EWKISdPEGicS0L2MnjAaaA1/YuV+zAXlIm/d1aI+w1IV97Zurfl6NqSGi+p1w1YCf6tadNKhoDaM/Pjz2cvbsOPS6nMZy3oR5mR3cVP6pfpAlQSO3W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NycWAibO; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ed96772f92so19999785ad.0;
+        Thu, 23 May 2024 04:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716464076; x=1717068876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eshNdi8MhibtA7UrHJyZzzh5soo9ttxdAWbEOJelcIk=;
+        b=NycWAibOW69+jxe0TTJkC34lE2CMXuOM5SQK6LX9vKk4Y1Nm0slBLZHO1UnS+sq7++
+         afSFbOaiHo92BsFebsigFLu/bSHrWELXoaKUkIE5qMigXYitRQIt3D+CmlJVXr4lfTRl
+         FcMgDHeU0HCryg7dEwd1MeSi9zC/BC7qJ0LjXSz6XWQIfAKsylAWh+w5Lr+SbOp+tDx2
+         1yAgGRgzmrc9Vlkup5qcjS900bErUiWdgZKZu3Q03G1STlHi2HlRa6r1LH9TWB7K8c77
+         s97Tyj27aSYigXeRBv4a72cLXMzOVlr3qaLZeT59tEOcUkLuJWXN/XUN4vcFljyVp4rm
+         OaXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716464076; x=1717068876;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eshNdi8MhibtA7UrHJyZzzh5soo9ttxdAWbEOJelcIk=;
+        b=Rcmro49aCSn/OWg8cuEzlees0GSdY7yx5Eo2Q8zdTMWtBxKj7mWHdSWw1ANZgtc6lC
+         OktV6/3Qxfm/0iTInKruxPc7OvkaP6URYvHnKkb7Cg524UcWbmycXiG9cWvRTyXGlBrW
+         ZQ2gy3ieXrS3yUDGiHAasHTMIzd2+NwOx7nXh37oe533fg3nF6D9YmuWSk17gHsq263T
+         zk8gdZyibJgDeTKiAKNJlbG/yNivHDP4x2e2g2q4qLcC+bM32pRRDHPTGR4L6djvYbG1
+         ta3KmavyhLSnsmbG2BF0ZAdZNvfp0q3IqHMJs1zjN4qba0MCKsdUaHjmOGbTVAkpunPT
+         9w1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVqqMmpadv0bot8r3qlnxwHgjv7REZfT6luL3MKNX81TpiAhWyAsJ/B00aL9nZLv2wKPC5KxgdqcIZcBztXg4S757I0iV0jS8exQdyn
+X-Gm-Message-State: AOJu0Yx7zfNZVJx9hLEKRumpqBumrGdDkvWfRGL571+UF00sROownyuh
+	CXk4bJuklg1UOtlHN0lEEBzFNoHqvQVJT+AJoXeBGO/G1dfONFJI
+X-Google-Smtp-Source: AGHT+IE8SOxrwx1ljyyMEm028rnBv7WzfSsEYDiOEUuOm+609SUiBrz6bgQ6DnjQC8IeJrYO2te8jA==
+X-Received: by 2002:a17:903:950:b0:1eb:144f:63b7 with SMTP id d9443c01a7336-1f31c9e173bmr56580715ad.56.1716464076410;
+        Thu, 23 May 2024 04:34:36 -0700 (PDT)
+Received: from velvet.. ([111.42.148.111])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f0958fd757sm146846395ad.45.2024.05.23.04.34.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 04:34:36 -0700 (PDT)
+From: Shichao Lai <shichaorai@gmail.com>
+To: stern@rowland.harvard.edu,
+	gregkh@linuxfoundation.org,
+	oneukum@suse.com
+Cc: linux-usb@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: [PATCH v4 3/3] drm/gem-shmem: Add import attachment warning to locked pin function
-Date: Thu, 23 May 2024 12:32:19 +0100
-Message-ID: <20240523113236.432585-4-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240523113236.432585-1-adrian.larumbe@collabora.com>
-References: <20240523113236.432585-1-adrian.larumbe@collabora.com>
+	Shichao Lai <shichaorai@gmail.com>,
+	xingwei lee <xrivendell7@gmail.com>,
+	yue sun <samsun1006219@gmail.com>
+Subject: [PATCH v2] usb-storage: Check whether divisor is non-zero before division
+Date: Thu, 23 May 2024 19:34:10 +0800
+Message-Id: <20240523113410.983875-1-shichaorai@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Commit ec144244a43f ("drm/gem-shmem: Acquire reservation lock in GEM
-pin/unpin callbacks") moved locking DRM object's dma reservation to
-drm_gem_shmem_object_pin, and made drm_gem_shmem_pin_locked public, so we
-need to make sure the non-NULL check warning is also added to the latter.
+Since uzonesize may be zero, so judgements for non-zero
+are nessesary in both place.
 
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>
-Fixes: a78027847226 ("drm/gem: Acquire reservation lock in drm_gem_{pin/unpin}()")
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Changes since v1:
+- Add one more check in alauda_write_lba().
+- Move check ahead of loop in alauda_read_data().
+
+Reported-by: xingwei lee <xrivendell7@gmail.com>
+Reported-by: yue sun <samsun1006219@gmail.com>
+Signed-off-by: Shichao Lai <shichaorai@gmail.com>
 ---
- drivers/gpu/drm/drm_gem_shmem_helper.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/storage/alauda.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index 177773bcdbfd..ad5d9f704e15 100644
---- a/drivers/gpu/drm/drm_gem_shmem_helper.c
-+++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
-@@ -233,6 +233,8 @@ int drm_gem_shmem_pin_locked(struct drm_gem_shmem_object *shmem)
+diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+index 115f05a6201a..17c73acd3b02 100644
+--- a/drivers/usb/storage/alauda.c
++++ b/drivers/usb/storage/alauda.c
+@@ -813,6 +813,8 @@ static int alauda_write_lba(struct us_data *us, u16 lba,
+ 	unsigned char ecc[3];
+ 	int i, result;
+ 	unsigned int uzonesize = MEDIA_INFO(us).uzonesize;
++	if (!uzonesize)
++		return USB_STOR_TRANSPORT_ERROR;
+ 	unsigned int zonesize = MEDIA_INFO(us).zonesize;
+ 	unsigned int pagesize = MEDIA_INFO(us).pagesize;
+ 	unsigned int blocksize = MEDIA_INFO(us).blocksize;
+@@ -921,6 +923,8 @@ static int alauda_read_data(struct us_data *us, unsigned long address,
+ 	unsigned int blocksize = MEDIA_INFO(us).blocksize;
+ 	unsigned int pagesize = MEDIA_INFO(us).pagesize;
+ 	unsigned int uzonesize = MEDIA_INFO(us).uzonesize;
++	if (!uzonesize)
++		return USB_STOR_TRANSPORT_ERROR;
+ 	struct scatterlist *sg;
+ 	int result;
  
- 	dma_resv_assert_held(shmem->base.resv);
- 
-+	drm_WARN_ON(shmem->base.dev, shmem->base.import_attach);
-+
- 	ret = drm_gem_shmem_get_pages(shmem);
- 
- 	return ret;
 -- 
-2.45.1
+2.34.1
 
 
