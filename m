@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-188095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0732C8CDD1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:07:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A278CDD2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8793EB21479
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BD011C20B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E673128389;
-	Thu, 23 May 2024 23:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TKOYZL+L"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7B12880D;
+	Thu, 23 May 2024 23:09:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1B6763E6
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A4E126F27;
+	Thu, 23 May 2024 23:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716505635; cv=none; b=aTsk6ktiBXSCC3P82A3ey3nBCIH5J7+kA8/1ae41caKds2PWQ47gb5FCusY2tcwgABarO4Ir8g9T/dWPJJwm466YKF7BCvTJlnJBuNGUa5ycf+WJe/wgQSK+WR1oecI8ef3fgOAxxYq88z7lXKHyKpPVKYxlSo4uMkV0pdUw/jg=
+	t=1716505788; cv=none; b=T8t9JR+uCzcKDooinb26oOYuRXz70jmKQRb88vMousMPp38+N4sRPNziUkOaxbJ2Q355SuQhO1HEgnojJFEmzdd+uSn7TUCvNPItXmh+olffYzWK6aUPOBk1Aa3bbnBlS4Xbq+p8Fd0zBhi+YZ/1pWyGEdr+QNJvf7V5ZKcvpZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716505635; c=relaxed/simple;
-	bh=IVN/mtqfTzSQz5DOSJd2FkfrtcnQCqUA3LMLgp5J74w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6m8HWbWfAvU+Jrvr6C3jbTnTAbChZ3Op3mAiIN5pl8osJcd6xh7oC/SWC05hlsiNAgqzMj/bXoMkv6PbE4NCIkNXznh9B8vYJa1wLywRI+yg5AHxhXMhpZppkjqYKC2Yb4FWkq2tRvesfgJx6xHD8LKtSleQcnLLJB+kCWzvGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TKOYZL+L; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716505633;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9qOKzlr6EnmYdUBbeyGsYX+lnRnuf7tx0Aba9aPBtzo=;
-	b=TKOYZL+LOEh/5NHOi3PA38DFsQtWX+/h5lT1IAD/6EoXZ3VsEs/k6RsZeFK2MxNJsmKocZ
-	giacGBajqRh8NBN8pEBdD6kkys0TKPJs3uXBE10ahLC0jhvOMVSXpnk6m1RvGAZWBdkOmy
-	z7uchTXEJaYOc5rqIf9eyydIqpAvxV8=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-b1QWOzH8MyOEXg-l_JzWBA-1; Thu, 23 May 2024 19:07:11 -0400
-X-MC-Unique: b1QWOzH8MyOEXg-l_JzWBA-1
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b96a7cc02dso55782eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:07:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716505631; x=1717110431;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9qOKzlr6EnmYdUBbeyGsYX+lnRnuf7tx0Aba9aPBtzo=;
-        b=CnJBTtUz2AaO7DxzzZK2P5cxUZh0ScGyj7MF/WdfHqZCH008lSWT0J5YhDLHjO3Qq3
-         4sd2We615oSr9b6lphEmE78V97wS9f07xzmqt5E7jldgnrX+IpK6S2ITJ8a/B3FUyidg
-         7YAAm1tA3vkcK37SCxnU/b3/yGCDH4hEiWuQVH+EZ4CNxjYVXWZsyOtqsk/kdauw29sd
-         Etzct1Hj6rO/1a/F8YbTpMDgUpIhFWqhO/aRMLhY/LrMRki2IsH+c2gafhcvS1/MsiD+
-         kkLS+w49mMZ38h8SsFTgQXK3/U69Bqpxzq2tRJU7OdeURamqmT83AZZw50AMJaQzYxc2
-         QESA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdnaZ/t06qoCEy06Hn4clAMlW3lRJCTFxgFvRCE+0Y3tE34GTZ9bRdifGWXW/FA3Nh6/qVosPJeD1HRjAr1OGrmW9MGphf7NkXNOcP
-X-Gm-Message-State: AOJu0YzUJtXh5tJDDAA52iOawym8q8BG9yxAUi68h2MMyP1Tp1cnZEEj
-	mrQ9vGq/Mc3b6EIyU7N8t5JdBru1HDIi3psJzBy/fut6ziS3GoTNo9a3nypBYjyH+pD1aY+HLXF
-	ie9Ztgn956+pGlM4PVWrC+yCZI3ZzTF42zOck3qan0Bmtr+l7EJVR1SrFBx3Epg==
-X-Received: by 2002:a05:6358:895:b0:191:f9d:3468 with SMTP id e5c5f4694b2df-197e4844d1cmr101528555d.0.1716505630326;
-        Thu, 23 May 2024 16:07:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHkP8dUkBKBmrDPjNCP4ODSid8uay1YJsaPr84UgiuUBd25LP9SzmvCs1fRe5ULhTEy/LrP7Q==
-X-Received: by 2002:a05:6358:895:b0:191:f9d:3468 with SMTP id e5c5f4694b2df-197e4844d1cmr101525455d.0.1716505629618;
-        Thu, 23 May 2024 16:07:09 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac070f3298sm1303906d6.66.2024.05.23.16.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 16:07:09 -0700 (PDT)
-Date: Thu, 23 May 2024 19:07:06 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	"Kirill A . Shutemov" <kirill@shutemov.name>,
-	Mike Rapoport <rppt@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Borislav Petkov <bp@alien8.de>, x86@kernel.org
-Subject: Re: [PATCH RFC 2/2] mm/x86/pat: Do proper PAT bit shift for large
- mappings
-Message-ID: <Zk_MGmfYsY9dt2Uo@x1n>
-References: <20240523223745.395337-1-peterx@redhat.com>
- <20240523223745.395337-3-peterx@redhat.com>
- <f19f63ba-c436-4e39-ab86-78c80b1af667@intel.com>
+	s=arc-20240116; t=1716505788; c=relaxed/simple;
+	bh=1ZerqhZiEm0bGWbV+jNKn+Dq0L+J1awgxyJkbjTBq+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PRgePn3SU12vAWHevKZ3rBZ0w6wdx4WWSYcfGU//IBiFWfOf0F5QUGxQW/eCJ5wRZwidAACEZHjTy88yEZkgpImL2ymP8fjqvwyHSyYpYfvKfzD8ieBMnPU0a5Ih7czDZvXqEnA7SAD/GsDhdzvuwUOrj94sUexlXiSfqmc3aEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED0A8C2BD10;
+	Thu, 23 May 2024 23:09:45 +0000 (UTC)
+Date: Thu, 23 May 2024 19:10:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, Alexei
+ Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
+ <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
+Subject: Re: [PATCH v10 01/36] tracing: Add a comment about ftrace_regs
+ definition
+Message-ID: <20240523191031.7574d944@gandalf.local.home>
+In-Reply-To: <171509089214.162236.6201493898649663823.stgit@devnote2>
+References: <171509088006.162236.7227326999861366050.stgit@devnote2>
+	<171509089214.162236.6201493898649663823.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f19f63ba-c436-4e39-ab86-78c80b1af667@intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23, 2024 at 03:48:22PM -0700, Dave Hansen wrote:
-> On 5/23/24 15:37, Peter Xu wrote:
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 317de2afd371..c4a2356b1a54 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -1135,7 +1135,7 @@ static void insert_pfn_pmd(struct vm_area_struct *vma, unsigned long addr,
-> >  		goto out_unlock;
-> >  	}
-> >  
-> > -	entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
-> > +	entry = pmd_mkhuge(pfn_t_pmd(pfn, pgprot_4k_2_large(prot)));
-> >  	if (pfn_t_devmap(pfn))
-> >  		entry = pmd_mkdevmap(entry);
-> >  	if (write) {
+On Tue,  7 May 2024 23:08:12 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> Does this even compile on non-x86 architectures?
+> To clarify what will be expected on ftrace_regs, add a comment to the
+> architecture independent definition of the ftrace_regs.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> ---
+>  Changes in v8:
+>   - Update that the saved registers depends on the context.
+>  Changes in v3:
+>   - Add instruction pointer
+>  Changes in v2:
+>   - newly added.
+> ---
+>  include/linux/ftrace.h |   26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+> 
+> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+> index 54d53f345d14..b81f1afa82a1 100644
+> --- a/include/linux/ftrace.h
+> +++ b/include/linux/ftrace.h
+> @@ -118,6 +118,32 @@ extern int ftrace_enabled;
+>  
+>  #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+>  
+> +/**
+> + * ftrace_regs - ftrace partial/optimal register set
+> + *
+> + * ftrace_regs represents a group of registers which is used at the
+> + * function entry and exit. There are three types of registers.
+> + *
+> + * - Registers for passing the parameters to callee, including the stack
+> + *   pointer. (e.g. rcx, rdx, rdi, rsi, r8, r9 and rsp on x86_64)
+> + * - Registers for passing the return values to caller.
+> + *   (e.g. rax and rdx on x86_64)
+> + * - Registers for hooking the function call and return including the
+> + *   frame pointer (the frame pointer is architecture/config dependent)
+> + *   (e.g. rip, rbp and rsp for x86_64)
+> + *
+> + * Also, architecture dependent fields can be used for internal process.
+> + * (e.g. orig_ax on x86_64)
+> + *
+> + * On the function entry, those registers will be restored except for
+> + * the stack pointer, so that user can change the function parameters
+> + * and instruction pointer (e.g. live patching.)
+> + * On the function exit, only registers which is used for return values
+> + * are restored.
 
-Probably not..  I think I can define a pgprot_to_large() globally, pointing
-that to pgprot_4k_2_large() on x86 and make the fallback to be noop.  And
-if there's a new version I'll guarantee to run over my cross compilers.
+I wonder if we should also add a note about some architectures in some
+circumstances may store all pt_regs in ftrace_regs. For example, if an
+architecture supports FTRACE_WITH_REGS, it may pass the pt_regs within the
+ftrace_regs. If that is the case, then ftrace_get_regs() called on it will
+return a pointer to a valid pt_regs, or NULL if it is not supported or the
+ftrace_regs does not have a all the registers.
 
-Any comments on the idea itself?  Do we have a problem, or maybe I
-overlooked something?
+-- Steve
 
-Thanks,
 
--- 
-Peter Xu
+> + *
+> + * NOTE: user *must not* access regs directly, only do it via APIs, because
+> + * the member can be changed according to the architecture.
+> + */
+>  struct ftrace_regs {
+>  	struct pt_regs		regs;
+>  };
 
 
