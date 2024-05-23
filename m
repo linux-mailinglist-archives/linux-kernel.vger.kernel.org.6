@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-187714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F318CD70A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:28:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFB48CD714
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553B71F21723
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3257B1C217CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34F411720;
-	Thu, 23 May 2024 15:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0687014A96;
+	Thu, 23 May 2024 15:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="gSDqsHyG"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bIJ5AiLk"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9799811711
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4F9B657
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478097; cv=none; b=oE8S2Yan4SJerUpKGFp2gX5Wsqye42hrrvqE7V70YsElFnr0dXD0gmr8JAsPRC6ND2FeOU1eZXscJaGZW13Swc6kDvrg9JhOs32gVRad4Jm/V6TgBkND9UpQ5Gd4T4N6TFXM82dRCpr5N32/FIaOSGdbNbc7oLwdtHojMyWbnIM=
+	t=1716478250; cv=none; b=NNjfE+SofdthJf/DHz/e2eJ+qpRB3Ufue2CLXI+CAEGfvHcd7h0hoEwwJtQx/IjwlGhomplZVKCQG9hIeVUimCGUJRtGukG6zJNB78l1yUxQrQ7uM0izErUTyyRmr1H7zGV8f2fPzUXJURRyZowhXbxPIleZubjz1PXTleAwQOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478097; c=relaxed/simple;
-	bh=lHxOGmWdlihXCTgHVfb+T5jI7AtAtZWCWZ88p7h5se0=;
+	s=arc-20240116; t=1716478250; c=relaxed/simple;
+	bh=H0YBEupff31ZNnnhzkPXNJ35scGKevdaYJ+pEgGqNBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tns0YyyedSbQ7eBhPpPtSGhxcUSqMn/m6CbbHuiCUcwGpkgoCqxmSXqsg6KZwE97FUZgJd4D1qybHg8YBj+MvkixeoGL8VasqUECpYIasIb9FZn7mT6h84YUQ7QNCYjzsFL91Ebuu9HPZB8iFMitQ6Qw1UkMNY1Ny6P6KJMc6RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=gSDqsHyG; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79305314956so168577685a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1716478094; x=1717082894; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmfyLYVCfyswQ3c7xb61Hr7O417fd5EFVF7yNKTH3w8=;
-        b=gSDqsHyGsOcsBt5SvjKR7sU1nSqFoxJueeACqx5yt/MllU2s416ZjOM9lrDCh53QDI
-         FFxmxXP0+D8KjGUd2EDlsNXBV7nqWQnBifaM39U6IBqXy20yAffFZ3I1qGPJP30xSacx
-         xe7C/3mEB2SkSRTUqbX84uQe015fxVKlT1NdobcTwbM+JD7tQgXJ7ZqCgfOiGyFPcJwD
-         iiYpFMjGd7WxGt/fzZZnn+aIdv2enMWPjI/Z8RlBL4/kRrC2L1ngQDoSNXwLGAG91sRK
-         svoZamPEk2fwm54unYH9UWDYWsk+RcJrTAJVLGk/BikofGjzWdVuwh2QcAXXH0nGMEWO
-         HicQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716478094; x=1717082894;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hmfyLYVCfyswQ3c7xb61Hr7O417fd5EFVF7yNKTH3w8=;
-        b=l+HcO3xcermjJxwG3An7qHjQq4qEL67qoaDeFvReC8ZCy32CdDFwUkxQowBk/umkIZ
-         7M2pxs5DcaMe6TUEAbEqZnRny2QdZKdzbvztAuntDCNbqbqAnCQ6xj4v1S0le3SJAf93
-         Z8eMaY909BLNGMgtBjkIJKEq8pyVRfLMVo0NFWO9lERwtq+QoAE1n/2WiORbx8qXa7/u
-         BgFbrHfKPz+82IRikJ0DBBqV/hhWO270cOP17dRDFeVDynPWgGagx5hPJzbFUOgXdBdF
-         oZzJJla5ikM38nI8Nh1fQm83rgDYI48d4wDWiD7vZQ1CicnBsyqntNn3/7Cle6uTmkwp
-         22qw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoWf3EFY6CwJO+h+VYv3D6hnYDdHQhWGYUH5LoMSzemH3XD8LVSH0Iw/9l9LKic/B4Jy+miE+bkas2N/23eZurrvrKU0q/Hsa+bt3N
-X-Gm-Message-State: AOJu0YxiPAz/EB5OZOLSzSsJ2MmMIPCb4V1f9fIz/zPv2W0a6Psp5Bm0
-	PUBNA9bjsAVj8wtdKUnJuqUuWssn1VHZ+IHI+4/VdLMBHmr+kqVYFGFwPFUbTMI=
-X-Google-Smtp-Source: AGHT+IHTBzzwi4PjhcyoMTsLG+C6xPlPNq6v4XQ9szwtINNcWYZzWlV7kEZtWT8wPy12nifAJzgm5Q==
-X-Received: by 2002:a0c:f593:0:b0:6ab:8cbb:79f4 with SMTP id 6a1803df08f44-6ab8cbb7b85mr30572656d6.56.1716478094519;
-        Thu, 23 May 2024 08:28:14 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.89])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab84cd6d93sm15777036d6.127.2024.05.23.08.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 08:28:12 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sAAMU-00Frqn-OL;
-	Thu, 23 May 2024 12:28:10 -0300
-Date: Thu, 23 May 2024 12:28:10 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Tomasz Jeznach <tjeznach@rivosinc.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Anup Patel <apatel@ventanamicro.com>, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com,
-	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Nick Kossifidis <mick@ics.forth.gr>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v5 7/7] iommu/riscv: Paging domain support
-Message-ID: <20240523152810.GL69273@ziepe.ca>
-References: <cover.1715708679.git.tjeznach@rivosinc.com>
- <1ddb50a47c86d384157a979a7475b45f807ba81e.1715708679.git.tjeznach@rivosinc.com>
- <20240522-b25680db03b547123f1cd59a@orel>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/UN3qDPAK5QgafzGvl3gNPyCQ5CfnnEHX2opFJYZ2Aqd++sID6cAtnGUcrD4NcBqFCFeGhx8ncOGYt0q0vzmavL0axFweT2aP56bs3g/cpcDhpT/taH2z28zxwPX6nMN6rzDxhViEjrX8TYhet065A4uo8GnHBhq1iEOaQy44A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bIJ5AiLk; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: shakeel.butt@linux.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716478246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MqJQ6S1S7dUreqk/kr9p3VEkNZipko3/hIqO3h95RDA=;
+	b=bIJ5AiLkxgMWNcwwzjfqWlV8DrYGkdefLGSTiaBDdh5Sn5FZ/rHNpE3s7Q62HNrUy9+rcx
+	Jj/c6RnqWqXsu3xbXWAcY54dvM7BusU9yaHEqN86UspFAQi2+tBYdRQeUyhFQ/WMY8SwUp
+	ARFcKYI9wprtKL4byXQtm56KvkUBTtg=
+X-Envelope-To: yosryahmed@google.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: muchun.song@linux.dev
+X-Envelope-To: ying.huang@intel.com
+X-Envelope-To: feng.tang@intel.com
+X-Envelope-To: fengwei.yin@intel.com
+X-Envelope-To: oliver.sang@intel.com
+X-Envelope-To: kernel-team@meta.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Thu, 23 May 2024 08:30:40 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>, ying.huang@intel.com,
+	feng.tang@intel.com, fengwei.yin@intel.com, oliver.sang@intel.com,
+	kernel-team@meta.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] memcg: rearrage fields of mem_cgroup_per_node
+Message-ID: <Zk9hIBJr35_wSTMq@P9FQF9L96D.corp.robot.car>
+References: <20240523034824.1255719-1-shakeel.butt@linux.dev>
+ <CAJD7tkaaEn+2G46taRD1V1W=okBfZtPPOFFyj5A+MVfGzqPDqw@mail.gmail.com>
+ <m4ixafl5ajnr6tgkjwead3bmgglqqcpfwsgqijb6mlz2rfgjtu@yi3jwlnfpqpx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240522-b25680db03b547123f1cd59a@orel>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <m4ixafl5ajnr6tgkjwead3bmgglqqcpfwsgqijb6mlz2rfgjtu@yi3jwlnfpqpx>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 22, 2024 at 10:07:14AM +0200, Andrew Jones wrote:
-> On Tue, May 14, 2024 at 11:16:19AM GMT, Tomasz Jeznach wrote:
-> ...
-> > +static int riscv_iommu_bond_link(struct riscv_iommu_domain *domain,
-> > +				 struct device *dev)
-> > +{
-> > +	struct riscv_iommu_device *iommu = dev_to_iommu(dev);
-> > +	struct riscv_iommu_bond *bond;
-> > +	struct list_head *bonds;
-> > +
-> > +	bond = kzalloc(sizeof(*bond), GFP_KERNEL);
-> > +	if (!bond)
-> > +		return -ENOMEM;
-> > +	bond->dev = dev;
-> > +
-> > +	/*
-> > +	 * List of devices attached to the domain is arranged based on
-> > +	 * managed IOMMU device.
-> > +	 */
-> > +
-> > +	spin_lock(&domain->lock);
-> > +	list_for_each_rcu(bonds, &domain->bonds)
-> > +		if (dev_to_iommu(list_entry(bonds, struct riscv_iommu_bond, list)->dev) == iommu)
-> > +			break;
+On Wed, May 22, 2024 at 10:34:38PM -0700, Shakeel Butt wrote:
+> On Wed, May 22, 2024 at 09:35:57PM -0700, Yosry Ahmed wrote:
+> > On Wed, May 22, 2024 at 8:48 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> [...]
+> > >
+> > >  struct mem_cgroup_per_node {
+> > > -       struct lruvec           lruvec;
+> > > +       /* Keep the read-only fields at the start */
+> > > +       struct mem_cgroup       *memcg;         /* Back pointer, we cannot */
+> > > +                                               /* use container_of        */
+> > >
+> > >         struct lruvec_stats_percpu __percpu     *lruvec_stats_percpu;
+> > >         struct lruvec_stats                     *lruvec_stats;
+> > > -
+> > > -       unsigned long           lru_zone_size[MAX_NR_ZONES][NR_LRU_LISTS];
+> > > -
+> > > -       struct mem_cgroup_reclaim_iter  iter;
+> > > -
+> > >         struct shrinker_info __rcu      *shrinker_info;
+> > >
+> > > +       /* memcg-v1 only stuff in middle */
+> > > +
+> > >         struct rb_node          tree_node;      /* RB tree node */
+> > >         unsigned long           usage_in_excess;/* Set to the value by which */
+> > >                                                 /* the soft limit is exceeded*/
+> > >         bool                    on_tree;
+> > > -       struct mem_cgroup       *memcg;         /* Back pointer, we cannot */
+> > > -                                               /* use container_of        */
+> > 
+> > Do we need CACHELINE_PADDING() here (or maybe make struct lruvec
+> > cache-aligned) to make sure the false cacheline sharing doesn't happen
+> > again with the fields below, or is the idea that the fields that get
+> > read in hot paths (memcg, lruvec_stats_percpu, lruvec_stats) are far
+> > at the top, and the memcg v1 elements in the middle act as a buffer?
+
+It's a good point. Once we will compile out the memcg v1 stuff, it might stop
+working.
+
+> > 
+> > IOW, is sharing between the fields below and memcg v1 fields okay
+> > because they are not read in the hot path? If yes, I believe it's
+> > worth a comment. It can be easily missed if the memcg v1 soft limit is
+> > removed later for example.
+> > 
 > 
-> We should wrap this list_for_each_rcu() in rcu_read_lock() and
-> rcu_read_unlock().
+> For 6.10, I wanted to keep the change simple and yes, the memcg v1 stuff
+> as a buffer between the pointers and lruvec/lru_zone_size fields. For
+> 6.11 or later kernels, I am planning to use some asserts to make sure
+> these fields don't share a cacheline, so later when we remove the
+> v1-only stuff, the asserts will make sure we keep the separate cacheline
+> property intact.
 
-Not quite this is the write side, it is holding the spinlock so it
-doesn't need RCU. It should just call the normal list_for_each_entry()
+Sounds good. Once we'll have memcg v1 stuff under a config option, we'll
+put those asserts in.
+Btw, I'm about (today/tomorrow) to post the memcg-v1 separation patchset,
+so it won't take a long time.
 
-Jason
+Thanks!
 
