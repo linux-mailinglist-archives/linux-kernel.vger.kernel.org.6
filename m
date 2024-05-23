@@ -1,229 +1,200 @@
-Return-Path: <linux-kernel+bounces-186922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543998CCACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:39:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB318CCAD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077BE2822C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DFC11C212F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E419913A889;
-	Thu, 23 May 2024 02:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539C713A876;
+	Thu, 23 May 2024 02:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/zpiOWX"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="uHCRTCSM"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8785412BEAC;
-	Thu, 23 May 2024 02:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5A538FA8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716431936; cv=none; b=FSmKbR2B8ZptUuefZE5N/jfG/F4Zp1DMG19IePudxfviaaBy5TSKn8xuwlCwabYWbaYmC8Kp/iQ0PUz9JhMk9XpbBpBwgwpt0po94JSCKg5tqNurfAMhV7UC2SU/5rtRcis8T7mvvvKmFlqJF/tXlqyqClKMs4ZflzbWvkvh95o=
+	t=1716432056; cv=none; b=hJ2ykCXCeNpUzhM5cFMYKHbQv85qM2BJCGLIGEIBezEyCW2CLv7LyFfZzWlYpx+dSLPpx29gbRwVpBIsLJOWlPmZCXIxcnJpnhZ7xlUcWp5ZwJRnPKm8ZWR/frYSM9MU5XT0POe6Pi03sbnKZEPBKbAIP0b+hy1xGhdRUQt03XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716431936; c=relaxed/simple;
-	bh=c150eyXSG09ax/tuSQxo/vmwAamar5JegtikCRIL3Vs=;
+	s=arc-20240116; t=1716432056; c=relaxed/simple;
+	bh=8ZGDf3OkPJBcA1wHNNztZpCmXea4Px7Syw1Vmp3K8E8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N7qUtG+VaSlTZ3bA0jLjtTXAYqKiKeTxRsjcCsHDg6ZYBeVERhlcQQp07VWCf7jGVDWzBKM6bdIkvvbrE9NRlDz7HJaQq+cYtN8BBr8B8fi6i8wuyjotg8Q//2vQlflQFn0W83WzSWyiYOprJLP8d725SGDw6cqrY+omnoeCROM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/zpiOWX; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43de92e228aso35115141cf.1;
-        Wed, 22 May 2024 19:38:54 -0700 (PDT)
+	 To:Cc:Content-Type; b=h6b+KNHuXM6yz3i9RGMadaQq070JLbc2JdnHEvtXhuwymi8MP5Z+RgVX8SgOukn3glKu1C2ts+qkh6EcNiQQMFJF2Juze7fDz+hZ/Jk635Lh4k0natWVJOZpSDWA3NFczBGAB3keDcbrMX+cWym/1XmhznfAuiLccpPVea6/mXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uHCRTCSM; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-572a1b3d6baso4680a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 19:40:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716431933; x=1717036733; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1716432053; x=1717036853; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+ZtfxnLd2/r+HBGWTRVrrUFtrRVnkTfP4AwbLWkC7Ps=;
-        b=A/zpiOWXfD7mh/aX/4oFXpgI2UtG0S2/kWwqHaZrBYMSINwRA4A7XemkuGQoUvhi6z
-         b2eUAoKNU4Xr6f/lm9OPCbpL0PsJjzHmyuPxEXZ3DGjf6ISLE0ti4fXI1nFqp5RKbwTP
-         9nFToWO46QHKMLMn8FQJ18EzZlEFx9v/Dr1O3juKnVWS1xkddGjJFFx+B9KoI5YOLRgp
-         4s9MWVG1KsVIfx9rr7U/NzNmp46NxyOHYaXxktivzE1poD0jizFmWXBTUcIs5a9WZ33L
-         F/DhP6v7u/3n1t4qNTrsqfdo6KYW7AxwPVzQRbbwf/m2nCONVw21nNCiEkB2oG4fhcYk
-         1bYg==
+        bh=jWPP+Dz40GrCKZ1VUrua2jxqIySm9s34x1EAA+mtGnY=;
+        b=uHCRTCSMk85X1GPNz5kWn5DZuwz+GgdxUd9ik5WV3TGUKca8WgXnhk83bGz2RaMBgh
+         zJOdERn4w/PYcbL4S3Nycb6T6HC2kcPczJ16rgP8YbqE3tRBJFUwxowhM6WMOWZuLPYS
+         UfmwcAag+AKdVoXGpum3KRdbBbhUUvZqWAhKwoSbKBoOAdWNHXEEbTPiGrsPqouaiw/e
+         OriJl9uu250e4X/Kk015LU7FFf7AxVuO8q1d4dewZFWYc0UZNyJMHFQeF0WD9scyxvoc
+         WmlGui7KszQaSIGZWqWqkxLnEeGjrwqkCadNE1temVBGFBC3RuhEIgmW3WktkU52vaOI
+         X8tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716431933; x=1717036733;
+        d=1e100.net; s=20230601; t=1716432053; x=1717036853;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+ZtfxnLd2/r+HBGWTRVrrUFtrRVnkTfP4AwbLWkC7Ps=;
-        b=I6aH3lflbJira6SfGcNiAHpdUGtp+TT3lnCFqKFLPREooihsC/T1O+vTOt3X4u8VRL
-         1GWJkBeNtUJD5T4JQ3RKuCsB7duB/or/9jVjvhljqQXcrk8fjMgPRn0WOfaqCwtoOop/
-         XGgkUmi5Aq/na/imfV+nCS8jD+FdefT2BUDQMrY5WAsyzoGaW0b3XL4/G57QdOKR90tH
-         EimOV1Cta8aNXr097hdyCJR4T8G6F4kixuIxRFMYhdDJiiEZ1w/FyFa7d3sQm6pracI5
-         wtwWUzoEBFajYqGYWb5urye0pyrRIld6w0/kvxY61QqJPF2GaNp9TA6gKTntaZAmDxgh
-         VY2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvyknf3yWt46YHNMx7gfunLQZSYrIYNwLx03K/ZDjF+Sj5td9Qwpcez7FqdMJ8dXkDjfak93CHJIRDMUEgq96SBlDThWcnmvJhTyErRGiSJX3PzTmECsH9j01dNmKuAve6
-X-Gm-Message-State: AOJu0YwfXv96mHDXZrV3UiIytSAWq/0n1AyaU/pRgRv5cTXOKvCVJI6b
-	vFuGhmRXKDYGAHrCPpNc1TE3BGh2UMA8UKK7/3Y1OK8Tf2JISCOipAc6tNs3Btz3op05Z+NHp10
-	2yMr1DNKzBPvVTIxXXSgj3Xz/t+0=
-X-Google-Smtp-Source: AGHT+IH3JniY0spg98nO80aPZUSIymONa/6OB/gqUXHqeemMB+MNrIDWIKJR9zRKIWSqiAk80Drv8W5mKGkqvLnYpPo=
-X-Received: by 2002:a05:622a:8a:b0:43a:fb9a:c117 with SMTP id
- d75a77b69052e-43f9e0d3bd2mr37092321cf.37.1716431933305; Wed, 22 May 2024
- 19:38:53 -0700 (PDT)
+        bh=jWPP+Dz40GrCKZ1VUrua2jxqIySm9s34x1EAA+mtGnY=;
+        b=DuoJ0t63KC5BRMqYK9/qgkWj86ElDeFvEk1Z0mEkvUOq7rdHHrxO5JV5PaNWgQzeN1
+         6KlQW07HyWaPfldjiIFCy6KOWv6lUV17F9fc6z/P96wRpx53Rjc0gwn5QkcEVkKBNAMV
+         lq1FiGnTYrb5/gnn8XVgwlOJv3aABn2xK7/YQjGtQQGs4MC5mzIWAsVWl21PI+ProBBk
+         2Y36m5ie60f06Gcbe1zHAW5lsjLTXYLI4lGlVSlsqX7R62oQCuM2FbBba7x7kyXA0BIt
+         9RyC90IIKyznp2cYnqRbxfSePC4gsV5iVlrGTZOE+xA8RrqWbIrmokq/BYQ/0Ax3EEuK
+         bmQA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0C/V037gGGv0jknyLdHvWSbu1VPUpiMiM1zRfAH8aaB1h/JeAL5L2KaYUTGChh18SakwpYtvj8M/9MIgngCoJNrgZaCjICI/5NFVH
+X-Gm-Message-State: AOJu0YwO+FI/Xt6D9Viniu2vMdYlJNSu8az7GDmDgarl6K3jSG4nYm8B
+	WlZBCRYVm3XnjDmkym6gzTYw8amgkLphK0iMnE0VpENcnuL2QQUVWbluo2ysw/aHvIyH5tbSIST
+	QqNWEYWagL3nlx1X6jSqC0Qxw2atTEgoUHf++
+X-Google-Smtp-Source: AGHT+IFoMprtUuWbtKldBe/3g28FFO7W6k7ncLpONbXIhGG03bnXo2gGbai+JCKMqKm0XjcPlnfIbbiQJUoxfs57HHY=
+X-Received: by 2002:a05:6402:4305:b0:572:9eec:774f with SMTP id
+ 4fb4d7f45d1cf-57843b1aebbmr108042a12.0.1716432052838; Wed, 22 May 2024
+ 19:40:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr> <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
- <ZkvO-h7AsWnj4gaZ@slm.duckdns.org> <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
- <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
-In-Reply-To: <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 23 May 2024 10:38:17 +0800
-Message-ID: <CALOAHbAmHTGxTLVuR5N+apSOA29k08hky5KH9zZDY8yg2SAG8Q@mail.gmail.com>
-Subject: Re: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
- formatting and make wq_worker_comm() use full ID string
-To: Linus Torvalds <torvalds@linux-foundation.org>, bpf <bpf@vger.kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Jan Engelhardt <jengelh@inai.de>, Craig Small <csmall@enc.com.au>, 
-	linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+References: <20240513191544.94754-1-pobrn@protonmail.com> <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
+ <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org> <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
+In-Reply-To: <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
+From: Jeff Xu <jeffxu@google.com>
+Date: Wed, 22 May 2024 19:40:15 -0700
+Message-ID: <CALmYWFtnQH2UkjkZ+VWdsDjiQATcn-ori2UM0AdOnqQcxZ8Y-Q@mail.gmail.com>
+Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
+To: =?UTF-8?B?QmFybmFiw6FzIFDFkWN6ZQ==?= <pobrn@protonmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com, 
+	jorgelo@chromium.org, skhan@linuxfoundation.org, keescook@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 2:06=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, May 22, 2024 at 7:25=E2=80=AFPM Barnab=C3=A1s P=C5=91cze <pobrn@pro=
+tonmail.com> wrote:
 >
-> On Mon, 20 May 2024 at 19:34, Yafang Shao <laoar.shao@gmail.com> wrote:
+> Hi
+>
+>
+> 2024. m=C3=A1jus 23., cs=C3=BCt=C3=B6rt=C3=B6k 1:23 keltez=C3=A9ssel, And=
+rew Morton <akpm@linux-foundation.org> =C3=ADrta:
+>
+> > On Wed, 15 May 2024 23:11:12 -0700 Jeff Xu <jeffxu@google.com> wrote:
 > >
-> > We discussed extending it to 24 characters several years ago [0], but
-> > some userspace tools might break.
+> > > On Mon, May 13, 2024 at 12:15=E2=80=AFPM Barnab=C3=A1s P=C5=91cze <po=
+brn@protonmail.com> wrote:
+> > > >
+> > > > `MFD_NOEXEC_SEAL` should remove the executable bits and set
+> > > > `F_SEAL_EXEC` to prevent further modifications to the executable
+> > > > bits as per the comment in the uapi header file:
+> > > >
+> > > >   not executable and sealed to prevent changing to executable
+> > > >
+> > > > However, currently, it also unsets `F_SEAL_SEAL`, essentially
+> > > > acting as a superset of `MFD_ALLOW_SEALING`. Nothing implies
+> > > > that it should be so, and indeed up until the second version
+> > > > of the of the patchset[0] that introduced `MFD_EXEC` and
+> > > > `MFD_NOEXEC_SEAL`, `F_SEAL_SEAL` was not removed, however it
+> > > > was changed in the third revision of the patchset[1] without
+> > > > a clear explanation.
+> > > >
+> > > > This behaviour is suprising for application developers,
+> > > > there is no documentation that would reveal that `MFD_NOEXEC_SEAL`
+> > > > has the additional effect of `MFD_ALLOW_SEALING`.
+> > > >
+> > > Ya, I agree that there should be documentation, such as a man page. I=
+ will
+> > > work on that.
+> > >
+> > > > So do not remove `F_SEAL_SEAL` when `MFD_NOEXEC_SEAL` is requested.
+> > > > This is technically an ABI break, but it seems very unlikely that a=
+n
+> > > > application would depend on this behaviour (unless by accident).
+> > > >
+> > > > [0]: https://lore.kernel.org/lkml/20220805222126.142525-3-jeffxu@go=
+ogle.com/
+> > > > [1]: https://lore.kernel.org/lkml/20221202013404.163143-3-jeffxu@go=
+ogle.com/
+> > >
+> > > ...
+> > >
+> > > Reviewed-by: Jeff Xu <jeffxu@google.com>
+> >
+> > It's a change to a userspace API, yes?  Please let's have a detailed
+> > description of why this is OK.  Why it won't affect any existing users.
 >
-> Well, the fact that we already expose names longer than 16 bytes in
-> /proc means that at least *that* side of it could use an extended
-> comm[] array.
+> Yes, it is a uAPI change. To trigger user visible change, a program has t=
+o
 >
-> Yes, some other interfaces might want to still use a 16-byte limit as
-> the length for the buffers they use (tracing?) but I suspect we could
-> make the comm[] array easily bigger.
+>  - create a memfd
+>    - with MFD_NOEXEC_SEAL,
+>    - without MFD_ALLOW_SEALING;
+>  - try to add seals / check the seals.
+>
+> This change in essence reverts the kernel's behaviour to that of Linux <6=
+3, where
+> only `MFD_ALLOW_SEALING` enabled sealing. If a program works correctly on=
+ those
+> kernels, it will likely work correctly after this change.
+>
+I agree with this.
 
-Indeed, the 16-byte limit is hard-coded in certain BPF code:
-
-$ grep -r "comm\["  tools/testing/selftests/bpf/
-tools/testing/selftests/bpf//prog_tests/ringbuf_multi.c: char comm[16];
-tools/testing/selftests/bpf//prog_tests/sk_storage_tracing.c: char comm[16]=
-;
-tools/testing/selftests/bpf//prog_tests/test_overhead.c: char comm[16] =3D =
-{};
-tools/testing/selftests/bpf//prog_tests/ringbuf.c: char comm[16];
-tools/testing/selftests/bpf//progs/pyperf.h: char comm[TASK_COMM_LEN];
-tools/testing/selftests/bpf//progs/dynptr_success.c: char comm[16];
-tools/testing/selftests/bpf//progs/test_ringbuf.c: char comm[16];
-tools/testing/selftests/bpf//progs/test_ringbuf_n.c: char comm[16];
-tools/testing/selftests/bpf//progs/task_kfunc_success.c:
-bpf_strncmp(&task->comm[8], 4, "foo");
-tools/testing/selftests/bpf//progs/user_ringbuf_fail.c: char comm[16];
-tools/testing/selftests/bpf//progs/test_ringbuf_map_key.c: char comm[16];
-tools/testing/selftests/bpf//progs/test_core_reloc_kernel.c: char
-comm[sizeof("test_progs")];
-tools/testing/selftests/bpf//progs/test_core_reloc_kernel.c: char comm[16];
-tools/testing/selftests/bpf//progs/dynptr_fail.c: char comm[16];
-tools/testing/selftests/bpf//progs/strobemeta.h: char comm[TASK_COMM_LEN];
-tools/testing/selftests/bpf//progs/core_reloc_types.h: char
-comm[sizeof("test_progs")];
-tools/testing/selftests/bpf//progs/core_reloc_types.h: char
-comm[sizeof("test_progs")];
-tools/testing/selftests/bpf//progs/test_skb_helpers.c: char comm[TEST_COMM_=
-LEN];
-tools/testing/selftests/bpf//progs/test_tracepoint.c: char
-prev_comm[TASK_COMM_LEN];
-tools/testing/selftests/bpf//progs/test_tracepoint.c: char
-next_comm[TASK_COMM_LEN];
-tools/testing/selftests/bpf//progs/test_ringbuf_multi.c: char comm[16];
-tools/testing/selftests/bpf//progs/test_user_ringbuf.h: char comm[16];
-tools/testing/selftests/bpf//progs/test_core_reloc_module.c: char
-comm[sizeof("test_progs")];
-tools/testing/selftests/bpf//progs/test_stacktrace_map.c: char
-prev_comm[TASK_COMM_LEN];
-tools/testing/selftests/bpf//progs/test_stacktrace_map.c: char
-next_comm[TASK_COMM_LEN];
-tools/testing/selftests/bpf//progs/test_sk_storage_tracing.c: char comm[16]=
-;
-tools/testing/selftests/bpf//progs/test_sk_storage_tracing.c:char
-task_comm[16] =3D "";
-
->
-> But what I suspect we should do *first* is to try to get rid of a lot
-> of the "current->comm" users. One of the most common uses is purely
-> for printing, and we could actually just add a new '%p' pointer for
-> printing the current name. That would allow our vsprintf() code to not
-> just use tsk->comm, but to use the full_name for threads etc.
->
-> So instead of
->
->    printf("%s ..", tsk->comm..);
->
-> we could have something like
->
->    printf("%pc ..", tsk);
->
-> to print the name of the task.
-
-I believe it's a good start.
-
->
-> That would get rid of a lot of the bare ->comm[] uses, and then the
-> rest should probably use proper wrappers for copying the data (ie
-> using 'get_task_comm()' etc).
->
-> That would not only pick up the better names for printk and oopses, it
-> would also make future cleanups simpler (for example, I'd love to get
-> rid of the 'comm' name entirely, and replace it with 'exe_name[24]'
-> and have the compiler just notice when somebody is trying to access
-> 'comm' directly).
-
-Some tools may flag the naming change. Below is a simple grep from
-bcc-tools and bpftrace.
-
-bcc $ grep -r "\->comm" tools/
-tools//wakeuptime.py:    bpf_probe_read_kernel(&key.target,
-sizeof(key.target), p->comm);
-tools//bitesize.py:    bpf_probe_read_kernel(&key.name,
-sizeof(key.name), args->comm);
-tools//tcptracer.py:          evt4.comm[i] =3D p->comm[i];
-tools//tcptracer.py:          evt6.comm[i] =3D p->comm[i];
-tools//old/wakeuptime.py:    bpf_probe_read(&key.target,
-sizeof(key.target), p->comm);
-tools//old/oomkill.py:    bpf_probe_read(&data.tcomm,
-sizeof(data.tcomm), p->comm);
-tools//oomkill.py:    bpf_probe_read_kernel(&data.tcomm,
-sizeof(data.tcomm), p->comm);
-tools//runqslower.py:    bpf_probe_read_kernel_str(&data.prev_task,
-sizeof(data.prev_task), prev->comm);
-tools//runqslower.py:    bpf_probe_read_kernel_str(&data.task,
-sizeof(data.task), next->comm);
-tools//runqslower.py:    bpf_probe_read_kernel_str(&data.prev_task,
-sizeof(data.prev_task), prev->comm);
-tools//shmsnoop.py:    if (bpf_get_current_comm(&val->comm,
-sizeof(val->comm)) !=3D 0)
-tools//sslsniff.py:        bpf_get_current_comm(&data->comm,
-sizeof(data->comm));
-tools//sslsniff.py:        bpf_get_current_comm(&data->comm,
-sizeof(data->comm));
-tools//fileslower.py:    bpf_probe_read_kernel(&data.comm,
-sizeof(data.comm), valp->comm);
-tools//mountsnoop.py:    bpf_probe_read_kernel_str(&event.enter.pcomm,
-TASK_COMM_LEN, task->real_parent->comm);
-tools//mountsnoop.py:    bpf_probe_read_kernel_str(&event.enter.pcomm,
-TASK_COMM_LEN, task->real_parent->comm);
-tools//gethostlatency.py:    bpf_probe_read_kernel(&data.comm,
-sizeof(data.comm), valp->comm);
-tools//opensnoop.py:    bpf_probe_read_kernel(&data.comm,
-sizeof(data.comm), valp->comm);
-tools//killsnoop.py:    bpf_probe_read_kernel(&data.comm,
-sizeof(data.comm), valp->comm);
-
-bpftrace $ grep -r "\->comm" tools/
-tools//naptime.bt:     $task->real_parent->comm, pid, comm,
-tools//oomkill.bt:     $oc->chosen->pid, $oc->chosen->comm, $oc->totalpages=
-);
+The current memfd_test.c doesn't have good coverage sealable vs not_seable,
+most tests are created with MFD_ALLOW_SEALING
+I think the test_sysctl_set_sysctl0/1/2 need to add  cases for
+no-sealable memfd.
+because the change will also change the behavior of  the sysctl.
+Do you want to add them as part of the patch ?
 
 
---=20
-Regards
-Yafang
+> I have looked through Debian Code Search and GitHub, searching for `MFD_N=
+OEXEC_SEAL`.
+> And I could find only a single breakage that this change would case: dbus=
+-broker
+> has its own memfd_create() wrapper that is aware of this implicit `MFD_AL=
+LOW_SEALING`
+> behaviour[0], and tries to work around it. This workaround will break. Lu=
+ckily,
+> however, as far as I could tell this only affects the test suite of dbus-=
+broker,
+> not its normal operations, so I believe it should be fine. I have prepare=
+d a PR
+> with a fix[1].
+>
+Thanks for the investigation.
+
+>
+> >
+> > Also, please let's give consideration to a -stable backport so that all
+> > kernel versions will eventually behave in the same manner.
+> >
+> >
+>
+> I think that is a good idea, should I resend this with the `Cc: stable@..=
+` tag or
+> what should I do?
+>
+>
+> Regards,
+> Barnab=C3=A1s P=C5=91cze
+>
+>
+> [0]: https://github.com/bus1/dbus-broker/blob/9eb0b7e5826fc76cad7b025bc46=
+f267d4a8784cb/src/util/misc.c#L114
+> [1]: https://github.com/bus1/dbus-broker/pull/366
 
