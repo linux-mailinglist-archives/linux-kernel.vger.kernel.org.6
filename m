@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-187183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF608CCE37
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:33:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825108CCE39
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF6D1F21FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:33:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252681F222BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAF58249A;
-	Thu, 23 May 2024 08:33:38 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A024313CF84;
+	Thu, 23 May 2024 08:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="BAiXQTea"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52E746AF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DD546AF;
+	Thu, 23 May 2024 08:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716453218; cv=none; b=DKvbNjGFF4ajBo+MgrEFGzEd9k34ZEqJz61lX5sN/hFhrViA4B9RQyKdwC72HQNJN7m90g/hiBt1CDbYkq0UTivS1LxFDmw/sNS9j5SkfbGBUY68EBK4eyH67mkdhBiq725VynNPwTavaqncRzeH4ll1KOqrRJRczS47KpauEQE=
+	t=1716453269; cv=none; b=pCGhR4FJmKEexTtqAKQBtriMqZapxSGmfVJjSODQgxy+kzQGK9fDDUaml6sdfFaZMm2NAcwmhdn3CfLSZ7FsuCN5Xz4a97vO1tgy257RACY4hAWxXbAURMXI3iTYzACfE2tkHTM9ha6ogLOSWR8s00DAYgV/4+5/AMYqlp0sgGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716453218; c=relaxed/simple;
-	bh=v1Wpfd5pymv2nX9Revy1NHAYOMkvBeSoU+9s45OonyU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KZYz2cu5emaOmDEi+P+53KM/gFfsOKlRM/8cjnoeZXPaCNEVfE8FAKqTZXkFAKExul0sndtm4Pm490839QsZ0MX/8dDx3Wy2VojP47YMz1wdYfMZeghgIElQutmylwgwQkODVVMDFhvRzlF41D6UzSTnDV81K2ggbocGmkBnQlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e1d3928fd4so132162239f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:33:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716453216; x=1717058016;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ySwK4GW7MrBSOkmkCOo1wVWVNGzzwCbDdwGNcEIbngc=;
-        b=DRQRPdLRWfeTvKe6PczXrT+ynO7nIPbK3IV0OgzmZ68Vqiq1E9mvQcZdm9V1BP9x+k
-         OznBcJFDjC9uosiTgbljXKew+CSjKK+ksiy9sXbLm0Tp4oqb3ETo5TTdCZs2CwjW7XBb
-         RhouKzX75hrYcWyeHJeL6jw5w09B4f+jVibsr01GH70QHw6LzQJmtADeuSmiNaYGuAHu
-         8+Labx5tC2JPzxjO2zZgMTYLFgujFixTbyqo58ccfvChmxAWfDegTDaEMyP5OzEdXOhn
-         zcBOPtANMjZXOFDe49rj/Y18kJ22ZOyyFmL9L9adMd3eqK9Wp5NpBbM5pa0Kreqwqg5g
-         624Q==
-X-Gm-Message-State: AOJu0YxFKaPGTLcs1djwU3QxnS8uSRyM3YnE63m2mra34Le3BwS+ejX+
-	ny3+PIlM+RUWEzIbQcX1ryAiiLCkGi36m3JyBmQa4xBsfdcVFqUKaAzaL1tGz2HeLOkrawSaPIu
-	Ocu8V23Bt56NCxdg3A02D7k5cXia1P963EFYbU9lNzmegn8pp3dzSQK0=
-X-Google-Smtp-Source: AGHT+IHbmIQFE/GYihol8gquRtVvReYzw04EJjwwXg51W7zoP8t2XOPblgAWQu76wHD46jMBGchCSNOEez1fZcncjjox/g6YOv1R
+	s=arc-20240116; t=1716453269; c=relaxed/simple;
+	bh=OT5GpYkvqi359dkHE/K6vDw27Z7JCQ5cw7qP+eM0VBU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EPsWT6FQwK78nqFLSwcMUIKq32RncR01MD+Br6vfzB/JH55HRJ2vSVmY+YBCfCb7kuSJ0xW0xPb6qnJXjKhTXv6RWlcCw4WU+ILZE3vQKTXGooMJESqCs2mK7WnDFY2wH5HFFztxTwJ9YdZA++u++uif+dfXy76nZ5tT4tBJYiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=BAiXQTea; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=HKvZu/1Th/zFJANW3u9Wq82PwjCTymeIwMTRRihlSXg=; b=BAiXQTeaAHv2tk7ig3BINtVaQD
+	XphEVhbeOAJ1ZuPEJVz8yqT1gw9LdsEeY1zBQmzicSAejqwAOXIzwi86Nt4i0GxOHsDECDROHbz3T
+	8qVgg2/tVtfbQGLYalCVe9umV+/b0gvd/L0VCKfTExbgD1hppCXCusuIdQwQTRh5c0FcK1yt70liw
+	zVnmsx6dDXMUEcBdyyAGfRDOf00E/kFa56rY8NjHzNa/CHjezDM1BV1zEUjlpc1szcdOnEKerBYC1
+	BH59yzuLk9Yeg0V5129f0rYfUBervxunNbmdKZBeVsIN8o44hI165x2n6pzA2iZOMZ1pmCrvRyNkH
+	h/HRLjX7UrFXtI59ZIFmVARZMJu5IW7gza5sul01u7vKpc00SkGRuh/apcosk5XkEYSmG9YmRX1Qg
+	oK91vhofiEP8Ne3a0GOooJRy94fAwMrLgx6qR9iCZmxrUEavnZ/7eBvBaYgp+TbnG53klFwwWcr44
+	giZONdxRT67iNgOZgRjbEJd+MgA2qsHi/+7oxU1I9wIwE7ILrI+fxQ4H912VOV3VZFgEMIPMnp2wf
+	jz2p+YUV/m3tivjNMKVmHpYHg+0hwbWFr1VRj9PHtlOsXQuK56lDiNweKWmkjznl44faZJyemwo48
+	hmu8+h7Ai5Unk6KuHYDHKzVLAmS/9p1OfY4cI6zxE=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>, Greg Kurz <groug@kaod.org>,
+ Jianyong Wu <jianyong.wu@arm.com>, stable@vger.kernel.org,
+ Eric Van Hensbergen <ericvh@gmail.com>, v9fs@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: add missing locking around taking dentry fid list
+Date: Thu, 23 May 2024 10:34:14 +0200
+Message-ID: <3116644.1xDzT5uuKM@silver>
+In-Reply-To: <Zk4qcmtot6WEC1Xx@codewreck.org>
+References:
+ <20240521122947.1080227-1-asmadeus@codewreck.org> <1738699.kjPCCGL2iY@silver>
+ <Zk4qcmtot6WEC1Xx@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:6907:b0:488:59cc:eb42 with SMTP id
- 8926c6da1cb9f-4afe3c40ccbmr70028173.3.1716453216047; Thu, 23 May 2024
- 01:33:36 -0700 (PDT)
-Date: Thu, 23 May 2024 01:33:36 -0700
-In-Reply-To: <0000000000002fd2de0618de2e65@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000037689606191ae804@google.com>
-Subject: Re: [syzbot] [syzbot] [fs?] general protection fault in iter_file_splice_write
-From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Wednesday, May 22, 2024 7:25:06 PM CEST Dominique Martinet wrote:
+> Christian Schoenebeck wrote on Wed, May 22, 2024 at 04:35:19PM +0200:
+[...]
+> > > diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
+> > > index f16f73581634..01338d4c2d9e 100644
+> > > --- a/fs/9p/vfs_dentry.c
+> > > +++ b/fs/9p/vfs_dentry.c
+> > > @@ -48,12 +48,17 @@ static int v9fs_cached_dentry_delete(const struct dentry *dentry)
+> > >  static void v9fs_dentry_release(struct dentry *dentry)
+> > >  {
+> > >  	struct hlist_node *p, *n;
+> > > +	struct hlist_head head;
+> > >  
+> > >  	p9_debug(P9_DEBUG_VFS, " dentry: %pd (%p)\n",
+> > >  		 dentry, dentry);
+> > > -	hlist_for_each_safe(p, n, (struct hlist_head *)&dentry->d_fsdata)
+> > > +
+> > > +	spin_lock(&dentry->d_lock);
+> > > +	hlist_move_list((struct hlist_head *)&dentry->d_fsdata, &head);
+> > > +	spin_unlock(&dentry->d_lock);
+> > > +
+> > > +	hlist_for_each_safe(p, n, &head)
+> > >  		p9_fid_put(hlist_entry(p, struct p9_fid, dlist));
+> > > -	dentry->d_fsdata = NULL;
+> > >  }
+> > 
+> > I'm not sure if that works out. So you are moving the list from dentry to a
+> > local variable. But if you look at v9fs_fid_find() [fs/9p/fid.c#123] it reads
+> > dentry->d_fsdata (twice) and holds it as local variable before taking a
+> > lock. So the lock in v9fs_fid_find() should happen earlier, no?
+> 
+> The comment still works -- if detry->d_fsdata is NULL then
+> hlist_for_each_entry will stop short and not iterate over anything (it
+> won't bug out), so that part is fine in my opinion.
 
-***
+I meant the opposite: dentry->d_fsdata not being NULL. In this case
+v9fs_fid_find() takes a local copy of the list head pointer as `h` without
+taking a lock before.
 
-Subject: [syzbot] [fs?] general protection fault in iter_file_splice_write
-Author: lizhi.xu@windriver.com
+Then v9fs_fid_find() takes the lock to run hlist_for_each_entry(), but at this
+point `h` could already point at garbage.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 33e02dc69afb
+/Christian
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 60aed8de21f8..a7d59b2f1804 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -751,8 +751,18 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- 		/* dismiss the fully eaten buffers, adjust the partial one */
- 		tail = pipe->tail;
--		while (ret) {
-+		while (ret > 0) {
- 			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
-+			printk("ret: %d, nbufs: %d,  buf len: %u, m: %u, t: %u,ring size: %u, %s\n", ret, nbufs, buf->len, mask, tail, pipe->ring_size, __func__);
-+			if (pipe->ring_size <= mask) {
-+				ret = -EPIPE;
-+				printk("oooh, %s\n", __func__);
-+				break;
-+			}
-+			if (!buf->len) {
-+				tail++;
-+				continue;
-+			}
- 			if (ret >= buf->len) {
- 				ret -= buf->len;
- 				buf->len = 0;
+
 
