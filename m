@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-187350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950D48CD084
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:43:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2C98CD088
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC311C22852
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:43:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F076F1C22512
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE578144D13;
-	Thu, 23 May 2024 10:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C511448E1;
+	Thu, 23 May 2024 10:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eWOyTJTi"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H3qz4aTV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF85144306
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44E8142621
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716460967; cv=none; b=tTF8s/Pj09xK4qGOYAkGokW4FlRloBYCZKtwXJQHfzD+LtynevUtN+K2XDQCrCO/WroakXmaLFlSANNzw5xWusCNDbsYzwajie/ldm6Zlj6YdLdi+P+5oEAlW1Lg9pAygpSZTegSvVtFZndTwdE0qGipVPn2IFavqNqVHFpGPmo=
+	t=1716461017; cv=none; b=a+MpwzcnKIbojj0gZKWTS2QbdFIPNZ2XhquH7ynMHUXtT3Ndy5QlUqG5uwq+5QCmfUw8ka2/rhW5dmoupqkryIQA+Lq7aZ4hQmb2ecIGCqVINWwk/hc9w1/9hZfSDNyXJILa6Duqb1myBw3AC3kDqo4dR2vBh+g9063i+Ax/Sg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716460967; c=relaxed/simple;
-	bh=BIp8V+DKGlfhtyH5F/wbHKFDgs2uvsnHX+CSz9AjqZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C/jS197ePpTIaXIxFwg0QuvrJr03d2/d4CothrAVms4wWatWJih/aB6Z/hesZB4zhI3BSwzPglNNedK10wW6aLfq7S97JPvXJjkCLbjS7JybBgNr2fsGVmO++UuW0yEigPvaOXAtsPGcfRfa8kCpzA8uu5V5LGwCe49e7Ayvivk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eWOyTJTi; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-354e0d4db6cso1054569f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:42:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716460964; x=1717065764; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2KDdQKxWJ35TnwQ2Y115y1B8VQNH6wqcjHGIJjckbyM=;
-        b=eWOyTJTiTk/rghDXhEZjj1Vx+T5cf/G/izCVUfkMUI3b6BBYRRRoHOhqi+wRhfIhd8
-         JmH2UjBdU9kI4utsKjCHEXZLC2ZdhX87lU3T8Co6O0UshJRoOcfe6ToZVDAWIdIQEB3W
-         HB8TgKeYTv2vD4XckNhCP9o4s4sMKwBvCZlvhiNoPknLfxje0etcV8MWr53n+Gv+nsjU
-         sKkLKyM+E2aH8TftD5+Y8nloN9pgmaJoYHGjSZJsCVmqr0NYWInokjF1GSop79cbXdey
-         hG4CipFIyxtS1jfJ4waOoqcZu/auylQL32bcu7qfJSYHQv1TDtYRZN/7CQxMeHU2Pj3D
-         uT6Q==
+	s=arc-20240116; t=1716461017; c=relaxed/simple;
+	bh=nDxsQh//zo1y5z5bauVnQVFtzT643YqTMG646rY/zdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxD3oUXOzLX8dzeTz3ITl1npfVXQYP2PFEua2dYbQx9JAHbPKxZ1pLx5cMEib5tyby2J+ZTcdiYS4sR8AxfVwmf9cJYxdDy4VdKTsL1V2IBNcj3FICL9LvXwe7TBZwljuJEfg+S6JaMLyPPeEAZ3uQR9PowBmNDWIPSWE+rWvWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H3qz4aTV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716461013;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hbDIGJhvRjqMZ04SQyKdRF9N/GO/OgDidrS2yTufDB8=;
+	b=H3qz4aTVKr+OMbvuUxpBrg9t6+NG/SskX0gaFK/95eKyiRgzEZvmvknRtKoT6794KtXJC0
+	X8gi9x5+8aR61bq8SgwBnqWUgd7v/F0MYLcI4/63U7KUtS4tVXmSdMVbdf+tN9YRn7WhAk
+	ur1/XHAVL2BIdj43AOgm9h+ij5rZ5hE=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-kMg-vW0sMIqMjMkZl4aThg-1; Thu, 23 May 2024 06:43:32 -0400
+X-MC-Unique: kMg-vW0sMIqMjMkZl4aThg-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-792badf6670so1989112085a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:43:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716460964; x=1717065764;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2KDdQKxWJ35TnwQ2Y115y1B8VQNH6wqcjHGIJjckbyM=;
-        b=Gui6ORWZIKIcbSgGj/hikvHjDAQyRnR7sOK3grIno5heMWSPxnujb1Wf+V4QEvKKAo
-         58EqIAMcraEJBeyom2G6ZVmUmUfivlorgyhcCEv3deN8vXbwxbBywNUnMpFl3GRl+klc
-         1MYfVgDNIheumIRAoLofKnojbpQSduWKuDqwoQn9IhxItIioh3kn1ru5r3J6wguJf5bZ
-         p0WF5U3jGWZcnW2cWu0vRDoUC3IuUfEqWAUYMJcZTdGI3yv9A4Xleh8lz310GNiB5Li6
-         eGlwvAsRNcjyow2QNYwmgIacwADtloMtlUFEyRzys4/mqSHQ1qO1bqa+7L2zhwEikFLB
-         UXag==
-X-Forwarded-Encrypted: i=1; AJvYcCULHKq1ljNfQsUK7pvWgR2bNL9lb3u4Haa+YEa91w7UH1tbw+VIPBqW6kDgM9efwkHXytEbrF2ezNcgOnXLekGigTcHg8x/rkz1Szvj
-X-Gm-Message-State: AOJu0YyI1yMWjeuSBlp49uiEGTcfI3isQn9gFWAEbtRlsBdNzs1TpGQw
-	L/R/pipI7TOcdMjfWmflIjT2GRdgiTLfPqmN2OL8HnVOrKfU0aYqv8mO4BWMyLo=
-X-Google-Smtp-Source: AGHT+IFCxOVGjni/Qou98ipUA8+WBVhug9nclkRA+OWW1zR++81o5emL3+a0SUxs0Okbnlo5TbFriA==
-X-Received: by 2002:a5d:5142:0:b0:34c:f87b:f9fb with SMTP id ffacd0b85a97d-354f757d9c3mr1637122f8f.25.1716460964230;
-        Thu, 23 May 2024 03:42:44 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35501491c40sm516038f8f.28.2024.05.23.03.42.43
+        d=1e100.net; s=20230601; t=1716461012; x=1717065812;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hbDIGJhvRjqMZ04SQyKdRF9N/GO/OgDidrS2yTufDB8=;
+        b=GkghPfrTyrgyxPkTI0DBGt08vFdaI/U6d2vImJxLfh9DFFGy2LOwzcgtOQ9KKZdiyY
+         WpX48NknktI87IniFiSMN3LFpGw2TdO9xYxnEIjB3Z43LxvN0a/Jm/b40lgdOnnKO6oy
+         DSeDbf/S7W4SZcDhHCLDTe/0I74YJBn37xWd/zyqjYvnmzY64QTIgfBSYfYAP0dDkKbR
+         ZeLwRdne3kqAk/+6ZbmbPf61u9Rmyn+IuOrH5zfCJKAjUEkJbTJhNHCBH/cNF+1+OqGn
+         iyr8rrvZtI8BHZGJEAo56+qEcDKTIv/Lt3NvcxveI9p7chIiDXmtMKWIPC3RaAvJ5V8Q
+         mz+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVH6cGmH/4zKubxBYE9AcbFnIR3WYBW+Zl7a7eS5SOl5xH7KuG47WYZPlgL/IONjgziA7pYV6d3yL1cv3al7az6OxWto8V2K87jGl0G
+X-Gm-Message-State: AOJu0YzSun3gdqzDbVT/APNbYgYtXsAHs0zxZbj5SwWYQI8D74wIrOvS
+	/gjiLjBvfrKLlUsla0oMnTmQMxA8qPuSGl0lvRkm3SoYWb6iSExWpQ20FC8syMxJNHWI/jzP+K7
+	6oou8p1KyovbvkaUTQE9vLaCSNJ/iNMHtvOCtjApPE5pkQh4tmk5CAyNkdgm2Sg==
+X-Received: by 2002:a05:620a:f87:b0:792:c037:abc7 with SMTP id af79cd13be357-7949943d681mr399676485a.25.1716461011863;
+        Thu, 23 May 2024 03:43:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyXkeky/hgXWrbr7XrVg67knYOzWxw3YK7pzC7NB1DXzAMHA73585YCgpBWOuQEQKJpllUnQ==
+X-Received: by 2002:a05:620a:f87:b0:792:c037:abc7 with SMTP id af79cd13be357-7949943d681mr399674785a.25.1716461011444;
+        Thu, 23 May 2024 03:43:31 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-53-30-109.retail.telecomitalia.it. [79.53.30.109])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794724bb95dsm531587285a.53.2024.05.23.03.43.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 03:42:43 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 4/4] ASoC: codecs: wcd939x: Minor white-space and define cleanup
-Date: Thu, 23 May 2024 12:42:28 +0200
-Message-ID: <20240523104228.36263-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240523104228.36263-1-krzysztof.kozlowski@linaro.org>
-References: <20240523104228.36263-1-krzysztof.kozlowski@linaro.org>
+        Thu, 23 May 2024 03:43:30 -0700 (PDT)
+Date: Thu, 23 May 2024 12:43:26 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Xuewei Niu <niuxuewei97@gmail.com>
+Cc: stefanha@redhat.com, mst@redhat.com, davem@davemloft.net, 
+	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xuewei Niu <niuxuewei.nxw@antgroup.com>
+Subject: Re: [RFC PATCH 1/5] vsock/virtio: Extend virtio-vsock spec with an
+ "order" field
+Message-ID: <opwx66tvekodbus52cmg4nihiopma46b7fpnnrdzw6l2ij7jai@7rqy3nnl6upn>
+References: <20240517144607.2595798-1-niuxuewei.nxw@antgroup.com>
+ <20240517144607.2595798-2-niuxuewei.nxw@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240517144607.2595798-2-niuxuewei.nxw@antgroup.com>
 
-Correct white-space issues and drop unused
-WCD939X_MBHC_IS_SECOND_RAMP_REQUIRED() define.  No functional impact.
+As Alyssa suggested, we should discuss spec changes in the virtio ML.
+BTW as long as this is an RFC, it's fine. Just be sure, though, to 
+remember to merge the change in the specification first versus the 
+patches in Linux.
+So I recommend that you don't send a non-RFC set into Linux until you 
+have agreed on the changes to the specification.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- sound/soc/codecs/wcd939x.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On Fri, May 17, 2024 at 10:46:03PM GMT, Xuewei Niu wrote:
+>The "order" field determines the location of the device in the linked list,
+>the device with CID 4, having a smallest order, is in the first place, and
+>so forth.
 
-diff --git a/sound/soc/codecs/wcd939x.c b/sound/soc/codecs/wcd939x.c
-index 201592c728c3..770bc2f35ba7 100644
---- a/sound/soc/codecs/wcd939x.c
-+++ b/sound/soc/codecs/wcd939x.c
-@@ -85,7 +85,6 @@ enum {
- #define WCD939X_MBHC_GET_X1(x)		((x) & 0x3FFF)
- 
- /* Z value compared in milliOhm */
--#define WCD939X_MBHC_IS_SECOND_RAMP_REQUIRED(z) false
- #define WCD939X_ANA_MBHC_ZDET_CONST	(1018 * 1024)
- 
- enum {
-@@ -525,7 +524,7 @@ static int wcd939x_codec_hphl_dac_event(struct snd_soc_dapm_widget *w,
- 						      WCD939X_DIGITAL_CDC_COMP_CTL_0,
- 						      WCD939X_CDC_COMP_CTL_0_HPHL_COMP_EN,
- 						      true);
--			 /* 5msec compander delay as per HW requirement */
-+			/* 5msec compander delay as per HW requirement */
- 			if (!wcd939x->comp2_enable ||
- 			    snd_soc_component_read_field(component,
- 							 WCD939X_DIGITAL_CDC_COMP_CTL_0,
-@@ -1869,7 +1868,6 @@ static void wcd939x_mbhc_program_btn_thr(struct snd_soc_component *component,
- 
- static bool wcd939x_mbhc_micb_en_status(struct snd_soc_component *component, int micb_num)
- {
--
- 	if (micb_num == MIC_BIAS_2) {
- 		u8 val;
- 
--- 
-2.43.0
+Do we really need an order, or would it suffice to just indicate the 
+device to be used by default? (as the default gateway in networking)
+
+>
+>Rules:
+>
+>* It doesn’t have to be continuous;
+>* It cannot exist conflicts;
+>* It is optional for the mode of a single device, but is required for the
+>  mode of multiple devices.
+
+We should also add a feature to support this new field.
+
+>
+>Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
+>---
+> include/uapi/linux/virtio_vsock.h | 1 +
+> 1 file changed, 1 insertion(+)
+>
+>diff --git a/include/uapi/linux/virtio_vsock.h b/include/uapi/linux/virtio_vsock.h
+>index 64738838bee5..b62ec7d2ab1e 100644
+>--- a/include/uapi/linux/virtio_vsock.h
+>+++ b/include/uapi/linux/virtio_vsock.h
+>@@ -43,6 +43,7 @@
+>
+> struct virtio_vsock_config {
+> 	__le64 guest_cid;
+>+	__le64 order;
+
+Do we really need 64 bits for the order?
+
+> } __attribute__((packed));
+>
+> enum virtio_vsock_event_id {
+>-- 
+>2.34.1
+>
 
 
