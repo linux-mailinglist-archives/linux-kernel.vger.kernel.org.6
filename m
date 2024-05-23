@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-187217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 139108CCEB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:01:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB058CCEB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C631C20DF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF2791F23AC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909AA13CFB9;
-	Thu, 23 May 2024 09:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B4613D26D;
+	Thu, 23 May 2024 09:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IKMOxD4K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C87aiH9c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7238B42040
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680FE5B5B8;
+	Thu, 23 May 2024 09:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716454901; cv=none; b=M9UE/SImwaOYp65O05+K1D9ruEcp3v7z/MmM2urLYcEUxyIK/6ZOZ4Qh2B/pysLtRvwjhai4QAOv3QOUhE3oFoLNeFasOGdwz4M4XumpZG/fWdHsncCpGTv1owq7FtappZfmK3WmyFdrrG/C98E6YnyAKYU2ROXNELTIif4Qa6o=
+	t=1716454999; cv=none; b=puEGAW26UYHJE6nfbeG+5Ve4amYOOXbnZEHlxPbLTVbkQTYbu0Ks7Vt7+pwk7S/pRJjWpGFQ+RRjr/B7mSn9bKqivUkjJqaGxa9NBVSK1MDkBiE3sMxKrfBEozEYBNntqIttYEO4OdLE9sBBVBymQDWL1zGRnScTQzY6EvuV0hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716454901; c=relaxed/simple;
-	bh=9JZ4vRyQSMOfMmu/Xksqw4BMvaZK4uQ39PyE/CgZAtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lx7AQm2abr9ElLV/zECceEa5x43IidYv3LxAPQk0ekv+K7z81LLrq95V9SJ84XjEv6slQ3C1zrUOvLqly9Z0k0ugAGmmPtnKYkvP7NW/Sk6KhEBYoj1wAkyb/N4zZK0/FVMs2+TTBbEvF2m0L51qeUA//0KfORvTm7foPyEvE1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IKMOxD4K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716454899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mFacu1kUKny2NDsPD4zOPoyJoW5apqOqcBL0dKkoTjo=;
-	b=IKMOxD4KBgJlE7koL0xGcA/j+y0wfCpxDoYcHnL/CLFFDQoRf+nWnEjvFGr2MmjUswqhdC
-	JEMrq8cD5q6z8F0nrtNHWauwioAqG5APFI+P8kLY965KFCzHUm5TnHUl9hnxcddHDy/WWg
-	EygvCAN27b3G64aRfk1UBUZIXgNY5h0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-389-D4efVv2oM0eKn96ZQCIxoA-1; Thu, 23 May 2024 05:01:34 -0400
-X-MC-Unique: D4efVv2oM0eKn96ZQCIxoA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 39C53800994;
-	Thu, 23 May 2024 09:01:34 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.7])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 2C8CF40C6EB7;
-	Thu, 23 May 2024 09:01:31 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 23 May 2024 11:00:07 +0200 (CEST)
-Date: Thu, 23 May 2024 11:00:04 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrei Vagin <avagin@google.com>
-Cc: Kees Cook <keescook@chromium.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH 2/3] seccomp: release task filters when the task exits
-Message-ID: <20240523090004.GC15163@redhat.com>
-References: <20240523014540.372255-1-avagin@google.com>
- <20240523014540.372255-3-avagin@google.com>
+	s=arc-20240116; t=1716454999; c=relaxed/simple;
+	bh=KVukfS4Pd+wo33EJWTKBvTd3vyfqo7ASHDk8sbV1Xwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rC3LMgb8SOFmYgRGpNmcLjfXyve5rVV/vfhaqCr+yBLFvYV3JdSntpcf+M/zc4QXr++4B6wSUrDFbmNlx+sYN9Z2qhUoMnQ1YKswhvdPBlQy5B8S8WTkrdTjceCyy9gJR9+vzkG458uJwfWLzxmPDA4NAf/hfwx9fuDJC7ajjtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C87aiH9c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3268C2BD10;
+	Thu, 23 May 2024 09:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716454998;
+	bh=KVukfS4Pd+wo33EJWTKBvTd3vyfqo7ASHDk8sbV1Xwg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C87aiH9cQuMaLf+vh1NezGI3OQAYOQ1V3NtrtC5Pl21cWHU1PVL4wR1KdvLORZIOx
+	 CoogN+luWNmSWO9/L2s5CvBErUf+A92nxvQQRC48Si6RzbcWWL67S/PFooM47tIKvZ
+	 syilXWVKoXjkcR4d48UeykvEHnMaie5DLH73XdhU8putKOxK1htk3kKhND0WzXrZ1I
+	 QgeD5t8N6Eoquw3NLi9MaV/RDgzxgU0zy5RweiF2mQqXniaUN5f8EUhfiIo15a4mbw
+	 N3RwjQcKEbkWH060KEOX2X6wOAcQdM6+yaC3s0Sj0mTIFPUjU3tRHopEoZrTgPTS39
+	 xUeKY1SeoOX6g==
+Message-ID: <56ae2abf-fec8-4010-9d50-01f1bca1a61b@kernel.org>
+Date: Thu, 23 May 2024 11:03:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523014540.372255-3-avagin@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: arm: qcom: Add Lenovo Smart Tab M10
+ (WiFi)
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+References: <20240523-topic-sdm450-upstream-tbx605f-v1-0-e52b89133226@linaro.org>
+ <20240523-topic-sdm450-upstream-tbx605f-v1-1-e52b89133226@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240523-topic-sdm450-upstream-tbx605f-v1-1-e52b89133226@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 05/23, Andrei Vagin wrote:
->
-> Previously, seccomp filters were released in release_task(), which
-> required the process to exit and its zombie to be collected. However,
-> exited threads/processes can't trigger any seccomp events, making it
-> more logical to release filters upon task exits.
->
-> This adjustment simplifies scenarios where a parent is tracing its child
-> process. The parent process can now handle all events from a seccomp
-> listening descriptor and then call wait to collect a child zombie.
->
-> seccomp_filter_release takes the siglock to avoid races with
-> seccomp_sync_threads. There was an idea to bypass taking the lock by
-> checking PF_EXITING, but it can be set without holding siglock if
-> threads have SIGNAL_GROUP_EXIT. This means it can happen concurently
-> with seccomp_filter_release.
->
-> Signed-off-by: Andrei Vagin <avagin@google.com>
+On 23/05/2024 09:59, Neil Armstrong wrote:
+> This documents Lenovo Smart Tab M10 (WiFi) (model tbx605f)
+> which is a 10.1" tablet by Lenovo based on the SDM450 SoC.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  kernel/exit.c    |  3 ++-
->  kernel/seccomp.c | 22 ++++++++++++++++------
->  2 files changed, 18 insertions(+), 7 deletions(-)
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
