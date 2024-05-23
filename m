@@ -1,139 +1,134 @@
-Return-Path: <linux-kernel+bounces-187664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE878CD61F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:50:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780858CD626
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413041F24799
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:50:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12753B20F28
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26483847B;
-	Thu, 23 May 2024 14:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F5B6FCC;
+	Thu, 23 May 2024 14:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cELGUhTJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C0A7470
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B4A5227;
+	Thu, 23 May 2024 14:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716475800; cv=none; b=ZbblSvMCMJaFPsgRiYQYgkCIYEg6+tHLbas0axWoFPETFdIWYsVnixxuJHLnKYBfUe36uKaLesWtNXMnVW1vv1u7HdL0+zX/AN7BYBdoUukRe79XvJhZ14GosghwlH9O4SnqlNVgxPexDGVZt/eedXFYiCC0NMElA1Z+24UTbgs=
+	t=1716475867; cv=none; b=raDJjMWl3i7mgg87azCBeQbIA3hJcI8EXvkcB+ngkxbwApyUkNpUe+D6ZdNMr1c5gM8pAJBTn0L0Np5FVaSazZWiVcX/gVSsSJwXxjeFGsiF3ezjSQiCpEtXKD+iKM3xJZV2qWVdenf9QGPKL88hUznTgGoCyMFU8kttCRB3rGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716475800; c=relaxed/simple;
-	bh=ru3w+J+6Vnwg7ev/IkU4r/Z7zPmWepvVccSojIJNWLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tS7dVhOpeNjFEgz9Lxs8J97MY0Jrek8ZD+3Cr6spS7cYRFoi+qDFEYgQJGEqKEPKhc5DU6JB1OuNvxG8UqmTGx4WCpW7XzS5OQeaAsNc+WHtLe5Emb/CcclLq2lkgt/tYWokI87AJD2p4P5OeH2unHVnpcKUWuVw00eU5n7n0ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75AE5C2BD10;
-	Thu, 23 May 2024 14:49:59 +0000 (UTC)
-Date: Thu, 23 May 2024 10:50:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Shuah Khan <skhan@linuxfoundation.org>
-Subject: [for-linus][PATCH] tools/latency-collector: Fix -Wformat-security
- compile warns
-Message-ID: <20240523105043.2dc94825@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716475867; c=relaxed/simple;
+	bh=KXr+O49jgY3DWM6OLjKqbbwipuCBHbRBENFht4rZ6iY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iTOwgts3cU22oOzgGq8i36AAQqBXal2ukaZSnIBEQavy0kbt8TpezXdBzQN6oc0zvy+BIopqF//hnYRPMJHzGhpiRm5PS4stv6LfeE6Z2s8r02E+HmICZ5W7zFIMTXUuCUKFLDSyin7Km+NlLEHW+l7qov9xqxhMB3gFbx4AVWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cELGUhTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5D7C2BD10;
+	Thu, 23 May 2024 14:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716475867;
+	bh=KXr+O49jgY3DWM6OLjKqbbwipuCBHbRBENFht4rZ6iY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cELGUhTJByfteAzCn7jYhjQ9L+H2tm2L98G08fQVHP5rZuDBlapct1p2yKI0bgnCu
+	 LjQKuvZd9RVrMx9JqMxlU/ttymX2Uh54hnQoGTFqGjVlUUgRHd4AMbJvnDwFDfJtml
+	 /M8LxC8oap72j60cMJnypX77k/xK7pCK1SdWD8e/+b6pzjgxMT9yHfEieRf2ufH9M/
+	 kpikBeA3Jvcc+jSOfgtA2IEG6NuyHNzcGuWcEup8MDx789FfnnYCOdsyzEcwgwWfTE
+	 JTQrHC+4fZuSD1BTtrbBidV3jxga4TGuTOQ6cMsPX6JEGl9ktqhNCK/9A8oBKeiQhQ
+	 VqyuYEmNPnnOw==
+Date: Thu, 23 May 2024 15:51:01 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Oleh Kuzhylnyi <kuzhylol@gmail.com>
+Cc: linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
+	jeff@labundy.com, neil.armstrong@linaro.org, schnelle@linux.ibm.com,
+	arnd@kernel.org, hdegoede@redhat.com, linux-kernel@vger.kernel.org,
+	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	artur.serhiienko@gmail.com, igor.opaniuk@gmail.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: input: touchscreen: add Hynitron
+ CST816X
+Message-ID: <20240523-hulk-sake-da52a7545ab5@spud>
+References: <20240522203347.2263425-1-kuzhylol@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0lfDBifo+k1uqAPQ"
+Content-Disposition: inline
+In-Reply-To: <20240522203347.2263425-1-kuzhylol@gmail.com>
+
+
+--0lfDBifo+k1uqAPQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+On Wed, May 22, 2024 at 05:33:46PM -0300, Oleh Kuzhylnyi wrote:
+> Add documentation for the Hynitron CST816X touchscreen bindings.
+>=20
+> Signed-off-by: Oleh Kuzhylnyi <kuzhylol@gmail.com>
+> ---
+>=20
+> Changes in v2:
+>  - Apply pin definitions and DT headers
+>  - Use generic name for DT node
+>  - Drop status field
+>=20
+>  .../input/touchscreen/hynitron,cst816x.yaml   | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/h=
+ynitron,cst816x.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/hynitron=
+,cst816x.yaml b/Documentation/devicetree/bindings/input/touchscreen/hynitro=
+n,cst816x.yaml
+> new file mode 100644
+> index 000000000000..22bd145db5ee
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/hynitron,cst816=
+x.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/touchscreen/hynitron,cst816x.ya=
+ml#
 
-- Use the printf format string with %s to take a string instead of taking
-  in a string directly.
+Filename matching compatible please, so s/cst816x/cst816s/.
 
-Shuah Khan (1):
-      tools/latency-collector: Fix -Wformat-security compile warns
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Hynitron CST816X series touchscreen controller
+> +
+> +description: |
 
-----
- tools/tracing/latency/latency-collector.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
----------------------------
-commit df73757cf8f66fa54c4721c53b0916af3c4d9818
-Author: Shuah Khan <skhan@linuxfoundation.org>
-Date:   Wed Apr 3 19:10:09 2024 -0600
+The | here is not needed & you can drop the "Bindings for" below.
 
-    tools/latency-collector: Fix -Wformat-security compile warns
-   =20
-    Fix the following -Wformat-security compile warnings adding missing
-    format arguments:
-   =20
-    latency-collector.c: In function =E2=80=98show_available=E2=80=99:
-    latency-collector.c:938:17: warning: format not a string literal and
-    no format arguments [-Wformat-security]
-      938 |                 warnx(no_tracer_msg);
-          |                 ^~~~~
-   =20
-    latency-collector.c:943:17: warning: format not a string literal and
-    no format arguments [-Wformat-security]
-      943 |                 warnx(no_latency_tr_msg);
-          |                 ^~~~~
-   =20
-    latency-collector.c: In function =E2=80=98find_default_tracer=E2=80=99:
-    latency-collector.c:986:25: warning: format not a string literal and
-    no format arguments [-Wformat-security]
-      986 |                         errx(EXIT_FAILURE, no_tracer_msg);
-          |
-                             ^~~~
-    latency-collector.c: In function =E2=80=98scan_arguments=E2=80=99:
-    latency-collector.c:1881:33: warning: format not a string literal and
-    no format arguments [-Wformat-security]
-     1881 |                                 errx(EXIT_FAILURE, no_tracer_ms=
-g);
-          |                                 ^~~~
-   =20
-    Link: https://lore.kernel.org/linux-trace-kernel/20240404011009.32945-1=
--skhan@linuxfoundation.org
-   =20
-    Cc: stable@vger.kernel.org
-    Fixes: e23db805da2df ("tracing/tools: Add the latency-collector to tool=
-s directory")
-    Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Maybe add a link to a datasheet if you don't want title =3D=3D description.
 
-diff --git a/tools/tracing/latency/latency-collector.c b/tools/tracing/late=
-ncy/latency-collector.c
-index 0fd9c747d396..cf263fe9deaf 100644
---- a/tools/tracing/latency/latency-collector.c
-+++ b/tools/tracing/latency/latency-collector.c
-@@ -935,12 +935,12 @@ static void show_available(void)
- 	}
-=20
- 	if (!tracers) {
--		warnx(no_tracer_msg);
-+		warnx("%s", no_tracer_msg);
- 		return;
- 	}
-=20
- 	if (!found) {
--		warnx(no_latency_tr_msg);
-+		warnx("%s", no_latency_tr_msg);
- 		tracefs_list_free(tracers);
- 		return;
- 	}
-@@ -983,7 +983,7 @@ static const char *find_default_tracer(void)
- 	for (i =3D 0; relevant_tracers[i]; i++) {
- 		valid =3D tracer_valid(relevant_tracers[i], &notracer);
- 		if (notracer)
--			errx(EXIT_FAILURE, no_tracer_msg);
-+			errx(EXIT_FAILURE, "%s", no_tracer_msg);
- 		if (valid)
- 			return relevant_tracers[i];
- 	}
-@@ -1878,7 +1878,7 @@ static void scan_arguments(int argc, char *argv[])
- 			}
- 			valid =3D tracer_valid(current_tracer, &notracer);
- 			if (notracer)
--				errx(EXIT_FAILURE, no_tracer_msg);
-+				errx(EXIT_FAILURE, "%s", no_tracer_msg);
- 			if (!valid)
- 				errx(EXIT_FAILURE,
- "The tracer %s is not supported by your kernel!\n", current_tracer);
+Otherwise,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--0lfDBifo+k1uqAPQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk9X1QAKCRB4tDGHoIJi
+0iLcAQCd9wA6lC/r6uoaFfC4d+Rr6zRitp2mhqDJZ9AH+SEkrQEAoNlgRPmKtt1o
+BhQXnP0f3PcfwbvBrmiadI8uHUh8BwE=
+=eJC5
+-----END PGP SIGNATURE-----
+
+--0lfDBifo+k1uqAPQ--
 
