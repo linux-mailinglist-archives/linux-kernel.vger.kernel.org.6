@@ -1,94 +1,117 @@
-Return-Path: <linux-kernel+bounces-187606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA288CD529
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9798A8CD52E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB11C1F21350
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:58:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3941F1F21A13
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A75214C58A;
-	Thu, 23 May 2024 13:58:25 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id F209714C584
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A2814B07E;
+	Thu, 23 May 2024 13:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="B9WduptF"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957FA14AD2B
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716472704; cv=none; b=HNQEniKt/4ORxTCDDpktr72ELx68siu22gx7uszD5Vl6w7yR939jGFqdiL4fUevpu63Pcr3epfTrab3DvIDleIYgjERWYNlecajD94D6QhGtVXjME8ANt6nf4UDFIgSPqGoChagaWkYGN/PHFI8WGDSVnhQ2lFZxzULuxgMuWTs=
+	t=1716472729; cv=none; b=X/nn5XwFMzx66sqVQhUxSBf4sdZObbCe0+X2mxnnTSCowa7cH/AXQVPO1OzvDiXRnnHxFDM5sQBaCojEZ/1sK3Eq0nWTsqNRJFxIQFAI+E4IlvzdiUyzi3MVGSq/Dw9llorYRkVL9DTKzBiufXnqnGGpM5sw1rAIbY1N6QW1VP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716472704; c=relaxed/simple;
-	bh=ZxJY/vy8dQ5OzcdO9I/EsiKfnNp0n7gwTw3kEMSmU70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSwwekpbwctO7bLH+g1wmsHc33lv9rdrU0dX6F8ShGMV0ILgklb8Ceh/k3vhwKEj/Wc1FhFXV5evcBqYLVT5Zc1ewzq4Y0qd4rZNPH29iFKOhxC8oYtY/S/88o1x6m/x88QWZ4981xxK8u0yY3jaOYWCvw4PAHsllZ7P5h3QWbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 538957 invoked by uid 1000); 23 May 2024 09:58:21 -0400
-Date: Thu, 23 May 2024 09:58:21 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Shichao Lai <shichaorai@gmail.com>
-Cc: gregkh@linuxfoundation.org, oneukum@suse.com, linux-usb@vger.kernel.org,
-  usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-  xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>
-Subject: Re: [PATCHv2] Check whether divisor is non-zero before division
-Message-ID: <a0afa88b-f84c-4b45-a265-2e6bcbb84b35@rowland.harvard.edu>
-References: <20240523092608.874986-1-shichaorai@gmail.com>
+	s=arc-20240116; t=1716472729; c=relaxed/simple;
+	bh=K8S/RH5xbSFWbYcSj/xEygnrg6Y4m/tKjga93P359e8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QZubh4Ff/oallNR9mCrTSLUMxDto1ihh6fN1/I/YGhTmOnK4TgtZ14+RFzhG10Ox3dFIlcK29E/CVEHdyv22JbS7fvyLpiycu4anFr7HyMFeCYsIjPsHrYaS4XFKTAmg9A2aJbXzi+9RnXDhCA0fKhYmS7W5PneP1AVUJAtwyKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=B9WduptF; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
+	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=Wi7mrKqXXrJP2C7bbxhuWiixIqln+QxOIIfqxzOJhsE=; b=B9
+	WduptFYpkNFUY/yOKcu7PUOWulGWckQ9s1eiukQWg6xDcHopsS022VdxwN1bH/ThCTNwbCM1jl18+
+	T7ggZulEdyzPcVbENgxE2TwYeMMFq8FhWWIS3wV7z0D2B+eM0Xtj2fdfrWYkmOqOW84X+NjA44u4K
+	1sf2ELgpGCqTHPXYQAN9dQhz8SZoAftMhcLxjqs9uRN0ibqmXxhVIhDJhErrHSjM+z3VM3iTVok5B
+	TvjkFe++Swfbln71vwWLlWEAmUh3Ys52OxzGN6pzyNXP9GfLKCjFBjpULSZGV7pyM8tKtNJxRrbjN
+	6fECV2DI7ohHDtw1dUthqERwIQEf7T5w==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sA8xm-0009t7-4N; Thu, 23 May 2024 15:58:34 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sA8xl-0003xo-1I;
+	Thu, 23 May 2024 15:58:33 +0200
+From: Esben Haabendal <esben@geanix.com>
+Date: Thu, 23 May 2024 15:58:22 +0200
+Subject: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
+ selectable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523092608.874986-1-shichaorai@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
+X-B4-Tracking: v=1; b=H4sIAH1LT2YC/x3MQQqAIBBA0avErBuwqTC7SrQoG20gLBQikO6et
+ HyL/zMkjsIJxipD5FuSnKGgqSuw+xI8o2zFQIo61VOLLh0ozqI9gxOPdtDaKFrJaIYSXZGdPP9
+ wmt/3A7VDsm1gAAAA
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716472713; l=1025;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=K8S/RH5xbSFWbYcSj/xEygnrg6Y4m/tKjga93P359e8=;
+ b=qMuktJFS7Ku96n3tugCChtvnkI020HZp6LQY2vjkxJtjzq5YyGqp4QT7ihudxDbqvvFJ7p5kc
+ 4dXzuNWAZPCDV4wHDnPRFHVKrCOskNIYCrfGHJ5Tah+LRPszD0Z6MmS
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27284/Thu May 23 10:32:30 2024)
 
-On Thu, May 23, 2024 at 05:26:08PM +0800, Shichao Lai wrote:
-> Since uzonesize may be zero, so judgements for non-zero are nessesary in both place.
-> Previous check is moved out of loop, and one more check is added in alauda_write_lba.
-> 
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Reported-by: yue sun <samsun1006219@gmail.com>
-> Signed-off-by: Shichao Lai <shichaorai@gmail.com>
-> ---
->  drivers/usb/storage/alauda.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-> index 115f05a6201a..a6e60ef5cb0d 100644
-> --- a/drivers/usb/storage/alauda.c
-> +++ b/drivers/usb/storage/alauda.c
-> @@ -818,6 +818,8 @@ static int alauda_write_lba(struct us_data *us, u16 lba,
->  	unsigned int blocksize = MEDIA_INFO(us).blocksize;
->  	unsigned int lba_offset = lba % uzonesize;
->  	unsigned int new_pba_offset;
-> +	if (!uzonesize)
-> +		return USB_STOR_TRANSPORT_ERROR;
->  	unsigned int zone = lba / uzonesize;
->  
->  	alauda_ensure_map_for_zone(us, zone);
-> @@ -923,6 +925,8 @@ static int alauda_read_data(struct us_data *us, unsigned long address,
->  	unsigned int uzonesize = MEDIA_INFO(us).uzonesize;
->  	struct scatterlist *sg;
->  	int result;
-> +	if (!uzonesize)
-> +		return USB_STOR_TRANSPORT_ERROR;
->  
->  	/*
->  	 * Since we only read in one block at a time, we have to create
+While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
+driver selects FSL_IFC automatically, we need the option to be selectable
+for platforms using fsl_ifc with NOR flash.
 
-This is definitely NOT the right way to fix the bug!
+Fixes: ea0c0ad6b6eb ("memory: Enable compile testing for most of the drivers")
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+ drivers/memory/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-uzonesize is set once, when the device is probed, in 
-alauda_init_media().  That is where the check belongs; if uzonesize is 0 
-then the function should print a warning and return 
-USB_STOR_TRANSPORT_ERROR, because the device is unusable.
+diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
+index 8efdd1f97139..c82d8d8a16ea 100644
+--- a/drivers/memory/Kconfig
++++ b/drivers/memory/Kconfig
+@@ -167,7 +167,7 @@ config FSL_CORENET_CF
+ 	  represents a coherency violation.
+ 
+ config FSL_IFC
+-	bool "Freescale IFC driver" if COMPILE_TEST
++	bool "Freescale IFC driver"
+ 	depends on FSL_SOC || ARCH_LAYERSCAPE || SOC_LS1021A || COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 
 
-It's probably a good idea to check pagesize, blocksize, and zonesize at 
-the same time, even though none of them are used for any divisions.
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240523-fsl-ifc-config-c877902b297e
 
-Alan Stern
+Best regards,
+-- 
+Esben Haabendal <esben@geanix.com>
+
 
