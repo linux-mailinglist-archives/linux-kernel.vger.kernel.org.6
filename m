@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-187994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCDB8CDBA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:54:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E3C8CDBA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9151FB216AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062E01C2251D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F0286AFA;
-	Thu, 23 May 2024 20:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B313126F37;
+	Thu, 23 May 2024 20:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYJAiqPj"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1QZkGtQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F97126F02;
-	Thu, 23 May 2024 20:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F79086ADB;
+	Thu, 23 May 2024 20:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716497642; cv=none; b=RuSVgdlSd1gRKEBAKiTFzto2xh/nVRvNx5xKgxiDr+qfydvaWmNph5lXouFnQZt94tI7dUX3Cy0iEVHicjg8NfEUgNxYt6TqqvCR2JFAC8rjAPnQDtwSjGa7UiUoQGDUgsNl51MzBuV1UWCO4hZh5rLuGuUGR0uUeDPtKeePixE=
+	t=1716497750; cv=none; b=HqY5l7QUE7gDJJPdr+F9kK90l6OfazMt5wXUk5GN4fbpYlwRT3BBuqwIUItwTVCqDE7V0DHcCPdQgKjXN+7n/N4R5DDlmxke9g0Dn14jxZITBbi6vt65OJ1AgmULwD/XoGllwcebEQ/eje2GbB5kh33JZW4GalebP66lUI/ak7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716497642; c=relaxed/simple;
-	bh=pjdVD0Ey758EwjNxbZg5v0ciiT64t0TzFMxkXUAipvw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g7DMBjqbLn0nK56YIBxMHzVQXmnXQP1zzV4eQPVoLqqzUC0IZulW+GqEva7Hmm4XU7BEil9UJ9t1NFy5nLHg5xmJug0a1+BZwPXLavCVhKYjDJN5LglWyLzX/ve1unxJbdT9tblQxjCT+JsoszdVvTfLuomKHNuQSndMVKEDbCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYJAiqPj; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-68185f92bfdso144881a12.0;
-        Thu, 23 May 2024 13:54:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716497640; x=1717102440; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u3tHKSSpqdK97uiyWkm/Md0YuI2Y3keaW8/UuVa/Zik=;
-        b=DYJAiqPjHFysBddXcuLDsShlz5WwzRNjVya+2jru2X40gYQNTOCYd6yc2AmNP/hebP
-         7YEDg9MsgEIVbMmO2winE6JanVynLkUsezsQJ52JsWExRps/1pm6BWA+bWXkQ3IJbRXZ
-         KUyACeuzFDWcsnYVokqvAaoDO1S7I/iuohfnuhbIrsLQ6Q2vtWOgritsGnAn7znaJQfX
-         dVCtwjbw1czDNLXQhvE3s2ENBdXCqbUl5hadTLT069XEHIuLd+xL7WxPzC8ggo8FtDOd
-         6GQBE2qmof9kVmvGmb211mtLpXyZSOm1jNScXLQ+dJfICVTVEBl9z1e1ifN4BLWNCwjC
-         cUxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716497640; x=1717102440;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3tHKSSpqdK97uiyWkm/Md0YuI2Y3keaW8/UuVa/Zik=;
-        b=M0f5eJRFQAS9j+u7jfx7khv4CGDZoDNSNXfGCh5kWB8ck/HSGB9etwJ3cJETC+m71I
-         wlkuRNso+u7V1o54Zwbsog2P08wrfe21PudlrK0GrLtnF3Bz1eQjEOGaTzMlfZGNN0lD
-         lCAM+8xntM5ridQ09wKkte+/TpB2ru5eU31xLl2my0/Zh6t6t/A5trbBnj2x6fBZFxbm
-         cb+4d+8NmYQ271c6J4ESQI5/xFSQ3eIGG0EqajcFbc9J6WBonbWvetUOI5ONUFzrHcY+
-         yKKzpMF6Fa78Onx/1QRhPYcn0mETC7ZG7L2bhc6TR0dIskkMUNXmBYE/u23lrq0BTzKV
-         KRtg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9tqDzWSbfcLT7avK+vWkZsKiCpUgiqOghzBAozIDukJcj9NHwGLXGP5nNqTG66uyN5axFMItdpBe300H7GZM1eSjAQEk7hmE/Hvm11bAj8NRjID4WHkfhWQuAK3mtZuGcGEmh
-X-Gm-Message-State: AOJu0YxEU4k9AwhHgnFRj2s7RP2WXm0HLu53Ru7Pn0wRVqWYGahQaQtD
-	zxK3RpKxrUo/zHR0QIR/CneU9ahQxu3gRVKmh4uSLmOLzJ5C0jXH
-X-Google-Smtp-Source: AGHT+IHC97JOkbVLBmEFdPLulQZYGm7jf3Alvz+hlXanilKWbJ7JVA2WMR+URu6hZudYtfCu7PbVYw==
-X-Received: by 2002:a05:6a21:168e:b0:1af:fff9:30dd with SMTP id adf61e73a8af0-1b212d42ef1mr804825637.35.1716497639884;
-        Thu, 23 May 2024 13:53:59 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-6f8fcbeb973sm40251b3a.117.2024.05.23.13.53.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 13:53:59 -0700 (PDT)
-Message-ID: <15e80061-6e8e-4845-b377-e13dbaaa37bc@gmail.com>
-Date: Thu, 23 May 2024 13:53:57 -0700
+	s=arc-20240116; t=1716497750; c=relaxed/simple;
+	bh=bYJND2brIohOquChRi4KB6JO8mDP1tYK5N0YTGj9HCQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=gBNAvUFhXcemU69e+wJtVevm/tApKOAHk5XyQ6mZ1KOSpo/9YGQT3giVfHO7qBpY/73LLlw3oCPGVrmEWohrJVS2elgmeOxhjPlBeSmKSujkilWfq82h7aK4Dxf8fs/AtMyUa1yBDrx5Np9EMJyLJXKx8CID8nfe+pOjcBVhSq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1QZkGtQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 41175C3277B;
+	Thu, 23 May 2024 20:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716497750;
+	bh=bYJND2brIohOquChRi4KB6JO8mDP1tYK5N0YTGj9HCQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=m1QZkGtQ7HDonUflCim3C0887Ejwpcp2zPTMmYPSmBRgYslg2y9h9+2q0R0Klwa3i
+	 BJ1EpfjVTr1bnqQ8k6CE5b8yF8Cv9yc64+tLRpNFgHtVyZlia2MkpeKbJRQdB9W2yz
+	 StBPDVJxaI+0U1OVC0TZ5cum9s+CzRNnZF+meswfC5g8hGAXLFi3iyyNYIEt5x4vLp
+	 jJwpWI7fQgRxGl15txdtipMY5G2UtVyENbLaYI6X2DpbW6qgTwrRwF63EdJMuL28ie
+	 X5N9Qpm0tkBMrZiZoCv2zlHQ1IWyLcm9h0hByJlR9WygDdKuZQsq6AbKaepQqVbZy9
+	 Am3Nk6q4Acg9A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 36EA1C54BB2;
+	Thu, 23 May 2024 20:55:50 +0000 (UTC)
+Subject: Re: [GIT PULL] Please pull NFS client updates for 6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <c1293d87d1e91d9986cb03c923f714560a0cc4d0.camel@hammerspace.com>
+References: <c1293d87d1e91d9986cb03c923f714560a0cc4d0.camel@hammerspace.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <c1293d87d1e91d9986cb03c923f714560a0cc4d0.camel@hammerspace.com>
+X-PR-Tracked-Remote: git://git.linux-nfs.org/projects/trondmy/linux-nfs.git tags/nfs-for-6.10-1
+X-PR-Tracked-Commit-Id: 3c0a2e0b0ae661457c8505fecc7be5501aa7a715
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6d69b6c12fce479fde7bc06f686212451688a102
+Message-Id: <171649775021.3580.15544239282505269594.pr-tracker-bot@kernel.org>
+Date: Thu, 23 May 2024 20:55:50 +0000
+To: Trond Myklebust <trondmy@hammerspace.com>
+Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.8 00/23] 6.8.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240523130329.745905823@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240523130329.745905823@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 5/23/24 06:13, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.8.11 release.
-> There are 23 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.8.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The pull request you sent on Thu, 23 May 2024 20:30:36 +0000:
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+> git://git.linux-nfs.org/projects/trondmy/linux-nfs.git tags/nfs-for-6.10-1
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6d69b6c12fce479fde7bc06f686212451688a102
+
+Thank you!
+
 -- 
-Florian
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
