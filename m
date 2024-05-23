@@ -1,370 +1,234 @@
-Return-Path: <linux-kernel+bounces-187820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024AE8CD8FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:08:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42228CD900
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7059F1F23088
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9912B283207
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B648757E8;
-	Thu, 23 May 2024 17:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B76E8003F;
+	Thu, 23 May 2024 17:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BSaKMs1U"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="P3p6J5eo";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="P3p6J5eo"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203DA6E60F;
-	Thu, 23 May 2024 17:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6949376F17;
+	Thu, 23 May 2024 17:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716484110; cv=none; b=NKi7XXfqEjW0VPD/DpvstA+IJDlt/yk4hLwHktkTIvcz1a7CANdu1K3pX1nfDL9mCYCxAhO+NZAqOpzx4/E9kmmDBNZ8pOHis2cM6UxjxmYAOuvwk+ij+Tkpq54Fs35al6o8KsIVnMhMd1LRhyNfNqa18+YVmqgpUg5l1rwKRZo=
+	t=1716484114; cv=none; b=NOIBrS3kultTWgroqMMW+fCigydXXioKSUMt1F1y2JqiPwSxkIKG0jMXlg+D/nFJ51v1+EgH1bYQ1cAo7tl/MvCChgYz5dBawaNV8Aoq/gAbakzvGcKBXEJGNHah0q6P4DOXwaZg3rGOqZFPnIzT8QNBVhL4ZgCEbkp7F8sA9Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716484110; c=relaxed/simple;
-	bh=mO2C24AuLnZTL9f5oaz0mHHfnqvOcor9Wz9/UixnKCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M2FY6xUMQn7Iet37xnpsLP/2YJVm0XAqRraMKbRCWTAH3D7XA/I4pmoc7KK7pGSNAhc4XgJ+wzd8KOC8Oe8Ze/RRWy1FpWmIdT8JDtngRcErq2xUZfX3OK4VTJ2wITnQAvoLHXPg4veohhPX8MrF5cLPHUoP4LWOvdrw/LjzqJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BSaKMs1U; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1716484114; c=relaxed/simple;
+	bh=KZFKKbZdm+lm8S+PYjUAhSjWvEXA2BCj8ce8gNs6EgI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=e/1v9m4c9tfMiD0rhbsSUdQ/rLGV5FChqWYDKYpFkO4ZfXP+4/AvdVnm5281BsbQyWjhznfVzCzTaHOcYeYbY61XXneT3zAJswX185lseJ2lxGywBZxhOh6iRjOTRyuUSwPCNtUa+bRcBnvJCxD4+dMff6XW25wwvV7pQ+bEiyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=P3p6J5eo; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=P3p6J5eo; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716484108; x=1748020108;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mO2C24AuLnZTL9f5oaz0mHHfnqvOcor9Wz9/UixnKCU=;
-  b=BSaKMs1UccJ+naMqch0tP1OPGLsVi+QFEbbXEujQXKsAkqsvwNxqtIEw
-   olXOblaiPqH8SBRERIvn1fe1jnTVPOG6mkXZ+w7G6JTLh8VgvvhUCKVzT
-   aEHp40B6Mz2tXxJqC9gKOUytjW32FxlRQdmoTsEZcg8htsLD2XG0kQ967
-   GETJCb268dwraiqE2eKTMu0MOstkguxtkgu7142FEeRtBkXQ69s3j7g3U
-   1VSNHS1wuzI5tSoEUofLfSW9UjdRdTH0xU5nUXgou82n6gE93sakmKq6j
-   giNb8qUZwY9U6dZGNURNwzgIlFsFU92GGk8savWQFXes4QgrEZ6OIJHMq
-   Q==;
-X-CSE-ConnectionGUID: K0CIhHC6RnmyHfIqTSKfKQ==
-X-CSE-MsgGUID: ZK3C/eBiRGm/W9aqy8S3Zw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12939636"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="12939636"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 10:08:27 -0700
-X-CSE-ConnectionGUID: VouEAT/LQ/O7XPVIghJ8nA==
-X-CSE-MsgGUID: no97A+AZRn+3x3pLl7DiUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="56975148"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.38])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 10:08:24 -0700
-Message-ID: <75bc82b1-4a2b-4274-b55e-06288af6dc7a@intel.com>
-Date: Thu, 23 May 2024 20:08:19 +0300
+	d=hansenpartnership.com; s=20151216; t=1716484109;
+	bh=KZFKKbZdm+lm8S+PYjUAhSjWvEXA2BCj8ce8gNs6EgI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=P3p6J5eo0+A1Ts/CMbB8H/gN3fXMswLIF8AtaBTmA5o7bZSDyz2k2vizgnnK6+4It
+	 6hZXuwiAu1OBJ6B190W38UwTkbXoXxyCSb7/2d8ixRfgfl6vKmFK1cR8v0TiL6p4FS
+	 d46jVl1v4VUsFgCIz6ALOWylCNwYf9J7nps93p90=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id F1D7212872C0;
+	Thu, 23 May 2024 13:08:29 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id tdMngKiMGbsI; Thu, 23 May 2024 13:08:29 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1716484109;
+	bh=KZFKKbZdm+lm8S+PYjUAhSjWvEXA2BCj8ce8gNs6EgI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=P3p6J5eo0+A1Ts/CMbB8H/gN3fXMswLIF8AtaBTmA5o7bZSDyz2k2vizgnnK6+4It
+	 6hZXuwiAu1OBJ6B190W38UwTkbXoXxyCSb7/2d8ixRfgfl6vKmFK1cR8v0TiL6p4FS
+	 d46jVl1v4VUsFgCIz6ALOWylCNwYf9J7nps93p90=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4E8BD12872BB;
+	Thu, 23 May 2024 13:08:28 -0400 (EDT)
+Message-ID: <cb7510433c13aaaa9bc64d624331f1a3a958fcf3.camel@HansenPartnership.com>
+Subject: Re: [PATCH RESEND] KEYS: trusted: Use ASN.1 encoded OID
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Eric
+ Biggers <ebiggers@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Andrew Morton
+ <akpm@linux-foundation.org>, Mimi Zohar <zohar@linux.ibm.com>, David
+ Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James
+ Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "open
+ list:CRYPTO API" <linux-crypto@vger.kernel.org>,  open list
+ <linux-kernel@vger.kernel.org>, "open list:SECURITY SUBSYSTEM"
+ <linux-security-module@vger.kernel.org>
+Date: Thu, 23 May 2024 13:08:26 -0400
+In-Reply-To: <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
+References: <20240523131931.22350-1-jarkko@kernel.org>
+	 <9c96f39ed2161dd7f0c3a7964cba2de3169fae3b.camel@HansenPartnership.com>
+	 <D1H2P674GFY0.3O8WYK2P1GZ2K@kernel.org>
+	 <9dfeb6e3d568452ab1227484405b1fc221bd25c1.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V16 23/23] mmc: sdhci-pci-gli: enable UHS-II mode for
- GL9767
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- benchuanggli@gmail.com, HL.Liu@genesyslogic.com.tw,
- Greg.tu@genesyslogic.com.tw, takahiro.akashi@linaro.org,
- dlunev@chromium.org, Ben Chuang <ben.chuang@genesyslogic.com.tw>,
- Victor Shih <victor.shih@genesyslogic.com.tw>, ulf.hansson@linaro.org
-References: <20240522110909.10060-1-victorshihgli@gmail.com>
- <20240522110909.10060-24-victorshihgli@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240522110909.10060-24-victorshihgli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/05/24 14:09, Victor Shih wrote:
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+On Thu, 2024-05-23 at 11:30 -0400, James Bottomley wrote:
+> On Thu, 2024-05-23 at 16:54 +0300, Jarkko Sakkinen wrote:
+> > On Thu May 23, 2024 at 4:38 PM EEST, James Bottomley wrote:
+> > > On Thu, 2024-05-23 at 16:19 +0300, Jarkko Sakkinen wrote:
+> > > > There's no reason to encode OID_TPMSealedData at run-time, as
+> > > > it
+> > > > never changes.
+> > > > 
+> > > > Replace it with the encoded version, which has exactly the same
+> > > > size:
+> > > > 
+> > > >         67 81 05 0A 01 05
+> > > > 
+> > > > Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue
+> > > > so
+> > > > that the OID can be simply copied to the blob.
+> > > 
+> > > This is true, but if we're going to do this, we should expand the
+> > > OID
+> > > registry functions (in lib/oid_registry.c) to do something like
+> > > encode_OID.  The registry already contains the hex above minus
+> > > the
+> > > two
+> > > prefixes (which are easy to add).
+> > 
+> > Yes, I do agree with this idea, and I named variable the I named
+> > it to make it obvious that generation is possible.
+> > 
+> > It would be best to have a single source, which could be just
+> > a CSV file with entries like:
+> > 
+> > <Name>,<OID number>
+> > 
+> > And then in scripts/ there should be a script that takes this
+> > source and generates oid_registry.gen.{h,c}. The existing
+> > oid_registry.h should really just include oid_registry.gen.h
+> > then to make this transparent change.
+> > 
+> > And then in the series where OID's are encoded per-subsystem
+> > patch that takes pre-encoded OID into use.
+> > 
+> > Happy to review such patch set if it is pushed forward.
 > 
-> Changes are:
->  * Enable the internal clock when do reset on UHS-II mode.
->  * Increase timeout value before detecting UHS-II interface.
->  * Add vendor settings for UHS-II mode.
-> 
-> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-> ---
-> 
-> Updates in V15:
->  - Add gl9767 to support uhs2 function.
-> 
-> ---
-> 
->  drivers/mmc/host/sdhci-pci-gli.c | 152 ++++++++++++++++++++++++++++++-
->  drivers/mmc/host/sdhci-uhs2.c    |   3 +-
->  drivers/mmc/host/sdhci-uhs2.h    |   1 +
->  3 files changed, 153 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
-> index 5df6be758b06..20f19cec6e64 100644
-> --- a/drivers/mmc/host/sdhci-pci-gli.c
-> +++ b/drivers/mmc/host/sdhci-pci-gli.c
-> @@ -210,6 +210,10 @@
->  #define   PCIE_GLI_9767_SCR_CORE_PWR_D3_OFF		  BIT(21)
->  #define   PCIE_GLI_9767_SCR_CFG_RST_DATA_LINK_DOWN	  BIT(30)
->  
-> +#define PCIE_GLI_9767_UHS2_PHY_SET_REG1				0x90C
-> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR		  GENMASK(31, 29)
-> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE	  0x3
-> +
->  #define PCIE_GLI_9767_SDHC_CAP			0x91C
->  #define   PCIE_GLI_9767_SDHC_CAP_SDEI_RESULT	  BIT(5)
->  
-> @@ -228,9 +232,15 @@
->  #define   PCIE_GLI_9767_SD_EXPRESS_CTL_SD_EXPRESS_MODE	  BIT(1)
->  
->  #define PCIE_GLI_9767_SD_DATA_MULTI_CTL				0x944
-> +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2		  BIT(5)
-> +#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL	  BIT(8)
->  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME	  GENMASK(23, 16)
->  #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME_VALUE	  0x64
->  
-> +#define PCIE_GLI_9767_UHS2_PHY_SET_REG2					0x948
-> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING		  GENMASK(22, 21)
-> +#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE		  0x0
-> +
->  #define PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2			0x950
->  #define   PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2_SDEI_COMPLETE	  BIT(0)
->  
-> @@ -240,6 +250,28 @@
->  #define PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2				0x958
->  #define   PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2_SDEI_COMPLETE_SIGNAL_EN	  BIT(0)
->  
-> +#define PCIE_GLI_9767_UHS2_CTL1				0x95C
-> +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS		  BIT(5)
-> +#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE	  0x1
-> +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL		  BIT(6)
-> +#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE	  0x1
-> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN		  GENMASK(10, 7)
-> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE	  0x3
-> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV		  GENMASK(14, 11)
-> +#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE	  0xf
-> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS		  GENMASK(16, 15)
-> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE	  0x3
-> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV		  GENMASK(18, 17)
-> +#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE	  0x0
-> +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST			  BIT(25)
-> +#define   PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE		  0x1
-> +
-> +#define PCIE_GLI_9767_UHS2_CTL2			0x964
-> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC		  GENMASK(3, 0)
-> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE	  0xb
-> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL	  BIT(6)
-> +#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE	  0x1
-> +
->  #define GLI_MAX_TUNING_LOOP 40
->  
->  /* Genesys Logic chipset */
-> @@ -1198,8 +1230,35 @@ static void gl9767_hw_setting(struct sdhci_pci_slot *slot)
->  
->  static void sdhci_gl9767_reset(struct sdhci_host *host, u8 mask)
->  {
-> -	sdhci_reset(host, mask);
-> -	gli_set_9767(host);
-> +	u16 clk_ctrl;
-> +	u16 ctrl2;
-> +
-> +	if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
-> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
-> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
-> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
+> Heh, OK, since I'm the one who thinks it's quite easy, I'll give it a
+> go.
 
-That is the same as:
+Turns out it's actually really simple.  This would go as three patches:
+adding the feature to lib/oid_registry.c using it in trusted keys and
+removing the now unused OID encode from lib/asn1_encode.c but I'm
+attaching here (minus the removal) to give an idea.
 
-	if (mmc_card_uhs2(host->mmc)) {
+James
 
-> +		/* need internal clock */
-> +		if (mask & SDHCI_RESET_ALL) {
-> +			ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
-> +			clk_ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
-> +
-> +			if ((ctrl2 & SDHCI_CTRL_V4_MODE) && (ctrl2 & SDHCI_CTRL_UHS2_ENABLE)) {
-> +				sdhci_writew(host, SDHCI_CLOCK_INT_EN, SDHCI_CLOCK_CONTROL);
-> +			} else {
-> +				sdhci_writew(host, SDHCI_CLOCK_INT_EN, SDHCI_CLOCK_CONTROL);
-> +				sdhci_wait_clock_stable(host);
-> +				sdhci_writew(host, SDHCI_CTRL_V4_MODE, SDHCI_HOST_CONTROL2);
-> +			}
-> +		}
-> +		if ((mask & SDHCI_RESET_CMD) | (mask & SDHCI_RESET_DATA))
+---
 
-Simpler:
-		if (mask & (SDHCI_RESET_CMD | SDHCI_RESET_DATA))
-
-> +			sdhci_gli_uhs2_reset_sd_tran(host);
-> +
-> +		sdhci_uhs2_reset(host, mask);
-> +		gli_set_9767(host);
-> +	} else {
-> +		sdhci_reset(host, mask);
-> +		gli_set_9767(host);
-> +	}
->  }
->  
->  static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
-> @@ -1289,6 +1348,87 @@ static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
->  	return 0;
->  }
->  
-> +static void gl9767_vendor_init(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pci_slot *slot = sdhci_priv(host);
-> +	struct pci_dev *pdev = slot->chip->pdev;
-> +	u32 value;
-> +
-> +	gl9767_vhs_write(pdev);
-> +
-> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, &value);
-> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR,
-> +			    PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE);
-> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, value);
-> +
-> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, &value);
-> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING,
-> +			    PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE);
-> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, value);
-> +
-> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, &value);
-> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS,
-> +			    PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE) |
-> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL,
-> +			    PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE) |
-> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN,
-> +			    PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE) |
-> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV,
-> +			    PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE) |
-> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS,
-> +			    PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE) |
-> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_RECV,
-> +			    PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE) |
-> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_PDRST,
-> +			    PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE);
-> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, value);
-> +
-> +	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-> +	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC,
-> +			    PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE) |
-> +		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC_CTL,
-> +			    PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE);
-> +	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-> +
-> +	gl9767_vhs_read(pdev);
-> +}
-> +
-> +static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned char mode,	unsigned short vdd)
-> +{
-> +	struct sdhci_pci_slot *slot = sdhci_priv(host);
-> +	struct pci_dev *pdev;
-> +	u32 value;
-> +
-> +	pdev = slot->chip->pdev;
-> +
-> +	if (host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A ||
-> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_A_HD ||
-> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B ||
-> +	    host->mmc->ios.timing == MMC_TIMING_UHS2_SPEED_B_HD) {
-
-That is the same as:
-
-	if (mmc_card_uhs2(host->mmc)) {
-
-> +		gl9767_vhs_write(pdev);
-> +
-> +		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-> +		value |= PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-> +			 PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL;
-> +		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-> +
-> +		gl9767_vhs_read(pdev);
-> +
-> +		sdhci_uhs2_set_power(host, mode, vdd);
-> +	} else {
-> +		gl9767_vhs_write(pdev);
-> +
-> +		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-> +		value &= ~(PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-> +			   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL);
-> +		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-> +
-> +		gl9767_vhs_read(pdev);
-> +
-> +		sdhci_set_power(host, mode, vdd);
-> +	}
-> +}
-> +
->  static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
->  {
->  	struct sdhci_host *host = slot->host;
-> @@ -1325,6 +1465,7 @@ static int gli_probe_slot_gl9767(struct sdhci_pci_slot *slot)
->  	host->mmc->caps2 |= MMC_CAP2_SD_EXP;
->  	host->mmc_host_ops.init_sd_express = gl9767_init_sd_express;
->  	sdhci_enable_v4_mode(host);
-> +	gl9767_vendor_init(host);
->  
->  	return 0;
->  }
-> @@ -1828,12 +1969,19 @@ static const struct sdhci_ops sdhci_gl9767_ops = {
->  	.reset			 = sdhci_gl9767_reset,
->  	.set_uhs_signaling	 = sdhci_set_uhs_signaling,
->  	.voltage_switch		 = sdhci_gl9767_voltage_switch,
-> +	.dump_uhs2_regs		 = sdhci_uhs2_dump_regs,
-> +	.set_timeout		 = sdhci_uhs2_set_timeout,
-> +	.irq			 = sdhci_uhs2_irq,
-> +	.set_power		 = sdhci_gl9767_set_power,
-> +	.uhs2_pre_detect_init	 = sdhci_gli_pre_detect_init,
->  };
->  
->  const struct sdhci_pci_fixes sdhci_gl9767 = {
->  	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
->  	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
->  	.probe_slot	= gli_probe_slot_gl9767,
-> +	.add_host	= sdhci_pci_uhs2_add_host,
-> +	.remove_host	= sdhci_pci_uhs2_remove_host,
->  	.ops		= &sdhci_gl9767_ops,
->  #ifdef CONFIG_PM_SLEEP
->  	.resume		= sdhci_pci_gli_resume,
-> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-> index c830ee352504..47180429448b 100644
-> --- a/drivers/mmc/host/sdhci-uhs2.c
-> +++ b/drivers/mmc/host/sdhci-uhs2.c
-> @@ -125,7 +125,7 @@ static void sdhci_uhs2_reset_cmd_data(struct mmc_host *mmc)
->  	}
->  }
->  
-> -static void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd)
-> +void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd)
->  {
->  	struct mmc_host *mmc = host->mmc;
->  	u8 pwr = 0;
-> @@ -165,6 +165,7 @@ static void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, un
->  		mdelay(5);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(sdhci_uhs2_set_power);
->  
->  static u8 sdhci_calc_timeout_uhs2(struct sdhci_host *host, u8 *cmd_res, u8 *dead_lock)
->  {
-> diff --git a/drivers/mmc/host/sdhci-uhs2.h b/drivers/mmc/host/sdhci-uhs2.h
-> index 42f34ca75275..c4a860f4e1e0 100644
-> --- a/drivers/mmc/host/sdhci-uhs2.h
-> +++ b/drivers/mmc/host/sdhci-uhs2.h
-> @@ -185,5 +185,6 @@ void sdhci_uhs2_clear_set_irqs(struct sdhci_host *host, u32 clear, u32 set);
->  u32 sdhci_uhs2_irq(struct sdhci_host *host, u32 intmask);
->  int sdhci_uhs2_add_host(struct sdhci_host *host);
->  void sdhci_uhs2_remove_host(struct sdhci_host *host, int dead);
-> +void sdhci_uhs2_set_power(struct sdhci_host *host, unsigned char mode, unsigned short vdd);
->  
->  #endif /* __SDHCI_UHS2_H */
+diff --git a/include/linux/oid_registry.h b/include/linux/oid_registry.h
+index 51421fdbb0ba..87a6bcb2f5c0 100644
+--- a/include/linux/oid_registry.h
++++ b/include/linux/oid_registry.h
+@@ -151,5 +151,6 @@ extern enum OID look_up_OID(const void *data, size_t datasize);
+ extern int parse_OID(const void *data, size_t datasize, enum OID *oid);
+ extern int sprint_oid(const void *, size_t, char *, size_t);
+ extern int sprint_OID(enum OID, char *, size_t);
++extern ssize_t encode_OID(enum OID, u8 *, size_t);
+ 
+ #endif /* _LINUX_OID_REGISTRY_H */
+diff --git a/lib/oid_registry.c b/lib/oid_registry.c
+index fe6705cfd780..45f97e1e0f91 100644
+--- a/lib/oid_registry.c
++++ b/lib/oid_registry.c
+@@ -12,6 +12,7 @@
+ #include <linux/errno.h>
+ #include <linux/bug.h>
+ #include <linux/asn1.h>
++#include <linux/asn1_ber_bytecode.h>
+ #include "oid_registry_data.c"
+ 
+ MODULE_DESCRIPTION("OID Registry");
+@@ -196,3 +197,31 @@ int sprint_OID(enum OID oid, char *buffer, size_t bufsize)
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(sprint_OID);
++
++/**
++ * encode_OID - embed an ASN.1 encoded OID in the provide buffer
++ * @oid: The OID to encode
++ * @buffer: The buffer to encode to
++ * @bufsize: the maximum size of the buffer
++ *
++ * Returns: negative error or encoded size in the buffer.
++ */
++ssize_t encode_OID(enum OID oid, u8 *buffer, size_t bufsize)
++{
++	int oid_size;
++
++	BUG_ON(oid >= OID__NR);
++
++	oid_size = oid_index[oid + 1] - oid_index[oid];
++
++	if (bufsize < oid_size + 2)
++		return -EINVAL;
++
++	buffer[0] = _tag(UNIV, PRIM, OID);
++	buffer[1] = oid_size;
++
++	memcpy(&buffer[2], &oid_data[oid_index[oid]], oid_size);
++
++	return oid_size;
++}
++EXPORT_SYMBOL_GPL(encode_OID);
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 9c7ac2e423d3..b6f34ff0ca5c 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -19,8 +19,6 @@
+ #include "tpm2key.asn1.h"
+ #include "tpm2-policy.h"
+ 
+-static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
+-
+ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 			   struct trusted_key_options *options,
+ 			   u8 *src, u32 len)
+@@ -31,6 +29,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	u8 *end_work = scratch + SCRATCH_SIZE;
+ 	u8 *priv, *pub;
+ 	u16 priv_len, pub_len;
++	int ret;
+ 
+ 	priv_len = get_unaligned_be16(src) + 2;
+ 	priv = src;
+@@ -43,8 +42,10 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	if (!scratch)
+ 		return -ENOMEM;
+ 
+-	work = asn1_encode_oid(work, end_work, tpm2key_oid,
+-			       asn1_oid_len(tpm2key_oid));
++	ret = encode_OID(OID_TPMSealedData, work, end_work - work);
++	if (ret < 0)
++		return ret;
++	work += ret;
+ 
+ 	if (options->blobauth_len == 0) {
+ 		unsigned char bool[3], *w = bool;
 
 
