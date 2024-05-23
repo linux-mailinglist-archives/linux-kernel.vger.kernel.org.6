@@ -1,140 +1,215 @@
-Return-Path: <linux-kernel+bounces-187723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BDB8CD734
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C508CD73E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C081F228B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386F3281D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FFE125AC;
-	Thu, 23 May 2024 15:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8478C11717;
+	Thu, 23 May 2024 15:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nz+a4D3Z"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EnyncnAe"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0311FDDBB;
-	Thu, 23 May 2024 15:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163F117573
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478583; cv=none; b=GTpSuC/0n/ScivVboH0BRvH6aeXuPa/950+NjZvxmkMg+Rr2IVWrSHvQAkSrDhc5XHVYuMbZFZbMMyZ18Z0AG+K4mXLF+29LlFjIlfL16xSvjj4TPg7sASsDJFSmIhZeye0XhqC9KDEw1OUNSL/xsIT5iJPVJg194gR8IcGK+ZY=
+	t=1716478623; cv=none; b=gJqi/Kjoy0QJyU5deQnXf7jkwArxu+lDCGv5TDJQ304yFKoJunQXbBiKxoAiVhhFe9jFh6sXi56dnONGh1c/lAz3KVXuBWm9em+Vg4KS9UT4dn9V29BLTD5Nsj3VwErl68RiAze2HG1ohsnqINXFN8O6sYPkj4vou3wj3KAvJVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478583; c=relaxed/simple;
-	bh=n9OutbT4XsVJfELONUtQkWuMecyaz6eZVorP1OXBqk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qnv6TpUExvyltBzkr4Z7eSrZmxqh+4fy1LIfobMzNE+PcB4yPRFM2McgPA/gRAwfocVDH7+94ifGZ2M9DW0hKExVdw3xG7lR60W88DAdNC0dCJs4Njq2SQOX2cvX5Bo8oUqWd6azN6/vlM+UBBCXUgCperRUx4SX4PaJiPibYT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nz+a4D3Z; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716478582; x=1748014582;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=n9OutbT4XsVJfELONUtQkWuMecyaz6eZVorP1OXBqk8=;
-  b=Nz+a4D3ZBTlOcj1bAO2pd3y+2ZYRYO9aLdZePodUp2rEYySogPLqfr0z
-   w0WJm9ATiRaldIm83RNN+S9WHmZROJMTAk9iB4pISAnm3PdeUhCEb9EmJ
-   laqEMrota5ffyycJGqrr+0QKcWitM5YE2tMmsB0o2UxTEXhHkiMWSi5U9
-   US2P0kZEmoBqBpLoYob7ITnC270Owr2hmonn4QcBP7FSACa0egR86rWhY
-   cgYY77vCiJwzuyTsN8UkanOd7PatDnDzPb2LhIMWwqHer24V2ey/+HT9a
-   dnEo1RKe9606jPuzLwS6e3IeAhFHLjv5TPS8TGEKJhLMSLpGHOuuqvMnU
-   A==;
-X-CSE-ConnectionGUID: fPuad5V0Q9+V0/3BOO4CHg==
-X-CSE-MsgGUID: 1u4Sg6oNQvOsvMlaEQeTcw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="30306520"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="30306520"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 08:36:21 -0700
-X-CSE-ConnectionGUID: ScYjMlOBSwWV/owqfYFKFA==
-X-CSE-MsgGUID: XfbSzam2QTuRULC5hyqQig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="38289237"
-Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.110.49]) ([10.125.110.49])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 08:36:20 -0700
-Message-ID: <93510641-9032-4612-9424-c048145e883e@intel.com>
-Date: Thu, 23 May 2024 08:36:19 -0700
+	s=arc-20240116; t=1716478623; c=relaxed/simple;
+	bh=Pbsi2P8PF4TuOLx5XqrI6MwLSCMdLg38mH2lUsB//cY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tA1YMkTuSgtIH+sRE7SX50cX/3dlWbXRK8g/hTQvlt8IVVGGllrxZjoDx1BZiM7XUz0kYMrxc+C62KZOuaZhRaa4XXF2bAngJhVRfSKsCusP88QUNJc4l9HJs2R/+smgHO4bHBrK9t96JFbEZSIMPhIVEV2v51g25icfrkL9t2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EnyncnAe; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6ab8e759adbso10074186d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:37:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716478619; x=1717083419; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X6Yi5QsLgSFqxP/hYDl5gHS5x3eV0VrrWPeAD34sRDM=;
+        b=EnyncnAecNcs8FGHsYMxkUYLwYSoq141mlJONw+ANY4MtGnOlRkhrW7NtPWfyRmGaN
+         K/bvUrlOqllgNuSRllOUS5YB6BS8NbUCEMDYmBTDYO6F1QavvAiSp99FajFJ46tktWN+
+         O+D7dRxa/38zdG23xdU64DzrsTVDL4drrmvCs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716478619; x=1717083419;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X6Yi5QsLgSFqxP/hYDl5gHS5x3eV0VrrWPeAD34sRDM=;
+        b=phSEUPM2LbPj86P0ATxw/EBrBtnwgkQxu7pgE8lyaq4wLvIlln/y5g+syCu6j8CKCz
+         Qdotx/1Omh//r35E5HopupMT4jbRNKq5lkQKTvASXxxf1Elr0RU4hWx+wiHDj5J0+X7Z
+         MOg+9sZ9GBzVT8WEJtRV0NZF3/6KaCmeZ824QGrT4SAZO5DPH3ZBl1MDxzEDBjtYibHP
+         mq47tbZBJklqnHxy1UtInphDPqOBnij2p0GHENnWzVht8EXRGZTAspzzdCOyQTMMFFw9
+         1iM7QiwkiAb7VFyN1MhjSlNzTq53T2tzrwqekXJdVzBFoFSei+Fs5N5Mc6Flqz95PcxU
+         0/iw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRrGY8NPpGIpBB7s+rvr6NT9jKGhNvGLqmpglVX91zL/NZIvcBvSQh8lyr8uheztGgXXGJH9n6Zs8CbXm/31YFW3Lr4QiytGoP0xWV
+X-Gm-Message-State: AOJu0Yy3+whz9Q2rPbsGD5AtAP3ZEw8Z/SQovBkbTWamchq+gb5O2FXL
+	pbJ4Pw3v0+tkarfhMB2KIFQg+HOtLEQ9JHhWiih6GpmNuBPI86Punjbw6om1d7mBi4oSfGxC9EM
+	=
+X-Google-Smtp-Source: AGHT+IE489jSf9Ln4XlazZWNuZ0ROzIL+V8jBGaYAvzljm33ZJfrYsoMm3Qk2YoKd9lLtVDTLd91Kw==
+X-Received: by 2002:a05:6214:3a05:b0:6ab:724b:ed5d with SMTP id 6a1803df08f44-6ab8f621b61mr43946846d6.28.1716478619320;
+        Thu, 23 May 2024 08:36:59 -0700 (PDT)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab94a51fdasm5048226d6.131.2024.05.23.08.36.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 08:36:59 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43f87dd6866so405701cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:36:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXo74ZYbETKDDNwTa+2gxj1WgyxKUcPj//Y6mk8QM4gZXkJsZVyxnxzX2pMYpPWr0k9sTds/UW2DyApelg/OWChMGjM6MRXzpIIUl38
+X-Received: by 2002:a05:622a:6092:b0:43f:7ae1:7d1 with SMTP id
+ d75a77b69052e-43fa7437f48mr2924771cf.4.1716478617614; Thu, 23 May 2024
+ 08:36:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
- handler
-To: Alexandre Chartre <alexandre.chartre@oracle.com>, x86@kernel.org,
- kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
- pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
- konrad.wilk@oracle.com, peterz@infradead.org, gregkh@linuxfoundation.org,
- seanjc@google.com, andrew.cooper3@citrix.com, dave.hansen@linux.intel.com,
- nik.borisov@suse.com, kpsingh@kernel.org, longman@redhat.com, bp@alien8.de,
- pbonzini@redhat.com
-References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
- <a04d82be-a0d6-4e53-b47c-dba8402199e7@intel.com>
- <1c69f62e-0dee-4caa-9cbe-f43d8efd597b@oracle.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <1c69f62e-0dee-4caa-9cbe-f43d8efd597b@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240523-edp-panel-drop-v1-1-045d62511d09@linaro.org>
+In-Reply-To: <20240523-edp-panel-drop-v1-1-045d62511d09@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 23 May 2024 08:36:39 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xz1VsF8jG0q-Ldk+p=NY-ChJkTk0iW8fq2bO=oRFvXRA@mail.gmail.com>
+Message-ID: <CAD=FV=Xz1VsF8jG0q-Ldk+p=NY-ChJkTk0iW8fq2bO=oRFvXRA@mail.gmail.com>
+Subject: Re: [PATCH RFC] drm/panel-edp: add fat warning against adding new
+ panel compatibles
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/23/24 07:52, Alexandre Chartre wrote:
->> Should we wrap up this gem and put it with the other entry selftests?
-> 
-> It looks like tools/testing/selftests/x86/single_step_syscall.c tests
-> sysenter with TF set but it doesn't check if the kernel issues any
-> warning.
+Hi,
 
-Does it actually trip the warning though? I'm a bit surprised that
-nobody reported it if so.
+On Wed, May 22, 2024 at 3:07=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> Add a fat warning against adding new panel compatibles to the panel-edp
+> driver. All new users of the eDP panels are supposed to use the generic
+> "edp-panel" compatible device on the AUX bus. The remaining compatibles
+> are either used by the existing DT or were used previously and are
+> retained for backwards compatibility.
+>
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> The following compatibles were never used by the devices supported by
+> the upstream kernel and are a subject to possible removal:
+>
+> - auo,b133han05
+
+Ack. Looks like this was added by Bjorn but by the time the dts for
+the board (from context, sc8180x-primus) using it made it upstream it
+was using "edp-panel".
+
+
+> - auo,b140han06
+
+Ack. Same as above, but this time the board was "sc8180x-lenovo-flex-5g".
+
+
+> - ivo,m133nwf4-r0
+
+Ack. Also added by Bjorn but not easy to tell from context which board
+it was from. "m133nwf4" never shows up in the history of arm64 qcom
+dts files.
+
+
+> - lg,lp097qx1-spa1
+
+Maybe. Added by Yakir at Rockchip. I don't think this was ChromeOS
+related so I don't have any inside knowledge. Presumably this is for
+some other hardware they were using. Probably worth CCing Rockchip
+mailing list. It's entirely possible that they have downstream dts
+files using this and there's no requirement to upstream dts files that
+I'm aware of.
+
+
+> - lg,lp129qe
+
+NAK. See "arch/arm/boot/dts/nvidia/tegra124-venice2.dts"
+
+
+> - samsung,lsn122dl01-c01
+
+Maybe. Also by Yakir at Rockchip and also doesn't appear to be
+ChromeOS, so you should ask them.
+
+
+> - samsung,ltn140at29-301
+
+NAK. arch/arm/boot/dts/nvidia/tegra124-nyan-blaze.dts
+
+
+> - sharp,ld-d5116z01b
+
+Added by Jeffrey Hugo. Maybe Cc him to make sure it's OK to delete?
+
+
+> - sharp,lq140m1jw46
+
+Ack. Feel free to delete. This was used in the sc7280 reference board
+(hoglin/zoglin) and by the time the dts made it upstream it was
+already using generic edp-panel.
+
+
+> - starry,kr122ea0sra
+
+Ack. From my previous notes: "starry,kr122ea0sra - rk3399-gru-gru
+(reference board, not upstream)". Nobody needs this.
+
+
+> I'm considering dropping them, unless there is a good reason not to do
+> so.
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/pa=
+nel-edp.c
+> index 6db277efcbb7..95b25ec67168 100644
+> --- a/drivers/gpu/drm/panel/panel-edp.c
+> +++ b/drivers/gpu/drm/panel/panel-edp.c
+> @@ -1776,7 +1776,23 @@ static const struct of_device_id platform_of_match=
+[] =3D {
+>         {
+>                 /* Must be first */
+>                 .compatible =3D "edp-panel",
+> -       }, {
+> +       },
+> +       /*
+> +        * Do not add panels to the list below unless they cannot be hand=
+led by
+> +        * the generic edp-panel compatible.
+> +        *
+> +        * The only two valid reasons are:
+> +        * - because of the panel issues (e.g. broken EDID or broken
+> +        *   identification),
+> +        * - because the platform which uses the panel didn't wire up the=
+ AUX
+> +        *   bus properly.
+
+You mean that they physically didn't wire up the AUX bus? I don't
+think that's actually possible. I don't believe you can use an eDP
+panel without this working. Conceivably a reason to add here is if
+there's some old platform that hasn't coded up support for AUX bus.
+..but it would be much preferred to update the platform driver to
+support it.
+
+-Doug
 
