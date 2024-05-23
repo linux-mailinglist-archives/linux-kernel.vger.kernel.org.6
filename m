@@ -1,166 +1,115 @@
-Return-Path: <linux-kernel+bounces-187741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569E58CD7AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:49:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1438F8CD7A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D2461F22505
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:49:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D8BDB21931
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A412C1803D;
-	Thu, 23 May 2024 15:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1379D1BF3F;
+	Thu, 23 May 2024 15:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpRjojbx"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XpK4HD6z"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903B8125C1;
-	Thu, 23 May 2024 15:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B0C1862C
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716479344; cv=none; b=aI/oO9e2zsdpCcnnoJxjIMVXnVUB/WKOsONkQf4RY5GrKAj2O/Bl+F1hXjKfr2yFXtusRo8FWWtBUZmoZzM0by6bOm3OHdJfNLJuK3ys8r8UZZ0PPxziaSndZbRelUgV1dgqw1sum5AVaHIjsuW0OsMsgMEqkUgr/vii14uth2o=
+	t=1716479314; cv=none; b=p+HAIoEGoISWvOHDVsoxz7O3aYjyOeLqMz29J65oijtA+ACv90Dr3Joux16N2qF2lms03uulMAL+j5nF8V+Zn67eCI94FAXfaAAW11PysB9nWDcJS8pV3NwxgLb7981GS3AMHJuKToJnHQd7Pu84dVQY2QDreBibWuUF3Yd44Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716479344; c=relaxed/simple;
-	bh=ioYR1DhOVcXP0QlbNkVL+dsRPFTAWxaAIPYaf7pAaos=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=COjHsaFS2wmf6qBUKf4ZXlX2y6wbcNEseMF+HrAz6NfBuKskaGapXAXVUkmKbHqHrjpmMEs0/MSVzh1LLNkng4IQVwpv29GzMy4Cdt8HUGIcq1DftHRVU0VGyRzTc77AMKpQFKVv+wOAW571CxESTAQHmCueYgErJa1BsqonmWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpRjojbx; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ee7963db64so55855675ad.1;
-        Thu, 23 May 2024 08:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716479342; x=1717084142; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hYf12GLSAWFqtkB4/l4ObCrY/lFiR1gNXubtFx1aYgs=;
-        b=DpRjojbxyX7XYRPmgo1DniRtBBZ8MMx7GbyLtwc5XX8e2Tln3memp7ys31yhhpTHvp
-         kvDb1qn3NegE4Rh1B3fddZimvKUavaaVGfJizmptb/Nys3knpGsHOFTK/JjixQ3uGC1H
-         Y6siN79iTed/PGzPa3OkAxUjymHNO+KEf9oVW5gBv6DiF2ctasW0yJHDvcleYkLMfy56
-         N/bqyFoZqrNe0foLwydWLWUjYStM+8kNHaAUDQPGcEZL6i6ZRKKEgPH83NBDIQNo3XwP
-         iUv6RcRabCgJfBiSh2Xcau0dhU7jI/Pd60H0ZTH+TLX3s/fi1cbEnHqpIY4GeGd50Qnr
-         4QHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716479342; x=1717084142;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hYf12GLSAWFqtkB4/l4ObCrY/lFiR1gNXubtFx1aYgs=;
-        b=Krxyw8H7sRQwY0Ve6nuxr3hiMwnEHIBQy1qBuMtawJRukovaqibsCKvTfsQ0U/QxI6
-         YbSNAdoYiOlO/N5as7p+P3ntcQ5KcIoFNUsN+/poc23uIjImx0c6mYkGBAcX7ek54kVj
-         2eANKgrUAwbvccmEjuedLpKpLp32HzNF/r73Y5TasJ+e3g0hK89f29jkYPSpGxteGyH3
-         qzgCBjwcsFqa6Ge3PvU0BVeMdZBVBRBO0UGRKQKwKh/OU8eno3D1USqjRafEEzFgLqCS
-         ow/K4bYVTezOzTAsdtVfxqbq82iJieuNW0f2W+Vw4s5kljUxquqe55TavTQgTnzlnv7J
-         N3dA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCc1A5Q2GDUY7AlsZiNWRGA4Fh6V2OFlkEEFQJUUyRe0uDVfQYiLwUdp8W7dXzwGBmaYQ5UCfgOlu7eIfFgQsJMoqzy4M2TDupaXbkV7h5ayJSQ93t4393sWO5TV2crG6eAI6r2EJd1A==
-X-Gm-Message-State: AOJu0Yxr6RbwTG8vLoQEJ5VV33Vc4yaFrxmzpcW0fVcF/Y4VF8O9IS80
-	86RCg34j5ArLE7GDQvhDooyt0tuPf+adZc3H7mxfK+PmMrZJ8zV/
-X-Google-Smtp-Source: AGHT+IFp+EFEz2Up+5smpmBNDpXiFMYzk1R5BzaQXFEbAzaQyIkugWlEEJZN3Xd8zPy8Q4OJF/nAiA==
-X-Received: by 2002:a17:903:1247:b0:1f2:f3dc:43ee with SMTP id d9443c01a7336-1f31c967139mr61423015ad.3.1716479341924;
-        Thu, 23 May 2024 08:49:01 -0700 (PDT)
-Received: from localhost.localdomain ([223.178.81.93])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f3361a6678sm18321085ad.178.2024.05.23.08.48.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 08:49:01 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-X-Google-Original-From: Kanak Shilledar <kanakshilledar111@protonmail.com>
-To: 
-Cc: Kanak Shilledar <kanakshilledar111@protonmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [RESEND v3 2/2] dt-bindings: riscv: cpus: add ref to interrupt-controller
-Date: Thu, 23 May 2024 21:17:50 +0530
-Message-Id: <20240523154748.22670-3-kanakshilledar111@protonmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240523154748.22670-1-kanakshilledar111@protonmail.com>
-References: <20240523154748.22670-1-kanakshilledar111@protonmail.com>
+	s=arc-20240116; t=1716479314; c=relaxed/simple;
+	bh=joRVzwdZMfiuRYTp/LAgcznS1tEIbKXziY5L8is3Xrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jaCdK3M0nGRZjrm7mqRWiw9aL1kk4F+t9wSDg1eUFfS84lObZV4D0B99RJ3hyBpnKyXqcf66imZqAqz14vgjHPfNhbvyVKlLs9o5U9abQy8+luF69D/Dy6q3BsCyO4OxgcVkJnzaIjiU1UsJVlqEDWnuPqOUDQkCMJtOTNAU+rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XpK4HD6z; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=GMCX
+	jeQr/kc1haogBJ6sSOcdurhMSQkjSfFlJEVXoZo=; b=XpK4HD6zv+jNRT551lE6
+	xjYMyvu+GOUxa/57m2+S0DqornBlPEC8ZG/zmaQTDrO2ssAmi/KCwU2SX6H33rKH
+	JhDvu1eHYyq8YrxP+qzcQ/aZf2OqAY97YwSuBU5V8Vi+sTzNWhtSjXCGRNfP6tvY
+	DTtV5V9xIqNqWRPSjwAoHDDHoNdWSP1XJFc4iPg0A5ehPicRuMdgICPYnS1zv24c
+	5WjXphKW7364gyFfZoM3qGALSi9iH+NF7QD2gvJjo1Aeufnvv5rMnLk2HgLSbE2d
+	6DF8aLUbTsyxCEHkbyK3XIV3W5t8qVa1LtWM4nQyEv/3sIGtzYheN1nyqzcuZTib
+	iQ==
+Received: (qmail 1173772 invoked from network); 23 May 2024 17:48:21 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 May 2024 17:48:21 +0200
+X-UD-Smtp-Session: l3s3148p1@dycF+yAZ1pQujntm
+Date: Thu, 23 May 2024 17:48:20 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [GIT PULL] i2c-host changes for v6.10 - pt. 2
+Message-ID: <20240523154820.vza7xbdkgqyyth6w@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <2qtn3bk6pat2xkw7qz34pjpgh6zariuz6zjxhmuuo2jcddfpi4@xn6aqqppl3hi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k276mwu3dvz5qa7m"
+Content-Disposition: inline
+In-Reply-To: <2qtn3bk6pat2xkw7qz34pjpgh6zariuz6zjxhmuuo2jcddfpi4@xn6aqqppl3hi>
 
-removed the redundant properties for interrupt-controller
-and provide reference to the riscv,cpu-intc.yaml which defines
-the interrupt-controller. making the properties for riscv
-interrupt-controller at a central place.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Kanak Shilledar <kanakshilledar111@protonmail.com>
----
-Changes in v3:
-- No change.
-- Rolling out as RESEND.
-Changes in v2:
-- Fix warning of `type` is a required property during `make
-dt_bindings_check`.
----
- .../interrupt-controller/riscv,cpu-intc.yaml  |  2 +-
- .../devicetree/bindings/riscv/cpus.yaml       | 21 +------------------
- 2 files changed, 2 insertions(+), 21 deletions(-)
+--k276mwu3dvz5qa7m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.yaml
-index c9c79e0870ff..6c229f3c6735 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,cpu-intc.yaml
-@@ -61,7 +61,7 @@ required:
-   - compatible
-   - '#interrupt-cells'
-   - interrupt-controller
--  
-+
- additionalProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
-index d87dd50f1a4b..f1241e5e8753 100644
---- a/Documentation/devicetree/bindings/riscv/cpus.yaml
-+++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
-@@ -102,26 +102,7 @@ properties:
- 
-   interrupt-controller:
-     type: object
--    additionalProperties: false
--    description: Describes the CPU's local interrupt controller
--
--    properties:
--      '#interrupt-cells':
--        const: 1
--
--      compatible:
--        oneOf:
--          - items:
--              - const: andestech,cpu-intc
--              - const: riscv,cpu-intc
--          - const: riscv,cpu-intc
--
--      interrupt-controller: true
--
--    required:
--      - '#interrupt-cells'
--      - compatible
--      - interrupt-controller
-+    $ref: /schemas/interrupt-controller/riscv,cpu-intc.yaml#
- 
-   cpu-idle-states:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
--- 
-2.34.1
+Hi Andi,
 
+> now that the dependencies are fixed and no error report has been
+> sent on these two patches, I can finally send the second part of
+> the i2c pull request.
+
+Pulled, but I can't send out to Linus because
+e22e0e483b2c76728ccd119fdcfea81eb176b3a5 (drm/amd/pm: remove deprecated
+I2C_CLASS_SPD support from newly added SMU_14_0_2) is not in his tree
+yet, only in next.
+
+Happy hacking,
+
+   Wolfram
+
+
+--k276mwu3dvz5qa7m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZPZT8ACgkQFA3kzBSg
+KbZRtw/8CoUEMB+quI3WY1PWm+RUzwTzLqJxc6N+nWbNyg4RY3riARW2skQeyF00
+t+yM46bZxg3YQUm19IH95XTxaN+BbX5F79RhYFO8vKI9ELPLZyeInxWulxg+nWGf
+ifP2Mgk6wlJG6RLce1pNfmD1WnYzpDI36KOzyDFYK2If4XWeg2siLjnv5XnObmcf
+trjr0pohqmSOPu74XNLnCGQ9toQofqObta+VbLlQ/F12oyRqoH+a07pQDy1u04BB
+qKyxmgm9Z+1hSwLWbooK/jGPAMupk+bz0QewN8d6n57zcnNfDeeeXOtmYfU+EwSg
+C7Njekt0LHCXiBBgo7dH6ifg153YxBLu8hYH4abBtk0lXx0HfsVx9IfxzlZokELI
+24izDi7BnbhE5vMwqK89zRTumvsTbwh8fFFAIvdYm0BHdqrcWZmb6lq7leqp/3rJ
+97ybh9ccZ3R2OBB5TfVSbpie1rnKQa4NDeR6LrpmLiaeV7UtLAwT/mTab2P2rUyF
+L7v6mfq/GkmiPxaSHV7LxZnzN14aSUwuSePt8scumZkPrAAAEwFDGtEvOYdmVvv1
+eG3NWIvPoIhhz98g8cnKq6cqQ2yDmWtXWoUIP18aKY6trrQFnsZShdXGUjeGAyIb
+LD22iRIJaSxAV9e5bV0Ys8mDteGD6WioGH+H8tNOPFOx7wQNTnI=
+=Xl9G
+-----END PGP SIGNATURE-----
+
+--k276mwu3dvz5qa7m--
 
