@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-187220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AC08CCEBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:04:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DD28CCEBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5FD281F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E8C1F23DB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0096C13D285;
-	Thu, 23 May 2024 09:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25C813D28D;
+	Thu, 23 May 2024 09:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W06XnCZk"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D2h6Gblt"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE14C13CF93;
-	Thu, 23 May 2024 09:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F9413D26E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716455064; cv=none; b=pFOrZI3cW89Fm/e5tpabDtHQVjwrpMJM3mHSm1SwskEUsyj05Sv8e7h3E7xN6A0UvVzPpop8NUBIUEAfptev3wTGW2Y5dye0pFRPbAgrTiFFu6OXZqjACgQQmQeSbtsr0k5ZPRLuAGBOMY3eQw6RAdV9jQIMZaeZhbuTQb4x48s=
+	t=1716455169; cv=none; b=NXCbh3JU+U2J9UlWPM+t8oA88345uzNzwsNuMONCK0k9j4JTrWYWfe1567um0J4+Qf9t8W2tW6o7IcP0J6Va+Bn0Vy3xdyhjZdhsgPzhEUZVpjeM1ZMCkxPe9pZEe4LJFrSUDOT1Qg3bOpyEPKZoOajyEIYJv/wz/ZTOhp5/NxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716455064; c=relaxed/simple;
-	bh=mxjVwRe+KA59zffjuSJoN+F11EDx50GvARclkXrc3Pg=;
+	s=arc-20240116; t=1716455169; c=relaxed/simple;
+	bh=zAGC0q3zb/kUKLlN7+r/uiMOW4NzeKphfhi7MnVOhxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9vPa0IAo6j6RJudWX1wJ/fm35xP87W+Qgg5jvzhNAHrfW5o6IwjXiPrrtIqq7U9nEiPCa9JQH6HFrN2vcYFKYPRwkSbPME30Xik2w/7QiDNt9Q7JrIGsJ5Lf4/gf9TQ5bCtX2WFS4iX0aypVlTkbZioIFyemuPPqil973bLjrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W06XnCZk; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5cec2c2981so462873866b.1;
-        Thu, 23 May 2024 02:04:22 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ij+G3ZQxAX8l0C0rpbR2bk22bxxaiVLV1D6uVqvb3fRmw1P6/l5HyuyI0CiJiZviXKMbulbYYqhGSsOR/cFhFKeiPw5uT2RcjtGILz8zD3I84Fg7G4PWvBQbAqfswZjgFnrfgjmuxYhRDRDCRDQWDvmwVfHuNEjoEvNNphriHYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D2h6Gblt; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5a5cb0e6b7so1127482466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716455061; x=1717059861; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1716455165; x=1717059965; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xwT/Yuq4OgMz2tzy/XuZk3iW6O1XSg4X5ai7w04Ljms=;
-        b=W06XnCZkl5CALs2SemXvlwKTJ9wIktVuqysY4ZEgFSp1kA7tNE8NVfyTuee2TJEFdQ
-         alB/7FhEujFTdWxhDkr6TNlhEm1hrt2zPOMXzsBrUyDdnQ46GAvBpmMA+SlczoLiRjrP
-         dP3q7ReaL/elnBHMkvJsZaAZ87l/ACqRYvIB2eRKLH2ep4LabWOZ3LeuR4eem2SzXJfD
-         K//07t0A/fTaPco9XB4KpH3dyRhcBl4VS0XKtqKAGWAPBTWwI63goF9J6nJN8YdIPO8K
-         DfiK5mF4D6flY0fvIT59UBMgblS3VtTiRkLgQwYCoJp5NdWgYnjPMEDkmgpuqKQ6yI7c
-         gNYQ==
+        bh=4l5zU20cndw6hYAB3MUXx+3Gbe6LL2k71CJyaDseujw=;
+        b=D2h6GbltyI4M7OT8AraTGlHcftzZRO7aHGAy6Z6MLgISZUMLuEu+FzJnyYkF9/PHV3
+         +GMSpRc/rS+3Lpj3AW7hD9PqXfwMBB7G0yLDG6IR5WwUIUTOvoVPwYXzaCxJiMS1wZiE
+         GcP2/FbZVAvKgsvJl1lziTzSD1IN/vIpkpzCsx3B6MVuZECwlIoxisEUwXlz0eF+nW8Z
+         9cuzk2o3UpWqaqLQJbqoLYB51Gs9EImsOxGsqEnQc3zg+2bN67NKWkr4f5ilfakKPtgl
+         38WuAn4dLO9fGr+ajKoF/QZkvE3R9MGVG4KIVKpOWqbn+uuhRcfa1sDi0LXH3NR0vZda
+         bzag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716455061; x=1717059861;
+        d=1e100.net; s=20230601; t=1716455165; x=1717059965;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xwT/Yuq4OgMz2tzy/XuZk3iW6O1XSg4X5ai7w04Ljms=;
-        b=MhFuRRs8NBafoYuCCUh5eEAl+ycmEU/E/iBWzYJqvkFhx0REZdT/ATf19yg3FmIkN7
-         4JZ8IyLsIIlET/xN851xoz3C/KqAZWWDLm5Gdtcdz/t87vZ5i/hKLSfY06E7Y//yFZJL
-         /MkJHaDRSFG1bMcT3ueAxWQl5UDSp6RdEoHIBzQlTj6IAFCki8oXHj63jcQyQtbec2Cl
-         FgyKnPT9ed5STJJ4eW/b+W79U6+mdvde7Bn5C1xQVbyBCKTZeKIgfUPatcQrBaV/EUUa
-         TTJavr/xhibj06PuCSZziKCrW43JWHcSs0zCo+bRQVrntyPJimDTpL9CqYjzw2PpvS+c
-         Udow==
-X-Forwarded-Encrypted: i=1; AJvYcCXyoFzYSKHMPfYho1XPtpZ2gtAyI1W9NbGmGf6kfjn4ag/89iohC9dtRMUg/A47ghWjA2qwQ++21R6gjGw+/vby/3QSxowkC/gYSkqZdkyC81VXik3tcUWvpRAI3n4Gxa6n0Qd2QjQk4w==
-X-Gm-Message-State: AOJu0YzWyC0yN1vAFe0MD/4FTbimqQrwQQyZQRS+unUtv6xYgKGjYCzp
-	jum1tG10I0370Zxi4RYuwp2Ag8IgYN8yZ21ROAkfyKZdWcO0T1Ro
-X-Google-Smtp-Source: AGHT+IEz4KSr9vaAY0Rypx/DggKHZh91zzLIw9ycm65PkqV/FxMezQ4VwE3rGO485BLUAsZ+USk94w==
-X-Received: by 2002:a50:8e17:0:b0:573:55cc:2f50 with SMTP id 4fb4d7f45d1cf-57832c585c5mr3541161a12.37.1716455060827;
-        Thu, 23 May 2024 02:04:20 -0700 (PDT)
-Received: from andrea ([151.76.32.59])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c322dc2sm19648156a12.88.2024.05.23.02.04.19
+        bh=4l5zU20cndw6hYAB3MUXx+3Gbe6LL2k71CJyaDseujw=;
+        b=NKpkL2mWmjafOnQ8rVjM3liDVJSf4yXDzPcckGJ5yR5aBdcywIHGlUe4yGJf6OOMZq
+         VrOIkyGhFUx7pTCKvzXtVkb+WXa7UTxoeEI1rSIai6QNmj3wZRMV6HeuqdV6ZweOP1Ao
+         W3Ox8q5pqrVk7OZyGQXjpbwaTgPcOzeiQvAxPiV2BXY0m/Z4cIMq4YZuql49FARFcAvy
+         XhKyer6wlUxuTC/2rD/UPLbqMSLuUKqNPxHT/9IC7s4y9iRqNx5dtAzVyYHQseJq4I7g
+         yB82MW2KXji1YQb6zYhjX8qGScqy1zsezss7eHDDeUXvX+ICaDU+aQWoAWezidrAIsgM
+         N01w==
+X-Forwarded-Encrypted: i=1; AJvYcCUk519KOU7V3ciW3OqUhoaAVUy0IrKSFug464YgynOs3mgyERbYx6xDLxXHPnukfgdT4dV8Wbs1tHARmYZa3ZkoYxWlYXy/osF9wqyI
+X-Gm-Message-State: AOJu0YwiUnnIXhsZzehLPZtN3DJJFWEvgy2Xmphwic+d2uqsQvUznPYk
+	aD1ufMikmwW5XBuZ39wi9RicNd48osA+sK/RCrygESKBkehxh901HUr5kVPp2bs=
+X-Google-Smtp-Source: AGHT+IG/+kNSZwH/WitEGN5akql9DZcvaGdZF5htf4Rc1hKQs5Ev4o2xODzuMiJrZHse607olITOWA==
+X-Received: by 2002:a17:907:9148:b0:a59:a5c3:819e with SMTP id a640c23a62f3a-a622805e75cmr232911766b.11.1716455165190;
+        Thu, 23 May 2024 02:06:05 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a622bd91be5sm213204766b.33.2024.05.23.02.06.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 02:04:20 -0700 (PDT)
-Date: Thu, 23 May 2024 11:04:16 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	kernel-team@meta.com, boqun.feng@gmail.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: LKMM: Making RMW barriers explicit
-Message-ID: <Zk8GkFlnKeyIgYQb@andrea>
-References: <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
- <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
- <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
- <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
- <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
- <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
- <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
- <Zk4jQe7Vq3N2Vip0@andrea>
- <ba7120a5-9208-4506-bf99-2bfa165180c5@rowland.harvard.edu>
- <22b9837b-16c2-5413-3cd7-4d3a47252a6a@huaweicloud.com>
+        Thu, 23 May 2024 02:06:04 -0700 (PDT)
+Date: Thu, 23 May 2024 11:06:03 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: zhouquan@iscas.ac.cn
+Cc: anup@brainfault.org, atishp@atishpatra.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RISC-V: KVM: Fix incorrect reg_subtype labels in
+ kvm_riscv_vcpu_set_reg_isa_ext function
+Message-ID: <20240523-9c0425e6b3c697abc1009123@orel>
+References: <ff1c6771a67d660db94372ac9aaa40f51e5e0090.1716429371.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,26 +83,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <22b9837b-16c2-5413-3cd7-4d3a47252a6a@huaweicloud.com>
+In-Reply-To: <ff1c6771a67d660db94372ac9aaa40f51e5e0090.1716429371.git.zhouquan@iscas.ac.cn>
 
-> It would be much simpler if
-> one could find all the information to support lkmm in tools/memory-model/
-> (in the form of the model + some comments or a .txt to cover those things we
-> cannot move out of the tool implementation), rather than having to dive into
-> herd7 code.
+On Thu, May 23, 2024 at 10:13:34AM GMT, zhouquan@iscas.ac.cn wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> 
+> In the function kvm_riscv_vcpu_set_reg_isa_ext, the original code
+> used incorrect reg_subtype labels KVM_REG_RISCV_SBI_MULTI_EN/DIS.
+> These have been corrected to KVM_REG_RISCV_ISA_MULTI_EN/DIS respectively.
+> Although they are numerically equivalent, the actual processing
+> will not result in errors, but it may lead to ambiguous code semantics.
+> 
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> ---
+>  arch/riscv/kvm/vcpu_onereg.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
+> index c676275ea0a0..62874fbca29f 100644
+> --- a/arch/riscv/kvm/vcpu_onereg.c
+> +++ b/arch/riscv/kvm/vcpu_onereg.c
+> @@ -724,9 +724,9 @@ static int kvm_riscv_vcpu_set_reg_isa_ext(struct kvm_vcpu *vcpu,
+>  	switch (reg_subtype) {
+>  	case KVM_REG_RISCV_ISA_SINGLE:
+>  		return riscv_vcpu_set_isa_ext_single(vcpu, reg_num, reg_val);
+> -	case KVM_REG_RISCV_SBI_MULTI_EN:
+> +	case KVM_REG_RISCV_ISA_MULTI_EN:
+>  		return riscv_vcpu_set_isa_ext_multi(vcpu, reg_num, reg_val, true);
+> -	case KVM_REG_RISCV_SBI_MULTI_DIS:
+> +	case KVM_REG_RISCV_ISA_MULTI_DIS:
+>  		return riscv_vcpu_set_isa_ext_multi(vcpu, reg_num, reg_val, false);
+>  	default:
+>  		return -ENOENT;
+> 
+> base-commit: 29c73fc794c83505066ee6db893b2a83ac5fac63
+> -- 
+> 2.34.1
+> 
+>
 
-Got it.  And I do find that very relatable to LKMM developers who, like me,
-are definitely not fluent in OCaml.  :-/
-
-Let me draft some .txt to such effect, based on but expanding and hopefully
-completing my previous remarks in
-
-  https://lore.kernel.org/lkml/ZjrSm119+IfIU9eU@andrea/
-
-Having something like that "on paper" can also help evaluate future changes
-to the tool and/or model.
-
-Thank you for the suggestion.
-
-  Andrea
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
