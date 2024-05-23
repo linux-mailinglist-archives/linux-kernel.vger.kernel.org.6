@@ -1,100 +1,119 @@
-Return-Path: <linux-kernel+bounces-188002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B468CDBB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:06:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBA08CDBBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8014B22327
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:06:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088A91C225AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934E0127E06;
-	Thu, 23 May 2024 21:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA2684DEF;
+	Thu, 23 May 2024 21:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Z2nBb5Pl"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IrbEkxEH"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E112C47F5D;
-	Thu, 23 May 2024 21:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD8A84D04;
+	Thu, 23 May 2024 21:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716498365; cv=none; b=kQZEX7P6W0wEmyljoDgn3sHev1lk871prJVkuByxOGxGcD1ohnCPw7DO6gKQbli1geq/FvONouBOD0hcLv60gQoFo4Im1Sj4rGF2EPbH2YahDL64Cd/1BHYewCqkzKnWgGjrdVcjFnJM734NVGUGVGAZjDxAr4PZnvzoI+XnBJ8=
+	t=1716498396; cv=none; b=pksdEopuah5LSDo/wr4Iup8aSWcqcEmBMfkGJOCkBpc36mKvTh+oRYCGehmSoHJhgXZG2G877qBQJ20Af/pjgd8naGWxBLotO5pZjihID0syqth/Ix2j1gEFDqR1PiwmBaIdgJja4lDP11ZbQlx4cQNSciyGxhimvRZfky1QNYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716498365; c=relaxed/simple;
-	bh=tLmdHCjnuUDljef5WOT226x1/maTdvREQJpMX8NZ6a0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NG7q2QiISaJZXIM3NmPb2IK4chI7O33VILSpUBLdAqCIM+dbDNjGjL9dDNdnGZukZ1Pd7kzflwalyENQnyu13sBoq7AEduwG868qf63Ap6Syedja4MmDKZVxmV2JMbn8r/ud/CE1GlgH6zYeyUs7QGfMjiy9l2j2B7Z2TD3mlII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Z2nBb5Pl; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=GSO2GJxf5LIFsopVNpRkthQze4Dv+1RzRCMhXnyvo0I=; b=Z2nBb5PliQaycAxn
-	W1y6YgjA2KNUcu3q2pQITu8VrdVBEDs9AINJP6Wu/UW+kCMjAMFyBUaxkiJLfr1GH0us4J697h6g8
-	eKhiVcZDcGstsr+i+KQWSwufWyoca4lqw3kHV6Dde8XGI2NCsyhzgVRt+Hj4pLZeidLI2Ebh4+oxm
-	1tlV7MDThmOLz3vgLUYRWuRYe53ZgHiNgmOvSBdyMVODgYcaH2Y0ran0UK9GvjwKNxJi3OQJObhnH
-	WdQt1pAKizXGqYhflV1CCrTEZerJ+6Ioe63FN3htfO5ywTlXTCEyZdX/3FeYznE/nEEzpUDN72UI/
-	bXoGY20h4AbSCqhKMA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sAFdK-002IRW-0c;
-	Thu, 23 May 2024 21:05:54 +0000
-From: linux@treblig.org
-To: agk@redhat.com,
-	snitzer@kernel.org,
-	mpatocka@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] dm cache metadata: remove unused struct 'thunk'
-Date: Thu, 23 May 2024 22:05:50 +0100
-Message-ID: <20240523210550.309116-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716498396; c=relaxed/simple;
+	bh=pKD8sIzMjawIjx8TgK8/CugVLHIN9wwV+v7SX4LeI7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K7POdMrnvrIrrGO9BMOKKDwh2vKyI56Ifa26IkfzGT56D3f4TeYeP+JBjQRlRcplGchk4d1wYzXB6iiInWIB9jVobsP6CgOBATQBQbm7LHSlmPPF0iCmbvUrh52wki6rwXNEDuDQHySuqzXQG+w+ASjUCpLMqrdzIiNHHDXoQXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IrbEkxEH; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f693fb0ab6so3388359b3a.1;
+        Thu, 23 May 2024 14:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716498394; x=1717103194; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OTQYbO81rVm1d7lRu0tL1hZxpq81q3UNDF+EXPIQyIs=;
+        b=IrbEkxEHh0gFWEWD7eRIaQn3tkHiWGFzTDnMsBadW4jf3VQH1dyW7kP7Co68S5Nb0X
+         XsVdrvUMGYj3K6QRZ4P59n59grpXjqkbUejLAmzdq8oDzR67OGnDLz4dfR/hrWD/y/3Y
+         V5jPd6zUOvW8YM/QAVMCe2akPkX7ihxdZEEL3AhqjT99IiJOXsHfCjN1kUu6+BPtZyq6
+         sa1YW3HeOWfvNn0vp0caIqcEsOJow9Erq9JBkBNIU03JbY4QBy1HvsV+2eMddgwfwKAT
+         Pf+bQ9Th0zuhvI/sQuokDmJ4N6IuN0ju9m69y4vGSQ4fjvxwde9Mr2GywLH0Dcoslon+
+         UvkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716498394; x=1717103194;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OTQYbO81rVm1d7lRu0tL1hZxpq81q3UNDF+EXPIQyIs=;
+        b=JNqDNLmcsguf1QzztePFdU/vxLdSznc/C2lL09gOZOGcNbROFcHqcwm5sc1t8GU6eU
+         EYwIHWGS4TIu9hnXQO/1ywDjMToheRIOxGbIP5RkkJnQ1eObjcRxFPUpSZKJMpo+9Nvc
+         5T/LO7aWGEo3yOkfym08txJBFdsqg1208RY3pHYrBr5jtB3nZ7OC0MGMbeSCwO5Ylrvw
+         2t3229ETBsjnqR2xwbRw1wghBtJTztoU7leP+4fU4qE8aSrChnbrwfpta7dbCudJBt/V
+         Z7uLZBcL0Yj9ltna3Tm2Rab6hUcPKeMED2IvpRwlrDTEQ6kgQM8XfbC4JzFOyap31Zzg
+         OYPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiFKP3CQmS3R3OLIBrHY/EQRzsRuYiinamDDWZGPrLaKa6H7Bdwu0oTmN5z5qhD4Yrx4pg3r6y9Vj8RNoFY/0se2cZCHfzv76LmMRYSZrf3g42NpD8hAAsuKSop7QOZc1Ps1Ct
+X-Gm-Message-State: AOJu0YzfaUIJQu+hWtIho4aKBU6faPvzwmDLq9r6/WnxhtOBmBxBVGl8
+	KYPR5Gk1GAsB68KrU4HBJgE6J7xjUgo5FctSNvB2DieeCcp/9jxJZ0LFLbW8
+X-Google-Smtp-Source: AGHT+IFu8eH3wryZgm20YQAvXwmv2wMxXRUbiTwAcGLlf4xqZlHr+NJrsBs4mNDXckPYZS2gAZKfmA==
+X-Received: by 2002:a05:6a00:450a:b0:6e6:89ad:1233 with SMTP id d2e1a72fcca58-6f8f2c576d9mr396897b3a.2.1716498393894;
+        Thu, 23 May 2024 14:06:33 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-6822189197asm11024a12.20.2024.05.23.14.06.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 14:06:33 -0700 (PDT)
+Message-ID: <84dce939-ff26-4179-b466-a4e5f8b8f104@gmail.com>
+Date: Thu, 23 May 2024 14:06:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.9 00/25] 6.9.2-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240523130330.386580714@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240523130330.386580714@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 5/23/24 06:12, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.2 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.2-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-'thunk' has been unused since
-commit f177940a8091 ("dm cache metadata: switch to using the new
-cursor api for loading metadata").
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/md/dm-cache-metadata.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/md/dm-cache-metadata.c b/drivers/md/dm-cache-metadata.c
-index 96751cd3d181..0ad9dc1824fa 100644
---- a/drivers/md/dm-cache-metadata.c
-+++ b/drivers/md/dm-cache-metadata.c
-@@ -1282,15 +1282,6 @@ int dm_cache_insert_mapping(struct dm_cache_metadata *cmd,
- 	return r;
- }
- 
--struct thunk {
--	load_mapping_fn fn;
--	void *context;
--
--	struct dm_cache_metadata *cmd;
--	bool respect_dirty_flags;
--	bool hints_valid;
--};
--
- static bool policy_unchanged(struct dm_cache_metadata *cmd,
- 			     struct dm_cache_policy *policy)
- {
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.45.1
+Florian
 
 
