@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-187531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04538CD301
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7488F8CD31A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42518B21875
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26D9528505A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDEE14A604;
-	Thu, 23 May 2024 12:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A4A14A4F1;
+	Thu, 23 May 2024 13:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KDndgTDg"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QbP0Y189"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1C41494AC;
-	Thu, 23 May 2024 12:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F6413B7BC;
+	Thu, 23 May 2024 13:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716469185; cv=none; b=qtPj7v5qbkk4CPVOdkzuj/BCzx+LXeBPnpLsP7AWQSCud6oFsWc55hejiLu/WD/OcvKjOj6oNb4cuwQATzfOrB7zoxnf9DGCqVh5hZUPFtnWngq9EmWIW+E6tD3l9KC0J9MI9UVzhdjUcivYvkZ1tFf3h8W745oSG4ztX1o3T4s=
+	t=1716469328; cv=none; b=XIIOugmZyiVVEKqNuWWpdyB05D5b7NWF5kh0Ee8poKvgbzgzt1CXo54lbV2tU6ycQSGczB2Rj80ncbO180qBrkhzQKfegExllsa8kCo0vTaMBBGMaqwJiCX5TMLBnCS/rSUfp+Bc965URKH5Nwok5Q6ushOE7i2ErvvQ6Lty6vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716469185; c=relaxed/simple;
-	bh=r/jKk9ccksY/9WiNmL6OIFw97z+/dtosx4ERQ9Umakw=;
+	s=arc-20240116; t=1716469328; c=relaxed/simple;
+	bh=xyTHuhkTsGkxCewXIYtJbN5u25VhvmjpyGsoQHV0W9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMEtkAcvkmur1yR+49uKYOtMJwgklfgQirFdi3nLh883dW32XvYK/ocqIyfNuaMBCytNpOQjYedSss/arPJX0m0BWQm/8fbXslgZgckkGqY+DG3JVAUI2Y6fYvO/ot5Ou10XjfxKNRLhHObAiSmsdj2gT4qlDSiUZ7n5M0NNJXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KDndgTDg; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=iDDVfg/vJO5TvVPe2vKaGxm0sb/5qDyjmp6tSkeBIJY=; b=KDndgTDg2qikMCFERZR+gFarmK
-	9G/Uj8HEob9i/zOZ/rQiZOw+8Sls3K+AIZqyY7HhAGmtHePMnCx78hTbnK8Iq3OyAhYH6ARHTBLt6
-	wR5IXYGJvkh7bcWGCIe+KXZkcWisgmyslwcHVE6IG0EfdIuSFBrcGyEARAZxPg+5aJ7sUx8l6482D
-	+hcu1V7NJ8kMFKU0wlgbCUfHNH8Vbmem8ep65CqepoNeUcl5YEB0V75Vmino4e9KfjPwgnywW6XIl
-	AeO4ytyHtrUjUCebIU6hlTDJIN9baFTVLKwInT2vNigDOIlHjHF5Xadzj3VzqYMmEOWg/Rq49enPS
-	Ugz/Y4yQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sA82m-00000006IH1-1BCC;
-	Thu, 23 May 2024 12:59:40 +0000
-Date: Thu, 23 May 2024 05:59:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Theodore Ts'o <tytso@mit.edu>, lsf-pc@lists.linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] untorn buffered writes
-Message-ID: <Zk89vBVAeny6v13q@infradead.org>
-References: <20240228061257.GA106651@mit.edu>
- <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=utA1UPnvQMkjVEvg0rRPtM/UpTz4P2nzCrZCAuQGjaCWu3pBd27OeYqkwJI0MWy5PkgmDzt1ljR6hJB5nPjq0HE+yv/vQLSR73kQpCjTAnavSzrcvh4w/ntai4dQxLT/CM4FJd2ShUnbg7Micrboy6bbmgUH+wdqvxdWrLyo05E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QbP0Y189; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=UTBLLIVYfkg4QE6/jefBW6vdILy6/+yw6lYO8WeGjC0=; b=QbP0Y189CLpNctPQTudUmRk1Hp
+	CnoFA3HBpff5S8O7cAr0W5DFAGb9qCv4zmMenPG2OPe0x4VxqZCTxIY4K7LCo/SjXD5tDAL9HwW6G
+	+pkUcOHCK5khO6K64DMxwScxrxlM3e0S+CnEouAx/DgecW8LdkiTLRR2cv8BXLo5CjZk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sA84x-00FtRZ-90; Thu, 23 May 2024 15:01:55 +0200
+Date: Thu, 23 May 2024 15:01:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: wei.fang@nxp.com, shenwei.wang@nxp.com, xiaoning.wang@nxp.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, imx@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH] net: fec: free fec queue when fec_probe() fails or
+ fec_drv_remove()
+Message-ID: <ca1c4de5-537a-4aa9-851d-d37ce800fdac@lunn.ch>
+References: <20240523062920.2472432-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,31 +60,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9e230104-4fb8-44f1-ae5a-a940f69b8d45@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240523062920.2472432-1-xiaolei.wang@windriver.com>
 
-On Wed, May 15, 2024 at 01:54:39PM -0600, John Garry wrote:
-> On 27/02/2024 23:12, Theodore Ts'o wrote:
-> > Last year, I talked about an interest to provide database such as
-> > MySQL with the ability to issue writes that would not be torn as they
-> > write 16k database pages[1].
-> > 
-> > [1] https://urldefense.com/v3/__https://lwn.net/Articles/932900/__;!!ACWV5N9M2RV99hQ!Ij_ZeSZrJ4uPL94Im73udLMjqpkcZwHmuNnznogL68ehu6TDTXqbMsC4xLUqh18hq2Ib77p1D8_4mV5Q$
-> > 
+On Thu, May 23, 2024 at 02:29:20PM +0800, Xiaolei Wang wrote:
+> commit 59d0f7465644 ("net: fec: init multi queue date structure")
+> allocates multiple queues, which should be cleaned up when fec_probe()
+> fails or fec_drv_remove(), otherwise a memory leak will occur.
 > 
-> After discussing this topic earlier this week, I would like to know if there
-> are still objections or concerns with the untorn-writes userspace API
-> proposed in https://lore.kernel.org/linux-block/20240326133813.3224593-1-john.g.garry@oracle.com/
+> unreferenced object 0xffffff8010350000 (size 8192):
+>   comm "kworker/u8:3", pid 39, jiffies 4294893562
+>   hex dump (first 32 bytes):
+>     02 00 00 00 00 00 00 00 00 50 06 8a c0 ff ff ff  .........P......
+>     e0 6f 06 8a c0 ff ff ff 00 50 06 8a c0 ff ff ff  .o.......P......
+>   backtrace (crc f1b8b79f):
+>     [<0000000057d2c6ae>] kmemleak_alloc+0x34/0x40
+>     [<000000003c413e60>] kmalloc_trace+0x2f8/0x460
+>     [<00000000663f64e6>] fec_probe+0x1364/0x3a04
+>     [<0000000024d7e427>] platform_probe+0xc4/0x198
+>     [<00000000293aa124>] really_probe+0x17c/0x4f0
+>     [<00000000dfd1e0f3>] __driver_probe_device+0x158/0x2c4
 > 
-> I feel that the series for supporting direct-IO only, above, is stuck
-> because of this topic of buffered IO.
+> Fixes: 59d0f7465644 ("net: fec: init multi queue date structure")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 
-Just my 2 cents, but I think supporting untorn I/O for buffered I/O
-is an amazingly bad idea that opens up a whole can of worms in terms
-of potential failure paths while not actually having a convincing use
-case.
+Please read what i suggested. It is good to have code which is
+symmetric. probe() and remove() should be opposites of each other.
+probe() calls fec_enet_init(). So it would be good to have remove()
+call fec_enet_deinit() which does the opposite. We then have symmetry.
 
-For buffered I/O something like the atomic msync proposal makes a lot
-more sense, because it actually provides a useful API for non-trivial
-transactions.
+Is there anything else in fec_enet_init() which needs undoing? A rule
+of thumb: If you find a bug, look around, there might be others
+nearby. Maybe leaking the queues is not the only problem?
+
+	Andrew
 
