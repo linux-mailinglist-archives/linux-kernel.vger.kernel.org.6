@@ -1,192 +1,249 @@
-Return-Path: <linux-kernel+bounces-187543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850168CD339
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:08:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C028CD33E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9A51F21FE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9C811F223CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C86514A4D1;
-	Thu, 23 May 2024 13:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B5214A60D;
+	Thu, 23 May 2024 13:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="AUf+Lmh7";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="AUf+Lmh7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obwQ+HW3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BBC13B7A3;
-	Thu, 23 May 2024 13:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5360D13B7BC;
+	Thu, 23 May 2024 13:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716469719; cv=none; b=kWrpuQnvHpkvjof0aCROW+jvqEa7fWwUjFpp4XqmMG/up7OkP9/QRQP8R0rpWuV31kxT/rHpeg419Gzlw0lEkgXgktxghRktU1VbBWx8Z04bcU8bEYKatnpIevIzsfDXmFg8dA17un96WzHzoCG2Ek4AnJXgO1wELAmWDXvxiA4=
+	t=1716469730; cv=none; b=E8QLTW9oeSPa7m9dDi7gW2sjWYC6pkrnsq4zpBz4p6EgAihK34yaIUhQ8SkzUir3T1tosb922gWoyU0IDWSzLeSAb9PjzZ28PFjzGj72aDfLE86kaukkSxxfSFDhnb81z3OQHYY7sYnyXfNUGAG3T4WvjY12EwaNPxcXdLtSz9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716469719; c=relaxed/simple;
-	bh=xDrQGqytmmiE09OJrqy/cRCo3P9waA7SdWOA6LMaUi8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TehKHHD3B8L3mxZukRLWOPT7YKjhm9Zfp0adMBOpIIwaj045R5Y06rwwwZat2MfMXQX/QNbbovjNo49KqgGH5+S7xYBDOWxnJte0bvKb4Q8xMWDHX3PwDA62zEuS68FAdTNdCbgWnMPjpKqts8uCRM+G/74pw/SBC+THh/WO4NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=AUf+Lmh7; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=AUf+Lmh7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 88158221D6;
-	Thu, 23 May 2024 13:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716469709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8K/9FEoIHUeOKcKFSxIFhQixiarYUm7MU6Zat4dJJN4=;
-	b=AUf+Lmh7m1hT3cswnKkCner6GY9o/yZ+xt15sd+mjAgVvy4H+QaUmgKEtn0ZPlofL0RDDc
-	Rd8PyUJlZFGtP+j6e0sfTQdyCXTxx6LMzJCvGEWgi33i0LyGiNBOC7KSj4FDbrO6a6dqGJ
-	kunAcSSE56N4Nev8/vt9XMZ5Cn0jqxk=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=AUf+Lmh7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716469709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8K/9FEoIHUeOKcKFSxIFhQixiarYUm7MU6Zat4dJJN4=;
-	b=AUf+Lmh7m1hT3cswnKkCner6GY9o/yZ+xt15sd+mjAgVvy4H+QaUmgKEtn0ZPlofL0RDDc
-	Rd8PyUJlZFGtP+j6e0sfTQdyCXTxx6LMzJCvGEWgi33i0LyGiNBOC7KSj4FDbrO6a6dqGJ
-	kunAcSSE56N4Nev8/vt9XMZ5Cn0jqxk=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 65B7C13A6B;
-	Thu, 23 May 2024 13:08:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HgKsFs0/T2bpQQAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Thu, 23 May 2024 13:08:29 +0000
-Date: Thu, 23 May 2024 15:08:24 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Oscar Salvador <OSalvador@suse.com>, Peter Xu <peterx@redhat.com>,
-	cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: CVE-2024-36000: mm/hugetlb: fix missing hugetlb_lock for resv
- uncharge
-Message-ID: <Zk8_yGttYR_zPf_J@tiehlicka>
-References: <2024052023-CVE-2024-36000-cfc4@gregkh>
- <Zkto8rbtAUBql-78@tiehlicka>
- <Zkz4RRgfwUHPbQ5z@x1n>
- <Zk7ws6H0wwuiFAJW@tiehlicka>
- <Zk8bgS8IboS-7jQw@localhost.localdomain>
+	s=arc-20240116; t=1716469730; c=relaxed/simple;
+	bh=5x2a4GM3brTtaycRNakzuLxHq3n5FCWmESOoxOPKfDg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PFxiQmoYRWCSgxc2jL/++tI6NIkK5UsD/BqmAj1ZxPMF+E7N1wDbEH7mQPTY+cvW2TizTAY9Dyjjkbk3DAudx2v0l4Q3fkYtx2Z3/tzrJqa8y9B0woRMXo2tYDYO1vy3QVksGELjUpeP7bE32OaBmZf8j/uvCZ+u5D3Zz2NkgMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obwQ+HW3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56226C2BD10;
+	Thu, 23 May 2024 13:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716469729;
+	bh=5x2a4GM3brTtaycRNakzuLxHq3n5FCWmESOoxOPKfDg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=obwQ+HW3dkBtcZ2A7SnkC9L0Csk8Z3mlB8nmpNniwjdIiufbdTCQo56oh4HCPaWqg
+	 gEmXAmN1/XFKQamXKamiG0EiecKHbxM74ffFuv1M1CFqqQ5d270zshNA9U6d9JvHEr
+	 xMLoKSllvP4XLwdLtjxmE6QqRB/Zhj3TV5R64qVgqmfnJ7zMWuMfcnsxBlK+PjB0eN
+	 K6QKqzPMv3XUgWJtJYzHQsQqc7AE2cu9x8lbgMxBfJVks5GfhOu9pD6CSLWJnAxLTW
+	 enWO6FfGpHLuFMcAtS9ukesEZZl2OPpxXVNFGMHFWMkiJgihPF5C46koke1xoUSkmt
+	 SQuShp1g9Zd5w==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-kernel@vger.kernel.org (open list),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH] KEYS: trusted: Use ASN.1 encoded OID
+Date: Thu, 23 May 2024 16:08:35 +0300
+Message-ID: <20240523130839.31265-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zk8bgS8IboS-7jQw@localhost.localdomain>
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 88158221D6
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
+Content-Transfer-Encoding: 8bit
 
-On Thu 23-05-24 12:33:37, Oscar Salvador wrote:
-> On Thu, May 23, 2024 at 09:30:59AM +0200, Michal Hocko wrote:
-> > Let me add Oscar,
-> 
-> Thanks
-> 
-> > 
-> > On Tue 21-05-24 15:38:45, Peter Xu wrote:
-> > > That commit mentioned that we rely on the lock to make sure all hugetlb
-> > > folios on the active list will have a valid memcg.  However I'm not sure
-> > > whether it's still required now (after all that's 2012..), e.g., I'm
-> > > looking at hugetlb_cgroup_css_offline(), and hugetlb_cgroup_move_parent()
-> > > looks all safe to even take empty memcg folios with the latest code at
-> > > least:
-> > > 
-> > > 	/*
-> > > 	 * We can have pages in active list without any cgroup
-> > > 	 * ie, hugepage with less than 3 pages. We can safely
-> > > 	 * ignore those pages.
-> > > 	 */
-> > > 	if (!page_hcg || page_hcg != h_cg)
-> > > 		goto out;
-> 
-> Ok, I had a look at hugetlb_cgroup implementation.
-> First time looking at that code, so bear with me.
-> 
-> I looked back at commit
-> 
->  commit 94ae8ba7176666d1e7d8bbb9f93670a27540b6a8 (HEAD)
->  Author: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
->  Date:   Tue Jul 31 16:42:35 2012 -0700
->  
->      hugetlb/cgroup: assign the page hugetlb cgroup when we move the page to active list.
-> 
-> to understand why the lock was needed.
-> 
-> On the theoretical part:
-> 
-> And we could have
-> 
->      CPU0                                   CPU1
->  dequeue_huge_page_vma
->   dequeue_huge_page_node
->    move_page_to_active_list
->  release_lock
->                                            hugetlb_cgroup_pre_destroy
->                                             for_each_page_in_active_list
->                                             <-- pages empty cgroups are skipped -->
->                                              hugetlb_cgroup_move_parent
->                                              move_page_to_parent
->  hugetlb_cgroup_commit_charge <-- too late
->   page[2].lru.next = (void *)h_cg;
-> 
-> So, the above page should have been moved to the parent, but since by the time
-> we were checking the activelist this page did not have any cgroup attach ot it,
-> it was skipped.
-> 
-> Notice I said theoretical because I noticed that
-> cgroup_call_pre_destroy()->hugetlb_cgroup_pre_destroy() is called from
-> cgroup_rmdir(). I am not sure under which circumstances cgroup_rmdir()
-> can succeed (does the cgroup refcount have dropped to 0?)
+There's no reason to encode OID_TPMSealedData at run-time, as it never
+changes.
 
-Now, it just cannot have any tasks attached nor any subgroups. So is the
-race actually possible?
+Replace it with the encoded version, which has exactly the same size:
+
+	67 81 05 0A 01 05
+
+Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue so that
+the OID can be simply copied to the blob.
+
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ include/linux/asn1_encoder.h              |  4 -
+ lib/asn1_encoder.c                        | 91 -----------------------
+ security/keys/trusted-keys/trusted_tpm2.c | 10 ++-
+ 3 files changed, 7 insertions(+), 98 deletions(-)
+
+diff --git a/include/linux/asn1_encoder.h b/include/linux/asn1_encoder.h
+index 08cd0c2ad34f..afeefdfe2525 100644
+--- a/include/linux/asn1_encoder.h
++++ b/include/linux/asn1_encoder.h
+@@ -8,14 +8,10 @@
+ #include <linux/asn1_ber_bytecode.h>
+ #include <linux/bug.h>
+ 
+-#define asn1_oid_len(oid) (sizeof(oid)/sizeof(u32))
+ unsigned char *
+ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+ 		    s64 integer);
+ unsigned char *
+-asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+-		u32 oid[], int oid_len);
+-unsigned char *
+ asn1_encode_tag(unsigned char *data, const unsigned char *end_data,
+ 		u32 tag, const unsigned char *string, int len);
+ unsigned char *
+diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
+index 0fd3c454a468..c0db3cbebe89 100644
+--- a/lib/asn1_encoder.c
++++ b/lib/asn1_encoder.c
+@@ -85,97 +85,6 @@ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+ }
+ EXPORT_SYMBOL_GPL(asn1_encode_integer);
+ 
+-/* calculate the base 128 digit values setting the top bit of the first octet */
+-static int asn1_encode_oid_digit(unsigned char **_data, int *data_len, u32 oid)
+-{
+-	unsigned char *data = *_data;
+-	int start = 7 + 7 + 7 + 7;
+-	int ret = 0;
+-
+-	if (*data_len < 1)
+-		return -EINVAL;
+-
+-	/* quick case */
+-	if (oid == 0) {
+-		*data++ = 0x80;
+-		(*data_len)--;
+-		goto out;
+-	}
+-
+-	while (oid >> start == 0)
+-		start -= 7;
+-
+-	while (start > 0 && *data_len > 0) {
+-		u8 byte;
+-
+-		byte = oid >> start;
+-		oid = oid - (byte << start);
+-		start -= 7;
+-		byte |= 0x80;
+-		*data++ = byte;
+-		(*data_len)--;
+-	}
+-
+-	if (*data_len > 0) {
+-		*data++ = oid;
+-		(*data_len)--;
+-	} else {
+-		ret = -EINVAL;
+-	}
+-
+- out:
+-	*_data = data;
+-	return ret;
+-}
+-
+-/**
+- * asn1_encode_oid() - encode an oid to ASN.1
+- * @data:	position to begin encoding at
+- * @end_data:	end of data pointer, points one beyond last usable byte in @data
+- * @oid:	array of oids
+- * @oid_len:	length of oid array
+- *
+- * this encodes an OID up to ASN.1 when presented as an array of OID values
+- */
+-unsigned char *
+-asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+-		u32 oid[], int oid_len)
+-{
+-	int data_len = end_data - data;
+-	unsigned char *d = data + 2;
+-	int i, ret;
+-
+-	if (WARN(oid_len < 2, "OID must have at least two elements"))
+-		return ERR_PTR(-EINVAL);
+-
+-	if (WARN(oid_len > 32, "OID is too large"))
+-		return ERR_PTR(-EINVAL);
+-
+-	if (IS_ERR(data))
+-		return data;
+-
+-
+-	/* need at least 3 bytes for tag, length and OID encoding */
+-	if (data_len < 3)
+-		return ERR_PTR(-EINVAL);
+-
+-	data[0] = _tag(UNIV, PRIM, OID);
+-	*d++ = oid[0] * 40 + oid[1];
+-
+-	data_len -= 3;
+-
+-	for (i = 2; i < oid_len; i++) {
+-		ret = asn1_encode_oid_digit(&d, &data_len, oid[i]);
+-		if (ret < 0)
+-			return ERR_PTR(ret);
+-	}
+-
+-	data[1] = d - data - 2;
+-
+-	return d;
+-}
+-EXPORT_SYMBOL_GPL(asn1_encode_oid);
+-
+ /**
+  * asn1_encode_length() - encode a length to follow an ASN.1 tag
+  * @data: pointer to encode at
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 8b7dd73d94c1..dadeed35627c 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -26,7 +26,8 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+ };
+ 
+-static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
++/* Encoded OID_TPMSealedData. */
++static u8 OID_TPMSealedData_ASN1[] = {0x06, 0x06, 0x67, 0x81, 0x05, 0x0a, 0x01 0x05};
+ 
+ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 			   struct trusted_key_options *options,
+@@ -51,8 +52,8 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	if (!scratch)
+ 		return -ENOMEM;
+ 
+-	work = asn1_encode_oid(work, end_work, tpm2key_oid,
+-			       asn1_oid_len(tpm2key_oid));
++	work = memcpy(work, OID_TPMSealedData_ASN1, sizeof(OID_TPMSealedData_ASN1));
++	work += OID_TPMSealedData_ASN1;
+ 
+ 	if (options->blobauth_len == 0) {
+ 		unsigned char bool[3], *w = bool;
+@@ -90,6 +91,9 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 		goto err;
+ 	}
+ 
++	print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1,
++		       payload->blob, work1 - payload->blob, 0);
++
+ 	kfree(scratch);
+ 	return work1 - payload->blob;
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.45.1
+
 
