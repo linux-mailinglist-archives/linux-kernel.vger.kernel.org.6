@@ -1,131 +1,87 @@
-Return-Path: <linux-kernel+bounces-187658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22138CD5F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:38:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BE18CD602
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E1F281AFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48851F22374
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B400C14C580;
-	Thu, 23 May 2024 14:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A59814B96E;
+	Thu, 23 May 2024 14:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGpvGW6a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QL0ITScb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E2612B171;
-	Thu, 23 May 2024 14:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415E112B16E;
+	Thu, 23 May 2024 14:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716475079; cv=none; b=k45eYa4f6bptQpT8jtLZ34r+0MQa4nciXD6LZvyeDDxxzQL4LSducFf2xdAoqa38NsDDMCNevj5V0cpRcnMbELbIj9uyN5tXQbJU+DDLeGWUNhkabmu28it3TqOZTPCJuNrNuJ4ZSzT5ok/YmF4iS09zWEYwiXRqA33LPERYTE0=
+	t=1716475262; cv=none; b=HATgfDUk9yMVVbUPE/L90FgTj0oHapFzPakhjtKuItwRsITMOXRwTGi4Xa7sBj937Aeb66knz7Rwt+qr2TZKPGJ8oZJha+5d3H6aMUjfBqnw7FWdJoEgg7UHxgWmJXPCJKm6X2TE1Bo5fFfgp+YyQq9GA0XD/hU5Zg5KuR99/Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716475079; c=relaxed/simple;
-	bh=eT+HB+FXqP5lVZyAYj6JKHnhWvk/Ipdw9JdWIe8LzVM=;
+	s=arc-20240116; t=1716475262; c=relaxed/simple;
+	bh=J37CGLNwT838ydiPOn9Wa6R1GLXsTn7/JsoUPCz/9dA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6JK2PS7GNs0ZgjMAeX6JDnTagRUO5fLedYubGp7d7sLA7StzVsmQO98U5C4NulryGmyymmobeMQXlIoBXok/iS2QOYS70TFuLGQxkdSctRf4oK6qBZsB5HtfMQ8FhOJrrSrjA/WLncDylCte41tV1x9SUw8pu09bPrLbYyejPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGpvGW6a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F929C2BD10;
-	Thu, 23 May 2024 14:37:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4D8mRUV1IKJcOC6ewY3iKTdTbeIzj7LSbjK36hznVEzjSFp2nHKuDzzkkok54KzRkj35IYKSzNK66cciP4ygXrjICGV39R55TrNa595sj83vRlzPv7zbMLl88h3Yb1IbtPMQBBzs15YxP25Pr92ZLPqZZOv8hB7csYhOsaMJtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QL0ITScb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691CFC32781;
+	Thu, 23 May 2024 14:40:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716475078;
-	bh=eT+HB+FXqP5lVZyAYj6JKHnhWvk/Ipdw9JdWIe8LzVM=;
+	s=k20201202; t=1716475261;
+	bh=J37CGLNwT838ydiPOn9Wa6R1GLXsTn7/JsoUPCz/9dA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iGpvGW6a9yj3gWD7yyTWBWyh+7KuymQfmTC5VLzNGUETDnmwJO+vqyEup2aTcy1x1
-	 v5+2jkf19i+w373ThyPSeHO9d0rLYRxZS2d5F53xFNhOr2JrIpZLCEvo9Kr6ZmXv50
-	 3NNzg67yDi5QNGL2CJ6n2zsTvzkGIzpIsJaZ1haTVf2WYn9Q6tJ+PbjVHodEdmvjzJ
-	 bjPz8XeRxfiznuHWYXGTwqzoNUxuEKq6sWfsOsBFUMvLfatQWrjvTFGYc/+BgVmMEe
-	 Ybfm+/G9nXVsI+hCWBOhrluBHhkJUZe2NwH5vucQ75mnIY1Y+3GOXlPI87LCsVuN7A
-	 E0tblaqOZHbrA==
-Date: Thu, 23 May 2024 15:37:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexey Romanov <avromanov@salutedevices.com>
-Cc: "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"khilman@baylibre.com" <khilman@baylibre.com>,
-	"jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-	"martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	kernel <kernel@sberdevices.ru>
-Subject: Re: [PATCH v7 17/23] dt-bindings: crypto: meson: remove clk and
- second interrupt line for GXL
-Message-ID: <20240523-snowiness-attain-75d415573b5a@spud>
-References: <20240411133832.2896463-1-avromanov@salutedevices.com>
- <20240411133832.2896463-18-avromanov@salutedevices.com>
- <20240415-schnapps-plating-eb0895459004@spud>
- <20240506134754.jl633ncne7ct6szo@cab-wsm-0029881>
- <20240506-distrust-famine-6848f75dd3fe@spud>
- <20240523104624.tr5omyxnzxsjkpai@cab-wsm-0029881.sigma.sbrf.ru>
+	b=QL0ITScbbOElyfsR8elZCh9+T26SCaCcvQY3y5R5ZErz7XlJr8cGb2NGmFhunkSjP
+	 cITBqRd84LFpB13U5tk01oDerbVk9RsQ6uki2Mszgi36x6DwPcX47b8iCLGMzU1DIn
+	 mriaNCfssuXKrVDwwUMOiH8T7eaVEKkLIUfq+V5z4a8hCAHJPhQU74SJQFbg7N7/sI
+	 Bu4kgdEUwC5Q3mP1JAQbwISITePJ6A66gwDfPHABhlw3d7KGoUc1yG4OVdthA4OjFE
+	 eSVKtlhbQ4Ew5MkwW+DOQyy4629bKolE5X55VjGbks+vGaII+YCE40XZMY/MtiZTpM
+	 vCyUIoS4mPFag==
+Date: Thu, 23 May 2024 15:40:56 +0100
+From: Simon Horman <horms@kernel.org>
+To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+Cc: steve.glendinning@shawell.net, UNGLinuxDriver@microchip.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: usb: smsc95xx: fix changing LED_SEL bit value
+ updated from EEPROM
+Message-ID: <20240523144056.GO883722@kernel.org>
+References: <20240523085314.167650-1-Parthiban.Veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WTOLmlkXxsRP7sN+"
-Content-Disposition: inline
-In-Reply-To: <20240523104624.tr5omyxnzxsjkpai@cab-wsm-0029881.sigma.sbrf.ru>
-
-
---WTOLmlkXxsRP7sN+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240523085314.167650-1-Parthiban.Veerasooran@microchip.com>
 
-On Thu, May 23, 2024 at 10:46:35AM +0000, Alexey Romanov wrote:
-> Hi Conor,
->=20
-> On Mon, May 06, 2024 at 04:47:29PM +0100, Conor Dooley wrote:
-> > On Mon, May 06, 2024 at 01:48:01PM +0000, Alexey Romanov wrote:
-> > > On Mon, Apr 15, 2024 at 05:43:15PM +0100, Conor Dooley wrote:
-> > > > On Thu, Apr 11, 2024 at 04:38:26PM +0300, Alexey Romanov wrote:
-> > > > > GXL crypto IP isn't connected to clk and seconnd interrput line,
-> > > > > so we must remove them from dt-bindings.
-> > > >=20
-> > > > How does the device work without a clock?
-> > >=20
-> > > It's clocked by a common clock, the vendor didn't provide more
-> > > information. It doesn't have any special clock domains.
-> >=20
-> > So the hardware block does have a clock, which, even if it is a clock
-> > shared with other hardware blocks, makes your patch incorrect.
-> >=20
-> > Is the "blkmv" clock the shared clock?
->=20
-> I received accurate information from the vendor. Starting from GXL,
-> DMA engine is used for crypto HW and clock is hard weired to it (at RTL
-> level).
+On Thu, May 23, 2024 at 02:23:14PM +0530, Parthiban Veerasooran wrote:
+> LED Select (LED_SEL) bit in the LED General Purpose IO Configuration
+> register is used to determine the functionality of external LED pins
+> (Speed Indicator, Link and Activity Indicator, Full Duplex Link
+> Indicator). The default value for this bit is 0 when no EEPROM is
+> present. If a EEPROM is present, the default value is the value of the
+> LED Select bit in the Configuration Flags of the EEPROM. A USB Reset or
+> Lite Reset (LRST) will cause this bit to be restored to the image value
+> last loaded from EEPROM, or to be set to 0 if no EEPROM is present.
+> 
+> While configuring the dual purpose GPIO/LED pins to LED outputs in the
+> LED General Purpose IO Configuration register, the LED_SEL bit is changed
+> as 0 and resulting the configured value from the EEPROM is cleared. The
+> issue is fixed by using read-modify-write approach.
+> 
+> Fixes: f293501c61c5 ("smsc95xx: configure LED outputs")
+> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+> ---
+>  drivers/net/usb/smsc95xx.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 
-> That's why we have to remove it from device tree, because we can't
-> control it anyway.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-That's not true, if the clock runs at a fixed frequency it should be
-described as a fixed-clock in the devicetree.
-
---WTOLmlkXxsRP7sN+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk9UwAAKCRB4tDGHoIJi
-0kgCAQCc036MitPTeOOqstfi4ri+q3xgSGemTaQQWCQjlD0qKAD+OwLXN5ySvreg
-/MfIpImWvlSDrfrkLnC2nq4oV8AAmQg=
-=NYsR
------END PGP SIGNATURE-----
-
---WTOLmlkXxsRP7sN+--
 
