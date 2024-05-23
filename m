@@ -1,106 +1,208 @@
-Return-Path: <linux-kernel+bounces-187619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FC38CD54F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:03:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448B98CD54B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DEB1C228DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6FD2812DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401CB14B081;
-	Thu, 23 May 2024 14:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E9A14B06C;
+	Thu, 23 May 2024 14:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J7SzhgsT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YL+dW5wB"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2085.outbound.protection.outlook.com [40.107.223.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EF614A62B
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716473004; cv=none; b=lByzZM0Xus0fQlXBC3j17k30uwqGh8cX3hVNFISNZAl/6h21nJj6uiAEMS2kUS+NKpFNoToADBsjT9WqPydG5jzmRHH7gTJ4qnzZYce0JgGGk1HINCJqaPInRq/H74+o/ESKaM/agVrjLUmiYUQ7EyJlWd8D+nkKdfkhraBY9pg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716473004; c=relaxed/simple;
-	bh=jxBKTzoJOVyEA32cE+YGMZK++whGJj6vvOgzMyjakoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AqDPYlCsyLNduNwQNQDhjCASVyJ+3loYEzNzEJbEUdhnrLkq/Gmp+JrNUG+MENVtTha2xopgxHfhIt6/uDl1lSdwktcjcH2GkxHN1f4ED0aagZjNQDL/4kG9BODTAvqfFl6uBjldKp+86Vh5dveMWBOabyNgQidvI/fy1hI4H7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J7SzhgsT; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716473002; x=1748009002;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=jxBKTzoJOVyEA32cE+YGMZK++whGJj6vvOgzMyjakoY=;
-  b=J7SzhgsTOmqbuXKcCC4f6XTxNt1nfIv6N+t+gUAtkd6nsQKMa/xrSi5d
-   JO06pymV/zRLb1FIKtsXf0v55PkFaTTNbyriNVjy+Q4LAIT8KiB91Phlv
-   3zeutQa+pB7QiTXW3tRx2QmM+8ZexGttYywMn/h7Ggx2uL65JzpzlRUWQ
-   Y/YBSIpPx+H5wmj+hoJY2A4+EetTJ99CjXYtRJ8HWXb0bSJXZjMgmw7XN
-   zyv0Blpozr8X/sDoDifUBeOyB3S1C1uz4PbXgMduzXiVgj/zHQ5FJiUZI
-   v8Vk0RvNHLBZvTSNfSa4tiYyOioNmsSEP+1JaegA6+4jN2IXQ/YyDEqz0
-   A==;
-X-CSE-ConnectionGUID: ZzoCrDyWTeqASW8SOmwTbw==
-X-CSE-MsgGUID: mOESHmbDQ5WbxCI0ObH3aw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="24201702"
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="24201702"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 07:03:14 -0700
-X-CSE-ConnectionGUID: ntJ1y5dDSbuxoHApWddrqw==
-X-CSE-MsgGUID: dObKMKDbSwmrqc9kclILPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="38074404"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 23 May 2024 07:03:13 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sA92E-0002xn-2Z;
-	Thu, 23 May 2024 14:03:10 +0000
-Date: Thu, 23 May 2024 22:02:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: WARNING: modpost: vmlinux: section mismatch in reference:
- tracing_gen_ctx+0x64 (section: .text.unlikely) -> initcall_level_names
- (section: .init.data)
-Message-ID: <202405232113.H66VwtsE-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FB813D621
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716472987; cv=fail; b=Actoyd2im246QmzZAim+qnqdSiXfF6Dviex3hePNxIKRtzbWwZCL8tEohQODG+szKh3twBiqoUwkapqUAfRczzGenbtsRLCRoKA7kxkUdDw7ADxgx7kaC9KK7flXOu7xclpBsJz56+et7ZIB5Sg0m/5EISxAPyw/On9OkpxlEA8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716472987; c=relaxed/simple;
+	bh=RUiXPTuqNWLNvasHWVIJwApbf5OCVMU3lyMNFSCcEWc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=h3ar1EgUjMzk2oI4hc6Qf2mTV3oGesPy23ocXEnR4JfKEwje20s1PNlKMiiMXXYVlD5YzsPEXL3ioPjW1SkJ/3h6chB0yfKyUczuHXjQwf1+PIYbjSG/TeMj7Q6lzgoO9wsSvKZ4aqd9WGBKPJq49ZzdA0rTPM1GZxgqP+3lUIE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YL+dW5wB; arc=fail smtp.client-ip=40.107.223.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HT6eFmS8HjFAzzald/uDw3RK1cAKJnA8RkhLq27H/ChoKNAxPeMiRBbrLCCTfG43uH28thKhpzHt6GH6S3qIdpTdh5ZxrwLqfc10QL7bCepOtJokDWuwUqgnzP9SiUKX6KfcJVClJTvRmTR1MraFy7KK2BrmYJx7YV19EnM59fRQHcqNxdeGS/8u3pgowB+t9A6Ae6gnzdJLPzbOb4Rp6mhIKizPFsDizL1FVUrEuOcpFCEVnvN5KfCcWutIUHkqE7tWzDHQWH3OFrkOh+vXnyaxiCJV6dHILaCeXQyIczBgqM4hFawncmiIevIad4TDSrOr5U0fvXptrelgh5bcMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hbf0XR1rfkPLMO/nv5JDNK7viGH4RSwShuz7YNSZWGY=;
+ b=laqc1UFN23UMaVt+OGJnCMiFHf9A3RKljdPIr5oMn4mdXEBbftDOHHd7NHQe9qMRdy+l/5rlVGsB7PIfsM9iY/7WTFVsKiTF7ZcQ4NtaLxqtB9J47rf4wjXnlgz0raIG5c95VKB3Fdrk3rDkgHh4aOeOuyIDQ4zVtbFkSdKK4sEm7I1T0NTlVKoOHJeVF5D9tjUOmsobuXvi1aiL79S9kQl3ndKZ8AB5cvWquaN0XLwwPI2QjiY/zqTCOJqG+nGad9ddqnip3vgUR2SqcLEzdLbUXfiZGw7Fi1rg51nb8ld/z/PNYoIu/2dG6iP4trJKIcfqrn+6HKfw25hoderj+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hbf0XR1rfkPLMO/nv5JDNK7viGH4RSwShuz7YNSZWGY=;
+ b=YL+dW5wB/zRYCn73OAgEwWPWPj0bYDFYr9fYQu7BnI7IW11jc2BB2bLn4DZzJniEuE4Pf/Eh4PsAYwF6K8IYF1p7gDuPQRb2Q7i82Wf6whhDP1596ym5SnumzzcAKBzu8ZChW9D+qWgDVi0ruGHw9nbpB9i6eebypgV6JCpq22o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
+ by MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Thu, 23 May
+ 2024 14:03:03 +0000
+Received: from CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062]) by CO6PR12MB5427.namprd12.prod.outlook.com
+ ([fe80::1c2f:5c82:2d9c:6062%6]) with mapi id 15.20.7611.016; Thu, 23 May 2024
+ 14:03:02 +0000
+Message-ID: <39ca29dd-f072-43af-96ab-0fbe24bdda61@amd.com>
+Date: Thu, 23 May 2024 10:02:59 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amd/display: Enable colorspace property for MST
+ connectors
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ dri-devel@lists.freedesktop.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+ Aurabindo Pillai <aurabindo.pillai@amd.com>,
+ Daniel Wheeler <daniel.wheeler@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>,
+ =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+ Tyler Schneider <tyler.schneider@amd.com>
+References: <20240508214535.356-1-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Harry Wentland <harry.wentland@amd.com>
+In-Reply-To: <20240508214535.356-1-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YQZPR01CA0129.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:87::20) To CO6PR12MB5427.namprd12.prod.outlook.com
+ (2603:10b6:5:358::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|MW4PR12MB7142:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8f40ff5-b7b0-4899-605a-08dc7b310fbd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?elo2S1JFcUtNY2ltYlYzd3NUbStpancrRVArV0pTVEFaVS9LRmg3YzYyYmti?=
+ =?utf-8?B?aEFNSXdrY2MyODI0a2dxZ1FaRzBOMGZuVlNrbGtwbzk5WFZuU3h4WFY2RVl1?=
+ =?utf-8?B?U0xFOUlXcVZCQWRCaWFkWDZQeGtoQTUwbkdIS3BGc1FRM0xJY0RjOU55enFx?=
+ =?utf-8?B?VkdhbVcyNGpzdWIyZWk0SUdob3FvQVFDeWljL24zNE1CaVRHU0kvVzJkSEh2?=
+ =?utf-8?B?YlhRNThVWFBEM25SSEJ4cEZUQ0hId2d0Z014ckE4a0EwOUNsUW9jT3RYTGVh?=
+ =?utf-8?B?VTNqeXp1QVJETUpLYnhqV242Z2htOE5WSFl3K0ltQlBYaXU3YXUxaitJZkpl?=
+ =?utf-8?B?dndNdkh2aXhXV1ZxUmZtUUM2eFkrd1Q1Z2hWUGQwbFBDdHJ1QmJBKzZkY2ZT?=
+ =?utf-8?B?YjBVM0ppcHFWZkxTM1I2Ujk4aEZKQTVGVnB3V3U5T1ZlOFg5QURXeWZEQUpO?=
+ =?utf-8?B?WEkyd1EwTmY0WGljbTREQnRWQm1UaGt5UTlReVdxNk9IaXdQSmYzT253TVcy?=
+ =?utf-8?B?c2xiRDNZUjZUZS9ITC94YWl1VGl5TTJWeVdoeVFERE4yeXFrT1BxU242VTZI?=
+ =?utf-8?B?ZjhSeisrbTlUWHh1Y3A5eVZFY3d1SzZ3dkkyZldjeGdWNTY4Q21NUmNJUWVW?=
+ =?utf-8?B?NHhWYXl2NjJoeG5YRTEyNjA4WlVKL09iam83Z1dNL2dhVVIzV2o2clhkeXFH?=
+ =?utf-8?B?bG0wQS83d1BKeFNNTTljdEc1MXBBOVdod2I1T2NvV29Fd1Qwd3krY1VON3h6?=
+ =?utf-8?B?cTFyY3grdU1Uanh6bExHK0R2aUhyUVpFUjM1TzlVK0FEZU1GL3RnTVQ0Vk9N?=
+ =?utf-8?B?Y0UvR3RGaFdjbTk2LzFTeDg1YzgrTDNNc3lkYWFDemplQzJVL2JyL3FwNGxK?=
+ =?utf-8?B?UHVkZWtlV3dwbmZBLzRuazlRWGNqUnZmcUUvaXRqRGhGeXV1Nkh4MWhlalhr?=
+ =?utf-8?B?S052NkFvMWNPSGQ4THRwRDYreUgrVnF6bUNuWWNPN1dZY1hJSFRIRk5qV0Ri?=
+ =?utf-8?B?dnZGbHF3NHlIVWdsdld5Vy9KTWVnbzhpRGpRYlVXT09FMTI2Z09wRTBiTVFJ?=
+ =?utf-8?B?WUpvbDBJMjhEMzFMdEt2cWVLRXp5dDRhdjFYdm8vdkpXTjNtRFlvbmhzSEdC?=
+ =?utf-8?B?cHFZT29TcUYzdFhPWXZmK0tSMkROaXZWNXk2cUg1TEJZblJuZTR4ZUJYcmdH?=
+ =?utf-8?B?dWw2WUhtbW52bXhadDBzak5iS0pIbCtFUVBYcXdwNWc5MzhLYUNEYytiODA2?=
+ =?utf-8?B?cEQvWkYyZUZlZ1lHTy9QSm5GandyeWU3cDkxcXF6eTNBVnYzODZta2pwdUc5?=
+ =?utf-8?B?UmkzWmZXcjE0L202N2VudHFyRlZ2TDh4S2QzTU1oWHYvN1BXWkZpSVVFdHF6?=
+ =?utf-8?B?UC9tOVo4ZzF3TUNVY3BrTGttNXFJb3V1T242Qlg1TGlyT2MvRFpKaStESS96?=
+ =?utf-8?B?NVJyc09qcHFKWng2K3drZnZvaU9kNVhBb3B6MFBxY0tVS3B0TlNpQWJ6TGk5?=
+ =?utf-8?B?N3ljaWJFMFkyQVdsTlhXZ0lxUmNKbjRlYzNOeFNib2dLOEp3azB3WHBtb2F0?=
+ =?utf-8?B?cEJ5bmtVZzFmR1h0SUVDREorYkVheFdiYkRvRnZTRWVEZ09SSnhEWTFRekVK?=
+ =?utf-8?B?bGp0dHByK3FRUXJwKzdoaGxpb3l3Tmc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Um0wUW1QaWZMcm03ekZxSmVGeFBONE1zUWNkU3NlY1FrOTAzSmZqOFlLRlR1?=
+ =?utf-8?B?RnhSMmFualJOVk0wclN5WmJvTWJCQjZJQmovV2J5MmFuNWRsSSt5dC9jRDhj?=
+ =?utf-8?B?SGdqL3NRdUZaVDBlaXZucjlyamN0RjJzT2k4NlFJV09GdnBKUlRBVi9FOS9a?=
+ =?utf-8?B?dHYyMFhrOVovcEg1UjRVeXZFaFEyTWtIeVdURXJZN1dIUFByWS9MRWNtbXR4?=
+ =?utf-8?B?WXBsaG53SGtMQzJkcG1pNGFrRHN4MkN3UkEyd1l5dFNyUE1rZ0hta3FRL2V0?=
+ =?utf-8?B?dWRDN3ZWSkdZZGtvNkozb3cyeXRCcFY5QlFKaHI4U3pwUXFiOWtSc29rQkpP?=
+ =?utf-8?B?Z0UwSW1ncE90cnJud0RaMU5iSFVuRjRiTUJjMFhkUVNmeC9namRydjlOM09Y?=
+ =?utf-8?B?djB0RnZ2N0JaK1dHbGZ1Mzh4djBCY3JNTzhCdWtiT1d1cU5QRWhxK2JsRWc3?=
+ =?utf-8?B?bDFsTCswUlR3aytqWkhIYVE4YXpLNVZkcWpLaUVNMGo0bEVUb2VvdWhFRHVC?=
+ =?utf-8?B?L1FwZFdLUis5T2hLaEVVeW90SzNqTWJ5VHpjK0JMYncydkZNWkhqVWhsSFVj?=
+ =?utf-8?B?TndmdWtuZksvUDlQc0kvZFlUUnJhSUlHOU52TFZ5a0pjQngzbml0M1lpWUJJ?=
+ =?utf-8?B?RlU0WEJxcXpqOHN0d2ZuUkZmRmI4TlFlUmNubzE4bXNQcGpidEpIZXFNLzRp?=
+ =?utf-8?B?Mnh0VDN6Y2VYcWtrSC9VTmV5cGloVVFOdTRLNE9YQ0ZiZ1gyeE9zYjlHUE1Y?=
+ =?utf-8?B?NjhRdjk3WVIwTTVLdHZsRWpVaEw1ejliUkpHNFFuSFA1OGluN250aytMbk5U?=
+ =?utf-8?B?NGoxam16UHlmbGJzYmtWeVFQMXpoWGlSNStFdjliSGtqUmF1YS9VNlFQSDFm?=
+ =?utf-8?B?S2VjTkFuU0V4ZTR0aEJYc1RQbUtFeDBlbzBmYUhQSWRObk5uVis4cVN6WEJL?=
+ =?utf-8?B?WUpRZjBPWDV2ZXpseXdCeUwyQUJLYzVXWlRyMng1NTVneUFQbXVBNnJwWU9P?=
+ =?utf-8?B?T1ExRnZJRVpraExmcDBpd2VCUkFrODVFaHFlUXNZcFBXSjVwYWhmTXlNd3Rv?=
+ =?utf-8?B?OXBXOVJvT0xCdUl3WGxTU0VjMVpFM3N6ZWs2K1lteVV4VHQ5bXFFL3RScWhI?=
+ =?utf-8?B?N0JHVEhFeVFZUUh0LzI4Qk1pVERlWERRR0lBK1FtZ3IwRFhYeEVYYlVwM3hH?=
+ =?utf-8?B?eUk2Smw5eVhqU1NDSzVhenZ3SkNZdkc2MUtNbG1WaUpSbXhCaENuWU9yTDRw?=
+ =?utf-8?B?cDduM1ZRRFhHdUtMMVA1WTFwNmxNaSt5cnhuNjcxVHJvN09IRnA4MjNCTTUr?=
+ =?utf-8?B?d3VLQktDYm5SK0FHbDJLN2FLSkNkeWRBN0l6b1ZWWlFYZmZVQ2IzaTRSWnd0?=
+ =?utf-8?B?YTI4bDRYWE5DS1NlekpaNDAxMnV4RG9qbU0wSkhIZnoyYm1kaGYyMGhBRGEz?=
+ =?utf-8?B?b01aR2xsK0piMGRTZVUrL0FwZGd4ejFERG5tQkRtek9BL3VxMUpBQTZXTnVN?=
+ =?utf-8?B?VFhkSFNVNUdjS1JkY2M3aTBFemFUdVEzWGlNRGhVNUJldTh3SUJzeWZMTjRz?=
+ =?utf-8?B?MU1FR2RUWlNWQUFrOGw4ZE4weXlCdlgrRVAxL3NVOEo5TmZWOUFwNmhGSlJ4?=
+ =?utf-8?B?akd2ODBPVFdYTFFnMG1OMU13enJqS1E0bytQdEIwOUt6ZVZDOU82UE1YcmE5?=
+ =?utf-8?B?eVFQaEp2NVhCUkVrL1lvQjVZMFU3TmJTS0ZuL2hGd2NKcmM1OVd5a1ZSN1U1?=
+ =?utf-8?B?NjRHRGg3QWNsNWdVZDVKaVo4SG5VTnl3Wm56dXdSMnB0aElCUnB0anQvSWhD?=
+ =?utf-8?B?aDBES0ZzMUpRUk12blFTcVNoRDl6c3duRldKdm0rSktIZDJSazhtcDdsVFRl?=
+ =?utf-8?B?RGt1ZXdQdGg0UGwvVFhsdysvU2UyQWZJRWNib3NsSVpNMEZCTEtvZXUwVkpy?=
+ =?utf-8?B?QzYrWEFxOGw5eWE2L0hlTjFrVnM3bGZWdDFPNndORDdUSlFHdGYwNFVLNE9m?=
+ =?utf-8?B?L3pLZjR3NU5kci9GYVY4Q0FMRzBCQ2N0NFN6M0FId3YrUWpvUGw4bWFoaGpn?=
+ =?utf-8?B?VE5aVGFlYnZOR0hqN1d3MFRzK25BM2s5aXovMDF1eldtZDlRdmFZanBKTExE?=
+ =?utf-8?Q?l5OJXbDPYb7tJinz2AzG4D2Wf?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8f40ff5-b7b0-4899-605a-08dc7b310fbd
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 14:03:02.9330
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4HyOs1d/Rg/5U1QLvLxxKxp93fQhhK+EWO1/+nzJ7mvkWTKMsYtpu2kgbXchTl/J+O2MzrFjGH1JCRKAEMTvxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7142
 
-Hi Masahiro,
+On 2024-05-08 17:45, Mario Limonciello wrote:
+> MST colorspace property support was disabled due to a series of warnings
+> that came up when the device was plugged in since the properties weren't
+> made at device creation. Create the properties in advance instead.
+> 
+> Suggested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Fixes: 69a959610229 ("drm/amd/display: Temporary Disable MST DP Colorspace Property").
+> Reported-and-tested-by: Tyler Schneider <tyler.schneider@amd.com>
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3353
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-FYI, the error/warning still remains.
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c760b3725e52403dc1b28644fb09c47a83cacea6
-commit: 481461f5109919babbb393d6f68002936b8e2493 linux/export.h: make <linux/export.h> independent of CONFIG_MODULES
-date:   10 months ago
-config: xtensa-randconfig-r121-20240523 (https://download.01.org/0day-ci/archive/20240523/202405232113.H66VwtsE-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240523/202405232113.H66VwtsE-lkp@intel.com/reproduce)
+Harry
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405232113.H66VwtsE-lkp@intel.com/
-
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-WARNING: modpost: vmlinux: section mismatch in reference: put_page+0x4c (section: .text.unlikely) -> initcall_level_names (section: .init.data)
->> WARNING: modpost: vmlinux: section mismatch in reference: tracing_gen_ctx+0x64 (section: .text.unlikely) -> initcall_level_names (section: .init.data)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> index 941e96f100f4..12b036d511d0 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+> @@ -613,6 +613,9 @@ dm_dp_add_mst_connector(struct drm_dp_mst_topology_mgr *mgr,
+>   		&connector->base,
+>   		dev->mode_config.tile_property,
+>   		0);
+> +	connector->colorspace_property = master->base.colorspace_property;
+> +	if (connector->colorspace_property)
+> +		drm_connector_attach_colorspace_property(connector);
+>   
+>   	drm_connector_set_path_property(connector, pathprop);
+>   
 
