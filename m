@@ -1,153 +1,226 @@
-Return-Path: <linux-kernel+bounces-188009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD7F8CDBC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356C68CDBCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE032860E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:16:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 538B21C22B3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0BC84D3A;
-	Thu, 23 May 2024 21:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBEF127E0F;
+	Thu, 23 May 2024 21:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1cpAX/WT"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Al+0OEOX"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD8714A82
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 21:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77B02628D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 21:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716499005; cv=none; b=WYyxry3W8Q2V25bL/jgG7XTM60F/bP9/xGNpt2yVssSK0sY4zATxoaXHw5noHIkFq+JROcxEsBWvMJbbEun9Cqjl6EgPTaAEQkmfE7t1fndYGyfW/XnebJMoYQrsslmVLhXN5tT0kJTGTOTDDA+BKzHKAHdUPmLqr8Zo4SPeHRM=
+	t=1716499082; cv=none; b=Ku27lcNDCr6l+snDpnP3W7YVT9XV+nmHNTj/cvIb9ue6sZQD9TT2+BpiLgXaUOYbPDtca0UWd1jgFQK0ORrCccv72IAZOImPnzZfZbYbmM+44OXtzgU0aqYD6m/swxbION+YTaRM+BXNASu1axMbPXJEDoc746SN9e58oO7jukU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716499005; c=relaxed/simple;
-	bh=UyvAR+rCqOFMlr/SS+1G6e+pvgKBDpk94OJDklZdVUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=slt0Uvc07excorgbHSjSzrZnq6egjgXNHgDgKdA7HFsx1feTYYYoJ20Lm6olXQxBr36k/MFe8zghyjs7UA4qFY5I+gK6mGECFnTAAlt0sphPL0lWdEIABuMCzlt3sNiaBMdvup1Vn6uDcABqCPsB+nYME6oUoDnIvfoUxWQjXoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1cpAX/WT; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f33772fa90so1496395ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:16:42 -0700 (PDT)
+	s=arc-20240116; t=1716499082; c=relaxed/simple;
+	bh=Gpqhw/s2i2sLzZlRGqp7IZp6eytfKeTmUvdesErItAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwBh+MIBJFLauL8wV0n1zgLzXrjYty1uWW06yJ6I7y5Nh9R/yumS5CZSW/CCipfqiJpioHTm+u2Cb2Dh7yg9Q9WQWg8Vpj4HboU5h6Vc5WdSM9/nDmPIcunjalYj+2u8cW7xLqXG75dIKcufIy9hFvCp5vC6jZFPnW18Gp+Sj2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Al+0OEOX; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f8ec7e054dso172760b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:17:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716499001; x=1717103801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dYKcD5IuchFm4IMrBOnq6lh3XNI0BhQKY7/Pq8Y41cA=;
-        b=1cpAX/WTT+llFO04wUpvHFp4KZQDZVOU582pZ9oR8mGOBhcsAwKyHqr3mfDPVX/ynQ
-         CXZoGJQFEpZ0MIlDWHem+rYrilyJHoM1fLQVuMLdYFdXFCszqF98nWWBVT+KhxF3mmRh
-         aOe4Q0z+5yzOP8NO/7QL2dFO4ygvUS/iCAFOyrl1lTt+pAAaBCPJJBNtxtRt72XrtNoH
-         MBdi84U8f7EgS+HMJI3qS7Uk4DNZXUMZBnn55Z76V8ny2cLFTnVzArduX2EjGwrebl4W
-         8HZu1PskH01AXn50nsUge0JsJUtjIcWW52sknSLyESCe8p3ayIUq0GQ4xcVtAzMom2lK
-         Uw4Q==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716499079; x=1717103879; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PwzV5tVaq2B4FjInYNNPwOPVrbWL6OWL1o9jsQ7m6BM=;
+        b=Al+0OEOX6GH8RUjxGzOY0XowEd72FDBl0mXLDt3ygX/y/Xx4Jeju+F2YNS7CZyROiN
+         si/WJ2YGWizRb/pCgeQFECSkp5HJ0LVc//YwImb3u605GKlP/y+81lrLHPcyxeh63HM7
+         RRW7ObT4a01W0Icq8wsJ/h//oHGXAS4Np5CVcU4ipK1BuAzyaSWRvYUT5FYkWHbWvqdV
+         +CAoipJur4L20cbPM6VxuIFMRalDFwf9ZPEOs2miqUflpMPfAPVq1NofjCC5rbv6LRTN
+         ZnpALKiz9qlWWC9hRaeKquHQBScyZcTeYDA4oF9VFij6j4gp7YcP/Vdg7pwJIUsAo5UK
+         PqEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716499001; x=1717103801;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1716499079; x=1717103879;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dYKcD5IuchFm4IMrBOnq6lh3XNI0BhQKY7/Pq8Y41cA=;
-        b=Tefe3Gu9KRWXXfDfy7H+pJ/fXldlmyne5pwUmt8XEFXDtkwUFOVR0CxyocNBFx1ZGk
-         PQrxGJgPzIN7T/sPpIpy+dXmJhZWvkxzJpTTRFXf4eR1Yrnwoy4S0KVeAoyMd2cZIWXp
-         Tw8FFQq4FWotufKnpEoSBFIBdAU5QIXa40k9RaW3L8oHtHGqDMvKG1H1YsUIpBI8zZJD
-         YTH+oRryoDXbxi7b83CTVz0nkAS8OBQC958zz/ZjYrwHx1B3tmr8QCriAvBocRjVuXhP
-         XzNiqk0WOFc5ps4Lc0lQHjjPmv8Bd0LJMS5HZG1+fkp/yR+4hI/YTMJXpu7vNwBfBBuG
-         kSZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKlIooDpdB/sydTexFRqxgGiDy0RGrpmPbwmUNULvEYh4PH0wyWcvi6r4ek5VExolwdZhrABAKUqbVyutAthG+tSYZ57NUEK36ULz6
-X-Gm-Message-State: AOJu0YzsbtEYnHurofWf90X4u4hVsbUDTtAH4iz5d95mplSjf1MkLJmv
-	QEkOSnZ61OLeW1vyVNYacEj30+d0zVshjjF8OYsr1JEq6Ueaew/f+mI9pwrYw28=
-X-Google-Smtp-Source: AGHT+IEuoEoQ/bJet1m7gQrg83v+8LU9LhdnXxXzTFJ+8azHok2UlXv7rYJvnuhuAuTOIbgYM9Cflg==
-X-Received: by 2002:a17:903:41c6:b0:1f2:f73c:c442 with SMTP id d9443c01a7336-1f4483e91a8mr6489475ad.0.1716499001521;
-        Thu, 23 May 2024 14:16:41 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c085:21c1::1060? ([2620:10d:c090:400::5:32c6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c79d046sm373525ad.72.2024.05.23.14.16.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 14:16:40 -0700 (PDT)
-Message-ID: <024b9a30-ad3b-4063-b5c8-e6c948ad6b2e@kernel.dk>
-Date: Thu, 23 May 2024 15:16:38 -0600
+        bh=PwzV5tVaq2B4FjInYNNPwOPVrbWL6OWL1o9jsQ7m6BM=;
+        b=vOFe3ymZqESP93JXqp9oSEkjoxG3hOLTqBvROF1kw+rkDcSYdQmWjCHziBUKDbBCtL
+         bZOUU+Hm/VBFVPgDIKrFpx59gYr0FLtDMBJYROQTf/uD8NTaIXMjxrmFXt01NuxG3d8E
+         bXoA4ybCxmu5zBm3uVSkY7jHI5rA55hAK88eH059qAnwMUyIr9ItwET7F6KkeCHoo2kg
+         Py9ntvBL/yw6+xenowbFqvvS4RBZF0dWrYbyjwoc4QSeBWFyey+ObfP76X/FzthuVpor
+         nv56licnwkWObTUjObzy3DprP3z7g/KPw2zZ2dKtEzOOvZsC78paH+TzdEqCl2VkpoTL
+         5IXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGPifm9dSZJX8j/CZDri2Lis5Al7/rLZjQCgLwL+NzHkq2HacHFN2d4zwJhEN67gukbutrXfNEAyL1u9mqL7lKzZdE2Yjwi/hE7B/u
+X-Gm-Message-State: AOJu0YwpOtnt9BdZyz6Sb0pDAwiDAyPjtf6lAh5Bgm/c49Tj61YZbQqu
+	cgZNUa4AkYQt8NniOOxcZphA0cSkUgLu/f+cCYUHg7NxrFxRbYj+z8i6ylH7kWY=
+X-Google-Smtp-Source: AGHT+IGx0rsWYFEjcfR9pAludyPkzfDLkr55TU0Ix9xIuJv5a2gL44nhGVX/9NJpqJnSBX4lthJzqA==
+X-Received: by 2002:a05:6a20:5526:b0:1b1:c745:ea2c with SMTP id adf61e73a8af0-1b212e32cb1mr729638637.56.1716499078649;
+        Thu, 23 May 2024 14:17:58 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd6d2811sm55732b3a.217.2024.05.23.14.17.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 14:17:57 -0700 (PDT)
+Date: Thu, 23 May 2024 14:17:54 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Evan Green <evan@rivosinc.com>, Yangyu Chen <cyy@cyyself.name>,
+	linux-riscv@lists.infradead.org, Elliott Hughes <enh@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] docs: riscv: hwprobe: Clarify misaligned keys are
+ values not bitmasks
+Message-ID: <Zk+ygkJXUcW+H7Rl@ghost>
+References: <tencent_9D721BDDF88C04DBB5151D57711D62524209@qq.com>
+ <tencent_338DF690631BAE788C4CC858233E9FBAE006@qq.com>
+ <CALs-HssGcNso6vTfbcsiWX1h_46jgDDRcEWcfZCTpxXYnubcng@mail.gmail.com>
+ <20240522-d110bb16f54eebb725e943c2@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/filemap: invalidating pages is still necessary when io
- with IOCB_NOWAIT
-To: Matthew Wilcox <willy@infradead.org>, Liu Wei <liuwei09@cestc.cn>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- Goldwyn Rodrigues <rgoldwyn@suse.com>, Christoph Hellwig <hch@lst.de>,
- Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-References: <20240513132339.26269-1-liuwei09@cestc.cn>
- <Zk-wa_GvvrxpX9kn@casper.infradead.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Zk-wa_GvvrxpX9kn@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240522-d110bb16f54eebb725e943c2@orel>
 
-On 5/23/24 3:08 PM, Matthew Wilcox wrote:
-> On Mon, May 13, 2024 at 09:23:39PM +0800, Liu Wei wrote:
->> After commit (6be96d3ad3 fs: return if direct I/O will trigger writeback),
+On Wed, May 22, 2024 at 09:26:08AM +0200, Andrew Jones wrote:
+> On Tue, May 21, 2024 at 11:36:06AM GMT, Evan Green wrote:
+> > On Sat, May 18, 2024 at 9:00 AM Yangyu Chen <cyy@cyyself.name> wrote:
+> > >
+> > > The original documentation says hwprobe keys are bitmasks, but actually,
+> > > they are values. This patch clarifies this to avoid confusion.
+> > >
+> > > Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> > 
+> > Hm, we also have this problem in the code, since
+> > hwprobe_key_is_bitmask() returns true for KEY_CPUPERF_0. This results
+> > in wrong information being returned for queries using the WHICH_CPU
+> > flag. If usermode asked for the set of CPUs that was specifically SLOW
+> > or EMULATED, the returned cpuset would also include cpus that were
+> > FAST. I believe all other queries are okay.
+> > 
+> > The one-liner fix is to just not return true for that key in
+> > hwprobe_key_is_bitmask(). But that's technically user-visible: if some
+> > software relied on the buggy behavior of FAST cpus being swept up in
+> > the query for SLOW or EMULATED cpus, this change would expose that.
+> > The grownups-eat-their-vegetables thing to do would be to define a new
+> > key that returns this same value, but doesn't return true in
+> > hwprobe_key_is_bitmask(). What do people think?
 > 
-> If you're reporting problems with a particular commit, it's good form
-> to cc the people who actually wrote that commit.
+> Even though I actually enjoy eating vegetables, I think it's unlikely
+> that we need to be so cautious for this. I feel like kernel updates
+> provide a bit of freedom to change results of hardware query syscalls,
+> even when run on the same hardware. Particularly the EMULATED query,
+> which I guess could change with a firmware update. And, even the SLOW
+> query could change if the probing was modified directly or indirectly.
+> IOW, applications that use the which-cpus syscall shouldn't freak out
+> if they don't get the same cpuset after a kernel update, which means
+> we can drop the FAST cpus from the result.
 
-Yeah indeed...
+Dropping FAST does not really address the problem here. These keys are
+being treated as a bitmap when they are in fact just values. Because
+they are currently treated as bitmaps, it is semantically acceptable to
+"or" two of the keys together and pass them into hwprobe. Dropping FAST
+from the input of EMULATED | SLOW will make it appear to work, but it is
+not reasonable to try to support or'ing of values that are not bitmaps. If a
+key that maps to a value of 5 is ever introduced, then the input of
+UNSUPPORTED | EMULATED will also return cpus that map to the new key.
+If hwprobe recieves a value of 3 for CPUPERF_0 and or'ing is supported,
+that could either be interpreted that the user is asking for cpus that are
+EMULATED or SLOW or FAST, or just FAST, or just EMULATED or SLOW. The
+current implementation defines that only FAST will be returned because
+or'ing values like this is nonsense.
 
->> when we issuing AIO with direct I/O and IOCB_NOWAIT on a block device, the
->> process context will not be blocked.
->>
->> However, if the device already has page cache in memory, EAGAIN will be
->> returned. And even when trying to reissue the AIO with direct I/O and
->> IOCB_NOWAIT again, we consistently receive EAGAIN.
+Allowing an input where keys are or'd together should not be supported
+in CPUPERF_0 since it is what is causing this issue. However, the
+original intent seems to be to allow an or'ing of keys. The verbosity of
+using CPUPERF_0 will be greatly increased without the ability to or keys
+together. If an application wants to know if misaligned accesses are
+supported, it currently needs 3 separate hwprobe calls, one for each
+EMULATED, SLOW, and FAST. Changing CPUPERF_0 to be a true bitmap would
+require changing the values of each of the existing keys which is not an
+acceptable API change.
 
--EAGAIN doesn't mean "just try again and it'll work".
+In my previous email I proposed a new key, which could be something like
+RISCV_HWPROBE_KEY_CPUPERF_1, that is actually a bitmap. That way a query
+of EMULATED | SLOW | FAST would be possible in a single hwprobe call,
+which seems to be the original intent of CPUPERF_0.
 
->> Maybe a better way to deal with it: filemap_fdatawrite_range dirty pages
->> with WB_SYNC_NONE flag, and invalidate_mapping_pages unmapped pages at
->> the same time.
->>
->> Signed-off-by: Liu Wei <liuwei09@cestc.cn>
->> ---
->>  mm/filemap.c | 9 ++++++++-
->>  1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/filemap.c b/mm/filemap.c
->> index 30de18c4fd28..1852a00caf31 100644
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -2697,8 +2697,15 @@ int kiocb_invalidate_pages(struct kiocb *iocb, size_t count)
->>  
->>  	if (iocb->ki_flags & IOCB_NOWAIT) {
->>  		/* we could block if there are any pages in the range */
->> -		if (filemap_range_has_page(mapping, pos, end))
->> +		if (filemap_range_has_page(mapping, pos, end)) {
->> +			if (mapping_needs_writeback(mapping)) {
->> +				__filemap_fdatawrite_range(mapping,
->> +						pos, end, WB_SYNC_NONE);
->> +			}
+- Charlie
 
-I don't think WB_SYNC_NONE tells it not to block, it just says not to
-wait for it... So this won't work as-is.
 
->> +			invalidate_mapping_pages(mapping,
->> +					pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
->>  			return -EAGAIN;
->> +		}
->>  	} else {
->>  		ret = filemap_write_and_wait_range(mapping, pos, end);
->>  		if (ret)
->> -- 
->> 2.42.1
->>
->>
->>
-
--- 
-Jens Axboe
-
+> 
+> Thanks,
+> drew
+> 
+> > 
+> > -Evan
+> > 
+> > > ---
+> > >  Documentation/arch/riscv/hwprobe.rst | 31 ++++++++++++++++------------
+> > >  1 file changed, 18 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> > > index 239be63f5089..4abfa3f9fe44 100644
+> > > --- a/Documentation/arch/riscv/hwprobe.rst
+> > > +++ b/Documentation/arch/riscv/hwprobe.rst
+> > > @@ -188,25 +188,30 @@ The following keys are defined:
+> > >         manual starting from commit 95cf1f9 ("Add changes requested by Ved
+> > >         during signoff")
+> > >
+> > > -* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A bitmask that contains performance
+> > > +* :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: A value that contains performance
+> > >    information about the selected set of processors.
+> > >
+> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
+> > > -    scalar accesses is unknown.
+> > > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_MASK`: The bitmask of the misaligned
+> > > +    access performance field in the value of key `RISCV_HWPROBE_KEY_CPUPERF_0`.
+> > >
+> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned scalar accesses are
+> > > -    emulated via software, either in or below the kernel.  These accesses are
+> > > -    always extremely slow.
+> > > +    The following values (not bitmasks) in this field are defined:
+> > >
+> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned scalar accesses are
+> > > -    slower than equivalent byte accesses.  Misaligned accesses may be supported
+> > > -    directly in hardware, or trapped and emulated by software.
+> > > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of misaligned
+> > > +      scalar accesses is unknown.
+> > >
+> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned scalar accesses are
+> > > -    faster than equivalent byte accesses.
+> > > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned scalar accesses are
+> > > +      emulated via software, either in or below the kernel.  These accesses are
+> > > +      always extremely slow.
+> > >
+> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned scalar accesses
+> > > -    are not supported at all and will generate a misaligned address fault.
+> > > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned scalar accesses are
+> > > +      slower than equivalent byte accesses.  Misaligned accesses may be supported
+> > > +      directly in hardware, or trapped and emulated by software.
+> > > +
+> > > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned scalar accesses are
+> > > +      faster than equivalent byte accesses.
+> > > +
+> > > +    * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned scalar accesses
+> > > +      are not supported at all and will generate a misaligned address fault.
+> > >
+> > >  * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
+> > >    represents the size of the Zicboz block in bytes.
+> > > --
+> > > 2.43.0
+> > >
 
