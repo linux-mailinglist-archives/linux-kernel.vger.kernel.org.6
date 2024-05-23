@@ -1,187 +1,96 @@
-Return-Path: <linux-kernel+bounces-187765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17AE8CD809
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:04:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F408CD80A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 292E428420F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81341F22934
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC7E111AA;
-	Thu, 23 May 2024 16:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AA017BAA;
+	Thu, 23 May 2024 16:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RXxeiBjj"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fnmmv6dj"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0259C1D55D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38F52C684;
+	Thu, 23 May 2024 16:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716480268; cv=none; b=FOMP0jlq1yyvhzhOqtwVbxd0o4NhbjS2qf7/58bwuz1t5Nvo0dJ10VsGctvQQ+ArynV9Gkv+BU5VaVVHYI91baaZELww1U3Hs0AczWDVKUt04aSKldsbVxcVlQ0r/VrIIqNVt7adnibF3jMAleiVl/cK0HMUNoTEXfiTVLBcygU=
+	t=1716480293; cv=none; b=Q2vX0W/ssKpY1JaC0VFbBNyHMnkWxyyyWDKHUMk25hFdkfcdmJIRLl+u+C8Mb9CMRRdScBXLiz05ik/dFuneh+1Xb3yMXJVXdxL52ZbEWRZ5z+U2Nc5Gl3Pxv5X/Jg2U9Ku34tnJW1lTzrSZCxKQKnoLjTopNgkXqXUDfEShEfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716480268; c=relaxed/simple;
-	bh=EhTBCoWEsH6RQeHWfu+3Ppem+Bmf+xIMkgx/LOGt+8s=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BgysTmtM9dj6UVqcOK1AYqMe5cNQAL2bAZuUu1/uZ3xU9x4ey+wIGTP6zOArRr2MEzkEEO272hLbslC0AzFG1jnJfraBPCLYRpUU6fr2Ch1UsgNrvrtLWsqpX/QajS4L2Gito2HVei8Whdlk7oUNu8kUcvn9scIqFUJfGS2E+Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RXxeiBjj; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sebastianene.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61b2ef746c9so254101517b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:04:25 -0700 (PDT)
+	s=arc-20240116; t=1716480293; c=relaxed/simple;
+	bh=HZ9RonlrBTgQKUksO/V8zol27bXAiWM7tEzfNGOp3Zk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=GkWu5lAndr0vb5051fF2kpzQwSkM7T616O387t+9QytTXqgKEtYELLNLoD4pMltrbjPuIN8V/OnqBlxc3zobuMimOu6g8j3H+SCsrTMRlyQJh8acM63JcoWHuImMUtQ//UDi6fUH5vgYQN6iE0H/0hcwGk8mRfCeLl/ns3LzbSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fnmmv6dj; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1f32448e8fbso15183875ad.1;
+        Thu, 23 May 2024 09:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716480265; x=1717085065; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3d3iyJqmM/1eDHi6IVV043bTCqbOnpQe2A0l9FAURNs=;
-        b=RXxeiBjjFncawXnhuOMFZDJN5S23C+oXf0DEXlPgBqL108Uwku/Z+RmPh9S7gWEPsl
-         N3ndt7oExXpqqgzIITD6ugUGkN8CBJskCX8Hvfz9638+vPGAlWPrpYmR6O6Zpj9mvpAT
-         CuX7RWD8P3SXOSvKBQTb71FwKeFY+c68HEPKzUkDYoYI59yToe4VirrkZ76WP5q0KKTu
-         jGAbtt6CKpjBjRJh3pEUB/95sARYDXm/7eWU3ef8p326OaFQnkkl4fY0XLlUI3EiMmSi
-         fuevxJCBy8hHUGEkHG4jLxtUQAxJ0hKXk2DjXz+uSyKEiV29C0zbFYQbx+HnkRy/P5Te
-         eKEQ==
+        d=gmail.com; s=20230601; t=1716480292; x=1717085092; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HZ9RonlrBTgQKUksO/V8zol27bXAiWM7tEzfNGOp3Zk=;
+        b=Fnmmv6djqxgeBwhbOaVy2qS7HMHs5DWbVK4MEHhXgCSYm1gi72WBGRbVSih7uyT5Cp
+         Xc3dGrefFcuRZkvsJChbAuk/Sh/njln6V8RSOrWZStqS3LbzTtMN/649YDOi4kA44EW2
+         uwWZW15DAwkZ0lyEBlKGFg/1hIGF+f/j2wNo9EKe7xfR/KlMOXKpXOZkNfG+un9YC6IC
+         hayRLh10wg7itU93l/G1z/wyWOA28kHMfZOE7hZ/AoH3Udd8UiUHJ7xTRrpcpHWqPVHZ
+         U0RNAN0HyaqBGFbtWvP83AX+55tAHmqXPlmN4YREjbOAjNfCe4+0ZdhCJ5Nf5L+6IXOY
+         F8IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716480265; x=1717085065;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3d3iyJqmM/1eDHi6IVV043bTCqbOnpQe2A0l9FAURNs=;
-        b=aYFvPuP+einmD1pGjXTxL8XBCKpQIsbIFcUHADUv+XGP8Wz//+eiNUrBqeeUyqwPJ+
-         TntzP2bYZE03dDjGwL+3Ub7NiGRKUtCcyAlDRnGSWDGXhxYXSYLt3AmprFCaBNOlNNAj
-         araI/GQshczT+r9ioPrhD8rBBCxiQnwrqz4BJ4G/AYmazQIWli6E9aGDWc0PuHiv9gAj
-         Xb0xXqE+0rDlj5MtFeqFGXLyUwz9idAaZnIZJv7Sj9wAloNMZjLoiWirmcowRAniuQVl
-         /NZNFiho6KPyX7Dsdj2jvpaZHqG2QnEjoeAYvfrZ49lZeDzI7yxCNPzneVbrhRwVTXXU
-         UnJA==
-X-Gm-Message-State: AOJu0YwcGElu6dqG21FbuztzwSFwCmbeEnhmoEXsUPRvngmK6UAcbXmv
-	chqGXs07qAj4+SKP2xAuAlXMCPMsQvRZKOHsS6DrFTaTHvJyvI12wTGsOzVkzSKtGkv3YUXZ6JD
-	TjBeT5ZPOrcx3p2ZXkqQCSsaUmw==
-X-Google-Smtp-Source: AGHT+IESLjYZSJRI10bNAhY1mQgDdw0aTOQt2wYMTwe81yGAhnG89hGg49am+K4s35CF2jj0v1b5wbDesfLFNl9I1x0=
-X-Received: from sebkvm.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:cd5])
- (user=sebastianene job=sendgmr) by 2002:a05:6902:1207:b0:df4:db4d:5db2 with
- SMTP id 3f1490d57ef6-df4e0bcd6d0mr1593000276.7.1716480265117; Thu, 23 May
- 2024 09:04:25 -0700 (PDT)
-Date: Thu, 23 May 2024 16:04:13 +0000
-In-Reply-To: <20240523160413.868830-1-sebastianene@google.com>
+        d=1e100.net; s=20230601; t=1716480292; x=1717085092;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HZ9RonlrBTgQKUksO/V8zol27bXAiWM7tEzfNGOp3Zk=;
+        b=wL9XKOUscVLC8TWc15tyU+zFynI3srpdQhEvNgbsTZQiUKPcrvU35UuYkFO9Eh9yh+
+         EN8MplRfBnYN2v6dGc8jspqUue6p6G13Q83A38CWugyQqGFgMWZQwevkRA4FHYjyHgnN
+         rzRl6vvA2p9kAn3iMBl2u3KZG1669+YOOpOhSiFrEXG8Uas0YCb9oNQR+jlljHrjw+rw
+         aG34mK6Q8cmjWcBR6oAKUuGRcSZbZO6PAEPqqK0v6SlzDhf23jye7PwVQ223DJkJ3U0i
+         ebDvemM3z7GJXauC4eMbruYIWvJrPfC7FXhvpaRQT9+fbreNF/ibKGwaxFdWWSIQMrQX
+         5T9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVs/1wfkLN81TPbC2iw2S6+rdOAN+apnnSaJeelN/wmJafik3ZqChAYu7ox+Ow/JNhGsOJeDtQ75FQNM0ctES/467oBtMKn8QFGfAQFunPEgB1lU4hYDtorHRRqus7btk8uOddE4JiTiJqe8Sw=
+X-Gm-Message-State: AOJu0Yy50/JC8gAd6Erf3le3mGuptY9CzM2DcNd8YLMJoXEYSdKgKp0S
+	/19uB0D8mbCjytyfY/FXN1sVmJCO6t9ks8AKphcHhhQP8b1uoi8TBW0ePZRB
+X-Google-Smtp-Source: AGHT+IFnmgQnffQWlozSlFnHpvCn9HYz0suB5yGves8e6JydYfSSoqwXqttah3ztzfXPm41ybSfsdg==
+X-Received: by 2002:a17:902:db07:b0:1f3:3d07:d6e3 with SMTP id d9443c01a7336-1f33d07d86cmr25200585ad.34.1716480291813;
+        Thu, 23 May 2024 09:04:51 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f32695c45fsm31086895ad.92.2024.05.23.09.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 09:04:51 -0700 (PDT)
+From: xu xin <xu.xin.sc@gmail.com>
+X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
+To: xu.xin16@zte.com.cn
+Cc: bigeasy@linutronix.de,
+	john.ogness@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-rt-users@vger.kernel.org,
+	liu.chun2@zte.com.cn,
+	rostedt@goodmis.org,
+	si.hao@zte.com.cn,
+	yang.yang29@zte.com.cn,
+	zhang.yunkai@zte.com.cn
+Subject: Re:[PATCH  5.15-rt] printk: ignore that console preempted by irq/softirq.
+Date: Thu, 23 May 2024 16:04:47 +0000
+Message-Id: <20240523160447.740955-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240523235401355RFqSAGtIPwMKV39mUulN1@zte.com.cn>
+References: <20240523235401355RFqSAGtIPwMKV39mUulN1@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240523160413.868830-1-sebastianene@google.com>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-Message-ID: <20240523160413.868830-3-sebastianene@google.com>
-Subject: [PATCH 2/2] misc: Register a PPI for the vcpu stall detection virtual device
-From: Sebastian Ene <sebastianene@google.com>
-To: arnd@arndb.de, gregkh@linuxfoundation.org, will@kernel.org, maz@kernel.org, 
-	Rob Herring <robh+dt@kernel.org>, Dragan Cvetic <dragan.cvetic@xilinx.com>, 
-	Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	kernel-team@android.com, Sebastian Ene <sebastianene@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Request a PPI for each vCPU during probe which will be used by the host
-to communicate a stall detected event on the vCPU. When the host raises
-this interrupt from the virtual machine monitor, the guest is expected to
-handle the interrupt and panic.
-
-Signed-off-by: Sebastian Ene <sebastianene@google.com>
----
- drivers/misc/vcpu_stall_detector.c | 41 ++++++++++++++++++++++++++++--
- 1 file changed, 39 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/vcpu_stall_detector.c b/drivers/misc/vcpu_stall_detector.c
-index e2015c87f03f..c580cd7fd225 100644
---- a/drivers/misc/vcpu_stall_detector.c
-+++ b/drivers/misc/vcpu_stall_detector.c
-@@ -32,6 +32,7 @@
- struct vcpu_stall_detect_config {
- 	u32 clock_freq_hz;
- 	u32 stall_timeout_sec;
-+	int ppi_irq;
- 
- 	void __iomem *membase;
- 	struct platform_device *dev;
-@@ -77,6 +78,12 @@ vcpu_stall_detect_timer_fn(struct hrtimer *hrtimer)
- 	return HRTIMER_RESTART;
- }
- 
-+static irqreturn_t vcpu_stall_detector_irq(int irq, void *dev)
-+{
-+	panic("vCPU stall detector");
-+	return IRQ_HANDLED;
-+}
-+
- static int start_stall_detector_cpu(unsigned int cpu)
- {
- 	u32 ticks, ping_timeout_ms;
-@@ -132,7 +139,7 @@ static int stop_stall_detector_cpu(unsigned int cpu)
- 
- static int vcpu_stall_detect_probe(struct platform_device *pdev)
- {
--	int ret;
-+	int ret, irq, num_irqs;
- 	struct resource *r;
- 	void __iomem *membase;
- 	u32 clock_freq_hz = VCPU_STALL_DEFAULT_CLOCK_HZ;
-@@ -169,9 +176,32 @@ static int vcpu_stall_detect_probe(struct platform_device *pdev)
- 	vcpu_stall_config = (struct vcpu_stall_detect_config) {
- 		.membase		= membase,
- 		.clock_freq_hz		= clock_freq_hz,
--		.stall_timeout_sec	= stall_timeout_sec
-+		.stall_timeout_sec	= stall_timeout_sec,
-+		.ppi_irq		= -1,
- 	};
- 
-+	num_irqs = platform_irq_count(pdev);
-+	if (num_irqs < 0) {
-+		dev_err(&pdev->dev, "Failed to get irqs\n");
-+		ret = num_irqs;
-+		goto err;
-+	} else if (num_irqs > 1) {
-+		dev_err(&pdev->dev, "Multipple irqs detected\n");
-+		ret = -EINVAL;
-+		goto err;
-+	} else if (num_irqs == 1) {
-+		irq = platform_get_irq(pdev, 0);
-+		if ((irq > 0) && irq_is_percpu_devid(irq)) {
-+			ret = request_percpu_irq(irq,
-+						 vcpu_stall_detector_irq,
-+						 "vcpu_stall_detector",
-+						 vcpu_stall_detectors);
-+			if (!ret)
-+				vcpu_stall_config.ppi_irq = irq;
-+
-+		}
-+	}
-+
- 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
- 				"virt/vcpu_stall_detector:online",
- 				start_stall_detector_cpu,
-@@ -184,6 +214,9 @@ static int vcpu_stall_detect_probe(struct platform_device *pdev)
- 	vcpu_stall_config.hp_online = ret;
- 	return 0;
- err:
-+	if (vcpu_stall_config.ppi_irq > 0)
-+		free_percpu_irq(vcpu_stall_config.ppi_irq,
-+				vcpu_stall_detectors);
- 	return ret;
- }
- 
-@@ -193,6 +226,10 @@ static void vcpu_stall_detect_remove(struct platform_device *pdev)
- 
- 	cpuhp_remove_state(vcpu_stall_config.hp_online);
- 
-+	if (vcpu_stall_config.ppi_irq > 0)
-+		free_percpu_irq(vcpu_stall_config.ppi_irq,
-+				vcpu_stall_detectors);
-+
- 	for_each_possible_cpu(cpu)
- 		stop_stall_detector_cpu(cpu);
- }
--- 
-2.45.1.288.g0e0cd299f1-goog
-
+Sorry, this is wrong subject. ignore this, it should have been to 5.10-rt
 
