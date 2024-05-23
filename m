@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-187219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B99A8CCEBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:04:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AC08CCEBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9971C20E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:04:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5FD281F8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE4B13D272;
-	Thu, 23 May 2024 09:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0096C13D285;
+	Thu, 23 May 2024 09:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnmD5UTn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W06XnCZk"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BED85B5B8;
-	Thu, 23 May 2024 09:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE14C13CF93;
+	Thu, 23 May 2024 09:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716455046; cv=none; b=NL2UPwbZV1XhjuM3PHB99nn08Ddx3s5l5X4q9ZAoNYBKdFlTEwqf73+u3ETFOg+3cexZrXOHRtnJt5bDTE1t6HF2oDJT6WGKNk/iz40qRbg8f7OJ9PMjvoGdDXpiggfi3KE6csn5IvvvXg0Zbbc5zPMJfxQHdkFRYf5Xjg2O5ro=
+	t=1716455064; cv=none; b=pFOrZI3cW89Fm/e5tpabDtHQVjwrpMJM3mHSm1SwskEUsyj05Sv8e7h3E7xN6A0UvVzPpop8NUBIUEAfptev3wTGW2Y5dye0pFRPbAgrTiFFu6OXZqjACgQQmQeSbtsr0k5ZPRLuAGBOMY3eQw6RAdV9jQIMZaeZhbuTQb4x48s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716455046; c=relaxed/simple;
-	bh=4bjW0bSiPjmYlEO80YX84p66ykb3KjQXZreh1KJ9JDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YXpE1mHyBkPEuI3VS2J0CC5OWqh8fGnWajzSr7DXek35MhJjwz5nz6PxZfryGjC0DbEC4fdYWbiim3hDOuTq0FU2kpAGTjtMB6/om8EiGyWi5ke7wXxQ2InmzcGtsCeWATHL4i+zczq9QDl0PSVfKb9bnTp+IQ/Z6RkUSq4wNwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnmD5UTn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B86C2BD10;
-	Thu, 23 May 2024 09:04:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716455045;
-	bh=4bjW0bSiPjmYlEO80YX84p66ykb3KjQXZreh1KJ9JDk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JnmD5UTni3xtpEY/gISKVQefid1tGsoYFOUZNB/ia9xfvsN1Xt0zmiE6X+m4KtK+z
-	 mcR2SwzgsRHwtk4+VUpvfUWCCSAJEbx7JABad+w78EtR21iXKKiV4Ddmo17CVO9coX
-	 eyOCeQqIpiu1qvQD0thxQYQgxCb4X6T6rDv1GhpPYxQBKmPQnqFemgpOv3p1t1Y1lE
-	 w4yj9phtlrkzOSRMw7TsuIDcQDOtIbuoSCNy5UrE9U3VkCJyr3CgKfOEzX7viCmP9H
-	 6hu21am2s3uIkVB3pvFHPmIcdtTQdu+U8Amv+ZdBLcaoFUtdTZ3dT788qD27AFwTeq
-	 d/SF72JWrWKOA==
-Message-ID: <07319e04-bc65-4a39-9ba8-15db99b68c34@kernel.org>
-Date: Thu, 23 May 2024 11:04:00 +0200
+	s=arc-20240116; t=1716455064; c=relaxed/simple;
+	bh=mxjVwRe+KA59zffjuSJoN+F11EDx50GvARclkXrc3Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9vPa0IAo6j6RJudWX1wJ/fm35xP87W+Qgg5jvzhNAHrfW5o6IwjXiPrrtIqq7U9nEiPCa9JQH6HFrN2vcYFKYPRwkSbPME30Xik2w/7QiDNt9Q7JrIGsJ5Lf4/gf9TQ5bCtX2WFS4iX0aypVlTkbZioIFyemuPPqil973bLjrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W06XnCZk; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a5cec2c2981so462873866b.1;
+        Thu, 23 May 2024 02:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716455061; x=1717059861; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xwT/Yuq4OgMz2tzy/XuZk3iW6O1XSg4X5ai7w04Ljms=;
+        b=W06XnCZkl5CALs2SemXvlwKTJ9wIktVuqysY4ZEgFSp1kA7tNE8NVfyTuee2TJEFdQ
+         alB/7FhEujFTdWxhDkr6TNlhEm1hrt2zPOMXzsBrUyDdnQ46GAvBpmMA+SlczoLiRjrP
+         dP3q7ReaL/elnBHMkvJsZaAZ87l/ACqRYvIB2eRKLH2ep4LabWOZ3LeuR4eem2SzXJfD
+         K//07t0A/fTaPco9XB4KpH3dyRhcBl4VS0XKtqKAGWAPBTWwI63goF9J6nJN8YdIPO8K
+         DfiK5mF4D6flY0fvIT59UBMgblS3VtTiRkLgQwYCoJp5NdWgYnjPMEDkmgpuqKQ6yI7c
+         gNYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716455061; x=1717059861;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xwT/Yuq4OgMz2tzy/XuZk3iW6O1XSg4X5ai7w04Ljms=;
+        b=MhFuRRs8NBafoYuCCUh5eEAl+ycmEU/E/iBWzYJqvkFhx0REZdT/ATf19yg3FmIkN7
+         4JZ8IyLsIIlET/xN851xoz3C/KqAZWWDLm5Gdtcdz/t87vZ5i/hKLSfY06E7Y//yFZJL
+         /MkJHaDRSFG1bMcT3ueAxWQl5UDSp6RdEoHIBzQlTj6IAFCki8oXHj63jcQyQtbec2Cl
+         FgyKnPT9ed5STJJ4eW/b+W79U6+mdvde7Bn5C1xQVbyBCKTZeKIgfUPatcQrBaV/EUUa
+         TTJavr/xhibj06PuCSZziKCrW43JWHcSs0zCo+bRQVrntyPJimDTpL9CqYjzw2PpvS+c
+         Udow==
+X-Forwarded-Encrypted: i=1; AJvYcCXyoFzYSKHMPfYho1XPtpZ2gtAyI1W9NbGmGf6kfjn4ag/89iohC9dtRMUg/A47ghWjA2qwQ++21R6gjGw+/vby/3QSxowkC/gYSkqZdkyC81VXik3tcUWvpRAI3n4Gxa6n0Qd2QjQk4w==
+X-Gm-Message-State: AOJu0YzWyC0yN1vAFe0MD/4FTbimqQrwQQyZQRS+unUtv6xYgKGjYCzp
+	jum1tG10I0370Zxi4RYuwp2Ag8IgYN8yZ21ROAkfyKZdWcO0T1Ro
+X-Google-Smtp-Source: AGHT+IEz4KSr9vaAY0Rypx/DggKHZh91zzLIw9ycm65PkqV/FxMezQ4VwE3rGO485BLUAsZ+USk94w==
+X-Received: by 2002:a50:8e17:0:b0:573:55cc:2f50 with SMTP id 4fb4d7f45d1cf-57832c585c5mr3541161a12.37.1716455060827;
+        Thu, 23 May 2024 02:04:20 -0700 (PDT)
+Received: from andrea ([151.76.32.59])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c322dc2sm19648156a12.88.2024.05.23.02.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 02:04:20 -0700 (PDT)
+Date: Thu, 23 May 2024 11:04:16 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	kernel-team@meta.com, boqun.feng@gmail.com, j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr, Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: LKMM: Making RMW barriers explicit
+Message-ID: <Zk8GkFlnKeyIgYQb@andrea>
+References: <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+ <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+ <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+ <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
+ <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+ <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <Zk4jQe7Vq3N2Vip0@andrea>
+ <ba7120a5-9208-4506-bf99-2bfa165180c5@rowland.harvard.edu>
+ <22b9837b-16c2-5413-3cd7-4d3a47252a6a@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: iommu: qcom,iommu: Add MSM8953 GPU IOMMU
- to SMMUv2 compatibles
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20240523-topic-sdm450-upstream-tbx605f-v1-0-e52b89133226@linaro.org>
- <20240523-topic-sdm450-upstream-tbx605f-v1-2-e52b89133226@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240523-topic-sdm450-upstream-tbx605f-v1-2-e52b89133226@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22b9837b-16c2-5413-3cd7-4d3a47252a6a@huaweicloud.com>
 
-On 23/05/2024 09:59, Neil Armstrong wrote:
-> Add MSM8953 compatible string with "qcom,msm-iommu-v2" as fallback
-> for the MSM8953 GPU IOMMU which is compatible with Qualcomm's secure
-> fw "SMMU v2" implementation.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+> It would be much simpler if
+> one could find all the information to support lkmm in tools/memory-model/
+> (in the form of the model + some comments or a .txt to cover those things we
+> cannot move out of the tool implementation), rather than having to dive into
+> herd7 code.
 
+Got it.  And I do find that very relatable to LKMM developers who, like me,
+are definitely not fluent in OCaml.  :-/
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Let me draft some .txt to such effect, based on but expanding and hopefully
+completing my previous remarks in
 
-Best regards,
-Krzysztof
+  https://lore.kernel.org/lkml/ZjrSm119+IfIU9eU@andrea/
 
+Having something like that "on paper" can also help evaluate future changes
+to the tool and/or model.
+
+Thank you for the suggestion.
+
+  Andrea
 
