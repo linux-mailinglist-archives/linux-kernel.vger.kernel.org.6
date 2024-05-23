@@ -1,236 +1,306 @@
-Return-Path: <linux-kernel+bounces-186909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4977D8CCAAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:20:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83ECF8CCAAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94EB282A8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:20:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37849280D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1747DA94C;
-	Thu, 23 May 2024 02:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9332963D0;
+	Thu, 23 May 2024 02:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RyHmPiIp"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2058.outbound.protection.outlook.com [40.107.105.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XySX8E8L"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16036567F;
-	Thu, 23 May 2024 02:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716430831; cv=fail; b=Hsxx9dCpizRMMMBfM1t+GJHKjVNKPeZcQKruwBnmMSq9nOlk2hburuJ4FUCeTUqKH/eVDw4tOQQUUl0Rg1/1T569bgBgoXbo8nIJT3fsktzWw99AlVV+xva2CX2w4h7aQQ4NTu8rVBRC+SrjmmnSklEtbmZOmQj+SpisAMpwLpo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716430831; c=relaxed/simple;
-	bh=VvaXW52K/fR8fLDtbZl0JEeWiJiV9GCpJ9+H+4IYIbs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fb5qI8toL7GWp/aX8E4NvEWa0NmgdBQQttw+DO0bfAl6RTsSfFh1OoAs+vEQVsABjxDjK9hULM0jYFtqQdfFJAW1+doBVvc+n4S1oT+bIxOPOai2SwnIMx+lF9ahMKdMeYpyAtl4cZKZ1QY9l0sytFZN3oyvR7kM7tEkDiBuc7E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=RyHmPiIp; arc=fail smtp.client-ip=40.107.105.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Tih2zOphrDNURZRIfrM7XDnwGe9KFsn6XdRpqUUGNeXR4BNecHSR5oBjP6aI+RRYnPOX8qyunN+omVgJ/TH41J3sZFGSHwv4vFhkWw+qk3IDN4aD+wl0UAst7lMxjKU9DL7Iabb45tQX+QGAvJ2LkrF9BfbxOFAxitaZMKiNuHga67tq3jQwemhxVfsvvcSmenm4JwMNvlPj6Jfw5UjAU+Dm973IaYrAnY0TLidJKZ8m+9JInZtTwPeOWdnKM1cSQ3gKihg3VtUhySYPuX5ZPXFbz0y/irv2PSH0UUprPZGpNxAvXqrMtbEpOQUA4z9EMpViorS2FxinvipL39yf8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tN+6PgowAgtHBTCHjD5eWDOK1f4DAKdTAOG+BtrO9y8=;
- b=U9x7DHOO0u/U8UT4s7LL7gHeffoZvSX4YSfoEnJOweiEQw0C7XXcnTJSgN9iR1gXGDuT8cdwkAa1btqhfhVcxw+ofvT7qsSPK6X1g/f2e2CCRwVzNVcmH5NBecJsTSF+qh4WSzVQJdu8RTuQ/ji0z02+5bQ7VHSq4SmuKxZQaxta0y/T0T7ZQaArbO1CzzYAgf1GYrlRmu3A6lFlF0RHSpup8BY7kUn0B7b4dJG7krCe19XZ6fOGI91dxkgscBH4Mo/2YNPt2yzRcWWDLUWTf5SWCz9P5FJ0gzndOas9bpypm5NN8+KtZhrDTzP48EeZKHN09nVf/a/N2CS7/moxSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tN+6PgowAgtHBTCHjD5eWDOK1f4DAKdTAOG+BtrO9y8=;
- b=RyHmPiIpKq8AS4bO9qenI8guHJXSQjLYY7G0GAOFuTx6tGqhhOcY9wujw8OWwi3gKNGVu1SbBrzX5vqjrHi8fwWYfTsmyha9F0tKI/0OwcWPUHBmtfyLFJbYRFZIFdOzNB/9Vr0PojLAfRzISxifdFOeOIjnIn/8uv1NO78ig20=
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by GVXPR04MB10659.eurprd04.prod.outlook.com (2603:10a6:150:214::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Thu, 23 May
- 2024 02:20:25 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%4]) with mapi id 15.20.7611.016; Thu, 23 May 2024
- 02:20:24 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Brian Norris <briannorris@chromium.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvalo@kernel.org" <kvalo@kernel.org>, "francesco@dolcini.it"
-	<francesco@dolcini.it>, Pete Hsieh <tsung-hsien.hsieh@nxp.com>, Francesco
- Dolcini <francesco.dolcini@toradex.com>
-Subject: RE: [EXT] Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP
- mode
-Thread-Topic: [EXT] Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP
- mode
-Thread-Index: AQHakVah/NlfkBV8NUyUKYHJ747D+LGkNjoAgAAWMtA=
-Date: Thu, 23 May 2024 02:20:24 +0000
-Message-ID:
- <PA4PR04MB96385E87C3F000554F325697D1F42@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240418060626.431202-1-yu-hao.lin@nxp.com>
- <20240418060626.431202-3-yu-hao.lin@nxp.com> <Zk6U7CYW2bP-DVTM@google.com>
-In-Reply-To: <Zk6U7CYW2bP-DVTM@google.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|GVXPR04MB10659:EE_
-x-ms-office365-filtering-correlation-id: c37e3033-9d7e-43cd-589c-08dc7acee7af
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?7LzbOV+C/M0LzwYPscen0H9n/J4RQYMP7Nk4Hb2NuGnVZlZMD0KUhCIZKZdc?=
- =?us-ascii?Q?Z39b+8pL9P3XQYKDQJhxiS+VuzCR9pPxxlISPAUqfn3+RQoI48R9KYQcHKhG?=
- =?us-ascii?Q?j7SaI/o+9KVFIL2wsR3hBJu6HcZi6+1j2QPQohZNZasDqOt8TrGvXNeEp7nh?=
- =?us-ascii?Q?D9PuGebKBSbd2lXpwdjpLJSI9Om6tNtpVRxK/4yDxma2mttWB4UKhDq+8Ovz?=
- =?us-ascii?Q?AWZkbR22I3klqyGFEo1NH2lVXaQwn24wJ+o0wBVRzz0kVVtrJ/oD6eS4MSkv?=
- =?us-ascii?Q?arYZt9FFAa6u5qmK7h/8X8IDVbKd+Vs2lyOoAYR9IRXNhlHky+JnOSxNdrQE?=
- =?us-ascii?Q?rhxgpum1RhXWtBA3mhO12qfuQP7N1EgADwxbigGxs9Ij5fkAdsoJpvDMQa/p?=
- =?us-ascii?Q?IP/DyUsxBVjTWy3F6qs/7nEckMJi4Fig1D1DFv0S2H/1R2ag+coF3v9kFjzL?=
- =?us-ascii?Q?U7sN6lk81XZ/TNlbpp4XXJXx4pacmuFTbq2A5wTank6rEx4SzQEdaoRTvvMK?=
- =?us-ascii?Q?Lozj2W5AfeL61780jni2xssGZ23wnkFOtPPCTxPcfdgB+8v/b2Eml5D7urpp?=
- =?us-ascii?Q?zva2AsiiKeuqIwkpAn8NqqQbkGlEr4T4xeLZOOVIg37buMDRU4eBqsz63u9k?=
- =?us-ascii?Q?6lFoldbWaSXJ43nK4ILDc3J1fMDue2tNfxdVuec3bQ7s4p5t4MPjnOYXTBYt?=
- =?us-ascii?Q?nTVmQ4a/G6HoDqAjnEFEtS4XFMl2T5wEbGcE/YnEMoAzXod8BIvvYleSnKO8?=
- =?us-ascii?Q?A/29pw15QLZ4SGMzPfFGuexZbT4mW5V9tW/5SbcKmJVvjBZIezpQhl6XVetc?=
- =?us-ascii?Q?a4DMflU+qG5djUt23okWqO4Lp0lv3lZZG61hXvt/4HLOtX6sP8SxsJvW802M?=
- =?us-ascii?Q?3kLzGtQKuhn9rfKhmif0LnALJ+qv4XGzuDB72FMzCMgoY27EI0lgoI6uQBb/?=
- =?us-ascii?Q?zIH1JOlBoslRWGgz7W2zyPWQKWGIi5XWe+9Lsl5NZhVl69JNXZhSawo0q98C?=
- =?us-ascii?Q?eMee98V82zwjaHgqZUT2+vk9KR3lV2VnFX0YIGM8lLN5Sx9BYqWqinnYlGIg?=
- =?us-ascii?Q?9ynaaROcN4FMINyKjzIg+s5M7RyDngwirmC64Qy0C/CTANCKhnJZ2PJNeId8?=
- =?us-ascii?Q?wozCmhp6y6k4MmxpNdy29ddGP+VJQBtCrqdADiSdwm35T8h4lrGJENAKCjPA?=
- =?us-ascii?Q?7Aqiob7SQbLvyUNArX4H4XbuQc2QmLRDDQGHo400jxuReMGKuVjGFHbOLTgI?=
- =?us-ascii?Q?6pdfCKZIsjcNyAWayRfgLMQMJ16/rJ7mJwqTEd5fx4FdhfTwVxkd507ORzgA?=
- =?us-ascii?Q?b1LPgNeVhUfGvGWMVfcURD+gBMPJzLSyFmi4Jc0aCHmSBg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?+psAPzi/MpzGQhkr0wZ8uVQZu4uS/06n/W/8tqQehCMSUSgQlzDZ1Iz9TqYH?=
- =?us-ascii?Q?1qE4C+9eCYpb4/ITTreky+HrrMhdbMrVT7SqLnEa5iEvrICzWyP6BWVLY5Oa?=
- =?us-ascii?Q?G3nBWAPlLGvKjOLx52h/3tFJ6VexSnkpR+V9IuGGO9gG1EQWaM1o9IShc6dE?=
- =?us-ascii?Q?3ysyjvjlorvEcenPH/NOhTpcyFnh5BxIabx/BBtf3VUpL950txdTbscCKVbA?=
- =?us-ascii?Q?Os7Afo6SbCn8zXTyayrvhRgAoYnL2WHNTSPzsRlPU4oQDHDvQwn1rqx8HefO?=
- =?us-ascii?Q?bvGSwi1QzWk22ecdwss/Zlz8AYn5SicJ0opkWgAcmmN2SmZqrHzD9yQDV3bw?=
- =?us-ascii?Q?/jRIeVp+NpEczv6I84gnfSAgXnt4BLI9rfJd97Rl2gPzVh8r/g806ymptgjJ?=
- =?us-ascii?Q?1PxUhhUIf9gI9JY8+uF+Wu4XmHYJyOfqC0pIs0N+PKPJBLDJHTeJZQ9CMpAc?=
- =?us-ascii?Q?gxtaU5ZsO5N4htJKJnITZZl5DbQP3B025vWaI9ki0lZbP3KLnve9vy8bN/NP?=
- =?us-ascii?Q?2Dz99bZu/aSZkT8AHCJWpGMMcIJA1N+4iBYPhrR5/GRb1NSf+qX1WYQjLzy9?=
- =?us-ascii?Q?rMInv4OCqNhZSE1Gw6rJmIyJv46XmoccuZldmyzrf4/xbb0kq4PhU0UhXPlg?=
- =?us-ascii?Q?2SHyeZ3BxtksnLIHgQphM61ovyiX1Wa2A4cdlL32gVN0scCMCKbgbQVD15nf?=
- =?us-ascii?Q?rdcyoJj2xvtW2B6Hu0fI+GOuEN1Vv7YCFMf+uSBAmeeW5ADHpqUMdIpz/YJD?=
- =?us-ascii?Q?6zkfjI+/S4sMJ6V8w4d/fCKyBEYBIbDfx/Xo4dX0ehjM39NUKxHybkhDS1+c?=
- =?us-ascii?Q?T6qTumQjWUTQD7Rpx3WLFudMUqXSMHaNaotXMHgPH3EhKSxNJdj5aTecs97v?=
- =?us-ascii?Q?45nGtiuYbi0UH+thGdouQL3sAux8QZO+2XYIVOW0D2HydmPjDotKLOdvP5ht?=
- =?us-ascii?Q?IT8gyJ8a4ZDXk7zQzWuqXkTfvzqsJrxcZagDVhE+2arkyhtz81UnxjJFnlgW?=
- =?us-ascii?Q?/oV4yVnw6agIeiY+ZE4ZR8daOYDj+mXk+ttXgctnCLr7pEIdjQriFawhB+Bu?=
- =?us-ascii?Q?vI+N4R7716EQhdzmFkcjqopj8s+rAn/t13hYG2iZx/Y+XDTMk9sj4KByM0vA?=
- =?us-ascii?Q?LI4iu0gd1Bffne++VtCXEduMWhSsIBSe5P313IlsF6yhjOBVir6I6AuZnla8?=
- =?us-ascii?Q?6mByRLta0ERdxqVXLt49HcSe7hbqt+J6axVtZuiuzjeqhwE6DEx8GE04IxoI?=
- =?us-ascii?Q?PAJLdd6AWChPIjIvwjr2IKMX6TPhyDSG3p77KJZRLCENUtvJt/kkIQVQ0P0z?=
- =?us-ascii?Q?coI4FCnvYg5q/7ngOfGxfaXAGnPlujXN/QmEAgCgmlkGXjXZIjFOKirxk6Ac?=
- =?us-ascii?Q?T0Ivd6Nbjqfj5tM41wHp9n+tj59j3vlEgKGjBrs2ZUYoB9SzbFbGhIebmtNp?=
- =?us-ascii?Q?Ds1+ahtOZ9me56x6DnEDovMvuwub9BgbFJ7XbZVB8YGSKxCHSvLTx0hVZG83?=
- =?us-ascii?Q?ekICKgn9ciKrLcIbeITawjQg6QLhMzpTsN2FiXjBOO2t/hk19jIifkyQOWRP?=
- =?us-ascii?Q?GgX42I8vBDtc4fCwhi3KPuPdMRoTM5luGLHul/9J?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D764687;
+	Thu, 23 May 2024 02:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716430938; cv=none; b=MkZsLd+l9uc7IkJ0ibsPqwJN/TPM4zrhifLNjVWATwjva9pZnSFnIrLsOYjo+barfHmAhYewzWMuNKzfft/KdqRQ5s1pzP6C37eufHEWB6FpG00EwBYAez7yQeAMlC5FXJy7bdj7QAVBqhF4mhAECEC9fFBMV4xcMyLAW5RoJPQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716430938; c=relaxed/simple;
+	bh=n6S3d3rjzLN89lrRlWOEeom2CR+3xxp0nmbZn5Tlv8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t/S/Gn9eeA2YsGGPGgxUi/60m02SkUF9Oqgaza/P/r/zN+vp1YXEKSuY6Az1FwFNfa5u6RatA18Hqm2MTArxyLswDQ1eSMTCr20+DdWQCDQynEH7+/B02Mjd/4b/ZWk5iDobDPGmqcjBRxjgfVjiR6Kxw/D7Nm2aKxcmtLPxBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XySX8E8L; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-df4d60c59f7so1661561276.3;
+        Wed, 22 May 2024 19:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716430936; x=1717035736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NQDfZ0LPwhJX3/QNF0EEJO3WCRe9zAijIGwiWSjHPuo=;
+        b=XySX8E8LxDGOI/tor9LveyTBVtjIitEuX3O+5BtUaH2V8HHRRFM4USmAZnq7J1AQig
+         scTFtx8v463Wxqn6DNwUdr7BmOSL0VOpNwfDrI8RzpIdBVBTYuqigW1DUvvADkYHgHRD
+         O8ZlLZTyJV6OA18jaMPeW+JVrNzgJow2KuEeoc9GynLo4vicv4BYgzgIrSaHna8pT2tz
+         m+XUW36ZZ7nPmH+GEO9fQ/TzX92o5GlzqCy/UJzoOlovxCfUcuGit8TvQwnMn748GDXx
+         epQJmmond7IJjMRrjQGc7LhuW8DtWOvZ16LX5Kr5K29o0vtKqcPBP1HUoUtj/khiawwY
+         gOxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716430936; x=1717035736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NQDfZ0LPwhJX3/QNF0EEJO3WCRe9zAijIGwiWSjHPuo=;
+        b=Hd3wqLQKSedAMgHclZFOQM10dIGgJJvo7ZB9pXEaZixy9DL1YLxt3sDEc8roEJl7j1
+         W7abs8CXP786R3boW85on3EYorSR0cxvOWEN9lc6eCpBIyH0oVl1M+dcgBRn3StrWM4k
+         3bC+VovWBzLhTgiEGmlEwZ3u33qL8qUKAvuWsS4jYFdNF+KGKBpCobeTTJSw/BZTeICy
+         RCzsDqURn9tNED7w17CSLd7td949ugEsUppUz2sKhDPGARrrVYGzROwVafd3p3pqeYAk
+         dtbnvs565m8mbP8ZjVsge1EToSBv41DoGj1PwuB+sRl4ECZddjP9LOyIeCoA29ZOmZ5u
+         nbFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSNayr8L7qSsLToACZ/0XtI2xWWcSqLjQrIN05ctJrUPf4E/wmOCM7sjuWcFWJlF9f5lvxmfFggIM80JE7RgDZnHy0pOrAjsCfM8XOdVjtizb9Kx3ypYnOR2uUIBVZoq+Vkqb+3bTY9HFnMw==
+X-Gm-Message-State: AOJu0YyvYC+xLiNfCqFM0emoz6cJCxgiuCX4i+QOpgrIzTGre1eXGTLX
+	AHwSsXmX6HcCg5cfsehFVPV0c0QbooRT/ouON5ffV9OKph+tI6iWuaufq7M1PkEQU12+OlL2/9M
+	MqOnVda15eT+aKZlYqqXLbI8sIoo=
+X-Google-Smtp-Source: AGHT+IGIrKWhqy/R8UjLEd99c1CXhskhEggyC5D4DvABYvRnP5ifskPb85lAwQfQ0fLDLvAUpyNvgP63eumMfAsRfuk=
+X-Received: by 2002:a25:d090:0:b0:de5:8290:35b8 with SMTP id
+ 3f1490d57ef6-df4e0ad024cmr4216897276.32.1716430935914; Wed, 22 May 2024
+ 19:22:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c37e3033-9d7e-43cd-589c-08dc7acee7af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2024 02:20:24.8625
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: k+RkWQnV+e2baKcGFDz7iIxFSZ7lc23o7RdSYtpfnkGwnDPj7Tblos0ufco36vBunCsnacL/m8akau82Q2RxtA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10659
+References: <CAHk-=whHsCLoBsCdv2TiaQB+2TUR+wm2EPkaPHxF=g9Ofki7AQ@mail.gmail.com>
+ <20240515091727.22034-1-laoar.shao@gmail.com> <CAHk-=wgcnsjRvJ3d_Pm6HZ+0Pf_er4Zt2T04E1TSCDywECSJJQ@mail.gmail.com>
+ <Zk2x+WmxndbwjxQ4@xsang-OptiPlex-9020>
+In-Reply-To: <Zk2x+WmxndbwjxQ4@xsang-OptiPlex-9020>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 23 May 2024 10:21:39 +0800
+Message-ID: <CALOAHbD7x_QCyPTy8M7KXddEdLK6vQhg8kv=U2bPucgV0-pN-Q@mail.gmail.com>
+Subject: Re: [PATCH] vfs: Delete the associated dentry when deleting a file
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, longman@redhat.com, viro@zeniv.linux.org.uk, 
+	walters@verbum.org, wangkai86@huawei.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>, ying.huang@intel.com, 
+	feng.tang@intel.com, fengwei.yin@intel.com, philip.li@intel.com, 
+	yujie.liu@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> From: Brian Norris <briannorris@chromium.org>
-> Sent: Thursday, May 23, 2024 8:59 AM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
-> <tsung-hsien.hsieh@nxp.com>; Francesco Dolcini
-> <francesco.dolcini@toradex.com>
-> Subject: [EXT] Re: [PATCH v10 2/2] wifi: mwifiex: add host mlme for AP mo=
-de
->=20
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report
-> this email' button
->=20
->=20
-> Hi,
->=20
-> Hopefully-last comment for patch 2:
->=20
-> On Thu, Apr 18, 2024 at 02:06:26PM +0800, David Lin wrote:
-> > --- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-> > +++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
->=20
-> > @@ -1712,7 +1735,7 @@ static const u32 mwifiex_cipher_suites[] =3D {  }=
-;
+On Wed, May 22, 2024 at 4:51=E2=80=AFPM Oliver Sang <oliver.sang@intel.com>=
+ wrote:
+>
+>
+> hi, Linus, hi, Yafang Shao,
+>
+>
+> On Wed, May 15, 2024 at 09:05:24AM -0700, Linus Torvalds wrote:
+> > Oliver,
+> >  is there any chance you could run this through the test robot
+> > performance suite? The original full patch at
 > >
-> >  /* Supported mgmt frame types to be advertised to cfg80211 */ -static
-> > const struct ieee80211_txrx_stypes
-> > +static struct ieee80211_txrx_stypes
-> >  mwifiex_mgmt_stypes[NUM_NL80211_IFTYPES] =3D {
-> >       [NL80211_IFTYPE_STATION] =3D {
-> >               .tx =3D BIT(IEEE80211_STYPE_ACTION >> 4) |
-> ...
-> > +     if (adapter->host_mlme_enabled) {
-> > +             mwifiex_mgmt_stypes[NL80211_IFTYPE_AP].tx =3D 0xffff;
-> > +             mwifiex_mgmt_stypes[NL80211_IFTYPE_AP].rx =3D
-> > +                     BIT(IEEE80211_STYPE_ASSOC_REQ >> 4) |
-> > +                     BIT(IEEE80211_STYPE_REASSOC_REQ >> 4) |
-> > +                     BIT(IEEE80211_STYPE_PROBE_REQ >> 4) |
-> > +                     BIT(IEEE80211_STYPE_DISASSOC >> 4) |
-> > +                     BIT(IEEE80211_STYPE_AUTH >> 4) |
-> > +                     BIT(IEEE80211_STYPE_DEAUTH >> 4) |
-> > +                     BIT(IEEE80211_STYPE_ACTION >> 4);
-> > +     }
->=20
-> This doesn't look like a sound approach. I think you should keep
-> 'mwifiex_mgmt_stypes' const, because if you're making modifications to it=
-,
-> then you may break multi-adapter situations. Consider someone loads this
-> driver with host_mlme_enabled=3D=3Dtrue, and then later registers a devic=
-e with
-> host_mlme_enabled=3D=3Dfalse. The second adapter will get the wrong value=
-s.
->=20
-> I think 'mwifiex_mgmt_stypes' is small enough you might as well just make=
- a
-> second copy with the MLME-enabled values, rather than fiddling with
-> modifying a single copy.
->=20
-> Aside from that:
->=20
-> Acked-by: Brian Norris <briannorris@chromium.org>
->=20
-> (Feel free to carry that to a v11, since my only remaining substantial co=
-ncerns
-> are with patch 1 I think.)
->=20
-> Brian
+> >     https://lore.kernel.org/all/20240515091727.22034-1-laoar.shao@gmail=
+com/
+> >
+> > and it would be interesting if the test robot could see if the patch
+> > makes any difference on any other loads?
+> >
+>
+> we just reported a stress-ng performance improvement by this patch [1]
 
-I will modify mwifiex_mgmt_stypes for patch v11 and carry your "Acked-by" t=
-ag.
+Awesome!
 
-David
+>
+> test robot applied this patch upon
+>   3c999d1ae3 ("Merge tag 'wq-for-6.10' of git://git.kernel.org/pub/scm/li=
+nux/kernel/git/tj/wq")
+>
+> filesystem is not our team's major domain, so we just made some limited r=
+eview
+> of the results, and decided to send out the report FYI.
+>
+> at first stage, we decided to check below catagories of tests as priority=
+:
+>
+> stress-ng filesystem
+> filebench mailserver
+> reaim fileserver
+>
+> we also pick sysbench-fileio, blogbench into coverage.
+>
+> here is a summary.
+>
+> for stress-ng, besided [1] which was reported, we got below data that are
+> about this patch comparing to 3c999d1ae3.
+>
+> either there is no significant performance change, or the change is small=
+er
+> than the noise which will make test robot's bisect fail, so these informa=
+tion
+> is just FYI. and if you have any doubt about any subtests, could you let =
+us know
+> then we could check further?
+>
+> (also included some net test results)
+>
+>       12.87 =C4=85  6%      -0.6%      12.79        stress-ng.xattr.ops_p=
+er_sec
+>        6721 =C4=85  5%      +7.5%       7224 =C4=85 27%  stress-ng.rawdev=
+ops_per_sec
+>        9002 =C4=85  7%      -8.7%       8217        stress-ng.dirmany.ops=
+_per_sec
+>     8594743 =C4=85  4%      -3.0%    8337417        stress-ng.rawsock.ops=
+_per_sec
+>        2056 =C4=85  3%      +2.9%       2116        stress-ng.dirdeep.ops=
+_per_sec
+>        4307 =C4=85 21%      -6.9%       4009        stress-ng.dir.ops_per=
+_sec
+>      137946 =C4=85 18%      +5.8%     145942        stress-ng.fiemap.ops_=
+per_sec
+>    22413006 =C4=85  2%      +2.5%   22982512 =C4=85  2%  stress-ng.sockdi=
+ag.ops_per_sec
+>      286714 =C4=85  2%      -3.8%     275876 =C4=85  5%  stress-ng.udp-fl=
+ood.ops_per_sec
+>       82904 =C4=85 46%     -31.6%      56716        stress-ng.sctp.ops_pe=
+r_sec
+>     9853408            -0.3%    9826387        stress-ng.ping-sock.ops_pe=
+r_sec
+>       84667 =C4=85 12%     -26.7%      62050 =C4=85 17%  stress-ng.dccp.o=
+ps_per_sec
+>       61750 =C4=85 25%     -24.2%      46821 =C4=85 38%  stress-ng.open.o=
+ps_per_sec
+>      583443 =C4=85  3%      -3.4%     563822        stress-ng.file-ioctl.=
+ops_per_sec
+>       11919 =C4=85 28%     -34.3%       7833        stress-ng.dentry.ops_=
+per_sec
+>       18.59 =C4=85 12%     -23.9%      14.15 =C4=85 27%  stress-ng.swap.o=
+ps_per_sec
+>      246.37 =C4=85  2%     +15.9%     285.58 =C4=85 12%  stress-ng.aiol.o=
+ps_per_sec
+>        7.45            -4.8%       7.10 =C4=85  7%  stress-ng.fallocate.o=
+ps_per_sec
+>      207.97 =C4=85  7%      +5.2%     218.70        stress-ng.copy-file.o=
+ps_per_sec
+>       69.87 =C4=85  7%      +5.8%      73.93 =C4=85  5%  stress-ng.fpunch=
+ops_per_sec
+>        0.25 =C4=85 21%     +24.0%       0.31        stress-ng.inode-flags=
+ops_per_sec
+>      849.35 =C4=85  6%      +1.4%     861.51        stress-ng.mknod.ops_p=
+er_sec
+>      926144 =C4=85  4%      -5.2%     877558        stress-ng.lease.ops_p=
+er_sec
+>       82924            -2.1%      81220        stress-ng.fcntl.ops_per_se=
+c
+>        6.19 =C4=85124%     -50.7%       3.05        stress-ng.chattr.ops_=
+per_sec
+>      676.90 =C4=85  4%      -1.9%     663.94 =C4=85  5%  stress-ng.iomix.=
+ops_per_sec
+>        0.93 =C4=85  6%      +5.6%       0.98 =C4=85  7%  stress-ng.symlin=
+k.ops_per_sec
+>     1703608            -3.8%    1639057 =C4=85  3%  stress-ng.eventfd.ops=
+_per_sec
+>     1735861            -0.6%    1726072        stress-ng.sockpair.ops_per=
+_sec
+>       85440            -2.0%      83705        stress-ng.rawudp.ops_per_s=
+ec
+>        6198            +0.6%       6236        stress-ng.sockabuse.ops_pe=
+r_sec
+>       39226            +0.0%      39234        stress-ng.sock.ops_per_sec
+>        1358            +0.3%       1363        stress-ng.tun.ops_per_sec
+>     9794021            -1.7%    9623340        stress-ng.icmp-flood.ops_p=
+er_sec
+>     1324728            +0.3%    1328244        stress-ng.epoll.ops_per_se=
+c
+>      146150            -2.0%     143231        stress-ng.rawpkt.ops_per_s=
+ec
+>     6381112            -0.4%    6352696        stress-ng.udp.ops_per_sec
+>     1234258            +0.2%    1236738        stress-ng.sockfd.ops_per_s=
+ec
+>       23954            -0.1%      23932        stress-ng.sockmany.ops_per=
+_sec
+>      257030            -0.1%     256860        stress-ng.netdev.ops_per_s=
+ec
+>     6337097            +0.1%    6341130        stress-ng.flock.ops_per_se=
+c
+>      173212            -0.3%     172728        stress-ng.rename.ops_per_s=
+ec
+>      199.69            +0.6%     200.82        stress-ng.sync-file.ops_pe=
+r_sec
+>      606.57            +0.8%     611.53        stress-ng.chown.ops_per_se=
+c
+>      183549            -0.9%     181975        stress-ng.handle.ops_per_s=
+ec
+>        1299            +0.0%       1299        stress-ng.hdd.ops_per_sec
+>    98371066            +0.2%   98571113        stress-ng.lockofd.ops_per_=
+sec
+>       25.49            -4.3%      24.39        stress-ng.ioprio.ops_per_s=
+ec
+>    96745191            -1.5%   95333632        stress-ng.locka.ops_per_se=
+c
+>      582.35            +0.1%     582.86        stress-ng.chmod.ops_per_se=
+c
+>     2075897            -2.2%    2029552        stress-ng.getdent.ops_per_=
+sec
+>       60.47            -1.9%      59.34        stress-ng.metamix.ops_per_=
+sec
+>       14161            -0.3%      14123        stress-ng.io.ops_per_sec
+>       23.98            -1.5%      23.61        stress-ng.link.ops_per_sec
+>       27514            +0.0%      27528        stress-ng.filename.ops_per=
+_sec
+>       44955            +1.6%      45678        stress-ng.dnotify.ops_per_=
+sec
+>      160.94            +0.4%     161.51        stress-ng.inotify.ops_per_=
+sec
+>     2452224            +4.0%    2549607        stress-ng.lockf.ops_per_se=
+c
+>        6761            +0.3%       6779        stress-ng.fsize.ops_per_se=
+c
+>      775083            -1.5%     763487        stress-ng.fanotify.ops_per=
+_sec
+>      309124            -4.2%     296285        stress-ng.utime.ops_per_se=
+c
+>       25567            -0.1%      25530        stress-ng.dup.ops_per_sec
+>        1858            +0.9%       1876        stress-ng.procfs.ops_per_s=
+ec
+>      105804            -3.9%     101658        stress-ng.access.ops_per_s=
+ec
+>        1.04            -1.9%       1.02        stress-ng.chdir.ops_per_se=
+c
+>       82753            -0.3%      82480        stress-ng.fstat.ops_per_se=
+c
+>      681128            +3.7%     706375        stress-ng.acl.ops_per_sec
+>       11892            -0.1%      11875        stress-ng.bind-mount.ops_p=
+er_sec
+>
+>
+> for filebench, similar results, but data is less unstable than stress-ng,=
+ which
+> means for most of them, we regarded them as that they should not be impac=
+ted by
+> this patch.
+>
+> for reaim/sysbench-fileio/blogbench, the data are quite stable, and we di=
+dn't
+> notice any significant performance changes. we even doubt whether they go
+> through the code path changed by this patch.
+>
+> so for these, we don't list full results here.
+>
+> BTW, besides filesystem tests, this patch is also piped into other perfor=
+mance
+> test categories such like net, scheduler, mm and others, and since it als=
+o goes
+> into our so-called hourly kernels, it could run by full other performance=
+ test
+> suites which test robot supports. so in following 2-3 weeks, it's still p=
+ossible
+> for us to report other results including regression.
+>
+
+That's great. Many thanks for your help.
+
+--=20
+Regards
+Yafang
 
