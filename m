@@ -1,282 +1,281 @@
-Return-Path: <linux-kernel+bounces-187045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5F48CCC3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:23:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D7F8CCC38
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCFD7B2167E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B85283932
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DA713B5A1;
-	Thu, 23 May 2024 06:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n/2ktVy1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB5313B59C;
+	Thu, 23 May 2024 06:23:29 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3337B13B590;
-	Thu, 23 May 2024 06:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716445417; cv=fail; b=FIEkWzcxoNKXmLRFQqM51iC7OpXLURQneh13c3F3uXg369ItUVbqcnGayrGlfN42+n/B0cLnUkKk6zq/Rstp2FmLhs+R6BTuHgyo1puio+m8ujmqXYPl6EkWYnukHuswZx0gD/+30FDIPXgMSJZVYJT2Dh3cvnsg62oAh4ytYjA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716445417; c=relaxed/simple;
-	bh=tXVoGFXQM2Gx58lzOtQzZDVOeJOg112aCibDqBCBUc0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sTb3MDt6xqQNZhFmw1fHEczT8730KWjKDmtEZ2nrHVMos8B/7YoTzmaGdfMAwlAimLhf9pTIyrp8gZvDbm4w5EbNwLsrmLFkOzXo2wun1BlyjS2RgaMgvoqbK10GrFA6aG0b/deKgJKU5tlpr1qgXf771H3t0g0ARr6FAXMQ9fM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n/2ktVy1; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716445416; x=1747981416;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=tXVoGFXQM2Gx58lzOtQzZDVOeJOg112aCibDqBCBUc0=;
-  b=n/2ktVy1o0QdcVYfstbCPi4xY8OQsTJBC/R6lzYpVEiEmXljJqLM1ZPq
-   V5bCcMKhY5qgtq0dtM6uUgRJalqwsalQ9Ahg1Ca+rJGh3w80gJRNwfhhP
-   Yj6mQaA9mDkIqvMAN9noTaFVCwZd8inEpfvfCs3K/MK1Rf+421nF6ZsSw
-   3OrcfFShJh2w46J4OqHg7wrG1U5fKs9PjvDpuX3NhHfMaUfWht/zSiSfh
-   14dQDS/VGoPVtIq6It5hg2BTXnsonH/snDSPC6W4ShJL6VK9AHZverDk2
-   2oCf7yGLxSOE5AIr4Oq/QUiFRXd5HH8SgmOfUuFNHht10oQn9k9tSDESs
-   w==;
-X-CSE-ConnectionGUID: E55MrM2xRVeZBZxrfXdTKQ==
-X-CSE-MsgGUID: tR/uWEu4SFakKfiA95G/vQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="16528394"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="16528394"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 23:23:35 -0700
-X-CSE-ConnectionGUID: pJ7S66BdRW6M3o9e6rIloA==
-X-CSE-MsgGUID: y7spsTAFR9u2xo4kvte6yg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33448695"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 May 2024 23:23:35 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 22 May 2024 23:23:30 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 22 May 2024 23:23:03 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 22 May 2024 23:23:03 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.40) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 22 May 2024 23:22:35 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OKcZ32xW1MGinVMZYteglZ6VrcojTp0u349S8DNKaZGuBlq634uSWRzf6lXaCwlZY7uATkUVK/zgmWyWaaATe1O6PiaXBMAP4abEbBEGi/Mz5E6lmg9CezBuXkTTPxvEii3gCwJQqJyIy+s/4hvvfJag4wr1x6scYpmABHo9v5xtxDyTm6gh7UQKmwd3xN1EDKH3IwuBCdJ6iqoYBKZ/Op6PIiY81rUukpmOJoGy9W8Senb7wiBqP+4fETME4pcV+lHLPF1oxmWX54cdygAlj0LRAvOV5yAIKqctNcMJwz+foEBZsEEdLN4LoHHAjQh2CIsKXK39HGxqjmoTYMeKBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tXVoGFXQM2Gx58lzOtQzZDVOeJOg112aCibDqBCBUc0=;
- b=XjsARMVnW9chVVsQ3ILbZMZ3xv3qfRuyoeJ1mFYYEJgArRBAnLvmPnC1YqsLddEwU+4BmZ1PkfFX/ItV3v894+FTQbA6hcbnUaVOWToqSCYdCpiDqiTiquFUri7atxvaqCQ89wzLvq/0lI02X/q4ojBOeubPOPvK4SM1vh4FBaAtV7kUrMz/pSzFTKjsqSv25kM6+/zY+Ww7s6MspS9W84hhbizm6QK7brZLycK6e59/1bsEDOMX4kjG4cowouxLQtMWmTKwjcbuW3QwSU5Sc37PFks4phBOloSw/TyeSxvYUySORO5aXr9yMkjaX7N6mCJh0MjLyVbixK9gKXm4cQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by PH8PR11MB6973.namprd11.prod.outlook.com (2603:10b6:510:226::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Thu, 23 May
- 2024 06:22:33 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7611.016; Thu, 23 May 2024
- 06:22:33 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: RE: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
-Thread-Topic: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
-Thread-Index: AQHajVVq/X0HjqCDvU+a/LkdwhCQ/LGT28sAgADojoCAD8kmgIAAB2yAgAABL2A=
-Date: Thu, 23 May 2024 06:22:33 +0000
-Message-ID: <BN9PR11MB5276DC89E13CCA16F9EC7D6D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
- <ZkDWXnPW7CaX5TtA@nvidia.com> <ZkGZc5dvLigXcWib@nvidia.com>
- <BN9PR11MB52764728D4A8F54CCDE9B6C38CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
- <Zk7dozLpy67ZY+RI@nvidia.com>
-In-Reply-To: <Zk7dozLpy67ZY+RI@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH8PR11MB6973:EE_
-x-ms-office365-filtering-correlation-id: 1afd4a80-06a0-4b19-bbca-08dc7af0bb8f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|1800799015|7416005|366007|376005|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?RzY3dE41YlV2aGw3OHJqUWMxZ0hpRU1VTWJJaG9XREQrdUR4azVIOGQxODFK?=
- =?utf-8?B?Y1NoZXZtaFQrQ0ZhOHRQQWhtNnYzR2lSWERhUzJGOHpOQjlSQjNjSHdWQ2p2?=
- =?utf-8?B?TjZHc2U5RVNLNWNkdTdkZ1lHS3hxYklUcnFmNWtvT1ZsNGhpL2N4RXBzazlh?=
- =?utf-8?B?VmgrU1lKOE9ORGhBQzRGbldaTjNZd01NTjRkSlFvRnEyUURMeXl2VU9od2lq?=
- =?utf-8?B?WXJQOENlOUZ1NmdZQ2FrTUFYZk0zd3hHK3lSdUdrYWM0U3FFRm11QVo5Q2Fp?=
- =?utf-8?B?dlN5bDZSOFlqY3orSW9qTzNiMUMrMG9YSG9YNFUxeWJZamJ2bWVEUklmTjhi?=
- =?utf-8?B?bGhLYkNEa3VVNTJlWHZPUHptRnkyeEcwSVZUYnhLb3hFM1A1elVQL0RYK2VT?=
- =?utf-8?B?T2xPOUhwaUtveGh2QlErQUhQM1RIRHhwMkdFdG5QbTk3ckx1ayt0M25ZSHI5?=
- =?utf-8?B?WjJjdXNnVGNIUUJmcmVJTklxNEpZTW56WGEyZXZmRzNRNnpVZUY5MklVNi85?=
- =?utf-8?B?V2Q2aHc3d25VUUJoU2RtOUFOUFcxS1J4MHVmc25JQ3oxd2hvSTZmcXk5V1Bo?=
- =?utf-8?B?Wk8vZUdJSHJ0MmpQeGdydmlPZ2pBeCsrZnVPMFlPWkFpYU9yam4yaTVpTDU5?=
- =?utf-8?B?djJ0d1lxWnNUWmo2d09YSkNoeWVGNWFvZWhxcU1PN2ZPVXZPcmEwM0gvdndn?=
- =?utf-8?B?aG1OZEVoY0xNRmdyS0l4SDVmOExyaExYQTZYR2RMTGd2TCtJQVlCZytVWS9h?=
- =?utf-8?B?c1dDeE40QlRRWS94YzFGQXpJbmNGT1FVc2xISWhIdktBN3puT0R3OWhYTVd1?=
- =?utf-8?B?ejFORVBXSndOcUJhZDJ1YjRzak43Nk1LVTNlVHVXOXpaK3dPZENJQ3A5d1lz?=
- =?utf-8?B?d2REUjdRSlVGM0txYjdTeUxuYXBLeXN1MmZQQ2wramg4K2dudGVmNWV5NWJY?=
- =?utf-8?B?RHdjYk1ZUmZYZ2JmckVwR2pLSWYyc3d1WmhjMVo0YmM1Ky82Q0g1VTgxSUNJ?=
- =?utf-8?B?ajc4bW0raElQRVYwMzhLbWprbi8yb2p3cHhsNWMzQ20yczNQTStQNG5RZG9E?=
- =?utf-8?B?SjI5dWMxQW41RnQ2ODM2WU01Ynhzcmx5MlhrcjkwTkRhelR4T04zN1hPR0lL?=
- =?utf-8?B?UnBQV2FZaVl0MjZ1OTY5bGRVRHhGWVc0S1hnOVp6Mkt6dnc1SFBRY3F0Z0Nx?=
- =?utf-8?B?em5zcUJPcTZta1M4WGNLZjlnQTlKekpCTHdVWERHa3lYeXN6QndNc25ialpy?=
- =?utf-8?B?Q28vWlJLYkRwTXBiWVJ4MVVoU25ST3c1U1I3SlRWaENqcWE0aUlwZnhUSmFH?=
- =?utf-8?B?aXhOUTFoSUk1Mnp3RDFOVkJaRkxTWXF5Ri8veGFkWUFUWjNDUWJaVmN0ZUlE?=
- =?utf-8?B?b3JYSzdselZJaHdkZHRRdUhxaXNxWnpBZGJacmJBcUVrek9WWjNVUTRLdTFp?=
- =?utf-8?B?TElWMnoxQlJIYVR6dkNEWXlnRnhFNG9sRUw3S01KZ2xaUGplOE1VM2FrdFp5?=
- =?utf-8?B?RU9iaEE3RU9qZ1pPWGNwdVcva2N5ZTFUQkdibWFIdzhsc2FPK3JjWHh2WmpV?=
- =?utf-8?B?N2dCTTAxZG1Kdm44K2p3YjlsdzVOdGEwd2JWTXBhbk5uUSsxcTRBdk5nVTg2?=
- =?utf-8?B?aDZSU0hEV01jNUR6a0tiOGxURXkvSXV4TnpWcmpRTHJxNDdWcWx4RmFKSm5t?=
- =?utf-8?B?a3VHMURYUE5XZXpUQ0hmMzlRYUhBeTRNYTA5elVsTTIzL1BvNzZ1TVVSZmV1?=
- =?utf-8?B?bzlZNkJQVFNkajYvMTZ3Yys5VU5KSVlOaWticHdDWWhxVlk5aGxUZEpZcnA5?=
- =?utf-8?B?V1YxVmYyd3lOeUt2WDRsQT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZlV0UHkzM2xTbkRiNnUweFBpOHZicmpVdW5aWXVDWlpkZ3dRa3RtWDJsWlJU?=
- =?utf-8?B?WEx0Y25lcG9ScHN3UVU4Sm9EYVM4UkRoZmphVlZOTzhBT2t3UDRqS3oycUNE?=
- =?utf-8?B?MFljaks4aENUSXdQbzBnR21COXFieklxY2U5eENDb2MwdzZ5L1J6R3pmWHEv?=
- =?utf-8?B?Nk5wc1BxbVRiNkZEWnNNR2dHUEYwK2Q3SFdkTi9oVS8vRmV5YnVMZnRwOTRX?=
- =?utf-8?B?YWZwUHpqL3J4enRXSHRuWStlMWR0Z3dMdUJwYlJDdHUwajVYL0tHSVRCenlV?=
- =?utf-8?B?UDdHNTM5bjNVYkZKaW9VNlowT3Qrb2J0TVZ5NlJxcXd4OFE5Z0o0T2xLRkpI?=
- =?utf-8?B?T0FoNjZNTTRKbmtvNG9QU0t2bkJvTHUxejN6NkxYOURQWmozTG9qbEpmQVhW?=
- =?utf-8?B?Vlo0OFpPbXAwcVNvbXdtdm9hOFNqK3VmbVZEVTAyMUpvdGRSRU9PYmNWa0Za?=
- =?utf-8?B?YUZaaHVlMXZIc203cmVGN2tUOWJJSlM3NzRLM2ttbytoS2FEYmRTMlVGWDUv?=
- =?utf-8?B?Y092RndwVWNRLzdXUndjVlBva292MmM4WU9SU3h2WFpRSEhtWXJEUFJMdTRy?=
- =?utf-8?B?R1VNb294RmQ1RjBValByS0huSnZIaU9zRmorbjJKamZPb0x4VHhMQy9aK0dS?=
- =?utf-8?B?LzlhMXlXdTZadnZZK09PWndnSm1SOElYSVhrTE1FRWVTVnp3RUUxTFNhR1Uy?=
- =?utf-8?B?RTY1RVJGVGhRd0xRcXB0c0dyS2dOZ0RvaVFpdkdMczBqK1Y0ZEhXQWUxdjVY?=
- =?utf-8?B?ZWl6RGNZM2ViWjBYelNrOHFvbzdhSmluNGxOYTUxcXl6dGR3dXJQZjZ3RjZU?=
- =?utf-8?B?ZnNLNDRTRVMrWWkwMURGRXl0MzgwaDVWYTdiZ2Y4M2dUUXFRdGsrRkFkVUNh?=
- =?utf-8?B?QVpMWHpvd3psMXZwcmFkZk5Wb2lVWVFFaXdkNjV2TkIyRCt2WGhzUUhzbUpz?=
- =?utf-8?B?K09IbUpUUDY5bTVFdGhlZGhhaXE2ME5tUng5TFhGcUZJcEkwdG1SSjIxSDhx?=
- =?utf-8?B?cUNhaHJCdThwT0U3dEdTZ0pyNVlFK3RLNTNhUzY5SGxVajNaSVdwWUdNVVc5?=
- =?utf-8?B?eXYzazVna3IyN1RzVlh4ZHhzeEpVeEFua2JNblluMkdVbzl2M2oxNFhJYUo3?=
- =?utf-8?B?M3BjM2pVVlQ2MVVORGJxTzNhekxMSEZKbEhGWVVSQVFzRDJpdHpYOFVvSWVh?=
- =?utf-8?B?dXJtUmJqam52bHI0bmo5MkdRcGQwc2d2clA3NUFPU1VRM1U2aFZQcEE0NEUv?=
- =?utf-8?B?TWs1T0hnUjQ3UmNBMlZudFRDVWNjQkhmTDcvQ0dvWGZ3WGlKOUJwbkw3dlpk?=
- =?utf-8?B?dGlvaERjNDEvMlJ2cTVWU0p4Y0xsWDhNdjJIdnRrdGFCNEdpc3JFN0hOeXQ2?=
- =?utf-8?B?Q2YzOHhiVE5DUUpPa09EL2VLQjA2SjlpeG5YUkZ2eUZQT3BvWGU1bGRJUTdF?=
- =?utf-8?B?b0ZlbSswY2xNdnY1WG5MZisraFFDblpJWXNZSXJQb1dqekJtbW5pSXZWWmoz?=
- =?utf-8?B?THJQYzRTd1hqd2lLbmJveWhqN3FIbDBCSDFrWTlibDJ2cERkV3lGRElVWjg3?=
- =?utf-8?B?NWtaWU9QM0pwbDBRMDgwTGpXTG12K21odUlzalhDd3hVSmVKSGlpdm8vK1dz?=
- =?utf-8?B?ZUlsUmJkbkRWVko3bFlHYnlQMXhEL0svODB2V0lyQXlQVGkvZTZyYnhHK08r?=
- =?utf-8?B?QjJ6eDkwTVBKT1dPNjlNSVIzNDVTRUlHU1lFVW82MDUwMitvU1ZNUlRFOW5P?=
- =?utf-8?B?S2x0YXgxRmxEbE5LTjlSSWxMZGJVMVVmQ3RWL1dUUzJLYkZraTVnMiszQzdF?=
- =?utf-8?B?VHVSUjVnangrb0Z2dkcvbm5JWnNnT29rMERINC9GbFIrUFBQdlBhZURQMUtL?=
- =?utf-8?B?TDBPdWVic01ORCtoUnFLdVRON05WTE1ubmdhM3FOVmhENjY3ZGZPWDZ2SDJo?=
- =?utf-8?B?dk5jMUxZdEJwUG1hZWs2bHRXYS9qY3liTWZOc0F5czhRN2JHTXcwRDhvV2Zy?=
- =?utf-8?B?Y0dDaEMrS3I5c1RwRlNNQmprVlZmMGVMeDhRbFBaYVQzaHEyRXQ1MG5Fd0FE?=
- =?utf-8?B?ekluODdDQlpUQWl2MlBOVmlLZmJoWjVsaGg1TWI4VXZpbHJFWGwwVUE0Q1FK?=
- =?utf-8?Q?Kxez5nq4T9vm49OLqoQIdrm4W?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759AF13B58E
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716445409; cv=none; b=sD3mXEUMc76HNIP81alv6FS5HAxndeP1oZS48rRy1DCGwqdAifADmQTp77vxNG4qUVljlerxxzYGzzRXDpYI9jz597W2jxI+jJlpYwuuMCdSnfs3smJ0Ru5zDsHxNJqFVHD+y64V6wCj+CZwSURMiBTYRkcQZk2QpyhuV85LHb0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716445409; c=relaxed/simple;
+	bh=0Ps/ANO7fGli6TROrZEAsKSunwS9h7zlQ0i5hXgbpdc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qldZUXrZsT7ZbL9MBWS1T0qVS3hNRM2LP28ig/vjb0YZJswB7s/9bzwfVRQ+Dgcq4voWOzj+5LtRwCop8Ya44JUaXGvrqZ7MP+OIgMgYooIurcahop+ocjWDcJWD7Cvj7GmsGXpuoSy1Aq0K/K5flP9HxUj8G3w4N8hRjyTdhYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-36c6dfc6134so17114425ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 23:23:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716445406; x=1717050206;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBMuUqX5kuVar7C8mlUR6O3NJrHuRZwGA97dxRcFh+o=;
+        b=C1M65omqaBdRzAL+uM51tCzr9AZ/2QicZS3RCjfRwNJHQYZipQI6YY5pecch5pXvJF
+         mCFbEv9coofGPrCAakEghuaRBhj7L3BNw4Cb3PjNlCdwrT7XyDWJaa+6xhFck7mdeLq3
+         29z+3LWAbo+RHHqOgC05+ya6ub/XXXoSI2vfgl+QzRTJF4GbxvTgtXkBQm5kCwumlSKp
+         D3cz8tWPAlzIZ3j+Y79sEHOLKeVp8Az4TTAX/vPxCZYAI6PW19dGNiu4A1Gu4fXuzavh
+         k/vmWZ6eWgcZxHiOCayOtAAixq5SnEvKuwqkmPi62Ok1gNaatFt0fosiVmvkZU8zIcnn
+         vBqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFhHkMSZHzAt5PfdwpoacsDiQElk53U4EKO4k/dVHEYfrzKZLAPo1QJCSIUfCqtTLcLf4KRPM5STP+Ox5Cyc2LFRyiH8P/93A69FO6
+X-Gm-Message-State: AOJu0YyBeuc0PAFPbuqwzke3ztCgXW3ZfUk4xHzyydMmtCH7Frm+6O3M
+	wCDDv/L2vTGYjtK7Olgrq89cJc8v+ECHBTZCeLaNN7s5CWlB6PDy8SyiqzHWScJb29nP4auyK3Y
+	ZsJW6fslkP1Bmd/MJgstYvAFqiCcb1TT2gGxBRYGzoqrjTo89WaXf400=
+X-Google-Smtp-Source: AGHT+IFs3s6TP+BHm6o2I8f1h1FGKe6aPqgpDeTRxFh1MT96XB+BkLhjeRFfJUBUE851dQypE+iVu6F7teJL6nYgKb11wJRYZTxj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1afd4a80-06a0-4b19-bbca-08dc7af0bb8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2024 06:22:33.6676
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SW5L1qLFMX5gwKKFJeuxG/rlM/T5wzKbiktdCQHKmCIGlQNoMbeE2GXBcfa2iQHHWH0SY/Uaqs/pIimbfgqtUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6973
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6e02:148d:b0:371:30f1:96be with SMTP id
+ e9e14a558f8ab-371f403f129mr2698855ab.0.1716445406705; Wed, 22 May 2024
+ 23:23:26 -0700 (PDT)
+Date: Wed, 22 May 2024 23:23:26 -0700
+In-Reply-To: <0000000000006588730616e3d3d8@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000be49b106191916f0@google.com>
+Subject: Re: [syzbot] [serial?] possible deadlock in uart_write (2)
+From: syzbot <syzbot+57cc2f20a84cb4346354@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-PiBGcm9tOiBOaWNvbGluIENoZW4gPG5pY29saW5jQG52aWRpYS5jb20+DQo+IFNlbnQ6IFRodXJz
-ZGF5LCBNYXkgMjMsIDIwMjQgMjoxMCBQTQ0KPiANCj4gT24gVGh1LCBNYXkgMjMsIDIwMjQgYXQg
-MDU6NDQ6NDBBTSArMDAwMCwgVGlhbiwgS2V2aW4gd3JvdGU6DQo+ID4gPiBGcm9tOiBOaWNvbGlu
-IENoZW4gPG5pY29saW5jQG52aWRpYS5jb20+DQo+ID4gPiBTZW50OiBNb25kYXksIE1heSAxMywg
-MjAyNCAxMjozOSBQTQ0KPiA+ID4NCj4gPiA+IE9uIFN1biwgTWF5IDEyLCAyMDI0IGF0IDExOjQ2
-OjU0QU0gLTAzMDAsIEphc29uIEd1bnRob3JwZSB3cm90ZToNCj4gPiA+ID4gT24gRnJpLCBBcHIg
-MTIsIDIwMjQgYXQgMDg6NDc6MDRQTSAtMDcwMCwgTmljb2xpbiBDaGVuIHdyb3RlOg0KPiA+ID4g
-PiA+IEFkZCBhIHBhaXIgb2Ygb3BzIHRvIHNldCBhbmQgdW5ldCBkZXZpY2UncyB2aXJ0dWFsIElE
-IHRoYXQgYmVsb25ncyB0bw0KPiA+ID4gPiA+IGEgdmlvbW11IG9iamVjdC4gVGhleSB3aWxsIGJl
-IHVzZWQsIGluIHRoZSBmb2xsb3dpbmcgcGF0Y2gsIGJ5DQo+IGlvbW11ZmQNCj4gPiA+ID4gPiB0
-byBzdXBwb3J0IHNvbWUgSFctYWNjZWxlcmF0aW9uIGZlYXR1cmUgZnJvbSB0aGUgaG9zdCBsZXZl
-bC4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEZvciBpbnN0YW5jZSwgZXZlcnkgZGV2aWNlIGJlaGlu
-ZCBhbiBBUk0gU01NVSBoYXMgYSBTdHJlYW0gSUQuIFRoZQ0KPiBJRA0KPiA+ID4gPiA+IGlzIHVz
-ZWQgYnkgQVRDIGludmFsaWRhdGlvbiBjb21tYW5kcyBzbyBTTU1VIEhXIGNhbiBkaXJlY3QNCj4g
-PiA+IGludmFsaWRhdGlvbg0KPiA+ID4gPiA+IHJlcXVlc3RzIHRvIHRoZSBjb3JyZXNwb25kaW5n
-IFBDSSBkZXZpY2Ugd2hlcmUgdGhlIElEIGJlbG9uZ3MgdG8uIEluIGENCj4gPiA+ID4gPiB2aXJ0
-dWFsaXphdGlvbiB1c2UgY2FzZSwgYSBwYXNzdGhyb3VnaGVkIGRldmljZSBpbiB0aGUgVk0gd2ls
-bCBoYXZlIGENCj4gPiA+ID4gPiB2aXJ0dWFpbCBTdHJlYW0gSUQsIHVzZWQgYnkgdGhlIEFUQyBp
-bnZhbGlkYXRpb24gY29tbWFuZHMgaW4gdGhlDQo+IGd1ZXN0DQo+ID4gPiA+ID4gc3lzdGVtLiBO
-VklESUEncyBDTURRViBleHRlbnNpb24gZm9yIFNNTVV2MyBwcm92aWRlcyBhIHYtDQo+IGludGVy
-ZmFjZQ0KPiA+ID4gdG8NCj4gPiA+ID4gPiBleGVjdXRlIHRoZSBndWVzdC1sZXZlbCBBVEMgaW52
-YWxpZGF0aW9uIGNvbW1hbmRzIGRpcmVjdGx5LCB5ZXQgbmVlZHMNCj4gPiA+ID4gPiB0aGUgSFcg
-dG8gYmUgYXdhcmUgb2YgaXRzIHZpcnR1YWwgU3RyZWFtIElEIHNvIGl0IGNhbiByZXBsYWNlIHdp
-dGggaXRzDQo+ID4gPiA+ID4gcGh5c2ljYWwgU3RyZWFtIElELg0KPiA+ID4gPg0KPiA+ID4gPiBJ
-IGltYWdpbmUgdXNpbmcgdGhpcyBhcyB3ZWxsIGZvciB0aGUgQVRDIGludmFsaWRhdGlvbiBjb21t
-YW5kcy4gSXQNCj4gPiA+ID4gd291bGQgYmUgdmVyeSBlYXN5IGFuZCBzaW1wbGlmeWluZyBpZiB0
-aGUgY29tbWFuZCBmaXh1cCBqdXN0IGV4dHJhY3RlZA0KPiA+ID4gPiB0aGUgdlNJRCBmcm9tIHRo
-ZSBBVEMgaW52YWxpZGF0aW9uIGFuZCB1c2VkIGFuIHhhcnJheSB0byB0dXJuIGl0IGludG8NCj4g
-PiA+ID4gYSBwU0lEIGFuZCB0aGVuIHB1c2hlZCB0aGUgcmVzdWx0aW5nIGNvbW1hbmQuDQo+ID4g
-Pg0KPiA+ID4gWW91IG1lYW4gdGhlIG5lc3RlZCBTTU1VIHNlcmllcyByaWdodD8gQWN0dWFsbHkg
-dGhlIHNldF9kZXZfaWQNCj4gPiA+IGlvY3RsIHdhcyBhIHBhcnQgb2YgdGhhdCB1bnRpbCB3ZSB3
-YW50ZWQgdG8gdHJ5IERFVl9JTlZBTElEQVRFLg0KPiA+ID4NCj4gPiA+IFNvIGFnYWluLCB5ZXMs
-IGl0IG1ha2VzIHNlbnNlIHRvIG1lIHRoYXQgd2UgbW92ZSB2aW9tbXUgYW5kIHRoZQ0KPiA+ID4g
-c2V0X2Rldl9pZCB0byB0aGUgbmVzdGVkIHNlcmllcywgYW5kIHRoZW4gZHJvcCBERVZfSU5WQUxJ
-REFURS4NCj4gPg0KPiA+IEknbSByaWdodCBhYm91dCB0byBhc2sgaG93IHRoZSBuZXN0aW5nIHNl
-cmllcyBpcyBnb2luZy4gUGVyIGVhcmxpZXINCj4gPiBkaXNjdXNzaW9uIGlpcmMgdGhlIG5lc3Rp
-bmcgc2VyaWVzIHdpbGwgZ28gaW4gYmVmb3JlIFZDTURRPw0KPiANCj4gWWVzLiBJdCBzdGlsbCBz
-aG91bGQuIFlldCB3ZSBlbmRlZCB1cCB3aXRoIGFkZGluZyBWSU9NTVUgdG8gdGhlDQo+IG5lc3Rl
-ZCBTTU1VIHNlcmllcyB0b28uIEEgc2hhcmVkIFMyIGRvbWFpbi9od3B0IGlzbid0IGV4Y2x1c2l2
-ZQ0KPiBmb3IgVkNNRFEgdXNlIGNhc2UgYnV0IGFsc28gZm9yIHJlZ3VsYXIgbmVzdGluZyBvbiBh
-IG11bHRpLVNNTVUNCj4gc2V0dXAuIFNvLCBWSU9NTVUgdHVybnMgb3V0IHRvIGJlIHRoZSBiZXN0
-IG9iamVjdCB0aGF0IHdlIGhhdmUNCj4gYXQgdGhpcyBtb21lbnQgdG8gaG9sZCBpbmRpdmlkdWFs
-IFZNSURzIGZvciBkaWZmZXJlbnQgcGh5c2ljYWwNCj4gU01NVXMgc2hhcmluZyBhIHNpbmdsZSBT
-MiBkb21haW4uIEl0cyB2aXJ0dWFsIGRldmljZSBJRCBsb29rdXANCj4gZmVhdHVyZSBjYW4gYWxz
-byBhbGxvdyB1cyB0byBmb3JnZXQgYWJvdXQgREVWX0lOVkFMSURBVEUgaW9jdGwNCj4gZm9yIG5v
-dy4NCg0KWWVhaCwgdGhhdCBtYWtlcyBzZW5zZS4gYnR3IGl0J3MgcHJvYmFibHkgaGVscGZ1bCB0
-byBmdXR1cmUgcmV2aWV3cw0KaWYgeW91IGNhbiB0cnkgdG8gaW5jbHVkZSBtb3JlIGV4cGxhbmF0
-aW9ucyBhYm91dCB0aGUgZGVzaWduDQp0cmFkZW9mZiBiYXNlZCBvbiB0aG9zZSBkaXNjdXNzaW9u
-cy4gU29tZWhvdyBpdCdzIG5vdCBlYXN5IGZvciBtZQ0KdG8gY2F0Y2ggdXAgd2l0aCB0aG9zZSBk
-aXNjdXNzaW9ucyBiZWluZyBsYWNraW5nIG9mIG1hbnkgY29udGV4dHMNCmhlcmUuIPCfmIoNCg0K
-PiANCj4gSmFzb24gbGlzdGVkIGFsbCB0aGUgdGFza3MgYWhlYWQgaW4gdGhpcyB0aHJlYWQgdG9v
-LCB1c2luZyBTTU1VDQo+IGFzIGFuIGV4YW1wbGU6DQo+ID4gU28gd2UgaGF2ZSB0aGlzIHN0dWZm
-IHN0aWxsIG9wZW46DQo+ID4gIC0gSWRlbnRpdHkgU1RFIHdpdGggUEFTSUQgKHBhcnQgMmIpDQo+
-ID4gIC0gSU9NTVVfR0VUX0hXX0lORk8gKHBhcnQgMykNCj4gPiAgLSBJT01NVV9IV1BUX0FMTE9D
-X05FU1RfUEFSRU5UIChwYXJ0IDMpDQo+ID4gIC0gSU9NTVVfSFdQVF9EQVRBX0FSTV9TTU1VVjMg
-KHBhcnQgMykNCj4gPiAgLSBJT01NVV9IV1BUX0lOVkFMSURBVEVfREFUQV9BUk1fU01NVVYzDQo+
-ID4gIC0gVklPTU1VX0FMTE9DLCBWSU9NTVVfQVRUQUNIDQo+ID4gIC0gVklPTU1VX0lOVkFMSURB
-VEUNCj4gDQo+IEJ5IHRoaXMgc2VyaWVzIG5lc3Rpbmcgc2V0dXAgaXMgZG9uZS4gV2UgbmVlZCBC
-YW9sdSdzIHNvbHV0aW9uDQo+IG9yIFZRVUVVRSBmb3IgZmF1bHQgcmVwb3J0aW5nIGFmdGVyIHRo
-YXQuDQo+IA0KDQp0aGlzIGlzIGEgY2xlYXIgcGxhbi4NCg==
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    de7e71ef8bed mm: simplify and improve print_vma_addr() out..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1358d748980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=45d62832ec0fc911
+dashboard link: https://syzkaller.appspot.com/bug?extid=57cc2f20a84cb4346354
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10cd9414980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140480ec980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-de7e71ef.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0c97829b07ce/vmlinux-de7e71ef.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e91040d0f4f3/bzImage-de7e71ef.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+57cc2f20a84cb4346354@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-syzkaller-11924-gde7e71ef8bed #0 Not tainted
+------------------------------------------------------
+syz-executor379/5188 is trying to acquire lock:
+ffffffff8dabed20 (console_owner){....}-{0:0}, at: console_trylock_spinning kernel/printk/printk.c:1994 [inline]
+ffffffff8dabed20 (console_owner){....}-{0:0}, at: vprintk_emit kernel/printk/printk.c:2344 [inline]
+ffffffff8dabed20 (console_owner){....}-{0:0}, at: vprintk_emit+0x42d/0x5a0 kernel/printk/printk.c:2300
+
+but task is already holding lock:
+ffffffff94de6f38 (&port_lock_key){-...}-{2:2}, at: uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
+ffffffff94de6f38 (&port_lock_key){-...}-{2:2}, at: uart_write+0x134/0x3e0 drivers/tty/serial/serial_core.c:624
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&port_lock_key){-...}-{2:2}:
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0x3a/0x60 kernel/locking/spinlock.c:162
+       uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
+       serial8250_console_write+0xaa6/0x1090 drivers/tty/serial/8250/8250_port.c:3352
+       console_emit_next_record kernel/printk/printk.c:2928 [inline]
+       console_flush_all+0x53f/0xd70 kernel/printk/printk.c:2994
+       console_unlock+0xae/0x290 kernel/printk/printk.c:3063
+       vprintk_emit kernel/printk/printk.c:2345 [inline]
+       vprintk_emit+0x11a/0x5a0 kernel/printk/printk.c:2300
+       vprintk+0x7f/0xa0 kernel/printk/printk_safe.c:45
+       _printk+0xc8/0x100 kernel/printk/printk.c:2370
+       register_console+0xa88/0x10a0 kernel/printk/printk.c:3596
+       univ8250_console_init+0x35/0x50 drivers/tty/serial/8250/8250_core.c:719
+       console_init+0xcc/0x680 kernel/printk/printk.c:3742
+       start_kernel+0x295/0x4c0 init/main.c:1038
+       x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:507
+       x86_64_start_kernel+0xb2/0xc0 arch/x86/kernel/head64.c:488
+       common_startup_64+0x13e/0x148
+
+-> #0 (console_owner){....}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       console_trylock_spinning kernel/printk/printk.c:1994 [inline]
+       vprintk_emit kernel/printk/printk.c:2344 [inline]
+       vprintk_emit+0x442/0x5a0 kernel/printk/printk.c:2300
+       vprintk+0x7f/0xa0 kernel/printk/printk_safe.c:45
+       _printk+0xc8/0x100 kernel/printk/printk.c:2370
+       __report_bug lib/bug.c:195 [inline]
+       report_bug+0x4ac/0x580 lib/bug.c:219
+       handle_bug+0x3d/0x70 arch/x86/kernel/traps.c:239
+       exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:260
+       asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
+       uart_write+0x2bf/0x3e0 drivers/tty/serial/serial_core.c:625
+       tnc_init drivers/net/hamradio/6pack.c:531 [inline]
+       sixpack_open+0x93b/0xb30 drivers/net/hamradio/6pack.c:628
+       tty_ldisc_open+0x9c/0x120 drivers/tty/tty_ldisc.c:432
+       tty_set_ldisc+0x318/0x720 drivers/tty/tty_ldisc.c:563
+       tiocsetd drivers/tty/tty_io.c:2439 [inline]
+       tty_ioctl+0xbdc/0x15f0 drivers/tty/tty_io.c:2739
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:907 [inline]
+       __se_sys_ioctl fs/ioctl.c:893 [inline]
+       __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&port_lock_key);
+                               lock(console_owner);
+                               lock(&port_lock_key);
+  lock(console_owner);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor379/5188:
+ #0: ffff888011ccc1c0 (&tty->legacy_mutex){+.+.}-{3:3}, at: tty_set_ldisc+0x8b/0x720 drivers/tty/tty_ldisc.c:528
+ #1: ffff888011ccc0a0 (&tty->ldisc_sem){++++}-{0:0}, at: __tty_ldisc_lock drivers/tty/tty_ldisc.c:289 [inline]
+ #1: ffff888011ccc0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_lock+0x65/0xb0 drivers/tty/tty_ldisc.c:313
+ #2: ffffffff94de6f38 (&port_lock_key){-...}-{2:2}, at: uart_port_lock_irqsave include/linux/serial_core.h:618 [inline]
+ #2: ffffffff94de6f38 (&port_lock_key){-...}-{2:2}, at: uart_write+0x134/0x3e0 drivers/tty/serial/serial_core.c:624
+
+stack backtrace:
+CPU: 2 PID: 5188 Comm: syz-executor379 Not tainted 6.9.0-syzkaller-11924-gde7e71ef8bed #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ console_trylock_spinning kernel/printk/printk.c:1994 [inline]
+ vprintk_emit kernel/printk/printk.c:2344 [inline]
+ vprintk_emit+0x442/0x5a0 kernel/printk/printk.c:2300
+ vprintk+0x7f/0xa0 kernel/printk/printk_safe.c:45
+ _printk+0xc8/0x100 kernel/printk/printk.c:2370
+ __report_bug lib/bug.c:195 [inline]
+ report_bug+0x4ac/0x580 lib/bug.c:219
+ handle_bug+0x3d/0x70 arch/x86/kernel/traps.c:239
+ exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:260
+ asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
+RIP: 0010:uart_write+0x2bf/0x3e0 drivers/tty/serial/serial_core.c:625
+Code: 6b fc e9 4e ff ff ff e8 ef e1 90 fc 90 0f 0b 90 49 c7 c4 d2 ff ff ff e9 39 ff ff ff e8 da e1 90 fc 45 31 ff e8 d2 e1 90 fc 90 <0f> 0b 90 48 85 ed 74 8c e8 c4 e1 90 fc 4c 8d a5 08 01 00 00 4c 89
+RSP: 0018:ffffc90003137bd8 EFLAGS: 00010093
+RAX: 0000000000000000 RBX: ffff88801f908be8 RCX: ffffffff816c49ad
+RDX: ffff88802a360000 RSI: ffffffff84fd0abe RDI: ffff88801f908f48
+RBP: ffffffff94de6f20 R08: 0000000000000001 R09: fffff52000626f69
+R10: 0000000000000003 R11: 0000000000000002 R12: 0000000000000001
+R13: 0000000000000001 R14: ffff888024980f01 R15: 0000000000000293
+ tnc_init drivers/net/hamradio/6pack.c:531 [inline]
+ sixpack_open+0x93b/0xb30 drivers/net/hamradio/6pack.c:628
+ tty_ldisc_open+0x9c/0x120 drivers/tty/tty_ldisc.c:432
+ tty_set_ldisc+0x318/0x720 drivers/tty/tty_ldisc.c:563
+ tiocsetd drivers/tty/tty_io.c:2439 [inline]
+ tty_ioctl+0xbdc/0x15f0 drivers/tty/tty_io.c:2739
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f956812d2e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeea498a48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffeea498c18 RCX: 00007f956812d2e9
+RDX: 0000000020000080 RSI: 0000000000005423 RDI: 0000000000000003
+RBP: 00007f95681a0610 R08: 0000000000000000 R09: 00007ffeea498c18
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffeea498c08 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+WARNING: CPU: 2 PID: 5188 at drivers/tty/serial/serial_core.c:625 uart_write+0x2bf/0x3e0 drivers/tty/serial/serial_core.c:625
+Modules linked in:
+CPU: 2 PID: 5188 Comm: syz-executor379 Not tainted 6.9.0-syzkaller-11924-gde7e71ef8bed #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:uart_write+0x2bf/0x3e0 drivers/tty/serial/serial_core.c:625
+Code: 6b fc e9 4e ff ff ff e8 ef e1 90 fc 90 0f 0b 90 49 c7 c4 d2 ff ff ff e9 39 ff ff ff e8 da e1 90 fc 45 31 ff e8 d2 e1 90 fc 90 <0f> 0b 90 48 85 ed 74 8c e8 c4 e1 90 fc 4c 8d a5 08 01 00 00 4c 89
+RSP: 0018:ffffc90003137bd8 EFLAGS: 00010093
+RAX: 0000000000000000 RBX: ffff88801f908be8 RCX: ffffffff816c49ad
+RDX: ffff88802a360000 RSI: ffffffff84fd0abe RDI: ffff88801f908f48
+RBP: ffffffff94de6f20 R08: 0000000000000001 R09: fffff52000626f69
+R10: 0000000000000003 R11: 0000000000000002 R12: 0000000000000001
+R13: 0000000000000001 R14: ffff888024980f01 R15: 0000000000000293
+FS:  0000555560c5f380(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 000000001e942000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ tnc_init drivers/net/hamradio/6pack.c:531 [inline]
+ sixpack_open+0x93b/0xb30 drivers/net/hamradio/6pack.c:628
+ tty_ldisc_open+0x9c/0x120 drivers/tty/tty_ldisc.c:432
+ tty_set_ldisc+0x318/0x720 drivers/tty/tty_ldisc.c:563
+ tiocsetd drivers/tty/tty_io.c:2439 [inline]
+ tty_ioctl+0xbdc/0x15f0 drivers/tty/tty_io.c:2739
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f956812d2e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeea498a48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffeea498c18 RCX: 00007f956812d2e9
+RDX: 0000000020000080 RSI: 0000000000005423 RDI: 0000000000000003
+RBP: 00007f95681a0610 R08: 0000000000000000 R09: 00007ffeea498c18
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffeea498c08 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
