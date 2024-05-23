@@ -1,253 +1,118 @@
-Return-Path: <linux-kernel+bounces-188097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353008CDD44
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:12:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 089518CDD45
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BE72856A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:12:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1321C22FA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BD2128813;
-	Thu, 23 May 2024 23:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D11A1292C9;
+	Thu, 23 May 2024 23:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iEelBT9g"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ItsY1AO8"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75BF126F27;
-	Thu, 23 May 2024 23:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716505940; cv=fail; b=rz0ufjoNgVKJ1Wn+BuJQgOYnk1zF7tVRJ/6jicmhZA2Ig7sUWHN/3xMwguRvb2J64TrMKM5WWzUd2UbYaBJfs49OxuU94R4+Jnlt3wtwXB4Ehrw3DV4m0k8sPFrFwc3/e5GMZeDHJHWgy0oZio6cOp4h9Dtg+7A/gCq2l0d5uxQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716505940; c=relaxed/simple;
-	bh=KM/kkkj11dWAIb64+s0XVTe7Wt2fyXgNtEwvTMOy4l0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RlDHL/Bz+8Vvn/c5Jh3NDqd6YcffS8iB0wJ7+ZJdlHf2KRL++goPXDvuoilo2ydpBgaO0d3LmTKvz0vGaowSNfF+dvtoTbKWLEeOLOvUu8sX0mJpU9krwrU3IpLy18tcV52oGJECaWDUpFCU8b/IUeHtGJQL74GIhmDDjgg+Pe8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iEelBT9g; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716505939; x=1748041939;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=KM/kkkj11dWAIb64+s0XVTe7Wt2fyXgNtEwvTMOy4l0=;
-  b=iEelBT9gHbfPr5SfjVnhjiHREYhA6YykpWN9AXd7KKYidyjLn3lDqBPc
-   +pkSEMeos0mNooVmF/ZMbBYFNSWT2KLQ5NtYWzRUHGk/ehQakqb7EmvxT
-   E83OwMyN2UviD/M4lRtyTqeQ6E+dc2M5uriMtoxVAOunz/TxCKygBxNGX
-   vywJJxVgkWHyU9+JHOhGLGQWEOAuurTBbqGw1Kc/4ehXiqs4AJqrpQFx9
-   YAf8xm2mz8LPVT2/XWQqVLm7nSTQ6tHfMm817ZTYck3n24GgrBhyWn5Yc
-   324DRfmmX0Ku+IaGR13Hh5whk1IzMKKp3WCINHKh8W8HPeOpwBZTR9GLM
-   g==;
-X-CSE-ConnectionGUID: hirtfK/DRX+dXMjvydU7zA==
-X-CSE-MsgGUID: ThcVEjmXTy6oqXV/TZ+s2w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12711463"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="12711463"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 16:11:54 -0700
-X-CSE-ConnectionGUID: 7zjz7uSRRm2KHOa8wKtJiA==
-X-CSE-MsgGUID: TGMlj8aQQMqm6o5JzbeArQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="38282586"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 May 2024 16:11:54 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 23 May 2024 16:11:53 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 23 May 2024 16:11:53 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 23 May 2024 16:11:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U7xJrvFCV2azPoTHXm+/w3wfRL5rq4d6fV9WNvWCKqi506ZtxHAnKSJ3uNC1oDFxxF4y/6nvMqNyz7Yth8c0R8l7L/2gpPdkI8M08HH9NKZ79T9ljilbTeguh7scQ6nF9XGmd9SdGWgQFOUIIXxEZG55Fdnnp8gOu78mwbDeQ3uesoFmcEDuWwnPFT2XCqIJ/IqqhsKIc9onx7CXkR1HoFBnbSaacbwTHvaCsNeQGYUBu5j4kCYUXyXFEvK8C1Z0hA8L1yrGYfbFCKzq0O1NX0OouMlxs/kzFA2eZWFqGqKENP4VXVPaooZR6HP+LARVfqxIpn5do/kL4eRkfxM/Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yCE+s7VpK/n3ssZIL0N5aTWAJC1NFbR3EeONMU0ib1M=;
- b=IMXN4Dg09JcXXhDKODOE7i1NbrCegatCE1PaWEVWWKFbswGQyOYEzVngNry0TabXXDUWeeyRQ+VCbqQ5i+hna9c8AvG9RO/Ka1qNPo3wVgGUBrXNF9p575ggyXbUU0uFu9j0E7KIDwn7PIht5KFZevCumANVK4imiHShreFtvvgOjHO8vKJrfvltKJpVgIdmYj7cc1Ebsym4GM91NbNG3vluYXo3gF/aIelfL4mft4H655cluswZYP+0mqZaB/W2O3dp2n1QtP+LHsmZzMhKYtO0+LRbcT4ODSXsLA8Pr31HBh1l1Oj9tGs84DZQMWkcUYYh5HB+63RF9ChgPJfFfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by SJ1PR11MB6154.namprd11.prod.outlook.com (2603:10b6:a03:45f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Thu, 23 May
- 2024 23:11:44 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7611.016; Thu, 23 May 2024
- 23:11:44 +0000
-Message-ID: <c4fa17ca-d361-4cb7-a897-9812571aa75f@intel.com>
-Date: Fri, 24 May 2024 11:11:37 +1200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] KVM: Add a module param to allow enabling
- virtualization when KVM is loaded
-To: Chao Gao <chao.gao@intel.com>
-CC: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
-	<pbonzini@redhat.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240522022827.1690416-1-seanjc@google.com>
- <20240522022827.1690416-4-seanjc@google.com>
- <8b344a16-b28a-4f75-9c1a-a4edf2aa4a11@intel.com>
- <Zk7Eu0WS0j6/mmZT@chao-email>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <Zk7Eu0WS0j6/mmZT@chao-email>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ2PR07CA0014.namprd07.prod.outlook.com
- (2603:10b6:a03:505::7) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01261126F27
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716505948; cv=none; b=sjCszK44r3jfVZoCur9BagpNnSegM0iewbrbdZkv6JJ4yaiVOf1mYyEO5BzjL8IwIKR+osityoM14sRZEo1GcG76Yr23+QRgrH2Be6MRpVOfDjYP7aEH7xgCipMz0E9+XX2COYDhRjNflnPJL35ZNGC0Y+gZow3W2nLCJxQfMJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716505948; c=relaxed/simple;
+	bh=Pr5fclf/NyQdxEw21anVvy8WtHKkbRAUyx9Gl02m/X8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8G+QMtVd1SDXNX0hRGZfY0uoRtLWz/5t8PMHBoDAkK4amrFRDNAt4h7ZEIiF8zVCRJbPjkbcOgVs87Y6q9znhswvI3ZAY5kLwIjgEXIrW42uIbkisTNq/j6nQR/FBTowYtPtB/AGMZ4eESYpL6N1eyyxHFA5VS0mHPYeSxjtz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ItsY1AO8; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f6a045d476so2708373b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716505946; x=1717110746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5mMbC5KBXhHkDvBNusLgJck71yWRaMS5suGXHx+nBss=;
+        b=ItsY1AO8e5s3tqCj4FAx7kY7vbd0B8OHNnQn2JiNWjhMliCkYCt488plqHZXasqnbO
+         sQxddStA6+8XOggXVsmLs7iKeFAp15gRXDgicqUYf65gJgGyyObQR4jU3cd7SEoQm74o
+         KCZwCcSe9j/7Bq0+RvXzFaIFyn65EqyQUO9JE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716505946; x=1717110746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5mMbC5KBXhHkDvBNusLgJck71yWRaMS5suGXHx+nBss=;
+        b=qGtEPhOACpSwA3eh8Ykj4g0wD+L11aHd54zcpytHz87/bZ74XDVBrDCBZgCrzkumhT
+         TO+a6zl8KnlON1eAGnc15hS9FVHa6ywvu+x6DnBNlpg/67Vic5kmyB7aXQWrydyDFZtt
+         6LylAONYMJLCzvfAQcIko0+5Ie5PTj1gdr456LvhzgyKXIpJURnA1gJfZV1TSDydlXvr
+         w93wXe8tM3vXZxmwyy2t65fe7IrOaKHUX/Wryt69gp0DL/8cfKAlb8aPKkFoKRDfF5l9
+         NMpe1BF6lyG246qh515QbxX2dcnIg9WEzW+FFZZDnGYfO9nxK50YgILuX9iQHSBaJb8O
+         HR1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTpNESjQhg5ZO7HFQVa7RPSq5ZlQznVo2TulP/YNm/RiitPozN6Fv/IEBex64Ys/KG8TV9PDIUEQ9A5MK/jwPVuXjcKx4tiOY4fiQc
+X-Gm-Message-State: AOJu0Yy3EliNWhF866ZY69B9vs0LcP5OhqfqXya5x8IDronwxEMxIO/2
+	gORyQfrZ4mIgGvzGG/n4sF+RJr7K8jkIO95i93FVW9Npn5/RNbXsx0TDo2jD8A==
+X-Google-Smtp-Source: AGHT+IFbXrTeUCq7J46GiJ/p3IWwvb8fOgFDb0trMNcBbD+UJjL4KOevqFmzptXng6JsupSTGMLaXg==
+X-Received: by 2002:a17:903:1d0:b0:1eb:73c2:6b4a with SMTP id d9443c01a7336-1f4486e5e10mr8167325ad.8.1716505946250;
+        Thu, 23 May 2024 16:12:26 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9b2e88sm1125295ad.253.2024.05.23.16.12.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 16:12:25 -0700 (PDT)
+Date: Thu, 23 May 2024 16:12:25 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, patches@lists.linux.dev,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] x86/boot: Address clang -Wimplicit-fallthrough in
+ vsprintf()
+Message-ID: <202405231603.2E810E3FC@keescook>
+References: <20240516-x86-boot-fix-clang-implicit-fallthrough-v1-1-04dc320ca07c@kernel.org>
+ <20240517095110.GAZkcojmJQoY_zU-OT@fat_crate.local>
+ <20240517151833.GB3660288@thelio-3990X>
+ <20240523115734.GAZk8vLgzOzD8Tv9pq@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|SJ1PR11MB6154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50acb8ec-c4af-4829-2a87-08dc7b7db6a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YmtPS2F1dkxlUTVvYStVdE5lb0ErWUF2c0FMeDk0aG01bnd6M3FBbi9xSWdU?=
- =?utf-8?B?NzFQVkZUdWZsNUdrTWZQKzhJU0t2MUgzb0o0UUR4ZTcyU1ZnNFFXZ29VanUz?=
- =?utf-8?B?MVcvSlY4QnBJQ3gvWlhKT1haUG01b2QvV1VNUjJzUlRpMS8rVHBCczFCU1pE?=
- =?utf-8?B?RGdPL2RRaXl3QTBVZklvRWNnWGprczBDUCtVWkg1TnUwWjhsU0RPdWxSMzZS?=
- =?utf-8?B?MVlyTnpYZmNzT3h2U0EvRlhmY0FXblhvUlJUUGNkRlBxdkFoNFhXbHRYN0FI?=
- =?utf-8?B?L2duZEN2Zm5UckN5Q0ZwV0tsa2J3UXYzOTI2QmEvK2UyUTNYaEhlQ1BTV0lJ?=
- =?utf-8?B?Q015aGE1alltcmVVK1hmYUdsRkNmeWMyanZ4SVZHbjBObkNIN3ZsaXV6cDNX?=
- =?utf-8?B?WGFnUUpnUHRqQnlPRWhWVHpVeW13dmh1YjBleldJZUpkNHY2b0NoNVpVSlBx?=
- =?utf-8?B?ZkFzbyswLy9JajJqZWdvcjVQamc4bEhiTEhhTUl3QjMzWTZvbjdaMk1UV3pT?=
- =?utf-8?B?M0tWL3JEVzdHbXM4NW1lcDczTU5BQW5aU2M5NW5QelppUllDYTdva3J3N0pr?=
- =?utf-8?B?NS9FUEp1clhmVlpRM2NkbGJmeVFoVEdUc1R3U2xTVEs4eFB5RUhtZTNkdEFQ?=
- =?utf-8?B?WURJQWdVZXRUdDhxTWZRKzc0NUhDMzlJT3pVMFlkUFl2S1B5cTNJYy9reGxq?=
- =?utf-8?B?bnJLWWc4T2JIbU8wZHJMRnFLTmdQUjk2RU5zMUt4UFBMbHNmMlcwd3F5M0E2?=
- =?utf-8?B?ZWpFajVPaUo3UnJ2UXZVRDUwbk5Zd2pZSFJjQisxWlNYVmtUT3UydzJPMklp?=
- =?utf-8?B?Q1BpSWZaR3VOUlI5MmpQZmd6VXJvOExpZXp6UDNSSEdZR2FjRjRUTlpnQmQ0?=
- =?utf-8?B?aXF3amdtVXhQSTlQZ2FjNGM3cTl2UW9xcmZiNEpzUGFsTnRMNElFTlZkaE44?=
- =?utf-8?B?SWpYdTJzclpQcERFU3BkNDNseFhnUUR2TXYyREhNTnVWa0tEWnlRd3BQVWRx?=
- =?utf-8?B?RlB5QW9ZV3BENWRub281QUNRS0VZZGdRL1c4YjNENDdTVmxxYzNzMFZHUU5I?=
- =?utf-8?B?c2xlUE9reXFDdS9DRExFQTNWaWNadVNtNXA5cXBuc3FUZWRPd0p0dGhDWnRz?=
- =?utf-8?B?L1B4bG12dkZmZDB2cGxGTDRZbWVHaWtsUmhCSlFjNDZSdk5xbEs5dC9DSkww?=
- =?utf-8?B?V21iUkVkaXJPWGdIMnZDZkpwU09LWlNXRmdEL1Q4TzU0Vm81eVowWGV0cWJQ?=
- =?utf-8?B?VmZiKzhDSG0yYytPdWZwTjVrdVRVdkREekNtZTF5aVBFSXdYd2lESTcrMTh1?=
- =?utf-8?B?T1U5VGpYdFdPZHZHSWtDbk9LYjBpZUR2c3l0MEZ5NTRUWXlTK2djbEdodFV4?=
- =?utf-8?B?a2toblluOWw0bnZoci96YUNiSm0vejFQM0hkeGx3Nk50ckxxYnM3ZjhnTzV0?=
- =?utf-8?B?RmlJUTZ3RTgrVmxtYkFzNGxZaGVtVTc1MThzeG5wV1ZhWCtUQTBYcExqSkJv?=
- =?utf-8?B?enZyRlNRU1pncjBPOUpCMDRRaTNWaUZxY1prbzNPVDRmeEdSd3U0blhQZ09R?=
- =?utf-8?B?WHhUV1FTQU5zcGJuZHQxNzhpMTllTzNFeXo0bWJCTml5TXZmUTVvaEthaXB1?=
- =?utf-8?B?cVg3S2hXNkFMZ1phTmMxdFdDVzk5V2x5SGlUb0FLcHpmbHBDai9HdC83WXNR?=
- =?utf-8?B?amptTzVYY2pvZjhxZzZUT1Nqa0tCNU9SNlM1V2t3Y3JraG0ydjNHbjFRPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TnJ6WGVVTEpEYUhsQXRFM3pCRjVpS2tzYzRHT1ZqL3I3akxOdGJyTUF2YlhT?=
- =?utf-8?B?S29MTHpEa01tUE5sWEhsdkNURG8vT3pVRHJMNUMwNVBTUDNVRFZLSnhibmQr?=
- =?utf-8?B?S3Z2dm5GUVhpTjZuT2dwT1ZBazZqVENuSXpBdG9VenJtY1AzVFB0cWdaYng2?=
- =?utf-8?B?dE5aM2J4N1BSdG1PQ0gzcnYrNlA4QjdNYzB1ODhFMEk0eDFuY2JjYkpwbVBU?=
- =?utf-8?B?Z1Q4MGZRNURHeldSVzlDbVBwSkp6QS8wY2VMQUdneWNPb3V2K0R1dEQwY3lD?=
- =?utf-8?B?RUF5WTdyblRtSTlyUmxOSnJ3LzNRTW1hS0M4ZDE5ZWZlWmJta1FhSURPYUlX?=
- =?utf-8?B?bzlSR0dyVkhSYVJOeXpCSUFpOVFMS0VtQUZVTGt1cWNBSXBraVBFcFlOZ0Zp?=
- =?utf-8?B?NHNCYmJLOVFGcS95UkFMSUgzUm1Pc280WmNEL3JtaWNnOW1zS0x2UXlyWG93?=
- =?utf-8?B?RnNnVngyL0lJR2M5NTRGTVRPSTk4THFXSE1nMlVBWjdob0xOY3ZEWmNxUndz?=
- =?utf-8?B?ZjMwTFBrSU5TYy9wRVZBWWtxZmRvbFdGNk0xMnYzV2pFbENaZGUveUZDUThR?=
- =?utf-8?B?R1JQT3ByZzFKMWxBSDh3SnVNaXJNSXZDRStkWVNSbWhUWUE2TUZZdFV5emNZ?=
- =?utf-8?B?cUt0d1NQK3F2T3NkVWJZd1ZxN3JZNXE4WS96RmVkUUpJaHMzRDhXUlJ5UmRP?=
- =?utf-8?B?WFUvUWptOThVTmJQb3p5VldvRU81Rm1weVlNWFJ3T21sRUF1aVFUeHBrQXJ5?=
- =?utf-8?B?UXRRZFEwSHlNUWttWTlFVXVOZE9HazhqOEFEcmdYemRYWittN1FIb081WVor?=
- =?utf-8?B?QXBhK0tRdHVRSHgzY2o5L3FXeEtsd1Q3YjhnYUl5allKL1QzY3E5eENrZmhh?=
- =?utf-8?B?bUcybUlQWXZTdXNGT2grOHBiN2xmS29XeGxLVTIzKzBmcGVCTUM3SFpSendz?=
- =?utf-8?B?WllDUVVHTmpQYjZzVDNNNHoxTWNEMit1bHhMZzU4NmttWUNJRC9MRndkRi9s?=
- =?utf-8?B?emNXb1lZRWtwQ3J0eDBxRDhCcDJMZG9MdlBJK2lUVndaMFk4Rmp6S3VzOUJi?=
- =?utf-8?B?SEtOOXV2cW1oWml4RXc1TVhCVGpURHg3UEZHalZyS3VRRGJ4ZTgyVSs1Sm9v?=
- =?utf-8?B?RUFiajNhYkN3eXM5MjR0TEViN0tFY09sVUpITHdNRmJNM1l5V1h3OEljaUxm?=
- =?utf-8?B?Y1FOVFE1WGd0VnB2NFJPQ1FVMmRXSGRNT082a0tLVXc5L3lhcHErUjM5Z2h2?=
- =?utf-8?B?RzMxWXY5L2RRRmJPSWtQUjYwUTM1VjI5SENObHlQYkVGbTJNODNNM2xJMFVi?=
- =?utf-8?B?LzBDTE5yOEp4dURXQ3N6ZVh0Q0dVSzFhOWxPMWxZbVVpa2V1ck05dmF2S3ZR?=
- =?utf-8?B?VUtReUxWS1l1OTdySDdwek0wNjdqZTNKaTJXU1FGUHBwbzZUWjI1aldnaVlt?=
- =?utf-8?B?ZXFZaUJpd2w2SkVPd3Ztd0JtcXB0Uk5OdFdWaGp4YnBDMm84ZjI4K1NudXB0?=
- =?utf-8?B?akwxaFJudTdCcXhKeUZnVWlWUHJpejFxbnIveE4vL2EzK3hqYXVMYlJpVzQ3?=
- =?utf-8?B?UEY5Nlk3N3I5MEUwa3NJMStIVFFJc3pmdHdHZG5ieUNxMmdtNmh2MmxOcUhC?=
- =?utf-8?B?dWZ1aHAvR1dPc1hzbGVUR0k3QnZIcCtycnA3ejhpOUMxbmZEOFRHaTE5OWhH?=
- =?utf-8?B?dG41NzI2alRNWVdWaytEZkpObDBFTFB0RWRwM0FEOU82RkFRZWNzRzBjNVdx?=
- =?utf-8?B?MzhIWDA5d2wvM2wwWjBSazAydXFtRXFqTllVYmloNENWUmpuZkVuUVpPNTNF?=
- =?utf-8?B?WDlqUU00czlwZnVjUXI0elpzTkJBRmIwbk9ZUjErUGRiMVpLRzBER2haalNU?=
- =?utf-8?B?SzVSOTJVL242VEFRaGcrMWt6NUJOcnZHeUdzekE2UngyRXYzZXNtRlIzaERL?=
- =?utf-8?B?RmFLaWlTT0pHYVhpTUxMTitac25zOTZ2Y2F4MEQ1UjFKUkhGNVltaHNrTjF3?=
- =?utf-8?B?bEs0SS9oU1Rpb3MvTmxCMko4ZHphUzJhY29zeWMxcWU2WHY2VXoyWEp5cWFk?=
- =?utf-8?B?cHFWSWpVU2M1S24xeXd6bHV6L1ZlTk9PYkllUGdzZFJGVXJUNkR1MzMrZ0ZH?=
- =?utf-8?Q?lAVhI+vdEqKSCAhBzT+cT3EfA?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50acb8ec-c4af-4829-2a87-08dc7b7db6a9
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 23:11:44.7505
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 17+fVZFwL8vVYb76bws6tq59MPiYEzse05tz25rCcfsZEQTvd2XWrPQWb1Uuez/S3D7IZHorTIL+uGAVTHLJ+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6154
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523115734.GAZk8vLgzOzD8Tv9pq@fat_crate.local>
 
-
-
-On 23/05/2024 4:23 pm, Chao Gao wrote:
-> On Thu, May 23, 2024 at 10:27:53AM +1200, Huang, Kai wrote:
->>
->>
->> On 22/05/2024 2:28 pm, Sean Christopherson wrote:
->>> Add an off-by-default module param, enable_virt_at_load, to let userspace
->>> force virtualization to be enabled in hardware when KVM is initialized,
->>> i.e. just before /dev/kvm is exposed to userspace.  Enabling virtualization
->>> during KVM initialization allows userspace to avoid the additional latency
->>> when creating/destroying the first/last VM.  Now that KVM uses the cpuhp
->>> framework to do per-CPU enabling, the latency could be non-trivial as the
->>> cpuhup bringup/teardown is serialized across CPUs, e.g. the latency could
->>> be problematic for use case that need to spin up VMs quickly.
->>
->> How about we defer this until there's a real complain that this isn't
->> acceptable?  To me it doesn't sound "latency of creating the first VM"
->> matters a lot in the real CSP deployments.
+On Thu, May 23, 2024 at 01:57:34PM +0200, Borislav Petkov wrote:
+> On Fri, May 17, 2024 at 08:18:33AM -0700, Nathan Chancellor wrote:
+> > There was a patch to make Clang match GCC's behavior a few years ago but
+> > I think Kees made a good argument that GCC's behavior leaves potential
+> > bugs on the table, so that was not pursued further.
+> > 
+> > https://reviews.llvm.org/D91895#2417170
 > 
-> I suspect kselftest and kvm-unit-tests will be impacted a lot because
-> hundreds of tests are run serially. And it looks clumsy to reload KVM
-> module to set enable_virt_at_load to make tests run faster. I think the
-> test slowdown is a more realistic problem than running an off-tree
-> hypervisor, so I vote to make enabling virtualization at load time the
-> default behavior and if we really want to support an off-tree hypervisor,
-> we can add a new module param to opt in enabling virtualization at runtime.
+> Really? Maybe I'm being dense but I don't see real bugs there... I see
+> readability issues. :-)
 
-I am not following why off-tree hypervisor is ever related to this.
+There isn't a bug _here_, but this is about making the code unambiguous
+everywhere in the kernel. We've already done the work to get rid of
+all these warnings; this one is newly introduced, so let's get it fixed.
 
-Could you elaborate?
+We don't want to have the same flow-control statement reachable from two
+different "case"s where the resulting behaviors are different. Otherwise
+we can't determine if a "fallthrough" is missing or intentional.
 
-The problem of enabling virt during module loading by default is it 
-impacts all ARCHs.  Given this performance downgrade (if we care) can be 
-resolved by explicitly doing on_each_cpu() below, I am not sure why we 
-want to choose this radical approach.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
+-Kees
 
->> Or we just still do:
->>
->> 	cpus_read_lock();
->> 	on_each_cpu(hardware_enable_nolock, ...);
->> 	cpuhp_setup_state_nocalls_cpuslocked(...);
->> 	cpus_read_unlock();
->>
->> I think the main benefit of series is to put all virtualization enabling
->> related things into one single function.  Whether using cpuhp_setup_state()
->> or using on_each_cpu() shouldn't be the main point.
->>
+-- 
+Kees Cook
 
