@@ -1,225 +1,222 @@
-Return-Path: <linux-kernel+bounces-187678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A871B8CD661
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:59:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1038CD66A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37EF21F228CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122D7286D34
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3E8BA45;
-	Thu, 23 May 2024 14:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D256FC7;
+	Thu, 23 May 2024 14:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="RF2YfXCQ"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xQoQE/L0"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B33AD2C;
-	Thu, 23 May 2024 14:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476337; cv=fail; b=BvvtEU6/Ln2T3UglQ7ai5mWTiUhZqXHWPJKJK1SfkyPwWa94xQvSLbB23fnc/xcCQLDX+WC4lmwbTDjwjP5lCR6geNBLSgJbSDkpFCH884zoT0KxR4kr/6tTwNBBl6tcDgfOx4QXjSuiZK6stzzkFIT0apySZIYlemuHi1QERJo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476337; c=relaxed/simple;
-	bh=4K+v5RXO332ltIWF9OAanmyxfQdcNtBamoaQaZpgMs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=tmr/CVCCzrWN83/5DvVHNPvBgMVVj2YdU0b/Zf0lcUKCGKqhCS7iXCkpwez31LwFqKvEf/xJtllx4Q5tekoHSM/X4SLEmm/rZYuoYdvV1zdav5HBttQuwN0zB5tYT7XT6RuIGHc/K+yuBb10y6OLciSSUZIArpBPG5t4yKmcObE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=RF2YfXCQ; arc=fail smtp.client-ip=40.107.93.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DeG/oOIYznhn6rN3vXT1/QuLlqwWvmQtAccCY1W3qkZCQFC/J9kJGWwHj0Ra2/8W5xn1d4VElmS/a9F30uESwpLemAseYNcF7QpUVV0bqcNOuexdS3wR81y77Soy4mkw8IcrlqA/1byuccnlarasWUhuktEJrGcHT/4pofCHgXG+335Hp2bl9DZYqNrgxkQGgAi55m3fY7Ak44fEev8dDD+KYZVUCPrpa9UbXkTVkFPFea3IrB65TOqgN7cTFFD4o2VB43VKG2ajBsZC7QO3WGEKfqDpYIm1FVSOpaU7k3Ju3rBqnzJR6zLJt9+ZhMg/mGGpoOfncFiMDlx91Nln+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y8++VBg1agQTiGKWOhILE1ijDRpUdZrr8SuE3a/3q8I=;
- b=GKnPMxcWXFkMBi/LzioGxuZ1606q8FWCdsTB2B5QbVGaCFtj4a3v5oFsIzjMY9UQv3Y1zMxc7/ogQqE/hHElP0pi0rI7n6Hj/2BzVtnWmueG8cPT2Tl3obTZkkeTy/vnOULnM/FHc2aLmpTXz9ttqXIRnU08HdJazkuCNKsEVxL4KhWPpFj7DCf2KMEQlyfxkNzAjVxdLKxQr9Ge4pe4yR5mqWgvuZIGBBU/gSbjA9NDbWaqxLn8tU4mO3e95Y4RVTqYyJBCRH8o/RGfjSZEXO2R3OuB/ftBtrT3rkI2T/y994tIv5ymJQFA4EnU0rXa9P5c3eP2DeURL4cjwAvJNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y8++VBg1agQTiGKWOhILE1ijDRpUdZrr8SuE3a/3q8I=;
- b=RF2YfXCQ7jGawjkY4gr5A3NTT7cJ+SgcDfUzD57/+tXdb+G6lTmbOuAz3UVHGBulHsXn0upwEDH5H6gQgl3cJ4ycSH7B4A5tgZBCkWsshBzUN8GWNDAmfaON+k4RZAo74cLxbugnuGaP8r3mvq9Tx9lFGgDlkVmayuLznc9168F9tJMEWVpO5hgpa78IQDUeCjmxYsBZUwEQR4es7TM2RvnFSGEoJMjTkikKhS3JyjqO6P1qRlj4tkjyQAjVIm1wm9nL6ajeN9rfjvWy418/RHFGNCNA+xKNGQN7ioi8x7OKpTA8olWr4INYW9nH6WO6pzashqTIk5/eff9dnmfWmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by CH3PR12MB8073.namprd12.prod.outlook.com (2603:10b6:610:126::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Thu, 23 May
- 2024 14:58:50 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7611.016; Thu, 23 May 2024
- 14:58:50 +0000
-Date: Thu, 23 May 2024 11:58:48 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	"Vetter, Daniel" <daniel.vetter@intel.com>,
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"Liu, Yi L" <yi.l.liu@intel.com>
-Subject: Re: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in
- non-coherent domains
-Message-ID: <20240523145848.GN20229@nvidia.com>
-References: <20240521160714.GJ20229@nvidia.com>
- <20240521102123.7baaf85a.alex.williamson@redhat.com>
- <20240521163400.GK20229@nvidia.com>
- <20240521121945.7f144230.alex.williamson@redhat.com>
- <20240521183745.GP20229@nvidia.com>
- <BN9PR11MB52769E209C5B978C7094A5C08CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240522122939.GT20229@nvidia.com>
- <BN9PR11MB527604CDF2E7FA49176200028CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240522233213.GI20229@nvidia.com>
- <BN9PR11MB5276C2DD3F924ED2EB6AD3988CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5276C2DD3F924ED2EB6AD3988CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BL1PR13CA0327.namprd13.prod.outlook.com
- (2603:10b6:208:2c1::32) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF252B645
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716476385; cv=none; b=CdWJdc1mh0uZmgCClXHyz6tNax9DMpLDUt5/5VFHQhKpxqsRyNDIhpa1IVgC4E+uOfd+ceAqp0VGafOULyGKNVu7Y0J7Yeuapl6mvHfK+6SFsXgIga7NjX+yTLt5OkwmQsrrx9MIxV3DH6D84kw45GVOUQwhe91cBnxVPhMt6rM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716476385; c=relaxed/simple;
+	bh=2Dr0p6+Vq88UVDiwU5c+6Vvwt3ZIg69MAge1qiiRneo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a+T0HowcIy4ZG4dvjqus65yGIpvc8C+WVFQkm1Hfx5dkScdKgfnOa0miUquzubTkyJ5keU1J5KekiilijsWoHM/bpA7E4WKz+GiMr6oONnRCX0jofDoahZcK64oScqbK1+fENNZdTYiXr94rUd8ospLRuECaJY+LLHl9qIpWS34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xQoQE/L0; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a621cb07d8fso289635166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716476381; x=1717081181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fJf8nECqEBzmEqcVWslv5AXViIlFFnTcWLmUE5Gi6ig=;
+        b=xQoQE/L0Ez07vhPcph3w2XDmhCXg9FR9r/yBEEx01f7bvRE6pNFesxXXnDrdLmFamj
+         XesPRyxF3OHasOAK/iaqcdv5zoFZiomaPpVt/7E4fOjuNVbIcP+IVNR1aRNCWOg2s/CV
+         wNIPFgPrvBs//5V83fAGcIfl1s9HG428CpnOlP1KUV/EgsHYy7nXz2byAAfjZoVzqIJ/
+         4xxfq8TBcEeS5aPfLZHDavEDlvF6DaPfCmBNddYxvyQNtpg9nRenN5LTqVvay59CM9k8
+         kqKo9wAvaLz/hqLfSOkB1qrMIrQ9HhsrCVBnZC+NVoiOwUKDm8szA65B8x5NQ7W1NwI6
+         PY8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716476381; x=1717081181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fJf8nECqEBzmEqcVWslv5AXViIlFFnTcWLmUE5Gi6ig=;
+        b=aABQ8V6+UddqFmcEM9dWE7WZ396zl6XyXciOGrRxM9NuLtEuF8lBP3/uWIchuOd2HV
+         XDC6jzGt6Io3zcgqjDh8PkNCAIU/bMaeBGASC2Tvwnr9nuDcSL5QefuVx3MVCXfd+vDa
+         w5wWiX6Urr3HpJwr2rcGytkAFSsW5/zbOmON6daoUpSyv5lVxHLXnxUFjffPmZZEfZZm
+         SaF0TwyuLi9k76/kN6CHlBgsedzrijv5Fe9r0BzAVBHPcOSNxmcda7fRwrkas/qz7DsI
+         0H8YxEG/7g3UwL6LXRubDSAq/s6ix62S6fZbk46kfXIYBMuGJaLHEtaHl+jQI7I508DC
+         no6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUJZHsCktJo3UGo7vzaFhLcPRPe8/Np9EB4RgebyU6QpUhg9Ome77Xe9lvkAt0EtGMjD97EdmZRZuJ7EJauKSqBZSWWDV+GEoQrH/vb
+X-Gm-Message-State: AOJu0Yy8sHhF6I61rVQuIeRKuGmSUpI9EFIa+/bsTFcu3VzJqhMvF3Tw
+	wF1m4G7fdOp40bv44ZjyVpAE6XjdxN/77xSuWdFu4f3LRJluQ/eAPWdwgMM41QUWzhGyFAZmZQL
+	sSgap9FSzxPwh9qxDt3lP0rnpm70P2BMwoD9w/A==
+X-Google-Smtp-Source: AGHT+IH96ZBYqe4cc+1wFeLH7NX/PsHsWO2WigAasUwgg3Elfr20rtzmvQZZHOI45ry8NHHXFtdf/BIf5ZeuawftPVg=
+X-Received: by 2002:a17:906:5296:b0:a5a:5c0b:ff77 with SMTP id
+ a640c23a62f3a-a622806c0camr321589066b.19.1716476381026; Thu, 23 May 2024
+ 07:59:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CH3PR12MB8073:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd185a79-42d0-44f8-31e8-08dc7b38db11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nQ33JfajdpJ67TcklgDgXOGNV/a7ZErihsBtspEihhVuMctI9kItB9zRVexl?=
- =?us-ascii?Q?bNkt0NzXJGltUu752XPzZtBIMoJhLrl3l7uasd1SmNdAmIeZjI8L1qMAQeNR?=
- =?us-ascii?Q?sNONUVwm+nAlNrH4+ytB3aTxdrq8CY1/PUrwcJ9yE5sTg2sgLDA5t7pUkIzU?=
- =?us-ascii?Q?jo8RBx1yajiMoRp1yRCFAoJtqSvsaQa88bcPVKWnEdrl/W1eyU/EYVA70uOg?=
- =?us-ascii?Q?9yTOTrr9+ge5Qa7ADeI7NBp3Z3adj2fe0S8m4tadOrQIGNiNxI3VVTkBbKP6?=
- =?us-ascii?Q?L4ZEbcVQi2STnWIqnWWkf5GY5BWRync9/i49pceLoO/N40RFIKppA2GGHmra?=
- =?us-ascii?Q?h5yyiuSVx2j3yg0GAuMSTCvI/cpGlN6Hx0qJzBtyPxFDNpxsL05JReA7fGh0?=
- =?us-ascii?Q?idat6XwEJWiZMWg232r1YMb4DmduUYT3lztDm3GYsmQKYoH0VMCed8xy5Fpo?=
- =?us-ascii?Q?Wz40un8G+bShOQXo4TSsEXyVTrQuBTPkBj96Aqc1WRroeAp7IPuph791iAjO?=
- =?us-ascii?Q?FD2txq9e4xlXd9fO6+Un1LtUm4yB1+ICB1P1n11q3iXHonGTgN03y7NaZEbx?=
- =?us-ascii?Q?nG+e4im6bqlvm1IZ/7vbWJS5q7yzTv5MJhVWsySgC1XZCL3lmaCEJhCBzoaA?=
- =?us-ascii?Q?nwr7Ua12SfE7jiRfwJq8YZE9/hY5PWVjZU9kcUztYnYxqQ3uYCOcZoYGYNeb?=
- =?us-ascii?Q?IxEsnRPhmsEM01tqiDOTp40aqHS8QYx94vDPTJpIuHycMenTHjZIB4KL2DXi?=
- =?us-ascii?Q?lzKADEAUIorzsCJX+y7uvoIg89UV/3U05oCYeCaelGnW1HfazgCxHtVRxyl8?=
- =?us-ascii?Q?exYYxcJGLTz18/JFrn/2QTBFN7Guwsdv1z5y8Y63+4Xh/9i88B/LclQCiuq8?=
- =?us-ascii?Q?bpaNNbrslDTgs73JzbDCcsUetuQLW+uQ/duXVMt7Z6vX1UuhWfilduF+DDA/?=
- =?us-ascii?Q?YUazL+oKkaGw0q9ChTo68ASsfOHbSrxe4IDG1fGxiIprztiC+W+yX591r/io?=
- =?us-ascii?Q?gyTw/s8ppAJg32auuR8yFIwso2CG+88WZrcTmow4DG0DynWIYQa70JRfeohH?=
- =?us-ascii?Q?N35f5rxen6PsWLDTTv5S+5MuOX2D0cE10xLO8mvs9Kbe/M+gcPpQ4wSsUSXk?=
- =?us-ascii?Q?M88qNooFJnDQhvUWdFpt+74XnXd9OQJU8QAZT/5ROs2eHTBZ8nkCWypOQOkg?=
- =?us-ascii?Q?eOkUP2WCTn13WYTu1f3lANf/iw5GOMLCbbvA3OOwdSE7Pkov0/wNRbBMA4xb?=
- =?us-ascii?Q?B1anv7CrX88Um8ERZKH9ksXonrcNBAZSfkZnl9bm1A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?fOmzRvcmRcddxcmxr3Gqh5P0PIXCWVZzFnS7xHS3jwePW99YOqn68v+qQcTJ?=
- =?us-ascii?Q?gvqzsjn64mkGAq1a2LU+8GYLvu7i20mi5Nf5yifRfvpSXMpGFCraWE5Pb8Yn?=
- =?us-ascii?Q?yDsL8hmUMzglr5JJ82dwaJWXlakTE0IGHziRKAJ1hkjfes/XWTO75++kzfr3?=
- =?us-ascii?Q?HNSMr/hPsA7h98Q9PSXA820T897YgTUM9n5uRzP+MzbahvoV46GWNChfpnYn?=
- =?us-ascii?Q?Lb7YO+nksSfU0JTuhjlkGslxKcCnFYyecX6MZtNKdor6gdo4535+WCo7fvBS?=
- =?us-ascii?Q?J0jBh78igdZlpcabehxct4aIlRlGkPsneFtpVD1O+EOp+liccd+ShRH1TbuC?=
- =?us-ascii?Q?6p4tIM3gTryenkCOZvtknQNhC1MVymnXKRytkKeS0clnVgRU9K1NsYqGoaRo?=
- =?us-ascii?Q?GmCo2zgolNCX6pnW4KTfa2GE0eSK2YQ5z9hQVYa+TehmzLUm/A1Bn9LPxiDf?=
- =?us-ascii?Q?YR2Ed0c9OVPPLlbG5JyZ3qVqfDsxlgCHl5GmEzXNMO6UPF5CiRu3mYRarELL?=
- =?us-ascii?Q?PE3xwi2oO5khz7C3uDsvC+hjanm+X6HxTagsQTOQEf4zUk0TXMkCfoKq6DiJ?=
- =?us-ascii?Q?aDVmL8p5hdFiHjXqGKBiq70YJ75BXzrYCQgp+eYEnaXa+qCJ70AQN6ktBLPh?=
- =?us-ascii?Q?K9VHD4YFu9OZKrnp/PMMCE0240geD6T8AlsuirHc5N016ZCdmVdryt8B9Hzw?=
- =?us-ascii?Q?Bx/TEzVHWLpAeAVz5EGkqEy06qBeXBZKs+eurq0FH22Khuke1nHuDfhpAKbx?=
- =?us-ascii?Q?iAm4cAf7MzqdMiF+kWPbdf6ehtIMnWo+5ug62b1GC0FRJKsBCeSAPih4FZBU?=
- =?us-ascii?Q?U1onVRwNSFtnjqnIRMfTiXRWZ+GH9KrJYwyTjd9gismKCLJAWsgD1k+xeLoE?=
- =?us-ascii?Q?qKMTWpiGCmwZi45DSYi1G/9DKvnAIUONA+lNjVVU6SwvM8rI5Ck1XwElLUiu?=
- =?us-ascii?Q?mHAUWVqsH0mqwzjbke1WIBNBNqCVxP9JSlLRrdAuiRlCn0muVLUTnZKypuJL?=
- =?us-ascii?Q?UL8UlOvnBl4yVL4VuNke0tbaaQdcaHqKJr/yqexqw7Eaxsu6ZxJ/gegMZZgz?=
- =?us-ascii?Q?vllhG3FxKNC0HN/QofBwdGjZ1OIYbtP2NX6/FXKeyZw+A3vC80z50facoccc?=
- =?us-ascii?Q?bOGwpuOrbVpHwibPSGvT1Gd7kiA3GRh4OkDsVF3Sm8HQ/eRA2NTlAzU0/xC7?=
- =?us-ascii?Q?yDSuEVIG3XOuGgpMxxL+9OFZx/+ivUcgOGFh5POzAw9H5X49UT1SgqVLyz8U?=
- =?us-ascii?Q?0OrkA9nj5rwLqYmJ0KWVZTpv1/BkctyKNyQrJsO0fdQ35HTRv/faqJup4iEM?=
- =?us-ascii?Q?MejJoHAejeMNlLhhaXsUkbgFBKb33k6ZVlTxkH+4FBGlBUl6L6guAqPOb6N8?=
- =?us-ascii?Q?JdDIbm5xNz8KHys0V7KlqIsx2IscX1jzdDj/htveQsdKWRVPPQHOb5icape+?=
- =?us-ascii?Q?x8EhDjFCAdlvb6fmRk4zp/p5EqklVSZL0VHDbnZOiUkZdLoFnGNPzBeFodcI?=
- =?us-ascii?Q?pj7MaEbELHuqvtGBIrtVuQQnBkD/xABchpM9g3elQHt/XWKawtfMmZGxjQn2?=
- =?us-ascii?Q?BtnA+alYtByrd6PgISU=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd185a79-42d0-44f8-31e8-08dc7b38db11
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 14:58:50.4825
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: naiJYk7qZ0wOff2k2ot138dQuHyCDf1Pfj/8R06hpXQlvDZSZD+c1bRIvoxnSMcT
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8073
+References: <20240403234054.2020347-1-debug@rivosinc.com> <20240403234054.2020347-14-debug@rivosinc.com>
+ <276fa17b-cd62-433d-b0ec-fa98c65a46ca@ghiti.fr> <ZkJOs6ENmDHFsq/U@debug.ba.rivosinc.com>
+In-Reply-To: <ZkJOs6ENmDHFsq/U@debug.ba.rivosinc.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Thu, 23 May 2024 16:59:30 +0200
+Message-ID: <CAHVXubhS3CJ87DxC+9+8z6CiWDV1bQ8nK+iOZUDvMiT7vszFLA@mail.gmail.com>
+Subject: Re: [PATCH v3 13/29] riscv mmu: write protect and shadow stack
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, paul.walmsley@sifive.com, rick.p.edgecombe@intel.com, 
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com, 
+	keescook@chromium.org, ajones@ventanamicro.com, conor.dooley@microchip.com, 
+	cleger@rivosinc.com, atishp@atishpatra.org, bjorn@rivosinc.com, 
+	samuel.holland@sifive.com, conor@kernel.org, linux-doc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	oleg@redhat.com, akpm@linux-foundation.org, arnd@arndb.de, 
+	ebiederm@xmission.com, Liam.Howlett@oracle.com, vbabka@suse.cz, 
+	lstoakes@gmail.com, shuah@kernel.org, brauner@kernel.org, 
+	andy.chiu@sifive.com, jerry.shih@sifive.com, hankuan.chen@sifive.com, 
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com, 
+	charlie@rivosinc.com, apatel@ventanamicro.com, mchitale@ventanamicro.com, 
+	dbarboza@ventanamicro.com, sameo@rivosinc.com, shikemeng@huaweicloud.com, 
+	willy@infradead.org, vincent.chen@sifive.com, guoren@kernel.org, 
+	samitolvanen@google.com, songshuaishuai@tinylab.org, gerg@kernel.org, 
+	heiko@sntech.de, bhe@redhat.com, jeeheng.sia@starfivetech.com, 
+	cyy@cyyself.name, maskray@google.com, ancientmodern4@gmail.com, 
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com, bgray@linux.ibm.com, 
+	mpe@ellerman.id.au, baruch@tkos.co.il, alx@kernel.org, david@redhat.com, 
+	catalin.marinas@arm.com, revest@chromium.org, josh@joshtriplett.org, 
+	shr@devkernel.io, deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org, 
+	jhubbard@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 11:40:58PM +0000, Tian, Kevin wrote:
-> > From: Jason Gunthorpe <jgg@nvidia.com>
-> > Sent: Thursday, May 23, 2024 7:32 AM
-> > 
-> > On Wed, May 22, 2024 at 11:26:21PM +0000, Tian, Kevin wrote:
-> > > > From: Jason Gunthorpe <jgg@nvidia.com>
-> > > > Sent: Wednesday, May 22, 2024 8:30 PM
-> > > >
-> > > > On Wed, May 22, 2024 at 06:24:14AM +0000, Tian, Kevin wrote:
-> > > > > I'm fine to do a special check in the attach path to enable the flush
-> > > > > only for Intel GPU.
-> > > >
-> > > > We already effectively do this already by checking the domain
-> > > > capabilities. Only the Intel GPU will have a non-coherent domain.
-> > > >
-> > >
-> > > I'm confused. In earlier discussions you wanted to find a way to not
-> > > publish others due to the check of non-coherent domain, e.g. some
-> > > ARM SMMU cannot force snoop.
-> > >
-> > > Then you and Alex discussed the possibility of reducing pessimistic
-> > > flushes by virtualizing the PCI NOSNOOP bit.
-> > >
-> > > With that in mind I was thinking whether we explicitly enable this
-> > > flush only for Intel GPU instead of checking non-coherent domain
-> > > in the attach path, since it's the only device with such requirement.
-> > 
-> > I am suggesting to do both checks:
-> >  - If the iommu domain indicates it has force coherency then leave PCI
-> >    no-snoop alone and no flush
-> >  - If the PCI NOSNOOP bit is or can be 0 then no flush
-> >  - Otherwise flush
-> 
-> How to judge whether PCI NOSNOOP can be 0? If following PCI spec
-> it can always be set to 0 but then we break the requirement for Intel
-> GPU. If we explicitly exempt Intel GPU in 2nd check  then what'd be
-> the value of doing that generic check?
+Hi Deepak,
 
-Non-PCI environments still have this problem, and the first check does
-help them since we don't have PCI config space there.
+On Mon, May 13, 2024 at 7:32=E2=80=AFPM Deepak Gupta <debug@rivosinc.com> w=
+rote:
+>
+> On Sun, May 12, 2024 at 06:31:24PM +0200, Alexandre Ghiti wrote:
+> >On 04/04/2024 01:35, Deepak Gupta wrote:
+> >>`fork` implements copy on write (COW) by making pages readonly in child
+> >>and parent both.
+> >>
+> >>ptep_set_wrprotect and pte_wrprotect clears _PAGE_WRITE in PTE.
+> >>Assumption is that page is readable and on fault copy on write happens.
+> >>
+> >>To implement COW on such pages,
+> >
+> >
+> >I guess you mean "shadow stack pages" here.
+>
+> Yes I meant shadow stack pages. Will fix the message.
+>
+> >
+> >
+> >>  clearing up W bit makes them XWR =3D 000.
+> >>This will result in wrong PTE setting which says no perms but V=3D1 and=
+ PFN
+> >>field pointing to final page. Instead desired behavior is to turn it in=
+to
+> >>a readable page, take an access (load/store) fault on sspush/sspop
+> >>(shadow stack) and then perform COW on such pages.
+> >>This way regular reads
+> >>would still be allowed and not lead to COW maintaining current behavior
+> >>of COW on non-shadow stack but writeable memory.
+> >>
+> >>On the other hand it doesn't interfere with existing COW for read-write
+> >>memory. Assumption is always that _PAGE_READ must have been set and thu=
+s
+> >>setting _PAGE_READ is harmless.
+> >>
+> >>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> >>---
+> >>  arch/riscv/include/asm/pgtable.h | 12 ++++++++++--
+> >>  1 file changed, 10 insertions(+), 2 deletions(-)
+> >>
+> >>diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/=
+pgtable.h
+> >>index 9b837239d3e8..7a1c2a98d272 100644
+> >>--- a/arch/riscv/include/asm/pgtable.h
+> >>+++ b/arch/riscv/include/asm/pgtable.h
+> >>@@ -398,7 +398,7 @@ static inline int pte_special(pte_t pte)
+> >>  static inline pte_t pte_wrprotect(pte_t pte)
+> >>  {
+> >>-     return __pte(pte_val(pte) & ~(_PAGE_WRITE));
+> >>+     return __pte((pte_val(pte) & ~(_PAGE_WRITE)) | (_PAGE_READ));
+> >>  }
+> >>  /* static inline pte_t pte_mkread(pte_t pte) */
+> >>@@ -581,7 +581,15 @@ static inline pte_t ptep_get_and_clear(struct mm_s=
+truct *mm,
+> >>  static inline void ptep_set_wrprotect(struct mm_struct *mm,
+> >>                                    unsigned long address, pte_t *ptep)
+> >>  {
+> >>-     atomic_long_and(~(unsigned long)_PAGE_WRITE, (atomic_long_t *)pte=
+p);
+> >>+     volatile pte_t read_pte =3D *ptep;
 
-PCI can supply more information (no snoop impossible) and variant
-drivers can add in too (want no snoop)
+Sorry I missed this ^. You need to use ptep_get() to get the value of
+a pte. And why do you need the volatile here?
 
-Jason
+> >>+     /*
+> >>+      * ptep_set_wrprotect can be called for shadow stack ranges too.
+> >>+      * shadow stack memory is XWR =3D 010 and thus clearing _PAGE_WRI=
+TE will lead to
+> >>+      * encoding 000b which is wrong encoding with V =3D 1. This shoul=
+d lead to page fault
+> >>+      * but we dont want this wrong configuration to be set in page ta=
+bles.
+> >>+      */
+> >>+     atomic_long_set((atomic_long_t *)ptep,
+> >>+                     ((pte_val(read_pte) & ~(unsigned long)_PAGE_WRITE=
+) | _PAGE_READ));
+> >>  }
+> >>  #define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
+> >
+> >
+> >Doesn't making the shadow stack page readable allow "normal" loads to
+> >access the page? If it does, isn't that an issue (security-wise)?
+>
+> When shadow stack permissions are there (i.e. R=3D0, W=3D1, X=3D0), then =
+also shadow stack is
+> readable through "normal" loads. So nothing changes when it converts into=
+ a readonly page
+> from page permissions perspective.
+>
+> Security-wise it's not a concern because from threat modeling perspective=
+, if attacker had
+> read-write primitives (via some bug in program) available to read and wri=
+te address space
+> of process/task; then they would have availiblity of return addresses on =
+normal stack. It's
+> the write primitive that is concerning and to be protected against. And t=
+hat's why shadow stack
+> is not writeable using "normal" stores.
+>
+> >
+
+Thanks for the explanation!
+
+With the use of ptep_get(), you can add:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
 
