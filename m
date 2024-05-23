@@ -1,85 +1,205 @@
-Return-Path: <linux-kernel+bounces-187782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB56B8CD86A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFFF8CD86D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D0B28296A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED491C21148
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ECD1804A;
-	Thu, 23 May 2024 16:30:55 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id C9D02B65D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E07818029;
+	Thu, 23 May 2024 16:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MUGDpc8C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A8D14A84
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716481855; cv=none; b=USwXFSVKUk+bdcuzYiuCsVaoUr5EjNpJR4QQlnMF9hTsYY/sOF0OjAOWZ9uEOr8JwJwkqBMKTTHDT52h6NSMpOsbH7B3dQm5XMHOppkDUj+LGgpaKMGe1MOJUHuF3NHyMFOcLjzkHx4qfDt7S3Q3Q2B3qTCq+sFjec/4DFsftWA=
+	t=1716481866; cv=none; b=ZbzECH60TO8AYvBLZzGo6DQu+q6Tbc37fonSZdNTcxJkfPh7OzlLDldQ7v5M1d/pFkruH/f5FNjSQoKB6LnytGfv9bDpyxZzqAqg+Pqomh1XhZ6F9ZM7me2yX30BM7eIG1fio0SNtpZPc5hPMeHQSIqIYm7J0EFCof8MOfpvcW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716481855; c=relaxed/simple;
-	bh=zsvWlc1vONWVLufrWVoYcSWo8o0jgMR2VZPSYk4F15E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nmcVN5g+SUExkyfqkqC9uKoh4LP2gDMeRa8sZhSembPKnb5DZ+lpgqE2Sx7SSSKoCtQPMbBgVbOj/a7S3TFIz2HSSiM1dbsK7NlcMpm87LhJKZGDvQEaBVtXl+WZ5p1B76NLLSzW7C9vfINmg92UInl05O+uQyw41iON32HaVzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 543687 invoked by uid 1000); 23 May 2024 12:30:52 -0400
-Date: Thu, 23 May 2024 12:30:52 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: shichao lai <shichaorai@gmail.com>
-Cc: gregkh@linuxfoundation.org, oneukum@suse.com, linux-usb@vger.kernel.org,
-  usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-  xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>
-Subject: Re: [PATCHv2] Check whether divisor is non-zero before division
-Message-ID: <eb995078-1923-43d5-a20f-9d4a7edee719@rowland.harvard.edu>
-References: <20240523092608.874986-1-shichaorai@gmail.com>
- <a0afa88b-f84c-4b45-a265-2e6bcbb84b35@rowland.harvard.edu>
- <bb581989-4ac5-4ffe-9f80-01b5f993146f@rowland.harvard.edu>
- <CACjpba5iJ5dC=rB_Ckaqe4BKesrAN2VmsDCPZJ=frufNgA96Uw@mail.gmail.com>
+	s=arc-20240116; t=1716481866; c=relaxed/simple;
+	bh=9p3g05jxI3LMH1prQIFLRK+R90YPXBe6/L06ltUbEKI=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=fEyFuZqWfaNKskYEIwczRZ4pmjlz0DlLE4rF9Lx7acaU72uhxuyMTxiEtZdIA04auPna5VaQbZ9twHCRwhZ77tt2q+XEtQ6+9xc28KHsClHzAiy2i4mFMA4x6CSVbOlkOJeZQYkrkDkLe9ekwneTVsyQCjrOOxALmyKxoIauBCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MUGDpc8C; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716481864; x=1748017864;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to;
+  bh=9p3g05jxI3LMH1prQIFLRK+R90YPXBe6/L06ltUbEKI=;
+  b=MUGDpc8C3PT4CqDvHO3s+FeW4aarqBUw8AEHSBUDDtz88CikYaXS/YGO
+   5eCAGa8uXnQiUY5rM+gvH/TNnQiMO3RC4q4LSyiMsVn2d2gwKar9Snbxn
+   kZWTKcNEH9wHGNoKQA2EOOIPAGmcyLRgd5M73PDx0gjG7GzOaW4wt5prx
+   s/pMM8XXZjMgUnrEzTgtX0ciffPNCBFHGRsz0GlX5yBhKDWvJb9w3SogJ
+   m871Y7PBmBeQ7wHC+rHohXLp+sMIA2I9eZp21tokSYdKdeP0/Gw2hbSsS
+   n798cpyOCCQLsahXypq/W3KeePi1OzIotiRcxhA2R0GkjhkifbckjNfEn
+   Q==;
+X-CSE-ConnectionGUID: cKp2f9Y8RyW8q1w7mSCIQQ==
+X-CSE-MsgGUID: aA0TexboTrCl/bMC9A91Cg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12990677"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="12990677"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:03 -0700
+X-CSE-ConnectionGUID: pux5fJh7QX6lNJCjnd/gIA==
+X-CSE-MsgGUID: ptyOQWxfTvqiKFbtV35Nww==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="33790415"
+Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.110.49]) ([10.125.110.49])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:02 -0700
+Content-Type: multipart/mixed; boundary="------------8q0W9NnK5AWL6oGobfSlsKZb"
+Message-ID: <7b8d1dd6-3913-45fe-941e-aac2c15916dc@intel.com>
+Date: Thu, 23 May 2024 09:30:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACjpba5iJ5dC=rB_Ckaqe4BKesrAN2VmsDCPZJ=frufNgA96Uw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/paravirt: Disable virt spinlock when
+ CONFIG_PARAVIRT_SPINLOCKS disabled
+To: Chen Yu <yu.c.chen@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Juergen Gross <jgross@suse.com>, Ajay Kaher <ajay.kaher@broadcom.com>,
+ Alexey Makhalov <alexey.amakhalov@broadcom.com>,
+ Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>,
+ x86@kernel.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+ Prem Nath Dey <prem.nath.dey@intel.com>,
+ Xiaoping Zhou <xiaoping.zhou@intel.com>
+References: <20240516130244.893573-1-yu.c.chen@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20240516130244.893573-1-yu.c.chen@intel.com>
 
-On Thu, May 23, 2024 at 11:13:08PM +0800, shichao lai wrote:
-> Thanks for your comprehensive analysis.
-> I added some pr_info() to check the workflow, and I found that the
-> uzonesize was not initialized in fact!
+This is a multi-part message in MIME format.
+--------------8q0W9NnK5AWL6oGobfSlsKZb
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 5/16/24 06:02, Chen Yu wrote:
+> Performance drop is reported when running encode/decode workload and
+> BenchSEE cache sub-workload.
+> Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
+> native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
+> is disabled the virt_spin_lock_key is set to true on bare-metal.
+> The qspinlock degenerates to test-and-set spinlock, which decrease the
+> performance on bare-metal.
 > 
-> The workflow is shown as below.
-> Before alauda_read_data(), there are in fact many alauda_check_media(),
-> but none of them enter the branch of alauda_init_media(), where
-> uzonesize is set to nonzero value.
-> The key branch condition is "status[0] & 0x08", which is always
-> unsatisfied in this repro.
-> 
-> ```
-> alauda_transport
->     alauda_check_media
->         if (status[0] & 0x08) // not satisfied
->             alauda_init_media()
->                 // initialize uzonesize
->     alauda_read_data
-> ```
+> Fix this by disabling virt_spin_lock_key if CONFIG_PARAVIRT_SPINLOCKS
+> is not set, or it is on bare-metal.
 
-Good work!  So the problem is that the driver believes the status[0] & 
-0x08 test.  
+This is missing some background:
 
-The way to fix this is to add an "initialized" flag to the alauda_info 
-structure.  Then alauda_check_media() should call alauda_init_media() if 
-the 0x08 bit is set in status[0] _or_ if info->initialized is 0.  And of 
-course, alauda_check_media() should then set info->initialized to 1 if 
-the alauda_init_media() call succeeds.
+The kernel can change spinlock behavior when running as a guest.  But
+this guest-friendly behavior causes performance problems on bare metal.
+So there's a 'virt_spin_lock_key' static key to switch between the two
+modes.
 
-Would you like to write and test a patch that does this?
+The static key is always enabled by default (run in guest mode) and
+should be disabled for bare metal (and in some guests that want native
+behavior).
 
-Alan Stern
+.. then describe the regression and the fix
+
+> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+> index 5358d43886ad..ee51c0949ed8 100644
+> --- a/arch/x86/kernel/paravirt.c
+> +++ b/arch/x86/kernel/paravirt.c
+> @@ -55,7 +55,7 @@ DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
+>  
+>  void __init native_pv_lock_init(void)
+>  {
+> -	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
+> +	if (!IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) ||
+>  	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
+>  		static_branch_disable(&virt_spin_lock_key);
+>  }
+This gets used at a single site:
+
+        if (pv_enabled())
+                goto pv_queue;
+
+        if (virt_spin_lock(lock))
+                return;
+
+which is logically:
+
+	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS))
+		goto ...; // don't look at virt_spin_lock_key
+
+	if (virt_spin_lock_key)
+		return; // On virt, but non-paravirt.  Did Test-and-Set
+			// spinlock.
+
+So I _think_ Arnd was trying to optimize native_pv_lock_init() away when
+it's going to get skipped over anyway by the 'goto'.
+
+But this took me at least 30 minutes of scratching my head and trying to
+untangle the whole thing.  It's all far too subtle for my taste, and all
+of that to save a few bytes of init text in a configuration that's
+probably not even used very often (PARAVIRT=y, but PARAVIRT_SPINLOCKS=n).
+
+Let's just keep it simple.  How about the attached patch?
+--------------8q0W9NnK5AWL6oGobfSlsKZb
+Content-Type: text/x-patch; charset=UTF-8; name="pv.patch"
+Content-Disposition: attachment; filename="pv.patch"
+
+
+--------------8q0W9NnK5AWL6oGobfSlsKZb--
 
