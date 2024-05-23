@@ -1,128 +1,159 @@
-Return-Path: <linux-kernel+bounces-186896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5580F8CCA89
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1B48CCA8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7E2B214E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:56:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71BD6B214DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815AA4685;
-	Thu, 23 May 2024 01:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z76hBx5t"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17364C74;
+	Thu, 23 May 2024 02:00:11 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC01A34
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CECD6FB9;
+	Thu, 23 May 2024 02:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716429401; cv=none; b=c0loQ8PlRaQNDT4gmK6obXuHkTXkCw+/VJBe735pQwFu9c91tucsX3aKxk3q9ZQMIsbdXQWBROi6DVKYnOForEGv8YkbtxHfPPthF03N3O0uh6aAidtkOQ3//k0Zw96IFp0Kh0GSWSkDuu7KvAzWFTOoumK/XbqqSOBO9Xz0QMo=
+	t=1716429611; cv=none; b=O002i80YUmthVFMHIxCnArDud8l6unHvgL6afQwx1sZPmqDEnSuMhlj6gSj5naJyFtsEqBTj1u8S/p8Kbma36a94wf6pQVmRAR4LMxYtLQaSBeVfaxQwPYZjq9/3dFINccCQnD4TDR0lFTnc3L8clz4ZqYHsK+6BPfibbsP68cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716429401; c=relaxed/simple;
-	bh=odqsliIp1bqB03SOjUukVLUc8qbuCHFi+9Xo8awy+IQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTP1tCAAS22Ju08NgncvhAs9GJHO7VCb0IosgNq2LBW8JkQkViN56m2+CKwFvQ9cQ+9TavqWz0GzG6f6h3zme7/4omsr1yGtZ+QbNIi3JDaXfPoI71ciC0uWCSKyfDJKOadg91wNjoKvJoqu2g+/eRqeA0IIdbNkDptpjVHihvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z76hBx5t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MHXLut010132;
-	Thu, 23 May 2024 01:56:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=xCFv3e6r0rcQyZLLSdgTL
-	+V8y45gOmc5gjoqM82CGt0=; b=Z76hBx5tMQsXewixk7qlbnkp0tSSEp/llANtO
-	iqFW/9IZr2GGIJCHNxn7TGGJw0VX6FMj0UunwDqVFb+X5MHkTMQ3svGcJS8VUbVt
-	RGXIs3Eixcq/AIDegYWfMvhPVpp8/DaKU7ukMfk0tMfF7mrioEbcg+LtLG14M8+V
-	reBBcPWMSyI1vWX1CGzr6FttY5PntQeRI7CzNIOexUDb3mHzkSSCBdthXKP8RTkF
-	65UHkVRB3A/0K2mtR/eq5R0jtYSW8874FV7wXSYN6f/RDpEP/NLFcuElWexr32Wy
-	O+ljcUqvf+bQRfcBB0pFfTI957B74HElk8aX4+bT0qC1sO8OQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pqat8tg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 01:56:35 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44N1uYN6009240
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 01:56:34 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 22 May 2024 18:56:34 -0700
-Date: Wed, 22 May 2024 18:56:34 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Xiong Nandi <xndchn@gmail.com>
-CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <quic_bjorande@quicinc.com>, <cmllamas@google.com>
-Subject: Re: [PATCH v2 1/2] scripts/decode_stacktrace.sh: wrap nm with
- UTIL_PREFIX and UTIL_SUFFIX
-Message-ID: <20240522185039245-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240521194010043-0700.eberman@hu-eberman-lv.qualcomm.com>
- <20240523010318.12934-1-xndchn@gmail.com>
- <20240523010318.12934-2-xndchn@gmail.com>
+	s=arc-20240116; t=1716429611; c=relaxed/simple;
+	bh=nhCPewS1z5PaPTyemrch/Z3VzSgGoYpoFUicHPWxQVY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=H0t5zkbJI8FVlKV6zWEzxI0l6qrGSW+aJ13OuVQ5p0DObiTHfNud9oLgzkq7mj/0mZ2MdzMg2SPqSIPLMXBroaxs+1SxQedrM1mNns1lrfNItyaej+bQ9jQhIavMmED6Mu1DjhDd4uqXTawSgf6O7zDz22OTofKcm/zDfgU+nKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VlBFV2NwWz4f3jQd;
+	Thu, 23 May 2024 09:59:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 255B11A0CD9;
+	Thu, 23 May 2024 10:00:04 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgCnyw4io05myMQANw--.37203S3;
+	Thu, 23 May 2024 10:00:03 +0800 (CST)
+Subject: Re: [PATCH v3 3/3] xfs: correct the zeroing truncate range
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, djwong@kernel.org,
+ hch@infradead.org, brauner@kernel.org, chandanbabu@kernel.org, jack@suse.cz,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240517111355.233085-1-yi.zhang@huaweicloud.com>
+ <20240517111355.233085-4-yi.zhang@huaweicloud.com>
+ <ZkwJJuFCV+WQLl40@dread.disaster.area>
+ <122ab6ed-147b-517c-148d-7cb35f7f888b@huaweicloud.com>
+ <Zk6XqIcO+7+VPn35@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <92cec08a-7fe7-1cc7-7a39-7f3d5fbc087b@huaweicloud.com>
+Date: Thu, 23 May 2024 10:00:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240523010318.12934-2-xndchn@gmail.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tX6hcs2pQ3mkCwgg2uFScb_dj3eDzK8q
-X-Proofpoint-ORIG-GUID: tX6hcs2pQ3mkCwgg2uFScb_dj3eDzK8q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_14,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0
- spamscore=0 malwarescore=0 mlxlogscore=475 clxscore=1015
- priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405010000 definitions=main-2405230012
+In-Reply-To: <Zk6XqIcO+7+VPn35@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgCnyw4io05myMQANw--.37203S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr13urW3Cw1xAr45Wr1Utrb_yoW5Cry8pF
+	WUGa4UKr4kA3yDC34IyFn2qw1Fyw1rJrW8uryrtw12kas8X342yFyjgFWFkFyUuFZ3Gr12
+	vF4jy3y3Zwn5A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, May 23, 2024 at 09:03:17AM +0800, Xiong Nandi wrote:
-> Since System.map is generated by cross-compile nm tool, we should use it here
-> too. Otherwise host nm may not recognize ARM Thumb-2 instruction address well.
+On 2024/5/23 9:11, Dave Chinner wrote:
+> On Wed, May 22, 2024 at 09:57:13AM +0800, Zhang Yi wrote:
+>> On 2024/5/21 10:38, Dave Chinner wrote:
+>>> We can do all this with a single writeback operation if we are a
+>>> little bit smarter about the order of operations we perform and we
+>>> are a little bit smarter in iomap about zeroing dirty pages in the
+>>> page cache:
+>>>
+>>> 	1. change iomap_zero_range() to do the right thing with
+>>> 	dirty unwritten and cow extents (the patch I've been working
+>>> 	on).
+>>>
+>>> 	2. pass the range to be zeroed into iomap_truncate_page()
+>>> 	(the fundamental change being made here).
+>>>
+>>> 	3. zero the required range *through the page cache*
+>>> 	(iomap_zero_range() already does this).
+>>>
+>>> 	4. write back the XFS inode from ip->i_disk_size to the end
+>>> 	of the range zeroed by iomap_truncate_page()
+>>> 	(xfs_setattr_size() already does this).
+>>>
+>>> 	5. i_size_write(newsize);
+>>>
+>>> 	6. invalidate_inode_pages2_range(newsize, -1) to trash all
+>>> 	the page cache beyond the new EOF without doing any zeroing
+>>> 	as we've already done all the zeroing needed to the page
+>>> 	cache through iomap_truncate_page().
+>>>
+>>>
+>>> The patch I'm working on for step 1 is below. It still needs to be
+>>> extended to handle the cow case, but I'm unclear on how to exercise
+>>> that case so I haven't written the code to do it. The rest of it is
+>>> just rearranging the code that we already use just to get the order
+>>> of operations right. The only notable change in behaviour is using
+>>> invalidate_inode_pages2_range() instead of truncate_pagecache(),
+>>> because we don't want the EOF page to be dirtied again once we've
+>>> already written zeroes to disk....
+>>>
+>>
+>> Indeed, this sounds like the best solution. Since Darrick recommended
+>> that we could fix the stale data exposure on realtime inode issue by
+>> convert the tail extent to unwritten, I suppose we could do this after
+>> fixing the problem.
 > 
-> Signed-off-by: Xiong Nandi <xndchn@gmail.com>
+> We also need to fix the truncate issue for the upcoming forced
+> alignment feature (for atomic writes), and in that case we are
+> required to write zeroes to the entire tail extent. i.e. forced
+> alignment does not allow partial unwritten extent conversion of
+> the EOF extent.
+> 
 
-Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
+Yes, right. I noticed that feature also needs to fix.
 
-> ---
->  scripts/decode_stacktrace.sh | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Hence I think we want to fix the problem by zeroing the entire EOF
+> extent first, then optimise the large rtextsize case to use
+> unwritten extents if that tail zeroing proves to be a performance
+> issue.
 > 
-> diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-> index fa5be6f57b00..2bc3a54ffba5 100755
-> --- a/scripts/decode_stacktrace.sh
-> +++ b/scripts/decode_stacktrace.sh
-> @@ -30,6 +30,7 @@ fi
->  
->  READELF=${UTIL_PREFIX}readelf${UTIL_SUFFIX}
->  ADDR2LINE=${UTIL_PREFIX}addr2line${UTIL_SUFFIX}
-> +NM=${UTIL_PREFIX}nm${UTIL_SUFFIX}
->  
->  if [[ $1 == "-r" ]] ; then
->  	vmlinux=""
-> @@ -158,7 +159,7 @@ parse_symbol() {
->  	if [[ $aarray_support == true && "${cache[$module,$name]+isset}" == "isset" ]]; then
->  		local base_addr=${cache[$module,$name]}
->  	else
-> -		local base_addr=$(nm "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
-> +		local base_addr=$(${NM} "$objfile" 2>/dev/null | awk '$3 == "'$name'" && ($2 == "t" || $2 == "T") {print $1; exit}')
->  		if [[ $base_addr == "" ]] ; then
->  			# address not found
->  			return
-> -- 
-> 2.25.1
+> I say "if" because the large rtextsize case will still need to write
+> zeroes for the fsb that spans EOF. Adding conversion of the rest of
+> the extent to unwritten may well be more expensive (in terms of both
+> CPU and IO requirements for the transactional metadata updates) than
+> just submitting a slightly larger IO containing real zeroes and
+> leaving it as a written extent....
 > 
+
+Yeah, if the rtextsize if not large (in most cases), I'm pretty sure
+that writing zeros would better. If the rtextsize is large enough, I
+think it deserves a performance test.
+
+Thanks,
+Yi.
+
 
