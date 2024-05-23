@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-187654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123138CD5ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:36:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 094888CD5E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD261F2234E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0451F21D22
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE9C14B075;
-	Thu, 23 May 2024 14:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E9A13C3E7;
+	Thu, 23 May 2024 14:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V2Yf1EJs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khRhRiGL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5611C12B16E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AC5433C3
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716475002; cv=none; b=K0FD8BdqfDlBlpZX3nGbaxvSgp9SGueOWBTsogILGOKr1QCUGQ+5Hiz7OruCvwJSWFwL/3SzJdfOIQDSx4pF37JK2QLeZjbNbFm0hoZo/byDFZh3YEjbzBRRm1pkckQRj2KlawiHcw1X5aae2arKg++gjXy0w6/xV/uMGU5eays=
+	t=1716474981; cv=none; b=IZ5k4MjxA7uS+LzR93sCma8sDq/S4U85tft8hur5xvJ+XYPbAL+KJbV/hwyp9LiZwoEBfW4n4qcwFIXxzlNmSB9NQXeaJbsBl2NfnNUnP9fO/Wb0vwvXXhSstHPeqsrBVXSbrEed8HULFiOC1gQOaXJw1Ici2hbOM4QP3YVCJxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716475002; c=relaxed/simple;
-	bh=D7ccP66lbly9TPuHTgEPpEZGApPtncrxRWXRsKA8lMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kmc03K6RmU05pIqotVNMWDQUEt/cxvCTCV++3doOv95d7+WzmUYyt4fnGCfU31oGSRceXZYr0ke1Qqrsl7vxYXjAm/oT0dOVBMO+HOofnp8fllG+dyO6FLDnQ78LlQymSZGbPPeWHo4aj8HOXYtjWLyOGHsZP4QXkY2IPOtCq0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V2Yf1EJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84952C4AF0A;
-	Thu, 23 May 2024 14:36:39 +0000 (UTC)
+	s=arc-20240116; t=1716474981; c=relaxed/simple;
+	bh=rsdSuMuHmlMiO59EQatovr1eBEyHOXTD0zhp1Jass5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hF4COC/ArUJ40aT6Y1pigMyWVtgyCq74ArMkAHwL5m03+NCIkX31h4WvEIcg93ZFRaigJCFk7Q180f4tnUzoFTXusfwZ3Hh0oCiY+uyUH5ZfEO9kMkf6/znodvS65dL7BVRnNVtwwwu6kX1pC5nIUABVU++VhDIOOFjXLfBA+3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khRhRiGL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 697D1C2BD10;
+	Thu, 23 May 2024 14:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716475001;
-	bh=D7ccP66lbly9TPuHTgEPpEZGApPtncrxRWXRsKA8lMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V2Yf1EJsH2yyQVH3Q9SWtWkogyrRYBQ5rjxoO5OMmKaWQgNYdjxOgON6K/qm/jnxX
-	 PsuVkcSv546+oFSMlSCeAfxdMC/vDp66cXvGagmBxUmwjL64wADEnkHWNwJIMbwv/m
-	 +wv7wNcztLxSeOKTEH5R2KV/JD8Pwy8hp65TGd99tMW2AWdLdtigxDWdL+SW2+Tp2S
-	 FG5LVL3+2fb2DOhJaChxyAAjnbZicPn7VrAZQT2toxg1D5LZRSmVaD5FFZgt3WFoMJ
-	 XbgX4CpqBgzjEDZhwlIbsSfGSq7I7TeciS4bZ3eaA7ZAahW1bPXCSHb5oB6IGEK0J2
-	 YszQBYY3Ydb/w==
-Date: Thu, 23 May 2024 17:34:50 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Jaewon Kim <jaewon31.kim@samsung.com>
-Cc: "vbabka@suse.cz" <vbabka@suse.cz>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jaewon31.kim@gmail.com" <jaewon31.kim@gmail.com>,
-	"tkjos@google.com" <tkjos@google.com>
-Subject: Re: (2) [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Message-ID: <Zk9UCsZdizqC1_36@kernel.org>
-References: <ZkxN0yQ7Fb0X26hT@kernel.org>
- <20240521023957.2587005-1-jaewon31.kim@samsung.com>
- <20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
- <CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p5>
- <20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
+	s=k20201202; t=1716474980;
+	bh=rsdSuMuHmlMiO59EQatovr1eBEyHOXTD0zhp1Jass5g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=khRhRiGL+YGmtdhEuxMCDy1UxhwKpjk6x0tk0g9pVBmceHadXp4DCdEu8ZeSZ/2ls
+	 qLJoE5A4pi6zB0i18pfrQY1taTMqwU8jWfwPlMNM3Bf95K+JBcwoPugphzituztdmC
+	 2pzWS0rTdZ44aNdXDPJkZqQMl+J22Oy3NMVr4N80gMyyfTTgcIR7A/dB/+9RLzGfhR
+	 IDj0sBeIeiM51C4kd/imXgjXkcXvHmy/o39FScTX+LQvv0QW36MtmNBTTuatHWB6/d
+	 00kAeqiHYr/obAUbQoGb+fH9UNDP1RPYv3DG959yBaXSXIxVcUAoVCIiaZ6P0l0X6i
+	 mwl6HN742onKg==
+Message-ID: <9a7f73f4-f5dc-4342-855b-08df6a839bb5@kernel.org>
+Date: Thu, 23 May 2024 16:36:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: fsl_ifc: Make FSL_IFC config visible and
+ selectable
+To: Esben Haabendal <esben@geanix.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240523-fsl-ifc-config-v1-1-6eff73bdc7e6@geanix.com>
+ <979fd913-050b-445d-9ca8-0ec6906ce3ea@kernel.org> <87cypc38gu.fsf@geanix.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <87cypc38gu.fsf@geanix.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 07:17:53PM +0900, Jaewon Kim wrote:
-> >On Tue, May 21, 2024 at 11:53:29AM +0900, Jaewon Kim wrote:
-> >> >--------- Original Message ---------
-> >> >Sender : 김재원 <jaewon31.kim@samsung.com>System Performance Lab.(MX)/삼성전자
-> >> >Date   : 2024-05-21 11:40 (GMT+9)
-> >> >Title  : [RESEND PATCH 00/10] memblock: introduce memsize showing reserved memory
-> >> >?
-> >> >Some of memory regions can be reserved for a specific purpose. They are
-> >> >usually defined through reserved-memory in device tree. If only size
-> >> >without address is specified in device tree, the address of the region
-> >> >will be determined at boot time.
-> >> >
-> >> >We may find the address of the memory regions through booting log, but
-> >> >it does not show all. And it could be hard to catch the very beginning
-> >> >log. The memblock_dump_all shows all memblock status but it does not
-> >> >show region name and its information is difficult to summarize.
-> >> >
-> >> >This patch introduce a debugfs node, memblock/memsize, to see reserved
-> >> >memory easily.
-> >> 
-> >> This is actually RESEND as it was introduced 2 years ago.
-> >> Please refer to https://lore.kernel.org/linux-mm/YkQB6Ah603yPR3qf@kernel.org/#t
-> >> 
-> >> > But you never provided details about *why* you want this information exposed.
-> >> 
-> >> For your question, I'd like to say ;
-> >> We can see the same format and exact information between different version of kernel status.
-> >> 
-> >> 1) Internally we can check if the reserved memory changes.
-> >> 2) Externally we can communicate between chipset vendors and OEM, with a same format.
-> >
-> >Why the existing debugfs interface is not sufficient?
+On 23/05/2024 16:32, Esben Haabendal wrote:
+> Krzysztof Kozlowski <krzk@kernel.org> writes:
 > 
-> debugfs/memblock/memory & debugfs/memblock/reserved have changed its
-> format but still does not show name, reusable, kernel size.  If memory is
-> reserved from memblock, and did not freed back to memblock. Memblock does
-> not know even after the memory is freed to system.  I think a simple
-> debug interface is needed to easily communicate with others or compare
-> different SW releases.
+>> On 23/05/2024 15:58, Esben Haabendal wrote:
+>>> While use of fsl_ifc driver with NAND flash is fine, as the fsl_ifc_nand
+>>> driver selects FSL_IFC automatically, we need the option to be selectable
+>>> for platforms using fsl_ifc with NOR flash.
+>>
+>> Which driver is that?
+> 
+> This is drivers/memory/fsl_ifc.o driver. It is for Integrated Flash
+> Controller (IFC) from NXP. It is used in various Layerscape socs.
 
-I still don't understand what problem are you trying to solve with these
-patches. 
- 
--- 
-Sincerely yours,
-Mike.
+? I know that, I mean the NOR flash working here.
+
+> 
+>> Which DTS?
+> 
+> It is for "fsl,ifc" compatible devices.
+
+That's not a NOR flash.
+
+Best regards,
+Krzysztof
+
 
