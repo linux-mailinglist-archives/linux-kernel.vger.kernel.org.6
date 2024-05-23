@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-187540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565088CD32D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:04:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4DF8CD331
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7141F235EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4D71C220D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6411314A4F1;
-	Thu, 23 May 2024 13:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D517114A4E9;
+	Thu, 23 May 2024 13:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fWEDIyWs"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Hsj30XWr"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7686814A4DF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E53714A4EA
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716469487; cv=none; b=Yly2R1GFGcLVGczq5qYmBDNNXLAlHKk9/JVjkOmKSSxpqc36fpNZzC6YAcFivf5n8RhWcX7I5rNIryHIfMfX7VHz0cFStU/j0O+4JHdVguc0Tps1he/Fn65s12qXJ8ajzIiEd0fz7mVLr75kRUIqwDZ0I83h7Cb/x0/NC1VGxF8=
+	t=1716469523; cv=none; b=kjG+6gHg/Fltn5iBS6q0DdfuU6xgp6j7+5hRrErh65aNVvhJXxD6fgtN/DBZmJdN1qWjBYXZAHozLbNCepcY2fUdC77xMhbp7K63qogLAZjc1Uw2p+7ynqCvnLNRoBjiwMbqUJuLrM0ZsbKUxg6s42uKOQ46LHzpnxYAXFw+4Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716469487; c=relaxed/simple;
-	bh=pMm7rZAZFGu1NTYvWOL9qrWRhbrbJa/MB80eW/64YQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYa703pKK117n/pVBaly/clcm/ccOjKZivNCPJv2e0Rrs6AvQApYwZcrVZO7TYZnoxLWgpxiqtNzgOGdmtRMLMfZj+dEIlaPY8YRtnb5+vwYcipDPsKjGVBRpC/50mhg5CJNA2EjvCJtEkUhSwK+U97GmNDxOiR1uIf85e3UEyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fWEDIyWs; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f347e8f6acso423285ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:04:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1716469486; x=1717074286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KPMiHsz8K2q9s42urhdT3u4JtQG3XTLimzTD3UwspMw=;
-        b=fWEDIyWsoHRobDxjN8y8zBcJpXMhNZugSCZlLrno0Lg0uAe1UGy1xrQo53rfs7+nwW
-         vynd6rTRFDz0GRe846y7BMXgUiCFPS3VKsYHlyhSqV0+SfZ3yCp0192wTfI9i8pUQhzw
-         Koe0Ls/K+yuSdjy8KVkb6skLzhAtAMQuHXL8GMe4K20HaVwPGHD9XQYFBsoSG8Od3aWV
-         I6aMtaTPW/aE3dyD3zvZcgDqvbf76HP0GwhnpuLWVVFDnju7coSoAFrEUr4Ys+qTXeCh
-         GlAIzOYKIHHI1t+q9e0fR7OqdfPaznuo9j90Otpf4n5heqRr1tbYure1VWG7ulCsh8lB
-         5hxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716469486; x=1717074286;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KPMiHsz8K2q9s42urhdT3u4JtQG3XTLimzTD3UwspMw=;
-        b=nReE+s4rbfMYKUYn3CTF0KZbgN3XlAYxK27bOkZeRzvyjfCUIzYD1aZ2Dvg0BgOIqT
-         zvn8fZPfUcTlIcFh9/+zagXbwk4ozp/aqpSDr330hs5FzYZ2o+KYU60FZHiUHTSO2pkE
-         L49avJE20a3KTuW7QkTizyK5d9XIvodb73L/sMebGd8TK0TpUaIci9I4nFCmgUcmWkGB
-         uEz/aa7i2qLBRpFv2MbsAzQFFoLEprDZ07ZwZaNlwWtx17TDztv8jP3dWRRId00DujI8
-         DGsmgiSNdQzwX0qJqAQL8OXrFzW8sDIOkKLx28Y05JZqMV1WuASSl8SO/eTFeBfmoO3Z
-         tGcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXUYBP7wYPnWA7TtbyPKJ74MiUmN2UPrjNLzHZx2R66l+3YOX5EHTBISGtZjST4LYv55Ci0YdcEPVnnsFMjVKYYh3h9VogkCFuAy2D
-X-Gm-Message-State: AOJu0YxRQD7L05yHGZeQc8sroXjhWJMaMIa4NRerPB0oAG0mfPyj6/hL
-	rCLRdnkRNz0LK/o7wqQdWNuX6aUOJphac8SEZ6hIug52jWL9XGzZuHxUtgXNszk=
-X-Google-Smtp-Source: AGHT+IGrW1xaiN9yzpdbCzUOTirocWCGoUs5hr3wkk51ksk12WLfAaS+/LYfk8LQ6+Q8R4jw5nldnw==
-X-Received: by 2002:a17:902:c402:b0:1f2:ffbc:7156 with SMTP id d9443c01a7336-1f31c96453fmr51875535ad.1.1716469485752;
-        Thu, 23 May 2024 06:04:45 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c0369f1sm255650015ad.185.2024.05.23.06.04.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 06:04:45 -0700 (PDT)
-Message-ID: <8cc049e2-157a-4b25-af00-e706c0071e64@kernel.dk>
-Date: Thu, 23 May 2024 07:04:44 -0600
+	s=arc-20240116; t=1716469523; c=relaxed/simple;
+	bh=T9afDleXRzBxJZKBOaQ/5h1gdMwqmEHOTqhTW5+06JQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eTleNuWkeMZVcQ6I8DhRxNzMx2ytmUdD/eJQjQ4NUAJH3A5vKcQks3+OrZKqLg/i7p3C89LDsUWTEVFbuMkOSy6cF9c6GCar3mZN4kZSZm8PJoah/lzEM2HJqLZf0R47MEr304jSGwWqMNa1nb3eSzMNplAThF+lPF7ldQ06HL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Hsj30XWr; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-108-7-50-195.bstnma.fios.verizon.net [108.7.50.195])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44ND4vx7028458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 09:04:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1716469499; bh=WZycEgts+i1uj4kN6iMFbOpgTuCjrceEnZED0MElG2U=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Hsj30XWrD5KN9QJX60Huqz+BT45WlWdO5cCHBmb5C2WmIy2NQtUfMq3o13mzHpgk9
+	 R3PmhxlcCBtZnmfWE+q5eJnxMAA6Sq2RUglx6gLHUXAUP7sxcAc+UPt5EwcASg90O9
+	 Xyw4Nfjz4LVdnCS4BjukgJt5IvK/pgpzpsd7MgjA5hS8txlRNT400lSVXr/8GgEaKI
+	 aYk2MyOTEF6qWZggXlryQOiHfABZ91Akgw5SrA9vIKMhTg29kFLAWG9QK2fog07T8f
+	 bWO3UGOqAKztL2J7lOOlON/YBVIeMve/ZXZwJyDKdBAVSjxs7MsgBsORCygi8dDzHU
+	 1E2rLWrZ7au8A==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 05EC115C0225; Thu, 23 May 2024 09:04:57 -0400 (EDT)
+Date: Thu, 23 May 2024 09:04:56 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: syzbot <syzbot+50835f73143cc2905b9e@syzkaller.appspotmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Justin Stitt <justinstitt@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [syzbot] [ext4?] WARNING in __fortify_report
+Message-ID: <20240523130456.GH65648@mit.edu>
+References: <00000000000019f4c00619192c05@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Yu Kuai <yukuai3@huawei.com>
-References: <20240523095035.11a94157@canb.auug.org.au>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240523095035.11a94157@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000019f4c00619192c05@google.com>
 
-On 5/22/24 5:50 PM, Stephen Rothwell wrote:
-> Hi all,
+On Wed, May 22, 2024 at 11:29:25PM -0700, syzbot wrote:
+> Hello,
 > 
-> Today's linux-next merge of the block tree got a conflict in:
+> syzbot found the following issue on:
 > 
->   block/blk-core.c
-> 
-> between commit:
-> 
->   ac2b6f9dee8f ("bdev: move ->bd_has_subit_bio to ->__bd_flags")
-> 
-> from Linus' tree and commit:
-> 
->   9a42891c35d5 ("block: fix lost bio for plug enabled bio based device")
-> 
-> from the block tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+> dashboard link: https://syzkaller.appspot.com/bug?extid=50835f73143cc2905b9e
 
-Thanks Stephen, looks fine. I'll mention it when sending in the rest
-for 6.10-rc1.
+> ...
+> strnlen: detected buffer overflow: 17 byte read of buffer size 16
+> [<8080fe10>] (__fortify_report) from [<818e9a40>] (__fortify_panic+0x10/0x14 lib/string_helpers.c:1036)
+> [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (strnlen include/linux/fortify-string.h:221 [inline])
+> [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (sized_strscpy include/linux/fortify-string.h:295 [inline])
+> [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (ext4_ioctl_getlabel fs/ext4/ioctl.c:1154 [inline])
 
--- 
-Jens Axboe
+> [<818e9a30>] (__fortify_panic) from [<8062a3b0>] (ext4_fileattr_get+0x0/0x78 fs/ext4/ioctl.c:1609)
+> [<8062829c>] (__ext4_ioctl) from [<8062aaac>] (ext4_ioctl+0x10/0x14 fs/ext4/ioctl.c:1626)
+>  r10:836e6c00 r9:00000005 r8:845e7900 r7:00000000 r6:845e7900 r5:00000000
 
+This is caused by commit 744a56389f73 ("ext4: replace deprecated
+strncpy with alternatives") and it's unclear whether this is being
+caused by a buggy implementation of strscpy_pad(), or a buggy fortify,
+but a simple way to fix is to go back to the good-old strncpy(), which
+is perfectly safe, and perfectly secure.
 
+(And this is a great example of "security initiatives" being an
+exercise in pain alocation tradeoffs between overworked maintainers
+and security teams...  regardless of whether the bug is in fortify,
+syzkaller, or an effort to completely convert away from strncpy()
+because it makes security analysis easier.)
+
+						- Ted
 
