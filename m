@@ -1,103 +1,87 @@
-Return-Path: <linux-kernel+bounces-187688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2327F8CD699
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:04:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F098CD69A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4FE7B20E1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:04:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344431C21E4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11230D304;
-	Thu, 23 May 2024 15:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gW2U8MdR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC85B653;
+	Thu, 23 May 2024 15:04:09 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457C76AAD;
-	Thu, 23 May 2024 15:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCC66FB6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476631; cv=none; b=qsxJTUyZs3lEQK8VE3QCJyQ8t9g5YrSnxLRBsvw4iKd3Ys3/ClgjKIvN0Kmi2w7M+EpC34xVCMTW50zdYo90xaEAE22iNWVVyCMLtveI+wn2gZfCgnxFj3TIX5cAvHBhJglxE5+yZcm1EqJ9TP8yeZeOHpWw/Q05Y8oMGINCh3s=
+	t=1716476649; cv=none; b=pEF00q/AV3Tlz6QIZy7Lob8Ep6kWen7vmKSA5WfZ1GE2PK+wHJtuZbl7JZ87d7F63C6t2km9115j1B5xuRQFD+1w74purW+6D+x8gY52FuEqSVCYTpghWFxAbUUWIfMNXZwSTED1EN47Cb5nMal3T5C98MwGNyQ2x+n12mZxUcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476631; c=relaxed/simple;
-	bh=N9nB2TabRE0ILucieRrFr8EiEb/dKAQ/M2yQBgPFKY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Z87W8GHpVK5Vb9Qt8nD3q0GLVRLtWqgqKRCBpUqTjDUHPBl8VSp0THVKN+dYURbbjst5AlPp6vLUcGHZUFEuDRUWeG75eflg6j/fqFCfmXbGyAPvmigdkbiRQQLLcSVM+jLcUM4bKC0ZA3hCW/NSPxWDwS7dMLCYyRcalUcojHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gW2U8MdR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92849C32786;
-	Thu, 23 May 2024 15:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716476630;
-	bh=N9nB2TabRE0ILucieRrFr8EiEb/dKAQ/M2yQBgPFKY4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gW2U8MdRupSPlhuIc29ggUoj8CTuq45vPyAXx5ABrUNtyXvTUbQSRF2zpB4eQouNp
-	 GlkNuZ4aBBLWujz1PHNOnhrFaNmZ1Fd69hmHs5ULylOlusqbVi46htoPXgEv1Ytkvc
-	 u6KwMlvcPJk6UfrvRuemSoDHsSYaSs8aTo2y2WN1qNXZtVmojFSlDKmMueuCquFvRn
-	 KtgmZg4QYYUunhZqmq8VDcs/KDde/9YVdwTkSDzEQE1PH7K/GKViOkcFT6Q88rL01g
-	 vtC+SRY9iD3M5CS8wx678JB2jCL4LcGYaSADnP3xUlM2M1jFQAAK9QWtqm+E07sqWc
-	 5p82lad0gqy9Q==
-Date: Thu, 23 May 2024 10:03:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: devi priya <quic_devipriy@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konrad.dybcio@linaro.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V5 1/6] Add PCIe pipe clock definitions for IPQ9574 SoC.
-Message-ID: <20240523150349.GA118633@bhelgaas>
+	s=arc-20240116; t=1716476649; c=relaxed/simple;
+	bh=BB8eqmpXw02S1/kBTJGcfE87OLw8jWCBPfvdVutU6aM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XJ/0CPsTiNtTtr9+6isXPCujWAl33uf0boVtTKYRbWRQw2+mcDoq+GBewCm0WzTaZqdh1nBjONprAtV5Du0JikFJRxZWMId2HYjGIVuCB6q55RlzFC0Z+0/fyrUrlKsBJMbPoOY37f+BBxWpvgMPZBBAc9frMrJTieVtMCoCk4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-36c89052654so21914395ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:04:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716476647; x=1717081447;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zlhtVE6QhrPTnfiT9bzIHgzjMwE8jicE8ReLvV48Ah0=;
+        b=Cgek1WJxMccH+AKnn1RnZTB3Abia4ogQ/q0cYP+85CmazMZNOC3RGFtQl3fGzo+JFq
+         9Nmx5aejIAvkpNbPjF8Bz8X7Cjv2yfUbDApyD8NrLSp2rsHpU1y4K+1SKYHv50Km2WBS
+         1X2pEN0ouC3JuvmLm4Ms6iXbNVX3JUbJw4K0bz7mN8AO9FbtMyihnD7HTeLvjVjDfqTK
+         WG8oDRGW9kJ4bIMzCX5Eym4VR4yD/9MVXd1Rxp9suG+TZlIcgtsHvq3TJvEDb/MUNd42
+         B7AaM7o8S88gOFE408NQPp9Kka84ASn9jfTmrkmwN9ASMiA9mi1l8R8+juMoigkXmmI7
+         o16w==
+X-Forwarded-Encrypted: i=1; AJvYcCURhXKxsi08JuG0HWbA3pHM83IExjuX/ppjblpHrC0HH9wSWuFIrhJGiprxb7aYAYpIjVXq4nbKO+/40MndflRObOrKH8+Y4wF8TzgC
+X-Gm-Message-State: AOJu0YyhDoh2l/abEv2yBQF+ezNdXP1gH1VZ5irLtMYc6zqC1YpDYOHl
+	QVEYjhYvryMEVYIRyN5PTZd/Ov3bl18UE/dsvgSg3H6VTW8b8WZQAVnM4PsTgLMNu+UZJY5k11w
+	cjxU8NTnRCQ5UR8Z+/eabflKqLPKlwtOwW0064+H9MKAoWgj+7MN6Png=
+X-Google-Smtp-Source: AGHT+IGbAfeK62wofPTkhHwGC8NPnacLdTEUS1iKQlAzqyVn18HhxuLcFJ5tATPY10drYoro52NpqWnCc89kV/qPb5xtdhMUr40r
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240512082858.1806694-2-quic_devipriy@quicinc.com>
+X-Received: by 2002:a05:6e02:148d:b0:36d:92b9:8f30 with SMTP id
+ e9e14a558f8ab-371f6b2a832mr4585555ab.1.1716476642845; Thu, 23 May 2024
+ 08:04:02 -0700 (PDT)
+Date: Thu, 23 May 2024 08:04:02 -0700
+In-Reply-To: <580959.1716475058@warthog.procyon.org.uk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008ffbc60619205c17@google.com>
+Subject: Re: [syzbot] [v9fs?] KASAN: slab-use-after-free Read in p9_fid_destroy
+From: syzbot <syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com, 
+	hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, May 12, 2024 at 01:58:53PM +0530, devi priya wrote:
+Hello,
 
-Please run "git log --oneline include/dt-bindings/clock/qcom,ipq9574-gcc.h"
-and follow the subject line style there:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-  - prefix "dt-bindings: clock: "
-  - no trailing period
-  - perhaps add commit log text if there's anything else useful to put
-    there
+Reported-and-tested-by: syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com
 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> ---
->  Changes in V5:
-> 	- No changes
-> 
->  include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> index 08fd3a37acaa..52123c5a09fa 100644
-> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> @@ -216,4 +216,8 @@
->  #define GCC_CRYPTO_AHB_CLK				207
->  #define GCC_USB0_PIPE_CLK				208
->  #define GCC_USB0_SLEEP_CLK				209
-> +#define GCC_PCIE0_PIPE_CLK				210
-> +#define GCC_PCIE1_PIPE_CLK				211
-> +#define GCC_PCIE2_PIPE_CLK				212
-> +#define GCC_PCIE3_PIPE_CLK				213
->  #endif
-> -- 
-> 2.34.1
-> 
+Tested on:
+
+commit:         c760b372 Merge tag 'mm-nonmm-stable-2024-05-22-17-30' ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1456cc14980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=966dbeb548ca6926
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7c7a495a5e466c031b6
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1632668a980000
+
+Note: testing is done by a robot and is best-effort only.
 
