@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-187431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C3F8CD1A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E278CD1AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A351F22B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:02:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145201C211D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076A513BACB;
-	Thu, 23 May 2024 12:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BE413C68F;
+	Thu, 23 May 2024 12:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="F1rghimA"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bGjQPoQG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1989413B7A1
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD52B13B5B0;
+	Thu, 23 May 2024 12:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716465721; cv=none; b=OZf1Yxn8ILdUI9u7UkdVlIGjgf/39yUCuXhszP1dE76vr7rBBJLks7OzQ93IemJQaKgjrb8MjqJBvfc5QToQ4hZxbRc6wpNWsBeSHjLDk4AdF4HmwRd5i1qyjw1EZcNdST1yoY1oNc81QybzYNI1pS1TDJ+mt+tv6HVYHS9LGjg=
+	t=1716465855; cv=none; b=PIuRiSg8rHFDjIusU6OqJ/EjYEVIQQYeov85LLMyP/xuHPZbBA2NcSlvV0BJHd81c3TkX5e+5oBsNzz3+wBcJ5jl4Xtpoz1Vn5gmVU07dN12TjRxToQ0oEY3Xuynf4/VJqYSNBHEG6UUrkqLW86BqESXdZjNxrwe1IDWtu+Azjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716465721; c=relaxed/simple;
-	bh=Tk/UnYB7NdgjEuYtt7p9NXYfWCDtEh/hlQ8P2WX9/Iw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z69h8PWv+9ufqNM6XU3bzTwOg3GQEDfK/Dwt+HcShILc5Ciiy1UczV3JtUbqbJ+skKUZ5IzXPq/906vg/gOEFOlRE7qnwK65qZV4SF076RFm7gNpCpn6drAQOyb818FjbOPTOSbKH0VNjoueE3hKH/UbIPaiT6c70nybn0aH/lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=F1rghimA; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-354de3c5d00so883935f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:01:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1716465717; x=1717070517; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AykWLRMhfIuqWQMOvQrfDGTd9ZVzX1cGKkmAJORqxQU=;
-        b=F1rghimAS6F4ee1UXOxdWXZk0jU3kg7EWm0aqh33Z+QRR2Cg5EOfm+F9mvLyV8Gb0W
-         /bfBM08ufp8yMn/6iYoetCu0Nk+jNVUhjlwa5UMAFwYsn9nQQeOMzwjamPgfjNZbVJqg
-         W+j9HOBj+g56rWC0QevdnA2nfSl+vXHlmVUD7p9KmfJp7AVsH2exN00qEHQJTpnDzWbF
-         o4KZiaAqjyoy0k+RZ/OZkFg1t1Lj7xTyOLZoXc+gWVfMdS0qEQb8uY0Cobp8ENop84bx
-         T9XaMc9mbXuJVwG1T2qxSW2Z15LCkdKsk0fzW8JW6IKirMFNjsmJmq2PbYD4jrKFD6pb
-         a5GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716465717; x=1717070517;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AykWLRMhfIuqWQMOvQrfDGTd9ZVzX1cGKkmAJORqxQU=;
-        b=dtOCUjP6c5ZTgruqn8nt+ADTyqitlo4UoGsXz0fHnZEhakUxlMA4zdp0VHUuDsNYzv
-         cOyqM49dNpnM9TWZW9+fCUqtkauj/AsrxERWcOcqqqgeYuxwInfx6NwpBoWrOUTiHjfM
-         gvDGaFScHsulg7NOYaHh3qMLWS/WUOe7UhnJWspnBAaqgMpbQhVVcquwqQvRKmF1JlDa
-         4B+0mDawE0OHBe65Jj3k7q81UvnLoBT4Uc1atLny+weRr8IkrJs0svcVCcdsdBdeDH14
-         iJeYS0FMykPt5lM0BPwGZNDzj7zyUzj+gEtjF/f/Rozt8m89lKMK/OqbZKwcC4bmSGEo
-         VSLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCaMFSgccF7C54DF3B5OyFD90Rn51atK5Vcr9L/+Vbua3GwN3SJhISR2tvXKCS7oFVpHiCS5z+xlIFXrte2opccxY7So9/ScQ7cJa0
-X-Gm-Message-State: AOJu0Yz432fwqS1ZmKHNvELQCsV69TXqIBEgnGKMkFctYApoayVrGGeB
-	ScGzrXLecvvNzspMsl4t2YfXWNtFMTrUqKJ5AV+fGawhlKLPoqL8FKkyDrPKQC/wm13ExbBqW43
-	d
-X-Google-Smtp-Source: AGHT+IFi7XOybuT2T0K5bGfhxgS5aB5gz/y/urapYI7H/O61zC0HgZ7qtTQepUscjXk1/8lMq6eLxQ==
-X-Received: by 2002:adf:fd85:0:b0:351:d2e3:68e9 with SMTP id ffacd0b85a97d-354f74ffd53mr1873455f8f.1.1716465717387;
-        Thu, 23 May 2024 05:01:57 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7315:e681:bab5:4646:cf21? ([2a10:bac0:b000:7315:e681:bab5:4646:cf21])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42106a158a6sm2766795e9.25.2024.05.23.05.01.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 05:01:57 -0700 (PDT)
-Message-ID: <5ea91ae6-091d-4378-950b-833561eef48c@suse.com>
-Date: Thu, 23 May 2024 15:01:56 +0300
+	s=arc-20240116; t=1716465855; c=relaxed/simple;
+	bh=HgC9TVuJDL0Gxu+T0SW+6KJaOfIiSm5IJ7kzEtOwfn0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YqCywrm9ttoMFX2YIRPAJpzBauv011OcYoSs8vQxlj/nCAlOL9leWkPukB99CS4LqjNbNItrDnUNi16ecJ3FckHTSy2/QBxbTKOo3ZgEXeQ1+csSNkUkAUsKwwEG/I3Cj5Z84gkmzcwhOZiz/7K/RkvjsI7yMF4RgtaAJnYYs0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bGjQPoQG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44N4kAL6013120;
+	Thu, 23 May 2024 12:04:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ZrL88IawaIl55f5X99a7wwfG
+	NdPBNplE1/fKAm5VbNo=; b=bGjQPoQGJCOMoUH/zbhHkun2nvCjaljlfRDAaP4k
+	PNSD9Du/6FQm9a04lFKR7uLdzaBuUF3XkfltS+H43KuB21OTEe+f7FqJCBuCLXso
+	bh4oSA2Zyo5hrEbdz2H+Df61mM/mFbJFdqrfEJCX6dTgXxkS2CJ0NwjU90ZV1yCu
+	HON4hAAEOg69yBkWt79n0vz1UFnHK+SCsOzCLKrb7b0alMsy8bFLLL2rtRdc1nWn
+	1ZcceoNVnRJNE8qqH3oHz+qombfKMTftEk6/tXODSwWZ1ttT9igN6d7gjn/jDuch
+	1jKPn/ZzV9lKHpx2nvH3h4ugduXn2sc4gW3wr1ioGXqk7A==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y9y29s0me-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 12:04:10 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44NC49oC002469
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 12:04:09 GMT
+Received: from hyd-e160-a01-3-01.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 23 May 2024 05:04:05 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+To: <ulf.hansson@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <bhupesh.sharma@linaro.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_nainmeht@quicinc.com>
+Subject: [PATCH v2 1/3] dt-bindings: mmc: sdhci-msm: Document the SDX75 compatible
+Date: Thu, 23 May 2024 17:33:35 +0530
+Message-ID: <20240523120337.9530-2-quic_nainmeht@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240523120337.9530-1-quic_nainmeht@quicinc.com>
+References: <20240523120337.9530-1-quic_nainmeht@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: CVE-2024-35802: x86/sev: Fix position dependent variable
- references in startup code
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-References: <2024051738-CVE-2024-35802-959d@gregkh>
- <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
- <2024052334-cable-serotonin-fa2b@gregkh>
-Content-Language: en-US
-From: Nikolay Borisov <nik.borisov@suse.com>
-In-Reply-To: <2024052334-cable-serotonin-fa2b@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: P_RtDrR5AsO49KUlbiuD7eZ15fciGUvB
+X-Proofpoint-GUID: P_RtDrR5AsO49KUlbiuD7eZ15fciGUvB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_07,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 lowpriorityscore=0 malwarescore=0 clxscore=1015 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405230082
 
+Document the compatible for SDHCI on SDX75 SoC.
 
+Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 23.05.24 г. 14:21 ч., Greg Kroah-Hartman wrote:
-> Isn't crashing SEV guests a problem with "availability"?  That term
-> comes from the CVE definition of what we need to mark as a CVE, which is
-> why this one was picked.
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+index c24c537f62b1..11979b026d21 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+@@ -51,6 +51,7 @@ properties:
+               - qcom,sdm845-sdhci
+               - qcom,sdx55-sdhci
+               - qcom,sdx65-sdhci
++              - qcom,sdx75-sdhci
+               - qcom,sm6115-sdhci
+               - qcom,sm6125-sdhci
+               - qcom,sm6350-sdhci
+-- 
+2.17.1
 
-But availability has never been one of the tenets of CoCo, in fact in 
-sev-snp/tdx the VMM is explicitly considered outside of the TCB so 
-availability cannot be guaranteed.
 
