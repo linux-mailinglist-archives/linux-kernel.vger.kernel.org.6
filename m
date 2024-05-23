@@ -1,259 +1,131 @@
-Return-Path: <linux-kernel+bounces-187657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34168CD5F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22138CD5F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A76EB228EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E1F281AFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF0D14A4C7;
-	Thu, 23 May 2024 14:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B400C14C580;
+	Thu, 23 May 2024 14:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TwcqKbxS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGpvGW6a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AE012B171
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E2612B171;
+	Thu, 23 May 2024 14:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716475066; cv=none; b=Eku9dGEGRkh+5FpcIhg0N7iPYPiAtBlbf1h14/g3x1w+LjUdSX89GhqucyWkiZtwBvZJP6q+29jO8MlbaLY484lyaO/nqir8eLQNXFFX7WmlRdmDxE6tXJWTbn+XfiVKSjWKwMh9lYUchK27Dg8Fu/rGXKGsPtZs9g/BbGzYflA=
+	t=1716475079; cv=none; b=k45eYa4f6bptQpT8jtLZ34r+0MQa4nciXD6LZvyeDDxxzQL4LSducFf2xdAoqa38NsDDMCNevj5V0cpRcnMbELbIj9uyN5tXQbJU+DDLeGWUNhkabmu28it3TqOZTPCJuNrNuJ4ZSzT5ok/YmF4iS09zWEYwiXRqA33LPERYTE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716475066; c=relaxed/simple;
-	bh=A6mMmcoPKr86m5mBYWP/jKQWZ1PrDwi8ZbWMCjNEw7o=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=KTcI1RPNRw3RH9QDaSz87bq3Pkt3wh3j4fZIYZe+fO25qxaX26Rwj/Nc5U9qg1LP8h1aCFGqQfByXodEMqo7Ri0gXr7Eqx14TDj95yRjTj/54E6XRZW5uKiPWdqmuq4C6cGoT2nIY1Y1tCN3YxnFZebuLlzGTjHkcv2BC+7OG58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TwcqKbxS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716475063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EBuJR9sHioIkXS6kfIzX9SE7PWR4EN1ACo5UdtBVH3U=;
-	b=TwcqKbxSsS97nadoOJjtHoZKh/6LeEoaxU6UKmMmnaAJDs0cawVkOyenfuBZTuLXbs+pJy
-	DaNIMIdXfBHPuDltiw6FAoOLhwFAZrs/ZFPjHWYnbrqwY6ESnILOdrUsu4lpp8EBsBXULi
-	4N/hvNz3jLpNoPqjA4pvseMJEoIsvVM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-lnui4_8cM6GJK8e4lQxzRA-1; Thu, 23 May 2024 10:37:40 -0400
-X-MC-Unique: lnui4_8cM6GJK8e4lQxzRA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EAABF81227E;
-	Thu, 23 May 2024 14:37:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 8D364200A35C;
-	Thu, 23 May 2024 14:37:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <00000000000092914806191382ac@google.com>
-References: <00000000000092914806191382ac@google.com>
-To: syzbot <syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com>
-Cc: dhowells@redhat.com, asmadeus@codewreck.org, brauner@kernel.org,
-    hdanton@sina.com, linux-kernel@vger.kernel.org,
-    syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [v9fs?] KASAN: slab-use-after-free Read in p9_fid_destroy
+	s=arc-20240116; t=1716475079; c=relaxed/simple;
+	bh=eT+HB+FXqP5lVZyAYj6JKHnhWvk/Ipdw9JdWIe8LzVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O6JK2PS7GNs0ZgjMAeX6JDnTagRUO5fLedYubGp7d7sLA7StzVsmQO98U5C4NulryGmyymmobeMQXlIoBXok/iS2QOYS70TFuLGQxkdSctRf4oK6qBZsB5HtfMQ8FhOJrrSrjA/WLncDylCte41tV1x9SUw8pu09bPrLbYyejPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGpvGW6a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F929C2BD10;
+	Thu, 23 May 2024 14:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716475078;
+	bh=eT+HB+FXqP5lVZyAYj6JKHnhWvk/Ipdw9JdWIe8LzVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iGpvGW6a9yj3gWD7yyTWBWyh+7KuymQfmTC5VLzNGUETDnmwJO+vqyEup2aTcy1x1
+	 v5+2jkf19i+w373ThyPSeHO9d0rLYRxZS2d5F53xFNhOr2JrIpZLCEvo9Kr6ZmXv50
+	 3NNzg67yDi5QNGL2CJ6n2zsTvzkGIzpIsJaZ1haTVf2WYn9Q6tJ+PbjVHodEdmvjzJ
+	 bjPz8XeRxfiznuHWYXGTwqzoNUxuEKq6sWfsOsBFUMvLfatQWrjvTFGYc/+BgVmMEe
+	 Ybfm+/G9nXVsI+hCWBOhrluBHhkJUZe2NwH5vucQ75mnIY1Y+3GOXlPI87LCsVuN7A
+	 E0tblaqOZHbrA==
+Date: Thu, 23 May 2024 15:37:52 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alexey Romanov <avromanov@salutedevices.com>
+Cc: "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"khilman@baylibre.com" <khilman@baylibre.com>,
+	"jbrunet@baylibre.com" <jbrunet@baylibre.com>,
+	"martin.blumenstingl@googlemail.com" <martin.blumenstingl@googlemail.com>,
+	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	kernel <kernel@sberdevices.ru>
+Subject: Re: [PATCH v7 17/23] dt-bindings: crypto: meson: remove clk and
+ second interrupt line for GXL
+Message-ID: <20240523-snowiness-attain-75d415573b5a@spud>
+References: <20240411133832.2896463-1-avromanov@salutedevices.com>
+ <20240411133832.2896463-18-avromanov@salutedevices.com>
+ <20240415-schnapps-plating-eb0895459004@spud>
+ <20240506134754.jl633ncne7ct6szo@cab-wsm-0029881>
+ <20240506-distrust-famine-6848f75dd3fe@spud>
+ <20240523104624.tr5omyxnzxsjkpai@cab-wsm-0029881.sigma.sbrf.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <580958.1716475057.1@warthog.procyon.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="WTOLmlkXxsRP7sN+"
+Content-Disposition: inline
+In-Reply-To: <20240523104624.tr5omyxnzxsjkpai@cab-wsm-0029881.sigma.sbrf.ru>
+
+
+--WTOLmlkXxsRP7sN+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 23 May 2024 15:37:38 +0100
-Message-ID: <580959.1716475058@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
+On Thu, May 23, 2024 at 10:46:35AM +0000, Alexey Romanov wrote:
+> Hi Conor,
+>=20
+> On Mon, May 06, 2024 at 04:47:29PM +0100, Conor Dooley wrote:
+> > On Mon, May 06, 2024 at 01:48:01PM +0000, Alexey Romanov wrote:
+> > > On Mon, Apr 15, 2024 at 05:43:15PM +0100, Conor Dooley wrote:
+> > > > On Thu, Apr 11, 2024 at 04:38:26PM +0300, Alexey Romanov wrote:
+> > > > > GXL crypto IP isn't connected to clk and seconnd interrput line,
+> > > > > so we must remove them from dt-bindings.
+> > > >=20
+> > > > How does the device work without a clock?
+> > >=20
+> > > It's clocked by a common clock, the vendor didn't provide more
+> > > information. It doesn't have any special clock domains.
+> >=20
+> > So the hardware block does have a clock, which, even if it is a clock
+> > shared with other hardware blocks, makes your patch incorrect.
+> >=20
+> > Is the "blkmv" clock the shared clock?
+>=20
+> I received accurate information from the vendor. Starting from GXL,
+> DMA engine is used for crypto HW and clock is hard weired to it (at RTL
+> level).
 
-netfs, 9p: Fix race between umount and async request completion [v2]
+> That's why we have to remove it from device tree, because we can't
+> control it anyway.
 
-There's a problem in 9p's interaction with netfslib whereby a crash occurs
-because the 9p_fid structs get forcibly destroyed during client teardown
-(without paying attention to their refcounts) before netfslib has finished
-with them.  However, it's not a simple case of deferring the clunking that
-p9_fid_put() does as that requires the client.
+That's not true, if the clock runs at a fixed frequency it should be
+described as a fixed-clock in the devicetree.
 
-The problem is that netfslib has to unlock pages and clear the IN_PROGRESS
-flag before destroying the objects involved - including the pid - and, in
-any case, nothing checks to see if writeback completed barring looking at
-the page flags.
+--WTOLmlkXxsRP7sN+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Fix this by keeping a count of outstanding I/O requests (of any type) and
-waiting for it to quiesce during inode eviction.
+-----BEGIN PGP SIGNATURE-----
 
-Reported-by: syzbot+df038d463cca332e8414@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/0000000000005be0aa061846f8d6@google.com/
-Reported-by: syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/000000000000b86c5e06130da9c6@google.com/
-Reported-by: syzbot+1527696d41a634cc1819@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/000000000000041f960618206d7e@google.com/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Steve French <sfrench@samba.org>
-cc: Hillf Danton <hdanton@sina.com>
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk9UwAAKCRB4tDGHoIJi
+0kgCAQCc036MitPTeOOqstfi4ri+q3xgSGemTaQQWCQjlD0qKAD+OwLXN5ySvreg
+/MfIpImWvlSDrfrkLnC2nq4oV8AAmQg=
+=NYsR
+-----END PGP SIGNATURE-----
 
-Notes:
-    Changes
-    =3D=3D=3D=3D=3D=3D=3D
-    ver #2)
-     - Wait for outstanding I/O before clobbering the pagecache.
-
----
- fs/9p/vfs_inode.c      |    1 +
- fs/afs/inode.c         |    1 +
- fs/netfs/objects.c     |    5 +++++
- fs/smb/client/cifsfs.c |    1 +
- include/linux/netfs.h  |   18 ++++++++++++++++++
- 5 files changed, 26 insertions(+)
-
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 8c9a896d691e..effb3aa1f3ed 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -349,6 +349,7 @@ void v9fs_evict_inode(struct inode *inode)
- 	__le32 __maybe_unused version;
- =
-
- 	if (!is_bad_inode(inode)) {
-+		netfs_wait_for_outstanding_io(inode);
- 		truncate_inode_pages_final(&inode->i_data);
- =
-
- 		version =3D cpu_to_le32(v9inode->qid.version);
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 94fc049aff58..15bb7989c387 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -648,6 +648,7 @@ void afs_evict_inode(struct inode *inode)
- =
-
- 	ASSERTCMP(inode->i_ino, =3D=3D, vnode->fid.vnode);
- =
-
-+	netfs_wait_for_outstanding_io(inode);
- 	truncate_inode_pages_final(&inode->i_data);
- =
-
- 	afs_set_cache_aux(vnode, &aux);
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index c90d482b1650..f4a642727479 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -72,6 +72,7 @@ struct netfs_io_request *netfs_alloc_request(struct addr=
-ess_space *mapping,
- 		}
- 	}
- =
-
-+	atomic_inc(&ctx->io_count);
- 	trace_netfs_rreq_ref(rreq->debug_id, 1, netfs_rreq_trace_new);
- 	netfs_proc_add_rreq(rreq);
- 	netfs_stat(&netfs_n_rh_rreq);
-@@ -124,6 +125,7 @@ static void netfs_free_request(struct work_struct *wor=
-k)
- {
- 	struct netfs_io_request *rreq =3D
- 		container_of(work, struct netfs_io_request, work);
-+	struct netfs_inode *ictx =3D netfs_inode(rreq->inode);
- 	unsigned int i;
- =
-
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_free);
-@@ -142,6 +144,9 @@ static void netfs_free_request(struct work_struct *wor=
-k)
- 		}
- 		kvfree(rreq->direct_bv);
- 	}
-+
-+	if (atomic_dec_and_test(&ictx->io_count))
-+		wake_up_var(&ictx->io_count);
- 	call_rcu(&rreq->rcu, netfs_free_request_rcu);
- }
- =
-
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index ec5b639f421a..14810ffd15c8 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -431,6 +431,7 @@ cifs_free_inode(struct inode *inode)
- static void
- cifs_evict_inode(struct inode *inode)
- {
-+	netfs_wait_for_outstanding_io(inode);
- 	truncate_inode_pages_final(&inode->i_data);
- 	if (inode->i_state & I_PINNING_NETFS_WB)
- 		cifs_fscache_unuse_inode_cookie(inode, true);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index d2d291a9cdad..3ca3906bb8da 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -68,6 +68,7 @@ struct netfs_inode {
- 	loff_t			remote_i_size;	/* Size of the remote file */
- 	loff_t			zero_point;	/* Size after which we assume there's no data
- 						 * on the server */
-+	atomic_t		io_count;	/* Number of outstanding reqs */
- 	unsigned long		flags;
- #define NETFS_ICTX_ODIRECT	0		/* The file has DIO in progress */
- #define NETFS_ICTX_UNBUFFERED	1		/* I/O should not use the pagecache */
-@@ -474,6 +475,7 @@ static inline void netfs_inode_init(struct netfs_inode=
- *ctx,
- 	ctx->remote_i_size =3D i_size_read(&ctx->inode);
- 	ctx->zero_point =3D LLONG_MAX;
- 	ctx->flags =3D 0;
-+	atomic_set(&ctx->io_count, 0);
- #if IS_ENABLED(CONFIG_FSCACHE)
- 	ctx->cache =3D NULL;
- #endif
-@@ -517,4 +519,20 @@ static inline struct fscache_cookie *netfs_i_cookie(s=
-truct netfs_inode *ctx)
- #endif
- }
- =
-
-+/**
-+ * netfs_wait_for_outstanding_io - Wait for outstanding I/O to complete
-+ * @ctx: The netfs inode to wait on
-+ *
-+ * Wait for outstanding I/O requests of any type to complete.  This is in=
-tended
-+ * to be called from inode eviction routines.  This makes sure that any
-+ * resources held by those requests are cleaned up before we let the inod=
-e get
-+ * cleaned up.
-+ */
-+static inline void netfs_wait_for_outstanding_io(struct inode *inode)
-+{
-+	struct netfs_inode *ictx =3D netfs_inode(inode);
-+
-+	wait_var_event(&ictx->io_count, atomic_read(&ictx->io_count) =3D=3D 0);
-+}
-+
- #endif /* _LINUX_NETFS_H */
-
+--WTOLmlkXxsRP7sN+--
 
