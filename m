@@ -1,219 +1,192 @@
-Return-Path: <linux-kernel+bounces-187567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29ECE8CD424
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1398CD42C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 765F3B207E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B71A1B22D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DAE14AD1B;
-	Thu, 23 May 2024 13:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1802614B081;
+	Thu, 23 May 2024 13:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KvwdCDvn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TBlNJTYW"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1C91D545
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44F014B089
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470508; cv=none; b=dYBRRPV4u6csHMrCuy8xFToZPm9BkcPSsWEzkSjt+9Yd93UGO1J0ckdn4AvQBqxX5blAn0j4meJR7otrBzSL+VY9FOmjlOT22hf4GrBY7xe5U7xtRSqBItPFijWMbn1H2aH+nkDpiK/UG/NuTBalN6xNhII0swEioMuOhs2V5zo=
+	t=1716470525; cv=none; b=fNe9YSeYR2hcsgAjYAbED7YOnulcC541wzwpNepilHCEczwEEndxFH66/R1ojuef6T7Lu8vKQzL5omPA3mEvs18vB+dQ+gifZTkN5sOleR4M894Jp/Zf0UCkDI/B3gJrrDT8Rwhnfo1TDq4XDVBGP1S4UXijmz48VW5aza++rlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470508; c=relaxed/simple;
-	bh=frsFIBZZBUMfVTrWwRd+78dd0v5HtpDdTLozyRbWWVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u6UuVl32wzenFGVcqE1NLDhc0pNuZ72RmZxYmask2BJT+1aljZcMIr6JFJgbgYjmjdAowDktpnHr/pgvO9328miNj1QeSKYj3a/yO4tJC8XogHCoPaQw/V1H9hUOVw82ljqwaFE9PzsFpviv/+6aqza7uaXghS0Eu6MIUPb7BWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KvwdCDvn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716470505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VsbXcm1sxFBR27e0f5ft9IivKoeATBdnB7W0mM8QHqU=;
-	b=KvwdCDvnC7xoKKpk/1JNdiSl4hUUeA9CUCEViy+XgtZyl371U5X8D7HrdRpzXrAHeJqL5G
-	OW1ZHsLnXfMV3lxPuMEgqvVf43r66RO0J3LPE3iTpbP/pOrolXh+rX+RWYq0un7N01aYma
-	uVvHf67fcpU1wqvLtBOou02cQeT/KfI=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-479-XgJ3Avr8MliUEkl5KO_9_g-1; Thu, 23 May 2024 09:21:43 -0400
-X-MC-Unique: XgJ3Avr8MliUEkl5KO_9_g-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6ab89f69cd8so459276d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:21:43 -0700 (PDT)
+	s=arc-20240116; t=1716470525; c=relaxed/simple;
+	bh=NH24LVGdDYeMPuYOJqA4c6ioraAkWYckArYfePkuphA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqqRyu19Mu8s529FS4kXgir6odY4oDZdTeWhgbeCJrmCJm6SZqk9+GI6zgj/8C6WMpTgmJEoZED4j0JVo9L8v0cFUKinjsBaTqBxcRjVNBJXJA5qFXcWGmprpRVh2twkRzoOg3M1RxPdab/LI2dQvr26Z16LmxzPOL4ehsN2ABc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=TBlNJTYW; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5a8bd02e8eso81559766b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1716470522; x=1717075322; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=On9r6HMkgaTSzrnf05gbFZryZJM5WajSuUMiqmrGLOk=;
+        b=TBlNJTYWU5SqMAL9bKhXyayirD1yhqkc9Qc7vZCj4acOA+YcYMkcCISYlrUUyXV6Ju
+         iA2HnaV5ir6Km+ylNGX16uFtxfY6pYaoHJxnQwKM/cwduGhHje83HsUNxbL3AOoyEz1+
+         jxJUzd4LNUJ+gQWglyS4APohz500Gzr9Tb3ds=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716470503; x=1717075303;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VsbXcm1sxFBR27e0f5ft9IivKoeATBdnB7W0mM8QHqU=;
-        b=DQUGMs/FqDLAKr7c3VwHxPDnXfYWrfpB6d1Kf7b43MDyRq1k2qMrKBUsvS+3wPJICs
-         k5hNxI3qOdeLnsM505x+nLHEIPFbdu8pHwUkat2bplw54uMvv7anTb6gfqiNCbc6OzRI
-         j4qzHVb1yKOwYDUoh0q4D50DWQTOUVjT+/+wChR38Zzliq3hhBni87I6lVM7sRhGazWF
-         adPB31Anqnimr84RpCZsKU8ul9GJKMVLIAqjCTiKkzR4fvNFeQsXdkaOHh2sJxyteKqJ
-         yAPUzUkmVF8cgE409MZC4n4rTpNQEOE73Xha8fT0RzutBvQ28mlm2EeLxqZPUZlWUPXC
-         RdgA==
-X-Gm-Message-State: AOJu0Yzbs9Rd5aWrJgeFxmyQ6XhbuSzaOmeqaQ372CnFHaIxIUZ9OQQN
-	wmp1i/6B5SbaR9j9mh9hdIdVOGNv+puLpA3hYHYgnCpk7SGe9u52zywdqmKJ3FeqDfIktRlbTVo
-	XPSe/Gri0TA8BmFfEUa0tx48voM3zvGj8hCyUPAb9lqJSIrSPdQVK0aK3MGv6IR0Ls5nPN/j1eh
-	9soxzpA8WqSVHNzUhIilNR24Kgc3Bifi9a/M384Sx8Rho=
-X-Received: by 2002:a05:6214:20ca:b0:6a0:cd60:cd3b with SMTP id 6a1803df08f44-6ab808f7119mr50153026d6.3.1716470502443;
-        Thu, 23 May 2024 06:21:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7NO9vVltJj/+QkjBYp5MEJF3IkhEATQaB+o8Vu0R5dHDKGWSJnhD6+0WyJTsI/P7Ex3Q1fg==
-X-Received: by 2002:a05:6214:20ca:b0:6a0:cd60:cd3b with SMTP id 6a1803df08f44-6ab808f7119mr50152616d6.3.1716470501696;
-        Thu, 23 May 2024 06:21:41 -0700 (PDT)
-Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab873f7108sm13713156d6.125.2024.05.23.06.21.40
+        d=1e100.net; s=20230601; t=1716470522; x=1717075322;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=On9r6HMkgaTSzrnf05gbFZryZJM5WajSuUMiqmrGLOk=;
+        b=VauV/XTuBDwIV2a7ztwJ4plYCBhdjWgwly3cBcXM/WglRD4k5gXspFowcosyEOywPL
+         z01PBE8AicrW5gBKYQXebBkHRQe5GUPdNq/lzLp/o99/I9j3Xl19ujmyZjrIW2BUrFDU
+         3QL/Ro4Gb1RuFc4c3EfA7eYmENsKVlEGn+6g19g3edQ+fEsIk2vJjPrDTZx3HH0zU6Xa
+         I8Iw4oX0OEW+Xk5+/BZZBjpAOmmNCX9O5bsqLdtD4v2HwxghKtBQdKBLi3yKvQ3wA2Xk
+         jBt43e4BHXjssVDqzVLlq3u0BYVVc/Q7RMBHigS4X3oLlgkfXWvpfsQFp8eoO4xJCmqR
+         cPDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrQTRoOENwcB6i7hJW410gepJZwqBfiZqW6LZlwFMv4S2TkMmNBAHVnF+gm8wiGye7Ez2AT/JaHaUMMO2733iNHM1t8L+pKLiKD32x
+X-Gm-Message-State: AOJu0YypmtAh9uZwA6REmicjVKfeaLhc5u6THupQbIbSVAPlUNlCU693
+	wgqf8myv0sp16N/f+eP4YxpTg2oFgIhu5B4+j9/f7ZoDAmHjW7itJDuxoV2wVjY=
+X-Google-Smtp-Source: AGHT+IGR0y2bdIOAPy2UsVNakF0nkcO1SJLtEWKLN+I3EqK+AagX4rPCgY602MbsaeBciZNK5T/aag==
+X-Received: by 2002:a17:906:64b:b0:a5c:e20c:8255 with SMTP id a640c23a62f3a-a622814aefamr315661266b.4.1716470521180;
+        Thu, 23 May 2024 06:22:01 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d350sm1934790766b.23.2024.05.23.06.22.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 06:21:41 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	peterx@redhat.com,
-	David Hildenbrand <david@redhat.com>,
-	Pavel Tatashin <pasha.tatashin@soleen.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Subject: [PATCH] mm/debug_vm_pgtable: Drop RANDOM_ORVALUE trick
-Date: Thu, 23 May 2024 09:21:39 -0400
-Message-ID: <20240523132139.289719-1-peterx@redhat.com>
-X-Mailer: git-send-email 2.45.0
+        Thu, 23 May 2024 06:22:00 -0700 (PDT)
+Date: Thu, 23 May 2024 15:21:58 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Helen Koike <helen.koike@collabora.com>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
+	Nikolai Kondrashov <spbnick@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>, linuxtv-ci@linuxtv.org,
+	dave.pigott@collabora.com, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kselftest@vger.kernel.org,
+	gustavo.padovan@collabora.com, pawiecz@collabora.com,
+	tales.aparecida@gmail.com, workflows@vger.kernel.org,
+	kernelci@lists.linux.dev, skhan@linuxfoundation.org,
+	kunit-dev@googlegroups.com, nfraprado@collabora.com,
+	davidgow@google.com, cocci@inria.fr, Julia.Lawall@inria.fr,
+	laura.nao@collabora.com, ricardo.canuelo@collabora.com,
+	kernel@collabora.com, gregkh@linuxfoundation.org
+Subject: Re: [PATCH 1/3] kci-gitlab: Introducing GitLab-CI Pipeline for
+ Kernel Testing
+Message-ID: <Zk9C9mCj15hVWUyL@phenom.ffwll.local>
+Mail-Followup-To: Helen Koike <helen.koike@collabora.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Nikolai Kondrashov <spbnick@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>, linuxtv-ci@linuxtv.org,
+	dave.pigott@collabora.com, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kselftest@vger.kernel.org,
+	gustavo.padovan@collabora.com, pawiecz@collabora.com,
+	tales.aparecida@gmail.com, workflows@vger.kernel.org,
+	kernelci@lists.linux.dev, skhan@linuxfoundation.org,
+	kunit-dev@googlegroups.com, nfraprado@collabora.com,
+	davidgow@google.com, cocci@inria.fr, Julia.Lawall@inria.fr,
+	laura.nao@collabora.com, ricardo.canuelo@collabora.com,
+	kernel@collabora.com, gregkh@linuxfoundation.org
+References: <20240228225527.1052240-1-helen.koike@collabora.com>
+ <20240228225527.1052240-2-helen.koike@collabora.com>
+ <20240229-dancing-laughing-groundhog-d85161@houat>
+ <5d7ed81b-37f9-48e9-ab7e-484b74ca886c@gmail.com>
+ <CAHk-=wixVy3WYvjbt43ZSrCqPDsS76QJQSkXFbbPsAOs1MCSAQ@mail.gmail.com>
+ <44ae0339-daf1-4bb9-a12d-e3d2e79b889e@gmail.com>
+ <CAHk-=wiccniE=iZDC_e7T+J8iPVQbh1Wi5BaVee9COfy+ZaYKg@mail.gmail.com>
+ <17341b96-5050-4528-867a-9f628434e4e6@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17341b96-5050-4528-867a-9f628434e4e6@collabora.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-Macro RANDOM_ORVALUE was used to make sure the pgtable entry will be
-populated with !none data in clear tests.
+On Mon, Mar 04, 2024 at 06:45:33PM -0300, Helen Koike wrote:
+> Hi Linus,
+> 
+> Thank you for your reply and valuable inputs.
+> 
+> On 01/03/2024 17:10, Linus Torvalds wrote:
+> > On Fri, 1 Mar 2024 at 02:27, Nikolai Kondrashov <spbnick@gmail.com> wrote:
+> > > 
+> > > I agree, it's hard to imagine even a simple majority agreeing on how GitLab CI
+> > > should be done. Still, we would like to help people, who are interested in
+> > > this kind of thing, to set it up. How about we reframe this contribution as a
+> > > sort of template, or a reference for people to start their setup with,
+> > > assuming that most maintainers would want to tweak it? We would also be glad
+> > > to stand by for questions and help, as people try to use it.
+> > 
+> > Ack. I think seeing it as a library for various gitlab CI models would
+> > be a lot more palatable. Particularly if you can then show that yes,
+> > it is also relevant to our currently existing drm case.
+> 
+> Having it as a library would certainly make my work as the DRM-CI maintainer
+> easier and  also simplify the process whenever we consider integrating tests
+> into other subsystems.
 
-The RANDOM_ORVALUE tried to cover mostly all the bits in a pgtable entry,
-even if there's no discussion on whether all the bits will be vaild.  Both
-S390 and PPC64 have their own masks to avoid touching some bits.  Now it's
-the turn for x86_64.
+Kinda ignored this thread, just wanted to throw my +1 in here.
 
-The issue is there's a recent report from Mikhail Gavrilov showing that
-this can cause a warning with the newly added pte set check in commit
-8430557fc5 on writable v.s. userfaultfd-wp bit, even though the check
-itself was valid, the random pte is not.  We can choose to mask more bits
-out.
+To spin it positively, the kernel CI space is wide open (more negatively,
+it's a fractured mess). And I think there's just no way to force top-down
+unification. Imo the only way is to land subsystem CI support in upstream,
+figure out what exactly that should look like (I sketched a lot of open
+questions in the DRM CI PR around what should and should not be in
+upstream).
 
-However the need to have such random bits setup is questionable, as now
-it's already guaranteed to be true on below:
+Then, once we have a few of those, extract common scripts and tools into
+tools/ci/ or scripts/ci or whatever.
 
-  - For pte level, the pgtable entry will be installed with value from
-    pfn_pte(), where pfn points to a valid page.  Hence the pte will be
-    !none already if populated with pfn_pte().
+And only then, best case years down the road, dare to have some common
+top-level CI, once it's clear what the actual common pieces and test
+stages even are.
 
-  - For upper-than-pte level, the pgtable entry should contain a directory
-    entry always, which is also !none.
+> > So I'm not objecting to having (for example) some kind of CI helper
+> > templates - I think a logical place would be in tools/ci/ which is
+> > kind of alongside our tools/testing subdirectory.
+> 
+> Works for me.
+> 
+> We  can skip having a default .gitlab-ci.yml in the root directory and
+> instead include clear instructions in our documentation for using these
+> templates.
 
-All the cases look like good enough to test a pxx_clear() helper.  Instead
-of extending the bitmask, drop the "set random bits" trick completely.  Add
-some warning guards to make sure the entries will be !none before clear().
+I'd go a few steps more back and start with trying to get more subsystem
+CI into upstream. And then once that dust has settled, figure out what the
+common pieces actually are. Because I'm pretty sure that what we have for
+drm ci or kernelci right now won't be it, but likely just a local optimum.
 
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Gavin Shan <gshan@redhat.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Link: https://lore.kernel.org/r/CABXGCsMB9A8-X+Np_Q+fWLURYL_0t3Y-MdoNabDM-Lzk58-DGA@mail.gmail.com
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- mm/debug_vm_pgtable.c | 31 +++++--------------------------
- 1 file changed, 5 insertions(+), 26 deletions(-)
+Cheers, Sima
 
-diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-index f1c9a2c5abc0..866eddb6cfda 100644
---- a/mm/debug_vm_pgtable.c
-+++ b/mm/debug_vm_pgtable.c
-@@ -40,22 +40,7 @@
-  * Please refer Documentation/mm/arch_pgtable_helpers.rst for the semantics
-  * expectations that are being validated here. All future changes in here
-  * or the documentation need to be in sync.
-- *
-- * On s390 platform, the lower 4 bits are used to identify given page table
-- * entry type. But these bits might affect the ability to clear entries with
-- * pxx_clear() because of how dynamic page table folding works on s390. So
-- * while loading up the entries do not change the lower 4 bits. It does not
-- * have affect any other platform. Also avoid the 62nd bit on ppc64 that is
-- * used to mark a pte entry.
-  */
--#define S390_SKIP_MASK		GENMASK(3, 0)
--#if __BITS_PER_LONG == 64
--#define PPC64_SKIP_MASK		GENMASK(62, 62)
--#else
--#define PPC64_SKIP_MASK		0x0
--#endif
--#define ARCH_SKIP_MASK (S390_SKIP_MASK | PPC64_SKIP_MASK)
--#define RANDOM_ORVALUE (GENMASK(BITS_PER_LONG - 1, 0) & ~ARCH_SKIP_MASK)
- #define RANDOM_NZVALUE	GENMASK(7, 0)
- 
- struct pgtable_debug_args {
-@@ -511,8 +496,7 @@ static void __init pud_clear_tests(struct pgtable_debug_args *args)
- 		return;
- 
- 	pr_debug("Validating PUD clear\n");
--	pud = __pud(pud_val(pud) | RANDOM_ORVALUE);
--	WRITE_ONCE(*args->pudp, pud);
-+	WARN_ON(pud_none(pud));
- 	pud_clear(args->pudp);
- 	pud = READ_ONCE(*args->pudp);
- 	WARN_ON(!pud_none(pud));
-@@ -548,8 +532,7 @@ static void __init p4d_clear_tests(struct pgtable_debug_args *args)
- 		return;
- 
- 	pr_debug("Validating P4D clear\n");
--	p4d = __p4d(p4d_val(p4d) | RANDOM_ORVALUE);
--	WRITE_ONCE(*args->p4dp, p4d);
-+	WARN_ON(p4d_none(p4d));
- 	p4d_clear(args->p4dp);
- 	p4d = READ_ONCE(*args->p4dp);
- 	WARN_ON(!p4d_none(p4d));
-@@ -582,8 +565,7 @@ static void __init pgd_clear_tests(struct pgtable_debug_args *args)
- 		return;
- 
- 	pr_debug("Validating PGD clear\n");
--	pgd = __pgd(pgd_val(pgd) | RANDOM_ORVALUE);
--	WRITE_ONCE(*args->pgdp, pgd);
-+	WARN_ON(pgd_none(pgd));
- 	pgd_clear(args->pgdp);
- 	pgd = READ_ONCE(*args->pgdp);
- 	WARN_ON(!pgd_none(pgd));
-@@ -634,10 +616,8 @@ static void __init pte_clear_tests(struct pgtable_debug_args *args)
- 	if (WARN_ON(!args->ptep))
- 		return;
- 
--#ifndef CONFIG_RISCV
--	pte = __pte(pte_val(pte) | RANDOM_ORVALUE);
--#endif
- 	set_pte_at(args->mm, args->vaddr, args->ptep, pte);
-+	WARN_ON(pte_none(pte));
- 	flush_dcache_page(page);
- 	barrier();
- 	ptep_clear(args->mm, args->vaddr, args->ptep);
-@@ -650,8 +630,7 @@ static void __init pmd_clear_tests(struct pgtable_debug_args *args)
- 	pmd_t pmd = READ_ONCE(*args->pmdp);
- 
- 	pr_debug("Validating PMD clear\n");
--	pmd = __pmd(pmd_val(pmd) | RANDOM_ORVALUE);
--	WRITE_ONCE(*args->pmdp, pmd);
-+	WARN_ON(pmd_none(pmd));
- 	pmd_clear(args->pmdp);
- 	pmd = READ_ONCE(*args->pmdp);
- 	WARN_ON(!pmd_none(pmd));
+> 
+> Thanks,
+> Helen Koike
+> 
+> > 
+> > (And then perhaps have a 'gitlab' directory under that. I'm not sure
+> > whether - and how much - commonality there might be between the
+> > different CI models of different hosts).
+> > 
+> > Just to clarify: when I say "a logical place", I very much want to
+> > emphasize the "a" - maybe there are better places, and I'm not saying
+> > that is the only possible place. But it sounds more logical to me than
+> > some.
+> > 
+> >              Linus
+
 -- 
-2.45.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
