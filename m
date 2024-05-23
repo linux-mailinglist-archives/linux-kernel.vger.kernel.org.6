@@ -1,61 +1,88 @@
-Return-Path: <linux-kernel+bounces-187111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACCA8CCD3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:46:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C0D8CCDBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC281C21569
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EFA81F21DB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E7E13CA91;
-	Thu, 23 May 2024 07:46:29 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC48F13D260;
+	Thu, 23 May 2024 08:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="BMXoBpfo"
+Received: from SINPR02CU002.outbound.protection.outlook.com (mail-southeastasiaazon11011005.outbound.protection.outlook.com [52.101.133.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65D7171C4;
-	Thu, 23 May 2024 07:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716450389; cv=none; b=nXtISPpajCbn19SsGqEMjElhkMTT1RqGWNtePqrdKoWfvTomR8Kg6VGqhQLVj2LEJpDCgOYzbgqNQT7QsRDHWuDAdWFnnGEWmKZVhIJwRpb0wXijNolcbtEPNx9NiDxe4o7EIAv7dXhgZZhiC9u9UU9VfUAeEeqXRMPw1nOlGQc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716450389; c=relaxed/simple;
-	bh=EJrS8nDXNgKWdYcCMgEmQeHUCpRdL5fEAEBB5pLnuAM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KJNxlsAOfzgAtccez+lbUWfLAtLfc4mOgeOIuHLgrLivnim4gD8uvn2OqeVkOaxJ1bwRr5ylSzmPneE9vdBwTf4QcuxVX58ClBvRQAgIs/oupFK267/tsdVdPaAO8ZkEf7ty8/UJwvS7hRp3ZkSBcMbXiItCVznkwjq3X7p4Zjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VlKx42tydz4f3jM1;
-	Thu, 23 May 2024 15:46:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 3D52C1A01A7;
-	Thu, 23 May 2024 15:46:22 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+RFL9E5mSXPDNQ--.10759S4;
-	Thu, 23 May 2024 15:46:21 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	yi.zhang@redhat.com,
-	dlemoal@kernel.org,
-	hare@suse.de,
-	johannes.thumshirn@wdc.com,
-	kch@nvidia.com,
-	zhouchengming@bytedance.com,
-	yanjun.zhu@linux.dev,
-	bvanassche@acm.org
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2] null_blk: fix null-ptr-dereference while configuring 'power' and 'submit_queues'
-Date: Thu, 23 May 2024 23:39:34 +0800
-Message-Id: <20240523153934.1937851-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3913CFB2;
+	Thu, 23 May 2024 08:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.133.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716451446; cv=fail; b=R90VZ/qq7zNWl7k1m3vshNhPZ+joVFfzgIhSDlg61ReTPYNmgJ8xYLrUrwcsuSa+VcwXqj+7yr3xNHwmJl9qX+Ww20ICygtqBcJ24c4rfuhRslOrFcEO7oUhc6z8+rkBtCAbmcsUtqHmQ9BniQTxAXv0JkMNHnqTnkMlPgBIg34=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716451446; c=relaxed/simple;
+	bh=btgdBgFxtTzunG2/lrrBUYJ1QxP+cTltq/6I9W7+wPg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oG3AWvNboibFP+Z6ttz1k1OV1lExShRF5grF9pSOx36r5ZkWlHcxTiXQUq2n+n1k0cO6pbT6DTIf+mA+tzMR97LZEkwsm6ti7Pdk6kBCqkIZmf6nnHKZFfh54dk/Kd9Gu70MOMhXeVsPAm71rfLHnWRNqo71hv0pcz2jX9zjotY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=BMXoBpfo; arc=fail smtp.client-ip=52.101.133.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hZg0Un3dLiTguHut3vKE19ZD/RBCzwNoqyDAFVPSxthR9M56l5PEG5LlJUCMffLGIQj0NSC28EXm8nZsh3ta+uKwlHTvW5DY8wszqmDj17l6lwYlmoVcvlaNI2Thn/4l7Ap3zo8UfaIW6DrRwCCtXOP0j2r6UmSj7jQ1oRpMxTpEYvMW3fUzgOaEBle3NyjuNnvzgeEZS8SqPIlD82v1nUl571YFqovcdQ8iWMQz4TaPzLzUr7M43/vy6Cw2Nf5XI1AbYZ+31szDwlUpW2xWukFmqG+U9yQB9XilsmKSMqxh8ok9F3Ax6i0hZZBWmTrX67mk3Slq7N3oKTxLAu264g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CsZr14PNPmBXIPZ1202IghyP5Yyu1YMx3BAbXzof8TE=;
+ b=R8tz7vKMwsBGgPnkJLsL8NbvwY/zfurYTAuMC00NJME+CpxghsHslvlP9jICx8LqaaoguNg+s+QLDwzIEHjyU6g3qu5mk7cnOlBTXhaLhQuPHOXeDY0T+qSnXPR0qaOeJ46sKds2sp1k8mL0P068kMue3d9vy/Kr3Yu1QvfEk8y3UnFYNpbk40S/FnBs37+quCDSqR3O2FObk4ieiZEz4MahdwkycqT8zuD2R5JHHaREj1oW1JVoHDZRmKuJ1TIgjCTGrlDXHJ/8loNWOTYg2fKnv8bhhNOe5sRWJAshpMuJmOPSNcaOGWlcV8WFuvpT9maeIN8kKyPjGJp79alcqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CsZr14PNPmBXIPZ1202IghyP5Yyu1YMx3BAbXzof8TE=;
+ b=BMXoBpfoXM7y6oe2EvSY7ynGT+Y76Hgw86cTaScLSozPx9zMYsKCs6aO8VLOjGYpfPWuRY+KDlAlMVcxv5ZW+Fb25N30sOru++pqUN9H2N7wuOwobHlykrRnEgsfXRuGgk63/F5077LhDf8nwKKXmjblSydtwTSOaxG4LVEMFVR08Zx/V8T92vKv43lHi5Y3aL+QmZEsA8l779nHEpfjvST9WedLChEvgmZH2Y+pBsvl9f5jbq0e9PA7ZISMY2qKcJgpq/tZZTeTNbvWvJm69DHRzH5vWpDH4nbPNAa49jmgaim/G+yj/O0GqZExv1BawuLf5BDHKU33xUnCBs0OTw==
+Received: from SG2PR04CA0165.apcprd04.prod.outlook.com (2603:1096:4::27) by
+ OS8PR04MB8162.apcprd04.prod.outlook.com (2603:1096:604:289::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.22; Thu, 23 May 2024 08:03:59 +0000
+Received: from SG2PEPF000B66CB.apcprd03.prod.outlook.com
+ (2603:1096:4:0:cafe::8a) by SG2PR04CA0165.outlook.office365.com
+ (2603:1096:4::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.20 via Frontend
+ Transport; Thu, 23 May 2024 08:03:58 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ SG2PEPF000B66CB.mail.protection.outlook.com (10.167.240.24) with Microsoft
+ SMTP Server id 15.20.7611.14 via Frontend Transport; Thu, 23 May 2024
+ 08:03:58 +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 02/23] ARM: dts: aspeed: yosemite4: Enable adc15
+Date: Thu, 23 May 2024 16:03:07 +0800
+Message-Id: <20240523080330.1860074-3-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240523080330.1860074-1-Delphine_CC_Chiu@wiwynn.com>
+References: <20240523080330.1860074-1-Delphine_CC_Chiu@wiwynn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,190 +90,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+RFL9E5mSXPDNQ--.10759S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr1xWFWrtF4UuF45Kr13XFb_yoWrtF4rpF
-	W5GFWak3y8WF4xXwsFqw1DWF9xAw1jvFyxGrWxGayxCa4jvrn2vr1vyFW5WrW8G393CrWY
-	qa1DXFs0ka1UWFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9q14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2jI8I6cxK62vIxIIY0VWUZVW8XwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
-	YI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWr
-	Jr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJbIYCTnIWIevJa73UjIFyTuYvjTRKD73UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CB:EE_|OS8PR04MB8162:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: a550532b-892f-4b87-0395-08dc7afee69a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|7416005|1800799015|376005|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yBg5lFGQ5t1Nnagy7DNlS6K/1o97lDgT9syF7VKGT8GOajcprqcgtitGtQed?=
+ =?us-ascii?Q?gf0FuUQOFHmPTuLf6EvNJ5dYDNAVrO55B3a3BVRYKeIOs8Gqs4RGU3gxwWmZ?=
+ =?us-ascii?Q?ZlFMR0SIABBJv10eG/ZdNjXHpTLoSS5/sZZHjgaDIICWJTZGvfRAj+ZJPSyy?=
+ =?us-ascii?Q?6ue0AK3hJv2ZAJAJKpy0EbgM1cUzatlqIkAoHY8Dn8AvkuqqrSCEssdfSmGa?=
+ =?us-ascii?Q?4QZXI3L9kjHi6v+jUBnS9r6gbeTeVDYOKrsNDex+qKcv+5+eOjklUsJ8Z4uv?=
+ =?us-ascii?Q?ofRJpim6ZstGh1e1+7njdv5jc+38q3Wm0FXYzU9h/pGSSnfVVzvLMzxQhhXj?=
+ =?us-ascii?Q?MOoj+dBOV/muYqYQ4qawfpVG9a8EWBz4XCOR7lX6jqd7y5tNil02XBn8Ass2?=
+ =?us-ascii?Q?vjCdQU6hHrx4bvy1PzMOlINbYFLguAJK9Rcw7Ww3av3lwSlOF6VzFJmFBM17?=
+ =?us-ascii?Q?CXodzemCQVcJ+pT54UmuIPESTsYYmYCTg0GRVodRQUWeQClXRhC7rM+GoTgM?=
+ =?us-ascii?Q?ntyQb5JiMu9ziAnoCMCs298aIdIsH/3v77FCcgJePgXAD03cIJzhQiEBuO4J?=
+ =?us-ascii?Q?JDkTfoniNwG10bRV+u2mc/DQHSL77ZUNvIKnf7IPU3qAHUamnknHOQGvFs3j?=
+ =?us-ascii?Q?soppdF9v3G7a6vSIIw2ep2STHErYhFi8vCP2DTGOQMKr+yEppZytblDlBYx0?=
+ =?us-ascii?Q?2q3jmIrVMB0/MFppv6vnqacswCtWgd04Z0KPhBIBLH0Iw/b867s1UkmXZkC4?=
+ =?us-ascii?Q?3gNsgU9jNna+2Vv0DA8frV6sQpagX6/wn/mWdTfiq9Snlo8ymISluefHyW2L?=
+ =?us-ascii?Q?vVxKQf6lacHVTXg7FU17hYMuUapDK0Uo/dmW9XXqGO6WZJqDhlEGCKDaFru4?=
+ =?us-ascii?Q?uaBhadlc5DDwwvRm7ZysOwGDpqmFV6c0NBaWnOmsWM8aa63J5xktCN7ZC7bC?=
+ =?us-ascii?Q?9uV72cHntRNByeLD55MB6C71bD9YY37mf+38WHXGUb2RTtEdDKYHgWiEpPU/?=
+ =?us-ascii?Q?YhFNScyDq9PuDP/UVhKiR3xSPffVfzbcN8nZ5UDEBVIYx/qFzRCsk20EcDYZ?=
+ =?us-ascii?Q?B+8EKUUsnKjwHh/3x8MmJvgOl2Lrj6umM5edsQsXUlkG7HJz9aUNkURiTzKU?=
+ =?us-ascii?Q?6GtJesa8BzooXWzzf+kIExXWlNqYvCBiG0Kh0sp2tkPs/7c8xaEoCTizosX7?=
+ =?us-ascii?Q?7OcHn+MM6nI7sJLYYdFoteeGu5y+Sos4PB4mApcL9M6/UOis5knLiYr8qejL?=
+ =?us-ascii?Q?Y8eNonrVFXAGn0cLTjwBftzyIMq5Jy6J8SbyZjvELmpzvjVpkZTLdWTizv63?=
+ =?us-ascii?Q?SrlYVV/74OwJLQGpOcvo0Eo9WY4cTsHbZPsVgrdhgTc/9zqOczn9pOfHv6Rj?=
+ =?us-ascii?Q?43VPq2k=3D?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(82310400017)(7416005)(1800799015)(376005)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 08:03:58.1558
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a550532b-892f-4b87-0395-08dc7afee69a
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG2PEPF000B66CB.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS8PR04MB8162
 
-From: Yu Kuai <yukuai3@huawei.com>
+Enable Yosemite 4 adc15 config
 
-Writing 'power' and 'submit_queues' concurrently will trigger kernel
-panic:
-
-Test script:
-
-modprobe null_blk nr_devices=0
-mkdir -p /sys/kernel/config/nullb/nullb0
-while true; do echo 1 > submit_queues; echo 4 > submit_queues; done &
-while true; do echo 1 > power; echo 0 > power; done
-
-Test result:
-
-BUG: kernel NULL pointer dereference, address: 0000000000000148
-Oops: 0000 [#1] PREEMPT SMP
-RIP: 0010:__lock_acquire+0x41d/0x28f0
-Call Trace:
- <TASK>
- lock_acquire+0x121/0x450
- down_write+0x5f/0x1d0
- simple_recursive_removal+0x12f/0x5c0
- blk_mq_debugfs_unregister_hctxs+0x7c/0x100
- blk_mq_update_nr_hw_queues+0x4a3/0x720
- nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
- nullb_device_submit_queues_store+0x79/0xf0 [null_blk]
- configfs_write_iter+0x119/0x1e0
- vfs_write+0x326/0x730
- ksys_write+0x74/0x150
-
-This is because del_gendisk() can concurrent with
-blk_mq_update_nr_hw_queues():
-
-nullb_device_power_store	nullb_apply_submit_queues
- null_del_dev
- del_gendisk
-				 nullb_update_nr_hw_queues
-				  if (!dev->nullb)
-				  // still set while gendisk is deleted
-				   return 0
-				  blk_mq_update_nr_hw_queues
- dev->nullb = NULL
-
-Fix this problem by resuing the global mutex to protect
-nullb_device_power_store() and nullb_update_nr_hw_queues() from configfs.
-
-Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after an instance has been configured")
-Reported-and-tested-by: Yi Zhang <yi.zhang@redhat.com>
-Closes: https://lore.kernel.org/all/CAHj4cs9LgsHLnjg8z06LQ3Pr5cax-+Ps+xT7AP7TPnEjStuwZA@mail.gmail.com/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
 ---
-Changes in v2:
- - remove the unrelated code.
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/block/null_blk/main.c | 40 +++++++++++++++++++++++------------
- 2 files changed, 27 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index 5d56ad4ce01a..eb023d267369 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -413,13 +413,25 @@ static int nullb_update_nr_hw_queues(struct nullb_device *dev,
- static int nullb_apply_submit_queues(struct nullb_device *dev,
- 				     unsigned int submit_queues)
- {
--	return nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
-+	int ret;
-+
-+	mutex_lock(&lock);
-+	ret = nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
-+	mutex_unlock(&lock);
-+
-+	return ret;
- }
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+index 66855efa0b4b..dd88be47d1c8 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+@@ -51,7 +51,7 @@ iio-hwmon {
+ 		compatible = "iio-hwmon";
+ 		io-channels = <&adc0 0>, <&adc0 1>, <&adc0 2>, <&adc0 3>,
+ 				<&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
+-				<&adc1 0>, <&adc1 1>;
++				<&adc1 0>, <&adc1 1>, <&adc1 7>;
+ 	};
+ };
  
- static int nullb_apply_poll_queues(struct nullb_device *dev,
- 				   unsigned int poll_queues)
- {
--	return nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
-+	int ret;
-+
-+	mutex_lock(&lock);
-+	ret = nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
-+	mutex_unlock(&lock);
-+
-+	return ret;
- }
+@@ -925,10 +925,10 @@ &pinctrl_adc4_default &pinctrl_adc5_default
  
- NULLB_DEVICE_ATTR(size, ulong, NULL);
-@@ -468,28 +480,31 @@ static ssize_t nullb_device_power_store(struct config_item *item,
- 	if (ret < 0)
- 		return ret;
+ &adc1 {
+ 	status = "okay";
+-	pinctrl-0 = <&pinctrl_adc8_default &pinctrl_adc9_default>;
++	pinctrl-0 = <&pinctrl_adc8_default &pinctrl_adc9_default>
++			&pinctrl_adc15_default>;
+ };
  
-+	ret = count;
-+	mutex_lock(&lock);
- 	if (!dev->power && newp) {
- 		if (test_and_set_bit(NULLB_DEV_FL_UP, &dev->flags))
--			return count;
-+			goto out;
-+
- 		ret = null_add_dev(dev);
- 		if (ret) {
- 			clear_bit(NULLB_DEV_FL_UP, &dev->flags);
--			return ret;
-+			goto out;
- 		}
- 
- 		set_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
- 		dev->power = newp;
- 	} else if (dev->power && !newp) {
- 		if (test_and_clear_bit(NULLB_DEV_FL_UP, &dev->flags)) {
--			mutex_lock(&lock);
- 			dev->power = newp;
- 			null_del_dev(dev->nullb);
--			mutex_unlock(&lock);
- 		}
- 		clear_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
- 	}
- 
--	return count;
-+out:
-+	mutex_unlock(&lock);
-+	return ret;
- }
- 
- CONFIGFS_ATTR(nullb_device_, power);
-@@ -1932,15 +1947,12 @@ static int null_add_dev(struct nullb_device *dev)
- 	nullb->q->queuedata = nullb;
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
- 
--	mutex_lock(&lock);
- 	rv = ida_alloc(&nullb_indexes, GFP_KERNEL);
--	if (rv < 0) {
--		mutex_unlock(&lock);
-+	if (rv < 0)
- 		goto out_cleanup_disk;
--	}
-+
- 	nullb->index = rv;
- 	dev->index = rv;
--	mutex_unlock(&lock);
- 
- 	if (config_item_name(&dev->group.cg_item)) {
- 		/* Use configfs dir name as the device name */
-@@ -1969,9 +1981,7 @@ static int null_add_dev(struct nullb_device *dev)
- 	if (rv)
- 		goto out_ida_free;
- 
--	mutex_lock(&lock);
- 	list_add_tail(&nullb->list, &nullb_list);
--	mutex_unlock(&lock);
- 
- 	pr_info("disk %s created\n", nullb->disk_name);
- 
-@@ -2020,7 +2030,9 @@ static int null_create_dev(void)
- 	if (!dev)
- 		return -ENOMEM;
- 
-+	mutex_lock(&lock);
- 	ret = null_add_dev(dev);
-+	mutex_unlock(&lock);
- 	if (ret) {
- 		null_free_dev(dev);
- 		return ret;
+-
+ &ehci0 {
+ 	status = "okay";
+ };
 -- 
-2.39.2
+2.25.1
 
 
