@@ -1,145 +1,128 @@
-Return-Path: <linux-kernel+bounces-187300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203008CCFDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:03:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCAB8CCFDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EDC31C223A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D80283FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F8613DBA0;
-	Thu, 23 May 2024 10:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B2B13E3EC;
+	Thu, 23 May 2024 10:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQ7xxNQt"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x/i3tPBA"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EFB54FA9;
-	Thu, 23 May 2024 10:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937D013D2A8
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716458616; cv=none; b=Cq3yWkPhZGlOSr06ujPOLyTIyCghSfkStRGtXEeEXcOo773nI2SBV8y7aigm6+lKOqWM9D8BjwyGo4Ik06gSSDtb4Q4WVY/fkoayNYBl2KywCqPyllErdZ2himpGkR1rU0z4SA7TuYRgqTKt83PtI9U67+44EXa2XAg8X7ghzR8=
+	t=1716458645; cv=none; b=esLKBKV+gkt1UORtWRjKxcDKDoVdUAsC9Gx30YVgJw1aK5wOyxosEaVVG8NPaH/G6pVSemsLEuxXyGThf0CtGhGNDkACeQy+WLIgHTKH5FMCauYZ+oxG6YdQfjYEG5vEgBYIxomVuXPjcM9phERRs0XWnDQk34lXN7IUk8gWvYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716458616; c=relaxed/simple;
-	bh=B4htPf5xVGqwwBiDxnPNiauy0HwH3xHECMfV7BHwozY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rfmycfeNGOwElsQ+3726YXsCrmCvXwa+TDelcQA7DXqa8wU5RWF2zPQ8iJiCZymoytsqYVeNYIile0/TEHVikajnnMMWR67goSDuuLc5kEgj+YJHUVfTLeA6DTWOYr7VQA402vmCAxfF6uSvZH3tOup7IHaqWVYGmz9YQwGMZ+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PQ7xxNQt; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b281f0d06dso797841eaf.0;
-        Thu, 23 May 2024 03:03:35 -0700 (PDT)
+	s=arc-20240116; t=1716458645; c=relaxed/simple;
+	bh=BHP9XT/mVXwqm4ETOekupe344ZcCjtfN+SBGF641Vc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q550MRLsFWLvEDW8PHt91HG+f9cYc+vZWkgHKyFFSInL3hTcIZmwSusZ72duOvCHRBQbmm2LCZFaH1HeeC3SP4WVnV1DRNh8wcDTUMt61izXAuJAWVjrZY4iKt3jtsyAHVAwDUj0U/SxpFjl3FUvnwYbO7gacdgbpkMpi3jhCEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x/i3tPBA; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-51f174e316eso7010621e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:04:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716458614; x=1717063414; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HQx+LcYS09PLD4Y4zGUC2HmR9UsKcG3BWLMiJQmSWWY=;
-        b=PQ7xxNQtjGIXnEUGbwdDBR7gpZ2qg5ke9N+vE4dvyB5p4FyI4l6Ddij7IKVlXayofC
-         Mmfg9FAO3D25KWtD7YtnfxlhW80aW6LhCSnzGNTHndR2VoTctHjdqMyU5NnyaWjxnMms
-         SowiNbhCL0yjL3GZBVCmOCtjtTOy73VBhk23ckCcP8b11piVjaUHpk/6SxR++LQBXg0s
-         +Wste+bVnAw5/wx8MIIS+Ks3td5xPvKtjVAHKAOEIt0VPt7Gh0iVj4tYc0gdpxfP3MjH
-         wnGB9gx6nw1xE3Pvltci5j9vpwd23t4wPYoGnDXc7AI5H76ZbCooD4T+4TxkB2Xw9ncS
-         QD+g==
+        d=linaro.org; s=google; t=1716458641; x=1717063441; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TH/BUWVtxkmUJ13gtzS4sCxD7fWyObo8iOIYwJa0PIw=;
+        b=x/i3tPBAJ0nIFSNZNVwvRgUGI9xLp/XgaIQo8VX18/hCsQ8IfU46o5PLInDkgfDTSp
+         NHtqMNi2ez0QsLApxRYuEp0WhN3X1kYxP+Buo1Rl+QgKSncssA37m4cI1JYF22YL8Nzl
+         ht8C8XY+gUhqnpB0NGgE4uOLXSK1NztO8Kj+2WYIUD9IZ6hS8uU7abIZiJeADkBxiQsf
+         2d/VKh8bDToR+uKWNBkO1LoovBEcxevMiI2gtO2UPRCJpA3wH9EmYqKM7s6UuHHMVJf7
+         +ejj7UDOAxyPhhWHQVro65mVmhGO9CHdKLery7RIfnVFU0kI+ejhTFeVl2qNsUsTVOw4
+         lhNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716458614; x=1717063414;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQx+LcYS09PLD4Y4zGUC2HmR9UsKcG3BWLMiJQmSWWY=;
-        b=wDryOO4DFN1N0FmH/AK0ajLIEai2EJBY1GTMHPCtUQP8DmcCpPaiA8G4tGMq9IugSz
-         pkSZnfcaLr2u31eZU26uVH+KTsa9IHxs8Ajcz6BU7xgDj+PHQRg3RDmogT5dnun/qJf5
-         6Qkk/RP2pawBj/hZDL1CG2Iau20fKdxL3v9Gr5t97GJquGR/1VxdsHELKVnZnd6LaiGv
-         FIuvceZDG+xDvQ2TLG2OS7S7Wv7Z6GceeLau0geCkZCL8ga1CIbq4yFCqqwWM9P1BbOi
-         ZA2GbqHRhc2nrZiO68LoSqlebqfgC/cAx9En9tfp3P5H0HzqzBdNXGu+cotV//rSSqBH
-         0cTg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9QSImN+vTXOGAcKpCHcZxqexwjYLBj/iikP8Uy5xeCgaNx4jWTKCvgXyqhi05tO67+oWOCfvplamHT+Gzfm/0rFAaBPUnxSTu4DmZFMLw+U9iAqxWcFuge4EMJkJDb4NUUhpV7wC5vQ==
-X-Gm-Message-State: AOJu0Yysrx1oBXXBvhAMzqFQ2Pb7+BeJju0NI+c3HO9PsuflYwIH40YZ
-	QuLxICa8FzI2jXbWIQcLOLTywTePIG6blxzIXQwy2LbTHgnUp7AH
-X-Google-Smtp-Source: AGHT+IE3AX0RgKsULxVNb/QunUqi3o/GN0pSoCZQmWAZYBCQadqwCr+epwhZuOeA3sjqRAz15zCQPw==
-X-Received: by 2002:a05:6820:2585:b0:5af:be60:ccdc with SMTP id 006d021491bc7-5b69e0eda3cmr4794743eaf.0.1716458614445;
-        Thu, 23 May 2024 03:03:34 -0700 (PDT)
-Received: from [192.168.0.98] ([67.6.32.220])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e0bf64844sm154398411cf.62.2024.05.23.03.03.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 03:03:34 -0700 (PDT)
-Message-ID: <f613ad78-9e87-4ba7-b944-b1f11ec5294b@gmail.com>
-Date: Thu, 23 May 2024 05:03:32 -0500
+        d=1e100.net; s=20230601; t=1716458641; x=1717063441;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TH/BUWVtxkmUJ13gtzS4sCxD7fWyObo8iOIYwJa0PIw=;
+        b=Tlvs5IrUkdD+U97jZGObEz2jhBRub7w6dSHzADopaJvFYro0sgVIOUgL0oVktosyfV
+         zwnYsyALAhDHXk5E9jJ85E7qpokigeCFgCxmjbGxYYdb/yGpG36nhfJbgWDEAQu1U7Lu
+         ZRyZRq4/eJ0aV+fv81C+n4F8HrnfAIT48jPivkg7H7erSe2MMLCVyqUtMYPO6AbFc2CX
+         4pwK4dNoODfV135DNnV3ERRvnbTKOEh4DdVVZ6sJZjLCoRfJDfptzmtrAl0vFD6bbCHG
+         m2qnZU3SRLF7xN9Px7WURPRrViXZmfBczlYPGvjBCglcr1C2BsvYt05ivWLYFOiIuNGq
+         aEXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHkQYvC8avBwZXQFgQlXcjIof8IYOQO0kxPLtBFReYuCuB4cKPaRx7kkrM6TXd1SAKzaX1/VlmHRXYLTMQuuDzzNg0wGg/gwMrHc9M
+X-Gm-Message-State: AOJu0YyWtGZ5vUzCqcPDQqZhmu+71Xh7IvGy5IFDYqsW1oRL1QWdQ4uy
+	Tu1NShwDj3aGgKITOV9dr8AbQ/70INZnw0Rji/QQHEasknLS/V3odGW/udyowO4=
+X-Google-Smtp-Source: AGHT+IGlpqecDFsJDGKpUD/L/07fSwQIVn93IEsQGl4tYZ0BdBGomkd7vGGiht1/7leKlSP/ZRYLZg==
+X-Received: by 2002:ac2:5930:0:b0:523:89b0:9b64 with SMTP id 2adb3069b0e04-526bebb45afmr2452653e87.7.1716458640738;
+        Thu, 23 May 2024 03:04:00 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d8ae2sm5423836e87.204.2024.05.23.03.04.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 03:04:00 -0700 (PDT)
+Date: Thu, 23 May 2024 13:03:58 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Sebastian Wick <sebastian.wick@redhat.com>, 
+	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v14 13/28] drm/connector: hdmi: Add custom hook to filter
+ TMDS character rate
+Message-ID: <hjz32n3wokppjxdpzu2lsoypno2dy6thi3tfrkhy76g7v2a5aq@5hjjd52fsqup>
+References: <20240521-kms-hdmi-connector-state-v14-0-51950db4fedb@kernel.org>
+ <20240521-kms-hdmi-connector-state-v14-13-51950db4fedb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: input: document Novatek NVT touchscreen
- controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, Hans de Goede
- <hdegoede@redhat.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240521-nvt-ts-devicetree-regulator-support-v1-0-8d766c639dca@gmail.com>
- <20240521-nvt-ts-devicetree-regulator-support-v1-1-8d766c639dca@gmail.com>
- <6f22e42d-8a06-4c24-93bd-25b6ac141cea@kernel.org>
- <7d84912f-7bc4-4376-9f13-31fae16013f4@gmail.com>
- <6635cbee-be58-4c84-9caf-309866f1002b@kernel.org>
-Content-Language: en-US
-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-In-Reply-To: <6635cbee-be58-4c84-9caf-309866f1002b@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521-kms-hdmi-connector-state-v14-13-51950db4fedb@kernel.org>
 
-Hi Krzysztof Kozlowski,
-
-On 5/23/24 01:18, Krzysztof Kozlowski wrote:
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - novatek,nvt-ts
->>>
->>> That's too generic. Looking at your driver change, it is not even needed.
-
-As suggested by Hans de Goede, I will fix the too generic issue in v2.
-
->>>> +      - novatek,nt36672a-ts
->>>
->>> Eh, we have already panel. Why there is a need for touchscreen binding
->>> (binding, not driver)?
->>
->> I am not sure I understand this correctly. Help me a bit here. For
->> context, in mainline there is an existing driver for the novatek nvt
->> touchscreen controller. The driver did not have devicetree support. It
->> only had a i2c_device_id "NVT-ts". I don't know what is the variant of
+On Tue, May 21, 2024 at 12:13:46PM +0200, Maxime Ripard wrote:
+> Most of the HDMI controllers have an upper TMDS character rate limit
+> they can't exceed. On "embedded"-grade display controllers, it will
+> typically be lower than what high-grade monitors can provide these days,
+> so drivers will filter the TMDS character rate based on the controller
+> capabilities.
 > 
-> I just got a bit confused that you add another binding for the same
-> device, but now I see these are different interfaces - DSI and I2C.
+> To make that easier to handle for drivers, let's provide an optional
+> hook to be implemented by drivers so they can tell the HDMI controller
+> helpers if a given TMDS character rate is reachable for them or not.
 > 
->> that Novatek touchscreen controller. To use the driver in Xiaomi Poco
->> F1, I introduced a devicetree compatible for it "novatek,nvt-ts". The
->> However, the Novatek touchscreen controller present in Xiaomi Poco F1 is
->> "NT36672A" which has a different chip id than the one in existing
->> driver. So I created a separate compatible for this touchscreen
->> controller variant "novatek,nt36672a-ts". I used compatible data to
->> differentiate the two variants. Since there are two variants, I am
->> mentioning both here.
+> This will then be useful to figure out the best format and bpc count for
+> a given mode.
 > 
-> Just to be clear, I don't care about driver here but hardware. You have
-> two separate interfaces on this hardware - DSI virtual channel and I2C?
-
-Yes, there are two different interface in the hardware. The display 
-panel is connected via DSI and the touchscreen is connected via I2C 
-interface separately.
-
-> 
-> Best regards,
-> Krzysztof
+> Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c    |  9 +++++++
+>  drivers/gpu/drm/drm_connector.c                    |  4 +++
+>  drivers/gpu/drm/tests/drm_connector_test.c         | 14 ++++++++++
+>  drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c |  4 +++
+>  include/drm/drm_connector.h                        | 31 ++++++++++++++++++++++
+>  5 files changed, 62 insertions(+)
 > 
 
-Regards,
-Joel Selvaraj
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+-- 
+With best wishes
+Dmitry
 
