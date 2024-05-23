@@ -1,119 +1,224 @@
-Return-Path: <linux-kernel+bounces-187497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4A18CD295
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EEE8CD2A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5811F21BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2515B1F21E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE13614A4DF;
-	Thu, 23 May 2024 12:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4B714AD38;
+	Thu, 23 May 2024 12:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BdhItuci"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="deZBBX3f"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E06C8174C;
-	Thu, 23 May 2024 12:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5021474BC
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716468559; cv=none; b=d8E6/jNTPBc5uI5jF4heLEydrmXrE0L6xwaQe4tP7tPtq4kiz1LhlOOXBeo7oxAgSHMN7Wlw2biuXe8Q2qk2smH34KzJhikXG7HDKHI2ENSJlgE5j1UiOMEj3YoYSqx4mTgfjq9IbiW8FuPyvoLoXrOvoG8PsVzXbDu4Bo0zIN0=
+	t=1716468570; cv=none; b=JuMk+1x1+TDiMmO7GePvHMoPwDMN559dk/KcbRKHNzB22VcUOBF7hAwyieeqjkJu5JDsf1vFfDMq7Tp5byJzM2/uxcjofKKWbT4Eatb75rDJYiEo/lP3T6IvWA2zNiBCmUPJJuQOCcKkDN/YnyKLkbQDwhnuN+akrtq/C3mW/6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716468559; c=relaxed/simple;
-	bh=e1/5ituq3BLc4p6hJQCp0rH729ZvAK/JPQCVOmmZpdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BrzPTujFrHtqi82cO9sR9Xdbg/0Yg6AsTpdHcZW42BgwA3/cvgJWIKXoWyxQyiPIytmJ6mfSNprfevm02TQah2U86G+wqYNYVJ3+WXbsOkaQGm0UhUvvg6SRXdDjG1hcnSWILGlA1zpzO/uE0PPzT4wJpmJMTHXIBSKRF2JY6HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BdhItuci; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716468557; x=1748004557;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e1/5ituq3BLc4p6hJQCp0rH729ZvAK/JPQCVOmmZpdg=;
-  b=BdhItuciNLwKbdJeHrSFq/Fzx72rUDmS25J0LfUHefFmVqlsHZiupvPh
-   on7mXYxRyy6hn20dJxW/PiQcLbqsP5h2kU7xCLXL7fxE5Gh0gWxpLKIOa
-   ujPgjw5REhN92vftn1ZBmM91Fwa3FhaEcX3IbAvQKAM1iMzNTFXWkMAie
-   YSvG5aEY+nkSQdvvi8Ngl78lYyIEL+KnWY8pu0XW3gDidTeSpwPX681sD
-   f/HO3p7jDNLkReFcsDpnGYSLzjkF59X8TPbahv3s8Air9z36A4Q2NmjRj
-   sk1DNwKGKhLoYcbFrq8p7SDrnM/uuC6kpuU70lpUeBEe/PBEd8UWIAlZn
-   Q==;
-X-CSE-ConnectionGUID: VuqQH3vpRDuW1J6YG7BL1Q==
-X-CSE-MsgGUID: Mkw63Yt/Sx+0J+xjmj1+sA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="23915456"
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="23915456"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 05:49:16 -0700
-X-CSE-ConnectionGUID: SjSzpwZNR5OHnoz4eUBT7g==
-X-CSE-MsgGUID: ZdOLjEcxRHGI3Jt0zs7NxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
-   d="scan'208";a="56886990"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 23 May 2024 05:49:12 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sA7sZ-0002rl-2g;
-	Thu, 23 May 2024 12:49:08 +0000
-Date: Thu, 23 May 2024 20:48:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: oe-kbuild-all@lists.linux.dev, eajames@linux.ibm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ninad@linux.ibm.com, lakshmiy@us.ibm.com, linux-i2c@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-	andrew@codeconstruct.com.au, joel@jms.id.au, robh@kernel.org,
-	conor+dt@kernel.org, krzk+dt@kernel.org, andi.shyti@kernel.org,
-	broonie@kernel.org
-Subject: Re: [PATCH v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
-Message-ID: <202405232008.olE9azVd-lkp@intel.com>
-References: <20240522192524.3286237-18-eajames@linux.ibm.com>
+	s=arc-20240116; t=1716468570; c=relaxed/simple;
+	bh=C7fb6vzetq5ZU7eJKZoB5RoOcLjPpbbNJrU4NnwRSZc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iHQ7SL784T8yFxb3ayEstDZ1SC8r+Nh/ldhHyI3Rx0HGgfqDici4uHfUdVhTGXxMgW63z44caq4m3x1zNicnoIy7yHNioqc6dw+mCKmHvQcpSjaIUAUCK/q6Tl2VIPMMQ0yOT7SrP+6IbE+2UCLKdUGko1E8DbNsMR8yNAlix6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=deZBBX3f; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3504f34a086so5010322f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716468565; x=1717073365; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b5RaZkdxauaYXfbvyvKa6gyD2x+fNrK3XRhxpmIfkZk=;
+        b=deZBBX3fc8fYaXGCmLQBAcG4md7CNcI/yIW86QSK2qvE3ljd1yr0WvmsvXHKzB3rNc
+         vU1D8osWyK0wADtNVvKj1whsjbefb4nQFRQZ2uhEvGje4NpvnQlaWd7Nx7EneyXXffN2
+         IwAuftEZRzWAyFqKcIX/Oo59SC/QY4fQXMSGlbRr9KQLlA1wsrYTE6KG+h/fO52L99Ua
+         M5d8m8ZlaOA6Gqp38w2ibC0j+g+KFVIkrgIDHNgqYULDsj5dlWaZejAnsLVU7n0qxNqc
+         FmLC373ZLKVVe5ZqwwYNf3Qel//4QDy49rj1GFqnpyo3fzkUa3+UsLPngfngKTS2Gdnj
+         jGrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716468565; x=1717073365;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b5RaZkdxauaYXfbvyvKa6gyD2x+fNrK3XRhxpmIfkZk=;
+        b=cvg8zGPRmhLeEE3C8Ia9h0CNVchr4h+B6Zo2m2McW6yohxWLeihA7/2FL+7xc6T//k
+         CoJtlmCRWblntwdiCh8C5YxhPM31P9lopZXFcNPKl47eIacURFLwve3b8XaNHB2lB+mh
+         ls68UHSBg6FqWM4YuB+AnQd3Jp78FOHlBJukyiV9H3+TDTonWkZTZu9irrCKAi6cPD8y
+         yCXY6aHTSbCUK5kpdKIki+nQJFaOc1zRqhyYKpspI8JRFGb6cxK8ylRUUyg6DS9R4zNZ
+         ceg+aEQaSG9tavklxydlW4sGLgcbl8L6URcTdZ/Crx8eIKP80fobVFKgOXqpgVmtThFH
+         bDvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXA22jAS+OXACOuBGxQd0XuYqxwC4iEeRSFhTR5sVBPzLTokZ60drHxGdNb4OJqTh9BEq3j80W/NZNqVhExtJ8zT+IpTRzqSwBgYiKg
+X-Gm-Message-State: AOJu0YyaWfCucGNFgfblQ2+NEY69IK9WjICLMBRarR/fCiUXLPJxatv3
+	tKLqauwJyjn2w6bDNcEa0LTXzuYTpet4lrVTtRmq0HOm5o0Ei5vyR12GXZ/I4S1r0nzVL8+oC23
+	xmA8=
+X-Google-Smtp-Source: AGHT+IHqEiyqrTp7LMxvNs2yc3pjoFF6b/IfjewpD+KY1pkilwCf+jGNlrljBdFDIaw7VPg2BoJfJA==
+X-Received: by 2002:adf:f509:0:b0:354:bc5c:6963 with SMTP id ffacd0b85a97d-354d8cccc64mr3588960f8f.16.1716468565082;
+        Thu, 23 May 2024 05:49:25 -0700 (PDT)
+Received: from [127.0.1.1] ([93.5.22.158])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-354faf3fa68sm1259611f8f.116.2024.05.23.05.49.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 05:49:24 -0700 (PDT)
+From: Alexandre Mergnat <amergnat@baylibre.com>
+Subject: [PATCH v4 00/15] Add display support for the MT8365-EVK board
+Date: Thu, 23 May 2024 14:49:13 +0200
+Message-Id: <20231023-display-support-v4-0-ed82eb168fb1@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522192524.3286237-18-eajames@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEk7T2YC/4WOTQ6CMBSEr0K6tqbtK1hdeQ/joj8PaYJAWiQSw
+ t1tWRoNi1nMJPPNLCRi8BjJpVhIwMlH33fJyENBbKO7B1LvkieCCeBJ1Pk4tHqm8TUMfRiprSR
+ XBhhKfiapZXREaoLubJN7I8aR53wIWPv3tnS7J9/4OPZh3oYnntP/GxOnjJZWVQxdaQHM1ei59
+ Sbg0fZPknGT2EGIhACwqFQljRCnHwjYQUB+AaBUDehAfr9Y1/UDgMizT08BAAA=
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Jitao Shi <jitao.shi@mediatek.com>, CK Hu <ck.hu@mediatek.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Alexandre Mergnat <amergnat@baylibre.com>, 
+ Fabien Parent <fparent@baylibre.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4708; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=C7fb6vzetq5ZU7eJKZoB5RoOcLjPpbbNJrU4NnwRSZc=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBmTztT5Bhxm5XHOggjDXk9dLGPF/rwS5HRGXuNUV8E
+ eM1x+yKJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZk87UwAKCRArRkmdfjHURdJyEA
+ Cg3bDewemZXZpwMZ+hzD3CnNlWwVQriRJfA5CX9ph6pBGMPNiCEYY7KANNRnxaoUIl7MNQEclY8ejc
+ y3Q0AXGTTlWOHpaggbs8cbHVjo+3aog4DleQAlRZ+Y2zCaEt9GQrnrVnAyp4iUDB8Z9KHK9YXUb4er
+ ImGYYDKAbGRoa31tg2Vm7zgd5aGwTfqdkDHaqIcT72dvC+4QPXXxwodYR8joFiiGooWRgX5DmZ/+Ur
+ dimhH6AlR5y7lXCKyqGF8hVMHwI8s5fNWpV/IIE/av6jKl4o5893ShBb+Ygl8fSvETaI3atvD0WiRH
+ hwXDAWeK7gw63JOrp59psmbfmXI9LepAg0rdCG0WZI2RM2OFGee+WyoVI0NINhRWC2WzdM03f5oelC
+ 1K8ptO9Q7rvO5r4TGYdF23reILcNaHhGgvVGXTa+IpUzi32VH2ZCv6NlG1g+2CR1QZZlGW2ZOU1yyi
+ fi0WwWTzydOo+uV/YrO06djxYOrDdO07aZPmHcagUb/A9c1+sgUJG8udE20+Hy9+Lr7kOHg7nbEH6c
+ H4NVpjHKjkM5GqQn4sJvKjozTxapmOiBPLzzHHC/DzMv+EdBFgnsptY8lEg5XZagqMBorrKNjEQIc4
+ MEewmx6cVDHOFn33OkHzqitJKWDriemTrwBBtqxZke/24biWUOFfqIsoKWgA==
+X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
+ fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 
-Hi Eddie,
+The purpose of this series is to add the display support for the mt8365-evk.
 
-kernel test robot noticed the following build errors:
+This is the list of HWs / IPs support added:
+- Connectors (HW):
+  - HDMI
+  - MIPI DSI (Mobile Industry Processor Interface Display Serial Interface)
+- HDMI bridge (it66121)
+- DSI pannel (startek,kd070fhfid015)
+- SoC display blocks (IP):
+  - OVL0 (Overlay)
+  - RDMA0 (Data Path Read DMA)
+  - Color0
+  - CCorr0 (Color Correction)
+  - AAL0 (Adaptive Ambient Light)
+  - GAMMA0
+  - Dither0
+  - DSI0 (Display Serial Interface)
+  - RDMA1 (Data Path Read DMA)
+  - DPI0 (Display Parallel Interface)
 
-[auto build test ERROR on andi-shyti/i2c/i2c-host]
-[also build test ERROR on linus/master v6.9 next-20240523]
-[cannot apply to robh/for-next broonie-spi/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The Mediatek DSI, DPI and DRM drivers are also improved.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eddie-James/spi-dt-bindings-Document-the-IBM-FSI-attached-SPI-controller/20240523-033334
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20240522192524.3286237-18-eajames%40linux.ibm.com
-patch subject: [PATCH v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
-config: arm-randconfig-001-20240523 (https://download.01.org/0day-ci/archive/20240523/202405232008.olE9azVd-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240523/202405232008.olE9azVd-lkp@intel.com/reproduce)
+The series is rebased on top of Angelo's series [1] to
+use the OF graphs support.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405232008.olE9azVd-lkp@intel.com/
+Regards,
+Alex
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+---
+Changes in v4:
+- Rebase to "next-20240523" branch.
+- Patch merged, then removed from the series:
+  - dt-bindings: display: mediatek: dpi: add power-domains property
+  - dt-bindings: pwm: mediatek,pwm-disp: add compatible for mt8365 SoC
+  - clk: mediatek: mt8365-mm: fix DPI0 parent
+- Remove mediatek,mt8365-dpi compatible from mtk_drm_drv.c because it
+  use the mt8192's data. It's a miss.
+- Add MT8365 OF graphs support, remove the hardcoded display path and
+  rebase on top of Angelo's series [1].
+- Link to v3: https://lore.kernel.org/r/20231023-display-support-v3-0-53388f3ed34b@baylibre.com
 
->> Error: arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-huygens.dts:13.2-37 Properties must precede subnodes
-   FATAL ERROR: Unable to parse input tree
+Changes in v3:
+- Drop "drm/mediatek: add mt8365 dpi support" because it's the same
+  config as mt8192 SoC
+- Drop "dt-bindings: pwm: mediatek,pwm-disp: add power-domains property"
+  because an equivalent patch has been merge already.
+- Add DPI clock fix in a separate commit.
+- Improve DTS(I) readability.
+- Link to v2: https://lore.kernel.org/r/20231023-display-support-v2-0-33ce8864b227@baylibre.com
 
+Changes in v2:
+- s/binding/compatible/ in commit messages/titles.
+- Improve commit messages as Conor suggest.
+- pwm-disp: Set power domain property for MT8365. This one is optionnal
+  and can be used for other SoC.
+- Fix mediatek,dsi.yaml issue.
+- Remove the extra clock in the DPI node/driver and fix the dpi clock
+  parenting to be consistent with the DPI clock assignement.
+- Link to v1: https://lore.kernel.org/r/20231023-display-support-v1-0-5c860ed5c33b@baylibre.com
+
+[1] https://lore.kernel.org/all/20240521075717.50330-1-angelogioacchino.delregno@collabora.com/
+[2] https://lore.kernel.org/lkml/67f13b3c-18b2-4042-9908-b4d41c24cdb0@baylibre.com/
+
+---
+Alexandre Mergnat (13):
+      dt-bindings: display: mediatek: aal: add compatible for MT8365 SoC
+      dt-bindings: display: mediatek: ccorr: add compatible for MT8365 SoC
+      dt-bindings: display: mediatek: color: add compatible for MT8365 SoC
+      dt-bindings: display: mediatek: dither: add compatible for MT8365 SoC
+      dt-bindings: display: mediatek: dsi: add compatible for MT8365 SoC
+      dt-bindings: display: mediatek: dpi: add compatible for MT8365
+      dt-bindings: display: mediatek: gamma: add compatible for MT8365 SoC
+      dt-bindings: display: mediatek: ovl: add compatible for MT8365 SoC
+      dt-bindings: display: mediatek: rdma: add compatible for MT8365 SoC
+      drm/mediatek: dsi: Improves the DSI lane setup robustness
+      arm64: defconfig: enable display connector support
+      arm64: dts: mediatek: add display blocks support for the MT8365 SoC
+      arm64: dts: mediatek: add display support for mt8365-evk
+
+Fabien Parent (2):
+      dt-bindings: display: mediatek: dpi: add power-domains property
+      drm/mediatek: add MT8365 SoC support
+
+ .../bindings/display/mediatek/mediatek,aal.yaml    |   1 +
+ .../bindings/display/mediatek/mediatek,ccorr.yaml  |   3 +
+ .../bindings/display/mediatek/mediatek,color.yaml  |   1 +
+ .../bindings/display/mediatek/mediatek,dither.yaml |   1 +
+ .../bindings/display/mediatek/mediatek,dpi.yaml    |   9 +
+ .../bindings/display/mediatek/mediatek,dsi.yaml    |   1 +
+ .../bindings/display/mediatek/mediatek,gamma.yaml  |   1 +
+ .../bindings/display/mediatek/mediatek,ovl.yaml    |   1 +
+ .../bindings/display/mediatek/mediatek,rdma.yaml   |   1 +
+ arch/arm64/boot/dts/mediatek/mt8365-evk.dts        | 236 +++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt8365.dtsi           | 336 +++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |   8 +
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |   2 +
+ 14 files changed, 602 insertions(+)
+---
+base-commit: 5fe1859247a981fa491507de2b1ba63e84addc38
+change-id: 20231023-display-support-c6418b30e419
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Alexandre Mergnat <amergnat@baylibre.com>
+
 
