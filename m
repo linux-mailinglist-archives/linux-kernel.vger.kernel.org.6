@@ -1,145 +1,223 @@
-Return-Path: <linux-kernel+bounces-187634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D7D8CD5A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:23:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F0A8CD5A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57D451C214D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD8A1C212D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A43414BF91;
-	Thu, 23 May 2024 14:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E0C14D296;
+	Thu, 23 May 2024 14:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDO0BB+N"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvSXR7qA"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BD014AD17;
-	Thu, 23 May 2024 14:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53ED14BF90;
+	Thu, 23 May 2024 14:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716474207; cv=none; b=HfWONqAJD3IKUXDJyd0NmRlS+9LHZQEFkjMgDG4i5rujKrhz4FtRTq9RxRZnCoKKYciPZT9qciDoHMrekTd/pnp5G+vDBA4ZFdVx2Ya+uEoghG0Y0BYuNqjkLdbEChgpTHrF7Bslg1g6ZjcLeNLopOkdXHHmmJxSggs18sTWkKA=
+	t=1716474224; cv=none; b=nOiMtFZebmeUaLR7bEC3BMh3zcdqYMk+FlRcYj2sXwo5kVQQ1emcYvYT66CujZBsPRZ+i9CiVvrvXB8u/1XNrLqLCaZEINsFJ0I95ZkxSg6La+xJviIEfOes2Hm5pOkEylNkjNwGY+Mh2WQzo9umYR16IRlLt64ufu65qYBBev8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716474207; c=relaxed/simple;
-	bh=JJ7bmhmcdNu8MKywaSirfkV+WFbvuDMYyJFOVkiBXjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gVGwibRh6TNM7Kt8XGwjndoA4Zp5M9ckOJfUWTbYmSfZRy69lVGYHZtbOwVy8MVVNMUlByvZVxAHATUi1y7XA6CaVtdiQSI6J2KfLMzhYnExevMrdklMmhNsfs/Bo5WWlnBAR2i+oiBrJn30wJBi1kJiJQ9Vpe3G3nwdwDwmkyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YDO0BB+N; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1716474224; c=relaxed/simple;
+	bh=yrGCGjJOaGbQ0l/A8VzBNklsCpurFdk/1Chj5MJVhT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SMR+ciuRBx9NLqJdXUQdAfSf70Ck9EBLGu8W9fnRvuWP47k0kWm3lMrWBbQfvnDG9KE3frQVeN8FojJTQJCUIpkSn0PYv///5NueET8zVvB0aQFtJimelbvWO91kypfMkrrEiYP+csIBF++ugoAxYf+hHObLntDZwSjKsbpAi+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvSXR7qA; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f44d2b3130so3432754b3a.2;
-        Thu, 23 May 2024 07:23:26 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e951296784so8340761fa.1;
+        Thu, 23 May 2024 07:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716474206; x=1717079006; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t/lNADwPwr25pysfe9uC4MhtrxN5wTcZxfw/uoqzjrk=;
-        b=YDO0BB+NuwXlDvo2rV6k+PnTabfQjYkUWTwhya2kRn5s6sWfv5pR4qpoypnBo2FeQx
-         Pklz2TPD9BSqfNAQEc71JRvuxwLU043Ds67z8lFUNJJdYpWr/Ci/aCpSP0LKIE0IuV9f
-         BVLJe1AA+i9K+z0DAesYeMz325uU6uZJKq6L6I3on3sOYxgnSLm6QYr7TF5dRJ7MPya5
-         l6EuyOBU7mp3Ah4w0436OJ3hE/ihlvQlx7V026s13nL8qKGqlqAzXFQoXqGQfMArcnZ1
-         ZzKvRAxrmWoTKS/Nq4VY9zFwzmzxoTmw7ocTNAtlMhd7FnwlWDHpMSidklQ7gJN2LFFY
-         7fhg==
+        d=gmail.com; s=20230601; t=1716474221; x=1717079021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JG/V5KaB4zeIXCOM315hO8c28tW7uX6d2gIJRmze4Sk=;
+        b=UvSXR7qA9OdaXZbX96iV2lNFOxmYzi8ZG0WPc7xoJFozc/5Mkb9uEoMyZz90/1VhRC
+         xnEZYkwdu9wQ+w+pXEjtkoSjn8rcpGloXWgV9JtkuQIU2+wWLDYG6WAxipWY0MfQ8hTH
+         ErXn3/NYOsSf8nGkXhDPL6haPELb2jRey9lKn9IGLEZGxSVOZ9yzMLkP97XZE3yJwxKy
+         TahwFtEa+Zua2vA9b7BUuojdGymiasM0UU3YjK9pLZrICyo61B/mrheTjrZc9zbPn8c7
+         U+91VMz3+11GOvqyoyYJ/VlfMamTJgeWkT5DQnlm+bS1L7O18NgRy/bwvvlK/Zs0OYQl
+         oOYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716474206; x=1717079006;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t/lNADwPwr25pysfe9uC4MhtrxN5wTcZxfw/uoqzjrk=;
-        b=NfEa19+L7gnVJuzlDoWGxSvtb86XJPEFD1TZH7owPpz1MuSQXn0svYq7zGMOGxbobG
-         8CnRZQ6LtIkrtAvFnI1tVwEouLLrBXasy2ZpXpcZ/J/5qq4rkU/ryaGkgME/QNQ4+aft
-         JweF7SXIpWcLhLIFbgC+cs0vTpH70rdjL21lWy2l9b77oSqJE5p9rS0D5Ga0+4wkZumL
-         Yiu+uX6zNDzXTDqZomytksesOGXeR+bStXQJcUIOUgzA6I+Na58k3+7XhupNW2okE9JA
-         6IGFqZF7R4w86bJzLjzyNCWR+1YBJL4J3g06mfeDIw/zsJzStnva8S9iNAPVp54AcGHU
-         bfPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjHAE6F+VoqdoKmYRB2eJZNF81Ob33+iwkV0RXPCmQAXA1i9ToHXGTDA3YFDZKKbl3ZtYGFsQ+P3OailIiNtinE2IrzsYo6pQjiUJxWurEZAz0zeEHRT9STnnGKw1VMIKUZOW4gpUuyZjJJ+vxgmxUNAPWWDG0J8/T+SfUHsNv0jntw8jh1ZLk34REL61QGpsVx0qFcKbgrOgUgxjJ3qtPk2t7Zu7kePfzpQtxj3J/wGSGhJbF7A1o1msWHw==
-X-Gm-Message-State: AOJu0YxXqSq2QlwYUf6LiVmLHzK7pIwMewxwsg4a6BRB42bHDNMmn9kw
-	mPUKaF+5I+0nl4Z/oukfG4yGokdLcUpdSY32okVv0YeSm3zP5ZzX
-X-Google-Smtp-Source: AGHT+IEWmE003niz8KfDtTyBhJFuwL9l4X+RCaG61wMtnhF90Faa7QASay0WGaxzbP5zU+5qgt+XNg==
-X-Received: by 2002:a05:6a21:999b:b0:1b0:31c8:edfb with SMTP id adf61e73a8af0-1b1f8a8669dmr5803662637.60.1716474205714;
-        Thu, 23 May 2024 07:23:25 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a665c0sm24088995b3a.3.2024.05.23.07.23.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 07:23:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 23 May 2024 07:23:23 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-	linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
-	Jean Delvare <jdelvare@suse.com>, Ard Biesheuvel <ardb@kernel.org>,
-	linux-efi@vger.kernel.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Zhi Wang <zhi.wang.linux@gmail.com>,
-	intel-gvt-dev@lists.freedesktop.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-pm@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-	linux-modules@vger.kernel.org
-Subject: Re: [PATCH] sysfs: Unbreak the build around
- sysfs_bin_attr_simple_read()
-Message-ID: <a396a2ce-656b-4525-acee-ed7c3742b2da@roeck-us.net>
-References: <2024052334-nape-wanting-0a2a@gregkh>
- <05f4290439a58730738a15b0c99cd8576c4aa0d9.1716461752.git.lukas@wunner.de>
+        d=1e100.net; s=20230601; t=1716474221; x=1717079021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JG/V5KaB4zeIXCOM315hO8c28tW7uX6d2gIJRmze4Sk=;
+        b=inLvXStIaRKsoyp8pr5U+LarSRXM02C1EKQ0PyznliLQhAA7y9WatJC1Tuzomu7hBq
+         b49+1x5SaDkJYgl4JHXhf+3SWceMDdX+8/jxlV37HTLVXffz5Zz8rDkEXV/4cXv9JYn3
+         k3XWvHmQ0gY/LTQZQYbJ2zM2cexzBLvnF8pVH6E4YHyJI9Og9BwJLcyidot2aPZ5RXsM
+         MS1x/Gzq7XNYCHYxWCNkK67ulo5P8HmDJznAzRWfw8FkJUXnuS5VxEPCubZhbaVnK9RB
+         cjk7MsifZgONdBU5+4Y1H7KfWjBmiDMhh/6Nux5ibd/4PXUK5U2a1KeUCgpueX3GLYP6
+         Adhw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4PjwWuqoXVc8HsbmUBfe6crwhWtUNdkL+rNjA+QJ1fPgURJSyXRENlo0hz9l8v0Yobyuk4l6YN9aGwQp9U8TQRo4UZtRJ+5GrkOIJvSgJ5Yj8eTlrfLy3rs8Z5MU565Jiqqc6
+X-Gm-Message-State: AOJu0YxAve2eq4/yOnA56SYqJmraHMNga/qOCwMF2SGfa6Dk/ZMnPAlz
+	M68N8KGhwAxOL0vM3mhI0foIzotKIDWTOVKFfo0x2Ucdbk9iXSH78hpJ/bYHIaY85nOHc0U0JJA
+	d0PiXeFSIGVGPFceZJkyJymbtBZY=
+X-Google-Smtp-Source: AGHT+IGiRbs1hDX03MTpGZZ2hY8YXqvy0WZ9IOUYqgmmAlA8zEqhk35ziVBDHsEFXF6DXxoKy9iv4DOcHv0cMorh2Bc=
+X-Received: by 2002:a2e:80ca:0:b0:2e7:1621:89d0 with SMTP id
+ 38308e7fff4ca-2e951b4ee15mr8234391fa.2.1716474220912; Thu, 23 May 2024
+ 07:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <05f4290439a58730738a15b0c99cd8576c4aa0d9.1716461752.git.lukas@wunner.de>
+References: <20240523060934.2883716-1-yinghsu@chromium.org>
+In-Reply-To: <20240523060934.2883716-1-yinghsu@chromium.org>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 23 May 2024 10:23:23 -0400
+Message-ID: <CABBYNZKwLTri10NfQ07sywymPCFq2mwvb8==Zjn1QMD-kwpobA@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: Add vendor-specific packet classification
+ for ISO data
+To: Ying Hsu <yinghsu@chromium.org>
+Cc: linux-bluetooth@vger.kernel.org, pmenzel@molgen.mpg.de, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Marcel Holtmann <marcel@holtmann.org>, Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 01:00:00PM +0200, Lukas Wunner wrote:
-> Günter reports build breakage for m68k "m5208evb_defconfig" plus
-> CONFIG_BLK_DEV_INITRD=y caused by commit 66bc1a173328 ("treewide:
-> Use sysfs_bin_attr_simple_read() helper").
-> 
-> The defconfig disables CONFIG_SYSFS, so sysfs_bin_attr_simple_read()
-> is not compiled into the kernel.  But init/initramfs.c references
-> that function in the initializer of a struct bin_attribute.
-> 
-> Add an empty static inline to avoid the build breakage.
-> 
-> Fixes: 66bc1a173328 ("treewide: Use sysfs_bin_attr_simple_read() helper")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/r/e12b0027-b199-4de7-b83d-668171447ccc@roeck-us.net
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Hi Ying,
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
+On Thu, May 23, 2024 at 2:09=E2=80=AFAM Ying Hsu <yinghsu@chromium.org> wro=
+te:
+>
+> When HCI raw sockets are opened, the Bluetooth kernel module doesn't
+> track CIS/BIS connections. User-space applications have to identify
+> ISO data by maintaining connection information and look up the mapping
+> for each ACL data packet received. Besides, btsnoop log captured in
+> kernel couldn't tell ISO data from ACL data in this case.
+>
+> To avoid additional lookups, this patch introduces vendor-specific
+> packet classification for Intel BT controllers to distinguish
+> ISO data packets from ACL data packets.
+>
+> Signed-off-by: Ying Hsu <yinghsu@chromium.org>
 > ---
->  include/linux/sysfs.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-> index a7d725fbf739..c4e64dc11206 100644
-> --- a/include/linux/sysfs.h
-> +++ b/include/linux/sysfs.h
-> @@ -750,6 +750,15 @@ static inline int sysfs_emit_at(char *buf, int at, const char *fmt, ...)
->  {
->  	return 0;
+> Tested LE audio unicast recording on a ChromeOS device with Intel AX211
+>
+> Changes in v2:
+> - Adds vendor-specific packet classificaton in hci_dev.
+> - Keeps reclassification in hci_recv_frame.
+>
+>  drivers/bluetooth/btusb.c        | 19 +++++++++++++++++++
+>  include/net/bluetooth/hci_core.h |  1 +
+>  net/bluetooth/hci_core.c         | 16 ++++++++++++++++
+>  3 files changed, 36 insertions(+)
+>
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 79aefdb3324d..75561e749c50 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -966,6 +966,24 @@ static void btusb_intel_cmd_timeout(struct hci_dev *=
+hdev)
+>         gpiod_set_value_cansleep(reset_gpio, 0);
 >  }
+>
+> +#define BT_USB_INTEL_ISODATA_HANDLE_BASE 0x900
 > +
-> +static inline ssize_t sysfs_bin_attr_simple_read(struct file *file,
-> +						 struct kobject *kobj,
-> +						 struct bin_attribute *attr,
-> +						 char *buf, loff_t off,
-> +						 size_t count)
+> +static u8 btusb_intel_classify_pkt_type(struct hci_dev *hdev, struct sk_=
+buff *skb)
+
+We might as well move this to btintel.c since it should not be USB specific=
+.
+
 > +{
-> +	return 0;
+> +       /*
+> +        * Distinguish ISO data packets form ACL data packets
+> +        * based on their conneciton handle value range.
+> +        */
+> +       if (hci_skb_pkt_type(skb) =3D=3D HCI_ACLDATA_PKT) {
+> +               __u16 handle =3D __le16_to_cpu(hci_acl_hdr(skb)->handle);
+> +
+> +               if (hci_handle(handle) >=3D BT_USB_INTEL_ISODATA_HANDLE_B=
+ASE)
+> +                       return HCI_ISODATA_PKT;
+> +       }
+> +
+> +       return hci_skb_pkt_type(skb);
 > +}
->  #endif /* CONFIG_SYSFS */
->  
->  static inline int __must_check sysfs_create_file(struct kobject *kobj,
-> -- 
-> 2.43.0
-> 
+> +
+>  #define RTK_DEVCOREDUMP_CODE_MEMDUMP           0x01
+>  #define RTK_DEVCOREDUMP_CODE_HW_ERR            0x02
+>  #define RTK_DEVCOREDUMP_CODE_CMD_TIMEOUT       0x03
+> @@ -4451,6 +4469,7 @@ static int btusb_probe(struct usb_interface *intf,
+>                 /* Transport specific configuration */
+>                 hdev->send =3D btusb_send_frame_intel;
+>                 hdev->cmd_timeout =3D btusb_intel_cmd_timeout;
+> +               hdev->classify_pkt_type =3D btusb_intel_classify_pkt_type=
+;
+>
+>                 if (id->driver_info & BTUSB_INTEL_NO_WBS_SUPPORT)
+>                         btintel_set_flag(hdev, INTEL_ROM_LEGACY_NO_WBS_SU=
+PPORT);
+> diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci=
+_core.h
+> index 9231396fe96f..7b7068a84ff7 100644
+> --- a/include/net/bluetooth/hci_core.h
+> +++ b/include/net/bluetooth/hci_core.h
+> @@ -649,6 +649,7 @@ struct hci_dev {
+>         int (*get_codec_config_data)(struct hci_dev *hdev, __u8 type,
+>                                      struct bt_codec *codec, __u8 *vnd_le=
+n,
+>                                      __u8 **vnd_data);
+> +       u8 (*classify_pkt_type)(struct hci_dev *hdev, struct sk_buff *skb=
+);
+>  };
+>
+>  #define HCI_PHY_HANDLE(handle) (handle & 0xff)
+> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> index b3ee9ff17624..8b817a99cefd 100644
+> --- a/net/bluetooth/hci_core.c
+> +++ b/net/bluetooth/hci_core.c
+> @@ -2941,15 +2941,31 @@ int hci_reset_dev(struct hci_dev *hdev)
+>  }
+>  EXPORT_SYMBOL(hci_reset_dev);
+>
+> +static u8 hci_dev_classify_pkt_type(struct hci_dev *hdev, struct sk_buff=
+ *skb)
+> +{
+> +       if (hdev->classify_pkt_type)
+> +               return hdev->classify_pkt_type(hdev, skb);
+> +
+> +       return hci_skb_pkt_type(skb);
+> +}
+> +
+>  /* Receive frame from HCI drivers */
+>  int hci_recv_frame(struct hci_dev *hdev, struct sk_buff *skb)
+>  {
+> +       u8 dev_pkt_type;
+> +
+>         if (!hdev || (!test_bit(HCI_UP, &hdev->flags)
+>                       && !test_bit(HCI_INIT, &hdev->flags))) {
+>                 kfree_skb(skb);
+>                 return -ENXIO;
+>         }
+>
+> +       /* Check if the driver agree with packet type classification */
+> +       dev_pkt_type =3D hci_dev_classify_pkt_type(hdev, skb);
+> +       if (hci_skb_pkt_type(skb) !=3D dev_pkt_type) {
+> +               hci_skb_pkt_type(skb) =3D dev_pkt_type;
+> +       }
+> +
+>         switch (hci_skb_pkt_type(skb)) {
+>         case HCI_EVENT_PKT:
+>                 break;
+> --
+> 2.45.1.288.g0e0cd299f1-goog
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
