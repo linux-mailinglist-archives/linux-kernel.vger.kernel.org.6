@@ -1,87 +1,102 @@
-Return-Path: <linux-kernel+bounces-187798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CCD8CD8A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7328CD8A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B32281DF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79171F21BE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F7839FD0;
-	Thu, 23 May 2024 16:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0DF1CF9A;
+	Thu, 23 May 2024 16:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="kcl3eoyE"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRqcliRi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C13420335
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F22517BD9;
+	Thu, 23 May 2024 16:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716482743; cv=none; b=sZWDZBeCkwgw7eZM1EKbr2wp1ukfmo8K7VHfgdW/ekkndHzdBl39V8XthcG2tEeoivdzdyYu/osGnV7Ns0qsGAH3EYC+knu9T23zHoHXxH+6i7LZ9gic+G/Ni+gBLlcy5X2psGBnW6H899lkDUPRJpGzSXWvH8hy3jQ4CobLF/k=
+	t=1716482731; cv=none; b=kTt/Vnk4oFou5kyFS/6Nqe0p7n9feZWUmVadMqwsD9mBn9WGUfmum22t06nqBWlrICN0hG/yvNnOPYSBdrCkv4JBG/HNpPUx9GxI/GQrymZP0aSzyK8N66OhKsyHjorzrVZgUx6QdeqvId7Z1BuWMT9pzk2+4PEYW8Lm+lNuu3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716482743; c=relaxed/simple;
-	bh=PeE2Iv1cUElnBiThT4jIFU1ihOHGm8Z1qxGwKgRJTAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LWeoJ76vo3OMB4EfrsWCDyhpJp8V0T9yatO92ipAzQnhkeGy7coijK+kjALci/M9OVt5zVZtG5ktfOZuMJCVT5MP8D6lPVwjofsFOvlZ5GZbdfdamN8ko+A4gAIgTAjqk81aNGn2DEZGX/BqlW5X4XMCIG+WUTsArR4D+LWx6os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=kcl3eoyE; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-108-7-50-195.bstnma.fios.verizon.net [108.7.50.195])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 44NGjJlI031728
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 12:45:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1716482722; bh=76A2SchJx/XQs3JI5IruaZJ74cXb24Hwn2+K3+4a8+k=;
-	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=kcl3eoyEwTqIqwlQ+1yfhnlEuUVOR+ebptXPpIwcNZjZxh0DsqTXIH+B4SMWoy3YU
-	 Jvjy4Lf4duH+yEuQMuLMdZOn1t4IHxW3RtrizNYNv9fbpjKRIRPOpke6chKK7V+nAC
-	 WTec0mnUr5r9cQ2lbKiPBPUKCFBuTTJyNi/IRMjLo/QuNmpFC7AmR2UoAIRhdS8SGu
-	 gVoGr2bSAea3BqQC3rb8TO+FwVp9j8y47UZ+LgdltsylDRxOsLBf0A5sEuul9U6KpF
-	 LbzdLJh/sn34Dv8tqLVbMnbIRi/M8a67AF//y1wElGyqRF/63QrgnPZ0L/h4N4w4hg
-	 p8xss9mQEH6Jw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 9E62715C0225; Thu, 23 May 2024 12:45:19 -0400 (EDT)
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Matthew Wilcox <willy@infradead.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ext4: fix error pointer dereference in ext4_mb_load_buddy_gfp()
-Date: Thu, 23 May 2024 12:45:16 -0400
-Message-ID: <171648267844.923789.4231199989954274163.b4-ty@mit.edu>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <eaafa1d9-a61c-4af4-9f97-d3ad72c60200@moroto.mountain>
-References: <eaafa1d9-a61c-4af4-9f97-d3ad72c60200@moroto.mountain>
+	s=arc-20240116; t=1716482731; c=relaxed/simple;
+	bh=Qp2cK468rwwqNdV1hrKOlsM51j4WX1baGTX5Xh/9+QY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PzLETVXmQbH6mRzLYoOa91DfKvQPGfdOVAVksK+pF6QkkiN7rXMjRAdcnxnXMeOPW61FTERhfpvJ4Yb2ZDrgJUQeuECGw8gWvBdtCtU+N5TOfCjKXDtNAS3RFGH2B7ZDpCmm/46mWZibpoaUqbgpu18KGe0gbHAvT1d68jPHtj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRqcliRi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54197C2BD10;
+	Thu, 23 May 2024 16:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716482731;
+	bh=Qp2cK468rwwqNdV1hrKOlsM51j4WX1baGTX5Xh/9+QY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dRqcliRiuLMx4OZ3+vAz+rn96k7hHfMVewUnMViITYeJkJYH3TXmpEv9CwPWcJqDW
+	 2/4Vlp9Gn9unaoGaXkF2ygBF1Gg0CUyt9kTwaiTKgwIOP5AqM60RWBHRlk4pQXzR6h
+	 AgfIWT+tUrv41Et6qZLseQDJ/vUKpzLGqOKIK+mu1cgC1KNe9peVA/Oqyl4aVyXSs9
+	 LHVrGYj4arYo3jh0DxcKwTG9YlFCDit5jtYicUzPInHsx1D5TgrqctxvO1S0+1kDQg
+	 mP5NH7/8JvL5DGLH9dHv+D1u+EYRM1FKDSK7LR8KiSa6zy9ZZjGmlnfYIYXSGDOi1P
+	 GWgeTLFl6oFmg==
+Received: by pali.im (Postfix)
+	id 5643B820; Thu, 23 May 2024 18:45:28 +0200 (CEST)
+Date: Thu, 23 May 2024 18:45:28 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (dell-smm) Add Dell G15 5511 to fan control
+ whitelist
+Message-ID: <20240523164528.xrq56r4m3snweofl@pali>
+References: <20240522210809.294488-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240522210809.294488-1-W_Armin@gmx.de>
+User-Agent: NeoMutt/20180716
 
-
-On Fri, 10 May 2024 18:22:53 +0300, Dan Carpenter wrote:
-> This code calls folio_put() on an error pointer which will lead to a
-> crash.  Check for both error pointers and NULL pointers before calling
-> folio_put().
+On Wednesday 22 May 2024 23:08:09 Armin Wolf wrote:
+> A user reported that he needs to disable BIOS fan control on his
+> Dell G15 5511 in order to be able to control the fans.
 > 
+> Closes: https://github.com/Wer-Wolf/i8kutils/issues/5
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/hwmon/dell-smm-hwmon.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+> index 48a81c64f00d..942526bd4775 100644
+> --- a/drivers/hwmon/dell-smm-hwmon.c
+> +++ b/drivers/hwmon/dell-smm-hwmon.c
+> @@ -1545,6 +1545,14 @@ static const struct dmi_system_id i8k_whitelist_fan_control[] __initconst = {
+>  		},
+>  		.driver_data = (void *)&i8k_fan_control_data[I8K_FAN_30A3_31A3],
+>  	},
+> +	{
+> +		.ident = "Dell G15 5511",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Dell G15 5511"),
+> +		},
+> +		.driver_data = (void *)&i8k_fan_control_data[I8K_FAN_30A3_31A3],
+> +	},
+>  	{ }
+>  };
+> 
+> --
+> 2.39.2
 > 
 
-Applied, thanks!
+Looks good,
 
-[1/1] ext4: fix error pointer dereference in ext4_mb_load_buddy_gfp()
-      commit: c6a6c9694aadc4c3ab8d89bdd44aed3eab1e43c6
-
-Best regards,
--- 
-Theodore Ts'o <tytso@mit.edu>
+Acked-by: Pali Rohár <pali@kernel.org>
 
