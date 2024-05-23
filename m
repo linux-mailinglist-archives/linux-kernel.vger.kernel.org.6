@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-186993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0779E8CCBA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:06:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2AB8CCBA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0986D1C21339
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:06:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9DB1F22C2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A0C13B7AC;
-	Thu, 23 May 2024 05:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496B813BADF;
+	Thu, 23 May 2024 05:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K49Ezcyn"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UugR7HhO"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36BC13AD3E
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C64213BAD5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716440720; cv=none; b=GYk+2huhTBJZXQhPmziR/iZmP1dm5ehdYuRdyuxBXzTrUZ7WLGYW7T6wmfNdjC9h16RMAaiorkP+bhgs2mmP5V+/vykxbXIJcIA1Op6/nsHhkI2RghxS/ktZ0UcH6RFYenNMQNJuf8maWsNXjEIOt5b7Q1+YLnhM5PKe1flVoX4=
+	t=1716440724; cv=none; b=Q5tgiPpxQmbus4hxPVDmo0y9nNH8UFsI7xhXSzSzctI+Xh3CziWoRZM0kbCABay7qlvfRtv7fKjoEas2ZV2bB5B+F4vF+rJ4BaAX+3E+LW11e5vgi9IOwdC3Fk8b0LvDwjtTGb+vgMQd7RH3FSqSAMIr7NBgD36VhF+I0xPkn/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716440720; c=relaxed/simple;
-	bh=mRkvD1MTPK2PgSmvjbHdBMgWLQtsN1Xd8k5RmXh9UMw=;
+	s=arc-20240116; t=1716440724; c=relaxed/simple;
+	bh=KrGpaMekyTRuOSDlmtTjCMBOb9Ydu/BZISecKqMIkbQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fTF3+DMGAWBH72gvSlYIjeDLhYFEShlBQr+wEtxmRSYzoLreoSTnIehxm3KvTE1p/FI5ErZ3YR3wCd0PD/FS8S7dnPd3iuT1p4d7M7EjSMhivlTwaoE33COqfhqeV10dcw6bOzxIcSZL81eP7c4p47GNv9rFCNO1OGoTY+J8Pj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K49Ezcyn; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=K/QjR9J4eYSMjFK8i1AyU1a8DCM5bGtfkoa0FGq7b+EP4+9Y4FQtUhKfGhD9UfEQBs0FcQjKm4tsZTJDelGEkZOcQmvNGApavwARNQC/WRHsmW7UtUAhV/CuvUOTl++dw1CoYABGHeGPE7gRTKT71qe7SByC39MJHTGRO7sid8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UugR7HhO; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716440718;
+	s=mimecast20190719; t=1716440722;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fa72I6mP4bkKPgXlioSXRQnIrhjQErXvO71QcCop5iA=;
-	b=K49EzcynPQ5QWmcVqTEOZKUkcMij6pAyTw9c6Gd0siB+MX3gtW9Sbw8fMqU707UvpYPebS
-	UVQf44DL8SlmI2mxvpr67iP/OFYt46/yrNfqQGUrLIVd+E4SHmAMgSANPa7Qkq50X+JJE5
-	teNIgAu0TrmKTfRA8SFJW6GmzR81VqY=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=iXqG8tM8YcaI9rGWt1KJ0lfMUtcaUoa1T7IYtFP1N5A=;
+	b=UugR7HhOJ9XUY6AbI+hmgEdo2rlQfNGuHsxNQn11PmmUfSdnzrx4ojzD1/yA8/d1y5s1U7
+	m0qIKoLsuUONFeGCuBJRy5IJVEn0HWau7nZMe3zVb472m82/mBS0mXcSrIy8NZeGPx3QJl
+	4TFvxGjGhqp4LHiTn/tnrCRC+eWtP60=
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
+ [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-680-Zkh4evz-O8G29H9WSwixJg-1; Thu, 23 May 2024 01:05:16 -0400
-X-MC-Unique: Zkh4evz-O8G29H9WSwixJg-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1ed90e91d3cso146589835ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:05:16 -0700 (PDT)
+ us-mta-646-fn22c9HnMG63SF5ut5hIjw-1; Thu, 23 May 2024 01:05:20 -0400
+X-MC-Unique: fn22c9HnMG63SF5ut5hIjw-1
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-6f0ff1a4fddso955448a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 22:05:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716440715; x=1717045515;
+        d=1e100.net; s=20230601; t=1716440719; x=1717045519;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fa72I6mP4bkKPgXlioSXRQnIrhjQErXvO71QcCop5iA=;
-        b=oySwe/Oj/eZkdrJCOLS6fm3eAABLwDYKQmdd///Z6wbR1OSQqu5cUzNS9g6XPROo0u
-         WoEGS4Sv8+LwDokq7S66A5SL1tM9YL8bQ6hD0RfLvx5VSMBP+T/B3PtoFxKK8P3lq56E
-         QNuxR3GkBSfx8aguNoJH2GW48yEEq4yXFD8GELDyuKFEbBf/CRvIGNFAt/ZVJdn2u1KU
-         p1L1pL2AAuZoGtvFQ73+wbXaMLG+C2JShxFIAMWIHgRPeAqEK1/DA2fktCRtn+6xUluQ
-         C+Rif2aSl6jhhniHLxhanYvoO4/YyoOF8ipZUZhg2Lj61DI4M9/u1XClhGaHrlQop109
-         GFDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi9VCaHyCXxTrEJphB7wPj+sLc9eGVjfpnvk2jB3EZCAxtvGQXlfr8pjYGBred+vwsSWt4f2YZ5a3gqyFwTfL5K+S5AtU+k1ZCB3Ah
-X-Gm-Message-State: AOJu0YzyIjyY/eog4DyOxzD0GXp831l163lZMkgDeCmTwTQzXdxDceaL
-	YSUV/a72d41z2APvPePjo+GtA9JsHHvo9xYQfg4vw6iw+IxO0GI9HLIrKQagazFDiNwiXfntvUm
-	jUwv7q+pkK860+AVlbFeKxw1aLpEZpLpZLpQj3WZhZrDo5TqnjSHVQnm/5XIGfg==
-X-Received: by 2002:a17:902:ff0a:b0:1ee:a09e:c7b0 with SMTP id d9443c01a7336-1f31c98db57mr32586285ad.37.1716440715014;
-        Wed, 22 May 2024 22:05:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHesrH0cqL5v8PGClCEwXynBSxt1oIPal3K2H0JK1dua8ax6gHHJh4QCElpHvpZJQCyMDnSkw==
-X-Received: by 2002:a17:902:ff0a:b0:1ee:a09e:c7b0 with SMTP id d9443c01a7336-1f31c98db57mr32586005ad.37.1716440714356;
-        Wed, 22 May 2024 22:05:14 -0700 (PDT)
+        bh=iXqG8tM8YcaI9rGWt1KJ0lfMUtcaUoa1T7IYtFP1N5A=;
+        b=uFIY+kXCHxl5xLO1TX8D4+KHBjh+QFtfwX5GXZyjy6OMIx04Suz3+ZMYB8rV5NTi2T
+         XokFB7TmQYVkgn4p5qZ+SyPa+5KPHhfWsgEynpjLOq6CNjgZI6Gt69pJw4GRmFiPR6xv
+         p+y/jJaSEWcPizQ0N3078/QQshIbzMLv8L3fN19zbcut+XyMzftqp8cdVUeKHz/ymC6e
+         ggQ/xC1zbFG5HkJGMmmqXAxcv2lZJPNNJcs+E9Mt3EX/4x/z9Y2cKnmM0Fhgj8w6jzjq
+         UUvf6ZZ9/s2U4u3xNdZEuYINsmZ5+F8HnPw06I0TFwzBawbUftXKSbfS1IIKHLg/6156
+         lazg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMC3LT8k3hUqMzLB8wldBeuCGfLrSYhpJtpHMVF7eImKVaqAKv+HIyewXRLiFbxvdpfXhYDsE8nZRP1M7eruvEoJ6eRi7LT41N+YI+
+X-Gm-Message-State: AOJu0YwmxPH13qDSw/Pbj7ejz67F4VV3J8fAZoZ1l/8L+XIktX0Yhkn9
+	J0QKYrElXS2OxQYQhuT5ERepKPbT9x90NWmoERIly5aJMcQAABUCLD+S4nM9P9M2uE3MfcaO/KZ
+	qrFgmwGcXEFHifsZ83vpIktPZ3Kai7jFWqiarv2V1RsKEQc5VrRneH8IP2+8Htg==
+X-Received: by 2002:a05:6830:10cd:b0:6f0:bf65:9c42 with SMTP id 46e09a7af769-6f666f7914bmr3888022a34.15.1716440719371;
+        Wed, 22 May 2024 22:05:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWQA1xavODDuyHNmo2P3AvBsnEdbuteghicukf23qUMHJD1rGUHnEt8+t2eLKuyEOwcoEKaA==
+X-Received: by 2002:a05:6830:10cd:b0:6f0:bf65:9c42 with SMTP id 46e09a7af769-6f666f7914bmr3888000a34.15.1716440718826;
+        Wed, 22 May 2024 22:05:18 -0700 (PDT)
 Received: from localhost ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f336103357sm7676865ad.128.2024.05.22.22.05.13
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63a917264d6sm20539102a12.73.2024.05.22.22.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 22:05:13 -0700 (PDT)
+        Wed, 22 May 2024 22:05:18 -0700 (PDT)
 From: Coiby Xu <coxu@redhat.com>
 To: kexec@lists.infradead.org
 Cc: Ondrej Kozina <okozina@redhat.com>,
@@ -87,10 +87,14 @@ Cc: Ondrej Kozina <okozina@redhat.com>,
 	x86@kernel.org,
 	Dave Hansen <dave.hansen@intel.com>,
 	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>
-Subject: [PATCH v4 5/7] crash_dump: retrieve dm crypt keys in kdump kernel
-Date: Thu, 23 May 2024 13:04:46 +0800
-Message-ID: <20240523050451.788754-6-coxu@redhat.com>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH v4 6/7] x86/crash: pass dm crypt keys to kdump kernel
+Date: Thu, 23 May 2024 13:04:47 +0800
+Message-ID: <20240523050451.788754-7-coxu@redhat.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240523050451.788754-1-coxu@redhat.com>
 References: <20240523050451.788754-1-coxu@redhat.com>
@@ -102,156 +106,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Crash kernel will retrieve the dm crypt keys based on the dmcryptkeys
-command line parameter. When user space writes the key description to
-/sys/kernel/crash_dm_crypt_key, the crash kernel will save the
-encryption keys to the user keyring. Then user space e.g. cryptsetup's
---volume-key-keyring API can use it to unlock the encrypted device.
+1st kernel will build up the kernel command parameter dmcryptkeys as
+similar to elfcorehdr to pass the memory address of the stored info of
+dm crypt key to kdump kernel.
 
 Signed-off-by: Coiby Xu <coxu@redhat.com>
 ---
- include/linux/crash_core.h   |  1 +
- kernel/crash_dump_dm_crypt.c | 99 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 99 insertions(+), 1 deletion(-)
+ arch/x86/kernel/crash.c           | 15 ++++++++++++++-
+ arch/x86/kernel/kexec-bzimage64.c |  7 +++++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
-index ab20829d0bc9..d7308b6e83f4 100644
---- a/include/linux/crash_core.h
-+++ b/include/linux/crash_core.h
-@@ -38,6 +38,7 @@ static inline void arch_kexec_unprotect_crashkres(void) { }
- int crash_sysfs_dm_crypt_keys_read(char *buf);
- int crash_sysfs_dm_crypt_keys_write(const char *buf, size_t count);
- int crash_load_dm_crypt_keys(struct kimage *image);
-+ssize_t dm_crypt_keys_read(char *buf, size_t count, u64 *ppos);
- #else
- static inline int crash_load_dm_crypt_keys(struct kimage *image) {return 0; }
- #endif
-diff --git a/kernel/crash_dump_dm_crypt.c b/kernel/crash_dump_dm_crypt.c
-index b4dc881cc867..dd818581858b 100644
---- a/kernel/crash_dump_dm_crypt.c
-+++ b/kernel/crash_dump_dm_crypt.c
-@@ -33,12 +33,67 @@ static struct keys_header {
- 	struct dm_crypt_key keys[] __counted_by(key_count);
- } *keys_header;
- 
-+unsigned long long dm_crypt_keys_addr;
-+EXPORT_SYMBOL_GPL(dm_crypt_keys_addr);
-+
-+static int __init setup_dmcryptkeys(char *arg)
-+{
-+	char *end;
-+
-+	if (!arg)
-+		return -EINVAL;
-+	dm_crypt_keys_addr = memparse(arg, &end);
-+	if (end > arg)
-+		return 0;
-+
-+	dm_crypt_keys_addr = 0;
-+	return -EINVAL;
-+}
-+
-+early_param("dmcryptkeys", setup_dmcryptkeys);
-+
- static size_t get_keys_header_size(struct keys_header *keys_header,
- 				   size_t key_count)
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index f06501445cd9..74b3844ae53c 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -266,6 +266,7 @@ static int memmap_exclude_ranges(struct kimage *image, struct crash_mem *cmem,
+ 				 unsigned long long mend)
  {
- 	return struct_size(keys_header, keys, key_count);
- }
- 
-+/*
-+ * Architectures may override this function to read dm crypt key
-+ */
-+ssize_t __weak dm_crypt_keys_read(char *buf, size_t count, u64 *ppos)
-+{
-+	struct kvec kvec = { .iov_base = buf, .iov_len = count };
-+	struct iov_iter iter;
-+
-+	iov_iter_kvec(&iter, READ, &kvec, 1, count);
-+	return read_from_oldmem(&iter, count, ppos, false);
-+}
-+
-+static int add_key_to_keyring(struct dm_crypt_key *dm_key,
-+			      key_ref_t keyring_ref)
-+{
-+	key_ref_t key_ref;
+ 	unsigned long start, end;
 +	int r;
+ 
+ 	cmem->ranges[0].start = mstart;
+ 	cmem->ranges[0].end = mend;
+@@ -274,7 +275,19 @@ static int memmap_exclude_ranges(struct kimage *image, struct crash_mem *cmem,
+ 	/* Exclude elf header region */
+ 	start = image->elf_load_addr;
+ 	end = start + image->elf_headers_sz - 1;
+-	return crash_exclude_mem_range(cmem, start, end);
++	r = crash_exclude_mem_range(cmem, start, end);
 +
-+	/* create or update the requested key and add it to the target keyring */
-+	key_ref = key_create_or_update(keyring_ref, "user", dm_key->key_desc,
-+				       dm_key->data, dm_key->key_size,
-+				       KEY_USR_ALL, KEY_ALLOC_IN_QUOTA);
++	if (r)
++		return r;
 +
-+	if (!IS_ERR(key_ref)) {
-+		r = key_ref_to_ptr(key_ref)->serial;
-+		key_ref_put(key_ref);
-+		pr_alert("Success adding key %s", dm_key->key_desc);
-+	} else {
-+		r = PTR_ERR(key_ref);
-+		pr_alert("Error when adding key");
++	/* Exclude dm crypt keys region */
++	if (image->dm_crypt_keys_addr) {
++		start = image->dm_crypt_keys_addr;
++		end = start + image->dm_crypt_keys_sz - 1;
++		return crash_exclude_mem_range(cmem, start, end);
 +	}
 +
-+	key_ref_put(keyring_ref);
 +	return r;
-+}
-+
- static int init(const char *buf)
- {
- 	unsigned int total_keys;
-@@ -120,11 +175,53 @@ static int process_cmd(const char *buf, size_t count)
- 	return -EINVAL;
  }
  
-+static int restore_dm_crypt_keys_to_thread_keyring(const char *key_desc)
-+{
-+	struct dm_crypt_key *key;
-+	key_ref_t keyring_ref;
-+	u64 addr;
+ /* Prepare memory map for crash dump kernel */
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index 68530fad05f7..9c94428927bd 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -76,6 +76,10 @@ static int setup_cmdline(struct kimage *image, struct boot_params *params,
+ 	if (image->type == KEXEC_TYPE_CRASH) {
+ 		len = sprintf(cmdline_ptr,
+ 			"elfcorehdr=0x%lx ", image->elf_load_addr);
 +
-+	/* find the target keyring (which must be writable) */
-+	keyring_ref =
-+		lookup_user_key(KEY_SPEC_USER_KEYRING, 0x01, KEY_NEED_WRITE);
-+	if (IS_ERR(keyring_ref)) {
-+		pr_alert("Failed to get keyring");
-+		return PTR_ERR(keyring_ref);
-+	}
-+
-+	addr = dm_crypt_keys_addr;
-+	dm_crypt_keys_read((char *)&key_count, sizeof(key_count), &addr);
-+	if (key_count < 0 || key_count > KEY_NUM_MAX) {
-+		pr_info("Failed to the number of dm_crypt keys\n");
-+		return -1;
-+	}
-+
-+	pr_debug("There are %u keys\n", key_count);
-+	addr = dm_crypt_keys_addr;
-+
-+	keys_header_size = get_keys_header_size(keys_header, key_count);
-+
-+	keys_header = kzalloc(keys_header_size, GFP_KERNEL);
-+	if (!keys_header)
-+		return -ENOMEM;
-+
-+	dm_crypt_keys_read((char *)keys_header, keys_header_size, &addr);
-+
-+	for (int i = 0; i < keys_header->key_count; i++) {
-+		key = &keys_header->keys[i];
-+		pr_alert("Get key (size=%u): %8ph...\n", key->key_size, key->data);
-+		add_key_to_keyring(key, keyring_ref);
-+	}
-+
-+	return 0;
-+}
-+
- int crash_sysfs_dm_crypt_keys_write(const char *buf, size_t count)
- {
- 	if (!is_kdump_kernel())
- 		return process_cmd(buf, count);
--	return -EINVAL;
-+	else
-+		return restore_dm_crypt_keys_to_thread_keyring(buf);
- }
- EXPORT_SYMBOL(crash_sysfs_dm_crypt_keys_write);
++		if (image->dm_crypt_keys_addr != 0)
++			len += sprintf(cmdline_ptr + len,
++					"dmcryptkeys=0x%lx ", image->dm_crypt_keys_addr);
+ 	}
+ 	memcpy(cmdline_ptr + len, cmdline, cmdline_len);
+ 	cmdline_len += len;
+@@ -441,6 +445,9 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 		ret = crash_load_segments(image);
+ 		if (ret)
+ 			return ERR_PTR(ret);
++		ret = crash_load_dm_crypt_keys(image);
++		if (ret)
++			pr_debug("Either no dm crypt key or error to retrieve the dm crypt key\n");
+ 	}
+ #endif
  
 -- 
 2.45.0
