@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-188101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFAF8CDD5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:14:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0566C8CDD6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D6328562D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:14:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978F4B21320
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201251292FF;
-	Thu, 23 May 2024 23:14:17 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD1D128833;
+	Thu, 23 May 2024 23:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rBc97HNN"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1291292D9;
-	Thu, 23 May 2024 23:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6122628D;
+	Thu, 23 May 2024 23:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716506056; cv=none; b=BSQ1t+YT0K1ls14JBAZGV1uwReF2ik4kKDgRjUajkOTlo2KOs7ntsRDx5hFXvHlDQGWnGkRXnAqFOJxScW5gFmT0D/eLiWTaZaWkm73eSo0/ROw6xxfaHkEb52Y/B6SOSu27uQ5r0HrThO3+Z7ZTLXbIhU5BtrDQnJQgf8u3aCI=
+	t=1716506180; cv=none; b=KiiyVfaww0eMkcnp4fKKdVncIrjUI3oTxBV9qS7FFwn2C3etVNb9iMJiXAr+wExkCa4m9vVvcfEzn7MHV1NcpqMiNVkoY6UGlzzUpqBe4lbv3xgkLQC2khiRzruhzQpbaVhAxze0OPS7RAx+qYDMLmVyyBt6LuH3I3QSAfDQrXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716506056; c=relaxed/simple;
-	bh=EC4mMstx3GoDVOr94WNVc788fgZGZZasw7u9LmyR0Sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VQNfKcLIooKZPfodgBZWZaaTFbNgWk3dtG6veOczl6y2+9/Uc/wEKGfJcVMqjEbYXYHDA2FxvPngsH/ZwChKdGaqxD5fYWK8d/LjV7eTL/p+ZgpRUQINAVLBG9DpCgbnwpjGvuk/MpkPHFmSmTgb0hbciQxQ6SbGu1ZN3Aaw9fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E45F5C32789;
-	Thu, 23 May 2024 23:14:13 +0000 (UTC)
-Date: Thu, 23 May 2024 19:14:59 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, Alexei
- Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v10 03/36] x86: tracing: Add ftrace_regs definition in
- the header
-Message-ID: <20240523191459.3858aecf@gandalf.local.home>
-In-Reply-To: <171509091569.162236.17928081833857878443.stgit@devnote2>
-References: <171509088006.162236.7227326999861366050.stgit@devnote2>
-	<171509091569.162236.17928081833857878443.stgit@devnote2>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716506180; c=relaxed/simple;
+	bh=RMvLc10WWkec9Bi31rmmFKbk2xAmd6fxCrUUK6JQnKY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BByClvYGaFDO9BOrE37tbVG4WB8hbNeNgg8c/L42zg9lziZp9SDA+sA5Bop+/7xXnko28CsMA79KcSK4OBCgCWoShOnLtDhVkvQOle53toltdYYryfbsrm7UDyk1Uzdhfw3hi4xoEUoq4ZjlLYkNa+YJDjf22enDzPFJW7XCJG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rBc97HNN; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44NNFGDH024880;
+	Thu, 23 May 2024 18:15:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716506116;
+	bh=qZ1DEGnaLNezLOzzeQrglFpvM2/JdS3Dq5AU/Q5NwRg=;
+	h=From:To:CC:Subject:Date;
+	b=rBc97HNNBmZj3M+HyXfTX/UITDf7MiizL6f6aj+cprIVXkE9cdh+ac1SHWFEUfpdx
+	 HDRCqaUZM+VSrrwbG9GbV5NeBcVefcCuPnfNt4qXKiJHy7hdSxK6P2u9R5XuYSuYEq
+	 cFezM4fZTjCsTnLhSHSedgiJ21Kz/0W97TYL1BcQ=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44NNFGrl047687
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 23 May 2024 18:15:16 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 23
+ May 2024 18:15:16 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 23 May 2024 18:15:16 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44NNFGqK008143;
+	Thu, 23 May 2024 18:15:16 -0500
+From: Judith Mendez <jm@ti.com>
+To: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>
+CC: David Lechner <david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        Nishanth Menon
+	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH v2 0/8] Enable eQEP DT support for Sitara K3 platforms
+Date: Thu, 23 May 2024 18:15:08 -0500
+Message-ID: <20240523231516.545085-1-jm@ti.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue,  7 May 2024 23:08:35 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+This patch series adds eQEP DT nodes for K3 Sitara devices:
+- AM62x
+- AM62ax
+- AM62px
+- AM64x
 
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Add ftrace_regs definition for x86_64 in the ftrace header to
-> clarify what register will be accessible from ftrace_regs.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  Changes in v3:
->   - Add rip to be saved.
->  Changes in v2:
->   - Newly added.
-> ---
->  arch/x86/include/asm/ftrace.h |    6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-> index cf88cc8cc74d..c88bf47f46da 100644
-> --- a/arch/x86/include/asm/ftrace.h
-> +++ b/arch/x86/include/asm/ftrace.h
-> @@ -36,6 +36,12 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
->  
->  #ifdef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
->  struct ftrace_regs {
-> +	/*
-> +	 * On the x86_64, the ftrace_regs saves;
-> +	 * rax, rcx, rdx, rdi, rsi, r8, r9, rbp, rip and rsp.
-> +	 * Also orig_ax is used for passing direct trampoline address.
-> +	 * x86_32 doesn't support ftrace_regs.
+Also enable eQEP to be built as a module for ARCH_k3.
 
-Should add a comment that if fregs->regs.cs is set, then all of the pt_regs
-is valid. And x86_32 does support ftrace_regs, it just doesn't support
-having a subset of it.
+Changes since v1:
+- Add new compatible ti,am62-eqep
+- Fix eqep binding for new compatible, require
+ power-domains for new compatible
+- Fix eQEP DT node to use new ti,am62-eqep compatible
 
--- Steve
+Judith Mendez (8):
+  counter/ti-eqep: Add new ti-am62-eqep compatible
+  dt-bindings: counter: Add new ti,am62-eqep compatible
+  arm64: dts: ti: k3-am62-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62a-main: Add eQEP nodes
+  arm64: dts: ti: k3-am62p-main: Add eQEP nodes
+  arm64: dts: ti: k3-am64-main: Add eQEP nodes
+  counter: ti-eqep: Allow eQEP driver to be built for K3 devices
+  arm64: defconfig: Enable TI eQEP Driver
+
+ .../devicetree/bindings/counter/ti-eqep.yaml  | 53 +++++++++++++++++--
+ arch/arm64/boot/dts/ti/k3-am62-main.dtsi      | 27 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am62a-main.dtsi     | 27 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p-main.dtsi     | 27 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi      | 27 ++++++++++
+ arch/arm64/configs/defconfig                  |  1 +
+ drivers/counter/Kconfig                       |  2 +-
+ drivers/counter/ti-eqep.c                     |  1 +
+ 8 files changed, 159 insertions(+), 6 deletions(-)
 
 
-> +	 */
->  	struct pt_regs		regs;
->  };
->  
+base-commit: 534ad093bb80f19c20b251a89f09ce1a0e3d4f2d
+-- 
+2.45.1
 
 
