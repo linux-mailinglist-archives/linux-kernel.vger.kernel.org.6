@@ -1,137 +1,142 @@
-Return-Path: <linux-kernel+bounces-187385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8243E8CD108
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:14:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8DB8CD10D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1679B203AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:14:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9231F21F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C68145B3C;
-	Thu, 23 May 2024 11:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E93146A6A;
+	Thu, 23 May 2024 11:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="TrAFcD/0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6lCag6+"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8711914533A;
-	Thu, 23 May 2024 11:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A82D144D0E;
+	Thu, 23 May 2024 11:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716462846; cv=none; b=MR3muuHM2jzBMBzDnz6N2TM5L8/UIK31+Kh5jAkyTUveL4OrAvkpefbY/8jzbFjnaOe9GRxTMguSGLFz44af5WezEAA5NLvxJpVD4Melo8Ivk++0nqKQMeIg8S7FUvUYnft1UZRk+k0zD3Q3qlfzORaKvMgN7Adc5kipJ8MfrOE=
+	t=1716462886; cv=none; b=bzJ5iqoeH0r9/WpjLByq9x+qxe8wTTqqJXRePkOTKiQBFbDFhQhzrpOZv1aVUDU2j1CzG/8bd9K4F5Qr4SzFeIcRB7XD6ugHbj6OAJavWGo65/sfV7bhOms19MJ9cjDAHihqitHRukp+XPA1LStc/rGASvv80jgsl519uVpUtU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716462846; c=relaxed/simple;
-	bh=WsFGnwTm99wDa34rj9YU1yMy/PbnfLe5oRW6cl9M6ko=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HYcJS1d5juOshDeyboeZfNu5m7IKloK+m7TMmZUy24KCQkhXKkf5ZvVy8EvRIcYApgThj1ggR/lVUM1efykco2tnP7BH6v2PFdrInAg/J6GB2URHSud5Gxi7DTa2wbpNZy4y7fpF4J7We/8Oos1Y0thXD11DyqChAL6SPZUPeZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=TrAFcD/0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1716462840;
-	bh=RQkvd78utY4Ja+S0DO/1Mye5FaeMmZbhGPyeP5EJKQQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TrAFcD/0oCSj4bONcbgtSXsgS11T7S6E6WEE0gffpW7ra3PdygToDHYnWt9FP325X
-	 Ulu0bqi0OxVHifCazgqTPTcv/aaBzA/83J1DT67GuP6P4kjWTmxYpR3k5d8QUw5SLX
-	 KaBhSbgX+yGymHJf39ImQ6bnlzCPqhwGCGOmHgS0sHnNQgFIAZ6faJ7xj1yh2/HfZ9
-	 /Z9LFLWzTrGlhqhCpc9jNxdoVnW04Z3oqkCtkFgdgatmkjO7vuIyMxPYAtcwoYLtH4
-	 NkZDz2N+aA5I64TWM3LiovfgstkBhV29OKuQ0ghCtOqMnTp1QDGg0kge9VdLNWKmjf
-	 eyL0seoYf1YEg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VlQXk23Vyz4wcK;
-	Thu, 23 May 2024 21:13:58 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Eric Chanudet <echanude@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, Peter
- Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter
- Anvin" <hpa@zytor.com>, Mike Rapoport <rppt@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, Nick Piggin
- <npiggin@gmail.com>
-Cc: x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Eric Chanudet
- <echanude@redhat.com>
-Subject: Re: [PATCH v2] mm/mm_init: use node's number of cpus in
- deferred_page_init_max_threads
-In-Reply-To: <20240522203758.626932-4-echanude@redhat.com>
-References: <20240522203758.626932-4-echanude@redhat.com>
-Date: Thu, 23 May 2024 21:13:55 +1000
-Message-ID: <87jzjk3hn0.fsf@mail.lhotse>
+	s=arc-20240116; t=1716462886; c=relaxed/simple;
+	bh=8n6nu/lTr7f8BK8EmXMpV/7Mr500bB6UmP2ECf0sGLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBfoGH5/VgorvzReg5jPYJ/DVvN/Af7OR+6XNMUTyaelfMUekaMDe45mzRAeT0gZEhLs1iIlx+ttFC5uw4REm5R9KTq4sjJ+zVPa+pPMf36nQW8kit23OQoiuKoyfERf93YH0eUWxn6dpc+rdLbrsfhujuqlHUnkpNuYhpPaGSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6lCag6+; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-574b3d6c0f3so12477319a12.0;
+        Thu, 23 May 2024 04:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716462883; x=1717067683; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CPc6oaYLUIIGqFx5m3Yc4i8wcC4CESeJfJvk9pDUTzs=;
+        b=J6lCag6+rl+22jYeYNGrX6kj35ZhAQ9ZnmnKoeUMKXJUsoZm81cGHwiUohclbQ7UH5
+         GiWtIe5e0upq2/8GBs4t2uFZiFciSO47/JJ1hB/BalPOxdS/1PwIDYl+fzwFcRi3gTk4
+         TsYJobP/gA8KwUtrw9J5ChszVySGoDMgySNgRz27X3SxnnWzN5FlSArXABN2B0KekNVY
+         R82UtkmY15pS3EesRVt7ycrEIZvUbp/CTYywsUH/Y+BhQlVCplhXtCxfnIGKGanpajUE
+         +Vk/qI+KNJPBKjkubxFNMiwAnbDee4R8RNa76J6P5WBDXJ4tssbG2o+Nfy/cvSBnL4hT
+         fcDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716462883; x=1717067683;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CPc6oaYLUIIGqFx5m3Yc4i8wcC4CESeJfJvk9pDUTzs=;
+        b=KFfGPl7tiBqk4WxPDtjzRKepnKIJmFBzJnka8zAREHtAbsKNPmqDvE0gNwIbtTQYNd
+         Xy707gZkFjfNbKclVKIVoGLJsTPMEl4z2+wqbz2ggxuylkLKEzN8mp0uTRh84WKdN9Ng
+         Rk3v5W9y2/c7zE13LvvCwuT06CnV7Q6Wm6neETIQcevN/87ppsPVQW0tbfNyCuTuKxGf
+         VzcsELhnv3aheDbKaA5TI6LbNcZwHzGGQjhNoFXIcHFR0nL+4MqSTV1L8kTO/9Ro49R1
+         gc0lxAoNuglvEd4MF2Kon0X9QuZxfFmIeEKxIzdSRKefNZjdR+hSqa+IYlJUiwMz4Jr/
+         urTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTDzqPK/b7qnv4TlhvEAHOdftfG6C549bb6spJvOowDISyt025vJMdvYs36Yxw4aH7VYKeRTIGp9ZnRRP2ap0DrL4cm7cgv1JyJfT23X1eSJ7+UHslthJHSUIkH5TjuK/IGyHygM1b
+X-Gm-Message-State: AOJu0YwROEwg7A9A+BfroosLVVobZr4R98Dqo25m0rEwpqr7vqzEGokq
+	Zbvl1LoCZDZkBW5TAcu618n0p7XXX4WiadjpB1wc1MP/8x2o8n97
+X-Google-Smtp-Source: AGHT+IH4WazQgFCrLINa6YVkA20c3EBt/5RUNd6fAmHu1NvenP/fjy1zrgd/5ZMDPuq042lL4tH/eA==
+X-Received: by 2002:a17:907:75c6:b0:a59:c833:d275 with SMTP id a640c23a62f3a-a622807c913mr270829066b.30.1716462883107;
+        Thu, 23 May 2024 04:14:43 -0700 (PDT)
+Received: from debian ([93.184.186.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a69148b97sm1463925566b.114.2024.05.23.04.14.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 04:14:41 -0700 (PDT)
+Date: Thu, 23 May 2024 13:14:39 +0200
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Andrew Hepp <andrew.hepp@ahepp.dev>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: temperature: mcp9600: add threshold events
+ support
+Message-ID: <20240523111439.GA513807@debian>
+References: <20240517081050.168698-1-dima.fedrau@gmail.com>
+ <20240517081050.168698-3-dima.fedrau@gmail.com>
+ <20240519174248.69f00448@jic23-huawei>
+ <20240519210036.GB10322@debian>
+ <20240520131850.00003430@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240520131850.00003430@Huawei.com>
 
-Eric Chanudet <echanude@redhat.com> writes:
-> x86_64 is already using the node's cpu as maximum threads. Make that the
-> default for all archs setting DEFERRED_STRUCT_PAGE_INIT.
+Am Mon, May 20, 2024 at 01:18:50PM +0100 schrieb Jonathan Cameron:
+> On Sun, 19 May 2024 23:00:36 +0200
+> Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
+> 
+> > Am Sun, May 19, 2024 at 05:42:48PM +0100 schrieb Jonathan Cameron:
+> > > On Fri, 17 May 2024 10:10:50 +0200
+> > > Dimitri Fedrau <dima.fedrau@gmail.com> wrote:
+> > >   
+> > > > The device has four programmable temperature alert outputs which can be
+> > > > used to monitor hot or cold-junction temperatures and detect falling and
+> > > > rising temperatures. It supports up to 255 degree celsius programmable
+> > > > hysteresis. Each alert can be individually configured by setting following
+> > > > options in the associated alert configuration register:
+> > > > - monitor hot or cold junction temperature
+> > > > - monitor rising or falling temperature
+> > > > - set comparator or interrupt mode
+> > > > - set output polarity
+> > > > - enable alert
+> > > > 
+> > > > This patch binds alert outputs to iio events:
+> > > > - alert1: hot junction, rising temperature
+> > > > - alert2: hot junction, falling temperature
+> > > > - alert3: cold junction, rising temperature
+> > > > - alert4: cold junction, falling temperature
+> > > > 
+> > > > All outputs are set in comparator mode and polarity depends on interrupt
+> > > > configuration.
+> > > > 
+> > > > Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>  
+> > > Hi Dmitri  
+> > 
+> > Hi Jonathan,
+> > 
+> > > Please make sure to address all questions in earlier reviews, either by
+> > > changing the code, or directly answering the question.
+> > >  
+> > I did, see: https://lore.kernel.org/linux-iio/20240509204559.GB3614@debian/T/#u
+> > or did I miss anything ? I'm a little bit confused.
+> 
+> I think some emails went astray :( Sorry I didn't check the archive.
+> 
+> Anyhow, thanks for providing the links.
 >
-> This returns to the behavior prior making the function arch-specific
-> with commit ecd096506922 ("mm: make deferred init's max threads
-> arch-specific").
->
-> Signed-off-by: Eric Chanudet <echanude@redhat.com>
->
-> ---
-> Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64 platforms
-> shows faster deferred_init_memmap completions:
->
-> |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
-> |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
-> |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
-> |---------|-------------|--------------|-----------------|--------------|
-> | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
-> |---------|-------------|--------------|-----------------|--------------|
-> | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
-> | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
->
-> - v1: https://lore.kernel.org/linux-arm-kernel/20240520231555.395979-5-echanude@redhat.com
-> - Changes since v1:
->  - Make the generic function return the number of cpus of the node as
->    max threads limit instead overriding it for arm64.
-> - Drop Baoquan He's R-b on v1 since the logic changed.
-> - Add CCs according to patch changes (ppc and s390 set
->   DEFERRED_STRUCT_PAGE_INIT by default).
->
->  arch/x86/mm/init_64.c | 12 ------------
->  mm/mm_init.c          |  2 +-
->  2 files changed, 1 insertion(+), 13 deletions(-)
+Just thought you were to busy to reply and that's because I had send a new
+version of the series.
 
-On a machine here (1TB, 40 cores, 4KB pages) the existing code gives:
-
-  [    0.500124] node 2 deferred pages initialised in 210ms
-  [    0.515790] node 3 deferred pages initialised in 230ms
-  [    0.516061] node 0 deferred pages initialised in 230ms
-  [    0.516522] node 7 deferred pages initialised in 230ms
-  [    0.516672] node 4 deferred pages initialised in 230ms
-  [    0.516798] node 6 deferred pages initialised in 230ms
-  [    0.517051] node 5 deferred pages initialised in 230ms
-  [    0.523887] node 1 deferred pages initialised in 240ms
-
-vs with the patch:
-
-  [    0.379613] node 0 deferred pages initialised in 90ms
-  [    0.380388] node 1 deferred pages initialised in 90ms
-  [    0.380540] node 4 deferred pages initialised in 100ms
-  [    0.390239] node 6 deferred pages initialised in 100ms
-  [    0.390249] node 2 deferred pages initialised in 100ms
-  [    0.390786] node 3 deferred pages initialised in 110ms
-  [    0.396721] node 5 deferred pages initialised in 110ms
-  [    0.397095] node 7 deferred pages initialised in 110ms
-
-Which is a nice speedup.
-
-Tested-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
-
-cheers
+> Jonathan
+> 
 
