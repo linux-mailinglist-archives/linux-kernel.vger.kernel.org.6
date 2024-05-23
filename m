@@ -1,73 +1,44 @@
-Return-Path: <linux-kernel+bounces-187970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB508CDB5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:27:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB128CDB61
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129D71F24AA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:27:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A22E71C2155D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAD184D3B;
-	Thu, 23 May 2024 20:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HZ65mTBD"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920C284DF3;
+	Thu, 23 May 2024 20:31:04 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B65280632
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C570982C8E;
+	Thu, 23 May 2024 20:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716496055; cv=none; b=BD9TWhP0Kka02wTdTigywvbc8rYWoUw7AkCUJwspGIvZea83LB5N7eK0ZU5Hpha8r2HVydeqLK/HTrAVQJSBrO/ONQiKDsVujqkjxIO+PUKsm4zUzHUPAsRrj86bd+pi9NWXMgQyksQMqXv477zsR+2SEJWvbPvpo7G3rTqKKnI=
+	t=1716496263; cv=none; b=tPXhwseqhQ1UUoe82XMtJ7N1jBr6cW+mQ17h3BTh3IqzdpHXzBe6Ic9NBllmEjZTnIsPu3mBfwout4XuTg+gEYsF51EeMpOWNn32LgwhsEFgDHc8I+hqtJGUkh9+3fuuOMtZMaSrWInJYVAXE6sAtUIZW7zJGM6jv9LIpAWfuzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716496055; c=relaxed/simple;
-	bh=c2lXC7rZq0RgDOLyx0NsOE+TDxw1lwT1aLua6AP15yo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TdwT2FVfpYpTaV0czTSyjOncxT06IKBJ74Qt72MiWaCMLaiuntivqURI5CinLO3aQPPtDOZu5xTDnJvQd1KdKGEW+Y22GNUfL8h3lvcnrj/0we6xTRwe5ZJ5Av/rY5Y92OQ/QNg8htpX8sfLb6hAZVpvJI6DGmIzh0I+PJXqmto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HZ65mTBD; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-354dfe54738so1772087f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716496052; x=1717100852; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4mCYQOucXHkzPzuxeSXoj7RNoEsjBU+3ZqxpnS0/TLs=;
-        b=HZ65mTBDTmhstLav8ffJ81eEeyt+6SLLAXi3YLzw4EGONMsTYCheZslQpnl0GYjRA2
-         CftKAQ90zTff3G7cQqkTH6ISy6BQCqFnU4nXRcSAFCCWSjOvP6vxr+WMud5knt3FRQI5
-         pX4GxK5kG/vMBZ8lj8rUOblNR7e8DkhH1BLFtpWuTA6E3MxWqLGwASWPUVlCTksJgTzz
-         japRxS1anao7Jf5I3+PwOslM3HO6Rjytp8OA9Vr+Mpfjr41+qi3F0/H4/CttJitYVXa/
-         /kfhybNpWEEtWGzT3pWZNDnC/fBqkd5x0YSDjFa3mjs62O2fcBMn7OWjo2ozs9WIzeml
-         bhcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716496052; x=1717100852;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4mCYQOucXHkzPzuxeSXoj7RNoEsjBU+3ZqxpnS0/TLs=;
-        b=vqm1g7So1MVO1lXUV3EsR/xOFAGjTwca0e90eX+pQTH2PO4vktImIgrkFILk1/Svs/
-         Kjl4fUuBp84oC7s/inRckbY6wvWmXkd9UlA8508akKlS1fmPKX724S+PKIhF2tJp+cSd
-         82fbHKaY42NMW+XM/I+m9orRNcO76ffR/6KSunNX44Wgaa7okxV86MG1b8ykHS4+Oj/I
-         oSSSJqF0FUZ+Hr+afrf0CvoDgwMAnZ1ZZ7o/e3jDDKSiycyKNia9B0sBYeDYy3KXCOro
-         nVIIb+78eWOiscgDy671qPOXcqie6GiM5EJzrSJo6oBTmgFfONFxwg6FFDCbfAqym/lJ
-         Wj4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXxyG2FZOac2jh1CMcQOnPbIyT0pf6/dl5TES6zTamxFAo8OLGeqGh5e0sHRqIHKXQcmXVlFVwHCZr37UimZkI877ltvKRnPpgqrpU
-X-Gm-Message-State: AOJu0YyE8HLH5V+Heg7yw2TDMPnxZ1LzDKLWRUtGj1yNb2Q+Amdt3gCg
-	ZmSUKyvnGG0B0TlU7+t9S8gOL94+CquXQpYYlt9Xo+iGr1PRhcVdeTdTYZi0mYc=
-X-Google-Smtp-Source: AGHT+IHkQxdVhHRUF2A3htjJRXvtthNPCjIjURm8kPBRBUe1GbHeUrZg7uMBl5UoYMDjslbgpN7p3w==
-X-Received: by 2002:a7b:c40e:0:b0:41e:1bc1:36de with SMTP id 5b1f17b1804b1-42108a03095mr1484915e9.26.1716496052347;
-        Thu, 23 May 2024 13:27:32 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c817974sm6629166b.25.2024.05.23.13.27.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 13:27:31 -0700 (PDT)
-Message-ID: <0ccbc35a-434a-47cd-b54c-02fec2cd9ccb@linaro.org>
-Date: Thu, 23 May 2024 22:27:30 +0200
+	s=arc-20240116; t=1716496263; c=relaxed/simple;
+	bh=xwfm1kmXiKCv+NYSUVC4LiJEEx87EhlweHt1yl3WpGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CJVWOa0rPr5P4ZGCjQ/laduN8PTiPGQqY2GYiuzhG7KOPg5AQQCp7wDKdplZy8RzJ7moq+2K1iYS6CHKdSL7YKCnvVDYZ7ENsTjJiMzUMPsvkP6+yo1n2PIdQ+MSPsF04YumT7/7VQLv8XP/IqqQypcd9W6lcYPy3f3lEJQM0Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4VlfWR11Rdz9v7Hp;
+	Fri, 24 May 2024 04:13:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id B59BA140717;
+	Fri, 24 May 2024 04:30:51 +0800 (CST)
+Received: from [10.81.203.103] (unknown [10.81.203.103])
+	by APP2 (Coremail) with SMTP id GxC2BwA3bSFwp09mQETECA--.21072S2;
+	Thu, 23 May 2024 21:30:51 +0100 (CET)
+Message-ID: <1b1485f8-9c84-4221-b955-622dbf2fd953@huaweicloud.com>
+Date: Thu, 23 May 2024 22:30:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,160 +46,237 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] RISC-V: add Star64 board devicetree
-To: H Bell <dmoo_dv@protonmail.com>, Emil Renner Berthing <kernel@esmil.dk>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <IPHlm5mOKUzYfwGy0auyufx-oPkSrtQjUjiQLbtvspD69UPX9O98iB8P2mqM8ahNaerz0yUa009f4XABRniq7aj2PUp83hbRVVhhKmqT0Ss=@protonmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <IPHlm5mOKUzYfwGy0auyufx-oPkSrtQjUjiQLbtvspD69UPX9O98iB8P2mqM8ahNaerz0yUa009f4XABRniq7aj2PUp83hbRVVhhKmqT0Ss=@protonmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: LKMM: Making RMW barriers explicit
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, kernel-team@meta.com, boqun.feng@gmail.com,
+ j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ Joel Fernandes <joel@joelfernandes.org>
+References: <72c804c8-2511-4349-a823-bc1de8bb729e@rowland.harvard.edu>
+ <e030f7a4-97e7-4e91-bbae-230ee5c97763@huaweicloud.com>
+ <a9bf972c-b5ee-f1c2-36bf-30ba62f419d7@huaweicloud.com>
+ <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+ <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
+ <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+ <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <Zk4jQe7Vq3N2Vip0@andrea>
+ <73e08b17-cb2a-4e14-a94f-7144c5738684@huaweicloud.com>
+ <Zk9waJNBwifS/Ops@andrea>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <Zk9waJNBwifS/Ops@andrea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwA3bSFwp09mQETECA--.21072S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3GF47uFW5CF1fKw43tryUAwb_yoW3Ar45pF
+	W7KFWFkr1ktr40kw1xAw4xX3WFyas5tFy5Zrn8Kw48Aan0grWSvr1Ikr4F9FyDWrs2vr1j
+	vw4jqa4kCFyDAaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbU
+	UUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On 23/05/2024 21:06, H Bell wrote:
-> The Pine64 Star64 is a development board based on the Starfive JH7110 SoC.
-> The board features:
+
+
+Am 5/23/2024 um 6:35 PM schrieb Andrea Parri:
+>> I would phrase it more extreme: I want to get rid of the unnecessary
+>> non-standard parts of the herd representation.
 > 
-> - JH7110 SoC
-> - 4/8 GiB LPDDR4 DRAM
-> - AXP15060 PMIC
-> - 40 pin GPIO header
-> - 1x USB 3.0 host port
-> - 3x USB 2.0 host port
-> - 1x eMMC slot
-> - 1x MicroSD slot
-> - 1x QSPI Flash
-> - 2x 1Gbps Ethernet port
-> - 1x HDMI port
-> - 1x 4-lane DSI
-> - 1x 2-lane CSI
-> - 1x PCIe 2.0 x1 lane
-> 
-> Signed-off-by: Henry Bell <dmoo_dv@protonmail.com>
-> Cc: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  arch/riscv/boot/dts/starfive/Makefile         |  1 +
->  .../dts/starfive/jh7110-pine64-star64.dts     | 62 +++++++++++++++++++
->  2 files changed, 63 insertions(+)
->  create mode 100644 arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-> 
-> diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-> index 2fa0cd7f31c3..7a163a7d6ba3 100644
-> --- a/arch/riscv/boot/dts/starfive/Makefile
-> +++ b/arch/riscv/boot/dts/starfive/Makefile
-> @@ -9,5 +9,6 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-beaglev-starlight.dtb
->  dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
->  
->  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
-> +dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
->  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
->  dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-> new file mode 100644
-> index 000000000000..c70fffd51181
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-> @@ -0,0 +1,62 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +/*
-> +* Copyright (C) 2022 StarFive Technology Co., Ltd.
-> +* Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
-> +*/
-> +
-> +/dts-v1/;
-> +#include "jh7110-common.dtsi"
-> +
-> +/ {
-> +	model = "Pine64 Star64";
-> +	compatible = "pine64,star64", "starfive,jh7110";
+> Please indulge the thought that what might appear to be "non-standard"
+> to one or one's community might appear differently to others.
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
+Certainly. And of course, the formalization of the LKMM doesn't have to 
+be optimized for the WMM community, even though I suspect that they (and 
+possibly the tools they develop) are the main direct consumers of the 
+formalization.
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
+> Continuing with the example above, I'm pretty sure your "standard" and
+> simple idea of mb-reads and mb-writes, or even "unsuccessful" mb-reads
+> will turn up the nose of many kernel developers...  
 
-> +		aliases {
-> +				ethernet1 = &gmac1;
-> +		};
+I'm not sure how true that is. Firstly I'm not sure how many kernel 
+developers really read the formalization and try to see what it does, 
+rather than relying on tools to gain an intuition of what's going on.
 
-Messed indentation.
+But let's say a kernel developer wants to make sure that their intuition 
+of how cmpxchg works is matched by the formal model, e.g., they want to 
+double check that the formal model is correct
+after they got some unexpected results in a herd7 litmus test.
+
+How would they go about it today? The only way is to read the OCaml 
+source code, because there's no other code that obviously defines the 
+behavior. At best, they would read
+
+atomic_cmpxchg_acquire(X,V,W) __cmpxchg{acquire}(X,V,W)
+atomic_cmpxchg_release(X,V,W) __cmpxchg{release}(X,V,W)
+atomic_cmpxchg(X,V,W) __cmpxchg{mb}(X,V,W)
+
+see the Acquire, Release, and Mb references in the model, and think "ok, 
+so '__cmpxchg{acquire}' means I get an Acquire tag in the success case 
+which gives acq_po ordering, '__cmpxchg{release}' means I get a Release 
+tag in the success case which gives po_rel ordering. Therefore 
+'__cmpxchg{mb}' must give me an Mb tag in the success case. That would 
+give me mb ordering, but not between the store and subsequent 
+operations, and that's just wrong."
+
+But of course this "understanding by analogy" is broken, because there's 
+a bunch of special OCaml match expressions in herd that look only for 
+release or mb and just give totally different behavior for that one 
+case. Every other tag behaves exactly the same way.
+
+At worst they wouldn't even guess that this only is the success ordering 
+(that's definitely what happened to us in the weak memory model 
+community, but we don't matter for this argument).
+
+A better situation would be to do something like this:
+
+                                        (*success*)(*fail*)
+atomic_cmpxchg_acquire(X,V,W) __cmpxchg {acquire}  {once} (X,V,W)
+atomic_cmpxchg_release(X,V,W) __cmpxchg {release}  {once} (X,V,W)
+atomic_cmpxchg(X,V,W)         __cmpxchg {mb}       {once} (X,V,W)
+
+and being explicit in the model about what the Mb tag does:
+
+      | [M];fencerel(Mb);[M] (* smp_mb() and operations with Mb ordering 
+such as cmpxchg() *)
+      | [M];po;[R & Mb] (* reads with an Mb tag - coming from full fence 
+rmws - are ordered as-if there was an smp_mb() right before the read *)
+      | [W & Mb];po;[M] (* correspondingly, writes with an Mb tag are 
+ordered as-if there was an smp_mb() right after the write *)
+
+And suddenly you can read the model and map it 1:1 to the intuition that 
+you can treat a successful cmpxchg() (or an xchg() etc.) as-if it was 
+enclosed by smp_mb().
+
+There doesn't need to be a real fence.
 
 
-> +};
-> +
-> +&gmac0 {
-> +	starfive,tx-use-rgmii-clk;
-> +	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
-> +	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
-> +};
-> +
-> +&gmac1 {
-> +	phy-handle = <&phy1>;
-> +	phy-mode = "rgmii-id";
-> +	status = "okay";
+> The current repre-
+> sentation for xchg() was described in the ASPLOS'18 work
 
-Status is the last property. Please read DTS coding style.
+Do you mean the one example in Table 3?
+What about cmpxchg() or cmpxchg_acquire()?
+
+> But that's not the point, "standards" can change and certainly kernels
+> and tools do.  My remark was more to point out that you're not getting
+> rid of anything..., 
+
+We're definitely getting rid of some lines in herd7, that have been 
+added solely for dealing with this specific case of LKMM.
+
+For example, there's some code looking like this (for a memory ordering 
+tag `a`)
+
+                 (match a with ["release"] -> a |  _ -> a_once)
+
+which specifically refers to the release tag in LKMM and we can turn 
+that into
+
+                 a
+
+with no more reference to any LKMM tags. Of course, this is not the 
+Linux community's problem, just the herd (and others who want to use the 
+literal cat file of LKMM) maintainers who have to deal with it.
+
+And imagine that at some point you want to add another tag to the linux 
+kernel - like for example for 'accessing an atomic in initialization 
+code, so that the compiler can do optimizations like merge a bunch of 
+bitwise operations'. Let's call it 'init.
+
+What will be the behavior of
+
+WRITE_INIT(X,V) __store{init}(X,V);
+
+with the current herd7? Honestly I have no clue, because there might be a
+
+                 (match a with ["release"] -> a |  _ -> a_once)
+
+somewhere that will turn this 'init into 'once. We'd have to comb the 
+herd7 codebase to know for sure (or hope that our experiments are 
+sufficiently thorough to catch all cases).
+
+ >you're simply proposing a different representation
+
+I wouldn't phrase it like that, since it's a representation many people 
+familiar with WMM would expect, but admittedly that doesn't have to be 
+the deciding factor.
+
+> asking kernel developers & maintainers to "deal with it"
+
+Deal with what, no longer having to learn OCaml to be sure that the 
+LKMM's formal definition matches the description in memory_barriers.txt?
+Otherwise, I don't see anything that changes for the worse.
+With the change, people need to think for a few seconds to see that the 
+explicit rules in the .cat file are a formalization of "treat xchg() as 
+if it had smp_mb() before and after".
+Without the change, they need to read an OCaml codebase to see that is 
+meant by
+
+atomic_xchg(X,V,W) __xchg{mb}(X,V,W)
+
+So I don't see any downsides.
 
 
-Best regards,
-Krzysztof
+I would also support making the representation explicit in the .def 
+files instead, with something like
+
+cmp_xchg(x,e,v) = { if (*x==e) { smp_mb(); int r = 
+__cmp_xchg{once}(x,e,v) ; smp_mb(); return r } else { __read{once}(x) } }
+
+Then you get to keep the representation.
+Without knowing herd's internals, I have no idea of how to seriously 
+specify a meta language so that herd could effectively and efficiently 
+deal with it in general. But one could at least envision some specific 
+syntax for cmpxchg with a code sequence for the failure case and a code 
+sequence for the success case.
+
+Personally I don't prefer this option, firstly because I don't see a 
+good reason for the Linux community to go their own way here. I don't 
+think there's really much of a problem with saying "this is the 
+intuition; this is how we formalize it" and for the two not to be 
+completely identical. It happens all the time, and in this case the gap 
+between "we formalize it by really having two smp_mb() appear in the 
+graph if it's successful" and "we formalize it by providing the same 
+ordering that the smp_mb() would have if it was there" isn't big.
+Especially for those kernel people who have enough motivation to 
+actually deep dive into the formalization in the first place. But it 
+makes it a lot more accessible for the WMM community, which can only 
+benefit LKMM.
+
+And secondly because people will probably mostly focus on the .cat file, 
+which means that it's still a bit of a booby trap to put something so 
+important (and perhaps surprising) into the .def file, but at least one 
+that is in the open for people who are more careful and also read the 
+def file.
+
+ > I am looking forward to something more than "because we can".
+
+- it makes it easier to maintain the LKMM in the future, because you 
+don't have to work around hidden transformations inside herd7
+- it makes implicit behavior explicit
+- it makes it easier to understand that the formalization matches the 
+intention
+- it makes it easier to learn the LKMM from the formalization without 
+having to cross-reference every bit with the informal documentation to 
+avoid misunderstandings
+
+
+Have a good time,
+   jonas
+
+
+
 
 
