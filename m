@@ -1,170 +1,347 @@
-Return-Path: <linux-kernel+bounces-187575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62E38CD48C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6265A8CD468
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4299C1F22728
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8D91C20CB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6108A14AD2C;
-	Thu, 23 May 2024 13:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0986B14D294;
+	Thu, 23 May 2024 13:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T8We9XTv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="koZB+EFR"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC713BAE2
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB4014A632
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470734; cv=none; b=h6RyNfva8vM1ZBrOkO16ptM/zykg2I0U3o+rNS3TenBnNjM6oyb53JCHu628cGst4gxVW/879/XmvrgH637zpwoL551qxcm5KV836RSsRR9ZqiycdXRjQIv30RphbhmT8qPEScU3R1xwGLFvR2K/LDpMrTCG/oCB4deJ18gcGZk=
+	t=1716470647; cv=none; b=MI1ZjYIlsMvYUWVxx12/Sft/0Lbq6yxhYYitdcNctHBQ9rzQQVYYd378sKy0uZefBgf50FgCq7tvLyy5VBzW/hHUUw6mye6noIFPfZYQOSCEFkKUZ819+2OoVuSe1ES4RVUMocgFrH23Xahs6jGdNnFZp2Z8IpXGXTvRQBxPJy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470734; c=relaxed/simple;
-	bh=p6xEboA4juve6QH4jxo+Pk4DmhsXMjwBg2oQJLkI1jQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mWW/spWZ480XHR6FK6SirCyP7pVTsBBS3iA8MCwmaN/yZEBdQjMBXMuWrVxzXnpin6BIDx2BxACURFpNosay2rAubEAyFTB7ZEhdOkyzlYGBDraL/HIOB7QS2jc+1/5yTR0SIcte2Dgf6xCTZRawnk/U64Dth5/CknXD36sFOfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T8We9XTv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716470732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5NqJdtUQ+TL9F/j4u/bCfZrmv1CaqcNgn4wLGAF0cI8=;
-	b=T8We9XTvz3CzCS1m2iluxPcfs6LaZPmnEkCWGf/HUpfrNtyv5VE4xdnfzDFWjoZI9/rsBD
-	kZYMO8Eh99kNGmcaABLWXF6Eu0W+vLXoIW89dFSOrZbk1Gu3gJBPdEjsLs4WLbYtT2YE60
-	q7oTBUOck3Yg2NM8aRMOYBMXsWR5mQ4=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-V317WFQ9PCK_bhfAEj22LA-1; Thu,
- 23 May 2024 09:25:28 -0400
-X-MC-Unique: V317WFQ9PCK_bhfAEj22LA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DA28A3801EC4;
-	Thu, 23 May 2024 13:25:27 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.7])
-	by smtp.corp.redhat.com (Postfix) with SMTP id E5084491034;
-	Thu, 23 May 2024 13:25:25 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 23 May 2024 15:24:00 +0200 (CEST)
-Date: Thu, 23 May 2024 15:23:58 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Chris von Recklinghausen <crecklin@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
- smp_call_function_single() with irqs disabled
-Message-ID: <20240523132358.GA1965@redhat.com>
-References: <20240522151742.GA10400@redhat.com>
+	s=arc-20240116; t=1716470647; c=relaxed/simple;
+	bh=NGwPr7Z67/7znzHkXoOkccT+OKYhRJioZ0H0WNeR2Ak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YDkOqnmKtVNUodcwOxyyv44CICBO3vlhe1rYvzXP9pQFuG8eGrfJeMT0nSRzRP6EDgdzHMBOYw2tdZT2ZF2avel7kELAjVVdOTvMeh0TCGtOQRnowbScRLImeLUWr6XieqPUIQ73olfe5phLcT35DaTevM/oVW/3znA+DNfdMEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=koZB+EFR; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-420180b59b7so18527085e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:24:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716470642; x=1717075442; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b1bEXVq0kjirSToKmi5rGdt49BYr5FRGBXpMPxi+kOw=;
+        b=koZB+EFRxprRe2NIqCCrwEOknZ5xyjogeACJw1ehjDsv17i/PEKbNVHQ9Nns/xroMk
+         M/h0DLqBGYVZQAo4PvW75UoA+clsqiWHgQcKg/K4vvMaNbbWx3Lm9foKTbwLf14PIDPb
+         XnhUQON2mHK0aDQpWaK94BXLFRTdRO0Oqlt8rcv0cOkYZYDFAZPsGn71KLAYh+WieP8H
+         e/K520HIGaxzTjELu8USDH3BfojE/3HImDdyuKKtJJf0xvE+v7pn6ZL15yS2OkEJ+50h
+         idv5OXhpU1J09LZ+TjbC5lXBOwMAOzMVj2YDbNg6gq6IeqaEqdkiKfYmztoz8DjNw2ic
+         nKeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716470642; x=1717075442;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b1bEXVq0kjirSToKmi5rGdt49BYr5FRGBXpMPxi+kOw=;
+        b=iR9It6jIoJ6yGtxQDtUJkol6YS9QzBPKjNXKerHz/3B/2WeoAfQq29E1N9J6NiQG/j
+         gYn3zaF+F/9QVgpCiD51WPcpmchEH2BtR4FFBJ7AK0fkXVuARhGx2jsuogDM1xYOjNil
+         Py+Um2AcGFC3vwmg8NdEAn+Sd6gRQeTIo19zzncMNQ25FgMAufgNzuhL/1Jmx4BgcHHI
+         4RLgL3NSvDImSGMSlF9j1uZOFuRcAc643ehYMM3bLKesoifk1s+pdhmyHC1YNKK1gjMp
+         io+DDyPS+TUt8A5ATm7Qmr2stprQt9SlRjRfy65Dw15h2VqOHI0+n7w71KjPnNWeP5X9
+         bD/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUfN/FkBPYd1y1KoZYNRVtNwCerReOXzWLCU5shlD0EBkqSYHle1IXZ/iyKOxreCSfLHzUGyTZ60BlffIo5N8EcFch59a7xjGuqYdx0
+X-Gm-Message-State: AOJu0YxgUYaZMvlHJTwN3A/vFLyiaGViEp7B8IJyHc6Nz2Hw0zXiT2jN
+	0otJPgRnhBBfd7Bc6jh/JMO5cVBZP3dpFj+EafixSKk0nWXHZraCU6z6PWguv2k=
+X-Google-Smtp-Source: AGHT+IEmASdfZKnXNv6IGUCEuEhwh0HO1qVFlUYCx6ZCIO7fIrZ4lZuzh8+txvcQCC9JRq0nnaNXoA==
+X-Received: by 2002:a1c:4c10:0:b0:420:1585:7a99 with SMTP id 5b1f17b1804b1-420fd384c7emr39170205e9.38.1716470642181;
+        Thu, 23 May 2024 06:24:02 -0700 (PDT)
+Received: from ?IPV6:2a04:cec2:21:7ed1:cc40:dfff:5a22:b06a? ([2a04:cec2:21:7ed1:cc40:dfff:5a22:b06a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fb7fe1sm25098895e9.45.2024.05.23.06.24.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 06:24:00 -0700 (PDT)
+Message-ID: <dfb5a14d-bd35-4271-9ded-888eb5c0cff3@baylibre.com>
+Date: Thu, 23 May 2024 15:23:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522151742.GA10400@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] thermal: Add support of multi sensors to
+ thermal_core
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Hsin-Te Yuan <yuanhsinte@chromium.org>
+References: <20240119110842.772606-1-abailon@baylibre.com>
+ <20240119110842.772606-3-abailon@baylibre.com>
+ <CAEXTbpeJ=3kxeKy4rXUfNEO==XYQ2DQx+ex2nLNkur_X6p1VVQ@mail.gmail.com>
+Content-Language: en-US
+From: Alexandre Bailon <abailon@baylibre.com>
+In-Reply-To: <CAEXTbpeJ=3kxeKy4rXUfNEO==XYQ2DQx+ex2nLNkur_X6p1VVQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 05/22, Oleg Nesterov wrote:
->
-> After the recent comment 5097cbcb38e6 ("sched/isolation: Prevent boot crash
-> when the boot CPU is nohz_full") the kernel no longer crashes, but there is
-> another problem.
->
-> In this case tick_setup_device() does tick_take_do_timer_from_boot() to
-> update tick_do_timer_cpu and this triggers WARN_ON_ONCE(irqs_disabled())
-> in smp_call_function_single().
->
-> I don't understand this code even remotely, I failed to find the fix.
->
-> Perhaps we can use smp_call_function_single_async() as a workaround ?
->
-> But I don't even understand why exactly we need smp_call_function()...
+Hi Pin-yen,
 
-..
+> Hi Alexandre,
+> 
+> On Thu, Apr 11, 2024 at 4:34 PM Alexandre Bailon <abailon@baylibre.com> wrote:
+>>
+>> This adds support of multi sensors to thermal.
+>> Currently, this only support the get_temp operation.
+>> This returns an average temperature of all the sensors.
+>> If defined, a coefficient is applied to the value read from the sensor
+>> before computing the average.
+>>
+>> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
+>> ---
+>>   drivers/thermal/Makefile        |   1 +
+>>   drivers/thermal/thermal_core.h  |   7 ++
+>>   drivers/thermal/thermal_multi.c | 178 ++++++++++++++++++++++++++++++++
+>>   3 files changed, 186 insertions(+)
+>>   create mode 100644 drivers/thermal/thermal_multi.c
+>>
+>> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+>> index c934cab309ae..757289a406f7 100644
+>> --- a/drivers/thermal/Makefile
+>> +++ b/drivers/thermal/Makefile
+>> @@ -6,6 +6,7 @@ CFLAGS_thermal_core.o           := -I$(src)
+>>   obj-$(CONFIG_THERMAL)          += thermal_sys.o
+>>   thermal_sys-y                  += thermal_core.o thermal_sysfs.o
+>>   thermal_sys-y                  += thermal_trip.o thermal_helpers.o
+>> +thermal_sys-y                  += thermal_multi.o
+>>
+>>   # netlink interface to manage the thermal framework
+>>   thermal_sys-$(CONFIG_THERMAL_NETLINK)          += thermal_netlink.o
+>> diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
+>> index 0a3b3ec5120b..26e83a5c8298 100644
+>> --- a/drivers/thermal/thermal_core.h
+>> +++ b/drivers/thermal/thermal_core.h
+>> @@ -138,6 +138,13 @@ ssize_t weight_show(struct device *, struct device_attribute *, char *);
+>>   ssize_t weight_store(struct device *, struct device_attribute *, const char *,
+>>                       size_t);
+>>
+>> +/* Multi sensors */
+>> +int thermal_multi_sensor_validate_coeff(int *coeff, int count, int offset);
+>> +int thermal_multi_sensor_register(const char *name,
+>> +       struct thermal_zone_device *sensor_tz, int coeff);
+>> +void thermal_multi_sensor_unregister(struct thermal_zone_device *sensor_tz);
+>> +
+>> +
+>>   #ifdef CONFIG_THERMAL_STATISTICS
+>>   void thermal_cooling_device_stats_update(struct thermal_cooling_device *cdev,
+>>                                           unsigned long new_state);
+>> diff --git a/drivers/thermal/thermal_multi.c b/drivers/thermal/thermal_multi.c
+>> new file mode 100644
+>> index 000000000000..a5a4f1f2d594
+>> --- /dev/null
+>> +++ b/drivers/thermal/thermal_multi.c
+>> @@ -0,0 +1,178 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/export.h>
+>> +#include <linux/of.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/thermal.h>
+>> +#include <linux/types.h>
+>> +#include <linux/string.h>
+>> +
+>> +#include "thermal_core.h"
+>> +
+>> +struct sensor_interface {
+>> +       struct thermal_zone_device *tz;
+>> +       int coeff;
+>> +
+>> +       struct list_head node;
+>> +};
+>> +
+>> +struct multi_sensor_thermal_zone {
+>> +       struct thermal_zone_device *tz;
+>> +       struct mutex sensors_lock;
+>> +       struct list_head sensors;
+>> +
+>> +       struct list_head node;
+>> +};
+>> +
+>> +static DEFINE_MUTEX(multi_tz_mutex);
+>> +static LIST_HEAD(multi_tz_list);
+>> +
+>> +#define TJ_MAX 120000
+>> +
+>> +static int multi_sensor_get_temp(struct thermal_zone_device *tz, int *temp)
+>> +{
+>> +       struct multi_sensor_thermal_zone *multi_tz = tz->devdata;
+>> +       struct sensor_interface *sensor;
+>> +       int accumulated_temp = 0;
+>> +       u32 accumulated_coeff;
+> 
+> Should we initialize accumulated_coeff to 0 as well?
+Yes, indeed, I will fix it.
+> 
+>> +       int ret;
+>> +
+>> +       mutex_lock(&multi_tz->sensors_lock);
+>> +
+>> +       if (list_empty(&multi_tz->sensors)) {
+>> +               mutex_unlock(&multi_tz->sensors_lock);
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       list_for_each_entry(sensor, &multi_tz->sensors, node) {
+>> +               ret = thermal_zone_get_temp(sensor->tz, temp);
+>> +               if (ret) {
+>> +                       mutex_unlock(&multi_tz->sensors_lock);
+>> +                       return ret;
+>> +               }
+>> +
+>> +               accumulated_temp += *temp * sensor->coeff;
+>> +               accumulated_coeff += sensor->coeff;
+>> +       }
+>> +
+>> +       mutex_unlock(&multi_tz->sensors_lock);
+>> +
+>> +       *temp = accumulated_temp / accumulated_coeff;
+>> +       return ret;
+>> +}
+>> +
+>> +struct thermal_zone_device_ops multi_sensor_ops = {
+>> +       .get_temp = multi_sensor_get_temp,
+>> +};
+>> +
+>> +int thermal_multi_sensor_validate_coeff(int *coeff, int count, int offset)
+>> +{
+>> +       int max_accumulated_temp = 0;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < count; i++) {
+>> +               max_accumulated_temp += TJ_MAX * coeff[i];
+>> +               if (max_accumulated_temp < 0)
+>> +                       return -EOVERFLOW;
+>> +       }
+>> +
+>> +       max_accumulated_temp += offset;
+>> +       return max_accumulated_temp < 0 ? -EOVERFLOW : 0;
+>> +}
+>> +
+>> +static struct thermal_zone_device *multi_sensor_tz_alloc(const char *name)
+>> +{
+>> +       struct thermal_zone_device *tz;
+>> +       struct thermal_zone_params tzp = {};
+>> +       struct multi_sensor_thermal_zone *multi_tz;
+>> +
+>> +       tz = thermal_zone_get_zone_by_name(name);
+>> +       if (!IS_ERR(tz)) {
+>> +               mutex_unlock(&multi_tz_mutex);
+>> +               return tz;
+>> +       }
+>> +
+>> +       multi_tz = kzalloc(sizeof(*multi_tz), GFP_KERNEL);
+>> +       if (!multi_tz)
+>> +               return ERR_PTR(-ENOMEM);
+>> +       mutex_init(&multi_tz->sensors_lock);
+>> +       INIT_LIST_HEAD(&multi_tz->sensors);
+>> +
+>> +       tzp.no_hwmon = true;
+>> +       tzp.slope = 1;
+>> +       tzp.offset = 0;
+>> +
+>> +       tz = thermal_tripless_zone_device_register(name, multi_tz,
+>> +                                                  &multi_sensor_ops, &tzp);
+>> +       if (IS_ERR(tz)) {
+>> +               kfree(multi_tz);
+>> +       } else {
+>> +               multi_tz->tz = tz;
+>> +               list_add(&multi_tz->node, &multi_tz_list);
+>> +       }
+>> +
+>> +       return tz;
+>> +}
+>> +
+>> +int thermal_multi_sensor_register(const char *name,
+>> +       struct thermal_zone_device *sensor_tz, int coeff)
+>> +{
+>> +       struct thermal_zone_device *tz;
+>> +       struct multi_sensor_thermal_zone *multi_tz;
+>> +       struct sensor_interface *sensor;
+>> +
+>> +       mutex_lock(&multi_tz_mutex);
+>> +
+>> +       tz = multi_sensor_tz_alloc(name);
+>> +       if (IS_ERR(tz)) {
+>> +               mutex_unlock(&multi_tz_mutex);
+>> +               return PTR_ERR(tz);
+>> +       }
+>> +       multi_tz =  tz->devdata;
+>> +
+>> +       sensor = kzalloc(sizeof(*sensor), GFP_KERNEL);
+>> +       if (!sensor) {
+>> +               mutex_unlock(&multi_tz_mutex);
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       sensor->tz = sensor_tz;
+>> +       sensor->coeff = coeff;
+>> +       mutex_lock(&multi_tz->sensors_lock);
+>> +       list_add(&sensor->node, &multi_tz->sensors);
+>> +       mutex_unlock(&multi_tz->sensors_lock);
+>> +
+>> +       thermal_zone_device_enable(tz);
+>> +
+>> +       mutex_unlock(&multi_tz_mutex);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +void thermal_multi_sensor_unregister(struct thermal_zone_device *sensor_tz)
+>> +{
+>> +       struct multi_sensor_thermal_zone *multi_tz;
+>> +       struct sensor_interface *sensor, *tmp;
+>> +
+>> +       mutex_lock(&multi_tz_mutex);
+>> +       list_for_each_entry(multi_tz, &multi_tz_list, node) {
+>> +               mutex_lock(&multi_tz->sensors_lock);
+>> +               list_for_each_entry_safe(sensor, tmp, &multi_tz->sensors, node) {
+>> +                       if (sensor->tz == sensor_tz) {
+>> +                               list_del(&sensor->node);
+>> +                               kfree(sensor);
+>> +                               break;
+>> +                       }
+>> +               }
+>> +
+>> +               if (list_empty(&multi_tz->sensors)) {
+>> +                       thermal_zone_device_unregister(multi_tz->tz);
+>> +                       mutex_unlock(&multi_tz->sensors_lock);
+>> +                       kfree(multi_tz);
+>> +               } else {
+>> +                       mutex_unlock(&multi_tz->sensors_lock);
+>> +               }
+>> +       }
+>> +       mutex_unlock(&multi_tz_mutex);
+>> +}
+>> --
+>> 2.41.0
+>>
+> 
+> By the way, may I know why min/max aggregation is dropped in this
+> version? I thought that checking max temperature is the most direct
+> approach to protect the hardware and the users from high temperature.
+You are right. The main reason was device tree bindings.
+I was expecting getting this accepted first before adding max and min.
 
-> Race with tick_nohz_stop_tick() on boot CPU which can set
-> tick_do_timer_cpu = TICK_DO_TIMER_NONE? Is it really bad?
-
-And is it supposed to happen if tick_nohz_full_running ?
-
-tick_sched_do_timer() and can_stop_idle_tick() claim that
-TICK_DO_TIMER_NONE is not possible in this case...
-
-So, once again, could you explain why the patch below is wrong?
-
-Oleg.
----
-
-diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
-index d88b13076b79..907b44d8cf1f 100644
---- a/kernel/time/tick-common.c
-+++ b/kernel/time/tick-common.c
-@@ -178,26 +178,6 @@ void tick_setup_periodic(struct clock_event_device *dev, int broadcast)
- 	}
- }
- 
--#ifdef CONFIG_NO_HZ_FULL
--static void giveup_do_timer(void *info)
--{
--	int cpu = *(unsigned int *)info;
--
--	WARN_ON(tick_do_timer_cpu != smp_processor_id());
--
--	tick_do_timer_cpu = cpu;
--}
--
--static void tick_take_do_timer_from_boot(void)
--{
--	int cpu = smp_processor_id();
--	int from = tick_do_timer_boot_cpu;
--
--	if (from >= 0 && from != cpu)
--		smp_call_function_single(from, giveup_do_timer, &cpu, 1);
--}
--#endif
--
- /*
-  * Setup the tick device
-  */
-@@ -231,9 +211,8 @@ static void tick_setup_device(struct tick_device *td,
- 
- 		} else if (tick_do_timer_boot_cpu != -1 &&
- 						!tick_nohz_full_cpu(cpu)) {
--			tick_take_do_timer_from_boot();
- 			tick_do_timer_boot_cpu = -1;
--			WARN_ON(READ_ONCE(tick_do_timer_cpu) != cpu);
-+			WRITE_ONCE(tick_do_timer_cpu, cpu);
- #endif
- 		}
- 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 71a792cd8936..3b1d011d45e1 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1014,6 +1014,9 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
- 	 */
- 	tick_cpu = READ_ONCE(tick_do_timer_cpu);
- 	if (tick_cpu == cpu) {
-+#ifdef CONFIG_NO_HZ_FULL
-+		WARN_ON_ONCE(tick_nohz_full_running);
-+#endif
- 		WRITE_ONCE(tick_do_timer_cpu, TICK_DO_TIMER_NONE);
- 		tick_sched_flag_set(ts, TS_FLAG_DO_TIMER_LAST);
- 	} else if (tick_cpu != TICK_DO_TIMER_NONE) {
-
+Thanks,
+Alexandre
+> 
+> Best regards,
+> Pin-yen
 
