@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-187430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABEE8CD1A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:01:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C3F8CD1A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009DC1F22C42
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:01:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34A351F22B43
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1EA13D277;
-	Thu, 23 May 2024 12:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076A513BACB;
+	Thu, 23 May 2024 12:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzgpqT2d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="F1rghimA"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3F8208A1;
-	Thu, 23 May 2024 12:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1989413B7A1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716465706; cv=none; b=t/t04YWnvQit/99tK977WtaSxFX4dDKg8pysTsVIPaU/1v9XTMucOUElTSyCPrG15naGMd5xsYbn0dyq/1ZvgJFwzUCmbFE60QbgrbHM/K0uPrQJgioiK3aliTBye/9rCVCLv5FZzwqDjJ/2gy0m7RDrlOM24h0BJ8U56CwyB7w=
+	t=1716465721; cv=none; b=OZf1Yxn8ILdUI9u7UkdVlIGjgf/39yUCuXhszP1dE76vr7rBBJLks7OzQ93IemJQaKgjrb8MjqJBvfc5QToQ4hZxbRc6wpNWsBeSHjLDk4AdF4HmwRd5i1qyjw1EZcNdST1yoY1oNc81QybzYNI1pS1TDJ+mt+tv6HVYHS9LGjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716465706; c=relaxed/simple;
-	bh=YBPjtDb/JXFKq66PcO5AIit/qgta0lNNGHZBGcZ6v3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PO/J3yWjKu8Ynby+ezedbM7dUT+5CtuHz9cGZxB8a5mVhGS7VhpFHcLPtfUA0DcRUZLBqecR2lflEOumuqbD+29Dlad2RJWTzAFi2/c2+YfEdGEvSOWSanD+xLEzNsNOfcR7PPXXWwIK0qs3w08gjePdCSCa2TEt/qnBpqqpRkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzgpqT2d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB2BC2BD10;
-	Thu, 23 May 2024 12:01:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716465705;
-	bh=YBPjtDb/JXFKq66PcO5AIit/qgta0lNNGHZBGcZ6v3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kzgpqT2dgX5wU4d+k28+SEDbxk2WNAlF7UYDbzRKg7S+LRpdITZxg79nRa6fYN94r
-	 IpeMOf0hHBfJkojfLJI23YMF5LS4jHO8P/KgF94CQoDO8SQWlQLGGViNDTday+k705
-	 2N58/Byi1D05LjJObCDJ4jIY5QMZgia3cc3qoKJ8HxTcsDN03nK7PS9VF1WLNbN40f
-	 NRbORl1tEVN57r/j1+NQN5UZYnrD5JTImwOTxfZrVTN7ny2/zrRvQqcKrrzKbsbPyo
-	 dGCCnH//nMyxIRITHPZAtw8NbCOiK/U1vaFsl3tr36n5S0PsL9SEyy09naHLdHekYI
-	 N4BI8AtEJwZzA==
-Date: Thu, 23 May 2024 13:01:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v1 2/2] spi: Check if transfer is mapped before calling
- DMA sync APIs
-Message-ID: <424a8c56-bde0-4b49-ae16-a018fa1b4962@sirena.org.uk>
-References: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
- <20240522171018.3362521-3-andriy.shevchenko@linux.intel.com>
- <4748499f-789c-45a8-b50a-2dd09f4bac8c@notapiano>
+	s=arc-20240116; t=1716465721; c=relaxed/simple;
+	bh=Tk/UnYB7NdgjEuYtt7p9NXYfWCDtEh/hlQ8P2WX9/Iw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z69h8PWv+9ufqNM6XU3bzTwOg3GQEDfK/Dwt+HcShILc5Ciiy1UczV3JtUbqbJ+skKUZ5IzXPq/906vg/gOEFOlRE7qnwK65qZV4SF076RFm7gNpCpn6drAQOyb818FjbOPTOSbKH0VNjoueE3hKH/UbIPaiT6c70nybn0aH/lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=F1rghimA; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-354de3c5d00so883935f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 05:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1716465717; x=1717070517; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AykWLRMhfIuqWQMOvQrfDGTd9ZVzX1cGKkmAJORqxQU=;
+        b=F1rghimAS6F4ee1UXOxdWXZk0jU3kg7EWm0aqh33Z+QRR2Cg5EOfm+F9mvLyV8Gb0W
+         /bfBM08ufp8yMn/6iYoetCu0Nk+jNVUhjlwa5UMAFwYsn9nQQeOMzwjamPgfjNZbVJqg
+         W+j9HOBj+g56rWC0QevdnA2nfSl+vXHlmVUD7p9KmfJp7AVsH2exN00qEHQJTpnDzWbF
+         o4KZiaAqjyoy0k+RZ/OZkFg1t1Lj7xTyOLZoXc+gWVfMdS0qEQb8uY0Cobp8ENop84bx
+         T9XaMc9mbXuJVwG1T2qxSW2Z15LCkdKsk0fzW8JW6IKirMFNjsmJmq2PbYD4jrKFD6pb
+         a5GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716465717; x=1717070517;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AykWLRMhfIuqWQMOvQrfDGTd9ZVzX1cGKkmAJORqxQU=;
+        b=dtOCUjP6c5ZTgruqn8nt+ADTyqitlo4UoGsXz0fHnZEhakUxlMA4zdp0VHUuDsNYzv
+         cOyqM49dNpnM9TWZW9+fCUqtkauj/AsrxERWcOcqqqgeYuxwInfx6NwpBoWrOUTiHjfM
+         gvDGaFScHsulg7NOYaHh3qMLWS/WUOe7UhnJWspnBAaqgMpbQhVVcquwqQvRKmF1JlDa
+         4B+0mDawE0OHBe65Jj3k7q81UvnLoBT4Uc1atLny+weRr8IkrJs0svcVCcdsdBdeDH14
+         iJeYS0FMykPt5lM0BPwGZNDzj7zyUzj+gEtjF/f/Rozt8m89lKMK/OqbZKwcC4bmSGEo
+         VSLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCaMFSgccF7C54DF3B5OyFD90Rn51atK5Vcr9L/+Vbua3GwN3SJhISR2tvXKCS7oFVpHiCS5z+xlIFXrte2opccxY7So9/ScQ7cJa0
+X-Gm-Message-State: AOJu0Yz432fwqS1ZmKHNvELQCsV69TXqIBEgnGKMkFctYApoayVrGGeB
+	ScGzrXLecvvNzspMsl4t2YfXWNtFMTrUqKJ5AV+fGawhlKLPoqL8FKkyDrPKQC/wm13ExbBqW43
+	d
+X-Google-Smtp-Source: AGHT+IFi7XOybuT2T0K5bGfhxgS5aB5gz/y/urapYI7H/O61zC0HgZ7qtTQepUscjXk1/8lMq6eLxQ==
+X-Received: by 2002:adf:fd85:0:b0:351:d2e3:68e9 with SMTP id ffacd0b85a97d-354f74ffd53mr1873455f8f.1.1716465717387;
+        Thu, 23 May 2024 05:01:57 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7315:e681:bab5:4646:cf21? ([2a10:bac0:b000:7315:e681:bab5:4646:cf21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42106a158a6sm2766795e9.25.2024.05.23.05.01.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 05:01:57 -0700 (PDT)
+Message-ID: <5ea91ae6-091d-4378-950b-833561eef48c@suse.com>
+Date: Thu, 23 May 2024 15:01:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eovZZzUrEQFpC6/X"
-Content-Disposition: inline
-In-Reply-To: <4748499f-789c-45a8-b50a-2dd09f4bac8c@notapiano>
-X-Cookie: You auto buy now.
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2024-35802: x86/sev: Fix position dependent variable
+ references in startup code
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org
+References: <2024051738-CVE-2024-35802-959d@gregkh>
+ <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
+ <2024052334-cable-serotonin-fa2b@gregkh>
+Content-Language: en-US
+From: Nikolay Borisov <nik.borisov@suse.com>
+In-Reply-To: <2024052334-cable-serotonin-fa2b@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---eovZZzUrEQFpC6/X
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 02:41:48PM -0400, N=EDcolas F. R. A. Prado wrote:
+On 23.05.24 г. 14:21 ч., Greg Kroah-Hartman wrote:
+> Isn't crashing SEV guests a problem with "availability"?  That term
+> comes from the CVE definition of what we need to mark as a CVE, which is
+> why this one was picked.
 
-> I tested this series and I still get the oops (attached at the end for
-> reference). When I tried this change originally, I added it on top of the
-> patches you had supplied. And as it turns out one of them was necessary.
-> Specifically, if I add=20
->=20
-> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-> index f94420858c22..9bc9fd10d538 100644
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@ -1220,6 +1220,11 @@ void spi_unmap_buf(struct spi_controller *ctlr, st=
-ruct device *dev,
->         spi_unmap_buf_attrs(ctlr, dev, sgt, dir, 0);
-
-The other two patches are already queued, could you send this one
-incrementally please Andy?
-
---eovZZzUrEQFpC6/X
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZPMCQACgkQJNaLcl1U
-h9D53wf/fkMqZQCyZodZWehUamrTAkwubsZLOYyTvWNrNebKBT/sFevYj1/p3WuN
-sPhPBTb4tPUxSCGGl+uNxTKKztBHwrpmWaHGkvsx8WExRUlB9GT/+8OCqHNdh6Se
-CNbYssM21raUwt0VK4yy+qmFPdNvG+mAUp6WbTVz38rvYbP8j5Meeyc9tRtv0x5F
-c3lFz6ex980JVDZvSM2RF0ghwLJK0GkSrzwD6JS9/tzl+1Y5pVTMLSYyYpl/rumF
-FjhkDx+vfl9Hes5m6p5pu1k1rhfWSnZqZ3zU+cKfc8ghySEkVn5QQV/qgU1Iw6On
-7OFfYQSg+zJO8wYeuJXbDpS0hZJ8Nw==
-=H/oA
------END PGP SIGNATURE-----
-
---eovZZzUrEQFpC6/X--
+But availability has never been one of the tenets of CoCo, in fact in 
+sev-snp/tdx the VMM is explicitly considered outside of the TCB so 
+availability cannot be guaranteed.
 
