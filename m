@@ -1,118 +1,202 @@
-Return-Path: <linux-kernel+bounces-188125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C484B8CDDC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 235E08CDDCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F3A1F23F82
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9301F1F23F3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1401292C2;
-	Thu, 23 May 2024 23:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8EE8061F;
+	Thu, 23 May 2024 23:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LV+YjtPX"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ifjEPms6"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2047.outbound.protection.outlook.com [40.107.237.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8683A127E28
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716508159; cv=none; b=HKrHnSm1UpNQB6noD9zAlfkGXqr3uY1oGgeeAeELSvYOQ9lXrQZ75s5Y9vtY8QyMYhFhoDp5NfiObYzaqf5snG7gBcv8XPtXK4B3zfCZDbT6Xo7RjyJECwz78B+BMAcxKdEWgqGG8XJ8CkoUpEO8GiiIN4As4rHy7ghjumnyeOk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716508159; c=relaxed/simple;
-	bh=f14zzgUE4RpNE/ENjRASf+ipA6iu8BQvstQoxLsQmxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1R/6nw7fWJMaj97pDbwHmE8WbXVpCz/mfp6UoYT0Dwj/qwU6fbMX67x/W/8aURyI8IQczSOCgNCOFd8naDRiO3enN7/6RvhONWDj+/9jqUCYo1dLQbXQaQWKPVB/XLl8fxaQS7NPPfwHadGceIsSTiZEsR/nXvy5s9QtgN4OEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LV+YjtPX; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f8f34cb0beso187345b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716508158; x=1717112958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1uIS3HZKU6NCDT1trnq/4hta3P9vI5FJKrJfEbB/tpM=;
-        b=LV+YjtPXgbb/L6ClgB/41htWhjJnbTlRAmiQFSMeqTLVDL8EAARikLt0zG3BIgk4VX
-         2Ch2TVOEvJ7+POR+Z7hX3kGMhehXVr31wKhy4eNBGYpfIixbkTrAbRZsnnkJzYQ2MYLH
-         8EuiglEYSUJi4qTs310q3tKATEZISAhYiJ0NM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716508158; x=1717112958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1uIS3HZKU6NCDT1trnq/4hta3P9vI5FJKrJfEbB/tpM=;
-        b=BrZGxfz2G5h39qgVROypbkzbla8CAK5L/qNjHzHHaijGnoSLVrmLgSECkR3WQ9cIa8
-         bMJS+pwRtN85D9lIfMLmuTvx3jLKnwfESdbRkg8uas2mh+yh0+wzFWR8uRlmzCzDcCb3
-         cdzE5Ctx0qaInKSkx+mJJkfVCa9Ai9ULrqu4lyqaTv0v1c8ABgDsjHLieIY/0Crktshv
-         /EfgMcARMb4K4jsOz2Mq9EGoTwATmMmOWjIN8l5IDkZzMqC/nFQFFRpckf73SA4o0mBe
-         7RU+NftTGSyAuAVdcr6Pn1xxKECnzfhe2GO2zAX2kP/suleKNYWOHznvSKjOt79R1bT0
-         AUpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUexN5sTn5j9AL0aEeJ/SIKfDdNGtRAs0zreeLRbidi1GpwtHXkNSf6mj0dZnO9iJr5+j1qTTcqmAWIwpHICkhHs7Wjnb8aOt+U9F3X
-X-Gm-Message-State: AOJu0Yxu2+d55XTEd4viZ/FNYiGy2ppSaWag0Svs20K89EDMf44FIn7G
-	NjM2OGTgCerUVuZ5SGllaCNZuJt75zQGhlsuGU/akPSpZI31ChUTcqFtvP9vBg==
-X-Google-Smtp-Source: AGHT+IF9gMMldiKXPn103xSNzm5h3lWwxxnQr7d6oU1kzXIcMvbxWqKETvebkWBqarV+LQyRu7xdMQ==
-X-Received: by 2002:a05:6a21:6da1:b0:1af:f50f:cbe5 with SMTP id adf61e73a8af0-1b205c8ad56mr5421013637.8.1716508157798;
-        Thu, 23 May 2024 16:49:17 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-682274bbbddsm107706a12.92.2024.05.23.16.49.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 16:49:17 -0700 (PDT)
-Date: Thu, 23 May 2024 16:49:16 -0700
-From: Kees Cook <keescook@chromium.org>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: mattst88@gmail.com, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Regression bisected to f2f84b05e02b (bug: consolidate
- warn_slowpath_fmt() usage)
-Message-ID: <202405231647.69CAA404D8@keescook>
-References: <20200602024804.GA3776630@p50-ethernet.mattst88.com>
- <20240521184652.1875074-1-glaubitz@physik.fu-berlin.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F1814A82
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716508180; cv=fail; b=CLMEyEYMTFDuUej+B0B2/yqhYjzrkcoINcEBKqW1CtycqGwnHnSBPTRrYrRiFPnrCtttDXOzhkLpJ/SOSONFppaz+8RzMpsuo1rqXsyHY8zZ4JTjcCAheYAfVr5nSqW8O7H8wj4XJFdiTW2xFyxCFveXGT8vFy01GU11UIvuqS0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716508180; c=relaxed/simple;
+	bh=qrU1imVJyxxUjrZtPJhy6knPT902mR9gA3qEU/YPOjQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GGbVELuDAgTCrauLB94SKGDj6VHQTEOUjMJhiraQaTToY0cUJz4WrXuUQx93eLWffaUe9p4/RA5Gl0UVvH55ZUD1mBL7ggTtOkSa8IEbMdaHOjpY/cMj608poEkpQhV/o2eZAO9iIyjAe7mdkQwkS7+j8Fkpmhc62LrGMPCURU8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ifjEPms6; arc=fail smtp.client-ip=40.107.237.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=djokf7vgvDr+DCccOPq5p08g++c9VIbgui1gOD358RuJz7Ei/OUCocSCV7GaZ6F77z1PS/kEmsq9wGSSAgN3GYzXMM0TMxTV0zKE6KLQa+w+qycH5c/tUZbS40P6/sqj5rEi7jZI7yN+uePm/zyc6apkH/RgqN/uodQ3UFlqGCFu4c23Bznb6kih0hsxeM/bpC3dTKofqtJoO27xxb8SJODIIBHVzPw6ltcWNeQ+HR3ZT60cMKZi/2sHyYPlofS2c7DAdBjOsXb20ygedSmXpedvW6ee7O8gWI0qQXOzxd3O3mRpqgDaIM0ModQ0mUpA2dfhopzfcE8ZzC+6PCc87Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PsBGLuXMbm/RHm5dN/OALKTOpOocKeDS5y32UysOmFQ=;
+ b=aQY80akmBCxwIFRO15O+vtGY//Ow4ryuZ3s3cJdqqxUgls54Zxsc73CvINl/Ep/FFUnjp1iFpxqbzyjDJFZ9UGR302Mu2pcngkKbvc0blOreHZIrccE4r6URxnkkw8SRrx23iTN6eHAkqg2fT7Q+RuOt9DnhpyphPiwBuk35vd+mpJC9r1NaupFsM5gYt8/fiNqwtM/qWIWywgOz9ZCadMPx3GrjIEReB7HkgpPt/MBFBQQ6mTso0cBdzLKETL3ZtgotSan3tNDEHh7oYf29hlpmT+4As90kGmhIwUoNuK2+dwDuDc+fZFzNLJxHAMdu07XfHltlmTgt3B1epAV8iA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PsBGLuXMbm/RHm5dN/OALKTOpOocKeDS5y32UysOmFQ=;
+ b=ifjEPms6Wu7/5TSINYvOuw75Lp9Clkbp5SVfWpPcxoeZA9Zxa9azlOxlRvy7d+Atq3tbyGGJ5GkK9cQ/oolNI225gor3KuoMmerOkl4/3fIhMan7tC1bKEmYNreyIh09AK1p64Pc/LyhsoggHmNvH3CX4L14fGtN+kv/ITUwrbs=
+Received: from DM6PR02CA0090.namprd02.prod.outlook.com (2603:10b6:5:1f4::31)
+ by IA0PR12MB7697.namprd12.prod.outlook.com (2603:10b6:208:433::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Thu, 23 May
+ 2024 23:49:35 +0000
+Received: from CH1PEPF0000AD77.namprd04.prod.outlook.com
+ (2603:10b6:5:1f4:cafe::88) by DM6PR02CA0090.outlook.office365.com
+ (2603:10b6:5:1f4::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22 via Frontend
+ Transport; Thu, 23 May 2024 23:49:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CH1PEPF0000AD77.mail.protection.outlook.com (10.167.244.55) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7611.14 via Frontend Transport; Thu, 23 May 2024 23:49:34 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 23 May
+ 2024 18:49:34 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 23 May
+ 2024 18:49:34 -0500
+Received: from xsjanatoliy50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 23 May 2024 18:49:33 -0500
+From: Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+Date: Thu, 23 May 2024 16:49:28 -0700
+Subject: [PATCH v2] drm: xlnx: zynqmp_dpsub: Enable plane in atomic update
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240521184652.1875074-1-glaubitz@physik.fu-berlin.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240523-dp-layer-enable-v2-1-d799020098fc@amd.com>
+X-B4-Tracking: v=1; b=H4sIAAjWT2YC/3WNQQqDMBBFryKz7pRM0NZ05T2Ki5iMNaBRkhIqk
+ rs3dd/le/DfPyBycBzhUR0QOLnoVl9AXiowk/YvRmcLgxSyFo0UaDec9c4B2ethZrwPzY30KJX
+ RLZTVFnh0n7P47AtPLr7XsJ8HiX72fysREho11C1JoYiaTi/2atYF+pzzF5PIuq+sAAAA
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen
+	<tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, Michal Simek <michal.simek@amd.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+X-Mailer: b4 0.13.0
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD77:EE_|IA0PR12MB7697:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e6e6c12-5028-431b-aa5b-08dc7b82ffca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|376005|36860700004|82310400017|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Nnk0SE9GZm1ySUhqa3FzSzhWbDZuWjNZLzdBMzNhYlRKU1ZYVUl1LzFPOXJs?=
+ =?utf-8?B?K0owT1BzTWlpSkJ0OGhoSWJmV0FsVndmQWNzSGtISGlSNmVrcHJIdHZVZTM5?=
+ =?utf-8?B?TE9TMDZJa213Ymx6VVNQWUZkK0lrOTdRUFdLN3E4ckFGZzV1WUNvQ3I2bGNx?=
+ =?utf-8?B?aVg1SUkvdDdFUzk1REFDTW1DM3Fpa25nSmc2SUJhV2w2OWNydlE5TDd1RVBv?=
+ =?utf-8?B?cUhlYVd2YVc0SDFHTTczRjQ4NWlpVFlDZmxRUXBKNG54UHpaTSt0Q3REOHgz?=
+ =?utf-8?B?UDdpaW55Q3RPd05IY1M5L0RMNlRNY1RPMUZGaDducUEyTjJlV3FTUS8xK1pw?=
+ =?utf-8?B?UEZQWVB2UlVBS2pVVjZBUENyZG5TaVhkbk8rMUJlQmcyN01Mb3FMQTF0WUJ2?=
+ =?utf-8?B?SjRMZmVJdUZWY0daRllaNTdNbUNKRWF2U0RPVDBteU1rN3lobUl3amRmd2RW?=
+ =?utf-8?B?cGh3bGVqOC9GMHBvRm9LanJNdjFGOXo4TkdDOGZtUStCYWtOYTZERTBpUFZ3?=
+ =?utf-8?B?YzdtV1RUMGxFUjMwMzNlRmthTFRIVWt5RUFXcVpCUmhubU5wUDQrVkxDYnBa?=
+ =?utf-8?B?MHptRXBIQ3VLQlloVHpxSWtNd0REcXdSQnhTWEhwZzc0SFZ4eVAxakNRT0VN?=
+ =?utf-8?B?bXFNMTRJTGg1a1RMaDU3cFJTRkR4d2dHQXVvNGtUVmlrM1RocEtJQTFCV1FT?=
+ =?utf-8?B?WmJaMHlNa1NXL09iWXRMWG9WZkZrMU5NVGwyOVZ1VmlQNFplZVg3aDkwU2Za?=
+ =?utf-8?B?OE5KejMrbk5JWUhFNFpSRTJMUDRubk5oaDE2R1B3YTlrNDNkdWs5K3VyV1hq?=
+ =?utf-8?B?L2J5VTBxRCtOenFOVGpWK2JOYStMM2ZQeEtESUlTV1N0TmZHZWx1NVN0d0RB?=
+ =?utf-8?B?ZTdDY25xRjlIckpTRGloRWxmSFB4azNUczJzMCtUUVpISENOZnBhWmRBc0Zw?=
+ =?utf-8?B?NnBwVnl4aXhtVml6WTloU2R0c1V5T01WSmtsL0FqV2FFZmtIdVkwMU9acy9E?=
+ =?utf-8?B?d3Y3M1FjaStta0NxLzMyYkZCelczOVBOQ2RqekgyaWJoVnV0bzd3RlJtcUJW?=
+ =?utf-8?B?RVdKTWMvUVIxT05LcEJaM05ZMTg1R3VhWjk5Q2FSR3NmbUgxRnhrTEZEWTF4?=
+ =?utf-8?B?NS9hMExEcURUck84QllhY00wMU85bGZ4dzNUc3BSNkExK21TQzlobEJ5dC82?=
+ =?utf-8?B?eFY2YTc1WS9ENHN1YlpSUktlSlpVNk41Tzl5NW9ZWUQ4RHZrK1ZDTnJsMS9o?=
+ =?utf-8?B?UTg3bzdKelNHZjNza3A2MGMreXBkZkVqV1pPWDF1Q0lQc0J4alBTaGpLTEJ3?=
+ =?utf-8?B?UFpmdlM1TC9Fc29ZSzlrWU14Ump4OGw5Skp1TnhDOHhHS1lKWnNVK25WOCtD?=
+ =?utf-8?B?V0Vienc4ZnI2UWRkN0VmSWxrL0gwYTA3V2NDMlBlNlNzZnEzRmtFVzlvSVlQ?=
+ =?utf-8?B?N2Z6RlRMQXdTVFZBVHJmWXFMN2QvTTVrcWxSbFQrQTZDQXV3ZzhPODJZd3Fq?=
+ =?utf-8?B?R2Z5YUJ0aDhya3E5ZTJ3SUpKUEl1YWdLQjRRd3hlRWlWUWRIQ1VvN0g4b1Vj?=
+ =?utf-8?B?ZzFJeEtTYUp2R3dnMlM3ZWFzNXhNMUNwNDRuSGFqTHFWYldNL1ZLZ3UyQzNi?=
+ =?utf-8?B?cEJLQXFwa0FERHZTNDFGL1hiSFpxUEJBRnQ0OUEzaHVVQmVIVXYvSklNYmR6?=
+ =?utf-8?B?SXFnMjlRamp0WS92UTc2MVNWaWNYTHd4cFhCeG9QOCtZL1kydVJVM3c0akdL?=
+ =?utf-8?Q?TOAIg6g3ZMFuhk4xXqBFoLyt/HAO/ow77XxugWh?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(7416005)(376005)(36860700004)(82310400017)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 23:49:34.6579
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e6e6c12-5028-431b-aa5b-08dc7b82ffca
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD77.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7697
 
-On Tue, May 21, 2024 at 08:46:52PM +0200, John Paul Adrian Glaubitz wrote:
-> Hi,
-> 
-> Replacing the calls to raw_smp_processor_id() in __warn() with just "0" fixes the problem for me:
-> 
-> diff --git a/kernel/panic.c b/kernel/panic.c
-> index 8bff183d6180..12f6cea6b8b0 100644
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@ -671,11 +671,11 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
->  
->         if (file)
->                 pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS\n",
-> -                       raw_smp_processor_id(), current->pid, file, line,
-> +                       0, current->pid, file, line,
->                         caller);
->         else
->                 pr_warn("WARNING: CPU: %d PID: %d at %pS\n",
-> -                       raw_smp_processor_id(), current->pid, caller);
-> +                       0, current->pid, caller);
->  
->  #pragma GCC diagnostic push
->  #ifndef __clang__
-> 
-> So, I assume the problem is that SMP support is not fully initialized at this
-> point yet such that raw_smp_processor_id() causes the zero pointer dereference.
+Unconditionally enable the DPSUB layer in the corresponding atomic plane
+update callback. Setting the new display mode may require disabling and
+re-enabling the CRTC. This effectively resets DPSUB to the default state
+with all layers disabled. The original implementation of the plane atomic
+update enables the corresponding DPSUB layer only if the framebuffer
+format has changed. This would leave the layer disabled after switching to
+a different display mode with the same framebuffer format.
 
-But how does the commit change that? It called __warn() before too.
+Signed-off-by: Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+---
+Changes in v2:
+- Added comment around DPSUB layer enablement explaining why it should be
+  done unconditionally.
+- Link to v1: https://lore.kernel.org/r/20240520-dp-layer-enable-v1-1-c9b481209115@amd.com
+---
+ drivers/gpu/drm/xlnx/zynqmp_kms.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Is this an inlining bug?
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+index 43bf416b33d5..0b57ab5451a9 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+@@ -120,9 +120,13 @@ static void zynqmp_dpsub_plane_atomic_update(struct drm_plane *plane,
+ 		zynqmp_disp_blend_set_global_alpha(dpsub->disp, true,
+ 						   plane->state->alpha >> 8);
+ 
+-	/* Enable or re-enable the plane if the format has changed. */
+-	if (format_changed)
+-		zynqmp_disp_layer_enable(layer);
++	/*
++	 * Unconditionally enable the layer, as it may have been disabled
++	 * previously either explicitly to reconfigure layer format, or
++	 * implicitly after DPSUB reset during display mode change. DRM
++	 * framework calls this callback for enabled planes only.
++	 */
++	zynqmp_disp_layer_enable(layer);
+ }
+ 
+ static const struct drm_plane_helper_funcs zynqmp_dpsub_plane_helper_funcs = {
 
+---
+base-commit: 673087d8b023faf34b84e8faf63bbeea3da87bab
+change-id: 20240520-dp-layer-enable-7b561af29ca8
+
+Best regards,
 -- 
-Kees Cook
+Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+
 
