@@ -1,78 +1,92 @@
-Return-Path: <linux-kernel+bounces-187986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319AC8CDB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:49:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8209B8CDB8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 632A51C20F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:49:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26A0AB22B8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EF384FD6;
-	Thu, 23 May 2024 20:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C946885289;
+	Thu, 23 May 2024 20:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDx6Bw/s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ntyXqSEp"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF8A84FC5
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9835B84FB1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716497361; cv=none; b=sCB/rQJzyVGdAsNZAQiULIk1ykqp+99TPGG7KPzy/X72o97nZggrSxKiF0Ch54itWxlME16xupn2AsXpqOCVTNNwhdPDiUxJW8rlnwa3sUQcP7xeYdIKS8LCKDaxPtIVPjDboVhwNwk4+A4zAPjkip84sAzDyziTLbKnjtG7sfw=
+	t=1716497368; cv=none; b=spcPYJXDGqlZUlCPJctF8pDDjCr6qst9w8epKnziZNdNyLJwzF+gP0p1cyaE59TiikxAqMKH3k5ac1MnhhMjZwD+EdaB53XExqUQktsp9G7Cyo5djW24+Y6hQq0JTSIh5O1TiLVQzwMHuuMscbhTuXaaYqZdM/cLi2XqEXQH5f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716497361; c=relaxed/simple;
-	bh=LOPULbERcuNf8rFFdJbq/B8rQvADBwtRdmVfX6wLTec=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=E3yYIEaNNaYiQLxn+tY1Ug0joXesWW4rq2QhdSLpXWurF9N7b5IfTt3lDrRmcUGT2mpL3nw1AHm+cT4b7tpegwSKWXfc1uZh4QCbXULTyaSvwJwkSha41YKb1XP15Hzo1fqJG+4sicIIjgmtVCFqgKqJ5JR3xNOg0D7qh0iiB0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDx6Bw/s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 03CDEC32782;
-	Thu, 23 May 2024 20:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716497361;
-	bh=LOPULbERcuNf8rFFdJbq/B8rQvADBwtRdmVfX6wLTec=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=sDx6Bw/sXPpfheXobJl4HbsCDKFPSvCXRtsC0Tws1wegBeSJZvPwfC5m5Iyx+kSIb
-	 2AfcZ6Clf6evfOkh0aMTP3jd++IOpH5g2YviMpQAqfyU6zuD2uag6oa20/ecfbcmEH
-	 MWDN6OXq1LrkWvL9ynmBmfRqHqXM8B0uELiNe/fecIP4+wPtw0lfMvfMXtDMSNBvXI
-	 ESGWVT5QqpdqfYi9KTs7a9D4JehHnWe6erKRUcENDvyKHR4EER4Bs91XMS8gFTJ3bF
-	 9OzLnRoMBC/3Gnb89hxw5SzA55ZmkqUXZjUnlw+vsOKbNrfNrvHGxuDBQr2sR44stb
-	 0pyj9a8REAzYQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ED42BC43617;
-	Thu, 23 May 2024 20:49:20 +0000 (UTC)
-Subject: Re: [GIT PULL] regulator fixes for v6.10-merge-window
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <e6c886a96dc7945fa3a03d37d73a9392.broonie@kernel.org>
-References: <e6c886a96dc7945fa3a03d37d73a9392.broonie@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <e6c886a96dc7945fa3a03d37d73a9392.broonie@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.10-merge-window
-X-PR-Tracked-Commit-Id: 74b38cd77d3eb63c6d0ad9cf2ae59812ae54d3ee
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c2c80ecdb48aab735d770685207df96b8d0c0112
-Message-Id: <171649736096.28255.11535405514953106370.pr-tracker-bot@kernel.org>
-Date: Thu, 23 May 2024 20:49:20 +0000
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+	s=arc-20240116; t=1716497368; c=relaxed/simple;
+	bh=rbeNStjq8ZvVvsplsNJqXS7R2MbmDyLPsKIoiXvOtfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U4ulhEFCIhHvTX7yOr4fB763EtXbNaxSJhAKpW5MfYbjCTsneI1hotU3RG/ru+rJZgJpeN/9dnbuL6M78sqTQ3v7slYvChLejEU4nR5VgSKzekANQPtHlcX37gTLq5tHzuEyfo5KZ+FxnqxLB8v+MwWId54fsrU1DxvBSZtZUcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ntyXqSEp; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=1M5svfgzLuARE6FrrTH0CdVr6zKhpnG/OhiYJueLczs=; b=ntyXqSEpzXLHjolE
+	nc5O47VLTS1KYDglITgNukeeiNoo8NpbPV26U6f5NIrRunKJffSjuKGJiwK5QeEoljfF60hSQdAfc
+	CemLAOZyqmZFgwN3IGJ4BGu3trdyvZfgOCLdsDUk5nONHeSws9WparFwdwJhBL7NQxYwX76dkM5Nm
+	kFi6xZfqvV7fIlk0sISHPJi+YBnmCV3pzARBGhb92HifbVNM/fNLtaQqpqXDmdhrEj3JX6hApJkvD
+	fuqhlrXW334Uw0xktPimFu6Ufkl5BPk0uclSc+xDseijHS/X6qpIs2uzxeVPNjHC++J032rEVindQ
+	IduPGyQ8JSYd9nG0Ew==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sAFNL-002IFF-2W;
+	Thu, 23 May 2024 20:49:24 +0000
+From: linux@treblig.org
+To: morbidrsa@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] mcb: remove unused struct 'mcb_parse_priv'
+Date: Thu, 23 May 2024 21:49:21 +0100
+Message-ID: <20240523204921.235746-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Thu, 23 May 2024 12:48:24 +0100:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.10-merge-window
+'mcb_parse_priv' has been unused since the initial
+commit 3764e82e5150 ("drivers: Introduce MEN Chameleon Bus").
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c2c80ecdb48aab735d770685207df96b8d0c0112
+Remove it.
 
-Thank you!
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/mcb/mcb-parse.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
+diff --git a/drivers/mcb/mcb-parse.c b/drivers/mcb/mcb-parse.c
+index 1ae37e693de0..a5f8ab9a0910 100644
+--- a/drivers/mcb/mcb-parse.c
++++ b/drivers/mcb/mcb-parse.c
+@@ -8,11 +8,6 @@
+ 
+ #include "mcb-internal.h"
+ 
+-struct mcb_parse_priv {
+-	phys_addr_t mapbase;
+-	void __iomem *base;
+-};
+-
+ #define for_each_chameleon_cell(dtype, p)	\
+ 	for ((dtype) = get_next_dtype((p));	\
+ 	     (dtype) != CHAMELEON_DTYPE_END;	\
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.45.1
+
 
