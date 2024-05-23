@@ -1,106 +1,107 @@
-Return-Path: <linux-kernel+bounces-187429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AB08CD1A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABEE8CD1A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A87E1F22B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009DC1F22C42
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9506E13C3FF;
-	Thu, 23 May 2024 12:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1EA13D277;
+	Thu, 23 May 2024 12:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fpn8Rvcu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzgpqT2d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D812113B5B0;
-	Thu, 23 May 2024 12:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3F8208A1;
+	Thu, 23 May 2024 12:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716465699; cv=none; b=DnffSxpKo7n0ktERCApom7sQa7KIGV1E2UZyJFDfjknqiegFTWJeF/4YaoB/dwtvoMPfZx4Y7ftZRfJkttMb6lVlAcj82ba43j2l6pstsVGROu1kjVZiTpN8Ec9sbaWKYsTVcnuVWd959geYn8ez9kOVx04zmwUthT3G8UlOdq4=
+	t=1716465706; cv=none; b=t/t04YWnvQit/99tK977WtaSxFX4dDKg8pysTsVIPaU/1v9XTMucOUElTSyCPrG15naGMd5xsYbn0dyq/1ZvgJFwzUCmbFE60QbgrbHM/K0uPrQJgioiK3aliTBye/9rCVCLv5FZzwqDjJ/2gy0m7RDrlOM24h0BJ8U56CwyB7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716465699; c=relaxed/simple;
-	bh=h02E3oFYubYEDTBjPHWQMILPffcs9Y5ozx2D/Cpn738=;
+	s=arc-20240116; t=1716465706; c=relaxed/simple;
+	bh=YBPjtDb/JXFKq66PcO5AIit/qgta0lNNGHZBGcZ6v3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mdjb58sljqwoXM1+OZiC86qxQwlcQrD8f9dA0H++6qJxCzNLTyKvTINhx596xYaG4GiR8Eb92FbOGsNhjIB9rqobnniFrR7ZR9TZ+qgXzgD76zqmqBC2vVwc35npGj35wwXQL22vqwgL2Sjl4ado3C8XSje+GdC1bJNiOoSsRIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fpn8Rvcu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17325C2BD10;
-	Thu, 23 May 2024 12:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716465698;
-	bh=h02E3oFYubYEDTBjPHWQMILPffcs9Y5ozx2D/Cpn738=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=PO/J3yWjKu8Ynby+ezedbM7dUT+5CtuHz9cGZxB8a5mVhGS7VhpFHcLPtfUA0DcRUZLBqecR2lflEOumuqbD+29Dlad2RJWTzAFi2/c2+YfEdGEvSOWSanD+xLEzNsNOfcR7PPXXWwIK0qs3w08gjePdCSCa2TEt/qnBpqqpRkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzgpqT2d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB2BC2BD10;
+	Thu, 23 May 2024 12:01:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716465705;
+	bh=YBPjtDb/JXFKq66PcO5AIit/qgta0lNNGHZBGcZ6v3M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fpn8RvcuUBRaz0NAFbRL3QRC+uHBJU3DeW2OxTGOqNvHMpY9AoFhxyqd/6nNPKCqg
-	 B5c+Y6fTDx2jPGjC5aaJfpTBMawrkUOZ9zERlGDpYno8aPHMkS8hffWv2wznr2JqdX
-	 SCXM0NgarcfTfVK2zuvxskahj0cQDQQeeFqexANY=
-Date: Thu, 23 May 2024 14:01:35 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: stable@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-	Baokun Li <libaokun1@huawei.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jingbo Xu <jefflexu@linux.alibaba.com>, Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH 6.8.y 2/2] erofs: reliably distinguish block based and
- fscache mode
-Message-ID: <2024052329-apostle-product-fced@gregkh>
-References: <20240521065032.4192363-1-hsiangkao@linux.alibaba.com>
- <20240521065032.4192363-2-hsiangkao@linux.alibaba.com>
+	b=kzgpqT2dgX5wU4d+k28+SEDbxk2WNAlF7UYDbzRKg7S+LRpdITZxg79nRa6fYN94r
+	 IpeMOf0hHBfJkojfLJI23YMF5LS4jHO8P/KgF94CQoDO8SQWlQLGGViNDTday+k705
+	 2N58/Byi1D05LjJObCDJ4jIY5QMZgia3cc3qoKJ8HxTcsDN03nK7PS9VF1WLNbN40f
+	 NRbORl1tEVN57r/j1+NQN5UZYnrD5JTImwOTxfZrVTN7ny2/zrRvQqcKrrzKbsbPyo
+	 dGCCnH//nMyxIRITHPZAtw8NbCOiK/U1vaFsl3tr36n5S0PsL9SEyy09naHLdHekYI
+	 N4BI8AtEJwZzA==
+Date: Thu, 23 May 2024 13:01:41 +0100
+From: Mark Brown <broonie@kernel.org>
+To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v1 2/2] spi: Check if transfer is mapped before calling
+ DMA sync APIs
+Message-ID: <424a8c56-bde0-4b49-ae16-a018fa1b4962@sirena.org.uk>
+References: <20240522171018.3362521-1-andriy.shevchenko@linux.intel.com>
+ <20240522171018.3362521-3-andriy.shevchenko@linux.intel.com>
+ <4748499f-789c-45a8-b50a-2dd09f4bac8c@notapiano>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eovZZzUrEQFpC6/X"
 Content-Disposition: inline
-In-Reply-To: <20240521065032.4192363-2-hsiangkao@linux.alibaba.com>
+In-Reply-To: <4748499f-789c-45a8-b50a-2dd09f4bac8c@notapiano>
+X-Cookie: You auto buy now.
 
-On Tue, May 21, 2024 at 02:50:32PM +0800, Gao Xiang wrote:
-> From: Christian Brauner <brauner@kernel.org>
-> 
-> commit 7af2ae1b1531feab5d38ec9c8f472dc6cceb4606 upstream.
-> 
-> When erofs_kill_sb() is called in block dev based mode, s_bdev may not
-> have been initialised yet, and if CONFIG_EROFS_FS_ONDEMAND is enabled,
-> it will be mistaken for fscache mode, and then attempt to free an anon_dev
-> that has never been allocated, triggering the following warning:
-> 
-> ============================================
-> ida_free called for id=0 which is not allocated.
-> WARNING: CPU: 14 PID: 926 at lib/idr.c:525 ida_free+0x134/0x140
-> Modules linked in:
-> CPU: 14 PID: 926 Comm: mount Not tainted 6.9.0-rc3-dirty #630
-> RIP: 0010:ida_free+0x134/0x140
-> Call Trace:
->  <TASK>
->  erofs_kill_sb+0x81/0x90
->  deactivate_locked_super+0x35/0x80
->  get_tree_bdev+0x136/0x1e0
->  vfs_get_tree+0x2c/0xf0
->  do_new_mount+0x190/0x2f0
->  [...]
-> ============================================
-> 
-> Now when erofs_kill_sb() is called, erofs_sb_info must have been
-> initialised, so use sbi->fsid to distinguish between the two modes.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> Reviewed-by: Chao Yu <chao@kernel.org>
-> Link: https://lore.kernel.org/r/20240419123611.947084-3-libaokun1@huawei.com
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> ---
->  fs/erofs/super.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
 
-All now queued up, thanks.
+--eovZZzUrEQFpC6/X
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On Wed, May 22, 2024 at 02:41:48PM -0400, N=EDcolas F. R. A. Prado wrote:
+
+> I tested this series and I still get the oops (attached at the end for
+> reference). When I tried this change originally, I added it on top of the
+> patches you had supplied. And as it turns out one of them was necessary.
+> Specifically, if I add=20
+>=20
+> diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+> index f94420858c22..9bc9fd10d538 100644
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@ -1220,6 +1220,11 @@ void spi_unmap_buf(struct spi_controller *ctlr, st=
+ruct device *dev,
+>         spi_unmap_buf_attrs(ctlr, dev, sgt, dir, 0);
+
+The other two patches are already queued, could you send this one
+incrementally please Andy?
+
+--eovZZzUrEQFpC6/X
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZPMCQACgkQJNaLcl1U
+h9D53wf/fkMqZQCyZodZWehUamrTAkwubsZLOYyTvWNrNebKBT/sFevYj1/p3WuN
+sPhPBTb4tPUxSCGGl+uNxTKKztBHwrpmWaHGkvsx8WExRUlB9GT/+8OCqHNdh6Se
+CNbYssM21raUwt0VK4yy+qmFPdNvG+mAUp6WbTVz38rvYbP8j5Meeyc9tRtv0x5F
+c3lFz6ex980JVDZvSM2RF0ghwLJK0GkSrzwD6JS9/tzl+1Y5pVTMLSYyYpl/rumF
+FjhkDx+vfl9Hes5m6p5pu1k1rhfWSnZqZ3zU+cKfc8ghySEkVn5QQV/qgU1Iw6On
+7OFfYQSg+zJO8wYeuJXbDpS0hZJ8Nw==
+=H/oA
+-----END PGP SIGNATURE-----
+
+--eovZZzUrEQFpC6/X--
 
