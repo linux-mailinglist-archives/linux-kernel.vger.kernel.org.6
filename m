@@ -1,109 +1,199 @@
-Return-Path: <linux-kernel+bounces-187945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892E88CDB1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 926C18CDB20
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 194E51F22FC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069811F22E0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C21684A54;
-	Thu, 23 May 2024 19:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D118C84A4F;
+	Thu, 23 May 2024 19:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xPNI7lGK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XyoNc7Sq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="R+CIzOY+"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B262AD00
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F67C2AD00
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716493969; cv=none; b=XCbUsARW13l97bWFtBdThS/h2AhE4XxxqrZRYK2uaR7EfGUzMPqzg2hQ+IO2pGC2S7eyKAb0SJZvq98H3cT0e1s71L7lPChsNpesBTQT82Sg63ThHI89LHsysKFkCcJ9UzESWxallLu/7SsTYVR3TLt+wf1zMKpVZJIv9mEEF3Y=
+	t=1716494157; cv=none; b=hp0ObU38YGSu0ySHzVkV9GUfZ5wlLpRdmi8Ng50SYixwHTZWtUAP742/i3R3R8EFyZybVSsssN4FuZN+DHXSGQ6sDwob1Hvh7oKV50HQPwHxCip2l1ygKTx2R9wl2OrHF4GwC8OmmnOeTrSK3yB+KX2Fe/AN7Cg/VOLzDzo9Oos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716493969; c=relaxed/simple;
-	bh=lnqVjgkvWi+fXg+ZEjXR4tnRofPmiBZHcMWL3I+8MDw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h+EFyr0k5ePXOhk/TaBAbfJKri8Nv0ry1EfsHazSbeTOs/hn+EAtJtTK6R6LS0jCbeAs6DDewOhLNNrD55DE72ADJYhLIlF2+uXSuQjgXZ5cvXB7EL3zlgpkcVGTVqwjRAC35T6RNH5p712b04RM0V3tapXE1wRjBi96KT2/+80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xPNI7lGK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XyoNc7Sq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716493966;
+	s=arc-20240116; t=1716494157; c=relaxed/simple;
+	bh=RNUrENHzVDWSGEhPxHBy8HHaJ/WPAYKrnsnljmpDJWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UnD/nRVy91Fs5jnqyzgPTEGJVE3mvTkuY4oboRlLu451dcC2OMxGSZRYMMDMvn6FS9eeKrujRMpJ8DVoIxZlv1Ss4MSUkCUdND+XOLl5THGQdo5GyCLoOZd+PNupST8OoxIUuwwF1GecUyzYLHs28IXpi903pnIhyxGILSAZtPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=R+CIzOY+; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: ryncsn@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716494152;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lnqVjgkvWi+fXg+ZEjXR4tnRofPmiBZHcMWL3I+8MDw=;
-	b=xPNI7lGKGva/APgAT7OzBOwQl0E/5c54B7HhDK5Phb1iKN4ahV3bEA3UYuY2dgt23o4aL/
-	zrJH32EYXAH3g3a95KY8llv/YVQYNV6a9rlHrGMsdRm20IGUZwdLlM5g6EeLCOBtXIM3hw
-	G3/z2s00T0J5qAe4+bcEQR/XZrvQhz0+znFmHQxX4y/T+GCPwc8e5Fkdhe1aZJYfA+YfLL
-	XojEfru58leoF1h7RUOYBuDuQK3ylam76TMP4TMlsno1AJxoanRPXed6E34ThJQEVbAsTI
-	H8xvTJIhVe/1xcyagrYMuSdK+k7jzB94Vlxsvm7pa920fc3xHyeKOCQXYOAuHg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716493966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lnqVjgkvWi+fXg+ZEjXR4tnRofPmiBZHcMWL3I+8MDw=;
-	b=XyoNc7Sqyr7swkex7HE2TEIQjbODm3OkyVUDf2n/A6xuYrKYWTf0K/c+g5RINgK7oREaoe
-	wOXHNQ0Nfr1iJjCw==
-To: Dongli Zhang <dongli.zhang@oracle.com>, x86@kernel.org
-Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, joe.jin@oracle.com, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] x86/vector: Fix vector leak during CPU offline
-In-Reply-To: <20240522220218.162423-1-dongli.zhang@oracle.com>
-References: <20240522220218.162423-1-dongli.zhang@oracle.com>
-Date: Thu, 23 May 2024 21:52:46 +0200
-Message-ID: <87a5kgfgq9.ffs@tglx>
+	bh=EfhkEzWabknfi/ShuVBS0FWHdosprJqhhLCoPMo+WAI=;
+	b=R+CIzOY+P1dVjCcgGIclYcx9Ar6XmcGgx2OC/vPyjecvjUv3j810uDfQAczcRgk9EjKJYP
+	F8lOyXOcRGA/m0Is3BcHwegpdQxx9ua8T0QScHaLDm1DKtcVipSIOS3dHlkM6Mif/2EIF5
+	aGcVkB9dUi6xyXqQ+XSuiJ5mqq+SL04=
+X-Envelope-To: shakeel.butt@linux.dev
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: muchun.song@linux.dev
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: willy@infradead.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: gthelen@google.coma
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: chrisl@kernel.org
+Date: Thu, 23 May 2024 12:55:46 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gthelen@google.coma,
+	rientjes@google.com, Chris Li <chrisl@kernel.org>
+Subject: Re: [PATCH rfc 0/9] mm: memcg: separate legacy cgroup v1 code and
+ put under config option
+Message-ID: <Zk-fQtFrj-2YDJOo@P9FQF9L96D.corp.robot.car>
+References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
+ <jf44dfyaenz6xmn2hcodaginrshw5d5hfhmakdxtj4x6szk6b2@cr2rxamkgj2m>
+ <CAMgjq7ARr0=OG8GQOJvzLtfdrtiwvJ19-mx1snxqmLE0Za+QCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7ARr0=OG8GQOJvzLtfdrtiwvJ19-mx1snxqmLE0Za+QCw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 22 2024 at 15:02, Dongli Zhang wrote:
-> The absence of IRQD_MOVE_PCNTXT prevents immediate effectiveness of
-> interrupt affinity reconfiguration via procfs. Instead, the change is
-> deferred until the next instance of the interrupt being triggered on the
-> original CPU.
->
-> When the interrupt next triggers on the original CPU, the new affinity is
-> enforced within __irq_move_irq(). A vector is allocated from the new CPU,
-> but if the old vector on the original CPU remains online, it is not
-> immediately reclaimed. Instead, apicd->move_in_progress is flagged, and the
-> reclaiming process is delayed until the next trigger of the interrupt on
-> the new CPU.
->
-> Upon the subsequent triggering of the interrupt on the new CPU,
-> irq_complete_move() adds a task to the old CPU's vector_cleanup list if it
-> remains online. Subsequently, the timer on the old CPU iterates over its
-> vector_cleanup list, reclaiming old vectors.
->
-> However, a rare scenario arises if the old CPU is outgoing before the
-> interrupt triggers again on the new CPU. The irq_force_complete_move() may
-> not have the chance to be invoked on the outgoing CPU to reclaim the old
-> apicd->prev_vector. This is because the interrupt isn't currently affine to
-> the outgoing CPU, and irq_needs_fixup() returns false. Even though
-> __vector_schedule_cleanup() is later called on the new CPU, it doesn't
-> reclaim apicd->prev_vector; instead, it simply resets both
-> apicd->move_in_progress and apicd->prev_vector to 0.
->
-> As a result, the vector remains unreclaimed in vector_matrix, leading to a
-> CPU vector leak.
->
-> To address this issue, move the invocation of irq_force_complete_move()
-> before the irq_needs_fixup() call to reclaim apicd->prev_vector, if the
-> interrupt is currently or used to affine to the outgoing CPU. Additionally,
-> reclaim the vector in __vector_schedule_cleanup() as well, following a
-> warning message, although theoretically it should never see
-> apicd->move_in_progress with apicd->prev_cpu pointing to an offline CPU.
+On Thu, May 23, 2024 at 01:58:49AM +0800, Kairui Song wrote:
+> On Thu, May 9, 2024 at 2:33 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Wed, May 08, 2024 at 08:41:29PM -0700, Roman Gushchin wrote:
+> > > Cgroups v2 have been around for a while and many users have fully adopted them,
+> > > so they never use cgroups v1 features and functionality. Yet they have to "pay"
+> > > for the cgroup v1 support anyway:
+> > > 1) the kernel binary contains useless cgroup v1 code,
+> > > 2) some common structures like task_struct and mem_cgroup have never used
+> > >    cgroup v1-specific members,
+> > > 3) some code paths have additional checks which are not needed.
+> > >
+> > > Cgroup v1's memory controller has a number of features that are not supported
+> > > by cgroup v2 and their implementation is pretty much self contained.
+> > > Most notably, these features are: soft limit reclaim, oom handling in userspace,
+> > > complicated event notification system, charge migration.
+> > >
+> > > Cgroup v1-specific code in memcontrol.c is close to 4k lines in size and it's
+> > > intervened with generic and cgroup v2-specific code. It's a burden on
+> > > developers and maintainers.
+> > >
+> > > This patchset aims to solve these problems by:
+> > > 1) moving cgroup v1-specific memcg code to the new mm/memcontrol-v1.c file,
+> > > 2) putting definitions shared by memcontrol.c and memcontrol-v1.c into the
+> > >    mm/internal.h header
+> > > 3) introducing the CONFIG_MEMCG_V1 config option, turned on by default
+> > > 4) making memcontrol-v1.c to compile only if CONFIG_MEMCG_V1 is set
+> > > 5) putting unused struct memory_cgroup and task_struct members under
+> > >    CONFIG_MEMCG_V1 as well.
+> > >
+> > > This is an RFC version, which is not 100% polished yet, so but it would be great
+> > > to discuss and agree on the overall approach.
+> > >
+> > > Some open questions, opinions are appreciated:
+> > > 1) I consider renaming non-static functions in memcontrol-v1.c to have
+> > >    mem_cgroup_v1_ prefix. Is this a good idea?
+> > > 2) Do we want to extend it beyond the memory controller? Should
+> > > 3) Is it better to use a new include/linux/memcontrol-v1.h instead of
+> > >    mm/internal.h? Or mm/memcontrol-v1.h.
+> > >
+> >
+> > Hi Roman,
+> >
+> > A very timely and important topic and we should definitely talk about it
+> > during LSFMM as well. I have been thinking about this problem for quite
+> > sometime and I am getting more and more convinced that we should aim to
+> > completely deprecate memcg-v1.
+> >
+> > More specifically:
+> >
+> > 1. What are the memcg-v1 features which have no alternative in memcg-v2
+> > and are blocker for memcg-v1 users? (setting aside the cgroup v2
+> > structual restrictions)
+> >
+> > 2. What are unused memcg-v1 features which we should start deprecating?
+> >
+> > IMO we should systematically start deprecating memcg-v1 features and
+> > start unblocking the users stuck on memcg-v1.
+> >
+> > Now regarding the proposal in this series, I think it can be a first
+> > step but should not give an impression that we are done. The only
+> > concern I have is the potential of "out of sight, out of mind" situation
+> > with this change but if we keep the momentum of deprecation of memcg-v1
+> > it should be fine.
+> >
+> > I have CCed Greg and David from Google to get their opinion on what
+> > memcg-v1 features are blocker for their memcg-v2 migration and if they
+> > have concern in deprecation of memcg-v1 features.
+> >
+> > Anyone else still on memcg-v1, please do provide your input.
+> >
+> 
+> Hi,
+> 
+> Sorry for joining the discussion late, but I'd like to add some info
+> here: We are using the "memsw" feature a lot. It's a very useful knob
+> for container memory overcommitting: It's a great abstraction of the
+> "expected total memory usage" of a container, so containers can't
+> allocate too much memory using SWAP, but still be able to SWAP out.
+> 
+> For a simple example, with memsw.limit == memory.limit, containers
+> can't exceed their original memory limit, even with SWAP enabled, they
+> get OOM killed as how they used to, but the host is now able to
+> offload cold pages.
+> 
+> Similar ability seems absent with V2: With memory.swap.max == 0, the
+> host can't use SWAP to reclaim container memory at all. But with a
+> value larger than that, containers are able to overuse memory, causing
+> delayed OOM kill, thrashing, CPU/Memory usage ratio could be heavily
+> out of balance, especially with compress SWAP backends.
+> 
+> Cgroup accounting of ZSWAP/ZRAM doesn't really help, we want to
+> account for the total raw usage, not the compressed usage. One example
+> is that if a container uses tons of duplicated pages, then it can
+> allocate much more memory than it is limited, that could cause
+> trouble.
 
-Nice change log!
+So you don't need separate swap knobs, only combined, right?
+
+> I saw Chris also mentioned Google has a workaround internally for it
+> for Cgroup V2. This will be a blocker for us and a similar workaround
+> might be needed. It will be great so see an upstream support for this.
+
+I think that _at least_ we should refactor the code so that it would
+be a minimal patch (e.g. one #define) to switch to the old mode.
+
+I don't think it's reasonable to add a new interface, but having a
+patch/config option or even a mount option which changes the semantics
+of memory.swap.max to the v1-like behavior should be ok.
+
+I'll try to do the first part (refactoring this code), and we can have
+a discussion from there.
+
+Thanks!
 
