@@ -1,244 +1,170 @@
-Return-Path: <linux-kernel+bounces-187571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CF78CD45C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:24:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B62E38CD48C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:25:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E191282108
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4299C1F22728
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF2414B06C;
-	Thu, 23 May 2024 13:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6108A14AD2C;
+	Thu, 23 May 2024 13:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mU0CSDIR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T8We9XTv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88B014A60D;
-	Thu, 23 May 2024 13:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CC713BAE2
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470629; cv=none; b=oBQcvq+gfK74HJEn0Q9i7fOnuqZ7A9ooBqCnOr60RQJGxRk/+TLDS8ztdV0ytkFd/4SciMF3/PR6J73rbPuluJu7hsIVblLu7ZamNIFNLCR5MT/U+BRl6vtRE2H3c/PT0KLnJbroa31AXeuNPP7G27P272LugowlPNyVwgdHXCA=
+	t=1716470734; cv=none; b=h6RyNfva8vM1ZBrOkO16ptM/zykg2I0U3o+rNS3TenBnNjM6oyb53JCHu628cGst4gxVW/879/XmvrgH637zpwoL551qxcm5KV836RSsRR9ZqiycdXRjQIv30RphbhmT8qPEScU3R1xwGLFvR2K/LDpMrTCG/oCB4deJ18gcGZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470629; c=relaxed/simple;
-	bh=Eji3OK0kgA/1QMg7rgMlIDsUrIG2CMxWsZn7mehH8BI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hj4iYykL9By/Ujq7avzM8gdDyQ+6XK9jOimm03c1ImIFVlQqGJDiviZ7Dimwjb6xciyNIfYuj3fQQAoYZgHv1Hz+i0/hHni2bn+06PILlQ4GAkMnwnldl7fNucZdFbJhleecoCuhP1KaZBl3cuD/XJ0SumVUMWdAFvgWOdsux3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mU0CSDIR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DBAEC2BD10;
-	Thu, 23 May 2024 13:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716470629;
-	bh=Eji3OK0kgA/1QMg7rgMlIDsUrIG2CMxWsZn7mehH8BI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mU0CSDIRLU770cVTc7mGdG67gRacbfHX7KZ3Gwz+oYUJEhalcsfOL6Vj1uCz2stDU
-	 TEripNlxvNFEQP8cntlNdqNLokL4guGK4fJoZy/He1cRDDL3C/hqdGyHfAyL+d//Ue
-	 SZ2a68BRNj2MQEEqXEcY/Bx+shnT3i/pQNx7nYcsMyoQYXkga7UNES7HLABgt8Evj2
-	 nGtk08D4xHZacvpGIqT2BnkIEG6gYleBhqPN4en9XoJgu06FVwBgAUzAhdsQw/HaVA
-	 fWJd4prZaGkIOdq20udzo8rEXW9StEHeOO2+21CdEQGxMjCQhfMTho3yWZS2G8d1A+
-	 1Y0kbZ0DQGXmA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biggers <ebiggers@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-crypto@vger.kernel.org (open list:CRYPTO API),
-	linux-kernel@vger.kernel.org (open list),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH v2] KEYS: trusted: Use ASN.1 encoded OID
-Date: Thu, 23 May 2024 16:23:37 +0300
-Message-ID: <20240523132341.32092-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716470734; c=relaxed/simple;
+	bh=p6xEboA4juve6QH4jxo+Pk4DmhsXMjwBg2oQJLkI1jQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWW/spWZ480XHR6FK6SirCyP7pVTsBBS3iA8MCwmaN/yZEBdQjMBXMuWrVxzXnpin6BIDx2BxACURFpNosay2rAubEAyFTB7ZEhdOkyzlYGBDraL/HIOB7QS2jc+1/5yTR0SIcte2Dgf6xCTZRawnk/U64Dth5/CknXD36sFOfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T8We9XTv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716470732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5NqJdtUQ+TL9F/j4u/bCfZrmv1CaqcNgn4wLGAF0cI8=;
+	b=T8We9XTvz3CzCS1m2iluxPcfs6LaZPmnEkCWGf/HUpfrNtyv5VE4xdnfzDFWjoZI9/rsBD
+	kZYMO8Eh99kNGmcaABLWXF6Eu0W+vLXoIW89dFSOrZbk1Gu3gJBPdEjsLs4WLbYtT2YE60
+	q7oTBUOck3Yg2NM8aRMOYBMXsWR5mQ4=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-V317WFQ9PCK_bhfAEj22LA-1; Thu,
+ 23 May 2024 09:25:28 -0400
+X-MC-Unique: V317WFQ9PCK_bhfAEj22LA-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DA28A3801EC4;
+	Thu, 23 May 2024 13:25:27 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.7])
+	by smtp.corp.redhat.com (Postfix) with SMTP id E5084491034;
+	Thu, 23 May 2024 13:25:25 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 23 May 2024 15:24:00 +0200 (CEST)
+Date: Thu, 23 May 2024 15:23:58 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Chris von Recklinghausen <crecklin@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
+ smp_call_function_single() with irqs disabled
+Message-ID: <20240523132358.GA1965@redhat.com>
+References: <20240522151742.GA10400@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522151742.GA10400@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-There's no reason to encode OID_TPMSealedData at run-time, as it never
-changes.
+On 05/22, Oleg Nesterov wrote:
+>
+> After the recent comment 5097cbcb38e6 ("sched/isolation: Prevent boot crash
+> when the boot CPU is nohz_full") the kernel no longer crashes, but there is
+> another problem.
+>
+> In this case tick_setup_device() does tick_take_do_timer_from_boot() to
+> update tick_do_timer_cpu and this triggers WARN_ON_ONCE(irqs_disabled())
+> in smp_call_function_single().
+>
+> I don't understand this code even remotely, I failed to find the fix.
+>
+> Perhaps we can use smp_call_function_single_async() as a workaround ?
+>
+> But I don't even understand why exactly we need smp_call_function()...
 
-Replace it with the encoded version, which has exactly the same size:
+..
 
-	67 81 05 0A 01 05
+> Race with tick_nohz_stop_tick() on boot CPU which can set
+> tick_do_timer_cpu = TICK_DO_TIMER_NONE? Is it really bad?
 
-Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue so that
-the OID can be simply copied to the blob.
+And is it supposed to happen if tick_nohz_full_running ?
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+tick_sched_do_timer() and can_stop_idle_tick() claim that
+TICK_DO_TIMER_NONE is not possible in this case...
+
+So, once again, could you explain why the patch below is wrong?
+
+Oleg.
 ---
-v2:
-* Not my day I guess. This one has print_hex_dump() taken away.
-  Apologies for spamming. The patch is however tested properly
-  with run-tests.sh in https://gitlab.com/jarkkojs/linux-tpmdd-test.
----
- include/linux/asn1_encoder.h              |  4 -
- lib/asn1_encoder.c                        | 91 -----------------------
- security/keys/trusted-keys/trusted_tpm2.c |  7 +-
- 3 files changed, 4 insertions(+), 98 deletions(-)
 
-diff --git a/include/linux/asn1_encoder.h b/include/linux/asn1_encoder.h
-index 08cd0c2ad34f..afeefdfe2525 100644
---- a/include/linux/asn1_encoder.h
-+++ b/include/linux/asn1_encoder.h
-@@ -8,14 +8,10 @@
- #include <linux/asn1_ber_bytecode.h>
- #include <linux/bug.h>
- 
--#define asn1_oid_len(oid) (sizeof(oid)/sizeof(u32))
- unsigned char *
- asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
- 		    s64 integer);
- unsigned char *
--asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
--		u32 oid[], int oid_len);
--unsigned char *
- asn1_encode_tag(unsigned char *data, const unsigned char *end_data,
- 		u32 tag, const unsigned char *string, int len);
- unsigned char *
-diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
-index 0fd3c454a468..c0db3cbebe89 100644
---- a/lib/asn1_encoder.c
-+++ b/lib/asn1_encoder.c
-@@ -85,97 +85,6 @@ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index d88b13076b79..907b44d8cf1f 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -178,26 +178,6 @@ void tick_setup_periodic(struct clock_event_device *dev, int broadcast)
+ 	}
  }
- EXPORT_SYMBOL_GPL(asn1_encode_integer);
  
--/* calculate the base 128 digit values setting the top bit of the first octet */
--static int asn1_encode_oid_digit(unsigned char **_data, int *data_len, u32 oid)
+-#ifdef CONFIG_NO_HZ_FULL
+-static void giveup_do_timer(void *info)
 -{
--	unsigned char *data = *_data;
--	int start = 7 + 7 + 7 + 7;
--	int ret = 0;
+-	int cpu = *(unsigned int *)info;
 -
--	if (*data_len < 1)
--		return -EINVAL;
+-	WARN_ON(tick_do_timer_cpu != smp_processor_id());
 -
--	/* quick case */
--	if (oid == 0) {
--		*data++ = 0x80;
--		(*data_len)--;
--		goto out;
--	}
--
--	while (oid >> start == 0)
--		start -= 7;
--
--	while (start > 0 && *data_len > 0) {
--		u8 byte;
--
--		byte = oid >> start;
--		oid = oid - (byte << start);
--		start -= 7;
--		byte |= 0x80;
--		*data++ = byte;
--		(*data_len)--;
--	}
--
--	if (*data_len > 0) {
--		*data++ = oid;
--		(*data_len)--;
--	} else {
--		ret = -EINVAL;
--	}
--
-- out:
--	*_data = data;
--	return ret;
+-	tick_do_timer_cpu = cpu;
 -}
 -
--/**
-- * asn1_encode_oid() - encode an oid to ASN.1
-- * @data:	position to begin encoding at
-- * @end_data:	end of data pointer, points one beyond last usable byte in @data
-- * @oid:	array of oids
-- * @oid_len:	length of oid array
-- *
-- * this encodes an OID up to ASN.1 when presented as an array of OID values
-- */
--unsigned char *
--asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
--		u32 oid[], int oid_len)
+-static void tick_take_do_timer_from_boot(void)
 -{
--	int data_len = end_data - data;
--	unsigned char *d = data + 2;
--	int i, ret;
+-	int cpu = smp_processor_id();
+-	int from = tick_do_timer_boot_cpu;
 -
--	if (WARN(oid_len < 2, "OID must have at least two elements"))
--		return ERR_PTR(-EINVAL);
--
--	if (WARN(oid_len > 32, "OID is too large"))
--		return ERR_PTR(-EINVAL);
--
--	if (IS_ERR(data))
--		return data;
--
--
--	/* need at least 3 bytes for tag, length and OID encoding */
--	if (data_len < 3)
--		return ERR_PTR(-EINVAL);
--
--	data[0] = _tag(UNIV, PRIM, OID);
--	*d++ = oid[0] * 40 + oid[1];
--
--	data_len -= 3;
--
--	for (i = 2; i < oid_len; i++) {
--		ret = asn1_encode_oid_digit(&d, &data_len, oid[i]);
--		if (ret < 0)
--			return ERR_PTR(ret);
--	}
--
--	data[1] = d - data - 2;
--
--	return d;
+-	if (from >= 0 && from != cpu)
+-		smp_call_function_single(from, giveup_do_timer, &cpu, 1);
 -}
--EXPORT_SYMBOL_GPL(asn1_encode_oid);
+-#endif
 -
- /**
-  * asn1_encode_length() - encode a length to follow an ASN.1 tag
-  * @data: pointer to encode at
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 8b7dd73d94c1..4a2b4ad5a913 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -26,7 +26,8 @@ static struct tpm2_hash tpm2_hash_map[] = {
- 	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
- };
+ /*
+  * Setup the tick device
+  */
+@@ -231,9 +211,8 @@ static void tick_setup_device(struct tick_device *td,
  
--static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
-+/* Encoded OID_TPMSealedData. */
-+static u8 OID_TPMSealedData_ASN1[] = {0x06, 0x06, 0x67, 0x81, 0x05, 0x0a, 0x01, 0x05};
+ 		} else if (tick_do_timer_boot_cpu != -1 &&
+ 						!tick_nohz_full_cpu(cpu)) {
+-			tick_take_do_timer_from_boot();
+ 			tick_do_timer_boot_cpu = -1;
+-			WARN_ON(READ_ONCE(tick_do_timer_cpu) != cpu);
++			WRITE_ONCE(tick_do_timer_cpu, cpu);
+ #endif
+ 		}
  
- static int tpm2_key_encode(struct trusted_key_payload *payload,
- 			   struct trusted_key_options *options,
-@@ -51,8 +52,8 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
- 	if (!scratch)
- 		return -ENOMEM;
- 
--	work = asn1_encode_oid(work, end_work, tpm2key_oid,
--			       asn1_oid_len(tpm2key_oid));
-+	work = memcpy(work, OID_TPMSealedData_ASN1, sizeof(OID_TPMSealedData_ASN1));
-+	work += sizeof(OID_TPMSealedData_ASN1);
- 
- 	if (options->blobauth_len == 0) {
- 		unsigned char bool[3], *w = bool;
--- 
-2.45.1
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 71a792cd8936..3b1d011d45e1 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -1014,6 +1014,9 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
+ 	 */
+ 	tick_cpu = READ_ONCE(tick_do_timer_cpu);
+ 	if (tick_cpu == cpu) {
++#ifdef CONFIG_NO_HZ_FULL
++		WARN_ON_ONCE(tick_nohz_full_running);
++#endif
+ 		WRITE_ONCE(tick_do_timer_cpu, TICK_DO_TIMER_NONE);
+ 		tick_sched_flag_set(ts, TS_FLAG_DO_TIMER_LAST);
+ 	} else if (tick_cpu != TICK_DO_TIMER_NONE) {
 
 
