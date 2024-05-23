@@ -1,46 +1,45 @@
-Return-Path: <linux-kernel+bounces-186885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043F88CCA61
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7CBB8CCA63
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99E12825A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAD1C20D8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 01:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F4F1C36;
-	Thu, 23 May 2024 01:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gX6ogx6C"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707B04687;
+	Thu, 23 May 2024 01:43:02 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57086FA8
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456A717C2;
+	Thu, 23 May 2024 01:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716428282; cv=none; b=FJjhKsA1Zh65ltYklnWkXbF1mFeZBddidbuYkdP7LuuIsbhH1LJ84Fs32ZVvGUXrmKjstnW+f0UDoRznxAOvPRF/tiGuNUkpItGpdVYHYEOyl8rfl33xBkCXa9pVoy4Bl41yx7vjGZXIf2Su/RKz4YlyQ519slJz8GdEZelyRog=
+	t=1716428582; cv=none; b=YDNqWer5Z1y2N8BALvJCe1JlfuayY5rthOox/IZ/A4YF5+e/E+VygSq84hV4GBW77gyVU7d0P7IqUFQDmFQ70TPZ7Eo4lDZThEMzB549fhAZULIhJ7MsyK7bPicRUbKofaBnvFeOj3XFXCxQZYJL53Ks/s8xtEJ9vpEmdmUcNbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716428282; c=relaxed/simple;
-	bh=IaaBnmqrE5GrOWnChjQosi39vJwLyOpYDRlQ6Ayg2YA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iz7wFVS3T3VjhKHO7lLEJSSugxrXtZi2JBBYZEwzkwvDaVXd0FcxhKAV3jntLElN5eQUOUn6lnstHsnX547Guel+GwJFQc05a2hfP4lLkl36bvMk4lHph0wuYBjOoSw5kBy3+9Tk8GRl3DsaVKVSuvZXVgs9PIxulkLlM99zfFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gX6ogx6C; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716428277; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=09MSV1/3zxYWr14W2ElPhQ9LPPVHhGubVkw27PQ/8ls=;
-	b=gX6ogx6C/lr631cFo7uLCYrD4qrNwPeVYjMjri4TWdnDnVDoxWuwZeEwZHE9BJnSfZtBNwjy08uwDfi09CrTi7y7jRYaoPZ4fNVK/bxLjTRwgslusLCK2T4ajhvWHTSTxLeFcSUlBGQo48Mfpj21hmkLg4pHnR6AlPf1JovOPgs=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W70hHJ9_1716428275;
-Received: from 30.97.56.57(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W70hHJ9_1716428275)
-          by smtp.aliyun-inc.com;
-          Thu, 23 May 2024 09:37:56 +0800
-Message-ID: <18aa865a-6d4a-4dcf-99ce-bcfbc0c92f19@linux.alibaba.com>
-Date: Thu, 23 May 2024 09:37:54 +0800
+	s=arc-20240116; t=1716428582; c=relaxed/simple;
+	bh=eeUvrJQaoEchYn+M2SIKzuf4GCNGNI557vCfeFKSwy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HsSAjUxeZHM2pPpMjA1iTUAYMmwPqRtX7gh2PfNBNUN2kDX8yW32Dxc5DBBw98Pk8ChXK0r0H1aJLAwrLiSkdYoybutDUqlhdJJEnUD+ds4CbCsGw8xrs5TNEvhPEv3QPEqC8NPMw7NAvyvFUCivlB8ZS3NFAcLlw8keF+SviuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Vl9np6vh4z2CjFs;
+	Thu, 23 May 2024 09:39:26 +0800 (CST)
+Received: from kwepemf100007.china.huawei.com (unknown [7.202.181.221])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7863D140153;
+	Thu, 23 May 2024 09:42:56 +0800 (CST)
+Received: from [10.67.109.184] (10.67.109.184) by
+ kwepemf100007.china.huawei.com (7.202.181.221) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 23 May 2024 09:42:55 +0800
+Message-ID: <e769b8a5-dd11-4cf5-95bb-4399dd836113@huawei.com>
+Date: Thu, 23 May 2024 09:42:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,80 +47,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: drop the 'anon_' prefix for swap-out mTHP counters
-To: "Huang, Ying" <ying.huang@intel.com>, Barry Song <21cnbao@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- willy@infradead.org, ryan.roberts@arm.com, ziy@nvidia.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <0e2a6f232e7579a2e4407ecf075531980d97f286.1716367360.git.baolin.wang@linux.alibaba.com>
- <22ac01a3-ddbb-4114-88cd-ad1a31982dad@redhat.com>
- <51ba1fc1-fd77-4601-8d27-459162fd008c@linux.alibaba.com>
- <CAGsJ_4zSuOTPi+zkS_kvS5T0MsdMBR+2gpXukJt0aMPrEnCDZg@mail.gmail.com>
- <875xv5ba8t.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <875xv5ba8t.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] riscv, bpf: Use STACK_ALIGN macro for size rounding up
+Content-Language: en-US
+To: Xiao Wang <xiao.w.wang@intel.com>
+CC: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<luke.r.nels@gmail.com>, <xi.wang@gmail.com>, <bjorn@kernel.org>,
+	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <haicheng.li@intel.com>
+References: <20240522054507.3941595-1-xiao.w.wang@intel.com>
+From: Pu Lehui <pulehui@huawei.com>
+In-Reply-To: <20240522054507.3941595-1-xiao.w.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf100007.china.huawei.com (7.202.181.221)
 
 
-
-On 2024/5/23 09:14, Huang, Ying wrote:
-> Barry Song <21cnbao@gmail.com> writes:
+On 2024/5/22 13:45, Xiao Wang wrote:
+> Use the macro STACK_ALIGN that is defined in asm/processor.h for stack size
+> rounding up, just like bpf_jit_comp32.c does.
 > 
->> On Wed, May 22, 2024 at 9:38 PM Baolin Wang
->> <baolin.wang@linux.alibaba.com> wrote:
->>>
->>>
->>>
->>> On 2024/5/22 16:58, David Hildenbrand wrote:
->>>> On 22.05.24 10:51, Baolin Wang wrote:
->>>>> The mTHP swap related counters: 'anon_swpout' and
->>>>> 'anon_swpout_fallback' are
->>>>> confusing with an 'anon_' prefix, since the shmem can swap out
->>>>> non-anonymous
->>>>> pages. So drop the 'anon_' prefix to keep consistent with the old swap
->>>>> counter
->>>>> names.
->>>>>
->>>>> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
->>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>> ---
->>>>
->>>> Am I daydreaming or did we add the anon_ for a reason and discussed the
->>>> interaction with shmem? At least I remember some discussion around that.
->>>
->>> Do you mean the shmem mTHP allocation counters in previous
->>> discussion[1]? But for 'anon_swpout' and 'anon_swpout_fallback', I can
->>> not find previous discussions that provided a reason for adding the
->>> ‘anon_’ prefix. Barry, any comments? Thanks.
->>
->> HI Baolin,
->> We had tons of emails discussing about namin and I found this email,
->>
->> https://lore.kernel.org/all/bca6d142-15fd-4af5-9f71-821f891e8305@redhat.com/
->>
->> David had this comment,
->> "I'm wondering if these should be ANON specific for now. We might want to
->> add others (shmem, file) in the future."
->>
->> This is likely how the 'anon_' prefix started being added, although it
->> wasn't specifically
->> targeting swapout.
->>
->> I sense your patch slightly alters the behavior of thp_swpout_fallback
->> in /proc/vmstat.
->> Previously, we didn't classify them as THP_SWPOUT_FALLBACK, even though we
->> always split them.
-> 
-> IIUC, "fallback" means you try to do something, but fail, so try
-> something else as fallback.  If so, then we don't need to count
-> splitting shmem large folio as fallback.
+> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
+> ---
+>   arch/riscv/net/bpf_jit_comp64.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 
-Agree. In additon, IIUC we have never counted splitting shmem large 
-folio as THP_SWPOUT_FALLBACK before or after this patch.
-
-> For example, before commit 5ed890ce5147 ("mm: vmscan: avoid split during
-> shrink_folio_list()"), if folio_entire_mapcount() == 0, we will split
-> the THP.  But we will not count it as "fallback" because we haven't
-> tried to swap it out as a whole.
+It met a patching conflict. I think you should target for the bpf-next tree.
+https://github.com/kernel-patches/bpf/pull/7080
 
