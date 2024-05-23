@@ -1,268 +1,277 @@
-Return-Path: <linux-kernel+bounces-187096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6928CCD13
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:34:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 383C88CCD14
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9521C21409
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:34:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B1F8B209D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7FE13CA99;
-	Thu, 23 May 2024 07:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D0113C9D2;
+	Thu, 23 May 2024 07:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EDoneBkV"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c2BQCtOQ"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B01D13B592
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C58E3B29D
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716449653; cv=none; b=krC9/ibhzWIlZ33VRQGNti9DJLRrAlH2k+l0lLhrPf5/yNTpWTtoTCP1iQ6bzerbgncdkJ9D5JjuFo70RoG6Q8xDP2hXl+LYc64gCn1d104n/H255Y1t/1ronNqSsJQAZ/UoVcKBJNg8UBvNKeyE2Y6x1GgHJpQuXOFfHJ3XYeQ=
+	t=1716449709; cv=none; b=olItq0MFhhJ7w23rxdntjT4l+TlTm9iZz4ni3Brv279bN5a//7gKlXkAuvKQyArTHoOgJVmM1iFwUyg3LrIhXhV2HHMXil3pDZV88EyOjVYU5Bsv28blOI1DUXb8qkNn3V+csrqFWXsjXQioxDplec5P8TBObs39rAdgPCuKKoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716449653; c=relaxed/simple;
-	bh=e+pnxPro/Bk2iXBaKon9OkDQYn2dOQdUYnKE1vh//Tg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q1Sym/B0rYvrm67L60IuhCGwl7WEp5EiWKJXBMN+CdyOwAhrM58rErsceBMo0wPH2QULRklk6FtUgn4zFdZht14W0KFkJQCw2G1j1YFr8jQUyyt07Q3w15XOrfaezfME/izcXruB1rhNWLGZyYVlibjARsEgQsw/kXS5ce1tb44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EDoneBkV; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: yukuai1@huaweicloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716449648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0euZuNBXt/t1L6vvrwtCCno1ncTQZXfg8PJkHBUVkU4=;
-	b=EDoneBkV46ZBClIvfya7xeBbTQkoiIBTRa19Wm0/C6mfxQM/jtaC5dGTwsZQGAuvsboDoV
-	bSH8FuSU2W5OLrxGp1UoKlBDTzzvg3Vg4we6skpr2XRXA0YdgJ+kSrRtj1S4yf66dvasqd
-	TqBBxG/ZLg38UaZLh4DonZFUcVfuOyI=
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: yi.zhang@redhat.com
-X-Envelope-To: dlemoal@kernel.org
-X-Envelope-To: hare@suse.de
-X-Envelope-To: johannes.thumshirn@wdc.com
-X-Envelope-To: kch@nvidia.com
-X-Envelope-To: zhouchengming@bytedance.com
-X-Envelope-To: bvanassche@acm.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: yukuai3@huawei.com
-X-Envelope-To: yi.zhang@huawei.com
-X-Envelope-To: yangerkun@huawei.com
-Message-ID: <c30465e7-ced2-4732-993f-9d9eba2f8403@linux.dev>
-Date: Thu, 23 May 2024 09:34:05 +0200
+	s=arc-20240116; t=1716449709; c=relaxed/simple;
+	bh=mfkJjjvi4JkPLQq6sLIpan5jpujSxOE1mQ/MIuk2o/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uTKCFZZWpwwy3PZlcs+VA6MIOq1kmbZcDMjctvsHEo73wLL1H2uD0aSxpdyei8ot158uFJx1xXX2w4zpuCd708/zU3gvc/3ZXZ5VY+fod/c6CO37M5klwR/uZiFtL6RztIkI1q2Nzlq9Sy1dakGMJZYVxMAizF/vUdjIuG6+MQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c2BQCtOQ; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-47f008106d0so1875862137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716449706; x=1717054506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4YGZE1m+x9SPS6iVgqx8jcKt9Av6k4v6WXfZY3xI6v0=;
+        b=c2BQCtOQazZCKldSYq39l11jRr4BfejH6APGTFj4RrmaLyKuSzk+uxR5+RD+iw8bnw
+         pl5xL9ZAy6wFrhoG5YMlqzaPWIVHizcNtID6hG+QFtxmNdpUEQSzkyw+q982MpkDi8fr
+         uK9Ybm5t4HTM0X9rdccr5aDkKljmawggtxOyLxuiK1A3x3bUAuJE6Npm26aaFDdCPmeW
+         3PXUuHynTSg7ca3vC+ZfsnTDGCrwGkcCOqQyQvEVf5X+RcJ7xkyA9R6A42xAort4EfzB
+         GIg6nRmku8QA1TrwrNTvJnwQNAc/082OADQ7s+st8Xj7G/18IH0gTY8n4PhJ92LFIhh2
+         W1/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716449706; x=1717054506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4YGZE1m+x9SPS6iVgqx8jcKt9Av6k4v6WXfZY3xI6v0=;
+        b=F5KKffc/FtEWiD3dMkw7QG1UtQ/whq9A8QghhqgY5xOxSULI5/kthwP5rMtG/lHNx7
+         q/+DVyTC0kPjDwOCU9Xw2j7MYmf1PLKHEZ6ftGthrr8kFc82tCKWFHMbtWQZYKp/2YH9
+         fCeTdTivXUjudhDfIed9dSeFxUcnCPrXN6wAhI2f0HTVTIL2JaTm7+c8xgHQx4AUGmVq
+         MVXIM9hTHmt36WcfLtVrLoLHvdRFSy7EkqrhwONCP0wqvdo1pElRFiCkDxGqTkJk9ANM
+         0QKwHtrxrGx0l39m+W+wtNviaXbTTaA/q1FZssqXScluPanijZPIN1iowGQZ5cmZHJlI
+         Kggw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVGAhUqbBvl4fZn7/6MEDgK5UWu+u3RJdzwC4FtYsMOx1/L8qpAj97Fda2AFvVooZ1KrEBtj4su4psPmKrfgfoqIBRqZB7V3lP6GC3
+X-Gm-Message-State: AOJu0YzLw4LQfpqARGHRRBu/BlIhEEkkBsYOPs7zUgMg7OTCmowA0v83
+	ihKARvWiRoLpB1iGlq4Wz7C8jrI/rOtaxbjQ0Wphou7ba+gpLsUzL6mz05WNVn8EAEQ2LwNPCVc
+	wRhXsKzrlu/2ncA4eWTHgSGKcNzwrJkHfpZ/8LZmSHc3D61xvrqQ=
+X-Google-Smtp-Source: AGHT+IF/CSc5xjoYFx79kNTBwY+/NdcvlEoBwd2+PDUny1z5QczOFReKI/K8sM3AzJP71Jl/QyWKbKTbbAGYaPdTa1g=
+X-Received: by 2002:a05:6102:3050:b0:47b:dcda:79df with SMTP id
+ ada2fe7eead31-489077ce87amr4966258137.19.1716449706032; Thu, 23 May 2024
+ 00:35:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RESEND] null_blk: fix null-ptr-dereference while
- configuring 'power' and 'submit_queues'
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, yi.zhang@redhat.com,
- dlemoal@kernel.org, hare@suse.de, johannes.thumshirn@wdc.com,
- kch@nvidia.com, zhouchengming@bytedance.com, bvanassche@acm.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-References: <20240523144536.1376904-1-yukuai1@huaweicloud.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240523144536.1376904-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240507020037.14009-1-gavin.liu@mediatek.com>
+ <CAFA6WYN79E8Hyxsaxu20hkyNebMqBWV7az5ByekTuii7Y7qjng@mail.gmail.com> <929512b561536d4ddfaeda518f2ce306b899f3a9.camel@mediatek.com>
+In-Reply-To: <929512b561536d4ddfaeda518f2ce306b899f3a9.camel@mediatek.com>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Thu, 23 May 2024 13:04:55 +0530
+Message-ID: <CAFA6WYNRVa_oem2TdyjoaUOTmW+vED-7LOC4wFjqG+puptg8tQ@mail.gmail.com>
+Subject: Re: [PATCH v3] optee: add timeout value to optee_notif_wait() to
+ support timeout
+To: =?UTF-8?B?R2F2aW4gTGl1ICjlionlk7Llu7cp?= <Gavin.Liu@mediatek.com>
+Cc: "jens.wiklander@linaro.org" <jens.wiklander@linaro.org>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, 21 May 2024 at 14:16, Gavin Liu (=E5=8A=89=E5=93=B2=E5=BB=B7) <Gavi=
+n.Liu@mediatek.com> wrote:
+>
+> Hi, Sumit,
+>
+> The corresponding OPTEE-OS pull request and change is here.
+>
+> https://github.com/OP-TEE/optee_os/pull/6641
 
-On 23.05.24 16:45, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
->
-> Writing 'power' and 'submit_queues' concurrently will trigger kernel
-> panic:
->
-> Test script:
->
-> modprobe null_blk nr_devices=0
-> mkdir -p /sys/kernel/config/nullb/nullb0
-> while true; do echo 1 > submit_queues; echo 4 > submit_queues; done &
-> while true; do echo 1 > power; echo 0 > power; done
->
-> Test result:
->
-> BUG: kernel NULL pointer dereference, address: 0000000000000148
-> Oops: 0000 [#1] PREEMPT SMP
-> RIP: 0010:__lock_acquire+0x41d/0x28f0
-> Call Trace:
->   <TASK>
->   lock_acquire+0x121/0x450
->   down_write+0x5f/0x1d0
->   simple_recursive_removal+0x12f/0x5c0
->   blk_mq_debugfs_unregister_hctxs+0x7c/0x100
->   blk_mq_update_nr_hw_queues+0x4a3/0x720
->   nullb_update_nr_hw_queues+0x71/0xf0 [null_blk]
->   nullb_device_submit_queues_store+0x79/0xf0 [null_blk]
->   configfs_write_iter+0x119/0x1e0
->   vfs_write+0x326/0x730
->   ksys_write+0x74/0x150
->
-> This is because del_gendisk() can concurrent with
-> blk_mq_update_nr_hw_queues():
->
-> nullb_device_power_store	nullb_apply_submit_queues
->   null_del_dev
->   del_gendisk
-> 				 nullb_update_nr_hw_queues
-> 				  if (!dev->nullb)
-> 				  // still set while gendisk is deleted
-> 				   return 0
-> 				  blk_mq_update_nr_hw_queues
->   dev->nullb = NULL
->
-> Fix this problem by resuing the global mutex to protect
-> nullb_device_power_store() and nullb_update_nr_hw_queues() from configs.
->
-> Fixes: 45919fbfe1c4 ("null_blk: Enable modifying 'submit_queues' after an instance has been configured")
-> Reported-and-tested-by: Yi Zhang <yi.zhang@redhat.com>
-> Closes: https://lore.kernel.org/all/CAHj4cs9LgsHLnjg8z06LQ3Pr5cax-+Ps+xT7AP7TPnEjStuwZA@mail.gmail.com/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/block/loop.c          |  2 +-
->   drivers/block/null_blk/main.c | 40 +++++++++++++++++++++++------------
->   2 files changed, 27 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 28a95fd366fe..3e1c4f5ef714 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -2140,7 +2140,7 @@ static int loop_control_remove(int idx)
->   		pr_warn_once("deleting an unspecified loop device is not supported.\n");
->   		return -EINVAL;
->   	}
-> -		
-> +
+As this is an ABI change where I see backwards compatibility is
+maintained. However, the forwards compatibility requires this change
+to be backported to stable releases. So for the next version please CC
+stable ML.
 
-This snippet changes nothing. Can we remove it?
+>
+> On Mon, 2024-05-20 at 16:16 +0530, Sumit Garg wrote:
+> >
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >  Hi,
+> >
+> > On Tue, 7 May 2024 at 07:31, gavin.liu <gavin.liu@mediatek.com>
+> > wrote:
+> > >
+> > > From: Gavin Liu <gavin.liu@mediatek.com>
+> > >
+> > > Add timeout value to support self waking when timeout to avoid
+> > waiting
+> > > indefinitely.
+> > >
+> > > Signed-off-by: Gavin Liu <gavin.liu@mediatek.com>
+> > > ---
+> > > change in v3:
+> > > 1. change the comment in optee_rpc_cmd.h
+> > > 2. add macro for "TEE_ERROR_TIMEOUT"
+> > > 3. change from "TEEC_ERROR_BUSY" to "TEE_ERROR_TIMEOUT"
+> > > ---
+> > >  drivers/tee/optee/notif.c         |  9 +++++++--
+> > >  drivers/tee/optee/optee_private.h |  5 ++++-
+> > >  drivers/tee/optee/optee_rpc_cmd.h |  1 +
+> > >  drivers/tee/optee/rpc.c           | 10 ++++++++--
+> > >  4 files changed, 20 insertions(+), 5 deletions(-)
+> > >
 
-Zhu Yanjun
+FWIW:
 
->   	/* Hide this loop device for serialization. */
->   	ret = mutex_lock_killable(&loop_ctl_mutex);
->   	if (ret)
-> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-> index 5d56ad4ce01a..eb023d267369 100644
-> --- a/drivers/block/null_blk/main.c
-> +++ b/drivers/block/null_blk/main.c
-> @@ -413,13 +413,25 @@ static int nullb_update_nr_hw_queues(struct nullb_device *dev,
->   static int nullb_apply_submit_queues(struct nullb_device *dev,
->   				     unsigned int submit_queues)
->   {
-> -	return nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
-> +	int ret;
-> +
-> +	mutex_lock(&lock);
-> +	ret = nullb_update_nr_hw_queues(dev, submit_queues, dev->poll_queues);
-> +	mutex_unlock(&lock);
-> +
-> +	return ret;
->   }
->   
->   static int nullb_apply_poll_queues(struct nullb_device *dev,
->   				   unsigned int poll_queues)
->   {
-> -	return nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
-> +	int ret;
-> +
-> +	mutex_lock(&lock);
-> +	ret = nullb_update_nr_hw_queues(dev, dev->submit_queues, poll_queues);
-> +	mutex_unlock(&lock);
-> +
-> +	return ret;
->   }
->   
->   NULLB_DEVICE_ATTR(size, ulong, NULL);
-> @@ -468,28 +480,31 @@ static ssize_t nullb_device_power_store(struct config_item *item,
->   	if (ret < 0)
->   		return ret;
->   
-> +	ret = count;
-> +	mutex_lock(&lock);
->   	if (!dev->power && newp) {
->   		if (test_and_set_bit(NULLB_DEV_FL_UP, &dev->flags))
-> -			return count;
-> +			goto out;
-> +
->   		ret = null_add_dev(dev);
->   		if (ret) {
->   			clear_bit(NULLB_DEV_FL_UP, &dev->flags);
-> -			return ret;
-> +			goto out;
->   		}
->   
->   		set_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
->   		dev->power = newp;
->   	} else if (dev->power && !newp) {
->   		if (test_and_clear_bit(NULLB_DEV_FL_UP, &dev->flags)) {
-> -			mutex_lock(&lock);
->   			dev->power = newp;
->   			null_del_dev(dev->nullb);
-> -			mutex_unlock(&lock);
->   		}
->   		clear_bit(NULLB_DEV_FL_CONFIGURED, &dev->flags);
->   	}
->   
-> -	return count;
-> +out:
-> +	mutex_unlock(&lock);
-> +	return ret;
->   }
->   
->   CONFIGFS_ATTR(nullb_device_, power);
-> @@ -1932,15 +1947,12 @@ static int null_add_dev(struct nullb_device *dev)
->   	nullb->q->queuedata = nullb;
->   	blk_queue_flag_set(QUEUE_FLAG_NONROT, nullb->q);
->   
-> -	mutex_lock(&lock);
->   	rv = ida_alloc(&nullb_indexes, GFP_KERNEL);
-> -	if (rv < 0) {
-> -		mutex_unlock(&lock);
-> +	if (rv < 0)
->   		goto out_cleanup_disk;
-> -	}
-> +
->   	nullb->index = rv;
->   	dev->index = rv;
-> -	mutex_unlock(&lock);
->   
->   	if (config_item_name(&dev->group.cg_item)) {
->   		/* Use configfs dir name as the device name */
-> @@ -1969,9 +1981,7 @@ static int null_add_dev(struct nullb_device *dev)
->   	if (rv)
->   		goto out_ida_free;
->   
-> -	mutex_lock(&lock);
->   	list_add_tail(&nullb->list, &nullb_list);
-> -	mutex_unlock(&lock);
->   
->   	pr_info("disk %s created\n", nullb->disk_name);
->   
-> @@ -2020,7 +2030,9 @@ static int null_create_dev(void)
->   	if (!dev)
->   		return -ENOMEM;
->   
-> +	mutex_lock(&lock);
->   	ret = null_add_dev(dev);
-> +	mutex_unlock(&lock);
->   	if (ret) {
->   		null_free_dev(dev);
->   		return ret;
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
 
--- 
-Best Regards,
-Yanjun.Zhu
+> >
+> > > diff --git a/drivers/tee/optee/notif.c b/drivers/tee/optee/notif.c
+> > > index 0d7878e770cd..1970880c796f 100644
+> > > --- a/drivers/tee/optee/notif.c
+> > > +++ b/drivers/tee/optee/notif.c
+> > > @@ -29,7 +29,7 @@ static bool have_key(struct optee *optee, u_int
+> > key)
+> > >         return false;
+> > >  }
+> > >
+> > > -int optee_notif_wait(struct optee *optee, u_int key)
+> > > +int optee_notif_wait(struct optee *optee, u_int key, u32 timeout)
+> > >  {
+> > >         unsigned long flags;
+> > >         struct notif_entry *entry;
+> > > @@ -70,7 +70,12 @@ int optee_notif_wait(struct optee *optee, u_int
+> > key)
+> > >          * Unlock temporarily and wait for completion.
+> > >          */
+> > >         spin_unlock_irqrestore(&optee->notif.lock, flags);
+> > > -       wait_for_completion(&entry->c);
+> > > +       if (timeout !=3D 0) {
+> > > +               if (!wait_for_completion_timeout(&entry->c,
+> > timeout))
+> > > +                       rc =3D -ETIMEDOUT;
+> > > +       } else {
+> > > +               wait_for_completion(&entry->c);
+> > > +       }
+> > >         spin_lock_irqsave(&optee->notif.lock, flags);
+> > >
+> > >         list_del(&entry->link);
+> > > diff --git a/drivers/tee/optee/optee_private.h
+> > b/drivers/tee/optee/optee_private.h
+> > > index 429cc20be5cc..424898cdc4e9 100644
+> > > --- a/drivers/tee/optee/optee_private.h
+> > > +++ b/drivers/tee/optee/optee_private.h
+> > > @@ -26,6 +26,9 @@
+> > >  #define TEEC_ERROR_BUSY                        0xFFFF000D
+> > >  #define TEEC_ERROR_SHORT_BUFFER                0xFFFF0010
+> > >
+> > > +/* API Return Codes are from the GP TEE Internal Core API
+> > Specification */
+> > > +#define TEE_ERROR_TIMEOUT              0xFFFF3001
+> > > +
+> > >  #define TEEC_ORIGIN_COMMS              0x00000002
+> > >
+> > >  /*
+> > > @@ -252,7 +255,7 @@ struct optee_call_ctx {
+> > >
+> > >  int optee_notif_init(struct optee *optee, u_int max_key);
+> > >  void optee_notif_uninit(struct optee *optee);
+> > > -int optee_notif_wait(struct optee *optee, u_int key);
+> > > +int optee_notif_wait(struct optee *optee, u_int key, u32 timeout);
+> > >  int optee_notif_send(struct optee *optee, u_int key);
+> > >
+> > >  u32 optee_supp_thrd_req(struct tee_context *ctx, u32 func, size_t
+> > num_params,
+> > > diff --git a/drivers/tee/optee/optee_rpc_cmd.h
+> > b/drivers/tee/optee/optee_rpc_cmd.h
+> > > index f3f06e0994a7..4576751b490c 100644
+> > > --- a/drivers/tee/optee/optee_rpc_cmd.h
+> > > +++ b/drivers/tee/optee/optee_rpc_cmd.h
+> > > @@ -41,6 +41,7 @@
+> > >   * Waiting on notification
+> > >   * [in]    value[0].a      OPTEE_RPC_NOTIFICATION_WAIT
+> > >   * [in]    value[0].b      notification value
+> > > + * [in]    value[0].c      timeout in milliseconds or 0 if no
+> > timeout
+> > >   *
+> > >   * Sending a synchronous notification
+> > >   * [in]    value[0].a      OPTEE_RPC_NOTIFICATION_SEND
+> > > diff --git a/drivers/tee/optee/rpc.c b/drivers/tee/optee/rpc.c
+> > > index f086812f1179..5de4504665be 100644
+> > > --- a/drivers/tee/optee/rpc.c
+> > > +++ b/drivers/tee/optee/rpc.c
+> > > @@ -130,6 +130,8 @@ static void
+> > handle_rpc_func_cmd_i2c_transfer(struct tee_context *ctx,
+> > >  static void handle_rpc_func_cmd_wq(struct optee *optee,
+> > >                                    struct optee_msg_arg *arg)
+> > >  {
+> > > +       int rc =3D 0;
+> > > +
+> > >         if (arg->num_params !=3D 1)
+> > >                 goto bad;
+> > >
+> > > @@ -139,7 +141,8 @@ static void handle_rpc_func_cmd_wq(struct optee
+> > *optee,
+> > >
+> > >         switch (arg->params[0].u.value.a) {
+> > >         case OPTEE_RPC_NOTIFICATION_WAIT:
+> > > -               if (optee_notif_wait(optee, arg-
+> > >params[0].u.value.b))
+> > > +               rc =3D optee_notif_wait(optee, arg-
+> > >params[0].u.value.b, arg->params[0].u.value.c);
+> > > +               if (rc)
+> > >                         goto bad;
+> > >                 break;
+> > >         case OPTEE_RPC_NOTIFICATION_SEND:
+> > > @@ -153,7 +156,10 @@ static void handle_rpc_func_cmd_wq(struct
+> > optee *optee,
+> > >         arg->ret =3D TEEC_SUCCESS;
+> > >         return;
+> > >  bad:
+> > > -       arg->ret =3D TEEC_ERROR_BAD_PARAMETERS;
+> > > +       if (rc =3D=3D -ETIMEDOUT)
+> > > +               arg->ret =3D TEE_ERROR_TIMEOUT;
+> > > +       else
+> > > +               arg->ret =3D TEEC_ERROR_BAD_PARAMETERS;
+> > >  }
+> > >
+> > >  static void handle_rpc_func_cmd_wait(struct optee_msg_arg *arg)
+> > > --
+> > > 2.18.0
+>
+> Regards,
+> Gavin Liu
+> > >
+>
+> ************* MEDIATEK Confidentiality Notice ********************
+> The information contained in this e-mail message (including any
+> attachments) may be confidential, proprietary, privileged, or otherwise
+> exempt from disclosure under applicable laws. It is intended to be
+> conveyed only to the designated recipient(s). Any use, dissemination,
+> distribution, printing, retaining or copying of this e-mail (including it=
+s
+> attachments) by unintended recipient(s) is strictly prohibited and may
+> be unlawful. If you are not an intended recipient of this e-mail, or beli=
+eve
+> that you have received this e-mail in error, please notify the sender
+> immediately (by replying to this e-mail), delete any and all copies of
+> this e-mail (including any attachments) from your system, and do not
+> disclose the content of this e-mail to any other person. Thank you!
 
+This text is not meant for public mailing lists. So please work with
+your IT team to allow you to post to public mailing lists without this
+text.
+
+-Sumit
 
