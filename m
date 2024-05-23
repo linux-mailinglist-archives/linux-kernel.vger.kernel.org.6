@@ -1,109 +1,167 @@
-Return-Path: <linux-kernel+bounces-186904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6D28CCAA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:14:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72DE8CCAA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90E88B212E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:14:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1050E1F21FAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E625227;
-	Thu, 23 May 2024 02:13:58 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1142BA53;
+	Thu, 23 May 2024 02:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bWgRLIhW"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C199529AB;
-	Thu, 23 May 2024 02:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DD26FCC;
+	Thu, 23 May 2024 02:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716430438; cv=none; b=jmTQpuZM0jFIJmvU7BYvwPpgG7S1xZCBy98O9/u4SA6w3Z3ByZsfJbP3vqTTs070/5k80rmsDfK3IEQUwHuLMFDDG/uZOkKHYyveDw1O9Hmj8vZhSXhzdVzSNad69gKysFb+ZO8YVnKhlkN6wPdZuYYTKBuVXHY0gzhzuw0/Yiw=
+	t=1716430539; cv=none; b=ly/TEDHx+uqkHGl04kJdSzPxmg5xlGIXOfi0xyTNR3m5T4Wu+HINCjPViyhnu6lvXFAZdyKnRn4FrIhDvTpBAonUqzfov/ZUu9UK16GX0S6Ovz+1zpCPuVn8IINQKJeLcA19kIksIoSxiojNF8Rh5e/zyHiut0xJltQ6ul7Y70Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716430438; c=relaxed/simple;
-	bh=JjfbM2SI2LLXpy0ta+dthuEvJcDGyZY7PJLCvNklKio=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q02X+NjDrwPvuKKcU2lvVTY8p3nIAqzezJq9aMHgKQUyTBSCr81I57HnLl/fC4BJNDh8/gaXtMP7hOvanuCi84sWxQA4CgncMVWXepxHq45JJHnKQFFnkdNvZEUPoMsJkq0prUjInXZY6jdzVGu3UNQkqvjDO4ODyeVqy2MemcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [121.237.92.18])
-	by APP-05 (Coremail) with SMTP id zQCowAA3PeVQpk5msp_mDA--.32642S2;
-	Thu, 23 May 2024 10:13:37 +0800 (CST)
-From: zhouquan@iscas.ac.cn
-To: anup@brainfault.org,
-	atishp@atishpatra.org
-Cc: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Quan Zhou <zhouquan@iscas.ac.cn>
-Subject: [PATCH] RISC-V: KVM: Fix incorrect reg_subtype labels in kvm_riscv_vcpu_set_reg_isa_ext function
-Date: Thu, 23 May 2024 10:13:34 +0800
-Message-Id: <ff1c6771a67d660db94372ac9aaa40f51e5e0090.1716429371.git.zhouquan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716430539; c=relaxed/simple;
+	bh=Rz/pzibnlbL3tWRpV3ly6iHU47rBqQBAtbvLNaBhy9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YpaR5tCSb3bQIFjSEUI1K3aZVsTWpnYYnLVY/hOd/R1Z5NThxkCal/EyvXWX8P47qPyQGJqVpr/4LSbkWoIEip3FQ22pdGIyqBFH326OiN2g3NMQk3qtHcDZjMpoypzaSOwDUyFxtO/PxMSeonxXOm6G3FjtxM9R7xs5aVHxG08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bWgRLIhW; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b277a61f6fso637969eaf.1;
+        Wed, 22 May 2024 19:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716430536; x=1717035336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uavZbL9YXxvdslM8FaHJLyH+/Wb+KYBkn+bR0P0W3V8=;
+        b=bWgRLIhWZfSOt7eUwQnhuO+ZAyuQKsZUHhpolRZPFRv/X/AcAln1xSlgO/qZqZXwQm
+         mEze6AFbuULyBFdpaS3HEzWK5i0nA3LUAKwKOe/92Gn2OoLO0Nh+aizEMsr/oH2aqBN4
+         Wf3HXCWwrFIqryIV7RmLTWGfrFqPvaFnOwbbxirNtBIfOR5D7Ux9fmfhVv+WQACg6yXi
+         ZalZd0y3mveP13TD2Pdp1B9JIuMA8vGldxAQaUAx0eqCBKZlen/5WXxT+53Kkl4cQ+NV
+         KP35sXhsbB/sbmupzsyQu2nCMlAU9z5cLb8L5HwEJZTB/OQQvT893qaPpWho4gKtA//y
+         +0Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716430536; x=1717035336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uavZbL9YXxvdslM8FaHJLyH+/Wb+KYBkn+bR0P0W3V8=;
+        b=ZX7YJ/UnbqijggmYVZgbgyhNCzjbj50Eg15XQ+N2zKpughLq7Mg0Xvc61JsK4I1h4C
+         DEXS/Ph6r+g1a7w5qm3/owVlu8ZcZnIxm/rsZfYc0VLYSe894cUwDbozl4kfqBGDoZEo
+         Dqx8iI/hfNOR9XBY8tlnwdSUggylyOV9rflhKN6Vptje2NdJ/omLpZKpvFMwTMpgWPYn
+         bUw7JZNSOvz41aS6PjQa28zI7r1I3SbDVXJYzmjHIiONMv+sVMNiqAUmjclrNytB0SVT
+         r4fES60fb5FbGkxSqM3wOEsrFLzOsZtvQELq98ghkD4MdG4ZAl2SVLrAS6fYMGlg3v9c
+         u5bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJKOqOQl6tSxS9PpDykX3KY6jHa7WGCZ+WJns0zf+wyGmetBJSv5TEoCKs3z2PKuJBoJY50hI2Mq7NEv8h3CHDpOAptJKoJWiC6xRpS6IxizMXN4NQBErwwgsjH2+K1ICWtFtZgMfWCN4=
+X-Gm-Message-State: AOJu0Ywp64yiYmCSYaQnwHkBydL9QGzMLqibMyNeidaijLfft5L7w7u9
+	EM2qt3DpsM8HHpVEhE6Le1WRfcuEOfMQZYy0n1Zl4/haFo9ASTD4BeEz3cD5bRB04/jPBveoUcV
+	s/T2IJ9w1kJGpmWvM5/gYqtNJsd8=
+X-Google-Smtp-Source: AGHT+IEj8CnFH5Ic4JJaIct67WmH5WU7V6wZU2RRtKRP2jz7hXvaccMyG9BQ9l1ZwIP0HkaKwmH78wp9Pgax2XYPdIA=
+X-Received: by 2002:a4a:d81a:0:b0:5b5:1b3f:e5f6 with SMTP id
+ 006d021491bc7-5b7fe7a68b3mr508224eaf.3.1716430536471; Wed, 22 May 2024
+ 19:15:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAA3PeVQpk5msp_mDA--.32642S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7try8WrykGryrtr15CrWkCrg_yoW8GF48pr
-	4DCrsYyrs5CFZ7Ca97ZrZ5Wr4Y9rs0gws5C3yI93yrJr45trWrXF1rtay7WF98GFyxXrWS
-	9FW8tF1FvF4Yva7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
-	WxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
-	Yx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7Cj
-	xVA2Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU9Z2fUUUUU
-	=
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiBg0GBmZOWhzPuQABsS
+References: <20240522074829.1750204-1-yunlong.xing@unisoc.com>
+ <5166bc31-1fd9-4f7f-bc51-f1f50d9d5483@acm.org> <68cfbc08-6d39-4bc6-854d-5df0c94dbfd4@kernel.dk>
+ <f6d3e1f2-e004-49bb-b6c1-969915ccab37@acm.org> <d9795483-ef64-4fd6-be71-a3946ae8fb3e@kernel.dk>
+In-Reply-To: <d9795483-ef64-4fd6-be71-a3946ae8fb3e@kernel.dk>
+From: yunlong xing <yunlongxing23@gmail.com>
+Date: Thu, 23 May 2024 10:15:25 +0800
+Message-ID: <CA+3AYtTpCC3g+31NDPFt4F58h_a43C+tTAXPTrFV5C_rmw=PYw@mail.gmail.com>
+Subject: Re: [PATCH] loop: inherit the ioprio in loop woker thread
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Bart Van Assche <bvanassche@acm.org>, Yunlong Xing <yunlong.xing@unisoc.com>, niuzhiguo84@gmail.com, 
+	Hao_hao.Wang@unisoc.com, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Quan Zhou <zhouquan@iscas.ac.cn>
+On Thu, May 23, 2024 at 2:13=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 5/22/24 12:12 PM, Bart Van Assche wrote:
+> > On 5/22/24 10:57, Jens Axboe wrote:
+> >> On 5/22/24 11:38 AM, Bart Van Assche wrote:
+> >>> On 5/22/24 00:48, Yunlong Xing wrote:
+> >>>> @@ -1913,6 +1921,10 @@ static void loop_handle_cmd(struct loop_cmd *=
+cmd)
+> >>>>            set_active_memcg(old_memcg);
+> >>>>            css_put(cmd_memcg_css);
+> >>>>        }
+> >>>> +
+> >>>> +    if (ori_ioprio !=3D cmd_ioprio)
+> >>>> +        set_task_ioprio(current, ori_ioprio);
+> >>>> +
+> >>>>     failed:
+> >>>>        /* complete non-aio request */
+> >>>>        if (!use_aio || ret) {
+> >>>
+> >>> Does adding this call in the hot path have a measurable performance i=
+mpact?
+> >>
+> >> It's loop, I would not be concerned with overhead. But it does look pr=
+etty
+> >> bogus to modify the task ioprio from here.
+> >
+> > Hi Jens,
+> >
+> > Maybe Yunlong uses that call to pass the I/O priority to the I/O submit=
+ter?
+> >
+> > I think that it is easy to pass the I/O priority to the kiocb submitted=
+ by
+> > lo_rw_aio() without calling set_task_ioprio().
+>
+> Yeah that was my point, it's both the completely wrong way to do it, nor
+> is it a sane way to do it. If the current stack off that doesn't allow
+> priority to be passed, then that work would need to be done first.
+>
+> --
+> Jens Axboe
+>
+Hi jens and bart=EF=BC=8C
 
-In the function kvm_riscv_vcpu_set_reg_isa_ext, the original code
-used incorrect reg_subtype labels KVM_REG_RISCV_SBI_MULTI_EN/DIS.
-These have been corrected to KVM_REG_RISCV_ISA_MULTI_EN/DIS respectively.
-Although they are numerically equivalent, the actual processing
-will not result in errors, but it may lead to ambiguous code semantics.
+Please let me explain the problem I'm having. There are many system service
+processes in the Android system that access loop devices. The tasks of thes=
+e
+system services themselves have high IO priorities.
 
-Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
----
- arch/riscv/kvm/vcpu_onereg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In the I/O stress tests such as filling disks, some disk devices like
+emmc will cause
+serious slowdowns. So now the disk speed is very slow, and there are still =
+many
+requests that need to be processed. I/O requests from system service taskes=
+ with
+high I/O priority should be prioritized over filling disk task with
+low I/O priority. The
+purpose is that the I/O requests of the system service process are processe=
+d as
+quickly as possible, without causing some stability problems due to being i=
+n the
+ioschdule state for a long time. However, these system service taskes acces=
+s the
+loop device. If the priority cannot be passed, the I/O requests
+submitted to the real
+disk device through the loop kwoker cannot be prioritized over the I/O
+requests of
+the filling disk task. Then the complete process of system process accessin=
+g the
+loop device will take a very long time.
 
-diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-index c676275ea0a0..62874fbca29f 100644
---- a/arch/riscv/kvm/vcpu_onereg.c
-+++ b/arch/riscv/kvm/vcpu_onereg.c
-@@ -724,9 +724,9 @@ static int kvm_riscv_vcpu_set_reg_isa_ext(struct kvm_vcpu *vcpu,
- 	switch (reg_subtype) {
- 	case KVM_REG_RISCV_ISA_SINGLE:
- 		return riscv_vcpu_set_isa_ext_single(vcpu, reg_num, reg_val);
--	case KVM_REG_RISCV_SBI_MULTI_EN:
-+	case KVM_REG_RISCV_ISA_MULTI_EN:
- 		return riscv_vcpu_set_isa_ext_multi(vcpu, reg_num, reg_val, true);
--	case KVM_REG_RISCV_SBI_MULTI_DIS:
-+	case KVM_REG_RISCV_ISA_MULTI_DIS:
- 		return riscv_vcpu_set_isa_ext_multi(vcpu, reg_num, reg_val, false);
- 	default:
- 		return -ENOENT;
-
-base-commit: 29c73fc794c83505066ee6db893b2a83ac5fac63
--- 
-2.34.1
-
+So the purpose of what I do is to let the I/O priority of the task
+accessing the loop
+device pass to the kworker process that submit i/o to the real disk
+device. Do you
+think the io priority of the task accessing the loop device should not
+be passed to
+the kwoker task? Do you have any suggestions for my above-mentioned questio=
+ns?
 
