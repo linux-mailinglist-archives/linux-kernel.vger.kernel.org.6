@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-187853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6BA8CD999
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:02:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926828CD99B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96196281595
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:02:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A73D41C21781
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19DCF9F5;
-	Thu, 23 May 2024 18:02:34 +0000 (UTC)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C370B7E79F;
+	Thu, 23 May 2024 18:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="riaDfviC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gn6t8o2I"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD467F7DD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAA9F9F5;
+	Thu, 23 May 2024 18:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716487354; cv=none; b=PEJ0WOEr9nsLoQAafu2WmzFPa40FvevL1n1LDb8wI82Vav7SPf+d54TVawFH5n8SozDvFidFyYbRWF7KwyEJtgmO3RdxNnUMPIH1y1OtFBr+XjdT9f+ZmdB4TuAJkA3+SPlL9xui+43S/hMsr0KZoE3sNSzeYJa5N6J6KuhiwIY=
+	t=1716487422; cv=none; b=TvpX60ck/omgg1KdZ6QS0FQC9b4l/mKXOnU9gseG7T03Pou1IkbgvS3PN+tVND5K9Y84//XlXsCqJJ9xxjeEZFvBZAnkKXrl+N4RiOedGioMhjpRJYLNZWriddBlGrlGRac8RNC38CBYC+/jOYd8bLLusxDUG2ECMuSLmj3Bqr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716487354; c=relaxed/simple;
-	bh=8u/HVbwKGKjv1d4NvsyoFcvc1mn5bKc3XWro9ywqZug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PAFegBqvJFvHkoM3Tu8xWxHlaNqh3vIipfNZKHGXZw9tZTauBXk/AEIjz7/IXw+OAg6cqCCrGnDuR9hFKTUdbrxXP1wB6bvhGMNwKt6abcNOxlst34eg5S8ecRc6hkkPh3XmiVTvPAICi/Ha5LkTj2wzXEhyqe1KrrDpZ++/kBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=snitzer.net; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=snitzer.net
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-792b8ebc4eeso474661985a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:02:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716487351; x=1717092151;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+nW7/qXjjeCu7jMbcTNifvfQ6nV4FRka2a7rVFTLMdM=;
-        b=Q3bDWwF167jxoKSszgbeOIRAGp01fU+7+2RmvqhXK964rm2hcvo6RzzymkrR8/8kVs
-         /c6s4QBfM0P9ui1u+OZw+L/YXU8EyuJe1AVyLO+97NRfDndFHL5A2yEpRSM9UHxi7cf+
-         b7nUW7NNGWW8jgYb8qjdTbKuf9eh0ggPA6KjewHW3Uq3+MseoJzGDMSapl01Nva3prtk
-         bFEjngUE3R0QKHCzAGwt5xL/H505+7WRU+/3woNGyJP9jDiAIt8uzGnsxw/hKXiS3x6M
-         6BVSlEHzf/EG5+IVjmqb8MYCg5MgJEqOUpLqLAi3DzhDQKgRUgK9IC0wL+4zrJeu/8Ow
-         J98A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQhFHj37MJLsq+3rlMV8KPm7BHO3KEd5nEqGyarov2JhOkdiI0KQHrpGNyZRuXVZ44bST24E2qgP9fM84tSHIkDso8rvcaiX4tE2dG
-X-Gm-Message-State: AOJu0Yz33tBoQt9crBFISNTNmGSx+57M6r+fdgGT9yR64uFgSdwdUERf
-	2iJCMU7UjkCYF0p1FTsx+lRwa5y4v+dNP57FexmmbVAsX37BLGSy91jfEStF1Rg=
-X-Google-Smtp-Source: AGHT+IHsWlC/DlnDdzhRq0vc0RR21gS5wvf1ly0f4w3gZUrfWWz62i7ZyWmfQJf/fP7ehrSqDXo+UA==
-X-Received: by 2002:a05:620a:cf8:b0:793:fdb:c9a with SMTP id af79cd13be357-794994115e3mr547613585a.6.1716487351141;
-        Thu, 23 May 2024 11:02:31 -0700 (PDT)
-Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e2467c2ecsm132296991cf.72.2024.05.23.11.02.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 11:02:30 -0700 (PDT)
-Date: Thu, 23 May 2024 14:02:29 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Benjamin Marzinski <bmarzins@redhat.com>,
-	Yang Yang <yang.yang@vivo.com>, Alasdair Kergon <agk@redhat.com>,
-	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dm: optimize flushes
-Message-ID: <Zk-EtZE4C7bndEYn@kernel.org>
-References: <20240514090445.2847-1-yang.yang@vivo.com>
- <20240514090445.2847-4-yang.yang@vivo.com>
- <ZkTXzG1yrPmW64Z6@redhat.com>
- <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com>
- <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com>
- <Zk4Y6DMgK71UuoKd@kernel.org>
- <44afd6c8-d36a-4b9d-e77f-fca269a9897b@redhat.com>
+	s=arc-20240116; t=1716487422; c=relaxed/simple;
+	bh=fgFCQKkzi3o7jrRI+z4PJ+96C/8tsH8Tyrk26hCeeXg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=IBvZuvBF1OK9B/ACKs3ZbazTUENlgooTUIGvffUDdRuJ6+GInmrN+L7NoqxYvVfO7xYWGuj0lbuccUXU3teZmLfr5Vk4NHw9cHDZmVhKCSLTBrqdRUAkhLJ77HRgHf3+78J8JH52/Sb4fSelqSADAOQG2gwOJLVA50lXjAs+CLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=riaDfviC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gn6t8o2I; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 23 May 2024 18:03:38 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716487418;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tUBVaf+IpEpYSyjsJQQw9ZgRULIxr3jpN5m8hkJ3YTo=;
+	b=riaDfviCQq1fdIDjSzjjQhy14vQeEhvJRYpXMjymkK1cIQLjoGJjlkCwJKxwoboZqkN9Dw
+	dOfjaFLxwTglkbpRv07CbfHmVHRpJ1v1MWVTHrIg59PdUosL8gu60NmTgR24DMM9J4h9/S
+	jy4N4NDsw6NYMLqdW9rwugUjvXIbiGBtV90r/89LCZkILByTqwI0T5fnRWyAhbb0hiVdXJ
+	OXzl/qQJivkk0oU+7XLc7LKEuwGxi6YKLBUpmKCYQXrfu/iKDXuFKfJUAv33tfKQ2JTaex
+	Yv+/ogbUfgRDbLn1P2CDpR0YxMJKzIBLdJc2UG7FkXe41cLXWJ72HjBvrGwU1A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716487418;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tUBVaf+IpEpYSyjsJQQw9ZgRULIxr3jpN5m8hkJ3YTo=;
+	b=gn6t8o2I+vP7OYBhthT1K07Xw8R7xzN3tyvHn8ubdxTMwKO5oVHbKxKpZj6Y4HqAdAXAYR
+	jlsFH6UB46ORdRCw==
+From: "tip-bot2 for Palmer Dabbelt" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/riscv-imsic: Fixup
+ riscv_ipi_set_virq_range() conflict
+Cc: Tomasz Jeznach <tjeznach@rivosinc.com>,
+ Palmer Dabbelt <palmer@rivosinc.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240522184953.28531-3-palmer@rivosinc.com>
+References: <20240522184953.28531-3-palmer@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <44afd6c8-d36a-4b9d-e77f-fca269a9897b@redhat.com>
+Message-ID: <171648741822.10875.7508999228304750442.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 23, 2024 at 07:46:25PM +0200, Mikulas Patocka wrote:
-> Hi
-> 
-> Here I'm resending the patch, with more comments and explanations added.
-> 
-> Mikulas
-> 
-> 
-> From: Mikulas Patocka <mpatocka@redhat.com>
-> 
-> Device mapper sends flush bios to all the targets and the targets send it
-> to the underlying device. That may be inefficient, for example if a table
-> contains 10 linear targets pointing to the same physical device, then
-> device mapper would send 10 flush bios to that device - despite the fact
-> that only one bio would be sufficient.
-> 
-> This commit optimizes the flush behavior. It introduces a per-target
-> variable flush_bypasses_map - it is set when the target supports flush
-> optimization - currently, the dm-linear and dm-stripe targets support it.
-> When all the targets in a table have flush_bypasses_map,
-> flush_bypasses_map on the table is set. __send_empty_flush tests if the
-> table has flush_bypasses_map - and if it has, no flush bios are sent to
-> the targets via the "map" method and the list dm_table->devices is
-> iterated and the flush bios are sent to each member of the list.
-> 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Suggested-by: Yang Yang <yang.yang@vivo.com>
+The following commit has been merged into the irq/urgent branch of tip:
 
-Nicely done, please feel free to stage for 6.11 (create a new
-'dm-6.11' branch starting from 'dm-6.10' -- we'll need to rebase
-dm-6.11 to 6.10-rc2 or so but at least we'll get this commit in the
-pipeline, push to 'for-next').
+Commit-ID:     88d68bbd07328aea6f6488b6803839970880492a
+Gitweb:        https://git.kernel.org/tip/88d68bbd07328aea6f6488b6803839970880492a
+Author:        Palmer Dabbelt <palmer@rivosinc.com>
+AuthorDate:    Wed, 22 May 2024 11:49:55 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 23 May 2024 19:57:12 +02:00
 
-Reviewed-by: Mike Snitzer <snitzer@kernel.org>
+irqchip/riscv-imsic: Fixup riscv_ipi_set_virq_range() conflict
+
+There was a semantic conflict between 21a8f8a0eb35 ("irqchip: Add RISC-V
+incoming MSI controller early driver") and dc892fb44322 ("riscv: Use
+IPIs for remote cache/TLB flushes by default") due to an API change.
+This manifests as a build failure post-merge.
+
+Fixes: 0bfbc914d943 ("Merge tag 'riscv-for-linus-6.10-mw1' of git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux")
+Reported-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/r/20240522184953.28531-3-palmer@rivosinc.com
+Link: https://lore.kernel.org/all/mhng-10b71228-cf3e-42ca-9abf-5464b15093f1@palmer-ri-x1c9/
+
+---
+ drivers/irqchip/irq-riscv-imsic-early.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-riscv-imsic-early.c b/drivers/irqchip/irq-riscv-imsic-early.c
+index 886418e..4fbb370 100644
+--- a/drivers/irqchip/irq-riscv-imsic-early.c
++++ b/drivers/irqchip/irq-riscv-imsic-early.c
+@@ -49,7 +49,7 @@ static int __init imsic_ipi_domain_init(void)
+ 		return virq < 0 ? virq : -ENOMEM;
+ 
+ 	/* Set vIRQ range */
+-	riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI, true);
++	riscv_ipi_set_virq_range(virq, IMSIC_NR_IPI);
+ 
+ 	/* Announce that IMSIC is providing IPIs */
+ 	pr_info("%pfwP: providing IPIs using interrupt %d\n", imsic->fwnode, IMSIC_IPI_ID);
 
