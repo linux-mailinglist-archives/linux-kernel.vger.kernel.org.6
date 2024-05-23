@@ -1,90 +1,165 @@
-Return-Path: <linux-kernel+bounces-187279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDAD8CCF64
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:36:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D178CCF61
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 586BF1C22484
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 181581F23145
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2AA13D521;
-	Thu, 23 May 2024 09:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0590C13D28E;
+	Thu, 23 May 2024 09:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="hgobShxP"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p0i+HBp7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D227D78C8B;
-	Thu, 23 May 2024 09:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED4278C8B;
+	Thu, 23 May 2024 09:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716456957; cv=none; b=sLqAxP5KHhe9HEXz/ZDWhlsNF+gUnk5VVDaYaO4wa4ym0eFCsJMzJTEYPjlIScnrS0Usqxv+Q+lqHfVaSnjJ7zA7gIbkeT+9q+eXFRAfKsxFswww2lLxjg3FbkUClSwS9UYU6qZRzi+cZblw6OyxDbucL+rQLxEb0cgwmrVYykQ=
+	t=1716456945; cv=none; b=rB/zrQLSEk3O7BYaCMDV77NbVq1W/6un419j8eK6qJXJ2idObyXCy7E2FnFdC5yjHkg6V9HlkolZ+Ud1ccv3mHjkJK3V0/5bwes6UGDWCJpSsQPw04fP4p5Vv6JVnyWf8F7oiY2lQ4Ys0pz4VM9RT6z+4Y9YfCY72knfow7clC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716456957; c=relaxed/simple;
-	bh=Ej4YT5rpVB1ypIhlhK6rTDQom/xOPRyn2nshuXUXznk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tAhC7x1P6Pqh6S6b7vjy3W/fc16d48FpPSVSFMdQCHm7dRBEYLHcMs7Ckdb0AX1NLX6QUPX7Vd0O8P9e0vLhM7qBF3Iy4oM0AlzA6KU67jyB0BBCcClf9o3Cn6A+8GdTN9IzVVKMNJWlET5fgd+zgYKcyYikMSwKDFRGWLYHqQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=hgobShxP; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=Ej4YT5rpVB1ypIhlhK6rTDQom/xOPRyn2nshuXUXznk=;
-	t=1716456954; x=1717666554; b=hgobShxP6k60ykh8Bkf7EUm35b9QlQRKb+oKT19ZO1CSHfU
-	FSISCcR0sLIM5wLMjLLuOtBEA+IHkAPdRFeRiyQ380yAqcSb1tZrDHGp7/63sDRfJV9Quedw4DW8x
-	hxT8IxJA0H1byj3vUzbr80FD3RplvVkdL9zMgU6kL/mGGwKxSAWOZC0Ubhl1h/sUEr4FfIArVgQ47
-	wCj21XqotL28cBDIt8N7MCLRITZ3540dUMPD25EWY9Nzfaj5PiUCnJUwNVL6d2IshihOXqQTmy6Ns
-	Wo593ps4vqC+tYtG9t1zxjSAKfBVDPzZgsF7B8jDHMhujatcT748BFj3Z4YvV+jQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sA4rL-00000005t78-0pdJ;
-	Thu, 23 May 2024 11:35:39 +0200
-Message-ID: <9fca4c0d496eb731f571cd8eacd409b9a9e61dae.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] wifi: mac80211: Avoid address calculations via out
- of bounds array indexing
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Simon Horman <horms@kernel.org>, Kenton Groombridge <concord@gentoo.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com,  linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, Kees Cook
- <keescook@chromium.org>
-Date: Thu, 23 May 2024 11:35:37 +0200
-In-Reply-To: <20240517204532.GC475595@kernel.org>
-References: <20240517145420.8891-1-concord@gentoo.org>
-	 <20240517204532.GC475595@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1716456945; c=relaxed/simple;
+	bh=gUFYD+H6fjG94sAYR9rMeCjL/q0ruoo74U+lISGMCMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUGy+2Ypb58QAfshUGgr+CXqki3FGiRVtX9lKv3JQvYy+jnA8WRUAqhcK/JWmbxKZrUyLyIkB/CNnbKrE1GdxoaLYOV6u0WJRSMrVQMrf9IXGwZY9XwlsZiWvPRci1xjrirCBDLAsbnoKq/esrseKQOmQ889IUp8JQQbxKZGEso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p0i+HBp7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E77DC3277B;
+	Thu, 23 May 2024 09:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716456944;
+	bh=gUFYD+H6fjG94sAYR9rMeCjL/q0ruoo74U+lISGMCMQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p0i+HBp7xrV8/YlymDXIf/TUrqbmRJ32NK0OgPTE+pqffTAkoGV5+dDGAqOwK5Hzr
+	 7JNeffpuZshUweYnrZC1q7Ssis8f+OSfm8wtTJyv0qLZFn9D78MGRPFJPXhnAFrnJF
+	 pCLUy60d/0F/FCuWsw1lFwGbmcufs4+4pW0HY6OI=
+Date: Thu, 23 May 2024 11:35:42 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: yangxingui <yangxingui@huawei.com>
+Cc: rafael@kernel.org, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	prime.zeng@hisilicon.com, liyihang9@huawei.com,
+	kangfenglong@huawei.com
+Subject: Re: [PATCH] driver core: Add log when devtmpfs create node failed
+Message-ID: <2024052354-legibly-willow-7134@gregkh>
+References: <20240522114346.42951-1-yangxingui@huawei.com>
+ <2024052221-pulverize-worrisome-37fb@gregkh>
+ <794b5fa3-0135-80cc-4b55-f48a430a58ca@huawei.com>
+ <2024052316-confused-payback-5658@gregkh>
+ <68b110da-ea20-fa03-be26-49dd3a04f835@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68b110da-ea20-fa03-be26-49dd3a04f835@huawei.com>
 
-On Fri, 2024-05-17 at 21:45 +0100, Simon Horman wrote:
->=20
-> FWWIW, it seems unfortunate to me that the __counted_by field (n_channels=
-)
-> is set some distance away from the allocation of the flex-array (channels=
-)
-> whose bounds it checks. It seems it would be pretty easy for a bug in the
-> code being updated here to result in an overrun.
->=20
+On Thu, May 23, 2024 at 05:23:07PM +0800, yangxingui wrote:
+> Hi Greg,
+> 
+> On 2024/5/23 15:25, Greg KH wrote:
+> > On Thu, May 23, 2024 at 09:50:09AM +0800, yangxingui wrote:
+> > > Hi, Greg
+> > > 
+> > > On 2024/5/22 20:23, Greg KH wrote:
+> > > > On Wed, May 22, 2024 at 11:43:46AM +0000, Xingui Yang wrote:
+> > > > > Currently, no exception information is output when devtmpfs create node
+> > > > > failed, so add log info for it.
+> > > > 
+> > > > Why?  Who is going to do something with this?
+> > > We execute the lsscsi command after the disk is connected, we occasionally
+> > > find that some disks do not have dev nodes and these disks cannot be used.
+> > 
+> > Ok, but why do you think that devtmpfs create failed?
+> I found that lsscsi will traverse the dev node and obtain device major and
+> min. If no matching dev node is found, it will display "-       ".
+> > 
+> > > However, there is no abnormal log output during disk scanning. We analyze
+> > > that it may be caused by the failure of devtmpfs create dev node, so the log
+> > > is added here.
+> > 
+> > But is that the case?  Why is devtmpfs failing?  Shouldn't we fix that
+> > instead?
+> My subsequent reply touches on these points.
+> > 
+> > > The lscsi command query results and kernel logs as follows:
+> > > 
+> > > [root@localhost]# lsscsi
+> > > [9:0:4:0]	disk	ATA	ST10000NM0086-2A SN05	-
+> > > 
+> > > kernel: [586669.541218] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
+> > > link_rate=10(sata)
+> > > kernel: [586669.541341] sas: phy-9:0 added to port-9:0, phy_mask:0x1
+> > > (5000000000000900)
+> > > kernel: [586669.541511] sas: DOING DISCOVERY on port 0, pid:2330731
+> > > kernel: [586669.541518] hisi_sas_v3_hw 0000:b4:04.0: dev[4:5] found
+> > > kernel: [586669.630816] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+> > > kernel: [586669.665960] hisi_sas_v3_hw 0000:b4:04.0: phydown: phy0
+> > > phy_state=0xe
+> > > kernel: [586669.665964] hisi_sas_v3_hw 0000:b4:04.0: ignore flutter phy0
+> > > down
+> > > kernel: [586669.863360] hisi_sas_v3_hw 0000:b4:04.0: phyup: phy0
+> > > link_rate=10(sata)
+> > > kernel: [586670.024482] ata19.00: ATA-10: ST10000NM0086-2AA101, SN05, max
+> > > UDMA/133
+> > > kernel: [586670.024487] ata19.00: 19532873728 sectors, multi 16: LBA48 NCQ
+> > > (depth 32), AA
+> > > kernel: [586670.027471] ata19.00: configured for UDMA/133
+> > > kernel: [586670.027490] sas: --- Exit sas_scsi_recover_host: busy: 0 failed:
+> > > 0 tries: 1
+> > > kernel: [586670.037541] sas: ata19: end_device-9:0:
+> > > model:ST10000NM0086-2AA101 serial:            ZA2B3PR2
+> > > kernel: [586670.100856] scsi 9:0:4:0: Direct-Access     ATA ST10000NM0086-2A
+> > > SN05 PQ: 0 ANSI: 5
+> > > kernel: [586670.101114] sd 9:0:4:0: [sdk] 19532873728 512-byte logical
+> > > blocks: (10.0 TB/9.10 TiB)
+> > > kernel: [586670.101116] sd 9:0:4:0: [sdk] 4096-byte physical blocks
+> > > kernel: [586670.101125] sd 9:0:4:0: [sdk] Write Protect is off
+> > > kernel: [586670.101137] sd 9:0:4:0: [sdk] Write cache: enabled, read cache:
+> > > enabled, doesn't support DPO or FUA
+> > > kernel: [586670.101620] sd 9:0:4:0: Attached scsi generic sg10 type 0
+> > > kernel: [586670.101714] sas: DONE DISCOVERY on port 0, pid:2330731, result:0
+> > > kernel: [586670.101731] sas: sas_form_port: phy0 belongs to port0
+> > > already(1)!
+> > > kernel: [586670.152512] sd 9:0:4:0: [sdk] Attached SCSI disk
+> > 
+> > Looks like sdk was found properly, what's the problem?
+> 
+> Yes, this problem occurs occasionally. There is no exception log when
+> scanning the disk, but the disk cannot be used. It has been confirmed that
+> it is related to fio testing. When the dev node does not exist, fio may
+> actively create this file.
 
-In a way, this is a more general problem, this allocates the max we know
-we might need, but then filter it down. It'd have to iterate twice to
-actually allocate the "correct" size, but then you could still have bugs
-by having different filter conditions in the two loops ...
+So that's a userspace issue.  If a device node is to be created, and the
+file is already present with that name, yes, we will fail to create it
+as obviously userspace did not want us to do so.
 
-Don't see any good solutions to this kind of code?
+It's not the kernel's job to protect userspace from doing foolish things
+itself, right?  :)
 
-johannes
+> If we want to solve this problem, should we delete the existing files first
+> when creating a dev node?
+
+No.
+
+> Or just print a prompt indicating that the dev node creation failed.
+
+We can do that, but will that cause error messages to be printed out for
+normal situations today where userspace does this on purpose?
+
+Again, this isn't fixing the root problem here (which is userspace doing
+something it shouldn't be doing), adding kernel log messages might be
+just noise at this point in time given that it has been operating this
+way for many years, if not decades.
+
+thanks,
+
+greg k-h
 
