@@ -1,111 +1,79 @@
-Return-Path: <linux-kernel+bounces-187414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5B98CD179
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:47:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D6548CD181
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C8D1F21CCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFECB1F221EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918B813BAFB;
-	Thu, 23 May 2024 11:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3B13BC0A;
+	Thu, 23 May 2024 11:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NMmYC3WZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pykEbYQN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCC53307B;
-	Thu, 23 May 2024 11:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FD813BAEF
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716464864; cv=none; b=WlQWxvgjoX8D6iNN37flF+LoHUJHFtUMVk2VWgkgvVgqvM0nDz3Kz7w79rqts5q/vqzpU3OPfSo7zyVj8lJp+/gPWiH6+ycefUnn0/Svm2Aj83UNklam4qt/4SgFg16PEUn4M1MIDhUGVbPhn9HY+E2GC9pTFByAymizkF+cNL8=
+	t=1716464899; cv=none; b=Z6jpI+u2bNYrnvQDw6oEhJ14c48WiDxDOgqcvw8pVTASw52U4IKjk5NhOmtOewf3cW1IgiNXwo4sLVghJCxvsbb+aS3XBC55rw5Kts+/UutOUy/RlLxT8piaxZ0FUX5v7yxvKkaKmLp8rupy5dO4R0UCQ4topbdfHw78duN/yuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716464864; c=relaxed/simple;
-	bh=3xbtnJwok+zrcbye3vysIdYFag8LyyseDL1qlml8khc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIubNPDHFHKP+dN338Ws6GeTGiP43apyoskXmDKvEw/1mnTBLeaM70P9x8JD0xKbM8+qmaGgVqegpbf/SZvuaJRp+B3ftmvkWq1Cq8NPKmFLxesmiKVwchoYSyO7Vcb4VJn44gsHOEH5k6M06MfKBRneJIPR+MF1Wwg/JzZ8qNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NMmYC3WZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F219C3277B;
-	Thu, 23 May 2024 11:47:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716464864;
-	bh=3xbtnJwok+zrcbye3vysIdYFag8LyyseDL1qlml8khc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NMmYC3WZAWpmW6xYQmR70bKA5gQiFRjQyPCYC3hNWsRwhWemQneADLGWG0c/O7ZLq
-	 EtmwpAOJOpIC7h1ykeAIMpXpflbVEEijS4DXHeqym8XVN8Q9x/2MXiAzp6QYoq199R
-	 3s7kWsSuLjpvRTOmBHpCnilH3S5zeBzaGchiW/oU=
-Date: Thu, 23 May 2024 13:47:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shichao Lai <shichaorai@gmail.com>
-Cc: stern@rowland.harvard.edu, oneukum@suse.com, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-	xingwei lee <xrivendell7@gmail.com>,
-	yue sun <samsun1006219@gmail.com>
-Subject: Re: [PATCH v2] usb-storage: Check whether divisor is non-zero before
- division
-Message-ID: <2024052351-demote-gangly-74b0@gregkh>
-References: <20240523113410.983875-1-shichaorai@gmail.com>
+	s=arc-20240116; t=1716464899; c=relaxed/simple;
+	bh=GdEfHQwd9UthVQYdbuGOINTzIHonWFAafApvVNK+jJQ=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=YYiPlquI64hds21XTGMzH+f3qSSMuBb3wI9s0EPoneAyNimZ09VjzGWS8VTsjs9efAb1ni9aXxUPJYF5E/WDXxcGOc0YF8tv/othP4Lazhc5hw6kn/IxxSP23dk5j5Pidv8yNBSXojxHOvQu/LG7qzude/jD3CXCMagkaoT4X4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pykEbYQN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23C13C4AF07;
+	Thu, 23 May 2024 11:48:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716464898;
+	bh=GdEfHQwd9UthVQYdbuGOINTzIHonWFAafApvVNK+jJQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pykEbYQNcZBaA9bC2vflH5VRpMklFtL4krDfUASsn45ovi8BUXgqSGofgKcl05XLZ
+	 S1vh0eRI3Ui9jcMyiaPqY911bHxpqDZLwgHwzB1hnD4fVZAXafOmRE6EOlCtXCv2mb
+	 swp9OWBJbAr6VgrqPF+azl9eerFAaal2xY+I30GJyVqXOdt9yNSo7UP68eGx1+SnQb
+	 17WAH3Sd11/nMYB9XRCeWJonebZHJi9B3WIKMMO78uQOso9smZp3vnffAFHyONSAzW
+	 46IXpzgOr5SKmyyZcGceo7keccmNkg4wgsC6vG1XvcR2RG4V9A/ZCbsRXelWS0+97V
+	 0p4ExBvEI1lFA==
+Message-ID: <e6cfc0e5425a26caf92012a9021e6a47.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regmap fixes for v6.10-merge-window
+Date: Thu, 23 May 2024 12:47:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523113410.983875-1-shichaorai@gmail.com>
 
-On Thu, May 23, 2024 at 07:34:10PM +0800, Shichao Lai wrote:
-> Since uzonesize may be zero, so judgements for non-zero
-> are nessesary in both place.
-> 
-> Changes since v1:
-> - Add one more check in alauda_write_lba().
-> - Move check ahead of loop in alauda_read_data().
+The following changes since commit 9b1fe0510494c989ab6a131ce8b97cdd02a1c869:
 
-Nit, this changes list should go below the --- line, as the
-documentation asks for.
+  regmap: Reorder fields in 'struct regmap_config' to save some memory (2024-05-07 10:31:42 +0900)
 
+are available in the Git repository at:
 
-> 
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Reported-by: yue sun <samsun1006219@gmail.com>
-> Signed-off-by: Shichao Lai <shichaorai@gmail.com>
-> ---
->  drivers/usb/storage/alauda.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-> index 115f05a6201a..17c73acd3b02 100644
-> --- a/drivers/usb/storage/alauda.c
-> +++ b/drivers/usb/storage/alauda.c
-> @@ -813,6 +813,8 @@ static int alauda_write_lba(struct us_data *us, u16 lba,
->  	unsigned char ecc[3];
->  	int i, result;
->  	unsigned int uzonesize = MEDIA_INFO(us).uzonesize;
-> +	if (!uzonesize)
-> +		return USB_STOR_TRANSPORT_ERROR;
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-fix-v6.10-merge-window
 
-Check after the list of variables please, not in the middle of them.  I
-think checkpatch will complain about this, right?
+for you to fetch changes up to 7ba822189e6060a8a2833b721d430f833bf0db43:
 
+  regmap: kunit: Fix array overflow in stride() test (2024-05-17 18:23:12 +0100)
 
->  	unsigned int zonesize = MEDIA_INFO(us).zonesize;
->  	unsigned int pagesize = MEDIA_INFO(us).pagesize;
->  	unsigned int blocksize = MEDIA_INFO(us).blocksize;
-> @@ -921,6 +923,8 @@ static int alauda_read_data(struct us_data *us, unsigned long address,
->  	unsigned int blocksize = MEDIA_INFO(us).blocksize;
->  	unsigned int pagesize = MEDIA_INFO(us).pagesize;
->  	unsigned int uzonesize = MEDIA_INFO(us).uzonesize;
-> +	if (!uzonesize)
-> +		return USB_STOR_TRANSPORT_ERROR;
+----------------------------------------------------------------
+regmap: Fix for v6.10
 
-Same here, at the end of the variable list please.
+Guenter ran with memory sanitisers and found an issue in the new KUnit
+tests that Richard added where an assumption in older test code was
+exposed, this was fixed quickly by Richard.
 
-thanks,
+----------------------------------------------------------------
+Richard Fitzgerald (1):
+      regmap: kunit: Fix array overflow in stride() test
 
-greg k-h
+ drivers/base/regmap/regmap-kunit.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
