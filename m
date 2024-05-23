@@ -1,244 +1,174 @@
-Return-Path: <linux-kernel+bounces-187847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B4B8CD980
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:53:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B188CD982
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D36821C20BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344BF1F2232F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA22D763F2;
-	Thu, 23 May 2024 17:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346D480039;
+	Thu, 23 May 2024 17:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CP1tl0gu"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="GFokNs26"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6274B8249B;
-	Thu, 23 May 2024 17:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C034E2746F
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716486756; cv=none; b=cbSARPIFQJT6vNsy+W5gtNDw5y8AMrgPomzXGZTfZFnmVYv/y+U25/nfU52vQ3NQm0QM+xX786dEdp5oKNXCwzWEBpcocF+w/a+NK0Txpv34gSqXP+/ODZKnAW9PgorDISdWqSJV6FtuSUscCBGJyA+lm7aDuaGPnXg7auxb3zE=
+	t=1716486821; cv=none; b=RJqGuY1NIyRmFhCBexnqKqB1zD6ePaabcMs52qFX2GFbBCO6HumrEmKfefx/MdR0HFOP0XsQOmwpKwht8r7C+HDLZZauxuZrMV3ubjymWAtgCLbP1oBtjrPZORz5v/u4kqPZJMxjg6RO2IIFqvpacqOvToUWFHLeW20rCX3XCic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716486756; c=relaxed/simple;
-	bh=OY84vnQmaOpm/ilqJFzeIS3mAQRqPDAKOALOTSxAdhM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cchnzGRvws40kGvmSJPIexdJ4jfZb+Xd+xHaICitjhygT2x90dniAykyv7aus8EB7XI0f2ECMGahSTxfM6NH3vuqkvafLkbabG4bi7sw0j89Aq/fu0dc6y3730PeaHtZe8CNrNnOZvw82LgSWmmOaFeCCAi2mf0hBW5Q/nR5UUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CP1tl0gu; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f8e819cf60so75914b3a.0;
-        Thu, 23 May 2024 10:52:35 -0700 (PDT)
+	s=arc-20240116; t=1716486821; c=relaxed/simple;
+	bh=1vlJyEbwuX0ZoN749JOIjA4u6/xlKVfxbDsvgdeX7zI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TeVeaEZr0foPkEEVVrl4DQyxLPcd1R9vWtegnXiUAvJsyd4wdwFa7BwRJNWUFxzmDpEWL4Vho7wRyHjxuLptpWb5AUSFVXmaKcw1gd1Boehv64eyQECgjPDitw+40Fv39gKRoiXfKSX1qlFmmtd7hgcUI0E0U0phrs7jPD6vzeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=GFokNs26; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-792d65cd7a8so328121785a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:53:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716486755; x=1717091555; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2sOHXqCncBU6birEuX4uwSPwzlGfl/T4qQvFWke/kK8=;
-        b=CP1tl0guO4hD+UxiU16hSJVVO7ci7jyWskY03ez1mraAwWKpItCvth9HLbYTOnf50F
-         QsMZIEE/+wnM3DeVBD2Ay8vp/5m+VxijoO8Q30yR4qPLEU9ANUR09bnsnxDte/gielD6
-         DejOuHdKQzVBhe4ysMyy0x4R3PSwF92nlE7ktDRFpIlCdj5b1XMx8xg8mCIJtUKF9Rff
-         URVDoufB1ypf7UAE3UdnRfZQnTekyuc5GX+FWXnBA2OW4h+y888oRbe+XAhovpzehyve
-         f5PyWOGCC6SU0KypcThao91FY/OwHPy2/S8dmRznFqc0aS9oRc76kTL8XJiPiEduWJmr
-         AlOQ==
+        d=citrix.com; s=google; t=1716486819; x=1717091619; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1vlJyEbwuX0ZoN749JOIjA4u6/xlKVfxbDsvgdeX7zI=;
+        b=GFokNs2639blQKjNSCx44Qm73y5ZcwUf2/YV/8LmDzfVxmDxE98ehiRerYGcEYRSgV
+         vwiSD3+fvCwF25ibN74KRFZbXpAbPAkoOD83IFhXKriDQS+OKjfStj2xwsLMl4wYKfxc
+         F0k0YBn5V3+KDEDxm8shoIHJtcT4fa1IXDx/0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716486755; x=1717091555;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2sOHXqCncBU6birEuX4uwSPwzlGfl/T4qQvFWke/kK8=;
-        b=HXtG2r7E+l8SGaQ5xXzpmi/jMQK6tsMbgqiabV6RW4gm8bQ3SI3F+FFgvkclX5mrr4
-         t7+QkWx4X9nx0tjd8RVKGz8xAKe2bZeeSG7hKHH/C07/tL2NO6ewHR6xlx0t5my/dOFS
-         cJgoFPYJiqtomU7iIdlqlg7ZxK6Nvc3dzqB+Nkmq6RtrDPZ8sZKXsSHNtXreKMlQnolh
-         QvoYNMfvWC4ORrhyjWScLrEy6q2UZXIHssvbN135XS/XVNSChSFrXdsSZWCXhlfslmtB
-         1kgtx4dso/rVH8tsbL1aZNWrzlgCaJ5kSATLes1tT0RCjiXL+LtjAhmqqNTsdyfQ7bvA
-         PchA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDx6wJI5RprdQIiGFQfzoWQDpYHdLp9wf/5Umra2WgdY6qAcT6/o96Y46n901HSX732El6TXW25niiEEdLeLL3Pp6aeX/FPlPobjEn
-X-Gm-Message-State: AOJu0YxEsmIGuXU3c7ZtASMnfwmmu+J7ols6HR0uf3d6EEyrJ4kKBKhZ
-	cWavB8zwedVAwP0nEasGEK12LSzaw5janHt0lJ/fwN+maV1KICUj
-X-Google-Smtp-Source: AGHT+IGqasfCKg6OOKa8oMiTtJmnCRILxbk2Jmphwrshne78caVg4jLmnEKamGYQegS93nsN0LMmVQ==
-X-Received: by 2002:a05:6a20:9195:b0:1af:d16a:baf1 with SMTP id adf61e73a8af0-1b212df0a34mr168503637.47.1716486754677;
-        Thu, 23 May 2024 10:52:34 -0700 (PDT)
-Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f5028d7738sm18830833b3a.71.2024.05.23.10.52.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 10:52:34 -0700 (PDT)
-From: Rob Clark <robdclark@gmail.com>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Will Deacon <will@kernel.org>,
-	Rob Clark <robdclark@chromium.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 2/2] drm/msm: Extend gpu devcore dumps with pgtbl info
-Date: Thu, 23 May 2024 10:52:22 -0700
-Message-ID: <20240523175227.117984-3-robdclark@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240523175227.117984-1-robdclark@gmail.com>
-References: <20240523175227.117984-1-robdclark@gmail.com>
+        d=1e100.net; s=20230601; t=1716486819; x=1717091619;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1vlJyEbwuX0ZoN749JOIjA4u6/xlKVfxbDsvgdeX7zI=;
+        b=gNwDMscyUU2xXN2Dai0oes+OPmaSxhPx/+8iuQrqlmqIkNC7MthlvEKTZbafAnuVIs
+         4snrLZAhNXhI9Bs27ZhI8j1mD34K06TJlXOEhK6zPqB4qG9zHUZlSOVoKB6LvOKLEIVu
+         u39JcMH0Uz7wZVNA9VknmT+uv3Qvc6IZHatzQfSL24O19fNZ/4t+/GgGl7+OnOf9tAME
+         AE5poSp9rbS9ejUa7OLrtr2+TbT2ug8sViZFdOrqJksL9fF9BG68bg6Di899jMM0gNmo
+         IvsrWmwG3hUmIpugJn26BfzmJ671WyVAADgiirCRMO9Hoyko2iZpvv+JrdcegSRNQGfJ
+         KpwQ==
+X-Gm-Message-State: AOJu0YxME+dvblEr88B/agReFrTngftpvcA0NJbgJ6Ettyi/i6xSkv27
+	QLJayvKZCVoKrmC2EHE3dX9PsCPfljK0iAOUQ2+STAwgEaBJqVj+Yd2cbvIIQCQ=
+X-Google-Smtp-Source: AGHT+IEyrXjRVTMHXi2p1He6w4MOb64tPMvvceUjvt4BggM/FGRRB/9P/aYFoq9Qo2ZNpSp/rwdk2g==
+X-Received: by 2002:ae9:e009:0:b0:792:bb55:906d with SMTP id af79cd13be357-79499455581mr571133085a.39.1716486818588;
+        Thu, 23 May 2024 10:53:38 -0700 (PDT)
+Received: from [10.125.231.30] ([217.156.233.157])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2a11e8sm1497940085a.58.2024.05.23.10.53.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 10:53:37 -0700 (PDT)
+Message-ID: <0fcbfcba-9fe2-414c-8424-347364fcbf35@citrix.com>
+Date: Thu, 23 May 2024 18:53:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
+ handler
+To: Alexandre Chartre <alexandre.chartre@oracle.com>,
+ Dave Hansen <dave.hansen@intel.com>, x86@kernel.org, kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
+ pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
+ konrad.wilk@oracle.com, peterz@infradead.org, gregkh@linuxfoundation.org,
+ seanjc@google.com, dave.hansen@linux.intel.com, nik.borisov@suse.com,
+ kpsingh@kernel.org, longman@redhat.com, bp@alien8.de, pbonzini@redhat.com
+References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
+ <a04d82be-a0d6-4e53-b47c-dba8402199e7@intel.com>
+ <1c69f62e-0dee-4caa-9cbe-f43d8efd597b@oracle.com>
+ <93510641-9032-4612-9424-c048145e883e@intel.com>
+ <5ed7d3c8-63c3-48f3-aaeb-a19514f4ef5e@oracle.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <5ed7d3c8-63c3-48f3-aaeb-a19514f4ef5e@oracle.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Rob Clark <robdclark@chromium.org>
+On 23/05/2024 6:03 pm, Alexandre Chartre wrote:
+>
+> On 5/23/24 17:36, Dave Hansen wrote:
+>> On 5/23/24 07:52, Alexandre Chartre wrote:
+>>>> Should we wrap up this gem and put it with the other entry selftests?
+>>>
+>>> It looks like tools/testing/selftests/x86/single_step_syscall.c tests
+>>> sysenter with TF set but it doesn't check if the kernel issues any
+>>> warning.
+>>
+>> Does it actually trip the warning though? I'm a bit surprised that
+>> nobody reported it if so.
+>
+> single_step_syscall does trigger the warning:
+>
+> $ ./single_step_syscall
+> [RUN]    Set TF and check nop
+> [OK]    Survived with TF set and 26 traps
+> [RUN]    Set TF and check syscall-less opportunistic sysret
+> [OK]    Survived with TF set and 30 traps
+> [RUN]    Set TF and check a fast syscall
+> [OK]    Survived with TF set and 40 traps
+> [RUN]    Fast syscall with TF cleared
+> [OK]    Nothing unexpected happened
+> [RUN]    Set TF and check SYSENTER
+>     Got SIGSEGV with RIP=ed7fe579, TF=256
+> [RUN]    Fast syscall with TF cleared
+> [OK]    Nothing unexpected happened
 
-In the case of iova fault triggered devcore dumps, include additional
-debug information based on what we think is the current page tables,
-including the TTBR0 value (which should match what we have in
-adreno_smmu_fault_info unless things have gone horribly wrong), and
-the pagetable entries traversed in the process of resolving the
-faulting iova.
+:-/
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/adreno/adreno_gpu.c | 10 ++++++++++
- drivers/gpu/drm/msm/msm_gpu.c           | 22 ++++++++++++++++++++++
- drivers/gpu/drm/msm/msm_gpu.h           |  8 ++++++++
- drivers/gpu/drm/msm/msm_iommu.c         | 18 ++++++++++++++++++
- drivers/gpu/drm/msm/msm_mmu.h           |  5 ++++-
- 5 files changed, 62 insertions(+), 1 deletion(-)
+What about the exit code?
 
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-index a00241e3373b..3b4c75df0a5f 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-@@ -861,6 +861,16 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 		drm_printf(p, "  - dir=%s\n", info->flags & IOMMU_FAULT_WRITE ? "WRITE" : "READ");
- 		drm_printf(p, "  - type=%s\n", info->type);
- 		drm_printf(p, "  - source=%s\n", info->block);
-+
-+		/* Information extracted from what we think are the current
-+		 * pgtables.  Hopefully the TTBR0 matches what we've extracted
-+		 * from the SMMU registers in smmu_info!
-+		 */
-+		drm_puts(p, "pgtable-fault-info:\n");
-+		drm_printf(p, "  - ttbr0: %.16llx\n", (u64)info->pgtbl_ttbr0);
-+		drm_printf(p, "  - asid: %d\n", info->asid);
-+		drm_printf(p, "  - ptes: %.16llx %.16llx %.16llx %.16llx\n",
-+			   info->ptes[0], info->ptes[1], info->ptes[2], info->ptes[3]);
- 	}
- 
- 	drm_printf(p, "rbbm-status: 0x%08x\n", state->rbbm_status);
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 43cde0590250..647bddc897f2 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -256,6 +256,18 @@ static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
- 	state->nr_bos++;
- }
- 
-+static int pgtable_walk_cb(void *cb_data, void *pte, int level)
-+{
-+	struct msm_gpu_fault_info *info = cb_data;
-+
-+	if (level > ARRAY_SIZE(info->ptes))
-+		return -EINVAL;
-+
-+	info->ptes[level] = *(u64 *)pte;
-+
-+	return 0;
-+}
-+
- static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
- 		struct msm_gem_submit *submit, char *comm, char *cmd)
- {
-@@ -281,6 +293,16 @@ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
- 	if (submit) {
- 		int i;
- 
-+		if (state->fault_info.ttbr0) {
-+			struct msm_gpu_fault_info *info = &state->fault_info;
-+			struct msm_mmu *mmu = submit->aspace->mmu;
-+
-+			msm_iommu_pagetable_params(mmu, &info->pgtbl_ttbr0,
-+						   &info->asid);
-+			msm_iommu_pagetable_walk(mmu, info->iova,
-+						 pgtable_walk_cb, info);
-+		}
-+
- 		state->bos = kcalloc(submit->nr_bos,
- 			sizeof(struct msm_gpu_state_bo), GFP_KERNEL);
- 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-index 04a696ac4626..82fbb626461a 100644
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -101,6 +101,14 @@ struct msm_gpu_fault_info {
- 	int flags;
- 	const char *type;
- 	const char *block;
-+
-+	/* Information about what we think/expect is the current SMMU state,
-+	 * for example expected_ttbr0 should match smmu_info.ttbr0 which
-+	 * was read back from SMMU registers.
-+	 */
-+	phys_addr_t pgtbl_ttbr0;
-+	u64 ptes[4];
-+	int asid;
- };
- 
- /**
-diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
-index d5512037c38b..f46ed4667475 100644
---- a/drivers/gpu/drm/msm/msm_iommu.c
-+++ b/drivers/gpu/drm/msm/msm_iommu.c
-@@ -195,6 +195,24 @@ struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu)
- 	return &iommu->domain->geometry;
- }
- 
-+int msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova,
-+			     int (*cb)(void *cb_data, void *pte, int level),
-+			     void *cb_data)
-+{
-+	struct msm_iommu_pagetable *pagetable;
-+
-+	if (mmu->type != MSM_MMU_IOMMU_PAGETABLE)
-+		return -EINVAL;
-+
-+	pagetable = to_pagetable(mmu);
-+
-+	if (!pagetable->pgtbl_ops->pgtable_walk)
-+		return -EINVAL;
-+
-+	return pagetable->pgtbl_ops->pgtable_walk(pagetable->pgtbl_ops, iova,
-+						  cb, cb_data);
-+}
-+
- static const struct msm_mmu_funcs pagetable_funcs = {
- 		.map = msm_iommu_pagetable_map,
- 		.unmap = msm_iommu_pagetable_unmap,
-diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
-index 88af4f490881..46b2550b9b7a 100644
---- a/drivers/gpu/drm/msm/msm_mmu.h
-+++ b/drivers/gpu/drm/msm/msm_mmu.h
-@@ -53,7 +53,10 @@ static inline void msm_mmu_set_fault_handler(struct msm_mmu *mmu, void *arg,
- struct msm_mmu *msm_iommu_pagetable_create(struct msm_mmu *parent);
- 
- int msm_iommu_pagetable_params(struct msm_mmu *mmu, phys_addr_t *ttbr,
--		int *asid);
-+			       int *asid);
-+int msm_iommu_pagetable_walk(struct msm_mmu *mmu, unsigned long iova,
-+			     int (*cb)(void *cb_data, void *pte, int level),
-+			     void *cb_data);
- struct iommu_domain_geometry *msm_iommu_get_geometry(struct msm_mmu *mmu);
- 
- #endif /* __MSM_MMU_H__ */
--- 
-2.45.1
+I find the absence of a [FAIL] concerning...
 
+~Andrew
 
