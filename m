@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-187553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF3C8CD380
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:15:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF158CD39F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1AF1C2115A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1092FB21714
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B07F14A4DC;
-	Thu, 23 May 2024 13:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBFB14A4F1;
+	Thu, 23 May 2024 13:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K1W4KnvL"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TVsu1lVh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7463B1D555;
-	Thu, 23 May 2024 13:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6563A13A897;
+	Thu, 23 May 2024 13:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470151; cv=none; b=Ey4ZDb4S1vEpLmmaWTXbXXgdPriamnkG6VLoroh3QKNHvx1iEpreR7ztqEYJYXBHd/sR8kDxTZbmlDgwYgrJFb7rO97KeDf2y+DCyWzTy44uAr8iZwvTje9PT6MHfblsIZIP6yf0+kzANZsc4HQvh02oJ6c18iFGPUR8ZQrXKnY=
+	t=1716470211; cv=none; b=cQp0W8z5Vta4fC8Bm+r1whJ7eslZDyqzwaGqfeypoc0ZkxhPvRqnLZE92G6RZdbMYQPMeM8+YxdiiT/+lGHoQdXHbqVJqK2RwOXc3fjjaRssAJw6uECE4uMd0eGWxroWlJ2uYA3TX0K9N0br/PSlAOIyeklQz7v9wTyBWCKQuJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470151; c=relaxed/simple;
-	bh=Mt40WalPBV+6m7xYF/DZKqbqaHNN2wWWKrpvMV5GrIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GX9hxNsoUEncWC1XMCD94hdHoDqJVsmYUu2l3KvYlVz0C5tKI9lQbiB6errJwlP0WLBFo3tSHMT2etHZqd2lTf9xhkQPOB42scjC8fySI2Tss+Nj/7ht1pQwa4mHvQZioZ8fSZ+pzsak7xLZP2z/tDYELKA9QQJlk+BednClhCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K1W4KnvL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C696AC2BD10;
-	Thu, 23 May 2024 13:15:50 +0000 (UTC)
+	s=arc-20240116; t=1716470211; c=relaxed/simple;
+	bh=EvnzBjcmnpVtd570HCf9DX1kYFonpcTI0KodIPfqSrA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RCypsbYCyr7m9AmQFnOQLiqCD3O0nWM6re2An+CVVxt1RzHp0AY9BVnyfDv8ZSiO9k7SuwDal0ropur4eKW3E5dodkXeqA5kRfw/vIfX7YFvzrall3QDST0b6YwCbrhgCJhKsK4fDiBc/lMrkamn1Jdpphv2H+O4JRaNrUPVBFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TVsu1lVh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F80C32781;
+	Thu, 23 May 2024 13:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716470151;
-	bh=Mt40WalPBV+6m7xYF/DZKqbqaHNN2wWWKrpvMV5GrIo=;
+	s=korg; t=1716470211;
+	bh=EvnzBjcmnpVtd570HCf9DX1kYFonpcTI0KodIPfqSrA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=K1W4KnvLB1q5vUNfDnYpvTWbCb+y5ivuSeZNcekXiskPWMaOtBF9BJW7+dVQxxm+G
-	 NbAs49Y+pWBDtymn9t5KR5SIKgC3wcrgdsEiunWRbEWStGn14qgFBeItxVhfcJSzNN
-	 D46RtkeO34QZEfusnRwygI81vzpkEyU44hlGKBk8=
+	b=TVsu1lVh6MqJSZNWRPRg49vKnV6g4DLmbwnQbc7ZWM53119Gaaw5WosC5R9WOt1IT
+	 XTJzkRqvvKvdX6Kz6/5FrQ5cAeh4OywYdPa5LyJWgSZZg+L8m5cvQav1uOrPmdIZpj
+	 LemXiaSuXjrF9dW51Iw7qS+g/1QAfkLR0yyXPajQ=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	conor@kernel.org,
 	allen.lkml@gmail.com,
 	broonie@kernel.org
-Subject: [PATCH 5.4 00/16] 5.4.277-rc1 review
-Date: Thu, 23 May 2024 15:12:33 +0200
-Message-ID: <20240523130325.743454852@linuxfoundation.org>
+Subject: [PATCH 5.10 00/15] 5.10.218-rc1 review
+Date: Thu, 23 May 2024 15:12:42 +0200
+Message-ID: <20240523130326.451548488@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,16 +69,16 @@ MIME-Version: 1.0
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.277-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.218-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.4.y
+X-KernelTest-Branch: linux-5.10.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.4.277-rc1
+X-KernelTest-Version: 5.10.218-rc1
 X-KernelTest-Deadline: 2024-05-25T13:03+00:00
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 5.4.277 release.
-There are 16 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 5.10.218 release.
+There are 15 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -86,9 +86,9 @@ Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.277-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.218-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
 and the diffstat can be found below.
 
 thanks,
@@ -99,7 +99,7 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 5.4.277-rc1
+    Linux 5.10.218-rc1
 
 Akira Yokosawa <akiyks@gmail.com>
     docs: kernel_include.py: Cope with docutils 0.21
@@ -116,35 +116,32 @@ Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
 Dominique Martinet <dominique.martinet@atmark-techno.com>
     btrfs: add missing mutex_unlock in btrfs_relocate_sys_chunks()
 
-Rob Herring <robh@kernel.org>
-    arm64: dts: qcom: Fix 'interrupt-map' parent address cells
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: ensure snd_nxt is properly initialized on connect
 
 Cristian Marussi <cristian.marussi@arm.com>
     firmware: arm_scmi: Harden accesses to the reset domains
 
-Paulo Alcantara <pc@manguebit.com>
-    smb: client: fix potential OOBs in smb2_parse_contexts()
+Sean Christopherson <seanjc@google.com>
+    KVM: x86: Clear "has_error_code", not "error_code", for RM exception injection
+
+Eric Dumazet <edumazet@google.com>
+    netlink: annotate lockless accesses to nlk->max_recvmsg_len
+
+liqiong <liqiong@nfschina.com>
+    ima: fix deadlock when traversing "ima_default_rules".
 
 Doug Berger <opendmb@gmail.com>
     net: bcmgenet: synchronize UMAC_CMD access
 
 Doug Berger <opendmb@gmail.com>
-    net: bcmgenet: synchronize use of bcmgenet_set_rx_mode()
-
-Doug Berger <opendmb@gmail.com>
     net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access
-
-Doug Berger <opendmb@gmail.com>
-    net: bcmgenet: keep MAC in reset until PHY is up
-
-Doug Berger <opendmb@gmail.com>
-    Revert "net: bcmgenet: use RGMII loopback for MAC reset"
 
 Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
     Revert "selftests: mm: fix map_hugetlb failure on 64K page size systems"
 
-Baokun Li <libaokun1@huawei.com>
-    ext4: fix bug_on in __es_tree_search
+Juergen Gross <jgross@suse.com>
+    x86/xen: Drop USERGS_SYSRET64 paravirt call
 
 Sergey Shtylyov <s.shtylyov@omp.ru>
     pinctrl: core: handle radix_tree_insert() errors in pinctrl_register_one_pin()
@@ -155,24 +152,33 @@ Sergey Shtylyov <s.shtylyov@omp.ru>
 Diffstat:
 
  Documentation/sphinx/kernel_include.py             |  1 -
- Makefile                                           |  4 +-
- arch/arm64/boot/dts/qcom/msm8998.dtsi              |  8 +--
- drivers/firmware/arm_scmi/reset.c                  |  6 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c            |  3 +
- drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 22 ++++--
- drivers/net/ethernet/broadcom/genet/bcmgenet.h     |  2 +
- drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c | 12 +++-
- drivers/net/ethernet/broadcom/genet/bcmmii.c       | 43 +++---------
- drivers/pinctrl/core.c                             | 14 +++-
- drivers/tty/serial/kgdboc.c                        | 30 +++++++-
- drivers/usb/typec/ucsi/displayport.c               |  4 --
+ Makefile                                           |  4 +--
+ arch/x86/entry/entry_64.S                          | 17 ++++++------
+ arch/x86/include/asm/irqflags.h                    |  7 -----
+ arch/x86/include/asm/paravirt.h                    |  5 ----
+ arch/x86/include/asm/paravirt_types.h              |  8 ------
+ arch/x86/kernel/asm-offsets_64.c                   |  2 --
+ arch/x86/kernel/paravirt.c                         |  5 +---
+ arch/x86/kernel/paravirt_patch.c                   |  4 ---
+ arch/x86/kvm/x86.c                                 | 11 ++++++--
+ arch/x86/xen/enlighten_pv.c                        |  1 -
+ arch/x86/xen/xen-asm.S                             | 21 ---------------
+ arch/x86/xen/xen-ops.h                             |  2 --
+ drivers/firmware/arm_scmi/reset.c                  |  6 ++++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c            |  3 +++
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 12 ++++++++-
+ drivers/net/ethernet/broadcom/genet/bcmgenet.h     |  2 ++
+ drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |  6 +++++
+ drivers/net/ethernet/broadcom/genet/bcmmii.c       |  4 +++
+ drivers/pinctrl/core.c                             | 14 +++++++---
+ drivers/tty/serial/kgdboc.c                        | 30 +++++++++++++++++++++-
+ drivers/usb/typec/ucsi/displayport.c               |  4 ---
  fs/btrfs/volumes.c                                 |  1 +
- fs/cifs/smb2ops.c                                  |  4 +-
- fs/cifs/smb2pdu.c                                  | 79 ++++++++++++++--------
- fs/cifs/smb2proto.h                                | 10 +--
- fs/ext4/extents.c                                  | 10 +--
- tools/testing/selftests/vm/map_hugetlb.c           |  7 --
- 18 files changed, 161 insertions(+), 99 deletions(-)
+ net/mptcp/protocol.c                               |  2 ++
+ net/netlink/af_netlink.c                           | 15 ++++++-----
+ security/integrity/ima/ima_policy.c                | 29 ++++++++++++++-------
+ tools/testing/selftests/vm/map_hugetlb.c           |  7 -----
+ 27 files changed, 123 insertions(+), 100 deletions(-)
 
 
 
