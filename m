@@ -1,105 +1,113 @@
-Return-Path: <linux-kernel+bounces-187661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54CD8CD60C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:44:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD198CD610
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4047CB21373
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55EC1F2428B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD9F14B966;
-	Thu, 23 May 2024 14:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CE66FB9;
+	Thu, 23 May 2024 14:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sUafcP7X"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NkAsg038"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F99929CEB
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 14:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55533567F;
+	Thu, 23 May 2024 14:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716475461; cv=none; b=MAxDYJM/ruS1xPxU/KDR2EkQh8uT/4naSKgPgz4PgJKtLWr1hocZGOZdgHsZMgiPZiv8KcGFyl/e5k9Q+3pBh1hCTSO9KbYtIwf185AArYm84HEA5zZwcFbwqdjwVNw4ImdEwS7BOi0uGPoMFTQZsf8lpgp26K5oINdaJ6T8xoM=
+	t=1716475578; cv=none; b=FD0izhiXKXrlk8QITIcXw1Uox9zcslZP+UM5fdT9h4HNN9QGGtpPO1Tks9A/pUx9K3YpKj2i/DQ581wXBfiB8gSY0jDCpW5oaJlzhX6O4+dZDesmFlSdvXOjvwoo0xyAoQmwT6b6/Xmp62DElCteSHFbsfMs6OnzBRTa5k6Hw7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716475461; c=relaxed/simple;
-	bh=CTkFcBEe+lA0saa+37DFgtuerxcdKMPPNDW5UJ0eiSs=;
+	s=arc-20240116; t=1716475578; c=relaxed/simple;
+	bh=hF9ljzZP9hwPMBp0SExgTSK/RJHnGtr+KaiJw2malPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+Kt2dW0s1O3Wa3BsKRUVpHGYqhjNhMyeu9PPcY1M7LLGCryd/5dUTq0yyeLsdl7oiJx6TgiAsKmppO7Bz9rL1yl4Tkj7wIAjpDcupV/gsvwlCHkiAnWccwEU3UQctgD5OHQGDIfjmShxPsz54MQi3daXG/97odx2HKfEMmcRNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sUafcP7X; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42101a2ac2cso8494245e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716475458; x=1717080258; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EflueoXTaQwLTE/im9nkFXYa8es8iL3v6VZsuAhHrIY=;
-        b=sUafcP7XDiOnz2QTr2/BmzfkY/+EV4X7AfOG1mwX5U7BPKXqwBquUvlj7gVSFfRMkQ
-         uimj0Hf2Ppqn39ANMnMrMc7BJodw4OOklqU3iUkIokwa8EmS0AotwqXW0FW+2bBfxyE/
-         MWjjC5/nZACWjeYCW0iQyQm57ntLp8qIDRoaof6E+QlMvS+/U0jGeIRV3Uz5MWSPfumQ
-         XYY35zlkM7DcmRmw2h7QqFDFv6BDJwUieQuZfQCp57JoqDt/HD33zVmlYM+oXCfySshe
-         sbc2GahQxeSxFoVZGzc4/uCk5JPOKYV8DDN9tk588zHjbKmionZOvKGIgcJBOjaKLcYB
-         /Rfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716475458; x=1717080258;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EflueoXTaQwLTE/im9nkFXYa8es8iL3v6VZsuAhHrIY=;
-        b=raqSRXTgI/gFPw6RX8Gqt62ktGsBp/oxfrmOyryNBbJCTRd5dKT44DClgL2Bvhdclq
-         TVNvHSa/Guj9p2W4iRUNemFIotYc6sAfL54bZud2onPCiXoknzNGLx2aE4WcRWsVkOB9
-         l6zoFrZwK4ZnFnbybZg25suhGAz0oBwK52+FbiiCm9hZgDwVYV3jKolGH0k2LyzHKDth
-         PZfQs0VUodwVHGFJChvoVTuH+y7e0V2+C4gFAhXluiPE2Opt6sUn5ElJYLn5XLL9gM5B
-         wPJBW8mDgVNcJjgWXWh7KSAiHHfqwHHhBlSCewGTRwLSQ57rbs0fbLBXtnYBzawK+y5F
-         fN5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW+nwhCA63usOPD7uvPZYBdPiyOMoqsRwyTqvAN0cWiof2kVzG7Llf5W04Bcr3mLEm2yz2T6mToDg9oaFACKfvYAeIdCicKkgDWuAeH
-X-Gm-Message-State: AOJu0YyOL2HqhhTFTbYWhDH02G/2/3NwCLbZ/gMgON9ewDsqH0IUuJe8
-	3Rr4x4Wws6PX/X1sZfBfuLcbG8NJzK+kZOQCPe06rnnfHZivoHtf4khXByZGCFM=
-X-Google-Smtp-Source: AGHT+IGKkx7VMsskD3yuGoLQql+31EQW+bCMcF0GvqSoicuAhJyouji9srJuUdiIZnIAxGjg2uDLaA==
-X-Received: by 2002:a05:600c:6a05:b0:41f:ed4c:b8b6 with SMTP id 5b1f17b1804b1-420fd3494f0mr40729205e9.38.1716475457414;
-        Thu, 23 May 2024 07:44:17 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100ee7f1dsm27249335e9.7.2024.05.23.07.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 07:44:16 -0700 (PDT)
-Date: Thu, 23 May 2024 17:44:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tree Davies <tdavies@darkphysics.net>
-Cc: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/31] Staging: rtl8192e: rtllib_rx.c Rename camelcase
- variables
-Message-ID: <75949442-193f-4db6-826c-6f23250c11b5@moroto.mountain>
-References: <20240521031718.17852-1-tdavies@darkphysics.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFTxSXvQH5kjdghgFeeaQzYvbT95jLnk1m7B8KvbG7KPXQLoJjtYWxmZSFQ5/9KFh0FAvgDAIcYIa12x5846vI6Vm5eMtD2fVk7KzJteAcsILeegs6pJBXsYOvCsrVsSbK50w25fqBhoULKrAxP3xUIPSmmxpWMrBXXLnVRzBs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NkAsg038; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A6C0B40E02A6;
+	Thu, 23 May 2024 14:46:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id l2nRQhdxUtB6; Thu, 23 May 2024 14:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1716475569; bh=lMSeCakuwLRl6qGLg3e16nybVlse1JsLGi9aJxe5ftU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NkAsg038Z89PME2UN43DYilqftlUXNoYQ0I2xyQ+Dd87EiGQjCd2nHlYvBfwh+hwX
+	 GQqXnErGMdybQAuqCqJMt1qbQ5oNP8WRw45nq1DUGAAJGH0tRQWRpVlSeRyp24f2Qr
+	 UsoGBxlgCF83MDFxnI3qDTIlHZtAj+XQeCACCTVVkO4GR0V1cgoASkFFeuTyl+4P4O
+	 EFaMZ7aOXrgmyqguiWfbw4vsFn5OnQO5Hfljlxn53B4AmauZf/QL4y8IV66VZE1qO1
+	 y2Nms1+rheRklnlsw6m+9XtdgeY5WG3O16CucUtSn8S0qF/KMloZkrbw8L6r0vzeai
+	 gRjh5MGKTOpMlw86P805CQmNb1QnHi/uXa5insULj9NwWUayOZCAyxm8G64CSZRjjZ
+	 xnDcKc8GzOEJi9MLB8QwO3Bc/Hhb3zs1bMFAv/ohVFarLlV5FodOiEAHW0CBTbAKhk
+	 KcpxoimWRptFK1V9CPXJ6IavRh5th2QUaNHd5zOWFQwtjQir1HqLiADLfuGGiV1klE
+	 viyd4zCpOG5RVEZNgKPKv6VX5uo0GUD+aJT8NJj0O5q56KjltkI5HHxX1btqaGuxwm
+	 V98KtpFeJ1V6e6l9xn2DQhfe6p9+yTTVqLuYD/zbX/dizkoOKWmbk3/G6oo3BQHnDG
+	 ob4/bbWz/FqktDEHgWCsy1Ic=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CAE0740E016A;
+	Thu, 23 May 2024 14:45:48 +0000 (UTC)
+Date: Thu, 23 May 2024 16:45:43 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Balasubrmanian, Vignesh" <vigbalas@amd.com>
+Cc: "Balasubrmanian, Vignesh" <Vignesh.Balasubrmanian@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-toolchains@vger.kernel.org" <linux-toolchains@vger.kernel.org>,
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+	"npiggin@gmail.com" <npiggin@gmail.com>,
+	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
+	"naveen.n.rao@linux.ibm.com" <naveen.n.rao@linux.ibm.com>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"keescook@chromium.org" <keescook@chromium.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"George, Jini Susan" <JiniSusan.George@amd.com>,
+	"matz@suse.de" <matz@suse.de>,
+	"binutils@sourceware.org" <binutils@sourceware.org>,
+	"jhb@FreeBSD.org" <jhb@freebsd.org>,
+	"felix.willgerodt@intel.com" <felix.willgerodt@intel.com>
+Subject: Re: [PATCH v2 1/1] x86/elf: Add a new .note section containing
+ Xfeatures information to x86 core files
+Message-ID: <20240523144543.GDZk9WlwKpCKx8I3RE@fat_crate.local>
+References: <87wmo4o3r4.ffs@tglx>
+ <4a090901-9705-40aa-ac3d-d67c52660f22@amd.com>
+ <20240522153433.GCZk4QiX4Hf0OuI48E@fat_crate.local>
+ <902b1bf0-15e6-42df-8f86-21387deef437@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240521031718.17852-1-tdavies@darkphysics.net>
+In-Reply-To: <902b1bf0-15e6-42df-8f86-21387deef437@amd.com>
 
-On Mon, May 20, 2024 at 08:16:47PM -0700, Tree Davies wrote:
-> This is v2 of series renaming camelcase variables to meet style
-> guide requirements. Thank you in advance to reviewers.
-> ~ Tree
-> 
-> Changes:
-> #16 Renamed plist to list
-> #17 Renamed npadding_length to pad_len
-> #19 Deleted ChkLength variable
-> 
+On Thu, May 23, 2024 at 11:57:00AM +0530, Balasubrmanian, Vignesh wrote:
+> Currently, this enum is the same as XSAVE, but when we add other features, this
+> enum might have a different value of the XSAVE features and can be modified
+> without disturbing the existing kernel code.
 
-Thanks!
+We will do that when we cross that bridge, right?
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+-- 
+Regards/Gruss,
+    Boris.
 
-regards,
-dan carpenter
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
