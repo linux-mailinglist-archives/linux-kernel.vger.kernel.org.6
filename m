@@ -1,203 +1,109 @@
-Return-Path: <linux-kernel+bounces-187944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE7A8CDB1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:48:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892E88CDB1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24099B23BC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 194E51F22FC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C0C84D03;
-	Thu, 23 May 2024 19:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C21684A54;
+	Thu, 23 May 2024 19:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WTIc1S3M"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xPNI7lGK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XyoNc7Sq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCAD83CBE;
-	Thu, 23 May 2024 19:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B262AD00
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716493668; cv=none; b=cAxlQOAwuGZVDVc/GI3DBgtPIledFPLIN6/2X+S74NlDrhKasd6fjvaWHlVyR1pzNqLp+6bGzCVEWJYXfbX5Ltjeu2SAiHQMRELrVlxO+Pfeo0AJaBEjCaqEExng1PDvs5wxaCxESJrwAfc8l0sqEFVTDG9wNRNChWwORNCZElM=
+	t=1716493969; cv=none; b=XCbUsARW13l97bWFtBdThS/h2AhE4XxxqrZRYK2uaR7EfGUzMPqzg2hQ+IO2pGC2S7eyKAb0SJZvq98H3cT0e1s71L7lPChsNpesBTQT82Sg63ThHI89LHsysKFkCcJ9UzESWxallLu/7SsTYVR3TLt+wf1zMKpVZJIv9mEEF3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716493668; c=relaxed/simple;
-	bh=GA52NJWp+1h8u4tby4+gGoB82JoXzqIxQTsoH7PKXfA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=E3TE0U8sxFr0/2cud+0mRExzqEaJp9hJG3YS/Hz5Bn+e6bCGa6MHNYWbTYNgYT9zlzun9I00FDE2t4886/lSB5BRBaFqd7J7YsiH7tnub3w8lTezjFlr1AZxZ6MKCMYBLL8VMrk0E3x4CRn6mZyDs4pAlLjFIVfGryXTixTTk/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WTIc1S3M; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NHTpDn020409;
-	Thu, 23 May 2024 19:47:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ol9wNVVAuaiGKkQ9S3XpDe
-	s5jFnSQ+wjUvQI60yY5m4=; b=WTIc1S3M4PvjohxCi2lIePT+XntJi9PJtuTw1f
-	b9vZgzDd1igQ6wg8qYcKzGAU5y4gnjPDoTkr2BO7UE7Ctd9vGwxs11fxzt16RW9t
-	uFfSAW1OZzFUswGyQDGlqZqQl217guEIbg35YNyWj6uM7eTirVrNFhonznMyQFEX
-	rntCyglP61DV4BRmWYr4zMPhAKwvox9EC/xEe6Rzc9yIdurzAp6bp1DUNRboLPLI
-	n5I4g3H7Kmv46ClxIgHb24mJRrSeL4GCue57Wl76yPkBy+0WhDj5HYr8dGONtXwJ
-	z01DWe/Dd4NoTJ9SjA5YzwOep6EXuRzs9TsXMdLNVzP/8sIQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8kg973-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 19:47:41 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44NJleLi013435
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 19:47:40 GMT
-Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 23 May
- 2024 12:47:40 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 23 May 2024 12:47:39 -0700
-Subject: [PATCH] crypto: Add missing MODULE_DESCRIPTION() macros
+	s=arc-20240116; t=1716493969; c=relaxed/simple;
+	bh=lnqVjgkvWi+fXg+ZEjXR4tnRofPmiBZHcMWL3I+8MDw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h+EFyr0k5ePXOhk/TaBAbfJKri8Nv0ry1EfsHazSbeTOs/hn+EAtJtTK6R6LS0jCbeAs6DDewOhLNNrD55DE72ADJYhLIlF2+uXSuQjgXZ5cvXB7EL3zlgpkcVGTVqwjRAC35T6RNH5p712b04RM0V3tapXE1wRjBi96KT2/+80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xPNI7lGK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XyoNc7Sq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716493966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lnqVjgkvWi+fXg+ZEjXR4tnRofPmiBZHcMWL3I+8MDw=;
+	b=xPNI7lGKGva/APgAT7OzBOwQl0E/5c54B7HhDK5Phb1iKN4ahV3bEA3UYuY2dgt23o4aL/
+	zrJH32EYXAH3g3a95KY8llv/YVQYNV6a9rlHrGMsdRm20IGUZwdLlM5g6EeLCOBtXIM3hw
+	G3/z2s00T0J5qAe4+bcEQR/XZrvQhz0+znFmHQxX4y/T+GCPwc8e5Fkdhe1aZJYfA+YfLL
+	XojEfru58leoF1h7RUOYBuDuQK3ylam76TMP4TMlsno1AJxoanRPXed6E34ThJQEVbAsTI
+	H8xvTJIhVe/1xcyagrYMuSdK+k7jzB94Vlxsvm7pa920fc3xHyeKOCQXYOAuHg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716493966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lnqVjgkvWi+fXg+ZEjXR4tnRofPmiBZHcMWL3I+8MDw=;
+	b=XyoNc7Sqyr7swkex7HE2TEIQjbODm3OkyVUDf2n/A6xuYrKYWTf0K/c+g5RINgK7oREaoe
+	wOXHNQ0Nfr1iJjCw==
+To: Dongli Zhang <dongli.zhang@oracle.com>, x86@kernel.org
+Cc: mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, joe.jin@oracle.com, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] x86/vector: Fix vector leak during CPU offline
+In-Reply-To: <20240522220218.162423-1-dongli.zhang@oracle.com>
+References: <20240522220218.162423-1-dongli.zhang@oracle.com>
+Date: Thu, 23 May 2024 21:52:46 +0200
+Message-ID: <87a5kgfgq9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240523-md-crypto-v1-1-eb68e4aa5592@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAFqdT2YC/x3MQQrCQAxA0auUrA2MY0XwKuIik6Y2YKdD0kpL6
- d0dXT74/B1cTMXh3uxg8lHXKVecTw3wQPklqF01xBDbcI0XHDtk28o8IdEtSUsxcM9Q+2LS6/p
- /PZ7ViVwwGWUefoe35mXFkXwWw7LVFI7jCy8u8laAAAAA
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>
-CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GOnCjqdKltJlcKC13t2aAjMTqsYyPci-
-X-Proofpoint-GUID: GOnCjqdKltJlcKC13t2aAjMTqsYyPci-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_11,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405230136
+Content-Type: text/plain
 
-Fix the 'make W=1' warnings:
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/cast_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/af_alg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_hash.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_skcipher.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/ecc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/curve25519-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/xor.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/crypto_simd.o
+On Wed, May 22 2024 at 15:02, Dongli Zhang wrote:
+> The absence of IRQD_MOVE_PCNTXT prevents immediate effectiveness of
+> interrupt affinity reconfiguration via procfs. Instead, the change is
+> deferred until the next instance of the interrupt being triggered on the
+> original CPU.
+>
+> When the interrupt next triggers on the original CPU, the new affinity is
+> enforced within __irq_move_irq(). A vector is allocated from the new CPU,
+> but if the old vector on the original CPU remains online, it is not
+> immediately reclaimed. Instead, apicd->move_in_progress is flagged, and the
+> reclaiming process is delayed until the next trigger of the interrupt on
+> the new CPU.
+>
+> Upon the subsequent triggering of the interrupt on the new CPU,
+> irq_complete_move() adds a task to the old CPU's vector_cleanup list if it
+> remains online. Subsequently, the timer on the old CPU iterates over its
+> vector_cleanup list, reclaiming old vectors.
+>
+> However, a rare scenario arises if the old CPU is outgoing before the
+> interrupt triggers again on the new CPU. The irq_force_complete_move() may
+> not have the chance to be invoked on the outgoing CPU to reclaim the old
+> apicd->prev_vector. This is because the interrupt isn't currently affine to
+> the outgoing CPU, and irq_needs_fixup() returns false. Even though
+> __vector_schedule_cleanup() is later called on the new CPU, it doesn't
+> reclaim apicd->prev_vector; instead, it simply resets both
+> apicd->move_in_progress and apicd->prev_vector to 0.
+>
+> As a result, the vector remains unreclaimed in vector_matrix, leading to a
+> CPU vector leak.
+>
+> To address this issue, move the invocation of irq_force_complete_move()
+> before the irq_needs_fixup() call to reclaim apicd->prev_vector, if the
+> interrupt is currently or used to affine to the outgoing CPU. Additionally,
+> reclaim the vector in __vector_schedule_cleanup() as well, following a
+> warning message, although theoretically it should never see
+> apicd->move_in_progress with apicd->prev_cpu pointing to an offline CPU.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- crypto/af_alg.c             | 1 +
- crypto/algif_hash.c         | 1 +
- crypto/algif_skcipher.c     | 1 +
- crypto/cast_common.c        | 1 +
- crypto/curve25519-generic.c | 1 +
- crypto/ecc.c                | 1 +
- crypto/simd.c               | 1 +
- crypto/xor.c                | 1 +
- 8 files changed, 8 insertions(+)
-
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 18cfead0081d..0da7c1ac778a 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -1317,5 +1317,6 @@ static void __exit af_alg_exit(void)
- 
- module_init(af_alg_init);
- module_exit(af_alg_exit);
-+MODULE_DESCRIPTION("Crypto userspace interface");
- MODULE_LICENSE("GPL");
- MODULE_ALIAS_NETPROTO(AF_ALG);
-diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
-index 7c7394d46a23..5498a87249d3 100644
---- a/crypto/algif_hash.c
-+++ b/crypto/algif_hash.c
-@@ -471,4 +471,5 @@ static void __exit algif_hash_exit(void)
- 
- module_init(algif_hash_init);
- module_exit(algif_hash_exit);
-+MODULE_DESCRIPTION("Userspace interface for hash algorithms");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/algif_skcipher.c b/crypto/algif_skcipher.c
-index 02cea2149504..125d395c5e00 100644
---- a/crypto/algif_skcipher.c
-+++ b/crypto/algif_skcipher.c
-@@ -437,4 +437,5 @@ static void __exit algif_skcipher_exit(void)
- 
- module_init(algif_skcipher_init);
- module_exit(algif_skcipher_exit);
-+MODULE_DESCRIPTION("Userspace interface for skcipher algorithms");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/cast_common.c b/crypto/cast_common.c
-index 9b2f60fd4cef..fec1f6609a40 100644
---- a/crypto/cast_common.c
-+++ b/crypto/cast_common.c
-@@ -282,4 +282,5 @@ __visible const u32 cast_s4[256] = {
- };
- EXPORT_SYMBOL_GPL(cast_s4);
- 
-+MODULE_DESCRIPTION("Common lookup tables for CAST-128 (cast5) and CAST-256 (cast6)");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/curve25519-generic.c b/crypto/curve25519-generic.c
-index d055b0784c77..68a673262e04 100644
---- a/crypto/curve25519-generic.c
-+++ b/crypto/curve25519-generic.c
-@@ -87,4 +87,5 @@ module_exit(curve25519_exit);
- 
- MODULE_ALIAS_CRYPTO("curve25519");
- MODULE_ALIAS_CRYPTO("curve25519-generic");
-+MODULE_DESCRIPTION("Curve25519 elliptic curve (RFC7748)");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index fe761256e335..af698f8852fb 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -1715,4 +1715,5 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- }
- EXPORT_SYMBOL(crypto_ecdh_shared_secret);
- 
-+MODULE_DESCRIPTION("core elliptic curve module");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/crypto/simd.c b/crypto/simd.c
-index edaa479a1ec5..2aa4f72e224f 100644
---- a/crypto/simd.c
-+++ b/crypto/simd.c
-@@ -523,4 +523,5 @@ void simd_unregister_aeads(struct aead_alg *algs, int count,
- }
- EXPORT_SYMBOL_GPL(simd_unregister_aeads);
- 
-+MODULE_DESCRIPTION("Shared crypto SIMD helpers");
- MODULE_LICENSE("GPL");
-diff --git a/crypto/xor.c b/crypto/xor.c
-index 8e72e5d5db0d..a1363162978c 100644
---- a/crypto/xor.c
-+++ b/crypto/xor.c
-@@ -165,6 +165,7 @@ calibrate_xor_blocks(void)
- 
- static __exit void xor_exit(void) { }
- 
-+MODULE_DESCRIPTION("RAID-5 checksumming functions");
- MODULE_LICENSE("GPL");
- 
- #ifndef MODULE
-
----
-base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
-change-id: 20240523-md-crypto-aa7be4a20cfc
-
+Nice change log!
 
