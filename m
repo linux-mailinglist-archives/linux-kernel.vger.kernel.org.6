@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-187115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752888CCD62
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:54:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2495E8CCD66
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3CB8B2186C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:54:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E1A1C20918
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5E113D24D;
-	Thu, 23 May 2024 07:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EF313D284;
+	Thu, 23 May 2024 07:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mrZu8ncX"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nfl6VszG"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AF113CA9A
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5C113CF85
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716450868; cv=none; b=GfV1oB9ZW2hk2lh73xVgUstyK0WlKhJStrhEcoTlCGDloU5lgawPUaqI2oQYUJACGVoNnBQI3+KDt1qRKf16p5SAD61q9PoNOiTk+lpMfHIUemh5Be4KYODlJZC4UlTOaQ4rLC8gOVPbprZkkwSQheAJRgWjeZcWyMfdAfy9mqk=
+	t=1716450870; cv=none; b=Qtr/B0nDf20pCjBDN5Gj5NsiZ1hFemT91m4B9xaWYk6REbeqcsLUjuvsbdSeW+si32OCHqYhWna5+RDmmdWTGKg70M8QwV8IBzVqqGdlsIzG5Sr1m2czvsX7VRPp/igvK3hrDIQY6AEXttJXDdUNBZ1OOpT6INYUzBDQf/ywyu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716450868; c=relaxed/simple;
-	bh=kJoDq+1PGhj178GDLSihIlH/mdh71gAOr67LZsxDh7E=;
+	s=arc-20240116; t=1716450870; c=relaxed/simple;
+	bh=IXICyk/2YP4eDexMcGBpEOku8KMw3RDWVpsaEO4xej4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SbgLpr20uMDS9s+LQFeP6XyU50YRfl87z0kBXvmcOx8SoySsH630JhBXjYTIrn2iSr+SS+Ks0YgZc8YCPWV4luML+NxJtQtqZ1lRY094rq/KINjTBy/8ZaT1zqapzl4ngaYUcw6NpU93tfzZJAdCiOx/Vkr1nDH/q582OppYFy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mrZu8ncX; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=salase6/i2D3qQVGJhmsQ8OgIqqAC/ei6QNeFvpXuexGYJrwXUPhlvVo4Lz2vqds+6AeXUlC+WTI1+CYrUwfIqIgY8JW8W+C6cjVr5W8r0v9CSdDP3qzoT5aPeKwU0mW2jRv4s8+yq3w1KzM2hKD7TDP/5bJjHjR9r5Y/cfnS24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nfl6VszG; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-420180b59b7so16306505e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:54:25 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-354cd8da8b9so1791986f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716450864; x=1717055664; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716450865; x=1717055665; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yFKoRI+8ogEC3xai0mED7XOpWxyQTS94NP18L7SjeH4=;
-        b=mrZu8ncXZLIrEKHKsaYPk3Fw7xH9BJGqpvBc36rTv7vy/ZA8iVXSmkNiPLrdQCwDv+
-         kUGVQ4lOj6FUtFEzlDy1jFFtC6Uf+WgZDFXYCvmvksGt6Oxp6Lmsyo/7KqU3KTv8Bp5A
-         +n+62gOS9L/D6F+F+ocGYeEwlCSN0+9v30+jbTJuI38hiSAYtRnBjnchgvA0wbANgq1t
-         4sPltO1VCowNbwJYw/qdyzEsDdZ1ku0JYQCq7clKDtC+tuipJ88KqnMO9/DKGIllHwJC
-         jrGNUeam4hvCIMEriDOsSZUGHfoZ1FlkdS2dxKlcU4GKoEUMLRIT7XBokDDnZ+mEcWI1
-         1GlA==
+        bh=Dfktdx7avVVxO+VgbPGQcts/32B65YHqwd/3ELI4ILs=;
+        b=nfl6VszGSwZVqB6kGkSVxFW4b4wZmTNTR5Phncuf7zqUOkk0rUWADvxYoV/UjnODvj
+         iW7AC7sMt64uIApFG11rLRiY1JLJIksqSxtKSRyhkEJNSW3qm+s7QawoRO9HIdO5kPGi
+         CJ/5/Rct1Lw4XpREAA3nQ8py/CWEP8e+Y0gwiTaMJ33XQpp684eTpU7wFEt4QjUtpgp+
+         Wj/Saabi8dmTd6Y/8e1nVPdJm6+kkkob3FURI5+aGRRmejk0Vef2MC9jbDeViyUKdK1l
+         1b6GENCnfl/FR7Z2Gyb70/Qd3vVAqUmBlsybiS6xTcgsovkUD96987bC/iizE1RLXxUX
+         snIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716450864; x=1717055664;
+        d=1e100.net; s=20230601; t=1716450865; x=1717055665;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yFKoRI+8ogEC3xai0mED7XOpWxyQTS94NP18L7SjeH4=;
-        b=NkZKMrZyxkyKlSN9b902vX9p2yDWcb3rGwNaP9Q5PxmtQS8SnEKqYQwLIv8kChBExn
-         F7w0njZQhKd5J9hAiD7zFHWKfNthNPsA/GfaJKX+qho4bh4wyGE+w+aNQ2ae6YnZPAFS
-         s7FXzK8aX5U1LOt57A+fkgc63Yiz3cmeudjGyzRBX9ioh0IAScGTr3bcbGOnhZULky8c
-         gyw+sNC4OmQwSVtrh6O32smrHHNLDQ/fYnArjpw2gW+CTnulTiojnDXMPMLIF+V0XU9A
-         3XnIB7x+tplQT1OAtp4BfgrPZbOkSOsMIES6/UQT3kFlkSZWD4EijRON9BPqMEUQpckK
-         HAGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+uGstvkuhbHriIm3VJtGcOCkyNwCqkEO/6U4XCZOeDdzaAI2sa67w6DIdzCO4yMu08ftjN6I+94brZDoA0+5vvvH/KKhoLeRqCbIf
-X-Gm-Message-State: AOJu0YyU6OhVSuGjP+JiiEEOhftuamWRQ0BpKcWVRzDcQXT+mm2deRIR
-	067jyGykfRw4vukImCbAo6osvu1lnDv8ftyod9FMEip015X1KjY3NtbNsG2gxvfMY3b07J8JPLk
-	t
-X-Google-Smtp-Source: AGHT+IGDzErplwCICU1ko5jWwuhNNvWBqpXdU1AVQfAdkYAqsILeEMKquVqY/w/WRkxQ5BGXYhUTkQ==
-X-Received: by 2002:a05:6000:795:b0:354:db63:9de5 with SMTP id ffacd0b85a97d-354db639e56mr4759952f8f.39.1716450864009;
-        Thu, 23 May 2024 00:54:24 -0700 (PDT)
+        bh=Dfktdx7avVVxO+VgbPGQcts/32B65YHqwd/3ELI4ILs=;
+        b=GAUs8E/ZQGt6WPrs2/rQ0TxqurX20yvpadmsIVKOC0QMSnd29osH6Ls/JWkidHAl57
+         gPvirpmorzSe1tWIDAzPIzT7bGCdCZhgtt7n+p329srmKhi4wR2GKvSO4F7/d2hMSjzm
+         P7wFgp75B4Qhqyjj0XgoqjyWsNeegFsB6wkaWX8Otdy1kHKk25wytP83Y43alHc997/w
+         QLhKWaVsHOOIzr7UQUhDEd7u0vnW/BwZy2HymFO7kpvcbb+7F9GNZf1PYbPDyo9I6149
+         sAYpYJj3XkFDtOgNX3g23J9z3NLbiCsZyKvb8P2t4EbASTUY9Z3QITjMPaNinvnG+ExQ
+         xmLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVgepRM5i0OXuDpuX/vVVMUb5mawR8Ks9x8WrnPJN2oEw26t/EdG73dvdLOLehKhXRYYJFZjFSvs5sBque7q8B8nXaV0e/eoIyUEo4
+X-Gm-Message-State: AOJu0Yy65di6cjoFfCs0gw+oYvevsd4GB3yx/bmOm85IKM/T9goKTDpF
+	BOvDEiJVVgkB/BKXv40W/Zro5YdZrUufpJmLZMPHaecKZr64joOlhAIE0+8fNCA=
+X-Google-Smtp-Source: AGHT+IF/pK55XVk6BU5rXK9slQYy/4lO8VwqixmRJMIscsNGljlUqfko0F+oxxn3ecB3ekIdd2xgtA==
+X-Received: by 2002:a5d:564b:0:b0:354:fd72:8791 with SMTP id ffacd0b85a97d-354fd7288b8mr235826f8f.43.1716450865365;
+        Thu, 23 May 2024 00:54:25 -0700 (PDT)
 Received: from blmsp.fritz.box ([2001:4091:a246:821e:6f3b:6b50:4762:8343])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad074sm36501833f8f.70.2024.05.23.00.54.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad074sm36501833f8f.70.2024.05.23.00.54.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 00:54:23 -0700 (PDT)
+        Thu, 23 May 2024 00:54:24 -0700 (PDT)
 From: Markus Schneider-Pargmann <msp@baylibre.com>
 To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
 	Marc Kleine-Budde <mkl@pengutronix.de>,
@@ -92,9 +91,9 @@ Cc: Vibhore Vardhan <vibhore@ti.com>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: [PATCH 1/7] dt-bindings: can: m_can: Add wakeup-source property
-Date: Thu, 23 May 2024 09:53:41 +0200
-Message-ID: <20240523075347.1282395-2-msp@baylibre.com>
+Subject: [PATCH 2/7] dt-bindings: can: m_can: Add wakeup pinctrl state
+Date: Thu, 23 May 2024 09:53:42 +0200
+Message-ID: <20240523075347.1282395-3-msp@baylibre.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240523075347.1282395-1-msp@baylibre.com>
 References: <20240523075347.1282395-1-msp@baylibre.com>
@@ -106,32 +105,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-m_can can be a wakeup source on some devices. Especially on some of the
-am62* SoCs pins, connected to m_can in the mcu, can be used to wakeup
-the SoC.
-
-This property defines on which devices m_can can be used for wakeup.
+Pins associated with m_can can be the source of a wakeup in deep sleep
+states. To be able to wakeup these pins have to be configured in a
+special way. To support this configuration add the default and wakeup
+pinctrl states.
 
 Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 ---
- Documentation/devicetree/bindings/net/can/bosch,m_can.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/net/can/bosch,m_can.yaml | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-index f9ffb963d6b1..33f1688ca208 100644
+index 33f1688ca208..7c6fa7367c37 100644
 --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
 +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-@@ -118,6 +118,10 @@ properties:
-   phys:
-     maxItems: 1
+@@ -106,6 +106,22 @@ properties:
+         maximum: 32
+     minItems: 1
  
-+  wakeup-source:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description: This device is capable to wakeup the SoC.
++  pinctrl-0:
++    description: Default pinctrl state
 +
- required:
-   - compatible
-   - reg
++  pinctrl-1:
++    description: Wakeup pinctrl state
++
++  pinctrl-names:
++    description:
++      When present should contain at least "default" describing the default pin
++      states. The second state called "wakeup" describes the pins in their
++      wakeup configuration required to exit sleep states.
++    minItems: 1
++    items:
++      - const: default
++      - const: wakeup
++
+   power-domains:
+     description:
+       Power domain provider node and an args specifier containing
 -- 
 2.43.0
 
