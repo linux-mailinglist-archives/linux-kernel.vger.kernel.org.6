@@ -1,173 +1,159 @@
-Return-Path: <linux-kernel+bounces-187137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2388CCDA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:02:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E93808CCDAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D594E28305E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:02:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259F71C20B46
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9F213C9D9;
-	Thu, 23 May 2024 08:01:56 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B6313CF92;
+	Thu, 23 May 2024 08:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HEyrLJLZ"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13B23C0B;
-	Thu, 23 May 2024 08:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A007B3C1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716451316; cv=none; b=NNkWrXH2HNRFHHvdZqm04KVQwJfubXUfz14iWzT99Yn6hb7z1o4/zPUzfXbgLUVBqBJrcE5vOUwuIOtDDKLM077ksiJKXHKEzfXPPKFcLv4SR/qegWruyyf/aHpay5MUhLMQI6N69B7Jp4TURbdYA0wB/h2LeUP3+awH3mMWRFI=
+	t=1716451355; cv=none; b=GUJRjgDIugcWyQnUzwLJMbGkwNHHA1/fLoO4VglC6m01o6+LkYJCZDvojRUX8jfBtya47TkwzGw7JI1qCzkBt6o9HbcqiUULFZbBAldF+k6HKdXSSKM0lVN5V1tsSTqkJ+rGFfJm/nDPDkbuc7QGojZZd3oJeoAcPPfF21ZV6O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716451316; c=relaxed/simple;
-	bh=nlnModm/nh8jhdOfTEtIpVQMLUVqOsoGH0zWuZRVCpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TTqfFcM17df3rn+laqiEvcujQXyr1RFc3v4Cgm4Y7VPyZyiSYvI01PddPdhbQAW1y91OlH6AZWDmwW5ss+n9eyYUxEFPHwx8AByA2D1XhlT5UhtO5yEaQgE2YqICh58mw+6hi7Nf3mEet1+a8/zeGjzouMzcha6WGGYKhaGhw70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a5ce2f0deffso719238666b.3;
-        Thu, 23 May 2024 01:01:54 -0700 (PDT)
+	s=arc-20240116; t=1716451355; c=relaxed/simple;
+	bh=klatJAFWHBc0wuOs/nIGWmTjjd1VxcRv1nD6KbggBgE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VjNNlHTdU7mBxmqEA7h6CDXF6x1zWVXzSD/exbVGnWacaxdY4UFIb7bcmMaD1Vbyt3InhCPSa+d2pU/RcmuoQOLdYnwvXE6z9FgmVQf2+eSAvZ68vu3hzbHIUHCbZQkeoaaGyvrAxIv3Y5/TOFl4EwWrJ8xs3KT2oemkXWzq5m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HEyrLJLZ; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-354dfe54738so1202393f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 01:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716451350; x=1717056150; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0J2OeoCqQcca8A4XUgC5bySDFCw48o1TNPYwtFh2a2I=;
+        b=HEyrLJLZjP56NB03ADK3PtQyNT3UX1lXGTttfs2BiEyLx/lkw+wYy2J785iBy4U7AL
+         dr6yWbZ/hG/1xwLD1LnTwjExVHsID4t4nE+4NpJTdyhvi7LygDHfgVh6x9gBABRPjb5p
+         3Dy2AbA/B6cJck0P9Lx5yUWe8PdaUVyNrab5/f2UmrRw+yJ2zyzIiWfp35pYoyReOBvD
+         CVTr1be4aVGLmZ/YXkulZDm33Q5G4+7aR9dFW7GFnStLO9jWkDlRi0brIbnq0bQVxvwH
+         NScQlq3CH4Ep1bJ3KZlQCcqRxUV4mVc6ZRB1IJldYDpeM1lFFmjm87Q8pAfQjm2pxswj
+         fUkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716451313; x=1717056113;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Fnh96bQQ5jVRR33oS2zRYWhPgFRRVaEEjkHx+ZLc80=;
-        b=GgV8ALKVS6NAVR1xPJfkkD5HG/VH/t+wwaI2TXeSvXykQneULOfRuAOm8YloPu3lO4
-         TRuSa3KzdIti+lEU9fcAU/REluj7jhgF+cDDKET51gZo4lhs1+YmWCvt4gB5V1e6v++/
-         vxj286C/N7NOfdJcYS2FOklaUDoE6QrOb4pCyakjsb1PSxX40IIansxOHaEsCa1sWwmV
-         doW9JYjtRlSGlLN4040Lx5OFFce7XAZT+QCvnz8T4JdXZsXk9FDX6BHzMuZNxbyF6OiP
-         Y/1TuUXUG8+eIytFuoDcq3wTUMBAAJxKiIAHAmPxyQxvjub3QgwG7jpeGkQkKgiKGDI7
-         3slg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKqvDednmrVe6aJTjbv1CygjiXwUkyf1GrgVoTmbbOsgeZGyksQzTCzauGrJCp71foWlaFM2CuBpGMcHAI+3WphsBBzvw3vfhaRNUx
-X-Gm-Message-State: AOJu0YwnlmPxLj7u+EDwZuiEKLrun2+Avw1YibQLY4rMZkaRQ87+lsqC
-	t2ZPoMe/ITQXAAA8W6Xf9EfYcSQeMPbLzEnNT5B2hjDD0vQxxX9eWbYK3A==
-X-Google-Smtp-Source: AGHT+IG/YUdugBTFOJUazBlYCJ0eMIctvjpLqXuK8VrHWrQWdx9m1lGfGZpl8Yrl7RF/bCc8L8VgaQ==
-X-Received: by 2002:a17:906:b89a:b0:a5a:8ac4:3c4c with SMTP id a640c23a62f3a-a622818d912mr219122766b.68.1716451312669;
-        Thu, 23 May 2024 01:01:52 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a61b5080f6dsm532969666b.43.2024.05.23.01.01.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 01:01:52 -0700 (PDT)
-Message-ID: <93ace08e-deb3-46e1-b318-18aecc210a85@kernel.org>
-Date: Thu, 23 May 2024 10:01:51 +0200
+        d=1e100.net; s=20230601; t=1716451350; x=1717056150;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0J2OeoCqQcca8A4XUgC5bySDFCw48o1TNPYwtFh2a2I=;
+        b=IDG5H4773+92pu+VdgriilrSb4DEl7M4lR+39bNZSvxuRqy4SImxDpbNIrV5PSjhsZ
+         b3MnoVm+9NNO5pJgpAxS8MPpQXtksrY+wORRLEgRtq5kgRN9Vlg7Z5av8JgRDSaxoOGW
+         qzzfw5hWzmioPkr1ewI911h8FTvWtA3F00bMrN2JH3949+bNNcSzylWA8Lak+ehRxa1Z
+         OGRj2WHEbESf6r1mo0GwacSsplx+XMCbUi9hYxMnk5+4Yivd4aEZQQJ1XgYNEixbb66y
+         1qeNajyeaiTEBUivNVwT9s40z6DCFg0Qw/jX2PfpWGtw0zcl0DRcs+GInNsujMPRZAkW
+         pezA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmqXsuzfE9VWzH3/c9UAA9MH+lkn3UnK/i6nVcHej7ltJLw9VjgmOhv8aAzJjt1yACUEHpcz3ilZRY9lcVbq0KfbpePmXMOPgy/Mzx
+X-Gm-Message-State: AOJu0YyNatOkLfQpD062SaWECquwE121jqh6P+FIOnW8Hc5GowsI3CHM
+	G/C5cskQLBtLRruPSdlvsXRkMog2NaJSgYNF3Yg5cY57WEH1mY0YpdSkhfmwo8E=
+X-Google-Smtp-Source: AGHT+IFs4zKu4mkfSwJ00cEuqunFI4d5En43MpOl7AHLMm7sgx8p/3MO55WY1Bh9L819Lj+C7uR7JQ==
+X-Received: by 2002:adf:cd06:0:b0:354:f2b8:c75e with SMTP id ffacd0b85a97d-354f2b8c8b4mr2348864f8f.33.1716451349471;
+        Thu, 23 May 2024 01:02:29 -0700 (PDT)
+Received: from blmsp.fritz.box ([2001:4091:a246:821e:6f3b:6b50:4762:8343])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35501abfdddsm93637f8f.110.2024.05.23.01.02.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 01:02:28 -0700 (PDT)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Nishanth Menon <nm@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Vibhore Vardhan <vibhore@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Dhruva Gole <d-gole@ti.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH 0/6] firmware: ti_sci: Partial-IO support
+Date: Thu, 23 May 2024 10:02:19 +0200
+Message-ID: <20240523080225.1288617-1-msp@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: N_HDLC line discipline: Race condition
-To: Dianne Skoll <dianne@skoll.ca>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240424173114.035ddd7b@gato.skoll.ca>
- <20240425140127.6504ade1@gato.skoll.ca>
- <63a5a3c5-8362-4b93-a50e-10c9cdcffdd2@kernel.org>
- <20240521101435.0b6b3420@gato.skoll.ca>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240521101435.0b6b3420@gato.skoll.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21. 05. 24, 16:15, Dianne Skoll wrote:
-> On Tue, 21 May 2024 12:47:00 +0200
-> Jiri Slaby <jirislaby@kernel.org> wrote:
-> 
->> I believe it is a correct behavior after all. As you use pty for
->> testing, the "framing" is lost during the pty-to-pty pass on the
->> flush to ldisc path (receive_buf()).
-> 
-> That might be what's happening, but I don't think it matches the documentation
-> in n_hdlc.c.  If you read the comment block near the top of the file,
-> it says this:
-> 
->   * All HDLC data is frame oriented which means:
->   *
->   * 1. tty write calls represent one complete transmit frame of data
->   *    The device driver should accept the complete frame or none of
->   *    the frame (busy) in the write method. Each write call should have
->   *    a byte count in the range of 2-65535 bytes (2 is min HDLC frame
->   *    with 1 addr byte and 1 ctrl byte). The max byte count of 65535
->   *    should include any crc bytes required. For example, when using
->   *    CCITT CRC32, 4 crc bytes are required, so the maximum size frame
->   *    the application may transmit is limited to 65531 bytes. For CCITT
->   *    CRC16, the maximum application frame size would be 65533.
->   *
->   *
->   * 2. receive callbacks from the device driver represents
->   *    one received frame. The device driver should bypass
->   *    the tty flip buffer and call the line discipline receive
->   *    callback directly to avoid fragmenting or concatenating
->   *    multiple frames into a single receive callback.
->   *
->   *    The HDLC line discipline queues the receive frames in separate
->   *    buffers so complete receive frames can be returned by the
->   *    tty read calls.
->   *
->   * 3. tty read calls returns an entire frame of data or nothing.
-> [...] */
-> 
-> Point 2 says that the driver should avoid fragmenting frames, or concatenating
-> frames into a single receive callback.  Doesn't this imply that frame
-> boundaries should be preserved when you read() data, which happens reliably
-> when you add a small delay between write()'s?
+Hi,
 
-The driver definitely behaves as described. If the ldisc is used on a 
-real HW. ptys are a different story -- it's not guaranteed there. Does 
-it make sense to use nhdlc on a pty pair? I believe not.
+Partial-IO is a poweroff SoC state with a few pingroups active for
+wakeup. This state can be entered by sending a TI_SCI PREPARE_SLEEP
+message.
 
-thanks,
+The message is sent on poweroff if one of the potential wakeup sources
+for this power state are wakeup enabled. A list of potential wakeup
+sources for the specific SoC is described in the devicetree. The wakeup
+sources can be individually enabled/disabled by the user in the running
+system.
+
+The series is based on Andrew Davis accepted patches:
+  [PATCH 0/4] Unconditionally register TI-SCI reset handler
+  https://lore.kernel.org/lkml/20240326223730.54639-1-afd@ti.com/
+
+This series is part of a bigger topic to support Partial-IO on am62,
+am62a and am62p. Partial-IO is a poweroff state in which some pins are
+able to wakeup the SoC. In detail MCU m_can and two serial port pins can
+trigger the wakeup.
+
+These two other series are relevant for the support of Partial-IO:
+
+ - serial: 8250: omap: Add am62 wakeup support
+ - can: m_can: Add am62 wakeup support
+
+A test branch is available here that includes all patches required to test
+Partial-IO:
+
+https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62-lp-sk-partialio/v6.9?ref_type=heads
+
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+I tested these patches on am62-lp-sk.
+
+Best,
+Markus
+
+Markus Schneider-Pargmann (5):
+  dt-bindings: ti, sci: Add property for partial-io-wakeup-sources
+  firmware: ti_sci: Partial-IO support
+  arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+  arm64: dts: ti: k3-am62: Add partial-io wakeup sources
+  arm64: dts: ti: k3-am62a: Add partial-io wakeup sources
+
+Vibhore Vardhan (1):
+  arm64: dts: ti: k3-am62p: Add partial-io wakeup sources
+
+ .../bindings/arm/keystone/ti,sci.yaml         |   6 +
+ arch/arm64/boot/dts/ti/k3-am62.dtsi           |   4 +
+ arch/arm64/boot/dts/ti/k3-am62a.dtsi          |   4 +
+ arch/arm64/boot/dts/ti/k3-am62p.dtsi          |   4 +
+ arch/arm64/boot/dts/ti/k3-pinctrl.h           |   3 +
+ drivers/firmware/ti_sci.c                     | 135 +++++++++++++++++-
+ drivers/firmware/ti_sci.h                     |  31 ++++
+ 7 files changed, 186 insertions(+), 1 deletion(-)
+
 -- 
-js
-suse labs
+2.43.0
 
 
