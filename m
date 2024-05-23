@@ -1,52 +1,74 @@
-Return-Path: <linux-kernel+bounces-187273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50938CCF58
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7090B8CCF5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5241F23112
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 134CA1F21907
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A895A13D538;
-	Thu, 23 May 2024 09:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3E113D27A;
+	Thu, 23 May 2024 09:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dxujooKk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fpbygn7/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC7513D28E;
-	Thu, 23 May 2024 09:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4CE17F6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716456745; cv=none; b=QITQyFwwG93x5SJmLRVcmaag836vh20Jgvp0IKeZMEfAkblBl8O74ib3H5yLnjqzRymsIAq73XSiaSBzXAHK3IQ/whPVQKkDz1BqMBgkjzVsJVw3ZnjKpjQPs8m4b31lCmbw26d943fFlMQz1mdibCebRzzTkoskLIXvWnj4y/A=
+	t=1716456911; cv=none; b=tkJnuxPiPM12/9yO/QpaPCP/ENNhCu7LZucdMeAa4GYAvNDS9PLslVsI0/e/eh6oSCKFPsAUgn7hU7aBGo7Dd5b+cgpcPCVWKlcV1yPevTyPKdmzRQvP5gWrbm34eZU3tNTYp5cHuUFIUI+crgq++HzWwQeqGsGhLscospBR/s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716456745; c=relaxed/simple;
-	bh=i/suwIO2X+IkJLPKjmWkqmwdbwnnIhI4At/U51qCpdo=;
+	s=arc-20240116; t=1716456911; c=relaxed/simple;
+	bh=3RdzRMF61KiMbeEgHAOewoeGsgX0t3vtk/NZFBB30OQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=piktVr98Anj6MFtix8sn6TWWgjk0ZnhuQdSnZhNWWOZsN22nQq7Q4YY91Ezkz7QYcq6J8Ex9g/5yE1uxApyJYqM3s9WbJXP14BRCn7xZ9jxalKPGgP0P0yGpkBfuHgZI9NYrBjGFNS5Hg0a9Uz4Hg6y+PiZSgpPddIpGArKrEz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dxujooKk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 061B2C3277B;
-	Thu, 23 May 2024 09:32:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716456743;
-	bh=i/suwIO2X+IkJLPKjmWkqmwdbwnnIhI4At/U51qCpdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dxujooKkOt81xkww9E/rCw7M2kqEcQL/edR+l4TEIrFph3a+zIcB8ZzfXbvkRkOdu
-	 w1UAN/ewE6XhixSlj4Js8iCvNMW1bnfE+hqGFmZtGrgUfb0nt+6uBOmVXvYZrL9z/Y
-	 t7U2rGdrLWOENswfM1n+jz4CXRo6wnGX4x8Sf6Ug=
-Date: Thu, 23 May 2024 11:32:20 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shichao Lai <shichaorai@gmail.com>
-Cc: stern@rowland.harvard.edu, oneukum@suse.com, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-	xingwei lee <xrivendell7@gmail.com>,
-	yue sun <samsun1006219@gmail.com>
-Subject: Re: [PATCHv2] Check whether divisor is non-zero before division
-Message-ID: <2024052359-clothes-plentiful-c320@gregkh>
-References: <20240523092608.874986-1-shichaorai@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIQf/EEl8HSidoyZRvBIvN7LRYjTxkmi/3WAIfN/65SC7C5++9kPIcUpnrfPv0amIP79xmh4S6RA5sTVfwMjpJoi5lmiGkFGTX5b2HyOH3+81cFKHwUhlTFzJZwBsaWPPCVzfQVE+3RnXb0gOK5y9gtdYLVzijmz7f5NGcULjd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fpbygn7/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716456909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lfk0mvv6ZfCRNrrlaQ0pNTuzMUrG6EPTfySp33FAHbY=;
+	b=Fpbygn7/VPkA0d+7PBn6AbIb+uKLhRYizrZxRZfnrkykFSGUgOTGB5enyGKn43n4r1HaIm
+	tUOjU/a1qyOac+dq/F6zdbzQECLDzSr32j9DXSVg8BrimNu57CD9JW38CWYKBBk159PHGu
+	/MmqCLUGLp97rTEXoZlWtJDYa4TpSAs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-135-h6UX6NhuNf2mmpSngUDQ-Q-1; Thu, 23 May 2024 05:35:05 -0400
+X-MC-Unique: h6UX6NhuNf2mmpSngUDQ-Q-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D4304800281;
+	Thu, 23 May 2024 09:35:04 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.7])
+	by smtp.corp.redhat.com (Postfix) with SMTP id E3CDE200A790;
+	Thu, 23 May 2024 09:35:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 23 May 2024 11:33:37 +0200 (CEST)
+Date: Thu, 23 May 2024 11:33:35 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrei Vagin <avagin@google.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Tycho Andersen <tandersen@netflix.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 0/3 v2] seccomp: improve handling of
+ SECCOMP_IOCTL_NOTIF_RECV
+Message-ID: <20240523093334.GD15163@redhat.com>
+References: <20240523014540.372255-1-avagin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,74 +77,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240523092608.874986-1-shichaorai@gmail.com>
+In-Reply-To: <20240523014540.372255-1-avagin@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-On Thu, May 23, 2024 at 05:26:08PM +0800, Shichao Lai wrote:
-> Since uzonesize may be zero, so judgements for non-zero are nessesary in both place.
-> Previous check is moved out of loop, and one more check is added in alauda_write_lba.
-> 
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Reported-by: yue sun <samsun1006219@gmail.com>
-> Signed-off-by: Shichao Lai <shichaorai@gmail.com>
-> ---
->  drivers/usb/storage/alauda.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-> index 115f05a6201a..a6e60ef5cb0d 100644
-> --- a/drivers/usb/storage/alauda.c
-> +++ b/drivers/usb/storage/alauda.c
-> @@ -818,6 +818,8 @@ static int alauda_write_lba(struct us_data *us, u16 lba,
->  	unsigned int blocksize = MEDIA_INFO(us).blocksize;
->  	unsigned int lba_offset = lba % uzonesize;
->  	unsigned int new_pba_offset;
-> +	if (!uzonesize)
-> +		return USB_STOR_TRANSPORT_ERROR;
->  	unsigned int zone = lba / uzonesize;
->  
->  	alauda_ensure_map_for_zone(us, zone);
-> @@ -923,6 +925,8 @@ static int alauda_read_data(struct us_data *us, unsigned long address,
->  	unsigned int uzonesize = MEDIA_INFO(us).uzonesize;
->  	struct scatterlist *sg;
->  	int result;
-> +	if (!uzonesize)
-> +		return USB_STOR_TRANSPORT_ERROR;
->  
->  	/*
->  	 * Since we only read in one block at a time, we have to create
-> -- 
-> 2.34.1
-> 
-> 
+On 05/23, Andrei Vagin wrote:
+>
+> This patch set addresses two problems with the SECCOMP_IOCTL_NOTIF_RECV
+> ioctl:
+> * it doesn't return when the seccomp filter becomes unused (all tasks
+>   have exited).
+> * EPOLLHUP is triggered not when a task exits, but rather when its zombie
+>   is collected.
 
-Hi,
+It seems that 2/3 also fixes another minor problem.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Suppose that a group leader installs the new filter without
+SECCOMP_FILTER_FLAG_TSYNC, exits, and becomes a zombie. It can't be
+released until all its sub-threads exit.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+After that, without 2/3, SECCOMP_FILTER_FLAG_TSYNC from any other thread
+can never succeed, seccomp_can_sync_threads() will check a zombie leader
+and is_ancestor() will fail.
 
-- Your patch contains warnings and/or errors noticed by the
-  scripts/checkpatch.pl tool.
+Right?
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+Oleg.
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
