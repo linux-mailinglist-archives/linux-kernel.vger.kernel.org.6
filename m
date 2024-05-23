@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-187458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D088CD222
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:17:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E0D8CD224
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 234C01C21205
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FAAC282347
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0075913BACC;
-	Thu, 23 May 2024 12:17:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6A213D88A;
+	Thu, 23 May 2024 12:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AgdBCXcD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkB7Q8tk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4223C1E481
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6B91E4B3;
+	Thu, 23 May 2024 12:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716466657; cv=none; b=U8X578eHn7IgVIBlrtRJCM/wWS/pCtAYUuUx0JWucWoQAWCnU0fK1JxV+ddT4NOmiAGo+av+w4C/dQpHbgxa2RAk3oVc2wpGWA+dmoNVeBphJ1Z95yqcojc03YJoerEwrmkqFsjhR/zDkBT4Wjy63hbEvlyhueZKPxlgBYvyIB0=
+	t=1716466680; cv=none; b=g+IxmpA7AFsNBO/u60KUXxSUF8TzM4GQ12qPeZeIiJOgH9oUoev9JwS7HzCn64HbtOnQOMMFSwc3qZEM3HOWbLmxG3NHysATazKZaGvV4Wpr/SiQ+trMJ+/BUDgt9ihWnYzAIlQN+RLNYF5lSPxwrUDtd6r7en6mS+nMXPgA5ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716466657; c=relaxed/simple;
-	bh=kShS9kQyOqyj0DwymZCMdDwTAoPZdXCOAqKVdAJhs7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/FkAfoMet6LhwbTuBnbHLKE29VJmubcF+JhohIB8Xf+HJSvKXzHIYEtUEGSjGzm/d6K4bSCWCUmzezUJJmyNtz9srNkn5oyQFOnjONGYHtvmA5SIBHKTkgKOwY+0dI2/rJyfnvyFUoHhnaBLkVRXH6p3rICDHrjW+zUMJ7HMG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AgdBCXcD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B40C2BD10;
-	Thu, 23 May 2024 12:17:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716466656;
-	bh=kShS9kQyOqyj0DwymZCMdDwTAoPZdXCOAqKVdAJhs7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AgdBCXcD0rL5hM44PRnaWIAKiTB/01ku8nPMGsVjdAf9DooW9QgEREPI0cQzJ9WmF
-	 uR1oFOjJmUbpnPcrgFD0645cjomv+s2w0oHGu2tVk5gv+sJusRv+ZHdVn16ukVpM/T
-	 /3G2F5OhW3QuHJwDQTy5olTQ/kdP4Uw2xxcoFfFM=
-Date: Thu, 23 May 2024 14:17:34 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2024-35802: x86/sev: Fix position dependent variable
- references in startup code
-Message-ID: <2024052310-undermost-cramp-5d81@gregkh>
-References: <2024051738-CVE-2024-35802-959d@gregkh>
- <b3a6ea47-8628-4edc-aee5-e5051955124a@suse.com>
- <2024052334-cable-serotonin-fa2b@gregkh>
- <5ea91ae6-091d-4378-950b-833561eef48c@suse.com>
+	s=arc-20240116; t=1716466680; c=relaxed/simple;
+	bh=7aO37F9CiT6mvhwAwSHzC9znFgm9Bnyz4DIrdvAUdKA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ufIK2pmg52+Uqw7tZPYaQydiHukGiC4MMNJ0q3hXjbHCZwWj37OIjqSwYGJwRLqbgg6/02gYDFjjLR9LHiDTRgndFs77fNgWCp9jSRKejiO0VRzTbD8w2hTDo13E8mzB/SHyghMMpzZNkIJnDfSOHFVD17J2BaLXac9F0sP15hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkB7Q8tk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3285C2BD10;
+	Thu, 23 May 2024 12:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716466679;
+	bh=7aO37F9CiT6mvhwAwSHzC9znFgm9Bnyz4DIrdvAUdKA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=tkB7Q8tk3Lz6sRa7u6f7tGj44Cm9blizkajVawGuvum9IhxNpw51pcIfbAPlwdAIT
+	 AVrXkqJIRVj0/wEwgmo1tnNEu+L3FCyrRVQsiKHHrPP/BLdQP8IjyaXaooGZfDVZsC
+	 7VcL9/DHrO74hCuL2Tvj6abQiRvaiAHpqLCrgMFBAMlGqo0YUql+8G8EqZtz6+G3uG
+	 hpXhvrkOoZVI8v6aKZXKUcJb1ESmFaFuDz52e7M6dAQ7vRAXVnW/wg+PGlGsE6PLit
+	 rvszT5EA+aPFHJoZ7GaI8VuGiXtHGqAHbj+h/Ok+m29oankEy3sbbH5IiwaXaNEQXQ
+	 pcQ2ZAO7L1k5Q==
+Date: Thu, 23 May 2024 14:17:56 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+cc: rrameshbabu@nvidia.com, bentiss@kernel.org, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: nvidia-shield: Add missing check for
+ input_ff_create_memless
+In-Reply-To: <20240515033051.2693390-1-nichen@iscas.ac.cn>
+Message-ID: <nycvar.YFH.7.76.2405231417500.16865@cbobk.fhfr.pm>
+References: <20240515033051.2693390-1-nichen@iscas.ac.cn>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ea91ae6-091d-4378-950b-833561eef48c@suse.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, May 23, 2024 at 03:01:56PM +0300, Nikolay Borisov wrote:
+On Wed, 15 May 2024, Chen Ni wrote:
+
+> Add check for the return value of input_ff_create_memless() and return
+> the error if it fails in order to catch the error.
 > 
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/hid/hid-nvidia-shield.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> On 23.05.24 г. 14:21 ч., Greg Kroah-Hartman wrote:
-> > Isn't crashing SEV guests a problem with "availability"?  That term
-> > comes from the CVE definition of what we need to mark as a CVE, which is
-> > why this one was picked.
-> 
-> But availability has never been one of the tenets of CoCo, in fact in
-> sev-snp/tdx the VMM is explicitly considered outside of the TCB so
-> availability cannot be guaranteed.
+> diff --git a/drivers/hid/hid-nvidia-shield.c b/drivers/hid/hid-nvidia-shield.c
+> index 58b15750dbb0..ff9078ad1961 100644
+> --- a/drivers/hid/hid-nvidia-shield.c
+> +++ b/drivers/hid/hid-nvidia-shield.c
+> @@ -283,7 +283,9 @@ static struct input_dev *shield_haptics_create(
+>  		return haptics;
+>  
+>  	input_set_capability(haptics, EV_FF, FF_RUMBLE);
+> -	input_ff_create_memless(haptics, NULL, play_effect);
+> +	ret = input_ff_create_memless(haptics, NULL, play_effect);
+> +	if (ret)
+> +		goto err;
+>  
 
-This has nothing to do with CoCo (but really, ability of the host to
-crash the guest seems like it should be as I would assume that CoCo
-guests would want to be able to be run...)
+Applied, thanks.
 
-Official CVE definition of vulnerability from cve.org:
-	An instance of one or more weaknesses in a Product that can be
-	exploited, causing a negative impact to confidentiality, integrity, or
-	availability; a set of conditions or behaviors that allows the
-	violation of an explicit or implicit security policy.
+-- 
+Jiri Kosina
+SUSE Labs
 
-I think "able to crash SEV guests" is a direct weakness that has to do
-with availability here which is why I marked it as such (as did other
-reviewers.)  Now if CoCo wants to claim it as part of their security
-implicit or explicit security policy, all the better :)
-
-thanks,
-
-greg k-h
 
