@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-187295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0BB8CCFBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:57:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F5038CCFC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBEE1C2234A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E20C01F23880
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4F013DDB8;
-	Thu, 23 May 2024 09:57:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795C013D521;
-	Thu, 23 May 2024 09:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4748713DDCB;
+	Thu, 23 May 2024 09:59:08 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2249F13D521;
+	Thu, 23 May 2024 09:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716458265; cv=none; b=d5/RhHGwJXZxl9396qqnNQDwtyY0Aj1xqmMOzNtoj5OhaIgHCu6A9GNiIlg6Kb6FLZTXChmCwir+Nb2dDULzNJDdd/gu8MmGpIlLVQ8D3AJkH8RF3KeA949f8D4Nklw/8cweFLftRZLNt3MAVoLBI7nwW9s+IFjBg+xjmibmdqQ=
+	t=1716458347; cv=none; b=BKA/MHNuGDeRfpfO6n1wzfM8qF9bU/wvuW3jtR9ILZ5h20GiUqzTP0ewABHLuxTyWPliJ0Ia108Qt178+YtNWez5klZdahfr/GSn60Qyb8IHumeUFfd+Is2J/kzgYvjb9ccgps8PE+M6ZdS2khEByvuvrPhYi+/48SMd6BBNiAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716458265; c=relaxed/simple;
-	bh=pJ+B3e29HJAbTyYyZa4HUjzMSv5Rh0HroDPaliFp3ZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oKupF983S0+z5AWBCG6IDUtsR13Xt5XPGov8KcscIEA3AfkXqi7D1Nym12QNnUaFCf6UtJTMveLbarBX+DTusJ4edChX65UL1zI/PR2XHFs9QN8JZKZjV2atyc4XE0L6uyZliznM8FLFvmKNH3yzMTz5KgUpCOBJc2L9wxS5h6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A3C82F4;
-	Thu, 23 May 2024 02:58:06 -0700 (PDT)
-Received: from [10.1.30.34] (e122027.cambridge.arm.com [10.1.30.34])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF8003F766;
-	Thu, 23 May 2024 02:57:39 -0700 (PDT)
-Message-ID: <c329ae18-2b61-4851-8d6a-9e691a2007c8@arm.com>
-Date: Thu, 23 May 2024 10:57:37 +0100
+	s=arc-20240116; t=1716458347; c=relaxed/simple;
+	bh=U2XlzDGvqBl/xtnZsazcyCvUucQHVzfGF3tyCr5r4RA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kegloX2caYnKl4XIWoKJmIaJpMRsFVZh0+xg5tfwOyRQVu3UqYopTakSC/uuHjBLaspsCI5Km5sVMW+DSowSmUDMoco7EsDGK585ndBmU9GMVN5fAqRZKxgwLuR0cCr9K8qdXqCRUVcLtgQx8qhfynliUa7xKIC4nxt/X4eDg3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sA5Dq-001Lgc-0d;
+	Thu, 23 May 2024 17:58:55 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 23 May 2024 17:58:55 +0800
+Date: Thu, 23 May 2024 17:58:55 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	regressions@lists.linux.dev, kernel@collabora.com,
+	Tejun Heo <tj@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Kees Cook <keescook@chromium.org>, Torsten Duwe <duwe@lst.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [v3 PATCH] hwrng: core - Remove add_early_randomness
+Message-ID: <Zk8TXz1hfA8_Uu9R@gondor.apana.org.au>
+References: <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org>
+ <20240518043115.GA53815@sol.localdomain>
+ <ZkhS1zrobNwAuANI@gondor.apana.org.au>
+ <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano>
+ <ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
+ <07512097-8198-4a84-b166-ef9809c2913b@notapiano>
+ <Zk2Eso--FVsZ5AF3@gondor.apana.org.au>
+ <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com>
+ <Zk7K7hw-XIHmPs26@gondor.apana.org.au>
+ <D1GXKODMD4S8.1J12D4GOEQWPL@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/14] arm64: realm: Support nonsecure ITS emulation
- shared
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Marc Zyngier
- <maz@kernel.org>, Will Deacon <will@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-13-steven.price@arm.com> <ZkSV7Z8QFQYLETzD@arm.com>
- <74011ac1-34e0-4ee3-a00d-f78ad334fce2@arm.com> <Zk4l2xFBDW_3ImFD@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <Zk4l2xFBDW_3ImFD@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D1GXKODMD4S8.1J12D4GOEQWPL@kernel.org>
 
-On 22/05/2024 18:05, Catalin Marinas wrote:
-> On Wed, May 22, 2024 at 04:52:45PM +0100, Steven Price wrote:
->> On 15/05/2024 12:01, Catalin Marinas wrote:
->>> On Fri, Apr 12, 2024 at 09:42:11AM +0100, Steven Price wrote:
->>>> @@ -3432,7 +3468,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->>>>  	nr_ites = max(2, nvecs);
->>>>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
->>>>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
->>>> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
->>>> +	itt_order = get_order(sz);
->>>> +	page = its_alloc_shared_pages_node(its->numa_node,
->>>> +					   GFP_KERNEL | __GFP_ZERO,
->>>> +					   itt_order);
->>>
->>> How much do we waste by going for a full page always if this is going to
->>> be used on the host?
->>
->> sz is a minimum of ITS_ITT_ALIGN*2-1 - which is 511 bytes. So
->> potentially PAGE_SIZE-512 bytes could be wasted here (minus kmalloc
->> overhead).
+On Thu, May 23, 2024 at 12:53:04PM +0300, Jarkko Sakkinen wrote:
+>
+> Just throwing something because came to mind, not a serious suggestion.
 > 
-> That I figured out as well but how many times is this path called with a
-> size smaller than a page?
+> In crypto_larval_lookup I see statements like this:
 > 
+> 	request_module("crypto-%s", name);
+> 
+> You could potentially bake up a section/table to vmlinux which would
+> have entries like:
+> 
+> 	"module name", 1/0
+> 
+> '1' would mean built-in. Then for early randomness use only stuff
+> that is built-in.
 
-That presumably depends on the number of devices in the guest. For my
-test guest setup (using kvmtool) this is called 3 times each with sz=511.
+This early random stuff is obsolete not just because we have a
+kernel thread doing the same thing, but moreover random.c itself
+has been modified so that it is no longer starved of entropy on
+startup.  There is no reason to feed any early randomness.
 
-Steve
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
