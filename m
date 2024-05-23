@@ -1,147 +1,155 @@
-Return-Path: <linux-kernel+bounces-186866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94178CCA2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:50:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA568CCA2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186051F223AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:50:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0942CB21CDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 00:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229F71C3E;
-	Thu, 23 May 2024 00:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3684D1C36;
+	Thu, 23 May 2024 00:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HjX8ixgg"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="V9y08BT7"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDCA17EF
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999C2A29
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716425431; cv=none; b=JyYhBSVUaLAGE6sGRtwV5y/jCk/K9HerzfZg2A9CV1zhxR87bxXaUbSiMbwmQsOTh42kwGRRXtjoyU5WA4vo5eEB9rEEWX6MlCkWFBlPLmf4h4A4nL34E8MFgEJ1TBdEFor2/B+OxlvYwNvIm/UZTSHcHbYM9VNMYoc7WRdK0H8=
+	t=1716425480; cv=none; b=FcT4Hlidlu9VFpNKfKBzT5HFgNG6wViET4XWNEnc9LA7aTFcXeM8hgsEeeg66UA1uHbrXRm7AbWcB/ftvAy4goPfH1WgMyMw2fOhFwlAa3f2Srjb2+fTQYK8YZ7vQ0q8iUL7z09GqMTvArWQdMCIS7QwMbqtddQ6HeLqqW1/neM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716425431; c=relaxed/simple;
-	bh=UbwQHGJBE6SZy3dTvzmiW3Y7u7jPztiPZ4sdWKIuK9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rKbSi8bOm0uuXAVPfb2qjZUYclmL+JyeFTbwuKHCBIrz+TKsb0fMPcNfINnEglS9pOnM+wGRIVzxAEBjlu62GNktTsSDJ5yRGc+aJC01OademSEhy6u5HDLH4vQOWLOrIi9/o4ap5Xf5fXiKdiIb230GxPBQ3KpFAVmwcO+8J8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HjX8ixgg; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1716425480; c=relaxed/simple;
+	bh=yxU1QwZ7uz0FY2t5VpTQaVDl0Pyu6rzKYoJLrD6zb4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TYkpNlEwq8Hc+pk6qWafUzBydHcZl/+wbI0EP5ELVKAtQsJpAT6LMPnI7pLEjBWwmUWcQ42b2oGUu/Sjq7QBbhktMBUKeyRRI2wkAdzJaFuHAkCZzVVZxK/EQAw16hDoZI9XferBgszH9+r0iqWw+SaC/Kgnoc/4gPxlOWBrDUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=V9y08BT7; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1edfc57ac0cso15088745ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:50:29 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-56e1baf0380so11149674a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:51:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716425429; x=1717030229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/bNuy6SM/kLB6qLCSNaw2T+XxnPO+OsFpO7610Vx//k=;
-        b=HjX8ixggKAjeqRU17T6IPgVoQlI7BnR5bE5FnPdqVNcq5gS3kLGTMayAu52XGMxIGs
-         IhYPuW7x4Wp8aEId7JTpOckT314Evr4uVSl3mvXqKyQ+dYTq7MUKYATR5gQh48M13iPJ
-         gvQpwKYtRKLJP9/S5C41Aa05UOaPnWH3lnjBM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716425429; x=1717030229;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1716425476; x=1717030276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/bNuy6SM/kLB6qLCSNaw2T+XxnPO+OsFpO7610Vx//k=;
-        b=m2gdD23e0LhKz1gEPNr++UklR30u9Zi+lby0YDguoduLhmT0n47IZfrBi9iyHt1a7J
-         7bcUZoxMMiZANDkEMxt8gyLEdVJqMa28k4g9ykCP6Ur19hwLkArAVmBJfHm/jYEtW+8J
-         2odym+HpLC+oeWHWYN2dhggtE2PmXTBrODvdYqGgsNDtdsi1troKjmOLZ2qJmsqVAn0V
-         gEv8p3fer/7cDBVyk+L5rPANP+vrmvYkm97nB3foBTVjskpO0z59G/4c5UZhr6mECaHj
-         086s+h+ghv1FEQF6yas76Zfa+IXD52PDbMzqZ5+E96WYm7nXeBtId8Cnzb7w4xbC40nV
-         b+Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9QHuXc1W4khR8ziQgDZy29wNszboYKBvlr8/T+E1c4d2bhxn2aLCMoN4XvO6Fi1ii89Eee2Tx47rrf6qEVpJ55KgLijupTIvD3Czb
-X-Gm-Message-State: AOJu0YzLFSG0p7wwlAMK2UEfQSciqfArSBxSJrUPC5nV3kJeIO9i5Dax
-	swP0TJTezmdw8y5V49ruE8XfYk1uKrW03SNoeF+qMCi2CagxL9vPPgVqkU/yweKguj+QQRl5jWw
+        bh=6eNvVxmV8P5acguEgjlHTJnEuDbK2NepmN9TUkFRojg=;
+        b=V9y08BT7qlxD819x03+nP1h3fzop2jaGREsNRt/Mi3uy2GVUK2lqMWFPAhBL1MFErC
+         p3ew6OOVXc6GSwC8juKjGhWMBkuVC+ItjJh88z1+IiWDd1M/bk8rnFB1NJ8aWpbQMmao
+         a/5t/sTb//YM3Wf/FPJ4dqIn3fhHHpCHYzN9k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716425476; x=1717030276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6eNvVxmV8P5acguEgjlHTJnEuDbK2NepmN9TUkFRojg=;
+        b=PkiT+m4vJ+1tmCvTQDRvT1tKA4DRyj0TGaqsn+7tJZkUuAsb602HlI52bK41ejHKi1
+         +Ovb57mrQl5TNv24g1dMSpfM5TOobx6KLVwTTMH73c4Y9HwAHO9MLhxPHgEXsf9s2uk0
+         BkDD6pbZwPTQL2oENIEUYfDIPUaPfj9lkjse0M0uDXg9hTFKi1/tbtJ9EruQkPuLgZDX
+         AVlBraglDJrZVdVqbq85Ut+GQwS4Seq6U/MHL6TZ3uJaJ6ksddqECvqMEjk4N198eSyR
+         /NBG+y/jmVF6ibJqTrdqn7wGS1a38iqFiLPE15S7HsMTBV5gA6lSaHnmpxJGoMCl+2bQ
+         PYxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJqxByAvY6/OEGFE7Vft0hN2Ub4fCwCnAa7EpwJV7ZFj4Ih7Yu8S0eKZnQz430pNcRgAcIb1nsfyjE4CU6RYLS2aRwD0k3lZ0Kbdw8
+X-Gm-Message-State: AOJu0YzoJt8q7+hcowS9u6GB5IRKe1C2mM6NnJj2TQWuvx1IxHjWQM6r
+	Nje0B2e3GZiTUrWljFEXARQRIvlv8EqK+2mAGG5eISPEviIU7STtIZQ9ad0ch4FTMOlkFWliY8Q
 	=
-X-Google-Smtp-Source: AGHT+IEdMYJvguszZWQhcagUOIsDBSSSsuIKGnskWDfANoYCNYn6AMpeqnKTOXyc04/jjf4/0L64nw==
-X-Received: by 2002:a17:902:e944:b0:1f2:f6ca:fbca with SMTP id d9443c01a7336-1f31c976c1emr37161985ad.9.1716425429401;
-        Wed, 22 May 2024 17:50:29 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:3a97:1cc8:ab6c:8d0f])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-1f326bd5b70sm17699125ad.237.2024.05.22.17.50.28
+X-Google-Smtp-Source: AGHT+IFjL7F6LyDnJJBT53II/Guw9oU4C/GUtNOPHU0J3TPfsfX7xw4C4ebDMKLnucB9A3E91SO5nw==
+X-Received: by 2002:a17:906:2347:b0:a5a:4683:e961 with SMTP id a640c23a62f3a-a6228163179mr245631166b.52.1716425476246;
+        Wed, 22 May 2024 17:51:16 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a8b634cdcsm1175252966b.93.2024.05.22.17.51.15
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 May 2024 17:50:28 -0700 (PDT)
-Date: Wed, 22 May 2024 17:50:26 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-	"francesco@dolcini.it" <francesco@dolcini.it>,
-	Pete Hsieh <tsung-hsien.hsieh@nxp.com>,
-	"rafael.beims" <rafael.beims@toradex.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [EXT] [PATCH v10 0/2] wifi: mwifiex: add code to support host
- mlme
-Message-ID: <Zk6S0m2U_xEojICb@google.com>
-References: <6CB59E09-F34E-4986-AA88-8EC4EE5E71DF@holtmann.org>
- <PA4PR04MB9638B62BC25F773C6922A4BCD10D2@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <ZiLlPOvKlfCySZwF@google.com>
- <PA4PR04MB96383D46C1187C237DFC7988D1122@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <PA4PR04MB96389E67F826216C44FE19FFD1112@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <C8F76484-1359-437B-85BF-C646A21F7BCE@holtmann.org>
- <PA4PR04MB9638670FD6768AD8A69F5125D1172@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <CA+ASDXNhkHi47=d-TMkjy3oebsK_NvWuC9CQtEEQYN-nHHbx-g@mail.gmail.com>
- <PA4PR04MB9638F35B2FF70A1E514C25D0D1182@PA4PR04MB9638.eurprd04.prod.outlook.com>
- <PA4PR04MB96381B9675BCA5861AEDEF25D1E22@PA4PR04MB9638.eurprd04.prod.outlook.com>
+        Wed, 22 May 2024 17:51:15 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-56e1baf0380so11149654a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 17:51:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXqNVbAtW83145rlqZgE/k1HVhyuJfd7Wxwke+QLIl/DeIa0F67co7GIBfCBUcWCI8gxXG95HHA4J03iEnPY92Y6iOEyUGC3vnLJEAs
+X-Received: by 2002:a17:906:3f94:b0:a62:404a:d0d0 with SMTP id
+ a640c23a62f3a-a62404ad2bdmr31881866b.42.1716425474954; Wed, 22 May 2024
+ 17:51:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PA4PR04MB96381B9675BCA5861AEDEF25D1E22@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20231222032123.1036277-1-yu-hao.lin@nxp.com> <20231222032123.1036277-2-yu-hao.lin@nxp.com>
+ <20240227175306.GB11034@francesco-nb> <PA4PR04MB96383C684AAA40C14DDB4B79D15F2@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <PA4PR04MB9638983EBD1DB4D3E8FB5474D1222@PA4PR04MB9638.eurprd04.prod.outlook.com>
+In-Reply-To: <PA4PR04MB9638983EBD1DB4D3E8FB5474D1222@PA4PR04MB9638.eurprd04.prod.outlook.com>
+From: Brian Norris <briannorris@chromium.org>
+Date: Wed, 22 May 2024 17:51:00 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXM1PEMRyxRpBryJ7G6e7yzG8Ku+g2_qpHN3g5djFpAWkw@mail.gmail.com>
+Message-ID: <CA+ASDXM1PEMRyxRpBryJ7G6e7yzG8Ku+g2_qpHN3g5djFpAWkw@mail.gmail.com>
+Subject: Re: [EXT] Re: [PATCH v8 1/2] wifi: mwifiex: add host mlme for client mode
+To: David Lin <yu-hao.lin@nxp.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvalo@kernel.org" <kvalo@kernel.org>, 
+	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 01:27:13AM +0000, David Lin wrote:
-> > From: David Lin <yu-hao.lin@nxp.com>
-> > Sent: Thursday, May 2, 2024 4:35 PM
-> > 
-> > 1. The process of external_auth should be as follows:
-> >   a. cfg80211_ops.connect() is called to establish connection with remote
-> > AP.
-> >   b. If authentication is not WLAN_AUTH_SAE, FW will process
-> > authentication/association
-> >   and reply connection result to cfg80211.
-> >   c. If authentication is WLAN_AUTH_SAE, FW should notify driver to call
-> >   cfg80211_external_auth_request() to offload authentication to
-> > wpa_supplicant.
+Necromancing some v8 comments here, since I realized I had the same
+question on my last pass at v10:
 
-FWIW, I expect you could just as well teach the driver to detect this --
-I don't think we'd strictly require that firmware notify the driver.
-Essentially, you could teach the driver to notice any sort of CONNECT
-request (e.g., keep a list of FW-supported WLAN_AUTH_* modes?) that the
-firmware can't handle on its own, and begin the external_auth() process.
+On Mon, Mar 4, 2024 at 11:26=E2=80=AFPM David Lin <yu-hao.lin@nxp.com> wrot=
+e:
+> > From: David Lin
+> > Sent: Thursday, February 29, 2024 11:53 AM
+> >
+> > > From: Francesco Dolcini <francesco@dolcini.it>
+> > > Sent: Wednesday, February 28, 2024 1:53 AM
+> > >
+> > > On Fri, Dec 22, 2023 at 11:21:22AM +0800, David Lin wrote:
+> > > > +static int
+> > > > +mwifiex_cfg80211_probe_client(struct wiphy *wiphy,
+> > > > +                           struct net_device *dev, const u8 *peer,
+> > > > +                           u64 *cookie) {
+> > > > +     return -1;
+> > >
+> > > See my following comment on this
 
-I'm not sure this is ideal, but it does sound doable even without FW
-notification.
+> > > > +             mwifiex_cfg80211_ops.probe_client =3D
+> > > > +                     mwifiex_cfg80211_probe_client;
+> > >
+> > > Can you omit this one? You should get `-EOPNOTSUPP` for free with
+> > > probe_client set to NULL. Am I wrong?
+> > >
+> >
+> > Yes. You are right. Remove in patch v9.
+>
+> This function must be hooked, otherwise AP mode can't work. I will hook t=
+his function as before but return -EOPNOTSUPP instead.
 
-> >   d. FW will wait for authentication result passed by
-> > cfg80211_ops.external_auth() to
-> >   decide if association should be processed with remote AP for the original
-> > connection
-> >   request and reply connection result to cfg80211.
-> >   NXP FW only supports association with or without authentication, it can't
-> > support external_auth.
+You mean, hostapd doesn't like it? That seems like hostapd's problem,
+because the actual effect is the same -- the feature isn't supported,
+and will always throw an error. The kernel is lying if it adds
+NL80211_CMD_PROBE_CLIENT into the wiphy command feature list.
 
-But could it support my above description? Basically, the driver decides
-whether to submit the connection request directly to the firmware, or
-go with external_auth() instead.
+Can you point at what specifically goes wrong in hostapd, and see if
+we can find a way to fix it in the right place -- in hostapd? I don't
+really hack on hostapd much, but it looks like it comes down to the
+drv->use_monitor flag? Notably, that has a comment:
 
-> > 2. Hook separating auth/assoc will offload SME to wpa_supplicant
-> > completely. Driver/FW don't need
-> >   to involve the process of authentication just like external_auth did. There
-> > is no effort for driver/FW
-> >   to support any future modifications of authentication process.
-> 
-> Can we confirm that hooking separating auth/assoc is more suitable than "external_auth" for mwifiex?
+# src/drivers/driver_nl80211_capa.c ~ line 1424
+/*
+ * If poll command and tx status are supported, mac80211 is new enough
+  * to have everything we need to not need monitor interfaces.
+ */
 
-I have one clarification question above. And I haven't heard anything
-more from Marcel, so assuming the above is clarified, I suppose we can
-drop the external_auth question.
+So, you're actively subverting something that hostapd is trying to
+learn about mac80211. That sounds double wrong.
+
+At the very least, if we're going to include hacks like this in the
+kernel, we should probably have a comment in there, so that future
+readers don't keep stubbing their toes on the same question. Or worse,
+removing the seemingly useless function and breaking hostapd. But
+ideally, we'd drop this hack and fix hostapd.
 
 Brian
 
