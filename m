@@ -1,139 +1,101 @@
-Return-Path: <linux-kernel+bounces-187259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7718CCF1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:25:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D4C8CCF1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 023ACB23384
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:25:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDEDF1F239F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768141411DD;
-	Thu, 23 May 2024 09:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oSt/dpJP"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F015213DDD9;
+	Thu, 23 May 2024 09:23:59 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B505913D51D
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B4A7E0F1
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716456203; cv=none; b=TEVLT6aYXucKWo+0oCnptQzeEzdDNKTPRpbbaVDtHj0iyy6XWb2wkahb7iLtPGlSBV9o072UE1r7onEoNv44hSnMAhEJZvnx6EvCPPzi+eZlDGjDgn09pHo0JXuZLO0ELcMRT05/652PKal3SXTWuU8dbPx3qZPOrl5UMF6feZM=
+	t=1716456239; cv=none; b=VvV3rcB50c36t7pE35jjNF/HhWusodJ2/4S1B/SsSt5Q9oqWfJS8YTsrczqjpmYTYkUtXF8VQxNBVNRW5/8OQlQBPflsWnSMrKQfX2XlIqGowZcxyr8yZyaAiHPmDRCdfoLOMTqPADcym4zLYEdUpPmNm/IgDZcZXvH0R/0mgkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716456203; c=relaxed/simple;
-	bh=FxEgQ2M46ww0wpQM5t+QGhAhtJlzQZOGBgjrkSndrSo=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=r1DHCWdvo17aKBbsI53ckPKU4P12vkXRj1nvTtPboDue7XAmT89YamgdjULtrh+K1LpbexjrE/khTyetDaWNQCLMfkDe5110bzPZWQt7a9FqwGJdw71pzGJrcEqsWUbcBU+m9u5sZsNoLYDpWGikKlZsNqdDHqW27zPgGm+Kb1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=oSt/dpJP; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240523092318epoutp0374daa221fdfac98e6242462c92c224fa~SE9F4S18R2166421664epoutp03s
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:23:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240523092318epoutp0374daa221fdfac98e6242462c92c224fa~SE9F4S18R2166421664epoutp03s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716456198;
-	bh=KlOaCwQxSICkRstCpowtJ7ZRITRgzPxIIxTlCKKVUos=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=oSt/dpJPVED7UMEjG8mAzIZFkXR4eIeRvRpJeJlgvWSi2cJHZ1xmOf7la+cw/huCe
-	 e5UB8gZgrWk1trLxjw4WdUVrsPQNDVImvFEStIOkd80DmVWyJeaWxEROxPLHo+D8rn
-	 LgrcyVEEx8UENviJjCJmIB2GCbIarkBtW4LrN9qQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240523092317epcas1p1ac965eb311209ef51dca3b3e54679f24~SE9Ffmk7k2410824108epcas1p1y;
-	Thu, 23 May 2024 09:23:17 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.38.243]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4VlN514NVdz4x9Q1; Thu, 23 May
-	2024 09:23:17 +0000 (GMT)
-X-AuditID: b6c32a33-af9ff700000021b3-09-664f0b055bf6
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	82.12.08627.50B0F466; Thu, 23 May 2024 18:23:17 +0900 (KST)
+	s=arc-20240116; t=1716456239; c=relaxed/simple;
+	bh=i/kAXeaeveQl/LhDEZFxa/tIpqb06WoJDHtVFQ3cVDw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GhkhtsHo0/2k5ADQrp7KQRUfkIBhxqjagn5qpPYtIVoHRMWnNyQUNWMAhZhjlYa/Em9bzXpDeAObs72MzQ3qMymawoZVli70MU2EPVG9JXI7SQkkG5fLgOzWUU4gAH/7QrY4VivIRb+KkWmapeT/kl2z28PbFIrxPzQHhuvOCGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e1d122f75cso134421439f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:23:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716456237; x=1717061037;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s/1v5n2ho6exAPz3FqoiG3p4pmvbzpXZz0rxeJDjWAU=;
+        b=N0b6jVlWodWRihmSPtU6T9VBxzEC9SuIzER4CaRPpkWz/41anukiO9rTzPZFBMTS78
+         LYrB5/o4nCKB0HQuYlpy/SOgYagpKalOCQC5aM2NBdLiW2gzq8NT0hT0Yw8aB/4iKGcr
+         B+LiZmGQvvvrUz5UmRW2iVzfpTHQCeJM7mS2de0VrkPF6CgnsRzbu5DKtPUPHqKxkhzl
+         O+CYCgK8pgTh63AoLZCyUNVPQxzAnarqSSobQ11nzv+wq7/KlaFv81cx4uBt/pJep+PZ
+         Q69P9qgldG5yx7GZpHTDiCMbReye1MrSKlD1fDGLZB0FzuZe1T3tuBmtr5gZQOjyzL0Y
+         1lDg==
+X-Gm-Message-State: AOJu0Ywm/IiGCyD6jYOwzfTJlEinCTVeOoTAOus/F4Iyf1os4sQ2AAva
+	g5pY5qXYmqPjgJKKsRPD9k+ETjYNhxAGD4cWSqRbxDtAkTS1FpjJO075rvMq+IXsBXcMjklLrCm
+	UDWghp4jdxlp3v9MxgQvTsbPPIfb+UNZflV8rNwoBf3LsFUcIbi0M8cs=
+X-Google-Smtp-Source: AGHT+IFUCh5BM8oHCC8THlCOM74vYit9mGhjDkgWLUq+RZ4DlbrKCG8UA2TEguWMf1ILblN8bA9aDpKp7pc91yWh82GgotRDB+s0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: [RESEND PATCH 00/10] memblock: introduce memsize showing
- reserved memory
-Reply-To: jaewon31.kim@samsung.com
-Sender: =?UTF-8?B?6rmA7J6s7JuQ?= <jaewon31.kim@samsung.com>
-From: =?UTF-8?B?6rmA7J6s7JuQ?= <jaewon31.kim@samsung.com>
-To: "richard.weiyang@gmail.com" <richard.weiyang@gmail.com>,
-	=?UTF-8?B?6rmA7J6s7JuQ?= <jaewon31.kim@samsung.com>
-CC: Mike Rapoport <rppt@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "jaewon31.kim@gmail.com"
-	<jaewon31.kim@gmail.com>, "tkjos@google.com" <tkjos@google.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20240523085554.netvftdebmg5ie4a@master>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20240523092317epcms1p220c5ebd665d2c7b6a8a43e884926573b@epcms1p2>
-Date: Thu, 23 May 2024 18:23:17 +0900
-X-CMS-MailID: 20240523092317epcms1p220c5ebd665d2c7b6a8a43e884926573b
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmni4rt3+awd6jihZz1q9hs+jePJPR
-	ovf9KyaLy7vmsFncW/Of1eJO3ysWiyPrtzNZvJ9cbDG7sY/RgdNj56y77B4LNpV6bFrVyeax
-	6dMkdo8TM36zePRtWcXocWbBEXaPz5vkAjiism0yUhNTUosUUvOS81My89JtlbyD453jTc0M
-	DHUNLS3MlRTyEnNTbZVcfAJ03TJzgK5TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak
-	5BSYFegVJ+YWl+al6+WlllgZGhgYmQIVJmRnvL+6hrmgkbXi27S1TA2MP5i7GDk5JARMJF5e
-	bmPqYuTiEBLYwShxaMJq1i5GDg5eAUGJvzuEQWqEBcIl5uxfxQRiCwkoSZz9cYUdIm4tsX/R
-	DLA4m4ClxPabExlBbBGBIokbe76xg8xkFjjNJLHr03UWiGW8EjPan0LZ0hLbl28Fa+AUMJVY
-	dQyiWUJAVOLm6rfsMPb7Y/Oh4iISrffOQh0tKPHg525GmDl/jj9ng7CLJZZ1PmCCsGskVpxb
-	BRU3l2h4uxLM5hXwlZiy6DHYfBYBVYnGP1uhdrlILFjWCDaTWUBeYvvbOcygcGAW0JRYv0sf
-	Iswn8e5rDyvMKzvmPYFapSbR8uwrVFxG4u+/Z1C2h8Tda7tZIGF7nFni56RVbBMY5WchgncW
-	km2zELYtYGRexSiWWlCcm56abFhgCI/R5PzcTYzg1KllvIPx8vx/eocYmTgYDzFKcDArifBG
-	r/RNE+JNSaysSi3Kjy8qzUktPsRoCvTnRGYp0eR8YPLOK4k3NLE0MDEzMrEwtjQ2UxLnPXOl
-	LFVIID2xJDU7NbUgtQimj4mDU6qBqWmX2Omqc7ue1P37mrV4Orvxy471R1dse7FFSuL1zbZp
-	Py4vKFhe6px/rUuX54Gds+qFqk//8xM8pUVzDW+0dYVU9Kz07vDgK2H3l3TxPftjfkLs0/y5
-	YZ/vHfW9ZsjPuGVdmlLUdPY7ElNN5eyyXX0yJXweLdZds95FJUBG8SnPi68KhrObC9Orq6dK
-	flyhJlEwNbjqY8y/gxIL7q/p/3JmqZrrLHNHls27laWP39Q5vPv0bVum+3dafU9vWd086eWH
-	t3tvTDq85nSSfIqeT+2UXcfuxW7dlu8maPxduf1Girj+vt5W5xg+F67yhVuzH29fnPplWnD/
-	rOZZ8mt6ns+d0+J+9dvG6rr7aVZ7A5RYijMSDbWYi4oTAZvst5ImBAAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76
-References: <20240523085554.netvftdebmg5ie4a@master>
-	<20240522081647.zlwenenrbrjemlp6@master> <ZkxN0yQ7Fb0X26hT@kernel.org>
-	<20240521023957.2587005-1-jaewon31.kim@samsung.com>
-	<20240521025329epcms1p6ce11064c0f0608a0156d82fda7ef285c@epcms1p6>
-	<20240521101753epcms1p50443f6b88adea211dd9bbb417dd57cb1@epcms1p5>
-	<20240522084738epcms1p80845ffecee4fbab97b34fdf2ce1595a7@epcms1p8>
-	<CGME20240521024009epcas1p10ed9f9b929203183a29f79508e79bb76@epcms1p2>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:8619:b0:488:59cc:eb41 with SMTP id
+ 8926c6da1cb9f-4afe3b2cac9mr173780173.3.1716456237240; Thu, 23 May 2024
+ 02:23:57 -0700 (PDT)
+Date: Thu, 23 May 2024 02:23:57 -0700
+In-Reply-To: <0000000000002fd2de0618de2e65@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004b237106191b9c7a@google.com>
+Subject: Re: [syzbot] [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
->[...]
->>
->>Hi
->>
->>> Maybe you can show the log difference, so that we can see how it helps you.
->>
->>For your new email, could you elaborate the difference you meant? 
->>Do you mean difference between existing debugfs membock interfaces and the one I introdued here?
->>
->
->You mentioned the difference between kernel version helps you locate the
->problem. That is the difference of your new debugfs.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Correct. Actually we get many SW release from chipset vendors. Even though
-their kernel version is same, the reserved memory status varies. So we can
-easily compare them.
+***
 
-BR
+Subject: [syzbot] [fs?] general protection fault in iter_file_splice_write
+Author: lizhi.xu@windriver.com
 
->
->
->-- 
->Wei Yang
->Help you, Help me
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 33e02dc69afb
+
+diff --git a/fs/splice.c b/fs/splice.c
+index 60aed8de21f8..35a99fdabe9c 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -751,8 +751,18 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 
+ 		/* dismiss the fully eaten buffers, adjust the partial one */
+ 		tail = pipe->tail;
+-		while (ret) {
++		while (ret > 0) {
+ 			struct pipe_buffer *buf = &pipe->bufs[tail & mask];
++			printk("ret: %d, nbufs: %d,  buf len: %u, m: %u, t: %u,ring size: %u, bufs len: %d, %s\n", ret, nbufs, buf->len, mask, tail, pipe->ring_size, ARRAY_SIZE(pipe->bufs), __func__);
++			if (ARRAY_SIZE(pipe->bufs) <= mask) {
++				ret = -EPIPE;
++				printk("oooh, %s\n", __func__);
++				break;
++			}
++			if (!buf->len) {
++				tail++;
++				continue;
++			}
+ 			if (ret >= buf->len) {
+ 				ret -= buf->len;
+ 				buf->len = 0;
 
