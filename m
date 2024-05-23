@@ -1,127 +1,153 @@
-Return-Path: <linux-kernel+bounces-187560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE568CD3B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:18:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7945F8CD3E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A977E282FD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:18:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355532853AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49C014BF8F;
-	Thu, 23 May 2024 13:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaKmJTU/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB4514B945;
+	Thu, 23 May 2024 13:19:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF98713A897;
-	Thu, 23 May 2024 13:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF8F13B7AE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470267; cv=none; b=Sx4ad3eBHzjrwJYlShq/Guss6XVqZFfKdlhamt9BBfxLsT8Xt1wrbAVDUDjYVaOMnmetq8MGzSVneDmSaimqRWsQOjlhqiEnujom3z/ORx0IqP8Oh3H+n3llqeV0eU4vyitLc+HRLhOiokT7js4RMgtPM5p9NbFg+z7lJ4J1tAI=
+	t=1716470366; cv=none; b=uEHPRov3pjNv8xuZeB7eO4yrkZMvvnEzdiRAn4HeJpXRY9h7wgH1BV0VRrLqMiv3Tmran/vPjMMLZ+DmVCFZYSo/y8V1xPZZPdyrYg/EN+4PCyovEbi7CKEh+jFBATWcA5iPe5uwx8PjiiKWOeVuGCsUD2UyNmSOhJRJ95Cg/UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470267; c=relaxed/simple;
-	bh=YjxDl1qQvJLbI7CoFRNnlkwjjIbQpYwYvmdsXfobHJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LSGumkf3m3wyT9Skc6y6rH3IxyRpy9MXmaExe735VazthbDpnlMupm1N4aKispMV4YKLCFC2zvg4UL0sdA04/6o05C5LgSP68lV4VvLHJFV3oMi7fv3TiH/ie8s18UuPwTByZuOYIAxyeLo1/FzDqh/QEL2uurtpt9XJFxoGiws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MaKmJTU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6053C32786;
-	Thu, 23 May 2024 13:17:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716470266;
-	bh=YjxDl1qQvJLbI7CoFRNnlkwjjIbQpYwYvmdsXfobHJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MaKmJTU/iS0pIIfN8usqIyj8MvyBtIJ16dcfxAzoYDE0uFLhzjM60MKbiXIDM7EFj
-	 FomaG3mM96YmzQe/dYg7/9hcwYBK21wX37GoqhD0lbnFP4du30TlKfWC7HgqkQ0Tia
-	 CQVmKwE2wfblNqTHnw2Ks/zf35Y7NDYwAkGEmmr6KgFhZNTSNljRCxbd/7qtITt7MX
-	 OVSI/5vZf6/hDGRM6V/Hf1XA17l6Ec/f1Uy5gGS66/cxZ6IWk+9KWCcjcEfJpVIikC
-	 rXgnUk6h/lC7+aDZxaGHZwm1bKASAjWvovD9GaHn1yVGzsO43TKkZXVdzFIFlsoBDS
-	 054pHjsu/3IPw==
-Date: Thu, 23 May 2024 14:17:41 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ying Hsu <yinghsu@chromium.org>
-Cc: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com,
-	pmenzel@molgen.mpg.de, chromeos-bluetooth-upstreaming@chromium.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v2] Bluetooth: Add vendor-specific packet classification
- for ISO data
-Message-ID: <20240523131741.GN883722@kernel.org>
-References: <20240523060934.2883716-1-yinghsu@chromium.org>
+	s=arc-20240116; t=1716470366; c=relaxed/simple;
+	bh=BCNVEcgkU7+tO0w4DqWtv5Adc7V8KuJiUTOcc0wVbu8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ggaOUeo8McYSoKqAZX8Y5fAk1TFeuDrbON/zTPp3gmRPfuhI7AhSM16K/bE3uoOeahWUWYJX89jAbHr7ue210iGfuDoS7fkZG+PwJtEZAKKX9NfCojv9A7MlmOJksgYjGjHAZpHclFH+RoOjLUgUdzvn1dYCK2K03YOIv9Fo11A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1sA8LW-0002sd-B1; Thu, 23 May 2024 15:19:02 +0200
+Received: from [2a0a:edc0:0:1101:1d::54] (helo=dude05.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1sA8LR-002fRe-S9; Thu, 23 May 2024 15:18:57 +0200
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1sA8LR-005g9l-2d;
+	Thu, 23 May 2024 15:18:57 +0200
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Date: Thu, 23 May 2024 15:18:29 +0200
+Subject: [PATCH] docs: crypto: async-tx-api: fix broken code example
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523060934.2883716-1-yinghsu@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240523-async-dma-docs-v1-1-b900e0804e11@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIACRCT2YC/x3MMQqAMAxA0atIZgNprSBeRRxqGzWDVRoQRby7x
+ fEN/z+gnIUV+uqBzKeo7KnA1BWE1aeFUWIxWLKOWtug1zsFjJvHuAdFIp5M5x2TCVCiI/Ms1z8
+ cxvf9AHQBbaBgAAAA
+To: Dan Williams <dan.j.williams@intel.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>, Jonathan Corbet <corbet@lwn.net>, 
+ Maciej Sosnowski <maciej.sosnowski@intel.com>, 
+ Andre Noll <maan@systemlinux.org>
+Cc: linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
+ Ahmad Fatoum <a.fatoum@pengutronix.de>
+X-Mailer: b4 0.13-dev
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2024 at 06:09:31AM +0000, Ying Hsu wrote:
-> When HCI raw sockets are opened, the Bluetooth kernel module doesn't
-> track CIS/BIS connections. User-space applications have to identify
-> ISO data by maintaining connection information and look up the mapping
-> for each ACL data packet received. Besides, btsnoop log captured in
-> kernel couldn't tell ISO data from ACL data in this case.
-> 
-> To avoid additional lookups, this patch introduces vendor-specific
-> packet classification for Intel BT controllers to distinguish
-> ISO data packets from ACL data packets.
-> 
-> Signed-off-by: Ying Hsu <yinghsu@chromium.org>
-> ---
-> Tested LE audio unicast recording on a ChromeOS device with Intel AX211
-> 
-> Changes in v2:
-> - Adds vendor-specific packet classificaton in hci_dev.
-> - Keeps reclassification in hci_recv_frame.
-> 
->  drivers/bluetooth/btusb.c        | 19 +++++++++++++++++++
->  include/net/bluetooth/hci_core.h |  1 +
->  net/bluetooth/hci_core.c         | 16 ++++++++++++++++
->  3 files changed, 36 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 79aefdb3324d..75561e749c50 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -966,6 +966,24 @@ static void btusb_intel_cmd_timeout(struct hci_dev *hdev)
->  	gpiod_set_value_cansleep(reset_gpio, 0);
->  }
->  
-> +#define BT_USB_INTEL_ISODATA_HANDLE_BASE 0x900
-> +
-> +static u8 btusb_intel_classify_pkt_type(struct hci_dev *hdev, struct sk_buff *skb)
-> +{
-> +	/*
-> +	 * Distinguish ISO data packets form ACL data packets
-> +	 * based on their conneciton handle value range.
+The code example fails to compile:
 
-nit: connection
+  1) ddr_conv is defined twice, once as a VLA, which have been phased out
 
-> +	 */
-> +	if (hci_skb_pkt_type(skb) == HCI_ACLDATA_PKT) {
-> +		__u16 handle = __le16_to_cpu(hci_acl_hdr(skb)->handle);
-> +
-> +		if (hci_handle(handle) >= BT_USB_INTEL_ISODATA_HANDLE_BASE)
-> +			return HCI_ISODATA_PKT;
-> +	}
-> +
-> +	return hci_skb_pkt_type(skb);
-> +}
-> +
->  #define RTK_DEVCOREDUMP_CODE_MEMDUMP		0x01
->  #define RTK_DEVCOREDUMP_CODE_HW_ERR		0x02
->  #define RTK_DEVCOREDUMP_CODE_CMD_TIMEOUT	0x03
+  2) submit is not a pointer, but is still dereferenced with ->
 
-..
+Fix these issues and while at it, make the functions static as users
+are unlikely to export them.
+
+Fixes: 04ce9ab385dc ("async_xor: permit callers to pass in a 'dma/page scribble' region")
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+ Documentation/crypto/async-tx-api.rst | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/crypto/async-tx-api.rst b/Documentation/crypto/async-tx-api.rst
+index 27c146b54d71..2fa260f2a222 100644
+--- a/Documentation/crypto/async-tx-api.rst
++++ b/Documentation/crypto/async-tx-api.rst
+@@ -150,38 +150,38 @@ of an operation.
+ Perform a xor->copy->xor operation where each operation depends on the
+ result from the previous operation::
+ 
+-    void callback(void *param)
++    static void callback(void *param)
+     {
+ 	    struct completion *cmp = param;
+ 
+ 	    complete(cmp);
+     }
+ 
+-    void run_xor_copy_xor(struct page **xor_srcs,
+-			int xor_src_cnt,
+-			struct page *xor_dest,
+-			size_t xor_len,
+-			struct page *copy_src,
+-			struct page *copy_dest,
+-			size_t copy_len)
++    #define NDISKS  2
++
++    static void run_xor_copy_xor(struct page **xor_srcs,
++				 struct page *xor_dest,
++				 size_t xor_len,
++				 struct page *copy_src,
++				 struct page *copy_dest,
++				 size_t copy_len)
+     {
+ 	    struct dma_async_tx_descriptor *tx;
+-	    addr_conv_t addr_conv[xor_src_cnt];
+ 	    struct async_submit_ctl submit;
+ 	    addr_conv_t addr_conv[NDISKS];
+ 	    struct completion cmp;
+ 
+ 	    init_async_submit(&submit, ASYNC_TX_XOR_DROP_DST, NULL, NULL, NULL,
+ 			    addr_conv);
+-	    tx = async_xor(xor_dest, xor_srcs, 0, xor_src_cnt, xor_len, &submit)
++	    tx = async_xor(xor_dest, xor_srcs, 0, NDISKS, xor_len, &submit);
+ 
+-	    submit->depend_tx = tx;
++	    submit.depend_tx = tx;
+ 	    tx = async_memcpy(copy_dest, copy_src, 0, 0, copy_len, &submit);
+ 
+ 	    init_completion(&cmp);
+ 	    init_async_submit(&submit, ASYNC_TX_XOR_DROP_DST | ASYNC_TX_ACK, tx,
+ 			    callback, &cmp, addr_conv);
+-	    tx = async_xor(xor_dest, xor_srcs, 0, xor_src_cnt, xor_len, &submit);
++	    tx = async_xor(xor_dest, xor_srcs, 0, NDISKS, xor_len, &submit);
+ 
+ 	    async_tx_issue_pending_all();
+ 
+
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240523-async-dma-docs-00eb18a4e01c
+
+Best regards,
+-- 
+Ahmad Fatoum <a.fatoum@pengutronix.de>
+
 
