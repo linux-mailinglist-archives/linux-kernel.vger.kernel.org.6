@@ -1,288 +1,272 @@
-Return-Path: <linux-kernel+bounces-186964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281288CCB48
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:02:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76C28CCB4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE211C20E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2DE283012
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E01E39FEB;
-	Thu, 23 May 2024 04:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0D353E31;
+	Thu, 23 May 2024 04:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JdErt27o"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2054.outbound.protection.outlook.com [40.107.93.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="lyoPPAmX"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BF27EF;
-	Thu, 23 May 2024 04:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716436931; cv=fail; b=fcCfnlOMm5xDY6rz+6B4kABBz17CEqnzyHGK5jF5QotZ9ovc9Z7lURqo5PXjjnAzFiZ5rHxNf6F1lxz11BO/NISrt0qYXYBR/A/Zh3hTj54Ka8c2JKZBRCPTq6kfTf9nys3a122e8AMeVfat119zVoiN9vMQdAjfXrj41JCT6ec=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716436931; c=relaxed/simple;
-	bh=1VyyIyuGeXF+P+mXNm72RpNrub8EFrEY+IN1Tc/tGkw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJpceOZN9fI576RDYhcsr+WWKnpaOa6sMu5aNwX2v0brTNmCZIfwjTR7oF6c8DesTs4gOfsVMxjtOYJJEcCx9tM1xXXj3KT57SQks/NpMoIP1QFXLA63AakE/CCceQ6MaJzg6BkmlQkwd95fxzl6SMWlxSmbDK518OayEo8r5nE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JdErt27o; arc=fail smtp.client-ip=40.107.93.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ipOv/4D/Z4adzXdleNgwadkpNswyVkQku6F1Kw3gZ6EvMYG8ujbsPM4Q6RyRB7u49Q3hJ8RMBcm8PEIbuHPORZckjy0rqNW74CylcMjeuRyOy8v3Pxg+iPooe+mA0gEEztPQNLgp7daW9UKynHOZJpv2RkNwzP+CL9m0rkBMmYpRq3kXioxYqe4lta9AOOx5yhvTCcX1Z3lam6H5+yyT4woLQzT5oZxv2fidTwvDYkcCsiPGdK1qpZcqBx3+mBD4DqI+VS7j4rO5y8tYUrDLG+gEWa2FNN/oyRV2RJgJ8Zjik3hfyJKjNXMjcUkcw3RMKCNxU7+qPAuMXxfbS/RGBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uqcJvF3RIFyP59Sa5TRtC0oqFCSO7fC8X/Q0JQ4LmO8=;
- b=jyUG7vd+G8DQjp5ate+rUY30qemyieePv2N8vUF6uaI0CY0QnWejzHT+dr0WJCilRBka/LpmfuHTncKcPButoGSZMlI5cYXX+9INjBK+BdjH5gyF1idZivo2vDDDoXDjqoNTvxZFpDz7n73qmq3A1A+1xGT5jqxTdrxMJauFk+EyInrEtAzJW+FykAjUucq0zCINUITSYlahCvK2j4CgWm2bxO2VNsGnRwSkjMpP71+0OOX6H2kJReF5Ph2V2PlaZDyYXpUAW568iF9zui0Wa0VSpF0MwzqYwWgarG4IEWfOIjTpOyBorjSSL8haGMwWKZNXWELVkX86Rah5rJcccw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uqcJvF3RIFyP59Sa5TRtC0oqFCSO7fC8X/Q0JQ4LmO8=;
- b=JdErt27ouaQUyQknaN5aJAbKhBc1ZaJjxdqjSC9uGw2J0+Vi3A3XQVQtK4b/MAYECDxoDrn/dZGYBJQjyYNi9NBrOIiSWssi3+csUGbdAWZ3NJEDZ05d0Vn5Z6T8rDpo/nd5Z3k+jVLK1Lvg1Bpa9f7eaCIbX/954QQPfNNoni+C8VEsPwwQBqUzarKdJ2frCDtuAd2+zZP80qwUQ2Gg5+BIciJKXipMyEb65rve/K/wESeoUGOlvFtZl+WRfwsA5Zq+Xh3HSSqVEuNE6PPfb53PweiJ7MtoPvWSUdVoTZXfTAivtRCUj+y7uuCb6ZbEyE/x1E2iUKgPU5OJ3+fLQg==
-Received: from SA9PR13CA0169.namprd13.prod.outlook.com (2603:10b6:806:28::24)
- by MN6PR12MB8565.namprd12.prod.outlook.com (2603:10b6:208:47d::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.20; Thu, 23 May
- 2024 04:02:06 +0000
-Received: from SN1PEPF0002529D.namprd05.prod.outlook.com
- (2603:10b6:806:28:cafe::5c) by SA9PR13CA0169.outlook.office365.com
- (2603:10b6:806:28::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19 via Frontend
- Transport; Thu, 23 May 2024 04:02:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SN1PEPF0002529D.mail.protection.outlook.com (10.167.242.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7611.14 via Frontend Transport; Thu, 23 May 2024 04:02:06 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
- 2024 21:01:56 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 22 May 2024 21:01:56 -0700
-Received: from nvidia.com (10.127.8.10) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Wed, 22 May 2024 21:01:52 -0700
-Date: Wed, 22 May 2024 21:01:50 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>
-CC: "will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "suravee.suthikulpanit@amd.com"
-	<suravee.suthikulpanit@amd.com>, "joro@8bytes.org" <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 04/14] iommufd: Add struct iommufd_viommu and
- iommufd_viommu_ops
-Message-ID: <Zk6/rpwvh5lMck2I@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <8610498e3fc00000e78bb9cef6fac9f6a54978a4.1712978212.git.nicolinc@nvidia.com>
- <ZkDMSfd9BXmsFfb+@nvidia.com>
- <ZkGKKoHnykAdGJq6@nvidia.com>
- <ZkOJgvMNFaZZ06OO@nvidia.com>
- <BN9PR11MB5276423A0BFBDA8346E1ED3C8CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240522133905.GX20229@nvidia.com>
- <BN9PR11MB5276267BB1CC4AA7008AFBFC8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8021F5E6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716437050; cv=none; b=MvcGxNCYHsUVEsOabbMhHbTP02xZHl6i1bI3EMiAlRgmnrwHNIr2kDj44qxyfeMksZOknKkg8SNNH15uBm34rNch1TKZANzeeiKeV7o+rcxerASJ8Ocy+bgaD1c+8M3KskKIVEcIpleX3/7jaOgD9IPIwnHxNG7G/yog30ZgsQI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716437050; c=relaxed/simple;
+	bh=XTUe5aCnw3K/pMpLtTkLFD0FKOvZqW9DD/Kq3k7RHg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uOoT8n2+AipvRMnT48DkERD3ic07qfjPx6kicaIcGA4IfBrbsSOtaCWC38DaoyTuCKfGNrf7auGVtHOCJVfmqZMgazYiTbbHZLuo81SSPFbXrskc9+KiM66sla9XZ1IWQ3CwL7kRJdPxyBdOM9fo5SXLd9WEb88OOpHhzZKE5oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lyoPPAmX; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-43dfe020675so305831cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:04:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716437048; x=1717041848; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KQ0/oTNt/XNBJvSuQqhte1CxCjwKvN4ey33h/UCL+Tc=;
+        b=lyoPPAmXARvarbo/wZnblGrnuX6dze7u34Cx9DEyFJ+L+ZHvGTB9nbnRra12vmVV2Z
+         3YnDtyYhxJQbLgL+zY4TAARbWzw7Q3JJeEk3izJMhJx8lMrYcWgCsazTbQRA9uU95rYs
+         QO04d0a39G25GqfEniFDxfZN+UBllaQolFhzpgHy8D5ziDVJnbc/hxEZ/zkb4hpt/fp2
+         AAoNRNhSrkW7NFKLirUc6UCyFoGO8joEmsAfM/6hZbvBzVshYAwvxvKSW8ZAi982+bIR
+         tuAKGEOD19gPhM/w2J/jaeOiH7WrefWC6M0wwdjcedtHFUEo4fjbppq33mtI2XmURsjm
+         MVbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716437048; x=1717041848;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KQ0/oTNt/XNBJvSuQqhte1CxCjwKvN4ey33h/UCL+Tc=;
+        b=Ype1zEXNCjkXujPzsl3Ocdo6Oz4NS9JJBep1bDbDz7Q7sQXmOjri8qemyMAgPKLy0M
+         LEjDHPe6Wwg1rKNr9F1CEaX3Zzj+zb/Pp7ODHwZG1YQ/UeFtN0286q1YuH81c9RVS4fu
+         Ln9UySXCP/dIaPrQ3CPt9ImKP2wrDS/CTTFKGAzke2u64A66ET7zk/B9jX5O/KVf0iaD
+         qyAhsEPQjCzDGlbmPCn3dgdH7j5sYkuO6D5AeAZpaiemrO3GrBQ3WlmD5ip6OrKE4U8Z
+         X/SW3mp+Wwfc/HbhDGB5RBMsqduQsjDwFH7IuhC5EtEFLiySvWG15z50OsCNV2MzEDR0
+         4l1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUMQ01uKe3dLo7UqMw64dCJi7n2iKB2Fz4vvGWvc/NCyvEzR5yxvhiZbg9pBS3cOA9RDduSuChciB/zYcxmNhOS4jP9bO7r+MwQQdFZ
+X-Gm-Message-State: AOJu0YyCCjA+OqxYmE8j1hkcOS+ybsWJjHyRJHSWqj6gWvJ1JtEdFMZb
+	jqJS0Fn3AK65vlJfwMqMWX+hTo3rogBQNWa8VV0PbfNnAtY36wng0A0INGl7MdMZaFyO+z+4pbl
+	6Pi15jDGAa1FyM5g4xnTZCSAybbpQB73veC97aveDbjkv2X3KKHKB
+X-Google-Smtp-Source: AGHT+IGqllYxOUfGCyA3rl6J1Jk1N/Z/YMMqp/pujhDjVukawgCJ2WGf2kAu+w1xf1XXebK+gmnt79RYn0wDxMj7N10=
+X-Received: by 2002:a05:622a:418b:b0:43e:3b12:8bb0 with SMTP id
+ d75a77b69052e-43fa80bf918mr875721cf.17.1716437047593; Wed, 22 May 2024
+ 21:04:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BN9PR11MB5276267BB1CC4AA7008AFBFC8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529D:EE_|MN6PR12MB8565:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63814427-f490-4926-0ebb-08dc7add1ca7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|7416005|36860700004|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QVVMdEg2RFMwdzh6Mm4reHZpYTBudXRyamF3L3JrVE42aXpzbU1MdEZxTURj?=
- =?utf-8?B?ZTdVWHF5UEUvd3FvdFFEV3VyMTJRaXVsQWZFbEZab09oc2xRdk1NdlFIUGla?=
- =?utf-8?B?YktocENMUW1aelNrOG5CWVlpa1EzOWlHRjhwYTEyK0xVMTNhbVhuRHFrazRs?=
- =?utf-8?B?T0ZtTVI4dDhBWWgwZkY1dTMxWDRZZHpzMlhENFNQaUZqK1QxZkxJVzRUclZv?=
- =?utf-8?B?WGpTKzZhR2NvMnZRQ0lxUnFjelMrcDFUMjRTK1F0MjF2TW9mQ0NUaTl3N2JY?=
- =?utf-8?B?bGZ4Q3JzVlR3ZEN4elR4ZndYN28xdHYyVjBMSVBNT3pXQjFGb2kwZGM0dlpv?=
- =?utf-8?B?bzhuYTJBSStkWVo5aEhUT01GekcydTB3VS80OGRzZTZzQmFNVzdOKytNUVpR?=
- =?utf-8?B?Q3NzVGVMYm50YjhQYnpRQTJ6WU5GMitDOTEzemZoMG43bVZTNThCck92YXFG?=
- =?utf-8?B?MWFSZHYzZTc4bklaQ25EandkZGZVdWRoaWJvTEhFOUs1dVFWVThNNFZzc3VN?=
- =?utf-8?B?enpQWEtLVGxtOWs4SWc0UDhnVzlVVDQwYk03VmM3cmdlSEtXL0phUGZZZEpa?=
- =?utf-8?B?RkU2QTBBWW1na2dpelhoRitXdXBWU3pkVzRPd0pOUkxHUkMxWUozR0I0UWow?=
- =?utf-8?B?ZENsbmkybGhZMzlrUlZmMkxsMXc1TWRON2x4L25LUkNRWU54ODVNZzhKNktm?=
- =?utf-8?B?VzFZdUJTL09yamNyTngxT1VQK0l3NVhBTmNOM1B3UEhORWVUYmVvWVBib1Fo?=
- =?utf-8?B?WlBvbVdOcUpVWnpaUU9VUnNpcUUrU0VBaEM4aWVsNzVwalgxT0F0Q0FwZ1JP?=
- =?utf-8?B?QnYwRWtEU2FkQk9EYXcxVW1maFNMbVpxazdnWlBCOTZCNGgwaDA0M3pQa3Mw?=
- =?utf-8?B?b0VmZUlSN1pMTVVUYThEc2VoNjBmWmxhNXFMT1ErbTJHVk8vQUppOGdtYXhL?=
- =?utf-8?B?UWFHeXpXZGZaQXVDT1ZKNDRmUnBPZ0R6SlJpcDJCZnB5d1NFcTA2eC9LVVhi?=
- =?utf-8?B?RHAzV3I3TDMvQ0NiYlZ2WDI1SHpVRDIvVjlUQzNrRFo2SlRheDNtS0h2ZjM4?=
- =?utf-8?B?QlNjTmJvcnRhVVlmUEgwdi84a1lWMkVsUXJDUHFDSG5GczF3a0srOXgxaVIy?=
- =?utf-8?B?UjdIaFpBcmp3NUVjRlllQUQrQnVxbVgxTmVMbnVYM1dna3h6KzhsYTBmaFV6?=
- =?utf-8?B?UHVXRUJuZFQzc3pLdnZPcEwvTUdaaW9Ca1NaNVFJQjNZeWhmam5EdHZBblUr?=
- =?utf-8?B?aHVLQ3h4ck0yTVNYNTNiQjIyVWoyNEYxUmd5Wm9xNmtVT1dsMnhpZDNqMndS?=
- =?utf-8?B?NXJlQ2FRaXFwclpTNk5DNWhSRlFnR05tWjA4aDhFRFl1bkxEaGpQeTI2dXpP?=
- =?utf-8?B?RG55cWhzWVFGMUNWLzJpTHUreVY4eFJNOHdhaXlXQmdOUlh5YlJMTThPZHpB?=
- =?utf-8?B?K3ZTcG1xL0ducWc4REJIRHFDNmFOY1ArbExXcHdGL1lzWERvdFpqUEg0cGNX?=
- =?utf-8?B?eWhoZzBTRE9sUklGd0VweEZQOTdRV2QyM29DWkdKNCtEWGVTalAyZXFiekNn?=
- =?utf-8?B?c3ZOSW5BRGR2ZmdxYk5scjBaalZLZ0lYOUZ1TFhNYzVRQ0Q4QjFFemVnZ3p4?=
- =?utf-8?B?RS9DSjZBK1ZwNXZDd2JnaFgrZXdrVGdzcXcvclgyRjBMUThualBPV0lMUGJ6?=
- =?utf-8?B?MjhlSTFjbzdvRW01U1Bxck5KaVlubG1qekwwcnlQT0FjR0V5QzJ6VjZ4eFY0?=
- =?utf-8?B?Q3kwNG9TeC9vY3BYM1ExOTFaTG1NYVVETXppZVpjMW5hWitGanJsNVpHVkFM?=
- =?utf-8?B?YjRNaXJLRHJoSjJsWlhTYTRYeng5aFdzYkd0Um1KZ2lvTDJhNGNReU9ZUEk3?=
- =?utf-8?Q?u55rsrloGZK5e?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 04:02:06.4651
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63814427-f490-4926-0ebb-08dc7add1ca7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529D.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8565
+References: <20240521173952.3397644-1-weilin.wang@intel.com>
+In-Reply-To: <20240521173952.3397644-1-weilin.wang@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 22 May 2024 21:03:56 -0700
+Message-ID: <CAP-5=fU2-9WFZAewj_B7phusZyarA3xrenGVz6PMwy5B+B=RPg@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 0/7] TPEBS counting mode support
+To: weilin.wang@intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
+	Caleb Biggers <caleb.biggers@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 01:43:45AM +0000, Tian, Kevin wrote:
-> > From: Jason Gunthorpe <jgg@nvidia.com>
-> > Sent: Wednesday, May 22, 2024 9:39 PM
-> > VIOMMU contains:
-> >  - A nesting parent
-> >  - A KVM
-> >  - Any global per-VM data the driver needs
-> >    * In ARM case this is VMID, sometimes shared with KVM
-> 
-> In which case is it not shared with KVM? I had the impression that
-> VMID always comes from KVM in this VCMDQ usage. 😊
+On Tue, May 21, 2024 at 10:39=E2=80=AFAM <weilin.wang@intel.com> wrote:
+>
+> From: Weilin Wang <weilin.wang@intel.com>
+>
+> Changes in v9:
+> - Update the retire_latency result print and metric calculation method. P=
+lugin
+> the value to evsel so that no special code is required.
+> - Update --control:fifo to use pipe instead of named pipe.
+> - Add test for TPEBS counting mode.
+> - Update Document with more details.
+>
+> Changes in v8:
+> - In this revision, the code is updated to base on Ian's patch on R modif=
+ier
+> parser https://lore.kernel.org/lkml/20240428053616.1125891-3-irogers@goog=
+le.com/
 
-Not actually. I guess that shared VMID is for BTM.
+I pulled the first patch of these 3, to clean up the tool events into
+its own patch and hopefully addressed Namhyung's feedback:
+https://lore.kernel.org/lkml/20240503232849.17752-1-irogers@google.com/
+It is looking for review.
 
-> > On ARM the S2 is not divorced from the VIOMMU, ARM requires a single
-> > VMID, shared with KVM, and localized to a single VM for some of the
-> > bypass features (vBTM, vCMDQ). So to attach a S2 you actually have to
-> > attach the VIOMMU to pick up the correct VMID.
-> >
-> > I imagine something like this:
-> >    hwpt_alloc(deva, nesting_parent=true) = shared_s2
-> >    viommu_alloc(deva, shared_s2) = viommu1
-> >    viommu_alloc(devb, shared_s2) = viommu2
-> >    hwpt_alloc(deva, viommu1, vste) = deva_vste
-> >    hwpt_alloc(devb, viommu2, vste) = devb_vste
-> >    attach(deva, deva_vste)
-> >    attach(devb, devb_vste)
-> >    attach(devc, shared_s2)
-> 
-> I wonder whether we want to make viommu as the 1st-class citizen
-> for any nested hwpt if it is desirable to enable it even for VT-d which
-> lacks of a hw viommu concept at the moment.
+I think in general it'd be useful when posting the series to include
+the patches it is dependent on, that way we can also make changes to
+those patches (for example the missed perf-list documentation of the
+'R' modifier).
 
-I think Jason is completely using SMMU as an example here.
+Thanks,
+Ian
 
-Also FWIW, I am trying a core-allocated core-managed viommu for
-IOMMU_VIOMMU_TYPE_DEFAULT. So VT-d driver doesn't need to hold
-a viommu while VMM could still allocate one if it wants. And the
-VIOMMU interface can provide some helpers if driver wants some
-info from the core-managed viommu: a virtual dev ID to physical
-dev ID (returning device pointer) translation for example. And
-we can add more after we brain storm.
 
-Sample change:
-@@ -623,6 +625,18 @@ struct iommu_ops {
-+ * @viommu_alloc: Allocate an iommufd_viommu associating to a nested parent
-+ *                @domain as a user space IOMMU instance for HW-accelerated
-+ *                features from the physical IOMMU behind the @dev. The
-+ *                @viommu_type must be defined in include/uapi/linux/iommufd.h
-+ *                It is suggested to call iommufd_viommu_alloc() helper for
-+ *                a bundled allocation of the core and the driver structures,
-+ *                using the given @ictx pointer.
-+ * @default_viommu_ops: Driver can choose to use a default core-allocated core-
-+ *                      managed viommu object by providing a default viommu ops.
-+ *                      Otherwise, i.e. for a driver-managed viommu, viommu_ops
-+ *                      should be passed in via iommufd_viommu_alloc() helper in
-+ *                      its own viommu_alloc op.
 
-[..]
-
-+int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
-+{
- ...
-+       if (cmd->type == IOMMU_VIOMMU_TYPE_DEFAULT) {
-+               viommu = __iommufd_viommu_alloc(
-+                               ucmd->ictx, sizeof(*viommu),
-+                               domain->ops->default_viommu_ops);
-+       } else {
-+               if (!domain->ops->viommu_alloc) {
-+                       rc = -EOPNOTSUPP;
-+                       goto out_put_hwpt;
-+               }
-+
-+               viommu = domain->ops->viommu_alloc(domain, idev->dev,
-+                                                  ucmd->ictx, cmd->type);
-+       }
-
-[..]
-// Helper:
-+struct device *
-+iommufd_viommu_find_device(struct iommufd_viommu *viommu, u64 id);
-
-> > The driver will then know it should program three different VMIDs for
-> > the same S2 page table, which matches the ARM expectation for
-> > VMID. That is to say we'd pass in the viommu as the pt_id for the
-> > iommu_hwpt_alloc. The viommu would imply both the S2 page table and
-> > any meta information like VMID the driver needs.
-> 
-> Can you elaborate the aspect about "three different VMIDs"? They are
-> all for the same VM hence sharing the same VMID per the earlier
-> description. This is also echo-ed in patch14:
-> 
-> tegra241_cmdqv_viommu_alloc()
->         vintf->vmid = smmu_domain->vmid;
-
-The design in the series is still old using a 1:1 relationship
-between a viommu and an S2 domain. I think the "three" is from
-his SMMU example above? Leaving it to Jason to reply though.
-
-> > now. If someone needs them linked someday we can add a viommu_id to
-> > the create pri queue command.
-> 
-> I'm more worried about the potential conflict between the vqueue
-> object here and the fault queue object in Baolu's series, if we want
-> to introduce vIOMMU concept to platforms which lack of the hw
-> support.
-
-I actually see one argument is whether we should use a vqueue
-v.s. Baolu's fault queue object, and a counter argument whether
-we should also use vqueue for viommu invalidation v.s an array-
-based invalidation request that we have similarly for HWPT...
-
-Thanks
-Nicolin
+> After this change, there is no special code required for R modifier in
+> metricgroup.c and metricgroup.h files.
+>
+> Caveat of this change:
+>   Ideally, we will need to add special handling to skip counting events w=
+ith R
+> modifier in evsel. Currently, this is not implemented so the event with :=
+R will
+> be both counted and sampled. Usually, in a metric formula that uses retir=
+e_latency,
+> it would already require to count the event. As a result, we will endup c=
+ount the
+> same event twice. This should be able to be handled properly when we fina=
+lize our
+> design on evsel R modifier support.
+>
+> - Move TPEBS specific code out from main perf stat code to separate files=
+ in
+> util/intel-tpebs.c and util/intel-tpebs.h. [Namhyung]
+> - Use --control:fifo to ack perf stat from forked perf record instead of =
+sleep(2) [Namhyung]
+> - Add introductions about TPEBS and R modifier in Documents. [Namhyung]
+>
+>
+> Changes in v7:
+> - Update code and comments for better code quality [Namhyung]
+> - Add a separate commit for perf data [Namhyung]
+> - Update retire latency print function to improve alignment [Namhyung]
+>
+> Changes in v6:
+> - Update code and add comments for better code quality [Namhyung]
+> - Remove the added fd var and directly pass the opened fd to data.file.fd=
+ [Namhyung]
+> - Add kill() to stop perf record when perf stat exists early [Namhyung]
+> - Add command opt check to ensure only start perf record when -a/-C given=
+ [Namhyung]
+> - Squash commits [Namhyung]
+>
+> Changes in v5:
+> - Update code and add comments for better code quality [Ian]
+>
+> Changes in v4:
+> - Remove uncessary debug print and update code and comments for better
+> readability and quality [Namhyung]
+> - Update mtl metric json file with consistent TmaL1 and TopdownL1 metricg=
+roup
+>
+> Changes in v3:
+> - Remove ':' when event name has '@' [Ian]
+> - Use 'R' as the modifier instead of "retire_latency" [Ian]
+>
+> Changes in v2:
+> - Add MTL metric file
+> - Add more descriptions and example to the patch [Arnaldo]
+>
+> Here is an example of running perf stat to collect a metric that uses
+> retire_latency value of event MEM_INST_RETIRED.STLB_HIT_STORES on a MTL s=
+ystem.
+>
+> In this simple example, there is no MEM_INST_RETIRED.STLB_HIT_STORES samp=
+le.
+> Therefore, the MEM_INST_RETIRED.STLB_HIT_STORES:p count and retire_latenc=
+y value
+> are all 0.
+>
+> ./perf stat -M tma_dtlb_store -a -- sleep 1
+>
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.000 MB - ]
+>
+>  Performance counter stats for 'system wide':
+>
+>        181,047,168      cpu_core/TOPDOWN.SLOTS/          #      0.6 %  tm=
+a_dtlb_store
+>          3,195,608      cpu_core/topdown-retiring/
+>         40,156,649      cpu_core/topdown-mem-bound/
+>          3,550,925      cpu_core/topdown-bad-spec/
+>        117,571,818      cpu_core/topdown-fe-bound/
+>         57,118,087      cpu_core/topdown-be-bound/
+>             69,179      cpu_core/EXE_ACTIVITY.BOUND_ON_STORES/
+>              4,582      cpu_core/MEM_INST_RETIRED.STLB_HIT_STORES/
+>         30,183,104      cpu_core/CPU_CLK_UNHALTED.DISTRIBUTED/
+>         30,556,790      cpu_core/CPU_CLK_UNHALTED.THREAD/
+>            168,486      cpu_core/DTLB_STORE_MISSES.WALK_ACTIVE/
+>               0.00 MEM_INST_RETIRED.STLB_HIT_STORES:p       0        0
+>
+>        1.003105924 seconds time elapsed
+>
+> v1:
+> TPEBS is one of the features provided by the next generation of Intel PMU=
+.
+> Please refer to Section 8.4.1 of "Intel=C2=AE Architecture Instruction Se=
+t Extensions
+> Programming Reference" [1] for more details about this feature.
+>
+> This set of patches supports TPEBS in counting mode. The code works in th=
+e
+> following way: it forks a perf record process from perf stat when retire_=
+latency
+> of one or more events are used in a metric formula. Perf stat would send =
+a
+> SIGTERM signal to perf record before it needs the retire latency value fo=
+r
+> metric calculation. Perf stat will then process sample data to extract th=
+e
+> retire latency data for metric calculations. Currently, the code uses the
+> arithmetic average of retire latency values.
+>
+> [1] https://www.intel.com/content/www/us/en/content-details/812218/intel-=
+architecture-instruction-set-extensions-programming-reference.html?wapkw=3D=
+future%20features
+>
+>
+> Weilin Wang (7):
+>   perf vendor events intel: Add MTL metric json files
+>   perf data: Allow to use given fd in data->file.fd
+>   perf stat: Fork and launch perf record when perf stat needs to get
+>     retire latency value for a metric.
+>   perf stat: Plugin retire_lat value from sampled data to evsel
+>   perf stat: Add command line option for enabling tpebs recording
+>   perf Document: Add TPEBS to Documents
+>   perf test: Add test for Intel TPEBS counting mode
+>
+>  tools/perf/Documentation/perf-list.txt        |    1 +
+>  tools/perf/Documentation/topdown.txt          |   30 +
+>  tools/perf/arch/x86/util/evlist.c             |    6 +
+>  tools/perf/builtin-stat.c                     |   24 +
+>  .../arch/x86/meteorlake/metricgroups.json     |  127 +
+>  .../arch/x86/meteorlake/mtl-metrics.json      | 2551 +++++++++++++++++
+>  .../perf/tests/shell/test_stat_intel_tpebs.sh |   27 +
+>  tools/perf/util/Build                         |    1 +
+>  tools/perf/util/data.c                        |    7 +-
+>  tools/perf/util/evsel.c                       |   53 +
+>  tools/perf/util/evsel.h                       |    5 +
+>  tools/perf/util/intel-tpebs.c                 |  301 ++
+>  tools/perf/util/intel-tpebs.h                 |   30 +
+>  tools/perf/util/stat.h                        |    1 +
+>  14 files changed, 3163 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/metricgroup=
+s.json
+>  create mode 100644 tools/perf/pmu-events/arch/x86/meteorlake/mtl-metrics=
+json
+>  create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
+>  create mode 100644 tools/perf/util/intel-tpebs.c
+>  create mode 100644 tools/perf/util/intel-tpebs.h
+>
+> --
+> 2.43.0
+>
 
