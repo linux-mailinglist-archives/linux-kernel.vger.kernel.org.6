@@ -1,62 +1,39 @@
-Return-Path: <linux-kernel+bounces-187294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE29D8CCFB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:55:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0BB8CCFBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:57:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B572837FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:55:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBEE1C2234A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A60113D618;
-	Thu, 23 May 2024 09:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="j1WGJSfz"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C12A929;
-	Thu, 23 May 2024 09:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4F013DDB8;
+	Thu, 23 May 2024 09:57:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795C013D521;
+	Thu, 23 May 2024 09:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716458099; cv=none; b=FzW3gWs8CtbHUU6flDh9Ag71+uWK+uERgILZ2+Eb2bZoR+X9/osl5goauUsuQSwu9s+rLhFxMMwwu29h40DYWgHsaAssuNEqA2/isTbkuxRWUNyOZDlYNcjQefS0KaeEURNunitwJSyS51kzD7TExrqgg12mUlRmars0LvSthNM=
+	t=1716458265; cv=none; b=d5/RhHGwJXZxl9396qqnNQDwtyY0Aj1xqmMOzNtoj5OhaIgHCu6A9GNiIlg6Kb6FLZTXChmCwir+Nb2dDULzNJDdd/gu8MmGpIlLVQ8D3AJkH8RF3KeA949f8D4Nklw/8cweFLftRZLNt3MAVoLBI7nwW9s+IFjBg+xjmibmdqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716458099; c=relaxed/simple;
-	bh=jRwumRBtxAKuVqRoLekvSCRPcpJJN2Bo6lT9gsNUCvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L81U24rPC2mvpjsGiOiTYp0w2tIo3R5m7vyA7+wMTKc9S1GdRSGtRpIKZPUis22J7jwe288NpBHl17n/pXWRIIlf41+8u7XD/jwlBIR1ZajxDkQqBvtzeFQSiaeYXZe+PqpzZ6s7idrW8RM7JFzXDOk6ArOuTZKS9yOTm/9XVhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=j1WGJSfz; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44N9smVT075328;
-	Thu, 23 May 2024 04:54:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716458088;
-	bh=jx13z+9Ch6ZmYMVuWybOQTRsnPzK7wjSAS29/oe3F/E=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=j1WGJSfzHe1hyvnLmIZHLROVofnHnqM7unyhWL4X/FWPP4LKHUwYsyVpl/n0xi70s
-	 wJIspzwwT/A4RT92EZzwpBEWIsTW+fC+vKvZ1h5KTzXor6Ev9M+IGgvW39Ob3x1ARi
-	 281Lydkqrmw2ERAtWAuGou4tp399v1vpgxxNyh/0=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44N9sml8009293
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 23 May 2024 04:54:48 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 23
- May 2024 04:54:48 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 23 May 2024 04:54:48 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44N9siRN090840;
-	Thu, 23 May 2024 04:54:45 -0500
-Message-ID: <24d0579a-1c8d-42ea-afa5-dcd0ab3fa193@ti.com>
-Date: Thu, 23 May 2024 15:24:43 +0530
+	s=arc-20240116; t=1716458265; c=relaxed/simple;
+	bh=pJ+B3e29HJAbTyYyZa4HUjzMSv5Rh0HroDPaliFp3ZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oKupF983S0+z5AWBCG6IDUtsR13Xt5XPGov8KcscIEA3AfkXqi7D1Nym12QNnUaFCf6UtJTMveLbarBX+DTusJ4edChX65UL1zI/PR2XHFs9QN8JZKZjV2atyc4XE0L6uyZliznM8FLFvmKNH3yzMTz5KgUpCOBJc2L9wxS5h6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A3C82F4;
+	Thu, 23 May 2024 02:58:06 -0700 (PDT)
+Received: from [10.1.30.34] (e122027.cambridge.arm.com [10.1.30.34])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF8003F766;
+	Thu, 23 May 2024 02:57:39 -0700 (PDT)
+Message-ID: <c329ae18-2b61-4851-8d6a-9e691a2007c8@arm.com>
+Date: Thu, 23 May 2024 10:57:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,52 +41,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-j722s-evm: Mark eMMC as non removable
-To: Bhavya Kapoor <b-kapoor@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
-        <jm@ti.com>, <nm@ti.com>
-References: <20240522083631.1015198-1-b-kapoor@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20240522083631.1015198-1-b-kapoor@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 12/14] arm64: realm: Support nonsecure ITS emulation
+ shared
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Marc Zyngier
+ <maz@kernel.org>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-13-steven.price@arm.com> <ZkSV7Z8QFQYLETzD@arm.com>
+ <74011ac1-34e0-4ee3-a00d-f78ad334fce2@arm.com> <Zk4l2xFBDW_3ImFD@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <Zk4l2xFBDW_3ImFD@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-
-
-On 22/05/24 14:06, Bhavya Kapoor wrote:
-> Mark the eMMC module on J722S as non removable since it
-> is always present on the evm.
-
-Nit s/evm/EVM
-
+On 22/05/2024 18:05, Catalin Marinas wrote:
+> On Wed, May 22, 2024 at 04:52:45PM +0100, Steven Price wrote:
+>> On 15/05/2024 12:01, Catalin Marinas wrote:
+>>> On Fri, Apr 12, 2024 at 09:42:11AM +0100, Steven Price wrote:
+>>>> @@ -3432,7 +3468,16 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
+>>>>  	nr_ites = max(2, nvecs);
+>>>>  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
+>>>>  	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
+>>>> -	itt = kzalloc_node(sz, GFP_KERNEL, its->numa_node);
+>>>> +	itt_order = get_order(sz);
+>>>> +	page = its_alloc_shared_pages_node(its->numa_node,
+>>>> +					   GFP_KERNEL | __GFP_ZERO,
+>>>> +					   itt_order);
+>>>
+>>> How much do we waste by going for a full page always if this is going to
+>>> be used on the host?
+>>
+>> sz is a minimum of ITS_ITT_ALIGN*2-1 - which is 511 bytes. So
+>> potentially PAGE_SIZE-512 bytes could be wasted here (minus kmalloc
+>> overhead).
 > 
-> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
-> ---
-
-This needs a Fixes tag?
-
->  arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 1 +
->  1 file changed, 1 insertion(+)
+> That I figured out as well but how many times is this path called with a
+> size smaller than a page?
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> index bf3c246d13d1..fe810e32cb7a 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-> @@ -369,6 +369,7 @@ partition@3fc0000 {
->  &sdhci0 {
->  	disable-wp;
->  	bootph-all;
-> +	non-removable;
->  	ti,driver-strength-ohm = <50>;
->  	status = "okay";
->  };
 
+That presumably depends on the number of devices in the guest. For my
+test guest setup (using kvmtool) this is called 3 times each with sz=511.
 
--- 
-Regards
-Vignesh
+Steve
+
 
