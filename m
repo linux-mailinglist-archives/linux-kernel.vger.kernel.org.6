@@ -1,89 +1,115 @@
-Return-Path: <linux-kernel+bounces-187399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCD88CD13F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E0B8CD142
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1851F21B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 579081F21F43
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411C41487C9;
-	Thu, 23 May 2024 11:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325A91487CF;
+	Thu, 23 May 2024 11:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KpeF3hQU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="taQOIum8"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7897D13D293;
-	Thu, 23 May 2024 11:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8DCBA2F;
+	Thu, 23 May 2024 11:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716463895; cv=none; b=YOD36iIUHjtmilhhwoOQEOk3t7qIx0kSul7LUcotILDAO6a4lkUAh95Xb1gNRpVxQWSIRw/7Gkfu9WnyTl/v02T4AcVYYChrPSWOXTtOOWR7V63I4JaK7BTMS9LjbzJp/kDh5s7kjmHLXwd1omW09/xxCoQkgeG+bv1aExreObA=
+	t=1716463971; cv=none; b=aa0c2N2Lv401BVUUn1BQlDipTu8cR+udo43y2kst6LDZzkFkpSrdQzfREe/slCisamF7mravx+2K8deZ0Bl8Q2kG26Z0HMFDQfdpoiFxLGOJtxLyNPjSYkJpqaromzOxw7Hu9lUjjErfDQD1jQYp+2ggKHU1ejh5D1m+Q1DoM+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716463895; c=relaxed/simple;
-	bh=TdT3Z/oqpZMtGUX0UvJK5EHjrgJ+sgTczuon/rWERhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmeLKx2Se4rQ1gnlmEYBceOC3GO1oLScxdD+trZ12z4tbPen7iDrO5pBCkv0YVc5fxQN6Pb/CyQyc8Qa0t7/DOypAv/LTpxYfhh1Vn/BflDK9cxC6RaStaBUlo7bVRk3HktckFU7Ky1EwdhTIyJkaRTols0xGJcvNl++9Cs3O8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KpeF3hQU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90586C2BD10;
-	Thu, 23 May 2024 11:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716463894;
-	bh=TdT3Z/oqpZMtGUX0UvJK5EHjrgJ+sgTczuon/rWERhw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KpeF3hQUzv+3UWwu+hrFkDpJEazX5xxsXqpzXSFJ6JVwSf8OBzjHP7vt+swefQRkK
-	 b5gLwbBEz0G6EfN7suYujD8I5uwZA/3wpTTnlWSufhnhfcIlv3gVBuLhhalcrJjs4p
-	 K4Fp3K5tnEsD5TlXMd1pkle8OHoGf6kblxJ4Cjqo=
-Date: Thu, 23 May 2024 13:31:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Doug Berger <opendmb@gmail.com>
-Cc: stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH stable 5.4 0/3] net: bcmgenet: protect contended accesses
-Message-ID: <2024052326-popcorn-chloride-b06c@gregkh>
-References: <20240516230151.1031190-1-opendmb@gmail.com>
+	s=arc-20240116; t=1716463971; c=relaxed/simple;
+	bh=P8iZRYjzf5V/CwUg/tRStLzmlTzFHauJjmXv3MkDoCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BeoXKKE8JcvqlYHHhZF/u81cIH6Q3uEY6PWyJtq6GEARHIYu4t7XdawaLgFcvVZBTMsPefIFbOUGqwiF3mKDvZxlejRXWUeIJ8UNkK+ozgpW3MxyeF6QpPB0I9BW/aYUqZdX0DCccXXZ8Mjsnkl1SOKqYvGr7qEH8Ob1Zv6qDKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=taQOIum8; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716463967;
+	bh=P8iZRYjzf5V/CwUg/tRStLzmlTzFHauJjmXv3MkDoCs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=taQOIum8Twjkoi5IyV7Vq6dIRtnTd0nMeQutsIHIpCrhgEovTWViWuRgANmci3jCB
+	 PEwcy/7mdF08aneb6cv2asq1wSUWj1sPFbpVzyBv2dz1II6dk+BOkoTQoKHE5E9qlN
+	 CVVY0K/22QLDrWIDOgd7cusZ82eq3ibKrWtkErq1XH6+EhfieMIZpy8KL1qCErajy2
+	 R+gGSM160e6U3pqG+rqWTc7uxM5+kz4iBozc9Qp0KAZjj0uHihJdOSmO80farKXArM
+	 nlQc1cjSdZfaXS4ZCqWFz19SkM7WWuc4Ek1RKJZ5PZExYe/A3+NwWt3bu9xvcqjR0n
+	 wG2ToueKf7JpA==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: alarumbe)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1925537821B8;
+	Thu, 23 May 2024 11:32:47 +0000 (UTC)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Zack Rusin <zack.rusin@broadcom.com>
+Cc: kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org
+Subject: [PATCH v4 0/3] drm: Fix dma_resv deadlock at drm object pin time
+Date: Thu, 23 May 2024 12:32:16 +0100
+Message-ID: <20240523113236.432585-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240516230151.1031190-1-opendmb@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 16, 2024 at 04:01:48PM -0700, Doug Berger wrote:
-> Some registers may be modified by parallel execution contexts and
-> require protections to prevent corruption.
-> 
-> A review of the driver revealed the need for these additional
-> protections.
-> 
-> Doug Berger (3):
->   net: bcmgenet: synchronize EXT_RGMII_OOB_CTRL access
->   net: bcmgenet: synchronize use of bcmgenet_set_rx_mode()
->   net: bcmgenet: synchronize UMAC_CMD access
-> 
->  drivers/net/ethernet/broadcom/genet/bcmgenet.c     | 14 +++++++++++++-
->  drivers/net/ethernet/broadcom/genet/bcmgenet.h     |  2 ++
->  drivers/net/ethernet/broadcom/genet/bcmgenet_wol.c |  6 ++++++
->  drivers/net/ethernet/broadcom/genet/bcmmii.c       |  4 ++++
->  4 files changed, 25 insertions(+), 1 deletion(-)
-> 
-> -- 
-> These commits are dependent on the previously submitted:
-> [PATCH stable 5.4 0/2] net: bcmgenet: revisit MAC reset
-> 
-> 2.34.1
-> 
-> 
+This is v4 of https://lore.kernel.org/lkml/20240521181817.097af5e1@collabora.com/T/
 
-All now queued up, thanks.
+The goal of this patch series is fixing a deadlock upon locking the dma reservation
+of a DRM gem object when pinning it, at a prime import operation.
 
-greg k-h
+Changelog:
+v3:
+ - Split driver fixes into separate commits for Panfrost and Lima
+ - Make drivers call drm_gem_shmem_pin_locked instead of drm_gem_shmem_object_pin
+ - Improved commit message for first patch to explain why dma resv locking in the 
+ pin callback is no longer necessary.
+v2:
+ - Removed comment explaining reason why an already-locked
+pin function replaced the locked variant inside Panfrost's
+object pin callback.
+ - Moved already-assigned attachment warning into generic
+already-locked gem object pin function
+
+
+Adrián Larumbe (3):
+  drm/panfrost: Fix dma_resv deadlock at drm object pin time
+  drm/lima: Fix dma_resv deadlock at drm object pin time
+  drm/gem-shmem: Add import attachment warning to locked pin function
+
+ drivers/gpu/drm/drm_gem_shmem_helper.c  | 2 ++
+ drivers/gpu/drm/lima/lima_gem.c         | 2 +-
+ drivers/gpu/drm/panfrost/panfrost_gem.c | 2 +-
+ 3 files changed, 4 insertions(+), 2 deletions(-)
+
+
+base-commit: 7acacca1b157fcb258cfd781603425f73bc7370b
+-- 
+2.45.1
+
 
