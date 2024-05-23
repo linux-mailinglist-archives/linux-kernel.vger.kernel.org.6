@@ -1,92 +1,135 @@
-Return-Path: <linux-kernel+bounces-187861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD2A8CD9B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:09:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA9A8CD9B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 076AE1C2178E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:09:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3FA3B224D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB72081AD1;
-	Thu, 23 May 2024 18:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F98E8287D;
+	Thu, 23 May 2024 18:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="C6Kk+Cae"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2X/9CXkz"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F83537FF;
-	Thu, 23 May 2024 18:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6DC6E2BE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716487780; cv=none; b=kPXkSx5IpUJxvcaTtKd6orbH+15mxoORsKs11KNye3l+VCq3gl1bYGliteR7nLAYBCayxkmaq5R8SUierMmY03bOKbpjz5T0MB7kgCodneYDzDUmakqxV4tKNkBvtj4W2nAecSC1InxkGWT9sye3ABunsB3lYb/SDlM/1Sq+SRU=
+	t=1716488003; cv=none; b=WqylUgZN4wsvf/SLgs6FvoOmTnQZ7tE3Gvh0mImS8Cpddp4LYNP18J5sgBgbxPbDjkYf98AW21Cg1qI5s63y0SSrMF7W3oOu1Axh8pWVna7aI/KGRdSjjxMLCioCn6QwA/FjXcNu4lYBTRm57O39E6ilsY7Xo+eBtdgulXv7ZIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716487780; c=relaxed/simple;
-	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=e7Rs2tqp/JNZkoKHYHoruYbhahxd3TzSAgNmx+wA+NXq7VTopBl/CXoHqhXfMc+lXRUHZaHiSPrLs3997z5YvtVfhN5V6wxG4mHdch68fovCoJuwySZTSHTx3i1JA8xKlFobjGdp2LmLyI2YzvqS+JWkXt5FkOAlLFX/+7GTh2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=C6Kk+Cae; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1716487774; x=1717092574; i=rwarsow@gmx.de;
-	bh=dmMdDLN3YgL1qMEqV22WwccWKGPvTDnUyQtKaq9KA84=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=C6Kk+CaeEBsuPdbBVphWzEK2gkhafDFLcElTB3KBlrf4Fw7f/DoOIafChC50WeLc
-	 8iE19Amcytyqpa6+f5BPQZdeTYiXC1k6OwML/CCM4T3yaKpG9o1JY/e8wZf/Lpr2j
-	 1bOQKkNJxoWyXEw+k1aNAIVmgkE//QNVvR0MqWzdh+OFwEjHAIhVht9Ad80EKbnUw
-	 I0qPvtL3wZPWV7/M8nBZMRHUO00rnFUHRz8y1bdiY22HlvW0gMISdmztwl6B5j5iC
-	 QwVNWttrZcfMYTfu8VCrNxZrShGNo8nxeZtmfVJs/cLEG+YJWRNvbnFKNhYluZabg
-	 6twEa12QYArK8HAwNw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([92.116.253.15]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M9FnZ-1sCh332Y6h-007VFp; Thu, 23
- May 2024 20:09:34 +0200
-Message-ID: <c7b3528d-d09a-4ea6-a587-c2e2f7fb222c@gmx.de>
-Date: Thu, 23 May 2024 20:09:34 +0200
+	s=arc-20240116; t=1716488003; c=relaxed/simple;
+	bh=zsnTKCdVkvI0k+jxRH2TuSi7PFifNDtiAicq3/1spJA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=grn8uc7HmWb7nxZ3be/Bd3UGXX5pgA40zAJ9iCmf1dCIxbr8HWVWKNtEQ1UUGEngCDGTb6jIBy+auWD/DtGM+Q09scxH4fMfm1LJUiB/hLThbZopBq9pnmvI75ToUMyUZvNhEbw7EbfyDCUgwpwt4MlFGHAimZlZ/dbU43DU8QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2X/9CXkz; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5724736770cso1237a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716488000; x=1717092800; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TmV9pjx2Z/cgyKoVK6PJ6k9Fa04AQ2nQf51yC2c36Uc=;
+        b=2X/9CXkzUa2XXZf7Pc6ONJBU1W/rvJ4wSpgHYq2AexrqD9KxQIdkteHQRvbnQ7Nu6i
+         7whqhSAEFey88amyy43L2nGMCCb0zl7EGVf/rhm5gJDBD/dh3BYxadgIe1Aqizu+n8eR
+         tNloqYgm7JQBR/3xPhVDvsIBPrEGgxdT5WXve8uf7mnGdFHCBRwPRG/xj1LdXVzGqImg
+         Nl9fVZJgYUt/kPF/b0R2I6DAMQh6feIwKOe08Y/wIoAnTySIUhOn9JwpKy5kHDhkEahl
+         WEgwfKhhrey4SacY6KSCQ+5jzUB+5lhy68+PkmDMEC/aFnI9Cp8ad69dRLJxTH6ybTeo
+         3r4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716488000; x=1717092800;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TmV9pjx2Z/cgyKoVK6PJ6k9Fa04AQ2nQf51yC2c36Uc=;
+        b=Lji0uQVc0432+VNY2yJ2DW/mxS44hcuIjpc2DYHaO4Co9sY3LXVpOPMUBruK79VTtY
+         sm4Gvs5A3HD5x/G4byExN9oQNOLINu2aPXJ3IQQzDthdxyhy9vvNHfJ9jUCrPG6aY4xS
+         wPXnAceua9XTVTbS2VusUPBFd1aag9QuOlnmSRbMtJiRlnx6Br6mrxukN0d0GzyIlpyG
+         Cz0BK1NP4Q7yHIeYDMKwKVx262IFrp4VlgJ4gPbH2cNfSvOGjX1W+LtBBN6xm6YemIxD
+         6b33VLKymgn/BwR4nMdwl11yDLCFmx+emNWziLAsVHbSM9dcIpkx/73fm+9Krzchl45O
+         Xocw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ6x8BphH2eGN7WSyk5csLvIN+2HEP221fDo7ZI+smX9bWJLDhfVvKUOz9v5pTYN7Goh5p+fbO4s+65WbG/0woZTIlODy0cXaR8AbR
+X-Gm-Message-State: AOJu0Yx6wlY48EQYlDvCHxTxXSFtCNNLea1C/zDn3fYDeX3MVP/ueem4
+	jW0jVMjGDRiXoI9BgeLZLnJtm977O0KRmFfJHTA3GQlHGCAc3kL2qmvK+r6WFYNXNFlCHdeRSyq
+	yx+36wcoTjyn82cOWobcvdRIMqeIoQL9MTa40
+X-Google-Smtp-Source: AGHT+IH4XyN34wwdQO+LD1omzn19g4Z0hsO4LF5HJg6/COqxImkywXTVpGaksCMO62vMlBB+i2WN/mYDnRwwA5mbJXU=
+X-Received: by 2002:aa7:c941:0:b0:578:33c0:f00e with SMTP id
+ 4fb4d7f45d1cf-578510d677dmr19276a12.0.1716487999947; Thu, 23 May 2024
+ 11:13:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.9 00/25] 6.9.2-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:CLqZJRPSCjZX+KKyoz+mtIm0pLRGGCgz8GGuzj6yvQbB4cpfr5Y
- S7io3dwHpOZW8K9m/R1KLTv8EIIKHztRfqJlVwpUhR3FWGmcKXQFYmjOj6fmw8oNrSwLzpp
- jtsoKzhaxgciWS6WHjW9wJv3KhAKo5IuygO+Vx4K/TxaAg+rLWNPl4BjWpc2fFUNZ2qSwSu
- MoHDoGo0JjcbfXw5c9nSA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JOJtwedHdjY=;qAwhznuwt9PiJLlqJy3AuGTTy8l
- S+/pCuZMkJIR37IcEqubcwH+KZhkNF5Z+cOCoqJixb1CxK5c3WRogLxlFP+ql8rvdEFcNIEYV
- sQOIqEZ2hPI5YVyC5LchG6iTzPmQeUUN+29x/ew7jcP0a5w3fTG0fAU2Io5moMO7wlpMdXz7K
- EboYGKJT2DVmsjYw0qg2bEFMPOPvLWG1IGp0R5Jh1971UgTyxCi98VrTu6TedXqphkJIsaPut
- a5Hve2PCLfFT0YiLLUitpz6Ukk6A/YC7p8pM4WEpxq8147lgLQhesiZZWWtfdCbWY1U1YxT6f
- 2mwO3fyR618W8YlOj4nNmWNRL1a40CtUFgOUStSYUQLB3ysAGx72etniijsFe8pRe4YK6A0Pl
- bRHQqZDXw9ORoyUTHvMZRxTSheOuILk4EXJhJPxjOl1sf9+912nxSjUoi64cEEgKtIOqdU0Bx
- ZOAPXPI1Lpa1mCKVKji5rfbQ3r0sD3SCuT1AB9vIps6+1YSwTRcJDcum0TffFxOz2k6v43AfV
- HmUoS4xSN6VjsNDHGseShkM7rQYYi3/Lc1lOThasOxwrAqkXGGEyDYoc0gLzoArPzMyW6c80D
- 5K/Lcpo0Qz+w5AhGJ9d8eI/88nE8MQNoE6sXDXExtzwth1Md169Oh8J9V/plAk4jp8wpajXHh
- CsIVt8ebwHzVRf6PLsSn9xHbCrw6ZNnRQinF9iCuyzR161aJ71hqUkfeu5u66T02PPZsBuYRW
- MIn7fRn7wWLWiuXJ4I6sRwPSmNFBwW52DobmweNNM4XKossLXojZZ+BRxDALLIjJh3uxTO7CW
- ckv10VLVbJ+Gi5ywiRTJn5D9PyVrjp0dNZzGvBFvScz7g=
+References: <20240522005913.3540131-1-edliaw@google.com> <20240522005913.3540131-3-edliaw@google.com>
+ <94b73291-5b8a-480d-942d-cfc72971c2f5@sirena.org.uk> <CAG4es9WAASaSG+Xgp31-kLT3G8wpeT5vAqbCA4r=Z8G_zAF73w@mail.gmail.com>
+ <9e2677ec-1d54-4969-907b-112b71ef8dd3@nvidia.com> <d5471e30-227d-4e6d-9bbd-90a74bd9006b@linuxfoundation.org>
+In-Reply-To: <d5471e30-227d-4e6d-9bbd-90a74bd9006b@linuxfoundation.org>
+From: Edward Liaw <edliaw@google.com>
+Date: Thu, 23 May 2024 11:12:52 -0700
+Message-ID: <CAG4es9XU2fMo7hBv81vpn1JGKFWt9gExOhyAyRtOc-5OR5eiLQ@mail.gmail.com>
+Subject: Re: [PATCH v5 02/68] kselftest: Desecalate reporting of missing _GNU_SOURCE
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: John Hubbard <jhubbard@nvidia.com>, Mark Brown <broonie@kernel.org>, shuah@kernel.org, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Kees Cook <keescook@chromium.org>, 
+	Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg
+On Thu, May 23, 2024 at 11:02=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.=
+org> wrote:
+>
+> On 5/22/24 20:28, John Hubbard wrote:
+> > On 5/22/24 10:46 AM, Edward Liaw wrote:
+> >> On Wed, May 22, 2024 at 4:21=E2=80=AFAM Mark Brown <broonie@kernel.org=
+> wrote:
+> >>> On Wed, May 22, 2024 at 12:56:48AM +0000, Edward Liaw wrote:
+> > ...
+> >>> You've not provided a Signed-off-by for this so people can't do anyth=
+ing
+> >>> with it, please see Documentation/process/submitting-patches.rst for
+> >>> details on what this is and why it's important.
+> >>
+> >> Sorry, my mistake, I forgot to add it after cherry-picking.  If added
+> >
+> > Adding this to your .gitconfig would cover you for cases like this, I t=
+hink
+> > it's pretty common to do this:
+> >
+> > [format]
+> >      signoff =3D true
+> >
+> >
 
-*no* regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+Thanks Mark, I'll add that.
 
-Thanks
+>
+> Mark, Edward,
+>
+> Is this patch still necessary of the series is dropped?
+>
+> thanks,
+> -- Shuah
+>
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
-
+No, it is not necessary anymore.
 
