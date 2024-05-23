@@ -1,137 +1,169 @@
-Return-Path: <linux-kernel+bounces-186898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728F98CCA8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:00:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94EC18CCA93
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C971C20DAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4775F2827DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 02:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60004C7E;
-	Thu, 23 May 2024 02:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T/7Y40EX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF914C8C;
+	Thu, 23 May 2024 02:05:20 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2110.outbound.protection.partner.outlook.cn [139.219.146.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC0229AB
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716429637; cv=none; b=elqGSRdT+YEFyl7igGeTeIt1NLQkxrX2FzqrvCQHNH6qI71yUMikFS9FEK8pnE/WF+X35zF8ul93T7SKeKhVTJLz+6hNB4IYLIQ5daK2L1zCxryUxcu/ZgrpOwJWzmMMS+4vQ2s+fQg1ov2TAEMAYOkkMhi5AMoLoCJXkfaho7M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716429637; c=relaxed/simple;
-	bh=5LuGAZn2G3frjwFiOv9YFsKhgCgVPleiTQXpWm6omWQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORmgFDbua8pPsF7GfhDxc0nyAU/XJPSC7NKRPqHkdP54NVlmwUfrG67WlVy9/ZcRMuvPaxfHT6aJ8Cn/1wSJLnRpdH+gWdsxmN3/2YKcLCQyteR4Am6gKvXbIgXjIQrt5YmW6AbWzXJhQ0cmEzS/UQAAd6GVCBeGVd3kfIgn03Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T/7Y40EX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MMlVAQ021900;
-	Thu, 23 May 2024 02:00:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=+LiIFNnp6+uDCpIGI0uQw
-	zsJP44iemqQPuHh35TTH/4=; b=T/7Y40EXa5Aunn831lSIzB8/MchWN4FhKZqpE
-	TkUQVGHEKj2/WDyvXybYE9XcZax8Nt9EUDu8R1BpD7lvybwJc4kP/MKzILjRQP8V
-	8k7au/LSkLyTMHVMlPKSYcAfbdgftzqyFIER9m9Y+e3agidJsigrQnxGSsBqloEm
-	2iG7qv21TpBZh7eBRX+wowrMgB/GtH97k1ATIAmeBSIM1nvNQgAXzN9YZQmx87US
-	V1O+dRm51YcvcLnuqrv/8rqgw/8DTfn+n4k3SJ1N6tkVLhQ6L/Z8Yvx3+EMiX+kg
-	oKv6pdn4UQt2Az/BCQftl5MmBS1V2g5E/oNOKbwGjP3KwGAiA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6pr2tcwk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 02:00:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44N20V5b024652
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 02:00:31 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 22 May 2024 19:00:30 -0700
-Date: Wed, 22 May 2024 19:00:30 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Xiong Nandi <xndchn@gmail.com>
-CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <quic_bjorande@quicinc.com>, <cmllamas@google.com>
-Subject: Re: [PATCH v2 2/2] scripts/decode_stacktrace.sh: better support to
- ARM32 module stack trace
-Message-ID: <20240522185741891-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240521194010043-0700.eberman@hu-eberman-lv.qualcomm.com>
- <20240523010318.12934-1-xndchn@gmail.com>
- <20240523010318.12934-3-xndchn@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D254687;
+	Thu, 23 May 2024 02:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.110
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716429919; cv=fail; b=hLwcU45tAq8dkdjkSH/Cl2jkO3wkRoKKGZ4aSjJQ4SqIkcRZ9M+U0NH6o12e0adk3q2dCt5FxNTvGBHe3gxhi/attpCPRXxH8EypJ30DAscERtui3S1/muBWKkr0AP1q+WcAmED0tuFIUAlIZ5jzMtzK44J2xJkN1u9tZ/T1td0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716429919; c=relaxed/simple;
+	bh=Fus6Ppe/8Bf+Q/12no8+yQP5kmLXaP6K3RGALkfKOBo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=UXzWS2KHDSxR1ijTmRRBT7fjH80gf6YE13GLsJok66qd4Qij/A2YH3Z4aFQYrUXwkTzixP6Kt9qnXwBz7Yw5gNXQpQY7Q/KeW/1pWGdL6AqpvWkU9HBDB3dhi6iU/6tvTHdgX4F2wJY1HjEH6E8g2UvleGPQrfT42RbKIueGzzo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vu0V0PIp6YOzWPqpMY7VZfhgwplPeA714hjtPv47rObQFZs0lLO/ZjwOMJCbRMshVzTJOHe0AcTFfoKuLjz/W2L4xd9CBUkgvIeb6F/VjcCgEaElfNFhbmzEyX6Fm3ivbjweUaW+C6lWEYbXpU9q+c7f7cx3LucQsNuE1d8zSN5aBhT5Y0vIPvN4aT6TjIO9NDr1kXvq8bOU3TFAuAaJiqltwPl8ulUeaZ8+eW0D0dYLsZcdQNKYrQmc0L7hdzizsys0FUEHCdDyV8d9Z8gDBqg2lS3qpW/KGWSg0OEh/hd88ueu3r56K41r5TN46C8w/TJvn3S/hBuURvMejTV0Qw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vf46/6kYIW3uUV4UPQjL9QVmPC/ACK517YtWT495oXA=;
+ b=EBKusfD0dPSkajewqwix3t7L8OVPLpxqX8gcEJhMxYeuB1Eb5C458vzvIf32o1TEArmySG3ekHJtppcdrbNYhJ7zEbOO1fE9/wT2CJEk8k6BFXmzA89vwXLy/wsADtj9bHPw4GVLclSjgU3ovdLrOQzu90ngN+N/y5/xTsCW4IooO4e1q2Y/2zgQQ4WQkar953spVZfZicDM4UGMjPbuYDSSc1KNAags57qXtjr26qo53o0jt87GRAb4Gm1bc4wo/0w2h/OYRzPktWyqb1wA3g5ZNhoc5YHwFRd+MCMnv4DnM5menXoWhNgNnp/hUOHUJx6vnncMnSNIIE7A+fsS7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1099.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:1::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.37; Thu, 23 May
+ 2024 01:48:57 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e903:99a6:10b7:304d]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::e903:99a6:10b7:304d%6])
+ with mapi id 15.20.7472.044; Thu, 23 May 2024 01:48:57 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Walker Chen
+	<walker.chen@starfivetech.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>, "linux-sound@vger.kernel.org"
+	<linux-sound@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela
+	<perex@perex.cz>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+	<conor.dooley@microchip.com>
+Subject: RE: [PATCH v2 2/2] ASoC: starfive: Add PDM controller support
+Thread-Topic: [PATCH v2 2/2] ASoC: starfive: Add PDM controller support
+Thread-Index: AQHalVkIdRsOCKK/U0GRbtz/T/P037GiqLtwgAChPwCAAOjtUA==
+Date: Thu, 23 May 2024 01:48:56 +0000
+Message-ID:
+ <NTZPR01MB0956E13D4D327B76682E51279FF42@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+References: <20240423083405.263912-1-xingyu.wu@starfivetech.com>
+ <20240423083405.263912-3-xingyu.wu@starfivetech.com>
+ <NTZPR01MB0956BAFCBF0EA32824C3350A9FEB2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <297b2034-4e2e-47a7-97bf-53991a102db7@sirena.org.uk>
+In-Reply-To: <297b2034-4e2e-47a7-97bf-53991a102db7@sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1099:EE_
+x-ms-office365-filtering-correlation-id: 3d4412f9-93d2-444e-98d8-08dc7aca8269
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|7416005|1800799015|41320700004|366007|38070700009;
+x-microsoft-antispam-message-info:
+ ETwNtop60IaaWvwXslC9h+OK7apdTxt/va+4w3Kr50bIgQcBqqNdPT5wwP4AE1xKGHZeNniO0v+o77In/GI1xdFUt9ipKuHmkp2876TgKKAMHFOPgE818kUEeclbFCbxOWS2U0sAzILw3N7CM4NeJaLVaKq07BdeHSP8hefn+rkHBhjsV419SRLTwjZQZ4Ice//g7p/CzYHrY29yIESETrMNJliy0H6Lhirj8mXhmEUCQ/tzjR6hMQx153a+sAiSy4aYQoy8sndW3yMnUqZ9ulgLDks8D9xNtWiqqXEPGdWpgqGHi9fHfhENfWs8IOhNky9L7O6PP7hEbLwTgr7KcT+hJBEgb0ppFuqeDclW067oukB9Ok2di2xpMucSeOSRiZwXHUhqi9T0/w+req+dLtpgocF+8uwdn5OjZGtwXMbm+9ErPLcJBSP0z/ZFGT9QKD7zhySu1RrQkBEKrqf3sQ+3TpYk7l5zbYmn0UsbOOiPQXrhvivLkdHCKhaBwks1se38/ihaeWCPiYIuVtvUV8VYsnwHuAkQ1OADooW9SD+gd1wj9YndqO67KNlpDze8KggLTDMsNbMOQqyA7KO3LSebENllaz+7c+dWxbXTZYe6J9tOSwhlxzBGGl3jhVpl
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(41320700004)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?oPyko5St/rcgjisQUS5cESLxOnDtGs5bbLJMjluHTn2gHn7vDe1LqjO/WRdC?=
+ =?us-ascii?Q?f0fZ6q0qksyGURG8zTEiXTW2dWTlqxzwOXi6Hg0UaxqtdpiE/drKdQGuMFYo?=
+ =?us-ascii?Q?mlJrgxL7WUiuAHDFLrcVUrwFBK7dGVz2IZvKD128WcojK4XFZbHi3zw/cdVQ?=
+ =?us-ascii?Q?0nZ+Oa9pZvyTFrRH1PiNPh9F3PxIeK4h6cRLgvOB8dmT5DN/HFuMfh13i5Hi?=
+ =?us-ascii?Q?fsI6B6yUZymHQvnfrLMH8PsXDc1moo6f4jW6d0KWITfAl3Y8r8UkTEE+rhpA?=
+ =?us-ascii?Q?Nir5/S6Xofo3QYGaifw0h6ABKw25SnOmlAFea4rnO16stsVIHCZY+E74nLCv?=
+ =?us-ascii?Q?ACp58hrU+ANy7i2j9wxAG52Zgvk7fl/iqsVqCITLMHVhm1MQftFqzbUv9GzT?=
+ =?us-ascii?Q?RNIKmAHQ9Izki6yo4mwubircpGRVB6vIBquyVSsZJQiYDf8u/yfO9LlZ61Zo?=
+ =?us-ascii?Q?QuhfG+lzXwXGphhPSKVevLCzA8mzXralkwDBQrpAFmlLj/UnUN37PlBloFT5?=
+ =?us-ascii?Q?JoToKzbOCkeErZXvfQqGJPy2YB+CKlFpSJWIAqK2mRTWgGN3U6Cp7RMjK8yF?=
+ =?us-ascii?Q?IfIL9dycyDNjQaBGPTCESihAQcbILRAjXwsWT+8fk60Ik3zySTbzohC523OU?=
+ =?us-ascii?Q?aWtmMcFGrospgJ7xfofP0LK+jNiuReMUvy8gr63cqEN4lTgUBsn3UXGnmYSa?=
+ =?us-ascii?Q?lDQfjbWQnH5QsaxNZCJxkshRtXSQUyNDd+N6BZkZ2swqrzmPmNfQrPliMI4j?=
+ =?us-ascii?Q?wNBAU0TmpHKXjvk47FsgISoAoppkxcDk/BBwRFdR03khGpPqFlzsVwK71W8X?=
+ =?us-ascii?Q?pHYZM87/N4msHZxgqG6D1lgev0qC1J4DmxBhvLRCTLS9bvlk8WRLeGFmSU9q?=
+ =?us-ascii?Q?c3D+BmF5cTsHJ5YO4LaxcD0NX9vopssjl0ij93RZq2M0WyWdiNsD1zK9/gmP?=
+ =?us-ascii?Q?tgaYVM5rs8TSWTcU7OvcBWr4/nVfvfQu6XXso/cRzWX3PrbHnQeVrKXETibA?=
+ =?us-ascii?Q?4DNsvPMYRqQK9XEiEurQIAt+mKDp0waC5XuRcHHZBG+043m2ywESoSgvLgFM?=
+ =?us-ascii?Q?gmtefmsyBtE9h15nedH9n3dQiPfl+ZhEsgwYYOjAUu70gm7NOymqA/17mYKJ?=
+ =?us-ascii?Q?NOOdGFUxMb6GWGxwbpNLBBPT1ZkfO+loo4u6OXjTkc/evq0Zx14Z4Z4A83vz?=
+ =?us-ascii?Q?gzAq/wKR/19OsQRjGLR2C6VZ+Ue6EIToC8phnlBKG12p3Qzmg1QG14V4VUsZ?=
+ =?us-ascii?Q?q7blnWPIdsKvY7F1GBc6clxCQo/wUAqCC4m1UV4LL8hKmUtcHYrUJ3CMjm40?=
+ =?us-ascii?Q?HhdACNYQMwFzmV+wAN73O6dgbfgTcH78Mbn0W10We42veML6v4LHRFkeWTXK?=
+ =?us-ascii?Q?YJS7N281JCQDhm5saGlVP5lZtIt4v8FQyivALkZ7Q0crsg52NpH/ILYNVOc2?=
+ =?us-ascii?Q?jUZbYpVfnfGu/wECe5Uhg1XiAngAbsAExghpCv2erm7D+x2D6rnVM8Mk5hSb?=
+ =?us-ascii?Q?xQDYWk3UM35P5XeWBt1fNd8brvb/2+vpFBL4Ex98xkNmnPjHbhaRTiTqRHVb?=
+ =?us-ascii?Q?kuG1AR1B/dXfwE93HvvTc4nKptgO+12KNmf03Ms3?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240523010318.12934-3-xndchn@gmail.com>
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SnbSIRKPCwKH0CNOIzPaKPfb-F7DeyVb
-X-Proofpoint-GUID: SnbSIRKPCwKH0CNOIzPaKPfb-F7DeyVb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-22_14,2024-05-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=651 bulkscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 suspectscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405230012
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d4412f9-93d2-444e-98d8-08dc7aca8269
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2024 01:48:56.9676
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: E6+2hJ5hWmCxhQQ4Tg686XWAXRydqDgA0RThNB3T95lWiouuFiqXxctLnJBgi3R+IkOYlI1Fa9NFZ3+/lJ5YIKwZ89mu9QQErP6cEb1Wgw8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1099
 
-On Thu, May 23, 2024 at 09:03:18AM +0800, Xiong Nandi wrote:
-> Sometimes there is special characters around module name in stack trace,
-> such as ARM32 with BACKTRACE_VERBOSE in "(%pS)" format, such as:
-> [<806e4845>] (dump_stack_lvl) from [<7f806013>] (hello_init+0x13/0x1000 [test])
-> 
-> After stripping other characters around "[module]", it can be finally decoded:
-> (dump_stack_lvl) from hello_init (/foo/test.c:10) test
-> 
-> Signed-off-by: Xiong Nandi <xndchn@gmail.com>
-> ---
->  scripts/decode_stacktrace.sh | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-> index 2bc3a54ffba5..324e4a6c260a 100755
-> --- a/scripts/decode_stacktrace.sh
-> +++ b/scripts/decode_stacktrace.sh
-> @@ -283,8 +283,8 @@ handle_line() {
->  
->  	if [[ ${words[$last]} =~ \[([^]]+)\] ]]; then
->  		module=${words[$last]}
-> -		module=${module#\[}
-> -		module=${module%\]}
-> +		module=${module#*\[}
-> +		module=${module%\]*}
+On 22/05/2024 19:23, Mark Brown wrote:
+>=20
+> On Wed, May 22, 2024 at 02:11:55AM +0000, Xingyu Wu wrote:
+>=20
+> > Could you please help to review and give your comment about this PDM dr=
+iver?
+>=20
+> Please don't send content free pings and please allow a reasonable time f=
+or
+> review.  People get busy, go on holiday, attend conferences and so on so =
+unless
+> there is some reason for urgency (like critical bug fixes) please allow a=
+t least a
+> couple of weeks for review.  If there have been review comments then peop=
+le
+> may be waiting for those to be addressed.
+>=20
+> Sending content free pings adds to the mail volume (if they are seen at
+> all) which is often the problem and since they can't be reviewed directly=
+ if
+> something has gone wrong you'll have to resend the patches anyway, so sen=
+ding
+> again is generally a better approach though there are some other maintain=
+ers
+> who like them - if in doubt look at how patches for the subsystem are nor=
+mally
+> handled.
 
-I think it'd be better to just remove the parenthesis similar to how is
-done in the symbol name.
+Sorry, you can do it when you have free time. Don't mind.
 
-That is:
-
-		module=${words[$last]}
-		module=${module#\[}
-		module=${module%\]}
-		# some nice comment explaining only the closing paren is
-		# need to be stripped
-		module=${module%\)}
-		modbuildid=${module#* }
-
->  		modbuildid=${module#* }
->  		module=${module% *}
->  		if [[ $modbuildid == $module ]]; then
-> -- 
-> 2.25.1
-> 
+Thanks,
+Xingyu Wu
 
