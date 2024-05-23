@@ -1,95 +1,136 @@
-Return-Path: <linux-kernel+bounces-187850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5014B8CD991
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:00:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E808CD992
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2651F21BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93659281611
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775857E766;
-	Thu, 23 May 2024 18:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CCF78C67;
+	Thu, 23 May 2024 18:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWyACaHv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzr55e51"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F1FA94C;
-	Thu, 23 May 2024 18:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCDBF9F5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716487233; cv=none; b=A5haF7f1LBWKj6J+geHbXhRIHXlsdJclXmuIaZss9n5lOIVHxbalY6uWs8eV2U7u/88wVKHoEHvtIu1Br2NEp6q5QPP2a9vkCSvgcH2HzBdr81NDwDskXE0Y6I3jEo+PRYmgrp0GI0GsyM/TcvbepwpUEAKp/5rHyTz8kPU0fe0=
+	t=1716487317; cv=none; b=eIOiN//cndR8r7WLp1jLZTFYZm7/VuKnuga8A+vaGZ4K9uzEFyTp0vi0UlX4CwlMchrHZTUillLozstN2EdYCAUQmOikISqkv0xCmx4W9iQ3Q0EcNc4oJjYO6R/zs8hCnJRZgJtUh47io2VGAgLCnKOqFfzIeY0/TpS7VWd4YHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716487233; c=relaxed/simple;
-	bh=LPuvBxy3iF5eqbTEUy7UQgJ9ro1OJVRiXbhQTYzW4BU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nLVn7ykYg2ZHYn/ADzSmOoQKadgEASnumoPthstTLQ53gcyYKuu3ZUPlGiEFM9L29hel10kiq/w7WwPcxf0XGgr4lH74pSeOs4PA6RR4feDk19D7vGGWjUfxKAZMp9uUSrDyRfpMhd0NunM/TrXVvkU3PLaluN3y/BM698XURfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WWyACaHv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 375C1C3277B;
-	Thu, 23 May 2024 18:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716487233;
-	bh=LPuvBxy3iF5eqbTEUy7UQgJ9ro1OJVRiXbhQTYzW4BU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WWyACaHvCcfSiW7Ac4wmfxxD63inDTSeTQasgttg15eqpjaWjoMX6sBR/bwKGnUWT
-	 9DbS8DwB3QAPriD2RywSRG3igxM1Mzp0ZFVmkeHC3fW2RXfY18ckiOqXod//4SHPux
-	 vGR42czNI55h8SOJRlBYh8KGUIPuOdO6Abvz91OiNVh4nSCblRzHFFpVxkIHxx3rrq
-	 fjbB4cwCRjPkab6E23zz0cKyYBbtS+bafbJ58ZZrvqqOjtNAQIy4K8QV48bLeBpAvx
-	 ZOlicjpQ/6gklqHRbGbqaR1q0Wl7cnhOQqrMs2CFXIavIKjDcqxUa6VgXfhI+iRwrg
-	 m/RUeAf0PAHvQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 16D73C43617;
-	Thu, 23 May 2024 18:00:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716487317; c=relaxed/simple;
+	bh=Mkyvi+hwGqf0BwdJmb5ZcX25h3S6XKbnnfWJg5dvTVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c8jLBFagj4caRw5/u01ZgiROzkFbMBQNHstq2MiVRzqFA1OOkxDLvOZqSY6CgD3HeoOPIHqJTDrwpUBgYgrIRw/fyhvOCLpKY+HD5WxyJZJKidqgLge2QPxR+cWYVy7N+3l5RQrfdqovbZilRnsFJsOMMmEemslWpaEfymlEj+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mzr55e51; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5785109cd7aso92864a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 11:01:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716487313; x=1717092113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hAmXocRkIx1PH2lT0cYBRu4GpiG/zqum3FJI9WN36SY=;
+        b=mzr55e51E1CQGLp0yOw/2IHd7cdnjAmJFZTN9QWh1i2MQpLRNRcwYD4dljhehCNhrR
+         5tlM2StD92cViLROjHv+g7RwK9xGe/Bgb60av8HExGxvEjQFewt+/WG7SaKirdi81v8t
+         TIz93GgPr1/V5NP4PhegpSYhL2nhcytC8Qqc+idl11/MJszgsyfAL9xmVaL3Tkww4vb5
+         CBT3Az2czKQo2F4m5TJYfzRFWCUO1RDEEDRRNrkHFREHY4mrSlx7s2rqLHceiZgFUqgR
+         NaXLRUwg78VnoY/nyzZwsUzyzKTbK4rjbm/R6nNCrjl19/Wq9nRewzaAEtvcUhz2AGGq
+         3ACQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716487313; x=1717092113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hAmXocRkIx1PH2lT0cYBRu4GpiG/zqum3FJI9WN36SY=;
+        b=KbNupBOHpDlmsy3sKj8paYkc04PU5/EEgh82MCO962Z7xK+o4MkxDXXvGSULI1Y0dI
+         rc7ceemr1DMjJV5HVWdtxSvau2nDNNJrS95RcP/FS0zqiZV/Nk4HWDOmIWMZQv7wozGj
+         IhWCf1Ae/u400WRlm7VWpTl9rmIxsRUcPJP8bUCowBqlAVayZEK8UzylYwDfPcDDT478
+         kagcDMpZUi1x7//W/xU88PQuCa2rLnu4JS6/7GrCQyFkWrsEATxIsWQjp4YuYFk2A3iz
+         Z5kB1qy/BRnR4rV6btGwQxdAS3JkhwSUbV/lWFLWgXxOlD8RKZO6MhfKVRNWJeMcv3B/
+         uueQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzEnYEUgAVtxmqjEKT0bXIi86MPILQ69eslgmWEdX41po6VctcfV/wdIeB913lPhlyVCA2PHeP756AazQhXUnfJPXIgg3nzw+5lGEx
+X-Gm-Message-State: AOJu0YzH/RZdeb5hk9syMWwmH79bvtSu8EFxYulLqcYwlbkfhPdEmB6o
+	hLcWWR1LVnVim8Zxs5oOznEvlER9hNMvWtbZv6RKvQGuBhF2fr3b99H6eq9emh2/MqOvbILZVHT
+	5g0eiL7SAB75QaHbkuQzaXL+Xoto=
+X-Google-Smtp-Source: AGHT+IHGF0RBU6YdvZb1CDrHGJK3LLHbM9I07lFJkH8DJd1cswIT/hez7w8J0rcgYRoEJhJSjZhFDgFOn+Di3tiQZ4c=
+X-Received: by 2002:a50:ccc2:0:b0:573:1ebd:d670 with SMTP id
+ 4fb4d7f45d1cf-5785190fc49mr28765a12.3.1716487313413; Thu, 23 May 2024
+ 11:01:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: Fix early ftrace nop patching
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <171648723308.17418.17188308425434687140.git-patchwork-notify@kernel.org>
-Date: Thu, 23 May 2024 18:00:33 +0000
-References: <20240523115134.70380-1-alexghiti@rivosinc.com>
-In-Reply-To: <20240523115134.70380-1-alexghiti@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, rostedt@goodmis.org,
- mhiramat@kernel.org, mark.rutland@arm.com, parri.andrea@gmail.com,
- bjorn@rivosinc.com, conor.dooley@microchip.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
+References: <20240522194250.1165568-1-pvkumar5749404@gmail.com> <87h6eo3h4i.fsf@mail.lhotse>
+In-Reply-To: <87h6eo3h4i.fsf@mail.lhotse>
+From: prabhav kumar <pvkumar5749404@gmail.com>
+Date: Thu, 23 May 2024 23:31:40 +0530
+Message-ID: <CAH8oh8UP=U11XJWoDWf2wRb08PZk0LuCiYMygWSmcYtZ3Yh3mA@mail.gmail.com>
+Subject: Re: [PATCH next] arch: powerpc: platforms: Remove unnecessary call to of_node_get
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: akpm@linux-foundation.org, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	naveen.n.rao@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	julia.lawall@inria.fr, javier.carrasco.cruz@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
-
-This patch was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
-
-On Thu, 23 May 2024 13:51:34 +0200 you wrote:
-> Commit c97bf629963e ("riscv: Fix text patching when IPI are used")
-> converted ftrace_make_nop() to use patch_insn_write() which does not
-> emit any icache flush relying entirely on __ftrace_modify_code() to do
-> that.
-> 
-> But we missed that ftrace_make_nop() was called very early directly when
-> converting mcount calls into nops (actually on riscv it converts 2B nops
-> emitted by the compiler into 4B nops).
-> 
-> [...]
-
-Here is the summary with links:
-  - riscv: Fix early ftrace nop patching
-    https://git.kernel.org/riscv/c/6ca445d8af0e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+On Thu, May 23, 2024 at 4:55=E2=80=AFPM Michael Ellerman <mpe@ellerman.id.a=
+u> wrote:
+>
+> Prabhav Kumar Vaish <pvkumar5749404@gmail.com> writes:
+> > `dev->of_node` has a pointer to device node, of_node_get call seems
+> > unnecessary.
+>
+> Sorry but it is necessary.
+>
+> > Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+> > ---
+> >  arch/powerpc/platforms/cell/iommu.c | 9 +++------
+> >  1 file changed, 3 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platfor=
+ms/cell/iommu.c
+> > index 4cd9c0de22c2..5b794ce08689 100644
+> > --- a/arch/powerpc/platforms/cell/iommu.c
+> > +++ b/arch/powerpc/platforms/cell/iommu.c
+> > @@ -780,14 +780,13 @@ static int __init cell_iommu_init_disabled(void)
+> >  static u64 cell_iommu_get_fixed_address(struct device *dev)
+> >  {
+> >       u64 cpu_addr, size, best_size, dev_addr =3D OF_BAD_ADDR;
+> > -     struct device_node *np;
+> > +     struct device_node *np =3D dev->of_node;
+> >       const u32 *ranges =3D NULL;
+> >       int i, len, best, naddr, nsize, pna, range_size;
+> >
+> >       /* We can be called for platform devices that have no of_node */
+> > -     np =3D of_node_get(dev->of_node);
+> >       if (!np)
+> > -             goto out;
+> > +             return dev_addr;
+> >
+> >       while (1) {
+> >               naddr =3D of_n_addr_cells(np);
+>
+>                 nsize =3D of_n_size_cells(np);
+>                 np =3D of_get_next_parent(np);
+>                 if (!np)
+>                         break;
+>
+> of_get_next_parent() drops the reference of the node passed to it (np).
+>
+> So if you actually tested your patch you should see a recount underflow.
+>
+Thanks, I will check this out once again
+Prabhav
+> cheers
 
