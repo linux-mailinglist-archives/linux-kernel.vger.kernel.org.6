@@ -1,149 +1,155 @@
-Return-Path: <linux-kernel+bounces-187130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690628CCD98
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:00:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CCCC8CCD9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C41E1C21ACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B93281935
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8F113D24C;
-	Thu, 23 May 2024 07:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FBB13D279;
+	Thu, 23 May 2024 07:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cOvjj4vW"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H1dKsC2a"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F6C13CAA4;
-	Thu, 23 May 2024 07:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD2C13CAA4
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716451171; cv=none; b=KVKRVgpJLQ0FyA8/TVaU5kS7/36qZxNYV/ULzR2wxmQpxbEhZK+x+LUrDvHu7i6YRsPdlVzqld4hZgn5VAwh9OxXxgews6kEjmJ+YuJfAhYCgZeRBdljLpmo+oAevSZeKHPLZ3bHh7dVQ480F87Honr0GWXi52kt7cpnU2kvOTk=
+	t=1716451186; cv=none; b=V2wOdjWAaJXLAr/KC1t9Y1jY+gcV6CSs/WAx+YZC2/zHnO8iahi23T45Aw52/UjUgG63Y25h91ofESEkIKhECbez2S8Bg2+7DSmcKyxziLAbfXfUVmeNxBWOzMXuNhY3UYSBDBA6qXaIZdkc6n9VqjQW8IxBIwidWKYdzZ499hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716451171; c=relaxed/simple;
-	bh=WtSnqLqjaolEMd13H+N82n7kj2rcAGt469kIrKiluQM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TmMcvX1RCoVbpYmT5j1xQA0zxf6yj6Pjw7OT2IN+Js9RBQPdYjUAhRy5c6RGJY3SCXbxXGcE2tBf9nPziX2KnJXT8YHVV7TcEbEwIt6MJlLLAlAcxwkuHW7gmt+ukXo+ftZYPtrtzfwCspi4uAmRjSOZet44QKCE5yqzHRtZUds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cOvjj4vW; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e1fa824504so71431081fa.0;
-        Thu, 23 May 2024 00:59:29 -0700 (PDT)
+	s=arc-20240116; t=1716451186; c=relaxed/simple;
+	bh=+j8A4VZeAl+Y4aj2STDkjjffz6s3NT87BVIa8sVLpDk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YAvMCS5XL6acM8X8wP8FwWMPiSspFy4oVgCIKJqvOTpB7D096s9vD0XtuLUaBnRY6EmuawFU2tpNRgLScxhhciM09XMf24uW151NR5MausrcyNrjXf4qczrUjH1PViQbECysLnZDcjzKDnCEBRhmYZYhngOnA2QHk2GnL9Y7pLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H1dKsC2a; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a620a28e95cso357462666b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:59:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716451168; x=1717055968; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WtSnqLqjaolEMd13H+N82n7kj2rcAGt469kIrKiluQM=;
-        b=cOvjj4vW/lJwlTx2Qjui0thz8B2ebqwfCFawPUz7kpZ2GwhYOziwNdMh63s1FyKKg0
-         PNRZUt7tL3GLulE3SfDBj+GbHg7D2V2pe62yNjW/kwtWQOOe4hVBPONBd7ZQw2a7JE/8
-         hL8fQ5GEyE/rdOj7ErvNOeEQdqumqsUyI3RvFPQbqZpqi9sBb2JSTl+AFkDBflwM54EC
-         gm96vfIGhkAcXMZd4pb07MQ1xwubBN6oKe5ewCsroiH/40fDTs7pnlfwM4SnlUezI32W
-         dCFZ0ZZ9sXeQFxdZc5yDD9iPhwmsKUr3QTdbc0falRnud90o5vh/PFzLSQJxtctI73TG
-         xbEQ==
+        d=linaro.org; s=google; t=1716451182; x=1717055982; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BBn5fJbZjjKVEfV88PasIUUBNVIZvJAuh9fIwEn4kSQ=;
+        b=H1dKsC2avCBDN/vKbLf2ftj4Fk9gqoTyLghBidVPnGj9jLkjMszCdf+VzaCGgbbRnQ
+         SrNlSisOpT76OuAEXVkRyDP/x1QVHGATdxTer9YFcQ5rL5zaKBQIzH1c8bABANXGneT0
+         HHPd4pZU8b07tAb50hOUyeMNgLBCTU2w5NYVSxChQD+PRHnBHonBkmRUpfI3yXhuE9a8
+         pr/vxPKgpuLaTzS9i+iUO6mW1ip1Sm/sWzM0udAaoPKpvRoOQDJWI6Icp/xkSPUMWH8B
+         Y9+VT37dIGdzFwvuLqCU5e73zx1YygoF/0GVPAEDsxZZe9CtBSK/wtRISaGlK+UWaaPw
+         YjSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716451168; x=1717055968;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WtSnqLqjaolEMd13H+N82n7kj2rcAGt469kIrKiluQM=;
-        b=HLU9teLXlrlnzmOhR2G+z00gxBE1rLfH43aSfo5ZvUnZzMeJ9jUK5gzPDtYkmd9TGQ
-         TIB3tIfppnFpSbYhH0P11J2an8tQKgn7PG73JSOSEidIo5ycaQ6cZTbyXrcmK/DbesGR
-         Pne7H3fgNpi9FfGWiIoFW6h/VE5S3Ms+CLISfdCDF1JBeUszxlGAdRe13wEnfA3q6fsK
-         whhdzdCooSjyVUfkc3zTNwi+g1tgNZWb+NIxE1Hfw9NZyJgir8lmEtNfK3gcX+iGfl+T
-         k5zyrehzUmoBtEehF95yhNXihX54VqQll+i/2kmgythmDln7tYi6EeJHiYA4ycbaiF7D
-         PR8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU90DNY6ELE4iRQhlA3CEmL2uZZFILtPbEskW0wR1DCEQFj9qcXJPOJTw+5oGtJgvNTvhGebDw5KKElCOd5A4cfLWtDPAqreNTVuw88ciAm0XiE8qcUT3HYuHDSgl0FOn+JAgjPoA7cAL4tvmBiC/JirzhJq4wi9EdMimS8N3q1fABm6TVaodTBAXjJBa06mtNyFFzT
-X-Gm-Message-State: AOJu0YzhJ5LMFjYutz/ENYoTYwPuuNpUPe+cf7AaVo2j2E2pLKz4ngB0
-	n0u2u1em2MwRywROTYQ2ayLSexrGRTQTtAXv5dJx0oDKoxUNf9ZT
-X-Google-Smtp-Source: AGHT+IHj83isYx5eRRBpiHrJyvX73GmHx3W8fORWFJYjD+n/EEYdfg/dboaPB2E2XnPdmJx6mCHvbQ==
-X-Received: by 2002:a2e:944a:0:b0:2da:50f8:dfab with SMTP id 38308e7fff4ca-2e94944139amr23917821fa.7.1716451168022;
-        Thu, 23 May 2024 00:59:28 -0700 (PDT)
-Received: from ?IPv6:2001:8a0:e622:f700:5f49:e958:98cd:f4c3? ([2001:8a0:e622:f700:5f49:e958:98cd:f4c3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f591cbsm17285555e9.22.2024.05.23.00.59.26
+        d=1e100.net; s=20230601; t=1716451182; x=1717055982;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BBn5fJbZjjKVEfV88PasIUUBNVIZvJAuh9fIwEn4kSQ=;
+        b=AZ3eQzd1gq1vhalPnsohfOZj8sk7efqwfaiDMH/ugzg9ZjyMm3QUcU1/I7XiO93aX5
+         3bvAqTZ0Mjb1Zdvkxz9pg/olNk6hieKocMPRqt1A8fYDgx8E/E5SeqFptPev6vTMd53E
+         E3KRZlUrX1F3AMMi3PEi8KJEEX9tm2FD6sMM+ZoBCUCIWw2QaEaKp4bnRrteE0KnvjpD
+         ZdvniZ6tVLRVBZoJfMAFV5mKgeLy624zNWgk+IRjt/TcJwal5gcE6PYMii2WJGp5bVn3
+         /sh1mJ9MLmccaKbHeOnaBZYrRbtiBG9Vwj9tU3xqsrwuKtc6pPcx2I3mUq8eEdifXdLq
+         3tfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkUAj681iNzaB48+Yfy/4D6OH7AfIZ3iLViPsVbxXJgmFmjon4FNHfwP+9vRA+rmeRHX1OubWeTswN3KAVF5hB9Ktb2+6//+qLGvD9
+X-Gm-Message-State: AOJu0Yz28q8V9usfjJyMY12v2ojivLBVyEmgE6B22F87dCHOZ5iF3oon
+	UZlMk9gVkqNSwuhTntknogis8oxOE0bMaSd5wF8GRWvUMNL5Orl/1sJEWwZbjgY=
+X-Google-Smtp-Source: AGHT+IE2a1HuJ87qJ5GF7wgS7CRYREnyk7jhZzWYgIBDeaQk+LSmL0pKqmeh32jI27/6wsPC1TPjHg==
+X-Received: by 2002:a17:906:3daa:b0:a5a:8d07:6a00 with SMTP id a640c23a62f3a-a622814c36amr270759666b.64.1716451181810;
+        Thu, 23 May 2024 00:59:41 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:e0a:982:cbb0:825d:600a:c16:a973])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5ec2a8f320sm719100066b.170.2024.05.23.00.59.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 00:59:27 -0700 (PDT)
-Message-ID: <3e4bbd0f0fe9f57fd7555a3775e8d71031c0d6c5.camel@gmail.com>
-Subject: Re: [PATCH 1/3] tpm: Disable TCG_TPM2_HMAC by default
-From: Vitor Soares <ivitro@gmail.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, James Bottomley
-	 <James.Bottomley@HansenPartnership.com>, linux-integrity@vger.kernel.org
-Cc: keyrings@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, Jason
- Gunthorpe <jgg@ziepe.ca>, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Date: Thu, 23 May 2024 08:59:26 +0100
-In-Reply-To: <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
-References: <20240519235122.3380-1-jarkko@kernel.org>
-	 <20240519235122.3380-2-jarkko@kernel.org>
-	 <850862655008f84ef0b6ecd99750e8dc395304d1.camel@gmail.com>
-	 <D1F4V8NMSUNZ.2VCTEKHZZ0LB@kernel.org>
-	 <17dc838120b56ce342c34611596c7b46dcd9ab5a.camel@HansenPartnership.com>
-	 <2dd8d49516ec9c7cb8c1182b5b8537b1e82d7067.camel@gmail.com>
-	 <17a5dcd7aceb356587ef7c8f45b0f6359b2d2a91.camel@HansenPartnership.com>
-	 <D1G8HOCIDWTC.2ERVA0CYHLY0B@kernel.org>
-	 <0c12c9ea10aa97e246230fc33e6b35c571102b48.camel@gmail.com>
-	 <D1GAZSIOZVWW.2UZBFHASIG21U@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Thu, 23 May 2024 00:59:41 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH 0/3] arm64: qcom: sdm450: add initial support for Lenovo
+ Smart Tab M10
+Date: Thu, 23 May 2024 09:59:32 +0200
+Message-Id: <20240523-topic-sdm450-upstream-tbx605f-v1-0-e52b89133226@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGT3TmYC/x3MwQqDMAwA0F+RnBeIWSubvzJ2qDXOHNTS1CGI/
+ 76y47u8E0yyikHfnJDlq6bbWtHeGohzWD+COlYDEzvyzFi2pBFtXJwn3JOVLGHBMhwd+QmZSR7
+ P4O5xCFCPlGXS4/+/3tf1Azu8EiFvAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1622;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=+j8A4VZeAl+Y4aj2STDkjjffz6s3NT87BVIa8sVLpDk=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmTvdmN2PpWBGo+DgdsVg3di1/28MIozIYQe4Kh
+ iSsDdxrOrGJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZk73ZgAKCRB33NvayMhJ
+ 0VNYEACMzhmilSv/cnWGpD3CJ5na508TP5YZevct065S/q7D/76vqdskqd7bihAaIvNtgVfToie
+ f3xCzZe1T6MzhNjpvx3tBihB9xgnU4hxMS0P8iFBqE0WQ5lgnED7APBV5GJoGl6GnuuHvF632yC
+ sGod7gp+cVu8x7AU+Y3nB7GB/2aDFVnS/ucL9lf5/6JZhMtPmNH6qJvOtOAUaYYnCqusXfzbiTr
+ a1VS57Eh6aMDjvOfBCBrge7iSDaCVYXA0wdIM2cq7Y2j/H6uLMlI8PRtFWfdnEOGyLsGczGiTYL
+ OTvBu23RdE/yI+rWPGlKa/oX5pH/3p5eyUCQKC+Yuc6tkIRVkBFoK+Algh6hfEzFlVG/5gvquyT
+ Jd6letUrWjNBV8cOuYINAOc8/kpi9tBWoDbrRXQXfRiTrx/oCxkL/NyLjmobCGrr4G+QrOEfXK8
+ hymSBp5vrIirJG09vd48+F9/xw2H//m/BUijQLD6sK4NWavgDs7jFwRbXze57XzZIUoarJdYZ1Z
+ FP4r+i+5gleIyVIEgxxw3HnMdCWGz/HN9SVEtB1TkpUDKTcu1TpfcfuBgVdGR7rvorSEFc3Q5ie
+ uVJNWgklPatoHrUOIHNej5qEPp20j90NXFvr8Bb7f7a+v9vWzSkrpZKadQHh/80+UPrlV+XE7m4
+ OG/MW5VlvJf2yJw==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Wed, 2024-05-22 at 19:11 +0300, Jarkko Sakkinen wrote:
-> On Wed May 22, 2024 at 5:58 PM EEST, Vitor Soares wrote:
-> > I did run with ftrace, but need some more time to go through it.
-> >=20
-> > Here the step I did:
-> > kernel config:
-> > =C2=A0 CONFIG_FUNCTION_TRACER
-> > =C2=A0 CONFIG_FUNCTION_GRAPH_TRACER
-> >=20
-> > ftrace:
-> > =C2=A0 # set filters
-> > =C2=A0 echo tpm* > set_ftrace_filter
-> >=20
-> > =C2=A0 # set tracer
-> > =C2=A0 echo function_graph > current_tracer
-> >=20
-> > =C2=A0 # take the sample
-> > =C2=A0 echo 1 > tracing_on; time modprobe tpm_tis_spi; echo 0 > tracing=
-_on
-> >=20
-> > regards,
-> > Vitor Soares
->=20
-> I'm now compiling distro kernel (OpenSUSE) for NUC7 with v6.10 contents.
->=20
-> After I have that setup, I'll develop a perf test either with perf or
-> bpftrace. I'll come back with the possible CONFIG_* that should be in
-> place in your kernel. Might take up until next week as I have some
-> conference stuff to prepare but I try to have stuff ready early next
-> week.
->=20
-> No need to rush with this as long as possible patches go to rc2 or rc3.
-> Let's do a proper analysis instead.
->=20
-> In the meantime you could check if you get perf and/or bpftrace to=20
-> your image that use to boot up your device. Preferably both but
-> please inform about this.
->=20
+Add initial support for the WiFi version of the Lenovo Smart Tab M10,
+model TB-X605F with:
+- SDM450 SoC
+- Up to 3GiB of DDR
+- 10.1" LCD Touch Panel
+- eMMC
+- Bluetooth & WiFi
+- SDcard Slot
+- Camera (unsupported)
 
-I already have perf running, for the bpftrace I might not be able to help.
+Tablet can be found as "Tab M10" and "Smart Tab M10", the "Smart" variant
+seems to comes with a dock I do not own.
 
-Regards,
-Vitor Soares
+Vendor page:
+- https://pcsupport.lenovo.com/us/en/products/tablets/m-series-tablets/tab-m10
 
-> Fair enough?
->=20
-> BR, Jarkko
+Downstream sources can be found at:
+- https://github.com/Yahoo-Mike/android_kernel_lenovo_X605F
+- https://gitlab.com/ubports/porting/community-ports/android9/lenovo-tab-m10-fhd/kernel-lenovo-x605
+
+In order to pass DTBs check, the GPU SMMU compatible needs to be fixed.
+
+The current display uses simple-framebuffer, proper support
+of the BOE TV101WUM-LL2 DSI panel will be sent separately.
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Neil Armstrong (3):
+      dt-bindings: arm: qcom: Add Lenovo Smart Tab M10 (WiFi)
+      dt-bindings: iommu: qcom,iommu: Add MSM8953 GPU IOMMU to SMMUv2 compatibles
+      arm64: dts: qcom: sdm450: add Lenovo Smart Tab M10 DTS
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |   1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+ arch/arm64/boot/dts/qcom/sdm450-lenovo-tbx605f.dts | 276 +++++++++++++++++++++
+ 4 files changed, 279 insertions(+)
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240522-topic-sdm450-upstream-tbx605f-220e89a43cba
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
 
