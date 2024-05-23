@@ -1,81 +1,151 @@
-Return-Path: <linux-kernel+bounces-187833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7FF8CD926
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:25:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC9F8CD928
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 19:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3621F21D0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:25:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F6D81F21932
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994D3757E8;
-	Thu, 23 May 2024 17:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7153EA66;
+	Thu, 23 May 2024 17:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRspGMfc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A28A762C9;
-	Thu, 23 May 2024 17:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F351852;
+	Thu, 23 May 2024 17:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716485136; cv=none; b=fppjtEDjphfvx594hLrAcvJibYfBzq4Y/CyKa0zoxEXKhx3D4suDK9O5HUXXgQRgKozfxCjogG04V+zNQbSPmwfW01iiErHraxGunPBBDxRUeFk3abNhaoCNpiJan5/fnlWzB0rYxFa0A293sKHTyIWYiN1ggq5LQLIISu6IuG0=
+	t=1716485427; cv=none; b=SUTYdVwDkhgVgazEWtbWo0ipoaqy19StD2W+ZMoo1SlJf7qSrXyvSygoJq8SOyDuaPh5kDAtKb3Zv0FsYO56bk70JtbBRMIND1dLa6GxVRuUqTsP4lSgUyJPgExq3Vq7JV4HaWUd2NKnM9tTCtrzR98KgJgLDLHxfj6D/D288cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716485136; c=relaxed/simple;
-	bh=8eUT9FM0v7qVS6YDmMIi10oeekmWY6u4aR80+EI5UXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lkqzjUP1J+LAd/g0VV6yZTL23ArLsggTqdaB7Jcq4Vkio7VBlGkcuuvuPa6AUl4cLHm/8KiFRClnZp3lQ65SVjNXnEaI1OciNYOUGvs3rzGm+15fyIZLToHL6q7dNxaz0mlowXFRdh8Nt4bAGw8wxWQbZ4JzPaShRxj5Ke358Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 885BAC2BD10;
-	Thu, 23 May 2024 17:25:34 +0000 (UTC)
-Date: Thu, 23 May 2024 13:25:27 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, bpf <bpf@vger.kernel.org>,
-	Tejun Heo <tj@kernel.org>, Jan Engelhardt <jengelh@inai.de>,
-	Craig Small <csmall@enc.com.au>, linux-kernel@vger.kernel.org,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
- formatting and make wq_worker_comm() use full ID string
-Message-ID: <Zk98B1FLIAt2SU4Y@home.goodmis.org>
-References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr>
- <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
- <ZkvO-h7AsWnj4gaZ@slm.duckdns.org>
- <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
- <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
- <CALOAHbAmHTGxTLVuR5N+apSOA29k08hky5KH9zZDY8yg2SAG8Q@mail.gmail.com>
- <CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com>
+	s=arc-20240116; t=1716485427; c=relaxed/simple;
+	bh=aVHtIGbg5uYTcGxto713YYITzXRC0Y++rdwWapj1pck=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M0RmelCWHlECRxUW5ISNL83fhYhHw+3bpALKOZT11WGXwA38Z6HugA0RXUTAHI2SEj/AZQB3Mj/Ny9+r7keu1ArRRI0XsSFG2Ib4hAvY34n0wBR6h3oNH0kibNAasldP7gNYcBHAhFo2vlRSotaWMUsNX2OJq2WCz/CELt3kwf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRspGMfc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8BAC32786;
+	Thu, 23 May 2024 17:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716485426;
+	bh=aVHtIGbg5uYTcGxto713YYITzXRC0Y++rdwWapj1pck=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=pRspGMfcIcUoU4PegowdguSJZ/u/bosBG0xeGrWbFc5/2Z9jC9GyqAZCpqD3DUBrT
+	 d97V2SaB4zDbfJ+sxYfKho1z6651nGB9cBNhwIfJ3RQmJcuRlc0ua6A+hM9tg9sohV
+	 SkYrKknB4nZNYsWsJ+xLsS9thly87krVz3Sm13RA1qLQSFQgrdNaF/IPm+IZ/f3bS0
+	 WERr75VdJYhwIxfebRvMrO4XLFWGM+koyCghDjeiFnejE0AMXd9yjvhaD8XnB1TFes
+	 BY3a+7bdC6TLX5th1S1kFXXL393wbke8juF8d+JAAYTV+xLgqIrt/kJ5PBOQ6IG3Yi
+	 TgBJQYlWGn9YQ==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e95a7622cfso17141fa.2;
+        Thu, 23 May 2024 10:30:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVNZx6sZ1Ttnhf59JE4CuTIVFO7LabLmGVMqDlXaACmyAzrY8HOIHQaUHa8rAOj+XrUtcvOtQRpI5p4rFxxTUjKKTjNqsmGbJ8HtUJCqH7Eh/U45/PzKHyuGqqcjwiso+lGXn8CKY1A28zO
+X-Gm-Message-State: AOJu0YxsXftb6oNOM5+XiNr8ztLrjFJhwEKrrYxS3jIMTkA9LlyuyklA
+	B6SKPh9Tx6aBgGxjP0saI16KWCEmPly9Vw69WwKDtX6sYVK+cS8SrTP9llw5g1rf8oMms5gHOH7
+	ORXZ1OCVUi0gRKKxsie6ZV8B/vyE=
+X-Google-Smtp-Source: AGHT+IHulkUdoghkJ0YEwwy9vCXMJWjHcRu/tUJfmMLwjx6Fw7rIYl2G5N8e2CdNZeR/dixJ2gHw2WISv1qbbsCjZ8U=
+X-Received: by 2002:a2e:88d1:0:b0:2e6:f556:48a5 with SMTP id
+ 38308e7fff4ca-2e9494cb6e0mr36736331fa.19.1716485424933; Thu, 23 May 2024
+ 10:30:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com>
+References: <20240521065107.30371-1-wenst@chromium.org> <20240521065107.30371-2-wenst@chromium.org>
+ <CAFLszTgJpaWzJneZ-uReEGrE85MgGYOjJKxOL7jGCYMuVMPKUg@mail.gmail.com>
+In-Reply-To: <CAFLszTgJpaWzJneZ-uReEGrE85MgGYOjJKxOL7jGCYMuVMPKUg@mail.gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 24 May 2024 01:30:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67MQDep8gfPWgeQoew8URAZyPw6ocGEMxMnwzYYRa0PYg@mail.gmail.com>
+Message-ID: <CAGb2v67MQDep8gfPWgeQoew8URAZyPw6ocGEMxMnwzYYRa0PYg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] scripts/make_fit: Drop fdt image entry compatible string
+To: Simon Glass <sjg@chromium.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 09:32:03PM -0700, Linus Torvalds wrote:
-> On Wed, 22 May 2024 at 19:38, Yafang Shao <laoar.shao@gmail.com> wrote:
+On Fri, May 24, 2024 at 1:19=E2=80=AFAM Simon Glass <sjg@chromium.org> wrot=
+e:
+>
+> Hi Chen-Yu,
+>
+> On Tue, 21 May 2024 at 00:51, Chen-Yu Tsai <wenst@chromium.org> wrote:
 > >
-> > Indeed, the 16-byte limit is hard-coded in certain BPF code:
-> 
-> It's worse than that.
-> 
-> We have code like this:
-> 
->     memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
+> > According to the FIT image spec, the compatible string in the fdt image
+>
+> Can you please add a link to where it says this in the spec? I cannot
+> find it after a short search.
 
-FYI, I would be happy to convert the tracing events over to dynamic strings.
-It takes a 4 byte meta data that holds the offset and size of the string, then
-the string itself (appended at the end of the event buffer) as well as the
-space. The sched_switch and sched_waking events were created before the
-dynamic string code was added, hence the hard coded size.
+(Quick reply from my other email before I forget.)
 
-I'm not sure what fallout that would have for user space tools, as some
-tooling does hardcode the parsing of the sched event. But I'm sure I can work
-to fix those tools.
+From the FIT source file format document, found in U-boot source
+"doc/usage/fit/source_file_format.rst", or on the website:
+https://docs.u-boot.org/en/latest/usage/fit/source_file_format.html
 
--- Steve
+Under "'/images' node" -> "Conditionally mandatory property", the
+"compatible" property is described as "compatible method for loading image.=
+"
 
+I'll add the reference in the next version.
+
+
+ChenYu
+
+> I believe this patch is correct. Since the information is in the
+> configuration node it does not need to be in the FDT.
+>
+> > node or any image node specifies the method to load the image, not the
+> > compatible string embedded in the FDT or used for matching.
+> >
+> > Drop the compatible string from the fdt image entry node.
+> >
+> > While at it also fix up a typo in the document section of output_dtb.
+> >
+> > Fixes: 7a23b027ec17 ("arm64: boot: Support Flat Image Tree")
+> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > ---
+> >  scripts/make_fit.py | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+> > index 3de90c5a094b..263147df80a4 100755
+> > --- a/scripts/make_fit.py
+> > +++ b/scripts/make_fit.py
+> > @@ -190,7 +190,7 @@ def output_dtb(fsw, seq, fname, arch, compress):
+> >      Args:
+> >          fsw (libfdt.FdtSw): Object to use for writing
+> >          seq (int): Sequence number (1 for first)
+> > -        fmame (str): Filename containing the DTB
+> > +        fname (str): Filename containing the DTB
+> >          arch: FIT architecture, e.g. 'arm64'
+> >          compress (str): Compressed algorithm, e.g. 'gzip'
+> >
+> > @@ -211,7 +211,6 @@ def output_dtb(fsw, seq, fname, arch, compress):
+> >          fsw.property_string('type', 'flat_dt')
+> >          fsw.property_string('arch', arch)
+> >          fsw.property_string('compression', compress)
+> > -        fsw.property('compatible', bytes(compat))
+> >
+> >          with open(fname, 'rb') as inf:
+> >              compressed =3D compress_data(inf, compress)
+> > --
+> > 2.45.0.215.g3402c0e53f-goog
+> >
+>
+> Regards,
+> Simon
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
