@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-187480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9B58CD25C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:37:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED118CD25F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBCE41F2135B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D4F41C20B99
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9961148835;
-	Thu, 23 May 2024 12:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FB61487F2;
+	Thu, 23 May 2024 12:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KcGE+YTA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eee3lRyj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307E314532F;
-	Thu, 23 May 2024 12:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C94144D26
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 12:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716467841; cv=none; b=S4fMVWAsXA8OyuIoegjMynLaJixQnIYM/8QSNi4QI1dRyYTl8NSxVA9jifSXLqlwig6rb2+7BgQZP5ifcieS22aemiSSR3Zy8VzQkPlCd8dM/njKULisvn91DUPvj9Yo5AqXL9OO4///TunKOTaAOg5LTxF9Jy7g+F8FjN/uKeA=
+	t=1716467945; cv=none; b=R2zCmQINFmho/OKQCDpypGxs4h9+s6b+qdAFUfwQ+GGonSEbglXETVFAIIk7iyEkB/A2d1Sd+nTH+aZb33cQlUpQkMNnUoDbLQxpqp6Oa02lH7080rbfMMgyl4spQohQ5AmFDNJqjShTPyMAoaMyl9Mli/r5PQW947JMTWWHeuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716467841; c=relaxed/simple;
-	bh=o+cIsFagOQT2Q33MTrnnLdxWh5QXIRSFcQAPjiLDD0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UzdDESExPY4S4RtqG6tbnGwJiCdC+/Hz3G7Lv9o7MS6heRzS8Lc85e413ztpzoLOGofZbs1PQOHsQ+YNpkYpRVy5OgShM91S0arCBwPUDMi8MEd/TTC7eRarD2gjC6d25x/eK1LEv2zzylQ1PXsbJnDrbc2NvKo0LfKfXuuOFao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KcGE+YTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9ECC2BD10;
-	Thu, 23 May 2024 12:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716467840;
-	bh=o+cIsFagOQT2Q33MTrnnLdxWh5QXIRSFcQAPjiLDD0E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KcGE+YTAH4DiNSX1KL56t0ozxuwvELpqo4VkZZaTeDQBO44KZfSn0Q979gtVmbVFB
-	 NX73obibt80jeLyvLB7MieFgC+hOKMDeVdIEPZd6OKaC8T2G18B9m4/nutHTNsjLy8
-	 12xmviuwtED6AiOFESaXpBnHJmPScUqT6uI5hUCk=
-Date: Thu, 23 May 2024 14:37:18 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: shichao lai <shichaorai@gmail.com>
-Cc: oneukum@suse.com, stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org,
-	xingwei lee <xrivendell7@gmail.com>,
-	yue sun <samsun1006219@gmail.com>
-Subject: Re: [PATCH v2] usb-storage: Check whether divisor is non-zero before
- division
-Message-ID: <2024052354-snorkel-drainer-d328@gregkh>
-References: <20240523113410.983875-1-shichaorai@gmail.com>
- <2024052351-demote-gangly-74b0@gregkh>
- <CACjpba7k2+GS3c+NGgOeP=9=DU8Mh1DFEGUB_WAkX_VFKBBtrA@mail.gmail.com>
+	s=arc-20240116; t=1716467945; c=relaxed/simple;
+	bh=NxNHmDTyf45u7ZHwoFE+CVEyUDmnNLkRf5O6kktNz0o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mxotuHflejPK6XhaQ0rU0Ohp8LK8QdtL6FEYXtwVD2RhIdT0FRrsmmHrbqPgrvYWJOW5/CanFxFBS2FbPhZJHJb8S5xSMHXRV11z7/gLde+kQkIxPWS5bC4f08yBcDKB2BGlarjmIrhepIbisJlG+Em9SCMyQxg0+n4Yyf05srM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eee3lRyj; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716467944; x=1748003944;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=NxNHmDTyf45u7ZHwoFE+CVEyUDmnNLkRf5O6kktNz0o=;
+  b=Eee3lRyj6avt/C0fPRvx5vtvtyF02rNEsdZrHIfcSjo5gJzPaHtND2E8
+   3jK2gTcpKYll8QtiKd6dq4SWN/fyzg/JiBZXr1WRDCYFEExCi9hcnIgc/
+   +IzDEfUGvlDfCEJDdtZnqw5Isd5LZeyHBnuH/tR7vBSSwRfVtlJo+9jzu
+   JNpePGs5yGxT5rOI4BNxEI7WvjS9Y1F9mSHhBhzeMq3PSxoHT6KiY4oIX
+   9MDiRGfT/plUv0ThACLrS0m5hpnXbKo6Q0bi2F1QiwRrrbNhLh73K0HRT
+   OCOw51jle0byOlfud16M0tKN8ol3cbpTK3jxaHvUbRGWx3iKq+0In2a1Q
+   Q==;
+X-CSE-ConnectionGUID: +smcLB/qThyh3uAfZ+BpmA==
+X-CSE-MsgGUID: 5JyL0qPmTCqxnas0Za+A6Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="16608181"
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="16608181"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 05:39:03 -0700
+X-CSE-ConnectionGUID: N0+VvKRtTvKSyJ7zisdmkw==
+X-CSE-MsgGUID: yNXd5J9JSsKM+zgpr7BRxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,182,1712646000"; 
+   d="scan'208";a="33666838"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 23 May 2024 05:39:00 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sA7il-0002q4-1Y;
+	Thu, 23 May 2024 12:38:59 +0000
+Date: Thu, 23 May 2024 20:38:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shahab Vahedi <shahab@synopsys.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	Alexei Starovoitov <ast@kernel.org>
+Subject: arch/arc/net/bpf_jit_core.c:170:47-52: WARNING: conversion to bool
+ not needed here
+Message-ID: <202405232036.Xqoc3b0J-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACjpba7k2+GS3c+NGgOeP=9=DU8Mh1DFEGUB_WAkX_VFKBBtrA@mail.gmail.com>
 
-On Thu, May 23, 2024 at 08:23:57PM +0800, shichao lai wrote:
-> On Thu, May 23, 2024 at 7:47 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, May 23, 2024 at 07:34:10PM +0800, Shichao Lai wrote:
-> > > Since uzonesize may be zero, so judgements for non-zero
-> > > are necessary in both place.
-> > >
-> > > Changes since v1:
-> > > - Add one more check in alauda_write_lba().
-> > > - Move check ahead of loop in alauda_read_data().
-> >
-> > Nit, this changes list should go below the --- line, as the
-> > documentation asks for.
-> 
-> Sorry for my inexperience. I have read the document and found some
-> examples but I am still a little confused about this.
-> I guess this is what you mean?
-> 
-> Since uzonesize may be zero ... (context)
-> 
-> Reported-by: xingwei lee <xrivendell7@gmail.com>
-> Reported-by: yue sun <samsun1006219@gmail.com>
-> Signed-off-by: Shichao Lai <shichaorai@gmail.com>
-> ---
-> Changes since v1:
-> - Add one more check in alauda_write_lba().
-> - Move check ahead of loop in alauda_read_data().
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c760b3725e52403dc1b28644fb09c47a83cacea6
+commit: f122668ddcce450c2585f0be4bf4478d6fd6176b ARC: Add eBPF JIT support
+date:   11 days ago
+config: arc-randconfig-r062-20240523 (https://download.01.org/0day-ci/archive/20240523/202405232036.Xqoc3b0J-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
 
-Yes.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405232036.Xqoc3b0J-lkp@intel.com/
 
-> 
->  drivers/usb/storage/alauda.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> ...
-> 
-> 
-> 
-> > Check after the list of variables please, not in the middle of them.  I
-> > think checkpatch will complain about this, right?
-> 
-> In fact this script doesn't warn about these problems, but I will
-> adjust my code style later.
-> But the check in alauda_write_lba() is due to some variable like
-> lba_offset and zone will perform modulo and divide operations,
-> which may throw divide errors when uzonesize is 0.
-> So I think I prefer to adjust the order of the variable list later.
-> Changes like this.
-> ```c
-> unsigned int uzonesize = MEDIA_INFO(us).uzonesize;
-> unsigned int zonesize = MEDIA_INFO(us).zonesize;
-> unsigned int pagesize = MEDIA_INFO(us).pagesize;
-> unsigned int blocksize = MEDIA_INFO(us).blocksize;
-> unsigned int new_pba_offset;
-> if (!uzonesize)
->     return USB_STOR_TRANSPORT_ERROR;
-> unsigned int lba_offset = lba % uzonesize;
-> unsigned int zone = lba / uzonesize;
-> ```
-> If it's ok, I will post the patch v3 soon.
+cocci warnings: (new ones prefixed by >>)
+>> arch/arc/net/bpf_jit_core.c:170:47-52: WARNING: conversion to bool not needed here
+--
+>> arch/arc/net/bpf_jit_core.c:162:16-22: ERROR: application of sizeof to pointer
+--
+>> arch/arc/net/bpf_jit_core.c:586:5-8: Unneeded variable: "ret". Return "0" on line 638
 
-That works, thanks!
+vim +170 arch/arc/net/bpf_jit_core.c
 
-greg k-h
+   158	
+   159	/* Initialise the context so there's no garbage. */
+   160	static int jit_ctx_init(struct jit_context *ctx, struct bpf_prog *prog)
+   161	{
+ > 162		memset(ctx, 0, sizeof(ctx));
+   163	
+   164		ctx->orig_prog = prog;
+   165	
+   166		/* If constant blinding was requested but failed, scram. */
+   167		ctx->prog = bpf_jit_blind_constants(prog);
+   168		if (IS_ERR(ctx->prog))
+   169			return PTR_ERR(ctx->prog);
+ > 170		ctx->blinded = (ctx->prog == ctx->orig_prog ? false : true);
+   171	
+   172		/* If the verifier doesn't zero-extend, then we have to do it. */
+   173		ctx->do_zext = !ctx->prog->aux->verifier_zext;
+   174	
+   175		ctx->is_extra_pass = ctx->prog->jited;
+   176		ctx->user_bpf_prog = ctx->prog->is_func;
+   177	
+   178		return 0;
+   179	}
+   180	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
