@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-187662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD198CD610
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5AD8CD617
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55EC1F2428B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB6051F21F9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CE66FB9;
-	Thu, 23 May 2024 14:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78327482;
+	Thu, 23 May 2024 14:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NkAsg038"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ig2sXpis"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55533567F;
-	Thu, 23 May 2024 14:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F314B63D0;
+	Thu, 23 May 2024 14:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716475578; cv=none; b=FD0izhiXKXrlk8QITIcXw1Uox9zcslZP+UM5fdT9h4HNN9QGGtpPO1Tks9A/pUx9K3YpKj2i/DQ581wXBfiB8gSY0jDCpW5oaJlzhX6O4+dZDesmFlSdvXOjvwoo0xyAoQmwT6b6/Xmp62DElCteSHFbsfMs6OnzBRTa5k6Hw7g=
+	t=1716475670; cv=none; b=uncziVeF9HRAsOJ+SPa0iI+lR3g76zPqKAbuey7Gvmrjdy3sccpBQFaysym8bIpYMWqVCLMlIyaSBYDUMKKg9Ps8T0zzTd+1xLz3mf1E5yUzTv6gbbYrD+W0UIeniy2FXQeXk/Cys6Cv2fMpUjbmGP8v+TVOqiL5pkaRbVtmhA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716475578; c=relaxed/simple;
-	bh=hF9ljzZP9hwPMBp0SExgTSK/RJHnGtr+KaiJw2malPE=;
+	s=arc-20240116; t=1716475670; c=relaxed/simple;
+	bh=VETQLzlRvJ/atP7lNfjD3xkU+FekoieBP/u4SqPwNv4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFTxSXvQH5kjdghgFeeaQzYvbT95jLnk1m7B8KvbG7KPXQLoJjtYWxmZSFQ5/9KFh0FAvgDAIcYIa12x5846vI6Vm5eMtD2fVk7KzJteAcsILeegs6pJBXsYOvCsrVsSbK50w25fqBhoULKrAxP3xUIPSmmxpWMrBXXLnVRzBs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NkAsg038; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A6C0B40E02A6;
-	Thu, 23 May 2024 14:46:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id l2nRQhdxUtB6; Thu, 23 May 2024 14:46:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716475569; bh=lMSeCakuwLRl6qGLg3e16nybVlse1JsLGi9aJxe5ftU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gdqvf/tsfv2bFqZIhwVORRwYxho7w8JFQwda3LAzEQ8moHD2z2Vouoxe0zLila69ZnXVr3wIXAV+Hg3jdxx6zPLULak8238ULfU1sL/0DsVznGqpvnLs2435txHQVFG4wUGT6mRWFSADsgLpw2351Z7RIN6AYbCQIPT2cfobUFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ig2sXpis; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5386C2BD10;
+	Thu, 23 May 2024 14:47:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716475669;
+	bh=VETQLzlRvJ/atP7lNfjD3xkU+FekoieBP/u4SqPwNv4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NkAsg038Z89PME2UN43DYilqftlUXNoYQ0I2xyQ+Dd87EiGQjCd2nHlYvBfwh+hwX
-	 GQqXnErGMdybQAuqCqJMt1qbQ5oNP8WRw45nq1DUGAAJGH0tRQWRpVlSeRyp24f2Qr
-	 UsoGBxlgCF83MDFxnI3qDTIlHZtAj+XQeCACCTVVkO4GR0V1cgoASkFFeuTyl+4P4O
-	 EFaMZ7aOXrgmyqguiWfbw4vsFn5OnQO5Hfljlxn53B4AmauZf/QL4y8IV66VZE1qO1
-	 y2Nms1+rheRklnlsw6m+9XtdgeY5WG3O16CucUtSn8S0qF/KMloZkrbw8L6r0vzeai
-	 gRjh5MGKTOpMlw86P805CQmNb1QnHi/uXa5insULj9NwWUayOZCAyxm8G64CSZRjjZ
-	 xnDcKc8GzOEJi9MLB8QwO3Bc/Hhb3zs1bMFAv/ohVFarLlV5FodOiEAHW0CBTbAKhk
-	 KcpxoimWRptFK1V9CPXJ6IavRh5th2QUaNHd5zOWFQwtjQir1HqLiADLfuGGiV1klE
-	 viyd4zCpOG5RVEZNgKPKv6VX5uo0GUD+aJT8NJj0O5q56KjltkI5HHxX1btqaGuxwm
-	 V98KtpFeJ1V6e6l9xn2DQhfe6p9+yTTVqLuYD/zbX/dizkoOKWmbk3/G6oo3BQHnDG
-	 ob4/bbWz/FqktDEHgWCsy1Ic=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CAE0740E016A;
-	Thu, 23 May 2024 14:45:48 +0000 (UTC)
-Date: Thu, 23 May 2024 16:45:43 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Balasubrmanian, Vignesh" <vigbalas@amd.com>
-Cc: "Balasubrmanian, Vignesh" <Vignesh.Balasubrmanian@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-toolchains@vger.kernel.org" <linux-toolchains@vger.kernel.org>,
-	"mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-	"npiggin@gmail.com" <npiggin@gmail.com>,
-	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-	"aneesh.kumar@kernel.org" <aneesh.kumar@kernel.org>,
-	"naveen.n.rao@linux.ibm.com" <naveen.n.rao@linux.ibm.com>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"keescook@chromium.org" <keescook@chromium.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"George, Jini Susan" <JiniSusan.George@amd.com>,
-	"matz@suse.de" <matz@suse.de>,
-	"binutils@sourceware.org" <binutils@sourceware.org>,
-	"jhb@FreeBSD.org" <jhb@freebsd.org>,
-	"felix.willgerodt@intel.com" <felix.willgerodt@intel.com>
-Subject: Re: [PATCH v2 1/1] x86/elf: Add a new .note section containing
- Xfeatures information to x86 core files
-Message-ID: <20240523144543.GDZk9WlwKpCKx8I3RE@fat_crate.local>
-References: <87wmo4o3r4.ffs@tglx>
- <4a090901-9705-40aa-ac3d-d67c52660f22@amd.com>
- <20240522153433.GCZk4QiX4Hf0OuI48E@fat_crate.local>
- <902b1bf0-15e6-42df-8f86-21387deef437@amd.com>
+	b=Ig2sXpissfaNNs5NshOSEl68IinJC3y64FR3DuTloH2UAHva/7q3QW2LZDgk0oYmG
+	 y1C5CZobEM7VacAiKf1qrngIp/xPaXEohxsmlQPO0WjzncblpNb3qJ6odwsJNs4Fhu
+	 MnFtNdleE4jxl8m0SoAh3mtOf2Q3hZJ4Ph+KtgQyHF8o8kAaPD2K3mjj1u6vjL9xQK
+	 y4rPh+sg+p2wYLRwbo8sx8oPbCkUuVcVBTciMTqpXatEQ87nhtzj9EDeujiAV7ZpRd
+	 sLDvVD08EYxqXVGmlcBpFarApQhO4BqVCp6aLHfwpTMjzaqx38sBDrcqtCui9AMl1n
+	 V0pcZQwQdmCVg==
+Date: Thu, 23 May 2024 15:47:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Tim Harvey <tharvey@gateworks.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Li Yang <leoyang.li@nxp.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
+Message-ID: <20240523-vividly-sequester-d85ac7bccbbd@spud>
+References: <20240522215043.3747651-1-tharvey@gateworks.com>
+ <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mHB66SfMY12XnJ+/"
 Content-Disposition: inline
-In-Reply-To: <902b1bf0-15e6-42df-8f86-21387deef437@amd.com>
+In-Reply-To: <07250029-7cea-4a82-9e70-22e0e6f7fb37@linaro.org>
 
-On Thu, May 23, 2024 at 11:57:00AM +0530, Balasubrmanian, Vignesh wrote:
-> Currently, this enum is the same as XSAVE, but when we add other features, this
-> enum might have a different value of the XSAVE features and can be modified
-> without disturbing the existing kernel code.
 
-We will do that when we cross that bridge, right?
+--mHB66SfMY12XnJ+/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Regards/Gruss,
-    Boris.
+On Thu, May 23, 2024 at 09:02:46AM +0200, Krzysztof Kozlowski wrote:
+> On 22/05/2024 23:50, Tim Harvey wrote:
+> > The GW7905 was renamed to GW7500 before production release.
+> >=20
+> > Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+> > ---
+> >  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documenta=
+tion/devicetree/bindings/arm/fsl.yaml
+> > index 0027201e19f8..d8bc295079e3 100644
+> > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > @@ -920,8 +920,8 @@ properties:
+> >                - fsl,imx8mm-ddr4-evk       # i.MX8MM DDR4 EVK Board
+> >                - fsl,imx8mm-evk            # i.MX8MM EVK Board
+> >                - fsl,imx8mm-evkb           # i.MX8MM EVKB Board
+> > +              - gateworks,imx8mm-gw75xx-0x # i.MX8MM Gateworks Board
+>=20
+> That's not even equivalent. You 7500 !=3D 75xx.
+>=20
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> >                - gateworks,imx8mm-gw7904
+> > -              - gateworks,imx8mm-gw7905-0x # i.MX8MM Gateworks Board
+>=20
+> Compatibles do not change. It's just a string. Fixed string.
+
+I think there's justification here for removing it, per the commit
+message, the rename happened before the device was available to
+customers.
+Additionally, I think we can give people that upstream things before they're
+publicly available a bit of slack, otherwise we're just discouraging
+people from upstreaming early.
+
+--mHB66SfMY12XnJ+/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZk9XEAAKCRB4tDGHoIJi
+0pJIAQCdg1Tf5q/06rcKoEqgcWnLs/48jFh1hSVrAM3QZADuMQEA05roU61bH/VP
+OkVQflknoA0fQLl2xRmXY0EunCIYEw0=
+=v3l4
+-----END PGP SIGNATURE-----
+
+--mHB66SfMY12XnJ+/--
 
