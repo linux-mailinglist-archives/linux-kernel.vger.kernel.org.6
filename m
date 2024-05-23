@@ -1,176 +1,159 @@
-Return-Path: <linux-kernel+bounces-187107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14728CCD36
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A718CCD37
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB539B2192F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46C11C212C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 07:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B9013CA92;
-	Thu, 23 May 2024 07:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67513CA81;
+	Thu, 23 May 2024 07:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="KmvMA0Rl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ky1FyPr0"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BF9U98Ot"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630273B29D;
-	Thu, 23 May 2024 07:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90DF13B2B6
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 07:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716450214; cv=none; b=DqeQyZS8rxrlD5PAryXZF0HVajHkmOY/Y+GAqslz3SGwfIEmbYeWnR1zQV8zg8woQi1wlsLBZDXSpURcJc/eIFgergLDVM3/0oU3ADlPcUSm5LyhVTjLSCyU4Ldye+ilzfXCqsI08poXyJjnWjMZOCEQWzLe5dsL6VJrebNPAXA=
+	t=1716450244; cv=none; b=WoniC9UI8kGI0Q61xdhCVZMEv8lAJyFx+B5Hjwtw4tWwhgNtLO81/EvhEB7tBTdmYa+6cDtiXcRE6lAPmvJ7wdz2r1QYg59a36FXovK90U3J7mB2rSHr1YP8Iu5uBsdPhjNOQU+dH7WaBj4j0o0r1sdx4HWSDuN3K+H3BEoLZVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716450214; c=relaxed/simple;
-	bh=RF/T6VmbZncLkH+mPH467ZY+cLh6LpgxZjP0H/p17T4=;
+	s=arc-20240116; t=1716450244; c=relaxed/simple;
+	bh=+6H0NuY7yf5yKBj+9qrBGACSuEKEjoGIDa04RAZyPB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XUR7y3KY8UZHxKwR3JWV7ukWE3oT/MxLt/uCc6n/jAb6mcitpsx4/ehRHwoH4kqN0cZsNJ3b/VpSmtIibp7CwVN7fROb5wAVf9GFiw7FEkOJ7pKh/lEKYgn5e2tpE5KTax3Ni+Znyt0HahMsQjqYnW8+sNDOiDZrd2kTUqyROPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=KmvMA0Rl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ky1FyPr0; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 4BDF21380093;
-	Thu, 23 May 2024 03:43:30 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 23 May 2024 03:43:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1716450210; x=1716536610; bh=Z54riPT5w/
-	GXWKm3n3NRJES1/8ZfLErFEZnD1X1HhbQ=; b=KmvMA0RlQBO6id/CK5a9vFvUvR
-	5C5ltyCkThCqWn71NsagNjedTWcuKDeEYnv1j9Y8SkYecGHxuJUd56zkpVBBzu08
-	1xL1BiUErrUZugZUnARtLOqK94YpHZRKFoAELNy15h8WmWdqO7J8Y98DC3cg5bph
-	0eQrsQea64ecYxDcREORxP9+gl2/lkl6YoVK2PWqs1NupIZBozv0dB8EY71bbhXL
-	UZEi9JN5sxDgHfZB7aG90AdHMvKKBJJX4V/roR4S0+fL6J4f6iiKInzSKREi2oRl
-	g3creWIGcsDdzSfNEGyqiVVDgrLIEei4w2NfCo7YvlVPw6a++EK9zVxohg0g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1716450210; x=1716536610; bh=Z54riPT5w/GXWKm3n3NRJES1/8Zf
-	LErFEZnD1X1HhbQ=; b=ky1FyPr0AtptsanbZ9Zekp0M244Y8s0mQ00QcCarYrn+
-	eD0PhiIOWMMTg4xFaaWUk+c12RkXfpF63BnJephrceyb1a6TthWopg8FCp3i95bi
-	YWUYHYtOzf2x5hfukSR8Kg9yi3gHm8c5brfXNxHBQW/npILV1lFoElSxRgyuD6M9
-	R1ZHECtWKgreEvfG+zJXbauCFEfn5Wn70Q6QUygk6QpDzqJZy2cK+k4LqCHIlLY3
-	wEs0f3ZH6jP/wPEjo6dd+lNxBrCCFd/R1rXNqyIpud6p/05Wn1fM/qCfN8JYG1ZD
-	s+qJaKGbKWyuZBr2jI69cLaam6aehHFue9T332Tv1w==
-X-ME-Sender: <xms:ofNOZl1j_FziXDjSHf76AJHKJIz0tesuZEZpkFOBfp-VSzVdWDb6bA>
-    <xme:ofNOZsH4beBGtIkt56x418n9qckwNv1v9k0nGiiMMsJGLACdQTkzJFeEg_83X_UBV
-    R5z-q1qICpM1uZ0Ww>
-X-ME-Received: <xmr:ofNOZl6onAOMt8r4gcJBkkGBHdjiL0L7ZqFkxKjI2pMyu2yNgP9AuPt4WPicDGD6KSU6oTj5fDtq4yUmvDRqVsF-B0lS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeihedguddvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttdejnecuhfhrohhmpeetlhih
-    shhsrgcutfhoshhsuceohhhisegrlhihshhsrgdrihhsqeenucggtffrrghtthgvrhhnpe
-    egiedutdegvdffuefgkedtgedtvdetfedvffejveefhfefffeugfeiffeiffegveenucff
-    ohhmrghinhepohgrshhishdqohhpvghnrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhephhhisegrlhihshhsrgdrihhs
-X-ME-Proxy: <xmx:ofNOZi2Qg0gLRtEISMFBv4LBxL6pap9WcDOUuJB5pT7yv27lxRwo0w>
-    <xmx:ofNOZoGVTD9hpKcgPmu7CxJvnevTESb1hf-gscRyo9UyR811PveD4w>
-    <xmx:ofNOZj8qwPPeRTDZcmfHslbCdHQ0MsOa-tsqcUX8idEpWObRc-kQpA>
-    <xmx:ofNOZlkoeHUIDuIjgP8TARrySxpfZwmXxXZibytZ6H45EsCreYF2lA>
-    <xmx:ovNOZr9KQWdmmOyos6VDiamTU3CIzp7VOXDV6wI4FCOcP7Iul1xeqd7n>
-Feedback-ID: i12284293:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 May 2024 03:43:29 -0400 (EDT)
-Received: by mbp.qyliss.net (Postfix, from userid 1000)
-	id 477F54F4620; Thu, 23 May 2024 09:43:27 +0200 (CEST)
-Date: Thu, 23 May 2024 09:43:27 +0200
-From: Alyssa Ross <hi@alyssa.is>
-To: Xuewei Niu <niuxuewei97@gmail.com>
-Cc: stefanha@redhat.com, sgarzare@redhat.com, mst@redhat.com, 
-	davem@davemloft.net, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xuewei Niu <niuxuewei.nxw@antgroup.com>, virtio-comment@lists.linux.dev
-Subject: Re: [RFC PATCH 1/5] vsock/virtio: Extend virtio-vsock spec with an
- "order" field
-Message-ID: <4hmduhgue6g7rnuaqtakvgigaiu2dwgm2cm7wwusm7wa2xfdtr@eav5ltj4lqsd>
-References: <20240517144607.2595798-1-niuxuewei.nxw@antgroup.com>
- <20240517144607.2595798-2-niuxuewei.nxw@antgroup.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J19g/sS3bomTuJLk7Y87KolfTuYnwERyPGn2F8PJLIIlCJWoXaJAkVqhvFRvP01clAocZN1E6sqVK0/zhDEnKj0XxvwCeprN0tLrSmnMMQ5Dx2QwVoRitmX/p4twdTlZjH66aQj5avWg3tu6T+X5eINdW7qZjuTH3K7dfo5yZ44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BF9U98Ot; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e576057c2bso107583311fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 00:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716450241; x=1717055041; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pQaQnll249PzObj0jm3igRrSGBLp96MOKX/eXVstz48=;
+        b=BF9U98OtYzMQfzj5Yas/dJuwzl4POXxcUIn8BRuErnI6dRxci8BtT21ifeoFpBgRf0
+         L+OPjlWYsHa3jGCR4UsUAhSSJ7Eh7kJ3ypOHSGoNkJPZ9g21xp6bQ14gTZHD4Qz6bqT5
+         sQmarYBOpRepOzVEM8XrBPZddjKB2ScXYZrjIpwrzYPngiqBjtnR7ncg5ImhTXL7ia1G
+         SZXHbCBxgtvjrh/gQqD2P+eB5s2AkY0eeZUV39CXD+rrSY0vy9qAqVQ1qczlkQ/JzvOR
+         NYbBmmAgPTNhw9ysY5TQaetOo3sDnwCN7NJ3D8CgJnb1MPwWUo/yTKkPmbK025VGGbN9
+         1vSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716450241; x=1717055041;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=pQaQnll249PzObj0jm3igRrSGBLp96MOKX/eXVstz48=;
+        b=LxJPPXh3OT9UePKuMi2IHmomvgdl2WHCFDbJR5b0DNeCXh/Z0q3gpNRgrXSrHbePsQ
+         eUGRT7xE363ruGf81uvR2tjg5aThVTBP+2UO51BazztfI4DzKNNFOe01BpSZMrQcLIFR
+         XQQSTZHg1z/5DshbXe10Qt2vb3llR2NroV2b56ALT+Plmc7WMIMS/JdA7rz51eZEj4OF
+         b3DHhE85RlKOsav5AijaE06Yw8YLR2xE5EyTfzv7QSIhUNFmUHMxolp1E8S40ES0ArZq
+         X/zLHOmksz22aU0qyDqGj4WhmPV3e0cQKMI6Gj2kWpQPuZihijkmgPjSOJhTsKNEAq+8
+         e7Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX+6Wq6AsCW4gEanpgUoqBK0cLLQafertC3vVoD571VfaZofXubl0V082x0240uOoDWlC7wkro5cUHPlowjdsGjcFn2cxZhteRyIS5
+X-Gm-Message-State: AOJu0YyLo32BGpP36bjeLMnUUV9ivTvN+DZNtd00iz5hIJlwTCbt2ZUM
+	6zlwX8zu3t+zhtFLZoCy5wNJTmucakaVlmBsxh2AfO6Gjj7zqXrR
+X-Google-Smtp-Source: AGHT+IE5e9Zd5efr0fJkiJxH9yPmzb9fqN4396AbqSEx6AVkQZ2469hY6NkXoWnVN+M9g2ISeUpqtw==
+X-Received: by 2002:a2e:86c8:0:b0:2e7:1e4a:31e0 with SMTP id 38308e7fff4ca-2e949467bf2mr30023561fa.18.1716450240590;
+        Thu, 23 May 2024 00:44:00 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01968sm1899538766b.166.2024.05.23.00.43.59
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2024 00:43:59 -0700 (PDT)
+Date: Thu, 23 May 2024 07:43:59 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wei Yang <richard.weiyang@gmail.com>, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@in.ibm.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>, Steve Wahl <steve.wahl@hpe.com>,
+	Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH] x86/head/64: level2_kernel_pgt's kernel area is built
+ with _PAGE_PRESENT set
+Message-ID: <20240523074359.wiqurnqqrxjtgghu@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240323232621.10400-1-richard.weiyang@gmail.com>
+ <87jzjmgod2.ffs@tglx>
+ <20240522140614.fxe6tw6y5clrnve3@master>
+ <87a5khh9in.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ymwyv3un5agbox3r"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240517144607.2595798-2-niuxuewei.nxw@antgroup.com>
+In-Reply-To: <87a5khh9in.ffs@tglx>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
+On Wed, May 22, 2024 at 10:33:20PM +0200, Thomas Gleixner wrote:
+>On Wed, May 22 2024 at 14:06, Wei Yang wrote:
+>> On Wed, May 22, 2024 at 11:58:01AM +0200, Thomas Gleixner wrote:
+>>>
+>>>What's the actual problem you are trying to solve?
+>>
+>> Not a problem. It tries to remove some duplicate check.
+>
+>I assume you mean redundant check, right?
 
---ymwyv3un5agbox3r
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yep, you are right.
 
-(CCing virtio-comment, since this proposes adding a field to a struct
-that is standardized[1] in the VIRTIO spec, so changes to the Linux
-implementation should presumably be coordinated with changes to the
-spec.)
-
-[1]: https://docs.oasis-open.org/virtio/virtio/v1.3/csd01/virtio-v1.3-csd01=
-=2Ehtml#x1-4780004
-
-On Fri, May 17, 2024 at 10:46:03PM +0800, Xuewei Niu wrote:
-> The "order" field determines the location of the device in the linked lis=
-t,
-> the device with CID 4, having a smallest order, is in the first place, and
-> so forth.
 >
-> Rules:
+>The changelog should explain that. I really could not figure out
+>what this is about.
 >
-> * It doesn=E2=80=99t have to be continuous;
-> * It cannot exist conflicts;
-> * It is optional for the mode of a single device, but is required for the
->   mode of multiple devices.
+>>>>  	/* fixup pages that are part of the kernel image */
+>>>>  	for (; i <= pmd_index((unsigned long)_end); i++)
+>>>> -		if (pmd[i] & _PAGE_PRESENT)
+>>>> -			pmd[i] += load_delta;
+>>>> +		pmd[i] += load_delta;
+>>>
+>>>Fixing up non-present PMDs is a pointless exercise.
+>>>
+>>
+>> Agree. While we are sure then range here must present.
+>>
+>> The whole process looks like this
+>>
+>>     pmd in [0, _text)
+>>         unset _PAGE_PRESENT
+>>     pmd in [_text, _end]
+>>         fix up delta
+>>     pmd in (_end, 256)
+>>         unset _PAGE_PRESENT
+>>
+>> Since we have compiled in _PAGE_PRESENT in this page table, it is not
+>> necessary to check _PAGE_PRESENT again before fixing up delta.
 >
-> Signed-off-by: Xuewei Niu <niuxuewei.nxw@antgroup.com>
-> ---
->  include/uapi/linux/virtio_vsock.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/include/uapi/linux/virtio_vsock.h b/include/uapi/linux/virti=
-o_vsock.h
-> index 64738838bee5..b62ec7d2ab1e 100644
-> --- a/include/uapi/linux/virtio_vsock.h
-> +++ b/include/uapi/linux/virtio_vsock.h
-> @@ -43,6 +43,7 @@
->
->  struct virtio_vsock_config {
->  	__le64 guest_cid;
-> +	__le64 order;
->  } __attribute__((packed));
->
->  enum virtio_vsock_event_id {
-> --
-> 2.34.1
+>That wants to be in the change log.
 >
 
---ymwyv3un5agbox3r
-Content-Type: application/pgp-signature; name="signature.asc"
+Sure, I would put this in the change log in next version.
 
------BEGIN PGP SIGNATURE-----
+>Referencing the history of the code is definitely interesting and you
+>did a great job on decoding it, but for the change itself the only
+>relevant information is that all PMDs between _text and _end are marked
+>present because the whole table is marked so.
+>
+>> BTW, if one entry between _text and _end is not present, we will failed to
+>> fixing the kernel code pmd entry, which will lead to some problem.
+>
+>It does not because a non-present entry does not care about the load
+>delta obviously.
+>
+>Thanks,
+>
+>        tglx
 
-iQIzBAABCAAdFiEEH9wgcxqlHM/ARR3h+dvtSFmyccAFAmZO85wACgkQ+dvtSFmy
-ccDRVg/+J2b4Yt4KmcQzq0DfhbUZU5xta4K5cBOzSruvTYlBmO0SFOoBRnLERz7g
-J5/1nYCE6vxMPymbTLkvaP+npnZfnr9Vdtf9f+jJ2NtBEcxVYV2ITZ2wb3a9+ffT
-VPE78h3xVPFA6cGRTQomS4xaThvLtngicfBWwoZT1LrC2Jt5U14fYxO8u0FOCd1w
-X7eEfmnz1rieoUKOf6g1ELIpNTSI6OcWxZafKXFtqX2IZo9e22Ln4yft8F4CS0fc
-3Pczp2OVHIZEkUz6hfaGQlwpavm0Asrf4M+StL4nyQJ5rTJF3/pVBDEsK+v4IlDP
-TQCZyd436QhXZG5NV9Fb6cry9Rh3vmhPkuE/NljpWn3SI0WyOsbITmxoGmgpJkYq
-RIjIcGM8EIqUwik8KtdUqkkA0opseaZOp90MpieUBFzDAPJr8b7Afa7oaDmUdkak
-6Q+29Bpvy5exSzuCNjQjksaBUgwAyd5SvZTyaxQCKxKEjM+FROvARo/cLQUYpDuf
-r3EPH9gMwx99mewVLhnxE5AxmfcGgElextGjBBc0OZ+KglvFziVx/l0EBmvwxoLP
-FDiJ8+wfSc0a68wqKmGsrphRu8fxIkOnHy80VGKm+sdeljH+qRETwqBo1S7rtYWs
-tZlgDBEtc7DjSlo8G0GxBeIW9yWsfsg1nLMbd8UCQ8rR/pjn0bE=
-=n1+2
------END PGP SIGNATURE-----
-
---ymwyv3un5agbox3r--
+-- 
+Wei Yang
+Help you, Help me
 
