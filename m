@@ -1,192 +1,173 @@
-Return-Path: <linux-kernel+bounces-187801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E78B8CD8B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:52:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20108CD8BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813A71C213FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231481F23179
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ED0381B0;
-	Thu, 23 May 2024 16:52:40 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655A529CEB;
+	Thu, 23 May 2024 16:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lwgFh6Gu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Of5P/s3g";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lwgFh6Gu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Of5P/s3g"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1912C1A2;
-	Thu, 23 May 2024 16:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A752B22334;
+	Thu, 23 May 2024 16:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716483160; cv=none; b=dX7iXHbN/U28WzQH13iQiSKGBQAWsCB+rPnZWf9A1jGGEeT17cHYJN9fahCkzgVd7B/XGWWWvhhLosYg2sUoDhHOVt93CmAUZs1Y4OLFbPX+Aunt5dyrf7cxNFRqS4uIYAhgL9P3T7C7G7RErb5O9+EFuuyBDuBzkwgQ4/lX1kA=
+	t=1716483291; cv=none; b=Gdg5t53hYGZrC870XLNnQ+JU0qJJZzc+zJMQQXb3SKMzY8fxXqzxJJZW3M6HzRyq6RKUIX7Y154fP/mD8g4rsKa+NaKaqpxrJXLRz/HpGhrzU7v0OA7yQjP0u3DM78wZB7paC/pjMFqpbR3ZjsbKjKlT66yN3qZ2+c/rzKiKW+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716483160; c=relaxed/simple;
-	bh=Jw3ekEjuKFoUIPIkpKYN7WVXSRJdpf5zIWvM7wH9bGc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJootb7nBbjK2Tv2dWChqvR+YQIk3sEvekEiADSUY3XvqfDdl8kdivuwQtw+O8hicFmzQChbsjifthtqjRGoXFINs7ccm2w6P09xj9vZEezxx+znIEL8ih3obIHmrGvQQzP9GZcgFP5dwGCVXjBz6JUXajvioWgdAmgUTmVU7Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VlZ2R0BRjz6K9Nl;
-	Fri, 24 May 2024 00:51:43 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id A1E301400DB;
-	Fri, 24 May 2024 00:52:34 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 23 May
- 2024 17:52:34 +0100
-Date: Thu, 23 May 2024 17:52:33 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, "David
- Lechner" <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, "Liam
- Girdwood" <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Dimitri
- Fedrau" <dima.fedrau@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Michael
- Hennerich" <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	<noname.nuno@gmail.com>
-Subject: Re: [PATCH v2 1/5] iio: ABI: Generalize ABI documentation for DAC
-Message-ID: <20240523175233.00006e8b@Huawei.com>
-In-Reply-To: <20240523031909.19427-2-kimseer.paller@analog.com>
-References: <20240523031909.19427-1-kimseer.paller@analog.com>
-	<20240523031909.19427-2-kimseer.paller@analog.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1716483291; c=relaxed/simple;
+	bh=eYRTP55zHPTx1wqIyD0CwxUVER7F1bNXTCqO7Z2cUeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GCUgcKxLJ1/rX8D0QdNTmRrROvqCs/wNibo0vIvms5f3mNJAE7q9VTwwCpdBYOLRHFjUlGRSeXzBw52QnoS7f2OT1i0LQP+aLC4U++Kh8FeZC8qxE73nK6VVdOOUisZuv6Xs3Wn3Ovm0oP7E6Epio8LG0XIXoFiOqFnQLtcqBvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lwgFh6Gu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Of5P/s3g; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lwgFh6Gu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Of5P/s3g; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7ECC42036A;
+	Thu, 23 May 2024 16:54:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716483287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8dXeplD1JrXrU/dHr8hrBZ3Tb1p6ZC/7YwQd+1tVqb8=;
+	b=lwgFh6Gubysg2jLJrdwJfqEdWiYVYdoeCQbmgSacaROl6wot0vSXiipzhGt+sADPA/moWN
+	nPmF+gQeb3nF/z2pDA5sx9ksAZ84VSf8jCdv1IpRiVIsYzcD+yRa4S+Z3gZn/6XUWrGFPk
+	nlJed8gFdnaU8P0xRtLyugf6wlAxCW4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716483287;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8dXeplD1JrXrU/dHr8hrBZ3Tb1p6ZC/7YwQd+1tVqb8=;
+	b=Of5P/s3g5djlbJvdQ9bIs63NtrddvumKnxoeHxqG6R0e76IfAXVDOx1JJzG6vCAXCNTmiP
+	+ymvF9TG1pSyn1Bg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1716483287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8dXeplD1JrXrU/dHr8hrBZ3Tb1p6ZC/7YwQd+1tVqb8=;
+	b=lwgFh6Gubysg2jLJrdwJfqEdWiYVYdoeCQbmgSacaROl6wot0vSXiipzhGt+sADPA/moWN
+	nPmF+gQeb3nF/z2pDA5sx9ksAZ84VSf8jCdv1IpRiVIsYzcD+yRa4S+Z3gZn/6XUWrGFPk
+	nlJed8gFdnaU8P0xRtLyugf6wlAxCW4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1716483287;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8dXeplD1JrXrU/dHr8hrBZ3Tb1p6ZC/7YwQd+1tVqb8=;
+	b=Of5P/s3g5djlbJvdQ9bIs63NtrddvumKnxoeHxqG6R0e76IfAXVDOx1JJzG6vCAXCNTmiP
+	+ymvF9TG1pSyn1Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B10313A6B;
+	Thu, 23 May 2024 16:54:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9rFJE9d0T2bzeQAAD6G6ig
+	(envelope-from <iluceno@suse.de>); Thu, 23 May 2024 16:54:47 +0000
+From: Ismael Luceno <iluceno@suse.de>
+To: linux-kernel@vger.kernel.org
+Cc: Ismael Luceno <iluceno@suse.de>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	=?UTF-8?q?Michal=20Kube=C4=8Dek?= <mkubecek@suse.com>,
+	Simon Horman <horms@verge.net.au>,
+	Julian Anastasov <ja@ssi.bg>,
+	lvs-devel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	coreteam@netfilter.org
+Subject: [PATCH] ipvs: Avoid unnecessary calls to skb_is_gso_sctp
+Date: Thu, 23 May 2024 18:54:44 +0200
+Message-ID: <20240523165445.24016-1-iluceno@suse.de>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,netfilter.org:email,suse.de:email]
 
-On Thu, 23 May 2024 11:19:05 +0800
-Kim Seer Paller <kimseer.paller@analog.com> wrote:
+In the context of the SCTP SNAT/DNAT handler, these calls can only
+return true.
 
-> Introduces a more generalized ABI documentation for DAC. Instead of
-> having separate ABI files for each DAC, we now have a single ABI file
-> that covers the common sysfs interface for all DAC.
->=20
-> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio-dac   | 61 +++++++++++++++++++
->  .../ABI/testing/sysfs-bus-iio-dac-ltc2688     | 31 ----------
->  MAINTAINERS                                   |  8 +++
->  3 files changed, 69 insertions(+), 31 deletions(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-dac
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-dac b/Documentation/=
-ABI/testing/sysfs-bus-iio-dac
-> new file mode 100644
-> index 000000000000..53d5213520c6
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-dac
-> @@ -0,0 +1,61 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_toggle_en
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Toggle enable. Write 1 to enable toggle or 0 to disable it. This is
-> +		useful when one wants to change the DAC output codes. The way it should
-> +		be done is:
-> +
-> +		- disable toggle operation;
-> +		- change out_currentY_raw0 and out_currentY_raw1;
+Ref: e10d3ba4d434 ("ipvs: Fix checksumming on GSO of SCTP packets")
+Signed-off-by: Ismael Luceno <iluceno@suse.de>
+CC: Pablo Neira Ayuso <pablo@netfilter.org>
+CC: Michal Kubeček <mkubecek@suse.com>
+CC: Simon Horman <horms@verge.net.au>
+CC: Julian Anastasov <ja@ssi.bg>
+CC: lvs-devel@vger.kernel.org
+CC: netfilter-devel@vger.kernel.org
+CC: netdev@vger.kernel.org
+CC: coreteam@netfilter.org
+---
+ net/netfilter/ipvs/ip_vs_proto_sctp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Generalize to [0...N] or something like that to allow more symbols.
-
-> +		- enable toggle operation.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_raw0
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_raw1
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		It has the same meaning as out_currentY_raw. This attribute is
-> +		specific to toggle enabled channels and refers to the DAC output
-> +		code in INPUT_A (_raw0) and INPUT_B (_raw1). The same scale and offset
-> +		as in out_currentY_raw applies.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_currentY_symbol
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Performs a SW toggle. This attribute is specific to toggle
-> +		enabled channels and allows to toggle between out_currentY_raw0
-> +		and out_currentY_raw1 through software. Writing 0 will select
-> +		out_currentY_raw0 while 1 selects out_currentY_raw1.
-Perhaps write this more generally.  The ABI handles more than 2 symbol valu=
-es.
-
-                Performs a SW switch to a predefined output symbol, allowing
-		switching between current symbol A with output
-		out_currentY_rawA and new symbol B with output
-		out_currentY_rawB by writing integer value B.
-=20
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_toggle_en
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Toggle enable. Write 1 to enable toggle or 0 to disable it. This is
-> +		useful when one wants to change the DAC output codes. The way it should
-> +		be done is:
-> +
-> +		- disable toggle operation;
-> +		- change out_voltageY_raw0 and out_voltageY_raw1;
-> +		- enable toggle operation.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_raw0
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_raw1
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		It has the same meaning as out_voltageY_raw. This attribute is
-> +		specific to toggle enabled channels and refers to the DAC output
-> +		code in INPUT_A (_raw0) and INPUT_B (_raw1). The same scale and offset
-> +		as in out_voltageY_raw applies.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/out_voltageY_symbol
-> +KernelVersion:	5.18
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Performs a SW toggle. This attribute is specific to toggle
-> +		enabled channels and allows to toggle between out_voltageY_raw0
-> +		and out_voltageY_raw1 through software. Writing 0 will select
-> +		out_voltageY_raw0 while 1 selects out_voltageY_raw1.
-
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 758c202ec712..b3be54c09159 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12850,6 +12850,14 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
->  F:	drivers/iio/dac/ltc1660.c
-> =20
-> +LTC2664 IIO DAC DRIVER
-> +M:	Michael Hennerich <michael.hennerich@analog.com>
-> +M:	Kim Seer Paller <kimseer.paller@analog.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Supported
-> +W:	https://ez.analog.com/linux-software-drivers
-> +F:	Documentation/ABI/testing/sysfs-bus-iio-dac
-
-As it's a general doc, doesn't really belong in a driver specific entry.
-So far we haven't listed these generic docs as having specific maintainers
-and people have to rely on history to figure out who to cc.
-
-> +
->  LTC2688 IIO DAC DRIVER
->  M:	Nuno S=E1 <nuno.sa@analog.com>
->  L:	linux-iio@vger.kernel.org
+diff --git a/net/netfilter/ipvs/ip_vs_proto_sctp.c b/net/netfilter/ipvs/ip_vs_proto_sctp.c
+index 1e689c714127..83e452916403 100644
+--- a/net/netfilter/ipvs/ip_vs_proto_sctp.c
++++ b/net/netfilter/ipvs/ip_vs_proto_sctp.c
+@@ -126,7 +126,7 @@ sctp_snat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+ 	if (sctph->source != cp->vport || payload_csum ||
+ 	    skb->ip_summed == CHECKSUM_PARTIAL) {
+ 		sctph->source = cp->vport;
+-		if (!skb_is_gso(skb) || !skb_is_gso_sctp(skb))
++		if (!skb_is_gso(skb))
+ 			sctp_nat_csum(skb, sctph, sctphoff);
+ 	} else {
+ 		skb->ip_summed = CHECKSUM_UNNECESSARY;
+@@ -175,7 +175,7 @@ sctp_dnat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
+ 	    (skb->ip_summed == CHECKSUM_PARTIAL &&
+ 	     !(skb_dst(skb)->dev->features & NETIF_F_SCTP_CRC))) {
+ 		sctph->dest = cp->dport;
+-		if (!skb_is_gso(skb) || !skb_is_gso_sctp(skb))
++		if (!skb_is_gso(skb))
+ 			sctp_nat_csum(skb, sctph, sctphoff);
+ 	} else if (skb->ip_summed != CHECKSUM_PARTIAL) {
+ 		skb->ip_summed = CHECKSUM_UNNECESSARY;
+-- 
+2.44.0
 
 
