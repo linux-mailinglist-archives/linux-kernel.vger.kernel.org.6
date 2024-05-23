@@ -1,130 +1,244 @@
-Return-Path: <linux-kernel+bounces-187572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3954D8CD461
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7CF78CD45C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9EEDB228DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E191282108
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 13:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CA814BFBC;
-	Thu, 23 May 2024 13:23:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF2414B06C;
+	Thu, 23 May 2024 13:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mU0CSDIR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A771214B95C
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88B014A60D;
+	Thu, 23 May 2024 13:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716470634; cv=none; b=q1C1h9dRBZNhoRCos97bBRxLuMHjXEy4Xo0adYEsNCbas+HHhc6YdA1nOCwtY5pKTp+O3ZPiz5RnNvfls1Qph14qJ3t0GOfzoWnF9+K5+CR89w4g4NNazF1Bu2Ymr8k/0ZYAU5zmAfEr6BJgbU2sHQKUVXt3DZgUVdhUPbAX9eA=
+	t=1716470629; cv=none; b=oBQcvq+gfK74HJEn0Q9i7fOnuqZ7A9ooBqCnOr60RQJGxRk/+TLDS8ztdV0ytkFd/4SciMF3/PR6J73rbPuluJu7hsIVblLu7ZamNIFNLCR5MT/U+BRl6vtRE2H3c/PT0KLnJbroa31AXeuNPP7G27P272LugowlPNyVwgdHXCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716470634; c=relaxed/simple;
-	bh=jfoi1eZMaRi271oO//ba6KU8TVc2gQ7Tp96Z7KExp+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUYcffLSY/ep2QCw8tJCeG3L8rsr9hrqE8DidIqRq+gMqKPZ1hgucvYhzViljGnLbKwwtE2sNrAIr0ZSasI4mO78K78y8/yLFH2OnIL7jcLqfdhrbAeNjNoExUL8u8L4DNNd325b0vk4WUACvkFBvQw4rd/uIS5maw6ACcZdbQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sA8Py-00046I-Ol; Thu, 23 May 2024 15:23:38 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sA8Pw-002fRw-0p; Thu, 23 May 2024 15:23:36 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sA8Pv-009qGA-2y;
-	Thu, 23 May 2024 15:23:35 +0200
-Date: Thu, 23 May 2024 15:23:35 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/5] firmware: imx: add driver for NXP EdgeLock Enclave
-Message-ID: <Zk9DV6Ko-KO0kym_@pengutronix.de>
-References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
- <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
+	s=arc-20240116; t=1716470629; c=relaxed/simple;
+	bh=Eji3OK0kgA/1QMg7rgMlIDsUrIG2CMxWsZn7mehH8BI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hj4iYykL9By/Ujq7avzM8gdDyQ+6XK9jOimm03c1ImIFVlQqGJDiviZ7Dimwjb6xciyNIfYuj3fQQAoYZgHv1Hz+i0/hHni2bn+06PILlQ4GAkMnwnldl7fNucZdFbJhleecoCuhP1KaZBl3cuD/XJ0SumVUMWdAFvgWOdsux3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mU0CSDIR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DBAEC2BD10;
+	Thu, 23 May 2024 13:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716470629;
+	bh=Eji3OK0kgA/1QMg7rgMlIDsUrIG2CMxWsZn7mehH8BI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mU0CSDIRLU770cVTc7mGdG67gRacbfHX7KZ3Gwz+oYUJEhalcsfOL6Vj1uCz2stDU
+	 TEripNlxvNFEQP8cntlNdqNLokL4guGK4fJoZy/He1cRDDL3C/hqdGyHfAyL+d//Ue
+	 SZ2a68BRNj2MQEEqXEcY/Bx+shnT3i/pQNx7nYcsMyoQYXkga7UNES7HLABgt8Evj2
+	 nGtk08D4xHZacvpGIqT2BnkIEG6gYleBhqPN4en9XoJgu06FVwBgAUzAhdsQw/HaVA
+	 fWJd4prZaGkIOdq20udzo8rEXW9StEHeOO2+21CdEQGxMjCQhfMTho3yWZS2G8d1A+
+	 1Y0kbZ0DQGXmA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-crypto@vger.kernel.org (open list:CRYPTO API),
+	linux-kernel@vger.kernel.org (open list),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v2] KEYS: trusted: Use ASN.1 encoded OID
+Date: Thu, 23 May 2024 16:23:37 +0300
+Message-ID: <20240523132341.32092-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 23, 2024 at 04:19:35PM +0530, Pankaj Gupta wrote:
-> NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE),
-> are embedded in the SoC to support the features like HSM, SHE & V2X,
-> using message based communication interface.
-> 
-> The secure enclave FW communicates on a dedicated messaging unit(MU)
-> based interface(s) with application core, where kernel is running.
-> It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
-> 
-> This patch adds the driver for communication interface to secure-enclave,
-> for exchanging messages with NXP secure enclave HW IP(s) like EdgeLock
-> Enclave (ELE) from Kernel-space, used by kernel management layers like
-> - DM-Crypt.
-> 
-> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
-> ---
->  drivers/firmware/imx/Kconfig        |  12 +
->  drivers/firmware/imx/Makefile       |   2 +
->  drivers/firmware/imx/ele_base_msg.c | 286 +++++++++++++++++++
->  drivers/firmware/imx/ele_base_msg.h |  92 +++++++
->  drivers/firmware/imx/ele_common.c   | 239 ++++++++++++++++
->  drivers/firmware/imx/ele_common.h   |  43 +++
->  drivers/firmware/imx/se_ctrl.c      | 531 ++++++++++++++++++++++++++++++++++++
->  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
->  include/linux/firmware/imx/se_api.h |  14 +
->  9 files changed, 1318 insertions(+)
+There's no reason to encode OID_TPMSealedData at run-time, as it never
+changes.
 
-[...]
+Replace it with the encoded version, which has exactly the same size:
 
-> 
-> +int imx_ele_msg_send(struct se_if_priv *priv, void *tx_msg)
-> +{
-> +	struct se_msg_hdr *header;
-> +	int err;
-> +
-> +	header = (struct se_msg_hdr *) tx_msg;
-> +
-> +	if (header->tag == priv->cmd_tag)
-> +		lockdep_assert_held(&priv->se_if_cmd_lock);
-> +
-> +	scoped_guard(mutex, &priv->se_if_lock);
+	67 81 05 0A 01 05
 
-scoped_guard() with an empty block doesn't make much sense. Either use
-scope_guard() { /* do something locked */ }; or guard().
+Include OBJECT IDENTIFIER (0x06) tag and length as the epilogue so that
+the OID can be simply copied to the blob.
 
-Sascha
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2:
+* Not my day I guess. This one has print_hex_dump() taken away.
+  Apologies for spamming. The patch is however tested properly
+  with run-tests.sh in https://gitlab.com/jarkkojs/linux-tpmdd-test.
+---
+ include/linux/asn1_encoder.h              |  4 -
+ lib/asn1_encoder.c                        | 91 -----------------------
+ security/keys/trusted-keys/trusted_tpm2.c |  7 +-
+ 3 files changed, 4 insertions(+), 98 deletions(-)
 
+diff --git a/include/linux/asn1_encoder.h b/include/linux/asn1_encoder.h
+index 08cd0c2ad34f..afeefdfe2525 100644
+--- a/include/linux/asn1_encoder.h
++++ b/include/linux/asn1_encoder.h
+@@ -8,14 +8,10 @@
+ #include <linux/asn1_ber_bytecode.h>
+ #include <linux/bug.h>
+ 
+-#define asn1_oid_len(oid) (sizeof(oid)/sizeof(u32))
+ unsigned char *
+ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+ 		    s64 integer);
+ unsigned char *
+-asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+-		u32 oid[], int oid_len);
+-unsigned char *
+ asn1_encode_tag(unsigned char *data, const unsigned char *end_data,
+ 		u32 tag, const unsigned char *string, int len);
+ unsigned char *
+diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
+index 0fd3c454a468..c0db3cbebe89 100644
+--- a/lib/asn1_encoder.c
++++ b/lib/asn1_encoder.c
+@@ -85,97 +85,6 @@ asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
+ }
+ EXPORT_SYMBOL_GPL(asn1_encode_integer);
+ 
+-/* calculate the base 128 digit values setting the top bit of the first octet */
+-static int asn1_encode_oid_digit(unsigned char **_data, int *data_len, u32 oid)
+-{
+-	unsigned char *data = *_data;
+-	int start = 7 + 7 + 7 + 7;
+-	int ret = 0;
+-
+-	if (*data_len < 1)
+-		return -EINVAL;
+-
+-	/* quick case */
+-	if (oid == 0) {
+-		*data++ = 0x80;
+-		(*data_len)--;
+-		goto out;
+-	}
+-
+-	while (oid >> start == 0)
+-		start -= 7;
+-
+-	while (start > 0 && *data_len > 0) {
+-		u8 byte;
+-
+-		byte = oid >> start;
+-		oid = oid - (byte << start);
+-		start -= 7;
+-		byte |= 0x80;
+-		*data++ = byte;
+-		(*data_len)--;
+-	}
+-
+-	if (*data_len > 0) {
+-		*data++ = oid;
+-		(*data_len)--;
+-	} else {
+-		ret = -EINVAL;
+-	}
+-
+- out:
+-	*_data = data;
+-	return ret;
+-}
+-
+-/**
+- * asn1_encode_oid() - encode an oid to ASN.1
+- * @data:	position to begin encoding at
+- * @end_data:	end of data pointer, points one beyond last usable byte in @data
+- * @oid:	array of oids
+- * @oid_len:	length of oid array
+- *
+- * this encodes an OID up to ASN.1 when presented as an array of OID values
+- */
+-unsigned char *
+-asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
+-		u32 oid[], int oid_len)
+-{
+-	int data_len = end_data - data;
+-	unsigned char *d = data + 2;
+-	int i, ret;
+-
+-	if (WARN(oid_len < 2, "OID must have at least two elements"))
+-		return ERR_PTR(-EINVAL);
+-
+-	if (WARN(oid_len > 32, "OID is too large"))
+-		return ERR_PTR(-EINVAL);
+-
+-	if (IS_ERR(data))
+-		return data;
+-
+-
+-	/* need at least 3 bytes for tag, length and OID encoding */
+-	if (data_len < 3)
+-		return ERR_PTR(-EINVAL);
+-
+-	data[0] = _tag(UNIV, PRIM, OID);
+-	*d++ = oid[0] * 40 + oid[1];
+-
+-	data_len -= 3;
+-
+-	for (i = 2; i < oid_len; i++) {
+-		ret = asn1_encode_oid_digit(&d, &data_len, oid[i]);
+-		if (ret < 0)
+-			return ERR_PTR(ret);
+-	}
+-
+-	data[1] = d - data - 2;
+-
+-	return d;
+-}
+-EXPORT_SYMBOL_GPL(asn1_encode_oid);
+-
+ /**
+  * asn1_encode_length() - encode a length to follow an ASN.1 tag
+  * @data: pointer to encode at
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 8b7dd73d94c1..4a2b4ad5a913 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -26,7 +26,8 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+ };
+ 
+-static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
++/* Encoded OID_TPMSealedData. */
++static u8 OID_TPMSealedData_ASN1[] = {0x06, 0x06, 0x67, 0x81, 0x05, 0x0a, 0x01, 0x05};
+ 
+ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 			   struct trusted_key_options *options,
+@@ -51,8 +52,8 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	if (!scratch)
+ 		return -ENOMEM;
+ 
+-	work = asn1_encode_oid(work, end_work, tpm2key_oid,
+-			       asn1_oid_len(tpm2key_oid));
++	work = memcpy(work, OID_TPMSealedData_ASN1, sizeof(OID_TPMSealedData_ASN1));
++	work += sizeof(OID_TPMSealedData_ASN1);
+ 
+ 	if (options->blobauth_len == 0) {
+ 		unsigned char bool[3], *w = bool;
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.45.1
+
 
