@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-187033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93698CCC19
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:13:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5950A8CCC1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB5F01C21E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D992B1F22EDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07FF713B584;
-	Thu, 23 May 2024 06:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66A513B58E;
+	Thu, 23 May 2024 06:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETN4Qjpb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkkYuERG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F3A51016;
-	Thu, 23 May 2024 06:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D09187F;
+	Thu, 23 May 2024 06:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716444782; cv=none; b=qKtb9aCU1Ht0P8wSZW1dxN7tyy0qqGS7FZy6yswHmh3UiYfT85dRUOLfxaxref36nPq/SiTw+X1AIvnd8Ss26IFA+FhcLV/H9kPaA6epBG3yXCX1fHTkIM88/CWPlcHSND+VgZEbv9AW9Bqwo7/4xF/0w14dIFxlTgsYjU8Zu90=
+	t=1716444963; cv=none; b=owhac80B7bpq14N/EqXRAJ8UvhycGW1WWmUjw1x4BZfjIYUp4DxLSsoWLYYieun5+XXouLaPT0BZtjW2hDxLbXeBVJsRmMGQW75qzjH1XzO7XnuNj+mPZ5UwI51Vpf6udpba4oTJywOKbXA6X4qOfHZY33Ohe6CifLZal6PByPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716444782; c=relaxed/simple;
-	bh=WPDLcXZthh302mCbXexkdGSBS8pYsMAnGyk3Q69k02I=;
+	s=arc-20240116; t=1716444963; c=relaxed/simple;
+	bh=2Gv4TYLp3WpuCGedr5MvVJZUKZFO/am8jSeOVS5dCaY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BdZazij7BSfPr0VbzhYSqjqpTcWc2jyfhDFs5s3nlpArKJQCkao8dp8tUjthyX7CfLj2hffCf96E+kKS3ytRMYqMb5BLlQis+ietkYhgeUCx+sINhTnX+xbO3E2ErnM2qhu/ii0MC47LmqSHpx2FlLryFQKjuDQI9g8IR48UyBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETN4Qjpb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EC8C2BD10;
-	Thu, 23 May 2024 06:12:58 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lYqJ4n73nHt+uFaRoxMAlHkecYPTS5SwgKN1YO71oBPW+g7jBiESsUkfmgq87/XpWMHb+1qv07exUjEP9/mibsGjVLYaGPPdPRytU8OR2QDGohYS9bM1KgxFZfwqVjWw2Cz+jedo3cP1p2Ibz6qd8oRM7H4NwtJfkFKvEVdaTHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkkYuERG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AB7CC2BD10;
+	Thu, 23 May 2024 06:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716444781;
-	bh=WPDLcXZthh302mCbXexkdGSBS8pYsMAnGyk3Q69k02I=;
+	s=k20201202; t=1716444963;
+	bh=2Gv4TYLp3WpuCGedr5MvVJZUKZFO/am8jSeOVS5dCaY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ETN4QjpbxOTdj1AdywTzjVV0dyVS7TyolMJeOSbFiArROtNENWTpEHGOUJFvGif0v
-	 6rK6mzi+Xl+gK0wbrylciSOjDwVrkkysgqv7l+gzLxdwYVrfJPnE/jVsQrhSPQVrzZ
-	 f91auwH4lAnfSv4UY2o3Qti9a2A0AbtJevxAu8lBA2YnMfQ4tOL6C8pTpYJlKU14eJ
-	 YHcFN67e3J8QV43du3aXv7GDlwEWJH9xF8zKE+ULuQkOWpY62j8em5dKyu/lVtfoXn
-	 ggpHAI22vuShy9rEvdDctNS55b5ZbjqfYJ5vAuMz8JG8FdcISSxPB4+rXYTTBjZabW
-	 p5InBCDQ4u5gQ==
-Message-ID: <e43b0e4f-4eae-4667-9fe7-7d1f07c46b68@kernel.org>
-Date: Thu, 23 May 2024 08:12:56 +0200
+	b=EkkYuERGD3hG0qRPQMKgQ9beRgl8oSx/xtG2tWdgh/f6jSIQyw88RCniPhfpwRVnD
+	 g+yJH7bN9IBfyXWMQjvXCZjCNGr7AptjBWkw1j4g5MqS2hWdQSf12qNkPp+CKkWrcd
+	 ZWlGHttv3QPXDDr/uuQ1xHltUIycrp4v4j7YzevnJnvAdgAjkiAa/iDJA7bfCKB6bh
+	 +bCtj3771bxVW9f0vbSilJdP2jPonUje+3Mnwhbw3lQAr7+1UeTgt2KvmK5yDykd1w
+	 yRjU5+j/XY6l/gZr5DH9+jELIa+P3nyk7uUc8IDdU84tbvtFJ/mWjv3UTQYAtXViPF
+	 IPz4avuZqHTVg==
+Message-ID: <aed37430-7e87-4516-86da-3997c01a8aa8@kernel.org>
+Date: Thu, 23 May 2024 08:15:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: DT schema bindings conversion mentorships (was Re: [PATCH v5]
- ASoC: dt-bindings: omap-mcpdm: Convert to DT schema)
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Daniel Baluta <daniel.baluta@nxp.com>, Shuah Khan
- <skhan@linuxfoundation.org>, Julia Lawall <julia.lawall@inria.fr>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
- linux-kernel@vger.kernel.org
-References: <20240522075245.388-1-bavishimithil@gmail.com>
- <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
- <4f722e53-011f-4176-b6af-080522165007@kernel.org>
- <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
- <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org>
- <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
- <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
- <60989c44-6d16-4698-bf3f-b3c5dcd7b3e0@kernel.org>
- <292d220d-2177-4516-a391-4695bffc2ab5@gmail.com>
+Subject: Re: [PATCH 5/7] dt-bindings: remoteproc: qcom,pas: Add hwlocks
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240516-hwspinlock-bust-v1-0-47a90a859238@quicinc.com>
+ <20240516-hwspinlock-bust-v1-5-47a90a859238@quicinc.com>
+ <3521519f-34b8-472d-be37-f0e64bba24fc@kernel.org>
+ <a944418a-1699-44fa-bdfc-2e57129adea1@quicinc.com>
+ <c9882ba0-bbbf-44ec-9606-ebe68bcb8866@kernel.org>
+ <ZkzzY311XiRigJPt@hu-bjorande-lv.qualcomm.com>
+ <92dcd555-69b1-4111-92dd-debe5107d526@kernel.org>
+ <Zk4wab/NZOOZ3hA6@hu-bjorande-lv.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,55 +116,71 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <292d220d-2177-4516-a391-4695bffc2ab5@gmail.com>
+In-Reply-To: <Zk4wab/NZOOZ3hA6@hu-bjorande-lv.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/05/2024 19:47, Javier Carrasco wrote:
->> https://social.kernel.org/notice/Ai9hYRUKo8suzX3zNY
+On 22/05/2024 19:50, Bjorn Andersson wrote:
+>>>>>
+>>>>> We did consider tying this to the SMEM instance, but the entitiy 
+>>>>> relating to firmware is the remoteproc instance.
+>>>>
+>>>> I still do not understand why you have to add hwlock to remoteproc, even
+>>>> though it is not directly used. Your driver problem looks like lack of
+>>>> proper driver architecture - you want to control the locks not from the
+>>>> layer took the lock, but one layer up. Sorry, no, fix the driver
+>>>> architecture.
+>>>>
+>>>
+>>> No, it is the firmware's reference to the lock that is represented in
+>>> the remoteproc node, while SMEM deals with Linux's reference to the lock.
+>>>
+>>> This reference would be used to release the lock - on behalf of the
+>>> firmware - in the event that the firmware held it when it
+>>> stopped/crashed.
 >>
->> 1. Please convert bindings which have active DTS users. First choose
->> bindings with DTS built by arm64 defconfig, then next choice by arm
->> multi_v7 defconfig. Then any other ARM or different architecture DTS.
->>
->> 2. Be sure dt_bindings_check (including yamllint) and checkpatch pass
->> without any warnings. See writing-schema.rst document.
->>
->> 3. Be sure DTS using these bindings passes dtbs_check validation. If
->> this means binding needs to be adapted during conversion, mention
->> briefly in the commit message changes done comparing to pure TXT->DT
->> schema conversion.
->>
->> Best regards,
->> Krzysztof
+>> I understood, but the remoteproc driver did not acquire the hardware
+>> lock. It was taken by smem, if I got it correctly, so you should poke
+>> smem to bust the spinlock.
 >>
 > 
+> The remoteproc instance is the closest representation of the entity that
+> took the lock (i.e. the firmware). SMEM here is just another consumer of
+> the same lock.
 > 
-> Hello Krzysztof,
+>> The hwlock is not a property of remote proc, because remote proc does
+>> not care, right? Other device cares... and now for every smem user you
+>> will add new binding property?
+>>
 > 
-> Several mentees from the Linux Kernel Mentorship Program have been
-> converting bindings within the last weeks, but it was not a programmed
-> task from the mentorship as such. They are free to choose the areas
-> where they want to contribute, and some of them chose that one.
-> Therefore no direct contact with the subsystem maintainers was
-> established. We will keep an eye on that too, so we can anticipate such
-> misunderstandings and additional work for the maintainers.
+> Right, the issue seen relates to SMEM, because the remote processor (not
+> the remoteproc driver) took the lock.
 > 
-> Nonetheless, I saw that some our mentees sent such faulty/pointless
-> conversions a few days ago, and they received some guidelines and links
-> to the official documentation yesterday. All points you mentioned were
-> covered, so the next patches should look better.
+>> No, you are adding a binding based on your driver solution.
 > 
-> Usually their patches are sent to the mentors first for a preliminary
-> review, but sometimes that step gets "bypassed". We will insist on the
-> preliminary review, at least for the first conversions.
+> Similar to how hwspinlocks are used in other platforms (e.g. TI) the
+> firmware could take multiple locks, e.g. to synchronize access to other
+> shared memory mechanism (i.e. not SMEM). While I am not aware of such
+> use case today, my expectation was that in such case we just list all
+> the hwlocks related to the firmware and bust those from the remoteproc
+> instance.
 > 
-> Apologies for any faulty patch they might still send directly/not taking
-> those points into account.
-> 
-> Thank you so much for your patience and feedback.
+> Having to export APIs from each one of such drivers and make the
+> remoteproc identify the relevant instances and call those APIs does
+> indeed seem inconvenient.
+> SMEM is special here because it's singleton, but this would not
+> necessarily be true for other cases.
 
-Sounds good, thanks Javier!
+I don't think that exporting such API is unreasonable, but quite
+opposite - expected. The remote processor crashed, so the remoteproc
+driver is supposed to call some sort of smem_cleanup() or
+smem_cleanup_on_crash() and call would bust/release the lock. That way
+lock handling is encapsulated entirely in one driver which already takes
+and releases the lock.
+
+Just like freeing any memory. remoteproc driver does not free other
+driver's memory only because processor crashed.
+
 
 Best regards,
 Krzysztof
