@@ -1,153 +1,146 @@
-Return-Path: <linux-kernel+bounces-186932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641068CCAE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CABF8CCAEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188B01F21B83
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:02:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF6E1C2103B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7208D7E765;
-	Thu, 23 May 2024 03:02:47 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0858413AA37;
+	Thu, 23 May 2024 03:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="FhxcBbdS"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4134A34
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACD1A34
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716433367; cv=none; b=rhAbOejAETH2guGjubBbTVKfmsextg852DGB1BcAkY7NdGD9VewNpIMQm1raMbmfSBKRqorpU7+foxXQVkqrz4ar/LacaIQUwcmM+yY4WhByPj9Yk164MGw05wnZUV15hvq9beK7Y5fy4yeM6/2W9I7oePbM0Uu40FJ1Oxr+8tE=
+	t=1716433546; cv=none; b=pXrI66OF4arZl5IThBS2ymk1b36erzkgU7YRH7a76uHGkLI8RZ4jfUvtXgKCDmKYH2wB5ZXFR+aFWRPHJQ+KsbNn9yLImUBzkdxKXEh7QJvxhjZFy/mKurhXCYRePrg215dGVv2m1dFwTlnfXQuU8TSV2FwCZ4psvoAmhRCfqn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716433367; c=relaxed/simple;
-	bh=puZNZp2QdH8s3Zbw8ku3b7fKBDToV2EptNwEa/K/S7k=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZekijpIjUON8+cbbTqNYJdAmfeqVsgibf9D9um4oV4QmEJbYXMYegJM9fxZCfBT5cGgyxCx7b5GP0IPw1ngOy/O0Z7MBQaEZIsoqQDezOFov00BNIsYVPxdjpLgmMr/EqDr/yuQ8NHhaWEJz8IKVCbx+0H1MR/+XfWA6r5way9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4VlCYp2DrYz1ltYt;
-	Thu, 23 May 2024 10:59:10 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id AD6B41400D3;
-	Thu, 23 May 2024 11:02:39 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 23 May 2024 11:02:39 +0800
-Subject: Re: [PATCH v3 5/5] mm/memory-failure: send SIGBUS in the event of thp
- split fail
-To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
-	<akpm@linux-foundation.org>, <osalvador@suse.de>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240521235429.2368017-1-jane.chu@oracle.com>
- <20240521235429.2368017-6-jane.chu@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <c95a0336-6755-03a4-5c09-273d538e139e@huawei.com>
-Date: Thu, 23 May 2024 11:02:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1716433546; c=relaxed/simple;
+	bh=7DaPTZBGkttvXDB8AfLhqx6sF7jNWK9QRVpfv2fzxfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOrPmzXGZUyHTic+kRNBD4nJ5wr1fdIza1S/9PH9SO+ySX2YgNm7pB+UccZpUz2Ej/S/iPwQz7bFG8A2THomKFOBynPliWU0Jboom+lLnNCD8lrx+3tWTwU6v/TVT6duLtcJAMUb843f26V6I9rh2amRKbtUbKvzOxi/u4u2dq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=none smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=FhxcBbdS; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=jookia.org
+X-Envelope-To: kikuchan98@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
+	t=1716433542;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5pCVOTMBUtF61UbWtvu2nKJhMTtTjKGnydb/Jdcjr8w=;
+	b=FhxcBbdSQ46OFbvgAWdxQJA7GZW9tW+Rqg67JJJviT54ZJTH6ulBW8YIa9jNvxyuDsNw2f
+	2M/1OGKt48ujYuqKtg2WOKVbf9LUj5QLVbw/xYFNEUyfmwF6cxVDatxWTSgeHR7Hpj3lwo
+	p4TZSrMq25uv13sjXX7HUuRJ+wBZu1717d/7y3dAv8crxXQdQAn4NIQ2pxyxbdK73ytwhD
+	CnU1avWfaB1loIYCZTer/ek+TfsfD6DdW2iZ7ZFrVwJf8eiQ0i9voPBMW9Fv0CpU0s6OfJ
+	NzE/w7FHeZbUlwG2pXmyhTBWO+UfBPnwD4Mq+W+09cbkaS04YQFNocDyVfIOOg==
+X-Envelope-To: privatesub2@gmail.com
+X-Envelope-To: aou@eecs.berkeley.edu
+X-Envelope-To: bigunclemax@gmail.com
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: fusibrandon13@gmail.com
+X-Envelope-To: jernej.skrabec@gmail.com
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-pwm@vger.kernel.org
+X-Envelope-To: linux-riscv@lists.infradead.org
+X-Envelope-To: linux-sunxi@lists.linux.dev
+X-Envelope-To: mkl@pengutronix.de
+X-Envelope-To: p.zabel@pengutronix.de
+X-Envelope-To: palmer@dabbelt.com
+X-Envelope-To: paul.walmsley@sifive.com
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: samuel@sholland.org
+X-Envelope-To: ukleinek@kernel.org
+X-Envelope-To: wens@csie.org
+Date: Thu, 23 May 2024 13:04:11 +1000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: John Watts <contact@jookia.org>
+To: =?utf-8?B?44GN44GP44Gh44KD44KT44GV44KT?= <kikuchan98@gmail.com>
+Cc: privatesub2@gmail.com, aou@eecs.berkeley.edu, bigunclemax@gmail.com,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	fusibrandon13@gmail.com, jernej.skrabec@gmail.com,
+	krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	mkl@pengutronix.de, p.zabel@pengutronix.de, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, robh@kernel.org, samuel@sholland.org,
+	ukleinek@kernel.org, wens@csie.org
+Subject: Re: [PATCH v9 0/3] Add support for Allwinner PWM on D1/T113s/R329
+ SoCs
+Message-ID: <Zk6yK3U9tgxOxcBb@titan>
+References: <CAG40kxGMu-TSchNezkcC_A97hzPnWU3KxeL-X-hJfPhjr_COyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240521235429.2368017-6-jane.chu@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500002.china.huawei.com (7.192.104.244)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG40kxGMu-TSchNezkcC_A97hzPnWU3KxeL-X-hJfPhjr_COyQ@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/5/22 7:54, Jane Chu wrote:
-> While handling hwpoison in a THP page, it is possible that
-> try_to_split_thp_page() fails. For example, when the THP page has
-> been RDMA pinned. At this point, the kernel cannot isolate the
-> poisoned THP page, all it could do is to send a SIGBUS to the user
-> process with meaningful payload to give user-level recovery a chance.
+On Thu, May 23, 2024 at 11:26:07AM +0900, きくちゃんさん wrote:
+> Hello Aleksandr,
 > 
-
-Thanks for your patch.
-
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
-> ---
->  mm/memory-failure.c | 35 ++++++++++++++++++++++++++++++-----
->  1 file changed, 30 insertions(+), 5 deletions(-)
+> I had coincidentally developed a PWM driver for the device.
+> Based on my experience, I find that dynamically changing the coupled
+> DIV_M value is quite complex.
+> The current approach has limitations, especially with resolution
+> changes, which can be unpredictable for users. For example:
 > 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 794196951a04..a14d56e66902 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1706,7 +1706,12 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->  	return page_action(ps, p, pfn);
->  }
->  
-> -static int try_to_split_thp_page(struct page *page)
-> +/*
-> + * When 'release' is 'false', it means that if thp split has failed,
-> + * there is still more to do, hence the page refcount we took earlier
-> + * is still needed.
-> + */
-> +static int try_to_split_thp_page(struct page *page, bool release)
->  {
->  	int ret;
->  
-> @@ -1714,7 +1719,7 @@ static int try_to_split_thp_page(struct page *page)
->  	ret = split_huge_page(page);
->  	unlock_page(page);
->  
-> -	if (unlikely(ret))
-> +	if (ret && release)
->  		put_page(page);
+>   1. Enabling channel A automatically selects DIV_M.
+>   2. Enabling coupled channel B with a specific period may result in
+> poor resolution for channel B, as the DIV_M value depends on the
+> period of channel A.
+>   3. If channel B is enabled first, channel A may not be enabled if
+> its period doesn't fit the DIV_M range selected by channel B.
+> 
+> Additionally, using APB as a clock source for the channels would
+> further complicate the process.
+> 
+> To simplify this, I suggest (maybe for the future) specifying these
+> values directly in the Device Tree like this:
+> ```
+> allwinner,pwm-coupled-channel-clock-sources="hosc", "apb", "hosc";
+> allwinner,pwm-coupled-channel-clock-prescales=<0>, <3>, <8>;
+> ```
+> This would delegate the complexity to the DT, making the resolution
+> predictable for users.
+> As a bonus, it introduces a way to select clock sources for each
+> coupled channels.
+> 
+> For the meantime, I think it is enough to use fixed "hosc" and <0> for
+> regular use.
+> 
+> Looking forward to your thoughts.
+> 
+> Best regards,
+> kikuchan.
 
-Is "unlikely" still needed?
+I have a somewhat opposite opinion. I've developed a driver too and posted it
+on the u-boot mailing list that is deterministic and handles both channels:
 
->  
->  	return ret;
-> @@ -2187,6 +2192,24 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  	return rc;
->  }
->  
-> +/*
-> + * The calling condition is as such: thp split failed, page might have
-> + * been RDMA pinned, not much can be done for recovery.
-> + * But a SIGBUS should be delivered with vaddr provided so that the user
-> + * application has a chance to recover. Also, application processes'
-> + * election for MCE early killed will be honored.
-> + */
-> +static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
-> +				struct folio *folio)
-> +{
-> +	LIST_HEAD(tokill);
-> +
-> +	collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
-> +	kill_procs(&tokill, true, pfn, flags);
-> +
-> +	return -EHWPOISON;
-> +}
-> +
->  /**
->   * memory_failure - Handle memory failure of a page.
->   * @pfn: Page Number of the corrupted page
-> @@ -2328,8 +2351,10 @@ int memory_failure(unsigned long pfn, int flags)
->  		 * page is a valid handlable page.
->  		 */
->  		folio_set_has_hwpoisoned(folio);
-> -		if (try_to_split_thp_page(p) < 0) {
-> -			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_IGNORED);
-> +		if (try_to_split_thp_page(p, false) < 0) {
-> +			res = kill_procs_now(p, pfn, flags, folio);
+https://lore.kernel.org/all/20240518-pwm_d1-v1-0-311fc5fe2248@jookia.org/
 
-No strong opinion but we might remove the return value of kill_procs_now as
-it always return -EHWPOISON? We could simply set res to -EHWPOISON here.
+It does this by remembering the settings for channels and disabling then
+setting both channels at once whenever there's an update.
 
-Besides from above possible nits, this patch looks good to me.
-Acked-by: Miaohe Lin <linmiaohe@huawei.com>
-Thanks.
-.
+I think this is a decent enough solution to the problem and just works
+automatically without people having to micromanage the controller.
 
+John.
 
