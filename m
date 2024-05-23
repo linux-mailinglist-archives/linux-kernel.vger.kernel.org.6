@@ -1,192 +1,193 @@
-Return-Path: <linux-kernel+bounces-186935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E577F8CCAF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:08:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5248CCAF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C042830BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:08:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFC1A1C214DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B401513A878;
-	Thu, 23 May 2024 03:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FB813AA37;
+	Thu, 23 May 2024 03:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YcGnkarf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8seKvAx3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xo8J9aYV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nN513p3S"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mHQYeUlR"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2060.outbound.protection.outlook.com [40.107.220.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83927EF;
-	Thu, 23 May 2024 03:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716433720; cv=none; b=Ahyg6PsdmKOYu9XLL9G68SsgposTnjZ8tLfI6LM46VpPGTvE7nRcK4mmZSsa9MUD6m6RNhZTpfoAK0wnwhOkE77sm2fC5KthMfRC04jcM16+gs3AdVWFSdbGdILD0jRziKxU0iFF8050tc9bkbuDAjeT+qrkgXChj71nCXNDpdQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716433720; c=relaxed/simple;
-	bh=395EtBMeKvhaqcyJa2SJSdImD3drPDcuSCs8TeGMsS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWw4OAO+QuT/BXvg6EFQ2B5IuDgk6MDCwhtErIN34KZ03sFO1TFblbr6vbzu5GkctgZygAuxMYSHZC5VImRBjqFxmr0/uoMZzhfpAam9MctXyIu8Cr13dNGESTItSZC5ndXfAugsqvktjsQTYB9v1BTl7r/119fIlq3iOb7o/yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YcGnkarf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8seKvAx3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xo8J9aYV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nN513p3S; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EDE2C1FDCE;
-	Thu, 23 May 2024 03:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716433716; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0N0S6r8IeovFdxww9RN8WulP8rYDdid/w2zv2NcHlY=;
-	b=YcGnkarfP7rAwvhiOINxsKMbHpbeoO5PLcP2+nhBTfDiy176wv+VbDX11CO6faQrg2kZ6B
-	xmEWJFNLm4TqJ8NB5pQi4TQ4HlbCqxki0PZnYqRfn/1PGf2sp5uIgzPHi8DO5YYkntL13s
-	/PoGuujuJZycBq23rlOpbta8wOEdouU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716433716;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0N0S6r8IeovFdxww9RN8WulP8rYDdid/w2zv2NcHlY=;
-	b=8seKvAx34N9zbAbSXvZmX90nlXbI+J0lTECHG1ywHskkNPLTJeU0OCKKXM714nxIgCjOPv
-	cAqnqxCS4rF9SjAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xo8J9aYV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=nN513p3S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1716433715; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0N0S6r8IeovFdxww9RN8WulP8rYDdid/w2zv2NcHlY=;
-	b=xo8J9aYV2HvLfM1cXOQxHP9mc8VPZLhgd60GR2simJH6IFQTHl2BisCBQ80uUL+up4OfDt
-	IKTrH+tCZw22ujA2Fz5M+WpPbZ4dxsWOe2MMd5DqaEBJJMod50MovReFjtWnyfWYgNWUhU
-	Kp8Uhrbt/BtvEopATR1oY6dRnd4z+VU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1716433715;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0N0S6r8IeovFdxww9RN8WulP8rYDdid/w2zv2NcHlY=;
-	b=nN513p3S5maKAmTkBL5gb+fzrqAqgWdB+u8EK73ofQkChx9IgR8Rg6R7AxhnOx1vhmHiHn
-	oIj72gUreXnNf5Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 948A813A6B;
-	Thu, 23 May 2024 03:08:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x4UfITKzTmZrEAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 23 May 2024 03:08:34 +0000
-Date: Thu, 23 May 2024 05:08:29 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Peter Xu <peterx@redhat.com>
-Cc: Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Liu Shixin <liushixin2@huawei.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
- poison errors
-Message-ID: <Zk6zLRimo6Q6ZrwM@localhost.localdomain>
-References: <20240510182926.763131-1-axelrasmussen@google.com>
- <20240510182926.763131-2-axelrasmussen@google.com>
- <Zj51rEwZeSK4Vr1G@x1n>
- <ZkPJCc5N1Eotpa4u@localhost.localdomain>
- <ZkPY4CSnZWZnxjTa@x1n>
- <ZkSMv31Cwx080no7@localhost.localdomain>
- <Zk5noUEYI4lknyJy@x1n>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAF47EF;
+	Thu, 23 May 2024 03:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716433776; cv=fail; b=mEh6rWnj/t13XwUKEiZPuH0fXAYxW4/kk4TdKT0t1ST1OursRYJcJypN4uzegorO+BRZ6S8xYQlBxM9RqHmlGMphFLj+BJqmvThfF2JMccovwrGwoYr/sr91jK7fbq1PthQq9k4lPWbtMstNYklmJgWiD+YZYcHldpzLtCNMV1Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716433776; c=relaxed/simple;
+	bh=PtEd7ynRPnJiEBSwlVR8TvZXkLY/E2ppQQkpERl6qv0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u6SnFA75pxXFYCqx/Pu7wd6CPhdgtMJxa5IFCWB8iV1nctImtJto075Ej1lf4cXFd72SWysJJ4dxuOMGKNMEZ5ai1tzgoFG5bBZjoUmddEE+It5hFo6LC2QwSMi5MY7nYVbfO5zSITZEZb7zM8G2Zj7Ca0k7Hkcr+HvzYlZtER8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mHQYeUlR; arc=fail smtp.client-ip=40.107.220.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jIce3jIIq433U07RzCG174S1G4r/P8IjqVs4meAkng3/FAEzLqpmSSLwqOzwigBP6W1/iT2fky4ysWbsrGiAgWbuMOdqSEIjBjqmhiBu3mlWaN78K1wdU+XIKueluCJBHIdiimfuQJte/YmigRMt/LMtJ7sCzlnv0ZBgBV552faVZ51PMrHzI0TD9r7uwiFS4CPyq0un9LQ2036Ix/v7BQfuWYlqQSLiJDZoCt9OoLSLtyc9NHj+jeRgoxESELIzaNTGbNVO8SME5tfbXq3piVLUX+wmtwtJm/WBbTrS8anCRgGuexNfofHkNlQ9AJ7FU/XZEGXmley2YVqTZBBArg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5CrQCJIOt/4ild4erdJZgraCrySx80LVvxqhRaQQ7Mw=;
+ b=f6IXd4Tp46Mfxzs0izubvtD7emAtSPdutcAlCjBrNjxIhrwJeBJ4RaAII1QwiBu5IJGZduW6rFuhhiecsJ+YxS+hqO6G1QYK1KwopENxHG+ErsIlRweJuQbyOkEKjcw3z8AGwWvRVSCSixI0vkclADvJfEk69BjDiD7RwpKfxApZHaSvaA13RksBLNOlkvBGNV2wgPzXzC+itq+Xgba+4BodOZ+3/hGLOZSxlp9WVnNiwKe+CyLLroyoSdXqpuWZGiAgSpu0voIXgIWqYJziJaSTORmwnNMEt3hEVCIJqlc6bBb4QQEU/dNeULIZoarKALJGgvn2qRx+LqDZp9YIsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5CrQCJIOt/4ild4erdJZgraCrySx80LVvxqhRaQQ7Mw=;
+ b=mHQYeUlRvI0rqs8GPZM4LfAHGXtvNsKGicgiAArxR7arone4Kf/L9UZiPBHCTLjfDqRyC4q3mPACA4Jf8co2TUlPDzDwzeXLSs9qLO+zLQvc/2oQpUNGXknw3x0chSbm+5peWBDCX9eAYQ8zm/2THTHL1H2wa6AStGiTEacN/57YcJJNGY9U7O2ksp3gKYI8KM2LUEG3VsmUktgYAEm9eiHPXVjEWhazUJ2zCFs+bPnFeP2KEd70Ga3dfi8NmpcHzYZJeGhK1W70LROv8XeZxp1wvME/pF4MtJBIZKAQuWZXfUIX7QG8+p03/T+CnlPhNpfXU7VNzpCK0A613dqQqg==
+Received: from BY5PR16CA0019.namprd16.prod.outlook.com (2603:10b6:a03:1a0::32)
+ by MW4PR12MB6731.namprd12.prod.outlook.com (2603:10b6:303:1eb::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Thu, 23 May
+ 2024 03:09:32 +0000
+Received: from CO1PEPF000042A7.namprd03.prod.outlook.com
+ (2603:10b6:a03:1a0:cafe::52) by BY5PR16CA0019.outlook.office365.com
+ (2603:10b6:a03:1a0::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.20 via Frontend
+ Transport; Thu, 23 May 2024 03:09:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000042A7.mail.protection.outlook.com (10.167.243.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7611.14 via Frontend Transport; Thu, 23 May 2024 03:09:31 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
+ 2024 20:09:19 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 22 May
+ 2024 20:09:19 -0700
+Received: from nvidia.com (10.127.8.10) by mail.nvidia.com (10.129.68.7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 22 May 2024 20:09:14 -0700
+Date: Wed, 22 May 2024 20:09:12 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>
+CC: "will@kernel.org" <will@kernel.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "joro@8bytes.org" <joro@8bytes.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
+	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
+	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 00/14] Add Tegra241 (Grace) CMDQV Support (part 2/2)
+Message-ID: <Zk6zWLcPCc+nWICX@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <BN9PR11MB527641C15DD88FB0C44323D08CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20240522164818.GB20229@nvidia.com>
+ <Zk5Lx7IqvnE2q7a7@nvidia.com>
+ <20240522232833.GH20229@nvidia.com>
+ <BN9PR11MB527613C6094EDE9B2732928F8CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <Zk5noUEYI4lknyJy@x1n>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,linux-foundation.org,kernel.org,alien8.de,csgroup.eu,linux.intel.com,redhat.com,zytor.com,gmx.de,hansenpartnership.com,nvidia.com,huawei.com,infradead.org,ellerman.id.au,linux.dev,linux.ibm.com,gmail.com,linutronix.de,vger.kernel.org,kvack.org,lists.ozlabs.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLeqp5gkuwhygrjzi4zhnnr4iu)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: EDE2C1FDCE
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
+In-Reply-To: <BN9PR11MB527613C6094EDE9B2732928F8CEB2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042A7:EE_|MW4PR12MB6731:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e79f045-2b4d-4815-cc20-08dc7ad5c441
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|7416005|1800799015|36860700004|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SraaloBUE0r2zmIsy2hVyDmeiXTHSBYeD7hDdbhhAIrqBo0atuCyT7SIZuXw?=
+ =?us-ascii?Q?xaLuo45bOrEvaNTPdszQTX8iyOWScDHh8mOnszDMOyxgHc0EAbFWhK9zDn3n?=
+ =?us-ascii?Q?S4kBbV/ypSI6shlZlMwRV5xWuE/b+5Uybz76RwHSRXq2q3f6MZPRi2JDyYIQ?=
+ =?us-ascii?Q?QmOIl6fgFSTHemQ+LRXzusKf07otAz6PatiqPRzxxobXhDRI8EB9P966SKIR?=
+ =?us-ascii?Q?uK4n3UsiowmZaL0FMJTjH8TPdolVV6HgvDvl1QCyIoH7ZYYHmCbYmIIDy1ta?=
+ =?us-ascii?Q?k4xI7q9Dh2nERZLc+Lduj+FtnzGW1pKSbNQUQYt6JlCi50syEAFL+qhktimK?=
+ =?us-ascii?Q?SXCuqawpjeT9uCbdXCJonNztVuVyD60WLu3XmA6+wGgJupa/9bvf33lFoC0E?=
+ =?us-ascii?Q?2Ax5F7xr4iJFSNXMRilMK56brWsd5jPCcTO3mkMSdMkTnuQ6lyv//KcrvpVG?=
+ =?us-ascii?Q?BdTOgTOrEp6T1SkjwbxxfQGje+O1epwdWXy8ZYtr81pdd4hfh5S5I3/S/1rv?=
+ =?us-ascii?Q?EG4hQd6wfEMelT6YsK61dkcf0JearepukYkFjNyM4lOXs/SpF4t4NzW2vFHd?=
+ =?us-ascii?Q?pnK9ToH6+dJKxDwB9+oXgiYLTlCxOcBXQFhscY34DwTl+JRfphIyJ3hVaoT4?=
+ =?us-ascii?Q?RFJ157DRa6dHi7ylT/EKkqu7VnvWR3g27xWMLdhqopFMQY9GdcTLiiwj45L4?=
+ =?us-ascii?Q?+zXsbSAPI4o14KrLnxizXJE5iHmVdHn+yx7ySV4861Iew1VhPn+HGNjQQvvb?=
+ =?us-ascii?Q?SQgCKiwNjkTkUZcUoJrhzTmq541VTGPZbUgZ7glEhLbtlx+AU64/yz3tVkY1?=
+ =?us-ascii?Q?mTxljEDMQbYLMsPS3MkWnetsTRNkGdhHoo1VgXlQz3KBrHDyH4Bpk7l6x6yV?=
+ =?us-ascii?Q?pxwwqVbZKzbm3VOS9AxCaNln00jZskw89frGJHSCD3VA5VXQ4HCNsMvx7Dcw?=
+ =?us-ascii?Q?94NYs4Nv1yy/gjlZ2jtHdrRbS7Nh6k3PXlVft6MkD5Gk6v++LdAb3VoeQ3b7?=
+ =?us-ascii?Q?jJKz5gGKbVY+Z3fg26iQm5dua6U+5iGCfE5ZI/ckf+ChdFuqLdK9PtsSsUoe?=
+ =?us-ascii?Q?tbnc2Id9nFLQaNpP2UTxZ4PFALEmuaKq79KajqoZJ/u0s9ygebA7Nw/OekeB?=
+ =?us-ascii?Q?kAqGrr1e24LKDs/T8BiANDzPLxKjaiyQIffjPCzG5sBXai8Bk/1ePjI5dEb5?=
+ =?us-ascii?Q?5T8ZQHwYnZXrQk79u43wJ/QpiBk1lZzzcgii4HQphg+xsk60LTi4lAQd51SD?=
+ =?us-ascii?Q?9k94qc+1vku8//AhWVzv2zpu8UqWs4boOT6mq7hblUDcoD3JM2dSkxpusJA2?=
+ =?us-ascii?Q?D3+IiAuxmCILAxIhS5d9jwlQflJZO8El8/IIRCp+p2XkFUpgaNbrzuUOWf6R?=
+ =?us-ascii?Q?/NNGAsSvibik9vG5wZSlFgNlT5Ef?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(7416005)(1800799015)(36860700004)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 03:09:31.8099
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e79f045-2b4d-4815-cc20-08dc7ad5c441
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042A7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6731
 
-On Wed, May 22, 2024 at 05:46:09PM -0400, Peter Xu wrote:
-> > Now, ProcessB still has the page mapped, so upon re-accessing it,
-> > it will trigger a new MCE event. memory-failure code will see that this
+On Wed, May 22, 2024 at 11:43:51PM +0000, Tian, Kevin wrote:
+> > From: Jason Gunthorpe <jgg@nvidia.com>
+> > Sent: Thursday, May 23, 2024 7:29 AM
+> > On Wed, May 22, 2024 at 12:47:19PM -0700, Nicolin Chen wrote:
+> > > Yea, SMMU also has Event Queue and PRI queue. Though I haven't
+> > > got time to sit down to look at Baolu's work closely, the uAPI
+> > > seems to be a unified one for all IOMMUs. And though I have no
+> > > intention to be against that design, yet maybe there could be
+> > > an alternative in a somewhat HW specific language as we do for
+> > > invalidation? Or not worth it?
+> >
+> > I was thinking not worth it, I expect a gain here is to do as AMD has
+> > done and make the HW dma the queues directly to guest memory.
+> >
+> > IMHO the primary issue with the queues is DOS, as having any shared
+> > queue across VMs is dangerous in that way. Allowing each VIOMMU to
+> > have its own private queue and own flow control helps with that.
+> >
 > 
-> The question is why accessing that hwpoison entry from ProcB triggers an
-> MCE.  Logically that's a swap entry and it should generate a page fault
-> rather than MCE.  Then in the pgfault hanlder we don't need that encoded
-> pfn as we have vmf->address.
+> and also shorter delivering path with less data copy?
 
-It would be a swap entry if we reach try_to_umap_one() without trouble.
-Then we have the code that converts it:
+Should I interpret that as a yes for fault report via VQUEUE?
 
- ...
- if (PageHWPoison(p))
-         pteval = swp_entry_to_pte(make_hwpoison_entry(subpage));
-	 set_{huge_}pte_at
- ...
+We only have AMD that can HW dma the events to the guest queue
+memory. Others all need a backward translation of (at least) a
+physical dev ID to a virtual dev ID. This is now doable in the
+kernel by the ongoing vdev_id design by the way. So kernel then
+can write the guest memory directly to report events?
 
-But maybe we could only do that for ProcA, while ProcB failed to do that,
-which means that for ProcA that is a hwpoisoned-swap-entry, but ProcB still
-has this page mapped as usual, so if ProcB re-access it, that will not
-trigger a fault (because the page is still mapped in its pagetables).
-
-
--- 
-Oscar Salvador
-SUSE Labs
+Thanks
+Nicolin
 
