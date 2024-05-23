@@ -1,72 +1,119 @@
-Return-Path: <linux-kernel+bounces-187895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22408CDA3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:56:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826BF8CDA42
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 661231F21E45
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2AC41C21C1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C53380624;
-	Thu, 23 May 2024 18:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24858289B;
+	Thu, 23 May 2024 18:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J2Nraw2g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqyk9WqN"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744C0171A5;
-	Thu, 23 May 2024 18:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932492C694;
+	Thu, 23 May 2024 18:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716490587; cv=none; b=RrEezAFNo0zO6hVKuNp0GTRbpb6vroDgFPaYsFunMLH4bK7VJdPQry1znkmLz0qe8CNYdct2XzfZ3M6KHay1gGja/2M3s03RB6qWz8hKJoGekWMK9Q8N8EWY+7SgSoszYaZs5wHAX1M7F2yLJ5QyHicQXWX9FuCRfr6S6hZWm+s=
+	t=1716490599; cv=none; b=T3U9Xog8OhUGjUE7DS4iF5u1AK3Hm9TWTMIhZF7YFsnaBc7aJEujC6k8rz+2EE/ecrHSe15Tn4Xe+bpCKLH9wljAov5oslhRUa4gYJMXDX8T8PDD2nRnW3ZhIPpAh2fF41pNkW3ippj/EuZPEwBtG+whFz3xxyqHWIeCRFd/2c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716490587; c=relaxed/simple;
-	bh=GMvp4ZUa5auyWW48u3nDaI5JWsfDmBZz1W/ehEXgqs8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bcizJ6YmYfZ6Q1p5eqPDeF50Ns4ppP+tBP77Qk0CjlRH+VzbP5xe1ixwvHKUZkywtPDl5o0xp6weVtPwQo+llFkIPzYJKDYwGKcgxv9yqY19qURPWgaDtf9RSwdAo8AA9gzw1xGXxb04AZTMl64tnp42Gw2Q5c+jujBpCJge7A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=J2Nraw2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD8BC2BD10;
-	Thu, 23 May 2024 18:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716490586;
-	bh=GMvp4ZUa5auyWW48u3nDaI5JWsfDmBZz1W/ehEXgqs8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J2Nraw2gaH6n3MhgobyWRQcVgP6jAWECBzB95SjfoVBQJmBDmSNJZDtSOjFJ4JlAt
-	 F4W6jfmG+4pH2rfoHIiPlrLeKyO9ulz746Hu/tTOEZGDO51VthSHB81abHQHqj2vKY
-	 OI3ineFKsxEaxMgE/dRhUP0goHVQ7NaCG+OwWmGI=
-Date: Thu, 23 May 2024 11:56:24 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yuanyuan Zhong <yzhong@purestorage.com>
-Cc: David Hildenbrand <david@redhat.com>, Matthew Wilcox
- <willy@infradead.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Mohamed Khalfella
- <mkhalfella@purestorage.com>
-Subject: Re: [PATCH] mm: /proc/pid/smaps_rollup: avoid skipping vma after
- getting mmap_lock again
-Message-Id: <20240523115624.d068dfb43afc067ed9307cfe@linux-foundation.org>
-In-Reply-To: <20240523183531.2535436-1-yzhong@purestorage.com>
-References: <20240523183531.2535436-1-yzhong@purestorage.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716490599; c=relaxed/simple;
+	bh=sEYh8/OSr1G/nZSPJQFB5WsX5qPrCE0Z5j+fdmyie6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I8D/iIv2r+LnXaoBXgifI9a+zXBj116oqdOUWHSkeBr2xN2WJkQcOVLI6i1fh2V3RACmPPM83wJwYX5e8mfMlXC/32bxOP46ZFVx6ngOn2m8Vq+8x+IJM1RXifW28eJAE/grvRN+TnwTmnSIZkCC/2ucCEgS9Kez9xo42k1S5QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqyk9WqN; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-351d309bbecso5434955f8f.2;
+        Thu, 23 May 2024 11:56:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716490596; x=1717095396; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AvoPPMhrO2hD7dyAxOKf0bPuZdn/lIXtjZ6yK7Xph24=;
+        b=jqyk9WqNJxxPmRrEDmF2IAM6KynHoL9CRRElBLVykB9wOTjn+5jtKq6HM0LTGkxjuD
+         MEeLTbTi5rPWFhNNhGZQEaUXSukhahqAjqDAGuEGoZJHcAA0lZlAwHnKvmWfYiix8KCH
+         IKv4t7SSr0FfPyRJaI8SJ/gsrBrvdRMiLCUGpo/ueAMUSVdFVLtJEMFL/b6m5oN7YFwY
+         Yhb1sxxUIfseKJxLrPJegEHehsY2vsw6Up989oDk2NgwCfbltBKEDYIPnDM7/0i/1SsQ
+         qr0PafqPBmXJ0TXiwrXCQJ6ob99VJX6OQLLEzpUmzzVAx4K4E6W1ki+4AJgQmNCzBiOM
+         4L+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716490596; x=1717095396;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AvoPPMhrO2hD7dyAxOKf0bPuZdn/lIXtjZ6yK7Xph24=;
+        b=HU0FaeG/ZOCnq+p+lfCFJTl8+pjMkfeoQH7Iejz2Y1i6az3thW4yvZd57AYn79V5w5
+         9cuTr4bZNGgRq/jyNUuIr/ynduADEFIDFEAAWnwyuJ7XLkKZ96FY0XDrbNvfG2ngZs9M
+         it29wEZ/Y/8yhHPN6FGT791nmqIEKCgwTBu2+Q+GQgl9LZXL/sN9PpmVkXLCCmM2dpwf
+         /D6qGgRcC4sDTLit9Tx9ts3L1kvUFyvDE+PI4QVh7R+RYgfsFAdMWxlAIJ5Mk0a8VMlw
+         rx0Ao25eTW3wlB5IzfXNpf1ytf4nZPj+dMAOzh+5ANctB4csJLyrdVvgnpGm1Gchq+iv
+         9i8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXn0MKfDRu2tSUqHsJ7/DnM2ybhmrBmTrKREV4Vp+id5xKHvh00mT9AnBXietRTzmBYBJLFSt0vFZ2U4t82u0jlOQu53zaNkz9A/NMJ1VXoWzsQ8ha7/9aIXQHbmVcpuD2yloBEDAIX5A==
+X-Gm-Message-State: AOJu0YwVQMm3IUXOBGtxNTssq2V5mnuQVU3nmBHujXQuNKzgegqKZrqs
+	6oxHs344SAIGO9/6ZAnLAfEXrFnoBOgsIVCytEEB2NPrfX7gHPI=
+X-Google-Smtp-Source: AGHT+IFDAmICUJMGqa0dJt54nPZguG3L4s2OBkFBuWtKgRLfaPC9zbKPd41N2wEkKSET7fJJHIYs2A==
+X-Received: by 2002:a05:6000:4021:b0:354:df31:6dfc with SMTP id ffacd0b85a97d-354df31706fmr7116512f8f.58.1716490595941;
+        Thu, 23 May 2024 11:56:35 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:a453:b45b:e52a:2302])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3550c675581sm3965f8f.13.2024.05.23.11.56.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 11:56:35 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH 0/3] Add VPU support for RK3128
+Date: Thu, 23 May 2024 20:56:30 +0200
+Message-ID: <20240523185633.71355-1-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 23 May 2024 12:35:31 -0600 Yuanyuan Zhong <yzhong@purestorage.com> wrote:
+Similar to most Rockchip SoCs RK312x have hantro G1 based decoder and a
+hantro H1 based encoder with attached iommu.
 
-> After switching smaps_rollup to use VMA iterator, searching for next
-> entry is part of the condition expression of the do-while loop. So the
-> current VMA needs to be addressed before the continue statement.
+The existing drivers can be used as-is.
 
-Please describe the userspace-visible runtime effects of this bug. 
-This aids others in deciding which kernel version(s) need the patch.
+Fluster scores:
+  - FFmpeg:
+    - H.264: 127/135
+    - VP8:    59/61
+  - GStreamer:
+    - H.264: 129/135
+    - VP8:    59/61
 
-Thanks.
+Alex Bee (3):
+  dt-bindings: media: rockchip,vpu: Document RK3128 compatible
+  soc: rockchip: grf: Set RK3128's vpu main clock
+  ARM: dts: rockchip: Add vpu nodes for RK3128
+
+ .../bindings/media/rockchip-vpu.yaml          |  4 +++-
+ arch/arm/boot/dts/rockchip/rk3128.dtsi        | 24 +++++++++++++++++++
+ drivers/soc/rockchip/grf.c                    |  2 ++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
+
+-- 
+2.45.0
+
 
