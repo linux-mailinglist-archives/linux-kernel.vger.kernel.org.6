@@ -1,251 +1,158 @@
-Return-Path: <linux-kernel+bounces-188067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451E88CDCCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:17:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0C588CDCD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68CA71C2356D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E851F214F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677DA12836E;
-	Thu, 23 May 2024 22:17:15 +0000 (UTC)
-Received: from mx.ewheeler.net (mx.ewheeler.net [173.205.220.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FE7128372;
+	Thu, 23 May 2024 22:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RPIpX5yG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB82823B0
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.205.220.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AA1823B0;
+	Thu, 23 May 2024 22:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716502634; cv=none; b=pDhyBghmdnTtkKWDS22FauW9PSm39g4+RlOtUHJ8vA//DQdSIGJsWwEavWaekBIpQFx3nRnGbvs0tirwO8UA/0ErNqoA8+BbQMLra/bljxdFXQZMV7RrAf3U3KLCexoz81ZaCbNOX5Tu9abZV1Hu9fir0JLMnwVG3akD8YKsI38=
+	t=1716502727; cv=none; b=rAsnw6HGfuKO84A0xTgyyNzvTb9Zn8dHYID/kjHb7poGYWnKL6GMmuvY9MMTaiEy05fx21NR4DX+VfqNAINlevclixJdAlD0Mxrpo9gzD5m57yVAN4lXzC4vRac6ojlEAgWX9f9aQRTQ57+LfZetsc5CTzvNSbvFd/vAD8mysPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716502634; c=relaxed/simple;
-	bh=WKSeStaX/TFdgri9jtr2/9pLUQwqpsJ7Cj+v+tXlRwo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Clam9vgUTNsKqQlLaoYwD9nALl1/kvSPqBw9ZdWiTTouAC7Jk01l85mavS7kxqFkhLihX3apR+jIUMaSCzNj/otrhaoFwBXF2KaHs3rPoFu3tE8bcPdi7wSwNEf3iSloddAsJ/y6KA86EvRAFd/LkygZNKucKRTSfcJphglTrug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lists.ewheeler.net; spf=none smtp.mailfrom=lists.ewheeler.net; arc=none smtp.client-ip=173.205.220.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lists.ewheeler.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lists.ewheeler.net
-Received: from localhost (localhost [127.0.0.1])
-	by mx.ewheeler.net (Postfix) with ESMTP id 7E16481;
-	Thu, 23 May 2024 15:17:12 -0700 (PDT)
-X-Virus-Scanned: amavisd-new at ewheeler.net
-Received: from mx.ewheeler.net ([127.0.0.1])
-	by localhost (mx.ewheeler.net [127.0.0.1]) (amavisd-new, port 10024)
-	with LMTP id v-ScayE9AXXK; Thu, 23 May 2024 15:17:10 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx.ewheeler.net (Postfix) with ESMTPSA id AC0BE40;
-	Thu, 23 May 2024 15:17:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx.ewheeler.net AC0BE40
-Date: Thu, 23 May 2024 15:17:10 -0700 (PDT)
-From: Eric Wheeler <dm-devel@lists.ewheeler.net>
-To: Mike Snitzer <snitzer@kernel.org>
-cc: Mikulas Patocka <mpatocka@redhat.com>, 
-    Benjamin Marzinski <bmarzins@redhat.com>, Yang Yang <yang.yang@vivo.com>, 
-    Alasdair Kergon <agk@redhat.com>, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: dm: optimize flushes
-In-Reply-To: <Zk4Y6DMgK71UuoKd@kernel.org>
-Message-ID: <92786ecf-aa40-5e7-47c3-82614dffca78@ewheeler.net>
-References: <20240514090445.2847-1-yang.yang@vivo.com> <20240514090445.2847-4-yang.yang@vivo.com> <ZkTXzG1yrPmW64Z6@redhat.com> <60bd4b9-8edd-7e22-ce8b-e5d0e43da195@redhat.com> <90f4beb-2e15-3f9-4bc2-0d13872e8ea@redhat.com> <Zk4Y6DMgK71UuoKd@kernel.org>
+	s=arc-20240116; t=1716502727; c=relaxed/simple;
+	bh=1NaIoGRUhnN6xYMOU6GSlsoHT9TyOUpfTCPyfZr+ldw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8twpdiKqy7Fxsvz5pPDbFOGxXu8u6mC8xrKlQOfmhEqLhu1DKxBLtwY+Z+reNf2NShPEiUKyAZ63xkxgkZ5wRXWSwwHYjko1kH3/prVor/uJ0ZuB2KilU2KMxRB1zhFnFcb1nVXnZ1ZHM/6Apoo+41uT71QGuWN8LIQhP4vDMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RPIpX5yG; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716502725; x=1748038725;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1NaIoGRUhnN6xYMOU6GSlsoHT9TyOUpfTCPyfZr+ldw=;
+  b=RPIpX5yG1H0aVvXAf5bYmtGuf+EYoQwnXmMYln0lB4NwzoCyRIYgxe6i
+   dD9nGQlRLbktTHujCHDqgxPfi6gSxAgeHRqSZfSzAPJ/ZzoO4u1p/nUqc
+   Fl/Yp05KWwWficvvzu4y4zuEoOuElodRYanYr+FLss+a8rufr5Yygi1RC
+   L0B78g9AWPnQXYv1WTdad3RpADobbTb1V5tmGGvVY5bArRL7pXQPaHCqT
+   XxRTHT4/+rU3jy8mCiqZ0wy7+v7dmPUWEagaBzDtJM3iYgwNZ/kGKDsJm
+   +uIl95uuIEfJtHtb85vow7Thn/uklvt8VvE/jrKFyBXRNLukezGpEbBsJ
+   g==;
+X-CSE-ConnectionGUID: c91IAtIaTYysQmiaj8X6/w==
+X-CSE-MsgGUID: 2iGeNS/wSBuNz6vF/vns2A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="38238845"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="38238845"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 15:18:44 -0700
+X-CSE-ConnectionGUID: 8bcP8lf1R3WRQCBr8yIoaA==
+X-CSE-MsgGUID: ewHfpK7hRvi7w0A1/Gu0IA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="38668287"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 23 May 2024 15:18:42 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sAGlj-0003Zv-2o;
+	Thu, 23 May 2024 22:18:39 +0000
+Date: Fri, 24 May 2024 06:17:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: oe-kbuild-all@lists.linux.dev, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] LoongArch: smp: Add all CPUs enabled by fdt to NUMA
+ node 0
+Message-ID: <202405240627.5Ey7vV8v-lkp@intel.com>
+References: <20240521-loongarch-booting-fixes-v1-2-659c201c0370@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521-loongarch-booting-fixes-v1-2-659c201c0370@flygoat.com>
 
-On Wed, 22 May 2024, Mike Snitzer wrote:
-> On Thu, May 16, 2024 at 10:49:55PM +0200, Mikulas Patocka wrote:
-> > Device mapper sends flush bios to all the targets and the targets send it
-> > to the underlying device. That may be inefficient, for example if a table
-> > contains 10 linear targets pointing to the same physical device, then
-> > device mapper would send 10 flush bios to that device - despite the fact
-> > that only one bio would be sufficient.
-> > 
-> > This commit optimizes the flush behavior. It introduces a per-target
-> > variable flush_pass_around - it is set when the target supports flush
-> > optimization - currently, the dm-linear and dm-stripe targets support it.
-> > When all the targets in a table have flush_pass_around, flush_pass_around
-> > on the table is set. __send_empty_flush tests if the table has
-> > flush_pass_around - and if it has, no flush bios are sent to the targets
-> > and the list dm_table->devices is iterated and the flush bios are sent to
-> > each member of the list.
-> 
-> What does "pass around" mean?  Seems like an awkward name for this.
-> (Naming can be hard, I don't have better suggestions at the moment.)
+Hi Jiaxun,
 
-just playing with naming ideas from other disciplines in case you likes 
-one of these concepts better than "pass around".  I'm not attached any of 
-these, this is just for making conversation so the flag can be easily 
-understood:
+kernel test robot noticed the following build errors:
 
-	- flush_can_scatter (as in scatter/gather)
-	- flush_can_distribute
-	- flush_can_spread
-	- flush_deduplicate
-	
-..
+[auto build test ERROR on 124cfbcd6d185d4f50be02d5f5afe61578916773]
 
-> > Index: linux-2.6/include/linux/device-mapper.h
-> > ===================================================================
-> > --- linux-2.6.orig/include/linux/device-mapper.h	2024-05-15 16:56:49.000000000 +0200
-> > +++ linux-2.6/include/linux/device-mapper.h	2024-05-15 16:56:49.000000000 +0200
-> > @@ -397,6 +397,11 @@ struct dm_target {
-> >  	 * bio_set_dev(). NOTE: ideally a target should _not_ need this.
-> >  	 */
-> >  	bool needs_bio_set_dev:1;
-> > +
-> > +	/*
-> > +	 * Set if the target supports flush optimization
-> > +	 */
-> > +	bool flush_pass_around:1;
-> >  };
-> 
-> How does a developer _know_ if a target can set this flag?  Please
-> elaborate on the requirements in this code comment.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jiaxun-Yang/LoongArch-Fix-built-in-DTB-detection/20240522-041534
+base:   124cfbcd6d185d4f50be02d5f5afe61578916773
+patch link:    https://lore.kernel.org/r/20240521-loongarch-booting-fixes-v1-2-659c201c0370%40flygoat.com
+patch subject: [PATCH 2/4] LoongArch: smp: Add all CPUs enabled by fdt to NUMA node 0
+config: loongarch-randconfig-001-20240524 (https://download.01.org/0day-ci/archive/20240524/202405240627.5Ey7vV8v-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405240627.5Ey7vV8v-lkp@intel.com/reproduce)
 
-Relatedly,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405240627.5Ey7vV8v-lkp@intel.com/
 
-To what extent can this be set automatically? For example, if you have a 
-bunch of non-DM (eg, SCSI) disks under a device mapper target, then it 
-seems reasonable that they would "support" this feature in the identity 
-sense: they can take flush and it will (should) not be spread to other 
-devices in the DM stack, so the device mapper targets being instantiated 
-in such a case would enable this flag.  Thus, a new target that only has 
-non-DM devices can (probably?) default enabled; maybe there are counter 
-examples here.
+All errors (new ones prefixed by >>):
 
-Another consideration is for targets (eg, dm-thinpool) which have multiple 
-lower-level block devices on the same table definition line, often a data 
-and metadata volume. By contrast, linear tables may have multiple backing 
-devices in separate target table lines.  This may be further complicated 
-by the fact that a device mapper target can be composed of multiple 
-disparate targets as separate table lines, each of which may have a 
-different number of backing devices for their own definition.
-
-Perhaps your design already covers these edge cases, so I am only 
-mentioning this in case it may prompt ideas for other edge cases 
-to review.
+   arch/loongarch/kernel/smp.c: In function 'fdt_smp_setup':
+>> arch/loongarch/kernel/smp.c:287:17: error: implicit declaration of function 'set_cpuid_to_node'; did you mean 'set_cpu_numa_node'? [-Werror=implicit-function-declaration]
+     287 |                 set_cpuid_to_node(cpuid, 0);
+         |                 ^~~~~~~~~~~~~~~~~
+         |                 set_cpu_numa_node
+   cc1: some warnings being treated as errors
 
 
---
-Eric Wheeler
+vim +287 arch/loongarch/kernel/smp.c
 
+   259	
+   260	static void __init fdt_smp_setup(void)
+   261	{
+   262	#ifdef CONFIG_OF
+   263		unsigned int cpu, cpuid;
+   264		struct device_node *node = NULL;
+   265	
+   266		for_each_of_cpu_node(node) {
+   267			if (!of_device_is_available(node))
+   268				continue;
+   269	
+   270			cpuid = of_get_cpu_hwid(node, 0);
+   271			if (cpuid >= nr_cpu_ids)
+   272				continue;
+   273	
+   274			if (cpuid == loongson_sysconf.boot_cpu_id) {
+   275				cpu = 0;
+   276			} else {
+   277				cpu = cpumask_next_zero(-1, cpu_present_mask);
+   278			}
+   279	
+   280			num_processors++;
+   281			set_cpu_possible(cpu, true);
+   282			set_cpu_present(cpu, true);
+   283			__cpu_number_map[cpuid] = cpu;
+   284			__cpu_logical_map[cpu] = cpuid;
+   285	
+   286			early_numa_add_cpu(cpu, 0);
+ > 287			set_cpuid_to_node(cpuid, 0);
+   288			numa_add_cpu(cpu);
+   289		}
+   290	
+   291		loongson_sysconf.nr_cpus = num_processors;
+   292		set_bit(0, loongson_sysconf.cores_io_master);
+   293	#endif
+   294	}
+   295	
 
-
-> 
-> >  
-> >  void *dm_per_bio_data(struct bio *bio, size_t data_size);
-> > Index: linux-2.6/drivers/md/dm.c
-> > ===================================================================
-> > --- linux-2.6.orig/drivers/md/dm.c	2024-05-15 16:56:49.000000000 +0200
-> > +++ linux-2.6/drivers/md/dm.c	2024-05-16 20:06:32.000000000 +0200
-> > @@ -645,7 +645,7 @@ static struct bio *alloc_tio(struct clon
-> >  
-> >  	/* Set default bdev, but target must bio_set_dev() before issuing IO */
-> >  	clone->bi_bdev = md->disk->part0;
-> > -	if (unlikely(ti->needs_bio_set_dev))
-> > +	if (likely(ti != NULL) && unlikely(ti->needs_bio_set_dev))
-> >  		bio_set_dev(clone, md->disk->part0);
-> >  
-> >  	if (len) {
-> > @@ -1107,7 +1107,7 @@ static void clone_endio(struct bio *bio)
-> >  	blk_status_t error = bio->bi_status;
-> >  	struct dm_target_io *tio = clone_to_tio(bio);
-> >  	struct dm_target *ti = tio->ti;
-> > -	dm_endio_fn endio = ti->type->end_io;
-> > +	dm_endio_fn endio = likely(ti != NULL) ? ti->type->end_io : NULL;
-> >  	struct dm_io *io = tio->io;
-> >  	struct mapped_device *md = io->md;
-> >  
-> > @@ -1154,7 +1154,7 @@ static void clone_endio(struct bio *bio)
-> >  	}
-> >  
-> >  	if (static_branch_unlikely(&swap_bios_enabled) &&
-> > -	    unlikely(swap_bios_limit(ti, bio)))
-> > +	    likely(ti != NULL) && unlikely(swap_bios_limit(ti, bio)))
-> >  		up(&md->swap_bios_semaphore);
-> >  
-> >  	free_tio(bio);
-> 
-> What is it about this commit that makes it important to verify ti
-> isn't NULL in the above 3 hunks?
-> 
-> Should these NULL checks be factored out as a separate fix?
-> 
-> Or can these hunks be dropped?
-> 
-> > @@ -1566,17 +1566,36 @@ static void __send_empty_flush(struct cl
-> >  	ci->sector_count = 0;
-> >  	ci->io->tio.clone.bi_iter.bi_size = 0;
-> >  
-> > -	for (unsigned int i = 0; i < t->num_targets; i++) {
-> > -		unsigned int bios;
-> > -		struct dm_target *ti = dm_table_get_target(t, i);
-> > -
-> > -		if (unlikely(ti->num_flush_bios == 0))
-> > -			continue;
-> > -
-> > -		atomic_add(ti->num_flush_bios, &ci->io->io_count);
-> > -		bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
-> > -					     NULL, GFP_NOWAIT);
-> > -		atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-> > +	if (!t->flush_pass_around) {
-> > +		for (unsigned int i = 0; i < t->num_targets; i++) {
-> > +			unsigned int bios;
-> > +			struct dm_target *ti = dm_table_get_target(t, i);
-> > +
-> > +			if (unlikely(ti->num_flush_bios == 0))
-> > +				continue;
-> > +
-> > +			atomic_add(ti->num_flush_bios, &ci->io->io_count);
-> > +			bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
-> > +						     NULL, GFP_NOWAIT);
-> > +			atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
-> > +		}
-> > +	} else {
-> > +		/*
-> > +		 * Note that there's no need to grab t->devices_lock here
-> > +		 * because the targets that support flush pass-around don't
-> > +		 * modify the list of devices.
-> > +		 */
-> > +		struct list_head *devices = dm_table_get_devices(t);
-> > +		unsigned int len = 0;
-> > +		struct dm_dev_internal *dd;
-> > +		list_for_each_entry(dd, devices, list) {
-> > +			struct bio *clone;
-> > +			clone = alloc_tio(ci, NULL, 0, &len, GFP_NOIO);
-> > +			atomic_add(1, &ci->io->io_count);
-> > +			bio_set_dev(clone, dd->dm_dev->bdev);
-> > +			clone->bi_end_io = clone_endio;
-> > +			dm_submit_bio_remap(clone, NULL);
-> > +		}
-> >  	}
-> >  
-> >  	/*
-> > 
-> > 
-> 
-> Still missing what "pass-around" is meant to convey given that you
-> aren't passing around the same flush... you're cloning a new flush and
-> issuing one per device.  Probably worth explaining that's what you
-> mean by "flush_pass_around" (both in commit header and elaborate in
-> code)?
-> 
-> Also, you're issuing a flush to _all_ devices in a table. Not just
-> the data devices.  .iterate_devices returns only the data devices.
-> If/when there is a need to extend this feature to targets that have
-> metadata devices (e.g. dm-thin, cache, etc): would it make sense to
-> filter out non-data devices (by stepping through each target in the
-> table and using iterate_devices)?
-> 
-> Mike
-> 
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
