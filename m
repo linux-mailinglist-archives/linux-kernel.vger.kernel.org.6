@@ -1,419 +1,614 @@
-Return-Path: <linux-kernel+bounces-188049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1A48CDC3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:42:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9718CDC40
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:43:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61A4A1C2141D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:42:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFFC21C20982
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 21:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915DB127E34;
-	Thu, 23 May 2024 21:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ciDnuLhL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5308B127E22;
+	Thu, 23 May 2024 21:43:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E4B101E2;
-	Thu, 23 May 2024 21:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716500544; cv=fail; b=LwDrY1x3qfaNe1zNh9YWC/Tm595f3uTU0ZIdDXX2NAxOgOSyso9Ewj9VrDDg5dUIWhe8iaL7kyEHJgMdeezs2g2kyVtMpP6Pbkm75M3QJlPOsZzkBw9txjc5uv8wQgNpOhCxYV29lN7eQfLUSQF03oBjih/NPlhq2AWKIc4ChSs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716500544; c=relaxed/simple;
-	bh=uWtmboQH7FPubZoqXRkvIp2b1Qh8XIBiJxX81JLqF5U=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kmZUYFW8Zq2+QVf1itBgdP7JKLoF4fV5eIssUkd6WijTA7aduPFTp4bpQgU4wCjKKHe2w0WNkdSw2ZBbSgzt8iTpQrNAm6rtQcu5UxvmWn66CO2kNc2qCYvao2eiBoPiNyPzn8hvqwxdTRl3tIO2LWSdKaI9Rkd4UnufdrtKqTg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ciDnuLhL; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716500541; x=1748036541;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=uWtmboQH7FPubZoqXRkvIp2b1Qh8XIBiJxX81JLqF5U=;
-  b=ciDnuLhLlMMS/T7vatu/v9GcX7014A2roW8nPgzEoC+RDo0oYOgLBzpS
-   A5RFE+qazzq6qAUR3Dpd+sYl17CxiPEEo+7GTvBVCqVmsWqqA9gD5YmMY
-   U01cwMdbR22b+qDYE/v0tkGpFAD2/SgFW8GKk6oVfC6YM+bVkzkLP8yXt
-   9hAbsOpdIqx/CkVpNsCEZM2GgQWJuUNCCuaef8vDwlt+jPq2wvw57Ub10
-   H93JOWupw2PuinKhyGJVfpKB8Q3ShXxO8AIVt6BeC5Hwe/KF/e3giKQBg
-   zejSHm79Jdnf/DZhBIFfGGu0U7hJ6E+lDxFEJaRncIhlge+LmeCb5hLFE
-   w==;
-X-CSE-ConnectionGUID: 3Qhj8L8kRXST0wXgIVPp5Q==
-X-CSE-MsgGUID: DLt5TfvQQhiIdZmviqU24A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="35370149"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="35370149"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 14:42:21 -0700
-X-CSE-ConnectionGUID: TxN2bYWsRP+kTiEk63ETWA==
-X-CSE-MsgGUID: 63qFl8sQTGe1dMoubF44KQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="33888666"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 May 2024 14:42:21 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 23 May 2024 14:42:20 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 23 May 2024 14:42:20 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 23 May 2024 14:42:20 -0700
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 23 May 2024 14:42:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AzI76Pktg5HqpVLipFIrolDG2k8yDtnWlfVx/ZBPpYupUuFIm5RmKQZ63F2WY0fa98fSRsIIUcJlk3SSOSnkIcgDYJtPNjav+jw8lMXmEExHH6RsfL4AXm9pCY7NeI5xriI4bDC/H2v8kXgmuXJeR2Bgn3/hnSfNmvpm/I7v8a8G34ghjPTQJ49ESwiYI3F6mZU4o8cc3haOzHtKy0cw2YvPK7mRSTxjJdcAHigSd+grly4JhDJOmCgdWGTjdMuE8YVkgZJofGPGU1gcTx02K0cvenBLgdg2f37Vf4Jj1jJXWHC7nmyzrKDy/8Ot8zTVkEvBrz3rg+qEjmniTqBbrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bbL1Fb7HiGIFYO0irvblKcmowvPDcmD+4dZnj1xo/Lo=;
- b=P5UfOoThU7BlB6gR7wMp6BVVm3K9RqwWgWKpB+DqNDOKjFTCS6buYMzkKM1MCVAZp0GZTX1t1gFx9DVBgIUnB7iWid3qxNzmCHHO/OCCctJ31es3uA6uqzgi2OKCbFQ9PGor6PmOY2WsGhwIxypJSnswTWnN+kvTeZVDR4F0bsCGF38VX2p4wbBstzpfT3tPwDStihLKuW//6clC+7F+CUo1emnIOC++hTxJk/HBk319CMfSisjM5fCvdwUVA7nOp2U4Cln9Z90xwg2MOMyRsKL1d5fAdEITHQD1/PWWIj6UqB1ZPbgDBqdHszToRfxWhS9dB/NCogNnURbFNH9Xkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by DM4PR11MB6527.namprd11.prod.outlook.com (2603:10b6:8:8e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.18; Thu, 23 May
- 2024 21:42:17 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%5]) with mapi id 15.20.7611.016; Thu, 23 May 2024
- 21:42:17 +0000
-Message-ID: <aa6a5450-7e66-4da7-b396-1ce48837cd7e@intel.com>
-Date: Thu, 23 May 2024 14:42:15 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v11] ice: Add get/set hw address for VFs using
- devlink commands
-To: Karthik Sundaravel <ksundara@redhat.com>, <jesse.brandeburg@intel.com>,
-	<wojciech.drewek@intel.com>, <sumang@marvell.com>,
-	<anthony.l.nguyen@intel.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <intel-wired-lan@lists.osuosl.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <horms@kernel.org>
-CC: <pmenzel@molgen.mpg.de>, <jiri@resnulli.us>,
-	<michal.swiatkowski@linux.intel.com>, <bcreeley@amd.com>,
-	<rjarry@redhat.com>, <aharivel@redhat.com>, <vchundur@redhat.com>,
-	<cfontain@redhat.com>
-References: <20240520102040.54745-1-ksundara@redhat.com>
- <20240520102040.54745-2-ksundara@redhat.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-In-Reply-To: <20240520102040.54745-2-ksundara@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0279.namprd04.prod.outlook.com
- (2603:10b6:303:89::14) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B26101E2
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 21:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716500616; cv=none; b=ILo8pv5YUSkCMzEJVXAbr7GlvCQV73NZJ5CAWkX8WqSg0uEvnQCOdPEWCe/I2JxS/+WkvzwaElPZYN9aC1O72aVh0q/baWs9gNuPJRC4R2JiFcQCegYfmV4ToIVkKB+BOctGdC8MFYovK9KQ42yJxtTeW/6xQq6IveIPKJYEprU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716500616; c=relaxed/simple;
+	bh=mqSXq2SOODtmeeZOJoJ2rQIOgvP7jiztGQl9wKxaMEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tbZUSoLn0ANB5aKiZkYakeTjNXrvHdf8hU9pp5bHUU9g1jggKh+1Ry0dokDDKbiiDI5y2qN57U4wLbFjsdlm8wkYSHlwU0dhFVecITuwqW12lUUjBsfhUd3NUMDwbzaqStY6zqrd/INWLItpXKEKnKhGfVB53l+ksRGLsaT6Cac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C39AC2BD10;
+	Thu, 23 May 2024 21:43:35 +0000 (UTC)
+Date: Thu, 23 May 2024 17:44:19 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Masahiro Yamada <masahiroy@kernel.org>
+Subject: [GIT PULL] tracefs/eventfs: Fixes and cleanups for v6.10
+Message-ID: <20240523174419.1e5885a5@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|DM4PR11MB6527:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae48fe96-2fa1-4286-0fcf-08dc7b713763
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005|921011;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RlhDeGZmdVg4eEd6MUlPVHJsMWI5MkZRS25uRWc1MS9OdXBEUVZrREJBanln?=
- =?utf-8?B?K0dzVEtOV2tBYUdmMGxuRFV0Q0NLZFBjK2ViSFJVYlpTQUI2UVR5Q1FQYTN2?=
- =?utf-8?B?RS9jMUFXOFlPSE5NOXF1L28xMkhDTm1iLzlKYWVmSnpDaWRrMGpxTEthKytT?=
- =?utf-8?B?aHRoVHN6NC96aTNENnhuWGJtWDhaaTdWZFY0MkV3Vi9JYlBCQnd0VUVMKytY?=
- =?utf-8?B?M1ZDampWMzR0UXR2b2NhTTRING5tVEtDbkVUWkdheUtYOGQrVU1DZ21xcHVU?=
- =?utf-8?B?RzNiRWhkVjdiV29MeWVFbnVLdkxmQlV0bXZjNWFaVlp1WWg1bitYejYrZ3FC?=
- =?utf-8?B?YUNiRUxFWXJVcFhBNjJ3RXJxWjBPN3NpQTF6aUk2cytIYW95cjVHSjg4TWhT?=
- =?utf-8?B?OTE0ZnBxQWpBU2luMjJrSUtobkhUZTVGSE5DSU5RWjZPbERXT1RXWDlHTW5Y?=
- =?utf-8?B?dkRWY25MdzQ5ejRobzBzcFBOaWM4QlIxUy8vSUdKa1lselBZN2g0R2M3MWJv?=
- =?utf-8?B?RXUrcmJ5aGFxSlZzbUkvb2NKcTl5SGRTSDV6WGovdXZHdnV6MHEwczJQbU5H?=
- =?utf-8?B?SEc1SW1tbWF0d29wWnMyWnVVVHEzaFZWT3d6bXR6NW1vUmF6QnRYWVVVeEhj?=
- =?utf-8?B?YTdWSGxrSFNQMDErR1ZZRHR5TE9DQS9zc1gvK2Zsd21IK2RNdDdpZnNPL1Vw?=
- =?utf-8?B?S0xIRHVOaHlwWEs5c2RvQ0NOa0ZqaEFsRDkxZnFWNmF0cDVJeHRCdmpqWWdo?=
- =?utf-8?B?a3dZZkNSb3hjeUxpM1RzbjM4YlBrNFJSRytnT2wrSStHakNONkxuWm44dFh5?=
- =?utf-8?B?TktVMDVMd1RpUWM4azUreWVZNlpXdi9Vcng0cFJZQzI1d2V3UjFOVXdTWUtz?=
- =?utf-8?B?QXkrNXhLMlhHYTYycGIvQ0Y1d1Z0TVRlcXpCOHdPWHVRczdJTVJmK3dodXpT?=
- =?utf-8?B?RWZDaDFST2Y1WCtnREwvcDkrSTVSTjBWTUZ4aWNtTm4yTDVIUEJ0cnlBYzNQ?=
- =?utf-8?B?RVBnYzN5Tmg2OXlkbmNaZTFpeDhIRHEwL3dzQksrZ01JNFdndjBUVGNxWW9o?=
- =?utf-8?B?ZUFaVXZVOVRLWkVxQUU4Z0c1WjBZOWwvR3dMWGNDbWlCak9NRVEwSWxyM1RB?=
- =?utf-8?B?OG16UWowWjkzVDdIZ1B2MUg2Q293dDRUcVVJbnBBS3lZYjdTblBFdGdIaHhx?=
- =?utf-8?B?TDF2ZnVQRlJwbGc0MDRhMHpPZmRXL1Y3SHhKSVUzTjAyY09MUEpqVjl2VWps?=
- =?utf-8?B?dVpEZ2JENFA2TTJqN3YyclIwV0JZcWMzaXdtckxXNUl3VisxNVdZVUdlVnRi?=
- =?utf-8?B?S2h3SjlNMkgrT0R2WmdUL3VGMTErL2lTTWV0a0NUNmljUVFBU0Ntdzk3T3l3?=
- =?utf-8?B?cWg3L2orZmx5eDZCVVpPenp0eVdhRmdiM2xQWFFLRndRQTAxdmx4bHJJeHBh?=
- =?utf-8?B?L0NxVmlQdFNjcTBCTGJzbkU0UXZpN2xRWmZCamVTRC9lYUFwbkcweHRhYVZm?=
- =?utf-8?B?bEswZUJEZUZGSUpBZWVDZndUQVFSTFNyeE9TT1pDbWRQbUc3YWI2eGEvdm9U?=
- =?utf-8?B?cUY4VUg3R2NiMkMrdjEzQ203OTBvK2JEeHlwYStMMVBIQUs3bHdveThjeUVh?=
- =?utf-8?B?RTlZUW5GR0h0d2VmaG9CZGlod0c4NDVFTVhQNWlQR3EvcEJzSmZHVjYyQlVV?=
- =?utf-8?B?bEt6R2NHYmY0Q0VGZHEvaEN0QVg3aTE4N0xVTVo4d1AvK3JMdnVOVGt5NjlY?=
- =?utf-8?Q?YAbQVFgicx8IjTjZLhNIVW3PLnUr9nJnswaKpIo?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?WnY0cnE1OTFrSHBXZTVXV2FINGE5cndCTmdMQndPc3JDNUZDQVZLem9xS0x1?=
- =?utf-8?B?TkliaTlUMTFtTFQ5aHhuSzJOcW9SM0pXbk1xWDEzK2pUK3VFb0thWmZIbjBD?=
- =?utf-8?B?V1RNbmNiaWxBQXFlc1ZFalhmUmlFc2V5OVVSZkhPVnlKaWx2SGFqRlU5aEtK?=
- =?utf-8?B?NXZXWDFiRWxxdFpqdzRaZVF6dmNMQW5CQnhHbFNQanRnQWFkQmRBUC8wUFRU?=
- =?utf-8?B?VW03aXJwKzJzMFFOcEpBMmtwK3ZtMWpaZSs5SnR5b2RWMHdpMnJPblZZU0lN?=
- =?utf-8?B?ZzB6R1l1ZkVUWlQyNTZmdFpNcDUwOTdQY3lQdHJlTlhoRTEvTEczOC9halJY?=
- =?utf-8?B?L3FJZnZMRkF6ZENtQ09XOUtyYkM5UWttVGhmTnJHM3FxcHFqbUR0QTBSWGRr?=
- =?utf-8?B?TTk4dm1QNmhqdjdJaFJVMitEcW1oN0oxMmU0UmZBdm1lS3czemorKzlDODND?=
- =?utf-8?B?a2YrU3hhN3hISXN2QnVnT0pBdEFma25IZEFoVDF5M2dTekMrY3ZibW9JMkxs?=
- =?utf-8?B?TVJpSnFUQVpiaG1nTzh1WE9rWWNVUDlkOXQwMGRZYSs5MFN6bVVubW5FR1c4?=
- =?utf-8?B?VTBTR1dXWTNDQ05zbFlqK0IrOUZ6Y2RlQTRKWFNjOElQM09PelZQUU4xVFkz?=
- =?utf-8?B?N3dBTjl4NTBWbE1PRWhSUEcwNkdsQkt0MjU0cTBuK24yVHZObGxKK21CNCsw?=
- =?utf-8?B?SktIeGtncXlZMEFuUE5jOHdNTmNGc1pJdlVxQ2ZLUUw5QnA0dFErbVhWNVg1?=
- =?utf-8?B?b2MrOU15OGRBblFrakVFR0szOE5lUDNSWEY0WVZvUVA2TTNJM2xBMjNQZmww?=
- =?utf-8?B?d092ei9tRHMwMUJmeXp5TncyL2M5M3ZNeW5JSTk1UTE2V1JValN2a0RFVHZE?=
- =?utf-8?B?OFU4STMrNzM1dFF1VUhDWGxMMHVwTnowMXhyVHlpampmRGtDU2ZyMHhBS0JR?=
- =?utf-8?B?OVBhdU9FcG1LK2FkbmV4WGZDaDRMaUJ2YisyYTZIb0kwZTJCaFFzODNGMjRT?=
- =?utf-8?B?bm5Nb1pNSkpRR0Z4WmhPMjVpdU1SNlFoV2dNQ2lFUENlOEQ3K0RlTmhHRmRh?=
- =?utf-8?B?SWJyMTFtdGoyZ3Y4ZG1nazVSclJ0ZGkyend1QmZoUVdxNXZaaCtxRU4rRHdt?=
- =?utf-8?B?VGREVll1bW4xZHJJc085ZFlUcTlSbkdaZW8wQjN1Uy9oT0gySS9XZ01kZnJm?=
- =?utf-8?B?T1dUSU9QMFd2cUMrTFBoOEtZSUI0V09GVFBpNXBCQXBOK2JBZFBuMWdYbWJ1?=
- =?utf-8?B?NTZRUGN5QkNFMkdtSEloK0lTekFlb3V6S1VpeXgwR002eVJYVFA3SHpDdTR1?=
- =?utf-8?B?VDI1SFI5UUNucnA5UGVNZzhYdmFrZVBKai9zTXNNaThONjhIc0ovQUVMdm1C?=
- =?utf-8?B?SVZNeGRyeXhuMG5BaVVSczJJVGtoWTFUUEFTY0ZvR3RQVW9xTStFREF2Y2hy?=
- =?utf-8?B?OGRtQ21pVm0zWTdBQldZb0JTMUZ3QlNoYkFqOTN2ckdHZEErWkFsS0xPVEQ0?=
- =?utf-8?B?WXBucHNYcXRPSWZqZEg5ZmVDTHhURGpVd3RITzE3OWxjd01rSzNlWU5yWHEr?=
- =?utf-8?B?YUI5RUEzWGFvNTRGVkpEN3RZRHZKZExVb1ZzcWZzeDBOUHYwdXFKZVBjRzZV?=
- =?utf-8?B?QVppQkUyTnh4b0J2SzNDV3dIY3BuUWNDTWo4Z3cxTHQzc1lsR2lRVUNYT1Ra?=
- =?utf-8?B?MGFKZGQxMThHSHRaTU5GZVB0bEdrdktLWHR2YWZXN0NQd2N4SDgrdWJsRyt4?=
- =?utf-8?B?Y1BSNTlKSkdHb0VKaGUyZVhTdmF2bnFwK1NneUk0K3lZWWpHV2FGcDVwbTdJ?=
- =?utf-8?B?dkpYSm9aMlZMbGRUbUxUWjF2WTZiUHVnN1JSUW5iZFV1bnVQYjVzbTV5cUlq?=
- =?utf-8?B?amh3aDV1aG9VVFJqOStvakFFeTBZV1lmeVV6ZXhVa2VPWDlhSEordWZCQ0ZN?=
- =?utf-8?B?c1h3eXF0SVpjUzhQbEwvdUhBRGVvcVBDaDNWRkxVdmFYUkpTUmNEa3IzRzNP?=
- =?utf-8?B?eHZtV05rak91akZZeDFseHd4b2dLSmRlSEZUWmpZZCtrS2dmNDJUMjRkT3o3?=
- =?utf-8?B?Q1REYjIxQzhkQjJTWXp0UDlrc1JwT2FtUVc1akVZMWtDS1RHakpZWmsvajAw?=
- =?utf-8?B?THhzS1l3LzFncHZBTkxCU0NvQnhTQVNrMzEyemw3dVA4aHhSdnZQd2wvV3Ft?=
- =?utf-8?B?Tmc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae48fe96-2fa1-4286-0fcf-08dc7b713763
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 21:42:17.2346
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NrUd5J+zLShPQ5hQKmjYrGdrMPyp9D8v5OXiknwnjwZ4lAFTj5Sz1GnMpl6Xsw/CvxcfjJO/5woZdvilBC5ifmX+X91Nc1WagYOtdSpmmo0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6527
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
 
-On 5/20/2024 3:20 AM, Karthik Sundaravel wrote:
-> Changing the MAC address of the VFs is currently unsupported via devlink.
-> Add the function handlers to set and get the HW address for the VFs.
-> 
-> Signed-off-by: Karthik Sundaravel <ksundara@redhat.com>
-> ---
->  .../ethernet/intel/ice/devlink/devlink_port.c | 59 ++++++++++++++++++-
->  drivers/net/ethernet/intel/ice/ice_sriov.c    | 32 +++++++---
->  drivers/net/ethernet/intel/ice/ice_sriov.h    |  8 +++
->  3 files changed, 89 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
-> index c9fbeebf7fb9..00fed5a61d62 100644
-> --- a/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
-> +++ b/drivers/net/ethernet/intel/ice/devlink/devlink_port.c
-> @@ -372,6 +372,62 @@ void ice_devlink_destroy_pf_port(struct ice_pf *pf)
->  	devl_port_unregister(&pf->devlink_port);
->  }
->  
-> +/**
-> + * ice_devlink_port_get_vf_fn_mac - .port_fn_hw_addr_get devlink handler
-> + * @port: devlink port structure
-> + * @hw_addr: MAC address of the port
-> + * @hw_addr_len: length of MAC address
-> + * @extack: extended netdev ack structure
-> + *
-> + * Callback for the devlink .port_fn_hw_addr_get operation
-> + * Return: zero on success or an error code on failure.
-> + */
-> +static int ice_devlink_port_get_vf_fn_mac(struct devlink_port *port,
-> +					  u8 *hw_addr, int *hw_addr_len,
-> +					  struct netlink_ext_ack *extack)
-> +{
-> +	struct ice_vf *vf = container_of(port, struct ice_vf, devlink_port);
-> +
-> +	ether_addr_copy(hw_addr, vf->dev_lan_addr);
-> +	*hw_addr_len = ETH_ALEN;
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * ice_devlink_port_set_vf_fn_mac - .port_fn_hw_addr_set devlink handler
-> + * @port: devlink port structure
-> + * @hw_addr: MAC address of the port
-> + * @hw_addr_len: length of MAC address
-> + * @extack: extended netdev ack structure
-> + *
-> + * Callback for the devlink .port_fn_hw_addr_set operation
-> + * Return: zero on success or an error code on failure.
-> + */
-> +static int ice_devlink_port_set_vf_fn_mac(struct devlink_port *port,
-> +					  const u8 *hw_addr,
-> +					  int hw_addr_len,
-> +					  struct netlink_ext_ack *extack)
-> +
-> +{
-> +	struct devlink_port_attrs *attrs = &port->attrs;
-> +	struct devlink_port_pci_vf_attrs *pci_vf;
-> +	struct devlink *devlink = port->devlink;
-> +	struct ice_pf *pf;
-> +	u16 vf_id;
-> +
-> +	pf = devlink_priv(devlink);
-> +	pci_vf = &attrs->pci_vf;
-> +	vf_id = pci_vf->vf;
-> +
-> +	return __ice_set_vf_mac(pf, vf_id, hw_addr);
-> +}
-> +
-> +static const struct devlink_port_ops ice_devlink_vf_port_ops = {
-> +	.port_fn_hw_addr_get = ice_devlink_port_get_vf_fn_mac,
-> +	.port_fn_hw_addr_set = ice_devlink_port_set_vf_fn_mac,
-> +};
-> +
->  /**
->   * ice_devlink_create_vf_port - Create a devlink port for this VF
->   * @vf: the VF to create a port for
-> @@ -407,7 +463,8 @@ int ice_devlink_create_vf_port(struct ice_vf *vf)
->  	devlink_port_attrs_set(devlink_port, &attrs);
->  	devlink = priv_to_devlink(pf);
->  
-> -	err = devl_port_register(devlink, devlink_port, vsi->idx);
-> +	err = devl_port_register_with_ops(devlink, devlink_port, vsi->idx,
-> +					  &ice_devlink_vf_port_ops);
->  	if (err) {
->  		dev_err(dev, "Failed to create devlink port for VF %d, error %d\n",
->  			vf->vf_id, err);
-> diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.c b/drivers/net/ethernet/intel/ice/ice_sriov.c
-> index 067712f4923f..dd1583b0fd90 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_sriov.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.c
-> @@ -1416,21 +1416,22 @@ ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi)
->  }
->  
->  /**
-> - * ice_set_vf_mac
-> - * @netdev: network interface device structure
-> + * __ice_set_vf_mac
-> + * @pf: PF to be configure
->   * @vf_id: VF identifier
->   * @mac: MAC address
->   *
->   * program VF MAC address
->   */
-> -int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
-> +int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac)
->  {
+Linus,
 
-This has a couple of new kdoc warnings:
+[
+  At the beginning of this week, Masahiro Yamada reported a regression
+  again in running the ownership selftest where the first run would
+  succeed but a subsequent run would fail. This was fixed before but
+  another fix broke it again (I've sent a patch to run that test twice by
+  default to prevent the regression from happening again).
+
+  In the process of debugging it, I spent a lot of time cleaning up the
+  eventfs permission code, removing functions and simplifying it. Then when
+  I finally found the bug, it had nothing to do with the code I was working
+  on.
+
+  The first 4 commits fix the bug, but because I actually like the clean
+  ups made while debugging it as it made it simpler and removed code, where
+  the diffstat of the last 4 commits is:
+
+    1 file changed, 46 insertions(+), 126 deletions(-)
+
+  I decided to include it in this pull request. But I admit, this work was
+  started on the second week of the merge window. I'll let you decide if
+  you want to take this merge request or not. If not, I'll happily create a
+  new tag with only the first 4 commits and save this for the next merge
+  window. But honestly, I feel more comfortable with the new changes than
+  the existing code.
+]
+
+tracefs/eventfs fixes and updates for v6.10:
+
+Bug fixes:
+
+- The eventfs directories need to have unique inode numbers. Make sure that
+  they do not get the default file inode number.
+
+- Update the inode uid and gid fields on remount.
+  When a remount happens where a uid and/or gid is specified, all the tracefs
+  files and directories should get the specified uid and/or gid. But this
+  can be sporadic when some uids were assigned already. There's already
+  a list of inodes that are allocated. Just update their uid and gid fields
+  at the time of remount.
+
+- Update the eventfs_inodes on remount from the top level "events" descriptor.
+  There was a bug where not all the eventfs files or directories where
+  getting updated on remount. One fix was to clear the SAVED_UID/GID
+  flags from the inode list during the iteration of the inodes during
+  the remount. But because the eventfs inodes can be freed when the last
+  referenced is released, not all the eventfs_inodes were being updated.
+  This lead to the ownership selftest to fail if it was run a second
+  time (the first time would leave eventfs_inodes with no corresponding
+  tracefs_inode).
+
+  Instead, for eventfs_inodes, only process the "events" eventfs_inode
+  from the list iteration, as it is guaranteed to have a tracefs_inode
+  (it's never freed while the "events" directory exists). As it has
+  a list of its children, and the children have a list of their children,
+  just iterate all the eventfs_inodes from the "events" descriptor and
+  it is guaranteed to get all of them.
+
+- Clear the EVENT_INODE flag from the tracefs_drop_inode() callback.
+  Currently the EVENTFS_INODE FLAG is cleared in the tracefs_d_iput()
+  callback. But this is the wrong location. The iput() callback is
+  called when the last reference to the dentry inode is hit. There could
+  be a case where two dentry's have the same inode, and the flag will
+  be cleared prematurely. The flag needs to be cleared when the last
+  reference of the inode is dropped and that happens in the inode's
+  drop_inode() callback handler.
+
+Clean ups:
+
+- Consolidate the creation of a tracefs_inode for an eventfs_inode
+  A tracefs_inode is created for both files and directories of the
+  eventfs system. It is open coded. Instead, consolidate it into a
+  single eventfs_get_inode() function call.
+
+- Remove the eventfs getattr and permission callbacks.
+  The permissions for the eventfs files and directories are updated
+  when the inodes are created, on remount, and when the user sets
+  them (via setattr). The inodes hold the current permissions so
+  there is no need to have custom getattr or permissions callbacks
+  as they will more likely cause them to be incorrect. The inode's
+  permissions are updated when they should be updated. Remove the
+  getattr and permissions inode callbacks.
+
+- Do not update eventfs_inode attributes on creation of inodes.
+  The eventfs_inodes attribute field is used to store the permissions
+  of the directories and files for when their corresponding inodes
+  are freed and are created again. But when the creation of the inodes
+  happen, the eventfs_inode attributes are recalculated. The
+  recalculation should only happen when the permissions change for
+  a given file or directory. Currently, the attribute changes are
+  just being set to their current files so this is not a bug, but
+  it's unnecessary and error prone. Stop doing that.
+
+- The events directory inode is created once when the events directory
+  is created and deleted when it is deleted. It is now updated on
+  remount and when the user changes the permissions. There's no need
+  to use the eventfs_inode of the events directory to store the
+  events directory permissions. But using it to store the default
+  permissions for the files within the directory that have not been
+  updated by the user can simplify the code.
 
 
->  * __ice_set_vf_mac
-> drivers/net/ethernet/intel/ice/ice_sriov.c:1427: warning: No description found for return value of '__ice_set_vf_mac'
-> drivers/net/ethernet/intel/ice/ice_sriov.c:1481: warning: missing initial short description on line:
+Please pull the latest trace-tracefs-v6.10 tree, which can be found at:
 
-These aren't the fault of this patch, but merely new due to renaming.
-Since these are not fundamentally new issues, I am going to apply this
-as-is.
 
-For this alone, I do not think a v12 is necessary. However, if you need
-to do a v12 for another reason, I would request that you fix the kdoc
-warnings. Otherwise, the patch will fail our initial automated checks.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-tracefs-v6.10
 
-Thanks,
-Jake
+Tag SHA1: 2d8ea7f64b455ec3d0eb2beb0b9e09e893c303f2
+Head SHA1: 2dd00ac1d38afba1b59e439abc300a9b0ce696bf
 
-> -	struct ice_pf *pf = ice_netdev_to_pf(netdev);
-> +	struct device *dev;
->  	struct ice_vf *vf;
->  	int ret;
->  
-> +	dev = ice_pf_to_dev(pf);
->  	if (is_multicast_ether_addr(mac)) {
-> -		netdev_err(netdev, "%pM not a valid unicast address\n", mac);
-> +		dev_err(dev, "%pM not a valid unicast address\n", mac);
->  		return -EINVAL;
->  	}
->  
-> @@ -1459,13 +1460,13 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
->  	if (is_zero_ether_addr(mac)) {
->  		/* VF will send VIRTCHNL_OP_ADD_ETH_ADDR message with its MAC */
->  		vf->pf_set_mac = false;
-> -		netdev_info(netdev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
-> -			    vf->vf_id);
-> +		dev_info(dev, "Removing MAC on VF %d. VF driver will be reinitialized\n",
-> +			 vf->vf_id);
->  	} else {
->  		/* PF will add MAC rule for the VF */
->  		vf->pf_set_mac = true;
-> -		netdev_info(netdev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
-> -			    mac, vf_id);
-> +		dev_info(dev, "Setting MAC %pM on VF %d. VF driver will be reinitialized\n",
-> +			 mac, vf_id);
->  	}
->  
->  	ice_reset_vf(vf, ICE_VF_RESET_NOTIFY);
-> @@ -1476,6 +1477,19 @@ int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
->  	return ret;
->  }
->  
-> +/**
-> + * ice_set_vf_mac
-> + * @netdev: network interface device structure
-> + * @vf_id: VF identifier
-> + * @mac: MAC address
-> + *
-> + * program VF MAC address
-> + */
-> +int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac)
-> +{
-> +	return __ice_set_vf_mac(ice_netdev_to_pf(netdev), vf_id, mac);
-> +}
-> +
->  /**
->   * ice_set_vf_trust
->   * @netdev: network interface device structure
-> diff --git a/drivers/net/ethernet/intel/ice/ice_sriov.h b/drivers/net/ethernet/intel/ice/ice_sriov.h
-> index 8f22313474d6..96549ca5c52c 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_sriov.h
-> +++ b/drivers/net/ethernet/intel/ice/ice_sriov.h
-> @@ -28,6 +28,7 @@
->  #ifdef CONFIG_PCI_IOV
->  void ice_process_vflr_event(struct ice_pf *pf);
->  int ice_sriov_configure(struct pci_dev *pdev, int num_vfs);
-> +int __ice_set_vf_mac(struct ice_pf *pf, u16 vf_id, const u8 *mac);
->  int ice_set_vf_mac(struct net_device *netdev, int vf_id, u8 *mac);
->  int
->  ice_get_vf_cfg(struct net_device *netdev, int vf_id, struct ifla_vf_info *ivi);
-> @@ -80,6 +81,13 @@ ice_sriov_configure(struct pci_dev __always_unused *pdev,
->  	return -EOPNOTSUPP;
->  }
->  
-> +static inline int
-> +__ice_set_vf_mac(struct ice_pf __always_unused *pf,
-> +		 u16 __always_unused vf_id, const u8 __always_unused *mac)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->  static inline int
->  ice_set_vf_mac(struct net_device __always_unused *netdev,
->  	       int __always_unused vf_id, u8 __always_unused *mac)
+
+Steven Rostedt (Google) (8):
+      eventfs: Keep the directories from having the same inode number as files
+      tracefs: Update inode permissions on remount
+      eventfs: Update all the eventfs_inodes from the events descriptor
+      tracefs: Clear EVENT_INODE flag in tracefs_drop_inode()
+      eventfs: Consolidate the eventfs_inode update in eventfs_get_inode()
+      eventfs: Remove getattr and permission callbacks
+      eventfs: Cleanup permissions in creation of inodes
+      eventfs: Do not use attributes for events directory
+
+----
+ fs/tracefs/event_inode.c | 223 ++++++++++++++++++-----------------------------
+ fs/tracefs/inode.c       |  48 ++++++----
+ 2 files changed, 116 insertions(+), 155 deletions(-)
+---------------------------
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index 0256afdd4acf..5d88c184f0fc 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -37,7 +37,6 @@ static DEFINE_MUTEX(eventfs_mutex);
+ 
+ struct eventfs_root_inode {
+ 	struct eventfs_inode		ei;
+-	struct inode			*parent_inode;
+ 	struct dentry			*events_dir;
+ };
+ 
+@@ -50,8 +49,12 @@ static struct eventfs_root_inode *get_root_inode(struct eventfs_inode *ei)
+ /* Just try to make something consistent and unique */
+ static int eventfs_dir_ino(struct eventfs_inode *ei)
+ {
+-	if (!ei->ino)
++	if (!ei->ino) {
+ 		ei->ino = get_next_ino();
++		/* Must not have the file inode number */
++		if (ei->ino == EVENTFS_FILE_INODE_INO)
++			ei->ino = get_next_ino();
++	}
+ 
+ 	return ei->ino;
+ }
+@@ -207,7 +210,9 @@ static int eventfs_set_attr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	 * determined by the parent directory.
+ 	 */
+ 	if (dentry->d_inode->i_mode & S_IFDIR) {
+-		update_attr(&ei->attr, iattr);
++		/* Just use the inode permissions for the events directory */
++		if (!ei->is_events)
++			update_attr(&ei->attr, iattr);
+ 
+ 	} else {
+ 		name = dentry->d_name.name;
+@@ -225,70 +230,9 @@ static int eventfs_set_attr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	return ret;
+ }
+ 
+-static void update_events_attr(struct eventfs_inode *ei, struct super_block *sb)
+-{
+-	struct eventfs_root_inode *rei;
+-	struct inode *parent;
+-
+-	rei = get_root_inode(ei);
+-
+-	/* Use the parent inode permissions unless root set its permissions */
+-	parent = rei->parent_inode;
+-
+-	if (rei->ei.attr.mode & EVENTFS_SAVE_UID)
+-		ei->attr.uid = rei->ei.attr.uid;
+-	else
+-		ei->attr.uid = parent->i_uid;
+-
+-	if (rei->ei.attr.mode & EVENTFS_SAVE_GID)
+-		ei->attr.gid = rei->ei.attr.gid;
+-	else
+-		ei->attr.gid = parent->i_gid;
+-}
+-
+-static void set_top_events_ownership(struct inode *inode)
+-{
+-	struct tracefs_inode *ti = get_tracefs(inode);
+-	struct eventfs_inode *ei = ti->private;
+-
+-	/* The top events directory doesn't get automatically updated */
+-	if (!ei || !ei->is_events)
+-		return;
+-
+-	update_events_attr(ei, inode->i_sb);
+-
+-	if (!(ei->attr.mode & EVENTFS_SAVE_UID))
+-		inode->i_uid = ei->attr.uid;
+-
+-	if (!(ei->attr.mode & EVENTFS_SAVE_GID))
+-		inode->i_gid = ei->attr.gid;
+-}
+-
+-static int eventfs_get_attr(struct mnt_idmap *idmap,
+-			    const struct path *path, struct kstat *stat,
+-			    u32 request_mask, unsigned int flags)
+-{
+-	struct dentry *dentry = path->dentry;
+-	struct inode *inode = d_backing_inode(dentry);
+-
+-	set_top_events_ownership(inode);
+-
+-	generic_fillattr(idmap, request_mask, inode, stat);
+-	return 0;
+-}
+-
+-static int eventfs_permission(struct mnt_idmap *idmap,
+-			      struct inode *inode, int mask)
+-{
+-	set_top_events_ownership(inode);
+-	return generic_permission(idmap, inode, mask);
+-}
+-
+ static const struct inode_operations eventfs_dir_inode_operations = {
+ 	.lookup		= eventfs_root_lookup,
+ 	.setattr	= eventfs_set_attr,
+-	.getattr	= eventfs_get_attr,
+-	.permission	= eventfs_permission,
+ };
+ 
+ static const struct inode_operations eventfs_file_inode_operations = {
+@@ -301,84 +245,109 @@ static const struct file_operations eventfs_file_operations = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
+-/*
+- * On a remount of tracefs, if UID or GID options are set, then
+- * the mount point inode permissions should be used.
+- * Reset the saved permission flags appropriately.
+- */
+-void eventfs_remount(struct tracefs_inode *ti, bool update_uid, bool update_gid)
++static void eventfs_set_attrs(struct eventfs_inode *ei, bool update_uid, kuid_t uid,
++			      bool update_gid, kgid_t gid, int level)
+ {
+-	struct eventfs_inode *ei = ti->private;
++	struct eventfs_inode *ei_child;
+ 
+-	if (!ei)
++	/* Update events/<system>/<event> */
++	if (WARN_ON_ONCE(level > 3))
+ 		return;
+ 
+-	if (update_uid)
++	if (update_uid) {
+ 		ei->attr.mode &= ~EVENTFS_SAVE_UID;
++		ei->attr.uid = uid;
++	}
+ 
+-	if (update_gid)
++	if (update_gid) {
+ 		ei->attr.mode &= ~EVENTFS_SAVE_GID;
++		ei->attr.gid = gid;
++	}
++
++	list_for_each_entry(ei_child, &ei->children, list) {
++		eventfs_set_attrs(ei_child, update_uid, uid, update_gid, gid, level + 1);
++	}
+ 
+ 	if (!ei->entry_attrs)
+ 		return;
+ 
+ 	for (int i = 0; i < ei->nr_entries; i++) {
+-		if (update_uid)
++		if (update_uid) {
+ 			ei->entry_attrs[i].mode &= ~EVENTFS_SAVE_UID;
+-		if (update_gid)
++			ei->entry_attrs[i].uid = uid;
++		}
++		if (update_gid) {
+ 			ei->entry_attrs[i].mode &= ~EVENTFS_SAVE_GID;
++			ei->entry_attrs[i].gid = gid;
++		}
+ 	}
++
+ }
+ 
+-/* Return the evenfs_inode of the "events" directory */
+-static struct eventfs_inode *eventfs_find_events(struct dentry *dentry)
++/*
++ * On a remount of tracefs, if UID or GID options are set, then
++ * the mount point inode permissions should be used.
++ * Reset the saved permission flags appropriately.
++ */
++void eventfs_remount(struct tracefs_inode *ti, bool update_uid, bool update_gid)
+ {
+-	struct eventfs_inode *ei;
++	struct eventfs_inode *ei = ti->private;
+ 
+-	do {
+-		// The parent is stable because we do not do renames
+-		dentry = dentry->d_parent;
+-		// ... and directories always have d_fsdata
+-		ei = dentry->d_fsdata;
++	/* Only the events directory does the updates */
++	if (!ei || !ei->is_events || ei->is_freed)
++		return;
+ 
+-		/*
+-		 * If the ei is being freed, the ownership of the children
+-		 * doesn't matter.
+-		 */
+-		if (ei->is_freed)
+-			return NULL;
++	eventfs_set_attrs(ei, update_uid, ti->vfs_inode.i_uid,
++			  update_gid, ti->vfs_inode.i_gid, 0);
++}
+ 
+-		// Walk upwards until you find the events inode
+-	} while (!ei->is_events);
++static void update_inode_attr(struct inode *inode, umode_t mode,
++			      struct eventfs_attr *attr, struct eventfs_root_inode *rei)
++{
++	if (attr && attr->mode & EVENTFS_SAVE_MODE)
++		inode->i_mode = attr->mode & EVENTFS_MODE_MASK;
++	else
++		inode->i_mode = mode;
+ 
+-	update_events_attr(ei, dentry->d_sb);
++	if (attr && attr->mode & EVENTFS_SAVE_UID)
++		inode->i_uid = attr->uid;
++	else
++		inode->i_uid = rei->ei.attr.uid;
+ 
+-	return ei;
++	if (attr && attr->mode & EVENTFS_SAVE_GID)
++		inode->i_gid = attr->gid;
++	else
++		inode->i_gid = rei->ei.attr.gid;
+ }
+ 
+-static void update_inode_attr(struct dentry *dentry, struct inode *inode,
+-			      struct eventfs_attr *attr, umode_t mode)
++static struct inode *eventfs_get_inode(struct dentry *dentry, struct eventfs_attr *attr,
++				       umode_t mode,  struct eventfs_inode *ei)
+ {
+-	struct eventfs_inode *events_ei = eventfs_find_events(dentry);
++	struct eventfs_root_inode *rei;
++	struct eventfs_inode *pei;
++	struct tracefs_inode *ti;
++	struct inode *inode;
+ 
+-	if (!events_ei)
+-		return;
++	inode = tracefs_get_inode(dentry->d_sb);
++	if (!inode)
++		return NULL;
+ 
+-	inode->i_mode = mode;
+-	inode->i_uid = events_ei->attr.uid;
+-	inode->i_gid = events_ei->attr.gid;
++	ti = get_tracefs(inode);
++	ti->private = ei;
++	ti->flags |= TRACEFS_EVENT_INODE;
+ 
+-	if (!attr)
+-		return;
++	/* Find the top dentry that holds the "events" directory */
++	do {
++		dentry = dentry->d_parent;
++		/* Directories always have d_fsdata */
++		pei = dentry->d_fsdata;
++	} while (!pei->is_events);
+ 
+-	if (attr->mode & EVENTFS_SAVE_MODE)
+-		inode->i_mode = attr->mode & EVENTFS_MODE_MASK;
++	rei = get_root_inode(pei);
+ 
+-	if (attr->mode & EVENTFS_SAVE_UID)
+-		inode->i_uid = attr->uid;
++	update_inode_attr(inode, mode, attr, rei);
+ 
+-	if (attr->mode & EVENTFS_SAVE_GID)
+-		inode->i_gid = attr->gid;
++	return inode;
+ }
+ 
+ /**
+@@ -401,7 +370,6 @@ static struct dentry *lookup_file(struct eventfs_inode *parent_ei,
+ 				  void *data,
+ 				  const struct file_operations *fop)
+ {
+-	struct tracefs_inode *ti;
+ 	struct inode *inode;
+ 
+ 	if (!(mode & S_IFMT))
+@@ -410,13 +378,11 @@ static struct dentry *lookup_file(struct eventfs_inode *parent_ei,
+ 	if (WARN_ON_ONCE(!S_ISREG(mode)))
+ 		return ERR_PTR(-EIO);
+ 
+-	inode = tracefs_get_inode(dentry->d_sb);
++	/* Only directories have ti->private set to an ei, not files */
++	inode = eventfs_get_inode(dentry, attr, mode, NULL);
+ 	if (unlikely(!inode))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	/* If the user updated the directory's attributes, use them */
+-	update_inode_attr(dentry, inode, attr, mode);
+-
+ 	inode->i_op = &eventfs_file_inode_operations;
+ 	inode->i_fop = fop;
+ 	inode->i_private = data;
+@@ -424,9 +390,6 @@ static struct dentry *lookup_file(struct eventfs_inode *parent_ei,
+ 	/* All files will have the same inode number */
+ 	inode->i_ino = EVENTFS_FILE_INODE_INO;
+ 
+-	ti = get_tracefs(inode);
+-	ti->flags |= TRACEFS_EVENT_INODE;
+-
+ 	// Files have their parent's ei as their fsdata
+ 	dentry->d_fsdata = get_ei(parent_ei);
+ 
+@@ -446,28 +409,19 @@ static struct dentry *lookup_file(struct eventfs_inode *parent_ei,
+ static struct dentry *lookup_dir_entry(struct dentry *dentry,
+ 	struct eventfs_inode *pei, struct eventfs_inode *ei)
+ {
+-	struct tracefs_inode *ti;
+ 	struct inode *inode;
++	umode_t mode = S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO;
+ 
+-	inode = tracefs_get_inode(dentry->d_sb);
++	inode = eventfs_get_inode(dentry, &ei->attr, mode, ei);
+ 	if (unlikely(!inode))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	/* If the user updated the directory's attributes, use them */
+-	update_inode_attr(dentry, inode, &ei->attr,
+-			  S_IFDIR | S_IRWXU | S_IRUGO | S_IXUGO);
+-
+ 	inode->i_op = &eventfs_dir_inode_operations;
+ 	inode->i_fop = &eventfs_file_operations;
+ 
+ 	/* All directories will have the same inode number */
+ 	inode->i_ino = eventfs_dir_ino(ei);
+ 
+-	ti = get_tracefs(inode);
+-	ti->flags |= TRACEFS_EVENT_INODE;
+-	/* Only directories have ti->private set to an ei, not files */
+-	ti->private = ei;
+-
+ 	dentry->d_fsdata = get_ei(ei);
+ 
+ 	d_add(dentry, inode);
+@@ -828,7 +782,6 @@ struct eventfs_inode *eventfs_create_events_dir(const char *name, struct dentry
+ 	// Note: we have a ref to the dentry from tracefs_start_creating()
+ 	rei = get_root_inode(ei);
+ 	rei->events_dir = dentry;
+-	rei->parent_inode = d_inode(dentry->d_sb->s_root);
+ 
+ 	ei->entries = entries;
+ 	ei->nr_entries = size;
+@@ -838,14 +791,12 @@ struct eventfs_inode *eventfs_create_events_dir(const char *name, struct dentry
+ 	uid = d_inode(dentry->d_parent)->i_uid;
+ 	gid = d_inode(dentry->d_parent)->i_gid;
+ 
+-	ei->attr.uid = uid;
+-	ei->attr.gid = gid;
+-
+ 	/*
+-	 * When the "events" directory is created, it takes on the
+-	 * permissions of its parent. But can be reset on remount.
++	 * The ei->attr will be used as the default values for the
++	 * files beneath this directory.
+ 	 */
+-	ei->attr.mode |= EVENTFS_SAVE_UID | EVENTFS_SAVE_GID;
++	ei->attr.uid = uid;
++	ei->attr.gid = gid;
+ 
+ 	INIT_LIST_HEAD(&ei->children);
+ 	INIT_LIST_HEAD(&ei->list);
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index a827f6a716c4..7c29f4afc23d 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -373,12 +373,21 @@ static int tracefs_apply_options(struct super_block *sb, bool remount)
+ 
+ 		rcu_read_lock();
+ 		list_for_each_entry_rcu(ti, &tracefs_inodes, list) {
+-			if (update_uid)
++			if (update_uid) {
+ 				ti->flags &= ~TRACEFS_UID_PERM_SET;
++				ti->vfs_inode.i_uid = fsi->uid;
++			}
+ 
+-			if (update_gid)
++			if (update_gid) {
+ 				ti->flags &= ~TRACEFS_GID_PERM_SET;
+-
++				ti->vfs_inode.i_gid = fsi->gid;
++			}
++
++			/*
++			 * Note, the above ti->vfs_inode updates are
++			 * used in eventfs_remount() so they must come
++			 * before calling it.
++			 */
+ 			if (ti->flags & TRACEFS_EVENT_INODE)
+ 				eventfs_remount(ti, update_uid, update_gid);
+ 		}
+@@ -417,10 +426,26 @@ static int tracefs_show_options(struct seq_file *m, struct dentry *root)
+ 	return 0;
+ }
+ 
++static int tracefs_drop_inode(struct inode *inode)
++{
++	struct tracefs_inode *ti = get_tracefs(inode);
++
++	/*
++	 * This inode is being freed and cannot be used for
++	 * eventfs. Clear the flag so that it doesn't call into
++	 * eventfs during the remount flag updates. The eventfs_inode
++	 * gets freed after an RCU cycle, so the content will still
++	 * be safe if the iteration is going on now.
++	 */
++	ti->flags &= ~TRACEFS_EVENT_INODE;
++
++	return 1;
++}
++
+ static const struct super_operations tracefs_super_operations = {
+ 	.alloc_inode    = tracefs_alloc_inode,
+ 	.free_inode     = tracefs_free_inode,
+-	.drop_inode     = generic_delete_inode,
++	.drop_inode     = tracefs_drop_inode,
+ 	.statfs		= simple_statfs,
+ 	.show_options	= tracefs_show_options,
+ };
+@@ -446,22 +471,7 @@ static int tracefs_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	return !(ei && ei->is_freed);
+ }
+ 
+-static void tracefs_d_iput(struct dentry *dentry, struct inode *inode)
+-{
+-	struct tracefs_inode *ti = get_tracefs(inode);
+-
+-	/*
+-	 * This inode is being freed and cannot be used for
+-	 * eventfs. Clear the flag so that it doesn't call into
+-	 * eventfs during the remount flag updates. The eventfs_inode
+-	 * gets freed after an RCU cycle, so the content will still
+-	 * be safe if the iteration is going on now.
+-	 */
+-	ti->flags &= ~TRACEFS_EVENT_INODE;
+-}
+-
+ static const struct dentry_operations tracefs_dentry_operations = {
+-	.d_iput = tracefs_d_iput,
+ 	.d_revalidate = tracefs_d_revalidate,
+ 	.d_release = tracefs_d_release,
+ };
 
