@@ -1,211 +1,111 @@
-Return-Path: <linux-kernel+bounces-187344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C523F8CD077
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6C58CD07B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 169D9B216AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1C7284681
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 10:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CC31422B4;
-	Thu, 23 May 2024 10:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="npU09icX"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2083.outbound.protection.outlook.com [40.107.93.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89639143C7E;
+	Thu, 23 May 2024 10:41:02 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0013B13CF98
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 10:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716460844; cv=fail; b=MVZ7ov/c3Kk9iahM2/04IPfIuiiweLlSRTdJ5O6EXn3HbeE2VTzTqbbHsH6+Tx0ei3CrUF2aWyNGoKyN92Vy5tb9g2FHrrmTU8YOyRFvk+mnZVvp2AS/IQ34KntzGVku6XUxd7HcuCup+mDVsLUk/Y5hFd8UbCYEEn+0WcYhTek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716460844; c=relaxed/simple;
-	bh=4sGHe7qTSgh4kCYsHZnqHqbO6gqfsgeVmYR62JV+RcY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H0GaGfhIamirfVY7fWOvkGZyb1M4CzgGtPWmUjiBDKW9O3WGs6xsbLZvZ6qCKo3CaGZ5EQ1vsiKDnfPu7m6DCRZ+9RlLLbVPSaX+Q41lPuzzix2llB0IwET8k+8OzIGJlcFwIJ6CnwsRrJSMNm2oqKzRg9w0P7MLEuCezOc6tF4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=npU09icX; arc=fail smtp.client-ip=40.107.93.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U1CzCKQmQ4w5liUSr6mTAYvozjWEm4QycWuMKpBcxol1mRCGmHAsK6af6NghTYnE/T8w/q+kW06IAJm2C3MYH41706AhCYALTo/tQJHLaEYviMmYERyO2RW29pH8yJQ87dPhFuLKt3xqZ+V6rGm4RjKdBTi4Zw4Vcy1F1lXbOE9VZHbS98dAvv4JNzaMBKQVjfcPJSpnXquPzv+gswSzBq/EIhHoUXvu0kdmV7eCDo18ZDu8ct96CVZKYmFepo4Qe/VOP0M9PODErIOVQvUt0Zt82QLPttjkfAbvB9cs5DYQa9+rknGtWrgJnQ4wFl7nZ+uQ+MLmWDCT0lYfOapEGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qJPW3P3hjESHaBglB2CrG8PWbM9x7tGg1ozNuEQE56s=;
- b=h5WkL/yA+rZgHvYOSHnIGuUMhT35L0f9ItkGljO2wP5YXkaTk500RKqF/EEVGX0RquhCZlr3PqIcEGOWqEAFFsIrttbCQYt2Oq9O0OxUoJIxpOonXNrJOW+4DSeHDqSNwfeZPvwEv6orETeh/Ojs7Ny6WaKQ8eWRkVOxkaae6U/IVyLZok/Nq1O++lkK3hIjdDRtuv4TmgFed1KrNsY72qAXjqVcXmJcgDDhF9beDN4mKedRnDMKlelph7UbqCdMOk/PH1+rXgIYlApIxZ++wMiUvQbovtw5wK9/nTHvo+yaD4shDCBz3bjTxtbVsh7OAvMwEH8SNoIqaVI0GIz6dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qJPW3P3hjESHaBglB2CrG8PWbM9x7tGg1ozNuEQE56s=;
- b=npU09icXIlWDdVh8uAGb/vNl/yUZHkqeiWDYo1QWVv8/6mMKuTndJwCs88XIzvyTAC8RqJ+OuRH7wt3qcyFQUV/tHsCB+EECNx+13l1n3l1mjgKZ42XrB1Uyen2x7yD9ULG8eDmNTbwFtNAeJKykxPOE4Yn69jskhKzPPXoMbZk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- IA1PR12MB6483.namprd12.prod.outlook.com (2603:10b6:208:3a8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Thu, 23 May
- 2024 10:40:38 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::af7d:5f4f:2139:ebd1]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::af7d:5f4f:2139:ebd1%4]) with mapi id 15.20.7587.035; Thu, 23 May 2024
- 10:40:38 +0000
-Message-ID: <bf2ea452-75ea-4091-90fe-c83062729b76@amd.com>
-Date: Thu, 23 May 2024 16:10:28 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] iommu/amd: Use try_cmpxchg64() in v2_alloc_pte()
-To: Uros Bizjak <ubizjak@gmail.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: Joerg Roedel <joro@8bytes.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-References: <20240522082729.971123-1-ubizjak@gmail.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20240522082729.971123-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BMXPR01CA0086.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:54::26) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5651411C2;
+	Thu, 23 May 2024 10:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716460862; cv=none; b=JvBwxAcMB9ciyvfmemoLD1rB9ebX5uD2Tt8M19gV0imeD1zW46FKbUzIef1hF8FnTZuHsulaX12EgiYrVyx9w9gccb9GXgk7VJT8PKQP/59L6kF4D0QgkGhrb5ToPNoMtFKkoVkAdIVDg607naJmdk7EqH9tC8ulfvdzDKBK/eo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716460862; c=relaxed/simple;
+	bh=eXRSHwUvy8ISV/ZF5NEQa0Kx5OLcz4a9q9ZU1a3C/gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ly/QUq62YsaWYT+APwTG67o8xQqYAtBgakJlTPNITxtXn2tmtMsQcjLNOzusMsWbUHN8KHYKobXZbDZ/9Ap3T3fDCiabvDCzq9M0THp4g9xe935bc3MVtUdfNO5aK3FbXhryxUntDK/BylAIhTPSe1KvWWvLxUy4lDcTpzn80qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 107)
+	id 3D0D568D09; Thu, 23 May 2024 12:40:57 +0200 (CEST)
+X-Spam-Level: 
+Received: from blackhole.lan (p5b33fb10.dip0.t-ipconnect.de [91.51.251.16])
+	by verein.lst.de (Postfix) with ESMTPSA id 5E39267373;
+	Thu, 23 May 2024 12:40:36 +0200 (CEST)
+Date: Thu, 23 May 2024 12:40:32 +0200
+From: Torsten Duwe <duwe@lst.de>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, "=?UTF-8?B?TsOtY29s?=
+ =?UTF-8?B?YXM=?= F. R. A. Prado" <nfraprado@collabora.com>, Eric Biggers
+ <ebiggers@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>, James Bottomley
+ <James.Bottomley@hansenpartnership.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ regressions@lists.linux.dev, kernel@collabora.com, Tejun Heo
+ <tj@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Kees Cook <keescook@chromium.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [v3 PATCH] hwrng: core - Remove add_early_randomness
+Message-ID: <20240523123954.5e42bd93@blackhole.lan>
+In-Reply-To: <Zk7K7hw-XIHmPs26@gondor.apana.org.au>
+References: <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com>
+	<dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano>
+	<D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org>
+	<20240518043115.GA53815@sol.localdomain>
+	<ZkhS1zrobNwAuANI@gondor.apana.org.au>
+	<00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano>
+	<ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
+	<07512097-8198-4a84-b166-ef9809c2913b@notapiano>
+	<Zk2Eso--FVsZ5AF3@gondor.apana.org.au>
+	<CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com>
+	<Zk7K7hw-XIHmPs26@gondor.apana.org.au>
+Organization: LST e.V.
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|IA1PR12MB6483:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0bdcc1f5-e8e0-490a-6eb3-08dc7b14c911
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YWhCdWtCdjVaOUhjMU1CRzRpaVlURHhOcldMYnNjSWlBcHAwd2NuWUJ0V2M5?=
- =?utf-8?B?OUhZaHg0VG95aUtQTG83c1kxa29HbXV6SVlxZGJkc0RkblJNaDJLQzhHRjEr?=
- =?utf-8?B?RFErdnBveUxPQk1uejlDTnFCbmx6K2Izc3Fhc1Z5VE0yTm1BQzNoWVZvditL?=
- =?utf-8?B?OElxaC9CUlpORXEralJINFFtc0tJWHdBZ3Y3SUx2aHlPRGdKUHAzcTZnRmJT?=
- =?utf-8?B?Y1EreGlrcVEweDdTL0dXamtNeVhkSFpNU0dHeUo3YlV4OTBaZ3N6d25RQ2tB?=
- =?utf-8?B?ZSs4ZGJiZ2s3b3ppcDArZFQzSmc0Y3RkUGVJbXVJdXdJRjRQT0lIOTcvMDZD?=
- =?utf-8?B?ejdtMEkwQU4wb1VRaytEcE9VQzJkK2RrRFZ2WXQzZ3lhOXJVUU9VTEtGakN4?=
- =?utf-8?B?Q1JvUmdUOHhRS0lkRFNWeWdYdUs4bjhPdGVGTll3N2RXTEt6U3l0bXp1bURy?=
- =?utf-8?B?UnB4ZlkzcjVoYmFLSll5aGpGSit6aXFPNG9xVUgvY3JhNlBqeWVTYWhkcDN0?=
- =?utf-8?B?bGdYUkJBbFhlTFg3S1lqdWI1NzZWajNGOXo4Rm9HczRiQjc0cnF2RVd6dmNC?=
- =?utf-8?B?WHR1Z2FKdkpGM0hUZDBJUWJqb0RmL1JzUmwyWDhpWVN6RUlBSmkvYlNqWWN0?=
- =?utf-8?B?WmhqSDhBc1dqcURKNWZjTm1QKzZXWGtLOFI5dzVNMWFlaVVoZVY1NDZ6Wmp5?=
- =?utf-8?B?VHd3Nkk3a1Nzd2FXcWZIMlM0K1Nzb0xDaWh3TkEyd1ZIcHl4bDJGNFo2TmZQ?=
- =?utf-8?B?NlN4UXpqb3VlN2pmQWNRRExMcEtUdmNKblpTVWpxdEc3ZmkyVzVFMUlCT29W?=
- =?utf-8?B?NUdYd0RQOHgycGw5ZmF6Ulo2aXIvSXEvMjRwKzdRbmtmZHE1THgraFN6d2pV?=
- =?utf-8?B?VnZ3dFdFbHk4bXk5dXNIMDJPUnBtY092eWZZOHZyK0cvRjc1MkdzeEhnc2Jo?=
- =?utf-8?B?bDRKQjVXc0xSaGRKbmd4TDNKdk9zbHphM3NlOVZUTTYwWFptbkVUSzBCRE9J?=
- =?utf-8?B?MW1SenphQmtSUU0rU1NiUjVEWUxqN2svNjJLcGh0ZWdlZUdSQ1M2Y1pxUnBJ?=
- =?utf-8?B?NGpTdFp3QzJGUTRnTnlaNm5TSmdnTFpsQzIvMXhZL0JNQVJrcXd6SXppOG9w?=
- =?utf-8?B?OU5iUkRUN1ZvU0JSU1hlUjQwcU9EdFd3TklNTXVRQ29WTWRuWHozRnNrRHJj?=
- =?utf-8?B?azhoOXRncXl1SVlrcTVwMjhqRWc2U3B4clJWNEtNMmZtZjhDZGlzVUpDRDBX?=
- =?utf-8?B?OXpSNGQ2Rkpzd3BjMGVRRVFYaWhrQUs3SWtCdzFSRE1iYVRTOE5FSTBZK0ZO?=
- =?utf-8?B?VmVyVmJiQnRFbVRWZHdocDloVHI4aGc5SmVWcEIrV2xzczRXdjdxb2RGNGlt?=
- =?utf-8?B?UFFLdXlGNXl5UEhJS3hlaUg0YXUwelErSmxZNGRkUDBhVlZoVTBsRVB6VmE3?=
- =?utf-8?B?WUJrMmU5a3hnN1ZxYThlZFZOVVczSVU2OHlvRHdwUG9uNWZhbWRvNU5mdENG?=
- =?utf-8?B?NW9hek11d0ZZemFvNmNPbzBFME1FTjBLcTN4d0d0bTJUU1RrTUJyZXJ6ekNY?=
- =?utf-8?B?WlpjQ2FXdnk2ai9paVRLbk13TG1Fd3lNbmpBQVp3Yi9WL0g2b2piR3NoNWZZ?=
- =?utf-8?B?WmlCWmhUeGMxYXY0OHZ0c3Z4QmxITzFSTWNDa09LY2lQbG4vR09PdFlGWGlo?=
- =?utf-8?B?ZDlsTnRXNHdyc0dZMTZodGF6Vmg4c0VsM0Q5L3RoZm9OejFIVkJpR3ZnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?a0NGRWhDbXc4Q2NJcERFZEZNdytuZlJlMHFTemdJd1hVMXFvb0w5TEJMNERo?=
- =?utf-8?B?MDNiMmlNclBlK0h2cm9kbEUraEZnVjNKdHFaUlJobEtaSndsOVo2cThoTmFW?=
- =?utf-8?B?TUpRSDYxT092M0ZxRWxEYzVLbGpFYkJydjIyaE5QMlY3WmhJdWVhZXc5Wmls?=
- =?utf-8?B?cUxYRllsdFRtVEQ2dDZBdDl3SW5BcEZNTUhtQ085QzMwRExDVDhodG05czEz?=
- =?utf-8?B?NEV0R0c3NGFhSVo0bmtiRTczbmRNdDRtaDE4d1RzRjlkbWcyUDNtdzRZM0xy?=
- =?utf-8?B?bVRFaytSWXU2VGFtdXhzbW1OYU9sUEFOWlVaSWFlb01tUEc5SmNPSUExTmoy?=
- =?utf-8?B?d3BBNjFSdnd4N2NSVmQxek8zLzVCRldFL21LdlVIa3Y3RTFOKzh4SGtOQ3c3?=
- =?utf-8?B?cU1UalQxMW4wdFNoZ0kvQ01wVzJEQUJtNzRoeG4zcnVzaXNNWjZEWXdmN1pB?=
- =?utf-8?B?U3hndldmNUU2ZlI4Um81bzNVZ3Q4bnBjcHpWQ3JuU2M0S0daZlMrVDhsbGVr?=
- =?utf-8?B?bnhMTU5DOFVMT1NEeWZaNzBiQlhCOW90dUxxRUd6aThUaU5JeDRCbGNZTUlI?=
- =?utf-8?B?TnF2MXlsM3BDcEU0eVRDRi9VWnVKdldHMFdDbHZrSUQ5VStlVDlPN3VxRXMv?=
- =?utf-8?B?bGRmVmlUQ0l0clJ6VmRuOEU0dFdNMzBsWVp1NVQ4RkFkWEdvcXdaYnQ0VFo4?=
- =?utf-8?B?c1NRZTNNWjBYSXVNNXFlK3NXS013dWordzRtUFZadzArOVArU1dIR2VHUE5Y?=
- =?utf-8?B?YXdhN0NSY0I5ZjFmV0w3VWF4V2NmU1NqeWdxTVBlaHFKSlMwbHpHVkl5U05l?=
- =?utf-8?B?Q09aQXEwZXE0RFpFbG9ocS8wQWtrVmpBaDdxeE1ySWFpUERtaTNUUHVCRER6?=
- =?utf-8?B?L0o4K1VzYVFZWmIramd0RFBCY08rYlh4V2xjakRyNzJNUVVDalpZSTF0YlAy?=
- =?utf-8?B?REdnblNzTis5ZjdJOU1iWi9YY0d2b1dGTUM1amdoYU9XaituTjdsRGtsVUJI?=
- =?utf-8?B?azRDK0JXbU9IZks3Z1Z5UEtSb2ZOdklkcytoVXVYY0U1STI1VEFWRktmS2hZ?=
- =?utf-8?B?QnFNUGdPNGVvTUFXeHlsb2daZVdlckFrOHhaN3N4emw2d1JDQ0lXamtRRmlS?=
- =?utf-8?B?cUZ1NzY1L21SMW5TWmxHN2ZyY0xlNEw3azVjOEMvOUhqSnQ3bE01Z0hUdm1p?=
- =?utf-8?B?eEIyTTN6elJQOG12RVR6TkNBdFN2Rnd1N2k5TXpzWXZ4Mk9pRGttOFhSRi84?=
- =?utf-8?B?VE5tcHRpaUd5b2dsdEt3MXVqTTZ2WFZlSDZPb2NyTDd0dnNmclRUZ3dNVGZ3?=
- =?utf-8?B?dXo0QVBTa3dDbVBDZG1wODh0aHU3ZlBIcU9YM2REd2Y3d0g4NnJFMmdPYmNr?=
- =?utf-8?B?NXdiMURadGZ0SXJTSTh1ZEVNbmdOUktQdFRXY1VsNGp3N0c5Z2lmcUJ2VTEx?=
- =?utf-8?B?Zy9udGVkMW1KVzl3RVlOUkZkNHdTbUREa1M0VnhvUGZaTWRyTHVCYXdBUXY3?=
- =?utf-8?B?bnF1RW04MWwxUlNmQnpOd09RL3FOMGVFTlZpcS9Ca0pyL3J3M25TaDg3VTcx?=
- =?utf-8?B?ZzJROHRnbG16Q1dqV2ZNV1lYdXFhTTJ1em1YZ2FjYWJORXg4NWl2aFVaSW5m?=
- =?utf-8?B?cWlpdzRwUlZBRlladGRXYzZSR2dOamhQRGh1UjN2Rk9PbUF2dUJQMDFNaG9z?=
- =?utf-8?B?NVlPT295WlZWem5hamp2SzFRS1g4Q1hHZE9jdEtLRFdvMzhJcCszb1BjQzU0?=
- =?utf-8?B?d040WGFIK3pXdGxTYjdUNjNJbU5tdWdqM0RHcG9pSUcwMFMzdEJsU0NnbS9O?=
- =?utf-8?B?ZHg3MWFwV1dBZE01S1JzdzdPS1M5aHpxK0lnTkNpd0oxZHY0VE5HYUpiQlpV?=
- =?utf-8?B?a2J4NzFzOGViVWQ1enoxUUlrOGVDMmJHbjRXTjFHWXNHZWlhbmcrS0VvNUxF?=
- =?utf-8?B?UldacFIrcU1FU3htdFZqeTB0UGFHMTMvN1VmS0hGZm5LL04zWXZVYjhTRzMr?=
- =?utf-8?B?NGkxeTBOU09WYkpGUXpPZDdZdGFmQTdIZnh1emxKNFFWQVNyWksxd21SWFRi?=
- =?utf-8?B?aUJOS0dwMGt1Nk1qTk0rL21FV2Z4aVlpUDNLdHNZb1Z3YTlsQ1VXSWNlL1Vq?=
- =?utf-8?Q?NcQGix4vz9mMzyhBeLJCU1ScU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bdcc1f5-e8e0-490a-6eb3-08dc7b14c911
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 10:40:38.6142
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lZRD6ziPMcUWnaXYFg+CC6MgonJz7G8M5vddpAyU5AZQjNinvOuVC/YOOtuRvrACdWXKYXo++5CG1PiDTtQjpw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6483
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 23 May 2024 12:49:50 +0800
+Herbert Xu <herbert@gondor.apana.org.au> wrote:
 
-
-On 5/22/2024 1:56 PM, Uros Bizjak wrote:
-> Use try_cmpxchg64() instead of cmpxchg64 (*ptr, old, new) != old in
-> v2_alloc_pte().  cmpxchg returns success in ZF flag, so this change
-> saves a compare after cmpxchg (and related move instruction
-> in front of cmpxchg).
+> On Wed, May 22, 2024 at 03:53:23PM -0700, Linus Torvalds wrote:
+> > 
+> > That said, looking at the code in question, there are other oddities
+> > going on. Even the "we found a favorite new rng" case looks rather
+> > strange. The thread we use - nice and asynchronous - seems to sleep
+> > only if the randomness source is emptied.
+> > 
+> > What if you have a really good source of hw randomness? That looks
+> > like a busy loop to me, but hopefully I'm missing something obvious.
 > 
-> This is the same improvement as implemented for alloc_pte() in:
+> Yes that does look strange.  So I dug up the original patch at
 > 
->   commit 0d10fe759117 ("iommu/amd: Use try_cmpxchg64 in alloc_pte and free_clear_pte")
+> 	https://lore.kernel.org/all/20140317165012.GC1763@lst.de/
 > 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Robin Murphy <robin.murphy@arm.com>
+> and therein lies the answer.  It's relying on random.c to push back
+> when the amount of new entropy exceeds what it needs.  IOW we will
+> sleep via add_hwgenerator_randomness when random.c decides that
+> enough is enough.
 
-Thanks for fixing it. Looks good to me.
+Yes, I thought that this was the obvious choice, the lesser evil. If it
+just discarded the excess and returned immediately I had expected some
+kernel threads to spin constantly.
 
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+>  In fact the rate is much less now compared to
+> when the patch was first applied.
 
--Vasant
+You mean the rate of required entropy? Doesn't that make things worse?
+Maybe redesign the API to use a pull scheme? RNGs register at the
+randomness facility with a callback that can be used when there is a
+need for fresh entropy?
 
-> ---
->  drivers/iommu/amd/io_pgtable_v2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/amd/io_pgtable_v2.c b/drivers/iommu/amd/io_pgtable_v2.c
-> index 78ac37c5ccc1..664e91c88748 100644
-> --- a/drivers/iommu/amd/io_pgtable_v2.c
-> +++ b/drivers/iommu/amd/io_pgtable_v2.c
-> @@ -158,7 +158,7 @@ static u64 *v2_alloc_pte(int nid, u64 *pgd, unsigned long iova,
->  
->  			__npte = set_pgtable_attr(page);
->  			/* pte could have been changed somewhere. */
-> -			if (cmpxchg64(pte, __pte, __npte) != __pte)
-> +			if (!try_cmpxchg64(pte, &__pte, __npte))
->  				iommu_free_page(page);
->  			else if (IOMMU_PTE_PRESENT(__pte))
->  				*updated = true;
+	Torsten
+
 
