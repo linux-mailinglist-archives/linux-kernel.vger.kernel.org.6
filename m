@@ -1,439 +1,559 @@
-Return-Path: <linux-kernel+bounces-186955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035888CCB24
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:27:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBB48CCB36
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 05:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E26282E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDB5B1F22C73
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 03:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EF213AD3E;
-	Thu, 23 May 2024 03:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78A7446AE;
+	Thu, 23 May 2024 03:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Pw/PW1/U"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WoglU0F2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1ED433A2
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 03:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B8920319;
+	Thu, 23 May 2024 03:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716434812; cv=none; b=BN9JhN4gFZBlP+XrJ13dE5k3gZg6R3pALZ9p38AqMNo5GegnusgQmDe9t0ktIDFM1Koa0onHy/63a31bEZt/JVSyKzX14rd7c52j9uDsEBUDRHTTFPZg/Bi27arFMioENr3zh2m/ZcpbRSq/oGqo/lvaPLvw1qPi3k0uKgP+cXU=
+	t=1716435299; cv=none; b=e43FM55R++zlKnuAphzI+REh2i+LV6C6QRnp2Zc8EPrp/22xbDvrh41pNJfzqE/sN1kfRFvJ5EVXDQUNqrDjciMTS2JR7mU1HnAYqyJcFkFMR6S85iQyM/coOSm6TT/s0KDw02l2r9QfA2U0E1C8CRo5Mp+GEPix5Kyy9kYXD8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716434812; c=relaxed/simple;
-	bh=kOSJ5343ZgD6KXVJTDj3JIky3M/+oxREycPHACuh6ik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C+yg+wkj08aCfCSK8Rh+e3i0U27UM3YD3+Wl2CCQQ9nlnYh5R9wt2z3Yt/ZvvP0UwREaRejI3HdXUVXmCXmAiI8YBqmY8rF+rK52J32fCbN+N4mKYoW0o+fMKoP6ADRBidrtPXS7URxmA9S4ubugNfuosyhI+wg6EDe5z3lyXsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Pw/PW1/U; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b295d6b7fbso3274133eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 20:26:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1716434809; x=1717039609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c7zTuP2XgCofoIWKacpr34bMlGlhPX3lpxrhBKwjHqo=;
-        b=Pw/PW1/UJKe5HYwiCzPETJv+yNRutwa/nB+YBS8rni2AhlrKOv18GoFbzsVoBEduCO
-         gP8eC15FNJ6T31rCr7QrPZMRlEKOd83DsbHqEmRQFnmj1P2FnRXGfrD6LeCTNLf9FeVw
-         qi4JraER+4g4CksWgpRpb7tX508byqMtqEfXi1qf+xJ1z2jTeB33W9TqiBzJ+6iOyalH
-         kLzsDiWs5Po4C/4JBzZ1Z6pS1FgswHOz1aK9IPsW3Cw+PrrVPgDeOnBpgjPUg2U6CWpj
-         BSsRkr6ywwWVwROStRjymcHSkT1YZ6QFlOn9oRuRWIYmS8GcZvTOHgpSVUVG6/C2QPul
-         4l6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716434809; x=1717039609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c7zTuP2XgCofoIWKacpr34bMlGlhPX3lpxrhBKwjHqo=;
-        b=uDjy2ZNYTCMsZyV1xbFsJO+QxLkVYAkY4oxBmW9A8NYpgZQrOH0U4moxK/+gkHsWrr
-         IJindxvBPt5VU+9+oWxEIGkE+xJGq9lpnI28CEbpywuSwtauVUF25RcSwF0LdvermC4q
-         NHMlDifZuoM24tTNFiQL8UJ0vjBE24AFHr1WKBDcRBCVNXvvILQnF1tBAnycNZcXzI4j
-         ayMMoxGDohN1GUmJNOqFxISIwUt44psRFJ6wNknJ0dn0uFSzD2dJvUk+jZCDGoCfRmtc
-         BULxul68UtqHAfl/1y4LCOQ0Ujop+nrnKBenvH/eBRC6MeeNH1cI4PoUiNAIKhDOm1ap
-         1sPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFdxa8fO7m3ouOS9ptQxT6yX52rzXC+HxLD/H+ArBb6VCTqiRFuuMo5wrx3YljbBoJeRX8ij4eI/OgFjnmPUFhHaHvuqowBaZuOSpt
-X-Gm-Message-State: AOJu0YzvD1mg2Sjx0DOICO7MNNgL9oJialPE6QXv5w7eiFABy3qihT2d
-	4S8JkZbrl9jmUfZdonJFrY0mhygpg/ZMTTeZRTfgzTRYWuJVRuPcy8QAXWe7P3zW7EfqfwS7Jd8
-	a3HOxgORA6OAdEb5IQ0ADqQbjhMrzBL4w+s1Fsw==
-X-Google-Smtp-Source: AGHT+IGGpf1SUcygd521wlQp1GkYsu1Ml5R8D8AIaZD4u1+YTualMlPhYztsm7Qk6u1pKSqTcEtgsPAy5CbvGXxqUPA=
-X-Received: by 2002:a05:6820:821:b0:5b2:3f04:8d03 with SMTP id
- 006d021491bc7-5b6a4123352mr3639833eaf.7.1716434809075; Wed, 22 May 2024
- 20:26:49 -0700 (PDT)
+	s=arc-20240116; t=1716435299; c=relaxed/simple;
+	bh=o10imn5J0AI2O2FGptsG7XtejKtBda9RPe1N1FflebA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=czwZ9ZGY4zMRKGzMcST6pSLDaGC9DsdRf7tkxRqHbxzUxihWe7IqJLKIN1hkRmB3J2RnCapaFanuaHdUkB6Sj+4JoIH6mVudJZxY4H/Hf/i2Y7NHdGJO0pMjrU/ZTOR44adzbwpFK1xKCQeFVdnGnIra0V5FR0gh8RvWar2x89M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WoglU0F2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44MLkf46002549;
+	Thu, 23 May 2024 03:34:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=7MeQ8tDFi4p6ig6ite5CM/mtmGZW9qTTX3crnlZFHT0=; b=Wo
+	glU0F2QPnXttl748KKTmNNkzgvCIbtqR+2PUebRGdrbE/2GKYZy2ayMFi9+LCNsK
+	o9sMsMvzp2hu0r9pZiqmOpNwhDibY8c/D3M492J87V77CqRmlS7W/anWU13IkmHi
+	TUe4jZTszt8zOXPtE72bMznrjPTPs2K54rRbrsxPTSc7CDcuscVl1qTitjnnWwAk
+	Q4kjyiGMUCDt4qpAVAi0dOc1Wlon7OywRvVQ6Yz5f/hpgbbd38h4hBFLdQ5F1VvL
+	G48sLTqi1Ke+jaSo8EBFW0DOydPO46gK2qzjThaCM7jorsbAKc5XdSXiAGirF+G0
+	0uA4TMuhGTkifs9lN+lA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y6n4gjmpd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 03:34:41 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44N3YdCh024879
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 03:34:39 GMT
+Received: from [10.216.36.209] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 22 May
+ 2024 20:34:33 -0700
+Message-ID: <6fe417c8-8eb8-2489-5295-c94dd5cc08bd@quicinc.com>
+Date: Thu, 23 May 2024 09:04:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
- <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
- <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
- <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
- <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
- <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
- <CAAhSdy33DcNw+pbDRrR=hBH86kwvu3xZbomQby8XhRXcc-exqQ@mail.gmail.com>
- <CAKddAkBrP2iQBC+aY1Xw5pssBpiQZe4V-6ww5m8hbKP6V0jzLg@mail.gmail.com>
- <CAAhSdy12-_Hdb-WVrs8kyfCy_OQA0p27DS6TOV87dh9HODrU_Q@mail.gmail.com>
- <CAKddAkCQOvnci-bzKx1pBUJh5t1uPT-wNXGH1WyqDyb5qR_Scg@mail.gmail.com> <CAK9=C2V2xYwi4wK2+e=z7NF8Ph7+LxvWh4J4TmQrbVfSfpO-Ag@mail.gmail.com>
-In-Reply-To: <CAK9=C2V2xYwi4wK2+e=z7NF8Ph7+LxvWh4J4TmQrbVfSfpO-Ag@mail.gmail.com>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Thu, 23 May 2024 11:26:38 +0800
-Message-ID: <CAKddAkA6ghz3LmVwkdCJ8n+JeF-67pZi07NuPWfron46NLpKoQ@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Anup Patel <anup@brainfault.org>, Ulf Hansson <ulf.hansson@linaro.org>, palmer@dabbelt.com, 
-	rafael@kernel.org, daniel.lezcano@linaro.org, paul.walmsley@sifive.com, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, zong.li@sifive.com, 
-	Cyan Yang <cyan.yang@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Anup,
-
-On Fri, May 17, 2024 at 12:39=E2=80=AFPM Anup Patel <apatel@ventanamicro.co=
-m> wrote:
->
-> On Thu, May 16, 2024 at 9:40=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrot=
-e:
-> >
-> > Hi Anup
-> >
-> > On Wed, May 15, 2024 at 9:46=E2=80=AFPM Anup Patel <anup@brainfault.org=
-> wrote:
-> > >
-> > > Hi Nick,
-> > >
-> > > On Wed, May 15, 2024 at 5:45=E2=80=AFPM Nick Hu <nick.hu@sifive.com> =
-wrote:
-> > > >
-> > > > Hi Anup,
-> > > >
-> > > > Thank you for your guidance.
-> > > > After enabling the debug message, we found a way to solve the probl=
-em
-> > > > by the following steps:
-> > > > 1. Add a compatible string in 'power-domains' node otherwise it won=
-'t
-> > > > be the supplier of the consumers. (See of_link_to_phandle())
-> > >
-> > > Hmm, requiring a compatible string is odd. Where should we document
-> > > this compatible string ?
-> > >
-> > Sorry, this is my fault. I didn't include some updates in
-> > of_link_to_phandle(). This led some misunderstandings here.
-> > You are right, we don't need it.
-> > The supplier will be linked to the CLUSTER_PD node.
-> >
-> > > > 2. Move the 'power-domains' node outside the 'cpus' node otherwise =
-it
-> > > > won't be added to the device hierarchy by device_add().
-> > > > 3. Update the cpuidle-riscv-sbi driver to get the pds_node from
-> > > > '/power-domains'.
-> > >
-> > > By adding a compatible string and moving the "power-domains" node
-> > > outside, you are simply forcing the OF framework to populate devices.
-> > >
-> > > How about manually creating platform_device for each power-domain
-> > > DT node using of_platform_device_create() in sbi_pd_init() ?
-> > >
-> > Thanks for the suggestion! We have test the solution and it could work.
-> > We was wondering if it's feasible for us to relocate the
-> > 'power-domains' node outside of the /cpus? The CLUSTER_PD might
-> > encompass not only the CPUs but also other components within the
-> > cluster.
->
-> The cpuidle-riscv-sbi driver expects "power-domains" DT node
-> under "/cpus" DT node because this driver only deals with power
-> domains related to CPU cluster or CPU cache-hierarchy. It does
-> make sense to define L2/L3 power domains under
-> "/cpus/power-domain" since these are related to CPUs.
->
-> Moving the CPU "power-domains" DT node directly under "/" or
-> somewhere else would mean that it covers system-wide power
-> domains which is not true.
->
-> I suggest we continue using "/cpus/power-domains" DT node
-> only for power domains related to CPU clusters or CPU
-> cache-hierarchy.
->
-> For system wide power domains of SoC devices, we can either:
-> 1) Use device power domains through the SBI MPXY extension
->     via different driver
-> 2) Use a platform specific driver
->
-Thank you for your valuable feedback. We will continue to use the
-"/cpus/power-domains".
-
-> >
-> > We also look at cpuidle_psci_domain driver and it seems Arm doesn't
-> > create the devices for each subnode of psci domain.
-> > Is there any reason that they don't need it?
->
-> Existing ARM DTS files under arch/arm64/boot/dts, use device
-> power domains through SCMI (or platform specific mechanism)
-> which are already populated as devices by Linux DD framework.
->
-> Regards,
-> Anup
->
-Thank you for the explanation!
-
-Regards,
-Nick
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v6 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash
+ Interface
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+CC: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20240521105532.1537845-1-quic_mdalam@quicinc.com>
+ <20240521105532.1537845-7-quic_mdalam@quicinc.com>
+ <20240521152410.7cff71ab@xps-13>
+ <5b96e24a-edcd-df85-9e70-332a6059ee73@quicinc.com>
+ <20240522143317.07f78601@xps-13>
+Content-Language: en-US
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <20240522143317.07f78601@xps-13>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bLwe8LSLbrzdS-DgTxjFvWXzELXu1Vt1
+X-Proofpoint-ORIG-GUID: bLwe8LSLbrzdS-DgTxjFvWXzELXu1Vt1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_01,2024-05-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405230023
 
 
-> >
-> > > >
-> > > > So the DTS will be like:
-> > > > cpus {
-> > > >     ...
-> > > >      domain-idle-states {
-> > > >            CLUSTER_SLEEP:cluster-sleep {
-> > > >                         compatible =3D "domain-idle-state";
-> > > >                         ...
-> > > >             }
-> > > >      }
-> > > > }
-> > > > power-domains {
-> > > >             compatible =3D "riscv,sbi-power-domains"
-> > > >             ...
-> > > >             ...
-> > > >             CLUSTER_PD: clusterpd {
-> > > >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
-> > > >             };
-> > > > }
-> > > > soc {
-> > > >       deviceA@xxx{
-> > > >              ...
-> > > >              power-domains =3D <&CLUSTER_PD>;
-> > > >              ...
-> > > >       }
-> > > > }
-> > >
-> > > Regards,
-> > > Anup
-> > >
-> > > >
-> > > > Regards,
-> > > > Nick
-> > > >
-> > > > On Tue, May 14, 2024 at 10:54=E2=80=AFPM Anup Patel <anup@brainfaul=
-t.org> wrote:
-> > > > >
-> > > > > On Tue, May 14, 2024 at 7:53=E2=80=AFPM Anup Patel <anup@brainfau=
-lt.org> wrote:
-> > > > > >
-> > > > > > Hi Nick,
-> > > > > >
-> > > > > > On Tue, May 14, 2024 at 3:20=E2=80=AFPM Nick Hu <nick.hu@sifive=
-com> wrote:
-> > > > > > >
-> > > > > > > Hi Ulf,
-> > > > > > >
-> > > > > > > Thank you for your valuable suggestion.
-> > > > > > > I sincerely apologize for the delay in responding to your mes=
-sage We
-> > > > > > > have diligently worked on experimenting with the suggestion y=
-ou
-> > > > > > > provided.
-> > > > > > >
-> > > > > > > As per your recommendation, we have incorporated the "power-d=
-omains=3D<>
-> > > > > > > property" into the consumer's node, resulting in modification=
-s to the
-> > > > > > > DTS as illustrated below:
-> > > > > > >
-> > > > > > > cpus {
-> > > > > > >     ...
-> > > > > > >      domain-idle-states {
-> > > > > > >            CLUSTER_SLEEP:cluster-sleep {
-> > > > > > >                         compatible =3D "domain-idle-state";
-> > > > > > >                         ...
-> > > > > > >             }
-> > > > > > >      }
-> > > > > > >      power-domains {
-> > > > > > >             ...
-> > > > > > >             ...
-> > > > > > >             CLUSTER_PD: clusterpd {
-> > > > > > >                     domain-idle-states =3D <&CLUSTER_SLEEP>;
-> > > > > > >             };
-> > > > > > >      }
-> > > > > > > }
-> > > > > > > soc {
-> > > > > > >       deviceA@xxx{
-> > > > > > >              ...
-> > > > > > >              power-domains =3D <&CLUSTER_PD>;
-> > > > > > >              ...
-> > > > > > >       }
-> > > > > > > }
-> > > > > > >
-> > > > > > > However, this adjustment has led to an issue where the probe =
-for
-> > > > > > > 'deviceA' is deferred by 'device_links_check_suppliers()' wit=
-hin
-> > > > > > > 'really_probe()'. In an attempt to mitigate this issue, we
-> > > > > > > experimented with a workaround by adding the attribute
-> > > > > > > "status=3D"disabled"" to the 'CLUSTER_PD' node. This action a=
-imed to
-> > > > > > > prevent the creation of a device link between 'deviceA' and
-> > > > > > > 'CLUSTER_PD'. Nevertheless, we remain uncertain about the
-> > > > > > > appropriateness of this solution.
-> > > > > > >
-> > > > > > > Do you have suggestions on how to effectively address this is=
-sue?
-> > > > > >
-> > > > > > I totally missed this email since I was not CC'ed sorry about t=
-hat. Please
-> > > > > > use get_maintainers.pl when sending patches.
-> > > > >
-> > > > > I stand corrected. This patch had landed in the "spam" folder. I =
-don't know why.
-> > > > >
-> > > > > Regards,
-> > > > > Anup
-> > > > >
-> > > > > >
-> > > > > > The genpd_add_provider() (called by of_genpd_add_provider_simpl=
-e())
-> > > > > > does mark the power-domain DT node as initialized (fwnode_dev_i=
-nitialized())
-> > > > > > so after the cpuidle-riscv-sbi driver is probed the 'deviceA' d=
-ependency is
-> > > > > > resolved and 'deviceA' should be probed unless there are other =
-unmet
-> > > > > > dependencies.
-> > > > > >
-> > > > > > Try adding "#define DEBUG" before all includes in drivers/core/=
-basec
-> > > > > > and add "loglevel=3D8" in kernel parameters, this will print pr=
-oducer-consumer
-> > > > > > linkage of all devices.
-> > > > > >
-> > > > > > Marking the power-domain DT node as "disabled" is certainly not=
- the
-> > > > > > right way.
-> > > > > >
-> > > > > > Regards,
-> > > > > > Anup
-> > > > > >
-> > > > > > >
-> > > > > > > Regards,
-> > > > > > > Nick
-> > > > > > >
-> > > > > > > On Tue, Apr 30, 2024 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hans=
-son@linaro.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, 29 Apr 2024 at 18:26, Nick Hu <nick.hu@sifive.com> =
-wrote:
-> > > > > > > > >
-> > > > > > > > > On Tue, Apr 30, 2024 at 12:22=E2=80=AFAM Nick Hu <nick.hu=
-@sifive.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > Hi Ulf
-> > > > > > > > > >
-> > > > > > > > > > On Mon, Apr 29, 2024 at 10:32=E2=80=AFPM Ulf Hansson <u=
-lf.hansson@linaro.org> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > On Mon, 26 Feb 2024 at 07:51, Nick Hu <nick.hu@sifive=
-com> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > When the cpus in the same cluster are all in the id=
-le state, the kernel
-> > > > > > > > > > > > might put the cluster into a deeper low power state=
- Call the
-> > > > > > > > > > > > cluster_pm_enter() before entering the low power st=
-ate and call the
-> > > > > > > > > > > > cluster_pm_exit() after the cluster woken up.
-> > > > > > > > > > > >
-> > > > > > > > > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > > > > > > > > > >
-> > > > > > > > > > > I was not cced this patch, but noticed that this patc=
-h got queued up
-> > > > > > > > > > > recently. Sorry for not noticing earlier.
-> > > > > > > > > > >
-> > > > > > > > > > > If not too late, can you please drop/revert it? We sh=
-ould really move
-> > > > > > > > > > > away from the CPU cluster notifiers. See more informa=
-tion below.
-> > > > > > > > > > >
-> > > > > > > > > > > > ---
-> > > > > > > > > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++=
-+++++++++++++--
-> > > > > > > > > > > >  1 file changed, 22 insertions(+), 2 deletions(-)
-> > > > > > > > > > > >
-> > > > > > > > > > > > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/=
-drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > > > > > > index e8094fc92491..298dc76a00cf 100644
-> > > > > > > > > > > > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > > > > > > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > > > > > > > > > @@ -394,6 +394,7 @@ static int sbi_cpuidle_pd_power=
-_off(struct generic_pm_domain *pd)
-> > > > > > > > > > > >  {
-> > > > > > > > > > > >         struct genpd_power_state *state =3D &pd->st=
-ates[pd->state_idx];
-> > > > > > > > > > > >         u32 *pd_state;
-> > > > > > > > > > > > +       int ret;
-> > > > > > > > > > > >
-> > > > > > > > > > > >         if (!state->data)
-> > > > > > > > > > > >                 return 0;
-> > > > > > > > > > > > @@ -401,6 +402,10 @@ static int sbi_cpuidle_pd_powe=
-r_off(struct generic_pm_domain *pd)
-> > > > > > > > > > > >         if (!sbi_cpuidle_pd_allow_domain_state)
-> > > > > > > > > > > >                 return -EBUSY;
-> > > > > > > > > > > >
-> > > > > > > > > > > > +       ret =3D cpu_cluster_pm_enter();
-> > > > > > > > > > > > +       if (ret)
-> > > > > > > > > > > > +               return ret;
-> > > > > > > > > > >
-> > > > > > > > > > > Rather than using the CPU cluster notifiers, consumer=
-s of the genpd
-> > > > > > > > > > > can register themselves to receive genpd on/off notif=
-iers.
-> > > > > > > > > > >
-> > > > > > > > > > > In other words, none of this should be needed, right?
-> > > > > > > > > > >
-> > > > > > > > > > Thanks for the feedback!
-> > > > > > > > > > Maybe I miss something, I'm wondering about a case like=
- below:
-> > > > > > > > > > If we have a shared L2 cache controller inside the cpu =
-cluster power
-> > > > > > > > > > domain and we add this controller to be a consumer of t=
-he power
-> > > > > > > > > > domain, Shouldn't the genpd invoke the domain idle only=
- after the
-> > > > > > > > > > shared L2 cache controller is suspended?
-> > > > > > > > > > Is there a way that we can put the L2 cache down while =
-all cpus in the
-> > > > > > > > > > same cluster are idle?
-> > > > > > > > > > > [...]
-> > > > > > > > > Sorry, I made some mistake in my second question.
-> > > > > > > > > Update the question here:
-> > > > > > > > > Is there a way that we can save the L2 cache states while=
- all cpus in the
-> > > > > > > > > same cluster are idle and the cluster could be powered do=
-wn?
-> > > > > > > >
-> > > > > > > > If the L2 cache is a consumer of the cluster, the consumer =
-driver for
-> > > > > > > > the L2 cache should register for genpd on/off notifiers.
-> > > > > > > >
-> > > > > > > > The device representing the L2 cache needs to be enabled fo=
-r runtime
-> > > > > > > > PM, to be taken into account correctly by the cluster genpd=
- In this
-> > > > > > > > case, the device should most likely remain runtime suspende=
-d, but
-> > > > > > > > instead rely on the genpd on/off notifiers to understand wh=
-en
-> > > > > > > > save/restore of the cache states should be done.
-> > > > > > > >
-> > > > > > > > Kind regards
-> > > > > > > > Uffe
-> >
+
+On 5/22/2024 6:03 PM, Miquel Raynal wrote:
+> Hi,
+> 
+>>>> +static int qcom_spi_ooblayout_ecc(struct mtd_info *mtd, int section,
+>>>> +				  struct mtd_oob_region *oobregion)
+>>>> +{
+>>>> +	struct nand_device *nand = mtd_to_nanddev(mtd);
+>>>> +	struct qcom_nand_controller *snandc = nand_to_qcom_snand(nand);
+>>>> +	struct qpic_ecc *qecc = snandc->qspi->ecc;
+>>>> +
+>>>> +	if (section > 1)
+>>>> +		return -ERANGE;
+>>>> +
+>>>> +	if (!section) {
+>>>> +		oobregion->length = (qecc->bytes * (qecc->steps - 1)) + qecc->bbm_size;
+>>>> +		oobregion->offset = 0;
+>>>
+>>> No, offset 0 is for the BBM. This is wrong.
+>>> The whole oob layout looks really really wrong.
+>>>
+>>> ECC bytes are where the ECC engine puts its bytes in the OOB area.
+>>> Free bytes start after the BBM and fill the gaps until the end of the
+>>> area, except where there are ECC bytes.
+>>    QPIC NAND controller having its own page layout with ecc and without ecc.
+>>    The same layout we are using in raw nand driver as well, so i used the
+>>    same here. The below info is already there in qcom raw nand driver file
+>>    in page layout info.
+>>
+>>    QPIC NAND controller layout as below:
+>>
+>>     Layout with ECC enabled:
+>>
+>>       |----------------------|  |---------------------------------|
+>>       |           xx.......yy|  |             *********xx.......yy|
+>>       |    DATA   xx..ECC..yy|  |    DATA     **SPARE**xx..ECC..yy|
+>>       |   (516)   xx.......yy|  |  (516-n*4)  **(n*4)**xx.......yy|
+>>       |           xx.......yy|  |             *********xx.......yy|
+>>       |----------------------|  |---------------------------------|
+>>        codeword 1,2..n-1                  codeword n
+>>       <---(528/532 Bytes)-->    <-------(528/532 Bytes)--------->
+>>
+>>       n = Number of codewords in the page
+>>       . = ECC bytes
+>>       * = Spare/free bytes
+>>       x = Unused byte(s)
+>>       y = Reserved byte(s)
+>>
+>>       2K page: n = 4, spare = 16 bytes
+>>       4K page: n = 8, spare = 32 bytes
+>>       8K page: n = 16, spare = 64 bytes
+>>
+>>       the qcom nand controller operates at a sub page/codeword level. each
+>>       codeword is 528 and 532 bytes for 4 bit and 8 bit ECC modes respectively.
+>>       the number of ECC bytes vary based on the ECC strength and the bus width.
+>>
+>>       the first n - 1 codewords contains 516 bytes of user data, the remaining
+>>       12/16 bytes consist of ECC and reserved data. The nth codeword contains
+>>       both user data and spare(oobavail) bytes that sum up to 516 bytes.
+>>
+>>       When we access a page with ECC enabled, the reserved bytes(s) are not
+>>       accessible at all. When reading, we fill up these unreadable positions
+>>       with 0xffs. When writing, the controller skips writing the inaccessible
+>>       bytes.
+>>
+>>       Layout with ECC disabled:
+>>
+>>       |------------------------------|  |---------------------------------------|
+>>       |         yy          xx.......|  |         bb          *********xx.......|
+>>       |  DATA1  yy  DATA2   xx..ECC..|  |  DATA1  bb  DATA2   **SPARE**xx..ECC..|
+>>       | (size1) yy (size2)  xx.......|  | (size1) bb (size2)  **(n*4)**xx.......|
+>>       |         yy          xx.......|  |         bb          *********xx.......|
+>>       |------------------------------|  |---------------------------------------|
+>>            codeword 1,2..n-1                        codeword n
+>>       <-------(528/532 Bytes)------>    <-----------(528/532 Bytes)----------->
+>>
+>>       n = Number of codewords in the page
+>>       . = ECC bytes
+>>       * = Spare/free bytes
+>>       x = Unused byte(s)
+>>       y = Dummy Bad Bock byte(s)
+>>       b = Real Bad Block byte(s)
+>>       size1/size2 = function of codeword size and 'n'
+>>
+>>       when the ECC block is disabled, one reserved byte (or two for 16 bit bus
+>>       width) is now accessible. For the first n - 1 codewords, these are dummy Bad
+>>       Block Markers. In the last codeword, this position contains the real BBM
+>>
+>>       In order to have a consistent layout between RAW and ECC modes, we assume
+>>       the following OOB layout arrangement:
+>>
+>>       |-----------|  |--------------------|
+>>       |yyxx.......|  |bb*********xx.......|
+>>       |yyxx..ECC..|  |bb*FREEOOB*xx..ECC..|
+>>       |yyxx.......|  |bb*********xx.......|
+>>       |yyxx.......|  |bb*********xx.......|
+>>       |-----------|  |--------------------|
+>>       first n - 1       nth OOB region
+>>       OOB regions
+>>
+>>       n = Number of codewords in the page
+>>       . = ECC bytes
+>>       * = FREE OOB bytes
+>>       y = Dummy bad block byte(s) (inaccessible when ECC enabled)
+>>       x = Unused byte(s)
+>>       b = Real bad block byte(s) (inaccessible when ECC enabled)
+>>
+>>       This layout is read as is when ECC is disabled. When ECC is enabled, the
+>>       inaccessible Bad Block byte(s) are ignored when we write to a page/oob,
+>>       and assumed as 0xffs when we read a page/oob. The ECC, unused and
+>>       dummy/real bad block bytes are grouped as ecc bytes (i.e, ecc->bytes is
+>>       the sum of the three).
+> 
+> Thanks for the detailed explanation (which would benefit from being
+> added somewhere in a comment, maybe at the top of the file).
+Ok
+> 
+> Unfortunately, these ooblayout callbacks do work on a flat <data><oob>
+> layout, not on the hardware ECC engine layout. So whatever the real
+> physical position of the bad block marker within the NAND array, these
+> markers will always be at offset 0 and 1 in the OOB final buffer.
+Ok , will fix in next patch.
+> 
+> Same applies to the spare and ECC bytes. These layouts are totally
+> wrong and must be fixed. If the layouts are the same in both raw/spi
+> cases, maybe they should be part of the common file?
+Ok , will fix in next patch.
+> 
+>>>> +	} else {
+>>>> +		oobregion->length = qecc->ecc_bytes_hw + qecc->spare_bytes;
+>>>> +		oobregion->offset = mtd->oobsize - oobregion->length;
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int qcom_spi_ooblayout_free(struct mtd_info *mtd, int section,
+>>>> +				   struct mtd_oob_region *oobregion)
+>>>> +{
+>>>> +	struct nand_device *nand = mtd_to_nanddev(mtd);
+>>>> +	struct qcom_nand_controller *snandc = nand_to_qcom_snand(nand);
+>>>> +	struct qpic_ecc *qecc = snandc->qspi->ecc;
+>>>> +
+>>>> +	if (section)
+>>>> +		return -ERANGE;
+>>>> +
+>>>> +	oobregion->length = qecc->steps * 4;
+>>>> +	oobregion->offset = ((qecc->steps - 1) * qecc->bytes) + qecc->bbm_size;
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>
+>>> ...
+>>>    
+>>>> +static int qcom_spi_ecc_prepare_io_req_pipelined(struct nand_device *nand,
+>>>> +						 struct nand_page_io_req *req)
+>>>> +{
+>>>> +	struct qcom_nand_controller *snandc = nand_to_qcom_snand(nand);
+>>>> +	struct qpic_ecc *ecc_cfg = nand_to_ecc_ctx(nand);
+>>>> +	struct mtd_info *mtd = nanddev_to_mtd(nand);
+>>>> +
+>>>> +	snandc->qspi->ecc = ecc_cfg;
+>>>> +	snandc->qspi->pagesize = mtd->writesize;
+>>>> +	snandc->qspi->raw_rw = false;
+>>>> +	snandc->qspi->oob_rw = false;
+>>>> +	snandc->qspi->page_rw = false;
+>>>> +
+>>>> +	if (req->datalen)
+>>>> +		snandc->qspi->page_rw = true;
+>>>> +
+>>>> +	if (req->ooblen) {
+>>>> +		snandc->qspi->oob_rw = true;
+>>>> +		if (req->ooblen == BAD_BLOCK_MARKER_SIZE)
+>>>> +			snandc->qspi->read_last_cw = true;
+>>>
+>>> ???
+>>     As per QPIC controller layout , the actual babd block marker will
+>>     be present in last code word. Thats why i have added this check.
+>>     to read only last codeword for bad block check.
+> 
+> You need to comply with the request. If ooblen is != 0, you need to
+> read the codeword(s) where the oob is. Please don't try to be smarter
+> than that. Checking the _value_ of ooblen is an optimization I don't
+> think is worth.
+Ok, will try to cleanup all the indirection in next patch.
+> 
+>>>    
+>>>> +	}
+>>>> +
+>>>> +	if (req->mode == MTD_OPS_RAW)
+>>>> +		snandc->qspi->raw_rw = true;
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int qcom_spi_ecc_finish_io_req_pipelined(struct nand_device *nand,
+>>>> +						struct nand_page_io_req *req)
+>>>> +{
+>>>> +	struct qcom_nand_controller *snandc = nand_to_qcom_snand(nand);
+>>>> +	struct mtd_info *mtd = nanddev_to_mtd(nand);
+>>>> +
+>>>> +	if (req->mode == MTD_OPS_RAW || req->type != NAND_PAGE_READ)
+>>>> +		return 0;
+>>>> +
+>>>> +	if (snandc->qspi->ecc_stats.failed)
+>>>> +		mtd->ecc_stats.failed += snandc->qspi->ecc_stats.failed;
+>>>> +	mtd->ecc_stats.corrected += snandc->qspi->ecc_stats.corrected;
+>>>
+>>> Seems strange
+>>     In flash error check for each code word i am updating the error value.
+>>     So on finishing on io i am assigning that error to mtd variables so that
+>>     upper layer check for error.
+> 
+> You don't clear the qspi ecc_stats so this cannot work properly.
+  I am clearing in the qcom_spi_check_error() api, before reading status for the next page.
+
+  snandc->qspi->ecc_stats.failed = 0;
+  snandc->qspi->ecc_stats.corrected = 0;
+> 
+> Plus, I would welcome an else statement for incrementing the corrected
+> field.
+Ok
+> 
+>>>    
+>>>> +
+>>>> +	if (snandc->qspi->ecc_stats.failed)
+>>>> +		return -EBADMSG;
+>>>> +	else
+>>>> +		return snandc->qspi->ecc_stats.bitflips;
+>>>> +}
+>>>> +
+>>>> +static struct nand_ecc_engine_ops qcom_spi_ecc_engine_ops_pipelined = {
+>>>> +	.init_ctx = qcom_spi_ecc_init_ctx_pipelined,
+>>>> +	.cleanup_ctx = qcom_spi_ecc_cleanup_ctx_pipelined,
+>>>> +	.prepare_io_req = qcom_spi_ecc_prepare_io_req_pipelined,
+>>>> +	.finish_io_req = qcom_spi_ecc_finish_io_req_pipelined,
+>>>> +};
+>>>> +
+>>>
+>>> ...
+>>>    
+>>>> +static int qcom_spi_read_page_raw(struct qcom_nand_controller *snandc,
+>>>> +				  const struct spi_mem_op *op)
+>>>> +{
+>>>> +	struct qpic_ecc *ecc_cfg = snandc->qspi->ecc;
+>>>> +	u8 *data_buf = NULL, *oob_buf = NULL;
+>>>> +	int ret, cw;
+>>>> +	u32 num_cw = snandc->qspi->num_cw;
+>>>> +
+>>>> +	if (snandc->qspi->page_rw)
+>>>
+>>> I don't like this indirection very much. Can't you simplify this and
+>>> just follow the spi-mem op instead of constantly trying to add
+>>> additional stuff?
+>>     This indirection needed due to QPIC controller will not take all the instruction
+>>     one-by-one , once we will set CMD_EXEC = 1, then it will execute all the instruction
+>>     at once.
+> 
+> The spi_mem_op structure already describes the whole operation. Why do
+> you split the operation in sub routines if you can't actually do that?
+Ok , will try to cleanup in next patch.
+> 
+>>>
+>>> The hardware is already quite complex, but it feels like your adding
+>>> yet another pile of unnecessary complexity.
+>>     Yes hardware is complex. let me check if i can further optimize as per spi-mem op
+>>     as you suggested.
+>>>    
+>>>> +		data_buf = op->data.buf.in;
+>>>> +
+>>>> +	if (snandc->qspi->oob_rw)
+>>>> +		oob_buf = op->data.buf.in;
+> 
+> ...
+> 
+>>>> +static int qcom_spi_write_page_cache(struct qcom_nand_controller *snandc,
+>>>> +				     const struct spi_mem_op *op)
+>>>> +{
+>>>> +	struct qpic_snand_op s_op = {};
+>>>> +	u32 cmd;
+>>>> +
+>>>> +	cmd = qcom_spi_cmd_mapping(snandc, op->cmd.opcode);
+>>>
+>>> I've asked for switch cases to return an error in case they could not
+>>> handle the request. If you don't check the returned values, it
+>>> does not make any sense.
+>>    Ok, will fix in next patch.
+>>>    
+>>>> +	s_op.cmd_reg = cmd;
+>>>> +
+>>>> +	if (op->cmd.opcode == SPINAND_PROGRAM_LOAD) {
+>>>> +		if (snandc->qspi->page_rw)
+>>>> +			snandc->qspi->data_buf = (u8 *)op->data.buf.out;
+>>>
+>>> What you do here does not write anything in a page cache.
+>>     No here just updating the buffer , actual write will happen in program_execute.
+>>     This is due to QPIC controller will not take all the instruction one-by-one.
+>>     once we will set CMD_EXEC = 1, then it will execute all the instruction
+>>     at once. So accumulating all the instruction and then executing at once in
+>>     program_execute.
+>>>
+>>> I also don't understand why you would have to check against the
+>>> SPINAND_PROGRAM_LOAD opcode.
+>>     Because the actual write will happen in program_execute. and here
+>>     PROGRAM_EXECUTE command will also land, so that added the check.
+>>>    
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int qcom_spi_send_cmdaddr(struct qcom_nand_controller *snandc,
+>>>> +				 const struct spi_mem_op *op)
+>>>> +{
+>>>> +	struct qpic_snand_op s_op = {};
+>>>> +	u32 cmd;
+>>>> +	int ret, opcode;
+>>>> +
+>>>> +	cmd = qcom_spi_cmd_mapping(snandc, op->cmd.opcode);
+>>>> +
+>>>> +	s_op.cmd_reg = cmd;
+>>>> +	s_op.addr1_reg = op->addr.val;
+>>>> +	s_op.addr2_reg = 0;
+>>>> +
+>>>> +	opcode = op->cmd.opcode;
+>>>> +
+>>>> +	switch (opcode) {
+>>>> +	case SPINAND_WRITE_EN:
+>>>> +		return 0;
+>>>> +	case SPINAND_PROGRAM_EXECUTE:
+>>>> +		s_op.addr1_reg = op->addr.val << 16;
+>>>> +		s_op.addr2_reg = op->addr.val >> 16 & 0xff;
+>>>> +		snandc->qspi->addr1 = s_op.addr1_reg;
+>>>> +		snandc->qspi->addr2 = s_op.addr2_reg;
+>>>> +		snandc->qspi->cmd = cmd;
+>>>> +		return qcom_spi_program_execute(snandc, op);
+>>>> +	case SPINAND_READ:
+>>>> +		s_op.addr1_reg = (op->addr.val << 16);
+>>>> +		s_op.addr2_reg = op->addr.val >> 16 & 0xff;
+>>>> +		snandc->qspi->addr1 = s_op.addr1_reg;
+>>>> +		snandc->qspi->addr2 = s_op.addr2_reg;
+>>>> +		snandc->qspi->cmd = cmd;
+>>>> +		return 0;
+>>>> +	case SPINAND_ERASE:
+>>>> +		s_op.addr2_reg = (op->addr.val >> 16) & 0xffff;
+>>>> +		s_op.addr1_reg = op->addr.val;
+>>>> +		snandc->qspi->addr1 = (s_op.addr1_reg << 16);
+>>>> +		snandc->qspi->addr2 = s_op.addr2_reg;
+>>>> +		snandc->qspi->cmd = cmd;
+>>>> +		qcom_spi_block_erase(snandc);
+>>>> +		return 0;
+>>>> +	default:
+>>>> +		break;
+>>>> +	}
+>>>> +
+>>>> +	snandc->buf_count = 0;
+>>>> +	snandc->buf_start = 0;
+>>>> +	qcom_clear_read_regs(snandc);
+>>>> +	qcom_clear_bam_transaction(snandc);
+>>>> +
+>>>> +	snandc->regs->cmd = s_op.cmd_reg;
+>>>> +	snandc->regs->exec = 1;
+>>>> +	snandc->regs->addr0 = s_op.addr1_reg;
+>>>> +	snandc->regs->addr1 = s_op.addr2_reg;
+>>>> +
+>>>> +	qcom_write_reg_dma(snandc, &snandc->regs->cmd, NAND_FLASH_CMD, 3, NAND_BAM_NEXT_SGL);
+>>>> +	qcom_write_reg_dma(snandc, &snandc->regs->exec, NAND_EXEC_CMD, 1, NAND_BAM_NEXT_SGL);
+>>>> +
+>>>> +	ret = qcom_submit_descs(snandc);
+> 
+> And you really don't want to check the validity of the opcode with what
+> you support before submitting the descriptors?
+Ok , will do in next patch.
+> 
+>>>> +	if (ret)
+>>>> +		dev_err(snandc->dev, "failure in sbumitting cmd descriptor\n");
+>>>
+>>> typo
+>>    Ok , will fix in next patch.
+>>>    
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static int qcom_spi_io_op(struct qcom_nand_controller *snandc, const struct spi_mem_op *op)
+>>>> +{
+>>>> +	int ret, val, opcode;
+>>>> +	bool copy = false, copy_ftr = false;
+>>>> +
+>>>> +	ret = qcom_spi_send_cmdaddr(snandc, op);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	snandc->buf_count = 0;
+>>>> +	snandc->buf_start = 0;
+>>>> +	qcom_clear_read_regs(snandc);
+>>>> +	qcom_clear_bam_transaction(snandc);
+>>>> +	opcode = op->cmd.opcode;
+>>>> +
+>>>> +	switch (opcode) {
+>>>> +	case SPINAND_READID:
+>>>> +		snandc->buf_count = 4;
+>>>> +		qcom_read_reg_dma(snandc, NAND_READ_ID, 1, NAND_BAM_NEXT_SGL);
+>>>> +		copy = true;
+>>>> +		break;
+>>>> +	case SPINAND_GET_FEATURE:
+>>>> +		snandc->buf_count = 4;
+>>>> +		qcom_read_reg_dma(snandc, NAND_FLASH_FEATURES, 1, NAND_BAM_NEXT_SGL);
+>>>> +		copy_ftr = true;
+>>>> +		break;
+>>>> +	case SPINAND_SET_FEATURE:
+>>>> +		snandc->regs->flash_feature = *(u32 *)op->data.buf.out;
+>>>> +		qcom_write_reg_dma(snandc, &snandc->regs->flash_feature,
+>>>> +				   NAND_FLASH_FEATURES, 1, NAND_BAM_NEXT_SGL);
+>>>> +		break;
+>>>> +	case SPINAND_RESET:
+>>>> +		return 0;
+>>>> +	case SPINAND_PROGRAM_EXECUTE:
+>>>> +		return 0;
+>>>> +	case SPINAND_WRITE_EN:
+>>>> +		return 0;
+>>>> +	case SPINAND_ERASE:
+>>>> +		return 0;
+>>>> +	case SPINAND_READ:
+>>>> +		return 0;
+>>>
+>>> You can stack the cases
+>> Ok
+>>>    
+>>>> +	default:
+>>>> +		return -EOPNOTSUPP;
+>>>> +	}
+>>>> +
+>>>> +	ret = qcom_submit_descs(snandc);
+>>>> +	if (ret)
+>>>> +		dev_err(snandc->dev, "failure in submitting descriptor for:%d\n", opcode);
+>>>> +
+>>>> +	if (copy) {
+>>>> +		qcom_nandc_dev_to_mem(snandc, true);
+>>>> +		memcpy(op->data.buf.in, snandc->reg_read_buf, snandc->buf_count);
+>>>> +	}
+>>>> +
+>>>> +	if (copy_ftr) {
+>>>> +		qcom_nandc_dev_to_mem(snandc, true);
+>>>> +		val = le32_to_cpu(*(__le32 *)snandc->reg_read_buf);
+>>>> +		val >>= 8;
+>>>> +		memcpy(op->data.buf.in, &val, snandc->buf_count);
+>>>> +	}
+>>>> +
+>>>> +	return ret;
+>>>> +}
+> 
+> Thanks,
+> Miquèl
 
