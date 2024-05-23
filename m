@@ -1,154 +1,155 @@
-Return-Path: <linux-kernel+bounces-187686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3138CD680
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:02:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CADB8CD66C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4053B1F22EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE37F1F22091
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FB41097B;
-	Thu, 23 May 2024 15:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72001170F;
+	Thu, 23 May 2024 15:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsR/erEG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+aH0G6d"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F4010A0A;
-	Thu, 23 May 2024 15:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7F66FB9;
+	Thu, 23 May 2024 15:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476512; cv=none; b=A3aLifEI60OW7BB2fMxao1Qn6HAlnPeO9TefqgtC6WwHykVJpupVtRoUr8cuaxFNgh86WzTL4nF4j1R/qUi4yUWowBeRnwcJpkHtAyqG5W3aQmzOQMAGLYfmEuP882pSr0nNoKCQkj2/nNUfMWJPyknjdDTyQHzdlqdvRYad1ZY=
+	t=1716476403; cv=none; b=ZXEDd1k4tVF1HnKCFaKSKkBPx+Y6U6c/QEiiH9W/TsPKYXtNgy+lH3+5W1m3De3VCTk92cygLy4aDMt+0UOxkH4VSHBfu+mtJWkY6xCnHPHA8gr+bvLa8BbKe5ZleBUjMvRE2Ladbh0XNGpCTYXp6nfxdp7jO5tPJAV+/jPjyz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476512; c=relaxed/simple;
-	bh=vjt+cmVcTd/Pb33Pdy5i3IcyArhpy6Hbpole/X6gRcQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgV6kfpsSazIojmbs7X8TYBcK4XVRSYFhWDZjyBU3Wdhcy2XNb6wB/BpJL5s8Fyb85HIUXG9TjEQLwFk81UnMW917VtVKKDa6OPhLCHbk90RhhV1DKsiEXylD4tkfLr0gLSfe+C0Tj/KWOzfyRnvuaOQT/XJ97Plfu48O1evD64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dsR/erEG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F92C32781;
-	Thu, 23 May 2024 15:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716476511;
-	bh=vjt+cmVcTd/Pb33Pdy5i3IcyArhpy6Hbpole/X6gRcQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dsR/erEGWqTrpUYgBr8bhaGLVokjd8cGzstRgXhQ2zvCED20LY5mA0MnJl4aB4HJc
-	 La4XclaMTB3PLF5t0NJgcHpcBikZatrx9W4WY9ygCpu1jkJvp4V89pXQqDXr566CAL
-	 gTkjCgb0GVECIIBAC7rE9Vcc1BNWnE1kQBSn89vMljOj6PktOdWsJ4kFOSyrO2FQOr
-	 YJRZELiVBmkHdkK9xYQW0SBB5IY9tYW95xCXMJLE7tBB8hjy9m3a/szl7vBydpvJgo
-	 1cI8r/UjUvpLRpRRJc65nGhaaJ0KJTCyhyGWqb4hhOTwLwf4mJQ8SN2F9cBm49eRrj
-	 334Kp8GdszKmQ==
-Date: Thu, 23 May 2024 17:59:57 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Eric Chanudet <echanude@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nick Piggin <npiggin@gmail.com>, x86@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] mm/mm_init: use node's number of cpus in
- deferred_page_init_max_threads
-Message-ID: <Zk9Z7S_wbumOekP6@kernel.org>
-References: <20240522203758.626932-4-echanude@redhat.com>
+	s=arc-20240116; t=1716476403; c=relaxed/simple;
+	bh=SAOCWyE5winR3sfCd14gHp7mco0EGetdVtps2eCt62I=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=cwoqXEnTathjcPL8KoAYu8NusMayplHLvnGtOrNyDkqcrpLBCveO6WoGGw6j4Bwphc5xzMlQ1vC8/wB+xq2p8cR0FmeYj9GSaS3sllLk4soWsIH21orUO9M7Glj3KTm8Kr/BJdsT9/aRYcUF5pVzpctzmc8cYmmrl6QYq805kCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+aH0G6d; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-df4e81e0b22so1939625276.3;
+        Thu, 23 May 2024 08:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716476400; x=1717081200; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2pzvpZz45nT1lL1/WYOVJvhpVhqZ+zX2th+ykDS47iw=;
+        b=E+aH0G6d+xzpc+LKTNxursx2/AhEsiZOjRu2NXSXSayVWfjdtyK8NqbIAmUsrGrxE/
+         2vF6ciAocDLh5p1LyrBWxxJPKBPCr6OD9DCvs4d1shrpt/M5NtdwoLnUor4Hq8SLKiz2
+         bzEHbs2yXAwFmMgJMUo0Jm2PTc1Ns5vz3lCV6CLnEnsrIanzHXdDidfz7XlNmjoHom3L
+         2tsUh5AWtZRIaPD4ykYEDc6WMS7Fn5VL6pUAgjzhM7RtOaOVCmgsw7gv0JxvO/zizPHJ
+         DD0p4h57x4qkYrTGkSe3zBZp/Px/OYBWPYtvqlSkZ9hecyRDbBWRL34I0MA6E3Bou0xg
+         0DhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716476400; x=1717081200;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=2pzvpZz45nT1lL1/WYOVJvhpVhqZ+zX2th+ykDS47iw=;
+        b=WoOVVTx4FFXdJYMmGy7/Oq2USnTITUQCOQH1Xmg2EUHfp7PB7f07ewutrmaD7HZAgF
+         XX7kednpDuTAZAi3Nq/hBgVg8Svk3cBaiVbquJbUnMuIvRBhqzs8zeW38wwK2ZO33mT/
+         N1C+jFa/E0f/yx16kUBChgfj/6xsQEGqVqetWah9utSbGOVewbvdYvorSpHziWqF+E6X
+         oH0MFcrAuOauALU31YVMqRaCn+0keVZPE1PTADLkeQnLsjOJlrEwE4gws9e2dvSv1Lkp
+         tMlPNqPAGNMz8iwnI9cp4/gc0DDV8SuM3UAGhrkoQmc6eAFJTRQA8R7QespknEzW58yZ
+         5gfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcde5K76dFgKPNAOHRXoa6othsNKMTk6M9Tvu6oo/RObLVpaukya3npxRc5PrG8c4Sm8pc9webswT+zC9M64IWCT/dPsG7
+X-Gm-Message-State: AOJu0YyzUsd8/VM6M1DzGjhbLXbApbnHL6z6CNF+Mb/aTv6XazLtzRPQ
+	d+wc86H3an9q17uaa5LanzVzLlf4oCkOo5UJmDCBMSekSudd59WeC8UDtA==
+X-Google-Smtp-Source: AGHT+IF0s0+xHBS8iHKnTWrDlRyAwmj/nJRi3prOJDDqcze2NocDRfUC22GnS69mlHtKPLHdp7ulLw==
+X-Received: by 2002:a05:6902:2211:b0:de5:6a82:49dd with SMTP id 3f1490d57ef6-df4e0a760eemr6165214276.13.1716476400389;
+        Thu, 23 May 2024 08:00:00 -0700 (PDT)
+Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ab8be59ba7sm11024876d6.24.2024.05.23.07.59.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 07:59:59 -0700 (PDT)
+Date: Thu, 23 May 2024 10:59:58 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ =?UTF-8?B?TGVuYSBXYW5nICjnjovlqJwp?= <Lena.Wang@mediatek.com>, 
+ "kuba@kernel.org" <kuba@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+ =?UTF-8?B?U2hpbWluZyBDaGVuZyAo5oiQ6K+X5piOKQ==?= <Shiming.Cheng@mediatek.com>, 
+ "pabeni@redhat.com" <pabeni@redhat.com>, 
+ "edumazet@google.com" <edumazet@google.com>, 
+ "willemdebruijn.kernel@gmail.com" <willemdebruijn.kernel@gmail.com>, 
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+ "davem@davemloft.net" <davem@davemloft.net>
+Message-ID: <664f59eedbee7_1b5d24294ef@willemb.c.googlers.com.notmuch>
+In-Reply-To: <664f3aa1847cc_1a64412944f@willemb.c.googlers.com.notmuch>
+References: <20240428142913.18666-1-shiming.cheng@mediatek.com>
+ <20240429064209.5ce59350@kernel.org>
+ <bc69f8cc4aed8b16daba17c0ca0199fe6d7d24a8.camel@mediatek.com>
+ <20240516081110.362cbb51@kernel.org>
+ <15675c6e0facd64b1cdc2ec0ded32b84a4e5744b.camel@mediatek.com>
+ <664f3aa1847cc_1a64412944f@willemb.c.googlers.com.notmuch>
+Subject: Re: [PATCH net] net: prevent pulling SKB_GSO_FRAGLIST skb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522203758.626932-4-echanude@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 22, 2024 at 04:38:01PM -0400, Eric Chanudet wrote:
-> x86_64 is already using the node's cpu as maximum threads. Make that the
-> default for all archs setting DEFERRED_STRUCT_PAGE_INIT.
+Willem de Bruijn wrote:
+> > The problem now is the ethtool in ubuntu can't support "rx-gro-list"
+> > and "rx-udp-gro-forwarding" although it is updated to version 6.7 from 
+> > https://mirrors.edge.kernel.org/pub/software/network/ethtool. 
+> > 
+> > There is another verison in 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/ethtool.
+> >  We download the sourcecode but don't know how to compile for ubuntu as
+> > no ./configure there.
+> > 
+> > Is it the one we should use?  If yes, could you please show me how to
+> > compile and install this ethtool?
 > 
-> This returns to the behavior prior making the function arch-specific
-> with commit ecd096506922 ("mm: make deferred init's max threads
-> arch-specific").
+> https://git.kernel.org/pub/scm/network/ethtool/ethtool.git is the
+> upstream ethtool repo.
 > 
-> Signed-off-by: Eric Chanudet <echanude@redhat.com>
+> Since you are testing a custom built kernel, there are other hacky
+> ways to configure a feature if you lack a userspace component:
 > 
-> ---
-> Setting DEFERRED_STRUCT_PAGE_INIT and testing on a few arm64 platforms
-> shows faster deferred_init_memmap completions:
-> 
-> |         | x13s        | SA8775p-ride | Ampere R137-P31 | Ampere HR330 |
-> |         | Metal, 32GB | VM, 36GB     | VM, 58GB        | Metal, 128GB |
-> |         | 8cpus       | 8cpus        | 8cpus           | 32cpus       |
-> |---------|-------------|--------------|-----------------|--------------|
-> | threads |  ms     (%) | ms       (%) |  ms         (%) |  ms      (%) |
-> |---------|-------------|--------------|-----------------|--------------|
-> | 1       | 108    (0%) | 72      (0%) | 224        (0%) | 324     (0%) |
-> | cpus    |  24  (-77%) | 36    (-50%) |  40      (-82%) |  56   (-82%) |
-> 
-> - v1: https://lore.kernel.org/linux-arm-kernel/20240520231555.395979-5-echanude@redhat.com
-> - Changes since v1:
->  - Make the generic function return the number of cpus of the node as
->    max threads limit instead overriding it for arm64.
-> - Drop Baoquan He's R-b on v1 since the logic changed.
-> - Add CCs according to patch changes (ppc and s390 set
->   DEFERRED_STRUCT_PAGE_INIT by default).
-> 
->  arch/x86/mm/init_64.c | 12 ------------
->  mm/mm_init.c          |  2 +-
->  2 files changed, 1 insertion(+), 13 deletions(-)
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 7e177856ee4f..adec42928ec1 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1354,18 +1354,6 @@ void __init mem_init(void)
->  	preallocate_vmalloc_pages();
->  }
->  
-> -#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> -int __init deferred_page_init_max_threads(const struct cpumask *node_cpumask)
-> -{
-> -	/*
-> -	 * More CPUs always led to greater speedups on tested systems, up to
-> -	 * all the nodes' CPUs.  Use all since the system is otherwise idle
-> -	 * now.
-> -	 */
-> -	return max_t(int, cpumask_weight(node_cpumask), 1);
-> -}
-> -#endif
-> -
->  int kernel_set_to_readonly;
->  
->  void mark_rodata_ro(void)
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index f72b852bd5b8..e0023aa68555 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -2126,7 +2126,7 @@ deferred_init_memmap_chunk(unsigned long start_pfn, unsigned long end_pfn,
->  __weak int __init
+> - just hardcode on or off and reboot
+> - use YNL ethtool (but features is not implemented yet?)
+> - write your own netlink helper
+> - abuse some existing kernel API to toggle it, like a rarely uses systl
 
-If s390 folks confirm there's no regression for them I think we can make
-this static.
+And as shared off-line, virtme-ng (vng) can be a good option for
+working on tools/testing/selftests too.
 
->  deferred_page_init_max_threads(const struct cpumask *node_cpumask)
->  {
-> -	return 1;
-> +	return max_t(int, cpumask_weight(node_cpumask), 1);
->  }
->  
->  /* Initialise remaining memory on a node */
-> -- 
-> 2.44.0
-> 
+Ideally
 
--- 
-Sincerely yours,
-Mike.
+```
+vng -v -b -f tools/testing/selftests/net
+make headers
+make -C tools/testing/selftests/net
+
+vng -v -r arch/x86/boot/bzImage --user root
+# inside the VM
+make -C tools/testing/selftests TARGETS=net run_tests
+```
+
+Though last time I tried I had to use a slightly more roundabout
+
+```
+make defconfig; make kvm_guest.config
+/scripts/kconfig/merge_config.sh -m .config tools/testing/selftests/net/config
+make olddefconfig
+make -j $(nproc) bzImage
+make headers
+make -C tools/testing/selftests/net
+
+vng -v -r arch/x86/boot/bzImage --user root
+```
+
+
+https://lpc.events/event/17/contributions/1506/attachments/1143/2441/virtme-ng.pdf
 
