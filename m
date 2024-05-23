@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-187271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751BE8CCF54
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:32:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016168CCF56
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 11:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 116ACB20CDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84EBB1F21A0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 09:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0C713D28A;
-	Thu, 23 May 2024 09:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB1513D260;
+	Thu, 23 May 2024 09:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MyMk/sgC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oRsgBB/q"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FF1446AE;
-	Thu, 23 May 2024 09:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C17446AE
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 09:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716456723; cv=none; b=fuI7Ng5I5T3iRlHYE20eXuC2WVrO84SJUFK2il8OGMjMK69p0D1aIMrO5z/8T/BnyFJon5X9ySE/e/H4e3knB0tHB9byXReXB29V5cVOZmkZ3Y+WUr36YZRZ1hSbqe/hOWeapdTqR2TN8MnU5NM6eQ52K0oCO8mWn6lhosQvm1E=
+	t=1716456740; cv=none; b=poaL0n+rAyL7gMUSx5WZf/HaOOgESfRVs6VTSDsgzBMKRZuO3UCVISjCfkoKfa52J3IBFHA6VSwxRo6LxlsQBhulJ9gjA0e5lWKSn8oIowVwLDjuDHzBFwor4RZYXwTp1hiS4egczxJCQ5h8E/iuHngh0ua9ZPrjcPmnhs2M79o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716456723; c=relaxed/simple;
-	bh=cX95jCA9O9tZPPJJ58l7jYy+M8WwvnaiJK+eob7aWZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=isz0nXBtIxQqRLtB8GCUar5U+Q+3iSiG7QZB5U8cxeb0P9qVPYd673JA8RUOGHBs7gxEWBRnuPNfR/XqICGkAv2oYENawPlvlnCwHcMvkeeQrFLOPyntWTphKVRJkwzNV2fR7MYl5EsH8VrY3otEtpJVFF36dKyX+VO7tzD1J88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MyMk/sgC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65C1AC32789;
-	Thu, 23 May 2024 09:32:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716456722;
-	bh=cX95jCA9O9tZPPJJ58l7jYy+M8WwvnaiJK+eob7aWZU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MyMk/sgCm4Q27fBluf6XB5lx0hpYaSEIPIpXLanxP5xeatHdBIy2u26ExI5w1HW6Q
-	 utLVTkmDRCuAAudcNK3H28LxRpTI1Ri/C7htoqGBahyHoBWr5rjHnrME4rcmK7d7UF
-	 4CRf8+YKUqsixfD/3bvUxtiu1VvQsqxIbXygbNkSWO4NkpX4c+QPB1nCeFXiOS0vxC
-	 xuUdznkt6Ucbb3MWHR6H2wv0i4RvWux768VtrOJHZgxoWT2J36BdFZyC36M7NKUCdt
-	 fEnk+CIq2NDLJmvhBq8V62012iaIp4PMssjvhWreTbZt8Xsf7G2LSVmoK0Y8VkXx74
-	 BTx5EpywBkuVA==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e724bc466fso57252431fa.3;
-        Thu, 23 May 2024 02:32:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXfLjblEv+gN2/eBWQjcglhfs7RKhksCbPrFBxmcYTg+bNfnHB04RJEZvvPfZIZE3UWWOwxqAmhq+M92VWGsFdE4vCyKZAhaiwls10/sIu/+q2NNcRbBpCiqsvHe8p/EoLsybX47Pky/kXBHFqk+f8+siAsnPUug4Auw4REmA==
-X-Gm-Message-State: AOJu0Yyg1Rt54kZL+dNzlG/LC+8faMQF3J1b79B8hidgqkJBHDKwu37R
-	mpqbdXNNGxw8/O+7B0it9d/u4BnsxzFxDyzQ9odlp+NKwIqMNNG/6RLih1Mknjz8cwLF0xam9iR
-	wQh5eMbVbiFniklGiCYS9ncQwHzQ=
-X-Google-Smtp-Source: AGHT+IHqpQAHZywXcdOOBq3HuHn8WSR7/eN+fpGHKcdJVZzoWrlOpapeJsSx+A82sHWTBHqOUYj9QhP+mCcn3nBDWro=
-X-Received: by 2002:a05:651c:216:b0:2e1:f338:d228 with SMTP id
- 38308e7fff4ca-2e9494cf3d6mr39701131fa.20.1716456720722; Thu, 23 May 2024
- 02:32:00 -0700 (PDT)
+	s=arc-20240116; t=1716456740; c=relaxed/simple;
+	bh=Lj98U6JsOomLPuUxYnAamRHx6i8QFetonnyK1CfOu6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rBMdRpGjqu3wAyUoyKQAPPeREmlMTVmnZBB/uN9MAm9rEFCrH+XkuK/AFZOB5M68g1roOsmFsMTVCgAY1eYDwarBZcqeNqbpjVNeRxNYChP1NavlbtZZFti7t6LQBhDYWo4/P4u7pILo2ngLE1qi/y9K5G1CAOwpYHkZaT5U4Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oRsgBB/q; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52848dcebe7so339022e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 02:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716456737; x=1717061537; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5mQDu8PodgpyJeYqrI53Wq+jk69QtdU/8gr3jtIgfVw=;
+        b=oRsgBB/qYGMLA5lBkUSEco8P+2cF/JERyGB8CjU1O1jDwraU/RYjPON/xRns70qqSt
+         ThVhFGW3baEKZCNFPe1a563yGL3zKZFZq6V8RaXRGFKBsxsqyQvlcD1VPG/kQEZj16zv
+         wbW/I1vrmRZAi48ALara9bJSYpfJelByUj8EA0/VNHUg09L2HGzOguZC3kTEV+6WtiWB
+         wxZuSLc01ET7wn3QnUJSG/vPuvkSX3jkQVot4A34pJVB90DGw3TVlxf+K9f8OKysPneV
+         EQko0a4kIIDmMTi1dYo0mi9dPjYteOU9f+2UlKmilZxRcfWAxyBQaIXBQJ5TpUSIvaSU
+         9XqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716456737; x=1717061537;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5mQDu8PodgpyJeYqrI53Wq+jk69QtdU/8gr3jtIgfVw=;
+        b=X772efN0jie8e10lNkRiccwojXAM2ztGmjEF5u6kxoxx5hgWfTFnW6i+nvXFFZNGRA
+         r7UZhSWSY2IPpUwXR1gsjuEK+bzO6S8TuF5vr2Ui6cMb3AZqgP3igfQP8Kt6k/2yYliF
+         H7a0B4w3gi73t4daefwgr2tAFDWtmAupHEVnSssNPeCq7RaxnndivY8P/+P9OZ1ZqNJC
+         3xfCXbp+lCX9FTpewh/b9nnK++gA/LDfY2AHzmzdix2ivPb21PUPFtBr62VlzmHMHLqI
+         Y0KqtdZFYDwfUVb69wwYNQpoU9A3xyxEsk4YE0jIOjD926bS0mfNDfLKwD4MYdtQjL1d
+         k3Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9JBGZmBrP15FzDUUzsXITQ2CdmT4TrGy+yChWu3OMHBTJej2NcLnc152nl7jjwDx5aOQpzV+QfHG7pSzYD2D9K9HemxEbMon/jDkg
+X-Gm-Message-State: AOJu0YxKkiLxe9W6h+5F49hgcAQD5GBpt9pB7LwLrZtaeE/LsewsVd37
+	rZz4uFjD2sH5iu+YWoNhvI51dTEo/fS1DLa9a99YYA2LbSiUH/+ChL8o3ycrCg==
+X-Google-Smtp-Source: AGHT+IEk9OvR9KACg8HHVRm631KJZ77bnL1wnmhw4pprthIUd9aI9YxgnMHNvd3Rv4SBsaB2zLbhiQ==
+X-Received: by 2002:a05:6512:3b11:b0:516:be0a:58b with SMTP id 2adb3069b0e04-527eed419ffmr775222e87.6.1716456736468;
+        Thu, 23 May 2024 02:32:16 -0700 (PDT)
+Received: from google.com ([2a00:79e0:18:10:4571:1ce:5c15:9ee])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e6f5cada08sm22900441fa.140.2024.05.23.02.32.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 02:32:16 -0700 (PDT)
+Date: Thu, 23 May 2024 11:32:11 +0200
+From: "Steinar H. Gunderson" <sesse@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, irogers@google.com
+Subject: Re: [PATCH v4 1/3] perf report: Support LLVM for addr2line()
+Message-ID: <Zk8NG10oHcQ0T6EQ@google.com>
+References: <20240520083048.322863-1-sesse@google.com>
+ <CAM9d7cgBZVfur8S3QC2woUA2C6O3Dme0YHP8PbFcwc_o0k-dWg@mail.gmail.com>
+ <Zk5Mi7SliDOd8uO4@google.com>
+ <CAM9d7cjjH63CC8r-z33P4SCWw3x4NMxuSC1CovVHqpp-zXSf6g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240522114755.318238-1-masahiroy@kernel.org> <20240522114755.318238-3-masahiroy@kernel.org>
-In-Reply-To: <20240522114755.318238-3-masahiroy@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 23 May 2024 11:31:49 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHwEMxAhj=zCBRCAxE8MXhzT95CTtAin+fPQr3DSJ46fA@mail.gmail.com>
-Message-ID: <CAMj1kXHwEMxAhj=zCBRCAxE8MXhzT95CTtAin+fPQr3DSJ46fA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] kbuild: remove PROVIDE() for kallsyms symbols
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-arch@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAM9d7cjjH63CC8r-z33P4SCWw3x4NMxuSC1CovVHqpp-zXSf6g@mail.gmail.com>
 
-On Wed, 22 May 2024 at 13:48, Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> This reimplements commit 951bcae6c5a0 ("kallsyms: Avoid weak references
-> for kallsyms symbols").
->
-> I am not a big fan of PROVIDE() because it always satisfies the linker
-> even in situations that should result in a link error. In other words,
-> it can potentially shift a compile-time error into a run-time error.
->
+On Wed, May 22, 2024 at 01:46:35PM -0700, Namhyung Kim wrote:
+> Great!  Personally I found libbfd is hard to read (and use).  Hope
+> that libllvm is better in that pov.  I'm not sure if we all want to
+> remove the libbfd dependency but at least we can select one of
+> them at build time.  Maybe the same for libelf and libdw(fl) too.
 
-I don't disagree. However, I did realize that, in this particular
-case, we could at least make the preliminary symbol definitions
-conditional on CONFIG_KALLSYMS rather than always providing them.
+I've never used either before, but I found libllvm pretty
+straightforward. The C/C++ interop is a bit painful, though.
+(The disassembler has a C interface, but addr2line does not,
+from what I could see.)
 
-This approach is also fine with me, though.
+> Having symbol enumeration and demangling with LLVM would
+> be nice but not required to merge this work.  I'll take a deeper
+> look next week.  Please post v5.
 
+Posted.
 
-> Duplicating kallsyms_* in vmlinux.lds.h also reduces maintainability.
->
-> As an alternative solution, this commit prepends one more kallsyms step.
->
->     KSYMS   .tmp_vmlinux.kallsyms0.S          # added
->     AS      .tmp_vmlinux.kallsyms0.o          # added
->     LD      .tmp_vmlinux.btf
->     BTF     .btf.vmlinux.bin.o
->     LD      .tmp_vmlinux.kallsyms1
->     NM      .tmp_vmlinux.kallsyms1.syms
->     KSYMS   .tmp_vmlinux.kallsyms1.S
->     AS      .tmp_vmlinux.kallsyms1.o
->     LD      .tmp_vmlinux.kallsyms2
->     NM      .tmp_vmlinux.kallsyms2.syms
->     KSYMS   .tmp_vmlinux.kallsyms2.S
->     AS      .tmp_vmlinux.kallsyms2.o
->     LD      vmlinux
->
-> Step 0 takes /dev/null as input, and generates .tmp_vmlinux.kallsyms0.o,
-> which has a valid kallsyms format with the empty symbol list, and can be
-> linked to vmlinux. Since it is really small, the added compile-time cost
-> is negligible.
->
-
-OK, so the number of linker invocations is the same, right? The
-difference is that the kallsyms symbol references are satisfied by a
-dummy object?
-
-That seems reasonable to me.
-
-For the series,
-
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+/* Steinar */
 
