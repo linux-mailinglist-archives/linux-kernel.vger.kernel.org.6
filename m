@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-186982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D9208CCB7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:45:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864298CCB7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B040B1C20E54
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:45:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08578B21D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD3613A889;
-	Thu, 23 May 2024 04:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QF3ROHgA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA4813A41C;
+	Thu, 23 May 2024 04:50:12 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914141F5E6;
-	Thu, 23 May 2024 04:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BA733FE;
+	Thu, 23 May 2024 04:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716439514; cv=none; b=KWZK57oO+11vhiqKy1Ou2uRbHvPpRdJH8n+HrhclptNQtlVgzwzBJ/Fupl+0WDj3Q5P1Nak9XD6mxJWJZZvMamdgo9DprojgF1IORTumpfQrMOGE95c1dD7pQJR4U6WtkGKACRUmmaPUOeRRCDxiWNTe14rG72nHET91ZU/VVoc=
+	t=1716439811; cv=none; b=buqvtjHy2OeGONGOqDCyzVoS6+1ZVBniBdbExG3ESnsYi/+LcNuCQ3iG35i7wk4mOT0LRx6n1fDMJpSIehbnpZuFuYkLm4nMz5OnAv3yPZS1CGYDkBra6CvVY1wcT0zSR0lZ6ps4sRrFcZPjffK50iXV2+fSA07aOdl7hLUTtEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716439514; c=relaxed/simple;
-	bh=vCGKBBvs+CFNAlmNfTvta6ASZjdxorfckdKRcybznSQ=;
+	s=arc-20240116; t=1716439811; c=relaxed/simple;
+	bh=jjn1jg+bSbVkvunIql0DVqZdwho4v/lxRgtyF8jVGGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYB3k5mWJIZFfNlUanpzI5u6uv3FZrLzHek2mdPr6lnhRfVAcSVCL8QcUrxXXqYKhQtZfUhGA2VGorXvzIcjDHbXLdqvAtFQQOJxPZ54f3EshjzuRBLzQo634ke0l+xOveUgrVXjdYkphBjJuKAtasMf5pksoWBOBz4LAZl09uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QF3ROHgA; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716439513; x=1747975513;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vCGKBBvs+CFNAlmNfTvta6ASZjdxorfckdKRcybznSQ=;
-  b=QF3ROHgAewoBhWvOAJu5nDL9+dnGiZqJwxylXO12DjU0B049ogvLqpL4
-   VouFS39iu2vF7CUt9pjmKnRdsqZI7AT6pjravWfscF/TzyaUNg00gdXBJ
-   aga8Jx9E1Dn7aUCqOecv+8J1zRADmOF3Jqx6Th9DblneCtTtwD0YRa+v/
-   ANfSCsnVxy4fqhN87KJpe8AIYvE0GGzdECh0NB2CrIiFAwJTOCuc1U3av
-   7qYqxRvM/vMNVOG/ro2le8oowDYnqpa4BG25hwZ5O4Ed7bF6CHLILAGGn
-   E6jxI+m6Xly4BY9gr0OhfZQ/sHJbKESVlIqDYk5xidIBifHM8TNLmLuyC
-   Q==;
-X-CSE-ConnectionGUID: 3stSL6jqTMGpk2zd/QzSaA==
-X-CSE-MsgGUID: kVPSIKh3TL+e7iJDG5srhA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11080"; a="12564657"
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="12564657"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2024 21:45:12 -0700
-X-CSE-ConnectionGUID: 5hDjUWs0SY++9FE1vCsMCw==
-X-CSE-MsgGUID: myyeBLecRpmyCN6Kh5ttQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,181,1712646000"; 
-   d="scan'208";a="33427663"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa007.fm.intel.com with ESMTP; 22 May 2024 21:45:09 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id DABA2E7; Thu, 23 May 2024 07:45:07 +0300 (EEST)
-Date: Thu, 23 May 2024 07:45:07 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Gia <giacomo.gio@gmail.com>, "S, Sanath" <Sanath.S@amd.com>,
-	Benjamin =?utf-8?Q?B=C3=B6hmke?= <benjamin@boehmke.net>,
-	Christian Heusel <christian@heusel.eu>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"kernel@micha.zone" <kernel@micha.zone>,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Subject: Re: [REGRESSION][BISECTED] "xHCI host controller not responding,
- assume dead" on stable kernel > 6.8.7
-Message-ID: <20240523044507.GX1421138@black.fi.intel.com>
-References: <20240520162100.GI1421138@black.fi.intel.com>
- <5d-664b8000-d-70f82e80@161590144>
- <CAHe5sWazL96zPa-v9S515ciE46JLZ1ROL7gmGikfn-vhUoDaZg@mail.gmail.com>
- <20240521051151.GK1421138@black.fi.intel.com>
- <CAHe5sWb7kHurBvu6JC6OgXZm9mSg5a2W2XK9L8gCygYaFZz7JQ@mail.gmail.com>
- <20240521085926.GO1421138@black.fi.intel.com>
- <CAHe5sWb=14MWvQc1xkyrkct2Y9jn=-dKgX55Cow_9VKEeapFwA@mail.gmail.com>
- <20240521112654.GP1421138@black.fi.intel.com>
- <CAHe5sWbAkgypzOA-JpBpwY5oFP1wXShKDNevmjLEu1kR1VOeRA@mail.gmail.com>
- <79dfc0b9-94d4-4046-a3b9-185e53b4a192@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oi4Aqc3hUehlU93rCWzzYfR0MH5s/RzIwgS+pxBkVA7U6hiuqAn5GV2P4qRMQ/ACGlateOxIOGueT2rlWtXABUm+TNdnTJoAYIm9h9A5xJkjFnmizBFtVdn4vQIDprUklgHO+KUyJHcf36R/+woGQnSdMMG+/C0Yhmaw26m3E6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sA0Oi-001ETa-2b;
+	Thu, 23 May 2024 12:49:49 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 23 May 2024 12:49:50 +0800
+Date: Thu, 23 May 2024 12:49:50 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+	regressions@lists.linux.dev, kernel@collabora.com,
+	Tejun Heo <tj@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Kees Cook <keescook@chromium.org>, Torsten Duwe <duwe@lst.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [v3 PATCH] hwrng: core - Remove add_early_randomness
+Message-ID: <Zk7K7hw-XIHmPs26@gondor.apana.org.au>
+References: <66ec985f3ee229135bf748f1b0874d5367a74d7f.camel@HansenPartnership.com>
+ <dfb0d930-7cbe-46c5-be19-d132b4906ecf@notapiano>
+ <D1C2NPOBHAHK.20O4IME8OK1FH@kernel.org>
+ <20240518043115.GA53815@sol.localdomain>
+ <ZkhS1zrobNwAuANI@gondor.apana.org.au>
+ <00bcfa65-384d-46ae-ab8b-30f12487928b@notapiano>
+ <ZkwMnrTR_CbXcjWe@gondor.apana.org.au>
+ <07512097-8198-4a84-b166-ef9809c2913b@notapiano>
+ <Zk2Eso--FVsZ5AF3@gondor.apana.org.au>
+ <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79dfc0b9-94d4-4046-a3b9-185e53b4a192@amd.com>
+In-Reply-To: <CAHk-=wi7vwgzD4hdBzMrt1u3L2JyoctB91B7NLq-kVHrYXoTGA@mail.gmail.com>
 
-On Wed, May 22, 2024 at 10:19:51AM -0500, Mario Limonciello wrote:
-> On 5/22/2024 09:41, Gia wrote:
-> > Now this is odd...
-> > 
-> > I've tested another cable - a very short one used with a Gen3 nvme
-> > enclosure that I'm sure it's working - and I got Gen2 20 Gbps. I also
-> > have tested this on Windows 11 and I still just got a Gen2 connection.
-> > 
-> > I was almost sure it was caused by a bad USB4 implementation by the PC
-> > manufacturer, then I tried to connect a Thunderbolt 3 disk enclosure
-> > via daisy chain to the Caldigit dock and I got the full Gen3 40 Gbps
-> > connection! See the attached picture.
-> > 
+On Wed, May 22, 2024 at 03:53:23PM -0700, Linus Torvalds wrote:
 > 
-> I suspect you can't actually get Gen 3 performance in this configuration.
-> IIUC you should still be limited by the uplink to the host.
+> That said, looking at the code in question, there are other oddities
+> going on. Even the "we found a favorite new rng" case looks rather
+> strange. The thread we use - nice and asynchronous - seems to sleep
+> only if the randomness source is emptied.
+> 
+> What if you have a really good source of hw randomness? That looks
+> like a busy loop to me, but hopefully I'm missing something obvious.
 
-One "explanation" could be that the distance from the SoC to the Type-C
-connector is relatively long which would require a retimer to get the
-Gen3 speeds.
+Yes that does look strange.  So I dug up the original patch at
+
+	https://lore.kernel.org/all/20140317165012.GC1763@lst.de/
+
+and therein lies the answer.  It's relying on random.c to push back
+when the amount of new entropy exceeds what it needs.  IOW we will
+sleep via add_hwgenerator_randomness when random.c decides that
+enough is enough.  In fact the rate is much less now compared to
+when the patch was first applied.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
