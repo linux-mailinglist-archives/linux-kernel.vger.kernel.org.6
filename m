@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-186979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-186981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B6C8CCB6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:38:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93B28CCB71
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14965B21777
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6480B282790
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 04:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2AA60BBE;
-	Thu, 23 May 2024 04:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z3BDGhl4"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D23413A41C;
+	Thu, 23 May 2024 04:39:11 +0000 (UTC)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B0B20DF7
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 04:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4034437C;
+	Thu, 23 May 2024 04:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716439120; cv=none; b=uXMnAJcmAqwwZ89KN7dEdxZe6PcakYNE3dsU0P3DVbEqklUoh/jXM5h1kunZzFIeSPad6iHbOcZcPbl9UFMf3qApDJmXHm6kt5kXNTuJYc1M4ZzklA3Qse1eciJ/O6D7hna0F1BskUvRUVYIpqu7FCrma2O3KMAPw0T92hYqpII=
+	t=1716439150; cv=none; b=sM2qy5TApKrTLwL9Y5EI6ztOsPirc0ZJ6PEvu6+NhPRUVzhErhr8XWoBdcQYzjtGn5xjTozWwB9ezh17yuaOFrgBuOFjLRE7EKiKngjAgPpgr+0Ug2kQwVWHyzbzehKKPPF6yz1iyn3VEOuPnFoe7LxpVQ1H7/I/sRmjVzd859o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716439120; c=relaxed/simple;
-	bh=sLqwxYRWLi/EknlqTLKKf6eEdx7TZyvIBF8Tl5eh5dQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mh5OI4vZeh483j9pEpVVgnqp1Jx62yLukzjVLbvj3NsElMeT/02mo3gAxmWnpKowtafVl0oq/Ivb6hnIVnzqiOQ7Y9a2ISQkXmYmgjo5BFwTH/5/PehBJS0tBNth7nDWC8qCy2f01QGiNwtRaqXdZZk8NsZZsJyW6zNf3JjSBdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z3BDGhl4; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2b4a7671abaso1735346a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2024 21:38:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716439118; x=1717043918; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yx/IyOCYfXpCeY7uF5ICIIriQlpze5QD3ipJLntQuhY=;
-        b=z3BDGhl4L7hVgR7A2mvoeqtyAqssNuZAV1chPNZwMwaPOJFZRJVZZjZMlxMcU95vLO
-         N+moIEM7chbEf1YcBZ1Rdgb3dO4zt1wZpgTXcax0GvmoTf6/Oa/B0cWCJCbhy0za0dFw
-         k6W9eO0nyRwOU0ymjKtTtQgx08eeZe/Qwc++qLVAYH9e6Bmflo8PApREdKdznoLbIy0L
-         QOiLlEvWACBkMnnYFUHqtUTvjtjMacduR78lKPpGXtGjFxN0YatKc7RXdhE71Gu9Aeuf
-         MnAhEXvI4JfgHGhFk8NmiBgHV59inIzFxIuImKi9YDWI3OdbLXgWyV4N88OTM/yw71Sd
-         OjCQ==
+	s=arc-20240116; t=1716439150; c=relaxed/simple;
+	bh=ZgEDoaEgLaLqW3nAPYF9qKxB7KP0ycksaFQhIz4kCuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rrpuob/zBxgUC7/Pz7W9ZKOntVnhmrTDlT/lIJf+y0owkwLx/kJp0I2IHd+t9KKNoeay/52DebYYFfYvIN6ed/Iy5bGwfI33qcba27nnYHFs1NuZowAo/dksahomnfX4lp6qGG3XuPjux7W64acXos93tqUspYmPRv1qAd4brek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5ce07cf1e5dso2343983a12.2;
+        Wed, 22 May 2024 21:39:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716439118; x=1717043918;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yx/IyOCYfXpCeY7uF5ICIIriQlpze5QD3ipJLntQuhY=;
-        b=QuSLNFpNSYYx6K0FFNEUnT1sA+unFz/Wt1eSRMFO1y0WdtfPH+3QW288IIHnIgvFJF
-         riABL03QvKz6fjklCiUPcyka4HPRN6bYMe5jknQS708UB74ETVdpsKMjy2zYTqA5U2Jv
-         S6FXoStl9PGO63lhSE5GN8w9XSZAWaFQvoD5uHwCXu4zF4sZmqgvzJpdbq/OfJgM+se7
-         WkXiSMj+UR6YPdR8/7Q/qZRgQ2AAbftmiHsjojf/iPlFHxgI4VloDR0d/3Q9cmfzmDdp
-         yGKq/VWzyLvNBZxRKcB5lsoVkqFW57ekuCPw0LnqUIvzTIoOWnMfJjVS3DJWoaaqZMs3
-         brLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWISGsmxnwueYsph3It8Cm6H4T/zjkmldxOYMf2JGu60R04XQH/Bg2btq4IMUcuGb6tXUX31qk8C7NHGEpZaFru2A3FPE1L6N2aO8at
-X-Gm-Message-State: AOJu0YzqADjbvHPqxFmUsCc+oyV17QShxP2+qAZOsOlALqfe/mHuAX89
-	yl1s7WHhLt9n/X0mSlU/6Kzqrr+hcAcHW2bIEeXWuVvMxTKxkiXTGs/NznHU9A==
-X-Google-Smtp-Source: AGHT+IGFia7qcvwiNk7C0cFGAA4kfsQWTt46R5waKo9eNbE72+nSC/qxM96B5ZKcnaWLZtd7r5qMFA==
-X-Received: by 2002:a17:90b:3545:b0:2bd:ed72:29dd with SMTP id 98e67ed59e1d1-2bded722a42mr183089a91.27.1716439116882;
-        Wed, 22 May 2024 21:38:36 -0700 (PDT)
-Received: from thinkpad ([120.60.139.242])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2bdd9f4c604sm633634a91.41.2024.05.22.21.38.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 May 2024 21:38:36 -0700 (PDT)
-Date: Thu, 23 May 2024 10:08:28 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, quic_cang@quicinc.com,
-	quic_nitirawa@quicinc.com, avri.altman@wdc.com, beanhuo@micron.com,
-	adrian.hunter@intel.com, martin.petersen@oracle.com,
-	linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
-	"James E.J. Bottomley" <jejb@linux.ibm.com>,
-	Stanley Chu <stanley.chu@mediatek.com>,
-	Peter Wang <peter.wang@mediatek.com>,
-	Po-Wen Kao <powen.kao@mediatek.com>,
-	Maramaina Naresh <quic_mnaresh@quicinc.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] scsi: ufs: core: Support Updating UIC Command
- Timeout
-Message-ID: <20240523043828.GA5758@thinkpad>
-References: <cover.1716359578.git.quic_nguyenb@quicinc.com>
- <292d7702e946ca513af51236ca9e38bf1b1eb269.1716359578.git.quic_nguyenb@quicinc.com>
- <cb05bc3f-5fb0-45aa-961b-bb9edc007407@acm.org>
- <d4d7ac49-1055-5305-99b5-af8e1428c746@quicinc.com>
+        d=1e100.net; s=20230601; t=1716439148; x=1717043948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rv4Spa7J+1d8S/LcjXFnrbLk7mSgRjPXbAy53MafDq0=;
+        b=PijBheWgTpXB0tcNZbUo7NXqW0ayFtWVEDwp7L8Xp8YIjR6IQexNKW+tFJjkjilDp5
+         E6i2TUN7P241R9nbUcxJ1UinDodPX4M8HERvsGH6nFuzvDinStbKygjcUApdFv9LCfks
+         C3gcRTfkjFo2S5/Vx5N2A3uQWHmM6E9RRHp/dFO0ibBetV1rD4orJ95t0VdwdcCLrONr
+         ax9j2onu039KGCLrJTlxpO+XT/DgLHBtx8tsWN8TlUg10M6qBPyvWnJvCC+/4c8vtuDH
+         qh0TFVHS4CRYU6DjZg58XR7LXDTZdC0N0ea54nWczlFbwJg5ucAWkvvpnsEFLGq7f2O5
+         p9Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCYBYgxIQOJvV5VnDXBkdinSrs5u0tajn6U1b/LmfKV+mRTPUKWEozUsjJiTfWTYhW3Q3tQ1X4NeCUqCE5jvlfHq7Yxc1szM06Dih/pvE/dS0S9JMVLRKjDoCQuq3FJTUCpmJDc7OGFCzad/g8PG8eYSNKK7/r1bJ7bSR0Hyc4f882yQ==
+X-Gm-Message-State: AOJu0YzvSnXaG5M0ajeOxSu/GpMwd/i4SrRxyjiSL5AXUvCoI5HYMkHf
+	f4+yVNRkSFEKnXqjFahvJH3Wjc+xPi6BF+ngWWq93Be99/TtKpFvijtaZPzr2MRXQilI7SpAY3P
+	ig5ZulBhTkgwZm89K+KchqH+0BLk=
+X-Google-Smtp-Source: AGHT+IGyxu4zpQIYFBOUiL3hGmai4PHmO6FSFeTJvn1XdtLU4H0XYTlVFI9f7RgGjY6eS1D0s0Rq7N6aZ6h3GDv7rec=
+X-Received: by 2002:a05:6a20:9683:b0:1a3:8e1d:16b8 with SMTP id
+ adf61e73a8af0-1b1f87e0455mr3572608637.28.1716439148483; Wed, 22 May 2024
+ 21:39:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d4d7ac49-1055-5305-99b5-af8e1428c746@quicinc.com>
+References: <20240521010439.321264-1-irogers@google.com>
+In-Reply-To: <20240521010439.321264-1-irogers@google.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 22 May 2024 21:38:57 -0700
+Message-ID: <CAM9d7cibAi-Xnr5HTCT6HB0sat=w5qicDrr+pcMuUF0OfNQRPQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Use BPF filters for a "perf top -u" workaround
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Changbin Du <changbin.du@huawei.com>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 01:51:06PM -0700, Bao D. Nguyen wrote:
-> On 5/22/2024 11:16 AM, Bart Van Assche wrote:
-> > On 5/22/24 00:01, Bao D. Nguyen wrote:
-> > > interrupt starvations happen occasionally because the uart may
-> > > print long debug messages from different modules in the system.
-> > 
-> > I think that's a bug in the UART driver that should be fixed in the
-> > UART driver.
-> 
-> Thanks Bart.
-> I am not familiar with the UART drivers. I looked at some UART code and it
-> could be interpreted as their choice of implementation.
-> During product development, the UART may be used. However, when the
-> development completes, most likely the UART logging is disabled due to
-> performance reason.
-> 
-> This change is to give flexibility to the SoCs to use the UART
-> implementation of their choice and to choose the desired UIC command timeout
-> without affecting the system stability or the default hardcoded UIC timeout
-> value of 500ms that others may be using.
-> 
+On Mon, May 20, 2024 at 6:04=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> Allow uid and gid to be terms in BPF filters by first breaking the
+> connection between filter terms and PERF_SAMPLE_xx values. Calculate
+> the uid and gid using the bpf_get_current_uid_gid helper, rather than
+> from a value in the sample. Allow filters to be passed to perf top, this =
+allows:
+>
+> $ perf top -e cycles:P --filter "uid =3D=3D $(id -u)"
+>
+> to work as a "perf top -u" workaround, as "perf top -u" usually fails
+> due to processes/threads terminating between the /proc scan and the
+> perf_event_open.
+>
+> v2. Allow PERF_SAMPLE_xx to be computed from the PBF_TERM_xx value
+>     using a shift as requested by Namhyung.
+>
+> Ian Rogers (3):
+>   perf bpf filter: Give terms their own enum
+>   perf bpf filter: Add uid and gid terms
+>   perf top: Allow filters on events
 
-If UART runs in atomic context for 500ms, then it is doomed.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-But for increasing the UIC timeout, I agree that the flexibility is acceptable.
-In that case, please use a user configurable option like cmdline etc... instead
-of hardcoding the value in glue drivers.
+Thanks,
+Namhyung
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+>  tools/perf/Documentation/perf-record.txt     |  2 +-
+>  tools/perf/Documentation/perf-top.txt        |  4 ++
+>  tools/perf/builtin-top.c                     |  9 +++
+>  tools/perf/util/bpf-filter.c                 | 33 ++++++----
+>  tools/perf/util/bpf-filter.h                 |  5 +-
+>  tools/perf/util/bpf-filter.l                 | 66 ++++++++++----------
+>  tools/perf/util/bpf-filter.y                 |  7 ++-
+>  tools/perf/util/bpf_skel/sample-filter.h     | 61 +++++++++++++++++-
+>  tools/perf/util/bpf_skel/sample_filter.bpf.c | 54 +++++++++++-----
+>  9 files changed, 171 insertions(+), 70 deletions(-)
+>
+> --
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+>
 
