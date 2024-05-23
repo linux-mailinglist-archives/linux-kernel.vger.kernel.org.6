@@ -1,216 +1,126 @@
-Return-Path: <linux-kernel+bounces-188115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA5B8CDDAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 174048CDDAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BADAA288412
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:23:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D781F2275D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814E7129A83;
-	Thu, 23 May 2024 23:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23830129E92;
+	Thu, 23 May 2024 23:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SruNbPq6"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kjOtTJJE"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228071292E4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B42129E78;
+	Thu, 23 May 2024 23:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716506567; cv=none; b=QEXjXEuRdWdQ2izwDkV9qzUpNJ5hc5IdNEjGim0c+YOtnrD/tSCSZ67Uicawqm5o9bBIwyPXtrhBSJZ3c8DlGu7HjTpOmo+mn2RU58mYq3VxdUriswJNueKspSmcrR9cBtfJOiM9jMP8zFnObFBfKsIJu0VDYDU/o1q0j0iWXTE=
+	t=1716506572; cv=none; b=jyFNKUWbnblQRd3x53NnUXHKBs8bIYcumnwHcDYVnqse0mLfZI5EgryoBvbvSI3PHmAxyTZiN8gOd36LoWWQ9PsD61GL7ACp/LidsXvP/EzsclI7nD/m065QehZm8EsE575JITD5M4WWn6pgzf5q0Fe5/mcLtxxT0m+ugEFGnqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716506567; c=relaxed/simple;
-	bh=oV1Rfj+qKyPdHTzJSmq+wfpP0m/pXfeqpjvSIitjMtg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DX5aPpPJKAA5iqrq7mKkGLHuUpUHpyMfRZ9+LqZUKn7IaFfE1Ft4RfnwRkPycWtpyoypYcDlhj8S7PFybI1B2MNmR4R6PQdsSWMJMDVxOePWUSbwhEe8COJHpme1vJcZTNykR8hGzqlmPON/loPE9TAV6GKf3SXXqzx6LYyKs0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SruNbPq6; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f44b6f9363so1448465ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 16:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716506565; x=1717111365; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s2cndOyPusWD60XrwWYL/VwafNE0FrOs0G8XlptnnkQ=;
-        b=SruNbPq6CfDND7ZWpZKM/xov5+ElNuMX0r2YpZMdQUy0DjfVHrMuv27feV8gEu1hxi
-         HmI6aE7aSdi9Lt2RKdj+ZFBjwEtk19XxF2t14U430l99lDkDpPuoKerdxxXxSiVPTFCX
-         S7w9qygItxt9Tk6sTmMyUn+N0iYVO45LHYyvk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716506565; x=1717111365;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s2cndOyPusWD60XrwWYL/VwafNE0FrOs0G8XlptnnkQ=;
-        b=Ft7PI7QgSMZZ4dsifLoYOfMOvceN0QPN1egFiLfSYtrc6mTaraTL/JmHfpQpmyCkUY
-         Ntqjr4DJmqE/uq849W9/CNkajz2DuG4yTFuZAyD/iNDpybX/S3tKnHCP7AfEr4UlKcjl
-         TvDB68Hv7C2FdRTupUe6UVzL6rvF60vFXgRtabneJALTz2zdg4Gi55d6R6b6GPoqo5DD
-         /PItW3Bi8gHP1wCAn/Ji/MtzL6m4oEOzxlwTT3AySKqW+4E8xE/yKm+9Q41WQWWQVrBX
-         0+FrUVyvFz5yMNYYWkRNzKbEYwBreGw1zvZ2eNc9rk7Dpp5R0nIFkIxQjFgN0ExO3AlE
-         pY+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVtU8jBQ/L5XB2PL/ywoZFVOIiJH/riL4pW9dIN9PrGTtoQPv6s2XTigm/EwEK3cSdGvKzz49ghwlJg6odHoN325sljWx43CIlaKqAP
-X-Gm-Message-State: AOJu0Yzz4geraFLrqSkgkwKR6zldAji9K/MkTwzFERjOihJJrSoh9/Yc
-	p0OKPVLMLkei/+Mxdc73df1whcfGTecZqukTv75pFpnU2Cm61an1nYcqVa5d4w==
-X-Google-Smtp-Source: AGHT+IHumt/MN1WgDMPiG970IBz7UzTszuFv7QPc41T4yeFO+pUdGKncQVg5TJZDuSajZ38nDHv2fA==
-X-Received: by 2002:a17:902:f68d:b0:1f2:fccf:32d1 with SMTP id d9443c01a7336-1f4486dc807mr9531725ad.17.1716506565523;
-        Thu, 23 May 2024 16:22:45 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:b835:ba86:8e6d:41c6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c797938sm1279545ad.64.2024.05.23.16.22.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 16:22:44 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-arm-msm@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	James Clark <james.clark@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: [PATCH 2/2] serial: qcom-geni: Fix qcom_geni_serial_stop_tx_fifo() while xfer
-Date: Thu, 23 May 2024 16:22:13 -0700
-Message-ID: <20240523162207.2.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-In-Reply-To: <20240523232216.3148367-1-dianders@chromium.org>
-References: <20240523232216.3148367-1-dianders@chromium.org>
+	s=arc-20240116; t=1716506572; c=relaxed/simple;
+	bh=OLXX2LxJlZ5Ny/3fQeOWJvdMWznXzudiOcGh4kVBmRc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Dy40IFCCS3J1Aonbo5v0cM/uOs8UB8CbJMPOTZyhfDvxoL4zcRqCEq0aFZwELzGtmUbAheTtO9kv5uZsxPy5bNY5T/EHWZO6Ee1fk2Q2z6j98RW72upoqecc0YSkf/pvwUm1lFbr95ciNdw/yjvJEiq5w0p+8rxDGPXZT3NXJ/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kjOtTJJE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NNJbuO029560;
+	Thu, 23 May 2024 23:22:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EOM4CsCYqg5acNEKpbY5mZ
+	cQ8K+iIvTv5UvVK50XzZw=; b=kjOtTJJEfej48fGOFdbmFZGUqL1df4xiz5gZtS
+	v/NMJwoONC6A/PGTB1rTXfk8a55hEeGPuZNKNF/xvXHyQV1pGJM529SPtFxATPMJ
+	832qK02v89+bhkDMm9M1+F7nFNUCEcJORP0prlSJwSug1E/ebnNTY185SIQB9v4o
+	4LG+RMH+Cc5qNgTG1X3hrlBTyljV1bvxRsHdQHf8zyZcVRyNCFi2A/HH/CHgvccP
+	y0sFhBBjDtFFUcNJIKkEAKzVdocfyC5G7wwloMiGJoF0Ss8aY6tfrwVVLdRdQ5Nx
+	yJ2BwK8NOBfH5QYZ9kmoYZVkQHkLqgLEqWiSfGfhsksmNhow==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8k0n3g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 23:22:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44NNMZqP014960
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 May 2024 23:22:35 GMT
+Received: from [169.254.0.1] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 23 May
+ 2024 16:22:35 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 23 May 2024 16:22:34 -0700
+Subject: [PATCH] firewire: add missing MODULE_DESCRIPTION() to test modules
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240523-md-firewire-uapi-test-v1-1-6be5adcc3aed@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALnPT2YC/x2MQQrCMBBFr1Jm7UBaFapXEReTZmIHbAyZtFZK7
+ +7o4i8e/Pc2UC7CCtdmg8KLqLySQXtoYBgpPRglGEPnupM7d0ecAkYp/LbhTFmwslZ0ffSOLtz
+ 2gcHcXDjK+u/e7saelNEXSsP4qz0lzStOpJUL5o9dYd+/ZxLfzowAAAA=
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+CC: <linux1394-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TJV6-wRw29BO6wRTBrWepdbvrxpI07hU
+X-Proofpoint-GUID: TJV6-wRw29BO6wRTBrWepdbvrxpI07hU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_13,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ suspectscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=981 impostorscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405230161
 
-If qcom_geni_serial_stop_tx_fifo() was called while a transfer was
-happening then the UART would be effectively stuck and wouldn't
-transmit again. Specifically, I could reproduce these problem by
-logging in via an agetty on the debug serial port (which was _not_
-used for kernel console) and running:
-  cat /var/log/messages
-..and then (via an SSH session) forcing a few suspend/resume cycles.
+Fix the 'make W=1' warnings:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/uapi-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/packet-serdes-test.o
 
-Digging into this showed a number of problems. One problem was that we
-cancelled the current "tx" command but we forgot to zero out
-"tx_remaining". Another problem was that we didn't drain the buffer
-before cancelling the "tx" command and thus those bytes were
-lost. Another problem was that failing to drain the buffer meant that
-the hardware still reported something in the FIFO and that caused
-qcom_geni_serial_start_tx_fifo() to be a no-op, since it doesn't do
-anything if the TX FIFO is not empty.
-
-Though I haven't gone back and validated on ancient code, it appears
-from code inspection that many of these problems have existed since
-the start of the driver. In the very least, I could reproduce the
-problems on vanilla v5.15. The problems don't seem to reproduce when
-using the serial port for kernel console output and also don't seem to
-reproduce if nothing is being printed to the console at suspend time,
-so this is presumably why they were not noticed until now.
-
-Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver support for GENI based QUP")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
+ drivers/firewire/packet-serdes-test.c | 1 +
+ drivers/firewire/uapi-test.c          | 1 +
+ 2 files changed, 2 insertions(+)
 
- drivers/tty/serial/qcom_geni_serial.c | 45 +++++++++++++++++++++++++--
- 1 file changed, 42 insertions(+), 3 deletions(-)
+diff --git a/drivers/firewire/packet-serdes-test.c b/drivers/firewire/packet-serdes-test.c
+index f93c966e794d..e83b1fece780 100644
+--- a/drivers/firewire/packet-serdes-test.c
++++ b/drivers/firewire/packet-serdes-test.c
+@@ -579,4 +579,5 @@ static struct kunit_suite packet_serdes_test_suite = {
+ };
+ kunit_test_suite(packet_serdes_test_suite);
+ 
++MODULE_DESCRIPTION("FireWire packet serialization/deserialization unit test suite");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/firewire/uapi-test.c b/drivers/firewire/uapi-test.c
+index 2fcbede4fab1..bc3f10a2e516 100644
+--- a/drivers/firewire/uapi-test.c
++++ b/drivers/firewire/uapi-test.c
+@@ -86,4 +86,5 @@ static struct kunit_suite structure_layout_test_suite = {
+ };
+ kunit_test_suite(structure_layout_test_suite);
+ 
++MODULE_DESCRIPTION("FireWire UAPI unit test suite");
+ MODULE_LICENSE("GPL");
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 2bd25afe0d92..9110ac4bdbbf 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -265,8 +265,8 @@ static bool qcom_geni_serial_secondary_active(struct uart_port *uport)
- 	return readl(uport->membase + SE_GENI_STATUS) & S_GENI_CMD_ACTIVE;
- }
- 
--static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
--				int offset, int field, bool set)
-+static bool qcom_geni_serial_poll_bitfield(struct uart_port *uport,
-+					   int offset, int field, u32 val)
- {
- 	u32 reg;
- 	struct qcom_geni_serial_port *port;
-@@ -295,7 +295,7 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
- 	timeout_us = DIV_ROUND_UP(timeout_us, 10) * 10;
- 	while (timeout_us) {
- 		reg = readl(uport->membase + offset);
--		if ((bool)(reg & field) == set)
-+		if ((reg & field) == val)
- 			return true;
- 		udelay(10);
- 		timeout_us -= 10;
-@@ -303,6 +303,12 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
- 	return false;
- }
- 
-+static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
-+				      int offset, int field, bool set)
-+{
-+	return qcom_geni_serial_poll_bitfield(uport, offset, field, set ? field : 0);
-+}
-+
- static void qcom_geni_serial_setup_tx(struct uart_port *uport, u32 xmit_size)
- {
- 	u32 m_cmd;
-@@ -675,6 +681,31 @@ static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
- 	if (!qcom_geni_serial_main_active(uport))
- 		return;
- 
-+	/*
-+	 * Wait until the FIFO has been drained. We've already taken bytes out
-+	 * of the higher level queue in qcom_geni_serial_send_chunk_fifo() so
-+	 * if we don't drain the FIFO but send the "cancel" below they seem to
-+	 * get lost.
-+	 */
-+	qcom_geni_serial_poll_bitfield(uport, SE_GENI_TX_FIFO_STATUS, TX_FIFO_WC, 0);
-+
-+	/*
-+	 * If we send the cancel immediately after the FIFO reports that it's
-+	 * empty then bytes still seem to get lost. From trial and error, it
-+	 * appears that a small delay here keeps bytes from being lost and
-+	 * there is (apparently) no bit that we can poll instead of this.
-+	 * Specifically it can be noted that the sequencer is still "active"
-+	 * if it's waiting for us to send it more bytes from the current
-+	 * transfer.
-+	 */
-+	mdelay(1);
-+
-+	/*
-+	 * Cancel the current command. After this the main sequencer will
-+	 * stop reporting that it's active and we'll have to start a new
-+	 * transfer command. If the cancel doesn't take, we'll also send an
-+	 * abort.
-+	 */
- 	geni_se_cancel_m_cmd(&port->se);
- 	if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
- 						M_CMD_CANCEL_EN, true)) {
-@@ -684,6 +715,14 @@ static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
- 		writel(M_CMD_ABORT_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
- 	}
- 	writel(M_CMD_CANCEL_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
-+
-+	/*
-+	 * We've cancelled the current command. "tx_remaining" stores how
-+	 * many bytes are left to finish in the current command so we know
-+	 * when to start a new command. Since the command was cancelled we
-+	 * need to zero "tx_remaining".
-+	 */
-+	port->tx_remaining = 0;
- }
- 
- static void qcom_geni_serial_handle_rx_fifo(struct uart_port *uport, bool drop)
--- 
-2.45.1.288.g0e0cd299f1-goog
+---
+base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
+change-id: 20240523-md-firewire-uapi-test-08fb0a9e18de
 
 
