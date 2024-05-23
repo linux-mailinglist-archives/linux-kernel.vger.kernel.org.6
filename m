@@ -1,162 +1,182 @@
-Return-Path: <linux-kernel+bounces-187967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E078CDB58
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:25:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 057568CDB59
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 22:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7337D1C21045
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF06728354F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2052884DE2;
-	Thu, 23 May 2024 20:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9BA84D3E;
+	Thu, 23 May 2024 20:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DRK+qRtZ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="crYORmdp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF27883CBD
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA0F28F5
+	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716495910; cv=none; b=rcf9eg4UlzM7BZoNKwOI8DO9FjskXooiPj7Lt6ysafe/Mnd3mEmyHjwx8XKbj6XamROLmRYBnjVit7PtsWIlvfyfqFdVeiHpqw3hX8Vn6uXChsp5YP1GbwYzR4Ef11R1toOpSd/8beRWWZWpvwXMeN1la0mpXb5Wzg9mKgFRtAA=
+	t=1716495948; cv=none; b=Ehi/R6Na2eogxSSKCokY/+TBVLZlHGTczVZuKHKqxAXhfkUZcdXmLTDEA1mfUA0ckKBbWem9w3t0pHLSxdBsvV6YPD30f7cR0BHTlvCvONUqZ7dBYxhsqSSmWYTgN6H4noDGHF7SnXPGiCY93EV8Yor0n2nfo6ZK20iAmp3Ofxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716495910; c=relaxed/simple;
-	bh=T53Qq6geUKMePsO3PpM709s0ZqBNoDAk8S13cUqTa2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dHfG5BoUiahNwXB/9+ocxf72O3D6Z2CLCHJe9ZRxBFTKRaBo/xmiIhUYT4SinkvMXnR4uVojjT3LREH7TFcLL7bZknu6LnCUzlhzAhT/PILgsPMfd/57ajCpzshUKkxtc0+M5ArdTc4fDiaa1s6ghwmoRDToc0HgHcgPM1Ng0yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DRK+qRtZ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6267639e86so13502266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 13:25:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716495907; x=1717100707; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gJ/+0iPILoCl4fYJ5JFyaYwZeFs4qxyfRvegHxvQq4I=;
-        b=DRK+qRtZxLHWzPilgEI80/kTEzB3CPRF8x1c4e1SCyMYpPQyS3+lEMRrUcoHci8nn7
-         dekP7fjCkOiRQLGVdQbOFfAKknXatpWRUITUfay4vZ7B3+fNPS2QLva4c0+EKPp8h/Gm
-         AbVXuDAy+5XDOVzdX/CMAcqRc78grw0oMPUht6Zvj788DH4QP1x9Usacjjx8FugbTFg5
-         GYIIMeUzGpm9g11/0w6hg0kJjTk3qxtsN+K6dm+toO7/kqcGIbqFT07eUQOFzcZNZX/k
-         WNgwd2xBxPnf8Nz68Z4uPd3rFGdYUi2Tu9BDZiGkLtTma7iZ5SQLQmmRnuYZJbsfz9Z2
-         VqeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716495907; x=1717100707;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gJ/+0iPILoCl4fYJ5JFyaYwZeFs4qxyfRvegHxvQq4I=;
-        b=EvTDLyZ5OjkniHyYfAXfrlirpG6TzTm3tt5oBlj4wAaZQhJfgIlFc1p/d+aXwprQS8
-         CjV/DGboOa1BAK2cd9rN27MIOf9hMXjy9dZ7qqJX5TOnZw2xBFpfh3tycuQn+3KCNQe4
-         42ZEKdpuBxgXb8H84eF488MgQ0QDuadjgbX7J1PpoFrdCD01Kd2Z2rJkx+Q0k0O2rjVs
-         LzrJKAPUPc6uUd+XDVmFLcaFOW59ShhWZQQqomWW8k3h1kkxjmJcS6UR6zQ28oDFRm8L
-         fnBqPgkb51+tPVz04opPVBv7IC/sTiyPip/zYn4upNwlOKctYVVu+TggwuHr1eXTkFu3
-         gHVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvbLRKxT4dSJeYDP3vdLpMVcpq6nN522qRugvjoHLCkTOIbpt6wEKSV7q+yhtER2rDiUIgIPF7+Y67b6HbwBuqW41woKwDC6ayslMt
-X-Gm-Message-State: AOJu0YyebLYUYzjhMIwcNw4E4tl/+KLMAJi35GylhNikVmq6hgFxrJo1
-	9g29ZpZx5Fbme6GTj0hPB22/+j7eRzpzU7TAOvu98BhyHeqMQYqR4yoWLVup1B0=
-X-Google-Smtp-Source: AGHT+IH0kSQVioE6QrkcWMRYqJsVE/G7bhrqp9bayeccrwTPqnCrnAClAN12t1htANyO2JKbYDRBZg==
-X-Received: by 2002:a17:906:af8d:b0:a59:ca9c:4de9 with SMTP id a640c23a62f3a-a626537535cmr22590266b.76.1716495907100;
-        Thu, 23 May 2024 13:25:07 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c93bbcesm6162266b.65.2024.05.23.13.25.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 13:25:06 -0700 (PDT)
-Message-ID: <8df0c766-adae-4009-826d-be863e77c609@linaro.org>
-Date: Thu, 23 May 2024 22:25:04 +0200
+	s=arc-20240116; t=1716495948; c=relaxed/simple;
+	bh=LKhQHsSrnnAo0BE32SPWbRof1Q809utUpT3FUynBKyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fu7JdchwNTmrZnjxsH7jkN9B6bkO7TEPKdsBjGC2TfrZiDtko5JVeYo4h82zD6xNREW2kMEbLHrbmE11IzE1GtmGGp6LJjkbN41B4ums7sV5UKJHOf6VeLGpGFgUyoY8xhNsLubyNKct8AI78TS1zFJesAbOlbjkwkerXmgl4XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=crYORmdp; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716495946; x=1748031946;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LKhQHsSrnnAo0BE32SPWbRof1Q809utUpT3FUynBKyM=;
+  b=crYORmdptGuspqlUb+ZbsstmtpNlfl6AnXUNOuw/NGk86dWUv0oEoL+7
+   5x1SNwKA32hJRW5HJOqtENIV3rd7U4/KMQjMdaPMqBGk6wrQZBePrE5YD
+   9toAmjAfSXQW5AE1FaVvpgyi5OZdSxbVagr808RPPKB29JTMQLAujfzwd
+   qzTuJIcqr4dDd4cJdggLQh1sUFQb39yoGP/tRkzyqNaKlaU/KjGA8oJ1M
+   6vA1fUpTfLrvwpaUMJjS2oImKJjxB7CfBLuFJ3wV2rpPh+1OjDJIyvC1U
+   pceml3vlTYSQBWAbMRyQ648xb3VIi2Dtw7c6o1p3soI0kkZmatt/P6Ymo
+   w==;
+X-CSE-ConnectionGUID: XIddjrF8ROe//bAobxo1PQ==
+X-CSE-MsgGUID: /+Wcy9doSbybLQPs0AakYQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12694362"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="12694362"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 13:25:45 -0700
+X-CSE-ConnectionGUID: JQPjwt5uSHSfoDQrSuGEpg==
+X-CSE-MsgGUID: 6cnjPq47TqOCPn2NpU480Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="38189693"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 23 May 2024 13:25:43 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sAF0P-0003KD-0R;
+	Thu, 23 May 2024 20:25:41 +0000
+Date: Fri, 24 May 2024 04:25:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: v9fs_fid_find: also lookup by inode if not found
+ dentry
+Message-ID: <202405240422.ZWrRj5Ck-lkp@intel.com>
+References: <20240523113638.1196299-1-asmadeus@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_1/2=5D_ti=3A_omap=3A_MAINTAINERS=3A_move_B?=
- =?UTF-8?Q?eno=C3=AEt_Cousson_to_CREDITS?=
-To: Kevin Hilman <khilman@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Olof Johansson <olof@lixom.net>, arm@kernel.org, soc@kernel.org,
- Antoine Tenart <atenart@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
- Benoit Cousson <bcousson@baylibre.com>
-References: <20240520074013.9672-1-krzysztof.kozlowski@linaro.org>
- <7httio2zta.fsf@baylibre.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <7httio2zta.fsf@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523113638.1196299-1-asmadeus@codewreck.org>
 
-On 23/05/2024 19:38, Kevin Hilman wrote:
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
-> 
->> Last email from Benoît Cousson was in 2014 [1], so remove him from
->> maintainers of the TI OMAP platform.  Stale maintainer entries hide
->> information whether subsystem needs help, has a bus-factor or is even
->> orphaned.
->>
->> Benoît Cousson, thank you for TI OMAP contributions and maintenance.
-> 
-> Not sure why Benoît is not cc'd, so adding him now so he can ack.
+Hi Dominique,
 
-Ah, my bad, I am sorry. I used my script which relied on maintainer
-entries but the entries got updated.
+kernel test robot noticed the following build warnings:
 
-Apologies.
+[auto build test WARNING on v6.9]
+[also build test WARNING on linus/master next-20240523]
+[cannot apply to ericvh-v9fs/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards,
-Krzysztof
+url:    https://github.com/intel-lab-lkp/linux/commits/Dominique-Martinet/9p-v9fs_fid_find-also-lookup-by-inode-if-not-found-dentry/20240523-193912
+base:   v6.9
+patch link:    https://lore.kernel.org/r/20240523113638.1196299-1-asmadeus%40codewreck.org
+patch subject: [PATCH] 9p: v9fs_fid_find: also lookup by inode if not found dentry
+config: riscv-defconfig (https://download.01.org/0day-ci/archive/20240524/202405240422.ZWrRj5Ck-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 7aa382fd7257d9bd4f7fc50bb7078a3c26a1628c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405240422.ZWrRj5Ck-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405240422.ZWrRj5Ck-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/9p/fid.c:17:
+   In file included from fs/9p/v9fs.h:11:
+   In file included from include/linux/backing-dev.h:16:
+   In file included from include/linux/writeback.h:13:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/riscv/include/asm/cacheflush.h:9:
+   In file included from include/linux/mm.h:2210:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> fs/9p/fid.c:137:2: warning: non-void function does not return a value [-Wreturn-type]
+     137 |         }
+         |         ^
+   fs/9p/fid.c:139:2: error: expected identifier or '('
+     139 |         return ret;
+         |         ^
+   fs/9p/fid.c:140:1: error: extraneous closing brace ('}')
+     140 | }
+         | ^
+   2 warnings and 2 errors generated.
+
+
+vim +137 fs/9p/fid.c
+
+987a64850996db Greg Kurz           2020-09-23  103  
+987a64850996db Greg Kurz           2020-09-23  104  
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  105  /**
+ba17674fe02909 Latchesar Ionkov    2007-10-17  106   * v9fs_fid_find - retrieve a fid that belongs to the specified uid
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  107   * @dentry: dentry to look for fid in
+ba17674fe02909 Latchesar Ionkov    2007-10-17  108   * @uid: return fid that belongs to the specified user
+ba17674fe02909 Latchesar Ionkov    2007-10-17  109   * @any: if non-zero, return any fid associated with the dentry
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  110   *
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  111   */
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  112  
+b464255699077c Eric W. Biederman   2013-01-30  113  static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  114  {
+ba17674fe02909 Latchesar Ionkov    2007-10-17  115  	struct p9_fid *fid, *ret;
+bd238fb431f319 Latchesar Ionkov    2007-07-10  116  
+4b8e992392a246 Al Viro             2014-08-19  117  	p9_debug(P9_DEBUG_VFS, " dentry: %pd (%p) uid %d any %d\n",
+4b8e992392a246 Al Viro             2014-08-19  118  		 dentry, dentry, from_kuid(&init_user_ns, uid),
+b464255699077c Eric W. Biederman   2013-01-30  119  		 any);
+ba17674fe02909 Latchesar Ionkov    2007-10-17  120  	ret = NULL;
+aaeb7ecfb48ad4 Al Viro             2013-02-28  121  	/* we'll recheck under lock if there's anything to look in */
+22e424feb6658c Dominique Martinet  2022-01-29  122  	if (dentry->d_fsdata) {
+aaeb7ecfb48ad4 Al Viro             2013-02-28  123  		struct hlist_head *h = (struct hlist_head *)&dentry->d_fsdata;
+9a268faa5f8627 Sohaib Mohamed      2021-10-01  124  
+634095dab2a200 Al Viro             2013-02-27  125  		spin_lock(&dentry->d_lock);
+56a79b7b021bf1 Linus Torvalds      2013-03-03  126  		hlist_for_each_entry(fid, h, dlist) {
+b464255699077c Eric W. Biederman   2013-01-30  127  			if (any || uid_eq(fid->uid, uid)) {
+ba17674fe02909 Latchesar Ionkov    2007-10-17  128  				ret = fid;
+b48dbb998d70b7 Dominique Martinet  2022-06-12  129  				p9_fid_get(ret);
+ba17674fe02909 Latchesar Ionkov    2007-10-17  130  				break;
+ba17674fe02909 Latchesar Ionkov    2007-10-17  131  			}
+ba17674fe02909 Latchesar Ionkov    2007-10-17  132  		}
+634095dab2a200 Al Viro             2013-02-27  133  		spin_unlock(&dentry->d_lock);
+7894f99a4c6ef6 Dominique Martinet  2024-05-23  134  	}
+7894f99a4c6ef6 Dominique Martinet  2024-05-23  135  	if (!ret && dentry->d_inode)
+1543b4c5071c54 Eric Van Hensbergen 2023-03-27  136  		ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
+ba17674fe02909 Latchesar Ionkov    2007-10-17 @137  	}
+bd238fb431f319 Latchesar Ionkov    2007-07-10  138  
+ba17674fe02909 Latchesar Ionkov    2007-10-17  139  	return ret;
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  140  }
+3ed8491c8a75ce Eric Van Hensbergen 2005-09-09  141  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
