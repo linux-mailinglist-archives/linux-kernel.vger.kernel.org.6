@@ -1,110 +1,125 @@
-Return-Path: <linux-kernel+bounces-187062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E534E8CCC87
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:51:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABF68CCC8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 08:52:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22BFE1C21155
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:51:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9B15B2162D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 06:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0DA13C913;
-	Thu, 23 May 2024 06:51:10 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9417F13C916;
+	Thu, 23 May 2024 06:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fCKm2ZqA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC82413C8F4
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 06:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07A113C8F2;
+	Thu, 23 May 2024 06:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716447070; cv=none; b=cP6zVuqsT1+6+KsGBgStXgdcAA7smjGEmNug65wD3WgXSsKkLcDkHHfVKAAwpx6WlF7Bkw1PKRN0fMf+diZvQH9EJzW62zlfUsBgJaSz/8kYomDw7SunRtvA8QK78D07manW34B7DdOckJhPqnDTyCps17SMtU3DJp0Z0+Ts9M4=
+	t=1716447112; cv=none; b=Xvd+77JDLi6cJKMaO1jp3T7KT/GCYC+97lIXRc0J0qLoHoZEOqWwV8d1BNQXmEO74kvz7gkfamHg8OKNzRhy2xrIuLkYQtcZ2td8TFJcT2G5LgwCtb8GwRofTgiVe6QeEFJcKQ111AgbWktqPEoYnNASt8VKrf3AVVsTj/OsdbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716447070; c=relaxed/simple;
-	bh=HbilW8+/QhxMpuv2I3szsbRjZe9iBLkmZfLbtsRhSQA=;
+	s=arc-20240116; t=1716447112; c=relaxed/simple;
+	bh=vxr2mkzYP8mbnwy26aQJbbvOzWaMQB/nx4kIMYC3W1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k9BgKTyQnOW5hTGp39MlLNSxu/bevOMYyUZA8VQh4iTqG7fJWmXsZ1DHOjW9yxu3HIZFLl1PU4Ue+T9prIE6g7FZTpzU9+li1jTV4P7nW3h662VpsvopXBX/PQUG6ykalvV081sjb6ZPYGKaGmzoJZ65Cvi/ybPRaF5QYiGXMjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1sA2I5-0001hf-DT; Thu, 23 May 2024 08:51:05 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1sA2I4-002crX-FE; Thu, 23 May 2024 08:51:04 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1sA2I4-00Aa6K-1G;
-	Thu, 23 May 2024 08:51:04 +0200
-Date: Thu, 23 May 2024 08:51:04 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Trevor Gamblin <tgamblin@baylibre.com>
-Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	michael.hennerich@analog.com, nuno.sa@analog.com, dlechner@baylibre.com
-Subject: Re: [PATCH 1/2 v3] pwm: add duty offset support
-Message-ID: <fqipplnnt2ppyjgvvg7klbnqqcn6phivziizgfbth4jauntsjo@reno3me4kr4o>
-References: <20240521194916.1897909-1-tgamblin@baylibre.com>
- <20240521194916.1897909-2-tgamblin@baylibre.com>
- <73y7ovftjv35gw3sjeu3jisg7feplhyebmcnldqvszuofqnn7q@eh4lyicuhfmq>
- <8cd080ef-e1f3-4752-8f92-d61c5fd321b5@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=naNIdBjZ4yCzP5Rt4fkmQnliJKrcdXD4YrcYoWrDgwVt+fjfHfaGVXmk9WsMndufH2vUb9TX8NQLdaBuOqF+JIdcEjxs8T7iq0h1oPIi5UTlhOyXrFbsH4zeF1Edhv+YEIWTdL82DcXo8ZqRmOM14GQqo2ogQ468Rp3j9r4Ro9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fCKm2ZqA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01670C2BD10;
+	Thu, 23 May 2024 06:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716447112;
+	bh=vxr2mkzYP8mbnwy26aQJbbvOzWaMQB/nx4kIMYC3W1A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fCKm2ZqAe71lxfgsC1I+obtVtvkM6KQ988dCXcZSItgRCne5xkpE9HqIVIHKcURGn
+	 OWi/X6qgvW381+OQ/PkhE0Gztw5g2taRrf+tH/4CpccMpg/oFdYXTYk3bx4mTg2JQF
+	 If/tlvTZPws+h4VEuXiCei21esZR+7aawIwmlyDM=
+Date: Thu, 23 May 2024 08:51:49 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Lukas Wunner <lukas@wunner.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+	linuxppc-dev@lists.ozlabs.org, linux-acpi@vger.kernel.org,
+	Jean Delvare <jdelvare@suse.com>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-efi@vger.kernel.org, Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Zhi Wang <zhi.wang.linux@gmail.com>,
+	intel-gvt-dev@lists.freedesktop.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-pm@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH 2/2] treewide: Use sysfs_bin_attr_simple_read() helper
+Message-ID: <2024052334-nape-wanting-0a2a@gregkh>
+References: <cover.1712410202.git.lukas@wunner.de>
+ <92ee0a0e83a5a3f3474845db6c8575297698933a.1712410202.git.lukas@wunner.de>
+ <e12b0027-b199-4de7-b83d-668171447ccc@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u3xcrkvxcpftqa4e"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8cd080ef-e1f3-4752-8f92-d61c5fd321b5@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <e12b0027-b199-4de7-b83d-668171447ccc@roeck-us.net>
 
+On Wed, May 22, 2024 at 07:51:35PM -0700, Guenter Roeck wrote:
+> Hi,
+> 
+> On Sat, Apr 06, 2024 at 03:52:02PM +0200, Lukas Wunner wrote:
+> > Deduplicate ->read() callbacks of bin_attributes which are backed by a
+> > simple buffer in memory:
+> > 
+> > Use the newly introduced sysfs_bin_attr_simple_read() helper instead,
+> > either by referencing it directly or by declaring such bin_attributes
+> > with BIN_ATTR_SIMPLE_RO() or BIN_ATTR_SIMPLE_ADMIN_RO().
+> > 
+> > Aside from a reduction of LoC, this shaves off a few bytes from vmlinux
+> > (304 bytes on an x86_64 allyesconfig).
+> > 
+> > No functional change intended.
+> > 
+> 
+> Not really; see below.
+> 
+> > Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> > Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> > ---
+> ...
+> > index da79760..5193fae 100644
+> > --- a/init/initramfs.c
+> > +++ b/init/initramfs.c
+> > @@ -575,15 +575,7 @@ static int __init initramfs_async_setup(char *str)
+> >  #include <linux/initrd.h>
+> >  #include <linux/kexec.h>
+> >  
+> > -static ssize_t raw_read(struct file *file, struct kobject *kobj,
+> > -			struct bin_attribute *attr, char *buf,
+> > -			loff_t pos, size_t count)
+> > -{
+> > -	memcpy(buf, attr->private + pos, count);
+> > -	return count;
+> > -}
+> > -
+> > -static BIN_ATTR(initrd, 0440, raw_read, NULL, 0);
+> > +static BIN_ATTR(initrd, 0440, sysfs_bin_attr_simple_read, NULL, 0);
+> >  
+> 
+> sysfs_bin_attr_simple_read is only declared and available if CONFIG_SYSFS=y.
+> With m68k:m5208evb_defconfig + CONFIG_BLK_DEV_INITRD=y, this results in
+> 
+> /opt/buildbot/slave/qemu-m68k/build/init/initramfs.c:578:31:
+> 	error: 'sysfs_bin_attr_simple_read' undeclared here (not in a function)
+> 
+> This happens because CONFIG_SYSFS=n and there is no dummy function for
+> sysfs_bin_attr_simple_read(). Presumably the problem will be seen for all
+> configurations with CONFIG_BLK_DEV_INITRD=y and CONFIG_SYSFS=n.
 
---u3xcrkvxcpftqa4e
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Lukas, can you send a patch adding a dummy function?
 
-On Wed, May 22, 2024 at 04:06:00PM -0400, Trevor Gamblin wrote:
-> Makes sense. On a related note, will your pwm/chardev branch be merged so=
-on?
+thanks,
 
-My plan here is to first add core support for .duty_offset, and then
-only expose those chips that implement the new .apply. The reasoning is
-that I want to assert that there is a consistent rounding for all
-new-style drivers and thus allow chardev users to rely on these rounding
-rules.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---u3xcrkvxcpftqa4e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZO51cACgkQj4D7WH0S
-/k6C6Qf+LTGJjBboyMSSTGF03G/zNT6JcBtkPJkyoI+Av73PPmFweSy8iuE7KtDa
-W9NPdmbpbos8hJLsD9O9IUM93okpA7WSEcmyoVNAMfs7GuZNjqpMD2LrS/5NsNJv
-Z0JEycpMDx5fdF45DYU2ruVXf30j40SUN3g2QaZ6/QSl/VRQx1tOR7iNmKl2VhMV
-XTi35dXsdcdjkkVVB+iGxROHY7hA22V8D8NLjfDIx5dErZds2/UXPnaiPmQKTu+z
-f7Y8mI0K7aZzx4fFEBMrJBSI+xZr6S2kpOxCfqaYjgL92Bl80SCrTOxioHkjsl0+
-DPYIUGsisTjiVVHIHHeh97s+4XpH5w==
-=DG6d
------END PGP SIGNATURE-----
-
---u3xcrkvxcpftqa4e--
+greg k-h
 
