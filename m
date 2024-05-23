@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-187490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F548CD278
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A7A8CD27C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 14:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F731C21049
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000E61F211EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 12:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF55014A085;
-	Thu, 23 May 2024 12:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDC714A088;
+	Thu, 23 May 2024 12:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b="DyO73YN/"
-Received: from dianne.skoll.ca (dianne.skoll.ca [144.217.161.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4aMC9y6"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4771494A6;
-	Thu, 23 May 2024 12:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.217.161.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA32E2AD00;
+	Thu, 23 May 2024 12:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716468278; cv=none; b=bAqz/KJ1Rp/kH2fH9kk6ACEtKZFq9hpW1k2XZ0zMSVOPI3RpvWC4eJnCsKhSfvfsmZyYva1iqoDbLhrSN74+xkm9nFsaaQtFu6rEa6fqYVbDtWvpsfZwb4zz1IduKdHBxg/5J6GKVe/3PnfrmfcOXzW6StChza1cIvKHnSCdyng=
+	t=1716468305; cv=none; b=EoklYVV+IabyDzBcUQg2GGJrSO3Hei6vTVb9foCqH6qNzdYl7ll4Q/IXryed2+MNv4xhGvfguX61WYMaa/29yIr4uKrl0v6wQi2u1tOrOryhGdJDCY0nEa/2DEV1/HKMYIOTAHLsmcSpdhIXiGLqIJBMLzVMQITLnDA3405T7hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716468278; c=relaxed/simple;
-	bh=FJWa/uNCr7cJhmS3SUB0xxF/4J8jPMsmYlv7f5oQz3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e2y4s0JhND/P1o5DEKX4Yw07D2pmU+x9gjFz/DyrJVRAseDP/FiQIiPrsg0MP0zisZ6FyfqetpMAdAFs1U/iMKl8nI97P84kaWmiluRju2Kll7F42EDMIhTlBzK413ocnf+Kn0MFJFXaoOSwCaWkE0xQ1isKNlEEL7EVMiqh70A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca; spf=pass smtp.mailfrom=skoll.ca; dkim=pass (2048-bit key) header.d=skoll.ca header.i=@skoll.ca header.b=DyO73YN/; arc=none smtp.client-ip=144.217.161.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=skoll.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skoll.ca
-Received: from pi4.skoll.ca ([192.168.84.18])
-	by dianne.skoll.ca (8.17.1.9/8.17.1.9/Debian-2) with ESMTPS id 44NCiF9M495868
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 23 May 2024 08:44:16 -0400
-Received: from gato.skoll.ca (gato.skoll.ca [192.168.83.21])
-	by pi4.skoll.ca (Postfix) with ESMTPS id 4VlSXt54VRzgd52Y;
-	Thu, 23 May 2024 08:44:14 -0400 (EDT)
-Date: Thu, 23 May 2024 08:44:09 -0400
-From: Dianne Skoll <dianne@skoll.ca>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: N_HDLC line discipline: Race condition
-Message-ID: <20240523084409.150fccb1@gato.skoll.ca>
-In-Reply-To: <93ace08e-deb3-46e1-b318-18aecc210a85@kernel.org>
-References: <20240424173114.035ddd7b@gato.skoll.ca>
-	<20240425140127.6504ade1@gato.skoll.ca>
-	<63a5a3c5-8362-4b93-a50e-10c9cdcffdd2@kernel.org>
-	<20240521101435.0b6b3420@gato.skoll.ca>
-	<93ace08e-deb3-46e1-b318-18aecc210a85@kernel.org>
+	s=arc-20240116; t=1716468305; c=relaxed/simple;
+	bh=q+Inqa6RiwJufQfw8Jn5LPYLy3oolTiQhCLr3UU3LHc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rrmhSwafGiUAts2fToBBCEEMyO5k/41k6HB5T0ZiXeMll/cRnX5E5yvs0qUTlBrLRam0q/oBBq37UT39WbpeMfeLUwvmo3nbkbKUXQ/0F8K1WjV6FjoAHjdA/cGFq2t69PmaELWXqF6ADxjgEYHE0FOSXCpG5akkOGK4MWJsnbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a4aMC9y6; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42011507a57so55519935e9.1;
+        Thu, 23 May 2024 05:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716468302; x=1717073102; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=q+Inqa6RiwJufQfw8Jn5LPYLy3oolTiQhCLr3UU3LHc=;
+        b=a4aMC9y6i6EA+fPaIXW69UUaSL/q8RE56AQD0P+zZRhWCNxPWwADXiTgH4nVF9kh3H
+         B21whQLNsKfeCHKdCtM6bi+kM2Brpu7kmE1qoydJm4QVb3EvXD+XHv9gIfvTq4NuE5Nh
+         DUK3IT1Bdks+5R32U3aZte9GlPAs2n8bZY0V9wzh+Ebps9a/wWPTbIFEHrRpnMJYX3HX
+         HGHqupKizF5yqb7u24PhK+wrljOKufRcN9+eyxnUo9bpzQtLPMPcEVA1XZQAJdXBzJ5L
+         1m7FBeCWPf4c4VSqcaeHsBpi9hrkDbYjUgA8x0AkUkBGc+25yGnycm4teZBIvLxUxb0N
+         79bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716468302; x=1717073102;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q+Inqa6RiwJufQfw8Jn5LPYLy3oolTiQhCLr3UU3LHc=;
+        b=I3zOlQEDob1vaKBjujKgSs7G275oPJAw/ESlQT5cAcaSC7Hxg7i3d8ALH23ibp5kpV
+         FcssEsYiWazEZ2YvHPORUMVOX0ut/gFvHrIscQuQZHIZVD8AteG+cq3ZQDQ5/+53OMpq
+         IrgYnmrUE35q+DG0UgyxegY07taAigIrQadXd+OpFcLUbP9Onz5RkIUAynURcZH2WH7R
+         lTUvW84YQH2Aa3cVW3xmntdpgiILVq1mj2rI/js9ovfCfXd7MEHZuBpFKD3zKJXArUTW
+         f5BFNChjksMe4Wmr7qHDE6kIxXY7UdLX9+wpH6iKsKmfhnVXV+QwBan8UZLcvTPF+0DE
+         b3Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWb4CJbI0Ff8bAtTdpkrQBgWBiE2Xa0tLe96owMVvs5I6LrjaCf1vtJvn2MbeOdy5xdkSZHqmXyLL/zQis6mygWCoOX1RYORqnZscebXenjAeqQ44MhRXLVagmZ95NYeES8nEgy3MQBdO0I9NOqP+VTuZ3Tqs4wHfFB6jmR+3da3A7duQ==
+X-Gm-Message-State: AOJu0Yzop8OeQHTqC8LAJKi0kIpDNoBUB5ImvlRxINAaP58dlkqNMgRl
+	hMiPKE6gjeRRFKpLvjmc60UhvVygdoZX2C+3WJ3Jn/bsl8uQFMyU
+X-Google-Smtp-Source: AGHT+IGiIca8Tkg+zrizFLj3/kOBi8DDUuoFXIu7QhVkNMfllhT4WCwzOwze2LB2M2VawVuw4Jkhrg==
+X-Received: by 2002:a7b:c84c:0:b0:41b:a8e8:3ff6 with SMTP id 5b1f17b1804b1-420fd303b7fmr42913905e9.11.1716468301861;
+        Thu, 23 May 2024 05:45:01 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f1f07bsm24556725e9.13.2024.05.23.05.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 05:45:01 -0700 (PDT)
+Message-ID: <751faef385f81f8a2dd0dcc2acd2d4519bebebe5.camel@gmail.com>
+Subject: Re: [PATCH v2 0/6] minor fixes and improvements
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: nuno.sa@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 23 May 2024 14:45:01 +0200
+In-Reply-To: <20240522150141.1776196-1-adureghello@baylibre.org>
+References: <20240522150141.1776196-1-adureghello@baylibre.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=skoll.ca; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=canit2;
-	 bh=5mf8k+q+wrhHknLna1GJnYemKxsMiU0vjw4WRkKWE8Y=; b=DyO73YN/mfLm
-	TEkbOo+PW0u/6+wcMkcWw15ED10uLoqUjEacT+S053Oymz//TL6/J7vyJF9+H8b8
-	nk9yr6akSKyRQYZE3ntDXfMbjFLyI5pWvdFU++fQa1jbBwDCYurMmFsbAZDOjSsQ
-	Iu1D16A7w3KyirYrLOUtwx/UCE5B+HFwUlMd/vY4VzPL7Yu2S5sgnD66KXJeoa+I
-	H0z/Qp9eBMhx69NsMhBLhwcEj2jUlTUYzHbgko6LhZz0C7Q1C+AlCWQEFSb7lfGf
-	mgtnDhjrvxUDK2NlX24VMKZ2pEgz0zSSASumMFFWHdP9bHOJa1T6zJomqHUvUK7g
-	z5Nxje7Okw==
-X-Scanned-By: CanIt (www . roaringpenguin . com)
-X-Scanned-By: mailmunge 3.16 on 192.168.83.18
-X-Spam-Score: undef - relay 192.168.84.18 marked with skip_spam_scan
-X-CanIt-Geo: No geolocation information available for 192.168.84.18
-X-CanItPRO-Stream: outbound (inherits from default)
-X-Canit-Stats-ID: Bayes signature not available
-X-CanIt-Archive-Cluster: tWKWaF/NcZkqjWIj0BEJTBHJhwY
-X-CanIt-Archived-As: base/20240523 / 01cqAIg3k
 
-On Thu, 23 May 2024 10:01:51 +0200
-Jiri Slaby <jirislaby@kernel.org> wrote:
+On Wed, 2024-05-22 at 17:01 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> After testing this driver, add some minor fixes and improvements,
+> as adding single channel variants support (ad3541r, ad3551r), also as a
+> preparatory step to bigger future improvements related to fast-rate mode
+> for this DAC family.
+>=20
+> Previous patches (v1, 3/3)
+> https://lore.kernel.org/linux-iio/20240510141836.1624009-1-adureghello@ba=
+ylibre.org
+> https://lore.kernel.org/linux-iio/20240510141836.1624009-2-adureghello@ba=
+ylibre.org/
+> https://lore.kernel.org/linux-iio/20240510141836.1624009-3-adureghello@ba=
+ylibre.org/
+>=20
+> Angelo Dureghello (6):
+> =C2=A0 dt-bindings: iio: dac: fix ad3552r gain parameter names
+> =C2=A0 dt-bindings: iio: dac: add ad35xxr single output variants
+> =C2=A0 iio: dac: ad3552r: add model data structure
+> =C2=A0 iio: dac: ad3552r: add support for ad3541r and ad3551r
+> =C2=A0 iio: dac: ad3552r: change AD3552R_NUM_CH define name
+> =C2=A0 iio: dac: ad3552r: uniform structure names
+>=20
+> =C2=A0.../bindings/iio/dac/adi,ad3552r.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 43 ++++--
+> =C2=A0drivers/iio/dac/ad3552r.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 | 140 ++++++++++++------
+> =C2=A02 files changed, 128 insertions(+), 55 deletions(-)
+>=20
 
-> The driver definitely behaves as described. If the ldisc is used on a
-> real HW. ptys are a different story -- it's not guaranteed there.
-> Does it make sense to use nhdlc on a pty pair? I believe not.
-
-OK.  Well, the use case was as follows:  pppd has an option called `pty`
-that makes it execute an arbitrary program, connect to its standard
-input and output via a pty pair, and send and receive PPP frames over that
-pty pair.
-
-rp-pppoe (https://dianne.skoll.ca/projects/rp-pppoe/) includes a
-program called `pppoe` designed to be on the other end of that pty
-pair and receive/transmit the PPP frames via PPPoE.  pppd includes a
-`sync` option, and pppoe a `-s` option that enable N_HDLC on the pty.
-This lets pppoe just read/write a frame at a time without worrying
-about PPP framing bytes or dealing with PPP escape characters, which
-reduces the CPU overhead of pppoe.
-
-Now, the Linux kernel has had built-in support for PPPoE for many
-years, and I was thinking of dropping userspace PPPoE support, but I
-heard from a user who wants to keep it.  ucLinux, it seems, does not
-support dlopen(), so this user can't use pppd's `plugin` option to
-load the kernel-mode PPPoE support module and has to keep using
-user-space PPPoE.
-
-Sync support was added to pppoe decades ago and either it worked well,
-nobody used it, or nobody reported a bug until recently.  But anyway,
-if the consensus is that N_HDLC shouldn't be used on a pty pair, I'm
-fine with that.  Perhaps a comment in the source file and a note in
-the N_HDLC documentation would be good, and then I'll just remove
-support for `sync` and `-s` from pppoe, since it can't be guaranteed
-to work correctly.
-
-Regards,
-
-Dianne.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
 
