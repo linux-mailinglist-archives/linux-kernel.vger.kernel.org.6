@@ -1,129 +1,98 @@
-Return-Path: <linux-kernel+bounces-187728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63658CD762
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E13A38CD773
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7CBE1C218E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:41:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C4A1C215A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE26A134A5;
-	Thu, 23 May 2024 15:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B34B125C9;
+	Thu, 23 May 2024 15:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T86A/Y/Q"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmTOoMyj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF3D1170F;
-	Thu, 23 May 2024 15:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F4811C92;
+	Thu, 23 May 2024 15:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716478867; cv=none; b=jSPnn3GR8tpORcUgIghlCrmgAF9F8J53VZOrdWUMKEJL9QWvauS/WaJhrokZCzS0YYlCFt/M+56b+YFFdNN9sQPSk6CU3H8WQnSemqYFwaMzoLVn91MSitGAaOBC8cRe0WOsdi4kprfXuD8IdqPyVnNaiSFAq266Pcz1SGhvQ4U=
+	t=1716478934; cv=none; b=eSO98gtgaILFvgiBm87dfxEvIZKivW/G1xxv6YW3e5rVf5mbItIt3MczAzJMPXin7Udtap0ZKnZvV4wRLOu+PV55aM916BzLVaWUXXOdL280V4rH+0T9asZ01KkMYNFZJCdzqvDJLrrIoFyhCZ6UDAYpbczefMxdjpPkH43DVyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716478867; c=relaxed/simple;
-	bh=yJgeKp2USP9hyFWHB6DyX7h+mt/gXrBpRhUYxVDXLak=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rUZIWssetgxnQhLyS9ddnDSHMJOnGyNUWUKWgbfOWYjOePOvkvo7RAVJVI86TgS8tbVrMOmyoPby9YpuC3vMCI+NUS+pnwdyvLVgmPJUKRXO2xf/j9RZOdTxR+f8Lsft+Y4bVGLY8NSk5F/piwT9bLsDih6Bmtk4vG3toAMFxYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T86A/Y/Q; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42102c51524so4971505e9.1;
-        Thu, 23 May 2024 08:41:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716478864; x=1717083664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0T/0BOLbQiEg7zkcIb/GRTDdLTeXOCbl42VLf5DDY4=;
-        b=T86A/Y/QYuk42Li4lOWU7gbBLqqvpyJScTGQNHjktZ4p3WedMnwR84W7icxDLrgs67
-         kUrVFd2mH0qF0Yk9/04u6mPhTnJvK798otVXCp1hjYC/L2C7DidPNMOZooctwplvezhq
-         MbHxfmifDZELn9Y3iFNIXD/OubXrjoaGn8PCpE5StoFa+7FditzmFthibZIoZvi7L1QU
-         ldEnParIG5/7fc4Jkm4qFoDHAsWo3Z9UQdz9QyW/fHAHbbq/AGFWo/9YmdIK7wGdqWvg
-         0BH4RCwbyE568ZizLMh29Whm91hm/phKdyMPRMf/9sJTE/1sv3JVIdjKM2h0eHvgMRot
-         rORQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716478864; x=1717083664;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N0T/0BOLbQiEg7zkcIb/GRTDdLTeXOCbl42VLf5DDY4=;
-        b=eNL7SMtTDyUS3BH1G0DShxp9FEP9PZNfKTQvmzK8CRJUXyUA9AZ+HkMMTT4j5QXNlv
-         UD7YVJYf9pyYV0IEI1rnhLBNHqpZwG3fZUf8radc6om2cpq1TAjqLOKoGGfbofqtQ0h9
-         P87IIjyjdJq4XXLUDJ9kSU+G9hLzbAuq+jXFpsVyHQP8WnnZ9Iv+5WVEwttaQhNp9egr
-         XHY+q484jzVxuLaGdP+cUcD4Ckda3D0w3g5HTLbhEGdL5hLeY5Gd9I+HwBhHpii8pFeR
-         Zr8yPQCAw3d4SwchBuJoXr4TuCw9uM9sWenZivAid+ZS4dKMeabAqtQYdF58o3sXC9lX
-         Pg+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUCO2AhsH0xyIdnqTXWUSm3gDYH6ZpIUeFcY1vLMwDRhZjL9+Rhm37PwFcQGUz8wbKL+bl2of8DjQEBVZerX4JneRTDiIx/o0/1dHHnNY5Vazz+cK4jXC+ghdeTQQU1Du69l45fSqlM/jFhj9dzVC25BiNBhH+lljQ6AtBbr64c7se0
-X-Gm-Message-State: AOJu0YwelbNNTPghYQrMkpD5P0+W9RA5w3WxmYQKWb6iLFmtearBoZUQ
-	iCSj7UwS9gzsKp/0ouPOtMB++iI14IqlOW4Pa8GZWxJuz75Uq6eX
-X-Google-Smtp-Source: AGHT+IEWXVf9qKaCwbnz/ddAncvRecD6EHwq3qDLQWks4lfRFKJXN6Zj4ogMsTsAkLKRi/EovgDXOQ==
-X-Received: by 2002:a05:600c:4709:b0:415:ff48:59fc with SMTP id 5b1f17b1804b1-421015af252mr23109415e9.8.1716478863738;
-        Thu, 23 May 2024 08:41:03 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fadd72sm28467225e9.31.2024.05.23.08.41.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 08:41:03 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	s=arc-20240116; t=1716478934; c=relaxed/simple;
+	bh=OtxukrI3lmyoMlT+l5Ie/gSVMik7bPQsqTVX7bxFcZ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iJDDH533goVRqAk0xBIOSK0jsTc8cVhh83bFoVktvlGbrK0hjG9Jznxpk60WclvAH7C4/kJiaUSDl3FBsScC+iHM+33Co3T3sROYkjiW34nt+hpTbwfGFzvM85v1wBMB7bab9LDpGOuVsEKsVw5C2KFIlMHaXQoWU4irpP8Knvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmTOoMyj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E2EC32782;
+	Thu, 23 May 2024 15:42:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716478934;
+	bh=OtxukrI3lmyoMlT+l5Ie/gSVMik7bPQsqTVX7bxFcZ8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TmTOoMyjoDLo+ENuTeUkDEt6IzrGwVU7KAAkBBXE4Dz3Wx8insM0cZGNIDQc8vYDp
+	 kucJWipukZvKjZYEzdEAbI968h51Q+tWTIYJo0oj+zeXvOOoO8xxIlmoxva7TAOLf0
+	 N74FlMW2BbZ0xhQPpSM6zrPLB/pjzrdn+eo9ZQWweJ4endQV+ThtABs75DMy2hkF7N
+	 O821UKg5s4JqhsV80bEUc2EUe3lH85csw5sfIPjDEYFT4zfD8/JyMORGV6SVlpLhrl
+	 sWCZ3WXa81vne1n2zlkI1Xt456DO9J6lWr9+L58hhrWKiDLsYj/y3W+h2P1ZWdlMEq
+	 CCk8frkxQIQ4Q==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] selftests: kvm: fix shift of 32 bit unsigned int more than 32 bits
-Date: Thu, 23 May 2024 16:41:02 +0100
-Message-Id: <20240523154102.2236133-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+Subject: [PATCH] dt-bindings: arm: stm32: st,mlahb: Drop spurious "reg" property from example
+Date: Thu, 23 May 2024 10:42:07 -0500
+Message-ID: <20240523154208.2457864-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Currrentl a 32 bit 1u value is being shifted more than 32 bits causing
-overflow and incorrect checking of bits 32-63. Fix this by using the
-BIT_ULL macro for shifting bits.
+"reg" is not documented nor used for st,mlahb, so drop it from the
+example to fix the warning:
 
-Detected by cppcheck:
-sev_init2_tests.c:108:34: error: Shifting 32-bit value by 63 bits is
-undefined behaviour [shiftTooManyBits]
+Documentation/devicetree/bindings/arm/stm32/st,mlahb.example.dtb: ahb@38000000: Unevaluated properties are not allowed ('reg' was unexpected)
+        from schema $id: http://devicetree.org/schemas/arm/stm32/st,mlahb.yaml#
 
-Fixes: dfc083a181ba ("selftests: kvm: add tests for KVM_SEV_INIT2")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Since "reg" is dropped, the unit-address must be as well.
 
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
+ Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-V2: Fix incorrect variable in 2nd BIT_ULL(), kudos to Dan Carpenter for
-    catching this error.
-
----
- tools/testing/selftests/kvm/x86_64/sev_init2_tests.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-index 7a4a61be119b..ea09f7a06aa4 100644
---- a/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-+++ b/tools/testing/selftests/kvm/x86_64/sev_init2_tests.c
-@@ -105,11 +105,11 @@ void test_features(uint32_t vm_type, uint64_t supported_features)
- 	int i;
+diff --git a/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml b/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml
+index d2dce238ff5d..3e996346b264 100644
+--- a/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml
++++ b/Documentation/devicetree/bindings/arm/stm32/st,mlahb.yaml
+@@ -54,11 +54,10 @@ unevaluatedProperties: false
  
- 	for (i = 0; i < 64; i++) {
--		if (!(supported_features & (1u << i)))
-+		if (!(supported_features & BIT_ULL(i)))
- 			test_init2_invalid(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) },
- 				"unknown feature");
--		else if (KNOWN_FEATURES & (1u << i))
-+		else if (KNOWN_FEATURES & BIT_ULL(i))
- 			test_init2(vm_type,
- 				&(struct kvm_sev_init){ .vmsa_features = BIT_ULL(i) });
- 	}
+ examples:
+   - |
+-    mlahb: ahb@38000000 {
++    ahb {
+       compatible = "st,mlahb", "simple-bus";
+       #address-cells = <1>;
+       #size-cells = <1>;
+-      reg = <0x10000000 0x40000>;
+       ranges;
+       dma-ranges = <0x00000000 0x38000000 0x10000>,
+                    <0x10000000 0x10000000 0x60000>,
 -- 
-2.39.2
+2.43.0
 
 
