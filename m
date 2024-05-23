@@ -1,213 +1,208 @@
-Return-Path: <linux-kernel+bounces-187682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B004E8CD66E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:00:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E65F38CD674
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 17:00:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FCA1F22D48
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DD9E2878C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 15:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F5E14287;
-	Thu, 23 May 2024 15:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="LiAF9et4"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CA7CA62;
+	Thu, 23 May 2024 15:00:50 +0000 (UTC)
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2130.outbound.protection.outlook.com [40.107.92.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4762F125A9
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 15:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476405; cv=none; b=b1XiubKpGCPtMdRl4DV/L5l/qqgR9u24bPsHPUwoJkB1IQU1WFDR4bp5OZOIn4GzC+NA3udv0e35DX1/pmOCtO5y0r23Bls2HnBVJeoIqADD+rS9oaS1LXn+bdpcYw1DQzlEXoBqneWNT5Djlt4GjQ5RN7aCO250vxjeZRgoCsI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476405; c=relaxed/simple;
-	bh=s2lYMgKhqmOoc2ZsDL1yCZHZwFkT2+ILqBEJ2uaDiAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNB3Poj/W+DM2L/7OpFRPetaHft3S0QDfLtTP1JtU6994/Y+jxaij31AOMuDAwp0NuXQgO0+s/OGDFuipBzcHZuQiohxj8qw6/wvkULxFMLBn3OHKXJ/HWTeue5JchtSYyxCYLwjD0q+l+cFPiKnh1FWW5OdfQvW2ucBAtv4hoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=LiAF9et4; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43df7f42ac9so12043851cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 08:00:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1716476403; x=1717081203; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=s2lYMgKhqmOoc2ZsDL1yCZHZwFkT2+ILqBEJ2uaDiAI=;
-        b=LiAF9et4e6YqmOY1K4Nm8yJO97KIGfkUcf4SiqVOOEFSFS+SiaH49u/zW/Wm3Bps42
-         5Ry0I2FCbrs9YwlnKnuIaZY3JMWZQ4ltGv7K2U3DwSPMHeCxVurwmfU9ZJ8rSTP5Mw+P
-         FLxs9qRWuMCG+9PHCNi38Y5/m8T6jA7mYooTc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716476403; x=1717081203;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s2lYMgKhqmOoc2ZsDL1yCZHZwFkT2+ILqBEJ2uaDiAI=;
-        b=psrEn4FKQbMKwSTXgQZ87r9BlBp7YEYE5ckmn1NM7mpd0V1odae0uHmF1/CPO3sMsa
-         qifXS2aye2S21uTO75sDrfx7CKO6xWGhCz1mCLYbMvw3CBpvDxVQOuzcy2pkVjLCa1CI
-         mrLObsnX3QYM8drMdHbQSFHY3hsc/4Mn0l+Ef/PEufY91FxOpZ1fRdy0TI4OXkTBs9tX
-         cnW+sPFouQ3gGvKEh5dyiisBtkz/L9LQ4/2OThOki48kX0SEwrBxNdvG/XiXfzi3HuPf
-         Iw/lk9s13USwhDq9uqk/r4WjHUVEIWxufYgF+I+v2frVdFc73WT/HcjmzwWqKiGAFsiO
-         Rbtw==
-X-Gm-Message-State: AOJu0YyNXqm+9/Nj4eH5OG7pDtufFEums0pX7y9nVgS5OBRxizklHG9W
-	OFsqx3NzbRgckRHsYtEz9l2c4f0fx/l1WVMuyjI43W5NTRuJVrP87iGOYiVJatg=
-X-Google-Smtp-Source: AGHT+IFFne2Xc83fYsFcLXZ3LBNtSJ3tgYmYGJNiUdED+FVyEy1/5AXrTpHr/PEuTUViuJNCQf792g==
-X-Received: by 2002:a05:622a:54d:b0:43a:f58b:2e71 with SMTP id d75a77b69052e-43f9e0849fbmr48737101cf.10.1716476403146;
-        Thu, 23 May 2024 08:00:03 -0700 (PDT)
-Received: from [10.125.231.30] ([217.156.233.157])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e17a8315csm144060261cf.32.2024.05.23.08.00.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 08:00:02 -0700 (PDT)
-Message-ID: <6fbc9a1e-fc3b-4034-a56d-3e8e64413b2c@citrix.com>
-Date: Thu, 23 May 2024 15:59:59 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E19B645;
+	Thu, 23 May 2024 15:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716476450; cv=fail; b=AFmgp9ZaOxtxZI4GD9gbQ5x9CCEGCgVbOBH8/kpaThsa/gHQptjowLPs590/p5R7xbh19KYmCC4AU5Wxuk/x1pWKZpYFszayjmzZdzOnTkI6ZfZ3jeq2lEGCGcP+dyibcIgkAS7bow28HHlbq8v+oVfuzhj5rszXzruf4KbdiJU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716476450; c=relaxed/simple;
+	bh=scs7kERhFIvKyKTZj/mmkY4UBNau8RrNbyOCZDQkeWU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GfaY2E33WtLyZGkv1A5e8En661Mvx00CQ4HxGcfSLINb0prXRRZ9AWjC/TUnBxaPjgT/jyOtVQkT0xpd+5l/HpAVVCntIqMoH5Buzq8JXRq96NIHnaPJEkprJKteSwnBMEBgeVQpwL1sLSAbBGJa0vyhjoHcmZr5/014iCrVwCE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=40.107.92.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JKIgPMo8fY4rBziWKmAsxbwAb/adU4KXD9U9HbcLJxBKfcpnGq52csvq4X/wlkPHvuTWvMBwrm1DbGqVCVUlqeLgg1uDa3ceLbfhTqL9sX1DqOdIgB8cM4ocxohl8yfHYfVUMjQ71lohi0/3/7uIuLbDEqUOQ8vQcoSjqhbwaJxiE8g9gFrBWWztUj0Bc90B0w15jz8UDVjaEdWWUEDawru/D2FztQxEJF3RoA83woCwYeE/Z/PGOD9N4G9vtsFqItmoIcSxokPOdh+FUHe/35/aPanxsJkHjEBw+EsQIn5KiUoxKo6pEN/qNkjxzBLP8IdvKUp8FWChBfa3Siis0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lTxQSjTX2oirq1SG4X9otd894ft78cRklL/6OlMCAUQ=;
+ b=Xcfqr9LkcG56DVRHsLBjuvGrc2WEJO+coyJEbQaa8UK6l+yeR1cgHX1SrZjHOZMAyRhLBJrFqWfaw1F94OZ+0Z3/LvWu/auQYp+8g4sa10ZTZlSoYiY5ytzddZcmYpWF/n3NYOzmxg5oGrs8UoJ8TG206/ybSa74av6HdWtKLGI7cuNi4+uU8zfVcdXG3ZJU3x/QUU0ZB+dsYdWTJfr3csTvbfuhEsXi1HEsrlpveP09iZigt3kx1Xu44MeB/IUtk59ELHJSILzZ2X/VeO8mo4Ad6wVBegvQ6e3vg24DOEYVvMlMiuxTbB3ibBgbSieOp/2e8BhikM/ODqUw7qnlTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
+ dkim=pass header.d=talpey.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=talpey.com;
+Received: from CH0PR01MB7170.prod.exchangelabs.com (2603:10b6:610:f8::12) by
+ DM4PR01MB7548.prod.exchangelabs.com (2603:10b6:8:5f::17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7587.35; Thu, 23 May 2024 15:00:43 +0000
+Received: from CH0PR01MB7170.prod.exchangelabs.com
+ ([fe80::97c:561d:465f:8511]) by CH0PR01MB7170.prod.exchangelabs.com
+ ([fe80::97c:561d:465f:8511%4]) with mapi id 15.20.7611.016; Thu, 23 May 2024
+ 15:00:43 +0000
+Message-ID: <28473e0b-bc3e-410a-a502-184595ae6f6c@talpey.com>
+Date: Thu, 23 May 2024 11:00:40 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] cifs: Fix credit handling in cifs_io_subrequest
+ cleanup
+To: David Howells <dhowells@redhat.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <nspmangalore@gmail.com>,
+ Rohith Surabattula <rohiths.msft@gmail.com>, Jeff Layton
+ <jlayton@kernel.org>, linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <536b0f03-db96-49a3-93de-d9ea835e8785@talpey.com>
+ <469451.1716418742@warthog.procyon.org.uk>
+ <581217.1716475935@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Tom Talpey <tom@talpey.com>
+In-Reply-To: <581217.1716475935@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BLAPR03CA0162.namprd03.prod.outlook.com
+ (2603:10b6:208:32f::22) To CH0PR01MB7170.prod.exchangelabs.com
+ (2603:10b6:610:f8::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
- handler
-To: Alexandre Chartre <alexandre.chartre@oracle.com>, x86@kernel.org,
- kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
- pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
- konrad.wilk@oracle.com, peterz@infradead.org, gregkh@linuxfoundation.org,
- seanjc@google.com, dave.hansen@linux.intel.com, nik.borisov@suse.com,
- kpsingh@kernel.org, longman@redhat.com, bp@alien8.de, pbonzini@redhat.com,
- "Kaplan, David" <david.kaplan@amd.com>
-References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
- <771bbaa3-0fa5-4b0a-a0a2-6516b4f42867@citrix.com>
- <5f064eb5-cabd-4adc-8c6f-6b2e449e3fe9@oracle.com>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <5f064eb5-cabd-4adc-8c6f-6b2e449e3fe9@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB7170:EE_|DM4PR01MB7548:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf2a413b-dd0c-4422-9ff3-08dc7b391e32
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|366007|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WFFEbVlvckl4SGhhZGx2QWJYdVFKVFA2TU54eGVpajRORzEreVVVUGREd2tm?=
+ =?utf-8?B?M1hhQzVyYTZJMk1FOHpJNXdjUkNYZVJjNEJPZndhQ0RieVBjaExwdG1OWlVD?=
+ =?utf-8?B?Q0x6ZXRQMjNUSmhDZWFDbjY4MGVXVTNmYjlDdUJZYTYwMlBWNHFnOXhvTEM2?=
+ =?utf-8?B?NFMxMW5uUVM3aCtScWVvdkpjUnFLT2JNdjJFazFwdFFkNDVBa1ZRYXJYd2lY?=
+ =?utf-8?B?K0YxUTF4bnIycCt1Uy9wL0VHL1M0T3NjMVJIcWN5RFBZOEhTb1RWUWwydEhQ?=
+ =?utf-8?B?WkhTRzBaVDR3cXBjUkl1S05QVG95K0VhaXR2Ri9YOFU2d2h2WU12WUtKdjZ6?=
+ =?utf-8?B?WXNxZ3FoVWg2bENTMFhGZmRwbVEyVzhRVWphNmVQeG1pYXdDbHZaSm8yd255?=
+ =?utf-8?B?b24xY0ZHYWVVcEhFTGNZNmNabjcwRkVhZGNEWEl3emMyb00xZlI4WGxjK240?=
+ =?utf-8?B?NW42c2FFblQ0Vk5wamRiQUduSmRlZk1JOCtFdkQ3RWRiNHkxc1VJc1NJTzhN?=
+ =?utf-8?B?VTBBOFo0Y2tCTGZWUzRoM1k0NEJIWHF5dHV5KzMxcDlKY3p2QTIybXFaNEMy?=
+ =?utf-8?B?dEdVR0gyYitjaXRIR2FSOWlLbGUrQThSSDFXbG11amNBVzBUcHJoNGhiQ29W?=
+ =?utf-8?B?Tzk5b1ZwWFkxeTVLZFhwdFk4Y2NNR0kweXZ1L2RPRTcvYithQVI1TFYwcVh6?=
+ =?utf-8?B?bG9HNlA1Y0xZWm9Bd0JkL1pjYnpoWm5CRGFFQXZ3QnFFM3drbTJvWDQrS1NQ?=
+ =?utf-8?B?Wkl3ckxoc0pBUVJDai8xRWl6WnFBODVueHRLamJGc0FXOFoxLzljUkxvR1hG?=
+ =?utf-8?B?aDJZQ0VjaGh3WEtzWUU0OE4yQXpVdnZFV2p6bXlDMGlJNnFyRFZaMnFXVGFp?=
+ =?utf-8?B?aWlmSjRCUEhzT1c4eEtQMjVXQ3ZDdU1UY1hVMzNoZ1E5b2VGVW91cEZaYU9q?=
+ =?utf-8?B?R25nTm5NYjhuVk16VzBhS0l1VXpLUWQwYlhJdEt4ZmNYcnFIeUFmOGFVbkxn?=
+ =?utf-8?B?VVZLUjlBYjk4VVdSazQ2ejREU3A4UTh3dnBWOVV5b1BXMVYyRG1QZVU5RUpa?=
+ =?utf-8?B?cXFtb1hZL01PRysrOU5vakpzQlZ0ekY4OFRjQy9RdmJ1M3p0NkdMVUVOTmgy?=
+ =?utf-8?B?L1lmMlZwS1BTWjk3dHVBYlBmclk4d3VBRVhzQXRkeGxpWlN5VG1jbm1URm5i?=
+ =?utf-8?B?bGdsbzNrOUhyNmpwZmFlU2dlS2dPcEV5ZmFZZ3FrNllNTlIza3g4VWRremoy?=
+ =?utf-8?B?QWZOVFB2TXBNNVZZWjFoamJvZTJwUjY4WFJvZnFRQVZ4c2x2TmRxa0k4VTdq?=
+ =?utf-8?B?SWYzczBhTFVNbGxhSi80RVVVeHdHa20wdm9mV0QyUS8xdUNCc3Y3MzBpb05u?=
+ =?utf-8?B?a2Z3RWc0aGZISjVnZEVWeXptWmdtbGtDSXhodC9ZbFFVNm11VFY3c0hiclFz?=
+ =?utf-8?B?TGo3UTZlODYrKytlbTQ5MHZ2M1Q3Zm5RYVJ6RXNjd1FzNEZRVU0zckZxMzA0?=
+ =?utf-8?B?Yk5EblpvTzJiOEM4NXNWM0RoKzE3WVExb3JPekRmR2FXK0xVTXAyc0J6ekZi?=
+ =?utf-8?B?NTJ4bkhkbTNqQVFaREZ6QllZWFVQRWp0Y1pCSXRKc3l6MUIzaXA0ZE5ReWRD?=
+ =?utf-8?B?WnJwRTcwdFF0VVkweTRpU1dqVmlUWlExNk5uL2UyeUNveUFyM1cyUWZOc3Nz?=
+ =?utf-8?B?cVIwQ1c1QkxPTnUyZmRiSzBVR0xWNmxHSTUvLzVwR0dnUzhjTUNEUDlBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB7170.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(376005)(1800799015);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TGZrc1RHcHpPWmh3VlpsaDFxYWVYaEVtZ2VrNEF1ZWFDbUxnc1ZuTmhLN1px?=
+ =?utf-8?B?VnhRZXNJYWttNWdiTmNSNlQ0TCt3UnEybVJwMWJFcDZ2TG5BTm5UaDBDQklz?=
+ =?utf-8?B?VGhVMzhTZGppam40c0N0UGcwaHpSSlkvekJ5eGNhWFJETnZVd01PVGlWdm1y?=
+ =?utf-8?B?NktyRzZNVUpwZHE3dHhDbDN0N1hkVnlvZW8zbVZnVjkvb0NJYVR4UXVxR3lC?=
+ =?utf-8?B?SmRicW1GVmU5bVpTc0NGbDZFWVZoK1MxVmd1cXMweDcvNlh2SU51eXlKZC8z?=
+ =?utf-8?B?WnZsK3JjYU1UeDdReUVmYVl2L09jaUVzTmVmN29MM00yUXM1dWZMeXd2bG05?=
+ =?utf-8?B?WDRhYmNNWkQ4OGhFU2F6T2h5bDU2UUplY1FieDVQUTA0Ymx4UVlPcExyMjVl?=
+ =?utf-8?B?VDJSeThKa0luR0I0MzVsM2JOeHlzNjdSNjdVN1RtUHpWbk5wRDNnRTNvbXBE?=
+ =?utf-8?B?MnNhNXRBOUVvZ1BUQnhHT1hiblIyQkpRV3QxdVA3Ym1hY0ZGdUJxdEtHazB0?=
+ =?utf-8?B?Q3NOaHlndENveHpKMjFaa2x2NkhmMTdHd3hab3U4STlnd0piQVBGaTNZM2Mw?=
+ =?utf-8?B?S0FtTXFiSDZFK3lhUFBRRlMxUGRYM3EydVhoaWtCYjZ0c3ZJbFd2M01Scy9S?=
+ =?utf-8?B?cE9rSFRJQklnRWNhVFU2ZUxuaDN3QjdneS9QQVJZenZYcWFLU1l5Yy96L0VM?=
+ =?utf-8?B?SnJJS2ZzWk83UXBvZFBKNjc2WVlUWDhnMks3cldBQURacmVodzJUdm5wbTVw?=
+ =?utf-8?B?cTlQcVR0SGkxRmowdlFmbDBQZjUvSXdKT1lNdWxxSHpDZGtLUnI1cUJKakdU?=
+ =?utf-8?B?QXhsL0c1VGJlY29jM0tGalpVK1FEVWVSL2dGZ2ozRWdMU3lFUVZFMmIwcXlL?=
+ =?utf-8?B?dVVnZTd4QlZmOVRGcmxDdnlFSEdaYXllUVZwR3ZGdk1ZTDk1MVYrQ21IVERV?=
+ =?utf-8?B?cjdnbVBhTUVpNEVIRlRsUUhSUmp4bGwrN3pUUDhBR3NONDd1MTIveUdkY29a?=
+ =?utf-8?B?NlVQOUNsSUdlVG84RzdzUXVxMTdKNTJaK0dieXZDdDhqNmgzcGFCY01GQlpp?=
+ =?utf-8?B?bklVTktpcFpuK3paL3FvZGduMWdNdlNLR3pPWHhlNTBNeElrd1M2QjFRTklt?=
+ =?utf-8?B?L1R6Tm0wU05OOHo1SDgxdndpa2I5KzF6TU9DYUNjc0dDcUg3QklZaUpNMXhT?=
+ =?utf-8?B?dzc1UWxmVThxTFBaeFdWZWNpQzR5ZEhsazJheUdwUVltSkI4UEkwRU0xOGFB?=
+ =?utf-8?B?bFJWcDZvZExkYUI5S3ptTmRNaEFmQitsYjdPNWpveVNKUVBwZVFsUHZmNVVu?=
+ =?utf-8?B?aVBDQms5bmJyVGdBYlVEdXNCVTNhdW8xK3pmbUpNUWVkWGt2UENBVkxJN25P?=
+ =?utf-8?B?ZHpqckZCRjd6ck5xYXR2QlJ5Z2N4eVA1d2FvNGg4SGJvT3JLZWtGeG1OTWdU?=
+ =?utf-8?B?QkYyYVU1Y0N2TTlzM3B1b3FaNkZ1Q0U2UVplUzJwcjlhak1hWDFsQkxhU3B6?=
+ =?utf-8?B?d0dpMS8wekFVUXhqUlhrMWgxNWZlNzhOK1NxRHNSU09Fd2NvU1BQNXNBYlVF?=
+ =?utf-8?B?czBhN1BCRUN0ZmZpN0tBVmF4SjdIc0JPL2RSMEtQdmlVUG53dGxuS0JTaWVo?=
+ =?utf-8?B?V2luY05DVVJoZDFrNHBMWHlJZnhmYXo1Y045Z0tYVGU5Qk1hT2NZS3F1ZG5J?=
+ =?utf-8?B?QWhKMjdiK1krMU5qL3daNlN2VFgyTi9lcFprbVBvaWJmQ3YwUUR3ckNMTGR5?=
+ =?utf-8?B?Y2tSRW1oTXE3R2R5eFdLSTlwcCtKaDRRYXJGc2U4RDlqRWFLcWhxTmFBZDUv?=
+ =?utf-8?B?bVFHbm8xcW5zR3RtQ1BzL0l4MTRuZTRZRmlSNkV5dkg4aHpRL2tpalV1NnNE?=
+ =?utf-8?B?b0FvV0hhQ3R4Zm5jMEpJM0toeTNzOVdpN001N0crMy9ySjkveVZQR1dBV09Z?=
+ =?utf-8?B?WFNPYnZXV0ptb1NSUlp2U2NoQndTTEpUR1VVMFNBUVZLcVRBV3pTRUVndGhU?=
+ =?utf-8?B?d3pxZ204OWJ2WEdmdzFpOG1pZ2xzekE5Y3JZbWp0UFNNZnZKSm5xZUhqcnJh?=
+ =?utf-8?B?ZzZsUm9wWGkyWDY4MUhaMVZvYk9zWHJTTjJTY3V0cVdJVitSZ2FkR3phQXBH?=
+ =?utf-8?Q?MeQDBQYte9ZPzVWElQQ4PmaHG?=
+X-OriginatorOrg: talpey.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf2a413b-dd0c-4422-9ff3-08dc7b391e32
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB7170.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 15:00:43.2584
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q0XQ4XQz2CzLP779s2Cg2L/cd5G4zDLNlyuWxj8nY8iDdvpTYDjW0ksinOD9MYmz
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR01MB7548
 
-On 23/05/2024 1:59 pm, Alexandre Chartre wrote:
->
->
-> On 5/23/24 14:42, Andrew Cooper wrote:
->> On 23/05/2024 1:33 pm, Alexandre Chartre wrote:
->>> diff --git a/arch/x86/entry/entry_64_compat.S
->>> b/arch/x86/entry/entry_64_compat.S
->>> index 11c9b8efdc4c..7fa04edc87e9 100644
->>> --- a/arch/x86/entry/entry_64_compat.S
->>> +++ b/arch/x86/entry/entry_64_compat.S
->>> @@ -91,7 +91,6 @@
->>> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
->>>         IBRS_ENTER
->>>       UNTRAIN_RET
->>> -    CLEAR_BRANCH_HISTORY
->>>         /*
->>>        * SYSENTER doesn't filter flags, so we need to clear NT and AC
->>> @@ -116,6 +115,12 @@
->>> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
->>>       jnz    .Lsysenter_fix_flags
->>>   .Lsysenter_flags_fixed:
->>>   +    /*
->>> +     * CLEAR_BRANCH_HISTORY can call other functions. It should be
->>> invoked
->>> +     * after making sure TF is cleared because single-step is
->>> ignored only
->>> +     * for instructions inside the entry_SYSENTER_compat function.
->>> +     */
->>> +    CLEAR_BRANCH_HISTORY
->>
->> Exactly the same is true of UNTRAIN_RET, although it will only manifest
->> in i386 builds running on AMD hardware (SYSENTER is #UD on AMD hardware
->> in Long mode.)
->>
->> #DB is IST so does handle it's own speculation safety.  It should be
->> safe to move all the speculation safety logic in the sysenter handler to
->> after .Lsysenter_flags_fixed:, I think?
->>
->
-> Right, so something like this:
->
-> --- a/arch/x86/entry/entry_64_compat.S
-> +++ b/arch/x86/entry/entry_64_compat.S
-> @@ -89,10 +89,6 @@
-> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
->  
->         cld
->  
-> -       IBRS_ENTER
-> -       UNTRAIN_RET
-> -       CLEAR_BRANCH_HISTORY
-> -
->         /*
->          * SYSENTER doesn't filter flags, so we need to clear NT and AC
->          * ourselves.  To save a few cycles, we can check whether
-> @@ -116,6 +112,15 @@
-> SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
->         jnz     .Lsysenter_fix_flags
->  .Lsysenter_flags_fixed:
->  
-> +       /*
-> +        * CPU bugs mitigations mechanisms can call other functions. They
-> +        * should be invoked after making sure TF is cleared because
-> +        * single-step is ignored only for instructions inside the
-> +        * entry_SYSENTER_compat function.
-> +        */
-> +       IBRS_ENTER
-> +       UNTRAIN_RET
-> +       CLEAR_BRANCH_HISTORY
+On 5/23/2024 10:52 AM, David Howells wrote:
+> Tom Talpey <tom@talpey.com> wrote:
+> 
+>>  From a protocol standpoint it's correct to reserve the credits while the
+>> operation is in flight. But from a code standpoint it seems risky to
+>> stop accounting for them. What if the operation is canceled, or times
+>> out?
+> 
+> No idea, TBH - SMB credits wrangling isn't my area of expertise.  Note the
+> patch is superfluous as smb2_readv/writev_callback() clear the credits at the
+> end; worse, it's actually wrong as we're not allowed to touch [rw]data after
+> calling ->async_readv()/->async_writev().
+> 
+>> I'd quibble with the assertion that the server will "give us new credits
+>> in the response". The number of granted credits is always the server's
+>> decision, not guaranteed by the protocol (except for certain edge
+>> conditions).
+> 
+> It does give us new credits in the response, doesn't it?  In
+> hdr.CreditRequest - though I suppose this could be zero.
 
-Yeah - this looks rather better.
+Yes, credits are consumed by requests and replenished in responses. One
+credit is needed for any request or response, plus one credit per 64KB
+chunk of payload (read, write, etc).
 
-Although I'd suggest a blank line here if you're going to formalise the
-patch.
+The value in hdr.CreditRequest is a hint when sent in a request, and
+a small-ish integer, very possibly zero, in a response. Often, it
+replenishes the credits consumed by the request it matches, but it can
+be higher or lower at the server's choice. And it can be sent in any
+response, before or after the one you might expect.
 
-~Andrew
+Tom.
+
+>> I guess I'd suggest a deeper review by someone familiar with the
+>> mechanics of fs/smb/client credit accounting. It might be ok!
+> 
+> I've given Steve a patch to try and find where the double add occurs.
+> 
+> David
+> 
+> 
 
