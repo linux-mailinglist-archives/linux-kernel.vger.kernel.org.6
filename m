@@ -1,254 +1,330 @@
-Return-Path: <linux-kernel+bounces-187882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A17B8CD9FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:31:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D10A8CD9FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 20:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108F11F22752
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3B3FB20B2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BD37604F;
-	Thu, 23 May 2024 18:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3D381AD1;
+	Thu, 23 May 2024 18:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cde6INrn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LeOzc9oE";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="L9BJ2mO4"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F3C82D66
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716489095; cv=none; b=iywmOuMZrnBWkgPfExgefCtFm+pBoQZ5BbtgeW96ky9hkZiMqep3ZDAUY6j0HKvN3YMqLb1eVozVUSwpr9L8b0oXy4oPtM0QoglYy97VBmvCVS13W4i5QJVm7/o32N0VXdkckRgpSqHemY33ACXRIFNRwtH12uafPU0OdUcFg0k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716489095; c=relaxed/simple;
-	bh=R+0S+fCwg02VLjfWw2Om8Hrf4inh/hpf95MwRuy2ltk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UwGU5xh+jxPQeWCxdPdRpFOZ2Z0xdZJDe89xryVsL+9nb8/PEKD7Ce+B6j7Sl5cSfiYndyj9ziaV/GYfVRrAdQVOM7D4+sVcNSgh8cHRppZubLAESrUm2CKfDBDg/Z4dfwZN8ulGdqHMh6FiP7TlRXZ+ljQWjlaEiI8Avpx5UEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cde6INrn; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716489093; x=1748025093;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=R+0S+fCwg02VLjfWw2Om8Hrf4inh/hpf95MwRuy2ltk=;
-  b=Cde6INrnGIz95SeNcy4Bwpaenk6J0mGQ5Xu2SmivFT40i7GLCet3h4mh
-   lruVn6sXMIkgQDthkIdz8ZbvFN9qZtAJVfdmHpVWcvNmDoodjc6cPRMD2
-   9CsPNmt6YDADnhXgP3XXWk+x5Faxiu5sFZuJR5AbsMJNmiATdvZTnYK2w
-   6uQlr4WxwBIQEEyIXt1ZhT++Gf8CsZEqOFlzkM7TVByPaaYOb2RfAT5zi
-   C12EdbLRDa5RbUMsk+VTfKyCz5PcKiDuf1tVKO6UzVARE6AP24y5/yAKF
-   4WCJiQfFl4JIc802nqjD07YvGaQy6qxNatvRitekKuAd8+ZkC2F+Ej8Q4
-   Q==;
-X-CSE-ConnectionGUID: DjqOFlRxSbGc0/YzI+EonA==
-X-CSE-MsgGUID: NAiiUvUITBm1+pCTNC5zuA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12949741"
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="12949741"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 11:31:33 -0700
-X-CSE-ConnectionGUID: 4BmPLX21R8WpcetedmCXNA==
-X-CSE-MsgGUID: sB4TVWclQZ2YhreAELmWwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
-   d="scan'208";a="33608833"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 23 May 2024 11:31:30 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sADDs-0003EO-0T;
-	Thu, 23 May 2024 18:31:28 +0000
-Date: Fri, 24 May 2024 02:30:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Kees Cook <keescook@chromium.org>
-Subject: WARNING: modpost: lib/test_bitmap: section mismatch in reference:
- alloc_tag_restore+0xb4 (section: .text.unlikely) -> test_print (section:
- .init.rodata)
-Message-ID: <202405240201.efKgUHwc-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1939B20DF7;
+	Thu, 23 May 2024 18:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716489076; cv=fail; b=mc6QwGjdH67eMQKecm/txvSqGNgb4Clu0O3FmsRS+00zTQomH32heNgRr9of2EIxtwZJ49jTlHe15ZBdC1EI8OhSRz6koRLMIgnwjEvAoa4ShX6ke+MvVWNOrv6YABjwxCk+RHTVHLh/ziJ8G3gu76wzyk7QIKtQ+tslQOGHtfo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716489076; c=relaxed/simple;
+	bh=YRMEoF+BK6Bs3/zg3tXRrEs4L7HV22D5EqFBo5q3eBE=;
+	h=Message-ID:Date:Cc:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pTZs3eKPawtOXX7s49i8OGQsHeqDsDqhab2IsOuwd4/rS0V28yw9/W2sWfmcKERGw3Nl6zlzJU6CQt7mo6KhBCDUyU5auS3DgJTsrEptnbvi/E7PSpWoMcNlVIhtG+LXx6hRTmO51BIzGqMzORm6Ec5/bC25mZee41SXE58Pc5A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LeOzc9oE; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=L9BJ2mO4; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44NI7jwq006721;
+	Thu, 23 May 2024 18:30:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ cc : subject : to : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=r3WQ3jSHp1Xxj4q6mgTpKiRyLyq6xJ6r5YbhVL6tJ4Q=;
+ b=LeOzc9oEIXZuHcWt0uos1cKUY5Q83KGwRzXw1mNmnlNTfSuTfeSiu16yLYALoZKacKzO
+ LD3At8zxmzyzt87NrtNHke9qABh71BnXDzNwrt6riCscP1/GMa0tSPxYDHSFLUMUoXXb
+ uxR8uBQwzrX/g3qmmeNJF66DjiN+lgyCwC7qZ5oQnugOuiAaebJSUt8buWcQM80vjxXa
+ E4kNdXnrmbaH/l2MwO7jA9jOzyS7hihia54DWFnRe6rlzwjzOv0TnBBel1lESRtFaUvv
+ PeSWc7yK2l+tNu6A06rNXoDuPwuTJ1W4iai5cEW6Ozl29qfj4ubK3dcztiVU+5ZZm7U3 zA== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y6mvvav4g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 May 2024 18:30:56 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44NGxSXE013792;
+	Thu, 23 May 2024 18:30:56 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2101.outbound.protection.outlook.com [104.47.58.101])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y6jsacy4w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 23 May 2024 18:30:56 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xarsnjy3iPtkTL0jDaPPmPGWUs4wOeJFG58DtEBOuv5cYCqwNFVGo1T0grHmweI7hYpzlA6m4pHoY7mgE/WCXiFmF7RQS2HXd0n0YRc6cAVt9ckgO3TXUB3nG7iQiMettoX73x3HJH9AYlsKY+wlq6oGg3sfxSiAR9bkJAg6s0uDLavkrg3Xiqa7H9/GDND+fmBxmkpeCh2ezooGWUuyGfpHZdrYJ6Udv9lw6yy8aBp92uFhoZgfvOQUmB0/BXhNIYjJ54g9tSKwGSfmc3al4VfcB91GkZ6jKm516vhiai7G9Sxs0H0ng/plqfqjFqgPlYDOcfU9UNWQV4z7yCVGHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r3WQ3jSHp1Xxj4q6mgTpKiRyLyq6xJ6r5YbhVL6tJ4Q=;
+ b=WitCmFaxNY8AX48ekxHGiNApZ+OPv3BGiQpiV6p02MhIFQq7P/lZOV11z9KlCRmKrVbMPLuGWjGoVJ0YOkFcyxJi5HXgKwsntO53YAGPggVv0DvG1yw96KOy2fvJAcHYblOARaNls3CWg7xS7vWH6V7RfSY24PQoV2ZuWnvqRBTh0ADzfjxxMBq8yi7dkxjkZCg4mRW2APlRgmvozOxf5ndZEqmqAYrkx20Mu0fsUujtvh44ML+nNC9T84yOgxy9ecVoiC3IZHVJfDUEvk+5qxqiG+KxalGSiXXl6v/vfUFhumjdK0uGM9BnIy06vpkwxCUexIsIoh9L1a7ZqpcfKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r3WQ3jSHp1Xxj4q6mgTpKiRyLyq6xJ6r5YbhVL6tJ4Q=;
+ b=L9BJ2mO44PSO/lmfvnYc+oi3s9VhWXHFRRkHQL2H5Aa9qTE+RZ6QAttaydcLsntZVUkJyXUqEgzvfyvKkD96RyAiBLVIOvbMrpvUIWZI1rZTi9Qo8cu02ipxJv0vUT/SFBHMF9nAnf0STvZrVVbqJtatqXgZBJSHhax2aU+fKdY=
+Received: from SN4PR10MB5622.namprd10.prod.outlook.com (2603:10b6:806:209::18)
+ by BN0PR10MB5063.namprd10.prod.outlook.com (2603:10b6:408:126::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Thu, 23 May
+ 2024 18:30:50 +0000
+Received: from SN4PR10MB5622.namprd10.prod.outlook.com
+ ([fe80::6bce:37ef:d1de:d084]) by SN4PR10MB5622.namprd10.prod.outlook.com
+ ([fe80::6bce:37ef:d1de:d084%6]) with mapi id 15.20.7611.016; Thu, 23 May 2024
+ 18:30:50 +0000
+Message-ID: <3cadb384-3493-4f36-a0b9-a3dffbf9fa9f@oracle.com>
+Date: Thu, 23 May 2024 20:30:44 +0200
+User-Agent: Mozilla Thunderbird
+Cc: alexandre.chartre@oracle.com, linux-kernel@vger.kernel.org,
+        daniel.sneddon@linux.intel.com, pawan.kumar.gupta@linux.intel.com,
+        tglx@linutronix.de, konrad.wilk@oracle.com, peterz@infradead.org,
+        gregkh@linuxfoundation.org, seanjc@google.com,
+        dave.hansen@linux.intel.com, nik.borisov@suse.com, kpsingh@kernel.org,
+        longman@redhat.com, bp@alien8.de, pbonzini@redhat.com
+Subject: Re: [PATCH] x86/bhi: BHI mitigation can trigger warning in #DB
+ handler
+Content-Language: en-US
+To: Andrew Cooper <andrew.cooper3@citrix.com>,
+        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        kvm@vger.kernel.org
+References: <20240523123322.3326690-1-alexandre.chartre@oracle.com>
+ <a04d82be-a0d6-4e53-b47c-dba8402199e7@intel.com>
+ <1c69f62e-0dee-4caa-9cbe-f43d8efd597b@oracle.com>
+ <93510641-9032-4612-9424-c048145e883e@intel.com>
+ <5ed7d3c8-63c3-48f3-aaeb-a19514f4ef5e@oracle.com>
+ <0fcbfcba-9fe2-414c-8424-347364fcbf35@citrix.com>
+ <d9f5a2d4-9c73-45c5-9de9-12a4d1d9ee99@oracle.com>
+From: Alexandre Chartre <alexandre.chartre@oracle.com>
+Autocrypt: addr=alexandre.chartre@oracle.com; keydata=
+ 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
+ swLliy6PdpST
+In-Reply-To: <d9f5a2d4-9c73-45c5-9de9-12a4d1d9ee99@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO3P123CA0032.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:388::8) To SN4PR10MB5622.namprd10.prod.outlook.com
+ (2603:10b6:806:209::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN4PR10MB5622:EE_|BN0PR10MB5063:EE_
+X-MS-Office365-Filtering-Correlation-Id: e450b140-34e7-4642-643f-08dc7b567892
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|7416005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?WDVEN0ZlZlFYMllqYjMzQnNCT2pGeHg0UysrNDRzYVJkUncwSDZEVTB6TktH?=
+ =?utf-8?B?QWhqTUhVaDMvc2MrUDRWbmo0R0l0dXRuekI5L29MSUdYQjNmc29aaUhpVzdW?=
+ =?utf-8?B?M2E1bEhaTkp2QTYwQU9DNnNLMWdoYlVVTWdOMmZMVjJHRWgzbGhwU0RUSE9x?=
+ =?utf-8?B?QlRrbDZVOGVDUFhScXZEQ3JoUDd0T3hDb2NGd0RqV2xKYTZ4S0ltRVZpN2s2?=
+ =?utf-8?B?aFRqbUNxTzlES01TbjN0a2pMU0ZGUUZ3RWVGUWJIRFpRTzFYYWxBMncweFgw?=
+ =?utf-8?B?RFJQYWJaYnpxRUl4eWRTQXRXalpBU1RIYys4NFA5RnNPL3RHeEs4Z2h3T0kz?=
+ =?utf-8?B?cm9odlVIaEgzamZVNlJoOVpQSDE2THZJV2xUSWhJZ0Z1THlrYk9iNXpVNU5R?=
+ =?utf-8?B?RFlDQW9WZG90ZjRnb3l4MEJXYWpmTUQ2L08wNi90KzdSOHlvZS9zK0k4Z3Vh?=
+ =?utf-8?B?SlRtM1BmcFlWOVhYekxYK01tZ2c2SFd5dHRxRCtxQjJOM0syd0gxWlNJdy9q?=
+ =?utf-8?B?YUt2cDFzN3hlc3BCY2gxM1lNaVlkZzd3VGxxQW5vZ1NRdjNsNm5POU1oZDE5?=
+ =?utf-8?B?MURidmJVcDQ4Ym0xU0hTaFpxajdtRUdFUC9kbERRUDBnRkpFT2RrVklpeVow?=
+ =?utf-8?B?aWVhcmhPWWVqTThtR1JnS1dsSU5wOVViOWJFTTBtODBzcGtmazgvcDNaNm5R?=
+ =?utf-8?B?YnJqbGRIU0VIUVR2M3M2d2hJTUp0UWJTaFI2YWRKc3FXTERMamIxYStXa0pP?=
+ =?utf-8?B?M3VwR2doZmNKRklrU0QrQUMyVUJuaVZ5K1Z6Yk03VjB4RTF1aVJRaWszd0Q5?=
+ =?utf-8?B?WHRRSTZkNEVxUVRNdGJGV3pvSWg1ZDVmSVhEYlh4QTQyNWdLUnJFR0VkUHcy?=
+ =?utf-8?B?Tm9jK3I4REMyQVgveVd6MWRrall6Z1U1RElDS0xEbUtPc2RUMGI4eGJYMVhn?=
+ =?utf-8?B?eGQ4dWRRMER5TFhUU1U0WE9zaFVNWnRBUDdKVm4vQXVpWnU1OFB4cGltN21m?=
+ =?utf-8?B?Sm5MYi84NTQ5blBQZ0JWUE1wdkIyZFNMa1FpVll1YlZpOWcrcUJTWkVhSkp1?=
+ =?utf-8?B?WXdSNXhLL0Vhakh3VENscjVPQTdDR0J0c3VwRlFxSmRLWVlYenNVWEIzMm1h?=
+ =?utf-8?B?cTlhdnpidTZoVGE5R0xGSVBkTitBS3pEWjFlUDR5VnNkdWVnOEJJL1p3TUtt?=
+ =?utf-8?B?ZTY2Nk5iMUN4dWJibFpacklGdEU4RjhodHcrbTU0UjNWVXMvb1U3SjBoTVNM?=
+ =?utf-8?B?bkF0bkYrem43ZWhadWdNaDcxaVhiSk81T3NzcHk0aXhvRVR4Ym1BbkJ1Y1h5?=
+ =?utf-8?B?ZEM1OXBFYnRtS1I1dVQ4My94THE2ZXplbUQ1bzRScmwrRk5iY0pLbE4xZjdu?=
+ =?utf-8?B?d3pYZGhSVjBJTGwzTlJDTEh6WkljVjRvTHZyMllGWUdhcHBKNEpPdHRySUx2?=
+ =?utf-8?B?ckhsd1RldVYvNHVkbE1CVXdrM2syT3JBVGtUL2p3em9RV1krR0VGZTFsaStV?=
+ =?utf-8?B?Mng0V1VuVFVRNk1BbXRwRzBjUDd2ZktsdGk1bklpR0F3aytKVEhPdFYyVTRv?=
+ =?utf-8?B?ak5TeXJNUUhvbk1aaVdCbWpEUXE5UkwzcWUzb01vK0llMEowRmQ5bVYrT1pK?=
+ =?utf-8?B?MDAyK3pvTVkrdE5wdW9CU3EzZThhSzRvaldUUzRwRjU2cEQ0TnNPRnAwMi9S?=
+ =?utf-8?B?MkZrV2U5alNMVFBLTU5qT2pJcE9wREFIUVN3cDNDN3dJMXFKT05uTkF3PT0=?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR10MB5622.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?ZjlabmdKZ21PQnNJbG8rNmR5a3ZwaERhSCtsQ0VodUI4ZW5kbVBZcGFlZ0s3?=
+ =?utf-8?B?anVwMUtYczh2dDVzMWFENWdmMmNRNjJvMDBpSExhZXJDRTh1TS9pTkN1dTRx?=
+ =?utf-8?B?ZWhFa0ZhdzV4ZnEyblhkWGhDamFJR3BhclFneVJKcjl4aGtyS0t0dkJYditw?=
+ =?utf-8?B?SmpjSk5JaXcxaU9sWk5MakE0VHE5RkF1cnRraVJFMHQwVWZRTU84dGdadE03?=
+ =?utf-8?B?Kzh0cWpPQ3NYU2M4djRRZlN3WXo2bHBPZ1FiSVczN000Zk04dEdid0pWaG9n?=
+ =?utf-8?B?M0R6aUZvd016WmFETmxlZ3NLYVNGUEhsaThNbFBjNzZkbmFVSEpncG5uemxZ?=
+ =?utf-8?B?ZHR2N2FKZjRaS1h4cGxWdEtZOGtoRVR5cktUZkdpR3ZVR3ZkY3k0dHFsb3NZ?=
+ =?utf-8?B?dEE2MzdSblBvT2xYWjQ0RmJGSVBFZEVTdTdSNXJPcEVIL3NVME02ZHVTbWFQ?=
+ =?utf-8?B?dzdGSFFDS0tsSE9Dam41ZFV5QXEzVkl1a1dvUElzZDhjT3JGTmVmZERRbVpz?=
+ =?utf-8?B?RE1NeHZER1F2VFU4VmJGcExHdjdxT1NyNG43cmpWQThoc0tzYnpQdDVJTkQ1?=
+ =?utf-8?B?bThGVi9ENXhCN0tjaU9wTHdLZ2Z1d0dBTVlNeGhzdUVIT25BMUZ0cUswdmFz?=
+ =?utf-8?B?aEozQjNBRUc0b2luWFJobDFIRHlzL2FyN0hCZ29yVEpVL1RaUjFVYWhhNVRr?=
+ =?utf-8?B?VU1UNnp2N1QyK1o4WmNIQ1lCSEpweU1uWXNYc010TlBya2xrUE8zbGM4KzQ3?=
+ =?utf-8?B?RmMyKzZDMWRaNm5hVlhBd2VTcnU0NzFvLys3c3FCbnJXb2R2SURwY3VocWJq?=
+ =?utf-8?B?QlZsNUtYZit6aTkycGl2ODg0cXVxNXdNNmowZ0xBbkRobjNJbzhCNXV0eVVZ?=
+ =?utf-8?B?MnQ3eEs1MW43QVdFTWNTTEJKdmh2VHdtRUJsa0RQTW9EZzR6WXo4am1Ha1JD?=
+ =?utf-8?B?YlFISnUyUE4rcDV3WnJDQzlvU0JySWxyRHZTMGpCTHA2OG52NDdaNVpvQVJa?=
+ =?utf-8?B?dGd5SWRmcnVtY2owSitGdzBSQ2VRbmJTU0RXOHYwc2VwOGxiODJJMnYvYW5P?=
+ =?utf-8?B?SE83MnhYc0p1TzdWelN0eFN4UVM1bEk1VlZxQi9iMXJORHFWN2JPUTJzOTRG?=
+ =?utf-8?B?TUJLVmZZWUIwU09xMDkwSWVWaGxla2JFbWFqRkN5TllzSXRqUmhPWmx1TWJO?=
+ =?utf-8?B?STlTNFordTZISUFieTU4N3VKRGRwcFlveVREVnYxNTN1VGlCc1pPemFmSExB?=
+ =?utf-8?B?L0s1eDR1WUU1SUJ0ZkFoenFOZVhnaDQwSXUzUjRGdDFTMGRieDVzWU5oL3Nw?=
+ =?utf-8?B?SzNwTTI3UmN3QU1UdlpSK1NUdU5kcGRoMG5UbU5DVjZDTy9FWFYvTUtDeHJx?=
+ =?utf-8?B?WU13WlYvbWJrVVZadDBqY3NnQzRpU0xkald2bmQzaHovMXV0QjdQMnRRQUpY?=
+ =?utf-8?B?cU1pWmdvWEdZc1FqSjVkNU9uRDFiZ3lsSm1wWTVjRlBDS0NvL1JaTWlOak9Z?=
+ =?utf-8?B?Ry81OFRtQW1ZSzhhaWVPNERkN3B0T0lCeUl4bWJJVnN3REpMLzlaSkxzbkhq?=
+ =?utf-8?B?QTBxSjMzdW9rWlFadVJPTXI3Y1M5c0UyWUNFWjJhaGlrcVBaWkVYOHRPR2E0?=
+ =?utf-8?B?TjVyWEJGdGl5WWovNEsrM0RHRVVnNEtsNTBVNCtQK2czbnU0M3ArVHZubjFE?=
+ =?utf-8?B?RzhqNHZxcDNJbnRtNTJKQmsvdFpybVNUNWovQWloR2pRL2dRUDlseGg3RG10?=
+ =?utf-8?B?bTNmVVBFa3BjaDlJZHpmYWtDVEQ2ei9EQmFnM0xiWUJYQURRb0UzbDV6dDFY?=
+ =?utf-8?B?RTJjVUNGaEo5ZllnVEtZRGZ4ZEJiSzZuRGVJd3NVUWpVWlJwOC92OXBnVnJo?=
+ =?utf-8?B?dUt3T0d1bTN1eWY3U3RkN1dOODh6OUFZcmpabEwxRFRRd21BZUNkdnZ3NklR?=
+ =?utf-8?B?cTY4bWh1eUsxU2ZmYWVJOTM0OXRHa1duc1pNaUh3ZGdPT0ljd1dYMUpaRWJ5?=
+ =?utf-8?B?eVlTQnE1NXhTN0EyOTFzVW9SMXErVUdVOTYrTkxLS1kyNXRLUzloTW9VdmJM?=
+ =?utf-8?B?VjI2bFgzM3lDcWxZTXZLL3cwMWV2NllLSHRNTXAxMm1vaUthMm05SDBDZks2?=
+ =?utf-8?B?WXA4VHQ3YmZyUU5paE1DYU5sQTFtRlAwck5zclRacERkS0JOcG1CQjZjMFA2?=
+ =?utf-8?B?L3c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	RUeTszTk7qnz/9HuYSBWKU5JFRzY0ZCekXRydPoZUJXTLxuf3ceQ9uWcTPK8iD7+iDW2mPXBm1PzSsg7GgTpaZrC9SqsBZ3tKhRt21jf4RS5zOY0C1dBYWe9Szxmetoz+ieQxigFPwSn/we3gzMThalBRiywXBtGUS9FkjoTGy51ID7krh5722Xg9qElcSLH74kbLm34kefs8j7+jWQNAttYGdeSfj3EXtAHxF0vH2ifyE7LP/+Dfzx6jSY1SzhosNiDE/ItwDQSQp5tLMvQnsRIcvkVxQI/cng4DmxWdL2aElYlgcs+6diOMQBG2IRaOiMdKAt675SQxb1HAD3iqlDPr0SMGm9gYqwlhV6FcUyJTw/ruOZVD5gjhmtcJzzDkr/ZPH/a7ZxZYehbpogmaKqe/VNxrppc7EzM3rOlPUvsKu4RvMMrkOL4iRXApQATGQc9avGG7kHcBVsop2VZhkADvJd+snI6lPcj85fmWuWGq34CMmYmeRtDCD4Aqm9Bv72/qXmnzaS9RJTeTpgKmZd5UIjP54RQl1WsWlSMAwc6NhmvfaTg94nBqFYdrtjRGWyTOpJseT2aCMiIAEXiZR7scSkNYW4yrqLPpujBuEY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e450b140-34e7-4642-643f-08dc7b567892
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR10MB5622.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2024 18:30:50.1941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n5goMUVm8z/5sM7INTUiA+G2ERjyw0VM0ZyBLK6bA1tHDuY76h37MAOfyqMdc3aZjlKNsg/o0wdBiI0LBIUaGBuyEnYQ2w/+GYNICZnYHdc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5063
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_11,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405230129
+X-Proofpoint-ORIG-GUID: LzEmcPLsYm8XILRAThA6G4VE4E9HLm-y
+X-Proofpoint-GUID: LzEmcPLsYm8XILRAThA6G4VE4E9HLm-y
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   c760b3725e52403dc1b28644fb09c47a83cacea6
-commit: 7bd230a26648ac68ab3731ebbc449090f0ac6a37 mm/slab: enable slab allocation tagging for kmalloc and friends
-date:   4 weeks ago
-config: xtensa-randconfig-r133-20240420 (https://download.01.org/0day-ci/archive/20240524/202405240201.efKgUHwc-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405240201.efKgUHwc-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405240201.efKgUHwc-lkp@intel.com/
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+On 5/23/24 20:27, Alexandre Chartre wrote:
+> 
+> 
+> On 5/23/24 19:53, Andrew Cooper wrote:
+>> On 23/05/2024 6:03 pm, Alexandre Chartre wrote:
+>>>
+>>> On 5/23/24 17:36, Dave Hansen wrote:
+>>>> On 5/23/24 07:52, Alexandre Chartre wrote:
+>>>>>> Should we wrap up this gem and put it with the other entry selftests?
+>>>>>
+>>>>> It looks like tools/testing/selftests/x86/single_step_syscall.c tests
+>>>>> sysenter with TF set but it doesn't check if the kernel issues any
+>>>>> warning.
+>>>>
+>>>> Does it actually trip the warning though? I'm a bit surprised that
+>>>> nobody reported it if so.
+>>>
+>>> single_step_syscall does trigger the warning:
+>>>
+>>> $ ./single_step_syscall
+>>> [RUN]    Set TF and check nop
+>>> [OK]    Survived with TF set and 26 traps
+>>> [RUN]    Set TF and check syscall-less opportunistic sysret
+>>> [OK]    Survived with TF set and 30 traps
+>>> [RUN]    Set TF and check a fast syscall
+>>> [OK]    Survived with TF set and 40 traps
+>>> [RUN]    Fast syscall with TF cleared
+>>> [OK]    Nothing unexpected happened
+>>> [RUN]    Set TF and check SYSENTER
+>>>      Got SIGSEGV with RIP=ed7fe579, TF=256
+>>> [RUN]    Fast syscall with TF cleared
+>>> [OK]    Nothing unexpected happened
+>>
+>> :-/
+>>
+>> What about the exit code?
+>>
+>> I find the absence of a [FAIL] concerning...
+>>
+> 
+> $ ./single_step_syscall
+> [RUN]    Set TF and check nop
+> [OK]    Survived with TF set and 26 traps
+> [RUN]    Set TF and check syscall-less opportunistic sysret
+> [OK]    Survived with TF set and 30 traps
+> [RUN]    Set TF and check a fast syscall
+> [OK]    Survived with TF set and 40 traps
+> [RUN]    Fast syscall with TF cleared
+> [OK]    Nothing unexpected happened
+> [RUN]    Set TF and check SYSENTER
+>      Got SIGSEGV with RIP=bb44b579, TF=256
+> [RUN]    Fast syscall with TF cleared
+> [OK]    Nothing unexpected happened
+> 
+> $ echo $?
+> 0
+> 
+> The program runs as expected (but it doesn't expect much than a SIGSEGV).
+> It triggers a warning from the kernel but it doesn't check if a warning
+> was produced.
+> 
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/xtensa/platforms/iss/simdisk.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/test_udelay.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/trace/preemptirq_delay_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/backtracetest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test_module.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/dmapool_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp437.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp775.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp850.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp852.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp855.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp857.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp860.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp863.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp950.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-3.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-5.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-13.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-15.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_koi8-r.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-greek.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-romanian.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-turkish.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ucs2_utils.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_misc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/jbd2/jbd2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/hpfs/hpfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/efs/efs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/qnx4/qnx4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/af_alg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/ecc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/curve25519-generic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/xor.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in block/t10-pi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libarc4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/find_bit_benchmark.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_user_copy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_scanf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
->> WARNING: modpost: lib/test_bitmap: section mismatch in reference: alloc_tag_restore+0xb4 (section: .text.unlikely) -> test_print (section: .init.rodata)
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_maple_tree.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_memcat_p.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ref_tracker.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-ts4800.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-meson-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-gw-pld.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-pcf857x.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-pxa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/controller/pcie-mt7621.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-pf-stub.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-aud.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-apmixed.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-topckgen.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-infracfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-audio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-ipu_conn.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-mm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-aud.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-scp_adsp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdo0.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdo1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-wpe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/lpass-gfm-sm8250.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/gcc-msm8976.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/videocc-sdm845.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun20i-d1-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-a64-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-a100-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun4i-a10-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a23-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-v3s-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-de2-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-npe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_ring.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/reset/hisilicon/hi6220_reset.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/owl-uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-abt-y030xx067a.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-auo-a030jtn01.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-novatek-nt39016.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-orisetech-ota5601a.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sil-sii8620.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/gm12u320.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_mipi_dbi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/udl/udl.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-sccb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/null_blk/null_blk.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/fastrpc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/open-dice.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-fsl-lib.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-qup.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/line-display.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/storage/uas.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/ezusb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_serial.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_obex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_tcm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ccgx-ucsi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-pxa.o
-WARNING: modpost: drivers/media/i2c/et8ek8/et8ek8: section mismatch in reference: et8ek8_i2c_driver+0x8 (section: .data) -> et8ek8_i2c_driver_exit (section: .exit.text)
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/videobuf2/videobuf2-dvb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/ttpci/budget-core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/pci/bt8xx/bt878.o
+Actually it checks that TF isn't cleared after the sysenter, but that's all.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+alex.
+
+
 
