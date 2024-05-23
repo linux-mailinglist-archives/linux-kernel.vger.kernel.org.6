@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-187784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-187785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BD78CD86F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:31:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41098CD874
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 18:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8549D1F22727
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36E261F22E8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 16:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DE118026;
-	Thu, 23 May 2024 16:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECF91CFB2;
+	Thu, 23 May 2024 16:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtVl1yCb"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fJp6Xc4x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD16B1CF8F;
-	Thu, 23 May 2024 16:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905651BC39;
+	Thu, 23 May 2024 16:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716481898; cv=none; b=gehDIJ6+RO7imdpCghp1kek7g1eLeZyNWf5iutoUlI6XghgdCsXdp19ET2GzTwsi/oFnFammC14eOF0HsTMBNHk5fxf6dQY0uw5g1Xosim0SDCfzmVCAqvHWpgwrfd1g0q93ouVAGDLA4LASi/uvvsRGMNPC4iEtwua1JKftabo=
+	t=1716481916; cv=none; b=WDbtRssZ7Z5nUjpgTTy5whlikpcoej5AaLdKplRO5wQhDfdMCzRQXbyFopv2Kbqnw1l5G9QtkeKvAPJWrp4EmMipI81Vjpe8875dEW0d7WMi3fTrC+C4UZtCt5bni3HK8V1atLne4yUGzR2i2JNiqzfMOkoUc1MzzVnwrgxJRXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716481898; c=relaxed/simple;
-	bh=yFdXknMEp6BoBRx9d/a3Xb7qQPDAPn3S0QNRYt4ZMwQ=;
+	s=arc-20240116; t=1716481916; c=relaxed/simple;
+	bh=BIV4oelLREsw1BHdiAVnVRU0aKkmcra+o9gjdpAyFV4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FR84PJYkLp/o0zTiAM9Wa1Z3n3lPL3c0GJvoUdyZj1ulxKnYubhQTdveDRPYaIqvwbvPOfGhEk2VBqXNJabxd6ugUeFg7rXTsfSLKtdo2yXavRHydJT0wIp1NTi62BwtcmblZf87r57JOlQNtXNwRWMYjODgPL7RASFy5HsytMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtVl1yCb; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42016c8db2aso21208065e9.0;
-        Thu, 23 May 2024 09:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716481895; x=1717086695; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BkFgbsBHw567DO162agH6xtszv6nFxh3v/OqHAXAYQA=;
-        b=XtVl1yCbHcsASENET0tbWaPdkK/ToyDTNTbRtiG4NlXpZhNkBWWd7MnMy578pnhfG2
-         7bLHEaLNqZ+ESZ2kB4xzJ2Xx8k5T6oj2NVKV+MsJo1EL3hQlLpPWKUseh1pAV3YcJriB
-         sMKMeKXbF3G8S6ETEiPJPuZt1BGrsz3sRWhE/fFkvx9wAdDpU80Aecn+2I1t/OKL7TXI
-         cXcKpBabwob6xoo+r6iLJ36Cr1/UnjSyA59WklhZF6sBi76XcBywcY1p/Aqa5udCoLnv
-         6CmVsCZn0gzG5CA5iTWcBZ7ZLCgWNqCGkR3TS4AoN5gggl6i8QqUwRDEYHBv79ogpmPP
-         fmCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716481895; x=1717086695;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BkFgbsBHw567DO162agH6xtszv6nFxh3v/OqHAXAYQA=;
-        b=wOSrM2cv2CIRlZVpl9vzJII4S8uj4uycSY51qqSzStpvlFWTiEYz4GfKCXmUNNxws8
-         lDxB39US65D5KZL1EG0OgPHQNMiCyzYjcxAUf5Lsqc4OpOSNsbNJJ5N6b4r388HVqnfC
-         mzElOORV5VqVZexAi/sktO4HJ6WO2gXXpsl223j1Za1XM+Zb/Sb0MMHztelYhQmLarOz
-         5KcZyy/lHJxD/TvM6Hsje4aZULVOcWicClzQ2+fGjqBe2Bf51lfa6FC1i5w74LSkpSSo
-         C1bS5uxWWAdqzhBJNNTIRxeEZSmrdRMqNR/YbMMhrJO7pB7Jsgd83lRKEJOhbWbyX04u
-         pwVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNB5bq3exj4r6dDHlAxL9CejA2jV8Gi4k0dK8tMGb4LxMRk8wHvw2l6vp5GP0ALqZP3cotScE4eaXz1VqELladsBtmaTCot7EdECg1kOVdxEeiWQoriTIi5swNVYCP4SD6tTk5WSqm0A==
-X-Gm-Message-State: AOJu0YwPBhj6Ye5xgLUffIGnSTCrHYiw9k5K+8ufpgrUoPR/RqakGgmZ
-	oWW4Vx6rPRi2cZH6z6hg/Av2pdIBZul2HZ8aL5p0TnGkLSegKBKv
-X-Google-Smtp-Source: AGHT+IGERajLeL6v45YR+OnIu7rQ+Rz0hkkeUorXN4ovcimgSqTBgypDrtLU+Fnhe8uBHynPnppIZw==
-X-Received: by 2002:a5d:5612:0:b0:354:eb32:6d1a with SMTP id ffacd0b85a97d-354eb326e3amr3792720f8f.59.1716481894901;
-        Thu, 23 May 2024 09:31:34 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-212-250.cable.dynamic.surfer.at. [84.115.212.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-354c2a40548sm12143109f8f.34.2024.05.23.09.31.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 May 2024 09:31:34 -0700 (PDT)
-Message-ID: <865295e7-30c8-4abf-9992-fcb9b3186ebb@gmail.com>
-Date: Thu, 23 May 2024 18:31:32 +0200
+	 In-Reply-To:Content-Type; b=uJuftAozJk7MsQSJFH+ttkY32P/Gx6Ed3YOMFk/jAvqldtNJODmT/yRB7VXnmd6kxaC3DPOsIUyx6LWxMZiIIh2DO/G64bP+SIiR/JufDBtnIIO0tSOmQ1Ia0rkSs5jvyOcWfdSwvvKtx/X6jeQYrnGABpmHQdZtueEZG8KphzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fJp6Xc4x; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716481914; x=1748017914;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BIV4oelLREsw1BHdiAVnVRU0aKkmcra+o9gjdpAyFV4=;
+  b=fJp6Xc4xOor6IKa3Oh70l2NK2d0CjB6G2FWlyoVhsgG3TVQ4+/zXTFTM
+   i92R+dPfwfG+EHPsPyeLCCR7I8RspCz5K72pypKNADayMi0rAMsNbMn8X
+   lPiqpiBffSpZw9LtNfcVYQPEoRRFgUhsmsyRJRP48MeJVxOPDkQugGLer
+   yD8F/U/JHBNvrH+TTM+udmoOQZl90TAKkFQCS84N/9TEN5qGJkL21o+1C
+   tiTUYCbx6YLvEPLnSovmz8XnNbbWLbq9UGUofV8TAHgbMcboVG1pKGTnZ
+   mdBOWQiuojH13C0bH7XTqoK/z7W037OxLpmbn+FygZ2uBCrVFgjH8So4C
+   A==;
+X-CSE-ConnectionGUID: /zL5pCHBSKylQfmxldJYKA==
+X-CSE-MsgGUID: dcRcnhcVTrO4n8KO6tyTyA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12990880"
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="12990880"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:54 -0700
+X-CSE-ConnectionGUID: TKPBX1INQzCGxw1D2USyNw==
+X-CSE-MsgGUID: Ab2krLjGRyuQnHQIVXw/iA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,183,1712646000"; 
+   d="scan'208";a="33790563"
+Received: from kinlongk-desk.amr.corp.intel.com (HELO [10.125.110.49]) ([10.125.110.49])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 09:31:52 -0700
+Message-ID: <5c14a151-25c9-41f5-af65-d2a8ffe548fa@intel.com>
+Date: Thu, 23 May 2024 09:31:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,79 +66,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: DT schema bindings conversion mentorships (was Re: [PATCH v5]
- ASoC: dt-bindings: omap-mcpdm: Convert to DT schema)
-To: Rob Herring <robh@kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>, Julia Lawall
- <julia.lawall@inria.fr>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>,
- linux-kernel@vger.kernel.org
-References: <20240522075245.388-1-bavishimithil@gmail.com>
- <0594944d-c158-4840-8724-b3f2edaab1ca@gmail.com>
- <4f722e53-011f-4176-b6af-080522165007@kernel.org>
- <bb44d588-9316-4509-b545-9bbaa2d240cb@gmail.com>
- <3c6c5be1-fb8e-4bf0-9f58-cfb09672e8c1@kernel.org>
- <d999bc26-9bb1-44a8-92a3-bcbe14c5a1c3@gmail.com>
- <58ada5ce-5c02-4ff5-8bdd-d6556c9d141f@kernel.org>
- <60989c44-6d16-4698-bf3f-b3c5dcd7b3e0@kernel.org>
- <dc31c4ba-1bea-4056-a68f-87d742eb8da3@nxp.com>
- <CAL_JsqJp133hGSkja9tabtsE9D7MSA9JErVkmkcy91piHMgfwg@mail.gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <CAL_JsqJp133hGSkja9tabtsE9D7MSA9JErVkmkcy91piHMgfwg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] x86/cpufeatures: Add AMD FAST CPPC feature flag
+To: Xiaojian Du <Xiaojian.Du@amd.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-pm@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, daniel.sneddon@linux.intel.com,
+ jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
+ sandipan.das@amd.com, kai.huang@intel.com, ray.huang@amd.com,
+ rafael@kernel.org, Perry.Yuan@amd.com, gautham.shenoy@amd.com,
+ Borislav.Petkov@amd.com, mario.limonciello@amd.com
+References: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <691ec6cf79788e6db919965f787505434b072fac.1716444920.git.Xiaojian.Du@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 23/05/2024 18:24, Rob Herring wrote:
-> On Thu, May 23, 2024 at 7:30 AM Daniel Baluta <daniel.baluta@nxp.com> wrote:
->>
->>
->> On 5/22/24 20:05, Krzysztof Kozlowski wrote:
->>> Dear Daniel, Shuah, Julia, Javier and other mentorship managers,
->>>
->>> I see some contributions regarding Devicetree bindings which look like
->>> efforts of some mentorship programs. It's great, I really like it. Only
->>> sadness is that no one ever asked us, Devicetree maintainers, about some
->>> sort of guidelines. This leads to sub-optimal allocation of tasks and
->>> quite a strain on reviewers side: for example we receive contributions
->>> which were never tested (tested as in make target - make
->>> dt_binding_check). Or people converted bindings which really do not
->>> matter thus their work soon will become obsolete.
->>>
->>
->> Hi Krzysztof,
->>
->> Some of the faulty patches are on me! Sorry for that. We had an
->> unexpected high
->>
->> number of people sending contributions for Google Summer of Code and I
->> couldn't watch them all.
->>
->> Now, the application period has ended and we have 1 intern working for
->> the summer!
->>
->> Will follow your guidance! Thanks a lot for your help!
-> 
-> To be specific, there are several ways to prioritize what to work on.
-> 
-> - There's a list maintained in CI of number of occurrences of
-> undocumented (by schema) compatibles[1]. Start at the top.
-> - Pick a platform (or family of platform) and get the warnings down to
-> 0 or close. There's a grouping of warnings and undocumented
-> compatibles by platform family at the same link.
-> - Prioritize newer platforms over older (arm64 rather than
-> arm32(though there's still new arm32 stuff)).
-> - Fix warnings treewide from common schemas (i.e. from dtschema).
-> That's not conversions, but related.
-> 
-> Rob
-> 
-> [1] https://gitlab.com/robherring/linux-dt/-/jobs/6918723853
+On 5/22/24 23:16, Xiaojian Du wrote:
+>  #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* "" BHI_DIS_S HW control available */
+>  #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
+>  #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
+> +#define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
 
-Thank you Rob, I forwarded your recommendations to the LFX mentees.
+It'd be nice to expand the CPPC acronym at least _once_.
 
-Best regards,
-Javier Carrasco
+Also, this is used _once_ at boot and not exposed in /proc/cpuinfo.  Is
+it even worth defining an X86_FEATURE_ for it?
 
