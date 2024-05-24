@@ -1,85 +1,212 @@
-Return-Path: <linux-kernel+bounces-188221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 934E48CDF54
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:56:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A9B8CDF57
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7BE91F21ECD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:56:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1661D282063
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519AC219E4;
-	Fri, 24 May 2024 01:56:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F14022331;
+	Fri, 24 May 2024 01:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eUGIU/x4"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852AF4A3C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DC44A3C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716515765; cv=none; b=LNTqF7QwU7+bzsJR+SWDXrZ0IGiWAh35e0N0rbMTZLZ12FQdqtOJF+gYvPWgfcFyT5A4jOIHFBh2d2HqlCjWTRhTvqf7MBPssCa7Lf+dl9vcR0fQulvfLQPpL63WXZsmQdKxBCQX/cLmdwgIbTxh99RQXCTz7VZw9p1MSV8N0qw=
+	t=1716515953; cv=none; b=q0Mh3ogGpmrsZa5oBTPlnRASa+Iln4JhICd/7KgCiiHq/ljE0W/6jXtE8p8yGRXIMHo/VMXaHZFfpq1N8JyjoCKIZ46ajqWIzQ9m4cNjfmXDayIuboTRwoedcXN16T4NYkn3r4AWMcd6yjcwfxl+4GgexQHzZwGNrUvr7DemJu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716515765; c=relaxed/simple;
-	bh=yeCZjY35YA4CjJKelxniszCVriItUDw1/H6xia/9cSA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lfktjED39i5Jt+pJ0xtKLP3xbzJqnck33zg/ZuAq+CvWPnnorqD75ecIv9oSO4763y/dgUChIqBQBQWsiVHtlQO1Ep65JuyBGhQFY24UjL1upZRndvkfL5HOqBbPhSo8FPEcPFrnMQ6IuGANogezjXrlVfXLLz2dxFvzSOYmPIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3737d7d68d1so574345ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:56:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716515763; x=1717120563;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0Y9UARb/XMrh5Ak9en7FCodvjHV6/rrjT89wZyHGxs=;
-        b=dfXXup7kHT+Ptt2s3mlfgTmvqoUicfJZh+7Tr6xAXdnJ8HDbxrXpjlZK0bCXA3Xzzz
-         XNtlLFAAQHFgF0S/1GYh32f/k7U7Ax2nrMbH9EJTWMiX+WL9Ckvhm3W6AotKdzkdbjqy
-         nCUWar3Lm6IJV3u/PDkb2JPoelRTo7OrVxNOfI4WzsmponStybuNNSPKQzm84cMJ0mHB
-         iKPqUp/XAf9ZVZ1ieG1qRnkwTlx7WwRbuT13H1ngNhU+g/1ZinNjXJLTRkYr/rIDwvPp
-         8WGE2dhZ2wpiAjDRfe6V7QP5QC/8DkYMK4R1UARUxqWU5lM8Pbwz2ZTItX+sKYy/9qAy
-         1rbA==
-X-Gm-Message-State: AOJu0YwKyPxvkVA4FIZO2zHPmd+2twuwI9GhCupUcHK5DZGl48QlqYPV
-	U6CJ421rmfPE4PGp3Axlm89PWqn1nceQ0PozeDvN4CSqRNJl2MlXBDV0htoyoTMsHTVy7i1FaZV
-	XVFPZ3brvNl842R4cvFNVQZ9BxjepKm00le22ggW3vTijrNnvn//d5tA=
-X-Google-Smtp-Source: AGHT+IF+MpgY9KucyHrheip8jIChunSLGZ91lDOB4tSHpqot5jRo6eM+poyaL/ClscMZnMuJHGJ+ZnQasEDeFlVzfg5vEJKwjt6D
+	s=arc-20240116; t=1716515953; c=relaxed/simple;
+	bh=8HvXOKkqios4yzwlfe0hQTKvICnw8ZVW3mMRcplGCRQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=A4gTl4lvApbRITX1Vi45JA49NCl+0j+VK/FxC6aymsPi/i8nT3qwtAMGbZGtkObEQposj007QpYmzdwn7PR6fxn5LtNCVJyyZKLo+fKMBCDMWg6YWUrHwgetZ4eDABdLo1lMVaTVr5/uSeoopBB0/XyetCKqt+8bx3vBDxk4EhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eUGIU/x4; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240524015908epoutp021cdf4345fee1d98cf712f937ff088ae9~SSikg2QAK2789727897epoutp02S
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:59:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240524015908epoutp021cdf4345fee1d98cf712f937ff088ae9~SSikg2QAK2789727897epoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716515948;
+	bh=Lc51D5b48Af/XQTwq2XFWVLT/g5JdkG0gRQi0KSFZYs=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=eUGIU/x4rpJ18TdxQtu955Ex+a4Ej/90jHUUIc6CjNxr3fQfAKDhRE7pi2DDIoCx+
+	 1Q9jyOXFkkvEMek2pJewtZNRZnv8SQ4LC+bvRBjXnJq75idkmaLdcb6uK5TCIZq5B8
+	 DJYDO6J+eWVeAc19KyQ8aOZTGdQWuY2uRLjSPWwM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240524015908epcas1p466445ee52a12daa12ceffe0f86919b88~SSikMFJbf2205322053epcas1p4M;
+	Fri, 24 May 2024 01:59:08 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.249]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VlpB35Vz3z4x9QK; Fri, 24 May
+	2024 01:59:07 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D2.9A.10158.B64FF466; Fri, 24 May 2024 10:59:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b~SSijih1Oj0170501705epcas1p2T;
+	Fri, 24 May 2024 01:59:07 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240524015907epsmtrp26cd1de8f56036ec4a4f8df6a7014b87d~SSijh1hrc0720707207epsmtrp2K;
+	Fri, 24 May 2024 01:59:07 +0000 (GMT)
+X-AuditID: b6c32a38-8e1ff700000027ae-47-664ff46bb858
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D7.D6.08924.B64FF466; Fri, 24 May 2024 10:59:07 +0900 (KST)
+Received: from lee.. (unknown [10.253.100.232]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240524015907epsmtip1067e709a65e6b21fb946d5f0a5616f2d~SSijWM8Sg2280522805epsmtip1c;
+	Fri, 24 May 2024 01:59:07 +0000 (GMT)
+From: Chanwoo Lee <cw9316.lee@samsung.com>
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+	quic_nguyenb@quicinc.com, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chanwoo Lee <cw9316.lee@samsung.com>
+Subject: [PATCH v2] ufs:mcq:Fixing Error Output and cleanup for
+ ufshcd_mcq_abort
+Date: Fri, 24 May 2024 10:59:04 +0900
+Message-Id: <20240524015904.1116005-1-cw9316.lee@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2182:b0:36b:2464:bd2c with SMTP id
- e9e14a558f8ab-3737b2b9108mr595775ab.2.1716515763696; Thu, 23 May 2024
- 18:56:03 -0700 (PDT)
-Date: Thu, 23 May 2024 18:56:03 -0700
-In-Reply-To: <20240523141707.25170-1-n.zhandarovich@fintech.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000058c52106192978c1@google.com>
-Subject: Re: [syzbot] [usb?] UBSAN: array-index-out-of-bounds in usbhid_parse
-From: syzbot <syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, n.zhandarovich@fintech.ru, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdljTQDf7i3+awftDGhYP5m1js3j58yqb
+	xbQPP5ktZpxqY7XY2M9hcXnXHDaL7us72CyWH//HZDH1xXF2B06Py1e8PaZNOsXm8fHpLRaP
+	iXvqPPq2rGL0+LxJzqP9QDdTAHtUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5
+	kkJeYm6qrZKLT4CuW2YO0F1KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnAKzAr3i
+	xNzi0rx0vbzUEitDAwMjU6DChOyM6Q+WMRe8E664uc+ugfEPfxcjB4eEgInE933GXYycHEIC
+	OxglWl/7djFyAdmfGCWuP5/ADOF8Y5R4dreTEaQKpGHLus3sEIm9jBJX+k+xQ7Q/YZToWO4J
+	MpVNQEvi9jFvkLCIwENGif63gSA2s4CGxJ+2i2wgtrBAkET7hIVgrSwCqhLfTu8Cs3kFbCV+
+	HDvJDLFLXmL/wbPMEHFBiZMzn7BAzJGXaN46G+w4CYG37BLb726FanCROH31KguELSzx6vgW
+	dghbSuLzu71sEA3NjBIL3xyH6p7AKPHl4202iCp7iebWZjaQD5gFNCXW79KH2MYn8e5rDysk
+	uHglOtqEIKpVJOZ0nWODmf/xxmNWCNtD4tqdVlZImMRKtHR/Z5/AKDcLyQ+zkPwwC2HZAkbm
+	VYxiqQXFuempxYYFJvBoTM7P3cQIToxaFjsY5779oHeIkYmD8RCjBAezkghv9ErfNCHelMTK
+	qtSi/Pii0pzU4kOMpsBQncgsJZqcD0zNeSXxhiaWBiZmRiYWxpbGZkrivGeulKUKCaQnlqRm
+	p6YWpBbB9DFxcEo1MCny/Tox4WOq61lmd/sPJ9I0lq5Mufl2ne0Mloa7Sg9Od/XNkuAozt3w
+	MiEqPjDD6vOvW0vNr9/5wHt6T+XkH8uSWc2y5jG4n0iW/PClYs/9N/pTjvlGxH9aaqO6W5Hh
+	7b2yZ2sWTXq4YHL0/j/LxK8e33BenCv4xqZ703c9vToj71bqHIcuu7STqq75XY9evLvaHukg
+	Ezsn+sPnjZ7mW9ZLNhgFbVRtXq6iIrpqPlvCM42jLekLv9ycVWlcGvVPIN9n3sqLjQ6LNzwU
+	MuHZGFob586y+i6zzTM9hua7XitZz+3vit4ekbnC7osha0J/jI3TmhObPIssPk148bT9/0ou
+	68x5X1Zx3e+LjFdw/SCqxFKckWioxVxUnAgA5Xcm5xUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSnG72F/80gzPLRSwezNvGZvHy51U2
+	i2kffjJbzDjVxmqxsZ/D4vKuOWwW3dd3sFksP/6PyWLqi+PsDpwel694e0ybdIrN4+PTWywe
+	E/fUefRtWcXo8XmTnEf7gW6mAPYoLpuU1JzMstQifbsErozpD5YxF7wTrri5z66B8Q9/FyMn
+	h4SAicSWdZvZuxi5OIQEdjNK7FrVyw6RkJLYvf88WxcjB5AtLHH4cDFIWEjgEaPEoVnWIGE2
+	AS2J28e8QVpFBF4ySvy+t4gJpIZZQEPiT9tFNhBbWCBA4v3jRWA2i4CqxLfTu8DG8wrYSvw4
+	dpIZYpW8xP6DZ5kh4oISJ2c+YYGYIy/RvHU28wRGvllIUrOQpBYwMq1ilEwtKM5Nzy02LDDM
+	Sy3XK07MLS7NS9dLzs/dxAgOYS3NHYzbV33QO8TIxMF4iFGCg1lJhDd6pW+aEG9KYmVValF+
+	fFFpTmrxIUZpDhYlcV7xF70pQgLpiSWp2ampBalFMFkmDk6pBqbYa6clajfIhqzxCrzEr6nU
+	tIFjZZrg2ZnCXwJ/fRO5MX+pvng1d1fqw4XT5CMWbtrNfr5uQpWwJjPv25JlR2tfXDu/PHva
+	CpbzbTee/b0h8V58X9y2HVaME+12iM1xfzr30RpJZSeRtAVPFj4u679z6MRnoWv5cV+/vzNW
+	M0zxmXv0W4BC83vF5MJj4izXTHlD17FJ3glWfXA66s2feRoFSyat0WZfn9U2y/+qSKjs9j3/
+	4ren2+r3+5otXzL/cJ6yUu52tvjwbRcEi46yHezw3fpgdvDruEVqBqz6+pu/XmNZOuFHUWdh
+	9P7HnG/Onq4I7YxxSZ7ufH6x0fo/xzJ1mtZmtnasuzq15My0Be+FlViKMxINtZiLihMB94Vy
+	GtACAAA=
+X-CMS-MailID: 20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b
+References: <CGME20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b@epcas1p2.samsung.com>
 
-Hello,
+An error unrelated to ufshcd_try_to_abort_task is being output and
+can cause confusion. So, I modified it to output the result of abort
+fail.
+  * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+And for readability,I modified it to return immediately instead of 'goto'.
 
-Reported-and-tested-by: syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com
+Fixes: f1304d442077 ("scsi: ufs: mcq: Added ufshcd_mcq_abort()")
+Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
 
-Tested on:
+---
+v1->v2:
+ - Change title and description
+ - Change all 'goto out' statements into 'return FAILED'.
+ - Add 'return SUCCESS' at the end.
+   v1 : https://patchwork.kernel.org/project/linux-scsi/patch/20240523002257.1068373-1-cw9316.lee@samsung.com/
+---
+ drivers/ufs/core/ufs-mcq.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-commit:         b4d88a60 Merge tag 'block-6.10-20240523' of git://git...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=117100d8980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=34e05c35ec964e75
-dashboard link: https://syzkaller.appspot.com/bug?extid=c52569baf0c843f35495
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1293b80c980000
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index 005d63ab1f44..8944548c30fa 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -634,20 +634,20 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
+ 	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
+ 	struct ufs_hw_queue *hwq;
+ 	unsigned long flags;
+-	int err = FAILED;
++	int err;
+ 
+ 	if (!ufshcd_cmd_inflight(lrbp->cmd)) {
+ 		dev_err(hba->dev,
+ 			"%s: skip abort. cmd at tag %d already completed.\n",
+ 			__func__, tag);
+-		goto out;
++		return FAILED;
+ 	}
+ 
+ 	/* Skip task abort in case previous aborts failed and report failure */
+ 	if (lrbp->req_abort_skip) {
+ 		dev_err(hba->dev, "%s: skip abort. tag %d failed earlier\n",
+ 			__func__, tag);
+-		goto out;
++		return FAILED;
+ 	}
+ 
+ 	hwq = ufshcd_mcq_req_to_hwq(hba, scsi_cmd_to_rq(cmd));
+@@ -659,7 +659,7 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
+ 		 */
+ 		dev_err(hba->dev, "%s: cmd found in sq. hwq=%d, tag=%d\n",
+ 			__func__, hwq->id, tag);
+-		goto out;
++		return FAILED;
+ 	}
+ 
+ 	/*
+@@ -667,18 +667,17 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
+ 	 * in the completion queue either. Query the device to see if
+ 	 * the command is being processed in the device.
+ 	 */
+-	if (ufshcd_try_to_abort_task(hba, tag)) {
++	err = ufshcd_try_to_abort_task(hba, tag);
++	if (err) {
+ 		dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
+ 		lrbp->req_abort_skip = true;
+-		goto out;
++		return FAILED;
+ 	}
+ 
+-	err = SUCCESS;
+ 	spin_lock_irqsave(&hwq->cq_lock, flags);
+ 	if (ufshcd_cmd_inflight(lrbp->cmd))
+ 		ufshcd_release_scsi_cmd(hba, lrbp);
+ 	spin_unlock_irqrestore(&hwq->cq_lock, flags);
+ 
+-out:
+-	return err;
++	return SUCCESS;
+ }
+-- 
+2.34.1
 
-Note: testing is done by a robot and is best-effort only.
 
