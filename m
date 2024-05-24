@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-189089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB498CEADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F59D8CEAE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8871C21666
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69B6281A75
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5187E792;
-	Fri, 24 May 2024 20:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173DE7350E;
+	Fri, 24 May 2024 20:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SF7v7qAq"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJiCJmMb"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DD02BCF7
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2687E792
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716582652; cv=none; b=Ffj/Vpn4SBjNn4CKCtsX4uWsHw481S7mn0L6K/i9DRNxNxw/e1rofxfNLsfQ8PfjCGu17UO8GUMJUrtEi+uc7TN8erBLNqk5w4P+QSHmkwcd63Vrw8XkKkESc0BwCLUH7q8XvD7IeL0RwjtvM5WDpijPW0MbipUpt2NyB1jfagE=
+	t=1716582685; cv=none; b=jY/gZyp7NAaK8D+I3QfOwX8wap5fVmc0KKYhhmkw8H6ozdDdRnMJlKv6ac9fT7yMedxP+Tu1j0IlOzNb/7tbgoWVZ8WT2x9XOSBaKoyImj2kbZCIFDcPP1tUWeuLXa2gyWqy4vF8nffilp323pHHpJYFzr/xwdTr9d+0ZHlzTfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716582652; c=relaxed/simple;
-	bh=79JSiMfJ4zEQ/cmlWaELDJ0t/4llGFYxxVgs6MsioME=;
+	s=arc-20240116; t=1716582685; c=relaxed/simple;
+	bh=u623NnOrxHXs1P61/2nyV6Lnky4xicwHtkxYnmWEW4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pw0JwuwGW+ENwsVXTtoRnteT1wf7rlFtLP1JYlgxrztlXYiY7E3WgBum0ddF0ykDwyYy+jSUDi/subTphwGY9FQsTaHFTbRZCH01cGRDnJX9yYWg2KnyPke8KYM9y8SKPhn+PR0M2cOr9vZjnd8eB4DyoS0K5R+F58fu9H/eOFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SF7v7qAq; arc=none smtp.client-ip=209.85.167.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmRaWQclc1/9SSbPfMnqFEuqCBcosOkTvCyzq0zChqF7fz5ggzEstzmIcoIYLnMQcgSTgKky7cjeq8evPvW50Ofo+kaeQ3kj1NYxE5go70I3L/QQSQUPgryCCyHwLnmqjqCkzRSqsx8ZD+zkp7AyNgIh4RmTTaAlz7YnF6a/Pqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LJiCJmMb; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5238b5c07efso8850686e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:30:50 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5295e488248so1460245e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:31:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716582649; x=1717187449; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716582682; x=1717187482; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XOwMS9RupB4Zk7hnPB906AiOhfZXq8ykp/rcedsTEy0=;
-        b=SF7v7qAqx81X+cPCRcR4KN71guGKhTM+fS6QzzgokehBtrk3Zy9tkSld0q22AXKMR0
-         p3VKp3AdehbShnQu5vgLTxu1bJB1otwNeyD0/nEtOIBBMLMnt7as7cTMVSSjU3nySEtb
-         dR6D2ZtCfx22Qv3kXoPQhMjnZjdreIrEPGzDzLSyva4Z3Vtz/Ypy2fdtVPgeY+AzIFZL
-         /b6oYypbh0g2wueYq3beY8Vdr71uem+3/RmUAZAeXIQyOCTnSGeJCfG0N9V8lHu+ccx+
-         8D/+2b+5pGgvxeCJxWEB7QKQSn+8nTbaVLpB09XaA6nUnPca2ZDj868iNJ7NDrYXwF7s
-         yZRQ==
+        bh=ent61cnCBQEKDoHe1EVzbi0f8AGZW1QPoDRi482kpkQ=;
+        b=LJiCJmMb1rKdehyc2lXOl1cGWa/8l6oIt5oVjUFFOC0sBWrUPVSKgGcsUu40W2hrnn
+         T3fShmDoVZdnHz1JgSQLKp0/M5C8HWRwge24GEVh+DZfAWNV8CSvQjJ1H5GLwp1hfx6Z
+         Az6g65QYAcFM2cReMz9QotQYfmv77Qg7Yqk8OsiRagjXd7Ozv0ckg9knqyl9YGBkZFWQ
+         e1Q80UZv49RtY3J+YvU5zBxT7Tmkze8OmtQ0ZGfOsZ8srKjynb8tkyEGHcPoCnykaxbW
+         UBx11dZLvjycJTchywkG5s9Yr6AjKQXgd+w1vXKWcWtc/p8euSldclynHLDADLLBXdJJ
+         0XJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716582649; x=1717187449;
+        d=1e100.net; s=20230601; t=1716582682; x=1717187482;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XOwMS9RupB4Zk7hnPB906AiOhfZXq8ykp/rcedsTEy0=;
-        b=Qf0D5hheuTeuhULJZ7sL8VvhHLVP7liBSH5beT6zz2+poLWlH1YiTUwyRNSSMMDL2G
-         mX7RA978jC4wmMqUTQDbxdpXN67WaeXgf26WKcixTXptVbUELdugwRKtzJOQnzHgnxvd
-         JeD6NQzJfkkADbwkbjJMNqprwd+j5UDtB2aKgB1jl26ZM5f2JyFc6tuv0oVwM62E7Iku
-         JVqWlkOtw2S66Ew5YtQKN95uAt1oo+Psj38d3RUCwBevR3J3bA5PyKvHtLOH5JasExEE
-         IX0yw3M4PbJubcSxh5SkKEftirXF3Ud0q/vC2DjxEHEJRujXox6cu+5x9cfAOjVxot79
-         LoMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/GdeSFd9xGOnTxn6M2ulZ4u6zrYfbtr6VOKxgYab3SzdtvzUyelfAz0FQ2mcpm0SZHtduCWOPKfcvNjzSLz4YBxoXvZ9UpeuYGWLH
-X-Gm-Message-State: AOJu0Yzg5YF6N7rmSVaFP5+yjiBDxhs9ZaU61pJrGsJ6TPnCEHsY6RAc
-	Z0was5T8vMZE5/vgAIhJTEwxgxEeGTmQLjuWTfnkUSXUupr7xqpnA86P4TfjTHA=
-X-Google-Smtp-Source: AGHT+IEn6vgWVGZmjSSJmxtnHf0sKpVPXkorQRcCI6P1/AiUkDQoMdH+f3BZS/PpcR8W27e4/knMBQ==
-X-Received: by 2002:a19:5f14:0:b0:528:ab83:3ee with SMTP id 2adb3069b0e04-52964ca7364mr2008469e87.31.1716582648997;
-        Fri, 24 May 2024 13:30:48 -0700 (PDT)
+        bh=ent61cnCBQEKDoHe1EVzbi0f8AGZW1QPoDRi482kpkQ=;
+        b=Iarei9EFUofJAE9bDES/NPbuLn7KYw8YuhvCOD1pEzRDdvQ+5mQUwMR7gdulYej25j
+         8SSxvY6v3//fwk+zb+z11r7oQcrOzc1WxzCwv75/7dwasI2QzZ+vCCB6xP/9coJeKQzd
+         4zO91zvhNwrjXlNwSB+vt/qR7U5f0NIEtxdJyg6eM6PwoyOy24brgAAAGaihMiuyfXf8
+         mX0KgBtfHnbIpOvuRP7G8iAKKnpuUexx4xkYQJwCUd0cZivyxbGVBSiSYA0gnY1YYrCq
+         zwrtc3uoQ8y0BfeHniLyFPZr2WZk1VuggZddGMS+x9TcXbzg6hv+TaTyKT6noqrI/OKG
+         BA1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVyQGGNymqFtgGIisHP+xR+A5QjYVwjVxyyF6o/MirTuKlyFa6g/VBsbpdGkNN+2LiUA/0dRvHX08IVDiZwUAhHTLF3IWa7dHYwHjtF
+X-Gm-Message-State: AOJu0YwgScNGrdw+QxJC9veTJg6PKdjljV7A4Si0TncnnWOmQZKzvleh
+	VAoRR5t8kZSuwDuHpY5878OLf9oHI6rcVPyXvJfNxvTslxeBjiXf8VdN0rTivxQ=
+X-Google-Smtp-Source: AGHT+IHUh2xKVsKGi0rWWDq7PVf3HdmkRF+5+JPD5w5onVGIxZmixczonLc501QvT4fpDyDbWAym7A==
+X-Received: by 2002:a05:6512:3682:b0:523:91af:12d9 with SMTP id 2adb3069b0e04-5296410a579mr1742608e87.9.1716582682274;
+        Fri, 24 May 2024 13:31:22 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e885cbdsm238930e87.54.2024.05.24.13.30.48
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b05csm235117e87.170.2024.05.24.13.31.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 13:30:48 -0700 (PDT)
-Date: Fri, 24 May 2024 23:30:47 +0300
+        Fri, 24 May 2024 13:31:21 -0700 (PDT)
+Date: Fri, 24 May 2024 23:31:20 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 Cc: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
 	jthies@google.com, bleung@chromium.org, abhishekpandit@chromium.org, 
 	saranya.gopal@intel.com, lk@c--e.de, linux-usb@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, pmalani@chromium.org
-Subject: Re: [PATCH 0/2] usb: typec: ucsi: Update optional notifications for
- UCSI v2.0
-Message-ID: <ory3biisuxsjdpcjxsvb42l3rjivkllnubbprjhhw4nml7v4yj@czrbcsyioj43>
+Subject: Re: [PATCH 2/2] usb: typec: ucsi: Enable UCSI v2.0 notifications
+Message-ID: <hf64gs27pyevjqijgsgrnilzzbag4dnz4w7lpqkf7viqw63s6e@6vgylbyiibf2>
 References: <20240524105837.15342-1-diogo.ivo@tecnico.ulisboa.pt>
+ <20240524105837.15342-3-diogo.ivo@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,31 +84,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240524105837.15342-1-diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20240524105837.15342-3-diogo.ivo@tecnico.ulisboa.pt>
 
-On Fri, May 24, 2024 at 11:58:19AM +0100, Diogo Ivo wrote:
-> Hello,
+On Fri, May 24, 2024 at 11:58:21AM +0100, Diogo Ivo wrote:
+> UCSI version 2.0 and above define new PPM notifications. Update the
+> logic to determine which notifications to enable taking into account
+> these changes.
 > 
-> These two patches enable checking and enabling the new optional
-> notification types defined in UCSI v2.0 and greater. For that, patch 1
-> defines the new optional capability bits and patch 2 adds the logic for
-> checking/enabling these new notification types.
-> 
-> Diogo Ivo (2):
->   usb: typec: ucsi: Add new capability bits
->   usb: typec: ucsi: Enable UCSI v2.0 notifications
-> 
+> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> ---
 >  drivers/usb/typec/ucsi/ucsi.c | 19 ++++++++++++++++++-
->  drivers/usb/typec/ucsi/ucsi.h |  8 +++++++-
->  2 files changed, 25 insertions(+), 2 deletions(-)
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
 
-You didn't declare dependency on [1], you didn't use --base when
-formatting patches, so LKP has no way to know that there is a
-dependency. In future please consider sending definitions together with
-the patches actually using those defs.
 
-[1] https://lore.kernel.org/all/3filrg6mbh6m3galir7ew5juakd25uvksimr7mqd7uc5td3xza@fdvxcewozqeh
-
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
