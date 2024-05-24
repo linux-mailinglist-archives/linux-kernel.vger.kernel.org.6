@@ -1,305 +1,134 @@
-Return-Path: <linux-kernel+bounces-188771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819E28CE6B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D818CE6B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31948283352
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:10:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CEDE1C220BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0187C12C476;
-	Fri, 24 May 2024 14:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XwqHhGHd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nbeNsxxf";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XwqHhGHd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nbeNsxxf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B63512C47E;
+	Fri, 24 May 2024 14:10:32 +0000 (UTC)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDED38DC8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049CA12C466;
+	Fri, 24 May 2024 14:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559814; cv=none; b=R8P1rxy7bE/MgjI5uymzfAHVDUkyiWf0aLko2j7EaZkrxoaAr1e3GlAIv1NF7wWtbv6sMltK4HGfb8ZDKaKarOUQDbVnIItS0vfc1/8IGwJ+lzLLR6j/Od30MmIUH+ataEpHi3xL/PLFKzXI7Mz06Yh6f1Bo1V74pHt1ZSiI2Mc=
+	t=1716559831; cv=none; b=PHttadKKZaVawMw3UlOxjqH3ebEIfYqHVkoYJ4L7Z5weUCInG++YF9fImKlf2WDFwtXmEVwljQPpoCej6mlZ8H5Df6VeNgtYHzPAHGDZyh9DYmEjAMA9et41BUXAyOK6sjwwnzD99fqPZ5JnGabXxfAcy3aRVggMLnMDz7hOL4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559814; c=relaxed/simple;
-	bh=Iwc7nRQUKffCASqdr7kL/QpPOc2Tz7sHTYeJAlhiIi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ho4OCIGzDxqgPmAR9dCxN3N6ncv3jvRcjWnaDjK4Ut08M9KEIKRarsMiEB9wzVUwPPowrxiCZkIabj4EMeop45flyaloJ8uBwpJWsnt041OsHsqwFNH2mDProviIejuScXU/Ifk9tBOKDfypJzEEHCC2B9AaMWo7SC09eZbOgIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XwqHhGHd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nbeNsxxf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XwqHhGHd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nbeNsxxf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1225A33B4E;
-	Fri, 24 May 2024 14:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716559810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
-	b=XwqHhGHdUzYod8u0PTEKmFcHp+qU2dOjuU5VjoxIJtGEukkanafLhxb3iE+lM2qv/s7N7x
-	sBrLsOhG+Tl2RkzmwP6e2PXP5RYEUHlvGBo8+Jy7zRJBjei+PK5Ut4iF13CGj4ABuObEeT
-	6iU0Z6BsUplfnW4aHAffX6IggUD34kY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716559810;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
-	b=nbeNsxxfR68jIe/QlMWUEW07uHFh8aae4yMwEvxcI1jSbKl1HdHN6KVSh+ZoqkRLt1VMVs
-	yEm7QJaoM6Cp7pDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XwqHhGHd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nbeNsxxf
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716559810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
-	b=XwqHhGHdUzYod8u0PTEKmFcHp+qU2dOjuU5VjoxIJtGEukkanafLhxb3iE+lM2qv/s7N7x
-	sBrLsOhG+Tl2RkzmwP6e2PXP5RYEUHlvGBo8+Jy7zRJBjei+PK5Ut4iF13CGj4ABuObEeT
-	6iU0Z6BsUplfnW4aHAffX6IggUD34kY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716559810;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
-	b=nbeNsxxfR68jIe/QlMWUEW07uHFh8aae4yMwEvxcI1jSbKl1HdHN6KVSh+ZoqkRLt1VMVs
-	yEm7QJaoM6Cp7pDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 035A713A6B;
-	Fri, 24 May 2024 14:10:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id s2cbO8GfUGaaGQAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Fri, 24 May 2024 14:10:09 +0000
-Date: Fri, 24 May 2024 16:10:10 +0200
-From: Cyril Hrubis <chrubis@suse.cz>
-To: ltp@lists.linux.it, linux-kernel@vger.kernel.org,
-	libc-alpha@sourceware.org
-Cc: lwn@lwn.net, akpm@linux-foundation.org, torvalds@linux-foundation.org
-Subject: [ANNOUNCE] The Linux Test Project has been released for MAY 2024
-Message-ID: <ZlCfwm2kzHqhjiWn@yuki>
+	s=arc-20240116; t=1716559831; c=relaxed/simple;
+	bh=GAlzwlQOD1Sk8N6PRgb6Q9JatX+C4h7JsGn1KatYt3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bAQ8GfbzRxNqG5lrwyPgMdFXDRqyytR9CqAqeJ99TufzpcvMBdDrJbIp7u8B5tUdRTiky4a2gsfCsXEXcNWdN7FfUs6WG5ATUU+ghjw60Am+COLzMsFbbZ0IqcSCj+73y8CsZdOO+DOn5H+6MtI25Waf9C6A4PM0Ofs93BeIID0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57852015f19so1499786a12.1;
+        Fri, 24 May 2024 07:10:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716559828; x=1717164628;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X4BCz6AMR+p4pjnNjlT2dYabrA3IFmEG66/vZYA0VK8=;
+        b=rFImpfdk7/sln3CfSZXVre+qjJqvupyrtpywPGeFWjK9yHU5pcHvlLU0pcF6EhwhJq
+         YMKLvrxz+/tguc4aGv2ZC4UalkVT6Z2rmshCTK3EHFPGDmadl5a/TkGlWew7471o1PK3
+         uEZVDGr6bYt2QPY4VK1xke5V0y7/C8YHJVKhE6QzmcW/BuVCGtZJCOMBpqZDCSEVC5+d
+         1LZqN85gsS74qPC5WJ9R0bMMZgRPe0iAytpVNX03b4Y6sU8AfezQCsqo2E9nMbm2+YMs
+         tqEf7HaiSq5q7YsbX3mOx/8+kstBYXqca9nqcCSoyDuLlHW3AmWjvaese4sFFj6RZ1bk
+         fXTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUow00LT6wTselz88TN4QaFzUAAYHGN47wZiDHiIBx8IC7eGDfOszWPzPHptQMcdIH0JPzcXrYxsjrZyM5jnDkT+elqYA7shvvJDMhQrKYA5EMilRzXP0Y/MvCtoifb5OhmcR5GAESu1jFboWBZiw==
+X-Gm-Message-State: AOJu0YxeBR4IyzXUimt5FCY/ZbA2dOvRm+dO53OZODVJ1DoPNYcQqT14
+	fKnC/s5pOAAHvFqsUKbBQTUgLZOW6ArPPDGZEZb09q5J/EPkZ0ry
+X-Google-Smtp-Source: AGHT+IFHXBDLAJjViFEsNbKr2wJ20cISr9KVjGUHeVjhX3Wg8qPQoA8SS7XsQ/cwsQ0tvkPtvnSbEQ==
+X-Received: by 2002:a50:8d4c:0:b0:572:3fac:e085 with SMTP id 4fb4d7f45d1cf-57843f1589fmr4900893a12.13.1716559828072;
+        Fri, 24 May 2024 07:10:28 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-005.fbsv.net. [2a03:2880:30ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785233c3c7sm1757666a12.10.2024.05.24.07.10.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 07:10:27 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: sandipan.das@amd.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: leit@meta.com,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH] perf/x86/amd: Warn only on new bits set
+Date: Fri, 24 May 2024 07:10:20 -0700
+Message-ID: <20240524141021.3889002-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 1225A33B4E
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
 
-Good news everyone,
+Warning at every leaking bits can cause a flood of message, triggering
+vairous stall-warning mechanisms to fire, including CSD locks, which
+makes the machine to be unusable.
 
-the Linux Test Project test suite stable release for *May 2024* has been
-released.
+Track the bits that are being leaked, and only warn when a new bit is
+set.
 
-Since the last release 292 patches by 27 authors were merged.
+Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ arch/x86/events/amd/core.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Patch review is what most of the projects struggle with and LTP is no
-different. If you can spare some effort helping with the patch review is more
-than welcomed.
-
-NOTABLE CHANGES
-===============
-
-* New tests
-
-  - mlock05 Test for pre-faulting locked memory
-  - kvm_svm04 Functional test for VMSAVE/VMLOAD instructions
-  - arch_prctl01 Test for ARCH_SET_CPUID and ARCH_GET_CPUID
-  - kallsyms A test to check that it's impossible to read kernel memory from userspace
-  - unlink09 Negative tests for unlink()
-  - getrandom05 Negative tests for getrandom()
-  - gethostname02 Negative tests for gethostname()
-  - splice08 Test for splicing from /dev/zero and /dev/full
-  - splice09 Test for splicing to /dev/zero and /dev/null
-  - shmat04 A regression test for fc0c8f9089c2
-           ("mm, mmap: fix vma_merge() case 7 with vma_ops->close")
-  - aslr01 Tests that hugepages, that cause addesses to be aligned to higher
-           order of 2, are not used for libraries when ASLR is enabled.
-
-* Increased coverage
-
-  - getsockname01 More negative testcases
-  - getsockopt01 More negative testcases
-  - bind01 More negative testcases
-  - swapon01 Runs on all supported filesystems now
-  - waitpid01 Tests all deadly signals now
-  - fanotify01 Tests setting two marks on different filesystems
-
-* Rewritten tests
-
-  - msgstress testcases were rewritten into a single msgstress01 test
-    this should finally fix the test to scale well from small embedded boards
-    towards big servers
-
-  - symlink01 has been split into several testcases, previously several different
-              testcases were build from the source based on different messy ifdefs
-
-* UCLINUX support was completely removed from LTP
-
-  It was unmaintained and partially broken and nobody stepped up to maintain
-  the support.
-
-* Small runtest files cleanup
-
-  - runtest/io was merged into ltp-aiodio.part4
-  - runtest/cap_bounds and runtest/filecaps were merged into single runtest file
-
-* 32 testcases were converted to the new test library
-
-+ The usual amount of fixes and cleanups
-
-NOTABLE CHANGES IN NETWORK TESTS
-================================
-brought to you by Petr Vorel
-
-* New tests
-
-  - nfs09 Regression test for file truncation on NFS.
-
-* Increased coverage
-
-  - nfsstat01.sh: Add support for NFSv4*
-
-* Removed tests
-
-  - clockdiff01.sh Testing clockdiff is not relevant nowadays.
-  - telnet01.sh Testing telnet not make sense nowadays, remove it.
-  - xinetd_tests.sh Testing xinetd is not relevant nowadays.
-  - host01.sh The test does not work in all cases since testing host require
-              proper DNS setup or internet connection. Rather than fixing this
-	      it makes sense to remove the test.
-
-New documentation
-=================
-
-We have finally started working on a comprehensive documentation for LTP and
-it's test library, the current state can be seen at:
-
-https://linux-test-project.readthedocs.io/en/latest/
-
-DOWNLOAD AND LINKS
-==================
-
-The latest version of the test-suite contains 3000+ tests for the Linux
-and can be downloaded at:
-
-https://github.com/linux-test-project/ltp/releases/tag/20240524
-
-The project pages as well as GIT repository are hosted on GitHub:
-
-https://github.com/linux-test-project/ltp
-
-If you ever wondered how to write a LTP testcase, don't miss our developer
-documentation at:
-
-https://linux-test-project.readthedocs.io/en/latest/developers/test_case_tutorial.html
-
-And our library API documentation at:
-
-https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.html
-
-Patches, new tests, bugs, comments or questions should go to to our mailing
-list at ltp@lists.linux.it.
-
-CREDITS
-=======
-
-Many thanks to the people contributing to this release:
-
-git shortlog -s -e -n 20240129..
-
-    140  Petr Vorel <pvorel@suse.cz>
-     22  Martin Doucha <mdoucha@suse.cz>
-     25  Yang Xu <xuyang2018.jy@fujitsu.com>
-     21  Li Wang <liwang@redhat.com>
-     16  Andrea Cervesato <andrea.cervesato@suse.com>
-     15  Andrea Manzini <andrea.manzini@suse.com>
-     14  Wei Gao <wegao@suse.com>
-     10  Cyril Hrubis <chrubis@suse.cz>
-      5  Avinesh Kumar <akumar@suse.de>
-      2  Detlef Riekenberg <wine.dev@web.de>
-      2  Edward Liaw <edliaw@google.com>
-      4  Hui Min Mina Chou <minachou@andestech.com>
-      2  lufei <lufei@uniontech.com>
-      1  Amir Goldstein <amir73il@gmail.com>
-      1  Dennis Brendel <dbrendel@redhat.com>
-      1  Filippo Storniolo <fstornio@redhat.com>
-      1  Jan Stancek <jstancek@redhat.com>
-      1  Khem Raj <raj.khem@gmail.com>
-      1  Mete Durlu <meted@linux.ibm.com>
-      1  Murphy Zhou <jencce.kernel@gmail.com>
-      1  Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-      1  Sebastian Chlad <sebastianchlad@gmail.com>
-      1  Sergey Ulanov via ltp <ltp@lists.linux.it>
-      1  Shiyang Ruan <ruansy.fnst@fujitsu.com>
-      1  Wenjie Xu <xuwenjie04@baidu.com>
-      1  Xiangyu Chen <xiangyu.chen@windriver.com>
-      1  yangfeng <yangfeng@kylinos.cn>
-
-And also thanks to patch reviewers:
-
-git log 20240129.. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
-
-    125 Petr Vorel <pvorel@suse.cz>
-     94 Cyril Hrubis <chrubis@suse.cz>
-     31 Li Wang <liwang@redhat.com>
-     15 Andrea Cervesato <andrea.cervesato@suse.com>
-     12 Martin Doucha <mdoucha@suse.cz>
-     11 Avinesh Kumar <akumar@suse.de>
-      7 Jan Stancek <jstancek@redhat.com>
-      3 Marius Kittler <mkittler@suse.de>
-      3 Jan Kara <jack@suse.cz>
-      2 Amir Goldstein <amir73il@gmail.com>
-      1 Wei Gao <wegao@suse.com>
-      1 Vlastimil Babka <vbabka@suse.cz>
-      1 Richard Palethorpe <rpalethorpe@suse.com>
-      1 Matt Bobrowski <mattbobrowski@google.com>
-      1 Kent Overstreet <kent.overstreet@linux.dev>
-      1 Joerg Vehlow <joerg.vehlow@aox.de>
-
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 1fc4ce44e743..df0ba2382d13 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -941,11 +941,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
+ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ {
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++	static atomic64_t status_warned = ATOMIC64_INIT(0);
++	u64 reserved, status, mask, new_bits;
+ 	struct perf_sample_data data;
+ 	struct hw_perf_event *hwc;
+ 	struct perf_event *event;
+ 	int handled = 0, idx;
+-	u64 reserved, status, mask;
+ 	bool pmu_enabled;
+ 
+ 	/*
+@@ -1010,7 +1011,11 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ 	 * the corresponding PMCs are expected to be inactive according to the
+ 	 * active_mask
+ 	 */
+-	WARN_ON(status > 0);
++	if (status > 0) {
++		new_bits = atomic64_fetch_or(status, &status_warned) ^ atomic64_read(&status_warned);
++		// A new bit was set for the very first time.
++		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
++	}
+ 
+ 	/* Clear overflow and freeze bits */
+ 	amd_pmu_ack_global_status(~status);
 -- 
-Cyril Hrubis
-chrubis@suse.cz
+2.43.0
+
 
