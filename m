@@ -1,89 +1,142 @@
-Return-Path: <linux-kernel+bounces-188740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5FE8CE630
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3448CE63C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0DC61C21AF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88281F222BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CA512BF38;
-	Fri, 24 May 2024 13:29:44 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6EF86AD6;
+	Fri, 24 May 2024 13:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qy9drsJU";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="qy9drsJU"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884526EB4A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59D01EEE9
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716557384; cv=none; b=S8Qn/AOqXjCicXm3p0aW8OgxjUQBSF/Ulf8fDawMDYbfYmvDznkRzWLgsnO/0lkCs4Ni2yRJH6ecqNwVe1q+5fW1NGYFt61N8UuegmLrPfeVw174huiUYGPOf7NmFLSsSy/zBq5OFlQwceYrGNUYOrwam2UCvcuJjoOo6WT3rJM=
+	t=1716557861; cv=none; b=oCUdafVibZ/Sh1/PgmXgK9P9reFunc7miWlcuNLfoUUmKG2Eu/eiKujpWxxAcSGsMLYS6awipskt0ztMdPSrKFzsEeAEKNTr3rNsiNXvqXdhlpo9adximCbHsFlcyvgMYfM0QKcMpkVABlTpQFyEaz0KXN9z3Qyicgfbf6C0Dgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716557384; c=relaxed/simple;
-	bh=2JDf92Tog9KBmuidK5Ef5p9+4ys6GFSdcqyfl4DeWXU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=f90waOIBkkXCcPJPjbl0Zqs2m7qYR6HbouvAmp/FMVrm/7C4Ygf9ysrmIQXZ1w1c/Ywx1Cl4AyeDMo5NhvJr2xRoeyzkVx3/5ic45AzEPzBsCQOcqOUqhOiMxs8QI25MEgh4W1MUdCmB4WX6+UBPlw2dUZeT0S0QapXc5J0VHJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44ODSJ4D038392;
-	Fri, 24 May 2024 22:28:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
- Fri, 24 May 2024 22:28:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44ODSJD4038388
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 24 May 2024 22:28:19 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <19563aef-ed63-47b6-94c4-079db1bf8576@I-love.SAKURA.ne.jp>
-Date: Fri, 24 May 2024 22:28:20 +0900
+	s=arc-20240116; t=1716557861; c=relaxed/simple;
+	bh=vPom3DkMhSpbyRBBabDqGPcu4MQ4zZW628XjWbKaq5E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KZOSNNaIC2v/XOuC2rQh1r9aPU/FI5qFlnPAzFyIa2G4KlbtizXNFawuhUdy6BydoBjQUW9rIy4COMPFTtYnVUgAJL6V6wqHB6fz8kO4Mb1EOAx9wXKujm2XqDyr6iPxK8yBkKfY6kKe6AmSfcdPc/ThFP4ymSSK3fpH+9JgUxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qy9drsJU; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=qy9drsJU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 18B6E33B2B;
+	Fri, 24 May 2024 13:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716557858; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JKHA+2p18tBMJqJgM8JceeW8T9TO/bDEUGloQ6VEz/o=;
+	b=qy9drsJUa5/BPf+w/P64RE3ruc3tnU95RQyGeW1R9ZlSldD9XjEEq2sjg2K/d1+7QpWChl
+	KokgJFTHZr5Ml2tJ8s1R4b/RwfJDtqakOR0hejgPG4URnIl1F7EToQCOvT8CCr/lmD6kNf
+	t5+nawkWosh5PgIj4fCVhH88h7vs/xg=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1716557858; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JKHA+2p18tBMJqJgM8JceeW8T9TO/bDEUGloQ6VEz/o=;
+	b=qy9drsJUa5/BPf+w/P64RE3ruc3tnU95RQyGeW1R9ZlSldD9XjEEq2sjg2K/d1+7QpWChl
+	KokgJFTHZr5Ml2tJ8s1R4b/RwfJDtqakOR0hejgPG4URnIl1F7EToQCOvT8CCr/lmD6kNf
+	t5+nawkWosh5PgIj4fCVhH88h7vs/xg=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A616313A3D;
+	Fri, 24 May 2024 13:37:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wr10GiCYUGbAMAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 24 May 2024 13:37:36 +0000
+From: Juergen Gross <jgross@suse.com>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	sstabellini@kernel.org
+Subject: [GIT PULL] xen: branch for v6.10-rc1
+Date: Fri, 24 May 2024 15:37:33 +0200
+Message-Id: <20240524133733.27825-1-jgross@suse.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH (REPOST)] profiling: initialize prof_cpu_mask from
- profile_online_cpu()
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@redhat.com>,
-        akpm@linux-foundation.org
-Cc: tglx@linutronix.de, paskripkin@gmail.com, rostedt@goodmis.org,
-        glider@google.com, ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+b1a83ab2a9eb9321fbdd@syzkaller.appspotmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <000000000000d6b55e060d6bc390@google.com>
- <7227c8d1-08f6-4f95-ad0f-d5c3e47d874d@I-love.SAKURA.ne.jp>
- <85edf211-aa30-4671-93e0-5173b3f7adf2@I-love.SAKURA.ne.jp>
- <239eadaf-d694-4dff-89b9-b476be35f4e9@I-love.SAKURA.ne.jp>
- <60011cc3-b9fc-49c8-b0c0-35aafe46f313@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <60011cc3-b9fc-49c8-b0c0-35aafe46f313@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.15 / 50.00];
+	BAYES_HAM(-2.35)[96.98%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.15
+X-Spam-Flag: NO
 
-On 2024/05/05 15:18, Tetsuo Handa wrote:
-> On 2024/04/27 15:51, Tetsuo Handa wrote:
->> Can somebody test this patch? I don't know how not using
->> cpu_possible_mask affects expected profile data collection
->> (especially when written to /sys/kernel/profiling interface
->> when some of CPUs are offline).
-> 
-> I confirmed that writing to /sys/kernel/profiling while some of
-> /sys/devices/system/cpu/cpu$num/online are 0 will not affect profile data
-> collection, for profile_online_cpu() is called (and corresponding bit is set)
-> when /sys/devices/system/cpu/cpu$num/online becomes 1. Thus, I consider that
-> this patch itself is correct and safe.
+Linus,
 
-Who can take this patch?
+Please git pull the following tag:
 
+ git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-6.10a-rc1-tag
+
+xen: branch for v6.10-rc1
+
+It contains the following patches:
+
+- a small cleanup in the drivers/xen/xenbus Makefile
+- a fix of the Xen xenstore driver to improve connecting to a late started
+  Xenstore
+- an enhancement for better support of ballooning in PVH guests
+- a cleanup using try_cmpxchg() instead of open coding it
+
+Thanks.
+
+Juergen
+
+ arch/x86/xen/enlighten.c          | 33 +++++++++++++++++++++++++++++++++
+ arch/x86/xen/p2m.c                | 11 +++++------
+ drivers/xen/xenbus/Makefile       | 14 ++++++--------
+ drivers/xen/xenbus/xenbus_probe.c | 36 +++++++++++++++++++++++-------------
+ 4 files changed, 67 insertions(+), 27 deletions(-)
+
+Andy Shevchenko (1):
+      xen/xenbus: Use *-y instead of *-objs in Makefile
+
+Henry Wang (1):
+      drivers/xen: Improve the late XenStore init protocol
+
+Roger Pau Monne (1):
+      xen/x86: add extra pages to unpopulated-alloc if available
+
+Uros Bizjak (1):
+      locking/x86/xen: Use try_cmpxchg() in xen_alloc_p2m_entry()
 
