@@ -1,177 +1,135 @@
-Return-Path: <linux-kernel+bounces-188827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB69F8CE789
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D458CE78E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C394281DA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:06:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5370282800
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B4312D1EB;
-	Fri, 24 May 2024 15:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5586812D1E7;
+	Fri, 24 May 2024 15:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCbC7Ozl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="gsgvX6Hj"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8693D12CDB0
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E16B12C7FD
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716563204; cv=none; b=YlFD4z+cPa3RUw9ZQ/m1lnHaVFIi88y6q2nPKUkxv0S6F56iPOsbiqr9R1Rgzd1eFFXH3rlRNZ9Geu0Wbq+OjdYu3YTf46+SEfGcAP4cgtlKbw+PDVUGpbhCDlPGuGgmH+Jwp1YcdgtMwbPirmAyE/H0/6aI3J+rlo010MU1lUY=
+	t=1716563378; cv=none; b=N3Ylbzq0vsa1Iclg0tpS8tJgbNCJbqLhIzjz7FbQNkd7FkZxMNRCwN3lMd53SgBQgbOQU81czf1kf1QMAFWqbkz6N4D8SfDxHEWLgKAaQIyero/5upuu2xW0xNTMNj/MVP1Ka5O/qhT/vPI1+Wte4Nb6Nagc2GykOCCftMfoAJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716563204; c=relaxed/simple;
-	bh=9U+I+3UvUYJ5TOhbk28BWESWOvCg3Hz3YAevF5AWKgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ow5O8zw7aBLZn5Kfva0kr4Bx8nnEMrQxDNnhN44731ByrbyjGy+q1qfmVVjcbsJUGvKpM3j99wHkmVc5tIbDxNaqrnIVBY068Zeiu+9cPKXTTJdTLE+hGt/AJwb5sIKcSnRO7vwZefRvaTKgK3KubyThfygZlGRFRyMXVEZHz0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCbC7Ozl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716563201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jEzeUmdMITBKrrK64NgaWJvJ6PGeqKr9vTpwhksm3mY=;
-	b=hCbC7OzlcKgRRaSY/NB8JIIrQ/C5fsQ7o/o+IvMKYXH5TMcGBns/Rwjb48pChCSv0ZioPb
-	gzpS525TQrmEDHGyFk4wmHDosDXJX4f9ibBA/k09i9bMcG2hhw1DkwSgdA5ihiAfLvVFqV
-	biRI4jyDR6Rs9acboSC7unAZPVSQ2g0=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-265-9fPz-Hs7P6eamDJNTX3Hdw-1; Fri, 24 May 2024 11:06:39 -0400
-X-MC-Unique: 9fPz-Hs7P6eamDJNTX3Hdw-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2e95a65681aso8158251fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:06:39 -0700 (PDT)
+	s=arc-20240116; t=1716563378; c=relaxed/simple;
+	bh=ZHnaZHaZskD/xonYeSEZFFMg+YXeoBIVEBxcMi8GbMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEEsqZenzTZuvIQE5g8gIjnC/mHdINLdcITO/aXDL4bTJi/iNRMDR80IVZpInFfAQo8y/4ar1ZOBsmm925HQ7Nf+Wd6LNVVA/eg63/irDzcKDvln6TyF3PbYjOvNNWzsmviFJIX17+AG2lZgCmMgeHaxEMWTu68lNW2K3a5FXjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=gsgvX6Hj; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-792ecce9522so268400385a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:09:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1716563376; x=1717168176; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JPPk9ZMB0Ku0hRWNSYQthiNRSt0noAUHxb8eADGB9tY=;
+        b=gsgvX6HjugJJ0dQc6gTulNKF8t0nJmmC/VSsBCBv7yr07ySteF8jDoolV6WS3cGRfx
+         4I4Dte3aYty2pVGmlAw6+hBvjKwq06Vh1eS9LEWgXs5+smKd/lch5AxR4sdgztBagxMK
+         t5DpFdTc/Dn2psnbn8xvy/NhTLicqpXZKnISF/xC4f1zBNE7VZIbdt9lRbLbxBo5cjg0
+         QEDTPpsAzCUKIzmM2qdLKBfVBMSZ74TkgLF8LTAM+aqyl8DgF6j9ZHFo11oVFc+0UmAq
+         b8wkqau1zPRGUl6+Kv2nEjw+ZBDJBqftbuqsN+lqs3aMcJi+/PXgNjFrtqcNy5VU4Kcb
+         O6fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716563198; x=1717167998;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1716563376; x=1717168176;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jEzeUmdMITBKrrK64NgaWJvJ6PGeqKr9vTpwhksm3mY=;
-        b=hilA+Or2+peAd3uD8lTHMLSfC+riDXm75Km95Qph7As1tLNF96kfRlVOdWoWX911F0
-         izfDelVf8gM8Uoyndok4gyXhIa6ur3ovKs5faD2VUbZcX5nWcggB9IjyHCDCg4I+fZuJ
-         Ifsge6wJ1doWjJV4ogYlb8/nqfvWVS+wL7TXapKh8ROIdFwMbA6+OPZK5+YTTevOQwGM
-         Ti7rPs0v0v2RMxt0Y9hZWimZeayQCO8k4OEH6ezz6HF4UEclN//vpFU5eLWbHJmryM7p
-         iB9VmN4ck6EAutsQpvDiWrD8J1PVO9yA83a0FyM78R0nMuS98M4d3hXqrxMNDU48G64B
-         xyFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWskNSrOtXiHO/NRjm2xJ1vGYxTGieD6dTTbmQSgILdrx/n7gijbkzdLyX2iIkBSMlAQF2CG2Vv/SN6ixlEj96iI8RVP8SYEsV20CDt
-X-Gm-Message-State: AOJu0YwtYpflhzTaCzUesXcs80SncUJraaZnvIm8+kFLZSm9koAx36+J
-	UYn20TcM78ptSrLZbu3DdvOde0KiDk/SgugIJBweMeXY7guXneuNkuHOOioV/TW1fDNU69ThlQS
-	1jwof7G1tk/i1/HWyY8CDeFZmgpUC2PqW2U1RRUckBSF4lwmrdc4lMuEAMBNI7Q==
-X-Received: by 2002:a2e:9e9a:0:b0:2e1:5644:24e7 with SMTP id 38308e7fff4ca-2e95b1cbdd2mr14931381fa.13.1716563198106;
-        Fri, 24 May 2024 08:06:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgVAO8a8+GpE50ED3afdkRmdjzibIG4w46Bmqk+wo1oLzofJQBLswBxjKT8Kl9N8FxBnAmOA==
-X-Received: by 2002:a2e:9e9a:0:b0:2e1:5644:24e7 with SMTP id 38308e7fff4ca-2e95b1cbdd2mr14931141fa.13.1716563197635;
-        Fri, 24 May 2024 08:06:37 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7dba2sm1797507f8f.17.2024.05.24.08.06.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 08:06:37 -0700 (PDT)
-Message-ID: <93f3b2cb-7f79-4556-b3de-1aee015a2382@redhat.com>
-Date: Fri, 24 May 2024 17:06:36 +0200
+        bh=JPPk9ZMB0Ku0hRWNSYQthiNRSt0noAUHxb8eADGB9tY=;
+        b=vniQ4Iote0J/xukYV0pjew92rsPCMqzFrVHt7wdmsblxgIml/sufsKB11nWZdgkPQ4
+         4eAa/QnYlNqJD1610jkuvtRAzRVN5QjsknYREuu/BpW8Ab6W2ayzq1Jv/khma0fT9Aor
+         xAtcib/5d/866Vh3oThKfe5vAruplGBBvUWmn/MSxApVIb9QrkF7p98wET7dlLVbUFw9
+         Ir1kAociGnB8lhb1MIin8hWMWWGA55qMooy1aR5sksgUgCJG+rOElXQJwTvSpPcJRfjJ
+         I5c3GT78vjZQEsepY3e13S+q57yvT9FnMqmeJh7mCmDm/ojrXyNSW0GBTyJJeoY9o/7b
+         kzqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB0kTBkvSPHne6LbxCJXIeA6NmeHFCWrRGoRytBjlHUHt7v88YyaGgN//lE9JLjvh4wmbVb0ho6MuKnfI9J+OSkO40xZiudKFbDT1O
+X-Gm-Message-State: AOJu0YxEAcL2u/ArBn/N82EZDEqWAz9JwEQc6s2NgzZ1bMqU8dEQmZWQ
+	UX/UYG3sEbWk6rRBe+e2DBrW/6xCfiqB0YdxNVbJOpkiEfuK7uHvk6LOxhiat0o=
+X-Google-Smtp-Source: AGHT+IF+iMK+Fk/kuTHFaJ9i9wXeJLcDfA5+fUTHGZpkoNnrMobEJ8vPGJL+mvQIBsyXRFWw9nLt/A==
+X-Received: by 2002:a05:620a:2603:b0:790:d62a:da09 with SMTP id af79cd13be357-794ab08688dmr336194185a.5.1716563376237;
+        Fri, 24 May 2024 08:09:36 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abcc0f04sm71408585a.42.2024.05.24.08.09.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 08:09:35 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sAWY2-001QzP-Mh;
+	Fri, 24 May 2024 12:09:34 -0300
+Date: Fri, 24 May 2024 12:09:34 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Tomasz Jeznach <tjeznach@rivosinc.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: Re: [PATCH v5 2/7] iommu/riscv: Add RISC-V IOMMU platform device
+ driver
+Message-ID: <20240524150934.GR69273@ziepe.ca>
+References: <cover.1715708679.git.tjeznach@rivosinc.com>
+ <4a1ac62b8b452f9face321c29502dee8ee88191c.1715708679.git.tjeznach@rivosinc.com>
+ <CANXhq0os1R3kR7dCKWs1Yu1ZeaKoQ2b3Q7QbvyU9nRgbB8ZFmA@mail.gmail.com>
+ <CAH2o1u4j9MS9Pq7d=4skq-nLM7c_x0Dwqy8WxVfO1FBSWqA0yg@mail.gmail.com>
+ <CAK9=C2Wff07Q72LXrB9POz=91t4SNZ8AaLhQdjjjXhbqTYKCHA@mail.gmail.com>
+ <CAH2o1u5N9ZdXePh=aJHkYOpLMXeuwQTzCuQJyLdgc3-FAKim2A@mail.gmail.com>
+ <CAK9=C2VAWa4jzCW63q366rB60wk2KDUJmF86EtQkVcMYLyiPBg@mail.gmail.com>
+ <CAH2o1u4jbObtXDAiXkedy_7P6VyRVTFj9OtmqwjgGYYfys1RmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] mm/memory-failure: remove obsolete comment in
- unpoison_memory()
-To: Miaohe Lin <linmiaohe@huawei.com>, akpm@linux-foundation.org,
- tony.luck@intel.com, bp@alien8.de
-Cc: nao.horiguchi@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
-References: <20240524091310.1430048-1-linmiaohe@huawei.com>
- <20240524091310.1430048-10-linmiaohe@huawei.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240524091310.1430048-10-linmiaohe@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH2o1u4jbObtXDAiXkedy_7P6VyRVTFj9OtmqwjgGYYfys1RmA@mail.gmail.com>
 
-On 24.05.24 11:13, Miaohe Lin wrote:
-> Since commit 130d4df57390 ("mm/sl[au]b: rearrange struct slab fields to
-> allow larger rcu_head"), folio->_mapcount is not overloaded with SLAB.
-> Update corresponding comment.
+On Thu, May 23, 2024 at 09:13:43AM -0700, Tomasz Jeznach wrote:
+> > > The activation of IOMMU_DMA for the RISC-V architecture will be
+> > > feasible once the core components achieve compatibility with the DMA
+> > > subsystem, which unfortunately is currently not the case. Without
+> > > IOMMU_DMA enabled, driver will recognize RISC-V IOMMU hardware,
+> > > register itself in the IOMMU core subsystem, and will provide basic
+> > > IDENTITY protection domains for connected devices.
+> >
+> > I am not asking for IOMMU_DMA feature instead I am asking for
+> > supporting device MSIs in this series.
+> >
 > 
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-> ---
->   mm/memory-failure.c | 4 ----
->   1 file changed, 4 deletions(-)
-> 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 19d338e83e43..e4252f297d41 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -2610,10 +2610,6 @@ int unpoison_memory(unsigned long pfn)
->   	    folio_test_reserved(folio) || folio_test_offline(folio))
->   		goto unlock_mutex;
->   
-> -	/*
-> -	 * Note that folio->_mapcount is overloaded in SLAB, so the simple test
-> -	 * in folio_mapped() has to be done after folio_test_slab() is checked.
-> -	 */
->   	if (folio_mapped(folio)) {
->   		unpoison_pr_info("Unpoison: Someone maps the hwpoison page %#lx\n",
->   				 pfn, &unpoison_rs);
+> Ok. Makes sense.
+> I've looked at the option to pull in / add small change to enable MSI
+> bypass window for systems with IMSIC enabled. With that, MSIs will be
+> supported, however without full interrupt remapping capabilities that
+> could IOMMU provide. If that sounds as sufficient change I'll add it
+> to this series.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Honestly I would prefer you keep that seperate as we really need to
+discuss the irq window stuff in alot of detail. The current thing ARM
+has done comes with alot of problems.
 
--- 
-Cheers,
+This series seems pretty good to me as is, let's get it merged.
 
-David / dhildenb
-
+Jason
 
