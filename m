@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-188819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2498CE770
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB838CE772
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175212829DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3361C219DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D691412D1FF;
-	Fri, 24 May 2024 14:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB90712CD8E;
+	Fri, 24 May 2024 14:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NpPwofG2"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Hcr2Mbsm"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8139212CDBC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEA012C55D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716562589; cv=none; b=VnQKfO+XnFf1SDTvXfhmRvQ1ElmwNSj4jB4frnX1DK4MwQK0r4UVOh9Z73bcDP5oCjJydX3XIFYh+pISfjl3LXWvpTEdyP5KH31GXJ5Nxh63OYcfFy25i1SGlxR4BYwWOfz5LzXaKGcUBJYPK47OLQ+DRM3P01PlKxpJOoUcUXc=
+	t=1716562729; cv=none; b=dhA9EiYd6jRzqTtcIuUCSzCqMoQ5rUE4/2ptJKXPYNqd2YrgirrhBs1PioyiwrndJL0kzrgPKR+iVESK9tQP0r0Ulotr+zI8+NBdDAzGZMqpZ/rWgB7ipqdvfqhEg4tgL5dmW6SaMGL7hcbSPdqLTddETcmB//brGvzaQxvlv+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716562589; c=relaxed/simple;
-	bh=OYw8Cg1eCDv4d2lRRfYHRk0lfNtBpolIkz/iSx2vZqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLfz19KaXYzJd+Z9r8JzmQfYlynzpTag9BP/oIvWwSFC84SLJ/+zpyNapJB3UtJMGDcBoiUjcY5aoSgaG1dMd3JcQBNV49ukUxAsQn/hLDhSgJ31Nj0K5nVecKAIVeDfX5O4XzoKYzUBhzOz+chfdV5WwNQrvk1UpjrW06+Bt68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NpPwofG2; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4210c9d1df6so1781635e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:56:27 -0700 (PDT)
+	s=arc-20240116; t=1716562729; c=relaxed/simple;
+	bh=2PAF37j9F18Nf5iuq9vX6tcKGUy44bEVYVrsHN5w9GU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eDoPImnioofUZ0lsLz8NFCqALn46DUvQ74TYgmw0aTj+6T17waHDTWqaKJbBOn1Nyy9bmplCVoLcDMvUUR84FDVTK7Yxg+HRiVGaVMWlIsvRyQmXhacFE8Gz9TLswPU3+zmcqg88f08TbAf2cuYVTHlnOsV3qO5IhUt3f8Lh3oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Hcr2Mbsm; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-578517c8b49so1280575a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:58:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716562586; x=1717167386; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IFd4NSwhfGGM0dkHfawikZtgqzn4xojK3Pqv6CdYZAo=;
-        b=NpPwofG2YFaIMPOzgmeWLIZcM84n/mpwjjXkpYeeSfe8k96Cmvqsi3ruBpQghEd9Nz
-         ZgZLop6umYPTQFhfunXW0JumlW1XeURH1wRC6XcapR2RvnS7mal1TJThzMSocwDuVTuO
-         I4oyL8f9dBCgEWNzNbndfwktCXBsUhRRvT7QZcFVzxNm9FT8KJkQAC1IOiLf0fpKqfrR
-         bkEt7L5gTw74PcU8Ojc/jzwedVwcDfNY8SFH9T+Q3I2qdxeqyNTK+EYSmu5564iVXQLj
-         i6v2cjd5zLKI3URicA6lgNV2BmIpQE2BphgRBbG/FzhNv2uWQOtikFUHGiWjHneGWSer
-         eBHQ==
+        d=linux-foundation.org; s=google; t=1716562725; x=1717167525; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcMspqehBFuBupFDxybL8n0NBRn8g86OZY15bYliGX4=;
+        b=Hcr2MbsmZ+IdUPrT/Z53hUrQBPhqvBWWOdoMYHlgkoHNeGvbgnDrrYd/lIY2mVd270
+         xIGtlZz4+UJxFwocspcYGdco3JsgV97huG1f44nlBNE4f9pp4g+MZM3c4rL62f6Gup5G
+         3EPJL0niAJZ/izTWY+e/dhHLXhZFJnwK5wd5Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716562586; x=1717167386;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IFd4NSwhfGGM0dkHfawikZtgqzn4xojK3Pqv6CdYZAo=;
-        b=D2VqnI+NJ+1LBrvJPp8DZwTqrJkXgcLEuw0wJwpBLee9ODKY54GNZIjaarksZfmAty
-         ZtD6f7VoMzII1E3OiSBAUe6v+YSWjX3QZk1PabkzskRpQaGQ21rpI0O2k6pBj+ZX+1U4
-         QuFstEDaGByfaXGCGcTl/BXLIRaOJsp4ozVIy91H1+t7PoSkpcFPekxM22/jkkewJKRa
-         +HSLw0jLau2QHHp7EReQBvSYAY2haQVrhxRJHvBypJUpUSWb6zwBPe9N0FZGr9uwNa5t
-         Oyd5NvaZQc/xrpMPJs6quVyyHlWgDdvK0x04l0YQQ4fUxqXIkoPI0C5goewMgISCO5TE
-         bluw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo1Ci9SXN8SK82dgsJXpW02DziI8Sih4DL6n3QXdN89Q22HXdRyTH3Z39sDjku+hVAcLm2w9wu3CYsez/b6zncxiv6+x8rQVvANEtK
-X-Gm-Message-State: AOJu0YwrtgqQFNPngznp7i1OBP0Yz+5Zd5buqOjEE4UR+ZAp4EqXJcDw
-	zZ58gKPPg9Xfwp4eMfp5z3CaPDxR+09UqCgodlC611X757p82ARPlBaMGpMh9K4=
-X-Google-Smtp-Source: AGHT+IFzhnwidECh45iEEjkgcSjoxnXJokt/Bwq6KmtAyfAEk5qpNjP3Kf0y8Ah4BCe9mjKHHw/9IA==
-X-Received: by 2002:a05:600c:6b04:b0:41f:f053:edb4 with SMTP id 5b1f17b1804b1-421089ebea3mr21345815e9.23.1716562585592;
-        Fri, 24 May 2024 07:56:25 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-420fc82c4e0sm74313045e9.0.2024.05.24.07.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 07:56:25 -0700 (PDT)
-Date: Fri, 24 May 2024 17:56:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	Michal Simek <michal.simek@amd.com>,
-	Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Bharat Kumar Gogada <bharatku@xilinx.com>
-Subject: Re: [PATCH v3 2/7] PCI: xilinx-nwl: Fix off-by-one in IRQ handler
-Message-ID: <c2e1d87c-14e2-4efd-a5cd-f173b52dad35@moroto.mountain>
-References: <20240522222834.GA101664@bhelgaas>
- <9299ee92-a32b-4b82-aa37-c7087a5c1376@linux.dev>
+        d=1e100.net; s=20230601; t=1716562725; x=1717167525;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rcMspqehBFuBupFDxybL8n0NBRn8g86OZY15bYliGX4=;
+        b=BYB18uAC06LkzngwvsnAz/4hg9NIwg/ty0SqCfwFlyegAi1rNGNjWk/5JqMkKGkueI
+         s4xHqFyqN8ltwUwdxc8+rLexNKhFAPhnlDiohbUlWAa0/uUGmO3pPiykZ9LgFpUSAZMy
+         Ngw97ATlife0GocDIGfGd9cmERisXZtgn+4Po1LqniOyfGtnGoxRa6LDtkLHSUpfAYQn
+         BLwdpcyR4CqA33qJvSpyBQnoy9dr27akVvd+0II0a7GJBY2ca3lFo+mntHtHKuqz9z+x
+         kPtJRxU0olGDdbH9u4dKcqpAR9ziD887rBdANIcuPylCugihOuFgl3ZJOqsn0Cw6hr5M
+         VTIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtI4rF4tIWJZ3ok4NjkFXtRq69kj5+vD9dvVoG3IJXNaRtM32H49pqpTgZmSW7W1HjwFgyAutdUBSIxFBX9btG8m5L6NpSGcoZynw1
+X-Gm-Message-State: AOJu0YwWaAHCt5zPdsilPTC5YBgsTZsuumu3skeNP7NsL7r2IzXmCE4F
+	1TDeynV9kF10ex4RCqVnIcEsjjImeWbKOLZgARkYLoY9Wo6XoqyXuhp5q1DBM6Q5NEkgIctAi0T
+	Z3j9BrA==
+X-Google-Smtp-Source: AGHT+IE9/Ab/fkref50cqc38dqfRc+2ZxdTMfktiFZBz6udps7S2Tmp4TrRAxXxdT/GNriRqgvQ/ZA==
+X-Received: by 2002:a50:aacd:0:b0:572:4702:2227 with SMTP id 4fb4d7f45d1cf-57851a98927mr1640024a12.35.1716562724992;
+        Fri, 24 May 2024 07:58:44 -0700 (PDT)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57852495dbasm1821249a12.78.2024.05.24.07.58.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 07:58:44 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6266fff501so123555166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:58:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWkvRRtBK1KU5nOnO5/VX/qa4OkjJe4KF5xlFFT5E7juspR0UU46AoAqnZiPAB/gNRZQXBkRqltiNq8fWHEfUywR1SST+eQ+blODEX7
+X-Received: by 2002:a17:906:2296:b0:a59:afba:d0a4 with SMTP id
+ a640c23a62f3a-a62641de237mr167222666b.23.1716562723858; Fri, 24 May 2024
+ 07:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9299ee92-a32b-4b82-aa37-c7087a5c1376@linux.dev>
+References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr> <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
+ <ZkvO-h7AsWnj4gaZ@slm.duckdns.org> <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
+ <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
+ <CALOAHbAmHTGxTLVuR5N+apSOA29k08hky5KH9zZDY8yg2SAG8Q@mail.gmail.com>
+ <CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com>
+ <CALOAHbAAAU9MTQFc56GYoYWR3TsLbkncp5QrrwHMbqJ9SECivw@mail.gmail.com>
+ <CAHk-=whwtEFJnDVrkkMtb6SWcmBQMK8+qXGtqvBO+xH8y2i6nA@mail.gmail.com> <CALOAHbD0LdbQTWyvDiLcgGupcQJKmadzWhoZiUTj126Rqqn6fQ@mail.gmail.com>
+In-Reply-To: <CALOAHbD0LdbQTWyvDiLcgGupcQJKmadzWhoZiUTj126Rqqn6fQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 24 May 2024 07:58:26 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wivfrF0_zvf+oj6==Sh=-npJooP8chLPEfaFV0oNYTTBA@mail.gmail.com>
+Message-ID: <CAHk-=wivfrF0_zvf+oj6==Sh=-npJooP8chLPEfaFV0oNYTTBA@mail.gmail.com>
+Subject: Re: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
+ formatting and make wq_worker_comm() use full ID string
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: bpf <bpf@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Jan Engelhardt <jengelh@inai.de>, 
+	Craig Small <csmall@enc.com.au>, linux-kernel@vger.kernel.org, 
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 23, 2024 at 11:21:52AM -0400, Sean Anderson wrote:
-> On 5/22/24 18:28, Bjorn Helgaas wrote:
-> > On Mon, May 20, 2024 at 10:53:57AM -0400, Sean Anderson wrote:
-> >> MSGF_LEG_MASK is laid out with INTA in bit 0, INTB in bit 1, INTC in bit
-> >> 2, and INTD in bit 3. Hardware IRQ numbers start at 0, and we register
-> >> PCI_NUM_INTX irqs. So to enable INTA (aka hwirq 0) we should set bit 0.
-> >> Remove the subtraction of one. This fixes the following UBSAN error:
-> > 
-> > Thanks for these details!
-> > 
-> > I guess UBSAN == "undefined behavior sanitizer", right?  That sounds
-> > like an easy way to find this but not the way users are likely to find
-> > it.
-> 
-> It's pretty likely they will find it this way, since I found it this way
-> and no one else had ;)
-> 
-> > I assume users would notice spurious and missing interrupts, e.g.,
-> > a driver that tried to enable INTB would have actually enabled INTA,
-> > so we'd see spurious INTA interrupts and the driver would never see
-> > the INTB it expected.
-> > 
-> > And a driver that tried to enable INTA would never see that interrupt,
-> > and we might not set any bit in MSGF_LEG_MASK?
-> 
-> And yes, this would manifest as INTx interrupts being broken.
-> 
+On Fri, 24 May 2024 at 00:43, Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> Actually, there are already helpers for this: get_task_comm() and
+> __get_task_comm(). We can simply replace the memcpy() with one of
+> these
 
-It's so weird that it's been broken for seven years and no one reported
-it.  :/
+No. We should get rid of those horrendous helpers.
 
-regards,
-dan carpenter
+> If the task_lock() in __get_task_comm() is a concern, we could
+> consider adding a new __get_current_comm().
 
+The task_lock is indeed the problem - it generates locking problems
+and basically means that most places cannot use them. Certainly not
+things like tracing etc.
+
+The locking is also entirely pointless\, since absolutely nobody
+cares. If somebody is changing the name at the same time - which
+doesn't happen in practice - getting some halfway result is fine as
+long as you get a proper NUL terminated result.
+
+Even for non-current, they are largely useless. They were a mistake.
+
+So those functions should never be used for any normal thing. Instead
+of locking, the function should literally just do a "copy a couple of
+words and make sure the end result still has a NUL at the end".
+
+That's literally what selinuxfs.c wants, for example - it copies the
+thing to a local buffer not because it cares about some locking issue,
+but because it wants one stable value. But by using 'memcpy()' and
+that fixed size, it means that we can't sanely extend the source size
+because now it wouldn't be NUL-terminated. But selinux never wanted a
+lock, and never wanted any kind of *consistent* result, it just wanted
+a *stable* result.
+
+Since user space can randomly change their names anyway, using locking
+was always wrong for readers (for writers it probably does make sense
+to have some lock - although practically speaking nobody cares there
+either, but at least for a writer some kind of race could have
+long-term mixed results)
+
+Oh well.
+
+                Linus
 
