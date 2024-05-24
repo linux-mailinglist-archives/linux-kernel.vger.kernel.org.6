@@ -1,284 +1,305 @@
-Return-Path: <linux-kernel+bounces-188769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BB88CE6AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819E28CE6B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F10F11C221EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31948283352
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FD712C559;
-	Fri, 24 May 2024 14:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0187C12C476;
+	Fri, 24 May 2024 14:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfqRC24l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XwqHhGHd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nbeNsxxf";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XwqHhGHd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nbeNsxxf"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD82B12C466;
-	Fri, 24 May 2024 14:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDED38DC8
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559706; cv=none; b=S6cw/BTn0iGX35LJ0vYLiqZURJVAv1iqQfcAUrDT0ngVOf0oC7Zpc7rNsSsQApXr6OpFnfSb4kNP5RZ4FeUy+zk1FZKMvA/rACz7lO7y/S/vKfGfHd+dckPqyS6KeStPEaDoD4gHmfsxrdShFymsT3k0sbVt4n4I3tWjlsSgQHk=
+	t=1716559814; cv=none; b=R8P1rxy7bE/MgjI5uymzfAHVDUkyiWf0aLko2j7EaZkrxoaAr1e3GlAIv1NF7wWtbv6sMltK4HGfb8ZDKaKarOUQDbVnIItS0vfc1/8IGwJ+lzLLR6j/Od30MmIUH+ataEpHi3xL/PLFKzXI7Mz06Yh6f1Bo1V74pHt1ZSiI2Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559706; c=relaxed/simple;
-	bh=jOLD+B0VxmIWv7LTxar6ty0Ee1Adzi/qqB67hBzJ79o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mTccwpfmyPpcGtWokXKzKM8jWnzk5QfI/G/hXN7Qz8GbJiMzyT9DC+urMlje5JytgIacxh9E3rBsQuYqnA/5j0E5fni4qgaLXSOKagH78gk158jXS8JiFt763GHHgiz1KtYm2vbDfCNtBTPbTIt153SnYKypoOHfxOMl6+/2I5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YfqRC24l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5879FC4AF09;
-	Fri, 24 May 2024 14:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716559705;
-	bh=jOLD+B0VxmIWv7LTxar6ty0Ee1Adzi/qqB67hBzJ79o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YfqRC24lOVeF+pf1yk7zDQkLmL2cfEyOfdyx8jvuexMd6HY3NyQOycMysksr57tI4
-	 mx8B4I4FNwv+tjerVNSyj/9PbxLxViwzXX+3m/LGIDcKMlOaDvPFBMRdNhyGl0d55u
-	 73nBoIYF2Saou6bBVRCxuvtTfjn4kbsKzlXp6hQCqGT7zsaWxlkoYQb1veKUzxjlf+
-	 /TMHMsGxLxDHCC+Poa5IdJf+mfd268M/JNYUdCFUE9HteEoBWlj0ISroETLR/C6ftF
-	 /u8YG/Wf9h0eT6XiKN1eM1gzjQA809XXOoy0HRWO4HeUTtHF5xGnIcx56w3y9X1BbF
-	 Dm6B2H7tZlUZQ==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e576057c2bso131794371fa.1;
-        Fri, 24 May 2024 07:08:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV6glINaGGALLEW5lzqKO+KsLsSAd4jz0INwUD3HfwCqdx8eVVIAPUlFs7Q3cFapA8LBg6OAFNiDkpahzgMJ74RbMyyBZn6W34E1I54eBTop5WNqGF+y4yIqXYK9zy3495REo4ip6lfTYQ=
-X-Gm-Message-State: AOJu0YyATlrvkYimn5aZJaIbnhHfER8LQDrFzTIDmucV9/s0hHGBoPlX
-	nYd9WTjC9AiOsbGDL2pUTUC8yMr0Lig29d4lPBq6SRXNN0CwHu5KvXWTDwnDuDLVfLohirsTM74
-	s6E5+R2fQLWbY4xshlqImmBR0Iak=
-X-Google-Smtp-Source: AGHT+IETr1rNL9PKRy/0zYi5XSFyiRAy5xWNxvtpD5IaKTyo1br2sWEu3Y0Lv7DzjYnbVUIr54kYrJ56YKzjSu5D88w=
-X-Received: by 2002:a2e:9899:0:b0:2e5:685a:85b5 with SMTP id
- 38308e7fff4ca-2e95b041622mr21195781fa.1.1716559703630; Fri, 24 May 2024
- 07:08:23 -0700 (PDT)
+	s=arc-20240116; t=1716559814; c=relaxed/simple;
+	bh=Iwc7nRQUKffCASqdr7kL/QpPOc2Tz7sHTYeJAlhiIi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ho4OCIGzDxqgPmAR9dCxN3N6ncv3jvRcjWnaDjK4Ut08M9KEIKRarsMiEB9wzVUwPPowrxiCZkIabj4EMeop45flyaloJ8uBwpJWsnt041OsHsqwFNH2mDProviIejuScXU/Ifk9tBOKDfypJzEEHCC2B9AaMWo7SC09eZbOgIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XwqHhGHd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nbeNsxxf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XwqHhGHd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nbeNsxxf; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1225A33B4E;
+	Fri, 24 May 2024 14:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716559810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
+	b=XwqHhGHdUzYod8u0PTEKmFcHp+qU2dOjuU5VjoxIJtGEukkanafLhxb3iE+lM2qv/s7N7x
+	sBrLsOhG+Tl2RkzmwP6e2PXP5RYEUHlvGBo8+Jy7zRJBjei+PK5Ut4iF13CGj4ABuObEeT
+	6iU0Z6BsUplfnW4aHAffX6IggUD34kY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716559810;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
+	b=nbeNsxxfR68jIe/QlMWUEW07uHFh8aae4yMwEvxcI1jSbKl1HdHN6KVSh+ZoqkRLt1VMVs
+	yEm7QJaoM6Cp7pDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XwqHhGHd;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nbeNsxxf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716559810; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
+	b=XwqHhGHdUzYod8u0PTEKmFcHp+qU2dOjuU5VjoxIJtGEukkanafLhxb3iE+lM2qv/s7N7x
+	sBrLsOhG+Tl2RkzmwP6e2PXP5RYEUHlvGBo8+Jy7zRJBjei+PK5Ut4iF13CGj4ABuObEeT
+	6iU0Z6BsUplfnW4aHAffX6IggUD34kY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716559810;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=F26aKVHEn/HJrJC8s7hiOmU9ISqv2CdOYQdRJrNXvj8=;
+	b=nbeNsxxfR68jIe/QlMWUEW07uHFh8aae4yMwEvxcI1jSbKl1HdHN6KVSh+ZoqkRLt1VMVs
+	yEm7QJaoM6Cp7pDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 035A713A6B;
+	Fri, 24 May 2024 14:10:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id s2cbO8GfUGaaGQAAD6G6ig
+	(envelope-from <chrubis@suse.cz>); Fri, 24 May 2024 14:10:09 +0000
+Date: Fri, 24 May 2024 16:10:10 +0200
+From: Cyril Hrubis <chrubis@suse.cz>
+To: ltp@lists.linux.it, linux-kernel@vger.kernel.org,
+	libc-alpha@sourceware.org
+Cc: lwn@lwn.net, akpm@linux-foundation.org, torvalds@linux-foundation.org
+Subject: [ANNOUNCE] The Linux Test Project has been released for MAY 2024
+Message-ID: <ZlCfwm2kzHqhjiWn@yuki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523-zoned-gc-v4-0-23ed9f61afa0@kernel.org> <20240523-zoned-gc-v4-1-23ed9f61afa0@kernel.org>
-In-Reply-To: <20240523-zoned-gc-v4-1-23ed9f61afa0@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Fri, 24 May 2024 15:07:46 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H6s=3avNUCCQK9W7AH+U_82eq0LaQ5XEL28m9X8k+rHkQ@mail.gmail.com>
-Message-ID: <CAL3q7H6s=3avNUCCQK9W7AH+U_82eq0LaQ5XEL28m9X8k+rHkQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] btrfs: zoned: reserve relocation block-group on mount
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	Hans Holmberg <Hans.Holmberg@wdc.com>, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 1225A33B4E
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-On Thu, May 23, 2024 at 4:32=E2=80=AFPM Johannes Thumshirn <jth@kernel.org>=
- wrote:
->
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Reserve one zone as a data relocation target on each mount. If we already
-> find one empty block group, there's no need to force a chunk allocation,
-> but we can use this empty data block group as our relocation target.
->
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/btrfs/block-group.c | 17 +++++++++++++
->  fs/btrfs/disk-io.c     |  2 ++
->  fs/btrfs/zoned.c       | 67 ++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  fs/btrfs/zoned.h       |  3 +++
->  4 files changed, 89 insertions(+)
->
-> diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-> index 9910bae89966..1195f6721c90 100644
-> --- a/fs/btrfs/block-group.c
-> +++ b/fs/btrfs/block-group.c
-> @@ -1500,6 +1500,15 @@ void btrfs_delete_unused_bgs(struct btrfs_fs_info =
-*fs_info)
->                         btrfs_put_block_group(block_group);
->                         continue;
->                 }
-> +
-> +               spin_lock(&fs_info->relocation_bg_lock);
-> +               if (block_group->start =3D=3D fs_info->data_reloc_bg) {
-> +                       btrfs_put_block_group(block_group);
-> +                       spin_unlock(&fs_info->relocation_bg_lock);
-> +                       continue;
-> +               }
-> +               spin_unlock(&fs_info->relocation_bg_lock);
-> +
->                 spin_unlock(&fs_info->unused_bgs_lock);
->
->                 btrfs_discard_cancel_work(&fs_info->discard_ctl, block_gr=
-oup);
-> @@ -1835,6 +1844,14 @@ void btrfs_reclaim_bgs_work(struct work_struct *wo=
-rk)
->                                       bg_list);
->                 list_del_init(&bg->bg_list);
->
-> +               spin_lock(&fs_info->relocation_bg_lock);
-> +               if (bg->start =3D=3D fs_info->data_reloc_bg) {
-> +                       btrfs_put_block_group(bg);
-> +                       spin_unlock(&fs_info->relocation_bg_lock);
-> +                       continue;
-> +               }
-> +               spin_unlock(&fs_info->relocation_bg_lock);
+Good news everyone,
 
-Ok, so the reclaim task and cleaner kthread will not remove the
-reserved block group.
+the Linux Test Project test suite stable release for *May 2024* has been
+released.
 
-But there's nothing preventing someone running balance manually, which
-will delete the block group.
+Since the last release 292 patches by 27 authors were merged.
 
-E.g. block group X is empty and reserved as the data relocation bg.
-The balance ioctl is invoked, it goes through all block groups for relocati=
-on.
-It happens that it first finds bg X. Deletes bg X.
+Patch review is what most of the projects struggle with and LTP is no
+different. If you can spare some effort helping with the patch review is more
+than welcomed.
 
-Now there's no more reserved bg for data relocation, and other tasks
-can come in and use the freed space and fill all of it or most of it.
+NOTABLE CHANGES
+===============
 
-Shouldn't we prevent the data reloc bg from being a target of a manual
-relocation too?
-E.g. have btrfs_relocate_chunk() do nothing if the bg is the data reloc bg.
+* New tests
 
-Thanks.
+  - mlock05 Test for pre-faulting locked memory
+  - kvm_svm04 Functional test for VMSAVE/VMLOAD instructions
+  - arch_prctl01 Test for ARCH_SET_CPUID and ARCH_GET_CPUID
+  - kallsyms A test to check that it's impossible to read kernel memory from userspace
+  - unlink09 Negative tests for unlink()
+  - getrandom05 Negative tests for getrandom()
+  - gethostname02 Negative tests for gethostname()
+  - splice08 Test for splicing from /dev/zero and /dev/full
+  - splice09 Test for splicing to /dev/zero and /dev/null
+  - shmat04 A regression test for fc0c8f9089c2
+           ("mm, mmap: fix vma_merge() case 7 with vma_ops->close")
+  - aslr01 Tests that hugepages, that cause addesses to be aligned to higher
+           order of 2, are not used for libraries when ASLR is enabled.
 
-> +
->                 space_info =3D bg->space_info;
->                 spin_unlock(&fs_info->unused_bgs_lock);
->
-> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> index 78d3966232ae..16bb52bcb69e 100644
-> --- a/fs/btrfs/disk-io.c
-> +++ b/fs/btrfs/disk-io.c
-> @@ -3547,6 +3547,8 @@ int __cold open_ctree(struct super_block *sb, struc=
-t btrfs_fs_devices *fs_device
->         }
->         btrfs_discard_resume(fs_info);
->
-> +       btrfs_reserve_relocation_bg(fs_info);
-> +
->         if (fs_info->uuid_root &&
->             (btrfs_test_opt(fs_info, RESCAN_UUID_TREE) ||
->              fs_info->generation !=3D btrfs_super_uuid_tree_generation(di=
-sk_super))) {
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index c52a0063f7db..d291cf4f565e 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -17,6 +17,7 @@
->  #include "fs.h"
->  #include "accessors.h"
->  #include "bio.h"
-> +#include "transaction.h"
->
->  /* Maximum number of zones to report per blkdev_report_zones() call */
->  #define BTRFS_REPORT_NR_ZONES   4096
-> @@ -2637,3 +2638,69 @@ void btrfs_check_active_zone_reservation(struct bt=
-rfs_fs_info *fs_info)
->         }
->         spin_unlock(&fs_info->zone_active_bgs_lock);
->  }
-> +
-> +static u64 find_empty_block_group(struct btrfs_space_info *sinfo, u64 fl=
-ags)
-> +{
-> +       struct btrfs_block_group *bg;
-> +
-> +       for (int i =3D 0; i < BTRFS_NR_RAID_TYPES; i++) {
-> +               list_for_each_entry(bg, &sinfo->block_groups[i], list) {
-> +                       if (bg->flags !=3D flags)
-> +                               continue;
-> +                       if (bg->used =3D=3D 0)
-> +                               return bg->start;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +void btrfs_reserve_relocation_bg(struct btrfs_fs_info *fs_info)
-> +{
-> +       struct btrfs_root *tree_root =3D fs_info->tree_root;
-> +       struct btrfs_space_info *sinfo =3D fs_info->data_sinfo;
-> +       struct btrfs_trans_handle *trans;
-> +       struct btrfs_block_group *bg;
-> +       u64 flags =3D btrfs_get_alloc_profile(fs_info, sinfo->flags);
-> +       u64 bytenr =3D 0;
-> +
-> +       lockdep_assert_not_held(&fs_info->relocation_bg_lock);
-> +
-> +       if (!btrfs_is_zoned(fs_info))
-> +               return;
-> +
-> +       if (fs_info->data_reloc_bg)
-> +               return;
-> +
-> +       bytenr =3D find_empty_block_group(sinfo, flags);
-> +       if (!bytenr) {
-> +               int ret;
-> +
-> +               trans =3D btrfs_join_transaction(tree_root);
-> +               if (IS_ERR(trans))
-> +                       return;
-> +
-> +               ret =3D btrfs_chunk_alloc(trans, flags, CHUNK_ALLOC_FORCE=
-);
-> +               btrfs_end_transaction(trans);
-> +               if (ret)
-> +                       return;
-> +
-> +               bytenr =3D find_empty_block_group(sinfo, flags);
-> +               if (!bytenr)
-> +                       return;
-> +
-> +       }
-> +
-> +       bg =3D btrfs_lookup_block_group(fs_info, bytenr);
-> +       if (!bg)
-> +               return;
-> +
-> +       if (!btrfs_zone_activate(bg))
-> +               bytenr =3D 0;
-> +
-> +       btrfs_put_block_group(bg);
-> +
-> +       spin_lock(&fs_info->relocation_bg_lock);
-> +       fs_info->data_reloc_bg =3D bytenr;
-> +       spin_unlock(&fs_info->relocation_bg_lock);
-> +}
-> diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-> index ff605beb84ef..56c1c19d52bc 100644
-> --- a/fs/btrfs/zoned.h
-> +++ b/fs/btrfs/zoned.h
-> @@ -95,6 +95,7 @@ int btrfs_zone_finish_one_bg(struct btrfs_fs_info *fs_i=
-nfo);
->  int btrfs_zoned_activate_one_bg(struct btrfs_fs_info *fs_info,
->                                 struct btrfs_space_info *space_info, bool=
- do_finish);
->  void btrfs_check_active_zone_reservation(struct btrfs_fs_info *fs_info);
-> +void btrfs_reserve_relocation_bg(struct btrfs_fs_info *fs_info);
->  #else /* CONFIG_BLK_DEV_ZONED */
->
->  static inline int btrfs_get_dev_zone_info_all_devices(struct btrfs_fs_in=
-fo *fs_info)
-> @@ -264,6 +265,8 @@ static inline int btrfs_zoned_activate_one_bg(struct =
-btrfs_fs_info *fs_info,
->
->  static inline void btrfs_check_active_zone_reservation(struct btrfs_fs_i=
-nfo *fs_info) { }
->
-> +static inline void btrfs_reserve_relocation_bg(struct btrfs_fs_info *fs_=
-info) { }
-> +
->  #endif
->
->  static inline bool btrfs_dev_is_sequential(struct btrfs_device *device, =
-u64 pos)
->
-> --
-> 2.43.0
->
->
+* Increased coverage
+
+  - getsockname01 More negative testcases
+  - getsockopt01 More negative testcases
+  - bind01 More negative testcases
+  - swapon01 Runs on all supported filesystems now
+  - waitpid01 Tests all deadly signals now
+  - fanotify01 Tests setting two marks on different filesystems
+
+* Rewritten tests
+
+  - msgstress testcases were rewritten into a single msgstress01 test
+    this should finally fix the test to scale well from small embedded boards
+    towards big servers
+
+  - symlink01 has been split into several testcases, previously several different
+              testcases were build from the source based on different messy ifdefs
+
+* UCLINUX support was completely removed from LTP
+
+  It was unmaintained and partially broken and nobody stepped up to maintain
+  the support.
+
+* Small runtest files cleanup
+
+  - runtest/io was merged into ltp-aiodio.part4
+  - runtest/cap_bounds and runtest/filecaps were merged into single runtest file
+
+* 32 testcases were converted to the new test library
+
++ The usual amount of fixes and cleanups
+
+NOTABLE CHANGES IN NETWORK TESTS
+================================
+brought to you by Petr Vorel
+
+* New tests
+
+  - nfs09 Regression test for file truncation on NFS.
+
+* Increased coverage
+
+  - nfsstat01.sh: Add support for NFSv4*
+
+* Removed tests
+
+  - clockdiff01.sh Testing clockdiff is not relevant nowadays.
+  - telnet01.sh Testing telnet not make sense nowadays, remove it.
+  - xinetd_tests.sh Testing xinetd is not relevant nowadays.
+  - host01.sh The test does not work in all cases since testing host require
+              proper DNS setup or internet connection. Rather than fixing this
+	      it makes sense to remove the test.
+
+New documentation
+=================
+
+We have finally started working on a comprehensive documentation for LTP and
+it's test library, the current state can be seen at:
+
+https://linux-test-project.readthedocs.io/en/latest/
+
+DOWNLOAD AND LINKS
+==================
+
+The latest version of the test-suite contains 3000+ tests for the Linux
+and can be downloaded at:
+
+https://github.com/linux-test-project/ltp/releases/tag/20240524
+
+The project pages as well as GIT repository are hosted on GitHub:
+
+https://github.com/linux-test-project/ltp
+
+If you ever wondered how to write a LTP testcase, don't miss our developer
+documentation at:
+
+https://linux-test-project.readthedocs.io/en/latest/developers/test_case_tutorial.html
+
+And our library API documentation at:
+
+https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.html
+
+Patches, new tests, bugs, comments or questions should go to to our mailing
+list at ltp@lists.linux.it.
+
+CREDITS
+=======
+
+Many thanks to the people contributing to this release:
+
+git shortlog -s -e -n 20240129..
+
+    140  Petr Vorel <pvorel@suse.cz>
+     22  Martin Doucha <mdoucha@suse.cz>
+     25  Yang Xu <xuyang2018.jy@fujitsu.com>
+     21  Li Wang <liwang@redhat.com>
+     16  Andrea Cervesato <andrea.cervesato@suse.com>
+     15  Andrea Manzini <andrea.manzini@suse.com>
+     14  Wei Gao <wegao@suse.com>
+     10  Cyril Hrubis <chrubis@suse.cz>
+      5  Avinesh Kumar <akumar@suse.de>
+      2  Detlef Riekenberg <wine.dev@web.de>
+      2  Edward Liaw <edliaw@google.com>
+      4  Hui Min Mina Chou <minachou@andestech.com>
+      2  lufei <lufei@uniontech.com>
+      1  Amir Goldstein <amir73il@gmail.com>
+      1  Dennis Brendel <dbrendel@redhat.com>
+      1  Filippo Storniolo <fstornio@redhat.com>
+      1  Jan Stancek <jstancek@redhat.com>
+      1  Khem Raj <raj.khem@gmail.com>
+      1  Mete Durlu <meted@linux.ibm.com>
+      1  Murphy Zhou <jencce.kernel@gmail.com>
+      1  Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+      1  Sebastian Chlad <sebastianchlad@gmail.com>
+      1  Sergey Ulanov via ltp <ltp@lists.linux.it>
+      1  Shiyang Ruan <ruansy.fnst@fujitsu.com>
+      1  Wenjie Xu <xuwenjie04@baidu.com>
+      1  Xiangyu Chen <xiangyu.chen@windriver.com>
+      1  yangfeng <yangfeng@kylinos.cn>
+
+And also thanks to patch reviewers:
+
+git log 20240129.. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
+
+    125 Petr Vorel <pvorel@suse.cz>
+     94 Cyril Hrubis <chrubis@suse.cz>
+     31 Li Wang <liwang@redhat.com>
+     15 Andrea Cervesato <andrea.cervesato@suse.com>
+     12 Martin Doucha <mdoucha@suse.cz>
+     11 Avinesh Kumar <akumar@suse.de>
+      7 Jan Stancek <jstancek@redhat.com>
+      3 Marius Kittler <mkittler@suse.de>
+      3 Jan Kara <jack@suse.cz>
+      2 Amir Goldstein <amir73il@gmail.com>
+      1 Wei Gao <wegao@suse.com>
+      1 Vlastimil Babka <vbabka@suse.cz>
+      1 Richard Palethorpe <rpalethorpe@suse.com>
+      1 Matt Bobrowski <mattbobrowski@google.com>
+      1 Kent Overstreet <kent.overstreet@linux.dev>
+      1 Joerg Vehlow <joerg.vehlow@aox.de>
+
+-- 
+Cyril Hrubis
+chrubis@suse.cz
 
