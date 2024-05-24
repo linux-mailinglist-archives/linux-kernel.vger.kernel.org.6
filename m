@@ -1,74 +1,91 @@
-Return-Path: <linux-kernel+bounces-189087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EF88CEAD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:26:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D76C8CEAB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98F5CB21384
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:25:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6645AB2148C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BAEA74E10;
-	Fri, 24 May 2024 20:25:52 +0000 (UTC)
-Received: from mta11.doruk.net.tr (mta11.doruk.net.tr [81.21.172.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F0E6FE16;
+	Fri, 24 May 2024 20:07:52 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCF846542
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.21.172.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114443D0C5
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716582351; cv=none; b=aD5cBAJGSzElBkCFWVNpkKa2ixFNdG5ZmWhoSK9YnKwPm6kGg24U5NP5EnEtGb68J3GyKCzyzFpgEAD7ZJdgd/ZcFg/2NXsoDxGokjM36/P5lcDIHTwJY7GSrAJt3EVGw5GkkXEyg8ABo+3MIodHw7wF2dRVVgJ6mBZ0GMpoc0U=
+	t=1716581272; cv=none; b=lKVWqjVT/g4+r1ClxEFC9oE8rtpf+T7kEm2EO1fN0EozSzKaetGuHCDIx5TICsse8zY1rBMEZPgzNi/AtJCBAuiv3KRRIQF53jh09B5JFp7BJzvXqoDc/dr058X6gw3rOzxPLa3RLexOrDDb0Osj237doCTO+uTrvmrJjOJhEzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716582351; c=relaxed/simple;
-	bh=/lp3Rwc0p0B4ZHQnRGocmeMmoBWLClruGn+qDx6fs4U=;
-	h=Content-Type:MIME-Version:To:From:Subject:Message-ID:Date; b=ncbZ98xkA1UPN1SJgjwWxEP76LTowqT40oo9CaArojiXzNQPv9e77+dWHkCXt9j/jbgot2IyRe6CgVnAZ92bXuxCxAcuxuFs4jhc7cDnc2gHslhW7lzAppz7Y3kZhh4+rgnyWkEfwg3rOTndTg+eNkE2Xjcl5YzWXqAZYrwH/lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gemak.biz; spf=pass smtp.mailfrom=gemak.biz; arc=none smtp.client-ip=81.21.172.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gemak.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gemak.biz
-Received: from cmail11.webkontrol.doruk.net.tr ([212.58.2.42]:62870)
-	by mta11.doruk.net.tr with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.90_1)
-	(envelope-from <cihan@gemak.biz>)
-	id 1sAaQ0-000Ao5-10
-	for linux-kernel@vger.kernel.org; Fri, 24 May 2024 22:17:32 +0300
-Received: from [127.0.1.1] ([121.127.33.252])
-        by cmail11.webkontrol.doruk.net.tr (13.0.3 build 11 ) with ASMTP (SSL) id 202405242217307857
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 22:17:30 +0300
-Reply-To: linda.smith@marsaveton.com
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.6-Rev57
-X-Originating-Client: open-xchange-appsuite
-X-OX-Marker: b0483612-72e5-4a04-924d-deb1afed12f4
-Content-Type: multipart/mixed; boundary="===============6990953336973176939=="
+	s=arc-20240116; t=1716581272; c=relaxed/simple;
+	bh=Zp3FRRxd0wt0czjSGF99QfwIwMQpolF1rDHfd4FWYeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oBfVZZnlYMMA9ZZSw36A5QSeUfS2tl7a3Nox4vYbiALBt2HDn5L/8F8PnF899SceYy1seYvBJ2cr9XZIv/8orBHNbFNnK3LFIN6HOuLOfSXtk/twWWLWYGuJ0cYJFLiVJEF15priKoN1MCJVcqq14jl0It7/OI0g5SuYwL4aE48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C78AA1BF203;
+	Fri, 24 May 2024 20:07:40 +0000 (UTC)
+Message-ID: <8b741144-8a3c-4a4c-bb3f-dfab4aa8e576@ghiti.fr>
+Date: Fri, 24 May 2024 22:07:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: "cihan@gemak.biz" <cihan@gemak.biz>
-Subject: Help Needed Regarding a Mysterious Charge on My Statement
-Message-ID: <14b7286e15dc92c467813b5a470b4ed7@gemak.biz>
-Date: Fri, 24 May 2024 22:17:32 +0300
-
---===============6990953336973176939==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Don't use hugepage mappings for vmemmap if it's
+ not supported
+Content-Language: en-US
+To: Nam Cao <namcao@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240508173116.2866192-1-namcao@linutronix.de>
+ <43829e94-98ae-46a4-a3e6-dbabbe94d7c1@ghiti.fr>
+ <20240508184641.WP8ok_Hg@linutronix.de>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240508184641.WP8ok_Hg@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hello,
+Hi Nam,
 
-I hope this message finds you well. I recently looked over my billing statement and observed a transaction from your store that I do not remember. The expense appears unknown to me, and I would appreciate your help in understanding it further.
+On 08/05/2024 20:46, Nam Cao wrote:
+> On Wed, May 08, 2024 at 08:22:43PM +0200, Alexandre Ghiti wrote:
+>> Hi Nam,
+> Hi Alex,
+>
+>>> Commit ff172d4818ad ("riscv: Use hugepage mappings for vmemmap") broke XIP
+>>> kernel, because huge pages are not supported on XIP kernel.
+>> I don't understand why XIP kernels can't support huge vmalloc mappings,
+> Me neither.
+>
+>> so I
+>> think the right fix would be to enable such mappings on XIP. WDYT?
+> I agree that is the ideal solution. But I don't want to send any new
+> feature to the stable trees (stable folks may even reject such patch).
+> So I intend that to be in another patch.
 
-Could you please offer clarification on this charge? Any information you can give would be greatly valued.
 
-Thank you for your prompt attention to this matter.
+I have been thinking about that, and I actually think that the real fix 
+is enabling huge vmalloc mappings for XIP as it was an oversight/mistake 
+in the first place. On 64-bit kernels, there are no reasons we can't use 
+PMD mappings for vmalloc. So I'd rather not go with this fix.
 
-Sincerely,
-Linda Smith
---===============6990953336973176939==--
+Thanks,
+
+Alex
+
+
+>
+> Best regards,
+> Nam
 
