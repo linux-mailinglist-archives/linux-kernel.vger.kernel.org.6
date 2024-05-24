@@ -1,376 +1,182 @@
-Return-Path: <linux-kernel+bounces-188799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3A88CE721
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:33:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D06EF8CE724
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859EB282478
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:33:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868042827F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1D912E1E4;
-	Fri, 24 May 2024 14:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AABC12C47C;
+	Fri, 24 May 2024 14:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gpdaIOqf"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWhpdXMq"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D8012DD8A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161AB42AB7;
+	Fri, 24 May 2024 14:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716561128; cv=none; b=i0+k0b8zSia/BErjwzgWDbn0i0kO0eTIX8UWl9S9UlGLhYqCtcWLBFQ9/tmulixH91la6t1APgxCSHslop5aX8ir8r1gu/dBTQsEhAY9zQbEc7PlLGV0pLos+DoqPI1/QjpJREp8jFFzSbpkxPS9PY7thuBhVkuM58cSXmNnW6E=
+	t=1716561251; cv=none; b=GZXEJAW63zDLMqKc+pGDc734mu32rRp5qqZabnqp/v1/FTFTz/DFepT/TTyHDnQh26P9q3E35EBbgZdodLEyRfRxxaZISOS1Jt6iIJSSRMqLU9qB1j/Q80FdeXC/BzNuSXZ7N9nOG608J3xv0huvo7FsuTuQg7CMac7NoJyjeRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716561128; c=relaxed/simple;
-	bh=ihEpBfOoTIzhcY5yCWLCSgakPGdyeqFhOmNtZbrClHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8g+6eaEdQjQCGDKLfZyaqmSONUPBjJkM7F37LdZ5BHh4UkXzkOHEalcYq4BfdvwQ2UqguFSzBr5SKstUJUMlLbKD6EBVN98Yt2/VpTL8pzPfrbm22kaDmjSDcCgp1boqv9qP1FneLmXgaOrE/uLOn7YBsWA5ChXUzMTqDD5354=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gpdaIOqf; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3504f34a086so6124066f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:32:06 -0700 (PDT)
+	s=arc-20240116; t=1716561251; c=relaxed/simple;
+	bh=I2+v/Q1z59dUqcWNBqnyTuW1Jc7Qs0z4dRzAqGwlZqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p9iWfoRyq7a6IMSOkKR7l8rlm6y78VfN40xqw+0nO2kxoLLG3vHmW3isAgX5QhafHTGlTlLwKhIfUxg9cD5xaMpkDTEYlYmBM+/xuQcAPgHPlyCho35KktWaF63vYSfyPaIH0hlBzjdY+5GSz+c8GfiadjC9xKV18fcZH+NAnnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWhpdXMq; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7948b50225bso265706685a.3;
+        Fri, 24 May 2024 07:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716561125; x=1717165925; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716561249; x=1717166049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/J4OrAZncZpQuvGizXTDM9c24jSIJESkYwIXxao8DRY=;
-        b=gpdaIOqfeDPXOPjjpojLfbIERjFDk3AzLAw8GuvXFpv/4vv6KCp0MLA6trPVlcLx4y
-         swgXtCQ8xLJjbZ0O6jprO8T8hiPvg4G/hg5OnEcWHdZKcieWPuYtpISckI5Im19+1KHL
-         0Qi45ybTs0VM9SGfocw4iy5BbG9RtxJcBJyPQ7W7MMB4p0VaadHB5R7fT2jmhgVjhlm1
-         RoDCSNmj6TwFzOCwIhXzf8Azvl6fy7FdMD52ZpYfTVrLBIeM338Y17eR2Ex94RPKWPb2
-         gianLWs3o/SZx8CVyd+C62TST0ahlttt1XajQyUoRM7XokZhNVs0p2B3bAPb0wxudpKR
-         9jkg==
+        bh=lavIFKRIk7FHUjZ/QCzEd4xNbBSagRLiRaEukU2fFZU=;
+        b=IWhpdXMq0kKJgeRYGGbAG1Wc2hCruP0E/Sh8EGswURaIc06g5PbEs1Q4SYa2gEhsGD
+         RAcAfrpBoUePFq7uKJrPZHdK806fpg2BhwtQXyAxzPp0Qof1f9HhK7sgWZmL4zFbhRZ/
+         1y35zEr7Y3ulwYq1FvDi8nY6jR8TvlpGILhLjNf2h8Nf0K4szf93M0FtQ8NQIrvGZag1
+         zPV7gMkSdTLuZ3BH1OZYOnxPOvUs55HFzB4FZfCnnWbsKY+6c2+t6bSj082NqeINmnTT
+         Ohe2/Pa7kPr06gjzB60jh4ZxU2TLtoSpHMaXL4gERjYY0Vwj9ckziVzBsB3bYnFi31I0
+         5FcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716561125; x=1717165925;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1716561249; x=1717166049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/J4OrAZncZpQuvGizXTDM9c24jSIJESkYwIXxao8DRY=;
-        b=N1IQRoGRfHfYa5oWdze8uKtmkOlRWlMnJkT4VdqVYH4i6yqKcJ2hILYVcjsHa/oQnK
-         TONMlXnJZeUEwlhz3wDTkRphZCUPfox95CaeISCWac7qEQvU2gjADXYQnKiMrfAHPde4
-         33D3bnao2o6mGfGRkxGXUL05h1vmGwDtC7+qDZbTfvzSRShcPGrmCsW7GXYbCgHIraFl
-         O5EmMLWe021ov6QDhWB9yTXWl6vZWdzv9UN/voR1So0pQeuVgwbyAUOug67OzIcQRhH8
-         xq6oMo/HUggoXqnHx09VSPKumgPv/rwnsm7ck4HqqMJGH6U3wdiF6JEMlm+bvd3GXXXw
-         YQhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeU5f9jnXneyTOsFEVIbDZ6h82anDhqo6VQc77Ahpy4uLQpNqXON4W4dUHDNGME2fX7rMuaqMKrAv70n3sHEdChXfc7MevFBhtWx4Z
-X-Gm-Message-State: AOJu0YzAlUJzFHUwLQlQvcf5DyMK/f/ghkYEQLNrJtvs39ljiQil2+qY
-	6/PaNQTBZurwEJFOKgPqSv6xww65K3T3HacTE1kQrLTlzVO2RawUjkcrJMvuXhketDtqXHtiNLh
-	DDzM=
-X-Google-Smtp-Source: AGHT+IFCKj2pq8XeDS8Y3FzCUKaVouktrLJTGeT9YfniOKJ5yXmCDzg766BhAVtXMdougnVYNmAMyw==
-X-Received: by 2002:a5d:400a:0:b0:355:21d:ab9d with SMTP id ffacd0b85a97d-3552fdfd70emr1644022f8f.65.1716561124742;
-        Fri, 24 May 2024 07:32:04 -0700 (PDT)
-Received: from localhost.localdomain (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a090c2bsm1719611f8f.59.2024.05.24.07.32.02
+        bh=lavIFKRIk7FHUjZ/QCzEd4xNbBSagRLiRaEukU2fFZU=;
+        b=aA/Mnjvo1Z4o1uKKjOVQnvQvFvOB7KnuftT9cw6jPG9hH6+hbKQRKNNLYlPfa8KunY
+         9wmN5j6nF1nIo//z7RcpKTmyw4ZDH/1BnvETUEjQZcrNF3znbuD+N8Lxucpc1OeNJEGv
+         pLuiFjD7I6MyI4x+qnn4XIkv4flBOeeMuqKj2VpwXtWAHs8gIGXndlHjV9NWYWtPBDVh
+         jRW7C0SEpjxAKBJItnkMyBhSxsUYAyfXGUrCWT7ePpViwY6+SQQ3P1GTV5IxW7HJvQFt
+         WVCwA9to2l0ZHb/Qo7mT0Tb530DgsDF1mvip21cD6vcSpg9H8tVf39U4bVZ9jav6UGHt
+         PFaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWxlV7JIERx9CLmIwAMaj3/R3377kOFxL4cJqm+Ea927wb86yo2mGKBPS5VE4NK51SL5y+9fneKBNFhdFH4J4GydUKuuZmc0Q8KiBkuYuB6JrGNwf3uZ23BbbpPOuNNX77dpIEYqxy+g==
+X-Gm-Message-State: AOJu0YywEdWP0tTTHHvOLgYAmfyIjxHFAMQyHuHdi9cXAJ0TroJhwG9Q
+	h16L9zwSHtz9tyfvmXVtruJ+SEjbzH3LfujC3+6W0dY4KurrF3R7Jf246Q==
+X-Google-Smtp-Source: AGHT+IHJVDIqpjASk3yLVR9rTzk9Ct4pXr7InniiEPN9pPtGrfOY/9/IhzAB/b9qkQ6XJiZgtQVq5w==
+X-Received: by 2002:a05:620a:a99:b0:793:292:ba41 with SMTP id af79cd13be357-794ab0f84e5mr259139185a.56.1716561248931;
+        Fri, 24 May 2024 07:34:08 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abca595fsm68702085a.20.2024.05.24.07.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 07:32:03 -0700 (PDT)
-From: Alexandre Bailon <abailon@baylibre.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Cc: rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexandre Bailon <abailon@baylibre.com>
-Subject: [PATCH v3 6/6] ARM64: mt8195: Use thermal aggregation for big and little cpu
-Date: Fri, 24 May 2024 16:31:50 +0200
-Message-ID: <20240524143150.610949-7-abailon@baylibre.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240524143150.610949-1-abailon@baylibre.com>
-References: <20240524143150.610949-1-abailon@baylibre.com>
+        Fri, 24 May 2024 07:34:08 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 0B8611200066;
+	Fri, 24 May 2024 10:34:08 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Fri, 24 May 2024 10:34:08 -0400
+X-ME-Sender: <xms:X6VQZpGAyFarDeUP7jTZVyABwvtuFpP-f2flyXSOwcFckdVXsP_GSQ>
+    <xme:X6VQZuUfg6Kf02X6TkH09ZRYJSrMuzAktZYzrdFz_0RDw4Sw7rm9fXbzZOpf6upuM
+    yPddy2jFUWjIodwsg>
+X-ME-Received: <xmr:X6VQZrKq-PT13AwDlG27NLVAk-TpirofwJw0PMChefmhpL_RtdCKRAIVCA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeikedgjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
+    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:X6VQZvEFOLSs2EXL7SxLkEUydwVE_vh09W3HNTPnJ3vvLeenWirUxw>
+    <xmx:X6VQZvXRoMUvutPisOrFw2vWeOgkKlR06AxFiPO8anTkkDIjEW7uhw>
+    <xmx:X6VQZqMf3iYE_Oc68IhTtg_Kw3k38izh-druHNS-SpIfWJQldW1RAg>
+    <xmx:X6VQZu174RMJKFlmHhvvHS3UoPMQFIEqsWCy7AqKi-ol7D0n-o77gg>
+    <xmx:YKVQZsV-hdlGj7Udns2Lgo54X75g9azVyTd61GTVpE_94y-rH3exqmU0>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 24 May 2024 10:34:07 -0400 (EDT)
+Date: Fri, 24 May 2024 07:34:06 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	kernel-team@meta.com, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr, Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: LKMM: Making RMW barriers explicit
+Message-ID: <ZlClXpjGga-6cv00@Boquns-Mac-mini.home>
+References: <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+ <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
+ <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
+ <a25f9654-e681-1bad-47ae-ddc519610504@huaweicloud.com>
+ <Zk9dXj-f4rANxPep@Boquns-Mac-mini.home>
+ <da5241f5-0ae3-40dd-a2fb-8f5307d31dba@rowland.harvard.edu>
+ <ZlAAY-BuXSs9xU0m@Boquns-Mac-mini.home>
+ <9256f95a-858b-435f-b40a-a4508a1096c9@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9256f95a-858b-435f-b40a-a4508a1096c9@rowland.harvard.edu>
 
-This uses the thermal aggregation for the mt8195 to get the maximal
-temperature of big and little cpu clusters.
+On Fri, May 24, 2024 at 10:14:25AM -0400, Alan Stern wrote:
+[...]
+> > Not really, RMW events contains all events generated from
+> > read-modify-write primitives, if there is an R event without a rmw
+> > relation (i.e there is no corresponding write event), it's a failed RWM
+> > by definition: it cannot be anything else.
+> 
+> Not true.  An R event without an rmw relation could be a READ_ONCE().  
 
-Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
----
- arch/arm64/boot/dts/mediatek/mt8195.dtsi | 212 +++--------------------
- 1 file changed, 27 insertions(+), 185 deletions(-)
+No, the R event is already in the RWM events, it has come from a rwm
+atomic.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-index 5d8b68f86ce4..8aa2bf142622 100644
---- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-@@ -3600,50 +3600,31 @@ dp_tx: dp-tx@1c600000 {
- 	};
- 
- 	thermal_zones: thermal-zones {
--		cpu0-thermal {
-+		cpu-little {
- 			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU0>;
-+			polling-delay-passive = <100>;
-+			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU0>,
-+					  <&lvts_mcu MT8195_MCU_LITTLE_CPU1>,
-+					  <&lvts_mcu MT8195_MCU_LITTLE_CPU2>,
-+					  <&lvts_mcu MT8195_MCU_LITTLE_CPU3>;
-+			sustainable-power = <1500>;
-+			aggregation = "max";
- 
- 			trips {
--				cpu0_alert: trip-alert {
--					temperature = <85000>;
-+				cpu_little_threshold: trip-point {
-+					temperature = <68000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu0_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu0_alert>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu1-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU1>;
--
--			trips {
--				cpu1_alert: trip-alert {
-+				cpu_little_target: target {
- 					temperature = <85000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu1_crit: trip-crit {
--					temperature = <100000>;
-+				cpu_little_soc_max_crit: soc-max-crit {
-+					temperature = <115000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
-@@ -3651,7 +3632,7 @@ cpu1_crit: trip-crit {
- 
- 			cooling-maps {
- 				map0 {
--					trip = <&cpu1_alert>;
-+					trip = <&cpu_little_target>;
- 					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-@@ -3660,170 +3641,31 @@ map0 {
- 			};
- 		};
- 
--		cpu2-thermal {
-+		cpu-big {
- 			polling-delay = <1000>;
- 			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU2>;
-+			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU0>,
-+					  <&lvts_mcu MT8195_MCU_BIG_CPU1>,
-+					  <&lvts_mcu MT8195_MCU_BIG_CPU2>,
-+					  <&lvts_mcu MT8195_MCU_BIG_CPU3>;
-+			sustainable-power = <1500>;
-+			aggregation = "max";
- 
- 			trips {
--				cpu2_alert: trip-alert {
--					temperature = <85000>;
-+				cpu_big_threshold: trip-point {
-+					temperature = <68000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu2_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu2_alert>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu3-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_LITTLE_CPU3>;
--
--			trips {
--				cpu3_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu3_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu3_alert>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu4-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU0>;
--
--			trips {
--				cpu4_alert: trip-alert {
-+				cpu_big_target: target {
- 					temperature = <85000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu4_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu4_alert>;
--					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu5-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU1>;
--
--			trips {
--				cpu5_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu5_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu5_alert>;
--					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu6-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU2>;
--
--			trips {
--				cpu6_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu6_crit: trip-crit {
--					temperature = <100000>;
--					hysteresis = <2000>;
--					type = "critical";
--				};
--			};
--
--			cooling-maps {
--				map0 {
--					trip = <&cpu6_alert>;
--					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--								<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--			};
--		};
--
--		cpu7-thermal {
--			polling-delay = <1000>;
--			polling-delay-passive = <250>;
--			thermal-sensors = <&lvts_mcu MT8195_MCU_BIG_CPU3>;
--
--			trips {
--				cpu7_alert: trip-alert {
--					temperature = <85000>;
--					hysteresis = <2000>;
--					type = "passive";
--				};
--
--				cpu7_crit: trip-crit {
--					temperature = <100000>;
-+				cpu_big_soc_max_crit: soc-max-crit {
-+					temperature = <115000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
-@@ -3831,7 +3673,7 @@ cpu7_crit: trip-crit {
- 
- 			cooling-maps {
- 				map0 {
--					trip = <&cpu7_alert>;
-+					trip = <&cpu_big_target>;
- 					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
- 								<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--- 
-2.44.1
+> Or a plain read.  The memory model uses the tag to distinguish these 
+> cases.
+> 
+> > > that it would work is merely an artifact of herd7's internal actions.  I 
+> > > think it would be much cleaner if herd7 represented these events in some 
+> > > other way, particularly if we can tell it how.
+> > > 
+> > > After all, herd7 already does generate different sets of events for 
+> > > successful (both R and W) and failed (only R) RMWs.  It's not such a big 
+> > > stretch to make the R events it generates different in the two cases.
+> > > 
+> > 
+> > I thought we want to simplify the herd internal processing by avoid
+> > adding mb events in cmpxchg() cases, in the same spirit, if syntactic
+> > tagging is already good enough, why do we want to make herd complicate?
+> 
+> Herd7 already is complicated by the fact that it needs to handle 
+> cmpxchg() instructions in two ways: success and failure.  This 
+> complication is unavoidable.  Adding one extra layer (different tags for 
+> the different ways) is an insignificant increase in the complication, 
+> IMO. And it's a net reduction when you compare it to the amount of 
+> complication currently in the herd7 code.
+> 
+> Also what about cmpxchg_acquire()?  If it fails, it will generate an R 
+> event with an acquire tag not in the rmw relation.  There is no way to 
+> tell such events apart from a normal smp_load_acquire(), and so the .cat 
+> file would have no way to know that the event should not have acquire 
+> semantics.  I guess we would have to rename this tag, as well.
 
+No,
+
+	let read_of_rmw = (RMW & R) 
+	let fail_read_of_rmw = read_of_rmw / dom(rmw)
+	let fail_cmpxchg_acquire = fail_read_of_rmw & [Acquire]
+
+gives you all the failed cmpxchg_acquire() apart from a normal
+smp_load_acquire().
+
+Regards,
+Boqun
+
+> 
+> Alan
 
