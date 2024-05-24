@@ -1,85 +1,135 @@
-Return-Path: <linux-kernel+bounces-188390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AA98CE171
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:17:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE838CE173
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3519282B21
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A6911F223E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E60412836A;
-	Fri, 24 May 2024 07:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B49128829;
+	Fri, 24 May 2024 07:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LebbOykl"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZY7i0DJH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEF218E1E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD67138FA0;
+	Fri, 24 May 2024 07:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716535037; cv=none; b=IntIn+kTIT0jDL6sUAvvpE9MKE5daLfTcpBLNsNo6cacSoH0OZFl0/Py0yQfgrcEjlqmLwKeAuxg0JLyR0H9Di3ugHO4daCEcQO077qRg6ilzt56zF6ctJ8g4doZ4mw4x9oISD3KCJPO/3U78tKQ+Zn7qfNZf57lFmsQ2w0JzAk=
+	t=1716535128; cv=none; b=g8LoJhZxTEgHanMA9nX6xI0uOS7TZ1U/mdjVaYB2RfgzIfvWMh1et4QP1ABG6X2X4Fea420ONmG/n+ZBkYfOxYWjG5exl1cURtDefdKBL41xj8REF+ltlofTqHiXq8bQ1ChtU5rRRIypO5DEW2+Vp7ucAjHvPpJUdcDeQYqRMaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716535037; c=relaxed/simple;
-	bh=epQCMj6liaNyJKlgtrEwum2Sais5F5kH3zdh6Ga1KMM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GmP8JE/ouLh/EH++IosMRPp94qMNOUdRYbS/ofz0PIqp5L1bhH+J6OGpPYGCfjKXXs+stV6eCT0n8n+AcqP6sSDOOGAe83qPM0eBTE+iVLD/oF+epnLXwgNy2CnDog7C3t7HuDz4x1cc+aNpIaeZrw/Ih0JijWSpPQ6iN8D+Zpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LebbOykl; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716535026; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=9kE5+w2PYj6eGYpIIldbh4TJulssfp+nNT8yXcCeH18=;
-	b=LebbOyklCTcN+nkCJ110GMXymxIriRcoLAM3HlRniwvoj6JZYLVsohJe7QZApTIBSulAhsRMc+OeGvs5DFPqZ/piJ6zPG+2Fjd9kPVAlVtTPTFdPq5P2Tb0TTVwS6X7NICyS00RUEhsPuJFlGIWtoIDUPq0a9pgiXdblZiZeZKc=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W75o86V_1716535018;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W75o86V_1716535018)
-          by smtp.aliyun-inc.com;
-          Fri, 24 May 2024 15:17:06 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] XArray tests: Compare pointers to NULL instead of 0
-Date: Fri, 24 May 2024 15:16:55 +0800
-Message-Id: <20240524071655.31386-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1716535128; c=relaxed/simple;
+	bh=gEpxqnhJewyVo17z9MQUXr2dRWmpPDHyYY8T/8oxJvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9SgBXBaQJ6OleEV8gv6jnCz1hx8fGDeVbs1BJPshLMF3fyIJhTJByfyncEEqlNNdHdZa6DHBPr6GfFeZKJFhvVsD1Q6RpOL1YPt0XsXKrSi1vCk+8ye7bCHzJc6fOfK1n09I/6XWL5XvT3mkAFuxPXoCByIZyGIdRN5mbZ6s1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZY7i0DJH; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716535127; x=1748071127;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gEpxqnhJewyVo17z9MQUXr2dRWmpPDHyYY8T/8oxJvE=;
+  b=ZY7i0DJHRXpnPOiBsXLReyVkSpkLh6+zeZAqqkEbXZCA7oLQkRDkukZz
+   v7EhUmsTpg/K65PonVZXxz7sOSo4oYO+gBpCE8RrijWBzhIldUhcIUKUK
+   mb9SsIEFlCpNlH4Ep6s5OM3HLBkSjDE1HGVe6PijHcqmM9llRfr8JA5sI
+   LuqbdmuAeGPTQlGAYgXgDDfvFciDU7kP/mLZmbZP3v5WkjYIn/GRhxr2t
+   aTzvKmLZTTHsgI2prIXpMG1nR4Y71pOuHcuARPaqjAJ5g9bXHI09mNEdE
+   mecXXvVoNUg5xLNSDgaK86NeYKBZwGcw5tI835EX0IZyo1vDESNy/+g+F
+   Q==;
+X-CSE-ConnectionGUID: Hn1hm+1oTFq7GBmaTN9Rog==
+X-CSE-MsgGUID: jUhQpeFsQLWA1Uezx8KdQA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12684220"
+X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
+   d="scan'208";a="12684220"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 00:18:46 -0700
+X-CSE-ConnectionGUID: xT9SPV0wT/aZPvAk2lxcCQ==
+X-CSE-MsgGUID: MZJgdZYrRsSd36J5AsCAkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
+   d="scan'208";a="33946883"
+Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 24 May 2024 00:18:42 -0700
+Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sAPCJ-00045P-1H;
+	Fri, 24 May 2024 07:18:39 +0000
+Date: Fri, 24 May 2024 15:17:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: ranechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	ranechita <ramona.nechita@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Maksim Kiselev <bigunclemax@gmail.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Liam Beguin <liambeguin@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: iio: adc: add support for ad777x family
+Message-ID: <202405241412.bLit8xvt-lkp@intel.com>
+References: <20240522120005.18197-1-ramona.nechita@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522120005.18197-1-ramona.nechita@analog.com>
 
-Avoid pointer type value compared with 0 to make code clear.
+Hi ranechita,
 
-/lib/test_xarray.c:973:52-53: WARNING comparing pointer to 0
+kernel test robot noticed the following build errors:
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9169
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- lib/test_xarray.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on linus/master v6.9 next-20240523]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index ab9cc42a0d74..a281436267ce 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -975,7 +975,7 @@ static noinline void check_xa_alloc_1(struct xarray *xa, unsigned int base)
- 
- 	XA_BUG_ON(xa, xa_alloc(xa, &id, xa_mk_index(10), XA_LIMIT(10, 5),
- 				GFP_KERNEL) != -EBUSY);
--	XA_BUG_ON(xa, xa_store_index(xa, 3, GFP_KERNEL) != 0);
-+	XA_BUG_ON(xa, NULL != xa_store_index(xa, 3, GFP_KERNEL));
- 	XA_BUG_ON(xa, xa_alloc(xa, &id, xa_mk_index(10), XA_LIMIT(10, 5),
- 				GFP_KERNEL) != -EBUSY);
- 	xa_erase_index(xa, 3);
+url:    https://github.com/intel-lab-lkp/linux/commits/ranechita/drivers-iio-adc-add-support-for-ad777x-family/20240522-203155
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240522120005.18197-1-ramona.nechita%40analog.com
+patch subject: [PATCH] drivers: iio: adc: add support for ad777x family
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240524/202405241412.bLit8xvt-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405241412.bLit8xvt-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405241412.bLit8xvt-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/iio/adc/ad7779.c:28:10: fatal error: 'cf_axi_adc.h' file not found
+      28 | #include "cf_axi_adc.h"
+         |          ^~~~~~~~~~~~~~
+   1 error generated.
+
+
+vim +28 drivers/iio/adc/ad7779.c
+
+    27	
+  > 28	#include "cf_axi_adc.h"
+    29	
+
 -- 
-2.20.1.7.g153144c
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
