@@ -1,163 +1,158 @@
-Return-Path: <linux-kernel+bounces-188174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8FC28CDEDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:24:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AEA8CDEE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6F8286305
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:24:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BF88286B51
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7006E2570;
-	Fri, 24 May 2024 00:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7431FC4;
+	Fri, 24 May 2024 00:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qHUloJ+L"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c0PNkwvg"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2912C9A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8561936D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716509929; cv=none; b=eJf2ZN/wBRcaTr6n+IQdY8Uff+xOM8/jTNg8aLn+LrXxVtjcHILq8NRPZ+3zxvZb9h4lwKSDZaDEyyTSoohKVuWwcgcf0UMHxMZEqU1xal7SuFj3NTsA6u4iw3QlozWKD4sq/qPtMzTSQElQ2VSpxzfQEKH8BfMndWCa16bWs1s=
+	t=1716510315; cv=none; b=qz1bW9cHE7BIqjzWM5/GJ/Dw7NZ5u22ybMI9e2mWY6VviVhUf0SZpwnlMRsVdVC01q39X/ZdQZWXpN1nxi7K6ohCFQRC7hUbDoKrLIwG/g/YBdPz3urVLhOKRng8mO7gebahHjQWZsqBSaof7KgtTy/Jbg7Z55SqWKIhYM2021Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716509929; c=relaxed/simple;
-	bh=/LHAMDUw9dxA/AqHsxp2TqEWaMowWilYcYA0HbO4XZw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=t4l0G9PSWFmMtgdhM6l5HPGXk7VSbGW8F67LY6WvwZs5QbklSFmerdZM0M6E8VBLCuhySFksc1yFf2pxUzuxyoElr2RkRsZH1VaG/oG6WJuCQ7t4TrEtgDmod0JiYQp3LF3UfewKmFjLLgZ5JUY3942QA8boOr6zh90AbdIE23k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qHUloJ+L; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240524001844epoutp042283985bf0f33f0c8bf295a345f3fa79~SRK6YA3SE0536405364epoutp04C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:18:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240524001844epoutp042283985bf0f33f0c8bf295a345f3fa79~SRK6YA3SE0536405364epoutp04C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716509924;
-	bh=DSC7gwpMSFmwZdZRot6AskcvnEqlG9tvIb88IW3wBJI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qHUloJ+Ltslw5mNSdlSwfQZ5n3rmTh5W26qvxzN5TaS+WCNiBXa6YUaucMXV30cv4
-	 4fKQpgMgeRC2Gxhrl5cbEJpJRnbPKblBoAA2Yh4kqz2OiSkHqcrw3BgGtxD9sOnjDc
-	 4lkzDRtjGQubbwIs8+1ShOtLcD6K8tJEbVlQuw+4=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240524001843epcas1p11e0bf5a73842f4d8e5e007a1b0bb18a6~SRK5gUgos0690206902epcas1p1G;
-	Fri, 24 May 2024 00:18:43 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.222]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VllyC2PrYz4x9Pp; Fri, 24 May
-	2024 00:18:43 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	80.25.09696.3ECDF466; Fri, 24 May 2024 09:18:43 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1~SRK4kXOKh3249332493epcas1p3g;
-	Fri, 24 May 2024 00:18:42 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240524001842epsmtrp111403e8bc3ceca40ba072cb985fd208d~SRK4joEF11318113181epsmtrp1v;
-	Fri, 24 May 2024 00:18:42 +0000 (GMT)
-X-AuditID: b6c32a36-7a9f9700000025e0-2d-664fdce3eeac
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7F.55.09238.2ECDF466; Fri, 24 May 2024 09:18:42 +0900 (KST)
-Received: from lee.. (unknown [10.253.100.232]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240524001842epsmtip194f05718e7e4af5f9c0509df59c4baec~SRK4We5Tb3056830568epsmtip13;
-	Fri, 24 May 2024 00:18:42 +0000 (GMT)
-From: Chanwoo Lee <cw9316.lee@samsung.com>
-To: cw9316.lee@samsung.com
-Cc: James.Bottomley@HansenPartnership.com, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
-	powen.kao@mediatek.com, quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
-	stanley.chu@mediatek.com, yang.lee@linux.alibaba.com
-Subject: RE: [PATCH] ufs:mcq:Fixing Error Output for
- ufshcd_try_to_abort_task in ufshcd_mcq_abort
-Date: Fri, 24 May 2024 09:18:40 +0900
-Message-Id: <20240524001840.1104839-1-cw9316.lee@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240523002257.1068373-1-cw9316.lee@samsung.com>
+	s=arc-20240116; t=1716510315; c=relaxed/simple;
+	bh=U+XQqQjFGY0Dsnz1iYyMGSwZE5e64uigVIBpySGsOWQ=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SnqZojKZZZADX6Kbc1PcYCw+WPBpIkbysP+7djCaGE1BXQyIPp/TpTmHQIAkYu/YlQ1N/KKk2jkoo5UVkIsjku/x3gFdrv4Hm4yXkvGSad8POjBe5hflTk6vfAYrf0FtJRFk7CxszH46d1XMfLOOUFbJ6YOj++gxK6fZ/mU99jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c0PNkwvg; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-794aa87af7cso13527385a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716510312; x=1717115112; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZX2oAdiZue5vGuu38VdxDUrJ1eMtA33xvB1yO4Vm7T4=;
+        b=c0PNkwvggpIrbWlbj9sRMJfNM2D47FdObwLX/tEWZIK+r57zbLqX2gMgJ579DDq1zm
+         Yn2H0M3E4aw0yr4awUDYI02ixHDnQFpaspApbOmpY6C9Y97jN7M3FJkdoszkRku+3+tQ
+         PeDFZjcrH5/BJb0/ARPOs5+/jKWMWvExoo0dE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716510312; x=1717115112;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZX2oAdiZue5vGuu38VdxDUrJ1eMtA33xvB1yO4Vm7T4=;
+        b=NsfcAIcn1xTQCQ+2iSzSmOeBMTvmGbQie60l+rYAPdTks7YA2Ycyj/XEL6j4lbf6u9
+         GI4kz1DvjUxfjtJRqtZrjR98NjCVPLlFGrBOA0XsxU0u5nS/fcG1GnfHFBqcX6xhHkQc
+         /68lrv9iJ1myHrPDeD8KLjVi1nDQcyIoDxbdu5l5wsRLpPZMZFRr7X2bZNSbSjCqtrqM
+         uJ+62D16n027ncPvysVlNaetjjU3ygPvEgNORbBLk6xzfgtRw0RndYRsAsAduF8poMGs
+         nC+V9TC7OozO1+uDOYWbNCixzpIulGHNWVu1LAnGNxLIqgYqlD4quoAADY+vfJqF0vtN
+         08oA==
+X-Forwarded-Encrypted: i=1; AJvYcCXp55l1AWH/rhkHooE8np6kYqGzXqCfjCo0EAbnF3N/fm8VIQprk+jRHJ05/FBR7/osnCBdMdbMKlM2s5ry+glaVfCKUyvXL0UN2EVo
+X-Gm-Message-State: AOJu0Yx41iGJ2YcsBlVrJfBPGUWYRhHWP0IeJIjokb1DK5qSZweXpPkk
+	5dCLN0utnBVx5Mjo7GVvrrN2CYxpGEFSx95JzVMQzepQrG1zpvMH9z58/0ckEtiFEfjH0durCo4
+	003ftF4mn/8HkWzPz68qZ/ZJsJmWOkKUemVBp
+X-Google-Smtp-Source: AGHT+IGFLK1p3SdN9AodStf+OL72IZFLq1VoeAAFc3OOdOka8ZwEhPtfLoJ456ZTTwjV8kUX6SQvIZZmMiHRGzOhlRc=
+X-Received: by 2002:a05:620a:2952:b0:792:9a4b:dcd4 with SMTP id
+ af79cd13be357-794ab09e87cmr96261885a.45.1716510312469; Thu, 23 May 2024
+ 17:25:12 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 23 May 2024 17:25:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmge7jO/5pBk+OCVg8mLeNzeLlz6ts
-	FtM+/GS2mHGqjdViYz+HxeVdc9gsuq/vYLNYfvwfk8Xbu/9ZLCZd28BmMfXFcXaLpVtvMlq8
-	azzM6MDrcfmKt8e0SafYPHY+tPRoObmfxePj01ssHhP31Hn0bVnF6PF5k5xH+4FupgDOqGyb
-	jNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKCjlRTKEnNK
-	gUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFZgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGVtb
-	etkLnrFXvGzqZmtgnMvWxcjJISFgInF81yXWLkYuDiGBHYwSs79sZIFwPjFKTJ7UwAThfGOU
-	aDryFq5l/qSNzBCJvYwSh7bvZYRwnjBK/Ft7AaiFg4NNQEvi9jFvkAYRASmJ2Tvmgk1iFjjB
-	JLH6+1x2kISwQLLEpMYFLCA2i4CqRNenl4wgvbwCthIH3yhCLJOX2H/wLDOIzSlgJ7F+8QWw
-	Vl4BQYmTM5+AtTID1TRvnQ12kITASg6JmfMvs0I0u0i8aH0MdbWwxKvjW9ghbCmJl/1t7BAN
-	zYwSC98ch+qewCjx5eNtqA57iebWZjaQi5gFNCXW79KH2MYn8e5rDytIWEKAV6KjTQiiWkVi
-	Ttc5Npj5H288hirxkLhwIAUkLCQwkVHiw3/WCYzys5C8MAvJC7MQdi1gZF7FKJZaUJybnlps
-	WGAEj9Xk/NxNjOCEq2W2g3HS2w96hxiZOBgPMUpwMCuJ8Eav9E0T4k1JrKxKLcqPLyrNSS0+
-	xGgKDN+JzFKiyfnAlJ9XEm9oYmlgYmZkYmFsaWymJM575kpZqpBAemJJanZqakFqEUwfEwen
-	VANTwa/SmnuHxYrtS7Y+YFD5dei92tlk9acpKelPi9J8ZC6otZxZWXGFzfbLLoav54M36+Ud
-	3sldV5X8xcctbKd/4eGiE/t/3FtgtmDanov5dua396/1y3RdURxUmGq43JMvmW0240RWM973
-	WT1Ce0sY65ZUt0z7FW8UW25/6uHlPwFPJvnkZ76L2pXbKNp39so7yx9punpdyz7/mTzzyPFN
-	114IFD63Y3Kud/I8eHb9BdU837nPbT7P8+/YOEd4gtOvqL/mXRy3PlmrzpjwUeaQeXNs/Id1
-	kjpJ9YUha3JMAhc+4/n4i/u/ZZDeFK3bRhMtFeZkdWsFtWT1nb36raju5+zSumklVa7OhUU7
-	D4UrsRRnJBpqMRcVJwIAkrxGLEEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSnO6jO/5pBgcPqFk8mLeNzeLlz6ts
-	FtM+/GS2mHGqjdViYz+HxeVdc9gsuq/vYLNYfvwfk8Xbu/9ZLCZd28BmMfXFcXaLpVtvMlq8
-	azzM6MDrcfmKt8e0SafYPHY+tPRoObmfxePj01ssHhP31Hn0bVnF6PF5k5xH+4FupgDOKC6b
-	lNSczLLUIn27BK6MrS297AXP2CteNnWzNTDOZeti5OSQEDCRmD9pIzOILSSwm1Hi3i8piLiU
-	xO7954FqOIBsYYnDh4u7GLmASh4xSnz9vYIRJM4moCVx+5g3SLkIUPnsHXOZQGqYBa4xSRyZ
-	NAusRlggUeJYbzRIDYuAqkTXp5dgYV4BW4mDbxQhNslL7D94FuwCTgE7ifWLL7BDXGMr8alx
-	BxOIzSsgKHFy5hMWEJsZqL5562zmCYwCs5CkZiFJLWBkWsUomVpQnJuem2xYYJiXWq5XnJhb
-	XJqXrpecn7uJERwrWho7GO/N/6d3iJGJg/EQowQHs5IIb/RK3zQh3pTEyqrUovz4otKc1OJD
-	jNIcLErivIYzZqcICaQnlqRmp6YWpBbBZJk4OKUamCaX72Zv3h6V2hTDNOnGpEL1Y+wCkm8u
-	PhJeoFbWtamZ0TDo9fGupn2KadKz0r5sNIqUmVX9oC06N1vv7rzDkh58zFk+SsY8N4//5an8
-	vP/m0wdzQzQNHq++PvHNxosbEvcFyG/xUks9++7+ww7fHh1z7xnhm6Q7JrQXMcnN/+N5LOZA
-	8Vu25eJ9fKozzF8pVc05uCWl9bqF9ul3guGx7+RXPsiyEJdjf/1bzOrFD975vbf/ry1ceShu
-	6WT3hAmRyRdOn25/fEdlJ6Osu4asAFOYeHXszSMztB2OzZNn9krzyBfoeBOWeFtju0h6huWX
-	Tyl6HnO67WZ1H52vbnz/drSyxivWBK25J7NO238zVWIpzkg01GIuKk4EAH0mfccEAwAA
-X-CMS-MailID: 20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1
-References: <20240523002257.1068373-1-cw9316.lee@samsung.com>
-	<CGME20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1@epcas1p3.samsung.com>
+In-Reply-To: <20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
+References: <20240523232216.3148367-1-dianders@chromium.org> <20240523162207.1.I2395e66cf70c6e67d774c56943825c289b9c13e4@changeid>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Thu, 23 May 2024 17:25:11 -0700
+Message-ID: <CAE-0n51nBXsaubmtbUxPBsNDiNuOVa1hB9O0bihm8fpEhEDjRg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] serial: port: Don't block system suspend even if
+ bytes are left to xmit
+To: Douglas Anderson <dianders@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	John Ogness <john.ogness@linutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	linux-arm-msm@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Guanbing Huang <albanhuang@tencent.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/24/24 12:08, Bart Van Assche wrote:
->On 5/23/24 16:56, Chanwoo Lee wrote:
->> I thought this patch would be appropriate to "fix" the following log.
->>    * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
->> If "Fixing" is not appropriate, could you suggest another word?
+Quoting Douglas Anderson (2024-05-23 16:22:12)
+> Recently, suspend testing on sc7180-trogdor based devices has started
+> to sometimes fail with messages like this:
 >
->That's something I had not noticed. This is indeed a bug fix. Please add
->a "Fixes:" tag as is expected for bug fixes.
+>   port a88000.serial:0.0: PM: calling pm_runtime_force_suspend+0x0/0xf8 @ 28934, parent: a88000.serial:0
+>   port a88000.serial:0.0: PM: dpm_run_callback(): pm_runtime_force_suspend+0x0/0xf8 returns -16
+>   port a88000.serial:0.0: PM: pm_runtime_force_suspend+0x0/0xf8 returned -16 after 33 usecs
+>   port a88000.serial:0.0: PM: failed to suspend: error -16
 >
->BTW, I think that ufshcd_mcq_abort() can be improved significantly. How
->about reworking that function as follows before the bug reported in this
->patch is fixed?
->- Remove the local variable 'err' (and reintroduce that variable in your
->patch).
->- Change all 'goto out' statements into 'return FAILED'.
->- Add 'return SUCCESS' at the end.
+> I could reproduce these problem by logging in via an agetty on the
+> debug serial port (which was _not_ used for kernel console) and
+> running:
+>   cat /var/log/messages
+> ...and then (via an SSH session) forcing a few suspend/resume cycles.
 >
->I expect that this change will make that function easier to read and to
->maintain.
+> Tracing through the code and doing some printf debugging shows that
+> the -16 (-EBUSY) comes from the recently added
+> serial_port_runtime_suspend().
 >
->Thanks,
->
->Bart.
+> The idea of the serial_port_runtime_suspend() function is to prevent
+> the port from being _runtime_ suspended if it still has bytes left to
+> transmit. Having bytes left to transmit isn't a reason to block
+> _system_ suspend, though.
 
-Thank you for the good suggestion.
-I will create a new patch and reply with v2.
+Can you elaborate? I paused to think that maybe we would want to make
+sure that everything that was transmitted had been transmitted but that
+doesn't seem right because it's a problem for higher layers to solve,
+e.g. serdev would want to make sure some sleep command sent over the
+wire actually got sent.
 
-Thanks,
+> The DEFINE_RUNTIME_DEV_PM_OPS() used by the
+> serial_port code means that the system suspend function will be
+> pm_runtime_force_suspend(). In pm_runtime_force_suspend() we can see
+> that before calling the runtime suspend function we'll call
+> pm_runtime_disable(). This should be a reliable way to detect that
+> we're called from system suspend and that we shouldn't look for
+> busyness.
+>
+> Fixes: 43066e32227e ("serial: port: Don't suspend if the port is still busy")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+>  drivers/tty/serial/serial_port.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/tty/serial/serial_port.c b/drivers/tty/serial/serial_port.c
+> index 91a338d3cb34..b781227cc996 100644
+> --- a/drivers/tty/serial/serial_port.c
+> +++ b/drivers/tty/serial/serial_port.c
+> @@ -64,6 +64,16 @@ static int serial_port_runtime_suspend(struct device *dev)
+>         if (port->flags & UPF_DEAD)
+>                 return 0;
+>
+> +       /*
+> +        * We only want to check the busyness of the port if PM Runtime is
+> +        * enabled. Specifically PM Runtime will be disabled by
+> +        * pm_runtime_force_suspend() during system suspend and we don't want
+> +        * to block system suspend even if there is data still left to
+> +        * transmit. We only want to block regulator PM Runtime transitions.
 
-Chanwoo Lee.
+s/regulator/regular/
+
+Is this a typo? Also, why is "runtime" capitalized?
+
+> +        */
+> +       if (!pm_runtime_enabled(dev))
+> +               return 0;
 
