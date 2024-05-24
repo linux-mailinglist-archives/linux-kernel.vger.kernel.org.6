@@ -1,136 +1,223 @@
-Return-Path: <linux-kernel+bounces-188922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA42D8CE88E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:18:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410B08CE899
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EEB1C20C15
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:18:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C631C20D8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EC312EBD2;
-	Fri, 24 May 2024 16:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FBF12EBD2;
+	Fri, 24 May 2024 16:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B1P/oKeC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O7OqNbK5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bhwwlCRS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kbwXvE8i";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="85DicWDe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A1C12E1CA
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5379381BB;
+	Fri, 24 May 2024 16:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716567486; cv=none; b=ovoL2LwD5xSEmtp+3uhgGdmfOuZbzduThwfhJkpEkwkueRX3ykUjaB8BWnm2EyyrPqVC9rU8WuKicdOqjyPSi6jscZjuRWdfHip/gyM653/9U+/vDRH5BrpIj4mq9shd0UK7CtN+GzFSL6wo/YZ0MmekAOkiEItIsqulfmhlc1Q=
+	t=1716567760; cv=none; b=ipojXVoVkBCCzgFz1mDeUjT1FY8VpZeZK2BHChRmHGfzMzu0BCBvcgA/ywRLLrqfue+ZpkHKm0DLFHiJJTRbdFO9pnVeD2hs3LeKZfNY02yj+NkET0VlksTObAfeGdOAfMPdmlVV3UoLsIF/bjmSk5LS9OJM82/JLq8Ki49LrSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716567486; c=relaxed/simple;
-	bh=omAssB6I02yj+x+pz+EEXEalHt+q5NCe67eht1huW5c=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=bMz4NTH31VVf/e2SeGhmey6FKoAtA0TCta1MmbBtrvsfuSdCHRHBMaTk39fhps8kRgYdL6aUfKI+Ko/nd+TPhXWVAuVqxKq7DlimQ5s3OMOFtbWPub5DvITPcnqbaSmtTP/7HsEMImJxHq1ifkQJXd57s78X+Don4XqMEYrvbRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B1P/oKeC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716567483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vHjClk8E6ZL5CAwbbjUXeTWTpXpzXKPzMEFy1g+hdPs=;
-	b=B1P/oKeCE3ZUiTX85+M6cqNtd5BWp65xF5d10saHWsAuMtg+Z6CBTw8kQO2cFrPXhLLVw1
-	TUaqLq/b4UyZnk1t0PxBfMKR+jUzeU6eyw+PZD4VmiH3P79IViD3nNoZVTHvRqrUBFzeqB
-	jLobxrONmgfPCQ+uJh40mxY6fx3Bg/A=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-163-Y4ybQU0dP5WtwdLUCHbt2Q-1; Fri, 24 May 2024 12:17:58 -0400
-X-MC-Unique: Y4ybQU0dP5WtwdLUCHbt2Q-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	s=arc-20240116; t=1716567760; c=relaxed/simple;
+	bh=iFZpV7CkR3cwZMbp91sg+RlX+hMKFzAL0gyw81GNBUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e0T3dLM6/5t3YUAbvtRCkAWgWjdCXrkjkO4sqSpkBNZGOs9lwUxNG/6BPuS4H8GbxGmmVKkVLM4D7eY3x8cMNQc0kVHm/uoBgfUHoBLcvNDdCXZ3uPbod4SyKosEcexsfMsGLCjnPWY2sQ1O+3ybfaGR92KWCEt/62jEQ5jauQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O7OqNbK5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bhwwlCRS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kbwXvE8i; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=85DicWDe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73C5C101A52C;
-	Fri, 24 May 2024 16:17:57 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 3D22F2026D68;
-	Fri, 24 May 2024 16:17:56 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com,
-    Jan Henrik Sylvester <jan.henrik.sylvester@uni-hamburg.de>,
-    Markus Suvanto <markus.suvanto@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Jeffrey Altman <jaltman@auristor.com>, linux-afs@lists.infradead.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Don't cross .backup mountpoint from backup volume
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E3FF720B84;
+	Fri, 24 May 2024 16:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716567756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
+	b=O7OqNbK5EP1Cc8HsrsH0LCJXvyCMdg5eyC1ll618XZO13Qvu+4YhapEsIO6XTVraDkZunw
+	M7P94uzBoHcA42oSfxDnNcpfTVgepPUSaogWj950H94MXJ+Xh2yfKptO3NChJC6jqIwU+f
+	2Kaadr47Sz6Mh7LV9PAEnN349th+exs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716567756;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
+	b=bhwwlCRSlcV9iltxJeraomTiYEBDlnDbC6ue3GInmvep7ITGMVHKLGXqbndDFA9Y3YmOw5
+	HU/gVf03e5g068Dg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1716567755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
+	b=kbwXvE8iJQ8gjOf/v3bD2Nv33spVQdPFzIc1YDI0cvMDOybBCkPHpFeIAeYZq/aHbFgiS5
+	KT/Y4Wy/OB7XJTwyVx6HK4JeElZOVp0tXqhHFti9amzYl1hONdRS3YSeCxcMPp4Y0j7siD
+	XiyR85dqMwOixju2M3DogX3N9wA0lno=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1716567755;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
+	b=85DicWDea8JNcYFvJVLrrmlLyWmX93rTmKs5k5JiVh23MjVvvnMfN1JbfkHHJEHtAJq4fB
+	HWdTNFrIEP8Y2LBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7EDD13A6B;
+	Fri, 24 May 2024 16:22:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1gexNMu+UGbCUAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 24 May 2024 16:22:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 32F87A0825; Fri, 24 May 2024 18:22:31 +0200 (CEST)
+Date: Fri, 24 May 2024 18:22:31 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
+	Jan Kara <jack@suse.cz>,
+	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ext4: fix fast commit inode enqueueing during a full
+ journal commit
+Message-ID: <20240524162231.l5r4niz7awjgfju6@quack3>
+References: <20240523111618.17012-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <768759.1716567475.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 May 2024 17:17:55 +0100
-Message-ID: <768760.1716567475@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523111618.17012-1-luis.henriques@linux.dev>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
 
-Hi Christian,
+On Thu 23-05-24 12:16:18, Luis Henriques (SUSE) wrote:
+> When a full journal commit is on-going, any fast commit has to be enqueued
+> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
+> is done only once, i.e. if an inode is already queued in a previous fast
+> commit entry it won't be enqueued again.  However, if a full commit starts
+> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
+> be done into FC_Q_STAGING.  And this is not being done in function
+> ext4_fc_track_template().
+> 
+> This patch fixes the issue by flagging an inode that is already enqueued in
+> either queues.  Later, during the fast commit clean-up callback, if the
+> inode has a tid that is bigger than the one being handled, that inode is
+> re-enqueued into STAGING and the spliced back into MAIN.
+> 
+> This bug was found using fstest generic/047.  This test creates several 32k
+> bytes files, sync'ing each of them after it's creation, and then shutting
+> down the filesystem.  Some data may be loss in this operation; for example a
+> file may have it's size truncated to zero.
+> 
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 
-Can you pick this up, please?
+Thanks for the fix. Some comments below:
 
-Thanks,
-David
----
-From: Marc Dionne <marc.dionne@auristor.com>
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 983dad8c07ec..4c308c18c3da 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1062,9 +1062,18 @@ struct ext4_inode_info {
+>  	/* Fast commit wait queue for this inode */
+>  	wait_queue_head_t i_fc_wait;
+>  
+> -	/* Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len */
+> +	/*
+> +	 * Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len,
+> +	 * i_fc_next
+> +	 */
+>  	struct mutex i_fc_lock;
+>  
+> +	/*
+> +	 * Used to flag an inode as part of the next fast commit; will be
+> +	 * reset during fast commit clean-up
+> +	 */
+> +	tid_t i_fc_next;
+> +
 
-afs: Don't cross .backup mountpoint from backup volume
+Do we really need new tid in the inode? I'd be kind of hoping we could use
+EXT4_I(inode)->i_sync_tid for this - I can see we even already set it in
+ext4_fc_track_template() and used for similar comparisons in fast commit
+code.
 
-Don't cross a mountpoint that explicitly specifies a backup volume
-(target is <vol>.backup) when starting from a backup volume.
+> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+> index 87c009e0c59a..bfdf249f0783 100644
+> --- a/fs/ext4/fast_commit.c
+> +++ b/fs/ext4/fast_commit.c
+> @@ -402,6 +402,8 @@ static int ext4_fc_track_template(
+>  				 sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) ?
+>  				&sbi->s_fc_q[FC_Q_STAGING] :
+>  				&sbi->s_fc_q[FC_Q_MAIN]);
+> +	else
+> +		ei->i_fc_next = tid;
+>  	spin_unlock(&sbi->s_fc_lock);
+>  
+>  	return ret;
+> @@ -1280,6 +1282,15 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
+>  	list_for_each_entry_safe(iter, iter_n, &sbi->s_fc_q[FC_Q_MAIN],
+>  				 i_fc_list) {
+>  		list_del_init(&iter->i_fc_list);
+> +		if (iter->i_fc_next == tid)
+> +			iter->i_fc_next = 0;
+> +		else if (iter->i_fc_next > tid)
+			 ^^^ careful here, TIDs do wrap so you need to use
+tid_geq() for comparison.
 
-It it not uncommon to mount a volume's backup directly in the volume
-itself.  This can cause tools that are not paying attention to get
-into a loop mounting the volume onto itself as they attempt to
-traverse the tree, leading to a variety of problems.
+> +			/*
+> +			 * re-enqueue inode into STAGING, which will later be
+> +			 * splice back into MAIN
+> +			 */
+> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
+> +				      &sbi->s_fc_q[FC_Q_STAGING]);
+>  		ext4_clear_inode_state(&iter->vfs_inode,
+>  				       EXT4_STATE_FC_COMMITTING);
+>  		if (iter->i_sync_tid <= tid)
+				     ^^^ and I can see this is buggy as
+well and needs tid_geq() (not your fault obviously).
 
-This doesn't prevent the general case of loops in a sequence of
-mountpoints, but addresses a common special case in the same way
-as other afs clients.
-
-Reported-by: Jan Henrik Sylvester <jan.henrik.sylvester@uni-hamburg.de>
-Link: http://lists.infradead.org/pipermail/linux-afs/2024-May/008454.html
-Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
-Link: http://lists.infradead.org/pipermail/linux-afs/2024-February/008074.=
-html
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
-cc: linux-afs@lists.infradead.org
----
- fs/afs/mntpt.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/afs/mntpt.c b/fs/afs/mntpt.c
-index 97f50e9fd9eb..297487ee8323 100644
---- a/fs/afs/mntpt.c
-+++ b/fs/afs/mntpt.c
-@@ -140,6 +140,11 @@ static int afs_mntpt_set_params(struct fs_context *fc=
-, struct dentry *mntpt)
- 		put_page(page);
- 		if (ret < 0)
- 			return ret;
-+
-+		/* Don't cross a backup volume mountpoint from a backup volume */
-+		if (src_as->volume && src_as->volume->type =3D=3D AFSVL_BACKVOL &&
-+		    ctx->type =3D=3D AFSVL_BACKVOL)
-+			return -ENODEV;
- 	}
- =
-
- 	return 0;
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
