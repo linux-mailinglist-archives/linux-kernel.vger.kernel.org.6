@@ -1,103 +1,100 @@
-Return-Path: <linux-kernel+bounces-189014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52BD88CE9EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:34:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBB98CE9F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A791C23206
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DF251F24CBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC513E462;
-	Fri, 24 May 2024 18:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F1544C94;
+	Fri, 24 May 2024 18:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlox4iNq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZBNDhN4m"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BC83399B;
-	Fri, 24 May 2024 18:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE7141C85;
+	Fri, 24 May 2024 18:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716575489; cv=none; b=kU/eqwlcfqjUdVlT95C8AjA7JtVAdA0gR8i1pvnq6IWORVNkLo2udss/nAJDzMpMGh+ELm2KZdQUU98cBvwMQpCma7icrHRp1XjWsG7/bB4BhefjAhgJEJkFud2lV1uUGM+/ZARTDF3quCgJOYClEWVDtFvOpZkMeBl1uyH2DnU=
+	t=1716575535; cv=none; b=m+uzyGfEmiwDN4NWtGl06CngDHXH1nEiDC7ntx609UJUTKffBDc7RCcRwst8BdGFLhl+YWr9aIBZlWTEqgdvoR/Skp2hJTZvx/RE3PUKn3pRBmM0dSttOgWsmiSj5IStrKkc4jqIij9g63i8vehDi6QpkXf2DFCf35m5IAJtfvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716575489; c=relaxed/simple;
-	bh=/ztmUaN+Csn+xIOOn+zVsdPvX0qFx5ZWesnKa3+2u4E=;
+	s=arc-20240116; t=1716575535; c=relaxed/simple;
+	bh=ZDW6n8R+BbYSZWdXmek/HnmZttNw+oIvTXE643uclug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihyxCsYemufg7Xt4iEbQznBVuzoI5Fi3h2+ShUc2bOChGizsvt/Gs1mWtOv++4GHPoIOzyX2PoXFr9FKyxOtguFx5zDVvxHKs83GB0CG+DeWQ7Do30yopAeDKsZUbMyauL3cx3cfPYknwNhqq6Skim8iXMkJ3Fd3ThGz33/c40A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlox4iNq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD6E0C2BBFC;
-	Fri, 24 May 2024 18:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716575489;
-	bh=/ztmUaN+Csn+xIOOn+zVsdPvX0qFx5ZWesnKa3+2u4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qlox4iNqmDPOjH4JRYBda8MvOcY+AoZDtCUyI65smRCljA+e8fgiRc/xLx8VpsKny
-	 UQzZr3+aYaRJ0Pbn7yrZNarCdTccjKvL4a3VapoRcVL2LBxlr4lwNmrLa6aSb2x70a
-	 l6qswPdJFpmWT059xtUA/+hjTkRzKKcFE4XG+MfShm+xsVpXmmYPwJPWOjVpqcAJWs
-	 M4ULilRuiR5r5xwfhzmxw4WwH0EkLMbRq2Alm2uqozs7SrKCQ47vp8KIP160dhiuBM
-	 Oiqqie/BGma2h2oroJctlzAr7pcAmPyqeaPghpK/ia0CuNrPAA4NGfnOzEEIUfZakc
-	 QJxCWnuOsZQqg==
-Date: Fri, 24 May 2024 19:31:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: usb: gpio-sbu-mux: Make
- 'enable-gpios' optional
-Message-ID: <20240524-boxer-grab-820cc815e55a@spud>
-References: <20240524071034.4441-1-francesco@dolcini.it>
- <20240524071034.4441-2-francesco@dolcini.it>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IBB7v3MZp6cuFpgSbcwxh+lznojv0HHHE5ZNMt3mqKQa/G9hNTiyTpXJ+YBRPk+WwLCsHJWb2uXC15CqohFz0VMxLWNaRSkV3bUDJ8l8me7wnfRd4myt4Ly43tifRzH4geqvtQxdhxM8XCe88/qDlonN5fzLbtiLhv3eFePDaE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZBNDhN4m; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=K03GNtWVmJPKVVQMTb7a854Ol2QjAiRCHfbNxrRekzI=; b=ZBNDhN4mHvJ+uJ7Nn43x5PtElC
+	zwBeXSm6fuQRM4NIbuYbs9Kl7sLYc+iR+wt45j4h7nP19aW5ivLR03hIftzsQLAEZhRvWh+1xR7iX
+	PZMUtXY2lqOGXzjbZ90YrnzQ+QS4Wddd3IHXLoojOMBK5ApH7u5Y6nSWOG5axhfStUWI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sAZhp-00FyHj-J9; Fri, 24 May 2024 20:31:53 +0200
+Date: Fri, 24 May 2024 20:31:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
+Cc: Parthiban.Veerasooran@microchip.com, Pier.Beruto@onsemi.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
+	anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, corbet@lwn.net,
+	linux-doc@vger.kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, Horatiu.Vultur@microchip.com,
+	ruanjinjie@huawei.com, Steen.Hegelund@microchip.com,
+	vladimir.oltean@nxp.com, UNGLinuxDriver@microchip.com,
+	Thorsten.Kummermehr@microchip.com, Selvamani.Rajagopal@onsemi.com,
+	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch
+Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
+ interrupts unmasking
+Message-ID: <7aaff08b-a770-4d93-b691-e89b4c40625e@lunn.ch>
+References: <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
+ <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
+ <BY5PR02MB678683EADBC47A29A4F545A59D1C2@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <ZkG2Kb_1YsD8T1BF@minibuilder>
+ <708d29de-b54a-40a4-8879-67f6e246f851@lunn.ch>
+ <ZkIakC6ixYpRMiUV@minibuilder>
+ <6e4207cd-2bd5-4f5b-821f-bc87c1296367@microchip.com>
+ <ZkUtx1Pj6alRhYd6@minibuilder>
+ <e75d1bbe-0902-4ee9-8fe9-e3b7fc9bf3cb@microchip.com>
+ <ZlDYqoMNkb-ZieSZ@minibuilder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="O2o6xvA5DJkzSTPJ"
-Content-Disposition: inline
-In-Reply-To: <20240524071034.4441-2-francesco@dolcini.it>
-
-
---O2o6xvA5DJkzSTPJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZlDYqoMNkb-ZieSZ@minibuilder>
 
-On Fri, May 24, 2024 at 09:10:33AM +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
->=20
-> The enable gpio is not required when the SBU mux is used only for
-> orientation, make enable-gpios required only for alternate mode
-> switch use case.
->=20
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> After a considerable ammount of headscratching it seems that disabling collision
+> detection on the macphy is the only way of getting it stable.
+> When PLCA is enabled it's expected that CD causes problems, when running
+> in CSMA/CD mode it was unexpected (for me at least).
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Now we are back to, why is your system different? What is triggering a
+collision for you, but not Parthiban?
 
-Cheers,
-Conor.
+There is nothing in the standard about reporting a collision. So this
+is a Microchip extension? So the framework is not doing anything when
+it happens, which will explain why it becomes a storm.... Until we do
+have a mechanism to handle vendor specific interrupts, the frame work
+should disable them all, to avoid this storm.
 
---O2o6xvA5DJkzSTPJ
-Content-Type: application/pgp-signature; name="signature.asc"
+Does the datasheet document what to do on a collision? How are you
+supposed to clear the condition?
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlDc/AAKCRB4tDGHoIJi
-0kKTAP46H5UKUeCFhR0V6Md/njZpnW/9w0OktOevN6t6RCH8EAD+KYPvjbobJ9UC
-TQGD0lFTB3bPp1NBXgIa2UoHJrf4Hgw=
-=zDnb
------END PGP SIGNATURE-----
-
---O2o6xvA5DJkzSTPJ--
+       Andrew
 
