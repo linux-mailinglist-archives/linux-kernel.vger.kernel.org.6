@@ -1,235 +1,140 @@
-Return-Path: <linux-kernel+bounces-189130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E258CEB94
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:58:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06A18CEB9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 181C128206C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:58:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5827D1F21A7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4673F1DFFC;
-	Fri, 24 May 2024 20:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FB984FB0;
+	Fri, 24 May 2024 21:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="c7iiMxL5"
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPTWeVLa"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8EC7442A;
-	Fri, 24 May 2024 20:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD323C47C;
+	Fri, 24 May 2024 21:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716584238; cv=none; b=Ke3GTL5hAglecUaiuyX+ZUrHFBErlBm9eUByQsnlY3WCmc4gB6gbx+B0JWwCYs5wVdmuVfgIjEYJ9VHLRi5LQEalGODZhTB2o+XznHnwDFnItbB9JZo85Dx3VvqHxS0L9S8QHuN6c8n/2IwthNXJM3pRySpy1rH1J8V61W2B7JU=
+	t=1716584604; cv=none; b=TNNp1UoVAIwH3ZsFnPhnMqc6ILIlp35N9OFqXKt4cqDlx6OiHxTPzip5a4lK9iGgknvFW0DB2+GUHuUed+pfgRAZSMjXCs8HGPRprflJeYzpODjk8zjrkPzrTusmjWKRC1xuKQCSDaHEIIBkQti3EDzG+iZU02RQoQ5Yii++1As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716584238; c=relaxed/simple;
-	bh=Y46nXxlcFgBHM6KViWljK/mrz7E2aT075oMJjZi2WQY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IFrsovovEZpa+esb/wLBQ7WzNDzazy6K3F1GEpCjCUZz3NVmEhq+wYTAu+0M40tYsBOoAt15QYUQaQDcxHcqizH6/+dFoz00HGyF+WLQLKtUJ/JSMVcLfaGh41b4s6Lx/TJAS0X1jzrg0BhU+uGDMPv3ELl/PYam9lS6JljMzmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=c7iiMxL5; arc=none smtp.client-ip=98.142.107.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=t2DOCJNyKvOfcOpBuODL8F4YyXgFuY85iOz3SlWrWOg=; b=c7iiMxL55RaSq6FjgjofpJVK3J
-	ZqhA0nDpMj8SZvzTPrYxvac9owiaU9xPm7Q4Bu+HrVOkkmFo6xUPSTlhUMvXcNJ2mhH22pqj6y/jD
-	jtBamNqpPA1XbB86PvUY+ZIrSPWsSQECJb6pHFHR3weU9iwDQzlqhr9ZI7EOoH5B4/Lvx4/exiIka
-	2i5CPKXcbgwGeY0XeBOPLlxd5sT9suJxQGxb2RJ6xMVlx4++97XqtWH57Q6ygTtyUo0nJkiJikyi1
-	zf++IMt2P+lFttamkwDY/1hrAGYoXgNSx67EiJob0XkhgPC9leogG7JS9s+Ps6xAPoeQptP4Pwzy1
-	q3c3QdWQ==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:42048 helo=[192.168.0.142])
-	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <david@lechnology.com>)
-	id 1sAc1o-0004Bn-1a;
-	Fri, 24 May 2024 16:57:13 -0400
-Message-ID: <e6a03921-532c-4aa7-92b6-812cd9a356d6@lechnology.com>
-Date: Fri, 24 May 2024 15:57:11 -0500
+	s=arc-20240116; t=1716584604; c=relaxed/simple;
+	bh=UvvZgf/c7R2Kuz7t2PBciYgKKn+4xkq6ebZaQLyY6oM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VwK4Y/HSLfTpbgtVBLT++5yPBjI79oHuwHrOtZPRouPwrocWTBZK3kD4WKIo1qZKlpvRL35cFJZVFhmjsHnkOxbF+WOADzcKeJyQeCQNHjb3hhN97ke6VdXLSnT4Uc1bTta/bCRKES6/p3HHxRGyK/ogSfDFbhW53XW53MK3tYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPTWeVLa; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so69083151fa.2;
+        Fri, 24 May 2024 14:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716584601; x=1717189401; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jfTzYX+duGMsU7h/VpsgnG4SbDyXgyQ9P7UXQAwHfVg=;
+        b=aPTWeVLaspchA5msb3QDFifp1gd5kW4gMuvVd/xGBKQKEUunIZ69dlIl/i9jHOc6ZZ
+         6N8J2aRFHxd7KU2aUP/qI5N5RiGesaqb3VOZ5BCo/yRwYUFEerM53Tac6UD+H9c7Bq4K
+         iXKb7ALmMkC9jfgqPXeCfXfzKfKppT/u0/ahP0WrML2TTmvHZBD0ivQwrAB/uTBiAjPQ
+         JSqR0Ta1nN3AgRGQ3nCRGqcZxP9qe6+dMDDw+eHYIEJchhB1PqhF2504oN8e1OXy8irO
+         QXiKlMt6Q1u9wHYNkGZuIzei4e9mvrDXoJAbkbg/2zcLsan51nLuM3DTwUOsxq5tXggQ
+         0c3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716584601; x=1717189401;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jfTzYX+duGMsU7h/VpsgnG4SbDyXgyQ9P7UXQAwHfVg=;
+        b=iK84pa3xC+jDKksszQrbFNFSAMCJtFuIHYKojTBFUUigllOlBoRkIOdMzMpnJUz4ks
+         Ie5qiEpjQsdjVtvLXfHu+9S//1WrTr+LgQESMD6jjZBnmnmZPviXa+YnJBhEjjG9Z0+c
+         4eOA/va4OrldJZn71qWztt0+n/Ku7Zmd9m+jiG8vQ8QY1aZ3okSuYKx6EUjkkId1034K
+         rBA0RQpcHugNJ/an2HrV9PgHYGl/RE46au65RbWOWXWO5L/9OVKvJRKq68ZGwqkK4Mw1
+         +d5J9K5pGktECHcFKuRqWvRwDznQumpQtE2EeN3EDIBcFEXBrhM+XR38tSMhztTAt8na
+         wywQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNavcBdq31TyeqmOCiVPBgtuSdPDjT6GUKiSJuJFNexQxj2ivxohGsyehNTGeD8UI3+2Nu56d7lmenPa3TyfZ4NtSYtjaAElfza5F6xrC5cE8A1X9gAMe6iEzEvrkRkph89wkr4vly5BE/7bj9h0ZM9YCPv6vNuyvk
+X-Gm-Message-State: AOJu0YyFkB7qfj0PYO3h2u+7ubDIkA4xrY1tbmww1vyp3iaQpho+jXwA
+	iM/UI7tZvgjO0aX9reoLKfV1V04tQKq0jQxiK0iXq+1R5mjdwziL
+X-Google-Smtp-Source: AGHT+IFsvg+3eW+uFt+8zbMHGOvvmM7wbkkNlpRI+IgIK/fpNCjG+0mt4y0mWAeB+ZHjQFEWsw7fgQ==
+X-Received: by 2002:a19:381d:0:b0:523:889a:ebd with SMTP id 2adb3069b0e04-52964ea947bmr1972965e87.24.1716584601070;
+        Fri, 24 May 2024 14:03:21 -0700 (PDT)
+Received: from localhost ([95.79.182.53])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52970e1ef56sm236078e87.228.2024.05.24.14.03.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 14:03:20 -0700 (PDT)
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RFC net-next 1/3] net: stmmac: Prevent RGSMIIIS IRQs flood
+Date: Sat, 25 May 2024 00:02:57 +0300
+Message-ID: <20240524210304.9164-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
+References: <ZkDuJAx7atDXjf5m@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] dt-bindings: counter: Add new ti,am62-eqep
- compatible
-From: David Lechner <david@lechnology.com>
-To: Judith Mendez <jm@ti.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- William Breathitt Gray <william.gray@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240523231516.545085-1-jm@ti.com>
- <20240523231516.545085-3-jm@ti.com>
- <2956d10b-d2cf-4019-adc8-d8053e435767@lechnology.com>
-Content-Language: en-US
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <2956d10b-d2cf-4019-adc8-d8053e435767@lechnology.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 
-On 5/24/24 3:50 PM, David Lechner wrote:
-> On 5/23/24 6:15 PM, Judith Mendez wrote:
->> Add new compatible ti,am62-eqep for TI K3 devices. If a device
->> uses this compatible, require power-domains property.
->>
->> Since there is only one functional and interface clock for eqep,
->> clock-names is not really required. The clock-name also changed
->> for TI K3 SoCs so make clock-names optional for the new compatible
->> since there is only one clock that is routed to the IP.
->>
->> While we are here, add an example using ti,am62-eqep compatible.
->>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->> Changes since v1:
->> - Fix eqep binding for new compatible, require
->>  power-domains for new compatible
->> ---
->>  .../devicetree/bindings/counter/ti-eqep.yaml  | 53 +++++++++++++++++--
->>  1 file changed, 48 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/counter/ti-eqep.yaml b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
->> index 85f1ff83afe72..c4bb0231f166a 100644
->> --- a/Documentation/devicetree/bindings/counter/ti-eqep.yaml
->> +++ b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
->> @@ -11,7 +11,9 @@ maintainers:
->>  
->>  properties:
->>    compatible:
->> -    const: ti,am3352-eqep
->> +    enum:
->> +      - ti,am3352-eqep
->> +      - ti,am62-eqep
->>  
->>    reg:
->>      maxItems: 1
->> @@ -21,19 +23,43 @@ properties:
->>      maxItems: 1
->>  
->>    clocks:
->> -    description: The clock that determines the SYSCLKOUT rate for the eQEP
->> -      peripheral.
->> +    description: The functional and interface clock that determines the clock
->> +      rate for the eQEP peripheral.
->>      maxItems: 1
->>  
->>    clock-names:
->> -    const: sysclkout
->> +    enum:
->> +      - sysclkout
->> +      - fck
->> +
-> 
-> If we are making this optional for ti,am62-eqep, why add a new name?
-> 
-> Also, we could change the description to say that sysclockout is not a
-> great name but is required for backwards compatibility.
-> 
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - ti,am3352-eqep
->> +    then:
->> +      required:
->> +        - clock-names
+Without reading the GMAC_RGSMIIIS/MAC_PHYIF_Control_Status the IRQ line
+won't be de-asserted causing interrupt handler executed over and over. As
+a quick-fix let's just dummy-read the CSR for now.
 
-I just looked at the Linux driver for this and the clock name is
-not used in the driver. So we could probably just deprecate the
-clock-names property here and not make it required for
-ti,am3352-eqep (and not allowed for any new compatibles as
-suggested below).
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c | 2 ++
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c    | 2 ++
+ 2 files changed, 4 insertions(+)
 
-> 
-> What if we just add
-> 
->   else:
->     clock-names: false
-> 
-> since there is only one clock and not worry about the name?
-> 
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - ti,am62-eqep
->> +    then:
->> +      required:
->> +        - power-domains
->>  
->>  required:
->>    - compatible
->>    - reg
->>    - interrupts
->>    - clocks
->> -  - clock-names
->>  
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+index adb872d5719f..2ae8467c588e 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac1000_core.c
+@@ -304,6 +304,8 @@ static int dwmac1000_irq_status(struct mac_device_info *hw,
+ 	dwmac_pcs_isr(ioaddr, GMAC_PCS_BASE, intr_status, x);
+ 
+ 	if (intr_status & PCS_RGSMIIIS_IRQ) {
++		/* TODO Dummy-read to clear the IRQ status */
++		readl(ioaddr + GMAC_RGSMIIIS);
+ 		phylink_pcs_change(&hw->mac_pcs, false);
+ 		x->irq_rgmii_n++;
+ 	}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+index a892d361a4e4..cd2ca1d0222c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+@@ -896,6 +896,8 @@ static int dwmac4_irq_status(struct mac_device_info *hw,
+ 
+ 	dwmac_pcs_isr(ioaddr, GMAC_PCS_BASE, intr_status, x);
+ 	if (intr_status & PCS_RGSMIIIS_IRQ) {
++		/* TODO Dummy-read to clear the IRQ status */
++		readl(ioaddr + GMAC_PHYIF_CONTROL_STATUS);
+ 		phylink_pcs_change(&hw->mac_pcs, false);
+ 		x->irq_rgmii_n++;
+ 	}
+-- 
+2.43.0
 
 
