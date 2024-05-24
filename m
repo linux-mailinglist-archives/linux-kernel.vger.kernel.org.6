@@ -1,398 +1,200 @@
-Return-Path: <linux-kernel+bounces-188215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B9C8CDF45
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:41:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7996F8CDF47
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6DFBB210D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:41:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBEB01F21F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154CE12B75;
-	Fri, 24 May 2024 01:41:40 +0000 (UTC)
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B4F1D52C;
+	Fri, 24 May 2024 01:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClGWt75N"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3452C9A;
-	Fri, 24 May 2024 01:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977AA63B8;
+	Fri, 24 May 2024 01:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716514899; cv=none; b=aEJMHRNI1rKnlc+sWnzYRbQcZ+uNhu4CMzOeyRXpIxTSJOKonSpWmcODHJ7sEnhAt1Uccd5T2UbbJ4zaneLfXa2D+9Vr89zNQFwSHG2plspvZpFaY1lUKBlPM+w+yCD5Ljsli2M9gt1K6sjmziTc8Ln3PbWzswkCOaOlGIgZ26Q=
+	t=1716515221; cv=none; b=P3YMqGP47wrEUTqaa0gSGlAhWuD6O/2HXTC11tBZEqtPBntikQZK3UdG2qKM6gItCHhbC4IVuPuPuRSpUiK/7dbVqpD8LFgQGlJdSkrNqruBqdp/0On7xpGQdY9GpsAntJ9JGSqlXmSErHbgEwxJjPoccaZbsV24bJkM1yfAAOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716514899; c=relaxed/simple;
-	bh=Gr69eyRY4A2sWWhxhR+iI5hpSOqo9bvnJuMiC63ff24=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qj8t3Derb+mI9kJ5ydChtzHA10Uu7rQkbRf0fQ5QNgaME6kdp+/ZFf44zIlioxU0s8/7gwgj6k2hq0S0d/7ufVXPaqvpxAXn1DCNh0lqnHwbJHpgaE8En1JhX4PjK7YVozTySDyaQdC4uOA9az0Zsyj7hrGmjTflu5ZWFdU8MiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1716515221; c=relaxed/simple;
+	bh=iAibcjhB3i077su1Tv38KybDJGy0gFiwnwF9ePlbHgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oee9AWGuHyuiDGgrwUrP6PIiapucJBidT5Nhcw03hAyDznQRLJvsN7CTXq6zg9E9x7JUa8XEiUqc0HBmAyHqcNbejcwDAtVYLgXNuqCWRlnj6ziMVkOeCv1Biyhv5gMwDTGZqFSTaynO50hluwcVb/tpsIt8USl03AuGCD3vgcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClGWt75N; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6818eea9c3aso311888a12.1;
-        Thu, 23 May 2024 18:41:37 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-354b722fe81so2599361f8f.3;
+        Thu, 23 May 2024 18:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716515218; x=1717120018; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t6jwG8DKwa2D68PCR9THchOvJn/p8bGOM0gVPOEmuF4=;
+        b=ClGWt75NtcpXiFnCYDRx41+l8bNjO+YEwvQe3J/yp0g8im/wkH78ffw4NIg1B8M7RH
+         36eoJTXnOXe1zrFAdhvP4Ypfxi8YyZg426jRlXuAmdLz5h9LIOAGC1yFIdJhPVKkAgsD
+         okQFIWwkwzC12v/nelAvHtr9HlBTvFIdbsjcwlE5jzDWy4paFoDhTgPpf8FjNH4XbyWr
+         QATi9Ekq4ASkn75dWtu9Q8dImufhso8pAqQv0XjQUEYIOzQEgrSXJ6hohSS4YrVwHnLw
+         Zfu4tYKUgv0IN8rPW5v9i26KK0j/tmUf0M3L7BuPRf6mMOzSCYOF4X7JtdgivQUGfL1r
+         pl1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716514897; x=1717119697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AXJqG5ST2BaWDalAXGjoC1Wu2MFeuF+wibS7fRKnrDI=;
-        b=RxtX/6F3coEVH1hP4ggtcuwpg+OvKj1oLBgBAk1I6dwzCQps31rEGfzSYdQC5oRGpc
-         ITfafDfRmEolyO18JKWnPs25j+10P5fesTj7qGyqfvwG2EoT20Gg6w/rBUgiSmr3JYch
-         nHQFgyx1/5rXqkOmxRfphPYH7L9lOW3+ajae6tqJXAnjNEBD8sE7x9kEERy5XAi4lmDV
-         O71Ku9hhrde++hh67CrOEjDZ1a8Wx2n0Taugow5a2/ElbEKB4KEZ79/NT8Tg4UcdGmqQ
-         4yfSSn34XIbVXABSnn9YF7hdzJjYpr7oqKZ+9Rbfe+KWgUVzXk47cFH5LKb1lXh/BweL
-         kiCg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp9RYoUOJJQJELNOpvIvvT5kVAYcEJt8FLMUfe6s7kyCli2QNPM7lnmvS4cUEERa60+1jOKGzAxSPsAOHpR83z/JNyuF/TL21KrboupFzED6i6lO3MYYO7ePgIXHJCk7f9PymGHKMmAiRTXK1dWQ==
-X-Gm-Message-State: AOJu0YxIANUKvzPY83uD+KYH8NFr1t6n4DxOYSLhV5vLBnshLyJnsACe
-	FLZ9/ZZ3gd7I6mb3f83k+DXFlwEnpYbI5NMn4M7W2aH14/eXdI1FF0gQZCpA0GFzR3EydPnr3t+
-	n09+0Isw1ZEcmXh3komtg3zQ0uNE=
-X-Google-Smtp-Source: AGHT+IE0d+X+isDX4ebvm/Ec1O4u+2HLSkbp1FDQRJvF/bk+LyP7mY6gwBfRgQVdY35tPtb0wLYQCgqk4NZAb3bB+RY=
-X-Received: by 2002:a17:90b:3006:b0:2bd:6a8f:4140 with SMTP id
- 98e67ed59e1d1-2bf5e18b462mr874273a91.20.1716514896929; Thu, 23 May 2024
- 18:41:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716515218; x=1717120018;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=t6jwG8DKwa2D68PCR9THchOvJn/p8bGOM0gVPOEmuF4=;
+        b=hRxedeQlIsiSUtnDbMNBtnR8EQjlQIUxqt5p8IP6RJkEpUfPSpr6Fm5wM8/04NUPLS
+         gG2xdjwaEopp1keJuWs07OsZbT4SXAcsYIx4oV8ouyRkf4SdTfzGuT8fDNz6kFkC71wP
+         v4MTS6R37aTFd/dPvoG9hlC6AmuEFEQu8SgPGMIhvO9uOzfu48CZLo7IU6GKOUiBvnrZ
+         Mzd5hRt+407uceIk9YnTd/nTRsmERlVyjkpKiSr+P8S2qMgKUb4NTNf6JrtoB/OCmdgG
+         nUIbOxxL77f+4iGaSMfa8jih5+0qvJ6XjCZgsr1jC6HhXG/8nPFwBxaCvJo4EKRUh8oJ
+         ppJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV24VTHMhGxrMtZH314aKZ/0xSTFOcW82m5k3zWJL4i90vrZk6tLvKp3jzOqpJMEeUqXm5JKjAzurwuVT+za/un1jMn707lkWqZGNxAMBuuj4Gm8D9m756XchtYPUDAS2y8zdy8+5DGfw==
+X-Gm-Message-State: AOJu0YxdDaouHeEjZniNp3Mi0XWFyV3XL/oh9EmYsMLfmXGK1PgzEQYH
+	ESwGBCl4PNS7mjAYuibQFbnlW+eUh0RCU46QAxJmjzgLBr23tfTwHRE+hg==
+X-Google-Smtp-Source: AGHT+IHDazZVS98g6jCPWCi6GMzJXJccQeP8EnJhTsM0NPuM+NoCFvUGXOm/kOMvOGJZBv5HNLIsdg==
+X-Received: by 2002:adf:ffce:0:b0:354:f802:f3a6 with SMTP id ffacd0b85a97d-355245e31b5mr430730f8f.9.1716515217640;
+        Thu, 23 May 2024 18:46:57 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc51ee7sm41771366b.139.2024.05.23.18.46.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2024 18:46:56 -0700 (PDT)
+Date: Fri, 24 May 2024 01:46:56 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>, mpe@ellerman.id.au,
+	npiggin@gmail.com, christophe.leroy@csgroup.eu,
+	aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, arnd@arndb.de,
+	anshuman.khandual@arm.com, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [Patch v2] mm/memblock: discard .text/.data if
+ CONFIG_ARCH_KEEP_MEMBLOCK not set
+Message-ID: <20240524014656.odw4yuvhgbu4dgf7@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240510020422.8038-1-richard.weiyang@gmail.com>
+ <ZkxLkK7vgzzaEvyw@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240521133029.83654-1-ben.gainey@arm.com> <20240521133029.83654-5-ben.gainey@arm.com>
-In-Reply-To: <20240521133029.83654-5-ben.gainey@arm.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 23 May 2024 18:41:25 -0700
-Message-ID: <CAM9d7chssov_fW3ZbpYqGRyhS=xuHLyJ7=rkxTNnJ6fkgEdGJQ@mail.gmail.com>
-Subject: Re: [PATCH v6 4/4] tools/perf: Allow inherit + PERF_SAMPLE_READ when
- opening events
-To: Ben Gainey <ben.gainey@arm.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	james.clark@arm.com, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkxLkK7vgzzaEvyw@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Tue, May 21, 2024 at 6:30=E2=80=AFAM Ben Gainey <ben.gainey@arm.com> wro=
-te:
+On Tue, May 21, 2024 at 10:21:52AM +0300, Mike Rapoport wrote:
+>Hi,
 >
-> The tool will now default to this new mode if the user specifies a
-> sampling group when not in system-wide mode, and when --no-inherit
-> is not specified.
+>On Fri, May 10, 2024 at 02:04:22AM +0000, Wei Yang wrote:
+>> When CONFIG_ARCH_KEEP_MEMBLOCK not set, we expect to discard related
+>> code and data. But it doesn't until CONFIG_MEMORY_HOTPLUG not set
+>> neither.
+>> 
+>> This patch puts memblock's .text/.data into its own section, so that it
+>> only depends on CONFIG_ARCH_KEEP_MEMBLOCK to discard related code and
+>> data.
+>> 
+>> After this, from the log message in mem_init_print_info(), init size
+>> increase from 2420K to 2432K on arch x86.
+>> 
+>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+>> 
+>> ---
+>> v2: fix orphan section for powerpc
+>> ---
+>>  arch/powerpc/kernel/vmlinux.lds.S |  1 +
+>>  include/asm-generic/vmlinux.lds.h | 14 +++++++++++++-
+>>  include/linux/memblock.h          |  8 ++++----
+>>  3 files changed, 18 insertions(+), 5 deletions(-)
+>>  
+>> +#define __init_memblock        __section(".mbinit.text") __cold notrace \
+>> +						  __latent_entropy
+>> +#define __initdata_memblock    __section(".mbinit.data")
+>> +
 >
-> This change updates evsel to allow the combination of inherit
-> and PERF_SAMPLE_READ.
+>The new .mbinit.* sections should be added to scripts/mod/modpost.c
+>alongside .meminit.* sections and then I expect modpost to report a bunch
+>of section mismatches because many memblock functions are called on memory
+>hotplug even on architectures that don't select ARCH_KEEP_MEMBLOCK.
 >
-> A fallback is implemented for kernel versions where this feature is not
-> supported.
 
-But I'm afraid the test would fail on old kernels.  Maybe we need to
-put it in the selftests.
+I tried to add some code in modpost.c, "make all" looks good.
 
-Thanks,
-Namhyung
+May I ask how can I trigger the "mismatch" warning?
 
+BTW, if ARCH_KEEP_MEMBLOCK unset, we would discard memblock meta-data. If
+hotplug would call memblock function, it would be dangerous?
+
+The additional code I used is like below.
+
+---
+ scripts/mod/modpost.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 937294ff164f..c837e2882904 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -777,14 +777,14 @@ static void check_section(const char *modname, struct elf_info *elf,
+ 
+ #define ALL_INIT_DATA_SECTIONS \
+ 	".init.setup", ".init.rodata", ".meminit.rodata", \
+-	".init.data", ".meminit.data"
++	".init.data", ".meminit.data", "mbinit.data"
+ 
+ #define ALL_PCI_INIT_SECTIONS	\
+ 	".pci_fixup_early", ".pci_fixup_header", ".pci_fixup_final", \
+ 	".pci_fixup_enable", ".pci_fixup_resume", \
+ 	".pci_fixup_resume_early", ".pci_fixup_suspend"
+ 
+-#define ALL_XXXINIT_SECTIONS ".meminit.*"
++#define ALL_XXXINIT_SECTIONS ".meminit.*", "mbinit.*"
+ 
+ #define ALL_INIT_SECTIONS INIT_SECTIONS, ALL_XXXINIT_SECTIONS
+ #define ALL_EXIT_SECTIONS ".exit.*"
+@@ -799,7 +799,7 @@ static void check_section(const char *modname, struct elf_info *elf,
+ 
+ #define INIT_SECTIONS      ".init.*"
+ 
+-#define ALL_TEXT_SECTIONS  ".init.text", ".meminit.text", ".exit.text", \
++#define ALL_TEXT_SECTIONS  ".init.text", ".meminit.text", ".mbinit.text", ".exit.text", \
+ 		TEXT_SECTIONS, OTHER_TEXT_SECTIONS
+ 
+ enum mismatch {
+-- 
+2.34.1
+
+
+>>  #ifndef CONFIG_ARCH_KEEP_MEMBLOCK
+>> -#define __init_memblock __meminit
+>> -#define __initdata_memblock __meminitdata
+>>  void memblock_discard(void);
+>>  #else
+>> -#define __init_memblock
+>> -#define __initdata_memblock
+>>  static inline void memblock_discard(void) {}
+>>  #endif
+>>  
+>> -- 
+>> 2.34.1
+>> 
+>> 
 >
-> Signed-off-by: Ben Gainey <ben.gainey@arm.com>
-> ---
->  tools/perf/tests/attr/README                  |  2 +
->  .../tests/attr/test-record-group-sampling     | 39 ------------
->  .../tests/attr/test-record-group-sampling1    | 50 ++++++++++++++++
->  .../tests/attr/test-record-group-sampling2    | 60 +++++++++++++++++++
->  tools/perf/tests/attr/test-record-group2      |  9 +--
->  tools/perf/util/evsel.c                       | 19 +++++-
->  tools/perf/util/evsel.h                       |  1 +
->  7 files changed, 135 insertions(+), 45 deletions(-)
->  delete mode 100644 tools/perf/tests/attr/test-record-group-sampling
->  create mode 100644 tools/perf/tests/attr/test-record-group-sampling1
->  create mode 100644 tools/perf/tests/attr/test-record-group-sampling2
->
-> diff --git a/tools/perf/tests/attr/README b/tools/perf/tests/attr/README
-> index 4066fec7180a8..67c4ca76b85d5 100644
-> --- a/tools/perf/tests/attr/README
-> +++ b/tools/perf/tests/attr/README
-> @@ -51,6 +51,8 @@ Following tests are defined (with perf commands):
->    perf record --call-graph fp kill              (test-record-graph-fp-aa=
-rch64)
->    perf record -e '{cycles,instructions}' kill   (test-record-group1)
->    perf record -e '{cycles/period=3D1/,instructions/period=3D2/}:S' kill =
-(test-record-group2)
-> +  perf record -e '{cycles,cache-misses}:S' kill (test-record-group-sampl=
-ing1)
-> +  perf record -c 10000 -e '{cycles,cache-misses}:S' kill (test-record-gr=
-oup-sampling2)
->    perf record -D kill                           (test-record-no-delay)
->    perf record -i kill                           (test-record-no-inherit)
->    perf record -n kill                           (test-record-no-samples)
-> diff --git a/tools/perf/tests/attr/test-record-group-sampling b/tools/per=
-f/tests/attr/test-record-group-sampling
-> deleted file mode 100644
-> index 97e7e64a38f07..0000000000000
-> --- a/tools/perf/tests/attr/test-record-group-sampling
-> +++ /dev/null
-> @@ -1,39 +0,0 @@
-> -[config]
-> -command =3D record
-> -args    =3D --no-bpf-event -e '{cycles,cache-misses}:S' kill >/dev/null =
-2>&1
-> -ret     =3D 1
-> -
-> -[event-1:base-record]
-> -fd=3D1
-> -group_fd=3D-1
-> -sample_type=3D343
-> -read_format=3D12|28
-> -inherit=3D0
-> -
-> -[event-2:base-record]
-> -fd=3D2
-> -group_fd=3D1
-> -
-> -# cache-misses
-> -type=3D0
-> -config=3D3
-> -
-> -# default | PERF_SAMPLE_READ
-> -sample_type=3D343
-> -
-> -# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST
-> -read_format=3D12|28
-> -task=3D0
-> -mmap=3D0
-> -comm=3D0
-> -enable_on_exec=3D0
-> -disabled=3D0
-> -
-> -# inherit is disabled for group sampling
-> -inherit=3D0
-> -
-> -# sampling disabled
-> -sample_freq=3D0
-> -sample_period=3D0
-> -freq=3D0
-> -write_backward=3D0
-> diff --git a/tools/perf/tests/attr/test-record-group-sampling1 b/tools/pe=
-rf/tests/attr/test-record-group-sampling1
-> new file mode 100644
-> index 0000000000000..9b87306266329
-> --- /dev/null
-> +++ b/tools/perf/tests/attr/test-record-group-sampling1
-> @@ -0,0 +1,50 @@
-> +[config]
-> +command =3D record
-> +args    =3D --no-bpf-event -e '{cycles,cache-misses}:S' kill >/dev/null =
-2>&1
-> +ret     =3D 1
-> +
-> +[event-1:base-record]
-> +fd=3D1
-> +group_fd=3D-1
-> +
-> +# cycles
-> +type=3D0
-> +config=3D0
-> +
-> +# default | PERF_SAMPLE_READ
-> +sample_type=3D343
-> +
-> +# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_T=
-OTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-> +read_format=3D28|31
-> +task=3D1
-> +mmap=3D1
-> +comm=3D1
-> +enable_on_exec=3D1
-> +disabled=3D1
-> +
-> +# inherit is enabled for group sampling
-> +inherit=3D1
-> +
-> +[event-2:base-record]
-> +fd=3D2
-> +group_fd=3D1
-> +
-> +# cache-misses
-> +type=3D0
-> +config=3D3
-> +
-> +# default | PERF_SAMPLE_READ
-> +sample_type=3D343
-> +
-> +# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_T=
-OTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-> +read_format=3D28|31
-> +task=3D0
-> +mmap=3D0
-> +comm=3D0
-> +enable_on_exec=3D0
-> +disabled=3D0
-> +freq=3D0
-> +
-> +# inherit is enabled for group sampling
-> +inherit=3D1
-> +
-> diff --git a/tools/perf/tests/attr/test-record-group-sampling2 b/tools/pe=
-rf/tests/attr/test-record-group-sampling2
-> new file mode 100644
-> index 0000000000000..8e29fc13f6668
-> --- /dev/null
-> +++ b/tools/perf/tests/attr/test-record-group-sampling2
-> @@ -0,0 +1,60 @@
-> +[config]
-> +command =3D record
-> +args    =3D --no-bpf-event -c 10000 -e '{cycles,cache-misses}:S' kill >/=
-dev/null 2>&1
-> +ret     =3D 1
-> +
-> +[event-1:base-record]
-> +fd=3D1
-> +group_fd=3D-1
-> +
-> +# cycles
-> +type=3D0
-> +config=3D0
-> +
-> +# default | PERF_SAMPLE_READ
-> +sample_type=3D87
-> +
-> +# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_T=
-OTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-> +read_format=3D28|31
-> +task=3D1
-> +mmap=3D1
-> +comm=3D1
-> +enable_on_exec=3D1
-> +disabled=3D1
-> +
-> +# inherit is enabled for group sampling
-> +inherit=3D1
-> +
-> +# sampling disabled
-> +sample_freq=3D0
-> +sample_period=3D10000
-> +freq=3D0
-> +write_backward=3D0
-> +
-> +[event-2:base-record]
-> +fd=3D2
-> +group_fd=3D1
-> +
-> +# cache-misses
-> +type=3D0
-> +config=3D3
-> +
-> +# default | PERF_SAMPLE_READ
-> +sample_type=3D87
-> +
-> +# PERF_FORMAT_ID | PERF_FORMAT_GROUP  | PERF_FORMAT_LOST | PERF_FORMAT_T=
-OTAL_TIME_ENABLED | PERF_FORMAT_TOTAL_TIME_RUNNING
-> +read_format=3D28|31
-> +task=3D0
-> +mmap=3D0
-> +comm=3D0
-> +enable_on_exec=3D0
-> +disabled=3D0
-> +
-> +# inherit is enabled for group sampling
-> +inherit=3D1
-> +
-> +# sampling disabled
-> +sample_freq=3D0
-> +sample_period=3D0
-> +freq=3D0
-> +write_backward=3D0
-> diff --git a/tools/perf/tests/attr/test-record-group2 b/tools/perf/tests/=
-attr/test-record-group2
-> index cebdaa8e64e47..785892a54d9e1 100644
-> --- a/tools/perf/tests/attr/test-record-group2
-> +++ b/tools/perf/tests/attr/test-record-group2
-> @@ -9,8 +9,9 @@ group_fd=3D-1
->  config=3D0|1
->  sample_period=3D1234000
->  sample_type=3D87
-> -read_format=3D12|28
-> -inherit=3D0
-> +read_format=3D28|31
-> +disabled=3D1
-> +inherit=3D1
->  freq=3D0
->
->  [event-2:base-record]
-> @@ -19,9 +20,9 @@ group_fd=3D1
->  config=3D0|1
->  sample_period=3D6789000
->  sample_type=3D87
-> -read_format=3D12|28
-> +read_format=3D28|31
->  disabled=3D0
-> -inherit=3D0
-> +inherit=3D1
->  mmap=3D0
->  comm=3D0
->  freq=3D0
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 3536404e9447b..557d409c53d6c 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1156,7 +1156,15 @@ void evsel__config(struct evsel *evsel, struct rec=
-ord_opts *opts,
->                  */
->                 if (leader->core.nr_members > 1) {
->                         attr->read_format |=3D PERF_FORMAT_GROUP;
-> -                       attr->inherit =3D 0;
-> +               }
-> +
-> +               /*
-> +                * Inherit + SAMPLE_READ requires SAMPLE_TID in the read_=
-format
-> +                */
-> +               if (attr->inherit) {
-> +                       evsel__set_sample_bit(evsel, TID);
-> +                       evsel->core.attr.read_format |=3D
-> +                               PERF_FORMAT_ID;
->                 }
->         }
->
-> @@ -1832,6 +1840,8 @@ static int __evsel__prepare_open(struct evsel *evse=
-l, struct perf_cpu_map *cpus,
->
->  static void evsel__disable_missing_features(struct evsel *evsel)
->  {
-> +       if (perf_missing_features.inherit_sample_read)
-> +               evsel->core.attr.inherit =3D 0;
->         if (perf_missing_features.branch_counters)
->                 evsel->core.attr.branch_sample_type &=3D ~PERF_SAMPLE_BRA=
-NCH_COUNTERS;
->         if (perf_missing_features.read_lost)
-> @@ -1887,7 +1897,12 @@ bool evsel__detect_missing_features(struct evsel *=
-evsel)
->          * Must probe features in the order they were added to the
->          * perf_event_attr interface.
->          */
-> -       if (!perf_missing_features.branch_counters &&
-> +       if (!perf_missing_features.inherit_sample_read &&
-> +           evsel->core.attr.inherit && (evsel->core.attr.sample_type & P=
-ERF_SAMPLE_READ)) {
-> +               perf_missing_features.inherit_sample_read =3D true;
-> +               pr_debug2("Using PERF_SAMPLE_READ / :S modifier is not co=
-mpatible with inherit, falling back to no-inherit.\n");
-> +               return true;
-> +       } else if (!perf_missing_features.branch_counters &&
->             (evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COU=
-NTERS)) {
->                 perf_missing_features.branch_counters =3D true;
->                 pr_debug2("switching off branch counters support\n");
-> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> index 517cff431de20..21b8b7e70e75e 100644
-> --- a/tools/perf/util/evsel.h
-> +++ b/tools/perf/util/evsel.h
-> @@ -192,6 +192,7 @@ struct perf_missing_features {
->         bool weight_struct;
->         bool read_lost;
->         bool branch_counters;
-> +       bool inherit_sample_read;
->  };
->
->  extern struct perf_missing_features perf_missing_features;
-> --
-> 2.45.1
->
+>-- 
+>Sincerely yours,
+>Mike.
+
+-- 
+Wei Yang
+Help you, Help me
 
