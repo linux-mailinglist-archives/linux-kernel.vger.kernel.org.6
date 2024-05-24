@@ -1,147 +1,159 @@
-Return-Path: <linux-kernel+bounces-188773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692F38CE6B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:10:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6D68CE6B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC2D1F22F2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:10:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A13CB21D62
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C74912C52C;
-	Fri, 24 May 2024 14:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB3B12C47F;
+	Fri, 24 May 2024 14:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNkh7Rlu"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GwmCAUjg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B94112C466;
-	Fri, 24 May 2024 14:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF4786146
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559839; cv=none; b=KdoXzB3S7DIRjEpD/Qboiw07Psed85O2VgaCysfOrVbZofWBrPI/Q78F9uWY3xrnnWXAsGtw1ErXu3KtRKvjnjFbablBjKv0DjuYYU41nl47q6Fu2Bt5RyVVSK+ZtNAkLPes6fdXMJ3M6tonEm9U7kg84zZmaqh17mjMuwsQIXM=
+	t=1716559949; cv=none; b=KLcHN9qzCrNWw7+Rp4IWcdi6mrJJy5O336JqAztwkua9IWr9NPrd2cO65cjz3w6d48JL7GBk+QlXMyk9eFJJks58rtxaNH/F8fNYNs05mvlNHxsqRaaIXJaXWoo7hM6ailwMkt09Pk9NZ1e0TEM/js2dcuMIfGOf7FyWU86c2Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559839; c=relaxed/simple;
-	bh=hJyg2YZ2WeH0Q9liuVLFHR9OibhRwupUtgr0ma4XRbo=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dkCpFPgrT733Ajhw3j4Wmk+xEjg5y0OgpEjGkipGDtvt6LQRBwMNN24h1vBtZxUg2ze4HhCDMbITgUdOfCitPfB0MKRz/rg3dvMbeWBiYAn1zE/MR9D6B4bUW1u/MqW1YapS4ZzZKp+sVXUn5DusZCisf5ogk8yriGCatsRcQhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNkh7Rlu; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35507dfe221so585677f8f.1;
-        Fri, 24 May 2024 07:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716559836; x=1717164636; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QveJEjdigPYVmEFYMrUNMB5K+Jm/VE2z4qre0BBpK4A=;
-        b=lNkh7RluM5SxuuPVy+ibwP//VXOYDc1PyyBseaGy+OCMSvW+i1fobInd3YE78GF1mX
-         Nk2upxKim+6zu8cZeK1JarwIrAFBo8aHFtO336U5hxD2m9wBze2ttV7wa5jCxcbygB7W
-         bFl4lSWYUU0s0hibbamP2Pqqon3ASdKyOqClVPlL/9xSY9EfwAXlPinXoumxL8/Z+CQ2
-         aNvAQqp5t5hEEQN6FQHnowhGJP1dKGLKgCptuqZ4LJodHi9mZn2qBKiBQfoPjS/ZVlXG
-         uSinEovkIlrIXySFob3X8rgCq7CbmHjCMsDMfSf0kfoc7mWK3mQdq/lNeJZFiRv+t172
-         ocig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716559836; x=1717164636;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QveJEjdigPYVmEFYMrUNMB5K+Jm/VE2z4qre0BBpK4A=;
-        b=gTrWu5NQnNq7/VtgJF6ifAaEObdN9dPNwE0j0ErieG99HerAsXEuVtP5dHkpHgvca/
-         qX4J5hMPpzdkm8HskZZNfo7R/w26EBIKm4/t4q/z4mQvFbIBlYsJfbwc32qdqAo612ug
-         B8H0NHK+aBhTSVCLcM3TzHL4kZ44OufrEAc0ayiK+mavvu2CIS9yLvhRl2P5xSU9SGzb
-         7gadTTdn8JZSRb9w6yI7EJD/QGE37VsBFRM4WKUUU7UMJrMeA7X3HoYOw6QNtLhZjqk5
-         Ou2broUev5fmPKk9YYQW6+WmUjdXhVgbVteHBzjR6+sXy52VPXy/wz10dFexw8/Jq1pM
-         tpKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG1rIK+7D0RSSakxY+iv28tQIwvve1bBwuaCx2sSfyTl3+tm6M0Gh9Eyk2vGeml23bemlB46+WTJrOcVZyPmCdf1v9ZICC/wdUf0SIWL4VqF/Y5GwRSV5MBCKQdLBahwKVqgj8HJv9ZzF0/JENahv7Gs7813XVgAKz1bvm
-X-Gm-Message-State: AOJu0Yx2PzQhBfEGBXkWqWgP9YR4wMb8ulPEV/jWuA0fhUoGcJusf53v
-	0Fd4y1AIMxN5joLBsTSofWKpQoF650+kj898j8o72FszXQGWjCqn
-X-Google-Smtp-Source: AGHT+IHHeXsQHs1F6X587eHgOckB4m1ejeDsmQpqoDkOBkHcRNjJ821RInFYpzgiea348JO51njZPQ==
-X-Received: by 2002:adf:db43:0:b0:354:f724:641a with SMTP id ffacd0b85a97d-3552fdc5d99mr2035164f8f.44.1716559836317;
-        Fri, 24 May 2024 07:10:36 -0700 (PDT)
-Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c938fsm1673617f8f.76.2024.05.24.07.10.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 07:10:35 -0700 (PDT)
-From: Paul Durrant <xadimgnik@gmail.com>
-X-Google-Original-From: Paul Durrant <paul@xen.org>
-Message-ID: <c36f5401-05e9-4c13-a24e-31ebab8ae4f7@xen.org>
-Date: Fri, 24 May 2024 15:10:33 +0100
+	s=arc-20240116; t=1716559949; c=relaxed/simple;
+	bh=3OBUEf+k9+/S53fi7pJ9nrmzNo/rGjvpS1jIyBj4xjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQ+dKz8GN+y041mlpGqySvnrADE8xxyJD9Okg8QTTueyvcbpWuRbOhlZpdSbg4Td7YzWqbyBORMMZudukmGFB8lqX66/oOolDUql+fLjz9hkcmVjIectZ5OuvL20G11Blpb11ERBx7GKYecPRjGF3d8GoKMbSzb0wKvxw8Hwm7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GwmCAUjg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716559945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cMrniT4MB7fift7AHz8aclN4rykTNGKWpu+SRc/tZkI=;
+	b=GwmCAUjgFxtzEKygEOYoIpX6Ge69jTfPtPSqTXO9237+74G72hJccAczT+LaZarRrB3LcZ
+	Lm/dTuDoW67w6b/idrA3q/JaMYj9RAW6je7M9IUwBLb+MeGmPiqXUPQ2kge+CnLlvAItJY
+	1HgOcReUcdlYnadz7ptJB1jS1bxrOqo=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-BijyvRmXNtaX6jLzc7Qd-w-1; Fri,
+ 24 May 2024 10:12:22 -0400
+X-MC-Unique: BijyvRmXNtaX6jLzc7Qd-w-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B280829AA2C8;
+	Fri, 24 May 2024 14:12:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.56])
+	by smtp.corp.redhat.com (Postfix) with SMTP id A54FF1C09480;
+	Fri, 24 May 2024 14:12:19 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 24 May 2024 16:10:54 +0200 (CEST)
+Date: Fri, 24 May 2024 16:10:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Nicholas Piggin <npiggin@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
+	Chris von Recklinghausen <crecklin@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
+ smp_call_function_single() with irqs disabled
+Message-ID: <20240524141018.GA14261@redhat.com>
+References: <20240522151742.GA10400@redhat.com>
+ <20240523132358.GA1965@redhat.com>
+ <87h6eneeu7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: paul@xen.org
-Subject: Re: [RFC PATCH v3 15/21] KVM: x86: Allow KVM master clock mode when
- TSCs are offset from each other
-To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Sean Christopherson <seanjc@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
- Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
- zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>
-References: <20240522001817.619072-1-dwmw2@infradead.org>
- <20240522001817.619072-16-dwmw2@infradead.org>
-Content-Language: en-US
-Organization: Xen Project
-In-Reply-To: <20240522001817.619072-16-dwmw2@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h6eneeu7.ffs@tglx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On 22/05/2024 01:17, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> There is no reason why the KVM clock cannot be in masterclock mode when
-> the TSCs are not in sync, as long as they are at the same *frequency*.
-> 
-> Running at a different frequency would lead to a systemic skew between
-> the clock(s) as observed by different vCPUs due to arithmetic precision
-> in the scaling. So that should indeed force the clock to be based on the
-> host's CLOCK_MONOTONIC_RAW instead of being in masterclock mode where it
-> is defined by the (or 'a') guest TSC.
-> 
-> But when the vCPUs merely have a different TSC *offset*, that's not a
-> problem. The offset is applied to that vCPU's kvmclock->tsc_timestamp
-> field, and it all comes out in the wash.
-> 
-> So, remove ka->nr_vcpus_matched_tsc and replace it with a new field
-> ka->all_vcpus_matched_tsc which is not only changed to a boolean, but
-> also now tracks that the *frequency* matches, not the precise offset.
-> 
-> Using a *count* was always racy because a new vCPU could be being
-> created *while* kvm_track_tsc_matching() was running and comparing with
-> kvm->online_vcpus. That variable is only atomic with respect to itself.
-> In particular, kvm_arch_vcpu_create() runs before kvm->online_vcpus is
-> incremented for the new vCPU, and kvm_arch_vcpu_postcreate() runs later.
-> 
-> Repurpose kvm_track_tsc_matching() to be called from kvm_set_tsc_khz(),
-> and kill the cur_tsc_generation/last_tsc_generation fields which tracked
-> the precise TSC matching.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->   arch/x86/include/asm/kvm_host.h |   6 +-
->   arch/x86/kvm/x86.c              | 130 +++++++++++++++++---------------
->   2 files changed, 71 insertions(+), 65 deletions(-)
-> 
+Hi Thomas,
 
-Reviewed-by: Paul Durrant <paul@xen.org>
+On 05/24, Thomas Gleixner wrote:
+>
+> >> But I don't even understand why exactly we need smp_call_function()...
+>
+> It's not required at all.
+>
+> >> Race with tick_nohz_stop_tick() on boot CPU which can set
+> >> tick_do_timer_cpu = TICK_DO_TIMER_NONE? Is it really bad?
+>
+> This can't happen.
+>
+> > And is it supposed to happen if tick_nohz_full_running ?
+> >
+> > tick_sched_do_timer() and can_stop_idle_tick() claim that
+> > TICK_DO_TIMER_NONE is not possible in this case...
+>
+> What happens during boot is:
+>
+>   1) The boot CPU takes the do_timer duty when it installs its
+>      clockevent device
+>
+>   2) The boot CPU does not give up the duty because of this
+>      condition in can_stop_idle_tick():
+>
+>      if (tick_nohz_full_enabled()) {
+>      	if (tick_cpu == cpu)
+>            return false;
+
+Yes, I have looked at this code too. But I failed to understand its
+callers, even tick_nohz_idle_stop_tick() which doesn't even call this
+function when ts->timer_expires != 0.
+
+This code is too tricky for me, I still don't follow the logic.
+Damn, I can't even remember the names of all these functions ;)
+
+> > So, once again, could you explain why the patch below is wrong?
+>
+> > -			tick_take_do_timer_from_boot();
+> >  			tick_do_timer_boot_cpu = -1;
+> > -			WARN_ON(READ_ONCE(tick_do_timer_cpu) != cpu);
+> > +			WRITE_ONCE(tick_do_timer_cpu, cpu);
+>
+> This part is perfectly fine.
+
+Great, thanks! I'll write the changelog and send the patch tomorrow.
+
+> > --- a/kernel/time/tick-sched.c
+> > +++ b/kernel/time/tick-sched.c
+> > @@ -1014,6 +1014,9 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
+> >  	 */
+> >  	tick_cpu = READ_ONCE(tick_do_timer_cpu);
+> >  	if (tick_cpu == cpu) {
+> > +#ifdef CONFIG_NO_HZ_FULL
+> > +		WARN_ON_ONCE(tick_nohz_full_running);
+> > +#endif
+>
+>                 WARN_ON_ONCE(tick_nohz_full_enabled());
+>
+> which spares the ugly #ifdef?
+
+Yes but tick_nohz_full_enabled() depends on context_tracking_key, and
+context_tracking_enabled() is false without CONFIG_CONTEXT_TRACKING_USER.
+I didn't even try to check if it is selected by NO_HZ_FULL and how do
+they play together.
+
+But you know, I won't include this WARN_ON_ONCE(), I have added it for
+(very basic) testing. We have another WARN_ON(tick_nohz_full_running)
+in tick_sched_do_timer(), I guess it should be enough.
+
+Thanks!
+
+Oleg.
 
 
