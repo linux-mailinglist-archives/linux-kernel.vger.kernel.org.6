@@ -1,316 +1,181 @@
-Return-Path: <linux-kernel+bounces-188238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659B08CDF91
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:50:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE568CDF93
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA79028304E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E981F22188
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976FB2E3EB;
-	Fri, 24 May 2024 02:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE065381DF;
+	Fri, 24 May 2024 02:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdM1qTRO"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5Kf61+D"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231E323D2;
-	Fri, 24 May 2024 02:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910C9376E4;
+	Fri, 24 May 2024 02:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716519012; cv=none; b=lIvN4yQUCfLbTMwyi1RdzQgcbTc9pqDsMkPKap3Jiv1CNLLNVZKyYAUyP4wGsgqndyIKuPCP5ScaVUbIpnLmEX6a3ngiGzfKVxzysQ8YYYaOhiAsGkYQRBcOk1BKc6AK+GyIji67xGf7TJSPHX2c4HNPQKkls84UxKSlf7OOkK4=
+	t=1716519017; cv=none; b=dnXobr+7naucR9V+WTNp79ROANXTa7gTrzZ7bEadX96GIxREJB4+BjoSXMsA1YSivXa519Z596/yqLsLOpyOihIPiYUEejSupnmFxaOnq6ucW84QIDcXjTqwL2ERFcvu9AGeBXd9xMia/Q6eaD2MEoW24mVWtC97NT1mcGGbmJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716519012; c=relaxed/simple;
-	bh=I47oGGk36vQtphOqG9IoTTYjE7Q5s4/MicU4RJRTlvU=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ZjOcWXpfCqz/ggcX7s768SPv8caQpKXpc0YdBmJuHVo/uFP1s6Ui46vJRVSiTWc2t96ZQPpc0wXhHSlcGDVfA5N1uqwHun/JSYhxP71+RCuLlo/ekW3NB7RD+/aiEBwGgj4DLs2n3zrEFxBCpfiwYN5phZXEV3nuXekkNJHLMEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdM1qTRO; arc=none smtp.client-ip=209.85.160.50
+	s=arc-20240116; t=1716519017; c=relaxed/simple;
+	bh=rxqVUwJ5ATZzy7sz/+sU7NReE/sV38HKpHu7OnrM0Eg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlZfhYUkHTI5xFIl2OQVuphr48ce8bZlGf5rrljDpBgHVEebgj5wtKlEgj4XLbfWCSTD6vnyq/vQYGdVN5i4QFdbTqRt8CLGoRHZjUMAh8DCXpprVpQg6dkDgStpAGpaqJJq2vMAFIjl5k1zDLr54qItNXx7/RtfW5XIPJhl08w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5Kf61+D; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-24ca2f48031so125719fac.0;
-        Thu, 23 May 2024 19:50:10 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-62a08092c4dso4592467b3.0;
+        Thu, 23 May 2024 19:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716519010; x=1717123810; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716519014; x=1717123814; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SASRSpkrtcKtFFyiMHRs0i11BtPvoBcdeEVAkFViJVg=;
-        b=hdM1qTRO8olrXdsu2SUwMOCj6XOkTmD/epP6l49b8rxMfAdfLgeckZzx2pPeEJBXk4
-         1Seix50uu2s7OWrR+V4Sq3iwJYlC2MjiRlVUa6uGeNKv+FTtexvcrWvIonVqNDriW09j
-         IdR7Jzfsg/yjCbVfZS6RvWcxHDN2DwpGjtjN5eF03UN9TBQ9vZpVThiyGpiJ/9XvmoCX
-         HVrnOLWKsSfKUvRODoL/WjlHrZasBUHZ+qw0tSB5mI/G28uxe8fkwbAEceZEo6YBp69q
-         W1MXJa5Gg/zJ5BBw7qeLcToONP1qCD6s2LKJdj/F2Vgu9BS5cVSycbTNbbxUTsLS2U0L
-         3DgQ==
+        bh=xxbRcf4yYw0BI0Vhm8N1Ed1WRrK48AEnOujMwZFhAeM=;
+        b=l5Kf61+DPQ1A8b2V6BdvDwJQxKJ8KK2xa1WhYpeEj/b5UVs+At5aDDX3bTQwKcQ5hW
+         YTZLLvmMFo/ccMOPzDdCFVBvrY2o04nEJx1QyYKECggJeh11NA51leuMZdkkbqcWUMPC
+         a/xY7JX0Dz//tozLA2r8p95AljJ4I0VloB+EHbG3pGwgjI/lRSKSGf9rM2CS2BdFjQ+X
+         hrOauREAzZOngRWgePFN0lKTTAZejsVq1w9sTp4uPPSnNAdst+yTIkuANoynSN8lPOW6
+         bKROwetjUSUEuvl2DCbBFNZ7qwVQLTzy6FULvAxaTycs7AbeblidlFC519LOkkC6JVpp
+         8fFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716519010; x=1717123810;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1716519014; x=1717123814;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SASRSpkrtcKtFFyiMHRs0i11BtPvoBcdeEVAkFViJVg=;
-        b=JHe8oDIX3tJyaWDaNTyDhyQNypGrYdEGohq7t/TUDO5+LHyDBSk0VPNCOQAce7e9g7
-         ujK3j08srHe+F3XjR1erQ219JLlfCCUtZVPLjt8r13m5ET19gnNuFg8gH/leDjXseRgD
-         DpADAHKcYxvBuX/6x5OYm+beLJlC1x/3HYBL3NUlHM6KvB+YAwIDs/nNm7JAR+CskvxP
-         hQA33yChwtEVDRAtXowgXK4hdvvvVJxjDPyJpoxMtZFhuoab/yeSz9xoCG5aQCnbdUXh
-         iRjymeVZNv/yU3rsikWa7zhHGJSF7Jbz+qNPBhr3W5jz3RgRafL7+dHCCDHVYfUi3LmY
-         8z6w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ceB0dMfhDrwxo0f4Mi7V9HfPkqA/8rubhWNCUutHqFGPjoba/7xTHF1ZTc5n/9PMDRVI35oeiy6tJ6va1ZpuErkxNUN9qNiP8ZiuSVdAMwoumEr61kSRijrZSCuzzkighzJ1Mo6oSE0E+Q==
-X-Gm-Message-State: AOJu0Yxh5qlZm3/2x04IS9XHPeyv4OIaCe5wsZi8a61n09SjGVBz007Q
-	as79/1++IsJL8mDu91bw69O9OZHuE4dDR+aY5k4vMHz/X9rraYEH
-X-Google-Smtp-Source: AGHT+IHjIaQY5M4+FeKKHj21CXeWPLfDUdZEOx3f9Iqn0FFDfQycAqmJHbytyZu+YhfBpAIMmy4WrQ==
-X-Received: by 2002:a05:6870:2320:b0:23d:79c3:5629 with SMTP id 586e51a60fabf-24ca12f4b25mr1126716fac.28.1716519009762;
-        Thu, 23 May 2024 19:50:09 -0700 (PDT)
-Received: from localhost.localdomain ([180.69.210.41])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-6f8fc36c608sm287453b3a.92.2024.05.23.19.50.06
+        bh=xxbRcf4yYw0BI0Vhm8N1Ed1WRrK48AEnOujMwZFhAeM=;
+        b=iS6XimRRqJ52IxD+o18DnhW55i3TD9w4y5bMRT76dqvg4LgYBPdalXtqtpEaf919Gz
+         bBXaD5FdLUrFyyy78xIMhz3YYiJNnmMyd0pLJHFLM6NuaNnd0uInFuEvQOIMSNG3FNUC
+         miZ1D/rOP1g0bh3dtrhkxIpglFnBuoQt8ZenTb3QTbvxBRiPdgDiAzoBuBUg2I6r/4Tb
+         VujlcRW66Q5WlOIZSSkhqIfp9hLfg5Umm9hvv3CXn1DBDcgQW/dg8CIDlJ6m7b/voedq
+         XwOvdL6Y3tWLTnVmPjCzS5gv5LcqDTFu51QCZIwuG4MEbpkNDRlRjbmuz2D35XGPUY2C
+         4Huw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTllov04w+IjQszPPeauPQfOhhRVRQKB+IKPKQksYmHtSYIbQrI529wp5273yr4u6QdjMyz0Ptvguvl7hrP67nWLN00AkdUxxBX21+n1eTE8TLU7/fCE1dxibl6HIioJFnhxNOCws6Hw==
+X-Gm-Message-State: AOJu0Yz+RJvArr8s63zeQYIW6hdtvFM/ZutoxEARs6Jt6LjGlBpvs2pW
+	OYIhk7xjdIlGTzvEcyqNnnRU/VSOeyfE/tEhaYBuyw+3OK9SJe3/
+X-Google-Smtp-Source: AGHT+IHZJFIKyd1koWosmYysmGPr0A3/bMNDhspgG3i6pvkXWU8Om1lGJpitSo6UtHy4JpRTyFxIpQ==
+X-Received: by 2002:a81:4913:0:b0:618:ce0e:b915 with SMTP id 00721157ae682-62a08dd36e7mr9912767b3.27.1716519014554;
+        Thu, 23 May 2024 19:50:14 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac070daa84sm2926836d6.37.2024.05.23.19.50.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 19:50:09 -0700 (PDT)
-From: Jung-JaeJoon <rgbi3307@gmail.com>
-X-Google-Original-From: Jung-JaeJoon <rgbi3307@naver.com>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peng Zhang <zhangpeng.00@bytedance.com>
-Cc: Jung-JaeJoon <rgbi3307@gmail.com>,
-	maple-tree@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Modified XArray entry bit flags as macro constants
-Date: Fri, 24 May 2024 11:49:45 +0900
-Message-Id: <20240524024945.9309-1-rgbi3307@naver.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 23 May 2024 19:50:14 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 8DD581200066;
+	Thu, 23 May 2024 22:50:13 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Thu, 23 May 2024 22:50:13 -0400
+X-ME-Sender: <xms:ZQBQZprEtrqsMAc_9Nj0NrSYqv978xIOEYIlZvVfADLeibHOXxRhcA>
+    <xme:ZQBQZrotYsbaPRLrJGfddubdlvx689z9GV8q8-zrb9Nt3VxL6GC1FLf4gnOIExxFt
+    0q7qou4vJ6NQVL12w>
+X-ME-Received: <xmr:ZQBQZmPsuheq7KoBxpnUGbxZdg00Ek7Jh4Pmjseh4_OBr_9xEwKcylbmGw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeijedgiedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
+    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:ZQBQZk4EHxVErdgasEpRM7aoiYfrva-ID6Lun2WwgenFo_TkJBcC3Q>
+    <xmx:ZQBQZo6tPrQBFSvp6At7TfiQd0udpQfJxLClPYaiqXxLfQGPCOFZGQ>
+    <xmx:ZQBQZsgVbLIgJCqdwpdZbNkHV3qcws4WBU5p7azAXl7EloYWQDUfiA>
+    <xmx:ZQBQZq6HlAoTKVAGm8461xAb1yk84dmhiSqxrpSI1Np8tHuiTPLZCA>
+    <xmx:ZQBQZvLlPPSR703Vy9iqJbBR6UPouQExZsZB9UwyCUB8z6VA7a6iSKFV>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 May 2024 22:50:13 -0400 (EDT)
+Date: Thu, 23 May 2024 19:50:11 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>,
+	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	kernel-team@meta.com, parri.andrea@gmail.com, j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr, Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: LKMM: Making RMW barriers explicit
+Message-ID: <ZlAAY-BuXSs9xU0m@Boquns-Mac-mini.home>
+References: <2f20e7cf-7c67-4ad3-8a0c-3c1d01257ae4@rowland.harvard.edu>
+ <0c309dd3-f8c1-4945-b8f1-154b2a775216@huaweicloud.com>
+ <4286e5b2-5954-4c77-a815-c1c2735d9509@rowland.harvard.edu>
+ <58042cf3-e515-4e5f-ab48-1d0d6123c9e9@huaweicloud.com>
+ <6174fd09-b287-49ae-b117-c3a36ef3800a@rowland.harvard.edu>
+ <7bd31eca-3cf3-4377-a747-ec224262bd2e@huaweicloud.com>
+ <35b3fd07-fa85-4244-b9cb-50ea54d9de6a@rowland.harvard.edu>
+ <a25f9654-e681-1bad-47ae-ddc519610504@huaweicloud.com>
+ <Zk9dXj-f4rANxPep@Boquns-Mac-mini.home>
+ <da5241f5-0ae3-40dd-a2fb-8f5307d31dba@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da5241f5-0ae3-40dd-a2fb-8f5307d31dba@rowland.harvard.edu>
 
-From: Jung-JaeJoon <rgbi3307@gmail.com>
+On Thu, May 23, 2024 at 09:38:05PM -0400, Alan Stern wrote:
+> On Thu, May 23, 2024 at 08:14:38AM -0700, Boqun Feng wrote:
+> > Besides, I'm not sure this is a good idea. Because the "{mb}, {once},
+> > etc" part is a syntax thing, you write a cmpxchg(), it should be
+> > translated to a cmpxchg event with MB tag on. As to failed cmpxchg()
+> > doesn't provide ordering, it's a semantics thing, as Jonas showed that
+> > it can be represent in cat file. As long as it's a semanitc thing and we
+> > can represent in cat file, I don't think we want herd to give a special
+> > treatment.
+> 
+> I don't really understand the distinction you're making between 
+> syntactic things and semantic things.  For most instructions there's no 
 
-It would be better to modify the operation on the last two bits of the entry 
-with a macro constant name rather than using a numeric constant.
+Syntax is how the code is written, and semantic is how the code is
+executed (in each execution candidate). So if we write a cmpxchg{mb}(),
+and in execution candiates, it could generates a read{MB} event and a
+write{MB} event (succeed case), or a read{MB} event (fail case), "{MB}"
+here doesn't mean it's a full barrier, it only means the event comes
+from a no suffix API. Here "{MB}" only has syntactic meaning (no
+semantic meaning).
 
-#define XA_VALUE_ENTRY		1UL
-#define XA_INTERNAL_ENTRY	2UL
-#define XA_POINTER_ENTRY	3UL
+> problem, because the instruction does just one thing.  But a cmpxchg 
+> instruction can do either of two things, depending on whether it 
+> succeeds or fails, so it makes sense to tell herd7 how to represent 
+> both of them.
+> 
+> > What you and Jonas looks fine to me, since it moves the semantic bits
+> > from herd internal to cat file.
+> 
+> Trying to recognize failed RMW events by looking for R events with an mb 
+> tag that aren't in the rmw relation seems very artificial.  That fact 
 
-In particular, in the xa_to_node() function, it is more consistent and efficient 
-to perform a logical AND operation as shown below than a subtraction operation.
+Not really, RMW events contains all events generated from
+read-modify-write primitives, if there is an R event without a rmw
+relation (i.e there is no corresponding write event), it's a failed RWM
+by definition: it cannot be anything else.
 
-- return (struct xa_node *)((unsigned long)entry - 2);
-+ return (struct xa_node *)((unsigned long)entry & ~XA_INTERNAL_ENTRY);
+> that it would work is merely an artifact of herd7's internal actions.  I 
+> think it would be much cleaner if herd7 represented these events in some 
+> other way, particularly if we can tell it how.
+> 
+> After all, herd7 already does generate different sets of events for 
+> successful (both R and W) and failed (only R) RMWs.  It's not such a big 
+> stretch to make the R events it generates different in the two cases.
+> 
 
-Additionally, it is better to modify the if condition below 
-in the mas_store_root() function of lib/maple_tree.c to the xa_is_internal() inline function.
+I thought we want to simplify the herd internal processing by avoid
+adding mb events in cmpxchg() cases, in the same spirit, if syntactic
+tagging is already good enough, why do we want to make herd complicate?
 
-- else if (((unsigned long) (entry) & 3) == 2)
-+ else if (xa_is_internal(entry))
+Regards,
+Boqun
 
-And there is no reason to declare XA_CHECK_SCHED as an enum data type.
--enum {
--	XA_CHECK_SCHED = 4096,
--};
-+#define XA_CHECK_SCHED          4096
-
-Signed-off-by: JaeJoon Jung <rgbi3307@gmail.com>
-
----
- include/linux/xarray.h | 55 ++++++++++++++++++++++--------------------
- lib/maple_tree.c       |  2 +-
- 2 files changed, 30 insertions(+), 27 deletions(-)
-
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index cb571dfcf4b1..d73dfe35a005 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -42,6 +42,16 @@
-  * returned by the normal API.
-  */
- 
-+#define XA_VALUE_ENTRY          1UL
-+#define XA_INTERNAL_ENTRY       2UL
-+#define XA_POINTER_ENTRY        3UL
-+
-+/*
-+ * If iterating while holding a lock, drop the lock and reschedule
-+ * every %XA_CHECK_SCHED loops.
-+ */
-+#define XA_CHECK_SCHED          4096
-+
- #define BITS_PER_XA_VALUE	(BITS_PER_LONG - 1)
- 
- /**
-@@ -54,7 +64,7 @@
- static inline void *xa_mk_value(unsigned long v)
- {
- 	WARN_ON((long)v < 0);
--	return (void *)((v << 1) | 1);
-+	return (void *)((v << XA_VALUE_ENTRY) | XA_VALUE_ENTRY);
- }
- 
- /**
-@@ -66,7 +76,7 @@ static inline void *xa_mk_value(unsigned long v)
-  */
- static inline unsigned long xa_to_value(const void *entry)
- {
--	return (unsigned long)entry >> 1;
-+	return (unsigned long)entry >> XA_VALUE_ENTRY;
- }
- 
- /**
-@@ -78,7 +88,7 @@ static inline unsigned long xa_to_value(const void *entry)
-  */
- static inline bool xa_is_value(const void *entry)
- {
--	return (unsigned long)entry & 1;
-+	return (unsigned long)entry & XA_VALUE_ENTRY;
- }
- 
- /**
-@@ -111,7 +121,7 @@ static inline void *xa_tag_pointer(void *p, unsigned long tag)
-  */
- static inline void *xa_untag_pointer(void *entry)
- {
--	return (void *)((unsigned long)entry & ~3UL);
-+	return (void *)((unsigned long)entry & ~XA_POINTER_ENTRY);
- }
- 
- /**
-@@ -126,7 +136,7 @@ static inline void *xa_untag_pointer(void *entry)
-  */
- static inline unsigned int xa_pointer_tag(void *entry)
- {
--	return (unsigned long)entry & 3UL;
-+	return (unsigned long)entry & XA_POINTER_ENTRY;
- }
- 
- /*
-@@ -144,7 +154,7 @@ static inline unsigned int xa_pointer_tag(void *entry)
-  */
- static inline void *xa_mk_internal(unsigned long v)
- {
--	return (void *)((v << 2) | 2);
-+	return (void *)((v << XA_INTERNAL_ENTRY) | XA_INTERNAL_ENTRY);
- }
- 
- /*
-@@ -156,7 +166,7 @@ static inline void *xa_mk_internal(unsigned long v)
-  */
- static inline unsigned long xa_to_internal(const void *entry)
- {
--	return (unsigned long)entry >> 2;
-+	return (unsigned long)entry >> XA_INTERNAL_ENTRY;
- }
- 
- /*
-@@ -168,7 +178,7 @@ static inline unsigned long xa_to_internal(const void *entry)
-  */
- static inline bool xa_is_internal(const void *entry)
- {
--	return ((unsigned long)entry & 3) == 2;
-+	return ((unsigned long)entry & XA_POINTER_ENTRY) == XA_INTERNAL_ENTRY;
- }
- 
- #define XA_ZERO_ENTRY		xa_mk_internal(257)
-@@ -220,7 +230,7 @@ static inline int xa_err(void *entry)
- {
- 	/* xa_to_internal() would not do sign extension. */
- 	if (xa_is_err(entry))
--		return (long)entry >> 2;
-+		return (long)entry >> XA_INTERNAL_ENTRY;
- 	return 0;
- }
- 
-@@ -1245,19 +1255,19 @@ static inline struct xa_node *xa_parent_locked(const struct xarray *xa,
- /* Private */
- static inline void *xa_mk_node(const struct xa_node *node)
- {
--	return (void *)((unsigned long)node | 2);
-+	return (void *)((unsigned long)node | XA_INTERNAL_ENTRY);
- }
- 
- /* Private */
- static inline struct xa_node *xa_to_node(const void *entry)
- {
--	return (struct xa_node *)((unsigned long)entry - 2);
-+	return (struct xa_node *)((unsigned long)entry & ~XA_INTERNAL_ENTRY);
- }
- 
- /* Private */
- static inline bool xa_is_node(const void *entry)
- {
--	return xa_is_internal(entry) && (unsigned long)entry > 4096;
-+	return xa_is_internal(entry) && (unsigned long)entry > XA_CHECK_SCHED;
- }
- 
- /* Private */
-@@ -1358,9 +1368,10 @@ struct xa_state {
-  * We encode errnos in the xas->xa_node.  If an error has happened, we need to
-  * drop the lock to fix it, and once we've done so the xa_state is invalid.
-  */
--#define XA_ERROR(errno) ((struct xa_node *)(((unsigned long)errno << 2) | 2UL))
--#define XAS_BOUNDS	((struct xa_node *)1UL)
--#define XAS_RESTART	((struct xa_node *)3UL)
-+#define XA_ERROR(errno) ((struct xa_node *)             \
-+        (((unsigned long)errno << XA_INTERNAL_ENTRY) | XA_INTERNAL_ENTRY))
-+#define XAS_BOUNDS	((struct xa_node *)XA_VALUE_ENTRY)
-+#define XAS_RESTART	((struct xa_node *)XA_POINTER_ENTRY)
- 
- #define __XA_STATE(array, index, shift, sibs)  {	\
- 	.xa = array,					\
-@@ -1449,7 +1460,7 @@ static inline void xas_set_err(struct xa_state *xas, long err)
-  */
- static inline bool xas_invalid(const struct xa_state *xas)
- {
--	return (unsigned long)xas->xa_node & 3;
-+	return (unsigned long)xas->xa_node & XA_POINTER_ENTRY;
- }
- 
- /**
-@@ -1477,13 +1488,13 @@ static inline bool xas_is_node(const struct xa_state *xas)
- /* True if the pointer is something other than a node */
- static inline bool xas_not_node(struct xa_node *node)
- {
--	return ((unsigned long)node & 3) || !node;
-+	return ((unsigned long)node & XA_POINTER_ENTRY) || !node;
- }
- 
- /* True if the node represents RESTART or an error */
- static inline bool xas_frozen(struct xa_node *node)
- {
--	return (unsigned long)node & 2;
-+	return (unsigned long)node & XA_INTERNAL_ENTRY;
- }
- 
- /* True if the node represents head-of-tree, RESTART or BOUNDS */
-@@ -1764,14 +1775,6 @@ static inline void *xas_next_marked(struct xa_state *xas, unsigned long max,
- 	return entry;
- }
- 
--/*
-- * If iterating while holding a lock, drop the lock and reschedule
-- * every %XA_CHECK_SCHED loops.
-- */
--enum {
--	XA_CHECK_SCHED = 4096,
--};
--
- /**
-  * xas_for_each() - Iterate over a range of an XArray.
-  * @xas: XArray operation state.
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 2d7d27e6ae3c..c08545f8b09b 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -3515,7 +3515,7 @@ static inline void mas_store_root(struct ma_state *mas, void *entry)
- {
- 	if (likely((mas->last != 0) || (mas->index != 0)))
- 		mas_root_expand(mas, entry);
--	else if (((unsigned long) (entry) & 3) == 2)
-+        else if (xa_is_internal(entry))
- 		mas_root_expand(mas, entry);
- 	else {
- 		rcu_assign_pointer(mas->tree->ma_root, entry);
--- 
-2.17.1
-
+> Alan
 
