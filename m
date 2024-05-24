@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-188241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AA98CDF9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:57:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3B58CDF9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:02:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 725162819D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3681D281BD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7343C2E622;
-	Fri, 24 May 2024 02:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE955328DB;
+	Fri, 24 May 2024 03:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="t07vfPWT"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mtzM/RNC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBA612B6C;
-	Fri, 24 May 2024 02:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379932C9A;
+	Fri, 24 May 2024 03:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716519455; cv=none; b=mPaluDVDpV8tI/0SKJamVPjVHMvR+N0YEFSoEFPv+O+f7r6b6dtwnxikmiR/ENKjGqO0BVkFuWW+f4YYZUa05BV6rc/D03+qbFwT5734U4l8On5iYf6a5wQuWJbemsX5aWozY+5uGaruKL5j+YeYxDvXiwQ3SUrCuinYZvz1ABo=
+	t=1716519750; cv=none; b=psf4LWQgCoWLP1F46grxA5aAyS0xdv8dLrvu51bkVNx9gVEbOfW5573FvBD/JrWmDBmDY6KjmnzFLaUtdAt3EriwYGiHouVVGyy9rp5a/N0UOYCWZlaGh7k8Fz8WxSkIn5T7+ecGanoZqCRHjqeLDpfJLDSyO9j7WRLi09CEba4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716519455; c=relaxed/simple;
-	bh=KumiJ0dcTbAP3ItPboriTQrVVDVKUARaIq7RCMFm+nw=;
+	s=arc-20240116; t=1716519750; c=relaxed/simple;
+	bh=UqaAqn/5AQ9qU6fVaXfOjyWzrKVks76At49JNqcdI3k=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=KD5OQkX1fNPOruUfctS+T6VYLf90NZmriTW2Dl1FVNWFQWGxJmMocJh4b4Z1ICKJGQnCaveqsuux7zWpAeO4ST1XSySpesHE21V3MhHK41DvkRxnZYaPWJ0pzNn6RhQSW377pbX8ykpsvQLTNIHG686TahlGMFp+0SOPM51WywQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=t07vfPWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC635C2BD10;
-	Fri, 24 May 2024 02:57:34 +0000 (UTC)
+	 Mime-Version:Content-Type; b=qL0oATGNu3gxDMQdrDJrkgLF4ZdFpjJotNi/0MAPblAahvwv6psBJUMDPzN35IMtSHXovUigPApmk2tn2Q7Z53NfyCtA1PglgS/M6O7nuE+xkzjcel5ig1Rem8jgu0OnbYDkCfKFt4CkzQZNkG8WiJuwtWr1iCJdjyhl5e8TI1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mtzM/RNC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829B3C32781;
+	Fri, 24 May 2024 03:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716519455;
-	bh=KumiJ0dcTbAP3ItPboriTQrVVDVKUARaIq7RCMFm+nw=;
+	s=korg; t=1716519749;
+	bh=UqaAqn/5AQ9qU6fVaXfOjyWzrKVks76At49JNqcdI3k=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=t07vfPWTsUhVpAlA44lnGhqRPWVxDW4/G0c7tGCLBfSlG4Um8+SlW6GxDCDM0Ie/3
-	 ZT9Rsr4SnkxXKdrCWUHU2WqBfgSAi4IOJdpiUfRBmQ/gJH+MHWY9lC6J2mmVZCBllu
-	 H65fjrfxEqe2T+aDn8vX4oLx58h2cVnJUoi5Ic1M=
-Date: Thu, 23 May 2024 19:57:34 -0700
+	b=mtzM/RNC6LPlo6QwCZDa7BwE1zCNweNBrAIKwARlEo5khM2vdPDiikPmJCATKwcoV
+	 edlxV/XwN8TFaHWmiOJxAFIYiuxdtUcixnFvZT9SDz50qGM/Cen/KPRVl3Ok9tWtYI
+	 6LRWEAUjsg6sb9zjBJjRsO+R279HIsHvwsOvKUNI=
+Date: Thu, 23 May 2024 20:02:28 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Donet Tom <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Tony Battersby
- <tonyb@cybernetics.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Ritesh
- Harjani <ritesh.list@gmail.com>, Mike Rapoport <rppt@kernel.org>, Muchun
- Song <songmuchun@bytedance.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked
- during __bio_release_pages()
-Message-Id: <20240523195734.bc03a8822a34b1a97880fb65@linux-foundation.org>
-In-Reply-To: <d551d1cd-a02f-42aa-9de2-10ff7757224c@redhat.com>
-References: <20240523063905.3173-1-donettom@linux.ibm.com>
-	<20240523121344.6a67a109e0af2ba70973b34b@linux-foundation.org>
-	<d551d1cd-a02f-42aa-9de2-10ff7757224c@redhat.com>
+To: Yuanyuan Zhong <yzhong@purestorage.com>
+Cc: David Hildenbrand <david@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Mohamed Khalfella
+ <mkhalfella@purestorage.com>
+Subject: Re: [PATCH] mm: /proc/pid/smaps_rollup: avoid skipping vma after
+ getting mmap_lock again
+Message-Id: <20240523200228.fdaa0319d3fd4bd7a62f7f8a@linux-foundation.org>
+In-Reply-To: <CA+AMecHUo-sPy5wDszWgX5BWPAqMwrXqCWO1jGE5uMRq2U=BVw@mail.gmail.com>
+References: <20240523183531.2535436-1-yzhong@purestorage.com>
+	<20240523115624.d068dfb43afc067ed9307cfe@linux-foundation.org>
+	<CA+AMecHUo-sPy5wDszWgX5BWPAqMwrXqCWO1jGE5uMRq2U=BVw@mail.gmail.com>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,25 +58,22 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 23 May 2024 22:40:25 +0200 David Hildenbrand <david@redhat.com> wrote:
+On Thu, 23 May 2024 12:16:57 -0700 Yuanyuan Zhong <yzhong@purestorage.com> wrote:
 
-> > You have stable@vger.kernel.org in the mail headers, so I assume you're
-> > proposing this for backporting.  When doing this, please include
-> > 
-> > Cc: <stable@vger.kernel.org>
-> > 
-> > in the changelog footers and also include a Fixes: target.  I'm
-> > assuming the suitable Fixes: target for this patch is 38b43539d64b?
+> On Thu, May 23, 2024 at 11:56 AM Andrew Morton
+> <akpm@linux-foundation.org> wrote:
+> >
+> > Please describe the userspace-visible runtime effects of this bug.
+> > This aids others in deciding which kernel version(s) need the patch.
+> >
+> Otherwise, with some VMAs skipped, userspace observed memory consumption
+> from /proc/pid/smaps_rollup will be smaller than the sum of the
+> corresponding fields from /proc/pid/smaps.
 > 
-> This adds a new selfest to make sure what was fixed (and backported to 
-> stable) remains fixed.
+> Please let me know if separate v2 is needed. Thanks
 
-Sure.  But we should provide -stable maintainers guidance for "how far
-back to go".  There isn't much point in backporting this into kernels
-where it's known to fail!
-
-I'm still thinking that we want this in kernels which have 38b43539d64b?
+All is good, thanks.  I added the above text and the cc:stable tag.
 
