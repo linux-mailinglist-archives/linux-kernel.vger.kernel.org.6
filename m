@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-188851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 029BA8CE7C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:23:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0F58CE7CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340D81C20699
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:23:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD050B21359
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C421B12EBE7;
-	Fri, 24 May 2024 15:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBF912DD9E;
+	Fri, 24 May 2024 15:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cM4l69z8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RsSgHFLT"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9612EBDD;
-	Fri, 24 May 2024 15:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E560512C80F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716564147; cv=none; b=F2/KyvTf/+hTubkXSR9QjKtBbdE8a6CrbqmpZTXa6QreaqEM67Ym8Hw08SFcGPAV9OaQyKKdNYXaO8q8D9XPMB0WYumIcoXqYmVgCH0P/sWEdKB8APMuQoBPZ9PDrtF+UC0huC5UmJ1sIQqDXDzZhMD2GZjn6zSWYCYxniETnzA=
+	t=1716564204; cv=none; b=KhZxxRQS+aVuMDvF56uk46kArFnAps7ln12C59xSI7fv9HpyOmUeAczMyl/WN5CUT+10KBZlO4a0GRh5U3TXXonhf6qVjwjQvSosIcccuCpPz1ZGvQ9ro0zo+VH/yx59BuwBTvCWJJR4JCr5hyYF2OR/b9m96/M0HgqEfY0slBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716564147; c=relaxed/simple;
-	bh=KJRMlqCqKSeCAg/9WK2lD6+u6yawgLpv3ewX/qdZ/8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gB1fId69lD8A/ZvahXf9uu1xux575TxqLPFIVQw6Fp1V3gI/4ofdCLN94+Fg0UBlL4dEZQD56uo4iLItf77m5PGpGAW0YnyRMZin7k4/NyMKOdZ9P0PhVL8gTV17WXMMSzH+OBe4DiREB0f3U6k6B/6r+Xrax0fZ+T3e0u2sDaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cM4l69z8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E4F5C2BBFC;
-	Fri, 24 May 2024 15:22:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716564146;
-	bh=KJRMlqCqKSeCAg/9WK2lD6+u6yawgLpv3ewX/qdZ/8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cM4l69z8Pri4jff3QA2Yg9o1yKRy1YBKslxPI09u6Tn4L7xN1Lwdh4vgH7e7kYgAZ
-	 YZV+NdsVMmcEwCbZWoxSAV34t62+YaKYJTgLQN35fFotRferv8DJx27pU1HTTr1E47
-	 +ZhKTtjtNwSY/ZcbEKgEYghuOdSgOfe5zkDa8RTM=
-Date: Fri, 24 May 2024 17:22:24 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-35906: drm/amd/display: Send DTBCLK disable message on
- first commit
-Message-ID: <2024052453-afar-tartly-3721@gregkh>
-References: <2024052136-cubbyhole-ecologist-5b68@gregkh>
- <ZkzREEA5_N_xfqED@tiehlicka>
- <2024052110-grasp-liking-22c0@gregkh>
- <ZkzgZoxF_RD50PdW@tiehlicka>
- <2024052243-napping-coastal-3306@gregkh>
- <Zk790Afi1sfwgrZi@tiehlicka>
- <2024052309-scabby-favored-0973@gregkh>
- <ZlBnsEsr66mR-frf@tiehlicka>
- <2024052458-matrimony-making-b7f1@gregkh>
- <ZlCd6kD4w2mezWBj@tiehlicka>
+	s=arc-20240116; t=1716564204; c=relaxed/simple;
+	bh=zXfqXpGWAQG4ZMLumxJ2Lnu86nfnso0TO3tH26EXC0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m8yUyYralfkKzfDawrpmDVW7/K3m86pH5UdzO1o0mU/c6sPR9/03MYqVZBc/ivbv5KDKf1ZoR1QNPRO9Y0d1JsLLYOFdwqLnto+LdxhWWvLaE4YDsPI1EMZklqxoq2WDsMeyDLZcnffljcS7ZR7n4LwUY3ftFbi7M7OpEEnSmwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RsSgHFLT; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a626ac4d299so104534366b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:23:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716564200; x=1717169000; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=E/c/NoolbIiOnZjQKL5o7R7e5Dr0hpiTDegX3eduIqI=;
+        b=RsSgHFLTW/YPBX976Eqs/65V2FMg/OHCSW1b0HntDIp7x3iwuNnisumt4nBT3MlL6Q
+         WUWC1Kc5aMb5ePpRx8PMXfXerq3H7ojGnjn3KOz0Lc/v3opCyCghzsBRNlqWkRiVm1f1
+         jdy0P8KdH9RWPBxhtRmdfgr1hiGxpbB8Zi/w6mPFjs8rEeLggIT+XTX8YUwWs/6eVKI9
+         U7ocvD1bmeMznrKOct7vyoRbVJ1gTJVaawriGKOAnzignXGBSSXOUivceBWbcx3neF5I
+         zpPO9vs3Qu7h24TcFTJHZJwJeNvJLiTF6Uchik1+5WPzoC+LLY2KeAU84H0NUVhLgsNP
+         OGCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716564200; x=1717169000;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E/c/NoolbIiOnZjQKL5o7R7e5Dr0hpiTDegX3eduIqI=;
+        b=O2qXT7w74jPArMOb7pJ+QPibegyRQzk9/95HQisEPG0UipIeHVHimXsSt/+r8FO0k9
+         BBtwiueCUT4OPyIVOjjGh0N7fiLV9bcNaT98fJTbxcz5RfOfz6qe4ra4JA5m1HTr7fRC
+         Easy0VmlsV6xOYErjP8c+3StG0M55GR5VM4TMkJjCq4BGnUFShY3GSlNM8NfC+0i/qnZ
+         HwnbXtdIMmPXzUpYB+hovZChPHVI6OI8SG/NTOKoAoh3552/dHMqsrCxvq+Zgo0sXMWH
+         sXsbu/6U9WiTYti39Y6DO9O09EarxZcCsR7mdqgdncoy93iL2Z6kuaWc0QG5muzI50DJ
+         X0Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKmwHbDAZN617By6tobDdqXijJkHsXkeXyaM+oz8DS4XRxIJJ2mZRizTqdzjanm7BL4nomHJb0k6/lcLenS+XqwiABWVQhEFlhepkR
+X-Gm-Message-State: AOJu0Yzno4WnjkDSkL+fDGW7Wr76skE9NATVY3s9u9ca3eDRi+XlvX3S
+	WDeKRfNPRpd2dgbH/AQAqui4qfKaH8WbmMS+FIuo57Y8JJ+XnmlMdXa/13aEo5g=
+X-Google-Smtp-Source: AGHT+IFTqRrx8FfSzxDfEsdShFcGX5aT/Vp4VnWyDG8+xgLaROCOzEXthZc1kR4w42R6OaXYXME9fA==
+X-Received: by 2002:a17:906:3e0c:b0:a59:aae5:5840 with SMTP id a640c23a62f3a-a62651140b6mr180008966b.75.1716564200163;
+        Fri, 24 May 2024 08:23:20 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c8181cesm147711666b.14.2024.05.24.08.23.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 08:23:19 -0700 (PDT)
+Message-ID: <5cb66bd3-2a41-4698-8f2f-9eaf76cb06e9@linaro.org>
+Date: Fri, 24 May 2024 17:23:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlCd6kD4w2mezWBj@tiehlicka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/dpu: drop duplicate drm formats from wb2_formats
+ arrays
+To: Junhao Xie <bigfoot@classfun.cn>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Ryan McCann <quic_rmccann@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jonathan Marek <jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240524150128.1878297-2-bigfoot@classfun.cn>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <20240524150128.1878297-2-bigfoot@classfun.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 24, 2024 at 04:02:18PM +0200, Michal Hocko wrote:
-> On Fri 24-05-24 13:47:00, Greg KH wrote:
-> > On Fri, May 24, 2024 at 12:10:56PM +0200, Michal Hocko wrote:
-> > > On Thu 23-05-24 15:49:59, Greg KH wrote:
-> > > > On Thu, May 23, 2024 at 10:26:56AM +0200, Michal Hocko wrote:
-> > > > > On Wed 22-05-24 05:57:38, Greg KH wrote:
-> > > [...]
-> > > > Because of asking, many others are starting to help out, you can too,
-> > > > just submit patches against the cve/review/proposed/ directory with a
-> > > > list of commits that you feel should have CVEs assigned for, or annotate
-> > > > why you feel specific ones we have reviewed should NOT have a CVE
-> > > > assigned, and our tools can handle them quite well as part of the
-> > > > assignment process (see scripts/cve_review for a tool that some of us
-> > > > use to create these files, that's not required, as not all of us use it,
-> > > > but the output format is the key, and that's a simple list of commit
-> > > > ids, personally I generate that from mboxes.)
-> > > 
-> > > Do I get it right that proposals shouldn't be sent via email to
-> > > cve@kernel.org as suggested by the in tree documentation?
-> > 
-> > The documentation should say that you _SHOULD_ send proposals to
-> > cve@kernel.org, did we get it wrong somehow?
-> > 
-> > > I do not mind
-> > > the specific workflow but until now I have followed Documentation/process/cve.rst
-> > > as authoritative source of the process. It would be really great if that
-> > > matched the workflow.
-> > 
-> > I'm confused as to what in that document is incorrect, care to point it
-> > out?
+On 24.05.2024 5:01 PM, Junhao Xie wrote:
+> There are duplicate items in wb2_formats_rgb and wb2_formats_rgb_yuv,
+> which cause weston assertions failed.
 > 
-> Maybe I've just misunderstood the part about sending patches against
-> cve/review/proposed/. I was thinking about sending pull requests against
-> vulns.git.
-
-Yes, you can do that too, send it to same email address.  That's not
-really documented, just ask us instead!  :)
-
-> > And people want to word-smith the text all the time already, so we just
-> > default to using the changelog text as that's the most "neutral" and
-> > public information out there (i.e. we don't have to worry about any sort
-> > of data-retention or classification laws as the information is already
-> > public in kernel changelog text.)
+> weston: libweston/drm-formats.c:131: weston_drm_format_array_add_format:
+> Assertion `!weston_drm_format_array_find_format(formats, format)' failed.
 > 
-> This part I do not understand. What is wrong about a reasoning why
-> something has been considered a CVE? E.g. something like 
-> CVE assigned because a potential WARN_ON is fixed and that could panic
-> with panic_on_warn. Fixed by <URL_TO_LINUS_TREE>
-> 
-> or
-> CVE assigned because UAF is fixed and those can be generally used to
-> construct more complex attacks. Fixed by <URL_TO_LINUS_TREE>
-> 
-> etc.
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
+> ---
 
-Doing the work to classify all of these in this manner isn't going to
-happen by us, sorry, as it is not required by the CVE process, and
-frankly, we are doing a load of work already here.  We are going to rely
-on the text that is in the changelog.  Maybe over time you can work with
-the kernel developers to write better changelogs to describe what you
-are looking for?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-We will rely on external parties to "classify" the CVEs if they wish to
-as there is already a whole ecosystem that attempts to do this already,
-with various success.  In the end, it's up to each integrator of Linux
-to classify them themselves as everyone's use case is different
-(remember, cow milking machines, super-mega-yaht-stabilizers, washing
-machines, servers, watches, air-traffic-control systems, etc...)
-
-thanks,
-
-greg k-h
+Konrad
 
