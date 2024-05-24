@@ -1,217 +1,125 @@
-Return-Path: <linux-kernel+bounces-188854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385108CE7D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B571D8CE7D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB541C20A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:26:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FE11C2225F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8985F12DDA1;
-	Fri, 24 May 2024 15:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C8212DDA5;
+	Fri, 24 May 2024 15:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dV9H049W"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Tt7E37Ji"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139191802B;
-	Fri, 24 May 2024 15:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7707712DD98;
+	Fri, 24 May 2024 15:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716564398; cv=none; b=ivtY1BdsZTYvwqQW5mhq+zWehMYLkUHEtqM05cXlvrJtUw+Cor5oCCIhLKsnsaQdwtj/QAlhchoXp5eKhHaBHzfb2kPCPLykyaulzcLAZgYw9XQU5S4OEp30yATlZuFbhX5AE9mu8yOXV1fisD0alvSw1Rnnbtf+TdiT9wU8+rY=
+	t=1716564416; cv=none; b=cqPi0Y1E3huKxu1lHtz9OtvVAH3gNdw1e2EyjGELMV5gTdPAV3AX+Hi1jb0EpyKMBLVVBv8kQ0tHT2iTawdyX+NiQ8pIbl2rdEhDsdqGP35VcyhvDPni8BD5fQxQZFFJHZKNmCyX84li++XilMsO2W5HNvr+1K2Qd2J1mb5asQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716564398; c=relaxed/simple;
-	bh=jrsMR0Hbp2Lf70BirMCZcxLAC3k0Adh53Y+FmXUtnPQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JyDPFFpCXq0/lHy71te9Cmi+E0cqeTpahCx7XOv98YGv4UwvYqEg/PM2rF/uCoVabsuG53gzxnLxZA3IbmNfoHVFhM31sP8S85XxUK7VNO30ym70kc6L8MZzeufZXKw9NckKhmkvUkZD0axTh/cNVNkSIudOjCZ1OqSU1tHZHUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dV9H049W; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716564397; x=1748100397;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=jrsMR0Hbp2Lf70BirMCZcxLAC3k0Adh53Y+FmXUtnPQ=;
-  b=dV9H049WgyO8QaMF0/bhp42TFmHcyqGcjOyIX74SfDlTHWot0hdfWbak
-   xRe9wKwuHvljYEmMuqeR+P1Fr3JhtnzKn/AzY6uHT2w9VIoxlElTacDJY
-   61XvM9Z1g5EN174Ga3gh/hZyOhw4YJLWEeyHGZnt5iOiDuWzcfc+92RlC
-   oaTwXKqgZcZe3KsXhU8gy5cV8bsLAkYs0+4i3wY0UX0roe5kCMiede6cF
-   t60YYhueGmQ5dSKbG67rJoDqdkqFsg3/gdnA2lLgkcZNx43ruAxV1z5QL
-   HXuNE96CG1kpNaK+YvMBrZp5F9jukDOEbeSaeksZOJKdf5QTqwJbBdev4
-   Q==;
-X-CSE-ConnectionGUID: kqm/mlRvQ+CvrHMrLOJxYA==
-X-CSE-MsgGUID: /mUzzxPGSDy/8caLnw2qZQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11082"; a="16776010"
-X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
-   d="scan'208";a="16776010"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 08:26:36 -0700
-X-CSE-ConnectionGUID: JATHZZ8QSNaEs7JvDbcC5g==
-X-CSE-MsgGUID: /ev4NJy+SAqYQOohgYmHmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
-   d="scan'208";a="34549821"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.127])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 08:26:33 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 24 May 2024 18:26:29 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-    Babu Moger <babu.moger@amd.com>, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>, 
-    Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v4 02/16] selftests/resctrl: Calculate resctrl FS derived
- mem bw over sleep(1) only
-In-Reply-To: <d8063ee7-1744-45a2-b6b9-506e68106baf@intel.com>
-Message-ID: <b029db88-2e09-0b4a-f46a-84b5e535f178@linux.intel.com>
-References: <20240520123020.18938-1-ilpo.jarvinen@linux.intel.com> <20240520123020.18938-3-ilpo.jarvinen@linux.intel.com> <04d0a5d6-82fa-4cc7-bd80-ee5cbd35f0c3@intel.com> <ea0c86b9-ae77-c2d9-b52b-239ae42603e8@linux.intel.com>
- <d8063ee7-1744-45a2-b6b9-506e68106baf@intel.com>
+	s=arc-20240116; t=1716564416; c=relaxed/simple;
+	bh=NLTly/Ziw39O2EegvKrx3fgQaIpoemL3GO1n6sD2/2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XZ/ihy4ftrj8DjOlaf+OmPWG6lbvMDI3BtMI5bf3YLehw69K68t1jCY3Ih41C1yG7SUyrC5jgsmDNo/ZByClKO7TFSvUvVM7t9fqZiL+xf8/4MdGmOa2NpN5y5v5JftE37ppKzRbjqEGPvSMm+C3Lr3VIpe5lwxnas1GuX4x5As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Tt7E37Ji; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCDCCC2BBFC;
+	Fri, 24 May 2024 15:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716564416;
+	bh=NLTly/Ziw39O2EegvKrx3fgQaIpoemL3GO1n6sD2/2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tt7E37Ji8Nlrkf5LLq3db4+FpfySQAVKAFS21sgYgQ6veuRQXUovU4vxI1W1w+/ZT
+	 T8SE7exYq6ze+kSfLxufUmg1HdsXQnimEzxw4G+2AJgouPEOTySKonFdwnstI0fuIC
+	 GMcrW30P1EVP9sEXJCAZrp0VN+v3O1zSayi+12ao=
+Date: Fri, 24 May 2024 17:26:53 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Bohac <jbohac@suse.cz>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	Eric Biederman <ebiederm@xmission.com>, kexec@lists.infradead.org
+Subject: Re: CVE-2023-52823: kernel: kexec: copy user-array safely
+Message-ID: <2024052440-irrigate-tightness-4a8a@gregkh>
+References: <2024052106-CVE-2023-52823-3d81@gregkh>
+ <ZlBlorsBMPK0RdnR@dwarf.suse.cz>
+ <2024052420-clang-flatterer-366b@gregkh>
+ <ZlCKLBjrF5PWt1hz@dwarf.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-770057559-1716564389=:1394"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlCKLBjrF5PWt1hz@dwarf.suse.cz>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, May 24, 2024 at 02:38:04PM +0200, Jiri Bohac wrote:
+> On Fri, May 24, 2024 at 12:15:47PM +0200, Greg Kroah-Hartman wrote:
+> > Nice, but then why was this commit worded this way?  Now we check twice?
+> > Double safe?  Should it be reverted?
+> 
+> double safe's good; turning it into a CVE not so much :(
+> CVE-2023-52822, CVE-2023-52824 and CVE-2023-52820, originally from the same patch
+> series, seem to be the exact same case.
+> 
+> CVE-2023-52822:
+> 
+> 	int vmw_surface_define_ioctl(struct drm_device *dev, void *data,
+> 				     struct drm_file *file_priv)
+> 	{
+> 	...
+> 		if (num_sizes > DRM_VMW_MAX_SURFACE_FACES * DRM_VMW_MAX_MIP_LEVELS ||
+> 		    num_sizes == 0)
+> 			return -EINVAL;
+> 	...
+> 		metadata->num_sizes = num_sizes;
+> 		metadata->sizes =
+> 			memdup_user((struct drm_vmw_size __user *)(unsigned long)
+> 				    req->size_addr,
+> 				    sizeof(*metadata->sizes) * metadata->num_sizes);
+> 	}
 
---8323328-770057559-1716564389=:1394
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Agreed, now rejected.
 
-On Fri, 24 May 2024, Reinette Chatre wrote:
-> On 5/24/24 12:57 AM, Ilpo J=C3=A4rvinen wrote:
-> > On Thu, 23 May 2024, Reinette Chatre wrote:
-> > > On 5/20/24 5:30 AM, Ilpo J=C3=A4rvinen wrote:
-> > > > For MBM/MBA tests, measure_vals() calls get_mem_bw_imc() that perfo=
-rms
-> > > > the measurement over a duration of sleep(1) call. The memory bandwi=
-dth
-> > > > numbers from IMC are derived over this duration. The resctrl FS der=
-ived
-> > > > memory bandwidth, however, is calculated inside measure_vals() and =
-only
-> > > > takes delta between the previous value and the current one which
-> > > > besides the actual test, also samples inter-test noise.
-> > > >=20
-> > > > Rework the logic in measure_vals() and get_mem_bw_imc() such that t=
-he
-> > > > resctrl FS memory bandwidth section covers much shorter duration
-> > > > closely matching that of the IMC perf counters to improve measureme=
-nt
-> > > > accuracy. Open two the resctrl mem bw files twice to avoid opening
-> > > > after the test during measurement period (reading the same file twi=
-ce
-> > > > returns the same value so two files are needed).
-> > >=20
-> > > I think this is only because of how the current reading is done, resc=
-trl
-> > > surely supports keeping a file open and reading from it multiple time=
-s.
-> > >=20
-> > > There seems to be two things that prevent current code from doing thi=
-s
-> > > correctly:
-> > > (a) the fscanf() code does not take into account that resctrl also
-> > >      prints a "\n" ... (this seems to be the part that may cause the =
-same
-> > >      value to be returned).
-> > >      So:
-> > > =09if (fscanf(fp, "%lu", mbm_total) <=3D 0) {
-> > >      should be:
-> > > =09if (fscanf(fp, "%lu\n", mbm_total) <=3D 0) {
-> > > (b) the current reading does not reset the file position so a second
-> > >      read will attempt to read past the beginning. A "rewind(fp)"
-> > >      should help here.
-> >=20
-> > (b) cannot be the cause for returning the same value again. It would
-> > not be able to reread the number at all if file position is not moved.
->=20
-> I know. This was not intended to explain the duplicate answer but instead
-> describe another change required to use current code in a loop. I
-> specifically said in (a) that "(this seems to be the part that may cause
-> the same value to be returned)".
->=20
-> > I certainly tried with fseek() and it is when I got same value on the
-> > second read which is when I just went to two files solution.
-> >=20
-> > > A small program like below worked for me by showing different values
-> > > on every read:
-> > >=20
-> > > #include <stdio.h>
-> > > #include <stdlib.h>
-> > > #include <unistd.h>
-> > >=20
-> > > const char *mbm_total_path =3D
-> > > "/sys/fs/resctrl/mon_data/mon_L3_00/mbm_total_bytes";
-> > >=20
-> > > int main(void)
-> > > {
-> > > =09unsigned long mbm_total;
-> > > =09FILE *fp;
-> > > =09int count;
-> > >=20
-> > > =09fp =3D fopen(mbm_total_path, "r");
-> > > =09if (!fp) {
-> > > =09=09perror("Opening data file\n");
-> > > =09=09exit(1);
-> > > =09}
-> > > =09for (count =3D 0; count < 100; count++) {
-> > > =09=09if (fscanf(fp, "%lu\n", &mbm_total) <=3D 0) {
-> > > =09=09=09perror("Unable to read from data file\n");
-> > > =09=09=09exit(1);
-> > > =09=09}
-> > > =09=09printf("Read %d: %lu\n",count ,mbm_total );
-> > > =09=09sleep(1);
-> > > =09=09rewind(fp);
-> > > =09}
-> > > =09fclose(fp);
-> > > =09return 0;
-> > > }
-> >=20
-> > Okay, so perhaps it's your explanation (a) but can libc be trusted to n=
-ot
-> > do buffering/caching for FILE *? So to be on the safe side, it would
->=20
-> Coding with expectation that libc cannot be trusted sounds strange to me.
->=20
-> > need to use syscalls directly to guarantee it's read the file twice.
-> >=20
-> > If I convert it into fds, fscanf() cannot be used which would complicat=
-e
-> > the string processing by adding extra steps.
-> >=20
->=20
-> It is not clear to me why you think that fscanf() cannot be used.
+> CVE-2023-52824 (here the check is in the immediately preceeding statement, could it
+> be any more obvious?):
+> 
+> 	long watch_queue_set_filter(struct pipe_inode_info *pipe,
+> 				    struct watch_notification_filter __user *_filter)
+> 	{
+> 		if (filter.nr_filters == 0 ||
+> 		    filter.nr_filters > 16 ||
+> 		    filter.__reserved != 0)
+> 			return -EINVAL;
+> 
+> 		tf = memdup_user(_filter->filters, filter.nr_filters * sizeof(*tf));
+> 	}
 
-This was related to fscanf() not being able to read from an fd which is=20
-different interface than what libc's FILE * is.
+Yup, now rejected.
 
-> Could you please elaborate what the buffering issues are?
+> 
+> 
+> CVE-2023-52820 is a little less obvious to be safe, but I believe it is:
+> 
+> 	int drm_mode_create_lease_ioctl(struct drm_device *dev,
+> 					void *data, struct drm_file *lessor_priv)
+> 	{
+> 	...
+> 			object_ids = memdup_user(u64_to_user_ptr(cl->object_ids),
+> 						 array_size(object_count, sizeof(__u32)));
+> 
+> 	array_size() will safely multiply object_count * 4 and return SIZE_MAX on
+> 	overflow, making the kmalloc inside memdup_user cleanly fail with -ENOMEM.
 
-I'm pretty sure that by default libc does some buffering (even std*=20
-streams are line buffered and others streams even more). I'm not entirely=
-=20
-sure about the extent of that buffering but here we need to always read=20
-the up to date value from the file itself, not from some buffer.
+Also agreed, now rejected.
 
-Maybe there never is any problem that the earlier read values are returned=
-=20
-from some libc buffer when lseek/rewind is used, I just don't know that=20
-for sure. You seem to be more certain but I've not seen on what basis=20
-(other than the anecdotial test you provided).
+thanks,
 
-> It is not necessary to open and close the file every time a value needs
-> to be read from it.
-
---=20
- i.
---8323328-770057559-1716564389=:1394--
+greg k-h
 
