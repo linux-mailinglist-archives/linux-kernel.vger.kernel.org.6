@@ -1,197 +1,139 @@
-Return-Path: <linux-kernel+bounces-188913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB03C8CE86E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:03:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BB68CE86F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 027C51C20BDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6276BB210BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9BD12E1EB;
-	Fri, 24 May 2024 16:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF55D12E1D0;
+	Fri, 24 May 2024 16:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BJ7hrmY5"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="Lbgi7TeO"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB07012CD8E;
-	Fri, 24 May 2024 16:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9D11AACC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716566617; cv=none; b=OoBfrQPl1HPwzpNODdw6y4F9plLRZML5n4mi3+6h9maL3ZMd9DEwxQbUafDIm3iDml6gK36sUKDemWZ9QturopKk0ZWz3OuWzcfuHxfDZ1XvkUXePgGUMianLdwVEeZcio+L4skBP5yM3/D1Mh2DaM9ESGEm19F2RCl4FPVJJoA=
+	t=1716566704; cv=none; b=cps/qEaWgZN5WrW7DQg+9yiqp9sx6DuzQ23z83MlLzKDAW8Ur7WWmCxKb7RImTtlDZTlAiW8IzNRAivw4nx24z+dl2VCe03c2LT2ogFd3CM+w0l0HTof8wsf5DLcbA7Orr0tVeu65kD+mhW1y4ZFYdog5SByKsYTw7LUZxxeHbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716566617; c=relaxed/simple;
-	bh=jcYfrQux9RRufLBucVlaKQB/uSKaLAyTFQ1XBs3s/18=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XfdMyN5zPYjg/Ff2gP78JOOSdW1y/lM6jq1dCd2Ptt9lmsG6OHXGSwjSjBYqoFoeoG2noQRYG07udU2ry9DVagiWKAsi2CMz0gdEgLey+mKZw/GTF1p7dlo/y5kD7hvF47bZNVMldl7uJ3udzvblb++LlmsWXyugzcZZePQHG/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BJ7hrmY5; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1716566614;
-	bh=jcYfrQux9RRufLBucVlaKQB/uSKaLAyTFQ1XBs3s/18=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=BJ7hrmY59qdh4O56NrMB5x+iWZR9T0WcUGf+f5D2Qo1Qw19wz6478UWqyrAGio8DP
-	 mQEU+sP+FBbdlnJAfRATwFkavyzQCgs35Yp21eb6Jsim6U9ChpnTWW8+GP19t6R6kj
-	 rtFeaNirDP+bY9EklkVzOlx0zHqwzMIJP+oTRLgY/2XuXebBeXM339WxVjmFYrcJ4H
-	 JxaTU7wOyqq5fVqRuCarRi1DRem1L3MIPCVA7dFFyd22m+FHHEx9eyLHNV3SSr5Bi2
-	 L+kBaonsDvKf+zzG2nB/eISphTs8fAQByHO4wCW7LvT7eAB6H12SXlxd3i5ZoWoPgr
-	 1Yl7mbE5VnmFg==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vm8wQ4q9Dz11J8;
-	Fri, 24 May 2024 12:03:34 -0400 (EDT)
-Message-ID: <7236a148-c513-4053-9778-0bce6657e358@efficios.com>
-Date: Fri, 24 May 2024 12:04:11 -0400
+	s=arc-20240116; t=1716566704; c=relaxed/simple;
+	bh=bENozkYqLLbuieHyKroyUB6wlwtIHSYIRauuwhuKVCY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ipggn+f0hVnzEJVDgSeL+54dmtCVz3IgsAQnvHQ9ZV7HFRL6m/YCwMCCuunFk7WZ0m9Zg68Z8RLqxcfBCRCabbUkm8uJTQeqEs/7wMYdU9BTTeGmOSEo578lhfhdnV56JqhaBtlw9pCRdXfHNwucL1FJuo5ZAAoB902HO/RRvjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=Lbgi7TeO; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1716566703; x=1748102703;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=MDXx/XnKHW1rqwed/iKvE1FGlnrLhIu2TweAuu7JpO4=;
+  b=Lbgi7TeOVHxQFYa7xR2KMDL6WbMw4NHlQz2j6B3rbbHeyYevgmTIh3HS
+   hXkBRB2iq4T6N65fwqQiQQJXZmqO3YM7pqVk+E4cK65vOOSFZNlNWUlt0
+   dfqejuriQs1ONl6gBDSrapj7ID52O1BJ76sBLVVyUV5Cwp0szYudfAMxr
+   U=;
+X-IronPort-AV: E=Sophos;i="6.08,185,1712620800"; 
+   d="scan'208";a="728072119"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 16:04:56 +0000
+Received: from EX19MTAUEA001.ant.amazon.com [10.0.29.78:46947]
+ by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.87.67:2525] with esmtp (Farcaster)
+ id fe603f6f-4dfe-4386-8cb7-81bd4115f331; Fri, 24 May 2024 16:04:55 +0000 (UTC)
+X-Farcaster-Flow-ID: fe603f6f-4dfe-4386-8cb7-81bd4115f331
+Received: from EX19D008UEC001.ant.amazon.com (10.252.135.232) by
+ EX19MTAUEA001.ant.amazon.com (10.252.134.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 24 May 2024 16:04:55 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D008UEC001.ant.amazon.com (10.252.135.232) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 24 May 2024 16:04:54 +0000
+Received: from dev-dsk-stanspas-1a-2337b95e.eu-west-1.amazon.com
+ (172.19.107.251) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28 via Frontend Transport; Fri, 24 May 2024 16:04:53 +0000
+From: Stanislav Spassov <stanspas@amazon.de>
+To: <linux-kernel@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra
+	<peterz@infradead.org>, David Woodhouse <dwmw@amazon.co.uk>, James Gowans
+	<jgowans@amazon.com>, Stanislav Spassov <stanspas@amazon.de>
+Subject: [PATCH] cpu: Reverse order of iteration in freeze_secondary_cpus
+Date: Fri, 24 May 2024 16:04:49 +0000
+Message-ID: <20240524160449.48594-1-stanspas@amazon.de>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Use of zero-length arrays in bcachefs structures inner fields
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Brian Foster <bfoster@redhat.com>, Kees Cook <keescook@chromium.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, linux-bcachefs@vger.kernel.org,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- llvm@lists.linux.dev
-References: <986294ee-8bb1-4bf4-9f23-2bc25dbad561@efficios.com>
- <vu7w6if47tv3kwnbbbsdchu3wpsbkqlvlkvewtvjx5hkq57fya@rgl6bp33eizt>
- <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com>
-Content-Language: en-US
-In-Reply-To: <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-On 2024-05-24 11:35, Mathieu Desnoyers wrote:
-> [ Adding clang/llvm and KMSAN maintainers/reviewers in CC. ]
-> 
-> On 2024-05-24 11:28, Kent Overstreet wrote:
->> On Thu, May 23, 2024 at 01:53:42PM -0400, Mathieu Desnoyers wrote:
->>> Hi Kent,
->>>
->>> Looking around in the bcachefs code for possible causes of this KMSAN
->>> bug report:
->>>
->>> https://lore.kernel.org/lkml/000000000000fd5e7006191f78dc@google.com/
->>>
->>> I notice the following pattern in the bcachefs structures: zero-length
->>> arrays members are inserted in structures (not always at the end),
->>> seemingly to achieve a result similar to what could be done with a
->>> union:
->>>
->>> fs/bcachefs/bcachefs_format.h:
->>>
->>> struct bkey_packed {
->>>          __u64           _data[0];
->>>
->>>          /* Size of combined key and value, in u64s */
->>>          __u8            u64s;
->>> [...]
->>> };
->>>
->>> likewise:
->>>
->>> struct bkey_i {
->>>          __u64                   _data[0];
->>>
->>>          struct bkey     k;
->>>          struct bch_val  v;
->>> };
->>>
->>> (and there are many more examples of this pattern in bcachefs)
->>>
->>> AFAIK, the C11 standard states that array declarator constant expression
->>>
->>> Effectively, we can verify that this code triggers an undefined behavior
->>> with:
->>>
->>> #include <stdio.h>
->>>
->>> struct z {
->>>          int x[0];
->>>          int y;
->>>          int z;
->>> } __attribute__((packed));
->>>
->>> int main(void)
->>> {
->>>          struct z a;
->>>
->>>          a.y = 1;
->>>          printf("%d\n", a.x[0]);
->>> }
->>> delimited by [ ] shall have a value greater than zero.
->>
->> Yet another example of the C people going absolutely nutty with
->> everything being undefined. Look, this isn't ok, we need to get work
->> done, and I've already wasted entirely too much time on ZLA vs. flex
->> array member nonsense.
->>
->> There's a bunch of legit uses for zero length arrays, and your example,
->> where we're not even _assigning_ to x, is just batshit. Someone needs to
->> get his head examined.
+Whenever CPU hotplug state callbacks are registered (cpuhp_setup_state),
+the startup callback is invoked on CPUs that have already reached the
+provided state in order of ascending CPU id. For symmetry, we change
+freeze_secondary_cpus to iterate through the CPUs in opposite order,
+so that the teardown callback invocations happen in order of descending
+CPU id.
 
-Notice how a.y is first set to 1, then a.x[0] is loaded, expecting to
-alias with a.y.
+One case where this is known to make a difference is the current
+implementation of these callbacks in arch/x86/events/intel/uncore.c:
 
-This is the same aliasing pattern found in bcachefs, for instance here:
+- uncore_event_cpu_online: designates the first CPU it is invoked for
+  on each package as the uncore event collector for that package
 
-bcachefs_format.h:
+- uncore_event_cpu_offline: if the CPU being offlined is the event
+  collector for its package, transfers that responsibility over to
+  the next (by ascending CPU id) one in the same package
 
-struct jset {
-[...]
-         __u8                    encrypted_start[0];
+Without reversing the order of teardowns in freeze_secondary_cpus, the
+latter ends up doing the ownership transfer work on every single CPU.
+That work involves a synchronize_rcu call (in perf_pmu_migrate_context),
+ultimately unnecessarily degrading the performance of the CPU offlining.
 
-         __le16                  _read_clock; /* no longer used */
-         __le16                  _write_clock;
+Signed-off-by: Stanislav Spassov <stanspas@amazon.de>
+---
+ kernel/cpu.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-         /* Sequence number of oldest dirty journal entry */
-         __le64                  last_seq;
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index cc4a8068747c..aaa8b7d5f93e 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1942,7 +1942,10 @@ int freeze_secondary_cpus(int primary)
+ 	cpumask_clear(frozen_cpus);
+ 
+ 	pr_info("Disabling non-boot CPUs ...\n");
+-	for_each_online_cpu(cpu) {
++	for (cpu = nr_cpu_ids - 1; cpu >= 0; cpu--) {
++		if (!cpu_online(cpu))
++			continue;
++
+ 		if (cpu == primary)
+ 			continue;
+ 
 
-
-         struct jset_entry       start[0];
-         __u64                   _data[];
-} __packed __aligned(8);
-
-where struct jset last_seq field is set by jset_validate():
-
-		jset->last_seq = jset->seq;
-
-and where journal_read_bucket() uses the encrypted_start member as input:
-
-                 ret = bch2_encrypt(c, JSET_CSUM_TYPE(j), journal_nonce(j),
-                              j->encrypted_start,
-                              vstruct_end(j) - (void *) j->encrypted_start);
-
-Regards,
-
-Mathieu
-
-
->>
->>> So I wonder if the issue reported by KMSAN could be caused by this
->>> pattern ?
->>
->> Possibly; the KMSAN errors I've been looking at do look suspicious. But
->> it sounds like we need a real fix that involves defining proper
->> semantics, not compiler folks giving up and saying 'aiee!'.
->>
->> IOW, clang/KMSAN are broken if they simply choke on a zero length array
->> being present.
-> 
-
+base-commit: 266e95786452d97f42dcb9a881bba223584b9648
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.40.1
+
+
+
+
+Amazon Web Services Development Center Germany GmbH
+Krausenstr. 38
+10117 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
 
 
