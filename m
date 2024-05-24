@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-189148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98AC8CEBD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C288CEBD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4F751C20EA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:28:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79841C20F34
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF83185C41;
-	Fri, 24 May 2024 21:27:46 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F9382D91;
+	Fri, 24 May 2024 21:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wNlifsgj"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B7883CBD
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 21:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3D17494;
+	Fri, 24 May 2024 21:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716586066; cv=none; b=Qj+iXiMS//1jmt3aC8XcNPyOq18TEZoq3yFv/KLaevMvUxB4v+mD/epXm0g4B6f0/UbdsOtNrfeL8qEj+HMutPUozsnJMfReT1P+HgXi364tcTO0vNZOUptdDorVf29/MrTAaW4e4VP9H64SMufkQ3+gDGZZukHvxAIZ7gkOzqk=
+	t=1716586289; cv=none; b=IyIsPO45J0YgNla3JVMEN8rAlz2N1yU5YEdsDXugY8vse5pcOfSqMkWMcxUo53KLuJEF9/SXHJ0+my0MXny9CLTsicmBdxqIj2OQaSgpUGV5y12WpFHdp194f85oUeYbEW5LqO07V8OeM++Dcfsu4BzyS56R1UZ8+KRKwc0zZME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716586066; c=relaxed/simple;
-	bh=6LUbgEU1sHvRL09NLMAPira3jisNG7ZtwY9v2d7Go5s=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=cbwiuNXv9NX5R5Z+pfGoFNiJJi/XsHu3jBhpG7ElDbTMumnrFZ5lWBThzuzytcd536HWhlxFugsw9XUugV6C23/1C6NPTddCahJEracSWMv861MVJP1xUe4zrXv+nXB5gf6t9qHQR6CGKp1lL9V4HYZgEAi70EAgJhfUXNfMhKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 497716195FCA;
-	Fri, 24 May 2024 23:27:43 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id FgmitsyXq52a; Fri, 24 May 2024 23:27:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id C0C306195FCC;
-	Fri, 24 May 2024 23:27:42 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WOanlW2rmycA; Fri, 24 May 2024 23:27:42 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 9BDD86195FCA;
-	Fri, 24 May 2024 23:27:42 +0200 (CEST)
-Date: Fri, 24 May 2024 23:27:42 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, david <david@sigma-star.at>, 
-	oe-kbuild-all <oe-kbuild-all@lists.linux.dev>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	david oberhollenzer <david.oberhollenzer@sigma-star.at>
-Message-ID: <39518719.144820.1716586062550.JavaMail.zimbra@nod.at>
-In-Reply-To: <D1I6WMDSLOW0.2RS18E7T61X9A@kernel.org>
-References: <202405240610.fj53EK0q-lkp@intel.com> <1855855000.144805.1716584815663.JavaMail.zimbra@nod.at> <D1I6WMDSLOW0.2RS18E7T61X9A@kernel.org>
-Subject: Re: security/keys/trusted-keys/trusted_dcp.c:206:24: sparse:
- sparse: incorrect type in assignment (different base types)
+	s=arc-20240116; t=1716586289; c=relaxed/simple;
+	bh=iRsfZhHHk71N/q9aE51lLLyvA9UPU40D5vl1+FqnZ9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KnCbVv1qfs2h48cYdTEts+BN+Pb6Z/93k5WnULL4rtFdsp209DayHqpFk7JTV5gHa4dyfkqYLKylpZ3StdlCCGm4SWD0KHfRLw3CRosLZlHTcEX34dKKWi58gHzlv8x9lAje8cLWYkY+E+Zdz961UqZ9uu8n1KePKfh8GzfIYFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wNlifsgj; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44OLUXdN074423;
+	Fri, 24 May 2024 16:30:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716586233;
+	bh=D2pCSFcs7g2kozusYYwZ2vVwg6i86RchvcpGVG5lRMA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=wNlifsgj8VBfqBup3/kAVMgUQeXAI00abMy0LNki1nv1BurZ8nlJI7fPpd3rmu1yv
+	 miYMiGVATO4OgwapDHnGpVtfU8urBkAXgb5uhV3+TCraxd55QvQuKiuXkP0sqP6ubt
+	 K0aopZY4CFAP0P4ux+s2+ltl59zY4CKJRvWOfKA0=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44OLUWSp007969
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 May 2024 16:30:32 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
+ May 2024 16:30:32 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 24 May 2024 16:30:32 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44OLUWcn076348;
+	Fri, 24 May 2024 16:30:32 -0500
+Message-ID: <57e4f7b1-2955-4dd5-b9d9-f3b1f27aab75@ti.com>
+Date: Fri, 24 May 2024 16:30:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Topic: security/keys/trusted-keys/trusted_dcp.c:206:24: sparse: sparse: incorrect type in assignment (different base types)
-Thread-Index: YxKdVb/v6foZyOVf4L0HtOwHX9OJ0Q==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: counter: Add new ti,am62-eqep
+ compatible
+To: Conor Dooley <conor@kernel.org>
+CC: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        David Lechner
+	<david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
+	<vigneshr@ti.com>
+References: <20240523231516.545085-1-jm@ti.com>
+ <20240523231516.545085-3-jm@ti.com>
+ <20240524-wrecker-busybody-2c082b87ddef@spud>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240524-wrecker-busybody-2c082b87ddef@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
------ Urspr=C3=BCngliche Mail -----
-> Von: "Jarkko Sakkinen" <jarkko@kernel.org>
-> An: "richard" <richard@nod.at>, "kernel test robot" <lkp@intel.com>
-> CC: "david" <david@sigma-star.at>, "oe-kbuild-all" <oe-kbuild-all@lists.l=
-inux.dev>, "linux-kernel"
-> <linux-kernel@vger.kernel.org>, "david oberhollenzer" <david.oberhollenze=
-r@sigma-star.at>
-> Gesendet: Freitag, 24. Mai 2024 23:24:30
-> Betreff: Re: security/keys/trusted-keys/trusted_dcp.c:206:24: sparse: spa=
-rse: incorrect type in assignment (different
-> base types)
-
-> On Sat May 25, 2024 at 12:06 AM EEST, Richard Weinberger wrote:
->> >| Reported-by: kernel test robot <lkp@intel.com>
->> >| Closes:
->> >| https://lore.kernel.org/oe-kbuild-all/202405240610.fj53EK0q-lkp@intel=
-com/
->> >=20
->> > sparse warnings: (new ones prefixed by >>)
->> >>> security/keys/trusted-keys/trusted_dcp.c:206:24: sparse: sparse: inc=
-orrect type
->> >>> in assignment (different base types) @@     expected restricted __le=
-32
->> >>> [usertype] payload_len @@     got unsigned int @@
->> >   security/keys/trusted-keys/trusted_dcp.c:206:24: sparse:     expecte=
-d restricted
->> >   __le32 [usertype] payload_len
->> >   security/keys/trusted-keys/trusted_dcp.c:206:24: sparse:     got uns=
-igned int
->> >=20
->> > vim +206 security/keys/trusted-keys/trusted_dcp.c
->> >=20
->> >   179
->> >   180=09static int trusted_dcp_seal(struct trusted_key_payload *p, cha=
-r *datablob)
->> >   181=09{
->> >   182=09=09struct dcp_blob_fmt *b =3D (struct dcp_blob_fmt *)p->blob;
->> >   183=09=09int blen, ret;
->> >   184
->> >   185=09=09blen =3D calc_blob_len(p->key_len);
->> >   186=09=09if (blen > MAX_BLOB_SIZE)
->> >   187=09=09=09return -E2BIG;
->> >   188
->> >   189=09=09b->fmt_version =3D DCP_BLOB_VERSION;
->> >   190=09=09get_random_bytes(b->nonce, AES_KEYSIZE_128);
->> >   191=09=09get_random_bytes(b->blob_key, AES_KEYSIZE_128);
->> >   192
->> >   193=09=09ret =3D do_aead_crypto(p->key, b->payload, p->key_len, b->b=
-lob_key,
->> >   194=09=09=09=09     b->nonce, true);
->> >   195=09=09if (ret) {
->> >   196=09=09=09pr_err("Unable to encrypt blob payload: %i\n", ret);
->> >   197=09=09=09return ret;
->> >   198=09=09}
->> >   199
->> >   200=09=09ret =3D encrypt_blob_key(b->blob_key);
->> >   201=09=09if (ret) {
->> >   202=09=09=09pr_err("Unable to encrypt blob key: %i\n", ret);
->> >   203=09=09=09return ret;
->> >   204=09=09}
->> >   205
->> > > 206=09=09b->payload_len =3D get_unaligned_le32(&p->key_len);
+On 5/24/24 1:38 PM, Conor Dooley wrote:
+> On Thu, May 23, 2024 at 06:15:10PM -0500, Judith Mendez wrote:
+>> Add new compatible ti,am62-eqep for TI K3 devices. If a device
+>> uses this compatible, require power-domains property.
 >>
->> I think this should be a put_unaligned_le32(p->key_len, &b->payload_len)=
-.
->=20
-> Please send then fix, reasoning of that, and finally:
+>> Since there is only one functional and interface clock for eqep,
+>> clock-names is not really required. The clock-name also changed
+>> for TI K3 SoCs so make clock-names optional for the new compatible
+>> since there is only one clock that is routed to the IP.
+> 
+> Really the clock should be named after the function it has in the IP
+> block - it looks like "sysoutclk" is more likely the name of the clock
+> routed to the IP rather than the role it has?
 
-Sure. Let me first talk to David and give it a test...
+It is the name of the clock, though id like to keep sysclkout for
+backwards compatibility, even though the name is confusing.
+~ Judith
 
-Thanks,
-//richard
+
+>>
+>> While we are here, add an example using ti,am62-eqep compatible.
+>>
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>> Changes since v1:
+>> - Fix eqep binding for new compatible, require
+>>   power-domains for new compatible
+>> ---
+>>   .../devicetree/bindings/counter/ti-eqep.yaml  | 53 +++++++++++++++++--
+>>   1 file changed, 48 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/counter/ti-eqep.yaml b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
+>> index 85f1ff83afe72..c4bb0231f166a 100644
+>> --- a/Documentation/devicetree/bindings/counter/ti-eqep.yaml
+>> +++ b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
+>> @@ -11,7 +11,9 @@ maintainers:
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: ti,am3352-eqep
+>> +    enum:
+>> +      - ti,am3352-eqep
+>> +      - ti,am62-eqep
+> 
+> I'm going to ack this even though the driver makes it seem like the
+> devices are compatible (there's no match data etc) given the addition of
+> the power domain and changes in required properties.
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> 
+> Cheers,
+> Conor.
+> 
+
 
