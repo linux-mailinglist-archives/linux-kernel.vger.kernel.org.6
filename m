@@ -1,84 +1,133 @@
-Return-Path: <linux-kernel+bounces-189077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F09F8CEABA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:13:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B92B8CEABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49D1E1C20825
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:13:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03484B2160C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BB857CB8;
-	Fri, 24 May 2024 20:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816105336D;
+	Fri, 24 May 2024 20:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1zFJRgB7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QGHThyLD"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5D983CBD;
-	Fri, 24 May 2024 20:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FF78493
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716581574; cv=none; b=W23KshCyrjviiCaFxR9vm/6AJfLjBWAH6xuXbVFzokRj3K8juvgbPcC1ehwDZTbVrY1RRrg7Z+vBioTw7FQRtg/c554WbbJ5W+AYNlePuQfLbC09RM/bHlxH2jvEnCQa5reiO67tqcgjTZ2IF5BwcJUwlbOi9pur3P/H79IJatI=
+	t=1716581901; cv=none; b=iYYkA3WVvRKXUpY3HkBegM4yW2MF6xiLbpfVI63khMKcEDLeHnYAzldCloevTP1AC5KMwlgKjuzWE6g3v1E1bfP7Bd/E9XIzFH7SR62uiTaVio8j4OtOED2wwYYXqoURdI7Affi6bPVLrJaIG7reFbm1wKps2wLJOCwdFLEsKRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716581574; c=relaxed/simple;
-	bh=3UnR8vsmR8CcxvacyVVttEzPUuRJVz8jYNuEfHywzW4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=A3MBTXKo9UXapaunnw7BgW9XHCajXohIkibFAgZDkP4D6glmClOJkbEe8tNxeb9t9HeI75uKVBTA9DnDwdiHyIX/IkrKDi0PMfC/XJBg506WkGfq3RtZCHDmsQV4BTfwp0Y+px9DFK9m470HY0pv1ufmWC5tHj7zkPoQt+WUoKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1zFJRgB7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EAAC2BBFC;
-	Fri, 24 May 2024 20:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716581573;
-	bh=3UnR8vsmR8CcxvacyVVttEzPUuRJVz8jYNuEfHywzW4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=1zFJRgB7GUn20f6S8m3qnHj7wBwqWEifkehnYbb5C3CHrLqqQEp2ckQJccVPm3hEN
-	 82fbFl2JJI0VlLLmIgAdrnKJoVjWd6d7u3R0O4L09cLNvWUk+D4PFxRzyLiNUkKT6Y
-	 EsjcEmBJlOmoUfkb0ZoGkWbgu5VJ5v+NJC48B+yY=
-Date: Fri, 24 May 2024 13:12:52 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>, Donet Tom
- <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>, Muchun Song
- <songmuchun@bytedance.com>
-Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked
- during __bio_release_pages()
-Message-Id: <20240524131252.52475e7dc695b4d924c253a2@linux-foundation.org>
-In-Reply-To: <87msofsntw.fsf@gmail.com>
-References: <20240523063905.3173-1-donettom@linux.ibm.com>
-	<20240523121344.6a67a109e0af2ba70973b34b@linux-foundation.org>
-	<d551d1cd-a02f-42aa-9de2-10ff7757224c@redhat.com>
-	<87msofsntw.fsf@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716581901; c=relaxed/simple;
+	bh=p/NRncoY56p0bib/WzzDXctsmUiON69N127T2VCB9Qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cYmTd9w6B9GkSgft7d68ZF5CfxEIfIDHgO2i7g4R7MZ7dyatI2ow3sZPVkbaS4zoNL/YAEqSNHJEiyjsueXdgX5akjdYSFdZaPvqhQJtU4t+Y3Mjrm7+P4aLJ2O1hxVRJtLQ9k8cx3yMl4bN4QgM648GHuSrPjEIW2eXnqzM3KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QGHThyLD; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-24d8b372911so327116fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716581897; x=1717186697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HalOAyLkDzegc+4kX0OIEOAwPaY/uhF+wibqleOrnyU=;
+        b=QGHThyLDGzZ3thvfFj5KGruOyj0pqLiQssZwSPRShlcPTwKB9K3YHbnAAEhGNBd0NP
+         JWBwJTYKiFf/n1lq7E5T6K+0UE1RRaAuFd6UXVYiDHaZA7fh0Ykb4/AvJVR/zAaj2c1u
+         mkvoxboOr2DZ0pV43iGdtuLp2TNRVKss3SSmLJHfLHccwlC6KBfIgw2xn/XC5/3F9cau
+         6CoHqJhMlh2YyLfgl0tfmWl9iIMfbHnex5Fjlhe0H8JEtEDKiNAm6+3YJfXcwVALwzbx
+         3lvQFez71gJ+t7QeGaLY5sCFtjHdIMB3EVWT+/U1dyd1bgiUCOJAr5FBPB2WewnKNnKc
+         STyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716581897; x=1717186697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HalOAyLkDzegc+4kX0OIEOAwPaY/uhF+wibqleOrnyU=;
+        b=MjFGLfDUQ+sY7/Y9JmYBjBXUbl6KmsE/7cFQ8j5LMC95TamSzrK7XJqq2NUssFy7b5
+         DGo0+4UM9b4tvaZQQLb6FOtSGcZJd/upu6ZvIyieUxNy/dAPrOCBo4aJWUvwNnj5WFV4
+         TPla2JO0JCkZCvGE5NRb5Ajd669+7L0wCTrG/clPEk76Hup79remgMxRb0i5NqoySurm
+         Nu3BqwuxgtIo4UiGTSaJFOU4myJJjkoNM25MzNK5q+v8tEuP2Z21wZMRCTYPph11yvH9
+         F1HUhmSTg87S9IboiaRe9LZgVvzGbeUABBL6rZ7fNnlXcyOinxifQzLjZv5ONeBHWX6f
+         OCAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUuLOztYfi3IhjPM1jiyLV4+j9vmrHUasq84OKfBS7uZfNaXNtroQvZbhGY4uoqcczo4p1K9Wpj0DknHvAUcalOFG+Rqj0X/yEk4SB
+X-Gm-Message-State: AOJu0YyI8E/OPAgusaOI8dNIrJNCE++zyHs7r3BgiCKa1WtI6Sx6NMi9
+	BawBpFrFhqAtA6UvjQqo1Jp+0MJaXjvmZHEyiGrJdcKMYY086Pu/55raId2GPzw=
+X-Google-Smtp-Source: AGHT+IEEm310HUA19zQ7ahDsUmBpRn0zbL0JH1ZmvUCVnEHDH2QRw6nh3//N3jOz6mDMfKmDdb2sDQ==
+X-Received: by 2002:a05:6870:b24f:b0:23c:3c37:a4ef with SMTP id 586e51a60fabf-24ca121d841mr3869731fac.29.1716581897398;
+        Fri, 24 May 2024 13:18:17 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-24ca2840481sm516737fac.57.2024.05.24.13.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 13:18:16 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Julien Stephan <jstephan@baylibre.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] iio: add support for multiple scan types
+Date: Fri, 24 May 2024 15:18:06 -0500
+Message-ID: <20240524-iio-add-support-for-multiple-scan-types-v2-0-a6c328fdfab7@baylibre.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
 
-On Fri, 24 May 2024 12:23:15 +0530 Ritesh Harjani (IBM) <ritesh.list@gmail.com> wrote:
+Up to now, the IIO subsystem has only supported a single scan type per
+channel. This scan type determines the binary format of the data in the
+buffer when doing buffered reads.
 
-> >>> This patch verifies that a hugepage, used as a user buffer for DIO
-> >>> operations, is correctly freed upon unmapping, regardless of whether
-> >>> the offsets are aligned or unaligned w.r.t page boundary.
-> >>>
-> >> 
-> >
-> > Two SOF, is there a Co-developed-by: missing?
-> >
-> 
-> Sorry about that. Andrew, could you please add the tag (let me know if you
-> would like me to send v2). Will take care of it next time.
-> 
-> Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+For simple devices, there is only one scan type and all is well. But
+for more complex devices, there may be multiple scan types. For example,
+ADCs with an resolution boost feature that adds more bits to the raw
+sample data. Traditionally, for slow devices, we've just always used the
+highest resolution mode, but for high performance ADCs, this may not be
+always practical. Manipulating data after every read can hurt performance
+and in the case of hardware buffers, it may not be possible to change the
+format of the data in the buffer at all. There are also ADCs where
+enabling the higher resolution can only be done if oversampling is also
+enabled which may not be desireable.
 
-I made that edit, thanks.
+To allow for more flexibility, we would like to add support for multiple
+scan types per channel.
+
+To avoid having to touch every driver, we implemented this in a way that
+preserves the existing scan_type field. See the "iio: add support for
+multiple scan types per channel" the details. The first couple of patches
+are just preparation for this.
+
+---
+Changes in v2:
+- Use union for scan_type and scan_type_ext.
+- Dropped ad7380 patch - those changed will be squashed into the next
+  revision of the series adding the driver for ad7380.
+- Temporary updated ad7380 patch for reference: https://github.com/dlech/linux/commit/64be3de241e73b43c5a5daa44b6b97f35f0743bf
+- Link to v1: https://lore.kernel.org/r/20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com
+
+---
+David Lechner (3):
+      iio: introduce struct iio_scan_type
+      iio: buffer: use struct iio_scan_type to simplify code
+      iio: add support for multiple scan types per channel
+
+ drivers/iio/industrialio-buffer.c | 91 ++++++++++++++++++++++++++++-----------
+ include/linux/iio/iio.h           | 85 +++++++++++++++++++++++++++---------
+ 2 files changed, 131 insertions(+), 45 deletions(-)
+---
+base-commit: 6c46802cc0c4ff878f07139f7b7b8774fd43ce3d
+change-id: 20240507-iio-add-support-for-multiple-scan-types-f4dbcf4c2cb8
 
