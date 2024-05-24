@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-188954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDD18CE8EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:50:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8538CE8EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:50:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBCE2281447
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95E77B20E34
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC64D130482;
-	Fri, 24 May 2024 16:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3915D12EBD4;
+	Fri, 24 May 2024 16:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Y5OUZKrE"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IHWvqFSU"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B3E12CD81;
-	Fri, 24 May 2024 16:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A2212CD90
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716569379; cv=none; b=i5JH43ac6chFNKFsv6UCfNrF9XXgKpVHjqHzcoV7S5BeUD58tsVwtT7Xh35gljj+yq0ZoGwEJLSed5efqBLV4R2pNWe/Z9Qst8InHr3r3mjGkMA+s8VVaoYcdQSi5lG46bBwzR6WP4rbUH8yaWWiQl384RL2nE4plB/iPQrZrx8=
+	t=1716569437; cv=none; b=mQz4xAD3UDV5fyOgnkJeq7+9y6mJsXg+HJdvFoM5sMuWQWwduo3feMYZpg2CKMGB0kNspkidrWr3LcgIpP+Pjqh++yy1A8ETbawKOonEdWejcZV/TFdpY8/G+5TkLyvYy6VV7ONYEo/IVXYpwWeUZBBCuc+10qImKytPEERpNbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716569379; c=relaxed/simple;
-	bh=nZiuVw2+FK3x2PUca+c6KL4a7y8UxzcuaAjOwcSH9GM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J1XwZ4sf3atnzeQAPVYvPbfJGwxo4hXGmsQX51af5k6kdeYo+1B30JrVtJNcCOavsuFgaZ81g1abdA60kn2VoZ/HZYOXVsdmoasHwXDjgP/Ax0FNKAgG45RnmbjBigsDl+hUmicpKbFCjzzUjT2bLQj26bmGyOqC+FO7fYAtHdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Y5OUZKrE; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=geXUP07gEPh/tWoZ5y8jkfeS43t3AQZ7yWhXEVqcMuM=; b=Y5OUZKrEDeAPTNJR
-	pYRtjFzEVOj1ovQ7FRVx41MStRoKkiw2UuoZT1PBfh3Di0Fs6pAOd821iDFL2C9lV6tThfExqwhJl
-	gsSYKC+jhMaqQf0dzHCGQVXk+EeLQAodnZX/H56CaFHHmwHcKlWTfga3WiCajMca8gsvcJfz5lBvN
-	8htu9meoV1A8GtTtNauLugEfncallilcojfxu3ghkY05YoWOmGc2eqtH1i2bI7kZVUvAwmsgb+sWb
-	+dNxFf+NC27DrnSnoeu0vvMlCgsSTKGr3IlD6S9XCRNKTTjqE7cs3RXEfv/MFL9j2M5W+1r8wPzjK
-	5k0cuUqhd20ZzVAdnQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sAY6m-002Qpy-2I;
-	Fri, 24 May 2024 16:49:33 +0000
-From: linux@treblig.org
-To: mchehab@kernel.org,
-	sakari.ailus@linux.intel.com,
-	hverkuil-cisco@xs4all.nl
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 4/4] media: i2c: adv7511: remove unused struct 'i2c_reg_value'
-Date: Fri, 24 May 2024 17:48:51 +0100
-Message-ID: <20240524164851.184467-5-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240524164851.184467-1-linux@treblig.org>
-References: <20240524164851.184467-1-linux@treblig.org>
+	s=arc-20240116; t=1716569437; c=relaxed/simple;
+	bh=HcJ3lytpbQnXo443M5BAMEUyaYSBLtuCf2kCkQUnnPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vAdSqYnQngKyeCOw2qIsy0fgzbRyaKVH0m7C8JkiPnlQlWef9JHpfd6SLkxSIFbXFTop8G4HwMadYT8SpYA/OOKvgaZuN/3y138p1EkHThLa8yuDXe5ZaDSLTl/BUaljzdvBTj7QsPzd6Q9GD6Hbc3ixs3gbXbwevS+KNQ48gAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IHWvqFSU; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52388d9ca98so13862349e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1716569434; x=1717174234; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/wd0aVWeaab4pkRhA/5Mkwde91KCNjgTYomFjikwQ9E=;
+        b=IHWvqFSUUdak0YQMUAlHb4mzO76TO1wwpddI2HAy89X9ah0f1uLMJCMk6CgqDdoEoH
+         2xJXWb6uyoSYvsIZoDDTAVbtzBKo2LLFRUR/qVtBXcSfEyns5kqoCql8+Ieoflxwr5BI
+         jH5qSIgo09fwRUsOr4mIaF2V+iX5WlhGM2tWU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716569434; x=1717174234;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/wd0aVWeaab4pkRhA/5Mkwde91KCNjgTYomFjikwQ9E=;
+        b=UEY1SpXJTPkSusD4bNL1J8zweSGd2ISNnowrBfSmTaj9dXg8dNIuaQ5myZiIGOkyyo
+         e/rfd25umgN4glU+37gUNX3pHzO/Trz62FNeR8psoHbV+f3Pe0SM0ANw/E8tK4bAY+YM
+         T2slEImQJvMCdteVeB+Rz0nEe3X+QKdB8TOyXQejlmPxZ9TUDzt7ODhTDSUnD0XoIF8n
+         VrE/tHDTqUuZqOSALr+3CEX2NuzQdScaAB/Q5Ry6Al66NOI7CE/xgHKjpj3+pEUNexWG
+         mEiiwqu5m0CQ3OV2YFcwCzIm2PvKqLKfB6vY5DW7y9gHZAsY7XHdY4u3RkTa+MoDVGvj
+         3cUw==
+X-Gm-Message-State: AOJu0YzajfKJilOXHISN9zobKZ5HZu6mzwd1hm0jH4IWcN9ubVHaUwr/
+	1BLxDGKs1ON5HlOWjjJhk6r8dtpiAXf4IRkUYCWDkDreS+nXPfDbnVqhV24/vwAen62NeA/6Gp3
+	Zr3HNnA==
+X-Google-Smtp-Source: AGHT+IGMsL/k44RAutIoXwXBvSbgsGa8Y+aAXzxdTHgEoR2OSM41e1jJ9TJLaA98Gsx8iHo5zJurPA==
+X-Received: by 2002:a19:7410:0:b0:51a:c7d0:9e84 with SMTP id 2adb3069b0e04-52965384ad9mr2240758e87.12.1716569433560;
+        Fri, 24 May 2024 09:50:33 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b23esm207943e87.125.2024.05.24.09.50.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 09:50:32 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e576057c2bso134758371fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:50:32 -0700 (PDT)
+X-Received: by 2002:a2e:7407:0:b0:2e9:485d:45a4 with SMTP id
+ 38308e7fff4ca-2e95b096de2mr23558551fa.16.1716569432516; Fri, 24 May 2024
+ 09:50:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <Zk_rXBV8E8Hwu04W@google.com> <ZlCv3HNhfcaEYjHf@google.com>
+In-Reply-To: <ZlCv3HNhfcaEYjHf@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 24 May 2024 09:50:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgXJcLOGizFGmVyY3cd9+oBwsh3-PYPdVBdqCW+Djgz8Q@mail.gmail.com>
+Message-ID: <CAHk-=wgXJcLOGizFGmVyY3cd9+oBwsh3-PYPdVBdqCW+Djgz8Q@mail.gmail.com>
+Subject: Re: [git pull] Input updates for v6.10-rc0
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, 24 May 2024 at 08:18, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+>
+> Oops, forgot to push the tag, sorry about it. Should be there now.
 
-'i2c_reg_value' is unused since the original
-commit 5a544cce2177 ("[media] adv7511: add new video encoder").
+Possibly related to that, you didn't get a pr-tracker-bot notification either.
 
-Remove it.
+So beep-boop, this is your manual robot notification.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/media/i2c/adv7511-v4l2.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/media/i2c/adv7511-v4l2.c b/drivers/media/i2c/adv7511-v4l2.c
-index 79946e9c7401..261871be833f 100644
---- a/drivers/media/i2c/adv7511-v4l2.c
-+++ b/drivers/media/i2c/adv7511-v4l2.c
-@@ -62,11 +62,6 @@ MODULE_LICENSE("GPL v2");
- **********************************************************************
- */
- 
--struct i2c_reg_value {
--	unsigned char reg;
--	unsigned char value;
--};
--
- struct adv7511_state_edid {
- 	/* total number of blocks */
- 	u32 blocks;
--- 
-2.45.1
-
+              Linus
 
