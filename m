@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-188817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C32E8CE759
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:54:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9F28CE75D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223111F21A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:54:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC003B2133C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97C012C7FD;
-	Fri, 24 May 2024 14:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC3412C80B;
+	Fri, 24 May 2024 14:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b4T3ldzd"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VEKBWNRw"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5C12BAF3;
-	Fri, 24 May 2024 14:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B0B12C498
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716562444; cv=none; b=tUOmqFq+QPeCQB2N0suVziIef+CZ8qSuz5nbFejqNbJfetXO0n6PyvLPUVv4LjQba/tYUqefKnX68+QuAkQFeslqXdZGZft/d5Srdfu8xDnMddQzZVYa0j0GduNWf9ETZv8nqpFyo74kBuzbcvfr5RyyFcOrma84XE5FQNaqhb8=
+	t=1716562509; cv=none; b=nvfDWSyo84xfwnltk8PbpKFpP2BRMuBj/DyabI7TdAiwFQt6LU34cm87v2gNqejri/RbWxB+7HzqDdJMbIMAjw1V2br06t1UQntiYxReOdaRE2wbTvmv7V3RmVFNk90tFtrPPVAJz2TYd0tPbl0DDujzqzpugV9isJFPQQxXYLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716562444; c=relaxed/simple;
-	bh=6b5WaG8RwTRaSu4VPX/gk6NuU3QaXHGREcosZB+kWIQ=;
+	s=arc-20240116; t=1716562509; c=relaxed/simple;
+	bh=ys1NXraa5YBjhGzFwgmkQfLtgZfUi3TRL9qe0CS4rAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D8FS9vzLw9WQWLSPr7obczPAg+TNfrcCfiw+zXiRNtrW98kHtv1GHBdYXVtZAVcV/gruQX/5JQIdhWAlIpV/iL98YrZeuVzxn7xAiSnvVNuWdBpiP7IDCKZaPyN+TWxGty9tFCnB7Yw+kFquC28NYffJzvRdLNKbuT7nr13cKUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=b4T3ldzd; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 016CE40E02A8;
-	Fri, 24 May 2024 14:53:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 66pLATH8wysw; Fri, 24 May 2024 14:53:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716562428; bh=6/WyMpeLD7PW3IYfJwxTvSgcRfBMp0+ADWk+WOzwZAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b4T3ldzdx0/7BTYg2WMGtiO56rn3h/2g/5UaXTovqRMFl4RBK1+nKh4Y97djbSu8b
-	 Vyi+g7ERRf+ftImqLW3b975Sq4RIax29yhp4I+UHvrK0mXXzD+9VE9KVU+wRlxje76
-	 VxXWmkuipruLm0hmPcMaImddyDwMsTy9KdPPZyBv/e9mTqeUcJghrjiZAl0a35K7/E
-	 yl80JUVVz3TdsgAk08XsZXBrf4T9z8hqsuW7Z/jC0dXZtCWiBUZiLbGDNhC5CZxfaN
-	 vP6qDazPBemIABb607Zx+WqTigwsbxdO/B/paTuThtRfcE3U7krWR2ihNSBCp4hz1c
-	 BAbua3KeVwysicYp8pcVMWVU/HvlHQmwH5tEcfzzXw7KOXZMIiTZwX2pT1wWo5TvDL
-	 LnjqxcDWtNlsqykoUOqaO5dASoh0TuNAPcgVm2EbGCKmjmFL1qr9GoqZRayPAVJR8J
-	 Kd8ZKXGtKjJoe4UxD36ioSAg0RzS6NvIbr7E1CQVzWXMLomVdxTp/Dz1/6P103VMW8
-	 ncokZo7y3+fwhWDRy+sWqRmOSq6RnusrG6lQu3Z/850FgzHKWNjqZZjMr0Pzph+aMT
-	 CX+r65EgjzlrBLU2HoMS6j2hl7MwYoBjlpw0eu1dFkvM6N1nl6IDbyRIkpXkMr+vBB
-	 46GNV6Bxb9Qz4urWohzj9ZW8=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9920740E01F6;
-	Fri, 24 May 2024 14:53:41 +0000 (UTC)
-Date: Fri, 24 May 2024 16:53:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com
-Subject: Re: [PATCH 3/9] x86/mce: Increment MCP count only for timer calls
-Message-ID: <20240524145335.GAZlCp7wAO22acrGyP@fat_crate.local>
-References: <20240523155641.2805411-1-yazen.ghannam@amd.com>
- <20240523155641.2805411-4-yazen.ghannam@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0gNcOK22x2fjYZLV/GAYVXSv9b18Sa2dGr2TWgI+YAfXntnb7Y5Z/78z1BhObtUSnNm6nvjpZRRKjK0mTBpJf1KJwa+fT5MVgVrWrscF6VuOurdNOfz3JNDVq7Xb4BGj5l53/q0ze4b/cAhbipiVlhI6ZfFu5uhE9yO/YMnVKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VEKBWNRw; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: keescook@chromium.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716562504;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7eBsqdgaEgOyK97Okk1hi9lHrmzeIeL0UB3tqvDlIRw=;
+	b=VEKBWNRw/vIK1I11UQntL0tbVI40n9fwIDNjWrmS/yO6NcBT7iM8OrrN0fAApJnI8HlcMv
+	NJijsJJ8VQ/28RWLHEEslbN/nHi04xkmLPun8i7kREnkqMh9PlWA3fJ21lHErYrRcko6j2
+	ImDohF7BAmiSIQ+Ime2Wv+cWQPm/ZAc=
+X-Envelope-To: vbabka@suse.cz
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: cl@linux.com
+X-Envelope-To: penberg@kernel.org
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: iamjoonsoo.kim@lge.com
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: 42.hyeyoo@gmail.com
+X-Envelope-To: gongruiqi@huaweicloud.com
+X-Envelope-To: xiujianfeng@huawei.com
+X-Envelope-To: surenb@google.com
+X-Envelope-To: jannh@google.com
+X-Envelope-To: matteorizzo@google.com
+X-Envelope-To: tgraf@suug.ch
+X-Envelope-To: herbert@gondor.apana.org.au
+X-Envelope-To: julien.voisin@dustri.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-hardening@vger.kernel.org
+Date: Fri, 24 May 2024 10:54:58 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Kees Cook <keescook@chromium.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, "GONG, Ruiqi" <gongruiqi@huaweicloud.com>, 
+	Xiu Jianfeng <xiujianfeng@huawei.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>, 
+	Thomas Graf <tgraf@suug.ch>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	julien.voisin@dustri.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] slab: Introduce dedicated bucket allocator
+Message-ID: <7nonr2cucww7j55kresncgt23pvgt3pmnfukqpnqblk3fmtfdl@ewhqe3ylioz2>
+References: <20240424213019.make.366-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240523155641.2805411-4-yazen.ghannam@amd.com>
+In-Reply-To: <20240424213019.make.366-kees@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, May 23, 2024 at 10:56:35AM -0500, Yazen Ghannam wrote:
-> MCP count is currently incremented for any call to machine_check_poll().
-> Therefore, the count includes calls from the timer, boot-time polling,
-> and interrupt handlers.
+On Wed, Apr 24, 2024 at 02:40:57PM -0700, Kees Cook wrote:
+> Hi,
 > 
-> Only increment the MCP count when called from the timer so as to avoid
-> double counting the interrupt handlers.
+> Series change history:
+> 
+>  v3:
+>   - clarify rationale and purpose in commit log
+>   - rebase to -next (CONFIG_CODE_TAGGING)
+>   - simplify calling styles and split out bucket plumbing more cleanly
+>   - consolidate kmem_buckets_*() family introduction patches
+>  v2: https://lore.kernel.org/lkml/20240305100933.it.923-kees@kernel.org/
+>  v1: https://lore.kernel.org/lkml/20240304184252.work.496-kees@kernel.org/
+> 
+> For the cover letter, I'm repeating commit log for patch 4 here, which has
+> additional clarifications and rationale since v2:
+> 
+>     Dedicated caches are available for fixed size allocations via
+>     kmem_cache_alloc(), but for dynamically sized allocations there is only
+>     the global kmalloc API's set of buckets available. This means it isn't
+>     possible to separate specific sets of dynamically sized allocations into
+>     a separate collection of caches.
+>     
+>     This leads to a use-after-free exploitation weakness in the Linux
+>     kernel since many heap memory spraying/grooming attacks depend on using
+>     userspace-controllable dynamically sized allocations to collide with
+>     fixed size allocations that end up in same cache.
 
-Well, but, every time the function is called, we did poll the banks.
-Sure, the count is part of /proc/interrupts but we did poll the banks in
-those other cases too. So I think showing an accurate poll number is
-actually representing the truth, no matter where it is shown...
+This is going to increase internal fragmentation in the slab allocator,
+so we're going to need better, more visible numbers on the amount of
+memory stranded thusly, so users can easily see the effect this has.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Please also document this effect and point users in the documentation
+where to check, so that we devs can get feedback on this.
 
