@@ -1,146 +1,177 @@
-Return-Path: <linux-kernel+bounces-189149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C288CEBD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:31:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660D78CEBD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C79841C20F34
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16BCB211BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F9382D91;
-	Fri, 24 May 2024 21:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3289C8595C;
+	Fri, 24 May 2024 21:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wNlifsgj"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gn5GQ9pc"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3D17494;
-	Fri, 24 May 2024 21:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDC87494;
+	Fri, 24 May 2024 21:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716586289; cv=none; b=IyIsPO45J0YgNla3JVMEN8rAlz2N1yU5YEdsDXugY8vse5pcOfSqMkWMcxUo53KLuJEF9/SXHJ0+my0MXny9CLTsicmBdxqIj2OQaSgpUGV5y12WpFHdp194f85oUeYbEW5LqO07V8OeM++Dcfsu4BzyS56R1UZ8+KRKwc0zZME=
+	t=1716586401; cv=none; b=CFxzwTRSQWQ3BVqrtxFMR/8YZE2pcImDO0YlGsDs836gwZssztLgojePLO70/LcyqjK0Kq8no2anmDz+OAUPcDFYhtKA4uaCp2zt8yVeYMVplzbptRSnzi1l4J1jPFurJUJkNbk2+lh5/RgAk5XX1b0tK4xyaBlAzSbLb5sbGv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716586289; c=relaxed/simple;
-	bh=iRsfZhHHk71N/q9aE51lLLyvA9UPU40D5vl1+FqnZ9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KnCbVv1qfs2h48cYdTEts+BN+Pb6Z/93k5WnULL4rtFdsp209DayHqpFk7JTV5gHa4dyfkqYLKylpZ3StdlCCGm4SWD0KHfRLw3CRosLZlHTcEX34dKKWi58gHzlv8x9lAje8cLWYkY+E+Zdz961UqZ9uu8n1KePKfh8GzfIYFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wNlifsgj; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44OLUXdN074423;
-	Fri, 24 May 2024 16:30:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716586233;
-	bh=D2pCSFcs7g2kozusYYwZ2vVwg6i86RchvcpGVG5lRMA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=wNlifsgj8VBfqBup3/kAVMgUQeXAI00abMy0LNki1nv1BurZ8nlJI7fPpd3rmu1yv
-	 miYMiGVATO4OgwapDHnGpVtfU8urBkAXgb5uhV3+TCraxd55QvQuKiuXkP0sqP6ubt
-	 K0aopZY4CFAP0P4ux+s2+ltl59zY4CKJRvWOfKA0=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44OLUWSp007969
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 24 May 2024 16:30:32 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
- May 2024 16:30:32 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 24 May 2024 16:30:32 -0500
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44OLUWcn076348;
-	Fri, 24 May 2024 16:30:32 -0500
-Message-ID: <57e4f7b1-2955-4dd5-b9d9-f3b1f27aab75@ti.com>
-Date: Fri, 24 May 2024 16:30:32 -0500
+	s=arc-20240116; t=1716586401; c=relaxed/simple;
+	bh=kS/RQ4cV15lrdM14LL44ca5FC0YdNuULpCqorPSUcD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRtIfidAS6RVFb/ugUw3OJXcazwU4JmupoIkKEys4oaarFFRkr+H9mSNqa007GYSO5l6/oXdSgTvPcxeiGq3wf29h1UAYuky4uIkzSnrZ/Pnutfx1TQ/OX+ys69WKDdJe9BecMPJBqCGmIkh1+IPyErWsaWo4XR4wU3Y0U2PDAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gn5GQ9pc; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iFnpsnIr3E7unjMeiYQVNgGcmGx9RfPTJUxPktbjnSc=; b=gn5GQ9pc+/AVFWvnYNQ4KYIm6j
+	hhfICy9CJx9/Jmzo+K2PY2GbQOGUs752SW+Z4W9w8uBtsjkZMF7S5p90pPNhxa1nIY7BH4/fAU9u4
+	R0l5dISBXYogfEebMkp+H9hIwqyH0Vt3Vn0+fSEn+bSDnfKUk1h0jIKmKx8r5257PCmSzh6MjmhNg
+	Yv1uAmlOKngfSs2vqacswt7H/pALxbDzbCyp7/1R0f0WpuwFwbD1Ze4O8rbv1nUHhPVvDCnK2FpGl
+	jstYHPWxC73R82W8iU2m5NKgvRhIBg3SFxN3auyp8uL4HRWCBksw5sviXDyyGNLRZMis+IhKLt3vq
+	QhnQmbJQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1sAcWr-005rmb-1V;
+	Fri, 24 May 2024 21:32:45 +0000
+Date: Fri, 24 May 2024 22:32:45 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: brauner@kernel.org, a.hindborg@samsung.com, alex.gaynor@gmail.com,
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com, cmllamas@google.com, dan.j.williams@intel.com,
+	dxu@dxuuu.xyz, gary@garyguo.net, gregkh@linuxfoundation.org,
+	joel@joelfernandes.org, keescook@chromium.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	maco@android.com, ojeda@kernel.org, peterz@infradead.org,
+	rust-for-linux@vger.kernel.org, surenb@google.com,
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu,
+	wedsonaf@gmail.com, willy@infradead.org, yakoyoku@gmail.com
+Subject: Re: [PATCH v6 3/8] rust: file: add Rust abstraction for `struct file`
+Message-ID: <20240524213245.GT2118490@ZenIV>
+References: <20240524-anhieb-bundesweit-e1b0227fd3ed@brauner>
+ <20240524191714.2950286-1-aliceryhl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] dt-bindings: counter: Add new ti,am62-eqep
- compatible
-To: Conor Dooley <conor@kernel.org>
-CC: Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        William Breathitt Gray <william.gray@linaro.org>,
-        David Lechner
-	<david@lechnology.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>
-References: <20240523231516.545085-1-jm@ti.com>
- <20240523231516.545085-3-jm@ti.com>
- <20240524-wrecker-busybody-2c082b87ddef@spud>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <20240524-wrecker-busybody-2c082b87ddef@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524191714.2950286-1-aliceryhl@google.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 5/24/24 1:38 PM, Conor Dooley wrote:
-> On Thu, May 23, 2024 at 06:15:10PM -0500, Judith Mendez wrote:
->> Add new compatible ti,am62-eqep for TI K3 devices. If a device
->> uses this compatible, require power-domains property.
->>
->> Since there is only one functional and interface clock for eqep,
->> clock-names is not really required. The clock-name also changed
->> for TI K3 SoCs so make clock-names optional for the new compatible
->> since there is only one clock that is routed to the IP.
+On Fri, May 24, 2024 at 07:17:13PM +0000, Alice Ryhl wrote:
+
+> > You obviously are aware of this but I'm just spelling it out. Iirc,
+> > there will practically only ever be one light refcount per file.
+> >
+> > For a light refcount to be used we know that the file descriptor table
+> > isn't shared with any other task. So there are no threads that could
+> > concurrently access the file descriptor table. We also know that the
+> > file descriptor table cannot become shared while we're in system call
+> > context because the caller can't create new threads and they can't
+> > unshare the file descriptor table.
+> >
+> > So there's only one fdget() caller (Yes, they could call fdget()
+> > multiple times and then have to do fdput() multiple times but that's a
+> > level of weirdness that we don't need to worry about.).
 > 
-> Really the clock should be named after the function it has in the IP
-> block - it looks like "sysoutclk" is more likely the name of the clock
-> routed to the IP rather than the role it has?
+> Hmm. Is it not the case that different processes with different file
+> descriptor tables could reference the same underlying `struct file` and
+> both use light refcounts to do so, as long as each fd table is not
+> shared? So there could be multiple light refcounts to the same `struct
+> file` at the same time on different threads.
 
-It is the name of the clock, though id like to keep sysclkout for
-backwards compatibility, even though the name is confusing.
-~ Judith
+Relevant rules:
+
+	* Each file pointer in any descriptor table contributes to refcount
+of file.
+
+	* All assignments to task->files are done by the task itself or,
+during task creation, by its parent The latter happens before the task
+runs for the first time.  The former is done with task_lock(current)
+held.
+
+	* current->files is always stable.  The object it points to
+is guaranteed to stay alive at least until you explicitly change
+current->files.
+	* task->files is stable while you are holding task_lock(task).
+The object it points to is guaranteed to stay alive until you release
+task_lock(task).
+	* task->files MAY be fetched (racily) without either of the
+above, but it should not be dereferenced - the memory may be freed
+and reused right after you've fetched the pointer.
+
+	* descriptor tables are refcounted by table->count.
+	* descriptor table is created with ->count equal to 1 and
+destroyed when its ->count reaches 0.
+	* each task with task->files == table contributes to table->count.
+	* before the task dies, its ->files becomes NULL (see exit_files()).
+	* when task is born (see copy_process() and copy_files())) the parent
+is responsible for setting the value of task->files and making sure that
+refcounts are correct; that's the only case where one is allowed to acquire
+an extra reference to existing table (handling of clone(2) with COPY_FILES).
+
+	* the only descriptor table one may modify is that pointed to
+by current->files.  Any access to other threads' descriptor tables is
+read-only.
+
+	* struct fd is fundamentally thread-local.  It should never be
+passed around, put into shared data structures, etc.
+
+	* if you have done fdget(N), the matching fdput() MUST be done
+before the caller modifies the Nth slot of its descriptor table,
+spawns children that would share the descriptor table.
+
+	* fdget() MAY borrow a reference from caller's descriptor table.
+That can be done if current->files->count is equal to 1.
+In that case we can be certain that the file reference we fetched from
+our descriptor table will remain unchanged (and thus contributing to refcount
+of file) until fdput().  Indeed,
+	+ at the time of fdget() no other thread has task->files pointing
+to our table (otherwise ->count would be greater than 1).
+	+ our thread will remain the sole owner of descriptor table at
+least until fdput().  Indeed, the first additional thread with task->files
+pointing to our table would have to have been spawned by us and we are
+forbidden to do that (rules for fdget() use)
+	+ no other thread could modify our descriptor table (they would
+have to share it first).
+	+ we are allowed to modify our table, but we are forbidden to touch
+the slot we'd copied from (rules for fdget() use).
+
+In other words, if current->files->count is equal to 1 at fdget() time
+we can skip incrementing refcount.  Matching fdput() would need to
+skip decrement, of course.  Note that we must record that (borrowed
+vs. cloned) in struct fd - the condition cannot be rechecked at fdput()
+time, since the table that had been shared at fdget() time might no longer
+be shared by the time of fdput().
+
+> And this does *not* apply to `fdget_pos`, which checks the refcount of
+> the `struct file` instead of the refcount of the fd table.
+
+False.  fdget_pos() is identical to fdget() as far as file refcount
+handling goes.  The part that is different is that grabbing ->f_pos_lock
+is sensitive to file refcount in some cases.  This is orthogonal to
+"does this struct fd contribute to file refcount".
 
 
->>
->> While we are here, add an example using ti,am62-eqep compatible.
->>
->> Signed-off-by: Judith Mendez <jm@ti.com>
->> ---
->> Changes since v1:
->> - Fix eqep binding for new compatible, require
->>   power-domains for new compatible
->> ---
->>   .../devicetree/bindings/counter/ti-eqep.yaml  | 53 +++++++++++++++++--
->>   1 file changed, 48 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/counter/ti-eqep.yaml b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
->> index 85f1ff83afe72..c4bb0231f166a 100644
->> --- a/Documentation/devicetree/bindings/counter/ti-eqep.yaml
->> +++ b/Documentation/devicetree/bindings/counter/ti-eqep.yaml
->> @@ -11,7 +11,9 @@ maintainers:
->>   
->>   properties:
->>     compatible:
->> -    const: ti,am3352-eqep
->> +    enum:
->> +      - ti,am3352-eqep
->> +      - ti,am62-eqep
-> 
-> I'm going to ack this even though the driver makes it seem like the
-> devices are compatible (there's no match data etc) given the addition of
-> the power domain and changes in required properties.
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> 
-> Cheers,
-> Conor.
-> 
+Again, "light" references are tied to thread; they can only be created
+if we are guaranteed that descriptor table's slot they came from will
+remain unchanged for as long as the reference is used.
 
+And yes, there may be several light references to the same file - both
+in different processes that do not share descriptor table *and* in the
+same thread, if e.g. sendfile(in_fd, out_fd, ...) is called with
+in_fd == out_fd.
 
