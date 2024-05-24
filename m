@@ -1,115 +1,110 @@
-Return-Path: <linux-kernel+bounces-188648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A31C8CE4E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:32:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1F18CE4E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A605D1F2154D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162A528210F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26148625A;
-	Fri, 24 May 2024 11:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBF586251;
+	Fri, 24 May 2024 11:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="GyyKuxGZ"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9uHcxGt"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2BC9475;
-	Fri, 24 May 2024 11:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B6A9475;
+	Fri, 24 May 2024 11:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716550325; cv=none; b=hX1g4v3pzPEquiwCU6ZOgYeNS2q0Dl/YLkGLQQQjAPWCMBoLKpjz3w7vVSmE7L9BCuZ3VI/SKjjldQv4PENxGCyNU18WHbeqKV4cjLBUi60rOrnu0JlRKs0o9xCn1mIKuKx7SrKzGOKbMGB1Hw0r1xOuR9K7LeelhxbqgIMr9Jo=
+	t=1716550363; cv=none; b=A7uN/5NUoyXhV7XG9wsHfryr07En0WZwxLMcjpsk+5vZHJ8vTprAXCgv+5d1FF2xbIpUXyiGjXl05TKFEk7gV4tggS+WCdua3kl8pJsW/cWyFpKwpM3rNYdVx1j7/95YufI7A2r/YmOGZVcTFj+ZM8d2cA5oMJDqQwAM+x8bW5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716550325; c=relaxed/simple;
-	bh=IlUQDrvlikCtPQHZL17bTPh6Z9sOobbSRi8dQxajFWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MuqZKAfAgm5ZVMrLlJ7Lck8EXYBMCvdm8441rAcuFsPsN3Uz4wbHadyZ9br2+QCpxS2uSYtDkOtAEPzPtyrOaxiMWmNIkfiX8F9V+dkAjYycqamNfoRJCWIK2wkzPTXkB7Ey7PAu8ASL7X4TqdsPvckh+xphRVDa+39dOrusZC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=GyyKuxGZ; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id CACB220232;
-	Fri, 24 May 2024 13:31:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1716550318;
-	bh=82c4Czu1Ofgrwin76Gz+pckw49eOGhAz3rJrK16Yv+Y=;
-	h=Received:From:To:Subject;
-	b=GyyKuxGZ2tIOliFP18R2TXgCqDmRgWASUfwA840XG2LKymLhmQZjiErUKFjbJjaEg
-	 hvCFXNP0SSRooL8Cf7ZaZYkcNa2HhMqz26nIyVzSTR79n+YY98NoxvEKa/lOJIg2Vk
-	 vhQxShGKkdahRQRf47OAhKc6xD3cZC3YIFBPvDJQ6XcQTMtTeIBvaaShbgxgXLtI08
-	 Eo1/vXJ3sAP+6SFsSj/2hS/JyfcagPBBWxzN2v4hdPtEFejG1iVaveWJOUpbMv/RxG
-	 iU5WXYtAzhNjuLb5+ki5g/Ts6hZdUOT54RsmBps/noAc17n/j17wjKoGKOd4qIX0RE
-	 i3YyMYFoU6+SA==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 626617F963; Fri, 24 May 2024 13:31:58 +0200 (CEST)
-Date: Fri, 24 May 2024 13:31:58 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH v1 2/2] usb: typec: mux: gpio-sbu: Make enable gpio
- optional
-Message-ID: <ZlB6ruZ8j2rVsIio@gaggiata.pivistrello.it>
-References: <20240524071034.4441-1-francesco@dolcini.it>
- <20240524071034.4441-3-francesco@dolcini.it>
- <5of64nmgpotr7fu66urgko5gfvr4ffhmff4dgkagkdvwh2dywk@etlw6rsmhki6>
+	s=arc-20240116; t=1716550363; c=relaxed/simple;
+	bh=+FdDMqfYCOb2sKqwmEoU3h3Dyjm499FpbBKjwJhpYlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sm3RC6c8ex6sye1oJQ3mR0DB68Hpmyc2xlDO40rroiTFvc/vVlj2dxjl/95GaN+4TYLd650g9ZCw1IsssEtgBpBa4qwVwtWrME6F/1AoZ3opcGAswHNVzE6W3jRDpoJ2ZtFbFt7pIxjkZ7TNou9PTPLx1ndemKrUO/6ODu9hq58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9uHcxGt; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4d7e3dc94so3691419276.1;
+        Fri, 24 May 2024 04:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716550361; x=1717155161; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+FdDMqfYCOb2sKqwmEoU3h3Dyjm499FpbBKjwJhpYlE=;
+        b=U9uHcxGtMgfyGEdsMk9bVoAXftS6K4fgRv0otMMVRQY6OQ7GmmvSBePryykgJLoeTV
+         QG1Sch4kWHLEOs8XtEfH50DUotQ5PqNyeA2XsiuoDcwsun0bxT5TDOaAd8zpVxpsPfA1
+         9vNcygkGgFc9f0eiEWyIUmA8s/sNy0N5YRVDMhoPbqyim8Z63ezt4/9/gR6+1xRthkp4
+         5UpCyhZtNbuW/F+/SJ3d5rhEIke4HSuQSgHHzOvBk6n9OTjkhJh0K3NeD+ciCHPMLrot
+         +YFCB4x2AZmEERtyOBYWNuZCna7f0Vgbc9oI3DWh7ctmRygsxmPDHUXKgRgL3jUyYqtE
+         oFLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716550361; x=1717155161;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+FdDMqfYCOb2sKqwmEoU3h3Dyjm499FpbBKjwJhpYlE=;
+        b=FLpaxYGF1ejVCREJbaywtpgHtDPmt0OAlKNet5d1Fhvy0JcGeQ3hNQX6Wc5yUiMTxx
+         wnHxXgLNInMHNN6DbAWnCX+CsDQ3HoQtIG/IVLkrv2PeAvTexXc3BJBr29+Knt9I2QHo
+         E5FRTa1p5gb53ecVuE86zfJQ0uFGYjo0ShuXZ2AFsVajNzjfAI76DuilFct9sSHsBoN3
+         6n4Qtf6wpZQD0qRa/li5XLDt0J3KQ4UcwHXWF7h8K188XkRJGWRVRHNP+pCncFYjsJ0q
+         nrHvN117gha92Nu66C02eDFQ8POVgUxq5kdVGn0mHrFRCFKT5PL840OLAvN+C78OIMEM
+         1ofQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUroWUuJQfpom0lgL7dPnxTIH5pfmPKngMOdyfisq6Sl+h2gu7Fr5TVG6U+xcb+pFjZYKO9TWmz9hahyUMI4tx1s4Wt0t6eALUJ099hoZTfBHdZ0KX0/fmathT2Iz4qI0LkKaPfqeevZ7eQoh7WMhDwtgXSyUAIbqS1GY7RP+mo0Rhntw==
+X-Gm-Message-State: AOJu0Yxxo2MlfQO4MGSU/QK+PVaSI+vrxtQz+n41R5F/uHbtHI4aSLlr
+	W7Ui1/DD5dbJWtmyl5+pGPj6a+JNKUjT1MBea1OVccHm1U+NXyX6g5UHsdH4WCmpp/Gsm+j9q0/
+	9b0shDM93NDOFAdiIe559IMLlFllQrGdmbm3j7Q==
+X-Google-Smtp-Source: AGHT+IEUNT8qpSYVeFnLdK93OupqdGs3ueGj/G+IJ+fEMIu7n+LnUqnYTr2e4NhRpeaNvCqdhdjlRj2DJtbwV9uDHPI=
+X-Received: by 2002:a25:824d:0:b0:de5:5255:ceb5 with SMTP id
+ 3f1490d57ef6-df77218a263mr1853899276.3.1716550360799; Fri, 24 May 2024
+ 04:32:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5of64nmgpotr7fu66urgko5gfvr4ffhmff4dgkagkdvwh2dywk@etlw6rsmhki6>
+References: <CAG40kxGMu-TSchNezkcC_A97hzPnWU3KxeL-X-hJfPhjr_COyQ@mail.gmail.com>
+ <Zk6yK3U9tgxOxcBb@titan> <CAG40kxFxE_Oj+9aCzGku0a3KFHpuW8ai=gEkV9M8==5gwmjdEA@mail.gmail.com>
+ <Zk7Z-MfdF-YKWeJ6@titan>
+In-Reply-To: <Zk7Z-MfdF-YKWeJ6@titan>
+From: =?UTF-8?B?44GN44GP44Gh44KD44KT44GV44KT?= <kikuchan98@gmail.com>
+Date: Fri, 24 May 2024 20:32:29 +0900
+Message-ID: <CAG40kxG0yM0+ge3=zX4S_MQevuNQ5oWAvtmTPXAbHHk2nmSYew@mail.gmail.com>
+Subject: Re: [PATCH v9 0/3] Add support for Allwinner PWM on D1/T113s/R329 SoCs
+To: John Watts <contact@jookia.org>
+Cc: privatesub2@gmail.com, aou@eecs.berkeley.edu, bigunclemax@gmail.com, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, fusibrandon13@gmail.com, 
+	jernej.skrabec@gmail.com, krzk+dt@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, mkl@pengutronix.de, p.zabel@pengutronix.de, 
+	palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, 
+	samuel@sholland.org, ukleinek@kernel.org, wens@csie.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Dmitry,
-thanks for the review.
+Hi John,
 
-On Fri, May 24, 2024 at 12:56:15PM +0300, Dmitry Baryshkov wrote:
-> On Fri, May 24, 2024 at 09:10:34AM +0200, Francesco Dolcini wrote:
-> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > 
-> > The enable gpio is not required when the SBU mux is used only for
-> > orientation, make it optional.
-> > 
-> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > ---
-> >  drivers/usb/typec/mux/gpio-sbu-mux.c | 11 ++++++++---
-> >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
-> > index 374168482d36..cf44259980a1 100644
-> > --- a/drivers/usb/typec/mux/gpio-sbu-mux.c
-> > +++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
-..
-> > @@ -66,6 +66,9 @@ static int gpio_sbu_mux_set(struct typec_mux_dev *mux,
-> >  {
-> >  	struct gpio_sbu_mux *sbu_mux = typec_mux_get_drvdata(mux);
-> >  
-> > +	if (!sbu_mux->enable_gpio)
-> > +		return -EOPNOTSUPP;
-> 
-> Can we skip registering the mux if there is no enable_gpio? This can
-> save users from the unexpected errors during runtime.
+> Does Linux guarantee a flicker-free experience with setting up PWM
+> channels, or that it doesn't affect other channels?
+> How do other drivers handle this situation?
 
-Yes, I considered this option.
+I've noticed that drivers/pwm/pwm-fsl-ftm.c and
+drivers/pwm/pwm-microchip-core.c use a similar approach for shared
+resources between PWM channels.
+They simply fail if the settings are not applicable to the hardware,
+much like this driver does. However, I have yet to find a driver that
+aggressively changes another channel that is already running.
 
-The rationale for the current implementation is that if the device tree is
-correct (no mode-switch property, when enable-gpios is not present), nobody
-will call gpio_sbu_mux_set() so no runtime error is possible. If the
-configuration in the DT is not correct you get this runtime error.
+Maybe you're right; Linux might not guarantee anything about this.
+I think all we can do is deliver the best experience to users within
+such limitations.
 
-With your proposal in case the DT configuration is not correct there will be no
-errors from the kernel, but the functionality will not work.
-
-Francesco
-
+Best regards,
+kikuchan.
 
