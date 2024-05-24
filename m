@@ -1,104 +1,88 @@
-Return-Path: <linux-kernel+bounces-188418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276D98CE1BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:49:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C027C8CE1C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64B628244C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:49:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1BD51C20E66
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82F11292DE;
-	Fri, 24 May 2024 07:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7C6129A8E;
+	Fri, 24 May 2024 07:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xhUi4/3G"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="V29NG5FD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738251292C3;
-	Fri, 24 May 2024 07:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20894129A79
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716536947; cv=none; b=bkL7A3Q9zT3HTQcl3jCIv8PO+z5mgtRAUIJonfHzTmECQlSEwDwsp1zpV1zSsqpGAz4VjzLvgW+8uCLix2HF5L6gq834e5OChVp6cAiVzuLxTGDQGqpepweGlR9xIGnPJuyRfXhf5CU9iZDxFi5eroGexPJTBUC7YexP442GUi8=
+	t=1716536950; cv=none; b=R3BD1mXCSawW30gwzcdBik7/U3JS8rkP6VNRGqjHl876cwlRmwP3sLxvlzXUFA270sO+E5f9Z9LtR3xIL1T2FiNBfWutKjG5dB93veLhR9BuUIlOTMTAXPABjUSGVoqq6ZCHcc+ranoa0L0CsPnWnMbkDNwl9Bm+jTBsAqIFD+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716536947; c=relaxed/simple;
-	bh=FbAxsDuQqprqbZ3o1qy7Esisf/ahAAzjSyXHO2NFNc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ehN6u7gW1D4SaLdSnDIG787c/Jm06oH9wFhM/jurHVy7cH1o7VdErz01HCwH8h1o+0YDQu5lQLYrrbUkyZQBSMrm5XnGf38YimOIlTipmnhs1Y0yI2Ml3TB0f+mh4pfXwuCIa27jcwp04CSX0PV4Oer5KoS/TNxrPJfurLjDoZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xhUi4/3G; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44O7mpgB110057;
-	Fri, 24 May 2024 02:48:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716536931;
-	bh=LbV912eUItDCFeujcZ+K3k698C6fxl6NNH6ifgGmUWE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=xhUi4/3Guvgv7deYfTV+ieGc6o4LiLwhr0YRbqoLRjcUYQHMPqp9PB1/6A32Y6a+Y
-	 v4lT05hmp/OlEb99aon6if5gPgpZcX65R2qN+Zwn4v3f7kUPAy7zcUEC929nLSsjOS
-	 f0whMXr20j64LTMVCiQKC8KJunrMZgC6PcKEVSQU=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44O7mpos042818
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 24 May 2024 02:48:51 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
- May 2024 02:48:51 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 24 May 2024 02:48:51 -0500
-Received: from [10.250.145.232] ([10.250.145.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44O7mmX2125835;
-	Fri, 24 May 2024 02:48:49 -0500
-Message-ID: <dd8f294b-425c-4e4a-8eaf-026138461941@ti.com>
-Date: Fri, 24 May 2024 10:48:47 +0300
+	s=arc-20240116; t=1716536950; c=relaxed/simple;
+	bh=utlEHUqwLb0a9EkIt9qkYExkZRdM5VZro1Uw5S6l5Rk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OdVh2g3ZPbdpiDMc2lMSLdMY3/LA0qSDzZF4hMPhgh4KR7sNfRhMKoGYzpMPXdPqT6gRaO9nZfVE7Oog1J83EfqfcXE3JtoL/KRR4CZ7ol88H5NJKAkCSUzFa8aTcZsuFwm/MOcmrO2oENvXq47W2kgmO9jgSD8FkgHAxaqW4mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=V29NG5FD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D49AC32782;
+	Fri, 24 May 2024 07:49:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716536949;
+	bh=utlEHUqwLb0a9EkIt9qkYExkZRdM5VZro1Uw5S6l5Rk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=V29NG5FD+m/SpbxXG1zyZg8HiEe75McinZuFskrQFIvssmjCd6vc59Qv63vd6h9m2
+	 ItY6j4V4KU+AsD+Zbgfy26qOBZRnw1YTczzWUaAyeNx1jQOo74Ndc2ijCppSFp2+uz
+	 XjI5ijl7NLlcSTcqsB06g4bM4ltK0EqlggpyzqRA=
+Date: Fri, 24 May 2024 09:49:06 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fix for 6.10-rc1
+Message-ID: <ZlBGcsni1Clme5hU@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/17] wifi: cc33xx: Add driver for new TI CC33xx wireless
- device family
-To: Kalle Valo <kvalo@kernel.org>
-CC: Johannes Berg <johannes.berg@intel.com>, Breno Leitao <leitao@debian.org>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sabeeh Khan
-	<sabeeh-khan@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <87msohatii.fsf@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <87msohatii.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
 
-On 5/23/2024 10:15 AM, Kalle Valo wrote:
-> The community (myself included) has been frustrated that TI has dropped
-> the ball on their existing wireless drivers:
->
-> https://docs.kernel.org/process/maintainers.html#ti-wilink-wireless-drivers
->
-> This kind of behaviour is not exactly building trust. So how is this
-> driver going to be any different?
+  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
 
-I understand the frustration. As the engineer leading the development of 
-the CC33xx driver I can say that CC3300 and CC3301 are the first in a 
-family whose roadmap goes beyond 2030. I can also say that Linux driver 
-support is foundational for this line of products and TI is committed to 
-supporting these devices in the linux-wireless community for at least 10 
-years. Unlike previous drivers, development and maintenance of CC33xx 
-will be done by TI engineers and not a 3rd party. Is this acceptable?
+are available in the Git repository at:
 
-Michael.
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.10-rc1-fix
 
+for you to fetch changes up to 008ab3c53bc4f0b2f20013c8f6c204a3203d0b8b:
+
+  speakup: Fix sizeof() vs ARRAY_SIZE() bug (2024-05-08 19:44:21 +0100)
+
+----------------------------------------------------------------
+Char/Misc bugfix for 6.10-rc1
+
+Here is one remaining bugfix for 6.10-rc1 that missed the 6.9-final
+merge window, and has been sitting in my tree and linux-next for quite a
+while now, but wasn't sent to you (my fault, travels...)
+
+It is a bugfix to resolve an error in the speakup code that could
+overflow a buffer.
+
+It has been in linux-next for a while with no reported problems.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      speakup: Fix sizeof() vs ARRAY_SIZE() bug
+
+ drivers/accessibility/speakup/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
