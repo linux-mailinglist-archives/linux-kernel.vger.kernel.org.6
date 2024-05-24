@@ -1,162 +1,111 @@
-Return-Path: <linux-kernel+bounces-188421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010558CE1C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:52:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48EA8CE1CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5292820D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D629A1C20A60
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A0884A53;
-	Fri, 24 May 2024 07:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W5WqQ140"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E593C839FE;
+	Fri, 24 May 2024 07:52:47 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F50B273FD;
-	Fri, 24 May 2024 07:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC6538FA3
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716537129; cv=none; b=YXl1fd/mABPEEFe7HW+bEoAgdC9LdlihOTSA+Tl3LNXdbohUNYZRjfWTDmSsai+ZdzP/Rov6DH8sKtWSgSVPBYeBZ4tbjcZxfOoIS/3hRufxTmQPKEPgEy1J20MXa1YgJL9zJythYaGs2TaXwpEy3Pgg8FmYSfXltVOFfrnoLnQ=
+	t=1716537167; cv=none; b=LSbo+7BFvXb16dmUrm0vE5wh3ka7+DGzO9SVge3b4Np4AKIyYpCwky2cWbzuVHOTwXBe/9aAkDwh7X53Mc2P/jCkHSW4Tu0JvexxxnayTn+YWw5ibdWJM4qRE+gdEdpO43UmgGHHpUuehj1MzfafoloaW6aYLnCO2gOxqjS7BgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716537129; c=relaxed/simple;
-	bh=MjBK2+dYLp1CdY6g8R/OhSJwEQPIK/CNCRXCuJFMwzE=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Wdw2sXdt2cG5IY4Cx3g0DMUNH+EGOLxkNPhYSuf+PRQdnkag7ZudVnJzgzOGCY6epLbpelR6wZYKBMZ3WdzxzJOuImuALOrBxpIRXoqmWZK15NiDt57siK7qWgyj9TJpCkX8Xs2ZGFJJ32TKXQtx4agKrRTqwnmDuQsN+mKtozk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W5WqQ140; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4202c1d19d5so59553855e9.2;
-        Fri, 24 May 2024 00:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716537127; x=1717141927; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xpOH0pit2ctvVAA8aW14MWUGNwzhLD66U+MeS8Uxcgo=;
-        b=W5WqQ1402OjaOTTBnQxXuTUStnJvMh7CCmWmC2vW1Sv5z3NlVJG8sja3eA9047kDaI
-         kX8p8olgs3ULf/BdyxAOvcmYOYtlpvbq+MgXurwNb8qhLUwcQfnWNM8Ro1JJq1vf/BiQ
-         h4gdsvrcdKJR99twNgAogGBXPgMh9b6p8Dv2pD7jr1EegtxXSfBuczW8p8Wwxl9KrsMZ
-         u2lDVKnNHDdXBWL9CuAitmXtudUYgmXcC43423O+8ZGaJxSnze8UvNrycAlbJbFn14o8
-         yArS1kiePLiy3GsX2OvHjozCYQmtr4hPmugBG7Nn8uH1tIjmtKiPNq864GoZedSfGe1s
-         Y1mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716537127; x=1717141927;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xpOH0pit2ctvVAA8aW14MWUGNwzhLD66U+MeS8Uxcgo=;
-        b=cEAUMtz5/EWJCGAh2nKtdJVxtyrKXnri0JUyWYc4pyLJGE6k0ROUWN3ZXY3IN+SHnp
-         txU3Vk1JjjdBXZSNm93NA3TJtRLngxLxckEUWa3IiViK32Ha8DPqF2TtwU3y3ZpXn3zd
-         ZG7pU8cV5ErKcjjXhSn/NoSi2zqO0kl4a3u598JDBmrZK29w9hBtECQikZif745nlgLH
-         l8c0l8slJ7NI5xUpnIjFBTrKmA5ghjnf/sbdQ4B8K4BYkqXHIpNWULgAWWk88bs/9EVo
-         KTaz0Z6kITeVf3ipu6oZ0lgP01J01Gwwl9HdBe6QxOjwUaqM1N2jZjsWG6fJR28CaUxs
-         UpZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJtXvV2yzvHmxger/bS3vGpatMATlkpqcwsJAXMnb+oiLRkzFD7J/X81MiFjYKgmgrOhQxOejmSyk/FU2Khh3bvGH0xKPCNNSEWXlOkZMStRqzhj3wjMyIIP35LBg2HWd8htPQRpDUFifsyZOvZi/iG1E0lc0v/F6zEkCZCNkSNeEgr8XDVAesX4d970dZd7ebWcIfbkStspiJPuDc4p0rHgYF4154z0k0O/3RxF5u0Bjat2QQWBC+OpS9cpPjZ9WfZcSsD5aUJQ8RYVnsLjKBZYTST0aT
-X-Gm-Message-State: AOJu0Yy4IU9+eI2OIegBXMl0D8M/5SeCNoKNz7mf3Nho3WOoWW2IGzDd
-	Zh3UN7k4EEcEGVokHh3DLYSDZm+EIrmijx4D6WEdrUIuufLOf67K
-X-Google-Smtp-Source: AGHT+IHycvDZr6CKJKqSZlsIR32lGvACNpCEm+RbcTm7UzKj3bS3g4IDhMzUmN0QDCQrfDu0crtpLA==
-X-Received: by 2002:a7b:cd94:0:b0:41a:f76f:3362 with SMTP id 5b1f17b1804b1-421089d3927mr10273385e9.21.1716537126410;
-        Fri, 24 May 2024 00:52:06 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad7ecsm45907975e9.36.2024.05.24.00.52.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 00:52:05 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=814b05467eb5fb3d1194dffe0bcc9ad51fe1c1889dcbffafdae7b5a67172;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	s=arc-20240116; t=1716537167; c=relaxed/simple;
+	bh=0WCNFDXp1xMSbC4bwKH3Ol6IPf4WEDGeRYHim8+28wU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=gi0O3Z4uY/ejDlSoi3flmKLk0wcei7CihF48IR5T0obtgBd4dq1JEXJGgyi/kzQ0F3L5/CaX4XSWyfwk6x/ZInVfrZq5jmcz1JOfHSLDr7vQGMY3aM4NYKAqEz2k4vB4PQXiKN47qWy9zk0cDL/QO+xFdXCjYZLRUFyC6fIc2+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-199-p_PFq1w1MwCWhi6R7Pg5-g-1; Fri, 24 May 2024 08:52:37 +0100
+X-MC-Unique: p_PFq1w1MwCWhi6R7Pg5-g-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 24 May
+ 2024 08:52:05 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 24 May 2024 08:52:05 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: =?utf-8?B?J0FuZHLDqSBBbG1laWRhJw==?= <andrealmeid@igalia.com>, "Mathieu
+ Desnoyers" <mathieu.desnoyers@efficios.com>, Peter Zijlstra
+	<peterz@infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Thomas
+ Gleixner" <tglx@linutronix.de>, "Paul E . McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, "H . Peter Anvin" <hpa@zytor.com>, "Paul
+ Turner" <pjt@google.com>, "linux-api@vger.kernel.org"
+	<linux-api@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, "Florian
+ Weimer" <fw@deneb.enyo.de>, "carlos@redhat.com" <carlos@redhat.com>, "Peter
+ Oskolkov" <posk@posk.io>, Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Chris Kennelly <ckennelly@google.com>, Ingo Molnar <mingo@redhat.com>,
+	"Darren Hart" <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+	"libc-alpha@sourceware.org" <libc-alpha@sourceware.org>, Steven Rostedt
+	<rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Noah Goldstein
+	<goldstein.w.n@gmail.com>, Daniel Colascione <dancol@google.com>,
+	"longman@redhat.com" <longman@redhat.com>, "kernel-dev@igalia.com"
+	<kernel-dev@igalia.com>
+Subject: RE: [PATCH v2 1/1] futex: Add FUTEX_SPIN operation
+Thread-Topic: [PATCH v2 1/1] futex: Add FUTEX_SPIN operation
+Thread-Index: AQHarUzWukUXPS/11kKDb3WyV7rGCLGmAfcw
+Date: Fri, 24 May 2024 07:52:05 +0000
+Message-ID: <16a6a6f28cc547b7a0a27ae6eebcca43@AcuMS.aculab.com>
+References: <20240523200704.281514-1-andrealmeid@igalia.com>
+ <20240523200704.281514-2-andrealmeid@igalia.com>
+In-Reply-To: <20240523200704.281514-2-andrealmeid@igalia.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Fri, 24 May 2024 09:52:04 +0200
-Message-Id: <D1HPMKUW9LW5.2UGOGXXTNBB52@gmail.com>
-Cc: <jonathanh@nvidia.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <corbet@lwn.net>, <andi.shyti@kernel.org>,
- <wsa+renesas@sang-engineering.com>, <ulf.hansson@linaro.org>,
- <adrian.hunter@intel.com>, <digetx@gmail.com>, <ldewangan@nvidia.com>,
- <mkumard@nvidia.com>
-Subject: Re: [RFC PATCH 00/11] Introduce Tegra register config settings
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Krishna Yarlagadda"
- <kyarlagadda@nvidia.com>, <linux-tegra@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
- <71c52a0d-b788-4bbd-b409-6e62e6aff222@kernel.org>
-In-Reply-To: <71c52a0d-b788-4bbd-b409-6e62e6aff222@kernel.org>
-
---814b05467eb5fb3d1194dffe0bcc9ad51fe1c1889dcbffafdae7b5a67172
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Tue May 7, 2024 at 8:38 AM CEST, Krzysztof Kozlowski wrote:
-> On 07/05/2024 00:51, Krishna Yarlagadda wrote:
-> > =20
-> >  Patch 01: Documentation about the device tree binding for common confi=
-g framework.
-> >  Patch 02: Common parser of the device tree config setting node for Teg=
-ra SoC.
-> >  Patch 03: Device tree binding documentation for config setting.
-> >  Patch 04: Device tree binding documentation for the I2C config setting=
-.
-> >  Patch 05: Avoid config settings child node to be treated as I2C device=
-.
-> >  Patch 06: Move clock initialization code into new methods
-> >  Patch 07: Using config settings in Tegra I2C driver for interface timi=
-ng registers.
-> >  Patch 08: Add Tegra234 I2C config settings in DT.
-> >  Patch 09: Device tree binding documentation for the SDHCI config setti=
-ng.
-> >  Patch 10: Using config settings in Tegra SDHCI driver for tuning itera=
-tion.
-> >  Patch 11: Add Tegra234 SDHCI config settings in DT.
-> >=20
-> > Known Issues:
-> >  - DTC warning for config 'missing or empty reg property for I2C nodes'
->
-> Which should stop you from sending buggy code, till you fix it.
+RnJvbTogQW5kcsOpIEFsbWVpZGENCj4gU2VudDogMjMgTWF5IDIwMjQgMjE6MDcNCj4gDQo+IEFk
+ZCBhIG5ldyBtb2RlIGZvciBmdXRleCB3YWl0LCB0aGUgZnV0ZXggc3Bpbi4NCj4gDQo+IEdpdmVu
+IHRoZSBGVVRFWDJfU1BJTiBmbGFnLCBwYXJzZSB0aGUgZnV0ZXggdmFsdWUgYXMgdGhlIFRJRCBv
+ZiB0aGUgbG9jaw0KPiBvd25lci4gVGhlbiwgYmVmb3JlIGdvaW5nIHRvIHRoZSBub3JtYWwgd2Fp
+dCBwYXRoLCBzcGlucyB3aGlsZSB0aGUgbG9jaw0KPiBvd25lciBpcyBydW5uaW5nIGluIGEgZGlm
+ZmVyZW50IENQVSwgdG8gYXZvaWQgdGhlIHdob2xlIGNvbnRleHQgc3dpdGNoDQo+IG9wZXJhdGlv
+biBhbmQgdG8gcXVpY2tseSByZXR1cm4gdG8gdXNlcnNwYWNlLiBJZiB0aGUgbG9jayBvd25lciBp
+cyBub3QNCj4gcnVubmluZywganVzdCBzbGVlcCBhcyB0aGUgbm9ybWFsIGZ1dGV4IHdhaXQgcGF0
+aC4NCj4gDQo+IFRoZSB1c2VyIHZhbHVlIGlzIG1hc2tlZCB3aXRoIEZVVEVYX1RJRF9NQVNLLCB0
+byBhbGxvdyBzb21lIGJpdHMgZm9yDQo+IGZ1dHVyZSB1c2UuDQo+IA0KPiBUaGUgY2hlY2sgZm9y
+IHRoZSBvd25lciB0byBiZSBydW5uaW5nIG9yIG5vdCBpcyBpbXBvcnRhbnQgdG8gYXZvaWQNCj4g
+c3Bpbm5pbmcgZm9yIHNvbWV0aGluZyB0aGF0IHdvbid0IGJlIHJlbGVhc2VkIHF1aWNrbHkuIFVz
+ZXJzcGFjZSBpcw0KPiByZXNwb25zaWJsZSBvbiBwcm92aWRpbmcgdGhlIHByb3BlciBUSUQsIHRo
+ZSBrZXJuZWwgZG9lcyBhIGJhc2ljIGNoZWNrLg0KDQpUaGUga2VybmVsIG5lZWRzIHRvIGRvIHNv
+bWV0aGluZyB0byBzdG9wIGEgdXNlci1wcm9jZXNzIHNwaW5uaW5nIGluLWtlcm5lbA0KaW5kZWZp
+bml0ZWx5Lg0KDQouLi4NCj4gK3N0YXRpYyBpbmxpbmUgYm9vbCB0YXNrX29uX2NwdShzdHJ1Y3Qg
+dGFza19zdHJ1Y3QgKnApDQo+ICt7DQo+ICsjaWZkZWYgQ09ORklHX1NNUA0KPiArCXJldHVybiAh
+IShwLT5vbl9jcHUpOw0KPiArI2Vsc2UNCj4gKwlyZXR1cm4gZmFsc2U7DQo+ICsjZW5kaWYNCj4g
+K30NCg0KSSBzdXNwZWN0IHRoYXQgaXNuJ3QgZ29pbmcgdG8gd29yayBpbiBhIFZNIHdoZXJlIHRo
+ZSBlbnRpcmUgJ2NwdScNCmNhbiBiZSBzbGVlcGluZy4NCg0KVGhpcyBpcyBzaW1pbGFyIHRvIHRo
+ZSAoSSBkb24ndCB0aGluayB3b3JrcyBwcm9wZXJseSkgY2hlY2sNCmluIHRoZSAnb3NxJyAob3B0
+aW1pc3RpYyBzcGluIHF1ZXVlKSB1c2VkIHdoZW4gd2FpdGluZyBmb3INCnRoZSB0aHJlYWQgc3Bp
+bm5pbmcgb24gYSBtdXRleC9yd2xvY2sgdG8gY2hhbmdlIHN0YXRlLg0KDQpJSVJDIHRoYXQgY29k
+ZSBhbHNvIGNoZWNrcyB3aGV0aGVyIHRoZSBjdXJyZW50IHRocmVhZCBzaG91bGQNCmJlIHByZS1l
+bXB0ZWQgYnkgYSBoaWdoZXIgcHJpb3JpdHkgcHJvY2Vzcy4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
+dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
+S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-Okay, so this RFC series was meant to solicit comments on the general
-approach of this. Fixing this known issue is fairly complicated and
-involves patching DTC, which we would be prepared to do if this was
-generally deemed acceptable, but doesn't seem like a worthwhile
-undertaking until we know we can move ahead with this.
-
-So rather than categorically NAKing something that was sent out as a
-proposal looking for feedback on how to improve and turn this into
-something acceptable, it'd be great to get constructive feedback on how
-we can get there.
-
-Thierry
-
---814b05467eb5fb3d1194dffe0bcc9ad51fe1c1889dcbffafdae7b5a67172
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZQRyUACgkQ3SOs138+
-s6EYPRAApKj6TZ45ihKFbdihmJOaY25HqHqqAOmw/WIDGwBEJMrVVW41xioiMLzp
-k32CEAFP5kxE3WPay97YquvQn7Vh4qhe64qYPr/UaTsr3TeklU2e/G/E1xfsTTAt
-8jjR5dfSPG2uoCaHgQ5R+nOF1UTH5+1BLLPNF0rKacaFe90o/rLpH0YZG7lSH7Te
-jOU8AinN/cd68weuz1aRdVcylA/XSUOy62QU6uJKAPSVNgfYMp5P1RE+drnyP15V
-H5Xx9Y9QhWSfIoDVepJXLfZkz/l8MowjLxFVFg0P3On0A/rHTDilHHOntZoj1x3d
-n2xFR35NZo7DdkewHcbMHUyrUrsSzTQC4JvjD7Ecx1HmpQTjo079AabM/mFdI9te
-czUUPCzwlqr/GOyW8sIz00POG0+jzVLNXJKWKJOkbTJepXkR95EVSYS53wpcAUp0
-oOW5dHWbl64xDCZa4BFoIJZ3N8tYnPEetfGdPxFklNnjKwvGWuFqmuHyKQb9O+Js
-/bpmc+xjo4kghNnoU55N2pDzizeDahkutILnSY2pd/MdttXlfD9C7xQAYjVFPs6y
-gPPHNZ9Cz8AjV3HN8N87CqB1plGzLpF9MnXZgyPS84PYDwG+G2bJAaT4vUHznr8/
-RtYG3PwbFX06/nGAkYDQOmpkaK0A7L4Sz0sAdw+MkRS/xElALp4=
-=AtSK
------END PGP SIGNATURE-----
-
---814b05467eb5fb3d1194dffe0bcc9ad51fe1c1889dcbffafdae7b5a67172--
 
