@@ -1,148 +1,124 @@
-Return-Path: <linux-kernel+bounces-188783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C518CE6D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:17:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA038CE6D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A461D1F21983
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18A7D1C21F9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFCD126F04;
-	Fri, 24 May 2024 14:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4826412C48E;
+	Fri, 24 May 2024 14:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="h0SYFVy4"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3ncpc2z"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B084112C473
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB7439FF4;
+	Fri, 24 May 2024 14:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716560221; cv=none; b=JzXJLyI9+j1yUfh7AX85ZBW0fE9oAwXeV5dFkyd9XEW26zTXC5md6nfPgC7AIy7ipvkc6sJDgvj1PiL9exg4Isoa26z7qrB4Gq/vjomyYxNRpATCoEbNfZNw011X1wdDKRabAFZbrM8+gs4zY7+ZW+JB6vAVdH5GIoZCawmN//Y=
+	t=1716560296; cv=none; b=LSoYR8Fj95H2BMbxszNACJI54tqOk4CHIC/D4uS9tOzKY/aT6RuyWUz52XVkdev9WvcJ6VwajDJvEkUqM03mb7j6+M0VjZcS9vFxBG1IEoLOWbCjU5EwQBt7vors1j83t5wB7Ca257ICRMIe74ql/svryylIjsjHo6iLBm7b9SI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716560221; c=relaxed/simple;
-	bh=801tCOV5OAv0DZm2X9cQ9Ugasii44hxsZOXOquLuSwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdU9N7YG7LUdbvRx0UqlHwsV8zHX2ZEJhE+veVtOgNrBDmprOxNl9fhcfWQ2r50B3BtsiAGZS3Z3f34H/ZYFAyA3taFtPq8NRV7s/8mn8rUu5R5bT83l/NuFVo2EGy+HdDzler+0Us+3pMlSQ2FRLEhp/O039apDLwEdOcd6aVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=h0SYFVy4; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-794ab4480beso65498785a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:16:59 -0700 (PDT)
+	s=arc-20240116; t=1716560296; c=relaxed/simple;
+	bh=NY8YdGL7ms66sxZ2wcs4Q4KtZZk9+ISmVct2OPO9gnQ=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hEU//DcskWy1RrqN2/tniTMmuEAdrfPGdOp/WXhVJlbp+0Txeu0tnsh9Gat12gdBjC+E+M0V5HExAHH/6RebD+/nKWaWqGnSUaiG5hesnD3kjZYT9pEKvxOg/WQGBQS8VRKJTpzQH6/YSbtgnuIDfgoD5AEak7TeA84MXwvwt/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3ncpc2z; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42016c8db2aso31336895e9.0;
+        Fri, 24 May 2024 07:18:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1716560218; x=1717165018; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=suZw9oB6HBTqRgA6OrNMLSYpruM3XqODKPk/UHtyCxE=;
-        b=h0SYFVy4hLqjBjxuf6QqsSt6tF/a93RQPVnIawHGMUprLO4RqOwJrJQTgSANGS15VF
-         2+viWvX42W2H2G9yCvePBOfHJ3oDfaxgYp4NMxmBombSZl7j2QKJmWEVKUCq7Hlc8slz
-         0vS/wibJ8NDpuXkLMACQGSxm523af0o18ffhuw5b3YW4c4qTTjqTLGi7yJ3uKcY+fbmA
-         KPGPjl7gLUBYvqTwbVskaWDmsGWka/wQtORVV+RiZ8/JkhoPhcdhSFDmjiiC48xWVBF0
-         L+EIrprPNxWedstZNAfsjlLa6zxaRnTSuaMJoTJN5DEC3Y8LYR9kn9n9EUyunz4cV6Vv
-         FuGQ==
+        d=gmail.com; s=20230601; t=1716560293; x=1717165093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bOhN+K4MQEPHmraxcKoGfFFGKaOrlPJMqWUZiK5bPS8=;
+        b=R3ncpc2zgsR3mxNkGFvXuemhjPVU5I97ajc8uQR4Dmj9GhYS+ek6YiSqHkBTD7jmIY
+         Wl3G2UIzDMOZsPMQw5crIyGLSnbnl33a5oOEQwUcVL1uzO34CW5bzGCB/NaIaprq5c3R
+         5C7d7b+qUkaUXc8JYnEkhP1x1kBgSx+dEisOF+7kdCpUnYL4KPTcfzSLaRp6ykZScNnW
+         1SwIF7jzMljKcQp08zOeZNCx0qHTmOwm2xdINB82nhSRakXEjchpqXGPY7mkrhooeBsh
+         uU6uU/zkwsdrL4XwosED6Ws9LW1Hqtg/CSD8lAPWdXc4A66XnHxw4QZAmr6btZIYNGd4
+         Iegw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716560218; x=1717165018;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1716560293; x=1717165093;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=suZw9oB6HBTqRgA6OrNMLSYpruM3XqODKPk/UHtyCxE=;
-        b=GugTZL3UPkbwCwhPNmX6G1moVqR9jgQ7BYdrfDb7SKqIvvJhatqMucsh3C2tb22UJT
-         1n92ilUUUXsZ7Q4gyNX2s+mDfYHfOILy27wr1rbfvcnhcPOb16UmozNBCKFEnew3Ssn4
-         bzQz6LLzwPU1UxU7JBA5lejtql+H89ipTBlAL5XvxbQn2/tAy2DSQQTJ663spL3CcVTY
-         R3GQWuiHVJkZZzvbTu6RW4xBv9uq9x9wsCi3frvSKvtUhfQzfRVuTSzIkPS/7v+trPQY
-         K7gVOzkX63Xns1W92w/raUJguUhzIWwOatrM/Rk9TcwyD+9cnthCeSDBtQKt8aP14qat
-         9sLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlkgSwIioyDzkVNQImQepa4jS2jWGBTnQZU2wswG96mlU9buVjibsKw05FiUym8vukszMhS2fU/2Tkm1ZsAXiNyWL/+jwCVVJEiu0Q
-X-Gm-Message-State: AOJu0YzRUpiOPwcYth+v1qL5ytbXxf8X73rv9HSW0Wxv2r9dJESlGya2
-	3vtM2qmbnXqA47Kck7Q9H0Cmnu6tNBKga7eCTtbh5v/vjU6+s8Awf5CnGxbPzq0=
-X-Google-Smtp-Source: AGHT+IGJz8qoEDJMKsE3K/mi44tccE8zp05AFCzKA8aB112w+RpaAl9TlJZS6IYNjZCyNnjlwMPUfw==
-X-Received: by 2002:a05:6214:2f09:b0:6ab:86fe:514c with SMTP id 6a1803df08f44-6abcd0b1f1cmr32057116d6.38.1716560218580;
-        Fri, 24 May 2024 07:16:58 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac070dab0dsm7645576d6.34.2024.05.24.07.16.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 07:16:58 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sAVj7-001Jqp-Hy;
-	Fri, 24 May 2024 11:16:57 -0300
-Date: Fri, 24 May 2024 11:16:57 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 5/9] iommufd: Add iommufd fault object
-Message-ID: <20240524141657.GO69273@ziepe.ca>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-6-baolu.lu@linux.intel.com>
- <BN9PR11MB52769AC595B6BDA8FB4639258CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <79bacf16-dfa6-42c7-b02d-117985e38472@linux.intel.com>
+        bh=bOhN+K4MQEPHmraxcKoGfFFGKaOrlPJMqWUZiK5bPS8=;
+        b=ap0tI8f7DPxjC7j+1Ct/XXixNaOYoTqs3Hu7yepWHDyQh60k6mBjkH7TMXv9EEuXnE
+         /y5F9ppfExMUWLE7/r+1e8z/NxqG0I+FgVOuRtpuAC773IG4urJcvxsF6mPaSIWxtMgV
+         YOBPpFL4/b8ZohEudy0G8FgCa5SiWhfQR5QA3iCioElCI+aIZ3kOKHdRbR0HPxJsbMNl
+         tkssJkx/5kOg5+w6HXQKjqWrvTnp0gw3FGV5a7WHBT1ewz6xHMvWp9lXA+HfFmwRaUI4
+         GLQ1VKN+ZqPSIJqiWrNCFk8XIKyrelWYyVWeYnSI5O/9SThPT4gJ/clEiwj8hMtqv7iS
+         Cizw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxClvNN+jL4tE/8Z8GoEDEmDlrmvVMZEy6Au0JIOUy2vA4QW8u4HiicRma5v9TjgYRdW2Xub/nQ7Ctd0KnAS0wHul3AOmdyTQFyopjCKeEOYXl4XrQtJZagR+L89iChbgor9zB3SXdrQt79db5t71P6vkN2M6jiW8wFRrZ
+X-Gm-Message-State: AOJu0YzCumaz3ETImTlSbKjWch2RMj+Ha7TTymdtR1063dm1MlGjbq8W
+	KbajXNgW9h/pQ6O5LXq86SV4HBVWhWsWp2qauD4xB7CLDxYkTyu3
+X-Google-Smtp-Source: AGHT+IENmGtjYoWphFB7uTohfBjfa6/lyQohW/GvX3LNtGQLqfFkv/9Y5j5qgcHoHjhWIAOiaJXDDQ==
+X-Received: by 2002:a7b:cc97:0:b0:420:66e:f5c with SMTP id 5b1f17b1804b1-421089f874bmr17983875e9.14.1716560293301;
+        Fri, 24 May 2024 07:18:13 -0700 (PDT)
+Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421088f9d3csm22238855e9.0.2024.05.24.07.18.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 07:18:12 -0700 (PDT)
+From: Paul Durrant <xadimgnik@gmail.com>
+X-Google-Original-From: Paul Durrant <paul@xen.org>
+Message-ID: <b1b02044-761b-48e3-b58f-b9c31b64ccfa@xen.org>
+Date: Fri, 24 May 2024 15:18:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79bacf16-dfa6-42c7-b02d-117985e38472@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: paul@xen.org
+Subject: Re: [RFC PATCH v3 19/21] KVM: x86: Avoid periodic KVM clock updates
+ in master clock mode
+To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
+ zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>
+References: <20240522001817.619072-1-dwmw2@infradead.org>
+ <20240522001817.619072-20-dwmw2@infradead.org>
+Content-Language: en-US
+Organization: Xen Project
+In-Reply-To: <20240522001817.619072-20-dwmw2@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 20, 2024 at 09:24:09AM +0800, Baolu Lu wrote:
-> On 5/15/24 4:37 PM, Tian, Kevin wrote:
-> > > +static ssize_t iommufd_fault_fops_write(struct file *filep, const char __user
-> > > *buf,
-> > > +					size_t count, loff_t *ppos)
-> > > +{
-> > > +	size_t response_size = sizeof(struct iommu_hwpt_page_response);
-> > > +	struct iommufd_fault *fault = filep->private_data;
-> > > +	struct iommu_hwpt_page_response response;
-> > > +	struct iommufd_device *idev = NULL;
-> > > +	struct iopf_group *group;
-> > > +	size_t done = 0;
-> > > +	int rc;
-> > > +
-> > > +	if (*ppos || count % response_size)
-> > > +		return -ESPIPE;
-> > > +
-> > > +	mutex_lock(&fault->mutex);
-> > > +	while (count > done) {
-> > > +		rc = copy_from_user(&response, buf + done, response_size);
-> > > +		if (rc)
-> > > +			break;
-> > > +
-> > > +		if (!idev || idev->obj.id != response.dev_id)
-> > > +			idev = container_of(iommufd_get_object(fault->ictx,
-> > > +							       response.dev_id,
-> > > +
-> > > IOMMUFD_OBJ_DEVICE),
-> > > +					    struct iommufd_device, obj);
-> > > +		if (IS_ERR(idev))
-> > > +			break;
-> > > +
-> > > +		group = xa_erase(&idev->faults, response.cookie);
-> > > +		if (!group)
-> > > +			break;
-> > is 'continue' better?
+On 22/05/2024 01:17, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
 > 
-> If we can't find a matched iopf group here, it means userspace provided
-> something wrong. The current logic is that we stop here and tell
-> userspace that only part of the faults have been responded to and it
-> should retry the remaining responses with the right message.
+> When the KVM clock is in master clock mode, updating the KVM clock is
+> pointless. Let the periodic work 'expire', and start it running again
+> from kvm_end_pvclock_update() if the master clock mode is ever turned
+> off again.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>   arch/x86/kvm/x86.c | 14 +++++++++++---
+>   1 file changed, 11 insertions(+), 3 deletions(-)
+> 
 
-The usual fd-ish error handling here should be to return a short write
-(success) and then userspace will retry with the failing entry at the
-start of the buffer and collect the errno.
+Reviewed-by: Paul Durrant <paul@xen.org>
 
-Jason
 
