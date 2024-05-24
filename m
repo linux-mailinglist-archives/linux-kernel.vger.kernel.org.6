@@ -1,250 +1,114 @@
-Return-Path: <linux-kernel+bounces-188253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070FC8CDFC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:28:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8308D8CDFBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE3B1F21B0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:28:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E24BB2201B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B00037708;
-	Fri, 24 May 2024 03:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AFB2E644;
+	Fri, 24 May 2024 03:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IyrW24+b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOx+5aMd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196D722616;
-	Fri, 24 May 2024 03:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A881DA4E;
+	Fri, 24 May 2024 03:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716521322; cv=none; b=oGoVBzDFYYC4tG1UB4esHNRpsMpPj6+umeDe4nzTQeRUez4Q7TfSKF5cufdZVWFpcppn1JwQxPfRe8Se7O46MHKa0DQhnJAf4oQk+XnhZxvby/5YKIDCrMCXsaBujqxBf8eyXF1CYZnibS8HG/eY3OyptKX6EIOXT72uyVuwH6Y=
+	t=1716521037; cv=none; b=tn9My+zsRelcfM/ON3HokRX2g6CLagIH5DQt4G2D8JU2Mmjb0XCn12dHLQQ7CjfzygJs1gZGgsByMBAZ2npcqEaV8tO37Vgb02XImvk+0peg3rr2YYjdaD+gLc2ubbraeTYgtWvrtLM29DclGT6GAJIhxaEbybuZ9cxstnD/DCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716521322; c=relaxed/simple;
-	bh=BmHxPvxy7A16jb2AYJ8QAISuGgdPP6gUOqwmVG0jhKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZpkwZXyXk+qLj/zjGUQJEV66cbJj7Xap6jVT3H73tDrBOWD0jL3cT8ur+4s+Z1cAjyrSWkkjHqNzkdNte8TP/qlNblYR0QMFLOai+ROyJBppcQNsLtsci/Z/PfKpYxsLxvwMp4YD8CEBfKSmM+8+9VWNKhWvTHERLqlizTQfLWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IyrW24+b; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716521321; x=1748057321;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BmHxPvxy7A16jb2AYJ8QAISuGgdPP6gUOqwmVG0jhKQ=;
-  b=IyrW24+bBOi0DgUQCVPonuGSCA80PxeuT/nJ8IJYgyE1lTKcX/EKQYUA
-   M50IC22lbb1v31wzGg5SPuXfgWux9jqfYqzmAT0buEZXehm+j1HgQxQ98
-   G72yrrYvJw6nGF7cx+GoC46ky7IosLb6w7EwLP3pfphpGSTsHllUtrIvQ
-   RmLh43YKTNHaR+AfzK3CeamDY8M4VRG5iQeCY+0UVbgG9wVemIPR0JHMU
-   4RvZFNHIhimRSwA2wFfwiPn9DqVUb4UrgsIGi8dLe81bd+sMBwEvWyBC2
-   IZhH6HqDdHFMTVpLSuZnD+QqVf9pvWXzB1Kt1mcwmsNonFuvjtELQKPOD
-   A==;
-X-CSE-ConnectionGUID: 0iDmhUuPS6e9rGYhZ57ExQ==
-X-CSE-MsgGUID: JWwO0x6FR7qIPBjEP+hS1g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="35398333"
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="35398333"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 20:28:40 -0700
-X-CSE-ConnectionGUID: gY/CM6FATPai6/GBbCwYiw==
-X-CSE-MsgGUID: vmi/9T6/RKm+fon72EZqig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="65093228"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 23 May 2024 20:28:35 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sALbb-0003n3-2n;
-	Fri, 24 May 2024 03:28:32 +0000
-Date: Fri, 24 May 2024 11:28:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kim Seer Paller <kimseer.paller@analog.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v2 5/5] iio: dac: ltc2664: Add driver for LTC2664 and
- LTC2672
-Message-ID: <202405241141.kYcxrSem-lkp@intel.com>
-References: <20240523031909.19427-6-kimseer.paller@analog.com>
+	s=arc-20240116; t=1716521037; c=relaxed/simple;
+	bh=ydtWc6Jqwh9jM1OclM0cKRCte/xIWkRER8JWVBlappk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Mvwn6Cojkim/aZvpV0rrj0hnmy8TQoqoHJo/p0RmJ1fCfE2iLBz0xfvw7KH3WjSqyfR/bwx9GUq829iCN5Hw2dGWyqEb8/NHjOcK6mNK5u/6+ynUcv6q7nFpEA699EVeUErD3oGZEO2alvWtQfzO8qhXtQIl3iwAhZoikKK0sjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOx+5aMd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 406D0C2BD10;
+	Fri, 24 May 2024 03:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716521036;
+	bh=ydtWc6Jqwh9jM1OclM0cKRCte/xIWkRER8JWVBlappk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=gOx+5aMdT5Lg5igFK9U7XI0WDBDNo5+JC/9Pp2WIJ81MV8if2cDBNNfaBk43/WxrO
+	 +1MyO0vryXkt32JmcdrYaIJkshWFZMk+Y07pTmnzkIJiBGwULadz8WyLziHhpwM3Ws
+	 4Co1Ee0xTGwipURrPi7sT+XXd1qtwlaO/EGP44L7Gb7EUisz7w3PZ5n7NzpRU7WOnr
+	 5YLCug8uyYmTNoVi8petUK8Chinkog1WEEjY0sm3H8ZVNcGy9DioFHhSA5MdX/TkIc
+	 W2oHPC1PdV3s8rG9PVoKBmiDJ73Ue47vueV9fVB8siiAlasmcfbLthFT1OqDM+W2sZ
+	 hlZhFGlsb0X+w==
+From: Bjorn Andersson <andersson@kernel.org>
+Date: Thu, 23 May 2024 20:28:41 -0700
+Subject: [PATCH] firmware: qcom: uefisecapp: Allow on X1E devices
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523031909.19427-6-kimseer.paller@analog.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240523-x1e-efivarfs-v1-1-5d986265b8e4@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGgJUGYC/x2MSwqAIBQAryJvneAnCbtKtLB81ttYKIgg3j1pO
+ QwzDTImwgwra5CwUKYnDpATg/N28UJOfjAooWZhlOZVIsdAxaWQ+aJRSI/msFbDSN40VP13297
+ 7B4CxaPheAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <quic_bjorande@quicinc.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1018;
+ i=quic_bjorande@quicinc.com; h=from:subject:message-id;
+ bh=ERGpu8nKvI4MRFNSC0reaZS/RpSwo24aniqg0QkL33I=;
+ b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUAlvrwj2bOwJHpUck0ZApMOmtxdYpn1mriVOf
+ uWk++T1kBuJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlAJbxUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcVwFw//Va3M/fXnRGkOP3RD4UZSZ5k7rOWB9hVV1hGc66P
+ y2G9dqA+4Ql3/W6NS9sxVc+4gnu1J5oH2zr0giDx233YS5Yc+QJ8bw9virEvlqBcqorhSVjExOY
+ Xs4p5pm3sQ5UPBb7p+TLDxYlHER1IuydHBeTrmrgW58YV85lxEqANktu/l6IvFzfidc5pZIigPl
+ V7VbCcBssbyfLDag5U8PFCAwAmyrmvpMMeg2BOR6BfC1uV03Xq3ZcBkqZxShFASHNvhgulfLr0f
+ BoKfnk2QB5Doz4JRLU44Zd2lixeAIItH2osEQ/+fjj2E1pK+RTzdAZt0qcxMRqAFSbS2UVFm0jq
+ z9J3KkO0fi1Wvp5IQBBgyBGpmZqx5u1wwNcT6kSV6fc920VSZHaATitms4QsglnRlObBCItPtib
+ lFA97f6CNP7pvneBpVSmM3b4bmeLMxHGJ+pvgwPdSEkZr6CE1QMQCVrHv3TZ4gspFfCearu9ILj
+ Ayk4ZoPOAbeFxmH/TT4kc7AtvnydpDpWiF710lpXEAKVUNSIptGQvvXkMzMmf2mawwv2lebc8Uk
+ NwK/Q7KzZjyYZ0TNSpk7fqOiksZR1TzwrFcDYzHRxiMVqhEhf4A6WLWkYZW6ykuRF2ygsBqnI2Y
+ 171pl13hLZu7Ha82fJCp93dwfhdLP+VslLqCEz06Yptc=
+X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
+ fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
 
-Hi Kim,
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-kernel test robot noticed the following build warnings:
+As with previous platforms, qseecom and the uefisecapp provides access
+to EFI variables. Add X1E CRD and QCP devices to the allowlist.
 
-[auto build test WARNING on 827dca3129708a8465bde90c86c2e3c38e62dd4f]
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+Only tested on CRD
+---
+ drivers/firmware/qcom/qcom_scm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kim-Seer-Paller/iio-ABI-Generalize-ABI-documentation-for-DAC/20240523-112246
-base:   827dca3129708a8465bde90c86c2e3c38e62dd4f
-patch link:    https://lore.kernel.org/r/20240523031909.19427-6-kimseer.paller%40analog.com
-patch subject: [PATCH v2 5/5] iio: dac: ltc2664: Add driver for LTC2664 and LTC2672
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20240524/202405241141.kYcxrSem-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 7aa382fd7257d9bd4f7fc50bb7078a3c26a1628c)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405241141.kYcxrSem-lkp@intel.com/reproduce)
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 68f4df7e6c3c..1be5374cd3c9 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -1649,6 +1649,8 @@ static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
+ 	{ .compatible = "lenovo,flex-5g" },
+ 	{ .compatible = "lenovo,thinkpad-x13s", },
+ 	{ .compatible = "qcom,sc8180x-primus" },
++	{ .compatible = "qcom,x1e80100-crd" },
++	{ .compatible = "qcom,x1e80100-qcp" },
+ 	{ }
+ };
+ 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405241141.kYcxrSem-lkp@intel.com/
+---
+base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+change-id: 20240523-x1e-efivarfs-73e01de5b993
 
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/iio/dac/ltc2664.c:20:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2208:
-   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     509 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     516 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     528 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     537 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> drivers/iio/dac/ltc2664.c:627:8: warning: variable 'span' is uninitialized when used here [-Wuninitialized]
-     627 |                         if (span < 0)
-         |                             ^~~~
-   drivers/iio/dac/ltc2664.c:563:15: note: initialize the variable 'span' to silence this warning
-     563 |         int ret, span;
-         |                      ^
-         |                       = 0
-   6 warnings generated.
-
-
-vim +/span +627 drivers/iio/dac/ltc2664.c
-
-   557	
-   558	static int ltc2664_channel_config(struct ltc2664_state *st)
-   559	{
-   560		const struct ltc2664_chip_info *chip_info = st->chip_info;
-   561		struct device *dev = &st->spi->dev;
-   562		u32 reg, tmp[2], mspan;
-   563		int ret, span;
-   564	
-   565		mspan = LTC2664_MSPAN_SOFTSPAN;
-   566		ret = device_property_read_u32(dev, "adi,manual-span-operation-config",
-   567					       &mspan);
-   568		if (!ret) {
-   569			if (!chip_info->manual_span_support)
-   570				return dev_err_probe(dev, -EINVAL,
-   571				       "adi,manual-span-operation-config not supported\n");
-   572	
-   573			if (mspan > ARRAY_SIZE(ltc2664_mspan_lut))
-   574				return dev_err_probe(dev, -EINVAL,
-   575				       "adi,manual-span-operation-config not in range\n");
-   576		}
-   577	
-   578		st->rfsadj = 20000;
-   579		ret = device_property_read_u32(dev, "adi,rfsadj-ohms", &st->rfsadj);
-   580		if (!ret) {
-   581			if (!chip_info->rfsadj_support)
-   582				return dev_err_probe(dev, -EINVAL,
-   583						     "adi,rfsadj-ohms not supported\n");
-   584	
-   585			if (st->rfsadj < 19000 || st->rfsadj > 41000)
-   586				return dev_err_probe(dev, -EINVAL,
-   587						     "adi,rfsadj-ohms not in range\n");
-   588		}
-   589	
-   590		device_for_each_child_node_scoped(dev, child) {
-   591			struct ltc2664_chan *chan;
-   592	
-   593			ret = fwnode_property_read_u32(child, "reg", &reg);
-   594			if (ret)
-   595				return dev_err_probe(dev, ret,
-   596						     "Failed to get reg property\n");
-   597	
-   598			if (reg >= chip_info->num_channels)
-   599				return dev_err_probe(dev, -EINVAL,
-   600						     "reg bigger than: %d\n",
-   601						     chip_info->num_channels);
-   602	
-   603			chan = &st->channels[reg];
-   604	
-   605			if (fwnode_property_read_bool(child, "adi,toggle-mode")) {
-   606				chan->toggle_chan = true;
-   607				/* assume sw toggle ABI */
-   608				st->iio_channels[reg].ext_info = ltc2664_toggle_sym_ext_info;
-   609				/*
-   610				 * Clear IIO_CHAN_INFO_RAW bit as toggle channels expose
-   611				 * out_voltage/current_raw{0|1} files.
-   612				 */
-   613				__clear_bit(IIO_CHAN_INFO_RAW,
-   614					    &st->iio_channels[reg].info_mask_separate);
-   615			}
-   616	
-   617			chan->raw[0] = ltc2664_mspan_lut[mspan][1];
-   618			chan->raw[1] = ltc2664_mspan_lut[mspan][1];
-   619	
-   620			chan->span = ltc2664_mspan_lut[mspan][0];
-   621	
-   622			ret = fwnode_property_read_u32_array(child, "adi,output-range-microvolt",
-   623							     tmp, ARRAY_SIZE(tmp));
-   624			if (!ret && mspan == LTC2664_MSPAN_SOFTSPAN) {
-   625				chan->span = ltc2664_set_span(st, tmp[0] / 1000,
-   626							      tmp[1] / 1000, reg);
- > 627				if (span < 0)
-   628					return dev_err_probe(dev, span,
-   629							     "Failed to set span\n");
-   630	
-   631			}
-   632	
-   633			ret = fwnode_property_read_u32(child,
-   634						       "adi,output-range-microamp",
-   635						       &tmp[0]);
-   636			if (!ret) {
-   637				chan->span = ltc2664_set_span(st, 0, tmp[0] / 1000, reg);
-   638				if (span < 0)
-   639					return dev_err_probe(dev, span,
-   640							     "Failed to set span\n");
-   641			}
-   642		}
-   643	
-   644		return 0;
-   645	}
-   646	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Bjorn Andersson <quic_bjorande@quicinc.com>
+
 
