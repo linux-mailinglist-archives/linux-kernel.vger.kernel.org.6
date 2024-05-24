@@ -1,227 +1,102 @@
-Return-Path: <linux-kernel+bounces-188964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E358CE91B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 449148CE917
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500251F20582
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:13:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D521F220A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0594112FB29;
-	Fri, 24 May 2024 17:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="f4ccaKAw"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281A412F379;
+	Fri, 24 May 2024 17:13:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C10B381CC;
-	Fri, 24 May 2024 17:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81F9381CC;
+	Fri, 24 May 2024 17:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716570820; cv=none; b=QuSfA7M/9qnSrVzySiDzeloVFeqnsO0QqACQOqSmEtcH0LAz1dQP3fFkKolZdFeh3qzDjffmfSpp4fKnEAIxqEpyCPcYASEKalbQmfU5zw1Xo5xcBeElna+l4DUgGVdAEwIFUYeulvk7xTwi5cLKNxvwVOg+ZzpaGccny0/6bjo=
+	t=1716570805; cv=none; b=lY/HxHqrq+gpkQIUEt3ND3GOdLnh7ZeWujG/bhZIY51y6uXnpykRjB4j9cdfnKJ2V9x1SD3v3oTyc8TrfBm2FIYADvDaVCEGsLHTol5W/mTP6I/JMzOsx8tt8WnpVXgZHgXsV8zRxve4/OzrB8c8j1sO7DwNp25ZZzu4RLxUiQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716570820; c=relaxed/simple;
-	bh=niiygQemT/sqnVFy3UWwLMvNxIikaJEfzXfZrGhDvJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AykQWKEbJWhE/RP2cWl6stqEEYO8gv9QnCRUjuvESl2b0Squv7N1IomJLEaFWKDWoCrtkCONqw3t/sod4HW6xu50AD5wfeMi7qmprzFQcbLDin01fX/tu484knFfRcCDPUweEJ7CODuMSs29SKsICybZt6J6So8rJ/WxRZ2G4fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=f4ccaKAw; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1aJfRRbC8WpoZM7RERcls71YiqRszkda7JhNjiCCDo4=; b=f4ccaKAwYs++oHMLkZG1DeJl46
-	XbxPpb9GSkHiPgJzQJV9PgbY5U6lnCr4phhHQulTUMIbzv+S+oaowg+7BGpqVZRg0SkWuNJZFev/W
-	7d5EiQud6xbl9ye0BkxF555nnF+qdDnW8ObWJoq3lW7RKxcIwt4lhxdhMCwoNEZIde5m93mGkavJR
-	Z0bSiGSsK/f3Jfi7/p2KztgxmGWgjtrM17kLL+NOeVD9pdhv0MVp4ATvZXEImaIUUv38xKiUl9GNs
-	fnXrH1bQPK78qwea9qneljDs/cqTlJaZ9uAGFH5kCYY4BhMIid382YNuh0hajWrlIN3vbph5NWE25
-	B/rcDztQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46500)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sAYTn-0005iu-2p;
-	Fri, 24 May 2024 18:13:20 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sAYTm-00087X-4Z; Fri, 24 May 2024 18:13:18 +0100
-Date: Fri, 24 May 2024 18:13:17 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Sneh Shah <quic_snehshah@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Andrew Halaney <ahalaney@redhat.com>, kernel@quicinc.com
-Subject: Re: [PATCH net-next 2/2] net: stmmac: dwmac-qcom-ethqos: Enable
- support for 2500BASEX
-Message-ID: <ZlDKrS0EhHgQPHAo@shell.armlinux.org.uk>
-References: <20240524130653.30666-1-quic_snehshah@quicinc.com>
- <20240524130653.30666-3-quic_snehshah@quicinc.com>
- <a7317809-77a1-4884-83d8-2271ceea2c81@lunn.ch>
+	s=arc-20240116; t=1716570805; c=relaxed/simple;
+	bh=vphDPHazOPYYZyWRv4dKhwcY4W9o4i4ZeP8O0B/7XYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SBo6iz49gxP9i0f205fGRCnFiJYOoRsv/2zBOw5/PtZ+z75qkkAN7dFqIio6KExi75d7tK8b8kmnzlQoWyled93vPa4jHEYgSogPY1OFNhnz8DSWo0p4m0ghthdsCOtud8D9Yln3/pSSjg+wG/bbqVduTqI2JrSvwGq8HLrErS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C2F3C2BBFC;
+	Fri, 24 May 2024 17:13:24 +0000 (UTC)
+Date: Fri, 24 May 2024 13:14:11 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Ilkka
+ =?UTF-8?B?TmF1bGFww6TDpA==?= <digirigawa@gmail.com>,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
+ Shutdown/Reboot
+Message-ID: <20240524131411.4bfe89d2@gandalf.local.home>
+In-Reply-To: <5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
+References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
+	<5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7317809-77a1-4884-83d8-2271ceea2c81@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 06:07:15PM +0200, Andrew Lunn wrote:
-> On Fri, May 24, 2024 at 06:36:53PM +0530, Sneh Shah wrote:
-> > With integrated PCS qcom mac supports both SGMII and 2500BASEX mode.
-> > Implement get_interfaces to add support for 2500BASEX.
-> 
-> I don't know this driver very well..... but
-> 
-> /* PCS defines */
-> #define STMMAC_PCS_RGMII        (1 << 0)
-> #define STMMAC_PCS_SGMII        (1 << 1)
-> #define STMMAC_PCS_TBI          (1 << 2)
-> #define STMMAC_PCS_RTBI         (1 << 3)
-> 
-> 
-> static int stmmac_ethtool_get_link_ksettings(struct net_device *dev,
->                                              struct ethtool_link_ksettings *cmd)
-> {
->         struct stmmac_priv *priv = netdev_priv(dev);
-> 
->         if (!(priv->plat->flags & STMMAC_FLAG_HAS_INTEGRATED_PCS) &&
->             (priv->hw->pcs & STMMAC_PCS_RGMII ||
->              priv->hw->pcs & STMMAC_PCS_SGMII)) {
->                 struct rgmii_adv adv;
->                 u32 supported, advertising, lp_advertising;
-> 
->                 if (!priv->xstats.pcs_link) {
->                         cmd->base.speed = SPEED_UNKNOWN;
->                         cmd->base.duplex = DUPLEX_UNKNOWN;
->                         return 0;
->                 }
+On Fri, 24 May 2024 12:50:08 +0200
+"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>=
+ wrote:
 
-Note that this checks for !STMMAC_FLAG_HAS_INTEGRATED_PCS, so this isn't
-going to be used by this code which is conditional on this flag being
-set.
+> [CCing a few people]
+>=20
 
-In any case, I posted a patch set 12 days ago, which has remained
-unreviewed and untested for 10 days from a promise to do so converting
-this ugly hack to a phylink PCS driver (not that I would have had time
-to deal with any feedback due to an urgent work issue, but that's sort
-of beside the point.) There's some vague handwaving by Serge that there
-are some issues in this series, but there hasn't been any feedback yet
-on what these issues may be.
+Thanks for the Cc.
 
-Also, from what I can tell, neither STMMAC_PCS_TBI nor STMMAC_PCS_RTBI
-are ever assigned to hw->pcs. So, in stmmac_eee_init():
+> On 24.05.24 12:31, Ilkka Naulap=C3=A4=C3=A4 wrote:
+> >=20
+> > I have encountered a critical bug in the Linux vanilla kernel that
+> > leads to a kernel panic during the shutdown or reboot process. The
+> > issue arises after all services, including `journald`, have been
+> > stopped. As a result, the machine fails to complete the shutdown or
+> > reboot procedure, effectively causing the system to hang and not shut
+> > down or reboot. =20
 
-        if (priv->hw->pcs == STMMAC_PCS_TBI ||
-            priv->hw->pcs == STMMAC_PCS_RTBI)
-                return false;
+To understand this, did you do anything with tracing? Before shutting down,
+is there anything in /sys/kernel/tracing/instances directory?
+Were any of the files/directories permissions in /sys/kernel/tracing change=
+d?
 
-is always false, and can be removed.
+>=20
+> Thx for the report. Not my area of expertise, so take this with a gain
+> of salt. But given the versions your mention in your report and the
+> screenshot that mentioned tracefs_free_inode I suspect this is caused by
+> baa23a8d4360d ("tracefs: Reset permissions on remount if permissions are
+> options"). A few fixes for it will soon hit mainline and are meant to be
+> backported to affected stable trees:
+>=20
+> https://lore.kernel.org/all/20240523212406.254317554@goodmis.org/
+> https://lore.kernel.org/all/20240523174419.1e5885a5@gandalf.local.home/
+>=20
+> You might want to try them =E2=80=93 or recheck once they hit the stable =
+trees
+> you are about. If they don't work, please report back.
 
-In __stmmac_open():
+There's been quite a bit of updates in this code, but this looks new to me.
+I have more fixes that were just pulled by Linus today.
 
-        if (priv->hw->pcs != STMMAC_PCS_TBI &&
-            priv->hw->pcs != STMMAC_PCS_RTBI &&
-            (!priv->hw->xpcs ||
-             xpcs_get_an_mode(priv->hw->xpcs, mode) != DW_AN_C73)) {
+  https://git.kernel.org/torvalds/c/0eb03c7e8e2a4cc3653eb5eeb2d2001182071215
 
-can become:
-	if (!priv->hw->xpcs ||
-	    xpcs_get_an_mode(priv->hw->xpcs, mode) != DW_AN_C73)) {
+I'm not sure how relevant that is for this. But if you can reproduce it
+with that commit, then this is a new bug.
 
-In stmmac_dvr_probe():
-
-        if (priv->hw->pcs != STMMAC_PCS_TBI &&
-            priv->hw->pcs != STMMAC_PCS_RTBI) {
-                /* MDIO bus Registration */
-                ret = stmmac_mdio_register(ndev);
-
-This if() condition can be eliminated, and we always register the
-MDIO, and similarly in the cleanup and stmmac_dvr_remove() paths.
-
-> /**
->  * stmmac_check_pcs_mode - verify if RGMII/SGMII is supported
->  * @priv: driver private structure
->  * Description: this is to verify if the HW supports the PCS.
->  * Physical Coding Sublayer (PCS) interface that can be used when the MAC is
->  * configured for the TBI, RTBI, or SGMII PHY interface.
->  */
-> static void stmmac_check_pcs_mode(struct stmmac_priv *priv)
-> {
->         int interface = priv->plat->mac_interface;
-> 
->         if (priv->dma_cap.pcs) {
->                 if ((interface == PHY_INTERFACE_MODE_RGMII) ||
->                     (interface == PHY_INTERFACE_MODE_RGMII_ID) ||
->                     (interface == PHY_INTERFACE_MODE_RGMII_RXID) ||
->                     (interface == PHY_INTERFACE_MODE_RGMII_TXID)) {
->                         netdev_dbg(priv->dev, "PCS RGMII support enabled\n");
->                         priv->hw->pcs = STMMAC_PCS_RGMII;
->                 } else if (interface == PHY_INTERFACE_MODE_SGMII) {
->                         netdev_dbg(priv->dev, "PCS SGMII support enabled\n");
->                         priv->hw->pcs = STMMAC_PCS_SGMII;
->                 }
->         }
-> }
-> 
-> I get the feeling this is a minimal hack, rather than a proper
-> solution.
-
-I didn't remove that in my patch set because I don't understand fully
-the logic here - and I didn't want to add further dubious complication
-to my six patch series. I actually kept the logic and continued to
-use it explicitly to avoid changing the decision making:
-
-+static struct phylink_pcs *
-+dwmac4_phylink_select_pcs(struct stmmac_priv *priv, phy_interface_t interface)
-+{
-+       if (priv->hw->pcs & STMMAC_PCS_RGMII ||
-+           priv->hw->pcs & STMMAC_PCS_SGMII)
-+               return &priv->hw->mac_pcs;
-+
-+       return NULL;
-+}
-
-Ultimately, this _should_ check the "interface" here, but bear in
-mind that stmmac_check_pcs_mode() checks plat->mac_interface
-(which is the interface between the MAC and PCS) whereas the
-"interface" passed here is the interface between the PCS and PHY.
-This is why removing stmmac_check_pcs_mode() isn't a sane change
-to make until we have worked through the issues with removing the
-its-a-PCS-but-not-phylink_pcs hack.
-
-I _think_ a sensible next step would be to eliminate priv->hw->pcs,
-instead testing priv->plat->mac_interface in
-dwmac4_phylink_select_pcs() and dwmac1000_phylink_select_pcs():
-
-	phy_interface_t mac_interface = priv->plat->mac_interface;
-
-	if (phy_interface_is_rgmii(mac_interface) ||
-	    mac_interface == PHY_INTERFACE_MODE_SGMII)
-		return &priv->hw->mac_pcs;
-
-and _then_ maybe as a separate patch switch this to test the
-PHY-side interface (because that would make more sense... but
-that would be a behavioural change to the driver.)
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+-- Steve
 
