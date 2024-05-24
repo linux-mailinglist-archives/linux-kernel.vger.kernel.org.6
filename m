@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-188280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3C98CDFFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:56:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 285468CE001
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0C4E1C22007
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:56:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1561F2276C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A2F381B9;
-	Fri, 24 May 2024 03:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD765383BF;
+	Fri, 24 May 2024 03:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8k1u+vj"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AQkuYC5j"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388362F50A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B7D2F50A;
+	Fri, 24 May 2024 03:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716522959; cv=none; b=LF3AVJj3AzTMtvgs7m6yOH08+VuS/N6zBtcefWriDssqZazES5ESUmvkdT6EbXlPAIS45BxCP9FfOmR+voMKf5ypPoGVo+/GxcBcuRgHMo1Rfihk+zhTUodEeurmn4/Yrfl0JxlU7iAmo3JL/wcdD28AWB8ii0hENp0TYVtgB9Q=
+	t=1716522996; cv=none; b=fv+L6ek2lC+TA7d/CIobm3PdI2ZD4UoS7ZU5Xx1gtPghZx0LgGTuhHVylaMvsCf6ewekS9YmqKOZ+i6XUWbhvUKeWjgjD+2fmwyTRiwL7iFZu1JEkoRwbmUHs5nGvGIQsWLjVDTsjYSM+dEa4dD1tqpYtqOxChMLvd65iRs0w5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716522959; c=relaxed/simple;
-	bh=hz6yD3YpRQ+/vmJO/Jc9hA4ctopEf7XFcndZkYLFllw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=auCZYaLmscwXrOk5JvP3GdkwrbgIGaz36RR2qOV8bjGLuLXeKtWku8LJ3y6udm4yrgf+eTPnbnyzZaPLWYmv/mhpYGosVxNiThqEIUQapVIjTjQZnk8ww3+Q7RWwJuuHPDFawBy6otqgthngFLb6NeH45eyxpXlywxDnFxmUyFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8k1u+vj; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f332511457so3580705ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716522957; x=1717127757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3x9vVo+8n8DI9HwirLv4lx4BXroqIOS5ZYSTB5Fjk5s=;
-        b=c8k1u+vjjo6aB2ZjdldI7U961vypCfzllL0Nn58GCycFBgQFtzyEuxRs8AGfS4wxZ+
-         v4uvXLoVHZ04RZ2toAQmKa6xT9PKgL0So8skT/F67W1co0/OL1vQh9ETt3aqtMgDmslV
-         pVr/tHGsHNJHa0VHQR7/z0hjlEykOwkfiE2ijZvx7kQLcnSLm+Zf5/icSLKyirSESWnI
-         etSz22q3uEzoni/v7EDO13eiQsN2a29/yglPvLaiRecKCjgOkNPQvoT5uf8fJynuGtcn
-         Vm8qku7qhbAwbtCBuOH2CApOYqqTiZ/u/nqI0u7BoCWKus87YQ8Ub+1epi6gylSVtpYY
-         3ukQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716522957; x=1717127757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3x9vVo+8n8DI9HwirLv4lx4BXroqIOS5ZYSTB5Fjk5s=;
-        b=w7z6nBgtMWS5notE3BVY61GmMHpAhRuNjprv4Q/3ik6UL9atf0wI4D+LegG2J7CiOR
-         lSFmmiIrj0WfvxNokMh+1AwLjivLlpFQUHDrRMVTG4lqtGkrVcPPRSCCeBxzXhqI/pN7
-         taBBmKQMWeWTEXYjGjaR2UckVNB0H/69A4H1cj46X9PQDCurdeoTkqyxNO7w69ga7wXv
-         +hOklucoftDPEXvkTLpH8wQrrVhozo89zV6OMitocVcXrBBGuJLf9vj2xPR081FjPEVd
-         z2F289F7KQcqiJwRMppy1h+1vxpVC+Yz6x2ifEmuYt7TrZwO+9Pf/s+7k1vkmaQz7ulI
-         tnlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeYyCSeS7hh/jFfPKXWAn1guUEeDXVWSwYLsm8Jntv2WFFSc7wMWYT9WRutDI+dTxhFHaYRZYyam+vB8JlSetCB7tj0Rqzf2O4RGvu
-X-Gm-Message-State: AOJu0Yw/x028zgHbnF1oIB1slcHoFXnY/dPUd9OFkucRdJmwPD2i/UOT
-	/ZdcyYOLBb02atkIniUHck3eAc6hMzxnvjHDni75hP8oh9RiTRbw
-X-Google-Smtp-Source: AGHT+IGHa4C3FN7n8+eC7KzOZBlPE2yGNCes1Lr9VjmAe4+0SYxnbQiTgj05W5VxdVyMph6XmY9Tqw==
-X-Received: by 2002:a17:902:d2c9:b0:1ee:8fb7:dce1 with SMTP id d9443c01a7336-1f44893d42bmr14924295ad.31.1716522957373;
-        Thu, 23 May 2024 20:55:57 -0700 (PDT)
-Received: from ubuntukernelserver.. ([110.44.116.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c79d046sm3708015ad.72.2024.05.23.20.55.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 20:55:56 -0700 (PDT)
-From: Roshan Khatri <topofeverest8848@gmail.com>
-To: gregkh@linuxfoundation.org,
-	tdavies@darkphysics.net,
-	philipp.g.hortmann@gmail.com,
-	garyrookard@fastmail.org
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: rtl8192e: Fix spelling mistakes in rtllib_softmac.c
-Date: Fri, 24 May 2024 09:40:24 +0545
-Message-Id: <20240524035525.61072-1-topofeverest8848@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716522996; c=relaxed/simple;
+	bh=tCImr3eNuGCx3++HG06+FF6HfNx8UBkQ8vONEBmnqFw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CiwjE7CEvUaDZZuJxNVAFAb5vDhkytMdUJ+Gn6HyWZaRC9VWNzMVOd1WhCv8CaNRtMde150jJ9xIa+KmnlRFYQCeQRxl8heKojDFr5Vr0wdPAzvIbkAksVkQWyCX3hB2MsmAiu/I5ZxmDomVU+aQP0nbDjjh5tw0TaJhU0xxiIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AQkuYC5j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NNPjke013266;
+	Fri, 24 May 2024 03:56:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ZAR/+EBIHXZGJe+mq0lrwc
+	QHAnY1nldA39qM/Y3XeFY=; b=AQkuYC5ja9rNX6gpHm0fkb4Ipm+aXACAatm/6h
+	caAiB/WQQrpoH0xZ5zo84wK4Rv6ye6/T+JNN5K4xHVCTl++IKj+hr2AJ7d5B2FIk
+	0B0SeqsAMxGM8Df7ofePjHwBfxP1A579Mj8XfqDtAXNJEKniFc8t/zo+wWO/DPTi
+	CnHlaqWm1J0J0sAW9rQmq0/SKxiv6604+oCo6RchdyRYrnJ1490ZaZg+44+ujqGf
+	NpfAGaRX7br/lbh3nhZ393Qsylgp3DrflEGdEFfCLZQ8O0T4SUypkioV/ZDVvoq6
+	4b5SRNXHG6mXNvJItGqOrPHHYCQlug30uCwQQMmCTNfhmmjw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8hs470-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 03:56:16 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44O3uF7B018545
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 03:56:15 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 23 May 2024 20:56:10 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami
+	<bgoswami@quicinc.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela
+	<perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>
+CC: <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
+        <quic_pkumpatl@quicinc.com>,
+        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [PATCH v5 0/7] ASoC: codecs: wcd937x: add wcd937x audio codec support
+Date: Fri, 24 May 2024 09:25:28 +0530
+Message-ID: <20240524035535.3119208-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,56 +81,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: L3st0f3sd4uXIkAkilpiBdlveYl6tFL7
+X-Proofpoint-GUID: L3st0f3sd4uXIkAkilpiBdlveYl6tFL7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_15,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 bulkscore=1 malwarescore=0 clxscore=1015
+ impostorscore=0 suspectscore=0 mlxlogscore=624 lowpriorityscore=1
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405240025
 
-This patch corrects some misspellings to increase code readability and
-searching.
+This patchset adds support for Qualcomm WCD9370/WCD9375 codec.
 
-Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
----
- drivers/staging/rtl8192e/rtllib_softmac.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Qualcomm WCD9370/WCD9375 Codec is a standalone Hi-Fi audio codec IC
+connected over SoundWire. This device has two SoundWire devices, RX and
+TX respectively supporting 3 x ADCs, ClassH, Ear, Aux PA, 2xHPH,
+6 DMICs and MBHC.
 
-diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
-index 97fdca828da7..0fc97c868f81 100644
---- a/drivers/staging/rtl8192e/rtllib_softmac.c
-+++ b/drivers/staging/rtl8192e/rtllib_softmac.c
-@@ -421,7 +421,7 @@ static void rtllib_softmac_scan_syncro(struct rtllib_device *ieee)
- 		 *    So we switch to MAC80211_LINKED_SCANNING to remember
- 		 *    that we are still logically linked (not interested in
- 		 *    new network events, despite for updating the net list,
--		 *    but we are temporarly 'unlinked' as the driver shall
-+		 *    but we are temporarily 'unlinked' as the driver shall
- 		 *    not filter RX frames and the channel is changing.
- 		 * So the only situation in which are interested is to check
- 		 * if the state become LINKED because of the #1 situation
-@@ -934,7 +934,7 @@ static void rtllib_associate_abort(struct rtllib_device *ieee)
+For codec driver to be functional it would need both tx and rx Soundwire devices
+to be up and this is taken care by using device component framework and device-links
+are used to ensure proper pm dependencies. Ex tx does not enter suspend
+before rx or codec is suspended.
+
+This patchset along with other SoundWire patches on the list
+have been tested on QCM6490 IDP device.
+
+Changes since v4:
+ - Removed volatile/read-only registers from defaults list
+ - Added wcd939x_volatile_register() with only volatile registers
+ - Added a wcd939x_readable_register() with read-only and read-write registers, so cache does it's job
+ - Fixed Spurious events for mixer controls and validated with mixer selftest tool
+ - Used TLV instead of enum for ear_pa_gain mixer control
+ - Used enum constraints instead of OneOf in dt-binding patch
+ - Added vdd-px supply property as non optional in dt-binding patch
+ - Reworked and done driver cleanup
  
- 	ieee->associate_seq++;
+Changes since v3:
+ - Fixed dt binding check errors.
+ - Added constraints on values in v4-0001 binding patch as suggested by Krzysztof
+ - Change the patch sequence soundwire driver first then codec driver
+ - Added missing .remove soundwire driver function
+ - Reworked and done driver cleanup
+
+Changes since v2:
+ - Used common qcom,wcd93xx-common.yaml. removed duplicate properties.
+ - Merged bindings patches "v2-0001" and "v2-0003" in single patch for easy review.
+ - Fixed dt binding check errors.
+ - Added missing "qcom,wcd9375-codec" in v3-0001 dt binding patch.
+ - Added constraints on values in v3-0001 binding patch as suggested by Krzysztof
+ - Fix the typo mistake in v2 cover letter
  
--	/* don't scan, and avoid to have the RX path possibily
-+	/* don't scan, and avoid to have the RX path possibly
- 	 * try again to associate. Even do not react to AUTH or
- 	 * ASSOC response. Just wait for the retry wq to be scheduled.
- 	 * Here we will check if there are good nets to associate
-@@ -1359,7 +1359,7 @@ static short rtllib_sta_ps_sleep(struct rtllib_device *ieee, u64 *time)
- 		return 0;
- 	timeout = ieee->current_network.beacon_interval;
- 	ieee->current_network.dtim_data = RTLLIB_DTIM_INVALID;
--	/* there's no need to nofity AP that I find you buffered
-+	/* there's no need to notify AP that I find you buffered
- 	 * with broadcast packet
- 	 */
- 	if (dtim & (RTLLIB_DTIM_UCAST & ieee->ps))
-@@ -1806,7 +1806,7 @@ void rtllib_softmac_xmit(struct rtllib_txb *txb, struct rtllib_device *ieee)
- 
- 	spin_lock_irqsave(&ieee->lock, flags);
- 
--	/* called with 2nd parm 0, no tx mgmt lock required */
-+	/* called with 2nd param 0, no tx mgmt lock required */
- 	rtllib_sta_wakeup(ieee, 0);
- 
- 	/* update the tx status */
+Changes since v1:
+ - Split the patch per driver for easier review as suggested by Krzysztof
+ - Used devm_gpiod_get api to get reset gpio as suggested by Krzysztof
+
+Prasad Kumpatla (7):
+  ASoC: dt-bindings: document wcd937x Audio Codec
+  ASoC: codecs: wcd937x-sdw: add SoundWire driver
+  ASoC: codecs: wcd937x: add wcd937x codec driver
+  ASoC: codecs: wcd937x: add basic controls
+  ASoC: codecs: wcd937x: add playback dapm widgets
+  ASoC: codecs: wcd937x: add capture dapm widgets
+  ASoC: codecs: wcd937x: add audio routing and Kconfig
+
+ .../bindings/sound/qcom,wcd937x-sdw.yaml      |   91 +
+ .../bindings/sound/qcom,wcd937x.yaml          |   82 +
+ sound/soc/codecs/Kconfig                      |   20 +
+ sound/soc/codecs/Makefile                     |    7 +
+ sound/soc/codecs/wcd937x-sdw.c                | 1139 +++++++
+ sound/soc/codecs/wcd937x.c                    | 3029 +++++++++++++++++
+ sound/soc/codecs/wcd937x.h                    |  653 ++++
+ 7 files changed, 5021 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wcd937x.yaml
+ create mode 100644 sound/soc/codecs/wcd937x-sdw.c
+ create mode 100644 sound/soc/codecs/wcd937x.c
+ create mode 100644 sound/soc/codecs/wcd937x.h
+
+
+base-commit: 124cfbcd6d185d4f50be02d5f5afe61578916773
 -- 
-2.34.1
+2.25.1
 
 
