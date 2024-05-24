@@ -1,201 +1,143 @@
-Return-Path: <linux-kernel+bounces-188363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100228CE117
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4CC8CE12F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3E41F22037
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CEC2825F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7F7129A7F;
-	Fri, 24 May 2024 06:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1D185636;
+	Fri, 24 May 2024 06:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NVgMMK21"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nUhZv0o6"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDD11292F9;
-	Fri, 24 May 2024 06:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4AC749C;
+	Fri, 24 May 2024 06:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716532845; cv=none; b=GhtCPc1TaxndXJrPA0KHYArFmvS3GZJmcYMVJwBVAcBf0r5UzSfl171wsWqhevixD536r0GWGydo9dFLKvKm3M/ngxmyiMIECquLk53lGhlkhD7enIvGLDWzE0ZBbuhmpq6roEaB4/I93F4vfHglEwYDbmjIli0P1KMXe2aMZv4=
+	t=1716533577; cv=none; b=Pi/nnfP+fB/fw1npfSFeEveahTsj7J6045P71fI/ZpMzEyuHGqT0lW3bJrwpkJ8doGD65apxfssaUHww+ZsQx73OtMzAF4vYiyi+gCgj1bcGgaUyassI6YIBB466EYt8T0fkJMJSznjDJHyTm3681W6kqgmHq0qyJJwyAbmvYGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716532845; c=relaxed/simple;
-	bh=J6/WO3s5F8GQUUVL4fPdIsMWGDnpzpRnMebb8UdB1Ek=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WdvLBmJSBHAWuSml6uSmJHOOEYEfNjDsZHWOzYBoPR8PDKdkYz7dLEiLxkhC1nWtTtBZ8X+3+s+UdKeoMvdAfXwgEpyP1qHTBhMzNM3FjVxNH8CwRKsJt1JhRaR847qas+Zv30QlNaVLnRQ6pIu1gS9BVw9FiWxQ4jv451gQRl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NVgMMK21; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716532835; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=cXWzUpJjQ4PNak4y+VXJdShi18hH5igzhBYCqKdRrXU=;
-	b=NVgMMK21ymXTWq4k4be4BksohmCfH5oD3dKPQT72SDb4hrdTHxxizYJ7kTy0w4vXK7t5R1DK7XuvYLdxWTkMkoeUX/LXwB4+fVdnIOwAyCC0I46RC11ciQik3B4PDJjo2F5rqB6e+uonnBy+vq2qrvBxieiP0674X/DByhdm0RE=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W75A0P8_1716532833;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W75A0P8_1716532833)
-          by smtp.aliyun-inc.com;
-          Fri, 24 May 2024 14:40:34 +0800
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	winters.zc@antgroup.com
-Subject: [RFC 2/2] fuse: uid-based security enhancement for the recovery mechanism
-Date: Fri, 24 May 2024 14:40:30 +0800
-Message-Id: <20240524064030.4944-3-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
-In-Reply-To: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
-References: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+	s=arc-20240116; t=1716533577; c=relaxed/simple;
+	bh=IcA8areGBmtYySpKsN1vV7VjabAeCliqI9BnabnxYUw=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Kr9XpFB8k+ek9S/yFC07R282KsgYBlLPKr9C9Z8Hcrw5N360txGZSXuwx7BubjAs1SmlCO4TKS2TdoqLuXZoMu/SaF+ajO72QbdICfW3o1d/H4iqFtj5tstes4dxAvVyyc/vth6qqPpF1ptlbmZZsd/Ss9tGUeRr3QdZaUpLIuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nUhZv0o6; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f8edff35a0so467509b3a.2;
+        Thu, 23 May 2024 23:52:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716533575; x=1717138375; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ykVoCzYAXxgYfsHCRKZ4/jVPW0FI1w87SrBVTf97eqM=;
+        b=nUhZv0o6ncGQOriNb3/F9yu/80UgAqCL+KA625jf6q2izZyg8nYAgnfLMkoEpHnnda
+         RpEw8AlfkLzP/bLTG9jhaRaZmpgesUhG7Nf8PUMcEeOJ3yWJNce/kRSONrX1gt1SKdNF
+         fQ/3ZmTNl0OyLT8irj9tUsfYiCOQwmRqjxCW5vl3EgShfbXsyMDMntjE4lENm3owSqWV
+         fxsvArUPX9a4uoCTMOEauryrhRfeVchS/zLajs5xIw+v2qUdB3gtveG0K5aZCSNDhOjs
+         73QsbA7JB/RfZU3gi4GmbVMuUj/QVi+CfvXqHIFdQcxPB6pgillNbWaQgmsjTyBblwdc
+         rGOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716533575; x=1717138375;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ykVoCzYAXxgYfsHCRKZ4/jVPW0FI1w87SrBVTf97eqM=;
+        b=cnv4sfnH89PDtAxdZxiCO7MzvXPrnjX/v1ReGmY/tlukb911hhETdL0KokUswhTeZG
+         QMeCpQyYWH2WaoHxzfZFMFgL+2087us07Ns6rlH2vxvxOVh0qJu02dOvPVY2fFUrpuRu
+         pE094i7IEYkiZZXgjnr4cXOsnz+iNxv757Lk8GQOSjTkRSumCnzdzNXf1Q5TSfHSpbhy
+         KT9fDv2lkHvcFFPzEjUiX+ZPuiM2lIjHptYG0+65UU03u3gF+cEHEgC/tDwgTStbbx1f
+         fynUsvbnqB+61JfDnhjGmaLqXOZPe9eQR4+X35oDejTx51wPkXcwzj7O24OGkygIpzbE
+         XQ7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFOIr1ZocP9CA/OYGCtfrMllj00sSXwrGYeuT+aFQJqqz4IT+eb+95XrLUUYznm26z3lYzJf6bD+/LgOsvqCWiYoA/SU/BLrr7f8b1W3k1yVVNPEG+utGkYHe6B0cfiI/bU7nRwbrEJCDXE4TU
+X-Gm-Message-State: AOJu0YwqDyhqTM0dhxsi6eN62Z9D6Y10Z4OMe4WYirf1yoNS95SSDKsF
+	f3TjT5w04QdaKA4MmC8PHizuKTDzNWYMpy/cKDK9oJqeVQU0AKC4
+X-Google-Smtp-Source: AGHT+IFeHmKmJv50+uxoFGpkU0wNY7hJ3X7HEEhI+59tWnSNxwwR2DeReAt6XXA5R0PCcd9vrR99RA==
+X-Received: by 2002:a05:6a00:418a:b0:6ea:df6a:39e7 with SMTP id d2e1a72fcca58-6f8f2d7247cmr1513112b3a.13.1716533575418;
+        Thu, 23 May 2024 23:52:55 -0700 (PDT)
+Received: from dw-tp ([129.41.58.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc053bd6sm582396b3a.45.2024.05.23.23.52.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 23:52:54 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Donet Tom <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>, Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked during __bio_release_pages()
+In-Reply-To: <7792c8ba-39e6-47ee-9b43-108270325c15@redhat.com>
+Date: Fri, 24 May 2024 12:13:04 +0530
+Message-ID: <87o78vsoav.fsf@gmail.com>
+References: <20240523063905.3173-1-donettom@linux.ibm.com> <20240523121344.6a67a109e0af2ba70973b34b@linux-foundation.org> <d551d1cd-a02f-42aa-9de2-10ff7757224c@redhat.com> <20240523195734.bc03a8822a34b1a97880fb65@linux-foundation.org> <7792c8ba-39e6-47ee-9b43-108270325c15@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Offer a uid-based security enhancement for the fuse server recovery
-mechanism.  Otherwise any malicious attacker could kill the fuse server
-and take the filesystem service over with the recovery mechanism.
+David Hildenbrand <david@redhat.com> writes:
 
-Introduce a new "rescue_uid=" mount option specifying the expected uid
-of the legal process running the fuse server.  Then only the process
-with the matching uid is permissible to retrieve the fuse connection
-with the server recovery mechanism.
+dropping stable@vger.kernel.org
 
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
- fs/fuse/dev.c    | 12 ++++++++++++
- fs/fuse/fuse_i.h |  8 ++++++++
- fs/fuse/inode.c  | 13 ++++++++++++-
- 3 files changed, 32 insertions(+), 1 deletion(-)
+> On 24.05.24 04:57, Andrew Morton wrote:
+>> On Thu, 23 May 2024 22:40:25 +0200 David Hildenbrand <david@redhat.com> wrote:
+>> 
+>>>> You have stable@vger.kernel.org in the mail headers, so I assume you're
+>>>> proposing this for backporting.  When doing this, please include
+>>>>
+>>>> Cc: <stable@vger.kernel.org>
+>>>>
+>>>> in the changelog footers and also include a Fixes: target.  I'm
+>>>> assuming the suitable Fixes: target for this patch is 38b43539d64b?
+>>>
+>>> This adds a new selfest to make sure what was fixed (and backported to
+>>> stable) remains fixed.
+>> 
+>> Sure.  But we should provide -stable maintainers guidance for "how far
+>> back to go".  There isn't much point in backporting this into kernels
+>> where it's known to fail!
+>
+> I'm probably missing something important.
+>
+> 1) It's a test that does not fall into the common stable kernels 
+> categories (see Documentation/process/stable-kernel-rules.rst).
+>
+> 2) If it fails in a kernel *it achieved its goal* of highlighting that 
+> something serious is broken.
+>
+>> 
+>> I'm still thinking that we want this in kernels which have 38b43539d64b?
+>
+> To hide that the other kernels are seriously broken and miss that fix?
+>
+> Really (1) this shouldn't be backported. I'm not even sure it should be 
+> a selftest (sounds more like a reproducer that we usually attach to 
+> commits, but that's too late). And if people care about backporting it, 
+> (2) you really want this test to succeed everywhere. Especially also to 
+> find kernels *without* 38b43539d64b
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 7599138baac0..9db35a2bbd85 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -2376,12 +2376,24 @@ static long fuse_dev_ioctl_backing_close(struct file *file, __u32 __user *argp)
- 	return fuse_backing_close(fud->fc, backing_id);
- }
- 
-+static inline bool fuse_device_attach_permissible(struct fuse_conn *fc)
-+{
-+	const struct cred *cred = current_cred();
-+
-+	return (uid_eq(cred->euid, fc->rescue_uid) &&
-+		uid_eq(cred->suid, fc->rescue_uid) &&
-+		uid_eq(cred->uid,  fc->rescue_uid));
-+}
-+
- static inline bool fuse_device_attach_match(struct fuse_conn *fc,
- 					    const char *tag)
- {
- 	if (!fc->recovery)
- 		return false;
- 
-+	if (!fuse_device_attach_permissible(fc))
-+		return false;
-+
- 	return !strncmp(fc->tag, tag, FUSE_TAG_NAME_MAX);
- }
- 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index e9832186f84f..c43026d7229c 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -560,6 +560,7 @@ struct fuse_fs_context {
- 	unsigned int rootmode;
- 	kuid_t user_id;
- 	kgid_t group_id;
-+	kuid_t rescue_uid;
- 	bool is_bdev:1;
- 	bool fd_present:1;
- 	bool rootmode_present:1;
-@@ -571,6 +572,7 @@ struct fuse_fs_context {
- 	bool no_control:1;
- 	bool no_force_umount:1;
- 	bool legacy_opts_show:1;
-+	bool rescue_uid_present:1;
- 	enum fuse_dax_mode dax_mode;
- 	unsigned int max_read;
- 	unsigned int blksize;
-@@ -616,6 +618,9 @@ struct fuse_conn {
- 	/** The group id for this mount */
- 	kgid_t group_id;
- 
-+	/* The expected user id of the fuse server */
-+	kuid_t rescue_uid;
-+
- 	/** The pid namespace for this mount */
- 	struct pid_namespace *pid_ns;
- 
-@@ -864,6 +869,9 @@ struct fuse_conn {
- 	/** Support for fuse server recovery */
- 	unsigned int recovery:1;
- 
-+	/** Is rescue_uid specified? */
-+	unsigned int rescue_uid_present:1;
-+
- 	/** Maximum stack depth for passthrough backing files */
- 	int max_stack_depth;
- 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 1ab245d6ade3..3b00482293b6 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -734,6 +734,7 @@ enum {
- 	OPT_MAX_READ,
- 	OPT_BLKSIZE,
- 	OPT_TAG,
-+	OPT_RESCUE_UID,
- 	OPT_ERR
- };
- 
-@@ -749,6 +750,7 @@ static const struct fs_parameter_spec fuse_fs_parameters[] = {
- 	fsparam_u32	("blksize",		OPT_BLKSIZE),
- 	fsparam_string	("subtype",		OPT_SUBTYPE),
- 	fsparam_string	("tag",			OPT_TAG),
-+	fsparam_u32	("rescue_uid",		OPT_RESCUE_UID),
- 	{}
- };
- 
-@@ -841,6 +843,13 @@ static int fuse_parse_param(struct fs_context *fsc, struct fs_parameter *param)
- 		param->string = NULL;
- 		return 0;
- 
-+	case OPT_RESCUE_UID:
-+		ctx->rescue_uid = make_kuid(fsc->user_ns, result.uint_32);
-+		if (!uid_valid(ctx->rescue_uid))
-+			return invalfc(fsc, "Invalid rescue_uid");
-+		ctx->rescue_uid_present = true;
-+		break;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1344,7 +1353,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
- 			}
- 			if (flags & FUSE_NO_EXPORT_SUPPORT)
- 				fm->sb->s_export_op = &fuse_export_fid_operations;
--			if (flags & FUSE_HAS_RECOVERY)
-+			if (flags & FUSE_HAS_RECOVERY && fc->rescue_uid_present)
- 				fc->recovery = 1;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
-@@ -1753,6 +1762,8 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
- 	fc->destroy = ctx->destroy;
- 	fc->no_control = ctx->no_control;
- 	fc->no_force_umount = ctx->no_force_umount;
-+	fc->rescue_uid = ctx->rescue_uid;
-+	fc->rescue_uid_present = ctx->rescue_uid_present;
- 	fc->tag = ctx->tag;
- 	ctx->tag = NULL;
- 
--- 
-2.19.1.6.gb485710b
 
+Sorry about the noise and cc'd to stable. I believe we don't need to
+backport this test. The idea of adding a selftests was "also" to catch any
+future bugs like this. 
+
+I am unaware of any functional test suite where we could add such tests
+like how filesystems have fstests. Hence the ideas was to add this in
+selftests. 
+
+So this begs the question which I also asked few people at LSFMM,
+Does mm has any mmfvt (mm functional verification tests)? Should we have
+something like this? Was it tried in past?
+
+(Sorry, mmtests name is already taken - "MMTests is a configurable test suite that runs performance tests against arbitrary workloads.")
+
+-ritesh
+
+>
+> -- 
+> Cheers,
+>
+> David / dhildenb
 
