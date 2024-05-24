@@ -1,79 +1,176 @@
-Return-Path: <linux-kernel+bounces-188182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F1F8CDEEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDD78CDEF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 067811C20F1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:36:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4321C1C21328
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CFC749C;
-	Fri, 24 May 2024 00:36:46 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8527779C2;
+	Fri, 24 May 2024 00:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ex3GKSZu"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAFD36D;
-	Fri, 24 May 2024 00:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41150816
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716511006; cv=none; b=DlLP8DMGsUWJULmUooDJCzwm0n48h0jso4xWU4joCPC4Cv5Yrar/9REYqD9b3AVHgnOlrfZnyb8uo0j9pfLh00iQ0X4y5nIY0dKA8gj7vRM55xvRLh6E7//aX/H/e+HbNUofDFh3OS9dw+gtYwIi9TBF7kgOoWL68HFe9FyzHbA=
+	t=1716511118; cv=none; b=jdLDixjaIMzLVzpqp6LgDvrz1CtdiKjvB2Q1dpxN9l0KbPbEtAJaxzLgNy3Bhk16rJN04/0lNMuXPyLPISjTGneO5xI2yWO22vMJhSg09F+4xt022qyMV3igPoj3fpVkB4sOvKmSrAaoGowWbXuEWJFRAlE3TvWMHbDELz8c+bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716511006; c=relaxed/simple;
-	bh=JdMmuZbKXPkOidcdB/87y1uuTORyZPwXg3doRxtxYgk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fVfsX48v2spjZwA0/s5eqx/R3ZV3wdpgCVd5Hx6CHUrNrWElmfvwlZp3YEwCbFkWrJGKvE0zdN8Ev2y2X/cUe8u0PCt7kNYadLYYtjCm+gowAgjcxsi5GNautc/JPS5fmzGQjPfcaFFhK/9JdLv469UJfKYtNZjNw7NwHiTlqqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44O0aXlfD1489359, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44O0aXlfD1489359
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 May 2024 08:36:33 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 24 May 2024 08:36:33 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 24 May 2024 08:36:33 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Fri, 24 May 2024 08:36:33 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Shichao Lai <shichaorai@gmail.com>, Kalle Valo <kvalo@kernel.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>
-Subject: RE: INFO: trying to register non-static key in skb_dequeue
-Thread-Topic: INFO: trying to register non-static key in skb_dequeue
-Thread-Index: AQHarBxzMJWY0Vu27kehlktUAsNdF7GkIKiggAA0AwCAATc1MA==
-Date: Fri, 24 May 2024 00:36:33 +0000
-Message-ID: <b5a61acb12f0401f8077c677d53f8fa7@realtek.com>
-References: <CAEk6kZuuezkH1dVRJf3EAVZK-83=OpTz62qCugkpTkswj8JF6w@mail.gmail.com>
- <54dbdd605bca48a68ae9a7423b4c994f@realtek.com>
- <CAEk6kZtsmKrvSEsPmH_5yYdqzZtAqubyh7qe7jaXBe6sz2nPrg@mail.gmail.com>
-In-Reply-To: <CAEk6kZtsmKrvSEsPmH_5yYdqzZtAqubyh7qe7jaXBe6sz2nPrg@mail.gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1716511118; c=relaxed/simple;
+	bh=grp2aumzXD04JTUddCKPIYKV3Zd9gabxwz5TJKI3HGw=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SAzQR9c7sRC8jUysQrJnwehH5b+wf+zrExpcrol4D2F10ifjmYUr92AX7cuMMS39bMBiQbfLPSi44jGX1pvFbY1LD8ExNMJY0+3WwI4vNJV5eMKoO9Y3lflYtmVUzEBWUSzhVqaUDMtNsbpHImFGE8yHdV8CbU8kZSphZToZkDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ex3GKSZu; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c99e6b8b1fso4348730b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:38:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716511116; x=1717115916; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8oEGXFFhEZ3kKS8HqbZY7sKVJ85+CGR+UK70IUChd0Y=;
+        b=Ex3GKSZuxcxD+i/4WPEcNOxsUhcdOmlkltvZ1BBzr8A0NFRBOQgveZg/VxQ/SrZeq+
+         y/e30zgGncRfviVjrjqjUKsN1kHKXyMvp7BOkIDyT7tKch6OBqnqVfe2k2lmVzdQvhEM
+         VMIu08MgAP+W4ocCPdyD9Z2cU78O9B/BlcEfQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716511116; x=1717115916;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8oEGXFFhEZ3kKS8HqbZY7sKVJ85+CGR+UK70IUChd0Y=;
+        b=C8VDA7IHfsoVMuETXwiD8hAc1MUP6z0ikf+iCUK3eYCvgEt2FD3hjmiiwmZ+R07mdM
+         ImOGlSwruzlYAJ1HtDXi1CY906UqGEIqD5fH4RPb0m02C8ucafVmIijKZSVZB5zY6DLq
+         WKdyenJr8jxYYvdDeGl9sRmZWr8/xI4+X7MGGdnt6LOns/NcP6CODwKO3drFQzj0bDLO
+         FRoWT0slBUQMp9bjcgs9Z395m6TOs54Hu0aX8hfHOvBl5nCqmaURcInwdYusSVm5Ktv/
+         zfM38WuMRQtSRy/F1YwGvs/qf4hBhn0+HdxwmAzDlJ0tXYSSQqb5DmN5z9wrGVT3CV4N
+         MUdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh2wjlDxeNpaouA2OlS080UWWrxn1O8y6mWi2bk6n5/HMsjXvYHVu0A4PeULC6Y1wewyHrO2jNLyxnd0mxx9fJWN81QCv+nYAuK4v6
+X-Gm-Message-State: AOJu0YxohfW9R7AYb3BlwrlkbsOQKYbYXaMd4b43oDIZp7eJHEfHOUt0
+	7YavPmQnRKz6FvfER+zpT3WSc2iOmbmLgtMZQnJQO46hHTRilxUkpYkYSGmM8TgNBw7Gqv8M6iA
+	15WJA8dFMF3CudiAPPYXpm5yg4N/ajVDoRW3c
+X-Google-Smtp-Source: AGHT+IHANTkEZOvjig5FCEm2CHI3m2gat2w85Oc8UgsCt8xQgTaCvhgmAJNa/wG52wcTxm0wOonRSfXfhADKRKsIqAk=
+X-Received: by 2002:a05:6808:358:b0:3c7:4fd4:ae76 with SMTP id
+ 5614622812f47-3d1a4fb3c78mr1125728b6e.10.1716511116239; Thu, 23 May 2024
+ 17:38:36 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 23 May 2024 19:38:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240523162207.2.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
+References: <20240523232216.3148367-1-dianders@chromium.org> <20240523162207.2.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Thu, 23 May 2024 19:38:34 -0500
+Message-ID: <CAE-0n53F3Xg2vOdgy-Vpjw4Kirdgi6B+BnO51fd6qOtDu0iXCg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] serial: qcom-geni: Fix qcom_geni_serial_stop_tx_fifo()
+ while xfer
+To: Douglas Anderson <dianders@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	John Ogness <john.ogness@linutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	linux-arm-msm@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@arm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-U2hpY2hhbyBMYWkgPHNoaWNoYW9yYWlAZ21haWwuY29tPiB3cm90ZToNCj4gDQo+IEl0IHNlZW1z
-IHRvIHdvcmsgY29ycmVjdGx5ISBObyB3YXJubmluZyBvY2N1cnMuDQo+IElmIHlvdSBhcmUgdG8g
-YWRkIGEgcGF0Y2gsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8gdGhlIGNvbW1pdDoN
-Cj4gUmVwb3J0ZWQtYnk6IFNoaWNoYW8gTGFpIDxtYWlsdG86c2hpY2hhb3JhaUBnbWFpbC5jb20+
-DQoNCkFkZGVkLCBhbHNvIGFkZGVkIFRlc3RlZC1ieSBbMV0uDQoNClsxXSBodHRwczovL2xvcmUu
-a2VybmVsLm9yZy9saW51eC13aXJlbGVzcy8yMDI0MDUyNDAwMzI0OC41OTUyLTEtcGtzaGloQHJl
-YWx0ZWsuY29tL1QvI3UNCg0K
+Quoting Douglas Anderson (2024-05-23 16:22:13)
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> index 2bd25afe0d92..9110ac4bdbbf 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -265,8 +265,8 @@ static bool qcom_geni_serial_secondary_active(struct uart_port *uport)
+>         return readl(uport->membase + SE_GENI_STATUS) & S_GENI_CMD_ACTIVE;
+>  }
+>
+> -static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+> -                               int offset, int field, bool set)
+> +static bool qcom_geni_serial_poll_bitfield(struct uart_port *uport,
+> +                                          int offset, int field, u32 val)
+
+Can these be unsigned offset and field?
+
+>  {
+>         u32 reg;
+>         struct qcom_geni_serial_port *port;
+> @@ -295,7 +295,7 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+>         timeout_us = DIV_ROUND_UP(timeout_us, 10) * 10;
+>         while (timeout_us) {
+>                 reg = readl(uport->membase + offset);
+> -               if ((bool)(reg & field) == set)
+> +               if ((reg & field) == val)
+>                         return true;
+>                 udelay(10);
+>                 timeout_us -= 10;
+> @@ -303,6 +303,12 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+>         return false;
+>  }
+>
+> +static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
+> +                                     int offset, int field, bool set)
+
+Can these be unsigned offset and field?
+
+> +{
+> +       return qcom_geni_serial_poll_bitfield(uport, offset, field, set ? field : 0);
+> +}
+> +
+>  static void qcom_geni_serial_setup_tx(struct uart_port *uport, u32 xmit_size)
+>  {
+>         u32 m_cmd;
+> @@ -675,6 +681,31 @@ static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
+>         if (!qcom_geni_serial_main_active(uport))
+>                 return;
+>
+> +       /*
+> +        * Wait until the FIFO has been drained. We've already taken bytes out
+> +        * of the higher level queue in qcom_geni_serial_send_chunk_fifo() so
+> +        * if we don't drain the FIFO but send the "cancel" below they seem to
+> +        * get lost.
+> +        */
+> +       qcom_geni_serial_poll_bitfield(uport, SE_GENI_TX_FIFO_STATUS, TX_FIFO_WC, 0);
+> +
+> +       /*
+> +        * If we send the cancel immediately after the FIFO reports that it's
+> +        * empty then bytes still seem to get lost. From trial and error, it
+> +        * appears that a small delay here keeps bytes from being lost and
+> +        * there is (apparently) no bit that we can poll instead of this.
+> +        * Specifically it can be noted that the sequencer is still "active"
+> +        * if it's waiting for us to send it more bytes from the current
+> +        * transfer.
+> +        */
+> +       mdelay(1);
+
+I wonder if the FIFO is in a different 1kb chunk of device memory and so
+this needs to be an instruction barrier (isb()) to prevent the cancel
+from being executed before or in parallel to the FIFO polling. Hopefully
+someone at qcom can confirm this. It looks like SE_GENI_TX_FIFO_STATUS
+is 0x800 offset and the cancel is at 0x600 so it looks like it may be
+this problem. Device memory doesn't save us even if that has ordered
+accesses :(
+
+> +
+> +       /*
+> +        * Cancel the current command. After this the main sequencer will
+> +        * stop reporting that it's active and we'll have to start a new
+> +        * transfer command. If the cancel doesn't take, we'll also send an
+> +        * abort.
+> +        */
+>         geni_se_cancel_m_cmd(&port->se);
+>         if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
+>                                                 M_CMD_CANCEL_EN, true)) {
 
