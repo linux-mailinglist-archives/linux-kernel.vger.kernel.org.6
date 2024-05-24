@@ -1,130 +1,189 @@
-Return-Path: <linux-kernel+bounces-188702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFA08CE583
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:51:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3548CE585
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619971C20EFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C363A1C213E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0127986647;
-	Fri, 24 May 2024 12:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="zfaJR4yw"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9978664C;
+	Fri, 24 May 2024 12:51:29 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A487C85640;
-	Fri, 24 May 2024 12:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC7885640
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716555076; cv=none; b=FBpH7U7Tgh2uzmT53lDX+OPCj0e8JxJBCXnPkpu25jRcixbisi43PFePCY3ZNY0lK7ut6LzSW7t0KRk4XNQSMR5V0lkVhMtknm8RFf52wGdZSLrsLhL8paU2ERbQqL4gkbeWeo2YsdEM6li6bQMiYqCpc7/BgklhcCImVrBFu+Y=
+	t=1716555089; cv=none; b=jreeZ+FtYMd/EXWxdKityOoclWNMbmA+tX23lZHv8Xi/dEbumCG/bDFeRbyk4rzbn9sDxFMylDqdL/4+stfieKHNZTXi2aG2pwP6ctq1u34nvZc7tQVzH5j1VjH8WTeJY4jws2SarrbxQftLkqwXa6j7IjzwnjU5z7vOUqpWVh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716555076; c=relaxed/simple;
-	bh=JwjqONGEZD9m35VNHftWFl/8SV4bLxXpT8LuBhIOxBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDIcAvgi98V1stZG+MqMBXCYrJN9M9DDFEfr7QbKqMdvYioU1zU8dwFqDwV7+dbnI8qO+1DbcL50//oOBZhq6P8K9hLPeuN9y5HHwQpQ+DEhl0OZ7Mew5ZmyYozTcULALQS/cDqD9nxAIpl0VoiEoZsclWjjYvhSs/05qWsFoNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=zfaJR4yw; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 4B3AD20234;
-	Fri, 24 May 2024 14:51:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1716555071;
-	bh=qDP8cRI/5qtHYgYuFlaak2vCfnTE2IhepeW5hOhXj0E=;
-	h=Received:From:To:Subject;
-	b=zfaJR4ywn9eBBxnPWl5eKvyTv28K2In7JStDJ2B6zR6mV+vsLTYM33TnHxPIJJzbD
-	 ZR3RXVi1ejNX+TMl01HFc7wB0UY768JZISvVc+Ym8O0Ei9ZwJCkRgx4OvZRdbSoQp9
-	 k2ppI1BtRJOXamaT/RN9QfLnMTjjHCGT9NNUu6Osy4sYwvelP0BDnJ8SCgkM6eMywI
-	 6RkV/NjZloO1vQuegu0t5JkiPMbgS117xov7hKGy9tH9JO7ZYzvzXLfTJ3AT6TMh7k
-	 iGWKxbprw28P8GxXIv++PBdDdJFXnqIjPwn1Opcj/C1wTce8cXs9eg3NmLQ1oNMChl
-	 2fVR1eCBWosrQ==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id E297E7F963; Fri, 24 May 2024 14:51:10 +0200 (CEST)
-Date: Fri, 24 May 2024 14:51:10 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH v1 2/2] usb: typec: mux: gpio-sbu: Make enable gpio
- optional
-Message-ID: <ZlCNPg2iuvSTpVJs@gaggiata.pivistrello.it>
-References: <20240524071034.4441-1-francesco@dolcini.it>
- <20240524071034.4441-3-francesco@dolcini.it>
- <5of64nmgpotr7fu66urgko5gfvr4ffhmff4dgkagkdvwh2dywk@etlw6rsmhki6>
- <ZlB6ruZ8j2rVsIio@gaggiata.pivistrello.it>
- <3z3gi2s2dxlflmfpcirutvesnj6gsxyriijl2jrc2udaqucoyb@6scxw5hb2nv7>
+	s=arc-20240116; t=1716555089; c=relaxed/simple;
+	bh=EqnsROPwTP3ntkopFkdrZelWoz/7Hj+16Nwvgg65sKg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fFFCXj4bfa5NClfHPprJyZvG79BhShYb2EtSHhwsOYfa9gczDjpzuOOFmsL8xpEGlZHYogrG6uTEa9HfYlJjLxmSdPr8QzO9fXwgjrEbwQO5w4FVFcDj2VfawwQg/gcLmZJxJpk3HY8HXRfIDVRdK9hMAMuxFl8pxPOYxO0OwjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-37128f4b7f9so30686125ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:51:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716555087; x=1717159887;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LWR8v6vD/ml9vWdL1nuV53C5OuiUbXhFWnnf57JGgQk=;
+        b=nT5BQoZGBjaXLrMxMT8RJ+VsRF6aJuqbO4WZCsy156NtdJPfXTTzKndwzz9ChvfRnu
+         HSMGUF6ze8TXXOPOPmfBDu9hea6EHvmjeyXYwIeSVSOL7Yu+W9QhJZ92GB0vJO5VqjJN
+         cifeKH7RJciJQEB3kZqImQ75GPr3FlJMfuUL92mlvLpFEui27fEEtZn6Pcj9/W4JF+4i
+         9kk5b9sQaH0ikNMM3Hl4geeWVLHlQSnuyQUoGlWNroJ0Y7tc8wXL9xEH6AWlROHLB9BS
+         eSXNM7833dBSX7mFXLMLGTvaoCP14OnIKmPt4ABMJXDciHf7AZc5FM8HJetRF/GW/iNv
+         fnOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWe4J7xj1XU5eUbhXK0Lw/PMDPYFIFiMWglAaTKDzMKps3K2eHNiQAxN+xmP3hHDSRI8TEe0ZI62KHBDBZWZVrTWCg9jzFx6CwiRF+C
+X-Gm-Message-State: AOJu0YyzjJidxEFjEQPJTm0AMF63ntYAaZsC/ke1xCpESMGFy2jZP7TZ
+	QRqivIFMVjpR1w7BJJunz7HpiuwgqYkDMooTES4S57+P2qyzeV+wOggtx7/G9aWZngHVKt+Pkgt
+	FKEHSUd7i2Q+mvR0vA4v28hs8DTQdgsvdKsjLqsYzRyxZjNaTjZva680=
+X-Google-Smtp-Source: AGHT+IE1JjcpjaC2BHnwYpKEH7AuYjloe9wjM4YYnL2XHbMZ/dpvGBz6q/CpNKjGQ+cByz1cp/TWPBDwuHY7CRbbM77uGI0dct+4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3z3gi2s2dxlflmfpcirutvesnj6gsxyriijl2jrc2udaqucoyb@6scxw5hb2nv7>
+X-Received: by 2002:a05:6e02:1d9b:b0:36f:c675:fe8e with SMTP id
+ e9e14a558f8ab-3737b350f33mr2429995ab.4.1716555087179; Fri, 24 May 2024
+ 05:51:27 -0700 (PDT)
+Date: Fri, 24 May 2024 05:51:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000035941f061932a077@google.com>
+Subject: [syzbot] [net?] KMSAN: kernel-infoleak in __skb_datagram_iter (4)
+From: syzbot <syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Dmitry,
+Hello,
 
-On Fri, May 24, 2024 at 02:42:04PM +0300, Dmitry Baryshkov wrote:
-> On Fri, May 24, 2024 at 01:31:58PM +0200, Francesco Dolcini wrote:
-> > On Fri, May 24, 2024 at 12:56:15PM +0300, Dmitry Baryshkov wrote:
-> > > On Fri, May 24, 2024 at 09:10:34AM +0200, Francesco Dolcini wrote:
-> > > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > > 
-> > > > The enable gpio is not required when the SBU mux is used only for
-> > > > orientation, make it optional.
-> > > > 
-> > > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > > > ---
-> > > >  drivers/usb/typec/mux/gpio-sbu-mux.c | 11 ++++++++---
-> > > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
-> > > > index 374168482d36..cf44259980a1 100644
-> > > > --- a/drivers/usb/typec/mux/gpio-sbu-mux.c
-> > > > +++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
-> > ...
-> > > > @@ -66,6 +66,9 @@ static int gpio_sbu_mux_set(struct typec_mux_dev *mux,
-> > > >  {
-> > > >  	struct gpio_sbu_mux *sbu_mux = typec_mux_get_drvdata(mux);
-> > > >  
-> > > > +	if (!sbu_mux->enable_gpio)
-> > > > +		return -EOPNOTSUPP;
-> > > 
-> > > Can we skip registering the mux if there is no enable_gpio? This can
-> > > save users from the unexpected errors during runtime.
-> > 
-> > Yes, I considered this option.
-> > 
-> > The rationale for the current implementation is that if the device tree is
-> > correct (no mode-switch property, when enable-gpios is not present), nobody
-> > will call gpio_sbu_mux_set() so no runtime error is possible. If the
-> > configuration in the DT is not correct you get this runtime error.
-> > 
-> > With your proposal in case the DT configuration is not correct there will be no
-> > errors from the kernel, but the functionality will not work.
-> 
-> I'm slightly biased maybe, but I prefer an error from probe (or
-> dependent devices being deferred). On the other hand, current motto is
-> that 'the kernel should not duplicate dt-validate's work'.
+syzbot found the following issue on:
 
-I am in favor of "the kernel should not duplicate dt-validate's work".
+HEAD commit:    101b7a97143a Merge tag 'acpi-6.10-rc1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15633df4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7ac2f8c387a23814
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c85cae3350b7d486aee
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Now the question is if you are ok with the current implementation or you want
-me to change the way you suggested.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Or maybe there is a third variant, not doing the return -EOPNOTSUPP and
-registering gpio_sbu_mux_set() even if the gpio get returns NULL. This is a
-one-line patch and everything will work just fine.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4f673334a91c/disk-101b7a97.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8e6db59f4091/vmlinux-101b7a97.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7e5782387c9d/bzImage-101b7a97.xz
 
-Francesco
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:29 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
+BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:271 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x366/0x24b0 lib/iov_iter.c:185
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ copy_to_user_iter lib/iov_iter.c:24 [inline]
+ iterate_ubuf include/linux/iov_iter.h:29 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
+ iterate_and_advance include/linux/iov_iter.h:271 [inline]
+ _copy_to_iter+0x366/0x24b0 lib/iov_iter.c:185
+ copy_to_iter include/linux/uio.h:196 [inline]
+ simple_copy_to_iter net/core/datagram.c:532 [inline]
+ __skb_datagram_iter+0x185/0x1000 net/core/datagram.c:420
+ skb_copy_datagram_iter+0x5c/0x200 net/core/datagram.c:546
+ skb_copy_datagram_msg include/linux/skbuff.h:4070 [inline]
+ netlink_recvmsg+0x432/0x1610 net/netlink/af_netlink.c:1962
+ sock_recvmsg_nosec net/socket.c:1046 [inline]
+ sock_recvmsg+0x2c4/0x340 net/socket.c:1068
+ ____sys_recvmsg+0x18a/0x620 net/socket.c:2803
+ ___sys_recvmsg+0x223/0x840 net/socket.c:2845
+ __sys_recvmsg net/socket.c:2875 [inline]
+ __do_sys_recvmsg net/socket.c:2885 [inline]
+ __se_sys_recvmsg net/socket.c:2882 [inline]
+ __x64_sys_recvmsg+0x304/0x4a0 net/socket.c:2882
+ x64_sys_call+0x38ff/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:48
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ pskb_expand_head+0x30f/0x19d0 net/core/skbuff.c:2271
+ netlink_trim+0x2c2/0x330 net/netlink/af_netlink.c:1317
+ netlink_broadcast_filtered+0x82/0x23b0 net/netlink/af_netlink.c:1523
+ nlmsg_multicast_filtered include/net/netlink.h:1111 [inline]
+ nlmsg_multicast include/net/netlink.h:1130 [inline]
+ nlmsg_notify+0x15f/0x2f0 net/netlink/af_netlink.c:2602
+ rtnl_notify+0xc3/0xf0 net/core/rtnetlink.c:757
+ wireless_nlevent_flush net/wireless/wext-core.c:354 [inline]
+ wireless_nlevent_process+0xfe/0x250 net/wireless/wext-core.c:414
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
+ worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ wireless_send_event+0x566/0x1020 net/wireless/wext-core.c:580
+ ioctl_standard_iw_point+0x12e5/0x13c0
+ compat_standard_call+0x179/0x310 net/wireless/wext-core.c:1110
+ wext_ioctl_dispatch+0x234/0xa30 net/wireless/wext-core.c:1016
+ compat_wext_handle_ioctl+0x1ae/0x2f0 net/wireless/wext-core.c:1139
+ compat_sock_ioctl+0x26b/0x1370 net/socket.c:3525
+ __do_compat_sys_ioctl fs/ioctl.c:1004 [inline]
+ __se_compat_sys_ioctl+0x791/0x1090 fs/ioctl.c:947
+ __ia32_compat_sys_ioctl+0x93/0xe0 fs/ioctl.c:947
+ ia32_sys_call+0x1481/0x40a0 arch/x86/include/generated/asm/syscalls_32.h:55
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb4/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Local variable iwp created at:
+ compat_standard_call+0x48/0x310 net/wireless/wext-core.c:1097
+ wext_ioctl_dispatch+0x234/0xa30 net/wireless/wext-core.c:1016
+
+Bytes 60-63 of 64 are uninitialized
+Memory access of size 64 starts at ffff88804af03180
+Data copied to user address 00007fff5690c968
+
+CPU: 0 PID: 4697 Comm: dhcpcd Tainted: G        W          6.9.0-syzkaller-02339-g101b7a97143a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
