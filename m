@@ -1,231 +1,112 @@
-Return-Path: <linux-kernel+bounces-188592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22B48CE40B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD4E8CE40D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567E2281AEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:13:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E341C21792
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3E58562C;
-	Fri, 24 May 2024 10:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6ED185940;
+	Fri, 24 May 2024 10:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="USoDXd6t"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NIhCGedn"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F5E55E73;
-	Fri, 24 May 2024 10:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A8485926
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716545598; cv=none; b=L5D6kvmt4x216n8YkdExl40dQrxYLyEqQRhNQgWIWXRNXgWhMCUJDNP8fgy+kkCpuapTAplXhwK7C3IKna0S5JJPv91f4rOMVcWrs672NP/hJE9ecPr3rJg6QDWmOFut/OrgPvtS68EbbYgcOiLWif+pbM/6FLuTSjHmPESGEpw=
+	t=1716545650; cv=none; b=XELRpNrwsPtDto9bnM37M2Lvf1cMJKk5pKH39qKkoCaONGyIxR5L83Yl1rjJBw0oJJlwtR76qM+8gkTAmBPc2DiE2etyfSC5oC7Di5GbD8joOKnwKdGojfRXvgHLLsOY2I1YzK3TikCglhU9J2dHCKuPuNIrmrDAjZujcmj5Ljs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716545598; c=relaxed/simple;
-	bh=c6TDcv5JxC0r9PYfwCFcLyrh3UD3cztzug9U0akFypY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LGtgaSSilzMoJJ3+qRHG9b+QbIlwak+fLdfC/dDIUcCRK0P1ej84oDNdu0J6c6+rrUCwBkSe9p8BJoinkShcPBnU5X0gsTgxMorviVYD0UCIA21cqyqs6iY3qU2EeN9hFxnkaQI0GR9oPRmNm7Quv2owhY7VhDdqhv+5/1oQ24Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=USoDXd6t; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O6CEeh020201;
-	Fri, 24 May 2024 06:13:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=DKIM; bh=TweYl9Z6tYTIKENAzoHuQerH0ps
-	os/upZIovCsAyM+M=; b=USoDXd6tJK3rw+aTWEvrKSO0LQfQ7LnLj2TzPBQSr0R
-	31hWTw/EViA8NMLX07FCZIYA7Nf1JlPkXKoc4AfW7X4gbqHewSlLpGyyECg0kx0R
-	D5syJDOSVptKJy6/yg3cNQl1mI6kAE3EGCiI7AP0erxywSt8M8Oo8wQx6Wx16WXw
-	GqceZNfZfNDGQP4tFn+uNChyAGgt6aNiMgLEGL/zLtAjpG+tglG2HWcLCub6mvTb
-	4wj/hpVul/1fY1xYasEddhhIbthsKLpI27RWlxse28qDRWXaCnyyryFSnHbz+vT4
-	Jq8hjAbRowaq45x5hFsW/Xfc7KxNk/bdUwr2BarIXSw==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3yaaaqb1j1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 06:13:02 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 44OAD13T038773
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 24 May 2024 06:13:01 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 24 May
- 2024 06:13:00 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 24 May 2024 06:13:00 -0400
-Received: from radu.ad.analog.com ([10.48.65.189])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44OACjBH011026;
-	Fri, 24 May 2024 06:12:48 -0400
-From: Radu Sabau <radu.sabau@analog.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-hwmon@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Radu Sabau <radu.sabau@analog.com>
-Subject: [PATCH v3] drivers: hwmon: max31827: Add PEC support
-Date: Fri, 24 May 2024 13:12:31 +0300
-Message-ID: <20240524101232.6295-1-radu.sabau@analog.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716545650; c=relaxed/simple;
+	bh=sDQFYTVbNT2/K9iVIl5y4i/52Li/sV3v7epjRryjwUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=M8MypFrm7mwcrjyO08a9zhGd+k3cF3M3XiZhI/CAFr3DvaWd5I5lDiTFFma7WlKcoSUAjRsB4WIDZgsCUWR6HaD1VeZjKfX4pR2VL4GJwoorKTH6/IGAJK95PWJUVOHYldpWtFRQ+yAVM7XJvFPAE3DC7WbaEQ5eVrwKyucw3dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NIhCGedn; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-420180b58c3so66268055e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716545647; x=1717150447; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IM+l9b+Ddr6zhT1mzkxDkWWP6YYG+wKMelFtyjWWBDQ=;
+        b=NIhCGednBxy/TivUBT20zMCtZTtJE2oeeglyMkW8Lx+QRDznGRUa3ntltDS30L22fp
+         XGjjpAvx3B+SXCVH9z+VvvU8rnu8cEoiGURcCfppYw8UB76P/IL8UHgzJxeUY/mgtzib
+         AeRJV2TYl88rame2w6i9cvFWevaMNrR+p6tGlyvoa+MjIVpVNx5RHUXIY3B35nWLz06c
+         G4i3A85kfzEx8rNKns3L4jL9G9YwEuXsmpGcCmaX8RvzJidjeE6ZgEu78/oAxHb38iNd
+         OOWeAesmljUOnu+X/X+e7o88IkUC2fn8WxE3cKQAsXcRPbK+/PoN6dW9GcBzBlWQHGGL
+         AiAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716545647; x=1717150447;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IM+l9b+Ddr6zhT1mzkxDkWWP6YYG+wKMelFtyjWWBDQ=;
+        b=do0Akj2GCKRjsISDpcQIRk1dnw7zTK/23WsSd58JuXccaTRZlFndW/rps96IzDtfyG
+         ni1OrfzKLPHHYmbp+Lbge80Bt+uOva+yCRnudV9+dHgroxoVo9BKW0Vm5xVhL0dTWbnH
+         MIUpsIiBpNjg65Vn1OgK0Jk6cCdCza0Wi1PISU9PkZzLzSqZd5FqNAI6O8MJYILrXqxy
+         4kJeKffGcjObWunAUvCte09iNQZzh8EItKNhWtYUVdz2a8YiLJdrdWVq9TJ8ZUUf2bjj
+         6mMouq+jPWZ1dIUanMPt4sf30i+F90tqIwCisnzADH3h2oYBDo8K1u8LQlB+vjKk0e57
+         vz9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWWq3SlZ4kfenAJz1MFm16IjehmzNIf2X69YskpHhm/jZadbkrZsOsg7WcdM0IwedDSETajMkfWWS2btN1Q6Rf//9yRDZHH7oNgUckG
+X-Gm-Message-State: AOJu0YyHZ8r+hVVcoJ9P4u0muFy2wLulldRJdjD8OYcRe+02wOR64PJ+
+	u2XititdLU07sfQsgwVs+YE4esxr2lB93UvcnrqBpy1S1t2dtubZYR9QE4uvvDE=
+X-Google-Smtp-Source: AGHT+IFCqr13Uicxve2AP2QOtfOfD7tHQdd+OMCD8G33EQHCrhyPN3FgroHGrS3bmoEBT/VkcRutVQ==
+X-Received: by 2002:a05:600c:444e:b0:420:14fb:de1f with SMTP id 5b1f17b1804b1-42108a5965fmr11697145e9.14.1716545646781;
+        Fri, 24 May 2024 03:14:06 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100f759f0sm48224445e9.28.2024.05.24.03.14.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 03:14:06 -0700 (PDT)
+Date: Fri, 24 May 2024 13:14:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] Bluetooth:  MGMT: Uninitialized variable in load_conn_param()
+Message-ID: <819ed9b8-8790-4d15-b2a0-20929328d582@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: PD8aSPPWRgVFpKvxXWAV_6LJJjpHzDoI
-X-Proofpoint-ORIG-GUID: PD8aSPPWRgVFpKvxXWAV_6LJJjpHzDoI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_03,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 adultscore=0 mlxlogscore=999 lowpriorityscore=0
- clxscore=1015 spamscore=0 suspectscore=0 phishscore=0 bulkscore=0
- impostorscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405240070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Add support for PEC by attaching PEC attribute to the i2c device.
-Add pec_store and pec_show function for accessing the "pec" file.
+The "update" variable needs to be initialized to false.
 
-Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+Fixes: 831be422f3bb ("Bluetooth: MGMT: Make MGMT_OP_LOAD_CONN_PARAM update existing connection")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Change log:
-v2:
- *Rebase on top of v6.9
- *Attach pec attribute only to i2c device
- *Fix bug to attach pec attribute to i2c device if the device supports it.
-v3:
- *Use only one variable to write PEC_EN bit in configuration register
- *Use regmap_set_bits to set PEC_EN bit when requested instead of
-  regmap_update_bits.
- *Fix typo in commit message.
----
- Documentation/hwmon/max31827.rst | 13 +++++--
- drivers/hwmon/max31827.c         | 63 ++++++++++++++++++++++++++++++++
- 2 files changed, 73 insertions(+), 3 deletions(-)
+ net/bluetooth/mgmt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
-index 44ab9dc064cb..9c11a9518c67 100644
---- a/Documentation/hwmon/max31827.rst
-+++ b/Documentation/hwmon/max31827.rst
-@@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive temperature faults must occur
- before overtemperature or undertemperature faults are indicated in the
- corresponding status bits.
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 20eca8a9c681..3ab1558ff391 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -7865,8 +7865,8 @@ static int load_conn_param(struct sock *sk, struct hci_dev *hdev, void *data,
+ 		struct mgmt_conn_param *param = &cp->params[i];
+ 		struct hci_conn_params *hci_param;
+ 		u16 min, max, latency, timeout;
++		bool update = false;
+ 		u8 addr_type;
+-		bool update;
  
--Notes
-------
-+PEC Support
-+-----------
-+
-+When reading a register value, the PEC byte is computed and sent by the chip.
-+
-+PEC on word data transaction respresents a signifcant increase in bandwitdh
-+usage (+33% for both write and reads) in normal conditions.
- 
--PEC is not implemented.
-+Since this operation implies there will be an extra delay to each
-+transaction, PEC can be disabled or enabled through sysfs.
-+Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
-diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
-index f8a13b30f100..46ddd5f8ee1c 100644
---- a/drivers/hwmon/max31827.c
-+++ b/drivers/hwmon/max31827.c
-@@ -24,6 +24,7 @@
- 
- #define MAX31827_CONFIGURATION_1SHOT_MASK	BIT(0)
- #define MAX31827_CONFIGURATION_CNV_RATE_MASK	GENMASK(3, 1)
-+#define MAX31827_CONFIGURATION_PEC_EN_MASK	BIT(4)
- #define MAX31827_CONFIGURATION_TIMEOUT_MASK	BIT(5)
- #define MAX31827_CONFIGURATION_RESOLUTION_MASK	GENMASK(7, 6)
- #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
-@@ -475,6 +476,53 @@ static ssize_t temp1_resolution_store(struct device *dev,
- 
- static DEVICE_ATTR_RW(temp1_resolution);
- 
-+static ssize_t pec_show(struct device *dev, struct device_attribute *devattr,
-+			char *buf)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+
-+	return scnprintf(buf, PAGE_SIZE, "%d\n", !!(client->flags & I2C_CLIENT_PEC));
-+}
-+
-+static ssize_t pec_store(struct device *dev, struct device_attribute *devattr,
-+			 const char *buf, size_t count)
-+{
-+	struct max31827_state *st = dev_get_drvdata(dev);
-+	struct i2c_client *client = to_i2c_client(dev);
-+	unsigned int val;
-+	int err;
-+
-+	err = kstrtouint(buf, 10, &val);
-+	if (err < 0)
-+		return err;
-+
-+	switch (val) {
-+	case 0:
-+		err = regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
-+					 MAX31827_CONFIGURATION_PEC_EN_MASK,
-+					 0);
-+		if (err)
-+			return err;
-+
-+		client->flags &= ~I2C_CLIENT_PEC;
-+		break;
-+	case 1:
-+		err = regmap_set_bits(st->regmap, MAX31827_CONFIGURATION_REG,
-+				      MAX31827_CONFIGURATION_PEC_EN_MASK);
-+		if (err)
-+			return err;
-+
-+		client->flags |= I2C_CLIENT_PEC;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(pec);
-+
- static struct attribute *max31827_attrs[] = {
- 	&dev_attr_temp1_resolution.attr,
- 	NULL
-@@ -578,6 +626,11 @@ static int max31827_init_client(struct max31827_state *st,
- 	return regmap_write(st->regmap, MAX31827_CONFIGURATION_REG, res);
- }
- 
-+static void max31827_remove_pec(void *dev)
-+{
-+	device_remove_file(dev, &dev_attr_pec);
-+}
-+
- static const struct hwmon_channel_info *max31827_info[] = {
- 	HWMON_CHANNEL_INFO(temp, HWMON_T_ENABLE | HWMON_T_INPUT | HWMON_T_MIN |
- 					 HWMON_T_MIN_HYST | HWMON_T_MIN_ALARM |
-@@ -627,6 +680,16 @@ static int max31827_probe(struct i2c_client *client)
- 	if (err)
- 		return err;
- 
-+	if (i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_PEC)) {
-+		err = device_create_file(dev, &dev_attr_pec);
-+		if (err)
-+			return err;
-+
-+		err = devm_add_action_or_reset(dev, max31827_remove_pec, dev);
-+		if (err)
-+			return err;
-+	}
-+
- 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, st,
- 							 &max31827_chip_info,
- 							 max31827_groups);
+ 		bt_dev_dbg(hdev, "Adding %pMR (type %u)", &param->addr.bdaddr,
+ 			   param->addr.type);
 -- 
-2.34.1
+2.43.0
 
 
