@@ -1,273 +1,214 @@
-Return-Path: <linux-kernel+bounces-188330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E69258CE094
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:24:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81168CE095
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DBF21F222CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:24:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18960B221E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909435BACF;
-	Fri, 24 May 2024 05:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71B35FB8A;
+	Fri, 24 May 2024 05:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IkMXDIkm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ajou.ac.kr header.i=@ajou.ac.kr header.b="mUKc34Uw"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE37381AA;
-	Fri, 24 May 2024 05:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716528262; cv=fail; b=P+ruHCVu9XIMW3uMLxm5Ya+3RVPrl1qrlaiU9aCorI0mWwhSP/dWhi9xuwzOKFH4KEKP7+HrTONbcg5Y1cqRGpYvuhm57uiCES5qwlC3jskW2g5mvJkOaMVM+TI5lNC7wds8fDLVXOEiV2qTv6hHhGJmy1D5FGLWCd9j+R4IQsw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716528262; c=relaxed/simple;
-	bh=g9sI7Z1KosDmnOq9B6rUpINFLv/+PnrOzeHylZJUDJY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ObrnCFz3lq7aEj8pXPxM8qTF9s/1iCQYpHpjxIARRaCfLm8/wjraovdfy3XGrAHLIzkTu1YE+jj3hXQ4ZwKzyGxzw/zF07gdaRcdJDgTmR6Og1qqriR44EWEX6x+NJpEDg2z07Z3cWeFcYQKg0hquYhUhCd4VaggBeXnGPAtn/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IkMXDIkm; arc=fail smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716528261; x=1748064261;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=g9sI7Z1KosDmnOq9B6rUpINFLv/+PnrOzeHylZJUDJY=;
-  b=IkMXDIkm08HbTP0bycg28oh1CNwa+n533QKY1A0eq6dSNI6c1PbwlKIG
-   h8b3yz5knDw03GllfcZr1E50WLDkOkRHgo9ucpu1dUHGIPnrFp4EtzfR3
-   mtrTkmSGH87L044AejTQYpWqfPJeYWXNhg7JQFSWKnnzdrrgyJgHTypLL
-   WA80LhnW7319caf1qzVF7HmtriWHfIE1AGa8PllncFhhc+oJxxcnkPEup
-   GocpXhda0h4Z5pDtoQrIrn47QJsz7bsjKgDQDRJC5zdzjygS6qdOOiU8i
-   3A2/7ryaKjORHRMQ+RQIQpEEZ1F+BVc3ilPB70yMZsx39lEQ9fcWC4+Qi
-   w==;
-X-CSE-ConnectionGUID: Oond+Jz5Sj6aZaXexqv/Aw==
-X-CSE-MsgGUID: rGH+VXWBS6CYA1saMdBqYQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="35406210"
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="35406210"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2024 22:24:20 -0700
-X-CSE-ConnectionGUID: PjVDfQ3vTp69rmqhojoR5Q==
-X-CSE-MsgGUID: aw0+4yt+Teuo/o+ITz9TrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="34016977"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 May 2024 22:24:20 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 23 May 2024 22:24:19 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 23 May 2024 22:24:19 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 23 May 2024 22:24:18 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WUHr9LaWeqYYBhWqL46Wt+WqFdUqX6PQvbQmPOuv19ifigjWHXLVxMtf6nxGoQxU8weGsQw6/sz3BEMh3qae41pJskVZfY/2w9spYPIUnzuDYt7GBaam+Hlp+0Q9OZCORKtYZJ2XM7FLIlkX72S6cR4s/Wp5V3UGT4RtZ0JFINHca8c/9U1pHFKRyBDOy5/GSfJ64IyDQkqDwYTvZD0ydSrSgtAYUxBqrJwNu6dVCc3W0sKHdYTheEDGziQ83CvJKuJOf86Nxgg/DWMLhubM39t7BxyC2tZPnj9YOxiJz/6+mPa0J8VyrZES2TugrEonoiO6fE8CDHq/rc+rx92Uig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g9sI7Z1KosDmnOq9B6rUpINFLv/+PnrOzeHylZJUDJY=;
- b=IRHG8nXITKlPWsWg6msuOySTCukbAL95vkwtl0ABlsM/hjChKruGtf3oTJ1rKj0C6lG4kEAL10EpeSRUAxMYnN36PEfcYwOAlgBqp0W7sZ24aJdImGFuZde5E67sJUv9kNchxdvHE9mhZGlq6VxYmPb3aBg0GJ39fueWoL9VV3FHvx5MBgOeg/ZKmFF5jWRK0vUPuHBPGl757exxYTSVbsoyafzTcoO7+kftQYclj7fiZSmt8iXjfd9BkeTJTQ5XNsksG1gwoX7T2aNxh7EC6ZU3eAOdr8Dna+ki2ph1FUobkzjFYwTMrXqtXqbn7OgIIOa2vlAa8lwcV0yofLYPuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by PH7PR11MB8275.namprd11.prod.outlook.com (2603:10b6:510:1ae::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Fri, 24 May
- 2024 05:24:11 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7611.016; Fri, 24 May 2024
- 05:24:11 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-CC: Jason Gunthorpe <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: RE: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
-Thread-Topic: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
-Thread-Index: AQHajVVq/X0HjqCDvU+a/LkdwhCQ/LGT28sAgADojoCAAk6vgIAAqT2AgAqBYwCAAlS+oIAAlxIAgAC8r8CAABODgIAAIBrQ
-Date: Fri, 24 May 2024 05:24:11 +0000
-Message-ID: <BN9PR11MB5276422CE4B77D262CD292208CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
- <ZkDWXnPW7CaX5TtA@nvidia.com> <ZkGZc5dvLigXcWib@nvidia.com>
- <ZkOI8ztR1mUMJ8oe@nvidia.com> <ZkQW6/OAQ8MzN6Go@nvidia.com>
- <20240521182448.GN20229@nvidia.com>
- <BN9PR11MB5276EEC2A1DDA9C92F96737C8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240523150120.GO20229@nvidia.com>
- <BN9PR11MB5276A896D215E1FA61DECDC38CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlAI5d6ktg7yncLE@nvidia.com>
-In-Reply-To: <ZlAI5d6ktg7yncLE@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH7PR11MB8275:EE_
-x-ms-office365-filtering-correlation-id: d20e6fcb-1b55-48f5-f211-08dc7bb1be99
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?aUtmTWdFRm5hZVhGNEgrMkxhaUtnb1hVZEVuTGUxVHlCOGVSZTVsdGhvMXZ3?=
- =?utf-8?B?NnRpQ3Zvd1JwM0JhaXJ6d1FjK0hIRStXcTBrRjRtTkx2K2hKUm41cHZPTGZk?=
- =?utf-8?B?VU5JcGlWbHpiVEpWcDNiaVZQM003Vnc1OUVvZVU5bjhIT2daL1RBY0czd0I3?=
- =?utf-8?B?K2V0WHRNRlFpdSt4Tm1ZOHN0bk5SUmdTaG9HYkgycHIvS3RqUXprMTg5eGpt?=
- =?utf-8?B?aHI1SUdTYWhtRFpBL3poWVdsYlpCWTFNT2xiVWIrWnNPU0JJQkxuSy91dERi?=
- =?utf-8?B?RVFuVjVZdDUyVmM5RUJEODZFZkFIRE1XTzhlQ3BhSXpHUEUvTVlnVVE2UVRx?=
- =?utf-8?B?aFpHZGFiUHJKUXIxNUtTdmEzSUw4em5CS2ZmTDd1Z0lWUU1NeEtWM2VRNWpt?=
- =?utf-8?B?dDl5eVV6VTlibERDVXNuWkM4QVNyM0ZDc3YwTmZrL0FsaXRaK2xmWHJaakxL?=
- =?utf-8?B?VG1IdDNGVk4zZE5CYzJiU1dzS24ycm14Q1pubURVOWVmdkN6L1F6Rk1KSEds?=
- =?utf-8?B?cCtRV01ZU1BNQkxVMTdiTjEwcXNyQ01WOExHOFJwcWJDeC8rUEJpOUNJWFVQ?=
- =?utf-8?B?U09adk9qUVVGUXhCN0N2ZFBpV1BLS3hFTTl4OStvOEFBdWpDUjdFbi96Q2ZZ?=
- =?utf-8?B?Kzl2bHQ0T2lWelIxcjloVGRuT3E4bmY5ZUgydmRlY1FQSDE2QjNGcCtZMHZG?=
- =?utf-8?B?TDVkR1hYRzBjVkRvc2xWY0tqVCtmbTBadXZtdWl5cmhsdUZNU3BHTmtYQ3VD?=
- =?utf-8?B?RkRSOWVGeDhKNncrRFhmdXRXOUFuQ3E0djViNkd1VnhESlBMVHVXeEJnUFRz?=
- =?utf-8?B?Qk1kRlF5TUMwUzhCNVFpbmF4QTZZQXJuMWs4VnZWeUxUU1h1SUNJWUMrT1V3?=
- =?utf-8?B?cG1HRUY3S0IwRHBEMUtLdTV0QWZRY3p1eWI0djA1dzZ1eld6Smc3bmJ0aWY1?=
- =?utf-8?B?bzEwOXdvSU5SZFZSbkNzVmF5ek9SaERmSVh1YzJiY0Zqd0p2WjV5VkRzcW1q?=
- =?utf-8?B?TDhRN0V6d0VlblRJRXhvQSt3cWNOTTg0ZDlScjRkbVNxVnpIbGtLY09JUG9o?=
- =?utf-8?B?dC9XeFJ5UEpiWU5iK1VKVTN3OW9aR2s0a2JsbGhKS3FVbzNXcUloeDErOHYy?=
- =?utf-8?B?bnRheFZEUGVkZFVGUFBER2wxc2swOVlXTERLUy9pR3c1RkRScVJvbGZTa1ZU?=
- =?utf-8?B?WmtDUGZDd2pPRlk2MDZDdWRWY1p1MjFNTXBwY2ltM1ZhSEIzWXVmUzNSOHEv?=
- =?utf-8?B?c24rd1UyclNSSmtRWllDemREd3VvVktkWmROK2R0amlBVDY3QSsyMEJPMUxC?=
- =?utf-8?B?UDdPZkZDNHFWSFhBa0xvN05TREV2Sklwc2E5QUUwTHNDK1dveU5TWTNTTHVI?=
- =?utf-8?B?NUE1dmpPaUJvZ3RNcDlwekxtQ0YwZXBQUXFxRWEvWmY2L0wwa3VDWmJmVFRL?=
- =?utf-8?B?M291S2x1bEFLaGZwWVFnWVBOazVqKzA4My9SbUFLc0NqemFJTmE4WENLT1pM?=
- =?utf-8?B?d3JjalorNVdhelovQTBYNHlYZDdHWEo4a2pIakVoaWIvOU10MnJUOWcxL1Y2?=
- =?utf-8?B?T1piTys3SXVxekNxSDVlV29Db0U2RVptdDcyUUVITkxBZXFlRmVjR3plMjdX?=
- =?utf-8?B?VEZ3NllubE1tVzI2Rm5qclZBL1F6a2VwMjBEQm1UbldWOUZFLzBEZXdBWHpK?=
- =?utf-8?B?TU1tRUtrWmZRNERLeXhwdU1lSUl5Ny95ekZFeEsxS25WU1l4ZmJQUjVpNDIw?=
- =?utf-8?B?SVYxMmxUU2tGMjcxbEZUZ1YweitOdzVxSnI2U3hYVXFKM3lKa3pZMHJkZy9h?=
- =?utf-8?B?UlhPa3U1cTdDcEE4SjBYUT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dCtUSW9rWmtCUFVJZ2krWUxMV2hLV3g5RnFOS3J1ME9RdzB4aEhIcUtzTGhs?=
- =?utf-8?B?KzNqT0lBZmtzM2s4NWtjbWRFZW9Zcnd4RHpONmx6bTIvNXQ5ekFlOFZxcHg3?=
- =?utf-8?B?TGowZGtxclBDVXFqdTNIemc4WFM3RlBzUzlTUFA3TFVkdWpKVEZCSXZaMHdX?=
- =?utf-8?B?SGVxS2tIMWpRVU1rV1pYbyt5Zk1ESmNLRkcvQ0tvbEVpRkFaMUNLL0hBRGUv?=
- =?utf-8?B?USs1VWRERzRvQWFqZnpnUFdPRWhSTnVvMFRXaUVoSDVtbENiaHU3WW4rUFZF?=
- =?utf-8?B?aFovWTliYzdjYVBtYTRoUVNFTXN4cmRTeStDNzJSOHBUU0Z3Ui9pSHpOODFz?=
- =?utf-8?B?UGthdnFlVFF2VlhadXZzWnpNU01vSVNxQTdDMnl4ZmZwalVBZDRkSGR1NHF0?=
- =?utf-8?B?c3R1UjFBY1FlVXJQcnpYUU1aa28xWDNaQ3p5dGp1alNVUkVoSDh0MWxqWC9G?=
- =?utf-8?B?c01aWHlwOTRMYWU3TFlYT0toMnNJaXZjWm9VZVBtbUpGWlVpMUl5VkJUK3po?=
- =?utf-8?B?NFlvdHVIcEVCRUM3QjdHeTREb284UVVBVHN1cEdDL243UVdsbTgzMFRrejBI?=
- =?utf-8?B?eE1ZcGVscUhqQWIxS2pLRkJJaFBUOXBwRnhoRGpmNTJLd1RSV3RGMnphWitK?=
- =?utf-8?B?SThod1FpVjdWNUdCUzU4aFJYUHBCSkFKVEhWcG9RSEtyaWdaZVZXL3h5WEpk?=
- =?utf-8?B?Z3RJUmJybXVBSXIwenlBQldLTFFPZjZhVEhDNG5EaE5TZnIvcTI4eGhHZzZx?=
- =?utf-8?B?VzBUZjMyQ1pLR1RveDVFS0R3MjZMR1hKZ2pZY3R5eHZsbVd4NndMVjEreVhw?=
- =?utf-8?B?Q09hZ05pczI2eHptZm10dklVKzlYREVJVHJROERCYjhvcUpHdjVIeHFqaSta?=
- =?utf-8?B?bjVybDU4ZkJmYlR3d2ZRNkxEU1VDamtjYjZyZ3NBWWFWTVN0VWJ4djBHSWEr?=
- =?utf-8?B?ajZ3OGpyQXZ0dFRPeUlzeHlRcXRJTldLcmVBU0ZNSkJWeWl4ZWcycEgyWmxK?=
- =?utf-8?B?RGJpd0hMR0VENDFIdmpPNmk4YkNqdjNhRWxNVWpKajRTN0p0dmFKQjRVbkRV?=
- =?utf-8?B?V2dFanVMNW5MY0Y0blNLZU4xQjhrVTdBQVY5NkZadlp2Z3E2VVVNVi9QM3p3?=
- =?utf-8?B?NC8yU2wrdkRGdDJIUlR6L3FaYjlHNEJyVTExakQwNVpiRUNkejBqb3Ywdlly?=
- =?utf-8?B?YjFlQ2dSSHhrclZlMVhiTWV5SElZdy9NZ0N4WlM3TFhKTVpHTVduTXJRQzQ1?=
- =?utf-8?B?NkY4cVpGKy9UV1Q4ZXlXdU43ZEdJT2lDQjNycjFwSWlMRE53Y2l4UmR4Wk0z?=
- =?utf-8?B?NFZBanFUNkhTWml3Y2pZVlZGOEtOcEV2S0lNTkVIeGozQnVyTTdweklRZ093?=
- =?utf-8?B?TElVMnFOS3p4ZTJQeWY4akhKVnNQMTF1cTVaeVJNbHRLbURCamZ0Y1ZCVlBw?=
- =?utf-8?B?N0cyVENoQy9sZ1RiSnBDZkEzOUFUL2R3NCtkRjkxS3BYRVFXaUdUTGMrQmty?=
- =?utf-8?B?eTMzc1dldGs1MW1aNmk1Zml1QjNqYkc0UzM4THZ6dzVFb1NXVGhBMFF3blJG?=
- =?utf-8?B?Y2JwUVJoOTVGQjl5anhITGFyOU9TTW9LZXNCN2pmYm5RMytzYVplV0hKSzI0?=
- =?utf-8?B?SWx0ZGRPajRTQmVBSDFkNFNYcjhvNFNXUVNNNGI5dTJ0M1NRdFdUcHlvdDFJ?=
- =?utf-8?B?NnhwUCtEQXl5amg4VmRvOVJkNnVRdGJ3UzZwYjFxRHZyY2tBT3FMUEprRXpT?=
- =?utf-8?B?Q1lqS1VRaGZVeUhhVHczVE03bUVnNkZHdFRwRm5zSWJDR0lpZno2UDhVTnRH?=
- =?utf-8?B?VDZpM29XcU9iTnZuZmN6RWlwK2JMMW42RzhxbnlMN1MxUWtEdHdrRDY0MVdi?=
- =?utf-8?B?ZzZZLzFyYjNDV3B1dGNTRTZhalBNaDFOQ1E3MFkvQWtTeGltc2pjNXlNRWk1?=
- =?utf-8?B?aGs5Skd4clMvc2J3UkV2eUdsK2tiVWsyVTJCSlJLbmxGTGNZcXF4OFNnYnhW?=
- =?utf-8?B?dktVT1daTmNzSENwZC8vRUNiRUU3dEhRMzN0K1p5TTQ5clVWS0l4T3VrUW54?=
- =?utf-8?B?cVlWK1FNVTVkM0kvdXlHRzMxR2dQL3lhdVRTdE93RDRMTmdMK2tNdGwwZjZN?=
- =?utf-8?Q?8hSyv1g2XOW4Dk0q3iXcFisMw?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA80C39FD0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716528276; cv=none; b=uz0Dxvm7DKzhikSi7Dc/90LoO2aCfkgw59wpi8YUzCM1GWiQ+F0lNQpPHJq6KURU2u5Av8GPhmJxBy48pWAJE4r9iInlkqB63hAgX1iWMzNZLGxipWTfda4jDa8xF/OA/G6xknilzSv9q8vTDydthjrkotWI1zA+ALX8XJG84oo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716528276; c=relaxed/simple;
+	bh=WNvFZcVJoZwOnhGCpX6HD7eYMpDa41RHwTdkoBeiEzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7XA6sUF7i5WR7vxpFhAGSd6UpIMvRf3hg6Ci+b1i370Cppu6woG2BYnn7Ayj16zwGIeIz5reACRUeo5s6XWeHbrS5x1QfnYMylUlABixgum3tsVpXvP139BxF2xAhKMZhSEjhNKNn+pfCvuS3RI7xOUmGJYgY5DrTKX4ozL/9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ajou.ac.kr; spf=pass smtp.mailfrom=ajou.ac.kr; dkim=pass (1024-bit key) header.d=ajou.ac.kr header.i=@ajou.ac.kr header.b=mUKc34Uw; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ajou.ac.kr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ajou.ac.kr
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-663d2e6a3d7so2151462a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 22:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ajou.ac.kr; s=google; t=1716528273; x=1717133073; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dIV5RE5g4iad/Y9kEiDw/i3UIuirpCFKtvdMSetkisA=;
+        b=mUKc34UwniTPd5RsehlGNMiULcSZ2TgHy3eO2NLWT2m7mj9slJSR3HeBWbl16qzbmO
+         dFJXW+iN/ZfnTzKzXo912OilBDxmukpTGihaerLGqsVKHpbRT1TPKY6kMbBdL7MtKZen
+         NNwbVjVKtm2JmXJY+1EE2feuLCFnlSwktiPWs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716528273; x=1717133073;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dIV5RE5g4iad/Y9kEiDw/i3UIuirpCFKtvdMSetkisA=;
+        b=tuS2K2BNXk+6WlB4kmZfKluoQ0L/P9mlZLGWRM3zGEyXkDexgVStaUt6SDFV5lj9T2
+         3bmypwm/+I29BVJszrDeGSJWORmOHZR8BxHSqV5YzAsueKlIjfIzHpO79etbYNDfFhe6
+         zGfugdAwkdJb0erfeN2RilSILlaqcK+KACG0NH2TRLNYxwHCS2BAnk+0P9pzNrSK9R+s
+         6UdkWCuLwAJa79mWxCNNfa9eXoGfFjTexllblwObJwRrsbDOn+Pfr8QJmDs1BHen6Cj0
+         oa1cLi+d49GLvcnrYWjNz8PgvOXWp8TnkDcoql3qsWvnTvR/tEtOL161WFQ2hAiCY4eU
+         in4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVvspeOXBmp13rRS5z7fPXvqS5qqvj8daPWyRD88F/6QNWzbwGYCwvmJ5HKuVx+bzaWm48Oc2QJ1UyLflQSPRLnsfWYLpxUhnt7DhMc
+X-Gm-Message-State: AOJu0YzI3uUPiLO4FRvttW4oWsBZ7ZOv4usHWsRm7YKObGnQRPYTPn0Q
+	wt9yuhC2OD+Vl9hBD2jq/VM35NhH8du/L5EHzyisRsFdU7hL0SRf2T3r3exbvx3yKWbgaIR09hw
+	ChP4=
+X-Google-Smtp-Source: AGHT+IGC0OeejHOahOcls4+0SSq+j0qs0QDYYujqimaD7K7PmQNUXYf5rNmSGHvF6o4treKv5WkUvQ==
+X-Received: by 2002:a17:902:d4c4:b0:1f4:5072:e094 with SMTP id d9443c01a7336-1f45072e339mr7589545ad.9.1716528272832;
+        Thu, 23 May 2024 22:24:32 -0700 (PDT)
+Received: from swarm08 ([210.107.197.32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9b87b4sm5121745ad.264.2024.05.23.22.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 22:24:32 -0700 (PDT)
+Date: Fri, 24 May 2024 14:24:28 +0900
+From: Jonghyeon Kim <tome01@ajou.ac.kr>
+To: SeongJae Park <sj@kernel.org>
+Cc: damon@lists.linux.dev, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 0/3] Add NUMA-aware DAMOS watermarks
+Message-ID: <20240524052428.GA368050@swarm08>
+References: <20240520143038.189061-1-tome01@ajou.ac.kr>
+ <20240522010034.79165-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d20e6fcb-1b55-48f5-f211-08dc7bb1be99
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2024 05:24:11.6351
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9DVFNeGXMpnHorodhcPscjVrR8ex5baSbtm4M+zeGHH9dUNrDmJ2kY3JaxLYJBpaCpSiakYd+Zl5qoAlrBWVIw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8275
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240522010034.79165-1-sj@kernel.org>
 
-PiBGcm9tOiBOaWNvbGluIENoZW4gPG5pY29saW5jQG52aWRpYS5jb20+DQo+IFNlbnQ6IEZyaWRh
-eSwgTWF5IDI0LCAyMDI0IDExOjI2IEFNDQo+IA0KPiBPbiBGcmksIE1heSAyNCwgMjAyNCBhdCAw
-MjoyMToyM0FNICswMDAwLCBUaWFuLCBLZXZpbiB3cm90ZToNCj4gPiA+IEZyb206IEphc29uIEd1
-bnRob3JwZSA8amdnQG52aWRpYS5jb20+DQo+ID4gPiBTZW50OiBUaHVyc2RheSwgTWF5IDIzLCAy
-MDI0IDExOjAxIFBNDQo+ID4gPg0KPiA+ID4gT24gVGh1LCBNYXkgMjMsIDIwMjQgYXQgMDY6MTk6
-NTlBTSArMDAwMCwgVGlhbiwgS2V2aW4gd3JvdGU6DQo+ID4gPiA+ID4gRnJvbTogSmFzb24gR3Vu
-dGhvcnBlIDxqZ2dAbnZpZGlhLmNvbT4NCj4gPiA+ID4gPiBTZW50OiBXZWRuZXNkYXksIE1heSAy
-MiwgMjAyNCAyOjI1IEFNDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBPbiBUdWUsIE1heSAxNCwgMjAy
-NCBhdCAwNjo1OTowN1BNIC0wNzAwLCBOaWNvbGluIENoZW4gd3JvdGU6DQo+ID4gPiA+ID4gPiBT
-bywgeW91IHdhbnQgYSBwcm94eSBTMSBkb21haW4gZm9yIGEgZGV2aWNlIHRvIGF0dGFjaCwgaW4g
-Y2FzZQ0KPiA+ID4gPiA+ID4gb2YgYSBzdGFnZS0yIG9ubHkgc2V0dXAsIGJlY2F1c2UgYW4gUzIg
-ZG9tYWluIHdpbGwgbm8gbG9uZ2VyIGhhcw0KPiA+ID4gPiA+ID4gYSBWTUlELCBzaW5jZSBpdCdz
-IHNoYXJlZCBhbW9uZyB2aW9tbXVzLiBJbiB0aGUgU01NVSBkcml2ZXIgY2FzZSwNCj4gPiA+ID4g
-PiA+IGFuIGFybV9zbW11X2RvbWFpbiB3b24ndCBoYXZlIGFuIHNtbXUgcG9pbnRlciwgc28gYSBk
-ZXZpY2UNCj4gY2FuJ3QNCj4gPiA+ID4gPiA+IGF0dGFjaCB0byBhbiBTMiBkb21haW4gYnV0IGFs
-d2F5cyBhbiBuZXN0ZWQgUzEgZG9tYWluLCByaWdodD8NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFRo
-YXQgc2VlbXMgbGlrZSBhIHNpbXBsZSBzb2x1dGlvbiB0byB0aGUgVk1JRCBsaWZldGltZSwgYnV0
-IGl0IG1lYW5zDQo+ID4gPiA+ID4gdGhlIGtlcm5lbCBoYXMgdG8gZGVjb2RlIG1vcmUgdHlwZXMg
-b2YgdlNURS4NCj4gPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiB3aHkgZG9lcyBBVEMgaW52YWxp
-ZGF0aW9uIG5lZWQgdG8ga25vdyBhYm91dCBWTUlEPw0KPiA+ID4NCj4gPiA+IEFUQyBpbnZhbGlk
-YXRpb24gYWx3YXlzIHJlcXVpcmVzIGEgdlJJRCB0byBwUklEIHRyYW5zbGF0aW9uIGFuZCB0aGUN
-Cj4gPiA+IFZJT01NVSB3aWxsIGhvbGQgdGhhdCB0cmFuc2xhdGlvbi4NCj4gPiA+DQo+ID4gPiBP
-biB2Q01EUSBIVyBhbmQgb24gQU1EIEhXIHRoZSB2UklEIHRvIHBSSUQgdHJhbnNsYXRpb24gaXMg
-cHVzaGVkDQo+IGludG8NCj4gPiA+IEhXLCBhbmQgdkNNRFEgcmVxdWlyZXMgdGhlIFZNSUQgdG8g
-ZG8gdGhhdC4NCj4gPiA+DQo+ID4NCj4gPiBBdCBhIHF1aWNrIGdsYW5jZSBWTUlEIGFuZCB2UklE
-LT5wUklEIHRyYW5zbGF0aW9uIGFyZSBib3RoIGNvbmZpZ3VyYXRpb25zDQo+ID4gb2YgYSB2aW50
-Zi4NCj4gPg0KPiA+IE15IGltcHJlc3Npb24gd2FzIHRoYXQgdmludGYtPnZtaWQgaXMgYWRkZWQg
-dG8gZ3Vlc3QgY21kIHdoZW4gaXQncw0KPiA+IGFib3V0IGlvdGxiIGludmFsaWRhdGlvbi4NCj4g
-Pg0KPiA+IHRoZW4gdmludGYtPnNpZF9zbG90cyBpcyB3YWxrZWQgd2hlbiBoYW5kbGluZyBhIGd1
-ZXN0IGNtZCBmb3IgQVRDDQo+ID4gaW52YWxpZGF0aW9uLg0KPiA+DQo+ID4gSSdtIG5vdCBzdXJl
-IHdoeSB0aGUgbGF0dGVyIG9uZSByZXF1aXJlcyBhIHZhbGlkIFZNSUQgdG8gZG8gdGhlIHdhbGtp
-bmcNCj4gPiBleGNlcHQgaXQncyBhIGltcGxlbWVudGF0aW9uIGNob2ljZSBtYWRlIGJ5IHZDTURR
-Pw0KPiANCj4gV2VsbCwgd2UgaGF2ZW4ndCB0aG91Z2h0IGFib3V0IGEgY2FzZSBvZiBkb2luZyBB
-VEMgaW52YWxpZGF0aW9uDQo+IHZpYSBWSU5URi9WQ01EUSB3aXRob3V0IHNldHRpbmcgdXAgYSBW
-TUlELCBhcyAiVk1JRCIgaXMgYSBmaWVsZA0KPiBpbiB0aGUgVklOVEZfQ09ORklHIHJlZ2lzdGVy
-IG5leHQgdG8gdGhlIEVuYWJsZSBiaXQgYW5kIG11c3QgYmUNCj4gc2V0IHByaW9yIHRvIGVuYWJs
-aW5nIGEgVklOVEYsIHRob3VnaCB5b3VyIHVuZGVyc3RhbmRpbmcgb2YgdGhlDQo+IEhXIHdvcmsg
-ZmxvdyBpcyBwcm9iYWJseSBhY2N1cmF0ZSA6KQ0KDQpPa2F5LCB0aGF0IGV4cGxhaW5zIGl0LiB0
-aGV5IGFyZSBpcnJlbGV2YW50IGluIGNvbmNlcHQgYnV0IGNvbWUNCnJlbGV2YW50IGR1ZSB0byB0
-aGF0IGRldGFpbC4g8J+Yig0KDQo+IA0KPiBBbmQgdGhlIG5hcnJhdGl2ZSBhdCB0aGUgdG9wIHdh
-cyB0cnlpbmcgdG8gZGVzY3JpYmUgdGhlIGxpbmtzOg0KPiAgIFsgZGV2aWNlIF0gPT4gWyBwcm94
-eSBpZGVudGl0eSBTMSBdID0+IFsgdmlvbW11IFsgc2hhcmVkIFMyIF0gXQ0KPiB2LnMuDQo+ICAg
-WyBkZXZpY2UgXSA9PiBbIG5vbi1zaGFyZWFibGUgUzIgXQ0KPiANCj4gU28gdGhlIGZpcnN0IGNh
-c2UgY2FuIHRha2UgYWR2YW50YWdlIG9mIFZJT01NVV9JTlZBTElEQVRFIHYucy4NCj4gdGhlIHNl
-Y29uZCBjYXNlIHJlcXVpcmVzIGEgREVWX0lOVkFMSURBVEUuDQoNCmFuZCBvbmUgc2lkZS1lZmZl
-Y3QgaW4gdGhlIGZpcnN0IGNhc2UgaXMgdG8gc2F2ZSBvbmUgVk1JRCBmb3INCm5vbi1zaGFyZWFi
-bGUgUzIgaGVuY2UgaW1wcm92ZXMgaW90bGIgZWZmaWNpZW5jeS4NCg0KPiANCj4gQW5vdGhlciBj
-b25jbHVzaW9uIGJldHdlZW4gdGhlIGxpbmVzOiBzaW5jZSBBUk0gU01NVSB3aWxsIGhhdmUNCj4g
-dGhlIGZpcnN0IGNhc2UgKHdpdGggdmlvbW11KSwgdGhlcmUgaXMgbm8gbG9uZ2VyIGFueSB1c2Ug
-b2YgYQ0KPiBERVZfSU5WQUxJREFURSBpb2N0bC4gU28sIHdlIHdvdWxkIGxpa2VseSBkcm9wIGl0
-IGluIHRoZSBjb21pbmcNCj4gdmVyc2lvbi4NCj4gDQo+IFRoYW5rcw0KPiBOaWNvbGluDQo=
+On Tue, May 21, 2024 at 06:00:34PM -0700, SeongJae Park wrote:
+> Hi Jonghyeon,
+> 
+
+Hi, SeongJae
+
+> On Mon, 20 May 2024 14:30:35 +0000 Jonghyeon Kim <tome01@ajou.ac.kr> wrote:
+> 
+> > Current DAMOS schemes are not considered with multiple NUMA memory nodes.
+> > For example, If we want to proactively reclaim memory of a one NUMA node,
+> > DAMON_RECLAIM has to wake up kdamond before kswapd does reclaim memory.
+> > However, since the DAMON watermarks are based on not a one NUMA memory
+> > node but total system free memory, kdamond is not waked up before invoking
+> > memory reclamation from kswapd of the target node.
+> > 
+> > These patches allow for DAMON to select monitoring target either total
+> > memory or a specific NUMA memory node.
+> 
+> I feel such usage could exist, but my humble brain is not clearly imagining
+> such realistic usage.  If you could further clarify the exampected usage, it
+> would be very helpful for me to better understand the intention and pros/cons
+> of this patchset.  Especially, I'm wondering why they would want to use the
+> watermark feature, rather than manually checking the metric and turning DAMON
+> on/off, or feeding the metric as a quota tuning goal.
+> 
+
+The goal of this patchset is to manage each NUMA memory node
+individually through DAMON. Also, the main target scheme is memory
+reclaim (or demotion in tiered memory). By allowing DAMON to be managed
+by each NUMA node, I expect that users can easily set up memory reclaim
+for each node.
+
+Additionally, I think that a watermark for each node is an appropriate
+metric for activating DAMON_RECLAIM, because the kswapd reclaim logic
+also follows a watermark of free memory for each node.
+
+There are two use cases. Let's assume two NUMA nodes are constructed of
+32GB (node0) and 16GB (node1), respectively.
+
+The first case is when using DAMON module. If users do not specify a
+monitoring region, DAMON's module finds the biggest size of the two NUMA
+memory nodes and designates it as the monitoring region (node0, 32GB).
+Even if we want to enable DAMON_RECLAIM to node0, it does not work
+proactively because the watermark works based on the total system memory
+(48GB).
+
+Similarly, if the users want to enable DAMON_RECLAIM to node1, users have
+to manually designate the monitoring region as the address of node1.
+Nonetheless, since DAMON still follows the default watermark
+(total memory, 48GB), proactive reclaim will not work properly.
+
+Below is an example.
+
+# echo Y > /sys/module/damon_reclaim/parameters/enabled
+# cat /sys/module/damon_reclaim/parameters/monitor_region_start
+4294967296 # 0x100000000
+# cat /sys/module/damon_reclaim/parameters/monitor_region_end
+36507222015 # 0x87fffffff
+
+# dmesg | grep node
+..
+[0.012812] Early memory node ranges
+[0.012813]   node   0: [mem 0x0000000000001000-0x000000000009ffff]
+[0.012815]   node   0: [mem 0x0000000000100000-0x000000005e22dfff]
+[0.012817]   node   0: [mem 0x000000005e62c000-0x0000000069835fff]
+[0.012818]   node   0: [mem 0x000000006f2d3000-0x000000006f7fffff] 
+[0.012819]   node   0: [mem 0x0000000100000000-0x000000087fffffff] < target 
+[0.012825]   node   1: [mem 0x0000002800000000-0x0000002bffffffff] 
+..
+
+When we use DAMON_RECLAIM by default, DAMON_RECLAIM targets node0
+memory (32GB). However, DAMON runs differently from the initial goal
+because the watermark works based on the combined node0 and node1(48GB).
+DAMON_LRU_SORT also faces the same situation.
+
+The second case is when we apply DAMON to a process. If a process
+allocates memory that exceeds a single NUMA node(node0), some users
+could want to reclaim the cold memory of the process in that node. In my
+humble opinion, the reclaim scheme(DAMOS_PAGEOUT) is effective in this
+case.  Unlike the DAMON module, since DAMON monitors process memory
+using a virtual address, it is hard to decide whether to enable a
+DAMOS_PAGEOUT due to a lack of node memory stats. Even though we use
+watermarks for DAMOS_PAGEOUT, it works the same with the above module
+case (thresholds based on total memory, 48GB). To overcome this problem,
+I think the dedicated watermark (for node0) can be an answer. 
+
+> > 
+> > ---
+> > Changes from RFC PATCH v1
+> > (https://lore.kernel.org/all/20220218102611.31895-1-tome01@ajou.ac.kr)
+> > - Add new metric type for NUMA node, DAMOS_WMARK_NODE_FREE_MEM_RATE
+> > - Drop commit about damon_start()
+> > - Support DAMON_LRU_SORT
+> > 
+> > Jonghyeon Kim (3):
+> >   mm/damon: Add new metric type and target node for watermark
+> >   mm/damon: add module parameters for NUMA system
+> >   mm/damon: add NUMA-awareness to DAMON modules
+> 
+> Following up to the above question, why they would want to use DAMON modules
+> rather than manually controlling DAMON via DAMON sysfs interface?
+
+IMHO, some users want to use DAMON feature without mannualy
+configurating via DAMON sysfs due to complexity.  Since this patchset
+can be adopted to sysfs interface, I will update supporting NUMA-aware
+watermarks for sysfs interface in the next version.
+
+Best Regards,
+Jonghyeon
+
+> 
+> 
+> Thanks,
+> SJ
+> 
+> > 
+> >  include/linux/damon.h     | 11 +++++++++--
+> >  mm/damon/core.c           | 11 ++++++++---
+> >  mm/damon/lru_sort.c       | 14 ++++++++++++++
+> >  mm/damon/modules-common.h |  4 +++-
+> >  mm/damon/reclaim.c        | 14 ++++++++++++++
+> >  mm/damon/sysfs-schemes.c  | 35 +++++++++++++++++++++++++++++++++--
+> >  6 files changed, 81 insertions(+), 8 deletions(-)
+> > 
+> > -- 
+> > 2.34.1
 
