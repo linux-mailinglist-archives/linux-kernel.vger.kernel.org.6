@@ -1,189 +1,335 @@
-Return-Path: <linux-kernel+bounces-188753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E42E8CE66A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:54:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BD68CE66D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B991C21B4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:54:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3BD1F23DFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2F812C485;
-	Fri, 24 May 2024 13:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WCNjZdbv"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C23812C472;
+	Fri, 24 May 2024 13:54:37 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6B712C47C;
-	Fri, 24 May 2024 13:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F6739FF4;
+	Fri, 24 May 2024 13:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716558801; cv=none; b=m/nomKgi52ts1mYL1s7ScOsg8tnYJ5uSepeUYxAfvZVojhxtxH9QgdFzeJNeFO7zk30BpJQgKR6P2k+3Hm4NFszXd/22hzVhmMBOxNbQnOk9gDVe/mC3m6erYhqr3Pdxzwn808brmO9Cd8p244fQVoCGE/AK+8RT+KDuwaPmTlI=
+	t=1716558876; cv=none; b=BqsDr6sDyohNweWv0snzVgpDHtq2wts5x+dxojnkRyDjAd6GNxE3mBExDtxPm0HXJtfwUxOCDHNUDRDRQhn9rNVk2nob3aF79TuJjniQNJhkxuF6YyVFmllAYGj6DlF9Whzn7HMizA3aX+N8yf+Al/8hjflLiAW7k4jwFcvRVcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716558801; c=relaxed/simple;
-	bh=mV+N6Vuao2DF+3LDDtNXzl30dnyKutNjJGhqc6i6P+I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fOnciumaCGEk2ta+/waDbTfbNpn3Eggg+u57TsfHWyDFnr2dtEnuIG5RDV62EJYxDyzWOnfeYBm2aXc2jm7jc9MvvhoQxFaCCJgonrc3Oy8yq1V9Uf/f/pDZORvPE4Xe5BNtUbwziKPp7W5CEf+NjIzX4qBIz6gwC7cCoa91Omc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WCNjZdbv; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1716558876; c=relaxed/simple;
+	bh=eAOPnFbyPbt4b7dZDxAMimYBECW1SJUYOjLmWeeLflc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j0K1HfGGEN2fkgEDaUswUclMAO2LutmcgqvP+CWFzUa8fz8kcUoPBRkPa7XJZBpAxVTvl+E64qunlKAc6czxpcuPQk9TaBUkrilDWZKPu2QivTqMBNKnehPbC+n+wV5+s0s+eUsB6xJXJyyEx5u+Ne9ZK6MNlvrLAcuMbd5WKk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f8eba8dcfcso803880b3a.3;
-        Fri, 24 May 2024 06:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716558799; x=1717163599; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=b0/TSFREZaBctG5vlYD0Hmuh0/DxJ4bPlmcsHcY/PdU=;
-        b=WCNjZdbv69OaT8A2HoNLPgwbcApDDW1D09UA5W9YJQzzMn1n/SBYKR+5bZQwNb0+23
-         ICiVtOpVbTPZYwIaHWkctl+ZKH36x7O0bzMaLJgS4dHHClQjxTIVjbi5fI5b+Z0pJOlP
-         aKCsXeQ/jnP9SFc4LSRf9Xu6ZXcuCaL7bAe4kISMOkAkG1OuN2njOT2eDZVBMKQbYdu7
-         1rMOi3OIQNIS2+VpFmfgCp4rgeu2A8JeJQPiB7wGC8JL0p8iHgB/5VZDZxXVC7QpkR5+
-         qOnpv8g6Kj+bpFk56kW2BJcf9bMQZGLUMqmb/eVzVkEAvHpZFADuAyh5oA0/AnsL+c8E
-         Ib8g==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5dcb5a0db4so818124366b.2;
+        Fri, 24 May 2024 06:54:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716558799; x=1717163599;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b0/TSFREZaBctG5vlYD0Hmuh0/DxJ4bPlmcsHcY/PdU=;
-        b=wY/Fslk+IgXUWovrWy26udycEq2B1W0ctdOB175GJUrB7i/o5XC4qbrTHfYmprGyar
-         MtAXQFQCkZsm5jLKbAhojqIel8F8kk0MetMyKx/aYG4Ojw2eNsATKI4+FNS82ldsVnj6
-         bsuOnvjUxWtraxbjeQfZofHRCEkTQDnnm79krQ6+cI2OCPbxabU8rC8QDn7iJiQkvTi3
-         bDoWeCFIGAYRE0KZDbVrDJEfiH1hLHIJfrxDQbmuPVcqWsg/yAqFq4kbnvpBIwX788w+
-         6VAjHuT8aB135e6gv6T6x64DXtIiCIphctJjxoGINxCkO5Rh3utGTksomLyYZ2ju6rTQ
-         EXzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWunFPUfH48KPX1U3HE43a+0OG04Ii1Bof3S/7z7+S5/gCXOEORpjPobOlaHRLhDPjm7NYHP7AGtHq8QXsORot5M/5Q+ZnAawbLGMUwIUhgLiXJ/o4z1ZatHEe43O2yoyqYpqkEesglRw==
-X-Gm-Message-State: AOJu0Ywyt8ae1QH2WYU8QhBVlVsW4KE3T/zu9uV0BlOgj4PozXAjOx4o
-	gvf7K2IFB2uLq4tVFrvlxisR6/SHW7tmWAoO0bFAj0TWk+RN1kJg
-X-Google-Smtp-Source: AGHT+IH3aQaFlbwWMDNIYwkEtj6N6w858o4MAHD4uUjiZfFfdXxaGquXuXeOwr68wYrmKImdEsesTw==
-X-Received: by 2002:a05:6a21:99a4:b0:1a9:c4ca:dc74 with SMTP id adf61e73a8af0-1b212ce1f54mr3260189637.5.1716558799320;
-        Fri, 24 May 2024 06:53:19 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc057e52sm1127383b3a.57.2024.05.24.06.53.17
+        d=1e100.net; s=20230601; t=1716558873; x=1717163673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FtIiG4+dY4ijuoTv6o6TaHGyoLw5cDgUvbJqBk9VGYo=;
+        b=nkho6x+co/BwYDkCbY9KREKSBfol4XzRUniAM+6NFlZW26wsUUxQtCPy6vwdO5YOhc
+         +ab3kW6nDmmFndLQw8QxzgGZ2VlwThlcHwysL00NpU4a5U7QoxekSwnRf1LkVQm7YMyk
+         WEPNvLrOVlPmoFvKVDPEd/eBBB3s8r4HD8U7nFt7J+M4nhJMLigiFPBVRiirTUyqYSNL
+         sAL23fi4FOlN3icaH79DynSgJA2Yrxdw+nol3O+9KmSMHeu1lnYrvJAC1VkE9xfnrCS8
+         XDlHScAgosg9V73AcVYavRfeOyk8LDzF2pCIUd+4ekE20K4a/EU+6vN5S8fx6W6Si+g0
+         8aoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTnTpoEcI/HhTQmJ/sFEhcgr71Fzf0bn29C6mN4IHJOZVTqeDDnQBPe4t7ZtvGwRPYfhO+ZiLrRlDbm5rFANKkFDZT7w9CEKo0hTK30sEvuagVGgUQY3HwE5CFTS/u52nP4S8w9LDZt0bIgGsXyFZgq6hxhEBnFCv/Ffpdzs/e
+X-Gm-Message-State: AOJu0YwPnWpfq/EXtpQ0YN49BubUj9FNbnjJzL28GvpFuZ7bfTyJIilL
+	FtapmtX6b5SLk7p+Ey+cdGiZmZ+CiPj0TAkvK9rY8j34Q1BvtI06ZU4LWuNX
+X-Google-Smtp-Source: AGHT+IGRu9Vh+Y889fwFeYdjoJhpHCTs6pmBAcVwnozz/2DXDsbes93GufuAD/lIwvsmPxrL40r2LQ==
+X-Received: by 2002:a17:906:c002:b0:a59:cbb5:e09f with SMTP id a640c23a62f3a-a6264f10776mr153578866b.53.1716558872503;
+        Fri, 24 May 2024 06:54:32 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8c287sm134358966b.162.2024.05.24.06.54.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 06:53:18 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <91f8b384-9a6a-4435-9f9a-7a65a7c62bf2@roeck-us.net>
-Date: Fri, 24 May 2024 06:53:16 -0700
+        Fri, 24 May 2024 06:54:32 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5785c1e7448so693028a12.2;
+        Fri, 24 May 2024 06:54:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWDDQwOgt0V2T2gD0btkBt3hsWIo2XpH0G1wUB7CFAiBI1r/xWp6Tgo1sSXJXXMqQSF/iSPye5tZyDqFDMbsreWxcZv2LoCLQHeX56C0PEAOwooUguBY2nvI6PZGgkyUCNjHxUCEglHEH9gEJdrAeX+GAN2OMLO8HfGoR51urWQ
+X-Received: by 2002:a17:906:27cc:b0:a5a:3579:b908 with SMTP id
+ a640c23a62f3a-a62643eb6abmr151973466b.38.1716558871847; Fri, 24 May 2024
+ 06:54:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/15] drm/amd/display: Use ARCH_HAS_KERNEL_FPU_SUPPORT
-From: Guenter Roeck <linux@roeck-us.net>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Samuel Holland <samuel.holland@sifive.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- Christoph Hellwig <hch@lst.de>, loongarch@lists.linux.dev,
- amd-gfx@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>
-References: <20240329072441.591471-1-samuel.holland@sifive.com>
- <20240329072441.591471-14-samuel.holland@sifive.com>
- <eeffaec3-df63-4e55-ab7a-064a65c00efa@roeck-us.net>
- <CADnq5_NmKyTBbE6=V+XdEKStnjcyYSHyHqdkgBen4UhPnVKimQ@mail.gmail.com>
- <CADnq5_Ndzw5Gre=yyPKyFNX5yFWjTCMg2xqrn6tEj6h8t-nAYg@mail.gmail.com>
- <1e088782-418d-41e2-843f-b3d6cd3ab4f7@roeck-us.net>
-Content-Language: en-US
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <1e088782-418d-41e2-843f-b3d6cd3ab4f7@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240524-xhci-streams-v1-1-6b1f13819bea@marcan.st>
+In-Reply-To: <20240524-xhci-streams-v1-1-6b1f13819bea@marcan.st>
+From: Neal Gompa <neal@gompa.dev>
+Date: Fri, 24 May 2024 09:53:54 -0400
+X-Gmail-Original-Message-ID: <CAEg-Je-O=MU2DHobGcRy_5YvWkvA0f7JJbZ4PuZd4oC_ofrE4Q@mail.gmail.com>
+Message-ID: <CAEg-Je-O=MU2DHobGcRy_5YvWkvA0f7JJbZ4PuZd4oC_ofrE4Q@mail.gmail.com>
+Subject: Re: [PATCH] xhci: Handle TD clearing for multiple streams case
+To: Hector Martin <marcan@marcan.st>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev, stable@vger.kernel.org, 
+	security@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/24/24 06:43, Guenter Roeck wrote:
-> On 5/24/24 06:18, Alex Deucher wrote:
->> On Fri, May 24, 2024 at 9:17 AM Alex Deucher <alexdeucher@gmail.com> wrote:
->>>
->>> On Fri, May 24, 2024 at 5:16 AM Guenter Roeck <linux@roeck-us.net> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On Fri, Mar 29, 2024 at 12:18:28AM -0700, Samuel Holland wrote:
->>>>> Now that all previously-supported architectures select
->>>>> ARCH_HAS_KERNEL_FPU_SUPPORT, this code can depend on that symbol instead
->>>>> of the existing list of architectures. It can also take advantage of the
->>>>> common kernel-mode FPU API and method of adjusting CFLAGS.
->>>>>
->>>>> Acked-by: Alex Deucher <alexander.deucher@amd.com>
->>>>> Reviewed-by: Christoph Hellwig <hch@lst.de>
->>>>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->>>>
->>>> With this patch in the mainline kernel, I get the following build error
->>>> when trying to build powerpc:ppc32_allmodconfig.
->>>>
->>>> powerpc64-linux-ld: drivers/gpu/drm/amd/amdgpu/../display/dc/dml/display_mode_lib.o uses hard float, drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_helpers.o uses soft float
->>>> powerpc64-linux-ld: failed to merge target specific data of file drivers/gpu/drm/amd/amdgpu/../display/dc/dml/display_mode_lib.o
->>>>
->>>> [ repeated many times ]
->>>>
->>>> The problem is no longer seen after reverting this patch.
->>>
->>> Should be fixed with this patch:
->>> https://gitlab.freedesktop.org/agd5f/linux/-/commit/5f56be33f33dd1d50b9433f842c879a20dc00f5b
->>> Will pull it into my -fixes branch.
->>>
->>
->> Nevermind, this is something else.
->>
-> 
-> Yes, CONFIG_DRM_AMD_DC_FP is enabled in that configuration.
-> 
+On Fri, May 24, 2024 at 6:28=E2=80=AFAM Hector Martin <marcan@marcan.st> wr=
+ote:
+>
+> When multiple streams are in use, multiple TDs might be in flight when
+> an endpoint is stopped. We need to issue a Set TR Dequeue Pointer for
+> each, to ensure everything is reset properly and the caches cleared.
+> Change the logic so that any N>1 TDs found active for different streams
+> are deferred until after the first one is processed, calling
+> xhci_invalidate_cancelled_tds() again from xhci_handle_cmd_set_deq() to
+> queue another command until we are done with all of them. Also change
+> the error/"should never happen" paths to ensure we at least clear any
+> affected TDs, even if we can't issue a command to clear the hardware
+> cache, and complain loudly with an xhci_warn() if this ever happens.
+>
+> This problem case dates back to commit e9df17eb1408 ("USB: xhci: Correct
+> assumptions about number of rings per endpoint.") early on in the XHCI
+> driver's life, when stream support was first added. At that point, this
+> condition would cause TDs to not be given back at all, causing hanging
+> transfers - but no security bug. It was then identified but not fixed
+> nor made into a warning in commit 674f8438c121 ("xhci: split handling
+> halted endpoints into two steps"), which added a FIXME comment for the
+> problem case (without materially changing the behavior as far as I can
+> tell, though the new logic made the problem more obvious).
+>
+> Then later, in commit 94f339147fc3 ("xhci: Fix failure to give back some
+> cached cancelled URBs."), it was acknowledged again. This commit was
+> unfortunately not reviewed at all, as it was authored by the maintainer
+> directly. Had it been, perhaps a second set of eyes would've noticed
+> that it does not fix the bug, but rather just makes it (much) worse.
+> It turns the "transfers hang" bug into a "random memory corruption" bug,
+> by blindly marking TDs as complete without actually clearing them at all
+> nor moving the dequeue pointer past them, which means they aren't actuall=
+y
+> complete, and the xHC will try to transfer data to/from them when the
+> endpoint resumes, now to freed memory buffers.
+>
+> This could have been a legitimate oversight, but apparently the commit
+> author was aware of the problem (yet still chose to submit it): It was
+> still mentioned as a FIXME, an xhci_dbg() was added to log the problem
+> condition, and the remaining issue was mentioned in the commit
+> description. The choice of making the log type xhci_dbg() for what is,
+> at this point, a completely unhandled and known broken condition is
+> puzzling and unfortunate, as it guarantees that no actual users would
+> see the log in production, thereby making it nigh undebuggable (indeed,
+> even if you turn on DEBUG, the message doesn't really hint at there
+> being a problem at all).
+>
+> It took me *months* of random xHC crashes to finally find a reliable
+> repro and be able to do a deep dive debug session, which could all have
+> been avoided had this unhandled, broken condition been actually reported
+> with a warning, as it should have been as a bug intentionally left in
+> unfixed (never mind that it shouldn't have been left in at all).
+>
+> > Another fix to solve clearing the caches of all stream rings with
+> > cancelled TDs is needed, but not as urgent.
+>
+> 3 years after that statement and 14 years after the original bug was
+> introduced, I think it's finally time to fix it. And maybe next time
+> let's not leave bugs unfixed (that are actually worse than the original
+> bug), and let's actually get people to review kernel commits please.
+>
+> Fixes xHC crashes and IOMMU faults with UAS devices when handling
+> errors/faults. Easiest repro is to use `hdparm` to mark an early sector
+> (e.g. 1024) on a disk as bad, then `cat /dev/sdX > /dev/null` in a loop.
+> At least in the case of JMicron controllers, the read errors end up
+> having to cancel two TDs (for two queued requests to different streams)
+> and the one that didn't get cleared properly ends up faulting the xHC
+> entirely when it tries to access DMA pages that have since been unmapped,
+> referred to by the stale TDs. This normally happens quickly (after two
+> or three loops). After this fix, I left the `cat` in a loop running
+> overnight and experienced no xHC failures, with all read errors
+> recovered properly. Repro'd and tested on an Apple M1 Mac Mini
+> (dwc3 host).
+>
+> On systems without an IOMMU, this bug would instead silently corrupt
+> freed memory, making this a security bug (even on systems with IOMMUs
+> this could silently corrupt memory belonging to other USB devices on the
+> same controller, so it's still a security bug). Given that the kernel
+> autoprobes partition tables, I'm pretty sure a malicious USB device
+> pretending to be a UAS device and reporting an error with the right
+> timing could deliberately trigger a UAF and write to freed memory, with
+> no user action.
+>
+> Fixes: e9df17eb1408 ("USB: xhci: Correct assumptions about number of ring=
+s per endpoint.")
+> Fixes: 94f339147fc3 ("xhci: Fix failure to give back some cached cancelle=
+d URBs.")
+> Fixes: 674f8438c121 ("xhci: split handling halted endpoints into two step=
+s")
+> Cc: stable@vger.kernel.org
+> Cc: security@kernel.org
+> Signed-off-by: Hector Martin <marcan@marcan.st>
+> ---
+>  drivers/usb/host/xhci-ring.c | 54 +++++++++++++++++++++++++++++++++++---=
+------
+>  drivers/usb/host/xhci.h      |  1 +
+>  2 files changed, 44 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 575f0fd9c9f1..9c06502be098 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -1034,13 +1034,27 @@ static int xhci_invalidate_cancelled_tds(struct x=
+hci_virt_ep *ep)
+>                                 break;
+>                         case TD_DIRTY: /* TD is cached, clear it */
+>                         case TD_HALTED:
+> +                       case TD_CLEARING_CACHE_DEFERRED:
+> +                               if (cached_td) {
+> +                                       if (cached_td->urb->stream_id !=
+=3D td->urb->stream_id) {
+> +                                               /* Multiple streams case,=
+ defer move dq */
+> +                                               xhci_dbg(xhci,
+> +                                                        "Move dq deferre=
+d: stream %u URB %p\n",
+> +                                                        td->urb->stream_=
+id, td->urb);
+> +                                               td->cancel_status =3D TD_=
+CLEARING_CACHE_DEFERRED;
+> +                                               break;
+> +                                       }
+> +
+> +                                       /* Should never happen, at least =
+try to clear the TD if it does */
+> +                                       xhci_warn(xhci,
+> +                                                 "Found multiple active =
+URBs %p and %p in stream %u?\n",
+> +                                                 td->urb, cached_td->urb=
+,
+> +                                                 td->urb->stream_id);
+> +                                       td_to_noop(xhci, ring, cached_td,=
+ false);
+> +                                       cached_td->cancel_status =3D TD_C=
+LEARED;
+> +                               }
+> +
+>                                 td->cancel_status =3D TD_CLEARING_CACHE;
+> -                               if (cached_td)
+> -                                       /* FIXME  stream case, several st=
+opped rings */
+> -                                       xhci_dbg(xhci,
+> -                                                "Move dq past stream %u =
+URB %p instead of stream %u URB %p\n",
+> -                                                td->urb->stream_id, td->=
+urb,
+> -                                                cached_td->urb->stream_i=
+d, cached_td->urb);
+>                                 cached_td =3D td;
+>                                 break;
+>                         }
+> @@ -1060,10 +1074,16 @@ static int xhci_invalidate_cancelled_tds(struct x=
+hci_virt_ep *ep)
+>         if (err) {
+>                 /* Failed to move past cached td, just set cached TDs to =
+no-op */
+>                 list_for_each_entry_safe(td, tmp_td, &ep->cancelled_td_li=
+st, cancelled_td_list) {
+> -                       if (td->cancel_status !=3D TD_CLEARING_CACHE)
+> +                       /*
+> +                        * Deferred TDs need to have the deq pointer set =
+after the above command
+> +                        * completes, so if that failed we just give up o=
+n all of them (and
+> +                        * complain loudly since this could cause issues =
+due to caching).
+> +                        */
+> +                       if (td->cancel_status !=3D TD_CLEARING_CACHE &&
+> +                           td->cancel_status !=3D TD_CLEARING_CACHE_DEFE=
+RRED)
+>                                 continue;
+> -                       xhci_dbg(xhci, "Failed to clear cancelled cached =
+URB %p, mark clear anyway\n",
+> -                                td->urb);
+> +                       xhci_warn(xhci, "Failed to clear cancelled cached=
+ URB %p, mark clear anyway\n",
+> +                                 td->urb);
+>                         td_to_noop(xhci, ring, td, false);
+>                         td->cancel_status =3D TD_CLEARED;
+>                 }
+> @@ -1350,6 +1370,7 @@ static void xhci_handle_cmd_set_deq(struct xhci_hcd=
+ *xhci, int slot_id,
+>         struct xhci_ep_ctx *ep_ctx;
+>         struct xhci_slot_ctx *slot_ctx;
+>         struct xhci_td *td, *tmp_td;
+> +       bool deferred =3D false;
+>
+>         ep_index =3D TRB_TO_EP_INDEX(le32_to_cpu(trb->generic.field[3]));
+>         stream_id =3D TRB_TO_STREAM_ID(le32_to_cpu(trb->generic.field[2])=
+);
+> @@ -1436,6 +1457,8 @@ static void xhci_handle_cmd_set_deq(struct xhci_hcd=
+ *xhci, int slot_id,
+>                         xhci_dbg(ep->xhci, "%s: Giveback cancelled URB %p=
+ TD\n",
+>                                  __func__, td->urb);
+>                         xhci_td_cleanup(ep->xhci, td, ep_ring, td->status=
+);
+> +               } else if (td->cancel_status =3D=3D TD_CLEARING_CACHE_DEF=
+ERRED) {
+> +                       deferred =3D true;
+>                 } else {
+>                         xhci_dbg(ep->xhci, "%s: Keep cancelled URB %p TD =
+as cancel_status is %d\n",
+>                                  __func__, td->urb, td->cancel_status);
+> @@ -1445,8 +1468,17 @@ static void xhci_handle_cmd_set_deq(struct xhci_hc=
+d *xhci, int slot_id,
+>         ep->ep_state &=3D ~SET_DEQ_PENDING;
+>         ep->queued_deq_seg =3D NULL;
+>         ep->queued_deq_ptr =3D NULL;
+> -       /* Restart any rings with pending URBs */
+> -       ring_doorbell_for_active_rings(xhci, slot_id, ep_index);
+> +
+> +       if (deferred) {
+> +               /* We have more streams to clear */
+> +               xhci_dbg(ep->xhci, "%s: Pending TDs to clear, continuing =
+with invalidation\n",
+> +                        __func__);
+> +               xhci_invalidate_cancelled_tds(ep);
+> +       } else {
+> +               /* Restart any rings with pending URBs */
+> +               xhci_dbg(ep->xhci, "%s: All TDs cleared, ring doorbell\n"=
+, __func__);
+> +               ring_doorbell_for_active_rings(xhci, slot_id, ep_index);
+> +       }
+>  }
+>
+>  static void xhci_handle_cmd_reset_ep(struct xhci_hcd *xhci, int slot_id,
+> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+> index 6f4bf98a6282..aa4379bdb90c 100644
+> --- a/drivers/usb/host/xhci.h
+> +++ b/drivers/usb/host/xhci.h
+> @@ -1276,6 +1276,7 @@ enum xhci_cancelled_td_status {
+>         TD_DIRTY =3D 0,
+>         TD_HALTED,
+>         TD_CLEARING_CACHE,
+> +       TD_CLEARING_CACHE_DEFERRED,
+>         TD_CLEARED,
+>  };
+>
+>
+> ---
+> base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+> change-id: 20240524-xhci-streams-124e88db52e6
+>
 
-Also, the above patch does not apply upstream; the endif is already in
-the correct place in the upstream kernel (though the commit introducing
-it adds a blank line at the end of the file)
+Intense story, relatively simple fix. :)
 
-Guenter
+Reviewed-by: Neal Gompa <neal@gompa.dev>
 
+
+--=20
+=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
+=BC=81/ Always, there's only one truth!
 
