@@ -1,175 +1,144 @@
-Return-Path: <linux-kernel+bounces-188207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A468CDF31
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 791618CDF33
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53EE41F23B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:31:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B888282B76
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B81BF9CB;
-	Fri, 24 May 2024 01:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2485BF9CB;
+	Fri, 24 May 2024 01:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="iXMNXKYv"
-Received: from smtp2.infineon.com (smtp2.infineon.com [217.10.52.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C1DgJ7D+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9728019B;
-	Fri, 24 May 2024 01:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.52.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5F12C9A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716514304; cv=none; b=sis75zSGjLsK7mBq0CqFt29ioq676qgiUHP8U3s8i8hunLfmhXm/CBBU6qgRHeNJltcIy5P7yxQZeIqlw3+TMKUWcn9zwu2SrogB09hjx7Zd/LATyNCOGOg1Q1K8tBu4VXbQswIGrTN+OtgcrGVf/hOgY+yjnPbGE204/hZNFfI=
+	t=1716514488; cv=none; b=TbiXMCZJOan38PTKYWAQRxvKRqHu25LUkClI21gJcDEFxXCIhQJh9OrtrN6hW1UBmmmrg/UqKayR42aYwgLPGDwFZB4HwLO52Jw5xV6qiMNQGLkhDMAslu3DYXiCgULbvMGYnXPtXtxhYAHtqmO+Pk2l8SNRzXbQlWKW7EyFrL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716514304; c=relaxed/simple;
-	bh=hS8TiiH1WQ8HBxgia2bpb9rfgZ+xhKtMyuS/NsF3gWM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c8WBk/HTuqYJJhEAGy1wReSFBaAiw4Gas6gPQZPlbjoWCuCK3hdo2TbDUlc0Jh2t1MK59ePZaDRXsaCI7hFJDr35UMwVgH3f38esIsb0rVP/HOyZi8un47+cbLtap31iujnrMBDVTBb//TSQJgNQUPYxrq6zOU9fkLF8AYoi7k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com; spf=pass smtp.mailfrom=infineon.com; dkim=pass (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b=iXMNXKYv; arc=none smtp.client-ip=217.10.52.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infineon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infineon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1716514303; x=1748050303;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=hS8TiiH1WQ8HBxgia2bpb9rfgZ+xhKtMyuS/NsF3gWM=;
-  b=iXMNXKYv/NdsSrPihhOt166IdRrO/rNcgVpeimHp24gG79HSuS/XYA+o
-   5+YwQ+0VJLdEZKQEOJquGP5sm3Ro4JTduCWUWcVVS9LpevnAbQvpQZchT
-   pOlgP6CgK+1umwWZoV4buZj+an0PJG7zaPffargNlKiJRCtMnkXt9ElGF
-   c=;
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="76904617"
-X-IronPort-AV: E=Sophos;i="6.08,184,1712613600"; 
-   d="scan'208";a="76904617"
-Received: from unknown (HELO MUCSE814.infineon.com) ([172.23.29.40])
-  by smtp2.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 03:31:35 +0200
-Received: from MUCSE832.infineon.com (172.23.7.104) by MUCSE814.infineon.com
- (172.23.29.40) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Fri, 24 May
- 2024 03:31:34 +0200
-Received: from icw-osk-deskmini.osa.infineon.com (10.161.6.196) by
- MUCSE832.infineon.com (172.23.7.104) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 24 May 2024 03:31:32 +0200
-From: Nobuaki Tsunashima <nobuaki.tsunashima@infineon.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>
-CC: <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Nobuaki Tsunashima" <Nobuaki.Tsunashima@infineon.com>
-Subject: [PATCH v4] Bluetooth: btbcm: Apply HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER to CYW4373
-Date: Fri, 24 May 2024 10:31:27 +0900
-Message-ID: <20240524013127.434500-1-nobuaki.tsunashima@infineon.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1716514488; c=relaxed/simple;
+	bh=6eqPKy9djQ44kxy9/4ekHNwI380SgUbokve8MKOW5nw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F5UVyQmJWYU0SwCyzKrGilh+zAAnRaGdnoWicU7M7cQf1ve2co/wEu8LaD0OVnFqOh+FXVjzCOzkK2EqOo0Vjs9vpojwx49i7qwg6yW7N0euBcqcpui7GEfED0NW4IFX5I1kFFkWL/MrL6TqnGHvmF1AmvMkw1QdeAu0WUVWhIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C1DgJ7D+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716514485;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7zyDSjhpyorp5nAJxno7CoO9uDDRfWCi8vAJwbr4pI=;
+	b=C1DgJ7D+EF28NlN15v5CE/Jc5hrbtD0GiVB4hxyLtviMoyJ2nzVNNlmQDly4VNEKkU/FGQ
+	xwL8SylDSc47eeQa1eZmSf+o/mYuZyODm+m3iLNhHAJX7suum9KUr/stEayq5SiOleUUws
+	GtT77HpHjNc1mtLEoAfnkTnksp6/iu4=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-ZIX_0hKeM9ap0z4eUk3t9A-1; Thu, 23 May 2024 21:34:43 -0400
+X-MC-Unique: ZIX_0hKeM9ap0z4eUk3t9A-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-794aaf57a38so39433885a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:34:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716514483; x=1717119283;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u7zyDSjhpyorp5nAJxno7CoO9uDDRfWCi8vAJwbr4pI=;
+        b=BN36NqcX3cvfZeMhJJorWABbjmLO7AcpN+SzSb18Gd7XE29E1VEkgf7u14+R+bLKBX
+         0JRzhu2Ss8wjZz3gqrkezQg3eMkasi4qoc7gjUzpcOMCtuEtRNrlQZa/9JfmYSw5t2Hb
+         wMWAZG4xhvzkjOytv2BprrqE/I5PAZ56GtR6AgebRRNzKl8x00neDLcHHpYxnWtAxPZm
+         Mp/MIf12pUyfqdQQ2XwSGpPKGlQ7bNjnZgh2+pzulX8TTI9R07X1bMd5IJTH2XlV7Y7z
+         3sdkisiEZdr1Uf13zqc9SIXHR9OcpeHlH5vcE3QCTz1DNI24NZSs2Yk641KThYE0aZA2
+         HrQw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/LMVAtlCYZXT7CMV7mSOqz35KKv/LzmX79F3SZJ7+RoA94gFc3Vbs8Wtzaw3iyfCoctHwfBw7R3/pZZ4NzOTedEJ3AExRxDjrmpu2
+X-Gm-Message-State: AOJu0YxF1LemL1Uw+pygAWyHJ9upNVC3FP/LJVeUh4SNtDdLz7HVW/Fl
+	Q+HU9rmEaRSbmXc9lyXsINe2MG4FxSa9V5wmQ6X28wF2I7X+IY8Yri/0oQFQKl/9XnNGniWhKd4
+	rJOstKjOpxcrWCKpvBC7LpM1v7MyAviMd/kdCfBLAJuJDuhZTXzuz7wjt7/udRA==
+X-Received: by 2002:a05:6214:5c07:b0:6a0:8559:d137 with SMTP id 6a1803df08f44-6abcdaa8559mr9297986d6.61.1716514482821;
+        Thu, 23 May 2024 18:34:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFdkDT3EyxEf+gntyix61idG5hT7+VI8hQowuVB9g+Y0LHc/PAp4h7v2266c9W7+jo6cv+TeA==
+X-Received: by 2002:a05:6214:5c07:b0:6a0:8559:d137 with SMTP id 6a1803df08f44-6abcdaa8559mr9297736d6.61.1716514482293;
+        Thu, 23 May 2024 18:34:42 -0700 (PDT)
+Received: from [192.168.1.175] ([70.22.187.239])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac070dc638sm2357546d6.35.2024.05.23.18.34.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 May 2024 18:34:41 -0700 (PDT)
+Message-ID: <cc86b717-e060-2d73-88a6-1625285c47c5@redhat.com>
+Date: Thu, 23 May 2024 21:34:41 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MUCSE824.infineon.com (172.23.29.55) To
- MUCSE832.infineon.com (172.23.7.104)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] dm vdo: remove unused struct 'uds_attribute'
+Content-Language: en-US
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>
+References: <20240523210716.309324-1-linux@treblig.org>
+ <5c063045-4bce-14e4-9930-77cc0ed2edad@redhat.com>
+ <Zk_ozpHryOiMLx_Q@gallifrey>
+From: Matthew Sakai <msakai@redhat.com>
+In-Reply-To: <Zk_ozpHryOiMLx_Q@gallifrey>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
+On 5/23/24 21:09, Dr. David Alan Gilbert wrote:
+> * Matthew Sakai (msakai@redhat.com) wrote:
+>> On 5/23/24 17:07, linux@treblig.org wrote:
+>>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>>>
+>>> 'uds_attribute' is unused since
+>>> commit a9da0fb6d8c6 ("dm vdo: remove all sysfs interfaces").
+>>>
+>>> Remove it.
+>>>
+>>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+>>
+>> Yes, this was clearly an oversight on our part. Feel free to add:
+>> Reviewed-by: Matthew Sakai <msakai@redhat.com>
+> 
+> Thanks for the quick review.
+> Is this something you'll send a pull for, or do I need to
+> ask someone else to include it?
 
-CYW4373 ROM FW has an issue that it claims LE_Read_Transmit_Power command
-as supported in a response of Read_Local_Supported_Command command but
-rejects the LE_Read_Transmit_Power command with "Unknown HCI Command"
-status. Because Bluetooth driver of kernel 5.11 added sending the
-LE_Read_Transmit_Power command in initialize phase, hci up fails due to the
-issue.
+No need to do anything else, I think. Mike (or Mikulas), can you
+include this with the next set of device mapper patches?
 
-Especially in USB i/f case, it would be difficult to download patch FW that
-includes its fix unless hci is up.
-
-The driver already contains infrastructure to apply the quirk for the
-issue, but currently it only supports DMI based matching. Add support to
-match by chip id and baseline FW version to detect CYW4373 ROM FW build
-in generic system.
-
-Fixes: 7c395ea521e6 ("Bluetooth: Query LE tx power on startup")
-Signed-off-by: Nobuaki Tsunashima <Nobuaki.Tsunashima@infineon.com>
----
-V3 -> V4: Fix a few coding style warnings and refine comments for clarify.
-V2 -> V3: Fix a few coding style warnings and change the subject as more specific.
-V1 -> V2: Fix several coding style warnings.
-
- drivers/bluetooth/btbcm.c | 32 +++++++++++++++++++++++++++++++-
- drivers/bluetooth/btusb.c |  4 ++++
- 2 files changed, 35 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
-index 0a5445ac5e1b..29e3f83a19fa 100644
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -437,18 +437,48 @@ static const struct dmi_system_id disable_broken_read_transmit_power[] = {
- 	{ }
- };
- 
-+struct bcm_chip_version_table {
-+	u8 chip_id;			/* Chip ID */
-+	u16 baseline;		/* Baseline version of patch FW */
-+};
-+#define BCM_ROMFW_BASELINE_NUM	0xFFFF
-+static const struct bcm_chip_version_table disable_broken_read_transmit_power_by_chip_ver[] = {
-+	{ 0x87, BCM_ROMFW_BASELINE_NUM }		/* CYW4373/4373E */
-+};
-+static bool btbcm_is_disable_broken_read_tx_power_by_chip_ver(u8 chip_id, u16 baseline)
-+{
-+	int i;
-+	size_t table_size = ARRAY_SIZE(disable_broken_read_transmit_power_by_chip_ver);
-+	const struct bcm_chip_version_table *entry =
-+						&disable_broken_read_transmit_power_by_chip_ver[0];
-+
-+	for (i = 0 ; i < table_size ; i++, entry++)	{
-+		if ((chip_id == entry->chip_id) && (baseline == entry->baseline))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static int btbcm_read_info(struct hci_dev *hdev)
- {
- 	struct sk_buff *skb;
-+	u8 chip_id;
-+	u16 baseline;
- 
- 	/* Read Verbose Config Version Info */
- 	skb = btbcm_read_verbose_config(hdev);
- 	if (IS_ERR(skb))
- 		return PTR_ERR(skb);
--
-+	chip_id = skb->data[1];
-+	baseline = skb->data[3] | (skb->data[4] << 8);
- 	bt_dev_info(hdev, "BCM: chip id %u", skb->data[1]);
- 	kfree_skb(skb);
- 
-+	/* Check Chip ID and disable broken Read LE Min/Max Tx Power */
-+	if (btbcm_is_disable_broken_read_tx_power_by_chip_ver(chip_id, baseline))
-+		set_bit(HCI_QUIRK_BROKEN_READ_TRANSMIT_POWER, &hdev->quirks);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index d31edad7a056..52561c8d8828 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -142,6 +142,10 @@ static const struct usb_device_id btusb_table[] = {
- 	{ USB_VENDOR_AND_INTERFACE_INFO(0x04ca, 0xff, 0x01, 0x01),
- 	  .driver_info = BTUSB_BCM_PATCHRAM },
- 
-+	/* Cypress devices with vendor specific id */
-+	{ USB_VENDOR_AND_INTERFACE_INFO(0x04b4, 0xff, 0x01, 0x01),
-+	  .driver_info = BTUSB_BCM_PATCHRAM },
-+
- 	/* Broadcom devices with vendor specific id */
- 	{ USB_VENDOR_AND_INTERFACE_INFO(0x0a5c, 0xff, 0x01, 0x01),
- 	  .driver_info = BTUSB_BCM_PATCHRAM },
--- 
-2.25.1
+> Dave
+> 
+>>> ---
+>>>    drivers/md/dm-vdo/dedupe.c | 5 -----
+>>>    1 file changed, 5 deletions(-)
+>>>
+>>> diff --git a/drivers/md/dm-vdo/dedupe.c b/drivers/md/dm-vdo/dedupe.c
+>>> index 117266e1b3ae..39ac68614419 100644
+>>> --- a/drivers/md/dm-vdo/dedupe.c
+>>> +++ b/drivers/md/dm-vdo/dedupe.c
+>>> @@ -148,11 +148,6 @@
+>>>    #include "vdo.h"
+>>>    #include "wait-queue.h"
+>>> -struct uds_attribute {
+>>> -	struct attribute attr;
+>>> -	const char *(*show_string)(struct hash_zones *hash_zones);
+>>> -};
+>>> -
+>>>    #define DEDUPE_QUERY_TIMER_IDLE 0
+>>>    #define DEDUPE_QUERY_TIMER_RUNNING 1
+>>>    #define DEDUPE_QUERY_TIMER_FIRED 2
+>>
+>>
 
 
