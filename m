@@ -1,153 +1,95 @@
-Return-Path: <linux-kernel+bounces-188191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535158CDF05
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6DC8CDF08
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D0F1F2220D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:55:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17741F2254E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EF063CB;
-	Fri, 24 May 2024 00:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BBE79C8;
+	Fri, 24 May 2024 00:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bC3bwDM6"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029302C9A
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="b63FHAbG"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF7D81F;
+	Fri, 24 May 2024 00:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716512105; cv=none; b=G8aqta8UUqKOgdd8KgyfqDVg0ifGo4uHBnMjkS9QJ5Sy+g65BdF9/Qpo70fVTklN7rtbTZRooCjvw/Mo9bZX+GFAmuirDIKS+T3iVxZN+UOu4Od2aAlti25TcrSXFEVoBXM1CP+MgRFoi9kLAvL46qe51G853rpl39wgKMUpoFE=
+	t=1716512188; cv=none; b=iJ1i72895D/bpzpw9HVxMZCxhIGRUN61VJGhaKqlBCYLYnziVCf42oS8BroQ/ZT7/Zh9ZA/RkvNo7qtcsRjqpy+sHTYCLB8xu/6Gkz7WycyPSIoLy1wxOp0mLSRzR8jGzIrZexant4waB9rLQKsTtvfs5u+KJIHHTmfnrpPqAC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716512105; c=relaxed/simple;
-	bh=i/X7vfVzszREoH7LEU3tywFJJJRVwFpzHn/HKGf+APM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=joNGefFjvvzT/wC6x6rlKu2ywcJNr0CL7AbpMwRBOjP6mZK7Z5vyWLv7ICsNn3ly7V0FCFphr9n7hJIJC4rgzu6+Pd2SL0Vm9bSanWOTQtoyFLBEvEvuBnweAGD5pbb4gKp46xQdda/Iik31Ze123Yw4Sl5CqSKtrokApYXyc/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bC3bwDM6; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f6a045d476so2757599b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716512103; x=1717116903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=btdOk87mswYXidZeRThBlXVYcnXj0Y1fcw2iEYiTWQ4=;
-        b=bC3bwDM6xIFalUabyQ6wMvIc6AKNIDBzy6sEO6ZAXq1JKubfaawbO1IiM+EY6GP+TC
-         AOv6mk8MZnWvD7ieFz2k5NmkNZDTLLPV7cnUWOrOnZz6mzJrW48DweE43RjB39StKRVs
-         jiTp22L4Q0haaUGpxu0V/MP9IGTX2StbF3Re+6nLgL7sNazEENRlv9Y782KuHyUsBWwb
-         +MEiadJzK3ol+YuMGDE6Oi32ONs+TKEKAygKmxikDvcRFJBZU5D4oAhB8bmAIyqjHxwv
-         PIhW3OVHkJjDNwn+v5zd+FZjjhmSbx8zG/WseA05wNvDOvOsnUGzSxzbtmJQRqEgdBLA
-         Xjzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716512103; x=1717116903;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=btdOk87mswYXidZeRThBlXVYcnXj0Y1fcw2iEYiTWQ4=;
-        b=kz6vZ9Imn/KMczoOS3gKMuU8B0YmVyA5iSXck6HSKJA7ZVLgdrmudOxgQUuivjr7Xo
-         Z7oKBJQpzY0iuqiR6TFTG9cxDvIgEyh0QLVM/zm/hUYQEilFYUP+2atxKghpLmCa4/UW
-         hPMUsvyiUT47162uebO0AnX57Izx26L0lYUtLMiYpWm1aRyI7nonYxkVqWrnlmsmXYVI
-         oJ5CGt8/sP3cQXj8VEXBU922Ru8ib1sOpJLyg2y1SWCYSYNDgxoqgQLZ3ygEb8JGg/JL
-         fDXPgQ39E5xzy9m2QB15jAJTRcvqruVvgImxGmoAc03D1opxAYF3SMUyw6/WhpE0b4gM
-         vebQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWyzv/i74BKod5c0edrXsqM1N5PB+qHDmFqcFKtOuRyUH9gK2Jr7qWa/eNvFezYqq3IL9u8csDCK78wT2/HDNWvzTrO4/NC5GV2rFC
-X-Gm-Message-State: AOJu0Yw7LamhwxgR8F4e5tKpFNySsw+EoZMbKFIhfy4G+3gjAT78DSFb
-	L2xOpiiPkUraDQZiYCfWU2YBbl61orhvUEPa+3GOemNYsw2BXbiw
-X-Google-Smtp-Source: AGHT+IFvwAGrb1aoG1lN2VJQK7/vDKkqVmBwD8ukAXrSTWGhK6vhiW+LH9ZzbgawCxVlb6aETJ7N1w==
-X-Received: by 2002:a05:6a20:9684:b0:1af:aeaa:6db4 with SMTP id adf61e73a8af0-1b212f19e21mr994255637.47.1716512103027;
-        Thu, 23 May 2024 17:55:03 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9c9065sm1881425ad.280.2024.05.23.17.54.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 17:55:02 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org,
-	linux-mm@kvack.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Barry Song <v-songbaohua@oppo.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Barry Song <21cnbao@gmail.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jeff Xie <xiehuan09@gmail.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Minchan Kim <minchan@kernel.org>,
-	Muchun Song <songmuchun@bytedance.com>,
-	Peter Xu <peterx@redhat.com>,
-	Yang Shi <shy828301@gmail.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	Zach O'Keefe <zokeefe@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Subject: [PATCH] mm: arm64: Fix the out-of-bounds issue in contpte_clear_young_dirty_ptes
-Date: Fri, 24 May 2024 12:54:44 +1200
-Message-Id: <20240524005444.135417-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1716512188; c=relaxed/simple;
+	bh=5F1z1Woqll497cd46zyP+J5EAcA55tR8OXSbU/KNAac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AafcBfypai8cC9PblTQ522h29OlvIFPhO4Gq5aXh/e2u2dlllof7YO8sHn6icCXJBuhCqqIIH/I9O6rPKwj9Yg/IeOrlq1Egq68cYOoK73UNGoA3b8WieEli6KrKlixvk81vlAAVbv8EUkw202VI2KhtDhZX41WmicA4P0TrfIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=b63FHAbG; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 4875B14C2DB;
+	Fri, 24 May 2024 02:56:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1716512183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=10Rzt42s+HPACNX7hQ0Sh+1c1eQ91GOfo9jACwkRnOA=;
+	b=b63FHAbGiS5pCrH8hcTwp0IyhAL3RM6UxNRm5LyOPkpaZ7+6TBjip82FKAnZZPDCvyWvtW
+	ZSflcHDFZFPPv33AmFPdQe8rebTJnJNXUsOxCu0dpk+B7BBsIT6NUeGTcI48enDoOIrOoc
+	EH2NhZjP0jkpmP7HzXgawVumenld1Z4FKcjfyHBnnVzBOQj8OfL8kZ0cord+NauvP2Qd3p
+	iNJp6SqUoG58yTIDy9pOBfYL9d6aYRM8EonBqKY8yD56EyATI+1gaAcu/1/C5UxEwKAYkR
+	JnPcVdNjrqW3s6ysz6pUZvlDwJrYY7Hn2lCm5jxg36n9K/wNInDJx83EiT13WQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 2d469f13;
+	Fri, 24 May 2024 00:56:14 +0000 (UTC)
+Date: Fri, 24 May 2024 09:55:59 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 00/15] 5.10.218-rc1 review
+Message-ID: <Zk_lnyn3IAmRtP2X@codewreck.org>
+References: <20240523130326.451548488@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240523130326.451548488@linuxfoundation.org>
 
-From: Barry Song <v-songbaohua@oppo.com>
+Greg Kroah-Hartman wrote on Thu, May 23, 2024 at 03:12:42PM +0200:
+> This is the start of the stable review cycle for the 5.10.218 release.
+> There are 15 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.218-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 
-We are passing a huge nr to __clear_young_dirty_ptes() right
-now. While we should pass the number of pages, we are actually
-passing CONT_PTE_SIZE. This is causing lots of crashes of
-MADV_FREE, panic oops could vary everytime.
+Tested bc8c5267b8b7 ("Linux 5.10.218-rc1") on:
+- arm i.MX6ULL (Armadillo 640)
+- arm64 i.MX8MP (Armadillo G4)
 
-Fixes: 89e86854fb0a ("mm/arm64: override clear_young_dirty_ptes() batch helper")
-Cc: Lance Yang <ioworker0@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Jeff Xie <xiehuan09@gmail.com>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Muchun Song <songmuchun@bytedance.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Yang Shi <shy828301@gmail.com>
-Cc: Yin Fengwei <fengwei.yin@intel.com>
-Cc: Zach O'Keefe <zokeefe@google.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Signed-off-by: Barry Song <v-songbaohua@oppo.com>
----
- arch/arm64/mm/contpte.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+No obvious regression in dmesg or basic tests:
+Tested-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
 
-diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
-index 9f9486de0004..a3edced29ac1 100644
---- a/arch/arm64/mm/contpte.c
-+++ b/arch/arm64/mm/contpte.c
-@@ -376,7 +376,7 @@ void contpte_clear_young_dirty_ptes(struct vm_area_struct *vma,
- 	 * clearing access/dirty for the whole block.
- 	 */
- 	unsigned long start = addr;
--	unsigned long end = start + nr;
-+	unsigned long end = start + nr * PAGE_SIZE;
- 
- 	if (pte_cont(__ptep_get(ptep + nr - 1)))
- 		end = ALIGN(end, CONT_PTE_SIZE);
-@@ -386,7 +386,7 @@ void contpte_clear_young_dirty_ptes(struct vm_area_struct *vma,
- 		ptep = contpte_align_down(ptep);
- 	}
- 
--	__clear_young_dirty_ptes(vma, start, ptep, end - start, flags);
-+	__clear_young_dirty_ptes(vma, start, ptep, (end - start) / PAGE_SIZE, flags);
- }
- EXPORT_SYMBOL_GPL(contpte_clear_young_dirty_ptes);
- 
--- 
-2.34.1
-
+--
+Dominique Martinet | Asmadeus
 
