@@ -1,179 +1,153 @@
-Return-Path: <linux-kernel+bounces-188128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADA48CDDD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:56:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983138CDDDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5558B2172A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2024 23:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31F41C21AE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09AC01292D1;
-	Thu, 23 May 2024 23:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A3F81F;
+	Fri, 24 May 2024 00:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="adC2gtcw"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="asSNy4Fa"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3875127E28
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B475F19A;
+	Fri, 24 May 2024 00:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716508583; cv=none; b=ZrevaQ6+D0vk5gfHIB9va4XDZWyS0yH28jkaMc/66CC3HxnLojv+SqXmxuwFieEUYDkUsJJt9lF8h++/KRww8G7nwqsu0dGBAL7eqbsgTgeuCueorkSejpayiM9zJxEvM4CyMoGiwZqNJg+pS/A5N0ECxaiewf1XemDM7s7MqtE=
+	t=1716508883; cv=none; b=OvRscNebhTTK8IEEELJB2EhXPDJdW1RGSjs3CgYjBC+TbgrzFGd1F023glwiH9LnaRO+2oN6IjzXU1U9LCSOI91FdU8SzrQbTyKfO7WhVDRs/HDMoR4cUtmou2/wi9u41Xz0ACNk8Y+mwtCvIvIBc9OO2YtgUSpk40482e+XBJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716508583; c=relaxed/simple;
-	bh=Q+KvU0oLvca8ovAHLR6eF077NY2tGTdk+AFMRrDUktQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=twP7RUCTkn2zi/t7f5bzyaBCyxPABAiH2pNa0rz3MuJ2zuFgIGrdtl/vuAn/sCHWfKJjfkFLPaiN4Eqgdnzu/MpLjp9Ztmiyr9eOXSvDnDyneR/2nP1SJmnP/lSFoJrfP/gXz/rukWsTPe7pclsLFRQrXPiU0Pr90MKkKWGKyW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=adC2gtcw; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240523235616epoutp0264598e1ceb6df909d91197ffdadf7e40~SQ3Sz2VUL0928409284epoutp02l
-	for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:56:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240523235616epoutp0264598e1ceb6df909d91197ffdadf7e40~SQ3Sz2VUL0928409284epoutp02l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1716508576;
-	bh=rwOlfClFjOkWWM2PUxxGFjT0Rypn1JfWpa8Qo6yo6KU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=adC2gtcwpHZi+D0VjLUBiI9swjzVc/wzgQv+XqHFww44869Y9VXjprOsbFtgUM+98
-	 3muGpHCm/v9D3RaVBPE6ODgeryL/0cPMfEzdvdx0RdYlcw+JtYpkVGUo4/Q5DgaLYI
-	 qJmbgcB7iyi2aBCRNovmK2f3x7/a5e9ujMZ7bINc=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240523235615epcas1p45cc0b38562bcde2cdde65bc5e51f2bdb~SQ3ST332r0266102661epcas1p4y;
-	Thu, 23 May 2024 23:56:15 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.222]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4VllSH3xY7z4x9Q1; Thu, 23 May
-	2024 23:56:15 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B0.EF.09696.F97DF466; Fri, 24 May 2024 08:56:15 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240523235615epcas1p282b2405bed41b94ef8a40633066f1d4c~SQ3Rf2n6t0712807128epcas1p2q;
-	Thu, 23 May 2024 23:56:15 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240523235614epsmtrp1f19aa23990c3339365ae0e36957fc8ea~SQ3RaVsmb3240532405epsmtrp1S;
-	Thu, 23 May 2024 23:56:14 +0000 (GMT)
-X-AuditID: b6c32a36-553ff700000025e0-88-664fd79fa749
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	02.83.09238.E97DF466; Fri, 24 May 2024 08:56:14 +0900 (KST)
-Received: from lee.. (unknown [10.253.100.232]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240523235614epsmtip190345a8816f60141ab7a0f270931bdda~SQ3RNMoMq1202612026epsmtip1Y;
-	Thu, 23 May 2024 23:56:14 +0000 (GMT)
-From: Chanwoo Lee <cw9316.lee@samsung.com>
-To: cw9316.lee@samsung.com
-Cc: James.Bottomley@HansenPartnership.com, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
-	powen.kao@mediatek.com, quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
-	stanley.chu@mediatek.com, yang.lee@linux.alibaba.com
-Subject: Re: Re: [PATCH] ufs:mcq:Fixing Error Output for
- ufshcd_try_to_abort_task in ufshcd_mcq_abort
-Date: Fri, 24 May 2024 08:56:13 +0900
-Message-Id: <20240523235613.1103161-1-cw9316.lee@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240523002257.1068373-1-cw9316.lee@samsung.com>
+	s=arc-20240116; t=1716508883; c=relaxed/simple;
+	bh=F3Vl6maBpSObnSnLyMANYRh0J6RgnvUUfsR2qaphZYk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=U2BGt6xz6GlxcD4o8j2/+iNuGCbB0EAKtnzDEcmmglnwtvu7AFE3wQED3nED8YNznGwMuYqEU887Bpu+SPPc+sYTtdNeqVtHPw+ykCBXxqlyjyHkiJC1WdfH59b8qh7oW34Hi8h3qXlLCrF+6hzZihSZYFZh3fKFzx1M81R6G6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=asSNy4Fa; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-171-248.adl-adc-lon-bras34.tpg.internode.on.net [118.210.171.248])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 9453C20075;
+	Fri, 24 May 2024 08:01:11 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1716508876;
+	bh=FRh3v+DpUqq0irMJLtFl1AS9WmSx+bJ219CeU6lA6XE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=asSNy4FaG4rCai1mMhq1l1iBz6v3bmu7J95cNw2rd46+MrZEuQsGsiec6v4UYpRXn
+	 hra5+gjbvazAljrMSm29uryjeAm7VO5/pywW4nYn31Z2+knQXJztSenjgcK1aIknk5
+	 jSbEhZlnLcwGqourbjISIeHlkIBLisCebh80wJCzo08ssruvLaCcEtS5yz5ksQqKtV
+	 rH2VUMnzc1Dp/DJL8AtuNFgSUJ4haK6T03roNi6nta9aPdwCeuSZWAbs9siUhbiims
+	 0wpGhSYtpMqbdlq7Tpy9C41eK7ITmKfqi3gNzVPOm7+tvAherXs70okjIP2d2+n2el
+	 FxTZol/o9bfwg==
+Message-ID: <6cf99700841ac27c74821e92b5d7d9fe778b9e67.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v8 00/23] Add i2c-mux and eeprom devices for Meta
+ Yosemite 4
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
+Date: Fri, 24 May 2024 09:31:10 +0930
+In-Reply-To: <20240523091812.2032933-1-Delphine_CC_Chiu@wiwynn.com>
+References: <20240523091812.2032933-1-Delphine_CC_Chiu@wiwynn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmvu786/5pBmeOSVk8mLeNzeLlz6ts
-	FtM+/GS2mHGqjdViYz+HxeVdc9gsuq/vYLNYfvwfk8Xbu/9ZLCZd28BmMfXFcXaLpVtvMlq8
-	azzM6MDrcfmKt8e0SafYPHY+tPRoObmfxePj01ssHhP31Hn0bVnF6PF5k5xH+4FupgDOqGyb
-	jNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKCjlRTKEnNK
-	gUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFZgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGUt7
-	lrIU3OapuPxQq4FxJlcXIyeHhICJxPObX1i6GLk4hAR2MErMPNfCDuF8YpTYuu0gI4TzjVHi
-	28WNjDAtbzdvYQOxhQT2Mkrsb9eFKHrCKPFk7nKgWRwcbAJaErePeYPUiAhISczeMZcJpIZZ
-	4ASTxOrvc9lBEsIC6RJflu1lB6lnEVCVeNqsBxLmFbCV6Jh8HGqXvMT+g2eZQWxOATuJ9Ysv
-	sEPUCEqcnPmEBcRmBqpp3jqbGWS+hMBaDom1k/tZIJpdJF7v/M8MYQtLvDq+hR3ClpJ42d/G
-	DtHQzCix8M1xqO4JjBJfPt5mg6iyl2hubWYDuY5ZQFNi/S59iG18Eu++9rCChCUEeCU62oQg
-	qlUk5nSdY4OZ//HGY1YI20Ni0tuH0CCdyCjx4/ML1gmM8rOQPDELyROzELYtYGRexSiWWlCc
-	m55abFhgBI/V5PzcTYzghKtltoNx0tsPeocYmTgYDzFKcDArifBGr/RNE+JNSaysSi3Kjy8q
-	zUktPsRoCgzhicxSosn5wJSfVxJvaGJpYGJmZGJhbGlspiTOe+ZKWaqQQHpiSWp2ampBahFM
-	HxMHp1QD04yeozsu1C0KuCy1RknhREZI7LvN6UG3UvXWKE3Tfbz3tZjg9iKOE5dvKO0sNmSs
-	v582t+Wrbdnv9nO39rjNKuhISeXMMCkMzI5/d+lT0Kv26E/mh1u2eFXonHhxNdrK9trCX8t9
-	unhmdf7es3oJu6Lo0lU7N3v0ssQrF768r5xTntU+Z9PH8NIZ1hPecrDPcIwVVVGWP8z1J3j9
-	dvm5Lfcmta6tvy0ZOO3I2psb5TZUXvLfwBfKtvVW3Mu9/c/3fHnFFjtZYOrSx38P2F3RyDRN
-	6/rVcPDNg58HJ36Zzy+6TVEmfqWRydM5ft56y/rjuh6ki2qH1vaF3uL2d8x/q6F0c3pZS27e
-	ZykWWb+ICCWW4oxEQy3mouJEAFcn85NBBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsWy7bCSnO686/5pBpeOmlk8mLeNzeLlz6ts
-	FtM+/GS2mHGqjdViYz+HxeVdc9gsuq/vYLNYfvwfk8Xbu/9ZLCZd28BmMfXFcXaLpVtvMlq8
-	azzM6MDrcfmKt8e0SafYPHY+tPRoObmfxePj01ssHhP31Hn0bVnF6PF5k5xH+4FupgDOKC6b
-	lNSczLLUIn27BK6MpT1LWQpu81RcfqjVwDiTq4uRk0NCwETi7eYtbF2MXBxCArsZJXYcXMQE
-	kZCS2L3/PFCCA8gWljh8uBii5hGjxLqvW5hA4mwCWhK3j3mDlIsAlc/eMZcJpIZZ4BqTxJFJ
-	sxhBEsICqRJf1n5nBKlnEVCVeNqsBxLmFbCV6Jh8nBFilbzE/oNnmUFsTgE7ifWLL7CD2EJA
-	NZ8adzBB1AtKnJz5hAXEZgaqb946m3kCo8AsJKlZSFILGJlWMUqmFhTnpucmGxYY5qWW6xUn
-	5haX5qXrJefnbmIER4uWxg7Ge/P/6R1iZOJgPMQowcGsJMIbvdI3TYg3JbGyKrUoP76oNCe1
-	+BCjNAeLkjiv4YzZKUIC6YklqdmpqQWpRTBZJg5OqQamh+suvz5pWj7ztsWyNUymmz3/rJ/8
-	L27RyaW+ghUcTpcVDNberGM/dmXZ7VY7g6lT6r4r+0/NWzjvbNzrOsE/U84KyNjvPNWyu+xO
-	jqQTb9iyKd8cmV/caF4atjRjv8Hp7JDE1ZXuvzi1BG/NKvY8Epyo1ZKSY+qSbGF1zcTmeser
-	upiZp88Gi+gu/KC/SqP0x68q3SjXqI0Ha8/aNf0+07bhwZoP0xKzek/JV2cVVggf+1kZWLl0
-	uu/GA6/EZ6Y//fs+njl/Qk7YPx05J+mn86+IrpWz+R92xmDms/UfzNIW/dvqu7BrXZPIiVc/
-	SmY/nXXDj/ezzfuyvErfX4qfwwRuc/y3uKT7IvNyOxv7ISWW4oxEQy3mouJEABU6Dk8FAwAA
-X-CMS-MailID: 20240523235615epcas1p282b2405bed41b94ef8a40633066f1d4c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240523235615epcas1p282b2405bed41b94ef8a40633066f1d4c
-References: <20240523002257.1068373-1-cw9316.lee@samsung.com>
-	<CGME20240523235615epcas1p282b2405bed41b94ef8a40633066f1d4c@epcas1p2.samsung.com>
 
-On 5/23/24 22:43, Bart Van Assche wrote:
->On 5/22/24 17:22, Chanwoo Lee wrote:
->> An error unrelated to ufshcd_try_to_abort_task is being output and
->> can cause confusion. So, I modified it to output the result of abort
->> fail. This modification was similarly revised by referring to the
->> ufshcd_abort function.
->> 
->> Signed-off-by: Chanwoo Lee <cw9316.lee@samsung.com>
->> ---
->>   drivers/ufs/core/ufs-mcq.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
->> index 005d63ab1f44..fc24d1af1fe8 100644
->> --- a/drivers/ufs/core/ufs-mcq.c
->> +++ b/drivers/ufs/core/ufs-mcq.c
->> @@ -667,9 +667,11 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd)
->>   	 * in the completion queue either. Query the device to see if
->>   	 * the command is being processed in the device.
->>   	 */
->> -	if (ufshcd_try_to_abort_task(hba, tag)) {
->> +	err = ufshcd_try_to_abort_task(hba, tag);
->> +	if (err) {
->>   		dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
->>   		lrbp->req_abort_skip = true;
->> +		err = FAILED;
->>   		goto out;
->>   	}
->
->Why does the word "Fixing" occur in the title of this patch? I think
->that this patch does not affect the value returned by
->ufshcd_mcq_abort(). From the start of that function:
->
->int err = FAILED;
->
->Thanks,
->
->Bart.
+There's still no response to my comments (either replies or adjustments
+to the patches) on v5, and we're now at v8.
 
-I thought this patch would be appropriate to "fix" the following log.
-  * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
-If "Fixing" is not appropriate, could you suggest another word?
+Upstreaming the patches won't progress if you don't engage with the
+feedback.
 
-Thanks,
+Andrew
 
-Chanwoo Lee.
+On Thu, 2024-05-23 at 17:17 +0800, Delphine CC Chiu wrote:
+> Changelog:
+>   - v8
+>     - add fan led config
+>   - v7
+>     - Revise pca9506 i2c address
+>   - v6
+>     - Revise i2c duty-cycle for meeting 400khz spec
+>   - v5
+>     - Support medusa board adc sensors
+>     - support NIC eeprom
+>   - v4
+>     - Re-format gpio linename
+>     - Revise i2c device node names
+>     - Split patches by logic changes
+>   - v3
+>     - Correct patch for revising gpio name
+>   - v2
+>     - Revise mx31790 fan tach config
+>     - Add mctp config for NIC
+>     - Support mux to cpld
+>     - Revise gpio name
+>   - v1
+>     - Add gpio and eeprom behind i2c-mux
+>     - Remove redundant idle-state setting for i2c-mux
+>     - Enable adc 15, wdt2,spi gpio for yosemite4 use
+>     - Revise quad mode to dual mode to avoid WP pin influnece the SPI
+>     - Revise power sensor adm1281 for yosemite4 schematic change
+>     - Add gpio pca9506 I/O expander for yosemite4 use
+>     - remove space for adm1272 compatible
+>     - enable interrupt setting for pca9555
+>     - add eeprom for yosemite4 medusa board/BSM use
+>     - remove temperature sensor for yosemite4 schematic change
+>     - add power sensor for power module reading
+>     - Revise adc128d818 adc mode for yosemite4 schematic change
+>     - Revise ina233 for yosemite4 schematic change
+>     - Remove idle state setting for yosemite4 NIC connection
+>     - Initialize bmc gpio state
+>     - Revise mx31790 fan tach config
+>     - Add mctp config for NIC
+>     - Support mux to cpld
+>     - Revise gpio name
+>=20
+> Delphine CC Chiu (23):
+>   ARM: dts: aspeed: yosemite4: Revise i2c-mux devices
+>   ARM: dts: aspeed: yosemite4: Enable adc15
+>   ARM: dts: aspeed: yosemite4: Enable spi-gpio setting
+>   ARM: dts: aspeed: yosemite4: Enable watchdog2
+>   ARM: dts: aspeed: yosemite4: Revise quad mode to dual mode
+>   ARM: dts: aspeed: yosemite4: Revise power sensor adm1281 for schematic
+>     change
+>   ARM: dts: aspeed: yosemite4: Add gpio pca9506
+>   ARM: dts: aspeed: yosemite4: Remove space for adm1272 compatible
+>   ARM: dts: aspeed: yosemite4: Enable interrupt setting for pca9555
+>   ARM: dts: aspeed: yosemite4: Add power sensor for power module reading
+>   ARM: dts: aspeed: yosemite4: Add eeprom for yosemite4 use
+>   ARM: dts: aspeed: yosemite4: Remove temperature sensor for yosemite4
+>     schematic change
+>   ARM: dts: aspeed: yosemite4: Revise adc128d818 adc mode for yosemite4
+>     schematic change
+>   ARM: dts: aspeed: yosemite4: Revise ina233 config for yosemite4
+>     schematic change
+>   ARM: dts: aspeed: yosemite4: Remove idle state setting for yosemite4
+>     NIC connection
+>   ARM: dts: aspeed: yosemite4: Initialize bmc gpio state
+>   ARM: dts: aspeed: yosemite4: Revise mx31790 fan tach config
+>   ARM: dts: aspeed: yosemite4: add mctp config for NIC
+>   ARM: dts: aspeed: yosemite4: support mux to cpld
+>   ARM: dts: aspeed: yosemite4: support medusa board adc sensors
+>   ARM: dts: aspeed: yosemite4: support NIC eeprom
+>   ARM: dts: aspeed: yosemite4: Revise i2c duty-cycle
+>   ARM: dts: aspeed: yosemite4: add fan led config
+>=20
+>  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 1410 +++++++++++++++--
+>  1 file changed, 1301 insertions(+), 109 deletions(-)
+>=20
+
 
