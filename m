@@ -1,168 +1,147 @@
-Return-Path: <linux-kernel+bounces-188787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8FD8CE6EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:24:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953938CE6EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1731F218AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18C7AB20C2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A2112C498;
-	Fri, 24 May 2024 14:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE11E12C48E;
+	Fri, 24 May 2024 14:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hPbKOQgK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TN8MKuSU"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1846A84FDA
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A7B12C47A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716560633; cv=none; b=PNAtvZNCWIm+rqqFgTyS9VgugOPJcIm/FNYmaoBToaUbI9gmGLX0auxUP4x36a5eWdfqAfhRpTU7xZ1Wu+WcHaa0zRZA2hoMOeAtGdjIIo6wJVtmAqknvJQ+GurP/go3RAc/kidELlXy/GBkB92qvHncDWnR86qTvRB57phHBhM=
+	t=1716560691; cv=none; b=bN6Azfc1qL2K80nXgw3XeGvvjKQplr44aAPXOj/ZB7gb/lS7u76CcKUeM5BiM9SE87Jcq0fpX3i7MGfhOkShxcDbYrzjCnEQoiOgsag5G52Lw1PulJUSyWuaAY30B0NiA9SL8mM04enMwLg2RBqlq217ZdtE6cZ/Min8tXPcE10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716560633; c=relaxed/simple;
-	bh=EpoHsjB4EOCos3U2u+XvJyYSt6At/bEiZlRNqBU3718=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=JZS4OvPQaVmNb9TmUEvBdQNAaSmVtscxZrH+asDTFj/4kfMpNnZZc1OFwMLtdoxL4QobepTXCPuhzhmnvjsgmzuQ+Qj4rWNthJcYJ/pwHlte16+28cw+U55L20rRBkauf45uzkhqltPzCLQEc1yChOQwSLUJtOpcwDIByrz/jtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hPbKOQgK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716560629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0AzS/2TqPoHiXyqv0zYxlSb1DTSMYdwN2BmrfNFCiwg=;
-	b=hPbKOQgKxcriIcktceY+ylUSWQqprd7xN1c6EpXxn58Zzy3BS4E7PXwRtgKeQLvtL3+UQf
-	i7JZZed1MbxKXTdXx+uu5FkdHAM4IOBIoAjW6ushCzdt9qkTuF/4A8iWxfN+9kh6swUDPe
-	BJUZqp03M6Ow0llndvXPazw4V1RuK/M=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-136-yPthP4h7N7-bmYUuQbCbkQ-1; Fri, 24 May 2024 10:23:45 -0400
-X-MC-Unique: yPthP4h7N7-bmYUuQbCbkQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B384881227E;
-	Fri, 24 May 2024 14:23:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 8B0D740C6EB7;
-	Fri, 24 May 2024 14:23:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <nspmangalore@gmail.com>,
-    Rohith Surabattula <rohiths.msft@gmail.com>,
-    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix missing set of remote_i_size
+	s=arc-20240116; t=1716560691; c=relaxed/simple;
+	bh=GAKoyrn5jaPJBZhMvzIPnR163kOxc9TRWI2BEHr/EOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n07qfbB2cpU2B/7d2RNeMG1385Bl6zWNoifUtiTDg1YzPfaDjjYcGUPE20I8dMLSCtE5vkEfAJ0phoOEmDeu6TJj/N2mDaKqcsFxHLtDUJ6HvusBWDHaZA2Y0OtkIasx1sBnv7z1muvoN0/j9uKzxlK+J5BM+R7xwT9iRbyNHZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TN8MKuSU; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-43fb094da40so6195391cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:24:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1716560687; x=1717165487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hYkOeLY4QiEED8wXU9jSl5gIYmutzD/WSLBujMKTRo=;
+        b=TN8MKuSUv7kOzp1AATaWO5/SNu/JY1be4aCDxAWxoss/L4y88/gjOeNSVthWx9YqA3
+         eN7xRHION/ozr9MmZYRZYWLhXQEXg0ubbIQlivPlIv74PvM2Xjmb93JgdxniFF4fff8b
+         wQhI6GfGjxCWjHzD+r0hovVvZ2JUrllZC7icoe+5O0SW37PrwnxrcEPYKm73J84ShoS8
+         5I6Numt9wCE1ErBHRsMXQB6Ah46uESfJrLrRyKZ7SAkb4cFP9oqEBBTzOStLjMEla5s4
+         KR0+Jh5D5vMwgFqLWRenh8X3FokIXkmmOkf5ZYBmcJMgpoztYXSWPQlvDp4E9mLY0Bk7
+         QZXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716560687; x=1717165487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8hYkOeLY4QiEED8wXU9jSl5gIYmutzD/WSLBujMKTRo=;
+        b=UDTfbxZwEtOE0KWCtezruEgeVpnenTbwjyia9t6Amx01XgrVBcGX+c/BOpKxXD3bCk
+         y8iFMlU0ckAgY+ttkcHBvRM26v3RK/Fd4Ph43CLhJIYamFYEVFG8PUMiJFY0GT/IGwP1
+         eBC9OnMHASuB0zjgkJMYFyUCnkwGhjzwqLVINhoM2HLjS1d8J1VCl6wnhYVWM1rqb2cj
+         8IPCyFWzp876yoZoVY4Y2xyFEwnvOY/oPfkoNDgMu01H+eHiuUWIG23qeIevquaThxvI
+         u87sRRNlcKFXGe+buLbdiAKIkJxq+ntMc7JIrPYbI9U/IyB7oZDyIPmHUwbnwaKjJ3qM
+         zHHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVq6dBDc2Qz24WN5t/scXujfpzFFw3PO+JzUKIO9fUHlZFCe5bpNxG3IU4l84U7NlFJUw9l+uygjijFl4M7cvih+QfEI8v3ZF2CLdn
+X-Gm-Message-State: AOJu0YyfJjCzzEjc5iFPwIr2So+7IlKZcWzwIRztW9EjohtCjE9FvlnJ
+	GCVpStzoDF1EMhgdAEEe+U3Q6XfGaVNQP8Fs3T9qIJZEIjfk/T0RLzw9oHG3sno=
+X-Google-Smtp-Source: AGHT+IHQjREFVeKjhgG/zBc9srfJFpq4/cK6ER06u+9Acna36n0WAlHDtLFo5xXKXDhG9YwoKONBbQ==
+X-Received: by 2002:ac8:7d81:0:b0:439:d07d:e25f with SMTP id d75a77b69052e-43fafb16fa4mr46187801cf.16.1716560687135;
+        Fri, 24 May 2024 07:24:47 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43fb183507asm8326431cf.56.2024.05.24.07.24.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 07:24:46 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sAVqg-001KtA-6F;
+	Fri, 24 May 2024 11:24:46 -0300
+Date: Fri, 24 May 2024 11:24:46 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 7/9] iommufd: Associate fault object with
+ iommufd_hw_pgtable
+Message-ID: <20240524142446.GP69273@ziepe.ca>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-8-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276A8E898983310B83C399E8CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <b09f96db-8451-4de9-81c5-312cffdfd4fc@linux.intel.com>
+ <BN9PR11MB5276F07A130CD617777A3AAD8CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <755786.1716560616.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 May 2024 15:23:36 +0100
-Message-ID: <755787.1716560616@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276F07A130CD617777A3AAD8CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-Occasionally, the generic/001 xfstest will fail indicating corruption in
-one of the copy chains when run on cifs against a server that supports
-FSCTL_DUPLICATE_EXTENTS_TO_FILE (eg. Samba with a share on btrfs).  The
-problem is that the remote_i_size value isn't updated by cifs_setsize()
-when called by smb2_duplicate_extents(), but i_size *is*.
+On Mon, May 20, 2024 at 03:39:54AM +0000, Tian, Kevin wrote:
+> > From: Baolu Lu <baolu.lu@linux.intel.com>
+> > Sent: Monday, May 20, 2024 10:19 AM
+> > 
+> > On 5/15/24 4:50 PM, Tian, Kevin wrote:
+> > >> From: Lu Baolu <baolu.lu@linux.intel.com>
+> > >> Sent: Tuesday, April 30, 2024 10:57 PM
+> > >>
+> > >> @@ -308,6 +314,19 @@ int iommufd_hwpt_alloc(struct iommufd_ucmd
+> > >> *ucmd)
+> > >>   		goto out_put_pt;
+> > >>   	}
+> > >>
+> > >> +	if (cmd->flags & IOMMU_HWPT_FAULT_ID_VALID) {
+> > >> +		struct iommufd_fault *fault;
+> > >> +
+> > >> +		fault = iommufd_get_fault(ucmd, cmd->fault_id);
+> > >> +		if (IS_ERR(fault)) {
+> > >> +			rc = PTR_ERR(fault);
+> > >> +			goto out_hwpt;
+> > >> +		}
+> > >> +		hwpt->fault = fault;
+> > >> +		hwpt->domain->iopf_handler = iommufd_fault_iopf_handler;
+> > >> +		hwpt->domain->fault_data = hwpt;
+> > >> +	}
+> > >
+> > > this is nesting specific. why not moving it to the nested_alloc()?
+> > 
+> > Nesting is currently a use case for userspace I/O page faults, but this
+> > design should be general enough to support other scenarios as well.
+> 
+> Do we allow user page table w/o nesting?
+> 
+> What would be a scenario in which the user doesn't manage the
+> page table but still want to handle the I/O page fault? The fault
+> should always be delivered to the owner managing the page table...
 
-This may cause cifs_remap_file_range() to then skip the bit after calling
-->duplicate_extents() that sets sizes.
+userspace always manages the page table, either it updates the IOPTE
+directly in a nest or it calls iommufd map operations.
 
-Fix this by calling netfs_resize_file() in smb2_duplicate_extents() before
-calling cifs_setsize() to set i_size.
+Ideally the driver will allow PRI on normal cases, although it will
+probably never be used.
 
-This means we don't then need to call netfs_resize_file() upon return from
-->duplicate_extents(), but we also fix the test to compare against the pre=
--dup
-inode size.
-
-[Note that this goes back before the addition of remote_i_size with the
-netfs_inode struct.  It should probably have been setting cifsi->server_eo=
-f
-previously.]
-
-Fixes: cfc63fc8126a ("smb3: fix cached file size problems in duplicate ext=
-ents (reflink)")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
----
- fs/smb/client/cifsfs.c  |    6 +++---
- fs/smb/client/smb2ops.c |    1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index 14810ffd15c8..bb86fc0641d8 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1227,7 +1227,7 @@ static loff_t cifs_remap_file_range(struct file *src=
-_file, loff_t off,
- 	struct cifsFileInfo *smb_file_src =3D src_file->private_data;
- 	struct cifsFileInfo *smb_file_target =3D dst_file->private_data;
- 	struct cifs_tcon *target_tcon, *src_tcon;
--	unsigned long long destend, fstart, fend, new_size;
-+	unsigned long long destend, fstart, fend, old_size, new_size;
- 	unsigned int xid;
- 	int rc;
- =
-
-@@ -1294,6 +1294,7 @@ static loff_t cifs_remap_file_range(struct file *src=
-_file, loff_t off,
- 		goto unlock;
- 	if (fend > target_cifsi->netfs.zero_point)
- 		target_cifsi->netfs.zero_point =3D fend + 1;
-+	old_size =3D target_cifsi->netfs.remote_i_size;
- =
-
- 	/* Discard all the folios that overlap the destination region. */
- 	cifs_dbg(FYI, "about to discard pages %llx-%llx\n", fstart, fend);
-@@ -1306,9 +1307,8 @@ static loff_t cifs_remap_file_range(struct file *src=
-_file, loff_t off,
- 	if (target_tcon->ses->server->ops->duplicate_extents) {
- 		rc =3D target_tcon->ses->server->ops->duplicate_extents(xid,
- 			smb_file_src, smb_file_target, off, len, destoff);
--		if (rc =3D=3D 0 && new_size > i_size_read(target_inode)) {
-+		if (rc =3D=3D 0 && new_size > old_size) {
- 			truncate_setsize(target_inode, new_size);
--			netfs_resize_file(&target_cifsi->netfs, new_size, true);
- 			fscache_resize_cookie(cifs_inode_cookie(target_inode),
- 					      new_size);
- 		}
-diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-index b87b70edd0be..4ce6c3121a7e 100644
---- a/fs/smb/client/smb2ops.c
-+++ b/fs/smb/client/smb2ops.c
-@@ -2028,6 +2028,7 @@ smb2_duplicate_extents(const unsigned int xid,
- 		 * size will be queried on next revalidate, but it is important
- 		 * to make sure that file's cached size is updated immediately
- 		 */
-+		netfs_resize_file(netfs_inode(inode), dest_off + len, true);
- 		cifs_setsize(inode, dest_off + len);
- 	}
- 	rc =3D SMB2_ioctl(xid, tcon, trgtfile->fid.persistent_fid,
-
+Jason
 
