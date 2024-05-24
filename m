@@ -1,125 +1,203 @@
-Return-Path: <linux-kernel+bounces-189047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E178CEA4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:30:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015BC8CEA53
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F79281C93
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC582281D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010385FBA9;
-	Fri, 24 May 2024 19:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7075C5F870;
+	Fri, 24 May 2024 19:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ulzdx/3z"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="BrKM/aiN"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CEE5CDE9;
-	Fri, 24 May 2024 19:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4B35BAC3
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716579033; cv=none; b=HBJOpjZQkMdylN7GT4CYxrdU7z+OgnAgsLD4QIuh7kV7lA5ADmjKlTSuTdrZWnVdZwaHUM8zSzIiMMDi/AbtOnVtgchopkMyygaJCqD7Oft22pEuC7R7v09u8DHHo8qtPuRbZqcPwPhCGks9b47XMtjDAueMC4gpzip4xfTEPn8=
+	t=1716579302; cv=none; b=OVN1GjyYh4FgdJzuxcVPRefonFJUjkyZdr8iM0axKamswltdZZ2VnNCbmz+6QHPYykgXGaXtNoYzH7Zs8ym/YOcWTrrq5z704fhDGaS1bbQirD8wfBjEJTjOVovQDtttQXQZJ5evpm4OEXbQY5fDeQSFHV4cj2B5bB17+FM/X9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716579033; c=relaxed/simple;
-	bh=dzHU3P7qRxjg2ho0r9MNensCeoxNpPcQCmFpOL/oYJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fnqtJfzBRM5QCN/b9OWVfYHSKuZ8rQwZ+ynWgzbPISlelMN/uW2gg60rwlxwYmMkYunzlXaBhpsIH3wVBB+g8CPtrM2do/IzwXbCGCd12ShpA5fpMqpl5iDvoGGah/7uO5lhYI9jjCiCknLmW9KElgIQ38UFlO5kRDD3cGM+0z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ulzdx/3z; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f32b1b5429so21791305ad.2;
-        Fri, 24 May 2024 12:30:31 -0700 (PDT)
+	s=arc-20240116; t=1716579302; c=relaxed/simple;
+	bh=LcaRAUpDmT9uL3/H/GEO5lBvGBVhfM/fXJ6PGiMjmGc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZwSBTKeDUAsSW+dXUXwM5Jycogc0wBSBpKE/pWkX6FRpvb9XL2QhH0k3cAGq5Xyl/DiHzSCMOBmmkFa6FTyFQnR5TPYehcRSwiX/5ppuBHkiXgxztDc9maN5B1WonKds0gnULNPU+zfSidLbfRPG5H7Mt3pctiVAXvag7S69sQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=BrKM/aiN; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f966840af7so814798b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:35:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716579031; x=1717183831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dzHU3P7qRxjg2ho0r9MNensCeoxNpPcQCmFpOL/oYJM=;
-        b=Ulzdx/3zkLYBhCIXLDCB3IAMbe0FHGpUsNyY/BosEydFd5j+G8yMgXmY17JwvNBYGt
-         7m3v+dBkQDUOQSxRP+KbfKg2NazeMeFPNFKJp9icZKsVuqSt4mNdp8wZsiCOyTU1XLjf
-         pTx6hE77O7JG51cvDVf1WITsVYvWZunVDRpifVhHobzwyo4y2zl8ETcPkc6dtN+UHJPh
-         Ih3sdiO3ddxJclK9+KU1f/yjpT3dZSEucBd2luExtUNtIxMh1hXNH6ix7SJj/YnzOwcV
-         e4ZkjDPw4ZYIATY4/6TkkQw8sOs8iVlvjZuAuMWtMdAtodh4/35oM28oaAoEc62VCMy4
-         y1rA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716579300; x=1717184100; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=twMRxUCtZSr+seZ0b3xRB7CPy5cBgsYTAlk2ZKA97pU=;
+        b=BrKM/aiNDtMfeYYGYdcAOuudmKxVYqh6auVyu7D1KzOUlGDhda3vjdc3qx3LTQF2qY
+         EYF3FRqyoSy0RWmhnaBzv4jWVVSJ/x2W2V5rVcxuEClUrcMnOWEi0rW/fezd8U14uu6n
+         dngu2EAGWfcShmosdwfeYF/isIPkaPvhHjdZaF3hZ2WE625aZkN7KBTwyhe2zboNj4xX
+         750fMp/wKLCCkI1UGZFtzka7wTo2Y37XWtuKUJLYaKLfkDBm8n2IHeLR1tyYk3y6Qu1S
+         9kMCNp++M5yVfSu7wd77ZfInVnKgaOv85F05VXyi6R3IqZ+tya+De7G/kfc8+5UGdGv2
+         nEoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716579031; x=1717183831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dzHU3P7qRxjg2ho0r9MNensCeoxNpPcQCmFpOL/oYJM=;
-        b=PV6zHif/uRqu2XwnoBMWQmff7A1Ilf+b3l0deaCpXQ4Pm+ZL1+vAFb7ilmJ37n+IL7
-         8UJuI+kEJE7YvKDET15e2Yy0jzY+Sy6mM7tQe3ShU1H89T7ESpO8lDFy/hKINjdxAE4J
-         HNE5YQd8yXzydm8qh0eFfv7li7IupViKV9Oo4jOHjaXCtFm5e+Fig6U6nQp3Ov5ypoZH
-         hNQrsui0qPy5pCIRl91ZHKDIYwGsW8fdtmD2+dh0l+0SQ7jW9vBqWIuJXxkgNiVLgk00
-         5BDKw/5D/wf4ZXY5xUJj/aa14FrGpkBBSqCbEASd7XLofyXpWECFkM4JVXuo4e+LQP44
-         4oaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWp11Cw/58Rz5v8bmNjrD2S9apEhtC74GTxEacIOzfY3WbdHvfb/MDnuY98P+jbnLVzJ1YMTLKH6tVZ5ZEcIOgQ9lBZhD2UESvTtCGgx+LF9mhuSUIMf9IOOe7miITJpPVGx4HXjKj7bxFvWmeN/d27Oiivy2CuWL8Ew3g6uSYJSQ==
-X-Gm-Message-State: AOJu0Yx/yxdvV0WCDwhPeDBJc1wAO646U5woOsg+7hnVi/TkM5NuBpBD
-	7K3l6Z0+eF7oWYro01m6zbzUXaRxof45ExxzitfJ6wprkbvXIQG0E8nnjRvV6D9UjIVqapVAPdf
-	nM6ug/k5L2jTbvQen3sz09UNdJ2Q=
-X-Google-Smtp-Source: AGHT+IErPGmKm79ivkmkKeo0JgNi86h6exL4rS7HdkRJQeYCQL17fT0j3PSVuuXjGNENXBV8IjvDmTQR0TXeOsBeJjw=
-X-Received: by 2002:a17:902:ecc6:b0:1f3:4348:15ca with SMTP id
- d9443c01a7336-1f4486f294bmr43420585ad.25.1716579031155; Fri, 24 May 2024
- 12:30:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716579300; x=1717184100;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=twMRxUCtZSr+seZ0b3xRB7CPy5cBgsYTAlk2ZKA97pU=;
+        b=HqgCl/t/HiVaxy6QyBuVLkgwW4zDwTwhrThBQcebaXgOKl0hwKWJWbfWS08pwzJIfp
+         X6g5KxTI9ytwtuQ5ck7Y3xR6rOUf05W+eA2g13ylYcLO/F6/PfeELw8ER075yKahqa1o
+         vmUnzvJeIF4WgS5xK4+SZobhwBrhoyV9czYNG0wDii1aubGsVJD7oRRR4B58WAkmUxLm
+         gpLgK3as6oy8Gfitr+eicOSxCaZEyz7svwlHLCYJsUFAYeEibp4iHmzzj8XrXEtVOlrm
+         xUP0Q3AChcFXxyxXWxP8VZ8Sv91uWCq3fb5/6IITfnSrJFPUc6val4lz57K14yfLd0Ti
+         5C7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXkoopS33eKDKfX/kLe+OCJkKuLXjEfOvju1R91F10v16u6q0mIXbjTyd2AjJ3AzrWPXhXR445OJRAm8PH8aG1Op/xACZnQGRIAO2/k
+X-Gm-Message-State: AOJu0YxaHqkLIWyW+9BGwEV0PFXA8b21Wzozlij/KUPsNbJuzdnLjkr2
+	Jx80aPcCAc7+kk45BtwT3NzIRZ3yOKGGFYfRynRiAgzYCtmRxTPmU8rQA0sJr4o=
+X-Google-Smtp-Source: AGHT+IFfYlOaukFeK0Acw8qQh3bHGn6ykj/ULsrJMIR71cvO0RlraJSJAmP/NYucgiy6i5xZ2M+0RA==
+X-Received: by 2002:a05:6a20:9485:b0:1b1:d32f:38ba with SMTP id adf61e73a8af0-1b212e17127mr2979231637.42.1716579299800;
+        Fri, 24 May 2024 12:34:59 -0700 (PDT)
+Received: from tjeznach.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fd4d878esm1441684b3a.190.2024.05.24.12.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 12:34:59 -0700 (PDT)
+From: Tomasz Jeznach <tjeznach@rivosinc.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Sebastien Boeuf <seb@rivosinc.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux@rivosinc.com,
+	Tomasz Jeznach <tjeznach@rivosinc.com>
+Subject: [PATCH v6 0/7] Linux RISC-V IOMMU Support
+Date: Fri, 24 May 2024 12:34:40 -0700
+Message-Id: <cover.1716578450.git.tjeznach@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524041032.1048094-1-andrii@kernel.org> <20240524103212.382d10aed85f2e843e86febb@linux-foundation.org>
-In-Reply-To: <20240524103212.382d10aed85f2e843e86febb@linux-foundation.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 24 May 2024 12:30:18 -0700
-Message-ID: <CAEf4BzaT0yVenLQWc7Be+Y+yYhrfUR=gi-PyzVarQam9WqzESw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] ioctl()-based API to query VMAs from /proc/<pid>/maps
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	gregkh@linuxfoundation.org, linux-mm@kvack.org, liam.howlett@oracle.com, 
-	surenb@google.com, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 24, 2024 at 10:32=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Thu, 23 May 2024 21:10:22 -0700 Andrii Nakryiko <andrii@kernel.org> wr=
-ote:
->
-> > Implement binary ioctl()-based interface to /proc/<pid>/maps file
->
-> Why an ioctl rather than a read() of (say) a sysfs file?
+This patch series introduces support for RISC-V IOMMU architected
+hardware into the Linux kernel.
 
-This is effectively a request/response kind of API. User provides at
-least address and a set of flags (that determine what subset of VMAs
-are of interest), and optionally could provide buffer pointers for
-extra variable-length data (e.g., VMA name). I'm not sure how to
-achieve this with read() syscall.
+The RISC-V IOMMU specification, which this series is based on, is
+ratified and available at GitHub/riscv-non-isa [1].
 
-Kernel has already established an approach to support these
-input/output binary-based protocols and how to handle extensibility
-and backwards/forward compatibility. And so we are using that here as
-well. ioctl() is just an existing mechanism for passing a pointer to
-such binary request/response structure in the context of some process
-(also note that normally it will be a different process from the
-actual user process that is using this API, that's always the case for
-profiling, for example).
+At a high level, the RISC-V IOMMU specification defines:
 
-As for the sysfs as a location for this file. It doesn't matter much
-to me where to open some file, but it has to be a per-PID file,
-because each process has its own set of VMAs. Applications often will
-be querying VMAs across many processes, depending on incoming data (in
-our cases, profiling stack trace address data). So this eliminates
-something like prctl().
+1) Data structures:
+  - Device-context: Associates devices with address spaces and holds
+    per-device parameters for address translations.
+  - Process-contexts: Associates different virtual address spaces based
+    on device-provided process identification numbers.
+  - MSI page table configuration used to direct an MSI to a guest
+    interrupt file in an IMSIC.
+2) In-memory queue interface:
+  - Command-queue for issuing commands to the IOMMU.
+  - Fault/event queue for reporting faults and events.
+  - Page-request queue for reporting "Page Request" messages received
+    from PCIe devices.
+  - Message-signaled and wire-signaled interrupt mechanisms.
+3) Memory-mapped programming interface:
+  - Mandatory and optional register layout and description.
+  - Software guidelines for device initialization and capabilities discovery.
 
-Does sysfs have an existing per-process hierarchy of files or
-directories that would be a natural match here? As I mentioned,
-/proc/PID/maps does seem like a natural fit in this case, because it
-represents the set of VMAs of a specified process. And this new API is
-just an alternative (to text-based read() protocol) way of querying
-this set of VMAs.
+
+This series introduces RISC-V IOMMU hardware initialization and complete
+single-stage translation with paging domain support.
+
+The patches are organized as follows:
+
+Patch 1: Introduces minimal required device tree bindings for the driver.
+Patch 2: Defines RISC-V IOMMU data structures, hardware programming interface
+         registers layout, and minimal initialization code for enabling global
+         pass-through for all connected masters.
+Patch 3: Implements the device driver for PCIe implementation of RISC-V IOMMU
+         architected hardware.
+Patch 4: Introduces IOMMU interfaces to the kernel subsystem.
+Patch 5: Implements device directory management with discovery sequences for
+         I/O mapped or in-memory device directory table location, hardware
+         capabilities discovery, and device to domain attach implementation.
+Patch 6: Implements command and fault queue, and introduces directory cache
+         invalidation sequences.
+Patch 7: Implements paging domain, using highest page-table mode advertised
+         by the hardware. This series enables only 4K mappings; complete support
+         for large page mappings will be introduced in follow-up patch series.
+
+Follow-up patch series, providing large page support and updated walk cache
+management based on the revised specification, and complete ATS/PRI/SVA support,
+will be posted to GitHub [2].
+
+Changes from v5:
+- rebase on master
+- fix dc.tc.v check in riscv_iommu_iodir_update()
+- fix to use list_for_each_entry (without _rcu) under lock
+- editorial changes: comment spelling
+
+Best regards,
+ Tomasz Jeznach
+
+[1] link: https://github.com/riscv-non-isa/riscv-iommu
+[2] link: https://github.com/tjeznach/linux
+v5 link:  https://lore.kernel.org/linux-iommu/cover.1715708679.git.tjeznach@rivosinc.com/
+v4 link:  https://lore.kernel.org/linux-iommu/cover.1714752293.git.tjeznach@rivosinc.com/
+v3 link:  https://lore.kernel.org/linux-iommu/cover.1714494653.git.tjeznach@rivosinc.com/
+v2 link:  https://lore.kernel.org/linux-iommu/cover.1713456597.git.tjeznach@rivosinc.com/
+v1 link:  https://lore.kernel.org/linux-iommu/cover.1689792825.git.tjeznach@rivosinc.com/
+
+Tomasz Jeznach (7):
+  dt-bindings: iommu: riscv: Add bindings for RISC-V IOMMU
+  iommu/riscv: Add RISC-V IOMMU platform device driver
+  iommu/riscv: Add RISC-V IOMMU PCIe device driver
+  iommu/riscv: Enable IOMMU registration and device probe.
+  iommu/riscv: Device directory management.
+  iommu/riscv: Command and fault queue support
+  iommu/riscv: Paging domain support
+
+ .../bindings/iommu/riscv,iommu.yaml           |  147 ++
+ MAINTAINERS                                   |    8 +
+ drivers/iommu/Kconfig                         |    1 +
+ drivers/iommu/Makefile                        |    2 +-
+ drivers/iommu/riscv/Kconfig                   |   20 +
+ drivers/iommu/riscv/Makefile                  |    3 +
+ drivers/iommu/riscv/iommu-bits.h              |  782 ++++++++
+ drivers/iommu/riscv/iommu-pci.c               |  119 ++
+ drivers/iommu/riscv/iommu-platform.c          |   92 +
+ drivers/iommu/riscv/iommu.c                   | 1674 +++++++++++++++++
+ drivers/iommu/riscv/iommu.h                   |   88 +
+ 11 files changed, 2935 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
+ create mode 100644 drivers/iommu/riscv/Kconfig
+ create mode 100644 drivers/iommu/riscv/Makefile
+ create mode 100644 drivers/iommu/riscv/iommu-bits.h
+ create mode 100644 drivers/iommu/riscv/iommu-pci.c
+ create mode 100644 drivers/iommu/riscv/iommu-platform.c
+ create mode 100644 drivers/iommu/riscv/iommu.c
+ create mode 100644 drivers/iommu/riscv/iommu.h
+
+
+base-commit: f1f9984fdc5e37303d7180ff7a85dfecb8e57e85
+-- 
+2.34.1
+
 
