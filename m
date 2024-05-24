@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-189059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B528CEA70
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:46:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327848CEA72
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25ABC1C20F50
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAFF0282C3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBD0405D8;
-	Fri, 24 May 2024 19:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1308E42ABE;
+	Fri, 24 May 2024 19:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDmL8cjM"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NVaFpX52"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D851BF3F
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7480F25757
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716579977; cv=none; b=rN/RkbVITjzGVaDVajEG/MFuHdto1mPzEVtfi1929lst9tsO3ckuuNcc1iuiXL6t0QmSC0guZy89VUCOrC0ymgUV7W7rbEzofn/gaReDq2Z44sob7N9V2rFKcdvbetfmfNMw/9tECXK84rNWVXpLyyBWmhaYBJn5sQrUazRS+5M=
+	t=1716580018; cv=none; b=hViV86aNpuHxy+QFQ5Qs35GTb4++1c9XRw4m3TYekgpQtnhxCQuaUg6piRV//vku421S5DrgLFDFnFe05Ldm+tG+B1+5JVKys10OW58Bo7bJSRZ2psUyyRxENZfrSre7Ms96YlBo7TzeSo4j9CSHEn41eKaaDHrsVH6/NXf33dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716579977; c=relaxed/simple;
-	bh=v57WsHIXuyTLImPDj4QD2uCiQ9W6+aOrQYAEun7dCrQ=;
+	s=arc-20240116; t=1716580018; c=relaxed/simple;
+	bh=hqoGfP2ngsyi75wjK/7UVPy1G49ajBOguF0CykV81S8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MG+xomM7acJLORQolgwaQyiEyTu0wB9lasiRJPSzXtTz7tfCEwuUA8zyt8hBC9Ra2b397cgrYquA8tkZo/NqZLnlo52jj2rUTr6LUrWj1t4T4wC6FUOTZdF6Qp5KBp6Mzupg8ZXQKJG1naXQBF2mmqAX/X7BvX/ZLdbkDxKM4Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kDmL8cjM; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f8e838cfbfso23315b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:46:15 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJ4O4NRRB3hdNpq0Lx5LHvFQSd8h3Of+qGWdjrDpWS2B+uvS1eQEudCpnxjJLeu5tQ37h/8ls5XT2TTIazdvzYD21Jcz3KuhYrQqpM27UekgWDRI2+XNyrzGZHq8VqPXYf4TafbjZjJ8eCTgO0NYTz4DsnWA1crY/i/tVWYPj6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NVaFpX52; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e72b8931caso68962501fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:46:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716579975; x=1717184775; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716580014; x=1717184814; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zfFKfQRl66NaHOBeukuApZN3TjnqGpMUm67PVQU9uwY=;
-        b=kDmL8cjMYij08fya6tMdhuzA7TlrHcATM1QyByM/tXSprGVLrw+7R9AZj61403f69M
-         nq4MkBRin4u7LlGB8ckCT0mKn0oOGbYuM1T+sp21skgLGTHuiCT5QSE0SOQmCNfkcekz
-         cQIFJz29bfIYrO6Cv84bTgmPBdzuEIU9djqobIFx3b0X4Pz9WHD9dbjL7zrKWTB0ZE26
-         a+VQwqSYw7bpenVVC6u6L9zTJyFIaVq8FrQHphu6qL+UTyQ5Qi6VpyPtP36HWpUR2wfT
-         45I8YbPSDp7uTnKjP3A91CDwdo2Ps++ghVeCTL1YK77g2+ReStAS8DqDYoViHPRG1jLG
-         WKsg==
+        bh=Quo9VUto6uPX81U21h21/Sote2mqJ5XSyeYi0dVaj0I=;
+        b=NVaFpX52RbA0jt5wHoA3J7cbasoJ60Lq2ovvvvAwcQj8RqVi2R5ou50YzMhmPRBBeq
+         kNqOqUSOG+fNFOlDUfpesKgb+y261us8576doKV74avyMUGE79ukXgNzA1oVbi/mIN79
+         HI2NxMC4qxMLcXDO2CKb8BXf7+9wpA+zLWPV50tKRzWJOYjkUsTrRc335BtEcVXx9eP1
+         S5TWUe/EIWxJTprbJbwjaFqsKcgJljpmA0g+nnKOZAuGWtekZYUpWLQJZrbF3MMXEVIk
+         cMd692zYp0LdExPMXQJopJCkmKK/qUF2EkOgEhlFFWxE+dzt4s6eEIJ0u+8AnHDlZn6u
+         zGsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716579975; x=1717184775;
+        d=1e100.net; s=20230601; t=1716580014; x=1717184814;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zfFKfQRl66NaHOBeukuApZN3TjnqGpMUm67PVQU9uwY=;
-        b=UM4igYaek3xa7e/D0T52J922ndRsgEX+WGzqeVZ/itKeCxXvLEIKBZo4UjcUbAlNwc
-         xMnSyGZSMHjvwx5dOGBnW9ktfueSVHdEdtEZKD6q/iKjM3eUXWWiCXQpKz84hhkFydBe
-         AWyjR/7FP4iQI8k814tnOr4vV8c9g+KNIwwkGHKmcdblOOrKbUJzrv5xCUt1zwyr0T5u
-         305P2OhNemO/io1VSUtHzbnrANQJzTEa12SJNd+auvaKLM1g82rXCnPK2wlZpa+8v+Uc
-         4fgZOAZmW+uKBCGYdhyCM+NbDTw3yT0LfLaypXhrwMJ5/M3N7C0+LfwcyuBRNFfJevWr
-         MKlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbY1rnxyxXkxTIReVljxi1wTwiEW0h/2aAW8rqUmpdnjLTmUbr0amftZKxrA0r5OxlbCkx6z3dye/Fi/wKOK8Naaxp6sJhL9x9mrTC
-X-Gm-Message-State: AOJu0YwWmZAKWawuIuyZLn0cZV3zuOLfry3+zgVSVrZOatkFU4hcJCBj
-	tsAtLeMvbWdXmRxen/n6IxEGaYG/GQZKCYJYqg0xHE6N95WfxljrbZnpew==
-X-Google-Smtp-Source: AGHT+IGkLeO6KWtdoA7p36j/aj2kkZ1oedQz4pFmlvueja7yNSq8jTCvi8T2YMPnywkzlODkzOHwLQ==
-X-Received: by 2002:a05:6a00:11d3:b0:6f4:c946:5584 with SMTP id d2e1a72fcca58-6f8f3a231afmr3361088b3a.2.1716579975152;
-        Fri, 24 May 2024 12:46:15 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc15b169sm1455694b3a.75.2024.05.24.12.46.13
+        bh=Quo9VUto6uPX81U21h21/Sote2mqJ5XSyeYi0dVaj0I=;
+        b=tAFnQop9Mhh02t3hC+OaBoPTYnkEM8uYKQp6vY06nzVfGiOwkqGXQ4MvfxplhEuFjf
+         V+gdDKK218LOmqgJIhDdm68lW/d5cTivTBfpm7RNa14y/RTgzeYlQeL3ZrdNblZls5Bf
+         12Q5DkNXLbp3vwh9X7uynRFiNM7VS135t3/W2MVLBFF8lkVHNh7ezuTRqVr9BfyZOr6O
+         iELJpdd8xYHpuEjgrvCS5JQXqaz1V7qG1y51Uung9DUf/RDgTvjJeRAnLAxzUU+emvbh
+         61s+8mhCAXPzDoLBBe9SPI/BkE4sRP0WwVGsK22qURXHJb7YnVJOsNZe2DiPo8RMBy3a
+         dhMg==
+X-Gm-Message-State: AOJu0YxsjQYnXJyc0TJlL9Gpr3V4+OgZRknsEYqSD8S1Y63eMS6Unxg/
+	eUeVbRUYQOoI2M4jlGC2SGLMtu4JE+GbQGgWjO9pOSu6bIDmsrqRwPQbSpstBpKV8+/90magA1o
+	b
+X-Google-Smtp-Source: AGHT+IGGkwkIgDNujDfrkTUvU6TyZSMLZ2HS+RhhNILj1udlfwdmNchCCne3FxzMdqc27keq9rutHg==
+X-Received: by 2002:a2e:3209:0:b0:2d8:34ec:54e6 with SMTP id 38308e7fff4ca-2e95b24dee7mr21133711fa.33.1716580014516;
+        Fri, 24 May 2024 12:46:54 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e95be00a0dsm3111601fa.105.2024.05.24.12.46.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 12:46:14 -0700 (PDT)
-Date: Sat, 25 May 2024 03:46:12 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/lib/slab: Fix potential NULL pointer dereference
- in kmalloc()
-Message-ID: <ZlDuhAPHNw5ZCfjH@visitorckw-System-Product-Name>
-References: <20240524191459.949731-1-visitorckw@gmail.com>
- <20240524122350.a22ca8dfe07a21f3eb862159@linux-foundation.org>
+        Fri, 24 May 2024 12:46:54 -0700 (PDT)
+Date: Fri, 24 May 2024 22:46:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jayesh Choudhary <j-choudhary@ti.com>
+Cc: linux-kernel@vger.kernel.org, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	sam@ravnborg.org, mripard@kernel.org, dri-devel@lists.freedesktop.org, 
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, a-bhatia1@ti.com
+Subject: Re: [PATCH v3 1/2] drm/bridge: sii902x: Fix mode_valid hook
+Message-ID: <x7i5miguht47wxliioos7npelzzicnwt7g5pfjqjvdztksgzga@c7djvf3lg3kf>
+References: <20240524093509.127189-1-j-choudhary@ti.com>
+ <20240524093509.127189-2-j-choudhary@ti.com>
+ <y6ersd72tp2d6k4i2hja7bg37lahnvye2qion67urxeakw6rju@dher7oomt2ks>
+ <4cd64cf5-d2b0-4aa9-b958-6b6fc54f0bf2@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,39 +87,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240524122350.a22ca8dfe07a21f3eb862159@linux-foundation.org>
+In-Reply-To: <4cd64cf5-d2b0-4aa9-b958-6b6fc54f0bf2@ti.com>
 
-On Fri, May 24, 2024 at 12:23:50PM -0700, Andrew Morton wrote:
-> On Sat, 25 May 2024 03:14:59 +0800 Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+On Fri, May 24, 2024 at 05:54:02PM +0530, Jayesh Choudhary wrote:
+> Hello Dmitry,
 > 
-> > In kmalloc(), add a check to ensure that the pointer 'ret' is not NULL
-> > before attempting to memset it when the __GFP_ZERO flag is set. This
-> > prevents a potential NULL pointer dereference.
+> On 24/05/24 15:11, Dmitry Baryshkov wrote:
+> > On Fri, May 24, 2024 at 03:05:08PM +0530, Jayesh Choudhary wrote:
+> > > Currently, mode_valid hook returns all mode as valid and it is
+> > > defined only in drm_connector_helper_funcs. With the introduction of
+> > > 'DRM_BRIDGE_ATTACH_NO_CONNECTOR', connector is not initialized in
+> > > bridge_attach call for cases when the encoder has this flag enabled.
+> > > So add the mode_valid hook in drm_bridge_funcs as well with proper
+> > > clock checks for maximum and minimum pixel clock supported by the
+> > > bridge.
+> > > 
+> > > Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+> 
+> [...]
+> 
+> > > +
+> > >   static enum drm_mode_status sii902x_mode_valid(struct drm_connector *connector,
+> > >   					       struct drm_display_mode *mode)
+> > >   {
+> > > -	/* TODO: check mode */
+> > > +	struct sii902x *sii902x = connector_to_sii902x(connector);
+> > > +	const struct drm_display_mode *mod = mode;
+> > > -	return MODE_OK;
+> > > +	return sii902x_validate(sii902x, mod);
 > > 
-> > ...
-> >
-> > --- a/tools/lib/slab.c
-> > +++ b/tools/lib/slab.c
-> > @@ -22,7 +22,7 @@ void *kmalloc(size_t size, gfp_t gfp)
-> >  	uatomic_inc(&kmalloc_nr_allocated);
-> >  	if (kmalloc_verbose)
-> >  		printf("Allocating %p from malloc\n", ret);
-> > -	if (gfp & __GFP_ZERO)
-> > +	if (gfp & __GFP_ZERO && ret)
-> >  		memset(ret, 0, size);
-> >  	return ret;
-> >  }
+> > There is no need to. The drm_bridge_chain_mode_valid() should take care
+> > of calling bridge's mode_valid callback and rejecting the mode if it is
+> > not accepted.
 > 
-> I suspect we have a lot of unchecked mallocs in our userspace code.  If
-> there's an argument for fixing them all(?) then it would be best to do
-> this in a wholesale fashion rather than patch-at-a-time piecemeal.
->
-It seems likely that I'm not the first to notice the unchecked mallocs
-in our userspace code if they're indeed widespread. Are there specific
-reasons or guidelines indicating when malloc checks are necessary, and
-when they can be omitted?
+> I need some clarity here.
+> 
+> IIRC, if the bridge does initialize the connector in case
+> where the encoder does not attach the bridge with the
+> DRM_BRIDGE_ATTACH_NO_CONNECTOR (DBANC) flag (referring to tidss
+> encoder before we implemented the DBANC feature), then
+> drm_connector_helper_func are called and drm_bridge_funcs
+> are NOT called (atleast from what I have seen in detect
+> hook for cdns-mhdp-8546 driver which is there in both
+> structures).
 
-Regards,
-Kuan-Wei
+There are different kinds of bridge_funcs. detect is a part of the
+connector-related interface, so it is not called by the drm core. On the
+other hand functions like mode_valid, enable/disable, etc. are called
+for all bridges.
 
+> I do not have any platform to test non-DBANC encoders.
+> And I did not want to break any platform that were still using
+> bridge_attach without DBANC flag.
+> That is why I kept mode_valid hook in both structures.
+> 
+> Are you implying that if connector_helper_funcs are not there
+> then there will be some sort of fallback to bridge_funcs instead
+> of passthrough for mode_valid check? Because that goes against my
+> previous observations.
+
+Not quite. See how drm_atomic_heler uses bridge_funcs.
+
+-- 
+With best wishes
+Dmitry
 
