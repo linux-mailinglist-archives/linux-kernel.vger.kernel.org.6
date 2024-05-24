@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-189030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8537D8CEA0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:51:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B51A8CEA11
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3669D1F24AC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:51:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD9D71F24E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D3540858;
-	Fri, 24 May 2024 18:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C6540875;
+	Fri, 24 May 2024 18:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="v0ZDJDFo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSUslT03"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6E73EA64;
-	Fri, 24 May 2024 18:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C783EA64;
+	Fri, 24 May 2024 18:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716576696; cv=none; b=caSejmjxA3xz5Cc601vTEBndPEGnKYuBnmWQSM0CBjjpYIuFHf4CR9f2A9Ix1+H9gqASeEKKXFVD8vJ/sHod8bQgyEzKNPBI0m6S9wraXXOTxAbV+Z1/Fasr9/8XwlB9BWWqgo5wfpdS/DfQ7GJ0dz0t6KixL2eKjs5IyWQ5yQQ=
+	t=1716576929; cv=none; b=jLnu2/iBjTvgkk+cd88AKvwgAMwOwB6S1tll0crOLlynhMn6qQTskI/Y2oSAjBOB2XnF0I6LMZmP729ltp3fJO//U0jNkrJ99HQ9LUdql45puYqTCZKuWyNIcUarBpuxRi/jxbZkVhxbFUw+O2Op4njLTYvCi3qUdfXejJOhhUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716576696; c=relaxed/simple;
-	bh=LMF9gkUgHj1akckbBYnGykASAD6kVjbsT7sG7bX3nE4=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=NEmO1H0e02fgPOFkKNh6EKmyRcSYhPAHdUf0eOft22BDgBfFltXKZ6XffdaKp9V2oNjBrABmwG3B8IJ/U68J26BndPXxh1nIQn8BwJtu4DT9AGRNgQHuGMFtMI7Fcj8IfmHfpEcmZDwTHdWXdTLI38+H3KKF9oLkLv7uS27+E00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=v0ZDJDFo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3290DC2BBFC;
-	Fri, 24 May 2024 18:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1716576696;
-	bh=LMF9gkUgHj1akckbBYnGykASAD6kVjbsT7sG7bX3nE4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=v0ZDJDFokhg5Y1Da+53pmWUPHBl53thb8uo3wp/9W0jDlrEVTjKZXPE7rd09wJtDX
-	 gfL6iuCIZfbefowsxPyeH7MUZgah0zVaOauf9dCnx17BWKrhw8Is5cZeBTMluz3Ttz
-	 x9NL+f5tIhQUIs5Esa1VdtWmms4iIuoerSE+9gL8=
-Date: Fri, 24 May 2024 11:51:35 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] final MM update for 6.10-rc1
-Message-Id: <20240524115135.3b6fd971bdb3e538e1873632@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1716576929; c=relaxed/simple;
+	bh=V55crGx9DJS5MiBJVv/+LEY0ZPYPpfjGvUfBJMEw2h8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cr9H9XYLYIg82NzIOixIwc4N2z2EvoCu26DXUmoB/o82rEbvP/bk1J2avQ5j8tQE5rwzwtbPtsLpaRrxtIjHaHN7V0v6UWHjK9Nd0/IlEg6+9Mjjl7btAVpt3YSgX5wml3kEY6i6/h8/C5pwkV3kbU4VXZdT4bXmRUn5zKnvCUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSUslT03; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACE30C2BBFC;
+	Fri, 24 May 2024 18:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716576928;
+	bh=V55crGx9DJS5MiBJVv/+LEY0ZPYPpfjGvUfBJMEw2h8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NSUslT03br2Zde0/wO+jMVdw6sK7NAOIuEh4K1LUO6Loi6/dV7aaBHppO7dblbAUw
+	 BWx6lqAoWYfImY9bA9iA/FFycLRyYvWxZ63byq1VLzEupR7NBOteKJlPJ6uF1KDOzN
+	 sfa8AcqlKS+amQnLqTc6jkaWxq724BT2jmvdMFqfgOfXLgBEY4E1gvLRGBFbd+T3ce
+	 VFW+QkpBxVJ/vgOBRv+ieMzaUC46u18LNf5Vad3/SLXcRG3JWunFqjrskBY3xfUZ8p
+	 7dqeFkE5i5zke9aMHvAMqto/yNU3n6F06wRQYtoWw8FooJaXhKAWDfKCohezy0Qwus
+	 ijwmLFwU0fuUw==
+Date: Fri, 24 May 2024 19:55:23 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Patrick Delaunay <patrick.delaunay@foss.st.com>
+Cc: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Pascal Paillet <p.paillet@foss.st.com>, Marek Vasut <marex@denx.de>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: regulator: st,stm32mp1-pwr-reg: add
+ compatible for STM32MP13
+Message-ID: <20240524-reorder-tattoo-13af5d569e3f@spud>
+References: <20240523180435.583257-1-patrick.delaunay@foss.st.com>
+ <20240523200353.v4.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="C5nojw+CH6iHfaud"
+Content-Disposition: inline
+In-Reply-To: <20240523200353.v4.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
 
 
-Linus, please merge Jeff's mseal() syscall patchset, thanks.
+--C5nojw+CH6iHfaud
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 23, 2024 at 08:04:33PM +0200, Patrick Delaunay wrote:
+> Add new compatible "st,stm32mp13-pwr-reg" for STM32MP13 SoC family.
+>=20
+> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
 
-The following changes since commit c760b3725e52403dc1b28644fb09c47a83cacea6:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-  Merge tag 'mm-nonmm-stable-2024-05-22-17-30' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm (2024-05-22 18:59:29 -0700)
+Cheers,
+Conor.
 
-are available in the Git repository at:
+--C5nojw+CH6iHfaud
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2024-05-24-11-49
+-----BEGIN PGP SIGNATURE-----
 
-for you to fetch changes up to a52b4f11a2e17109c4b9f7df4ff19215b1752efc:
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlDimwAKCRB4tDGHoIJi
+0qMMAQCifoMtFkXnySZ7EmWtDmoZFR86d/CLsf2nWTYn2dAs5wEAmlR2PAW4Z2ic
+GAGmr55uU4Ay8/FGlfegcoU/KbXmKQg=
+=HKMv
+-----END PGP SIGNATURE-----
 
-  selftest mm/mseal read-only elf memory segment (2024-05-23 19:40:27 -0700)
-
-----------------------------------------------------------------
-Jeff Xu's implementation of the mseal() syscall.
-
-----------------------------------------------------------------
-Jeff Xu (5):
-      mseal: wire up mseal syscall
-      mseal: add mseal syscall
-      selftest mm/mseal memory sealing
-      mseal: add documentation
-      selftest mm/mseal read-only elf memory segment
-
- Documentation/userspace-api/index.rst       |    1 +
- Documentation/userspace-api/mseal.rst       |  199 +++
- arch/alpha/kernel/syscalls/syscall.tbl      |    1 +
- arch/arm/tools/syscall.tbl                  |    1 +
- arch/arm64/include/asm/unistd.h             |    2 +-
- arch/arm64/include/asm/unistd32.h           |    2 +
- arch/m68k/kernel/syscalls/syscall.tbl       |    1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |    1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |    1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |    1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |    1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |    1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |    1 +
- arch/s390/kernel/syscalls/syscall.tbl       |    1 +
- arch/sh/kernel/syscalls/syscall.tbl         |    1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |    1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |    1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |    1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |    1 +
- include/linux/syscalls.h                    |    1 +
- include/uapi/asm-generic/unistd.h           |    5 +-
- kernel/sys_ni.c                             |    1 +
- mm/Makefile                                 |    4 +
- mm/internal.h                               |   37 +
- mm/madvise.c                                |   12 +
- mm/mmap.c                                   |   31 +-
- mm/mprotect.c                               |   10 +
- mm/mremap.c                                 |   31 +
- mm/mseal.c                                  |  307 +++++
- tools/testing/selftests/mm/.gitignore       |    2 +
- tools/testing/selftests/mm/Makefile         |    2 +
- tools/testing/selftests/mm/mseal_test.c     | 1894 +++++++++++++++++++++++++++
- tools/testing/selftests/mm/seal_elf.c       |  179 +++
- 33 files changed, 2732 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/userspace-api/mseal.rst
- create mode 100644 mm/mseal.c
- create mode 100644 tools/testing/selftests/mm/mseal_test.c
- create mode 100644 tools/testing/selftests/mm/seal_elf.c
-
+--C5nojw+CH6iHfaud--
 
