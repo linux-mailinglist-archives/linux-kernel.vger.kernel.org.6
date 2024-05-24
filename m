@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-188925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EC9D8CE89F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:26:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23F98CE8A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603161C20AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:26:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D30E282D79
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F0D12EBD5;
-	Fri, 24 May 2024 16:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b2MoG3DA"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E175112EBE1;
+	Fri, 24 May 2024 16:29:21 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D2B12E1F9
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA347126F06;
+	Fri, 24 May 2024 16:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716568002; cv=none; b=RBsgodCGHjFt+pS38eneRuCp9fbabI6FDa02IinMFTH7Wefo9ZeV3RIotJmfQxIAnsuRapuPR34EsevTXB/l8/x57VGfPJyalUqO+oK/KZMVI5N5ois9uAkLfDL20tZEf1Pc2VtqBDRR8wtvRn1p6K9Mj2LXHsu2bPue/uJmpCw=
+	t=1716568161; cv=none; b=a9Jb8MSK3h1kjqvziE7VXfBOLQSlTRNLZivOfViooyMMcAgksyX5qAraIem5t2Tl+2V0di5//a4SsJF/sHw7w7otEGhrPXtsCQB5koQnMcRKGTZQZaDIUgYTqsahsX9rC+N7Zrp6CxXVIiy8gUgW1hyjX+mJcLYGomIx9VZbBts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716568002; c=relaxed/simple;
-	bh=uy3Bu+RWC2BwlJbf2rF1oLCzsBktn97cLQW+3/UQOvU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQJMDoEnDqPy+h8TA2u5Xs1QWg+Hy74OT8Jl/ivc2+61ny8OgnyhfaZzASk1vTU6cQ6+p31dzWr+ru3NbkJ1rd7HJ+Gc+VAbbpiLo0ab7T2ZzlvgLXxwDqeVCMqTduhxfy7q2BHoLYGZuGsVJdsEc2/wYoaSggDfIRexSmmKJ6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b2MoG3DA; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3737b3c6411so807375ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1716568000; x=1717172800; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lsPe10u6HqBDcmGD9Z1JKcdv2q+3cFzOGeNoz7xgfPM=;
-        b=b2MoG3DA0N/dGtaNaWgvKcY0kSJpFnq0ZJbLBk6TdyVA0paB8HiXM1QhNAjuVlZS0z
-         X9qT/kyY7O7QnU1bxKaVoFO0s5EoQsPCMyhfBOhV3447OMk3x/7VuhASdAUm0clEqXEI
-         G/6FYhYaN0ueKBidd62g5t/kbZn3QEu/gKoDg=
+	s=arc-20240116; t=1716568161; c=relaxed/simple;
+	bh=gXyxBWibeXUwqcMk4+uZivGUqGgkuPH86sT5M7vg9lw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GIc5/0Ly1Riq2aU4NkDEaKMSekazQmzBz8Ng2cdXnGy1yWRLHBHPp+pyv7SoXuEtCUd/V/9XukR7EwNIc0o/pU3lfCVgUEKxnhpSR+EwVoMJuNHyPn4E+AMquwB3N+trMyWofGdZaXl5wLhAeB25y855oZfTykz1y1YOwQWs+N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5a7d28555bso1343660866b.1;
+        Fri, 24 May 2024 09:29:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716568000; x=1717172800;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lsPe10u6HqBDcmGD9Z1JKcdv2q+3cFzOGeNoz7xgfPM=;
-        b=A6QCnAugoukaxlOsSKgPrd2gLAEExwZaraGeuAXbfofEi+efjpFsXOCMVTaHn6Ad88
-         UwOKkPzFaBhT3qMsr5bu25kuCsvZNoOlbxDEHmvvIBTbw0DJ3ZPrbBVvQ9z440ePCNxi
-         tOcxvENgUNahypBZjmdmCbw+g4bgcGSJCe9KL9sUU2KR+T5zQWrh0SuMAzf8+vfjN7F7
-         1RW97NsO/9NlbG40FhgseQlXy9vDp/cZZ18muzZzKOhXDcQp7CvaYf6PLCXUfwyYoWlm
-         m+NFOG6yBXNTAkuseiE8lDvfA5cq7xt7/uKXgOTjtbxR3xb1/NqAEnED//iJodsonu/S
-         Ql2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWRm3rkMuVmD7pmmfN9tuWPReaIEgKah/L0BkdeDrwvZKrV4h6aweAGzwkholJyqhZbIkh3xL0z/2AYJYAdxH95+ZgBtdyIg5HdAcA4
-X-Gm-Message-State: AOJu0Yy28fzJCH7ZgEjVwkuQmgknGCEcLmkIDmpAsgIyh7fggFV+0pjo
-	d2KqwfrjlRVxgTXSZl2V/5CJiB8prPTKRJlrlOv0RuXe4fDZ5ptTeAQhx0HX5gc=
-X-Google-Smtp-Source: AGHT+IFZbhef8P56pBniXYHEspKkB2ti3g9EoFPYnn4FxykwHwL2OKJqu0yxdgGOlJl/tpiHmBHLdQ==
-X-Received: by 2002:a5d:8783:0:b0:7e1:d865:e700 with SMTP id ca18e2360f4ac-7e8c65599d7mr325855239f.2.1716568000560;
-        Fri, 24 May 2024 09:26:40 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b03ebbf1bfsm438640173.89.2024.05.24.09.26.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 09:26:40 -0700 (PDT)
-Message-ID: <af4aefec-c893-4356-a50b-5f67a3913740@linuxfoundation.org>
-Date: Fri, 24 May 2024 10:26:39 -0600
+        d=1e100.net; s=20230601; t=1716568158; x=1717172958;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B+YAuHdOZVCtb+ZmWIiRbLMqGayfxaS/iCjW3hjDnCw=;
+        b=i5f9Jk952XhiTqHVTkQKT1TC/HPMbM++RiLdbTKvihcPajQxeYGAPTF1iEx7HwwuMq
+         uiOq7qENUOuRdchdjpTFwMRvEPt/V7/EPn38RHm83AaeWfEeHRIJW2xtkXp65rnAT0pt
+         034Lafc8CDRpQa1kpkx8wRBhGH1DzBIk+zTa5uDS9JqpTSLHdNX70csTGWhUFonmBt4n
+         XA7Pnw63rfWiLPUIuEpeSZ5O525sihe/+FYkfS1cN8xpVSnJNplFVJjg6vs0QMO6VSe7
+         lPqGJjjxPrkU4IdJzGjXC+obG7pshgMx7AXFLK5sFq1FBWYM/MRXT4mGC3In/IiGbF0g
+         Uoeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdfdYk9AE7hSpZKLDnp3LwLF7xWEkj+/npyRLB8FtZRBzr/8uqjCdh/aeXa7+33ygryfCT/PBktugJVNhEnvhgoUaQOVz8m/atyMipy3gK5Ew68Ku+OiRLJxImT0LWimhCLJZm4my4Pk0=
+X-Gm-Message-State: AOJu0YxPtL69x02SgYa1KOGXBQzMJ0/oaCcByHesoVYBSBpzlkddCOY+
+	EQj2MqYv4eHBsMEa/9cwsZV31E3GgGUm/7E67EFb5Hsl1bEMj89d
+X-Google-Smtp-Source: AGHT+IFEYEIkAL41P2xHZ5ahUJbQKypTmQHKStTHVyJKBNsRaKOORgXztWudtth5IXRZUpNrcNsYmQ==
+X-Received: by 2002:a17:906:12d8:b0:a5c:df6b:a9b5 with SMTP id a640c23a62f3a-a6265128c6dmr186503166b.59.1716568157869;
+        Fri, 24 May 2024 09:29:17 -0700 (PDT)
+Received: from [127.0.0.1] (p200300f6f7253800fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f725:3800:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc8dcb2sm154137066b.173.2024.05.24.09.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 09:29:17 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH v5 0/3] btrfs: zoned: always set aside a zone for
+ relocation
+Date: Fri, 24 May 2024 18:29:08 +0200
+Message-Id: <20240524-zoned-gc-v5-0-872907c7cff4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4.19 00/18] 4.19.315-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240523130325.727602650@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240523130325.727602650@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFTAUGYC/23NTQ7CIBAF4Ks0rMXwM5TgynsYFy1MW6JpDRiiN
+ r27tCtMXb7JfO/NJGLwGMmpmknA5KOfxhzUoSJ2aMYeqXc5E8EEMMWBfqYRHe0tFRa1kaAMtpr
+ k90fAzr+2qss158HH5xTeW3Pi6/VPSeKUUc5Mx5vaagB9vmEY8X6cQk/WliRKqQopshTMatsaX
+ UvrdlIWUvBCyiy1ywwEKLD7TSilLCSsmxKd6WredA37kcuyfAGi4l0lTwEAAA==
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: Hans Holmberg <Hans.Holmberg@wdc.com>, linux-btrfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Naohiro Aota <naohiro.aota@wdc.com>, 
+ Filipe Manana <fdmanana@suse.com>, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>
+X-Mailer: b4 0.12.4
 
-On 5/23/24 07:12, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.315 release.
-> There are 18 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.315-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+For zoned filesytsems we heavily rely on relocation for garbage collecting
+as we cannot do any in-place updates of disk blocks.
 
-Compiled and booted on my test system. No dmesg regressions.
+But there can be situations where we're running out of space for doing the
+relocation.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+To solve this, always have a zone reserved for relocation.
 
-thanks,
--- Shuah
+This is a subset of another approach to this problem I've submitted in
+https://lore.kernel.org/r/20240328-hans-v1-0-4cd558959407@kernel.org
+
+---
+Changes in v5:
+- Split out one patch to skip relocation of the data relocation bg
+- Link to v4: https://lore.kernel.org/r/20240523-zoned-gc-v4-0-23ed9f61afa0@kernel.org
+
+Changes in v4:
+- Skip data_reloc_bg in delete_unused_bgs() and reclaim_bgs_work()
+- Link to v3: https://lore.kernel.org/r/20240521-zoned-gc-v3-0-7db9742454c7@kernel.org
+
+Changes in v3:
+- Rename btrfs_reserve_relocation_zone -> btrfs_reserve_relocation_bg
+- Bail out if we already have a relocation bg set
+- Link to v2: https://lore.kernel.org/r/20240515-zoned-gc-v2-0-20c7cb9763cd@kernel.org
+
+Changes in v2:
+- Incorporate Naohiro's review
+- Link to v1: https://lore.kernel.org/r/20240514-zoned-gc-v1-0-109f1a6c7447@kernel.org
+
+---
+Johannes Thumshirn (3):
+      btrfs: don't try to relocate the data relocation block-group
+      btrfs: zoned: reserve relocation block-group on mount
+      btrfs: reserve new relocation block-group after successful relocation
+
+ fs/btrfs/block-group.c | 11 ++++++++
+ fs/btrfs/disk-io.c     |  2 ++
+ fs/btrfs/relocation.c  | 14 +++++++++++
+ fs/btrfs/volumes.c     |  2 ++
+ fs/btrfs/zoned.c       | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/zoned.h       |  3 +++
+ 6 files changed, 100 insertions(+)
+---
+base-commit: 2aabf192868a0f6d9ee3e35f9b0a8d97c77a46da
+change-id: 20240514-zoned-gc-2ce793459eb7
+
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
+
 
