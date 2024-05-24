@@ -1,154 +1,92 @@
-Return-Path: <linux-kernel+bounces-189067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F748CEA92
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:00:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B808CEA97
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EEA52818D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:00:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD18DB20F9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D436214D;
-	Fri, 24 May 2024 20:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183107E796;
+	Fri, 24 May 2024 20:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="luY7Yz16"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oG4kaUxd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C1E3BBE8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486EA3BBE8;
+	Fri, 24 May 2024 20:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716580813; cv=none; b=hCN7rEzN80d11fb4uJsdQ6BnLjh+B7ILVCpSC7lBOQq8Cfqj+qTU7lFKhwa/HSkyJbqA57gbSF2j+tLPCo3X0MIlpkJbxKHwHwVYwppH6l4qgiDZqCbdBp+KBQAnVSjBoxB57B1vOJeBmzvzPiqGg0JcWYpq9QKK2tvRgTmpHaM=
+	t=1716580830; cv=none; b=QXvZalSIi3cHXU4qfv0/WVr2OCxSzRT7wuI/rKU+5I6enjr7p1JQm9sR4ozIX5MjZGOW6F1xpPrV970UFy61GHWLyDieSRL3mCc8OfKLlYZtehc40GOxcO59eCdhDr2jJdiTk1ihYHL5a0RY1ccOVflqTA1nJ4CzlOWXvzjLKFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716580813; c=relaxed/simple;
-	bh=Gv43iCvXawnlGLRmctGhbdkb5WAxXv1tZ9waG3dYXuw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=m8OftY93OyuYh0PIW2pLLhKDCnUrThvt6VylI5GsF4JqfH6ga/eepwDQsQ39EB3GJl+aIs2SEKvBTZGqyDOoQwTmUe0sWdqPoLgkl44o1UYTybatopo5E92dVP+hSQOYdkb/CYxQTtnK5hoTNdJJBz2hiQFQCorv2Al2LUuUdFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=luY7Yz16; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f337d0e382so33185ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1716580810; x=1717185610; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J03u/azUiuyJ/7gPFey8suUIJZ5rc1p0eW52hXcyf1w=;
-        b=luY7Yz16J6LPMLhLqtyuR+ZV1IxJQv9r1b0wa+/3z1fQhLwtAOmyP8UGuyOQ5DNYcL
-         mX+KwRFwb0ojhQCxG7rZwyIXcBDc6sX2F815JmFgNbiNARUW2DgMCwyPpy15/mE2Ip65
-         ErBN2ch8jOg0QdzNQrNacUhZZ9IEwdrfHHks5icZPgtkyDzhPPXDkLlCyXjEkXvuAXrX
-         9kz1V8zR/66zL/w+W99dTrb/ynvjBpzfduy3+x0OV4jZeYud5LE4sIc1uvGPtnJlWWeM
-         tGEvla9idzN3dK4Ylaeu+D5b0ko1nTiJh7aRbxxb5tfCnGSlKYtHkv29nRNGy00o/Uv8
-         WboQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716580810; x=1717185610;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J03u/azUiuyJ/7gPFey8suUIJZ5rc1p0eW52hXcyf1w=;
-        b=o2UJPeeSBVmgqvnWtmIktDYVKQ1xGPMAo9bO5dUKeqtiFM3+mRwUfVcCiQ7k7a/Dks
-         7jy6VAVcEEGhkd3fhgAY2tRVPkkuoh6O7uUvvi/8afjwaUZSkq8g73oLidTLe3dePgo0
-         PrQAFdesgkKGMfjCaXJ8SBUNzi6McuqAtoet1EtSUDP6Iti6M3Chv7+BHax9KKEjk15s
-         DVMB/pwU76xNkQsSpcXnH1ceKgkzWPOha4C0ZAfopV8XiDb8YwNqAlTQXpj/xkFgEASc
-         RurSJ6+x1YA4p4A8Ay1TLSKBatCUhv3SdIcNpA2zKDXdVf6zVlHNIlh229JX7sEH6EFN
-         KcKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXaIkyiNn+mco9l0anYPHIROgRW8jmBoJ/dQtAJMwUslldhfQ93Q59fy1f5+kDeVVXQgNbRj3l1bY2YjS11XwLqIpeEUcRVgteOKeqR
-X-Gm-Message-State: AOJu0Yzk5HP4h/eavmTJ//kxU6Un9osgM0lEVSb9N2SSqnaKRtB5enJY
-	fi1O3y0zWGs46SQML0R8JsTTJv6A5WbNBXbpq25ZCSw5LLh/YAf57RrNjsCEBg==
-X-Google-Smtp-Source: AGHT+IGCIXQDdrO6BGUEBPI0rbMRLEFS1n4FDhL/LvduVdqztKRsVCv6w1yspdPe5J3ICBr0hoDTAg==
-X-Received: by 2002:a17:902:d902:b0:1f4:50b4:a50b with SMTP id d9443c01a7336-1f466ce2270mr381615ad.18.1716580808226;
-        Fri, 24 May 2024 13:00:08 -0700 (PDT)
-Received: from [2620:0:1008:15:c92f:57d0:1ea4:5439] ([2620:0:1008:15:c92f:57d0:1ea4:5439])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc05e08bsm1456208b3a.52.2024.05.24.13.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 13:00:07 -0700 (PDT)
-Date: Fri, 24 May 2024 13:00:06 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Sourav Panda <souravpanda@google.com>
-cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
-    Andrew Morton <akpm@linux-foundation.org>, mike.kravetz@oracle.com, 
-    muchun.song@linux.dev, rppt@kernel.org, david@redhat.com, 
-    rdunlap@infradead.org, chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, 
-    tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
-    pasha.tatashin@soleen.com, yosryahmed@google.com, hannes@cmpxchg.org, 
-    shakeelb@google.com, kirill.shutemov@linux.intel.com, 
-    wangkefeng.wang@huawei.com, adobriyan@gmail.com, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, surenb@google.com, 
-    linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-    linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-    Matthew Wilcox <willy@infradead.org>, weixugc@google.com
-Subject: Re: [PATCH v12] mm: report per-page metadata information
-In-Reply-To: <45fb4c94-dd77-94c3-f08f-81bf31e6d6d2@google.com>
-Message-ID: <1e1b89af-3b7a-7400-cfd7-d22a101955de@google.com>
-References: <20240512010611.290464-1-souravpanda@google.com> <45fb4c94-dd77-94c3-f08f-81bf31e6d6d2@google.com>
+	s=arc-20240116; t=1716580830; c=relaxed/simple;
+	bh=r06Ah7YDJnhIxNnpacx35mRIM+8qmbpW+3+eLX93wrA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=uFyYxottRH+/WnY64N1hlFohn1pU+tzIus54sLgyw7X2xol5YaIWb/5fe6ZL7TEw3YuSb/yYkBrxfozm4N1BLy9O1kS6U1ACRUuoX3+/MVxyN0ZNYsFdVNuvqKuPcautRS5yE3mkhqaYCUJOQywbLGedzjCTJnlU+OLOLUQuwgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oG4kaUxd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D663CC32789;
+	Fri, 24 May 2024 20:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716580829;
+	bh=r06Ah7YDJnhIxNnpacx35mRIM+8qmbpW+3+eLX93wrA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oG4kaUxdcn5VN8Q3Sou5qko+NGCqAIFdfEMHjzZRJ5QjsRYGR3py6hoNzjw3EkuZ9
+	 R28wInlC7WsL0KU84fS9Q2h5PixVmVjbJ70AVdB5mEjVhNFmf7FNLu+wAEswyOaQ0w
+	 8DMJvGqgWkUqZyIdti3aXJrlT2EUPfleM2jir6zogY+d77vkbBO5k/FYCcnsR8q56z
+	 634IvM5EybhT2DCoMmbYQXvAx3Mxy3WBAHuxaZTiTvfNLqQtLFHlVzxCBPc+i0O2gT
+	 Mi5BnCAEMHJ2w5R0SAWr0USuUkJCa4t2VSD1jqXWhrZ8uam5rELPpM/zteVljfzaWS
+	 1gtCk0lgiFYMw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C0438CF21F1;
+	Fri, 24 May 2024 20:00:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: Use sizeof(*pointer) instead of sizeof(type)
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <171658082978.8511.5942378609117134177.git-patchwork-notify@kernel.org>
+Date: Fri, 24 May 2024 20:00:29 +0000
+References: <AS8PR02MB72373F23330301EA5B897D6E8BF52@AS8PR02MB7237.eurprd02.prod.outlook.com>
+In-Reply-To: <AS8PR02MB72373F23330301EA5B897D6E8BF52@AS8PR02MB7237.eurprd02.prod.outlook.com>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, keescook@chromium.org,
+ gustavoars@kernel.org, justinstitt@google.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
 
-On Sat, 18 May 2024, David Rientjes wrote:
+Hello:
 
-> On Sun, 12 May 2024, Sourav Panda wrote:
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+
+On Fri, 24 May 2024 19:11:51 +0200 you wrote:
+> It is preferred to use sizeof(*pointer) instead of sizeof(type)
+> due to the type of the variable can change and one needs not
+> change the former (unlike the latter). This patch has no effect
+> on runtime behavior.
 > 
-> > Today, we do not have any observability of per-page metadata
-> > and how much it takes away from the machine capacity. Thus,
-> > we want to describe the amount of memory that is going towards
-> > per-page metadata, which can vary depending on build
-> > configuration, machine architecture, and system use.
-> > 
-> > This patch adds 2 fields to /proc/vmstat that can used as shown
-> > below:
-> > 
-> > Accounting per-page metadata allocated by boot-allocator:
-> > 	/proc/vmstat:nr_memmap_boot * PAGE_SIZE
-> > 
-> > Accounting per-page metadata allocated by buddy-allocator:
-> > 	/proc/vmstat:nr_memmap * PAGE_SIZE
-> > 
-> > Accounting total Perpage metadata allocated on the machine:
-> > 	(/proc/vmstat:nr_memmap_boot +
-> > 	 /proc/vmstat:nr_memmap) * PAGE_SIZE
-> > 
-> > Utility for userspace:
-> > 
-> > Observability: Describe the amount of memory overhead that is
-> > going to per-page metadata on the system at any given time since
-> > this overhead is not currently observable.
-> > 
-> > Debugging: Tracking the changes or absolute value in struct pages
-> > can help detect anomalies as they can be correlated with other
-> > metrics in the machine (e.g., memtotal, number of huge pages,
-> > etc).
-> > 
-> > page_ext overheads: Some kernel features such as page_owner
-> > page_table_check that use page_ext can be optionally enabled via
-> > kernel parameters. Having the total per-page metadata information
-> > helps users precisely measure impact. Furthermore, page-metadata
-> > metrics will reflect the amount of struct pages reliquished
-> > (or overhead reduced) when hugetlbfs pages are reserved which
-> > will vary depending on whether hugetlb vmemmap optimization is
-> > enabled or not.
-> > 
-> > For background and results see:
-> > lore.kernel.org/all/20240220214558.3377482-1-souravpanda@google.com
-> > 
-> > Signed-off-by: Sourav Panda <souravpanda@google.com>
-> > Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Erick Archer <erick.archer@outlook.com>
 > 
-> Acked-by: David Rientjes <rientjes@google.com>
-> 
+> [...]
 
-This would be a very useful extension to be able to provide observability 
-of per-page metadata overhead and the impact of things like HVO on the 
-overall footprint.  Today, we don't have observability for this memory 
-overhead.
+Here is the summary with links:
+  - Bluetooth: Use sizeof(*pointer) instead of sizeof(type)
+    https://git.kernel.org/bluetooth/bluetooth-next/c/3c376f35eb13
 
-Andrew, anything else that can be addressed before this is eligible for 
-staging in MM unstable?
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
