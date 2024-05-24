@@ -1,252 +1,194 @@
-Return-Path: <linux-kernel+bounces-188809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8B48CE748
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:40:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C7A8CE749
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9691F218C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1272A1F2188F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87D712CDBC;
-	Fri, 24 May 2024 14:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2aQRmyy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5AB12C53A;
+	Fri, 24 May 2024 14:41:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CF642AB7;
-	Fri, 24 May 2024 14:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA921AACC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716561589; cv=none; b=MaBnu4l7RmTMK+Y9C+JDKVyn+f4CMKYN+yz4BUI7sBq9IHhTjZtOsSItjqP/3iEU02MinMzDXfcEfef1utp/LR496Vk9PNUGRLigu2GbmZ6W7XS4w2zEnBajdM3J7Zt9haaGYMgVFxOl/I3nm5y/JsrBV/2bYh+hhFMEYiZM72w=
+	t=1716561693; cv=none; b=HN1VN9Apij5E7QoHYc3doY77hVM5EqUYTscFkaahEucm1wR7osN9tjIcO14GPV2gDTKJsnAAHbF9VVNNDBAy+LgyedDxKZIihz2WVilWJD/tps9QqnjmAfLSsKm1kj1JKP9h26ccGRt/i46Pe3GnkNkLmgdFlakjKG3t/6d1VtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716561589; c=relaxed/simple;
-	bh=azd/+Jtb3PR7LZMaQHlxqyMQJmkcRTdfxSuAuKzYoWs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KS/tOozzFreOpkQv83qtsQl/U8FtCsgKKTfiPJl1o0f3bTTino662ugKHz+4nqKhiz70hEaudSive2cFz24Q6Tdk/y6OvgsrkNL75T0lkMo0BSoFb8wjzwjMT63IfVGR1mQVgOelYu4N3437tXlG3DFydpbG9v1a4oyFhURompw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2aQRmyy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 89298C32789;
-	Fri, 24 May 2024 14:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716561589;
-	bh=azd/+Jtb3PR7LZMaQHlxqyMQJmkcRTdfxSuAuKzYoWs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=M2aQRmyyaZQfqtPWnQ/9RXPSHv41T39imxCCf/golpT5NtAVqcl3A+QZlyZR467nd
-	 IdxVWUgM986bNzwEv1VzF5YxjEgRgsxKRP6CinpHIW7e1M+q7yK8TWl+VfTde6jM9l
-	 ibIcRIMVTCg3fP/3mu8RwKsJojGqfQB7FDlqHoJPsdPhHg6qZA+M4PQKB/fAtuheae
-	 fhxJvjC0BvOn8eJX8idOx+GE5NTjP8qY7vf/JB9046yDTyDKz53hwifS7uOA9sKEKj
-	 yMkM8GAItvk1WhdT4tKc0wGr1B66mdAXffC86gtUIwtWh1QNJDNNXpDZLZhgIVPsKu
-	 QASO57CziNszQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77786C25B7A;
-	Fri, 24 May 2024 14:39:49 +0000 (UTC)
-From: Joel Selvaraj via B4 Relay <devnull+joelselvaraj.oss.gmail.com@kernel.org>
-Date: Fri, 24 May 2024 09:39:20 -0500
-Subject: [PATCH v2 3/3] Input: novatek-nvt-ts: add support for NT36672A
- touchscreen
+	s=arc-20240116; t=1716561693; c=relaxed/simple;
+	bh=Vu45rtbcjvN3EGAu7WZguOVfW+W89M687Ss5idA7zMc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oM6Mh7247eREA7VXM7k4dGFfDKaZi5PxIUMxJ1H6cHJnqui/fMFp4fIGzjgN+XdbCChL5IN4ti6BPh2lHElnFDbgUTLNswkdKzpMtNCE8OuE963XguPTVZjdf03202iS359UpD/QNIi/48xGcv95C8ZSPT9B0se6tLtAos7Xk4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3737b3db665so9925615ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:41:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716561691; x=1717166491;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3diBwk1afZHyXCXGdf1TiC34TBcucgnkB2c00Bw3NuY=;
+        b=iYCtCTkZLrPECHbjlL3noATT09oWePcmb0skcRjknti4Nl69B4EACqysyPR2qgfhZW
+         dpZf00HzvS0abyal0AGYuAd5HAQngJOQeLW6KaeT+l2qejVD57cYVGSH18UufA02oKFk
+         1aEdOjoG2MxbKtY60MYxu+j3skKlIEYV1ytwQd1L25fhuFCJc1P3YQhb1XUvNnm2Exra
+         0kPM/Y7J0WGlRmU5oED981X++JRWRnxkZndQNjo3iGFgJhAeKhy42GfTFUk7Y7F8Vm1t
+         f0RAanxPCsY2d14rv65K3MV+qsnYkeyu72vPrnVGdYaQwXCS4qVBecX3KYQbU2Tao3M8
+         Howw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaGuZr+ysA0ZQwpuae3eUlu4B3VnYimLuos3hGJPvfBmLeIzDDVtN/Ky6a7bEkSefpqz6eyNIZll4pPrDdf/JQpfpSkbJu3rLWN4QC
+X-Gm-Message-State: AOJu0YysG3l9ujInpm+zipBufAhA5F+JlgAQ1CNKWhYO79sngV9f4E1G
+	WgJ5hlW0UsqDb5EDBWNuZGi5OEatw5vNwSAsB3aDZPQlPBsyAfK3Y9VWzf0q+MCsAx0PZ24+jIN
+	RC0MwArBDTcKZB1tgcGLimCpGtNH6MZXWjJ+eHdbi2ygP2zHTMF6jdZY=
+X-Google-Smtp-Source: AGHT+IHRpaYBI4bRsEi3wGjh+b2oK/19QZWQUqN6tLK7mhhdWh8PlbnMXcBW/BqneqkO9+W9BBS8AUarJgCW+pY8gxJ7qNQ9hKAh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240524-nvt-ts-devicetree-regulator-support-v2-3-b74947038c44@gmail.com>
-References: <20240524-nvt-ts-devicetree-regulator-support-v2-0-b74947038c44@gmail.com>
-In-Reply-To: <20240524-nvt-ts-devicetree-regulator-support-v2-0-b74947038c44@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- Joel Selvaraj <joelselvaraj.oss@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716561588; l=5429;
- i=joelselvaraj.oss@gmail.com; s=20240420; h=from:subject:message-id;
- bh=iS/qydC+3ZyOwj/BFn5ZeWXmsLtQZbVeeksPZgAo5MU=;
- b=it6bM7idQMfK/9zprRb/BDnQ0I6+EMIqT/GWcPoiI4aCre6zWER6hYdZarF2jpU0n3F47QCl3
- 6SnhCHRKA8KCQoBPzdUHXALe+CrZUeBtTpOZgvHZpkQw7yIj73yDMYN
-X-Developer-Key: i=joelselvaraj.oss@gmail.com; a=ed25519;
- pk=qT4gsuVtlPE0Dpr+tQA/Fumm7wzVP6qfeVaY+6pX04s=
-X-Endpoint-Received: by B4 Relay for joelselvaraj.oss@gmail.com/20240420
- with auth_id=165
-X-Original-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-Reply-To: joelselvaraj.oss@gmail.com
+X-Received: by 2002:a05:6e02:1a41:b0:36d:d38e:3520 with SMTP id
+ e9e14a558f8ab-3737b33d769mr1754245ab.4.1716561690925; Fri, 24 May 2024
+ 07:41:30 -0700 (PDT)
+Date: Fri, 24 May 2024 07:41:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d2b05506193429da@google.com>
+Subject: [syzbot] [f2fs?] WARNING in f2fs_getxattr
+From: syzbot <syzbot+3c58b51b764fa1f423b1@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+Hello,
 
-Extend the novatek touchscreen driver to support NT36672A chip which
-is found in phones like Xiaomi Poco F1 [1]. Added devicetree support for
-the driver and used i2c chip data to handle the variation in chip id and
-wake type. Also added vcc and iovcc regulators which are used to power
-the touchscreen hardware.
+syzbot found the following issue on:
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-tianma.dts?h=v6.9
+HEAD commit:    eb6a9339efeb Merge tag 'mm-nonmm-stable-2024-05-19-11-56' ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d95748980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e2ea586e11acd6ec
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c58b51b764fa1f423b1
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-eb6a9339.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/21782c1528d1/vmlinux-eb6a9339.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6c377678e8b1/bzImage-eb6a9339.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3c58b51b764fa1f423b1@syzkaller.appspotmail.com
+
+F2FS-fs (loop2): Mounted with checkpoint version = 48b305e4
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(l->owner)
+WARNING: CPU: 0 PID: 6234 at include/linux/local_lock_internal.h:30 local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
+WARNING: CPU: 0 PID: 6234 at include/linux/local_lock_internal.h:30 ___slab_alloc+0x16c2/0x1870 mm/slub.c:3715
+Modules linked in:
+CPU: 0 PID: 6234 Comm: syz-executor.2 Not tainted 6.9.0-syzkaller-09699-geb6a9339efeb #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:local_lock_acquire include/linux/local_lock_internal.h:30 [inline]
+RIP: 0010:___slab_alloc+0x16c2/0x1870 mm/slub.c:3715
+Code: 98 02 85 c0 74 09 83 3d bf bd 00 0e 00 74 21 90 e9 30 ff ff ff 90 48 c7 c6 bf f8 36 8d 48 c7 c7 f6 c3 36 8d e8 df 54 6f ff 90 <0f> 0b 90 90 eb c6 90 48 c7 c6 c8 f8 36 8d 48 c7 c7 f6 c3 36 8d e8
+RSP: 0018:ffffc900063376a0 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000000000246 RCX: ffffc9000c171000
+RDX: 0000000000040000 RSI: ffffffff81510236 RDI: 0000000000000001
+RBP: ffffc90006337780 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000002d2d2d2d R12: ffff88801b4ac880
+R13: ffff888040ef4dc0 R14: ffffe8ffad044130 R15: ffffe8ffad044110
+FS:  0000000000000000(0000) GS:ffff88802c000000(0063) knlGS:00000000f5f1cb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020aa3000 CR3: 0000000026fac000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3756
+ __slab_alloc_node mm/slub.c:3809 [inline]
+ slab_alloc_node mm/slub.c:3988 [inline]
+ kmem_cache_alloc_noprof+0x2ae/0x2f0 mm/slub.c:4007
+ f2fs_kmem_cache_alloc fs/f2fs/f2fs.h:2832 [inline]
+ xattr_alloc fs/f2fs/xattr.c:30 [inline]
+ lookup_all_xattrs fs/f2fs/xattr.c:333 [inline]
+ f2fs_getxattr+0x46d/0x11e0 fs/f2fs/xattr.c:533
+ f2fs_xattr_generic_get+0x138/0x170 fs/f2fs/xattr.c:63
+ __vfs_getxattr+0x13b/0x1a0 fs/xattr.c:423
+ cap_inode_need_killpriv+0x40/0x60 security/commoncap.c:302
+ security_inode_need_killpriv+0x65/0xb0 security/security.c:2504
+ dentry_needs_remove_privs fs/inode.c:2015 [inline]
+ file_remove_privs_flags+0x3a6/0x5d0 fs/inode.c:2046
+ file_modified_flags fs/inode.c:2167 [inline]
+ file_modified+0x47/0x200 fs/inode.c:2196
+ f2fs_write_checks fs/f2fs/file.c:4553 [inline]
+ f2fs_file_write_iter+0x3cf/0x2160 fs/f2fs/file.c:4822
+ call_write_iter include/linux/fs.h:2120 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x6b6/0x1120 fs/read_write.c:590
+ ksys_write+0x12f/0x260 fs/read_write.c:643
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x75/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf732a579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5f1c5ac EFLAGS: 00000292 ORIG_RAX: 0000000000000004
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000000000
+RDX: 00000000fffff000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
 ---
- drivers/input/touchscreen/novatek-nvt-ts.c | 78 +++++++++++++++++++++++++++---
- 1 file changed, 72 insertions(+), 6 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/input/touchscreen/novatek-nvt-ts.c b/drivers/input/touchscreen/novatek-nvt-ts.c
-index 224fd112b25a9..7a82a1b09f9d5 100644
---- a/drivers/input/touchscreen/novatek-nvt-ts.c
-+++ b/drivers/input/touchscreen/novatek-nvt-ts.c
-@@ -31,9 +31,6 @@
- #define NVT_TS_PARAMS_CHIP_ID		0x0e
- #define NVT_TS_PARAMS_SIZE		0x0f
- 
--#define NVT_TS_SUPPORTED_WAKE_TYPE	0x05
--#define NVT_TS_SUPPORTED_CHIP_ID	0x05
--
- #define NVT_TS_MAX_TOUCHES		10
- #define NVT_TS_MAX_SIZE			4096
- 
-@@ -51,11 +48,18 @@ static const int nvt_ts_irq_type[4] = {
- 	IRQF_TRIGGER_HIGH
- };
- 
-+struct nvt_ts_i2c_chip_data {
-+	u8 wake_type;
-+	u8 chip_id;
-+};
-+
- struct nvt_ts_data {
- 	struct i2c_client *client;
- 	struct input_dev *input;
- 	struct gpio_desc *reset_gpio;
-+	struct regulator_bulk_data regulators[2];
- 	struct touchscreen_properties prop;
-+	const struct nvt_ts_i2c_chip_data *chip;
- 	int max_touches;
- 	u8 buf[NVT_TS_TOUCH_SIZE * NVT_TS_MAX_TOUCHES];
- };
-@@ -139,9 +143,23 @@ static irqreturn_t nvt_ts_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static void nvt_ts_disable_regulators(void *_data)
-+{
-+	struct nvt_ts_data *data = _data;
-+
-+	regulator_bulk_disable(ARRAY_SIZE(data->regulators), data->regulators);
-+}
-+
- static int nvt_ts_start(struct input_dev *dev)
- {
- 	struct nvt_ts_data *data = input_get_drvdata(dev);
-+	int error;
-+
-+	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(&data->client->dev, "failed to enable regulators\n");
-+		return error;
-+	}
- 
- 	enable_irq(data->client->irq);
- 	gpiod_set_value_cansleep(data->reset_gpio, 0);
-@@ -155,6 +173,7 @@ static void nvt_ts_stop(struct input_dev *dev)
- 
- 	disable_irq(data->client->irq);
- 	gpiod_set_value_cansleep(data->reset_gpio, 1);
-+	nvt_ts_disable_regulators(data);
- }
- 
- static int nvt_ts_suspend(struct device *dev)
-@@ -199,9 +218,37 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	if (!data)
- 		return -ENOMEM;
- 
-+	data->chip = device_get_match_data(&client->dev);
-+	if (!data->chip)
-+		return -EINVAL;
-+
- 	data->client = client;
- 	i2c_set_clientdata(client, data);
- 
-+	/*
-+	 * VCC is the analog voltage supply
-+	 * IOVCC is the digital voltage supply
-+	 */
-+	data->regulators[0].supply = "vcc";
-+	data->regulators[1].supply = "iovcc";
-+	error = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(dev, "cannot get regulators: %d\n", error);
-+		return error;
-+	}
-+
-+	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators), data->regulators);
-+	if (error) {
-+		dev_err(dev, "failed to enable regulators\n");
-+		return error;
-+	}
-+
-+	error = devm_add_action_or_reset(dev, nvt_ts_disable_regulators, data);
-+	if (error) {
-+		dev_err(dev, "failed to install regulator disable handler\n");
-+		return error;
-+	}
-+
- 	data->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
- 	error = PTR_ERR_OR_ZERO(data->reset_gpio);
- 	if (error) {
-@@ -225,8 +272,8 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	if (width > NVT_TS_MAX_SIZE || height >= NVT_TS_MAX_SIZE ||
- 	    data->max_touches > NVT_TS_MAX_TOUCHES ||
- 	    irq_type >= ARRAY_SIZE(nvt_ts_irq_type) ||
--	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != NVT_TS_SUPPORTED_WAKE_TYPE ||
--	    data->buf[NVT_TS_PARAMS_CHIP_ID] != NVT_TS_SUPPORTED_CHIP_ID) {
-+	    data->buf[NVT_TS_PARAMS_WAKE_TYPE] != data->chip->wake_type ||
-+	    data->buf[NVT_TS_PARAMS_CHIP_ID] != data->chip->chip_id) {
- 		dev_err(dev, "Unsupported touchscreen parameters: %*ph\n",
- 			NVT_TS_PARAMS_SIZE, data->buf);
- 		return -EIO;
-@@ -277,8 +324,26 @@ static int nvt_ts_probe(struct i2c_client *client)
- 	return 0;
- }
- 
-+static const struct nvt_ts_i2c_chip_data nvt_nt11205_ts_data = {
-+	.wake_type = 0x05,
-+	.chip_id = 0x05,
-+};
-+
-+static const struct nvt_ts_i2c_chip_data nvt_nt36672a_ts_data = {
-+	.wake_type = 0x01,
-+	.chip_id = 0x08,
-+};
-+
-+static const struct of_device_id nvt_ts_of_match[] = {
-+	{ .compatible = "novatek,nt11205-ts", .data = &nvt_nt11205_ts_data },
-+	{ .compatible = "novatek,nt36672a-ts", .data = &nvt_nt36672a_ts_data },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, nvt_ts_of_match);
-+
- static const struct i2c_device_id nvt_ts_i2c_id[] = {
--	{ "NT11205-ts" },
-+	{ "NT11205-ts", (unsigned long) &nvt_nt11205_ts_data },
-+	{ "NT36672A-ts", (unsigned long) &nvt_nt36672a_ts_data },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, nvt_ts_i2c_id);
-@@ -287,6 +352,7 @@ static struct i2c_driver nvt_ts_driver = {
- 	.driver = {
- 		.name	= "novatek-nvt-ts",
- 		.pm	= pm_sleep_ptr(&nvt_ts_pm_ops),
-+		.of_match_table = nvt_ts_of_match,
- 	},
- 	.probe = nvt_ts_probe,
- 	.id_table = nvt_ts_i2c_id,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.45.1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
