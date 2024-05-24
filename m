@@ -1,134 +1,147 @@
-Return-Path: <linux-kernel+bounces-188772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D818CE6B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692F38CE6B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CEDE1C220BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:10:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC2D1F22F2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B63512C47E;
-	Fri, 24 May 2024 14:10:32 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C74912C52C;
+	Fri, 24 May 2024 14:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNkh7Rlu"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049CA12C466;
-	Fri, 24 May 2024 14:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B94112C466;
+	Fri, 24 May 2024 14:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559831; cv=none; b=PHttadKKZaVawMw3UlOxjqH3ebEIfYqHVkoYJ4L7Z5weUCInG++YF9fImKlf2WDFwtXmEVwljQPpoCej6mlZ8H5Df6VeNgtYHzPAHGDZyh9DYmEjAMA9et41BUXAyOK6sjwwnzD99fqPZ5JnGabXxfAcy3aRVggMLnMDz7hOL4A=
+	t=1716559839; cv=none; b=KdoXzB3S7DIRjEpD/Qboiw07Psed85O2VgaCysfOrVbZofWBrPI/Q78F9uWY3xrnnWXAsGtw1ErXu3KtRKvjnjFbablBjKv0DjuYYU41nl47q6Fu2Bt5RyVVSK+ZtNAkLPes6fdXMJ3M6tonEm9U7kg84zZmaqh17mjMuwsQIXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559831; c=relaxed/simple;
-	bh=GAlzwlQOD1Sk8N6PRgb6Q9JatX+C4h7JsGn1KatYt3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bAQ8GfbzRxNqG5lrwyPgMdFXDRqyytR9CqAqeJ99TufzpcvMBdDrJbIp7u8B5tUdRTiky4a2gsfCsXEXcNWdN7FfUs6WG5ATUU+ghjw60Am+COLzMsFbbZ0IqcSCj+73y8CsZdOO+DOn5H+6MtI25Waf9C6A4PM0Ofs93BeIID0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1716559839; c=relaxed/simple;
+	bh=hJyg2YZ2WeH0Q9liuVLFHR9OibhRwupUtgr0ma4XRbo=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dkCpFPgrT733Ajhw3j4Wmk+xEjg5y0OgpEjGkipGDtvt6LQRBwMNN24h1vBtZxUg2ze4HhCDMbITgUdOfCitPfB0MKRz/rg3dvMbeWBiYAn1zE/MR9D6B4bUW1u/MqW1YapS4ZzZKp+sVXUn5DusZCisf5ogk8yriGCatsRcQhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNkh7Rlu; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57852015f19so1499786a12.1;
-        Fri, 24 May 2024 07:10:29 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35507dfe221so585677f8f.1;
+        Fri, 24 May 2024 07:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716559836; x=1717164636; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QveJEjdigPYVmEFYMrUNMB5K+Jm/VE2z4qre0BBpK4A=;
+        b=lNkh7RluM5SxuuPVy+ibwP//VXOYDc1PyyBseaGy+OCMSvW+i1fobInd3YE78GF1mX
+         Nk2upxKim+6zu8cZeK1JarwIrAFBo8aHFtO336U5hxD2m9wBze2ttV7wa5jCxcbygB7W
+         bFl4lSWYUU0s0hibbamP2Pqqon3ASdKyOqClVPlL/9xSY9EfwAXlPinXoumxL8/Z+CQ2
+         aNvAQqp5t5hEEQN6FQHnowhGJP1dKGLKgCptuqZ4LJodHi9mZn2qBKiBQfoPjS/ZVlXG
+         uSinEovkIlrIXySFob3X8rgCq7CbmHjCMsDMfSf0kfoc7mWK3mQdq/lNeJZFiRv+t172
+         ocig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716559828; x=1717164628;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X4BCz6AMR+p4pjnNjlT2dYabrA3IFmEG66/vZYA0VK8=;
-        b=rFImpfdk7/sln3CfSZXVre+qjJqvupyrtpywPGeFWjK9yHU5pcHvlLU0pcF6EhwhJq
-         YMKLvrxz+/tguc4aGv2ZC4UalkVT6Z2rmshCTK3EHFPGDmadl5a/TkGlWew7471o1PK3
-         uEZVDGr6bYt2QPY4VK1xke5V0y7/C8YHJVKhE6QzmcW/BuVCGtZJCOMBpqZDCSEVC5+d
-         1LZqN85gsS74qPC5WJ9R0bMMZgRPe0iAytpVNX03b4Y6sU8AfezQCsqo2E9nMbm2+YMs
-         tqEf7HaiSq5q7YsbX3mOx/8+kstBYXqca9nqcCSoyDuLlHW3AmWjvaese4sFFj6RZ1bk
-         fXTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUow00LT6wTselz88TN4QaFzUAAYHGN47wZiDHiIBx8IC7eGDfOszWPzPHptQMcdIH0JPzcXrYxsjrZyM5jnDkT+elqYA7shvvJDMhQrKYA5EMilRzXP0Y/MvCtoifb5OhmcR5GAESu1jFboWBZiw==
-X-Gm-Message-State: AOJu0YxeBR4IyzXUimt5FCY/ZbA2dOvRm+dO53OZODVJ1DoPNYcQqT14
-	fKnC/s5pOAAHvFqsUKbBQTUgLZOW6ArPPDGZEZb09q5J/EPkZ0ry
-X-Google-Smtp-Source: AGHT+IFHXBDLAJjViFEsNbKr2wJ20cISr9KVjGUHeVjhX3Wg8qPQoA8SS7XsQ/cwsQ0tvkPtvnSbEQ==
-X-Received: by 2002:a50:8d4c:0:b0:572:3fac:e085 with SMTP id 4fb4d7f45d1cf-57843f1589fmr4900893a12.13.1716559828072;
-        Fri, 24 May 2024 07:10:28 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-005.fbsv.net. [2a03:2880:30ff:5::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5785233c3c7sm1757666a12.10.2024.05.24.07.10.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 07:10:27 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: sandipan.das@amd.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: leit@meta.com,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
-	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
-Subject: [PATCH] perf/x86/amd: Warn only on new bits set
-Date: Fri, 24 May 2024 07:10:20 -0700
-Message-ID: <20240524141021.3889002-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1716559836; x=1717164636;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QveJEjdigPYVmEFYMrUNMB5K+Jm/VE2z4qre0BBpK4A=;
+        b=gTrWu5NQnNq7/VtgJF6ifAaEObdN9dPNwE0j0ErieG99HerAsXEuVtP5dHkpHgvca/
+         qX4J5hMPpzdkm8HskZZNfo7R/w26EBIKm4/t4q/z4mQvFbIBlYsJfbwc32qdqAo612ug
+         B8H0NHK+aBhTSVCLcM3TzHL4kZ44OufrEAc0ayiK+mavvu2CIS9yLvhRl2P5xSU9SGzb
+         7gadTTdn8JZSRb9w6yI7EJD/QGE37VsBFRM4WKUUU7UMJrMeA7X3HoYOw6QNtLhZjqk5
+         Ou2broUev5fmPKk9YYQW6+WmUjdXhVgbVteHBzjR6+sXy52VPXy/wz10dFexw8/Jq1pM
+         tpKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG1rIK+7D0RSSakxY+iv28tQIwvve1bBwuaCx2sSfyTl3+tm6M0Gh9Eyk2vGeml23bemlB46+WTJrOcVZyPmCdf1v9ZICC/wdUf0SIWL4VqF/Y5GwRSV5MBCKQdLBahwKVqgj8HJv9ZzF0/JENahv7Gs7813XVgAKz1bvm
+X-Gm-Message-State: AOJu0Yx2PzQhBfEGBXkWqWgP9YR4wMb8ulPEV/jWuA0fhUoGcJusf53v
+	0Fd4y1AIMxN5joLBsTSofWKpQoF650+kj898j8o72FszXQGWjCqn
+X-Google-Smtp-Source: AGHT+IHHeXsQHs1F6X587eHgOckB4m1ejeDsmQpqoDkOBkHcRNjJ821RInFYpzgiea348JO51njZPQ==
+X-Received: by 2002:adf:db43:0:b0:354:f724:641a with SMTP id ffacd0b85a97d-3552fdc5d99mr2035164f8f.44.1716559836317;
+        Fri, 24 May 2024 07:10:36 -0700 (PDT)
+Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a1c938fsm1673617f8f.76.2024.05.24.07.10.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 07:10:35 -0700 (PDT)
+From: Paul Durrant <xadimgnik@gmail.com>
+X-Google-Original-From: Paul Durrant <paul@xen.org>
+Message-ID: <c36f5401-05e9-4c13-a24e-31ebab8ae4f7@xen.org>
+Date: Fri, 24 May 2024 15:10:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Reply-To: paul@xen.org
+Subject: Re: [RFC PATCH v3 15/21] KVM: x86: Allow KVM master clock mode when
+ TSCs are offset from each other
+To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
+ zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>
+References: <20240522001817.619072-1-dwmw2@infradead.org>
+ <20240522001817.619072-16-dwmw2@infradead.org>
+Content-Language: en-US
+Organization: Xen Project
+In-Reply-To: <20240522001817.619072-16-dwmw2@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Warning at every leaking bits can cause a flood of message, triggering
-vairous stall-warning mechanisms to fire, including CSD locks, which
-makes the machine to be unusable.
+On 22/05/2024 01:17, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> There is no reason why the KVM clock cannot be in masterclock mode when
+> the TSCs are not in sync, as long as they are at the same *frequency*.
+> 
+> Running at a different frequency would lead to a systemic skew between
+> the clock(s) as observed by different vCPUs due to arithmetic precision
+> in the scaling. So that should indeed force the clock to be based on the
+> host's CLOCK_MONOTONIC_RAW instead of being in masterclock mode where it
+> is defined by the (or 'a') guest TSC.
+> 
+> But when the vCPUs merely have a different TSC *offset*, that's not a
+> problem. The offset is applied to that vCPU's kvmclock->tsc_timestamp
+> field, and it all comes out in the wash.
+> 
+> So, remove ka->nr_vcpus_matched_tsc and replace it with a new field
+> ka->all_vcpus_matched_tsc which is not only changed to a boolean, but
+> also now tracks that the *frequency* matches, not the precise offset.
+> 
+> Using a *count* was always racy because a new vCPU could be being
+> created *while* kvm_track_tsc_matching() was running and comparing with
+> kvm->online_vcpus. That variable is only atomic with respect to itself.
+> In particular, kvm_arch_vcpu_create() runs before kvm->online_vcpus is
+> incremented for the new vCPU, and kvm_arch_vcpu_postcreate() runs later.
+> 
+> Repurpose kvm_track_tsc_matching() to be called from kvm_set_tsc_khz(),
+> and kill the cur_tsc_generation/last_tsc_generation fields which tracked
+> the precise TSC matching.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>   arch/x86/include/asm/kvm_host.h |   6 +-
+>   arch/x86/kvm/x86.c              | 130 +++++++++++++++++---------------
+>   2 files changed, 71 insertions(+), 65 deletions(-)
+> 
 
-Track the bits that are being leaked, and only warn when a new bit is
-set.
-
-Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- arch/x86/events/amd/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index 1fc4ce44e743..df0ba2382d13 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -941,11 +941,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
- static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
- {
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-+	static atomic64_t status_warned = ATOMIC64_INIT(0);
-+	u64 reserved, status, mask, new_bits;
- 	struct perf_sample_data data;
- 	struct hw_perf_event *hwc;
- 	struct perf_event *event;
- 	int handled = 0, idx;
--	u64 reserved, status, mask;
- 	bool pmu_enabled;
- 
- 	/*
-@@ -1010,7 +1011,11 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
- 	 * the corresponding PMCs are expected to be inactive according to the
- 	 * active_mask
- 	 */
--	WARN_ON(status > 0);
-+	if (status > 0) {
-+		new_bits = atomic64_fetch_or(status, &status_warned) ^ atomic64_read(&status_warned);
-+		// A new bit was set for the very first time.
-+		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
-+	}
- 
- 	/* Clear overflow and freeze bits */
- 	amd_pmu_ack_global_status(~status);
--- 
-2.43.0
+Reviewed-by: Paul Durrant <paul@xen.org>
 
 
