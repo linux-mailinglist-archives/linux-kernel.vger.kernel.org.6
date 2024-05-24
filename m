@@ -1,142 +1,106 @@
-Return-Path: <linux-kernel+bounces-188615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BF08CE45F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:47:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33638CE463
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494CD1F22610
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF1B1C20F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5921385933;
-	Fri, 24 May 2024 10:47:34 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6118612C;
+	Fri, 24 May 2024 10:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2rcn///"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48712208A1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9FA328B6;
+	Fri, 24 May 2024 10:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716547653; cv=none; b=cPQvL6zFpNctijrOV+6D5777sPtCgb4bpnn1N0MeDnjfrX9DZGAgAE79ujRon4k/dQ/AeNXjqOmfiiaqUYsd1rb/+PqZDwo3wOfu+qGI9U7xadTI1+KPon4+UWtpQz7vNZxEU+yGn/BAnWuCQ+AJ493wes3AEBqmGGBwBdlDN7k=
+	t=1716547662; cv=none; b=uVedLFkp7N/aZJtGeU26GZCXf39xRR7XKsOoFPF7xC7IIXXRu2wXxqaH6Ux4hvGCIwKVCShVwDgUnk8RCrRmuzF8EnIIDkK3vrzWWBHpiOQkXALJ960TUY/BKHi6dfxaFiHZd/fHTpxybENLbPSytu9D5w/SJBILccpZ9uV043s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716547653; c=relaxed/simple;
-	bh=9TvjPqCliIU3ksv9BzpmBijNYq3dOmKIiwbn2vtAAok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msfO4Om1f6Ab6fGjjukyZmp6ScCwTv7cTA0fY13jZEtcaN0xvUqU5EAC9cvYwmGGZv/6JN9BJJFkMhcahq5edGCKyXmW5DiS7PXdo+/EW51gKFX2UW2IHpPwS7QMSJank3iErMqXCmDdpirP9KjmSzL7mjhQ6XbkVUrcjU0dXEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sASSE-00012m-SY; Fri, 24 May 2024 12:47:18 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sASSD-002mZn-Tv; Fri, 24 May 2024 12:47:17 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sASSD-00Bejt-2f;
-	Fri, 24 May 2024 12:47:17 +0200
-Date: Fri, 24 May 2024 12:47:17 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/5] firmware: imx: add driver for NXP EdgeLock Enclave
-Message-ID: <ZlBwNbkFV1fcnPKE@pengutronix.de>
-References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
- <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
+	s=arc-20240116; t=1716547662; c=relaxed/simple;
+	bh=Cn7ewNXIF644KtlU+Ek21a4zvbcO07e24R37rH614Dg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eeJKE8rRI5Rfmtu3OOxCzO8Jfa/TcbHOXXeQVscUVqjO2QxDU3nT/T3jig9yB5GD119kNSOAZO7msvzfZ1mzzWVOsy6mKKkkaqkcJh6AqgWWPNwfkgQWvArGouPl+DlDVZ5Lf1dpxErJoeW3KnID2lrz5P1J0MmpjXvupJrbSpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h2rcn///; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-354e0d4db6cso1780730f8f.0;
+        Fri, 24 May 2024 03:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716547659; x=1717152459; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cn7ewNXIF644KtlU+Ek21a4zvbcO07e24R37rH614Dg=;
+        b=h2rcn///10w6n9cGvL2KZSCbW3q8itQ84g5/wkc72Tl/1fJolFGocTItcClphx18vp
+         RqVM7qZCR06KRVyax1/+i+14jluNAsX24JenVihoN5iB1Y+9GuBnvQAM+7RVAr7Q1FV1
+         pC+2OV6OYCeHtKKsgs8sbFc+W9CH2lxHg8I260GUvfLp2Xu7Jaun/Wg5p4Y8eWg/nfZM
+         US0O3/zwUwRpz+d/v1W3k4UGJ5tecbm1nV/TMTm8xpRqrqWzx6DDMJC0cO7Ct+bwSfwe
+         xnhQmVw4APR0DeD8jvJ0bbfFVzpyk2u+AeWGfjdEWDdlqZ7VinpNWHzmPB4//Df98lRa
+         L9Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716547659; x=1717152459;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Cn7ewNXIF644KtlU+Ek21a4zvbcO07e24R37rH614Dg=;
+        b=VB2MHL3wbxsunzsWup+cTEdFeh4maB3n/sx7MmUVJbmlqZQBPVV/uMgcVAUUY55p5t
+         Ri6Q5dY16klYEZwLvC3nahpNKJ2NfV7QiGB16WMyYEVreH0jnxbbHbRnGi2PMW2LUWpW
+         9/uVUClXrxPHCMhXICCPGxaQqm/0rOEeVEHvBog7AlkaQXZc41G2KjbFFo1tjXLDjph4
+         T0tnEJsaoklu/bnawAU84FDHA9PwIOdj/5d6rHdIkcOcNBiVTtkvkRgdzgfCxvSWq7J1
+         dHPtTrgGc6/eLPE+VfjHZa7LCUJnzQlIp4hJmvIsAnYs2SCBlvu/wIap/ui/9BfCLXlS
+         y47g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJUJfRlqyUF670j0ZHh0U/IDT0ZawVjBgN7AidoBrkzrui82ibknm8fDIDZFvLk0E5k7jWwUTsWXPRJVbsh5Zxtf5pezWWPdb3rythPppbByupYDN55UdW544HeSMVYIiajbKd8jPX3qvMSAxA1enOZ/4ro2j8P5mqPDEOioqMy3AaUA==
+X-Gm-Message-State: AOJu0YxKSRaE0JFADQVu57Uw5pkJdMz5yIQF84YvqUwNYBT1sFehyHhT
+	9gZXNtallgIH5TAQj0f47Sdoh8v2Rynw8ntO+8R6sPbsQ5ZkTLKM
+X-Google-Smtp-Source: AGHT+IHSshkfT1uIQWOnACVv/tDpADh+aIudiggPQs3RFyGGLrx+yTBY87WFXQ4PSYNZ8Sm7sOWKRw==
+X-Received: by 2002:a05:6000:11cf:b0:351:debf:a39e with SMTP id ffacd0b85a97d-354f757d1a5mr4479651f8f.27.1716547658868;
+        Fri, 24 May 2024 03:47:38 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fadd72sm49999255e9.31.2024.05.24.03.47.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 03:47:38 -0700 (PDT)
+Message-ID: <4ccfe084339360695edb5ae774a3bc67b1781c95.camel@gmail.com>
+Subject: Re: [PATCH v4 08/10] iio: imu: adis16475: Re-define ADIS16475_DATA
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>, 
+	linux-kernel@vger.kernel.org, jic23@kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, conor+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
+Date: Fri, 24 May 2024 12:47:38 +0200
+In-Reply-To: <20240524090030.336427-9-ramona.bolboaca13@gmail.com>
+References: <20240524090030.336427-1-ramona.bolboaca13@gmail.com>
+	 <20240524090030.336427-9-ramona.bolboaca13@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2024 at 04:19:35PM +0530, Pankaj Gupta wrote:
-> NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE),
-> are embedded in the SoC to support the features like HSM, SHE & V2X,
-> using message based communication interface.
-> 
-> The secure enclave FW communicates on a dedicated messaging unit(MU)
-> based interface(s) with application core, where kernel is running.
-> It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
-> 
-> This patch adds the driver for communication interface to secure-enclave,
-> for exchanging messages with NXP secure enclave HW IP(s) like EdgeLock
-> Enclave (ELE) from Kernel-space, used by kernel management layers like
-> - DM-Crypt.
-> 
-> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+On Fri, 2024-05-24 at 12:00 +0300, Ramona Gradinariu wrote:
+> Re-define ADIS16475_DATA such that it takes _has_fifo as parameter.
+>=20
+> Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
 > ---
->  drivers/firmware/imx/Kconfig        |  12 +
->  drivers/firmware/imx/Makefile       |   2 +
->  drivers/firmware/imx/ele_base_msg.c | 286 +++++++++++++++++++
->  drivers/firmware/imx/ele_base_msg.h |  92 +++++++
->  drivers/firmware/imx/ele_common.c   | 239 ++++++++++++++++
->  drivers/firmware/imx/ele_common.h   |  43 +++
->  drivers/firmware/imx/se_ctrl.c      | 531 ++++++++++++++++++++++++++++++++++++
->  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
->  include/linux/firmware/imx/se_api.h |  14 +
->  9 files changed, 1318 insertions(+)
-> 
-> +static int imx_fetch_se_soc_info(struct device *dev)
-> +{
-> +	struct se_if_priv *priv = dev_get_drvdata(dev);
-> +	struct imx_se_node_info_list *info_list;
-> +	const struct imx_se_node_info *info;
-> +	struct soc_device_attribute *attr;
-> +	struct soc_device *sdev;
-> +	u64 serial_num;
-> +	u16 soc_rev;
-> +	int err = 0;
-> +
-> +	info = priv->info;
-> +	info_list = (struct imx_se_node_info_list *)
-> +				device_get_match_data(dev);
-> +
-> +	/* This function should be called once.
-> +	 * Check if the soc_rev is zero to continue.
-> +	 */
-> +	if (priv->soc_rev)
-> +		return err;
-> +
-> +	err = info->se_fetch_soc_info(dev, &soc_rev, &serial_num);
-> +	if (err < 0) {
-> +		dev_err(dev, "Failed to fetch SoC Info.");
-> +		return err;
-> +	}
 
-This is called unconditionally but is not set for i.MX93. You should
-either set it for i.MX93 or check it before calling it.
+I may be missing something but do we actually need to patches redefining th=
+e macro?
+If I'm not missing nothing the first patch is only relevant for the new ADI=
+S devices
+which are added in patch 10. So maybe squash both patches changing the macr=
+o.
 
-Sascha
+- Nuno S=C3=A1
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
 
