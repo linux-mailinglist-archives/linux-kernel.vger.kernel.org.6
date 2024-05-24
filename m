@@ -1,140 +1,140 @@
-Return-Path: <linux-kernel+bounces-188850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A668CE7C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:23:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 029BA8CE7C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F9CF282F15
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340D81C20699
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CC312E1C5;
-	Fri, 24 May 2024 15:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C421B12EBE7;
+	Fri, 24 May 2024 15:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElhUYfZu"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cM4l69z8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1590112DDB3
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9612EBDD;
+	Fri, 24 May 2024 15:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716564140; cv=none; b=J0BDvBliNuc7uVZp+Czd7PDr2OA7w27Z5o5/Xy2bcLQf1RpsO/NsG+McnE2W97TE/RR04TlL6WPD4S/qxS/GJWJx3nXgdQ3AxPrD31QJqvRn8pAIO+eWMH9ngZsisKEhbRGxtXcP5DRstYbPwDOF9ln7ZDTmNRq3ifs0CB3I3bQ=
+	t=1716564147; cv=none; b=F2/KyvTf/+hTubkXSR9QjKtBbdE8a6CrbqmpZTXa6QreaqEM67Ym8Hw08SFcGPAV9OaQyKKdNYXaO8q8D9XPMB0WYumIcoXqYmVgCH0P/sWEdKB8APMuQoBPZ9PDrtF+UC0huC5UmJ1sIQqDXDzZhMD2GZjn6zSWYCYxniETnzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716564140; c=relaxed/simple;
-	bh=rERK38A3YDvE0CAtapMe8mxNsMbKVDTYsfNJyVUOTa4=;
+	s=arc-20240116; t=1716564147; c=relaxed/simple;
+	bh=KJRMlqCqKSeCAg/9WK2lD6+u6yawgLpv3ewX/qdZ/8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klFPraF4oCOfLfYQ2kNd5ilqqZxCEbg1O4SxxExaVp/+pp6KxyMe/8rkOVYO4m+8nEtYSNL6HLbex+PnHVVA+MK7i+IT3zyPbu2xOeKXK5ab94j9StFOcYHpQi4+MqBO3MAu+rlHtoDFrHiSIJEv48+ITZF4b0/QTNda0yu4jXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElhUYfZu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DD2CC2BBFC;
-	Fri, 24 May 2024 15:22:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716564139;
-	bh=rERK38A3YDvE0CAtapMe8mxNsMbKVDTYsfNJyVUOTa4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=gB1fId69lD8A/ZvahXf9uu1xux575TxqLPFIVQw6Fp1V3gI/4ofdCLN94+Fg0UBlL4dEZQD56uo4iLItf77m5PGpGAW0YnyRMZin7k4/NyMKOdZ9P0PhVL8gTV17WXMMSzH+OBe4DiREB0f3U6k6B/6r+Xrax0fZ+T3e0u2sDaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cM4l69z8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E4F5C2BBFC;
+	Fri, 24 May 2024 15:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716564146;
+	bh=KJRMlqCqKSeCAg/9WK2lD6+u6yawgLpv3ewX/qdZ/8I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ElhUYfZuIxVWE1d2d0zdwnEg7VPJNUsIIgjeECn2Fw/Hvej4YemstEuJNSoS/Kkxo
-	 7l93U+MDDNuD8o/Rhpt2yTkhjaxJZqt/Y8XQZT3jqcJduPneQT8KohIiWg/FZcCF1e
-	 ZVDj7DSKX3YI/dwbzpO+naqp99zbM+zywVaXb2y94KrvXZ09bEMVEhiLkSSM44wkyy
-	 A3KgKSHwmot2fTmevA9UzzM8L8SS3Pr7oz0n5zryc7F0ntQAu+XQhRd2sLea9puqLl
-	 2wX8orrpDm9jZkjbgxVae8jBoWmogBw0kEv0XOvVpQ4JMBxIm9l8qZInw7AAi86AC0
-	 HL4TbNnOkVc6g==
-Date: Fri, 24 May 2024 17:22:16 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>,
-	Chris von Recklinghausen <crecklin@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: sched/isolation: tick_take_do_timer_from_boot() calls
- smp_call_function_single() with irqs disabled
-Message-ID: <ZlCwqEUPq5VFAqrS@pavilion.home>
-References: <20240522151742.GA10400@redhat.com>
- <20240523132358.GA1965@redhat.com>
- <87h6eneeu7.ffs@tglx>
- <20240524141018.GA14261@redhat.com>
+	b=cM4l69z8Pri4jff3QA2Yg9o1yKRy1YBKslxPI09u6Tn4L7xN1Lwdh4vgH7e7kYgAZ
+	 YZV+NdsVMmcEwCbZWoxSAV34t62+YaKYJTgLQN35fFotRferv8DJx27pU1HTTr1E47
+	 +ZhKTtjtNwSY/ZcbEKgEYghuOdSgOfe5zkDa8RTM=
+Date: Fri, 24 May 2024 17:22:24 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org
+Subject: Re: CVE-2024-35906: drm/amd/display: Send DTBCLK disable message on
+ first commit
+Message-ID: <2024052453-afar-tartly-3721@gregkh>
+References: <2024052136-cubbyhole-ecologist-5b68@gregkh>
+ <ZkzREEA5_N_xfqED@tiehlicka>
+ <2024052110-grasp-liking-22c0@gregkh>
+ <ZkzgZoxF_RD50PdW@tiehlicka>
+ <2024052243-napping-coastal-3306@gregkh>
+ <Zk790Afi1sfwgrZi@tiehlicka>
+ <2024052309-scabby-favored-0973@gregkh>
+ <ZlBnsEsr66mR-frf@tiehlicka>
+ <2024052458-matrimony-making-b7f1@gregkh>
+ <ZlCd6kD4w2mezWBj@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240524141018.GA14261@redhat.com>
+In-Reply-To: <ZlCd6kD4w2mezWBj@tiehlicka>
 
-Le Fri, May 24, 2024 at 04:10:52PM +0200, Oleg Nesterov a écrit :
-> Hi Thomas,
+On Fri, May 24, 2024 at 04:02:18PM +0200, Michal Hocko wrote:
+> On Fri 24-05-24 13:47:00, Greg KH wrote:
+> > On Fri, May 24, 2024 at 12:10:56PM +0200, Michal Hocko wrote:
+> > > On Thu 23-05-24 15:49:59, Greg KH wrote:
+> > > > On Thu, May 23, 2024 at 10:26:56AM +0200, Michal Hocko wrote:
+> > > > > On Wed 22-05-24 05:57:38, Greg KH wrote:
+> > > [...]
+> > > > Because of asking, many others are starting to help out, you can too,
+> > > > just submit patches against the cve/review/proposed/ directory with a
+> > > > list of commits that you feel should have CVEs assigned for, or annotate
+> > > > why you feel specific ones we have reviewed should NOT have a CVE
+> > > > assigned, and our tools can handle them quite well as part of the
+> > > > assignment process (see scripts/cve_review for a tool that some of us
+> > > > use to create these files, that's not required, as not all of us use it,
+> > > > but the output format is the key, and that's a simple list of commit
+> > > > ids, personally I generate that from mboxes.)
+> > > 
+> > > Do I get it right that proposals shouldn't be sent via email to
+> > > cve@kernel.org as suggested by the in tree documentation?
+> > 
+> > The documentation should say that you _SHOULD_ send proposals to
+> > cve@kernel.org, did we get it wrong somehow?
+> > 
+> > > I do not mind
+> > > the specific workflow but until now I have followed Documentation/process/cve.rst
+> > > as authoritative source of the process. It would be really great if that
+> > > matched the workflow.
+> > 
+> > I'm confused as to what in that document is incorrect, care to point it
+> > out?
 > 
-> On 05/24, Thomas Gleixner wrote:
-> >
-> > >> But I don't even understand why exactly we need smp_call_function()...
-> >
-> > It's not required at all.
-> >
-> > >> Race with tick_nohz_stop_tick() on boot CPU which can set
-> > >> tick_do_timer_cpu = TICK_DO_TIMER_NONE? Is it really bad?
-> >
-> > This can't happen.
-> >
-> > > And is it supposed to happen if tick_nohz_full_running ?
-> > >
-> > > tick_sched_do_timer() and can_stop_idle_tick() claim that
-> > > TICK_DO_TIMER_NONE is not possible in this case...
-> >
-> > What happens during boot is:
-> >
-> >   1) The boot CPU takes the do_timer duty when it installs its
-> >      clockevent device
-> >
-> >   2) The boot CPU does not give up the duty because of this
-> >      condition in can_stop_idle_tick():
-> >
-> >      if (tick_nohz_full_enabled()) {
-> >      	if (tick_cpu == cpu)
-> >            return false;
-> 
-> Yes, I have looked at this code too. But I failed to understand its
-> callers, even tick_nohz_idle_stop_tick() which doesn't even call this
-> function when ts->timer_expires != 0.
-> 
-> This code is too tricky for me, I still don't follow the logic.
-> Damn, I can't even remember the names of all these functions ;)
-> 
-> > > So, once again, could you explain why the patch below is wrong?
-> >
-> > > -			tick_take_do_timer_from_boot();
-> > >  			tick_do_timer_boot_cpu = -1;
-> > > -			WARN_ON(READ_ONCE(tick_do_timer_cpu) != cpu);
-> > > +			WRITE_ONCE(tick_do_timer_cpu, cpu);
-> >
-> > This part is perfectly fine.
-> 
-> Great, thanks! I'll write the changelog and send the patch tomorrow.
-> 
-> > > --- a/kernel/time/tick-sched.c
-> > > +++ b/kernel/time/tick-sched.c
-> > > @@ -1014,6 +1014,9 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
-> > >  	 */
-> > >  	tick_cpu = READ_ONCE(tick_do_timer_cpu);
-> > >  	if (tick_cpu == cpu) {
-> > > +#ifdef CONFIG_NO_HZ_FULL
-> > > +		WARN_ON_ONCE(tick_nohz_full_running);
-> > > +#endif
-> >
-> >                 WARN_ON_ONCE(tick_nohz_full_enabled());
-> >
-> > which spares the ugly #ifdef?
-> 
-> Yes but tick_nohz_full_enabled() depends on context_tracking_key, and
-> context_tracking_enabled() is false without CONFIG_CONTEXT_TRACKING_USER.
-> I didn't even try to check if it is selected by NO_HZ_FULL and how do
-> they play together.
+> Maybe I've just misunderstood the part about sending patches against
+> cve/review/proposed/. I was thinking about sending pull requests against
+> vulns.git.
 
-Yes it is! You can rely on it.
+Yes, you can do that too, send it to same email address.  That's not
+really documented, just ask us instead!  :)
 
-Thanks.
+> > And people want to word-smith the text all the time already, so we just
+> > default to using the changelog text as that's the most "neutral" and
+> > public information out there (i.e. we don't have to worry about any sort
+> > of data-retention or classification laws as the information is already
+> > public in kernel changelog text.)
+> 
+> This part I do not understand. What is wrong about a reasoning why
+> something has been considered a CVE? E.g. something like 
+> CVE assigned because a potential WARN_ON is fixed and that could panic
+> with panic_on_warn. Fixed by <URL_TO_LINUS_TREE>
+> 
+> or
+> CVE assigned because UAF is fixed and those can be generally used to
+> construct more complex attacks. Fixed by <URL_TO_LINUS_TREE>
+> 
+> etc.
+
+Doing the work to classify all of these in this manner isn't going to
+happen by us, sorry, as it is not required by the CVE process, and
+frankly, we are doing a load of work already here.  We are going to rely
+on the text that is in the changelog.  Maybe over time you can work with
+the kernel developers to write better changelogs to describe what you
+are looking for?
+
+We will rely on external parties to "classify" the CVEs if they wish to
+as there is already a whole ecosystem that attempts to do this already,
+with various success.  In the end, it's up to each integrator of Linux
+to classify them themselves as everyone's use case is different
+(remember, cow milking machines, super-mega-yaht-stabilizers, washing
+machines, servers, watches, air-traffic-control systems, etc...)
+
+thanks,
+
+greg k-h
 
