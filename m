@@ -1,214 +1,208 @@
-Return-Path: <linux-kernel+bounces-188552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DF58CE351
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 162438CE352
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2FC1C21BD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355B81C2157B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2AB84FCF;
-	Fri, 24 May 2024 09:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D7C84FCE;
+	Fri, 24 May 2024 09:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="E9wyE8fE"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bgfcu2z1"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6396E615;
-	Fri, 24 May 2024 09:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716542960; cv=fail; b=i22Q64T83p0nJ4mGj8gVJIQRhrfLy4Q3QXkqit0PfmP2o/eyuFy9NLGQjaqTHvPrpjDXfUUiMt8XU+H+yRAuL+tpm+Dts0fEuyQQ0VFA3yD+wTkcLTTa6CMNn+s5vQY1ujfiqKBJIQrv7uvoYA/AhR8Gf/9nLrEdEtf481TmENs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716542960; c=relaxed/simple;
-	bh=IyUkPioFfJXuyp6FgY+U/sCDAgMHmG/yMga3WNqzbXc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=frmIChn1oZhe1vTYhmBKhwxOvL840kS6Rtvm+hyV7YmTtlDE00GbYF1J+K6TvjoDutvBGOpSJltPxZUTU3zecbDOvS+PWsKacAxwnPVGow2QAmGrjGzVcTScipb7wlokL4Nd8YWQ0nj1l96fHL7SGcKJS7R2TpJ7TyNuesQmRno=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=E9wyE8fE; arc=fail smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O60RTX016339;
-	Fri, 24 May 2024 02:28:50 -0700
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3yaa85tmuw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 02:28:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Kqq5KsR0SKN5zQqP9Ydc61Gtm2m8aeo04ejAK/rvEwpGAVPNzXolmaSCMi68PBB/koL4KvHARtwSHsAFQeKAVKqpsa96WdTUQB5II4/xq7nfbYK9jOdHde3IWqKchoR5+ybkYIzC/5SWSXCt1xKklgCMZsJouzJ7IZe7fY/2bFN+hJqSg3XMGkDjcxoVG6c2erF7zdkG/Q8xKTTip8Vnid0nhTJNx9g8R7MdxcLxctCCq4CbDfatl1VkWrG84GWaqkPzridAmFe/7oA9JP9JS91XYq9bZkVvnL0gbTRMfXEbZsgyMvmhiNFaPFbchBdcWx9uqvZkgFU2GiS7buLrNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YdFegzvpShIEESA7aalmeFQ8sVBjj/s9H/bqeYgwcfw=;
- b=cQzA6Ae9MAO2M/XwmTVFRXVjc8ZFYpeLVXOWZhJ1Td4nVFKgWgL99EGV2xX62CU873YV5FCePsPKHu34KjlI9DOsHcQnExyoUFK3/CbiA9szRmxCzI6Xgk9EmmK1qSm7/XKFB7BQO8o1SyLhtThiMVc+pK6VGSNnodc/flvJMlAC3SFOqkDQzO/Zh9gyNSztO9HSeWi4mTai1W8LZAqYOrQk1RzAabHgCTiwrkMJDDrs18kf+tYOuGggdAqydop+ALnBazqFjhB1A9A9cbpKSJyWQnWUj2miy4GUo8lSqHpDCoMljZ7XUGReDgutOh13eS6Ym4Vxv4w66RRqgroY2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YdFegzvpShIEESA7aalmeFQ8sVBjj/s9H/bqeYgwcfw=;
- b=E9wyE8fEVlnqtVn6EiRCtwe6dcQOQHqwOEeLKVg4c64dxeC+nsHqCZj8Z5plO31CMdNqt5tFwidN7sC9xvcxdhqUB345lez/Ndt0Hnvcrt8C4Qc64UjDGoDNY8FxxWzEVEWa6vXJ6IR5ywLnw0w+VhsQVdJ+n741xgQ2YoK0WtE=
-Received: from SJ0PR18MB5216.namprd18.prod.outlook.com (2603:10b6:a03:430::6)
- by CH4PR18MB6360.namprd18.prod.outlook.com (2603:10b6:610:230::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.26; Fri, 24 May
- 2024 09:28:45 +0000
-Received: from SJ0PR18MB5216.namprd18.prod.outlook.com
- ([fe80::2bf5:960a:a348:fad1]) by SJ0PR18MB5216.namprd18.prod.outlook.com
- ([fe80::2bf5:960a:a348:fad1%5]) with mapi id 15.20.7611.016; Fri, 24 May 2024
- 09:28:45 +0000
-From: Suman Ghosh <sumang@marvell.com>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>,
-        "andrew@lunn.ch"
-	<andrew@lunn.ch>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "pabeni@redhat.com" <pabeni@redhat.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [EXTERNAL] [PATCH net v2] net: micrel: Fix lan8841_config_intr
- after getting out of sleep mode
-Thread-Topic: [EXTERNAL] [PATCH net v2] net: micrel: Fix lan8841_config_intr
- after getting out of sleep mode
-Thread-Index: AQHarbhQeUVWEJNGskeeatAPV6IdgrGmHecw
-Date: Fri, 24 May 2024 09:28:44 +0000
-Message-ID: 
- <SJ0PR18MB5216EFA6E40EF5FAC4C096A0DBF52@SJ0PR18MB5216.namprd18.prod.outlook.com>
-References: <20240524085350.359812-1-horatiu.vultur@microchip.com>
-In-Reply-To: <20240524085350.359812-1-horatiu.vultur@microchip.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR18MB5216:EE_|CH4PR18MB6360:EE_
-x-ms-office365-filtering-correlation-id: e4c53dd0-8d05-4c11-b88b-08dc7bd3e893
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: 
- =?us-ascii?Q?1NDKS7Ai3D0X0V6NOtxptVdLeOgm4hkH1kNmdyO4yw0Ch6Es57Mglifq56CE?=
- =?us-ascii?Q?v6oL7FQwe+woaBa3DHngF8PWfA8Om/6TXzKJfPKLb3IWmJzpvNm46laYwwxO?=
- =?us-ascii?Q?Ds/I2ousJtRfLswNiMr5LdVGj4OBkkHGZ+o71FZJwUw4QV4C7pqQXGBOIKDM?=
- =?us-ascii?Q?EUOFgP/RAUeGBUA20PHKcAdjZt1pLpQ7LKQPx/xBv8JViApqSCd7sJKUcg8t?=
- =?us-ascii?Q?vNdg55yru0awguyfKa5V6/1y0Q2YBnOBeVJJ7saPuEqRyZOaOGPac6f4Nn4V?=
- =?us-ascii?Q?5B6HXZk5sGkM5hsD0kkTC9QlIwVN60CezohTNdKnsELNNOjSnrPlDXfEimck?=
- =?us-ascii?Q?Fi0HBY81ZxCntakY7o3wfJ5MW4sWH3ARvD3hwehyhEVGY3/yPvE8Sdy7wMa1?=
- =?us-ascii?Q?iFkGpsgyspQ1pLZZYmNrujRAENn7CHrqScqIEXkw8/786bDzvYlSCP5xLKKm?=
- =?us-ascii?Q?DSEkRfqcoXJHGEx/h8YBBPZe1CzyuBEnu75ApGpc/TvBcY/LKWFQjTBdP9RU?=
- =?us-ascii?Q?wbsRFMe8Ri0NC21mGANq6e3DSSlU/1SlEEAIJQbxXnPF13n2qsBUv7/ASj1r?=
- =?us-ascii?Q?R7TKykm7rj6GdjTKbhJJquhFKu4T0RQFR9P0+fe1PHMtX6NqcNE/YVysdXgz?=
- =?us-ascii?Q?QM5gAMCDoDDiWVdPHB+eE9wz/Y9fq+Mn75GO6jQFaUM7LLYhpEmzq4tGbaYU?=
- =?us-ascii?Q?DqqSfQPaucP8qbZMqxzTza6GydJpA8Un+X1o2XlSECqMV9cY526PHeMly9xA?=
- =?us-ascii?Q?VcYPzWC0jaLhYAAyxlQonQ9RegJOnsrJ1PTP+6lrobwAE+SjY1qJoAwBuNZR?=
- =?us-ascii?Q?gZ60iDz/LnkyjO2+PkpiR3mMtfpfdS437Qt6AkpUoRZaiQ8wX0I17MPRH/pk?=
- =?us-ascii?Q?AqiI4m0Qg8Dg1vn1MdvLC6vVuEPFqb/yFB2kkYvCD9gFYhVZtM2/lA9aZeF5?=
- =?us-ascii?Q?JVCEqQICQex9nu45Pw2EvaO7XpRcu/mkm5NzK6v4f1jqtPyw/Et2wwDzcxIQ?=
- =?us-ascii?Q?mK9jpCQlNHheoZdjEUeTwYE0AMTI7M7TKPKITDSqJr8H6HtXEu/tKnvLizcF?=
- =?us-ascii?Q?F5se3JxmJ2wqlDcIQ/FUGi82IK0if+Qo8+bj/ikPFYiwbTcgvrxOOTjqW1Kw?=
- =?us-ascii?Q?tlEKAV3uLHn4Ul5+bCVtsRJVot/+++YheKnqeEhFZY66NxQPz1kdRtmXymOn?=
- =?us-ascii?Q?xZwbZnP/gWVu3FKG/8rqR/S25nWfvFM8B2jpVi9TvOKX5Mr4r6wQYy+KeDZM?=
- =?us-ascii?Q?tWtI7dn4n2di9yIxlep9C9Zq6N55Zpvza1F2EwfulxgV2oRmym7wVkKFyTRB?=
- =?us-ascii?Q?q8TkCRlR7nYFdvuaDlRk4ZoieY2FBaAHB0gQFNPs1iGywQ=3D=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR18MB5216.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?us-ascii?Q?YrttkIiDSTMVDH/4zWdRugVYzcHMImZk3OKSWtjzC4XAHPHqoINQS5DMLQU7?=
- =?us-ascii?Q?bVaR5/0IrdR+HpvdCRJ/aA53uZYYUp4CqvZ4RYff6ZM7sT3g+Jr24OsPk597?=
- =?us-ascii?Q?uSH2OyEYNbcyMtEFdRvbXJLHmRsU0nQXTDUBj+SQ+rvO7EZys62RJtI1XARK?=
- =?us-ascii?Q?1PQWnkRYZ/IwObb5JE6B7Gvacj8le3fZ5NarKtIrJv09PbCZWvYGKenVYqHi?=
- =?us-ascii?Q?PZ3OqnBoM7sZlsOGsoP5WV9xaxitKJnEpLvdI3ViZQ1oUZ/lOpiG9UFEwmx/?=
- =?us-ascii?Q?vcmUTTHR/oTX4+t++e3i/FhnRn38GjMImjZe6NX9wy+2P5ijNRJYjslK8Dvd?=
- =?us-ascii?Q?6SL+ZMMvsFDire7fAa0yajotXb83NA1JX9BCV4N0UuSdDokKrS3SorLrOPeX?=
- =?us-ascii?Q?qwNdDljPyI4dFK9sSiu5N8MTXOAgnjRvLyGJkLbC1O0o8C0c8ZZvbPqTsB++?=
- =?us-ascii?Q?KdKNVx3bHBT9X30lELW3t0AVoAKysLxlOTG5W0JfI/mpui/RUwSwDVqjy1AL?=
- =?us-ascii?Q?tvL5KuwepgqzYE03tFjarzohxXWyZAHDDLVeEKyqLfrfmxLWXzKG0TnPLmGv?=
- =?us-ascii?Q?f+syfEHd9Khvebzt9ZyT3cx0wS9RTd645wSFjjpFtlgrc+nQqS0hFMNC+Aza?=
- =?us-ascii?Q?aMVqJ4ygDKcCDAJ1aqX65Oui8N+uGXaRmaIC8hZDuuqoIgfbbu175JJBWpKm?=
- =?us-ascii?Q?20N1rXwIqVGezNc+BOg5vndzqFopCEspLy9raIea4w8J1US8MC2yt55c731J?=
- =?us-ascii?Q?5KA2meBP+/nzcPGaAtzepxkp5uwuSi2L8F1bbHV/b2A9iYnr/3IHeEUm6c0g?=
- =?us-ascii?Q?yQPWsAbNoZp8Cf06fedeHDCjb22doahnN+3ceTEBMACDJCkXfOjuCY3m7uw4?=
- =?us-ascii?Q?afASDZMpa8N4s2IC6HRYMnBnnxd5USy0yoaDKd0KfkuDJLeg1ny6jKd/xthv?=
- =?us-ascii?Q?NGC1I2xI+Sqm0ES3vULVpOf3euRTsIA8zcMfLEdRIQBQPs9WL1sZh0yrR/T4?=
- =?us-ascii?Q?eJKVHpxs2TSKuD2GBd0+vgptnmxBOcdIYkagGxNuHm2OmKzlxjYkKSJ5w06h?=
- =?us-ascii?Q?hNfwHV/o07aaXL60ak2affe6wSXYDUYYSseSol+q6yD2unMYw1dbCjytTWcX?=
- =?us-ascii?Q?2YcJhNTCapQPSLB2BWqIRsiM42VEHuHL0fnjBy+bz8iOydyFlQCN5K7+4h3m?=
- =?us-ascii?Q?6avDaxcUp3Ha6VPMMAo5E3ppANOiYHWD7ISm00N2XljaswcGBWq3ExtUBah8?=
- =?us-ascii?Q?cf30UATo8USmSy/WRXAiFMMlSmQk584l0LoNucOdeJAfDDusMV8cGXphP4BC?=
- =?us-ascii?Q?qZR685Qrg+G80VpIa2IawBzfsxEi6g7xFp91eEJ9ntdZTbiIrJX5PTfagEfU?=
- =?us-ascii?Q?WHwc270TLz438EQHHANqxg7d5rO9JU+1qPcfjr30yY+J7a3qCggbA4xLYuKj?=
- =?us-ascii?Q?b9XcVl7djUACJ7N80m4zxgyoo922An0b53Az6BqdOBCnsyN2rJDVFOI4il12?=
- =?us-ascii?Q?aRP8PqYC3TTWH3szmJ9gKRDzQrt9kYi2oYqZ4CHZ+qOLZTDY4+evZZ+qZJhR?=
- =?us-ascii?Q?qXQUxnQDumATv85nAJ0=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6C26E615
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716542970; cv=none; b=fUuAMCIvRF6dc5EMkhMz+dZ7yPrhegn7xiGjpiwgSaO2p/nlkvRHiJOM/40mtRic2DcxgNYtce5uY8cwku8LbEGEU0d+0ysNbNMlS/gjtdn+DSIG/ncyRdXJUHqNP1JSr0ryR3k+FD38gLY4KMC+QueGXg1GESO5/zAffpw6C/E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716542970; c=relaxed/simple;
+	bh=IBAnQ9CMDXIKWvV3wLZ+swiAC1EyC37vO4/qOtqoCMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BtP6IWMrOnSU7o7HJjLSBB6sc/5ZbCjDJTu8tZDmGHTWoZmuvaqUa8CxdcfF6R+Gsma9Na7Cmt5hRsvxOgQZYhkHT5rf8csEBRgPutDGi1h4ZdVE2Le0FxN7Hm4IGco70vvD1Cqaalq4HBSkRMlpc9ivMhfkdc9Yh+ZGsY0hBgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bgfcu2z1; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-df475159042so6361406276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 02:29:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716542967; x=1717147767; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P22112kFA90ysUyH7aovtgsokvUOX3eAoJT9LIJl3U0=;
+        b=bgfcu2z1QZ6L3HdKDCAYPMoL9pFCBtI1g7qWpfB1rveE2HjnM9yZOD0uq+uLoJi6NF
+         p6CN7nsMEdmwRQzuTYf35A4zNpwnf0CrngOjZHC8F2X28In1HiNH8hKNFIFcHvTmOyde
+         aSiKTFqH1JvosHvNo5RZ/ihFLhmKAOvMZhDoZHFoZ5ZkQYHb9/4Z8Ktn9bzoeJHZS/Ce
+         L6bf3OsNaVdZgiT/2kJiahpJiLMZNYpy9HP/6rMO5kh0RFkWqHJ1/lntYPMuHCK/RLf4
+         WoonNVsxZrVzVouWLycGTCSquKPgpVwyZ9Xi6duYsNs4MWsB/yxysC3+htvqfKajZCnj
+         MUhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716542967; x=1717147767;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P22112kFA90ysUyH7aovtgsokvUOX3eAoJT9LIJl3U0=;
+        b=ATmg5fHTcEPByrarBPfrPjlyDBWPRBQ7qoGRlSm9XpxNNgV7StudwP2JVm1vFzhrV+
+         mgWxZLjIP2hS5vnw2VYUsGbG98lZbkgLDreBwbi/5xhV8u0TLmbMYx6Q3rknHgJHBCTg
+         pj6JCbhICn+wsNDHD6ixK2e03qwmyurVOr+FfS8yM0m4zOu0ca3+TUNLtqLW9ypdofkN
+         BdPTmTufVwxonROSbmnsdfLP3IkpL8cVy9Csxq6FkqbmHx15ZkzF6n6d2kzcS+/VbnPk
+         jwKrriwyCkI+aoj6bZP0uNGg7RSZ17PlcYJMbBib+d2RAm3dN6HKybMzrLON/T3RQkJF
+         CatA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQC+rqWba4KJMi/JDDf0iR0Oso7LxViF5ELFpwqZKd3+zHrssWGFszWGrwxSjwJ1xhajXXpmsp78+73CCj6KVe6YMkS/ltx5/aZQ52
+X-Gm-Message-State: AOJu0YzsKTV8nrzombtc/HWDzTRKyWUXBPZ3LvCU+IFUYuFGry+/H+7v
+	i2pgoxs0xUAPDQ/DeUhngf3zoWUYLE5S0d1H5TYUj8ylod2fu2OExwhcgLN9vLRf4sMpoxEcLuX
+	gAiDRB2HQlVFtE2oBlbPlJJ9KfD12unxEtwE34g==
+X-Google-Smtp-Source: AGHT+IH5kMYZ/J9vZ252zm8A3SdbGG9Q4CU9lCHy4KU17bWRixODcdgT+jPb7hSuOZsaT0YhwZFPjRji7j89YbQD+8E=
+X-Received: by 2002:a25:add9:0:b0:de5:f0ef:788e with SMTP id
+ 3f1490d57ef6-df77219deb4mr1663549276.20.1716542967414; Fri, 24 May 2024
+ 02:29:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR18MB5216.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4c53dd0-8d05-4c11-b88b-08dc7bd3e893
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2024 09:28:44.9864
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RlmpOqtEw4TZ5SLpqmpUGZ5PPlsFsP6cHHJbVFEzzw7haTbYdOP83CJ4iSjyUMlRIUly0+ZPD+P/WYnJWNwt9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH4PR18MB6360
-X-Proofpoint-ORIG-GUID: bpr7T7MyoRC69_4E-8Xl20XKVrABZU3U
-X-Proofpoint-GUID: bpr7T7MyoRC69_4E-8Xl20XKVrABZU3U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_02,2024-05-23_01,2024-05-17_01
+References: <20240524082236.24112-1-quic_kbajaj@quicinc.com>
+In-Reply-To: <20240524082236.24112-1-quic_kbajaj@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 24 May 2024 12:29:16 +0300
+Message-ID: <CAA8EJpp9U-ucMAiNmVvWDuupd=OR_fLK9fQ+n21SVmktWMxhmA@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: qdu/qru1000-idp: Fix the voltage setting
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Melody Olvera <quic_molvera@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
->diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c index
->13e30ea7eec5d..c0773d74d5104 100644
->--- a/drivers/net/phy/micrel.c
->+++ b/drivers/net/phy/micrel.c
->@@ -4029,7 +4029,7 @@ static int lan8841_config_intr(struct phy_device
->*phydev)
+On Fri, 24 May 2024 at 11:23, Komal Bajaj <quic_kbajaj@quicinc.com> wrote:
 >
-> 	if (phydev->interrupts =3D=3D PHY_INTERRUPT_ENABLED) {
-> 		err =3D phy_read(phydev, LAN8814_INTS);
->-		if (err)
->+		if (err < 0)
-> 			return err;
->
-> 		/* Enable / disable interrupts. It is OK to enable PTP
->interrupt @@ -4045,6 +4045,14 @@ static int lan8841_config_intr(struct
->phy_device *phydev)
-> 			return err;
->
-> 		err =3D phy_read(phydev, LAN8814_INTS);
->+		if (err < 0)
->+			return err;
->+
->+		/* Getting a positive value doesn't mean that is an error, it
->+		 * just indicates what was the status. Therefore make sure to
->+		 * clear the value and say that there is no error.
->+		 */
->+		err =3D 0;
-[Suman] Looks good to me.
-Reviewed-by: Suman Ghosh <sumang@marvell.com>
+> While adding the USB support, it was found that the configuration
+> for regulator smps5 was incorrectly set. Upon cross verifying for
+> all the regulators, found that smps4, smps6 and smps8 are also
+> incorrectly configured. This patch fixes the same.
 
-> 	}
->
-> 	return err;
->--
->2.34.1
+Nit: see Documentation/process/submitting-patches.rst, "This patch..."
 
+> In particular -
+> - smps4 is 1.574V min and 2.04V max
+> - smps5 is 1.2V min and 1.4V max
+> - smps6 is 0.382V min and 1.12V max
+
+Just for my understanding, will anything further constraint these values?
+
+> - smps8 is fixed at 0.752V
+>
+> Fixes: d1f2cfe2f669 ("arm64: dts: qcom: Add base QDU1000/QRU1000 IDP DTs")
+> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+> ---
+> Changes in v2-
+> * Updated the commit message as suggested by Krzysztof
+> * Link to v1: https://lore.kernel.org/linux-arm-msm/20240514131038.28036-1-quic_kbajaj@quicinc.com/
+> ---
+>
+>  arch/arm64/boot/dts/qcom/qdu1000-idp.dts | 16 ++++++++--------
+>  arch/arm64/boot/dts/qcom/qru1000-idp.dts | 16 ++++++++--------
+>  2 files changed, 16 insertions(+), 16 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> index 6e129dc123ed..89b84fb0f70a 100644
+> --- a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> @@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
+>
+>                 vreg_s4a_1p8: smps4 {
+>                         regulator-name = "vreg_s4a_1p8";
+> -                       regulator-min-microvolt = <1800000>;
+> -                       regulator-max-microvolt = <1800000>;
+> +                       regulator-min-microvolt = <1574000>;
+> +                       regulator-max-microvolt = <2040000>;
+>                 };
+>
+>                 vreg_s5a_2p0: smps5 {
+>                         regulator-name = "vreg_s5a_2p0";
+> -                       regulator-min-microvolt = <1904000>;
+> -                       regulator-max-microvolt = <2000000>;
+> +                       regulator-min-microvolt = <1200000>;
+> +                       regulator-max-microvolt = <1400000>;
+>                 };
+>
+>                 vreg_s6a_0p9: smps6 {
+>                         regulator-name = "vreg_s6a_0p9";
+> -                       regulator-min-microvolt = <920000>;
+> -                       regulator-max-microvolt = <1128000>;
+> +                       regulator-min-microvolt = <382000>;
+> +                       regulator-max-microvolt = <1120000>;
+>                 };
+>
+>                 vreg_s7a_1p2: smps7 {
+> @@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
+>
+>                 vreg_s8a_1p3: smps8 {
+>                         regulator-name = "vreg_s8a_1p3";
+> -                       regulator-min-microvolt = <1352000>;
+> -                       regulator-max-microvolt = <1352000>;
+> +                       regulator-min-microvolt = <752000>;
+> +                       regulator-max-microvolt = <752000>;
+>                 };
+>
+>                 vreg_l1a_0p91: ldo1 {
+> diff --git a/arch/arm64/boot/dts/qcom/qru1000-idp.dts b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> index 2a862c83309e..258483af065b 100644
+> --- a/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> @@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
+>
+>                 vreg_s4a_1p8: smps4 {
+>                         regulator-name = "vreg_s4a_1p8";
+> -                       regulator-min-microvolt = <1800000>;
+> -                       regulator-max-microvolt = <1800000>;
+> +                       regulator-min-microvolt = <1574000>;
+> +                       regulator-max-microvolt = <2040000>;
+>                 };
+>
+>                 vreg_s5a_2p0: smps5 {
+>                         regulator-name = "vreg_s5a_2p0";
+> -                       regulator-min-microvolt = <1904000>;
+> -                       regulator-max-microvolt = <2000000>;
+> +                       regulator-min-microvolt = <1200000>;
+> +                       regulator-max-microvolt = <1400000>;
+>                 };
+>
+>                 vreg_s6a_0p9: smps6 {
+>                         regulator-name = "vreg_s6a_0p9";
+> -                       regulator-min-microvolt = <920000>;
+> -                       regulator-max-microvolt = <1128000>;
+> +                       regulator-min-microvolt = <382000>;
+> +                       regulator-max-microvolt = <1120000>;
+>                 };
+>
+>                 vreg_s7a_1p2: smps7 {
+> @@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
+>
+>                 vreg_s8a_1p3: smps8 {
+>                         regulator-name = "vreg_s8a_1p3";
+> -                       regulator-min-microvolt = <1352000>;
+> -                       regulator-max-microvolt = <1352000>;
+> +                       regulator-min-microvolt = <752000>;
+> +                       regulator-max-microvolt = <752000>;
+>                 };
+>
+>                 vreg_l1a_0p91: ldo1 {
+> --
+> 2.42.0
+>
+>
+
+
+-- 
+With best wishes
+Dmitry
 
