@@ -1,130 +1,174 @@
-Return-Path: <linux-kernel+bounces-188488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57E88CE2A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:52:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7F28CE2A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F03A1C20C5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:52:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 754E9282C92
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426CD1292CC;
-	Fri, 24 May 2024 08:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295991292E1;
+	Fri, 24 May 2024 08:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="wd0JHmYW"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvOmlvkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDDF29AB
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BB529AB
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716540756; cv=none; b=SCS7xTavrnHg+WuPS7/86+5q8nDbqWP0CUWwWSKhIg+CFEFo5cYy4/7K2d4fbcEyKA84XUE1aGbrQIXpKwj/GUxKvAKKeiUS7ewYyrIh5Rw8A6iIpj83a+nFSiFFAINIC1CAJt2l7jl+K3B1/BVr0SoO/4nKDAvRF0wpvbfYPOc=
+	t=1716540853; cv=none; b=Wh+A1r3+N7EM63xSeHuwJ7QlSnGTkx1RenTxHOu4XqD1yO1Cr9nVfvFY1/75rnkopKAM1BIDaaRQvEnIuc3JR75XMudt31/ueQMdrq3pkF4Y9Dwawjq+xsU9UkzFVfDmDVm8fh52oV81T4deM8UOdQMVtCfV7hMEHE5YSSI63Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716540756; c=relaxed/simple;
-	bh=g79TpF5NqmfM4/+AYCqHAMnlSQQsi+jBILUac8AyAJU=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=qu7aacRtLMoWN3VQz3wad+fDKUZxFl9gPAQccfWwM2GgYZp3vED6VhjkoHZm8yHxyUUX17aIQ35kCPV1Fi4mwZ95jhcB1SfcIV1s0xJ30hM6B+7A1+i7SUPYWgoQWAlSy92ysZf6nOttMrcfNfq8nz6aiCHeHslpY67TZ2UjXPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=wd0JHmYW; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id AMsEs9RRJJXoqAQf4szdfR; Fri, 24 May 2024 08:52:26 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id AQf3sWiLGsrbKAQf3ssO1H; Fri, 24 May 2024 08:52:26 +0000
-X-Authority-Analysis: v=2.4 cv=EpDUrzcA c=1 sm=1 tr=0 ts=6650554a
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=BXyYjBD0cXuZo9oD7aYA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8mMZ7AvVhPnVUl8xcQJIPlIXEWATxZ5xmhCKjmdZjgI=; b=wd0JHmYW8tM2Kq/qUf303dyWWO
-	UJexwYNqW4u8t4rw5iuouzWAKoQfJT6MHok1bGfc91NQnGZkHSRWb9bIVKZrGlall6b0VRIzlfgRC
-	O7+AeclVtX6iX8Mz4gJ10xpWPp3fjEsD2d6XuyHjWfmCCw61rp3Wj2aN655tzgELdofZ+/gQX56SI
-	+2da6obyBxbvtpz9+jdyIFjso51620+efYrTi4t4g7gupqAEbwzges1o7Z+N0ba1n8KCw8ct+sOeg
-	C6/dFX/YJrNYq1peOD81Wmi9ZAQRjqgul7OmldMSa8fnhPZAXXwk0lNRC7k07z0VeE+QR722RErqF
-	9BL5UWjA==;
-Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:39708 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sAQf1-002rOS-0q;
-	Fri, 24 May 2024 02:52:23 -0600
-Subject: Re: [PATCH 6.9 00/25] 6.9.2-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240523130330.386580714@linuxfoundation.org>
-In-Reply-To: <20240523130330.386580714@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <50c32cca-8a9c-ceda-46c3-2c86e0cc0a25@w6rz.net>
-Date: Fri, 24 May 2024 01:52:20 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1716540853; c=relaxed/simple;
+	bh=FAXY6q/KqLfozRRhaLeHqYjWrboj5rE0C/VoQK4TuAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vzc7NpkKT0f6H+LeGvLk0KWXJ+GcMavgaIZlM6ZfqmnDFOa9PDGHduPK0tfy51c4d74PSBbJp/gWAnP5l1vxM5UJESj261i3ZpUIy6DV0PEovo8qBZrEH+GAKlmAY5+kmz9nNR3d8JfszMC/PeAM6sZ0xomzGHV5k5CAztsreAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvOmlvkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D5AC2BBFC;
+	Fri, 24 May 2024 08:54:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716540852;
+	bh=FAXY6q/KqLfozRRhaLeHqYjWrboj5rE0C/VoQK4TuAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cvOmlvkR9omRAL+z5koDiA3lYIQCIzzOy/epDpUKdm+tiQ1JCLW5RIMUy/ckma01o
+	 p6Bz7FcGd+1Nr8WqCJx/ppZgVN8SXBJ9HwdcqEyJaZhDLhxw6vT6iag8ESefjwzbLD
+	 0biPP5VDtEdR70LAIPqOH/mJtFsZzszR0Uaa6eRJidBl6hjzAoWhLgp8Uz9j5gwE52
+	 YReQahWGnm6P5od6pbkSxEDPenbZX4pLb4Ebmq9/OX+kmlDDMq1DuEMOmnGBGvMZf+
+	 pf9RVOM+GzlLeE3kljkvuwdHyrZaEEZtxThTibHUXNp50tgycfTK0YoffR+PaBhpWo
+	 QgjTO6359DUfw==
+Date: Fri, 24 May 2024 11:52:21 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Subject: Re: [PATCH RFC 3/6] mm/zsmalloc: use a proper page type
+Message-ID: <ZlBVRXfZxDJjIIBd@kernel.org>
+References: <20240522210341.1030552-1-david@redhat.com>
+ <20240522210341.1030552-4-david@redhat.com>
+ <2563ea6b-7c65-46a0-adf3-552f2e863c94@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 98.207.139.8
-X-Source-L: No
-X-Exim-ID: 1sAQf1-002rOS-0q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:39708
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfBPSt2ru74lh+ohoVtOKXH9Nirtc6SJsWLTJp2K0tOqMX380nrDDL6Mr/T1QY1U5GEm8F/8S3XX6otCp3N3yQNq/eSUBgE1qSVCBI585HyELdClOtC6T
- vYJ+1nG+XHRt4J6B+gPWoGkZFnD5gOcN9iah0Rhwm0xJtYewATro526OvHrY76leIqlrxipwICQkkIlNYn09rcGd0xE8pXKKCFM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2563ea6b-7c65-46a0-adf3-552f2e863c94@redhat.com>
 
-On 5/23/24 6:12 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.2 release.
-> There are 25 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Thu, May 23, 2024 at 04:55:44PM +0200, David Hildenbrand wrote:
+> On 22.05.24 23:03, David Hildenbrand wrote:
+> > Let's clean it up: use a proper page type and store our data (offset
+> > into a page) in the lower 16 bit as documented.
+> > 
+> > We'll have to restrict ourselves to <= 64KB base page size (so the offset
+> > fits into 16 bit), which sounds reasonable. Unfortunately, we don't have
+> > any space to store it elsewhere for now.
+> > 
+> > Based on this, we should do a proper "struct zsdesc" conversion, as
+> > proposed in [1].
+> > 
+> > This removes the last _mapcount/page_type offender.
+> > 
+> > [1] https://lore.kernel.org/all/20231130101242.2590384-1-42.hyeyoo@gmail.com/
+> > 
+> > Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> > Signed-off-by: David Hildenbrand <david@redhat.com>
+> > ---
+> >   include/linux/page-flags.h |  3 +++
+> >   mm/Kconfig                 |  1 +
+> >   mm/zsmalloc.c              | 23 +++++++++++++++++++----
+> >   3 files changed, 23 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> > index ed9ac4b5233d..ccaf16656de9 100644
+> > --- a/include/linux/page-flags.h
+> > +++ b/include/linux/page-flags.h
+> > @@ -959,6 +959,7 @@ PAGEFLAG_FALSE(HasHWPoisoned, has_hwpoisoned)
+> >   #define PG_guard	0x00080000
+> >   #define PG_hugetlb	0x00100800
+> >   #define PG_slab		0x00200000
+> > +#define PG_zsmalloc	0x00400000
+> >   #define PageType(page, flag)						\
+> >   	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
+> > @@ -1073,6 +1074,8 @@ FOLIO_TYPE_OPS(hugetlb, hugetlb)
+> >   FOLIO_TEST_FLAG_FALSE(hugetlb)
+> >   #endif
+> > +PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
+> > +
+> >   /**
+> >    * PageHuge - Determine if the page belongs to hugetlbfs
+> >    * @page: The page to test.
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index b4cb45255a54..0371d79b1b75 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -190,6 +190,7 @@ config ZSMALLOC
+> >   	tristate
+> >   	prompt "N:1 compression allocator (zsmalloc)" if ZSWAP
+> >   	depends on MMU
+> > +	depends on PAGE_SIZE_LESS_THAN_256KB # we want <= 64KB
+> >   	help
+> >   	  zsmalloc is a slab-based memory allocator designed to store
+> >   	  pages of various compression levels efficiently. It achieves
+> > diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+> > index b42d3545ca85..6f0032e06242 100644
+> > --- a/mm/zsmalloc.c
+> > +++ b/mm/zsmalloc.c
+> > @@ -20,7 +20,8 @@
+> >    *	page->index: links together all component pages of a zspage
+> >    *		For the huge page, this is always 0, so we use this field
+> >    *		to store handle.
+> > - *	page->page_type: first object offset in a subpage of zspage
+> > + *	page->page_type: PG_zsmalloc, lower 16 bit locate the first object
+> > + *		offset in a subpage of a zspage
+> >    *
+> >    * Usage of struct page flags:
+> >    *	PG_private: identifies the first component page
+> > @@ -450,14 +451,22 @@ static inline struct page *get_first_page(struct zspage *zspage)
+> >   	return first_page;
+> >   }
+> > +static inline void reset_first_obj_offset(struct page *page)
+> > +{
+> > +	page->page_type |= 0xffff;
+> > +}
+> > +
+> >   static inline unsigned int get_first_obj_offset(struct page *page)
+> >   {
+> > -	return page->page_type;
+> > +	return page->page_type & 0xffff;
+> >   }
+> >   static inline void set_first_obj_offset(struct page *page, unsigned int offset)
+> >   {
+> > -	page->page_type = offset;
+> > +	BUILD_BUG_ON(PAGE_SIZE & ~0xffff);
+> 
+> Buildbot is correctly complaining with PAGE_SIZE=64KiB.
+> 
+> We must check BUILD_BUG_ON((PAGE_SIZE -1) & ~0xffff);
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Won't 
 
-Tested-by: Ron Economos <re@w6rz.net>
+BUILD_BUG_ON(PAGE_SIZE > SZ_64K)
 
+be clearer?
+ 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
