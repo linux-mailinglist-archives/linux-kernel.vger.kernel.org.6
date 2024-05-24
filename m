@@ -1,129 +1,269 @@
-Return-Path: <linux-kernel+bounces-188718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253008CE5E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:18:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6076B8CE5ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5DD7282C2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835041C21AFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E3686657;
-	Fri, 24 May 2024 13:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB54127E2D;
+	Fri, 24 May 2024 13:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRN/KYpo"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eXddsbsC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F90285959;
-	Fri, 24 May 2024 13:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266EC127B54;
+	Fri, 24 May 2024 13:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716556673; cv=none; b=i0Xb/gvSupOonhGRG2w92makdDt9BXBDe0wi8JuIO6HOJpFN2GgxAwQV34blvxpCFSYChkzfb9m/zOgZqF2+d8bdlS9VYAGOBOwRxQWTqvWQp3v3Wxmo1/UvNydRv5TxlPHV/rLU/jXsJ/KaL2h3khkNdjGjEVk8S1lrrIrNLmI=
+	t=1716556748; cv=none; b=HaW7IkNirY4p3adUkIvubmxUCBjZDfZbCscyIb0AD/cwtye2jB02GBjqjU13bRKWNkVaEop7j51l9jJPjq9yGbh6mbKji9WYzFUCFzAre4zpVqKt3EChnUk83Fz7vMmTLId5gPxdpHKDxXEnQUKzAG5/Hmc/NMcsbkImoQcfK8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716556673; c=relaxed/simple;
-	bh=SlXCQc3o/MB52ttkYbUWNblq+v3TZ5Rf15VGTVZLLpk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1gMXfimHbMWeLHOYM4jBkEvKaESgF50b7U/snP1Jhax+CmsBK0ARc1cvPfZuoV1gfd/7KWw0b23ZnO7WLKWWF1sOMgM5B4Mz2u5scY6QQOxWG3rbAgns9qEliCP1lwpaQtDSSpHPLx6p+3jCi1d28eZaNCfpQSYMJECYrnDewY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRN/KYpo; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f8ec7e054dso611790b3a.2;
-        Fri, 24 May 2024 06:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716556671; x=1717161471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SlXCQc3o/MB52ttkYbUWNblq+v3TZ5Rf15VGTVZLLpk=;
-        b=iRN/KYpovpFye/RhwC4ixASJxRtJdGlzjp4JJHi/TL5i5nzflZ/+jrTBlzImqeeqFA
-         Nf2sYF8ErsLhqpccWb87sII1eDidDBObuLtI4V0MJkL3BlWlE3Uk962IQaqFmsCgEpWc
-         Ir6uRiKZfYAFg2U2bz/grOHSkBi80Q+Gck/mOi1puJCjnt7KiMYjjksIGdNsrRgA0xTp
-         WXkkNcTqXazrLCtGPecXgQRy2Fblr6QcACWJDhTF/71yD/Y+2779VG1Qzse1l1/DmURZ
-         XKODVkswaXbzbU+lpZQ+vLFJcVuSH9F5K4QHdYeV4K1JdPc0SUVnOE8PX2yLop2wDeml
-         poSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716556671; x=1717161471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SlXCQc3o/MB52ttkYbUWNblq+v3TZ5Rf15VGTVZLLpk=;
-        b=qpe3xle8uUjZakCyoGv6hxTNXP33TjUBYPzytEp7uC7z4qoqvl3NauQkBC3Ls9JzeG
-         PUoR0FF6hrh2W3MJNOsnw4z+hQfwGK/mccnZCN3wZOFPYMEYS6/F/ritLeVXRYNk8NXi
-         CIqJ9LGiXOCEXp4eR9kvLFLdHa4VtyMJ52FVorS+Bdgdbzcbo5cMLTDoBIKdccOn/4Wk
-         R59VxPplHmAKeRhFk00j6JyDAQi3WHjRejNxgbA5bTlzLMrdub5gN8FVlKTjPwbtvVQi
-         /Mk6CQ3OBnIup6CctOPlBb+Nm19z/eRqmxigvA/2HsO4Ea4WnF/QKq6L8yklcIMgTObC
-         pB6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVnXlhPYn8CDpx6175Utcz01m/x/FNKQEIdXmsDZh1UHeyjQiBQ9CNojauSqTPyrhKaUeFLDHQuOfxQ3HAPQGTkK8wCJ1x90GpQPDYx+TpuOwEdBskVAck6drguvd/gebAi8gwDB6afXw==
-X-Gm-Message-State: AOJu0Yxm/1I4HEsuFrzC/3KjTIfEzsfMuMMlkJtC5dwO/SN8G/r8cmAS
-	9/YzCNcAauSuXuKNapMpaiDBiDXowSbH/OyhjH56Rv0zPjF+YwMxDuzdUrAZV54F5/p7+RfW129
-	UhJwKE8onkuOkUb9Q6plcrVN3wWUuyiYi
-X-Google-Smtp-Source: AGHT+IEwoe8jd0oZgn4cZUVcBCDA8tK4CYreDWY9kJHQp57IWOrilIahqDCBhTgwJSyB8G7rI/D9MAOMBfFiB7nWxpM=
-X-Received: by 2002:a17:90b:1888:b0:2ac:5d2d:12ac with SMTP id
- 98e67ed59e1d1-2bf5e84abfdmr2678646a91.5.1716556671509; Fri, 24 May 2024
- 06:17:51 -0700 (PDT)
+	s=arc-20240116; t=1716556748; c=relaxed/simple;
+	bh=xwQy0LcwhNQIEn/aICdV8U22j7RyzTcdJa+zRxNK684=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pMbKOiqwtKmIEkvn6a2ywYMYcWfESfUTdfIQxjqR3hxhLRqzQmT+G9VyaKwuYVvpFUTkEihQQyD9o6quaRYC+GOFirDVTw1ccj4e2hgg6yLegUI7WiWjUbiH6dL+9zBszaTVhybtuP3wDWcXuIsdZpYznCjVgdiHahfUvg0ISoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eXddsbsC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44OA0StU022320;
+	Fri, 24 May 2024 13:18:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jtH39QGDRoyjguOfOrP8Vy
+	cq2ZjaqEmzTTqVJ1HQYuw=; b=eXddsbsCWPnBHR5Dtnzp9M2ZFycA/l2KA40Orb
+	hkN9u9LKNQjqn77z5+rH0jx4HJxSihZFZxYN4ncHHUn6mtAq0K+r7CFy6jbSp5mj
+	VdJYMbnAyHVW3cuXenJ2WftTxnhGviCLL5cRyNgRkgOYQj2mOxfYU9CAhSkk3VYV
+	yxuMLXdAhCGXxMYxEMGyd0oI5nb4GKwawR4ryd0Ma6hVcrivTI/J/cabT0L296Bg
+	gf3GbPBIsGcXEdZ0ZMQVA+p28gxURZFPYQNdSD0geiplUoCWNDGWtxr8oKmQh7lz
+	2p5J7y6zNgAa0u2/CC6cJF1jUSQR9kGKHMptY4z4IvhMdG+g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa9u2h05-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 13:18:31 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44ODITBd031502
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 13:18:29 GMT
+Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 24 May 2024 06:18:24 -0700
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
+        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
+        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <konrad.dybcio@linaro.org>
+CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Bibek Kumar Patro" <quic_bibekkum@quicinc.com>
+Subject: [PATCH v10 0/5] iommu/arm-smmu: introduction of ACTLR implementation for Qualcomm SoCs
+Date: Fri, 24 May 2024 18:47:55 +0530
+Message-ID: <20240524131800.2288259-1-quic_bibekkum@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240329072441.591471-1-samuel.holland@sifive.com>
- <20240329072441.591471-14-samuel.holland@sifive.com> <eeffaec3-df63-4e55-ab7a-064a65c00efa@roeck-us.net>
-In-Reply-To: <eeffaec3-df63-4e55-ab7a-064a65c00efa@roeck-us.net>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 24 May 2024 09:17:40 -0400
-Message-ID: <CADnq5_NmKyTBbE6=V+XdEKStnjcyYSHyHqdkgBen4UhPnVKimQ@mail.gmail.com>
-Subject: Re: [PATCH v4 13/15] drm/amd/display: Use ARCH_HAS_KERNEL_FPU_SUPPORT
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Samuel Holland <samuel.holland@sifive.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
-	Christoph Hellwig <hch@lst.de>, loongarch@lists.linux.dev, amd-gfx@lists.freedesktop.org, 
-	Alex Deucher <alexander.deucher@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WEW9SrWi5Bh0D8Ag2IUTBnzz3YTog9xQ
+X-Proofpoint-ORIG-GUID: WEW9SrWi5Bh0D8Ag2IUTBnzz3YTog9xQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_04,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ mlxlogscore=999 priorityscore=1501 bulkscore=0 spamscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405240091
 
-On Fri, May 24, 2024 at 5:16=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> Hi,
->
-> On Fri, Mar 29, 2024 at 12:18:28AM -0700, Samuel Holland wrote:
-> > Now that all previously-supported architectures select
-> > ARCH_HAS_KERNEL_FPU_SUPPORT, this code can depend on that symbol instea=
-d
-> > of the existing list of architectures. It can also take advantage of th=
-e
-> > common kernel-mode FPU API and method of adjusting CFLAGS.
-> >
-> > Acked-by: Alex Deucher <alexander.deucher@amd.com>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
->
-> With this patch in the mainline kernel, I get the following build error
-> when trying to build powerpc:ppc32_allmodconfig.
->
-> powerpc64-linux-ld: drivers/gpu/drm/amd/amdgpu/../display/dc/dml/display_=
-mode_lib.o uses hard float, drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm=
-/amdgpu_dm_helpers.o uses soft float
-> powerpc64-linux-ld: failed to merge target specific data of file drivers/=
-gpu/drm/amd/amdgpu/../display/dc/dml/display_mode_lib.o
->
-> [ repeated many times ]
->
-> The problem is no longer seen after reverting this patch.
+This patch series consist of five parts and covers the following:
 
-Should be fixed with this patch:
-https://gitlab.freedesktop.org/agd5f/linux/-/commit/5f56be33f33dd1d50b9433f=
-842c879a20dc00f5b
-Will pull it into my -fixes branch.
+1. Re-enable context caching for Qualcomm SoCs to retain prefetcher
+   settings during reset and runtime suspend.
 
-Alex
+2. Remove cfg inside qcom_smmu structure and replace it with single
+   pointer to qcom_smmu_match_data avoiding replication of multiple
+   members from same.
 
->
-> Guenter
+3. Introduce intital set of driver changes to implement ACTLR register
+   for custom prefetcher settings in Qualcomm SoCs.
+
+4. Add ACTLR data and implementation operations for SM8550.
+
+5. Add ACTLR data and implementation operations for SC7280.
+
+Changes in v10 from v9:
+ - Added reviewed-by tags 1/5,2/5,3/5.
+ Changes incorporated:
+ - Remove redundant PRR bit setting from gfx actlr table(patch 4/5,5/5)
+   as this bit needs special handling in the gfx driver along with
+   the associated register settings.
+ Link to discussion on PRR bit:
+ https://lore.kernel.org/all/f2222714-1e00-424e-946d-c314d55541b8@quicinc.com/
+ Link to v9:
+ https://lore.kernel.org/all/20240123144543.9405-1-quic_bibekkum@quicinc.com/
+
+Changes in v9 from v8:
+ Changes to incorporate suggestions from Konrad as follows:
+ - Re-wrap struct members of actlr_variant in patch 4/5,5/5
+   in a cleaner way.
+ - Move actlr_config members to the header.
+ Link to v8:
+ https://lore.kernel.org/all/20240116150411.23876-1-quic_bibekkum@quicinc.com/
+
+Changes in v8 from v7:
+ - Added reviewed-by tags on patch 1/5, 2/5.
+ Changes to incorporate suggestions from Pavan and Konrad:
+ - Remove non necessary extra lines.
+ - Use num_smmu and num_actlrcfg to store the array size and use the
+   same to traverse the table and save on sentinel space along with
+   indentation levels.
+ - Refactor blocks containing qcom_smmu_set_actlr to remove block
+   repetition in patch 3/5.
+ - Change copyright year from 2023 to 2022-2023 in patch 3/5.
+ - Modify qcom_smmu_match_data.actlrvar and actlr_variant.actlrcfg to
+   const pointer to a const resource.
+ - use C99 designated initializers and put the address first.
+ Link to v7:
+ https://lore.kernel.org/all/20240109114220.30243-1-quic_bibekkum@quicinc.com/
+
+Changes in v7 from v6:
+ Changes to incorporate suggestions from Dmitry as follows:
+ - Use io_start address instead of compatible string to identify the
+   correct instance by comparing with smmu start address and check for
+   which smmu the corresponding actlr table is to be picked.
+Link to v6:
+https://lore.kernel.org/all/20231220133808.5654-1-quic_bibekkum@quicinc.com/
+
+Changes in v6 from v5:
+ - Remove extra Suggested-by tags.
+ - Add return check for arm_mmu500_reset in 1/5 as discussed.
+Link to v5:
+https://lore.kernel.org/all/20231219135947.1623-1-quic_bibekkum@quicinc.com/
+
+Changes in v5 from v4:
+ New addition:
+ - Modify copyright year in arm-smmu-qcom.h to 2023 from 2022.
+ Changes to incorporate suggestions from Dmitry as follows:
+ - Modify the defines for prefetch in (foo << bar) format
+   as suggested.(FIELD_PREP could not be used in defines
+   is not inside any block/function)
+ Changes to incorporate suggestions from Konrad as follows:
+ - Shift context caching enablement patch as 1/5 instead of 5/5 to
+   be picked up as independent patch.
+ - Fix the codestyle to orient variables in reverse xmas tree format
+   for patch 1/5.
+ - Fix variable name in patch 1/5 as suggested.
+ Link to v4:
+https://lore.kernel.org/all/20231215101827.30549-1-quic_bibekkum@quicinc.com/
+
+Changes in v4 from v3:
+ New addition:
+ - Remove actlrcfg_size and use NULL end element instead to traverse
+   the actlr table, as this would be a cleaner approach by removing
+   redundancy of actlrcfg_size.
+ - Renaming of actlr set function to arm_smmu_qcom based proprietary
+   convention.
+ - break from loop once sid is found and ACTLR value is initialized
+   in qcom_smmu_set_actlr.
+ - Modify the GFX prefetch value separating into 2 sensible defines.
+ - Modify comments for prefetch defines as per SMMU-500 TRM.
+ Changes to incorporate suggestions from Konrad as follows:
+ - Use Reverse-Christmas-tree sorting wherever applicable.
+ - Pass arguments directly to arm_smmu_set_actlr instead of creating
+   duplicate variables.
+ - Use array indexing instead of direct pointer addressed by new
+   addition of eliminating actlrcfg_size.
+ - Switch the HEX value's case from upper to lower case in SC7280
+   actlrcfg table.
+ Changes to incorporate suggestions from Dmitry as follows:
+ - Separate changes not related to ACTLR support to different commit
+   with patch 5/5.
+ - Using pointer to struct for arguments in smr_is_subset().
+ Changes to incorporate suggestions from Bjorn as follows:
+ - fix the commit message for patch 2/5 to properly document the
+   value space to avoid confusion.
+ Fixed build issues reported by kernel test robot [1] for
+ arm64-allyesconfig [2].
+ [1]: https://lore.kernel.org/all/202312011750.Pwca3TWE-lkp@intel.com/
+ [2]:
+https://download.01.org/0day-ci/archive/20231201/202312011750.Pwca3TWE-lkp@intel.com/config
+ Link to v3:
+https://lore.kernel.org/all/20231127145412.3981-1-quic_bibekkum@quicinc.com/
+
+Changes in v3 from v2:
+ New addition:
+ - Include patch 3/4 for adding ACTLR support and data for SC7280.
+ - Add driver changes for actlr support in gpu smmu.
+ - Add target wise actlr data and implementation ops for gpu smmu.
+ Changes to incorporate suggestions from Robin as follows:
+ - Match the ACTLR values with individual corresponding SID instead
+   of assuming that any SMR will be programmed to match a superset of
+   the data.
+ - Instead of replicating each elements from qcom_smmu_match_data to
+   qcom_smmu structre during smmu device creation, replace the
+   replicated members with qcom_smmu_match_data structure inside
+   qcom_smmu structre and handle the dereference in places that
+   requires them.
+ Changes to incorporate suggestions from Dmitry and Konrad as follows:
+ - Maintain actlr table inside a single structure instead of
+   nested structure.
+ - Rename prefetch defines to more appropriately describe their
+   behavior.
+ - Remove SM8550 specific implementation ops and roll back to default
+   qcom_smmu_500_impl implementation ops.
+ - Add back the removed comments which are NAK.
+ - Fix commit description for patch 4/4.
+ Link to v2:
+https://lore.kernel.org/all/20231114135654.30475-1-quic_bibekkum@quicinc.com/
+
+Changes in v2 from v1:
+ - Incorporated suggestions on v1 from Dmitry,Konrad,Pratyush.
+ - Added defines for ACTLR values.
+ - Linked sm8550 implementation structure to corresponding
+   compatible string.
+ - Repackaged actlr value set implementation to separate function.
+ - Fixed indentation errors.
+ - Link to v1:
+https://lore.kernel.org/all/20231103215124.1095-1-quic_bibekkum@quicinc.com/
+
+Changes in v1 from RFC:
+ - Incorporated suggestion form Robin on RFC
+ - Moved the actlr data table into driver, instead of maintaining
+   it inside soc specific DT and piggybacking on exisiting iommus
+   property (iommu = <SID, MASK, ACTLR>) to set this value during
+   smmu probe.
+ - Link to RFC:
+https://lore.kernel.org/all/a01e7e60-6ead-4a9e-ba90-22a8a6bbd03f@quicinc.com/
+
+Bibek Kumar Patro (5):
+  iommu/arm-smmu: re-enable context caching in smmu reset operation
+  iommu/arm-smmu: refactor qcom_smmu structure to include single pointer
+  iommu/arm-smmu: introduction of ACTLR for custom prefetcher settings
+  iommu/arm-smmu: add ACTLR data and support for SM8550
+  iommu/arm-smmu: add ACTLR data and support for SC7280
+
+ .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  |   2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c    | 223 +++++++++++++++++-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h    |  18 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.c         |   5 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu.h         |   5 +
+ 5 files changed, 243 insertions(+), 10 deletions(-)
+
+--
+2.34.1
+
 
