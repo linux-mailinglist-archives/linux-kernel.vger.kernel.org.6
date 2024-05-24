@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-188647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E3F8CE4DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A31C8CE4E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7791F22667
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A605D1F2154D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27CD86246;
-	Fri, 24 May 2024 11:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26148625A;
+	Fri, 24 May 2024 11:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ccx6URR+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="GyyKuxGZ"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5C29475;
-	Fri, 24 May 2024 11:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2BC9475;
+	Fri, 24 May 2024 11:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716550309; cv=none; b=gQum9D1PQyGm1GkYBUZwT0kfWshL5KropXd1mjaJWY0ljfXXOjRpTXlSPzGlvcK209BRaB0OvoliO9a/+w5s74mbwcQHHfs0oHYgFtmU0uZx1kxV4PFSKkiHm+3ai9jAY5UlNny8n3h2z7yEOCsW3aeNiR6OF9Zu/A2V3s8T18o=
+	t=1716550325; cv=none; b=hX1g4v3pzPEquiwCU6ZOgYeNS2q0Dl/YLkGLQQQjAPWCMBoLKpjz3w7vVSmE7L9BCuZ3VI/SKjjldQv4PENxGCyNU18WHbeqKV4cjLBUi60rOrnu0JlRKs0o9xCn1mIKuKx7SrKzGOKbMGB1Hw0r1xOuR9K7LeelhxbqgIMr9Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716550309; c=relaxed/simple;
-	bh=4LBvQetF7IAlYlAy82ZKXQGvBJrIruYN4l+FdhPRo9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WRlVrxzBlFHOTQ2WxHCfqEwQ1ey6OEct0aiaLA5WgXP/U8kVWNGuLGhj8f7ovi2KGsPuvlDp6+Qj+StuUjt+aSbJ07lUGohhvzLC+Lp0BJNzlNHMvcEoiF+/9C/0IB+JkMglqupLA0rQlzs+SlQBEXFaRE2V14oWWRXnjq3t3kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ccx6URR+; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716550307; x=1748086307;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4LBvQetF7IAlYlAy82ZKXQGvBJrIruYN4l+FdhPRo9w=;
-  b=Ccx6URR+0/PFlO5Oi0HFar46OGN8+NDZoFhUPE4AoKv+LUGrRo/xNAHR
-   IL7xkrudYYTck6uFd2FUq16jEAVZuJRFaQ7y23y8Fv7DZyt06iw+vB4as
-   pIg7RiXuFROyV5R4Grx5UwPsNMrCk/qEHyqLflV5bZCSjzoIAV/l8oL/T
-   +8S3M3ZH2vLcAeUqbjeZB7LjCMpCNCBVnuLy5UO0czpqIkLTjCu6k0MKZ
-   XoH8/EEpw5+6xWEC5OkVBpszY1hwDbscNvVCmsPaW78B8zaItZPu5h+Wu
-   JDN1ZqYe5OkORKZs56OuVaQN8cl754LdmsLwcifObwGGXDpKd5DNqQN2K
-   g==;
-X-CSE-ConnectionGUID: 8+O3WPpLRv60RzEBxqHjbA==
-X-CSE-MsgGUID: UF7FIWG7QUGbTWqGMC7ktQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12772021"
-X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
-   d="scan'208";a="12772021"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 04:31:46 -0700
-X-CSE-ConnectionGUID: MbmgJak5T4+/wMghuBMT4Q==
-X-CSE-MsgGUID: knQZ5qdJTr6hmbJRHeoo3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
-   d="scan'208";a="38432250"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa003.fm.intel.com with ESMTP; 24 May 2024 04:31:44 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] page_pool: fix &page_pool_params kdoc issues
-Date: Fri, 24 May 2024 13:28:59 +0200
-Message-ID: <20240524112859.2757403-1-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716550325; c=relaxed/simple;
+	bh=IlUQDrvlikCtPQHZL17bTPh6Z9sOobbSRi8dQxajFWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuqZKAfAgm5ZVMrLlJ7Lck8EXYBMCvdm8441rAcuFsPsN3Uz4wbHadyZ9br2+QCpxS2uSYtDkOtAEPzPtyrOaxiMWmNIkfiX8F9V+dkAjYycqamNfoRJCWIK2wkzPTXkB7Ey7PAu8ASL7X4TqdsPvckh+xphRVDa+39dOrusZC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=GyyKuxGZ; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id CACB220232;
+	Fri, 24 May 2024 13:31:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1716550318;
+	bh=82c4Czu1Ofgrwin76Gz+pckw49eOGhAz3rJrK16Yv+Y=;
+	h=Received:From:To:Subject;
+	b=GyyKuxGZ2tIOliFP18R2TXgCqDmRgWASUfwA840XG2LKymLhmQZjiErUKFjbJjaEg
+	 hvCFXNP0SSRooL8Cf7ZaZYkcNa2HhMqz26nIyVzSTR79n+YY98NoxvEKa/lOJIg2Vk
+	 vhQxShGKkdahRQRf47OAhKc6xD3cZC3YIFBPvDJQ6XcQTMtTeIBvaaShbgxgXLtI08
+	 Eo1/vXJ3sAP+6SFsSj/2hS/JyfcagPBBWxzN2v4hdPtEFejG1iVaveWJOUpbMv/RxG
+	 iU5WXYtAzhNjuLb5+ki5g/Ts6hZdUOT54RsmBps/noAc17n/j17wjKoGKOd4qIX0RE
+	 i3YyMYFoU6+SA==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 626617F963; Fri, 24 May 2024 13:31:58 +0200 (CEST)
+Date: Fri, 24 May 2024 13:31:58 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v1 2/2] usb: typec: mux: gpio-sbu: Make enable gpio
+ optional
+Message-ID: <ZlB6ruZ8j2rVsIio@gaggiata.pivistrello.it>
+References: <20240524071034.4441-1-francesco@dolcini.it>
+ <20240524071034.4441-3-francesco@dolcini.it>
+ <5of64nmgpotr7fu66urgko5gfvr4ffhmff4dgkagkdvwh2dywk@etlw6rsmhki6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5of64nmgpotr7fu66urgko5gfvr4ffhmff4dgkagkdvwh2dywk@etlw6rsmhki6>
 
-After the tagged commit, @netdev got documented twice and the kdoc
-script didn't notice that. Remove the second description added later
-and move the initial one according to the field position.
+Hello Dmitry,
+thanks for the review.
 
-After merging commit 5f8e4007c10d ("kernel-doc: fix
-struct_group_tagged() parsing"), kdoc requires to describe struct
-groups as well. &page_pool_params has 2 struct groups which
-generated new warnings, describe them to resolve this.
+On Fri, May 24, 2024 at 12:56:15PM +0300, Dmitry Baryshkov wrote:
+> On Fri, May 24, 2024 at 09:10:34AM +0200, Francesco Dolcini wrote:
+> > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > 
+> > The enable gpio is not required when the SBU mux is used only for
+> > orientation, make it optional.
+> > 
+> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > ---
+> >  drivers/usb/typec/mux/gpio-sbu-mux.c | 11 ++++++++---
+> >  1 file changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
+> > index 374168482d36..cf44259980a1 100644
+> > --- a/drivers/usb/typec/mux/gpio-sbu-mux.c
+> > +++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
+..
+> > @@ -66,6 +66,9 @@ static int gpio_sbu_mux_set(struct typec_mux_dev *mux,
+> >  {
+> >  	struct gpio_sbu_mux *sbu_mux = typec_mux_get_drvdata(mux);
+> >  
+> > +	if (!sbu_mux->enable_gpio)
+> > +		return -EOPNOTSUPP;
+> 
+> Can we skip registering the mux if there is no enable_gpio? This can
+> save users from the unexpected errors during runtime.
 
-Fixes: 403f11ac9ab7 ("page_pool: don't use driver-set flags field directly")
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/net/page_pool/types.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yes, I considered this option.
 
-diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
-index b088d131aeb0..7e8477057f3d 100644
---- a/include/net/page_pool/types.h
-+++ b/include/net/page_pool/types.h
-@@ -45,16 +45,17 @@ struct pp_alloc_cache {
- 
- /**
-  * struct page_pool_params - page pool parameters
-+ * @fast:	params accessed frequently on hotpath
-  * @order:	2^order pages on allocation
-  * @pool_size:	size of the ptr_ring
-  * @nid:	NUMA node id to allocate from pages from
-  * @dev:	device, for DMA pre-mapping purposes
-- * @netdev:	netdev this pool will serve (leave as NULL if none or multiple)
-  * @napi:	NAPI which is the sole consumer of pages, otherwise NULL
-  * @dma_dir:	DMA mapping direction
-  * @max_len:	max DMA sync memory size for PP_FLAG_DMA_SYNC_DEV
-  * @offset:	DMA sync address offset for PP_FLAG_DMA_SYNC_DEV
-- * @netdev:	corresponding &net_device for Netlink introspection
-+ * @slow:	params with slowpath access only (initialization and Netlink)
-+ * @netdev:	netdev this pool will serve (leave as NULL if none or multiple)
-  * @flags:	PP_FLAG_DMA_MAP, PP_FLAG_DMA_SYNC_DEV, PP_FLAG_SYSTEM_POOL
-  */
- struct page_pool_params {
--- 
-2.45.1
+The rationale for the current implementation is that if the device tree is
+correct (no mode-switch property, when enable-gpios is not present), nobody
+will call gpio_sbu_mux_set() so no runtime error is possible. If the
+configuration in the DT is not correct you get this runtime error.
+
+With your proposal in case the DT configuration is not correct there will be no
+errors from the kernel, but the functionality will not work.
+
+Francesco
 
 
