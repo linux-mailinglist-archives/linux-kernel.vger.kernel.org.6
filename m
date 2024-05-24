@@ -1,130 +1,114 @@
-Return-Path: <linux-kernel+bounces-188497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074068CE2B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:59:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE0D8CE2BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF2A1F2217C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:59:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8B9CB2199C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0FD1292E1;
-	Fri, 24 May 2024 08:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DED129A71;
+	Fri, 24 May 2024 09:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="ui3u4wwD"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8TFXnfQ"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245829475
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862891D54D;
+	Fri, 24 May 2024 09:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716541176; cv=none; b=huAsla8E77RPnOXD5u6nXPEio1XfmwwO3JQc1cEgKGLjbSoSqe8vPETvPhWsDE4NsN+5fkz4sL78cN+UXMjz89AFPD5AkT3qxkuj8vjd1EYEPbH68EGN4qm1WhKC8KNfWRyqGaOjiZfyIsvBiGsOeYo6NJQIDjHvFC0HieQNQ00=
+	t=1716541242; cv=none; b=cAJRhSisbJrX/oOBii5T2PXdJosDlJg28/AsT6sAU7Na/un76OmdpdQhXjBJMk3l3QbhxAnUirq+2bWqn6eRWafoDuuUAprVT/Y1ASuab35tm5n5YIdpC3JA1SMQi+oshI/tOhNKWxBYMt3btYwu2nz5jCUJbAVWJnxxQAQc1dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716541176; c=relaxed/simple;
-	bh=zHpc+qxtONUw0wwUJ4wmIXG/NriOH96j4U6RN6GB8pg=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=HatRHhVblXwRAgDUjZJLOA09hYWjuZ7XPQy4LStTWUaICVQGyrniQphSoFs2gs0rPjeV6pqRxibu11C3+Kk6HL/m0W7JkT7QdA/gyUtMkmvSCVe6RCGXFCBDyT4UX1NIlDSPWDaVflX2hhjv5MT+OIZqPHb3IgUbvyi7GEnYdlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=ui3u4wwD; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id ALqes9BpDJXoqAQlxszg07; Fri, 24 May 2024 08:59:33 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id AQlwsWWzVuv6XAQlxs0t7F; Fri, 24 May 2024 08:59:33 +0000
-X-Authority-Analysis: v=2.4 cv=YbZ25BRf c=1 sm=1 tr=0 ts=665056f5
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=BXyYjBD0cXuZo9oD7aYA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0gf7r2/eflWxCGXjTMWMn16pfPrcTB0I/nO5t6cKk1s=; b=ui3u4wwDMELcZU85CWdsumJw39
-	hHmap6xOrfkWgfBore+rZ+nh0AwNEVkfOiN+JjxIXEgkHryqVmdvTUzuPHYQvF44Rd6yKEMr4mOz9
-	PaZ+n7tShDcUa9Wbm2JjfN+ZJgmYIJKmM1FqnmHdURpYKEWzdTjtEjGHEb3U1PWn99CT3dk/F77GA
-	QHlhq/73zQJX8ZXzNxoZ9LXCXHU8qLNr1NMf/D1Y1rRSy6hQ5MnzwkJy5eC0BmpJdJ+hly4JCguDz
-	6NBZOC3QD7q9b3Qklqpv8DVcHptHufGiB27v6d7G8KnbpshCaLzA4bi7qIHLkHrR0edCCPmrWDHii
-	gAnMmoHQ==;
-Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:39716 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sAQlu-002uOz-2m;
-	Fri, 24 May 2024 02:59:30 -0600
-Subject: Re: [PATCH 6.8 00/23] 6.8.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240523130329.745905823@linuxfoundation.org>
-In-Reply-To: <20240523130329.745905823@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <bb0d45ed-9195-0d5b-2068-71a772042d7d@w6rz.net>
-Date: Fri, 24 May 2024 01:59:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1716541242; c=relaxed/simple;
+	bh=Ndc1ZOTSc3HE60JBg1s0bP8GySv9wslKlje95u3jiOs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DG8AhllXehQQ0WltukHruatJx4ThexMpheY+PrYQZX8UXxCIJ9LGowLiBKcpAhwSw+K47tqjnhbBafejfhzN42focQPZrceuqeMnGsFy0kGlFE8KlKFXThLxKkn8mLRRnzHhm8Nq2Bz7jKpmbL6ZyfLpsk+wF4KC8YoJqx2+lYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f8TFXnfQ; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57851788450so852138a12.2;
+        Fri, 24 May 2024 02:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716541238; x=1717146038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xAjoDwv+nuxA5R+xwHfwe17PEr8mDnmdJPuKHL0+yys=;
+        b=f8TFXnfQRKTl7ietflyhvJ87fdTvqgr3uiFxf0qONNXrafgY5it6bTwe1chdrGuiBj
+         lpSASd8efjciORQsjojY0PrCS7CQ2N65ASh0z1C8peoQ2bgVQ9JMO12JcqGIi/iweODX
+         AaAegqQ+rISXm0Wjg5hcatooSK163wVSH+mbctvt3oQtldB1VLh1c/eKww313Vt/GNa8
+         6NhvlPVYuCwBMO7brxU+pKpatMfOcx4mefCffOgaGFNWbgMLtZNhcFe7UQA1EcznFHi4
+         ujhUiK202b3b8RQcH23pMdm2O5f6OEz7v/2p2jAZJpuKQ/h3rL86kO8gWeDyuVY0jTX2
+         Pc5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716541238; x=1717146038;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xAjoDwv+nuxA5R+xwHfwe17PEr8mDnmdJPuKHL0+yys=;
+        b=AmhEiydgUPKvi80S/EDbmqgWHHQQK88xZpMIKOGQss38rs/xxXdIRHrDZbzPo6wUL6
+         hZmQZday93LjVEgByNQ4Bvr+fzeQvFmGxXqQ/gwzCC3v0qUx57ox9TGrtWuAVjN6xD7k
+         uXsJeroItpuSJvzD1ggPsnciXtOFlft4ENTwxCzyji7RLHWdlG68BXbq45pi113wBT5t
+         43C3gXw/EaTiDFW/ZczAUNzksY5a/qoe71hNS8v/bMlWXSK28MX+ufCgYHbqdLgmYmC+
+         cqmELw4qsbJ13AZvncLqk3Cq4nAcZhHY9l66S7tIyLdxkTd4mJDFD1OlE4BCXGQGZc4E
+         b4wA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxpz4odRTBez61HrksQJ419V+vt46E83vWCF5qnk4viSx9awM25SCNF4w6kDdYRyCi1XOmnwsd7P+J/SICoWkF/k1kJFu1lnQKl/85S+6WaepHBrhYUIetCW8hnzIUMV5HlhGZ/g==
+X-Gm-Message-State: AOJu0Yxks+o4IqSwHKPuMZNZSJ4I5m3eDhlNwXg8DBnrHrXS0pkLRWjQ
+	v5MgYNaVr8Ose4Zrt7nYskjrAPUM3pkkteCHf379eSvUDgJdNKXboCEMont2jWU=
+X-Google-Smtp-Source: AGHT+IFIHJ5yG0dlv43AcToWv7U3z1W6V+gd7KJL85LgZHIHN2D/RfHCRkuNzETZAikxYg2vWubBeQ==
+X-Received: by 2002:a17:906:478c:b0:a59:cdc9:6fdf with SMTP id a640c23a62f3a-a62641c4376mr115375866b.4.1716541238040;
+        Fri, 24 May 2024 02:00:38 -0700 (PDT)
+Received: from rbolboac.. ([2a02:2f0e:350b:4500:dac3:9bb:ed7a:184b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626c93ae41sm97730466b.62.2024.05.24.02.00.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 02:00:37 -0700 (PDT)
+From: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	jic23@kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	conor+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	robh@kernel.org,
+	nuno.sa@analog.com
+Cc: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Subject: [PATCH v4 00/10] adis16501 and adis1657x support
+Date: Fri, 24 May 2024 12:00:21 +0300
+Message-Id: <20240524090030.336427-1-ramona.bolboaca13@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 98.207.139.8
-X-Source-L: No
-X-Exim-ID: 1sAQlu-002uOz-2m
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:39716
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNsueqSPlAcx1SZ42/0a0LdQTUCgVY+uhFUE+s2VLFQc23+6D+QKDyIp4q4vRaiF9nsrGaqRZnKrj8I01YnWb+4a9eN8wrQefg/6Dzd5ng4XbUjtusVo
- sPUL4ZxA1zNByeaUaFVFCX3IQgoAiMTv3/QqV9LcRdrufMCWqNP/e+VU4XQbM4eShpC0eDsVHnI7+3Bitj7ifNJ27y+LTTtAtro=
+Content-Transfer-Encoding: 8bit
 
-On 5/23/24 6:13 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.8.11 release.
-> There are 23 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.8.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Add adis16501 and adis1657x support in adis16475.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Ramona Gradinariu (10):
+  dt-bindings: iio: imu: Add ADIS16501 compatibles
+  drivers: iio: imu: Add support for ADIS16501
+  iio: imu: adis16475: Re-define ADIS16475_DATA
+  iio: imu: adis_buffer: Add buffer setup API with buffer attributes
+  iio: imu: adis16475: Create push single sample API
+  drivers: iio: imu: adis16475: generic computation for sample rate
+  iio: imu: adis_trigger: Allow level interrupts for FIFO readings
+  iio: imu: adis16475: Re-define ADIS16475_DATA
+  dt-bindings: iio: imu: Add ADIS1657X family devices compatibles
+  drivers: iio: imu: Add support for adis1657x family
 
-Tested-by: Ron Economos <re@w6rz.net>
+ .../bindings/iio/imu/adi,adis16475.yaml       |  31 +
+ drivers/iio/imu/Kconfig                       |   4 +-
+ drivers/iio/imu/adis16475.c                   | 810 +++++++++++++++---
+ drivers/iio/imu/adis_buffer.c                 |  32 +-
+ drivers/iio/imu/adis_trigger.c                |  37 +-
+ include/linux/iio/imu/adis.h                  |  20 +-
+ 6 files changed, 792 insertions(+), 142 deletions(-)
+
+--
+2.34.1
 
 
