@@ -1,134 +1,90 @@
-Return-Path: <linux-kernel+bounces-188759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CC08CE67A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1833A8CE679
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BDF1C21AF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:58:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCF31C21A9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FD112C461;
-	Fri, 24 May 2024 13:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1C912C468;
+	Fri, 24 May 2024 13:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEKf2oNO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="e7V9Lm77"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BBC1E52C
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA29E1E52C;
+	Fri, 24 May 2024 13:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559096; cv=none; b=k6uQS7s2Vn5jTek7mhDCByHo6w6w951HoauonOizALKpiwKIJAbP3sio9xr9HhleHvz+nvPZFbUSjLIYmX6Vy5z86JOWTursTWRiQoFIbvblqPMN7Aen72nkFSQTCjbo7nMmFjjC++/tLQ+S9+v+wiaVOtjsD7nBXzejM5E+1pU=
+	t=1716559090; cv=none; b=mrEx2YIgVrCQGV4R2pLN4L5ye2z+Ca8k3Y2C1dbCPAQnL0MvoYePlNYaCPZH1RnDG1PNfSdfeUnvQ5BXz1CMwZSK2JblBfADOLQlajlwfPApT98FPFFh7Q+1inaLMWdp7FSWp5Ug1/2pD6dW6JEG4PwSiwGdL865QVRuDVdPtuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559096; c=relaxed/simple;
-	bh=uFDcDFnvfL5qT+v6BH7T1D5GHPvkVzjP6kkXiYmqx0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D+1/PbyJoRWj1CGwf656InysdgS8EG31hHOFmxgBMq/oRkY+6VkjDGkkppPlZjHtgascgJKoZv6r0H8gG7FOeLBK+8PSbt4Qb/YSR8x/2KmR0bhhey+SyQNGzRvTzgfgTc41qdaODN9s6l0a9MX6Q1Kr+8XU8i0haSZkfuhSiAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEKf2oNO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC16C32782;
-	Fri, 24 May 2024 13:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716559095;
-	bh=uFDcDFnvfL5qT+v6BH7T1D5GHPvkVzjP6kkXiYmqx0s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OEKf2oNOw4ClzvvnGF1nGv5jdj9y66xt5tu/XIadvaU0Sz4VUwSqJLd137R0qiAqF
-	 36kxyU2n/ACR1am+UfAzK2Gz+nDaXWDO4o9L/5hVf+NP2m5m0Q1YASL3SU6zy8i/wI
-	 LNDSbTsQBUYWVeDxpVG6FtjfTxnQ/umAC98hfaAr9Acp8CoTFPmPTGRWAV99zyvJZb
-	 ZaT4XiMEg9fbpZoQJyCvSA/4rryP7N1c8/K0vH9QyOvM8j81ZtaLEP+RZRfipdwPjq
-	 4OwDirAwfafcQ3ub1Vd9QLG3lAdD4eTZoW06sf6hzwtUvejz5jjuHBZ1bTQZJ4aAJR
-	 L0kC6itmoFePQ==
-Date: Fri, 24 May 2024 21:57:46 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Hongzhen Luo <hongzhen@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>, Chao Yu <chao@kernel.org>
-Subject: [GIT PULL] erofs more updates for 6.10-rc1
-Message-ID: <ZlCc2s0h0H1v16er@debian>
-Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Hongzhen Luo <hongzhen@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>, Chao Yu <chao@kernel.org>
+	s=arc-20240116; t=1716559090; c=relaxed/simple;
+	bh=My46v/q3vuGUyzhpBjk8iJOci71XYAlSL0dzslvRT94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XN4I8g+QCMfGv0ialZ8U0ecmnbb3D5e//q4pkTmbOPo2xvrdQWTkmI/95glH5VDXln/ZYmYn7vK3yP/JQxuPBYf6k6iWmJKoI4FdZ+z995XZYHguDDT7bKwsazqpO0k1+hi7aUXgpkbfxtQsw+dX3GoNw1C0vJNvwX2jPRYT/Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=e7V9Lm77; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vm67h2CkLz6Cnk98;
+	Fri, 24 May 2024 13:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1716559085; x=1719151086; bh=YSAvrSBYQ1N+WHlYWnVL/esX
+	HnHkzq/h8R3JKbIoeoA=; b=e7V9Lm77kIZf29EMMJzHB/H3dvp5vL3WtxOauLqu
+	PalH564fnUrroI7IyvU+lTJ55USND8R+tPxNtffRIhxXKhlpDMkGqiIShm6VRaP9
+	xp7QUpJMW5IjO47eUSo9gibNdKiDcmt30r+lxDSzw+4hvyLWldSypa7zn2Orgm8j
+	/rDHoQ7gzXfNTFt7D6Xy/xBB8I8alp3f76m14RCF3V1++94RPGkatpr3Sx5Kjpi/
+	MY9n0LGK/k4MqZ/EjcKxbdBtQwxc5ofiVlHFsUGGa4MZYfiRB4kNlBIbkdPMpEJv
+	gywL83Zx+F7kxU4FUrTYVtjc60v0p3EEgJy+YuQdzdEp8w==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id L21v3LBY9ndt; Fri, 24 May 2024 13:58:05 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vm67Z6ZL0z6Cnk94;
+	Fri, 24 May 2024 13:58:02 +0000 (UTC)
+Message-ID: <396e5a4f-b9a1-4d82-bfc7-9264dd741a00@acm.org>
+Date: Fri, 24 May 2024 06:58:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ufs:mcq:Fixing Error Output and cleanup for
+ ufshcd_mcq_abort
+To: Chanwoo Lee <cw9316.lee@samsung.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, quic_nguyenb@quicinc.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20240524015907epcas1p2598a2ba8a81529b6639cff007fe9106b@epcas1p2.samsung.com>
+ <20240524015904.1116005-1-cw9316.lee@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240524015904.1116005-1-cw9316.lee@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 5/23/24 18:59, Chanwoo Lee wrote:
+> An error unrelated to ufshcd_try_to_abort_task is being output and
+> can cause confusion. So, I modified it to output the result of abort
+> fail.
+>    * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
+> 
+> And for readability,I modified it to return immediately instead of 'goto'.
 
-Could you consider these extra patches for 6.10-rc1?
-
-The main ones are metadata API conversion to byte offsets by
-Al Viro.  Since some of patches are also part of VFS
-"->bd_inode elimination" (and they were merged upstream days ago),
-I did a merge commit to resolve the dependency with the detailed
-description.
-
-Another patch gets rid of unnecessary memory allocation out of
-DEFLATE decompressor.  The remaining one is a trivial cleanup.
-
-All commits have been in -next and no potential merge conflict is
-observed.
-
-Thanks,
-Gao Xiang
-
-The following changes since commit 7c35de4df1056a5a1fb4de042197b8f5b1033b61:
-
-  erofs: Zstandard compression support (2024-05-09 07:46:56 +0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.10-rc1-2
-
-for you to fetch changes up to 80eb4f62056d6ae709bdd0636ab96ce660f494b2:
-
-  erofs: avoid allocating DEFLATE streams before mounting (2024-05-21 03:07:39 +0800)
-
-----------------------------------------------------------------
-Changes since last update:
-
- - Convert metadata APIs to byte offsets;
-
- - Avoid allocating DEFLATE streams unnecessarily;
-
- - Some erofs_show_options() cleanup.
-
-----------------------------------------------------------------
-Al Viro (6):
-      erofs: switch erofs_bread() to passing offset instead of block number
-      erofs_buf: store address_space instead of inode
-      erofs: mechanically convert erofs_read_metabuf() to offsets
-      erofs: don't align offset for erofs_read_metabuf() (simple cases)
-      erofs: don't round offset down for erofs_read_metabuf()
-      z_erofs_pcluster_begin(): don't bother with rounding position down
-
-Gao Xiang (2):
-      Merge branch 'misc.erofs' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
-      erofs: avoid allocating DEFLATE streams before mounting
-
-Hongzhen Luo (1):
-      erofs: clean up erofs_show_options()
-
- fs/erofs/data.c                 | 25 +++++++++----------
- fs/erofs/decompressor_deflate.c | 55 ++++++++++++++++++++++-------------------
- fs/erofs/dir.c                  |  4 +--
- fs/erofs/fscache.c              | 12 +++------
- fs/erofs/inode.c                |  4 +--
- fs/erofs/internal.h             |  9 +++----
- fs/erofs/namei.c                |  6 ++---
- fs/erofs/super.c                | 44 +++++++++++----------------------
- fs/erofs/xattr.c                | 37 +++++++++++----------------
- fs/erofs/zdata.c                |  8 +++---
- fs/erofs/zmap.c                 | 24 +++++++++---------
- 11 files changed, 97 insertions(+), 131 deletions(-)
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
