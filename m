@@ -1,113 +1,189 @@
-Return-Path: <linux-kernel+bounces-188900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0A48CE84F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C57C68CE853
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3480B281647
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:55:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B0D281A90
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD8B12E1DE;
-	Fri, 24 May 2024 15:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D8912E1D7;
+	Fri, 24 May 2024 15:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSo9KmLY"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="S6kZt8fg"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A01B126F04;
-	Fri, 24 May 2024 15:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A056E5ED
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716566129; cv=none; b=tqSsbXmpht9oEZOW5MVkygQTdleh+03rhj+b9xvQP1uv/c81G/AFMgA3J9kFrBn0HWLYeJe202JUzsDRWNZ8q1P1dQ8PuWWfzfUuC7dB5TMtode+gYTm3uTg8CanUSvcfxTg7DU4cagwLQih1rSOvAyN4TWvb0ehPny65fkw9iY=
+	t=1716566220; cv=none; b=phqUs816HQ6P/4435KU/fkgiqSmTtLEmP9mpIw5gEROVQKxYcKmd19qMuSV90CUvLwitfvEwdmCIqTI3uKRNRc/3K8n4SjdpRcA7BhZEJFaSdNRov2aBxd4kHfiWJd1yNQwH1ulViIUQFCAM+KuSXskJBp0GsmwkXtV2z08JYNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716566129; c=relaxed/simple;
-	bh=xS5Cb4oU68zPCtUxfTuRzeBZiDu8VHCvZRRao9Wn4OM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wr4+hd0T0nA+ugHRHlfo0j2pJBMAD6xsG3xBF27yumDy8IbaqUv/K2VKuSdUtymEnJiW1A9cPP2/gVCS/T/2ZVa1nV1wkM3lgGVMwhf/AfxN1BgIbCnhmJ1xQpuGzZJwtvypnQBWzZPj8CEL9Dad41bznR0iWl0mh/MeSLt1BSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSo9KmLY; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35507de9853so587079f8f.0;
-        Fri, 24 May 2024 08:55:27 -0700 (PDT)
+	s=arc-20240116; t=1716566220; c=relaxed/simple;
+	bh=f/jxpUwz/FQOHV/5vg4nxEyI+NJdfbQEy5Bdkdr5fys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qB1cmujnlbiDZqpnUzZGi+/7ENSOxqXCiSs85stiOIEzy2mYJGvWuVSja8FUNRhRFy7y6NxGyAGmm0Vx2pnVSmAQF5o/TFvVt7lV2qOT6aVvSXdP67WkZtMFnqA8bABOhVKshWNIp320VTh+Szfl1lVZYvhUkP4vB6jbR9ASAhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=S6kZt8fg; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b2ed25b337so4873390eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:56:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716566126; x=1717170926; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=//KD1Ad6RRaTW94yeORLrlBuaIevXtri2sWaywu2r1w=;
-        b=iSo9KmLYdnM9CdcRxSy6fKoYsfFCnJrBgqA184WuoxjNiE+edVoZXC9mwI/G/4VQiH
-         f3iBI2hGsAcU/5ShRyxv8qkko4gRe+hDVCu936f6H65zoZ7nv3Tv10zFDPJiMirNVdOO
-         iSlEjJBd3HLqJYtk5oeKRZU2bS6C0/qkT1oAHGjzVO6Pr3KoBCret//dWvt8fTgmJtmb
-         Y1Sm804XsdSvtjzTqZVo+9L0gffaQQn3njRYCsTC7BoI1goGElUoP1UXaw6UfIYGNwGI
-         WRkaaWY8vcpWZMqcfCkhHZ0mQOjgIi1SqBaRAshP5fdRVPPoB24yO48PSDyyU4hteRZo
-         Wbhg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716566217; x=1717171017; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pAHpfkkCR92bCHuVeFb4Gd0c4Ft15svLHWynuFWFQ0Y=;
+        b=S6kZt8fgs8xTEX5bf8nZrzMLr59wmtxWO0bsiq+JoAjaMZBFU2MLZ9C9yqreLPla0r
+         QBG6c1tns8AN4wqjI8Fh+Io8Zx8fphvDAGyyfQ6nByL6LkXCp4x+M80fthzNqDtYsd+5
+         1UbMOf9XJAXOR+mgKQeSweJMoQRglxx4X1EPLs1I+y9XqEHleBdOQ+e9OYb6QO+D4hqg
+         JBK9vzumjlkjxWiMNjgFcTNXIQSoyKpargtO9uK3m1g/plMopiDqRU/BSlH2DMT23hOA
+         RnZSvHml85Se1N8eQRHA2dHw0xCsXCJbDLgwMThP+ndfUOsCwkHSkgmZNqgN/Ys8dQTY
+         oMWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716566126; x=1717170926;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=//KD1Ad6RRaTW94yeORLrlBuaIevXtri2sWaywu2r1w=;
-        b=uUGSMffX80YSw1Ph8sx9CCBRTYPYl1edsRdZ+ij44dZSk7wvh1ErvH+k6HEv+EEyDD
-         9GZSzi3cldFsL2Jzc85CVS50f6M/PmgE0qLqmwxqJyXOz1OYmPtFQPa5QzQu4APTV0CU
-         s0rJWFgHGnHVIAZxTtGZFsBMucfe6Ui2nFcyoL+LRkZ+Wk+pZgpgO1pfGw0WmIduFHL/
-         xFdAd4i7uv776D9TsqH5xinECjzXOc0toTjz3n4XnY1xC8MKPHXd/RvwPN8YyIow6PI4
-         N/fd04UcDJ2HccnKzdGhga6C91SavfGQcmTKVbG6C0F0G2GBJf67bkQEHot0XW8X8QeU
-         n6vg==
-X-Forwarded-Encrypted: i=1; AJvYcCVT6BxZD5Wnal4vHsqQA7ZY2rirLF4N2hkNs1EysIKLXzmvlE+oM051TE2oJ052EJuy+uLvJNQCce5jHeCz2b/QmEWogaxxg56H+Nbwo6iUtr100wIidcgCPMRiX0M7NMDFN98nDXyS8w==
-X-Gm-Message-State: AOJu0YzObSTXFpYUJnl5y8XKwo3IzpF+oi7fHVzupSHvBF8AFNA3hcMt
-	atRBC2xpqzmzMelQF0/pedRONNOxYXc6uKVa1aKvDP6cmNGJZJPc
-X-Google-Smtp-Source: AGHT+IGvjRiaA8GlfSDW7h+Ok/W23XLgkVoUl4OzjYq5we7GcVfeiytWRtbZHIoF1/0S4q9ZqlUhig==
-X-Received: by 2002:a5d:5242:0:b0:34c:77bd:2508 with SMTP id ffacd0b85a97d-35506d48543mr2704271f8f.11.1716566125620;
-        Fri, 24 May 2024 08:55:25 -0700 (PDT)
-Received: from andrea ([151.76.32.59])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557dcf06dcsm1901645f8f.106.2024.05.24.08.55.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 08:55:25 -0700 (PDT)
-Date: Fri, 24 May 2024 17:55:20 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-Message-ID: <ZlC4aFfAx4u8cjDb@andrea>
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <ZlC0IkzpQdeGj+a3@andrea>
- <bd6426c0-f439-4b15-9ab4-12768aa8557a@rowland.harvard.edu>
+        d=1e100.net; s=20230601; t=1716566217; x=1717171017;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pAHpfkkCR92bCHuVeFb4Gd0c4Ft15svLHWynuFWFQ0Y=;
+        b=M1wIXKt1TDOAgK31EFbWiX/uYsDGJkj4XMWbKaJ91sFAlCPgJIkzKM0Ps6TkI9so9J
+         itf4353dmcInwxjh9S+NIeQXXOxcy9w+ryg/fsqCMzQwTm1J6QSDKPCyRRNnN5MmNfRk
+         bA3jzAJa82sH80PcMegAy0+xEuzXfxrQ/NKwPHrOkHpppVw4spYMXXvmwYUCoYedh2x5
+         dM3ua2Uhy63hWEpcgCuw3ssPnLK3dUEHQabbB9qfEXVd7CvnDn5lzN4s90AOZTsxg+CJ
+         +dTg0AyIe2xKbWCKWAWOniUZ19VOep+dgOTzg+2jpJQnreMafFE2WsbKKuRb43PK+Xlw
+         ep/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcHRD8NioKE6GaNsDDOF9ZhG3PpGAy83EWogeT0+sK/9B2nV9I0Bw+oxH6nuGo1fV1ZKrjbolDy4gFriQWBI1ZqZ0fYygITz8ZbHtK
+X-Gm-Message-State: AOJu0YwlAUF5AcijSvtrs6CGcXAxjxdmdLyLFktQeLXhDXnK54xtEyAK
+	/8THdu8h02I724YBoRNJYyGOnrqmuzLsJLb+tPTz36zVYS8SPLVR2AHsW+FUaxI=
+X-Google-Smtp-Source: AGHT+IFE4xFCp4W7Db3D88pPozUhIjZLpDcQGWfRPtJqKqzBQzuSuQ51HXr5tiQ4YwalghgOOYGSbQ==
+X-Received: by 2002:a05:6820:1606:b0:5b2:72e5:c12d with SMTP id 006d021491bc7-5b961b5dda1mr3688565eaf.5.1716566216830;
+        Fri, 24 May 2024 08:56:56 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b96c699953sm358875eaf.31.2024.05.24.08.56.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 08:56:56 -0700 (PDT)
+Message-ID: <5cf036d5-1eb3-4f63-82f9-d01b79b7fe47@baylibre.com>
+Date: Fri, 24 May 2024 10:56:55 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd6426c0-f439-4b15-9ab4-12768aa8557a@rowland.harvard.edu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 3/4] iio: add support for multiple scan types per
+ channel
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Julien Stephan <jstephan@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+ <20240507-iio-add-support-for-multiple-scan-types-v1-3-95ac33ee51e9@baylibre.com>
+ <20240519201241.7c60abac@jic23-huawei>
+ <ebf18ed1-a82f-4c0a-9a63-2c428b5aee40@baylibre.com>
+ <20240520171205.000035b0@Huawei.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240520171205.000035b0@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> > $ cat T.litmus 
-> > C T
-> > 
-> > {}
-> > 
-> > P0(spinlock_t *x)
-> > {
-> > 	int r0;
-> > 
-> > 	spin_lock(x);
-> > 	spin_unlock(x);
-> > 	r0 = spin_is_locked(x);
-> > }
+On 5/20/24 11:12 AM, Jonathan Cameron wrote:
+> On Mon, 20 May 2024 08:51:52 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
 > 
-> No "exists" clause?  Maybe that's your problem.
+>> On 5/19/24 2:12 PM, Jonathan Cameron wrote:
+>>> On Tue,  7 May 2024 14:02:07 -0500
+>>> David Lechner <dlechner@baylibre.com> wrote:
+>>>   
+>>>> This adds new fields to the iio_channel structure to support multiple
+>>>> scan types per channel. This is useful for devices that support multiple
+>>>> resolution modes or other modes that require different data formats of
+>>>> the raw data.
+>>>>
+>>>> To make use of this, drivers can still use the old scan_type field for
+>>>> the "default" scan type and use the new scan_type_ext field for any
+>>>> additional scan types.  
+>>>
+>>> Comment inline says that you should commit scan_type if scan_type_ext
+>>> is provided.  That makes sense to me rather that a default no one reads.
+>>>
+>>> The example that follows in patch 4 uses both the scan_type and
+>>> the scan_type_ext which is even more confusing.
+>>>   
+>>>> And they must implement the new callback
+>>>> get_current_scan_type() to return the current scan type based on the
+>>>> current state of the device.
+>>>>
+>>>> The buffer code is the only code in the IIO core code that is using the
+>>>> scan_type field. This patch updates the buffer code to use the new
+>>>> iio_channel_validate_scan_type() function to ensure it is returning the
+>>>> correct scan type for the current state of the device when reading the
+>>>> sysfs attributes. The buffer validation code is also update to validate
+>>>> any additional scan types that are set in the scan_type_ext field. Part
+>>>> of that code is refactored to a new function to avoid duplication.
+>>>>
+>>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>>>> ---  
+>>>   
+>>>> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+>>>> index 19de573a944a..66f0b4c68f53 100644
+>>>> --- a/include/linux/iio/iio.h
+>>>> +++ b/include/linux/iio/iio.h
+>>>> @@ -205,6 +205,9 @@ struct iio_scan_type {
+>>>>   * @scan_index:		Monotonic index to give ordering in scans when read
+>>>>   *			from a buffer.
+>>>>   * @scan_type:		struct describing the scan type
+>>>> + * @ext_scan_type:	Used in rare cases where there is more than one scan
+>>>> + *			format for a channel. When this is used, omit scan_type.  
+>>>
+>>> Here is the disagreement with the patch description.
+>>>   
+>>>> + * @num_ext_scan_type:	Number of elements in ext_scan_type.
+>>>>   * @info_mask_separate: What information is to be exported that is specific to
+>>>>   *			this channel.
+>>>>   * @info_mask_separate_available: What availability information is to be
+>>>> @@ -256,6 +259,8 @@ struct iio_chan_spec {
+>>>>  	unsigned long		address;
+>>>>  	int			scan_index;
+>>>>  	struct iio_scan_type scan_type;
+>>>> +	const struct iio_scan_type *ext_scan_type;
+>>>> +	unsigned int		num_ext_scan_type;  
+>>>
+>>> Let's make it explicit that you can't do both.
+>>>
+>>> 	union {
+>>> 		struct iio_scan_type scan_type;
+>>> 		struct {
+>>> 			const struct iio_scan_type *ext_scan_type;
+>>> 			unsigned int num_ext_scan_type;
+>>> 		};
+>>> 	};
+>>> should work for that I think.
+>>>
+>>> However this is I think only used for validation. If that's the case
+>>> do we care about values not in use?  Can we move the validation to
+>>> be runtime if the get_current_scan_type() callback is used.  
+>>
+>> I like the suggestion of the union to use one or the other. But I'm not
+>> sure I understand the comments about validation.
+>>
+>> If you are referring to iio_channel_validate_scan_type(), it only checks
+>> for programmer error of realbits > storagebits, so it seems better to
+>> keep it where it is to fail as early as possible.
+> 
+> That requires the possible scan masks to be listed here but there is
+> nothing enforcing the callback returning one from here.  Maybe make it
+> return an index instead?
+> 
 
-Nope, that doesn't seem to be it.  (Same result after adding one.)
+Sorry, still not understanding what we are trying to catch here. Why
+would the scan mask have any effect of checking if realbits > storagebits?
 
-  Andrea
 
