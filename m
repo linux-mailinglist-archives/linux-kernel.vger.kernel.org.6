@@ -1,171 +1,109 @@
-Return-Path: <linux-kernel+bounces-188645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFA68CE4DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:27:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C52F8CE4DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2AC028169E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8623C2823F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31D184FDB;
-	Fri, 24 May 2024 11:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFC686158;
+	Fri, 24 May 2024 11:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YierkngI";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YierkngI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="auxo9UDh"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E0E84FB1;
-	Fri, 24 May 2024 11:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CDC53E31;
+	Fri, 24 May 2024 11:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716550048; cv=none; b=LP9IqH2w3L9kHPTtlryziRKw1fAfk9saDh/O5BgSQT9RiKb6nDNlGNak0xtMSLKi241wafFGOFAikQE/lLPNZF9fuROcoC3O/+KMggPCBPJP5nlW4XYwQrcgO+g/tQfghuukOEDKrheV5p1CaxtI8/AQ6K94c99m72Dn6DUClfU=
+	t=1716550096; cv=none; b=my8fCUewBSiy8poEPeWHhyK2Gt6ZUMT+J0n8bcowPK8cLrGhls698QmrNfK7xqk6WMpOcnTKuSU2AXGNeJKHgroqdzO+dWrVrE34DOWtJJQd7X9uGgzGMkzbP81LOqCfbXj67Lb2Y3txJQ5wd0amlOcNNE9O/O7gKNWVRU6Gtw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716550048; c=relaxed/simple;
-	bh=lWIcExuNIvSZE9aJBZpRjiblaXxJSviHY/f+mr0RxW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lp50eooHpYzWDjyESUX0x/oM8kEDrrcGom3QWeKRmHP7dIriujFTbi1pZ7y9g9SCmLOVpc2BDKCG0mo1h67wlMFE1gS6KiQui2Fj7LBzxz1isp0tEbmd1LgBqkqAxLH68v9xfkeTsgZxDFX94hbnafcIxDdGh8xQPC/amkXojOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=YierkngI; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=YierkngI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5ECB320982;
-	Fri, 24 May 2024 11:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716550044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4WLWgVOfLhXHFK0AX9hIsRSzqQqW6MtlpTAPDJhTPOU=;
-	b=YierkngITLivRB8ICZHBOnZmEVE2CAdTqe0ax7WvpT4PYwIo624XgcYVWefW++2bvLkAJ5
-	nei5skVPwfU2I2gTpn2eW1Qa/04XsnHJzVhCb3FS9/Q5VNmPAGe3klzB1E4MOBE/kG1Akz
-	SYzehHb3XE5RO9v8H5Q4MnU3R8x0cBY=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=YierkngI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1716550044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4WLWgVOfLhXHFK0AX9hIsRSzqQqW6MtlpTAPDJhTPOU=;
-	b=YierkngITLivRB8ICZHBOnZmEVE2CAdTqe0ax7WvpT4PYwIo624XgcYVWefW++2bvLkAJ5
-	nei5skVPwfU2I2gTpn2eW1Qa/04XsnHJzVhCb3FS9/Q5VNmPAGe3klzB1E4MOBE/kG1Akz
-	SYzehHb3XE5RO9v8H5Q4MnU3R8x0cBY=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 449B613A3D;
-	Fri, 24 May 2024 11:27:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rqnADZx5UGbtCwAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Fri, 24 May 2024 11:27:24 +0000
-Date: Fri, 24 May 2024 13:27:19 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Davide Benini <davide.benini@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, cve@kernel.org,
-	linux-kernel@vger.kernel.org, Jason Xing <kernelxing@tencent.com>,
-	linux-cve-announce@vger.kernel.org
-Subject: Re: CVE-2024-27429: netrom: Fix a data-race around
- sysctl_netrom_obsolescence_count_initialiser
-Message-ID: <ZlB5l40ahqW8PGlC@tiehlicka>
-References: <2024051722-CVE-2024-27429-878c@gregkh>
- <ZkxdqOUek_MHqIMn@tiehlicka>
- <2024052105-pulsate-reborn-119a@gregkh>
- <ZkzGL_vXciG7ipm5@tiehlicka>
- <2024052219-storewide-arrogance-8d54@gregkh>
- <5f3cccea-eff5-40f7-a868-743ca837e84d@suse.com>
+	s=arc-20240116; t=1716550096; c=relaxed/simple;
+	bh=oHA9gc+CrTyin+zUK+uAT3gY9fGy7KJDCFi88foFCBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r+lULIRYGxhPdEPkSzPFfdtKKj/V2Xt+Mg3XFs6BRR7O0P/Da8J0EnB8HX20PXVPFKNVqswywrh03kHXdjL6lGCU8OmGpsvp92dzXqo13rN2EoeF+FKedE8MnOzTqVKCzPy7X0dXKE4zqkjey9w/Mts8k0hUnjJiAbBSud7nSKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=auxo9UDh; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=hcK9uKDg9sC6XHkeLqCJBgcdOFQUEGulh79bnSWYMao=;
+	t=1716550095; x=1716982095; b=auxo9UDhDQ1HOC77g1uMdbpyjeOPhq663wLpwEwXn+xdlpc
+	BlCqAdD6T9cUU/I8lOLSbKwv5TjsTFLZrSl0pDrKWuI9kKEwf3LLClR14UIjVGY/XWIZ0dhs7aHT6
+	OfUqVyvbIXfhp2Cglu9Icq9DYcDXvN0RnmutDhOCwXKsOiqUAdsdnOxCRxQrt0+Xb0SZEw+jMwMcn
+	Yb8GoVB1XVQqJvr2x9/M4Rfp1c5BQD3RRRbLVEUEJDLZm9Wp2ZxgYulNWMQe3zbyevh3dub0Qfv8x
+	OPJ0xxjFgXN5uO+ptdQL/yaJGYWZ/MrUG9a7iV+hZRJPhCCc70IdRhlnq/r+lHJQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sAT5o-0008IF-Oe; Fri, 24 May 2024 13:28:12 +0200
+Message-ID: <06f50224-9d9e-4118-adf4-ac89b0a06086@leemhuis.info>
+Date: Fri, 24 May 2024 13:28:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f3cccea-eff5-40f7-a868-743ca837e84d@suse.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_LOW(-1.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 5ECB320982
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -5.01
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [BUG] Linux 6.8.10 NPE
+To: Greg KH <gregkh@linuxfoundation.org>,
+ Paul Grandperrin <paul.grandperrin@gmail.com>
+Cc: rankincj@gmail.com, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <A8DQDS.ZXN0FMYZ3DIM1@gmail.com>
+ <2024052249-cryptic-anthem-5bd2@gregkh>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <2024052249-cryptic-anthem-5bd2@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716550095;b262171c;
+X-HE-SMSGID: 1sAT5o-0008IF-Oe
 
-On Wed 22-05-24 12:21:54, Davide Benini wrote:
-> On 22/05/24 07:11, Greg Kroah-Hartman wrote:
-> > On Tue, May 21, 2024 at 06:05:03PM +0200, Michal Hocko wrote:
-> > > On Tue 21-05-24 16:40:24, Greg KH wrote:
-> > > > On Tue, May 21, 2024 at 10:39:04AM +0200, Michal Hocko wrote:
-> > > > > This and couple of others are all having the same pattern. Adding
-> > > > > READ_ONCE for an integer value with a claim that this might race with
-> > > > > sysctl updates. While the claim about the race is correct I fail to see
-> > > > > how this could have any security consequences. Even if a partial write
-> > > > > was observed which sounds _more_ than theoretical these all are merely
-> > > > > timeouts and delays.
-> > > > > 
-> > > > > Is there anything I am missing?
-> > > > 
-> > > > Nope, you are right, our fault, I'll go revoke this now.
-> > > 
-> > > please also revoke all others touching the same function.
-> > 
-> > I don't see any other CVEs that reference that function, but I do see
-> > some that reference the same type of issue in the same file:
-> > 	CVE-2024-27420
-> > 	CVE-2024-27421
-> > 	CVE-2024-27430
-> > are those what you are referring to?  If not, which ones do you think
-> > also should be revoked?
+[CCing the regression list, as it should be in the loop for regressions:
+https://docs.kernel.org/admin-guide/reporting-regressions.html]
+
+On 22.05.24 17:12, Greg KH wrote:
+> On Sun, May 19, 2024 at 01:28:58PM +0200, Paul Grandperrin wrote:
+>>> I am using vanilla Linux 6.8.10, and I've just noticed this BUG in my
+>> dmesg log. I have no idea what triggered it, and especially since I
+>> have not even mounted any NFS filesystems?!
+>>
+>> Hi all,
+>> I have the exact same bug. I'm using the NixOS kernel but as soon as it was
+>> updated to 6.8.10 my server has gone in a crash-reboot-loop.
+>>
+>> The server is hosting an NFS deamon and it crashes about 10 seconds after
+>> the tty login prompt is displayed.
+>>
+>> Dowgrading to 6.8.9 fixes the issue.
 > 
-> It seems all the CVEs in the range [CVE-2024-27420, CVE-2024-27430] are of the same kind.
-> Shouldn't all be revoked?
+> Any chance you all can use 'git bisect' to track down the offending
+> commit?
 
-Yes all these
-bc76645ebdd0 ("netrom: Fix a data-race around sysctl_netrom_link_fails_count")
-b5dffcb8f71b ("netrom: Fix a data-race around sysctl_netrom_routing_control")
-f99b494b4043 ("netrom: Fix a data-race around sysctl_netrom_transport_no_activity_timeout")
-a2e706841488 ("netrom: Fix a data-race around sysctl_netrom_transport_requested_window_size")
-43547d869943 ("netrom: Fix a data-race around sysctl_netrom_transport_busy_delay")
-806f462ba902 ("netrom: Fix a data-race around sysctl_netrom_transport_acknowledge_delay")
-e799299aafed ("netrom: Fix a data-race around sysctl_netrom_transport_maximum_tries")
-60a7a152abd4 ("netrom: Fix a data-race around sysctl_netrom_transport_timeout")
-119cae5ea3f9 ("netrom: Fix data-races around sysctl_netrom_network_ttl_initialiser")
-cfd9f4a740f7 ("netrom: Fix a data-race around sysctl_netrom_obsolescence_count_initialiser")
-958d6145a6d9 ("netrom: Fix a data-race around sysctl_netrom_default_path_quality")
+Paul, any progress on this?
 
--- 
-Michal Hocko
-SUSE Labs
+BTW, there is also a report about a NFS related general protection
+fault, see this thread:
+
+https://lore.kernel.org/all/CAK8fFZ7rbh5o9XG1D5KAPSRyES-8W8AphxsLJXOWUFZK49i8fA@mail.gmail.com/
+
+It was bisected to 4b14885411f74b ("nfsd: make all of the nfsd stats
+per-network namespace") [v6.9-rc1, v6.8.10 (abf5fb593c90d3)]
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
