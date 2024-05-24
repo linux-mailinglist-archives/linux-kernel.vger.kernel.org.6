@@ -1,85 +1,56 @@
-Return-Path: <linux-kernel+bounces-188910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD3A8CE868
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:01:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85788CE86A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC0C1C20C59
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:01:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B1ACB219C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3116012E1F7;
-	Fri, 24 May 2024 16:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83AE12E1CA;
+	Fri, 24 May 2024 16:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZwHdI6f"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CB2kUAOR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A3F12D75D;
-	Fri, 24 May 2024 16:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACEE1E52C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716566450; cv=none; b=BXryNhHRgJZLSN4pJvrQ6j0GOXuH7Vaov5OQj7x57sd05tjLBSkjUXXcZix6j+5o7YuvRiIQ2/gx8B+1lQPWE3Vj2o/SimHwlQAcNze8KO2BgbqxX43C/25DPuGeQopYWRvxlAk9TjPo1LL9F4653VR3/eSmTAP7JKR4YdQ97BM=
+	t=1716566513; cv=none; b=KE36b5XX0EeclgMqcDoGN6qcZVC75AhTY1M/oCjuDDq5k5FesSEEWDYpOf1Em1l2aUqJaDrFe1Yl+jNZVgmx2QkNXJbd64BNLgh2+WnjyK2kOw1r59AAiGRN4I+zWoWrxBUC6GZCz4KUT+xGQPpR/EI8/Nox4CNcUHFE5W8ftUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716566450; c=relaxed/simple;
-	bh=FnAaiCmQC7YRKlzCDKAI0OXamAuUxY3zUlnua8fn3oU=;
+	s=arc-20240116; t=1716566513; c=relaxed/simple;
+	bh=gpmn/L/CKIjmdBWM+e87XryHHA3qf/UV+ODH/mboJAk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ibLECZA1SQbMO/y9D+8fnoYwFEk4lUAyzNdLsm8bv4YyxYhL2qEN6JhDWBJrDhh6OYUF3v5c+WjehNe2NAjI1/ABNvVL3bQPYrsnrSBON2yRBs+L6lOnZSu6Zvm6fymnF3nkxkRzDru7NE4JIszNs9d0sV8aLcqbGjuZorgi6u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZwHdI6f; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4210c9d1df6so2340765e9.2;
-        Fri, 24 May 2024 09:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716566447; x=1717171247; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EeGxIN2NLzfkcvB5SwbOf6TisZFQzjCd2Zm13eyZV2Y=;
-        b=aZwHdI6fHD6FVqiwULtAjRG8q/+Xwgce+MLh0saIIQZuaze81i7+ndbL38ugVY7xKh
-         FFR2YI+HauS/y9O512e6JtMLlic8Y67G1lMF1FQVuWn7o0CeonrXerxH30hLs7CBh5Yf
-         tSoEUarxJIAc6Rs6l56FYf+P4pVDiaTmbli2mUaXN0Jx9rPUT2EXjwIry2/NHNDiHb+k
-         FxjGAw9WniZae8mg6/usDCs5pu2JV0Vaa58qqLSSdZt2mKr4/44IIOoASwyPcickK2Zh
-         Gj06JSfqAYLv2Uqjw0acPskIKOMOlIG5SF2l/bdzUFzr//TVT2jQKrkVq1P+3bZJqpy6
-         9EOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716566447; x=1717171247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EeGxIN2NLzfkcvB5SwbOf6TisZFQzjCd2Zm13eyZV2Y=;
-        b=XQRR6vhpRiuHM7nBvs/3Ital/4GObdH9hGucyOrGvnMBB45Xhz2hRW9a/kIrutTMDt
-         Aj2UIaxEibCqQeSuL5War6QTzZC7IE0AWjpc7LAM3BWUW8E/iq+YMsFASWNOjMap0Mhz
-         agqVt8lfPywReH96bkHSFl+yOqWVUl+r2e4ScPT11+7DGj7wo0qniQeKOmIZgS5+igwU
-         mH8USq/+UhDP8qvkqmrBe9HARD+Dd6PNKdP9xsw4WZy8Z9R/G2hnHhYMzHhIirC8WKBB
-         +8ZrPzRqxgV2bvbQUlxSy9HmcGITmm8lmAIO0IC6sumQsd4KbL/4e8pNbIUz2jeR20Cj
-         5Xkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHnx9LzGuzvMZoYcXohJ1wCu5lJbCHYHYHjWt24+ZhzQF4WIxTeBucheYgW6kqyFmTy7dViGhRj70fg44Y1RloKI14Xr3AMoprGDuCsGzDWx2cLgZw1OvaS3GS/UYIybrh6DSDVgI4Mg==
-X-Gm-Message-State: AOJu0YyokkXCc4Nngge+1MPv8agTQkCtBw4EKUH57nHddhMMhfcQBezZ
-	3xP93tSJaq0RlPetA0oVn96oLS4J6KZkza+8wyX3MHd4JE2hoCF9
-X-Google-Smtp-Source: AGHT+IF1nzlmWcJjKLmWsVsX2Q/bz3pbEstFXA5fX3vj4NYfHb6SpOA1kbfUC2hwKB/oVXMdf4RHSw==
-X-Received: by 2002:a05:600c:581a:b0:41f:f957:96ac with SMTP id 5b1f17b1804b1-421089d9dc3mr22424605e9.13.1716566447029;
-        Fri, 24 May 2024 09:00:47 -0700 (PDT)
-Received: from andrea ([151.76.32.59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089667fbsm24207395e9.9.2024.05.24.09.00.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 09:00:45 -0700 (PDT)
-Date: Fri, 24 May 2024 18:00:43 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	hernan.poncedeleon@huaweicloud.com,
-	jonas.oberhauser@huaweicloud.com
-Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
- representation
-Message-ID: <ZlC5q7bcdCAe7xPp@andrea>
-References: <20240524151356.236071-1-parri.andrea@gmail.com>
- <1c6d4146-86f8-4fd5-a23e-a95ba2464c9e@rowland.harvard.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sqGISur+aGYV39BQZWuRWHoEEIND5ZgjBamDs40z9UD3H0eQpxkiUmajqk6coslN4crkrtzMaYYZNnY+cJW5aIb3OmMac/OtX+gfedy5p+TfY71OgBkyzIwbIJsmpGTLn+8fksCEotvp9mO6Y0xEpj90OVHyB9+v/CsvghLbxww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CB2kUAOR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C41A7C2BBFC;
+	Fri, 24 May 2024 16:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716566512;
+	bh=gpmn/L/CKIjmdBWM+e87XryHHA3qf/UV+ODH/mboJAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CB2kUAORBi58asZ36d3lwq+uvSFUOAXiinqr9tfxAL0GoCBGUg1rO5yDzwj3xFU3g
+	 BpfLVl2v/UIUaqM3dvcViU076dMWfBT9LTSwUeFR2JOucA2HpXGBmy0PSYTaMUptus
+	 IQxjbumAE9DVU+JxWMt/dVRj6N1PALbox7z5lOG6Ji5zuJWBxFDg0+SapnpL1jjyi4
+	 7TKYD03kNMkNbfOObxFyGT1ViLumE0994zijEO+uSY8OafiqEI5M+wBHYwVucTVqlt
+	 QfsLFhNSsRg9VZKrURKayjAiUcW1+yOR+1mrqI45byuDOAaj51/b2R5XzVgYTw/fF8
+	 Yn3IuSYcDK8gg==
+Date: Fri, 24 May 2024 10:01:49 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Kundan Kumar <kundan.kumar@samsung.com>
+Cc: axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	joshi.k@samsung.com, anuj20.g@samsung.com, nj.shetty@samsung.com,
+	c.gameti@samsung.com, gost.dev@samsung.com
+Subject: Re: [PATCH] nvme: adjust multiples of NVME_CTRL_PAGE_SIZE in offset
+Message-ID: <ZlC57Zvr1qmtEyEY@kbusch-mbp.dhcp.thefacebook.com>
+References: <CGME20240523113915epcas5p32626cec7fb138355e74415534a3ece36@epcas5p3.samsung.com>
+ <20240523113149.29174-1-kundan.kumar@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,12 +59,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1c6d4146-86f8-4fd5-a23e-a95ba2464c9e@rowland.harvard.edu>
+In-Reply-To: <20240523113149.29174-1-kundan.kumar@samsung.com>
 
-> What's the difference between R and R*, or between W and W*?
+On Thu, May 23, 2024 at 05:01:49PM +0530, Kundan Kumar wrote:
+> bio_vec start offset may be relatively large particularly when large
+> folio gets added to the bio. A bigger offset will result in avoiding the
+> single-segment mapping optimization and end up using expensive
+> mempool_alloc further.
+> 
+> Rather than using absolute value, adjust bv_offset by
+> NVME_CTRL_PAGE_SIZE while checking if segment can be fitted into one/two
+> PRP entries.
 
-AFAIU, herd7 uses such notation, "*", to denote a load or a store which
-is also in RMW.
-
-  Andrea
+Thanks, applied to nvme-6.10.
 
