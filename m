@@ -1,189 +1,238 @@
-Return-Path: <linux-kernel+bounces-188703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3548CE585
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:51:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CEA8CE588
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C363A1C213E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D561F1F217A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9978664C;
-	Fri, 24 May 2024 12:51:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBDB86647;
+	Fri, 24 May 2024 12:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="u+FkYJZ+"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC7885640
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A5484D30
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716555089; cv=none; b=jreeZ+FtYMd/EXWxdKityOoclWNMbmA+tX23lZHv8Xi/dEbumCG/bDFeRbyk4rzbn9sDxFMylDqdL/4+stfieKHNZTXi2aG2pwP6ctq1u34nvZc7tQVzH5j1VjH8WTeJY4jws2SarrbxQftLkqwXa6j7IjzwnjU5z7vOUqpWVh4=
+	t=1716555274; cv=none; b=YPkkeKEk4zRz6hEKnA5EHYG5WSgtmJ2YJ8SeGEDSln0pi+txy3CboZhZU2MHkVPpoAmdTrjkKPGTf6W/fbbs9fnA78bCDmSeKYzv7MOen8QIjedt6nvUfAyyddX7d42zF6jkyWaXq47g8FV+1DPZq7Ffk02bmTyQFnB1+I/sfxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716555089; c=relaxed/simple;
-	bh=EqnsROPwTP3ntkopFkdrZelWoz/7Hj+16Nwvgg65sKg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fFFCXj4bfa5NClfHPprJyZvG79BhShYb2EtSHhwsOYfa9gczDjpzuOOFmsL8xpEGlZHYogrG6uTEa9HfYlJjLxmSdPr8QzO9fXwgjrEbwQO5w4FVFcDj2VfawwQg/gcLmZJxJpk3HY8HXRfIDVRdK9hMAMuxFl8pxPOYxO0OwjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-37128f4b7f9so30686125ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:51:27 -0700 (PDT)
+	s=arc-20240116; t=1716555274; c=relaxed/simple;
+	bh=2Q87jTyD/yahS92t5urdkFnj9lWgA8pkg+6R0zo54pM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XSfUfZVMNasjtQoZlgXOrJqZgGw4eubw1bw4PJCErXM6Q6k/DVIMaqETkFyPF1lFfv9r25qXvr6+ps2AVS8sfN+3I4qtDd3PYWmzIsupXb13n2bgp8uFH6J4WULR3kReIKDpjrHOAdVDuO8mVhYdi+8PHEve+aH0hi8nxiSWbNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=u+FkYJZ+; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3737b33270aso3671345ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:54:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1716555272; x=1717160072; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MxmDLiLsd5ua2H7Oam6e1zqnDQkQ25mJBA16oWnpxYY=;
+        b=u+FkYJZ+VJyMo2mGe63D+Dp/95+eDIx/MnSo623ZuYzp8yzHNbzGjTt730HJYfRIln
+         zHeNSLvLpgL+zaCFzTswgHStVvyP4goL6BSS9s0H29t8oCR2BqKEQIgUiqiZ9EdZrhVK
+         +gM3xNR0JYKsubmaxrNWK7nxAei9amlxZQs5t+47XXVBMXy0oKKYhed/mWVoeX3PIY8A
+         6YcUGC19YbNjigXAGhGy7gHFjsDi4cvgPg3WHcvRCsQGpYeRhbHRvgnNtUoOGT1OUc+A
+         gMcz+MByevlTbxxdw28feWsCF6Mha86G/izo3GWrM7TLbOaFPlGnt6m8KBOXUABrY2hQ
+         ihrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716555087; x=1717159887;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LWR8v6vD/ml9vWdL1nuV53C5OuiUbXhFWnnf57JGgQk=;
-        b=nT5BQoZGBjaXLrMxMT8RJ+VsRF6aJuqbO4WZCsy156NtdJPfXTTzKndwzz9ChvfRnu
-         HSMGUF6ze8TXXOPOPmfBDu9hea6EHvmjeyXYwIeSVSOL7Yu+W9QhJZ92GB0vJO5VqjJN
-         cifeKH7RJciJQEB3kZqImQ75GPr3FlJMfuUL92mlvLpFEui27fEEtZn6Pcj9/W4JF+4i
-         9kk5b9sQaH0ikNMM3Hl4geeWVLHlQSnuyQUoGlWNroJ0Y7tc8wXL9xEH6AWlROHLB9BS
-         eSXNM7833dBSX7mFXLMLGTvaoCP14OnIKmPt4ABMJXDciHf7AZc5FM8HJetRF/GW/iNv
-         fnOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWe4J7xj1XU5eUbhXK0Lw/PMDPYFIFiMWglAaTKDzMKps3K2eHNiQAxN+xmP3hHDSRI8TEe0ZI62KHBDBZWZVrTWCg9jzFx6CwiRF+C
-X-Gm-Message-State: AOJu0YyzjJidxEFjEQPJTm0AMF63ntYAaZsC/ke1xCpESMGFy2jZP7TZ
-	QRqivIFMVjpR1w7BJJunz7HpiuwgqYkDMooTES4S57+P2qyzeV+wOggtx7/G9aWZngHVKt+Pkgt
-	FKEHSUd7i2Q+mvR0vA4v28hs8DTQdgsvdKsjLqsYzRyxZjNaTjZva680=
-X-Google-Smtp-Source: AGHT+IE1JjcpjaC2BHnwYpKEH7AuYjloe9wjM4YYnL2XHbMZ/dpvGBz6q/CpNKjGQ+cByz1cp/TWPBDwuHY7CRbbM77uGI0dct+4
+        d=1e100.net; s=20230601; t=1716555272; x=1717160072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MxmDLiLsd5ua2H7Oam6e1zqnDQkQ25mJBA16oWnpxYY=;
+        b=IMZ/WrHoUqDi4pEtqEjwBe0VTuV7QgGtUjxKHJlEwqWk2d771euUDcyV9lkyL0QoqG
+         hLf5IwZqxMfmse/Kw+c0DDuPiKSDedZNuKHkIwX3REFEWmOP2rJu/0hZUFRq4Qk+VQB5
+         PrrH5KAJIuLKOVLtdP5yCiByLBqsUzQBxyei8LehzwQ8d+LYdobe+xNlDrP/PhA8qVKa
+         jqY7Tx91nDiTQA6h5sOOS3kLWd8Lgb1E4bj9bTMAP3G+7BWL2mQpwuYPXM8DISNwn4tC
+         tR7fSCOqDp1B3Qcf1/qK//0rrLGDb/tt9N6tOarGPpvT904dNKk2mbLAQdh1iIiAAC5s
+         3lqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVcvBAte0NRApDGH3zsf1t57vJWl78ClddGKs6J0bu46LrZT+CWBvpKZUkpkSSoEqQZBY+n3LLlHwgzts8ATNd/1d8fXMaHnq6aWus
+X-Gm-Message-State: AOJu0Yw0BHtTWi5eCnoq8zMIdRipUpv94VIkvVkpAAv/mQBnjxhZtdbR
+	JWncQa3e1Eqxa88i8VYRAYCB+7WXaILJdvfrMRhVCeIdegmFYmkhkR/jvL/9hBvgNCy+TSTPnEC
+	dhk5TRPog4SqPQX4Raw4p0uP174CjOvlWqDxQKQ==
+X-Google-Smtp-Source: AGHT+IG706oHtTX6EHJGP+6O0ueOX8hKEYHRAtlMxjdpa5kaBBkruy70OydInrBDfoTThdPlUAB7QfD2yRnjk92tjac=
+X-Received: by 2002:a05:6e02:1a09:b0:36b:2731:83ce with SMTP id
+ e9e14a558f8ab-3737b2c5874mr24957655ab.8.1716555272176; Fri, 24 May 2024
+ 05:54:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9b:b0:36f:c675:fe8e with SMTP id
- e9e14a558f8ab-3737b350f33mr2429995ab.4.1716555087179; Fri, 24 May 2024
- 05:51:27 -0700 (PDT)
-Date: Fri, 24 May 2024 05:51:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000035941f061932a077@google.com>
-Subject: [syzbot] [net?] KMSAN: kernel-infoleak in __skb_datagram_iter (4)
-From: syzbot <syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
+ <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
+ <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
+ <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
+ <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
+ <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
+ <CAAhSdy33DcNw+pbDRrR=hBH86kwvu3xZbomQby8XhRXcc-exqQ@mail.gmail.com>
+ <CAKddAkBrP2iQBC+aY1Xw5pssBpiQZe4V-6ww5m8hbKP6V0jzLg@mail.gmail.com>
+ <CAAhSdy12-_Hdb-WVrs8kyfCy_OQA0p27DS6TOV87dh9HODrU_Q@mail.gmail.com>
+ <CAKddAkCQOvnci-bzKx1pBUJh5t1uPT-wNXGH1WyqDyb5qR_Scg@mail.gmail.com>
+ <CAK9=C2V2xYwi4wK2+e=z7NF8Ph7+LxvWh4J4TmQrbVfSfpO-Ag@mail.gmail.com> <CAPDyKFo6PiWmwtHTfRCWK95RgQShfuR+G2cZm0D1Ad-at_MWmg@mail.gmail.com>
+In-Reply-To: <CAPDyKFo6PiWmwtHTfRCWK95RgQShfuR+G2cZm0D1Ad-at_MWmg@mail.gmail.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 24 May 2024 18:24:20 +0530
+Message-ID: <CAAhSdy3VVbOjMZR_De3D6hC0XwgjwpRzxU=Xpf=OOULfTYOxOw@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Anup Patel <apatel@ventanamicro.com>, Nick Hu <nick.hu@sifive.com>, palmer@dabbelt.com, 
+	rafael@kernel.org, daniel.lezcano@linaro.org, paul.walmsley@sifive.com, 
+	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, zong.li@sifive.com, 
+	Cyan Yang <cyan.yang@sifive.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, May 24, 2024 at 4:11=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> On Fri, 17 May 2024 at 06:39, Anup Patel <apatel@ventanamicro.com> wrote:
+> >
+> > On Thu, May 16, 2024 at 9:40=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wr=
+ote:
+> > >
+> > > Hi Anup
+> > >
+> > > On Wed, May 15, 2024 at 9:46=E2=80=AFPM Anup Patel <anup@brainfault.o=
+rg> wrote:
+> > > >
+> > > > Hi Nick,
+> > > >
+> > > > On Wed, May 15, 2024 at 5:45=E2=80=AFPM Nick Hu <nick.hu@sifive.com=
+> wrote:
+> > > > >
+> > > > > Hi Anup,
+> > > > >
+> > > > > Thank you for your guidance.
+> > > > > After enabling the debug message, we found a way to solve the pro=
+blem
+> > > > > by the following steps:
+> > > > > 1. Add a compatible string in 'power-domains' node otherwise it w=
+on't
+> > > > > be the supplier of the consumers. (See of_link_to_phandle())
+> > > >
+> > > > Hmm, requiring a compatible string is odd. Where should we document
+> > > > this compatible string ?
+> > > >
+> > > Sorry, this is my fault. I didn't include some updates in
+> > > of_link_to_phandle(). This led some misunderstandings here.
+> > > You are right, we don't need it.
+> > > The supplier will be linked to the CLUSTER_PD node.
+> > >
+> > > > > 2. Move the 'power-domains' node outside the 'cpus' node otherwis=
+e it
+> > > > > won't be added to the device hierarchy by device_add().
+> > > > > 3. Update the cpuidle-riscv-sbi driver to get the pds_node from
+> > > > > '/power-domains'.
+> > > >
+> > > > By adding a compatible string and moving the "power-domains" node
+> > > > outside, you are simply forcing the OF framework to populate device=
+s.
+> > > >
+> > > > How about manually creating platform_device for each power-domain
+> > > > DT node using of_platform_device_create() in sbi_pd_init() ?
+> > > >
+> > > Thanks for the suggestion! We have test the solution and it could wor=
+k.
+> > > We was wondering if it's feasible for us to relocate the
+> > > 'power-domains' node outside of the /cpus? The CLUSTER_PD might
+> > > encompass not only the CPUs but also other components within the
+> > > cluster.
+> >
+> > The cpuidle-riscv-sbi driver expects "power-domains" DT node
+> > under "/cpus" DT node because this driver only deals with power
+> > domains related to CPU cluster or CPU cache-hierarchy. It does
+> > make sense to define L2/L3 power domains under
+> > "/cpus/power-domain" since these are related to CPUs.
+> >
+> > Moving the CPU "power-domains" DT node directly under "/" or
+> > somewhere else would mean that it covers system-wide power
+> > domains which is not true.
+>
+> I understand your point, but I am not convinced that the power-domains
+> need to belong to the "cpus" node. Ideally, the power-domain describes
+> the power-rail and the interface to manage the CPUs, this can surely
+> be described outside the "cpus" node - even if there are only CPUs
+> that are using it.
+>
+> Moreover, moving forward, one should not be surprised if it turns out
+> that a platform has other devices than the CPUs, sharing the same
+> power-rail as the CPU cluster. At least, we have that for arm/psci
+> [1].
 
-syzbot found the following issue on:
+For non-CPU power domains, we are working on a messaging
+specification (RPMI) [1]. The supervisor software might have
+direct access to a RPMI transport or it can send RPMI messages
+via SBI MPXY extension [2].
 
-HEAD commit:    101b7a97143a Merge tag 'acpi-6.10-rc1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15633df4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7ac2f8c387a23814
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c85cae3350b7d486aee
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+If power-rails on a platform are shared between CPUs and
+devices then the platform can:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+1) Use SBI HSM for CPUs and use RPMI for devices. The
+DT bindings for device power-domains based on RPMI are
+still work-in-progress. If there are multiple supervisor domains
+(aka system level partitions) created by SBI implementation or
+some partitioning hypervisor then the RPMI messages can be
+arbitraged by SBI implementation using SBI MPXY extension.
+The SBI MPXY extension also allows sharing the same RPMI
+transport between machine-mode (firmware) and supervisor-mode.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4f673334a91c/disk-101b7a97.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8e6db59f4091/vmlinux-101b7a97.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7e5782387c9d/bzImage-101b7a97.xz
+2) Use its own platform specific power-domain driver for both
+CPUs and devices (basically don't use the SBI HSM and RPMI).
+In this case, there won't be any controlled access (or arbitration)
+of power rails across supervisor domains.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0c85cae3350b7d486aee@syzkaller.appspotmail.com
+>
+> >
+> > I suggest we continue using "/cpus/power-domains" DT node
+> > only for power domains related to CPU clusters or CPU
+> > cache-hierarchy.
+> >
+> > For system wide power domains of SoC devices, we can either:
+> > 1) Use device power domains through the SBI MPXY extension
+> >     via different driver
+> > 2) Use a platform specific driver
+> >
+> > >
+> > > We also look at cpuidle_psci_domain driver and it seems Arm doesn't
+> > > create the devices for each subnode of psci domain.
+> > > Is there any reason that they don't need it?
+>
+> We don't need it for arm as we have a separate node for PSCI and its
+> power-domains [2]. Moreover, we have a separate driver that manages
+> the power-domain (cpuidle-psci-domain).
 
-=====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_ubuf include/linux/iov_iter.h:29 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:271 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x366/0x24b0 lib/iov_iter.c:185
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- copy_to_user_iter lib/iov_iter.c:24 [inline]
- iterate_ubuf include/linux/iov_iter.h:29 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:245 [inline]
- iterate_and_advance include/linux/iov_iter.h:271 [inline]
- _copy_to_iter+0x366/0x24b0 lib/iov_iter.c:185
- copy_to_iter include/linux/uio.h:196 [inline]
- simple_copy_to_iter net/core/datagram.c:532 [inline]
- __skb_datagram_iter+0x185/0x1000 net/core/datagram.c:420
- skb_copy_datagram_iter+0x5c/0x200 net/core/datagram.c:546
- skb_copy_datagram_msg include/linux/skbuff.h:4070 [inline]
- netlink_recvmsg+0x432/0x1610 net/netlink/af_netlink.c:1962
- sock_recvmsg_nosec net/socket.c:1046 [inline]
- sock_recvmsg+0x2c4/0x340 net/socket.c:1068
- ____sys_recvmsg+0x18a/0x620 net/socket.c:2803
- ___sys_recvmsg+0x223/0x840 net/socket.c:2845
- __sys_recvmsg net/socket.c:2875 [inline]
- __do_sys_recvmsg net/socket.c:2885 [inline]
- __se_sys_recvmsg net/socket.c:2882 [inline]
- __x64_sys_recvmsg+0x304/0x4a0 net/socket.c:2882
- x64_sys_call+0x38ff/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:48
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Unlike the ARM world, we don't have any DT node for SBI in
+the RISC-V world because the SBI is always there. Due to this,
+the SBI HSM CPU idle driver (this driver) currently looks for
+CPU "power-domains" under "/cpus" DT node because the
+SBI HSM extension only deals with CPU states.
 
-Uninit was stored to memory at:
- pskb_expand_head+0x30f/0x19d0 net/core/skbuff.c:2271
- netlink_trim+0x2c2/0x330 net/netlink/af_netlink.c:1317
- netlink_broadcast_filtered+0x82/0x23b0 net/netlink/af_netlink.c:1523
- nlmsg_multicast_filtered include/net/netlink.h:1111 [inline]
- nlmsg_multicast include/net/netlink.h:1130 [inline]
- nlmsg_notify+0x15f/0x2f0 net/netlink/af_netlink.c:2602
- rtnl_notify+0xc3/0xf0 net/core/rtnetlink.c:757
- wireless_nlevent_flush net/wireless/wext-core.c:354 [inline]
- wireless_nlevent_process+0xfe/0x250 net/wireless/wext-core.c:414
- process_one_work kernel/workqueue.c:3267 [inline]
- process_scheduled_works+0xa81/0x1bd0 kernel/workqueue.c:3348
- worker_thread+0xea5/0x1560 kernel/workqueue.c:3429
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> [...]
+>
+> [1] arch/arm64/boot/dts/qcom/sc7280.dtsi (search for "CLUSTER_PD")
+> [2] Documentation/devicetree/bindings/arm/psci.yaml
+>
+> Kind regards
+> Uffe
 
-Uninit was stored to memory at:
- wireless_send_event+0x566/0x1020 net/wireless/wext-core.c:580
- ioctl_standard_iw_point+0x12e5/0x13c0
- compat_standard_call+0x179/0x310 net/wireless/wext-core.c:1110
- wext_ioctl_dispatch+0x234/0xa30 net/wireless/wext-core.c:1016
- compat_wext_handle_ioctl+0x1ae/0x2f0 net/wireless/wext-core.c:1139
- compat_sock_ioctl+0x26b/0x1370 net/socket.c:3525
- __do_compat_sys_ioctl fs/ioctl.c:1004 [inline]
- __se_compat_sys_ioctl+0x791/0x1090 fs/ioctl.c:947
- __ia32_compat_sys_ioctl+0x93/0xe0 fs/ioctl.c:947
- ia32_sys_call+0x1481/0x40a0 arch/x86/include/generated/asm/syscalls_32.h:55
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb4/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+[1] https://github.com/riscv-non-isa/riscv-rpmi
+[2] https://docs.google.com/document/d/1Ivej3u6uQgVdJHnjrbqgUwE1Juy75d4uYCj=
+WrdNjeAg/edit?usp=3Dsharing
 
-Local variable iwp created at:
- compat_standard_call+0x48/0x310 net/wireless/wext-core.c:1097
- wext_ioctl_dispatch+0x234/0xa30 net/wireless/wext-core.c:1016
-
-Bytes 60-63 of 64 are uninitialized
-Memory access of size 64 starts at ffff88804af03180
-Data copied to user address 00007fff5690c968
-
-CPU: 0 PID: 4697 Comm: dhcpcd Tainted: G        W          6.9.0-syzkaller-02339-g101b7a97143a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best regards,
+Anup
 
