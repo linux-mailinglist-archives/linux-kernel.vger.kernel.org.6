@@ -1,130 +1,184 @@
-Return-Path: <linux-kernel+bounces-189143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A898CEBC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:24:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120968CEBC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D6E1C20FEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75F011F21F3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF98E85264;
-	Fri, 24 May 2024 21:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6J1ClIK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6463885264;
+	Fri, 24 May 2024 21:26:18 +0000 (UTC)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3567C29403;
-	Fri, 24 May 2024 21:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FA65F870
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 21:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716585874; cv=none; b=A7dyG3eQwYOf34gRO0cLJs2kro/L1zXPlN/2cnAcewFP8+6tbjhznJRFiYBP0guoAqzPT/QVDTv0MPcWGDqhezJJNPbigsjmGwdG+Xlv8z0HwSjW35t3FAqZf1fYke2sypJarIr9GjvlTaV1eZR6jU9ioganLrRDhVP4RnwHjfo=
+	t=1716585977; cv=none; b=mJntYAwnK1u8PuzcilV6dkv1RgDNu/JXZe6Yo88+v/IczPRXok7qNeWf06mcsKloc36XjZuyr43tk9lvObljybBHam37VEdk4QXC8zA9qOe3/jkkfe9r21G5eMvThpSPNLz+3zB8SBjP1brSxkeUJdgTUwgf7f92uxUQBwIM2kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716585874; c=relaxed/simple;
-	bh=ZVPg8EMx0Yr6yPElmIUEkpUwH0oSsvKTxevOdlxBNxI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=hGjJoxDDAwHD0L0O4BO2v2Xx5NXB0kmQ2rX8Jxvxbr68St37cSnCd3q7RzcYirGX45OCUvV/jnEc/3Ae+h1hqCs5hhXSONdcJmZP2wrGC090L4UBSORBojHOXo6rXoy5IKv/ZLIzIGxLhRdmAU9DHD0nrUafC3QMXnVSfiasDRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6J1ClIK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B325CC2BBFC;
-	Fri, 24 May 2024 21:24:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716585874;
-	bh=ZVPg8EMx0Yr6yPElmIUEkpUwH0oSsvKTxevOdlxBNxI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=F6J1ClIK/S5O+G6GhHyDpJt5o5KL5E+VS3FheUVROo53UdlMEojNnYsSStUS+R9yw
-	 UC10CcHcy0pjGU+ivFhvQO4ikOXqQjNQzHipPspVJt3Z1wrImN5HYKu6xzR8xcAloy
-	 FMfZ6hF9CTEtrod8mQIi4T6qleSicQFYxkqtgkCkT6poqYTs2aWmMqXdh4vNOw8J3p
-	 cqzbYAZjCc2cjHtbc/O9LS9VPL4IuUih1ysCu0pEklQ0KScMHaVksP6hMQwe2u/uC6
-	 Nzi/GBYWD2h6VWw05InFZsKFZYGEBEbGTojIrUBfB3EVYsgmVtfYNQ+dGTMkoZmHi7
-	 Y7KKqD8fC2LCg==
+	s=arc-20240116; t=1716585977; c=relaxed/simple;
+	bh=1hT6rSveJTWLtGOvT6dNMMjUctIsT3JA+5OR1oLX9pc=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=jpMS/m737agkvQu2vYEAOynuIhJkac6sh7AA4Sz7nfbjgpUF1BNT7LeSg84P58dP6sutxYt45I3L1+ybdEiI6azg5h2lkreg0wr7PlcupSU6RD9q6G0FKxwqyoc0sK6qhX/CZubaVXrI7hOeVotn8UkwbFJLhaF0ZMPIoirVPGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 3ABEF6195FCA;
+	Fri, 24 May 2024 23:26:13 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id cmVIACII7s2V; Fri, 24 May 2024 23:26:12 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id C4E036195FCC;
+	Fri, 24 May 2024 23:26:12 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id nBDwiu23_hNP; Fri, 24 May 2024 23:26:12 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id A9C4F6195FCA;
+	Fri, 24 May 2024 23:26:12 +0200 (CEST)
+Date: Fri, 24 May 2024 23:26:12 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-um <linux-um@lists.infradead.org>
+Message-ID: <291644210.144818.1716585972644.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] UML changes for v6.10-rc1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 25 May 2024 00:24:30 +0300
-Message-Id: <D1I6WMDSLOW0.2RS18E7T61X9A@kernel.org>
-Cc: "david" <david@sigma-star.at>, "oe-kbuild-all"
- <oe-kbuild-all@lists.linux.dev>, "linux-kernel"
- <linux-kernel@vger.kernel.org>, "david oberhollenzer"
- <david.oberhollenzer@sigma-star.at>
-Subject: Re: security/keys/trusted-keys/trusted_dcp.c:206:24: sparse:
- sparse: incorrect type in assignment (different base types)
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Richard Weinberger" <richard@nod.at>, "kernel test robot"
- <lkp@intel.com>
-X-Mailer: aerc 0.17.0
-References: <202405240610.fj53EK0q-lkp@intel.com>
- <1855855000.144805.1716584815663.JavaMail.zimbra@nod.at>
-In-Reply-To: <1855855000.144805.1716584815663.JavaMail.zimbra@nod.at>
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
+Thread-Index: xBd1AgElQDu67oKGTzsCTOWQJc5Ing==
+Thread-Topic: UML changes for v6.10-rc1
 
-On Sat May 25, 2024 at 12:06 AM EEST, Richard Weinberger wrote:
-> >| Reported-by: kernel test robot <lkp@intel.com>
-> >| Closes:
-> >| https://lore.kernel.org/oe-kbuild-all/202405240610.fj53EK0q-lkp@intel.=
-com/
-> >=20
-> > sparse warnings: (new ones prefixed by >>)
-> >>> security/keys/trusted-keys/trusted_dcp.c:206:24: sparse: sparse: inco=
-rrect type
-> >>> in assignment (different base types) @@     expected restricted __le3=
-2
-> >>> [usertype] payload_len @@     got unsigned int @@
-> >   security/keys/trusted-keys/trusted_dcp.c:206:24: sparse:     expected=
- restricted
-> >   __le32 [usertype] payload_len
-> >   security/keys/trusted-keys/trusted_dcp.c:206:24: sparse:     got unsi=
-gned int
-> >=20
-> > vim +206 security/keys/trusted-keys/trusted_dcp.c
-> >=20
-> >   179
-> >   180	static int trusted_dcp_seal(struct trusted_key_payload *p, char *=
-datablob)
-> >   181	{
-> >   182		struct dcp_blob_fmt *b =3D (struct dcp_blob_fmt *)p->blob;
-> >   183		int blen, ret;
-> >   184
-> >   185		blen =3D calc_blob_len(p->key_len);
-> >   186		if (blen > MAX_BLOB_SIZE)
-> >   187			return -E2BIG;
-> >   188
-> >   189		b->fmt_version =3D DCP_BLOB_VERSION;
-> >   190		get_random_bytes(b->nonce, AES_KEYSIZE_128);
-> >   191		get_random_bytes(b->blob_key, AES_KEYSIZE_128);
-> >   192
-> >   193		ret =3D do_aead_crypto(p->key, b->payload, p->key_len, b->blob_k=
-ey,
-> >   194				     b->nonce, true);
-> >   195		if (ret) {
-> >   196			pr_err("Unable to encrypt blob payload: %i\n", ret);
-> >   197			return ret;
-> >   198		}
-> >   199
-> >   200		ret =3D encrypt_blob_key(b->blob_key);
-> >   201		if (ret) {
-> >   202			pr_err("Unable to encrypt blob key: %i\n", ret);
-> >   203			return ret;
-> >   204		}
-> >   205
-> > > 206		b->payload_len =3D get_unaligned_le32(&p->key_len);
->
-> I think this should be a put_unaligned_le32(p->key_len, &b->payload_len).
+Linus,
 
-Please send then fix, reasoning of that, and finally:
+The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f=
+:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202405240610.fj53EK0q-lkp@int=
-el.com/
+  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
 
-> Thanks,
-> //richard
+are available in the Git repository at:
 
-BR, Jarkko
+  git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-=
+linus-6.10-rc1
+
+for you to fetch changes up to 919e3ece7f5aaf7b5f3c54538d5303b6eeeb053b:
+
+  um: virtio_uml: Convert to platform remove callback returning void (2024-=
+04-30 14:19:03 +0200)
+
+----------------------------------------------------------------
+This pull request contains the following changes for UML:
+
+- Fixes for -Wmissing-prototypes warnings and further cleanup
+- Remove callback returning void from rtc and virtio drivers
+- Fix bash location
+
+----------------------------------------------------------------
+Duoming Zhou (1):
+      um: Fix return value in ubd_init()
+
+Johannes Berg (5):
+      um: signal: move pid variable where needed
+      um: slirp: remove set but unused variable 'pid'
+      um: vector: fix bpfflash parameter evaluation
+      um: vector: remove unused len variable/calculation
+      um: process: remove unused 'n' variable
+
+Roberto Sassu (1):
+      um: Add winch to winch_handlers before registering winch IRQ
+
+Tiwei Bie (16):
+      um: Make local functions and variables static
+      um: Fix the declaration of vfree
+      um: Remove unused functions
+      um: Fix the return type of __switch_to
+      um: Add missing headers
+      um: Move declarations to proper headers
+      um: Fix -Wmissing-prototypes warnings for text_poke*
+      um: Fix -Wmissing-prototypes warnings for __warp_* and foo
+      um: Stop tracking host PID in cpu_tasks
+      um: Fix -Wmissing-prototypes warnings for (rt_)sigreturn
+      um: Fix the -Wmissing-prototypes warning for __switch_mm
+      um: Fix the -Wmissing-prototypes warning for get_thread_reg
+      um: Fix the declaration of kasan_map_memory
+      um: Add an internal header shared among the user code
+      um: Fix -Wmissing-prototypes warnings for __vdso_*
+      um: Remove unused do_get_thread_area function
+
+Uwe Kleine-K=C3=B6nig (2):
+      um: rtc: Convert to platform remove callback returning void
+      um: virtio_uml: Convert to platform remove callback returning void
+
+Yueh-Shun Li (1):
+      um: Makefile: use bash from the environment
+
+ arch/um/Makefile                           |  2 +-
+ arch/um/drivers/line.c                     | 14 ++++----
+ arch/um/drivers/pcap_kern.c                |  4 +--
+ arch/um/drivers/rtc_kern.c                 |  5 ++-
+ arch/um/drivers/slirp_user.c               |  3 +-
+ arch/um/drivers/ubd_kern.c                 |  4 +--
+ arch/um/drivers/ubd_user.c                 |  2 +-
+ arch/um/drivers/vector_kern.c              |  6 ++--
+ arch/um/drivers/virtio_uml.c               |  5 ++-
+ arch/um/include/asm/kasan.h                |  1 -
+ arch/um/include/asm/mmu.h                  |  2 --
+ arch/um/include/asm/processor-generic.h    |  1 -
+ arch/um/include/asm/ptrace-generic.h       |  3 ++
+ arch/um/include/shared/as-layout.h         |  1 -
+ arch/um/include/shared/kern_util.h         |  3 ++
+ arch/um/include/shared/skas/mm_id.h        |  2 ++
+ arch/um/include/shared/um_malloc.h         |  2 +-
+ arch/um/kernel/kmsg_dump.c                 |  2 +-
+ arch/um/kernel/mem.c                       |  2 ++
+ arch/um/kernel/physmem.c                   |  3 +-
+ arch/um/kernel/process.c                   | 52 +++++++-------------------=
+----
+ arch/um/kernel/ptrace.c                    |  3 --
+ arch/um/kernel/reboot.c                    |  1 +
+ arch/um/kernel/skas/mmu.c                  |  1 +
+ arch/um/kernel/skas/process.c              |  5 +--
+ arch/um/kernel/time.c                      |  7 ++--
+ arch/um/kernel/tlb.c                       |  7 +---
+ arch/um/kernel/um_arch.c                   |  1 +
+ arch/um/kernel/um_arch.h                   |  2 ++
+ arch/um/os-Linux/drivers/ethertap_kern.c   |  2 +-
+ arch/um/os-Linux/drivers/tuntap_kern.c     |  2 +-
+ arch/um/os-Linux/elf_aux.c                 |  1 +
+ arch/um/os-Linux/internal.h                | 20 ++++++++++++
+ arch/um/os-Linux/main.c                    |  8 +++--
+ arch/um/os-Linux/mem.c                     |  2 ++
+ arch/um/os-Linux/signal.c                  |  4 +--
+ arch/um/os-Linux/skas/mem.c                |  3 +-
+ arch/um/os-Linux/skas/process.c            |  1 +
+ arch/um/os-Linux/start_up.c                |  4 +--
+ arch/x86/um/asm/ptrace.h                   |  6 ++++
+ arch/x86/um/bugs_32.c                      |  1 +
+ arch/x86/um/bugs_64.c                      |  1 +
+ arch/x86/um/elfcore.c                      |  1 +
+ arch/x86/um/fault.c                        |  1 +
+ arch/x86/um/os-Linux/mcontext.c            |  1 +
+ arch/x86/um/os-Linux/registers.c           |  2 +-
+ arch/x86/um/os-Linux/tls.c                 |  1 +
+ arch/x86/um/ptrace_32.c                    |  2 --
+ arch/x86/um/shared/sysdep/archsetjmp.h     |  7 ++++
+ arch/x86/um/shared/sysdep/kernel-offsets.h |  3 ++
+ arch/x86/um/signal.c                       | 14 ++++----
+ arch/x86/um/tls_32.c                       | 19 +----------
+ arch/x86/um/user-offsets.c                 |  3 ++
+ arch/x86/um/vdso/um_vdso.c                 | 10 ++++--
+ 54 files changed, 136 insertions(+), 129 deletions(-)
+ create mode 100644 arch/um/os-Linux/internal.h
 
