@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-188417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680008CE1BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:48:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276D98CE1BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FE728200A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D64B628244C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFFF82892;
-	Fri, 24 May 2024 07:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82F11292DE;
+	Fri, 24 May 2024 07:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Tft+xQRl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xhUi4/3G"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EFE273FD;
-	Fri, 24 May 2024 07:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738251292C3;
+	Fri, 24 May 2024 07:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716536926; cv=none; b=I5GUKOSZibF6BFLNxDSC78SUSGwXm8Cg+ZV8VSb7l9KHNfGU4MQPGwplwrSN7RIWhoGt3quOu7VgUwzBAqLbDAeWhALfjUArlu2Z7Gtq357GTbkZy8DXjdy0fId63M/OIn8dRncSDjijXKOMqxjDux2uK1G7v4UcT1AjO/v8MNs=
+	t=1716536947; cv=none; b=bkL7A3Q9zT3HTQcl3jCIv8PO+z5mgtRAUIJonfHzTmECQlSEwDwsp1zpV1zSsqpGAz4VjzLvgW+8uCLix2HF5L6gq834e5OChVp6cAiVzuLxTGDQGqpepweGlR9xIGnPJuyRfXhf5CU9iZDxFi5eroGexPJTBUC7YexP442GUi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716536926; c=relaxed/simple;
-	bh=2K1g3kVDeJ3awJXb/+t4b51AojlZaPt6EK7sOJ+IxGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LtllYbxPVrmHbCPeZ+3A9K4tAIGpNBXMXaFESf2kHADKHmMwIHRO2xquzHGwU8qqZbYtEpkl8FL2pIYH6WUZ3yD7u37BRP7BC7Dt1teNY+kSVt8fBeQsbDDQLmFzRX7YQV13ARLxLrYAx5PxopvtOh1zPXxQvTNAPriqzmNIMgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Tft+xQRl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A93DC2BBFC;
-	Fri, 24 May 2024 07:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716536925;
-	bh=2K1g3kVDeJ3awJXb/+t4b51AojlZaPt6EK7sOJ+IxGw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Tft+xQRleT3xVUTSnGAV36rvOMvYMtlb/FYHk89uQf8yNhIx0fw1Gl4oB6+L8vuFs
-	 FYzIjzxCPqQFYOe2pR/Ef4UmggVgL7a+Mwlz5v2HjpTFLkHaFkCO2pKIvAvb85IreD
-	 l3Zcat7u28gZ1oun9Bztjgcmg9rVUlpMsEUdrmsI=
-Date: Fri, 24 May 2024 09:48:43 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY/Serial driver fixes for 6.10-rc1
-Message-ID: <ZlBGWwX-98c6wnGW@kroah.com>
+	s=arc-20240116; t=1716536947; c=relaxed/simple;
+	bh=FbAxsDuQqprqbZ3o1qy7Esisf/ahAAzjSyXHO2NFNc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ehN6u7gW1D4SaLdSnDIG787c/Jm06oH9wFhM/jurHVy7cH1o7VdErz01HCwH8h1o+0YDQu5lQLYrrbUkyZQBSMrm5XnGf38YimOIlTipmnhs1Y0yI2Ml3TB0f+mh4pfXwuCIa27jcwp04CSX0PV4Oer5KoS/TNxrPJfurLjDoZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xhUi4/3G; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44O7mpgB110057;
+	Fri, 24 May 2024 02:48:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716536931;
+	bh=LbV912eUItDCFeujcZ+K3k698C6fxl6NNH6ifgGmUWE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=xhUi4/3Guvgv7deYfTV+ieGc6o4LiLwhr0YRbqoLRjcUYQHMPqp9PB1/6A32Y6a+Y
+	 v4lT05hmp/OlEb99aon6if5gPgpZcX65R2qN+Zwn4v3f7kUPAy7zcUEC929nLSsjOS
+	 f0whMXr20j64LTMVCiQKC8KJunrMZgC6PcKEVSQU=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44O7mpos042818
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 May 2024 02:48:51 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
+ May 2024 02:48:51 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 24 May 2024 02:48:51 -0500
+Received: from [10.250.145.232] ([10.250.145.232])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44O7mmX2125835;
+	Fri, 24 May 2024 02:48:49 -0500
+Message-ID: <dd8f294b-425c-4e4a-8eaf-026138461941@ti.com>
+Date: Fri, 24 May 2024 10:48:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/17] wifi: cc33xx: Add driver for new TI CC33xx wireless
+ device family
+To: Kalle Valo <kvalo@kernel.org>
+CC: Johannes Berg <johannes.berg@intel.com>, Breno Leitao <leitao@debian.org>,
+        Justin Stitt <justinstitt@google.com>,
+        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sabeeh Khan
+	<sabeeh-khan@ti.com>
+References: <20240521171841.884576-1-michael.nemanov@ti.com>
+ <87msohatii.fsf@kernel.org>
+Content-Language: en-US
+From: "Nemanov, Michael" <michael.nemanov@ti.com>
+In-Reply-To: <87msohatii.fsf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
 
-  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
+On 5/23/2024 10:15 AM, Kalle Valo wrote:
+> The community (myself included) has been frustrated that TI has dropped
+> the ball on their existing wireless drivers:
+>
+> https://docs.kernel.org/process/maintainers.html#ti-wilink-wireless-drivers
+>
+> This kind of behaviour is not exactly building trust. So how is this
+> driver going to be any different?
 
-are available in the Git repository at:
+I understand the frustration. As the engineer leading the development of 
+the CC33xx driver I can say that CC3300 and CC3301 are the first in a 
+family whose roadmap goes beyond 2030. I can also say that Linux driver 
+support is foundational for this line of products and TI is committed to 
+supporting these devices in the linux-wireless community for at least 10 
+years. Unlike previous drivers, development and maintenance of CC33xx 
+will be done by TI engineers and not a 3rd party. Is this acceptable?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.10-rc1-fixes
+Michael.
 
-for you to fetch changes up to 8492bd91aa055907c67ef04f2b56f6dadd1f44bf:
-
-  serial: sc16is7xx: fix bug in sc16is7xx_set_baud() when using prescaler (2024-05-04 18:14:14 +0200)
-
-----------------------------------------------------------------
-TTY/Serial fixes for 6.10-rc1
-
-Here are some small TTY and Serial driver fixes that missed the
-6.9-final merge window, but have been in my tree for weeks (my fault,
-travel caused me to miss this.)
-
-These fixes include:
-  - more n_gsm fixes for reported problems
-  - 8520_mtk driver fix
-  - 8250_bcm7271 driver fix
-  - sc16is7xx driver fix
-
-All of these have been in linux-next for weeks without any reported
-problems.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Daniel Starke (2):
-      tty: n_gsm: fix possible out-of-bounds in gsm0_receive()
-      tty: n_gsm: fix missing receive state reset after mode switch
-
-Doug Berger (1):
-      serial: 8250_bcm7271: use default_mux_rate if possible
-
-Hugo Villeneuve (1):
-      serial: sc16is7xx: fix bug in sc16is7xx_set_baud() when using prescaler
-
-Pin-yen Lin (1):
-      serial: 8520_mtk: Set RTS on shutdown for Rx in-band wakeup
-
- drivers/tty/n_gsm.c                    | 140 +++++++++++++++++++++++----------
- drivers/tty/serial/8250/8250_bcm7271.c |  99 +++++++++++++----------
- drivers/tty/serial/8250/8250_mtk.c     |   8 +-
- drivers/tty/serial/sc16is7xx.c         |  23 ++++--
- 4 files changed, 180 insertions(+), 90 deletions(-)
 
