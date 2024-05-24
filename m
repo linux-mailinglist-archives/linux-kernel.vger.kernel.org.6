@@ -1,265 +1,160 @@
-Return-Path: <linux-kernel+bounces-188790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7778CE6F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 908028CE6FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D68B20F38
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:26:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2217B20EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7608D12C526;
-	Fri, 24 May 2024 14:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8296112C495;
+	Fri, 24 May 2024 14:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P39J+PgD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b="C0UBxj2u";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PmtcMxuW"
+Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F6586279
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9981986262;
+	Fri, 24 May 2024 14:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716560789; cv=none; b=QLadKPg3u86C6+qlY0SZMqPFtrtCZbG6rpwpebfjrNPaYYbDo0mNQSzXz7/4WMcmmzrI4aXyi1DIs2NpL50X75OeA5NcB+EVgVaGCkuusu12AjU3fs6GeQlw07eFBPbnaYO2yTDllDSPWdX1I2fQLqS2yJcRlvNpI/8hDPQje9I=
+	t=1716560957; cv=none; b=Qjj8okhPPOrP7qt+VJfyJd82Q5L30GjHjcyH/paO5Sje6li/7qsYNTyxH/soepjydUOYyQ+jTEPc2NgoWG9F69jIa/elCt5k7UpG2l0ahp73GdYrhcTCJZJC3pAkLf8YaWfMi6vRVhnZyZnB1FBzn7DxCaoBej1GyW0uvFtfbpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716560789; c=relaxed/simple;
-	bh=/hO+Wdk51Ceeo7dHaf4yVaejFzzuVQkXGewi20m1Row=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=IeN+CXgQTCf/UO34qew/sBLb6zGiWHkdviJiNWf27bv+Et/tOGEXz+tkhkSMDVvCxIt7cDKSoRL67tVzhOSf+B3faODpWtDzHAutlh2AcxT/Qa120LIGsgMP6QELxTtyGDdktGB1dpKWTrVLy0/aEgiWz9bFuwjoRjvSJpLVJxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P39J+PgD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716560786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GLnGM17UL4b12TgJD1s/b9rU7JDsVx4PpoKaNTMgNmk=;
-	b=P39J+PgDdkmvyI1GHVFrwyuES3UkvaMWko3H+3VIpXLHLDWWqFVixQmBCnbGvvAOjSBSzH
-	+tmFKUGB3k+JG6SKRTEBB++gB1BYkeFDFPKaDmL7s4cSpdOQYsR/c0KcrKugjKf4725hpl
-	6BDqQQxks7kJQp/Ho3iHhNCMXbprswM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-182-QUYKM_jeN5mRBk6fOMzu1g-1; Fri, 24 May 2024 10:26:23 -0400
-X-MC-Unique: QUYKM_jeN5mRBk6fOMzu1g-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4613C800994;
-	Fri, 24 May 2024 14:26:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.20])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 63F432026D68;
-	Fri, 24 May 2024 14:26:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Dominique Martinet <asmadeus@codewreck.org>
-cc: dhowells@redhat.com,
-    syzbot+df038d463cca332e8414@syzkaller.appspotmail.com,
-    syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com,
-    syzbot+1527696d41a634cc1819@syzkaller.appspotmail.com,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Latchesar Ionkov <lucho@ionkov.net>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>,
-    Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
-    Hillf Danton <hdanton@sina.com>,
-    Christian Brauner <brauner@kernel.org>, v9fs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v3] netfs, 9p: Fix race between umount and async request completion
+	s=arc-20240116; t=1716560957; c=relaxed/simple;
+	bh=wWkRIiMlgm73/vZ1bN5Kw4M/XsO1r+Ec7tonrYS1gl4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=uaPnw3GcdHiBThPYLJe7SAkdRyGODPP31feQOugPBTH72CBt+PIxS5a759UCkTF0XVjuDPt6BILv53nYQMs3RhVDhRiLLngtfEgNpPl019khAXZgg85cTqN1uxcdk77ANK0qpiOBra6WVxZESV9Gwcz2Gdfyqur5EDzrHaSML9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu; spf=pass smtp.mailfrom=readahead.eu; dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b=C0UBxj2u; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PmtcMxuW; arc=none smtp.client-ip=64.147.123.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=readahead.eu
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 103F2180015A;
+	Fri, 24 May 2024 10:29:14 -0400 (EDT)
+Received: from imap50 ([10.202.2.100])
+  by compute6.internal (MEProxy); Fri, 24 May 2024 10:29:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=readahead.eu; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1716560953;
+	 x=1716647353; bh=o8AX8LeWahoPFHk+J4cUsl3zwJzxBQkqh2YVrBWWfog=; b=
+	C0UBxj2uJjlibG8L2PThZlcsFGdwQhmn72N+w1ztqwQlSV1pMT7vMP0huWnHUSBs
+	AD9K9xexXAcJuShJAp/whush/BYPyJGTLiVHmItllK9uDaIEvtOP21OBi2vZwy8a
+	18BqY/76darPC7U7i8KHnfNOA/OcLsAptoN0+1OJ1EWBnTInr690xJyQjX2Spf8B
+	m7v6kdTjpD21FezaGQwbm1GeZkpr1ZS1EHuqRA4a1F4ANc5NmIzUh+TSZ+6L4Wub
+	R9vgND4eHu1tMlCzk9Ij7ju4Sn2RpSTApb98bWuwE3CY4AlvuUDZuEKH8BJMDWNi
+	hHeIFHuqbJx6XrMxOmIPoQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716560953; x=
+	1716647353; bh=o8AX8LeWahoPFHk+J4cUsl3zwJzxBQkqh2YVrBWWfog=; b=P
+	mtcMxuW87sztIVnwRNYwYHkDi5632gdUQZy9L94igZAfSxiKrhUjJZaXZJ26EH2C
+	oin9u+4gzbp0L+6cegVxLSxCQasr/6SU7NOK3gz1HUkpzcRlhQmz3gg33W7o1HeO
+	KlyDVOhxm+AN3nMcxi/eHVrLCFQqt8QcD1qbr1tv5lY1ME8Cp6jh7I+vrCMgTX8y
+	588TS5UxmYrJv6ab4xe5d0hGsHezVwnJfaI3v3ZeHozL02UQ0C85WkmyMM1Uigh5
+	CUgy9vh9mAhhLP4buXXuR12Cszkg07xxiLVesoKKCUwdY7NEuV8cxeS3ac7lgPNH
+	xnxv4UKSDbamTddQERHMQ==
+X-ME-Sender: <xms:OaRQZqX7lQ0d8hynRDHHPb5Jwbvt28Pd1H07Un2r2U1cVXBiZfPtDQ>
+    <xme:OaRQZml_BOMnT_Z6k2jKiHbnuuTam3EU3aMLuBE2XmU9eEQzGEnhxeSkVNXzNYP2r
+    96mbxPjXWo5XV7-meQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeikedgjeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdff
+    rghvihguucfthhgvihhnshgsvghrghdfuceouggrvhhiugesrhgvrggurghhvggrugdrvg
+    huqeenucggtffrrghtthgvrhhnpeejgeeutdeufedtjeffvdfghfdvvdetteejfedtieff
+    keduffeiheeijeehvdekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegurghvihgusehrvggruggrhhgvrggurdgvuh
+X-ME-Proxy: <xmx:OaRQZubtji3F1UxuEtKTajXaHr71b188hWYLsl32q14At9wqRVvKXg>
+    <xmx:OaRQZhVbg9iwbMpQOpc3scieJQgQMP9Mq3-nApDWSgRx14cGf3Etjg>
+    <xmx:OaRQZklqYp123ywL-KrR6iCDTxkIFiG53N0oIeQ-n338WHHLBhTb-A>
+    <xmx:OaRQZmdzlziJFgZPIMYQ3wqmsrddOVH7E2ahCQNN5samDfa9GTm5yw>
+    <xmx:OaRQZv-Y6IPXT_cKEcmZf02-bB3N_bnjFOky1EDUE17lvVGR-GEB0Xi4>
+Feedback-ID: id2994666:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 1A5F11700093; Fri, 24 May 2024 10:29:13 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-480-g515a2f54a-fm-20240515.001-g515a2f54
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <755890.1716560771.1@warthog.procyon.org.uk>
+Message-Id: <f880562e-9521-4270-82e2-c6fb14dc853a@app.fastmail.com>
+In-Reply-To: 
+ <CALmYWFtedtEnfGFp5DYacHYOE7+GB8yoQC-iyw7JAxySmgQ7vw@mail.gmail.com>
+References: <20240513191544.94754-1-pobrn@protonmail.com>
+ <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
+ <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
+ <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
+ <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com>
+ <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
+ <CALmYWFtedtEnfGFp5DYacHYOE7+GB8yoQC-iyw7JAxySmgQ7vw@mail.gmail.com>
+Date: Fri, 24 May 2024 16:28:50 +0200
+From: "David Rheinsberg" <david@readahead.eu>
+To: "Jeff Xu" <jeffxu@google.com>, "Aleksa Sarai" <cyphar@cyphar.com>
+Cc: =?UTF-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ dmitry.torokhov@gmail.com, "Daniel Verkamp" <dverkamp@chromium.org>,
+ hughd@google.com, jorgelo@chromium.org, skhan@linuxfoundation.org,
+ "Kees Cook" <keescook@chromium.org>
+Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 24 May 2024 15:26:11 +0100
-Message-ID: <755891.1716560771@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-netfs, 9p: Fix race between umount and async request completion
+Hi
 
-There's a problem in 9p's interaction with netfslib whereby a crash occurs
-because the 9p_fid structs get forcibly destroyed during client teardown
-(without paying attention to their refcounts) before netfslib has finished
-with them.  However, it's not a simple case of deferring the clunking that
-p9_fid_put() does as that requires the p9_client record to still be
-present.
+On Thu, May 23, 2024, at 6:55 PM, Jeff Xu wrote:
+> On Thu, May 23, 2024 at 9:20=E2=80=AFAM Jeff Xu <jeffxu@google.com> wr=
+ote:
+>> On Thu, May 23, 2024 at 1:24=E2=80=AFAM David Rheinsberg <david@reada=
+head.eu> wrote:
+>> > We asked for exactly this fix before, so I very much support this. =
+Our test-suite in `dbus-broker` merely verifies what the current kernel =
+behavior is (just like the kernel selftests). I am certainly ok if the k=
+ernel breaks it. I will gladly adapt the test-suite.
+>> >
+> memfd is by default not sealable, and file is by default sealable,
+> right ? that makes the memfd  semantics different from other objects
+> in linux.
+> I wonder what is the original reason to have memfd  this way?
 
-The problem is that netfslib has to unlock pages and clear the IN_PROGRESS
-flag before destroying the objects involved - including the fid - and, in
-any case, nothing checks to see if writeback completed barring looking at
-the page flags.
+shmem-files are *not* sealable by default. This design was followed for =
+backward compatibility reasons, since shmem-files predate sealing and si=
+lently enabling sealing on all shmem-files would have broken existing us=
+ers (see shmem.c which initializes seals to F_SEAL_SEAL).
 
-Fix this by keeping a count of outstanding I/O requests (of any type) and
-waiting for it to quiesce during inode eviction.
+I am not sure what you mean with "makes [memfd] semantics different from=
+ other objects in linux". Can you elaborate?
 
-Reported-by: syzbot+df038d463cca332e8414@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/0000000000005be0aa061846f8d6@google.com/
-Reported-by: syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/000000000000b86c5e06130da9c6@google.com/
-Reported-by: syzbot+1527696d41a634cc1819@syzkaller.appspotmail.com
-Link: https://lore.kernel.org/all/000000000000041f960618206d7e@google.com/
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Dominique Martinet <asmadeus@codewreck.org>
-Tested-by: syzbot+d7c7a495a5e466c031b6@syzkaller.appspotmail.com
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Steve French <sfrench@samba.org>
-cc: Hillf Danton <hdanton@sina.com>
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
-Notes:
-    Changes
-    =3D=3D=3D=3D=3D=3D=3D
-    ver #3)
-     - Adjust commit message; no change to the diff.
-    ver #2)
-     - Wait for outstanding I/O before clobbering the pagecache.
+Since `memfd_create` was introduced at the same time as shmem-sealing, i=
+t could certainly have enabled sealing by default. Not sure whether this=
+ would be preferable, though.
 
- fs/9p/vfs_inode.c      |    1 +
- fs/afs/inode.c         |    1 +
- fs/netfs/objects.c     |    5 +++++
- fs/smb/client/cifsfs.c |    1 +
- include/linux/netfs.h  |   18 ++++++++++++++++++
- 5 files changed, 26 insertions(+)
+> Another solution is to change memfd to be by-default sealable,
+> although that will be an api change, but what side effect  will it be
+> ?
+> If we are worried about the memfd being sealed by an attacker, the
+> malicious code could also overwrite the content since memfd is not
+> sealed.
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 8c9a896d691e..effb3aa1f3ed 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -349,6 +349,7 @@ void v9fs_evict_inode(struct inode *inode)
- 	__le32 __maybe_unused version;
- =
+You cannot change the default-seals retrospectively. There are existing =
+shmem-users that share file-descriptors and *expect* the other party to =
+be able to override data, but do *not* expect the other party to be able=
+ to apply seals. Note that these models explicitly *want* shared, writab=
+le access to the buffer (e.g., render-client shares a buffer with the di=
+splay server for scanout), so just because you can *write* to a shmem-fi=
+le does not mean that sharing is unsafe (e.g., using SIGBUS+mmap can saf=
+ely deal with page-faults).
 
- 	if (!is_bad_inode(inode)) {
-+		netfs_wait_for_outstanding_io(inode);
- 		truncate_inode_pages_final(&inode->i_data);
- =
-
- 		version =3D cpu_to_le32(v9inode->qid.version);
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 94fc049aff58..15bb7989c387 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -648,6 +648,7 @@ void afs_evict_inode(struct inode *inode)
- =
-
- 	ASSERTCMP(inode->i_ino, =3D=3D, vnode->fid.vnode);
- =
-
-+	netfs_wait_for_outstanding_io(inode);
- 	truncate_inode_pages_final(&inode->i_data);
- =
-
- 	afs_set_cache_aux(vnode, &aux);
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index c90d482b1650..f4a642727479 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -72,6 +72,7 @@ struct netfs_io_request *netfs_alloc_request(struct addr=
-ess_space *mapping,
- 		}
- 	}
- =
-
-+	atomic_inc(&ctx->io_count);
- 	trace_netfs_rreq_ref(rreq->debug_id, 1, netfs_rreq_trace_new);
- 	netfs_proc_add_rreq(rreq);
- 	netfs_stat(&netfs_n_rh_rreq);
-@@ -124,6 +125,7 @@ static void netfs_free_request(struct work_struct *wor=
-k)
- {
- 	struct netfs_io_request *rreq =3D
- 		container_of(work, struct netfs_io_request, work);
-+	struct netfs_inode *ictx =3D netfs_inode(rreq->inode);
- 	unsigned int i;
- =
-
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_free);
-@@ -142,6 +144,9 @@ static void netfs_free_request(struct work_struct *wor=
-k)
- 		}
- 		kvfree(rreq->direct_bv);
- 	}
-+
-+	if (atomic_dec_and_test(&ictx->io_count))
-+		wake_up_var(&ictx->io_count);
- 	call_rcu(&rreq->rcu, netfs_free_request_rcu);
- }
- =
-
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index ec5b639f421a..14810ffd15c8 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -431,6 +431,7 @@ cifs_free_inode(struct inode *inode)
- static void
- cifs_evict_inode(struct inode *inode)
- {
-+	netfs_wait_for_outstanding_io(inode);
- 	truncate_inode_pages_final(&inode->i_data);
- 	if (inode->i_state & I_PINNING_NETFS_WB)
- 		cifs_fscache_unuse_inode_cookie(inode, true);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index d2d291a9cdad..3ca3906bb8da 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -68,6 +68,7 @@ struct netfs_inode {
- 	loff_t			remote_i_size;	/* Size of the remote file */
- 	loff_t			zero_point;	/* Size after which we assume there's no data
- 						 * on the server */
-+	atomic_t		io_count;	/* Number of outstanding reqs */
- 	unsigned long		flags;
- #define NETFS_ICTX_ODIRECT	0		/* The file has DIO in progress */
- #define NETFS_ICTX_UNBUFFERED	1		/* I/O should not use the pagecache */
-@@ -474,6 +475,7 @@ static inline void netfs_inode_init(struct netfs_inode=
- *ctx,
- 	ctx->remote_i_size =3D i_size_read(&ctx->inode);
- 	ctx->zero_point =3D LLONG_MAX;
- 	ctx->flags =3D 0;
-+	atomic_set(&ctx->io_count, 0);
- #if IS_ENABLED(CONFIG_FSCACHE)
- 	ctx->cache =3D NULL;
- #endif
-@@ -517,4 +519,20 @@ static inline struct fscache_cookie *netfs_i_cookie(s=
-truct netfs_inode *ctx)
- #endif
- }
- =
-
-+/**
-+ * netfs_wait_for_outstanding_io - Wait for outstanding I/O to complete
-+ * @ctx: The netfs inode to wait on
-+ *
-+ * Wait for outstanding I/O requests of any type to complete.  This is in=
-tended
-+ * to be called from inode eviction routines.  This makes sure that any
-+ * resources held by those requests are cleaned up before we let the inod=
-e get
-+ * cleaned up.
-+ */
-+static inline void netfs_wait_for_outstanding_io(struct inode *inode)
-+{
-+	struct netfs_inode *ictx =3D netfs_inode(inode);
-+
-+	wait_var_event(&ictx->io_count, atomic_read(&ictx->io_count) =3D=3D 0);
-+}
-+
- #endif /* _LINUX_NETFS_H */
-
+Thanks
+David
 
