@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-188447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652EF8CE22D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5538CE233
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9561C21714
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB5471C20C5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49E812883C;
-	Fri, 24 May 2024 08:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55AF1292CC;
+	Fri, 24 May 2024 08:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rypv7Ggy"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PORLJGhl"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC5D5B1F8;
-	Fri, 24 May 2024 08:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B933884A4C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716538635; cv=none; b=HwNydIZ7JbauDC0e5FiArEUgc8DILJ8U8KeRXbOZ0RYroRWIlcaSmxNRb5a3v5Efam2Rtlo/6wQfH+LTz4vKR44JNvGX3b99SprESmwmop3eQ+t8MpPDaHfpcDtbTbKCTZX3+gEWP8DLH+xa6a0E/yjXot2LvUVE7BNuQ+mpoGI=
+	t=1716538658; cv=none; b=LCf+uCRJv6YIc5FotAk29kCzUtn1goGJoADD1+SuXizMXzXwzApWOi6EWcRvbkM4E0QrrNlcOTerAOU5QVE0P5BQ5oneD2gD3VC6hzi1B13ROmXFPBkWOgcYNwnANyNtKnQvhf229PgJwMjZZNuq6u4Wxb/hrELaBlLiqTMGXqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716538635; c=relaxed/simple;
-	bh=FiVnBrORsgbrMgm/9Fxel6Aacpzj5+DJofKLEW/BxqA=;
+	s=arc-20240116; t=1716538658; c=relaxed/simple;
+	bh=ZyOb8Zm9KaWoMqlCeqJVsRrwWf3xumNfTSNahrKhYSQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGh3O0j57en15vKj0TqSeU+gWhvTZ/0OQkLaqnJAcxMZfLtFWFLjrBhedgEZfAxuOSau4nlz/qyyxsw73who/v+1RSaVn3SO5t0v/1f+FCtFCfP6zOlzZ7w1693svTiJs6e7ycnmqnp6n4C0JZF6z1mPZjtPRdWNLu1ebwqqFAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rypv7Ggy; arc=none smtp.client-ip=209.85.167.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=N7N+8JVUurEx02CoKrB7qnd9nTUttYxKVtvvdb8hX3OI2+B3n6oTte9ubnpxUG1kRFBaR7pLD6Q3mvoBqO2blTUP/EC+jm/tkGxqUoJni1OH9jirsbJWyxlnKfLW/mwAfO3XntchMUgNrzYOCOOrihCTbec/E76slE/4Pjt8o5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PORLJGhl; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5238b7d0494so9180767e87.3;
-        Fri, 24 May 2024 01:17:13 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5295ae273c8so629384e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716538632; x=1717143432; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1716538654; x=1717143454; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fYU7th+sP9Y5EgJGx8NE5uHiwuls5zINMP/N9oIeob0=;
-        b=Rypv7GgyBzbn4i0/kz5VVx2U6dgkO8OFvFHt78gREGKvMADY0wytD+6/Ioftaj+OtM
-         DPFUjHn0v3HsDVoTHOhcfC5qmd5ixqLu4mLTzJy5GBg8Gm+rzpAuPHZ6mBeWVGAMLhDd
-         G2OnI/IHT2LOdxc2hydfSJdl8rZXyJlvMQf0w5s3E/1ejAJqQJVTvVrwEBzr0v6GEwWk
-         XPWVMORDLKozm8Ik7Xjcbgnk1ox1Rq5RbBsavOZLpUO2SA9oNLkhdduyqIT8/gHewzJr
-         7ieygnk6rvTorHD17OOEHXTbkeNPBkXhtWV5BO4ENcvvJccyo/eqzNzS12y1zaJLafMS
-         0hoQ==
+        bh=090dvuQGvCbsaptvlb8a5zlgHtiHoPXRYcl+CEyJ+s0=;
+        b=PORLJGhl9GMQyvG9cR//kEqyDej/+emXqYFyBEKBNiFxMFDSO+TVRa6RyMTkiOUT2z
+         bgjYLhozSUb7aPN1SSX0N0mBYC/LngjTfmx4O4droZJ9MnDUbPMQO/yr50SSZGbfGI4p
+         30f0NiCl6+p5wvbE1Y+EL3Xg6+jLsV7/gTqMKIKK5LyeCQHHdNCzVRQEzgFzyz1yfvBV
+         lE0czQVqx0zXlTY6YJnC7ONLbJpKa0NNuJVdSq9IuhcI/h0Ci5EJD5e2gZPBc4k20Fk6
+         dOyeWn2KgoVmD+LncxFZRfM5R//Ke9n6QCl0VlQNT+mCHXaCaLQc1ql2+Iz7DX8XS93o
+         agSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716538632; x=1717143432;
+        d=1e100.net; s=20230601; t=1716538654; x=1717143454;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fYU7th+sP9Y5EgJGx8NE5uHiwuls5zINMP/N9oIeob0=;
-        b=ntwUpFgkqygqvUL7Y50IvEVqOo9HjBwxYsyjJqYQ46ZROg76jpYE9BVnnmEQaUpd9m
-         cvXca0ewolVrEzPevRtzdt//U7Ije+AIdDjBOi2DGNeLYMtZIJ9g3tuySQFWkdNr8jzk
-         8ZGhuuzL/PJrmkZCllXjFSnoNcXwcw78Id8G638YNthf4SEGYoSRnzAmEtwlhaxULpwj
-         xXsZdaKsZxd/EjNf0EgPK8soVi1GEratAd1pArVBoRt/9VPwc+1725nJ4P2itfyHEut1
-         ytgZZHbIV++B7iTH9qVqI5eq+RuKfx60EXbnayKFhyWX5MJFFJwAH58LRKT+9EBDYKkT
-         ChWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWS0/Wh+BFXsK3y0pp2S1dBN4kfO8dgnKnZQKv8gyughevqAlTX1rG5UM8+eple5UDqsGw29xmx+NK+ltS/IZbbHxEqeSNPujXbUFOBKco8+4QZBJxh/dHUY40Ui7KTKAq21R4yAKNfdA==
-X-Gm-Message-State: AOJu0YwvTnCCNPPOol7JYd5vIBFBw1+UdUHKXguQPDENbzW+VTAyq89W
-	qQvtGn5UWq5Uv1mAiv74gP3zAkTrOyrp5YJCZ5szvgm6RudRLEAy
-X-Google-Smtp-Source: AGHT+IEZsppLEDEDKwsDDRzSaHgrmqpWDzfj0mpPNqQquVSEmp7ZKoDGEKcFqUKxN2cNH4in0b7UbQ==
-X-Received: by 2002:a19:5f0d:0:b0:51d:5ffd:efe4 with SMTP id 2adb3069b0e04-52964ea9811mr1423557e87.1.1716538631686;
-        Fri, 24 May 2024 01:17:11 -0700 (PDT)
+        bh=090dvuQGvCbsaptvlb8a5zlgHtiHoPXRYcl+CEyJ+s0=;
+        b=G4c/D8qeVIs7njyBpCrm2UjAJuhcx8Dl3xJj3yHAqtha4grT8zTJRPQY5ESOdEoaQE
+         4yDAO+n5XUsD6OZBYqzbIW0c3BtzptaNG0dsWfSlbuy+9Os7H7Jf79yeYspzA77gsSFl
+         CvnDlzrodEZzOUYEw8ZpjxPJhifRQhxB45QzkBiFMgQ2M6JpfPrZMcs4kpi1nXah3Evu
+         5ix2qKlupEKnsxoG8INlxvMf15UN0pO5tjEFn958lNjEo0PM7VZdnSQ8mDz+SMMQMU9A
+         DbDGb9dZg5p8E6zy3oLZ+MhHxEJHJUCtlhlOkarM8id7osw5bBkGPQqdCqEjA8vgtg9R
+         52Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwbanRPPPejbT516ZNRAZdlM2FyIyhNzxBci2PDSpVQw/nXtPO0ZMkIVqQnyB2zzP2z+IKaaRoAwYSF4g9IGAwHOr5qMtujrNm6ztg
+X-Gm-Message-State: AOJu0Yw612NvpdAIEIQpgs/xxrpJYTkjyhyRr3ZdaHTikXM4h346+u9J
+	QiEhbAYvB7lkUoVkChuFCaDwihBW8XQJz7vyKYFrA1JhsWa5IBiV
+X-Google-Smtp-Source: AGHT+IH14pg9Q2jJD6vbkuRypXeisgvBrZmc3hTy5kfGD9lldF0iiHgYNF7G1Fj1GnSa98eT+DOvTQ==
+X-Received: by 2002:ac2:5111:0:b0:51d:a1ca:5f26 with SMTP id 2adb3069b0e04-529649c5e5emr959028e87.20.1716538653593;
+        Fri, 24 May 2024 01:17:33 -0700 (PDT)
 Received: from fedora ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e887705sm124283e87.28.2024.05.24.01.17.09
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e8877a3sm126467e87.36.2024.05.24.01.17.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 01:17:10 -0700 (PDT)
-Date: Fri, 24 May 2024 11:17:05 +0300
+        Fri, 24 May 2024 01:17:32 -0700 (PDT)
+Date: Fri, 24 May 2024 11:17:27 +0300
 From: Matti Vaittinen <mazziesaccount@gmail.com>
 To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
 	Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+Cc: Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/10] dt-bindings: mfd: bd96801 PMIC core
-Message-ID: <bd468e695d8331762d5be77196368b82366be7af.1716533790.git.mazziesaccount@gmail.com>
+Subject: [PATCH v2 03/10] mfd: support ROHM BD96801 PMIC core
+Message-ID: <5d20cad717bfb145dca407a81f2dfbc3ebbe7b48.1716533790.git.mazziesaccount@gmail.com>
 References: <cover.1716533790.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,224 +85,600 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kKCrEB1nWc/4YMm0"
+	protocol="application/pgp-signature"; boundary="UYHqMm8NblOqrO1s"
 Content-Disposition: inline
 In-Reply-To: <cover.1716533790.git.mazziesaccount@gmail.com>
 
 
---kKCrEB1nWc/4YMm0
+--UYHqMm8NblOqrO1s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-ROHM BD96801 is a highly configurable automotive grade PMIC. Introduce
-DT bindings for the BD96801 core.
+The ROHM BD96801 PMIC is highly customizable automotive grade PMIC
+which integrates regulator and watchdog funtionalities.
+
+Provide INTB IRQ and register accesses for regulator/watchdog drivers.
 
 Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
 ---
-Revision history:
+Changelog:
 v1 =3D> v2:
- - use lowercase node names in example
- - minor addition to ERRB use-cases
+- Drop unused enum
+- Improve error prints
+- improve comments
 
-RFCv2 =3D> v1
- - minor cleaning
- - add timeout-sec
+ RFCv2 =3D> v1:
+- drop ERRB interrupts (for now)
+- bd96801: Unlock registers in core driver
 
-RFCv1 =3D> RFCv2:
-  - Document rohm,hw-timeout-ms
-  - Document rohm,wdg-action
+Changelog: RFCv1 =3D> RFCv2
+- Work-around the IRQ domain name conflict
+- Add watchdog IRQ
+- Various styling fixes based on review by Lee
 ---
- .../bindings/mfd/rohm,bd96801-pmic.yaml       | 173 ++++++++++++++++++
- 1 file changed, 173 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic=
-=2Eyaml
+ drivers/mfd/Kconfig              |  13 ++
+ drivers/mfd/Makefile             |   1 +
+ drivers/mfd/rohm-bd96801.c       | 273 +++++++++++++++++++++++++++++++
+ include/linux/mfd/rohm-bd96801.h | 215 ++++++++++++++++++++++++
+ include/linux/mfd/rohm-generic.h |   1 +
+ 5 files changed, 503 insertions(+)
+ create mode 100644 drivers/mfd/rohm-bd96801.c
+ create mode 100644 include/linux/mfd/rohm-bd96801.h
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml b=
-/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 4b023ee229cf..9e874453d94d 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -2089,6 +2089,19 @@ config MFD_ROHM_BD957XMUF
+ 	  BD9573MUF Power Management ICs. BD9576 and BD9573 are primarily
+ 	  designed to be used to power R-Car series processors.
+=20
++config MFD_ROHM_BD96801
++	tristate "ROHM BD96801 Power Management IC"
++	depends on I2C=3Dy
++	depends on OF
++	select REGMAP_I2C
++	select REGMAP_IRQ
++	select MFD_CORE
++	help
++	  Select this option to get support for the ROHM BD96801 Power
++	  Management IC. The ROHM BD96801 is a highly scalable Power Management
++	  IC for industrial and automotive use. The BD96801 can be used as a
++	  master PMIC in a chained PMIC solution with suitable companion PMICs.
++
+ config MFD_STM32_LPTIMER
+ 	tristate "Support for STM32 Low-Power Timer"
+ 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index c66f07edcd0e..e792892d4a8b 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -264,6 +264,7 @@ obj-$(CONFIG_RAVE_SP_CORE)	+=3D rave-sp.o
+ obj-$(CONFIG_MFD_ROHM_BD71828)	+=3D rohm-bd71828.o
+ obj-$(CONFIG_MFD_ROHM_BD718XX)	+=3D rohm-bd718x7.o
+ obj-$(CONFIG_MFD_ROHM_BD957XMUF)	+=3D rohm-bd9576.o
++obj-$(CONFIG_MFD_ROHM_BD96801)	+=3D rohm-bd96801.o
+ obj-$(CONFIG_MFD_STMFX) 	+=3D stmfx.o
+ obj-$(CONFIG_MFD_KHADAS_MCU) 	+=3D khadas-mcu.o
+ obj-$(CONFIG_MFD_ACER_A500_EC)	+=3D acer-ec-a500.o
+diff --git a/drivers/mfd/rohm-bd96801.c b/drivers/mfd/rohm-bd96801.c
 new file mode 100644
-index 000000000000..d381125a0a15
+index 000000000000..1c2a9591be7b
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
-@@ -0,0 +1,173 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/rohm,bd96801-pmic.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/mfd/rohm-bd96801.c
+@@ -0,0 +1,273 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) 2024 ROHM Semiconductors
++ *
++ * ROHM BD96801 PMIC driver
++ *
++ * This version of the "BD86801 scalable PMIC"'s driver supports only very
++ * basic set of the PMIC features. Most notably, there is no support for
++ * the ERRB interrupt and the configurations which should be done when the
++ * PMIC is in STBY mode.
++ *
++ * Supporting the ERRB interrupt would require dropping the regmap-IRQ
++ * usage or working around (or accepting a presense of) a naming conflict
++ * in debugFS IRQs.
++ *
++ * Being able to reliably do the configurations like changing the
++ * regulator safety limits (like limits for the over/under -voltages, over
++ * current, thermal protection) would require the configuring driver to be
++ * synchronized with entity causing the PMIC state transitions. Eg, one
++ * should be able to ensure the PMIC is in STBY state when the
++ * configurations are applied to the hardware. How and when the PMIC state
++ * transitions are to be done is likely to be very system specific, as will
++ * be the need to configure these safety limits. Hence it's not simple to
++ * come up with a generic solution.
++ *
++ * Users who require the ERRB handling and STBY state configurations can
++ * have a look at the original RFC:
++ * https://lore.kernel.org/all/cover.1712920132.git.mazziesaccount@gmail.c=
+om/
++ * which implements a workaround to debugFS naming conflict and some of
++ * the safety limit configurations - but leaves the state change handling
++ * and synchronization to be implemented.
++ *
++ * It would be great to hear (and receive a patch!) if you implement the
++ * STBY configuration support or a proper fix to the debugFS naming
++ * conflict in your downstream driver ;)
++ */
 +
-+title: ROHM BD96801 Scalable Power Management Integrated Circuit
++#include <linux/i2c.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++#include <linux/types.h>
 +
-+maintainers:
-+  - Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
++#include <linux/mfd/rohm-bd96801.h>
++#include <linux/mfd/rohm-generic.h>
++static const struct resource regulator_intb_irqs[] =3D {
++	DEFINE_RES_IRQ_NAMED(BD96801_TW_STAT, "bd96801-core-thermal"),
 +
-+description:
-+  BD96801 is an automotive grade single-chip power management IC.
-+  It integrates 4 buck converters and 3 LDOs with safety features like
-+  over-/under voltage and over current detection and a watchdog.
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPH_STAT, "bd96801-buck1-overcurr-h"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPL_STAT, "bd96801-buck1-overcurr-l"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OCPN_STAT, "bd96801-buck1-overcurr-n"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_OVD_STAT, "bd96801-buck1-overvolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_UVD_STAT, "bd96801-buck1-undervolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK1_TW_CH_STAT, "bd96801-buck1-thermal"),
 +
-+properties:
-+  compatible:
-+    const: rohm,bd96801
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OCPH_STAT, "bd96801-buck2-overcurr-h"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OCPL_STAT, "bd96801-buck2-overcurr-l"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OCPN_STAT, "bd96801-buck2-overcurr-n"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_OVD_STAT, "bd96801-buck2-overvolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_UVD_STAT, "bd96801-buck2-undervolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK2_TW_CH_STAT, "bd96801-buck2-thermal"),
 +
-+  reg:
-+    maxItems: 1
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OCPH_STAT, "bd96801-buck3-overcurr-h"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OCPL_STAT, "bd96801-buck3-overcurr-l"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OCPN_STAT, "bd96801-buck3-overcurr-n"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_OVD_STAT, "bd96801-buck3-overvolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_UVD_STAT, "bd96801-buck3-undervolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK3_TW_CH_STAT, "bd96801-buck3-thermal"),
 +
-+  interrupts:
-+    description:
-+      The PMIC provides intb and errb IRQ lines. The errb IRQ line is used
-+      for fatal IRQs which will cause the PMIC to shut down power outputs.
-+      In many systems this will shut down the SoC contolling the PMIC and
-+      connecting/handling the errb can be omitted. However, there are cases
-+      where the SoC is not powered by the PMIC or has a short time backup
-+      energy to handle shutdown of critical hardware. In that case it may =
-be
-+      useful to connect the errb and handle errb events.
-+    minItems: 1
-+    maxItems: 2
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OCPH_STAT, "bd96801-buck4-overcurr-h"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OCPL_STAT, "bd96801-buck4-overcurr-l"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OCPN_STAT, "bd96801-buck4-overcurr-n"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_OVD_STAT, "bd96801-buck4-overvolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_UVD_STAT, "bd96801-buck4-undervolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_BUCK4_TW_CH_STAT, "bd96801-buck4-thermal"),
 +
-+  interrupt-names:
-+    minItems: 1
-+    items:
-+      - enum: [intb, errb]
-+      - const: errb
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_OCPH_STAT, "bd96801-ldo5-overcurr"),
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_OVD_STAT, "bd96801-ldo5-overvolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO5_UVD_STAT, "bd96801-ldo5-undervolt"),
 +
-+  rohm,hw-timeout-ms:
-+    description:
-+      Watchdog timeout value(s). First walue is timeout limit. Second valu=
-e is
-+      optional value for 'too early' watchdog ping if window timeout mode =
-is
-+      to be used.
-+    minItems: 1
-+    maxItems: 2
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_OCPH_STAT, "bd96801-ldo6-overcurr"),
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_OVD_STAT, "bd96801-ldo6-overvolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO6_UVD_STAT, "bd96801-ldo6-undervolt"),
 +
-+  rohm,wdg-action:
-+    description:
-+      Whether the watchdog failure must turn off the regulator power outpu=
-ts or
-+      just toggle the INTB line.
-+    enum:
-+      - prstb
-+      - intb-only
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_OCPH_STAT, "bd96801-ldo7-overcurr"),
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_OVD_STAT, "bd96801-ldo7-overvolt"),
++	DEFINE_RES_IRQ_NAMED(BD96801_LDO7_UVD_STAT, "bd96801-ldo7-undervolt"),
++};
 +
-+  timeout-sec:
-+    maxItems: 2
++static const struct resource wdg_intb_irqs[] =3D {
++	DEFINE_RES_IRQ_NAMED(BD96801_WDT_ERR_STAT, "bd96801-wdg"),
++};
 +
-+  regulators:
-+    $ref: /schemas/regulator/rohm,bd96801-regulator.yaml
-+    description:
-+      List of child nodes that specify the regulators.
++static struct mfd_cell bd96801_mfd_cells[] =3D {
++	{
++		.name =3D "bd96801-wdt",
++		.resources =3D wdg_intb_irqs,
++		.num_resources =3D ARRAY_SIZE(wdg_intb_irqs),
++	}, {
++		.name =3D "bd96801-pmic",
++		.resources =3D regulator_intb_irqs,
++		.num_resources =3D ARRAY_SIZE(regulator_intb_irqs),
++	},
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - regulators
++static const struct regmap_range bd96801_volatile_ranges[] =3D {
++	/* Status registers */
++	regmap_reg_range(BD96801_REG_WD_FEED, BD96801_REG_WD_FAILCOUNT),
++	regmap_reg_range(BD96801_REG_WD_ASK, BD96801_REG_WD_ASK),
++	regmap_reg_range(BD96801_REG_WD_STATUS, BD96801_REG_WD_STATUS),
++	regmap_reg_range(BD96801_REG_PMIC_STATE, BD96801_REG_INT_LDO7_INTB),
++	/* Registers which do not update value unless PMIC is in STBY */
++	regmap_reg_range(BD96801_REG_SSCG_CTRL, BD96801_REG_SHD_INTB),
++	regmap_reg_range(BD96801_REG_BUCK_OVP, BD96801_REG_BOOT_OVERTIME),
++	/*
++	 * LDO control registers have single bit (LDO MODE) which does not
++	 * change when we write it unless PMIC is in STBY. It's safer to not
++	 * cache it.
++	 */
++	regmap_reg_range(BD96801_LDO5_VOL_LVL_REG, BD96801_LDO7_VOL_LVL_REG),
++};
 +
-+additionalProperties: false
++static const struct regmap_access_table volatile_regs =3D {
++	.yes_ranges =3D bd96801_volatile_ranges,
++	.n_yes_ranges =3D ARRAY_SIZE(bd96801_volatile_ranges),
++};
 +
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/leds/common.h>
-+    i2c {
-+        #address-cells =3D <1>;
-+        #size-cells =3D <0>;
-+        pmic: pmic@60 {
-+            reg =3D <0x60>;
-+            compatible =3D "rohm,bd96801";
-+            interrupt-parent =3D <&gpio1>;
-+            interrupts =3D <29 IRQ_TYPE_LEVEL_LOW>, <6 IRQ_TYPE_LEVEL_LOW>;
-+            interrupt-names =3D "intb", "errb";
++static const struct regmap_irq bd96801_intb_irqs[] =3D {
++	/* STATUS SYSTEM INTB */
++	REGMAP_IRQ_REG(BD96801_TW_STAT, 0, BD96801_TW_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_WDT_ERR_STAT, 0, BD96801_WDT_ERR_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_I2C_ERR_STAT, 0, BD96801_I2C_ERR_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_CHIP_IF_ERR_STAT, 0, BD96801_CHIP_IF_ERR_STAT_MASK=
+),
++	/* STATUS BUCK1 INTB */
++	REGMAP_IRQ_REG(BD96801_BUCK1_OCPH_STAT, 1, BD96801_BUCK_OCPH_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK1_OCPL_STAT, 1, BD96801_BUCK_OCPL_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK1_OCPN_STAT, 1, BD96801_BUCK_OCPN_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK1_OVD_STAT, 1, BD96801_BUCK_OVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK1_UVD_STAT, 1, BD96801_BUCK_UVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK1_TW_CH_STAT, 1, BD96801_BUCK_TW_CH_STAT_MASK),
++	/* BUCK 2 INTB */
++	REGMAP_IRQ_REG(BD96801_BUCK2_OCPH_STAT, 2, BD96801_BUCK_OCPH_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK2_OCPL_STAT, 2, BD96801_BUCK_OCPL_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK2_OCPN_STAT, 2, BD96801_BUCK_OCPN_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK2_OVD_STAT, 2, BD96801_BUCK_OVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK2_UVD_STAT, 2, BD96801_BUCK_UVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK2_TW_CH_STAT, 2, BD96801_BUCK_TW_CH_STAT_MASK),
++	/* BUCK 3 INTB */
++	REGMAP_IRQ_REG(BD96801_BUCK3_OCPH_STAT, 3, BD96801_BUCK_OCPH_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK3_OCPL_STAT, 3, BD96801_BUCK_OCPL_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK3_OCPN_STAT, 3, BD96801_BUCK_OCPN_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK3_OVD_STAT, 3, BD96801_BUCK_OVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK3_UVD_STAT, 3, BD96801_BUCK_UVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK3_TW_CH_STAT, 3, BD96801_BUCK_TW_CH_STAT_MASK),
++	/* BUCK 4 INTB */
++	REGMAP_IRQ_REG(BD96801_BUCK4_OCPH_STAT, 4, BD96801_BUCK_OCPH_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK4_OCPL_STAT, 4, BD96801_BUCK_OCPL_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK4_OCPN_STAT, 4, BD96801_BUCK_OCPN_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK4_OVD_STAT, 4, BD96801_BUCK_OVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK4_UVD_STAT, 4, BD96801_BUCK_UVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_BUCK4_TW_CH_STAT, 4, BD96801_BUCK_TW_CH_STAT_MASK),
++	/* LDO5 INTB */
++	REGMAP_IRQ_REG(BD96801_LDO5_OCPH_STAT, 5, BD96801_LDO_OCPH_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_LDO5_OVD_STAT, 5, BD96801_LDO_OVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_LDO5_UVD_STAT, 5, BD96801_LDO_UVD_STAT_MASK),
++	/* LDO6 INTB */
++	REGMAP_IRQ_REG(BD96801_LDO6_OCPH_STAT, 6, BD96801_LDO_OCPH_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_LDO6_OVD_STAT, 6, BD96801_LDO_OVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_LDO6_UVD_STAT, 6, BD96801_LDO_UVD_STAT_MASK),
++	/* LDO7 INTB */
++	REGMAP_IRQ_REG(BD96801_LDO7_OCPH_STAT, 7, BD96801_LDO_OCPH_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_LDO7_OVD_STAT, 7, BD96801_LDO_OVD_STAT_MASK),
++	REGMAP_IRQ_REG(BD96801_LDO7_UVD_STAT, 7, BD96801_LDO_UVD_STAT_MASK),
++};
 +
-+            regulators {
-+                buck1 {
-+                    regulator-name =3D "buck1";
-+                    regulator-ramp-delay =3D <1250>;
-+                    /* 0.5V min INITIAL - 150 mV tune */
-+                    regulator-min-microvolt =3D <350000>;
-+                    /* 3.3V + 150mV tune */
-+                    regulator-max-microvolt =3D <3450000>;
++static struct regmap_irq_chip bd96801_irq_chip_intb =3D {
++	.name =3D "bd96801-irq-intb",
++	.main_status =3D BD96801_REG_INT_MAIN,
++	.num_main_regs =3D 1,
++	.irqs =3D &bd96801_intb_irqs[0],
++	.num_irqs =3D ARRAY_SIZE(bd96801_intb_irqs),
++	.status_base =3D BD96801_REG_INT_SYS_INTB,
++	.mask_base =3D BD96801_REG_MASK_SYS_INTB,
++	.ack_base =3D BD96801_REG_INT_SYS_INTB,
++	.init_ack_masked =3D true,
++	.num_regs =3D 8,
++	.irq_reg_stride =3D 1,
++};
 +
-+                    /* These can be set only when PMIC is in STBY */
-+                    rohm,initial-voltage-microvolt =3D <500000>;
-+                    regulator-ov-error-microvolt =3D <230000>;
-+                    regulator-uv-error-microvolt =3D <230000>;
-+                    regulator-temp-protection-kelvin =3D <1>;
-+                    regulator-temp-warn-kelvin =3D <0>;
-+                };
-+                buck2 {
-+                    regulator-name =3D "buck2";
-+                    regulator-min-microvolt =3D <350000>;
-+                    regulator-max-microvolt =3D <3450000>;
++static const struct regmap_config bd96801_regmap_config =3D {
++	.reg_bits =3D 8,
++	.val_bits =3D 8,
++	.volatile_table =3D &volatile_regs,
++	.cache_type =3D REGCACHE_RBTREE,
++};
 +
-+                    rohm,initial-voltage-microvolt =3D <3000000>;
-+                    regulator-ov-error-microvolt =3D <18000>;
-+                    regulator-uv-error-microvolt =3D <18000>;
-+                    regulator-temp-protection-kelvin =3D <1>;
-+                    regulator-temp-warn-kelvin =3D <1>;
-+                };
-+                buck3 {
-+                    regulator-name =3D "buck3";
-+                    regulator-min-microvolt =3D <350000>;
-+                    regulator-max-microvolt =3D <3450000>;
++static int bd96801_i2c_probe(struct i2c_client *i2c)
++{
++	struct regmap_irq_chip_data *intb_irq_data;
++	const struct fwnode_handle *fwnode;
++	struct irq_domain *intb_domain;
++	struct regmap *regmap;
++	int ret, intb_irq;
 +
-+                    rohm,initial-voltage-microvolt =3D <600000>;
-+                    regulator-ov-warn-microvolt =3D <18000>;
-+                    regulator-uv-warn-microvolt =3D <18000>;
-+                    regulator-temp-protection-kelvin =3D <1>;
-+                    regulator-temp-error-kelvin =3D <0>;
-+                };
-+                buck4 {
-+                    regulator-name =3D "buck4";
-+                    regulator-min-microvolt =3D <350000>;
-+                    regulator-max-microvolt =3D <3450000>;
++	fwnode =3D dev_fwnode(&i2c->dev);
++	if (!fwnode)
++		return dev_err_probe(&i2c->dev, -EINVAL, "Failed to find fwnode\n");
 +
-+                    rohm,initial-voltage-microvolt =3D <600000>;
-+                    regulator-ov-warn-microvolt =3D <18000>;
-+                    regulator-uv-warn-microvolt =3D <18000>;
-+                    regulator-temp-protection-kelvin =3D <1>;
-+                    regulator-temp-error-kelvin =3D <0>;
-+                };
-+                ldo5 {
-+                    regulator-name =3D "ldo5";
-+                    regulator-min-microvolt =3D <300000>;
-+                    regulator-max-microvolt =3D <3300000>;
++	intb_irq =3D fwnode_irq_get_byname(fwnode, "intb");
++	if (intb_irq < 0)
++		return dev_err_probe(&i2c->dev, intb_irq, "INTB IRQ not configured\n");
 +
-+                    rohm,initial-voltage-microvolt =3D <500000>;
-+                    regulator-ov-error-microvolt =3D <36000>;
-+                    regulator-uv-error-microvolt =3D <34000>;
-+                    regulator-temp-protection-kelvin =3D <1>;
-+                    regulator-temp-warn-kelvin =3D <0>;
-+                };
-+                ldo6 {
-+                    regulator-name =3D "ldo6";
-+                    regulator-min-microvolt =3D <300000>;
-+                    regulator-max-microvolt =3D <3300000>;
++	regmap =3D devm_regmap_init_i2c(i2c, &bd96801_regmap_config);
++	if (IS_ERR(regmap))
++		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
++				    "Regmap initialization failed\n");
 +
-+                    rohm,initial-voltage-microvolt =3D <300000>;
-+                    regulator-ov-error-microvolt =3D <36000>;
-+                    regulator-uv-error-microvolt =3D <34000>;
-+                    regulator-temp-protection-kelvin =3D <1>;
-+                    regulator-temp-warn-kelvin =3D <0>;
-+                };
-+                ldo7 {
-+                    regulator-name =3D "ldo7";
-+                    regulator-min-microvolt =3D <300000>;
-+                    regulator-max-microvolt =3D <3300000>;
++	ret =3D regmap_write(regmap, BD96801_LOCK_REG, BD96801_UNLOCK);
++	if (ret)
++		return dev_err_probe(&i2c->dev, ret, "Failed to unlock PMIC\n");
 +
-+                    rohm,initial-voltage-microvolt =3D <500000>;
-+                    regulator-ov-error-microvolt =3D <36000>;
-+                    regulator-uv-error-microvolt =3D <34000>;
-+                    regulator-temp-protection-kelvin =3D <1>;
-+                    regulator-temp-warn-kelvin =3D <0>;
-+                };
-+            };
-+        };
-+    };
++	ret =3D devm_regmap_add_irq_chip(&i2c->dev, regmap, intb_irq,
++				       IRQF_ONESHOT, 0, &bd96801_irq_chip_intb,
++				       &intb_irq_data);
++	if (ret)
++		return dev_err_probe(&i2c->dev, ret, "Failed to add INTB IRQ chip\n");
++
++	intb_domain =3D regmap_irq_get_domain(intb_irq_data);
++
++	ret =3D devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
++				   bd96801_mfd_cells,
++				   ARRAY_SIZE(bd96801_mfd_cells), NULL, 0,
++				   intb_domain);
++
++	if (ret)
++		dev_err(&i2c->dev, "Failed to create subdevices\n");
++
++	return ret;
++}
++
++static const struct of_device_id bd96801_of_match[] =3D {
++	{ .compatible =3D "rohm,bd96801",	},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, bd96801_of_match);
++
++static struct i2c_driver bd96801_i2c_driver =3D {
++	.driver =3D {
++		.name =3D "rohm-bd96801",
++		.of_match_table =3D bd96801_of_match,
++	},
++	.probe =3D bd96801_i2c_probe,
++};
++
++static int __init bd96801_i2c_init(void)
++{
++	return i2c_add_driver(&bd96801_i2c_driver);
++}
++
++/* Initialise early so consumer devices can complete system boot */
++subsys_initcall(bd96801_i2c_init);
++
++static void __exit bd96801_i2c_exit(void)
++{
++	i2c_del_driver(&bd96801_i2c_driver);
++}
++module_exit(bd96801_i2c_exit);
++
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("ROHM BD96801 Power Management IC driver");
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/mfd/rohm-bd96801.h b/include/linux/mfd/rohm-bd96=
+801.h
+new file mode 100644
+index 000000000000..e2d9e10b6364
+--- /dev/null
++++ b/include/linux/mfd/rohm-bd96801.h
+@@ -0,0 +1,215 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* Copyright (C) 2024 ROHM Semiconductors */
++
++#ifndef __MFD_BD96801_H__
++#define __MFD_BD96801_H__
++
++#define BD96801_REG_SSCG_CTRL		0x09
++#define BD96801_REG_SHD_INTB            0x20
++#define BD96801_LDO5_VOL_LVL_REG	0x2c
++#define BD96801_LDO6_VOL_LVL_REG	0x2d
++#define BD96801_LDO7_VOL_LVL_REG	0x2e
++#define BD96801_REG_BUCK_OVP		0x30
++#define BD96801_REG_BUCK_OVD		0x35
++#define BD96801_REG_LDO_OVP		0x31
++#define BD96801_REG_LDO_OVD		0x36
++#define BD96801_REG_BOOT_OVERTIME	0x3a
++#define BD96801_REG_WD_TMO		0x40
++#define BD96801_REG_WD_CONF		0x41
++#define BD96801_REG_WD_FEED		0x42
++#define BD96801_REG_WD_FAILCOUNT	0x43
++#define BD96801_REG_WD_ASK		0x46
++#define BD96801_REG_WD_STATUS		0x4a
++#define BD96801_REG_PMIC_STATE		0x4f
++#define BD96801_REG_EXT_STATE		0x50
++
++#define BD96801_STATE_STBY		0x09
++
++#define BD96801_LOCK_REG		0x04
++#define BD96801_UNLOCK			0x9d
++#define BD96801_LOCK			0x00
++
++/* IRQ register area */
++#define BD96801_REG_INT_MAIN		0x51
++
++/*
++ * The BD96801 has two physical IRQ lines, INTB and ERRB.
++ *
++ * The 'main status register' is located at 0x51.
++ * The ERRB status registers are located at 0x52 ... 0x5B
++ * INTB status registers are at range 0x5c ... 0x63
++ */
++#define BD96801_REG_INT_SYS_ERRB1	0x52
++#define BD96801_REG_INT_SYS_INTB	0x5c
++#define BD96801_REG_INT_LDO7_INTB	0x63
++
++/* MASK registers */
++#define BD96801_REG_MASK_SYS_INTB	0x73
++#define BD96801_REG_MASK_SYS_ERRB	0x69
++
++#define BD96801_MAX_REGISTER		0x7a
++
++#define BD96801_OTP_ERR_MASK		BIT(0)
++#define BD96801_DBIST_ERR_MASK		BIT(1)
++#define BD96801_EEP_ERR_MASK		BIT(2)
++#define BD96801_ABIST_ERR_MASK		BIT(3)
++#define BD96801_PRSTB_ERR_MASK		BIT(4)
++#define BD96801_DRMOS1_ERR_MASK		BIT(5)
++#define BD96801_DRMOS2_ERR_MASK		BIT(6)
++#define BD96801_SLAVE_ERR_MASK		BIT(7)
++#define BD96801_VREF_ERR_MASK		BIT(0)
++#define BD96801_TSD_ERR_MASK		BIT(1)
++#define BD96801_UVLO_ERR_MASK		BIT(2)
++#define BD96801_OVLO_ERR_MASK		BIT(3)
++#define BD96801_OSC_ERR_MASK		BIT(4)
++#define BD96801_PON_ERR_MASK		BIT(5)
++#define BD96801_POFF_ERR_MASK		BIT(6)
++#define BD96801_CMD_SHDN_ERR_MASK	BIT(7)
++#define BD96801_INT_PRSTB_WDT_ERR_MASK	BIT(0)
++#define BD96801_INT_CHIP_IF_ERR_MASK	BIT(3)
++#define BD96801_INT_SHDN_ERR_MASK	BIT(7)
++#define BD96801_OUT_PVIN_ERR_MASK	BIT(0)
++#define BD96801_OUT_OVP_ERR_MASK	BIT(1)
++#define BD96801_OUT_UVP_ERR_MASK	BIT(2)
++#define BD96801_OUT_SHDN_ERR_MASK	BIT(7)
++
++/* ERRB IRQs */
++enum {
++	/* Reg 0x52, 0x53, 0x54 - ERRB system IRQs */
++	BD96801_OTP_ERR_STAT,
++	BD96801_DBIST_ERR_STAT,
++	BD96801_EEP_ERR_STAT,
++	BD96801_ABIST_ERR_STAT,
++	BD96801_PRSTB_ERR_STAT,
++	BD96801_DRMOS1_ERR_STAT,
++	BD96801_DRMOS2_ERR_STAT,
++	BD96801_SLAVE_ERR_STAT,
++	BD96801_VREF_ERR_STAT,
++	BD96801_TSD_ERR_STAT,
++	BD96801_UVLO_ERR_STAT,
++	BD96801_OVLO_ERR_STAT,
++	BD96801_OSC_ERR_STAT,
++	BD96801_PON_ERR_STAT,
++	BD96801_POFF_ERR_STAT,
++	BD96801_CMD_SHDN_ERR_STAT,
++	BD96801_INT_PRSTB_WDT_ERR,
++	BD96801_INT_CHIP_IF_ERR,
++	BD96801_INT_SHDN_ERR_STAT,
++
++	/* Reg 0x55 BUCK1 ERR IRQs */
++	BD96801_BUCK1_PVIN_ERR_STAT,
++	BD96801_BUCK1_OVP_ERR_STAT,
++	BD96801_BUCK1_UVP_ERR_STAT,
++	BD96801_BUCK1_SHDN_ERR_STAT,
++
++	/* Reg 0x56 BUCK2 ERR IRQs */
++	BD96801_BUCK2_PVIN_ERR_STAT,
++	BD96801_BUCK2_OVP_ERR_STAT,
++	BD96801_BUCK2_UVP_ERR_STAT,
++	BD96801_BUCK2_SHDN_ERR_STAT,
++
++	/* Reg 0x57 BUCK3 ERR IRQs */
++	BD96801_BUCK3_PVIN_ERR_STAT,
++	BD96801_BUCK3_OVP_ERR_STAT,
++	BD96801_BUCK3_UVP_ERR_STAT,
++	BD96801_BUCK3_SHDN_ERR_STAT,
++
++	/* Reg 0x58 BUCK4 ERR IRQs */
++	BD96801_BUCK4_PVIN_ERR_STAT,
++	BD96801_BUCK4_OVP_ERR_STAT,
++	BD96801_BUCK4_UVP_ERR_STAT,
++	BD96801_BUCK4_SHDN_ERR_STAT,
++
++	/* Reg 0x59 LDO5 ERR IRQs */
++	BD96801_LDO5_PVIN_ERR_STAT,
++	BD96801_LDO5_OVP_ERR_STAT,
++	BD96801_LDO5_UVP_ERR_STAT,
++	BD96801_LDO5_SHDN_ERR_STAT,
++
++	/* Reg 0x5a LDO6 ERR IRQs */
++	BD96801_LDO6_PVIN_ERR_STAT,
++	BD96801_LDO6_OVP_ERR_STAT,
++	BD96801_LDO6_UVP_ERR_STAT,
++	BD96801_LDO6_SHDN_ERR_STAT,
++
++	/* Reg 0x5b LDO7 ERR IRQs */
++	BD96801_LDO7_PVIN_ERR_STAT,
++	BD96801_LDO7_OVP_ERR_STAT,
++	BD96801_LDO7_UVP_ERR_STAT,
++	BD96801_LDO7_SHDN_ERR_STAT,
++};
++
++/* INTB IRQs */
++enum {
++	/* Reg 0x5c (System INTB) */
++	BD96801_TW_STAT,
++	BD96801_WDT_ERR_STAT,
++	BD96801_I2C_ERR_STAT,
++	BD96801_CHIP_IF_ERR_STAT,
++
++	/* Reg 0x5d (BUCK1 INTB) */
++	BD96801_BUCK1_OCPH_STAT,
++	BD96801_BUCK1_OCPL_STAT,
++	BD96801_BUCK1_OCPN_STAT,
++	BD96801_BUCK1_OVD_STAT,
++	BD96801_BUCK1_UVD_STAT,
++	BD96801_BUCK1_TW_CH_STAT,
++
++	/* Reg 0x5e (BUCK2 INTB) */
++	BD96801_BUCK2_OCPH_STAT,
++	BD96801_BUCK2_OCPL_STAT,
++	BD96801_BUCK2_OCPN_STAT,
++	BD96801_BUCK2_OVD_STAT,
++	BD96801_BUCK2_UVD_STAT,
++	BD96801_BUCK2_TW_CH_STAT,
++
++	/* Reg 0x5f (BUCK3 INTB)*/
++	BD96801_BUCK3_OCPH_STAT,
++	BD96801_BUCK3_OCPL_STAT,
++	BD96801_BUCK3_OCPN_STAT,
++	BD96801_BUCK3_OVD_STAT,
++	BD96801_BUCK3_UVD_STAT,
++	BD96801_BUCK3_TW_CH_STAT,
++
++	/* Reg 0x60 (BUCK4 INTB)*/
++	BD96801_BUCK4_OCPH_STAT,
++	BD96801_BUCK4_OCPL_STAT,
++	BD96801_BUCK4_OCPN_STAT,
++	BD96801_BUCK4_OVD_STAT,
++	BD96801_BUCK4_UVD_STAT,
++	BD96801_BUCK4_TW_CH_STAT,
++
++	/* Reg 0x61 (LDO5 INTB) */
++	BD96801_LDO5_OCPH_STAT, /* bit [0] */
++	BD96801_LDO5_OVD_STAT,	/* bit [3] */
++	BD96801_LDO5_UVD_STAT,  /* bit [4] */
++
++	/* Reg 0x62 (LDO6 INTB) */
++	BD96801_LDO6_OCPH_STAT, /* bit [0] */
++	BD96801_LDO6_OVD_STAT,	/* bit [3] */
++	BD96801_LDO6_UVD_STAT,  /* bit [4] */
++
++	/* Reg 0x63 (LDO7 INTB) */
++	BD96801_LDO7_OCPH_STAT, /* bit [0] */
++	BD96801_LDO7_OVD_STAT,	/* bit [3] */
++	BD96801_LDO7_UVD_STAT,  /* bit [4] */
++};
++
++/* IRQ MASKs */
++#define BD96801_TW_STAT_MASK		BIT(0)
++#define BD96801_WDT_ERR_STAT_MASK	BIT(1)
++#define BD96801_I2C_ERR_STAT_MASK	BIT(2)
++#define BD96801_CHIP_IF_ERR_STAT_MASK	BIT(3)
++
++#define BD96801_BUCK_OCPH_STAT_MASK	BIT(0)
++#define BD96801_BUCK_OCPL_STAT_MASK	BIT(1)
++#define BD96801_BUCK_OCPN_STAT_MASK	BIT(2)
++#define BD96801_BUCK_OVD_STAT_MASK	BIT(3)
++#define BD96801_BUCK_UVD_STAT_MASK	BIT(4)
++#define BD96801_BUCK_TW_CH_STAT_MASK	BIT(5)
++
++#define BD96801_LDO_OCPH_STAT_MASK	BIT(0)
++#define BD96801_LDO_OVD_STAT_MASK	BIT(3)
++#define BD96801_LDO_UVD_STAT_MASK	BIT(4)
++
++#endif
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-gene=
+ric.h
+index 4eeb22876bad..e7d4e6afe388 100644
+--- a/include/linux/mfd/rohm-generic.h
++++ b/include/linux/mfd/rohm-generic.h
+@@ -16,6 +16,7 @@ enum rohm_chip_type {
+ 	ROHM_CHIP_TYPE_BD71828,
+ 	ROHM_CHIP_TYPE_BD71837,
+ 	ROHM_CHIP_TYPE_BD71847,
++	ROHM_CHIP_TYPE_BD96801,
+ 	ROHM_CHIP_TYPE_AMOUNT
+ };
+=20
 --=20
 2.45.1
 
@@ -319,20 +695,20 @@ Simon says - in Latin please.
 ~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
 Thanks to Simon Glass for the translation =3D]=20
 
---kKCrEB1nWc/4YMm0
+--UYHqMm8NblOqrO1s
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEyBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmZQTQEACgkQeFA3/03a
-ocVB8Af4nZHZVnLp1JDhTu63ycQIMCXHcGmrZPoFghB9Lf7zgZsrhD06IXhtTAIQ
-YNBbsE1Wd02cqkFIM2vfT7Un4mGXRmsTfxnL1t4thIX/KWNCZsRJAMC1h35whaIJ
-6Qsnm2v5wEIMuvle+BLbiEK9emAc8Qu9FzDUBddPy0Eq4GuLatIKeYMsro1vvhPK
-qfrZQp0XppsGNHFrPT1J1P3KJm3RWhMdurOjxGGCfHMMNPq8SQrklh3+GUaHurDE
-aJ12XFkp1auQfrylYliMWDJ1I1H1zRZec4CO7u3wklUYKq6jsnLiG/XaIPM0UpZ7
-3eXmWdNJWBayhvc6um9QnrYRIEtT
-=r1Tw
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmZQTRcACgkQeFA3/03a
+ocWSqwf/Yh3ruZgOY5bazAs1pDiRB8FXA4/IO34288WN2rAq6no9pznyhoTKL7qQ
+v+7lBCNez8/8zAmf+hOIrdYLkINY5Y8xyTaleqrM5hWjKxguh118QN2sWzLxm+JR
+1YyQF7k/ihksAd7i9iUSFtCDV4UmJLeN44pDv6Ocx5+sh2N2NDHkhx+WUaQcjtBA
+SCbY+mpA5u3ZoQXJsM2+GpZFP8zxltQILHdjQHS1DZxbjJNjVWgW4UhWfLclJNM8
+7vF7qYM5LfrlJEf7azEboVcBVkbrao1BF41qNd9+ADFfERnloRWKO7SJqaoznjTl
+YWbe3QNnWTB1F46yVCVoEkCqQGB6TQ==
+=063Y
 -----END PGP SIGNATURE-----
 
---kKCrEB1nWc/4YMm0--
+--UYHqMm8NblOqrO1s--
 
