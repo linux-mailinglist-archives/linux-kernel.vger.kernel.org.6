@@ -1,87 +1,42 @@
-Return-Path: <linux-kernel+bounces-188185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5106C8CDEFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:47:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65DF8CDEFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315F01C20C8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:47:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655811F2169D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D948488;
-	Fri, 24 May 2024 00:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZZpTA8t"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DB2EDF;
-	Fri, 24 May 2024 00:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0016116;
+	Fri, 24 May 2024 00:47:52 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6FC81F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716511633; cv=none; b=bY6Azhazi5zIiXBsN/qdXPTpJEXkz/3IbWiO9lL/mnMng4ZPlokqzbNZZNUWtfFIIRIDkCcgYwGPE81oqcCyW994Lb+pXUVMFL4tfsg3HulgoTOzOgQPc2Xk1HKhBCVm3LwXzq0QDFlUokTWIof9VK3QxC7JBiJVaVOH5RJaIqA=
+	t=1716511672; cv=none; b=c56otq0N5WjotXhonFyh/fRTwymhwBIiTAPjmRIDXSGXXLcMsQs3MhM7wefaGQvuTj0N66RNF7xEJlKV1K1qB424t93/uipdWuBE/DPI/tWNkb1IE0CKluLrBhlsGcCEty7CsWUKIcBv9R3FsGAr0uW4Dj9k782j/ZNjc/TL+ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716511633; c=relaxed/simple;
-	bh=KLMnBc+W7brKUXqt0eZU0uMPzeOY+z6lS4AmDmnWoLc=;
+	s=arc-20240116; t=1716511672; c=relaxed/simple;
+	bh=9TiQ1NawlgxMFkjnvp0VImY+CBDxe13HEElO1pLM4yY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LG3dE2i9zPXQSmnqlfao1p6pH5Jz2HyE0pSD2WCiN0gtHYSrFHvgeiMPh50clqqNp73wEikXidFYi1tL4YLYKY6RaFFEidiRQFcaSTotLHjpEBmW4qOEBjt1+PiBw4OeIHZBEBl4qIkEMeH3P1G6tTXCRxyGtkz6UHc+eAAVOBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZZpTA8t; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f12171523eso3725349a34.1;
-        Thu, 23 May 2024 17:47:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716511630; x=1717116430; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xhHs76QOp2MGGcphbew3t/rK2bfPPoj+eZPq3AAV6vg=;
-        b=UZZpTA8tGkooj7W/X1zLm/t/2aATszHLo7mIqQhbObnPLa5c0Xt8UlSZTh+UDvyG5A
-         USk9azCux1IF+JXBNgB1yAkJ8eX1oZwdvFC85nnxLSpuSZJYJmaaB+leWaLPRhf2Oa1k
-         pMgZLaA+qeQuFyIWQVZvniNWmYbRCRdaDXrT5aIQ79BOTxkyK1oeZCZsQA5/BWw0XbM1
-         xv63NfTQuSs6C5JCyd0CqJouyNaEAPQ/eNN+qTIx8D9kcpsFrXA3n1PlWhG1SrEDWlMv
-         GzxNLC3QA10hkvJKizsjS/ZJBTSBRnEkc76BbnHEvZzDWiQMfW189PHqibSAMyrr43Uw
-         cVpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716511630; x=1717116430;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xhHs76QOp2MGGcphbew3t/rK2bfPPoj+eZPq3AAV6vg=;
-        b=SuBukYzLzHCK74qGAHH9rpnkkg/HR+LaTQLW+y+toffgcsxvaQoEAByZnw6XAcSs10
-         PzSGLsAjjFIAdlGMvT7x6yBF6oQV/UEaAdHI70BpT1YEDaCRodKso/xwLTnSPqtnkA9V
-         IlU6ATGwE70KCptrCjbZ0viCSzsiHkTEO34v1NOR9//ZgV0BEpDGWe3jtjUNr2DpEqlo
-         s9eSmfzMsSahf5VAjDIPAj9axygxGNdjdmTWG3EDOTPWHy55C9WtJwcxr0k4IzUASxDL
-         pKSA2+KxjgiARmk16Op/MIWMWPRypIVLU4l0wbFR9qTGAFGJYLlMM85jepaMr3kF6Bne
-         gtTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfHk8kZ/cEaFJGToW48XL7k/m5XI3thQw0oxbD9kvaY4vCIveyWaRkXEIZ2p4eANrFgbd0aI78wbB6iN/ZDND0iwUieLZH3wW75H+g+hhKe08SmjoPG++vUehwQmfl3tcdc94CAfTCgJocJw==
-X-Gm-Message-State: AOJu0Yw2ZuRt6rfyfsdQ4Ql7U6+PFiUSegqR6evca+8beX5dTkb3p84X
-	fuPKBu8AR211Xdy1nWkCGmTzRVxE9LJ4zIltPEnc8Nqz9rEheq/98l83J14l
-X-Google-Smtp-Source: AGHT+IFfirIf8OFRPb3WySkQ+KDQray5kCg1lM30f03akhL+f1lZdNnquwHvOD0fvvHmBd3Df7O8bw==
-X-Received: by 2002:a05:6830:121a:b0:6f0:9b4c:9aea with SMTP id 46e09a7af769-6f8d0a99ea4mr931418a34.16.1716511630224;
-        Thu, 23 May 2024 17:47:10 -0700 (PDT)
-Received: from Borg-10.local (syn-070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f8d0daf4a4sm119022a34.28.2024.05.23.17.47.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 May 2024 17:47:09 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Thu, 23 May 2024 19:47:08 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-Message-ID: <sq6fbx5jpzkjw43wyr7zmfnvcw45ah5f4vtz6wtanjai3t4cvk@awxlk72xzzkm>
-References: <cover.1708709155.git.john@groves.net>
- <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
- <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
- <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
- <kejfka5wyedm76eofoziluzl7pq3prys2utvespsiqzs3uxgom@66z2vs4pe22v>
- <CAJfpegvQefgKOKMWC8qGTDAY=qRmxPvWkg2QKzNUiag1+q5L+Q@mail.gmail.com>
- <l2zbsuyxzwcozrozzk2ywem7beafmidzp545knnrnkxlqxd73u@itmqyy4ao43i>
- <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRWNNh1YLuXh0p68KxUuZGNcrDM+d/W6F66/lemZHQUqig7sVUzk9ue1D3/xsS/K4rLdykbh5QA/KJihq29/gTiX5Gn7Na+SLzUPnC/uAQP8Z0DP1DN4e72Rnx4KmA3zWN2wE2FtS3Y4Rro2HPZi9se1d6Oq+ReM3zm4y/03G2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d6dff70000001748-40-664fe3a87ca5
+Date: Fri, 24 May 2024 09:47:31 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Karim Manaouil <kmanaouil.dev@gmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel_team@skhynix.com
+Subject: Re: [PATCH] mm: let kswapd work again for node that used to be
+ hopeless but may not now
+Message-ID: <20240524004731.GA78958@system.software.com>
+References: <20240523051406.81053-1-byungchul@sk.com>
+ <Zk88UTrNIAMWdLMs@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,58 +45,209 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
+In-Reply-To: <Zk88UTrNIAMWdLMs@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsXC9ZZnke6Kx/5pBs/n6lvMWb+GzeLthO2M
+	Fpd3zWGzuLfmP6sDi8fOWXfZPTZ9msTucWLGbxaPz5vkAliiuGxSUnMyy1KL9O0SuDLOnG1j
+	KlhkXjF13SPmBsafWl2MnBwSAiYSU39+YoexJ35dzwZiswioSvxuWsoMYrMJqEvcuPETzBYR
+	0JGY8LQdqJ6Dg1kgS2J6axRIWFggSaLn3gYmEJtXwEJix4J1jCC2kECCxIZvPcwQcUGJkzOf
+	sIDYzAJaEjf+vWSCGCMtsfwfB0iYU8BU4tqNxWAlogLKEge2HQcq4QK6bAKbxMYDm6HOlJQ4
+	uOIGywRGgVlIxs5CMnYWwtgFjMyrGIUy88pyEzNzTPQyKvMyK/SS83M3MQIDdlntn+gdjJ8u
+	BB9iFOBgVOLhPaDvnybEmlhWXJl7iFGCg1lJhDd6pW+aEG9KYmVValF+fFFpTmrxIUZpDhYl
+	cV6jb+UpQgLpiSWp2ampBalFMFkmDk6pBsbcxr6jDaEmSR5HL9zmqIy49NWiZP9Fm7li3Ndv
+	50YJGXsbzaluSkp9u8Rdrl9glrH4tiXP3x23lLPc9XFdlugXI4U1x346rGacJpC11qr2Xt23
+	hXPfnM25w7d29iOJXRmvagVSV53ql8rbddvms8UVftbAPQz2ETGXN37/X13eunK205TS485K
+	LMUZiYZazEXFiQChxJnnVAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsXC5WfdrLvisX+aweT/chZz1q9hszg89ySr
+	xdsJ2xktLu+aw2Zxb81/VgdWj52z7rJ7bPo0id3jxIzfLB6LX3xg8vi8SS6ANYrLJiU1J7Ms
+	tUjfLoEr48zZNqaCReYVU9c9Ym5g/KnVxcjJISFgIjHx63o2EJtFQFXid9NSZhCbTUBd4saN
+	n2C2iICOxISn7exdjBwczAJZEtNbo0DCwgJJEj33NjCB2LwCFhI7FqxjBLGFBBIkNnzrYYaI
+	C0qcnPmEBcRmFtCSuPHvJRPEGGmJ5f84QMKcAqYS124sBisRFVCWOLDtONMERt5ZSLpnIeme
+	hdC9gJF5FaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmD4Lav9M3EH45fL7ocYBTgYlXh4D+j7
+	pwmxJpYVV+YeYpTgYFYS4Y1e6ZsmxJuSWFmVWpQfX1Sak1p8iFGag0VJnNcrPDVBSCA9sSQ1
+	OzW1ILUIJsvEwSnVwLiu57xNe9zCmbnd9/5VZT/9omHDu7BptpKNpL3zv3UBj1uktm479v+T
+	RHTRZkfN/M3sy2tuTupuNtTWf7+Ay7XkSOivS3XNzdtD7gU/27xc+3PQ9eBLM/y5AmdbsJpt
+	u/VVjqtp5uPf/7bPadn5L6je+uzVuZlr3tZ8UePxXRApOGH604X6Rh+UWIozEg21mIuKEwER
+	keXAOwIAAA==
+X-CFilter-Loop: Reflected
 
-On 24/05/23 03:57PM, Miklos Szeredi wrote:
-> [trimming CC list]
+On Thu, May 23, 2024 at 01:53:37PM +0100, Karim Manaouil wrote:
+> On Thu, May 23, 2024 at 02:14:06PM +0900, Byungchul Park wrote:
+> > I suffered from kswapd stopped in the following scenario:
+> > 
+> >    CONFIG_NUMA_BALANCING enabled
+> >    sysctl_numa_balancing_mode set to NUMA_BALANCING_MEMORY_TIERING
+> >    numa node0 (500GB local DRAM, 128 CPUs)
+> >    numa node1 (100GB CXL memory, no CPUs)
+> >    swap off
+> > 
+> >    1) Run any workload using a lot of anon pages e.g. mmap(200GB).
+> >    2) Keep adding another workload using a lot of anon pages.
+> >    3) The DRAM becomes filled with only anon pages through promotion.
+> >    4) Demotion barely works due to severe memory pressure.
+> >    5) kswapd for node0 stops because of the unreclaimable anon pages.
 > 
-> On Thu, 23 May 2024 at 04:49, John Groves <John@groves.net> wrote:
-> 
-> > - memmap=<size>!<hpa_offset> will reserve a pretend pmem device at <hpa_offset>
-> > - memmap=<size>$<hpa_offset> will reserve a pretend dax device at <hpa_offset>
-> 
-> Doesn't get me a /dev/dax or /dev/pmem
-> 
-> Complete qemu command line:
-> 
-> qemu-kvm -s -serial none -parallel none -kernel
-> /home/mszeredi/git/linux/arch/x86/boot/bzImage -drive
-> format=raw,file=/home/mszeredi/root_fs,index=0,if=virtio -drive
-> format=raw,file=/home/mszeredi/images/ubd1,index=1,if=virtio -chardev
-> stdio,id=virtiocon0,signal=off -device virtio-serial -device
-> virtconsole,chardev=virtiocon0 -cpu host -m 8G -net user -net
-> nic,model=virtio -fsdev local,security_model=none,id=fsdev0,path=/home
-> -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare -device
-> virtio-rng-pci -smp 4 -append 'root=/dev/vda console=hvc0
-> memmap=4G$4G'
-> 
-> root@kvm:~/famfs# scripts/chk_efi.sh
-> This system is neither Ubuntu nor Fedora. It is identified as debian.
-> /sys/firmware/efi not found; probably not efi
->  not found; probably nof efi
-> /boot/efi/EFI not found; probably not efi
-> /boot/efi/EFI/BOOT not found; probably not efi
-> /boot/efi/EFI/ not found; probably not efi
-> /boot/efi/EFI//grub.cfg not found; probably nof efi
-> Probably not efi; errs=6
-> 
-> Thanks,
-> Miklos
+> It's not very clear to me, but if I understand correctly, if you have
 
+I don't have free memory on CXL.
 
-Apologies, but I'm short on time at the moment - going into a long holiday
-weekend in the US with family plans. I should be focused again by middle of
-next week.
+> free memory on CXL, kswapd0 should not stop as long as demotion is
 
-But can you check /proc/cmdline to see of the memmap arg got through without
-getting mangled? The '$' tends to get fubar'd. You might need \$, or I've seen
-the need for \\\$. If it's un-mangled, there should be a dax device.
+kswapd0 stops because demotion barely works.
 
-If that doesn't work, it's worth trying '!' instead, which I think would give
-you a pmem device - if the arg gets through (but ! is less likely to get
-horked). That pmem device can be converted to devdax...
+> successfully migrating the pages from DRAM to CXL and returns that as
+> nr_reclaimed in shrink_folio_list()? 
+> 
+> If that's the case, kswapd0 is making progress and shouldn't give up.
 
-Regards,
-John
+It's not the case.
 
+> If CXL memory is also filled and migration fails, then it doesn't make
+> sense to me to wake up kswapd0 as it obvisoly won't help with anything,
+
+It's true *only* when it won't help with anything.
+
+However, kswapd should work again once the system got back to normal
+e.g. by terminating the anon hoggers.  I addressed this issue.
+
+> because, you guessed it, you have no memory in the first place!!
+> 
+> >    6) Manually kill the memory hoggers.
+
+This is the point.
+
+	Byungchul
+
+> >    7) kswapd is still stopped even though the system got back to normal.
+> > 
+> > From now on, the system should run without reclaim service in background
+> > served by kswapd until direct reclaim will do for that.  Even worse,
+> > tiering mechanism is no longer able to work because kswapd has stopped
+> > that the mechanism relies on.
+> > 
+> > However, after 6), the DRAM will be filled with pages that might or
+> > might not be reclaimable, that depends on how those are going to be used.
+> > Since those are potentially reclaimable anyway, it's worth hopefully
+> > trying reclaim by allowing kswapd to work again if needed.
+> > 
+> > Signed-off-by: Byungchul Park <byungchul@sk.com>
+> > ---
+> >  include/linux/mmzone.h |  4 ++++
+> >  mm/page_alloc.c        | 12 ++++++++++++
+> >  mm/vmscan.c            | 21 ++++++++++++++++-----
+> >  3 files changed, 32 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> > index c11b7cde81ef..7c0ba90ea7b4 100644
+> > --- a/include/linux/mmzone.h
+> > +++ b/include/linux/mmzone.h
+> > @@ -1331,6 +1331,10 @@ typedef struct pglist_data {
+> >  	enum zone_type kswapd_highest_zoneidx;
+> >  
+> >  	int kswapd_failures;		/* Number of 'reclaimed == 0' runs */
+> > +	int nr_may_reclaimable;		/* Number of pages that have been
+> > +					   allocated since considered the
+> > +					   node is hopeless due to too many
+> > +					   kswapd_failures. */
+> >  
+> >  #ifdef CONFIG_COMPACTION
+> >  	int kcompactd_max_order;
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 14d39f34d336..1dd2daede014 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -1538,8 +1538,20 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
+> >  static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
+> >  							unsigned int alloc_flags)
+> >  {
+> > +	pg_data_t *pgdat = page_pgdat(page);
+> > +
+> >  	post_alloc_hook(page, order, gfp_flags);
+> >  
+> > +	/*
+> > +	 * New pages might or might not be reclaimable depending on how
+> > +	 * these pages are going to be used.  However, since these are
+> > +	 * potentially reclaimable, it's worth hopefully trying reclaim
+> > +	 * by allowing kswapd to work again even if there have been too
+> > +	 * many ->kswapd_failures, if ->nr_may_reclaimable is big enough.
+> > +	 */
+> > +	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
+> > +		pgdat->nr_may_reclaimable += 1 << order;
+> > +
+> >  	if (order && (gfp_flags & __GFP_COMP))
+> >  		prep_compound_page(page, order);
+> >  
+> > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > index 3ef654addd44..5b39090c4ef1 100644
+> > --- a/mm/vmscan.c
+> > +++ b/mm/vmscan.c
+> > @@ -4943,6 +4943,7 @@ static void lru_gen_shrink_node(struct pglist_data *pgdat, struct scan_control *
+> >  done:
+> >  	/* kswapd should never fail */
+> >  	pgdat->kswapd_failures = 0;
+> > +	pgdat->nr_may_reclaimable = 0;
+> >  }
+> >  
+> >  /******************************************************************************
+> > @@ -5991,9 +5992,10 @@ static void shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+> >  	 * sleep. On reclaim progress, reset the failure counter. A
+> >  	 * successful direct reclaim run will revive a dormant kswapd.
+> >  	 */
+> > -	if (reclaimable)
+> > +	if (reclaimable) {
+> >  		pgdat->kswapd_failures = 0;
+> > -	else if (sc->cache_trim_mode)
+> > +		pgdat->nr_may_reclaimable = 0;
+> > +	} else if (sc->cache_trim_mode)
+> >  		sc->cache_trim_mode_failed = 1;
+> >  }
+> >  
+> > @@ -6636,6 +6638,11 @@ static void clear_pgdat_congested(pg_data_t *pgdat)
+> >  	clear_bit(PGDAT_WRITEBACK, &pgdat->flags);
+> >  }
+> >  
+> > +static bool may_recaimable(pg_data_t *pgdat, int order)
+> > +{
+> > +	return pgdat->nr_may_reclaimable >= 1 << order;
+> > +}
+> > +
+> >  /*
+> >   * Prepare kswapd for sleeping. This verifies that there are no processes
+> >   * waiting in throttle_direct_reclaim() and that watermarks have been met.
+> > @@ -6662,7 +6669,8 @@ static bool prepare_kswapd_sleep(pg_data_t *pgdat, int order,
+> >  		wake_up_all(&pgdat->pfmemalloc_wait);
+> >  
+> >  	/* Hopeless node, leave it to direct reclaim */
+> > -	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES)
+> > +	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES &&
+> > +	    !may_recaimable(pgdat, order))
+> >  		return true;
+> >  
+> >  	if (pgdat_balanced(pgdat, order, highest_zoneidx)) {
+> > @@ -6940,8 +6948,10 @@ static int balance_pgdat(pg_data_t *pgdat, int order, int highest_zoneidx)
+> >  		goto restart;
+> >  	}
+> >  
+> > -	if (!sc.nr_reclaimed)
+> > +	if (!sc.nr_reclaimed) {
+> >  		pgdat->kswapd_failures++;
+> > +		pgdat->nr_may_reclaimable = 0;
+> > +	}
+> >  
+> >  out:
+> >  	clear_reclaim_active(pgdat, highest_zoneidx);
+> > @@ -7204,7 +7214,8 @@ void wakeup_kswapd(struct zone *zone, gfp_t gfp_flags, int order,
+> >  		return;
+> >  
+> >  	/* Hopeless node, leave it to direct reclaim if possible */
+> > -	if (pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES ||
+> > +	if ((pgdat->kswapd_failures >= MAX_RECLAIM_RETRIES &&
+> > +	     !may_recaimable(pgdat, order)) ||
+> >  	    (pgdat_balanced(pgdat, order, highest_zoneidx) &&
+> >  	     !pgdat_watermark_boosted(pgdat, highest_zoneidx))) {
+> >  		/*
+> > -- 
+> > 2.17.1
+> > 
+> > 
 
