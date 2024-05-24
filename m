@@ -1,148 +1,171 @@
-Return-Path: <linux-kernel+bounces-188780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C488CE6C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:15:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597F78CE6D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ED47281ABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:15:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D59181F21626
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F61A12C483;
-	Fri, 24 May 2024 14:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8650912C47E;
+	Fri, 24 May 2024 14:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Z4O9HmfJ"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b="v6rR/A02";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m79tD6Sr"
+Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315E912BF39
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A925686279;
+	Fri, 24 May 2024 14:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716560111; cv=none; b=T0n/yvkPhbX/VWfsI/oocdx3WYmh5EqQ6dlw2CCwUzHgPNVPKDScmB7MAFO1/dnYM7zOMdy7hz576PKD6maOR6fwa88JJzks+3RcOL5mfx/NBg0RfAs7sjFfkXRsgjI0OFVJWb6cn2STLSb521OAArYMpxbqr+UzISl44uxzYsk=
+	t=1716560145; cv=none; b=uXITjeFCcj5oouGNBagDYtkCqONxqtX6PDAeANskAyVu98y90bdqv8/QNo6zqrJ+AZnaSwVaFstKPSBv3MY01T945avXgzy9FCACgT53MTlOS0wqnTy7l8ItuQIfyTg98yiMESKDItEsdraIO9KelkDyq/Vl6h+ZXMZHs4ecuuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716560111; c=relaxed/simple;
-	bh=Xks612s/7rT6Q6ukp30bszt+1cZ8l1ePIW1QRk5v5F0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IIbnJSnzZJx/QCPLPw0pQbpsqHWACKE+s+dq/Off06WryZ5MkIQ9eZVzdKs+6Knn8TDoX7FKBxvZhCjz3j5bFKK3plOa+5sWKmsB1wkbluedDyXauO2vgSRyXThxOyIX3osJrC+k6jmCMp0rFlzgNGB8rzBrPtUn0pXKvusVrww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Z4O9HmfJ; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6ab9d01c479so4551896d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1716560108; x=1717164908; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IB3mcx1/Tv2PzlpsLjModpuSvG006O6sdr/ydjXYZrw=;
-        b=Z4O9HmfJAyLs8AKSAar3Mk5yc6fTi61i4Tyh0u49fTmuPdGPGa3gjfOeHY9Z9f43dT
-         ypMsblj33z3xR1NU1zBLwVmcz06JQTsQRNmos+CVVPXwXof4J17yi61VlYRa/BQF+kPd
-         DCj21Sffp+XWSs0cT9TtnIH9GI6ZohnjP+2p+i50hYa77sIJoELz5IQbp1fndRXFXmlT
-         BOz4DNGt1UaTxm0Un01AUceMRNo+FDc6vZ6zMRZZsf6+oDYQNnbQXO0Tdmcid3xspsXz
-         GOQbgP/Jjr+dcB+q9PlGPzp26C7HVBrroA0oYuszHsPiuK91C8k/iYKOL/DzBXjxczkt
-         4W6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716560108; x=1717164908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IB3mcx1/Tv2PzlpsLjModpuSvG006O6sdr/ydjXYZrw=;
-        b=wUqLWSsgmsZNgnGgpDAgysh7q8QQrYDN0ETTUKdP71S/VEsueZZ7RmtH0tNu2r1S9N
-         1pWPKznow9H0kPomViVumBrkF3JfEblEA1UDKS4IAAgYqL+co/K/OImioE6/+Dc67bEM
-         MjqvfGqLTvcg5mFDylrerbXLQLOJ/VrjIBjTntKp4nfSOiRscKNJ1eqtJF2mb+bkwgR9
-         dkz0pKbd/gYveIiWsCjz6WcTf1i3uyVQ6h7z1aG4qWoUMdaWhZBCPkU5KYDSWrxfuVw/
-         nveuzMj9LG+z04tLbx+NbSbrAHy8Vy5UFjP9sJcEpZuqQHnokvXOLvCsL9XyVLHh/qtI
-         EUcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBX6LqfTBjJUPpu+JOxO7UyS6/zic3x6gaO+EB6avq1hmPNfafGkOvl5WsktUNdLN5KaxEREGYrktSjuktfbFp8gafVMvT53e6xVLS
-X-Gm-Message-State: AOJu0YyqM0IJ02Np0W+JnzupO+v0OLH69GTqdd4I58yJ3GaWsfMJJji0
-	+PvDDAZDSk9q5/Z3npi6bBSNB23mpDJyf85zI1jlm5s3K3AG+k21j0DwEy/RgHc=
-X-Google-Smtp-Source: AGHT+IH6Ac9WsdsUZJ58JI8yWFb4+VExingKf2US7XYudAGfc/E7XKaMftG4JYXDj6Yn+MrOVUjI+A==
-X-Received: by 2002:a05:6214:4981:b0:6aa:3dc9:4b2 with SMTP id 6a1803df08f44-6abbbca5e8amr26530426d6.5.1716560108113;
-        Fri, 24 May 2024 07:15:08 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ac071048a3sm7543566d6.69.2024.05.24.07.15.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 07:15:07 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sAVhK-001JcU-UZ;
-	Fri, 24 May 2024 11:15:06 -0300
-Date: Fri, 24 May 2024 11:15:06 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 4/9] iommufd: Add fault and response message
- definitions
-Message-ID: <20240524141506.GN69273@ziepe.ca>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-5-baolu.lu@linux.intel.com>
- <BN9PR11MB52762F2AF16AA5833D61AFF68CEC2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <805f3ae2-341e-4255-add8-3f6dd296a556@linux.intel.com>
- <BN9PR11MB5276A68C9DCDA201826714018CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
- <04288162-e5fd-48f3-bb60-a41b4ed2c244@linux.intel.com>
- <BN9PR11MB5276EEE89AB66C0EFB6D4DA88CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1716560145; c=relaxed/simple;
+	bh=EXGqEZ+6IZa4t+vQ3br7xmeU+42xs9OcjiGVeuVCtOg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=BkKU13AzBGpp4hrmiptXAUuXehuUDzBHCfxYijd/3ccpvqDAF3Y7thMjWicMFZVD4FXPXxF7z0tHbKEEh4HjH27KX5mOXRI0ZPYsJlPCwCwr8g3see4jS8HUyQ18Ptpmjw1+x2OMW4yY/4Ry0U1hZ8Ed/7yZ4a6bD1MEqHIcM3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu; spf=pass smtp.mailfrom=readahead.eu; dkim=pass (2048-bit key) header.d=readahead.eu header.i=@readahead.eu header.b=v6rR/A02; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m79tD6Sr; arc=none smtp.client-ip=64.147.123.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readahead.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=readahead.eu
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfhigh.west.internal (Postfix) with ESMTP id B33BE1800122;
+	Fri, 24 May 2024 10:15:39 -0400 (EDT)
+Received: from imap50 ([10.202.2.100])
+  by compute6.internal (MEProxy); Fri, 24 May 2024 10:15:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=readahead.eu; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1716560139;
+	 x=1716646539; bh=SX/ETyfE9F87YnrwRyr03ccHrX8ow3V9bkqTKeM04kI=; b=
+	v6rR/A02Ruy16iWS6ZBc6fQaUbkzd7fhoSdR7XuFBW+6lRqbYkD1Q/zgMyaNW0JI
+	HGkLx3K/2yz9MADgxKjl2Zr7SNDijV/AVL6mTMxqg1WWPz76Uk1sSz8B+OOLdEgA
+	5HtzcOdaER2bv21IoM0OZu8DVn1a7B8oAwOFnX7fvIZtNxtY+hXg0Bh0DxibDiYj
+	j3eoEJctlY6BI+NGu9f4Lzimgz/96bMrK43T+sub2YOz0YTc2Iy0vAtJNdomnavb
+	sTAJ8gcNeiLWOSRci9zoZp8wngEtUwMrIbXZHa+fVMGl2PrpzGsWTgo/HDiaPRvE
+	AJWMLO0M+qEO5/8wjSim/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716560139; x=
+	1716646539; bh=SX/ETyfE9F87YnrwRyr03ccHrX8ow3V9bkqTKeM04kI=; b=m
+	79tD6Sr8WShuEz7/pN+BUHj8WoSUFBqud4bBvEao+oVGHHX+H6lksrlSNDl0AoNX
+	K15AipgiBHVtBl7qhqAp6pYFylrMnMGHjlTgpfVciD/FTq9COhGt/9V5x8wGCzCa
+	DzBHavzXv6cLssOpVOYJpGKGzcpiTAxzT8E0VKwi8ntrvrUC/iCz26m4lAcRFzge
+	om7zSS3XgrAS6NxMEmjdkwyLSW+1b+WpYLmde8+4dBL+pGTqFoUgxJ5zefsOgqKi
+	ox35v7j8wAQ4r5riW5PeUmLN0bjf8hp8z/CmY4Cp+hzi2awlRjD/O9pRpEg+TES1
+	vfkyix+YDWj88GNIRYO+w==
+X-ME-Sender: <xms:CqFQZpfW6zqJtLtPvnKLvRU8aKos4TCzPnnxwvBnZUc1MQ9eR-sUgw>
+    <xme:CqFQZnMkYAbQlVGybXkF8pPwtMIMv1SXV4GCnhfFPxBnUnFGk4o1kxq0pLE2-XMnR
+    54AEVrvnoP_jG6_wI0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeikedgjedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdff
+    rghvihguucfthhgvihhnshgsvghrghdfuceouggrvhhiugesrhgvrggurghhvggrugdrvg
+    huqeenucggtffrrghtthgvrhhnpefgvefhteeivddvkefhveekfefgvdeuleeiffeihfej
+    vdettdevvefgveeugffhleenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnh
+    gvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpegurghvihgusehrvggruggrhhgvrggurdgvuh
+X-ME-Proxy: <xmx:CqFQZigvE2PZLctxOyKy2_1paXAx2z5Ona3v8BHwPanW9s5Nd-325g>
+    <xmx:C6FQZi9wTNkD7YDLuamsDR4oJkPb8Em3gkdHVb99FdjrG3sBnh_Nfw>
+    <xmx:C6FQZlvC7Zvcep-wCnzQk08fq2Hk94oK2iZryQJFHUpx3logYyQdtA>
+    <xmx:C6FQZhEfpJeOnDoSyRHv2hWtkHWB_C719RBfNJGGhbZ8Ha6WMtf1Ng>
+    <xmx:C6FQZlFSBHsoOBIemMsgghotBoCfBV6bxvJ5sdLGL-Y8cEdwpU50t5P6>
+Feedback-ID: id2994666:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id DAC861700093; Fri, 24 May 2024 10:15:38 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-480-g515a2f54a-fm-20240515.001-g515a2f54
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5276EEE89AB66C0EFB6D4DA88CE92@BN9PR11MB5276.namprd11.prod.outlook.com>
+Message-Id: <79b3aa3e-bc70-410e-9646-0b6880a4a74b@app.fastmail.com>
+In-Reply-To: <20240524033933.135049-2-jeffxu@google.com>
+References: <20240524033933.135049-1-jeffxu@google.com>
+ <20240524033933.135049-2-jeffxu@google.com>
+Date: Fri, 24 May 2024 16:15:06 +0200
+From: "David Rheinsberg" <david@readahead.eu>
+To: "Jeff Xu" <jeffxu@chromium.org>, "Jeff Xu" <jeffxu@google.com>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, cyphar@cyphar.com,
+ dmitry.torokhov@gmail.com, "Daniel Verkamp" <dverkamp@chromium.org>,
+ hughd@google.com, jorgelo@chromium.org, "Kees Cook" <keescook@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org,
+ =?UTF-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>,
+ skhan@linuxfoundation.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] memfd: fix MFD_NOEXEC_SEAL to be non-sealable by default
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 20, 2024 at 04:59:18AM +0000, Tian, Kevin wrote:
-> > From: Baolu Lu <baolu.lu@linux.intel.com>
-> > Sent: Monday, May 20, 2024 11:33 AM
-> > 
-> > On 5/20/24 11:24 AM, Tian, Kevin wrote:
-> > >> From: Baolu Lu <baolu.lu@linux.intel.com>
-> > >> Sent: Sunday, May 19, 2024 10:38 PM
-> > >>
-> > >> On 2024/5/15 15:43, Tian, Kevin wrote:
-> > >>>> From: Lu Baolu <baolu.lu@linux.intel.com>
-> > >>>> Sent: Tuesday, April 30, 2024 10:57 PM
-> > >>>>
-> > >>>> + * @length: a hint of how much data the requestor is expecting to
-> > fetch.
-> > >> For
-> > >>>> + *          example, if the PRI initiator knows it is going to do a 10MB
-> > >>>> + *          transfer, it could fill in 10MB and the OS could pre-fault in
-> > >>>> + *          10MB of IOVA. It's default to 0 if there's no such hint.
-> > >>>
-> > >>> This is not clear to me and I don't remember PCIe spec defines such
-> > >>> mechanism.
-> > >>
-> > >> This came up in a previous discussion. While it's not currently part of
-> > >
-> > > Can you provide a link to that discussion?
-> > 
-> > https://lore.kernel.org/linux-iommu/20240322170410.GH66976@ziepe.ca/
-> > 
-> 
-> We can always extend uAPI for new usages, e.g. having a new flag
-> bit to indicate the additional filed for carrying the number of pages.
-> But requiring the user to handle non-zero length now (though trivial)
-> is unnecessary burden.
+Hi
 
-It is tricky to extend this stuff since it comes out in read().. We'd
-have to have userspace negotiate a new format most likely.
+On Fri, May 24, 2024, at 5:39 AM, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@google.com>
+>
+> By default, memfd_create() creates a non-sealable MFD, unless the
+> MFD_ALLOW_SEALING flag is set.
+>
+> When the MFD_NOEXEC_SEAL flag is initially introduced, the MFD created
+> with that flag is sealable, even though MFD_ALLOW_SEALING is not set.
+> This patch changes MFD_NOEXEC_SEAL to be non-sealable by default,
+> unless MFD_ALLOW_SEALING is explicitly set.
+>
+> This is a non-backward compatible change. However, as MFD_NOEXEC_SEAL
+> is new, we expect not many applications will rely on the nature of
+> MFD_NOEXEC_SEAL being sealable. In most cases, the application already
+> sets MFD_ALLOW_SEALING if they need a sealable MFD.
 
-> Do we want the response message to also carry a length field i.e.
-> allowing the user to partially fix the fault? 
+This does not really reflect the effort that went into this. Shouldn't t=
+his be something along the lines of:
 
-No, the device will discover this when it gets another fault  :)
+    This is a non-backward compatible change. However, MFD_NOEXEC_SEAL
+    was only recently introduced and a codesearch revealed no breaking
+    users apart from dbus-broker unit-tests (which have a patch pending
+    and explicitly support this change).
 
-Jason
+> Additionally, this enhances the useability of  pid namespace sysctl
+> vm.memfd_noexec. When vm.memfd_noexec equals 1 or 2, the kernel will
+> add MFD_NOEXEC_SEAL if mfd_create does not specify MFD_EXEC or
+> MFD_NOEXEC_SEAL, and the addition of MFD_NOEXEC_SEAL enables the MFD
+> to be sealable. This means, any application that does not desire this
+> behavior will be unable to utilize vm.memfd_noexec =3D 1 or 2 to
+> migrate/enforce non-executable MFD. This adjustment ensures that
+> applications can anticipate that the sealable characteristic will
+> remain unmodified by vm.memfd_noexec.
+>
+> This patch was initially developed by Barnab=C3=A1s P=C5=91cze, and Ba=
+rnab=C3=A1s
+> used Debian Code Search and GitHub to try to find potential breakages
+> and could only find a single one. Dbus-broker's memfd_create() wrapper
+> is aware of this implicit `MFD_ALLOW_SEALING` behavior, and tries to
+> work around it [1]. This workaround will break. Luckily, this only
+> affects the test suite, it does not affect
+> the normal operations of dbus-broker. There is a PR with a fix[2]. In
+> addition, David Rheinsberg also raised similar fix in [3]
+>
+> [1]:=20
+> https://github.com/bus1/dbus-broker/blob/9eb0b7e5826fc76cad7b025bc46f2=
+67d4a8784cb/src/util/misc.c#L114
+> [2]: https://github.com/bus1/dbus-broker/pull/366
+> [3]:=20
+> https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahead.e=
+u/
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC")
+> Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
+> Signed-off-by: Jeff Xu <jeffxu@google.com>
+> Reviewed-by: David Rheinsberg <david@readahead.eu>
+
+Looks good! Thanks!
+David
 
