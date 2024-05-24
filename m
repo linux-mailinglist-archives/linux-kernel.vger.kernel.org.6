@@ -1,173 +1,84 @@
-Return-Path: <linux-kernel+bounces-189076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325628CEAB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:12:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F09F8CEABA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A701C21042
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:12:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49D1E1C20825
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A3C6F06D;
-	Fri, 24 May 2024 20:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BB857CB8;
+	Fri, 24 May 2024 20:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WpeJsYyv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hoYbLTxK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1zFJRgB7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A86F1CFB2;
-	Fri, 24 May 2024 20:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5D983CBD;
+	Fri, 24 May 2024 20:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716581541; cv=none; b=S953cpxf/RL76m4pUol/DF+/p38CZudOAQmHHLEQC7H4APZatmSVki/V6UjQBIiCNtWGWqw7IFhfNBEbS0qia+PTS9ttMxB6kmF2gGUHytLOqqMqvS/G+vdS4BdSCUtBriReOAJQjVKKFpQcZ3tjl+IGKZozH4xVmh+GcXulLFw=
+	t=1716581574; cv=none; b=W23KshCyrjviiCaFxR9vm/6AJfLjBWAH6xuXbVFzokRj3K8juvgbPcC1ehwDZTbVrY1RRrg7Z+vBioTw7FQRtg/c554WbbJ5W+AYNlePuQfLbC09RM/bHlxH2jvEnCQa5reiO67tqcgjTZ2IF5BwcJUwlbOi9pur3P/H79IJatI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716581541; c=relaxed/simple;
-	bh=/0AJ4dHxpn+FPk7XO9/c18yo0iSc19ctgk3pqPUkIwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X/bXPbG3CIzTkTOVcY3jLjkPlJHjAItxEplrL5z3vN8GwMgiYQMYTOyW6Bbj1172o/7PPF24TIrjQ6QenIAB8iBiow708zYyznYFHGEuC+wNpqzpZq+tRmAqNSUxIj+x71g738YVP8CdkIf7XvGCDjETzO1tnPPH6nSNT9BYMdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WpeJsYyv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hoYbLTxK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 24 May 2024 22:12:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716581537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtvCptJpVCuAsJ2ZJytWgyRQHpaYiuYuk+w0LKHWO7c=;
-	b=WpeJsYyvfRQCdvsuiugotFM2OeN+eJK54kuZZFjeHwH/jI6N5gBK8SruIep0g4FivxhfPF
-	+qEmvoBZaWWjuojdVBRmEaQ3oExGnbzPP+9FMx4Tq8NtGL3V5qRgfoE3IX81TXotpzcieC
-	WMQCa1uaoW1M+hn0y3BH0dJQCQBmdkO96DQFK0W5aR1KXwEj2Xq3c39ZEkzutwANhvkSf9
-	uh9U3PmdeLo8K4FAS+wjmXY3wvqp0p4K0t7BAmnY8kYRCQMicxYqSDv2kFflawbBefhc73
-	LQC8oEr0YhGl9oQjCXJi9ubmSypOix7KvmuTYTvYM+/lRJQ3ZbQ6/uMH7upZ8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716581537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtvCptJpVCuAsJ2ZJytWgyRQHpaYiuYuk+w0LKHWO7c=;
-	b=hoYbLTxKk+aDa5qSkASfvMUdMj1vNefW8gt92TzKCuE1gbUgOMVWr/wdeOPwdaw2XPQzN1
-	kEfvwJIoFPfGjXCQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Cc: syzbot <syzbot+83763e624cfec6b462cb@syzkaller.appspotmail.com>,
-	Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [staging?] [usb?] memory leak in _r8712_init_xmit_priv
- (2)
-Message-ID: <20240524201212.mjMDljAc@linutronix.de>
-References: <000000000000809328060a8a4c1c@google.com>
- <20240520144641.17643-1-n.zhandarovich@fintech.ru>
- <20240520171848.60Nzvv8y@linutronix.de>
- <5b351cfa-6537-4e3d-9d5b-0435e4eceef9@fintech.ru>
+	s=arc-20240116; t=1716581574; c=relaxed/simple;
+	bh=3UnR8vsmR8CcxvacyVVttEzPUuRJVz8jYNuEfHywzW4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=A3MBTXKo9UXapaunnw7BgW9XHCajXohIkibFAgZDkP4D6glmClOJkbEe8tNxeb9t9HeI75uKVBTA9DnDwdiHyIX/IkrKDi0PMfC/XJBg506WkGfq3RtZCHDmsQV4BTfwp0Y+px9DFK9m470HY0pv1ufmWC5tHj7zkPoQt+WUoKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1zFJRgB7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48EAAC2BBFC;
+	Fri, 24 May 2024 20:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1716581573;
+	bh=3UnR8vsmR8CcxvacyVVttEzPUuRJVz8jYNuEfHywzW4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=1zFJRgB7GUn20f6S8m3qnHj7wBwqWEifkehnYbb5C3CHrLqqQEp2ckQJccVPm3hEN
+	 82fbFl2JJI0VlLLmIgAdrnKJoVjWd6d7u3R0O4L09cLNvWUk+D4PFxRzyLiNUkKT6Y
+	 EsjcEmBJlOmoUfkb0ZoGkWbgu5VJ5v+NJC48B+yY=
+Date: Fri, 24 May 2024 13:12:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, Donet Tom
+ <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>, Matthew Wilcox
+ <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>,
+ linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mike Rapoport <rppt@kernel.org>, Muchun Song
+ <songmuchun@bytedance.com>
+Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked
+ during __bio_release_pages()
+Message-Id: <20240524131252.52475e7dc695b4d924c253a2@linux-foundation.org>
+In-Reply-To: <87msofsntw.fsf@gmail.com>
+References: <20240523063905.3173-1-donettom@linux.ibm.com>
+	<20240523121344.6a67a109e0af2ba70973b34b@linux-foundation.org>
+	<d551d1cd-a02f-42aa-9de2-10ff7757224c@redhat.com>
+	<87msofsntw.fsf@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b351cfa-6537-4e3d-9d5b-0435e4eceef9@fintech.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 22, 2024 at 06:33:57AM -0700, Nikita Zhandarovich wrote:
-> On 5/20/24 10:18, Nam Cao wrote:
-> > On Mon, May 20, 2024 at 07:46:41AM -0700, Nikita Zhandarovich wrote:
-> >>> BUG: memory leak
-> >>> unreferenced object 0xffff888107a5c000 (size 4096):
-> >>>   comm "kworker/1:0", pid 22, jiffies 4294943134 (age 18.720s)
-> >>>   hex dump (first 32 bytes):
-> >>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> >>>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> >>>   backtrace:
-> >>>     [<ffffffff816337cd>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-> >>>     [<ffffffff816337cd>] slab_post_alloc_hook mm/slab.h:766 [inline]
-> >>>     [<ffffffff816337cd>] slab_alloc_node mm/slub.c:3478 [inline]
-> >>>     [<ffffffff816337cd>] __kmem_cache_alloc_node+0x2dd/0x3f0 mm/slub.c:3517
-> >>>     [<ffffffff8157e625>] kmalloc_trace+0x25/0x90 mm/slab_common.c:1098
-> >>>     [<ffffffff83cee442>] kmalloc include/linux/slab.h:600 [inline]
-> >>>     [<ffffffff83cee442>] _r8712_init_xmit_priv+0x2b2/0x6e0 drivers/staging/rtl8712/rtl871x_xmit.c:130
-> >>>     [<ffffffff83ce9033>] r8712_init_drv_sw+0xc3/0x290 drivers/staging/rtl8712/os_intfs.c:311
-> >>>     [<ffffffff83ce7ce6>] r871xu_drv_init+0x1c6/0x920 drivers/staging/rtl8712/usb_intf.c:386
-> >>>     [<ffffffff832d0f0b>] usb_probe_interface+0x16b/0x3a0 drivers/usb/core/driver.c:396
-> >>>     [<ffffffff82c3bb06>] call_driver_probe drivers/base/dd.c:579 [inline]
-> >>
-> >> I am inclined to think that this issue might be false positive. During
-> >> repro the device is initialized correctly, does some work and then
-> >> exits, calling all required functions to clean things up
-> >> (i.e. _free_xmit_priv()), including pxmitbuf->pallocated_buf.
-> >> Kmemleak triggers disappear if you set longer intervals between
-> >> scannning for them (obviously). And if all the things get cleared up
-> >> when the device disconnects, isn't that correct and expected
-> >> behaviour? Could the scanner just "lose track" of some of the objects
-> >> here?
+On Fri, 24 May 2024 12:23:15 +0530 Ritesh Harjani (IBM) <ritesh.list@gmail.com> wrote:
 
-I think you may be right that this is false negative.
+> >>> This patch verifies that a hugepage, used as a user buffer for DIO
+> >>> operations, is correctly freed upon unmapping, regardless of whether
+> >>> the offsets are aligned or unaligned w.r.t page boundary.
+> >>>
+> >> 
+> >
+> > Two SOF, is there a Co-developed-by: missing?
+> >
+> 
+> Sorry about that. Andrew, could you please add the tag (let me know if you
+> would like me to send v2). Will take care of it next time.
+> 
+> Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-I am guessing that kmemleak scans memory for pointers in block of 8-byte.
-However, this driver aligns the buffer from kmalloc() to 4 bytes, which is
-not necessary because pointers from kmalloc() is at least 8-byte-aligned.
-Then more pointers are stored in this 4-byte-aligned buffer. Thus, kmemleak
-misses these pointers, and falsely report memory leak.
-
-I never interacted with syzbot before, let's hope it can catch this:
-
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
-index 6353dbe554d3..408616e9afcf 100644
---- a/drivers/staging/rtl8712/rtl871x_xmit.c
-+++ b/drivers/staging/rtl8712/rtl871x_xmit.c
-@@ -117,12 +117,9 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
- 	/*init xmit_buf*/
- 	_init_queue(&pxmitpriv->free_xmitbuf_queue);
- 	_init_queue(&pxmitpriv->pending_xmitbuf_queue);
--	pxmitpriv->pallocated_xmitbuf =
--		kmalloc(NR_XMITBUFF * sizeof(struct xmit_buf) + 4, GFP_ATOMIC);
--	if (!pxmitpriv->pallocated_xmitbuf)
-+	pxmitpriv->pxmitbuf = kmalloc(NR_XMITBUFF * sizeof(struct xmit_buf), GFP_ATOMIC);
-+	if (!pxmitpriv->pxmitbuf)
- 		goto clean_up_frame_buf;
--	pxmitpriv->pxmitbuf = pxmitpriv->pallocated_xmitbuf + 4 -
--			      ((addr_t)(pxmitpriv->pallocated_xmitbuf) & 3);
- 	pxmitbuf = (struct xmit_buf *)pxmitpriv->pxmitbuf;
- 	for (i = 0; i < NR_XMITBUFF; i++) {
- 		INIT_LIST_HEAD(&pxmitbuf->list);
-@@ -165,8 +162,8 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
- 		for (k = 0; k < 8; k++)		/* delete xmit urb's */
- 			usb_free_urb(pxmitbuf->pxmit_urb[k]);
- 	}
--	kfree(pxmitpriv->pallocated_xmitbuf);
--	pxmitpriv->pallocated_xmitbuf = NULL;
-+	kfree(pxmitpriv->pxmitbuf);
-+	pxmitpriv->pxmitbuf = NULL;
- clean_up_frame_buf:
- 	kfree(pxmitpriv->pallocated_frame_buf);
- 	pxmitpriv->pallocated_frame_buf = NULL;
-@@ -193,7 +190,7 @@ void _free_xmit_priv(struct xmit_priv *pxmitpriv)
- 		pxmitbuf++;
- 	}
- 	kfree(pxmitpriv->pallocated_frame_buf);
--	kfree(pxmitpriv->pallocated_xmitbuf);
-+	kfree(pxmitpriv->pxmitbuf);
- 	free_hwxmits(padapter);
- }
- 
-diff --git a/drivers/staging/rtl8712/rtl871x_xmit.h b/drivers/staging/rtl8712/rtl871x_xmit.h
-index cdcbc87a3cad..784172c385e3 100644
---- a/drivers/staging/rtl8712/rtl871x_xmit.h
-+++ b/drivers/staging/rtl8712/rtl871x_xmit.h
-@@ -244,7 +244,6 @@ struct	xmit_priv {
- 	int cmdseq;
- 	struct  __queue free_xmitbuf_queue;
- 	struct  __queue pending_xmitbuf_queue;
--	u8 *pallocated_xmitbuf;
- 	u8 *pxmitbuf;
- 	uint free_xmitbuf_cnt;
- };
+I made that edit, thanks.
 
