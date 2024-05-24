@@ -1,142 +1,179 @@
-Return-Path: <linux-kernel+bounces-188674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9E58CE538
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:25:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F338CE54B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2D62282108
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95631C217A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AC61272D5;
-	Fri, 24 May 2024 12:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ABF12A15B;
+	Fri, 24 May 2024 12:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wEv8x/8u"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkW0tr5R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7B086ADC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D37E129E8C;
+	Fri, 24 May 2024 12:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716553479; cv=none; b=o4xJfNg1wwdZblT0YoiOZtdfOYWvyyE9o1L7XbpPmeCWowLBe0yKKSlxNCNnyg81yMxmeSkEKbwJ4hGwJwG4WV+kFpWo0pH3hapH6f1VIQKRNvXxb2HOnV6ok8xqlxAeXLv/uJnXiA0nzzm7g7RCuxo/iyaahoZJJrjBiYK2pJo=
+	t=1716553535; cv=none; b=In3o9OG/IpI0hIV2LNanjiZzJKgIloC9+GuCdVl+/rKcMfS8g6ZbAkIbK8XG1GlaRxVUWONxnYgmTjFLQp9jDlVV45B/+cBEsjCPmhnhUpjxO/FLlTwnF2Vfi3fBT1RkFEJ5kQi8RZM46VjeoWPTR5/U3oMK2xluc0NTc9lihlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716553479; c=relaxed/simple;
-	bh=8/a7npM7hJqrQbYOsMWig+hn/LOVNlmliFUO66jQTgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SYEuXeIsm7OAyOJHsMDO7IdH40a1sLA4dSAroYoTJM7wQ7SY/DZSAhJQv6a61WjDxLNEwXGBVPyaWNLXfMd+paHfcyr1LNHI063JQ2BVvRL5QBIwCSt5MgO5LEMEkZgNkaNaG1d/VW3wdC/3Kya6CakENvnE3eQHoViyh4ZWdXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wEv8x/8u; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44OCOAeB072566;
-	Fri, 24 May 2024 07:24:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716553450;
-	bh=3qMBw6WRH8Qi98NWykEp6y7Qays0g4/TXrxegpA4IRg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=wEv8x/8u7GA+R60hURzHW2DHcLRKNDLaSzbzJ5xtKx2Zyas18lPRLGu33jmOqCgYy
-	 zd8R4KRTUWOSUQDCp42AzAXGuIwoQhcAPggFV9wz8ixKQAnpZIBx6knsskXX69QBdd
-	 brlOEHu7XruS4mfYBvkIR2bRZkjnXX6dhAtdFvj4=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44OCOAET003898
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 24 May 2024 07:24:10 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
- May 2024 07:24:09 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 24 May 2024 07:24:09 -0500
-Received: from [172.24.227.102] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.102] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44OCO4k8051568;
-	Fri, 24 May 2024 07:24:05 -0500
-Message-ID: <4cd64cf5-d2b0-4aa9-b958-6b6fc54f0bf2@ti.com>
-Date: Fri, 24 May 2024 17:54:02 +0530
+	s=arc-20240116; t=1716553535; c=relaxed/simple;
+	bh=ZxYHa51J4F5219O37AqS4VcEPL/q/VMQFkZNaNvxL90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i09h36bHNBK+/EZcV0BhKHjTYp7vAP7KABdgm5CpaR1Lwf4GiLtPbZjiwFDvzLwY/J1HVbmj+N+8zI3L/mrR0INoq6/58h2lBoR2JDYsjyOryAKFOdVPcb91ZaFwWtYJD6yfKc0988wh5L4Zb1qUqVnETkpw9ImScsAeOUGO9uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkW0tr5R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D97DC3277B;
+	Fri, 24 May 2024 12:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716553535;
+	bh=ZxYHa51J4F5219O37AqS4VcEPL/q/VMQFkZNaNvxL90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CkW0tr5R8netKj3H1R0ye6wSoxVxKRlZiTiwB5ukR9z1c7TP8OAWTNPe+H9EmVF22
+	 iKkCl70NzB7uaY8AfBcCaRKbTyGTfdFg1jHihFJZ5Uoy8R+aVDuz0tNO8q75mlh7us
+	 Xy8VhegHlVFdHiVLAf9zzcRCH1bsnEs7SXkm37EWKHiVieSVPSCoghLYqr24+y78kR
+	 38s1l2TmBykYbhZ+4vsqtYBw2j6ggNFV733hpo7KUxTw41ziOyxLOi2+wHF+Xw4hRh
+	 mTzxV/l6+7NC5VCV6V/NgIBNtmyoV/WvvdqAmM9xUOaFZhSEqiakJdZ+TbeZxHQOKe
+	 M1jgxSlGK77Ng==
+Date: Fri, 24 May 2024 14:25:30 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] fhandle: expose u64 mount id to name_to_handle_at(2)
+Message-ID: <20240524-ahnden-danken-02a2e9b87190@brauner>
+References: <20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
+ <20240521-verplanen-fahrschein-392a610d9a0b@brauner>
+ <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/bridge: sii902x: Fix mode_valid hook
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <andrzej.hajda@intel.com>,
-        <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-        <Laurent.pinchart@ideasonboard.com>, <sam@ravnborg.org>,
-        <mripard@kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-        <airlied@gmail.com>, <daniel@ffwll.ch>, <a-bhatia1@ti.com>
-References: <20240524093509.127189-1-j-choudhary@ti.com>
- <20240524093509.127189-2-j-choudhary@ti.com>
- <y6ersd72tp2d6k4i2hja7bg37lahnvye2qion67urxeakw6rju@dher7oomt2ks>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <y6ersd72tp2d6k4i2hja7bg37lahnvye2qion67urxeakw6rju@dher7oomt2ks>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240523.154320-nasty.dough.dark.swig-wIoXO62qiRSP@cyphar.com>
 
-Hello Dmitry,
-
-On 24/05/24 15:11, Dmitry Baryshkov wrote:
-> On Fri, May 24, 2024 at 03:05:08PM +0530, Jayesh Choudhary wrote:
->> Currently, mode_valid hook returns all mode as valid and it is
->> defined only in drm_connector_helper_funcs. With the introduction of
->> 'DRM_BRIDGE_ATTACH_NO_CONNECTOR', connector is not initialized in
->> bridge_attach call for cases when the encoder has this flag enabled.
->> So add the mode_valid hook in drm_bridge_funcs as well with proper
->> clock checks for maximum and minimum pixel clock supported by the
->> bridge.
->>
->> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-
-[...]
-
->> +
->>   static enum drm_mode_status sii902x_mode_valid(struct drm_connector *connector,
->>   					       struct drm_display_mode *mode)
->>   {
->> -	/* TODO: check mode */
->> +	struct sii902x *sii902x = connector_to_sii902x(connector);
->> +	const struct drm_display_mode *mod = mode;
->>   
->> -	return MODE_OK;
->> +	return sii902x_validate(sii902x, mod);
+On Thu, May 23, 2024 at 09:52:20AM -0600, Aleksa Sarai wrote:
+> On 2024-05-21, Christian Brauner <brauner@kernel.org> wrote:
+> > On Mon, May 20, 2024 at 05:35:49PM -0400, Aleksa Sarai wrote:
+> > > Now that we have stabilised the unique 64-bit mount ID interface in
+> > > statx, we can now provide a race-free way for name_to_handle_at(2) to
+> > > provide a file handle and corresponding mount without needing to worry
+> > > about racing with /proc/mountinfo parsing.
+> > > 
+> > > As with AT_HANDLE_FID, AT_HANDLE_UNIQUE_MNT_ID reuses a statx AT_* bit
+> > > that doesn't make sense for name_to_handle_at(2).
+> > > 
+> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > ---
+> > 
+> > So I think overall this is probably fine (famous last words). If it's
+> > just about being able to retrieve the new mount id without having to
+> > take the hit of another statx system call it's indeed a bit much to
+> > add a revised system call for this. Althoug I did say earlier that I
+> > wouldn't rule that out.
+> > 
+> > But if we'd that then it'll be a long discussion on the form of the new
+> > system call and the information it exposes.
+> > 
+> > For example, I lack the grey hair needed to understand why
+> > name_to_handle_at() returns a mount id at all. The pitch in commit
+> > 990d6c2d7aee ("vfs: Add name to file handle conversion support") is that
+> > the (old) mount id can be used to "lookup file system specific
+> > information [...] in /proc/<pid>/mountinfo".
 > 
-> There is no need to. The drm_bridge_chain_mode_valid() should take care
-> of calling bridge's mode_valid callback and rejecting the mode if it is
-> not accepted.
+> The logic was presumably to allow you to know what mount the resolved
+> file handle came from. If you use AT_EMPTY_PATH this is not needed
+> because you could just fstatfs (and now statx(AT_EMPTY_PATH)), but if
+> you just give name_to_handle_at() almost any path, there is no race-free
+> way to make sure that you know which filesystem the file handle came
+> from.
+> 
+> I don't know if that could lead to security issues (I guess an attacker
+> could find a way to try to manipulate the file handle you get back, and
+> then try to trick you into operating on the wrong filesystem with
+> open_by_handle_at()) but it is definitely something you'd want to avoid.
 
-I need some clarity here.
+So the following paragraphs are prefaced with: I'm not an expert on file
+handle encoding and so might be totally wrong.
 
-IIRC, if the bridge does initialize the connector in case
-where the encoder does not attach the bridge with the
-DRM_BRIDGE_ATTACH_NO_CONNECTOR (DBANC) flag (referring to tidss
-encoder before we implemented the DBANC feature), then
-drm_connector_helper_func are called and drm_bridge_funcs
-are NOT called (atleast from what I have seen in detect
-hook for cdns-mhdp-8546 driver which is there in both
-structures).
+Afaiu, the uniqueness guarantee of the file handle mostly depends on:
 
-I do not have any platform to test non-DBANC encoders.
-And I did not want to break any platform that were still using
-bridge_attach without DBANC flag.
-That is why I kept mode_valid hook in both structures.
+(1) the filesystem
+(2) the actual file handling encoding
 
-Are you implying that if connector_helper_funcs are not there
-then there will be some sort of fallback to bridge_funcs instead
-of passthrough for mode_valid check? Because that goes against my
-previous observations.
+Looking at file handle encoding to me it looks like it's fairly easy to
+fake them in userspace (I guess that's ok if you think about them like a
+path but with a weird permission model built around them.) for quite a
+few filesystems.
 
-Thanks,
-Jayesh
+For example, for anything that uses fs/libfs.c:generic_encode_ino32_fh()
+it's easy to construct a file handle by retrieving the inode number via
+stat and the generation number via FS_IOC_GETVERSION.
+
+Encoding using the inode number and the inode generation number is
+probably not very strong so it's not impossible to generate a file
+handle that is not unique without knowing in which filesystem to
+interpret it in.
+
+The problem is with what name_to_handle_at() returns imho. A mnt_id
+doesn't pin the filesystem and the old mnt_id isn't unique. That means
+the filesystem can be unmounted and go away and the mnt_id can be
+recycled almost immediately for another mount but the file handle is
+still there.
+
+So to guarantee that a (weakly encoded) file handle is interpreted in
+the right filesystem the file handle must either be accompanied by a
+file descriptor that pins the relevant mount or have any other guarantee
+that the filesystem doesn't go away (Or of course, the file handle
+encodes the uuid of the filesystem or something or uses some sort of
+hashing scheme.).
+
+One of the features of file handles is that they're globally usable so
+they're interesting to use as handles that can be shared. IOW, one can
+send around a file handle to another process without having to pin
+anything or have a file descriptor open that needs to be sent via
+AF_UNIX.
+
+But as stated above that's potentially risky so one might still have to
+send around an fd together with the file handle if sender and receiver
+don't share the filesystem for the handle.
+
+However, with the unique mount id things improve quite a bit. Because
+now it's possible to send around the unique mount id and the file
+handle. Then one can use statmount() to figure out which filesystem this
+file handle needs to be interpreted in.
+
+> 
+> > Granted, that's doable but it'll mean a lot of careful checking to avoid
+> > races for mount id recycling because they're not even allocated
+> > cyclically. With lots of containers it becomes even more of an issue. So
+> > it's doubtful whether exposing the mount id through name_to_handle_at()
+> > would be something that we'd still do.
+> > 
+> > So really, if this is just about a use-case where you want to spare the
+> > additional system call for statx() and you need the mnt_id then
+> > overloading is probably ok.
+> > 
+> > But it remains an unpleasant thing to look at.
+> > 
+> 
+> Yeah, I agree it's ugly.
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
 
 
 
