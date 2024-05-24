@@ -1,112 +1,78 @@
-Return-Path: <linux-kernel+bounces-188937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D818CE8CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:40:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D10C8CE8D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA983283CF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:40:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5F86B20F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA3712EBD7;
-	Fri, 24 May 2024 16:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6A512F368;
+	Fri, 24 May 2024 16:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lSjyQV7C"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FVcePM3/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8407A12E1C9
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3323D76
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716568822; cv=none; b=GDR/BL7QnccGCKy45osk3uJ5DQOU4ZDVDbDzkCiRlb1EO4adSvbvuOzQFwPAt2WjB0zBqtAMSV2ju3rzcKuo6c8WzYCOCcS4V2Cdmmh8a8hwTLsii69rCpY1PBG1l9jPovI+mQa1FD6oUNtmmrdLwx3qTH7UZ3r1ErYDLGLiFi8=
+	t=1716569126; cv=none; b=YQDyfBJzgLxqwqk4iU+hZ5wRBJqmJCFQvI3BzWeKN2x/2asn5abg31k03UhA4RUVuLoXm2Jrp4U5dgZWU4DmolnUM7tagxYUfft6c2bjc89mT0Y2ADzgCqUfTrOUhaPE54KVyx0B7I+hAfjouM2jgZ7FJgCaQmqbpgBZR7dhaP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716568822; c=relaxed/simple;
-	bh=9mvpBAnKzNAyjIz4AaURNG6HUDlSprKVfsup9+Rsh3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WrncZLqQCThTvuQZyxcBVKDTxkQp+l/QVWdHfVtiaBaCRdpX8xtX4Xm+qXc7Gg/GFrCsSDv7IwseALsohXXxFwJdsObo3pLrtbGCW3fyEIZUxDcVbn9jcZtOFuMDg0yhy8yzcuYEFr+UZlhyf3rPtVLiFqZ2z6Lt56N4FC0zXYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lSjyQV7C; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 18F2240E02A8;
-	Fri, 24 May 2024 16:40:18 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tm43LEE-mE5d; Fri, 24 May 2024 16:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1716568813; bh=jiaxkAzz/Wg3+OBprXDh1+W9WaBImj/HoQGusdn/co4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lSjyQV7CoZXTb+RQFBdfy8SZiBa5FhP58xrEVOvOq5su45eeCbtV8uc8W5t0yGCE0
-	 GtcIJtgF3SWdypNdkTxX6o9IqvGoTE6F1eYoOYdiTHSRxBEJlBBWh15Kxzv8wXQPZE
-	 rlBOAEJZke50zWDCQEjDmsBwYm66EQBdooJEqoEnHCfJqmrDHgShcXAFIvcPiJ6Ucm
-	 ZievW5F/CVIfrDmVsWZyT985vBV8KaP01FZ0FEVCoD9Kq96WVm2Ku8ZublztRRToX+
-	 hq2ElrwRehd8uejyTPLYe+LBiW1fiWOcXWEsAbPSbcrCtpYvdjTtmILg+7GyNiA6iZ
-	 85Wy1/sSAUmNdfCiz+swD8hC3btor5aPpF5TlVhLMsqtP4htLUAW2fbDxaZ/zYLQIP
-	 Nxtzf4EZrCrQyE3JnoxHRMC7klma0PVLb27CIQKjJYBHwm0OxdJPiczv7P3bVdmyCV
-	 1NHG8f8h0Vb5T0q/U6irqgQrlQQGMZ6iey9aCIA0Cu4shRWUZPywyiy6jyLuy+g+Qm
-	 Wb5wySme+TjQ6VbR6bGpyYIeE4ZSyWv6IXYPlm+nycKRUnsQJxcsJoA/TrRkBME/5z
-	 CX71Fv5nuHWqxw/zvo0zZBu8hDRrn/0ZWkVIbAK/OL7CL7pePffHTwD46RO5Y+ZjvG
-	 bd0u23XM4fIc5GEqCVXkvcYo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9C4BD40E016A;
-	Fri, 24 May 2024 16:40:01 +0000 (UTC)
-Date: Fri, 24 May 2024 18:39:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Kees Cook <keescook@chromium.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, patches@lists.linux.dev,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] x86/boot: Address clang -Wimplicit-fallthrough in
- vsprintf()
-Message-ID: <20240524163956.GBZlDC3DH_OqvAjSBC@fat_crate.local>
-References: <20240516-x86-boot-fix-clang-implicit-fallthrough-v1-1-04dc320ca07c@kernel.org>
- <20240517095110.GAZkcojmJQoY_zU-OT@fat_crate.local>
- <20240517151833.GB3660288@thelio-3990X>
- <20240523115734.GAZk8vLgzOzD8Tv9pq@fat_crate.local>
- <202405231603.2E810E3FC@keescook>
+	s=arc-20240116; t=1716569126; c=relaxed/simple;
+	bh=VE8qg68nZPwNjA6Q0XTg5dVqXarGnbaZjRYSOy/mcpw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=AMk6feJ8D6skv0xuClXla4cjoIJCxi00f4C7axdWyc5g68thu1lgu8Nk/ImfPfBUyADhsJcXAdgtq+g/OcCm7DdfT1SVaf5hs6Ljx3PfnQ2J5/HKw9aNXFb4Q8AimFumUgqouB6irJXAbfFPEe+qGUMAgaxE2JmXwit93evMvLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FVcePM3/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D21CCC32782;
+	Fri, 24 May 2024 16:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716569125;
+	bh=VE8qg68nZPwNjA6Q0XTg5dVqXarGnbaZjRYSOy/mcpw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=FVcePM3/RUY3uZCQXZEti0jZijuwRAQuYnrTo5NcVA1ovn38XCFoofUDLZzyvF3ne
+	 0yZ8MWFgGbEynd7elwCS7gcp77wggeUF9kXd1d+V1PZYr5tTnuGBEu5BjFT+XZFDwa
+	 SSMI+0aNxMGL7Jk4+rgRdzGNhVEZuAC3UaNu69Ez+ZLy8n0JQ+edfmXmbyKi87FE+S
+	 b4gvQjF4b+enaL/cWDu9GEwcgwUYk/XrEA+N4Vw5mMNCYds6BISe3NjxxJuQOIJm3t
+	 wO4BtB3gwKWDp5vMS+astceMHvvBRHaEhMekEuWpIscMTd9Qxwjo/ATeA31poIXXXE
+	 mw94lUzqpcABA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C784CC32766;
+	Fri, 24 May 2024 16:45:25 +0000 (UTC)
+Subject: Re: [GIT PULL] tracefs/eventfs: Fixes and cleanups for v6.10
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240523174419.1e5885a5@gandalf.local.home>
+References: <20240523174419.1e5885a5@gandalf.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240523174419.1e5885a5@gandalf.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-tracefs-v6.10
+X-PR-Tracked-Commit-Id: 2dd00ac1d38afba1b59e439abc300a9b0ce696bf
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0eb03c7e8e2a4cc3653eb5eeb2d2001182071215
+Message-Id: <171656912579.29701.16740873194804586676.pr-tracker-bot@kernel.org>
+Date: Fri, 24 May 2024 16:45:25 +0000
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Masahiro Yamada <masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202405231603.2E810E3FC@keescook>
 
-On Thu, May 23, 2024 at 04:12:25PM -0700, Kees Cook wrote:
-> There isn't a bug _here_, but this is about making the code unambiguous
-> everywhere in the kernel. We've already done the work to get rid of
-> all these warnings; this one is newly introduced, so let's get it fixed.
+The pull request you sent on Thu, 23 May 2024 17:44:19 -0400:
 
-Nah, it has been there since forever (forever == 2007 in this case). It
-fires because I enabled the warning in the decompressor.
+> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-tracefs-v6.10
 
-> We don't want to have the same flow-control statement reachable from two
-> different "case"s where the resulting behaviors are different. Otherwise
-> we can't determine if a "fallthrough" is missing or intentional.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0eb03c7e8e2a4cc3653eb5eeb2d2001182071215
 
-I'd agree if this warning wasn't enabled by default but were a W=123...
-diagnostic thing which does the additional checks. But right now clang
-is warning for a perfectly valid, albeit a bit confusing C.
+Thank you!
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
