@@ -1,178 +1,124 @@
-Return-Path: <linux-kernel+bounces-188380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA52E8CE14D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:05:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97B28CE160
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470721F2249F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:05:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49741C2139F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CA3128803;
-	Fri, 24 May 2024 07:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06117128826;
+	Fri, 24 May 2024 07:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RaNx9+/L"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="Bld0O95j"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CF336D;
-	Fri, 24 May 2024 07:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C708F5A;
+	Fri, 24 May 2024 07:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716534333; cv=none; b=OqXjncffEKbWUIA0SfeKARp1SHtbWGveparLuL7rCYDeoECAD+sOj3I4hGWI9t6SGhW28uF034glTRcrrTlj2FuygoP8WYh8ih74DzxHTtl1Zry/vvXGTYYgodXYwmyyPCPhqGweVTswEVB9BNtiTVj86to/ymfUZjuw9BhlQlg=
+	t=1716534812; cv=none; b=XMj3iDrsgnpeHNaZhkuKhvJJQR/ZZgk9l5d9VZcIWxXGa8DV5PFiTQd837y9ZNdMMoAtLt/hSQ5VdepuMwgTW9TSnCF2s9vgJR4+E6mm6K1tMuoexvGJbvnERwSTVs0tOPztdjtUI+9+6Sk/p0ECVaHmF2/dSPhzKc5IZZ4tw+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716534333; c=relaxed/simple;
-	bh=j+WyVH68DgCq9sHBM6WN02HyNxMeR3vS+yEYlfsJMjg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jA8b56zcpCMgpNcuCeFj/lzlJxc3Wslflgb3B5maOWSVgLJ/jCtdf0MNv5Eoujb8UyComDLI5dms9cEacpRdbTFCXjunbRbiqmSmj+7+uqwsl2n53PETVt90J2wcWEBnbrQeakuCo5JZKqtMeRoLRdZf35DxD46OAl65jtlv6k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RaNx9+/L; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44O6ueGA022177;
-	Fri, 24 May 2024 07:05:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=B0E2pQOSkqRhF1xAHFhIHkcc7dyiyPWFa+UuS2hwL9E=;
- b=RaNx9+/LHgy5W+A3YUe8XXIhw6cJDDkqKVpgRqQZqmSbijOanVxfu7Op6Kz4g9IVgSko
- iugS5RJXEblaNzXnwZShTSpDA4Rd0+A9SAKzSRlO++K5rJmFl5FZ1E5XvJ0ZDZDPUIXI
- ymrpZKvSqFgEFwGJpF57tyitnz5OOLfjh22IyD7N3SISMwkdqqWTpo8cDRBM2RhJJ1UI
- Bm/7O1+bhm7EboHNKmbqiYrpj3JX39k4EM5T8S5ZsvdL5QynVmI5hFpAYmTwvHsgbSbz
- otp1Pmqs6B4lJiZstF8kEGrViJx2R6maIfv6WPcvJc+K71fCiDfT7bNr8qIzglBLtPW0 0w== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y6m7bbdnd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 May 2024 07:05:05 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44O5CIBl002744;
-	Fri, 24 May 2024 07:05:04 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y6jsbhv4w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 May 2024 07:05:03 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44O740UO037114;
-	Fri, 24 May 2024 07:05:03 GMT
-Received: from laptop-dell-latitude7430.nl.oracle.com (dhcp-10-175-21-30.vpn.oracle.com [10.175.21.30])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3y6jsbhv35-1;
-	Fri, 24 May 2024 07:05:03 +0000
-From: Alexandre Chartre <alexandre.chartre@oracle.com>
-To: x86@kernel.org, kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, daniel.sneddon@linux.intel.com,
-        pawan.kumar.gupta@linux.intel.com, tglx@linutronix.de,
-        konrad.wilk@oracle.com, peterz@infradead.org, seanjc@google.com,
-        andrew.cooper3@citrix.com, dave.hansen@linux.intel.com,
-        nik.borisov@suse.com, kpsingh@kernel.org, longman@redhat.com,
-        bp@alien8.de, pbonzini@redhat.com, alexandre.chartre@oracle.com
-Subject: [PATCH v2] x86/bhi: BHI mitigation can trigger warning in #DB handler
-Date: Fri, 24 May 2024 09:04:59 +0200
-Message-Id: <20240524070459.3674025-1-alexandre.chartre@oracle.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1716534812; c=relaxed/simple;
+	bh=qSjCs6Ul6ojhpPYSK0ZQVIJa3AR8PdI5qM0Fn+3yBdU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VlCg+D22/pvB510b0um0iizybXV6itcNo3xRPaxrs/QlLhlFuryKPsDrYWGVTOJDFMdMMGKCX7GEY58ONSC6t0YOUj/boTFMTiSlbSHeHwJh+GBl1AQ2lip/1yZOb7J8y0C6tgBVLF0MobfzjBDR6u6APP6rVolLjLqR2030R+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=Bld0O95j; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sendonly@marcansoft.com)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 7BE133FA37;
+	Fri, 24 May 2024 07:07:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1716534472; bh=qSjCs6Ul6ojhpPYSK0ZQVIJa3AR8PdI5qM0Fn+3yBdU=;
+	h=From:Date:Subject:To:Cc;
+	b=Bld0O95jSq1Wc3K3MI5TbwrffzqDn4V+xD9E2GiHUPJE6lrFoElBw1qcIGPR7csxN
+	 Lt/BtFCfPlCkEC99p5O4OnRNUXu8/c3s+NQBAlOdlYSssSp3Dd/qGi+8RrWfMfEksq
+	 iQBtFjUYxORbu1MvGr3hqJPz6YtZ+pAipWcGizSgCYGUZNZ2afEmFgHI6GquO9eacy
+	 EqryhqHvwKYHvbUWJiQyhFCIeQib6G8xxhYU4Nr/NaJY9qVxpWRjI0FrxUQQMsquDZ
+	 k1KJfYE8ZwiQG25vPjMelz88bsGPD3qDUU3+D/8WetfKCei07CWYYYflX8I2QWO8JQ
+	 eF4dBuFEw/EyA==
+From: Hector Martin <marcan@marcan.st>
+Date: Fri, 24 May 2024 16:07:41 +0900
+Subject: [PATCH] xhci: Remove dead code in xhci_move_dequeue_past_td()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_02,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0
- suspectscore=0 spamscore=0 mlxscore=0 adultscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405240048
-X-Proofpoint-ORIG-GUID: J0-c5BRsBuhouwMG-663WjxsFai3Yg4E
-X-Proofpoint-GUID: J0-c5BRsBuhouwMG-663WjxsFai3Yg4E
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240524-xhci-deadcode-v1-1-a4453a756e0f@marcan.st>
+X-B4-Tracking: v=1; b=H4sIALw8UGYC/x3MSwqAIBRG4a3IHSeY2HMr0aC8f3UnGQohRHtPG
+ n6Dcx5KiIJEo3oo4pYk4SyoK0X+WM4dWriYrLHONNbpfHjRjIV9YOh+3SxWdK0ZmEpzRWyS/98
+ 0v+8HZXcjt18AAAA=
+To: Mathias Nyman <mathias.nyman@intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Hector Martin <marcan@marcan.st>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1605; i=marcan@marcan.st;
+ h=from:subject:message-id; bh=qSjCs6Ul6ojhpPYSK0ZQVIJa3AR8PdI5qM0Fn+3yBdU=;
+ b=owGbwMvMwCUm+yP4NEe/cRLjabUkhrQAm6PiYb88WX9VGif+VN/wLtr6ybOMaW4+n8+nrVsmv
+ nD2q7m9HaUsDGJcDLJiiiyNJ3pPdXtOP6eumjIdZg4rE8gQBi5OAZhI91VGhiu2Knc3+J97d8n+
+ u9utJhGtqQnF/WePJO6qmlx1VrSnSILhD+/VtEMXAhylhdReH7SzuPJ3uX3owkXF/3PqFTRXffy
+ 1lQEA
+X-Developer-Key: i=marcan@marcan.st; a=openpgp;
+ fpr=FC18F00317968B7BE86201CBE22A629A4C515DD5
 
-When BHI mitigation is enabled, if sysenter is invoked with the TF flag
-set then entry_SYSENTER_compat uses CLEAR_BRANCH_HISTORY and calls the
-clear_bhb_loop() before the TF flag is cleared. This causes the #DB
-handler (exc_debug_kernel) to issue a warning because single-step is
-used outside the entry_SYSENTER_compat function.
+This codepath is trivially dead, since the function is never called with
+a non-NULL td (the only callsite is immediately preceded by a NULL guard).
 
-To address this issue, entry_SYSENTER_compat() should use
-CLEAR_BRANCH_HISTORY after making sure flag the TF flag is cleared.
-
-The problem can be reproduced with the following sequence:
-
- $ cat sysenter_step.c
- int main()
- { asm("pushf; pop %ax; bts $8,%ax; push %ax; popf; sysenter"); }
-
- $ gcc -o sysenter_step sysenter_step.c
-
- $ ./sysenter_step
- Segmentation fault (core dumped)
-
-The program is expected to crash, and the #DB handler will issue a warning.
-
-Kernel log:
-
-  WARNING: CPU: 27 PID: 7000 at arch/x86/kernel/traps.c:1009 exc_debug_kernel+0xd2/0x160
-  ...
-  RIP: 0010:exc_debug_kernel+0xd2/0x160
-  ...
-  Call Trace:
-  <#DB>
-   ? show_regs+0x68/0x80
-   ? __warn+0x8c/0x140
-   ? exc_debug_kernel+0xd2/0x160
-   ? report_bug+0x175/0x1a0
-   ? handle_bug+0x44/0x90
-   ? exc_invalid_op+0x1c/0x70
-   ? asm_exc_invalid_op+0x1f/0x30
-   ? exc_debug_kernel+0xd2/0x160
-   exc_debug+0x43/0x50
-   asm_exc_debug+0x1e/0x40
-  RIP: 0010:clear_bhb_loop+0x0/0xb0
-  ...
-  </#DB>
-  <TASK>
-   ? entry_SYSENTER_compat_after_hwframe+0x6e/0x8d
-  </TASK>
-
-Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
-Reported-by: Suman Maity <suman.m.maity@oracle.com>
-Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Signed-off-by: Hector Martin <marcan@marcan.st>
 ---
- arch/x86/entry/entry_64_compat.S | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/usb/host/xhci-ring.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-diff --git a/arch/x86/entry/entry_64_compat.S b/arch/x86/entry/entry_64_compat.S
-index 11c9b8efdc4c..ed0a5f2dc129 100644
---- a/arch/x86/entry/entry_64_compat.S
-+++ b/arch/x86/entry/entry_64_compat.S
-@@ -89,10 +89,6 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 575f0fd9c9f1..f1ed728d9f8c 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -656,25 +656,6 @@ static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
+ 			  stream_id);
+ 		return -ENODEV;
+ 	}
+-	/*
+-	 * A cancelled TD can complete with a stall if HW cached the trb.
+-	 * In this case driver can't find td, but if the ring is empty we
+-	 * can move the dequeue pointer to the current enqueue position.
+-	 * We shouldn't hit this anymore as cached cancelled TRBs are given back
+-	 * after clearing the cache, but be on the safe side and keep it anyway
+-	 */
+-	if (!td) {
+-		if (list_empty(&ep_ring->td_list)) {
+-			new_seg = ep_ring->enq_seg;
+-			new_deq = ep_ring->enqueue;
+-			new_cycle = ep_ring->cycle_state;
+-			xhci_dbg(xhci, "ep ring empty, Set new dequeue = enqueue");
+-			goto deq_found;
+-		} else {
+-			xhci_warn(xhci, "Can't find new dequeue state, missing td\n");
+-			return -EINVAL;
+-		}
+-	}
  
- 	cld
- 
--	IBRS_ENTER
--	UNTRAIN_RET
--	CLEAR_BRANCH_HISTORY
--
- 	/*
- 	 * SYSENTER doesn't filter flags, so we need to clear NT and AC
- 	 * ourselves.  To save a few cycles, we can check whether
-@@ -116,6 +112,16 @@ SYM_INNER_LABEL(entry_SYSENTER_compat_after_hwframe, SYM_L_GLOBAL)
- 	jnz	.Lsysenter_fix_flags
- .Lsysenter_flags_fixed:
- 
-+	/*
-+	 * CPU bugs mitigations mechanisms can call other functions. They
-+	 * should be invoked after making sure TF is cleared because
-+	 * single-step is ignored only for instructions inside the
-+	 * entry_SYSENTER_compat function.
-+	 */
-+	IBRS_ENTER
-+	UNTRAIN_RET
-+	CLEAR_BRANCH_HISTORY
-+
- 	movq	%rsp, %rdi
- 	call	do_SYSENTER_32
- 	jmp	sysret32_from_system_call
+ 	hw_dequeue = xhci_get_hw_deq(xhci, dev, ep_index, stream_id);
+ 	new_seg = ep_ring->deq_seg;
+
+---
+base-commit: a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+change-id: 20240524-xhci-deadcode-8bf2ebe7609d
+
+Best regards,
 -- 
-2.39.3
+Hector Martin <marcan@marcan.st>
 
 
