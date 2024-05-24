@@ -1,149 +1,201 @@
-Return-Path: <linux-kernel+bounces-188360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921F08CE10F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308BF8CE113
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C751C20E47
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624821C20DDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B847128813;
-	Fri, 24 May 2024 06:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16274128396;
+	Fri, 24 May 2024 06:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sOpAnTvY"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qU53u/e/"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254CA2207A;
-	Fri, 24 May 2024 06:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8197229CFB;
+	Fri, 24 May 2024 06:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716532736; cv=none; b=OJDHpQXv+jb3xK3mwo9H7Ldjihh4H1rcj6uEn9VEwleHUYiDZPnXIrZ077Gr7sAFJI/WIedxrpQOk44sIRTy7iHmNXH+9OLPCmu3ElEoE8/BBM/XWKFIR74NJ1UelMON5XYE0Np3Xp9UJybqyViWpK1xxrjTTHYXPFAjBBWTQmQ=
+	t=1716532838; cv=none; b=iNQ12/A82Dh8StKqiT8eToBcDV0x4hh4Za67wgBWO+SvrXJXIBaVmrPcUryVlAfKf6MSOqXXV5QkC+8kMU4xrSiW3aVnmgvkWGeG2phjehMxiGub7YKUYgh/EtT2HanIH/kZYfWa1NMV8z5inchW5wra3eBmSjXQn4+2ifN/8SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716532736; c=relaxed/simple;
-	bh=/zgxCyuQmfba06hzzw8jaE81x2r+bW7Tb1LVqVcwEgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vw9SJh1FprXghkPK41yOrSaAICquU2hSsy/xj5ETXYg0AVBtmTCAlQMvxwJGIAKgoLOeijOX3kNTAIwEAG/X76mgtun+Gf/4EjQKGzqaR5o/acxkVnYi5x4KCMMYTJ7HpMXTKlG5l1Arju8PoeDd9ivNl/Aaes/O7UvRUcP9atY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sOpAnTvY; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716532702; x=1717137502; i=markus.elfring@web.de;
-	bh=Umioa2mJKM7ga4XuEYMOnM1K4xmUwt4dK5hfLV9jtS8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=sOpAnTvYvGjPTY8/5f/WIwlpSkgsAsOjUR3CloKRJQ4PoF3WFicyV7+gQsZWei/T
-	 tpbqfNZrvMg+7CiGDrUUphgSuiV3Rf0Nu4RNaxTXMXVQzMp1K87p1oJlfobkGAFqj
-	 QWHAoNHhsvsOnMt1EktHXGCeaxJuzXKT9A2YzgNMtbvKow+CyjbxF8VpRKBRuT03j
-	 a/i94/92lZ2EcKxDtTq9wil6NtsghS9nW4jsqZBzC2KK5j4pch70K1ucPeF27B7Gm
-	 TStm14AT7sXVYWIHfvmJF+DDni6ThkVX5UyMMtdc3TyDHrf8sv5QMRDDKOU8hphAC
-	 OPxH6WNhzhx8fc9KlQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBRZ-1sggNX0bbB-00eylk; Fri, 24
- May 2024 08:38:22 +0200
-Message-ID: <8a92a08c-2a57-454d-a7ff-3edb3528b78e@web.de>
-Date: Fri, 24 May 2024 08:38:08 +0200
+	s=arc-20240116; t=1716532838; c=relaxed/simple;
+	bh=ZXj+xbqSxGn+CVGpP5LLmAUVtakGkcfQPZV90p2upEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RZpkg/0YTah6MJLZuIt8mcMHC3jyG2P3bgbQbtFEcprJx4IchhSb80DWH3wDihnQOiwuKaAm7/sQiNnWFrNgax6q6XiiLY9JtxrvrZ0hCvFG0l7CEI3zUWuG87vYog2yZfuUKlY1M9km5ZnO2/gZ+PCKQaCtb4DRWTiQtwSjmMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qU53u/e/; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716532832; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=irj4yLqQZlehuPnw0PRAwbDzUyDoWcmcW8nbRN9wmRU=;
+	b=qU53u/e/rtmjFq8H6kg0gUIAn6v3e5oxGWDaISG2fgGqWuyioV3TsYH2obUnf0yClt3/tn8wkSArbaLzCVcW8kdiJJO7rm5Cv9w5kT1C0mVw/uCX+pc7AJ5rn5etaT3+Q0flH80JcZqph4k2IWF2jgS03n8r7YLatn2W4ZkZIJ0=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R921e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W75A0OG_1716532830;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W75A0OG_1716532830)
+          by smtp.aliyun-inc.com;
+          Fri, 24 May 2024 14:40:32 +0800
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+To: miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	winters.zc@antgroup.com
+Subject: [RFC 0/2] fuse: introduce fuse server recovery mechanism
+Date: Fri, 24 May 2024 14:40:28 +0800
+Message-Id: <20240524064030.4944-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 17/20] ARM: dts: aspeed: Add IBM Huygens BMC system
-To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsi@lists.ozlabs.org,
- linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Eddie James <eajames@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Lakshmi Yadlapati <lakshmiy@us.ibm.com>, Mark Brown <broonie@kernel.org>,
- Ninad Palsule <ninad@linux.ibm.com>, Rob Herring <robh@kernel.org>
-References: <20240522192524.3286237-18-eajames@linux.ibm.com>
- <2fe45df6-01a2-488b-99fb-5ee20491554c@web.de>
- <910b18b7-3717-4087-b028-fcaf5f2a604b@linux.ibm.com>
- <398bf753-6701-4925-b814-781a68a75cc5@web.de>
- <20240523-rinse-sturdily-7c78d8517884@spud>
- <d6289d1c-deae-49a3-9fc9-98a2f2e57802@web.de>
- <20240523203339.GS2118490@ZenIV>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240523203339.GS2118490@ZenIV>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:r06ohMYipjx7MaDK2OvRnKAwkIBVsS5fvyAmsplcvM21XF7HMAm
- A0Src/BHL8flyhJsz3MdFdif8NmB9aq/3fPsFxXcV0kugN2P4baA5bybyQbqJ/d6dNe9V+y
- KfQwRn3SQK5W6mReVOGkQ2OSBIazmuosZVNLZ33w5EUM3wEEBDegS2xAFsb1BzNwauzEvv0
- 3DSCxroZyv2XOPlUjbbcQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kCE3UA8E6+4=;ji6T0ME+UaTyDdrzMP3bhGy4KvJ
- x6/ZMWjLm/maIjQj8faQ8jaaXxne+4RWYF2gWiwqpZFSRptL6UemOufq0G5J/LuJUqlKprCRO
- /gLLi2bzQNuv7L5dPd+cQ+jDFNVKlL7COeE1EczqTQNoUOdebG5s43B/sjNI5vSfEx5m+gvlS
- uD7wXufB3FmjWU1Npmatn16cvxxNHci4pYVniVX/jOaqtsE14DiOzrf1vIl2+IbmdBTuMovrd
- WxLSMdoOW98/tOqyFBxx0LUmyqKFdUBB5P7vBkGLRoqesA71fZYv3VGAco4KGWNAwmEYHVGCA
- 8KZH7zZsPHUaEcLJQxXiX2IxyCnEFxsZ5hKfgqbfIyUDom/zuAw/nrTu5O26LEs9sg3cNqoNz
- Ajd+7kqFOY761H+OmpG+4Sh4ZWhOqZOP57ngiqhhLXQp1HXL6D7pUaOZH/SISHpJ/KUpvwyc7
- CsCwY1rlgRzt8OHnhhwCwXFX8rEjGdFZ/lzuTtkxo2kul297iEZvM16PdEERo8xWSxnEwZK6C
- y8Vnc245eoWOZTxRh45sPoCL56j69Guxz2NZNENIG6egmMLAVdDPmkeHkerpC805YEUMT9iYj
- jaQhBbtwrOeFTQc0CB3MmF/cdeR/gJKQ/vhnIRKf9HX0T3u9jfKOkbhtVyqQHPKJXSqztp3iy
- X+x2+EfCK7jIjHqRl1Q2EG1lYoAWnE+UwXvkc4XoUoecguH4JfaURbK+vljt7vZPoWrpqV5+i
- H9MsnTFswl8dXlkNEs3OhuYN6yAHkdSiSBptLw6RwEyfZcUZzOVClcorvQ4n9TEtIwDJxpp4W
- mLutMFCP5rXz2JvcO73g1uR3r6UH0Y2DHPF5Y7mCr2JYQ=
+Content-Transfer-Encoding: 8bit
 
->> Why do you interpret my patch review contributions in this direction
->> when the official Linux development documentation provides special advi=
-ce
->> on affected wording details?
->
-> Your "contributions" are garbage in general,
+Background
+==========
+The fd of '/dev/fuse' serves as a message transmission channel between
+FUSE filesystem (kernel space) and fuse server (user space). Once the
+fd gets closed (intentionally or unintentionally), the FUSE filesystem
+gets aborted, and any attempt of filesystem access gets -ECONNABORTED
+error until the FUSE filesystem finally umounted.
 
-My contributions are also varying (as usual) through the years.
+It is one of the requisites in production environment to provide
+uninterruptible filesystem service.  The most straightforward way, and
+maybe the most widely used way, is that make another dedicated user
+daemon (similar to systemd fdstore) keep the device fd open.  When the
+fuse daemon recovers from a crash, it can retrieve the device fd from the
+fdstore daemon through socket takeover (Unix domain socket) method [1]
+or pidfd_getfd() syscall [2].  In this way, as long as the fdstore
+daemon doesn't exit, the FUSE filesystem won't get aborted once the fuse
+daemon crashes, though the filesystem service may hang there for a while
+when the fuse daemon gets restarted and has not been completely
+recovered yet.
+
+This picture indeed works and has been deployed in our internal
+production environment until the following issues are encountered:
+
+1. The fdstore daemon may be killed by mistake, in which case the FUSE
+filesystem gets aborted and irrecoverable.
+
+2. In scenarios of containerized deployment, the fuse daemon is deployed
+in a container POD, and a dedicated fdstore daemon needs to be deployed
+for each fuse daemon.  The fdstore daemon could consume a amount of
+resources (e.g. memory footprint), which is not conducive to the dense
+container deployment.
+
+3. Each fuse daemon implementation needs to implement its own fdstore
+daemon.  If we implement the fuse recovery mechanism on the kernel side,
+all fuse daemon implementations could reuse this mechanism.
 
 
->                                              and this thread is not an e=
-xception.
+What we do
+==========
 
-It is just another example for involved communication challenges.
+Basic Recovery Mechanism
+------------------------
+We introduce a recovery mechanism for fuse server on the kernel side.
 
-
-> More specifically, you are picking an advice
-
-Some development activities are reminders according to known information s=
-ources.
-
-
->                                              that is inapplicable,
-> transforming it into a question and "contributing" the result.
->
-> And your entire modus operandi fits that pattern - you spew random garba=
-ge and
-> expect the contributors to spend their time and efforts on checking if y=
-our
-> (contents-free) "advice" happens to make any sense.
-
-Do you express special concerns here which can be reconsidered because of
-advices and requirements from software development guidelines?
+To do this:
+1. Introduce a new "tag=" mount option, with which users could identify
+a fuse connection with a unique name.
+2. Introduce a new FUSE_DEV_IOC_ATTACH ioctl, with which the fuse server
+could reconnect to the fuse connection corresponding to the given tag.
+3. Introduce a new FUSE_HAS_RECOVERY init flag.  The fuse server should
+advertise this feature if it supports server recovery.
 
 
-=E2=80=A6
->                           Unfortunately, the kernel development is clear=
-ly
-> not among those.
+With the above recovery mechanism, the whole time sequence is like:
+- At the initial mount, the fuse filesystem is mounted with "tag="
+  option
+- The fuse server advertises FUSE_HAS_RECOVERY flag when replying
+  FUSE_INIT
+- When the fuse server crashes and the (/dev/fuse) device fd is closed,
+  the fuse connection won't be aborted.
+- The requests submitted after the server crash will keep staying in
+  the iqueue; the processes submitting the requests will hang there
+- The fuse server gets restarted and recovers the previous state before
+  crash (including the negotiation results of the last FUSE_INIT)
+- The fuse server opens /dev/fuse and gets a new device fd, and then
+  runs FUSE_DEV_IOC_ATTACH ioctl on the new device fd to retrieve the
+  fuse connection with the tag previously used to mount the fuse
+  filesystem
+- The fuse server issues a FUSE_NOTIFY_RESEND notification to request
+  the kernel to resend those inflight requests that have been sent to
+  the fuse server before the server crash but not been replied yet
+- The fuse server starts to process requests normally (those queued in
+  iqueue and those resent by FUSE_NOTIFY_RESEND)
 
-How does such a view fit to an other data representation?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?qt=
-=3Dauthor&q=3DElfring
+In summary, the requests submitted after the server crash will stay in
+the iqueue and get serviced once the fuse server recovers from the crash
+and retrieve the previous fuse connection.  As for the inflight requests
+that have been sent to the fuse server before the server crash but not
+been replied yet, the fuse server could request the kernel to resend
+those inflight requests through FUSE_NOTIFY_RESEND notification type.
 
-Regards,
-Markus
+
+Security Enhancement
+---------------------
+Besides, we offer a uid-based security enhancement for the fuse server
+recovery mechanism.  Otherwise any malicious attacker could kill the
+fuse server and take the filesystem service over with the recovery
+mechanism.
+
+To implement this, we introduce a new "rescue_uid=" mount option
+specifying the expected uid of the legal process running the fuse
+server.  Then only the process with the matching uid is permissible to
+retrieve the fuse connection with the server recovery mechanism.
+
+
+Limitation
+==========
+1. The current mechanism won't resend a new FUSE_INIT request to fuse
+server and start a new negotiation when the fuse server attempts to
+re-attach to the fuse connection through FUSE_DEV_IOC_ATTACH ioctl.
+Thus the fuse server needs to recover the previous state before crash
+(including the negotiation results of the last FUSE_INIT) by itself.
+
+PS. Thus I had to do hacking tricks on libfuse passthrough_ll daemon
+when testing the recovery feature.
+
+2. With the current recovery mechanism, the fuse filesystem won't get
+aborted when the fuse server crashes.  A following umount will get hung
+there.  The call stack shows the hang task is waiting for FUSE_GETATTR
+on the mntpoint:
+
+[<0>] request_wait_answer+0xe1/0x200
+[<0>] fuse_simple_request+0x18e/0x2a0
+[<0>] fuse_do_getattr+0xc9/0x180
+[<0>] vfs_statx+0x92/0x170
+[<0>] vfs_fstatat+0x7c/0xb0
+[<0>] __do_sys_newstat+0x1d/0x40
+[<0>] do_syscall_64+0x60/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+It's not fixed yet in this RFC version.
+
+3. I don't know if a kernel based recovery mechanism is welcome on the
+community side.  Any comment is welcome.  Thanks!
+
+
+[1] https://copyconstruct.medium.com/file-descriptor-transfer-over-unix-domain-sockets-dcbbf5b3b6ec
+[2] https://copyconstruct.medium.com/seamless-file-descriptor-transfer-between-processes-with-pidfd-and-pidfd-getfd-816afcd19ed4
+
+
+Jingbo Xu (2):
+  fuse: introduce recovery mechanism for fuse server
+  fuse: uid-based security enhancement for the recovery mechanism
+
+ fs/fuse/dev.c             | 55 ++++++++++++++++++++++++++++++++++++++-
+ fs/fuse/fuse_i.h          | 15 +++++++++++
+ fs/fuse/inode.c           | 46 +++++++++++++++++++++++++++++++-
+ include/uapi/linux/fuse.h |  7 +++++
+ 4 files changed, 121 insertions(+), 2 deletions(-)
+
+-- 
+2.19.1.6.gb485710b
+
 
