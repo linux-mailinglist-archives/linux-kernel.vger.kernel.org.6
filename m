@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-188416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8BA8CE1BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680008CE1BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D92F5B21A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:48:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FE728200A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D620083CD9;
-	Fri, 24 May 2024 07:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFFF82892;
+	Fri, 24 May 2024 07:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="D+4fGya2"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Tft+xQRl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9CC82892;
-	Fri, 24 May 2024 07:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EFE273FD;
+	Fri, 24 May 2024 07:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716536906; cv=none; b=bow0UEbznEc3KIzPKeQ9ySZvT74/StyXcBW6zQWz96Vg4ZU1fLXHWXL/dcMZDjzZAwE2dWirP5d7LrJb/GV76zoxJ5qPEBeYJT+bNvB5nr3XYHuXPEXHn69z/w2O113BNtO+x9eYnpBcd7oF9whvaswyYxhAyubaTdKHt/mxviI=
+	t=1716536926; cv=none; b=I5GUKOSZibF6BFLNxDSC78SUSGwXm8Cg+ZV8VSb7l9KHNfGU4MQPGwplwrSN7RIWhoGt3quOu7VgUwzBAqLbDAeWhALfjUArlu2Z7Gtq357GTbkZy8DXjdy0fId63M/OIn8dRncSDjijXKOMqxjDux2uK1G7v4UcT1AjO/v8MNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716536906; c=relaxed/simple;
-	bh=G9of7yjWCLy7s/7xrTDLYwVEPLTdCopPiEDSzmy57yM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jP+w6cMEpf43skuVjxU9m1FmcwsD6b3kKY05ubiA09eKexDdME4dRXIDBH2Qs7i+MBjs8q8tbqvDHkFkJCBzNv6jw96ML8iKqhm63AtZgGmki7JibxM/DGakUJaZ9D+kv5zwuwggimhvN9HiOfdCJgajiWCm19wNS+8G5v6YvvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=D+4fGya2; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44O7mCIU109969;
-	Fri, 24 May 2024 02:48:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716536892;
-	bh=G9of7yjWCLy7s/7xrTDLYwVEPLTdCopPiEDSzmy57yM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=D+4fGya28lc7tqSnGAIDg3Bk97anaut1RWLFdp44ekVDp51D+RnP8DtEnb4+isf23
-	 iyLHDvfZbvvbcSqlUAOThpsxMHCXNjsJROH05E0kEhaehtmKx9KeuZIhTB6Xf6DG+q
-	 b+jotmRydPTC/55GlVGHwYwUB9GeYQMCpH3ILXDE=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44O7mCeR106592
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 24 May 2024 02:48:12 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
- May 2024 02:48:12 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 24 May 2024 02:48:12 -0500
-Received: from [10.250.145.232] ([10.250.145.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44O7m9NR012044;
-	Fri, 24 May 2024 02:48:10 -0500
-Message-ID: <00c132c2-7f3e-4d3a-939e-a1b2801dd937@ti.com>
-Date: Fri, 24 May 2024 10:48:08 +0300
+	s=arc-20240116; t=1716536926; c=relaxed/simple;
+	bh=2K1g3kVDeJ3awJXb/+t4b51AojlZaPt6EK7sOJ+IxGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LtllYbxPVrmHbCPeZ+3A9K4tAIGpNBXMXaFESf2kHADKHmMwIHRO2xquzHGwU8qqZbYtEpkl8FL2pIYH6WUZ3yD7u37BRP7BC7Dt1teNY+kSVt8fBeQsbDDQLmFzRX7YQV13ARLxLrYAx5PxopvtOh1zPXxQvTNAPriqzmNIMgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Tft+xQRl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A93DC2BBFC;
+	Fri, 24 May 2024 07:48:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1716536925;
+	bh=2K1g3kVDeJ3awJXb/+t4b51AojlZaPt6EK7sOJ+IxGw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Tft+xQRleT3xVUTSnGAV36rvOMvYMtlb/FYHk89uQf8yNhIx0fw1Gl4oB6+L8vuFs
+	 FYzIjzxCPqQFYOe2pR/Ef4UmggVgL7a+Mwlz5v2HjpTFLkHaFkCO2pKIvAvb85IreD
+	 l3Zcat7u28gZ1oun9Bztjgcmg9rVUlpMsEUdrmsI=
+Date: Fri, 24 May 2024 09:48:43 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY/Serial driver fixes for 6.10-rc1
+Message-ID: <ZlBGWwX-98c6wnGW@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/17] Add conf.h
-To: Kalle Valo <kvalo@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-CC: Johannes Berg <johannes.berg@intel.com>, Breno Leitao <leitao@debian.org>,
-        Justin Stitt <justinstitt@google.com>,
-        Kees Cook <keescook@chromium.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sabeeh Khan
-	<sabeeh-khan@ti.com>
-References: <20240521171841.884576-1-michael.nemanov@ti.com>
- <20240521171841.884576-14-michael.nemanov@ti.com>
- <9ba9d156-ce38-47ba-b0fb-63e6174c3094@kernel.org> <87r0dtattp.fsf@kernel.org>
- <735594c5-5f50-49b0-b84c-e41efbb834b0@kernel.org> <87ikz5atdr.fsf@kernel.org>
-Content-Language: en-US
-From: "Nemanov, Michael" <michael.nemanov@ti.com>
-In-Reply-To: <87ikz5atdr.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
 
-On 5/23/2024 10:18 AM, Kalle Valo wrote:
-> Michael, it would be good to explain that in the cover letter so that
-> people don't get confused about these multiple patches. Maybe even
-> include the link?
+  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
 
-Sure, will add link and explanation in v2.
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.10-rc1-fixes
+
+for you to fetch changes up to 8492bd91aa055907c67ef04f2b56f6dadd1f44bf:
+
+  serial: sc16is7xx: fix bug in sc16is7xx_set_baud() when using prescaler (2024-05-04 18:14:14 +0200)
+
+----------------------------------------------------------------
+TTY/Serial fixes for 6.10-rc1
+
+Here are some small TTY and Serial driver fixes that missed the
+6.9-final merge window, but have been in my tree for weeks (my fault,
+travel caused me to miss this.)
+
+These fixes include:
+  - more n_gsm fixes for reported problems
+  - 8520_mtk driver fix
+  - 8250_bcm7271 driver fix
+  - sc16is7xx driver fix
+
+All of these have been in linux-next for weeks without any reported
+problems.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Daniel Starke (2):
+      tty: n_gsm: fix possible out-of-bounds in gsm0_receive()
+      tty: n_gsm: fix missing receive state reset after mode switch
+
+Doug Berger (1):
+      serial: 8250_bcm7271: use default_mux_rate if possible
+
+Hugo Villeneuve (1):
+      serial: sc16is7xx: fix bug in sc16is7xx_set_baud() when using prescaler
+
+Pin-yen Lin (1):
+      serial: 8520_mtk: Set RTS on shutdown for Rx in-band wakeup
+
+ drivers/tty/n_gsm.c                    | 140 +++++++++++++++++++++++----------
+ drivers/tty/serial/8250/8250_bcm7271.c |  99 +++++++++++++----------
+ drivers/tty/serial/8250/8250_mtk.c     |   8 +-
+ drivers/tty/serial/sc16is7xx.c         |  23 ++++--
+ 4 files changed, 180 insertions(+), 90 deletions(-)
 
