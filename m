@@ -1,172 +1,98 @@
-Return-Path: <linux-kernel+bounces-188430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9EF8CE1E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 367208CE1E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A75752811CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674551C21738
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC93A83CAE;
-	Fri, 24 May 2024 07:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16FF8405C;
+	Fri, 24 May 2024 07:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Doc44Kxm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZJXtNVAI"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2A67604F;
-	Fri, 24 May 2024 07:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D5B83CAE;
+	Fri, 24 May 2024 07:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716537447; cv=none; b=Ess8dYj+dxqDtpO59PuNKY6ovCNVg+XI6m+NdDdnNnKkbnouMeNUtSnM7vqoYyEcsTBWQkA3gC6HaWYh5u3w8pk7KCFovTuC/zcQOjmagCYsp5sx7pyyRV+sW0MyU9ehmdmRrK+2+aKa8H/eOyBXoKgPLTVGQpNbP9bbWeQksJg=
+	t=1716537525; cv=none; b=nV8NyVvJBUm7ZUHuHFvlxbnRfqN5flK1UoYvQwCLBVmG/2XXgRPRcr11jG7ZEi/KZYwx/a86nEGvhe64p6DFc1bCfrhtOIWPLescUtAXS0MQ2wCY4UAp3mzGM0000POe2qhmsxNjnzJf/IkyghcGV7DCpEUqqFcp86IObFjCXVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716537447; c=relaxed/simple;
-	bh=2nW2MH8YYHHMcOuU6yP8ETfJDp4ymu8aiSEbCDPefVY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DSCX2aXM62qAmg8vuu0N+3Gmn7OrJim7wgCuB6jjdlgLQ0QDmKB826/AGcZhYoN27QcNkiw9aAuRPc1Oy3KsVQrs24SCxhrvxS7oMo3ppYv2lToxlL1eUPFJTGgHRicYc3WA67bLAn4xccvK0QHbhaI+EmHPMs4wyVGw5nNcjqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Doc44Kxm; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716537446; x=1748073446;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=2nW2MH8YYHHMcOuU6yP8ETfJDp4ymu8aiSEbCDPefVY=;
-  b=Doc44KxmINpnOIhMjExKaXokT9sP+xVVFSlUMHDmAZ0tB4B9YWRhAzJ2
-   CGfOmMneGgEJ+eVcS04NET9L97i9AVw6PMhFPLe0Rzsh0tY5B9m7OKur2
-   MmKhhYvtiRQZCOBL9VQrnnwN4hcWqpF1hqQbQuEZixZPDoen8QCkTZJDM
-   3i77o9bGUu8Gz/4rwEQFInFQgWXIgsytKQxVddHmfZow8x3pN5RMstTPV
-   SGv3vNdPgSfYJBj7JNyD7KA96Jbfl9Sl8m8st+LrUfMTC9xfaNL1o7pBo
-   rIApyt/c6Eu8CIEEJ+Ng29Yb+PTvIna5Hm+lk10wxozdTTF/K3R8Q3ADf
-   w==;
-X-CSE-ConnectionGUID: CMg1Q00pSMivJCoc4cLMBA==
-X-CSE-MsgGUID: zTw9tLpDRMurMhy79jWdNw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12843684"
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="12843684"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 00:57:25 -0700
-X-CSE-ConnectionGUID: IjiR8ATdRbiRMIkWiEyIrg==
-X-CSE-MsgGUID: 7miEALFIRtWZk2Ju6+D+qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="34055675"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.127])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 00:57:22 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 24 May 2024 10:57:16 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-    Babu Moger <babu.moger@amd.com>, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, Fenghua Yu <fenghua.yu@intel.com>, 
-    Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v4 02/16] selftests/resctrl: Calculate resctrl FS derived
- mem bw over sleep(1) only
-In-Reply-To: <04d0a5d6-82fa-4cc7-bd80-ee5cbd35f0c3@intel.com>
-Message-ID: <ea0c86b9-ae77-c2d9-b52b-239ae42603e8@linux.intel.com>
-References: <20240520123020.18938-1-ilpo.jarvinen@linux.intel.com> <20240520123020.18938-3-ilpo.jarvinen@linux.intel.com> <04d0a5d6-82fa-4cc7-bd80-ee5cbd35f0c3@intel.com>
+	s=arc-20240116; t=1716537525; c=relaxed/simple;
+	bh=bqyPMRt9wz028/U8fejcJ/EaS7Tt7i+3cUm/fCpxTb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rwmoR5CHGskT4/QOZTBF3ttj5cSGvGoeFkFRCu2ovBgjvIK4n7DjCQO5CDHdQ7cooB+5OTefi9wzcNeo3PZQAF0Qt3AYE/v7QXGpLRzp1W8db97134aORueUmbX+NqYZRMoin73rsWiNLva2X0Eh9zTWKvfQqb1moyuRV88VPkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZJXtNVAI; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1716537515; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=07/n6HPUGsrYONlCxyGegVdPDEuAAjDjEBGbwCI4jeE=;
+	b=ZJXtNVAIrEEXn4AWb8v3kCsGxVKYn1ezqcsNc5chOciWmdn1okKrDOLWYoeRFJnvCjTraShAMU31TFS/zL5Y0+pcPzukIavIj90TDxySm1fRxhAAGbNN4vR7cRna6OwNj3hijQPWRVgIgQcs8TtZVgJ7+FvlamRJ6HIGAfxYiSQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W75y.OR_1716537505;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W75y.OR_1716537505)
+          by smtp.aliyun-inc.com;
+          Fri, 24 May 2024 15:58:34 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: pkshih@realtek.com
+Cc: kvalo@kernel.org,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] wifi: rtw89: chan: Use swap() instead of open coding it
+Date: Fri, 24 May 2024 15:58:19 +0800
+Message-Id: <20240524075819.2789-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-355923539-1716537436=:1394"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Swap is a function interface that provides exchange function. To avoid
+code duplication, we can use swap function.
 
---8323328-355923539-1716537436=:1394
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+/drivers/net/wireless/realtek/rtw89/chan.c:2336:32-33: WARNING opportunity for swap().
 
-On Thu, 23 May 2024, Reinette Chatre wrote:
-> On 5/20/24 5:30 AM, Ilpo J=C3=A4rvinen wrote:
-> > For MBM/MBA tests, measure_vals() calls get_mem_bw_imc() that performs
-> > the measurement over a duration of sleep(1) call. The memory bandwidth
-> > numbers from IMC are derived over this duration. The resctrl FS derived
-> > memory bandwidth, however, is calculated inside measure_vals() and only
-> > takes delta between the previous value and the current one which
-> > besides the actual test, also samples inter-test noise.
-> >=20
-> > Rework the logic in measure_vals() and get_mem_bw_imc() such that the
-> > resctrl FS memory bandwidth section covers much shorter duration
-> > closely matching that of the IMC perf counters to improve measurement
-> > accuracy. Open two the resctrl mem bw files twice to avoid opening
-> > after the test during measurement period (reading the same file twice
-> > returns the same value so two files are needed).
->=20
-> I think this is only because of how the current reading is done, resctrl
-> surely supports keeping a file open and reading from it multiple times.
->=20
-> There seems to be two things that prevent current code from doing this
-> correctly:
-> (a) the fscanf() code does not take into account that resctrl also
->     prints a "\n" ... (this seems to be the part that may cause the same
->     value to be returned).
->     So:
-> =09if (fscanf(fp, "%lu", mbm_total) <=3D 0) {
->     should be:
-> =09if (fscanf(fp, "%lu\n", mbm_total) <=3D 0) {
-> (b) the current reading does not reset the file position so a second
->     read will attempt to read past the beginning. A "rewind(fp)"
->     should help here.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9174
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ drivers/net/wireless/realtek/rtw89/chan.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-(b) cannot be the cause for returning the same value again. It would=20
-not be able to reread the number at all if file position is not moved.
+diff --git a/drivers/net/wireless/realtek/rtw89/chan.c b/drivers/net/wireless/realtek/rtw89/chan.c
+index 051a3cad6101..3b1997223cc5 100644
+--- a/drivers/net/wireless/realtek/rtw89/chan.c
++++ b/drivers/net/wireless/realtek/rtw89/chan.c
+@@ -2322,7 +2322,6 @@ static void rtw89_swap_sub_entity(struct rtw89_dev *rtwdev,
+ 				  enum rtw89_sub_entity_idx idx2)
+ {
+ 	struct rtw89_hal *hal = &rtwdev->hal;
+-	struct rtw89_sub_entity tmp;
+ 	struct rtw89_vif *rtwvif;
+ 	u8 cur;
+ 
+@@ -2332,9 +2331,7 @@ static void rtw89_swap_sub_entity(struct rtw89_dev *rtwdev,
+ 	hal->sub[idx1].cfg->idx = idx2;
+ 	hal->sub[idx2].cfg->idx = idx1;
+ 
+-	tmp = hal->sub[idx1];
+-	hal->sub[idx1] = hal->sub[idx2];
+-	hal->sub[idx2] = tmp;
++	swap(hal->sub[idx1], hal->sub[idx2]);
+ 
+ 	rtw89_for_each_rtwvif(rtwdev, rtwvif) {
+ 		if (!rtwvif->chanctx_assigned)
+-- 
+2.20.1.7.g153144c
 
-I certainly tried with fseek() and it is when I got same value on the=20
-second read which is when I just went to two files solution.
-
-> A small program like below worked for me by showing different values
-> on every read:
->=20
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
->=20
-> const char *mbm_total_path =3D
-> "/sys/fs/resctrl/mon_data/mon_L3_00/mbm_total_bytes";
->=20
-> int main(void)
-> {
-> =09unsigned long mbm_total;
-> =09FILE *fp;
-> =09int count;
->=20
-> =09fp =3D fopen(mbm_total_path, "r");
-> =09if (!fp) {
-> =09=09perror("Opening data file\n");
-> =09=09exit(1);
-> =09}
-> =09for (count =3D 0; count < 100; count++) {
-> =09=09if (fscanf(fp, "%lu\n", &mbm_total) <=3D 0) {
-> =09=09=09perror("Unable to read from data file\n");
-> =09=09=09exit(1);
-> =09=09}
-> =09=09printf("Read %d: %lu\n",count ,mbm_total );
-> =09=09sleep(1);
-> =09=09rewind(fp);
-> =09}
-> =09fclose(fp);
-> =09return 0;
-> }
-
-Okay, so perhaps it's your explanation (a) but can libc be trusted to not=
-=20
-do buffering/caching for FILE *? So to be on the safe side, it would=20
-need to use syscalls directly to guarantee it's read the file twice.
-
-If I convert it into fds, fscanf() cannot be used which would complicate=20
-the string processing by adding extra steps.
-
---=20
- i.
-
---8323328-355923539-1716537436=:1394--
 
