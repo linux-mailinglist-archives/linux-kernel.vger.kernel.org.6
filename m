@@ -1,131 +1,134 @@
-Return-Path: <linux-kernel+bounces-188757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D57B8CE676
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:57:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CC08CE67A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58F4D2820F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BDF1C21AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0419912C46D;
-	Fri, 24 May 2024 13:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FD112C461;
+	Fri, 24 May 2024 13:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnv85tLf"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEKf2oNO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB46786120;
-	Fri, 24 May 2024 13:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BBC1E52C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559019; cv=none; b=MQJ0cUAdgvoeCosu1NNfYuzwLOHXX9t8pli1Ad3hx2x273T8Hj9gCKQDhfNBk0XEIajAKchxS2tQTkUcWkdXi563j9kGjmwB12a/sdazEc13srJ2+Gk64gO2ulj48gsrHDgN16ct555iEiJR8V312GMoonx46/YywaYbBCKE0vE=
+	t=1716559096; cv=none; b=k6uQS7s2Vn5jTek7mhDCByHo6w6w951HoauonOizALKpiwKIJAbP3sio9xr9HhleHvz+nvPZFbUSjLIYmX6Vy5z86JOWTursTWRiQoFIbvblqPMN7Aen72nkFSQTCjbo7nMmFjjC++/tLQ+S9+v+wiaVOtjsD7nBXzejM5E+1pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559019; c=relaxed/simple;
-	bh=TbI1b1nQhIM/TWlonzYbHmL/h2K+W+tquMtOW1q6Oto=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BkW5+4RcdIIKfCLp/bFgbtR4vt0z0ePpA0NM5b//RtHWvSky7xH7y6+Tk4ZVCgqhTzUIFYONcUwR9OfhteLljbyYBGH2dF2Gougrewc/lMRLqiAbr/9itotpxF+F6UtK0btNi2N5aOWxCQEg1l7a+NqfpfSIXvc+PRe+Al6wvig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnv85tLf; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e538a264f7so101204591fa.0;
-        Fri, 24 May 2024 06:56:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716559016; x=1717163816; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DnGCZeDgq06e4yJxv3zYBUOrTNbIwkOVZezg5gdIpJc=;
-        b=fnv85tLf9xERd7u1q6vWGyNstsJNAk/7uSIn0M+OBE2WXJizTBzl30vq06zZan7qQT
-         b5aeWNeRRzLfPCX7x0e9h/03AdIOR/k+qqdDN9RFw8rXAuiVeTFy9alegIduBNvEDy9v
-         6RpQKqMAVHSnuDvZB72eNjb6tlnss+ag/17rD6zHTucOkkirEGtYupw6gdH/NopCa8sR
-         JHsiUWRPLT0mQu4QQxt0Z0pyn5Vz8bjLzP4RCZ2y1Q2iDsqcd79WJSU5vY7T5EhwWuYs
-         LMS4ZhmTvenNP7j9hZIdVjnwa5npSJ+KJ6+zwlJzI1dNfKPXCnBjkC1HMlD43AXJA5ei
-         x3qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716559016; x=1717163816;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DnGCZeDgq06e4yJxv3zYBUOrTNbIwkOVZezg5gdIpJc=;
-        b=OM8eIpSeZqucTMMOtW9BTlthLu3fb4foAU3uUGpM1ZQ7XgauCWbITIfM6tb7L4rV9G
-         3c5Us51WQOj8dy1v1oQeXYMkOCTlY5gbJFLPhWQ4XxCnWWvUrA0imuzdP7ZZVQxl1OSv
-         PazLOSHYMEZSaRzVx3o6Q6Fvunh/xRjrfj5TTJ1nG1+fhDtbgHqOK7xY6MrgNBJ2xjV9
-         MSNxXntm4phMiqtl+m8/QDGZLUHPyC4zsjfneNUIkqTxd96RKYWAEv6+vVrtPtLZVusJ
-         OO218CdeKliUjZBVOdna0hbg7fN/VNqhovBNBA44SZ20cumM7MPKbYi55V5lf1T+spGV
-         sM7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKnzUgE7t8D/l+eq3Qda/U6UGehyU+1cLTtYibu35KMfrhUEa0sz46XyKMcJ4O//8Qm12qpTgITm8FD8Uclt+9F8nTQRi1S+3YLnXE97YnDtaPvyP6yMMFQZzvoCrYnm7VfaG8pvuYnFdCl3JKivRfMtX8QhEDBl6slde1
-X-Gm-Message-State: AOJu0Yz/Lx8RLEjxl1I5N3Le3GKdQfX8KbJ8fnTd5hSHnLxvRXfbY2j3
-	RNdTDSbD9V2atItzKkxMluw3rqhBhGxJoc2BTgQcBIxanE9drYEB
-X-Google-Smtp-Source: AGHT+IHetKRmg0p6ec20FHTRXCN/whjCZU8/Nl0XsjhlMJEnyWnCU0egaJ69kA4sx+zMiu/9CyYB0Q==
-X-Received: by 2002:a2e:b3c9:0:b0:2e1:2169:a5cc with SMTP id 38308e7fff4ca-2e95b0c2343mr12132001fa.15.1716559015865;
-        Fri, 24 May 2024 06:56:55 -0700 (PDT)
-Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fad970sm54296835e9.37.2024.05.24.06.56.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 06:56:55 -0700 (PDT)
-From: Paul Durrant <xadimgnik@gmail.com>
-X-Google-Original-From: Paul Durrant <paul@xen.org>
-Message-ID: <e62157f2-d691-4cf1-8cb0-717580b8a836@xen.org>
-Date: Fri, 24 May 2024 14:56:53 +0100
+	s=arc-20240116; t=1716559096; c=relaxed/simple;
+	bh=uFDcDFnvfL5qT+v6BH7T1D5GHPvkVzjP6kkXiYmqx0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=D+1/PbyJoRWj1CGwf656InysdgS8EG31hHOFmxgBMq/oRkY+6VkjDGkkppPlZjHtgascgJKoZv6r0H8gG7FOeLBK+8PSbt4Qb/YSR8x/2KmR0bhhey+SyQNGzRvTzgfgTc41qdaODN9s6l0a9MX6Q1Kr+8XU8i0haSZkfuhSiAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEKf2oNO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC16C32782;
+	Fri, 24 May 2024 13:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716559095;
+	bh=uFDcDFnvfL5qT+v6BH7T1D5GHPvkVzjP6kkXiYmqx0s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OEKf2oNOw4ClzvvnGF1nGv5jdj9y66xt5tu/XIadvaU0Sz4VUwSqJLd137R0qiAqF
+	 36kxyU2n/ACR1am+UfAzK2Gz+nDaXWDO4o9L/5hVf+NP2m5m0Q1YASL3SU6zy8i/wI
+	 LNDSbTsQBUYWVeDxpVG6FtjfTxnQ/umAC98hfaAr9Acp8CoTFPmPTGRWAV99zyvJZb
+	 ZaT4XiMEg9fbpZoQJyCvSA/4rryP7N1c8/K0vH9QyOvM8j81ZtaLEP+RZRfipdwPjq
+	 4OwDirAwfafcQ3ub1Vd9QLG3lAdD4eTZoW06sf6hzwtUvejz5jjuHBZ1bTQZJ4aAJR
+	 L0kC6itmoFePQ==
+Date: Fri, 24 May 2024 21:57:46 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Hongzhen Luo <hongzhen@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>, Chao Yu <chao@kernel.org>
+Subject: [GIT PULL] erofs more updates for 6.10-rc1
+Message-ID: <ZlCc2s0h0H1v16er@debian>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Hongzhen Luo <hongzhen@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>, Chao Yu <chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: paul@xen.org
-Subject: Re: [RFC PATCH v3 12/21] KVM: x86: Remove implicit rdtsc() from
- kvm_compute_l1_tsc_offset()
-To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Sean Christopherson <seanjc@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
- Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
- zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>
-References: <20240522001817.619072-1-dwmw2@infradead.org>
- <20240522001817.619072-13-dwmw2@infradead.org>
-Content-Language: en-US
-Organization: Xen Project
-In-Reply-To: <20240522001817.619072-13-dwmw2@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 22/05/2024 01:17, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> Let the callers pass the host TSC value in as an explicit parameter.
-> 
-> This leaves some fairly obviously stupid code, which using this function
-> to compare the guest TSC at some *other* time, with the newly-minted TSC
-> value from rdtsc(). Unless it's being used to measure *elapsed* time,
-> that isn't very sensible.
-> 
-> In this case, "obviously stupid" is an improvement over being non-obviously
-> so.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->   arch/x86/kvm/x86.c | 14 ++++++++------
->   1 file changed, 8 insertions(+), 6 deletions(-)
-> 
+Hi Linus,
 
-Reviewed-by: Paul Durrant <paul@xen.org>
+Could you consider these extra patches for 6.10-rc1?
 
+The main ones are metadata API conversion to byte offsets by
+Al Viro.  Since some of patches are also part of VFS
+"->bd_inode elimination" (and they were merged upstream days ago),
+I did a merge commit to resolve the dependency with the detailed
+description.
+
+Another patch gets rid of unnecessary memory allocation out of
+DEFLATE decompressor.  The remaining one is a trivial cleanup.
+
+All commits have been in -next and no potential merge conflict is
+observed.
+
+Thanks,
+Gao Xiang
+
+The following changes since commit 7c35de4df1056a5a1fb4de042197b8f5b1033b61:
+
+  erofs: Zstandard compression support (2024-05-09 07:46:56 +0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.10-rc1-2
+
+for you to fetch changes up to 80eb4f62056d6ae709bdd0636ab96ce660f494b2:
+
+  erofs: avoid allocating DEFLATE streams before mounting (2024-05-21 03:07:39 +0800)
+
+----------------------------------------------------------------
+Changes since last update:
+
+ - Convert metadata APIs to byte offsets;
+
+ - Avoid allocating DEFLATE streams unnecessarily;
+
+ - Some erofs_show_options() cleanup.
+
+----------------------------------------------------------------
+Al Viro (6):
+      erofs: switch erofs_bread() to passing offset instead of block number
+      erofs_buf: store address_space instead of inode
+      erofs: mechanically convert erofs_read_metabuf() to offsets
+      erofs: don't align offset for erofs_read_metabuf() (simple cases)
+      erofs: don't round offset down for erofs_read_metabuf()
+      z_erofs_pcluster_begin(): don't bother with rounding position down
+
+Gao Xiang (2):
+      Merge branch 'misc.erofs' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git
+      erofs: avoid allocating DEFLATE streams before mounting
+
+Hongzhen Luo (1):
+      erofs: clean up erofs_show_options()
+
+ fs/erofs/data.c                 | 25 +++++++++----------
+ fs/erofs/decompressor_deflate.c | 55 ++++++++++++++++++++++-------------------
+ fs/erofs/dir.c                  |  4 +--
+ fs/erofs/fscache.c              | 12 +++------
+ fs/erofs/inode.c                |  4 +--
+ fs/erofs/internal.h             |  9 +++----
+ fs/erofs/namei.c                |  6 ++---
+ fs/erofs/super.c                | 44 +++++++++++----------------------
+ fs/erofs/xattr.c                | 37 +++++++++++----------------
+ fs/erofs/zdata.c                |  8 +++---
+ fs/erofs/zmap.c                 | 24 +++++++++---------
+ 11 files changed, 97 insertions(+), 131 deletions(-)
 
