@@ -1,150 +1,209 @@
-Return-Path: <linux-kernel+bounces-188918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E708B8CE87A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:08:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E114E8CE87F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0EA1F23317
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:08:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12295B211D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4744912E1EE;
-	Fri, 24 May 2024 16:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713DF12E1F7;
+	Fri, 24 May 2024 16:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pq3BJCG8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="Em9LLFkQ"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC99F12C485
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A663B12E1CD;
+	Fri, 24 May 2024 16:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716566915; cv=none; b=AW/LLQv1qYPYfvEVa49nql9pqsCSCaz5mLV/REvWOTi0ukCkaeeGUqusBBCBQQCW32jeq4KhikLoFm3AWGstRPCArenDxayNdpzF999ije+jf8PZMBag/wF+GJM7GeJMbs3VhE6VC+lY2cP0z+BguyoFRsX7IychzTYhpPfkqEA=
+	t=1716567156; cv=none; b=YRPsAKNjeMolLHCL1ke3yTSQwSyb73JhjEQzZcuHZ8DucVgfGYokzZrq/K/sJ7ZhYMe/SSJYOSIfg1gJWCmI69nS0K9n62gtF/jjN9Thi/5lDLV3aq8VjHQgPjbCijfReaTtWeEx0Z6ReCyJKdQe4ZCao1/5JnElsjjCO8lOQdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716566915; c=relaxed/simple;
-	bh=exq6Vtd1oSOfzg1kMHw3YZ1MwxxjP2vFYDjQCzib8oE=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=gBMU7O2rh93f1VKUmtWryXmOHLZpMpR+7KDRyUZDK9cqEAToRdAdXq4mWQXJg/b9XDTv8cHc8+bpehlD7Uge2VtC/rC01tigdAkHJsBWX3sp92JQUqvrn1JrOA90s0qtj0SoHY/rJPON/TE72u3YmlFD2vfId7fCwtUqrtcLeak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pq3BJCG8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716566912;
+	s=arc-20240116; t=1716567156; c=relaxed/simple;
+	bh=PkpmlA/zkNI792rcgDNLFPKWwIP63bpddmC62RpAfLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HxXV3TRwk5/tIYMRA6kkOkPMehmq+jJOQ2BvkLaIZOr5f9RDLMhGSfMmBsjTrJbyXElOQwurGScrjV4KQzzFr37DYctywZepoPx/WPU65zE2ADUatDoxJQUIRv1mZHXxBzHPrTmq/OpvSJ3GsjNNoh3s6fdsh3Z58v31hvX9+8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=Em9LLFkQ; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Vm96b4pdgz9snk;
+	Fri, 24 May 2024 18:12:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1716567143;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9EwsuqSUYRo+pt3iaFFkxaae/M20Vya0rjHfH1b6HdE=;
-	b=Pq3BJCG8/a9JM9s/HBV4jtsQyY/TF1pp0zL/MpN8DHgIuNoaEP0sGKMr6EgUpZQ1CRH1Ou
-	aklHJM7Uhl2hQrxbuieJXS/RaRk3TrxC9/hOzxtqhZpFq/T3ry1pKWoU62iNPAzKX+tt4Q
-	tfTKE5MRvWoMdjIlCdF9wAbdrJ2ae2o=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-74bSxkcPN8iqgQEOafz94g-1; Fri, 24 May 2024 12:08:31 -0400
-X-MC-Unique: 74bSxkcPN8iqgQEOafz94g-1
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-66348aafadcso2202863a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:08:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716566909; x=1717171709;
-        h=content-transfer-encoding:cc:organization:subject:from
-         :content-language:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9EwsuqSUYRo+pt3iaFFkxaae/M20Vya0rjHfH1b6HdE=;
-        b=nos5mzNwaoavnPGH2OyAP4wPA9zV9d4ml8RKKXiflRgTdBm4LtF6lTNZEbdv85JGol
-         pL21AfqCchUVqlJ2Rv5LwWo+pTgVNmqn7qEYNiSl7843iAbUbMGNB2x5cmNBfSAC4KcD
-         ju1acx/JK2Y6lNwKuFaR0sAFsdXA/jh241zKEarVtslrru5mMun4dtME1voszRNxnBra
-         vRTn1ykFE/Dbh90GA0z/RCTc67GgWst5eENULuoYITcnl/jTOtfmy9+3LBeudWHqjdk9
-         2InqtEoxfmYpiwfO9QPbCN0qFeqLjZpFYrWfJWsXw1FZpl/bN4ohKU4+om64pTOmjgOO
-         1/+g==
-X-Gm-Message-State: AOJu0YyYmmebA3E7XTFAMP/p79CNhKguu8k33zRugXA61jIETtTDVjOB
-	71FoCp9jiV5+dopWv/joWK/kXj8nmoPsf3zkREA8sGmw3cFQZxE/1QCXbwRa7XFmHsPAmq0qxV+
-	fk6H2qiiF/vGz+7XEmjeoR6AG+QjwtuRo9uTYGVDKfGK6yGGhnM+vU7/r/mRn9t3KDj/BD5eOTk
-	4HFIUbOEnzUy7ET1duPs5AtwwC9VSfrzPiAd8YcfWYBKoR
-X-Received: by 2002:a17:902:da8c:b0:1f4:64ba:af96 with SMTP id d9443c01a7336-1f464bab257mr843375ad.9.1716566909201;
-        Fri, 24 May 2024 09:08:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVAzB2NbvKOHgVznREzaRv64nuyc5oToZKRz+E7t+S5zlxeXZPJuO5VrhKYB5HbvXUxtmZcQ==
-X-Received: by 2002:a17:902:da8c:b0:1f4:64ba:af96 with SMTP id d9443c01a7336-1f464bab257mr842885ad.9.1716566908618;
-        Fri, 24 May 2024 09:08:28 -0700 (PDT)
-Received: from ?IPV6:2001:569:7cd6:cc00:5079:5849:feac:f62? ([2001:569:7cd6:cc00:5079:5849:feac:f62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c967bcasm15639335ad.176.2024.05.24.09.08.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 09:08:27 -0700 (PDT)
-Message-ID: <75c17881-68e9-40e7-821c-5655d49d7c0f@redhat.com>
-Date: Fri, 24 May 2024 09:08:26 -0700
+	 in-reply-to:in-reply-to:references:references;
+	bh=s+5qKHX2IsWM7J9FUKkWmszqqI4gGvklJbYhyzY7vqE=;
+	b=Em9LLFkQiu/6zjn522ieKWQ1hrqAxhUL7BmUAJlC1xLxLR78NDZdWzOFQJPTPqWufI0lH4
+	1a447gcUo4U3LOmz3aZPvN91yOpaBxzJkICnaJ3aojVWRp622POE241XfpZ4znfpWZI6Cn
+	gwCtNKxZBENlEvZXzQZ7qzW9C6m0/Z1EH+G3lJ024fVySHH7/I4kNkMMB80xIsCG7Gfyza
+	q7xEZbwstnrFWuIhNcmboL+pG1+6sFoCX3CZAsItZ3DDPsUc6SjKQ2pQknugrv73UBba5B
+	ZSs4UESPLleQZ9pwqK56V5rKePDs6fY5LRTyFjGCpCXPla95626wOeEiTw+FGA==
+Date: Fri, 24 May 2024 09:12:14 -0700
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Jeff Xu <jeffxu@google.com>
+Cc: David Rheinsberg <david@readahead.eu>, 
+	=?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, dmitry.torokhov@gmail.com, 
+	Daniel Verkamp <dverkamp@chromium.org>, hughd@google.com, jorgelo@chromium.org, 
+	skhan@linuxfoundation.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply
+ `MFD_ALLOW_SEALING`
+Message-ID: <20240524.160158-custard.odds.smutty.cuff-caukvmB4EWP9@cyphar.com>
+References: <20240513191544.94754-1-pobrn@protonmail.com>
+ <CALmYWFt7MYbWrCDVEKH4DrMQGxaXA2kK8qth-JVxzkvMd6Ohtg@mail.gmail.com>
+ <20240522162324.0aeba086228eddd8aff4f628@linux-foundation.org>
+ <1KDsEBw8g7ymBVpGJZp9NRH1HmCBsQ_jjQ_jKOg90gLUFhW5W6lcG-bI4-5OPkrD24RiG7G83VoZL4SXPQjfldsNFDg7bFnFFgrVZWwSWXQ=@protonmail.com>
+ <08450f80-4c33-40db-886f-fee18e531545@app.fastmail.com>
+ <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-Content-Language: en-CA
-From: Adam Williamson <awilliam@redhat.com>
-Subject: Intermittent inability to type in graphical Plymouth on UEFI VMs
- since kernel 6.9
-Organization: Red Hat
-Cc: jforbes@redhat.com, rstrode@redhat.com
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o6rbmbukevbfurx5"
+Content-Disposition: inline
+In-Reply-To: <CALmYWFv9dK5ZPzwx3WCLMXzuuDadvFxh84+8rrT7aL105+ZZAQ@mail.gmail.com>
 
-Hi, folks. Please CC me on replies, I'm not subscribed to the list. The 
-downstream bug report for this is 
-https://bugzilla.redhat.com/show_bug.cgi?id=2274770 .
 
-I maintain Fedora's openQA instance - https://openqa.fedoraproject.org/ 
-(openQA is an automated testing system which runs jobs on qemu VMs, 
-inputting keyboard and mouse events via VNC, and monitoring results via 
-screenshots and the serial console).
+--o6rbmbukevbfurx5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We have several tests that involve doing an install of Fedora with root 
-storage encrypted and then booting it. Some of these install enough 
-packages for us to hit the 'graphical' mode of plymouth (the bootsplash 
-manager thingy), so we see a graphical passphrase prompt like 
-https://openqa.fedoraproject.org/tests/2642868#step/_graphical_wait_login/3 
-; some are minimal installs, so we see a text prompt like 
-https://openqa.fedoraproject.org/tests/2642845#step/disk_guided_encrypted_postinstall/1 
-.
+On 2024-05-23, Jeff Xu <jeffxu@google.com> wrote:
+> On Thu, May 23, 2024 at 1:24=E2=80=AFAM David Rheinsberg <david@readahead=
+=2Eeu> wrote:
+> >
+> > Hi
+> >
+> > On Thu, May 23, 2024, at 4:25 AM, Barnab=C3=A1s P=C5=91cze wrote:
+> > > 2024. m=C3=A1jus 23., cs=C3=BCt=C3=B6rt=C3=B6k 1:23 keltez=C3=A9ssel,=
+ Andrew Morton
+> > > <akpm@linux-foundation.org> =C3=ADrta:
+> > >> It's a change to a userspace API, yes?  Please let's have a detailed
+> > >> description of why this is OK.  Why it won't affect any existing use=
+rs.
+> > >
+> > > Yes, it is a uAPI change. To trigger user visible change, a program h=
+as to
+> > >
+> > >  - create a memfd
+> > >    - with MFD_NOEXEC_SEAL,
+> > >    - without MFD_ALLOW_SEALING;
+> > >  - try to add seals / check the seals.
+> > >
+> > > This change in essence reverts the kernel's behaviour to that of Linux
+> > > <6.3, where
+> > > only `MFD_ALLOW_SEALING` enabled sealing. If a program works correctly
+> > > on those
+> > > kernels, it will likely work correctly after this change.
+> > >
+> > > I have looked through Debian Code Search and GitHub, searching for
+> > > `MFD_NOEXEC_SEAL`.
+> > > And I could find only a single breakage that this change would case:
+> > > dbus-broker
+> > > has its own memfd_create() wrapper that is aware of this implicit
+> > > `MFD_ALLOW_SEALING`
+> > > behaviour[0], and tries to work around it. This workaround will break.
+> > > Luckily,
+> > > however, as far as I could tell this only affects the test suite of
+> > > dbus-broker,
+> > > not its normal operations, so I believe it should be fine. I have
+> > > prepared a PR
+> > > with a fix[1].
+> >
+> > We asked for exactly this fix before, so I very much support this. Our =
+test-suite in `dbus-broker` merely verifies what the current kernel behavio=
+r is (just like the kernel selftests). I am certainly ok if the kernel brea=
+ks it. I will gladly adapt the test-suite.
+> >
+> > Previous discussion was in:
+> >
+> >     [PATCH] memfd: support MFD_NOEXEC alongside MFD_EXEC
+> >     https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahea=
+d.eu/
+> >
+> > Note that this fix is particularly important in combination with `vm.me=
+mfd_noexec=3D2`, since this breaks existing user-space by enabling sealing =
+on all memfds unconditionally. I also encourage backporting to stable kerne=
+ls.
+> >
+> Also with vm.memfd_noexec=3D1.
+> I think that problem must be addressed either with this patch, or with
+> a new flag.
+>=20
+> Regarding vm.memfd_noexec, on another topic.
+> I think in addition to  vm.memfd_noexec =3D 1 and 2,  there still could
+> be another state: 3
+>=20
+> =3D0. Do nothing.
+> =3D1. This will add MFD_NOEXEC_SEAL if application didn't set EXEC or
+> MFD_NOEXE_SEAL (to help with the migration)
+> =3D2: This will reject all calls without MFD_NOEXEC_SEAL (the whole
+> system doesn't allow executable memfd)
+> =3D3:  Application must set MFD_EXEC or MFD_NOEXEC_SEAL explicitly, or
+> else it will be rejected.
+>=20
+> 3 is useful because it lets applications choose what to use, and
+> forces applications to migrate to new semantics (this is what 2 did
+> before 9876cfe8).
+> The caveat is 3 is less restrictive than 2, so must document it clearly.
 
-Recently I switched up our configuration so most of these tests run on 
-UEFI VMs (previously they mostly ran on BIOS VMs). When I did that, the 
-tests that hit the graphical prompt started failing frequently on Fedora 
-Rawhide. The tests that hit the text prompt do not seem to be affected.
+As discussed at the time, "you must use this flag" is not a useful
+setting for a general purpose operating system because it explicitly
+disables backwards compatibility (breaking any application that was
+written in the past 10 years!) for no reason other than "new is better".
 
-At first I figured this was caused by a plymouth change, but some 
-testing indicates it's actually related to kernel version: it seems to 
-have been introduced in kernel 6.9. Fedora 40 uses kernel 6.8, so tests 
-on F40 are not usually affected by this, but I engineered some runs of 
-an affected test on an F40 install with kernel 6.9, and they hit the bug.
+As I suggested when we fixed the semantics of vm.memfd_noexec, if you
+really want to block a particular flag from not being set, seccomp lets
+you do this incredibly easily without acting as a footgun for admins.
+Yes, vm.memfd_noexec can break programs that use executable memfds, but
+that is the point of the sysctl -- making vm.memfd_noexec break programs
+that don't use executable memfds (they are only guilty of being written
+before mid-2023) is not useful.
 
-So to summarize, we hit the bug when all the following conditions are met:
+In addition, making 3 less restrictive than 2 would make the original
+restriction mechanism useless. A malicious process could raise the
+setting to 3 and disable the "protection" (as discussed before, I really
+don't understand the threat model here, but making it possible to
+disable easily is pretty clearly). You could change the policy, but now
+you're adding more complexity for a feature that IMO doesn't really make
+sense in the first place.
 
-* Running on UEFI qemu-kvm VM
-* Graphical passphrase prompt encountered on boot
-* Running kernel 6.9
+> -Jeff
+>=20
+> > Reviewed-by: David Rheinsberg <david@readahead.eu>
+> >
+> > Thanks
+> > David
 
-When it sees the passphrase prompt, the test system types the correct 
-password. When the bug happens, this input seems to simply be ignored - 
-plymouth does not echo dots back to the screen representing the typed 
-characters, and on hitting enter the system does not attempt to proceed 
-with decryption. (Unfortunately this also means we don't get any logs 
-from the failure, as the test system needs a booted system to be able to 
-upload any logs).
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-Looking at results from the last month and a half, the bug happens on 
-about 30% of the tests run.
+--o6rbmbukevbfurx5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I have reproduced this manually in a similar VM, but did not yet manage 
-to reproduce it on hardware (which is unfortunate, as it'd make it 
-somewhat easier to attempt some kind of bisect).
+-----BEGIN PGP SIGNATURE-----
 
-The earliest build I can say for sure the bug happened with is 
-kernel-6.9.0-0.rc0.20240322git8e938e398669.14.fc41 .
--- 
-Adam Williamson (he/him/his)
-Fedora QA
-Fedora Chat: @adamwill:fedora.im | Mastodon: @adamw@fosstodon.org
-https://www.happyassassin.net
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZlC8XgAKCRAol/rSt+lE
+b1u8AQCSXfCJULF5mlBI3NTwWtmfPXHkw9y5f+xKfcb1hs0lMgEAnnJpD63h0VKg
+jcEGjPSfyrhbIP6TbC+mELL+Af3N7Ao=
+=SpBD
+-----END PGP SIGNATURE-----
 
+--o6rbmbukevbfurx5--
 
