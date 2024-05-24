@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-188625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E8B8CE48A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:58:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668EE8CE484
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5643D1C20D14
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D97282444
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5AE85C7F;
-	Fri, 24 May 2024 10:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF69385C66;
+	Fri, 24 May 2024 10:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A9+BSXlB"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J+p5TNps";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wyrt3ETa"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A7785C58;
-	Fri, 24 May 2024 10:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9144585956;
+	Fri, 24 May 2024 10:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716548281; cv=none; b=gsZpA1MI5wWvUGp/gB+Rm6IMmdEZJAjsq8tDPX/0FnVYLSHasB5ax4XVgj7AwHIUZkOeVWXsjf0OO2vXHsYEs4NYxPVpl1sJbnBjs+Iiu44YqbgTDPGwxMhhktJ594g/WhK4nVvEbsaVNWwVDF3tDTnjB/tHTWeee04FAzYHyE4=
+	t=1716548268; cv=none; b=kbBFGQIqWT89qGnsNFnWMt7Jwpvqm1gNSRV/8dA85bN20dN3O5UGkYHrbYapPLY9P6NwDnkg0Tx51O67WuHplYji2tk9Q6H3+xClCCREZh5Mv8Tva7MvMyQOLY4OlHltP3Te+3QNmsMtfXx4Q6dGR3rRik0xmwsD1ee2PSCh5Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716548281; c=relaxed/simple;
-	bh=+tGHaaXA/o+PcEWpkVJfOIRNHuU+e2wPnmxnU44WR5s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zo+Q3gxzTky33UZGlf2WXdY1DqraGtJo1UXjbpsm0rTj1C2RlVXG9UHoOKiZhxQT0uED1piD6yLvTr/MY+tckWcwelWurUeYarpneep5FwNZfIsZVfIQPHckiqJVgDg3qcPMQojzgug6SbWlk19RvLtOHt8+d5vIoaTt3z+B4dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A9+BSXlB; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44OAvTFY056814;
-	Fri, 24 May 2024 05:57:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716548249;
-	bh=oAxDy7HRzkzyrAajDGbOIZ7VyO0W++qJINz2lTGFPco=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=A9+BSXlBOhx1TAmOU96P2XHek96O/xk+nOzNEpSNTep++dnl6X1t3n6KatGRqv6bi
-	 rloF0zLQxtkSMuCaHh/OCw7gXgJBAk7w8JBzcLpbRf2zn+p7OAlT8QFbZIHisKiPrZ
-	 qtZvZwyocV54FIk80sVYPr8Chc+BfAHRDJSzVEQI=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44OAvTVZ037425
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 24 May 2024 05:57:29 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
- May 2024 05:57:29 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 24 May 2024 05:57:29 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44OAvFvF049802;
-	Fri, 24 May 2024 05:57:25 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <manivannan.sadhasivam@linaro.org>,
-        <kishon@kernel.org>, <u.kleine-koenig@pengutronix.de>,
-        <cassel@kernel.org>, <dlemoal@kernel.org>,
-        <yoshihiro.shimoda.uh@renesas.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v2 2/2] PCI: keystone: Add link up check in ks_child_pcie_ops.map_bus()
-Date: Fri, 24 May 2024 16:27:14 +0530
-Message-ID: <20240524105714.191642-3-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240524105714.191642-1-s-vadapalli@ti.com>
-References: <20240524105714.191642-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1716548268; c=relaxed/simple;
+	bh=colrypTjylwyez/3r9sQhQskA+fGLFAX5Vtn76reIsw=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=IBk+ySyHK/134aWZZttRdRwqDlBUvwutEH2ekEfFewr5svqs3uIG+OAc2Uo1PSr5r2SvN+x/8jNFNeWhVKKFRzWb9/eQr1QdVzcB+38O6WHIS4OHnOyg3nqmv3Sc6IH5FX/pmBpmJC25sjETq9vXL1XcS4BOKWO2k3k6qc+6rtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J+p5TNps; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wyrt3ETa; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 24 May 2024 10:57:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1716548264;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BLYn3FwQBwFMOl0ONyA3r9l1SvJ452A313P0X1CGLe0=;
+	b=J+p5TNpsmfs1LzuvHTrFETBpJUNc2Ow2jID0Odkui9OWA14LfyWRuQdwoZQghv3yGVqcQp
+	iFoQYQi3VOwZhVUKikSDbrQ5eclREGbuBLE7vKPUSstHlLNpl6QuMtC95rO5fEQrKhH+af
+	H7Eieono3dKrINSXXHWv5K43wDVRK6WKBxDalCckG2lwRoFHIJoE/YOlL2+y9/LnzSJpXJ
+	3Xqw9gkNHwTlSYGnDUkTqYSh/LMPNe1o/gtnECEJjmv7eE/nrxBhQWWXeyiHkrbWVkCRwe
+	RozwWzJBdKbhTvBBI5HiOks2aOxAlxBiDJwUTnvZTyW5Udrc8LnMuNW9UXap4A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1716548264;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BLYn3FwQBwFMOl0ONyA3r9l1SvJ452A313P0X1CGLe0=;
+	b=Wyrt3ETaQN8tBUGYJimQo23LgMKAtNZQ0hlQiv9n7oPAun+/7GAigxd4mFzwIGd7vRnqwg
+	tTH4gAxF5U9OjNAQ==
+From: "tip-bot2 for dicken.ding" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] genirq/irqdesc: Prevent use-after-free in
+ irq_find_at_or_after()
+Cc: "dicken.ding" <dicken.ding@mediatek.com>,
+ Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240524091739.31611-1-dicken.ding@mediatek.com>
+References: <20240524091739.31611-1-dicken.ding@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-ID: <171654826399.10875.17851209724801691980.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+The following commit has been merged into the irq/urgent branch of tip:
 
-K2G forwards the error triggered by a link-down state (e.g., no connected
-endpoint device) on the system bus for PCI configuration transactions;
-these errors are reported as an SError at system level, which is fatal and
-hangs the system. So fix it similar to how it was done in designware core
-driver commit 15b23906347c ("PCI: dwc: Add link up check in
-dw_child_pcie_ops.map_bus()")
+Commit-ID:     b84a8aba806261d2f759ccedf4a2a6a80a5e55ba
+Gitweb:        https://git.kernel.org/tip/b84a8aba806261d2f759ccedf4a2a6a80a5e55ba
+Author:        dicken.ding <dicken.ding@mediatek.com>
+AuthorDate:    Fri, 24 May 2024 17:17:39 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 24 May 2024 12:49:35 +02:00
 
-Fixes: 10a797c6e54a ("PCI: dwc: keystone: Use pci_ops for config space accessors")
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+genirq/irqdesc: Prevent use-after-free in irq_find_at_or_after()
+
+irq_find_at_or_after() dereferences the interrupt descriptor which is
+returned by mt_find() while neither holding sparse_irq_lock nor RCU read
+lock, which means the descriptor can be freed between mt_find() and the
+dereference:
+
+    CPU0                            CPU1
+    desc = mt_find()
+                                    delayed_free_desc(desc)
+    irq_desc_get_irq(desc)
+
+The use-after-free is reported by KASAN:
+
+    Call trace:
+     irq_get_next_irq+0x58/0x84
+     show_stat+0x638/0x824
+     seq_read_iter+0x158/0x4ec
+     proc_reg_read_iter+0x94/0x12c
+     vfs_read+0x1e0/0x2c8
+
+    Freed by task 4471:
+     slab_free_freelist_hook+0x174/0x1e0
+     __kmem_cache_free+0xa4/0x1dc
+     kfree+0x64/0x128
+     irq_kobj_release+0x28/0x3c
+     kobject_put+0xcc/0x1e0
+     delayed_free_desc+0x14/0x2c
+     rcu_do_batch+0x214/0x720
+
+Guard the access with a RCU read lock section.
+
+Fixes: 721255b9826b ("genirq: Use a maple tree for interrupt descriptor management")
+Signed-off-by: dicken.ding <dicken.ding@mediatek.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20240524091739.31611-1-dicken.ding@mediatek.com
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ kernel/irq/irqdesc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 3184546ba3b6..ca476fa584e7 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -430,6 +430,17 @@ static void __iomem *ks_pcie_other_map_bus(struct pci_bus *bus,
- 	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
- 	u32 reg;
- 
-+	/*
-+	 * Checking whether the link is up here is a last line of defense
-+	 * against platforms that forward errors on the system bus as
-+	 * SError upon PCI configuration transactions issued when the link
-+	 * is down. This check is racy by definition and does not stop
-+	 * the system from triggering an SError if the link goes down
-+	 * after this check is performed.
-+	 */
-+	if (!dw_pcie_link_up(pci))
-+		return NULL;
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 88ac365..07e99c9 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -160,7 +160,10 @@ static int irq_find_free_area(unsigned int from, unsigned int cnt)
+ static unsigned int irq_find_at_or_after(unsigned int offset)
+ {
+ 	unsigned long index = offset;
+-	struct irq_desc *desc = mt_find(&sparse_irqs, &index, nr_irqs);
++	struct irq_desc *desc;
 +
- 	reg = CFG_BUS(bus->number) | CFG_DEVICE(PCI_SLOT(devfn)) |
- 		CFG_FUNC(PCI_FUNC(devfn));
- 	if (!pci_is_root_bus(bus->parent))
--- 
-2.40.1
-
++	guard(rcu)();
++	desc = mt_find(&sparse_irqs, &index, nr_irqs);
+ 
+ 	return desc ? irq_desc_get_irq(desc) : nr_irqs;
+ }
 
