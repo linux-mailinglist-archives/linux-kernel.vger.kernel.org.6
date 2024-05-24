@@ -1,105 +1,155 @@
-Return-Path: <linux-kernel+bounces-188979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366578CE93B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:35:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD858CE93D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673F11C20336
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32CC2823BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C96179B7;
-	Fri, 24 May 2024 17:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8977029401;
+	Fri, 24 May 2024 17:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="NEe45Ed0"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yxWdXENZ"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E025623776
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 17:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB126179B7
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 17:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716572113; cv=none; b=sgZiE06IIVE6qqGtVbNYHdb2mq+3a+sFf1rUXKycf22HtmvNPzxxGrftBqbEEbVmKv0bEcFZdfnN3dwSxXYFLUKM4/Jf/E2qI6uf0axdLOmhKX0Wpsx5JkmcDyXIEfnrjPLIirxJmgJ/3La2Ut1B+cbNvUMcW1xX/bS3VKIOnQw=
+	t=1716572220; cv=none; b=OXQwpDsY6H5IdxGc4APiQUL7Vc/mzARFAWUnH7ibD9P8WOlB6KtvSFAKzz3DH2NSf7zQQJyNeAMdarmffi8ci26aTgbYUuAU9w7zjojSyAV0+9d9QSAKBzFLv+331hVs4DXcE8vXPceonaKpj3t2QywI7IssumalVDlfc4SLW00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716572113; c=relaxed/simple;
-	bh=X7q4I3Z2W8ceiJRUmxuw0oIfEkVA3C+3uJyWgUVv1N0=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=YKpbHdSIGRMKtqDjtl0jelvgfQnaKVAUN1hZ5jSA6EjzCAprYc0osers0LBtK9gHIz9mpmAuSHAs/xy+SxziGyvoXvYIubGYtLJi9Jsec6CCo2sBYA5ALd6FWwL0wUuaMchDjLGHikSPuUDFd16Fa86iGfYKfRDJHzCqCvg3Ci8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=NEe45Ed0; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f3310a21d8so22416385ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:35:11 -0700 (PDT)
+	s=arc-20240116; t=1716572220; c=relaxed/simple;
+	bh=ibcYNZiSaxk9EBTq4JLd0V3zMQ/xYLqk8gCrm4L9wgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=smDrZE1SvsLGq4tr43vvho98Q29RSy3qYD1JxvhZuMfTuN8haBzLtrQzK+qrAmiKfMTOUQQTJS4BkLrLMa9dHUSOqYV0IzSZ3X+cFcJczGs/4YaHnmjQI7GgEpHcTeI+mDnWbeoGg2z0NHdNXTYI+uSi+QBEygGiBpmuALXEcxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yxWdXENZ; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4df150f29so3204627276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1716572111; x=1717176911; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b/lYKjkuHWJ/tP+SWUmNPxY2vRmvZk0xnVEoyWXDsrM=;
-        b=NEe45Ed0QafHxXMB2z7MLiKQtFpj/oTdqxc4LI8XXlTbsS5xEaUoT+4YYjFHsk8PTV
-         kxp1JTCcvI9IIbJtDRzdYsOYwJ2KBFBe7ad8BJBynh/d2Q50w0HE4DxdXOxfqOY7e3Kq
-         l/NOHHcmg53VIga26fNSO08VAhGSItxiEqkhU2qlRWCKJTJbe7J3iCNUYTkPP1/ipyJj
-         fczSo6zUptgl5INTHHBxxBYmnK8xMYZ64+EyY9iQGEVRb6yt+7Ro6GGLMATdj4jQfUCD
-         Lt644L8fZSXqLrEBM1LaUP8h/k+47r3M1ECCZHbUvSROY9+NFWseBpJE4w5IDGXenO2v
-         1IFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716572111; x=1717176911;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1716572218; x=1717177018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b/lYKjkuHWJ/tP+SWUmNPxY2vRmvZk0xnVEoyWXDsrM=;
-        b=xQ4WcAIrl9Wbor7KriQyij9iMpY3BYQCl1JZJduzYArNCweHc9yLg39ZVKsgwMrh0v
-         4LIkA2AZbVwsMYj/REUBw0LSCm/0xjU+eBz27zmfhuS8qCZWdQfaYF8/XmJu8darZ+bA
-         Wl8WR5g+4aZsugp9v/nRVZYMwE+6hSsH77a63KmrTQhTWGNnZVQoypTqqp10GS9w5jT6
-         6tibisfG9P6V8msYHAP7DALGAkT7sZzCb++mPjliAzKwP3ancIXf2MUHk1zoF78ILMaU
-         7U+Dmq0+ywntI6Cy+6gMpkhsHk5k7tiz4+HHU1OlS95RI5nqwhoebY6gA5EB+40VBKpA
-         3+MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Fd7jsOPeg5G1gJzwIqP+mXsBdS4uGXtRZmUrqWkR0r3b0uCuTkiB+sN5PvBAs+hSDbrcIo3r2+rLrC9AxUxalkOYgb8c7w99IvCk
-X-Gm-Message-State: AOJu0Yxtg3LBpUJKm89CDcylKZwDapCiP9Sm5Z+s5yEMZu5DCLPK7feM
-	PlllJCFbGDbnzFLdgLWJYFwzte3JvBiC4WzWqY1Y4i7J34wNchtaG9TVS2uTlRg=
-X-Google-Smtp-Source: AGHT+IHIs13/ijYk/c01n1Igl2g2Bp1b8sXlKJdcpDFmF1ecg8B5NT9tVh3ERgJlBBvoqmPuaM3uhw==
-X-Received: by 2002:a17:902:efd6:b0:1f2:f107:5a71 with SMTP id d9443c01a7336-1f4494f2cc2mr25001835ad.44.1716572110954;
-        Fri, 24 May 2024 10:35:10 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c75782esm16429155ad.31.2024.05.24.10.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 10:35:10 -0700 (PDT)
-Date: Fri, 24 May 2024 10:35:10 -0700 (PDT)
-X-Google-Original-Date: Fri, 24 May 2024 10:35:08 PDT (-0700)
-Subject:     Re: riscv: irq-riscv-imsic-early.c:52:9: error: too many arguments to function 'riscv_ipi_set_virq_range'
-In-Reply-To: <875xv3dt71.ffs@tglx>
-CC: linux@roeck-us.net, Conor Dooley <conor@kernel.org>, naresh.kamboju@linaro.org,
-  linux-kernel@vger.kernel.org, lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
-  linux-riscv@lists.infradead.org, apatel@ventanamicro.com, anders.roxell@linaro.org, dan.carpenter@linaro.org,
-  Arnd Bergmann <arnd@arndb.de>
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: tglx@linutronix.de
-Message-ID: <mhng-44d7a1c7-c15a-4077-ac94-23985f686474@palmer-ri-x1c9>
+        bh=wUyEyvPVhRUH4S+rRRLUtExiOqqOJDk147Gd3ruQKmU=;
+        b=yxWdXENZBQUAb7eCw7tEuGoiUNWDM/XpTgAl0uOxI42E9faLZFDuRUD18AXmyi4SJQ
+         Dnbroej4fqJ+78HTSJSkhPKvyFL5B7hmpv6I9Mf7XgXrOCrTiuLUp3P+HGavYmA7mZD/
+         jA/pEjmJauBnCDEsaUjA3EG30ZVWwVzvvTEYsIs5oC0fOR09bRRpJBNJcAOcjK4+7j4X
+         QU34xYIv1laWqn0tFslRR0tE5GNC0Hy8Ied3Lfj7tmL7dRpkbAUAF7aN0FyQTMMi2pMG
+         FGDfUIneELF0tv1pMaxLROl3tVSuLupCjfz+SrGMcm2zulAqckK+jQVoDTs0xoHeh0Da
+         3+YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716572218; x=1717177018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wUyEyvPVhRUH4S+rRRLUtExiOqqOJDk147Gd3ruQKmU=;
+        b=AgICoNyftvZQOpB2lXpiB7ae0moi+5sJQxjaFOhSamv00PWxAK8YmhVkbQUA8D43lp
+         7P7Gaf9nErFRrz0R+62lqHNWazrsuF+Dt3CfFRxotQehAi5pHHB0vbM3J+cv2yfexPcs
+         EK1QkdbyT4umLOPmgEq2ofSqi5bo9AW2ltt9lV7NeHv/k10M6aoo3N+prVf2Xt7OYNGT
+         XRAmoZAT528EiSEkHPRC9zeqd6LiMCNkCZCFdmHXe1nJ/FBHn+OXro3//CPjz3czIVOD
+         oeXjyC/EWsVFQRDbH2P87TEB/+2dORtXqS3Yh8xkPyFejNMLfHFM5O1ay7i8BGu/lBCF
+         YtMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeKC/Mry8GOyNzhYhHXASeLUDlJq8toqurzhgyqtf4seJjR5BslUkAZJzCaHzvkQ6RuJpemfIRTM1nVkVpxtYNNZHx2hO3kWzOXA6r
+X-Gm-Message-State: AOJu0YyYh/xCjydZoJp7aDxW8/1+27Y/5JdkUA2F/PDtH7SaH8baOi8Y
+	iHFKBgfOihGVWDAvCA1CfID/uDjfyaPbRLyDmUqeyzFzt4CJkbzLUfmcHvj4mFBelYv70cwsyTF
+	ehIkkSeBEXbtrwGDQUcE8KdncGwfJpAJQZU5L
+X-Google-Smtp-Source: AGHT+IFatYprpN2Za2quSkeGQqvvQgPAgx65FQ0QEqjzcX9e6NullPqgV+zJ3Og0iSrW+IzIAN6KhKXpiE3QPe4WRxA=
+X-Received: by 2002:a25:b845:0:b0:de6:1057:c85f with SMTP id
+ 3f1490d57ef6-df7721890b4mr2711368276.22.1716572217394; Fri, 24 May 2024
+ 10:36:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <20240519174650.559538-1-tjmercier@google.com> <h5xdtfh7dc4rjh74b4cwkpjszro73hfbxzdobwtivyx4hl4hyn@p5lp5h5gzjuj>
+In-Reply-To: <h5xdtfh7dc4rjh74b4cwkpjszro73hfbxzdobwtivyx4hl4hyn@p5lp5h5gzjuj>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Fri, 24 May 2024 10:36:45 -0700
+Message-ID: <CABdmKX149mbOkjo6fwZdx1LKX+xXH1TicUx+92Ud99RS9hSy7A@mail.gmail.com>
+Subject: Re: [RFC] cgroup: Fix /proc/cgroups count for v2
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, shakeel.butt@linux.dev, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 24 May 2024 10:18:42 PDT (-0700), tglx@linutronix.de wrote:
-> On Fri, May 24 2024 at 08:10, Guenter Roeck wrote:
->> On Wed, May 15, 2024 at 10:05:59AM -0700, Palmer Dabbelt wrote:
->>> as a conflict resolution, which IIUC should happen when Linus merges my next
->>> PR.  So I'll try and remember to call that out.
->>>
->>
->> Unfortunately it looks like the conflict resolution did not happen,
->> and mainline builds are now affected.
+On Fri, May 24, 2024 at 7:23=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
 >
-> Fix is queued and goes to Linus tomorrow.
+> Hello.
+Hi Michal, thanks for taking a look.
 
-Sorry I misesd this.  The PR I sent Linus this morning contains my fix 
-from earlier this week: 
-https://lore.kernel.org/linux-riscv/171647463438.13050.6219786365640043025.git-patchwork-notify@kernel.org/T/#t 
+> On Sun, May 19, 2024 at 05:46:48PM GMT, "T.J. Mercier" <tjmercier@google.=
+com> wrote:
+> > The number of cgroups using a controller is an important metric since
+> > kernel memory is used for each cgroup, and some kernel operations scale
+> > with the number of cgroups for some controllers (memory, io). So users
+> > have an interest in minimizing/tracking the number of them.
+>
+> I agree this is good for debugging or quick checks of unified hierarchy
+> enablement status.
+>
+> > To deal with num_cgroups being reported as 1 for those utility
+> > controllers regardless of the number of cgroups that exist and support
+> > their use,
+>
+> But '1' is correct number no? Those utility controllers are v1-only and
+> their single group only exists on (default) root.
+
+Sometimes? Take freezer as an example. If you don't mount it on v1
+then /proc/cgroups currently advertises the total number of v2
+cgroups. I thought that was reasonable since there exists a
+cgroup.freeze in every cgroup, but does freezer really count as a
+controller in this case? There's no freezer css for each cgroup so I
+guess the better answer is just to report 1 like you suggest.
+
+>
+> > @@ -675,11 +699,19 @@ int proc_cgroupstats_show(struct seq_file *m, voi=
+d *v)
+> >        * cgroup_mutex contention.
+> >        */
+> >
+> > -     for_each_subsys(ss, i)
+> > +     for_each_subsys(ss, i) {
+> > +             int count;
+> > +
+> > +             if (!cgroup_on_dfl(&ss->root->cgrp) || is_v2_utility_cont=
+roller(i))
+> > +                     count =3D atomic_read(&ss->root->nr_cgrps);
+>
+> I think is_v2_utility_controller(ssid) implies
+> !cgroup_on_dfl(&ss->root->cgrp). I'd only decide based on the
+> cgroup_on_dfl() predicate.
+>
+> > --- a/kernel/cgroup/cgroup.c
+> > +++ b/kernel/cgroup/cgroup.c
+> > @@ -2047,6 +2047,8 @@ void init_cgroup_root(struct cgroup_fs_context *c=
+tx)
+> >
+> >       INIT_LIST_HEAD_RCU(&root->root_list);
+> >       atomic_set(&root->nr_cgrps, 1);
+> > +     for (int i =3D 0; i < CGROUP_SUBSYS_COUNT; ++i)
+> > +             atomic_set(&root->nr_css[i], 0);
+>
+> Strictly not needed, non-dfl roots are kzalloc'd and dfl root is global
+> variable (zeroed).
+>
+> HTH,
+> Michal
+
+Thanks, removed. I'll resend this with these changes as a PATCH with my SoB=
 .
+
+Best,
+T.J.
 
