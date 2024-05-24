@@ -1,200 +1,232 @@
-Return-Path: <linux-kernel+bounces-188216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7996F8CDF47
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:47:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2F48CDF4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBEB01F21F5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9511F230D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B4F1D52C;
-	Fri, 24 May 2024 01:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1493F2231F;
+	Fri, 24 May 2024 01:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClGWt75N"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X25gAqII"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977AA63B8;
-	Fri, 24 May 2024 01:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28C163B8;
+	Fri, 24 May 2024 01:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716515221; cv=none; b=P3YMqGP47wrEUTqaa0gSGlAhWuD6O/2HXTC11tBZEqtPBntikQZK3UdG2qKM6gItCHhbC4IVuPuPuRSpUiK/7dbVqpD8LFgQGlJdSkrNqruBqdp/0On7xpGQdY9GpsAntJ9JGSqlXmSErHbgEwxJjPoccaZbsV24bJkM1yfAAOs=
+	t=1716515362; cv=none; b=MWGuHL1Bne6mIFKUSSXTg+rwwOhbxO/93KdV+IL5/fKQ9HsYl8gIEL7HyojxRfb7X8i9a1cLjxY0jnFMMCkmCm9Lsnja3tNSHELvC7bfeiffkR9nAzKojTU5Krkiy1U0i2weHvUUCbydWq8XaEFrSqGOovqYMxjQN6O77z1riig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716515221; c=relaxed/simple;
-	bh=iAibcjhB3i077su1Tv38KybDJGy0gFiwnwF9ePlbHgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oee9AWGuHyuiDGgrwUrP6PIiapucJBidT5Nhcw03hAyDznQRLJvsN7CTXq6zg9E9x7JUa8XEiUqc0HBmAyHqcNbejcwDAtVYLgXNuqCWRlnj6ziMVkOeCv1Biyhv5gMwDTGZqFSTaynO50hluwcVb/tpsIt8USl03AuGCD3vgcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClGWt75N; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1716515362; c=relaxed/simple;
+	bh=fOK2TCE5oDIMbTwzI9DfT0ukFf7sfhp16ruyzkZnJtE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cylVhUSDAUJRRtOFtCn5K3NU1n6csuBbLbZLMdA1F05ysr9i6kM9AqeDeZohUM5Lhsfliun7rVmAyq+hE0QUUKQL2cV1IwK1On0Txr20SrSDIkGaiXMGH0t+42L+jyLzfhhKeVh8pNvIuheiJCH7eCJ5215GeS7GcxRhiNw8bzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X25gAqII; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-354b722fe81so2599361f8f.3;
-        Thu, 23 May 2024 18:46:59 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3737b26657fso2162105ab.0;
+        Thu, 23 May 2024 18:49:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716515218; x=1717120018; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1716515360; x=1717120160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t6jwG8DKwa2D68PCR9THchOvJn/p8bGOM0gVPOEmuF4=;
-        b=ClGWt75NtcpXiFnCYDRx41+l8bNjO+YEwvQe3J/yp0g8im/wkH78ffw4NIg1B8M7RH
-         36eoJTXnOXe1zrFAdhvP4Ypfxi8YyZg426jRlXuAmdLz5h9LIOAGC1yFIdJhPVKkAgsD
-         okQFIWwkwzC12v/nelAvHtr9HlBTvFIdbsjcwlE5jzDWy4paFoDhTgPpf8FjNH4XbyWr
-         QATi9Ekq4ASkn75dWtu9Q8dImufhso8pAqQv0XjQUEYIOzQEgrSXJ6hohSS4YrVwHnLw
-         Zfu4tYKUgv0IN8rPW5v9i26KK0j/tmUf0M3L7BuPRf6mMOzSCYOF4X7JtdgivQUGfL1r
-         pl1g==
+        bh=QaHuh4+m6vv2JYkBPChLg2kvgbF787xvUsagVVKzGy4=;
+        b=X25gAqIIN1YjBYrwcAcD824tq3Tf2sO6EVWmrKsuimaKJR7WH/7pB0U2/cqp0xRKx2
+         29KEjdCiCx0JiY3qsD1me1sHOQhT5j2b1BoU4ck+rIL7RbxmT4m41DDiQcRaUwx3/PcZ
+         k5v2qUBs2GVDk3x/kU4Sbx3GrXxy3Y0vspHiVhx4TzT/gzTJOYFtR9nBL/kTOghT5hC5
+         /0P5SCp6prHrtQRjMdfO0/FqA3g6SWnpwAzJMoiDMDM0SaFPKRvrTLXH+o7E6+Dm49El
+         ERyn6w1ze541VBKwZvAiqABBhgyBdeskkR+sTOQOX05q0QEqr3ek6TIKkxHxzwwIgOR+
+         Yb0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716515218; x=1717120018;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=t6jwG8DKwa2D68PCR9THchOvJn/p8bGOM0gVPOEmuF4=;
-        b=hRxedeQlIsiSUtnDbMNBtnR8EQjlQIUxqt5p8IP6RJkEpUfPSpr6Fm5wM8/04NUPLS
-         gG2xdjwaEopp1keJuWs07OsZbT4SXAcsYIx4oV8ouyRkf4SdTfzGuT8fDNz6kFkC71wP
-         v4MTS6R37aTFd/dPvoG9hlC6AmuEFEQu8SgPGMIhvO9uOzfu48CZLo7IU6GKOUiBvnrZ
-         Mzd5hRt+407uceIk9YnTd/nTRsmERlVyjkpKiSr+P8S2qMgKUb4NTNf6JrtoB/OCmdgG
-         nUIbOxxL77f+4iGaSMfa8jih5+0qvJ6XjCZgsr1jC6HhXG/8nPFwBxaCvJo4EKRUh8oJ
-         ppJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV24VTHMhGxrMtZH314aKZ/0xSTFOcW82m5k3zWJL4i90vrZk6tLvKp3jzOqpJMEeUqXm5JKjAzurwuVT+za/un1jMn707lkWqZGNxAMBuuj4Gm8D9m756XchtYPUDAS2y8zdy8+5DGfw==
-X-Gm-Message-State: AOJu0YxdDaouHeEjZniNp3Mi0XWFyV3XL/oh9EmYsMLfmXGK1PgzEQYH
-	ESwGBCl4PNS7mjAYuibQFbnlW+eUh0RCU46QAxJmjzgLBr23tfTwHRE+hg==
-X-Google-Smtp-Source: AGHT+IHDazZVS98g6jCPWCi6GMzJXJccQeP8EnJhTsM0NPuM+NoCFvUGXOm/kOMvOGJZBv5HNLIsdg==
-X-Received: by 2002:adf:ffce:0:b0:354:f802:f3a6 with SMTP id ffacd0b85a97d-355245e31b5mr430730f8f.9.1716515217640;
-        Thu, 23 May 2024 18:46:57 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc51ee7sm41771366b.139.2024.05.23.18.46.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2024 18:46:56 -0700 (PDT)
-Date: Fri, 24 May 2024 01:46:56 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>, mpe@ellerman.id.au,
-	npiggin@gmail.com, christophe.leroy@csgroup.eu,
-	aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, arnd@arndb.de,
-	anshuman.khandual@arm.com, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [Patch v2] mm/memblock: discard .text/.data if
- CONFIG_ARCH_KEEP_MEMBLOCK not set
-Message-ID: <20240524014656.odw4yuvhgbu4dgf7@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240510020422.8038-1-richard.weiyang@gmail.com>
- <ZkxLkK7vgzzaEvyw@kernel.org>
+        d=1e100.net; s=20230601; t=1716515360; x=1717120160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QaHuh4+m6vv2JYkBPChLg2kvgbF787xvUsagVVKzGy4=;
+        b=ucg4UgtEl41KEftqejY6VLcBInETagLyAr+09Jb55zUJt/Yud5ecEXikrsyVb6xVkL
+         lXNbFgE8wgqRc/eOpTePnwJVLoUbJJl5l5VK/D7V66/u+LG8byBSqBgqgnGM+Ui+5YnJ
+         9WMttVsezVVEnxoNVK3RJYQ8Jp/GFWMN3xW8Vx8U1d+n6anfrL4EMyMigMvQvmeukEUp
+         Ov5UO6glQrREJQMZPJdR/aUj69KrN8g4/iaaMwCbM/0a79URfa5wZKSDPeoINnmd+r6C
+         RSrLPXjfjJzQf+upKWlTicLFPCCFjsF9EoMLvBBkI8/GO30B9v5KorM8zrceQXk1SDVw
+         Ne3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXs0O0XIyUFyaSk7JqLVwNoKaFNX2cVF0nnDpWoYerfktF9F65OUgCGQE78c9909zPYRkuhLkBIwjRymPv6oKJabvC09fm5aBJN8cOzsTaVpLjE/eK8B11lmKqFRWRsOz2Wah/86cdX1w041p+HeTiXKwZOujKXzPgSTlrmNCHCydwcMQ==
+X-Gm-Message-State: AOJu0YzBXblQIds50KpvuglWCFSyPkycu9oOgSDSlsAZGvtJcR8MrjaT
+	7mCFt9bfGRjFzQAdQ61scDuC8KR7N8PeYpL8G5OkNPWJSTQpwsyE8fS6aNd8Lyv6b+HwjGDFR/y
+	hoeCyzA2gBhi4LGZdenBG+UH2Vjo=
+X-Google-Smtp-Source: AGHT+IEK9vmj8neF4F55N645JBC1EaRdY3npShutVz5Cv3dOxwoge7Qm5GttoeiQi1A3WlSKb4Zn6OT23sNlHff/HF4=
+X-Received: by 2002:a92:c249:0:b0:371:b5a7:e44c with SMTP id
+ e9e14a558f8ab-3737b35f477mr10159775ab.25.1716515359840; Thu, 23 May 2024
+ 18:49:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkxLkK7vgzzaEvyw@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1716458390-20120-1-git-send-email-shengjiu.wang@nxp.com>
+ <1716458390-20120-3-git-send-email-shengjiu.wang@nxp.com> <Zk+oxAh9+c0RIQ/t@lizhi-Precision-Tower-5810>
+In-Reply-To: <Zk+oxAh9+c0RIQ/t@lizhi-Precision-Tower-5810>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 24 May 2024 09:49:08 +0800
+Message-ID: <CAA+D8ANOQ8Pgt8QZWduZoVKCcb8Mdc=Xzotu4zAqakTjHO8pBQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] clk: imx: clk-audiomix: Add reset controller
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 21, 2024 at 10:21:52AM +0300, Mike Rapoport wrote:
->Hi,
+On Fri, May 24, 2024 at 4:36=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
 >
->On Fri, May 10, 2024 at 02:04:22AM +0000, Wei Yang wrote:
->> When CONFIG_ARCH_KEEP_MEMBLOCK not set, we expect to discard related
->> code and data. But it doesn't until CONFIG_MEMORY_HOTPLUG not set
->> neither.
->> 
->> This patch puts memblock's .text/.data into its own section, so that it
->> only depends on CONFIG_ARCH_KEEP_MEMBLOCK to discard related code and
->> data.
->> 
->> After this, from the log message in mem_init_print_info(), init size
->> increase from 2420K to 2432K on arch x86.
->> 
->> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
->> 
->> ---
->> v2: fix orphan section for powerpc
->> ---
->>  arch/powerpc/kernel/vmlinux.lds.S |  1 +
->>  include/asm-generic/vmlinux.lds.h | 14 +++++++++++++-
->>  include/linux/memblock.h          |  8 ++++----
->>  3 files changed, 18 insertions(+), 5 deletions(-)
->>  
->> +#define __init_memblock        __section(".mbinit.text") __cold notrace \
->> +						  __latent_entropy
->> +#define __initdata_memblock    __section(".mbinit.data")
->> +
+> On Thu, May 23, 2024 at 05:59:47PM +0800, Shengjiu Wang wrote:
+> > Audiomix block control can be a reset controller for
+> > Enhanced Audio Return Channel (EARC), which is one of
+> > modules in this audiomix subsystem.
+> >
+> > The reset controller is supported by the auxiliary device
+> > framework.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  drivers/clk/imx/Kconfig               |  1 +
+> >  drivers/clk/imx/clk-imx8mp-audiomix.c | 60 +++++++++++++++++++++++++++
+> >  2 files changed, 61 insertions(+)
+> >
+> > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> > index 6da0fba68225..9edfb030bea9 100644
+> > --- a/drivers/clk/imx/Kconfig
+> > +++ b/drivers/clk/imx/Kconfig
+> > @@ -81,6 +81,7 @@ config CLK_IMX8MP
+> >       tristate "IMX8MP CCM Clock Driver"
+> >       depends on ARCH_MXC || COMPILE_TEST
+> >       select MXC_CLK
+> > +     select AUXILIARY_BUS
+> >       help
+> >           Build the driver for i.MX8MP CCM Clock Driver
+> >
+> > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/cl=
+k-imx8mp-audiomix.c
+> > index b381d6f784c8..2ee68f518850 100644
+> > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > @@ -5,6 +5,7 @@
+> >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
+> >   */
+> >
+> > +#include <linux/auxiliary_bus.h>
+> >  #include <linux/clk-provider.h>
+> >  #include <linux/device.h>
+> >  #include <linux/io.h>
+> > @@ -13,6 +14,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_runtime.h>
+> > +#include <linux/slab.h>
+> >
+> >  #include <dt-bindings/clock/imx8mp-clock.h>
+> >
+> > @@ -217,6 +219,60 @@ struct clk_imx8mp_audiomix_priv {
+> >       struct clk_hw_onecell_data clk_data;
+> >  };
+> >
+> > +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+> > +
+> > +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
+> > +{
+> > +     struct auxiliary_device *adev =3D _adev;
+> > +
+> > +     auxiliary_device_delete(adev);
+> > +     auxiliary_device_uninit(adev);
+> > +}
+> > +
+> > +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+> > +{
+> > +     struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> > +
+> > +     kfree(adev);
+> > +}
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct device=
+ *dev,
+> > +                                                      struct clk_imx8m=
+p_audiomix_priv *priv)
+> > +{
+> > +     struct auxiliary_device __free(kfree) * adev =3D NULL;
 >
->The new .mbinit.* sections should be added to scripts/mod/modpost.c
->alongside .meminit.* sections and then I expect modpost to report a bunch
->of section mismatches because many memblock functions are called on memory
->hotplug even on architectures that don't select ARCH_KEEP_MEMBLOCK.
+> nit:  *adev =3D NULL;
+
+Actually,  the checkpatch.pl told me need to have space after '*'...
+
+Best regards
+Shengjiu Wang
+
 >
-
-I tried to add some code in modpost.c, "make all" looks good.
-
-May I ask how can I trigger the "mismatch" warning?
-
-BTW, if ARCH_KEEP_MEMBLOCK unset, we would discard memblock meta-data. If
-hotplug would call memblock function, it would be dangerous?
-
-The additional code I used is like below.
-
----
- scripts/mod/modpost.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 937294ff164f..c837e2882904 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -777,14 +777,14 @@ static void check_section(const char *modname, struct elf_info *elf,
- 
- #define ALL_INIT_DATA_SECTIONS \
- 	".init.setup", ".init.rodata", ".meminit.rodata", \
--	".init.data", ".meminit.data"
-+	".init.data", ".meminit.data", "mbinit.data"
- 
- #define ALL_PCI_INIT_SECTIONS	\
- 	".pci_fixup_early", ".pci_fixup_header", ".pci_fixup_final", \
- 	".pci_fixup_enable", ".pci_fixup_resume", \
- 	".pci_fixup_resume_early", ".pci_fixup_suspend"
- 
--#define ALL_XXXINIT_SECTIONS ".meminit.*"
-+#define ALL_XXXINIT_SECTIONS ".meminit.*", "mbinit.*"
- 
- #define ALL_INIT_SECTIONS INIT_SECTIONS, ALL_XXXINIT_SECTIONS
- #define ALL_EXIT_SECTIONS ".exit.*"
-@@ -799,7 +799,7 @@ static void check_section(const char *modname, struct elf_info *elf,
- 
- #define INIT_SECTIONS      ".init.*"
- 
--#define ALL_TEXT_SECTIONS  ".init.text", ".meminit.text", ".exit.text", \
-+#define ALL_TEXT_SECTIONS  ".init.text", ".meminit.text", ".mbinit.text", ".exit.text", \
- 		TEXT_SECTIONS, OTHER_TEXT_SECTIONS
- 
- enum mismatch {
--- 
-2.34.1
-
-
->>  #ifndef CONFIG_ARCH_KEEP_MEMBLOCK
->> -#define __init_memblock __meminit
->> -#define __initdata_memblock __meminitdata
->>  void memblock_discard(void);
->>  #else
->> -#define __init_memblock
->> -#define __initdata_memblock
->>  static inline void memblock_discard(void) {}
->>  #endif
->>  
->> -- 
->> 2.34.1
->> 
->> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 >
->-- 
->Sincerely yours,
->Mike.
-
--- 
-Wei Yang
-Help you, Help me
+> > +     int ret;
+> > +
+> > +     adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> > +     if (!adev)
+> > +             return -ENOMEM;
+> > +
+> > +     adev->name =3D "reset";
+> > +     adev->dev.parent =3D dev;
+> > +     adev->dev.release =3D clk_imx8mp_audiomix_reset_adev_release;
+> > +
+> > +     ret =3D auxiliary_device_init(adev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D auxiliary_device_add(adev);
+> > +     if (ret) {
+> > +             auxiliary_device_uninit(adev);
+> > +             return ret;
+> > +     }
+> > +
+> > +     return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_un=
+register_adev,
+> > +                                     no_free_ptr(adev));
+> > +}
+> > +
+> > +#else /* !CONFIG_RESET_CONTROLLER */
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_im=
+x8mp_audiomix_priv *priv)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +#endif /* !CONFIG_RESET_CONTROLLER */
+> > +
+> >  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool =
+save)
+> >  {
+> >       struct clk_imx8mp_audiomix_priv *priv =3D dev_get_drvdata(dev);
+> > @@ -337,6 +393,10 @@ static int clk_imx8mp_audiomix_probe(struct platfo=
+rm_device *pdev)
+> >       if (ret)
+> >               goto err_clk_register;
+> >
+> > +     ret =3D clk_imx8mp_audiomix_reset_controller_register(dev, priv);
+> > +     if (ret)
+> > +             goto err_clk_register;
+> > +
+> >       pm_runtime_put_sync(dev);
+> >       return 0;
+> >
+> > --
+> > 2.34.1
+> >
 
