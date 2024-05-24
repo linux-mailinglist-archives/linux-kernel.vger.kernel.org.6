@@ -1,176 +1,120 @@
-Return-Path: <linux-kernel+bounces-189058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A628CEA6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:39:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B528CEA70
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BFA528497B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:39:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25ABC1C20F50
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28416F069;
-	Fri, 24 May 2024 19:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBD0405D8;
+	Fri, 24 May 2024 19:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpNqhp7m"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kDmL8cjM"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518295BACF;
-	Fri, 24 May 2024 19:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D851BF3F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716579584; cv=none; b=NSOIbWvR6+nlI3dFNuq/5WIYXkuvha0OM977FCu1de5iDaYemIv54iW97l0DXtnDaCz2AmhbUJOsr4PVcB8JBaQm1fVhK7diZ8aDAhjmazxla+oWNmi1vGqGeGFSjQxW4wCYgwoQUmixIJgjScktEFLwe2I9f/o6CNrz58Lfrbo=
+	t=1716579977; cv=none; b=rN/RkbVITjzGVaDVajEG/MFuHdto1mPzEVtfi1929lst9tsO3ckuuNcc1iuiXL6t0QmSC0guZy89VUCOrC0ymgUV7W7rbEzofn/gaReDq2Z44sob7N9V2rFKcdvbetfmfNMw/9tECXK84rNWVXpLyyBWmhaYBJn5sQrUazRS+5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716579584; c=relaxed/simple;
-	bh=AO6flEiY5GN86OBnbWq/A3cQxhOqbBj/HG/J6IbbzR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=edXwNp2Y2tiQjlN+JncbXnfGuSfby9R5EdAtJ2Zzkfb3zbtSdIhty2sCRmLYZlv/g6K1m9qGMQRrOTFmYY5jZRE3ik8Jpkwbx3RPCBGI32heE0bRTPreZleuEwVWrkMkJb6Z7ir79ghEePtKvtQHuJoAPrxHfwDjel1iyw85URA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpNqhp7m; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1716579977; c=relaxed/simple;
+	bh=v57WsHIXuyTLImPDj4QD2uCiQ9W6+aOrQYAEun7dCrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MG+xomM7acJLORQolgwaQyiEyTu0wB9lasiRJPSzXtTz7tfCEwuUA8zyt8hBC9Ra2b397cgrYquA8tkZo/NqZLnlo52jj2rUTr6LUrWj1t4T4wC6FUOTZdF6Qp5KBp6Mzupg8ZXQKJG1naXQBF2mmqAX/X7BvX/ZLdbkDxKM4Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kDmL8cjM; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e719bab882so79656891fa.3;
-        Fri, 24 May 2024 12:39:43 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f8e838cfbfso23315b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716579581; x=1717184381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vvA1TEXJy8UZ30B8rAec5iNH0YYUOMkxldrbK8cu0os=;
-        b=fpNqhp7mEyZmRsonidx1iLVfgQMsxODqXHqFQjtcwik/bVS71vfMR6ppE/l89inEPu
-         SRX7D0j7QtYGPIn5aLjlthMNKz+AKLjt0bwuibRD6btcgml0ddsaQoKK4fKhTwRBU1Oc
-         c28aOzgg0VBS6zhMBWX40hAj6AQrsNCzKcu2PZjCuRJ8l2R8Qo8zTqHYX4QiilDF1C/V
-         U/Q9qmQCYjREc11Vc+fIbh7P6FzSM01OdVL6G+BsiUr2h+S/lGD71KrE5Sv4vIIAo0gx
-         q2y9mxwQohBdoLWrO13NyA7UeVq+Afdn2fsfE4cMA/aFiT4hz6DYmcF6dVgFG/uBStP6
-         PN1Q==
+        d=gmail.com; s=20230601; t=1716579975; x=1717184775; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zfFKfQRl66NaHOBeukuApZN3TjnqGpMUm67PVQU9uwY=;
+        b=kDmL8cjMYij08fya6tMdhuzA7TlrHcATM1QyByM/tXSprGVLrw+7R9AZj61403f69M
+         nq4MkBRin4u7LlGB8ckCT0mKn0oOGbYuM1T+sp21skgLGTHuiCT5QSE0SOQmCNfkcekz
+         cQIFJz29bfIYrO6Cv84bTgmPBdzuEIU9djqobIFx3b0X4Pz9WHD9dbjL7zrKWTB0ZE26
+         a+VQwqSYw7bpenVVC6u6L9zTJyFIaVq8FrQHphu6qL+UTyQ5Qi6VpyPtP36HWpUR2wfT
+         45I8YbPSDp7uTnKjP3A91CDwdo2Ps++ghVeCTL1YK77g2+ReStAS8DqDYoViHPRG1jLG
+         WKsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716579581; x=1717184381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vvA1TEXJy8UZ30B8rAec5iNH0YYUOMkxldrbK8cu0os=;
-        b=Fae0I5QoxJoANM9sPV8YVhZUoDgTdziSR2QdvEWorII8T7MMgNrY3dNCTOdnzf7/OD
-         1knUTRM3ty8S7P0HsRC6My9aregaTJOgbHMKsjPs3wa3dmUoorwrtx0hv0BHG0tVeVWq
-         A52QLJvlKPyJ2FCT1RCrIG19Eblxb7BmvggUTofUa+hTAdmg619f0h2xS0triu9L7EyF
-         qzJ9Xk6MCBcR0RU3bW6uM+jvXx6K52owbpzutC3IL63jraGOxwOVsSbujd3o+4aBgATJ
-         BNxzPxgjsmLZ88rDGOf87f88ZjX1Udw6+NtSZkVCvsYB34CWxSZJDRJ+JNN0RrCrWVee
-         lU5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTeRBbECuQWhmUpCoKyAx0pj2rPch445fKkoqXy73PL6j0FnlTloM2Y5n+oCIn36kcq88FkPw/nJ4xjgwQk9T/Ef6u8xgh4PpWfZDOWOJ3XgJkH1VzSatgSTc7FityEaUO3UeEr0gvcUT0EaSI0V1I6SHyUqMzpM5AR1KT9FUuTREb8Olv0QmXhvmFb45l
-X-Gm-Message-State: AOJu0YxiD5V+6eo1e38VrQ6Y7FnwqvwKiDeGdMlDwUrvKHMyXiJOtau/
-	GKc3HjdcXoO1sjLypMvdqQwWQF/+HqZqlniYSHCONzMQq0iKwMsSK/6JMsRdtpE474RMyBu2EhR
-	yCmuhWMvFh1F3eaiHOpWzO+0Q9kqwvQ==
-X-Google-Smtp-Source: AGHT+IH/Fts2MZ9JzhPQTFc1u/R6qIz3bkV8n8VX15J9OkSYxcuMJAlWmONNhgDMZkSm5Y85aUEXz0rqzNRZEaB/Riw=
-X-Received: by 2002:a2e:b74c:0:b0:2de:8685:d07b with SMTP id
- 38308e7fff4ca-2e95b2cf26bmr17130481fa.46.1716579581149; Fri, 24 May 2024
- 12:39:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716579975; x=1717184775;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zfFKfQRl66NaHOBeukuApZN3TjnqGpMUm67PVQU9uwY=;
+        b=UM4igYaek3xa7e/D0T52J922ndRsgEX+WGzqeVZ/itKeCxXvLEIKBZo4UjcUbAlNwc
+         xMnSyGZSMHjvwx5dOGBnW9ktfueSVHdEdtEZKD6q/iKjM3eUXWWiCXQpKz84hhkFydBe
+         AWyjR/7FP4iQI8k814tnOr4vV8c9g+KNIwwkGHKmcdblOOrKbUJzrv5xCUt1zwyr0T5u
+         305P2OhNemO/io1VSUtHzbnrANQJzTEa12SJNd+auvaKLM1g82rXCnPK2wlZpa+8v+Uc
+         4fgZOAZmW+uKBCGYdhyCM+NbDTw3yT0LfLaypXhrwMJ5/M3N7C0+LfwcyuBRNFfJevWr
+         MKlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbY1rnxyxXkxTIReVljxi1wTwiEW0h/2aAW8rqUmpdnjLTmUbr0amftZKxrA0r5OxlbCkx6z3dye/Fi/wKOK8Naaxp6sJhL9x9mrTC
+X-Gm-Message-State: AOJu0YwWmZAKWawuIuyZLn0cZV3zuOLfry3+zgVSVrZOatkFU4hcJCBj
+	tsAtLeMvbWdXmRxen/n6IxEGaYG/GQZKCYJYqg0xHE6N95WfxljrbZnpew==
+X-Google-Smtp-Source: AGHT+IGkLeO6KWtdoA7p36j/aj2kkZ1oedQz4pFmlvueja7yNSq8jTCvi8T2YMPnywkzlODkzOHwLQ==
+X-Received: by 2002:a05:6a00:11d3:b0:6f4:c946:5584 with SMTP id d2e1a72fcca58-6f8f3a231afmr3361088b3a.2.1716579975152;
+        Fri, 24 May 2024 12:46:15 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fc15b169sm1455694b3a.75.2024.05.24.12.46.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 12:46:14 -0700 (PDT)
+Date: Sat, 25 May 2024 03:46:12 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools/lib/slab: Fix potential NULL pointer dereference
+ in kmalloc()
+Message-ID: <ZlDuhAPHNw5ZCfjH@visitorckw-System-Product-Name>
+References: <20240524191459.949731-1-visitorckw@gmail.com>
+ <20240524122350.a22ca8dfe07a21f3eb862159@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 24 May 2024 15:39:28 -0400
-Message-ID: <CABBYNZLeM7MQrBuGE49KN9Xm1EQ-cFK3nR57sg2hWB0jOUFn7A@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of btintel_pcie_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Tedd Ho-Jeong An <tedd.an@intel.com>, Kiran K <kiran.k@intel.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, linux-bluetooth@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524122350.a22ca8dfe07a21f3eb862159@linux-foundation.org>
 
-Hi Christophe,
+On Fri, May 24, 2024 at 12:23:50PM -0700, Andrew Morton wrote:
+> On Sat, 25 May 2024 03:14:59 +0800 Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+> 
+> > In kmalloc(), add a check to ensure that the pointer 'ret' is not NULL
+> > before attempting to memset it when the __GFP_ZERO flag is set. This
+> > prevents a potential NULL pointer dereference.
+> > 
+> > ...
+> >
+> > --- a/tools/lib/slab.c
+> > +++ b/tools/lib/slab.c
+> > @@ -22,7 +22,7 @@ void *kmalloc(size_t size, gfp_t gfp)
+> >  	uatomic_inc(&kmalloc_nr_allocated);
+> >  	if (kmalloc_verbose)
+> >  		printf("Allocating %p from malloc\n", ret);
+> > -	if (gfp & __GFP_ZERO)
+> > +	if (gfp & __GFP_ZERO && ret)
+> >  		memset(ret, 0, size);
+> >  	return ret;
+> >  }
+> 
+> I suspect we have a lot of unchecked mallocs in our userspace code.  If
+> there's an argument for fixing them all(?) then it would be best to do
+> this in a wholesale fashion rather than patch-at-a-time piecemeal.
+>
+It seems likely that I'm not the first to notice the unchecked mallocs
+in our userspace code if they're indeed widespread. Are there specific
+reasons or guidelines indicating when malloc checks are necessary, and
+when they can be omitted?
 
-On Mon, May 20, 2024 at 3:42=E2=80=AFAM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> Some resources freed in the remove function are not handled by the error
-> handling path of the probe.
->
-> Add the needed function calls.
->
-> Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe trans=
-port")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> Maybe incomplete.
-> ---
->  drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel=
-_pcie.c
-> index 5b6805d87fcf..d572576d0dbc 100644
-> --- a/drivers/bluetooth/btintel_pcie.c
-> +++ b/drivers/bluetooth/btintel_pcie.c
-> @@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pde=
-v,
->
->         err =3D btintel_pcie_config_pcie(pdev, data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_destroy_worqueue;
->
->         pci_set_drvdata(pdev, data);
->
->         err =3D btintel_pcie_alloc(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_irq_vectors;
->
->         err =3D btintel_pcie_enable_bt(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_pcie;
->
->         /* CNV information (CNVi and CNVr) is in CSR */
->         data->cnvi =3D btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_RE=
-V_REG);
-> @@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pde=
-v,
->
->         err =3D btintel_pcie_start_rx(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_pcie;
->
->         err =3D btintel_pcie_setup_hdev(data);
->         if (err)
-> -               goto exit_error;
-> +               goto exit_free_pcie;
->
->         bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
->                    data->cnvr);
->         return 0;
->
-> -exit_error:
-> +exit_free_pcie:
-> +       btintel_pcie_free(data);
-> +
-> +exit_free_irq_vectors:
-> +       pci_free_irq_vectors(pdev);
-> +
-> +exit_destroy_worqueue:
-> +       destroy_workqueue(data->workqueue);
-> +
+Regards,
+Kuan-Wei
 
-This looks a bit messy, perhaps we should really be calling
-btintel_pcie_remove instead and adapt it to check if a field has been
-initialized or not then proceed to free/cleanup/etc.
-
->         /* reset device before exit */
->         btintel_pcie_reset_bt(data);
->
-> --
-> 2.45.1
->
-
-
---=20
-Luiz Augusto von Dentz
 
