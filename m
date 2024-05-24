@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-188826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65B38CE788
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB69F8CE789
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B02C28297B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C394281DA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DFB12D750;
-	Fri, 24 May 2024 15:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B4312D1EB;
+	Fri, 24 May 2024 15:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IEqdJmya"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCbC7Ozl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDCE12D1E9
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8693D12CDB0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716563180; cv=none; b=Gv8+D/UoA5bQfkcoVuwxniXeryzJK2AMSHLFpCc6d0OnkglCfSF6W9s4rcdZv5CyLgw78Q9Y+yofT7mPxkb4bw9XUIRbGxg1y/s7fkCFGgtU0UYGBzYqsxmQolcveLVMMb/R1nrIV9I+l7bbRXZTJaKcwJxOXuQakokcXbPH+Js=
+	t=1716563204; cv=none; b=YlFD4z+cPa3RUw9ZQ/m1lnHaVFIi88y6q2nPKUkxv0S6F56iPOsbiqr9R1Rgzd1eFFXH3rlRNZ9Geu0Wbq+OjdYu3YTf46+SEfGcAP4cgtlKbw+PDVUGpbhCDlPGuGgmH+Jwp1YcdgtMwbPirmAyE/H0/6aI3J+rlo010MU1lUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716563180; c=relaxed/simple;
-	bh=7jEQdSU7Rg63/C2v0Z0arE+Uxrcq0NTUUdiTgoLsLdc=;
+	s=arc-20240116; t=1716563204; c=relaxed/simple;
+	bh=9U+I+3UvUYJ5TOhbk28BWESWOvCg3Hz3YAevF5AWKgY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kQp0w3o8z81TdwO0ND0q5c6za3MViDLnLWv/im7+lIU7Lt3oqm0yEAjNZO3c0jfKgZ51ipV+WE5Pmbqagcm/cqhYxWdtEzrGKPVmDg+VhP0m0Ro2SpQINdj8pasmNszcR1nRWByzde6LAzJpj6FfyJBeBzUeVyWcCObdVrhO3f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IEqdJmya; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=Ow5O8zw7aBLZn5Kfva0kr4Bx8nnEMrQxDNnhN44731ByrbyjGy+q1qfmVVjcbsJUGvKpM3j99wHkmVc5tIbDxNaqrnIVBY068Zeiu+9cPKXTTJdTLE+hGt/AJwb5sIKcSnRO7vwZefRvaTKgK3KubyThfygZlGRFRyMXVEZHz0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCbC7Ozl; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716563176;
+	s=mimecast20190719; t=1716563201;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=I1BCpL/PStPCH7MJBW+moVlonxUq2Qtd0gJwH5QgdVc=;
-	b=IEqdJmyaOSDj3zA2NM/5EO1lyBRpBG3Umxv+gYB+vn4w5GQWn6rxza81mttNUQcLI3OHQm
-	lRpToNaSLNuOjeZOinUMRhojwKv+BMHBfDSXUpz7bZz3QfGCOj6mf7HgFC2WJQd55bgO1P
-	4fEZ45Ld2sDBQOAdBXBcSL0wJFSweTI=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=jEzeUmdMITBKrrK64NgaWJvJ6PGeqKr9vTpwhksm3mY=;
+	b=hCbC7OzlcKgRRaSY/NB8JIIrQ/C5fsQ7o/o+IvMKYXH5TMcGBns/Rwjb48pChCSv0ZioPb
+	gzpS525TQrmEDHGyFk4wmHDosDXJX4f9ibBA/k09i9bMcG2hhw1DkwSgdA5ihiAfLvVFqV
+	biRI4jyDR6Rs9acboSC7unAZPVSQ2g0=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-mirOepdNNNG7AAbKhI9gnA-1; Fri, 24 May 2024 11:06:14 -0400
-X-MC-Unique: mirOepdNNNG7AAbKhI9gnA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-41fda32e6c0so1814575e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:06:14 -0700 (PDT)
+ us-mta-265-9fPz-Hs7P6eamDJNTX3Hdw-1; Fri, 24 May 2024 11:06:39 -0400
+X-MC-Unique: 9fPz-Hs7P6eamDJNTX3Hdw-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2e95a65681aso8158251fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:06:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716563173; x=1717167973;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=I1BCpL/PStPCH7MJBW+moVlonxUq2Qtd0gJwH5QgdVc=;
-        b=fR8IlNjXO8nAJhoDvqQhjE1P0dmgg/GgGCK88YKGPa8QFV8s8nCOAFiPX2DReU6xjT
-         RZL5YKAUjAl+4URxyR0SkGhrb7BY0Ks03YfIuiswp+jwRhmvoUrp2YfIhQ30f08gsqJV
-         iheUCD9RzIEAlBP/VCoeNWUMqFQTjA2hJB6ud65KkLvO9BFnFpTWFoO0oeVBXsj/Wl0U
-         pclqf+qSWP9YgOEmNxGu3+7Fhlt05GsckbRQ/wPTdL1y8wkW7pe3qSZYEtl9s2Kw7H+v
-         snniTkQfODK0WsGNIqnOwpmiFrZPfkXHFaQ7VraLqVE4k6Ds7mcfhfMfL/lmTMSQL3ZD
-         f+tg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSLc/yjlLDrVD4vtX1/pPmFEAa7+QrF/4Juyk7DRI9yk1lLzGLvkhFRSQEimQoRp3Mza3Jy6Eg7bcngX1HjhVEakLnf1BRs+dtZBxR
-X-Gm-Message-State: AOJu0YzXaxuxuwTW89KrOZYeVXghdSvV8ot+zbGec09iBw3fdPpwUEzk
-	lS4iRK+EQmFJZv4WvFC6raoQtSQxiDlaOUkigFVukKAjXYfdf6eA9kSAi3hUB/l/J8UF5ZOYHZt
-	iuNxyA8nvcXf2dxHt9nzvVz8dKVoyLSKZsA9pn7G5z8UtynI936lGNskn/BNl3Q==
-X-Received: by 2002:a05:600c:358b:b0:418:7ec1:7bdb with SMTP id 5b1f17b1804b1-421015ae128mr52793195e9.5.1716563173605;
-        Fri, 24 May 2024 08:06:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHiU9+kaG5yUruAptWc0nWWtPse7n1sPHrG9uGZZ4QrNbQYAhHC77nqCz1rYW+K7Lp9HD7z6w==
-X-Received: by 2002:a05:600c:358b:b0:418:7ec1:7bdb with SMTP id 5b1f17b1804b1-421015ae128mr52792805e9.5.1716563173120;
-        Fri, 24 May 2024 08:06:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716563198; x=1717167998;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jEzeUmdMITBKrrK64NgaWJvJ6PGeqKr9vTpwhksm3mY=;
+        b=hilA+Or2+peAd3uD8lTHMLSfC+riDXm75Km95Qph7As1tLNF96kfRlVOdWoWX911F0
+         izfDelVf8gM8Uoyndok4gyXhIa6ur3ovKs5faD2VUbZcX5nWcggB9IjyHCDCg4I+fZuJ
+         Ifsge6wJ1doWjJV4ogYlb8/nqfvWVS+wL7TXapKh8ROIdFwMbA6+OPZK5+YTTevOQwGM
+         Ti7rPs0v0v2RMxt0Y9hZWimZeayQCO8k4OEH6ezz6HF4UEclN//vpFU5eLWbHJmryM7p
+         iB9VmN4ck6EAutsQpvDiWrD8J1PVO9yA83a0FyM78R0nMuS98M4d3hXqrxMNDU48G64B
+         xyFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWskNSrOtXiHO/NRjm2xJ1vGYxTGieD6dTTbmQSgILdrx/n7gijbkzdLyX2iIkBSMlAQF2CG2Vv/SN6ixlEj96iI8RVP8SYEsV20CDt
+X-Gm-Message-State: AOJu0YwtYpflhzTaCzUesXcs80SncUJraaZnvIm8+kFLZSm9koAx36+J
+	UYn20TcM78ptSrLZbu3DdvOde0KiDk/SgugIJBweMeXY7guXneuNkuHOOioV/TW1fDNU69ThlQS
+	1jwof7G1tk/i1/HWyY8CDeFZmgpUC2PqW2U1RRUckBSF4lwmrdc4lMuEAMBNI7Q==
+X-Received: by 2002:a2e:9e9a:0:b0:2e1:5644:24e7 with SMTP id 38308e7fff4ca-2e95b1cbdd2mr14931381fa.13.1716563198106;
+        Fri, 24 May 2024 08:06:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgVAO8a8+GpE50ED3afdkRmdjzibIG4w46Bmqk+wo1oLzofJQBLswBxjKT8Kl9N8FxBnAmOA==
+X-Received: by 2002:a2e:9e9a:0:b0:2e1:5644:24e7 with SMTP id 38308e7fff4ca-2e95b1cbdd2mr14931141fa.13.1716563197635;
+        Fri, 24 May 2024 08:06:37 -0700 (PDT)
 Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089cc4e2sm22879045e9.39.2024.05.24.08.06.12
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35579d7dba2sm1797507f8f.17.2024.05.24.08.06.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 08:06:12 -0700 (PDT)
-Message-ID: <65447480-f46f-4256-a093-f8232fb6ed84@redhat.com>
-Date: Fri, 24 May 2024 17:06:11 +0200
+        Fri, 24 May 2024 08:06:37 -0700 (PDT)
+Message-ID: <93f3b2cb-7f79-4556-b3de-1aee015a2382@redhat.com>
+Date: Fri, 24 May 2024 17:06:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,15 +82,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/13] mm/memory-failure: save a page_folio() call
+Subject: Re: [PATCH 09/13] mm/memory-failure: remove obsolete comment in
+ unpoison_memory()
 To: Miaohe Lin <linmiaohe@huawei.com>, akpm@linux-foundation.org,
  tony.luck@intel.com, bp@alien8.de
 Cc: nao.horiguchi@gmail.com, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org
 References: <20240524091310.1430048-1-linmiaohe@huawei.com>
- <20240524091310.1430048-5-linmiaohe@huawei.com>
-From: David Hildenbrand <david@redhat.com>
+ <20240524091310.1430048-10-linmiaohe@huawei.com>
 Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -136,32 +137,35 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240524091310.1430048-5-linmiaohe@huawei.com>
+In-Reply-To: <20240524091310.1430048-10-linmiaohe@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 24.05.24 11:13, Miaohe Lin wrote:
-> Use local variable folio directly to save a page_folio() call.
-> No functional change intended.
+> Since commit 130d4df57390 ("mm/sl[au]b: rearrange struct slab fields to
+> allow larger rcu_head"), folio->_mapcount is not overloaded with SLAB.
+> Update corresponding comment.
 > 
 > Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
 > ---
->   mm/memory-failure.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>   mm/memory-failure.c | 4 ----
+>   1 file changed, 4 deletions(-)
 > 
 > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index b571aaf987a2..73878ecdec22 100644
+> index 19d338e83e43..e4252f297d41 100644
 > --- a/mm/memory-failure.c
 > +++ b/mm/memory-failure.c
-> @@ -1658,7 +1658,7 @@ static bool hwpoison_user_mappings(struct folio *folio, struct page *p,
->   	unmap_success = !page_mapped(p);
-
-We should be using folio_mapped() here.
-
->   	if (!unmap_success)
->   		pr_err("%#lx: failed to unmap page (folio mapcount=%d)\n",
-> -		       pfn, folio_mapcount(page_folio(p)));
-> +		       pfn, folio_mapcount(folio));
+> @@ -2610,10 +2610,6 @@ int unpoison_memory(unsigned long pfn)
+>   	    folio_test_reserved(folio) || folio_test_offline(folio))
+>   		goto unlock_mutex;
+>   
+> -	/*
+> -	 * Note that folio->_mapcount is overloaded in SLAB, so the simple test
+> -	 * in folio_mapped() has to be done after folio_test_slab() is checked.
+> -	 */
+>   	if (folio_mapped(folio)) {
+>   		unpoison_pr_info("Unpoison: Someone maps the hwpoison page %#lx\n",
+>   				 pfn, &unpoison_rs);
 
 Reviewed-by: David Hildenbrand <david@redhat.com>
 
