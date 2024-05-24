@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-188813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C148CE74B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:47:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4F98CE753
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19BEE1F21A9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:47:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71AF42827DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE6612C498;
-	Fri, 24 May 2024 14:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A82512C7F9;
+	Fri, 24 May 2024 14:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bW7ceZwj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3KCexhg7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B4D1802B;
-	Fri, 24 May 2024 14:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BD12BAF3;
+	Fri, 24 May 2024 14:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716562027; cv=none; b=ffS5xKHXxh4ahdajU8cbvnKhcR/gHAyrC/2yHJrK7rQcNcKdSpRHde/CltB0DZhkP9lSqCHsAOO3aMnudPNv338JqS8ueTc2m6cGMySo98DZR4uOK6iZefv3/ExbWBvKGgPo5iOqpj9WqR1yyF7pJax4eskcz23TnWeUePMZfaU=
+	t=1716562275; cv=none; b=o5esppe4lnM92lp57Yev3xmRk8YobTOMesYN1rYIoukmOyLIUWx3CAYZ0Sx9330hMD+C/r93kw6zFgJ6D/68c+Ja+begerOmY5kBsgQB6rjR00+jBvQGwi/UAXYqheMiIoXYU+gj0chzXz8ucKDbT6bP7m64MWdjp/uKXFWmbLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716562027; c=relaxed/simple;
-	bh=BJ5VrB+qJfZCoyNHI7babiy3dogLb5Qii6s5S49ROfk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mLTjONSjcHf4MmKG0fMPdGcXk2UJ+xgvO436hGCzIP95Tbn5TqRwbhGbb7ylFl34XnADyOvSXfxW5tKGTIe/VYjTR4DU42FBXtQXDjgNhaIZz4HW8x765fQnU4WRcOcjJQlqI/7afJtrQfHTCUAmG7vKSFEnFNYy/eyCHTsdQ8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bW7ceZwj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O97ddS007622;
-	Fri, 24 May 2024 14:46:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RQj5TYZnb1ah25s5Ay50rB8Vo5r8uZJ5JDJMSNUD8KM=; b=bW7ceZwjonyC/fWy
-	6DzWjZB9cv9AhlUB7kIYpSeze8Ksh+oDyM5xUrtD5T2P2bzXtvHI9IfZbX9Tflaz
-	bP5yDB5Zue0mtxTrkt9E3yeHS6ScA3ha9RYpyZ8M4Ac1P/Hqo+fQ/wYi2qOOoWaa
-	spRpP0pGOtxnv43mfGjF0IVa7eePHU7gThxYD6SZ5TLlU1M7I3Z8veZIT798IPho
-	+ZCS/az2s8eCVoRG5ywNVWQgf90nXkfZxESNjnIFFYEI0i4oKMg9NJvxfxgqrd6Q
-	qvLXSGQfHRpET0byoIoZYcWsRgewZuJushpq/WLH9zMf7EhU1V0/YeTRE0QWKjpF
-	3h1+Sg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa9ttrpv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 14:46:58 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44OEku8s000561
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 14:46:56 GMT
-Received: from [10.253.37.124] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
- 2024 07:46:55 -0700
-Message-ID: <ced59dca-70cd-4680-b7d5-e0983aa9be74@quicinc.com>
-Date: Fri, 24 May 2024 22:46:53 +0800
+	s=arc-20240116; t=1716562275; c=relaxed/simple;
+	bh=SPu4GI7WlkmJaXShM+lFsDtYUKL+8xfKGCieEDmX8bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+oP0sBy7uqz2BVYOkMOhsXapp6dq/7Rl+7ih/8lxV9K5819s+HYGgW1OM+5wzMXtFi4LYr7jfM8Rg/09I5jLjRglrDBYEEirLz+q0uu2R9lVif8diW6fxrECkJbCThI2XyDOpS5Sz1HHuol3NHUQCSuTcIWLy3DVuN+UL87/gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3KCexhg7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GV/QsjEvDtrhh/ZaXZqdvmVcpw7ReZRze9VGzicNnAo=; b=3KCexhg73Y03UA5lUAYDBBkSIo
+	TvXOKhmEyaz7DCfsb4AyRCFL5tGRInrmjgxHjCvr6TgT9JnO06oCPnAi67Z1dbri4Dl7kQnnY0wPz
+	xMpBpvyU/DG6ql12hp9znHX1F6QfUBjXz2RvfaQstu7sWYlgWDmbzrH7RiiVsVveCg84=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sAWFp-00FxZ4-Kb; Fri, 24 May 2024 16:50:45 +0200
+Date: Fri, 24 May 2024 16:50:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	parthiban.veerasooran@microchip.com
+Subject: Re: [PATCH net 0/1] phy: microchip_t1s: lan865x rev.b1 support
+Message-ID: <99f56020-9293-4e6b-8c2a-986af8c3dd79@lunn.ch>
+References: <20240524140706.359537-1-ramon.nordin.rodriguez@ferroamp.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kobject_uevent: Fix OOB access within zap_modalias_env()
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <rafael@kernel.org>, <akpm@linux-foundation.org>,
-        <dmitry.torokhov@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <1716524403-5415-1-git-send-email-quic_zijuhu@quicinc.com>
- <2024052418-casket-partition-c143@gregkh>
- <74465bf5-ca18-45f8-a881-e95561c59a02@quicinc.com>
- <2024052438-hesitate-chevron-dbd7@gregkh>
- <5acce173-0224-4a05-ae88-3eb1833fcb39@quicinc.com>
- <2024052458-unleash-atom-489b@gregkh>
- <0b916393-eb39-4467-9c99-ac1bc9746512@quicinc.com>
- <2024052405-award-recycling-6931@gregkh>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <2024052405-award-recycling-6931@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ikya5VPHETM-SYfas71xA-vDncOI2iBH
-X-Proofpoint-ORIG-GUID: ikya5VPHETM-SYfas71xA-vDncOI2iBH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_04,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 adultscore=0 suspectscore=0 phishscore=0 impostorscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405240102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524140706.359537-1-ramon.nordin.rodriguez@ferroamp.se>
 
-On 5/24/2024 7:47 PM, Greg KH wrote:
-> On Fri, May 24, 2024 at 05:08:06PM +0800, quic_zijuhu wrote:
->> On 5/24/2024 2:56 PM, Greg KH wrote:
->>> On Fri, May 24, 2024 at 01:34:49PM +0800, quic_zijuhu wrote:
->>>> On 5/24/2024 1:21 PM, Greg KH wrote:
->>>>> On Fri, May 24, 2024 at 01:15:01PM +0800, quic_zijuhu wrote:
->>>>>> On 5/24/2024 12:33 PM, Greg KH wrote:
->>>>>>> On Fri, May 24, 2024 at 12:20:03PM +0800, Zijun Hu wrote:
->>>>>>>> zap_modalias_env() wrongly calculates size of memory block
->>>>>>>> to move, so maybe cause OOB memory access issue, fixed by
->>>>>>>> correcting size to memmove.
->>>>>>>
->>>>>>> "maybe" or "does"?  That's a big difference :)
->>>>>>>
->>>>>> i found this issue by reading code instead of really meeting this issue.
->>>>>> this issue should be prone to happen if there are more than 1 other
->>>>>> environment vars.
->>>>>
->>>>> But does it?  Given that we have loads of memory checkers, and I haven't
->>>>> ever seen any report of any overrun, it would be nice to be sure.
->>>>>
->>>> yes. if @env includes env vairable MODALIAS and  more than one other env
->>>> vairables. then (env->buflen - len) must be greater that actual size of
->>>> "target block" shown previously, so the OOB issue must happen.
->>>
->>> Then why are none of the tools that we have for catching out-of-bound
->>> issues triggered here?  Are the tools broken or is this really just not
->>> ever happening?  It would be good to figure that out...
->>>
->> don't know why. perhaps, need to report our case to expert of tools.
+> Far as I can tell the phy-driver cannot access some of the regs necessary
+> for probing the hardware and performing the init/fixup without going
+> over the spi interface.
+> The MMDCTRL register (used with indirect access) can address
 > 
-> Try running them yourself and see!
-i find out the reason why the OOB issue is difficult to be observed.
-the reason is that MODALIAS is the last variable added by most of
-drivers by accident, and it skips the obvious wrong logic within
-zap_modalias_env().
+> * PMA - mms 3
+> * PCS - mms 2
+> * Vendor specific / PLCA - mms 4
+> 
+> This driver needs to access mms (memory map seleector)
+> * mac registers - mms 1,
+> * vendor specific / PLCA - mms 4
+> * vencor specific - mms 10
 
-you maybe run below command to confirm the reason.
-grep -l -r MODALIAS drivers/  | xargs grep add_uevent_var
+In general, a MAC should not be touching the PHY, and the PHY should
+not be touching the MAC. This rule is because you should not assume
+you have a specific MAC+PHY pair. However, this is one blob of
+silicon, so we can relax that a bit if needed.
+
+So it sounds like Microchip have mixed up the register address spaces
+:-(
+
+I guess this also means there is no discrete version of this PHY,
+because where would these registers be?
+
+Do any of the registers in the wrong address space need to be poked at
+runtime? By that i mean config_aneg(), read_status(). Or are they only
+needed around the time the PHY is probed?
+
+How critical is the ordering? Could we have the Microchip MAC driver
+probe. It instantiates the TC6 framework which registers the MDIO bus
+and probes the PHY. Can the MAC driver then complete the PHY setup
+using the registers in the wrong address space? Does it need to access
+any PHY registers in the correct address space? The MAC driver should
+be able to do this before phy_start()
+
+Does MMS 0 register 1 "PHY Identification Register" give enough
+information to know it is a B1 PHY? The standard suggests it is a
+straight copy of PHY registers 2 and 3. So the MAC driver does not
+need to touch PHY registers, we are not totally violating the
+layering...
+
+	Andrew
 
 
