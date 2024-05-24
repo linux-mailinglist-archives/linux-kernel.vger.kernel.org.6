@@ -1,106 +1,190 @@
-Return-Path: <linux-kernel+bounces-189036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E858CEA26
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:01:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7993D8CEA30
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CFF1F2148F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:01:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CCDF1F214C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A6942ABD;
-	Fri, 24 May 2024 19:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517FF43AA5;
+	Fri, 24 May 2024 19:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CELcBtIk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="cvl34NI5"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651612C6B6;
-	Fri, 24 May 2024 19:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216F74084E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716577311; cv=none; b=ttgKqmkDINwOzT+DmI7pviva2Y0Jh96vuDDknTH4yq+Uuq4ztQXcI9F0O85Ghn+H/b0Lx71ZCQJBf0ORRWDeAZjYE7XkD2gQmJuTJNLp7oXTcGp9V50JzMjatCC6WxS18lVvLT4/OycSPecA+oMIdP8jh2ToEc4ISmXwzzjGTZk=
+	t=1716577890; cv=none; b=QxJgXnUW23eR9TKezAvOK1/zFaIPjVr6RlTkVeKu1Y82ZaeyUlCM85NpxVF4b91nbAt4UuUAEYdJmvPFPgvk+wjSCpbelzwEWNwd1Bv2fMXJBrEw04rtgjVs8LS/dmEW8q5iebYYAgGpG5Zm1AmTKgIQkAg7dqZz3ox6Tkp+nhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716577311; c=relaxed/simple;
-	bh=8AHQ9p6PvVe4520jRRGX5kkQufDnzP7izZGOrirOQ0I=;
+	s=arc-20240116; t=1716577890; c=relaxed/simple;
+	bh=ekJ4PIWteF0STOLt8GEwvTZKcTBrMpP/XnMQSDaKdFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewSEnqBpgtN93fVdoWPdrVZs+0iIRDHssHlLcDMP/cKfYlPq1BoOnwZ/GVqjEXudEWjjmjKPyFjjMAw2KdEWVnwpmBxxAjuL9THvEoon6cm2442W1TAWbz0922/ZE5yp0MpRqqrA2Lt/l3BGZ4dhBjEnYRtR2n2RUNLEiMAVVXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CELcBtIk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E120C2BBFC;
-	Fri, 24 May 2024 19:01:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716577310;
-	bh=8AHQ9p6PvVe4520jRRGX5kkQufDnzP7izZGOrirOQ0I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CELcBtIkpB5jCodnFjjOjwruw3QCwbpf5Exmq6tZ2onRAlbnRDZ30PRAZ37lmgUtY
-	 5VbfwfQqh/wfjjdIcJfw9ZLkEL+OM5U0Oomww17SMMy09v8IwIbQbNs16pIiHmZSuR
-	 QLVKRKL8XJyk7WsaYTTHHOuWjNd85QLJYEZxbb6/e0cWSIQXdI1GoahikipROjZgeZ
-	 DraqkBAIgdkVi++1bJaTTjkXYewx/YYQ74+kAK9fJBkFEtjGvXFjMLmQ89qcEqGa8J
-	 EH0Hg8SOGAdb6vt8bT3gKayProiTLRmITRitNxr+DhRYwM4p2DbFH/yE1nngFP4u89
-	 Z6IXXgqxK6P4Q==
-Date: Fri, 24 May 2024 20:01:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: stm32: st,mlahb: Drop spurious "reg"
- property from example
-Message-ID: <20240524-selection-little-f8adfa0a32b4@spud>
-References: <20240523154208.2457864-1-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qg84aYVrC2WR/eCeUftTErO6qwBi5UICYp/AYUDP5/Jb1DcaFccU4CcFXADzX0r2UlEDkvqBLmS6/MTxTez4//dWFKCpDlEgCUB0ebHKjJoKhtMF0X/pkPuIqvgDwGBXZW9hVSsy6XIfEHJifInTzLyj7Na9Lys9H9IaV+hJ0p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=cvl34NI5; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f8e85a0a5bso1125079b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:11:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1716577887; x=1717182687; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NHWDoWZZfWuUu/P0x+kbvgCTb8gOtuuYHKkIDhOcYik=;
+        b=cvl34NI5VpJxkDOSy7KYVz/xK3ENQGCrkfRLgQ4/IO8GkFp1fUFXllN1DETVJl1aoB
+         F71hMlbxt64dut/e7wQyxc02fWBbI/wEMjW4bYitcIs2XIkLlxrsCHLBcPEmRhN9GtPQ
+         doeACI5uJUIXrVR4AMrrNkpz0KFyV4iTui3z/il+6kBHJ0vjW9XlRrScJDr/hzIi+GqF
+         14rgtxrXUN1124OkrFiRuHysCB9XYa82gBmQjA2Wg3GbHhww85RBvGZC2EkywHNdQvGc
+         LiphDU8ybvD0bpkJs504lph7tZuiXrGzmVYxfcixqboZVnVfSeoreuGgMT2+I4lnXgWB
+         GXbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716577887; x=1717182687;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NHWDoWZZfWuUu/P0x+kbvgCTb8gOtuuYHKkIDhOcYik=;
+        b=J120b42fj9TU9gj8J6ESJIt+8xocqsBafxwLROKTb4FO5e1HbigP0PsGBZa+mmTPvj
+         WtmDskYsxoxJ8a0n9jYGcwP213gSw29cm5n65tod1m4eXCa9QKCifm97si2NtVS6Vs5J
+         URcJNVtH5muDW77K9aQDYPNwsAmlJHkFXVBjRAXaWSL9TGKzVg8/cb+hCD1VK6yadRFv
+         NpgldVmh0mIdFdGTQa39qlEWBOEqx5VBiNdBgDci3+Xkmzj4rCc1kQmXSClkIZzWz5i3
+         RMugOiPF0Ossacxg6IZOEkI2lR/1ibSSex2lTlOVz3NCPa1QxIUY6dEUJjOc4jA1ckwl
+         ahQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOh91q6hcjJCGdY+QTXIqIBtX1gmZIQBrFmMMDOo/KrnDZAxkSAfA1F3+xxgstvUtjUwO5KzeC59+ksrNHUpEpJE/DWkFaWjHWCOME
+X-Gm-Message-State: AOJu0Ywy4l3GqYc+t6GlDLXtZiFYWXNK75a7RmEGVXx2x63RC3a/O07A
+	WGBr14QUR90q7+8BAANErKBlL/rDPJxnWYUOh1iiVe14L2a/PboFQwDRSXOhLAI=
+X-Google-Smtp-Source: AGHT+IEwWQZpFilaYbUUGlopJo1f2TdPyB2rRnSl7U/MDmzei8hNgpy175SX2dTVTzyB8unJyM8ICQ==
+X-Received: by 2002:a05:6a20:12ca:b0:1af:93b0:f007 with SMTP id adf61e73a8af0-1b212cc4fd5mr4361727637.1.1716577887327;
+        Fri, 24 May 2024 12:11:27 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fcfe5961sm1424089b3a.164.2024.05.24.12.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 12:11:26 -0700 (PDT)
+Date: Fri, 24 May 2024 12:11:22 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Andy Chiu <andy.chiu@sifive.com>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, jerry.shih@sifive.com,
+	hankuan.chen@sifive.com, greentime.hu@sifive.com, evan@rivosinc.com,
+	xiao.w.wang@intel.com, charlie@rivosinc.com,
+	apatel@ventanamicro.com, mchitale@ventanamicro.com,
+	dbarboza@ventanamicro.com, sameo@rivosinc.com,
+	shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 22/29] riscv sigcontext: adding cfi state field in
+ sigcontext
+Message-ID: <ZlDmWoo6EVZ1MKbN@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-23-debug@rivosinc.com>
+ <CABgGipW4ZTFLh1dkiRuWD0WP4RRkfhyFCc+RsUjCD2EkA5GhSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BHX4szPWPsM2i9bl"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240523154208.2457864-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABgGipW4ZTFLh1dkiRuWD0WP4RRkfhyFCc+RsUjCD2EkA5GhSQ@mail.gmail.com>
 
+On Fri, May 24, 2024 at 05:46:16PM +0800, Andy Chiu wrote:
+>Hi Deepak,
+>
+>On Thu, Apr 4, 2024 at 7:42 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> Shadow stack needs to be saved and restored on signal delivery and signal
+>> return.
+>>
+>> sigcontext embedded in ucontext is extendible. Adding cfi state in there
+>> which can be used to save cfi state before signal delivery and restore
+>> cfi state on sigreturn
+>>
+>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
+>>  arch/riscv/include/uapi/asm/sigcontext.h | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/riscv/include/uapi/asm/sigcontext.h b/arch/riscv/include/uapi/asm/sigcontext.h
+>> index cd4f175dc837..5ccdd94a0855 100644
+>> --- a/arch/riscv/include/uapi/asm/sigcontext.h
+>> +++ b/arch/riscv/include/uapi/asm/sigcontext.h
+>> @@ -21,6 +21,10 @@ struct __sc_riscv_v_state {
+>>         struct __riscv_v_ext_state v_state;
+>>  } __attribute__((aligned(16)));
+>>
+>> +struct __sc_riscv_cfi_state {
+>> +       unsigned long ss_ptr;   /* shadow stack pointer */
+>> +       unsigned long rsvd;             /* keeping another word reserved in case we need it */
+>> +};
+>>  /*
+>>   * Signal context structure
+>>   *
+>> @@ -29,6 +33,7 @@ struct __sc_riscv_v_state {
+>>   */
+>>  struct sigcontext {
+>>         struct user_regs_struct sc_regs;
+>> +       struct __sc_riscv_cfi_state sc_cfi_state;
+>
+>I am concerned about this change as this could potentially break uabi.
+>Let's say there is a pre-CFI program running on this kernel. It
+>receives a signal so the kernel lays out the sig-stack as presented in
+>this structure. If the program accesses sc_fpregs, it would now get
+>sc_cfi_state. As the offset has changed, and the pre-CFI program has
+>not been re-compiled.
 
---BHX4szPWPsM2i9bl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah this is a problem if program was built with older kernel/old toolchain
+(or cfi unaware toolchain). Thanks.
 
-On Thu, May 23, 2024 at 10:42:07AM -0500, Rob Herring (Arm) wrote:
-> "reg" is not documented nor used for st,mlahb, so drop it from the
-> example to fix the warning:
->=20
-> Documentation/devicetree/bindings/arm/stm32/st,mlahb.example.dtb: ahb@380=
-00000: Unevaluated properties are not allowed ('reg' was unexpected)
->         from schema $id: http://devicetree.org/schemas/arm/stm32/st,mlahb=
-=2Eyaml#
->=20
-> Since "reg" is dropped, the unit-address must be as well.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>
+>>         union {
+>>                 union __riscv_fp_state sc_fpregs;
+>>                 struct __riscv_extra_ext_header sc_extdesc;
+>> --
+>> 2.43.2
+>>
+>
+>There may be two ways to deal with this. One is to use a different
+>signal ABI for CFI-enabled programs. This may complicate the user
+>space because new programs will have to determine whether it should
+>use the CFI-ABI at run time. Another way is to follow what Vector does
+>for signal stack. It adds a way to introduce new extensions on signal
+>stack without impacting ABI.
+>
+>Please let me know if I misunderstand anything, thanks.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+I think following how vector does would be cleaner.
+Let me munch on this a little bit.
 
-Cheers,
-Conor.
-
---BHX4szPWPsM2i9bl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlDkGgAKCRB4tDGHoIJi
-0uCiAQDbjFKnua6YZv9wGHzySJp/xAnFvNaIBNwON9KN0AwFaAEAvtpXl04h0qr4
-OTc619LWMWvQYdnJxGl2CUuMgzl8WAA=
-=7zD8
------END PGP SIGNATURE-----
-
---BHX4szPWPsM2i9bl--
+>
+>Cheers,
+>Andy
 
