@@ -1,76 +1,62 @@
-Return-Path: <linux-kernel+bounces-188775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E12A8CE6BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:13:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A858CE6C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3B0F1F20FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:13:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2877B22043
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2138512C487;
-	Fri, 24 May 2024 14:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ABA12C487;
+	Fri, 24 May 2024 14:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZNTN49S"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a26KhZTH"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF09385933;
-	Fri, 24 May 2024 14:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BCA12C52E;
+	Fri, 24 May 2024 14:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716559989; cv=none; b=Mn0Ty2DH2GzGId6CbCJan34PsYh8UjqDKGHWexbna4zwnKMUwg7PskAXU3joWYcdSwHOARTPfy/U/1JDexbQihol/xcY+dDSjt4MB29zYymvWMyjl07n5CvqeT87w14GtgyT4E9zFCXR+jZFTKHGnojctJqXjFPgWVmNdLmvGvA=
+	t=1716560081; cv=none; b=H624D163D3I58NlltNaV0HqQtCFj3mt7IL4KT37pByVt/6vVR/TK2vTsyjb2N4svoOeRBzSXsDSKIryp+ELwpCBQV9zp1VWemWxRCvYrZrDT6p0XhKdmapaBDpmDT8FtKVLGc6rEU6YP1G8CS9JM8X1ILkPRPuQouznM1TwXKsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716559989; c=relaxed/simple;
-	bh=YxlpxnAvu/dOAFR4HiHkvmKzMo8zhWdu8PHes8ZOYBE=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g5C0y1761ATQ9zKGuDHpqg2LK27/94mf8SOYMl/6BsZgSteMMVLPDtBzRahLtxOnEHHogtoi/88iWB/JTLG0sTauRK9Tv+U1e7eI2Ogw7zd+vbC++fdc7zM4OZZ+Onq0mkY8bhPpF4bd7bCGNni4Ec0Ntlq4Hi8J9TWF+ScQD/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZNTN49S; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-351d309bbecso6137934f8f.2;
-        Fri, 24 May 2024 07:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716559986; x=1717164786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LIXRmETsPlPipZyoH/zKNgJDW/uAVRzPgiJ3jVW/v6w=;
-        b=kZNTN49SzksxwanMzbirTJAHmotgdeEut93X4C7pEJBjUFSm5J7E8XHyv6k5H+gjQj
-         TjPmXrpD9yP025UfFebZZ2ZzxHu826+cNVruTNi+ZvK9wbtqSXkhSGht/5BnR7MWFdAJ
-         1Lm2dzdyRN2JrQgVekogsh/nDT9Fgv02pKGTLSHwt6+q4EbiIRwNnQeGKHKfOCeEfvth
-         G+hD+VTGrd5C4CBWuU9oC9NyMMW8p7E/HudHEFw8Er6y4SvK+TDIX3AOKpbE4mQIvnHu
-         kVDHHNBdZVo/ZUFN61aex6q/sKIFU6XdTGBpe9ylYkGos2o8ykmbpwSgOpwtiEN/+guY
-         8WSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716559986; x=1717164786;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LIXRmETsPlPipZyoH/zKNgJDW/uAVRzPgiJ3jVW/v6w=;
-        b=Td3QNObuuRUsS5XnxA+AtzAIohqczkT30Bf6xtz2fSVEBK5G3kT13iScYrCor3hf4E
-         ZU0mJ5Scw6J9d27Hh1fA+V6Fgjnxv++TCkCI8RJW815iiwSNWhJ+lpvlMFvkGJY5thuC
-         YF3KJwDSj+fbUgBNOUWuYTcHg/Ta0QhFX3QhDFX1V+pDc+X3K7o4fc3iqyF6Yniodh5k
-         0u7juikTQkG9FA0aYZi+/CxecQMY7TqqovWahfytbanFyBkDEMNZut0UKCQ+j+dU7QvT
-         chKDx3rmqRWx9e1cA4bI0CNZsv3E8VU0+p2u4dlcCy5ROmXnucumwxjxkCPq3ozKvhBX
-         w+Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEvKJUAh8lj3rqIgApM+FZCJYtKjrHl6FN+v8UTbHSJj2GhnohSbEdEm0tmMku4MSWIgILIA+Ip2VpTinDcANI0vt0p+S5o5Q6/TFx8K7bSwGWK5Eb/lQ3gO5Z7QN1pRgY0yI+pEUSisX5elJnEUhFArT+4bIAdex/Q4KN
-X-Gm-Message-State: AOJu0YxOck33OljQcEt96cQ/Ow0o8x4LUJE9GreXKkEpTvV1w9rWBFSF
-	Ozeetv3LjW0lpfDxZmUPZ44a6PkerAS29DN4crdGfVho83AI+bMr
-X-Google-Smtp-Source: AGHT+IFpZvhYYO5p+X8RvnaHaktMtmd6wJtUb7B3pM5HVUaET70KBsAXDd1FRaAUGWaRlo3Sk/st9w==
-X-Received: by 2002:adf:fe91:0:b0:355:2cc:2f3a with SMTP id ffacd0b85a97d-3552f4fd766mr1876855f8f.18.1716559986127;
-        Fri, 24 May 2024 07:13:06 -0700 (PDT)
-Received: from [192.168.0.200] (54-240-197-234.amazon.com. [54.240.197.234])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557a08ab76sm1698469f8f.34.2024.05.24.07.13.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 07:13:05 -0700 (PDT)
-From: Paul Durrant <xadimgnik@gmail.com>
-X-Google-Original-From: Paul Durrant <paul@xen.org>
-Message-ID: <2b4c8233-9168-4e92-88fc-9dee0afec48c@xen.org>
-Date: Fri, 24 May 2024 15:13:03 +0100
+	s=arc-20240116; t=1716560081; c=relaxed/simple;
+	bh=/iCSwYFpPpnWKrk7OTbEJ2X5LrFGQnqRxn/p12z43c4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NiLG12Zy+TDk75DZ4DuXVrLaAeRsf7Yx1okDL7569ldWxC0mKW7kw7Sa4DzwqLmERMKqRoq/3lrkYYldROL2iLIacLmWUHgVDeVN13VgBbXxw35npMl2cZGIFqFfFtocJK/c0GYQG72cgGa76n1pUic+e8NfxARCVG140O0803M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a26KhZTH; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44OEDgwW096179;
+	Fri, 24 May 2024 09:13:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716560022;
+	bh=JI2PXYUUtgJy4L/iAwhj/g1y9I44a0am6XbwNhHJQ7o=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=a26KhZTHL5qHOOYNEiH75TcYqpvWhZfY3PB+h1CC6ppZ1Fjxna4Yr5bfB8LWN0CHG
+	 aU+dNUzlXKNaehwkFkmhfG12qbK2R6CzjmwSNa/Rt5e+EspHOH7WgRNW7DXH3gj+ZB
+	 X+Lf6ivw1XPD4dmi0h8BDbtFE6uy1rpwTA9bajbc=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44OEDgn5026390
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 May 2024 09:13:42 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
+ May 2024 09:13:41 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 24 May 2024 09:13:41 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44OEDfjc067963;
+	Fri, 24 May 2024 09:13:41 -0500
+Message-ID: <ddcab8c0-3772-4134-a3bb-27729e864627@ti.com>
+Date: Fri, 24 May 2024 09:13:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,52 +64,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: paul@xen.org
-Subject: Re: [RFC PATCH v3 16/21] KVM: x86: Factor out kvm_use_master_clock()
-To: David Woodhouse <dwmw2@infradead.org>, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Sean Christopherson <seanjc@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
- Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, jalliste@amazon.co.uk, sveith@amazon.de,
- zide.chen@intel.com, Dongli Zhang <dongli.zhang@oracle.com>,
- Chenyi Qiang <chenyi.qiang@intel.com>
-References: <20240522001817.619072-1-dwmw2@infradead.org>
- <20240522001817.619072-17-dwmw2@infradead.org>
+Subject: Re: [PATCH v2 8/8] arm64: defconfig: Enable TI eQEP Driver
+To: Nishanth Menon <nm@ti.com>
+CC: Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        William Breathitt Gray <william.gray@linaro.org>,
+        David Lechner
+	<david@lechnology.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+References: <20240523231516.545085-1-jm@ti.com>
+ <20240523231516.545085-9-jm@ti.com>
+ <20240524055923.zyfthiwcsbwbjg5k@undecided>
 Content-Language: en-US
-Organization: Xen Project
-In-Reply-To: <20240522001817.619072-17-dwmw2@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240524055923.zyfthiwcsbwbjg5k@undecided>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 22/05/2024 01:17, David Woodhouse wrote:
-> From: David Woodhouse <dwmw@amazon.co.uk>
-> 
-> Both kvm_track_tsc_matching() and pvclock_update_vm_gtod_copy() make a
-> decision about whether the KVM clock should be in master clock mode.
-> 
-> They use *different* criteria for the decision though. This isn't really
-> a problem; it only has the potential to cause unnecessary invocations of
-> KVM_REQ_MASTERCLOCK_UPDATE if the masterclock was disabled due to TSC
-> going backwards, or the guest using the old MSR. But it isn't pretty.
-> 
-> Factor the decision out to a single function. And document the historical
-> reason why it's disabled for guests that use the old MSR_KVM_SYSTEM_TIME.
-> 
-> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
-> ---
->   arch/x86/kvm/x86.c | 27 +++++++++++++++++++++++----
->   1 file changed, 23 insertions(+), 4 deletions(-)
-> 
+Hi Nishanth,
 
-Reviewed-by: Paul Durrant <paul@xen.org>
+On 5/24/24 12:59 AM, Nishanth Menon wrote:
+> On 18:15-20240523, Judith Mendez wrote:
+>> TI K3 SoC's support eQEP hardware, so enable TI eQEP driver
+>> to be built as a module.
+> 
+> All the nodes seem to be only in disabled mode, is there even a single
+> board that is actually using this? if so, why isn't it enabled?
+
+I will add pinmux and enable in the board level dts file.
+
+~ Judith
+
+> 
+>>
+>> Signed-off-by: Judith Mendez <jm@ti.com>
+>> ---
+>> Changes since v1:
+>> - No change
+>> ---
+>>   arch/arm64/configs/defconfig | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index 2c30d617e1802..23d11a1b20195 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -1593,6 +1593,7 @@ CONFIG_INTERCONNECT_QCOM_SM8550=y
+>>   CONFIG_INTERCONNECT_QCOM_SM8650=y
+>>   CONFIG_INTERCONNECT_QCOM_X1E80100=y
+>>   CONFIG_COUNTER=m
+>> +CONFIG_TI_EQEP=m
+>>   CONFIG_RZ_MTU3_CNT=m
+>>   CONFIG_HTE=y
+>>   CONFIG_HTE_TEGRA194=y
+>> -- 
+>> 2.45.1
+>>
+> 
 
 
