@@ -1,106 +1,197 @@
-Return-Path: <linux-kernel+bounces-188229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0398CDF79
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 019318CDF7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0BCD1F2175E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:26:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F5D1F21E35
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5784022616;
-	Fri, 24 May 2024 02:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2wQhyob"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B15C2B9BE;
+	Fri, 24 May 2024 02:28:34 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E43BE48;
-	Fri, 24 May 2024 02:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD683C0D;
+	Fri, 24 May 2024 02:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716517602; cv=none; b=LQhQc3/66YYNuC0hPw/tdDKdpSzjfbWg80mtHuIYqpP0M4qDKsVhbSAEz8yKSadxPvK2lm3cqCrjsOHG8vagjF7HJl7jXp35Hgajuwc4pw5NL+fGzaIsWSjtJ/G0mVPsn/qhNGpOrTmH3W82/Xuq1JaHDQqQ71tYG6//f962Ro4=
+	t=1716517714; cv=none; b=AjTDmmBNdGzVioviQv8F4z1D5bzB5iY6qp275WkG3oSnHLYaokC/kGuWpL6QNyWS8M5RjuqJFRQWqgUXGeVoW8rX2gDhxfbz+LPYOvUcHYFYmasHBheWGRb3SvWCr4rUqfXjQeUHwtdQfTVPdPjwOVuYu6gOqzHwKcasTt0TNB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716517602; c=relaxed/simple;
-	bh=V68S0YfqASuSJwOd0Y6I2O+LhStMZE72uKYdl/eTTAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7ZNDnAMDQ4pg8q29t9YojW9HceNoG2MjyL8OZxHs5DgJGpBM440OHMV9MDh3pPFAHWQjlr5YQ8KxhRHEYryTWJYOVEYBgr0TWGFAue+Eq9GVoD1uth4Ei2Zj1JuLw2vV/lu6DDgGCmbHq0NFbI5oOe2RAyFzUQZdnARvVLJIFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2wQhyob; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88466C2BD10;
-	Fri, 24 May 2024 02:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716517601;
-	bh=V68S0YfqASuSJwOd0Y6I2O+LhStMZE72uKYdl/eTTAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O2wQhyobFdhTB6x8N5tFKWgIblU+F5RC2QzfD4VQbqQg88wes4uVngfm6jmbfP6Sc
-	 X+tbywIGkqmTnhR2IxEINuesOfiPN0THXoWycvaNz2kHj22I1WeyEHx4/1FsYo6wdI
-	 1q75N/ZrziY0NyQPIzgS2c0ku2cRrS6AGhb2xI5PzRjlObaPgJzP86TG6MARu/2cZ3
-	 atP86hJ79HhcmIzYe21t5HcWPT6yJa/P6VKbABYOtk5vkg+UmwiVyJFh72M6aCjcCn
-	 YRajmZHoCNdaLDn38BNB8y0DrnmIHPGCq3eza2x2hPmeKz4dKIekY+KzHACR75WApS
-	 fNQKAvWAK4LXA==
-Date: Fri, 24 May 2024 02:26:38 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Ben Walsh <ben@jubnut.com>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	"Dustin L. Howett" <dustin@howett.net>,
-	Kieran Levin <ktl@frame.work>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] platform/chrome: cros_ec_lpc: Correct ACPI name for
- Framework Laptop
-Message-ID: <Zk_63rrDJFhN1Y1q@google.com>
-References: <20240515055631.5775-1-ben@jubnut.com>
- <20240515055631.5775-6-ben@jubnut.com>
- <ZkscFnmHeWWma7Nb@google.com>
- <87jzjk1ibr.fsf@jubnut.com>
+	s=arc-20240116; t=1716517714; c=relaxed/simple;
+	bh=H8aLNm5MJOA+vX46VpUQmOIxGGBQ5aeql+ZVGLNntL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mWGqKy+vJvAtAkK4lq6syU8bLW+Uws/0WglWeyg5sJDQ5gxdxOo3dwMlfyMGCmYQEWEr/Sj+mtH8MlAAWHxosRcHyCc7xGl0GSYxm4uS9us1wm0nVsmoSOwl8quDsm2ZXF+ebcyQs4HtkmL8DMXLCc5MUpaeND3DNIUmdq5IOXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vlpqm5pYgz4f3jLy;
+	Fri, 24 May 2024 10:28:20 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id A60901A0B56;
+	Fri, 24 May 2024 10:28:26 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g5G+09mNr8LNg--.19950S3;
+	Fri, 24 May 2024 10:28:26 +0800 (CST)
+Message-ID: <c2e331a1-8293-0055-3314-738530db3822@huaweicloud.com>
+Date: Fri, 24 May 2024 10:28:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87jzjk1ibr.fsf@jubnut.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [PATCH v3 06/12] cachefiles: add consistency check for
+ copen/cread
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, netfs@lists.linux.dev,
+ dhowells@redhat.com, jlayton@kernel.org
+Cc: hsiangkao@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ libaokun@huaweicloud.com
+References: <20240522114308.2402121-1-libaokun@huaweicloud.com>
+ <20240522114308.2402121-7-libaokun@huaweicloud.com>
+ <11f10862-9149-49c7-bac4-f0c1e0601b23@linux.alibaba.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <11f10862-9149-49c7-bac4-f0c1e0601b23@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX5g5G+09mNr8LNg--.19950S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw4rCr4fWr45tw1xZF4fZrb_yoWrAF4rpF
+	WayayakFy8uF1xKr97JF95W34Fy3s3AFsxWr93ta4UArnxur1Fvryft34UZF1UZwsYgr4I
+	qw42gF9rGr1jv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/
 
-On Thu, May 23, 2024 at 07:42:00PM +0100, Ben Walsh wrote:
-> Tzung-Bi Shih <tzungbi@kernel.org> writes:
-> 
-> > On Wed, May 15, 2024 at 06:56:30AM +0100, Ben Walsh wrote:
-> >> Framework Laptops' ACPI exposes the EC as name "PNP0C09". Use this to
-> >> find the device. This makes it easy to find the AML mutex via the
-> >> ACPI_COMPANION device.
-> >>
-> >> The name "PNP0C09" is part of the ACPI standard, not Chrome-specific,
-> >> so only recognise the device if the DMI data is recognised too.
-> >
-> > I don't quite understand the statement.  Why it needs DMI data?
-> 
-> There are lots of computers with EC chips with ACPI name "PNP0C09"
-> because it's part of the ACPI standard (for example I have an Intel NUC
-> with one of these). Most of them don't support the cros_ec protocol, so
-> the cros_ec driver should ignore these chips. The Framework EC is
-> unusual in that it's called "PNP0C09" and supports the cros_ec protocol.
-> 
-> Before these patches, the cros_ec code just ignored PNP0C09 because it
-> wasn't in the match table. The cros_ec_lpc_init logic looked like:
-> 
->   * dmi_match => ok
->   * acpi_name == "GOOG0004" => ok
->   * otherwise fail.
-> 
-> After the patch, cros_ec_lpc_init still has this behaviour. We have
-> "PNP0C09" in the match table so the driver gets hooked up correctly
-> with the right "ACPI_COMPANION" device, but we don't allow the match
-> to proceed unless we have the DMI data indicating it's a Framework EC.
+Hi Jingbo,
 
-From the context you provided, instead of matching "PNP0C09" in the driver,
-it makes more sense to me (for Framework EC):
+Thanks for the review!
 
-* Mainly use DMI match.
-* Add a quirk for looking up (acpi_get_devices()?) and binding
-  (e.g. ACPI_COMPANION_SET()) the `adev` in cros_ec_lpc_probe().
+On 2024/5/23 22:28, Jingbo Xu wrote:
+>
+> On 5/22/24 7:43 PM, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> This prevents malicious processes from completing random copen/cread
+>> requests and crashing the system. Added checks are listed below:
+>>
+>>    * Generic, copen can only complete open requests, and cread can only
+>>      complete read requests.
+>>    * For copen, ondemand_id must not be 0, because this indicates that the
+>>      request has not been read by the daemon.
+>>    * For cread, the object corresponding to fd and req should be the same.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Acked-by: Jeff Layton <jlayton@kernel.org>
+>> ---
+>>   fs/cachefiles/ondemand.c | 27 ++++++++++++++++++++-------
+>>   1 file changed, 20 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>> index bb94ef6a6f61..898fab68332b 100644
+>> --- a/fs/cachefiles/ondemand.c
+>> +++ b/fs/cachefiles/ondemand.c
+>> @@ -82,12 +82,12 @@ static loff_t cachefiles_ondemand_fd_llseek(struct file *filp, loff_t pos,
+>>   }
+>>   
+>>   static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+>> -					 unsigned long arg)
+>> +					 unsigned long id)
+>>   {
+>>   	struct cachefiles_object *object = filp->private_data;
+>>   	struct cachefiles_cache *cache = object->volume->cache;
+>>   	struct cachefiles_req *req;
+>> -	unsigned long id;
+>> +	XA_STATE(xas, &cache->reqs, id);
+>>   
+>>   	if (ioctl != CACHEFILES_IOC_READ_COMPLETE)
+>>   		return -EINVAL;
+>> @@ -95,10 +95,15 @@ static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
+>>   	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>>   		return -EOPNOTSUPP;
+>>   
+>> -	id = arg;
+>> -	req = xa_erase(&cache->reqs, id);
+>> -	if (!req)
+>> +	xa_lock(&cache->reqs);
+>> +	req = xas_load(&xas);
+>> +	if (!req || req->msg.opcode != CACHEFILES_OP_READ ||
+>> +	    req->object != object) {
+>> +		xa_unlock(&cache->reqs);
+>>   		return -EINVAL;
+>> +	}
+>> +	xas_store(&xas, NULL);
+>> +	xa_unlock(&cache->reqs);
+>>   
+>>   	trace_cachefiles_ondemand_cread(object, id);
+>>   	complete(&req->done);
+>> @@ -126,6 +131,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>>   	unsigned long id;
+>>   	long size;
+>>   	int ret;
+>> +	XA_STATE(xas, &cache->reqs, 0);
+>>   
+>>   	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
+>>   		return -EOPNOTSUPP;
+>> @@ -149,9 +155,16 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> -	req = xa_erase(&cache->reqs, id);
+>> -	if (!req)
+>> +	xa_lock(&cache->reqs);
+>> +	xas.xa_index = id;
+>> +	req = xas_load(&xas);
+>> +	if (!req || req->msg.opcode != CACHEFILES_OP_OPEN ||
+>> +	    !req->object->ondemand->ondemand_id) {
+> For a valid opened object, I think ondemand_id shall > 0.  When the
+> copen is for the object which is in the reopening state, ondemand_id can
+> be CACHEFILES_ONDEMAND_ID_CLOSED (actually -1)?
+If ondemand_id is -1, there are two scenarios:
+  * This could be a restore/reopen request that has not yet get_fd;
+  * The request is being processed by the daemon but its anonymous
+     fd has been closed.
+
+In the first case, there is no argument for not allowing copen.
+In the latter case, however, the closing of an anonymous fd may
+not be malicious, so if a copen delete request fails, the OPEN
+request will not be processed until RESTORE lets it be processed
+by the daemon again. However, RESTORE is not a frequent operation,
+so if only one anonymous fd is accidentally closed, this may result
+in a hung.
+
+So in later patches, we ensure that fd is valid (i.e. ondemand_id > 0)
+when setting the object to OPEN state and do not prevent it
+from removing the request here.
+
+If ondemand_id is 0, then it can be confirmed that the req has not
+been initialised, so the copen must be malicious at this point, so it
+is not allowed to complete the request. This is an instantaneous
+state, and the request can be processed normally after the daemon
+has read it properly. So there won't be any side effects here.
+
+-- 
+With Best Regards,
+Baokun Li
+
 
