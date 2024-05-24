@@ -1,109 +1,91 @@
-Return-Path: <linux-kernel+bounces-188527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F468CE30F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACF78CE322
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E5F1C21A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479EE1C20756
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B122D12AAC5;
-	Fri, 24 May 2024 09:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhlYZXjb"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB4584A40;
+	Fri, 24 May 2024 09:16:36 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65145127E2A;
-	Fri, 24 May 2024 09:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D3285260;
+	Fri, 24 May 2024 09:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716541798; cv=none; b=QYDTeo0Hi9gvDbvTPlgMZGwzS/+vno9DPOOJJsBd7rPjGI5QzNAA0Unup0dJLNc4XA8ufCASkYlUEad5DsCc/EqyaWoKSbzVbi79AVXcOq+szweBjZgLoauaeeeierNwi1pETaCbaxTD+sF13+23qgQVw/6fNQrPVdeh8a8GbK8=
+	t=1716542195; cv=none; b=O1uPQqnE8iLcFpjfguFFpSsbah5GmFT6jSJvJnc3W98m25zIBwEhr6wW0oLMzOcxnaGSwImUVekQ3SiN6X8X3q7CI2t2vBub50M60AdJ8h1hopVg1ZLylGZ1mY93cPXOtvRsr4PjcjLt7BK0aF85Iupvyoo8ZnZArlGlcPCsxU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716541798; c=relaxed/simple;
-	bh=lstC1JoXk86c4nUHzL+unxjK1j4sQb/y8G2ueEGHWcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QFL24QBV+mvq8fTHf6gWYDgyw3O116zUUIYNDHYl3HrjScSAE1+1qKOS5xqbrt/Eiz078ebtmMEXYnX4iBoL4eQPrSDCYqODbrwGFMEjc5bWOHmEgmKQSr/j2mDXQ3QYGq+X3Mx7Sl54a91W39hc2JTfGwPsl7b8KdFsMjcqA8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhlYZXjb; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5296935252dso572397e87.3;
-        Fri, 24 May 2024 02:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716541794; x=1717146594; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGJpJecwhnnThbUhyaw0vAGodYew/vpNpLv3LOUBtPs=;
-        b=AhlYZXjbVafUwiqymT5t6WVyrSQkzMilgQnGpfrjDsntOcwXAowct/qvUhP2CpCkBD
-         B04plfRqR1D1B4ON2x/32uX/BulMX6ZpXNw5N3JqcE7wjAuu8GD0iIU+P3wuwYcQlQND
-         k9WWhLrBo1MnsbhNcQoIpvzXiX9ldtcB39lzXNWmrKqQvZGb83ACjv74N1SiT+342D+A
-         Qojanlrc7ayB/Xmhp3Obljbxi4SQIFa7GcTKuHFF6fwSWC60dsmypPNdXjrZ1sdYWUgi
-         F9LSq0ulEmGRE9hNp/UThryxr6XflJEXreK6DEo93Ol8a2iGQJjWnGB714ehvUm41kXv
-         IheA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716541794; x=1717146594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iGJpJecwhnnThbUhyaw0vAGodYew/vpNpLv3LOUBtPs=;
-        b=TDk/fr9SB1D/vvSYVAtroVFP9+/jP8XJhjfsxfkcQS5MwjMamVdLfFuImol1TR0Q6y
-         wekj/zpZek9FbXYhSFyKNMAwVkwIN7Tha9+PPseft4D2/qJvPCLz0lXIp+fcb6nC8j8e
-         8ok36dn0Gqpajzloc4/YqOfb91TL8ZzIc5HNhB4Bqh30acZlCiyMrjFP3uYTd4ojAOr2
-         o09cdR68Yg9LewI5YKWO2IVeuHUUaeM0f8jaL6U2yOl4+3DdFDdy/Tix8ppYwGGBVLt1
-         izThqHzZLP5k3h0u4RRLcz52Mdg4J5gdKF7F8iP4BljgOSMJl3nnmAcpyUmX8PSXx4GZ
-         sfqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVGA6ROQ72IMxkWBso1jNZlHhtSYENS9SMw9etymlZZNrbH3vGDbcgbgXvT+QxRBQk2h7czWsuaNV6DSXBnpzsz7MpbxFwheSqbn5Qi1ZgZt3hq7ozpOjYdcNGM1BoxwrgiUNSsVNWQow=
-X-Gm-Message-State: AOJu0YxhzJ2U61Z5MHb3TwE5LI8u/NIyOI2WBVXv4aHeMG3fGfhb9jS6
-	IWL1S+uGUSRFWe7W5EVJWi+OCQYLEWmBnmoG+zD8ndvWEnW53RfR
-X-Google-Smtp-Source: AGHT+IEAjfgWIXUPdAjF4Xqxez+RSQN1xPVEA/NLEHeWg6ykXvZ34GEuRCMq1cjaFdYMkUDwsklYhA==
-X-Received: by 2002:ac2:4acb:0:b0:51c:43de:b18c with SMTP id 2adb3069b0e04-52964eaf6e7mr886594e87.27.1716541794363;
-        Fri, 24 May 2024 02:09:54 -0700 (PDT)
-Received: from localhost.localdomain ([178.70.43.28])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e885d9csm133178e87.21.2024.05.24.02.09.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 02:09:53 -0700 (PDT)
-Date: Fri, 24 May 2024 12:09:52 +0300
-From: Ivan Bornyakov <brnkv.i1@gmail.com>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: Nas Chung <nas.chung@chipsnmedia.com>, 
-	Jackson Lee <jackson.lee@chipsnmedia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] Wave515 decoder IP support
-Message-ID: <bliiovkmzwkd5ikvvhvuokiacdclinb5rx4fxbtufwqnvqypgw@uygv56l7a45c>
-References: <20240415100726.19911-1-brnkv.i1@gmail.com>
- <mwgydgjstvedkatdvopt3wh4imhnzflr7ut3vejgl6fz3vbgzg@x4spldwklrm3>
- <20240503150721.qd6d7csev5452rss@basti-XPS-13-9310>
+	s=arc-20240116; t=1716542195; c=relaxed/simple;
+	bh=OxOlLFwntFTxrhHfNG8R6BPeycdVesbhAez+Ydgo82w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ARZI5Tazro2O/OOQSbts0QitvvELnXEgSqf2qh43KR6qCIu6Zz1DKkVXXQSCQRjjQXZzMCa7jZW2n0Ln13/nHrmBeRSY23Jc7RJphfyUFf2Xga/9yeIc7nJOmsZQoWl+QpYkoIYVMHmuZMejW/xa+GsHajRQcWl3mXf6Ehcebss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VlzpP2TjczwPHd;
+	Fri, 24 May 2024 17:12:45 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id 20A3E180A9C;
+	Fri, 24 May 2024 17:16:26 +0800 (CST)
+Received: from huawei.com (10.173.135.154) by canpemm500002.china.huawei.com
+ (7.192.104.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 24 May
+ 2024 17:16:25 +0800
+From: Miaohe Lin <linmiaohe@huawei.com>
+To: <akpm@linux-foundation.org>, <tony.luck@intel.com>, <bp@alien8.de>
+CC: <nao.horiguchi@gmail.com>, <linmiaohe@huawei.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>
+Subject: [PATCH 00/13] Some cleanups for memory-failure
+Date: Fri, 24 May 2024 17:12:57 +0800
+Message-ID: <20240524091310.1430048-1-linmiaohe@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240503150721.qd6d7csev5452rss@basti-XPS-13-9310>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
-Greetings,
+Hi everyone,
+This series contains a few cleanup patches to remove unneeded function
+variant, add helper macro, fix some obsolete comments and so on. More
+details can be found in the respective changelogs.
+Thanks!
 
-On Fri, May 03, 2024 at 05:07:21PM GMT, Sebastian Fricke wrote:
-> Hey Ivan,
-> 
-> On 02.05.2024 09:40, Ivan Bornyakov wrote:
-> > 
-> > Friendly ping.
-> 
-> Sorry again for the delay, I was nearly finished with the patch set last
-> week but the time wasn't sufficient. And I sadly have to delay it again
-> a bit as I am on vacation until 13.05. I expect finishing it probably
-> until 17.05.
-> 
-> Regards,
-> Sebastian
+Miaohe Lin (13):
+  mm/memory-failure: simplify put_ref_page()
+  mm/memory-failure: remove MF_MSG_SLAB
+  mm/memory-failure: add macro GET_PAGE_MAX_RETRY_NUM
+  mm/memory-failure: save a page_folio() call
+  mm/memory-failure: remove unneeded empty string
+  mm/memory-failure: remove confusing initialization to count
+  mm/memory-failure: remove unneeded hwpoison_filter() variant
+  mm/memory-failure: use helper macro task_pid_nr()
+  mm/memory-failure: remove obsolete comment in unpoison_memory()
+  mm/memory-failure: move some function declarations into internal.h
+  mm/memory-failure: fix comment of get_hwpoison_page()
+  mm/memory-failure: remove obsolete comment in kill_proc()
+  mm/memory-failure: correct comment in me_swapcache_dirty
 
-Do you still intend to review the patch series?
+ include/linux/mm.h         | 14 ------------
+ include/linux/page-flags.h |  5 ----
+ include/linux/rmap.h       |  2 --
+ include/ras/ras_event.h    |  1 -
+ mm/internal.h              | 16 +++++++++++++
+ mm/memory-failure.c        | 47 +++++++++++++-------------------------
+ 6 files changed, 32 insertions(+), 53 deletions(-)
 
-Also should I resend? Is there anything I can do to budge the process?
+-- 
+2.33.0
+
 
