@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-188377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28F18CE144
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:02:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEE28CE14C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DEFD1F22257
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:02:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A21282848
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE65E128374;
-	Fri, 24 May 2024 07:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A872128374;
+	Fri, 24 May 2024 07:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cqxVJB0A"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PTGsz5+z"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B02636D
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14CC36D
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716534122; cv=none; b=p9gg0fULkw7fV246iD6JEdJkW0pIhLr2AMHw+XaToEFjNQoTKRh/uHfoTxv9oFStlE35ReuQdylqtokdpDL03VWm21TV4Os1QL2G8TxRywc+mPSn9pWEHgRK+sKW3+sAt14vOGWAZsbe/VMvv4IUk20Ie1MQ0MuCaZvRHzfse4k=
+	t=1716534295; cv=none; b=odgpWiEe3SzkWiNqG7yP07KDVhvyYoVj/WRQKRCtB20Sd3nGrV1PVEXCgfJh030wOk3CKIotsa6xistlGDg8JUghN3HY77fMQv0zkirbB4Dh+jqpYrxY/unD+mMkCMmBCrasLEpXLT0A1TkpxG8GI+oyXO9iyzPxtz4iXmd3Zv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716534122; c=relaxed/simple;
-	bh=S6X3QWQ+0K1WufA9+NZWA+XmUyZ213h25aZFAPV5q4g=;
+	s=arc-20240116; t=1716534295; c=relaxed/simple;
+	bh=e3BXT1PablyFvLf+qJm5pKwAzypSU5WiAQpdoJQOyXw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QD59Fvxt9Z+Q3YhYfLO5mmgcwuVfD35MwDS+reFxSbbXHb3idAwrYsLS7RHqDGAs5kugC6bEe5WhEsJE0ldYoqOxcr5jr/46ZXMMpwor6pBRsSXhRMgnmtvr8tBdLMQ02FZlLWN8K3n2n9OshUNfaK4rSA9Do4U3YGA4elGEcVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cqxVJB0A; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=lAblMVU7JvEeQo9YtrL1aBWr3nBrOQ8T5r0P+M25HaZByNjGRA/J/Y7YbCA9d8UxOEba+9P7eVzHaPFMvtfidfMsVLbTiL9ykEoc++SbYe0PHHMFpAXiq0N0jpg8wMJTBLNa6dL0FZxqj+dtAn05ZRmlOKF2sPJ5rWlXCYzMOTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PTGsz5+z; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716534118;
+	s=mimecast20190719; t=1716534292;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0uHq3ec8ZMgbwjUPHUCI4MPEhdD2KzAA/CPZDlqmLUk=;
-	b=cqxVJB0A912q8BZWb6HdiTCcxGZXtQ6dlO44B+00aJkRkzvcX1sG3w3XorVwJKreQxhPar
-	w2liX1Cu1zjIwqcaUt1/SVbzFFH1R4Q/81po7v01QMhfsdkq7LMBd2GRA38JuXh8hPs5MH
-	Yedl4S4pe9yU5SOCs0wrrh9VjMxBx2M=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=NkZj75EFLaQBFYfelEFxSPNdCTwZcFmz5ibsjes1oxM=;
+	b=PTGsz5+zz/QE8tWh/sJ9AkBew/XLUFJrWpQYaOojm/lartyXnxOZCzKGNme+FHUASaCWMl
+	VjWDpnWs7oCeHHEBCZ4JlBaFPDSTVKiH4MsuxEUqx2xk6ZvvCZ3nyxRFmjndL2cbYi4pNi
+	fBhfC8n27WFHtK0hAH1oLAfWZgN9wAE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-4dlcqD-SNP2L1ImLU4e4bQ-1; Fri, 24 May 2024 03:01:57 -0400
-X-MC-Unique: 4dlcqD-SNP2L1ImLU4e4bQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-420eed123a2so32038215e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:01:57 -0700 (PDT)
+ us-mta-422-HhmvlThzNW-x_ekMswRuDw-1; Fri, 24 May 2024 03:04:51 -0400
+X-MC-Unique: HhmvlThzNW-x_ekMswRuDw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-41ff6049fdbso81024035e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:04:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716534116; x=1717138916;
+        d=1e100.net; s=20230601; t=1716534290; x=1717139090;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=0uHq3ec8ZMgbwjUPHUCI4MPEhdD2KzAA/CPZDlqmLUk=;
-        b=wwDjPpyq2knrz5HitJsik2N80J0P/i50SN7DlzbRNFDceQnf/TIPFwQY7y72ixkgvf
-         poeMrfpYrAKW3QV1cZds7/beeo1nqXYn6X3bbPbNWRGhLoTsa+ye2nh/icOkPAAhLT99
-         AB+jsDBAUJHU/qFTBG3yQ9j9Q430riAcbA5pRB+oYFqpu2BHV4nWn2wYB3hBnYZzCpi/
-         gOfS9PtxkXPaxxRiWLikihoMSs6T8CMq826iSugGqXeGLiX23khM3Sp0pMQVU/PmDMeE
-         jDJKFdi1cwiiPLLncej7LRtU71tHbztVHoJq/Tcp/DXJtotEyWh/qd4jxQnFsCl9T662
-         382A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbsme8mCl+QyLUMInMbScKgSkuueIhI1vL+scDBmieb1fVkYxBvSPlFjOAUzTwfCXKId6hHp4hvZ3QgddYn+AxOVabd10CePrRquwO
-X-Gm-Message-State: AOJu0YzNxAxwyERcLd1oIgWUF3sb8MlmPNrofKzKZkmGRyndNAWIAiGK
-	Dyxw8BrYinJyP1yyRWMBiLMh5q5u1R6G6hpSgV+2InC1Kl++Aa6ERtsOOSRZZWNIwCwdiXe4+0w
-	HBGKypIJi2ZlEbyRts/bw+HtploYX3fxqFTICIQ++T9H5DLOFe16/InTQUx5xzA==
-X-Received: by 2002:a7b:cbd0:0:b0:420:1284:475 with SMTP id 5b1f17b1804b1-421089cd413mr11031005e9.12.1716534116033;
-        Fri, 24 May 2024 00:01:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWxG9Is1RP9OAuCNjoZ84PzkbrNAp1YEXxVe/Wk2tG3Id8JRSEhNammAi0NqOk2IOBrH+qkQ==
-X-Received: by 2002:a7b:cbd0:0:b0:420:1284:475 with SMTP id 5b1f17b1804b1-421089cd413mr11030695e9.12.1716534115521;
-        Fri, 24 May 2024 00:01:55 -0700 (PDT)
+        bh=NkZj75EFLaQBFYfelEFxSPNdCTwZcFmz5ibsjes1oxM=;
+        b=m7mEXnbNZz89xMKDqjx1A0xFFdrWw+HRXz3SH/qDY+bJlM9y+6k07n33MDqgznrxJ6
+         piwTy0lC7zX2aZj9T3/tQ/wh4QGRRKm0CDEGUeBqfFDGtWM4Nez60B6z2ZnoewNGpc5v
+         ywWCqb5hhUxOhv019/mwcgBtNWa0YQ/HsL78TflIGumWA/jG5lrEjt24DC2nhEmVqvxt
+         UFWA/xQr1wgjHvO4c2cs1552HzrBX+sClhR75+bhvBqHScBy8S0HKUynuOst/1KiNvvE
+         2O6N6zoBYePyZwl+mcV91zKKjE4ig2YTlft/nk4W4shQAQ4KOQNx0REgy+h0s/v1Yk3N
+         RGiw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+uSN5Ff/YWudt+l5pVQZER1pC+uzTX2m/X71gowPlgUGyIaNCI8BcXjLZ2ajs3XLomE8AAzd9/Rloy0QJdJvOYrXatRzyCzyGq/UZ
+X-Gm-Message-State: AOJu0YwCGs0JSiDBvcfKzW/KxVNo+H4BUEzR42nk2IkVLbwhckNAMTEM
+	bUt7LBvgCZBbhRBHY7oHekqwQAsswx7p9I9L6sSQWjPuYRvYrMZbyXFgpIRmix73uRMTRBUP4QQ
+	QEAxM6zg9odRA5gF9KGGCz89lfch/ZTDp8EW4U7Tdyk5g9lL0h/2d9DjuH2+i0hOejUR9zQ==
+X-Received: by 2002:a05:600c:2187:b0:41a:9fc2:a6b1 with SMTP id 5b1f17b1804b1-421089d4473mr11403885e9.22.1716534289481;
+        Fri, 24 May 2024 00:04:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbANVVttmPhRy5gHlbyox8+DZJn76ujulbq5P67qrxVc/eZb82/ecPtVBcBLTUTWyIKsHvgg==
+X-Received: by 2002:a05:600c:2187:b0:41a:9fc2:a6b1 with SMTP id 5b1f17b1804b1-421089d4473mr11403675e9.22.1716534289058;
+        Fri, 24 May 2024 00:04:49 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c724:bc00:e919:27a8:d431:782a? (p200300cbc724bc00e91927a8d431782a.dip0.t-ipconnect.de. [2003:cb:c724:bc00:e919:27a8:d431:782a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fadcabsm44408595e9.35.2024.05.24.00.01.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ccb10sm12101655e9.44.2024.05.24.00.04.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 00:01:55 -0700 (PDT)
-Message-ID: <c9ee47d3-77cd-4333-805a-d457e4a1bb80@redhat.com>
-Date: Fri, 24 May 2024 09:01:54 +0200
+        Fri, 24 May 2024 00:04:48 -0700 (PDT)
+Message-ID: <d9ed9876-db41-461e-9fb4-8932cc53331c@redhat.com>
+Date: Fri, 24 May 2024 09:04:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,20 +82,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked during
- __bio_release_pages()
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Donet Tom <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Tony Battersby
- <tonyb@cybernetics.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <songmuchun@bytedance.com>
-References: <20240523063905.3173-1-donettom@linux.ibm.com>
- <20240523121344.6a67a109e0af2ba70973b34b@linux-foundation.org>
- <d551d1cd-a02f-42aa-9de2-10ff7757224c@redhat.com>
- <20240523195734.bc03a8822a34b1a97880fb65@linux-foundation.org>
- <7792c8ba-39e6-47ee-9b43-108270325c15@redhat.com> <87o78vsoav.fsf@gmail.com>
+Subject: Re: [PATCH] mm: arm64: Fix the out-of-bounds issue in
+ contpte_clear_young_dirty_ptes
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Barry Song <v-songbaohua@oppo.com>, Lance Yang <ioworker0@gmail.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Jeff Xie <xiehuan09@gmail.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Michal Hocko <mhocko@suse.com>,
+ Minchan Kim <minchan@kernel.org>, Muchun Song <songmuchun@bytedance.com>,
+ Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+ Yin Fengwei <fengwei.yin@intel.com>, Zach O'Keefe <zokeefe@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+References: <20240524005444.135417-1-21cnbao@gmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -143,78 +142,40 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <87o78vsoav.fsf@gmail.com>
+In-Reply-To: <20240524005444.135417-1-21cnbao@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 24.05.24 08:43, Ritesh Harjani (IBM) wrote:
-> David Hildenbrand <david@redhat.com> writes:
+On 24.05.24 02:54, Barry Song wrote:
+> From: Barry Song <v-songbaohua@oppo.com>
 > 
-> dropping stable@vger.kernel.org
+> We are passing a huge nr to __clear_young_dirty_ptes() right
+> now. While we should pass the number of pages, we are actually
+> passing CONT_PTE_SIZE. This is causing lots of crashes of
+> MADV_FREE, panic oops could vary everytime.
 > 
->> On 24.05.24 04:57, Andrew Morton wrote:
->>> On Thu, 23 May 2024 22:40:25 +0200 David Hildenbrand <david@redhat.com> wrote:
->>>
->>>>> You have stable@vger.kernel.org in the mail headers, so I assume you're
->>>>> proposing this for backporting.  When doing this, please include
->>>>>
->>>>> Cc: <stable@vger.kernel.org>
->>>>>
->>>>> in the changelog footers and also include a Fixes: target.  I'm
->>>>> assuming the suitable Fixes: target for this patch is 38b43539d64b?
->>>>
->>>> This adds a new selfest to make sure what was fixed (and backported to
->>>> stable) remains fixed.
->>>
->>> Sure.  But we should provide -stable maintainers guidance for "how far
->>> back to go".  There isn't much point in backporting this into kernels
->>> where it's known to fail!
->>
->> I'm probably missing something important.
->>
->> 1) It's a test that does not fall into the common stable kernels
->> categories (see Documentation/process/stable-kernel-rules.rst).
->>
->> 2) If it fails in a kernel *it achieved its goal* of highlighting that
->> something serious is broken.
->>
->>>
->>> I'm still thinking that we want this in kernels which have 38b43539d64b?
->>
->> To hide that the other kernels are seriously broken and miss that fix?
->>
->> Really (1) this shouldn't be backported. I'm not even sure it should be
->> a selftest (sounds more like a reproducer that we usually attach to
->> commits, but that's too late). And if people care about backporting it,
->> (2) you really want this test to succeed everywhere. Especially also to
->> find kernels *without* 38b43539d64b
-> 
-> 
-> Sorry about the noise and cc'd to stable. I believe we don't need to
-> backport this test. The idea of adding a selftests was "also" to catch any
-> future bugs like this.
+> Fixes: 89e86854fb0a ("mm/arm64: override clear_young_dirty_ptes() batch helper")
+> Cc: Lance Yang <ioworker0@gmail.com>
+> Cc: Barry Song <21cnbao@gmail.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Jeff Xie <xiehuan09@gmail.com>
+> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Muchun Song <songmuchun@bytedance.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Yang Shi <shy828301@gmail.com>
+> Cc: Yin Fengwei <fengwei.yin@intel.com>
+> Cc: Zach O'Keefe <zokeefe@google.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
 
-Yes, for that purpose it's fine, but it has quite the "specific 
-reproducer taste". Having it as part of something that is prepared to 
-run against arbitrary kernels (which selftests frequently are not) to 
-detect known problems feels better.
+LGTM
 
-> 
-> I am unaware of any functional test suite where we could add such tests
-> like how filesystems have fstests. Hence the ideas was to add this in
-> selftests.
-
-LTP has quite some MM testcases in testcases/kernel/mem/. But it often 
-has a different focus (CVE or advanced feature/syscall tests). Now that 
-most things are CVEs ... it might not be a bad fit ... :)
-
-> 
-> So this begs the question which I also asked few people at LSFMM,
-> Does mm has any mmfvt (mm functional verification tests)? Should we have
-> something like this? Was it tried in past?
-
-I think LTP is mostly the only "bigger" thing we have that is prepared 
-to run against arbitrary kernel versions.
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
