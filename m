@@ -1,176 +1,132 @@
-Return-Path: <linux-kernel+bounces-188183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDD78CDEF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B168CDEF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4321C1C21328
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D96D28311D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8527779C2;
-	Fri, 24 May 2024 00:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EE86FC3;
+	Fri, 24 May 2024 00:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ex3GKSZu"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IMeW20Eq"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41150816
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD4A36D;
+	Fri, 24 May 2024 00:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716511118; cv=none; b=jdLDixjaIMzLVzpqp6LgDvrz1CtdiKjvB2Q1dpxN9l0KbPbEtAJaxzLgNy3Bhk16rJN04/0lNMuXPyLPISjTGneO5xI2yWO22vMJhSg09F+4xt022qyMV3igPoj3fpVkB4sOvKmSrAaoGowWbXuEWJFRAlE3TvWMHbDELz8c+bI=
+	t=1716511439; cv=none; b=kh9jbQRikINPampx8e+aZa0zIYUWKuvHJjIsBiu+D2KCvHNis5pVgrsdJW+jr6lW4VMxFkMVJ/KsPSuCun7gX8j3oh+MU+UunVdvk6cPh+R680ICE3Y6va3GUxS4/oVI8bfu9oN92U7Uc6ze78L8Qq9SrTjCO2Y/IQpXlRFPxYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716511118; c=relaxed/simple;
-	bh=grp2aumzXD04JTUddCKPIYKV3Zd9gabxwz5TJKI3HGw=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SAzQR9c7sRC8jUysQrJnwehH5b+wf+zrExpcrol4D2F10ifjmYUr92AX7cuMMS39bMBiQbfLPSi44jGX1pvFbY1LD8ExNMJY0+3WwI4vNJV5eMKoO9Y3lflYtmVUzEBWUSzhVqaUDMtNsbpHImFGE8yHdV8CbU8kZSphZToZkDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ex3GKSZu; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c99e6b8b1fso4348730b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1716511116; x=1717115916; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8oEGXFFhEZ3kKS8HqbZY7sKVJ85+CGR+UK70IUChd0Y=;
-        b=Ex3GKSZuxcxD+i/4WPEcNOxsUhcdOmlkltvZ1BBzr8A0NFRBOQgveZg/VxQ/SrZeq+
-         y/e30zgGncRfviVjrjqjUKsN1kHKXyMvp7BOkIDyT7tKch6OBqnqVfe2k2lmVzdQvhEM
-         VMIu08MgAP+W4ocCPdyD9Z2cU78O9B/BlcEfQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716511116; x=1717115916;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8oEGXFFhEZ3kKS8HqbZY7sKVJ85+CGR+UK70IUChd0Y=;
-        b=C8VDA7IHfsoVMuETXwiD8hAc1MUP6z0ikf+iCUK3eYCvgEt2FD3hjmiiwmZ+R07mdM
-         ImOGlSwruzlYAJ1HtDXi1CY906UqGEIqD5fH4RPb0m02C8ucafVmIijKZSVZB5zY6DLq
-         WKdyenJr8jxYYvdDeGl9sRmZWr8/xI4+X7MGGdnt6LOns/NcP6CODwKO3drFQzj0bDLO
-         FRoWT0slBUQMp9bjcgs9Z395m6TOs54Hu0aX8hfHOvBl5nCqmaURcInwdYusSVm5Ktv/
-         zfM38WuMRQtSRy/F1YwGvs/qf4hBhn0+HdxwmAzDlJ0tXYSSQqb5DmN5z9wrGVT3CV4N
-         MUdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXh2wjlDxeNpaouA2OlS080UWWrxn1O8y6mWi2bk6n5/HMsjXvYHVu0A4PeULC6Y1wewyHrO2jNLyxnd0mxx9fJWN81QCv+nYAuK4v6
-X-Gm-Message-State: AOJu0YxohfW9R7AYb3BlwrlkbsOQKYbYXaMd4b43oDIZp7eJHEfHOUt0
-	7YavPmQnRKz6FvfER+zpT3WSc2iOmbmLgtMZQnJQO46hHTRilxUkpYkYSGmM8TgNBw7Gqv8M6iA
-	15WJA8dFMF3CudiAPPYXpm5yg4N/ajVDoRW3c
-X-Google-Smtp-Source: AGHT+IHANTkEZOvjig5FCEm2CHI3m2gat2w85Oc8UgsCt8xQgTaCvhgmAJNa/wG52wcTxm0wOonRSfXfhADKRKsIqAk=
-X-Received: by 2002:a05:6808:358:b0:3c7:4fd4:ae76 with SMTP id
- 5614622812f47-3d1a4fb3c78mr1125728b6e.10.1716511116239; Thu, 23 May 2024
- 17:38:36 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 23 May 2024 19:38:34 -0500
+	s=arc-20240116; t=1716511439; c=relaxed/simple;
+	bh=wMezvM8py8OBv6OqV71f6d++eMzHpNIb5ooJ3D4l04M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ct9RIZX6i+pH+gDFha9wwXaEBeJaWUcrGKUmO7NeJPVMEwzI+cp23orl7P32skm7Q+Iiyz5bJ7lMfueeE9vIpJVTkIiOnH2fNh2Ec76Kwc9IDSR8EmLeuSO7WrL8M1FZrBWk9AXBlVPgOvpSnepNpzDxj64u0Jp6olYCstXLtbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IMeW20Eq; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44O0hlt3031521;
+	Thu, 23 May 2024 19:43:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716511427;
+	bh=f9Rks1hSMkKic3ENAndAYZu6kxKlZUtbmXsvFhAsljE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=IMeW20EqN/K57dTKjbNbPz7KGYFBAa0FeZ/M6YYqlxnKbLQtsPUCFmnIpPYSFtn4K
+	 8972P/eNNqifKzueyRF2gSYx03kQ6IoCBMSWlupRdZqnDW3GQasmSBaeZcGrqlSX29
+	 MZI6waBQcEXbRn0xD7XhsKkGVnAb5P/s8fU2ZjfA=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44O0hlEO036817
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 23 May 2024 19:43:47 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 23
+ May 2024 19:43:46 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 23 May 2024 19:43:46 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44O0hkoA018783;
+	Thu, 23 May 2024 19:43:46 -0500
+Date: Thu, 23 May 2024 19:43:46 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        Dhruva Gole <d-gole@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/6] dt-bindings: ti, sci: Add property for
+ partial-io-wakeup-sources
+Message-ID: <20240524004346.szrp7iiec2nhgvle@denatured>
+References: <20240523080225.1288617-1-msp@baylibre.com>
+ <20240523080225.1288617-2-msp@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240523162207.2.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
-References: <20240523232216.3148367-1-dianders@chromium.org> <20240523162207.2.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Thu, 23 May 2024 19:38:34 -0500
-Message-ID: <CAE-0n53F3Xg2vOdgy-Vpjw4Kirdgi6B+BnO51fd6qOtDu0iXCg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] serial: qcom-geni: Fix qcom_geni_serial_stop_tx_fifo()
- while xfer
-To: Douglas Anderson <dianders@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	John Ogness <john.ogness@linutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	linux-arm-msm@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Yicong Yang <yangyicong@hisilicon.com>, James Clark <james.clark@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vijaya Krishna Nivarthi <quic_vnivarth@quicinc.com>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240523080225.1288617-2-msp@baylibre.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Quoting Douglas Anderson (2024-05-23 16:22:13)
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 2bd25afe0d92..9110ac4bdbbf 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -265,8 +265,8 @@ static bool qcom_geni_serial_secondary_active(struct uart_port *uport)
->         return readl(uport->membase + SE_GENI_STATUS) & S_GENI_CMD_ACTIVE;
->  }
->
-> -static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
-> -                               int offset, int field, bool set)
-> +static bool qcom_geni_serial_poll_bitfield(struct uart_port *uport,
-> +                                          int offset, int field, u32 val)
+On 10:02-20240523, Markus Schneider-Pargmann wrote:
+> Add a property with an array of phandles to devices that have pins that
+> are capable to wakeup the SoC from Partial-IO. In Partial-IO everything
+> is powered off including the DDR. Only pins belonging to a couple of
+> devices are active and wakeup the system on activity.
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> index 7f06b1080244..c8ed0dd4fee4 100644
+> --- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> +++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> @@ -61,6 +61,12 @@ properties:
+>    mboxes:
+>      minItems: 2
+>  
+> +  ti,partial-io-wakeup-sources:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      List of phandles to devicetree nodes that can wakeup the SoC from the
+> +      Partial IO poweroff mode.
 
-Can these be unsigned offset and field?
+I think the description needs a bunch of improvement here.
 
->  {
->         u32 reg;
->         struct qcom_geni_serial_port *port;
-> @@ -295,7 +295,7 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
->         timeout_us = DIV_ROUND_UP(timeout_us, 10) * 10;
->         while (timeout_us) {
->                 reg = readl(uport->membase + offset);
-> -               if ((bool)(reg & field) == set)
-> +               if ((reg & field) == val)
->                         return true;
->                 udelay(10);
->                 timeout_us -= 10;
-> @@ -303,6 +303,12 @@ static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
->         return false;
->  }
->
-> +static bool qcom_geni_serial_poll_bit(struct uart_port *uport,
-> +                                     int offset, int field, bool set)
+Can I use no board peripherals to be the phandle? say a GPIO expander
+irq? This is not clear from the patch how peripherals and pins are
+related?
 
-Can these be unsigned offset and field?
-
-> +{
-> +       return qcom_geni_serial_poll_bitfield(uport, offset, field, set ? field : 0);
-> +}
-> +
->  static void qcom_geni_serial_setup_tx(struct uart_port *uport, u32 xmit_size)
->  {
->         u32 m_cmd;
-> @@ -675,6 +681,31 @@ static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
->         if (!qcom_geni_serial_main_active(uport))
->                 return;
->
-> +       /*
-> +        * Wait until the FIFO has been drained. We've already taken bytes out
-> +        * of the higher level queue in qcom_geni_serial_send_chunk_fifo() so
-> +        * if we don't drain the FIFO but send the "cancel" below they seem to
-> +        * get lost.
-> +        */
-> +       qcom_geni_serial_poll_bitfield(uport, SE_GENI_TX_FIFO_STATUS, TX_FIFO_WC, 0);
-> +
-> +       /*
-> +        * If we send the cancel immediately after the FIFO reports that it's
-> +        * empty then bytes still seem to get lost. From trial and error, it
-> +        * appears that a small delay here keeps bytes from being lost and
-> +        * there is (apparently) no bit that we can poll instead of this.
-> +        * Specifically it can be noted that the sequencer is still "active"
-> +        * if it's waiting for us to send it more bytes from the current
-> +        * transfer.
-> +        */
-> +       mdelay(1);
-
-I wonder if the FIFO is in a different 1kb chunk of device memory and so
-this needs to be an instruction barrier (isb()) to prevent the cancel
-from being executed before or in parallel to the FIFO polling. Hopefully
-someone at qcom can confirm this. It looks like SE_GENI_TX_FIFO_STATUS
-is 0x800 offset and the cancel is at 0x600 so it looks like it may be
-this problem. Device memory doesn't save us even if that has ordered
-accesses :(
+We also need to warn readers that this capability is firmware driven and
+not available on all SoC variants.
 
 > +
-> +       /*
-> +        * Cancel the current command. After this the main sequencer will
-> +        * stop reporting that it's active and we'll have to start a new
-> +        * transfer command. If the cancel doesn't take, we'll also send an
-> +        * abort.
-> +        */
->         geni_se_cancel_m_cmd(&port->se);
->         if (!qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
->                                                 M_CMD_CANCEL_EN, true)) {
+>    ti,host-id:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description: |
+> -- 
+> 2.43.0
+> 
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
