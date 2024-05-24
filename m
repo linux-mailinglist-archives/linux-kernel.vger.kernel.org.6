@@ -1,85 +1,113 @@
-Return-Path: <linux-kernel+bounces-188232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6708CDF82
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02328CDF85
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9658282573
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:31:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 710951F221C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7822206B;
-	Fri, 24 May 2024 02:31:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053702B9C4;
+	Fri, 24 May 2024 02:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ym0ZdkDp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFCE33D8
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 02:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397EF33D8;
+	Fri, 24 May 2024 02:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716517864; cv=none; b=mZQpB891kfq42xt2yziy7IhcBAkhvFtZmhSHX/A1MdWGbUXNnk2AUwROilIhlot9pIdig1smlkRTWEZ7UpRI7Bim3htEfFP20M0jlmxiBujSKKXUWPtCc0pJLUOdKnni/lrC/9K+GezR1hTQ3CJkuprx/v9XU+0l4qt61w+pJRE=
+	t=1716517976; cv=none; b=CwSkwdlfJwWLkAeSf9wEf4jB1wyFxb4Z/bGRkuXJeh5gJofKiIKcxlB6JOYjyTHTkR1r910UiCRPMzeQUWzEUTlg5bsBROAw9wmsHZXLO8eSFDznKg6aBHe3aBPC1FN+Bx6td8rZyZGUVn/FZVmBHSh14lhSiTBlLlW90ii7NpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716517864; c=relaxed/simple;
-	bh=TznDKzMJuKiUJ585rhM35ZjLhiINq0RwukspR7SwnVw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Io9ygb7l4qZuVz57yL14F5rlTD1YI/QpdvnN6LghWijy295L6D760vwwRgMiYX6jv83Vcw7U2SJILE/IE9SL9p0uWAq+dWp0+vIY22EmgW/BKe4WJcTcjnOanYMM5nVDA7maK+xmUkmqKhwdWcfs3n31PbtZnyDCWZJF3ANt2Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-371280b8ddfso25321465ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 19:31:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716517862; x=1717122662;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vaf6ixgd8Png0hsiVPaDl/h/gA5K/3vqhx/2V7KxUCU=;
-        b=jAlCIWsgPU2yc6gZF57mIvvfgGERXCiQHQQhoripVIKCJhag3+uNAavYk5NKzJ+3+a
-         VAANwG/MUPYpc5iyG8sVDlgw8REfReDcJFhg2pYZ5RxmzElr6PrHmDVG1bYTraG9H/d5
-         yL/hVf5H25qH8tJHCNPtKQwH+kbMHK6qhcGO/eNl9KoZyksP7cYMSDeGpRBx3jHqKD56
-         8RsitKyuAbL0rGvSLQ0I35/SCI+TrZq1n/JJh5OaoOHGitGCG6oB/5tgM4NPKyekGyOo
-         KzuCImkeO2+57PgNS3BBuc3V2YNnnuXoD1o7UQlovgWBuhZwYcPf1kGpv06I+T2bw0bs
-         WDKg==
-X-Gm-Message-State: AOJu0YyQCVtNLetLuyPCXY4s6V8ppEqWCwByekaNfSv/80E8Cogx3ls0
-	Bu6jnMR7oRnx26lT19fuZPAruwAikprY4InH0/r6Hc4CBkdB8l3aS9+2XQ3usSZw4yYZvbmIM+I
-	2UntK0/jXYnB8ShAWzJnAg1QkJ4OR4uHUMtuPHi+Du8Ns21F6OuVDfiU=
-X-Google-Smtp-Source: AGHT+IFWClzCgcboJPZ9l/HQN34nZajiVJZiMpSYVfzQBO8FBsGsRXMY5Ymv57/M5GAtlrdqXEsr4kbm9UTem1snyI6oEwOrlxMq
+	s=arc-20240116; t=1716517976; c=relaxed/simple;
+	bh=A2LtdXVt1FOoMFQuFZN7A3gmcj+m+lSSGQ1UKkAuIUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlNb9mX2bc8W1GV2aMhyDzOICTH4YFMuPDK2zlovh43ojHNKCtiuLfL9Q/taBIlxyu/08qFvBtJlFyKpYN21nT/3a1DEQoIZQj4gjRCQoubkqE8SQnD+Yc1nPBYo+PkMIF79+K4rUnfRfhAbYfw2hEheA5hhFB6nc5jlGnHS0ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ym0ZdkDp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95AD9C2BD10;
+	Fri, 24 May 2024 02:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716517975;
+	bh=A2LtdXVt1FOoMFQuFZN7A3gmcj+m+lSSGQ1UKkAuIUw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ym0ZdkDptYBUPkE3hlOpEL8aNS0dZcAKflY9fiifTdmYSQ6M7h6gTBNUPa/O32+uX
+	 hvr6icl4FGzK2iCeX9bCHMX2ncpBEKUzAS1ZH5dBJuqvsBJbC+OKueC+k1Wqvr+7qB
+	 6zRogeiRSLzL76X+k05LJ7bFe25m/aGmtljuUAFk0A8S2Ol187Ss05jYzlI9qtN+qI
+	 jJNznbDXYf5Fvu3x6u6fW4Bp9or4iLCeLPY/8xqWsSJ8PLcjToWwLmd51kLhJX7DPf
+	 ivM2/NmoSN8wjEnN/k2t4mEcT5hYD0KyDTh/2IN2RFqcyPxg9/tPQ7aUyoy3fAnrbe
+	 7hYBSW5g+tNng==
+Date: Thu, 23 May 2024 21:32:52 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Bjorn Andersson <quic_bjorande@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Caleb Connolly <caleb.connolly@linaro.org>, 
+	Komal Bajaj <quic_kbajaj@quicinc.com>, Naina Mehta <quic_nainmeht@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Specify zap region
+ for gpu
+Message-ID: <7zpdjp6h26isowviky3zlcmyafrrxdutqubnqgsmxioecfhdhs@ppvk2at4vp3t>
+References: <20240402-rb3gen2-gpu-v1-1-a51bb6080968@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2182:b0:36d:bb86:f6a7 with SMTP id
- e9e14a558f8ab-3737b2ca590mr451965ab.2.1716517862623; Thu, 23 May 2024
- 19:31:02 -0700 (PDT)
-Date: Thu, 23 May 2024 19:31:02 -0700
-In-Reply-To: <20240524020717.1126466-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000073dcb2061929f569@google.com>
-Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
-From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240402-rb3gen2-gpu-v1-1-a51bb6080968@quicinc.com>
 
-Hello,
+On Tue, Apr 02, 2024 at 08:33:30PM GMT, Bjorn Andersson wrote:
+> Without the zap region defined the enabled GPU will, if able to find the
+> other firmware files, attempt to initialize itself without the zap
+> firmware loading, which causes the rb3gen2 to freeze or crash.
+> 
+> Add the zap-shader node and define the memory-region and firmware path
+> to avoid this problem.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This statement is wrong, there is a zap-shader node already, but we're
+lacking the firmware-name...
 
-Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
+Regards,
+Bjorn
 
-Tested on:
-
-commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=110c280c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14f2c0fc980000
-
-Note: testing is done by a robot and is best-effort only.
+> 
+> Fixes: 04cf333afc75 ("arm64: dts: qcom: Add base qcs6490-rb3gen2 board dts")
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index 63ebe0774f1d..5b81b5e0b4ce 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -471,6 +471,13 @@ &gcc {
+>  			   <GCC_WPSS_RSCP_CLK>;
+>  };
+>  
+> +&gpu {
+> +	zap-shader {
+> +		memory-region = <&gpu_microcode_mem>;
+> +		firmware-name = "qcom/qcs6490/a660_zap.mbn";
+> +	};
+> +};
+> +
+>  &qupv3_id_0 {
+>  	status = "okay";
+>  };
+> 
+> ---
+> base-commit: 727900b675b749c40ba1f6669c7ae5eb7eb8e837
+> change-id: 20240326-rb3gen2-gpu-4343c5dc7e40
+> 
+> Best regards,
+> -- 
+> Bjorn Andersson <quic_bjorande@quicinc.com>
+> 
 
