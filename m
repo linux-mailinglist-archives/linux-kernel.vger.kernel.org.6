@@ -1,156 +1,163 @@
-Return-Path: <linux-kernel+bounces-188173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9188CDED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:24:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FC28CDEDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 02:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4923287C8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:24:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6F8286305
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 00:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D98F3839C;
-	Fri, 24 May 2024 00:16:34 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7006E2570;
+	Fri, 24 May 2024 00:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qHUloJ+L"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8765C812
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2912C9A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716509794; cv=none; b=B0aVtPhnt1OHBrZp0QNpvS3ohmRXvHfreRBZVpt5GP33gn4p5Z8jKsVXSDZJZ1s48k8GguRAHCFG+uuuViTkGE3P69D9OARxMs2RyqZu4P6p2uHZwtOJFcC/RbW9caoCMP9fc2KPCD8h7FU1CG+KD5qqLhtB6DqoNoXpQzlbCOQ=
+	t=1716509929; cv=none; b=eJf2ZN/wBRcaTr6n+IQdY8Uff+xOM8/jTNg8aLn+LrXxVtjcHILq8NRPZ+3zxvZb9h4lwKSDZaDEyyTSoohKVuWwcgcf0UMHxMZEqU1xal7SuFj3NTsA6u4iw3QlozWKD4sq/qPtMzTSQElQ2VSpxzfQEKH8BfMndWCa16bWs1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716509794; c=relaxed/simple;
-	bh=KDUWPHmhznFXO+SNxVv+uHTf7vceVStCVrFWJa39AEk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ex7YfOKmTIRApnjT55HT53NXlS9evM0ItJqraejMf08TJRcnxXTREzfQaNYOLXd+3I88diYLFygJhYFUdtefHkW9Ot5GE/fgUzrz8OgLyAwJ0iBFBlQtFM5MCCgJr4GzTyOJ+rwnr/hRbd8Hfv7I9kfp1P8IUZeklqvXKvkxYpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1d807cfbaso236064139f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 17:16:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716509790; x=1717114590;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fBNAgDjfQRvTsgfYZhDYhGGrl7saGwo7uOhhqFql94Q=;
-        b=GBUhJyO9JBIHtU92ZRgYbhmm940bErL6nSh7V4cwIjQFm2zikgkayQq4vhALk3UW+j
-         zHIATcL45F8uhlXTqw7v+orpbFhDRNJpjmUizcOSKw/HKXCSyOtkmqCV4+srFF+Gf4V0
-         +5RFy5kfmT2vUWZObMt8pFm7UXJWzjC7IwIuc71/DGH1UUe5AYtlJDkut08HJy8vGrYk
-         4zvMpYtNH/XTK/1WKSzOLb9A2YxL2+7S8JpfpwLZnl8m3YnJ0qyHSlw1hpVVfgYrYPuE
-         7JwgYHFJ5Vx9dX2BLgzJ5jlpq/ENuzwv/YM7gJ6TkUjz5XhW//J3fzZmAWepCPQlj7bJ
-         lOvQ==
-X-Gm-Message-State: AOJu0Yx9vnaJPERJDA16jqgXk3WcZfDrLMzy2lhHZPJxlslNGgmW6S15
-	LIK313q1iTph+wpJqiQT+XvurN1SrbnwCCNzzj/f24uFDliN3WH9L8vvqzWv6MMRDzRbkYdd3ra
-	ZK1QWgYKZ2i92v1ARiEUR/Un8sQ6vQ1IXRqEvZwTD8AydONNb2BA0ZLwnCg==
-X-Google-Smtp-Source: AGHT+IGCOjrUt8HO5X5AMJhG8O7DXFtK4P3mruf/kGHuVb3wVn4ZEw16iU6nA/eTZK02b2gaDoJ1XJSgAw/fyBaKm743gtKBAux9
+	s=arc-20240116; t=1716509929; c=relaxed/simple;
+	bh=/LHAMDUw9dxA/AqHsxp2TqEWaMowWilYcYA0HbO4XZw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=t4l0G9PSWFmMtgdhM6l5HPGXk7VSbGW8F67LY6WvwZs5QbklSFmerdZM0M6E8VBLCuhySFksc1yFf2pxUzuxyoElr2RkRsZH1VaG/oG6WJuCQ7t4TrEtgDmod0JiYQp3LF3UfewKmFjLLgZ5JUY3942QA8boOr6zh90AbdIE23k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qHUloJ+L; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240524001844epoutp042283985bf0f33f0c8bf295a345f3fa79~SRK6YA3SE0536405364epoutp04C
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 00:18:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240524001844epoutp042283985bf0f33f0c8bf295a345f3fa79~SRK6YA3SE0536405364epoutp04C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716509924;
+	bh=DSC7gwpMSFmwZdZRot6AskcvnEqlG9tvIb88IW3wBJI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qHUloJ+Ltslw5mNSdlSwfQZ5n3rmTh5W26qvxzN5TaS+WCNiBXa6YUaucMXV30cv4
+	 4fKQpgMgeRC2Gxhrl5cbEJpJRnbPKblBoAA2Yh4kqz2OiSkHqcrw3BgGtxD9sOnjDc
+	 4lkzDRtjGQubbwIs8+1ShOtLcD6K8tJEbVlQuw+4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240524001843epcas1p11e0bf5a73842f4d8e5e007a1b0bb18a6~SRK5gUgos0690206902epcas1p1G;
+	Fri, 24 May 2024 00:18:43 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.36.222]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4VllyC2PrYz4x9Pp; Fri, 24 May
+	2024 00:18:43 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	80.25.09696.3ECDF466; Fri, 24 May 2024 09:18:43 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1~SRK4kXOKh3249332493epcas1p3g;
+	Fri, 24 May 2024 00:18:42 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240524001842epsmtrp111403e8bc3ceca40ba072cb985fd208d~SRK4joEF11318113181epsmtrp1v;
+	Fri, 24 May 2024 00:18:42 +0000 (GMT)
+X-AuditID: b6c32a36-7a9f9700000025e0-2d-664fdce3eeac
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7F.55.09238.2ECDF466; Fri, 24 May 2024 09:18:42 +0900 (KST)
+Received: from lee.. (unknown [10.253.100.232]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240524001842epsmtip194f05718e7e4af5f9c0509df59c4baec~SRK4We5Tb3056830568epsmtip13;
+	Fri, 24 May 2024 00:18:42 +0000 (GMT)
+From: Chanwoo Lee <cw9316.lee@samsung.com>
+To: cw9316.lee@samsung.com
+Cc: James.Bottomley@HansenPartnership.com, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org, linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org, martin.petersen@oracle.com,
+	powen.kao@mediatek.com, quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+	stanley.chu@mediatek.com, yang.lee@linux.alibaba.com
+Subject: RE: [PATCH] ufs:mcq:Fixing Error Output for
+ ufshcd_try_to_abort_task in ufshcd_mcq_abort
+Date: Fri, 24 May 2024 09:18:40 +0900
+Message-Id: <20240524001840.1104839-1-cw9316.lee@samsung.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240523002257.1068373-1-cw9316.lee@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f94:b0:7cc:cc9:4332 with SMTP id
- ca18e2360f4ac-7e8c75d37d9mr2367339f.4.1716509790724; Thu, 23 May 2024
- 17:16:30 -0700 (PDT)
-Date: Thu, 23 May 2024 17:16:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000054792c06192814ef@google.com>
-Subject: [syzbot] [kernel?] WARNING in sched_mm_cid_remote_clear
-From: syzbot <syzbot+6023ff8646f73b21d232@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrHJsWRmVeSWpSXmKPExsWy7bCmge7jO/5pBk+OCVg8mLeNzeLlz6ts
+	FtM+/GS2mHGqjdViYz+HxeVdc9gsuq/vYLNYfvwfk8Xbu/9ZLCZd28BmMfXFcXaLpVtvMlq8
+	azzM6MDrcfmKt8e0SafYPHY+tPRoObmfxePj01ssHhP31Hn0bVnF6PF5k5xH+4FupgDOqGyb
+	jNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKCjlRTKEnNK
+	gUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkFZgV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGVtb
+	etkLnrFXvGzqZmtgnMvWxcjJISFgInF81yXWLkYuDiGBHYwSs79sZIFwPjFKTJ7UwAThfGOU
+	aDryFq5l/qSNzBCJvYwSh7bvZYRwnjBK/Ft7AaiFg4NNQEvi9jFvkAYRASmJ2Tvmgk1iFjjB
+	JLH6+1x2kISwQLLEpMYFLCA2i4CqRNenl4wgvbwCthIH3yhCLJOX2H/wLDOIzSlgJ7F+8QWw
+	Vl4BQYmTM5+AtTID1TRvnQ12kITASg6JmfMvs0I0u0i8aH0MdbWwxKvjW9ghbCmJl/1t7BAN
+	zYwSC98ch+qewCjx5eNtqA57iebWZjaQi5gFNCXW79KH2MYn8e5rDytIWEKAV6KjTQiiWkVi
+	Ttc5Npj5H288hirxkLhwIAUkLCQwkVHiw3/WCYzys5C8MAvJC7MQdi1gZF7FKJZaUJybnlps
+	WGAEj9Xk/NxNjOCEq2W2g3HS2w96hxiZOBgPMUpwMCuJ8Eav9E0T4k1JrKxKLcqPLyrNSS0+
+	xGgKDN+JzFKiyfnAlJ9XEm9oYmlgYmZkYmFsaWymJM575kpZqpBAemJJanZqakFqEUwfEwen
+	VANTwa/SmnuHxYrtS7Y+YFD5dei92tlk9acpKelPi9J8ZC6otZxZWXGFzfbLLoav54M36+Ud
+	3sldV5X8xcctbKd/4eGiE/t/3FtgtmDanov5dua396/1y3RdURxUmGq43JMvmW0240RWM973
+	WT1Ce0sY65ZUt0z7FW8UW25/6uHlPwFPJvnkZ76L2pXbKNp39so7yx9punpdyz7/mTzzyPFN
+	114IFD63Y3Kud/I8eHb9BdU837nPbT7P8+/YOEd4gtOvqL/mXRy3PlmrzpjwUeaQeXNs/Id1
+	kjpJ9YUha3JMAhc+4/n4i/u/ZZDeFK3bRhMtFeZkdWsFtWT1nb36raju5+zSumklVa7OhUU7
+	D4UrsRRnJBpqMRcVJwIAkrxGLEEEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrILMWRmVeSWpSXmKPExsWy7bCSnO6jO/5pBgcPqFk8mLeNzeLlz6ts
+	FtM+/GS2mHGqjdViYz+HxeVdc9gsuq/vYLNYfvwfk8Xbu/9ZLCZd28BmMfXFcXaLpVtvMlq8
+	azzM6MDrcfmKt8e0SafYPHY+tPRoObmfxePj01ssHhP31Hn0bVnF6PF5k5xH+4FupgDOKC6b
+	lNSczLLUIn27BK6MrS297AXP2CteNnWzNTDOZeti5OSQEDCRmD9pIzOILSSwm1Hi3i8piLiU
+	xO7954FqOIBsYYnDh4u7GLmASh4xSnz9vYIRJM4moCVx+5g3SLkIUPnsHXOZQGqYBa4xSRyZ
+	NAusRlggUeJYbzRIDYuAqkTXp5dgYV4BW4mDbxQhNslL7D94FuwCTgE7ifWLL7BDXGMr8alx
+	BxOIzSsgKHFy5hMWEJsZqL5562zmCYwCs5CkZiFJLWBkWsUomVpQnJuem2xYYJiXWq5XnJhb
+	XJqXrpecn7uJERwrWho7GO/N/6d3iJGJg/EQowQHs5IIb/RK3zQh3pTEyqrUovz4otKc1OJD
+	jNIcLErivIYzZqcICaQnlqRmp6YWpBbBZJk4OKUamCaX72Zv3h6V2hTDNOnGpEL1Y+wCkm8u
+	PhJeoFbWtamZ0TDo9fGupn2KadKz0r5sNIqUmVX9oC06N1vv7rzDkh58zFk+SsY8N4//5an8
+	vP/m0wdzQzQNHq++PvHNxosbEvcFyG/xUks9++7+ww7fHh1z7xnhm6Q7JrQXMcnN/+N5LOZA
+	8Vu25eJ9fKozzF8pVc05uCWl9bqF9ul3guGx7+RXPsiyEJdjf/1bzOrFD975vbf/ry1ceShu
+	6WT3hAmRyRdOn25/fEdlJ6Osu4asAFOYeHXszSMztB2OzZNn9krzyBfoeBOWeFtju0h6huWX
+	Tyl6HnO67WZ1H52vbnz/drSyxivWBK25J7NO238zVWIpzkg01GIuKk4EAH0mfccEAwAA
+X-CMS-MailID: 20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1
+References: <20240523002257.1068373-1-cw9316.lee@samsung.com>
+	<CGME20240524001842epcas1p3a66b301f7aad3a8da28869db634221d1@epcas1p3.samsung.com>
 
-Hello,
+On 5/24/24 12:08, Bart Van Assche wrote:
+>On 5/23/24 16:56, Chanwoo Lee wrote:
+>> I thought this patch would be appropriate to "fix" the following log.
+>>    * dev_err(hba->dev, "%s: device abort failed %d\n", __func__, err);
+>> If "Fixing" is not appropriate, could you suggest another word?
+>
+>That's something I had not noticed. This is indeed a bug fix. Please add
+>a "Fixes:" tag as is expected for bug fixes.
+>
+>BTW, I think that ufshcd_mcq_abort() can be improved significantly. How
+>about reworking that function as follows before the bug reported in this
+>patch is fixed?
+>- Remove the local variable 'err' (and reintroduce that variable in your
+>patch).
+>- Change all 'goto out' statements into 'return FAILED'.
+>- Add 'return SUCCESS' at the end.
+>
+>I expect that this change will make that function easier to read and to
+>maintain.
+>
+>Thanks,
+>
+>Bart.
 
-syzbot found the following issue on:
+Thank you for the good suggestion.
+I will create a new patch and reply with v2.
 
-HEAD commit:    eb6a9339efeb Merge tag 'mm-nonmm-stable-2024-05-19-11-56' ..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1614ddf0980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5fc7a1e1592b58da
-dashboard link: https://syzkaller.appspot.com/bug?extid=6023ff8646f73b21d232
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Thanks,
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/05cdbeb43be5/disk-eb6a9339.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a6ad79005c1f/vmlinux-eb6a9339.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/efe14da16779/bzImage-eb6a9339.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6023ff8646f73b21d232@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 22535 at include/linux/cpumask.h:144 cpu_max_bits_warn include/linux/cpumask.h:144 [inline]
-WARNING: CPU: 1 PID: 22535 at include/linux/cpumask.h:144 cpumask_check include/linux/cpumask.h:151 [inline]
-WARNING: CPU: 1 PID: 22535 at include/linux/cpumask.h:144 cpumask_clear_cpu include/linux/cpumask.h:528 [inline]
-WARNING: CPU: 1 PID: 22535 at include/linux/cpumask.h:144 __mm_cid_put kernel/sched/sched.h:3256 [inline]
-WARNING: CPU: 1 PID: 22535 at include/linux/cpumask.h:144 sched_mm_cid_remote_clear+0x518/0x680 kernel/sched/core.c:11874
-Modules linked in:
-CPU: 1 PID: 22535 Comm: udevadm Not tainted 6.9.0-syzkaller-09699-geb6a9339efeb #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:cpu_max_bits_warn include/linux/cpumask.h:144 [inline]
-RIP: 0010:cpumask_check include/linux/cpumask.h:151 [inline]
-RIP: 0010:cpumask_clear_cpu include/linux/cpumask.h:528 [inline]
-RIP: 0010:__mm_cid_put kernel/sched/sched.h:3256 [inline]
-RIP: 0010:sched_mm_cid_remote_clear+0x518/0x680 kernel/sched/core.c:11874
-Code: 0f 85 3c 01 00 00 89 9c 24 90 00 00 00 e9 98 fe ff ff e8 5b e7 14 0a 41 f7 c4 00 02 00 00 0f 85 e4 fe ff ff e9 7c ff ff ff 90 <0f> 0b 90 e9 5e fe ff ff 48 89 cb 44 89 f9 80 e1 07 80 c1 03 38 c1
-RSP: 0018:ffffc900044f7c00 EFLAGS: 00010002
-RAX: 0000000000000004 RBX: 000000000000000a RCX: ffffc900044f7c03
-RDX: 1ffff9200089ef92 RSI: 0000000000000004 RDI: ffffc900044f7c90
-RBP: ffffc900044f7cf0 R08: 0000000000000003 R09: fffff5200089ef92
-R10: dffffc0000000000 R11: fffff5200089ef92 R12: 0000000000000246
-R13: 1ffff9200089ef84 R14: dffffc0000000000 R15: ffff88805f05b848
-FS:  00007faff05ebc80(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000559bfef5ec28 CR3: 0000000061162000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- sched_mm_cid_remote_clear_old kernel/sched/core.c:11907 [inline]
- task_mm_cid_work+0x535/0x7c0 kernel/sched/core.c:11957
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x102/0x240 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faff07165f4
-Code: 64 c7 00 09 00 00 00 83 c8 ff c3 48 89 f2 b9 00 01 00 00 48 89 fe bf 9c ff ff ff e9 00 00 00 00 41 89 ca b8 06 01 00 00 0f 05 <45> 31 c0 3d 00 f0 ff ff 76 10 48 8b 15 03 a8 0d 00 f7 d8 41 83 c8
-RSP: 002b:00007ffda79a8098 EFLAGS: 00000246 ORIG_RAX: 0000000000000106
-RAX: 0000000000000000 RBX: 0000559bfef4a930 RCX: 00007faff07165f4
-RDX: 00007ffda79a80a8 RSI: 00007ffda79a8538 RDI: 00000000ffffff9c
-RBP: 00007ffda79a8138 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffda79a8538
-R13: 00007ffda79a80a8 R14: 0000559bfef4a910 R15: 0000559bfef4aa60
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Chanwoo Lee.
 
