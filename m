@@ -1,110 +1,96 @@
-Return-Path: <linux-kernel+bounces-188649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1F18CE4E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:32:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52CC8CE4EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162A528210F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:32:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E83AB21082
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBF586251;
-	Fri, 24 May 2024 11:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED35186255;
+	Fri, 24 May 2024 11:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9uHcxGt"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/t+YlXf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B6A9475;
-	Fri, 24 May 2024 11:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346C2433A4;
+	Fri, 24 May 2024 11:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716550363; cv=none; b=A7uN/5NUoyXhV7XG9wsHfryr07En0WZwxLMcjpsk+5vZHJ8vTprAXCgv+5d1FF2xbIpUXyiGjXl05TKFEk7gV4tggS+WCdua3kl8pJsW/cWyFpKwpM3rNYdVx1j7/95YufI7A2r/YmOGZVcTFj+ZM8d2cA5oMJDqQwAM+x8bW5U=
+	t=1716550830; cv=none; b=OPHh0AeaRyJqZtpQVRN94JdJRc9ZssSqb5hdG9jznXmfJtuVZ4sNbpwVKuMOsneTGLcszc/2GUEIHyRsgVInbtwiyKDGBdi8wr7OLaDUWQUGPxTulZK+EgsW8wtriyJk10mxGEdrfDuhwNhs5ynNLqfmKJTSmzfC5Ss5Yg3dkcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716550363; c=relaxed/simple;
-	bh=+FdDMqfYCOb2sKqwmEoU3h3Dyjm499FpbBKjwJhpYlE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sm3RC6c8ex6sye1oJQ3mR0DB68Hpmyc2xlDO40rroiTFvc/vVlj2dxjl/95GaN+4TYLd650g9ZCw1IsssEtgBpBa4qwVwtWrME6F/1AoZ3opcGAswHNVzE6W3jRDpoJ2ZtFbFt7pIxjkZ7TNou9PTPLx1ndemKrUO/6ODu9hq58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9uHcxGt; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df4d7e3dc94so3691419276.1;
-        Fri, 24 May 2024 04:32:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716550361; x=1717155161; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+FdDMqfYCOb2sKqwmEoU3h3Dyjm499FpbBKjwJhpYlE=;
-        b=U9uHcxGtMgfyGEdsMk9bVoAXftS6K4fgRv0otMMVRQY6OQ7GmmvSBePryykgJLoeTV
-         QG1Sch4kWHLEOs8XtEfH50DUotQ5PqNyeA2XsiuoDcwsun0bxT5TDOaAd8zpVxpsPfA1
-         9vNcygkGgFc9f0eiEWyIUmA8s/sNy0N5YRVDMhoPbqyim8Z63ezt4/9/gR6+1xRthkp4
-         5UpCyhZtNbuW/F+/SJ3d5rhEIke4HSuQSgHHzOvBk6n9OTjkhJh0K3NeD+ciCHPMLrot
-         +YFCB4x2AZmEERtyOBYWNuZCna7f0Vgbc9oI3DWh7ctmRygsxmPDHUXKgRgL3jUyYqtE
-         oFLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716550361; x=1717155161;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+FdDMqfYCOb2sKqwmEoU3h3Dyjm499FpbBKjwJhpYlE=;
-        b=FLpaxYGF1ejVCREJbaywtpgHtDPmt0OAlKNet5d1Fhvy0JcGeQ3hNQX6Wc5yUiMTxx
-         wnHxXgLNInMHNN6DbAWnCX+CsDQ3HoQtIG/IVLkrv2PeAvTexXc3BJBr29+Knt9I2QHo
-         E5FRTa1p5gb53ecVuE86zfJQ0uFGYjo0ShuXZ2AFsVajNzjfAI76DuilFct9sSHsBoN3
-         6n4Qtf6wpZQD0qRa/li5XLDt0J3KQ4UcwHXWF7h8K188XkRJGWRVRHNP+pCncFYjsJ0q
-         nrHvN117gha92Nu66C02eDFQ8POVgUxq5kdVGn0mHrFRCFKT5PL840OLAvN+C78OIMEM
-         1ofQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUroWUuJQfpom0lgL7dPnxTIH5pfmPKngMOdyfisq6Sl+h2gu7Fr5TVG6U+xcb+pFjZYKO9TWmz9hahyUMI4tx1s4Wt0t6eALUJ099hoZTfBHdZ0KX0/fmathT2Iz4qI0LkKaPfqeevZ7eQoh7WMhDwtgXSyUAIbqS1GY7RP+mo0Rhntw==
-X-Gm-Message-State: AOJu0Yxxo2MlfQO4MGSU/QK+PVaSI+vrxtQz+n41R5F/uHbtHI4aSLlr
-	W7Ui1/DD5dbJWtmyl5+pGPj6a+JNKUjT1MBea1OVccHm1U+NXyX6g5UHsdH4WCmpp/Gsm+j9q0/
-	9b0shDM93NDOFAdiIe559IMLlFllQrGdmbm3j7Q==
-X-Google-Smtp-Source: AGHT+IEUNT8qpSYVeFnLdK93OupqdGs3ueGj/G+IJ+fEMIu7n+LnUqnYTr2e4NhRpeaNvCqdhdjlRj2DJtbwV9uDHPI=
-X-Received: by 2002:a25:824d:0:b0:de5:5255:ceb5 with SMTP id
- 3f1490d57ef6-df77218a263mr1853899276.3.1716550360799; Fri, 24 May 2024
- 04:32:40 -0700 (PDT)
+	s=arc-20240116; t=1716550830; c=relaxed/simple;
+	bh=KQY3xqXY4b0WUCiY/yDkJ1BTG4PoCIuLFe0eHGjoJzs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=OX6H0Z8CLTF4lgt8AWpBYhkJre18ywknb3l4UaaAiaQkw1q1E83MvqVgtQypddUrd8VU4+4socbxshLDlgD53kmq+VdqXwGe4pCLTi/iqJ42ggfi6YW3O6sgm3IdGTbh+BGTem/r0xJUsoCTq0jy7NKEae9vIv1t4yZfmgdtAjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/t+YlXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 88BE7C3277B;
+	Fri, 24 May 2024 11:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716550829;
+	bh=KQY3xqXY4b0WUCiY/yDkJ1BTG4PoCIuLFe0eHGjoJzs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=f/t+YlXfMCVfI9ayEdS037pVDq6M9uaIeQecOY5jirbRTgBqkSCPipRzXounCxOrJ
+	 AQjPe9wX1fMTZevwmerERkKl9AuzTwU8UmX8gcVjHql8zt70Cg/TdhRh4SNqI7Lh3t
+	 Zqa8wYQ2Ngw3Dfq76QhHdofqS4k3Oa//JlX+UWPtDcw38Q4bq3dQXjlngp2Oztf2mW
+	 nDy5r6mxNinIQQ3nJxctzVOhWjaWSHtscTUU911sbnZ5jd8VBTqEbIHZua3IaYjReU
+	 8WnMw5qjMyBl9sRQCKW1p0zgrKOo1FK1+5jDY/E1jK/eoD93FiS0xOAc9ov4DRcZdI
+	 ioJdqIqZQ+89w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 77EF7CF21E0;
+	Fri, 24 May 2024 11:40:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAG40kxGMu-TSchNezkcC_A97hzPnWU3KxeL-X-hJfPhjr_COyQ@mail.gmail.com>
- <Zk6yK3U9tgxOxcBb@titan> <CAG40kxFxE_Oj+9aCzGku0a3KFHpuW8ai=gEkV9M8==5gwmjdEA@mail.gmail.com>
- <Zk7Z-MfdF-YKWeJ6@titan>
-In-Reply-To: <Zk7Z-MfdF-YKWeJ6@titan>
-From: =?UTF-8?B?44GN44GP44Gh44KD44KT44GV44KT?= <kikuchan98@gmail.com>
-Date: Fri, 24 May 2024 20:32:29 +0900
-Message-ID: <CAG40kxG0yM0+ge3=zX4S_MQevuNQ5oWAvtmTPXAbHHk2nmSYew@mail.gmail.com>
-Subject: Re: [PATCH v9 0/3] Add support for Allwinner PWM on D1/T113s/R329 SoCs
-To: John Watts <contact@jookia.org>
-Cc: privatesub2@gmail.com, aou@eecs.berkeley.edu, bigunclemax@gmail.com, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, fusibrandon13@gmail.com, 
-	jernej.skrabec@gmail.com, krzk+dt@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, mkl@pengutronix.de, p.zabel@pengutronix.de, 
-	palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, 
-	samuel@sholland.org, ukleinek@kernel.org, wens@csie.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: phy: micrel: set soft_reset callback to
+ genphy_soft_reset for KSZ8061
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171655082948.14489.8867165637123853171.git-patchwork-notify@kernel.org>
+Date: Fri, 24 May 2024 11:40:29 +0000
+References: <20240521065406.4233-1-othacehe@gnu.org>
+In-Reply-To: <20240521065406.4233-1-othacehe@gnu.org>
+To: Mathieu Othacehe <othacehe@gnu.org>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ karim.benhoucine@landisgyr.com
 
-Hi John,
+Hello:
 
-> Does Linux guarantee a flicker-free experience with setting up PWM
-> channels, or that it doesn't affect other channels?
-> How do other drivers handle this situation?
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-I've noticed that drivers/pwm/pwm-fsl-ftm.c and
-drivers/pwm/pwm-microchip-core.c use a similar approach for shared
-resources between PWM channels.
-They simply fail if the settings are not applicable to the hardware,
-much like this driver does. However, I have yet to find a driver that
-aggressively changes another channel that is already running.
+On Tue, 21 May 2024 08:54:06 +0200 you wrote:
+> Following a similar reinstate for the KSZ8081 and KSZ9031.
+> 
+> Older kernels would use the genphy_soft_reset if the PHY did not implement
+> a .soft_reset.
+> 
+> The KSZ8061 errata described here:
+> https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ8061-Errata-DS80000688B.pdf
+> and worked around with 232ba3a51c ("net: phy: Micrel KSZ8061: link failure after cable connect")
+> is back again without this soft reset.
+> 
+> [...]
 
-Maybe you're right; Linux might not guarantee anything about this.
-I think all we can do is deliver the best experience to users within
-such limitations.
+Here is the summary with links:
+  - net: phy: micrel: set soft_reset callback to genphy_soft_reset for KSZ8061
+    https://git.kernel.org/netdev/net/c/128d54fbcb14
 
-Best regards,
-kikuchan.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
