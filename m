@@ -1,67 +1,62 @@
-Return-Path: <linux-kernel+bounces-188903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668E58CE856
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 832C48CE857
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2943B227DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E765281EC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82C712E1E4;
-	Fri, 24 May 2024 15:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC23B12E1DE;
+	Fri, 24 May 2024 15:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ReUg/wOb"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YAsHear1"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83C712E1C2;
-	Fri, 24 May 2024 15:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE95A12E1CA
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716566273; cv=none; b=Orb0e55s2fRcgUnpGM7yjYgsLx+UKosvOFghwBS3WzvnLAc5KHCf16jpRi2XIEEEA5ak7w/VwrR37jEAx6ergIiTWDBArqNpoEmzkJR9WAlZcCh0X35F2gtx9PTSTuWl5haL4RyOp4PvYuEpy9W/aNh+nQT6wKHUDsm4LqG2/YY=
+	t=1716566317; cv=none; b=krIB+rNBVFQ/tjOnJLHNJGcJ8mgrLs7x8VtBhNOEAA/JhsDIPSrwQ3R20c/r5NmeWudhBR3TutkYD6PH7osfm086BgkvzIZATtjs0m6HwGxMDTdF3T709xGZxRt0XuDrUIUSk+0yrEJafDimXQ5KoKlWwvfztx/N/2AhOrLjEvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716566273; c=relaxed/simple;
-	bh=kfIIi857EybpxBimqI/wHunoGzeTcbPROPA9FGNUzsc=;
+	s=arc-20240116; t=1716566317; c=relaxed/simple;
+	bh=GLcPQLeFCdGDHpikSkh04nHRnieamjc6bh2RKAjmM3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvhCC768xlu7Zvpb+1Zfkoa4+Iod9ZTBOvWp5X8dC/+26/9zLmysB6OtgDQCrI7BKpEARfBkTXdlCwPse2ouSxebgWmV2VlMHtJSQ48QjLU1Jmk6vmKSG4UupAfPVdgV97D0qWNQYYOjRjuzYGWDhP4A13kdyHzHutXdOcGLBhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ReUg/wOb; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=etSydXL6tXHFa81kbUBjj0DUGgJuvxzCEq1M2WtotB0=; b=ReUg/wObEt+ltc/5I9cAUEALuM
-	9PHtfWthwH3KhBCBC4xjVJPC6OBRqGCSemSIJSOyn+ar8zl8+KMP9tsUptUyiLAatlbCBG2mfETJl
-	4hk5nfRUanX3aS8k0btrjL4oGqVMMxeG8Z86Up2m6bbIxgldDO3TNiApdCrhbPOij9JTsfy+tgVir
-	EFxp4lBXmxiwmbL1Y7ArJoGnQWFTxbPN8u3NIqRHqAA8W3fERSwgqL6x48OvZxM21xTBMt3NYJD9z
-	uIrQ5xHpFSOPmJEKIVLgzwXe72zSWQMDQEQXCBN/nN+repU4XVb9IVe+Um8nv/Wz96mvpz1R53rsH
-	NgoUYrRA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37468)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sAXIX-0005Vl-30;
-	Fri, 24 May 2024 16:57:37 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sAXIY-00084S-7T; Fri, 24 May 2024 16:57:38 +0100
-Date: Fri, 24 May 2024 16:57:38 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	sumang@marvell.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] net: micrel: Fix lan8841_config_intr after
- getting out of sleep mode
-Message-ID: <ZlC48i7YxFTaDVi1@shell.armlinux.org.uk>
-References: <20240524085350.359812-1-horatiu.vultur@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iR0Cjqm87xfwZ20IgxLDyF1XfC0/y82hVknWhZdZRRJJnRdPShIkU2gZJoeNb+sWDX5wv/szOOaRuJPdcwUbJjMP/HIsUPl4VDuiBpWxpd1nw3o8tVSOSabF8NYjLs9DsxOZ35Kfr6xGWTZVAWNKC7kbujYifspIW+UZiRYubag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YAsHear1; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: lkp@intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1716566313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qKYMhuglIuqXudirhgd6mCu0lEB042+XKKEjDiGgbYo=;
+	b=YAsHear1960MksYIKBv9kHeC4b+i0Gag4dL9SSb0vMMHOzcqH7v9LuqW9+KkAfsuhqljaR
+	LVxSLnkn4YKu18MXX8Z775+8+I0agcz7912B6X/zbGGw3C64MB8JhwnUFbJQZ6GUSU01c5
+	rGFKFVzYwACgyin+HR91Ooy5um96O/8=
+X-Envelope-To: philip.li@intel.com
+X-Envelope-To: surenb@google.com
+X-Envelope-To: oe-kbuild-all@lists.linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: linux-mm@kvack.org
+Date: Fri, 24 May 2024 11:58:30 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: kernel test robot <lkp@intel.com>, Philip Li <philip.li@intel.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: include/asm-generic/percpu.h:31:40: error: implicit declaration
+ of function 'raw_smp_processor_id'
+Message-ID: <d5ldg2u6kqgpiv7p42al7yp7zn2bpd3qrwmv76ccmzbvw5ag6x@enbx3xdtry4s>
+References: <202405210052.DIrMXJNz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,30 +65,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240524085350.359812-1-horatiu.vultur@microchip.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <202405210052.DIrMXJNz-lkp@intel.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, May 24, 2024 at 10:53:50AM +0200, Horatiu Vultur wrote:
-> When the interrupt is enabled, the function lan8841_config_intr tries to
-> clear any pending interrupts by reading the interrupt status, then
-> checks the return value for errors and then continue to enable the
-> interrupt. It has been seen that once the system gets out of sleep mode,
-> the interrupt status has the value 0x400 meaning that the PHY detected
-> that the link was in low power. That is correct value but the problem is
-> that the check is wrong.  We try to check for errors but we return an
-> error also in this case which is not an error. Therefore fix this by
-> returning only when there is an error.
+On Tue, May 21, 2024 at 12:31:18AM +0800, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   eb6a9339efeb6f3d2b5c86fdf2382cdc293eca2c
+> commit: 24e44cc22aa3112082f2ee23137d048c73ca96d5 mm: percpu: enable per-cpu allocation tagging
+> date:   4 weeks ago
+> config: mips-randconfig-r133-20240520 (https://download.01.org/0day-ci/archive/20240521/202405210052.DIrMXJNz-lkp@intel.com/config)
+> compiler: mips-linux-gcc (GCC) 13.2.0
+> reproduce: (https://download.01.org/0day-ci/archive/20240521/202405210052.DIrMXJNz-lkp@intel.com/reproduce)
 > 
-> Fixes: a8f1a19d27ef ("net: micrel: Add support for lan8841 PHY")
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202405210052.DIrMXJNz-lkp@intel.com/
 
-LGTM.
+I have a fix I'm testing for this but it's going to need a lot of
+randconfig build testing on all archs.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Philip, could 0day help out with that? I don't know how you schedule
+which branches for which testing, and previously the memory allocation
+profiling didn't get enough build testing before Andrew merged it.
 
-Thanks!
+Running my own build testing now, of course...
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+https://evilpiepirate.org/git/bcachefs.git fix_missing_include
 
