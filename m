@@ -1,197 +1,245 @@
-Return-Path: <linux-kernel+bounces-188735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3C08CE615
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC108CE618
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F9F028174C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF3A1C21089
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF22C12BF31;
-	Fri, 24 May 2024 13:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276021272C7;
+	Fri, 24 May 2024 13:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kgmVnNUy"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2049.outbound.protection.outlook.com [40.107.220.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FEPKYJwt"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB931292DE;
-	Fri, 24 May 2024 13:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716556829; cv=fail; b=a+xVAXdBx6/DXXRcBtEP1ReoePxvT6e6wJX+FIYWvA5i71oeVvKa160iMpYGUwlKaWns1B3wZKI92Xlt/2DihI3sWozDhhnIiMuY4ycdPtAQQmcrUqTuAgWkKNqvgOM3GYCTTrL/X37+sO3nuhO+nxu+/G1uREDyACA0JYhyI7c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716556829; c=relaxed/simple;
-	bh=MGngmGFps8h6ie1n4VfMbvNPonmhEbAAKWwZkOj2pQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G3BJS8Z6BMX2mJutZtgfiM2sWsM2hjnAxfAzKZGCyw2wgxqt0727pXeh89UnypKXm0U8umMCSTU/6PdPGU4l7WdpIrMx1mI7qYdqubxwQexkMVMkTFyYzSQSPudTwP4MqOe/zy65jl+MUC8hZfqCkWcrjCkd/FLEP0FlDCwOV90=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kgmVnNUy; arc=fail smtp.client-ip=40.107.220.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K7qHOK32ghjxcTFfBBN/Gs+J7qqxAz03X5ovD2TampJ+U+mmMjaXoXQ60iO2ZXtLXQ2pt/5NoNghgpEAHSLplIyXI6/FjXQ7yzsVlJPFe4vyiRqzKZF2yMEWWl0L2Ye8GtTWLKtL8k5u68mbT7YOiAfJfrLWU2APwiAsUEsfzbTjV6ILDh5m2f6qSmx3r54J6of4yn94w+sEALRG9aV9YMYVzeIh4Dct2/sWAbidNkqx5BBcqIF6Q49Xnobt8hgL/1B/Rk7+Te5hYN25/OpQbffjIuoL5f6YpNlujHtmekAGYC7Kb9PdtNbtR03jS4L9PQNaqe+Lr2xQX2c2AbQbNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PLu8/ugY0YeG3oL2kvjFML3moIZvhF2Ih6bb5mwQB9A=;
- b=oSG+2c6yr4Jkwk2b1Nf1WP7BMPOT8hjyAEgWxkKPbYUI7eZ5RZkqTqMo9XNw/Y6sZZW4sJRxFFk5BdzriExZO0jHitUtUOjdESirHbxFETq16msdSvyCFZA+1dJuFm60F6iQ1/Akjp7ScQw8JUyKeRB4L67BtiZEvAqsFH97RUlGDvIDUQD/Qjf0VKC7hByaFEH3PRj/neDeUFUv4HBl8tuFgwx0OxCEIZSQ9M6osWsENvsc4NjwVHdKsxOs41aC9YOXpzOOwMVoMEdotTBgdIWmeskfDuwQkPkY/fpJdqmtPziGw8NznZmao5MkxA1bF5w2Diw/54gm5pZ/9Gbdlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PLu8/ugY0YeG3oL2kvjFML3moIZvhF2Ih6bb5mwQB9A=;
- b=kgmVnNUyPg/CSOyDcp+/ENQknD8/uYOBDpGQX0UgE8oVo8fsCRAlOp2qJieHLCEr/2W7fPnkW18cjaVqoHMexk4eFRlWT2d9ikdUF0qcL8RKuJoO08bwdsL2nriYiExwA8v8b/qmwHYz1DwCBne+RmVDOux68qruv6xF6at8kzDgmB5cIJVu129jfOACrksx5XCwS0xvfHYBFoojA6R1e1hYOfgGIrb/En7hBuWme/AYBVvI2yVURiZPoLDV6d09WdSysHuAG/jCeWIisaH0iV1WQoVqDN+KZEmnod34gFznjBvP01k/iREfUjh2CoPpuLXhuD9oqsyIFjDyaxXGDg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by PH7PR12MB6955.namprd12.prod.outlook.com (2603:10b6:510:1b8::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Fri, 24 May
- 2024 13:20:24 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7611.016; Fri, 24 May 2024
- 13:20:24 +0000
-Date: Fri, 24 May 2024 10:20:23 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: "Tian, Kevin" <kevin.tian@intel.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"vasant.hegde@amd.com" <vasant.hegde@amd.com>,
-	"jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>,
-	"Dhaval.Giani@amd.com" <Dhaval.Giani@amd.com>,
-	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <20240524132023.GU20229@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <c97a98a72ee3498c587e5898d6b899553ccd9b27.1712978212.git.nicolinc@nvidia.com>
- <BN9PR11MB5276A897A5386DFAC9A35F9D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlAoN3s96HL7ROth@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZlAoN3s96HL7ROth@nvidia.com>
-X-ClientProxiedBy: YT4PR01CA0174.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:110::18) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6647D86ADC;
+	Fri, 24 May 2024 13:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716556853; cv=none; b=ZNfvMRpFkYgcHrlc3nwkyZeTPLuuf8VkKtbCrMWPSq8fCil8Oy1/QijGXIgkDStrBZFpSPkrmercpD7adslnmoBtC4ySg+TlCh+crxL6vmhLWr8WD44EeeykrUinmY5lFno2UDwnAnTGjtnTeli93dIQqHY2ObucLAEdlWMUOQU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716556853; c=relaxed/simple;
+	bh=dusH13FGed/xCq0e/yE1Yz7ndxxN5dgptGHXvcd88x8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TB1421tYLS5YieoKZ72mFJFxZG0yrNfT4a+BkUrojIEIDMXXZw+w1gfj+eL3+pbfnHSw7hdFA0q1ui2SNmCiyd7fze748XiVzVpEU0x1Y3r7eMlKosJXgyZ9f3tMkYeymgllKzVxDof8+PwfIzNrQa+qlr/6MjPvEQw0xpz3F3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FEPKYJwt; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e1b8e3070aso352245939f.3;
+        Fri, 24 May 2024 06:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716556850; x=1717161650; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=NiJkdpzuiz2YvDCtfW0QgbnVrbOaduXcSiyxb63NU5Y=;
+        b=FEPKYJwtfXbHmJnQJLLZZIa3zLBMpqrK1g2t/ZgAxs06wrC/j8fiYDo037Ie+eVZVd
+         2BnhMbwRzbE/gsUApeCc1VrY/JDl+qXENBmMVazhTBLtEJpW1msBOKr+J+U8heQ3zv1M
+         DyVFNz7dBOIvDMJwgXdzpwpWM70ESEwdv9bN5SvkP/MgYu7Zq+A7kBKpt03AN9VFNorG
+         cNwJf6ggE3R+EbdEq7meGvfhlMRAA+jg+33jPMcm4sqf4RZq+BmSBWNceW5zi9cPHr20
+         gj+0NpJqlWKiQvPMi4DowpiUxPk7POGhRDTRA/zJCl7XZbIaDA6vDwXlm7tb2P48ZGe4
+         qt0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716556850; x=1717161650;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NiJkdpzuiz2YvDCtfW0QgbnVrbOaduXcSiyxb63NU5Y=;
+        b=w06t12qnUL9JATJVYOoO8Mo5Gz/eip3eBD1+DP+CgdY/WVAyWVEE6Rk9k2VXZ5WQyg
+         Zkf9r3/kEo+cPD1McU9yzpHSrMKdWq24Qw82SAS0kg8vVXH3HA+sUnR1fKJF+8kBVtyw
+         HyfKDGbe0ICV3yA88n8g5uFIGh+lCwWMtU5u4h79TY7AynAl7eY4rZKYl5LWJM4A9+Z9
+         9xuCkNqHM5n7k1Relgu6TE+lQ+X0J2E4ZC4/6c/F8OS/fGGjHxPnQ3Xw9Y5V+jQHat+q
+         dRlJD+PLwUEXb+LGmefsEo6zGrZ4wmZuiPTDDRKyGRlZsPzRWqgGBXNnel+qH67n5DFQ
+         5a4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVl7SqAqmyJhrW4LZ1STI1TKnwoQoHiS6bPDluzMIT4BKq/UA80/GQa1bGJUK/Hf95YorUVjHoq0ipZWEqXhwYaPWeknWzW+3y9wwVMtASmXLy1Vqw+sUlobBb0ZWNXhV6+vkQmCfQtRZtCk26Xv0E6kPsTq+YUOCGl0qLU+Bfw1NNGTXU=
+X-Gm-Message-State: AOJu0Yys0BBzVuNhlFeU7gnKUK4GQR05gVr/lmXsPeNrHaiJyp0pmwy2
+	AlQg7YRfBfn21A/A7iinwUuwWUM3p9Tew9w4Wk5VxBqps0zvSsKs68kYjg==
+X-Google-Smtp-Source: AGHT+IFz8/TvUM5Di4GCF+AmnBdQr89Jdy/Ro3lkrn+zhhMoPUQmaE/oM7D9cB3wdkHXZDylWANqUA==
+X-Received: by 2002:a6b:5806:0:b0:7de:d88f:54a7 with SMTP id ca18e2360f4ac-7e8c636bae1mr261234839f.13.1716556850440;
+        Fri, 24 May 2024 06:20:50 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6822073fbffsm1139407a12.2.2024.05.24.06.20.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 06:20:49 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <5bb5b291-ec6c-4233-b2f2-bf7f1ba74d24@roeck-us.net>
+Date: Fri, 24 May 2024 06:20:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH7PR12MB6955:EE_
-X-MS-Office365-Filtering-Correlation-Id: 73aea56d-09c0-4d47-3db2-08dc7bf44526
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|7416005|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?q1umko8Zv9zLCkldHDEF2yOAeHnArC+gtk57EkUlR8+zfETll52v8ysaF32p?=
- =?us-ascii?Q?Jt+JNZS3mSNa7Rax7NSH+wNmY6bQr3ZSOtq2bPp5gnhHRndcwS4xy0H7Pior?=
- =?us-ascii?Q?l5N00i4SLaejDck9aDH6/GpLuZQ2dlDOMgRBh4TIvoHZw9/2lJhmSsUpdE0T?=
- =?us-ascii?Q?n8/CJlntgEnYg2H8VmNtf2X02yYGvgVeuZmse2dAy9lIkYv6K8vU9OTpihQV?=
- =?us-ascii?Q?2oXLr62Sj6IEn7rNW4KuJJUnPS2U44W77ROYmB7UW1RVVfkEQ7mMpChfBeGp?=
- =?us-ascii?Q?lW0YaBeK+fr6S1EejciWYk+TuPunkfmNegYJ/wGE9u786AMWzOLF5EWzRJvL?=
- =?us-ascii?Q?YRoqInpRYrTOesDqHFIrRxne/cgYQGFHQKR/tiWLiM+ssmmjUr7j1SQNsNtc?=
- =?us-ascii?Q?9PyEyUnmUKjCzBU3lXTOgdKVu22Bl/AEnSZIbAzElhLPNeLjVg8VXV1l6/uD?=
- =?us-ascii?Q?+4+ZzI/PjcdrW4QQMiAxU2vyUHT9ZwLrAA6jRxgis8GFmuYPDFHYza7/7fVC?=
- =?us-ascii?Q?gNe9YAwih8a5xTwFGEIQr9ncdDIWbXFpythKvh61BAZTdsj0qP60n+tSmP8M?=
- =?us-ascii?Q?+41njHFGB71UZIPFdvERoQ2qMb3OxxXrcTtVDLQ0wE2QdX3Lyz0cm4Cygl8g?=
- =?us-ascii?Q?OQtnzGyZFuzEcHV82wVXvpS37TMtNCXxTTIOwItBkVfcPYh4eaOjKUCJRO41?=
- =?us-ascii?Q?qDsa4olNnUxOe3VeMV9DrGq9Gfj1gW5xC4FMIb5dOVkKsa6VptuUhE0f1u3M?=
- =?us-ascii?Q?McveQW61Ecff4/3Psdglu4eCR6MZLcgKztUV+bqW2B5X2T+xKe8xHdSoyVhm?=
- =?us-ascii?Q?fMAlv2+vuk64uyLhvn8hBWzLO7l3IEaDEZriDC17vz7EXkZWCjucCnqZSGay?=
- =?us-ascii?Q?kwkF/rJAR2kgEgtP+C16pRK8JVpvSq0hXCHVoMYnXaP/6SgenUGSk4LdrfbE?=
- =?us-ascii?Q?1Ije9P+BqP+J0a7gmibgaLJHj3nE8d+8xY1O0Kzp8iahox2UfdL3FA0dSQmc?=
- =?us-ascii?Q?QZGLTZ0XTM5S9SdeJRRU3zDdQ3EDlii8LbxMzsfig/ce05wzCDJg+MAUwH6J?=
- =?us-ascii?Q?s6sNNJg6kdjvWNFl/QAMWMQdZCqk1pX3fN03ak1V99Lo7SkAcy/gTIDvzR1K?=
- =?us-ascii?Q?upOkPtBe4ufZNaQEl95Odg2tFm1/YVwAamtLRPi4QpxdBvOa88wJ3kM/mcfk?=
- =?us-ascii?Q?G/EQ0rStcrQjCz6OJwjIwZMVjmdBk1n4sTPx5n12gAG95HXaWuEzD2sDQqWv?=
- =?us-ascii?Q?L0/2OOV32uqB5JYfqmp3wXESdOI8i8G1RZWbxz/9Mg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(7416005)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1X6otUY66Jcyv8MrxFErY1aF6wh+SjL5wLW0n4RR0UrHzIpH5RuVjOhXscxQ?=
- =?us-ascii?Q?Z/kNaa/GW/SKGsmd2gk0XFe5zNuNdAkkzy81eq6dGTTrqyu0N24UVj7aLBCw?=
- =?us-ascii?Q?2eWmsdNSZo9I3hfUfyvh76z9FFOVtJaZp/U/YDPm4lL0AEm6zsXPj5RLgIly?=
- =?us-ascii?Q?LzbWE75gxC2YWjL+LZ5Pr/IBUGtWJJo7EbgnX0R9CRtnOc/1/cgx1uBvElm7?=
- =?us-ascii?Q?b5YZZ+lRQPFbhS7S/8h6tPxdiBp+BY4ywWpvrBLv7yaHyFy6iUWUrxrbcIMV?=
- =?us-ascii?Q?iafkAoFoc8+1aOOMC0yDOB4B3pArK5w//8svbNEDlZJJNt/nMBlV0LrHfG7g?=
- =?us-ascii?Q?tmR+RkUUQG0tHj6tZPq3TBv7lEvrls9g8I/lypRvOajdQk0KdvrUYh6O73jP?=
- =?us-ascii?Q?6wGhF3egouvjmUC/Mnvv72R1sjmAcjiBWvdMBy4EB2ELVvokqGealun0/ECc?=
- =?us-ascii?Q?frwso6WwP38dTK+4h4auy0dBa6lTzzG4OP/mQttI098RqI2ztsH/hyT1hmNy?=
- =?us-ascii?Q?6bOAiGxg3HnRMNRji27+HoyHtY1MH92p01oXMumdB4fZsdVz0U+DDl8HeAJr?=
- =?us-ascii?Q?rj2Xnpsg+3H23hzXmaXAtFfCZno0qjLQQSXWgo5I/hxUI6fnyiKlIamtWwom?=
- =?us-ascii?Q?pgmf3gstTGBlxo2PtzXiAYUuMNtyg4z84OwDQOC/MwTCM0ftYLqNdQAvtfh/?=
- =?us-ascii?Q?3XeFr6FB0WZ9dJzxz5pY3SUs5wEOdGbCP+Xt94uLbCYarXKHKI628OOWXJzP?=
- =?us-ascii?Q?MOaWu8cIeXg/rDpyqQ+i8Z1vpQ9ou5it3h1KATYsIaQcicVEpowUWBnRJalH?=
- =?us-ascii?Q?yDjFd0J8tRULGUo+sLsY42hgbb5uNqLk3zKuxyEeXTzESZBRmWa3qnw11dz/?=
- =?us-ascii?Q?L1vamdnFyDL+oRjAQAdG0ShkvRGEsRuBOvEFgZINdcsqfREWOVHTPgEN5zzU?=
- =?us-ascii?Q?r9LRq6GDF0oEDHwzePjPWJ8NMZNABp0ZUgyhab6taEoiqTTdTHQJ8uHn+zUp?=
- =?us-ascii?Q?x30tipqpz8eTxyQswI3xTrXA3PQCxdfO1Zb+FV8qZQItG/vO2IF8dEshxt50?=
- =?us-ascii?Q?rLS9InYi8udf6F64gWZo+hnoVAVN/Da4/vBsjgXZomWAfKGrM12gBiJoscfx?=
- =?us-ascii?Q?RXV7h87/ktmbYf2pTQGEk09s4viQXwq4h1ots40uEtGz2PvGbFJ3bT1l9Mdc?=
- =?us-ascii?Q?u04bH8sdE+0ORbp+Fp9VdTmasq6J5ShTI1uM97Ja/pcIH+1D99P5vJjaWxiu?=
- =?us-ascii?Q?HxfYAE27foa6amJzz/QevTEssuKMVWwBxVwqxdLHmyilSNYbsy/jODB1Nzn5?=
- =?us-ascii?Q?KcSoszAsZefr2AsjOp66oxYc9I1QKkl6qGou6WvjcwTccRhgudZHp2AjdKXt?=
- =?us-ascii?Q?vZ0rwUTTf+g0ze7nvPMxx2usyTxsoHyD7GsbUPKDaI5sH0/eshJiqvBny1sP?=
- =?us-ascii?Q?oZCGDLaE2Scqnxj+/JAL92Xj+6dIpwJj/5jcUtkV2g/LEX+61dlUwPofKKYS?=
- =?us-ascii?Q?32JWeopzeg9vrw+5GaEM2uN2xd8597OxGcTUreimhqfRHE4+ZDMQkw8pfeWf?=
- =?us-ascii?Q?6dLX4sc9ieIcOYRx625SzxQfSeDyIGYkEMyQRc8X?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73aea56d-09c0-4d47-3db2-08dc7bf44526
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 13:20:24.3145
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UjrT/z9dsoj2HcvcRJgsXFhe1Lp3nQvkcCyiMUI61KEb5VxkBuqFTbeAyNkym59w
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6955
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drivers: hwmon: max31827: Add PEC support
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Radu Sabau <radu.sabau@analog.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240523121057.5689-1-radu.sabau@analog.com>
+ <e52a86de-ead6-40d3-b652-461a90bd5942@roeck-us.net>
+ <58e17135b41da7eba8afd5d8fb5f25bcaffa7288.camel@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <58e17135b41da7eba8afd5d8fb5f25bcaffa7288.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 23, 2024 at 10:40:07PM -0700, Nicolin Chen wrote:
-> On Thu, May 23, 2024 at 06:42:56AM +0000, Tian, Kevin wrote:
-> > > From: Nicolin Chen <nicolinc@nvidia.com>
-> > > Sent: Saturday, April 13, 2024 11:47 AM
-> > >
-> > > Introduce a new ioctl to set a per-viommu device virtual id that should be
-> > > linked to the physical device id (or just a struct device pointer).
-> > >
-> > > Since a viommu (user space IOMMU instance) can have multiple devices
-> > 
-> > this is true...
-> > 
-> > > while
-> > > it's not ideal to confine a device to one single user space IOMMU instance
-> > > either, these two shouldn't just do a 1:1 mapping. Add two xarrays in
-> > 
-> > ...but why would one device link to multiple viommu instances?
+On 5/24/24 00:00, Nuno Sá wrote:
+> On Thu, 2024-05-23 at 07:19 -0700, Guenter Roeck wrote:
+>> On Thu, May 23, 2024 at 03:10:56PM +0300, Radu Sabau wrote:
+>>> Add support for PEC by attaching PEC attribute to the i2c device.
+>>> Add pec_store and pec_show function for accesing the "pec" file.
+>>>
+>>> Signed-off-by: Radu Sabau <radu.sabau@analog.com>
+>>> ---
+>>
+>> Change log missing.
+>>
+>>>   Documentation/hwmon/max31827.rst | 13 +++++--
+>>>   drivers/hwmon/max31827.c         | 64 ++++++++++++++++++++++++++++++++
+>>>   2 files changed, 74 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31827.rst
+>>> index 44ab9dc064cb..9c11a9518c67 100644
+>>> --- a/Documentation/hwmon/max31827.rst
+>>> +++ b/Documentation/hwmon/max31827.rst
+>>> @@ -131,7 +131,14 @@ The Fault Queue bits select how many consecutive temperature
+>>> faults must occur
+>>>   before overtemperature or undertemperature faults are indicated in the
+>>>   corresponding status bits.
+>>>   
+>>> -Notes
+>>> ------
+>>> +PEC Support
+>>> +-----------
+>>> +
+>>> +When reading a register value, the PEC byte is computed and sent by the chip.
+>>> +
+>>> +PEC on word data transaction respresents a signifcant increase in bandwitdh
+>>> +usage (+33% for both write and reads) in normal conditions.
+>>>   
+>>> -PEC is not implemented.
+>>> +Since this operation implies there will be an extra delay to each
+>>> +transaction, PEC can be disabled or enabled through sysfs.
+>>> +Just write 1  to the "pec" file for enabling PEC and 0 for disabling it.
+>>> diff --git a/drivers/hwmon/max31827.c b/drivers/hwmon/max31827.c
+>>> index f8a13b30f100..e86f8890ee72 100644
+>>> --- a/drivers/hwmon/max31827.c
+>>> +++ b/drivers/hwmon/max31827.c
+>>> @@ -24,6 +24,7 @@
+>>>   
+>>>   #define MAX31827_CONFIGURATION_1SHOT_MASK	BIT(0)
+>>>   #define MAX31827_CONFIGURATION_CNV_RATE_MASK	GENMASK(3, 1)
+>>> +#define MAX31827_CONFIGURATION_PEC_EN_MASK	BIT(4)
+>>>   #define MAX31827_CONFIGURATION_TIMEOUT_MASK	BIT(5)
+>>>   #define MAX31827_CONFIGURATION_RESOLUTION_MASK	GENMASK(7, 6)
+>>>   #define MAX31827_CONFIGURATION_ALRM_POL_MASK	BIT(8)
+>>> @@ -475,6 +476,54 @@ static ssize_t temp1_resolution_store(struct device *dev,
+>>>   
+>>>   static DEVICE_ATTR_RW(temp1_resolution);
+>>>   
+>>> +static ssize_t pec_show(struct device *dev, struct device_attribute *devattr,
+>>> +			char *buf)
+>>> +{
+>>> +	struct i2c_client *client = to_i2c_client(dev);
+>>> +
+>>> +	return scnprintf(buf, PAGE_SIZE, "%d\n", !!(client->flags &
+>>> I2C_CLIENT_PEC));
+>>> +}
+>>> +
+>>> +static ssize_t pec_store(struct device *dev, struct device_attribute *devattr,
+>>> +			 const char *buf, size_t count)
+>>> +{
+>>> +	struct max31827_state *st = dev_get_drvdata(dev);
+>>> +	struct i2c_client *client = to_i2c_client(dev);
+>>> +	unsigned int val;
+>>> +	int err;
+>>> +
+>>> +	err = kstrtouint(buf, 10, &val);
+>>> +	if (err < 0)
+>>> +		return err;
+>>> +
+>>> +	switch (val) {
+>>> +	case 0:
+>>> +		err = regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
+>>> +					 MAX31827_CONFIGURATION_PEC_EN_MASK,
+>>> +					 val);
+>>
+>> While correct, this is misleading. Should write 0.
+>>
+>>> +		if (err)
+>>> +			return err;
+>>> +
+>>> +		client->flags &= ~I2C_CLIENT_PEC;
+>>> +		break;
+>>> +	case 1:
+>>> +		err = regmap_update_bits(st->regmap, MAX31827_CONFIGURATION_REG,
+>>> +					 MAX31827_CONFIGURATION_PEC_EN_MASK,
+>>> +					 val);
+>>
+>> This is wrong. s/val/MAX31827_CONFIGURATION_PEC_EN_MASK/
+>>
+>>
 > 
-> That's a suggestion from Jason, IIRC, to avoid limiting a device
-> to a single viommu, though I can't find out the source at this
-> moment.
+> Then, maybe use regmap_set_bits()...
+
+Good point, and regmap_clear_bits() above.
+
+Guenter
+
 > 
-> Jason, would you mind shed some light here?
+> - Nuno Sá
+> 
 
-We could probably do it either way, it just doesn't seem like there is
-a strong reason to limit a device to a single viommu even if in
-practice that is how everyone will use it.
-
-Jason
 
