@@ -1,96 +1,140 @@
-Return-Path: <linux-kernel+bounces-188650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A52CC8CE4EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924228CE4EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E83AB21082
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2F441C20EC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED35186255;
-	Fri, 24 May 2024 11:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABCF8625F;
+	Fri, 24 May 2024 11:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/t+YlXf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nbGQhBWE"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346C2433A4;
-	Fri, 24 May 2024 11:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D7A8615E
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 11:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716550830; cv=none; b=OPHh0AeaRyJqZtpQVRN94JdJRc9ZssSqb5hdG9jznXmfJtuVZ4sNbpwVKuMOsneTGLcszc/2GUEIHyRsgVInbtwiyKDGBdi8wr7OLaDUWQUGPxTulZK+EgsW8wtriyJk10mxGEdrfDuhwNhs5ynNLqfmKJTSmzfC5Ss5Yg3dkcM=
+	t=1716550929; cv=none; b=n8rgTGveGpOrqLQtfrtYOScDRzCS0pCYhgwkMeIIWTE+mCVZYsgAAwvvKobEmLpzhD8kKDMxi6MTa0QySM1mx4Av+Pfv1YS5xkA0t9DEys2XPLOr1cMI+bM31LGBoAUMpZqI5QYJyBgpT3JIoP50lphqGYddySQgUGPrMi0IOi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716550830; c=relaxed/simple;
-	bh=KQY3xqXY4b0WUCiY/yDkJ1BTG4PoCIuLFe0eHGjoJzs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=OX6H0Z8CLTF4lgt8AWpBYhkJre18ywknb3l4UaaAiaQkw1q1E83MvqVgtQypddUrd8VU4+4socbxshLDlgD53kmq+VdqXwGe4pCLTi/iqJ42ggfi6YW3O6sgm3IdGTbh+BGTem/r0xJUsoCTq0jy7NKEae9vIv1t4yZfmgdtAjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/t+YlXf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 88BE7C3277B;
-	Fri, 24 May 2024 11:40:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716550829;
-	bh=KQY3xqXY4b0WUCiY/yDkJ1BTG4PoCIuLFe0eHGjoJzs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=f/t+YlXfMCVfI9ayEdS037pVDq6M9uaIeQecOY5jirbRTgBqkSCPipRzXounCxOrJ
-	 AQjPe9wX1fMTZevwmerERkKl9AuzTwU8UmX8gcVjHql8zt70Cg/TdhRh4SNqI7Lh3t
-	 Zqa8wYQ2Ngw3Dfq76QhHdofqS4k3Oa//JlX+UWPtDcw38Q4bq3dQXjlngp2Oztf2mW
-	 nDy5r6mxNinIQQ3nJxctzVOhWjaWSHtscTUU911sbnZ5jd8VBTqEbIHZua3IaYjReU
-	 8WnMw5qjMyBl9sRQCKW1p0zgrKOo1FK1+5jDY/E1jK/eoD93FiS0xOAc9ov4DRcZdI
-	 ioJdqIqZQ+89w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 77EF7CF21E0;
-	Fri, 24 May 2024 11:40:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1716550929; c=relaxed/simple;
+	bh=um20z/0h51TyiN3ed0lhaWcGjCmT5HIqNWJUIu2xitM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=td0lYlRnPVcMYiVXge/0tDpGpVvNNx0S614zoI6YwzR0NhVNOsQRougWsLQIyu07eB/U4TPIf6rQzaOGHUkg+axoQ6iLqiBbPKCN6CxMth9jW405WoB8OUJpiEV/5Q2MrHc4c4/fYCCEgk8CjouE77VZRPhZP1S12af91cipC08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nbGQhBWE; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5295d509178so792188e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 04:42:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716550926; x=1717155726; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U8ucJzSqULWl8fDGLbjGQazBi2zanFjR2g3fW7V53pQ=;
+        b=nbGQhBWECshYUvssH8kdkKMJeXQoDXhESKvUMLK/5dTBvhLQ8bAj713dT7BGNKytps
+         2GZuxeKUSizKl8S/3EADc0GKArT50M59/wprvpuuJRglZyhCXTlKyUqONm6lRYclmHNU
+         zc8lYj5dQHMthMBcGJUqXPtFoCS2qxpcRf4uqTZsji24+bLCb5WtycaX6Vc9atYuN6/j
+         8hqPDc8jgBZJ+8fUXBzctuDnSbGHRHVol7IkiLvpPkgUzuq6PMEFoaia3lwabLbaxhMl
+         XROn6YliHopMOs0FCUIZ6ejEVjdpKtg+UjTN5aeK5GNsYGLmYsP7AqSU/eH/PrEttgp8
+         s7hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716550926; x=1717155726;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U8ucJzSqULWl8fDGLbjGQazBi2zanFjR2g3fW7V53pQ=;
+        b=m1Tte/RBwRtn0jS+KV59P4fzJ+GShI7NRwyvNpdne0Fk4X7+sPVsYS4Hlkaol/pKGV
+         f5klZ/H4gC58wWdMD6hH6E+0tsnaT2SeqE1jdCkQyC+TjsHPNZSIv1Yne4A1mW1jzSBs
+         XB4KDRSGybaOtBJ/J1JxEU0KjXX/kBRmfa++ebv6lJ7FUObgRm3wugQoDkZIqPkEC2iv
+         i5sQG84huh6uqI2vVyH9m9hGTnx68aDvOGaQZmvxoe7iaVrV3KJ5noV1rcGnTRYnZXrR
+         8Wor+fLwZc5/SVTRyyI+dWCR9TwB5y9J26i1I18aLtqnajSpJ7DxLyrZQVK4eANaRs9e
+         0XlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMPGPo+DQUTQdWFC0ffNDMjNG7Bcpq5JXPA/DV8cQVvZzSgr2C7Yzi1dEYwAQM71cpHsEBgu6zMdbtLD7gCdyG9C3dNaXVrztbmZJ4
+X-Gm-Message-State: AOJu0YzPbLYhFd3HjyuMtGa9TC3nddNStLaOqa8V7b+dJHR6+RR7+zVI
+	9+dqCPpbJRf/uGkubUzdqnQYXqZnk0BvDk2RChJeZ8vTa6j76Qs1rnSIbHUhqnE=
+X-Google-Smtp-Source: AGHT+IHr7B3y1pvIPOhoBlsH5vP7fnRdRGNFoCQomY9uiTVTvzbuXki3VUxBhl97FiRxuDdtZV7Hng==
+X-Received: by 2002:a05:6512:224c:b0:518:c69b:3a04 with SMTP id 2adb3069b0e04-529612c0598mr2635953e87.0.1716550925998;
+        Fri, 24 May 2024 04:42:05 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52970d2a1f6sm160369e87.220.2024.05.24.04.42.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 04:42:05 -0700 (PDT)
+Date: Fri, 24 May 2024 14:42:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Francesco Dolcini <francesco.dolcini@toradex.com>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v1 2/2] usb: typec: mux: gpio-sbu: Make enable gpio
+ optional
+Message-ID: <3z3gi2s2dxlflmfpcirutvesnj6gsxyriijl2jrc2udaqucoyb@6scxw5hb2nv7>
+References: <20240524071034.4441-1-francesco@dolcini.it>
+ <20240524071034.4441-3-francesco@dolcini.it>
+ <5of64nmgpotr7fu66urgko5gfvr4ffhmff4dgkagkdvwh2dywk@etlw6rsmhki6>
+ <ZlB6ruZ8j2rVsIio@gaggiata.pivistrello.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: phy: micrel: set soft_reset callback to
- genphy_soft_reset for KSZ8061
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171655082948.14489.8867165637123853171.git-patchwork-notify@kernel.org>
-Date: Fri, 24 May 2024 11:40:29 +0000
-References: <20240521065406.4233-1-othacehe@gnu.org>
-In-Reply-To: <20240521065406.4233-1-othacehe@gnu.org>
-To: Mathieu Othacehe <othacehe@gnu.org>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- f.fainelli@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- karim.benhoucine@landisgyr.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZlB6ruZ8j2rVsIio@gaggiata.pivistrello.it>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Tue, 21 May 2024 08:54:06 +0200 you wrote:
-> Following a similar reinstate for the KSZ8081 and KSZ9031.
+On Fri, May 24, 2024 at 01:31:58PM +0200, Francesco Dolcini wrote:
+> Hello Dmitry,
+> thanks for the review.
 > 
-> Older kernels would use the genphy_soft_reset if the PHY did not implement
-> a .soft_reset.
+> On Fri, May 24, 2024 at 12:56:15PM +0300, Dmitry Baryshkov wrote:
+> > On Fri, May 24, 2024 at 09:10:34AM +0200, Francesco Dolcini wrote:
+> > > From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > 
+> > > The enable gpio is not required when the SBU mux is used only for
+> > > orientation, make it optional.
+> > > 
+> > > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> > > ---
+> > >  drivers/usb/typec/mux/gpio-sbu-mux.c | 11 ++++++++---
+> > >  1 file changed, 8 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/usb/typec/mux/gpio-sbu-mux.c b/drivers/usb/typec/mux/gpio-sbu-mux.c
+> > > index 374168482d36..cf44259980a1 100644
+> > > --- a/drivers/usb/typec/mux/gpio-sbu-mux.c
+> > > +++ b/drivers/usb/typec/mux/gpio-sbu-mux.c
+> ...
+> > > @@ -66,6 +66,9 @@ static int gpio_sbu_mux_set(struct typec_mux_dev *mux,
+> > >  {
+> > >  	struct gpio_sbu_mux *sbu_mux = typec_mux_get_drvdata(mux);
+> > >  
+> > > +	if (!sbu_mux->enable_gpio)
+> > > +		return -EOPNOTSUPP;
+> > 
+> > Can we skip registering the mux if there is no enable_gpio? This can
+> > save users from the unexpected errors during runtime.
 > 
-> The KSZ8061 errata described here:
-> https://ww1.microchip.com/downloads/en/DeviceDoc/KSZ8061-Errata-DS80000688B.pdf
-> and worked around with 232ba3a51c ("net: phy: Micrel KSZ8061: link failure after cable connect")
-> is back again without this soft reset.
+> Yes, I considered this option.
 > 
-> [...]
+> The rationale for the current implementation is that if the device tree is
+> correct (no mode-switch property, when enable-gpios is not present), nobody
+> will call gpio_sbu_mux_set() so no runtime error is possible. If the
+> configuration in the DT is not correct you get this runtime error.
+> 
+> With your proposal in case the DT configuration is not correct there will be no
+> errors from the kernel, but the functionality will not work.
 
-Here is the summary with links:
-  - net: phy: micrel: set soft_reset callback to genphy_soft_reset for KSZ8061
-    https://git.kernel.org/netdev/net/c/128d54fbcb14
+I'm slightly biased maybe, but I prefer an error from probe (or
+dependent devices being deferred). On the other hand, current motto is
+that 'the kernel should not duplicate dt-validate's work'.
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+With best wishes
+Dmitry
 
