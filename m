@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-188422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48EA8CE1CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:52:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4DF8CE1E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D629A1C20A60
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3501C216F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E593C839FE;
-	Fri, 24 May 2024 07:52:47 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A1E12836A;
+	Fri, 24 May 2024 08:01:00 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC6538FA3
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3811617578;
+	Fri, 24 May 2024 08:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716537167; cv=none; b=LSbo+7BFvXb16dmUrm0vE5wh3ka7+DGzO9SVge3b4Np4AKIyYpCwky2cWbzuVHOTwXBe/9aAkDwh7X53Mc2P/jCkHSW4Tu0JvexxxnayTn+YWw5ibdWJM4qRE+gdEdpO43UmgGHHpUuehj1MzfafoloaW6aYLnCO2gOxqjS7BgE=
+	t=1716537660; cv=none; b=rjcNAfFW+Jn3bRy92IOpUE2JygG+Fil91RAsU4tzMH8Vytm2x1aIRYiXA2IYvJaezQ3zD2LXj4qa2ZXkJdgBauPtLKdt71NdfMS78qLZ0RnUhvERK2Zb1zzTZXvbQO3ZypMzoi2u5qaaT+nph0hSb+EEChYJ3SD3siCduInEjdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716537167; c=relaxed/simple;
-	bh=0WCNFDXp1xMSbC4bwKH3Ol6IPf4WEDGeRYHim8+28wU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=gi0O3Z4uY/ejDlSoi3flmKLk0wcei7CihF48IR5T0obtgBd4dq1JEXJGgyi/kzQ0F3L5/CaX4XSWyfwk6x/ZInVfrZq5jmcz1JOfHSLDr7vQGMY3aM4NYKAqEz2k4vB4PQXiKN47qWy9zk0cDL/QO+xFdXCjYZLRUFyC6fIc2+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-199-p_PFq1w1MwCWhi6R7Pg5-g-1; Fri, 24 May 2024 08:52:37 +0100
-X-MC-Unique: p_PFq1w1MwCWhi6R7Pg5-g-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 24 May
- 2024 08:52:05 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 24 May 2024 08:52:05 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: =?utf-8?B?J0FuZHLDqSBBbG1laWRhJw==?= <andrealmeid@igalia.com>, "Mathieu
- Desnoyers" <mathieu.desnoyers@efficios.com>, Peter Zijlstra
-	<peterz@infradead.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Thomas
- Gleixner" <tglx@linutronix.de>, "Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, "H . Peter Anvin" <hpa@zytor.com>, "Paul
- Turner" <pjt@google.com>, "linux-api@vger.kernel.org"
-	<linux-api@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, "Florian
- Weimer" <fw@deneb.enyo.de>, "carlos@redhat.com" <carlos@redhat.com>, "Peter
- Oskolkov" <posk@posk.io>, Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Chris Kennelly <ckennelly@google.com>, Ingo Molnar <mingo@redhat.com>,
-	"Darren Hart" <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
-	"libc-alpha@sourceware.org" <libc-alpha@sourceware.org>, Steven Rostedt
-	<rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Noah Goldstein
-	<goldstein.w.n@gmail.com>, Daniel Colascione <dancol@google.com>,
-	"longman@redhat.com" <longman@redhat.com>, "kernel-dev@igalia.com"
-	<kernel-dev@igalia.com>
-Subject: RE: [PATCH v2 1/1] futex: Add FUTEX_SPIN operation
-Thread-Topic: [PATCH v2 1/1] futex: Add FUTEX_SPIN operation
-Thread-Index: AQHarUzWukUXPS/11kKDb3WyV7rGCLGmAfcw
-Date: Fri, 24 May 2024 07:52:05 +0000
-Message-ID: <16a6a6f28cc547b7a0a27ae6eebcca43@AcuMS.aculab.com>
-References: <20240523200704.281514-1-andrealmeid@igalia.com>
- <20240523200704.281514-2-andrealmeid@igalia.com>
-In-Reply-To: <20240523200704.281514-2-andrealmeid@igalia.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1716537660; c=relaxed/simple;
+	bh=DNGZeOxYDqy7RtdurPwzY4rLHbt20lsCtA68JHLwjSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LY8g2QaYI5oOyrnHFOaar4LNCtUBHP40z3fPrfuhTKYOpLaTRCHHfyQe59s245Gb8OuceWi1VnJsAzu2kMBrI0atlSt0XaB65irkaHlQkJe4Oa6/oFyCrltMN8Im4bNEw57f985eZnEmKQ2pjOgNFTDk/GC0zQAPvfp2cghQ1nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 87F7E100FC2B8;
+	Fri, 24 May 2024 09:53:49 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 37AB2541E49; Fri, 24 May 2024 09:53:49 +0200 (CEST)
+Date: Fri, 24 May 2024 09:53:49 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Bitao Hu <yaoma@linux.alibaba.com>
+Cc: bhelgaas@google.com, weirongguang@kylinos.cn, kanie@linux.alibaba.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Use appropriate conditions to check the
+ hotplug controller status
+Message-ID: <ZlBHjbmjjSEnXCMp@wunner.de>
+References: <20240524063023.77148-1-yaoma@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524063023.77148-1-yaoma@linux.alibaba.com>
 
-RnJvbTogQW5kcsOpIEFsbWVpZGENCj4gU2VudDogMjMgTWF5IDIwMjQgMjE6MDcNCj4gDQo+IEFk
-ZCBhIG5ldyBtb2RlIGZvciBmdXRleCB3YWl0LCB0aGUgZnV0ZXggc3Bpbi4NCj4gDQo+IEdpdmVu
-IHRoZSBGVVRFWDJfU1BJTiBmbGFnLCBwYXJzZSB0aGUgZnV0ZXggdmFsdWUgYXMgdGhlIFRJRCBv
-ZiB0aGUgbG9jaw0KPiBvd25lci4gVGhlbiwgYmVmb3JlIGdvaW5nIHRvIHRoZSBub3JtYWwgd2Fp
-dCBwYXRoLCBzcGlucyB3aGlsZSB0aGUgbG9jaw0KPiBvd25lciBpcyBydW5uaW5nIGluIGEgZGlm
-ZmVyZW50IENQVSwgdG8gYXZvaWQgdGhlIHdob2xlIGNvbnRleHQgc3dpdGNoDQo+IG9wZXJhdGlv
-biBhbmQgdG8gcXVpY2tseSByZXR1cm4gdG8gdXNlcnNwYWNlLiBJZiB0aGUgbG9jayBvd25lciBp
-cyBub3QNCj4gcnVubmluZywganVzdCBzbGVlcCBhcyB0aGUgbm9ybWFsIGZ1dGV4IHdhaXQgcGF0
-aC4NCj4gDQo+IFRoZSB1c2VyIHZhbHVlIGlzIG1hc2tlZCB3aXRoIEZVVEVYX1RJRF9NQVNLLCB0
-byBhbGxvdyBzb21lIGJpdHMgZm9yDQo+IGZ1dHVyZSB1c2UuDQo+IA0KPiBUaGUgY2hlY2sgZm9y
-IHRoZSBvd25lciB0byBiZSBydW5uaW5nIG9yIG5vdCBpcyBpbXBvcnRhbnQgdG8gYXZvaWQNCj4g
-c3Bpbm5pbmcgZm9yIHNvbWV0aGluZyB0aGF0IHdvbid0IGJlIHJlbGVhc2VkIHF1aWNrbHkuIFVz
-ZXJzcGFjZSBpcw0KPiByZXNwb25zaWJsZSBvbiBwcm92aWRpbmcgdGhlIHByb3BlciBUSUQsIHRo
-ZSBrZXJuZWwgZG9lcyBhIGJhc2ljIGNoZWNrLg0KDQpUaGUga2VybmVsIG5lZWRzIHRvIGRvIHNv
-bWV0aGluZyB0byBzdG9wIGEgdXNlci1wcm9jZXNzIHNwaW5uaW5nIGluLWtlcm5lbA0KaW5kZWZp
-bml0ZWx5Lg0KDQouLi4NCj4gK3N0YXRpYyBpbmxpbmUgYm9vbCB0YXNrX29uX2NwdShzdHJ1Y3Qg
-dGFza19zdHJ1Y3QgKnApDQo+ICt7DQo+ICsjaWZkZWYgQ09ORklHX1NNUA0KPiArCXJldHVybiAh
-IShwLT5vbl9jcHUpOw0KPiArI2Vsc2UNCj4gKwlyZXR1cm4gZmFsc2U7DQo+ICsjZW5kaWYNCj4g
-K30NCg0KSSBzdXNwZWN0IHRoYXQgaXNuJ3QgZ29pbmcgdG8gd29yayBpbiBhIFZNIHdoZXJlIHRo
-ZSBlbnRpcmUgJ2NwdScNCmNhbiBiZSBzbGVlcGluZy4NCg0KVGhpcyBpcyBzaW1pbGFyIHRvIHRo
-ZSAoSSBkb24ndCB0aGluayB3b3JrcyBwcm9wZXJseSkgY2hlY2sNCmluIHRoZSAnb3NxJyAob3B0
-aW1pc3RpYyBzcGluIHF1ZXVlKSB1c2VkIHdoZW4gd2FpdGluZyBmb3INCnRoZSB0aHJlYWQgc3Bp
-bm5pbmcgb24gYSBtdXRleC9yd2xvY2sgdG8gY2hhbmdlIHN0YXRlLg0KDQpJSVJDIHRoYXQgY29k
-ZSBhbHNvIGNoZWNrcyB3aGV0aGVyIHRoZSBjdXJyZW50IHRocmVhZCBzaG91bGQNCmJlIHByZS1l
-bXB0ZWQgYnkgYSBoaWdoZXIgcHJpb3JpdHkgcHJvY2Vzcy4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
-dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
-S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Fri, May 24, 2024 at 02:30:23PM +0800, Bitao Hu wrote:
+> The values of 'present' and 'link_active' have similar meanings:
+> the value is %1 if the status is ready, and %0 if it is not. If the
+> hotplug controller itself is not available, the value should be
+> %-ENODEV. However, both %1 and %-ENODEV are considered true, which
+> obviously does not meet expectations. 'Slot(xx): Card present' and
+> 'Slot(xx): Link Up' should only be output when the value is %1.
+[...]
+> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> @@ -276,10 +276,10 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+>  	case OFF_STATE:
+>  		ctrl->state = POWERON_STATE;
+>  		mutex_unlock(&ctrl->state_lock);
+> -		if (present)
+> +		if (present > 0)
+>  			ctrl_info(ctrl, "Slot(%s): Card present\n",
+>  				  slot_name(ctrl));
+> -		if (link_active)
+> +		if (link_active > 0)
+>  			ctrl_info(ctrl, "Slot(%s): Link Up\n",
+>  				  slot_name(ctrl));
+>  		ctrl->request_result = pciehp_enable_slot(ctrl);
 
+We already handle the "<= 0" case immediately above this code excerpt:
+
+	if (present <= 0 && link_active <= 0) {
+	...
+	}
+
+So neither "present" nor "link_active" can be < 0 at this point.
+
+Hence I don't quite understand what motivates the proposed code change?
+
+Thanks,
+
+Lukas
 
