@@ -1,75 +1,117 @@
-Return-Path: <linux-kernel+bounces-189170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0118CEC61
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:21:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32568CEC66
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA56A2828D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5A51F2190F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD188595B;
-	Fri, 24 May 2024 22:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB02126F32;
+	Fri, 24 May 2024 22:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2TkXcnq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P8f73AVw"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88BB1DFFC;
-	Fri, 24 May 2024 22:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980B41DFFC;
+	Fri, 24 May 2024 22:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716589298; cv=none; b=aWF+VTDlrxFkD9pZeW7sX7T3fJnnyNb/AOaxndS0eif5qst+E0j0DPNPPmAWcD7HbblLtZ1vqLLAuICOJ9fwjcRaorx3t+EMlySP0qwtsDSBr13PCNeyIUjb1ChP2OewfOfW1bE7P3bEmZGDps3iJU4XynoYDOxm3pQcxhn7160=
+	t=1716589668; cv=none; b=b+5gbZGT3OIxnvc5yTcF4ZNWNnoXk6UDHITOIiocCCjNqJrI7zRVwS+I62NX1hewWrqgeTg007pPXnTKESxvYOpRZWr4L8VWO/BceYmYPtETTHayeZCLbUj2EhZpyRI07cQyegpOecrDIsOjq3yMWn/pXgBgdmITNqY2ZGdDIks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716589298; c=relaxed/simple;
-	bh=EeJzb3mSGJq4pUEyp8uUcM94K108LeBzS6OPf3wdF6I=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=M3BwyDy87TUPXs07nSzeVuNv7wojXxFOZ2FW4zIY3UKsyExPVWaWhc8Z4kqdZiP23ODFPb9jsA/Oni1qbjHTWqX/MTmZgWREoJGTTpStAL3UJy33OTM1y0MDSs37heYtRCe8T4yUxE689yaWZuwszQtBd2V4by76KF5/2uGRdfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2TkXcnq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E5EC2BBFC;
-	Fri, 24 May 2024 22:21:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716589298;
-	bh=EeJzb3mSGJq4pUEyp8uUcM94K108LeBzS6OPf3wdF6I=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=b2TkXcnqcchNXExNJ0Hlf7RamZiP5mcjT7d1YDZOb4QcuRDfsT3A6CNPdY1QpmJl0
-	 Wtm1a2Otd3a/Smc41e/9QYqRvor9eK9EYAJvVL1SHlrpkwcdwuCdBqdzYS8N/KG1tG
-	 fly6ZHZT2VwuAdLn9IKAl8pX0x1tDi1Dug/FMmifWfcdS83EBDkwsKEih57NRK0kNH
-	 AFds20tADVkaQ+xMiz5cIWVwT/cm7PKlb/RyZFo7h/UtpufrEKPzspJkSVv1nzpi6h
-	 nSDOX/zcUauciiU8tQKpBXg8bkAtHqjf6GYv2bhUaZsBiq7wUV2xxlobb+z6XZ3dWW
-	 g+VF5dmGlGVYw==
+	s=arc-20240116; t=1716589668; c=relaxed/simple;
+	bh=iXH9XdZj6ElZjG8H8PzcGVxUnfrO4WKMqmUf3o3c0g8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qgIjjHVXKn96PLvmc6eBFoQp1E6vE4V7FC0U6yIzcFHi+WcQm5O1My/RG31JATgnwHUgYH+B3e3Pky0vQPW9OY1Pzhl4MgdHtyOmlMgr+P1T8egUlkIboaPusHSVhKQulEzdPYXqDi6TxD4gRVcGoAgNUN+IOnXAvWQJvYxhisc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P8f73AVw; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44OMMQtW013623;
+	Fri, 24 May 2024 22:27:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=mABNMy86l8KP+yPjxHU9m+yjpNAlq2nHkJ+scDyy1GM=;
+ b=P8f73AVw1LmH0i02WkI9DVxVeuNX7Lx8wjYDfzcDFmFvALpnPGURyB1StQJE/VbHHF+J
+ sWCQ3lko8kv1dkSrslLKJns4kFTHNCPvWwl0jruCRVNNca7mFhh1a/2Tx18uR8hscDrR
+ syFww0t1FzXvRCbo4dM5HKEEQmFDbJyhK0zYCY68hcDm7KnSJnDfHDCGmFnf+ngUQuCq
+ mg1Geon2KPqnJQGK8mR+gqmPfOf5VRMAylRRswFswGRd2zlGCz+L/j3S/6mzSBpA3qdr
+ Z342gwyivv5rfoc1mlKu7ftY3z8GBeFOavtzAdMbxR70jowLFCP5/MRAzCjTfaga/rHh cQ== 
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yb3me00cg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 22:27:31 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44OJEqYG026457;
+	Fri, 24 May 2024 22:27:30 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y785n38f6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 22:27:30 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44OMRRLv49808028
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 May 2024 22:27:29 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E920B5805C;
+	Fri, 24 May 2024 22:27:26 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 66E815805A;
+	Fri, 24 May 2024 22:27:25 +0000 (GMT)
+Received: from [9.61.107.154] (unknown [9.61.107.154])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 24 May 2024 22:27:25 +0000 (GMT)
+Message-ID: <56d16579-137f-4473-a9f1-44f7d030c166@linux.ibm.com>
+Date: Fri, 24 May 2024 17:27:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 25 May 2024 01:21:34 +0300
-Message-Id: <D1I84BEOGWMW.25XO15A34Y8J2@kernel.org>
-Cc: "kernel test robot" <lkp@intel.com>, "david" <david@sigma-star.at>,
- "oe-kbuild-all" <oe-kbuild-all@lists.linux.dev>, "linux-kernel"
- <linux-kernel@vger.kernel.org>, "david oberhollenzer"
- <david.oberhollenzer@sigma-star.at>
-Subject: Re: security/keys/trusted-keys/trusted_dcp.c:206:24: sparse:
- sparse: incorrect type in assignment (different base types)
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Richard Weinberger" <richard@nod.at>
-X-Mailer: aerc 0.17.0
-References: <202405240610.fj53EK0q-lkp@intel.com>
- <1855855000.144805.1716584815663.JavaMail.zimbra@nod.at>
- <D1I6WMDSLOW0.2RS18E7T61X9A@kernel.org>
- <39518719.144820.1716586062550.JavaMail.zimbra@nod.at>
-In-Reply-To: <39518719.144820.1716586062550.JavaMail.zimbra@nod.at>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 15/20] ARM: dts: aspeed: Add IBM P11 Blueridge 4U BMC
+ system
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lakshmiy@us.ibm.com, linux-i2c@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        andrew@codeconstruct.com.au, joel@jms.id.au, robh@kernel.org,
+        conor+dt@kernel.org, krzk+dt@kernel.org, andi.shyti@kernel.org,
+        broonie@kernel.org
+References: <20240522192524.3286237-1-eajames@linux.ibm.com>
+ <20240522192524.3286237-16-eajames@linux.ibm.com>
+Content-Language: en-US
+From: Ninad Palsule <ninad@linux.ibm.com>
+In-Reply-To: <20240522192524.3286237-16-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: CEKzfqnM2HtdiKClRyl_p3omOimFr-Zu
+X-Proofpoint-ORIG-GUID: CEKzfqnM2HtdiKClRyl_p3omOimFr-Zu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_08,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=736 clxscore=1015 mlxscore=0 spamscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405240162
 
-On Sat May 25, 2024 at 12:27 AM EEST, Richard Weinberger wrote:
-> > Please send then fix, reasoning of that, and finally:
-> Sure. Let me first talk to David and give it a test...
+Reviewed-by: Ninad Palsule <ninad@linux.ibm.com>
 
-No rush
-
-BR, Jarkko
+On 5/22/24 14:25, Eddie James wrote:
+> The 4U Blueridge is identical to the Blueridge system but has two extra
+> power supplies.
+>
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>   .../aspeed/aspeed-bmc-ibm-blueridge-4u.dts    | 21 +++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+>   create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dts
 
