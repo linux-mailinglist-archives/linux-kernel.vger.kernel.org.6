@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-188493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F378CE2AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:57:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BAA88CE2B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B4C1F21FD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:57:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E017AB21958
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09187129A93;
-	Fri, 24 May 2024 08:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161DC12A14B;
+	Fri, 24 May 2024 08:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KzK2wgoY"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E5m6I8de"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF437381D1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFC7129A77
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716541062; cv=none; b=SzmTwJvSmHhTvx3bJ5dkbWpLXNn3mpQRwnY5sSyUsrj+RotXORue4MbI5sGl/XM2XearG3Zpw6tZa3xe12pNVjXR9QBQFj5CN1QZFVIX72XFFvIV5jgO5pa9s3REOwPBWnIR3PuCHd0kY5I10uucW72xeFY46wMxwkGQNkVN5Q8=
+	t=1716541065; cv=none; b=ojHPHArpZq4kEqvp9d/9YrwBiRvyzJ1VBT92rndCD/aPz/f4AcKEFACGPhQTNfG8REase+DQd4Hmn7vil6/JgMqIPl7dCUYf85PmPSWHt0GgFy1uCTJUGz5m3Z73oI0ktnsRucPojP79m0GEEnGNNtiVyIJ0G68p+MwBYHktblo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716541062; c=relaxed/simple;
-	bh=JxsnAPdpaUy+vf0sl0PZjYU5lyGNxjQTcWpShsy4QXs=;
+	s=arc-20240116; t=1716541065; c=relaxed/simple;
+	bh=1G8p4ukUYdMOk654nZZJtD5LJSaJbjnQHPtspc5amuo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GlJTAHtmSaZ3VE0/hgeBVvNGWl1FDXZ93cA7y0fmyHl+6w/aGnSukifrJmid+/ijtzqETnVdN+H/ooEII80YwLKq41pexBiD/czUygNVR0rjdDa0v6VE8ZOZFI/hJvVeW308evd2g91tDJbQWhJwHytpYoctiPLZ8LOa2Ca06Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KzK2wgoY; arc=none smtp.client-ip=95.215.58.181
+	 In-Reply-To:To:Cc; b=eu5jCUqbmmvvKQBc1IRZc2ZzzvdWyTqgMoAPMWiHrXMRT/nuXm1x+9zL0VcYaTe8YK9wsDTYWfmBgsFGWO3mvvuf7JSY4g36S+uI6JfCDXv/9UPyNhRnuT5thjaQ1myjDaeTXKwrDz9HKQ0ARA1PQXFqcpdO2Az7xNmcK+79Bfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E5m6I8de; arc=none smtp.client-ip=95.215.58.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: linux-mm@kvack.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1716541057;
+	t=1716541060;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YHfQsO4NVTRNBD9ihuMdP3lZwpfoz/pqOUOarvdBcXM=;
-	b=KzK2wgoYer0vn4GzZWGWDfZ/tEhEAAuly8IRy9wsz+ICAhFVcu1u7w0U2xgEzapA1beUxr
-	Cg2RxMRwAs8u8ZeUyZCjq5yDfqpMWfTtf7foWhd11ZGZBNVmSH3cwAsudxn5P3p1OhqWa2
-	1T//kN+DQM8ZtlnL6O0rW8oo4QuAuMg=
+	bh=IrbgcBme4gf384UGODzdSyOVXcWHfhExwH5eqJcgItc=;
+	b=E5m6I8deIoqw6vq/84vM96nA3u/7CWXC5h8vgVpVwMJUh9OwqPhQXgVDBobdnZCcRDd2Gc
+	B5HXL/d0UK9N+vBSADHhJzUu5BnEttIHr756vbu3OZuMvZ340tmEvLOGgNm72mD3NyGRsH
+	zGXnHf/1q761IrZcj6NTN3l/RrrjkK0=
 X-Envelope-To: hughd@google.com
 X-Envelope-To: chengming.zhou@linux.dev
 X-Envelope-To: zhouchengming@bytedance.com
@@ -51,8 +51,9 @@ X-Envelope-To: aarcange@redhat.com
 X-Envelope-To: linux-kernel@vger.kernel.org
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Chengming Zhou <chengming.zhou@linux.dev>
-Date: Fri, 24 May 2024 16:56:50 +0800
-Subject: [PATCH 1/4] mm/ksm: refactor out try_to_merge_with_zero_page()
+Date: Fri, 24 May 2024 16:56:51 +0800
+Subject: [PATCH 2/4] mm/ksm: don't waste time searching stable tree for
+ fast changing page
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,120 +62,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240524-b4-ksm-scan-optimize-v1-1-053b31bd7ab4@linux.dev>
+Message-Id: <20240524-b4-ksm-scan-optimize-v1-2-053b31bd7ab4@linux.dev>
 References: <20240524-b4-ksm-scan-optimize-v1-0-053b31bd7ab4@linux.dev>
 In-Reply-To: <20240524-b4-ksm-scan-optimize-v1-0-053b31bd7ab4@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com, 
  aarcange@redhat.com, hughd@google.com, shr@devkernel.io
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
  zhouchengming@bytedance.com, Chengming Zhou <chengming.zhou@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1716541051; l=3157;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1716541051; l=2614;
  i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
- bh=JxsnAPdpaUy+vf0sl0PZjYU5lyGNxjQTcWpShsy4QXs=;
- b=+IclB6lAEN9i9mpmGfuCQ9JjgV8dqoL221kOWpl1/LyLcUwK7iGdiv9V31dGtFNFcnBd483w1
- oZJ5Bw1PSUwBuBpDWFbZ8IR5pOHuMwXOhMQ8PA7CAvcviaO3yj6FgCI
+ bh=1G8p4ukUYdMOk654nZZJtD5LJSaJbjnQHPtspc5amuo=;
+ b=CYjqK00M2lLdR7+WKq2pN5yhtp9lGVF60p4EeSzgxNV31x3wCoi5EIyOTEKvBZMWRWTvsRgmg
+ N2x1EYuvlGYA6VQKuU6yVelvTy0n7Rt4HTLV50/OImvqxM243FfBbNl
 X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
  pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
 X-Migadu-Flow: FLOW_OUT
 
-In preparation for later changes, refactor out a new function called
-try_to_merge_with_zero_page(), which tries to merge with zero page.
+The code flow in cmp_and_merge_page() is suboptimal for handling the
+ksm page and non-ksm page at the same time. For example:
+
+- ksm page
+ 1. Mostly just return if this ksm page is not migrated and this rmap_item
+    has been on the rmap hlist. Or we have to fix this rmap_item mapping.
+ 2. But we absolutely don't need to checksum for this ksm page, since it
+    can't change.
+
+- non-ksm page
+ 1. First don't need to waste time searching stable tree if fast changing.
+ 2. Should try to merge with zero page before search the stable tree.
+ 3. Then search stable tree to find mergeable ksm page.
+
+This patch optimizes the code flow so the handling differences between
+ksm page and non-ksm page become clearer and more efficient too.
 
 Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 ---
- mm/ksm.c | 67 +++++++++++++++++++++++++++++++++++-----------------------------
- 1 file changed, 37 insertions(+), 30 deletions(-)
+ mm/ksm.c | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
 diff --git a/mm/ksm.c b/mm/ksm.c
-index 4dc707d175fa..cbd4ba7ea974 100644
+index cbd4ba7ea974..2424081f386e 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
-@@ -1531,6 +1531,41 @@ static int try_to_merge_one_page(struct vm_area_struct *vma,
- 	return err;
- }
- 
-+/* This function returns 0 if the pages were merged, -EFAULT otherwise. */
-+static int try_to_merge_with_zero_page(struct ksm_rmap_item *rmap_item,
-+				       struct page *page)
-+{
-+	struct mm_struct *mm = rmap_item->mm;
-+	int err = -EFAULT;
+@@ -2366,6 +2366,23 @@ static noinline void cmp_and_merge_page(struct page *page, struct ksm_rmap_item
+ 		 */
+ 		if (!is_page_sharing_candidate(stable_node))
+ 			max_page_sharing_bypass = true;
++	} else {
++		remove_rmap_item_from_tree(rmap_item);
 +
-+	/*
-+	 * Same checksum as an empty page. We attempt to merge it with the
-+	 * appropriate zero page if the user enabled this via sysfs.
-+	 */
-+	if (ksm_use_zero_pages && (rmap_item->oldchecksum == zero_checksum)) {
-+		struct vm_area_struct *vma;
-+
-+		mmap_read_lock(mm);
-+		vma = find_mergeable_vma(mm, rmap_item->address);
-+		if (vma) {
-+			err = try_to_merge_one_page(vma, page,
-+					ZERO_PAGE(rmap_item->address));
-+			trace_ksm_merge_one_page(
-+				page_to_pfn(ZERO_PAGE(rmap_item->address)),
-+				rmap_item, mm, err);
-+		} else {
-+			/*
-+			 * If the vma is out of date, we do not need to
-+			 * continue.
-+			 */
-+			err = 0;
++		/*
++		 * If the hash value of the page has changed from the last time
++		 * we calculated it, this page is changing frequently: therefore we
++		 * don't want to insert it in the unstable tree, and we don't want
++		 * to waste our time searching for something identical to it there.
++		 */
++		checksum = calc_checksum(page);
++		if (rmap_item->oldchecksum != checksum) {
++			rmap_item->oldchecksum = checksum;
++			return;
 +		}
-+		mmap_read_unlock(mm);
-+	}
 +
-+	return err;
-+}
-+
- /*
-  * try_to_merge_with_ksm_page - like try_to_merge_two_pages,
-  * but no new kernel page is allocated: kpage must already be a ksm page.
-@@ -2305,7 +2340,6 @@ static void stable_tree_append(struct ksm_rmap_item *rmap_item,
-  */
- static noinline void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_item)
- {
--	struct mm_struct *mm = rmap_item->mm;
- 	struct ksm_rmap_item *tree_rmap_item;
- 	struct page *tree_page = NULL;
- 	struct ksm_stable_node *stable_node;
-@@ -2374,36 +2408,9 @@ static noinline void cmp_and_merge_page(struct page *page, struct ksm_rmap_item
++		if (!try_to_merge_with_zero_page(rmap_item, page))
++			return;
+ 	}
+ 
+ 	/* We first start with searching the page inside the stable tree */
+@@ -2396,21 +2413,6 @@ static noinline void cmp_and_merge_page(struct page *page, struct ksm_rmap_item
  		return;
  	}
  
 -	/*
--	 * Same checksum as an empty page. We attempt to merge it with the
--	 * appropriate zero page if the user enabled this via sysfs.
+-	 * If the hash value of the page has changed from the last time
+-	 * we calculated it, this page is changing frequently: therefore we
+-	 * don't want to insert it in the unstable tree, and we don't want
+-	 * to waste our time searching for something identical to it there.
 -	 */
--	if (ksm_use_zero_pages && (checksum == zero_checksum)) {
--		struct vm_area_struct *vma;
-+	if (!try_to_merge_with_zero_page(rmap_item, page))
-+		return;
- 
--		mmap_read_lock(mm);
--		vma = find_mergeable_vma(mm, rmap_item->address);
--		if (vma) {
--			err = try_to_merge_one_page(vma, page,
--					ZERO_PAGE(rmap_item->address));
--			trace_ksm_merge_one_page(
--				page_to_pfn(ZERO_PAGE(rmap_item->address)),
--				rmap_item, mm, err);
--		} else {
--			/*
--			 * If the vma is out of date, we do not need to
--			 * continue.
--			 */
--			err = 0;
--		}
--		mmap_read_unlock(mm);
--		/*
--		 * In case of failure, the page was not really empty, so we
--		 * need to continue. Otherwise we're done.
--		 */
--		if (!err)
--			return;
+-	checksum = calc_checksum(page);
+-	if (rmap_item->oldchecksum != checksum) {
+-		rmap_item->oldchecksum = checksum;
+-		return;
 -	}
+-
+-	if (!try_to_merge_with_zero_page(rmap_item, page))
+-		return;
+-
  	tree_rmap_item =
  		unstable_tree_search_insert(rmap_item, page, &tree_page);
  	if (tree_rmap_item) {
