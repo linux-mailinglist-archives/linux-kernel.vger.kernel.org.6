@@ -1,296 +1,132 @@
-Return-Path: <linux-kernel+bounces-188990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0FA38CE961
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:14:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0968CE967
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B0F282EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9615B2820E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF883BBE8;
-	Fri, 24 May 2024 18:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA023BBF4;
+	Fri, 24 May 2024 18:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FHPymeon"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hLgINpyx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CF63B293;
-	Fri, 24 May 2024 18:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FDB3C00;
+	Fri, 24 May 2024 18:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716574433; cv=none; b=dv+ADoX4A/3SNGBvk2Il1B0o/Odt7+LQ9ZQq7y/Gv9FC0vjk0Av5VKu0/19IBZ2jQApgZNLw0XL3MPkqdsdD8TfLB1oDMxk4p3lg1yxTP2AtCnioZqXA3Va7SiIA/tr5zwfa7BcX4kaR96CcHkD1PrsQ9UYA9q1uyc2GLL1j6Zw=
+	t=1716574796; cv=none; b=uxuhDf/EI/+G0FRn3JjajNeA9KwX/C/+HzHjBFUKUElvz6ZQ6pgfz3JtQZOo1jcWOn9hrZWZePaPON9eqPmAfGUo5x9OxvBhtWEgteecWYh4fGD+l3RLBQS14EGQ7Z5F+lMF53zAe9nZVQlFFbpKd/+7klTeXUo24OQpcHglS4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716574433; c=relaxed/simple;
-	bh=nl8N0WvwS+k4LhPqsELmqFo3kal4ucHu/JEWK5avZy4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rec0P0ObSMmxvJ6VS9D9D91IFs+MoFOZrkaK0z/XGNPXt3LKFbJgXcSpaB7vBRSicVjziOrf3bdpnJ4atY2Q7DmSuP5NMhhAnsc3OTZ6gK1lMLNs0EgcQ8YU9gidcFjKYo+ZwNmKNs85Up/1x84rqOrzSCrrr7/P36xVYcx6BBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FHPymeon; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716574424;
-	bh=nl8N0WvwS+k4LhPqsELmqFo3kal4ucHu/JEWK5avZy4=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=FHPymeon4A7eenU/nov8a+EGF3ECOQpJ4OlQiH235blmA+2LRz5kCyyfh+1g8LX4B
-	 LH3/JcCirtVOk7zOFgMTsNzm+nilIOCCZ4FWMU/pbUqC8f+vaH3vG/tLsi6Oe3HzPb
-	 Mb2K0wOUDmoW4IVz/mMvg7x1q7zlRtyYXJyF5VBYhpcRW/v09auEpGiLdu0q4vdtTX
-	 8QOF9vih4nrNp62I5ym4oBaBoOVlxFexQ9EUs563D+HnPdBbHqkZN1P6Wac+iwECP1
-	 dEgrLSHBbnkA0ESqZZjdypc5h00/w9UyWF3VpDsiIl2C7D5da0FOwjDPtv/VASIqXO
-	 4Y8jzZHM9WjPQ==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BC077378045F;
-	Fri, 24 May 2024 18:13:40 +0000 (UTC)
-Message-ID: <c94ad517-59c6-461c-98dc-1f1706c76389@collabora.com>
-Date: Fri, 24 May 2024 11:13:24 -0700
+	s=arc-20240116; t=1716574796; c=relaxed/simple;
+	bh=JWsCNf+jzHO49Y3NQf3KgHDEPooDA1NIecvE6GPE3OY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VFp+ABB2TRqyE/zJrgBEMkHvB0y8lxxk4kAJN8ILunkZU4u3nqeCknbLFYK3XybV9XR6Icynv/TVPOs87jqLx5lxaKoZrnyQc+MQdAwFgD2Ma2iaE6W4jTCK9aQj45iZcZKc2ECzti8mgs4Ej1YShIfqk7eCWhLyH5XNnL7zJFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hLgINpyx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O9qGhd011993;
+	Fri, 24 May 2024 18:19:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lnYhjTxqVIzgdrzBnAAvjO6PnXT/NqFysO5gWZNMD8o=; b=hLgINpyxQA3W2E8R
+	Csy7Qyvy4kNizcQKE0FOcbPL1ojDXPBXmA1tWQBjJO/HwRl/E9hmc5XHWRjrYHxm
+	b6QezQed9ZHI34DL6fIO7S9AXCxha0z5WKN4p9Ak39wbzHTOMBhhu/v9hZJJMOVx
+	8yOX0lqFlQa8wIR558u2hPPfqxcK7Gve+bqv8HobEqGptfDp50OJRaa8rw1Gb40i
+	Db/erZEHPNc4oUVKaXtKtwOEHPjTZvANZzGVYD781RZO4o5Uzqmha24f2GR4FAwB
+	FKf+lpw1qQejQPlhmGTbQr0ZebHC4cCTQal+nYzbdrBFnzw389scGGigcNFhBGwj
+	hvdEjA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa97u8gw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 18:19:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44OIJh6O024370
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 18:19:43 GMT
+Received: from [10.110.54.113] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
+ 2024 11:19:41 -0700
+Message-ID: <5db69319-4d61-7637-8bde-5d786e5faea4@quicinc.com>
+Date: Fri, 24 May 2024 11:19:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ritesh Harjani <ritesh.list@gmail.com>, Mike Rapoport <rppt@kernel.org>,
- Muchun Song <songmuchun@bytedance.com>, David Hildenbrand
- <david@redhat.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] selftest: mm: Test if hugepage does not get leaked during
- __bio_release_pages()
-To: Donet Tom <donettom@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Tony Battersby <tonyb@cybernetics.com>
-References: <20240523063905.3173-1-donettom@linux.ibm.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] drm/msm/dpu: drop duplicate drm formats from wb2_formats
+ arrays
 Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240523063905.3173-1-donettom@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+To: Junhao Xie <bigfoot@classfun.cn>, Rob Clark <robdclark@gmail.com>,
+        Dmitry
+ Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn
+ Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ryan McCann <quic_rmccann@quicinc.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Jonathan Marek <jonathan@marek.ca>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20240524150128.1878297-2-bigfoot@classfun.cn>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240524150128.1878297-2-bigfoot@classfun.cn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vlHK5zkBU_longt3fpGsbSeFx78bGiLf
+X-Proofpoint-ORIG-GUID: vlHK5zkBU_longt3fpGsbSeFx78bGiLf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_06,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 spamscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1011 mlxlogscore=623 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2405240128
 
-Thank you for submitting a patch.
 
-On 5/22/24 11:39 PM, Donet Tom wrote:
-> Commit 1b151e2435fc ("block: Remove special-casing of compound
-> pages") caused a change in behaviour when releasing the pages
-> if the buffer does not start at the beginning of the page. This
-> was because the calculation of the number of pages to release
-> was incorrect.
-> This was fixed by commit 38b43539d64b ("block: Fix page refcounts
-> for unaligned buffers in __bio_release_pages()").
+
+On 5/24/2024 8:01 AM, Junhao Xie wrote:
+> There are duplicate items in wb2_formats_rgb and wb2_formats_rgb_yuv,
+> which cause weston assertions failed.
 > 
-> We pin the user buffer during direct I/O writes. If this buffer is a
-> hugepage, bio_release_page() will unpin it and decrement all references
-> and pin counts at ->bi_end_io. However, if any references to the hugepage
-> remain post-I/O, the hugepage will not be freed upon unmap, leading
-> to a memory leak.
+> weston: libweston/drm-formats.c:131: weston_drm_format_array_add_format:
+> Assertion `!weston_drm_format_array_find_format(formats, format)' failed.
 > 
-> This patch verifies that a hugepage, used as a user buffer for DIO
-> operations, is correctly freed upon unmapping, regardless of whether
-> the offsets are aligned or unaligned w.r.t page boundary.
-> 
-> Test Result  Fail Scenario (Without the fix)
-> --------------------------------------------------------
-> []# ./hugetlb_dio
-> TAP version 13
-> 1..4
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 1 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 2 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 3 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 6
-> not ok 4 : Huge pages not freed!
-> Totals: pass:3 fail:1 xfail:0 xpass:0 skip:0 error:0
-> 
-> Test Result  PASS Scenario (With the fix)
-> ---------------------------------------------------------
-> []#./hugetlb_dio
-> TAP version 13
-> 1..4
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 1 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 2 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 3 : Huge pages freed successfully !
-> No. Free pages before allocation : 7
-> No. Free pages after munmap : 7
-> ok 4 : Huge pages freed successfully !
-> Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Junhao Xie <bigfoot@classfun.cn>
 > ---
->  tools/testing/selftests/mm/Makefile      |   1 +
->  tools/testing/selftests/mm/hugetlb_dio.c | 118 +++++++++++++++++++++++
-Add this test to vm_runtest.sh as all the tests are run from this script in
-CIs.
-
->  2 files changed, 119 insertions(+)
->  create mode 100644 tools/testing/selftests/mm/hugetlb_dio.c
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c | 6 ------
+>   1 file changed, 6 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-> index eb5f39a2668b..87d8130b3376 100644
-> --- a/tools/testing/selftests/mm/Makefile
-> +++ b/tools/testing/selftests/mm/Makefile
-> @@ -71,6 +71,7 @@ TEST_GEN_FILES += ksm_functional_tests
->  TEST_GEN_FILES += mdwe_test
->  TEST_GEN_FILES += hugetlb_fault_after_madv
->  TEST_GEN_FILES += hugetlb_madv_vs_map
-> +TEST_GEN_FILES += hugetlb_dio
->  
->  ifneq ($(ARCH),arm64)
->  TEST_GEN_FILES += soft-dirty
-> diff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
-> new file mode 100644
-> index 000000000000..6f6587c7913c
-> --- /dev/null
-> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
-> @@ -0,0 +1,118 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * This program tests for hugepage leaks after DIO writes to a file using a
-> + * hugepage as the user buffer. During DIO, the user buffer is pinned and
-> + * should be properly unpinned upon completion. This patch verifies that the
-> + * kernel correctly unpins the buffer at DIO completion for both aligned and
-> + * unaligned user buffer offsets (w.r.t page boundary), ensuring the hugepage
-> + * is freed upon unmapping.
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <stdio.h>
-> +#include <sys/stat.h>
-> +#include <stdlib.h>
-> +#include <fcntl.h>
-> +#include <stdint.h>
-> +#include <unistd.h>
-> +#include <string.h>
-> +#include <sys/mman.h>
-> +#include "vm_util.h"
-> +#include "../kselftest.h"
-> +
-> +void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
-> +{
-> +	int fd;
-> +	char *buffer =  NULL;
-> +	char *orig_buffer = NULL;
-> +	size_t h_pagesize = 0;
-> +	size_t writesize;
-> +	int free_hpage_b = 0;
-> +	int free_hpage_a = 0;
-> +
-> +	writesize = end_off - start_off;
-> +
-> +	/* Get the default huge page size */
-> +	h_pagesize = default_huge_page_size();
-> +	if (!h_pagesize)
-> +		ksft_exit_fail_msg("Unable to determine huge page size\n");
-> +
-> +	/* Open the file to DIO */
-> +	fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT);
-> +	if (fd < 0)
-> +		ksft_exit_fail_msg("Error opening file");
-Use ksft_exit_fail_perror to print the info about the error
-> +
-> +	/* Get the free huge pages before allocation */
-> +	free_hpage_b = get_free_hugepages();
-> +	if (free_hpage_b == 0) {
-> +		close(fd);
-> +		ksft_exit_skip("No free hugepage, exiting!\n");
-> +	}
-> +
-> +	/* Allocate a hugetlb page */
-> +	orig_buffer = mmap(NULL, h_pagesize, PROT_READ | PROT_WRITE, MAP_PRIVATE
-> +			| MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-Better align the arguments. Put all flags in one line instead of slitting
-like this
 
-> +	if (orig_buffer == MAP_FAILED) {
-> +		close(fd);
-> +		ksft_exit_fail_msg("Error mapping memory");
-nit: "\n" is missing from here.
+I think we need two fixes tag here, one for the RGB array and the other 
+one for the RGB+YUV array.
 
-> +	}
-> +	buffer = orig_buffer;
-> +	buffer += start_off;
-> +
-> +	memset(buffer, 'A', writesize);
-> +
-> +	/* Write the buffer to the file */
-> +	if (write(fd, buffer, writesize) != (writesize)) {
-> +		munmap(orig_buffer, h_pagesize);
-> +		close(fd);
-> +		ksft_exit_fail_msg("Error writing to file");
-> +	}
-> +
-> +	/* unmap the huge page */
-> +	munmap(orig_buffer, h_pagesize);
-> +	close(fd);
-> +
-> +	/* Get the free huge pages after unmap*/
-> +	free_hpage_a = get_free_hugepages();
-> +
-> +	/*
-> +	 * If the no. of free hugepages before allocation and after unmap does
-> +	 * not match - that means there could still be a page which is pinned.
-> +	 */
-> +	if (free_hpage_a != free_hpage_b) {
-> +		printf("No. Free pages before allocation : %d\n", free_hpage_b);
-Use ksft_print_msg instead
+Fixes: 8c16b988ba2d ("drm/msm/dpu: introduce separate wb2_format arrays 
+for rgb and yuv")
 
-> +		printf("No. Free pages after munmap : %d\n", free_hpage_a);
-> +		ksft_test_result_fail(": Huge pages not freed!\n");
-> +	} else {
-> +		printf("No. Free pages before allocation : %d\n", free_hpage_b);
-> +		printf("No. Free pages after munmap : %d\n", free_hpage_a);
-> +		ksft_test_result_pass(": Huge pages freed successfully !\n");
-> +	}
-> +}
-> +
-> +int main(void)
-> +{
-> +	size_t pagesize = 0;
-> +
-> +	ksft_print_header();
-> +	ksft_set_plan(4);
-> +
-> +	/* Get base page size */
-> +	pagesize  = psize();
-> +
-> +	/* start and end is aligned to pagesize */
-> +	run_dio_using_hugetlb(0, (pagesize * 3));
-> +
-> +	/* start is aligned but end is not aligned */
-> +	run_dio_using_hugetlb(0, (pagesize * 3) - (pagesize / 2));
-> +
-> +	/* start is unaligned and end is aligned */
-> +	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3));
-> +
-> +	/* both start and end are unaligned */
-> +	run_dio_using_hugetlb(pagesize / 2, (pagesize * 3) + (pagesize / 2));
-> +
-> +	ksft_finished();
-ksft_finished() never returns. Remove the following line.
+Fixes: 53324b99bd7b ("drm/msm/dpu: add writeback blocks to the sm8250 
+DPU catalog")
 
-> +	return 0;
-> +}
-> +
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
--- 
-BR,
-Muhammad Usama Anjum
+(pls ignore the line breaks in the fixes line, I will fix it while applying)
 
