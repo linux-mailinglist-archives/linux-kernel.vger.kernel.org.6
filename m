@@ -1,156 +1,185 @@
-Return-Path: <linux-kernel+bounces-189134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CB1B8CEBAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:06:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C92B8CEBAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 083BA281DD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:06:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B650AB216AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EB085655;
-	Fri, 24 May 2024 21:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGsQVoaz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8094C84A53;
+	Fri, 24 May 2024 21:06:30 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF643C47C;
-	Fri, 24 May 2024 21:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B116823D0
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 21:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716584777; cv=none; b=ig1O0U7fMj/CICqAaFAotSYIyz8crm2fu+UQpwpzLKybxgUiv3hWE7DrxhY5/zI0wmmWI4bizc+cdcI+YIjLFaNSNoMY5d8DheI8/Rhj4tEiecTvaAkSGNpr0fBFe2ztprviDwuXHSxKfe/ruJZGLINqBtJ1Vp+ii7KaLKTIoCw=
+	t=1716584790; cv=none; b=DyCnzsT00dlRr95rlZQZV7UAXVIIdk2T5ILN0B86atRmiWUEvwkM4/7q2KtIEs3llelTSxNd+Op69aXDW9bRAxDHQYqAY77l/Zvoy8kZ62VxYIn9yuVlz5tmBgRzxKsBhal1F6oh0mgxkpKIjelBWVcWCIsXU4aCI1dZr8uEPP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716584777; c=relaxed/simple;
-	bh=i2FYvQ/BuCKRsKhUyvuotfGtwF1qiSXoUMR8uyOnvAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MHg5Nc78JUPZDfw9VeG8CBzoHpmn0GCfqkl2j84wybuMwqE3UKktyeiL3HmwrHKuUk9xYs2xgv/dO87kzjkt9gnjPzxIA4cQIqKYAoOwkpzuUj4KgYa0c4iKkJwp+uX3hV0MblMNqbu9QE+6qeXhpOTWtZSFOXCoaaOrdX19RT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGsQVoaz; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716584775; x=1748120775;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i2FYvQ/BuCKRsKhUyvuotfGtwF1qiSXoUMR8uyOnvAg=;
-  b=mGsQVoazfreoJ4VR+jVsWh/U0L5a0weCmoOf0jNA4VmQ6mj7tGiDckFV
-   wYOC8SZSBmHFSXbp9zu3xznKZK7P91ntdMXeFdXm45dh4wyA4JoB/iqqc
-   N5U+JUblgIcAZbnp6NG1DNBIXNc/p/9Bb05KthJQHjizCtQ3lxiMNSnZv
-   X+SlyozcuJcSTzm44/6Rfs/vbI8FwtzyifS023UFnhjMBQwcR/BlKKbP4
-   64BpmiP/ZdEd3bAEF3D6fKdMryf6rjC6vGK3PBdrKYZIAU4j/+vnvqEJE
-   kHOnSE5FzUZ1hYZ6jo6YrF8UTBZJGDtJHjic+DIzty0v4CYen4szU2nvP
-   w==;
-X-CSE-ConnectionGUID: RwRlITcQTgWntLv1y3flew==
-X-CSE-MsgGUID: Y44mRza0TOKNicZIZ37Ezg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11082"; a="23546283"
-X-IronPort-AV: E=Sophos;i="6.08,186,1712646000"; 
-   d="scan'208";a="23546283"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 14:06:14 -0700
-X-CSE-ConnectionGUID: dg0+kzl/TTiFuWKJa05m+Q==
-X-CSE-MsgGUID: bBCnSzmmQreu0Xqb9a7bkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,186,1712646000"; 
-   d="scan'208";a="34112530"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 24 May 2024 14:06:10 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sAc6x-0005ul-1D;
-	Fri, 24 May 2024 21:06:00 +0000
-Date: Sat, 25 May 2024 05:05:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>,
-	linux-fsdevel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel@collabora.com, gbiv@google.com, ryanbeltran@google.com,
-	inglorion@google.com, ajordanr@google.com, jorgelo@chromium.org,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 1/2] proc: pass file instead of inode to proc_mem_open
-Message-ID: <202405250413.EENbErWw-lkp@intel.com>
-References: <20240524192858.3206-1-adrian.ratiu@collabora.com>
+	s=arc-20240116; t=1716584790; c=relaxed/simple;
+	bh=2g5KmH/crh64CquZwkIFfn7OzNgqf1dSfm5ijaTvYmI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KcPGwnLFNyPfXjfQYn6DwZFWxrhMfZ4eX8BtYNsk890O2PvPqd+a/Q4pJqU+NIl08xgEL8PhewcPUgvDug/P4o1i6BQ1bTShbS2uOla+eJutQwyfY6pUJteWqIU+u2ityb4MTJW2gAPskE0/vpfFORLCYlMd8vBtWNtrqA47URk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-36fe7b4ca2eso36922205ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 14:06:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716584787; x=1717189587;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EbZccHYr0VHHqYDgpwcysVLwOm6ViDucV9pCBr7KlAo=;
+        b=aCrcC7fCjFd8GzaKsToEAEdn1rKwV72EP5SVgVKnBjvKCf0JOPqz6dq3Gw/Z3sfhc0
+         HmWKSVxX6i6x6OmhHJ30p4mTj+qp6PSFQIe9B7JBIIkb60bqWh3yfqsy9e6Kv9x7yidh
+         yg4B9L/W3efMcoR23NkmE7pOoKg+R1eKaPomNOWpoFmc4SUMBEoS2N7XAD0JGNQtHoR4
+         YYCEQY+4pKlyzDCDhhctJhhZ74gTXMay5AK0XAAx7H7lmCFiy+uzKP67W0/EZz06RIF/
+         1aPIhgG3Iaz1e6Pe84bAXf05vdNZ+4Oaqzoa06J/wBh9IpRHkitf9qlExf6whU+ENusv
+         PjAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFmG6fZF1irrBnkRZOdKIT/QIpbofScJfEOMvuz7+Vbm6mUoJ+1uFWTufHIL9yvMHB9FaEg42yuHFUvENLsR2Drv4+JLNxBf/AzOHk
+X-Gm-Message-State: AOJu0YyBpbZDL3E60HFVR0oHrB0pgKICZ98vmRfIvX8Crlfm1vysCxmI
+	m5N8vCh4ze+/JP2F+o7azFa8XR436GxSWNahXI2B0qSN7+ibmdLeXbVxmyiY6xZ4zvgrnWRM8uO
+	ft/Nl+Mw+jiIndcMhgXtQvxanwU376jp+vCyDYckyX9wlHEyRSvKFuc4=
+X-Google-Smtp-Source: AGHT+IEF7eCaOxp6PbCVCcZKQytu7Us07etK69PHytKkCmlzyu30k50iyWfqAqmM/48jCLmpC42nJyy8WUgdWH9eztuwH+sKfzt8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524192858.3206-1-adrian.ratiu@collabora.com>
+X-Received: by 2002:a92:c247:0:b0:36c:852:9dc with SMTP id e9e14a558f8ab-3737b46721dmr2181805ab.6.1716584787627;
+ Fri, 24 May 2024 14:06:27 -0700 (PDT)
+Date: Fri, 24 May 2024 14:06:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007e604a0619398aa8@google.com>
+Subject: [syzbot] [jfs?] BUG: unable to handle kernel paging request in txBeginAnon
+From: syzbot <syzbot+4e89b5368baba8324e07@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Adrian,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on kees/for-next/pstore]
-[also build test ERROR on kees/for-next/kspp linus/master v6.9 next-20240523]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    fda5695d692c Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=104354b2980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95dc1de8407c7270
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e89b5368baba8324e07
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1748ee42980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=155733e4980000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Adrian-Ratiu/proc-restrict-proc-pid-mem/20240525-033201
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/pstore
-patch link:    https://lore.kernel.org/r/20240524192858.3206-1-adrian.ratiu%40collabora.com
-patch subject: [PATCH v4 1/2] proc: pass file instead of inode to proc_mem_open
-config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20240525/202405250413.EENbErWw-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 7aa382fd7257d9bd4f7fc50bb7078a3c26a1628c)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240525/202405250413.EENbErWw-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/07f3214ff0d9/disk-fda5695d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/70e2e2c864e8/vmlinux-fda5695d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b259942a16dc/Image-fda5695d.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/abb93d88d631/mount_0.gz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405250413.EENbErWw-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4e89b5368baba8324e07@syzkaller.appspotmail.com
 
-All errors (new ones prefixed by >>):
+ ... Log Wrap ... Log Wrap ... Log Wrap ...
+ ... Log Wrap ... Log Wrap ... Log Wrap ...
+jfs_dirty_inode called on read-only volume
+Is remount racy?
+Unable to handle kernel paging request at virtual address dfff800000000008
+KASAN: null-ptr-deref in range [0x0000000000000040-0x0000000000000047]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[dfff800000000008] address between user and kernel address ranges
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 6241 Comm: syz-executor389 Not tainted 6.9.0-rc7-syzkaller-gfda5695d692c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : generic_test_bit include/asm-generic/bitops/generic-non-atomic.h:128 [inline]
+pc : txBeginAnon+0xac/0x154 fs/jfs/jfs_txnmgr.c:465
+lr : spin_lock include/linux/spinlock.h:351 [inline]
+lr : txBeginAnon+0x78/0x154 fs/jfs/jfs_txnmgr.c:458
+sp : ffff80009b2171c0
+x29: ffff80009b2171c0 x28: ffff800093828e48 x27: ffff800093828000
+x26: ffff800093828000 x25: 0000000000000008 x24: 0000000000000150
+x23: dfff800000000000 x22: 0000000000000001 x21: 0000000000000000
+x20: 0000000000000040 x19: ffff80008f473720 x18: ffff80009b216e80
+x17: 000000000000cc10 x16: ffff80008034c6cc x15: ffff700013642e20
+x14: 1ffff00013642e20 x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff700013642e20 x10: 1ffff00013642e20 x9 : abdcc8a6ab47b800
+x8 : abdcc8a6ab47b800 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : 0000000000000020 x4 : 0000000000000000 x3 : ffff80008034c7fc
+x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000001
+Call trace:
+ txBeginAnon+0xac/0x154
+ extAlloc+0xe8/0xdec fs/jfs/jfs_extent.c:78
+ jfs_get_block+0x340/0xb98 fs/jfs/inode.c:248
+ __block_write_begin_int+0x580/0x166c fs/buffer.c:2105
+ __block_write_begin fs/buffer.c:2154 [inline]
+ block_write_begin+0x98/0x11c fs/buffer.c:2213
+ jfs_write_begin+0x44/0x88 fs/jfs/inode.c:299
+ generic_perform_write+0x28c/0x588 mm/filemap.c:3974
+ __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4069
+ generic_file_write_iter+0xb8/0x2b4 mm/filemap.c:4095
+ do_iter_readv_writev+0x438/0x658
+ vfs_writev+0x410/0xb58 fs/read_write.c:971
+ do_pwritev fs/read_write.c:1072 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1131 [inline]
+ __se_sys_pwritev2 fs/read_write.c:1122 [inline]
+ __arm64_sys_pwritev2+0x1dc/0x2f0 fs/read_write.c:1122
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:133
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: aa1803e0 97ffff65 aa1303e0 95922607 (38776b28) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	aa1803e0 	mov	x0, x24
+   4:	97ffff65 	bl	0xfffffffffffffd98
+   8:	aa1303e0 	mov	x0, x19
+   c:	95922607 	bl	0x6489828
+* 10:	38776b28 	ldrb	w8, [x25, x23] <-- trapping instruction
 
-   In file included from fs/proc/task_nommu.c:3:
-   In file included from include/linux/mm.h:2208:
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> fs/proc/task_nommu.c:262:27: error: incompatible pointer types passing 'struct inode *' to parameter of type 'struct file *' [-Werror,-Wincompatible-pointer-types]
-     262 |         priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
-         |                                  ^~~~~
-   fs/proc/internal.h:298:46: note: passing argument to parameter 'file' here
-     298 | struct mm_struct *proc_mem_open(struct file *file, unsigned int mode);
-         |                                              ^
-   1 warning and 1 error generated.
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-vim +262 fs/proc/task_nommu.c
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-b76437579d1344 Siddhesh Poyarekar 2012-03-21  251  
-b76437579d1344 Siddhesh Poyarekar 2012-03-21  252  static int maps_open(struct inode *inode, struct file *file,
-b76437579d1344 Siddhesh Poyarekar 2012-03-21  253  		     const struct seq_operations *ops)
-662795deb854b3 Eric W. Biederman  2006-06-26  254  {
-dbf8685c8e2140 David Howells      2006-09-27  255  	struct proc_maps_private *priv;
-dbf8685c8e2140 David Howells      2006-09-27  256  
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  257  	priv = __seq_open_private(file, ops, sizeof(*priv));
-ce34fddb5bafb4 Oleg Nesterov      2014-10-09  258  	if (!priv)
-ce34fddb5bafb4 Oleg Nesterov      2014-10-09  259  		return -ENOMEM;
-ce34fddb5bafb4 Oleg Nesterov      2014-10-09  260  
-2c03376d2db005 Oleg Nesterov      2014-10-09  261  	priv->inode = inode;
-27692cd56e2aa6 Oleg Nesterov      2014-10-09 @262  	priv->mm = proc_mem_open(inode, PTRACE_MODE_READ);
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  263  	if (IS_ERR(priv->mm)) {
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  264  		int err = PTR_ERR(priv->mm);
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  265  
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  266  		seq_release_private(inode, file);
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  267  		return err;
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  268  	}
-27692cd56e2aa6 Oleg Nesterov      2014-10-09  269  
-ce34fddb5bafb4 Oleg Nesterov      2014-10-09  270  	return 0;
-662795deb854b3 Eric W. Biederman  2006-06-26  271  }
-662795deb854b3 Eric W. Biederman  2006-06-26  272  
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
