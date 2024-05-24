@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-189093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3CF8CEAEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:38:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBC68CEAEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F35B281BFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:38:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE4F1C212C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 20:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5142D7E574;
-	Fri, 24 May 2024 20:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7AD41C67;
+	Fri, 24 May 2024 20:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0vWAcJk+"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="JR/0IOgD"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6557A74407
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED56824A4
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 20:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716583092; cv=none; b=QrDNf+VoFhnMKqNLf6c9B54pkRLHCkVjPrBIzwXGvnngLN8JugdIagHqFR2cxEsy8w0k54HUXDwwoNMh9QDTQlfWl/60LulKSoHtkZ0VBrRJ61sST3ggFeq5c7ltDO47yK9rpneAGohgJx+7g9lpcRQTJFsdAFv1jyE8R4h9vR0=
+	t=1716583148; cv=none; b=FqSjRaWzuB4dnjsZI7csxj8b6404Nv5DpMiqmEm8AXFkdMKbl7Enhbyf0f1Lhf/iDSj9z8j4W0zUOZx3IRr+9qUqQYFuKAm6wITw5A51uiEoQaP2h87fJ18rHo+b/U1OhayPoIIMOmT4C2X1Te30/xXdlJbCa6lcic5ZdRCHwyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716583092; c=relaxed/simple;
-	bh=8j8OrljIvFu2Et9RmLk4iAykmVaiaUh+gf8m1koNlGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aHk8kis/IdXste8au/mR7OhcI6/rMPzYOg9nJz9beunxogplsGCvOrIu4h5qttm3lKs3FIekzqwSeIxQDBvv7oOwmAYq8xuLALC6x6bVjdbUypJ//3ALf/DCkBYjJIBgcSjSI97qar4ditZfQOLC0yz4kqDcWnfNcFhZ6E0Q5UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0vWAcJk+; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b970a97e8eso616020eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1716583088; x=1717187888; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAb0yvkmRIH2YjR8NuuhLY/irhuLspeCDPAA3a0v6HQ=;
-        b=0vWAcJk+F10usFchgUjSpXLV+xvskFn8rkrSKiMLxogM9VO8QeWEgquyyCMnMGgSCX
-         IBAe5VowWqBeDyFBqrOlB0tRhfblPiM03bIK5Pi65XRJKzSp7tNtPXY0EXxqoTGoR62a
-         x9p3vwe69a7Vg2ii9b6l7YVWLZwxei6UWpaRbsBVUuoQ5t1fZdmN7/BdfFzJZvYX3+1V
-         Uow3AzyRGl9dm/pM5TrpAYy42CaByI3asakFgTgPOrK93uMgEcyaCq+meceASolpNqHH
-         GiDewN2YpCgtYg07OB1DTZnT9AfbysTgivd56Dh+MKBZ7evUqihWnwQVLvAwKvaXEGmz
-         VCHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716583088; x=1717187888;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lAb0yvkmRIH2YjR8NuuhLY/irhuLspeCDPAA3a0v6HQ=;
-        b=wCsO1FqZVkiBlRSrVgZQLFboujrfmsUrQLSeiykIsmvjTr8IIjgkRWbS6Bq1V24dZW
-         w3zJ2GpbB2p/F5QgGF9AP0qblFH6eNrCYotwukts7Dy4pByyEso4nhmhd76S5Se3ApuQ
-         O5NlqY/4pdW0LvyreMcE2OKtnYdVbvdSp+035kbaUFphErm+SdHTVEw3JAHNEg0gY3Y0
-         ZAxXLOfipTjCMg2zCQuG6gZbR70Isegx/K1d4DN1MP9H4DE5xfJcGQrq0yPrLSEzpZdE
-         nGjlvoMwX+56D2l31DLtOVzwYgnKm0oXq1h5t3k2QF3Dz5POa5X6hJg5epNqWQ24zY23
-         aMwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/8FmXAf3CBV0u+N8Hhs7+kG8Tvi8clUc4PZEvwv/6srPGN2EKE/QrC82aPXhh2Cy3j8piLskvSkClhBRdPCDfcCmMyGc6ZZ8923lZ
-X-Gm-Message-State: AOJu0Yxy541gZvKrsH4kt1WaAbP5/JGf+1OzkQEL0EFMnwVFvv/wCAwl
-	HKlEtjur+guAhLIXyoBoKiNFAl9Gpq1UfjUmFiWJwFCi0fzoUtuUUdIX15yC804=
-X-Google-Smtp-Source: AGHT+IFmcO1B730qZOExe18PR3yCsMK8Mp4TMxtezp+Z3SNVkxkF/bovPBgfXhsG6dK5UxW31fHKTg==
-X-Received: by 2002:a05:6820:603:b0:5b2:ff69:97c3 with SMTP id 006d021491bc7-5b95fe9c7b9mr4391373eaf.2.1716583088547;
-        Fri, 24 May 2024 13:38:08 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b96c462871sm480285eaf.1.2024.05.24.13.38.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 13:38:08 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: ad7944: remove unused parameter
-Date: Fri, 24 May 2024 15:38:04 -0500
-Message-ID: <20240524-iio-ad7944-remove-unused-parameter-v1-1-fd824d7122a0@baylibre.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1716583148; c=relaxed/simple;
+	bh=LoWM0TVymoHJriq6KJbuI3hatNBoiVI1Hv84Bj3Qfbo=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=kSwdZm22Q+cx3dN+VNcTQFX6CC7y3tLpovrHWL5mKi7sI4dwl6O27YnkDziPaR885OAOngOmztQGBtQL/9ojT5nC6yiHjtEnRCwoCj5bL2iWkRaV3rZAwdPj8wLx26wHI8c019hKEII9hbkWuWCuwWiRa/bvWDYcTsqewX1yMm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=JR/0IOgD; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
+	by cmsmtp with ESMTPS
+	id AXHvsrFQXxs4FAbgvsKHFx; Fri, 24 May 2024 20:39:05 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id Abgusg47LsT9BAbgusquUs; Fri, 24 May 2024 20:39:05 +0000
+X-Authority-Analysis: v=2.4 cv=LIutQ4W9 c=1 sm=1 tr=0 ts=6650fae9
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=BXyYjBD0cXuZo9oD7aYA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AfmSTF6K3ePH28mH9PRgkAE7ar31QEyzCQWuA2HmR74=; b=JR/0IOgD1ulBHucjtrFUg/gug1
+	NW39lml/9HWUGEo72+oXNTzlFjYt4JHyOrBThclN8vTX4xbQ26xfvICUQXangpReAz8jccgFl+1gO
+	SgxRq7of/EtmCKEMq4xyZfyAp5Qd6CbwE3ceGHA6i+P5Lxmr80rqfdokaQhNQBlVUM0/k56tw7oUP
+	qTLBn6sMxAHSsaZX38H/T8kmXTq/MNy9oGiaXqbo6ohMWrpmN26PQ/No+oznljt9g9O8EiEXTR57V
+	dOyr32wzZQdxjlwCOwwlH+uiAQxm6IQesQVl5TrtvGgaTyI1yaN5/r9QOBNpL+ll3izipNj3VS9BU
+	4u9UGc2w==;
+Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:39798 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sAbgs-0035AK-1m;
+	Fri, 24 May 2024 14:39:02 -0600
+Subject: Re: [PATCH 6.1 00/45] 6.1.92-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240523130332.496202557@linuxfoundation.org>
+In-Reply-To: <20240523130332.496202557@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <e530eccd-5da9-5eeb-9290-c83360b88d6d@w6rz.net>
+Date: Fri, 24 May 2024 13:38:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 98.207.139.8
+X-Source-L: No
+X-Exim-ID: 1sAbgs-0035AK-1m
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:39798
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 23
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKwkJqxup0dgyxWvKIQitiV84BB8K4Yq3uZx9p90xRF20zwxnQl9st1mbqWVQC72CJVZVVuawcrYTJcZOaxLqHFcs1K245IVbjCM4ZFKx0LFS2/66Qiw
+ fPi8qdYNvANksdbD8nq5EnODg3Rr3jareqQHEUmv1ywt0bp+8Bn4DNnILeqSNL5AW6lBUZY9ycwXEuUpWBH/vrL4vGQbvhe0RwQ=
 
-In the ad7944 driver, the ad7944_convert_and_acquire() had an unused
-`chan` parameter. This patch removes the parameter.
+On 5/23/24 6:12 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.92 release.
+> There are 45 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.92-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/ad7944.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
-index 4602ab5ed2a6..e2cb64cef476 100644
---- a/drivers/iio/adc/ad7944.c
-+++ b/drivers/iio/adc/ad7944.c
-@@ -259,7 +259,6 @@ static int ad7944_chain_mode_init_msg(struct device *dev, struct ad7944_adc *adc
- /**
-  * ad7944_convert_and_acquire - Perform a single conversion and acquisition
-  * @adc: The ADC device structure
-- * @chan: The channel specification
-  * Return: 0 on success, a negative error code on failure
-  *
-  * Perform a conversion and acquisition of a single sample using the
-@@ -268,8 +267,7 @@ static int ad7944_chain_mode_init_msg(struct device *dev, struct ad7944_adc *adc
-  * Upon successful return adc->sample.raw will contain the conversion result
-  * (or adc->chain_mode_buf if the device is using chain mode).
-  */
--static int ad7944_convert_and_acquire(struct ad7944_adc *adc,
--				      const struct iio_chan_spec *chan)
-+static int ad7944_convert_and_acquire(struct ad7944_adc *adc)
- {
- 	int ret;
- 
-@@ -291,7 +289,7 @@ static int ad7944_single_conversion(struct ad7944_adc *adc,
- {
- 	int ret;
- 
--	ret = ad7944_convert_and_acquire(adc, chan);
-+	ret = ad7944_convert_and_acquire(adc);
- 	if (ret)
- 		return ret;
- 
-@@ -361,7 +359,7 @@ static irqreturn_t ad7944_trigger_handler(int irq, void *p)
- 	struct ad7944_adc *adc = iio_priv(indio_dev);
- 	int ret;
- 
--	ret = ad7944_convert_and_acquire(adc, &indio_dev->channels[0]);
-+	ret = ad7944_convert_and_acquire(adc);
- 	if (ret)
- 		goto out;
- 
+Tested-by: Ron Economos <re@w6rz.net>
 
----
-base-commit: 6c46802cc0c4ff878f07139f7b7b8774fd43ce3d
-change-id: 20240524-iio-ad7944-remove-unused-parameter-d814bb7e1a28
 
