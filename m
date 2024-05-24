@@ -1,267 +1,577 @@
-Return-Path: <linux-kernel+bounces-188350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191238CE0DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:07:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A3E8CE0F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 907D61F21F8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:07:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C88231C20DF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9E3128363;
-	Fri, 24 May 2024 06:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="d+yHdEVf";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="cAYWillh"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19381292C4;
+	Fri, 24 May 2024 06:18:30 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910E722331;
-	Fri, 24 May 2024 06:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716530822; cv=fail; b=HP5bEiNghj1MAGHutYN864BpXxKm+su25FvUcf2L0YM/LYuwdtrPPIUxoWtUbe9rrd/M0vhh+rDLSqmeEDiaWUJJDTf2A6I6q9VXDmz/w1+xf3MV++RuXVNPWlnEKlLGXgnV+UzuAgqzHVkZTELeX1fXVbwVfOUStc6IJJIK+oE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716530822; c=relaxed/simple;
-	bh=pOWKC++1++RPJycn7bu/bJgAd7/XDCDGaZKT/ja5Rpo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cFUaDJfPlY+lbpc5j+8O+CxunECTHwKa38SvEoN/XuMPEGcZqmKczsZgVBjAOiFeYYcjjmmXCcW95DG6lzuXa2sinJ/aykL6njBcY6LAU72OMvoOfdkGtIb715W09cfxvboZKlWkXLZ5EdUOF2LI+ggnvTJ6rrBxe8S1jYtHMws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=d+yHdEVf; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=cAYWillh; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: d0bf3bf0199311ef8c37dd7afa272265-20240524
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=pOWKC++1++RPJycn7bu/bJgAd7/XDCDGaZKT/ja5Rpo=;
-	b=d+yHdEVfPltfp8GU4O7tET1NAchmCWCtuxHc/2DrC7gsGoy9axwSSYyN3boLYdQdp+KshQ+2zqOVKO2Uq5Ff3gQd9nmoIyz5vASjDtRi9WR1QUpuCxmzBF4GlajUnAHlmife4JqTo+gDnv67MTnzBg92s/+S6f+xL0Cn8edqK5o=;
-X-CID-CACHE: Type:Local,Time:202405241404+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:413c0fd5-a00e-4f59-b858-337d0bd4306c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:e07f7efc-ed05-4274-9204-014369d201e8,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: d0bf3bf0199311ef8c37dd7afa272265-20240524
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <peter.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 425319477; Fri, 24 May 2024 14:06:52 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 24 May 2024 14:06:51 +0800
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 24 May 2024 14:06:51 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q5fNT4c69JBux3EBTfCRlXq3niAoioCwgfjBTO6Ok7QWDxe0xKhS/LXhjbh/f15TbwMTvbF6zQM8vgOir9ieWUASe2W7DNN34kitpgU55gU5jo20CFGfv7Ym4q03QnsY1snSSIRYP3faYNs9VKMj5k9/KompKAhzlLid9AeWq4YEryVylY71ixZg/6yFKaDaHbbGKAKmop1NOo21EYgUNirXG4J8wA2MA5k+nzDi5f9BwM9WJrHdPlKqxiB6YkeDcluY9F+6qEPiJb0oELjj1lmYAUMvEXYTolsyk53I2cX64pfCBZewl7iJZenegNnbpNrhWOdCmew/wuBnXGp6Wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pOWKC++1++RPJycn7bu/bJgAd7/XDCDGaZKT/ja5Rpo=;
- b=VcEfgyJ1cjfCHbw7I2IHpsF7YLpe4YrCb3d1+Mr8M3l0o2M4xdVoLrPrJMAQlQjmvXgvGfQnmy1k+heBMI85k3+BYLG4d1MYSGjJWligqRO4xE2C01XVXfFIYR1Lswwt1ifR3+2GOGTq07W3CXW7Q8QdvEOR6GmMd9kye3sP3hyE/qBiLNnVDH0RGw/gGufmG1h05j9LiNW9a8qeI3dfhJ7ggta/IpBEXomnJdirh6XNyOxZmzU/EdpCQBxIalL1Hj46HfoWHT2WTNEcrjaKlzmiwpw8iGsbGWVyscsQVCRrf0YC1QCym61wQbtqNtVgmkypLUCTp1oY7cPFyrvFgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pOWKC++1++RPJycn7bu/bJgAd7/XDCDGaZKT/ja5Rpo=;
- b=cAYWillhqN0pl56yFfsLt9jsOgZ+WV9QVHhs1ciBFqfHr2qvHqsOrOMgmXHed/Zvgatt94ye097j3QL/Srhn7z/jNZe4C8l8AdhpZxF89kaQ53JoyBMz5TroFYJ5G7tCTXmMuXwhLb+/qFR8AX1Fl8icnq34CbilFbMY5AbXKuU=
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com (2603:1096:301:66::6)
- by KL1PR03MB7106.apcprd03.prod.outlook.com (2603:1096:820:d0::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.17; Fri, 24 May
- 2024 06:06:49 +0000
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c]) by PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c%7]) with mapi id 15.20.7611.016; Fri, 24 May 2024
- 06:06:49 +0000
-From: =?utf-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>
-To: "hch@infradead.org" <hch@infradead.org>, "Avri.Altman@wdc.com"
-	<Avri.Altman@wdc.com>
-CC: "beanhuo@micron.com" <beanhuo@micron.com>, "bvanassche@acm.org"
-	<bvanassche@acm.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org"
-	<linux-scsi@vger.kernel.org>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>
-Subject: Re: [PATCH v5 2/3] scsi: ufs: Allow platform vendors to set rtt
-Thread-Topic: [PATCH v5 2/3] scsi: ufs: Allow platform vendors to set rtt
-Thread-Index: AQHarREB5gyPI+xeYECfbFS+beiFrbGkySSAgAABmICAAAC4gIABG4kA
-Date: Fri, 24 May 2024 06:06:49 +0000
-Message-ID: <0a57d6bab739d6a10584f2baba115d00dfc9c94c.camel@mediatek.com>
-References: <20240523125827.818-1-avri.altman@wdc.com>
-	 <20240523125827.818-3-avri.altman@wdc.com> <Zk8-rwjFvgP714Mn@infradead.org>
-	 <DM6PR04MB65758584960580363D43AED4FCF42@DM6PR04MB6575.namprd04.prod.outlook.com>
-	 <Zk9Anwk1HEjUzSxc@infradead.org>
-In-Reply-To: <Zk9Anwk1HEjUzSxc@infradead.org>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PSAPR03MB5605:EE_|KL1PR03MB7106:EE_
-x-ms-office365-filtering-correlation-id: 7b596697-3e46-4ba0-b218-08dc7bb7b2fe
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|376005|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?S1FLN0hkY0duRllZaU8zcS91eFhuYnBOeDBSQmt3RWVCVnF0alM3cmhkclZ3?=
- =?utf-8?B?WWhNMkdRNnRXQmc1dUxsQTNUdGhJeUtFSVVmY3lPdHhUSkpaZXZjQjEvd0F1?=
- =?utf-8?B?d1QzN2hkbnEwNWgxek5oUmhIWkk2NHo2dDhGeDdwdDJNaSt1OTluUnhsaXEv?=
- =?utf-8?B?VVk1RGQyOUFVSWI0MzZMZ0NhMlcwdmtOR2dBbk5BdU9pZ3NMNysxMGtET1p3?=
- =?utf-8?B?QmJCUmRhWVd5NVVEYXVqRHlOVnZLQ1NObURxWThOL1ZLQmZ5Y0FuMjA2Wk5J?=
- =?utf-8?B?eWl1OEd0UWMzK1ZwaUxRZU9paFROLzFsUEFaendpSXUzdEZIbDlBOU1tL3Vq?=
- =?utf-8?B?aEdsSGpEdmlVdmduVVBXU2dwMnlIa0R1amh1QkFhVnVkL25WRzEzV0FJcFc1?=
- =?utf-8?B?VFdHMVpWMlFsMWt4Q1hVNzNRS000OXFtSElreEY2cXZHdTl1TFVlMXdHUDJq?=
- =?utf-8?B?cEpuQ1Jta2NoclI1MHcySEVxaXVHWFpsV2wwaVZsSFdpU1FHVTlQWms0VWRl?=
- =?utf-8?B?Y21wa2QzL0xzS1I3Nno2aDZMMTZveUlxdENHWlBueERaQzI5enU1eTMzNmVH?=
- =?utf-8?B?UXRqQkMvdDl1WTdRck1VRTJEeEFpUDJvZTVqZ0lRMmpLMDVGN1ppSVNYcFcw?=
- =?utf-8?B?dDh5NjJhOTJjWTlBQWZoblh3TXdUbEV1cjdLb2VzRXFvZzIwODBOMlZWVWRN?=
- =?utf-8?B?Nzh6MVlpeCthOHdXTXR1dUFaZkN5SzIxdTc3V2hnSW8yK2FjMTJ6S3EvNUZq?=
- =?utf-8?B?NzNBKzdMN1BrUElZVUhCUlNqVnlTN1dnZ1R3dUUvalVQbGFSc01GNkh4U0Ur?=
- =?utf-8?B?aUJtdXlUV1NBcEdWd2R1aU9vMDZrbjNyQVZjMlYyTFY0NmFldGFmL1VMdzdH?=
- =?utf-8?B?NjVFK0xYdHdtMUtNcXkwZWppNC92ZU5PSy91MHQzZ0w0OWh2MjRJdG1IaDYx?=
- =?utf-8?B?cWJlT25kd1AvVllPK0dpRFNSczZEb3d5MnBSdnpjbldaVzJVUzFlSHhic0lB?=
- =?utf-8?B?Z21oblpVOWFySVp5ZFpDdnlqbDFOUEQzeUFsY0REN3U2cnJ2aEpzMXhUZ1pQ?=
- =?utf-8?B?Q2JlYUtFQ3M3dFJ5M1FOT2FQSW1jVFV3N0hJalpVZm5BcGhFd3RtQ29YK2M2?=
- =?utf-8?B?Y0NSVmhGc0xqa2FvWVU2SUViYmdNd21tNUhIN205cFRQTG0yeGVSeTJEVEsz?=
- =?utf-8?B?M1dOVEF4QTN6QlRBUXd0ak1aSVV4OFAxcVFValhPV0Ewcmk4ME5zTkdia2tw?=
- =?utf-8?B?OXpsUjFQMkVpNEFBUEhINWNaY1k4Sld6QWpCbERPdmkvdFp2akg5eWpTL1NP?=
- =?utf-8?B?MVEvL2ZZRWpWUTdMbXlqU0YycTRYb0NWV05MckpqbXZkSkdCRGVOOHBEZmdV?=
- =?utf-8?B?OFJuTEVxL0xKdytlSlJHUUc4Sk41UTZqektRK3BOVEhrV2JrcTRiQ1kyalMw?=
- =?utf-8?B?eHhnZDJFT0syYUJBV3V0ckpvdkFURjVkV1ZTRHI0TTRvWkZlOVdRVk5hSDRy?=
- =?utf-8?B?dnRMSFhOeksvNzQxZ2lNQ0FFQ0cvRTZ6dHZWVXp6TUE1eisrT1NqRUtxcmZJ?=
- =?utf-8?B?Zi9ndTdvTHRCa1RsOEN0N09DZUxDT2RjbmdITlB5WEhQaUc5T3VnMG9RbzEy?=
- =?utf-8?B?eUpmQ3dLMXg1Nm0wZjFmbjVHcmNjcXdSS3pBeU1XWlJzbjcydjBRYlFDQU5a?=
- =?utf-8?B?VVVPditTRDVkQ1dGWSsrVk9VY0hHb1NJQUR5UmRQUjg1WmJWdEVvMm0zRno2?=
- =?utf-8?B?cTFyWG9wbFYrZkNqQ0lSVmQ2TDhkaURkS3lzVk51L2ZSQTVwZGc1K0RHNG91?=
- =?utf-8?B?YzBxTkpNWkpOQUpHOVpkdz09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB5605.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ckZqNVVMZTZJMUZGNFBjNGtJd0lKVGNqenE2VlZEQjg3aEhjT2tERFZKK21O?=
- =?utf-8?B?ZG9OVjJ6cUk2cE15UTkrL3hXUXJBbzNVSWFVaHQrWnZpNVoyWjhYWC9aa2Y2?=
- =?utf-8?B?NkxoNkdWRDRrLzJJS2l1RENUYThIZmRkTXllOFM0TnFDY0hRYjVaOWtkaC9S?=
- =?utf-8?B?UTgwbzYyVTJPV0NEckNVYVhxZ0pqSjZkRitGU3BLeDFvQlZ6MisyYm1KWEVy?=
- =?utf-8?B?UUZUK21vTTVNMzdMRGtxRmxVMVUzeEdnZEZLbVU5dXpVYzFRc0hwdG5hWFZH?=
- =?utf-8?B?U1kvY3J1WWIwbnp1Wk5TODFqUUdEUHZLMkJIdmhnZzdDZWJGSjZaK2RwNEJh?=
- =?utf-8?B?aEF3bnR3YjFXQjZqZUo4bUVGa1pPbVQ5UTNpUWVlYWFTVndyOGY2QjlHQmQv?=
- =?utf-8?B?VVVrYXBLQUYxRXBmZ2llclRDSnI0MHlqK3dWQkcwbWNhOXgxYllnQTFGOHlx?=
- =?utf-8?B?M2FzK2JKUDBUUjhwUDJoTVFXOHNuRHlXa3NiMGZId3Fpa2FFTW9vcStMNTNE?=
- =?utf-8?B?dzYxWnRlc0c3SEdCYklEQzUxVkZUaWd4MmlmUFlSNlQ3SElWbXRwOEcvMWVV?=
- =?utf-8?B?ODZtcnFtUTlLdndWbVh4dmVwUk1JQjEyejhWc0JtR2M3RkxTdlpLZ3pvN2JF?=
- =?utf-8?B?TlZCUWRkZDR1Y1JsaEdXVjgzQURLZ2FMUFpTRDRVY2pPOUlWdm5HNGRGQXMv?=
- =?utf-8?B?NFdPdTFRc2tpbW5YV2FuQUsrNElwMTl6YkxPYlQ4RzJINXFnQThuK3ZGVFFu?=
- =?utf-8?B?MGREYmQrUnNHN0NoK29VWEZTaW9uQmlnbHQvejg3MFJCMXBHYmFkZk9RZWlR?=
- =?utf-8?B?c0dabFQ1UWRhMHZtZE5QMmQwOFRpK1RlUFB0ZC9OczdxU1pJdFpTK005OStG?=
- =?utf-8?B?RG5FakIxYXowZlVBNGF2SEFvVDk0UFBYMGQ0U3VWV21ocDQxY2Q4VnFtaW5X?=
- =?utf-8?B?UGtOZVFOaXFISWwxZFJWeklTQ1hPYkhJZlkrWmxoVlJwdG5pOUdvOGZuU1Zm?=
- =?utf-8?B?b0VQb1ZsR0lpSTRzTGRscUI1YWJNcUxYbS9xS29oTkdXdVRSaWFYS0hLRzRl?=
- =?utf-8?B?ejMxbXVNdnRMaGE3QWZvWkUxa2RLeGYrNU9XNGxSaE85Zll6VmRDWlR3NVNX?=
- =?utf-8?B?S1hoMmxFdENBU3o3N2syMmFvSHZtMWhTZzQ0ZDI1SXFwYWdDUC9DWEV3Mmpz?=
- =?utf-8?B?K3JCZEtEb1RQb2htT2FLdGFRL2NYWERJUTQ4aFhBN01iZVV2andVU3JRYks1?=
- =?utf-8?B?d2NwbnFhMnA4Rk91anMwNklZTStIY0pPcHRVelQwRWR0dy9GbXhIVmNFYWV6?=
- =?utf-8?B?UkorS3ZhdUxpelhLaHJ4ZDJoOHFJVDVHNU8zYU1Ga0VwUzVzZ2hjVDVFMWdJ?=
- =?utf-8?B?cGRZVWZGQnR3MHQyQ2RXTGkrci9sMWpyOElvODRuUGZQTTZzRit2bFh6K1Y2?=
- =?utf-8?B?QVo3UXRhSGpQbnBnQm1WcnJ4dXUxeXIvZFJReVA3dmkveVpGcUdobHN1UHh4?=
- =?utf-8?B?eHo3dERCQ2dQVSt6YlB1OEM1RmZwN1dLMFd0dEZuTW9lSUx0MUdSTHhObzRT?=
- =?utf-8?B?VHJGZjlUaDBrTXRoS1RUVkgyOFlENUVHamhUTzAvM0tRUEFsdDNmWXZEWWtq?=
- =?utf-8?B?SmVEWU5XeWg3NFdkUkZHNm00SVEySGtpcEVCVkRrS1V0cHNYalRqZWFEY2tn?=
- =?utf-8?B?bXV1UzBodno4bnVIOGlmeUdQeW5XSktla3ZuWkw0UDVmallNOFlNdHhzQlNq?=
- =?utf-8?B?NlZmYzZmN2ZXWVFVdEx4U2QzTVFnaHU3VEt3bDd3RnJBUVhJUm8zYlVKbHZx?=
- =?utf-8?B?K2crd0wwWktwM203Rkw2RHRFTW9zWU1rU3BYQU8rTjgxUWFoSHp6OUxIc0Ev?=
- =?utf-8?B?ays5U0x6Sy9teGRlZzVFZ0xoZ2l3RXZ5TlBRRDJMNEI0Nzk0RTgzbTREMEJZ?=
- =?utf-8?B?YzlKY2VISmhlL0pwK09SMUN3K2FhS2lhWGhvbHA5YWlUL0lEeW94bC9RZnJt?=
- =?utf-8?B?dWFncE02NnUxaHhkL0w5TG0wbzFYK0g5UXg3NTZmZTdvNm84Q1NHeWlGcUwy?=
- =?utf-8?B?QURjV2Njbk9LcTVnRDNQZ0pmdy9mZ0s4NWZ5U1RlRC9vcC9yVmRUTXZMQlZ2?=
- =?utf-8?B?bk9sbnBzU0N5SkJxc3VVc0h4QzI5VytPVElnUjBYMSt0LzNOWTFwUzBhZ0Nk?=
- =?utf-8?B?RVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F2B808DBA2028349AC8A9DA93B1BD185@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3AE3C2F
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 06:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716531509; cv=none; b=C/75AxwwllsGB00CaTw2QwHqPWWrnlCJGUVrvRWBklseN3OijiEpJJl0ZGnV1n4CNojFh4L5K4pchkFFWMB08BfnS4lWKnQ2KojjNkFfAKevOfzPcN8mlBDPW78i9SKE5+FE3+tiuC6WGx+ta0zBwwV3uOx4hoYz6yWqYbuhXOI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716531509; c=relaxed/simple;
+	bh=irwvMJuabM/LE3ZP5E9X062DdIUthg83LdFaKiToKyQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r2O7sz+i19g5i3uAEV0MxiqtAFXl2frciJd31J4NvFzfrIyslmO30TbCaZZyK8UPV17fe7a8XaeSzeI6AI/Zyxvb0mkGmeO/jZuZeaB+gYiBRFjhvzpAqRA8eWjpFgHMT0cbC9rGDrUTQVdfAZr+J8f7LceeLaQp0wFPsszmz7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3713862bcefso21004615ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 23:18:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716531506; x=1717136306;
+        h=content-transfer-encoding:to:from:subject:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BNgu4oddCQYnVQUvBsGea594F0HKpe6UHOO7M9fsFuc=;
+        b=eiojfmqK2s6+VgnAva6gasWw8rHmOJKBTPOTpZZL06KxzLEnFX3TulveuooZY8ZA2D
+         JRLnHNTCPPEE1MJ0NN95e+68Wy1gfyYqJKa4KLFXy5BBR3jBUHwAk9HmXailnm4ijnaz
+         DmcbZ4oLjNbL6WbIulrF6e9hAre9aKDB4OO4Da699vvzffoDYCHhnPcS9zL/D7FJlTcO
+         MAvtibLWi1APpt9DsAOvQGNnFuh4GcjyoMSGY8q3RvswuOa5Qq5+r7QX8hdOLxQ4I0va
+         Zeqev7puTBusaIWM8xOkYGd2knci/E3nN3OBpBUiDtulBoFiw/GatnWV6JypkCuY2x4p
+         4q6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUIiHmk1L9agPTEVi2BtjX4jB12dGWIodfEJFe6lAIHtDG43rqoO5IUlds3CFDfyoypXqkoJExoe/DLDOEChBOoBQoatjfQuTq6rfCG
+X-Gm-Message-State: AOJu0Ywy+W+irGAgPIVgXbCyBuAPee42iHvYNyNBe71lqzjbaObUjiK7
+	4q62rAQ/mV6Jdioluhm/a59nf79vAE1Gc6XI8wBrMjpvqtf107pIbqBukRZe8q6W8EDSO7TQ4nx
+	sw8SS2A00Ix/ciHaZ9/7FIaGTf3fAxudfPY3zpSBHoTWKHzwwWKbRPO0=
+X-Google-Smtp-Source: AGHT+IGX/IoYA4ysHtyGmoHYjoFauld/xbpuOYFS7/TY05ffRVlnIETC6a1+jU0LC3iGAjmOdg0Fm6EhTUdO1YhxZQN0MnNWUi3m
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB5605.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b596697-3e46-4ba0-b218-08dc7bb7b2fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2024 06:06:49.1891
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3bLZsvkOOz9PPU9eaHPpKBOTQaJHbCSE2GFZKlvl7w95hZKGJ18Nkvh5yullXGEw9f5o5a+x6ZTblCf44CitZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7106
-X-MTK: N
+X-Received: by 2002:a05:6e02:1887:b0:371:a225:45b5 with SMTP id
+ e9e14a558f8ab-3737ac8695emr1192695ab.1.1716531506472; Thu, 23 May 2024
+ 23:18:26 -0700 (PDT)
+Date: Thu, 23 May 2024 23:18:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b07bfb06192d228b@google.com>
+Subject: [syzbot] [net?] [input?] [usb?] INFO: rcu detected stall in sendmsg (4)
+From: syzbot <syzbot+9c0539eda655673bdaa4@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCAyMDI0LTA1LTIzIGF0IDA2OjExIC0wNzAwLCBoY2hAaW5mcmFkZWFkLm9yZyB3cm90
-ZToNCj4gIAkgDQo+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBsaW5rcyBv
-ciBvcGVuIGF0dGFjaG1lbnRzIHVudGlsDQo+IHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBzZW5kZXIg
-b3IgdGhlIGNvbnRlbnQuDQo+ICBPbiBUaHUsIE1heSAyMywgMjAyNCBhdCAwMTowOToyNVBNICsw
-MDAwLCBBdnJpIEFsdG1hbiB3cm90ZToNCj4gPiA+IE9uIFRodSwgTWF5IDIzLCAyMDI0IGF0IDAz
-OjU4OjI1UE0gKzAzMDAsIEF2cmkgQWx0bWFuIHdyb3RlOg0KPiA+ID4gPiBBbGxvdyBwbGF0Zm9y
-bSB2ZW5kb3JzIHRvIHRha2UgcHJlY2VkZW5jZSBoYXZpbmcgdGhlaXIgb3duIHJ0dA0KPiA+ID4g
-PiBuZWdvdGlhdGlvbiBtZWNoYW5pc20uICBUaGlzIG1ha2VzIHNlbnNlIGJlY2F1c2UgdGhlIGhv
-c3QNCj4gY29udHJvbGxlcidzDQo+ID4gPiA+IG5vcnR0IGNoYXJhY3RlcmlzdGljIG1heSB2YXJ5
-IGFtb25nIHZlbmRvcnMuDQo+ID4gPiANCj4gPiA+IFBsYXRmb3JtIHZlbmRvcnMgaGF2ZSBhYnNv
-bHV0ZWx5dCBubyBidXNpbmVzcyBzYXlpbmcgYW55dGhpbmcuDQo+ID4gPiANCj4gPiA+IEZvcnR1
-bmF0ZWx5IHRoYXQncyBub3Qgd2hhdCB5b3UncmUgYWN0dWFsbHkgZG9pbmcsIGJ1dCBJIHJlYWxs
-eQ0KPiBkb24ndCB1bmRlcnN0YW5kDQo+ID4gPiB5b3VyIHZlbmRvciBmZXRpc2guDQo+ID4gSXQg
-d2FzIGEgc3BlY2lmaWMgcmVxdWVzdCBmcm9tIE1USyB0byBhbGxvdyBvdmVycmlkZSB0aGVpciBo
-b3N0DQo+IGNvbnRyb2xsZXIgY2FwYWJpbGl0aWVzLg0KPiANCj4gVGhlbiB0aGV5IG5lZWQgdG8g
-c3VibWl0IGEgcGF0Y2gganVzdCBsaWtlIGFueW9uZSB3aG8gd2FudHMgdG8NCj4gaW1wcm92ZQ0K
-PiBMaW51eC4gIEFuZCBub3QgdHJpY2sgdGhlaXIgTkFORCBzdXBwbGllciBpbnRvIGFkZGluZyBh
-biB1bnVzZWQgaG9va+KApg0KDQpIaSBBcnZpLA0KDQpDb3VsZCB5b3UgaGVscCBhZGQgYmVsb3cg
-cGF0Y2ggZm9yIG1lZGlhdGVrPw0KV2l0aCBiZWxvdyBtZWRpYXRlayBwYXRjaCwgDQoiQWxsb3cg
-UlRUIG5lZ290aWF0aW9uIiBwYXRjaCBzZXJpZXMgd2lsbCBtb3JlIGNvbXBsZXRlIGFuZCANCm1l
-ZGlhdGVrIHBsYXRmb3JtIG5vdCBhZmZlY3QgYnkgdGhpcyBwYXRjaCBzZXJpZXMuDQoNClRoYW5r
-cw0KUGV0ZXINCg0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy91ZnMvaG9zdC91ZnMtbWVkaWF0ZWsu
-YyBiL2RyaXZlcnMvdWZzL2hvc3QvdWZzLQ0KbWVkaWF0ZWsuYw0KaW5kZXggYzRmOTk3MTk2YzU3
-Li5mODcyNWYzMzc0ZjcgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Vmcy9ob3N0L3Vmcy1tZWRpYXRl
-ay5jDQorKysgYi9kcml2ZXJzL3Vmcy9ob3N0L3Vmcy1tZWRpYXRlay5jDQpAQCAtMTc3Nyw2ICsx
-Nzc3LDMyIEBAIHN0YXRpYyBpbnQgdWZzX210a19jb25maWdfZXNpKHN0cnVjdCB1ZnNfaGJhDQoq
-aGJhKQ0KICAgICAgICByZXR1cm4gdWZzX210a19jb25maWdfbWNxKGhiYSwgdHJ1ZSk7DQogfQ0K
-IA0KK3N0YXRpYyB2b2lkIHVmc19tdGtfc2V0X3J0dChzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0KK3sN
-CisgICAgICAgc3RydWN0IHVmc19kZXZfaW5mbyAqZGV2X2luZm8gPSAmaGJhLT5kZXZfaW5mbzsN
-CisgICAgICAgdTMyIHJ0dCA9IDA7DQorICAgICAgIHUzMiBkZXZfcnR0ID0gMDsNCisNCisgICAg
-ICAgLyogUlRUIG92ZXJyaWRlIG1ha2VzIHNlbnNlIG9ubHkgZm9yIFVGUy00LjAgYW5kIGFib3Zl
-ICovDQorICAgICAgIGlmIChkZXZfaW5mby0+d3NwZWN2ZXJzaW9uIDwgMHg0MDApDQorICAgICAg
-ICAgICAgICAgcmV0dXJuOw0KKw0KKyAgICAgICBpZiAodWZzaGNkX3F1ZXJ5X2F0dHJfcmV0cnko
-aGJhLCBVUElVX1FVRVJZX09QQ09ERV9SRUFEX0FUVFIsDQorICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBRVUVSWV9BVFRSX0lETl9NQVhfTlVNX09GX1JUVCwgMCwNCjAsICZkZXZf
-cnR0KSkgew0KKyAgICAgICAgICAgICAgIGRldl9lcnIoaGJhLT5kZXYsICJmYWlsZWQgcmVhZGlu
-ZyBiTWF4TnVtT2ZSVFRcbiIpOw0KKyAgICAgICAgICAgICAgIHJldHVybjsNCisgICAgICAgfQ0K
-Kw0KKyAgICAgICAvKiBvdmVycmlkZSBpZiBub3QgbWVkaWF0ZWsgc3VwcG9ydCAqLw0KKyAgICAg
-ICBpZiAoZGV2X3J0dCA9PSBNVEtfTUFYX05VTV9SVFQpDQorICAgICAgICAgICAgICAgcmV0dXJu
-Ow0KKw0KKyAgICAgICBydHQgPSBNVEtfTUFYX05VTV9SVFQ7DQorICAgICAgIGlmICh1ZnNoY2Rf
-cXVlcnlfYXR0cl9yZXRyeShoYmEsIFVQSVVfUVVFUllfT1BDT0RFX1dSSVRFX0FUVFIsDQorICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBRVUVSWV9BVFRSX0lETl9NQVhfTlVNX09G
-X1JUVCwgMCwNCjAsICZydHQpKQ0KKyAgICAgICAgICAgICAgIGRldl9lcnIoaGJhLT5kZXYsICJm
-YWlsZWQgd3JpdGluZyBiTWF4TnVtT2ZSVFRcbiIpOw0KK30NCisNCiAvKg0KICAqIHN0cnVjdCB1
-ZnNfaGJhX210a192b3BzIC0gVUZTIE1USyBzcGVjaWZpYyB2YXJpYW50IG9wZXJhdGlvbnMNCiAg
-Kg0KQEAgLTE4MDUsNiArMTgzMSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgdWZzX2hiYV92YXJp
-YW50X29wcw0KdWZzX2hiYV9tdGtfdm9wcyA9IHsNCiAgICAgICAgLm9wX3J1bnRpbWVfY29uZmln
-ICAgPSB1ZnNfbXRrX29wX3J1bnRpbWVfY29uZmlnLA0KICAgICAgICAubWNxX2NvbmZpZ19yZXNv
-dXJjZSA9IHVmc19tdGtfbWNxX2NvbmZpZ19yZXNvdXJjZSwNCiAgICAgICAgLmNvbmZpZ19lc2kg
-ICAgICAgICAgPSB1ZnNfbXRrX2NvbmZpZ19lc2ksDQorICAgICAgIC5zZXRfcnR0ICAgICAgICAg
-ICAgID0gdWZzX210a19zZXRfcnR0LA0KIH07DQogDQogLyoqDQpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy91ZnMvaG9zdC91ZnMtbWVkaWF0ZWsuaCBiL2RyaXZlcnMvdWZzL2hvc3QvdWZzLQ0KbWVkaWF0
-ZWsuaA0KaW5kZXggM2ZmMTdlOTVhZmFiLi4wNWQ3NmE2YmQ3NzIgMTAwNjQ0DQotLS0gYS9kcml2
-ZXJzL3Vmcy9ob3N0L3Vmcy1tZWRpYXRlay5oDQorKysgYi9kcml2ZXJzL3Vmcy9ob3N0L3Vmcy1t
-ZWRpYXRlay5oDQpAQCAtMTg5LDQgKzE4OSw3IEBAIHN0cnVjdCB1ZnNfbXRrX2hvc3Qgew0KIC8q
-IE1USyBkZWxheSBvZiBhdXRvc3VzcGVuZDogNTAwIG1zICovDQogI2RlZmluZSBNVEtfUlBNX0FV
-VE9TVVNQRU5EX0RFTEFZX01TIDUwMA0KIA0KKy8qIE1USyBSVFQgc3VwcG9ydCBudW1iZXIgKi8N
-CisjZGVmaW5lIE1US19NQVhfTlVNX1JUVCAyDQorDQogI2VuZGlmIC8qICFfVUZTX01FRElBVEVL
-X0ggKi8NCg0K
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    61307b7be41a Merge tag 'mm-stable-2024-05-17-19-19' of git.=
+.
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D13f55634980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3De7d2f006659b877
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D9c0539eda655673bd=
+aa4
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10311eb298000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12e9f1dc980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0de598381836/disk-=
+61307b7b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/69ea7aec70a4/vmlinux-=
+61307b7b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/07111fc20846/bzI=
+mage-61307b7b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:
+Reported-by: syzbot+9c0539eda655673bdaa4@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-...!: (7 ticks this GP) idle=3D5024/1/0x4000000000000000 softirq=3D=
+8175/8175 fqs=3D0
+rcu: 	(t=3D11029 jiffies g=3D8665 q=3D111 ncpus=3D2)
+rcu: rcu_preempt kthread starved for 11029 jiffies! g8665 f0x0 RCU_GP_WAIT_=
+FQS(5) ->state=3D0x0 ->cpu=3D0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expec=
+ted behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:28752 pid:17    tgid:1=
+7    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0xf15/0x5d00 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6837
+ schedule_timeout+0x136/0x2a0 kernel/time/timer.c:2581
+ rcu_gp_fqs_loop+0x1eb/0xb00 kernel/rcu/tree.c:2000
+ rcu_gp_kthread+0x271/0x380 kernel/rcu/tree.c:2202
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+CPU: 0 PID: 4533 Comm: udevd Not tainted 6.9.0-syzkaller-09429-g61307b7be41=
+a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 04/02/2024
+RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152=
+ [inline]
+RIP: 0010:_raw_spin_unlock_irqrestore+0x31/0x80 kernel/locking/spinlock.c:1=
+94
+Code: f5 53 48 8b 74 24 10 48 89 fb 48 83 c7 18 e8 16 10 82 f6 48 89 df e8 =
+fe 8c 82 f6 f7 c5 00 02 00 00 75 23 9c 58 f6 c4 02 75 37 <bf> 01 00 00 00 e=
+8 75 cd 73 f6 65 8b 05 06 1b 1a 75 85 c0 74 16 5b
+RSP: 0018:ffffc90000007a48 EFLAGS: 00000246
+RAX: 0000000000000002 RBX: ffff888023414000 RCX: 1ffffffff285644e
+RDX: 0000000000000000 RSI: ffffffff8b2cab60 RDI: ffffffff8b8faa00
+RBP: 0000000000000246 R08: 0000000000000001 R09: fffffbfff284be6a
+R10: ffffffff9425f357 R11: 0000000000000003 R12: ffff8880243de478
+R13: ffff8880243de480 R14: dffffc0000000000 R15: ffff8880243de478
+FS:  00007f58b93bdc80(0000) GS:ffff8880b9200000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f58b9410d80 CR3: 000000007cfb8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+ dummy_timer+0x1e16/0x3940 drivers/usb/gadget/udc/dummy_hcd.c:2001
+ call_timer_fn+0x1a0/0x610 kernel/time/timer.c:1792
+ expire_timers kernel/time/timer.c:1843 [inline]
+ __run_timers+0x74b/0xaf0 kernel/time/timer.c:2417
+ __run_timer_base kernel/time/timer.c:2428 [inline]
+ __run_timer_base kernel/time/timer.c:2421 [inline]
+ run_timer_base+0x111/0x190 kernel/time/timer.c:2437
+ run_timer_softirq+0x1a/0x40 kernel/time/timer.c:2447
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu kernel/softirq.c:637 [inline]
+ irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline=
+]
+ sysvec_apic_timer_interrupt+0x95/0xb0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:=
+702
+RIP: 0010:arch_static_branch arch/x86/include/asm/jump_label.h:27 [inline]
+RIP: 0010:__slub_debug_enabled mm/slab.h:510 [inline]
+RIP: 0010:kmem_cache_debug_flags mm/slab.h:531 [inline]
+RIP: 0010:kmem_cache_debug mm/slub.c:230 [inline]
+RIP: 0010:__slab_free+0x39/0x4d0 mm/slub.c:4253
+Code: 41 54 53 48 83 e4 f0 48 83 c4 80 48 89 54 24 08 48 8d 54 24 40 48 89 =
+7c 24 30 48 89 d7 48 89 4c 24 10 b9 08 00 00 00 f3 48 ab <0f> 1f 44 00 00 4=
+8 c7 04 24 00 00 00 00 c6 44 24 3e 00 66 44 89 44
+RSP: 0018:ffffc90003d27730 EFLAGS: 00000287
+RAX: 0000000000000000 RBX: ffff888015442140 RCX: 0000000000000000
+RDX: ffffc90003d27770 RSI: ffffea00008e5200 RDI: ffffc90003d277b0
+RBP: ffffc90003d277e0 R08: 0000000000000001 R09: ffffffff81e9db49
+R10: 0000000000000000 R11: 0000000000000001 R12: ffff888078e4a000
+R13: 0000000000000000 R14: ffffc90003d27828 R15: ffffea00008e5200
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:322
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ kmem_cache_alloc_node_noprof+0x153/0x310 mm/slub.c:4043
+ kmalloc_reserve+0x18b/0x2c0 net/core/skbuff.c:575
+ __alloc_skb+0x164/0x380 net/core/skbuff.c:666
+ alloc_skb include/linux/skbuff.h:1308 [inline]
+ netlink_alloc_large_skb+0x69/0x130 net/netlink/af_netlink.c:1210
+ netlink_sendmsg+0x689/0xd70 net/netlink/af_netlink.c:1880
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ ____sys_sendmsg+0xab5/0xc90 net/socket.c:2585
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2639
+ __sys_sendmsg+0x117/0x1f0 net/socket.c:2668
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f58b8f24a4b
+Code: ff 89 ef 48 89 04 24 e8 22 56 f9 ff 48 8b 04 24 48 83 c4 20 5d c3 c3 =
+64 8b 04 25 18 00 00 00 85 c0 75 20 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff f=
+f 76 6d 48 8b 15 ae c3 0c 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffe73c0e2d8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00005610f4ae1240 RCX: 00007f58b8f24a4b
+RDX: 0000000000000000 RSI: 00007ffe73c0e2e8 RDI: 0000000000000004
+RBP: 00005610f4b0e290 R08: 0000000000000001 R09: 3039abbe55c8e597
+R10: 1999999999999999 R11: 0000000000000246 R12: 0000000000000000
+R13: 00000000000000c4 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Mem-Info:
+active_anon:3729 inactive_anon:0 isolated_anon:0
+ active_file:0 inactive_file:15360 isolated_file:0
+ unevictable:768 dirty:3 writeback:0
+ slab_reclaimable:9244 slab_unreclaimable:79848
+ mapped:2131 shmem:1251 pagetables:547
+ sec_pagetables:0 bounce:0
+ kernel_misc_reclaimable:0
+ free:1491166 free_pcp:372 free_cma:0
+Node 0 active_anon:14916kB inactive_anon:0kB active_file:0kB inactive_file:=
+61364kB unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:852=
+4kB dirty:8kB writeback:0kB shmem:3468kB shmem_thp:0kB shmem_pmdmapped:0kB =
+anon_thp:0kB writeback_tmp:0kB kernel_stack:8496kB pagetables:2188kB sec_pa=
+getables:0kB all_unreclaimable? no
+Node 1 active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:76kB=
+ unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:0kB dirty:=
+4kB writeback:0kB shmem:1536kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:0=
+kB writeback_tmp:0kB kernel_stack:16kB pagetables:0kB sec_pagetables:0kB al=
+l_unreclaimable? no
+Node 0 DMA free:15360kB boost:0kB min:204kB low:252kB high:300kB reserved_h=
+ighatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_fi=
+le:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlo=
+cked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+lowmem_reserve[]: 0 2565 2567 0 0
+Node 0 DMA32 free:1992068kB boost:0kB min:35052kB low:43812kB high:52572kB =
+reserved_highatomic:0KB active_anon:14892kB inactive_anon:0kB active_file:0=
+kB inactive_file:59552kB unevictable:1536kB writepending:8kB present:312933=
+2kB managed:2654792kB mlocked:0kB bounce:0kB free_pcp:1456kB local_pcp:760k=
+B free_cma:0kB
+lowmem_reserve[]: 0 0 1 0 0
+Node 0 Normal free:28kB boost:0kB min:24kB low:28kB high:32kB reserved_high=
+atomic:0KB active_anon:24kB inactive_anon:0kB active_file:0kB inactive_file=
+:1812kB unevictable:0kB writepending:0kB present:1048576kB managed:1896kB m=
+locked:0kB bounce:0kB free_pcp:32kB local_pcp:8kB free_cma:0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 1 Normal free:3957208kB boost:0kB min:54828kB low:68532kB high:82236kB=
+ reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB =
+inactive_file:76kB unevictable:1536kB writepending:4kB present:4194304kB ma=
+naged:4109120kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:=
+0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024=
+kB (U) 1*2048kB (M) 3*4096kB (M) =3D 15360kB
+Node 0 DMA32: 724*4kB (UM) 1149*8kB (UME) 213*16kB (UME) 15*32kB (UME) 5*64=
+kB (E) 1*128kB (U) 3*256kB (ME) 1*512kB (U) 2*1024kB (ME) 1*2048kB (E) 481*=
+4096kB (M) =3D 1991976kB
+Node 0 Normal: 1*4kB (M) 1*8kB (M) 1*16kB (M) 0*32kB 0*64kB 0*128kB 0*256kB=
+ 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 28kB
+Node 1 Normal: 6*4kB (UM) 8*8kB (UM) 8*16kB (UM) 12*32kB (UM) 6*64kB (U) 2*=
+128kB (U) 1*256kB (M) 2*512kB (UM) 0*1024kB 1*2048kB (U) 965*4096kB (M) =3D=
+ 3957208kB
+Node 0 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 0 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+Node 1 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 1 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+16611 total pagecache pages
+0 pages in swap cache
+Free swap  =3D 0kB
+Total swap =3D 0kB
+2097051 pages RAM
+0 pages HighMem/MovableOnly
+401759 pages reserved
+0 pages cma reserved
+Mem-Info:
+active_anon:3734 inactive_anon:0 isolated_anon:0
+ active_file:0 inactive_file:15360 isolated_file:0
+ unevictable:768 dirty:0 writeback:0
+ slab_reclaimable:9186 slab_unreclaimable:79492
+ mapped:2131 shmem:1229 pagetables:570
+ sec_pagetables:0 bounce:0
+ kernel_misc_reclaimable:0
+ free:1491784 free_pcp:96 free_cma:0
+Node 0 active_anon:14936kB inactive_anon:0kB active_file:0kB inactive_file:=
+61364kB unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:852=
+4kB dirty:0kB writeback:0kB shmem:3380kB shmem_thp:0kB shmem_pmdmapped:0kB =
+anon_thp:0kB writeback_tmp:0kB kernel_stack:8624kB pagetables:2280kB sec_pa=
+getables:0kB all_unreclaimable? no
+Node 1 active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:76kB=
+ unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:0kB dirty:=
+0kB writeback:0kB shmem:1536kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:0=
+kB writeback_tmp:0kB kernel_stack:16kB pagetables:0kB sec_pagetables:0kB al=
+l_unreclaimable? no
+Node 0 DMA free:15360kB boost:0kB min:204kB low:252kB high:300kB reserved_h=
+ighatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_fi=
+le:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlo=
+cked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+lowmem_reserve[]: 0 2565 2567 0 0
+Node 0 DMA32 free:1994540kB boost:0kB min:35052kB low:43812kB high:52572kB =
+reserved_highatomic:0KB active_anon:14912kB inactive_anon:0kB active_file:0=
+kB inactive_file:59552kB unevictable:1536kB writepending:0kB present:312933=
+2kB managed:2654792kB mlocked:0kB bounce:0kB free_pcp:352kB local_pcp:160kB=
+ free_cma:0kB
+lowmem_reserve[]: 0 0 1 0 0
+Node 0 Normal free:28kB boost:0kB min:24kB low:28kB high:32kB reserved_high=
+atomic:0KB active_anon:24kB inactive_anon:0kB active_file:0kB inactive_file=
+:1812kB unevictable:0kB writepending:0kB present:1048576kB managed:1896kB m=
+locked:0kB bounce:0kB free_pcp:32kB local_pcp:8kB free_cma:0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 1 Normal free:3957208kB boost:0kB min:54828kB low:68532kB high:82236kB=
+ reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB =
+inactive_file:76kB unevictable:1536kB writepending:0kB present:4194304kB ma=
+naged:4109120kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:=
+0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024=
+kB (U) 1*2048kB (M) 3*4096kB (M) =3D 15360kB
+Node 0 DMA32: 815*4kB (UM) 1206*8kB (UME) 56*16kB (UME) 58*32kB (UME) 49*64=
+kB (UME) 3*128kB (UM) 2*256kB (ME) 1*512kB (U) 2*1024kB (ME) 1*2048kB (E) 4=
+81*4096kB (M) =3D 1994476kB
+Node 0 Normal: 1*4kB (M) 1*8kB (M) 1*16kB (M) 0*32kB 0*64kB 0*128kB 0*256kB=
+ 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 28kB
+Node 1 Normal: 6*4kB (UM) 8*8kB (UM) 8*16kB (UM) 12*32kB (UM) 6*64kB (U) 2*=
+128kB (U) 1*256kB (M) 2*512kB (UM) 0*1024kB 1*2048kB (U) 965*4096kB (M) =3D=
+ 3957208kB
+Node 0 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 0 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+Node 1 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 1 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+16589 total pagecache pages
+0 pages in swap cache
+Free swap  =3D 0kB
+Total swap =3D 0kB
+2097051 pages RAM
+0 pages HighMem/MovableOnly
+401759 pages reserved
+0 pages cma reserved
+Mem-Info:
+active_anon:3734 inactive_anon:0 isolated_anon:0
+ active_file:0 inactive_file:15360 isolated_file:0
+ unevictable:768 dirty:0 writeback:0
+ slab_reclaimable:9186 slab_unreclaimable:79492
+ mapped:2131 shmem:1229 pagetables:570
+ sec_pagetables:0 bounce:0
+ kernel_misc_reclaimable:0
+ free:1491583 free_pcp:285 free_cma:0
+Node 0 active_anon:14936kB inactive_anon:0kB active_file:0kB inactive_file:=
+61364kB unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:852=
+4kB dirty:0kB writeback:0kB shmem:3380kB shmem_thp:0kB shmem_pmdmapped:0kB =
+anon_thp:0kB writeback_tmp:0kB kernel_stack:8652kB pagetables:2280kB sec_pa=
+getables:0kB all_unreclaimable? no
+Node 1 active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:76kB=
+ unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:0kB dirty:=
+0kB writeback:0kB shmem:1536kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:0=
+kB writeback_tmp:0kB kernel_stack:16kB pagetables:0kB sec_pagetables:0kB al=
+l_unreclaimable? no
+Node 0 DMA free:15360kB boost:0kB min:204kB low:252kB high:300kB reserved_h=
+ighatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_fi=
+le:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlo=
+cked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+lowmem_reserve[]: 0 2565 2567 0 0
+Node 0 DMA32 free:1993736kB boost:0kB min:35052kB low:43812kB high:52572kB =
+reserved_highatomic:0KB active_anon:14912kB inactive_anon:0kB active_file:0=
+kB inactive_file:59552kB unevictable:1536kB writepending:0kB present:312933=
+2kB managed:2654792kB mlocked:0kB bounce:0kB free_pcp:1108kB local_pcp:916k=
+B free_cma:0kB
+lowmem_reserve[]: 0 0 1 0 0
+Node 0 Normal free:28kB boost:0kB min:24kB low:28kB high:32kB reserved_high=
+atomic:0KB active_anon:24kB inactive_anon:0kB active_file:0kB inactive_file=
+:1812kB unevictable:0kB writepending:0kB present:1048576kB managed:1896kB m=
+locked:0kB bounce:0kB free_pcp:32kB local_pcp:8kB free_cma:0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 1 Normal free:3957208kB boost:0kB min:54828kB low:68532kB high:82236kB=
+ reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB =
+inactive_file:76kB unevictable:1536kB writepending:0kB present:4194304kB ma=
+naged:4109120kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:=
+0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024=
+kB (U) 1*2048kB (M) 3*4096kB (M) =3D 15360kB
+Node 0 DMA32: 654*4kB (UM) 1192*8kB (UME) 56*16kB (UME) 58*32kB (UME) 49*64=
+kB (UME) 3*128kB (UM) 2*256kB (ME) 1*512kB (U) 2*1024kB (ME) 1*2048kB (E) 4=
+81*4096kB (M) =3D 1993720kB
+Node 0 Normal: 1*4kB (M) 1*8kB (M) 1*16kB (M) 0*32kB 0*64kB 0*128kB 0*256kB=
+ 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 28kB
+Node 1 Normal: 6*4kB (UM) 8*8kB (UM) 8*16kB (UM) 12*32kB (UM) 6*64kB (U) 2*=
+128kB (U) 1*256kB (M) 2*512kB (UM) 0*1024kB 1*2048kB (U) 965*4096kB (M) =3D=
+ 3957208kB
+Node 0 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 0 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+Node 1 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 1 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+16589 total pagecache pages
+0 pages in swap cache
+Free swap  =3D 0kB
+Total swap =3D 0kB
+2097051 pages RAM
+0 pages HighMem/MovableOnly
+401759 pages reserved
+0 pages cma reserved
+Mem-Info:
+active_anon:3721 inactive_anon:0 isolated_anon:0
+ active_file:0 inactive_file:15360 isolated_file:0
+ unevictable:768 dirty:0 writeback:0
+ slab_reclaimable:9222 slab_unreclaimable:79492
+ mapped:2131 shmem:1239 pagetables:556
+ sec_pagetables:0 bounce:0
+ kernel_misc_reclaimable:0
+ free:1491351 free_pcp:502 free_cma:0
+Node 0 active_anon:14884kB inactive_anon:0kB active_file:0kB inactive_file:=
+61364kB unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:852=
+4kB dirty:0kB writeback:0kB shmem:3420kB shmem_thp:0kB shmem_pmdmapped:0kB =
+anon_thp:0kB writeback_tmp:0kB kernel_stack:8624kB pagetables:2224kB sec_pa=
+getables:0kB all_unreclaimable? no
+Node 1 active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:76kB=
+ unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:0kB dirty:=
+0kB writeback:0kB shmem:1536kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:0=
+kB writeback_tmp:0kB kernel_stack:16kB pagetables:0kB sec_pagetables:0kB al=
+l_unreclaimable? no
+Node 0 DMA free:15360kB boost:0kB min:204kB low:252kB high:300kB reserved_h=
+ighatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_fi=
+le:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlo=
+cked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+lowmem_reserve[]: 0 2565 2567 0 0
+Node 0 DMA32 free:1992808kB boost:0kB min:35052kB low:43812kB high:52572kB =
+reserved_highatomic:0KB active_anon:14860kB inactive_anon:0kB active_file:0=
+kB inactive_file:59552kB unevictable:1536kB writepending:0kB present:312933=
+2kB managed:2654792kB mlocked:0kB bounce:0kB free_pcp:1976kB local_pcp:1008=
+kB free_cma:0kB
+lowmem_reserve[]: 0 0 1 0 0
+Node 0 Normal free:28kB boost:0kB min:24kB low:28kB high:32kB reserved_high=
+atomic:0KB active_anon:24kB inactive_anon:0kB active_file:0kB inactive_file=
+:1812kB unevictable:0kB writepending:0kB present:1048576kB managed:1896kB m=
+locked:0kB bounce:0kB free_pcp:32kB local_pcp:8kB free_cma:0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 1 Normal free:3957208kB boost:0kB min:54828kB low:68532kB high:82236kB=
+ reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB =
+inactive_file:76kB unevictable:1536kB writepending:0kB present:4194304kB ma=
+naged:4109120kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:=
+0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024=
+kB (U) 1*2048kB (M) 3*4096kB (M) =3D 15360kB
+Node 0 DMA32: 638*4kB (UM) 1185*8kB (UE) 13*16kB (UM) 62*32kB (UE) 49*64kB =
+(UME) 3*128kB (UM) 1*256kB (E) 1*512kB (U) 2*1024kB (ME) 1*2048kB (E) 481*4=
+096kB (M) =3D 1992784kB
+Node 0 Normal: 1*4kB (M) 1*8kB (M) 1*16kB (M) 0*32kB 0*64kB 0*128kB 0*256kB=
+ 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 28kB
+Node 1 Normal: 6*4kB (UM) 8*8kB (UM) 8*16kB (UM) 12*32kB (UM) 6*64kB (U) 2*=
+128kB (U) 1*256kB (M) 2*512kB (UM) 0*1024kB 1*2048kB (U) 965*4096kB (M) =3D=
+ 3957208kB
+Node 0 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 0 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+Node 1 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 1 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+16599 total pagecache pages
+0 pages in swap cache
+Free swap  =3D 0kB
+Total swap =3D 0kB
+2097051 pages RAM
+0 pages HighMem/MovableOnly
+401759 pages reserved
+0 pages cma reserved
+Mem-Info:
+active_anon:3748 inactive_anon:0 isolated_anon:0
+ active_file:0 inactive_file:15360 isolated_file:0
+ unevictable:768 dirty:0 writeback:0
+ slab_reclaimable:9238 slab_unreclaimable:79752
+ mapped:2131 shmem:1237 pagetables:570
+ sec_pagetables:0 bounce:0
+ kernel_misc_reclaimable:0
+ free:1491436 free_pcp:153 free_cma:0
+Node 0 active_anon:14992kB inactive_anon:0kB active_file:0kB inactive_file:=
+61364kB unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:852=
+4kB dirty:0kB writeback:0kB shmem:3412kB shmem_thp:0kB shmem_pmdmapped:0kB =
+anon_thp:0kB writeback_tmp:0kB kernel_stack:8624kB pagetables:2280kB sec_pa=
+getables:0kB all_unreclaimable? no
+Node 1 active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:76kB=
+ unevictable:1536kB isolated(anon):0kB isolated(file):0kB mapped:0kB dirty:=
+0kB writeback:0kB shmem:1536kB shmem_thp:0kB shmem_pmdmapped:0kB anon_thp:0=
+kB writeback_tmp:0kB kernel_stack:16kB pagetables:0kB sec_pagetables:0kB al=
+l_unreclaimable? no
+Node 0 DMA free:15360kB boost:0kB min:204kB low:252kB high:300kB reserved_h=
+ighatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_fi=
+le:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlo=
+cked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+lowmem_reserve[]: 0 2565 2567 0 0
+Node 0 DMA32 free:1993148kB boost:0kB min:35052kB low:43812kB high:52572kB =
+reserved_highatomic:0KB active_anon:14968kB inactive_anon:0kB active_file:0=
+kB inactive_file:59552kB unevictable:1536kB writepending:0kB present:312933=
+2kB managed:2654792kB mlocked:0kB bounce:0kB free_pcp:580kB local_pcp:0kB f=
+ree_cma:0kB
+lowmem_reserve[]: 0 0 1 0 0
+Node 0 Normal free:28kB boost:0kB min:24kB low:28kB high:32kB reserved_high=
+atomic:0KB active_anon:24kB inactive_anon:0kB active_file:0kB inactive_file=
+:1812kB unevictable:0kB writepending:0kB present:1048576kB managed:1896kB m=
+locked:0kB bounce:0kB free_pcp:32kB local_pcp:8kB free_cma:0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 1 Normal free:3957208kB boost:0kB min:54828kB low:68532kB high:82236kB=
+ reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB =
+inactive_file:76kB unevictable:1536kB writepending:0kB present:4194304kB ma=
+naged:4109120kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:=
+0kB
+lowmem_reserve[]: 0 0 0 0 0
+Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024=
+kB (U) 1*2048kB (M) 3*4096kB (M) =3D 15360kB
+Node 0 DMA32: 975*4kB (UM) 1198*8kB (UME) 281*16kB (UE) 30*32kB (UME) 6*64k=
+B (UE) 2*128kB (UM) 3*256kB (UME) 1*512kB (U) 2*1024kB (ME) 2*2048kB (UE) 4=
+80*4096kB (M) =3D 1993084kB
+Node 0 Normal: 1*4kB (M) 1*8kB (M) 1*16kB (M) 0*32kB 0*64kB 0*128kB 0*256kB=
+ 0*512kB 0*1024kB 0*2048kB 0*4096kB =3D 28kB
+Node 1 Normal: 6*4kB (UM) 8*8kB (UM) 8*16kB (UM) 12*32kB (UM) 6*64kB (U) 2*=
+128kB (U) 1*256kB (M) 2*512kB (UM) 0*1024kB 1*2048kB (U) 965*4096kB (M) =3D=
+ 3957208kB
+Node 0 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 0 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+Node 1 hugepages_total=3D0 hugepages_free=3D0 hugepages_surp=3D0 hugepages_=
+size=3D1048576kB
+Node 1 hugepages_total=3D2 hugepages_free=3D2 hugepages_surp=3D0 hugepages_=
+size=3D2048kB
+16597 total pagecache pages
+0 pages in swap cache
+Free swap  =3D 0kB
+Total swap =3D 0kB
+2097051 pages RAM
+0 pages HighMem/MovableOnly
+401759 pages reserved
+0 pages cma reserved
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
