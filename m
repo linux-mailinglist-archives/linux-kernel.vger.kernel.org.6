@@ -1,195 +1,118 @@
-Return-Path: <linux-kernel+bounces-188657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C6D8CE4FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:51:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D188CE502
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E781D1C21542
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03142822C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5952C86251;
-	Fri, 24 May 2024 11:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sz5CeaLt"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E62C8625B;
+	Fri, 24 May 2024 12:01:31 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87EC85640
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 11:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4C0839FC;
+	Fri, 24 May 2024 12:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716551469; cv=none; b=Y4PaL+drJA8p4YTvH5rwDJB1aXJEeYwt17MPt3/2WGBKQSlAevr8ef7k3ObqfW3yIWQX/87zhK56WSjuG8vPcKACb47gLCwNQ6Dfz1CSeqKh0CflFRjf/xq34zHxGfCXAPn+R+ceajsWMLFbddCdod9h1XPM/qbUKmyvW2o6A3I=
+	t=1716552090; cv=none; b=FG4sea7d5qSC3tyXj+j+Rue+6dy3h0IdyqoKpSM0dm9x9ihi3TQEf0TymFlNGkgwX/XtIRTKsiN0VLYBalairtu1vuhEQRRxSy18rPPc0/3xzIArVkKKHfp0aTMvt488STYmFXC+QAS/q9uspJJmvllRobHhe6DERwwV3mDYwEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716551469; c=relaxed/simple;
-	bh=FCPHFlcxBHbocJtDdR19vK9bHOzjeGF96v/VOE++YcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rm8lft1r7ynqNI2Cws6RDmBz7KL2b4JdtaFizZBB7k4X0Rra2NBHVf8khUpCyEOABbn5WdmIrtPbk+YvWV6sr7DqxmmHUmQzvZ0mUYcIcmYSNZXGk+DCFfl6RJkrdx4u8Q+Y5Ej32zNr5uB21mmAYHoCpuf3FT8KClpj8xibPHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sz5CeaLt; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-794ab01e747so49300485a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 04:51:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716551466; x=1717156266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kI3rC/mfMOMsxLRVRWjaH05KZLvb2lJoZXHMey213Tg=;
-        b=sz5CeaLtZKeY0h+ci5aO0V0b4lNiVoQcTlXpzi96keRYXGWYqR4kZSKU5BIFA2Zxza
-         z6vi9twZGPyemwSiJHz2ZehOAuZLpUs4sKxk/R7JH/qWHTbKYdNqcTVCOfb7EhjG0t2w
-         phKFakJT5E0RnIDFFu/+6mgG4rMh2kuvflQrQY/58118YQW7n58+7TKg+X1AxUCbxoLM
-         XoYFyDX2b8hfmetXZIVrlJP0KYhj+gueTfp7+IOKCmeDb5Sop/lhUWH0mdaGqhG5r/yY
-         uGikcO3IMqlloS+mTpZWW7LwNhq+/XMiSTQF6e9w6Jr7wv7uyLLehkb0RaaQnb8+5zIJ
-         +hFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716551466; x=1717156266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kI3rC/mfMOMsxLRVRWjaH05KZLvb2lJoZXHMey213Tg=;
-        b=RydAJFYB+OTmcvAz38f7qsLWTuhSIPMoMiUur103gXOPYSjYlC6PcRT2NQ/t3uRPsV
-         STiynIELH1F9YBGX/EzT9tJhyKXM8kx/BpKNTiCnwLOLPB7a2APa7gcSpZytBL5SPyfS
-         s6wpvQUewZ5fKCgqxnvrKsImY7I9MMReJCBuVRD0+6qE3rLK9C/xjfUfND1c8plMzGlE
-         YYdhMeajutbTjBmjTh3ux/WIMPrIDvo8odcP2IyyLIKyB4dCQ2x/1l9Tl8pH76Omzh6K
-         HoOS4blv3ghH1bKvEmz+aYDMR+d125DIt1/AWrfYQ69xp/fGwZX5tm4gqVAWLAllgklj
-         PUzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUh/94pqyj7FWnWj0jHtTaFXW0WKz1nbIYpxpC7n6YcVvQr9q60xqKuxjGcz8cSuDhpM47BrGpEyogWjL9vs0H1jQQoY6Awwr8BbQzx
-X-Gm-Message-State: AOJu0YxrasBHbNSQqHiNkANi1D4YgcMU9tyHHCh0AsNPzBSG+qWR6Ose
-	TJWo5rm0GaWI1QI84QS/5d1Y1MdRbdQanuqr2t2QYWN0Q/OwPldwFu4jMCdopX6PRBskn3Lhtgt
-	WopHw/yX3rV2ZZ67XqamyA88pyVk46SilYrJ7lw==
-X-Google-Smtp-Source: AGHT+IFZqBtDNWBSwVFl70aifDa3xZX3joiTKqJ0DW9rIZUf8b09hmIcoKQwVdYy5nTXL6+tjZRj4kF9HKabw9bNGEo=
-X-Received: by 2002:a05:6214:5781:b0:6ab:99df:40fc with SMTP id
- 6a1803df08f44-6abcd19e33cmr20418116d6.46.1716551465697; Fri, 24 May 2024
- 04:51:05 -0700 (PDT)
+	s=arc-20240116; t=1716552090; c=relaxed/simple;
+	bh=sjXQpdVuxVaMrcZZhjQ9Ud+3LbVMqNdFY3q2eDxl45I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nVtixYKWRX03A6nojuOnGzu0sVjwEKG6zCuqzo9rX+gOUUHfNF38Li632B0lhH8EzwKqMAzrVUuuBw1eWGW8agpYywGYi5gqDlV/2qNSma7VDvC75HrutJYk53ORij3wbDeeCss+LULG/W5oyvXA6SoUxWYo3hqYuN8sIbUejPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 24 May
+ 2024 15:01:20 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Fri, 24 May
+ 2024 15:01:20 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Kees Cook
+	<keescook@chromium.org>, <linux-usb@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
+	<linux-kernel@vger.kernel.org>,
+	<syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com>
+Subject: [PATCH] HID: usbhid: fix recurrent out-of-bounds bug in usbhid_parse()
+Date: Fri, 24 May 2024 05:01:12 -0700
+Message-ID: <20240524120112.28076-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523130325.743454852@linuxfoundation.org>
-In-Reply-To: <20240523130325.743454852@linuxfoundation.org>
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri, 24 May 2024 13:50:54 +0200
-Message-ID: <CADYN=9KOfUNp7E=sp_1or0YS15cwP0vYQJEhgkxscCUSLjVEzQ@mail.gmail.com>
-Subject: Re: [PATCH 5.4 00/16] 5.4.277-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Thu, 23 May 2024 at 15:15, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.4.277 release.
-> There are 16 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.4.277-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.4.y
-> and the diffstat can be found below.
+Syzbot reports [1] a reemerging out-of-bounds bug regarding hid
+descriptors possibly having incorrect bNumDescriptors values in
+usbhid_parse().
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Build on the previous fix in "HID: usbhid: fix out-of-bounds bug"
+and run a sanity-check ensuring that number of descriptors doesn't
+exceed the size of desc[] in struct hid_descriptor.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+[1] Syzbot report:
+Link: https://syzkaller.appspot.com/bug?extid=c52569baf0c843f35495
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 135 total, 135 passed, 0 failed
-* arm64: 35 total, 33 passed, 2 failed
-* i386: 23 total, 17 passed, 6 failed
-* mips: 25 total, 25 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 30 total, 30 passed, 0 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 6 total, 6 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 31 total, 31 passed, 0 failed
+UBSAN: array-index-out-of-bounds in drivers/hid/usbhid/hid-core.c:1024:7
+index 1 is out of range for type 'struct hid_class_descriptor[1]'
+CPU: 0 PID: 8 Comm: kworker/0:1 Not tainted 6.9.0-rc6-syzkaller-00290-gb9158815de52 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ usbhid_parse+0x5a7/0xc80 drivers/hid/usbhid/hid-core.c:1024
+ hid_add_device+0x132/0x520 drivers/hid/hid-core.c:2790
+ usbhid_probe+0xb38/0xea0 drivers/hid/usbhid/hid-core.c:1429
+ usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:656
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:798
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:828
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:956
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:457
+ __device_attach+0x333/0x520 drivers/base/dd.c:1028
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:532
+ device_add+0x8ff/0xca0 drivers/base/core.c:3720
+ usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+ usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
 
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* log-parser-boot
-* log-parser-test
-* ltp-cap_bounds
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-io
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-securebits
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
+Reported-and-tested-by: syzbot+c52569baf0c843f35495@syzkaller.appspotmail.com
+Fixes: f043bfc98c19 ("HID: usbhid: fix out-of-bounds bug")
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+ drivers/hid/usbhid/hid-core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---
-Linaro LKFT
-https://lkft.linaro.org
+diff --git a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
+index a90ed2ceae84..f38a4bd3a20e 100644
+--- a/drivers/hid/usbhid/hid-core.c
++++ b/drivers/hid/usbhid/hid-core.c
+@@ -1020,6 +1020,9 @@ static int usbhid_parse(struct hid_device *hid)
+ 	num_descriptors = min_t(int, hdesc->bNumDescriptors,
+ 	       (hdesc->bLength - offset) / sizeof(struct hid_class_descriptor));
+ 
++	if (num_descriptors > ARRAY_SIZE(hdesc->desc))
++		num_descriptors = ARRAY_SIZE(hdesc->desc);
++
+ 	for (n = 0; n < num_descriptors; n++)
+ 		if (hdesc->desc[n].bDescriptorType == HID_DT_REPORT)
+ 			rsize = le16_to_cpu(hdesc->desc[n].wDescriptorLength);
 
