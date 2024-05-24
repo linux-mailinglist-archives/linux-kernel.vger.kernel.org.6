@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-188391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE838CE173
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:18:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82DB8CE175
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A6911F223E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:18:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1417B2155F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B49128829;
-	Fri, 24 May 2024 07:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C75312883C;
+	Fri, 24 May 2024 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZY7i0DJH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wrFkMSil"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD67138FA0;
-	Fri, 24 May 2024 07:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113FF38FA0;
+	Fri, 24 May 2024 07:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716535128; cv=none; b=g8LoJhZxTEgHanMA9nX6xI0uOS7TZ1U/mdjVaYB2RfgzIfvWMh1et4QP1ABG6X2X4Fea420ONmG/n+ZBkYfOxYWjG5exl1cURtDefdKBL41xj8REF+ltlofTqHiXq8bQ1ChtU5rRRIypO5DEW2+Vp7ucAjHvPpJUdcDeQYqRMaU=
+	t=1716535151; cv=none; b=Z6M2FSmBP2dGSMBZebnslicqKKtF30+encU/H85927vR3a9difVpm5I0wFQ8NWdPn5nDPb1ezRx/w3nHKz8OhQQDQwwIxJDjSfiOXpAjBDGHHNDamv/H+dwvpMmEAYL9HpJ+/kVNr58RQbI1p/o7Fc95d6on/8M/ABXZH/jOJKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716535128; c=relaxed/simple;
-	bh=gEpxqnhJewyVo17z9MQUXr2dRWmpPDHyYY8T/8oxJvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9SgBXBaQJ6OleEV8gv6jnCz1hx8fGDeVbs1BJPshLMF3fyIJhTJByfyncEEqlNNdHdZa6DHBPr6GfFeZKJFhvVsD1Q6RpOL1YPt0XsXKrSi1vCk+8ye7bCHzJc6fOfK1n09I/6XWL5XvT3mkAFuxPXoCByIZyGIdRN5mbZ6s1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZY7i0DJH; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716535127; x=1748071127;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gEpxqnhJewyVo17z9MQUXr2dRWmpPDHyYY8T/8oxJvE=;
-  b=ZY7i0DJHRXpnPOiBsXLReyVkSpkLh6+zeZAqqkEbXZCA7oLQkRDkukZz
-   v7EhUmsTpg/K65PonVZXxz7sOSo4oYO+gBpCE8RrijWBzhIldUhcIUKUK
-   mb9SsIEFlCpNlH4Ep6s5OM3HLBkSjDE1HGVe6PijHcqmM9llRfr8JA5sI
-   LuqbdmuAeGPTQlGAYgXgDDfvFciDU7kP/mLZmbZP3v5WkjYIn/GRhxr2t
-   aTzvKmLZTTHsgI2prIXpMG1nR4Y71pOuHcuARPaqjAJ5g9bXHI09mNEdE
-   mecXXvVoNUg5xLNSDgaK86NeYKBZwGcw5tI835EX0IZyo1vDESNy/+g+F
-   Q==;
-X-CSE-ConnectionGUID: Hn1hm+1oTFq7GBmaTN9Rog==
-X-CSE-MsgGUID: jUhQpeFsQLWA1Uezx8KdQA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12684220"
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="12684220"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 00:18:46 -0700
-X-CSE-ConnectionGUID: xT9SPV0wT/aZPvAk2lxcCQ==
-X-CSE-MsgGUID: MZJgdZYrRsSd36J5AsCAkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,184,1712646000"; 
-   d="scan'208";a="33946883"
-Received: from unknown (HELO 0610945e7d16) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 24 May 2024 00:18:42 -0700
-Received: from kbuild by 0610945e7d16 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sAPCJ-00045P-1H;
-	Fri, 24 May 2024 07:18:39 +0000
-Date: Fri, 24 May 2024 15:17:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: ranechita <ramona.nechita@analog.com>, linux-iio@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	ranechita <ramona.nechita@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Maksim Kiselev <bigunclemax@gmail.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Liam Beguin <liambeguin@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: iio: adc: add support for ad777x family
-Message-ID: <202405241412.bLit8xvt-lkp@intel.com>
-References: <20240522120005.18197-1-ramona.nechita@analog.com>
+	s=arc-20240116; t=1716535151; c=relaxed/simple;
+	bh=3NFPZbOa4vLOs7iKJg9qDUPO1qYFwxkgx3qbSt/47Ek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Wwg90MqP2cZ7BRhT1K76jG4FmmUOUyJdNn16aijf/pq5DfIbxjyqd9ix1yM7puuyIKXCHOtQeyghmJciX7Kn1HJFsVKUyCQxgbK1gcWaQLjPehrR9pT1MfF1urt1SStmsRi1pjwmV3LXs/jN26ZGhybXJeRSqKklSuDqG+dR+A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wrFkMSil; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44O7J1vV128228;
+	Fri, 24 May 2024 02:19:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1716535141;
+	bh=ncPP31mWhfYzqRIAPmbHp+WUQhAJy3jptBcSDg8ch8Y=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=wrFkMSilr+MHgqqjLnkjfv4o02MlUwNxlPuhe7R8pHcnZUBbgOaBoTjwEYud3ZENA
+	 VkpNBZxPm4AKqNYTrgD1eEga+xEb6PyyjdfgZ5+pNVk+Uubn9q9sNZwds6y8K1L5Wm
+	 lChvwHlynLM4WXeV3MY3Qe/aJgca0s66qMD5UERw=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44O7J1FQ009042
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 24 May 2024 02:19:01 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 24
+ May 2024 02:19:00 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 24 May 2024 02:19:00 -0500
+Received: from [10.24.68.216] (a0498981-hp-z2-tower-g5-workstation.dhcp.ti.com [10.24.68.216])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44O7Ivmm083673;
+	Fri, 24 May 2024 02:18:58 -0500
+Message-ID: <607db056-1208-4353-a666-fe0d52a6b286@ti.com>
+Date: Fri, 24 May 2024 12:48:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240522120005.18197-1-ramona.nechita@analog.com>
-
-Hi ranechita,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on jic23-iio/togreg]
-[also build test ERROR on linus/master v6.9 next-20240523]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/ranechita/drivers-iio-adc-add-support-for-ad777x-family/20240522-203155
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240522120005.18197-1-ramona.nechita%40analog.com
-patch subject: [PATCH] drivers: iio: adc: add support for ad777x family
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240524/202405241412.bLit8xvt-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240524/202405241412.bLit8xvt-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405241412.bLit8xvt-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/iio/adc/ad7779.c:28:10: fatal error: 'cf_axi_adc.h' file not found
-      28 | #include "cf_axi_adc.h"
-         |          ^~~~~~~~~~~~~~
-   1 error generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: ti: k3-j722s-evm: Mark eMMC as non removable
+Content-Language: en-US
+To: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <jm@ti.com>, <nm@ti.com>
+References: <20240522083631.1015198-1-b-kapoor@ti.com>
+ <24d0579a-1c8d-42ea-afa5-dcd0ab3fa193@ti.com>
+From: Bhavya Kapoor <b-kapoor@ti.com>
+In-Reply-To: <24d0579a-1c8d-42ea-afa5-dcd0ab3fa193@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-vim +28 drivers/iio/adc/ad7779.c
+On 23/05/24 3:24 pm, Vignesh Raghavendra wrote:
+>
+> On 22/05/24 14:06, Bhavya Kapoor wrote:
+>> Mark the eMMC module on J722S as non removable since it
+>> is always present on the evm.
+> Nit s/evm/EVM
+This definately demands a v2
+>
+>> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+>> ---
+> This needs a Fixes tag?
 
-    27	
-  > 28	#include "cf_axi_adc.h"
-    29	
+Hi Vignesh, we are just adding up a property so i assume we should not 
+need a fixes tag.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+We can take reference from how its done in this patch: 
+https://patchwork.kernel.org/project/linux-samsung-soc/patch/1444927873-15140-7-git-send-email-javier@osg.samsung.com/
+
+>
+>>   arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> index bf3c246d13d1..fe810e32cb7a 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> @@ -369,6 +369,7 @@ partition@3fc0000 {
+>>   &sdhci0 {
+>>   	disable-wp;
+>>   	bootph-all;
+>> +	non-removable;
+>>   	ti,driver-strength-ohm = <50>;
+>>   	status = "okay";
+>>   };
+>
 
