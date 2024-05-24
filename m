@@ -1,202 +1,115 @@
-Return-Path: <linux-kernel+bounces-188748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD948CE64F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EFB8CE653
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:48:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589161C218C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122AE282073
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C026D8624B;
-	Fri, 24 May 2024 13:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7B312C464;
+	Fri, 24 May 2024 13:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7bIi0zj"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GxaZM0ZS"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7AF18E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 13:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37388528D;
+	Fri, 24 May 2024 13:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716558502; cv=none; b=es/DRQNal1s+4SO+FcIbGst1IDm+qopbyzdmNXSThhRfhqHMlFhjT3mB4ffxUyKKXIe+TkHe7+UAiaCTyv2vQdYizTn8KsCChWaAnLXsertr7aEtqNEUc39i1r4EfqxQ1hxMvZnLjR9zMKHMOZTKiL7D2r4z74dX4xWql6c4xwM=
+	t=1716558520; cv=none; b=fGZzUziAvKxRcJ1XSKNQhJENbIOKjwh5PG5FDiVGZrYvNSHdXgAEYic1YQDUfl48fGLsg97qe6OEavrEMSdEj7922h0X7vTtHMsN6F7dmN6eA5ECw3DsqUcewLLt25uMmftFoFxN48cRyyUCFaDPJJ41P4Pwiz1wJbizarv+dmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716558502; c=relaxed/simple;
-	bh=w3dR26NbGjOlarZLz5MR7N8wajh4hdLjcuJC80SA6/k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k1otPIBOErEkbdJQ1xXsw1o+89XtDbax196arct6mPX+YSQZfU+lvmUNV48REVBu9zlqVcRgBRd5FtIP2aoAQwarJ9i/Qx/CZFtze4jDOzn5eU4pNpJtPmoGPuaZy94NFFnheWTuzgLb2rab1FYtPh8+QwyyhcLURiadPFEEisM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7bIi0zj; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f67f4bebadso3264453b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 06:48:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716558500; x=1717163300; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=YIEeY0+RnmZng19NXAwQF+NfGbhg49taanreXH5yL+8=;
-        b=B7bIi0zjT5ypSZnouGciZJ+Hn4rzJSfKOt+ZYxrh0+dj7ilIu5A+0mvASNwReMMHmg
-         Bi/930raFEiVmQKIeL+MWZylmYbXjiPLDpPGKslC5uGyVJRXx2ZehXbeaBt+oH7BnRVm
-         btb4L2MF29+370pfyZ/7iM6gwrTWI7jPoHPu+DrzD/gWmZC6hnIDuYa6pZ2m794W4dW7
-         zf78VCXYjjJiBevjLag/Wbwqeeq37/Snnm/HvypypnfZma7XsTXJUUQP6GPj4lvXOPYM
-         fzSm/9LTaojehZXGZUZ6YeCsdzMZ+eyoAoWs3W2ES/yWtc6OMDNKCaUx2l3FF+YsGWvT
-         tDFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716558500; x=1717163300;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YIEeY0+RnmZng19NXAwQF+NfGbhg49taanreXH5yL+8=;
-        b=FFh3fdjKTGh2PkMdEDtu+8y9fP9vQkSD5JPF6fdRuv6mNjjgQ/PAVP73R4FSfSAIBX
-         X3AHeOxRKpklrMUdulTvVcN6RaVVHHOCe0l7FpRVS6hugq2XiyoaBPyb1k6hUmu+BQlK
-         5IjNS/kiFIjaVts8eGg11CZfSFr7HecamXvcg7Cr5FyrH/IOAC+S0AdApSwJt5tAI195
-         DYvD/Y0ZNPefC+tamD9c8eqdZlHX2mzs+ujKYuo6tzkdaeXmnM3dVa5f/cArBQMjw1UP
-         xUyu8NKIJl0avsoXCJw1LxEbeJ5wNTRM9PzhlDu/kvz4oPC7tsJCIX4OaNy6ly8v7h1/
-         23Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFLfUJ0A7S+fhYx56oUJ8XyXGNWuQRidI1Ec5pafMQHtBPU+4hLUm51HGNBW9ib4WmAccLaqCc5pmktV/Edgtk9FXqY4omdKoF1sXr
-X-Gm-Message-State: AOJu0Yy2VUFv6eg4jcs5yNpwvdv137WnIRPmlsJ1z3KgCShzcON+pT68
-	AEnVRVgsGXNVawnwQ4OMQq2ewHQqMTEWTmw0VUGPB7G62Qb3Q3Yk
-X-Google-Smtp-Source: AGHT+IGhbkcGjUJbmZJcY4isvA2oPLb6egvbHqqkkHxWAtES97h4D4AL7LJBpaP2EFezAAdNct+Ivw==
-X-Received: by 2002:a05:6a20:9707:b0:1b0:2cae:4622 with SMTP id adf61e73a8af0-1b212f0ea28mr2312580637.42.1716558499737;
-        Fri, 24 May 2024 06:48:19 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f8fcbeb14asm1121660b3a.118.2024.05.24.06.48.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 06:48:19 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: David Airlie <airlied@gmail.com>
-Cc: Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Joe Perches <joe@perches.com>
-Subject: [PATCH v3] drm/nouveau/nvif: Avoid build error due to potential integer overflows
-Date: Fri, 24 May 2024 06:48:17 -0700
-Message-Id: <20240524134817.1369993-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1716558520; c=relaxed/simple;
+	bh=hueieaLczksDkmqINO5OE5EiLQWKb0+iM/e3znMSFJA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=SXd5fSLsnForNFeKGmA9d2RAhQKZLS1A7tC2s8fol18m34dzI9g0hbhHpMfLO1rnfNOPhILwtpjjD1xapkzk+DbwzqHJb3ak57KB49kuyF00WRMe34xwI7nF+I1HQUSu8QTBHTJNt2dfLtmqoS4QKXE74lkqUHHJwsNhRTn2OTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GxaZM0ZS; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1716558506; x=1717163306; i=markus.elfring@web.de;
+	bh=TKpcU07BCg0puKeOnHmYb8r4j/62KyBnT3gPVl603HY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GxaZM0ZS8KUk0u8iDKn0jxjQCr6jUGjtxsD+g5VWAGPzgzgx5nuUMHwpdO3RQypt
+	 4I19S56RHUNnRpR4jS7kycWLzoHZrxTSipDL+zVPlM/2uZsFw+4GGe5nOP+ZqHsBK
+	 yKSiZwxXMkug8jAVV4cxgxz0HAimVO2OLbUdUXwl2QezSXzK8pZ6SXSs7ZghgXT/h
+	 nToxtfyG/0fho36ZgO6j8/bGkaE3NA3p6M2TgD9/+CdxJtu7hgFYIflgkiSLQ3bv7
+	 fDHZcoEcyF0RNB9nrlLkFps2FPId87VAA2J6Z1LzC9zTn/SfkuOjJ483Gjd31ky4k
+	 rRTNxBWG2SgEU1TwpA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuVGC-1sSa674Byk-015riH; Fri, 24
+ May 2024 15:48:26 +0200
+Message-ID: <085b205a-8658-49ba-a8cb-8ffdba9d7a85@web.de>
+Date: Fri, 24 May 2024 15:48:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, abaci@linux.alibaba.com,
+ dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Matthew Sakai <msakai@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240524074109.13433-1-jiapeng.chong@linux.alibaba.com>
+Subject: Re: [PATCH] dm vdo indexer: Use swap() instead of open coding it
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240524074109.13433-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CwR8mjLaFQnjS76aTyIm0LDeX7mE5+Y0DmhvsARq3yofsW07HBj
+ XVetph+zxrR1kLjbVa7noUXMRHfLtJRwmog6Kk1KslKiqasrwtVgdbf5ldE1TJD7Ct5ETzK
+ eeTWkQ4Qjw7UY/RwRqMy5oA4n6ciG0Oat3nOetnRJx2ZDIanzP/2f8xwwk3LHc7lDUhpcVx
+ ZO6H+xEleGpoEf5lhVuXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8nYy4xaiB90=;DW86oxmgOlM+5rGN6og4i9f/eqZ
+ s29BRMsR8VHowjsb4NBGxcY2vj5do+GfcSahA4BQpSnWvuk6ObrX2kC+qqcc7D5Y0R+yxKuBW
+ 5BnFZYrE8QO+8e9kyUXV/ng5Ku90FuO8gMVx/Bd9mIuKL/zN8gWjLpZI3Mkx7EMZFlC4cKpXL
+ 3/1D3dcryc9hiXieTWaUdmT3W6gg6wOPoF+Fu34/Qg/aYxhII69fgFra1lsvJIH2jfL5a28D8
+ Bwj8pyymS7u0R6j0ay2UGxBSq4Fxy3T8VAGqOKeu4U9IAHCPJAKic4D9FBj1cXE6Vd/04v3HO
+ 4g1X77glYRtrxvR3iLti2+HdX9KSN7cYyA3lpjMWyBmIO8/LqLA3V41g9ZDU4wBwK4cJeXFcL
+ xVi0fuKW2CsKX+6Lmkno9EcAVtEKSgaRhMHSgISBbdCRToyc5pWVsYzyue/8Fg6TiJHr3H47w
+ o99b92X9NyArBUYGPez8go5+Ltw+oSmzkyAQpqnYj/Hv4JqtDgDg/iwX1FUP03yr9cOtlytxB
+ aVkZFjxF+Zka0hty/jSMpXc102dxxvToqYw3sGoWTCFdFN/dkMcd7EE6laAkwp57QVktK4b8J
+ DKUb7uSHyDTIyPRuOORntHPp3+D01T9cAlO9uAx1w5UJNCDnZlDumLLRPgl43U8vEe5wislEt
+ jawv7Ob9bvlm9ivvooBOO2Jl6mmvBNhJn+4ZbiuHHh31axAJUAceU51r3PblbHZ3R7EmlbAJ1
+ pflTe+x/G9BHaX9BZdRYl7MlqWl47DUXnOlkkBXVdEFby69FlGq7FByrVtE7ZOSj83LOi2C0F
+ JdTpTuxf3Sg0DzB2mIUQuBs3dK4k5SAXE9NRisgW/jbxw=
 
-Trying to build parisc:allmodconfig with gcc 12.x or later results
-in the following build error.
+> Swap is a function interface that provides exchange function. To avoid
+> code duplication, we can use swap function.
 
-drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_mthd':
-drivers/gpu/drm/nouveau/nvif/object.c:161:9: error:
-	'memcpy' accessing 4294967264 or more bytes at offsets 0 and 32 overlaps 6442450881 bytes at offset -2147483617 [-Werror=restrict]
-  161 |         memcpy(data, args->mthd.data, size);
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/gpu/drm/nouveau/nvif/object.c: In function 'nvif_object_ctor':
-drivers/gpu/drm/nouveau/nvif/object.c:298:17: error:
-	'memcpy' accessing 4294967240 or more bytes at offsets 0 and 56 overlaps 6442450833 bytes at offset -2147483593 [-Werror=restrict]
-  298 |                 memcpy(data, args->new.data, size);
+Would a wording approach (like the following) be a bit nicer
+for the second sentence?
 
-gcc assumes that 'sizeof(*args) + size' can overflow, which would result
-in the problem.
+   Use existing swap() function rather than duplicating its implementation=
+.
 
-The problem is not new, only it is now no longer a warning but an error
-since W=1 has been enabled for the drm subsystem and since Werror is
-enabled for test builds.
 
-Rearrange arithmetic and use check_add_overflow() for validating the
-allocation size to avoid the overflow. While at it, split assignments
-out of if conditions.
+How do you think about to apply the summary phrase =E2=80=9CUse swap() in =
+swap_open_chapter()=E2=80=9D?
 
-Fixes: a61ddb4393ad ("drm: enable (most) W=1 warnings by default across the subsystem")
-Cc: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Jani Nikula <jani.nikula@intel.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Danilo Krummrich <dakr@redhat.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Joe Perches <joe@perches.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-v3: Split assignments from if conditions.
-v2: Use check_add_overflow() to calculate the allocation size and to check
-    for overflows.
 
- drivers/gpu/drm/nouveau/nvif/object.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+> ./drivers/md/dm-vdo/indexer/index.c:207:43-44: WARNING opportunity for s=
+wap().
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9173
 
-diff --git a/drivers/gpu/drm/nouveau/nvif/object.c b/drivers/gpu/drm/nouveau/nvif/object.c
-index 4d1aaee8fe15..1d19c87eaec1 100644
---- a/drivers/gpu/drm/nouveau/nvif/object.c
-+++ b/drivers/gpu/drm/nouveau/nvif/object.c
-@@ -142,11 +142,16 @@ nvif_object_mthd(struct nvif_object *object, u32 mthd, void *data, u32 size)
- 		struct nvif_ioctl_v0 ioctl;
- 		struct nvif_ioctl_mthd_v0 mthd;
- 	} *args;
-+	u32 args_size;
- 	u8 stack[128];
- 	int ret;
- 
--	if (sizeof(*args) + size > sizeof(stack)) {
--		if (!(args = kmalloc(sizeof(*args) + size, GFP_KERNEL)))
-+	if (check_add_overflow(sizeof(*args), size, &args_size))
-+		return -ENOMEM;
-+
-+	if (args_size > sizeof(stack)) {
-+		args = kmalloc(args_size, GFP_KERNEL);
-+		if (!args)
- 			return -ENOMEM;
- 	} else {
- 		args = (void *)stack;
-@@ -157,7 +162,7 @@ nvif_object_mthd(struct nvif_object *object, u32 mthd, void *data, u32 size)
- 	args->mthd.method = mthd;
- 
- 	memcpy(args->mthd.data, data, size);
--	ret = nvif_object_ioctl(object, args, sizeof(*args) + size, NULL);
-+	ret = nvif_object_ioctl(object, args, args_size, NULL);
- 	memcpy(data, args->mthd.data, size);
- 	if (args != (void *)stack)
- 		kfree(args);
-@@ -276,7 +281,15 @@ nvif_object_ctor(struct nvif_object *parent, const char *name, u32 handle,
- 	object->map.size = 0;
- 
- 	if (parent) {
--		if (!(args = kmalloc(sizeof(*args) + size, GFP_KERNEL))) {
-+		u32 args_size;
-+
-+		if (check_add_overflow(sizeof(*args), size, &args_size)) {
-+			nvif_object_dtor(object);
-+			return -ENOMEM;
-+		}
-+
-+		args = kmalloc(args_size, GFP_KERNEL);
-+		if (!args) {
- 			nvif_object_dtor(object);
- 			return -ENOMEM;
- 		}
-@@ -293,8 +306,7 @@ nvif_object_ctor(struct nvif_object *parent, const char *name, u32 handle,
- 		args->new.oclass = oclass;
- 
- 		memcpy(args->new.data, data, size);
--		ret = nvif_object_ioctl(parent, args, sizeof(*args) + size,
--					&object->priv);
-+		ret = nvif_object_ioctl(parent, args, args_size, &object->priv);
- 		memcpy(data, args->new.data, size);
- 		kfree(args);
- 		if (ret == 0)
--- 
-2.39.2
+Would another indication be helpful for the involved analysis tool?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/sc=
+ripts/coccinelle/misc/swap.cocci?h=3Dv6.9
 
+Regards,
+Markus
 
