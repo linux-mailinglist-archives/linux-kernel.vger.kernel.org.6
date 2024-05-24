@@ -1,128 +1,164 @@
-Return-Path: <linux-kernel+bounces-188279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0EB18CDFFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:55:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3D88CDFF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2887CB22CC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D522837FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A873CF6A;
-	Fri, 24 May 2024 03:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC5D2E622;
+	Fri, 24 May 2024 03:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NeYloDQl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PkQLW85K"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3723BBF4;
-	Fri, 24 May 2024 03:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E7A1C17
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716522886; cv=none; b=Y/qKiwxi/C4HwfDq5/iBdaRX2YKGVb1JPskcUhv1Y8mEq6I1kZoSqu5TMVXa6HGQbpHmpBG9GaVBCB+BMaEd+CBuFKqD46nDVAfQA7/YmaqSJ+GoCEXmc++m4/Yyh5SoYWO7gVLSn9PmwFWwwgLfRAeGwwdz3934DbeOBv70bjo=
+	t=1716522856; cv=none; b=Csmk5OzyRrhubE952uWSkXlsB6Tcjr78UlFmJi1QcvbcMjKVYDUbHuWhj31Fo/uGQnWjF6CjCRk61EvyW7gpHh/Au1PCq7eBlGz1wUuaYHh5DpCbn4jCPkV5q79xtZckVgC/JOnZ7JAXI4plJxTtRGF7vEeLaufI22z+K21q8fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716522886; c=relaxed/simple;
-	bh=ojwSW/sW2WoGGE7TZjI1eVy0HyWT9DzkCVi+qOzw8Uw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gIna4FRd5jqhnOzlIQpfTpM6c1auxhoW3m2QaTxLCg5NU996a8LruHyIKisjWWIQkF3g6adNoBeRgevUG9iwV5qwcbLYPZkBjpm1FatICQIM+apZ2CRNEawe1ztE2FDGXPXbyeAETGz09DrYo2WzKJ6HrQ3DBRHStGFV+vGssuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NeYloDQl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NNPPoJ022320;
-	Fri, 24 May 2024 03:54:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	45cdwSGTsaDqFfoJ7Wa+n9z+LEZVRnZrTzu4BzNzm08=; b=NeYloDQlIxHo8IcT
-	2IIR4Mnt77AUQw6zjXIHyBK7jetU+eQSl5E5dzUHPRz/IoMB6OElAXIAfCkhHulA
-	OXmTGt+dzcwTB6Dz9D9WF8GQ9F1qIHmSsX5kNHdcrKvL9H2hd+ILmO9vorPzr5c9
-	4Waz/OGk0FZmpVhd7FhkSJTONwlEHze4fPrTwOcTAaocFSTkCW6Sl166aV3nxK7R
-	AlcLN48VUxQ05C0dMqn5zD/OQL0EhL7GVVaK9hoUqnKORhLqiCq5vRq7D3GRs05P
-	mD/zJIIzfi95JNlXzjT27UkoRWUf0N/ISPtBlwu2QPfmTHEX+zDB6KyDWYG4STfC
-	XhugQg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa9u13fa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 03:54:29 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44O3sSX7019327
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 03:54:28 GMT
-Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 23 May 2024 20:54:23 -0700
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami
-	<bgoswami@quicinc.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela
-	<perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>
-CC: <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
-        <quic_pkumpatl@quicinc.com>,
-        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Subject: [PATCH v2 2/2] ASoC: qcom: sc8280xp: Add support for QCM6490 and QCS6490
-Date: Fri, 24 May 2024 09:23:50 +0530
-Message-ID: <20240524035350.3118981-3-quic_mohs@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240524035350.3118981-1-quic_mohs@quicinc.com>
-References: <20240524035350.3118981-1-quic_mohs@quicinc.com>
+	s=arc-20240116; t=1716522856; c=relaxed/simple;
+	bh=K99KUrVlDSGTuaBU0qLuO5KhBt6w+TaptshsCpmiKfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OQMrY97mo8trbwYobUhmnJtI5j5JPEw62lP1zUlZnxDf5nXN9ZE2p0bxhft0Fa69G95hB63bCjAxAb6MOVmkPkDtiOy/ygm8IegQCkNeBYXXt4bgJAyW69RuB6KTp4sknb3GviRBtS9zIhHyU4DCUgB+JkKyAeggjaYvmET54rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PkQLW85K; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-578517cab9eso438451a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:54:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716522853; x=1717127653; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dWW3AQa8TPc9MawrkKffK2j0szmcKvitO1soT+4auc0=;
+        b=PkQLW85KmbVuaxY9AX/KwWcvxeb+WJgJPRi9ruULOCQl2LtpFRBMe+gGHSzQJujl46
+         PWdEognNXog/rkKop/V38vuewn9BBz4HRZoRdbHYfV2lvT1GlTsGbS+FVwly3OfC1Ge4
+         4CCvrg6q1JAcqWwCLNtakFJN0yVkDUApAJOO33KzPo4AvVn71CUcxH19zE/R2c72ChH1
+         cBasIR06PFm9FAmP0KrSBuyENx8yJ5SU/EVALqCuJHIKfUzqSRr8qwsrb9tDyeOoMWK9
+         3XiHlAkHcl9OTdXe1qC8dzQ3TSGwCKylXXLb1elK1O57jhG3CSej7/PNRpc3/ic9i8na
+         U00Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716522853; x=1717127653;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dWW3AQa8TPc9MawrkKffK2j0szmcKvitO1soT+4auc0=;
+        b=iW1HdSqakkEmCzjvFEKEo/F9SjSf6ba3T1KsVwglw2yd3O2UbQebnBpHNJd5bOVccv
+         T/WwK26mpgt5BW+n4tLw/kIgpd46Z4Dg5YGx7ANSDlJACI7j1gdjDPuZtkT8gYzKfvdA
+         KAwT4rTlOHQyr2CbsMN3Xsbvxdr9BCm9aZiLnL6TmLi+dDHnSu9xFhU9iVGrN0H0inBJ
+         6QLsoSM/GrhCkVrLZ0gJMM/0ZOtCgxzcJqL3/GV2nEf/Fyki6pWmsjSMQX00GUBy8uwF
+         N7bdcoQn35fT9YHglvNC02wbsQDPcDmePwmpQhEjmWxWwV93WaX8JF1ZWhdLQjWVNPGw
+         qxCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0h/2pUOzwcIlY0xEm03CILbRjGF6W6+RpKN8WBtdKlzmBBim1p2JGl7RAPH/E41ZsUS/su1N4uFTTJB5Nd7xKRNvya9y7zWcvjN37
+X-Gm-Message-State: AOJu0Yz2bfGFRnHE2BOdkGZoJdURgGo3dLs/4+moLJMGAO62HhxPcLn2
+	y8z7Yu85/gTvTZeyzNZEW3Zv/qtapdDp1DGq7h6ZKBCPEOruxn8TbX3RyJhtq6w9bagcQ918ZfL
+	PuW4js0F94k6DCvJ/pQj8K+7YAAE=
+X-Google-Smtp-Source: AGHT+IGm8NBKfc/0PfmmWPj5Rz0Bs+ulDT4bDs5xol5Uuy0q/JDIXHIkkcYMZ0MH/xgLyuJy0C3yELiKVk9Ie4Hc154=
+X-Received: by 2002:a50:9557:0:b0:56e:7751:ae4e with SMTP id
+ 4fb4d7f45d1cf-57851a5c3bdmr544568a12.33.1716522853140; Thu, 23 May 2024
+ 20:54:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dNHZlXlwRqZh1hzISx4PKSPpuduH7yTN
-X-Proofpoint-ORIG-GUID: dNHZlXlwRqZh1hzISx4PKSPpuduH7yTN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-23_15,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405240025
+References: <20240524005444.135417-1-21cnbao@gmail.com>
+In-Reply-To: <20240524005444.135417-1-21cnbao@gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Fri, 24 May 2024 11:54:01 +0800
+Message-ID: <CAK1f24kfV0wHVFTmp7YdWMRB8jzncHTiM91kTn9dBtgfnqwdYQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: arm64: Fix the out-of-bounds issue in contpte_clear_young_dirty_ptes
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	David Hildenbrand <david@redhat.com>, Jeff Xie <xiehuan09@gmail.com>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Michal Hocko <mhocko@suse.com>, 
+	Minchan Kim <minchan@kernel.org>, Muchun Song <songmuchun@bytedance.com>, 
+	Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, "Zach O'Keefe" <zokeefe@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add compatibles for sound card on Qualcomm QCM6490 IDP and
-QCS6490 RB3Gen2 boards.
+Thanks a lot for reaching out, Barry!
 
-Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
----
- sound/soc/qcom/sc8280xp.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Fri, May 24, 2024 at 8:55=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> We are passing a huge nr to __clear_young_dirty_ptes() right
+> now. While we should pass the number of pages, we are actually
 
-diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
-index b7fd503a1666..09c949e01479 100644
---- a/sound/soc/qcom/sc8280xp.c
-+++ b/sound/soc/qcom/sc8280xp.c
-@@ -169,6 +169,8 @@ static int sc8280xp_platform_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id snd_sc8280xp_dt_match[] = {
-+	{.compatible = "qcom,qcm6490-sndcard", "qcm6490"},
-+	{.compatible = "qcom,qcs6490-rb3gen2-sndcard", "qcs6490"},
- 	{.compatible = "qcom,sc8280xp-sndcard", "sc8280xp"},
- 	{.compatible = "qcom,sm8450-sndcard", "sm8450"},
- 	{.compatible = "qcom,sm8550-sndcard", "sm8550"},
--- 
-2.25.1
+Yes.
 
+It's my mistake - sorry :(
+
+> passing CONT_PTE_SIZE. This is causing lots of crashes of
+> MADV_FREE, panic oops could vary everytime.
+>
+> Fixes: 89e86854fb0a ("mm/arm64: override clear_young_dirty_ptes() batch h=
+elper")
+> Cc: Lance Yang <ioworker0@gmail.com>
+> Cc: Barry Song <21cnbao@gmail.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Jeff Xie <xiehuan09@gmail.com>
+> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Muchun Song <songmuchun@bytedance.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Yang Shi <shy828301@gmail.com>
+> Cc: Yin Fengwei <fengwei.yin@intel.com>
+> Cc: Zach O'Keefe <zokeefe@google.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+
+LGTM.
+
+Acked-by: Lance Yang <ioworker0@gmail.com>
+
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  arch/arm64/mm/contpte.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+> index 9f9486de0004..a3edced29ac1 100644
+> --- a/arch/arm64/mm/contpte.c
+> +++ b/arch/arm64/mm/contpte.c
+> @@ -376,7 +376,7 @@ void contpte_clear_young_dirty_ptes(struct vm_area_st=
+ruct *vma,
+>          * clearing access/dirty for the whole block.
+>          */
+>         unsigned long start =3D addr;
+> -       unsigned long end =3D start + nr;
+> +       unsigned long end =3D start + nr * PAGE_SIZE;
+>
+>         if (pte_cont(__ptep_get(ptep + nr - 1)))
+>                 end =3D ALIGN(end, CONT_PTE_SIZE);
+> @@ -386,7 +386,7 @@ void contpte_clear_young_dirty_ptes(struct vm_area_st=
+ruct *vma,
+>                 ptep =3D contpte_align_down(ptep);
+>         }
+>
+> -       __clear_young_dirty_ptes(vma, start, ptep, end - start, flags);
+> +       __clear_young_dirty_ptes(vma, start, ptep, (end - start) / PAGE_S=
+IZE, flags);
+>  }
+>  EXPORT_SYMBOL_GPL(contpte_clear_young_dirty_ptes);
+>
+> --
+> 2.34.1
+>
 
