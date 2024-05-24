@@ -1,194 +1,142 @@
-Return-Path: <linux-kernel+bounces-188614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89298CE45A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:41:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BF08CE45F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B7AE1F2259D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 494CD1F22610
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27C585642;
-	Fri, 24 May 2024 10:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SR+NtTzG"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5921385933;
+	Fri, 24 May 2024 10:47:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455E384FDC
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48712208A1
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716547301; cv=none; b=HsH1zRwJ0tHaHN+Fyx+BtpQEnChhnzH58oT1H1zi24f6CmkFbvfHGNhCqx+hF9T7GiSO3uXyWS/PJAzHYG/DlfCNvfwIt6J0zS25K54ywAGKywDyHnttZPRaGZauJIBnQddGdcb4KnOPfjPf/KOiUAs25mUTvUbSKbZHTOxr7Us=
+	t=1716547653; cv=none; b=cPQvL6zFpNctijrOV+6D5777sPtCgb4bpnn1N0MeDnjfrX9DZGAgAE79ujRon4k/dQ/AeNXjqOmfiiaqUYsd1rb/+PqZDwo3wOfu+qGI9U7xadTI1+KPon4+UWtpQz7vNZxEU+yGn/BAnWuCQ+AJ493wes3AEBqmGGBwBdlDN7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716547301; c=relaxed/simple;
-	bh=Ka9cmTCSiwlHXYTApKkxtTxZ6kn3mKj/2waCvaYF9Qk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oadicu1EQbGa19kh+g0VPtnqkURWgvbPRel3TXoX0k/OQYjc5ZIVzqXpfNnZplS43WpvBL+ZV3njMhhyVeeUr76Qu36dsqin6pfgK1A0N78+OLjx5fEi65LYG81dJtCVere093s+inYSWSx1oK2N+bXIGQaZlmyS+mbFe/G1IDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SR+NtTzG; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-df4e7763603so2613522276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716547299; x=1717152099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wXTrajnU7to/8Kkx0kFyODWqZ7ULlok1jwgmE99WXAc=;
-        b=SR+NtTzGoAsNbf65Wp3JmHK4B6WAoi5OkqAPaGpmACESpSOSI6yuguZqhrcKS+xDlY
-         zGKPTL1c+rKUAA6KRKdrdwkiYutR/OyLRO/rYNKPAT2gGk64Fe/nlmd8W3iye7KA6ZIM
-         W7rD0UKFEP68mEwY+U39iqh2tUDAfLB4Wa1u2EQjuClpGrtPniak0wuPmLRDwumCfyKh
-         4bpq5M0Z9Ge8zn1qLWzQLp990Ma+/9F8ub67Y1FuIlSY6NnQ472iEch3/73sxqSd2VIl
-         tChseCAcZtMeIpHepaamLiPTgSsBGuTE6+1eBdK+tZ/F5GWt+nekkFr0jR4727PaKIc3
-         KSxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716547299; x=1717152099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wXTrajnU7to/8Kkx0kFyODWqZ7ULlok1jwgmE99WXAc=;
-        b=N7IOvdJPBSVDKsFAjcrO+klFv0NiOKSeJtgQU1OSITbgydKv4YbvyPLIOdSGVYTmSi
-         eDD8CR76uZgybETBFjPp7Oc6jyOSdZyG03wcsHBKDTILQAmcvwNheEwruKfbHzCxzeW4
-         mFpBUxYbRgs8RSMsK08PV79tmNq5NVHcEgXLVL1hR9KwZtvSt9KyFynHGMxE4kUnvBOo
-         H4mURj8ni5nbdSNDe6pNnO2NUWtyNY/wCP9AJ89Pb+7DhcPmA5YY9cmmTZ1u0J77EzRP
-         TObnMDJYJoUcuNGbUlpwKyWLFGfk/OCgpQjzlyEXMEmFXPSnkW56BG3vlrqTsDECNluH
-         oVtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnMA1QRbpBqkToo/538e0RPR+F32kzVehOIhz+HOvSMBxhI3TsGRaK4YwvFuLdF65rW/TJS+s7NjWmWmffXaPVNvm/ba4m6A7+UCrX
-X-Gm-Message-State: AOJu0Yw+A0FBOsloMbqcGPptKW45FTFIPEguu8klm3Wd1LBx30YljKHT
-	2njgOQAuJxoDbayeSyeSyugeoJtKClYixqnD2KWi5hEp3wrtyjI3uajxaqoVysMf50wlXgzHvJQ
-	oDzgpl8K8iI/ZEirTlYcZgv0Qr42oPGC3z55CSQ==
-X-Google-Smtp-Source: AGHT+IEPSpGVjqat8T+RvfksZYTyFP+HqIfWNgQJAU+a4NitDODiB8ZAXvb2En7cAUR5yVuO4qWc2l+8kTvUGGtyN0Q=
-X-Received: by 2002:a05:6902:c0d:b0:df4:8ab4:d8bf with SMTP id
- 3f1490d57ef6-df7721a50b6mr1984616276.33.1716547299257; Fri, 24 May 2024
- 03:41:39 -0700 (PDT)
+	s=arc-20240116; t=1716547653; c=relaxed/simple;
+	bh=9TvjPqCliIU3ksv9BzpmBijNYq3dOmKIiwbn2vtAAok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msfO4Om1f6Ab6fGjjukyZmp6ScCwTv7cTA0fY13jZEtcaN0xvUqU5EAC9cvYwmGGZv/6JN9BJJFkMhcahq5edGCKyXmW5DiS7PXdo+/EW51gKFX2UW2IHpPwS7QMSJank3iErMqXCmDdpirP9KjmSzL7mjhQ6XbkVUrcjU0dXEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sASSE-00012m-SY; Fri, 24 May 2024 12:47:18 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sASSD-002mZn-Tv; Fri, 24 May 2024 12:47:17 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sASSD-00Bejt-2f;
+	Fri, 24 May 2024 12:47:17 +0200
+Date: Fri, 24 May 2024 12:47:17 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/5] firmware: imx: add driver for NXP EdgeLock Enclave
+Message-ID: <ZlBwNbkFV1fcnPKE@pengutronix.de>
+References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
+ <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
- <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
- <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com>
- <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
- <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
- <CAAhSdy1SDd=VUqDQA0T5n9LwHo=3uGzFq1dUcbDFcB3aBdaioA@mail.gmail.com>
- <CAAhSdy33DcNw+pbDRrR=hBH86kwvu3xZbomQby8XhRXcc-exqQ@mail.gmail.com>
- <CAKddAkBrP2iQBC+aY1Xw5pssBpiQZe4V-6ww5m8hbKP6V0jzLg@mail.gmail.com>
- <CAAhSdy12-_Hdb-WVrs8kyfCy_OQA0p27DS6TOV87dh9HODrU_Q@mail.gmail.com>
- <CAKddAkCQOvnci-bzKx1pBUJh5t1uPT-wNXGH1WyqDyb5qR_Scg@mail.gmail.com> <CAK9=C2V2xYwi4wK2+e=z7NF8Ph7+LxvWh4J4TmQrbVfSfpO-Ag@mail.gmail.com>
-In-Reply-To: <CAK9=C2V2xYwi4wK2+e=z7NF8Ph7+LxvWh4J4TmQrbVfSfpO-Ag@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 24 May 2024 12:41:03 +0200
-Message-ID: <CAPDyKFo6PiWmwtHTfRCWK95RgQShfuR+G2cZm0D1Ad-at_MWmg@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
-To: Anup Patel <apatel@ventanamicro.com>, Nick Hu <nick.hu@sifive.com>
-Cc: Anup Patel <anup@brainfault.org>, palmer@dabbelt.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, paul.walmsley@sifive.com, linux-pm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	zong.li@sifive.com, Cyan Yang <cyan.yang@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, 17 May 2024 at 06:39, Anup Patel <apatel@ventanamicro.com> wrote:
->
-> On Thu, May 16, 2024 at 9:40=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrot=
-e:
-> >
-> > Hi Anup
-> >
-> > On Wed, May 15, 2024 at 9:46=E2=80=AFPM Anup Patel <anup@brainfault.org=
-> wrote:
-> > >
-> > > Hi Nick,
-> > >
-> > > On Wed, May 15, 2024 at 5:45=E2=80=AFPM Nick Hu <nick.hu@sifive.com> =
-wrote:
-> > > >
-> > > > Hi Anup,
-> > > >
-> > > > Thank you for your guidance.
-> > > > After enabling the debug message, we found a way to solve the probl=
-em
-> > > > by the following steps:
-> > > > 1. Add a compatible string in 'power-domains' node otherwise it won=
-'t
-> > > > be the supplier of the consumers. (See of_link_to_phandle())
-> > >
-> > > Hmm, requiring a compatible string is odd. Where should we document
-> > > this compatible string ?
-> > >
-> > Sorry, this is my fault. I didn't include some updates in
-> > of_link_to_phandle(). This led some misunderstandings here.
-> > You are right, we don't need it.
-> > The supplier will be linked to the CLUSTER_PD node.
-> >
-> > > > 2. Move the 'power-domains' node outside the 'cpus' node otherwise =
-it
-> > > > won't be added to the device hierarchy by device_add().
-> > > > 3. Update the cpuidle-riscv-sbi driver to get the pds_node from
-> > > > '/power-domains'.
-> > >
-> > > By adding a compatible string and moving the "power-domains" node
-> > > outside, you are simply forcing the OF framework to populate devices.
-> > >
-> > > How about manually creating platform_device for each power-domain
-> > > DT node using of_platform_device_create() in sbi_pd_init() ?
-> > >
-> > Thanks for the suggestion! We have test the solution and it could work.
-> > We was wondering if it's feasible for us to relocate the
-> > 'power-domains' node outside of the /cpus? The CLUSTER_PD might
-> > encompass not only the CPUs but also other components within the
-> > cluster.
->
-> The cpuidle-riscv-sbi driver expects "power-domains" DT node
-> under "/cpus" DT node because this driver only deals with power
-> domains related to CPU cluster or CPU cache-hierarchy. It does
-> make sense to define L2/L3 power domains under
-> "/cpus/power-domain" since these are related to CPUs.
->
-> Moving the CPU "power-domains" DT node directly under "/" or
-> somewhere else would mean that it covers system-wide power
-> domains which is not true.
+On Thu, May 23, 2024 at 04:19:35PM +0530, Pankaj Gupta wrote:
+> NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE),
+> are embedded in the SoC to support the features like HSM, SHE & V2X,
+> using message based communication interface.
+> 
+> The secure enclave FW communicates on a dedicated messaging unit(MU)
+> based interface(s) with application core, where kernel is running.
+> It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
+> 
+> This patch adds the driver for communication interface to secure-enclave,
+> for exchanging messages with NXP secure enclave HW IP(s) like EdgeLock
+> Enclave (ELE) from Kernel-space, used by kernel management layers like
+> - DM-Crypt.
+> 
+> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> ---
+>  drivers/firmware/imx/Kconfig        |  12 +
+>  drivers/firmware/imx/Makefile       |   2 +
+>  drivers/firmware/imx/ele_base_msg.c | 286 +++++++++++++++++++
+>  drivers/firmware/imx/ele_base_msg.h |  92 +++++++
+>  drivers/firmware/imx/ele_common.c   | 239 ++++++++++++++++
+>  drivers/firmware/imx/ele_common.h   |  43 +++
+>  drivers/firmware/imx/se_ctrl.c      | 531 ++++++++++++++++++++++++++++++++++++
+>  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
+>  include/linux/firmware/imx/se_api.h |  14 +
+>  9 files changed, 1318 insertions(+)
+> 
+> +static int imx_fetch_se_soc_info(struct device *dev)
+> +{
+> +	struct se_if_priv *priv = dev_get_drvdata(dev);
+> +	struct imx_se_node_info_list *info_list;
+> +	const struct imx_se_node_info *info;
+> +	struct soc_device_attribute *attr;
+> +	struct soc_device *sdev;
+> +	u64 serial_num;
+> +	u16 soc_rev;
+> +	int err = 0;
+> +
+> +	info = priv->info;
+> +	info_list = (struct imx_se_node_info_list *)
+> +				device_get_match_data(dev);
+> +
+> +	/* This function should be called once.
+> +	 * Check if the soc_rev is zero to continue.
+> +	 */
+> +	if (priv->soc_rev)
+> +		return err;
+> +
+> +	err = info->se_fetch_soc_info(dev, &soc_rev, &serial_num);
+> +	if (err < 0) {
+> +		dev_err(dev, "Failed to fetch SoC Info.");
+> +		return err;
+> +	}
 
-I understand your point, but I am not convinced that the power-domains
-need to belong to the "cpus" node. Ideally, the power-domain describes
-the power-rail and the interface to manage the CPUs, this can surely
-be described outside the "cpus" node - even if there are only CPUs
-that are using it.
+This is called unconditionally but is not set for i.MX93. You should
+either set it for i.MX93 or check it before calling it.
 
-Moreover, moving forward, one should not be surprised if it turns out
-that a platform has other devices than the CPUs, sharing the same
-power-rail as the CPU cluster. At least, we have that for arm/psci
-[1].
+Sascha
 
->
-> I suggest we continue using "/cpus/power-domains" DT node
-> only for power domains related to CPU clusters or CPU
-> cache-hierarchy.
->
-> For system wide power domains of SoC devices, we can either:
-> 1) Use device power domains through the SBI MPXY extension
->     via different driver
-> 2) Use a platform specific driver
->
-> >
-> > We also look at cpuidle_psci_domain driver and it seems Arm doesn't
-> > create the devices for each subnode of psci domain.
-> > Is there any reason that they don't need it?
-
-We don't need it for arm as we have a separate node for PSCI and its
-power-domains [2]. Moreover, we have a separate driver that manages
-the power-domain (cpuidle-psci-domain).
-
-[...]
-
-[1] arch/arm64/boot/dts/qcom/sc7280.dtsi (search for "CLUSTER_PD")
-[2] Documentation/devicetree/bindings/arm/psci.yaml
-
-Kind regards
-Uffe
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
