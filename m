@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-188244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6E58CDFA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:06:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDEFA8CDFAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA99B21C54
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794672818BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A804B3612D;
-	Fri, 24 May 2024 03:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jmtu2KN8"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0AC12E7F;
+	Fri, 24 May 2024 03:17:43 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626AF1E892;
-	Fri, 24 May 2024 03:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D6211712
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716519965; cv=none; b=UmoSR5FVIXyzE9BN25YfOgtHz75xSLpnbIYl9eVQCONUQs0wx8/g5M+woXONbejo5yRhJUz3JoTvRaimiFrtyoufKr784lXl2hECGwM0mKUR8MUcwsb0AteB1Mmc2/BdgRCGdwejX2loEKC0iQ8po3M1XEuByX3LoNZlWCHCj8I=
+	t=1716520662; cv=none; b=ONkieCtNWyfUrXggnbNpydJVD+TvQYppyiqqpNlvi92I/Z+8zpsMjVg/gdw31MzKtCFlB6Oc5eQzVkdOKpfCOaP27K8jnwUX2G+Rcq4YctvjoUM3xPqCiQPC1OIGbtaKw73vTdHagUffZ8clra8v9nAuClgMq+OpE+USQwHxfGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716519965; c=relaxed/simple;
-	bh=3ac3aDOUSyhZhlc2IzxHBt2wt1QJlTH7EB3FwNHBrlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D1Fd5Ov0Hm2SI/5MOCECccTaB40WE5yYX80mDbW5Zq91KbgE0ZWKifk/m3qTovwHSt6A4KhsHYihsMv3oeT8cMZiFZvgPVtJ9zdWcu8lP3MhghBAu2Vg8itrUi4c/adrS8mlmDgyhcXG01N2NNEMdE1mMTNARGYRE1LOCB7O1G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jmtu2KN8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bvCaQQNewdoOyjlJKFKuh3jGJ8NqvGaj8xV2P8qvIyU=; b=jmtu2KN8qcXDpnYpWr60sypBYH
-	mWrR5w8ho4fOS088iy2520XmhFMg3fXNY3OsFM+RfISEUdKA7nc7j68a4hzrYsxfcM2WRFTx0majP
-	EVOUZP5lMXLqv8fMtKrfIRnIUiZT0s8qCf0OvIgwEKY9kDyefqtLil/v83hGwRooqsmueh2cYWhbv
-	fIMoHR1i9vENcSk/KhIt52slwM4IFRW8ugSOoEvBpEhzmtRKv9OB8obQXylgmSSbYtngM4JfQnHmi
-	X7KQlmijfK/dgeQ82RcbhAvQ7SEwZ6ngzDPVnhJEi33knd80n62sA3s5Ad8h8YZ07jtb29bIsRcbd
-	TbMpC6fA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sALFd-00000002Lpz-12Xc;
-	Fri, 24 May 2024 03:05:49 +0000
-Date: Fri, 24 May 2024 04:05:49 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Jung-JaeJoon <rgbi3307@gmail.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peng Zhang <zhangpeng.00@bytedance.com>,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Modified XArray entry bit flags as macro constants
-Message-ID: <ZlAEDbOR6Ch-Y__C@casper.infradead.org>
-References: <20240524024945.9309-1-rgbi3307@naver.com>
+	s=arc-20240116; t=1716520662; c=relaxed/simple;
+	bh=KZCJ7YhijKwiZJ1xUJ2OGx9s+MymMCK9Uzsvp3M3spU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d4le+40qo+hcliqdXckMtnSnzxk3CJbRYjAyHjC75wf5CbcnoO2njdv0C/gIDU7M2MkdFcDhYHdUkdBq++aZsNrCzLDUoIig2h5sccyPJXUKYGx7isLkNgGvNE5aAkg2o//twTqCa5hjksubvkKG5qTYwQezugrPw4+tlD9xPwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowADX3eW9BlBmYwAXDQ--.41660S2;
+	Fri, 24 May 2024 11:17:18 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: kraxel@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: virtualization@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] drm/bochs: Add check for drm_simple_display_pipe_init
+Date: Fri, 24 May 2024 11:06:05 +0800
+Message-Id: <20240524030605.2185210-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240524024945.9309-1-rgbi3307@naver.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADX3eW9BlBmYwAXDQ--.41660S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4kZF4ktw1kZr4kuFW3Jrb_yoWftFc_WF
+	15u3s5Xr9ru3srCFnxZFnYgrWS9a4vvF48Xry2qFZ3tFyfW3ZxJrW2qryfZw4UW3yUJF1k
+	C3y7GrZ5JF1xWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JU-miiUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Fri, May 24, 2024 at 11:49:45AM +0900, Jung-JaeJoon wrote:
-> From: Jung-JaeJoon <rgbi3307@gmail.com>
-> 
-> It would be better to modify the operation on the last two bits of the entry 
-> with a macro constant name rather than using a numeric constant.
-> 
-> #define XA_VALUE_ENTRY		1UL
-> #define XA_INTERNAL_ENTRY	2UL
-> #define XA_POINTER_ENTRY	3UL
-> 
-> In particular, in the xa_to_node() function, it is more consistent and efficient 
-> to perform a logical AND operation as shown below than a subtraction operation.
-> 
-> - return (struct xa_node *)((unsigned long)entry - 2);
-> + return (struct xa_node *)((unsigned long)entry & ~XA_INTERNAL_ENTRY);
-> 
-> Additionally, it is better to modify the if condition below 
-> in the mas_store_root() function of lib/maple_tree.c to the xa_is_internal() inline function.
-> 
-> - else if (((unsigned long) (entry) & 3) == 2)
-> + else if (xa_is_internal(entry))
-> 
-> And there is no reason to declare XA_CHECK_SCHED as an enum data type.
-> -enum {
-> -	XA_CHECK_SCHED = 4096,
-> -};
-> +#define XA_CHECK_SCHED          4096
+Add check for the return value of drm_simple_display_pipe_init() and
+return the error if it fails in order to catch the error.
 
-Thank you for your patch.  I agree with none of this.  Rejected.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/gpu/drm/tiny/bochs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/tiny/bochs.c b/drivers/gpu/drm/tiny/bochs.c
+index c23c9f0cf49c..31ad2bc4ee22 100644
+--- a/drivers/gpu/drm/tiny/bochs.c
++++ b/drivers/gpu/drm/tiny/bochs.c
+@@ -550,13 +550,15 @@ static int bochs_kms_init(struct bochs_device *bochs)
+ 	bochs->dev->mode_config.funcs = &bochs_mode_funcs;
+ 
+ 	bochs_connector_init(bochs->dev);
+-	drm_simple_display_pipe_init(bochs->dev,
++	ret = drm_simple_display_pipe_init(bochs->dev,
+ 				     &bochs->pipe,
+ 				     &bochs_pipe_funcs,
+ 				     bochs_formats,
+ 				     ARRAY_SIZE(bochs_formats),
+ 				     NULL,
+ 				     &bochs->connector);
++	if (ret)
++		return ret;
+ 
+ 	drm_mode_config_reset(bochs->dev);
+ 
+-- 
+2.25.1
+
 
