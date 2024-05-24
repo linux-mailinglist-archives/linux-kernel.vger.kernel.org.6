@@ -1,95 +1,138 @@
-Return-Path: <linux-kernel+bounces-188410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A2E8CE1A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:41:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C158CE1AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7BCF1F22414
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:41:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FE61C21152
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7041292C3;
-	Fri, 24 May 2024 07:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E689E1292CC;
+	Fri, 24 May 2024 07:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="X8580v1W"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BgmhP/FF"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBE944C6E
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 07:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D657F328DB;
+	Fri, 24 May 2024 07:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716536489; cv=none; b=hSQxESrdOEnoJnW9D6fnAuiec2KxU2ETBw2Bp2ZG19NbSfOavCiTHrmxhhYejEiH3N5T207+GFtl8T9hSmh93umbzhP4E8SRYl0Wyd7cbeR7YDhLbuTU2PEkmiH743Rtffj15hzvqnOpZ2xznJgVvkems+zsX1hkGpq/RspxK60=
+	t=1716536598; cv=none; b=LnFj04bdzmeGlEyLr6SmtZUtxT15YrbXJguGSUyATUJl2CBiyPDB26iHrX01dIo5cqQQxn92Hu85zFou5WzjaIkCVPh5wthebj6bZYAfvCmo/eEmS5YyiSNW2//w8h237rd5+dfbYa1L+4USHeZwB9QR5AlEbXrsupqrVjOwC0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716536489; c=relaxed/simple;
-	bh=ozll6qRziq35PAG1YBIEGMLw6nDofgS/piP4h49p9Ek=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VLzPb3A38MHoL09fBF8ZjEhsNPBBGMytUr/2E/CH0xs+R5O7RV0p6l5ylKypqrhAGrrVFYpwF9G+hIu6USWRTfeXFQTOqUaRsnVLEmmrrxR7dYslzFG3EeunDoPe5L6oDc3w1PsdNbeVD3WEhSyt/KQWJI/arFcvj5VizCsV1sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=X8580v1W; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1716536483; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=CVF9HV5OIB/RrlM1U638eXjEEYFYuWvTgJEt/6k4K4w=;
-	b=X8580v1Wc5hUPAc4GCoRaLTw+u5pbchD4BHymuyTLLHqZ2E+4TThj30DX7KRjXx0CzBquQM6GzcpcH7fJD2iglz4Fou0riRmMSu8FCTVDklZbEvAyejK/7sycilF/wlAwHDeDKigQwCJkm8qWDTZlM/LpnvIrINJ3lUhjaEQ7s0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0W761soU_1716536471;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W761soU_1716536471)
-          by smtp.aliyun-inc.com;
-          Fri, 24 May 2024 15:41:23 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: msakai@redhat.com
-Cc: dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] dm vdo indexer: Use swap() instead of open coding it
-Date: Fri, 24 May 2024 15:41:09 +0800
-Message-Id: <20240524074109.13433-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1716536598; c=relaxed/simple;
+	bh=EEAPAkvRWTP87ptJdkXmynH7J+7oWnWgXa8qzJjCnUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i/Wc6f80qsYvhNBpbkbY14AhuXil5ugeJ6m2cDxTVouITBhFrtnpt+4MCDx8f84T1K16z5qAtg/fcYetGIppUtZ2gOIgt6rkkNaFQUtkkH8t8WiSa9fpFwY/IpsRKPQQfkwZ0bPM3QWYBaJO0uKD6KPYrb0ssoimJL3rtzCppHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BgmhP/FF; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62a082720f0so6218867b3.1;
+        Fri, 24 May 2024 00:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716536596; x=1717141396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8+5o0jnvfHIMGelQ8b/lLWEj2CJxrw/Z+KD+l+PaAQk=;
+        b=BgmhP/FFu5vBHzEvhKmIZTVicCcbO0W0HGcuxoEkrYO9d+30s1cEVHBseD6seKN3Cc
+         g6gp1PShJXVxyA9HnEktWk8xvzpUIYAy/dIOXfTiQUuyrmV3WJXYjVT5pRZ1lvDMjrW3
+         aV80M/5ydSyPBJgvhwj6rZ8nJT7rY//lrr4lTTbIY+mCzQVTDiL/IEyHvzGVMHiXzdoT
+         5hghpe8eMLCMFH//xfVZXR5WH+PfM/uMHzzNm6tpcKUf1UgN5vGp08bSQ+5q9nFgY03Z
+         BRETdqqS+sf9hnDg0/xrGephcLjC3lhnDwaS6ZCO3myKNO/epwcdRmgFO90qz5ewSf1V
+         KEcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716536596; x=1717141396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8+5o0jnvfHIMGelQ8b/lLWEj2CJxrw/Z+KD+l+PaAQk=;
+        b=o+kqHi57tR9RFV75p7Ojy2AL7LIRho3SAi3Y4USwRATTuKLg8fTBv/il4vjH/Fz++a
+         jE1pdlK8zJn0L/O06l+r+uZimDHOSJMJmiR5e4IAu1k4Io++hT3DX/SPmO8lDymkGUwx
+         WOQrOglKWn+WaGIpsjJVjltRDjOnn7eyG3DHi+rO2JfHQzkIKHR/mMoaHYJr8Csd7vcD
+         W5PFgcKyEnpAL7XljFiMUYU82cGkiHxYVFf0DgfsSgAU6W+z3wdrfs2EnzIhwuapQgkG
+         HdQCbtWWB6ovQodtcQHOAj4uQKnH3DsuDOPSylrUdc5ItpAZvnSIn4KH2x/fS5og6Oke
+         vN2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXJqqfjSDO9OVvZfi9f09AJN28/06Lpufndv+rQDMhfPgaJ0ouYHWInlwSHNH9Ey8LTlQdCuAB43/dTfXcveZflyPoafAsGmZQvMS+A
+X-Gm-Message-State: AOJu0YyvnBR1trdpRBBiU37w6OP1gQoEyx7CnWsXzlTaDJY0jeAXESHn
+	eEp6yS7s0hp5zCPvO/dtDyUVqKO0doUOAowN4IQelyogDquiLRASPCn+5P3cllCRfkDQ2w/Q2Af
+	6hmYKbJ439dCVNsKRL439znwf7SM=
+X-Google-Smtp-Source: AGHT+IFUF3ICaiQTE3zr4leR5Pkgem+HIQRPp295oMXpzO1jFJa/rHWdUCrzDilFW5dbZDoWbiLbuNViNj8R7nTRSAA=
+X-Received: by 2002:a0d:e8c4:0:b0:619:da17:87be with SMTP id
+ 00721157ae682-62a08ee8ad9mr13994687b3.42.1716536595834; Fri, 24 May 2024
+ 00:43:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <o89373n4-3oq5-25qr-op7n-55p9657r96o8@vanv.qr> <CAHk-=wjxdtkFMB8BPYpU3JedjAsva3XXuzwxtzKoMwQ2e8zRzw@mail.gmail.com>
+ <ZkvO-h7AsWnj4gaZ@slm.duckdns.org> <CALOAHbCYpV1ubO3Z3hjMWCQnSmGd9-KYARY29p9OnZxMhXKs4g@mail.gmail.com>
+ <CAHk-=wj9gFa31JiMhwN6aw7gtwpkbAJ76fYvT5wLL_tMfRF77g@mail.gmail.com>
+ <CALOAHbAmHTGxTLVuR5N+apSOA29k08hky5KH9zZDY8yg2SAG8Q@mail.gmail.com>
+ <CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com>
+ <CALOAHbAAAU9MTQFc56GYoYWR3TsLbkncp5QrrwHMbqJ9SECivw@mail.gmail.com> <CAHk-=whwtEFJnDVrkkMtb6SWcmBQMK8+qXGtqvBO+xH8y2i6nA@mail.gmail.com>
+In-Reply-To: <CAHk-=whwtEFJnDVrkkMtb6SWcmBQMK8+qXGtqvBO+xH8y2i6nA@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Fri, 24 May 2024 15:42:39 +0800
+Message-ID: <CALOAHbD0LdbQTWyvDiLcgGupcQJKmadzWhoZiUTj126Rqqn6fQ@mail.gmail.com>
+Subject: Re: [PATCH workqueue/for-6.10-fixes] workqueue: Refactor worker ID
+ formatting and make wq_worker_comm() use full ID string
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: bpf <bpf@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Jan Engelhardt <jengelh@inai.de>, 
+	Craig Small <csmall@enc.com.au>, linux-kernel@vger.kernel.org, 
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Swap is a function interface that provides exchange function. To avoid
-code duplication, we can use swap function.
+On Thu, May 23, 2024 at 11:55=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Thu, 23 May 2024 at 06:04, Yafang Shao <laoar.shao@gmail.com> wrote:
+> >
+> > If it's not urgent and no one else will handle it, I'll take care of
+> > it. However, I might not be able to complete it quickly.
+>
+> It's not urgent. In fact, I'm not convinced we need to even increase
+> the current comm[] size, since for normal user programs the main way
+> 'ps' and friends get it is by just reading the full command line etc.
+>
+> But I think it would be good to at least do the cleanup and walk away
+> from the bare hardcoded memcpy() so that we can move in that
+> direction.
 
-/drivers/md/dm-vdo/indexer/index.c:207:43-44: WARNING opportunity for swap().
+Certainly, let's start with the cleanup.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9173
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/md/dm-vdo/indexer/index.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Actually, there are already helpers for this: get_task_comm() and
+__get_task_comm(). We can simply replace the memcpy() with one of
+these. If the task_lock() in __get_task_comm() is a concern, we could
+consider adding a new __get_current_comm().
 
-diff --git a/drivers/md/dm-vdo/indexer/index.c b/drivers/md/dm-vdo/indexer/index.c
-index 1ba767144426..df4934846244 100644
---- a/drivers/md/dm-vdo/indexer/index.c
-+++ b/drivers/md/dm-vdo/indexer/index.c
-@@ -197,15 +197,12 @@ static int finish_previous_chapter(struct uds_index *index, u64 current_chapter_
- static int swap_open_chapter(struct index_zone *zone)
- {
- 	int result;
--	struct open_chapter_zone *temporary_chapter;
- 
- 	result = finish_previous_chapter(zone->index, zone->newest_virtual_chapter);
- 	if (result != UDS_SUCCESS)
- 		return result;
- 
--	temporary_chapter = zone->open_chapter;
--	zone->open_chapter = zone->writing_chapter;
--	zone->writing_chapter = temporary_chapter;
-+	swap(zone->open_chapter, zone->writing_chapter);
- 	return UDS_SUCCESS;
- }
- 
--- 
-2.20.1.7.g153144c
+It's important to note that people may continue to directly access
+task->comm in new code, even if we've added a comment to avoid that:
 
+    struct task_struct {
+        ...
+        /*
+         * executable name, excluding path.
+         *
+         * - normally initialized setup_new_exec()
+         * - access it with [gs]et_task_comm()
+         * - lock it with task_lock()
+         */
+        char                            comm[TASK_COMM_LEN];
+        ...
+    }
+
+We might add a rule in checkpatch.pl to warn against this, but that=E2=80=
+=99s
+not an ideal solution.
+
+--=20
+Regards
+Yafang
 
