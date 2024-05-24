@@ -1,131 +1,156 @@
-Return-Path: <linux-kernel+bounces-188883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4418CE827
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:37:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517038CE828
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CEF31C225CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DE81F21A04
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260EC1304B7;
-	Fri, 24 May 2024 15:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2381D12EBE2;
+	Fri, 24 May 2024 15:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPzh8gYs"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="OpuW54cR"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86F31EA80;
-	Fri, 24 May 2024 15:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CE412EBD7;
+	Fri, 24 May 2024 15:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716564826; cv=none; b=Nhbg4/9EkE68Ix81dr+x0h1RapsO4ozmWUxSYbq6VCqhj0owywA4Ut2QL7mfG2siAVX0FVPcLzxN0uDvry31QngnDoz3+b6TEmoEF4r6jyWMh9/UykoPVWkTOb2vvyZ0c5Wi5uWk67r9dp/+cCzKFOcHv3yYdFyurVpwPaFIxuM=
+	t=1716564896; cv=none; b=FhuVB9lWsunn0aNgmu/5MauL/5G6rhe6npDJW0+9iHorkI+HIa5TT91GkfB1IorMmn8xQoP22fbVItRI4Cggl7Itlg4eusbwmyCDxyNaxOjYWX0ck87aLunO5bSiMiboXfl2I6TKuBAtq1jeW5qQZXCFtjPwVU4ZYI3imzkNQZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716564826; c=relaxed/simple;
-	bh=7I+MlrFIcsAFr6aFArGk9/6RkVyXb9ZMH8J1XJK4E5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nn9gFszrrYRZ/O+0ulYK020yEWkXBvGosWdBHwZCZO650wDh9TsxQAJed0+Qy0Dskvi1mO+AghBBq+vviUFwnxbtuH+2JtS7liHk982Nhn0bbXTkyH8pXO1qgn10S3PL0+wjedr0LgWylANdwJXjXNaqQ0R6u003NLgF3NiUHDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPzh8gYs; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51fcb7dc722so3116185e87.1;
-        Fri, 24 May 2024 08:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716564823; x=1717169623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ptPH/gKMj44mK+DBZPwcDgch/F6jOYOlhSFCQQooJI=;
-        b=WPzh8gYsnBy5ouBlo23jem7S8OBcC8h/JTC/WCYwVkEXQhp7opsDCFmjHXXrYmrN0w
-         ClTJL0X7838GY6TZLjdwUY2fKlU7sBWJh4r1VmSftEi8Kf/hC2Y2rLfed8wROoZXTRa4
-         Ax2amyQBSGjm7BvDpqItT78OBOEEYaATxi+llC1Py4DCRnFFEs0du8XmL29+saqBA/mB
-         fDBwizbnUGJwgqF2MXYBV/W159tAAIXWDi3g8hkeLDhST2LSsd+9j8eTJq7d9XHDKR9A
-         ZL3JaxiVOGCLUa/9batPitQa1STEE5vPGM16wDFjz9jEvJnPpMiB1tpbzLkJHBZl1dUu
-         I9ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716564823; x=1717169623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9ptPH/gKMj44mK+DBZPwcDgch/F6jOYOlhSFCQQooJI=;
-        b=dE/oVJi6PAsV1KlbCCChNRoP/PrR8S9tyibPxYda0KuZaUe21VsBZfb74YVj53KdNo
-         5WhA52KvW0e2I4R+bHnwZC20DbydG+eVy9sLI8oOLgNUmAOSdnrwRS3itMGR6sjL/Pwe
-         4EAtTOdKk2IAh9xvrdBxc0+c1a9lBeJIZLaeb8USC+rDDVKNRBB7pFW4YVkOrKsJXAfR
-         m1JQtuQA1GOYQ8pgaxRTq87FAHfvYW03HKGfDtauYV4tis7zdOMgjJ3Wq2iNGuQ3kC9F
-         b+z7FPwNowiffkPusRRrWIWGUJObO05BMcYo3pvE+w570orXW2nfG/gWOZEZbfEaGEk2
-         YRfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcSqczi/cPlwGV/U2lQ2Ne+m1h5id2xNtZsUjH4Gsi/yEs97hFb0gEot8jGlXFXAKKVhzgdyhY4KppE/msQpWEE++U1Rkaybl7KDyTyYRrM4QN7LpRwCY94qjY0gu3RMaBVBVDHHDhmSaq3ddatVKOEOlLsjbGBPn4uoi1BIrJd8IR5cjuhAQ=
-X-Gm-Message-State: AOJu0YzUt09m0eqDTZfOb+G98a6eGjLHcLLLVjDD3/V3FdtfWS7YfTu/
-	pnT7leuPUEqMZDCKRLqxKYblQAXmPGm7H7oBiSnvg2twVvRR7IIjqNyxpICH5lOT1AIim3yWlEE
-	TQ0YcEwgDci1lAz+B+GVi/AoPaew=
-X-Google-Smtp-Source: AGHT+IGO93Mz5Yrq+Ung6+leuBDTr4dzk2/EKk5O5ykcgv0u3qZGH81F4jSxktWUki8wPKCwF3dvIKKj5fHssSz6q3E=
-X-Received: by 2002:a05:6512:3e1f:b0:529:a161:4781 with SMTP id
- 2adb3069b0e04-529a16149a0mr734837e87.7.1716564823004; Fri, 24 May 2024
- 08:33:43 -0700 (PDT)
+	s=arc-20240116; t=1716564896; c=relaxed/simple;
+	bh=YIHADUrzMeqDU2GX2RwQe7hbZm7SQ084SaTkE+z+/Rg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g6DGx6hxFsQkqBmuYjcgjvlSfIJhQoMHsoxU4hIEd47zbotdLYBM+4WBz9Jv9hxNCRTeVyEm/MC8CK4nkG6J/Dut7ehTjPA6Q48ixdRFC4QDh55qtvh40npPF3562jOuZPtsNMMFLgKSmMcYIl8FA0gqpzMqjoledOJQlKg7XT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=OpuW54cR; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1716564886;
+	bh=YIHADUrzMeqDU2GX2RwQe7hbZm7SQ084SaTkE+z+/Rg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OpuW54cRF0EDUvqWAD82RynvJZvRgCkM6tPI2OSk0XYy4SxCyCU6PBDMb4v4O8xA/
+	 d2hyTpY1pgJl+7nY2Svaix6zOj17b3ZRTDlNCrVqIWQjLZqA0MeWV8HuV3bmFZzgEk
+	 Fxj89UHxyfsk8aHqW2e3SL6K23dzwz/SxcoTa2xlETbulOnj41XZCp/CXruzpVObyh
+	 k5Mdx7AzCcG7eKrWLUoQ/ZdiTP7Jy/ZP4v/TU2dzGHf1XU9cLXV2e8WJVF6K6sO18X
+	 LGwLBxXYarIzxfD56bKvbOcw88CLPAIGZnFHzGk4EJ+thEJ42R26HKVPg6cl22Z4Ff
+	 CV9HfLbWAGlcQ==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vm8HB0VZNz1174;
+	Fri, 24 May 2024 11:34:46 -0400 (EDT)
+Message-ID: <944d79b5-177d-43ea-a130-25bd62fc787f@efficios.com>
+Date: Fri, 24 May 2024 11:35:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <316306.1716306586@warthog.procyon.org.uk> <20240522-weltmeere-rammt-70f03e24b8b4@brauner>
-In-Reply-To: <20240522-weltmeere-rammt-70f03e24b8b4@brauner>
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 24 May 2024 10:33:31 -0500
-Message-ID: <CAH2r5mv0x=PT-nfWbybkC5HiKHKN+-KS+Quk81_MEpnY4dpsVQ@mail.gmail.com>
-Subject: Re: [PATCH] netfs: Fix setting of BDP_ASYNC from iocb flags
-To: Christian Brauner <brauner@kernel.org>
-Cc: Steve French <stfrench@microsoft.com>, David Howells <dhowells@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, Enzo Matsumiya <ematsumiya@suse.de>, Jens Axboe <axboe@kernel.dk>, 
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Use of zero-length arrays in bcachefs structures inner fields
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Brian Foster <bfoster@redhat.com>, Kees Cook <keescook@chromium.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>, linux-bcachefs@vger.kernel.org,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ llvm@lists.linux.dev
+References: <986294ee-8bb1-4bf4-9f23-2bc25dbad561@efficios.com>
+ <vu7w6if47tv3kwnbbbsdchu3wpsbkqlvlkvewtvjx5hkq57fya@rgl6bp33eizt>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <vu7w6if47tv3kwnbbbsdchu3wpsbkqlvlkvewtvjx5hkq57fya@rgl6bp33eizt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-You can add my Tested-by if you would like
+[ Adding clang/llvm and KMSAN maintainers/reviewers in CC. ]
 
-On Wed, May 22, 2024 at 2:14=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, 21 May 2024 16:49:46 +0100, David Howells wrote:
-> > Fix netfs_perform_write() to set BDP_ASYNC if IOCB_NOWAIT is set rather
-> > than if IOCB_SYNC is not set.  It reflects asynchronicity in the sense =
-of
-> > not waiting rather than synchronicity in the sense of not returning unt=
-il
-> > the op is complete.
-> >
-> > Without this, generic/590 fails on cifs in strict caching mode with a
-> > complaint that one of the writes fails with EAGAIN.  The test can be
-> > distilled down to:
-> >
-> > [...]
->
-> Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-> Patches in the vfs.fixes branch should appear in linux-next soon.
->
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
->
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
->
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.fixes
->
-> [1/1] netfs: Fix setting of BDP_ASYNC from iocb flags
->       https://git.kernel.org/vfs/vfs/c/33c9d7477ef1
->
+On 2024-05-24 11:28, Kent Overstreet wrote:
+> On Thu, May 23, 2024 at 01:53:42PM -0400, Mathieu Desnoyers wrote:
+>> Hi Kent,
+>>
+>> Looking around in the bcachefs code for possible causes of this KMSAN
+>> bug report:
+>>
+>> https://lore.kernel.org/lkml/000000000000fd5e7006191f78dc@google.com/
+>>
+>> I notice the following pattern in the bcachefs structures: zero-length
+>> arrays members are inserted in structures (not always at the end),
+>> seemingly to achieve a result similar to what could be done with a
+>> union:
+>>
+>> fs/bcachefs/bcachefs_format.h:
+>>
+>> struct bkey_packed {
+>>          __u64           _data[0];
+>>
+>>          /* Size of combined key and value, in u64s */
+>>          __u8            u64s;
+>> [...]
+>> };
+>>
+>> likewise:
+>>
+>> struct bkey_i {
+>>          __u64                   _data[0];
+>>
+>>          struct bkey     k;
+>>          struct bch_val  v;
+>> };
+>>
+>> (and there are many more examples of this pattern in bcachefs)
+>>
+>> AFAIK, the C11 standard states that array declarator constant expression
+>>
+>> Effectively, we can verify that this code triggers an undefined behavior
+>> with:
+>>
+>> #include <stdio.h>
+>>
+>> struct z {
+>>          int x[0];
+>>          int y;
+>>          int z;
+>> } __attribute__((packed));
+>>
+>> int main(void)
+>> {
+>>          struct z a;
+>>
+>>          a.y = 1;
+>>          printf("%d\n", a.x[0]);
+>> }
+>> delimited by [ ] shall have a value greater than zero.
+> 
+> Yet another example of the C people going absolutely nutty with
+> everything being undefined. Look, this isn't ok, we need to get work
+> done, and I've already wasted entirely too much time on ZLA vs. flex
+> array member nonsense.
+> 
+> There's a bunch of legit uses for zero length arrays, and your example,
+> where we're not even _assigning_ to x, is just batshit. Someone needs to
+> get his head examined.
+> 
+>> So I wonder if the issue reported by KMSAN could be caused by this
+>> pattern ?
+> 
+> Possibly; the KMSAN errors I've been looking at do look suspicious. But
+> it sounds like we need a real fix that involves defining proper
+> semantics, not compiler folks giving up and saying 'aiee!'.
+> 
+> IOW, clang/KMSAN are broken if they simply choke on a zero length array
+> being present.
 
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
---=20
-Thanks,
-
-Steve
 
