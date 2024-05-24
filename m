@@ -1,99 +1,176 @@
-Return-Path: <linux-kernel+bounces-189056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D5D8CEA64
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:37:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A628CEA6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC472838A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BFA528497B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE026D1A0;
-	Fri, 24 May 2024 19:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28416F069;
+	Fri, 24 May 2024 19:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3WD9/WcC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qU+VxrMO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpNqhp7m"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244DC171A1
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 19:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518295BACF;
+	Fri, 24 May 2024 19:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716579393; cv=none; b=P4QYph8Oo4qpcJxMWLrx8hECX63XV9IFrnhD3/wiEmdCQSwSvZaZZfcaB8u6nHvmPF6OXBlmxr8yv0XXYRp2ux/sq51L0wlkrEfNghSAxLSxoKmXuivCq9NFhOaeCPgJ4B/zyLbOiot2N0NQpCcuXx0vfWXxhYekAuHsEqPm5xM=
+	t=1716579584; cv=none; b=NSOIbWvR6+nlI3dFNuq/5WIYXkuvha0OM977FCu1de5iDaYemIv54iW97l0DXtnDaCz2AmhbUJOsr4PVcB8JBaQm1fVhK7diZ8aDAhjmazxla+oWNmi1vGqGeGFSjQxW4wCYgwoQUmixIJgjScktEFLwe2I9f/o6CNrz58Lfrbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716579393; c=relaxed/simple;
-	bh=hNm24N+303+Eh3MG7JmHts0ImqtsVr4f5oZlFElgeCU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=O+XAKx2/H1IAYto/0cjntmYdh2m4YzyZVq4KNQqN/yqEKgBvUnOPIbBt1lI6KNYmgLk9FF1Bgdr9lu/3YybAP0zNDr9H8tD0HUns4Qe/WYHMgJSh6V9cjmCr4VUhnduf8slPkRd7zZtQOC6Iau2IxeT2t2W+1VB0kn55dBb/KAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3WD9/WcC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qU+VxrMO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1716579390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iyBt2ECzfVmFCZHLo5ZC95DN7e5Ms+svFwknAIN23AQ=;
-	b=3WD9/WcC2NxMMIC4HZU1cBqAMMWsNLq1yOqBP888RkF3HxgY/j3QNoZM7ziMvg4bJ5JIbo
-	/iZNFONV+nHh/8Hc55z9oOv+bqtJCDDkazvqULpQlN//8yXwV17ZUfNAGK0Q8ooklA3HTI
-	YBQ9GL8sQN76jJThK+hzui0WmnmTwLIQscgpeYofbZYRl6zVHjkey78ekK/0NNu5R0JpBl
-	jIhG/xpopaoQU0iu0G0sO5sVwO07HRqW4A8GA3dEkZIPRDgqUNRrki31o/9OHV8jbOJXsf
-	I63DGyHGAiq7EV2PKwQU6u4M5SxNpAQ5UsqTAwVP32/VTGN+O5E1Dhnd55Tp/w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1716579390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iyBt2ECzfVmFCZHLo5ZC95DN7e5Ms+svFwknAIN23AQ=;
-	b=qU+VxrMOzqTSj/kFZ90TGVWqWp4Dia3K5914XJoI7iPg7S5xAo6c7RH8CM2kx9BKYgCkwn
-	9H0wFxPovVYtPqCg==
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: linux@roeck-us.net, Conor Dooley <conor@kernel.org>,
- naresh.kamboju@linaro.org, linux-kernel@vger.kernel.org,
- lkft-triage@lists.linaro.org, regressions@lists.linux.dev,
- linux-riscv@lists.infradead.org, apatel@ventanamicro.com,
- anders.roxell@linaro.org, dan.carpenter@linaro.org, Arnd Bergmann
- <arnd@arndb.de>
-Subject: Re: riscv: irq-riscv-imsic-early.c:52:9: error: too many arguments
- to function 'riscv_ipi_set_virq_range'
-In-Reply-To: <mhng-44d7a1c7-c15a-4077-ac94-23985f686474@palmer-ri-x1c9>
-References: <mhng-44d7a1c7-c15a-4077-ac94-23985f686474@palmer-ri-x1c9>
-Date: Fri, 24 May 2024 21:36:29 +0200
-Message-ID: <87y17zc88y.ffs@tglx>
+	s=arc-20240116; t=1716579584; c=relaxed/simple;
+	bh=AO6flEiY5GN86OBnbWq/A3cQxhOqbBj/HG/J6IbbzR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=edXwNp2Y2tiQjlN+JncbXnfGuSfby9R5EdAtJ2Zzkfb3zbtSdIhty2sCRmLYZlv/g6K1m9qGMQRrOTFmYY5jZRE3ik8Jpkwbx3RPCBGI32heE0bRTPreZleuEwVWrkMkJb6Z7ir79ghEePtKvtQHuJoAPrxHfwDjel1iyw85URA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpNqhp7m; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e719bab882so79656891fa.3;
+        Fri, 24 May 2024 12:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716579581; x=1717184381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vvA1TEXJy8UZ30B8rAec5iNH0YYUOMkxldrbK8cu0os=;
+        b=fpNqhp7mEyZmRsonidx1iLVfgQMsxODqXHqFQjtcwik/bVS71vfMR6ppE/l89inEPu
+         SRX7D0j7QtYGPIn5aLjlthMNKz+AKLjt0bwuibRD6btcgml0ddsaQoKK4fKhTwRBU1Oc
+         c28aOzgg0VBS6zhMBWX40hAj6AQrsNCzKcu2PZjCuRJ8l2R8Qo8zTqHYX4QiilDF1C/V
+         U/Q9qmQCYjREc11Vc+fIbh7P6FzSM01OdVL6G+BsiUr2h+S/lGD71KrE5Sv4vIIAo0gx
+         q2y9mxwQohBdoLWrO13NyA7UeVq+Afdn2fsfE4cMA/aFiT4hz6DYmcF6dVgFG/uBStP6
+         PN1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716579581; x=1717184381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vvA1TEXJy8UZ30B8rAec5iNH0YYUOMkxldrbK8cu0os=;
+        b=Fae0I5QoxJoANM9sPV8YVhZUoDgTdziSR2QdvEWorII8T7MMgNrY3dNCTOdnzf7/OD
+         1knUTRM3ty8S7P0HsRC6My9aregaTJOgbHMKsjPs3wa3dmUoorwrtx0hv0BHG0tVeVWq
+         A52QLJvlKPyJ2FCT1RCrIG19Eblxb7BmvggUTofUa+hTAdmg619f0h2xS0triu9L7EyF
+         qzJ9Xk6MCBcR0RU3bW6uM+jvXx6K52owbpzutC3IL63jraGOxwOVsSbujd3o+4aBgATJ
+         BNxzPxgjsmLZ88rDGOf87f88ZjX1Udw6+NtSZkVCvsYB34CWxSZJDRJ+JNN0RrCrWVee
+         lU5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTeRBbECuQWhmUpCoKyAx0pj2rPch445fKkoqXy73PL6j0FnlTloM2Y5n+oCIn36kcq88FkPw/nJ4xjgwQk9T/Ef6u8xgh4PpWfZDOWOJ3XgJkH1VzSatgSTc7FityEaUO3UeEr0gvcUT0EaSI0V1I6SHyUqMzpM5AR1KT9FUuTREb8Olv0QmXhvmFb45l
+X-Gm-Message-State: AOJu0YxiD5V+6eo1e38VrQ6Y7FnwqvwKiDeGdMlDwUrvKHMyXiJOtau/
+	GKc3HjdcXoO1sjLypMvdqQwWQF/+HqZqlniYSHCONzMQq0iKwMsSK/6JMsRdtpE474RMyBu2EhR
+	yCmuhWMvFh1F3eaiHOpWzO+0Q9kqwvQ==
+X-Google-Smtp-Source: AGHT+IH/Fts2MZ9JzhPQTFc1u/R6qIz3bkV8n8VX15J9OkSYxcuMJAlWmONNhgDMZkSm5Y85aUEXz0rqzNRZEaB/Riw=
+X-Received: by 2002:a2e:b74c:0:b0:2de:8685:d07b with SMTP id
+ 38308e7fff4ca-2e95b2cf26bmr17130481fa.46.1716579581149; Fri, 24 May 2024
+ 12:39:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <692b4749f4267436363a5a8840140da8cd8858a1.1716190895.git.christophe.jaillet@wanadoo.fr>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 24 May 2024 15:39:28 -0400
+Message-ID: <CABBYNZLeM7MQrBuGE49KN9Xm1EQ-cFK3nR57sg2hWB0jOUFn7A@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btintel_pcie: Fix the error handling path of btintel_pcie_probe()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Tedd Ho-Jeong An <tedd.an@intel.com>, Kiran K <kiran.k@intel.com>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, linux-bluetooth@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24 2024 at 10:35, Palmer Dabbelt wrote:
-> On Fri, 24 May 2024 10:18:42 PDT (-0700), tglx@linutronix.de wrote:
->> On Fri, May 24 2024 at 08:10, Guenter Roeck wrote:
->>> On Wed, May 15, 2024 at 10:05:59AM -0700, Palmer Dabbelt wrote:
->>>> as a conflict resolution, which IIUC should happen when Linus merges my next
->>>> PR.  So I'll try and remember to call that out.
->>>>
->>>
->>> Unfortunately it looks like the conflict resolution did not happen,
->>> and mainline builds are now affected.
->>
->> Fix is queued and goes to Linus tomorrow.
+Hi Christophe,
+
+On Mon, May 20, 2024 at 3:42=E2=80=AFAM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> Sorry I misesd this.  The PR I sent Linus this morning contains my fix 
-> from earlier this week: 
-> https://lore.kernel.org/linux-riscv/171647463438.13050.6219786365640043025.git-patchwork-notify@kernel.org/T/#t 
+> Some resources freed in the remove function are not handled by the error
+> handling path of the probe.
+>
+> Add the needed function calls.
+>
+> Fixes: c2b636b3f788 ("Bluetooth: btintel_pcie: Add support for PCIe trans=
+port")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> Maybe incomplete.
+> ---
+>  drivers/bluetooth/btintel_pcie.c | 20 ++++++++++++++------
+>  1 file changed, 14 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel=
+_pcie.c
+> index 5b6805d87fcf..d572576d0dbc 100644
+> --- a/drivers/bluetooth/btintel_pcie.c
+> +++ b/drivers/bluetooth/btintel_pcie.c
+> @@ -1280,17 +1280,17 @@ static int btintel_pcie_probe(struct pci_dev *pde=
+v,
+>
+>         err =3D btintel_pcie_config_pcie(pdev, data);
+>         if (err)
+> -               goto exit_error;
+> +               goto exit_destroy_worqueue;
+>
+>         pci_set_drvdata(pdev, data);
+>
+>         err =3D btintel_pcie_alloc(data);
+>         if (err)
+> -               goto exit_error;
+> +               goto exit_free_irq_vectors;
+>
+>         err =3D btintel_pcie_enable_bt(data);
+>         if (err)
+> -               goto exit_error;
+> +               goto exit_free_pcie;
+>
+>         /* CNV information (CNVi and CNVr) is in CSR */
+>         data->cnvi =3D btintel_pcie_rd_reg32(data, BTINTEL_PCIE_CSR_HW_RE=
+V_REG);
+> @@ -1299,17 +1299,25 @@ static int btintel_pcie_probe(struct pci_dev *pde=
+v,
+>
+>         err =3D btintel_pcie_start_rx(data);
+>         if (err)
+> -               goto exit_error;
+> +               goto exit_free_pcie;
+>
+>         err =3D btintel_pcie_setup_hdev(data);
+>         if (err)
+> -               goto exit_error;
+> +               goto exit_free_pcie;
+>
+>         bt_dev_dbg(data->hdev, "cnvi: 0x%8.8x cnvr: 0x%8.8x", data->cnvi,
+>                    data->cnvr);
+>         return 0;
+>
+> -exit_error:
+> +exit_free_pcie:
+> +       btintel_pcie_free(data);
+> +
+> +exit_free_irq_vectors:
+> +       pci_free_irq_vectors(pdev);
+> +
+> +exit_destroy_worqueue:
+> +       destroy_workqueue(data->workqueue);
+> +
 
-Happens. I don't rebase my try. I just mention it to Linus when I
-send the pull request. It's the same change so the result is a NOOP and
-not another conflict :)
+This looks a bit messy, perhaps we should really be calling
+btintel_pcie_remove instead and adapt it to check if a field has been
+initialized or not then proceed to free/cleanup/etc.
 
-Thanks,
+>         /* reset device before exit */
+>         btintel_pcie_reset_bt(data);
+>
+> --
+> 2.45.1
+>
 
-        tglx
+
+--=20
+Luiz Augusto von Dentz
 
