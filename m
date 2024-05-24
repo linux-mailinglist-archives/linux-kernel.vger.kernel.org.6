@@ -1,223 +1,119 @@
-Return-Path: <linux-kernel+bounces-188923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410B08CE899
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F958CE89D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 18:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C631C20D8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76EAC1C20BBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 16:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FBF12EBD2;
-	Fri, 24 May 2024 16:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1C212EBD5;
+	Fri, 24 May 2024 16:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="O7OqNbK5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bhwwlCRS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kbwXvE8i";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="85DicWDe"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CCSqmaIG"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5379381BB;
-	Fri, 24 May 2024 16:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B45912E1F9
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 16:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716567760; cv=none; b=ipojXVoVkBCCzgFz1mDeUjT1FY8VpZeZK2BHChRmHGfzMzu0BCBvcgA/ywRLLrqfue+ZpkHKm0DLFHiJJTRbdFO9pnVeD2hs3LeKZfNY02yj+NkET0VlksTObAfeGdOAfMPdmlVV3UoLsIF/bjmSk5LS9OJM82/JLq8Ki49LrSQ=
+	t=1716567973; cv=none; b=ogQmguLqV16aCwH/hroJRjNximCo/D3Wv7cG6j/OI2GOpJGstZt5l83xZCHrA9vuNzNPLik9/cNhi3avyagjqzbcjmqlcsucOMjUW0d+V9txh/l9/PyVErLQ1bzUsIISH6iulaNN9ku7QnGJxoLljelTmniHA0x5YoTzVdnDEiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716567760; c=relaxed/simple;
-	bh=iFZpV7CkR3cwZMbp91sg+RlX+hMKFzAL0gyw81GNBUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e0T3dLM6/5t3YUAbvtRCkAWgWjdCXrkjkO4sqSpkBNZGOs9lwUxNG/6BPuS4H8GbxGmmVKkVLM4D7eY3x8cMNQc0kVHm/uoBgfUHoBLcvNDdCXZ3uPbod4SyKosEcexsfMsGLCjnPWY2sQ1O+3ybfaGR92KWCEt/62jEQ5jauQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=O7OqNbK5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bhwwlCRS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kbwXvE8i; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=85DicWDe; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E3FF720B84;
-	Fri, 24 May 2024 16:22:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716567756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
-	b=O7OqNbK5EP1Cc8HsrsH0LCJXvyCMdg5eyC1ll618XZO13Qvu+4YhapEsIO6XTVraDkZunw
-	M7P94uzBoHcA42oSfxDnNcpfTVgepPUSaogWj950H94MXJ+Xh2yfKptO3NChJC6jqIwU+f
-	2Kaadr47Sz6Mh7LV9PAEnN349th+exs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716567756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
-	b=bhwwlCRSlcV9iltxJeraomTiYEBDlnDbC6ue3GInmvep7ITGMVHKLGXqbndDFA9Y3YmOw5
-	HU/gVf03e5g068Dg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1716567755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
-	b=kbwXvE8iJQ8gjOf/v3bD2Nv33spVQdPFzIc1YDI0cvMDOybBCkPHpFeIAeYZq/aHbFgiS5
-	KT/Y4Wy/OB7XJTwyVx6HK4JeElZOVp0tXqhHFti9amzYl1hONdRS3YSeCxcMPp4Y0j7siD
-	XiyR85dqMwOixju2M3DogX3N9wA0lno=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1716567755;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6LER4DlKj7/Cd1I076cZl4KFbNFaWY4zTJ12iLqvBP8=;
-	b=85DicWDea8JNcYFvJVLrrmlLyWmX93rTmKs5k5JiVh23MjVvvnMfN1JbfkHHJEHtAJq4fB
-	HWdTNFrIEP8Y2LBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7EDD13A6B;
-	Fri, 24 May 2024 16:22:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1gexNMu+UGbCUAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 24 May 2024 16:22:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 32F87A0825; Fri, 24 May 2024 18:22:31 +0200 (CEST)
-Date: Fri, 24 May 2024 18:22:31 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ext4: fix fast commit inode enqueueing during a full
- journal commit
-Message-ID: <20240524162231.l5r4niz7awjgfju6@quack3>
-References: <20240523111618.17012-1-luis.henriques@linux.dev>
+	s=arc-20240116; t=1716567973; c=relaxed/simple;
+	bh=NTY/Z9vtY53/yxL38hWX8wJpC/fbWUZ8djdpBxujX6o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7s97LrpdV5IBkntfLJ7V29f/h4xPkStyzcR1Zfkt++0+0ApSl6Na3exCEW1VP+9XA8E1Glfo+QvKqA6BkMfF8J4KYojy+gHZQ8bn5d31RDsF+3C+gTTYV4hYQNadz5qVcM4/211U36UdohMCFJ5Mc377461bFMfT5+GbPnohKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CCSqmaIG; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7e8e2020002so4640339f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 09:26:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1716567971; x=1717172771; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Kwdb8YgsPUZNPJAKz/pu745pRsXy/bayXVNZ9hxFw1E=;
+        b=CCSqmaIGBzq6iK8J+qL89nRabyhdLb/57c4lxMAkA4tmVolSoqi8QbqKzOWqWhdzFL
+         LB3EXSKvbJv/POLDeA0ZY7CrH1U42bBg2BZ5mSQx+GQQtDoWUfki8mGSIwo5yhlwYgg9
+         Q6r0l2/1BXOscxdWEsgriVnkKZn6babwHirDc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716567971; x=1717172771;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kwdb8YgsPUZNPJAKz/pu745pRsXy/bayXVNZ9hxFw1E=;
+        b=tB2E0XObl7vKfuIUEsz9YSBa4zg+JjJwJxLmBAxVgHvrrgfwEDWnCO7TqwJUFXqLQn
+         ivEM1GQKfIWiZa9jBzD37VI/xB6rEq9LDj8oTYOYrP8HX0OG7vulU1XDftQhx7CTuuX3
+         /sl55YWA72ye/1d46Q+FGXDgqErGgY9hXJem7a7GhFC0vO4BJbSsf1uINVEBfVWVv0oQ
+         sGSU858AKKtC+Oikg0/zjtN52YsoesOaGwXH+BqSfWwzjhJ1YmEpcC/ByrpX77TWOOv/
+         EEC12r5aib6oGAVhg6qBVMkJ+qBpLr7XQpzKJLUZ8f/OwMXixToB9RUAkOjwQTJPJ8s0
+         1UuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyEefwsZk4CJxgyeTsuBNsM6i/DkpiMaw8DN1PAWqJ3g06A62I984ee3V+i0CxvUesJkyje/N9j9KVvJLJxKvcSbWaI6MalFEc2LM5
+X-Gm-Message-State: AOJu0YyLHQIjccYRoMR6MdUAIIJ+Cx10OsGGs7upe1oqTgwgBulGbGOw
+	GWFIBMnppuBQseR2o8NZWfU7yk2KjHt031vTmMiNY27xBGkEalTI1y9FCaV83fo=
+X-Google-Smtp-Source: AGHT+IE89eceySKyxxGYhU1vsQz02+tAJU6zkx7ZB41UqW+BW6pwkqXmIYaexWDDo2VjVpg/htC1sQ==
+X-Received: by 2002:a6b:fb09:0:b0:7de:b4dc:9b8f with SMTP id ca18e2360f4ac-7e8c607ad49mr320125639f.2.1716567971449;
+        Fri, 24 May 2024 09:26:11 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b03e94c6f2sm454828173.44.2024.05.24.09.26.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 May 2024 09:26:11 -0700 (PDT)
+Message-ID: <d27fddbb-bb75-4894-b164-ac9c77bc2061@linuxfoundation.org>
+Date: Fri, 24 May 2024 10:26:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523111618.17012-1-luis.henriques@linux.dev>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.4 00/16] 5.4.277-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240523130325.743454852@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240523130325.743454852@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu 23-05-24 12:16:18, Luis Henriques (SUSE) wrote:
-> When a full journal commit is on-going, any fast commit has to be enqueued
-> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
-> is done only once, i.e. if an inode is already queued in a previous fast
-> commit entry it won't be enqueued again.  However, if a full commit starts
-> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
-> be done into FC_Q_STAGING.  And this is not being done in function
-> ext4_fc_track_template().
+On 5/23/24 07:12, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.277 release.
+> There are 16 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> This patch fixes the issue by flagging an inode that is already enqueued in
-> either queues.  Later, during the fast commit clean-up callback, if the
-> inode has a tid that is bigger than the one being handled, that inode is
-> re-enqueued into STAGING and the spliced back into MAIN.
+> Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
+> Anything received after that time might be too late.
 > 
-> This bug was found using fstest generic/047.  This test creates several 32k
-> bytes files, sync'ing each of them after it's creation, and then shutting
-> down the filesystem.  Some data may be loss in this operation; for example a
-> file may have it's size truncated to zero.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.277-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
 > 
-> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+> thanks,
+> 
+> greg k-h
+> 
 
-Thanks for the fix. Some comments below:
+Compiled and booted on my test system. No dmesg regressions.
 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 983dad8c07ec..4c308c18c3da 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1062,9 +1062,18 @@ struct ext4_inode_info {
->  	/* Fast commit wait queue for this inode */
->  	wait_queue_head_t i_fc_wait;
->  
-> -	/* Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len */
-> +	/*
-> +	 * Protect concurrent accesses on i_fc_lblk_start, i_fc_lblk_len,
-> +	 * i_fc_next
-> +	 */
->  	struct mutex i_fc_lock;
->  
-> +	/*
-> +	 * Used to flag an inode as part of the next fast commit; will be
-> +	 * reset during fast commit clean-up
-> +	 */
-> +	tid_t i_fc_next;
-> +
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Do we really need new tid in the inode? I'd be kind of hoping we could use
-EXT4_I(inode)->i_sync_tid for this - I can see we even already set it in
-ext4_fc_track_template() and used for similar comparisons in fast commit
-code.
+thanks,
+-- Shuah
 
-> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-> index 87c009e0c59a..bfdf249f0783 100644
-> --- a/fs/ext4/fast_commit.c
-> +++ b/fs/ext4/fast_commit.c
-> @@ -402,6 +402,8 @@ static int ext4_fc_track_template(
->  				 sbi->s_journal->j_flags & JBD2_FAST_COMMIT_ONGOING) ?
->  				&sbi->s_fc_q[FC_Q_STAGING] :
->  				&sbi->s_fc_q[FC_Q_MAIN]);
-> +	else
-> +		ei->i_fc_next = tid;
->  	spin_unlock(&sbi->s_fc_lock);
->  
->  	return ret;
-> @@ -1280,6 +1282,15 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
->  	list_for_each_entry_safe(iter, iter_n, &sbi->s_fc_q[FC_Q_MAIN],
->  				 i_fc_list) {
->  		list_del_init(&iter->i_fc_list);
-> +		if (iter->i_fc_next == tid)
-> +			iter->i_fc_next = 0;
-> +		else if (iter->i_fc_next > tid)
-			 ^^^ careful here, TIDs do wrap so you need to use
-tid_geq() for comparison.
 
-> +			/*
-> +			 * re-enqueue inode into STAGING, which will later be
-> +			 * splice back into MAIN
-> +			 */
-> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
-> +				      &sbi->s_fc_q[FC_Q_STAGING]);
->  		ext4_clear_inode_state(&iter->vfs_inode,
->  				       EXT4_STATE_FC_COMMITTING);
->  		if (iter->i_sync_tid <= tid)
-				     ^^^ and I can see this is buggy as
-well and needs tid_geq() (not your fault obviously).
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
