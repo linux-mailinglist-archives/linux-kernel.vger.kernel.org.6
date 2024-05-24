@@ -1,130 +1,190 @@
-Return-Path: <linux-kernel+bounces-188619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0371E8CE469
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:50:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460E38CE479
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868131F21F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C161C20C10
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6558595A;
-	Fri, 24 May 2024 10:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05BF8595A;
+	Fri, 24 May 2024 10:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="vuV92Fr1"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GJiY9CD4"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92203482D8;
-	Fri, 24 May 2024 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C8685948
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716547822; cv=none; b=CHdELZC9hnz6xHL1jjfujTnVG0cu8DPGeJac+0mZffIsAwDSoa9UL6LIOVw6eNlIv+Mm7eZ59mZvLNXm6Nn2dRUFAxeDEdVMPbfyntp+Ij/IYi/nuH07gLLea1dU/0IoC9nF1aHijRIr9a3w7bKri7RAolbCLzZgw0kfy0S3EvE=
+	t=1716548013; cv=none; b=IIeZx2LN2kcbgYW7bRsPs0SNrVeMpQNPRDBzuK4w98F2gYrEKH1u1WALqof2w+2Hf8oiixdonCQbxexsZ4GP5IntSlPS/AQqK2jj9C/QkL0NwPc52nt1veDbrQzJ2qwgbHifetIJPYqwnZuH1V+89lEfhEAtAlQmO+BiycIg0Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716547822; c=relaxed/simple;
-	bh=W5iK/L69w1vS5jHqSzlK6AF7Pl8WAdVP/lDrntYBJek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DtT3Lr9evlIfQ44G2ELYPdUB92EChOSksOKpSeNGEMiD7Gl7hwwCpHLB7trDbusj5nOOWxhbPK/ueKbZVeMjbIOiMWq89N0rFQ9GFZ0SkZqBXhonUeZdxvpnicZulh8jNLD2EMXwYTuKDnEdyVldfcwExdi2dCX1CHSgYHOUrLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=vuV92Fr1; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=Xi0VV02aPT82jOki/4MXoZyGpobBnrrrOZsLV1eML+U=;
-	t=1716547818; x=1716979818; b=vuV92Fr1MFPiVmDIIDyp5+OsC1e5TCZP0ceCOqr9r0v/8/3
-	qahymqwOQddmwPc3nAxxSyo+zjPDYIeb9VcNU7I4Q+NywT4jIGcSVlvLdVkg5/mZ1JDZ76AiiyPoO
-	5jGd8iDmJ9QMVlIQMljtQWIidVClNaY8TG6AvX+HiqEA+WdFc6/jZcmwMknCjBUh3GmCSln1JGdUW
-	+l/2VcJ2JtzzLFTZJ5NZBIUzwjF+XmmHkaSynZ9Apq6Di4nGqIt6O0uhAvYxHLlCIfP44kPTF9ZIk
-	kPrYr3D3FFdAj48Zwp7Y9e3/Rzi0Y/muITCWS7ttzQs6x86IELiWjgbR87jbS2gw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sASUy-0000GP-TV; Fri, 24 May 2024 12:50:08 +0200
-Message-ID: <5b79732b-087c-411f-a477-9b837566673e@leemhuis.info>
-Date: Fri, 24 May 2024 12:50:08 +0200
+	s=arc-20240116; t=1716548013; c=relaxed/simple;
+	bh=8KfPxj52yS3hgd4q7Xf38W0d1NbXsaSF6pe+b8xCFaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXUp3GSPSDqDP9IULXJNY5odcsevcJntGpWmiAlAQPyzOYF3hS9eT2BKblrlbzUcQ1k40h6WPQ6Q4MgEbStE5vIB4MX9dUDnZcbLhcL/QN3iXb4P7MU3ADa/4DtWi7Jrzbll/GTc21d3/WL3OOFOgO+oS9fnQc7XvllCiFS4liU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GJiY9CD4; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44OApM54026188;
+	Fri, 24 May 2024 10:52:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=HOnrwaNy9ykjvlqstNgtIESB5QlN4FiK4G2SSvvccsw=;
+ b=GJiY9CD4lX8MRRzkAuw9Pi5E/gP3XWhIWcDlJibkehg0LHv8HFMpNTtg5cl50v9GO9eD
+ xcCRPADcF7mGeGXpNTSE91f9udsDXzRwAdpJinLK5BA7hSQe9eOzN8jE093Q9psVBWw3
+ o+CAxl3tUI7widPemvUBagBkriDrBDWcipKO3GfZ0D+eLBwnMJUfkNhBfJVCvdpdVT3X
+ WOdZRkTue9hesUMKUvzhyiQGkTi0eimz31WqYgbrXmf3KYZtIB0Xq69gaaAPMRAjPSjg
+ Biai/SG4R81y9XZtTkd31RZICIXOtxWPeXeZZ9DBsToDs8iKjFxr5+PUExM83h9jMwEP Qg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yascp00hk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 10:52:53 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44OAqrAA028394;
+	Fri, 24 May 2024 10:52:53 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yascp00he-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 10:52:52 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44O9R6Ms026478;
+	Fri, 24 May 2024 10:52:52 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y785n01ct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 10:52:52 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44OAqm6o15466964
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 24 May 2024 10:52:50 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E8A220043;
+	Fri, 24 May 2024 10:52:48 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3678320040;
+	Fri, 24 May 2024 10:52:42 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.171.63.30])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 24 May 2024 10:52:41 +0000 (GMT)
+Date: Fri, 24 May 2024 16:22:39 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Cheng Yu <serein.chengyu@huawei.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com,
+        changhuaixin@linux.alibaba.com, shanpeic@linux.alibaba.com,
+        dtcccc@linux.alibaba.com, tj@kernel.org, linux-kernel@vger.kernel.org,
+        zhangqiao22@huawei.com, judy.chenhui@huawei.com, yusongping@huawei.com,
+        zhaowenhui8@huawei.com, liaoqixin@huawei.com
+Subject: Re: [PATCH 0/2] cgroup cpu: set burst to zero when cfs bandwidth is
+Message-ID: <ZlBxUB-bQ2lvxumP@linux.ibm.com>
+References: <20240522031007.643498-1-serein.chengyu@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Bug in Kernel 6.8.x, 6.9.x Causing Trace/Panic During
- Shutdown/Reboot
-To: =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?= <digirigawa@gmail.com>,
- stable@vger.kernel.org
-Cc: regressions@lists.linux.dev, Steven Rostedt <rostedt@goodmis.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <CAE4VaREzY+a2PvQJYJbfh8DwB4OP7kucZG-e28H22xyWob1w_A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716547818;62e16c8f;
-X-HE-SMSGID: 1sASUy-0000GP-TV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240522031007.643498-1-serein.chengyu@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: M2KJPMt5AhSPf8Lvm33VXD7qv5WCBzBN
+X-Proofpoint-ORIG-GUID: MLbC9L6l5KqK3A7dZ4CV6QKvMKBfkSdq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_04,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 spamscore=0 adultscore=0 mlxscore=0 suspectscore=0
+ bulkscore=0 clxscore=1011 mlxlogscore=721 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2405240076
 
-[CCing a few people]
+On Wed, May 22, 2024 at 11:10:05AM +0800, Cheng Yu wrote:
+> In the cgroup cpu subsystem, when we remove the restriction on cfs
+> bandwidth, the burst feature is also turned off. At that time, we expect
+> that the value of burst is zero.
+> 
+> Patch 1 fixes it in cgroup v1 by Zhao Wenhui and patch 2 fixes it in
+> cgroup v2.
+> 
+> Cheng Yu (1):
+>   sched/fair: set burst to zero when set max to cpu.max
+> 
+> Zhao Wenhui (1):
+>   sched/fair: limit burst to zero when cfs bandwidth is turned off
+> 
 
-On 24.05.24 12:31, Ilkka Naulapää wrote:
-> 
-> I have encountered a critical bug in the Linux vanilla kernel that
-> leads to a kernel panic during the shutdown or reboot process. The
-> issue arises after all services, including `journald`, have been
-> stopped. As a result, the machine fails to complete the shutdown or
-> reboot procedure, effectively causing the system to hang and not shut
-> down or reboot.
+## Before patch
+# uname -r
+6.9.0-12124-g6d69b6c12fce-dirty
+# mkdir test
+# cd test/
+# cat cpu.max cpu.max.burst
+max 100000
+0
+# echo 10000000 > cpu.max.burst
+# echo 1000000000000 > cpu.max.burst
+# cat cpu.max cpu.max.burst
+max 100000
+1000000000000
+# echo "1000 100000" > cpu.max
+-bash: echo: write error: Invalid argument
+# echo 1000 > cpu.max.burst
+# echo "1000 100000" > cpu.max
+# cat cpu.max cpu.max.burst
+1000 100000
+1000
 
-Thx for the report. Not my area of expertise, so take this with a gain
-of salt. But given the versions your mention in your report and the
-screenshot that mentioned tracefs_free_inode I suspect this is caused by
-baa23a8d4360d ("tracefs: Reset permissions on remount if permissions are
-options"). A few fixes for it will soon hit mainline and are meant to be
-backported to affected stable trees:
+## After patch
 
-https://lore.kernel.org/all/20240523212406.254317554@goodmis.org/
-https://lore.kernel.org/all/20240523174419.1e5885a5@gandalf.local.home/
+# uname -r
+6.9.0-12126-g7eb1a247b675-dirty
+# mkdir test
+# cd test/
+# cat cpu.max cpu.max.burst
+max 100000
+0
+# echo 1134535435 > cpu.max.burst
+-bash: echo: write error: Invalid argument
+# echo 1 > cpu.max.burst
+-bash: echo: write error: Invalid argument
+# echo -1 > cpu.max.burst
+-bash: echo: write error: Invalid argument
+# echo "10000 100000" > cpu.max
+# echo 1000 > cpu.max.burst
+# cat cpu.max cpu.max.burst
+10000 100000
+1000
+# echo "max 100000" > cpu.max
+# cat cpu.max cpu.max.burst
+max 100000
+0
 
-You might want to try them – or recheck once they hit the stable trees
-you are about. If they don't work, please report back.
+# git log --oneline
+7eb1a247b6753 (HEAD) sched/fair: set burst to zero when set max to cpu.max
+421647086da9e sched/fair: limit burst to zero when cfs bandwidth is turned off
+6d69b6c12fce4 (origin/master, origin/HEAD, master) Merge tag 'nfs-for-6.10-1' o
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+Now, the burst value can only be set after setting 
+the quota. This change also prevents setting excessively
+large burst values.
 
-> Here are the details of the issue:
+Thank you the fix.
+
+Tested-by: Vishal Chourasia <vishalc@linux.ibm.com>
+
+>  kernel/sched/core.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
 > 
-> - Affected Versions: Before kernel version 6.8.10, the bug caused a
-> quick display of a kernel trace dump before the shutdown/reboot
-> completed. Starting from version 6.8.10 and continuing into version
-> 6.9.0 and 6.9.1, this issue has escalated to a kernel panic,
-> preventing the shutdown or reboot from completing and leaving the
-> machine stuck.
+> -- 
+> 2.25.1
 > 
-> - Symptoms:
->   - In normal shutdown/reboot scenarios, the kernel trace dump briefly
-> appears as the last message on the screen.
->   - In rescue mode, the kernel panic message is displayed. Normally it
-> is not shown.
-> 
-> Since `journald` is stopped before this issue occurs, no textual logs
-> are available. However, I have captured two pictures illustrating
-> these related issues, which I am attaching to this email for your
-> reference. Also added my custom kernel config.
-> 
-> Thank you for your attention to this matter. Please let me know if any
-> additional information is required to assist in diagnosing and
-> resolving this bug.
-> 
-> Best regards,
-> 
-> Ilkka Naulapää
 
