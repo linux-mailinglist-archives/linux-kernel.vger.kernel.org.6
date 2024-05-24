@@ -1,57 +1,86 @@
-Return-Path: <linux-kernel+bounces-188901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA1B8CE851
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:55:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0A48CE84F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 17:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85361F22C88
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3480B281647
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 15:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8288812EBD2;
-	Fri, 24 May 2024 15:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD8B12E1DE;
+	Fri, 24 May 2024 15:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DmVUYB3H"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSo9KmLY"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B1F12CD81;
-	Fri, 24 May 2024 15:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A01B126F04;
+	Fri, 24 May 2024 15:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716566130; cv=none; b=GSW9WVK2ShJpknGwiUE63N72hPv6TFzxQFGI2z6Ww9Sn+6+OvTvGV8z2JXz5ceqVvP+5gV0JsOenD8ILxOtIfD8YgdHMmQ1OSgxcmpsvj47AGgWl2GMNv8g3yxip7kTmAVl07wPui131rvDfZ2RS0aYMAHQA8jmImH66mXHczlo=
+	t=1716566129; cv=none; b=tqSsbXmpht9oEZOW5MVkygQTdleh+03rhj+b9xvQP1uv/c81G/AFMgA3J9kFrBn0HWLYeJe202JUzsDRWNZ8q1P1dQ8PuWWfzfUuC7dB5TMtode+gYTm3uTg8CanUSvcfxTg7DU4cagwLQih1rSOvAyN4TWvb0ehPny65fkw9iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716566130; c=relaxed/simple;
-	bh=zbyfZX6Yga2Bf8bLCvb+bQFlpjWOy0MIq9OjBAmJOiE=;
+	s=arc-20240116; t=1716566129; c=relaxed/simple;
+	bh=xS5Cb4oU68zPCtUxfTuRzeBZiDu8VHCvZRRao9Wn4OM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jR0HKR7BxNLYLMtX149MVduH0XZKVEjC5yhdBVAvck9JIjvQyAntv9jH0+s4KLfu6/sx5CuD1wVLwIyuLFTj35oNxKMCX4bXLPHyi76EsJBm4XMV0iM3ewgVq94GMgTkrLI10iy4ttXr+O5QRqW4AAky0+u152/1mZkCTHTm3/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DmVUYB3H; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=b0cNZSS7qsIL3jfLsIaauMYSwAyrlh2OnI7WJcM1lcs=; b=DmVUYB3HfEMWzTXJ4t9hv//EPh
-	YL1lLJZtGKm0xmM/7/bRtHTVS+pJP5ndOYairHHtl2VJpLQnLb2kkl4Ztn4+6Hv8hVx3DqtS7JpCD
-	neEgX4ADUmSOB8OgDt1FW/aALz7ffhWul/iZK1XknLbNvKeNEsAUPZLnuFxKgeN97Z64=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sAXGF-00FxoV-Cv; Fri, 24 May 2024 17:55:15 +0200
-Date: Fri, 24 May 2024 17:55:15 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	sumang@marvell.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] net: micrel: Fix lan8841_config_intr after
- getting out of sleep mode
-Message-ID: <ed816a87-f4f2-4eff-b4c1-1175251d9eb1@lunn.ch>
-References: <20240524085350.359812-1-horatiu.vultur@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wr4+hd0T0nA+ugHRHlfo0j2pJBMAD6xsG3xBF27yumDy8IbaqUv/K2VKuSdUtymEnJiW1A9cPP2/gVCS/T/2ZVa1nV1wkM3lgGVMwhf/AfxN1BgIbCnhmJ1xQpuGzZJwtvypnQBWzZPj8CEL9Dad41bznR0iWl0mh/MeSLt1BSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iSo9KmLY; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-35507de9853so587079f8f.0;
+        Fri, 24 May 2024 08:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716566126; x=1717170926; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=//KD1Ad6RRaTW94yeORLrlBuaIevXtri2sWaywu2r1w=;
+        b=iSo9KmLYdnM9CdcRxSy6fKoYsfFCnJrBgqA184WuoxjNiE+edVoZXC9mwI/G/4VQiH
+         f3iBI2hGsAcU/5ShRyxv8qkko4gRe+hDVCu936f6H65zoZ7nv3Tv10zFDPJiMirNVdOO
+         iSlEjJBd3HLqJYtk5oeKRZU2bS6C0/qkT1oAHGjzVO6Pr3KoBCret//dWvt8fTgmJtmb
+         Y1Sm804XsdSvtjzTqZVo+9L0gffaQQn3njRYCsTC7BoI1goGElUoP1UXaw6UfIYGNwGI
+         WRkaaWY8vcpWZMqcfCkhHZ0mQOjgIi1SqBaRAshP5fdRVPPoB24yO48PSDyyU4hteRZo
+         Wbhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716566126; x=1717170926;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=//KD1Ad6RRaTW94yeORLrlBuaIevXtri2sWaywu2r1w=;
+        b=uUGSMffX80YSw1Ph8sx9CCBRTYPYl1edsRdZ+ij44dZSk7wvh1ErvH+k6HEv+EEyDD
+         9GZSzi3cldFsL2Jzc85CVS50f6M/PmgE0qLqmwxqJyXOz1OYmPtFQPa5QzQu4APTV0CU
+         s0rJWFgHGnHVIAZxTtGZFsBMucfe6Ui2nFcyoL+LRkZ+Wk+pZgpgO1pfGw0WmIduFHL/
+         xFdAd4i7uv776D9TsqH5xinECjzXOc0toTjz3n4XnY1xC8MKPHXd/RvwPN8YyIow6PI4
+         N/fd04UcDJ2HccnKzdGhga6C91SavfGQcmTKVbG6C0F0G2GBJf67bkQEHot0XW8X8QeU
+         n6vg==
+X-Forwarded-Encrypted: i=1; AJvYcCVT6BxZD5Wnal4vHsqQA7ZY2rirLF4N2hkNs1EysIKLXzmvlE+oM051TE2oJ052EJuy+uLvJNQCce5jHeCz2b/QmEWogaxxg56H+Nbwo6iUtr100wIidcgCPMRiX0M7NMDFN98nDXyS8w==
+X-Gm-Message-State: AOJu0YzObSTXFpYUJnl5y8XKwo3IzpF+oi7fHVzupSHvBF8AFNA3hcMt
+	atRBC2xpqzmzMelQF0/pedRONNOxYXc6uKVa1aKvDP6cmNGJZJPc
+X-Google-Smtp-Source: AGHT+IGvjRiaA8GlfSDW7h+Ok/W23XLgkVoUl4OzjYq5we7GcVfeiytWRtbZHIoF1/0S4q9ZqlUhig==
+X-Received: by 2002:a5d:5242:0:b0:34c:77bd:2508 with SMTP id ffacd0b85a97d-35506d48543mr2704271f8f.11.1716566125620;
+        Fri, 24 May 2024 08:55:25 -0700 (PDT)
+Received: from andrea ([151.76.32.59])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3557dcf06dcsm1901645f8f.106.2024.05.24.08.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 08:55:25 -0700 (PDT)
+Date: Fri, 24 May 2024 17:55:20 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr, paulmck@kernel.org, akiyks@gmail.com,
+	dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	hernan.poncedeleon@huaweicloud.com,
+	jonas.oberhauser@huaweicloud.com
+Subject: Re: [PATCH] tools/memory-model: Document herd7 (internal)
+ representation
+Message-ID: <ZlC4aFfAx4u8cjDb@andrea>
+References: <20240524151356.236071-1-parri.andrea@gmail.com>
+ <ZlC0IkzpQdeGj+a3@andrea>
+ <bd6426c0-f439-4b15-9ab4-12768aa8557a@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,23 +89,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240524085350.359812-1-horatiu.vultur@microchip.com>
+In-Reply-To: <bd6426c0-f439-4b15-9ab4-12768aa8557a@rowland.harvard.edu>
 
-On Fri, May 24, 2024 at 10:53:50AM +0200, Horatiu Vultur wrote:
-> When the interrupt is enabled, the function lan8841_config_intr tries to
-> clear any pending interrupts by reading the interrupt status, then
-> checks the return value for errors and then continue to enable the
-> interrupt. It has been seen that once the system gets out of sleep mode,
-> the interrupt status has the value 0x400 meaning that the PHY detected
-> that the link was in low power. That is correct value but the problem is
-> that the check is wrong.  We try to check for errors but we return an
-> error also in this case which is not an error. Therefore fix this by
-> returning only when there is an error.
+> > $ cat T.litmus 
+> > C T
+> > 
+> > {}
+> > 
+> > P0(spinlock_t *x)
+> > {
+> > 	int r0;
+> > 
+> > 	spin_lock(x);
+> > 	spin_unlock(x);
+> > 	r0 = spin_is_locked(x);
+> > }
 > 
-> Fixes: a8f1a19d27ef ("net: micrel: Add support for lan8841 PHY")
-> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> No "exists" clause?  Maybe that's your problem.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Nope, that doesn't seem to be it.  (Same result after adding one.)
 
-    Andrew
+  Andrea
 
