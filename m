@@ -1,94 +1,90 @@
-Return-Path: <linux-kernel+bounces-188462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10028CE24E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:24:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27118CE254
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD0A1C218E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:24:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A956B282ECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 08:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19183128383;
-	Fri, 24 May 2024 08:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D205D1292D0;
+	Fri, 24 May 2024 08:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M/A+1VCG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Omg+KgOc"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FF4127E12
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 08:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8235B1F8;
+	Fri, 24 May 2024 08:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716539092; cv=none; b=SsniK0snpdsleqUt9XfGQQFzzLd8xx0fCyjwmeDGzJNBdWqb/awAL9Y6ry89AharPXGx41Bv9jzjZbAOrPvFlp+FDTxD1x0/rGaR2QWLtUaPJ6FTcO/9/5Igcezw9S4UJaH15uyyp2md0nUHPBymQjCdnN4XvL9gl14WgsXwIbA=
+	t=1716539352; cv=none; b=HPY7gZhWfer2h/dPkfUB2ruxcIOkqD0PGZ8srOwcldpipoud9w0Q5CgrfqrziLdTubFI+os0D+J6PPgKdz+ywrrw+razx6vBeMiery9fHpFVzJ0eGRn7pmmIlIQ7SK8oNEuZ6puIt97LO1olzgpfpohIg7hnjMxxiS0qpTqk6iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716539092; c=relaxed/simple;
-	bh=OoeEiGup8kxbvVebwYL9smtlfOOm6MqCCnMknxBm4BE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MFqLhGlnmzh39nRhz6p2mwkofn0AMdcEt7mm8A3jdgKIGZyBoPpJcBj5wlUc4yahsi9BmwQE5ZGo71t04ZSaU/XOiULFOzkLO4y89a/rJJamx0uTQKrTMrkQjX1u73inbP0vxG5aCS9E94iXvGPaiJGJZnyWBoSIAyP0zZkdLug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M/A+1VCG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716539089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KRXrVEjE7hwIwPecyo3X3AyrQafZGVYbwM3Pgp/6o0s=;
-	b=M/A+1VCGwOlT01CHM6MI2rGb6t10B5IxMScTjMNxsC7EIHQARn/E8ea0t2Ud7Di05tfX4g
-	zQ9MbSc72Gv728Wy7r7WbbG1Z6KFRtjcbrUQqCkdWSwADRNJj7NdXOcXw+jJyAM30FMktc
-	zPxKambSyLvNyNX3ZBnkTiF06/Rp8rA=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-300-uls1BQPJPR2plUVCYELqDg-1; Fri, 24 May 2024 04:24:47 -0400
-X-MC-Unique: uls1BQPJPR2plUVCYELqDg-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2e95a1f049aso5645301fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:24:47 -0700 (PDT)
+	s=arc-20240116; t=1716539352; c=relaxed/simple;
+	bh=Gh6NlYPXprP3xGD7ZZUEg2JlAMSrlweXjgU9wuMJn5s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mf/YNCR6ECYvoCSF/0gOhTZXFe4a5uhRdfhFFxweZt+r4FLtq9NpePUykmWeDVG+DKruzJyGinphJLwtmEtdFUWquJS+I4cf/zsp3+sSnJ9dH7mVRfp0fP7muyMiQHeGJGCdw/IRsLlRkk4suY5FatqfJWJ7gBXQRq4pLl2w8c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Omg+KgOc; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f3423646b7so13153165ad.0;
+        Fri, 24 May 2024 01:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716539350; x=1717144150; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tiZre0HC6g5xQkUkEEPwrvwt2kz5afaYH2z+fiQKH5k=;
+        b=Omg+KgOcZhA5HwuTpFhvwsnq8SdQp71mxp2syJbT+5AN5k/8iFM/L95W1dqnnc3bBi
+         PV77hcF2cH9Lvk52fm0jRrPaIMJzW9Pr7WpivepMWFgO7mhWxtyJ6ha1rLrfQDir2ZMe
+         Huey8DtS+Po0DcIss1xVOWZkIAwQkagjOcPxSPmA94cSgegpdvrGqlh581x6OroIhWN9
+         uxu+0dhHcKBwCxyWjfvnLOpj0TnouddiqiVSz+ZXU2Nc3olUwz2kGVllxLN7dZn56nA3
+         A9OamoXrlqCulNs9uJkdJk8HN+0Hfdwh449Y+peyO7Tob2ZLc0d60zKEaLli5cy9rMCQ
+         IdFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716539085; x=1717143885;
+        d=1e100.net; s=20230601; t=1716539350; x=1717144150;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KRXrVEjE7hwIwPecyo3X3AyrQafZGVYbwM3Pgp/6o0s=;
-        b=URZVLUL9dT80hJnMrKg//L592vZBVfD+4ScPiMumu1rHC5OzVLYQsSXjTISiS8pqtB
-         jQBIRpFmzaxxt1Xq9BTo69WfWI/8fhDGKN1LoHxdRFr9axYH0iuLsWtSR6bH3HUT/Jb5
-         GIc9/cz6JJ/Hg1CPSVf2525hTu0KMqkghYSFSkKuBu5WmMKgqbfhcr2cZx9rnAzISssY
-         b4zuJ6VAyVexkBTdDK82nZaCQmNCKokQ2HvxurGgYHmtDGb2A6gsuznOZZRotWzhEvPr
-         wCfxl9TaHs/A41eP5c5j68EL//zLE09dFVeuQOhflfrMxuBmLZUFlbOtcifbZWPBoT57
-         PEJA==
-X-Gm-Message-State: AOJu0YxU0MCF2lE1A3s8iT8A1SuoES7G+nA7Hf+ptJ9jud1Qei9B/Lbq
-	P7MHyJ6iMWchW6idMbfm7YGHA2MczH07dNcG7dnnASZnMgt3UHXXeySvX4D5PVa2YCK/I8kfhzb
-	7h2hfN7Cn2J7OD51XWsv34PZVXkJwRoQjEp4LBRWIrmeu8/sST9SFOVOKf28E8nHdsccGMfTSLP
-	RK/Ur1BFEAvBsdd0YZEi1dAnA9ay/JAwc4XGyy3s8QBNZG
-X-Received: by 2002:a2e:a304:0:b0:2e1:a504:f9ec with SMTP id 38308e7fff4ca-2e95b0c1546mr12076631fa.23.1716539084938;
-        Fri, 24 May 2024 01:24:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsD0Zx4R+bJoGaWEffXAyMLyRFY6ccJIG51S7LwCY1/ZZSqzhyemWROaM0WC1rr4KFj45nzA==
-X-Received: by 2002:a2e:a304:0:b0:2e1:a504:f9ec with SMTP id 38308e7fff4ca-2e95b0c1546mr12076201fa.23.1716539084310;
-        Fri, 24 May 2024 01:24:44 -0700 (PDT)
-Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-421089ae976sm13796085e9.38.2024.05.24.01.24.43
+        bh=tiZre0HC6g5xQkUkEEPwrvwt2kz5afaYH2z+fiQKH5k=;
+        b=kAEUn23g/mvNdXVf9rkpKGG7TtUjTEsjZc5UuT4O6DztzfC4AcLMJGQUOOX9JQ7Z7V
+         83mxFFNM2JqMAgrHnxBqM0acTnn3/kJuhktW15kMwPLvEj1olS0smbf2QbhKWKoQjNow
+         6kNqQJg3TH4M0TqLRQ9Noj2sWmRkpMDX0iQ3Uo1+0FR0fq+XNSI9/RXJbLPB6AJDtp1Y
+         ltk2wfWAnvAIiYWvISk8ON34DU+eIuQMB0inNw7aTdFswDfn1Q8j+r3yrjkLzj7/aelF
+         b7Gd+QdEQTJ1Z9lJYDyTCIUCZCcGncgqqI62RI2850JH7nOpIey2JOli7U8GY0Lvqhn7
+         ccwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzTFlFQaQVBbcVkusU9qaL649AjSbK1XyDoeOORqBNUJzShiJjgzZCD43tQmhguFzJ7EbgaqSII3Q2l7WfTAoN2NpmcwbFG9/BEx6saAjfl2qfoboS5/fDefdOP//Ecrmy2EnJyhPpiNB/0sL9IeUBAiUnaFTfTWKDvbuCMC3TTMCYpA==
+X-Gm-Message-State: AOJu0Yxaq+aqaJp/eJFxPmQk7n2UQgskRFe36IoB+s4WOcMVSABMA4YZ
+	UYUnEBy45f1tJ9vylZyTOHDmIeSc8ARkMjfWwTcA6I30SxufLaXI
+X-Google-Smtp-Source: AGHT+IHG1072pahpGeSGZ0ububXJmGaOpVjE9EfnrmCTcoQyErQfa6B3YwvGI2ql6Egx8Iesfmeihg==
+X-Received: by 2002:a17:902:c403:b0:1e4:4ade:f504 with SMTP id d9443c01a7336-1f449029c88mr15498605ad.46.1716539349864;
+        Fri, 24 May 2024 01:29:09 -0700 (PDT)
+Received: from prasmi.. ([2401:4900:1c07:bfcd:61e0:7fa9:84b8:25fd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c9c6ea3sm8420325ad.277.2024.05.24.01.29.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 May 2024 01:24:43 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	javier@dowhile0.org,
-	Christian Brauner <brauner@kernel.org>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Yoann Congal <yoann.congal@smile.fr>
-Subject: [PATCH] userns: Default to 'yes' when CONFIG_MEMCG option is enabled
-Date: Fri, 24 May 2024 10:24:16 +0200
-Message-ID: <20240524082434.657573-1-javierm@redhat.com>
-X-Mailer: git-send-email 2.45.1
+        Fri, 24 May 2024 01:29:09 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/4] Add CPG support for RZ/V2H(P) SoC
+Date: Fri, 24 May 2024 09:27:56 +0100
+Message-Id: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,49 +93,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The default value for the CONFIG_USER_NS Kconfig symbol changed over time.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-When first was introduced by commit acce292c82d4 ("user namespace: add the
-framework"), the default was 'no'. But then it was changed to 'yes' if the
-CONFIG_NAMESPACES option was enabled, by commit 17a6d4411a4d ("namespaces:
-default all the namespaces to 'yes' when CONFIG_NAMESPACES is selected").
+Hi All,
 
-Then, commit 5673a94c1457 ("userns: Add a Kconfig option to enforce strict
-kuid and kgid type checks") changed the default to 'no' again and selected
-the (now defunct) UIDGID_STRICT_TYPE_CHECKS option.
+This patch series aims to add the CPG support for the Renesas RZ/V2H(P) SoC.
 
-This selected option was removed by commit 261000a56b63 ("userns: Remove
-UIDGID_STRICT_TYPE_CHECKS"), but CONFIG_USER_NS default was left to 'no'.
+A separate CPG core driver is added as compared to the RZ/G2L as the
+RZ/V2H(P) SoC varies in terms of features and registers.
 
-Finally, the commit e11f0ae388f2 ("userns: Recommend use of memory control
-groups") added to the Kconfig symbol's help text a recommendation that the
-memory control groups should be used, to limit the amount of memory that a
-user who can create user namespaces can consume.
+Cheers,
+Prabhakar
 
-Looking at the changes' history, a default to 'yes' when the CONFIG_MEMCG
-option is enabled seems like a sane thing to do. Specially since systemd
-requires user namespaces support for services that use the PrivateUsers=
-property in their unit files (e.g: the UPower daemon).
+Lad Prabhakar (4):
+  dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG driver
+  dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
+  clk: renesas: Add RZ/V2H CPG core wrapper driver
+  clk: renesas: Add RZ/V2H(P) CPG helper driver
 
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
----
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |  78 ++
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/r9a09g057-cpg.c           | 112 +++
+ drivers/clk/renesas/rzv2h-cpg.c               | 677 ++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h               | 151 ++++
+ include/dt-bindings/clock/r9a09g057-cpg.h     | 644 +++++++++++++++++
+ 7 files changed, 1668 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+ create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+ create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
 
- init/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/init/Kconfig b/init/Kconfig
-index 72404c1f2157..208e2f500ef0 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1239,6 +1239,7 @@ config IPC_NS
- 
- config USER_NS
- 	bool "User namespace"
-+	default y if MEMCG
- 	default n
- 	help
- 	  This allows containers, i.e. vservers, to use user namespaces
 -- 
-2.45.1
+2.34.1
 
 
