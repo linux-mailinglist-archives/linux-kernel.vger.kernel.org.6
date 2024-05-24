@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-188646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C52F8CE4DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:28:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E3F8CE4DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 13:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8623C2823F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7791F22667
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFC686158;
-	Fri, 24 May 2024 11:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27CD86246;
+	Fri, 24 May 2024 11:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="auxo9UDh"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ccx6URR+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CDC53E31;
-	Fri, 24 May 2024 11:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5C29475;
+	Fri, 24 May 2024 11:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716550096; cv=none; b=my8fCUewBSiy8poEPeWHhyK2Gt6ZUMT+J0n8bcowPK8cLrGhls698QmrNfK7xqk6WMpOcnTKuSU2AXGNeJKHgroqdzO+dWrVrE34DOWtJJQd7X9uGgzGMkzbP81LOqCfbXj67Lb2Y3txJQ5wd0amlOcNNE9O/O7gKNWVRU6Gtw8=
+	t=1716550309; cv=none; b=gQum9D1PQyGm1GkYBUZwT0kfWshL5KropXd1mjaJWY0ljfXXOjRpTXlSPzGlvcK209BRaB0OvoliO9a/+w5s74mbwcQHHfs0oHYgFtmU0uZx1kxV4PFSKkiHm+3ai9jAY5UlNny8n3h2z7yEOCsW3aeNiR6OF9Zu/A2V3s8T18o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716550096; c=relaxed/simple;
-	bh=oHA9gc+CrTyin+zUK+uAT3gY9fGy7KJDCFi88foFCBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+lULIRYGxhPdEPkSzPFfdtKKj/V2Xt+Mg3XFs6BRR7O0P/Da8J0EnB8HX20PXVPFKNVqswywrh03kHXdjL6lGCU8OmGpsvp92dzXqo13rN2EoeF+FKedE8MnOzTqVKCzPy7X0dXKE4zqkjey9w/Mts8k0hUnjJiAbBSud7nSKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=auxo9UDh; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=hcK9uKDg9sC6XHkeLqCJBgcdOFQUEGulh79bnSWYMao=;
-	t=1716550095; x=1716982095; b=auxo9UDhDQ1HOC77g1uMdbpyjeOPhq663wLpwEwXn+xdlpc
-	BlCqAdD6T9cUU/I8lOLSbKwv5TjsTFLZrSl0pDrKWuI9kKEwf3LLClR14UIjVGY/XWIZ0dhs7aHT6
-	OfUqVyvbIXfhp2Cglu9Icq9DYcDXvN0RnmutDhOCwXKsOiqUAdsdnOxCRxQrt0+Xb0SZEw+jMwMcn
-	Yb8GoVB1XVQqJvr2x9/M4Rfp1c5BQD3RRRbLVEUEJDLZm9Wp2ZxgYulNWMQe3zbyevh3dub0Qfv8x
-	OPJ0xxjFgXN5uO+ptdQL/yaJGYWZ/MrUG9a7iV+hZRJPhCCc70IdRhlnq/r+lHJQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sAT5o-0008IF-Oe; Fri, 24 May 2024 13:28:12 +0200
-Message-ID: <06f50224-9d9e-4118-adf4-ac89b0a06086@leemhuis.info>
-Date: Fri, 24 May 2024 13:28:12 +0200
+	s=arc-20240116; t=1716550309; c=relaxed/simple;
+	bh=4LBvQetF7IAlYlAy82ZKXQGvBJrIruYN4l+FdhPRo9w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WRlVrxzBlFHOTQ2WxHCfqEwQ1ey6OEct0aiaLA5WgXP/U8kVWNGuLGhj8f7ovi2KGsPuvlDp6+Qj+StuUjt+aSbJ07lUGohhvzLC+Lp0BJNzlNHMvcEoiF+/9C/0IB+JkMglqupLA0rQlzs+SlQBEXFaRE2V14oWWRXnjq3t3kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ccx6URR+; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716550307; x=1748086307;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4LBvQetF7IAlYlAy82ZKXQGvBJrIruYN4l+FdhPRo9w=;
+  b=Ccx6URR+0/PFlO5Oi0HFar46OGN8+NDZoFhUPE4AoKv+LUGrRo/xNAHR
+   IL7xkrudYYTck6uFd2FUq16jEAVZuJRFaQ7y23y8Fv7DZyt06iw+vB4as
+   pIg7RiXuFROyV5R4Grx5UwPsNMrCk/qEHyqLflV5bZCSjzoIAV/l8oL/T
+   +8S3M3ZH2vLcAeUqbjeZB7LjCMpCNCBVnuLy5UO0czpqIkLTjCu6k0MKZ
+   XoH8/EEpw5+6xWEC5OkVBpszY1hwDbscNvVCmsPaW78B8zaItZPu5h+Wu
+   JDN1ZqYe5OkORKZs56OuVaQN8cl754LdmsLwcifObwGGXDpKd5DNqQN2K
+   g==;
+X-CSE-ConnectionGUID: 8+O3WPpLRv60RzEBxqHjbA==
+X-CSE-MsgGUID: UF7FIWG7QUGbTWqGMC7ktQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11081"; a="12772021"
+X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
+   d="scan'208";a="12772021"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2024 04:31:46 -0700
+X-CSE-ConnectionGUID: MbmgJak5T4+/wMghuBMT4Q==
+X-CSE-MsgGUID: knQZ5qdJTr6hmbJRHeoo3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,185,1712646000"; 
+   d="scan'208";a="38432250"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by fmviesa003.fm.intel.com with ESMTP; 24 May 2024 04:31:44 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] page_pool: fix &page_pool_params kdoc issues
+Date: Fri, 24 May 2024 13:28:59 +0200
+Message-ID: <20240524112859.2757403-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [BUG] Linux 6.8.10 NPE
-To: Greg KH <gregkh@linuxfoundation.org>,
- Paul Grandperrin <paul.grandperrin@gmail.com>
-Cc: rankincj@gmail.com, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <A8DQDS.ZXN0FMYZ3DIM1@gmail.com>
- <2024052249-cryptic-anthem-5bd2@gregkh>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <2024052249-cryptic-anthem-5bd2@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716550095;b262171c;
-X-HE-SMSGID: 1sAT5o-0008IF-Oe
+Content-Transfer-Encoding: 8bit
 
-[CCing the regression list, as it should be in the loop for regressions:
-https://docs.kernel.org/admin-guide/reporting-regressions.html]
+After the tagged commit, @netdev got documented twice and the kdoc
+script didn't notice that. Remove the second description added later
+and move the initial one according to the field position.
 
-On 22.05.24 17:12, Greg KH wrote:
-> On Sun, May 19, 2024 at 01:28:58PM +0200, Paul Grandperrin wrote:
->>> I am using vanilla Linux 6.8.10, and I've just noticed this BUG in my
->> dmesg log. I have no idea what triggered it, and especially since I
->> have not even mounted any NFS filesystems?!
->>
->> Hi all,
->> I have the exact same bug. I'm using the NixOS kernel but as soon as it was
->> updated to 6.8.10 my server has gone in a crash-reboot-loop.
->>
->> The server is hosting an NFS deamon and it crashes about 10 seconds after
->> the tty login prompt is displayed.
->>
->> Dowgrading to 6.8.9 fixes the issue.
-> 
-> Any chance you all can use 'git bisect' to track down the offending
-> commit?
+After merging commit 5f8e4007c10d ("kernel-doc: fix
+struct_group_tagged() parsing"), kdoc requires to describe struct
+groups as well. &page_pool_params has 2 struct groups which
+generated new warnings, describe them to resolve this.
 
-Paul, any progress on this?
+Fixes: 403f11ac9ab7 ("page_pool: don't use driver-set flags field directly")
+Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+---
+ include/net/page_pool/types.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-BTW, there is also a report about a NFS related general protection
-fault, see this thread:
+diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
+index b088d131aeb0..7e8477057f3d 100644
+--- a/include/net/page_pool/types.h
++++ b/include/net/page_pool/types.h
+@@ -45,16 +45,17 @@ struct pp_alloc_cache {
+ 
+ /**
+  * struct page_pool_params - page pool parameters
++ * @fast:	params accessed frequently on hotpath
+  * @order:	2^order pages on allocation
+  * @pool_size:	size of the ptr_ring
+  * @nid:	NUMA node id to allocate from pages from
+  * @dev:	device, for DMA pre-mapping purposes
+- * @netdev:	netdev this pool will serve (leave as NULL if none or multiple)
+  * @napi:	NAPI which is the sole consumer of pages, otherwise NULL
+  * @dma_dir:	DMA mapping direction
+  * @max_len:	max DMA sync memory size for PP_FLAG_DMA_SYNC_DEV
+  * @offset:	DMA sync address offset for PP_FLAG_DMA_SYNC_DEV
+- * @netdev:	corresponding &net_device for Netlink introspection
++ * @slow:	params with slowpath access only (initialization and Netlink)
++ * @netdev:	netdev this pool will serve (leave as NULL if none or multiple)
+  * @flags:	PP_FLAG_DMA_MAP, PP_FLAG_DMA_SYNC_DEV, PP_FLAG_SYSTEM_POOL
+  */
+ struct page_pool_params {
+-- 
+2.45.1
 
-https://lore.kernel.org/all/CAK8fFZ7rbh5o9XG1D5KAPSRyES-8W8AphxsLJXOWUFZK49i8fA@mail.gmail.com/
-
-It was bisected to 4b14885411f74b ("nfsd: make all of the nfsd stats
-per-network namespace") [v6.9-rc1, v6.8.10 (abf5fb593c90d3)]
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
 
