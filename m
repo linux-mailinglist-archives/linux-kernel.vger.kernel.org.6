@@ -1,113 +1,85 @@
-Return-Path: <linux-kernel+bounces-188199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB7D8CDF18
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:09:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7205D8CDF1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9726F280F18
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:09:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F9CC1C21940
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 01:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892A08F5A;
-	Fri, 24 May 2024 01:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="IZ0S2mWl"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D7FB662;
+	Fri, 24 May 2024 01:15:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6C063CB;
-	Fri, 24 May 2024 01:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A110053AC
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 01:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716512978; cv=none; b=h64Wl5MN0cAHViwhyrN8/p7BLA/2dvSpCjAE61OefNV0GAjtQ9fcfXy1wa+Jinu1rVWiBkIEeVLM9zNLFxYpNX+YbLl/3vEK3PodehT1g99C6uAVMaJ000lBhkYofiM4ZAwsnfcAt32Y+W1x78SbKp1TUKQxMxeQ2EirmXCmkzw=
+	t=1716513306; cv=none; b=WNEMr5cPk/7ecVhe1GMkWByb2HU968eRa3ubbqAZxbgGOkaLj4ihQB4fC98cZrylOmAyhZw/M6PM0vwBqNly8nllngpwvx1XgbSIKskndH1FAdKxE96ST17NJO4NUJsVqRbNWkP4npkDG7ThLW7Sfz30KSqye9meHvTa7zTPktM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716512978; c=relaxed/simple;
-	bh=DKYzJ7hjD6JFuqEN/bj9SwX3EBxt2SBvBFrB++TsDX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rmCinFWAIFBRMA7LRDotafSxUm3jWni6saDVO9opRVoyAYugJtTpf7wll8T+W0hv0T5KKRti7Sv8L6/riuHaE1ZfC+edI1WxcIBGMeUFAv4yrTnSvOpK0ZQX31jekPDqAq88kpCy/vQO7kHyOPATV+/skh0FM7xVTEV7alkigMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=IZ0S2mWl; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=9jocgfouEm7fZUmRdyzJbH9BH2DlQ+nVHBfnIEE3AFs=; b=IZ0S2mWlzKMb0Syb
-	TV1ATQKWitfvvGqM5BfBquDTLg0+rF/eG6xq4RNXgJ4y+AJ/zW3SHTmkLqym8OIqEvDk7EwHfG/pz
-	VXD8kuzOP/caMaTtiQ94NcPTDQpHod99TXRT2hruwmMoongYjuUZNWMTxjFUbqijxYF7Q9cwDbVWo
-	h7R3w1hfQpBzCoVKjvLTLzLZoizYHBHJlPfWo5KMLijO1MxLGu9wVSkZZRdIqowlWZaLG8teSYI28
-	jrfbLj7qGtiAh4elFZKsLqnhW2q5A850qr7vjFk5QyLyNFpwCh9EDyJrDMTl0umsAUU2TuHiGhPHh
-	Kx6BbprX+c8K9PZjgQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sAJR8-002KKC-2A;
-	Fri, 24 May 2024 01:09:34 +0000
-Date: Fri, 24 May 2024 01:09:34 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Matthew Sakai <msakai@redhat.com>
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dm vdo: remove unused struct 'uds_attribute'
-Message-ID: <Zk_ozpHryOiMLx_Q@gallifrey>
-References: <20240523210716.309324-1-linux@treblig.org>
- <5c063045-4bce-14e4-9930-77cc0ed2edad@redhat.com>
+	s=arc-20240116; t=1716513306; c=relaxed/simple;
+	bh=bwX6iJD6AQ6OPeWQnwz9ta/bbDVNLWJ3UEllJ04H7RI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sO1+gJd3jSj5oCFCV1M0rUz/hoRsu0atiw/KI0QitFwbPBZUMT8VDuF20sE2MF5mzfCzZ6GKGlSL743rMFeu6izEi6jPbJJRpvWdLFBhrz7YYbOE6Xp2bIJrLUuLzqiTUzwCwduWBIpuHWmcDFJDI1bTZLhdJ4yI3W+O6A7YD90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1ea8608afso236253139f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 18:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716513304; x=1717118104;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f1GRo7Zw3z2bdnpABa5h4u4gai61SwkRqBg80el+K2g=;
+        b=dll0RORLXPHyBEEtoU7DzSUKLFzG8L8568/AXBTobSmZsH2fzqM3pA8qqLr/uzInIK
+         WTZwnqsgc5AqEllGpGZ+FoCqNZNYtCE9y97+vlGLPJd3oF9kHYrjUsnDK6IaR7aHG7FN
+         77KLCBAdbtqxrw3NIE0qLnsTPZDID9RbJcUC4MsQyE3MLMshda6XrokEBrxIJpJqP8i2
+         Xn1vBHAqDJF6Q7zj5JruKqUdbEgmeRuprPuIH4pIv1KVh5rBYCG+xFt9VKZUGIG/zo6Z
+         9aHTGPpoGEZNmYtygo3WN7oDthWIiV4RYhehEVjzH6mCAKgkplHXLLbsJ4CmYEjipO26
+         gOBA==
+X-Gm-Message-State: AOJu0Yy2h7KrLdUT+IICbTrA6fRehJ3RguAvwbOeoYYOqQjGGucn3bte
+	whQ69sacbODAZlqoWKxf5OuCmeoWk4CAq2AgLT9YXv28dqCuBkGju98c3ECs8ry6MVLvJ3Hyb0S
+	MMeBfpNTdi2AoV92Zf4NCsX0LYPmRFJN/MUbzVmTMP+LrnaEZZstQV6U=
+X-Google-Smtp-Source: AGHT+IENwPUdXL/MUi8EwaA3jQWowBwFqOYQ3M3rvRSEME4YVrgM1eyTAEK6gsvjvo3wRJ6vp7IYphiY6tFxI2LC6Pc5f98ZE7t4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <5c063045-4bce-14e4-9930-77cc0ed2edad@redhat.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 01:08:57 up 15 days, 12:22,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Received: by 2002:a05:6e02:148e:b0:36d:cccb:6842 with SMTP id
+ e9e14a558f8ab-3737b1f362bmr381055ab.0.1716513303795; Thu, 23 May 2024
+ 18:15:03 -0700 (PDT)
+Date: Thu, 23 May 2024 18:15:03 -0700
+In-Reply-To: <20240524005225.2834298-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b9a61c061928e544@google.com>
+Subject: Re: [syzbot] [fs?] general protection fault in iter_file_splice_write
+From: syzbot <syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-* Matthew Sakai (msakai@redhat.com) wrote:
-> On 5/23/24 17:07, linux@treblig.org wrote:
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > 
-> > 'uds_attribute' is unused since
-> > commit a9da0fb6d8c6 ("dm vdo: remove all sysfs interfaces").
-> > 
-> > Remove it.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> 
-> Yes, this was clearly an oversight on our part. Feel free to add:
-> Reviewed-by: Matthew Sakai <msakai@redhat.com>
+Hello,
 
-Thanks for the quick review.
-Is this something you'll send a pull for, or do I need to
-ask someone else to include it?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Dave
+Reported-and-tested-by: syzbot+d2125fcb6aa8c4276fd2@syzkaller.appspotmail.com
 
-> > ---
-> >   drivers/md/dm-vdo/dedupe.c | 5 -----
-> >   1 file changed, 5 deletions(-)
-> > 
-> > diff --git a/drivers/md/dm-vdo/dedupe.c b/drivers/md/dm-vdo/dedupe.c
-> > index 117266e1b3ae..39ac68614419 100644
-> > --- a/drivers/md/dm-vdo/dedupe.c
-> > +++ b/drivers/md/dm-vdo/dedupe.c
-> > @@ -148,11 +148,6 @@
-> >   #include "vdo.h"
-> >   #include "wait-queue.h"
-> > -struct uds_attribute {
-> > -	struct attribute attr;
-> > -	const char *(*show_string)(struct hash_zones *hash_zones);
-> > -};
-> > -
-> >   #define DEDUPE_QUERY_TIMER_IDLE 0
-> >   #define DEDUPE_QUERY_TIMER_RUNNING 1
-> >   #define DEDUPE_QUERY_TIMER_FIRED 2
-> 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Tested on:
+
+commit:         33e02dc6 Merge tag 'sound-6.10-rc1' of git://git.kerne..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=135ad634980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2125fcb6aa8c4276fd2
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=117d5142980000
+
+Note: testing is done by a robot and is best-effort only.
 
