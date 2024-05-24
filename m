@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-189035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B438CEA24
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:01:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E858CEA26
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70143B20EE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:01:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CFF1F2148F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 19:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D848242ABD;
-	Fri, 24 May 2024 19:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A6942ABD;
+	Fri, 24 May 2024 19:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOZmcQTs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CELcBtIk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2362F47F57;
-	Fri, 24 May 2024 19:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651612C6B6;
+	Fri, 24 May 2024 19:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716577266; cv=none; b=HrMftVXygFoM26+fEOZBIAquYjNXUmBCsITZmBk0F5MXCqfKE6uCLXGOE9fqTPig6hchZazRqPZoTdjHao72Y/nJk0iuvjgNUnaIBjvEkZ1AQPPo9S+2OxmVRf7SPIXqUKtfQxIsBZXK7U6irgp6YgJLyAZnFfOSfyBZ+401UGw=
+	t=1716577311; cv=none; b=ttgKqmkDINwOzT+DmI7pviva2Y0Jh96vuDDknTH4yq+Uuq4ztQXcI9F0O85Ghn+H/b0Lx71ZCQJBf0ORRWDeAZjYE7XkD2gQmJuTJNLp7oXTcGp9V50JzMjatCC6WxS18lVvLT4/OycSPecA+oMIdP8jh2ToEc4ISmXwzzjGTZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716577266; c=relaxed/simple;
-	bh=lqkyT0jzHP+AbsDxIKKH+kS97cpS93owMRKVsE/Meyw=;
+	s=arc-20240116; t=1716577311; c=relaxed/simple;
+	bh=8AHQ9p6PvVe4520jRRGX5kkQufDnzP7izZGOrirOQ0I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7mNU0v5tG/59JD90dfjiBZbPu587g7a+pOTrCC7K7oJqktCXDZSvbPsJ//1qS5GbPBI+LArJ+fA52we6nYhogZaiYGvTmkyneyETIbKWCHOe7h0uobhcRzx7DsZF/TuecoCUhq5oHkjXUBX6poH/d5A20wbwi+Gi56SJbW1P34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOZmcQTs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C89FC2BD11;
-	Fri, 24 May 2024 19:01:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewSEnqBpgtN93fVdoWPdrVZs+0iIRDHssHlLcDMP/cKfYlPq1BoOnwZ/GVqjEXudEWjjmjKPyFjjMAw2KdEWVnwpmBxxAjuL9THvEoon6cm2442W1TAWbz0922/ZE5yp0MpRqqrA2Lt/l3BGZ4dhBjEnYRtR2n2RUNLEiMAVVXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CELcBtIk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E120C2BBFC;
+	Fri, 24 May 2024 19:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716577265;
-	bh=lqkyT0jzHP+AbsDxIKKH+kS97cpS93owMRKVsE/Meyw=;
+	s=k20201202; t=1716577310;
+	bh=8AHQ9p6PvVe4520jRRGX5kkQufDnzP7izZGOrirOQ0I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oOZmcQTsz1vE4FYet9Q0f2UFtKks5JH7/+XpQ66GdQhwOWh+iiqLC2C382HkpKGc0
-	 UHRgKsXDpe4aX3M0XSYiOGOULtITlGKWhf+w7KW9T7luWYqaltl584sW/V/ZezlFzk
-	 Jvm/xS8TCjdPAbJ34tIJ5fYm4nwKIokOLX74/zllAanHWw3caUXAal47srKO0xLxpq
-	 cJJ0Fl5Br4P0IB0t6gMYCy8BiY2BijjF+eB4zGhNYKAU936bMXfz9ECazAk7Uxxim6
-	 XQXF2Ecrc+82pXp8wH3QA+ysyJHqzhLjiX5iTQmwmAJAnCwYHtPQHE5TVdORZH0n+2
-	 5wBi+G3FNJArg==
-Date: Fri, 24 May 2024 20:01:01 +0100
+	b=CELcBtIkpB5jCodnFjjOjwruw3QCwbpf5Exmq6tZ2onRAlbnRDZ30PRAZ37lmgUtY
+	 5VbfwfQqh/wfjjdIcJfw9ZLkEL+OM5U0Oomww17SMMy09v8IwIbQbNs16pIiHmZSuR
+	 QLVKRKL8XJyk7WsaYTTHHOuWjNd85QLJYEZxbb6/e0cWSIQXdI1GoahikipROjZgeZ
+	 DraqkBAIgdkVi++1bJaTTjkXYewx/YYQ74+kAK9fJBkFEtjGvXFjMLmQ89qcEqGa8J
+	 EH0Hg8SOGAdb6vt8bT3gKayProiTLRmITRitNxr+DhRYwM4p2DbFH/yE1nngFP4u89
+	 Z6IXXgqxK6P4Q==
+Date: Fri, 24 May 2024 20:01:46 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, will@kernel.org,
-	maz@kernel.org, Rob Herring <robh+dt@kernel.org>,
-	Dragan Cvetic <dragan.cvetic@xilinx.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH 1/2] dt-bindings: vcpu_stall_detector: Add a PPI
- interrupt to the virtual device
-Message-ID: <20240524-portfolio-spoiled-a77d944d3844@spud>
-References: <20240523160413.868830-1-sebastianene@google.com>
- <20240523160413.868830-2-sebastianene@google.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: arm: stm32: st,mlahb: Drop spurious "reg"
+ property from example
+Message-ID: <20240524-selection-little-f8adfa0a32b4@spud>
+References: <20240523154208.2457864-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,38 +63,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zOPzgbwwnCxZeu9Y"
+	protocol="application/pgp-signature"; boundary="BHX4szPWPsM2i9bl"
 Content-Disposition: inline
-In-Reply-To: <20240523160413.868830-2-sebastianene@google.com>
+In-Reply-To: <20240523154208.2457864-1-robh@kernel.org>
 
 
---zOPzgbwwnCxZeu9Y
+--BHX4szPWPsM2i9bl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 04:04:12PM +0000, Sebastian Ene wrote:
-> The vcpu stall detector allows the host to monitor the availability of a
-> guest VM. Introduce a PPI interrupt which can be injected from the host
-> into the virtual gic to let the guest reboot itself.
+On Thu, May 23, 2024 at 10:42:07AM -0500, Rob Herring (Arm) wrote:
+> "reg" is not documented nor used for st,mlahb, so drop it from the
+> example to fix the warning:
 >=20
-> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> Documentation/devicetree/bindings/arm/stm32/st,mlahb.example.dtb: ahb@380=
+00000: Unevaluated properties are not allowed ('reg' was unexpected)
+>         from schema $id: http://devicetree.org/schemas/arm/stm32/st,mlahb=
+=2Eyaml#
+>=20
+> Since "reg" is dropped, the unit-address must be as well.
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Cheers,
 Conor.
 
---zOPzgbwwnCxZeu9Y
+--BHX4szPWPsM2i9bl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlDj7QAKCRB4tDGHoIJi
-0sDXAP9OQbjlYb0CGqvIgBAs4QOeNy77SMyJlCAMtgM6YE9EggD/RVlO6a5dBy2q
-bNRf2njTOep+FztTSJQcZ3Nv8bPhJAE=
-=4n7G
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlDkGgAKCRB4tDGHoIJi
+0uCiAQDbjFKnua6YZv9wGHzySJp/xAnFvNaIBNwON9KN0AwFaAEAvtpXl04h0qr4
+OTc619LWMWvQYdnJxGl2CUuMgzl8WAA=
+=7zD8
 -----END PGP SIGNATURE-----
 
---zOPzgbwwnCxZeu9Y--
+--BHX4szPWPsM2i9bl--
 
