@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-189171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32568CEC66
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:27:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1798CEC71
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2024 00:36:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5A51F2190F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:27:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9411F219CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 22:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB02126F32;
-	Fri, 24 May 2024 22:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8E7126F2A;
+	Fri, 24 May 2024 22:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P8f73AVw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hsgKbfBp"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980B41DFFC;
-	Fri, 24 May 2024 22:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879EB3D3B8
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 22:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716589668; cv=none; b=b+5gbZGT3OIxnvc5yTcF4ZNWNnoXk6UDHITOIiocCCjNqJrI7zRVwS+I62NX1hewWrqgeTg007pPXnTKESxvYOpRZWr4L8VWO/BceYmYPtETTHayeZCLbUj2EhZpyRI07cQyegpOecrDIsOjq3yMWn/pXgBgdmITNqY2ZGdDIks=
+	t=1716590158; cv=none; b=B/nagVeBfxjnCmFGZbhvHWVqicWPrIYqE0lNMqECvFueyy8guvbmwRndAkMvyQ7MfKqEebBYaXVQWgc6L23KewG0DTbSRNMbBr4wBElcUcaGAnGsuSALwHBCsZzMgydz6WBkj1hJIKFS/XS2Qhfx01gLM2A6ClwZXhkVl1dQxDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716589668; c=relaxed/simple;
-	bh=iXH9XdZj6ElZjG8H8PzcGVxUnfrO4WKMqmUf3o3c0g8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qgIjjHVXKn96PLvmc6eBFoQp1E6vE4V7FC0U6yIzcFHi+WcQm5O1My/RG31JATgnwHUgYH+B3e3Pky0vQPW9OY1Pzhl4MgdHtyOmlMgr+P1T8egUlkIboaPusHSVhKQulEzdPYXqDi6TxD4gRVcGoAgNUN+IOnXAvWQJvYxhisc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=P8f73AVw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44OMMQtW013623;
-	Fri, 24 May 2024 22:27:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=mABNMy86l8KP+yPjxHU9m+yjpNAlq2nHkJ+scDyy1GM=;
- b=P8f73AVw1LmH0i02WkI9DVxVeuNX7Lx8wjYDfzcDFmFvALpnPGURyB1StQJE/VbHHF+J
- sWCQ3lko8kv1dkSrslLKJns4kFTHNCPvWwl0jruCRVNNca7mFhh1a/2Tx18uR8hscDrR
- syFww0t1FzXvRCbo4dM5HKEEQmFDbJyhK0zYCY68hcDm7KnSJnDfHDCGmFnf+ngUQuCq
- mg1Geon2KPqnJQGK8mR+gqmPfOf5VRMAylRRswFswGRd2zlGCz+L/j3S/6mzSBpA3qdr
- Z342gwyivv5rfoc1mlKu7ftY3z8GBeFOavtzAdMbxR70jowLFCP5/MRAzCjTfaga/rHh cQ== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yb3me00cg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 22:27:31 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44OJEqYG026457;
-	Fri, 24 May 2024 22:27:30 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y785n38f6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 22:27:30 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44OMRRLv49808028
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 24 May 2024 22:27:29 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E920B5805C;
-	Fri, 24 May 2024 22:27:26 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 66E815805A;
-	Fri, 24 May 2024 22:27:25 +0000 (GMT)
-Received: from [9.61.107.154] (unknown [9.61.107.154])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 24 May 2024 22:27:25 +0000 (GMT)
-Message-ID: <56d16579-137f-4473-a9f1-44f7d030c166@linux.ibm.com>
-Date: Fri, 24 May 2024 17:27:24 -0500
+	s=arc-20240116; t=1716590158; c=relaxed/simple;
+	bh=M4VCk5Dt2iAzT91u/gVxNNQBx4fXfDo05VmnDW4PrRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqJ+9iQl6WNZzzxylpSBEwUlfra9sXXM7+UOqPIlWVjaAxT1oxqNTx3sCdSFooMsMvorWCI0zwjGRSLYi3Pq37aZzjr4cODxYNFLtwE3iIxOChOA97ZPlOjnGNV4/e52YVLKV6LM8eu4ZdllJLyb1AxjgnWZbqqoh4QBkhDlEu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hsgKbfBp; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5751bcb3139so10944095a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 15:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716590155; x=1717194955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M4VCk5Dt2iAzT91u/gVxNNQBx4fXfDo05VmnDW4PrRs=;
+        b=hsgKbfBpBqlkg//YouyxPSeFqOrOzjruprQy72rsJSWsIY2a3M1XDrgEBtWTMpsIwV
+         CINY5EJh3JTDA1h8XgYVoVktDK3qoZCiIsrTPg82aiW3988GejA+hzs+re+JTwXezv/N
+         Og52YFlxonbfJHQLdVEMQudHdlL826iJAIEjhMqigkRrJIW/sQN/cvz3k7I6o0tZr8zM
+         CzbEFI/5Tr3M6ClWKA4oFkvS/kcmi1VIXi1B8QP0/ebrPgxBId2daJdxR1to1/FmrtP3
+         vXrZ84eRqoTuWUrdqejhy+zPPcEjfG5V6vsqiezajnwkyAqBTx83gSljIBfm2r9OkJz9
+         7swA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716590155; x=1717194955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M4VCk5Dt2iAzT91u/gVxNNQBx4fXfDo05VmnDW4PrRs=;
+        b=vwfk1QwpFRh9NP5rrwfGb/nFM+roK/L+69sempdQSVfn8VMR/eXHiFIQt3riNrSUp+
+         SSbMTqAoBRgw5eZbrHTm9v+m92M6H7fhXRft2LfohifDuPkjdVbLcYaFOt5fg5vi8iMJ
+         nt6bNmyNlhKr8Ky19kf0nKyClf+bm28dOvnjAs4hdnWigcm8q3r+q8rbpt8pbrInNt7q
+         W3dEQIHdYtbRnM17GyA1iR9Ofgv07FQZIWx+AxIsQfvIX0aN+u0IvsaFVdtkH7xFbfN4
+         1YpA516S9pObVpXg3pXUXLWVPjJHQrqgRg3pDCeqsZqaTiucD6nPQNLVIYwFScBidGXd
+         jUMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ9M9zwPbHv6jcBPXVkrds7Lmxacitp8Z8SVzySyfcSkeDgcGggpCuy1dzZJdRpDev/zh/OG3MeEJJ0Igxx12VmYhhrZPwZgqHa6Vb
+X-Gm-Message-State: AOJu0YzbzHoQblS1zfKC9J5rei1cmAJ38dn5ak6KXkktg9S3gRNmIZ/f
+	lLMDNWCWA4G79kmgT6lxHLaHcX4ssYOnStOQd7iI9MLhKpIddSXD9Qcz9felKQs=
+X-Google-Smtp-Source: AGHT+IEoYoC3w04Q3y7BbD8fhPpPjz42RdyGJ8vVvhkiIz2RtEdt+0Vsq4dRJDybkSCXYA7IU2Fjwg==
+X-Received: by 2002:a50:ab13:0:b0:578:5d83:bae2 with SMTP id 4fb4d7f45d1cf-5785d83bf4dmr1949090a12.15.1716590154619;
+        Fri, 24 May 2024 15:35:54 -0700 (PDT)
+Received: from rex (lab-4.lab.cs.vu.nl. [192.33.36.4])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57872da9dfbsm23821a12.2.2024.05.24.15.35.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 15:35:54 -0700 (PDT)
+Date: Sat, 25 May 2024 00:35:52 +0200
+From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kasan-dev@googlegroups.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86: kmsan: Fix hook for unaligned accesses
+Message-ID: <ZlEWSIcHXnh/BqbW@rex>
+References: <20240523215029.4160518-1-bjohannesmeyer@gmail.com>
+ <CAG_fn=XR6KVQ=DbKZW3kNXsCHgULm2J7i6GCm8CZUjpjuk-d2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 15/20] ARM: dts: aspeed: Add IBM P11 Blueridge 4U BMC
- system
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lakshmiy@us.ibm.com, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        andrew@codeconstruct.com.au, joel@jms.id.au, robh@kernel.org,
-        conor+dt@kernel.org, krzk+dt@kernel.org, andi.shyti@kernel.org,
-        broonie@kernel.org
-References: <20240522192524.3286237-1-eajames@linux.ibm.com>
- <20240522192524.3286237-16-eajames@linux.ibm.com>
-Content-Language: en-US
-From: Ninad Palsule <ninad@linux.ibm.com>
-In-Reply-To: <20240522192524.3286237-16-eajames@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: CEKzfqnM2HtdiKClRyl_p3omOimFr-Zu
-X-Proofpoint-ORIG-GUID: CEKzfqnM2HtdiKClRyl_p3omOimFr-Zu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_08,2024-05-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=736 clxscore=1015 mlxscore=0 spamscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405240162
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG_fn=XR6KVQ=DbKZW3kNXsCHgULm2J7i6GCm8CZUjpjuk-d2A@mail.gmail.com>
 
-Reviewed-by: Ninad Palsule <ninad@linux.ibm.com>
+On Fri, May 24, 2024 at 10:28:05AM +0200, Alexander Potapenko wrote:
+> Nice catch! Does it fix any known bugs?
 
-On 5/22/24 14:25, Eddie James wrote:
-> The 4U Blueridge is identical to the Blueridge system but has two extra
-> power supplies.
->
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> ---
->   .../aspeed/aspeed-bmc-ibm-blueridge-4u.dts    | 21 +++++++++++++++++++
->   1 file changed, 21 insertions(+)
->   create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dts
+Not that I know of. Based on my cursory testing, it seems that
+string_memcpy_fromio() is rarely called with an unaligned `from`, so
+this is a bit of an edge case.
+
+On that note: I tried creating a unit test for this, to verify that
+an unaligned memcpy_fromio() would yield uninitialized data without the
+patch, and would yield initialized data with the patch. However, what I
+found is that kmsan_unpoison_memory() seems to always unpoison an entire
+4-byte word, even if called with a `size` of less than 4. However, this
+issue is somewhat unrelated to the patch at hand, so I'll create a
+separate patch to demonstrate what I mean.
+
+Thanks,
+Brian
 
