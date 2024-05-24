@@ -1,130 +1,109 @@
-Return-Path: <linux-kernel+bounces-188524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420F28CE306
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:08:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F468CE30F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 11:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B6B2831DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E5F1C21A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 09:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5637129A70;
-	Fri, 24 May 2024 09:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B122D12AAC5;
+	Fri, 24 May 2024 09:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mbX42WD/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhlYZXjb"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948F2127E2A;
-	Fri, 24 May 2024 09:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65145127E2A;
+	Fri, 24 May 2024 09:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716541700; cv=none; b=rBy3SgOzMkE/Y1S8xmMvi9WGvKPjCCdL1MGD9O7P9HKV3XmQKvYL7PiI+cwD0I8XsPxOeTZBRjgXQckddkNqhjPhsL6An9iJuP3G6sXlmH6aDmOFb4dOjPCuS3SnuKQaTtc2j74DaxunKhPPMHzUE31N5cgHOnFE6XNM8mY04KE=
+	t=1716541798; cv=none; b=QYDTeo0Hi9gvDbvTPlgMZGwzS/+vno9DPOOJJsBd7rPjGI5QzNAA0Unup0dJLNc4XA8ufCASkYlUEad5DsCc/EqyaWoKSbzVbi79AVXcOq+szweBjZgLoauaeeeierNwi1pETaCbaxTD+sF13+23qgQVw/6fNQrPVdeh8a8GbK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716541700; c=relaxed/simple;
-	bh=9Sa658riCmbCqT3J4PTUjBFOqYcZyEuze19YWzLl+Ss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qtQE4O/OSh9X1wD0VkaKxZu+Qm6OAVcrik1dOUAvkRUoXzH2MK6I3qSXrligzPGN0IIF9T2Vn6Au3dMVBoqkipBvM37qH8YGREYZOtRvUt85yz8AdyZ35kYPjymgSECfKlwhz7E5y7g/xwFLUN6uGZFeL75BIPEaSlkjs/cOcC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mbX42WD/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44NNPFQw004328;
-	Fri, 24 May 2024 09:08:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B7/WifPwzNZzPU9rOUg01zfQZ3c0yxVuki52/ZR7b14=; b=mbX42WD/1ON8fmsr
-	yRfw5/qMoRgLRlLwwtro5eVhz9sWrr3lFDyDVsx6oWVcZiNLbC3WPLB4QhaBB9Rj
-	PBgpezBTHU7PNvegP13dZ9a1Swssx/xpFE6ET7dHCwL9iUHVCfs/xyf7NyjEbh8X
-	LNU98mAgE3zwPHgYEXGsu96JaZs/kGZlSOuvboch/9q6nXhSSA6Bc2t0/MfQBKtm
-	bJ33YVKb1O2GdSEoP4zMmfill3sgiyDHkWD3IE7lcDBuwBd9xPu0ATnmpkTloWz3
-	BJfjaLU1kfGN41GlY2PbjmWkIGFHkQB53OpC4APH0U/AYRVAJf8fA+p1kXjoliyb
-	OGFgRg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaa8khsaa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 09:08:11 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44O98ALV026893
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 24 May 2024 09:08:10 GMT
-Received: from [10.253.37.124] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
- 2024 02:08:08 -0700
-Message-ID: <0b916393-eb39-4467-9c99-ac1bc9746512@quicinc.com>
-Date: Fri, 24 May 2024 17:08:06 +0800
+	s=arc-20240116; t=1716541798; c=relaxed/simple;
+	bh=lstC1JoXk86c4nUHzL+unxjK1j4sQb/y8G2ueEGHWcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QFL24QBV+mvq8fTHf6gWYDgyw3O116zUUIYNDHYl3HrjScSAE1+1qKOS5xqbrt/Eiz078ebtmMEXYnX4iBoL4eQPrSDCYqODbrwGFMEjc5bWOHmEgmKQSr/j2mDXQ3QYGq+X3Mx7Sl54a91W39hc2JTfGwPsl7b8KdFsMjcqA8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhlYZXjb; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5296935252dso572397e87.3;
+        Fri, 24 May 2024 02:09:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716541794; x=1717146594; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iGJpJecwhnnThbUhyaw0vAGodYew/vpNpLv3LOUBtPs=;
+        b=AhlYZXjbVafUwiqymT5t6WVyrSQkzMilgQnGpfrjDsntOcwXAowct/qvUhP2CpCkBD
+         B04plfRqR1D1B4ON2x/32uX/BulMX6ZpXNw5N3JqcE7wjAuu8GD0iIU+P3wuwYcQlQND
+         k9WWhLrBo1MnsbhNcQoIpvzXiX9ldtcB39lzXNWmrKqQvZGb83ACjv74N1SiT+342D+A
+         Qojanlrc7ayB/Xmhp3Obljbxi4SQIFa7GcTKuHFF6fwSWC60dsmypPNdXjrZ1sdYWUgi
+         F9LSq0ulEmGRE9hNp/UThryxr6XflJEXreK6DEo93Ol8a2iGQJjWnGB714ehvUm41kXv
+         IheA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716541794; x=1717146594;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iGJpJecwhnnThbUhyaw0vAGodYew/vpNpLv3LOUBtPs=;
+        b=TDk/fr9SB1D/vvSYVAtroVFP9+/jP8XJhjfsxfkcQS5MwjMamVdLfFuImol1TR0Q6y
+         wekj/zpZek9FbXYhSFyKNMAwVkwIN7Tha9+PPseft4D2/qJvPCLz0lXIp+fcb6nC8j8e
+         8ok36dn0Gqpajzloc4/YqOfb91TL8ZzIc5HNhB4Bqh30acZlCiyMrjFP3uYTd4ojAOr2
+         o09cdR68Yg9LewI5YKWO2IVeuHUUaeM0f8jaL6U2yOl4+3DdFDdy/Tix8ppYwGGBVLt1
+         izThqHzZLP5k3h0u4RRLcz52Mdg4J5gdKF7F8iP4BljgOSMJl3nnmAcpyUmX8PSXx4GZ
+         sfqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVGA6ROQ72IMxkWBso1jNZlHhtSYENS9SMw9etymlZZNrbH3vGDbcgbgXvT+QxRBQk2h7czWsuaNV6DSXBnpzsz7MpbxFwheSqbn5Qi1ZgZt3hq7ozpOjYdcNGM1BoxwrgiUNSsVNWQow=
+X-Gm-Message-State: AOJu0YxhzJ2U61Z5MHb3TwE5LI8u/NIyOI2WBVXv4aHeMG3fGfhb9jS6
+	IWL1S+uGUSRFWe7W5EVJWi+OCQYLEWmBnmoG+zD8ndvWEnW53RfR
+X-Google-Smtp-Source: AGHT+IEAjfgWIXUPdAjF4Xqxez+RSQN1xPVEA/NLEHeWg6ykXvZ34GEuRCMq1cjaFdYMkUDwsklYhA==
+X-Received: by 2002:ac2:4acb:0:b0:51c:43de:b18c with SMTP id 2adb3069b0e04-52964eaf6e7mr886594e87.27.1716541794363;
+        Fri, 24 May 2024 02:09:54 -0700 (PDT)
+Received: from localhost.localdomain ([178.70.43.28])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e885d9csm133178e87.21.2024.05.24.02.09.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 May 2024 02:09:53 -0700 (PDT)
+Date: Fri, 24 May 2024 12:09:52 +0300
+From: Ivan Bornyakov <brnkv.i1@gmail.com>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: Nas Chung <nas.chung@chipsnmedia.com>, 
+	Jackson Lee <jackson.lee@chipsnmedia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] Wave515 decoder IP support
+Message-ID: <bliiovkmzwkd5ikvvhvuokiacdclinb5rx4fxbtufwqnvqypgw@uygv56l7a45c>
+References: <20240415100726.19911-1-brnkv.i1@gmail.com>
+ <mwgydgjstvedkatdvopt3wh4imhnzflr7ut3vejgl6fz3vbgzg@x4spldwklrm3>
+ <20240503150721.qd6d7csev5452rss@basti-XPS-13-9310>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kobject_uevent: Fix OOB access within zap_modalias_env()
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <rafael@kernel.org>, <akpm@linux-foundation.org>,
-        <dmitry.torokhov@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <1716524403-5415-1-git-send-email-quic_zijuhu@quicinc.com>
- <2024052418-casket-partition-c143@gregkh>
- <74465bf5-ca18-45f8-a881-e95561c59a02@quicinc.com>
- <2024052438-hesitate-chevron-dbd7@gregkh>
- <5acce173-0224-4a05-ae88-3eb1833fcb39@quicinc.com>
- <2024052458-unleash-atom-489b@gregkh>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <2024052458-unleash-atom-489b@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: dBrbM2yb5iv4TzbRnaERgjGqmr-zxoCQ
-X-Proofpoint-GUID: dBrbM2yb5iv4TzbRnaERgjGqmr-zxoCQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-24_02,2024-05-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxlogscore=907 spamscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405240062
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503150721.qd6d7csev5452rss@basti-XPS-13-9310>
 
-On 5/24/2024 2:56 PM, Greg KH wrote:
-> On Fri, May 24, 2024 at 01:34:49PM +0800, quic_zijuhu wrote:
->> On 5/24/2024 1:21 PM, Greg KH wrote:
->>> On Fri, May 24, 2024 at 01:15:01PM +0800, quic_zijuhu wrote:
->>>> On 5/24/2024 12:33 PM, Greg KH wrote:
->>>>> On Fri, May 24, 2024 at 12:20:03PM +0800, Zijun Hu wrote:
->>>>>> zap_modalias_env() wrongly calculates size of memory block
->>>>>> to move, so maybe cause OOB memory access issue, fixed by
->>>>>> correcting size to memmove.
->>>>>
->>>>> "maybe" or "does"?  That's a big difference :)
->>>>>
->>>> i found this issue by reading code instead of really meeting this issue.
->>>> this issue should be prone to happen if there are more than 1 other
->>>> environment vars.
->>>
->>> But does it?  Given that we have loads of memory checkers, and I haven't
->>> ever seen any report of any overrun, it would be nice to be sure.
->>>
->> yes. if @env includes env vairable MODALIAS and  more than one other env
->> vairables. then (env->buflen - len) must be greater that actual size of
->> "target block" shown previously, so the OOB issue must happen.
-> 
-> Then why are none of the tools that we have for catching out-of-bound
-> issues triggered here?  Are the tools broken or is this really just not
-> ever happening?  It would be good to figure that out...
-> 
-don't know why. perhaps, need to report our case to expert of tools.
-> thanks,
-> 
-> greg k-h
+Greetings,
 
+On Fri, May 03, 2024 at 05:07:21PM GMT, Sebastian Fricke wrote:
+> Hey Ivan,
+> 
+> On 02.05.2024 09:40, Ivan Bornyakov wrote:
+> > 
+> > Friendly ping.
+> 
+> Sorry again for the delay, I was nearly finished with the patch set last
+> week but the time wasn't sufficient. And I sadly have to delay it again
+> a bit as I am on vacation until 13.05. I expect finishing it probably
+> until 17.05.
+> 
+> Regards,
+> Sebastian
+
+Do you still intend to review the patch series?
+
+Also should I resend? Is there anything I can do to budge the process?
 
