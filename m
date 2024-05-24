@@ -1,186 +1,267 @@
-Return-Path: <linux-kernel+bounces-188687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45998CE555
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9918CE55E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 14:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A47628174A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34B9D1F21231
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C24B86655;
-	Fri, 24 May 2024 12:26:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B65312881E;
+	Fri, 24 May 2024 12:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="y6KxUw8a"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF368127E0B
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662EC128807
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 12:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716553571; cv=none; b=qfHcgKJ3Gq4CI3LNLNyDt9izMmrQJ8V9SazntBdU5c4DUXf5/URzfpaCMTWv2mUKIlTcUpK5ow5B7qEdGBHAen3DhIuhzqnA0g9oRFwRsOhy692h3nuePgfbI5lt9f1rLkZ81mYO22xocww3tFqpJQScSeqxNd90tURtRBD+GJM=
+	t=1716553611; cv=none; b=qHIJH/Z0fkRRqS0bHsD/aTsFNviukqjhKpNVp0tdn/89S0LG7d81LdFOfCsMu5QfuqvROaowyQQUpD5yzk2x1PBISdsFvlkyEssFDuLqXXJ3vTJSNe0cuaxE6JoBt7FtxTJwihoU04C14HANtL1C9fp8kOQ9HtZoIQJ2FYJoTaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716553571; c=relaxed/simple;
-	bh=BR6wg9i/0mbzIcyzWHdONHm37dg16V5vztgEDpsM3jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3q+kKQkEtGnP/ovGRwmOxOZUMtSCfErqDxGR4huV4aM+cFUjyFbxASgGvXW39c53kK/3rZUb0uAeWeBvexhBBd1OnVcOHoykORcPJvxHVCZVMmgqPkh3oVngahCT2dl1fGZNVN77nPfroSNMgDM/nhowBDI7l5A6oKrhWYO2f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sATzb-0001Lx-DC; Fri, 24 May 2024 14:25:51 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sATza-002nB5-Jm; Fri, 24 May 2024 14:25:50 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sATza-00BiEV-1d;
-	Fri, 24 May 2024 14:25:50 +0200
-Date: Fri, 24 May 2024 14:25:50 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [EXT] Re: [PATCH v2 4/5] firmware: imx: add driver for NXP
- EdgeLock Enclave
-Message-ID: <ZlCHTqJ0Umgh3LCw@pengutronix.de>
-References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
- <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
- <ZlBtNSeh2VyZsVxq@pengutronix.de>
- <AM9PR04MB860424A71753DBB56D2CEF5895F52@AM9PR04MB8604.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1716553611; c=relaxed/simple;
+	bh=xuhMGFKrZLaP3kgQexbQhHlxBwz6KojWZq7D8mXC75w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MRqUfLTc5LfGeymbniyLAZgbMHaqCkCGHAFpuErxYJ3cWnnwI2j74KIRVqlYjpUhT34TXC4fLeRqsJgdEDsTsAha2XpUxCyEWmI1ZGMWdfmm7RJ0uzWaZ22C3HZBGaeX4zO/QuC8Uy3NKXCC+q9+0ZhskPAHKOz8+t0u2qIO/6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y6KxUw8a; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5750a8737e5so13032a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 05:26:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1716553608; x=1717158408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+5TB7ZrFRYN94Y3lNzCPIJpQbVDBgEGdR2gSSTMYVE=;
+        b=y6KxUw8acR1qNFn2UUIfldIUfLFE6UANfPMdSJ6UON9gsBF07iQPo6Y+TS64tojUZQ
+         jFXOXXozKGkyHVMIaRe+CQHkbNLxKZCGKogLZUU0dsKouvySyWpzFrQB5S87yO/uIV3P
+         k1ahZqLQ58OQ6RqJecoPw2/8r/aKQIp+ZruliOXPd88r5ZopZKoI5RmfzePrPq4nsdCJ
+         LCPZKfZda71LkTaubtk0nXRiW5PLRDV2xdP1YU8BlOni1uc9NfdHoqxCd+YrybCld6iK
+         NjSaJDuSr8W3bnQi6lZZ1Wl91mzwwPYYZDu77KYphik/FrnJuOFQvbIk3mf0q5FwFbl0
+         uR2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716553608; x=1717158408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+5TB7ZrFRYN94Y3lNzCPIJpQbVDBgEGdR2gSSTMYVE=;
+        b=q6o1Ykt+qpVFSgH9IJx9brK1pMG77vS1qFTOIBEfABvbOQLUlORDpO05R/uBs3oM0C
+         FKi/9ScheUpw2uLNSyXvnxtZI2f5GIBFE6rMgLS7OeFZ4gKBTujkpVeiANlkqPAZG8Dd
+         tjE5oG/3h5eBC5pQC6CgD+Ic/NWg7EYANBgfBhdOGgmlwR/5KbrmIjUkd2EQbpIHyGDK
+         ie73Cj/GcfQpSXw7RY3Ogd8DK0vHxyXiq9B4bLsMxQE7EjfdUhzOHq4hWEFb41wNNSIl
+         DKqmKmDOW321KbOIqHY7kQQrHHDGS2tiwWYdahk8rYHVR3BNUKrAh/nYCcD2S7l/4EmK
+         221A==
+X-Forwarded-Encrypted: i=1; AJvYcCWKrDlsuwvOytFaO30q+XX6YfmoPmPTico9BQ9H9DPJaxPkaWx4HnYNzx7vpmXCCUtBIHip12hLTB9zGp8qFtYpixxsmmJ46dFTAeew
+X-Gm-Message-State: AOJu0YzZ4X2cZZNbXRApJbVIfESJc7F8iqs7xlN3llzodatHkZwZOJA/
+	HK+OjRcIm7SE4SVErbsBYFakvMVx7GA5+IwLNcdUTGy1Pjj5rcHG9gQOnhsQjN62mHEUdCEKtuS
+	tzxweTbZixsFIL02vtwb8GpWnV5C/7cPYtToq
+X-Google-Smtp-Source: AGHT+IGHn5L1uycYhffe8JVxue6IwpHJSjos4Cxhy9NA8pouewer/Odr/+VsiRSafqS5Qj4i8HLUs/dTUGZSrFhAgkU=
+X-Received: by 2002:a05:6402:5207:b0:573:8b4:a0a6 with SMTP id
+ 4fb4d7f45d1cf-57855302f23mr137068a12.5.1716553605970; Fri, 24 May 2024
+ 05:26:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB860424A71753DBB56D2CEF5895F52@AM9PR04MB8604.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240524085108.1430317-1-yuehaibing@huawei.com>
+ <CANn89iL5-w3NzupmR4LgskvW2yw1jgnhdFg1HRg+k+JY38G6+w@mail.gmail.com> <5d001e22-c9fe-60d2-a775-40e1c44a1c56@huawei.com>
+In-Reply-To: <5d001e22-c9fe-60d2-a775-40e1c44a1c56@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 24 May 2024 14:26:31 +0200
+Message-ID: <CANn89iKbVU074xq6vi6d3HCUrX+kh=_=0xo4C4aepjCOD5YMCA@mail.gmail.com>
+Subject: Re: [PATCH net] net/sched: Add xmit_recursion level in sch_direct_xmit()
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, jhs@mojatatu.com, 
+	xiyou.wangcong@gmail.com, jiri@resnulli.us, hannes@stressinduktion.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mahesh Bandewar <maheshb@google.com>, David Ahern <dsahern@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 12:08:14PM +0000, Pankaj Gupta wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Sascha Hauer <s.hauer@pengutronix.de>
-> > Sent: Friday, May 24, 2024 4:04 PM
-> > To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh+dt@kernel.org>;
-> > Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley
-> > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Pengutronix
-> > Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > <festevam@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> > <krzk+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.dev;
-> > linux-arm-kernel@lists.infradead.org
-> > Subject: [EXT] Re: [PATCH v2 4/5] firmware: imx: add driver for NXP EdgeLock
-> > Enclave
+On Fri, May 24, 2024 at 12:40=E2=80=AFPM Yue Haibing <yuehaibing@huawei.com=
+> wrote:
+>
+> On 2024/5/24 17:24, Eric Dumazet wrote:
+> > On Fri, May 24, 2024 at 10:49=E2=80=AFAM Yue Haibing <yuehaibing@huawei=
+com> wrote:
+> >>
+> >> packet from PF_PACKET socket ontop of an IPv6-backed ipvlan device wil=
+l hit
+> >> WARN_ON_ONCE() in sk_mc_loop() through sch_direct_xmit() path while ip=
+vlan
+> >> device has qdisc queue.
+> >>
+> >> WARNING: CPU: 2 PID: 0 at net/core/sock.c:775 sk_mc_loop+0x2d/0x70
+> >> Modules linked in: sch_netem ipvlan rfkill cirrus drm_shmem_helper sg =
+drm_kms_helper
+> >> CPU: 2 PID: 0 Comm: swapper/2 Kdump: loaded Not tainted 6.9.0+ #279
+> >> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 0=
+4/01/2014
+> >> RIP: 0010:sk_mc_loop+0x2d/0x70
+> >> Code: fa 0f 1f 44 00 00 65 0f b7 15 f7 96 a3 4f 31 c0 66 85 d2 75 26 4=
+8 85 ff 74 1c
+> >> RSP: 0018:ffffa9584015cd78 EFLAGS: 00010212
+> >> RAX: 0000000000000011 RBX: ffff91e585793e00 RCX: 0000000002c6a001
+> >> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff91e589c0f000
+> >> RBP: ffff91e5855bd100 R08: 0000000000000000 R09: 3d00545216f43d00
+> >> R10: ffff91e584fdcc50 R11: 00000060dd8616f4 R12: ffff91e58132d000
+> >> R13: ffff91e584fdcc68 R14: ffff91e5869ce800 R15: ffff91e589c0f000
+> >> FS:  0000000000000000(0000) GS:ffff91e898100000(0000) knlGS:0000000000=
+000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 00007f788f7c44c0 CR3: 0000000008e1a000 CR4: 00000000000006f0
+> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >> Call Trace:
+> >>  <IRQ>
+> >>  ? __warn+0x83/0x130
+> >>  ? sk_mc_loop+0x2d/0x70
+> >>  ? report_bug+0x18e/0x1a0
+> >>  ? handle_bug+0x3c/0x70
+> >>  ? exc_invalid_op+0x18/0x70
+> >>  ? asm_exc_invalid_op+0x1a/0x20
+> >>  ? sk_mc_loop+0x2d/0x70
+> >>  ip6_finish_output2+0x31e/0x590
+> >>  ? nf_hook_slow+0x43/0xf0
+> >>  ip6_finish_output+0x1f8/0x320
+> >>  ? __pfx_ip6_finish_output+0x10/0x10
+> >>  ipvlan_xmit_mode_l3+0x22a/0x2a0 [ipvlan]
+> >>  ipvlan_start_xmit+0x17/0x50 [ipvlan]
+> >>  dev_hard_start_xmit+0x8c/0x1d0
+> >>  sch_direct_xmit+0xa2/0x390
+> >>  __qdisc_run+0x66/0xd0
+> >>  net_tx_action+0x1ca/0x270
+> >>  handle_softirqs+0xd6/0x2b0
+> >>  __irq_exit_rcu+0x9b/0xc0
+> >>  sysvec_apic_timer_interrupt+0x75/0x90
 > >
-> > Caution: This is an external email. Please take care when clicking links or
-> > opening attachments. When in doubt, report the message using the 'Report
-> > this email' button
+> > Please provide full symbols in stack traces.
+>
+> Call Trace:
+> <IRQ>
+> ? __warn (kernel/panic.c:693)
+> ? sk_mc_loop (net/core/sock.c:775 net/core/sock.c:760)
+> ? report_bug (lib/bug.c:201 lib/bug.c:219)
+> ? handle_bug (arch/x86/kernel/traps.c:239)
+> ? exc_invalid_op (arch/x86/kernel/traps.c:260 (discriminator 1))
+> ? asm_exc_invalid_op (./arch/x86/include/asm/idtentry.h:621)
+> ? sk_mc_loop (net/core/sock.c:775 net/core/sock.c:760)
+> ip6_finish_output2 (net/ipv6/ip6_output.c:83 (discriminator 1))
+> ? nf_hook_slow (./include/linux/netfilter.h:154 net/netfilter/core.c:626)
+> ip6_finish_output (net/ipv6/ip6_output.c:211 net/ipv6/ip6_output.c:222)
+> ? __pfx_ip6_finish_output (net/ipv6/ip6_output.c:215)
+> ipvlan_xmit_mode_l3 (drivers/net/ipvlan/ipvlan_core.c:498 drivers/net/ipv=
+lan/ipvlan_core.c:538 drivers/net/ipvlan/ipvlan_core.c:602) ipvlan
+> ipvlan_start_xmit (drivers/net/ipvlan/ipvlan_main.c:226) ipvlan
+> dev_hard_start_xmit (./include/linux/netdevice.h:4882 ./include/linux/net=
+device.h:4896 net/core/dev.c:3578 net/core/dev.c:3594)
+> sch_direct_xmit (net/sched/sch_generic.c:343)
+> __qdisc_run (net/sched/sch_generic.c:416)
+> net_tx_action (./include/net/sch_generic.h:219 ./include/net/pkt_sched.h:=
+128 ./include/net/pkt_sched.h:124 net/core/dev.c:5286)
+> handle_softirqs (./arch/x86/include/asm/jump_label.h:27 ./include/linux/j=
+ump_label.h:207 ./include/trace/events/irq.h:142 kernel/softirq.c:555)
+> __irq_exit_rcu (kernel/softirq.c:589 kernel/softirq.c:428 kernel/softirq.=
+c:637)
+> sysvec_apic_timer_interrupt (arch/x86/kernel/apic/apic.c:1043 arch/x86/ke=
+rnel/apic/apic.c:1043)
+>
 > >
+> >>  </IRQ>
+> >>
+> >> Fixes: f60e5990d9c1 ("ipv6: protect skb->sk accesses from recursive de=
+reference inside the stack")
+> >> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> >> ---
+> >>  include/linux/netdevice.h | 17 +++++++++++++++++
+> >>  net/core/dev.h            | 17 -----------------
+> >>  net/sched/sch_generic.c   |  8 +++++---
+> >>  3 files changed, 22 insertions(+), 20 deletions(-)
 > >
-> > On Thu, May 23, 2024 at 04:19:35PM +0530, Pankaj Gupta wrote:
-> > > NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE), are
-> > > embedded in the SoC to support the features like HSM, SHE & V2X, using
-> > > message based communication interface.
-> > >
-> > > The secure enclave FW communicates on a dedicated messaging unit(MU)
-> > > based interface(s) with application core, where kernel is running.
-> > > It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
-> > >
-> > > This patch adds the driver for communication interface to
-> > > secure-enclave, for exchanging messages with NXP secure enclave HW
-> > > IP(s) like EdgeLock Enclave (ELE) from Kernel-space, used by kernel
-> > > management layers like
-> > > - DM-Crypt.
-> > >
-> > > Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > ---
-> > >  drivers/firmware/imx/Kconfig        |  12 +
-> > >  drivers/firmware/imx/Makefile       |   2 +
-> > >  drivers/firmware/imx/ele_base_msg.c | 286 +++++++++++++++++++
-> > > drivers/firmware/imx/ele_base_msg.h |  92 +++++++
-> > >  drivers/firmware/imx/ele_common.c   | 239 ++++++++++++++++
-> > >  drivers/firmware/imx/ele_common.h   |  43 +++
-> > >  drivers/firmware/imx/se_ctrl.c      | 531
-> > ++++++++++++++++++++++++++++++++++++
-> > >  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
-> > >  include/linux/firmware/imx/se_api.h |  14 +
-> > >  9 files changed, 1318 insertions(+)
-> > >
+> > This patch seems unrelated to the WARN_ON_ONCE(1) met in sk_mc_loop()
 > >
-> > > +static int se_probe_if_cleanup(struct platform_device *pdev) {
-> > > +     struct device *dev = &pdev->dev;
-> > > +     struct se_if_priv *priv;
-> > > +     int ret = 0;
-> > > +
-> > > +     priv = dev_get_drvdata(dev);
-> > > +     if (!priv) {
-> > > +             ret = 0;
-> > > +             dev_dbg(dev, "SE-MU Priv data is NULL;");
-> > > +             return ret;
-> > > +     }
-> > > +
-> > > +     if (priv->tx_chan)
-> > > +             mbox_free_channel(priv->tx_chan);
-> > > +     if (priv->rx_chan)
-> > > +             mbox_free_channel(priv->rx_chan);
-> > > +
-> > > +     /* free the buffer in se remove, previously allocated
-> > > +      * in se probe to store encrypted IMEM
-> > > +      */
-> > > +     if (priv->imem.buf) {
-> > > +             dmam_free_coherent(dev,
-> > > +                                ELE_IMEM_SIZE,
-> > > +                                priv->imem.buf,
-> > > +                                priv->imem.phyaddr);
-> > > +             priv->imem.buf = NULL;
-> > > +     }
-> > > +
-> > > +     if (priv->flags & RESERVED_DMA_POOL) {
-> > > +             of_reserved_mem_device_release(dev);
+> > If sk_mc_loop() is called with a socket which is not inet, we are in tr=
+ouble.
 > >
-> > You can call this unconditionally, no need to keep track if you called
-> > of_reserved_mem_device_init() successfully.
-> 
-> But it will not be called for each SoC.
-> The memory is not reserved for i.MX95 platforms.
-> This is required.
+> > Please fix the root cause instead of trying to shortcut sk_mc_loop() as=
+ you did.
+> First setup like this:
+> ip netns add ns0
+> ip netns add ns1
+> ip link add ip0 link eth0 type ipvlan mode l3 vepa
+> ip link add ip1 link eth0 type ipvlan mode l3 vepa
+> ip link set ip0 netns ns0
+> ip link exec ip link set ip0 up
+> ip link set ip1 netns ns1
+> ip link exec ip link set ip1 up
+> ip link exec tc qdisc add dev ip1 root netem delay 10ms
+>
+> Second, build and send a raw ipv6 multicast packet as attached repro in n=
+s1
+>
+> packet_sendmsg
+>    packet_snd //skb->sk is packet sk
+>       __dev_queue_xmit
+>          __dev_xmit_skb //q->enqueue is not NULL
+>              __qdisc_run
+>                  qdisc_restart
+>                     sch_direct_xmit
+>                        dev_hard_start_xmit
+>                           netdev_start_xmit
+>                             ipvlan_start_xmit
+>                               ipvlan_xmit_mode_l3 //l3 mode
+>                                  ipvlan_process_outbound //vepa flag
+>                                    ipvlan_process_v6_outbound //skb->prot=
+ocol is ETH_P_IPV6
+>                                       ip6_local_out
+>                                        ...
+>                                          __ip6_finish_output
+>                                             ip6_finish_output2 //multicas=
+t packet
+>                                                sk_mc_loop //dev_recursion=
+_level is 0
+>                                                   WARN_ON_ONCE //sk->sk_f=
+amily is AF_PACKET
+>
+> > .
 
-Again: You can call this unconditionally. Look at the code,
-of_reserved_mem_device_release() won't do anything if you haven't called
-of_reserved_mem_device_init() before.
+I would say ipvlan code should not use skb->sk when calling
+ip6_local_out() , like other tunnels.
 
-Sascha
+Untested patch :
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+diff --git a/drivers/net/ipvlan/ipvlan_core.c b/drivers/net/ipvlan/ipvlan_c=
+ore.c
+index 2d5b021b4ea6053eeb055a76fa4c7d9380cd2a53..fef4eff7753a7acb1e11d9712ab=
+d669de7740df6
+100644
+--- a/drivers/net/ipvlan/ipvlan_core.c
++++ b/drivers/net/ipvlan/ipvlan_core.c
+@@ -439,7 +439,7 @@ static noinline_for_stack int
+ipvlan_process_v4_outbound(struct sk_buff *skb)
+
+        memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
+
+-       err =3D ip_local_out(net, skb->sk, skb);
++       err =3D ip_local_out(net, NULL, skb);
+        if (unlikely(net_xmit_eval(err)))
+                DEV_STATS_INC(dev, tx_errors);
+        else
+@@ -494,7 +494,7 @@ static int ipvlan_process_v6_outbound(struct sk_buff *s=
+kb)
+
+        memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
+
+-       err =3D ip6_local_out(dev_net(dev), skb->sk, skb);
++       err =3D ip6_local_out(dev_net(dev), NULL, skb);
+        if (unlikely(net_xmit_eval(err)))
+                DEV_STATS_INC(dev, tx_errors);
+        else
 
