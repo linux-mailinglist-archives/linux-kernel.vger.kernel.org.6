@@ -1,131 +1,116 @@
-Return-Path: <linux-kernel+bounces-189139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-189140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A283C8CEBB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78AA8CEBB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 23:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58A021F218A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82575281DCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 21:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41B885264;
-	Fri, 24 May 2024 21:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE6985640;
+	Fri, 24 May 2024 21:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOuREHgY"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kc9ZUNH/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1482D6C;
-	Fri, 24 May 2024 21:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E249784047;
+	Fri, 24 May 2024 21:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716585033; cv=none; b=giBExFABKQYwJSQz2YvGXCGshEj1EnRdMEwXI1J9XEKs2SFuLTgrrAQKg3VImM4N2A+8EFKlyBNNhtkwiVXC3252uWGAdDqoq52DquA8BdyeBkvOkGccANQkD8+65Qv1zLvKf+H7+Qa720WsTArf3Xc1F2q5drkm2DOf0ZuLTw4=
+	t=1716585072; cv=none; b=o0mKF1K8rUEuAQbT1ltYgcrNRuYpi7a79yLeeVj8UD+lGIbtQ+jVvmLQTssebCn+xWnoPbqqc89Cmqasf4Q05miHjckJ/W+EAomcuqF8Zd67C8Cp1+vVoI6kwMaEjwDz6LKMgvgZ+bsPIrhB60S6Mm0BHtcoPPHSVyIK1TiDTFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716585033; c=relaxed/simple;
-	bh=IkKuU4yp54waIwA456gQUHmRrLLSQ6nNxxNfaMdF938=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kh57T8ZaY+prHT2g/muBd6PJ2AqicCS7qU3wzvMTSS+8dUsixypHqYyRs83oeNJwh3wweGVDj9rvyMcohnP4T3POkskRin6MWwBGQ2s/MkRocxdWrzjgpm+7deZaXBzhavaORaJkCH8XqZB2Kqmg2wrqRIvDWDf3pY8fc1vIazA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOuREHgY; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a5a5cb0e6b7so1342994966b.1;
-        Fri, 24 May 2024 14:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716585029; x=1717189829; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IkKuU4yp54waIwA456gQUHmRrLLSQ6nNxxNfaMdF938=;
-        b=IOuREHgY7nppp3pZEvSGIC8I+h6OCwmpgq+3/79yx6hSyQkbDUX4KhbE0FPtdpjx9+
-         Iw01gfbomy6hAvgTDl5of6DbgvptJKAOt5mzjJO9EzvhkyDZF6+QBsBiq3E3BCBEFwr1
-         URjeriwfYaN5SrqNfUKtjWDBFNWi6afwKf4EINNVG7uP2OS7PMpZcp2pDp8GamsyxDAI
-         n0wbGWhlAwQv1sZQVM9s5XBcuPeOZeC24TA1pqpeOynRlChGk3UNPdXq8gZDnagLVkTy
-         MLo6a/r7GI48sxEnU4odbNM669JVe6DRtvMKwQfWPTgqjF9JwtEwiqg8hmZZvh4Sn9Jc
-         qqGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716585029; x=1717189829;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IkKuU4yp54waIwA456gQUHmRrLLSQ6nNxxNfaMdF938=;
-        b=OGBny2At0MDSjUoJrQWBaK4GM2TpcVbn1LecbCZ8xs7qQUaz5rndO3ytxABV/ty0FW
-         ObucoTb0Wu0dSgdheI7d03CTCPJKUg7+6WkcK/6eZt0gN30NJfXi1Xku3hKQ9hxODJk4
-         YNCsldtrKWg+GjPOaknDHJSzqWnxyGs0M0Z02ryGPuvjPMOEZ8Ca7/ak5RoNVaOF/doK
-         7tHZY7/gw7rM+AfgwIkXmg/OhN3I26l2vWGrxqSGWMFV3F3QcQx8gzd451HCi8w3huC/
-         MGV3m4ClAAJvt9caI60LIsoPj7bqtjgJPCaT71k9Vb9vwsHDWMT5uUmicMWw95USqXJY
-         qF4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEz8qPHsT70d0VniKPQ8/+VrG36+f8t5Hu7TBSN8LHiT1rTJ99TnfoP2AhqAhqy80OnnZilDxQ7uvB0oMKfPH76gAEn5WXEnCCS56TiVuH1R4h4C7Yqiq9je0dGBYsHUKdD+YAHnnjsWGoT5/7zJ2ZpEQy
-X-Gm-Message-State: AOJu0YxlCjkdON0Z4RjIGOP8ujR6KiwWjuQzep4e5OfKEOB2JMUFth0e
-	Qs4m2YLKctLKKvYgyj/aoPX6dSsTo//uDksx/I/kPAoTXASSvTPLHfN8CmegK/p+d2/+5XNlhoF
-	WR9aDUQV1uEIlSg7KSrAqz1jeR2g=
-X-Google-Smtp-Source: AGHT+IEdmDqM1TqCnfcEDk/lrtdB8utzVZ0biUE6609Ih2ONH64bkJcTijvGGyF3ozwzM4N0slFjnMuUDlJdZ2X7G+8=
-X-Received: by 2002:a17:906:6b0b:b0:a59:bae0:b12a with SMTP id
- a640c23a62f3a-a626536a08bmr227054366b.63.1716585028994; Fri, 24 May 2024
- 14:10:28 -0700 (PDT)
+	s=arc-20240116; t=1716585072; c=relaxed/simple;
+	bh=V+il1BpyLqguUN5u3WorxTuH/oNecBF5wDbRT8VY/24=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=WFrpNU64bsmXD5VcIdwH9iDDxaJFpYOXbR1MN/jjtGon3Yh/YcJDA7feORJtmsbxlsGS98HsUliZrC4TO67aXnQxkCnYw75SebkTAcnKdk2NWL07OtZVhDD3wlLfH5xDf/2D+BTYHogG6dz0kwrd5H8I5eGmwwxV0DAe+NjUC/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kc9ZUNH/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O9ngob004282;
+	Fri, 24 May 2024 21:11:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=x66SqudCH7fhj49RHmi5YV
+	d+DD2Xux89EX5heurLxOg=; b=Kc9ZUNH/26+JnF9XJ/verpLCVbaNRWTLknP4Fo
+	bT8YstvyZTpiX+RemGEamHtZh/oK6L8ba7UrLnW5lUvOITrwBlNq3iEhc3YF1vYk
+	gGy40oez4fU1fV5+2KZcjUOjAl27tc7cmiiChsM86PkaAEyVXlfn9lLs4JMmdb7a
+	eU1oXVuFADa8ebkLQg8KTPlXJyM99PmsjycidpwYKmZ1ga/5l8F6sSPYT0KTAGZ6
+	/hzz5fi7JopFS+WFVIrVxI/2MAJWyf47UV2qAunq+q6W9HDhkM5Amy6kyszRSqAn
+	I8foLzly1p24GIzuK8exg1Pr5bX5vt7/EofBO249koJj1OJA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yaabq3f69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 21:11:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44OLB5Bq005006
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 21:11:05 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 24 May
+ 2024 14:11:05 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 24 May 2024 14:11:04 -0700
+Subject: [PATCH] fs: sysv: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f184a2d6-7892-4e43-a0cd-cab638c3d5c2@amd.com> <096178c9-91de-4752-bdc4-6a31bcdcbaf8@amd.com>
- <4871a305-5d45-47d2-85f2-d718c423db80@canonical.com> <CAGudoHFkDmGuPQDLf6rfiJxUdqFxjeeM-_9rFCApSrBYzfyRmA@mail.gmail.com>
- <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com>
-In-Reply-To: <3b880c7c-0d19-4bb6-9f0f-fb69047f41cd@canonical.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 24 May 2024 23:10:16 +0200
-Message-ID: <CAGudoHEycK3iTO2Rrsqr56_Lm69rCzMRaYz11NLrOcn5gKB3RA@mail.gmail.com>
-Subject: Re: [RFC 0/9] Nginx refcount scalability issue with Apparmor enabled
- and potential solutions
-To: John Johansen <john.johansen@canonical.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	"Shukla, Santosh" <Santosh.Shukla@amd.com>, "Narayan, Ananth" <Ananth.Narayan@amd.com>, 
-	raghavendra.kodsarathimmappa@amd.com, koverstreet@google.com, 
-	paulmck@kernel.org, boqun.feng@gmail.com, vinicius.gomes@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240524-md-fs-sysv-v1-1-9ebcd4f61aa5@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGgCUWYC/x3MQQqDQAyF4atI1g3YYRSmV5EuRidqoI6SVFHEu
+ zd1+cF7/wlKwqTwKk4Q2lh5zobno4BujHkg5GQGVzpfVs7jlLBX1EM3DD5UFKh2dUpgh0Wo5/2
+ ONW9zG5WwlZi78Z/4cF53nKJ+SXA5bArX9QNTkzxagQAAAA==
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner
+	<brauner@kernel.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QScsE7XIEo-Ml0rSSP25xiPEwjQcyb9g
+X-Proofpoint-ORIG-GUID: QScsE7XIEo-Ml0rSSP25xiPEwjQcyb9g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-24_07,2024-05-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=804
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ spamscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405240152
 
-On Fri, Mar 8, 2024 at 9:09=E2=80=AFPM John Johansen
-<john.johansen@canonical.com> wrote:
->
-> On 3/2/24 02:23, Mateusz Guzik wrote:
-> > On 2/9/24, John Johansen <john.johansen@canonical.com> wrote:
-> >> On 2/6/24 20:40, Neeraj Upadhyay wrote:
-> >>> Gentle ping.
-> >>>
-> >>> John,
-> >>>
-> >>> Could you please confirm that:
-> >>>
-> >>> a. The AppArmor refcount usage described in the RFC is correct?
-> >>> b. Approach taken to fix the scalability issue is valid/correct?
-> >>>
-> >>
-> >> Hi Neeraj,
-> >>
-> >> I know your patchset has been waiting on review for a long time.
-> >> Unfortunately I have been very, very busy lately. I will try to
-> >> get to it this weekend, but I can't promise that I will be able
-> >> to get the review fully done.
-> >>
-> >
-> > Gentle prod.
-> >
-> > Any chances of this getting reviewed in the foreseeable future? Would
-> > be a real bummer if the patchset fell through the cracks.
-> >
->
-> yes, sorry I have been unavailable for the last couple of weeks. I am
-> now back, I have a rather large backlog to try catching up on but this
-> is has an entry on the list.
->
+Fix the 'make W=1' warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/sysv/sysv.o
 
-So where do we stand here?
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/sysv/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+diff --git a/fs/sysv/super.c b/fs/sysv/super.c
+index 3365a30dc1e0..5c0d07ddbda2 100644
+--- a/fs/sysv/super.c
++++ b/fs/sysv/super.c
+@@ -591,4 +591,5 @@ static void __exit exit_sysv_fs(void)
+ 
+ module_init(init_sysv_fs)
+ module_exit(exit_sysv_fs)
++MODULE_DESCRIPTION("SystemV Filesystem");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: 07506d1011521a4a0deec1c69721c7405c40049b
+change-id: 20240524-md-fs-sysv-9495e9e626dd
+
 
