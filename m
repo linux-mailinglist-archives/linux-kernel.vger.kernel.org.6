@@ -1,285 +1,216 @@
-Return-Path: <linux-kernel+bounces-188323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C6F8CE082
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 06:58:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E06B8CE085
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 07:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F0C1F228F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 04:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 069512828D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169EF3B1AC;
-	Fri, 24 May 2024 04:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfNZZU/r"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDE43AC1F;
+	Fri, 24 May 2024 05:06:11 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9713A27B;
-	Fri, 24 May 2024 04:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716526714; cv=none; b=snFdQ/GZogDXhG9xCHx5TZgS14osTG1Dk1Bo3qlYERBaTF6xyg2ZIyFz8jc91tzeetKbkJdl7mi+FCfSx4Ai2kDHzG2Ft4L8tV2bsiHOPEdOicD88mj8qMAbLRaNBtLmugiu1TgLTggDiKq/+nC62aXRg9ZCTyHhgzTAn6YWaB8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716526714; c=relaxed/simple;
-	bh=XNiUy9rDYeevLGiJZ9A/DHHrIjr9khy247wJmZzY+ds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rm2U+9+Uq6IqumCkK0I2fDo3pW/zJJyMQ0mcGQXeVtEoVCyLVyQbAyjxsYs2H/4gHZfYCKqrKwzbXcLFQIhghtXvyurMxpdKPioUgQ9Y190CjfXGMyvId8TXLEBJcZBg+5ohtO31ewHcpzUDXfN5VAhvoJku2WcxKmERVllNYxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfNZZU/r; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-794ab20699cso27508685a.2;
-        Thu, 23 May 2024 21:58:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716526710; x=1717131510; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yk3w0+viSFtKKuzWbFP83UAoZOZ1q21d0XNuU6k+kPk=;
-        b=bfNZZU/r9RyOPWCWXT8C59J+0vknNpPXG60DaHrOQW4Y+v2TK5gY+xo6ZynezOb8Mf
-         lWpTfFsr+J2t95tcZFNHgefnMhI9EMEJU0OqiOvcWvv1kbOsVGpdaqaPmNSTaHT3FgfL
-         9c3pyO8XuE/PiwwoqkKgMl+yfNKvIeVTtdwXeTi3RV3dG5jbnDjnT3Sbb37j8hs56dgf
-         P4/snWGHOFj61ul7/UDjbqypeS26pj67RvgHm9+YQuKAmH+aC0nPJaIRd+QrXHCdtjFH
-         lHG7Dbu1eto2JxerKNBu4ntrVgnK1vRkWU4wy8G5sXe2qsBc8MNiboxWL3mSeP7y2ulL
-         PqWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716526710; x=1717131510;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yk3w0+viSFtKKuzWbFP83UAoZOZ1q21d0XNuU6k+kPk=;
-        b=K7sLZRNNSeJEk4UIVYOm91bTPKp8RtEs2eWqjx64QzqMx7Cd0qGaR4SrCxAc1Zqahl
-         jzaPJIqOkN+CMLWh8zflLx3a/zjRbJ+2UKO+PJdnXyElatvyJiKKaenmUMzcUfI7Suv6
-         0jPyAtI7vvKVgJhBMityFs7uhKkP4b0lLXSbHfEt1n80YpveLzfh+L4kIubXOnZ3FR6G
-         OfcN3dqV3q5G7QfySuVulTVZJ1xVdpdUkiF70tvWDyagotD2tM7nH/hhfBTc6htlASb8
-         x9SdGYeoRqE5hkd334qzXlBQW83W77w+aQIGuJR6unaagL1Rm2Ds/ng6YDvLqbdlJAh1
-         a88A==
-X-Forwarded-Encrypted: i=1; AJvYcCV6x3AWYhTwYhqVuOAKaVGdz5wwA+BvQu8W/Mjihf06KHnP+Mx8aZm+5SulHaPCozbkpfdfqaDCBnf2FKtAgag2C8nxLAKRsPEf0wsL7hWHBuXJmeh6RzR7ihWPp8WeDjlpvsftXuuePTPOQe6VQPGIUvGbfYa3DD+opP72mIksRsPMwj1Twin/36NbeFPMV5Ivx3F+NBqyxBvOzYQrgilG3Q==
-X-Gm-Message-State: AOJu0YzBqs2QeK/gyfDpLFb8fKdGpxkX+ze/ECRilvL4gq14xAROrLPG
-	bplaTQraw88b/9mFDPB/88j6nBr7DxdJENBOstP//F1Jh/cQb3pgDgx65jAAg8dP5JsdCgy7s+u
-	6OhXYwgYDqVLbLP8d2HZ7nWlB2e8=
-X-Google-Smtp-Source: AGHT+IHwxoEyC/CgfcoYNTuXoypW6cR/wpwLB7WDQ5aO6pnZBvqbeq9XfR3HiSKH17tsDXpgZ02lfQFnCyS+mBCcaM4=
-X-Received: by 2002:a05:620a:817:b0:794:9a23:4915 with SMTP id
- af79cd13be357-794ab057904mr115843085a.8.1716526710061; Thu, 23 May 2024
- 21:58:30 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417DB2E631;
+	Fri, 24 May 2024 05:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716527170; cv=fail; b=IF7dL66DI8T2P7a9MWMGf3M/4ID+4oabWYFfQI3GuVTDLE/z+77KJ1OwczTnqguCC8VH8Q2P6bTgyOFlYuUP/MT7WfE5ZH3c7Q5ZBCnY568XJXdKM4z0kpgn5mfWHs8bTTk0eP2jZvFecs3X3wqQKmQ4y79/nA+18mUv+TpQHFg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716527170; c=relaxed/simple;
+	bh=lZIESxlLImVSwzoOmTFNc+W7/Z0H1z00PXF97ToKqzc=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=IFrHTYNsy+Cvv4cMtfEOHv9TqcqLOBYUjluIbci5Ro4uiBD45C3CeXHSN5oJISMkCxN2iS56YiAu0/mskx4bQLggkhXRgyRp+DpHeVutl9nSnOX4O+G9n4tMQ8EOC69qaKqKWQY6zJ11Yc4MAba+UDiIBD0iHDCeuWuiMqB8r00=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44O4i780001342;
+	Fri, 24 May 2024 05:05:50 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3yaa9j0f9v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 May 2024 05:05:50 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YmgsABLks8/RSwnftZQxAyhblbZXBQ0gDMSI3EbBkYbK/Vwby1wsQMS6m2Cnh0hY+CFTAedbpCtVBtRpik5WRtgZ+Ycbfhah+Rj8Ke7hKkmbvCED67SaLhxwqaRgbpMtAbxtfmCpdx53QKOngtERktz+VkBMxGeKBhPk2VHdtbwecZ/p1jj0A22C38Msb0vWupWQDVnY3uXWEF8Nu5ex+mg5jkN+5NTjTD540aj/u8ae1lH1rqKyACe8gGRB+WwbZ+/xkLmN7AHWOxsl27QST3s6GEwp05Nyxg4jrrGi2Npsy4kfWphwtjcIr7AYnj6ke4tMxPZN0h8pnHoP4IVTEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nqqWGmYQAUc/F8tkjCaGn/buIEAuX36hZkTDykdaGQY=;
+ b=erRqDNRoVqF1exV0JLvZ9a+KQfDHJGaptDWwz5wH9ItZ9CByoGWlC3ocBnaDMheEZcpMeuJP65omPlhYjRLWv7S8rxPVzipbkRNJ4DXE384ZomL2GRlqEDq9/VQWOPHQm5NuT7+eGTvAyVIYIHbH+L6s4ahn3j0fPW9ut75ypg3pyQQ7wGBNfNQrUx2jUYa8sPFr3FK5egVJvHM2N1yrNEezQ3ijyotbEmZNa86uQ0lDMSIMmvTzo02CnaWUYtSpQOrNiwT9HcWTMe6tn28/8VwvKVXTjXeTuCnpawkwbU7qLsA9T+Qmqj5bfQj+Y3RmzJzDxcyE+LJ1LuqNilLb8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com (2603:10b6:303:197::8)
+ by CH3PR11MB7371.namprd11.prod.outlook.com (2603:10b6:610:151::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Fri, 24 May
+ 2024 05:05:46 +0000
+Received: from MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8]) by MW5PR11MB5764.namprd11.prod.outlook.com
+ ([fe80::3c2c:a17f:2516:4dc8%4]) with mapi id 15.20.7611.016; Fri, 24 May 2024
+ 05:05:46 +0000
+From: Xiaolei Wang <xiaolei.wang@windriver.com>
+To: wei.fang@nxp.com, andrew@lunn.ch, shenwei.wang@nxp.com,
+        xiaoning.wang@nxp.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com
+Cc: imx@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [net v3 PATCH] net:fec: Add fec_enet_deinit()
+Date: Fri, 24 May 2024 13:05:28 +0800
+Message-Id: <20240524050528.4115581-1-xiaolei.wang@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0221.apcprd06.prod.outlook.com
+ (2603:1096:4:68::29) To MW5PR11MB5764.namprd11.prod.outlook.com
+ (2603:10b6:303:197::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
-In-Reply-To: <20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 24 May 2024 07:58:18 +0300
-Message-ID: <CAOQ4uxhp0_HSre2LLStPVVsEJ3MqYDs1Ak9UAvB=o8Z7sVB=Mg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2] fhandle: expose u64 mount id to name_to_handle_at(2)
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Alexander Aring <alex.aring@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-api@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR11MB5764:EE_|CH3PR11MB7371:EE_
+X-MS-Office365-Filtering-Correlation-Id: f84406a1-bf11-4af6-2a0e-08dc7baf2b77
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230031|366007|1800799015|52116005|376005|7416005|38350700005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?esehY2ZYsAdbWTlhYnPL8XRm876c8oFeU+DFd02FjhrJ3i14QReBACyF0o0s?=
+ =?us-ascii?Q?S/SwzW1/n+YGrKVWvtYBzhVYDwB7Kg+uw6KX/goa21vM8UEKnRCivBjfEwbA?=
+ =?us-ascii?Q?dakV2iUENofe2ta4zPclvcINGCzGV0js5Ch8TYvZre0bUULyZJLsgofgWNJC?=
+ =?us-ascii?Q?MbsF/cDcVparnYOdd2rwq+BLt11uPpgCogzt0drZNgd5yqlGbv8uk0vSmNNh?=
+ =?us-ascii?Q?+bQJnBhHBX1GhGTLoEJRIBFhddJJihl/s3lkbuoNUTmhDC9I+MgGFfzpA3Zx?=
+ =?us-ascii?Q?ewRODbwSTRzWkMy7Wu00JR39t80G0s1qL0O66OuqsweQU9FkiUaDFUU7dbz2?=
+ =?us-ascii?Q?3MsKEBVVm0ls4ecKrHT6j8XkkjFGbq+N5croZlo9VG9jtCNemmX/Qj6as5FC?=
+ =?us-ascii?Q?x2+QfB4cyTeq6pRrLYWUF3fwj5dH19lKMnDqG44JDrmncEnq2nBJ1j7DryIq?=
+ =?us-ascii?Q?e49rGJBDHmG2F5jB5yDBpZfhAQ/U0NvSWyCdFPvLsagUmkBooFUolX5OqqXL?=
+ =?us-ascii?Q?y3qhiR+Ber7lg/o8ntdug/3YeHn5O9HUdTxsSEogleRTwc7hwEdoWQvwnHSb?=
+ =?us-ascii?Q?vK2arRn0o2pzktdcyACQA8QTVktV3hOA7GDLEGpu/6Qm+d40zwk0UzDNzXct?=
+ =?us-ascii?Q?6V8fyGCkrYL/F+nJqdPtYXVh1+K1Nb0LDWjlrLJuOBHASEWD5yCU+MTdrZIW?=
+ =?us-ascii?Q?dW/y1Lncnq2DWApgGFYHlwTVvInxCSYXkxnupHEfDn5M9UllkVb8j1lLlD44?=
+ =?us-ascii?Q?BIHvsARoplN3Ck4zMFnh8I3I3fLZavChrMxHq3y3HilUQ6h3fLvLL2kMIIGV?=
+ =?us-ascii?Q?VJyXAwNQDraFgqaoM7le6rDUnMwwc9q8t2MWNAlgvdahOAkYbiqKxGP9FSlm?=
+ =?us-ascii?Q?8/cwisvl9Y/kB+K5/SJ0PbCBfuTYURvLyRFmV7qoC0cOywnTPZrazMuIyBvv?=
+ =?us-ascii?Q?j3xQGZJOXojPb32GBlbP/gimbjTypUnlXQnzIxnVF1qX4GfkM3oXRjg3Hkmw?=
+ =?us-ascii?Q?YuFe6Ln6WNjdM9cby1UtY1MLzz6OfP+jYMHBi3FvRQfe5N6/jsoX8i2ZC7AD?=
+ =?us-ascii?Q?yhULTjT3DErsqlhWucdgowW4EIGAwC7ERUeAcq9lRYtHYvCRTtfI9WAy2ybg?=
+ =?us-ascii?Q?CzIq9EAt2A+ndy6mGt+T0lcB1TLXm4RneU9vNUcEZtbl4Kyv94GOj8fuxAXg?=
+ =?us-ascii?Q?sltw7EH6TQN/LwwTGyyqBr9G6DBHuja37P9KhbrfPeU1gyOfZRgozFNZ14Ty?=
+ =?us-ascii?Q?2ExhB07UltESwNJuNzK/G3GF7odSyS++/1voJpkWFSbhrKo8ERZGnAfmnhQg?=
+ =?us-ascii?Q?PEsgDi8LpW28YSAYXFmj5LNP63YclmbtsqxmYsOzvcIBVg=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR11MB5764.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(52116005)(376005)(7416005)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?yNgAafwAg5CuadmTwnnjDnGTQM6zkImTgYnaIVTg/YB2ab0ACJANdCg9w4NV?=
+ =?us-ascii?Q?CqpcmljKWmPw8IiWvTFyvfu3klSWk6gwcCNo4kjBdS6LykPm9hfeWfiH1VZp?=
+ =?us-ascii?Q?qLu5jarM543aQ1uyJRfNxO8+FkXCbGti4J7nPmu5tfNeYtzAtgGUay21dycK?=
+ =?us-ascii?Q?yuz5JJBZMXonIoxt7iZiPS+tUQOk1fu80/qQlHwVCzUX+fPL9cKdt2FWQNaM?=
+ =?us-ascii?Q?xl34d/1lt/BPIVFIstuie4NF4wHqLq1PPogV5T2l4/n3TeGGAK6xE7e3qmLW?=
+ =?us-ascii?Q?+w/lArARPlp6HntJ0EAQ5kYJZOwldXlv9U/EfOJoJfOjanx9XgKvFFBOPtWo?=
+ =?us-ascii?Q?9oVMqi5+NOa67A8c6Z7W8esGclbGHBaBWBSOIevUP+JXMhzDw5LN1O7NPJWW?=
+ =?us-ascii?Q?MEqfEZ3yKK+49HhRAOPNNVtt3MJ4aV5ctarafghUMF8M8s1VDKH/7aScX5tA?=
+ =?us-ascii?Q?oa6Yj5N3MAha4pLmY52OYUk/bSTri6VINzbG7ez8Jf5pXqZVLVTL9TwPfvaU?=
+ =?us-ascii?Q?H605n6w4OQer4WwNEUaVeB8XOs40JwHg+IATp3vdeGdjQ/ALYW8qNg6Y/5kn?=
+ =?us-ascii?Q?UPjXocxUi6Clhc9MgLegcgfRK0eEieKEnSNcSGIo40fjZshd4zvumY0NsDeN?=
+ =?us-ascii?Q?uIz4qTsGsciGfYdNc8b9S8jHbSetbntw1hjIbyHoKcqGg+L2TQaE8xeO15Ml?=
+ =?us-ascii?Q?OMOalz3jZMsKogEbbsksftstU9EkhXTwNdzAMRQniVME2sRAzpqoSr6EDIGC?=
+ =?us-ascii?Q?p0j1BDuuyADkWrytyAxp/4t9tAq5eP54leMJoFTzV/ZHZd95w1Nx0PeTBq09?=
+ =?us-ascii?Q?f5+UYM5marsfIXTjyWo+i8ahep9F9IhsUgv1PojNIhh5pd+Qy+aDW3aND3qW?=
+ =?us-ascii?Q?IrqDRDmL/PQaQ5lt2KB3V9AuqAfEK56JTBKDEnYXA5c9T3Hy9ujaf4iM2N1Z?=
+ =?us-ascii?Q?/63v8G+Ezbq5TF6fxNmu3rrK5vSGnB0+Xa55sh9iYAyMbhDQGyZe3zNg35AD?=
+ =?us-ascii?Q?FR9rysshV+USKX1kRzS49EwMRGMcgL/RwxTFibqnO1JQljFFmsAkYfgXQfB/?=
+ =?us-ascii?Q?TNqRRacwhgJn85dlTz2pR3BI4ficxFy/L1O0+24EqLi5IVcqEnIqpPcW5RWC?=
+ =?us-ascii?Q?qOn9eYHJDnCPwu3LcuEQ0M7P6rwSNWUEbXNVJSqpin1lVH4KHJT7dSJ58/dm?=
+ =?us-ascii?Q?hM+ZkEvrigxZj1JU4WGp4OtH3MZ1kVXo17FLdht2lFOuqab976Pt4piRIclb?=
+ =?us-ascii?Q?4MAB/9cLj8oVi2jVzvPyy/Si8dSqDllSxeUCkHQu4/0tBNgxsNVRRoqvefWE?=
+ =?us-ascii?Q?IVz3oVLSKmQL94LlQMxeZHs7LZ5SHzP3szqeIrFMmuXGK8NzsSQBQKKxQeHt?=
+ =?us-ascii?Q?9NDbz3qGe5kJjhmu2OYdXGVS6PV9soOk7VvFjGuzCitzQgffQ9+j1ilbAUnw?=
+ =?us-ascii?Q?Fd7vLV/AfmWbP5S4fREg8ryvbORj9c4/lr37VZgbDENtXbNMBfx4l5oHdkbq?=
+ =?us-ascii?Q?9PYZAtHcfwJ1SK752WwTBs/Rt0wNVHfTDx1o7Cs27VHRTjBFYcBMV2lN/OB7?=
+ =?us-ascii?Q?Z2TKurT6fQpY6oy6qbFXLfl+Vwq7snN8yjeVzXZRNbUmOFhEY1p9sPX4EJz4?=
+ =?us-ascii?Q?KQ=3D=3D?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f84406a1-bf11-4af6-2a0e-08dc7baf2b77
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR11MB5764.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 05:05:45.9999
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Rq4x0vZApVw6WcsmRSq198U4sZkeqy+I1SDOosRl/B0b8gduddXQxT0EYYhlGfMYz9adYPM11VzWGer0Jhcs4esvjq0wpLZsHxEYYMnaizc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7371
+X-Proofpoint-ORIG-GUID: 3bA614thkzzmOuoSZxqnEn_Ppq9icmUL
+X-Proofpoint-GUID: 3bA614thkzzmOuoSZxqnEn_Ppq9icmUL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-23_15,2024-05-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405240033
 
-On Thu, May 23, 2024 at 11:57=E2=80=AFPM Aleksa Sarai <cyphar@cyphar.com> w=
-rote:
->
-> Now that we provide a unique 64-bit mount ID interface in statx, we can
-> now provide a race-free way for name_to_handle_at(2) to provide a file
-> handle and corresponding mount without needing to worry about racing
-> with /proc/mountinfo parsing.
->
-> While this is not necessary if you are using AT_EMPTY_PATH and don't
-> care about an extra statx(2) call, users that pass full paths into
-> name_to_handle_at(2) need to know which mount the file handle comes from
-> (to make sure they don't try to open_by_handle_at a file handle from a
-> different filesystem) and switching to AT_EMPTY_PATH would require
-> allocating a file for every name_to_handle_at(2) call, turning
->
->   err =3D name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
->                           AT_HANDLE_MNT_ID_UNIQUE);
->
-> into
->
->   int fd =3D openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
->   err1 =3D name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_PAT=
-H);
->   err2 =3D statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
->   mntid =3D statxbuf.stx_mnt_id;
->   close(fd);
->
-> Unlike AT_HANDLE_FID, as per Amir's suggestion, AT_HANDLE_MNT_ID_UNIQUE
-> uses a new AT_* bit from the historically-unused 0xFF range (which we
-> now define as being the "per-syscall" range for AT_* bits).
->
+When fec_probe() fails or fec_drv_remove() needs to release the
+fec queue and remove a NAPI context, therefore add a function
+corresponding to fec_enet_init() and call fec_enet_deinit() which
+does the opposite to release memory and remove a NAPI context.
 
-Sorry for nit picking, but I think that "Unlike AT_HANDLE_FID,..." is confu=
-sing
-in this statement.
-AT_HANDLE_FID is using a bit that was already effectively allocated for a
-"per-syscall" range.
-I don't think that mentioning AT_HANDLE_FID adds any clarity to the stateme=
-nt
-so better drop it?
+Fixes: 59d0f7465644 ("net: fec: init multi queue date structure")
+Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+Reviewed-by: Wei Fang <wei.fang@nxp.com>
+---
+v1 -> v2
+ - Add fec_enet_free_queue() in fec_drv_remove()
+v2 -> v3
+ - Add fec_enet_deinit()
 
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
-> Changes in v2:
-> - Fixed a few minor compiler warnings and a buggy copy_to_user() check.
-> - Rename AT_HANDLE_UNIQUE_MOUNT_ID -> AT_HANDLE_MNT_ID_UNIQUE to match st=
-atx.
-> - Switched to using an AT_* bit from 0xFF and defining that range as
->   being "per-syscall" for future usage.
-> - Sync tools/ copy of <linux/fcntl.h> to include changes.
-> - v1: <https://lore.kernel.org/r/20240520-exportfs-u64-mount-id-v1-1-f55f=
-d9215b8e@cyphar.com>
-> ---
->  fs/fhandle.c                     | 29 ++++++++++++++++++++++-------
->  include/linux/syscalls.h         |  2 +-
->  include/uapi/linux/fcntl.h       | 28 +++++++++++++++++++++-------
->  tools/include/uapi/linux/fcntl.h | 28 +++++++++++++++++++++-------
->  4 files changed, 65 insertions(+), 22 deletions(-)
->
-[...]
+ drivers/net/ethernet/freescale/fec_main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index c0bcc185fa48..9ed9d65842c1 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -87,22 +87,24 @@
->  #define DN_ATTRIB      0x00000020      /* File changed attibutes */
->  #define DN_MULTISHOT   0x80000000      /* Don't remove notifier */
->
-> +#define AT_FDCWD               -100    /* Special value used to indicate
-> +                                           openat should use the current
-> +                                           working directory. */
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index a72d8a2eb0b3..881ece735dcf 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -4130,6 +4130,14 @@ static int fec_enet_init(struct net_device *ndev)
+ 	return ret;
+ }
+ 
++static void fec_enet_deinit(struct net_device *ndev)
++{
++	struct fec_enet_private *fep = netdev_priv(ndev);
++
++	netif_napi_del(&fep->napi);
++	fec_enet_free_queue(ndev);
++}
++
+ #ifdef CONFIG_OF
+ static int fec_reset_phy(struct platform_device *pdev)
+ {
+@@ -4524,6 +4532,7 @@ fec_probe(struct platform_device *pdev)
+ 	fec_enet_mii_remove(fep);
+ failed_mii_init:
+ failed_irq:
++	fec_enet_deinit(ndev);
+ failed_init:
+ 	fec_ptp_stop(pdev);
+ failed_reset:
+@@ -4587,6 +4596,7 @@ fec_drv_remove(struct platform_device *pdev)
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	fec_enet_deinit(ndev);
+ 	free_netdev(ndev);
+ }
+ 
+-- 
+2.25.1
 
-(more nit picking)
-If you are changing this line, please at least add a new line,
-this is a different namespace :-/
-and perhaps change it to "Special value of dirfd argument..."
-
-Also, better leave a comment here to discourage allocation from this range:
-
-+ /* Reserved for per-syscall flags              0xff   */
-
-> +#define AT_SYMLINK_NOFOLLOW    0x100   /* Do not follow symbolic links. =
- */
-> +
->  /*
-> - * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EA=
-CCESS is
-> - * meaningful only to faccessat, while AT_REMOVEDIR is meaningful only t=
-o
-> + * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EA=
-CCESS
-> + * is meaningful only to faccessat, while AT_REMOVEDIR is meaningful onl=
-y to
->   * unlinkat.  The two functions do completely different things and there=
-fore,
->   * the flags can be allowed to overlap.  For example, passing AT_REMOVED=
-IR to
->   * faccessat would be undefined behavior and thus treating it equivalent=
- to
->   * AT_EACCESS is valid undefined behavior.
->   */
-
-If you are going to add this churn in this patch, please do it otherwise.
-It does not make sense to have this long explanation about pre-syscall
-AT_* flags in a different location from the comment you added about
-"All new purely-syscall-specific AT_* flags.."
-if this explanation is needed at all, it should be after the new comment
-as an example.
-
-
-> -#define AT_FDCWD               -100    /* Special value used to indicate
-> -                                           openat should use the current
-> -                                           working directory. */
-> -#define AT_SYMLINK_NOFOLLOW    0x100   /* Do not follow symbolic links. =
- */
->  #define AT_EACCESS             0x200   /* Test access permitted for
->                                             effective IDs, not real IDs. =
- */
->  #define AT_REMOVEDIR           0x200   /* Remove directory instead of
->                                             unlinking file.  */
-
-I really prefer to move those to the per-syscall section
-right next to AT_HANDLE_FID and leave a comment here:
-
-/* Reserved for per-syscall flags           0x200   */
-
-> +
->  #define AT_SYMLINK_FOLLOW      0x400   /* Follow symbolic links.  */
->  #define AT_NO_AUTOMOUNT                0x800   /* Suppress terminal auto=
-mount traversal */
->  #define AT_EMPTY_PATH          0x1000  /* Allow empty relative pathname =
-*/
-> @@ -114,10 +116,22 @@
->
->  #define AT_RECURSIVE           0x8000  /* Apply to the entire subtree */
->
-> -/* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits.=
-. */
-> +/*
-> + * All new purely-syscall-specific AT_* flags should consider using bits=
- from
-> + * 0xFF, but the bits used by RENAME_* (0x7) should be avoided in case u=
-sers
-> + * decide to pass AT_* flags to renameat2() by accident.
-
-Sorry, but I find the use of my renameat2() example a bit confusing
-in this sentence.
-If you mention it at all, please use "For example, the bits used by..."
-but I think it is more important to say "...should consider re-using bits
-already used by other per-syscalls flags".
-
-> These flag bits are
-> + * free for re-use by other syscall's syscall-specific flags without wor=
-ry.
-> + */
-> +
-> +/*
-> + * Flags for name_to_handle_at(2). To save AT_ flag space we re-use the
-> + * AT_EACCESS/AT_REMOVEDIR bit for AT_HANDLE_FID.
-> + */
-
-AT_EACCESS/AT_REMOVEDIR/AT_HANDLE_FID have exact same status,
-so instead of this asymmetric comment:
-
-+/* Flags for faccessat(2) */
-+#define AT_EACCESS             0x200   /* Test access permitted for
-+                                           effective IDs, not real IDs.  *=
-/
-+/* Flags for unlinkat(2) */
-+#define AT_REMOVEDIR           0x200   /* Remove directory instead of
-+                                           unlinking file.  */
-+/* Flags for name_to_handle_at(2) */
-+#define AT_HANDLE_FID          0x200   /* file handle is needed to
-                                        compare object identity and may not
-                                        be usable to open_by_handle_at(2) *=
-/
-
-> +#define AT_HANDLE_MNT_ID_UNIQUE        0x80    /* return the u64 unique =
-mount id */
-
-IDGI, I think we may have been miscommunicating :-/
-If 0x7 range is to be avoided for generic AT_ flags, then it *should* be us=
-ed
-for new per-syscall flags such as this one.
-
-The reservation of 0xff is not a strong guarantee.
-As long as people re-use new per-syscalls flags efficiently, we could
-decide to reclaim some of this space for generic AT_ flags in the future
-if it is needed.
-
-I know most of the mess was here before your patch, but I think
-it got to a point where we must put a little order before introducing
-the new per-syscall flag.
-
-Thanks,
-Amir.
 
