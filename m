@@ -1,135 +1,138 @@
-Return-Path: <linux-kernel+bounces-188281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B721D8CDFFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:56:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3C98CDFFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 05:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EB88B22C2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:56:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0C4E1C22007
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 03:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88511374D3;
-	Fri, 24 May 2024 03:56:15 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A2F381B9;
+	Fri, 24 May 2024 03:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8k1u+vj"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEF439850
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388362F50A
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716522975; cv=none; b=A6i96EAR/UXwpQSl2E3/80LZ+andfMN+6Rjm4g2EludU97ZuVdi+9ZCsK12bnOmK84s/38FMHUxz+lM1DMykFERE0wTN6yi5xuxRrdyPjAqFAWg5UJdlW+cXAcY8PQv+qvrcjwRN04KgZ4W0jJUtSEsAdo0Ra3DuXQT1+k651TQ=
+	t=1716522959; cv=none; b=LF3AVJj3AzTMtvgs7m6yOH08+VuS/N6zBtcefWriDssqZazES5ESUmvkdT6EbXlPAIS45BxCP9FfOmR+voMKf5ypPoGVo+/GxcBcuRgHMo1Rfihk+zhTUodEeurmn4/Yrfl0JxlU7iAmo3JL/wcdD28AWB8ii0hENp0TYVtgB9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716522975; c=relaxed/simple;
-	bh=b0OXx68f3pRMuKufG4kLSg9yI3HiTxdnA3tB5xoFOEo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dD2VhFZNyJ45D+MWJ+PtbSwSKKoCiq0XWTVYchOigoLTeh7tloyInKyaaqVqh0jqjb3X/HURa5amzn7lYI5Q2qSZwHzfK/5fN/5qecep7gvc0oslH7aA8cdxht1YBzTkkCdZUYdsYSsMZZp+jT3FgExfr/t4VFcgWKgdHTtdzRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VlrjY4PQ7z1ypJ4;
-	Fri, 24 May 2024 11:53:05 +0800 (CST)
-Received: from canpemm500001.china.huawei.com (unknown [7.192.104.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 22211180067;
-	Fri, 24 May 2024 11:56:09 +0800 (CST)
-Received: from octopus.huawei.com (10.67.174.191) by
- canpemm500001.china.huawei.com (7.192.104.163) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 24 May 2024 11:56:08 +0800
-From: Zhang Qiao <zhangqiao22@huawei.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <zhangqiao22@huawei.com>
-Subject: [PATCH] sched/numa: Correct NUMA imbalance calculation
-Date: Fri, 24 May 2024 11:54:38 +0800
-Message-ID: <20240524035438.2701479-1-zhangqiao22@huawei.com>
-X-Mailer: git-send-email 2.18.0.huawei.25
+	s=arc-20240116; t=1716522959; c=relaxed/simple;
+	bh=hz6yD3YpRQ+/vmJO/Jc9hA4ctopEf7XFcndZkYLFllw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=auCZYaLmscwXrOk5JvP3GdkwrbgIGaz36RR2qOV8bjGLuLXeKtWku8LJ3y6udm4yrgf+eTPnbnyzZaPLWYmv/mhpYGosVxNiThqEIUQapVIjTjQZnk8ww3+Q7RWwJuuHPDFawBy6otqgthngFLb6NeH45eyxpXlywxDnFxmUyFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8k1u+vj; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f332511457so3580705ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2024 20:55:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716522957; x=1717127757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3x9vVo+8n8DI9HwirLv4lx4BXroqIOS5ZYSTB5Fjk5s=;
+        b=c8k1u+vjjo6aB2ZjdldI7U961vypCfzllL0Nn58GCycFBgQFtzyEuxRs8AGfS4wxZ+
+         v4uvXLoVHZ04RZ2toAQmKa6xT9PKgL0So8skT/F67W1co0/OL1vQh9ETt3aqtMgDmslV
+         pVr/tHGsHNJHa0VHQR7/z0hjlEykOwkfiE2ijZvx7kQLcnSLm+Zf5/icSLKyirSESWnI
+         etSz22q3uEzoni/v7EDO13eiQsN2a29/yglPvLaiRecKCjgOkNPQvoT5uf8fJynuGtcn
+         Vm8qku7qhbAwbtCBuOH2CApOYqqTiZ/u/nqI0u7BoCWKus87YQ8Ub+1epi6gylSVtpYY
+         3ukQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716522957; x=1717127757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3x9vVo+8n8DI9HwirLv4lx4BXroqIOS5ZYSTB5Fjk5s=;
+        b=w7z6nBgtMWS5notE3BVY61GmMHpAhRuNjprv4Q/3ik6UL9atf0wI4D+LegG2J7CiOR
+         lSFmmiIrj0WfvxNokMh+1AwLjivLlpFQUHDrRMVTG4lqtGkrVcPPRSCCeBxzXhqI/pN7
+         taBBmKQMWeWTEXYjGjaR2UckVNB0H/69A4H1cj46X9PQDCurdeoTkqyxNO7w69ga7wXv
+         +hOklucoftDPEXvkTLpH8wQrrVhozo89zV6OMitocVcXrBBGuJLf9vj2xPR081FjPEVd
+         z2F289F7KQcqiJwRMppy1h+1vxpVC+Yz6x2ifEmuYt7TrZwO+9Pf/s+7k1vkmaQz7ulI
+         tnlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeYyCSeS7hh/jFfPKXWAn1guUEeDXVWSwYLsm8Jntv2WFFSc7wMWYT9WRutDI+dTxhFHaYRZYyam+vB8JlSetCB7tj0Rqzf2O4RGvu
+X-Gm-Message-State: AOJu0Yw/x028zgHbnF1oIB1slcHoFXnY/dPUd9OFkucRdJmwPD2i/UOT
+	/ZdcyYOLBb02atkIniUHck3eAc6hMzxnvjHDni75hP8oh9RiTRbw
+X-Google-Smtp-Source: AGHT+IGHa4C3FN7n8+eC7KzOZBlPE2yGNCes1Lr9VjmAe4+0SYxnbQiTgj05W5VxdVyMph6XmY9Tqw==
+X-Received: by 2002:a17:902:d2c9:b0:1ee:8fb7:dce1 with SMTP id d9443c01a7336-1f44893d42bmr14924295ad.31.1716522957373;
+        Thu, 23 May 2024 20:55:57 -0700 (PDT)
+Received: from ubuntukernelserver.. ([110.44.116.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f44c79d046sm3708015ad.72.2024.05.23.20.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 May 2024 20:55:56 -0700 (PDT)
+From: Roshan Khatri <topofeverest8848@gmail.com>
+To: gregkh@linuxfoundation.org,
+	tdavies@darkphysics.net,
+	philipp.g.hortmann@gmail.com,
+	garyrookard@fastmail.org
+Cc: Roshan Khatri <topofeverest8848@gmail.com>,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: rtl8192e: Fix spelling mistakes in rtllib_softmac.c
+Date: Fri, 24 May 2024 09:40:24 +0545
+Message-Id: <20240524035525.61072-1-topofeverest8848@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500001.china.huawei.com (7.192.104.163)
+Content-Transfer-Encoding: 8bit
 
-When perform load balance, a NUMA imbalance is allowed
-if busy CPUs is less than the maximum threshold, it
-remains a pair of communication tasks on the current
-node when the source doamin is lightly loaded. In many
-cases, this prevents communicating tasks being pulled apart.
+This patch corrects some misspellings to increase code readability and
+searching.
 
-But when I ran the lmbench bw_pipe testcase, I found that
-it was a little inconsistent with the above expectations,
-the communicating tasks were migrated to two different
-NUMA nodes.
-
-There may be two reasons for this issue:
-1. calculate_imbalance() use local->sum_nr_running, it
-may not be accurate, because the communication tasks run
-on busiest group, it should be busiest->sum_nr_running.
-
-2. In calculate_imbalance(), idles cpus are used to calculat
-imbalance, but the group_weight may not be equal between local
-and busiest group(My server has 4 NUMA nodes and kernel
-builds 3 level NUMA sched_domain, some sched_group's weight
-is different). In this case, even if both groups are very idle,
-imbalance will be calculated very large, the difference of busy
-cpus between groups might be more appropriate as imbalance value.
-
-For lmbench bw_pipe(bw_pipe -P 1):
-v6.6: 			1776.7533 MB/sec
-v6.6 + this patch:	4323 	  MB/sec
-
-Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
+Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
 ---
- kernel/sched/fair.c | 8 ++++----
+ drivers/staging/rtl8192e/rtllib_softmac.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 03be0d1330a6..c6170cde9c14 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1323,7 +1323,6 @@ static inline bool is_core_idle(int cpu)
- }
+diff --git a/drivers/staging/rtl8192e/rtllib_softmac.c b/drivers/staging/rtl8192e/rtllib_softmac.c
+index 97fdca828da7..0fc97c868f81 100644
+--- a/drivers/staging/rtl8192e/rtllib_softmac.c
++++ b/drivers/staging/rtl8192e/rtllib_softmac.c
+@@ -421,7 +421,7 @@ static void rtllib_softmac_scan_syncro(struct rtllib_device *ieee)
+ 		 *    So we switch to MAC80211_LINKED_SCANNING to remember
+ 		 *    that we are still logically linked (not interested in
+ 		 *    new network events, despite for updating the net list,
+-		 *    but we are temporarly 'unlinked' as the driver shall
++		 *    but we are temporarily 'unlinked' as the driver shall
+ 		 *    not filter RX frames and the channel is changing.
+ 		 * So the only situation in which are interested is to check
+ 		 * if the state become LINKED because of the #1 situation
+@@ -934,7 +934,7 @@ static void rtllib_associate_abort(struct rtllib_device *ieee)
  
- #ifdef CONFIG_NUMA
--#define NUMA_IMBALANCE_MIN 2
+ 	ieee->associate_seq++;
  
- static inline long
- adjust_numa_imbalance(int imbalance, int dst_running, int imb_numa_nr)
-@@ -1342,7 +1341,7 @@ adjust_numa_imbalance(int imbalance, int dst_running, int imb_numa_nr)
- 	 * Allow a small imbalance based on a simple pair of communicating
- 	 * tasks that remain local when the destination is lightly loaded.
- 	 */
--	if (imbalance <= NUMA_IMBALANCE_MIN)
-+	if (imbalance <= imb_numa_nr)
+-	/* don't scan, and avoid to have the RX path possibily
++	/* don't scan, and avoid to have the RX path possibly
+ 	 * try again to associate. Even do not react to AUTH or
+ 	 * ASSOC response. Just wait for the retry wq to be scheduled.
+ 	 * Here we will check if there are good nets to associate
+@@ -1359,7 +1359,7 @@ static short rtllib_sta_ps_sleep(struct rtllib_device *ieee, u64 *time)
  		return 0;
+ 	timeout = ieee->current_network.beacon_interval;
+ 	ieee->current_network.dtim_data = RTLLIB_DTIM_INVALID;
+-	/* there's no need to nofity AP that I find you buffered
++	/* there's no need to notify AP that I find you buffered
+ 	 * with broadcast packet
+ 	 */
+ 	if (dtim & (RTLLIB_DTIM_UCAST & ieee->ps))
+@@ -1806,7 +1806,7 @@ void rtllib_softmac_xmit(struct rtllib_txb *txb, struct rtllib_device *ieee)
  
- 	return imbalance;
-@@ -10727,14 +10726,15 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 			 */
- 			env->migration_type = migrate_task;
- 			env->imbalance = max_t(long, 0,
--					       (local->idle_cpus - busiest->idle_cpus));
-+					(busiest->group_weight - busiest->idle_cpus) -
-+					 (local->group_weight - local->idle_cpus));
- 		}
+ 	spin_lock_irqsave(&ieee->lock, flags);
  
- #ifdef CONFIG_NUMA
- 		/* Consider allowing a small imbalance between NUMA groups */
- 		if (env->sd->flags & SD_NUMA) {
- 			env->imbalance = adjust_numa_imbalance(env->imbalance,
--							       local->sum_nr_running + 1,
-+							       busiest->sum_nr_running,
- 							       env->sd->imb_numa_nr);
- 		}
- #endif
+-	/* called with 2nd parm 0, no tx mgmt lock required */
++	/* called with 2nd param 0, no tx mgmt lock required */
+ 	rtllib_sta_wakeup(ieee, 0);
+ 
+ 	/* update the tx status */
 -- 
-2.18.0.huawei.25
+2.34.1
 
 
