@@ -1,226 +1,186 @@
-Return-Path: <linux-kernel+bounces-188611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-188612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19BA8CE44F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:35:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811E88CE454
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 12:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624A51F221B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BF561C216B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2024 10:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF14F85956;
-	Fri, 24 May 2024 10:34:48 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DB385923;
+	Fri, 24 May 2024 10:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WZQHEFkc"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B95985940
-	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490E72CA5
+	for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 10:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716546888; cv=none; b=Buae1LmBBCPScrATkPZt0adqCJWnsC2mr7BYa1H7TzRklq8HTGQ/MViOkXqcHLOmzUznusIQ5oiS2+XORXQ4IMLB2jIWKLP/VNww82LeGQoL78juA7loxpNPtqeDm+IiAH9/1+tzxEDQPEdbJbCWRYNDgGHnjA+/tm1p2YSKKU8=
+	t=1716547132; cv=none; b=T40BpQYgQi9IHPly6ZV8vCFrrLhd6XOe15bVdYB+x1nor+QxeTLBx1kdBd7K7mZqfey6KzzeBIMPux2jE+7urHTZCLoT9As1uj+RC7FD0fpO7EEnNvpbcRhfDFeAuIzUsU0pcsIwwTirUhsTNwGIp5myt2IhLkggtN5xgXbOfWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716546888; c=relaxed/simple;
-	bh=qg+hQa3sjCvK1rsMinmlMmvRSQldE+iztqZn3l16GXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U3vPPjpNerpyfbn+02NFeWPEu7tmS6wPApVRgPaCMrYNf3a3JLec1wPJSdTP8RU7gcQBJIoR2PDGfKKt+km1xLZFP+swKSD+2NoUBuXb0HxjiKVU2cR5yH0tJ9ezh1IXtFOf5uiwMp12QMp4S6E//w4z6zn+r6jGwDyNvkUsoMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sASFq-0008L1-7k; Fri, 24 May 2024 12:34:30 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sASFp-002mYJ-9k; Fri, 24 May 2024 12:34:29 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sASFp-00Bdvd-0d;
-	Fri, 24 May 2024 12:34:29 +0200
-Date: Fri, 24 May 2024 12:34:29 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/5] firmware: imx: add driver for NXP EdgeLock Enclave
-Message-ID: <ZlBtNSeh2VyZsVxq@pengutronix.de>
-References: <20240523-imx-se-if-v2-0-5a6fd189a539@nxp.com>
- <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
+	s=arc-20240116; t=1716547132; c=relaxed/simple;
+	bh=gKa6mmvzOF1ZpJO+bPGgziKndrJPW99i0DYrvhPmWHI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c3r1MXPf5Ur3evM0b3euxQBUITntNKX/bBFQVBXx44zA2UI/Z0Q8GJ8N8Hs1G8QApBSsscTuqb4Nif1DKblRrbZxfcXmVeQufVB+TAG5naBgNZKmLzxNprcPIkUnioAwL6zOvMDOioszLr6eYGWgfnUkrCC6qVDsMdxUcluBwgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WZQHEFkc; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e73359b8fbso59455561fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2024 03:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1716547128; x=1717151928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O7QJ4Br1wGtDprLMS8vBRq5ATk0CW/YgMrLCILR8mwU=;
+        b=WZQHEFkcclDZ1fkgfSSO4f59VEZbGu7MYUspgtG0PC0ThlD/wSHbkx1k576sAWSgeM
+         GaJZBHI2ePdGICLk0shgrn84Okr4/AmvxIWQaeljGEAfGwAQab1CfhT7L2zQGhS1kelU
+         qm51HWVACdrNFwzdVbAIHoCbCjy7NQYMTAMvo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716547128; x=1717151928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O7QJ4Br1wGtDprLMS8vBRq5ATk0CW/YgMrLCILR8mwU=;
+        b=KAJTCUu74xCYMTaREd97oWUK13ZiSIUCt/SWPJHVgFlPsv2MdkQV1eSZKF6Gl6dxGw
+         vYqZ5ymFVzL7e5YxYugQUFZ2qxR7DS1VSnDxD6I8NJ9WSU8PNlwApDWNZumJlZDiEpIB
+         0yERR5c1yaN/m8SXNsnNsPFkLOYPS7Ga4XBAF6WV1mOg55WqwyLgUrLb3Jy9D6UhjlOr
+         3CZwcl4s6yzXcM65J7vzL1ifGvra+TCzM/MgyiyEG9jB1i49NrdEIiww+XsN4yrN297R
+         tlrYDJCWJoxKr074yysK9Vxk+d1+dE938L2tGNKMuarbjNGDRrRK/igQarWkCeTcyMKu
+         Ld3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXmZD3t8F3OWoqUT4D2qw/PMuB+t1TOhiKpM8WtWUUObdPi4dAwVUo/RJbjoSSj+JWcwuL0oo6MssZzGIXA6q7xdYJ1bNWTeTcihedy
+X-Gm-Message-State: AOJu0YwPn8z+L+od48sByaQZyYxY6ZEyzOJnOsUJoXzYU3R9kt3mvgta
+	karLiM7cr0ymdXx+kSZzPBLm3y/IrTW5NDgPOaBMjpQudppcDSIUiAmJa4EkoQ7IuPw/eD/CMH7
+	01tNp0SuInTFhZ1sBVbVi+JT47cW472xjals=
+X-Google-Smtp-Source: AGHT+IEKCqXlR3VFq4PuZL729CIHR+NXOv7en8ECSeBpEO61zPsCJiDAOi/Nenxh9tUH5OtaGhXb+HKe2JSOzy9OfNw=
+X-Received: by 2002:a05:6512:4024:b0:51d:a5fb:bfd8 with SMTP id
+ 2adb3069b0e04-52965b3a029mr1988848e87.32.1716547128267; Fri, 24 May 2024
+ 03:38:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523-imx-se-if-v2-4-5a6fd189a539@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240516174357.26755-1-jim.cromie@gmail.com> <20240516174357.26755-16-jim.cromie@gmail.com>
+ <CALwA+NYXBgennLhnFUvaU+U871hoiQbjNK2uRaPEd6fxPr68Jg@mail.gmail.com>
+ <CAJfuBxzNKvFGB3AyJyPRDALkZ9nNYvG33u6yZ4OWEbmNypotQg@mail.gmail.com> <CAJfuBxzJqgnwy1m9f-a7+Ke-g13mwQoA9NrPFAZU_Ems_fMPiw@mail.gmail.com>
+In-Reply-To: <CAJfuBxzJqgnwy1m9f-a7+Ke-g13mwQoA9NrPFAZU_Ems_fMPiw@mail.gmail.com>
+From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Date: Fri, 24 May 2024 12:38:36 +0200
+Message-ID: <CALwA+Na1rg2S0Nh_AtpLWSC6m6pCAZZG=FUo727_jdj8fO__Mw@mail.gmail.com>
+Subject: Re: [PATCH v8-RESEND 15/33] dyndbg-API: fix DECLARE_DYNDBG_CLASSMAP
+To: jim.cromie@gmail.com
+Cc: jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk, joe@perches.com, 
+	mcgrof@kernel.org, daniel.vetter@ffwll.ch, tvrtko.ursulin@linux.intel.com, 
+	jani.nikula@intel.com, ville.syrjala@linux.intel.com, seanpaul@chromium.org, 
+	robdclark@gmail.com, groeck@google.com, yanivt@google.com, bleung@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 04:19:35PM +0530, Pankaj Gupta wrote:
-> NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE),
-> are embedded in the SoC to support the features like HSM, SHE & V2X,
-> using message based communication interface.
-> 
-> The secure enclave FW communicates on a dedicated messaging unit(MU)
-> based interface(s) with application core, where kernel is running.
-> It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
-> 
-> This patch adds the driver for communication interface to secure-enclave,
-> for exchanging messages with NXP secure enclave HW IP(s) like EdgeLock
-> Enclave (ELE) from Kernel-space, used by kernel management layers like
-> - DM-Crypt.
-> 
-> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
-> ---
->  drivers/firmware/imx/Kconfig        |  12 +
->  drivers/firmware/imx/Makefile       |   2 +
->  drivers/firmware/imx/ele_base_msg.c | 286 +++++++++++++++++++
->  drivers/firmware/imx/ele_base_msg.h |  92 +++++++
->  drivers/firmware/imx/ele_common.c   | 239 ++++++++++++++++
->  drivers/firmware/imx/ele_common.h   |  43 +++
->  drivers/firmware/imx/se_ctrl.c      | 531 ++++++++++++++++++++++++++++++++++++
->  drivers/firmware/imx/se_ctrl.h      |  99 +++++++
->  include/linux/firmware/imx/se_api.h |  14 +
->  9 files changed, 1318 insertions(+)
-> 
+On Wed, May 22, 2024 at 8:52=E2=80=AFPM <jim.cromie@gmail.com> wrote:
+>
+> On Tue, May 21, 2024 at 10:31=E2=80=AFAM <jim.cromie@gmail.com> wrote:
+> >
+> > On Tue, May 21, 2024 at 5:46=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@ch=
+romium.org> wrote:
+> > >
+> > > On Thu, May 16, 2024 at 7:44=E2=80=AFPM Jim Cromie <jim.cromie@gmail.=
+com> wrote:
+> > > >
+> > > > DECLARE_DYNDBG_CLASSMAP() has a design error; its usage fails a bas=
+ic
+> > > > K&R rule: "define once, refer many times".
+> > > >
+> > > > It is used across DRM core & drivers, each use re-defines the class=
+map
+> > > > understood by that module; and all must match for the modules to
+> > > > respond together when DRM.debug categories are enabled.  This is
+> > > > brittle; a maintenance foot-gun.
+> > > >
+> > > > Worse, it causes the CONFIG_DRM_USE_DYNAMIC_DEBUG=3DY regression; 1=
+st
+> > > > drm.ko loads, and dyndbg initializes its DRM.debug callsites, then =
+a
+> > > > drm-driver loads, but too late - it missed the DRM.debug enablement=
+.
+> > > >
+> > > > So replace it with 2 macros:
+> > > >   DYNDBG_CLASSMAP_DEFINE - invoked once from core - drm.ko
+> > > >   DYNDBG_CLASSMAP_USE    - from all drm drivers and helpers.
+> >
+> > >
+> > > Why does DYNDBG_CLASSMAP_DEFINE take "stringified" enum name-vals ?
+> > >
+> >
+> > short version:
+> >
+> > real enum vals would be better - misspellings would be compiler errors
+> > but doing the stringification inside the macro doesnt work,
+> >  __stringify(__VA__ARGS__) produces "DRM_UT_CORE, DRM_UT_DRIVER" etc,
+> > not 10 separate stringifications
+> >
+> > I have a patchset for later that fixes this,
+> > but I didnt want to complicate this submission any further.
+> > Its already touching 2 sub-systems, revising and adding API
+> >
+> >
+> > > > -         This module registers a tracer callback to count enabled
+> > > > -         pr_debugs in a 'do_debugging' function, then alters their
+> > > > -         enablements, calls the function, and compares counts.
+> > > > +         This module exersizes/demonstrates dyndbg's classmap API,=
+ by
+> > >
+> > > Typo exersizes -> exercises
+> > >
+> >
+> > yes
+> >
+> > > > +static void ddebug_apply_params(const struct ddebug_class_map *cm,=
+ const char *modnm)
+> > > > +{
+> > > > +       const struct kernel_param *kp;
+> > > > +#if IS_ENABLED(CONFIG_MODULES)
+> > >
+> > > Instead of the above maybe use "if (IS_ENABLED(CONFIG_MODULES)) {" ?
+> > > This will allow to get rid of #if and #endif which make code less rea=
+dable.
+> > >
+> >
+> > will do.
+> >
+> > > > +       int i;
+> > > > +
+>
+> meh, turns out the #ifdef was doing more work - hiding the use of
+> struct module in the expression.
+> and since the cm->mod->kp actually refers thru the struct, it must be def=
+ined,
+> a forward decl looks insufficient
+>
+>
+> >> lib/dynamic_debug.c:1202:28: error: incomplete definition of type 'str=
+uct module'
+>     1202 |                         for (i =3D 0, kp =3D cm->mod->kp; i <
+> cm->mod->num_kp; i++, kp++)
+>          |                                          ~~~~~~~^
+>    arch/x86/include/asm/alternative.h:108:8: note: forward declaration
+> of 'struct module'
+>      108 | struct module;
+>          |        ^
+> [jimc:dd-classmap-fix-8d 15/36] lib/dynamic_debug.c:1202:28: error:
+> incomplete definition of type 'struct module'
+>
+>
+> I'll probably revert, and stick with the #if block,
+> anything else feels too subtle by half
 
-> +static int se_probe_if_cleanup(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct se_if_priv *priv;
-> +	int ret = 0;
-> +
-> +	priv = dev_get_drvdata(dev);
-> +	if (!priv) {
-> +		ret = 0;
-> +		dev_dbg(dev, "SE-MU Priv data is NULL;");
-> +		return ret;
-> +	}
-> +
-> +	if (priv->tx_chan)
-> +		mbox_free_channel(priv->tx_chan);
-> +	if (priv->rx_chan)
-> +		mbox_free_channel(priv->rx_chan);
-> +
-> +	/* free the buffer in se remove, previously allocated
-> +	 * in se probe to store encrypted IMEM
-> +	 */
-> +	if (priv->imem.buf) {
-> +		dmam_free_coherent(dev,
-> +				   ELE_IMEM_SIZE,
-> +				   priv->imem.buf,
-> +				   priv->imem.phyaddr);
-> +		priv->imem.buf = NULL;
-> +	}
-> +
-> +	if (priv->flags & RESERVED_DMA_POOL) {
-> +		of_reserved_mem_device_release(dev);
-
-You can call this unconditionally, no need to keep track if you called
-of_reserved_mem_device_init() successfully.
-
-> +
-> +static int se_if_probe(struct platform_device *pdev)
-> +{
-> +	struct imx_se_node_info_list *info_list;
-> +	struct device *dev = &pdev->dev;
-> +	struct imx_se_node_info *info;
-> +	struct se_if_priv *priv;
-> +	u32 idx;
-> +	int ret;
-> +
-> +	if (of_property_read_u32(dev->of_node, "reg", &idx)) {
-> +		ret = -EINVAL;
-> +		goto exit;
-> +	}
-> +
-> +	info_list = (struct imx_se_node_info_list *)
-> +			device_get_match_data(dev);
-> +	info = get_imx_se_node_info(info_list, idx);
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv) {
-> +		ret = -ENOMEM;
-> +		goto exit;
-> +	}
-> +
-> +	dev_set_drvdata(dev, priv);
-> +
-> +	/* Mailbox client configuration */
-> +	priv->se_mb_cl.dev		= dev;
-> +	priv->se_mb_cl.tx_block		= false;
-> +	priv->se_mb_cl.knows_txdone	= true;
-> +	priv->se_mb_cl.rx_callback	= se_if_rx_callback;
-> +
-> +	ret = se_if_request_channel(dev, &priv->tx_chan,
-> +			&priv->se_mb_cl, info->mbox_tx_name);
-> +	if (ret)
-> +		goto exit;
-> +
-> +	ret = se_if_request_channel(dev, &priv->rx_chan,
-> +			&priv->se_mb_cl, info->mbox_rx_name);
-> +	if (ret)
-> +		goto exit;
-> +
-> +	priv->dev = dev;
-> +	priv->info = info;
-> +
-> +	/* Initialize the mutex. */
-> +	mutex_init(&priv->se_if_lock);
-> +	mutex_init(&priv->se_if_cmd_lock);
-> +
-> +	priv->cmd_receiver_dev = NULL;
-> +	priv->waiting_rsp_dev = NULL;
-> +	priv->max_dev_ctx = info->max_dev_ctx;
-> +	priv->cmd_tag = info->cmd_tag;
-> +	priv->rsp_tag = info->rsp_tag;
-> +	priv->mem_pool_name = info->pool_name;
-> +	priv->success_tag = info->success_tag;
-> +	priv->base_api_ver = info->base_api_ver;
-> +	priv->fw_api_ver = info->fw_api_ver;
-> +
-> +	init_completion(&priv->done);
-> +	spin_lock_init(&priv->lock);
-> +
-> +	if (info->reserved_dma_ranges) {
-> +		ret = of_reserved_mem_device_init(dev);
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"failed to init reserved memory region %d\n",
-> +				ret);
-> +			priv->flags &= (~RESERVED_DMA_POOL);
-> +			goto exit;
-> +		}
-> +		priv->flags |= RESERVED_DMA_POOL;
-> +	}
-
-Can't this be optional? Why do you need to reserve memory in the device
-tree for it?
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Ah, you're right, without CONFIG_MODULES the compilation fails.
+Reverting to #if statement sounds good to me then.
 
